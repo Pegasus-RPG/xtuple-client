@@ -169,8 +169,8 @@ void dspTimePhasedPlannedREByPlannerCode::sFillList()
     else
       sql += QString(" SUM(plannedRevenue(plancode_id, warehous_id, 'A', %1, date('%2'), date('%3'))) AS revenue%4 ")
 	     .arg(cursor->id())
-	     .arg(_startEvalDate->dateString())
-	     .arg(_endEvalDate->dateString())
+	     .arg(_startEvalDate->date().toString())    // NOT locale format
+	     .arg(_endEvalDate->date().toString())      // NOT locale format
 	     .arg(columns++);
 
     _plannedRE->addColumn(formatDate(cursor->startDate()), _qtyColumn, Qt::AlignRight);

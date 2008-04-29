@@ -312,7 +312,7 @@ void printPackingList::sPopulate()
 
     QString dests = "<? if exists(\"sohead_id\") ?>"
 		    "SELECT cohead_number AS order_number,"
-		    "       formatDate(cohead_orderdate) AS orderdate,"
+		    "       cohead_orderdate AS orderdate,"
 		    "       cohead_custponumber AS alternate_number,"
 		    "       cust_name AS name, cust_phone AS phone "
 		    "FROM cohead, cust "
@@ -320,7 +320,7 @@ void printPackingList::sPopulate()
 		    " AND (cohead_id=<? value(\"sohead_id\") ?>) );"
 		    "<? elseif exists(\"tohead_id\") ?>"
 		    "SELECT tohead_number AS order_number,"
-		    "       formatDate(tohead_orderdate) AS orderdate,"
+		    "       tohead_orderdate AS orderdate,"
 		    "       <? value(\"to\") ?> AS alternate_number,"
 		    "       tohead_destname AS name, tohead_destphone AS phone "
 		    "FROM tohead "
@@ -331,7 +331,7 @@ void printPackingList::sPopulate()
     q = destm.toQuery(destp);
     if (q.first())
     {
-      _orderDate->setText(q.value("orderdate").toString());
+      _orderDate->setDate(q.value("orderdate").toDate());
       _poNumber->setText(q.value("alternate_number").toString());
       _custName->setText(q.value("name").toString());
       _custPhone->setText(q.value("phone").toString());

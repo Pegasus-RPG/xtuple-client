@@ -158,7 +158,7 @@ void copySalesOrder::sPopulateSoInfo(int)
   if (_so->id() != -1)
   {
     q.prepare( "SELECT cohead_number,"
-              "        formatDate(cohead_orderdate) AS orderdate,"
+              "        cohead_orderdate,"
               "        cohead_custponumber, cust_name, cust_phone "
               "FROM cohead, cust "
               "WHERE ( (cohead_cust_id=cust_id)"
@@ -167,7 +167,7 @@ void copySalesOrder::sPopulateSoInfo(int)
     q.exec();
     if (q.first())
     {
-      _orderDate->setText(q.value("orderdate").toString());
+      _orderDate->setDate(q.value("cohead_orderdate").toDate());
       _poNumber->setText(q.value("cohead_custponumber").toString());
       _custName->setText(q.value("cust_name").toString());
       _custPhone->setText(q.value("cust_phone").toString());

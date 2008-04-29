@@ -450,22 +450,22 @@ void creditMemo::sInvoiceList()
 
   invoiceList newdlg(this, "", TRUE);
   newdlg.set(params);
-  int invoiceNumber = newdlg.exec();
+  int invoiceid = newdlg.exec();
 
-  if (invoiceNumber != 0)
+  if (invoiceid != 0)
   {
-    _invoiceNumber->setInvoiceNumber(invoiceNumber);
 
     XSqlQuery sohead;
     sohead.prepare( "SELECT invchead.*, "
                     "       formatScrap(invchead_commission) AS f_commission "
                     "FROM invchead "
-                    "WHERE (invchead_invcnumber=:invcnumber) "
+                    "WHERE (invchead_id=:invcid) "
                     "LIMIT 1;" );
-    sohead.bindValue(":invcnumber", _invoiceNumber->invoiceNumber());
+    sohead.bindValue(":invcid", invoiceid);
     sohead.exec();
     if (sohead.first())
     {
+      _invoiceNumber->setInvoiceNumber(sohead.value("invchead_invcnumber").toString());
       _salesRep->setId(sohead.value("invchead_salesrep_id").toInt());
       _commission->setText(sohead.value("f_commission"));
 
@@ -1007,8 +1007,8 @@ void creditMemo::populate()
     if (!cmhead.value("cmhead_rsncode_id").isNull() && cmhead.value("cmhead_rsncode_id").toInt() != -1)
       _rsnCode->setId(cmhead.value("cmhead_rsncode_id").toInt());
 
-    if (cmhead.value("cmhead_invcnumber").toInt() != -1)
-      _invoiceNumber->setInvoiceNumber(cmhead.value("cmhead_invcnumber").toInt());
+    if (! cmhead.value("cmhead_invcnumber").toString().isEmpty())
+      _invoiceNumber->setInvoiceNumber(cmhead.value("cmhead_invcnumber").toString());
 
     sFreightChanged();
   }

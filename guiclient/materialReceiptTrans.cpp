@@ -182,7 +182,7 @@ enum SetResponse materialReceiptTrans::set(ParameterList &pParams)
       q.exec();
       if (q.first())
       {
-        _transDate->setText(q.value("invhist_transdate").toDate());
+        _transDate->setDate(q.value("invhist_transdate").toDate());
         _username->setText(q.value("invhist_user").toString());
         _qty->setText(q.value("invqty"));
         _beforeQty->setText(q.value("qohbefore").toString());

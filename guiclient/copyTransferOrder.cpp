@@ -116,14 +116,14 @@ void copyTransferOrder::populate()
     _orderDate->clear();
   else
   {
-    q.prepare( "SELECT formatDate(tohead_orderdate) AS orderdate "
+    q.prepare( "SELECT tohead_orderdate "
               "FROM tohead "
               "WHERE (tohead_id=:tohead_id);" );
     q.bindValue(":tohead_id", _to->id());
     q.exec();
     if (q.first())
     {
-      _orderDate->setText(q.value("orderdate").toString());
+      _orderDate->setDate(q.value("tohead_orderdate").toDate());
     }
     else if (q.lastError().type() != QSqlError::None)
     {

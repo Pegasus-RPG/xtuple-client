@@ -142,7 +142,7 @@ enum SetResponse invoiceList::set(ParameterList &pParams)
 
 void invoiceList::sClose()
 {
-  done(_invoiceNumber);
+  done(_invoice->id());
 }
 
 void invoiceList::sSelect()

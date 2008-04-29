@@ -123,8 +123,8 @@ void WoLineEdit::setId(int pId)
                   "       warehous_code, item_id, item_number, uom_name,"
                   "       item_descrip1, item_descrip2,"
                   "       wo_qtyord, wo_qtyrcv, wo_status,"
-                  "       formatDate(wo_duedate) AS duedate,"
-                  "       formatDate(wo_startdate) AS startdate,"
+                  "       wo_duedate,"
+                  "       wo_startdate,"
                   "       formatQtyPer(wo_qtyord) AS ordered,"
                   "       formatQtyPer(wo_qtyrcv) AS received, "
                   "       formatQtyPer(noNeg(wo_qtyord - wo_qtyrcv)) AS balance "
@@ -152,8 +152,8 @@ void WoLineEdit::setId(int pId)
       emit uomChanged(wo.value("uom_name").toString());
       emit itemDescrip1Changed(wo.value("item_descrip1").toString());
       emit itemDescrip2Changed(wo.value("item_descrip2").toString());
-      emit startDateChanged(wo.value("startdate").toString());
-      emit dueDateChanged(wo.value("duedate").toString());
+      emit startDateChanged(wo.value("wo_startdate").toDate());
+      emit dueDateChanged(wo.value("wo_duedate").toDate());
       emit qtyOrderedChanged(wo.value("ordered").toString());
       emit qtyReceivedChanged(wo.value("received").toString());
       emit qtyBalanceChanged(wo.value("balance").toString());
@@ -181,8 +181,8 @@ void WoLineEdit::setId(int pId)
   emit uomChanged("");
   emit itemDescrip1Changed("");
   emit itemDescrip2Changed("");
-  emit startDateChanged("");
-  emit dueDateChanged("");
+  emit startDateChanged(QDate());
+  emit dueDateChanged(QDate());
   emit qtyOrderedChanged("");
   emit qtyReceivedChanged("");
   emit qtyBalanceChanged("");
@@ -442,8 +442,8 @@ void WoCluster::constructor()
 
   connect(_woNumber, SIGNAL(newId(int)), this, SIGNAL(newId(int)));
   connect(_woNumber, SIGNAL(newItemid(int)), this, SIGNAL(newItemid(int)));
-  connect(_woNumber, SIGNAL(startDateChanged(const QString &)), this, SIGNAL(startDateChanged(const QString &)));
-  connect(_woNumber, SIGNAL(dueDateChanged(const QString &)), this, SIGNAL(dueDateChanged(const QString &)));
+  connect(_woNumber, SIGNAL(startDateChanged(const QDate &)), this, SIGNAL(startDateChanged(const QDate &)));
+  connect(_woNumber, SIGNAL(dueDateChanged(const QDate &)), this, SIGNAL(dueDateChanged(const QDate &)));
   connect(_woNumber, SIGNAL(qtyOrderedChanged(const QString &)), this, SIGNAL(qtyOrderedChanged(const QString &)));
   connect(_woNumber, SIGNAL(qtyReceivedChanged(const QString &)), this, SIGNAL(qtyReceivedChanged(const QString &)));
   connect(_woNumber, SIGNAL(qtyBalanceChanged(const QString &)), this, SIGNAL(qtyBalanceChanged(const QString &)));

@@ -61,8 +61,6 @@
 #include <QPair>
 #include <QString>
 
-#include "guiclient.h"
-
 #define TR(a)	QObject::tr(a)
 
 /*	try to address bug 4218
@@ -1149,8 +1147,10 @@ void initErrorLookupHash()
 
 	if (proxyIndex >= proxyList.size())
 	{
-	  systemError(0, TR("Could not find (%1, %2) in ErrorLookupHash when "
-			    "trying to insert proxy entry for (%3, %4).")
+          QMessageBox::critical(0, TR("Lookup Error"),
+                                TR("Could not find (%1, %2) in ErrorLookupHash "
+                                   "when trying to insert proxy entry for "
+                                   "(%3, %4).")
 			   .arg(proxyname).arg(errors[i].msgPtr)
 			   .arg(errors[i].procName).arg(errors[i].retVal));
 	  continue;
@@ -1171,8 +1171,10 @@ void initErrorLookupHash()
 	}
 	if (j >= numElems)
 	{
-	systemError(0, TR("Could not find (%1, %2) in ErrorLookupHash when "
-			  "trying to insert proxy entry for (%3, %4).")
+          QMessageBox::critical(0, TR("Lookup Error"),
+                                TR("Could not find (%1, %2) in ErrorLookupHash "
+                                   "when trying to insert proxy entry for "
+                                   "(%3, %4).")
 			  .arg(errors[i].proxyName).arg(errors[i].msgPtr)
 			  .arg(errors[i].procName).arg(errors[i].retVal));
 	continue;

@@ -59,6 +59,7 @@
 #define format_h
 
 #include <QColor>
+#include <QLocale>
 #include <QString>
 
 int     decimalPlaces(QString);
@@ -73,5 +74,10 @@ QString formatPurchPrice(double, int = -1);
 QString formatUOMRatio(double);
 QString formatPercent(double);
 QColor  namedColor(QString);
+
+inline QString formatDate(const QDate &pDate)
+{
+  return QLocale().toString(pDate, QLocale::ShortFormat);
+}
 
 #endif

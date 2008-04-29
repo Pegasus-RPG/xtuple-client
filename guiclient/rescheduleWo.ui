@@ -6,24 +6,15 @@
     <x>0</x>
     <y>0</y>
     <width>508</width>
-    <height>415</height>
+    <height>454</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Reschedule Work Order</string>
   </property>
   <layout class="QVBoxLayout" >
-   <property name="margin" >
-    <number>9</number>
-   </property>
-   <property name="spacing" >
-    <number>6</number>
-   </property>
    <item>
     <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
      <property name="spacing" >
       <number>2</number>
      </property>
@@ -48,9 +39,6 @@
      </item>
      <item>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
         <number>5</number>
        </property>
@@ -93,22 +81,13 @@
    </item>
    <item>
     <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
-     <property name="spacing" >
-      <number>6</number>
-     </property>
      <item>
       <layout class="QGridLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
-       <property name="spacing" >
-        <number>6</number>
-       </property>
        <item row="2" column="1" >
-        <widget class="QLabel" name="_currentDueDate" >
+        <widget class="DLineEdit" name="_currentDueDate" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
          <property name="minimumSize" >
           <size>
            <width>100</width>
@@ -176,7 +155,10 @@
         </widget>
        </item>
        <item row="1" column="1" >
-        <widget class="QLabel" name="_currentStartDate" >
+        <widget class="DLineEdit" name="_currentStartDate" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
          <property name="minimumSize" >
           <size>
            <width>100</width>
@@ -207,9 +189,6 @@
    </item>
    <item>
     <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
      <property name="spacing" >
       <number>0</number>
      </property>
@@ -240,17 +219,11 @@
    </item>
    <item>
     <layout class="QVBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
      <property name="spacing" >
       <number>0</number>
      </property>
      <item>
       <layout class="QHBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
         <number>0</number>
        </property>
@@ -285,9 +258,7 @@
         <bool>false</bool>
        </property>
        <property name="sizePolicy" >
-        <sizepolicy>
-         <hsizetype>5</hsizetype>
-         <vsizetype>7</vsizetype>
+        <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -296,25 +267,28 @@
         <string/>
        </property>
        <layout class="QVBoxLayout" >
-        <property name="margin" >
-         <number>5</number>
-        </property>
         <property name="spacing" >
          <number>0</number>
         </property>
+        <property name="leftMargin" >
+         <number>5</number>
+        </property>
+        <property name="topMargin" >
+         <number>5</number>
+        </property>
+        <property name="rightMargin" >
+         <number>5</number>
+        </property>
+        <property name="bottomMargin" >
+         <number>5</number>
+        </property>
         <item>
          <layout class="QHBoxLayout" >
-          <property name="margin" >
-           <number>0</number>
-          </property>
           <property name="spacing" >
            <number>0</number>
           </property>
           <item>
            <layout class="QHBoxLayout" >
-            <property name="margin" >
-             <number>0</number>
-            </property>
             <property name="spacing" >
              <number>5</number>
             </property>
@@ -362,24 +336,24 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>XCheckBox</class>
-   <extends>QCheckBox</extends>
-   <header>xcheckbox.h</header>
-  </customwidget>
-  <customwidget>
    <class>DLineEdit</class>
-   <extends>XLineEdit</extends>
+   <extends>QWidget</extends>
    <header>datecluster.h</header>
-  </customwidget>
-  <customwidget>
-   <class>XComboBox</class>
-   <extends>QComboBox</extends>
-   <header>xcombobox.h</header>
   </customwidget>
   <customwidget>
    <class>WoCluster</class>
    <extends>QWidget</extends>
    <header>wocluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XComboBox</class>
+   <extends>QComboBox</extends>
+   <header>xcombobox.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -393,7 +367,6 @@
   <tabstop>_reschedule</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
- <includes/>
  <resources/>
  <connections>
   <connection>
@@ -414,9 +387,9 @@
   </connection>
   <connection>
    <sender>_wo</sender>
-   <signal>startDateChanged(QString)</signal>
+   <signal>startDateChanged(QDate)</signal>
    <receiver>_currentStartDate</receiver>
-   <slot>setText(QString)</slot>
+   <slot>setDate(QDate)</slot>
    <hints>
     <hint type="sourcelabel" >
      <x>20</x>
@@ -430,9 +403,9 @@
   </connection>
   <connection>
    <sender>_wo</sender>
-   <signal>dueDateChanged(QString)</signal>
+   <signal>dueDateChanged(QDate)</signal>
    <receiver>_currentDueDate</receiver>
-   <slot>setText(QString)</slot>
+   <slot>setDate(QDate)</slot>
    <hints>
     <hint type="sourcelabel" >
      <x>20</x>

@@ -63,8 +63,8 @@
 #define woCluster_h
 
 #include "OpenMFGWidgets.h"
+#include <QDate>
 #include "xlineedit.h"
-
 #include <xsqlquery.h>
 
 class QLabel;
@@ -115,8 +115,8 @@ friend class WoCluster;
     void uomChanged(const QString &);
     void itemDescrip1Changed(const QString &);
     void itemDescrip2Changed(const QString &);
-    void startDateChanged(const QString &);
-    void dueDateChanged(const QString &);
+    void startDateChanged(const QDate &);
+    void dueDateChanged(const QDate &);
     void qtyOrderedChanged(const QString &);
     void qtyReceivedChanged(const QString &);
     void qtyBalanceChanged(const QString &);
@@ -171,8 +171,8 @@ class OPENMFGWIDGETS_EXPORT WoCluster : public QWidget
   signals:
     void newId(int);
     void newItemid(int);
-    void startDateChanged(const QString &);
-    void dueDateChanged(const QString &);
+    void startDateChanged(const QDate &);
+    void dueDateChanged(const QDate &);
     void qtyOrderedChanged(const QString &);
     void qtyReceivedChanged(const QString &);
     void qtyBalanceChanged(const QString &);

@@ -380,7 +380,7 @@ void dspInventoryAvailabilityBySalesOrder::sFillList()
   if (_so->id() != -1)
   {
     q.prepare( "SELECT cohead_number,"
-               "       formatDate(cohead_orderdate) AS orderdate,"
+               "       cohead_orderdate,"
                "       cohead_custponumber,"
                "       cust_name, cust_phone "
                "FROM cohead, cust "
@@ -390,7 +390,7 @@ void dspInventoryAvailabilityBySalesOrder::sFillList()
     q.exec();
     if (q.first())
     {
-      _orderDate->setText(q.value("orderdate").toString());
+      _orderDate->setDate(q.value("cohead_orderdate").toDate());
       _poNumber->setText(q.value("cohead_custponumber").toString());
       _custName->setText(q.value("cust_name").toString());
       _custPhone->setText(q.value("cust_phone").toString());
@@ -411,7 +411,7 @@ void dspInventoryAvailabilityBySalesOrder::sFillList()
                  "       (qoh + ordered - allocated) AS totalavail,"
                  "       formatQty(qoh + ordered - allocated) AS f_totalavail,"
                  "       atshipping,formatQty(atshipping) AS f_atshipping,"
-                 "       formatDate(coitem_scheddate) AS f_scheddate,"
+                 "       coitem_scheddate,"
                  "       (coitem_qtyreserved > 0 AND sobalance > coitem_qtyreserved) AS partialreservation,"
                  "       ((sobalance - coitem_qtyreserved) = 0) AS fullreservation,"
                  "       reorderlevel "
@@ -421,8 +421,8 @@ void dspInventoryAvailabilityBySalesOrder::sFillList()
                  "       wo_number,"
                  "       wo_ordered,"
                  "       formatQty(wo_ordered) AS f_wo_ordered,"
-                 "       formatDate(wo_startdate) AS f_wo_startdate, "
-                 "       formatDate(wo_duedate) AS f_wo_duedate,"
+                 "       wo_startdate, "
+                 "       wo_duedate,"
                  "       COALESCE(wo_latestart,false) AS wo_latestart,"
                  "       COALESCE(wo_latedue,false) AS wo_latedue "
                  "<? endif ?>"
@@ -500,7 +500,7 @@ void dspInventoryAvailabilityBySalesOrder::sFillList()
                                                q.value("f_qoh"), q.value("f_sobalance"),
                                                q.value("f_allocated"), q.value("f_ordered"),
                                                q.value("f_soavail"), q.value("f_totalavail"),
-                                               q.value("f_atshipping"), q.value("f_scheddate") );
+                                               q.value("f_atshipping"), q.value("coitem_scheddate") );
 
           if (q.value("qoh").toDouble() < 0)
             coitem->setTextColor(3, "red");
@@ -543,7 +543,8 @@ void dspInventoryAvailabilityBySalesOrder::sFillList()
                                                 q.value("wo_status"),
                                                "", "",
                                                "", q.value("f_wo_ordered"),
-                                              q.value("f_wo_startdate"), q.value("f_wo_duedate"),
+                                              q.value("wo_startdate"),
+                                              q.value("wo_duedate"),
                                                "" );
                                                
           if (q.value("wo_latestart").toBool())

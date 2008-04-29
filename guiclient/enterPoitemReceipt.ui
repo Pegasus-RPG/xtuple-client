@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>587</width>
-    <height>600</height>
+    <height>624</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -408,18 +408,6 @@
            <property name="enabled" >
             <bool>false</bool>
            </property>
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="maximumSize" >
-            <size>
-             <width>100</width>
-             <height>32767</height>
-            </size>
-           </property>
           </widget>
          </item>
          <item row="3" column="1" >
@@ -526,7 +514,7 @@
   </customwidget>
   <customwidget>
    <class>DLineEdit</class>
-   <extends>XLineEdit</extends>
+   <extends>QWidget</extends>
    <header>datecluster.h</header>
   </customwidget>
   <customwidget>
@@ -552,7 +540,6 @@
   <tabstop>_receive</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
- <includes/>
  <resources/>
  <connections>
   <connection>

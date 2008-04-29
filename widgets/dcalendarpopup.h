@@ -55,44 +55,29 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  invoicelineedit.h
-//  Created 02/28/2002 JSL
-//  Copyright (c) 2002-2008, OpenMFG, LLC
 
-#ifndef invoiceLineEdit_h
-#define invoiceLineEdit_h
+#ifndef dcalendarpopup_h
+#define dcalendarpopup_h
 
-#include "xlineedit.h"
+#include <QCalendarWidget>
+#include <QDate>
+#include <QWidget>
 
-#include "OpenMFGWidgets.h"
-
-class OPENMFGWIDGETS_EXPORT InvoiceLineEdit : public XLineEdit
+class DCalendarPopup : public QWidget
 {
   Q_OBJECT
 
   public:
-    InvoiceLineEdit(QWidget *, const char * = 0);
-
-  inline int  custid()        { return _custid;        }
-  inline int  coheadid()      { return _coheadid;      }
-  inline QString invoiceNumber() { return _invoiceNumber; }
+    DCalendarPopup(const QDate&, QWidget* = 0);
 
   public slots:
-    void setInvoiceNumber(QString);
-    void sParse();
-    virtual void setId(const int);
+    void dateSelected(const QDate &);
 
   signals:
-    void newCustid(int);
-    void newCoheadid(int);
-    void newInvoiceNumber(QString);
-    void newId(int);
-    void valid(bool);
+    void newDate(const QDate &);
 
   private:
-    int  _custid;
-    int  _coheadid;
-    QString _invoiceNumber;
+    QCalendarWidget *_cal;
 };
 
 #endif

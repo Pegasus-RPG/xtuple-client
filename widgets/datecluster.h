@@ -60,42 +60,33 @@
 #define datecluster_h
 
 #include <QDateTime>
+#include <QLabel>
+#include <QLineEdit>
+#include <QPushButton>
 
-#include "xlineedit.h"
 #include "xdatawidgetmapper.h"
 
-class QLabel;
-class DLineEdit;
 class ParameterList;
-class XSqlQuery;
 class QFocusEvent;
+class XSqlQuery;
 
-#define _dateFormat "%02d/%02d/%02d"
-
-QString OPENMFGWIDGETS_EXPORT formatDate(const QDate &);
-
-
-class OPENMFGWIDGETS_EXPORT DLineEdit : public XLineEdit
+class OPENMFGWIDGETS_EXPORT DLineEdit : public QWidget
 {
   Q_OBJECT
   Q_PROPERTY(QDate   date        READ date        WRITE setDate)
   Q_PROPERTY(QString fieldName   READ fieldName   WRITE setFieldName);
 
   public:
-    DLineEdit(QWidget *parent, const char *name = 0);
+    DLineEdit(QWidget *parent = 0, const char * = 0);
 
-    QDate   date();
-    QString dateString();
-
-    bool isNull();
-    bool isValid();
-
+    virtual void  clear();
+    virtual QDate date();
+    virtual bool  isNull();
+    virtual bool  isValid();
     inline void setAllowNullDate(bool pAllowNull)         { _allowNull = pAllowNull;                       }
     inline void setNullString(const QString &pNullString) { _nullString = pNullString;                     }
     inline void setNullDate(const QDate &pNullDate)       { _nullDate = pNullDate;                         }
-    inline int year()                                     { return ((_valid) ? _currentDate.year() : -1);  }
-    inline int month()                                    { return ((_valid) ? _currentDate.month() : -1); }
-    inline int day()                                      { return ((_valid) ? _currentDate.day() : -1);   }
+    virtual void setReadOnly(const bool);
     virtual QString fieldName()   const                   { return _fieldName;                             };
 
   public slots:
@@ -103,28 +94,26 @@ class OPENMFGWIDGETS_EXPORT DLineEdit : public XLineEdit
     virtual void setFieldName(QString p) { _fieldName = p; };
 
     void setNull();
-    void setDate(const QDate &, bool);
-    void setDate(const QDate &);
+    void setDate(const QDate &, bool = false);
+    void showCalendar();
+    void validateDate();
 
   signals:
     void newDate(const QDate &);
 
-  protected:
-    void focusOutEvent(QFocusEvent *);
-
   private:
     void parseDate();
-    void validateDate();
     bool fixMonthEnd(int *, int, int);
 
-    QString _dateString;
-    QString _fieldName;
-    QString _nullString;
-    QDate   _currentDate;
-    QDate   _nullDate;
-    bool    _allowNull;
-    bool    _valid;
-    bool    _null;
+    QDate       _currentDate;
+    QPushButton _calbutton;
+    QString     _fieldName;
+    QLineEdit   _lineedit;
+    QDate       _nullDate;
+    QString     _nullString;
+    bool        _allowNull;
+    bool        _parsed;
+    bool        _valid;
 };
 
 

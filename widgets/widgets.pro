@@ -169,6 +169,7 @@ HEADERS    += OpenMFGWidgets.h \
               xdatawidgetmapper.h \
               xtextedit.h \
 	      formcontrol.h \
+              dcalendarpopup.h\
 
 FORMS += accountSearch.ui \
 	 formControl.ui \

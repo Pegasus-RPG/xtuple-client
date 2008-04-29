@@ -222,7 +222,7 @@ void enterPoitemReceipt::populate()
     _vendorDescrip->setText(q.value("vend_item_descrip").toString());
     _vendorUOM->setText(q.value("vend_uom").toString());
     _invVendorUOMRatio->setText(q.value("f_venduomratio").toString());
-    _dueDate->setText(q.value("f_duedate").toString());
+    _dueDate->setDate(q.value("duedate").toDate());
     _ordered->setText(q.value("f_qtyordered").toString());
     _received->setText(q.value("f_qtyreceived").toString());
     _receivable = q.value("receivable").toDouble();

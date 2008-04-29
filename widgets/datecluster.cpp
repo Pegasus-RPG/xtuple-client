@@ -55,33 +55,43 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-
-#include <QLabel>
+#include <QCalendarWidget>
 #include <QDateTime>
-#include <QRegExp>
-#include <QValidator>
 #include <QHBoxLayout>
+#include <QRegExp>
 #include <QVBoxLayout>
-#include <QFocusEvent>
+#include <QValidator>
 
 #include <xsqlquery.h>
 #include <parameter.h>
 
 #include "datecluster.h"
+#include "dcalendarpopup.h"
+#include "format.h"
 
-const int intMonthDays[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
-
-QString formatDate(const QDate &pDate)
+DCalendarPopup::DCalendarPopup(const QDate &date, QWidget *parent)
+  : QWidget(parent, Qt::Popup)
 {
-  return QString().sprintf(_dateFormat, pDate.month(), pDate.day(), pDate.year());
+  _cal = new QCalendarWidget(this);
+  _cal->setVerticalHeaderFormat(QCalendarWidget::NoVerticalHeader);
+  _cal->setSelectedDate(date);
+
+  QVBoxLayout *vbox = new QVBoxLayout(this);
+  vbox->setMargin(0);
+  vbox->setSpacing(0);
+  vbox->addWidget(_cal);
+
+  connect(_cal, SIGNAL(activated(QDate)), this, SLOT(dateSelected(QDate)));
+  connect(_cal, SIGNAL(clicked(QDate)),   this, SLOT(dateSelected(QDate)));
+  connect(_cal, SIGNAL(activated(QDate)), this, SLOT(dateSelected(QDate)));
+
+  _cal->setFocus();
 }
 
-int addCentury(int intYear)
+void DCalendarPopup::dateSelected(const QDate &pDate)
 {
-  if (intYear < 50)
-    return (intYear + 2000);
-  else
-    return (intYear + 1900);
+  emit newDate(pDate);
+  close();
 }
 
 void DLineEdit::setDataWidgetMap(XDataWidgetMapper* m)
@@ -91,7 +101,7 @@ void DLineEdit::setDataWidgetMap(XDataWidgetMapper* m)
 
 void DLineEdit::validateDate()
 {
-  QString dateString = text().stripWhiteSpace();
+  QString dateString = _lineedit.text().stripWhiteSpace();
   bool    isNumeric;
 
 #ifdef OpenMFGGUIClient_h
@@ -100,167 +110,86 @@ void DLineEdit::validateDate()
   QDate today = QDate::currentDate();
 #endif
 
-  _valid = FALSE;
-  dateString.toLong(&isNumeric);
+  _valid = false;
 
-//  If the string is "0" then it is today
-  if (dateString == "0")
-  {
+  if (dateString == _nullString || dateString.isEmpty())
+    setNull();
+
+  else if (dateString == "0")                           // today
     setDate(today, TRUE);
-    _valid = TRUE;
-  }
 
-//  If the string starts with a "+" or a "-" and the rest is numeric
-//  then this may be an offset
-  else if ( (dateString[0] == '+') || (dateString[0] == '-') )
-  {
-    int offset = dateString.right(dateString.length() - 1).toInt(&isNumeric);
-    if (isNumeric)
-    {
-      setDate(today.addDays(offset * ((dateString.left(1) == "-") ? -1 : 1)), TRUE);
-      _valid = TRUE;
-    }
-  }
-
-//  If the string starts with a "#" and the rest is numeric then this may be a Julian date
-  else if (dateString[0] == '#')
-  {
-    int offset = dateString.right(dateString.length() - 1).toInt(&isNumeric);
-    if (isNumeric)
-    {
-      setDate(QDate(today.year(), 1, 1).addDays(offset - 1), TRUE);
-      _valid =  TRUE;
-    }
-}
-
-//  If the string is pure numeric and 1 or 2 characters then is may be the date in month
-  else if (dateString.length() <= 2)
+  else if (dateString.contains(QRegExp("^[+-][0-9]+"))) // offset from today
   {
     int offset = dateString.toInt(&isNumeric);
+    if (isNumeric)
+      setDate(today.addDays(offset), true);
+  }
+
+  else if (dateString[0] == '#')                        // julian day
+  {
+    int offset = dateString.right(dateString.length() - 1).toInt(&isNumeric);
+    if (isNumeric)
+      setDate(QDate(today.year(), 1, 1).addDays(offset - 1), TRUE);
+  }
+
+  else if (dateString.contains(QRegExp("^[0-9][0-9]?$"))) // date in month
+  {
+    int offset = dateString.toInt(&isNumeric, 10);
     if (isNumeric)
     {
       if (offset > today.daysInMonth())
         offset = today.daysInMonth();
  
       setDate(QDate(today.year(), today.month(), 1).addDays(offset - 1), TRUE);
-      _valid = TRUE;
     }
   }
 
-//  If the string is pure numeric and either 5 or 6 character in length then
-//  it may be a short date
-  else if ((isNumeric) && ((dateString.length() == 5) || (dateString.length() == 6)))
+  else                                                  // interpret with locale
   {
-    int day;
-    int month;
-    int year;
+    // Qt bug 193079: setDate(QDate::fromString(dateString, Qt::LocaleDate), true);
 
-    if (dateString.length() == 5)
-    {
-      day   = dateString.mid(1, 2).toInt();
-      month = dateString.left(1).toInt();
-      year  = dateString.right(2).toInt();
-      year  = addCentury(year);
-    }
-    else
-    {
-      day   = dateString.mid(2, 2).toInt();
-      month = dateString.left(2).toInt();
-      year  = dateString.right(2).toInt();
-      year  = addCentury(year);
-    }
-
-    if (fixMonthEnd(&day, month, year))
-    {
-      setDate(QDate(year, month, day), TRUE);
-      _valid = TRUE;
-    }
-  }
-
-//  If the field images to #/#/##, #/##/## , ##/#/##, or ##/##/##, it may be a 2 year conventional format
-//  If the field images to #/#/####, #/##/####, ##/#/####, or ##/##/####, it may be a 4 year conventional format
-  else
-  {
-    QRegExp dateRegExp("[0-9]{1,2}[/][0-9]{1,2}[/][0-9]{2,4}");
-    QRegExpValidator dateValidator(dateRegExp, this);
-    int position = 0;
-
-    if (dateValidator.validate(dateString, position))
-    {
-      int sep1 = dateString.find('/');
-      int sep2 = dateString.find('/', (sep1 + 1));
-      int day;
-      int month;
-      int year;
-
-      if (sep1 != -1)
-      {
-        month = dateString.left(sep1).toInt();
-
-        if (sep2 != -1)
-        {
-          day = dateString.mid((sep1 + 1), (sep2 - sep1 - 1)).toInt();
-          year = dateString.right((dateString.length() - (sep2 + 1))).toInt();
-
-          if (year < 100)
-            year = addCentury(year);
-
-          if (fixMonthEnd(&day, month, year))
-          {
-            setDate(QDate(year, month, day), TRUE);
-            _valid = TRUE;
-          }
-        }
-      }
-    }
+    QDate tmp = QDate::fromString(dateString,
+                                  QLocale().dateFormat(QLocale::ShortFormat));
+    setDate(QDate(tmp.year(), tmp.month(), tmp.day()), true );
   }
 
   if (!_valid)
-    setText("");
+    _lineedit.setText("");
 
-  _parsed = TRUE;
+  _parsed = true;
 }
 
 bool DLineEdit::fixMonthEnd(int *pDay, int pMonth, int pYear)
 {
-//  Fixup the Date
-  if (pMonth == 2)
-  {
-    bool leapYear = FALSE;
-
-    if ((pYear % 4) == 0)
-    {
-      if ((pYear % 400) == 0)
-        leapYear = TRUE;
-      else if ((pYear % 100) != 0)
-        leapYear = TRUE;
-    }
-
-    if (leapYear)
-    {
-      if (*pDay > 29)
-        *pDay = 29;
-    }
-    else if (*pDay > 28)
-      *pDay = 28;
-  }
-  else if (*pDay > intMonthDays[(pMonth - 1)])
-    *pDay = intMonthDays[(pMonth - 1)];
+  if (! QDate::isValid(pYear, pMonth, *pDay))
+    *pDay = QDate(pYear, pMonth, 1).daysInMonth();
 
   return TRUE;
 }
 
 DLineEdit::DLineEdit(QWidget *parent, const char *name) :
-  XLineEdit(parent, name)
+  QWidget(parent)
 {
   setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-  setMaximumWidth(100);
+  setFocusPolicy(Qt::StrongFocus);
+  setMaximumWidth(200);
+  setName(name);
+
+  QHBoxLayout *hbox = new QHBoxLayout(this);
+  hbox->addWidget(&_lineedit);
+  hbox->addWidget(&_calbutton);
+  hbox->setSpacing(1);
+  hbox->setMargin(0);
+
+  _calbutton.setText(tr("..."));
+
+  connect(&_calbutton,        SIGNAL(clicked()), this, SLOT(showCalendar()));
+  connect(&_lineedit, SIGNAL(editingFinished()), this, SLOT(validateDate()));
 
   _allowNull   = FALSE;
   _parsed      = FALSE;
   _nullString  = QString::null;
   _valid       = FALSE;
-  _null        = FALSE;
 }
 
 void DLineEdit::setNull()
@@ -268,53 +197,44 @@ void DLineEdit::setNull()
   if (_allowNull)
   {
     _valid  = TRUE;
-    _null   = TRUE;
     _parsed = TRUE;
-    setText(_nullString);
+    _lineedit.setText(_nullString);
 
     _currentDate = _nullDate;
-    _dateString.sprintf(_dateFormat, _nullDate.month(), _nullDate.day(), _nullDate.year());
   }
   else
   {
     _valid = FALSE;
-    _null = FALSE;
     _parsed = TRUE;
-    clear();
+    _lineedit.clear();
   }
 }
 
 void DLineEdit::setDate(const QDate &pDate, bool pAnnounce)
 {
-  setDate(pDate);
+  _valid = false;
+  if (pDate.isNull())
+    setNull();
+  else
+  {
+    _currentDate = pDate;
+
+    if ((_allowNull) && (_currentDate == _nullDate))
+      _lineedit.setText(_nullString);
+    else
+      _lineedit.setText(formatDate(pDate));
+
+    _valid = _currentDate.isValid();
+    _parsed = _valid;
+  }
 
   if (pAnnounce)
     emit newDate(_currentDate);
 }
 
-void DLineEdit::setDate(const QDate &pDate)
+void DLineEdit::clear()
 {
-  if (!pDate.isNull())
-  {
-    _currentDate = pDate;
-    _dateString = formatDate(pDate);
-
-    if ((_allowNull) && (_currentDate == _nullDate))
-    {
-      setText(_nullString);
-      _null  = TRUE;
-    }
-    else
-    {
-      setText(_dateString);
-      _null  = FALSE;
-    }
-
-    _valid = TRUE;
-  }
-
-  else if (_allowNull)
-    setNull();
+  setDate(_nullDate, true);
 }
 
 QDate DLineEdit::date()
@@ -328,20 +248,12 @@ QDate DLineEdit::date()
   return _currentDate;
 }
 
-QString DLineEdit::dateString()
-{
-  if (!_parsed)
-    parseDate();
-
-  return _dateString;
-}
-
 bool DLineEdit::isNull()
 {
   if (!_parsed)
     parseDate();
 
-  return _null;
+  return date().isNull();
 }
 
 bool DLineEdit::isValid()
@@ -354,43 +266,21 @@ bool DLineEdit::isValid()
 
 void DLineEdit::parseDate()
 {
-  _parsed = TRUE;
-
-  QString string = text().stripWhiteSpace();
-
-  if ((_allowNull) && (string == _nullString))
-    setNull();
-  else if (string.length() == 0)
-  {
-    if (_allowNull)
-    {
-      setNull();
-
-      emit newDate(_nullDate);
-    }
-    else
-    {
-      setText("");
-      _valid = FALSE;
-      _null  = FALSE;
-    }
-  }
-  else
-  {
-    _null = FALSE;
-
-    validateDate();
-  }
+  validateDate();
 }
 
-void DLineEdit::focusOutEvent(QFocusEvent *event)
+void DLineEdit::setReadOnly(const bool p)
 {
-  if (_parsed == FALSE)
-    parseDate();
-
-  QLineEdit::focusOutEvent(event);
+  _lineedit.setReadOnly(p);
+  _calbutton.setEnabled(p);
 }
 
+void DLineEdit::showCalendar()
+{
+  DCalendarPopup *cal = new DCalendarPopup(date());
+  connect(cal, SIGNAL(newDate(const QDate &)), this, SLOT(setDate(QDate)));
+  cal->show();
+}
 
 DateCluster::DateCluster(QWidget *pParent, const char *pName) : QWidget(pParent)
 {
@@ -429,11 +319,9 @@ DateCluster::DateCluster(QWidget *pParent, const char *pName) : QWidget(pParent)
   dataLayout->setObjectName(QString::fromUtf8("dataLayout"));
 
   _startDate = new DLineEdit(this, "_startDate");
-  _startDate->setMaximumWidth(100);
   dataLayout->addWidget(_startDate);
 
   _endDate = new DLineEdit(this, "_endDate");
-  _endDate->setMaximumWidth(100);
   dataLayout->addWidget(_endDate);
 
   mainLayout->addLayout(dataLayout);

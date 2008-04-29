@@ -134,7 +134,7 @@ enum SetResponse voucherItem::set(const ParameterList &pParams)
     q.prepare( "SELECT pohead_number, poitem_linenumber,"
                "       COALESCE(itemsite_id, -1) AS itemsiteid,"
                "       poitem_vend_item_number, poitem_vend_uom, poitem_vend_item_descrip,"
-               "       formatDate(poitem_duedate) AS duedate,"
+               "       poitem_duedate,"
                "       formatQty(poitem_qty_ordered) AS qtyordered,"
                "       formatQty(poitem_qty_received) AS qtyreceived,"
                "       formatQty(poitem_qty_returned) AS qtyreturned,"
@@ -166,7 +166,7 @@ enum SetResponse voucherItem::set(const ParameterList &pParams)
       _vendItemNumber->setText(q.value("poitem_vend_item_number").toString());
       _vendUOM->setText(q.value("poitem_vend_uom").toString());
       _vendDescription->setText(q.value("poitem_vend_item_descrip").toString());
-      _dueDate->setText(q.value("duedate").toString());
+      _dueDate->setDate(q.value("poitem_duedate").toDate());
       _ordered->setText(q.value("qtyordered").toString());
       _received->setText(q.value("qtyreceived").toString());
       _rejected->setText(q.value("qtyreturned").toString());

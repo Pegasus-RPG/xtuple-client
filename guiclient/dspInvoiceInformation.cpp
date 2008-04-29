@@ -58,7 +58,6 @@
 #include "dspInvoiceInformation.h"
 
 #include <QSqlError>
-#include <QStatusBar>
 #include <QVariant>
 
 #include "invoice.h"
@@ -74,7 +73,7 @@ dspInvoiceInformation::dspInvoiceInformation(QWidget* parent, const char* name, 
   (void)statusBar();
 
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_invoiceNumber, SIGNAL(newInvoiceNumber(int)), this, SLOT(sParseInvoiceNumber()));
+  connect(_invoiceNumber, SIGNAL(newInvoiceNumber(QString)), this, SLOT(sParseInvoiceNumber()));
   connect(_invoiceList, SIGNAL(clicked()), this, SLOT(sInvoiceList()));
   connect(_view, SIGNAL(clicked()), this, SLOT(sViewDetails()));
 
@@ -110,7 +109,7 @@ enum SetResponse dspInvoiceInformation::set(const ParameterList &pParams)
   param = pParams.value("invoiceNumber", &valid);
   if (valid)
   {
-    _invoiceNumber->setInvoiceNumber(param.toInt());
+    _invoiceNumber->setInvoiceNumber(param.toString());
     _invoiceNumber->setEnabled(FALSE);
     _invoiceList->hide();
   }
@@ -156,8 +155,8 @@ void dspInvoiceInformation::sParseInvoiceNumber()
 
     _custPoNumber->setText(q.value("invchead_ponumber").toString());
     _cust->setId(q.value("invchead_cust_id").toInt());
-    _invoiceDate->setText(q.value("invchead_invcdate").toDate());
-    _shipDate->setText(q.value("invchead_shipdate").toDate());
+    _invoiceDate->setDate(q.value("invchead_invcdate").toDate());
+    _shipDate->setDate(q.value("invchead_shipdate").toDate());
     _invoiceAmount->setText(q.value("f_amount").toString());
 
     _billToName->setText(q.value("invchead_billto_name"));
@@ -196,7 +195,7 @@ void dspInvoiceInformation::sParseInvoiceNumber()
                "            WHEN (arapply_source_doctype = 'K') THEN arapply_refnumber"
                "            ELSE :error"
                "       END AS docnumber,"
-               "       formatDate(arapply_postdate) AS f_postdate,"
+               "       arapply_postdate,"
                "       formatMoney(arapply_applied) AS f_amount "
                "FROM arapply "
                "WHERE ( (arapply_target_doctype='I') "
@@ -262,9 +261,9 @@ void dspInvoiceInformation::sInvoiceList()
 
   invoiceList newdlg(this, "", TRUE);
   newdlg.set(params);
-  int invoiceNumber = newdlg.exec();
+  int invoiceid = newdlg.exec();
 
-  if (invoiceNumber != 0)
-    _invoiceNumber->setInvoiceNumber(invoiceNumber);
+  if (invoiceid > 0)
+    _invoiceNumber->setId(invoiceid);
 }
 

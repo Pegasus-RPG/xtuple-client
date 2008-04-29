@@ -16,14 +16,16 @@ SOURCES = metrics.cpp \
           metricsenc.cpp \
           format.cpp \
           login2.cpp \
-          login2Options.cpp
+          login2Options.cpp \
+          storedProcErrorLookup.cpp
 HEADERS = metrics.h \
           qbase64encode.h \
           qmd5.h \
           metricsenc.h \
           format.h \
           login2.h \
-          login2Options.h
+          login2Options.h \
+          storedProcErrorLookup.h
 FORMS = login2.ui login2Options.ui
 
 

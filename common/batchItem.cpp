@@ -57,55 +57,36 @@
 
 #include "batchItem.h"
 
-#include <qvariant.h>
+#include <QMessageBox>
+#include <QSqlError>
+
 #include <xsqlquery.h>
 
-/*
- *  Constructs a batchItem as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
-batchItem::batchItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : QDialog(parent, name, modal, fl)
-{
-    setupUi(this);
-
-
-    // signals and slots connections
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_reschedule, SIGNAL(toggled(bool)), _interval, SLOT(setEnabled(bool)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-batchItem::~batchItem()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void batchItem::languageChange()
-{
-    retranslateUi(this);
-}
-
+#include "storedProcErrorLookup.h"
 
 #define cUndefined    0x00
 #define cReschedule  0x10
 
-void batchItem::init()
+batchItem::batchItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+    : QDialog(parent, name, modal, fl)
 {
+  setupUi(this);
+
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+
   _mode = cUndefined;
   _batchid = -1;
   _db = QSqlDatabase();
+}
+
+batchItem::~batchItem()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void batchItem::languageChange()
+{
+  retranslateUi(this);
 }
 
 int batchItem::Reschedule( int pBatchid, QWidget * pParent )
@@ -153,11 +134,39 @@ void batchItem::sSave()
     interval = "N";
 
   if (_mode == cReschedule)
-    XSqlQuery(_db).exec( QString("SELECT rescheduleBatchItem(%1, '%2 %3', '%4') AS resul;")
-                      .arg(_batchid)
-                      .arg(_scheduledDate->dateString())
-                      .arg(_scheduledTime->time().toString("hh:mm:ss"))
-                      .arg(interval) ); 
+  {
+    XSqlQuery schedq(_db);
+    schedq.prepare("SELECT rescheduleBatchItem(:batchid,"
+                   "                           CAST(:date AS DATE) +"
+                   "                           CAST(:time AS TIME),"
+                   "                           :interval) AS result;");
+    schedq.bindValue(":batchid",  _batchid);
+    schedq.bindValue(":date",     _scheduledDate->date());
+    schedq.bindValue(":time",     _scheduledTime->time());
+    schedq.bindValue(":interval", interval); 
+    schedq.exec();
+    if (schedq.first())
+    {
+      int result = schedq.value("result").toInt();
+      if (result < 0)
+      {
+        QMessageBox::critical(this,
+                              tr("Error Rescheduling Batch Item at %1::%2")
+                                .arg(__FILE__, __LINE__),
+                              storedProcErrorLookup("rescheduleBatchItem",
+                                                    result));
+        return;
+      }
+    }
+    else if (schedq.lastError().type() != QSqlError::None)
+    {
+      QMessageBox::critical(this,
+                            tr("Error Rescheduling Batch Item at %1::%2")
+                              .arg(__FILE__, __LINE__),
+                              schedq.lastError().databaseText());
+      return;
+    }
+  }
   done(_batchid);
 }
 
@@ -208,4 +217,3 @@ void batchItem::populate()
     _completedTime->setTime(batch.value("completed_time").toTime());
   }
 }
-

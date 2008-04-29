@@ -1121,7 +1121,7 @@ void invoice::populateCMInfo()
 	      " WHERE ( (aropenco_cohead_id=cohead_id)"
 	      "   AND   (aropenco_aropen_id=aropen_id)"
 	      "   AND   (cohead_number=:cohead_number) );");
-    cm.bindValue(":cohead_number", _orderNumber->text().toInt());
+    cm.bindValue(":cohead_number", _orderNumber->text());
   }
   else
   {
@@ -1190,7 +1190,7 @@ void invoice::populateCCInfo()
 	      "   AND   (payco_ccpay_id=ccpay_id)"
 	      "   AND   (payco_cohead_id=cohead_id)"
 	      "   AND   (cohead_number=:cohead_number) );");
-    cc.bindValue(":cohead_number", _orderNumber->text().toInt());
+    cc.bindValue(":cohead_number", _orderNumber->text());
   }
   else
   {

@@ -6,13 +6,11 @@
     <x>0</x>
     <y>0</y>
     <width>660</width>
-    <height>188</height>
+    <height>199</height>
    </rect>
   </property>
   <property name="sizePolicy" >
-   <sizepolicy>
-    <hsizetype>5</hsizetype>
-    <vsizetype>5</vsizetype>
+   <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -21,18 +19,12 @@
    <string>Print Packing List</string>
   </property>
   <layout class="QHBoxLayout" >
-   <property name="margin" >
-    <number>9</number>
-   </property>
-   <property name="spacing" >
-    <number>6</number>
-   </property>
    <item>
     <layout class="QGridLayout" >
-     <property name="margin" >
+     <property name="horizontalSpacing" >
       <number>0</number>
      </property>
-     <property name="spacing" >
+     <property name="verticalSpacing" >
       <number>0</number>
      </property>
      <item row="3" column="0" >
@@ -57,29 +49,8 @@
      </item>
      <item row="3" column="1" >
       <layout class="QHBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
-       <property name="spacing" >
-        <number>6</number>
-       </property>
        <item>
-        <widget class="DLineEdit" name="_orderDate" >
-         <property name="sizePolicy" >
-          <sizepolicy>
-           <hsizetype>5</hsizetype>
-           <vsizetype>0</vsizetype>
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="maximumSize" >
-          <size>
-           <width>100</width>
-           <height>32767</height>
-          </size>
-         </property>
-        </widget>
+        <widget class="DLineEdit" name="_orderDate" />
        </item>
        <item>
         <spacer>
@@ -111,12 +82,6 @@
      </item>
      <item row="2" column="1" >
       <layout class="QHBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
-       <property name="spacing" >
-        <number>6</number>
-       </property>
        <item>
         <widget class="ShipmentCluster" name="_shipment" >
          <property name="focusPolicy" >
@@ -160,9 +125,6 @@
      </item>
      <item row="0" column="1" >
       <layout class="QHBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
         <number>5</number>
        </property>
@@ -189,25 +151,16 @@
    </item>
    <item>
     <layout class="QVBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
      <property name="spacing" >
       <number>0</number>
      </property>
      <item>
       <layout class="QHBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
         <number>5</number>
        </property>
        <item>
         <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>1</number>
          </property>
@@ -245,18 +198,13 @@
        </item>
        <item>
         <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>0</number>
          </property>
          <item>
           <widget class="QLabel" name="_custName" >
            <property name="sizePolicy" >
-            <sizepolicy>
-             <hsizetype>7</hsizetype>
-             <vsizetype>5</vsizetype>
+            <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -293,17 +241,11 @@
    </item>
    <item>
     <layout class="QVBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
      <property name="spacing" >
       <number>0</number>
      </property>
      <item>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
         <number>5</number>
        </property>
@@ -356,24 +298,24 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>SoLineEdit</class>
-   <extends>XLineEdit</extends>
-   <header>socluster.h</header>
-  </customwidget>
-  <customwidget>
    <class>DLineEdit</class>
-   <extends>XLineEdit</extends>
-   <header>datecluster.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ToCluster</class>
    <extends>QWidget</extends>
-   <header>tocluster.h</header>
+   <header>datecluster.h</header>
   </customwidget>
   <customwidget>
    <class>ShipmentCluster</class>
    <extends>QWidget</extends>
    <header>shipmentcluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>SoLineEdit</class>
+   <extends>XLineEdit</extends>
+   <header>socluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ToCluster</class>
+   <extends>QWidget</extends>
+   <header>tocluster.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -385,7 +327,6 @@
   <tabstop>_close</tabstop>
   <tabstop>_salesOrderList</tabstop>
  </tabstops>
- <includes/>
  <resources/>
  <connections>
   <connection>

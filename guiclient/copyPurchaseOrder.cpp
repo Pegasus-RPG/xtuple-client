@@ -141,7 +141,7 @@ void copyPurchaseOrder::sPopulatePoInfo(int)
 {
   if (_po->id() != -1)
   {
-    q.prepare( "SELECT formatDate(pohead_orderdate) AS orderdate,"
+    q.prepare( "SELECT pohead_orderdate,"
               "        vend_id, vend_phone1, pohead_curr_id "
               "FROM pohead, vend "
               "WHERE ( (pohead_vend_id=vend_id)"
@@ -150,7 +150,7 @@ void copyPurchaseOrder::sPopulatePoInfo(int)
     q.exec();
     if (q.first())
     {
-      _orderDate->setText(q.value("orderdate").toString());
+      _orderDate->setDate(q.value("pohead_orderdate").toDate());
       _vend->setId(q.value("vend_id").toInt());
       _vendPhone->setText(q.value("vend_phone1").toString());
       _currency->setId(q.value("pohead_curr_id").toInt());

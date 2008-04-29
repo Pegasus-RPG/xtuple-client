@@ -79,7 +79,6 @@ public slots:
     virtual void populate();
 
 protected:
-    virtual void init();
 
 protected slots:
     virtual void languageChange();

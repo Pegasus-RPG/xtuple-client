@@ -57,18 +57,14 @@
 
 #include "adjustmentTrans.h"
 
-#include <QVariant>
 #include <QMessageBox>
-#include <QValidator>
 #include <QSqlError>
+#include <QVariant>
+
 #include "inputManager.h"
 #include "distributeInventory.h"
+#include "storedProcErrorLookup.h"
 
-/*
- *  Constructs a adjustmentTrans as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 adjustmentTrans::adjustmentTrans(QWidget* parent, Qt::WindowFlags fl)
     : XMainWindow(parent, fl)
 {
@@ -78,16 +74,11 @@ adjustmentTrans::adjustmentTrans(QWidget* parent, Qt::WindowFlags fl)
 
   _adjustmentTypeGroupInt = new QButtonGroup(this);
 
-  // signals and slots connections
-  connect(_item, SIGNAL(valid(bool)), _post, SLOT(setEnabled(bool)));
   connect(_warehouse, SIGNAL(newID(int)), this, SLOT(sPopulateQOH(int)));
   connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
   connect(_adjustmentTypeGroupInt, SIGNAL(buttonClicked(int)), this, SLOT(sPopulateQty()));
   connect(_qty, SIGNAL(textChanged(const QString&)), this, SLOT(sPopulateQty()));
   connect(_absolute, SIGNAL(toggled(bool)), this, SLOT(sPopulateQty()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-  connect(_item, SIGNAL(newId(int)), _warehouse, SLOT(findItemsites(int)));
-  connect(_item, SIGNAL(warehouseIdChanged(int)), _warehouse, SLOT(setId(int)));
 
   _captive = FALSE;
 
@@ -97,7 +88,6 @@ adjustmentTrans::adjustmentTrans(QWidget* parent, Qt::WindowFlags fl)
   omfgThis->inputManager()->notify(cBCItem, this, _item, SLOT(setItemid(int)));
   omfgThis->inputManager()->notify(cBCItemSite, this, _item, SLOT(setItemsiteid(int)));
   
-  //If not multi-warehouse hide whs control
   if (!_metrics->boolean("MultiWhs"))
   {
     _warehouseLit->hide();
@@ -105,18 +95,11 @@ adjustmentTrans::adjustmentTrans(QWidget* parent, Qt::WindowFlags fl)
   }
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 adjustmentTrans::~adjustmentTrans()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void adjustmentTrans::languageChange()
 {
   retranslateUi(this);
@@ -191,31 +174,27 @@ enum SetResponse adjustmentTrans::set(const ParameterList &pParams)
       _close->setText(tr("&Close"));
       _post->hide();
 
-      q.prepare( "SELECT invhist_itemsite_id, invhist_transdate,"
-                 "       formatQty(invhist_invqty) AS f_transqty,"
-                 "       formatQty(invhist_qoh_before) AS f_qohbefore,"
-                 "       formatQty(invhist_qoh_after) AS f_qohafter,"
-                 "       invhist_ordnumber, invhist_comments,"
-                 "       invhist_user "
+      q.prepare( "SELECT * "
                  "FROM invhist "
                  "WHERE (invhist_id=:invhist_id);" );
       q.bindValue(":invhist_id", invhistid);
       q.exec();
       if (q.first())
       {
-        _transactionDate->setText(q.value("invhist_transdate").toDate());
+        _transactionDate->setDate(q.value("invhist_transdate").toDate());
         _username->setText(q.value("invhist_user").toString());
-        _qty->setText(q.value("f_transqty"));
-        _beforeQty->setText(q.value("f_qohbefore").toString());
-        _afterQty->setText(q.value("f_qohafter").toString());
+        _qty->setText(formatQty(q.value("invhist_invqty").toDouble()));
+        _beforeQty->setText(formatQty(q.value("invhist_qoh_before").toDouble()));
+        _afterQty->setText(formatQty(q.value("invhist_qoh_after").toDouble()));
         _documentNum->setText(q.value("invhist_ordnumber"));
         _notes->setText(q.value("invhist_comments").toString());
         _item->setItemsiteid(q.value("invhist_itemsite_id").toInt());
       }
-      else
-        systemError(this, tr("A System Error occurred at %1::%2.")
-                          .arg(__FILE__)
-                          .arg(__LINE__) );
+      else if (q.lastError().type() != QSqlError::None)
+      {
+	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	return UndefinedError;
+      }
 
       _close->setFocus();
     }
@@ -226,12 +205,11 @@ enum SetResponse adjustmentTrans::set(const ParameterList &pParams)
 
 void adjustmentTrans::sPost()
 {
-
   if (_qty->text().length() == 0)
   {
-    QMessageBox::warning(  this, tr("Enter Adjustment Quantitiy"),
-                           tr(  "You must enter a valid Adjustment Quantity before entering this\n"
-                                "Adjustment Transaction."  ));
+    QMessageBox::warning( this, tr("Enter Adjustment Quantitiy"),
+                          tr("<p>You must enter a valid Adjustment Quantity "
+                             "before entering this Adjustment Transaction." ));
     _qty->setFocus();
     return;
   }
@@ -259,21 +237,22 @@ void adjustmentTrans::sPost()
   q.exec();
   if (q.first())
   {
-    if (q.value("result").toInt() < 0)
+    int result = q.value("result").toInt();
+    if (result < 0)
     {
       rollback.exec();
-      systemError( this, tr("A System Error occurred at adjustmentTrans::%1, Item ID #%2, Warehouse ID #%3, Error #%4.")
-                           .arg(__LINE__)
-                           .arg(_item->id())
-                           .arg(_warehouse->id())
-                           .arg(q.value("result").toInt()) );
+      systemError(this, tr("%1<p>%2::%3, Item ID #%4, Warehouse ID #%5.")
+                          .arg(storedProcErrorLookup("invAdjustment", result))
+                          .arg(__FILE__).arg(__LINE__).arg(_item->id())
+                          .arg(_warehouse->id()));
     }
     else
     {
       if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == XDialog::Rejected)
       {
         rollback.exec();
-        QMessageBox::information( this, tr("Inventory Adjustment"), tr("Transaction Canceled") );
+        QMessageBox::information( this, tr("Inventory Adjustment"),
+                                 tr("Transaction Canceled") );
         return;
       }
 
@@ -293,13 +272,22 @@ void adjustmentTrans::sPost()
       }
     }
   }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    rollback.exec();
+    systemError( this,
+                tr("A System Error occurred at %1::%2, Item ID #%3, "
+                   "Warehouse ID #%4:\n%5.")
+                .arg(__FILE__).arg(__LINE__).arg(_item->id())
+                .arg(_warehouse->id()).arg(q.lastError().databaseText()));
+  }
   else
   {
     rollback.exec();
-    systemError( this, tr("A System Error occurred at adjustmentTrans::%1, Item Site ID #%2, Warehouse ID #%3.")
-                       .arg(__LINE__)
-                       .arg(_item->id())
-                       .arg(_warehouse->id()) );
+    systemError( this,
+                tr("No inventory adjustment was done because Item ID #%1 "
+                   "was not found at Warehouse ID #%2.")
+                .arg(_item->id()).arg(_warehouse->id()));
   }
 }
 
@@ -348,4 +336,3 @@ void adjustmentTrans::sPopulateQty()
       _afterQty->clear();
   }
 }
-
