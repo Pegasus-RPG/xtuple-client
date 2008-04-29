@@ -83,16 +83,16 @@ dspPlannedRevenueExpensesByPlannerCode::dspPlannedRevenueExpensesByPlannerCode(Q
 
   _plannerCode->setType(PlannerCode);
 
-  _planord->addColumn(tr("Order #"),     _orderColumn, Qt::AlignLeft   );
-  _planord->addColumn(tr("Type"),        _uomColumn,   Qt::AlignCenter );
-  _planord->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft   );
-  _planord->addColumn(tr("Description"), -1,           Qt::AlignLeft   );
-  _planord->addColumn(tr("Due Date"),    _dateColumn,  Qt::AlignCenter );
-  _planord->addColumn(tr("Qty"),         _qtyColumn,   Qt::AlignRight  );
-  _planord->addColumn(tr("Firm"),        _ynColumn,    Qt::AlignCenter );
-  _planord->addColumn(tr("Cost"),        _moneyColumn, Qt::AlignRight  );
-  _planord->addColumn(tr("Revenue"),     _moneyColumn, Qt::AlignRight  );
-  _planord->addColumn(tr("Gr. Profit"),  _moneyColumn, Qt::AlignRight  );
+  _planord->addColumn(tr("Order #"),     _orderColumn, Qt::AlignLeft, true, "plonumber");
+  _planord->addColumn(tr("Type"),        _uomColumn,   Qt::AlignCenter,true, "plotype");
+  _planord->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft,  true, "item_number");
+  _planord->addColumn(tr("Description"), -1,           Qt::AlignLeft,  true, "itemdescrip");
+  _planord->addColumn(tr("Due Date"),    _dateColumn,  Qt::AlignCenter,true, "planord_duedate");
+  _planord->addColumn(tr("Qty"),         _qtyColumn,   Qt::AlignRight, true, "planord_qty");
+  _planord->addColumn(tr("Firm"),        _ynColumn,    Qt::AlignCenter,true, "plofirm");
+  _planord->addColumn(tr("Cost"),        _moneyColumn, Qt::AlignRight, true, "plocost");
+  _planord->addColumn(tr("Revenue"),     _moneyColumn, Qt::AlignRight, true, "plorevenue");
+  _planord->addColumn(tr("Gr. Profit"),  _moneyColumn, Qt::AlignRight, true, "profit");
 
   _startDate->setAllowNullDate(true);
   _startDate->setNullString(tr("Earliest"));
@@ -168,15 +168,17 @@ void dspPlannedRevenueExpensesByPlannerCode::sFillList()
   ParameterList params;
   setParams(params);
 
-  QString sql( "SELECT planord_id, planord_itemsite_id,"
-               "       plonumber, plotype, item_number, itemdescrip,"
-               "       formatDate(planord_duedate) AS duedate,"
-	       "       formatQty(planord_qty) AS qty,"
-               "       plofirm,"
-               "       formatMoney(plocost) AS cost,"
-	       "       formatMoney(plorevenue) AS revenue,"
-               "       formatMoney(plorevenue - plocost) AS profit,"
-               "       plocost, plorevenue "
+  QString sql( "SELECT *,"
+               "       plorevenue - plocost AS profit,"
+               "       CASE WHEN plocost > plorevenue THEN 'error'"
+               "       END AS plorevenue_xtforegroundrole,"
+               "       'qty' AS planord_qty_xtnumericrole,"
+               "       'curr' AS plocost_xtnumericrole,"
+               "       'curr' AS plorevenue_xtnumericrole,"
+               "       'curr' AS profit_xtnumericrole,"
+               "       0 AS plocost_xttotalrole,"
+               "       0 AS plorevenue_xttotalrole,"
+               "       0 AS profit_xttotalrole "
                "FROM ( SELECT planord_id, planord_itemsite_id, planord_duedate,"
                "       formatPloNumber(planord_id) AS plonumber,"
                "       CASE WHEN (planord_type='P') THEN 'P/O'"
@@ -185,7 +187,6 @@ void dspPlannedRevenueExpensesByPlannerCode::sFillList()
                "       END AS plotype,"
                "       item_number,"
 	       "       (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
-               "       formatDate(planord_duedate),"
                "       planord_qty, formatBoolYN(planord_firm) AS plofirm,"
 	       "<? if exists(\"useActualCost\") ?>"
 	       "       (actcost(item_id) * planord_qty)"
@@ -225,37 +226,15 @@ void dspPlannedRevenueExpensesByPlannerCode::sFillList()
 
   MetaSQLQuery mql(sql);
   q = mql.toQuery(params);
-
-  XTreeWidgetItem *last = NULL;
-  double        cost = 0;
-  double        revenue = 0;
-  
-  while (q.next())
-  {
-    last = new XTreeWidgetItem( _planord, last, q.value("planord_id").toInt(), q.value("planord_itemsite_id").toInt(),
-                              q.value("plonumber"), q.value("plotype"),
-                              q.value("item_number"), q.value("itemdescrip"),
-                              q.value("duedate"), q.value("qty"),
-                              q.value("plofirm"), q.value("cost"),
-                              q.value("revenue"), q.value("profit") );
-
-    cost += q.value("plocost").toDouble();
-    revenue += q.value("plorevenue").toDouble();
-
-    if (q.value("plocost").toDouble() > q.value("plorevenue").toDouble())
-      last->setTextColor(9, "red");
-  }
+  _planord->populate(q, true);
   if (q.lastError().type() != QSqlError::None)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
-  last = new XTreeWidgetItem(_planord, last, -1, -1, tr("Totals:"));
-  last->setText(7, formatMoney(cost));
-  last->setText(8, formatMoney(revenue));
-  last->setText(9, formatMoney(revenue - cost));
-
-  if (cost > revenue)
+  // set color if profit is negative
+  XTreeWidgetItem *last = _planord->topLevelItem(_planord->topLevelItemCount() - 1);
+  if (last && last->data(9, Qt::UserRole).toMap().value("raw").toDouble() < 0)
     last->setTextColor(9, "red");
 }

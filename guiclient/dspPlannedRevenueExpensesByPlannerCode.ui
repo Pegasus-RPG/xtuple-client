@@ -38,20 +38,7 @@
         </widget>
        </item>
        <item row="0" column="1" >
-        <widget class="DLineEdit" name="_startDate" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="maximumSize" >
-          <size>
-           <width>100</width>
-           <height>22</height>
-          </size>
-         </property>
-        </widget>
+        <widget class="DLineEdit" name="_startDate" />
        </item>
        <item row="1" column="0" >
         <widget class="QLabel" name="_endDateLit" >
@@ -64,20 +51,7 @@
         </widget>
        </item>
        <item row="1" column="1" >
-        <widget class="DLineEdit" name="_endDate" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="maximumSize" >
-          <size>
-           <width>100</width>
-           <height>22</height>
-          </size>
-         </property>
-        </widget>
+        <widget class="DLineEdit" name="_endDate" />
        </item>
       </layout>
      </widget>
@@ -209,24 +183,6 @@
          <property name="enabled" >
           <bool>false</bool>
          </property>
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize" >
-          <size>
-           <width>100</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize" >
-          <size>
-           <width>32767</width>
-           <height>22</height>
-          </size>
-         </property>
         </widget>
        </item>
        <item row="3" column="0" >
@@ -246,24 +202,6 @@
         <widget class="DLineEdit" name="_endEvalDate" >
          <property name="enabled" >
           <bool>false</bool>
-         </property>
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize" >
-          <size>
-           <width>100</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize" >
-          <size>
-           <width>16777215</width>
-           <height>16777215</height>
-          </size>
          </property>
         </widget>
        </item>
@@ -315,7 +253,7 @@
  <customwidgets>
   <customwidget>
    <class>DLineEdit</class>
-   <extends>XLineEdit</extends>
+   <extends>QWidget</extends>
    <header>datecluster.h</header>
   </customwidget>
   <customwidget>
@@ -348,7 +286,6 @@
   <tabstop>_print</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
- <includes/>
  <resources/>
  <connections>
   <connection>

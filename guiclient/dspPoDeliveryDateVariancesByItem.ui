@@ -286,7 +286,7 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="QLabel" name="_porecvLit" >
+       <widget class="QLabel" name="_recvLit" >
         <property name="sizePolicy" >
          <sizepolicy>
           <hsizetype>5</hsizetype>
@@ -308,12 +308,12 @@
          <set>Qt::AlignVCenter</set>
         </property>
         <property name="buddy" >
-         <cstring>_porecv</cstring>
+         <cstring>_recv</cstring>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="XTreeWidget" name="_porecv" />
+       <widget class="XTreeWidget" name="_recv" />
       </item>
      </layout>
     </item>
@@ -356,7 +356,7 @@
   <tabstop>_allPurchasingAgents</tabstop>
   <tabstop>_agent</tabstop>
   <tabstop>_query</tabstop>
-  <tabstop>_porecv</tabstop>
+  <tabstop>_recv</tabstop>
   <tabstop>_print</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>

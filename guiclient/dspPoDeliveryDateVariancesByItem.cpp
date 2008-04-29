@@ -57,73 +57,65 @@
 
 #include "dspPoDeliveryDateVariancesByItem.h"
 
-#include <QVariant>
-#include <QStatusBar>
 #include <QMessageBox>
+
 #include <openreports.h>
+#include <metasql.h>
 #include <parameter.h>
+
 #include "guiclient.h"
 
-/*
- *  Constructs a dspPoDeliveryDateVariancesByItem as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspPoDeliveryDateVariancesByItem::dspPoDeliveryDateVariancesByItem(QWidget* parent, const char* name, Qt::WFlags fl)
     : XMainWindow(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
-
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_selectedPurchasingAgent, SIGNAL(toggled(bool)), _agent, SLOT(setEnabled(bool)));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-  connect(_item, SIGNAL(valid(bool)), _query, SLOT(setEnabled(bool)));
 
   _item->setType(ItemLineEdit::cGeneralPurchased);
-
   _agent->setType(XComboBox::Agent);
   _agent->setText(omfgThis->username());
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
+  _dates->setEndNull(tr("Latest"),     omfgThis->endOfTime(),   TRUE);
   
-  _porecv->addColumn(tr("P/O #"),              _orderColumn, Qt::AlignRight  );
-  _porecv->addColumn(tr("Vendor"),             _orderColumn, Qt::AlignLeft   );
-  _porecv->addColumn(tr("Vend. Item #"),       _itemColumn,  Qt::AlignLeft   );
-  _porecv->addColumn(tr("Vendor Description"), -1,           Qt::AlignLeft   );
-  _porecv->addColumn(tr("Qty."),               _qtyColumn,   Qt::AlignRight  );
-  _porecv->addColumn(tr("Due Date"),           _dateColumn,  Qt::AlignCenter );
-  _porecv->addColumn(tr("Recv. Date"),         _dateColumn,  Qt::AlignCenter );
+  _recv->addColumn(tr("P/O #"),      _orderColumn, Qt::AlignRight, true, "recv_order_number");
+  _recv->addColumn(tr("Vendor"),     _orderColumn, Qt::AlignLeft,  true, "vend_name");
+  _recv->addColumn(tr("Vend. Item #"),_itemColumn, Qt::AlignLeft,  true, "itemnumber");
+  _recv->addColumn(tr("Vendor Description"),   -1, Qt::AlignLeft,  true, "itemdescrip");
+  _recv->addColumn(tr("Qty."),         _qtyColumn, Qt::AlignRight, true, "recv_qty");
+  _recv->addColumn(tr("Due Date"),    _dateColumn, Qt::AlignCenter,true, "recv_duedate");
+  _recv->addColumn(tr("Recv. Date"),  _dateColumn, Qt::AlignCenter,true, "recv_date");
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspPoDeliveryDateVariancesByItem::~dspPoDeliveryDateVariancesByItem()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspPoDeliveryDateVariancesByItem::languageChange()
 {
   retranslateUi(this);
 }
 
+bool dspPoDeliveryDateVariancesByItem::setParams(ParameterList &pParams)
+{
+  pParams.append("item_id", _item->id());
+
+  _warehouse->appendValue(pParams);
+  _dates->appendValue(pParams);
+
+  if (_selectedPurchasingAgent->isChecked())
+    pParams.append("agentUsername", _agent->currentText());
+
+  return true;
+}
+
 void dspPoDeliveryDateVariancesByItem::sPrint()
 {
   ParameterList params;
-  params.append("item_id", _item->id());
-
-  _warehouse->appendValue(params);
-  _dates->appendValue(params);
-
-  if (_selectedPurchasingAgent->isChecked())
-    params.append("agentUsername", _agent->currentText());
+  if (! setParams(params))
+    return;
 
   orReport report("DeliveryDateVariancesByItem", params);
   if (report.isValid())
@@ -134,32 +126,28 @@ void dspPoDeliveryDateVariancesByItem::sPrint()
 
 void dspPoDeliveryDateVariancesByItem::sFillList()
 {
-  QString sql( "SELECT porecv_id, porecv_ponumber, vend_name,"
-               "       firstLine(porecv_vend_item_number),"
-               "       firstLine(porecv_vend_item_descrip),"
-               "       formatQty(porecv_qty),"
-               "       formatDate(porecv_duedate),"
-               "       formatDate(porecv_date) "
-               "FROM porecv, vend, itemsite "
-               "WHERE ( (porecv_vend_id=vend_id)"
-               " AND (porecv_itemsite_id=itemsite_id)"
-               " AND (itemsite_item_id=:item_id)"
-               " AND (DATE(porecv_date) BETWEEN :startDate AND :endDate)" );
-
-  if (_warehouse->isSelected())
-    sql += " AND (itemsite_warehous_id=:warehous_id)";
-
-  if (_selectedPurchasingAgent->isChecked())
-    sql += " AND (porecv_agent_username=:username)";
-
-  sql += ") "
-         "ORDER BY porecv_date DESC;";
-
-  q.prepare(sql);
-  _warehouse->bindValue(q);
-  _dates->bindValue(q);
-  q.bindValue(":item_id", _item->id());
-  q.bindValue(":username", _agent->currentText());
-  q.exec();
-  _porecv->populate(q);
+  QString sql( "SELECT recv.*, vend_name,"
+               "       firstLine(recv_vend_item_number) AS itemnumber,"
+               "       firstLine(recv_vend_item_descrip) AS itemdescrip,"
+               "       'qty' AS recv_qty_xtnumericrole "
+               "FROM recv, vend, itemsite "
+               "WHERE ((recv_vend_id=vend_id)"
+               "  AND  (recv_itemsite_id=itemsite_id)"
+               "  AND  (itemsite_item_id=<? value(\"item_id\") ?>)"
+               "  AND  (recv_order_type='PO')"
+               "  AND  (DATE(recv_date) BETWEEN <? value(\"startDate\") ?> AND <? value(\"endDate\") ?>)"
+               "<? if exists(\"warehous_id\") ?>"
+               " AND (itemsite_warehous_id=<? value(\"warehous_id\") ?>)"
+               "<? endif ?>"
+               " <? if exists(\"agentUsername\") ?>"
+               " AND (recv_agent_username=<? value(\"agentUsername\") ?>)"
+               "<? endif ?>"
+               ") "
+               "ORDER BY recv_date DESC;" );
+  MetaSQLQuery mql(sql);
+  ParameterList params;
+  if (! setParams(params))
+    return;
+  q = mql.toQuery(params);
+  _recv->populate(q);
 }

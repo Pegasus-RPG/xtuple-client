@@ -60,6 +60,7 @@
 #include <QMenu>
 #include <QSqlError>
 
+#include <metasql.h>
 #include <openreports.h>
 #include <parameter.h>
 
@@ -81,14 +82,14 @@ dspPlannedOrdersByPlannerCode::dspPlannedOrdersByPlannerCode(QWidget* parent, co
 
   _plannerCode->setType(PlannerCode);
 
-  _planord->addColumn(tr("Order #"),     _orderColumn, Qt::AlignLeft   );
-  _planord->addColumn(tr("Type"),        _uomColumn,   Qt::AlignCenter );
-  _planord->addColumn(tr("Whs."),        _whsColumn,   Qt::AlignCenter );
-  _planord->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft   );
-  _planord->addColumn(tr("Description"), -1,           Qt::AlignLeft   );
-  _planord->addColumn(tr("Start Date"),  _dateColumn,  Qt::AlignCenter );
-  _planord->addColumn(tr("Due Date"),    _dateColumn,  Qt::AlignCenter );
-  _planord->addColumn(tr("Qty"),         _qtyColumn,   Qt::AlignRight  );
+  _planord->addColumn(tr("Order #"),     _orderColumn, Qt::AlignLeft,  true, "ordernum");
+  _planord->addColumn(tr("Type"),        _uomColumn,   Qt::AlignCenter,true, "ordtype");
+  _planord->addColumn(tr("Whs."),        _whsColumn,   Qt::AlignCenter,true, "warehous_code");
+  _planord->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft,  true, "item_number");
+  _planord->addColumn(tr("Description"), -1,           Qt::AlignLeft,  true, "item_descrip");
+  _planord->addColumn(tr("Start Date"),  _dateColumn,  Qt::AlignCenter,true, "planord_startdate");
+  _planord->addColumn(tr("Due Date"),    _dateColumn,  Qt::AlignCenter,true, "planord_duedate");
+  _planord->addColumn(tr("Qty"),         _qtyColumn,   Qt::AlignRight, true, "planord_qty");
   _planord->addColumn(tr("Firm"),        _ynColumn,    Qt::AlignCenter );
 
   connect(omfgThis, SIGNAL(workOrdersUpdated(int, bool)), this, SLOT(sFillList()));
@@ -104,11 +105,18 @@ void dspPlannedOrdersByPlannerCode::languageChange()
     retranslateUi(this);
 }
 
+bool dspPlannedOrdersByPlannerCode::setParams(ParameterList &pParams)
+{
+  _warehouse->appendValue(pParams);
+  _plannerCode->appendValue(pParams);
+
+  return true;
+}
+
 void dspPlannedOrdersByPlannerCode::sPrint()
 {
   ParameterList params;
-  _warehouse->appendValue(params);
-  _plannerCode->appendValue(params);
+  setParams(params);
 
   orReport report("PlannedOrdersByPlannerCode", params);
   if (report.isValid())
@@ -226,36 +234,44 @@ void dspPlannedOrdersByPlannerCode::sDeleteOrder()
 void dspPlannedOrdersByPlannerCode::sFillList()
 {
   QString sql( "SELECT planord_id, planord_itemsite_id,"
-               "       formatPloNumber(planord_id),"
+               "       formatPloNumber(planord_id) AS ordernum,"
                "       CASE WHEN (planord_type='P') THEN 'P/O'"
                "            WHEN (planord_type='W') THEN 'W/O'"
                "            ELSE '?'"
-               "       END,"
-               "       warehous_code, item_number, (item_descrip1 || ' ' || item_descrip2),"
-               "       formatDate(planord_startdate),"
-               "       formatDate(planord_duedate),"
-               " formatQty(planord_qty), formatBoolYN(planord_firm) "
+               "       END AS ordtype,"
+               "       warehous_code, item_number,"
+               "       (item_descrip1 || ' ' || item_descrip2) AS item_descrip,"
+               "       planord_startdate,"
+               "       planord_duedate,"
+               "       planord_qty, formatBoolYN(planord_firm),"
+               "       'qty' AS planord_qty "
                "FROM planord, itemsite, warehous, item "
                "WHERE ( (planord_itemsite_id=itemsite_id)"
                " AND (itemsite_warehous_id=warehous_id)"
-               " AND (itemsite_item_id=item_id)" );
-
-  if (_plannerCode->isSelected())
-    sql += " AND (itemsite_plancode_id=:plancode_id)";
-  else if (_plannerCode->isPattern())
-    sql += " AND (itemsite_plancode_id IN (SELECT plancode_id FROM plancode WHERE (plancode_code ~ :plancode_pattern)))";
-
-  if (_warehouse->isSelected())
-    sql += " AND (itemsite_warehous_id=:warehous_id)";
-
-  sql += " ) "
-         "ORDER BY planord_duedate, item_number";
+               " AND (itemsite_item_id=item_id)"
+               "<? if exists(\"plancode_id\") ?>"
+               " AND (itemsite_plancode_id=<? value(\"plancode_id\") ?>)"
+               "<? elseif exists(\"plancode_pattern\") ?>"
+               " AND (itemsite_plancode_id IN (SELECT plancode_id"
+               "    FROM plancode"
+               "    WHERE (plancode_code ~ <? value(\"plancode_pattern\") ?>)))"
+               "<? endif ?>"
+               "<? if exists(\"warehous_id\") ?>"
+               " AND (itemsite_warehous_id=<? value(\"warehous_id\") ?>)"
+               "<? endif ?>"
+               " ) "
+               "ORDER BY planord_duedate, item_number;");
  
-  q.prepare(sql);
-  _warehouse->bindValue(q);
-  _plannerCode->bindValue(q);
-  q.exec();
+  MetaSQLQuery mql(sql);
+  ParameterList params;
+  setParams(params);
+  q = mql.toQuery(params);
   _planord->populate(q, TRUE);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void dspPlannedOrdersByPlannerCode::sDspUsageStatistics()

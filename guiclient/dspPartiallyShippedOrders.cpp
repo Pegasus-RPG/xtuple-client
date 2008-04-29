@@ -72,6 +72,7 @@
 
 #define AMOUNT_COL	7
 #define AMOUNT_CURR_COL	8
+#define BASEAMOUNT_COL	9
 
 dspPartiallyShippedOrders::dspPartiallyShippedOrders(QWidget* parent, const char* name, Qt::WFlags fl)
     : XMainWindow(parent, name, fl)
@@ -88,15 +89,17 @@ dspPartiallyShippedOrders::dspPartiallyShippedOrders(QWidget* parent, const char
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 
-  _so->addColumn(tr("Hold"),        0,            Qt::AlignCenter );
-  _so->addColumn(tr("S/O #"),       _orderColumn, Qt::AlignRight  );
-  _so->addColumn(tr("Customer"),    -1,           Qt::AlignLeft   );
-  _so->addColumn(tr("Hold Type"),   _dateColumn,  Qt::AlignCenter );
-  _so->addColumn(tr("Ordered"),     _dateColumn,  Qt::AlignRight  );
-  _so->addColumn(tr("Scheduled"),   _dateColumn,  Qt::AlignRight  );
-  _so->addColumn(tr("Pack Date"),   _dateColumn,  Qt::AlignRight  );
-  _so->addColumn(tr("Amount"),      _moneyColumn, Qt::AlignRight  );
-  _so->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft);
+  _so->addColumn(tr("Hold"),        0,           Qt::AlignCenter,true, "cohead_holdtype");
+  _so->addColumn(tr("S/O #"),      _orderColumn, Qt::AlignRight, true, "cohead_number");
+  _so->addColumn(tr("Customer"),    -1,          Qt::AlignLeft,  true, "cust_name");
+  _so->addColumn(tr("Hold Type"),   _dateColumn, Qt::AlignCenter,true, "f_holdtype");
+  _so->addColumn(tr("Ordered"),     _dateColumn, Qt::AlignRight, true, "cohead_orderdate");
+  _so->addColumn(tr("Scheduled"),   _dateColumn, Qt::AlignRight, true, "minscheddate");
+  _so->addColumn(tr("Pack Date"),   _dateColumn, Qt::AlignRight, true, "cohead_packdate");
+  _so->addColumn(tr("Amount"),     _moneyColumn, Qt::AlignRight, true, "extprice");
+  _so->addColumn(tr("Currency"),_currencyColumn, Qt::AlignLeft,  true, "currAbbr");
+  _so->addColumn(tr("Amount\n(%1)").arg(CurrDisplay::baseCurrAbbr()),
+                                   _moneyColumn, Qt::AlignRight, true, "extprice_base");
 
   sHandlePrices(_showPrices->isChecked());
 
@@ -123,11 +126,14 @@ void dspPartiallyShippedOrders::sHandlePrices(bool pShowPrices)
     _so->showColumn(AMOUNT_COL);
     if (!omfgThis->singleCurrency())
       _so->showColumn(AMOUNT_CURR_COL);
+    if (!omfgThis->singleCurrency())
+      _so->showColumn(BASEAMOUNT_COL);
   }
   else
   {
     _so->hideColumn(AMOUNT_COL);
     _so->hideColumn(AMOUNT_CURR_COL);
+    _so->hideColumn(BASEAMOUNT_COL);
   }
 }
 
@@ -148,6 +154,9 @@ bool dspPartiallyShippedOrders::setParams(ParameterList &params)
   params.append("return", tr("Return"));
   params.append("ship",   tr("Ship"));
   params.append("other",  tr("Other"));
+
+  if (omfgThis->singleCurrency())
+    params.append("singlecurrency");
 
   return true;
 }
@@ -224,15 +233,23 @@ void dspPartiallyShippedOrders::sFillList()
 		 "            WHEN (cohead_holdtype='R') THEN <? value(\"return\") ?>"
 		 "            ELSE <? value(\"other\") ?>"
 		 "       END AS f_holdtype,"
-		 "       formatDate(cohead_orderdate) AS f_orderdate,"
-		 "       formatDate(MIN(coitem_scheddate)) AS f_scheddate,"
-		 "       formatDate(cohead_packdate) AS f_packdate,"
-		 "       formatMoney( SUM( (noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) *"
-		 "                         (coitem_price / coitem_price_invuomratio) ) ) AS f_extprice,"
-		 "       currConcat(cohead_curr_id) AS currAbbr,"
+		 "       cohead_orderdate,"
+		 "       (MIN(coitem_scheddate)) AS minscheddate,"
+		 "       cohead_packdate,"
 		 "       SUM( (noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) *"
-		 "            (coitem_price / coitem_price_invuomratio) ) AS backlog,"
-		 "       MIN(coitem_scheddate) AS scheddate "
+		 "                         (coitem_price / coitem_price_invuomratio) ) AS extprice,"
+		 "       currConcat(cohead_curr_id) AS currAbbr,"
+		 "       SUM(currToBase(cohead_curr_id,"
+                 "           (noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) *"
+		 "            (coitem_price / coitem_price_invuomratio),"
+                 "                      CURRENT_DATE)) AS extprice_base,"
+                 "       'curr' AS extprice_xtnumericrole,"
+                 "       'curr' AS extprice_base_xtnumericrole,"
+                 "<? if exists(\"singlecurrency\") ?>"
+                 "       0 AS extprice_xttotalrole "
+                 "<? else ?>"
+                 "       0 AS extprice_base_xttotalrole "
+                 "<? endif ?>"
 		 "FROM cohead, itemsite, item, cust, coitem "
 		 "WHERE ( (coitem_cohead_id=cohead_id)"
 		 " AND (cohead_cust_id=cust_id)"
@@ -252,60 +269,15 @@ void dspPartiallyShippedOrders::sFillList()
 		 "GROUP BY cohead_id, cohead_number, cust_name,"
 		 "         cohead_holdtype, cohead_orderdate, cohead_packdate,"
 		 "         cohead_curr_id "
-		 "ORDER BY scheddate, cohead_number;");
+		 "ORDER BY minscheddate, cohead_number;");
     MetaSQLQuery mql(sql);
     q = mql.toQuery(params);
-    if (q.first())
+    _so->populate(q, true);
+    if (q.lastError().type() != QSqlError::None)
     {
-      XTreeWidgetItem *last = NULL;
-
-      do
-      {
-        last = new XTreeWidgetItem( _so, last, q.value("_coheadid").toInt(), q.value("cohead_id").toInt(),
-                                  q.value("cohead_holdtype").toString(), q.value("cohead_number").toString(),
-                                  q.value("cust_name").toString(), q.value("f_holdtype").toString(),
-                                  q.value("f_orderdate").toString(), q.value("f_scheddate").toString(),
-                                  q.value("f_packdate").toString(), q.value("f_extprice").toString(),
-				  q.value("currAbbr"));
-      }
-      while (q.next());
-
-      _so->setDragString("soheadid=");
-
-      if (_showPrices->isChecked())
-      {
-	sql = "SELECT SUM(currToBase(cohead_curr_id,"
-	      "         (noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) *"
-	      "         (coitem_price / coitem_price_invuomratio), CURRENT_DATE)) AS backlog,"
-	      "     currConcat(baseCurrId()) AS currAbbr "
-	      "FROM cohead, itemsite, item, coitem "
-	      "WHERE ( (coitem_cohead_id=cohead_id)"
-	      " AND (coitem_itemsite_id=itemsite_id)"
-	      " AND (itemsite_item_id=item_id)"
-	      " AND (coitem_status='O')"
-	      " AND (cohead_id IN ( SELECT DISTINCT coitem_cohead_id"
-	      "                     FROM coitem"
-	      "                     WHERE (coitem_qtyshipped > 0) ))"
-	      " AND (coitem_qtyshipped < coitem_qtyord)"
-	      " AND (coitem_scheddate BETWEEN :startDate AND :endDate)";
-
-	if (_warehouse->isSelected())
-	  sql += " AND (itemsite_warehous_id=:warehous_id)";
-	sql += ") GROUP BY currAbbr";
-
-	q.prepare(sql);
-	_warehouse->bindValue(q);
-	_dates->bindValue(q);
-	q.exec();
-	if (q.first())
-	    new XTreeWidgetItem( _so, last, -1, -1,
-			       "", "", tr("Total Backlog"), "", "", "", "",
-			       formatMoney(q.value("backlog").toDouble()),
-			       q.value("currAbbr"));
-	else if (q.lastError().type() != QSqlError::NoError)
-	    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      }
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
     }
+    _so->setDragString("soheadid=");
   }
 }
-

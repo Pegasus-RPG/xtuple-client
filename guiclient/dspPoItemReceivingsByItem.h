@@ -69,6 +69,7 @@ class dspPoItemReceivingsByItem : public XMainWindow, public Ui::dspPoItemReceiv
 public:
     dspPoItemReceivingsByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspPoItemReceivingsByItem();
+    virtual bool setParams(ParameterList &);
 
 public slots:
     virtual void sPrint();

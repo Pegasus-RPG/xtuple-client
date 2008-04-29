@@ -57,21 +57,18 @@
 
 #include "dspGLTransactions.h"
 
-#include <QVariant>
-#include <QStatusBar>
 #include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
+
 #include <openreports.h>
-#include "voucher.h"
+
+#include "glTransactionDetail.h"
 #include "invoice.h"
 #include "purchaseOrder.h"
-#include "glTransactionDetail.h"
+#include "voucher.h"
 #include "dspShipmentsByShipment.h"
 
-/*
- *  Constructs a dspGLTransactions as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspGLTransactions::dspGLTransactions(QWidget* parent, const char* name, Qt::WFlags fl)
     : XMainWindow(parent, name, fl)
 {
@@ -79,40 +76,29 @@ dspGLTransactions::dspGLTransactions(QWidget* parent, const char* name, Qt::WFla
 
   (void)statusBar();
 
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_gltrans, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem*)));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-  connect(_selectedSource, SIGNAL(toggled(bool)), _source, SLOT(setEnabled(bool)));
-  connect(_selectedAccount, SIGNAL(toggled(bool)), _account, SLOT(setEnabled(bool)));
   connect(_showUsername, SIGNAL(toggled(bool)), this, SLOT(sShowUsername(bool)));
 
-  _gltrans->addColumn(tr("Date"),      _dateColumn,    Qt::AlignCenter );
-  _gltrans->addColumn(tr("Source"),    _orderColumn,   Qt::AlignCenter );
-  _gltrans->addColumn(tr("Doc. Type"), _docTypeColumn, Qt::AlignCenter );
-  _gltrans->addColumn(tr("Doc. #"),    _orderColumn,   Qt::AlignCenter );
-  _gltrans->addColumn(tr("Reference"), -1,             Qt::AlignLeft   );
-  _gltrans->addColumn(tr("Account"),   _itemColumn,    Qt::AlignLeft   );
-  _gltrans->addColumn(tr("Debit"),     _moneyColumn,   Qt::AlignRight  );
-  _gltrans->addColumn(tr("Credit"),    _moneyColumn,   Qt::AlignRight  );
-  _gltrans->addColumn(tr("Posted"),    _ynColumn,      Qt::AlignCenter );
-  _gltrans->addColumn(tr("Username"),  _userColumn,    Qt::AlignLeft );
+  _gltrans->addColumn(tr("Date"),      _dateColumn,    Qt::AlignCenter, true, "gltrans_date");
+  _gltrans->addColumn(tr("Source"),    _orderColumn,   Qt::AlignCenter, true, "gltrans_source");
+  _gltrans->addColumn(tr("Doc. Type"), _docTypeColumn, Qt::AlignCenter, true, "gltrans_doctype");
+  _gltrans->addColumn(tr("Doc. #"),    _orderColumn,   Qt::AlignCenter, true, "docnumber");
+  _gltrans->addColumn(tr("Reference"), -1,             Qt::AlignLeft,   true, "notes");
+  _gltrans->addColumn(tr("Account"),   _itemColumn,    Qt::AlignLeft,   true, "account");
+  _gltrans->addColumn(tr("Debit"),     _moneyColumn,   Qt::AlignRight,  true, "debit");
+  _gltrans->addColumn(tr("Credit"),    _moneyColumn,   Qt::AlignRight,  true, "credit");
+  _gltrans->addColumn(tr("Posted"),    _ynColumn,      Qt::AlignCenter, true, "posted");
+  _gltrans->addColumn(tr("Username"),  _userColumn,    Qt::AlignLeft,   true, "gltrans_username");
   sShowUsername(_showUsername->isChecked());
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspGLTransactions::~dspGLTransactions()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspGLTransactions::languageChange()
 {
   retranslateUi(this);
@@ -212,21 +198,24 @@ void dspGLTransactions::sPrint()
 void dspGLTransactions::sFillList()
 {
   _gltrans->clear();
-  QString sql( "SELECT gltrans_id, formatDate(gltrans_date), gltrans_source,"
-               "       gltrans_doctype,"
-               "       CASE WHEN(gltrans_docnumber='Misc.' AND invhist_docnumber IS NOT NULL) THEN (gltrans_docnumber || ' - ' || invhist_docnumber)"
+  QString sql( "SELECT gltrans.*,"
+               "       CASE WHEN(gltrans_docnumber='Misc.' AND"
+               "              invhist_docnumber IS NOT NULL) THEN"
+               "              (gltrans_docnumber || ' - ' || invhist_docnumber)"
                "            ELSE gltrans_docnumber"
-               "       END AS gltrans_docnumber,"
-               "       firstLine(gltrans_notes),"
-               "       (formatGLAccount(accnt_id) || ' - ' || accnt_descrip),"
-               "       CASE WHEN (gltrans_amount < 0) THEN formatMoney(ABS(gltrans_amount))"
-               "            ELSE ''"
-               "       END,"
-               "       CASE WHEN (gltrans_amount > 0) THEN formatMoney(gltrans_amount)"
-               "            ELSE ''"
-               "       END,"
+               "       END AS docnumber,"
+               "       firstLine(gltrans_notes) AS notes,"
+               "       (formatGLAccount(accnt_id) || ' - ' || accnt_descrip) AS account,"
+               "       CASE WHEN (gltrans_amount < 0) THEN ABS(gltrans_amount)"
+               "            ELSE NULL"
+               "       END AS debit,"
+               "       CASE WHEN (gltrans_amount > 0) THEN gltrans_amount"
+               "            ELSE NULL"
+               "       END AS credit,"
                "       formatBoolYN(gltrans_posted),"
-               "       gltrans_username "
+               "       gltrans_username,"
+               "       'curr' AS debit_xtnumericrole,"
+               "       'curr' AS credit_xtnumericrole "
                "FROM gltrans JOIN accnt ON (gltrans_accnt_id=accnt_id) "
                "     LEFT OUTER JOIN invhist ON (gltrans_misc_id=invhist_id AND gltrans_docnumber='Misc.') "
                "WHERE ((gltrans_date BETWEEN :startDate AND :endDate)" );
@@ -246,6 +235,11 @@ void dspGLTransactions::sFillList()
   q.bindValue(":source", _source->currentText());
   q.exec();
   _gltrans->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void dspGLTransactions::sShowUsername( bool yes )

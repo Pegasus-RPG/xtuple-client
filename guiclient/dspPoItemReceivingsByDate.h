@@ -69,6 +69,7 @@ class dspPoItemReceivingsByDate : public XMainWindow, public Ui::dspPoItemReceiv
 public:
     dspPoItemReceivingsByDate(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspPoItemReceivingsByDate();
+    virtual bool setParams(ParameterList&);
 
 public slots:
     virtual void sPrint();

@@ -80,13 +80,13 @@ accountingPeriods::accountingPeriods(QWidget* parent, const char* name, Qt::WFla
   connect(_closePeriod, SIGNAL(clicked()), this, SLOT(sClosePeriod()));
   connect(_freezePeriod, SIGNAL(clicked()), this, SLOT(sFreezePeriod()));
   
-  _period->addColumn(tr("Name"),   -1,          Qt::AlignLeft   );
-  _period->addColumn(tr("Start"),  _dateColumn, Qt::AlignCenter );
-  _period->addColumn(tr("End"),    _dateColumn, Qt::AlignCenter );
-  _period->addColumn(tr("Qtr"),    _statusColumn, Qt::AlignCenter );
-  _period->addColumn(tr("Year"),   _dateColumn,   Qt::AlignCenter );
-  _period->addColumn(tr("Closed"), _ynColumn+3, Qt::AlignCenter );
-  _period->addColumn(tr("Frozen"), _ynColumn+3, Qt::AlignCenter );
+  _period->addColumn(tr("Name"),            -1, Qt::AlignLeft,   true, "period_name");
+  _period->addColumn(tr("Start"),  _dateColumn, Qt::AlignCenter, true, "period_start");
+  _period->addColumn(tr("End"),    _dateColumn, Qt::AlignCenter, true, "period_end");
+  _period->addColumn(tr("Qtr"),  _statusColumn, Qt::AlignCenter, true, "qtr");
+  _period->addColumn(tr("Year"),   _dateColumn, Qt::AlignCenter, true, "year");
+  _period->addColumn(tr("Closed"), _ynColumn+3, Qt::AlignCenter, true, "closed");
+  _period->addColumn(tr("Frozen"), _ynColumn+3, Qt::AlignCenter, true, "frozen");
 
   if (_privileges->check("MaintainAccountingPeriods"))
   {
@@ -378,9 +378,11 @@ void accountingPeriods::sFillList()
                      "            ELSE 0"
                      "       END,"
                      "       period_name,"
-                     "       formatDate(period_start), formatDate(period_end),"
-                     "                 COALESCE(to_char(period_quarter,'9'),'?'), COALESCE(to_char(EXTRACT(year FROM yearperiod_end),'9999'),'?'),"
-                     "       formatBoolYN(period_closed), formatBoolYN(period_freeze) "
+                     "       period_start, period_end,"
+                     "       COALESCE(to_char(period_quarter,'9'),'?') AS qtr,"
+                     "       COALESCE(to_char(EXTRACT(year FROM yearperiod_end),'9999'),'?') AS year,"
+                     "       formatBoolYN(period_closed) AS closed,"
+                     "       formatBoolYN(period_freeze) AS frozen "
                      "  FROM period LEFT OUTER JOIN yearperiod "
                      "    ON (period_yearperiod_id=yearperiod_id) "
                      " ORDER BY period_start;", TRUE );

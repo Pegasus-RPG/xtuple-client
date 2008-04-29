@@ -41,6 +41,7 @@
     <file alias="forms/printPackingListBatchByShipvia/ShipVia.mql">printPackingListBatchByShipviaShipVia.mql</file>
     <file alias="forms/printPackingListBatchByShipvia/ToPrint.mql">printPackingListBatchByShipviaToPrint.mql</file>
     <file alias="forms/printShippingForm/HandleShipment.mql">printShippingFormHandleShipment.mql</file>
+    <file alias="itemReceivings/FillList.mql">poItemReceivingsFillList.mql</file>
   </qresource>
   <qresource prefix="crm">
     <file alias="opportunityList/FillListDetail.mql">opportunityListFillList.mql</file>

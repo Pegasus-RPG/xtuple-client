@@ -58,8 +58,6 @@
 #include "dspPoHistory.h"
 
 #include <QSqlError>
-#include <QStatusBar>
-#include <QVariant>
 
 #include <parameter.h>
 #include <openreports.h>
@@ -79,15 +77,15 @@ dspPoHistory::dspPoHistory(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _po->setType((cPOOpen | cPOClosed));
 
-  _poitem->addColumn(tr("#"),            _whsColumn,  Qt::AlignCenter );
-  _poitem->addColumn(tr("Item/Doc. #"),  _itemColumn, Qt::AlignLeft   );
-  _poitem->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignCenter );
-  _poitem->addColumn(tr("Due/Recvd."),   _dateColumn, Qt::AlignCenter );
-  _poitem->addColumn(tr("Vend. Item #"), -1,          Qt::AlignLeft   );
-  _poitem->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignCenter );
-  _poitem->addColumn(tr("Ordered"),      _qtyColumn,  Qt::AlignRight  );
-  _poitem->addColumn(tr("Received"),     _qtyColumn,  Qt::AlignRight  );
-  _poitem->addColumn(tr("Returned"),     _qtyColumn,  Qt::AlignRight  );
+  _poitem->addColumn(tr("#"),            _whsColumn,  Qt::AlignCenter, true, "poitem_linenumber");
+  _poitem->addColumn(tr("Item/Doc. #"),  _itemColumn, Qt::AlignLeft,   true, "itemnumber");
+  _poitem->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignCenter, true, "uomname");
+  _poitem->addColumn(tr("Due/Recvd."),   _dateColumn, Qt::AlignCenter, true, "poitem_duedate");
+  _poitem->addColumn(tr("Vend. Item #"), -1,          Qt::AlignLeft,   true, "poitem_vend_item_number");
+  _poitem->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignCenter, true, "poitem_vend_uom");
+  _poitem->addColumn(tr("Ordered"),      _qtyColumn,  Qt::AlignRight,  true, "poitem_qty_ordered");
+  _poitem->addColumn(tr("Received"),     _qtyColumn,  Qt::AlignRight,  true, "poitem_qty_received");
+  _poitem->addColumn(tr("Returned"),     _qtyColumn,  Qt::AlignRight,  true, "poitem_qty_returned");
 }
 
 dspPoHistory::~dspPoHistory()
@@ -104,14 +102,12 @@ void dspPoHistory::sFillList()
 {
   if (_po->isValid())
   {
-    q.prepare( "SELECT poitem_id, poitem_linenumber,"
-               "       COALESCE(item_number, :nonInventory),"
-               "       COALESCE(uom_name, :na),"
-               "       formatDate(poitem_duedate),"
-               "       poitem_vend_item_number, poitem_vend_uom,"
-               "       formatQty(poitem_qty_ordered),"
-               "       formatqty(poitem_qty_received),"
-               "       formatqty(poitem_qty_returned) "
+    q.prepare( "SELECT poitem_id, poitem.*,"
+               "       COALESCE(item_number, :nonInventory) AS itemnumber,"
+               "       COALESCE(uom_name, :na) AS uomname,"
+               "      'qty' AS poitem_qty_ordered_xtnumericrole,"
+               "      'qty' AS poitem_qty_received_xtnumericrole,"
+               "      'qty' AS poitem_qty_returned_xtnumericrole "
                "FROM poitem LEFT OUTER JOIN"
                "     ( itemsite JOIN item"
                "       ON (itemsite_item_id=item_id) JOIN uom ON (item_inv_uom_id=uom_id))"
@@ -122,12 +118,12 @@ void dspPoHistory::sFillList()
     q.bindValue(":na", tr("N/A"));
     q.bindValue(":pohead_id", _po->id());
     q.exec();
+    _poitem->populate(q);
     if (q.lastError().type() != QSqlError::None)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
-    _poitem->populate(q);
   }
   else
     _poitem->clear();

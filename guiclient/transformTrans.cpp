@@ -58,71 +58,49 @@
 #include "transformTrans.h"
 
 #include <QVariant>
-#include <QValidator>
+
 #include "distributeInventory.h"
 
-/*
- *  Constructs a transformTrans as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 transformTrans::transformTrans(QWidget* parent, const char* name, Qt::WFlags fl)
     : XMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
-    connect(_item, SIGNAL(warehouseIdChanged(int)), _warehouse, SLOT(setId(int)));
-    connect(_item, SIGNAL(privateIdChanged(int)), _warehouse, SLOT(findItemsites(int)));
-    connect(_warehouse, SIGNAL(newID(int)), this, SLOT(sFillList()));
-    connect(_target, SIGNAL(newID(int)), this, SLOT(sPopulateTarget(int)));
-    connect(_source, SIGNAL(valid(bool)), _post, SLOT(setEnabled(bool)));
-    init();
+  connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
+  connect(_warehouse, SIGNAL(newID(int)), this, SLOT(sFillList()));
+  connect(_target, SIGNAL(newID(int)), this, SLOT(sPopulateTarget(int)));
 
-    //If not multi-warehouse hide whs control
-    if (!_metrics->boolean("MultiWhs"))
-    {
-      _warehouseLit->hide();
-      _warehouse->hide();
-    }
+  _captive = FALSE;
+
+  _qty->setValidator(omfgThis->qtyVal());
+
+  _source->addColumn( tr("Location"),_itemColumn, Qt::AlignLeft, true, "locationname");
+  _source->addColumn( tr("Lot/Serial #"),     -1, Qt::AlignLeft, true, "lotserial");
+  _source->addColumn( tr("Qty."),     _qtyColumn, Qt::AlignRight,true, "qty");
+
+  _item->setFocus();
+
+  //If not multi-warehouse hide whs control
+  if (!_metrics->boolean("MultiWhs"))
+  {
+    _warehouseLit->hide();
+    _warehouse->hide();
+  }
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 transformTrans::~transformTrans()
 {
     // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void transformTrans::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
-
-void transformTrans::init()
-{
-  _captive = FALSE;
-
-  _qty->setValidator(omfgThis->qtyVal());
-
-  _source->addColumn( tr("Location"),     _itemColumn, Qt::AlignLeft  );
-  _source->addColumn( tr("Lot/Serial #"), -1,          Qt::AlignLeft  );
-  _source->addColumn( tr("Qty."),         _qtyColumn,  Qt::AlignRight );
-
-  _item->setFocus();
-}
-
-enum SetResponse transformTrans::set(ParameterList &pParams)
+enum SetResponse transformTrans::set(const ParameterList &pParams)
 {
   _captive = TRUE;
 
@@ -266,7 +244,7 @@ void transformTrans::sFillList()
                  "            ELSE formatLocationName(location_id)"
                  "       END AS locationname,"
                  "       ls_number AS lotserial,"
-                 "       itemloc_qty AS qty "
+                 "       itemloc_qty AS qty, 'qty' AS qty_xtnumericrole "
                  "FROM itemloc "
                  "  LEFT OUTER JOIN location ON (itemloc_location_id=location_id) "
                  "  LEFT OUTER JOIN ls ON (itemloc_ls_id=ls_id)"
@@ -276,7 +254,7 @@ void transformTrans::sFillList()
       q.prepare( "SELECT itemsite_id AS itemsiteid, -1 AS itemlocid,"
                  "       TEXT(:na) AS locationname,"
                  "       TEXT(:na) AS lotserial,"
-                 "       itemsite_qtyonhand AS qty "
+                 "       itemsite_qtyonhand AS qty, 'qty' AS qty_xtnumericrole "
                  "FROM itemsite "
                  "WHERE ( (itemsite_qtyonhand > 0)"
                  " AND (itemsite_id=:itemsite_id) );" );
@@ -284,12 +262,6 @@ void transformTrans::sFillList()
     q.bindValue(":na", tr("N/A"));
     q.bindValue(":itemsite_id", itemsiteid);
     q.exec();
-    XTreeWidgetItem *last = 0;
-    while (q.next())
-      last = new XTreeWidgetItem( _source, last,
-				 q.value("itemsiteid").toInt(),
-				 q.value("itemlocid").toInt(),
-				 q.value("locationname"), q.value("lotserial"),
-				 formatQty(q.value("qty").toDouble()) );
+    _source->populate(q, true);
   }
 }

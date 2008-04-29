@@ -57,18 +57,15 @@
 
 #include "dspPoItemReceivingsByDate.h"
 
-#include <QVariant>
-#include <QStatusBar>
 #include <QMessageBox>
+#include <QSqlError>
+
 #include <openreports.h>
 #include <parameter.h>
-#include "guiclient.h"
 
-/*
- *  Constructs a dspPoItemReceivingsByDate as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
+#include "guiclient.h"
+#include "mqlutil.h"
+
 dspPoItemReceivingsByDate::dspPoItemReceivingsByDate(QWidget* parent, const char* name, Qt::WFlags fl)
     : XMainWindow(parent, name, fl)
 {
@@ -76,27 +73,24 @@ dspPoItemReceivingsByDate::dspPoItemReceivingsByDate(QWidget* parent, const char
 
   (void)statusBar();
 
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_selectedPurchasingAgent, SIGNAL(toggled(bool)), _agent, SLOT(setEnabled(bool)));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_showVariances, SIGNAL(toggled(bool)), this, SLOT(sHandleVariance(bool)));
 
   _agent->setType(XComboBox::Agent);
   _agent->setText(omfgThis->username());
 
-  _porecv->addColumn(tr("P/O #"),       _orderColumn, Qt::AlignRight  );
-  _porecv->addColumn(tr("Vendor"),      -1,           Qt::AlignLeft   );
-  _porecv->addColumn(tr("Sched. Date"), _dateColumn,  Qt::AlignCenter );
-  _porecv->addColumn(tr("Recv. Date"),  _dateColumn,  Qt::AlignCenter );
-  _porecv->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft   );
-  _porecv->addColumn(tr("Rcvd/Rtnd"),   _qtyColumn,   Qt::AlignRight  );
-  _porecv->addColumn(tr("Qty."),        _qtyColumn,   Qt::AlignRight  );
+  _porecv->addColumn(tr("P/O #"),       _orderColumn, Qt::AlignRight, true, "ponumber");
+  _porecv->addColumn(tr("Vendor"),      -1,           Qt::AlignLeft,  true, "vend_name");
+  _porecv->addColumn(tr("Sched. Date"), _dateColumn,  Qt::AlignCenter,true, "duedate");
+  _porecv->addColumn(tr("Recv. Date"),  _dateColumn,  Qt::AlignCenter,true, "recvdate");
+  _porecv->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft,  true, "venditemnumber");
+  _porecv->addColumn(tr("Rcvd/Rtnd"),   _qtyColumn,   Qt::AlignRight, true, "sense");
+  _porecv->addColumn(tr("Qty."),        _qtyColumn,   Qt::AlignRight, true, "qty");
   if (_privileges->check("ViewCosts"))
   {
-    _porecv->addColumn(tr("Purch. Cost"), _priceColumn, Qt::AlignRight );
-    _porecv->addColumn(tr("Recv. Cost"),  _priceColumn, Qt::AlignRight );
+    _porecv->addColumn(tr("Purch. Cost"), _priceColumn, Qt::AlignRight,true,"purchcost");
+    _porecv->addColumn(tr("Recv. Cost"),  _priceColumn, Qt::AlignRight,true,"recvcost");
   }
 
   _showVariances->setEnabled(_privileges->check("ViewCosts"));
@@ -105,42 +99,48 @@ dspPoItemReceivingsByDate::dspPoItemReceivingsByDate(QWidget* parent, const char
   sHandleVariance(_showVariances->isChecked());
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspPoItemReceivingsByDate::~dspPoItemReceivingsByDate()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspPoItemReceivingsByDate::languageChange()
 {
   retranslateUi(this);
 }
 
-void dspPoItemReceivingsByDate::sPrint()
+bool dspPoItemReceivingsByDate::setParams(ParameterList &pParams)
 {
   if (!_dates->allValid())
   {
     QMessageBox::warning( this, tr("Enter Valid Dates"),
                           tr( "Please enter a valid Start and End Date." ) );
     _dates->setFocus();
-    return;
+    return false;
   }
 
-  ParameterList params;
-  _warehouse->appendValue(params);
-  _dates->appendValue(params);
+  _warehouse->appendValue(pParams);
+  _dates->appendValue(pParams);
+
+  pParams.append("received", tr("Received"));
+  pParams.append("returned", tr("Returned"));
+  pParams.append("nonInv",   tr("NonInv - "));
+  pParams.append("na",       tr("N/A"));
 
   if (_selectedPurchasingAgent->isChecked())
-    params.append("agentUsername", _agent->currentText());
+    pParams.append("agentUsername", _agent->currentText());
 
   if (_showVariances->isChecked())
-    params.append("showVariances");
+    pParams.append("showVariances");
+
+  return true;
+}
+
+void dspPoItemReceivingsByDate::sPrint()
+{
+  ParameterList params;
+  if (! setParams(params))
+    return;
 
   orReport report("ReceiptsReturnsByDate", params);
   if (report.isValid())
@@ -165,72 +165,19 @@ void dspPoItemReceivingsByDate::sHandleVariance(bool pShowVariances)
 
 void dspPoItemReceivingsByDate::sFillList()
 {
-  if (_dates->allValid())
+  ParameterList params;
+  if (! setParams(params))
   {
-    QString sql( "SELECT porecv_id, porecv_ponumber,"
-                 "       vend_name,"
-                 "       formatDate(porecv_duedate) AS f_duedate,"
-                 "       formatDate(porecv_date) AS f_recvdate,"
-                 "       COALESCE(item_number, (:nonInv || porecv_vend_item_number)) AS itemnumber,"
-                 "       :received AS sence,"
-                 "       formatQty(porecv_qty) AS f_recvqty,"
-                 "       formatCost(porecv_purchcost) AS f_purchcost,"
-                 "       CASE WHEN (porecv_recvcost IS NULL) THEN :na"
-                 "            ELSE formatCost(porecv_recvcost)"
-                 "       END,"
-                 "       porecv_date AS sortdate "
-                 "FROM vend, porecv LEFT OUTER JOIN"
-                 "           ( itemsite JOIN item"
-                 "             ON (itemsite_item_id=item_id)"
-                 "           ) ON (porecv_itemsite_id=itemsite_id) "
-                 "WHERE ( (porecv_vend_id=vend_id)"
-                 " AND (DATE(porecv_date) BETWEEN :startDate AND :endDate)" );
-
-    if (_warehouse->isSelected())
-      sql += " AND (itemsite_warehous_id=:warehous_id)";
-
-    if (_selectedPurchasingAgent->isChecked())
-      sql += " AND (porecv_agent_username=:username)";
-
-    sql += ") "
-           "UNION "
-           "SELECT poreject_id, poreject_ponumber,"
-           "       vend_name,"
-           "       '' AS f_duedate,"
-           "       formatDate(poreject_date) AS f_recvdate,"
-           "       COALESCE(item_number, (:nonInv || poreject_vend_item_number)) AS itemnumber,"
-           "       :returned AS sense,"
-           "       formatQty(poreject_qty) AS f_recvqty,"
-           "       '' AS f_purchcost,"
-           "       '' AS f_recvcost,"
-           "       poreject_date AS sortdate "
-           "FROM vend, poreject LEFT OUTER JOIN"
-           "           ( itemsite JOIN item"
-           "             ON (itemsite_item_id=item_id)"
-           "           ) ON (poreject_itemsite_id=itemsite_id) "
-           "WHERE ( (poreject_vend_id=vend_id)"
-           " AND (DATE(poreject_date) BETWEEN :startDate AND :endDate)";
-
-    if (_warehouse->isSelected())
-      sql += " AND (itemsite_warehous_id=:warehous_id)";
-
-    if (_selectedPurchasingAgent->isChecked())
-      sql += " AND (poreject_agent_username=:username)";
-
-    sql += ") "
-           "ORDER BY sortdate DESC";
-
-    q.prepare(sql);
-    _warehouse->bindValue(q);
-    _dates->bindValue(q);
-    q.bindValue(":received", tr("Received"));
-    q.bindValue(":returned", tr("Returned"));
-    q.bindValue(":nonInv", tr("NonInv - "));
-    q.bindValue(":na", tr("N/A"));
-    q.bindValue(":username", _agent->currentText());
-    q.exec();
-    _porecv->populate(q);
-  }
-  else
     _porecv->clear();
+    return;
+  }
+  MetaSQLQuery mql = mqlLoad(":/sr/itemReceivings/FillList.mql");
+  q = mql.toQuery(params);
+
+  _porecv->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
