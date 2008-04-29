@@ -71,7 +71,7 @@ CalendarComboBox::CalendarComboBox(QWidget *pParent, const char *pName) :
   setAllowNull(TRUE);
 
   XSqlQuery q;
-  q.exec( "SELECT calhead_id, calhead_name "
+  q.exec( "SELECT calhead_id, calhead_name, calhead_name "
           "FROM calhead "
           "ORDER BY calhead_name;" );
   populate(q);

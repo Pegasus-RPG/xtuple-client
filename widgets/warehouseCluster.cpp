@@ -148,7 +148,7 @@ void WComboBox::findItemsites(int pItemID)
 {
   if (pItemID != -1)
   {
-    QString iss("SELECT warehous_id, warehous_code "
+    QString iss("SELECT warehous_id, warehous_code, warehous_code "
                "FROM whsinfo, itemsite "
                "WHERE ((itemsite_warehous_id=warehous_id)"
                "  AND  (itemsite_item_id=<? value(\"itemid\") ?>) "
