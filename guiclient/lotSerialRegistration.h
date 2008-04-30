@@ -77,23 +77,22 @@ public:
 
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
-    virtual void sNew();
-    virtual void sEdit();
+    virtual void populate();
     virtual void sSave();
-    virtual void sUndo();
     virtual void sNewCharass();
     virtual void sEditCharass();
     virtual void sDeleteCharass();
     virtual void sFillList();
+    virtual void sDateUpdated();
 
 protected slots:
     virtual void languageChange();
 
 private:
     int               _mode;
+    int               _lsregid;
     QString           _number;
-    QSqlTableModel    _model;
-    XDataWidgetMapper _mapper;
+    
 };
 
 #endif // LOTSERIALREGISTRATION_H

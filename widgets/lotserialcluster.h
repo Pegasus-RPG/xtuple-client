@@ -108,6 +108,7 @@ class OPENMFGWIDGETS_EXPORT LotserialLineEdit : public VirtualClusterLineEdit
 	inline virtual bool	strict() const		{ return _strict; };
 
     public slots:
+        virtual void setId(const int);
 	virtual void clear();
 	virtual void sParse();
 	virtual void setItemId(const int);

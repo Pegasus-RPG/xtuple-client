@@ -291,6 +291,9 @@
       <layout class="QGridLayout" >
        <item row="0" column="0" >
         <widget class="Comments" name="_comments" >
+         <property name="focusPolicy" >
+          <enum>Qt::StrongFocus</enum>
+         </property>
          <property name="type" >
           <enum>Comments::LotSerial</enum>
          </property>
@@ -330,16 +333,17 @@
  <tabstops>
   <tabstop>_item</tabstop>
   <tabstop>_lotSerial</tabstop>
-  <tabstop>_tab</tabstop>
   <tabstop>_charass</tabstop>
   <tabstop>_newChar</tabstop>
   <tabstop>_editChar</tabstop>
   <tabstop>_deleteChar</tabstop>
+  <tabstop>_tab</tabstop>
   <tabstop>_reg</tabstop>
   <tabstop>_newReg</tabstop>
-  <tabstop>_deleteReg</tabstop>
   <tabstop>_editReg</tabstop>
+  <tabstop>_deleteReg</tabstop>
   <tabstop>_notes</tabstop>
+  <tabstop>_comments</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
@@ -356,8 +360,8 @@
      <y>32</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>506</x>
+     <y>21</y>
     </hint>
    </hints>
   </connection>
@@ -372,8 +376,8 @@
      <y>317</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>542</x>
-     <y>230</y>
+     <x>565</x>
+     <y>210</y>
     </hint>
    </hints>
   </connection>
@@ -388,8 +392,8 @@
      <y>317</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>542</x>
-     <y>254</y>
+     <x>565</x>
+     <y>210</y>
     </hint>
    </hints>
   </connection>
@@ -400,12 +404,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>263</x>
-     <y>317</y>
+     <x>458</x>
+     <y>307</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>542</x>
-     <y>230</y>
+     <x>568</x>
+     <y>216</y>
     </hint>
    </hints>
   </connection>
@@ -416,12 +420,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>263</x>
-     <y>317</y>
+     <x>471</x>
+     <y>324</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>542</x>
-     <y>254</y>
+     <x>588</x>
+     <y>251</y>
     </hint>
    </hints>
   </connection>
@@ -436,8 +440,8 @@
      <y>126</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>377</x>
-     <y>449</y>
+     <x>110</x>
+     <y>201</y>
     </hint>
    </hints>
   </connection>
@@ -448,11 +452,11 @@
    <slot>setItemId(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>196</x>
+     <x>215</x>
      <y>50</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>208</x>
+     <x>215</x>
      <y>113</y>
     </hint>
    </hints>
@@ -464,12 +468,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>198</x>
-     <y>118</y>
+     <x>306</x>
+     <y>103</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>568</x>
-     <y>51</y>
+     <x>597</x>
+     <y>44</y>
     </hint>
    </hints>
   </connection>
@@ -480,12 +484,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>158</x>
+     <x>294</x>
      <y>122</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>522</x>
-     <y>206</y>
+     <x>529</x>
+     <y>182</y>
     </hint>
    </hints>
   </connection>
@@ -500,24 +504,24 @@
      <y>110</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>519</x>
-     <y>204</y>
+     <x>565</x>
+     <y>210</y>
     </hint>
    </hints>
   </connection>
   <connection>
    <sender>_reg</sender>
-   <signal>newId(int)</signal>
+   <signal>itemDoubleClicked(QTreeWidgetItem*,int)</signal>
    <receiver>_editReg</receiver>
    <slot>animateClick()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>442</x>
-     <y>241</y>
+     <x>472</x>
+     <y>289</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>533</x>
-     <y>235</y>
+     <x>549</x>
+     <y>218</y>
     </hint>
    </hints>
   </connection>

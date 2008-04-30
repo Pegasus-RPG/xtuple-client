@@ -5,378 +5,458 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>650</width>
-    <height>584</height>
+    <width>670</width>
+    <height>689</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Lot Serial Registration</string>
   </property>
   <widget class="QWidget" name="centralwidget" >
-   <layout class="QGridLayout" >
-    <item row="0" column="0" colspan="6" >
-     <widget class="formControl" name="_control" >
-      <property name="tableName" >
-       <string>lsreg</string>
-      </property>
-      <property name="mode" >
-       <enum>formControl::Edit</enum>
-      </property>
-     </widget>
+   <layout class="QVBoxLayout" >
+    <item>
+     <layout class="QHBoxLayout" >
+      <item>
+       <layout class="QVBoxLayout" >
+        <property name="spacing" >
+         <number>0</number>
+        </property>
+        <item>
+         <layout class="QHBoxLayout" >
+          <item>
+           <widget class="QLabel" name="_numberLit" >
+            <property name="text" >
+             <string>Registration #:</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="buddy" >
+             <cstring>_regNumber</cstring>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="XLineEdit" name="_regNumber" >
+            <property name="fieldName" >
+             <string>lsreg_number</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="_typeLit" >
+            <property name="text" >
+             <string>Type:</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="buddy" >
+             <cstring>_type</cstring>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="XComboBox" name="_type" >
+            <property name="type" >
+             <enum>XComboBox::RegistrationTypes</enum>
+            </property>
+            <property name="fieldName" >
+             <string>lsreg_regtype_id</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>21</width>
+              <height>25</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" >
+        <item>
+         <widget class="QPushButton" name="_cancel" >
+          <property name="text" >
+           <string>&amp;Cancel</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="_save" >
+          <property name="text" >
+           <string>&amp;Save</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+     </layout>
     </item>
-    <item row="1" column="0" >
-     <widget class="QLabel" name="_numberLit" >
-      <property name="text" >
-       <string>Registration #:</string>
-      </property>
-      <property name="alignment" >
-       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="1" >
-     <widget class="XLineEdit" name="_regNumber" >
-      <property name="fieldName" >
-       <string>lsreg_number</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="2" >
-     <widget class="QLabel" name="_typeLit" >
-      <property name="text" >
-       <string>Type:</string>
-      </property>
-      <property name="alignment" >
-       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-      </property>
-      <property name="buddy" >
-       <cstring>_type</cstring>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="3" colspan="2" >
-     <widget class="XComboBox" name="_type" >
-      <property name="type" >
-       <enum>XComboBox::RegistrationTypes</enum>
-      </property>
-      <property name="fieldName" >
-       <string>lsreg_regtype_id</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="5" >
-     <spacer>
-      <property name="orientation" >
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeHint" >
-       <size>
-        <width>261</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item row="2" column="0" colspan="4" >
-     <widget class="QGroupBox" name="_itemGroup" >
-      <property name="title" >
-       <string/>
-      </property>
-      <layout class="QGridLayout" >
-       <item row="0" column="0" colspan="3" >
-        <widget class="ItemCluster" name="_item" >
-         <property name="focusPolicy" >
-          <enum>Qt::TabFocus</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0" >
-        <widget class="LotserialCluster" name="_lotSerial" >
-         <property name="focusPolicy" >
-          <enum>Qt::StrongFocus</enum>
-         </property>
-         <property name="label" >
-          <string>  Lot/Serial #:</string>
-         </property>
-         <property name="infoVisible" >
-          <bool>false</bool>
-         </property>
-         <property name="fieldName" >
-          <string>lsreg_ls_id</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1" >
-        <layout class="QVBoxLayout" >
-         <item>
-          <layout class="QHBoxLayout" >
+    <item>
+     <layout class="QGridLayout" >
+      <item row="0" column="0" >
+       <widget class="QGroupBox" name="_itemGroup" >
+        <property name="title" >
+         <string/>
+        </property>
+        <layout class="QGridLayout" >
+         <item row="0" column="0" colspan="3" >
+          <widget class="ItemCluster" name="_item" >
+           <property name="focusPolicy" >
+            <enum>Qt::StrongFocus</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" >
+          <widget class="LotserialCluster" name="_lotSerial" >
+           <property name="focusPolicy" >
+            <enum>Qt::StrongFocus</enum>
+           </property>
+           <property name="label" >
+            <string>  Lot/Serial #:</string>
+           </property>
+           <property name="infoVisible" >
+            <bool>false</bool>
+           </property>
+           <property name="fieldName" >
+            <string>lsreg_ls_id</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1" >
+          <layout class="QVBoxLayout" >
            <item>
-            <widget class="QLabel" name="_qty" >
+            <layout class="QHBoxLayout" >
+             <item>
+              <widget class="QLabel" name="_qtyLit" >
+               <property name="text" >
+                <string>Qty:</string>
+               </property>
+               <property name="alignment" >
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+               <property name="buddy" >
+                <cstring>_qty</cstring>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="XLineEdit" name="_qty" >
+               <property name="fieldName" >
+                <string>lsreg_qty</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" >
+              <size>
+               <width>20</width>
+               <height>16</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item row="1" column="2" >
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>0</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="0" column="1" >
+       <widget class="QGroupBox" name="_dateGroup" >
+        <property name="title" >
+         <string/>
+        </property>
+        <layout class="QGridLayout" >
+         <item row="0" column="0" >
+          <widget class="QLabel" name="_regDateLit" >
+           <property name="text" >
+            <string>Register Date:</string>
+           </property>
+           <property name="alignment" >
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+           <property name="buddy" >
+            <cstring>_regDate</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" >
+          <widget class="QLabel" name="_soldDateLit" >
+           <property name="text" >
+            <string>Sold Date:</string>
+           </property>
+           <property name="alignment" >
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+           <property name="buddy" >
+            <cstring>_soldDate</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1" >
+          <widget class="DLineEdit" name="_soldDate" >
+           <property name="toolTip" >
+            <string>sold_date</string>
+           </property>
+           <property name="fieldName" >
+            <string>lsreg_solddate</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2" >
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="2" column="0" >
+          <widget class="QLabel" name="_expireDateLit" >
+           <property name="text" >
+            <string>Expire Date:</string>
+           </property>
+           <property name="alignment" >
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+           <property name="buddy" >
+            <cstring>_expireDate</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1" >
+          <widget class="DLineEdit" name="_expireDate" >
+           <property name="toolTip" >
+            <string>expire_date</string>
+           </property>
+           <property name="date" >
+            <date>
+             <year>2000</year>
+             <month>1</month>
+             <day>1</day>
+            </date>
+           </property>
+           <property name="fieldName" >
+            <string>lsreg_expiredate</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1" >
+          <widget class="DLineEdit" name="_regDate" >
+           <property name="toolTip" >
+            <string>register_date</string>
+           </property>
+           <property name="fieldName" >
+            <string>lsreg_regdate</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="1" column="0" >
+       <widget class="QGroupBox" name="_crmaccntGroup" >
+        <property name="title" >
+         <string/>
+        </property>
+        <layout class="QGridLayout" >
+         <item row="0" column="0" >
+          <widget class="CRMAcctCluster" name="_crmacct" >
+           <property name="focusPolicy" >
+            <enum>Qt::StrongFocus</enum>
+           </property>
+           <property name="label" >
+            <string>CRM Account:</string>
+           </property>
+           <property name="fieldName" >
+            <string>lsreg_crmacct_id</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="1" column="1" >
+       <widget class="QGroupBox" name="_orderGroup" >
+        <property name="title" >
+         <string/>
+        </property>
+        <layout class="QGridLayout" >
+         <item row="0" column="0" >
+          <layout class="QVBoxLayout" >
+           <property name="topMargin" >
+            <number>7</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="_soLit" >
              <property name="text" >
-              <string>Qty:</string>
+              <string>Sales Order #:</string>
              </property>
              <property name="alignment" >
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="XLineEdit" name="xlineEdit" >
-             <property name="fieldName" >
-              <string>lsreg_qty</string>
+             <property name="buddy" >
+              <cstring>_so</cstring>
              </property>
             </widget>
            </item>
+           <item>
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" >
+              <size>
+               <width>20</width>
+               <height>0</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
           </layout>
          </item>
-         <item>
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" >
+         <item row="0" column="1" >
+          <widget class="SoCluster" name="_so" >
+           <property name="minimumSize" >
             <size>
-             <width>20</width>
-             <height>16</height>
+             <width>140</width>
+             <height>0</height>
             </size>
            </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
-       <item row="1" column="2" >
-        <spacer>
-         <property name="orientation" >
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" >
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="2" column="4" colspan="2" >
-     <widget class="QGroupBox" name="_dateGroup" >
-      <property name="title" >
-       <string/>
-      </property>
-      <layout class="QGridLayout" >
-       <item row="0" column="0" >
-        <widget class="QLabel" name="_regDateLit" >
-         <property name="text" >
-          <string>Register Date:</string>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0" >
-        <widget class="QLabel" name="_soldDateLit" >
-         <property name="text" >
-          <string>Sold Date:</string>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1" >
-        <widget class="DLineEdit" name="_soldDate" >
-         <property name="toolTip" >
-          <string>sold_date</string>
-         </property>
-         <property name="fieldName" >
-          <string>lsreg_solddate</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="2" >
-        <spacer>
-         <property name="orientation" >
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" >
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="2" column="0" >
-        <widget class="QLabel" name="_expireDateLit" >
-         <property name="text" >
-          <string>Expire Date:</string>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1" >
-        <widget class="DLineEdit" name="_expireDate" >
-         <property name="toolTip" >
-          <string>expire_date</string>
-         </property>
-         <property name="date" >
-          <date>
-           <year>2000</year>
-           <month>1</month>
-           <day>1</day>
-          </date>
-         </property>
-         <property name="fieldName" >
-          <string>lsreg_expiredate</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1" >
-        <widget class="DLineEdit" name="_regDate" >
-         <property name="toolTip" >
-          <string>register_date</string>
-         </property>
-         <property name="fieldName" >
-          <string>lsreg_regdate</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="3" column="0" colspan="4" >
-     <widget class="QGroupBox" name="_crmaccntGroup" >
-      <property name="title" >
-       <string/>
-      </property>
-      <layout class="QGridLayout" >
-       <item row="0" column="0" >
-        <widget class="CRMAcctCluster" name="_crmacct" >
-         <property name="focusPolicy" >
-          <enum>Qt::StrongFocus</enum>
-         </property>
-         <property name="label" >
-          <string>CRM Account:</string>
-         </property>
-         <property name="fieldName" >
-          <string>lsreg_crmacct_id</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="3" column="4" colspan="2" >
-     <widget class="QGroupBox" name="_orderGroup" >
-      <property name="title" >
-       <string/>
-      </property>
-      <layout class="QGridLayout" >
-       <item row="0" column="0" >
-        <layout class="QVBoxLayout" >
-         <property name="topMargin" >
-          <number>7</number>
-         </property>
-         <item>
-          <widget class="QLabel" name="_soLit" >
-           <property name="text" >
-            <string>Sales Order #:</string>
+           <property name="focusPolicy" >
+            <enum>Qt::StrongFocus</enum>
            </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           <property name="label" >
+            <string/>
+           </property>
+           <property name="fieldName" >
+            <string>lsreg_cohead_id</string>
            </property>
           </widget>
          </item>
-         <item>
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Vertical</enum>
+         <item row="1" column="0" >
+          <layout class="QVBoxLayout" >
+           <property name="topMargin" >
+            <number>3</number>
            </property>
-           <property name="sizeHint" >
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
+           <item>
+            <widget class="QLabel" name="_shipmentLit" >
+             <property name="text" >
+              <string>Shipment #:</string>
+             </property>
+             <property name="alignment" >
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <property name="buddy" >
+              <cstring>_shipment</cstring>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" >
+              <size>
+               <width>20</width>
+               <height>0</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
          </item>
-        </layout>
-       </item>
-       <item row="0" column="1" >
-        <widget class="SoCluster" name="_so" >
-         <property name="minimumSize" >
-          <size>
-           <width>140</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="focusPolicy" >
-          <enum>Qt::StrongFocus</enum>
-         </property>
-         <property name="label" >
-          <string/>
-         </property>
-         <property name="fieldName" >
-          <string>lsreg_cohead_id</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0" >
-        <layout class="QVBoxLayout" >
-         <property name="topMargin" >
-          <number>3</number>
-         </property>
-         <item>
-          <widget class="QLabel" name="_shipmentLit" >
-           <property name="text" >
-            <string>Shipment #:</string>
+         <item row="1" column="1" >
+          <widget class="ShipmentCluster" name="_shipment" >
+           <property name="focusPolicy" >
+            <enum>Qt::StrongFocus</enum>
            </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           <property name="infoVisible" >
+            <bool>false</bool>
+           </property>
+           <property name="nameVisible" >
+            <bool>true</bool>
+           </property>
+           <property name="fieldName" >
+            <string>lsreg_shiphead_id</string>
            </property>
           </widget>
          </item>
-         <item>
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" >
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
         </layout>
-       </item>
-       <item row="1" column="1" >
-        <widget class="ShipmentCluster" name="_shipment" >
-         <property name="focusPolicy" >
-          <enum>Qt::StrongFocus</enum>
-         </property>
-         <property name="infoVisible" >
-          <bool>false</bool>
-         </property>
-         <property name="nameVisible" >
-          <bool>true</bool>
-         </property>
-         <property name="fieldName" >
-          <string>lsreg_shiphead_id</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
+       </widget>
+      </item>
+     </layout>
     </item>
-    <item row="4" column="0" colspan="6" >
+    <item>
      <widget class="QTabWidget" name="_tab" >
+      <property name="sizePolicy" >
+       <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+        <horstretch>0</horstretch>
+        <verstretch>1</verstretch>
+       </sizepolicy>
+      </property>
       <property name="currentIndex" >
        <number>0</number>
       </property>
@@ -515,7 +595,7 @@
   </customwidget>
   <customwidget>
    <class>DLineEdit</class>
-   <extends>XLineEdit</extends>
+   <extends>QWidget</extends>
    <header>datecluster.h</header>
    <container>1</container>
   </customwidget>
@@ -560,31 +640,28 @@
    <extends>QTextEdit</extends>
    <header>xtextedit.h</header>
   </customwidget>
-  <customwidget>
-   <class>formControl</class>
-   <extends>QWidget</extends>
-   <header>formcontrol.h</header>
-  </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>_regNumber</tabstop>
   <tabstop>_type</tabstop>
   <tabstop>_item</tabstop>
   <tabstop>_lotSerial</tabstop>
-  <tabstop>xlineEdit</tabstop>
+  <tabstop>_qty</tabstop>
   <tabstop>_regDate</tabstop>
   <tabstop>_soldDate</tabstop>
   <tabstop>_expireDate</tabstop>
   <tabstop>_crmacct</tabstop>
   <tabstop>_so</tabstop>
   <tabstop>_shipment</tabstop>
-  <tabstop>_tab</tabstop>
   <tabstop>_cntct</tabstop>
+  <tabstop>_tab</tabstop>
   <tabstop>_charass</tabstop>
   <tabstop>_newChar</tabstop>
   <tabstop>_editChar</tabstop>
   <tabstop>_deleteChar</tabstop>
   <tabstop>_notes</tabstop>
+  <tabstop>_save</tabstop>
+  <tabstop>_cancel</tabstop>
  </tabstops>
  <resources/>
  <connections>
@@ -595,12 +672,12 @@
    <slot>setAccount(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>172</x>
-     <y>228</y>
+     <x>214</x>
+     <y>358</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>179</x>
-     <y>391</y>
+     <x>190</x>
+     <y>645</y>
     </hint>
    </hints>
   </connection>
@@ -611,8 +688,8 @@
    <slot>setItemId(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>237</x>
-     <y>96</y>
+     <x>279</x>
+     <y>156</y>
     </hint>
     <hint type="destinationlabel" >
      <x>208</x>
@@ -627,220 +704,12 @@
    <slot>limitToOrder(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>630</x>
-     <y>266</y>
+     <x>714</x>
+     <y>298</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>630</x>
-     <y>335</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_control</sender>
-   <signal>newDataWidgetMapper(XDataWidgetMapper*)</signal>
-   <receiver>_regNumber</receiver>
-   <slot>setDataWidgetMap(XDataWidgetMapper*)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>95</x>
-     <y>27</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>184</x>
-     <y>78</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_control</sender>
-   <signal>newDataWidgetMapper(XDataWidgetMapper*)</signal>
-   <receiver>_item</receiver>
-   <slot>setDataWidgetMap(XDataWidgetMapper*)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>109</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>116</x>
-     <y>97</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_control</sender>
-   <signal>newDataWidgetMapper(XDataWidgetMapper*)</signal>
-   <receiver>_lotSerial</receiver>
-   <slot>setDataWidgetMap(XDataWidgetMapper*)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>136</x>
-     <y>26</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>137</x>
-     <y>172</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_control</sender>
-   <signal>newDataWidgetMapper(XDataWidgetMapper*)</signal>
-   <receiver>_cntct</receiver>
-   <slot>setDataWidgetMap(XDataWidgetMapper*)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>151</x>
-     <y>31</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>158</x>
-     <y>403</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_control</sender>
-   <signal>newDataWidgetMapper(XDataWidgetMapper*)</signal>
-   <receiver>_type</receiver>
-   <slot>setDataWidgetMap(XDataWidgetMapper*)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>391</x>
-     <y>26</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>422</x>
-     <y>78</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_control</sender>
-   <signal>newDataWidgetMapper(XDataWidgetMapper*)</signal>
-   <receiver>_regDate</receiver>
-   <slot>setDataWidgetMap(XDataWidgetMapper*)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>510</x>
-     <y>37</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>577</x>
-     <y>122</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_control</sender>
-   <signal>newDataWidgetMapper(XDataWidgetMapper*)</signal>
-   <receiver>_soldDate</receiver>
-   <slot>setDataWidgetMap(XDataWidgetMapper*)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>542</x>
-     <y>31</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>577</x>
-     <y>156</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_control</sender>
-   <signal>newDataWidgetMapper(XDataWidgetMapper*)</signal>
-   <receiver>_expireDate</receiver>
-   <slot>setDataWidgetMap(XDataWidgetMapper*)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>562</x>
-     <y>30</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>577</x>
-     <y>190</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_control</sender>
-   <signal>newDataWidgetMapper(XDataWidgetMapper*)</signal>
-   <receiver>_so</receiver>
-   <slot>setDataWidgetMap(XDataWidgetMapper*)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>574</x>
-     <y>27</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>630</x>
-     <y>266</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_control</sender>
-   <signal>newDataWidgetMapper(XDataWidgetMapper*)</signal>
-   <receiver>_shipment</receiver>
-   <slot>setDataWidgetMap(XDataWidgetMapper*)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>598</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>602</x>
-     <y>276</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_control</sender>
-   <signal>newDataWidgetMapper(XDataWidgetMapper*)</signal>
-   <receiver>_notes</receiver>
-   <slot>setDataWidgetMap(XDataWidgetMapper*)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>151</x>
-     <y>25</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>147</x>
-     <y>521</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_control</sender>
-   <signal>newDataWidgetMapper(XDataWidgetMapper*)</signal>
-   <receiver>_crmacct</receiver>
-   <slot>setDataWidgetMap(XDataWidgetMapper*)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>194</x>
-     <y>27</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>180</x>
-     <y>229</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_control</sender>
-   <signal>saveClicked()</signal>
-   <receiver>_cntct</receiver>
-   <slot>save()</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>329</x>
-     <y>17</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>335</x>
-     <y>416</y>
+     <x>714</x>
+     <y>358</y>
     </hint>
    </hints>
   </connection>
@@ -851,8 +720,8 @@
    <slot>setId(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>208</x>
-     <y>198</y>
+     <x>351</x>
+     <y>214</y>
     </hint>
     <hint type="destinationlabel" >
      <x>310</x>
@@ -861,18 +730,50 @@
    </hints>
   </connection>
   <connection>
-   <sender>_control</sender>
-   <signal>newDataWidgetMapper(XDataWidgetMapper*)</signal>
-   <receiver>xlineEdit</receiver>
-   <slot>setDataWidgetMap(XDataWidgetMapper*)</slot>
+   <sender>_charass</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_editChar</receiver>
+   <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>272</x>
-     <y>29</y>
+     <x>581</x>
+     <y>513</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>272</x>
-     <y>164</y>
+     <x>714</x>
+     <y>508</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_charass</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_deleteChar</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>616</x>
+     <y>541</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>714</x>
+     <y>535</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_cancel</sender>
+   <signal>clicked()</signal>
+   <receiver>lotSerialRegistration</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>674</x>
+     <y>22</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>617</x>
+     <y>27</y>
     </hint>
    </hints>
   </connection>

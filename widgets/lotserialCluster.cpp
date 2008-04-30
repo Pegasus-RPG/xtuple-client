@@ -100,6 +100,7 @@ LotserialLineEdit::LotserialLineEdit(QWidget* pParent, const char* pName) :
     setTitles(tr("Lot/Serial Number"), tr("Lot/Serial Numbers"));
     _query = QString("SELECT ls_id AS id, "
                      "       ls_number AS number, "
+                     "       item_id,"
                      "       item_number AS name, "
                      "       ls_notes AS description "
                      "FROM ls, item "
@@ -157,6 +158,19 @@ void LotserialLineEdit::clear()
   VirtualClusterLineEdit::clear();
 }
 
+void LotserialLineEdit::setId(const int lsid)
+{
+  VirtualClusterLineEdit::setId(lsid);
+  XSqlQuery qq;
+  qq.prepare("SELECT ls_item_id"
+             "  FROM ls"
+             " WHERE(ls_id=:id);");
+  qq.bindValue(":id", id());
+  qq.exec();
+  if(qq.first())
+    emit newItemId(qq.value("ls_item_id").toInt());
+}
+
 /* copied from virtualCluster.cpp but with one important difference:
    if a not-strict flag is set then warn the user but don't clear the
    lotserial field
@@ -181,7 +195,7 @@ void LotserialLineEdit::sParse()
                 _valid = true;
                 setId(numQ.value("id").toInt());
                 _name = (numQ.value("name").toString());
-                _itemid = (numQ.value("description").toInt());
+                _itemid = (numQ.value("item_id").toInt());
             }
             else if (numQ.lastError().type() != QSqlError::None)
             {

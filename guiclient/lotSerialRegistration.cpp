@@ -76,29 +76,17 @@ lotSerialRegistration::lotSerialRegistration(QWidget* parent, const char* name, 
 {
   setupUi(this);
 
+  _lsregid = -1;
+
   // signals and slots connections
-  /*
   connect(_save,	SIGNAL(clicked()),	this,	SLOT(sSave()));
+  connect(_soldDate, SIGNAL(newDate(const QDate&)), this, SLOT(sDateUpdated()));
  
   _lotSerial->setStrict(true);
   _cntct->setAccountVisible(FALSE);
   _cntct->setActiveVisible(FALSE);
 
-  _model.setTable("api.lotserialreg");
-  _mapper.setSqlTableModel(&_model);
-  _regNumber->setDataWidgetMap(&_mapper);
-  _type->setDataWidgetMap(&_mapper);
-  _regDate->setDataWidgetMap(&_mapper);
-  _soldDate->setDataWidgetMap(&_mapper);
-  _expireDate->setDataWidgetMap(&_mapper);
-  _item->setDataWidgetMap(&_mapper);
-  _lotSerial->setDataWidgetMap(&_mapper);
-  _crmacct->setDataWidgetMap(&_mapper);
-  _so->setDataWidgetMap(&_mapper);
-  _shipment->setDataWidgetMap(&_mapper);
-  _cntct->setDataWidgetMap(&_mapper);
-  _notes->setDataWidgetMap(&_mapper);
-  resize(minimumSize()); */
+  resize(minimumSize());
 }
 
 /*
@@ -106,7 +94,7 @@ lotSerialRegistration::lotSerialRegistration(QWidget* parent, const char* name, 
  */
 lotSerialRegistration::~lotSerialRegistration()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 /*
@@ -115,7 +103,7 @@ lotSerialRegistration::~lotSerialRegistration()
  */
 void lotSerialRegistration::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 enum SetResponse lotSerialRegistration::set(const ParameterList &pParams)
@@ -137,14 +125,16 @@ enum SetResponse lotSerialRegistration::set(const ParameterList &pParams)
     _mode = cNew;
 
     if (param.toString() == "new")
-      sNew();
+      _mode = cNew;
     else if (param.toString() == "edit")
-      sEdit();
-
+    {
+      _mode = cEdit;
+      populate();
+      _save->setFocus();
+    }
     else if (param.toString() == "view")
     {
       _mode = cView;
-/*
       _regDate->setEnabled(false);
       _soldDate->setEnabled(false);
       _expireDate->setEnabled(false);
@@ -159,7 +149,7 @@ enum SetResponse lotSerialRegistration::set(const ParameterList &pParams)
       _notes->setEnabled(false);
       _save->hide();
       _cancel->setText(tr("&Close"));
-      _cancel->setFocus();*/
+      _cancel->setFocus();
     }
   }
 
@@ -215,32 +205,128 @@ void lotSerialRegistration::sDeleteCharass()
 
 void lotSerialRegistration::sFillList()
 {
+  // TODO
 }
 
-void lotSerialRegistration::sNew()
+void lotSerialRegistration::populate()
 {
-}
-
-void lotSerialRegistration::sEdit()
-{
-  _mode = cEdit;
- /* _save->setFocus();
-  
-  _model.setFilter("registration_number ~ '" + _number + "'");
-  _model.select();  
-  _mapper.toFirst(); */
+  q.prepare("SELECT *"
+            "  FROM lsreg LEFT OUTER JOIN ls ON (lsreg_ls_id=ls_id)"
+            " WHERE(lsreg_number=:number);");
+  q.bindValue(":number", _number);
+  q.exec();
+  if(q.first())
+  {
+    _lsregid = q.value("lsreg_id").toInt();
+    _regNumber->setText(q.value("lsreg_number").toString());
+    _type->setId(q.value("lsreg_regtype_id").toInt());
+    _lotSerial->setId(q.value("lsreg_ls_id").toInt());
+    _qty->setText(q.value("lsreg_qty").toString());
+    _item->setId(q.value("ls_item_id").toInt());
+    _regDate->setDate(q.value("lsreg_regdate").toDate());
+    _soldDate->setDate(q.value("lsreg_solddate").toDate());
+    _expireDate->setDate(q.value("lsreg_expiredate").toDate());
+    _crmacct->setId(q.value("lsreg_crmacct_id").toInt());
+    _cntct->setId(q.value("lsreg_cntct_id").toInt());
+    _notes->setText(q.value("lsreg_notes").toString());
+    if(!q.value("lsreg_cohead_id").isNull())
+      _so->setId(q.value("lsreg_cohead_id").toInt());
+    if(!q.value("lsreg_shiphead_id").isNull())
+      _shipment->setId(q.value("lsreg_shiphead_id").toInt());
+  }
+  else if(q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void lotSerialRegistration::sSave()
-{ /*
-  _mapper.submit();
-  _model.submitAll();
-  accept(); */
-}
-
-void lotSerialRegistration::sUndo()
 {
- // _mapper.revert();
+  if(cView == _mode)
+    return;
+
+  // TODO: Add any error checking that is necessary here
+
+  if(cNew == _mode)
+  {
+    q.exec("SELECT NEXTVAL('lsreg_lsreg_id_seq') AS _lsreg_id;");
+    if (q.first())
+      _lsregid = q.value("_lsreg_id").toInt();
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+    q.prepare("INSERT INTO lsreg"
+              "      (lsreg_id, lsreg_number, lsreg_regtype_id,"
+              "       lsreg_ls_id, lsreg_qty, lsreg_regdate, lsreg_solddate,"
+              "       lsreg_expiredate, lsreg_crmacct_id, lsreg_cntct_id,"
+              "       lsreg_notes, lsreg_cohead_id, lsreg_shiphead_id) "
+              "VALUES(:lsreg_id, :lsreg_number, :lsreg_regtype_id,"
+              "       :lsreg_ls_id, :lsreg_qty, :lsreg_regdate, :lsreg_solddate,"
+              "       :lsreg_expiredate, :lsreg_crmacct_id, :lsreg_cntct_id,"
+              "       :lsreg_notes, :lsreg_cohead_id, :lsreg_shiphead_id);");
+  }
+  else if(cEdit == _mode)
+    q.prepare("UPDATE lsreg"
+              "   SET lsreg_number=:lsreg_number,"
+              "       lsreg_regtype_id=:lsreg_regtype_id,"
+              "       lsreg_ls_id=:lsreg_ls_id,"
+              "       lsreg_qty=:lsreg_qty,"
+              "       lsreg_regdate=:lsreg_regdate,"
+              "       lsreg_solddate=:lsreg_solddate,"
+              "       lsreg_expiredate=:lsreg_expiredate,"
+              "       lsreg_crmacct_id=:lsreg_crmacct_id,"
+              "       lsreg_cntct_id=:lsreg_cntct_id,"
+              "       lsreg_notes=:lsreg_notes,"
+              "       lsreg_cohead_id=:lsreg_cohead_id,"
+              "       lsreg_shiphead_id=:lsreg_shiphead_id"
+              " WHERE(lsreg_id=:lsreg_id);");
+  
+  q.bindValue(":lsreg_id", _lsregid);
+  q.bindValue(":lsreg_number", _regNumber->text().stripWhiteSpace());
+  q.bindValue(":lsreg_regtype_id", _type->id());
+  q.bindValue(":lsreg_ls_id", _lotSerial->id());
+  q.bindValue(":lsreg_qty", _qty->toDouble());
+  q.bindValue(":lsreg_regdate", _regDate->date());
+  q.bindValue(":lsreg_solddate", _soldDate->date());
+  q.bindValue(":lsreg_expiredate", _expireDate->date());
+  q.bindValue(":lsreg_crmacct_id", _crmacct->id());
+  q.bindValue(":lsreg_cntct_id", _cntct->id());
+  q.bindValue(":lsreg_notes", _notes->text());
+  if(_so->id() != -1)
+    q.bindValue(":lsreg_cohead_id", _so->id());
+  if(_shipment->id() != -1)
+    q.bindValue(":lsreg_shiphead_id", _shipment->id());
+
+  q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
+  close();
 }
 
+void lotSerialRegistration::sDateUpdated()
+{
+  if(cView == _mode)
+    return;
 
+  QDate date = _soldDate->date();
+  if(date.isNull())
+    return;
+
+  q.prepare("SELECT item_warrdays"
+            "  FROM item"
+            " WHERE(item_id=:item_id);");
+  q.bindValue(":item_id", _item->id());
+  q.exec();
+  if(q.first())
+  {
+    date.addDays(q.value("item_warrdays").toInt());
+    _expireDate->setDate(date);
+  }
+}
