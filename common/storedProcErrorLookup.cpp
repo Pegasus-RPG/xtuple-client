@@ -932,6 +932,9 @@ void initErrorLookupHash()
 			-2, TR("Cannot release this Billing Header because it "
 			       "has Line Items."), 		0, "" },
 
+  { "relocateInventory", -1, TR("You cannot Relocate more inventory than is "
+                                "available."),                  0, "" },
+
   { "replaceAllVoidedChecks", -1, "", -1, "replaceVoidedCheck" },
 
   { "replaceVoidedCheck", -1, TR("Cannot replace this voided check because "

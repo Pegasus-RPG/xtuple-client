@@ -87,7 +87,8 @@ dspInventoryHistoryByParameterList::dspInventoryHistoryByParameterList(QWidget* 
   connect(_invhist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
 
   _invhist->setRootIsDecorated(TRUE);
-  _invhist->addColumn(tr("Time"),        (_dateColumn + 50), Qt::AlignLeft   );
+  _invhist->addColumn(tr("Transaction Time"),_timeDateColumn, Qt::AlignLeft  );
+  _invhist->addColumn(tr("Created Time"),    _timeDateColumn, Qt::AlignLeft  );
   _invhist->addColumn(tr("User"),        _orderColumn,       Qt::AlignCenter );
   _invhist->addColumn(tr("Type"),        _transColumn,       Qt::AlignCenter );
   _invhist->addColumn(tr("Whs."),        _whsColumn,         Qt::AlignCenter );
@@ -455,7 +456,8 @@ void dspInventoryHistoryByParameterList::sFillList()
         parentItem = new XTreeWidgetItem( _invhist, parentItem,
 					  q.value("invhist_id").toInt(),
 					  q.value("invdetail_id").toInt(),
-					  q.value("transdate"),
+					  q.value("invhist_transdate"),
+					  q.value("invhist_created"),
 					  q.value("invhist_user"),
 					  q.value("invhist_transtype"),
 					  q.value("warehous_code"),
@@ -466,10 +468,10 @@ void dspInventoryHistoryByParameterList::sFillList()
 
         if (q.value("invhist_posted").toBool())
         {
-          parentItem->setText( 8, q.value("locfrom").toString());
-          parentItem->setText( 9, q.value("qohbefore").toString());
-          parentItem->setText(10, q.value("locto").toString());
-          parentItem->setText(11, q.value("qohafter").toString());
+          parentItem->setText( 9, q.value("locfrom").toString());
+          parentItem->setText(10, q.value("qohbefore").toString());
+          parentItem->setText(11, q.value("locto").toString());
+          parentItem->setText(12, q.value("qohafter").toString());
         }
         else
           parentItem->setTextColor("orange");
@@ -485,8 +487,8 @@ void dspInventoryHistoryByParameterList::sFillList()
 
         if (q.value("invhist_posted").toBool())
         {
-          child->setText( 9, q.value("locationqtybefore").toString());
-          child->setText(11, q.value("locationqtyafter").toString());
+          child->setText(10, q.value("locationqtybefore").toString());
+          child->setText(12, q.value("locationqtyafter").toString());
         }
         else
           child->setTextColor("orange");

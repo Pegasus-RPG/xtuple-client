@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>671</width>
-    <height>461</height>
+    <width>467</width>
+    <height>510</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -14,38 +14,14 @@
   </property>
   <widget class="QWidget" name="widget" >
    <layout class="QVBoxLayout" >
-    <property name="spacing" >
-     <number>5</number>
-    </property>
-    <property name="leftMargin" >
-     <number>5</number>
-    </property>
-    <property name="topMargin" >
-     <number>5</number>
-    </property>
-    <property name="rightMargin" >
-     <number>5</number>
-    </property>
-    <property name="bottomMargin" >
-     <number>5</number>
-    </property>
     <item>
      <layout class="QHBoxLayout" >
-      <property name="spacing" >
-       <number>5</number>
-      </property>
       <item>
        <layout class="QVBoxLayout" >
-        <property name="spacing" >
-         <number>5</number>
-        </property>
         <item>
          <layout class="QHBoxLayout" >
-          <property name="spacing" >
-           <number>5</number>
-          </property>
           <item>
-           <widget class="QLabel" name="lblTransactionDateLit" >
+           <widget class="QLabel" name="_transDateLit" >
             <property name="text" >
              <string>Transaction Date:</string>
             </property>
@@ -55,25 +31,14 @@
            </widget>
           </item>
           <item>
-           <layout class="QHBoxLayout" >
-            <property name="spacing" >
-             <number>7</number>
+           <widget class="DLineEdit" name="_transDate" />
+          </item>
+          <item>
+           <widget class="QLabel" name="_usernameLit" >
+            <property name="text" >
+             <string>Username:</string>
             </property>
-            <item>
-             <widget class="DLineEdit" name="_transDate" >
-              <property name="enabled" >
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="_usernameLit" >
-              <property name="text" >
-               <string>Username:</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
+           </widget>
           </item>
           <item>
            <widget class="QLabel" name="_username" >
@@ -257,12 +222,6 @@
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
-            </property>
-            <property name="maximumSize" >
-             <size>
-              <width>80</width>
-              <height>32767</height>
-             </size>
             </property>
             <property name="alignment" >
              <set>Qt::AlignRight</set>
@@ -495,13 +454,14 @@
  <customwidgets>
   <customwidget>
    <class>DLineEdit</class>
-   <extends>XLineEdit</extends>
+   <extends>QWidget</extends>
    <header>datecluster.h</header>
   </customwidget>
   <customwidget>
    <class>ItemCluster</class>
    <extends>QWidget</extends>
    <header>itemcluster.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>WComboBox</class>
@@ -531,7 +491,6 @@
   <tabstop>_post</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
- <includes/>
  <resources/>
  <connections>
   <connection>

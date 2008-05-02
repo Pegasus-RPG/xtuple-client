@@ -6,11 +6,11 @@
     <x>0</x>
     <y>0</y>
     <width>486</width>
-    <height>413</height>
+    <height>425</height>
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Scrap Transaction</string>
+   <string>Expense Transaction</string>
   </property>
   <widget class="QWidget" name="widget" >
    <layout class="QVBoxLayout" >
@@ -26,9 +26,6 @@
         </property>
         <item>
          <layout class="QHBoxLayout" >
-          <property name="spacing" >
-           <number>5</number>
-          </property>
           <item>
            <widget class="QLabel" name="_transDateLit" >
             <property name="text" >
@@ -443,7 +440,7 @@
  <customwidgets>
   <customwidget>
    <class>DLineEdit</class>
-   <extends>XLineEdit</extends>
+   <extends>QWidget</extends>
    <header>datecluster.h</header>
   </customwidget>
   <customwidget>
@@ -455,6 +452,7 @@
    <class>ItemCluster</class>
    <extends>QWidget</extends>
    <header>itemcluster.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>WComboBox</class>
@@ -478,7 +476,6 @@
   <tabstop>_post</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
- <includes/>
  <resources/>
  <connections>
   <connection>

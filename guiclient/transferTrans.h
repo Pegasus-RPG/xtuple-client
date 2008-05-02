@@ -71,10 +71,8 @@ public:
     transferTrans(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~transferTrans();
 
-    virtual void init();
-
 public slots:
-    virtual enum SetResponse set( ParameterList & pParams );
+    virtual enum SetResponse set(const ParameterList & pParams );
 
 protected slots:
     virtual void languageChange();

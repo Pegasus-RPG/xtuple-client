@@ -194,7 +194,7 @@ QColor namedColor(QString pName)
 
 QString formatNumber(double value, int decimals)
 {
-   return QString().sprintf("%0.*f", decimals, value);
+   return QLocale().toString(value, 'f', decimals);
 }
 
 /*
@@ -205,7 +205,7 @@ QString formatNumber(double value, int decimals)
 */
 QString formatMoney(double value, int /* curr_id */, int extraDecimals)
 {
-  return QString().sprintf("%0.*f", currvalscale + extraDecimals, value);
+  return QLocale().toString(value, 'f', currvalscale + extraDecimals);
 }
 
 QString formatCost(double value, int /* curr_id */)

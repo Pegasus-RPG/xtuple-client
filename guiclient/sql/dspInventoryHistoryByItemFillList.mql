@@ -1,15 +1,11 @@
-SELECT invhist_id,
-       invhist_transdate, formatDateTime(invhist_transdate) AS transdate,
-       invhist_user, invhist_transtype, whs1.warehous_code AS warehous_code,
+SELECT invhist.*, whs1.warehous_code AS warehous_code,
        formatQty(invhist_invqty) AS transqty,
-       invhist_invuom,
        CASE WHEN (invhist_ordtype NOT LIKE '') THEN
 				  (invhist_ordtype || '-' || invhist_ordnumber)
             ELSE invhist_ordnumber
        END AS ordernumber,
        formatQty(invhist_qoh_before) AS qohbefore,
        formatQty(invhist_qoh_after) AS qohafter,
-       invhist_posted,
        0 AS invdetail_id, '' AS locationname,
        '' AS detailqty,
        '' AS locationqtybefore, '' AS locationqtyafter,
@@ -63,18 +59,14 @@ WHERE ( (NOT invhist_hasdetail)
   AND (itemsite_warehous_id=<? value("warehous_id") ?>)
   <? endif ?>
   ) 
-UNION SELECT invhist_id,
-             invhist_transdate, formatDateTime(invhist_transdate) AS transdate,
-             invhist_user, invhist_transtype, whs1.warehous_code AS warehous_code,
+UNION SELECT invhist.*, whs1.warehous_code AS warehous_code,
              formatQty(invhist_invqty) AS transqty,
-             invhist_invuom,
              CASE WHEN (invhist_ordtype NOT LIKE '') THEN
 				(invhist_ordtype || '-' || invhist_ordnumber)
                   ELSE invhist_ordnumber
              END AS ordernumber,
              formatQty(invhist_qoh_before) AS qohbefore,
              formatQty(invhist_qoh_after) AS qohafter,
-             invhist_posted,
              invdetail_id,
              CASE WHEN (invdetail_location_id=-1) THEN invdetail_lotserial
                   WHEN (invdetail_lotserial IS NULL) THEN formatLocationName(invdetail_location_id)

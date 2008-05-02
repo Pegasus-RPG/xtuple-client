@@ -84,7 +84,8 @@ dspInventoryHistoryByOrderNumber::dspInventoryHistoryByOrderNumber(QWidget* pare
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_invhist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
 
-  _invhist->addColumn(tr("Time"),        (_dateColumn + 30), Qt::AlignLeft   );
+  _invhist->addColumn(tr("Transaction Time"),_timeDateColumn, Qt::AlignLeft   );
+  _invhist->addColumn(tr("Created Time"),    _timeDateColumn, Qt::AlignLeft   );
   _invhist->addColumn(tr("User"),        _orderColumn,       Qt::AlignCenter );
   _invhist->addColumn(tr("Type"),        _transColumn,       Qt::AlignCenter );
   _invhist->addColumn(tr("Whse."),       _whsColumn,         Qt::AlignLeft   );
@@ -242,7 +243,8 @@ void dspInventoryHistoryByOrderNumber::sFillList()
     while (q.next())
     {
       last = new XTreeWidgetItem(_invhist, last, q.value("invhist_id").toInt(),
-                                 q.value("transdate"), q.value("invhist_user"),
+                                 q.value("invhist_transdate"), q.value("invhist_created"),
+                                 q.value("invhist_user"),
                                  q.value("invhist_transtype"),
 				 q.value("warehous_code"),
                                  q.value("item_number"),
@@ -251,8 +253,8 @@ void dspInventoryHistoryByOrderNumber::sFillList()
 
       if (q.value("invhist_posted").toBool())
       {
-        last->setText(8, q.value("qohbefore").toString());
-        last->setText(9, q.value("qohafter").toString());
+        last->setText( 9, q.value("qohbefore").toString());
+        last->setText(10, q.value("qohafter").toString());
       }
       else
         last->setTextColor("orange");

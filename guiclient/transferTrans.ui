@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>492</width>
-    <height>388</height>
+    <height>411</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -14,21 +14,6 @@
   </property>
   <widget class="QWidget" name="widget" >
    <layout class="QVBoxLayout" >
-    <property name="spacing" >
-     <number>5</number>
-    </property>
-    <property name="leftMargin" >
-     <number>5</number>
-    </property>
-    <property name="topMargin" >
-     <number>5</number>
-    </property>
-    <property name="rightMargin" >
-     <number>5</number>
-    </property>
-    <property name="bottomMargin" >
-     <number>5</number>
-    </property>
     <item>
      <layout class="QHBoxLayout" >
       <property name="spacing" >
@@ -41,9 +26,6 @@
         </property>
         <item>
          <layout class="QHBoxLayout" >
-          <property name="spacing" >
-           <number>5</number>
-          </property>
           <item>
            <widget class="QLabel" name="_transDateLit" >
             <property name="text" >
@@ -153,322 +135,152 @@
      </layout>
     </item>
     <item>
-     <layout class="QHBoxLayout" >
-      <property name="spacing" >
-       <number>0</number>
-      </property>
-      <item>
-       <layout class="QVBoxLayout" >
-        <property name="spacing" >
-         <number>0</number>
+     <layout class="QGridLayout" >
+      <item row="1" column="0" >
+       <widget class="QLabel" name="_fromWarehouseLit" >
+        <property name="text" >
+         <string>From Whse.:</string>
         </property>
-        <item>
-         <layout class="QHBoxLayout" >
-          <property name="spacing" >
-           <number>5</number>
-          </property>
-          <item>
-           <spacer>
-            <property name="orientation" >
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeType" >
-             <enum>QSizePolicy::Expanding</enum>
-            </property>
-            <property name="sizeHint" >
-             <size>
-              <width>20</width>
-              <height>5</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QLabel" name="_beforeLit" >
-            <property name="minimumSize" >
-             <size>
-              <width>80</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="text" >
-             <string>Before</string>
-            </property>
-            <property name="alignment" >
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="_afterLit" >
-            <property name="minimumSize" >
-             <size>
-              <width>80</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="text" >
-             <string>After</string>
-            </property>
-            <property name="alignment" >
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" >
-          <property name="spacing" >
-           <number>5</number>
-          </property>
-          <item>
-           <layout class="QVBoxLayout" >
-            <property name="spacing" >
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="QLabel" name="_fromWarehouseLit" >
-              <property name="text" >
-               <string>From Whse.:</string>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="_toWarehouseLit" >
-              <property name="text" >
-               <string>To Whse.:</string>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QVBoxLayout" >
-            <property name="spacing" >
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="WComboBox" name="_fromWarehouse" />
-            </item>
-            <item>
-             <widget class="WComboBox" name="_toWarehouse" />
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QVBoxLayout" >
-            <property name="spacing" >
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="QLabel" name="_fromBeforeQty" >
-              <property name="minimumSize" >
-               <size>
-                <width>80</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="_toBeforeQty" >
-              <property name="minimumSize" >
-               <size>
-                <width>80</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QVBoxLayout" >
-            <property name="spacing" >
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="QLabel" name="_fromAfterQty" >
-              <property name="minimumSize" >
-               <size>
-                <width>80</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="_toAfterQty" >
-              <property name="minimumSize" >
-               <size>
-                <width>80</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </item>
-       </layout>
+        <property name="alignment" >
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
       </item>
-      <item>
-       <spacer>
-        <property name="orientation" >
-         <enum>Qt::Vertical</enum>
+      <item row="2" column="0" >
+       <widget class="QLabel" name="_toWarehouseLit" >
+        <property name="text" >
+         <string>To Whse.:</string>
         </property>
-        <property name="sizeType" >
-         <enum>QSizePolicy::Expanding</enum>
+        <property name="alignment" >
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
-        <property name="sizeHint" >
+       </widget>
+      </item>
+      <item row="1" column="1" >
+       <widget class="WComboBox" name="_fromWarehouse" />
+      </item>
+      <item row="2" column="1" >
+       <widget class="WComboBox" name="_toWarehouse" />
+      </item>
+      <item row="1" column="2" >
+       <widget class="QLabel" name="_fromBeforeQty" >
+        <property name="minimumSize" >
          <size>
-          <width>141</width>
-          <height>20</height>
+          <width>80</width>
+          <height>0</height>
          </size>
         </property>
-       </spacer>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" >
-      <property name="spacing" >
-       <number>5</number>
-      </property>
-      <item>
-       <layout class="QVBoxLayout" >
-        <property name="spacing" >
-         <number>0</number>
+        <property name="alignment" >
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
-        <item>
-         <widget class="QLabel" name="_qtyLit" >
-          <property name="text" >
-           <string>Transferred Qty.:</string>
-          </property>
-          <property name="alignment" >
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="_documentNumLit" >
-          <property name="text" >
-           <string>Document #:</string>
-          </property>
-          <property name="alignment" >
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-       </layout>
+       </widget>
       </item>
-      <item>
-       <layout class="QVBoxLayout" >
-        <property name="spacing" >
-         <number>0</number>
+      <item row="2" column="2" >
+       <widget class="QLabel" name="_toBeforeQty" >
+        <property name="minimumSize" >
+         <size>
+          <width>80</width>
+          <height>0</height>
+         </size>
         </property>
-        <item>
-         <layout class="QHBoxLayout" >
-          <property name="spacing" >
-           <number>0</number>
-          </property>
-          <item>
-           <widget class="XLineEdit" name="_qty" >
-            <property name="sizePolicy" >
-             <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="maximumSize" >
-             <size>
-              <width>80</width>
-              <height>32767</height>
-             </size>
-            </property>
-            <property name="alignment" >
-             <set>Qt::AlignRight</set>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer>
-            <property name="orientation" >
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeType" >
-             <enum>QSizePolicy::Expanding</enum>
-            </property>
-            <property name="sizeHint" >
-             <size>
-              <width>20</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" >
-          <property name="spacing" >
-           <number>0</number>
-          </property>
-          <item>
-           <widget class="XLineEdit" name="_documentNum" >
-            <property name="sizePolicy" >
-             <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="maximumSize" >
-             <size>
-              <width>100</width>
-              <height>32767</height>
-             </size>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer>
-            <property name="orientation" >
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeType" >
-             <enum>QSizePolicy::Expanding</enum>
-            </property>
-            <property name="sizeHint" >
-             <size>
-              <width>20</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </item>
-       </layout>
+        <property name="alignment" >
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2" >
+       <widget class="QLabel" name="_beforeLit" >
+        <property name="minimumSize" >
+         <size>
+          <width>80</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="text" >
+         <string>Before</string>
+        </property>
+        <property name="alignment" >
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3" >
+       <widget class="QLabel" name="_afterLit" >
+        <property name="minimumSize" >
+         <size>
+          <width>80</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="text" >
+         <string>After</string>
+        </property>
+        <property name="alignment" >
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="3" >
+       <widget class="QLabel" name="_fromAfterQty" >
+        <property name="minimumSize" >
+         <size>
+          <width>80</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="alignment" >
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="3" >
+       <widget class="QLabel" name="_toAfterQty" >
+        <property name="minimumSize" >
+         <size>
+          <width>80</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="alignment" >
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" >
+       <widget class="QLabel" name="_qtyLit" >
+        <property name="text" >
+         <string>Transferred Qty.:</string>
+        </property>
+        <property name="alignment" >
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1" >
+       <widget class="XLineEdit" name="_qty" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="alignment" >
+         <set>Qt::AlignRight</set>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0" >
+       <widget class="QLabel" name="_documentNumLit" >
+        <property name="text" >
+         <string>Document #:</string>
+        </property>
+        <property name="alignment" >
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1" colspan="3" >
+       <widget class="XLineEdit" name="_documentNum" />
       </item>
      </layout>
     </item>
@@ -509,13 +321,14 @@
  <customwidgets>
   <customwidget>
    <class>DLineEdit</class>
-   <extends>XLineEdit</extends>
+   <extends>QWidget</extends>
    <header>datecluster.h</header>
   </customwidget>
   <customwidget>
    <class>ItemCluster</class>
    <extends>QWidget</extends>
    <header>itemcluster.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>WComboBox</class>
@@ -539,7 +352,6 @@
   <tabstop>_post</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
- <includes/>
  <resources/>
  <connections>
   <connection>

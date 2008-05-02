@@ -73,16 +73,20 @@ public:
 
 public slots:
     virtual enum SetResponse set(const ParameterList & pParams );
-    virtual void sPost();
-    virtual void sPopulateTarget(int pItemid);
     virtual void sFillList();
+    virtual void sHandleButtons();
+    virtual void sPopulateQOH();
+    virtual void sPopulateTarget(int pItemid);
+    virtual void sPost();
+    virtual void sRecalculateAfter();
 
 protected slots:
     virtual void languageChange();
 
 private:
-    int _mode;
+    int  _mode;
     bool _captive;
+    bool _controlled;
 
 };
 

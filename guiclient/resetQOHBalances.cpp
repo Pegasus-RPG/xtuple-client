@@ -57,64 +57,47 @@
 
 #include "resetQOHBalances.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QMessageBox>
+#include <QSqlError>
 
-/*
- *  Constructs a resetQOHBalances as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
+#include "storedProcErrorLookup.h"
+
 resetQOHBalances::resetQOHBalances(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  connect(_reset, SIGNAL(clicked()), this, SLOT(sReset()));
 
-    // signals and slots connections
-    connect(_reset, SIGNAL(clicked()), this, SLOT(sReset()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    init();
+  _classCode->setType(ClassCode);
+  _transDate->setEnabled(_privileges->check("AlterTransactionDates"));
+  _transDate->setDate(omfgThis->dbDate());
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 resetQOHBalances::~resetQOHBalances()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void resetQOHBalances::languageChange()
 {
-    retranslateUi(this);
-}
-
-
-void resetQOHBalances::init()
-{
-  _classCode->setType(ClassCode);
+  retranslateUi(this);
 }
 
 void resetQOHBalances::sReset()
 {
-  if (QMessageBox::information( this, tr("Reset Selected QOH Balances?"),
-                                tr( "<p>You are about to issue Adjustment "
-				    "Transactions for all Item Sites within "
-				    "the selected Warehouse and Class Code(s) "
-				    "that are not Lot/Serial or Location  "
-				    "Controlled to adjust their QOH values to "
-				    "0.<br>Are you sure that you want to do this?</p>" ),
-                                tr("Yes"), tr("No"), "", 0, 1) != 0)
+  if (QMessageBox::question(this, tr("Reset Selected QOH Balances?"),
+                            tr( "<p>You are about to issue Adjustment "
+                                "Transactions for all Item Sites within "
+                                "the selected Warehouse and Class Code(s) "
+                                "that are not Lot/Serial or Location  "
+                                "Controlled to adjust their QOH values to "
+                                "0.<br>Are you sure that you want to do this?"),
+                            QMessageBox::Yes,
+                            QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
     return;
 
-  QString sql( "SELECT resetQOHBalance(itemsite_id) AS result "
+  QString sql( "SELECT resetQOHBalance(itemsite_id, :date) AS result "
                "FROM itemsite, item "
                "WHERE ((itemsite_qtyonhand < 0)"
                " AND (itemsite_item_id=item_id)" );
@@ -132,7 +115,23 @@ void resetQOHBalances::sReset()
   q.prepare(sql);
   _warehouse->bindValue(q);
   _classCode->bindValue(q);
+  q.bindValue(":date", _transDate->date());
   q.exec();
+  if (q.first())
+  {
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("resetQOHBalance", result),
+                  __FILE__, __LINE__);
+      return;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   accept();
 }

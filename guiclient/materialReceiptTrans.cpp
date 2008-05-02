@@ -1,120 +1,82 @@
 /*
- * Common Public Attribution License Version 1.0. 
- * 
- * The contents of this file are subject to the Common Public Attribution 
- * License Version 1.0 (the "License"); you may not use this file except 
- * in compliance with the License. You may obtain a copy of the License 
- * at http://www.xTuple.com/CPAL.  The License is based on the Mozilla 
- * Public License Version 1.1 but Sections 14 and 15 have been added to 
- * cover use of software over a computer network and provide for limited 
- * attribution for the Original Developer. In addition, Exhibit A has 
+ * Common Public Attribution License Version 1.0.
+ *
+ * The contents of this file are subject to the Common Public Attribution
+ * License Version 1.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License
+ * at http://www.xTuple.com/CPAL.  The License is based on the Mozilla
+ * Public License Version 1.1 but Sections 14 and 15 have been added to
+ * cover use of software over a computer network and provide for limited
+ * attribution for the Original Developer. In addition, Exhibit A has
  * been modified to be consistent with Exhibit B.
- * 
- * Software distributed under the License is distributed on an "AS IS" 
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See 
- * the License for the specific language governing rights and limitations 
- * under the License. 
- * 
- * The Original Code is PostBooks Accounting, ERP, and CRM Suite. 
- * 
- * The Original Developer is not the Initial Developer and is __________. 
- * If left blank, the Original Developer is the Initial Developer. 
- * The Initial Developer of the Original Code is OpenMFG, LLC, 
- * d/b/a xTuple. All portions of the code written by xTuple are Copyright 
- * (c) 1999-2008 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
- * 
+ *
+ * Software distributed under the License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
+ * the License for the specific language governing rights and limitations
+ * under the License.
+ *
+ * The Original Code is PostBooks Accounting, ERP, and CRM Suite.
+ *
+ * The Original Developer is not the Initial Developer and is __________.
+ * If left blank, the Original Developer is the Initial Developer.
+ * The Initial Developer of the Original Code is OpenMFG, LLC,
+ * d/b/a xTuple. All portions of the code written by xTuple are Copyright
+ * (c) 1999-2008 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved.
+ *
  * Contributor(s): ______________________.
- * 
- * Alternatively, the contents of this file may be used under the terms 
- * of the xTuple End-User License Agreeement (the xTuple License), in which 
- * case the provisions of the xTuple License are applicable instead of 
- * those above.  If you wish to allow use of your version of this file only 
- * under the terms of the xTuple License and not to allow others to use 
- * your version of this file under the CPAL, indicate your decision by 
- * deleting the provisions above and replace them with the notice and other 
- * provisions required by the xTuple License. If you do not delete the 
- * provisions above, a recipient may use your version of this file under 
+ *
+ * Alternatively, the contents of this file may be used under the terms
+ * of the xTuple End-User License Agreeement (the xTuple License), in which
+ * case the provisions of the xTuple License are applicable instead of
+ * those above.  If you wish to allow use of your version of this file only
+ * under the terms of the xTuple License and not to allow others to use
+ * your version of this file under the CPAL, indicate your decision by
+ * deleting the provisions above and replace them with the notice and other
+ * provisions required by the xTuple License. If you do not delete the
+ * provisions above, a recipient may use your version of this file under
  * either the CPAL or the xTuple License.
- * 
+ *
  * EXHIBIT B.  Attribution Information
- * 
- * Attribution Copyright Notice: 
+ *
+ * Attribution Copyright Notice:
  * Copyright (c) 1999-2008 by OpenMFG, LLC, d/b/a xTuple
- * 
- * Attribution Phrase: 
+ *
+ * Attribution Phrase:
  * Powered by PostBooks, an open source solution from xTuple
- * 
- * Attribution URL: www.xtuple.org 
+ *
+ * Attribution URL: www.xtuple.org
  * (to be included in the "Community" menu of the application if possible)
- * 
- * Graphic Image as provided in the Covered Code, if any. 
+ *
+ * Graphic Image as provided in the Covered Code, if any.
  * (online at www.xtuple.com/poweredby)
- * 
- * Display of Attribution Information is required in Larger Works which 
- * are defined in the CPAL as a work which combines Covered Code or 
+ *
+ * Display of Attribution Information is required in Larger Works which
+ * are defined in the CPAL as a work which combines Covered Code or
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
 #include "materialReceiptTrans.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qvalidator.h>
-#include <qstatusbar.h>
+#include <QMessageBox>
+#include <QSqlError>
+#include <QValidator>
+#include <QVariant>
+
 #include "inputManager.h"
 #include "distributeInventory.h"
+#include "storedProcErrorLookup.h"
 
-/*
- *  Constructs a materialReceiptTrans as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 materialReceiptTrans::materialReceiptTrans(QWidget* parent, const char* name, Qt::WFlags fl)
     : XMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_issueToWo, SIGNAL(toggled(bool)), _wo, SLOT(setEnabled(bool)));
-    connect(_item, SIGNAL(valid(bool)), _post, SLOT(setEnabled(bool)));
-    connect(_item, SIGNAL(newId(int)), _warehouse, SLOT(findItemsites(int)));
-    connect(_item, SIGNAL(warehouseIdChanged(int)), _warehouse, SLOT(setId(int)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
-    connect(_item, SIGNAL(newId(int)), this, SLOT(sPopulateQty()));
-    connect(_warehouse, SIGNAL(newID(int)), this, SLOT(sPopulateQty()));
-    init();
+  connect(_item,      SIGNAL(newId(int)), this, SLOT(sPopulateQty()));
+  connect(_post,       SIGNAL(clicked()), this, SLOT(sPost()));
+  connect(_warehouse, SIGNAL(newID(int)), this, SLOT(sPopulateQty()));
 
-    //If not multi-warehouse hide whs control
-    if (!_metrics->boolean("MultiWhs"))
-    {
-      _warehouseLit->hide();
-      _warehouse->hide();
-    }
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-materialReceiptTrans::~materialReceiptTrans()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void materialReceiptTrans::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void materialReceiptTrans::init()
-{
   _captive = FALSE;
 
   _item->setType(ItemLineEdit::cActive);
@@ -125,10 +87,26 @@ void materialReceiptTrans::init()
   omfgThis->inputManager()->notify(cBCItem, this, _item, SLOT(setItemid(int)));
   omfgThis->inputManager()->notify(cBCItemSite, this, _item, SLOT(setItemsiteid(int)));
 
+  if (!_metrics->boolean("MultiWhs"))
+  {
+    _warehouseLit->hide();
+    _warehouse->hide();
+  }
+
   _item->setFocus();
 }
 
-enum SetResponse materialReceiptTrans::set(ParameterList &pParams)
+materialReceiptTrans::~materialReceiptTrans()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void materialReceiptTrans::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse materialReceiptTrans::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -147,6 +125,7 @@ enum SetResponse materialReceiptTrans::set(ParameterList &pParams)
 
       setCaption(tr("Enter Material Receipt"));
       _usernameLit->clear();
+      _transDate->setEnabled(_privileges->check("AlterTransactionDates"));
       _transDate->setDate(omfgThis->dbDate());
 
       connect(_qty, SIGNAL(textChanged(const QString &)), this, SLOT(sUpdateQty(const QString &)));
@@ -169,27 +148,29 @@ enum SetResponse materialReceiptTrans::set(ParameterList &pParams)
       _post->hide();
       _close->setText(tr("&Close"));
       _close->setFocus();
- 
-      q.prepare( "SELECT invhist_itemsite_id, invhist_transdate,"
-                 "       formatQty(invhist_invqty) AS invqty,"
-                 "       formatQty(invhist_qoh_before) AS qohbefore,"
-                 "       formatQty(invhist_qoh_after) AS qohafter,"
-                 "       invhist_ordnumber, invhist_comments,"
-                 "       invhist_ordtype, invhist_ordnumber, invhist_user "
+
+      XSqlQuery popq;
+      popq.prepare( "SELECT * "
                  "FROM invhist "
                  "WHERE (invhist_id=:invhist_id);" );
-      q.bindValue(":invhist_id", _invhistid);
-      q.exec();
-      if (q.first())
+      popq.bindValue(":invhist_id", _invhistid);
+      popq.exec();
+      if (popq.first())
       {
-        _transDate->setDate(q.value("invhist_transdate").toDate());
-        _username->setText(q.value("invhist_user").toString());
-        _qty->setText(q.value("invqty"));
-        _beforeQty->setText(q.value("qohbefore").toString());
-        _afterQty->setText(q.value("qohafter").toString());
-        _documentNum->setText(q.value("invhist_ordnumber"));
-        _notes->setText(q.value("invhist_comments").toString());
-        _item->setItemsiteid(q.value("invhist_itemsite_id").toInt());
+        // _item first so it doesn't trigger sPopulateQty
+        _item->setItemsiteid(popq.value("invhist_itemsite_id").toInt());
+        _transDate->setDate(popq.value("invhist_transdate").toDate());
+        _username->setText(popq.value("invhist_user").toString());
+        _qty->setText(formatQty(popq.value("invhist_invqty").toDouble()));
+        _beforeQty->setText(formatQty(popq.value("invhist_qoh_before").toDouble()));
+        _afterQty->setText(formatQty(popq.value("invhist_qoh_after").toDouble()));
+        _documentNum->setText(popq.value("invhist_ordnumber"));
+        _notes->setText(popq.value("invhist_comments").toString());
+      }
+      else if (popq.lastError().type() != QSqlError::None)
+      {
+	systemError(this, popq.lastError().databaseText(), __FILE__, __LINE__);
+	return UndefinedError;
       }
     }
   }
@@ -199,24 +180,30 @@ enum SetResponse materialReceiptTrans::set(ParameterList &pParams)
 
 void materialReceiptTrans::sPost()
 {
-  if (!_item->isValid())
+  struct {
+    bool        condition;
+    QString     msg;
+    QWidget     *widget;
+  } error[] = {
+    { ! _item->isValid(),
+      tr("You must select an Item before posting this transaction."), _item },
+    { _qty->text().length() == 0 || _qty->toDouble() <= 0,
+      tr("<p>You must enter a positive Quantity before posting this Transaction."),
+      _qty },
+    { true, "", NULL }
+  };
+
+  int errIndex;
+  for (errIndex = 0; ! error[errIndex].condition; errIndex++)
+    ;
+  if (! error[errIndex].msg.isEmpty())
   {
-    QMessageBox::warning(  this, tr("Select Item Number"),
-                           tr(  "You must select an Item to receive before entering this\n"
-                                "Material Receipt Transaction."  ));
-    _item->setFocus();
+    QMessageBox::critical(this, tr("Cannot Post Transaction"),
+                          error[errIndex].msg);
+    error[errIndex].widget->setFocus();
     return;
   }
 
-  if (_qty->text().length() == 0)
-  {
-    QMessageBox::warning(  this, tr("Enter Receipt Quantitiy"),
-                           tr(  "You must enter a valid Receipt Quantity before entering this\n"
-                                "Material Receipt Transaction."  ));
-    _qty->setFocus();
-    return;
-  }
-  
   if (_issueToWo->isChecked())
   {
     q.prepare( "SELECT womatl_id, womatl_issuemethod "
@@ -248,6 +235,22 @@ void materialReceiptTrans::sPost()
         q.bindValue(":item_id", _item->id());
         q.bindValue(":warehous_id", _warehouse->id());
         q.exec();
+        if (q.first())
+        {
+          int result = q.value("result").toInt();
+          if (result < 0)
+          {
+            systemError(this,
+                        storedProcErrorLookup("invReceiptIssueToWomatl", result),
+                        __FILE__, __LINE__);
+            return;
+          }
+        }
+        else if (q.lastError().type() != QSqlError::None)
+        {
+          systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+          return;
+        }
 
         if (_captive)
           close();
@@ -262,28 +265,33 @@ void materialReceiptTrans::sPost()
           _issueToWo->setChecked(FALSE);
           _wo->setId(-1);
           _notes->clear();
-          
+
           _item->setFocus();
         }
       }
       else
-        QMessageBox::critical( this, tr("Cannot Receive and Issue Material"),
-                               tr( "The select Item may not be issued againt the selected W/O as the\n"
-                                   "W/O Material Requirement Issue Method is Pull.  Material is issued\n"
-                                   "to this W/O Material Requirement via a Backflush." ) );
+        QMessageBox::critical(this, tr("Cannot Receive and Issue Material"),
+                              tr("<p>The select Item may not be issued againt "
+                                 "the selected W/O as the W/O Material "
+                                 "Requirement Issue Method is Pull. Material "
+                                 "is issued to this W/O Material Requirement "
+                                 "via a Backflush." ) );
     }
     else
-      QMessageBox::critical( this, tr("Cannot Receive and Issue Material"),
-                             tr( "The select Item may not be issued againt the selected W/O as there\n"
-                                 "there isn't a W/O Material Requirement for the selected W/O/Item combination." ) );
+      QMessageBox::critical(this, tr("Cannot Receive and Issue Material"),
+                            tr("The select Item may not be issued againt the "
+                               "selected W/O as there there isn't a W/O "
+                               "Material Requirement for the selected W/O/Item "
+                               "combination." ) );
   }
   else
   {
     XSqlQuery rollback;
     rollback.prepare("ROLLBACK;");
 
-    q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
-    q.prepare( "SELECT invReceipt(itemsite_id, :qty, '', :docNumber, :comments) AS result "
+    q.exec("BEGIN;");	// because of possible distribution cancelations
+    q.prepare( "SELECT invReceipt(itemsite_id, :qty, '', :docNumber,"
+               "                  :comments, :date) AS result "
                "FROM itemsite "
                "WHERE ( (itemsite_item_id=:item_id)"
                " AND (itemsite_warehous_id=:warehous_id) );" );
@@ -292,28 +300,34 @@ void materialReceiptTrans::sPost()
     q.bindValue(":comments", _notes->text());
     q.bindValue(":item_id", _item->id());
     q.bindValue(":warehous_id", _warehouse->id());
+    q.bindValue(":date",        _transDate->date());
     q.exec();
     if (q.first())
     {
-      if (q.value("result").toInt() < 0)
+      int result = q.value("result").toInt();
+      if (result < 0)
       {
         rollback.exec();
-        systemError( this, tr("A System Error occurred at materialReceiptTrans::%1, Item ID #%2, Warehouse ID #%3, Error #%4.")
-                           .arg(__LINE__)
-                           .arg(_item->id())
-                           .arg(_warehouse->id())
-                           .arg(q.value("result").toInt()) );
+        systemError(this, storedProcErrorLookup("invReceipt", result),
+                    __FILE__, __LINE__);
         return;
       }
-      else if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == XDialog::Rejected)
+      else if (q.lastError().type() != QSqlError::None)
+      {
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        return;
+      }
+
+      if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == XDialog::Rejected)
       {
         rollback.exec();
-        QMessageBox::information( this, tr("Enter Receipt"), tr("Transaction Canceled") );
+        QMessageBox::information(this, tr("Enter Receipt"),
+                                 tr("Transaction Canceled") );
         return;
       }
-      
+
       q.exec("COMMIT;");
- 
+
       if (_captive)
         close();
       else
@@ -327,24 +341,30 @@ void materialReceiptTrans::sPost()
         _issueToWo->setChecked(FALSE);
         _wo->setId(-1);
         _notes->clear();
+
         _item->setFocus();
       }
+    } 
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      rollback.exec();
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
     }
     else
     {
       rollback.exec();
-      systemError( this, tr("A System Error occurred at materialReceiptTrans::%1, Item Site ID #%2, Warehouse ID #%3.")
-                         .arg(__LINE__)
-                         .arg(_item->id())
-                         .arg(_warehouse->id()) );
-      return;
+      systemError( this,
+                  tr("<p>No transaction was done because Item %1 "
+                     "was not found at Warehouse %2.")
+                  .arg(_item->itemNumber()).arg(_warehouse->currentText()));
     }
   }
 }
 
 void materialReceiptTrans::sPopulateQty()
 {
-  q.prepare( "SELECT itemsite_qtyonhand, formatQty(itemsite_qtyonhand) AS f_qoh "
+  q.prepare( "SELECT itemsite_qtyonhand "
              "FROM itemsite "
              "WHERE ( (itemsite_item_id=:item_id)"
              " AND (itemsite_warehous_id=:warehous_id) );" );
@@ -354,14 +374,18 @@ void materialReceiptTrans::sPopulateQty()
   if (q.first())
   {
     _cachedQOH = q.value("itemsite_qtyonhand").toDouble();
-    _beforeQty->setText(q.value("f_qoh").toString());
+    _beforeQty->setText(formatQty(q.value("itemsite_qtyonhand").toDouble()));
 
     if (_issueToWo->isChecked())
-      _afterQty->setText(q.value("f_qoh").toString());
+      _afterQty->setText(formatQty(q.value("itemsite_qtyonhand").toDouble()));
     else if (_qty->text().length())
       _afterQty->setText(formatQty(_cachedQOH + _qty->toDouble()));
   }
-//  ToDo
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   _wo->setWarehouse(_warehouse->id());
 }

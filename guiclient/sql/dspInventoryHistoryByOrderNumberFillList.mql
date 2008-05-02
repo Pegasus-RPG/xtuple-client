@@ -1,14 +1,12 @@
-SELECT invhist_id, formatDateTime(invhist_transdate) AS transdate,
-       invhist_user, invhist_transtype,
+SELECT invhist.*,
        warehous_code, item_number,
-       formatQty(invhist_invqty) AS transqty, invhist_invuom,
+       formatQty(invhist_invqty) AS transqty,
        CASE WHEN (invhist_ordtype NOT LIKE '') THEN
 				(invhist_ordtype || '-' || invhist_ordnumber)
             ELSE invhist_ordnumber
        END AS ordernumber,
        formatQty(invhist_qoh_before) AS qohbefore,
-       formatQty(invhist_qoh_after) AS qohafter,
-       invhist_posted 
+       formatQty(invhist_qoh_after) AS qohafter
 FROM invhist, itemsite, item, warehous 
 WHERE ( (invhist_itemsite_id=itemsite_id)
   AND  (itemsite_item_id=item_id)
