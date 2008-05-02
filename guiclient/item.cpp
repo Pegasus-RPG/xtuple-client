@@ -659,6 +659,12 @@ void item::sSave()
   q.bindValue(":item_extdescrip", _extDescription->text());
   q.bindValue(":item_warrdays", _warranty->value());
   q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+    q.exec("ROLLBACK;");
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   if (_mode == cCopy)
   {
@@ -1782,11 +1788,11 @@ void item::sFillUOMList()
 void item::sPopulatePriceUOMs()
 {
   int pid = _priceUOM->id();
-  q.prepare("SELECT uom_id, uom_name"
+  q.prepare("SELECT uom_id, uom_name, uom_name"
             "  FROM uom"
             " WHERE(uom_id=:uom_id)"
             " UNION "
-            "SELECT uom_id, uom_name"
+            "SELECT uom_id, uom_name, uom_name"
             "  FROM uom"
             "  JOIN itemuomconv ON (itemuomconv_to_uom_id=uom_id)"
             "  JOIN item ON (itemuomconv_from_uom_id=item_inv_uom_id)"
@@ -1795,7 +1801,7 @@ void item::sPopulatePriceUOMs()
             " WHERE((itemuomconv_item_id=:item_id)"
             "   AND (uomtype_name='Selling'))"
             " UNION "
-            "SELECT uom_id, uom_name"
+            "SELECT uom_id, uom_name, uom_name"
             "  FROM uom"
             "  JOIN itemuomconv ON (itemuomconv_from_uom_id=uom_id)"
             "  JOIN item ON (itemuomconv_to_uom_id=item_inv_uom_id)"
@@ -1803,11 +1809,16 @@ void item::sPopulatePriceUOMs()
             "  JOIN uomtype ON (itemuom_uomtype_id=uomtype_id)"
             " WHERE((itemuomconv_item_id=:item_id)"
             "   AND (uomtype_name='Selling'))"
-            " ORDER BY uom_name;");
+            " ORDER BY 2;");
   q.bindValue(":item_id", _itemid);
   q.bindValue(":uom_id", _inventoryUOM->id());
   q.exec();
   _priceUOM->populate(q, pid);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void item::closeEvent(QCloseEvent *pEvent)
