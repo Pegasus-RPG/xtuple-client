@@ -223,7 +223,7 @@ int warehouse::saveContact(ContactCluster* pContact)
 		    2, 2);
   else if (-10 == saveResult)
     answer = QMessageBox::question(this,
-		    tr("Question Saving Contact").arg(pContact->label()),
+		    tr("Question Saving Contact %1").arg(pContact->label()),
 		    tr("Would you like to update the existing Contact or "
 		       "create a new one?"),
 		    tr("Create New"),
