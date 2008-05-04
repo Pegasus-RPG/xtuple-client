@@ -8,8 +8,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>727</width>
-    <height>803</height>
+    <width>644</width>
+    <height>692</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -449,6 +449,19 @@
           </property>
          </widget>
         </item>
+        <item row="0" column="2" >
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
         <item row="1" column="0" >
          <widget class="QLabel" name="_qtyUOMLit" >
           <property name="text" >
@@ -469,6 +482,19 @@
           </property>
          </widget>
         </item>
+        <item row="1" column="2" >
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
         <item row="2" column="0" >
          <widget class="QLabel" name="_qtySoldLit" >
           <property name="text" >
@@ -479,7 +505,7 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="1" >
+        <item row="2" column="1" colspan="2" >
          <widget class="QLabel" name="_qtySold" >
           <property name="minimumSize" >
            <size>
@@ -505,7 +531,7 @@
           </property>
          </widget>
         </item>
-        <item row="3" column="1" >
+        <item row="3" column="1" colspan="2" >
          <widget class="QLabel" name="_qtyReceived" >
           <property name="minimumSize" >
            <size>
@@ -531,7 +557,7 @@
           </property>
          </widget>
         </item>
-        <item row="4" column="1" >
+        <item row="4" column="1" colspan="2" >
          <widget class="QLabel" name="_qtyShipped" >
           <property name="minimumSize" >
            <size>
@@ -601,7 +627,7 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="1" colspan="2" >
+        <item row="1" column="1" colspan="3" >
          <widget class="CurrCluster" name="_netUnitPrice" >
           <property name="minimumSize" >
            <size>
@@ -620,7 +646,7 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="3" >
+        <item row="1" column="4" >
          <widget class="QPushButton" name="_listPrices" >
           <property name="enabled" >
            <bool>false</bool>
@@ -659,7 +685,7 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="2" colspan="2" >
+        <item row="2" column="2" colspan="3" >
          <spacer>
           <property name="orientation" >
            <enum>Qt::Horizontal</enum>
@@ -682,7 +708,7 @@
           </property>
          </widget>
         </item>
-        <item row="3" column="1" colspan="3" >
+        <item row="3" column="1" colspan="2" >
          <widget class="CurrCluster" name="_extendedPrice" >
           <property name="focusPolicy" >
            <enum>Qt::NoFocus</enum>
@@ -697,6 +723,19 @@
            <bool>false</bool>
           </property>
          </widget>
+        </item>
+        <item row="3" column="3" >
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
         </item>
         <item row="4" column="0" >
          <spacer>
@@ -775,7 +814,7 @@
         </sizepolicy>
        </property>
        <property name="currentIndex" >
-        <number>1</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="_supply" >
         <attribute name="title" >
@@ -1136,6 +1175,9 @@
               </item>
               <item>
                <widget class="QPushButton" name="_edit" >
+                <property name="enabled" >
+                 <bool>false</bool>
+                </property>
                 <property name="text" >
                  <string>&amp;Edit</string>
                 </property>
@@ -1143,6 +1185,9 @@
               </item>
               <item>
                <widget class="QPushButton" name="_delete" >
+                <property name="enabled" >
+                 <bool>false</bool>
+                </property>
                 <property name="focusPolicy" >
                  <enum>Qt::NoFocus</enum>
                 </property>
@@ -1505,7 +1550,7 @@
   </customwidget>
   <customwidget>
    <class>DLineEdit</class>
-   <extends>XLineEdit</extends>
+   <extends>QWidget</extends>
    <header>datecluster.h</header>
    <container>1</container>
   </customwidget>
@@ -1584,7 +1629,7 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>713</x>
+     <x>632</x>
      <y>35</y>
     </hint>
     <hint type="destinationlabel" >
@@ -1604,7 +1649,7 @@
      <y>193</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>612</x>
+     <x>531</x>
      <y>140</y>
     </hint>
    </hints>
@@ -1620,7 +1665,7 @@
      <y>193</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>713</x>
+     <x>632</x>
      <y>66</y>
     </hint>
    </hints>
@@ -1632,11 +1677,11 @@
    <slot>setId(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>556</x>
+     <x>475</x>
      <y>276</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>575</x>
+     <x>430</x>
      <y>332</y>
     </hint>
    </hints>
@@ -1648,12 +1693,12 @@
    <slot>setId(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>556</x>
+     <x>475</x>
      <y>276</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>214</x>
-     <y>512</y>
+     <x>181</x>
+     <y>607</y>
     </hint>
    </hints>
   </connection>
@@ -1664,12 +1709,12 @@
    <slot>setId(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>556</x>
+     <x>475</x>
      <y>276</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>214</x>
-     <y>542</y>
+     <x>181</x>
+     <y>607</y>
     </hint>
    </hints>
   </connection>
@@ -1680,12 +1725,12 @@
    <slot>setId(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>556</x>
+     <x>475</x>
      <y>276</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>214</x>
-     <y>572</y>
+     <x>181</x>
+     <y>607</y>
     </hint>
    </hints>
   </connection>
@@ -1696,11 +1741,11 @@
    <slot>setEffective(QDate)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>556</x>
+     <x>475</x>
      <y>276</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>575</x>
+     <x>430</x>
      <y>332</y>
     </hint>
    </hints>
@@ -1712,12 +1757,12 @@
    <slot>setEffective(QDate)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>556</x>
+     <x>475</x>
      <y>276</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>214</x>
-     <y>512</y>
+     <x>181</x>
+     <y>607</y>
     </hint>
    </hints>
   </connection>
@@ -1728,12 +1773,12 @@
    <slot>setEffective(QDate)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>556</x>
+     <x>475</x>
      <y>276</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>214</x>
-     <y>572</y>
+     <x>181</x>
+     <y>607</y>
     </hint>
    </hints>
   </connection>
@@ -1744,12 +1789,12 @@
    <slot>setEffective(QDate)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>556</x>
+     <x>475</x>
      <y>276</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>214</x>
-     <y>542</y>
+     <x>181</x>
+     <y>607</y>
     </hint>
    </hints>
   </connection>
@@ -1764,7 +1809,7 @@
      <y>189</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>612</x>
+     <x>531</x>
      <y>166</y>
     </hint>
    </hints>
@@ -1792,8 +1837,8 @@
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>53</x>
-     <y>469</y>
+     <x>21</x>
+     <y>487</y>
     </hint>
     <hint type="destinationlabel" >
      <x>102</x>
@@ -1814,6 +1859,38 @@
     <hint type="destinationlabel" >
      <x>572</x>
      <y>540</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_raitemls</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_delete</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>437</x>
+     <y>537</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>555</x>
+     <y>567</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_raitemls</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_edit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>385</x>
+     <y>566</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>529</x>
+     <y>550</y>
     </hint>
    </hints>
   </connection>

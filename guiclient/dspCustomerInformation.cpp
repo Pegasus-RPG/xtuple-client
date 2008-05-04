@@ -129,7 +129,7 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   // setup arhist list
   _arhist->addColumn(tr("Open"),      _orderColumn, Qt::AlignCenter );
   _arhist->addColumn(tr("Doc. Type"), _dateColumn,  Qt::AlignCenter );
-  _arhist->addColumn(tr("Doc. #"),    _orderColumn, Qt::AlignRight  );
+  _arhist->addColumn(tr("Doc. #"),    -1, Qt::AlignRight  );
   _arhist->addColumn(tr("Doc. Date"), _dateColumn,  Qt::AlignCenter );
   _arhist->addColumn(tr("Due. Date"), _dateColumn,  Qt::AlignCenter );
   _arhist->addColumn(tr("Amount"),    _moneyColumn, Qt::AlignRight  );
@@ -137,7 +137,7 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   _arhist->addColumn(tr("Currency"),  _currencyColumn, Qt::AlignLeft);
 
   // setup Quote list
-  _quote->addColumn(tr("Quote #"),    _orderColumn, Qt::AlignRight  );
+  _quote->addColumn(tr("Quote #"),    -1, Qt::AlignRight  );
   _quote->addColumn(tr("P/O Number"), _itemColumn,  Qt::AlignLeft   );
   _quote->addColumn(tr("Quote Date"), _dateColumn,  Qt::AlignCenter );
   if(_privileges->check("MaintainQuotes"))
@@ -155,7 +155,7 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   connect(omfgThis, SIGNAL(quotesUpdated(int, bool)), this, SLOT(sFillQuoteList()));
 
   // setup Order list
-  _order->addColumn(tr("S/O #"),            _orderColumn, Qt::AlignLeft   );
+  _order->addColumn(tr("S/O #"),            -1, Qt::AlignLeft   );
   _order->addColumn(tr("Cust. P/O Number"), _itemColumn,  Qt::AlignLeft   );
   _order->addColumn(tr("Ordered"),          _dateColumn,  Qt::AlignCenter );
   _order->addColumn(tr("Scheduled"),        _dateColumn,  Qt::AlignCenter );
@@ -174,7 +174,7 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   // setup Invoice list
   _invoice->addColumn(tr("Posted"),     _ynColumn,    Qt::AlignCenter );
   _invoice->addColumn(tr("Open"),       _ynColumn,    Qt::AlignCenter );
-  _invoice->addColumn(tr("Invoice #"),  _orderColumn, Qt::AlignLeft   );
+  _invoice->addColumn(tr("Invoice #"),  -1, Qt::AlignLeft   );
   _invoice->addColumn(tr("S/O #"),      _orderColumn, Qt::AlignLeft   );
   _invoice->addColumn(tr("Invc. Date"), _dateColumn,  Qt::AlignCenter );
   _invoice->addColumn(tr("Due Date"),   _dateColumn,  Qt::AlignCenter );
@@ -199,7 +199,7 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   _creditMemo->addColumn(tr("Posted"),    _ynColumn,    Qt::AlignCenter );
   _creditMemo->addColumn(tr("Open"),      _ynColumn,    Qt::AlignCenter );
   _creditMemo->addColumn(tr("Type"),      _ynColumn,    Qt::AlignCenter );
-  _creditMemo->addColumn(tr("C/M #"),     _orderColumn, Qt::AlignLeft   );
+  _creditMemo->addColumn(tr("Memo #"),     -1, Qt::AlignLeft   );
   _creditMemo->addColumn(tr("Doc. Date"), _dateColumn,  Qt::AlignCenter );
   _creditMemo->addColumn(tr("Amount"),    _moneyColumn, Qt::AlignRight  );
   _creditMemo->addColumn(tr("Balance"),   _moneyColumn, Qt::AlignRight  );
@@ -216,7 +216,7 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   _payments->addColumn(tr("Entered By"),   _userColumn,     Qt::AlignLeft  );
   _payments->addColumn(tr("Total Amount"), _moneyColumn,    Qt::AlignRight );
   _payments->addColumn(tr("Currency"),     _currencyColumn, Qt::AlignLeft  );
-  _payments->addColumn(tr("S/O #"),        _orderColumn,    Qt::AlignLeft  );
+  _payments->addColumn(tr("S/O #"),        -1,    Qt::AlignLeft  );
   _payments->addColumn(tr("Reference"),    _orderColumn,    Qt::AlignLeft  );
   _payments->addColumn(tr("Allocated"),    _moneyColumn,    Qt::AlignRight );
   _payments->addColumn(tr("Currency"),     _currencyColumn, Qt::AlignLeft  );
@@ -229,12 +229,28 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
     _payments->hideColumn(5);
     _payments->hideColumn(8);
   }
-
-  _edit->setEnabled(_privileges->check("MaintainCustomerMasters"));
-  _crmAccount->setEnabled(_privileges->check("MaintainCRMAccounts") || _privileges->check("ViewCRMAccounts"));
-  _workbenchInvoice->setEnabled(_privileges->check("ViewAROpenItems"));
-  _cashReceiptInvoice->setEnabled(_privileges->check("MaintainCashReceipts"));
-  _workbenchCreditMemo->setEnabled(_privileges->check("ViewAROpenItems"));
+  
+  if (_privileges->check("MaintainCRMAccounts") || _privileges->check("ViewCRMAccounts"))
+    connect (_cust, SIGNAL(valid(bool)), _crmAccount, SLOT(setEnabled(bool)));
+  if (_privileges->check("MaintainCustomerMasters"))
+    connect (_cust, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
+  if (_privileges->check("ViewAROpenItems"))
+  {
+    connect (_cust, SIGNAL(valid(bool)), _workbenchInvoice, SLOT(setEnabled(bool)));
+    connect (_cust, SIGNAL(valid(bool)), _workbenchCreditMemo, SLOT(setEnabled(bool)));
+  }
+  if (_privileges->check("MaintainCashReceipts"))
+    connect (_cust, SIGNAL(valid(bool)), _cashReceiptInvoice, SLOT(setEnabled(bool)));
+  if (_privileges->check("ViewAROpenItems"))
+    connect (_cust, SIGNAL(valid(bool)), _workbenchCreditMemo, SLOT(setEnabled(bool)));
+  if (_privileges->check("MaintainMiscInvoices"))
+    connect (_cust, SIGNAL(valid(bool)), _newInvoice, SLOT(setEnabled(bool)));
+  if (_privileges->check("MaintainSalesOrders"))
+    connect (_cust, SIGNAL(valid(bool)), _newOrder, SLOT(setEnabled(bool)));
+  if (_privileges->check("MaintainQuotes"))
+    connect (_cust, SIGNAL(valid(bool)), _newQuote, SLOT(setEnabled(bool)));
+  if (_privileges->check("MaintainCreditMemos"))
+    connect (_cust, SIGNAL(valid(bool)), _newCreditMemo, SLOT(setEnabled(bool)));
 }
 
 dspCustomerInformation::~dspCustomerInformation()

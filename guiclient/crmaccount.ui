@@ -238,7 +238,7 @@
              <bool>false</bool>
             </property>
             <property name="text" >
-             <string>Prospect</string>
+             <string>Prospect...</string>
             </property>
            </widget>
           </item>
@@ -255,7 +255,7 @@
              <bool>false</bool>
             </property>
             <property name="text" >
-             <string>Customer</string>
+             <string>Customer...</string>
             </property>
            </widget>
           </item>
@@ -265,7 +265,7 @@
              <bool>false</bool>
             </property>
             <property name="text" >
-             <string>Workbench</string>
+             <string>Workbench...</string>
             </property>
            </widget>
           </item>
@@ -275,7 +275,7 @@
              <bool>false</bool>
             </property>
             <property name="text" >
-             <string>Vendor</string>
+             <string>Vendor...</string>
             </property>
            </widget>
           </item>
@@ -305,7 +305,7 @@
              <bool>false</bool>
             </property>
             <property name="text" >
-             <string>Tax Authority</string>
+             <string>Tax Authority...</string>
             </property>
            </widget>
           </item>

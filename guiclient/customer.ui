@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>819</height>
+    <width>770</width>
+    <height>529</height>
    </rect>
   </property>
   <property name="minimumSize" >
@@ -243,7 +243,7 @@
           </property>
          </widget>
         </item>
-        <item rowspan="2" row="0" column="1" >
+        <item row="0" column="1" colspan="2" >
          <widget class="XComboBox" name="_salesrep" >
           <property name="allowNull" >
            <bool>true</bool>
@@ -253,7 +253,20 @@
           </property>
          </widget>
         </item>
-        <item rowspan="2" row="1" column="0" >
+        <item row="0" column="3" >
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>431</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="1" column="0" >
          <widget class="QLabel" name="_defaultCommPrcnt" >
           <property name="text" >
            <string>Commission:</string>
@@ -263,7 +276,7 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="1" >
+        <item row="1" column="1" colspan="3" >
          <layout class="QHBoxLayout" >
           <property name="spacing" >
            <number>3</number>
@@ -312,117 +325,110 @@
           </item>
          </layout>
         </item>
-        <item row="3" column="0" colspan="2" >
-         <layout class="QHBoxLayout" >
-          <property name="spacing" >
-           <number>0</number>
+        <item row="2" column="0" colspan="2" >
+         <widget class="QGroupBox" name="_defaultGroup" >
+          <property name="title" >
+           <string>Defaults:</string>
           </property>
-          <item>
-           <widget class="QGroupBox" name="_defaultGroup" >
-            <property name="title" >
-             <string>Defaults:</string>
-            </property>
-            <layout class="QGridLayout" >
-             <item row="0" column="0" >
-              <widget class="QLabel" name="_defaultShipVia" >
-               <property name="text" >
-                <string>Ship Via:</string>
-               </property>
-               <property name="alignment" >
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1" >
-              <widget class="XComboBox" name="_shipvia" >
-               <property name="sizePolicy" >
-                <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="allowNull" >
-                <bool>true</bool>
-               </property>
-               <property name="type" >
-                <enum>XComboBox::ShipVias</enum>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0" >
-              <widget class="QLabel" name="_defaultBOLFormatLit" >
-               <property name="text" >
-                <string>Shipping Form:</string>
-               </property>
-               <property name="alignment" >
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1" >
-              <widget class="XComboBox" name="_shipform" >
-               <property name="sizePolicy" >
-                <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="allowNull" >
-                <bool>true</bool>
-               </property>
-               <property name="type" >
-                <enum>XComboBox::ShippingForms</enum>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="0" >
-              <widget class="QLabel" name="_shipchrgLit" >
-               <property name="text" >
-                <string>Shipping Charges:</string>
-               </property>
-               <property name="alignment" >
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1" >
-              <widget class="XComboBox" name="_shipchrg" >
-               <property name="sizePolicy" >
-                <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="allowNull" >
-                <bool>true</bool>
-               </property>
-               <property name="type" >
-                <enum>XComboBox::ShippingCharges</enum>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item>
-           <spacer>
-            <property name="orientation" >
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeType" >
-             <enum>QSizePolicy::Preferred</enum>
-            </property>
-            <property name="sizeHint" >
-             <size>
-              <width>45</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
+          <layout class="QGridLayout" >
+           <item row="0" column="0" >
+            <widget class="QLabel" name="_defaultShipVia" >
+             <property name="text" >
+              <string>Ship Via:</string>
+             </property>
+             <property name="alignment" >
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1" >
+            <widget class="XComboBox" name="_shipvia" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="allowNull" >
+              <bool>true</bool>
+             </property>
+             <property name="type" >
+              <enum>XComboBox::ShipVias</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0" >
+            <widget class="QLabel" name="_defaultBOLFormatLit" >
+             <property name="text" >
+              <string>Shipping Form:</string>
+             </property>
+             <property name="alignment" >
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1" >
+            <widget class="XComboBox" name="_shipform" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="allowNull" >
+              <bool>true</bool>
+             </property>
+             <property name="type" >
+              <enum>XComboBox::ShippingForms</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0" >
+            <widget class="QLabel" name="_shipchrgLit" >
+             <property name="text" >
+              <string>Shipping Charges:</string>
+             </property>
+             <property name="alignment" >
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1" >
+            <widget class="XComboBox" name="_shipchrg" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="allowNull" >
+              <bool>true</bool>
+             </property>
+             <property name="type" >
+              <enum>XComboBox::ShippingCharges</enum>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
         </item>
-        <item row="4" column="0" colspan="2" >
+        <item row="2" column="2" colspan="2" >
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType" >
+           <enum>QSizePolicy::Preferred</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>551</width>
+            <height>106</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="3" column="0" colspan="4" >
          <layout class="QHBoxLayout" >
           <property name="spacing" >
            <number>0</number>
@@ -452,7 +458,7 @@
           </item>
          </layout>
         </item>
-        <item row="5" column="0" colspan="2" >
+        <item row="4" column="0" colspan="4" >
          <layout class="QHBoxLayout" >
           <property name="spacing" >
            <number>0</number>
@@ -508,7 +514,7 @@
           </item>
          </layout>
         </item>
-        <item row="6" column="0" colspan="2" >
+        <item row="5" column="0" colspan="4" >
          <layout class="QHBoxLayout" >
           <property name="spacing" >
            <number>0</number>
@@ -538,7 +544,7 @@
           </item>
          </layout>
         </item>
-        <item row="7" column="0" colspan="2" >
+        <item row="6" column="0" colspan="4" >
          <layout class="QHBoxLayout" >
           <property name="spacing" >
            <number>0</number>
@@ -568,24 +574,8 @@
           </item>
          </layout>
         </item>
-        <item row="8" column="0" colspan="2" >
+        <item row="7" column="0" colspan="4" >
          <layout class="QHBoxLayout" >
-          <property name="spacing" >
-           <number>5</number>
-          </property>
-          <item>
-           <spacer>
-            <property name="orientation" >
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" >
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
           <item>
            <layout class="QVBoxLayout" >
             <property name="spacing" >
@@ -676,6 +666,11 @@
                   <string/>
                  </property>
                 </item>
+                <item>
+                 <property name="text" >
+                  <string/>
+                 </property>
+                </item>
                </widget>
               </item>
              </layout>
@@ -698,9 +693,22 @@
             </item>
            </layout>
           </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>501</width>
+              <height>24</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
          </layout>
         </item>
-        <item row="9" column="0" colspan="2" >
+        <item row="8" column="3" >
          <spacer>
           <property name="orientation" >
            <enum>Qt::Vertical</enum>
@@ -1321,6 +1329,19 @@
            </item>
           </layout>
          </widget>
+        </item>
+        <item row="2" column="0" >
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>20</width>
+            <height>0</height>
+           </size>
+          </property>
+         </spacer>
         </item>
        </layout>
       </widget>
@@ -2254,8 +2275,8 @@
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>787</x>
-     <y>38</y>
+     <x>757</x>
+     <y>34</y>
     </hint>
     <hint type="destinationlabel" >
      <x>20</x>
@@ -2270,12 +2291,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>436</x>
-     <y>274</y>
+     <x>566</x>
+     <y>233</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>464</x>
-     <y>311</y>
+     <x>529</x>
+     <y>261</y>
     </hint>
    </hints>
   </connection>
@@ -2286,12 +2307,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>110</x>
-     <y>136</y>
+     <x>23</x>
+     <y>157</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>110</x>
-     <y>136</y>
+     <x>303</x>
+     <y>181</y>
     </hint>
    </hints>
   </connection>
@@ -2302,12 +2323,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>110</x>
-     <y>136</y>
+     <x>23</x>
+     <y>157</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>110</x>
-     <y>136</y>
+     <x>303</x>
+     <y>204</y>
     </hint>
    </hints>
   </connection>
@@ -2318,12 +2339,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>110</x>
-     <y>136</y>
+     <x>23</x>
+     <y>157</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>110</x>
-     <y>136</y>
+     <x>303</x>
+     <y>227</y>
     </hint>
    </hints>
   </connection>
@@ -2334,12 +2355,12 @@
    <slot>animateClick()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>110</x>
-     <y>136</y>
+     <x>23</x>
+     <y>157</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>110</x>
-     <y>136</y>
+     <x>303</x>
+     <y>181</y>
     </hint>
    </hints>
   </connection>
@@ -2354,8 +2375,8 @@
      <y>143</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>110</x>
-     <y>143</y>
+     <x>746</x>
+     <y>220</y>
     </hint>
    </hints>
   </connection>
@@ -2370,8 +2391,8 @@
      <y>134</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>163</x>
-     <y>152</y>
+     <x>728</x>
+     <y>161</y>
     </hint>
    </hints>
   </connection>
@@ -2382,12 +2403,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>113</x>
-     <y>338</y>
+     <x>21</x>
+     <y>290</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>113</x>
-     <y>393</y>
+     <x>21</x>
+     <y>370</y>
     </hint>
    </hints>
   </connection>

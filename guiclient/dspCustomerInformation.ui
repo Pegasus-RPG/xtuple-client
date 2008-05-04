@@ -42,8 +42,11 @@
        </item>
        <item>
         <widget class="QPushButton" name="_crmAccount" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
          <property name="text" >
-          <string>&amp;Account</string>
+          <string>&amp;Account...</string>
          </property>
         </widget>
        </item>
@@ -197,6 +200,9 @@
        </property>
        <item>
         <widget class="QPushButton" name="_print" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
          <property name="text" >
           <string>&amp;Print</string>
          </property>
@@ -214,6 +220,9 @@
        </item>
        <item>
         <widget class="QPushButton" name="_refresh" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
          <property name="text" >
           <string>&amp;Query</string>
          </property>
@@ -221,6 +230,9 @@
        </item>
        <item>
         <widget class="QPushButton" name="_edit" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
          <property name="text" >
           <string>Edit</string>
          </property>
@@ -1247,7 +1259,7 @@
      <property name="currentIndex" >
       <number>0</number>
      </property>
-     <widget class="QWidget" name="notes" >
+     <widget class="QWidget" name="_notesTab" >
       <attribute name="title" >
        <string>Notes</string>
       </attribute>
@@ -1276,7 +1288,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="comments" >
+     <widget class="QWidget" name="_commentsTab" >
       <attribute name="title" >
        <string>Comments</string>
       </attribute>
@@ -1298,6 +1310,9 @@
        </property>
        <item>
         <widget class="Comments" name="_comment" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
          <property name="type" >
           <enum>Comments::Customer</enum>
          </property>
@@ -1305,7 +1320,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="quotes" >
+     <widget class="QWidget" name="_quotesTab" >
       <attribute name="title" >
        <string>Quotes</string>
       </attribute>
@@ -1391,6 +1406,9 @@
              </item>
              <item>
               <widget class="QPushButton" name="_newQuote" >
+               <property name="enabled" >
+                <bool>false</bool>
+               </property>
                <property name="text" >
                 <string>New</string>
                </property>
@@ -1450,7 +1468,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="salesOrders" >
+     <widget class="QWidget" name="_salesOrdersTab" >
       <attribute name="title" >
        <string>Sales Orders</string>
       </attribute>
@@ -1526,6 +1544,9 @@
              </item>
              <item>
               <widget class="QPushButton" name="_newOrder" >
+               <property name="enabled" >
+                <bool>false</bool>
+               </property>
                <property name="text" >
                 <string>New</string>
                </property>
@@ -1575,7 +1596,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="invoices" >
+     <widget class="QWidget" name="_invoicesTab" >
       <attribute name="title" >
        <string>Invoices</string>
       </attribute>
@@ -1651,6 +1672,9 @@
              </item>
              <item>
               <widget class="QPushButton" name="_newInvoice" >
+               <property name="enabled" >
+                <bool>false</bool>
+               </property>
                <property name="text" >
                 <string>New</string>
                </property>
@@ -1680,15 +1704,21 @@
            </item>
            <item>
             <widget class="QPushButton" name="_workbenchInvoice" >
+             <property name="enabled" >
+              <bool>false</bool>
+             </property>
              <property name="text" >
-              <string>&amp;Workbench</string>
+              <string>&amp;Workbench...</string>
              </property>
             </widget>
            </item>
            <item>
             <widget class="QPushButton" name="_cashReceiptInvoice" >
+             <property name="enabled" >
+              <bool>false</bool>
+             </property>
              <property name="text" >
-              <string>&amp;Cash Receipt</string>
+              <string>&amp;Cash Receipt...</string>
              </property>
             </widget>
            </item>
@@ -1714,7 +1744,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="creditMemos" >
+     <widget class="QWidget" name="_creditMemosTab" >
       <attribute name="title" >
        <string>Credit Memos</string>
       </attribute>
@@ -1790,6 +1820,9 @@
              </item>
              <item>
               <widget class="QPushButton" name="_newCreditMemo" >
+               <property name="enabled" >
+                <bool>false</bool>
+               </property>
                <property name="text" >
                 <string>New</string>
                </property>
@@ -1819,6 +1852,9 @@
            </item>
            <item>
             <widget class="QPushButton" name="_workbenchCreditMemo" >
+             <property name="enabled" >
+              <bool>false</bool>
+             </property>
              <property name="text" >
               <string>&amp;Workbench</string>
              </property>
@@ -1846,7 +1882,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="arHistory" >
+     <widget class="QWidget" name="_arHistoryTab" >
       <attribute name="title" >
        <string>A/R History</string>
       </attribute>
@@ -1875,7 +1911,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="payments" >
+     <widget class="QWidget" name="_paymentsTab" >
       <attribute name="title" >
        <string>C/C Payments</string>
       </attribute>
@@ -1954,7 +1990,6 @@
   <tabstop>_edit</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
- <includes/>
  <resources/>
  <connections>
   <connection>
@@ -1964,12 +1999,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>323</x>
-     <y>489</y>
+     <x>246</x>
+     <y>592</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>691</x>
-     <y>413</y>
+     <x>771</x>
+     <y>384</y>
     </hint>
    </hints>
   </connection>
@@ -1980,12 +2015,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>333</x>
-     <y>489</y>
+     <x>268</x>
+     <y>621</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>700</x>
-     <y>412</y>
+     <x>762</x>
+     <y>419</y>
     </hint>
    </hints>
   </connection>
@@ -1996,12 +2031,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>333</x>
-     <y>489</y>
+     <x>136</x>
+     <y>447</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>700</x>
-     <y>412</y>
+     <x>762</x>
+     <y>419</y>
     </hint>
    </hints>
   </connection>
@@ -2012,8 +2047,8 @@
    <slot>animateClick()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>89</x>
-     <y>450</y>
+     <x>20</x>
+     <y>386</y>
     </hint>
     <hint type="destinationlabel" >
      <x>735</x>
@@ -2028,8 +2063,8 @@
    <slot>animateClick()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>89</x>
-     <y>450</y>
+     <x>83</x>
+     <y>386</y>
     </hint>
     <hint type="destinationlabel" >
      <x>735</x>
@@ -2044,12 +2079,60 @@
    <slot>animateClick()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>89</x>
-     <y>450</y>
+     <x>83</x>
+     <y>386</y>
     </hint>
     <hint type="destinationlabel" >
      <x>735</x>
      <y>78</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_cust</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_print</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>99</x>
+     <y>23</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>759</x>
+     <y>29</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_cust</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_refresh</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>108</x>
+     <y>22</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>727</x>
+     <y>86</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_cust</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_comment</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>86</x>
+     <y>22</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>720</x>
+     <y>381</y>
     </hint>
    </hints>
   </connection>
