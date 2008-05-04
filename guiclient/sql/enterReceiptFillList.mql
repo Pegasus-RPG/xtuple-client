@@ -19,20 +19,22 @@ ORDER BY poitem_linenumber;
 SELECT raitem_id, raitem_linenumber,
        formatDate(rahead_expiredate),
        COALESCE(item_number, <? value("nonInventory") ?>),
-       COALESCE(uom_name, <? value("na") ?>),
+       COALESCE(iu.uom_name, <? value("na") ?>),
        '' AS vend_item_number,
-       '' AS vend_uom,
+       ru.uom_name,
        formatQty(raitem_qtyauthorized),
        formatQty(raitem_qtyreceived),
        formatQty(qtyToReceive(<? value("ordertype") ?>, raitem_id))
 FROM rahead, raitem LEFT OUTER JOIN 
      ( itemsite JOIN item 
-       ON (itemsite_item_id=item_id) JOIN uom ON (item_inv_uom_id=uom_id)
-     ) ON (raitem_itemsite_id=itemsite_id) 
+       ON (itemsite_item_id=item_id) JOIN uom iu ON (item_inv_uom_id=uom_id)
+     ) ON (raitem_itemsite_id=itemsite_id), uom ru
+
 WHERE ( (raitem_status <> 'C')
  AND (raitem_qtyauthorized > 0)
  AND (raitem_disposition IN ('R','P','V'))
  AND (raitem_rahead_id=rahead_id)
+ AND (raitem_qty_uom_id=ru.uom_id)
  AND (rahead_id=<? value("rahead_id") ?>) )
 ORDER BY raitem_linenumber;
 <? elseif exists("tohead_id") ?>

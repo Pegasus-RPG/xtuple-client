@@ -149,12 +149,9 @@ enum SetResponse returnAuthItemLotSerial::set(const ParameterList &pParams)
   if (valid)
     _qtyUOM->setText(param.toString());
 
-  param = pParams.value("raitemls_id", &valid);
+  param = pParams.value("ls_id", &valid);
   if (valid)
-  {
-    _raitemlsid = param.toInt();
-    populate();
-  }
+    _lotSerial->setId(param.toInt());
 
   param = pParams.value("mode", &valid);
   if (valid)
@@ -229,30 +226,33 @@ void returnAuthItemLotSerial::sSave()
 
 void returnAuthItemLotSerial::sCheck()
 {
-  if ((_mode == cNew) || (_raitemlsid == -1))
+  q.prepare( "SELECT raitemls_id "
+             "FROM raitemls "
+             "WHERE ((raitemls_raitem_id=:raitem_id)"
+             " AND (raitemls_ls_id=:ls_id));" );
+  q.bindValue(":raitem_id", _raitemid);
+  q.bindValue(":ls_id", _lotSerial->id());
+  q.exec();
+  if (q.first())
   {
-    q.prepare( "SELECT raitemls_id "
-               "FROM raitemls "
-               "WHERE ((raitemls_raitem_id=:raitem_id)"
-               " AND (raitemls_ls_id=:ls_id));" );
-    q.bindValue(":raitem_id", _raitemid);
-    q.bindValue(":ls_id", _lotSerial->id());
-    q.exec();
-    if (q.first())
-    {
-      _raitemlsid = q.value("raitemls_id").toInt();
-      _mode = cEdit;
-      populate();
-    }
-    else
-      populateLotSerial();
+    _raitemlsid = q.value("raitemls_id").toInt();
+    _mode = cEdit;
+    populate();
+  }
+  else
+  {
+    _raitemlsid = -1;
+    _mode = cNew;
+    _qtyAuth->setText("0");
+    populateLotSerial();
   }
 }
 
 void returnAuthItemLotSerial::populate()
 {    
-  q.prepare( "SELECT itemsite_item_id, uom_name,raitemls_ls_id,raitemls_qtyauthorized,"
-		"raitemls_qtyreceived,COALESCE(lsreg_qty,0) AS qtyregistered, "
+  q.prepare( "SELECT itemsite_item_id, uom_name,raitemls_ls_id,formatqty(raitemls_qtyauthorized) AS qtyauthorized,"
+		"formatqty(raitemls_qtyreceived) as qtyreceived,"
+                "formatqty(COALESCE(SUM(lsreg_qty / raitem_qty_invuomratio),0)) AS qtyregistered, "
 		"itemsite_warehous_id "
 		"FROM raitemls "
 		"  LEFT OUTER JOIN lsreg ON (lsreg_crmacct_id=:crmacct_id) "
@@ -261,7 +261,9 @@ void returnAuthItemLotSerial::populate()
 		"WHERE ((raitemls_id=:raitemls_id) "
 		"AND (raitemls_raitem_id=raitem_id) "
 		"AND (uom_id=raitem_qty_uom_id) "
-		"AND (itemsite_id=raitem_itemsite_id))" );
+		"AND (itemsite_id=raitem_itemsite_id)) "
+                "GROUP BY itemsite_item_id,uom_name,raitemls_ls_id,raitemls_qtyauthorized,raitemls_qtyreceived, "
+                "itemsite_warehous_id" );
   q.bindValue(":raitemls_id", _raitemlsid);
   q.bindValue(":crmacct_id", _crmacctid);
   q.exec();
@@ -269,9 +271,9 @@ void returnAuthItemLotSerial::populate()
   {
     _item->setId(q.value("itemsite_item_id").toInt());
     _lotSerial->setId(q.value("raitemls_ls_id").toInt());
-    _qtyAuth->setText(q.value("raitemls_qtyauthorized").toString());
+    _qtyAuth->setText(q.value("qtyauthorized").toString());
     _qtyUOM->setText(q.value("uom_name").toString());
-    _qtyReceived->setText(q.value("raitemls_qtyreceived").toString());
+    _qtyReceived->setText(q.value("qtyreceived").toString());
     _qtyRegistered->setText(q.value("qtyregistered").toString());
     _warehouseid = q.value("itemsite_warehous_id").toInt();
     populateItemsite();
@@ -308,12 +310,14 @@ void returnAuthItemLotSerial::populateItemsite()
 
 void returnAuthItemLotSerial::populateLotSerial()
 {
-  q.prepare( "SELECT COALESCE(SUM(lsreg_qty),0) AS qtyregistered "
-		"FROM lsreg "
+  q.prepare( "SELECT formatqty(COALESCE(SUM(lsreg_qty / raitem_qty_invuomratio),0)) AS qtyregistered "
+		"FROM lsreg, raitem "
 		"WHERE ((lsreg_ls_id=:ls_id) "
-		"AND (lsreg_crmacct_id=:crmacct_id));" );
+		"AND (lsreg_crmacct_id=:crmacct_id) "
+                "AND (raitem_id=:raitem_id));" );
   q.bindValue(":ls_id", _lotSerial->id());
   q.bindValue(":crmacct_id", _crmacctid);
+  q.bindValue(":raitem_id", _raitemid);
   q.exec();
   if (q.first())
   {

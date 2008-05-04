@@ -94,6 +94,7 @@ returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* na
   _qtycredited = 0;
   _soldQty = 0;
   _coitemid = -1;
+  _crmacctid = -1;
 
   connect(_discountFromSale, SIGNAL(lostFocus()), this, SLOT(sCalculateFromDiscount()));
   connect(_extendedPrice, SIGNAL(valueChanged()), this, SLOT(sLookupTax()));
@@ -121,13 +122,13 @@ returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* na
   connect(_createOrder, SIGNAL(toggled(bool)), this, SLOT(sHandleWo(bool)));
   connect(_showAvailability, SIGNAL(toggled(bool)), this, SLOT(sDetermineAvailability()));
   connect(this, SIGNAL(rejected()), this, SLOT(rejectEvent()));
-  
+  connect(_authLotSerial, SIGNAL(toggled(bool)), _qtyUOM, SLOT(setDisabled(bool)));
+      
   connect(_new,		SIGNAL(clicked()),	this,	SLOT(sNew()));
   connect(_edit,	SIGNAL(clicked()),	this,	SLOT(sEdit()));
   connect(_delete,	SIGNAL(clicked()),	this,	SLOT(sDelete()));
     
-  _raitemls->addColumn(tr("Lot/Serial"),  _itemColumn,  Qt::AlignLeft   );
-  _raitemls->addColumn(tr("Reg. Number"), -1,           Qt::AlignLeft   );
+  _raitemls->addColumn(tr("Lot/Serial"),  -1,  Qt::AlignLeft   );
   _raitemls->addColumn(tr("Warranty"),	  _dateColumn,  Qt::AlignRight  );
   _raitemls->addColumn(tr("Registered"),  _qtyColumn,   Qt::AlignRight  );
   _raitemls->addColumn(tr("Authorized"),  _qtyColumn,   Qt::AlignRight  );
@@ -179,10 +180,12 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
     q.prepare("SELECT *,"
               "       rahead_curr_id AS taxcurr, "
               "       COALESCE(cust_preferred_warehous_id,-1) AS prefwhs, "
-              "       COALESCE(rahead_orig_cohead_id,-1) AS cohead_id "
-              "FROM rahead "
-              " LEFT OUTER JOIN custinfo ON (rahead_cust_id=cust_id) "
-              "WHERE (rahead_id=:rahead_id);");
+              "       COALESCE(rahead_orig_cohead_id,-1) AS cohead_id, "
+              "       crmacct_id "
+              "FROM rahead, custinfo, crmacct "
+              "WHERE ( (rahead_cust_id=cust_id) "
+              "AND (rahead_id=:rahead_id) "
+              "AND (rahead_cust_id=crmacct_cust_id) );");
     q.bindValue(":rahead_id", _raheadid);
     q.exec();
     if (q.first())
@@ -197,6 +200,7 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
       _netUnitPrice->setEffective(q.value("rahead_authdate").toDate());
       _preferredWarehouseid = q.value("prefwhs").toInt();
       _creditmethod = q.value("rahead_creditmethod").toString();
+      _crmacctid = q.value("crmacct_id").toInt();
     }
     else if (q.lastError().type() != QSqlError::None)
     {
@@ -725,18 +729,20 @@ void returnAuthorizationItem::populate()
                  "       nc.coitem_order_type AS coitem_order_type, "
                  "       rcv.itemsite_warehous_id AS itemsite_warehous_id, "
                  "       shp.itemsite_warehous_id AS shipWhs_id, "
-				 "       qtyToReceive('RA', raitem_id) AS qtytorcv "
+                 "       qtyToReceive('RA', raitem_id) AS qtytorcv, "
+                 "       crmacct_id "
                  "FROM raitem "
                  "  LEFT OUTER JOIN coitem oc ON (raitem_orig_coitem_id=oc.coitem_id) "
                  "  LEFT OUTER JOIN cohead och ON (oc.coitem_cohead_id=och.cohead_id) "
                  "  LEFT OUTER JOIN coitem nc ON (raitem_new_coitem_id=nc.coitem_id) "
                  "  LEFT OUTER JOIN cohead nch ON (nc.coitem_cohead_id=nch.cohead_id)"
                  "  LEFT OUTER JOIN itemsite shp ON (raitem_coitem_itemsite_id=shp.itemsite_id),"
-                 "  rahead, itemsite rcv, item "
+                 "  rahead, itemsite rcv, item, crmacct "
                  "WHERE ((raitem_rahead_id=rahead_id)"
                  " AND  (raitem_id=:raitem_id) "
                  " AND  (raitem_itemsite_id=rcv.itemsite_id) "
-                 " AND  (item_id=rcv.itemsite_item_id) );" );
+                 " AND  (item_id=rcv.itemsite_item_id) "
+                 " AND  (rahead_cust_id=crmacct_cust_id) );" );
   raitem.bindValue(":raitem_id", _raitemid);
   raitem.exec();
   if (raitem.first())
@@ -796,6 +802,7 @@ void returnAuthorizationItem::populate()
 
     _cQtyOrdered = _qtyAuth->toDouble();
     _cScheduledDate = _scheduledDate->date();
+    _crmacctid = raitem.value("crmacct_id").toInt();
 
     _coitemid = raitem.value("ra_coitem_id").toInt();
     if (_coitemid != -1)
@@ -1475,8 +1482,8 @@ void returnAuthorizationItem::sEdit()
 		for (int i = 0; i < selected.size(); i++)
 		{
 			ParameterList params;
-			params.append("raitemls_id", ((XTreeWidgetItem*)(selected[i]))->id());
-			params.append("raitem_id", _raitemid);
+                        params.append("raitem_id", _raitemid);			
+                        params.append("ls_id", ((XTreeWidgetItem*)(selected[i]))->altId());
 
 			if (_mode==cView)
 				params.append("mode", "view");
@@ -1518,20 +1525,26 @@ void returnAuthorizationItem::sDelete()
 
 void returnAuthorizationItem::sFillList()
 { 
-  q.prepare("SELECT raitemls_id, ls_number, COALESCE(lsreg_number,:na), "
-		" lsreg_expiredate, COALESCE(lsreg_qty,0), raitemls_qtyauthorized, "
-		" raitemls_qtyreceived "
+  q.prepare("SELECT raitemls_id,ls_id,ls_number, "
+		" MAX(lsreg_expiredate), formatqty(COALESCE(SUM(lsreg_qty / raitem_qty_invuomratio),0)), formatqty(raitemls_qtyauthorized), "
+		" formatqty(raitemls_qtyreceived) "
 		"FROM raitemls "
-		"  LEFT OUTER JOIN lsreg ON (lsreg_ls_id=raitemls_ls_id), "
-		"  ls "
-		"WHERE ((raitemls_raitem_id=:raitem_id) "
-		"AND (raitemls_ls_id=ls_id));" );
+		"  LEFT OUTER JOIN lsreg ON (lsreg_ls_id=raitemls_ls_id) "
+                "                       AND (lsreg_crmacct_id=:crmacct_id), "
+		"  ls, raitem "
+		"WHERE ((raitemls_raitem_id=raitem_id) "
+                "AND (raitem_id=:raitem_id) "
+		"AND (raitemls_ls_id=ls_id) ) "
+                "GROUP BY raitemls_id,ls_id,ls_number,raitemls_qtyauthorized,"
+                "  raitemls_qtyreceived "
+                "ORDER BY ls_number;" );
   q.bindValue(":raitem_id", _raitemid);
+  q.bindValue(":crmacct_id", _crmacctid);
   q.bindValue(":na", tr("N/A"));
   q.exec();
   _authLotSerial->setDisabled(q.first());
   _authLotSerial->setChecked(q.first());
-  _raitemls->populate(q);
+  _raitemls->populate(q,true);
   if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -1542,7 +1555,6 @@ void returnAuthorizationItem::sFillList()
 void returnAuthorizationItem::rejectEvent()
 {
   q.exec("ROLLBACK");
-  QMessageBox::warning(this,tr("Return Authorization Item"),tr("Changes Canceled."));
 }
 
 

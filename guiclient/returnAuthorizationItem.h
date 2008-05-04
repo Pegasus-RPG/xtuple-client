@@ -115,6 +115,7 @@ private:
     int      _raitemid;
     int	     _raheadid;
     int      _custid;
+    int      _crmacctid;
     int	     _coitemid;
     int	     _shiptoid;
     QString  _creditmethod;

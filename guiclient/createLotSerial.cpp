@@ -107,7 +107,7 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
 
     q.prepare( "SELECT item_fractional, itemsite_controlmethod, itemsite_item_id,"
 	       "       itemsite_id, itemsite_perishable, itemsite_warrpurc, "
-               "       invhist_ordtype, invhist_ordnumber "
+               "       invhist_transtype, invhist_docnumber "
                "FROM itemlocdist, itemsite, item, invhist "
                "WHERE ( (itemlocdist_itemsite_id=itemsite_id)"
                " AND (itemsite_item_id=item_id)"
@@ -133,18 +133,20 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
       _fractional = q.value("item_fractional").toBool();
       
       //If there is preassigned trace info for an associated order, force user to select from list
-      q.prepare("SELECT lsdetail_id "
-                "FROM lsdetail "
-                "WHERE ( (lsdetail_source_number=:ordernumber) "
-                "AND (lsdetail_source_type=:ordertype)"
+      XSqlQuery preassign;
+      preassign.prepare("SELECT lsdetail_id,ls_number,ls_number "
+                "FROM lsdetail,ls "
+                "WHERE ( (lsdetail_source_number=:docnumber) "
+                "AND (lsdetail_source_type=:transtype) "
+                "AND (lsdetail_ls_id=ls_id) "
                 "AND (lsdetail_qtytoassign > 0) )");
-      q.bindValue(":ordertype", q.value("invhist_ordtype").toString());
-      q.bindValue(":ordernumber", q.value("invhist_ordnumber").toString());
-      q.exec();
-      if (q.first())
+      preassign.bindValue(":transtype", q.value("invhist_transtype").toString());
+      preassign.bindValue(":docnumber", q.value("invhist_docnumber").toString());
+      preassign.exec();
+      if (preassign.first())
       {
         _lotSerial->setEditable(FALSE);
-        _lotSerial->populate(q);
+        _lotSerial->populate(preassign);
         _preassigned = true;
       }
       else if (q.lastError().type() != QSqlError::None)
@@ -319,12 +321,23 @@ void createLotSerial::sAssign()
     }
   }
 
-  q.prepare("SELECT createlotserial(:itemsite_id,:lotserial,:itemlocseries,'I',itemlocdist_id,:qty,:expiration,:warranty) "
-            "FROM itemlocdist "
-            "WHERE (itemlocdist_id=:itemlocdist_id);" );
+  QString sql;
+  if (_preassigned)
+    sql = "SELECT createlotserial(:itemsite_id,:lotserial,:itemlocseries,lsdetail_source_type,lsdetail_source_id,:itemlocdist_id,:qty,:expiration,:warranty) "
+              "FROM lsdetail,itemlocdist "
+              "WHERE ((lsdetail_id=:lsdetail_id)" 
+              "AND (itemlocdist_id=:itemlocdist_id));";
+
+  else
+    sql = "SELECT createlotserial(:itemsite_id,:lotserial,:itemlocseries,'I',NULL,itemlocdist_id,:qty,:expiration,:warranty) "
+              "FROM itemlocdist "
+              "WHERE (itemlocdist_id=:itemlocdist_id);";
+
+  q.prepare(sql);
   q.bindValue(":itemsite_id", _itemsiteid);
   q.bindValue(":lotserial", _lotSerial->currentText().upper());
   q.bindValue(":itemlocseries", _itemlocSeries);
+  q.bindValue(":lsdetail_id", _lotSerial->id());
   q.bindValue(":qty", _qtyToAssign->toDouble());
   if (_expiration->isEnabled())
     q.bindValue(":expiration", _expiration->date());

@@ -219,7 +219,7 @@ void LotserialLineEdit::sParse()
             }
             else
             {
-              numQ.exec("SELECT nextval('ls_ls_seq_id') AS ls_id;");
+              numQ.exec("SELECT nextval('ls_ls_id_seq') AS ls_id;");
               int lsid= numQ.value("ls_id").toInt();
               numQ.prepare("INSERT INTO ls (ls_id,ls_item_id,ls_number) "
                            "VALUES (:ls_id,:item_id,:number)");
