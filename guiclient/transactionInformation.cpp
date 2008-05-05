@@ -97,12 +97,7 @@ enum SetResponse transactionInformation::set(const ParameterList &pParams)
   {
     _invhistid = param.toInt();
 
-    q.prepare( "SELECT invhist_itemsite_id, invhist_transtype, invhist_analyze, invhist_user,"
-               "       formatDateTime(invhist_transdate) AS f_datetime,"
-               "       formatQty(invhist_invqty) AS f_qty,"
-               "       formatQty(invhist_qoh_before) AS f_before,"
-               "       formatQty(invhist_qoh_after) AS f_after,"
-               "       invhist_comments "
+    q.prepare( "SELECT * "
                "FROM invhist "
                "WHERE (invhist_id=:invhist_id);" );
     q.bindValue(":invhist_id", _invhistid);
@@ -111,12 +106,13 @@ enum SetResponse transactionInformation::set(const ParameterList &pParams)
     {
       _analyze->setChecked(q.value("invhist_analyze").toBool());
       _transactionType->setText(q.value("invhist_transtype").toString());
-      _transactionDate->setText(q.value("f_datetime").toString());
+      _transactionDate->setDate(q.value("invhist_transdate").toDate());
+      _createdDate->setDate(q.value("invhist_created").toDate());
       _username->setText(q.value("invhist_user").toString());
       _item->setItemsiteid(q.value("invhist_itemsite_id").toInt());
-      _transactionQty->setText(q.value("f_qty").toString());
-      _qohBefore->setText(q.value("f_before").toString());
-      _qohAfter->setText(q.value("f_after").toString());
+      _transactionQty->setText(formatQty(q.value("invhist_invqty").toDouble()));
+      _qohBefore->setText(formatQty(q.value("invhist_qoh_before").toDouble()));
+      _qohAfter->setText(formatQty(q.value("invhist_qoh_after").toDouble()));
       _notes->setText(q.value("invhist_comments").toString());
     }
     else if (q.lastError().type() != QSqlError::None)
