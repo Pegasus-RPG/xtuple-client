@@ -78,6 +78,7 @@ issueLineToShipping::issueLineToShipping(QWidget* parent, const char* name, bool
 
   _requireInventory = false;
   _snooze = false;
+  _transTS = QDateTime::currentDateTime();
   _item->setReadOnly(TRUE);
 
   _qtyToIssue->setValidator(omfgThis->qtyVal());
@@ -98,6 +99,28 @@ enum SetResponse issueLineToShipping::set(ParameterList &pParams)
   QVariant param;
   bool     valid;
 
+  param = pParams.value("transTS", &valid);
+  if (valid)
+    _transTS = param.toDateTime();
+
+  param = pParams.value("order_type", &valid);
+  if (valid)
+  {
+    _ordertype = param.toString();
+    if (_ordertype == "SO")
+      _orderNumberLit->setText(tr("Sales Order #:"));
+    else if (_ordertype == "TO")
+      _orderNumberLit->setText(tr("Transfer Order #:"));
+  }
+
+  param = pParams.value("order_id", &valid);
+  if (valid)
+  {
+    _itemid = param.toInt();
+    populate();
+  }
+
+  // TODO: deprecate by remoing from salesOrder and transferOrder windows
   param = pParams.value("soitem_id", &valid);
   if (valid)
   {
@@ -107,6 +130,7 @@ enum SetResponse issueLineToShipping::set(ParameterList &pParams)
     populate();
   }
 
+  // TODO: deprecate by remoing from salesOrder and transferOrder windows
   param = pParams.value("toitem_id", &valid);
   if (valid)
   {
@@ -243,10 +267,11 @@ void issueLineToShipping::sIssue()
 
   XSqlQuery issue;
   issue.exec("BEGIN;");
-  issue.prepare("SELECT issueToShipping(:ordertype, :lineitem_id, :qty, 0, CURRENT_TIMESTAMP) AS result;");
-  issue.bindValue(":ordertype", _ordertype);
+  issue.prepare("SELECT issueToShipping(:ordertype, :lineitem_id, :qty, 0, :ts) AS result;");
+  issue.bindValue(":ordertype",   _ordertype);
   issue.bindValue(":lineitem_id", _itemid);
-  issue.bindValue(":qty", _qtyToIssue->toDouble());
+  issue.bindValue(":qty",         _qtyToIssue->toDouble());
+  issue.bindValue(":ts",          _transTS);
   issue.exec();
 
   if (issue.first())
@@ -289,6 +314,7 @@ void issueLineToShipping::populate()
     itemp.append("toitem_id", _itemid);
   itemp.append("ordertype", _ordertype);
 
+  // TODO: make this an orderitem select
   QString sql = "<? if exists(\"soitem_id\") ?>"
 		"SELECT cohead_number AS order_number,"
 		"       itemsite_item_id AS item_id,"

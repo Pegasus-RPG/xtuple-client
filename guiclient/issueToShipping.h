@@ -84,8 +84,6 @@ public slots:
     virtual void sCatchToheadid( int pToheadid );
     virtual void sCatchToitemid( int porderitemid );
     virtual void sCatchWoid( int pWoid );
-    virtual void sHandleSalesOrder(const int porderid );
-    virtual void sHandleTransferOrder(const int porderid );
     virtual void sIssueAllBalance();
     virtual void sIssueLineBalance();
     virtual void sIssueStock();
@@ -97,7 +95,6 @@ protected slots:
     virtual void sFillList();
 
 private:
-    QString	_ordertype;
     bool	sufficientInventory(int);
     bool	sufficientItemInventory(int);
 

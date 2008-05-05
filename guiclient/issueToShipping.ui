@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>775</width>
-    <height>358</height>
+    <height>378</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -64,10 +64,7 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="SoCluster" name="_so" />
-        </item>
-        <item>
-         <widget class="ToCluster" name="_to" />
+         <widget class="OrderCluster" name="_order" />
         </item>
         <item>
          <spacer>
@@ -110,6 +107,26 @@
            <string>Require sufficient Inventory</string>
           </property>
          </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" >
+          <item>
+           <widget class="QLabel" name="_transDateLit" >
+            <property name="text" >
+             <string>Issue Date:</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="buddy" >
+             <cstring>_transDate</cstring>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="DLineEdit" name="_transDate" />
+          </item>
+         </layout>
         </item>
         <item>
          <spacer>
@@ -495,14 +512,14 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>SoCluster</class>
+   <class>DLineEdit</class>
    <extends>QWidget</extends>
-   <header>socluster.h</header>
+   <header>datecluster.h</header>
   </customwidget>
   <customwidget>
-   <class>ToCluster</class>
+   <class>OrderCluster</class>
    <extends>QWidget</extends>
-   <header>tocluster.h</header>
+   <header>ordercluster.h</header>
   </customwidget>
   <customwidget>
    <class>XCheckBox</class>
@@ -521,8 +538,6 @@
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>_so</tabstop>
-  <tabstop>_to</tabstop>
   <tabstop>_requireInventory</tabstop>
   <tabstop>_soitem</tabstop>
   <tabstop>_issueStock</tabstop>
@@ -535,7 +550,6 @@
   <tabstop>_ship</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
- <includes/>
  <resources/>
  <connections>
   <connection>
