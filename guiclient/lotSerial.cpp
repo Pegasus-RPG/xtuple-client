@@ -215,31 +215,34 @@ void lotSerial::sNewReg()
   params.append("mode", "new");
   params.append("ls_id", _lotSerial->id());
 
-  lotSerialRegistration *newdlg = new lotSerialRegistration();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
+  lotSerialRegistration newdlg(this, "", TRUE);
+  newdlg.set(params);
+  
+  newdlg.exec();
+  sFillList();
 }
 
 void lotSerial::sEditReg()
 {
-  XTreeWidgetItem *reg = static_cast<XTreeWidgetItem*>(_reg->currentItem());
   ParameterList params;
   params.append("mode", "edit");
-  params.append("number", reg->text(0));
+  params.append("lsreg_id", _reg->id());
 
-  lotSerialRegistration *newdlg = new lotSerialRegistration();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
+  lotSerialRegistration newdlg(this, "", TRUE);
+  newdlg.set(params);
+  
+  newdlg.exec();
+  sFillList();
 }
 
 void lotSerial::sDeleteReg()
 {
   q.prepare( "DELETE FROM lsreg "
-             "WHERE (lsreg_ls_id=:ls_id);"
+             "WHERE (lsreg_id=:lsreg_id);"
              "DELETE FROM charass "
              "WHERE ((charass_target_type='LSR') "
-             "AND (charass_target_id=:ls_id))" );
-  q.bindValue(":ls_id", _charass->id());
+             "AND (charass_target_id=:lsreg_id))" );
+  q.bindValue(":lsreg_id", _reg->id());
   q.exec();
   if (q.lastError().type() != QSqlError::None)
   {

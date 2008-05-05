@@ -59,7 +59,7 @@
 #define LOTSERIALREGISTRATION_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xdialog.h"
 #include "xdatawidgetmapper.h"
 #include <QStringList>
 #include <QSqlTableModel>
@@ -67,12 +67,12 @@
 
 #include "ui_lotSerialRegistration.h"
 
-class lotSerialRegistration : public XMainWindow, public Ui::lotSerialRegistration
+class lotSerialRegistration : public XDialog, public Ui::lotSerialRegistration
 {
     Q_OBJECT
 
 public:
-    lotSerialRegistration(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    lotSerialRegistration(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~lotSerialRegistration();
 
 public slots:
@@ -91,7 +91,6 @@ protected slots:
 private:
     int               _mode;
     int               _lsregid;
-    QString           _number;
     
 };
 

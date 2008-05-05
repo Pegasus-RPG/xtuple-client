@@ -75,6 +75,7 @@
 #include "dspCustomerInformation.h"
 #include "opportunity.h"
 #include "mqlutil.h"
+#include "lotSerialRegistration.h"
 
 crmaccount::crmaccount(QWidget* parent, Qt::WFlags fl)
     : QWidget(parent, fl)
@@ -103,14 +104,17 @@ crmaccount::crmaccount(QWidget* parent, Qt::WFlags fl)
   connect(_contacts, SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_customerButton,	SIGNAL(clicked()), this, SLOT(sCustomer()));
   connect(_deleteCharacteristic,SIGNAL(clicked()), this, SLOT(sDeleteCharacteristic()));
+  connect(_deleteReg,		SIGNAL(clicked()), this, SLOT(sDeleteReg()));
   connect(_deleteTodoIncdt,	SIGNAL(clicked()), this, SLOT(sDeleteTodoIncdt()));
   connect(_detach,		SIGNAL(clicked()), this, SLOT(sDetach()));
   connect(_edit,		SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_editCharacteristic,	SIGNAL(clicked()), this, SLOT(sEditCharacteristic()));
+  connect(_editReg,		SIGNAL(clicked()), this, SLOT(sEditReg()));
   connect(_editTodoIncdt,	SIGNAL(clicked()), this, SLOT(sEditTodoIncdt()));
   connect(_new,			SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_newCharacteristic,	SIGNAL(clicked()), this, SLOT(sNewCharacteristic()));
   connect(_newIncdt,		SIGNAL(clicked()), this, SLOT(sNewIncdt()));
+  connect(_newReg,		SIGNAL(clicked()), this, SLOT(sNewReg()));
   connect(_newTodo,		SIGNAL(clicked()), this, SLOT(sNewTodo()));
   connect(_partner,		SIGNAL(clicked()), this, SLOT(sPartner()));
 //  connect(_partnerButton,	SIGNAL(clicked()), this, SLOT(sPartner()));
@@ -166,6 +170,14 @@ crmaccount::crmaccount(QWidget* parent, Qt::WFlags fl)
   _oplist->addColumn(tr("Currency"), _currencyColumn, Qt::AlignLeft,  false,"ophead_currabbr");
   _oplist->addColumn(tr("Target Date"),  _dateColumn, Qt::AlignLeft,  true, "ophead_target_date");
   _oplist->addColumn(tr("Actual Date"),  _dateColumn, Qt::AlignLeft,   false,"ophead_actual_date");
+  
+  _reg->addColumn(tr("Lot/Serial")  ,  _itemColumn,  Qt::AlignLeft, true, "ls_number" );
+  _reg->addColumn(tr("Item")        ,  _itemColumn,  Qt::AlignLeft, true, "item_number" );
+  _reg->addColumn(tr("Description") ,  -1,  	     Qt::AlignLeft, true, "item_descrip1" );
+  _reg->addColumn(tr("Qty"       )  ,  _qtyColumn,   Qt::AlignLeft, true, "lsreg_qty" );
+  _reg->addColumn(tr("Sold"        ),  _dateColumn,  Qt::AlignLeft, true, "lsreg_solddate" );
+  _reg->addColumn(tr("Registered"  ),  _dateColumn,  Qt::AlignLeft, true, "lsreg_regdate" );
+  _reg->addColumn(tr("Expires"   )  ,  _dateColumn,  Qt::AlignLeft, true, "lsreg_expiredate" );
 
   if (_preferences->boolean("XCheckBox/forgetful"))
   {
@@ -184,6 +196,9 @@ crmaccount::crmaccount(QWidget* parent, Qt::WFlags fl)
   _taxauthId    = -1;
   _vendId       = -1;
   _comments->setId(-1);
+  
+  if (!_metrics->boolean("LotSerialControl"))
+    _tab->removeTab(_tab->indexOf(_registrationsTab));
 
   sHandleTodoPrivs();
   
@@ -870,6 +885,7 @@ void crmaccount::sPopulate()
   sGetCharacteristics();
   sPopulateTodo();
   sPopulateOplist();
+  sPopulateRegistrations();
 }
 
 void crmaccount::sPopulateContacts()
@@ -1743,3 +1759,74 @@ void crmaccount::sPopulateOplist()
 
   _oplist->populate(itemQ);
 }
+
+void crmaccount::sPopulateRegistrations()
+{
+  if (_metrics->boolean("LotSerialControl"))
+  {
+     q.prepare( "SELECT lsreg_id,ls_number,item_number, item_descrip1, "
+             "lsreg_qty,'qty' AS lsreg_qty_xtnumericrole,lsreg_solddate,"
+	     "lsreg_regdate,lsreg_expiredate, "
+	     "CASE WHEN lsreg_expiredate <= current_date THEN "
+	     "  'expired' "
+	     "END AS lsreg_expiredate_qtforegroundrole "
+             "FROM lsreg,ls,item  "
+             "WHERE ((lsreg_ls_id=ls_id) "
+	     "AND (ls_item_id=item_id) "
+             "AND (lsreg_crmacct_id=:crmacct_id));");
+    q.bindValue(":crmacct_id", _crmacctId);
+    q.exec();
+    _reg->clear();
+    _reg->populate(q);
+    if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+  }
+}
+
+void crmaccount::sNewReg()
+{
+  ParameterList params;
+  params.append("mode", "new");
+  params.append("crmacct_id", _crmacctId);
+
+  lotSerialRegistration newdlg(this, "", TRUE);
+  newdlg.set(params);
+  
+  newdlg.exec();
+  sPopulateRegistrations();
+}
+
+void crmaccount::sEditReg()
+{
+  ParameterList params;
+  params.append("mode", "edit");
+  params.append("lsreg_id", _reg->id());
+
+  lotSerialRegistration newdlg(this, "", TRUE);
+  newdlg.set(params);
+  
+  newdlg.exec();
+  sPopulateRegistrations();
+}
+
+void crmaccount::sDeleteReg()
+{
+  q.prepare( "DELETE FROM lsreg "
+             "WHERE (lsreg_id=:lsreg_id);"
+             "DELETE FROM charass "
+             "WHERE ((charass_target_type='LSR') "
+             "AND (charass_target_id=:lsreg_id))" );
+  q.bindValue(":lsreg_id", _reg->id());
+  q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
+  sPopulateRegistrations();
+}
+

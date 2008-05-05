@@ -71,8 +71,8 @@
  *  name 'name' and widget flags set to 'f'.
  *
  */
-lotSerialRegistration::lotSerialRegistration(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+lotSerialRegistration::lotSerialRegistration(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+    : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
@@ -111,13 +111,17 @@ enum SetResponse lotSerialRegistration::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
 
+  param = pParams.value("crmacct_id", &valid);
+  if (valid)
+    _crmacct->setId(param.toInt());
+  
   param = pParams.value("ls_id", &valid);
   if (valid)
     _lotSerial->setId(param.toInt());
   
-  param = pParams.value("number", &valid);
+  param = pParams.value("lsreg_id", &valid);
   if (valid)
-    _number=param.toString();
+    _lsregid=param.toInt();
 
   param = pParams.value("mode", &valid);
   if (valid)
@@ -125,7 +129,26 @@ enum SetResponse lotSerialRegistration::set(const ParameterList &pParams)
     _mode = cNew;
 
     if (param.toString() == "new")
+    {
       _mode = cNew;
+      q.exec ("SELECT fetchnextnumber('LsRegNumber') AS number;");
+      if (q.first())
+	_regNumber->setText(q.value("number").toString());
+      else if(q.lastError().type() != QSqlError::None)
+      {
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        reject();
+      }
+      q.exec("SELECT NEXTVAL('lsreg_lsreg_id_seq') AS _lsreg_id;");
+      if (q.first())
+        _lsregid = q.value("_lsreg_id").toInt();
+      else if (q.lastError().type() != QSqlError::None)
+      {
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        reject();
+      }
+      _qty->setText("1");
+    }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
@@ -166,7 +189,7 @@ void lotSerialRegistration::sNewCharass()
 {
   ParameterList params;
   params.append("mode", "new");
-  params.append("lsreg_id", _lotSerial->id());
+  params.append("lsreg_id", _lsregid);
 
   characteristicAssignment newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -205,15 +228,29 @@ void lotSerialRegistration::sDeleteCharass()
 
 void lotSerialRegistration::sFillList()
 {
-  // TODO
+  q.prepare( "SELECT charass_id, char_name, charass_value "
+             "FROM charass, char "
+             "WHERE ((charass_target_type='LSR')"
+             " AND   (charass_char_id=char_id)"
+             " AND   (charass_target_id=:lsreg_id) ) "
+             "ORDER BY char_name;" );
+  q.bindValue(":lsreg_id", _lsregid);
+  q.exec();
+  _charass->clear();
+  _charass->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void lotSerialRegistration::populate()
 {
   q.prepare("SELECT *"
             "  FROM lsreg LEFT OUTER JOIN ls ON (lsreg_ls_id=ls_id)"
-            " WHERE(lsreg_number=:number);");
-  q.bindValue(":number", _number);
+            " WHERE(lsreg_id=:lsreg_id);");
+  q.bindValue(":lsreg_id", _lsregid);
   q.exec();
   if(q.first())
   {
@@ -246,18 +283,50 @@ void lotSerialRegistration::sSave()
   if(cView == _mode)
     return;
 
-  // TODO: Add any error checking that is necessary here
+  if (!_regDate->isValid())
+  {
+    QMessageBox::warning(this, windowTitle(), "You must provide a registration date.");
+    _regDate->setFocus();
+    return;
+  }
+  
+  if (!_soldDate->isValid())
+  {
+    QMessageBox::warning(this, windowTitle(), "You must provide a sold date.");
+    _soldDate->setFocus();
+    return;
+  }
+
+  if (!_expireDate->isValid())
+  {
+    QMessageBox::warning(this, windowTitle(), "You must provide a expiration date.");
+    _expireDate->setFocus();
+    return;
+  }
+  
+  if (_lotSerial->id() == -1)
+  {
+    QMessageBox::warning(this, windowTitle(), "You must provide a lot/serial number.");
+    _lotSerial->setFocus();
+    return;
+  }
+  
+  if (!(_qty->toDouble() > 0))
+  {
+    QMessageBox::warning(this, windowTitle(), "You must provide a quantity greater than zero.");
+    _qty->setFocus();
+    return;
+  }
+  
+  if (_cntct->id() == -1)
+  {
+    QMessageBox::warning(this, windowTitle(), "You must provide a contact.");
+    _cntct->setFocus();
+    return;
+  }
 
   if(cNew == _mode)
   {
-    q.exec("SELECT NEXTVAL('lsreg_lsreg_id_seq') AS _lsreg_id;");
-    if (q.first())
-      _lsregid = q.value("_lsreg_id").toInt();
-    else if (q.lastError().type() != QSqlError::None)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
     q.prepare("INSERT INTO lsreg"
               "      (lsreg_id, lsreg_number, lsreg_regtype_id,"
               "       lsreg_ls_id, lsreg_qty, lsreg_regdate, lsreg_solddate,"

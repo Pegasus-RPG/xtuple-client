@@ -78,6 +78,7 @@ public slots:
     virtual void sPopulateContacts();
     virtual void sPopulateTodo();
     virtual void sPopulateOplist();
+    virtual void sPopulateRegistrations();
 
 protected slots:
     virtual void languageChange();
@@ -89,12 +90,14 @@ protected slots:
     virtual void sCustomer();
     virtual void sDeleteCharacteristic();
     virtual void sDeleteIncdt();
+    virtual void sDeleteReg();
     virtual void sDeleteTodo();
     virtual void sDeleteTodoIncdt();
     virtual void sDetach();
     virtual void sEdit();
     virtual void sEditCharacteristic();
     virtual void sEditIncdt();
+    virtual void sEditReg();
     virtual void sEditTodo();
     virtual void sEditTodoIncdt();
     virtual void sGetCharacteristics();
@@ -103,6 +106,7 @@ protected slots:
     virtual void sNew();
     virtual void sNewCharacteristic();
     virtual void sNewIncdt();
+    virtual void sNewReg();
     virtual void sNewTodo();
     virtual void sPartner();
     virtual void sPopulateMenu(QMenu *);
