@@ -332,7 +332,7 @@ int AddressCluster::save(enum SaveFlags flag)
   else if (flag == CHANGEALL)
     datamodQ.bindValue(":flag", QString("CHANGEALL"));
   else if (flag == CHANGEONE)
-    datamodQ.bindValue(":flag", QString("CHANGEALL"));
+    datamodQ.bindValue(":flag", QString("CHANGEONE"));
   else
     return -1;
     

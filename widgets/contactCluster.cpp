@@ -334,9 +334,9 @@ int ContactCluster::save(AddressCluster::SaveFlags flag)
     return addrSave;
 
   XSqlQuery datamodQ;
-  datamodQ.prepare("SELECT saveCntct(:cntct_id,:cntct_number,:crmacct_id,:addr_id,"
+  datamodQ.prepare("SELECT COALESCE(saveCntct(:cntct_id,:cntct_number,:crmacct_id,:addr_id,"
 		   ":first,:last,:honorific,:initials,:active,:phone,:phone2,:fax,:email,:webaddr,"
-		   ":notes,:title,:flag) AS result;");
+		   ":notes,:title,:flag),0) AS result;");
   datamodQ.bindValue(":cntct_number", _number->text());
   datamodQ.bindValue(":cntct_id",  id());
   datamodQ.bindValue(":honorific", _honorific->currentText());
@@ -366,7 +366,9 @@ int ContactCluster::save(AddressCluster::SaveFlags flag)
   datamodQ.exec();
   if (datamodQ.first())
   {
-    if (datamodQ.value("result").toInt() > 0)
+    if (datamodQ.value("result").toInt() == 0)
+      return 0;
+    else if (datamodQ.value("result").toInt() > 0)
       silentSetId(datamodQ.value("result").toInt());
     else if (datamodQ.value("result").toInt() == -10)
     {
