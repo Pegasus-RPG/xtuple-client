@@ -116,6 +116,7 @@
 #include "printShippingForm.h"
 #include "printShippingForms.h"
 #include "printLabelsBySo.h"
+#include "printLabelsByTo.h"
 #include "printLabelsByInvoice.h"
 #include "printLabelsByPo.h"
 
@@ -205,6 +206,7 @@ menuInventory::menuInventory(GUIClient *Pparent) :
   itemSitesMenu	= new QMenu(parent);
   warehouseMenu = new QMenu(parent);
   transferOrderMenu = new QMenu(parent);
+  transferOrderFormsMenu = new QMenu(parent);
   transactionsMenu	= new QMenu(parent);
   lotSerialControlMenu	= new QMenu(parent);
   physicalMenu = new QMenu(parent);
@@ -238,6 +240,7 @@ menuInventory::menuInventory(GUIClient *Pparent) :
   itemSitesMenu->setObjectName("menu.im.itemsites");
   warehouseMenu->setObjectName("menu.im.warehouse");
   transferOrderMenu->setObjectName("menu.im.transferorder");
+  transferOrderFormsMenu->setObjectName("menu.im.transferorderforms");
   transactionsMenu->setObjectName("menu.im.transactions");
   lotSerialControlMenu->setObjectName("menu.im.lotserialcontrol");
   physicalMenu->setObjectName("menu.im.physical");
@@ -287,6 +290,11 @@ menuInventory::menuInventory(GUIClient *Pparent) :
     { "menu",				tr("Transfer &Order"),	  (char*)transferOrderMenu,	mainMenu,	  true,	NULL, NULL, _metrics->boolean("MultiWhs"), NULL},
     { "im.interWarehouseTransfer",	tr("&New..."),	  SLOT(sNewTransferOrder()),	transferOrderMenu, _privileges->check("MaintainTransferOrders"),	NULL, NULL, _metrics->boolean("MultiWhs"), NULL }, 
     { "im.transferOrders",		tr("&List..."),	  SLOT(sTransferOrders()),	transferOrderMenu, (_privileges->check("ViewTransferOrders") || _privileges->check("MaintainTransferOrders")),	NULL, NULL, _metrics->boolean("MultiWhs"), NULL }, 
+    { "separator",			NULL,		  NULL,				transferOrderMenu, true, NULL, NULL, true, NULL},
+
+    // Inventory | Shipping | Forms
+    { "menu",				tr("&Forms"),	(char*)transferOrderFormsMenu,  transferOrderMenu, true, NULL, NULL, true , NULL },
+    { "sr.printShippingLabelsByTo",     tr("Shipping Labels by &T/O #..."), SLOT(sPrintShippingLabelsByTo()), transferOrderFormsMenu, _privileges->check("ViewTransferOrders"), NULL, NULL, true, NULL },
 
     //  Inventory | Physical Inventory
     { "menu",				tr("&Physical Inventory"),		   (char*)physicalMenu,			 mainMenu,	true,	NULL, NULL, true, NULL },
@@ -826,6 +834,11 @@ void menuInventory::sPrintShippingForms()
 void menuInventory::sPrintShippingLabelsBySo()
 {
   printLabelsBySo(parent, "", TRUE).exec();
+}
+
+void menuInventory::sPrintShippingLabelsByTo()
+{
+  printLabelsByTo(parent, "", TRUE).exec();
 }
 
 void menuInventory::sPrintShippingLabelsByInvoice()

@@ -137,6 +137,7 @@ class menuInventory : public QObject
     void sPrintShippingLabelsBySo();
     void sPrintShippingLabelsByInvoice();
     void sPrintReceivingLabelsByPo();
+    void sPrintShippingLabelsByTo();
 
     void sDestinations();
     void sCarriers();
@@ -229,6 +230,7 @@ class menuInventory : public QObject
     QMenu *itemSitesMenu;
     QMenu *warehouseMenu;
     QMenu *transferOrderMenu;
+    QMenu *transferOrderFormsMenu;
     QMenu *transactionsMenu;
     QMenu *lotSerialControlMenu;
     QMenu *physicalMenu;

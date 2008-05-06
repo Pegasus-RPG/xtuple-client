@@ -250,7 +250,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                printInvoice.ui printInvoices.ui printInvoicesByShipvia.ui reprintInvoices.ui          \
                printPackingList.ui                                                                    \
                printItemLabelsByClassCode.ui printLabelsByInvoice.ui printLabelsBySo.ui               \
-               printLabelsByPo.ui printPackingListBatchByShipvia.ui printPoForm.ui                    \
+               printLabelsByPo.ui printLabelsByTo.ui printPackingListBatchByShipvia.ui printPoForm.ui \
                printProductionEntrySheet.ui printPurchaseOrder.ui                                     \
                printPurchaseOrdersByAgent.ui printSASpecialCalendarForm.ui printSoForm.ui             \
                printRaForm.ui                                                                         \
@@ -563,7 +563,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h rwInterface
                printInvoice.h printInvoices.h printInvoicesByShipvia.h reprintInvoices.h              \
                printPackingList.h                                                                     \
                printItemLabelsByClassCode.h printLabelsByInvoice.h printLabelsBySo.h                  \
-               printLabelsByPo.h printPackingListBatchByShipvia.h printPoForm.h                       \
+               printLabelsByPo.h printLabelsByTo.h printPackingListBatchByShipvia.h printPoForm.h     \
                printProductionEntrySheet.h printPurchaseOrder.h                                       \
                printPurchaseOrdersByAgent.h printSASpecialCalendarForm.h printSoForm.h                \
                printRaForm.h                                                                          \
@@ -882,7 +882,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp rwInte
                printInvoice.cpp printInvoices.cpp printInvoicesByShipvia.cpp reprintInvoices.cpp      \
                printPackingList.cpp                                                                   \
                printItemLabelsByClassCode.cpp printLabelsByInvoice.cpp printLabelsBySo.cpp            \
-               printLabelsByPo.cpp printPackingListBatchByShipvia.cpp printPoForm.cpp                 \
+               printLabelsByPo.cpp printLabelsByTo.cpp printPackingListBatchByShipvia.cpp printPoForm.cpp \
                printProductionEntrySheet.cpp printPurchaseOrder.cpp                                   \
                printPurchaseOrdersByAgent.cpp printSASpecialCalendarForm.cpp printSoForm.cpp          \
                printRaForm.cpp                                                                        \
