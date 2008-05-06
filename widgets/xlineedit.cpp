@@ -60,9 +60,11 @@
 //  Copyright (c) 2003-2008, OpenMFG, LLC
 
 #include "xlineedit.h"
-#include <QMouseEvent>
+
 #include <QFocusEvent>
 #include <QKeyEvent>
+#include <QLocale>
+#include <QMouseEvent>
 
 XLineEdit::XLineEdit(QWidget *parent, const char *name) :
   QLineEdit(parent, name)
@@ -99,19 +101,7 @@ void XLineEdit::sParse()
 
 double XLineEdit::toDouble(bool *pIsValid)
 {
-  QString value;
-
-  value = text();
-
-//  Remove all 's
-  value = value.remove(',');
-
-//  Remove all but 1 .
-  int pos = value.find('.');
-  if (pos > -1)
-    value = (value.left(pos + 1) + value.right(value.length() - pos - 1).remove('.'));
-
-  return value.toDouble(pIsValid);
+  return QLocale().toDouble(text(), pIsValid);
 }
 
 void XLineEdit::setDataWidgetMap(XDataWidgetMapper* m)
