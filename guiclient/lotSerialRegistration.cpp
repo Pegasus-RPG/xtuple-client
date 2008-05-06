@@ -131,7 +131,7 @@ enum SetResponse lotSerialRegistration::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-      q.exec ("SELECT fetchnextnumber('LsRegNumber') AS number;");
+      q.exec ("SELECT fetchlsregnumber() AS number;");
       if (q.first())
 	_regNumber->setText(q.value("number").toString());
       else if(q.lastError().type() != QSqlError::None)
