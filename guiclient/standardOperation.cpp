@@ -203,6 +203,32 @@ void standardOperation::sCheck()
 
 void standardOperation::sSave()
 {
+  struct {
+    bool	condition;
+    QString	msg;
+    QWidget*	widget;
+  } error[] = {
+    { _number->text().stripWhiteSpace().isEmpty(),
+      tr("You must supply a Std. Oper. #."), _number },
+    { _stdTimes->isChecked() &&
+      _setupTime->toDouble() <= 0 && _runTime->toDouble() <= 0,
+      tr("If you select Use Standard Times then please enter at least a Setup "
+	 "or a Run Time."), _setupTime },
+    { true, "", NULL }
+  }; // error[]
+
+  int errIndex;
+  for (errIndex = 0; ! error[errIndex].condition; errIndex++)
+    ;
+  if (! error[errIndex].msg.isEmpty())
+  {
+    QMessageBox::critical(this, tr("Cannot Save Standard Operation"),
+			  error[errIndex].msg);
+    error[errIndex].widget->setFocus();
+    return;
+  }
+
+
   if (_mode == cNew)
   {
     q.exec("SELECT NEXTVAL('stdopn_stdopn_id_seq') AS _stdopn_id;");

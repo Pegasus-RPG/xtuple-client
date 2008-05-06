@@ -161,6 +161,14 @@ void taxType::sCheck()
 
 void taxType::sSave()
 {
+  if (_name->text().stripWhiteSpace().isEmpty())
+  {
+    QMessageBox::critical(this, tr("Missing Name"),
+			  tr("<p>You must name this Tax Type before saving it."));
+    _name->setFocus();
+    return;
+  }
+
   if (_mode == cEdit)
   {
     q.prepare( "SELECT taxtype_id "

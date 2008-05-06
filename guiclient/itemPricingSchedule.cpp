@@ -221,6 +221,14 @@ enum SetResponse itemPricingSchedule::set(const ParameterList &pParams)
 
 void itemPricingSchedule::sSave()
 {
+  if (_name->text().stripWhiteSpace().isEmpty())
+  {
+    QMessageBox::critical( this, tr("Enter Name"),
+                           tr("You must enter a Name for this Pricing Schedule.") );
+    _name->setFocus();
+    return;
+  }
+
   if (!_dates->startDate().isValid())
   {
     QMessageBox::critical( this, tr("Enter Effective Date"),

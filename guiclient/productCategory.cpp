@@ -168,6 +168,14 @@ void productCategory::sCheck()
 
 void productCategory::sSave()
 {
+  if (_category->text().stripWhiteSpace().isEmpty())
+  {
+    QMessageBox::critical(this, tr("Missing Category"),
+			  tr("You must name this Category before saving it."));
+    _category->setFocus();
+    return;
+  }
+
   if (_mode == cEdit)
   {
     q.prepare( "SELECT prodcat_id "

@@ -135,6 +135,26 @@ enum SetResponse characteristic::set(const ParameterList &pParams)
 
 void characteristic::sSave()
 {
+  if (_name->text().stripWhiteSpace().isEmpty())
+  {
+    QMessageBox::critical(this, tr("Missing Name"),
+			  tr("<p>You must name this Characteristic before "
+			     "saving it."));
+    _name->setFocus();
+    return;
+  }
+  if (! (_items->isChecked()       || _customers->isChecked() ||
+	 _lotSerial->isChecked()   || _addresses->isChecked() ||
+	 _crmaccounts->isChecked() || _contacts->isChecked() ||
+	 _opportunity->isChecked() ))
+  {
+    QMessageBox::critical(this, tr("Apply Characteristic"),
+			  tr("<p>You must apply this Characteristic to at "
+			     "least one type of application object."));
+    _items->setFocus();
+    return;
+  }
+
   if (_mode == cNew)
   {
     q.exec("SELECT NEXTVAL('char_char_id_seq') AS char_id;");
