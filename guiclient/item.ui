@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>636</width>
+    <height>539</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -635,127 +635,87 @@
          <bool>true</bool>
         </property>
         <layout class="QGridLayout" >
-         <item row="0" column="0" colspan="2" >
-          <widget class="QLabel" name="_prodcatLit" >
-           <property name="text" >
-            <string>Product C&amp;ategory:</string>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-           <property name="buddy" >
-            <cstring>_prodcat</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="2" colspan="3" >
-          <widget class="XComboBox" name="_prodcat" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="5" >
-          <widget class="QCheckBox" name="_exclusive" >
-           <property name="text" >
-            <string>Exclusive</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="6" >
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" >
-            <size>
-             <width>16</width>
-             <height>22</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="0" column="7" >
-          <widget class="QLabel" name="_upcCodeLit" >
-           <property name="text" >
-            <string>UPC:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="8" >
-          <widget class="XLineEdit" name="_upcCode" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="maximumSize" >
-            <size>
-             <width>120</width>
-             <height>32767</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0" >
-          <widget class="QLabel" name="_listPriceLit" >
-           <property name="text" >
-            <string>List Price:</string>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1" colspan="2" >
-          <widget class="XLineEdit" name="_listprice" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="maximumSize" >
-            <size>
-             <width>80</width>
-             <height>22</height>
-            </size>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight</set>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="3" >
-          <widget class="QLabel" name="_priceUOMLit" >
-           <property name="text" >
-            <string> Per </string>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="4" >
-          <widget class="XComboBox" name="_priceUOM" >
-           <property name="minimumSize" >
-            <size>
-             <width>120</width>
-             <height>0</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="5" colspan="4" >
+         <item row="0" column="0" >
           <layout class="QHBoxLayout" >
            <item>
-            <widget class="QLabel" name="_warrantyCodeLit" >
+            <widget class="QLabel" name="_prodcatLit" >
              <property name="text" >
-              <string>Warranty:</string>
+              <string>Product C&amp;ategory:</string>
+             </property>
+             <property name="alignment" >
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <property name="buddy" >
+              <cstring>_prodcat</cstring>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="XComboBox" name="_prodcat" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="_exclusive" >
+             <property name="text" >
+              <string>Exclusive</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" >
+              <size>
+               <width>6</width>
+               <height>22</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" >
+             <item>
+              <widget class="QLabel" name="_warrantyCodeLit" >
+               <property name="text" >
+                <string>Warranty:</string>
+               </property>
+               <property name="alignment" >
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="_warranty" >
+               <property name="maximum" >
+                <number>9999</number>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="_warrantyCodeLit_2" >
+               <property name="text" >
+                <string>Days</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </item>
+         <item row="1" column="0" >
+          <layout class="QHBoxLayout" >
+           <item>
+            <widget class="QLabel" name="_listPriceLit" >
+             <property name="text" >
+              <string>List Price:</string>
              </property>
              <property name="alignment" >
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -763,16 +723,77 @@
             </widget>
            </item>
            <item>
-            <widget class="QSpinBox" name="_warranty" >
-             <property name="maximum" >
-              <number>9999</number>
+            <widget class="XLineEdit" name="_listprice" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="maximumSize" >
+              <size>
+               <width>80</width>
+               <height>22</height>
+              </size>
+             </property>
+             <property name="alignment" >
+              <set>Qt::AlignRight</set>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="_warrantyCodeLit_2" >
+            <widget class="QLabel" name="_priceUOMLit" >
              <property name="text" >
-              <string>Days</string>
+              <string> Per </string>
+             </property>
+             <property name="alignment" >
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="XComboBox" name="_priceUOM" >
+             <property name="minimumSize" >
+              <size>
+               <width>120</width>
+               <height>0</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" >
+              <size>
+               <width>0</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QLabel" name="_upcCodeLit" >
+             <property name="text" >
+              <string>UPC Code:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="XLineEdit" name="_upcCode" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="maximumSize" >
+              <size>
+               <width>120</width>
+               <height>32767</height>
+              </size>
              </property>
             </widget>
            </item>
@@ -2019,12 +2040,12 @@
    <slot>animateClick()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>42</x>
-     <y>380</y>
+     <x>54</x>
+     <y>445</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>110</x>
-     <y>384</y>
+     <x>122</x>
+     <y>445</y>
     </hint>
    </hints>
   </connection>
@@ -2035,12 +2056,12 @@
    <slot>animateClick()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>53</x>
-     <y>384</y>
+     <x>65</x>
+     <y>474</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>110</x>
-     <y>384</y>
+     <x>122</x>
+     <y>474</y>
     </hint>
    </hints>
   </connection>
@@ -2051,8 +2072,8 @@
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>708</x>
-     <y>37</y>
+     <x>699</x>
+     <y>35</y>
     </hint>
     <hint type="destinationlabel" >
      <x>20</x>
@@ -2067,12 +2088,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>42</x>
-     <y>380</y>
+     <x>126</x>
+     <y>561</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>110</x>
-     <y>384</y>
+     <x>126</x>
+     <y>561</y>
     </hint>
    </hints>
   </connection>
@@ -2083,12 +2104,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>42</x>
-     <y>380</y>
+     <x>126</x>
+     <y>561</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>110</x>
-     <y>384</y>
+     <x>126</x>
+     <y>561</y>
     </hint>
    </hints>
   </connection>
@@ -2099,12 +2120,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>42</x>
-     <y>380</y>
+     <x>126</x>
+     <y>561</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>110</x>
-     <y>384</y>
+     <x>126</x>
+     <y>561</y>
     </hint>
    </hints>
   </connection>
@@ -2115,12 +2136,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>110</x>
-     <y>384</y>
+     <x>122</x>
+     <y>532</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>110</x>
-     <y>384</y>
+     <x>122</x>
+     <y>532</y>
     </hint>
    </hints>
   </connection>
@@ -2131,12 +2152,12 @@
    <slot>animateClick()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>110</x>
-     <y>380</y>
+     <x>148</x>
+     <y>590</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>110</x>
-     <y>384</y>
+     <x>148</x>
+     <y>590</y>
     </hint>
    </hints>
   </connection>
@@ -2147,12 +2168,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>110</x>
-     <y>384</y>
+     <x>122</x>
+     <y>532</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>110</x>
-     <y>384</y>
+     <x>122</x>
+     <y>532</y>
     </hint>
    </hints>
   </connection>
@@ -2163,12 +2184,12 @@
    <slot>animateClick()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>237</x>
-     <y>415</y>
+     <x>181</x>
+     <y>503</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>663</x>
-     <y>411</y>
+     <x>181</x>
+     <y>503</y>
     </hint>
    </hints>
   </connection>
@@ -2179,12 +2200,12 @@
    <slot>animateClick()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>521</x>
-     <y>459</y>
+     <x>203</x>
+     <y>532</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>670</x>
-     <y>399</y>
+     <x>203</x>
+     <y>532</y>
     </hint>
    </hints>
   </connection>
