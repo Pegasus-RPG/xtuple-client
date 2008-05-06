@@ -708,7 +708,7 @@
    <sender>_crmacct</sender>
    <signal>newId(int)</signal>
    <receiver>_cntct</receiver>
-   <slot>setAccount(int)</slot>
+   <slot>setSearchAcct(int)</slot>
    <hints>
     <hint type="sourcelabel" >
      <x>116</x>
