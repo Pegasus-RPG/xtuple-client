@@ -59,28 +59,18 @@
 
 #include <QVariant>
 #include <QMessageBox>
-#include <QValidator>
-#include "inputManager.h"
-#include "distributeInventory.h"
+#include <QSqlError>
 
-/*
- *  Constructs a returnWoMaterialItem as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
+#include "distributeInventory.h"
+#include "inputManager.h"
+#include "storedProcErrorLookup.h"
+
 returnWoMaterialItem::returnWoMaterialItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
-
-  // signals and slots connections
-  connect(_womatl, SIGNAL(valid(bool)), _return, SLOT(setEnabled(bool)));
   connect(_return, SIGNAL(clicked()), this, SLOT(sReturn()));
-  connect(_wo, SIGNAL(newId(int)), _womatl, SLOT(setWoid(int)));
-  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
   connect(_womatl, SIGNAL(newId(int)), this, SLOT(sSetQOH(int)));
   connect(_qty, SIGNAL(textChanged(const QString&)), this, SLOT(sUpdateQty()));
 
@@ -92,18 +82,11 @@ returnWoMaterialItem::returnWoMaterialItem(QWidget* parent, const char* name, bo
   _qty->setValidator(omfgThis->qtyVal());
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 returnWoMaterialItem::~returnWoMaterialItem()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void returnWoMaterialItem::languageChange()
 {
   retranslateUi(this);
@@ -162,13 +145,12 @@ void returnWoMaterialItem::sReturn()
   returnItem.exec();
   if (returnItem.first())
   {
-    if (returnItem.value("result").toInt() < 0)
+    int result = returnItem.value("result").toInt();
+    if (result < 0)
     {
       rollback.exec();
-      systemError( this, tr("A System Error occurred at returnWoMaterialItem::%1, Work Order ID #%2, Error #%3.")
-                         .arg(__LINE__)
-                         .arg(_wo->id())
-                         .arg(returnItem.value("result").toInt()) );
+      systemError(this, storedProcErrorLookup("returnWoMaterial", result),
+                  __FILE__, __LINE__);
       return;
     }
     else if (distributeInventory::SeriesAdjust(returnItem.value("result").toInt(), this) == XDialog::Rejected)
@@ -178,14 +160,12 @@ void returnWoMaterialItem::sReturn()
       return;
     }
 
-  returnItem.exec("COMMIT;");
+    returnItem.exec("COMMIT;");
   }
-  else
+  else if (returnItem.lastError().type() != QSqlError::None)
   {
     rollback.exec();
-    systemError( this, tr("A System Error occurred at returnWoMaterialItem::%1, Work Order ID #%2.")
-                       .arg(__LINE__)
-                       .arg(_wo->id()) );
+    systemError(this, returnItem.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
