@@ -360,7 +360,12 @@ void distributeInventory::sPost()
   q.prepare("SELECT distributeToLocations(:itemlocdist_id) AS result;");
   q.bindValue(":itemlocdist_id", _itemlocdistid);
   q.exec();
-
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(0, q.lastError().databaseText(), __FILE__, __LINE__);
+    reject();
+  }
+    
   _trapClose = FALSE;
   accept();
 }
