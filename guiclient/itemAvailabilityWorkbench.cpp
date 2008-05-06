@@ -1594,11 +1594,10 @@ void itemAvailabilityWorkbench::sEditTransInfo()
 
 void itemAvailabilityWorkbench::sViewWOInfo()
 {
-  QString orderNumber = _availability->currentItem()->text(0);
-  int sep1            = orderNumber.find('-');
-  int sep2            = orderNumber.find('-', (sep1 + 1));
-  int mainNumber      = orderNumber.mid((sep1 + 1), ((sep2 - sep1) - 1)).toInt();
-  int subNumber       = orderNumber.right((orderNumber.length() - sep2) - 1).toInt();
+  QString orderNumber = _availability->currentItem()->text(1);
+  int sep1            = orderNumber.indexOf('-');
+  int mainNumber      = orderNumber.left(sep1).toInt();
+  int subNumber       = orderNumber.right(orderNumber.length() - sep1 - 1).toInt();
 
   q.prepare( "SELECT wo_id "
              "FROM wo "
