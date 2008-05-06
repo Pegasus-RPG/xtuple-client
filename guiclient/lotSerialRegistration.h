@@ -84,6 +84,7 @@ public slots:
     virtual void sDeleteCharass();
     virtual void sFillList();
     virtual void sDateUpdated();
+    virtual void sSetSoCustId();
 
 protected slots:
     virtual void languageChange();

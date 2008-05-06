@@ -81,11 +81,14 @@ lotSerialRegistration::lotSerialRegistration(QWidget* parent, const char* name, 
   // signals and slots connections
   connect(_save,	SIGNAL(clicked()),	this,	SLOT(sSave()));
   connect(_soldDate, SIGNAL(newDate(const QDate&)), this, SLOT(sDateUpdated()));
+  connect(_crmacct, SIGNAL(newId(int)), this, SLOT(sSetSoCustId()));
  
   _lotSerial->setStrict(true);
   _cntct->setAccountVisible(FALSE);
   _cntct->setActiveVisible(FALSE);
 
+  _so->setType(cSoReleased);
+  
   resize(minimumSize());
 }
 
@@ -399,3 +402,31 @@ void lotSerialRegistration::sDateUpdated()
     _expireDate->setDate(date);
   }
 }
+
+void lotSerialRegistration::sSetSoCustId()
+{
+  if (_crmacct->id() != -1)
+  {
+    q.prepare("SELECT crmacct_cust_id "
+              "FROM crmacct "
+	      "WHERE (crmacct_id=:crmacct_id);");
+    q.bindValue(":crmacct_id", _crmacct->id());
+    q.exec();
+    if (q.first())
+    {
+      _so->setType(cSoCustomer);
+      _so->setCustId(q.value("crmacct_cust_id").toInt()); 
+    }
+    else if(q.lastError().type() != QSqlError::None)
+    { 
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }     
+  }
+  else
+  {
+    _so->setCustId(-1);
+    _so->setType(cSoReleased);
+  }
+}
+
