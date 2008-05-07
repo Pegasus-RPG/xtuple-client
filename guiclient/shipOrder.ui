@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>617</width>
+    <width>669</width>
     <height>445</height>
    </rect>
   </property>
@@ -247,7 +247,7 @@
            <property name="verticalSpacing" >
             <number>0</number>
            </property>
-           <item row="0" column="1" >
+           <item row="1" column="1" >
             <layout class="QHBoxLayout" >
              <property name="spacing" >
               <number>5</number>
@@ -269,22 +269,9 @@
                </property>
               </widget>
              </item>
-             <item>
-              <spacer>
-               <property name="orientation" >
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" >
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
             </layout>
            </item>
-           <item row="2" column="1" >
+           <item row="3" column="1" >
             <widget class="ShipmentCluster" name="_shipment" >
              <property name="enabled" >
               <bool>false</bool>
@@ -294,7 +281,7 @@
              </property>
             </widget>
            </item>
-           <item row="0" column="0" >
+           <item row="1" column="0" >
             <widget class="QLabel" name="_soNumberLit" >
              <property name="minimumSize" >
               <size>
@@ -310,7 +297,7 @@
              </property>
             </widget>
            </item>
-           <item row="2" column="0" >
+           <item row="3" column="0" >
             <widget class="QLabel" name="_shipmentLit" >
              <property name="text" >
               <string>Shipment #:</string>
@@ -323,8 +310,24 @@
              </property>
             </widget>
            </item>
-           <item row="1" column="0" colspan="2" >
+           <item row="2" column="0" colspan="2" >
             <widget class="ToCluster" name="_toNumber" />
+           </item>
+           <item row="0" column="0" >
+            <widget class="QLabel" name="_transDateLit" >
+             <property name="text" >
+              <string>Date Shipped:</string>
+             </property>
+             <property name="alignment" >
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <property name="buddy" >
+              <cstring>_transDate</cstring>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1" >
+            <widget class="DLineEdit" name="_transDate" />
            </item>
           </layout>
          </item>
@@ -604,6 +607,11 @@
    <header>currcluster.h</header>
   </customwidget>
   <customwidget>
+   <class>DLineEdit</class>
+   <extends>QWidget</extends>
+   <header>datecluster.h</header>
+  </customwidget>
+  <customwidget>
    <class>ShipmentCluster</class>
    <extends>QWidget</extends>
    <header>shipmentcluster.h</header>
@@ -635,21 +643,22 @@
   </customwidget>
  </customwidgets>
  <tabstops>
+  <tabstop>_transDate</tabstop>
   <tabstop>_soNumber</tabstop>
-  <tabstop>_toNumber</tabstop>
   <tabstop>_soList</tabstop>
+  <tabstop>_toNumber</tabstop>
   <tabstop>_shipment</tabstop>
   <tabstop>_select</tabstop>
   <tabstop>_create</tabstop>
   <tabstop>_print</tabstop>
   <tabstop>_receive</tabstop>
-  <tabstop>_coitem</tabstop>
+  <tabstop>_freight</tabstop>
   <tabstop>_shipVia</tabstop>
   <tabstop>_tracknum</tabstop>
+  <tabstop>_coitem</tabstop>
   <tabstop>_ship</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
- <includes/>
  <resources/>
  <connections>
   <connection>

@@ -193,8 +193,9 @@ void shipOrder::sShip()
   // failed insertGLTransaction RETURNs -5 rather than RAISE EXCEPTION
   shipq.exec("BEGIN;");
 
-  shipq.prepare( "SELECT shipShipment(:shiphead_id) AS result;");
+  shipq.prepare( "SELECT shipShipment(:shiphead_id, :ts) AS result;");
   shipq.bindValue(":shiphead_id", _shipment->id());
+  shipq.bindValue(":ts",          _transDate->date());
   shipq.exec();
   if (shipq.first())
   {
@@ -731,7 +732,7 @@ void shipOrder::sFillList()
     shipq.prepare("SELECT shiphead_shipvia, shiphead_order_type,"
 		  "       shiphead_freight, shiphead_freight_curr_id,"
 		  "       COALESCE(shipchrg_custfreight, TRUE) AS custfreight,"
-		  "       CURRENT_DATE AS effective "
+		  "       COALESCE(shiphead_shipdate,CURRENT_DATE) AS effective "
 		  "FROM shiphead LEFT OUTER JOIN "
 		  "     shipchrg ON (shiphead_shipchrg_id=shipchrg_id) "
 		  "WHERE ( (NOT shiphead_shipped)"
