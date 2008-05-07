@@ -181,7 +181,10 @@ DLineEdit::DLineEdit(QWidget *parent, const char *name) :
   hbox->setSpacing(1);
   hbox->setMargin(0);
 
-  _calbutton.setText(tr("..."));
+  QPixmap pixmap(":/widgets/images/calendar_16.png"); 
+  _calbutton.setIcon(QIcon(pixmap));
+  _calbutton.setFlat(true);
+  _calbutton.setMaximumSize(pixmap.size());
 
   connect(&_calbutton,        SIGNAL(clicked()), this, SLOT(showCalendar()));
   connect(&_lineedit, SIGNAL(editingFinished()), this, SLOT(validateDate()));
