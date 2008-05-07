@@ -127,7 +127,7 @@ void batchManager::sFillList()
                "<? endif ?>"
                "<? if exists(\"userid\") ?>"
                "    AND (usr_id=<? value(\"userid\") ?>)"
-               "<? else ?>"
+               "<? elseif exists(\"current_user\") ?>"
                "    AND (usr_username=CURRENT_USER)"
                "<? endif ?>"
                ") "
@@ -141,6 +141,8 @@ void batchManager::sFillList()
     params.append("showCompleted");
   if (_selectedUser->isChecked())
     params.append("userid", _usr->id());
+  else if(_currentUser->isChecked())
+    params.append("current_user");
 
   XSqlQuery batch(_db);
   MetaSQLQuery mql(sql);

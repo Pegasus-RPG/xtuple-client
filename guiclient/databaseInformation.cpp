@@ -93,11 +93,15 @@ databaseInformation::databaseInformation(QWidget* parent, const char* name, bool
     _defaultFromAddress->setText("");
     _defaultFromAddress->hide();
     _defaultFromAddressLit->hide();
+    _purgeDaysLit->hide();
+    _purgeDays->hide();
+    _purgeDaysDaysLit->hide();
   }
   else
   {
     _defaultFromAddress->setText(_metrics->value("DefaultBatchFromEmailAddress"));
     _enableBatchManager->setChecked(_metrics->boolean("EnableBatchManager"));
+    _purgeDays->setValue(_metrics->value("BatchManagerPurgeDays").toInt());
   }
 
   QString protocol;
@@ -142,6 +146,7 @@ void databaseInformation::sSave()
   _metrics->set("DatabaseComments", _comments->text().stripWhiteSpace());
 
   _metrics->set("EnableBatchManager", _enableBatchManager->isChecked());
+  _metrics->set("BatchManagerPurgeDays", _purgeDays->value());
   _metrics->set("updateTickInterval", _interval->value());
 
   _metrics->load();
