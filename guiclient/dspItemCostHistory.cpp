@@ -57,17 +57,11 @@
 
 #include "dspItemCostHistory.h"
 
-#include <QVariant>
-#include <QStatusBar>
 #include <QMessageBox>
+
 #include <openreports.h>
 #include <parameter.h>
 
-/*
- *  Constructs a dspItemCostHistory as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspItemCostHistory::dspItemCostHistory(QWidget* parent, const char* name, Qt::WFlags fl)
     : XMainWindow(parent, name, fl)
 {
@@ -75,41 +69,31 @@ dspItemCostHistory::dspItemCostHistory(QWidget* parent, const char* name, Qt::WF
 
   (void)statusBar();
 
-  // signals and slots connections
   connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-  connect(_item, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
 
-  _itemcost->addColumn(tr("Element"), -1,                 Qt::AlignLeft   );
-  _itemcost->addColumn(tr("Lower"),   _costColumn,        Qt::AlignCenter );
-  _itemcost->addColumn(tr("Type"),    _costColumn,        Qt::AlignCenter );
-  _itemcost->addColumn(tr("Time"),    (_dateColumn + 30), Qt::AlignCenter );
-  _itemcost->addColumn(tr("User"),    _qtyColumn,         Qt::AlignCenter );
-  _itemcost->addColumn(tr("Old"),     _costColumn,        Qt::AlignRight  );
-  _itemcost->addColumn(tr("Currency"), _currencyColumn,   Qt::AlignLeft   );
-  _itemcost->addColumn(tr("New"),     _costColumn,        Qt::AlignRight  );
-  _itemcost->addColumn(tr("Currency"), _currencyColumn,   Qt::AlignLeft   );
+  _itemcost->addColumn(tr("Element"),              -1, Qt::AlignLeft,  true, "cost_elem_type");
+  _itemcost->addColumn(tr("Lower"),       _costColumn, Qt::AlignCenter,true, "lowlevel");
+  _itemcost->addColumn(tr("Type"),        _costColumn, Qt::AlignLeft,  true, "type");
+  _itemcost->addColumn(tr("Time"),    _timeDateColumn, Qt::AlignCenter,true, "costhist_date");
+  _itemcost->addColumn(tr("User"),         _qtyColumn, Qt::AlignCenter,true, "username");
+  _itemcost->addColumn(tr("Old"),         _costColumn, Qt::AlignRight, true, "costhist_oldcost");
+  _itemcost->addColumn(tr("Currency"),_currencyColumn, Qt::AlignLeft,  true, "oldcurr");
+  _itemcost->addColumn(tr("New"),         _costColumn, Qt::AlignRight, true, "costhist_newcost");
+  _itemcost->addColumn(tr("Currency"),_currencyColumn, Qt::AlignLeft,  true, "newcurr");
 
   if (omfgThis->singleCurrency())
   {
-      _itemcost->hideColumn(6);
-      _itemcost->hideColumn(8);
+      _itemcost->hideColumn("oldcurr");
+      _itemcost->hideColumn("newcurr");
   }
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspItemCostHistory::~dspItemCostHistory()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspItemCostHistory::languageChange()
 {
   retranslateUi(this);
@@ -133,15 +117,21 @@ void dspItemCostHistory::sFillList()
 
   if (_item->isValid())
   {
-    q.prepare( "SELECT costhist_id, costelem_type, formatBoolYN(costhist_lowlevel),"
+    q.prepare( "SELECT costhist_id, costelem_type,"
+              "        formatBoolYN(costhist_lowlevel) AS lowlevel,"
                "       CASE WHEN costhist_type='A' THEN :actual"
                "            WHEN costhist_type='S' THEN :standard"
                "            WHEN costhist_type='D' THEN :delete"
                "            WHEN costhist_type='N' THEN :new"
-               "       END,"
-               "       formatDateTime(costhist_date), getUserName(costhist_user_id),"
-               "       formatCost(costhist_oldcost), currConcat(costhist_oldcurr_id), "
-	       "       formatCost(costhist_newcost), currConcat(costhist_newcurr_id) "
+               "       END AS type,"
+               "       costhist_date,"
+               "       getUserName(costhist_user_id) AS username,"
+               "       costhist_oldcost,"
+               "       currConcat(costhist_oldcurr_id) AS oldcurr, "
+	       "       costhist_newcost,"
+               "       currConcat(costhist_newcurr_id) AS newcurr,"
+               "       'cost' AS costhist_oldcost_xtnumericrole,"
+               "       'cost' AS costhist_newcost_xtnumericrole "
                "FROM costhist, costelem "
                "WHERE ( (costhist_costelem_id=costelem_id)"
                " AND (costhist_item_id=:item_id) ) "

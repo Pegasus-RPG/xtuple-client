@@ -77,6 +77,7 @@ public slots:
     virtual void sViewOrder();
     virtual void sFillList();
     virtual void sPopulateMenu(QMenu * pMenu, QTreeWidgetItem * pSelected);
+    virtual bool setParams(ParameterList &);
 
 protected slots:
     virtual void languageChange();

@@ -80,6 +80,7 @@ public slots:
     virtual void sReleaseOrder();
     virtual void sDeleteOrder();
     virtual void sFillList();
+    virtual bool setParams(ParameterList &);
 
 protected slots:
     virtual void languageChange();

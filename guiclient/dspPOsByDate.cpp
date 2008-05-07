@@ -57,17 +57,14 @@
 
 #include "dspPOsByDate.h"
 
-#include <QVariant>
-#include <QWorkspace>
 #include <QMessageBox>
+#include <QSqlError>
+
 #include <openreports.h>
+#include <metasql.h>
+
 #include "purchaseOrder.h"
 
-/*
- *  Constructs a dspPOsByDate as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspPOsByDate::dspPOsByDate(QWidget* parent, const char* name, Qt::WFlags fl)
     : XMainWindow(parent, name, fl)
 {
@@ -75,7 +72,6 @@ dspPOsByDate::dspPOsByDate(QWidget* parent, const char* name, Qt::WFlags fl)
 
   (void)statusBar();
 
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_poitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
@@ -88,38 +84,31 @@ dspPOsByDate::dspPOsByDate(QWidget* parent, const char* name, Qt::WFlags fl)
   _agent->setType(XComboBox::Agent);
   _agent->setText(omfgThis->username());
 
-  _poitem->addColumn(tr("P/O #"),       _orderColumn, Qt::AlignRight  );
-  _poitem->addColumn(tr("Whs."),        _whsColumn,   Qt::AlignCenter );
-  _poitem->addColumn(tr("Status"),      _dateColumn,  Qt::AlignCenter );
-  _poitem->addColumn(tr("Vendor"),      _itemColumn,  Qt::AlignLeft   );
-  _poitem->addColumn(tr("Due Date"),    _dateColumn,  Qt::AlignCenter );
+  _poitem->addColumn(tr("P/O #"),       _orderColumn, Qt::AlignRight, true, "pohead_number");
+  _poitem->addColumn(tr("Whs."),        _whsColumn,   Qt::AlignCenter,true, "warehousecode");
+  _poitem->addColumn(tr("Status"),      _dateColumn,  Qt::AlignCenter,true, "poitemstatus");
+  _poitem->addColumn(tr("Vendor"),      _itemColumn,  Qt::AlignLeft,  true, "vend_name");
+  _poitem->addColumn(tr("Due Date"),    _dateColumn,  Qt::AlignCenter,true, "minDueDate");
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspPOsByDate::~dspPOsByDate()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspPOsByDate::languageChange()
 {
   retranslateUi(this);
 }
 
-void dspPOsByDate::sPrint()
+bool dspPOsByDate::setParams(ParameterList &pParams)
 {
   if (!_dates->startDate().isValid())
   {
     QMessageBox::warning( this, tr("Enter Start Date"),
                           tr( "Please enter a valid Start Date." ) );
     _dates->setFocus();
-    return;
+    return false;
   }
 
   if (!_dates->endDate().isValid())
@@ -127,18 +116,32 @@ void dspPOsByDate::sPrint()
     QMessageBox::warning( this, tr("Enter End Date"),
                           tr( "Please eneter a valid End Date." ) );
     _dates->setFocus();
-    return;
+    return false;
   }
 
-  ParameterList params;
-  _dates->appendValue(params);
-  _warehouse->appendValue(params);
+  _dates->appendValue(pParams);
+  _warehouse->appendValue(pParams);
 
   if (_selectedPurchasingAgent->isChecked())
-    params.append("agentUsername", _agent->currentText());
+    pParams.append("agentUsername", _agent->currentText());
 
   if (_showClosed->isChecked())
-    params.append("showClosed");
+    pParams.append("showClosed");
+
+  pParams.append("closed",      tr("Closed"));
+  pParams.append("unposted",    tr("Unposted"));
+  pParams.append("partial",     tr("Partial"));
+  pParams.append("received",    tr("Received"));
+  pParams.append("open",        tr("Open"));
+
+  return true;
+}
+
+void dspPOsByDate::sPrint()
+{
+  ParameterList params;
+  if (! setParams(params))
+    return;
 
   orReport report("POsByDate", params);
   if (report.isValid())
@@ -187,62 +190,53 @@ void dspPOsByDate::sViewOrder()
 
 void dspPOsByDate::sFillList()
 {
-  _poitem->clear();
-
   QString sql( "SELECT pohead_id, pohead_number,"
                "       warehous_code AS warehousecode,"
-               "       CASE WHEN(poitem_status='C') THEN :closed"
-               "            WHEN(poitem_status='U') THEN :unposted"
-               "            WHEN(poitem_status='O' AND (SUM(poitem_qty_received-poitem_qty_returned) > 0) AND (SUM(poitem_qty_ordered)>SUM(poitem_qty_received-poitem_qty_returned))) THEN :partial"
-               "            WHEN(poitem_status='O' AND (SUM(poitem_qty_received-poitem_qty_returned) > 0) AND (SUM(poitem_qty_ordered)=SUM(poitem_qty_received-poitem_qty_returned))) THEN :received"
-               "            WHEN(poitem_status='O') THEN :open"
+               "       CASE WHEN(poitem_status='C') THEN <? value(\"closed\") ?>"
+               "            WHEN(poitem_status='U') THEN <? value(\"unposted\") ?>"
+               "            WHEN(poitem_status='O'"
+               "                 AND (SUM(poitem_qty_received-poitem_qty_returned) > 0)"
+               "                 AND (SUM(poitem_qty_ordered)>SUM(poitem_qty_received-poitem_qty_returned))) THEN <? value(\"partial\") ?>"
+               "            WHEN(poitem_status='O'"
+               "                 AND (SUM(poitem_qty_received-poitem_qty_returned) > 0)"
+               "                 AND (SUM(poitem_qty_ordered)=SUM(poitem_qty_received-poitem_qty_returned))) THEN <? value(\"received\") ?>"
+               "            WHEN(poitem_status='O') THEN <? value(\"open\") ?>"
                "            ELSE poitem_status"
                "       END AS poitemstatus,"
                "       vend_name,"
-               "       formatDate(MIN(poitem_duedate)) AS f_duedate,"
                "       MIN(poitem_duedate) AS minDueDate,"
-               "       (MIN(poitem_duedate) < CURRENT_DATE) AS late "
+               "       CASE WHEN (MIN(poitem_duedate) < CURRENT_DATE) THEN 'error'"
+               "       END AS minDueDate_qtforegroundrole "
                "  FROM vend, poitem, pohead "
                "       LEFT OUTER JOIN warehous ON (pohead_warehous_id=warehous_id)"
                " WHERE ((poitem_pohead_id=pohead_id)"
                "   AND  (pohead_vend_id=vend_id)"
-               "   AND  (poitem_duedate BETWEEN :startDate AND :endDate)" );
+               "   AND  (poitem_duedate BETWEEN <? value(\"startDate\") ?>"
+               "                            AND <? value(\"endDate\") ?>)"
+               "<? if exists(\"warehous_id\") ?>"
+               "   AND (pohead_warehous_id=<? value(\"warehous_id\") ?>) "
+               "<? endif ?>"
+               "<? if not exists(\"showClosed\") ?>"
+               "   AND (poitem_status!='C')"
+               "<? endif ?>"
+               "<? if exists(\"agentUsername\") ?>"
+               "   AND (pohead_agent_username=<? value(\"agentUsername\") ?>)"
+               "<? endif ?>"
+               ") "
+               "GROUP BY pohead_id, pohead_number, warehous_code,"
+               "         poitem_status, vend_name "
+               "ORDER BY minDueDate;");
 
-  if (_warehouse->isSelected())
-    sql += " AND (pohead_warehous_id=:warehous_id) ";
+  ParameterList params;
+  if (! setParams(params))
+    return;
 
-  if (!_showClosed->isChecked())
-    sql += " AND (poitem_status!='C')";
-
-  if (_selectedPurchasingAgent->isChecked())
-    sql += " AND (pohead_agent_username=:username)";
-
-  sql += ") "
-         "GROUP BY pohead_id, pohead_number, warehous_code,"
-         "         poitem_status, vend_name "
-         "ORDER BY minDueDate ";
-
-  q.prepare(sql);
-  _dates->bindValue(q);
-  _warehouse->bindValue(q);
-  q.bindValue(":username", _agent->currentText());
-  q.bindValue(":closed", tr("Closed"));
-  q.bindValue(":unposted", tr("Unposted"));
-  q.bindValue(":partial", tr("Partial"));
-  q.bindValue(":received", tr("Received"));
-  q.bindValue(":open", tr("Open"));
-  q.exec();
-  XTreeWidgetItem *last = 0;
-  while (q.next())
+  MetaSQLQuery mql(sql);
+  q = mql.toQuery(params);
+  _poitem->populate(q);
+  if (q.lastError().type() != QSqlError::None)
   {
-    last = new XTreeWidgetItem( _poitem, last,
-			       q.value("pohead_id").toInt(), -1,
-			       q.value("pohead_number"),
-			       q.value("warehousecode"),
-			       q.value("poitemstatus"),
-			       q.value("vend_name"),
-			       q.value("f_duedate"));
-    if (q.value("late").toBool())
-      last->setTextColor(4, "red");
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
 }

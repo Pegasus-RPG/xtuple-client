@@ -218,6 +218,8 @@ class OPENMFGWIDGETS_EXPORT XTreeWidget : public QTreeWidget
 
   public slots:
     void addColumn(const QString &, int, int, bool = true, const QString = QString(), const QString = QString());
+    inline void hideColumn(int colnum) { QTreeWidget::hideColumn(colnum); };
+    void hideColumn(const QString &);
 
   signals:
     void  valid(bool);

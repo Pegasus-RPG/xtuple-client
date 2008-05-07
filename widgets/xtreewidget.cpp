@@ -481,6 +481,21 @@ void XTreeWidget::addColumn(const QString & pString, int pWidth, int pAlignment,
   setColumnVisible(column, _savedVisibleColumns.value(column, pVisible));
 }
 
+void XTreeWidget::hideColumn(const QString &pColumn)
+{
+  int colnum = -1;
+
+  for (int i = 0; i < _roles.size(); i++)
+    if (_roles.value(0)->value("qteditrole").toString() == pColumn)
+    {
+      colnum = i;
+      break;
+    }
+
+  if (colnum >= 0)
+    QTreeWidget::hideColumn(colnum);
+}
+
 bool XTreeWidget::itemAsc(const QVariant &v1, const QVariant &v2)
 {
   bool returnVal = false;

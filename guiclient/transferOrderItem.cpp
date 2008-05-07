@@ -107,15 +107,15 @@ transferOrderItem::transferOrderItem(QWidget* parent, const char* name, bool mod
   _item->setType(ItemLineEdit::cActive);
   _item->addExtraClause( QString("(itemsite_active)") ); // ItemLineEdit::cActive doesn't compare against the itemsite record
 
-  _availability->addColumn(tr("#"),            _seqColumn,  Qt::AlignCenter );
-  _availability->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft   );
-  _availability->addColumn(tr("Description"),  -1,          Qt::AlignLeft   );
-  _availability->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignCenter );
-  _availability->addColumn(tr("Pend. Alloc."), _qtyColumn,  Qt::AlignRight  );
-  _availability->addColumn(tr("Total Alloc."), _qtyColumn,  Qt::AlignRight  );
-  _availability->addColumn(tr("On Order"),      _qtyColumn,  Qt::AlignRight  );
-  _availability->addColumn(tr("QOH"),          _qtyColumn,  Qt::AlignRight  );
-  _availability->addColumn(tr("Availability"), _qtyColumn,  Qt::AlignRight  );
+  _availability->addColumn(tr("#"),           _seqColumn, Qt::AlignCenter,true, "bomitem_seqnumber");
+  _availability->addColumn(tr("Item Number"),_itemColumn, Qt::AlignLeft,  true, "item_number");
+  _availability->addColumn(tr("Description"),         -1, Qt::AlignLeft,  true, "item_descrip");
+  _availability->addColumn(tr("UOM"),         _uomColumn, Qt::AlignCenter,true, "uom_name");
+  _availability->addColumn(tr("Pend. Alloc."),_qtyColumn, Qt::AlignRight, true, "pendalloc");
+  _availability->addColumn(tr("Total Alloc."),_qtyColumn, Qt::AlignRight, true, "totalalloc");
+  _availability->addColumn(tr("On Order"),    _qtyColumn, Qt::AlignRight, true, "ordered");
+  _availability->addColumn(tr("QOH"),         _qtyColumn, Qt::AlignRight, true, "qoh");
+  _availability->addColumn(tr("Availability"),_qtyColumn, Qt::AlignRight, true, "totalavail");
   
   _itemchar = new QStandardItemModel(0, 2, this);
   _itemchar->setHeaderData( 0, Qt::Horizontal, tr("Name"), Qt::DisplayRole);
@@ -690,16 +690,21 @@ void transferOrderItem::sDetermineAvailability()
 			  __FILE__, __LINE__);
 	      return;
 	    }
-            availability.prepare("SELECT itemsiteid, reorderlevel,"
-                                 "       bomwork_level, bomwork_id, bomwork_parent_id,"
+            availability.prepare("SELECT bomwork_id, *, "
                                  "       bomwork_seqnumber AS bomitem_seqnumber,"
-                                 "       item_number, item_descrip, uom_name,"
-                                 "       pendalloc, formatQty(pendalloc) AS f_pendalloc,"
-                                 "       ordered, formatQty(ordered) AS f_ordered,"
-                                 "       qoh, formatQty(qoh) AS f_qoh,"
-                                 "       formatQty(totalalloc + pendalloc) AS f_totalalloc,"
-                                 "       (qoh + ordered - (totalalloc + pendalloc)) as totalavail,"
-                                 "       formatQty(qoh + ordered - (totalalloc + pendalloc)) as f_totalavail"
+                                 "       totalalloc + pendalloc AS totalalloc,"
+                                 "       (qoh + ordered - (totalalloc + pendalloc)) AS totalavail,"
+                                 "       bomwork_level - 1 AS xtindentrole,"
+                                 "       'qty' AS totalalloc_xtnumericrole,"
+                                 "       'qty' AS totalavail_xtnumericrole,"
+                                 "       'qty' AS pendalloc_xtnumericrole,"
+                                 "       'qty' AS ordered_xtnumericrole,"
+                                 "       'qty' AS qoh_xtnumericrole,"
+                                 "       CASE WHEN (qoh < pendalloc) THEN 'error'"
+                                 "       END AS qoh_qtforegroundrole,"
+                                 "       CASE WHEN (qoh + ordered - (totalalloc + pendalloc) < 0) THEN 'error'"
+                                 "            WHEN (qoh + ordered - (totalalloc + pendalloc) < reorderlevel) THEN 'warning'"
+                                 "       END AS totalavail_qtforegroundrole "
                                  "  FROM ( SELECT itemsite_id AS itemsiteid,"
                                  "                CASE WHEN(itemsite_useparams) THEN itemsite_reorderlevel ELSE 0.0 END AS reorderlevel,"
                                  "                bomwork_id, bomwork_parent_id,"
@@ -718,55 +723,20 @@ void transferOrderItem::sDetermineAvailability()
                                  "            AND   (bomwork_set_id=:bomwork_set_id)"
                                  "                )"
                                  "       ) AS data "
-                                 "ORDER BY bomwork_level, bomwork_seqnumber DESC;");
+                                 "ORDER BY bomworksequence(bomwork_id);");
             availability.bindValue(":bomwork_set_id", _worksetid);
-            availability.bindValue(":warehous_id", _warehouse->id());
-            availability.bindValue(":qty", _qtyOrdered->toDouble());
-            availability.bindValue(":schedDate", _scheduledDate->date());
-            availability.bindValue(":origQtyOrd", _originalQtyOrd);
+            availability.bindValue(":warehous_id",    _warehouse->id());
+            availability.bindValue(":qty",            _qtyOrdered->toDouble());
+            availability.bindValue(":schedDate",      _scheduledDate->date());
+            availability.bindValue(":origQtyOrd",     _originalQtyOrd);
             availability.exec();
-	    XTreeWidgetItem *last = 0;
-            while(availability.next())
-            {
+            _availability->populate(availability);
+	    if (availability.lastError().type() != QSqlError::None)
+	    {
+	      systemError(this, availability.lastError().databaseText(), __FILE__, __LINE__);
+	      return;
+	    }
 
-              //  If the current bomwork is top level, make it a child of the XListView
-              if (availability.value("bomwork_parent_id").toInt() == -1)
-                last = new XTreeWidgetItem( _availability, availability.value("bomwork_id").toInt(),
-                                          availability.value("bomitem_seqnumber"), availability.value("item_number"),
-                                          availability.value("item_descrip"), availability.value("uom_name"),
-                                          availability.value("f_pendalloc"), availability.value("f_totalalloc"),
-                                          availability.value("f_ordered"), availability.value("f_qoh"),
-                                          availability.value("f_totalavail")  );
-  
-              else
-              {
-                //  March though the existing list, looking for the parent for the current bomwork
-		for (int i = 0; i < _availability->topLevelItemCount(); i++)
-		{
-		  XTreeWidgetItem *cursor = _availability->topLevelItem(i);
-		  if (cursor->id() == availability.value("bomwork_parent_id").toInt())
-		  {
-		    //  Found it, add the current bomwork as a child of its parent
-		    last = new XTreeWidgetItem(cursor, availability.value("bomwork_id").toInt(),
-					      availability.value("bomitem_seqnumber"), availability.value("item_number"),
-					      availability.value("item_descrip"), availability.value("uom_name"),
-					      availability.value("f_pendalloc"), availability.value("f_totalalloc"),
-					      availability.value("f_ordered"), availability.value("f_qoh"),
-					      availability.value("f_totalavail")  );
-		    break;
-		  }
-		}
-	      }
-
-              if (availability.value("qoh").toDouble() < availability.value("pendalloc").toDouble())
-                last->setTextColor(7, "red");
-    
-              if (availability.value("totalavail").toDouble() < 0.0)
-                last->setTextColor(8, "red");
-              else if (availability.value("totalavail").toDouble() <= availability.value("reorderlevel").toDouble())
-                last->setTextColor(8, "orange");
-            }
-      
             //  All done with the bomwork set, delete it
             availability.prepare("SELECT deleteBOMWorkset(:bomwork_set_id) AS result;");
             availability.bindValue(":bomwork_set_id", _worksetid);
@@ -791,14 +761,18 @@ void transferOrderItem::sDetermineAvailability()
         else
         {
           int itemsiteid = availability.value("itemsite_id").toInt();
-          availability.prepare( "SELECT itemsiteid, reorderlevel,"
-                                "       bomitem_seqnumber, item_number, item_descrip, uom_name,"
-                                "       pendalloc, formatQty(pendalloc) AS f_pendalloc,"
-                                "       ordered, formatQty(ordered) AS f_ordered,"
-                                "       qoh, formatQty(qoh) AS f_qoh,"
-                                "       formatQty(totalalloc + pendalloc) AS f_totalalloc,"
+          availability.prepare( "SELECT itemsiteid, *, "
                                 "       (qoh + ordered - (totalalloc + pendalloc)) AS totalavail,"
-                                "       formatQty(qoh + ordered - (totalalloc + pendalloc)) AS f_totalavail "
+                                "       'qty' AS totalalloc_xtnumericrole,"
+                                "       'qty' AS totalavail_xtnumericrole,"
+                                "       'qty' AS pendalloc_xtnumericrole,"
+                                "       'qty' AS ordered_xtnumericrole,"
+                                "       'qty' AS qoh_xtnumericrole,"
+                                "       CASE WHEN (qoh < pendalloc) THEN 'error'"
+                                "       END AS qoh_qtforegroundrole,"
+                                "       CASE WHEN (qoh + ordered - (totalalloc + pendalloc) < 0) THEN 'error'"
+                                "            WHEN (qoh + ordered - (totalalloc + pendalloc) < reorderlevel) THEN 'warning'"
+                                "       END AS totalavail_qtforegroundrole "
                                 "FROM ( SELECT cs.itemsite_id AS itemsiteid,"
                                 "              CASE WHEN(cs.itemsite_useparams) THEN cs.itemsite_reorderlevel ELSE 0.0 END AS reorderlevel,"
                                 "              bomitem_seqnumber, item_number,"
@@ -821,23 +795,11 @@ void transferOrderItem::sDetermineAvailability()
           availability.bindValue(":schedDate", _scheduledDate->date());
           availability.bindValue(":origQtyOrd", _originalQtyOrd);
           availability.exec();
-	  XTreeWidgetItem *last = 0;
-          while (availability.next())
+          _availability->populate(availability);
+          if (availability.lastError().type() != QSqlError::None)
           {
-	    last = new XTreeWidgetItem(_availability, last, availability.value("itemsiteid").toInt(),
-				       availability.value("bomitem_seqnumber"), availability.value("item_number"),
-				       availability.value("item_descrip"), availability.value("uom_name"),
-				       availability.value("f_pendalloc"), availability.value("f_totalalloc"),
-				       availability.value("f_ordered"), availability.value("f_qoh"),
-				       availability.value("f_totalavail")  );
-  
-            if (availability.value("qoh").toDouble() < availability.value("pendalloc").toDouble())
-              last->setTextColor(7, "red");
-  
-            if (availability.value("totalavail").toDouble() < 0.0)
-              last->setTextColor(8, "red");
-            else if (availability.value("totalavail").toDouble() <= availability.value("reorderlevel").toDouble())
-              last->setTextColor(8, "orange");
+            systemError(this, availability.lastError().databaseText(), __FILE__, __LINE__);
+            return;
           }
         }
       }
