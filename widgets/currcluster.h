@@ -60,7 +60,6 @@
 
 #include <QWidget>
 #include <QDateTime>
-#include <QLineEdit>
 
 class QLabel;
 class QGridLayout;
@@ -68,6 +67,7 @@ class QDoubleValidator;
 
 #include "OpenMFGWidgets.h"
 #include "xcombobox.h"
+#include "xlineedit.h"
 
 /*
  There are several places where all we need is a widget that shows a currency
@@ -133,7 +133,7 @@ class OPENMFGWIDGETS_EXPORT CurrDisplay : public QWidget
 	int		_localId;
 	QDate		_effective;
 	double		_valueLocal;
-	QLineEdit*	_valueLocalWidget;
+	XLineEdit*	_valueLocalWidget;
 	double		_valueBase;
 	int		_decimals;
 	bool		_localControl;

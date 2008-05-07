@@ -57,7 +57,6 @@
 
 #include <QDateTime>
 #include <QLabel>
-#include <QLineEdit>
 #include <QValidator>
 #include <QMessageBox>
 #include <QRect>
@@ -182,7 +181,7 @@ the local currency or the local currency to the base.
 Conversions are made using the current date unless effective is changed.
 
 Beware - there are subtle differences between how _valueLocalWidget and
-_valueBaseWidget are handled.  This is because _valueLocalWidget is a QLineEdit
+_valueBaseWidget are handled.  This is because _valueLocalWidget is an XLineEdit
 while _valueBaseWidget is a QLabel; they emit different signals.
 */
 
@@ -295,6 +294,7 @@ void CurrCluster::sId(int id)
 
 void CurrCluster::sLostFocus()
 {
+  _valueLocal = _valueLocalWidget->toDouble();
   sReformat();
   emit(lostFocus());
 }
@@ -467,7 +467,7 @@ CurrDisplay::CurrDisplay(QWidget * parent, const char* name)
     _grid->setMargin(2);
     _grid->setSpacing(2);
 
-    _valueLocalWidget = new QLineEdit(this);
+    _valueLocalWidget = new XLineEdit(this);
     _valueLocalWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     _valueLocalWidget->setMinimumWidth(QFontMetrics(QFont()).width("99999.9999"));
     _grid->addWidget(_valueLocalWidget, 0, 0);
@@ -660,7 +660,7 @@ void CurrDisplay::sValueLocalChanged()
 
     if (_valueLocalWidget->text() != tr(UNKNOWNSTR))
     {
-	_valueLocal = _valueLocalWidget->text().toDouble();
+	_valueLocal = _valueLocalWidget->toDouble();
 	_localKnown = true;
 	sValueLocalChanged(_valueLocal);
     }
