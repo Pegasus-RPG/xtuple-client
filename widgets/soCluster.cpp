@@ -108,9 +108,8 @@ void SoLineEdit::setId(int pId)
 
     setText(sohead.value("cohead_number").toString());
     
-    QString s;
     if (_mapper->model())
-      _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this)), _id);
+      _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this)), text());
   }
   else
   {
@@ -273,7 +272,7 @@ void SoCluster::setCustId(int pCustid)
 
 void SoCluster::setDataWidgetMap(XDataWidgetMapper* m)
 {
-  m->addFieldMapping(this, _fieldName, QByteArray("id"));
+  m->addFieldMapping(_soNumber, _fieldName, QByteArray("number"));
   _soNumber->_mapper=m;
 }
 

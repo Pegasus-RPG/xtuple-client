@@ -135,6 +135,29 @@ class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
     Q_PROPERTY(bool     minimalLayout         READ minimalLayout        	WRITE setMinimalLayout)
     Q_PROPERTY(bool     phonesVisible         READ phonesVisible        	WRITE setPhonesVisible)
     Q_PROPERTY(bool     webaddrVisible        READ webaddrVisible       	WRITE setWebaddrVisible)
+    Q_PROPERTY(QString  fieldNameNumber       READ fieldNameNumber      	WRITE setFieldNameNumber)   
+    Q_PROPERTY(QString  fieldNameActive       READ fieldNameActive      	WRITE setFieldNameActive)
+    Q_PROPERTY(QString  fieldNameCrmAccount   READ fieldNameCrmAccount      	WRITE setFieldNameCrmAccount)
+    Q_PROPERTY(QString  fieldNameHonorific    READ fieldNameHonorific   	WRITE setFieldNameHonorific)
+    Q_PROPERTY(QString  fieldNameFirst        READ fieldNameFirst       	WRITE setFieldNameFirst)
+    Q_PROPERTY(QString  fieldNameLast         READ fieldNameLast        	WRITE setFieldNameLast)
+    Q_PROPERTY(QString  fieldNameInitials     READ fieldNameInitials    	WRITE setFieldNameInitials)
+    Q_PROPERTY(QString  fieldNameTitle        READ fieldNameTitle       	WRITE setFieldNameTitle)
+    Q_PROPERTY(QString  fieldNamePhone        READ fieldNamePhone       	WRITE setFieldNamePhone)
+    Q_PROPERTY(QString  fieldNamePhone2       READ fieldNamePhone2      	WRITE setFieldNamePhone2)
+    Q_PROPERTY(QString  fieldNameFax          READ fieldNameFax         	WRITE setFieldNameFax)
+    Q_PROPERTY(QString  fieldNameEmailAddress READ fieldNameEmailAddress 	WRITE setFieldNameEmailAddress)
+    Q_PROPERTY(QString  fieldNameWebAddress   READ fieldNameWebAddress  	WRITE setFieldNameWebAddress)
+    Q_PROPERTY(QString  fieldNameAddressChange READ fieldNameAddrChange      	WRITE setFieldNameAddrChange)
+    Q_PROPERTY(QString  fieldNameAddressNumber READ fieldNameAddrNumber      	WRITE setFieldNameAddrNumber)   
+    Q_PROPERTY(QString  fieldNameLine1        READ fieldNameLine1          	WRITE setFieldNameLine1)
+    Q_PROPERTY(QString  fieldNameLine2        READ fieldNameLine2	    	WRITE setFieldNameLine2)
+    Q_PROPERTY(QString  fieldNameLine3        READ fieldNameLine3          	WRITE setFieldNameLine3)
+    Q_PROPERTY(QString  fieldNameCity         READ fieldNameCity           	WRITE setFieldNameCity)
+    Q_PROPERTY(QString  fieldNameState        READ fieldNameState          	WRITE setFieldNameState)
+    Q_PROPERTY(QString  fieldNamePostalCode   READ fieldNamePostalCode     	WRITE setFieldNamePostalCode)
+    Q_PROPERTY(QString  fieldNameCountry      READ fieldNameCountry        	WRITE setFieldNameCountry)
+    Q_PROPERTY(QString	number		      READ number		        WRITE setNumber)
 
     friend class ContactInfo;
     friend class ContactList;
@@ -147,7 +170,7 @@ class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
 
 	ContactCluster(QWidget*, const char* = 0);
 	virtual QString name() const;
-	inline virtual QString number()		const { return _number->text(); };
+	virtual QString number()		const { return _number->text(); };
 	inline virtual bool    numberVisible()  const { return _number->isVisible(); };
 	inline virtual bool    active()		const { return _active->isChecked(); };
 	inline virtual bool    activeVisible()  const { return _active->isVisible(); };
@@ -178,8 +201,32 @@ class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
 	inline virtual QString webAddress()	const { return _webaddr->text(); };
 	inline virtual bool    webaddrVisible() const { return _webaddr->isVisible(); };
 
+	//Return Data Mapping values
+	virtual QString  fieldNameNumber()        const { return _fieldNameNumber; };
+        virtual QString  fieldNameActive()        const { return _fieldNameActive; };
+        virtual QString  fieldNameCrmAccount()    const { return _fieldNameCrmAccount; };
+        virtual QString  fieldNameHonorific()     const { return _fieldNameHonorific; };
+        virtual QString  fieldNameFirst()         const { return _fieldNameFirst; };
+        virtual QString  fieldNameLast()          const { return _fieldNameLast; };
+        virtual QString  fieldNameInitials()      const { return _fieldNameInitials; };
+        virtual QString  fieldNameTitle()         const { return _fieldNameTitle; };
+        virtual QString  fieldNamePhone()         const { return _fieldNamePhone; };
+        virtual QString  fieldNamePhone2()        const { return _fieldNamePhone2; };
+        virtual QString  fieldNameFax()           const { return _fieldNameFax; };
+        virtual QString  fieldNameEmailAddress()  const { return _fieldNameEmailAddress; };
+        virtual QString  fieldNameWebAddress()    const { return _fieldNameWebAddress; };
+	virtual QString  fieldNameAddrChange() 	  const { return _fieldNameAddrChange; };
+	virtual QString  fieldNameAddrNumber() 	  const { return _fieldNameAddrNumber; };
+	virtual QString  fieldNameLine1() 	  const { return _fieldNameLine1; };
+	virtual QString  fieldNameLine2()  	  const { return _fieldNameLine2; };
+	virtual QString  fieldNameLine3()   	  const { return _fieldNameLine3; };
+	virtual QString  fieldNameCity()   	  const { return _fieldNameCity; };
+	virtual QString  fieldNameState()  	  const { return _fieldNameState; };
+	virtual QString  fieldNamePostalCode()    const { return _fieldNamePostalCode; };
+	virtual QString  fieldNameCountry() 	  const { return _fieldNameCountry; };
+
     public slots:
-    	inline virtual void setNumber(const QString& p)	{ _number->setText(p);};
+    	virtual void setNumber(QString p);
 	inline virtual void clearExtraClause()	{ };
 	inline virtual void setExtraClause(const QString&) { };
 	inline virtual void setAddress(const int p)     { _address->setId(p); };
@@ -212,14 +259,37 @@ class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
 	virtual void	setPhonesVisible(const bool);
 	virtual void	setSearchAcct(const int);
 	virtual void	setWebaddrVisible(const bool);
-	virtual void    setDataWidgetMap(XDataWidgetMapper* m);
+	
+        //Set Data Mapping 
+	virtual void setDataWidgetMap(XDataWidgetMapper* m);
+	virtual void setFieldNameNumber(QString p)	  { _fieldNameNumber = p ; };
+        virtual void setFieldNameActive(QString p)        { _fieldNameActive = p ; };
+	virtual void setFieldNameCrmAccount(QString p)    { _fieldNameCrmAccount = p ; };
+        virtual void setFieldNameHonorific(QString p)     { _fieldNameHonorific = p ; };
+        virtual void setFieldNameFirst(QString p)         { _fieldNameFirst = p ; };
+        virtual void setFieldNameLast(QString p)          { _fieldNameLast = p ; };
+        virtual void setFieldNameInitials(QString p)      { _fieldNameInitials = p ; };
+        virtual void setFieldNameTitle(QString p)         { _fieldNameTitle = p ; };
+        virtual void setFieldNamePhone(QString p)         { _fieldNamePhone = p ; };
+        virtual void setFieldNamePhone2(QString p)        { _fieldNamePhone2 = p ; };
+        virtual void setFieldNameFax(QString p)           { _fieldNameFax = p ; };
+        virtual void setFieldNameEmailAddress(QString p)  { _fieldNameEmailAddress = p ; };
+        virtual void setFieldNameWebAddress(QString p)    { _fieldNameWebAddress = p ; };
+	virtual void setFieldNameAddrChange(QString p)    { _fieldNameAddrChange = p ; };
+	virtual void setFieldNameAddrNumber(QString p)    { _fieldNameAddrNumber = p ; };
+	virtual void setFieldNameLine1(QString p)         { _fieldNameLine1 = p ; };
+	virtual void setFieldNameLine2(QString p)         { _fieldNameLine2 = p ; };
+	virtual void setFieldNameLine3(QString p)         { _fieldNameLine3 = p ; };
+	virtual void setFieldNameCity(QString p)          { _fieldNameCity = p ; };
+	virtual void setFieldNamePostalCode(QString p)    { _fieldNamePostalCode = p ; };
+	virtual void setFieldNameState(QString p)         { _fieldNameState = p ; };
+	virtual void setFieldNameCountry(QString p)       { _fieldNameCountry = p ; };
 
     signals:
 	void changed();
 	void newId(int);
 
     protected:
-        QHBoxLayout*    _numberBox;
 	QHBoxLayout*	_nameBox;
 	QHBoxLayout*	_titleBox;
 	QHBoxLayout*	_buttonBox;
@@ -270,6 +340,30 @@ class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
 	bool		_minimalLayout;
 	QString		_notes;
 	bool		_valid;
+	
+        //Data Mapping Values
+	QString  _fieldNameNumber;
+        QString  _fieldNameActive;
+	QString  _fieldNameCrmAccount;
+        QString  _fieldNameHonorific;
+        QString  _fieldNameFirst;
+        QString  _fieldNameLast;
+        QString  _fieldNameInitials;
+        QString  _fieldNameTitle;
+        QString  _fieldNamePhone;
+        QString  _fieldNamePhone2;
+        QString  _fieldNameFax;
+        QString  _fieldNameEmailAddress;
+        QString  _fieldNameWebAddress;
+	QString  _fieldNameAddrChange;
+	QString  _fieldNameAddrNumber;
+	QString  _fieldNameLine1;
+	QString  _fieldNameLine2;
+	QString  _fieldNameLine3;
+	QString  _fieldNameCity;
+	QString  _fieldNamePostalCode;
+	QString  _fieldNameState;
+	QString  _fieldNameCountry;
 };
 
 #endif

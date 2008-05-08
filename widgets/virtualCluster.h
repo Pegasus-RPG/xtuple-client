@@ -186,7 +186,8 @@ class OPENMFGWIDGETS_EXPORT VirtualInfo : public QDialog
 class OPENMFGWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
 {
     Q_OBJECT
-
+    Q_PROPERTY(QString     number          READ text          WRITE setNumber);
+    
     friend class VirtualCluster;
     friend class VirtualInfo;
     friend class VirtualList;
@@ -196,6 +197,7 @@ class OPENMFGWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
         VirtualClusterLineEdit(QWidget*, const char*, const char*, const char*,
                                const char*, const char*, const char*,
                                const char* = 0);
+        virtual int  id() const { return _id; }
 
     public slots:
         virtual void setId(const int);
@@ -248,6 +250,7 @@ class OPENMFGWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
         bool    _hasName;
         bool    _strict;
         virtual void silentSetId(const int);
+        XDataWidgetMapper *_mapper;
 };
 
 /*
@@ -274,7 +277,6 @@ class OPENMFGWIDGETS_EXPORT VirtualCluster : public QWidget
     Q_PROPERTY(bool    nameVisible READ nameVisible WRITE setNameVisible);
     Q_PROPERTY(bool    readOnly    READ readOnly    WRITE setReadOnly);
     Q_PROPERTY(QString fieldName   READ fieldName   WRITE setFieldName);
-    Q_PROPERTY(int     id          READ id          WRITE setId);
 
     friend class VirtualClusterLineEdit;
 
@@ -282,7 +284,7 @@ class OPENMFGWIDGETS_EXPORT VirtualCluster : public QWidget
         VirtualCluster(QWidget*, const char* = 0);
         VirtualCluster(QWidget*, VirtualClusterLineEdit* = 0, const char* = 0);
 
-        inline virtual int     id()          const { return _number->_id; };
+        inline virtual int     id()          const { return _number->id(); };
         inline virtual bool    infoVisible() const { return _info->isVisible(); };
         inline virtual bool    listVisible() const { return _list->isVisible(); };
         inline virtual QString label()       const { return _label->text(); };

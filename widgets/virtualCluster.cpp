@@ -151,7 +151,8 @@ void VirtualCluster::clear()
 
 void VirtualCluster::setDataWidgetMap(XDataWidgetMapper* m)
 {
-  m->addFieldMapping(this, _fieldName, QByteArray("id"));
+  m->addFieldMapping(_number, _fieldName, QByteArray("number"));
+  _number->_mapper=m;
 }
 
 void VirtualCluster::setEnabled(const bool p)
@@ -243,6 +244,8 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
     clear();
     _titleSingular = tr("Object");
     _titlePlural = tr("Objects");
+    
+    _mapper = new XDataWidgetMapper(this);
 }
 
 void VirtualClusterLineEdit::setTableAndColumnNames(const char* pTabName,
@@ -340,7 +343,9 @@ void VirtualClusterLineEdit::silentSetId(const int pId)
 	    if (_hasName)
 	      _name = (idQ.value("name").toString());
 	    if (_hasDescription)
-		_description = idQ.value("description").toString();
+	      _description = idQ.value("description").toString();
+            if (_mapper->model())
+              _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this)), text());
 	}
 	else if (idQ.lastError().type() != QSqlError::None)
 	    QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")

@@ -93,8 +93,6 @@ void ContactCluster::init()
     _grid->setMargin(0);
     _grid->setSpacing(2);
 
-    //_numberBox          = new QHBoxLayout;
-    //_numberBox->setSpacing(2);
     _nameBox		= new QHBoxLayout;
     _nameBox->setSpacing(2);
     _titleBox		= new QHBoxLayout;
@@ -102,9 +100,6 @@ void ContactCluster::init()
 
     _numberLit		= new QLabel(tr("Number:"), this, "_numberLit");
     _number		= new QLineEdit(this, "_number");
-  
-    //_numberBox->addWidget(_numberLit,	0);
-    //_numberBox->addWidget(_number,	0);
     
     _number->hide();
     _numberLit->hide();
@@ -264,6 +259,22 @@ void ContactCluster::silentSetId(const int pId)
 	    _active->setChecked(idQ.value("cntct_active").toBool());
             _notes = idQ.value("cntct_notes").toString();
 
+	    if (_mapper->model())
+	    {
+              _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_number)), 	_number->text());
+	      _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_honorific)), 	_honorific->currentText());
+	      _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_first)), 	_first->text());
+	      _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_last)), 	_last->text());
+	      _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_initials)), 	_initials->text());
+	      _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this)), 		_number->text());
+	      _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_title)), 	_title->text());
+	      _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_phone)), 	_phone->text());
+	      _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_phone2)), 	_phone2->text());
+	      _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_fax)),		_fax->text());
+	      _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_email)), 	_email->text());
+	      _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_webaddr)), 	_webaddr->text());
+	    }
+	    
             _ignoreSignals = false;
 	}
 	else if (idQ.lastError().type() != QSqlError::None)
@@ -275,6 +286,30 @@ void ContactCluster::silentSetId(const int pId)
     }
 
     // _parsed = TRUE;
+}
+
+void ContactCluster::setNumber(QString p)
+{
+  if (p == _number->text())
+  {
+    return;
+  }
+  else
+  { 
+    XSqlQuery q;
+    q.prepare("SELECT cntct_id "
+		"FROM cntct "
+		"WHERE (cntct_number=:number);");
+    q.bindValue(":number", p);
+    q.exec();
+    if (q.first())
+    {
+      if (q.value("cntct_id").toInt() != _id)
+        silentSetId(q.value("cntct_id").toInt());
+      else
+        _number->setText(p);
+    }
+  }   
 }
 
 void ContactCluster::clear()
@@ -309,6 +344,37 @@ QString ContactCluster::name() const
 
   return _first->text() + " " + _last->text();
 }
+
+void ContactCluster::setDataWidgetMap(XDataWidgetMapper* m)
+{  
+  m->addFieldMapping(this      ,  _fieldNameNumber, "number");
+  m->addFieldMapping(_active      ,  _fieldNameActive);
+  m->addFieldMapping(_first       ,  _fieldNameFirst);
+  m->addFieldMapping(_last        ,  _fieldNameLast);
+  m->addFieldMapping(_initials    ,  _fieldNameInitials);
+  m->addFieldMapping(_title       ,  _fieldNameTitle);
+  m->addFieldMapping(_phone       ,  _fieldNamePhone);
+  m->addFieldMapping(_phone2      ,  _fieldNamePhone2);
+  m->addFieldMapping(_fax         ,  _fieldNameFax);
+  m->addFieldMapping(_email       ,  _fieldNameEmailAddress);
+  m->addFieldMapping(_webaddr     ,  _fieldNameWebAddress);
+  _honorific->setFieldName(_fieldNameHonorific);
+  _honorific->setDataWidgetMap(m);
+  _crmAcct->setFieldName(_fieldNameCrmAccount);
+  _crmAcct->setDataWidgetMap(m);
+  _address->setFieldNameAddrChange(_fieldNameAddrChange);
+  _address->setFieldNameNumber(_fieldNameAddrNumber);
+  _address->setFieldNameLine1(_fieldNameLine1);
+  _address->setFieldNameLine2(_fieldNameLine2);
+  _address->setFieldNameLine3(_fieldNameLine3);
+  _address->setFieldNameCity(_fieldNameCity);
+  _address->setFieldNameState(_fieldNameState);
+  _address->setFieldNamePostalCode(_fieldNamePostalCode);
+  _address->setFieldNameCountry(_fieldNameCountry);
+  _address->setDataWidgetMap(m);
+  _mapper=m;
+}
+
 
 void ContactCluster::setName(const QString& p)
 {
@@ -493,20 +559,12 @@ void ContactCluster::setMinimalLayout(const bool p)
   layout();
 }
 
-void ContactCluster::setDataWidgetMap(XDataWidgetMapper* m)
-{
-  m->addFieldMapping(this, _fieldName, QByteArray("id"));
-  _mapper=m;
-  _address->setDataWidgetMap(m);
-}
-
 void ContactCluster::layout()
 {
   QLayout* currLayout = (_layoutDone) ? _grid : parentWidget()->layout();
 
   if (_layoutDone)
   {
-    currLayout->removeItem(_numberBox);
     currLayout->removeItem(_nameBox);
     currLayout->removeItem(_buttonBox);
     currLayout->removeItem(_titleBox);
@@ -515,7 +573,6 @@ void ContactCluster::layout()
   if (currLayout)
   {
     currLayout->removeWidget(_label);
-    currLayout->removeItem(_numberBox);
     currLayout->removeItem(_nameBox);
     currLayout->removeItem(_buttonBox);
     currLayout->removeItem(_titleBox);

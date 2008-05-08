@@ -81,7 +81,7 @@ class OPENMFGWIDGETS_EXPORT XComboBox : public QComboBox
   Q_PROPERTY(bool      allowNull READ allowNull WRITE setAllowNull )
   Q_PROPERTY(QString     nullStr READ nullStr   WRITE setNullStr   )
   Q_PROPERTY(XComboBoxTypes type READ type      WRITE setType      )
-  Q_PROPERTY(int            id   READ id        WRITE setId      )
+  Q_PROPERTY(QString        code READ code      WRITE setCode      )
   Q_PROPERTY(QString fieldName   READ fieldName WRITE setFieldName);
 
   public:

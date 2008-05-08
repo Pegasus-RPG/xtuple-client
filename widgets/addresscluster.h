@@ -128,6 +128,16 @@ class OPENMFGWIDGETS_EXPORT AddressCluster : public VirtualCluster
 {
     Q_OBJECT
     Q_PROPERTY(bool     activeVisible 	      	READ activeVisible      WRITE setActiveVisible)
+    Q_PROPERTY(QString  fieldNameAddressChange READ fieldNameAddrChange     WRITE setFieldNameAddrChange)
+    Q_PROPERTY(QString  fieldNameNumber        READ fieldNameNumber         WRITE setFieldNameNumber)
+    Q_PROPERTY(QString  fieldNameActive        READ fieldNameActive         WRITE setFieldNameActive)
+    Q_PROPERTY(QString  fieldNameLine1         READ fieldNameLine1          WRITE setFieldNameLine1)
+    Q_PROPERTY(QString  fieldNameLine2         READ fieldNameLine2	    WRITE setFieldNameLine2)
+    Q_PROPERTY(QString  fieldNameLine3         READ fieldNameLine3          WRITE setFieldNameLine3)
+    Q_PROPERTY(QString  fieldNameCity          READ fieldNameCity           WRITE setFieldNameCity)
+    Q_PROPERTY(QString  fieldNameState         READ fieldNameState          WRITE setFieldNameState)
+    Q_PROPERTY(QString  fieldNamePostalCode    READ fieldNamePostalCode     WRITE setFieldNamePostalCode)
+    Q_PROPERTY(QString  fieldNameCountry       READ fieldNameCountry        WRITE setFieldNameCountry)
 
     friend class AddressInfo;
     friend class AddressList;
@@ -151,6 +161,18 @@ class OPENMFGWIDGETS_EXPORT AddressCluster : public VirtualCluster
 	inline virtual QString notes()	     const { return _notes; };
 	inline virtual QString postalCode()  const { return _postalcode->text(); };
 	inline virtual QString state()       const { return _state->currentText(); };
+	
+	// Return data map values
+	virtual QString  fieldNameAddrChange()  const { return _fieldNameAddrChange; };
+	virtual QString  fieldNameNumber()	const { return _fieldNameNumber; };
+	virtual QString  fieldNameActive()	const { return _fieldNameActive; };
+	virtual QString  fieldNameLine1() 	const { return _fieldNameLine1; };
+	virtual QString  fieldNameLine2()  	const { return _fieldNameLine2; };
+	virtual QString  fieldNameLine3()   	const { return _fieldNameLine3; };
+	virtual QString  fieldNameCity()   	const { return _fieldNameCity; };
+	virtual QString  fieldNamePostalCode()  const { return _fieldNamePostalCode; };
+	virtual QString  fieldNameState()  	const { return _fieldNameState; };
+	virtual QString  fieldNameCountry() 	const { return _fieldNameCountry; };
 
     public slots:
 	inline virtual void clearExtraClause()	{ };
@@ -175,7 +197,19 @@ class OPENMFGWIDGETS_EXPORT AddressCluster : public VirtualCluster
 	virtual void	sSearch();
 	virtual void	setId(const int);
         virtual int	save(enum SaveFlags = CHECK);
-	virtual void    setDataWidgetMap(XDataWidgetMapper* m);
+
+	// Set data map values      
+        virtual void 	setDataWidgetMap(XDataWidgetMapper* m);
+	virtual void  	setFieldNameAddrChange(QString p)   { _fieldNameAddrChange = p ; };
+	virtual void  	setFieldNameNumber(QString p)       { _fieldNameNumber = p ; };
+	virtual void  	setFieldNameActive(QString p)       { _fieldNameActive = p ; };
+	virtual void  	setFieldNameLine1(QString p)        { _fieldNameLine1 = p ; };
+	virtual void  	setFieldNameLine2(QString p)        { _fieldNameLine2 = p ; };
+	virtual void  	setFieldNameLine3(QString p)        { _fieldNameLine3 = p ; };
+	virtual void  	setFieldNameCity(QString p)         { _fieldNameCity = p ; };
+	virtual void  	setFieldNamePostalCode(QString p)   { _fieldNamePostalCode = p ; };
+	virtual void  	setFieldNameState(QString p)        { _fieldNameState = p ; };
+	virtual void  	setFieldNameCountry(QString p)      { _fieldNameCountry = p ; };
 
     signals:
 	void newId(int);
@@ -184,6 +218,7 @@ class OPENMFGWIDGETS_EXPORT AddressCluster : public VirtualCluster
     protected:
 	QString		_query;	
 	QString		_extraClause;
+        QLineEdit*      _addrChange;
 	QLineEdit*      _number;
 	QLabel*		_addrLit;
 	QLineEdit*	_addr1;
@@ -223,6 +258,18 @@ class OPENMFGWIDGETS_EXPORT AddressCluster : public VirtualCluster
 	QString		c_country;
 	bool		c_active;
 	QString		c_notes;
+
+	// data map values
+	QString  _fieldNameAddrChange;
+	QString  _fieldNameNumber;
+	QString  _fieldNameActive;
+	QString  _fieldNameLine1;
+	QString  _fieldNameLine2;
+	QString  _fieldNameLine3;
+	QString  _fieldNameCity;
+	QString  _fieldNamePostalCode;
+	QString  _fieldNameState;
+	QString  _fieldNameCountry;
 };
 
 #endif

@@ -83,6 +83,7 @@ void AddressCluster::init()
     _grid->removeWidget(_info);
     delete _description;
 
+    _addrChange    = new QLineEdit(this);
     _number        = new QLineEdit(this);
     _addrLit       = new QLabel(tr("Street\nAddress:"), this);
     _addr1         = new QLineEdit(this);
@@ -99,6 +100,7 @@ void AddressCluster::init()
     _active        = new QCheckBox(tr("Active"), this);
     _mapper        = new XDataWidgetMapper(this);
 
+    _addrChange->hide();
     _number->hide();
     _addrLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     _cityLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
@@ -287,19 +289,26 @@ void AddressCluster::clear()
    
 void AddressCluster::setDataWidgetMap(XDataWidgetMapper* m)
 {
-  m->addFieldMapping(this, _fieldName, QByteArray("id"));
-  _mapper=m;
+  m->addFieldMapping(_addrChange,  _fieldNameAddrChange);
+  m->addFieldMapping(_active    ,  _fieldNameActive);
+  m->addFieldMapping(_number    ,  _fieldNameNumber);
+  m->addFieldMapping(_addr1 	,  _fieldNameLine1);
+  m->addFieldMapping(_addr2     ,  _fieldNameLine2);
+  m->addFieldMapping(_addr3     ,  _fieldNameLine3);
+  m->addFieldMapping(_city    	,  _fieldNameCity);
+  m->addFieldMapping(_postalcode,  _fieldNamePostalCode);
+  _state->setFieldName(_fieldNameState);
+  _state->setDataWidgetMap(m);
+  _country->setFieldName(_fieldNameCountry);
+  _country->setDataWidgetMap(m);
 }
    
-/* this should probably be a simple call to a saveAddr stored procedure
-   with the logic moved from here to that stored procedure
+/*
    return +N addr_id if save is successful or if found another addr with the same info
    return  0 if there is no address to save
    return -1 if there was an error
    return -2 if there are N contacts sharing this address
-   
-   TO DO:  Both sove functions can and should be removed when all references
-   to them have been removed from the application and replaced by API views
+  
  */
 int AddressCluster::save(enum SaveFlags flag)
 {

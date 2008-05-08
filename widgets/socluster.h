@@ -82,6 +82,7 @@ class SoCluster;
 class OPENMFGWIDGETS_EXPORT SoLineEdit : public XLineEdit
 {
   Q_OBJECT
+  Q_PROPERTY(QString     number          READ text()          WRITE setNumber);
 
 friend class SoCluster;
 
@@ -120,7 +121,6 @@ class OPENMFGWIDGETS_EXPORT SoCluster : public QWidget
   Q_PROPERTY(QString label       READ label       WRITE setLabel);
   Q_PROPERTY(bool    readOnly    READ isReadOnly  WRITE setReadOnly);
   Q_PROPERTY(QString fieldName   READ fieldName   WRITE setFieldName);
-  Q_PROPERTY(int     id 	 READ id          WRITE setId);
 
   public:
     SoCluster(QWidget *, const char * = 0);
@@ -130,7 +130,7 @@ class OPENMFGWIDGETS_EXPORT SoCluster : public QWidget
     inline int custid()            { return _soNumber->_custid;  } 
     inline bool isValid()          { return _soNumber->_valid;   }
     inline QString  number()           { return _soNumber->text();  }
-    inline void setType(int pType) { _soNumber->_type = pType;   }
+    //inline void setType(int pType) { _soNumber->_type = pType;   };
     inline virtual QString label() const { return _label; }
     inline bool isReadOnly()       { return _readOnly; } 
     QString fieldName() const 	{ return _fieldName; };
@@ -143,6 +143,7 @@ class OPENMFGWIDGETS_EXPORT SoCluster : public QWidget
     void setFieldName(QString p) { _fieldName = p; };
     void setNumber(QString);
     void setLabel(const QString p);
+    void setType(int pType) { _soNumber->_type = pType;   };
 
   signals:
     void newId(int);
