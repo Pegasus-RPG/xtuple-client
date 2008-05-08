@@ -2,7 +2,7 @@
     <qresource prefix="/widgets" >
         <file>images/add_24.png</file>
         <file>images/binoculars_24.png</file>
-        <file>images/calendar_16.png</file>
+        <file>images/calendar_24.png</file>
         <file>images/diskette_24.png</file>
         <file>images/next_24.png</file>
         <file>images/prev_24.png</file>
