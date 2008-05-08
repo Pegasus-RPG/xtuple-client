@@ -145,7 +145,7 @@
            <bool>false</bool>
           </property>
           <property name="text" >
-           <string>User</string>
+           <string>User...</string>
           </property>
          </widget>
         </item>
@@ -162,7 +162,7 @@
            <bool>false</bool>
           </property>
           <property name="text" >
-           <string>Sales Rep</string>
+           <string>Sales Rep...</string>
           </property>
          </widget>
         </item>
@@ -185,7 +185,7 @@
      <item row="2" column="0" colspan="3" >
       <widget class="QTabWidget" name="_tabWidget" >
        <property name="currentIndex" >
-        <number>0</number>
+        <number>4</number>
        </property>
        <widget class="QWidget" name="_detail" >
         <attribute name="title" >
