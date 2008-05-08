@@ -181,7 +181,8 @@ DLineEdit::DLineEdit(QWidget *parent, const char *name) :
   hbox->setSpacing(1);
   hbox->setMargin(0);
 
-  QPixmap pixmap(":/widgets/images/calendar_16.png"); 
+  QPixmap pixmap(":/widgets/images/calendar_24.png"); 
+  _calbutton.setIconSize(QSize(24,24));
   _calbutton.setIcon(QIcon(pixmap));
   _calbutton.setFlat(true);
   _calbutton.setMaximumSize(pixmap.size());
