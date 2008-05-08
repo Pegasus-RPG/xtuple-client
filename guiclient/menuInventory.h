@@ -230,7 +230,6 @@ class menuInventory : public QObject
     QMenu *itemSitesMenu;
     QMenu *warehouseMenu;
     QMenu *transferOrderMenu;
-    QMenu *transferOrderFormsMenu;
     QMenu *transactionsMenu;
     QMenu *lotSerialControlMenu;
     QMenu *physicalMenu;
