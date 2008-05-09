@@ -119,6 +119,7 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   connect(_refund,	SIGNAL(clicked()), this, SLOT(sRefund()));
   connect(_postReceipts, SIGNAL(clicked()), this, SLOT(sPostReceipts()));
   connect(_raitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem*)));
+  connect(_authNumber, SIGNAL(textEdited(QString)), this, SLOT(sCheckNumber()));
 
 
   _newso->setReadOnly(true);
@@ -219,17 +220,18 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
 	    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	    return UndefinedError;
       }
-
+      _cust->setFocus();      
       setNumber();
       _authDate->setDate(omfgThis->dbDate(), true);
 
       q.prepare("INSERT INTO rahead ("
 		        "    rahead_id, rahead_number, rahead_authdate"
 		        ") VALUES ("
-		        "    :rahead_id, 0, :rahead_authdate"
+		        "    :rahead_id, COALESCE(:rahead_number,0), :rahead_authdate"
 		        ");");
       q.bindValue(":rahead_id",		_raheadid);
-      q.bindValue(":rahead_number",	_authNumber->text().toInt());
+      if (!_authNumber->text().isEmpty())
+        q.bindValue(":rahead_number",	_authNumber->text());
       q.exec();
       if (q.lastError().type() != QSqlError::None)
       {
@@ -264,8 +266,6 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
 
       connect(_cust, SIGNAL(newId(int)), this, SLOT(sPopulateCustomerInfo()));
       connect(_cust, SIGNAL(valid(bool)), _new, SLOT(setEnabled(bool)));
-
-	  _cust->setFocus();
     }
     else if (param.toString() == "edit")
     {
@@ -1898,3 +1898,26 @@ void returnAuthorization::sShipment()
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }
+
+void returnAuthorization::sCheckNumber()
+{
+  q.prepare( "SELECT rahead_id "
+                 "FROM rahead "
+                 "WHERE (rahead_number=:rahead_number);" );
+  q.bindValue(":rahead_number", _authNumber->text());
+  q.exec();
+  if (q.first())
+  {
+    _mode = cEdit;
+    _raheadid = q.value("rahead_id").toInt();
+    populate();
+    _authNumber->setEnabled(FALSE);
+    _cust->setReadOnly(TRUE);
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+}
+
