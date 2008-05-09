@@ -664,6 +664,14 @@ bool salesOrder::save(bool partial)
     _shipToNumber->setFocus();
     return FALSE;
   }
+  
+  if (_total->localValue() < 0 )
+  {
+    QMessageBox::information(this, tr("Total Less than Zero"),
+                             tr("<p>The Total must be a positive value.") );
+    _cust->setFocus();
+    return FALSE;
+  }
 
   if (_usesPos && !partial)
   {
