@@ -258,22 +258,10 @@ void ContactCluster::silentSetId(const int pId)
 	    _address->setId(idQ.value("cntct_addr_id").toInt());
 	    _active->setChecked(idQ.value("cntct_active").toBool());
             _notes = idQ.value("cntct_notes").toString();
-
-	    if (_mapper->model())
-	    {
-              _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_number)), 	_number->text());
-	      _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_honorific)), 	_honorific->currentText());
-	      _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_first)), 	_first->text());
-	      _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_last)), 	_last->text());
-	      _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_initials)), 	_initials->text());
-	      _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this)), 		_number->text());
-	      _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_title)), 	_title->text());
-	      _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_phone)), 	_phone->text());
-	      _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_phone2)), 	_phone2->text());
-	      _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_fax)),		_fax->text());
-	      _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_email)), 	_email->text());
-	      _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_webaddr)), 	_webaddr->text());
-	    }
+              
+            if (_mapper->model() &&
+                _mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_number))).toString() != _number->text())
+              _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_number)), _number->text());
 	    
             _ignoreSignals = false;
 	}

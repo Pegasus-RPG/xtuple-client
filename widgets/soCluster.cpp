@@ -108,7 +108,8 @@ void SoLineEdit::setId(int pId)
 
     setText(sohead.value("cohead_number").toString());
     
-    if (_mapper->model())
+    if (_mapper->model() &&
+        _mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this))).toString() != text())
       _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this)), text());
   }
   else

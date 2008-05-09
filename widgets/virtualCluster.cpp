@@ -344,7 +344,8 @@ void VirtualClusterLineEdit::silentSetId(const int pId)
 	      _name = (idQ.value("name").toString());
 	    if (_hasDescription)
 	      _description = idQ.value("description").toString();
-            if (_mapper->model())
+            if (_mapper->model() &&
+                _mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this))).toString() != text())
               _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this)), text());
 	}
 	else if (idQ.lastError().type() != QSqlError::None)

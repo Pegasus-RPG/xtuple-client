@@ -111,6 +111,8 @@ void ScreenControl::toNext()
   _mapper.toNext();
   _prev->setEnabled(true);
   _next->setEnabled(_mapper.currentIndex() < _model.rowCount()-1);
+  qDebug("rows %d",_model.rowCount());
+  qDebug("curr idx %d",_mapper.currentIndex());
 }
 
 void ScreenControl::toPrevious()
@@ -261,7 +263,7 @@ void ScreenControl::setTable(QString s, QString t)
 
 void ScreenControl::setDataWidgetMapper(QSqlTableModel *p)
 {
-  _mapper.setSqlTableModel(&_model);
+  _mapper.setSqlTableModel(p);
   emit newDataWidgetMapper(&_mapper);
 }
 
