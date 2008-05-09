@@ -187,6 +187,34 @@ void createItemSitesByClassCode::sSave()
     return;
   }
 
+  if (_stocked->isChecked() && _reorderLevel->toDouble() == 0)
+  {
+    QMessageBox::critical( this, tr("Cannot Save Item Site"),
+                           tr("<p>You must set a reorder level "
+			      "for a stocked item before you may save it.") );
+    _reorderLevel->setFocus();
+    return;
+  }
+  
+  if ( _locationControl->isChecked() )
+  {
+    XSqlQuery locationid;
+    locationid.prepare( "SELECT location_id "
+                        "FROM location "
+                        "WHERE (location_warehous_id=:warehous_id)"
+                        "LIMIT 1;" );
+    locationid.bindValue(":warehous_id", _warehouse->id());
+    locationid.exec();
+    if (!locationid.first())
+    {
+      QMessageBox::critical( this, tr("Cannot Save Item Site"),
+                             tr( "You must first create at least one valid "
+				 "Location for this Warehouse before items may be "
+				 "multiply located." ) );
+      return;
+    }
+  }
+
   QString sql( "INSERT INTO itemsite "
                "( itemsite_item_id,"
                "  itemsite_warehous_id, itemsite_qtyonhand,"

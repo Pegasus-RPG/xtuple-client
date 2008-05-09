@@ -213,7 +213,10 @@ void location::sSave()
     return;
   }
 
-  if (_location->text().stripWhiteSpace().length() == 0)
+  if ( (_location->text().stripWhiteSpace().length() == 0) &&
+       (_aisle->text().stripWhiteSpace().length() == 0) &&
+       (_rack->text().stripWhiteSpace().length() == 0) &&
+       (_bin->text().stripWhiteSpace().length() == 0) )
   {
     QMessageBox::critical( this, tr("Enter Location Name"),
                            tr("<p>You must enter a unique name to identify "
