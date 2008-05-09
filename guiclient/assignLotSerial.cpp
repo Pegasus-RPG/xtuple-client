@@ -79,10 +79,10 @@ assignLotSerial::assignLotSerial(QWidget* parent, const char* name, bool modal, 
 
   _item->setReadOnly(TRUE);
 
-  _itemlocdist->addColumn( tr("Lot/Serial #"), -1,          Qt::AlignLeft   );
-  _itemlocdist->addColumn( tr("Expires"),      _dateColumn, Qt::AlignCenter );
-  _itemlocdist->addColumn( tr("Warranty"),     _dateColumn, Qt::AlignCenter );
-  _itemlocdist->addColumn( tr("Qty."),         _qtyColumn,  Qt::AlignRight  );
+  _itemlocdist->addColumn( tr("Lot/Serial #"),     -1, Qt::AlignLeft,  true, "ls_number");
+  _itemlocdist->addColumn( tr("Expires"), _dateColumn, Qt::AlignCenter,true, "itemlocdist_expiration");
+  _itemlocdist->addColumn( tr("Warranty"),_dateColumn, Qt::AlignCenter,true, "itemlodcist_warranty");
+  _itemlocdist->addColumn( tr("Qty."),     _qtyColumn, Qt::AlignRight, true, "itemlocdist_qty");
 
 }
 
@@ -245,7 +245,7 @@ void assignLotSerial::sFillList()
   if (q.first())
   {
     openQty = q.value("qty").toDouble();
-    _qtyToAssign->setText(formatNumber(openQty,6));
+    _qtyToAssign->setText(formatQty(openQty));
   }
   else if (q.lastError().type() != QSqlError::None)
   {
@@ -260,8 +260,8 @@ void assignLotSerial::sFillList()
   q.exec();
   if (q.first())
   {
-    _qtyAssigned->setText(formatNumber(q.value("totalqty").toDouble(),6));
-    _qtyBalance->setText(formatNumber(openQty - q.value("totalqty").toDouble(), 6));
+    _qtyAssigned->setText(formatQty(q.value("totalqty").toDouble()));
+    _qtyBalance->setText(formatQty(openQty - q.value("totalqty").toDouble()));
   }
   else if (q.lastError().type() != QSqlError::None)
   {
@@ -270,15 +270,12 @@ void assignLotSerial::sFillList()
   }
 
 
-  q.prepare( "SELECT itemlocdist_id, ls_number,"
-             "       formatDate(itemlocdist_expiration, :never),"
-             "       formatDate(itemlocdist_warranty, :never),"
-             "       itemlocdist_qty "
+  q.prepare( "SELECT *,"
+             "       'qty' AS itemlocdist_qty_xtnumericrole "
              "FROM itemlocdist, ls "
              "WHERE (itemlocdist_series=:itemlocdist_series) "
              "AND (itemlocdist_ls_id=ls_id) "
              "ORDER BY ls_number;" );
-  q.bindValue(":never", tr("Never"));
   q.bindValue(":itemlocdist_series", _itemlocSeries);
   q.exec();
   _itemlocdist->populate(q);
