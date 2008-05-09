@@ -55,36 +55,36 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#ifndef __FORMCONTROLPLUGIN_H__
-#define __FORMCONTROLPLUGIN_H__
+#ifndef __SCREENCONTROLPLUGIN_H__
+#define __SCREENCONTROLPLUGIN_H__
 
-#include "formcontrol.h"
+#include "screencontrol.h"
 
 #include <QDesignerCustomWidgetInterface>
 #include <QtPlugin>
 
-class formControlPlugin : public QObject, public QDesignerCustomWidgetInterface
+class ScreenControlPlugin : public QObject, public QDesignerCustomWidgetInterface
 {
     Q_OBJECT
     Q_INTERFACES(QDesignerCustomWidgetInterface)
 
   public:
-    formControlPlugin(QObject *parent = 0) : QObject(parent), initialized(false) {}
+    ScreenControlPlugin(QObject *parent = 0) : QObject(parent), initialized(false) {}
 
     bool isContainer() const { return false; }
     bool isInitialized() const { return initialized; }
     QIcon icon() const { return QIcon(); }
     QString domXml() const
     {
-      return "<widget class=\"formControl\" name=\"formControl\">\n"
+      return "<widget class=\"ScreenControl\" name=\"ScreenControl\">\n"
              "</widget>\n";
     }
     QString group() const { return "OpenMFG Custom Widgets"; }
-    QString includeFile() const { return "formcontrol.h"; }
-    QString name() const { return "formControl"; }
+    QString includeFile() const { return "screencontrol.h"; }
+    QString name() const { return "ScreenControl"; }
     QString toolTip() const { return ""; }
     QString whatsThis() const { return ""; }
-    QWidget *createWidget(QWidget *parent) { return new formControl(parent); }
+    QWidget *createWidget(QWidget *parent) { return new ScreenControl(parent); }
     void initialize(QDesignerFormEditorInterface *) { initialized = true; }
 
   private:

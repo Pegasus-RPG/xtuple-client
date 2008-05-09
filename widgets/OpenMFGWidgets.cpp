@@ -117,7 +117,7 @@
 #include "plugins/xtreewidgetplugin.h"
 #include "plugins/xurllabelplugin.h"
 #include "plugins/xtexteditplugin.h"
-#include "plugins/formcontrolplugin.h"
+#include "plugins/screencontrolplugin.h"
 
 OpenMFGPlugin::OpenMFGPlugin(QObject * parent) : QObject(parent)
 {
@@ -156,6 +156,7 @@ OpenMFGPlugin::OpenMFGPlugin(QObject * parent) : QObject(parent)
   m_plugins.append(new ProjectLineEditPlugin(this));
   m_plugins.append(new RaClusterPlugin(this));
   m_plugins.append(new RevisionClusterPlugin(this));
+  m_plugins.append(new ScreenControlPlugin(this));
   m_plugins.append(new ShiftClusterPlugin(this));
   m_plugins.append(new ShipmentClusterPlugin(this));
   m_plugins.append(new ShiptoClusterPlugin(this));
@@ -181,7 +182,6 @@ OpenMFGPlugin::OpenMFGPlugin(QObject * parent) : QObject(parent)
   m_plugins.append(new XTreeWidgetPlugin(this));
   m_plugins.append(new XURLLabelPlugin(this));
   m_plugins.append(new XTextEditPlugin(this));
-  m_plugins.append(new formControlPlugin(this));
 }
 
 QList<QDesignerCustomWidgetInterface*> OpenMFGPlugin::customWidgets() const
