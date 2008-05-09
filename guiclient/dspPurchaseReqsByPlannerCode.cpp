@@ -176,6 +176,8 @@ void dspPurchaseReqsByPlannerCode::sRelease()
   purchaseOrder *newdlg = new purchaseOrder();
   if(newdlg->set(params) == NoError)
     omfgThis->handleNewWindow(newdlg);
+  else
+    delete newdlg;
 }
 
 void dspPurchaseReqsByPlannerCode::sDelete()

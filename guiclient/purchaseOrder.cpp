@@ -259,11 +259,13 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
         q.exec();
         if (!q.first())
         {
-          QMessageBox::warning( omfgThis, tr("Cannot Create P/O"),
-                                tr( "A Purchase Order cannot be automatically created for this Item as there are no\n"
-                                    "Item Sources for it.  You must create one or more Item Sources for this Item before\n"
-                                    "OpenMFG can automatically create Purchase Orders for it." ) );
-          close();
+          QMessageBox::warning(omfgThis, tr("Cannot Create P/O"),
+                               tr("<p>A Purchase Order cannot be automatically "
+                                  "created for this Item as there are no Item "
+                                  "Sources for it.  You must create one or "
+                                  "more Item Sources for this Item before "
+                                  "the application can automatically create "
+                                  "Purchase Orders for it." ) );
           return UndefinedError;
         }
 
