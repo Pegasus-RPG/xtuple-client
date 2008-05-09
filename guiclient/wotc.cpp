@@ -57,56 +57,35 @@
 
 #include "wotc.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-/*
- *  Constructs a wotc as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
+#include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
+
 wotc::wotc(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  connect(_save,   SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_user, SIGNAL(valid(bool)), this, SLOT(sHandleButtons()));
+  connect(_wo,    SIGNAL(newId(int)), this, SLOT(sPopulateWooper()));
+  connect(_wo,   SIGNAL(valid(bool)), this, SLOT(sHandleButtons()));
 
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    connect(_wo, SIGNAL(valid(bool)), this, SLOT(sHandleButtons()));
-    connect(_user, SIGNAL(valid(bool)), this, SLOT(sHandleButtons()));
-    connect(_wo, SIGNAL(newId(int)), this, SLOT(sPopulateWooper()));
-    init();
+  _wooper->setAllowNull(true);
+  _wooper->setHidden(! (_metrics->value("WOTCPostStyle") == "Operations"));
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 wotc::~wotc()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void wotc::languageChange()
 {
     retranslateUi(this);
 }
 
-//Added by qt3to4:
-#include <QSqlError>
-void wotc::init()
-{
-  _wooper->setAllowNull(true);
-  _wooper->setHidden(! (_metrics->value("WOTCPostStyle") == "Operations"));
-}
-
-enum SetResponse wotc::set(ParameterList &pParams)
+enum SetResponse wotc::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -250,7 +229,8 @@ void wotc::sSave()
   q.bindValue(":wotc_wo_id", _wo->id());
   q.bindValue(":wotc_usr_id", _user->id());
   q.bindValue(":wotc_timein", dtIn);
-  q.bindValue(":wotc_timeout", dtOut);
+  q.bindValue(":wotc_timeout", (dtOut.isNull()) ? "" : dtOut.toString()); // bug 6655
+
   if (_wooper->id() != -1)
     q.bindValue(":wotc_wooper_id", _wooper->id());
   q.exec();

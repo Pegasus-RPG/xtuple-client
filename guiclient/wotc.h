@@ -71,7 +71,7 @@ public:
     ~wotc();
 
 public slots:
-    virtual SetResponse set( ParameterList & pParams );
+    virtual SetResponse set(const ParameterList & pParams );
     virtual void sHandleButtons();
     virtual void populate();
     virtual void sSave();
@@ -83,9 +83,6 @@ protected:
 
 protected slots:
     virtual void languageChange();
-
-    virtual void init();
-
 
 };
 
