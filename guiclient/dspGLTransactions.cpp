@@ -212,7 +212,7 @@ void dspGLTransactions::sFillList()
                "       CASE WHEN (gltrans_amount > 0) THEN gltrans_amount"
                "            ELSE NULL"
                "       END AS credit,"
-               "       formatBoolYN(gltrans_posted),"
+               "       formatBoolYN(gltrans_posted) AS posted,"
                "       gltrans_username,"
                "       'curr' AS debit_xtnumericrole,"
                "       'curr' AS credit_xtnumericrole "
