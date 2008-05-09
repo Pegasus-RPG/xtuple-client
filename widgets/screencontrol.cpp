@@ -154,7 +154,7 @@ void ScreenControl::save()
 {
   _mapper.submit();
   _model.submitAll();
-  if (_mode=New)
+  if (_mode==New)
     newRow();
 }
 
@@ -211,12 +211,12 @@ void ScreenControl::setAutoSave(bool p)
 
 void ScreenControl::setMode(Modes p)
 {
-  if (p=New)
+  if (p==New)
   {
     _mode=New;
     newRow();
   }
-  else if (p=Edit)
+  else if (p==Edit)
   {
     _mode=Edit;
   }
