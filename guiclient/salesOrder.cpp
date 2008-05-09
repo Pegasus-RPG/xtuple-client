@@ -488,6 +488,8 @@ enum SetResponse salesOrder::set(const ParameterList &pParams)
   else
   {
     _printSO->setChecked(_metrics->boolean("DefaultPrintSOOnSave"));
+    _expireLit->hide();
+    _expire->hide();
   }
 
   if(_metrics->boolean("HideSOMiscCharge"))
@@ -839,7 +841,7 @@ bool salesOrder::save(bool partial)
                "    quhead_misc=:misc, quhead_misc_accnt_id=:misc_accnt_id, quhead_misc_descrip=:misc_descrip,"
                "    quhead_ordercomments=:ordercomments, quhead_shipcomments=:shipcomments,"
                "    quhead_prj_id=:prj_id, quhead_warehous_id=:warehous_id,"
-               "    quhead_curr_id = :curr_id "
+               "    quhead_curr_id = :curr_id, quhead_expire=:expire "
               "WHERE (quhead_id=:id);" );
   else if (_mode == cNewQuote)
       q.prepare( "INSERT INTO quhead ("
@@ -861,7 +863,7 @@ bool salesOrder::save(bool partial)
                "    quhead_misc, quhead_misc_accnt_id, quhead_misc_descrip,"
                "    quhead_ordercomments, quhead_shipcomments,"
                "    quhead_prj_id, quhead_warehous_id,"
-               "    quhead_curr_id)"
+               "    quhead_curr_id, quhead_expire)"
                "    VALUES ("
                "    :id, :number, :cust_id,"
                "    :custponumber, :shipto_id,"
@@ -881,7 +883,7 @@ bool salesOrder::save(bool partial)
                "    :misc, :misc_accnt_id, :misc_descrip,"
                "    :ordercomments, :shipcomments,"
                "    :prj_id, :warehous_id,"
-               "    :curr_id);");
+               "    :curr_id, :expire);");
 
   q.bindValue(":id", _soheadid );
   q.bindValue(":number", _orderNumber->text().toInt());
@@ -932,6 +934,8 @@ bool salesOrder::save(bool partial)
   q.bindValue(":curr_id", _orderCurrency->id());
   q.bindValue(":cohead_shipcomplete", QVariant(_shipComplete->isChecked(), 0));
   q.bindValue(":prj_id", _project->id());
+  if(_expire->isValid())
+    q.bindValue(":expire", _expire->date());
 
   if (_holdType->currentItem() == 0)
     q.bindValue(":holdtype", "N");
@@ -2074,7 +2078,7 @@ void salesOrder::populate()
                 "       quhead_ordercomments, quhead_shipcomments,"
                 "       quhead_misc,"
                 "       quhead_misc_accnt_id, quhead_misc_descrip,"
-                "       quhead_prj_id, quhead_warehous_id, quhead_curr_id "
+                "       quhead_prj_id, quhead_warehous_id, quhead_curr_id, quhead_expire "
                 "FROM quhead, custinfo "
                 "WHERE ( (quhead_cust_id=cust_id)"
                 " AND (quhead_id=:quhead_id) )"
@@ -2096,7 +2100,7 @@ void salesOrder::populate()
                 "       quhead_ordercomments, quhead_shipcomments,"
                 "       quhead_misc,"
                 "       quhead_misc_accnt_id, quhead_misc_descrip,"
-                "       quhead_prj_id, quhead_warehous_id, quhead_curr_id "
+                "       quhead_prj_id, quhead_warehous_id, quhead_curr_id, quhead_expire "
                 "FROM quhead, prospect "
                 "WHERE ( (quhead_cust_id=prospect_id)"
                 " AND (quhead_id=:quhead_id) )"
@@ -2110,6 +2114,8 @@ void salesOrder::populate()
 
       _orderDate->setDate(qu.value("quhead_quotedate").toDate(), true);
       _packDate->setDate(qu.value("quhead_packdate").toDate());
+      if(!qu.value("quhead_expire").isNull())
+        _expire->setDate(qu.value("quhead_expire").toDate());
 
       _cust->setId(qu.value("quhead_cust_id").toInt());
 

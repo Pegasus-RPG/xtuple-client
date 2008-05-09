@@ -14,19 +14,37 @@
   </property>
   <widget class="QWidget" name="widget" >
    <layout class="QVBoxLayout" >
-    <property name="margin" >
-     <number>9</number>
-    </property>
     <property name="spacing" >
      <number>6</number>
     </property>
+    <property name="leftMargin" >
+     <number>9</number>
+    </property>
+    <property name="topMargin" >
+     <number>9</number>
+    </property>
+    <property name="rightMargin" >
+     <number>9</number>
+    </property>
+    <property name="bottomMargin" >
+     <number>9</number>
+    </property>
     <item>
      <layout class="QHBoxLayout" >
-      <property name="margin" >
-       <number>0</number>
-      </property>
       <property name="spacing" >
        <number>5</number>
+      </property>
+      <property name="leftMargin" >
+       <number>0</number>
+      </property>
+      <property name="topMargin" >
+       <number>0</number>
+      </property>
+      <property name="rightMargin" >
+       <number>0</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>0</number>
       </property>
       <item>
        <widget class="WarehouseGroup" name="_warehouse" >
@@ -40,16 +58,32 @@
       </item>
       <item>
        <layout class="QVBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
         <property name="spacing" >
          <number>6</number>
+        </property>
+        <property name="leftMargin" >
+         <number>0</number>
+        </property>
+        <property name="topMargin" >
+         <number>0</number>
+        </property>
+        <property name="rightMargin" >
+         <number>0</number>
+        </property>
+        <property name="bottomMargin" >
+         <number>0</number>
         </property>
         <item>
          <widget class="XCheckBox" name="_showProspects" >
           <property name="text" >
            <string>Show Quotes For Prospects</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="XCheckBox" name="_showExpired" >
+          <property name="text" >
+           <string>Show Expired Quotes</string>
           </property>
          </widget>
         </item>
@@ -86,10 +120,19 @@
       </item>
       <item>
        <layout class="QVBoxLayout" >
-        <property name="margin" >
+        <property name="spacing" >
          <number>0</number>
         </property>
-        <property name="spacing" >
+        <property name="leftMargin" >
+         <number>0</number>
+        </property>
+        <property name="topMargin" >
+         <number>0</number>
+        </property>
+        <property name="rightMargin" >
+         <number>0</number>
+        </property>
+        <property name="bottomMargin" >
          <number>0</number>
         </property>
         <item>
@@ -122,9 +165,7 @@
     <item>
      <widget class="QFrame" name="frame" >
       <property name="sizePolicy" >
-       <sizepolicy>
-        <hsizetype>5</hsizetype>
-        <vsizetype>7</vsizetype>
+       <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
         <horstretch>0</horstretch>
         <verstretch>1</verstretch>
        </sizepolicy>
@@ -136,10 +177,19 @@
        <enum>QFrame::Plain</enum>
       </property>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
+       <property name="spacing" >
         <number>0</number>
        </property>
-       <property name="spacing" >
+       <property name="leftMargin" >
+        <number>0</number>
+       </property>
+       <property name="topMargin" >
+        <number>0</number>
+       </property>
+       <property name="rightMargin" >
+        <number>0</number>
+       </property>
+       <property name="bottomMargin" >
         <number>0</number>
        </property>
        <item>
@@ -154,18 +204,25 @@
        </item>
        <item>
         <layout class="QHBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>7</number>
+         </property>
+         <property name="leftMargin" >
+          <number>0</number>
+         </property>
+         <property name="topMargin" >
+          <number>0</number>
+         </property>
+         <property name="rightMargin" >
+          <number>0</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>0</number>
          </property>
          <item>
           <widget class="XTreeWidget" name="_quote" >
            <property name="sizePolicy" >
-            <sizepolicy>
-             <hsizetype>7</hsizetype>
-             <vsizetype>7</vsizetype>
+            <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -177,18 +234,36 @@
          </item>
          <item>
           <layout class="QVBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
            <property name="spacing" >
             <number>5</number>
            </property>
+           <property name="leftMargin" >
+            <number>0</number>
+           </property>
+           <property name="topMargin" >
+            <number>0</number>
+           </property>
+           <property name="rightMargin" >
+            <number>0</number>
+           </property>
+           <property name="bottomMargin" >
+            <number>0</number>
+           </property>
            <item>
             <layout class="QVBoxLayout" >
-             <property name="margin" >
+             <property name="spacing" >
               <number>0</number>
              </property>
-             <property name="spacing" >
+             <property name="leftMargin" >
+              <number>0</number>
+             </property>
+             <property name="topMargin" >
+              <number>0</number>
+             </property>
+             <property name="rightMargin" >
+              <number>0</number>
+             </property>
+             <property name="bottomMargin" >
               <number>0</number>
              </property>
              <item>
@@ -215,10 +290,19 @@
            </item>
            <item>
             <layout class="QVBoxLayout" >
-             <property name="margin" >
+             <property name="spacing" >
               <number>0</number>
              </property>
-             <property name="spacing" >
+             <property name="leftMargin" >
+              <number>0</number>
+             </property>
+             <property name="topMargin" >
+              <number>0</number>
+             </property>
+             <property name="rightMargin" >
+              <number>0</number>
+             </property>
+             <property name="bottomMargin" >
               <number>0</number>
              </property>
              <item>
@@ -290,14 +374,14 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>XCheckBox</class>
-   <extends>QCheckBox</extends>
-   <header>xcheckbox.h</header>
-  </customwidget>
-  <customwidget>
    <class>WarehouseGroup</class>
    <extends>QGroupBox</extends>
    <header>warehousegroup.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
@@ -308,16 +392,16 @@
  <tabstops>
   <tabstop>_warehouse</tabstop>
   <tabstop>_showProspects</tabstop>
+  <tabstop>_showExpired</tabstop>
   <tabstop>_quote</tabstop>
   <tabstop>_convert</tabstop>
   <tabstop>_new</tabstop>
   <tabstop>_edit</tabstop>
   <tabstop>_view</tabstop>
   <tabstop>_delete</tabstop>
-  <tabstop>_close</tabstop>
   <tabstop>_print</tabstop>
+  <tabstop>_close</tabstop>
  </tabstops>
- <includes/>
  <resources/>
  <connections>
   <connection>
@@ -327,8 +411,8 @@
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>515</x>
+     <y>31</y>
     </hint>
     <hint type="destinationlabel" >
      <x>20</x>
@@ -343,12 +427,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>30</x>
+     <y>118</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>514</x>
+     <y>235</y>
     </hint>
    </hints>
   </connection>

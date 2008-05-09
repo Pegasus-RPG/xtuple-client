@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>914</width>
-    <height>622</height>
+    <width>808</width>
+    <height>647</height>
    </rect>
   </property>
   <property name="minimumSize" >
@@ -399,20 +399,36 @@
              </widget>
             </item>
             <item row="1" column="1" >
+             <widget class="DLineEdit" name="_expire" />
+            </item>
+            <item row="1" column="0" >
+             <widget class="QLabel" name="_expireLit" >
+              <property name="text" >
+               <string>Expire:</string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+              <property name="margin" >
+               <number>3</number>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1" >
              <widget class="QCheckBox" name="_shipComplete" >
               <property name="text" >
                <string>Ship Complete</string>
               </property>
              </widget>
             </item>
-            <item row="2" column="1" >
+            <item row="3" column="1" >
              <widget class="QCheckBox" name="_printSO" >
               <property name="text" >
                <string>Print on Save</string>
               </property>
              </widget>
             </item>
-            <item row="3" column="1" >
+            <item row="4" column="1" >
              <spacer>
               <property name="orientation" >
                <enum>Qt::Vertical</enum>
@@ -2258,7 +2274,7 @@
   </customwidget>
   <customwidget>
    <class>DLineEdit</class>
-   <extends>XLineEdit</extends>
+   <extends>QWidget</extends>
    <header>datecluster.h</header>
    <container>1</container>
   </customwidget>
@@ -2307,6 +2323,7 @@
   <tabstop>_taxAuth</tabstop>
   <tabstop>_terms</tabstop>
   <tabstop>_warehouse</tabstop>
+  <tabstop>_expire</tabstop>
   <tabstop>_shipComplete</tabstop>
   <tabstop>_printSO</tabstop>
   <tabstop>_origin</tabstop>

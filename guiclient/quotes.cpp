@@ -87,12 +87,14 @@ quotes::quotes(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_showProspects, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+  connect(_showExpired, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
 
-  _quote->addColumn(tr("Quote #"),    _orderColumn, Qt::AlignRight  );
-  _quote->addColumn(tr("Customer"),   -1,           Qt::AlignLeft   );
-  _quote->addColumn(tr("P/O Number"), _itemColumn,  Qt::AlignLeft   );
-  _quote->addColumn(tr("Quote Date"), _dateColumn,  Qt::AlignCenter );
+  _quote->addColumn(tr("Quote #"),    _orderColumn, Qt::AlignRight, true, "quhead_number");
+  _quote->addColumn(tr("Customer"),   -1,           Qt::AlignLeft,  true, "quhead_billtoname");
+  _quote->addColumn(tr("P/O Number"), _itemColumn,  Qt::AlignLeft,  true, "quhead_custponumber");
+  _quote->addColumn(tr("Quote Date"), _dateColumn,  Qt::AlignCenter,true, "quhead_quotedate");
+  _quote->addColumn(tr("Expires"),    _dateColumn,  Qt::AlignCenter,true, "quhead_expire");
   _quote->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
   if (_privileges->check("PrintQuotes"))
@@ -429,7 +431,8 @@ void quotes::sDelete()
 void quotes::sFillList()
 {
   QString sql("SELECT DISTINCT quhead_id, quhead_number, quhead_billtoname,"
-              "                quhead_custponumber, formatDate(quhead_quotedate) "
+              "                quhead_custponumber, quhead_quotedate,"
+              "                quhead_expire "
               "FROM quhead "
 	      " <? if exists(\"customersOnly\") ?>"
 	      "     JOIN custinfo ON (quhead_cust_id=cust_id) "
@@ -441,6 +444,11 @@ void quotes::sFillList()
 	      " <? endif ?>"
 	      " <? if exists(\"warehous_id\") ?>"
 	      " WHERE (itemsite_warehous_id=<? value(\"warehous_id\") ?>)"
+              " <?   if not exists(\"showExpired\") ?>"
+              "   AND ((quhead_expire IS NULL) OR (quhead_expire >= CURRENT_DATE))"
+              " <?   endif ?>"
+              " <? elseif not exists(\"showExpired\") ?>"
+              " WHERE((quhead_expire IS NULL) OR (quhead_expire >= CURRENT_DATE))"
 	      " <? endif ?>"
 	      "ORDER BY quhead_number;");
 
@@ -449,6 +457,8 @@ void quotes::sFillList()
     params.append("warehous_id", _warehouse->id());
   if (! _showProspects->isChecked())
     params.append("customersOnly");
+  if ( _showExpired->isChecked())
+    params.append("showExpired");
 
   MetaSQLQuery mql(sql);
   q = mql.toQuery(params);
