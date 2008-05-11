@@ -98,6 +98,8 @@ CLineEdit::CLineEdit(QWidget *pParent, const char *name) :
   connect(this, SIGNAL(lostFocus()), this, SLOT(sParse()));
   connect(this, SIGNAL(requestSearch()), this, SLOT(sSearch()));
   connect(this, SIGNAL(requestList()), this, SLOT(sList()));
+  
+  _mapper = new XDataWidgetMapper(this);
 }
 
 void CLineEdit::setAutoFocus(bool yes)
@@ -229,6 +231,10 @@ void CLineEdit::setSilentId(int pId)
       _id = pId;
 
       setText(cust.value("cust_number").toString());
+      
+      if (_mapper->model() &&
+          _mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this))).toString() != text())
+        _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this)), text());
 
       emit custNumberChanged(cust.value("cust_number").toString());
       emit custNameChanged(cust.value("cust_name").toString());
@@ -284,6 +290,14 @@ void CLineEdit::setId(int pId)
   emit newId(_id);
   emit valid(_valid);
 }
+
+void CLineEdit::setNumber(const QString& pNumber)
+{
+    _parsed = false;
+    setText(pNumber);
+    sParse();
+}
+
 
 void CLineEdit::setType(CLineEditTypes pType)
 {
@@ -557,6 +571,12 @@ void CustInfo::sHandleCreditStatus(const QString &pStatus)
     else if (pStatus == "H")
       _info->setPaletteForegroundColor(QColor("red"));
   }
+}
+
+void CustInfo::setDataWidgetMap(XDataWidgetMapper* m)
+{
+  m->addFieldMapping(_customerNumber, _fieldName, QByteArray("number"));
+  _customerNumber->_mapper=m;
 }
 
 

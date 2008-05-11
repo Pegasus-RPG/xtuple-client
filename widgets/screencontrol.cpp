@@ -69,13 +69,12 @@ ScreenControl::ScreenControl(QWidget *parent) :
   connect (_new,	SIGNAL(clicked()),	this,	SLOT(newRow()));
   connect (_save,       SIGNAL(clicked()),      this,   SIGNAL(saveClicked()));
   connect (_save,	SIGNAL(clicked()),	this,	SLOT(save()));
-  connect (_print,	SIGNAL(clicked()),	this,	SLOT(print()));
+  connect (_print,	SIGNAL(clicked()),	this,	SIGNAL(printClicked()));
   connect (_prev,	SIGNAL(clicked()),	this,	SLOT(toPrevious()));
   connect (_next,	SIGNAL(clicked()),	this,	SLOT(toNext()));
   connect (_search,	SIGNAL(clicked()),	this,	SLOT(search()));
   
-  //Hiding future functionality that has been commented out for now
-  _print->setVisible(FALSE);
+  //_print->setVisible(FALSE);
   _view->setVisible(FALSE);
 
 }
@@ -111,8 +110,6 @@ void ScreenControl::toNext()
   _mapper.toNext();
   _prev->setEnabled(true);
   _next->setEnabled(_mapper.currentIndex() < _model.rowCount()-1);
-  qDebug("rows %d",_model.rowCount());
-  qDebug("curr idx %d",_mapper.currentIndex());
 }
 
 void ScreenControl::toPrevious()

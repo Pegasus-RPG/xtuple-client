@@ -84,6 +84,7 @@ class OPENMFGWIDGETS_EXPORT CLineEdit : public XLineEdit
 
   Q_PROPERTY(bool	   autoFocus READ autoFocus WRITE setAutoFocus	)
   Q_PROPERTY(CLineEditTypes	type READ type	    WRITE setType	)
+  Q_PROPERTY(QString     number          READ text          WRITE setNumber)
 
   friend class CustInfo;
 
@@ -106,6 +107,7 @@ class OPENMFGWIDGETS_EXPORT CLineEdit : public XLineEdit
     void sList();
     void setSilentId(int);
     void setId(int);
+    void setNumber(const QString& pNumber);
     void setType(CLineEditTypes);
     void sParse();
     void setAutoFocus(bool);
@@ -132,6 +134,7 @@ class OPENMFGWIDGETS_EXPORT CLineEdit : public XLineEdit
     void dragEnterEvent(QDragEnterEvent *);
     void dropEvent(QDropEvent *);
     void keyPressEvent(QKeyEvent *);
+    XDataWidgetMapper *_mapper;
 
   private:
     bool		_autoFocus;
@@ -152,6 +155,7 @@ class OPENMFGWIDGETS_EXPORT CustInfo : public QWidget
 
   Q_PROPERTY(bool	   autoFocus READ autoFocus WRITE setAutoFocus	)
   Q_PROPERTY(CLineEdit::CLineEditTypes	type READ type	    WRITE setType	)
+  Q_PROPERTY(QString fieldName   READ fieldName   WRITE setFieldName)
 
   public:
     CustInfo(QWidget *parent, const char *name = 0);
@@ -164,12 +168,16 @@ class OPENMFGWIDGETS_EXPORT CustInfo : public QWidget
     inline CLineEdit::CLineEditTypes type() const { return _customerNumber->type(); }
 
     static CustInfoAction * _custInfoAction;
+      
+    QString fieldName()   const { return _fieldName; };
 
   public slots:
     void setSilentId(int);
     void setId(int);
     void setType(CLineEdit::CLineEditTypes);
     void setAutoFocus(bool);
+    void setDataWidgetMap(XDataWidgetMapper* m);
+    void setFieldName(QString p) { _fieldName = p; };
 
   private slots:
     void sInfo();
@@ -194,6 +202,7 @@ class OPENMFGWIDGETS_EXPORT CustInfo : public QWidget
     CLineEdit   *_customerNumber;
     QPushButton *_list;
     QPushButton *_info;
+    QString     _fieldName;
 };
 
 
@@ -203,6 +212,7 @@ class OPENMFGWIDGETS_EXPORT CustCluster : public QWidget
 
   Q_PROPERTY(bool	   autoFocus READ autoFocus WRITE setAutoFocus	)
   Q_PROPERTY(CLineEdit::CLineEditTypes	type READ type	    WRITE setType	)
+  Q_PROPERTY(QString fieldName   READ fieldName   WRITE setFieldName)
 
   public:
     CustCluster(QWidget *parent, const char *name = 0);
@@ -213,9 +223,10 @@ class OPENMFGWIDGETS_EXPORT CustCluster : public QWidget
     inline int		     id()	{ return _custInfo->id();       }
     inline bool		isValid()	{ return _custInfo->isValid();   }
     inline CLineEdit::CLineEditTypes type() const { return _custInfo->type(); }
+    inline QString    fieldName() const { return _custInfo->fieldName(); };
 
     void setType(CLineEdit::CLineEditTypes);
-
+    
   signals:
     void newId(int);
     void valid(bool);
@@ -224,6 +235,8 @@ class OPENMFGWIDGETS_EXPORT CustCluster : public QWidget
     void setId(int);
     void setSilentId(int);
     void setAutoFocus(bool);
+    void setFieldName(const QString& p) { _custInfo->setFieldName(p); };
+    void setDataWidgetMap(XDataWidgetMapper* m) { _custInfo->setDataWidgetMap(m); };
 
   private:
     CustInfo    *_custInfo;

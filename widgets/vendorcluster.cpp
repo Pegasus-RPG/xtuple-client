@@ -94,6 +94,8 @@ VendorLineEdit::VendorLineEdit(QWidget *pParent, const char *name) :
   connect(this, SIGNAL(lostFocus()), this, SLOT(sParse()));
   connect(this, SIGNAL(requestSearch()), this, SLOT(sSearch()));
   connect(this, SIGNAL(requestList()), this, SLOT(sList()));
+  
+  _mapper = new XDataWidgetMapper(this);
 }
 
 void VendorLineEdit::setId(int pId)
@@ -122,6 +124,10 @@ void VendorLineEdit::setId(int pId)
   
       setText(vend.value("vend_number").toString());
       _parsed = TRUE;
+      
+      if (_mapper->model() &&
+          _mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this))).toString() != text())
+        _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this)), text());
 
       emit nameChanged(vend.value("vend_name").toString());
       emit address1Changed(vend.value("vend_address1").toString());
@@ -357,6 +363,12 @@ void VendorInfo::setType(int pType)
   _vendorNumber->_type = pType;
 }
 
+void VendorInfo::setDataWidgetMap(XDataWidgetMapper* m)
+{
+  m->addFieldMapping(_vendorNumber, _fieldName, QByteArray("number"));
+  _vendorNumber->_mapper=m;
+}
+
 
 VendorCluster::VendorCluster(QWidget *pParent, const char *name) :
   QWidget(pParent, name)
@@ -419,5 +431,11 @@ void VendorCluster::setReadOnly(bool pReadOnly)
 void VendorCluster::setType(int pType)
 {
   _vendorNumber->_type = pType;
+}
+
+void VendorCluster::setDataWidgetMap(XDataWidgetMapper* m)
+{
+  m->addFieldMapping(_vendorNumber, _fieldName, QByteArray("number"));
+  _vendorNumber->_mapper=m;
 }
 

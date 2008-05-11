@@ -76,6 +76,7 @@ class VendorCluster;
 class OPENMFGWIDGETS_EXPORT VendorLineEdit : public XLineEdit
 {
   Q_OBJECT
+  Q_PROPERTY(QString     number          READ text          WRITE setNumber);
 
 friend class VendorInfo;
 friend class VendorCluster;
@@ -109,6 +110,7 @@ friend class VendorCluster;
     void mouseMoveEvent(QMouseEvent *);
     void dragEnterEvent(QDragEnterEvent *);
     void dropEvent(QDropEvent *);
+    XDataWidgetMapper *_mapper;
 
   private:
     bool _dragging;
@@ -120,6 +122,7 @@ class OPENMFGWIDGETS_EXPORT VendorInfo : public QWidget
   Q_OBJECT
 
   Q_PROPERTY(bool readOnly READ isReadOnly WRITE setReadOnly )
+  Q_PROPERTY(QString fieldName   READ fieldName   WRITE setFieldName);
 
   public:
     VendorInfo(QWidget *parent, const char *name = 0);
@@ -127,11 +130,15 @@ class OPENMFGWIDGETS_EXPORT VendorInfo : public QWidget
     inline int id()       const { return _vendorNumber->_id;    }
     inline bool isValid() const { return _vendorNumber->_valid; }
     inline bool isReadOnly() const { return _vendorNumber->isEnabled(); }
+    
+    QString fieldName()   const { return _fieldName; };
 
   public slots:
     void setId(int);
     void setType(int);
     void setReadOnly(bool);
+    void setDataWidgetMap(XDataWidgetMapper* m);
+    void setFieldName(QString p) { _fieldName = p; };
 
   signals:
     void newId(int);
@@ -149,12 +156,14 @@ class OPENMFGWIDGETS_EXPORT VendorInfo : public QWidget
     VendorLineEdit *_vendorNumber;
     QPushButton    *_list;
     QPushButton    *_info;
+    QString        _fieldName;
 };
 
 
 class OPENMFGWIDGETS_EXPORT VendorCluster : public QWidget
 {
   Q_OBJECT
+  Q_PROPERTY(QString fieldName   READ fieldName   WRITE setFieldName);
 
   public:
     VendorCluster(QWidget *, const char * = 0);
@@ -162,9 +171,14 @@ class OPENMFGWIDGETS_EXPORT VendorCluster : public QWidget
     inline void setId(int pId)     { _vendorNumber->setId(pId);    }
     inline int id()                { return _vendorNumber->_id;    }
     inline bool isValid()          { return _vendorNumber->_valid; }
+    inline QString    fieldName() const { return _fieldName; };
 
     void setReadOnly(bool);
     void setType(int);
+    
+  public slots:
+    void setFieldName(QString p) { _fieldName = p; };
+    void setDataWidgetMap(XDataWidgetMapper* m);
 
   signals:
     void newId(int);
@@ -174,6 +188,7 @@ class OPENMFGWIDGETS_EXPORT VendorCluster : public QWidget
     VendorLineEdit *_vendorNumber;
     QPushButton    *_list;
     QLabel         *_vendorName;
+    QString        _fieldName;
 };
 
 #endif

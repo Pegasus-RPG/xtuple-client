@@ -62,10 +62,13 @@
 #include <QPixmap>
 
 #include "OpenMFGWidgets.h"
+#include "xdatawidgetmapper.h"
 
 class OPENMFGWIDGETS_EXPORT XCheckBox : public QCheckBox
 {
   Q_OBJECT
+  Q_PROPERTY(QString fieldName   READ fieldName   WRITE setFieldName);
+  Q_PROPERTY(bool forgetful   READ forgetful   WRITE setForgetful);
 
   public:
     XCheckBox(QWidget * = 0);
@@ -73,12 +76,24 @@ class OPENMFGWIDGETS_EXPORT XCheckBox : public QCheckBox
     ~XCheckBox();
 
     virtual void setObjectName(const QString &);
+    virtual QString fieldName()   const { return _fieldName; };
+    virtual bool forgetful() const {return _forgetful; };
+    
+  public slots:
+    virtual void setDataWidgetMap(XDataWidgetMapper* m);
+    virtual void setFieldName(QString p) { _fieldName = p; };
+    virtual void setForgetful(bool p);
+    virtual void setData();
 
+  protected:
+    XDataWidgetMapper *_mapper;
+    
   private:
     virtual void constructor();
 
     bool    _forgetful;
     QString _settingsName;
+    QString _fieldName;
 
     static QPixmap *_checkedIcon;
 };

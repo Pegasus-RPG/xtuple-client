@@ -98,6 +98,8 @@ ItemLineEdit::ItemLineEdit(QWidget *pParent, const char *name) : XLineEdit(pPare
   connect(this, SIGNAL(requestList()), this, SLOT(sList()));
   connect(this, SIGNAL(requestSearch()), this, SLOT(sSearch()));
   connect(this, SIGNAL(requestAlias()), this, SLOT(sAlias()));
+  
+  _mapper = new XDataWidgetMapper(this);
 }
 
 void ItemLineEdit::setItemNumber(QString pNumber)
@@ -225,6 +227,10 @@ void ItemLineEdit::silentSetId(int pId)
     _valid      = TRUE;
 
     setText(item.value("item_number").toString());
+
+    if (_mapper->model() &&
+        _mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this))).toString() != text())
+      _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this)), text());
 
     emit aliasChanged("");
     emit typeChanged(_itemType);
@@ -612,8 +618,6 @@ ItemCluster::ItemCluster(QWidget *pParent, const char *name) : QWidget(pParent)
   _descrip2->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
   mainLayout->addWidget(_descrip2);
   setLayout(mainLayout);
-  
-  _mapper = new XDataWidgetMapper(this);
 
 //  Make some internal connections
   connect(_itemNumber, SIGNAL(aliasChanged(const QString &)), this, SIGNAL(aliasChanged(const QString &)));
@@ -635,8 +639,8 @@ ItemCluster::ItemCluster(QWidget *pParent, const char *name) : QWidget(pParent)
 
 void ItemCluster::setDataWidgetMap(XDataWidgetMapper* m)
 {
-  m->addFieldMapping(this, _fieldName, QByteArray("id"));
-  _mapper=m;
+  m->addFieldMapping(_itemNumber, _fieldName, QByteArray("number"));
+  _itemNumber->_mapper=m;
 }
 
 void ItemCluster::setReadOnly(bool pReadOnly)

@@ -75,22 +75,36 @@ QPixmap *XCheckBox::_checkedIcon = 0;
 
 void XCheckBox::constructor()
 {
-  _forgetful = false;
-  if (_x_preferences)
+  setForgetful(false);
+    
+  _mapper = new XDataWidgetMapper(this);
+}
+
+void XCheckBox::setData()
+{
+  if (_mapper->model() &&
+    _mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this))).toBool() != isChecked())
+  _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this)), isChecked());
+}
+
+void XCheckBox::setForgetful(bool p)
+{
+  if (_x_preferences && !p)
     _forgetful = _x_preferences->value("XCheckBox/forgetful").startsWith("t", Qt::CaseInsensitive);
+  else
+    _forgetful = p;
+    
   if (! _forgetful)
   {
     Q_INIT_RESOURCE(widgets);
     if (! _checkedIcon)
       _checkedIcon = new QPixmap(":/widgets/images/xcheckbox.png");
-#if 0
-  // TODO: can we use the icon as the background for the XCheckBox::indicator?
-  setStyleSheet(styleSheet() + " XCheckBox::indicator { border-style: wave }");
-#else
+      
     setIcon(*_checkedIcon);
     setIconSize(_checkedIcon->size());
-#endif
   }
+  else
+    setIcon(QPixmap());    
 }
 
 void XCheckBox::setObjectName(const QString & pName)
@@ -118,4 +132,11 @@ XCheckBox::~XCheckBox()
     else
       _x_preferences->set(_settingsName + "/checked", (int)checkState());
   }
+}
+
+void XCheckBox::setDataWidgetMap(XDataWidgetMapper* m)
+{
+  m->addFieldMapping(this, _fieldName);
+  _mapper=m;
+  connect(this, SIGNAL(stateChanged(int)), this, SLOT(setData())); 
 }
