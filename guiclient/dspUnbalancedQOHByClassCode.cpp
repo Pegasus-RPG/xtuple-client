@@ -58,10 +58,12 @@
 #include "dspUnbalancedQOHByClassCode.h"
 
 #include <QMenu>
+#include <QSqlError>
 
 #include "createCountTagsByItem.h"
 #include "dspInventoryAvailabilityByItem.h"
 #include "itemSite.h"
+#include "storedProcErrorLookup.h"
 
 dspUnbalancedQOHByClassCode::dspUnbalancedQOHByClassCode(QWidget* parent, const char* name, Qt::WFlags fl)
     : XMainWindow(parent, name, fl)
@@ -98,6 +100,21 @@ void dspUnbalancedQOHByClassCode::sBalance()
   q.prepare("SELECT balanceItemsite(:itemsite_id) AS result;");
   q.bindValue(":itemsite_id", _itemsite->id());
   q.exec();
+  if (q.first())
+  {
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("balanceItemsite", result),
+                  __FILE__, __LINE__);
+      return;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
   sFillList();
 }
 
