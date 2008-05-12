@@ -66,6 +66,8 @@
 #include <QLocale>
 #include <QMouseEvent>
 
+#include "format.h"
+
 XLineEdit::XLineEdit(QWidget *parent, const char *name) :
   QLineEdit(parent, name)
 {
@@ -111,7 +113,13 @@ void XLineEdit::setDataWidgetMap(XDataWidgetMapper* m)
 
 void XLineEdit::setText(const QVariant &pVariant)
 {
-  QLineEdit::setText(pVariant.toString());
+  // TODO: don't hardcode 4 - add additional arg to setText? add setDouble? add another class that's model/view numeric?
+  bool ok = false;
+  double dblVal = pVariant.toDouble(&ok);
+  if (ok)
+    QLineEdit::setText(formatNumber(dblVal, 4));
+  else
+    QLineEdit::setText(pVariant.toString());
 }
 
 void XLineEdit::mousePressEvent(QMouseEvent *event)

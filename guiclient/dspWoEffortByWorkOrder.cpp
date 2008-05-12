@@ -57,12 +57,11 @@
 
 #include "dspWoEffortByWorkOrder.h"
 
-#include <QVariant>
-#include <QStatusBar>
-#include <QMessageBox>
-#include <QWorkspace>
 #include <QMenu>
+#include <QMessageBox>
 #include <QSqlError>
+#include <QVariant>
+
 #include <openreports.h>
 #include "math.h"
 #include "wotc.h"
@@ -90,13 +89,13 @@ dspWoEffortByWorkOrder::dspWoEffortByWorkOrder(QWidget* parent, const char* name
 
   //omfgThis->inputManager()->notify(cBCWorkOrder, this, _wo, SLOT(setId(int)));
 
-  _wotc->addColumn(tr("User"),         _userColumn,     Qt::AlignLeft  );
-  _wotc->addColumn(tr("Operation"),    -1,              Qt::AlignLeft  );
-  _wotc->addColumn(tr("Time In"),      _timeDateColumn, Qt::AlignRight );
-  _wotc->addColumn(tr("Time Out"),     _timeDateColumn, Qt::AlignRight );
-  _wotc->addColumn(tr("Setup Time"),   _timeColumn,     Qt::AlignRight );
-  _wotc->addColumn(tr("Run Time"),     _timeColumn,     Qt::AlignRight );
-  _wotc->addColumn(tr("Effort"),       _timeColumn,     Qt::AlignRight );
+  _wotc->addColumn(tr("User"),        _userColumn, Qt::AlignLeft, true, "usr_username");
+  _wotc->addColumn(tr("Operation"),            -1, Qt::AlignLeft, true, "wooper");
+  _wotc->addColumn(tr("Time In"), _timeDateColumn, Qt::AlignLeft, true, "wotc_timein");
+  _wotc->addColumn(tr("Time Out"),_timeDateColumn, Qt::AlignLeft, true, "wotc_timeout");
+  _wotc->addColumn(tr("Setup Time"),  _timeColumn, Qt::AlignLeft, true, "setup_time");
+  _wotc->addColumn(tr("Run Time"),    _timeColumn, Qt::AlignLeft, true, "run_time");
+  _wotc->addColumn(tr("Effort"),      _timeColumn, Qt::AlignLeft, true, "wo_effort");
 
   connect(omfgThis, SIGNAL(workOrdersUpdated(int,bool)),  this,SLOT(sFillList()));
 }
@@ -234,10 +233,10 @@ void dspWoEffortByWorkOrder::sFillList()
     q.prepare( "SELECT wotc_id, usr_username,"
 	       "       wooper_seqnumber || ' - ' || wooper_descrip1 || ' - ' ||"
 	       "                                    wooper_descrip2 AS wooper, "
-	       "       formatDateTime(wotc_timein) AS timein,"
-	       "       formatDateTime(wotc_timeout) AS timeout,"
+	       "       wotc_timein,"
+	       "       wotc_timeout,"
 	       "       NULL AS setup_time, NULL AS run_time,"
-	       "       formatInterval(wotcTime(wotc_id)) AS wo_effort "
+	       "       wotcTime(wotc_id) AS wo_effort "
 	       "FROM usr, wotc LEFT OUTER JOIN "
 	       "     wooper ON (wotc_wooper_id=wooper_id) "
 	       "WHERE ((wotc_wo_id=:wo_id)"
@@ -249,20 +248,19 @@ void dspWoEffortByWorkOrder::sFillList()
 	       "UNION "
 	       "SELECT wotc_id, usr_username,"
 	       "       CAST(wooperpost_seqnumber AS TEXT) AS wooper, "
-	       "       formatDateTime(wotc_timein) AS timein,"
-	       "       formatDateTime(wotc_timeout) AS timeout,"
-	       "       formatInterval(wooperpost_sutime) AS setup_time,"
-	       "       formatInterval(wooperpost_rntime) AS run_time,"
-	       "       formatInterval(wotcTime(wotc_id)) AS wo_effort "
+	       "       wotc_timein,"
+	       "       wotc_timeout,"
+	       "       wooperpost_sutime AS setup_time,"
+	       "       wooperpost_rntime AS run_time,"
+	       "       wotcTime(wotc_id) AS wo_effort "
 	       "FROM usr, wotc, wooperpost "
 	       "WHERE ((wotc_wo_id=:wo_id)"
 	       "  AND  (wotc_usr_id=usr_id) "
 	       "  AND  (wooperpost_wotc_id=wotc_id)) "
-	       "ORDER BY timein, timeout;" );
+	       "ORDER BY wotc_timein, wotc_timeout;" );
     q.bindValue(":wo_id", _wo->id());
     q.exec();
     _wotc->populate(q);
-
     if (q.lastError().type() != QSqlError::NoError)
     {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -274,9 +272,9 @@ void dspWoEffortByWorkOrder::sFillList()
 		       _wotc->topLevelItem(_wotc->topLevelItemCount() - 1),
 		       _wo->id(), "", tr("Total"));
 
-    q.prepare("SELECT formatDateTime(MIN(wotc_timein)) AS timein,"
-	      "       formatDateTime(MAX(wotc_timeout)) AS timeout,"
-	      "       formatInterval(woTimeByWo(wotc_wo_id)) AS wo_effort "
+    q.prepare("SELECT MIN(wotc_timein) AS timein,"
+	      "       MAX(wotc_timeout) AS timeout,"
+	      "       woTimeByWo(wotc_wo_id) AS wo_effort "
 	      "FROM wotc "
 	      "WHERE (wotc_wo_id=:wo_id) "
 	      "GROUP BY wotc_wo_id;");
@@ -291,8 +289,8 @@ void dspWoEffortByWorkOrder::sFillList()
     else if (q.lastError().type() != QSqlError::NoError)
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 
-    q.prepare("SELECT formatInterval(SUM(wooperpost_sutime)) AS setup_time,"
-	      "       formatInterval(SUM(wooperpost_rntime)) AS run_time,"
+    q.prepare("SELECT SUM(wooperpost_sutime) AS setup_time,"
+	      "       SUM(wooperpost_rntime) AS run_time,"
 	      "       SUM(wooperpost_sutime) + SUM(wooperpost_rntime) -"
 	      "           intervalToMinutes(woTimeByWo(wooperpost_wo_id)) AS variance "
 	      "FROM wooperpost "

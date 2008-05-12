@@ -57,12 +57,10 @@
 
 #include "dspWoEffortByUser.h"
 
-#include <QVariant>
-#include <QStatusBar>
-#include <QMessageBox>
-#include <QWorkspace>
 #include <QMenu>
+#include <QMessageBox>
 #include <QSqlError>
+
 #include <openreports.h>
 #include "implodeWo.h"
 #include "explodeWo.h"
@@ -103,14 +101,14 @@ dspWoEffortByUser::dspWoEffortByUser(QWidget* parent, const char* name, Qt::WFla
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
   _dates->setEndCaption(tr("End W/O Start Date:"));
 
-  _wotc->addColumn(tr("W/O #"),      _orderColumn,      Qt::AlignLeft   );
-  _wotc->addColumn(tr("Status"),     _statusColumn,     Qt::AlignCenter );
-  _wotc->addColumn(tr("Pri."),       _statusColumn,     Qt::AlignCenter );
-  _wotc->addColumn(tr("Whs."),       _whsColumn,        Qt::AlignCenter );
-  _wotc->addColumn(tr("Operation"),  -1,                Qt::AlignLeft   );
-  _wotc->addColumn(tr("Clock In"),   _timeDateColumn,   Qt::AlignLeft   );
-  _wotc->addColumn(tr("Clock Out"),  _timeDateColumn,   Qt::AlignLeft   );
-  _wotc->addColumn(tr("Effort"),     _timeColumn,       Qt::AlignRight  );
+  _wotc->addColumn(tr("W/O #"),       _orderColumn, Qt::AlignLeft, true, "wonumber");
+  _wotc->addColumn(tr("Status"),     _statusColumn, Qt::AlignCenter,true, "wo_status");
+  _wotc->addColumn(tr("Pri."),       _statusColumn, Qt::AlignCenter,true, "wo_priority");
+  _wotc->addColumn(tr("Whs."),          _whsColumn, Qt::AlignCenter,true, "warehous_code");
+  _wotc->addColumn(tr("Operation"),             -1, Qt::AlignLeft,  true, "wooper");
+  _wotc->addColumn(tr("Clock In"), _timeDateColumn, Qt::AlignLeft,  true, "wotc_timein");
+  _wotc->addColumn(tr("Clock Out"),_timeDateColumn, Qt::AlignLeft,  true, "wotc_timeout");
+  _wotc->addColumn(tr("Effort"),       _timeColumn, Qt::AlignLeft,  true, "wotcTime");
   
   connect(omfgThis, SIGNAL(workOrdersUpdated(int, bool)), this, SLOT(sFillList()));
 
@@ -312,10 +310,10 @@ void dspWoEffortByUser::sFillList()
   {
     QString sql( "SELECT wotc_id, wo_id, formatWONumber(wo_id) AS wonumber,"
 		 " wo_status, wo_priority, warehous_code,"
-                 " formatDateTime(wotc_timein) AS timein,"
-                 " formatDateTime(wotc_timeout) AS timeout,"
+                 " wotc_timein,"
+                 " wotc_timeout,"
 		 " wooper_seqnumber || ' - ' || wooper_descrip1 || ' - ' || wooper_descrip2 AS wooper,"
-		 " formatInterval(wotcTime(wotc_id)) AS wotcTime "
+		 " wotcTime(wotc_id) AS wotcTime "
                  "FROM wo, itemsite, warehous, wotc, wooper "
                  "WHERE ((wo_itemsite_id=itemsite_id)"
                  " AND (itemsite_warehous_id=warehous_id)"
@@ -326,10 +324,10 @@ void dspWoEffortByUser::sFillList()
 		 "UNION "
 		 "SELECT wotc_id, wo_id, formatWONumber(wo_id) AS wonumber,"
 		 " wo_status, wo_priority, warehous_code,"
-                 " formatDateTime(wotc_timein) AS timein,"
-                 " formatDateTime(wotc_timeout) AS timeout,"
+                 " wotc_timein,"
+                 " wotc_timeout,"
 		 " CAST(wooperpost_seqnumber AS TEXT) AS wooper,"
-		 " formatInterval(wotcTime(wotc_id)) AS wotcTime "
+		 " wotcTime(wotc_id) AS wotcTime "
                  "FROM wo, itemsite, warehous, wotc LEFT OUTER JOIN"
 		 "     wooperpost ON (wooperpost_wotc_id=wotc_id) "
                  "WHERE ((wo_itemsite_id=itemsite_id)"
@@ -338,31 +336,23 @@ void dspWoEffortByUser::sFillList()
 		 " AND (wotc_wo_id=wo_id)"
 		 " AND (wotc_usr_id=:usr_id)"
                  " AND (wo_startdate BETWEEN :startDate AND :endDate)) "
-		 "ORDER BY wonumber, timein, timeout;");
+		 "ORDER BY wonumber, wotc_timein, wotc_timeout;");
 
     q.prepare(sql);
     _dates->bindValue(q);
     q.bindValue(":usr_id", _user->id());
     q.exec();
-
-    XTreeWidgetItem *last = 0;
-    while (q.next() && (q.lastError().type() == QSqlError::NoError))
-    {
-      last = new XTreeWidgetItem(_wotc, last,
-			       q.value("wotc_id").toInt(), q.value("wo_id").toInt(),
-			       q.value("wonumber"),    q.value("wo_status"),
-			       q.value("wo_priority"), q.value("warehous_code"),
-			       q.value("wooper"),      q.value("timein"),
-			       q.value("timeout"),     q.value("wotcTime"));
-    }
+    _wotc->populate(q, true);
     if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
+    // TODO: add this to the query above somehow?
+    XTreeWidgetItem *last = 0;
     XSqlQuery total;
-    total.prepare("SELECT formatInterval(woTime(:wotc_wo_id, :wotc_usr_id)) AS total;");
+    total.prepare("SELECT woTime(:wotc_wo_id, :wotc_usr_id) AS total;");
     for (int i = 0; i < _wotc->topLevelItemCount(); i++)
     {
       last = _wotc->topLevelItem(i);
