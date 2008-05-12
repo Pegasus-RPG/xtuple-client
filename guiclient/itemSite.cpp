@@ -221,12 +221,12 @@ enum SetResponse itemSite::set(const ParameterList &pParams)
         else
         {
           _mode = cNew;
-          _reorderLevel->setText(formatQty(0.0));
-          _orderUpToQty->setText(formatQty(0.0));
-          _minimumOrder->setText(formatQty(0.0));
-          _maximumOrder->setText(formatQty(0.0));
-          _orderMultiple->setText(formatQty(0.0));
-          _safetyStock->setText(formatQty(0.0));
+          _reorderLevel->setDouble(0.0);
+          _orderUpToQty->setDouble(0.0);
+          _minimumOrder->setDouble(0.0);
+          _maximumOrder->setDouble(0.0);
+          _orderMultiple->setDouble(0.0);
+          _safetyStock->setDouble(0.0);
           _cycleCountFreq->setValue(0);
           _leadTime->setValue(0);
           _eventFence->setValue(_metrics->value("DefaultEventFence").toInt());
@@ -782,12 +782,12 @@ void itemSite::populate()
   itemsite.prepare( "SELECT itemsite_item_id, itemsite_warehous_id, itemsite_qtyonhand,"
                     "       item_sold, item_type, itemsite_active, itemsite_controlmethod,"
                     "       itemsite_perishable, itemsite_useparams, itemsite_useparamsmanual,"
-                    "       formatQty(itemsite_reorderlevel) AS f_reorderlevel,"
-                    "       formatQty(itemsite_ordertoqty) AS f_ordertoqty,"
-                    "       formatQty(itemsite_minordqty) AS f_minordqty,"
-                    "       formatQty(itemsite_maxordqty) AS f_maxordqty,"
-                    "       formatQty(itemsite_multordqty) AS f_multordqty,"
-                    "       formatQty(itemsite_safetystock) AS f_safetystock,"
+                    "       itemsite_reorderlevel,"
+                    "       itemsite_ordertoqty,"
+                    "       itemsite_minordqty,"
+                    "       itemsite_maxordqty,"
+                    "       itemsite_multordqty,"
+                    "       itemsite_safetystock,"
                     "       itemsite_leadtime, itemsite_eventfence, itemsite_plancode_id,"
                     "       itemsite_supply, itemsite_createpr, itemsite_createwo, itemsite_sold,"
                     "       itemsite_soldranking, itemsite_stocked, itemsite_abcclass, itemsite_autoabcclass,"
@@ -820,12 +820,12 @@ void itemSite::populate()
     _useParameters->setChecked(itemsite.value("itemsite_useparams").toBool());
     _useParametersOnManual->setChecked(itemsite.value("itemsite_useparamsmanual").toBool());
 
-    _reorderLevel->setText(itemsite.value("f_reorderlevel"));
-    _orderUpToQty->setText(itemsite.value("f_ordertoqty"));
-    _minimumOrder->setText(itemsite.value("f_minordqty"));
-    _maximumOrder->setText(itemsite.value("f_maxordqty"));
-    _orderMultiple->setText(itemsite.value("f_multordqty"));
-    _safetyStock->setText(itemsite.value("f_safetystock"));
+    _reorderLevel->setDouble(itemsite.value("itemsite_reorderlevel").toDouble());
+    _orderUpToQty->setDouble(itemsite.value("itemsite_ordertoqty").toDouble());
+    _minimumOrder->setDouble(itemsite.value("itemsite_minordqty").toDouble());
+    _maximumOrder->setDouble(itemsite.value("itemsite_maxordqty").toDouble());
+    _orderMultiple->setDouble(itemsite.value("itemsite_multordqty").toDouble());
+    _safetyStock->setDouble(itemsite.value("itemsite_safetystock").toDouble());
 
     _cycleCountFreq->setValue(itemsite.value("itemsite_cyclecountfreq").toInt());
     _leadTime->setValue(itemsite.value("itemsite_leadtime").toInt());

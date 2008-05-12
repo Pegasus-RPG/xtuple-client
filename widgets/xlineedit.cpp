@@ -65,6 +65,7 @@
 #include <QKeyEvent>
 #include <QLocale>
 #include <QMouseEvent>
+#include <QValidator>
 
 #include "format.h"
 
@@ -113,13 +114,32 @@ void XLineEdit::setDataWidgetMap(XDataWidgetMapper* m)
 
 void XLineEdit::setText(const QVariant &pVariant)
 {
-  // TODO: don't hardcode 4 - add additional arg to setText? add setDouble? add another class that's model/view numeric?
-  bool ok = false;
-  double dblVal = pVariant.toDouble(&ok);
-  if (ok)
-    QLineEdit::setText(formatNumber(dblVal, 4));
+  if (pVariant.type() == QVariant::Double)
+  {
+    const QValidator *v = validator();
+    int prec = 0;
+
+    if (v && v->inherits("QDoubleValidator"))
+      prec = ((QDoubleValidator*)v)->decimals();
+
+    QLineEdit::setText(formatNumber(pVariant.toDouble(), prec));
+  }
   else
     QLineEdit::setText(pVariant.toString());
+}
+
+void XLineEdit::setDouble(const double pDouble, const int pPrec)
+{
+  const QValidator *v = validator();
+  int prec = pPrec;
+
+  if (pPrec < 0 && v && v->inherits("QDoubleValidator"))
+  {
+    prec = ((QDoubleValidator*)v)->decimals();
+    //qDebug("prec set to %d", prec);
+  }
+
+  QLineEdit::setText(formatNumber(pDouble, prec));
 }
 
 void XLineEdit::mousePressEvent(QMouseEvent *event)

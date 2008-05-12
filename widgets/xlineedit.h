@@ -84,7 +84,8 @@ class OPENMFGWIDGETS_EXPORT XLineEdit : public QLineEdit
     double toDouble(bool * = 0);
     virtual QString fieldName()   const { return _fieldName; };
 
-    void   setText(const QVariant &);
+    virtual void   setText(const QVariant &);
+    virtual void   setDouble(const double, const int = -1);
 
   public slots:
     virtual void sParse();
