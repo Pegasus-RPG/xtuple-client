@@ -58,10 +58,7 @@
 #include "accountingYearPeriods.h"
 
 #include <QMenu>
-#include <QMessageBox>
 #include <QSqlError>
-#include <QStatusBar>
-#include <QVariant>
 
 #include <openreports.h>
 
@@ -83,9 +80,9 @@ accountingYearPeriods::accountingYearPeriods(QWidget* parent, const char* name, 
     connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
     connect(_closePeriod, SIGNAL(clicked()), this, SLOT(sClosePeriod()));
 
-    _period->addColumn(tr("Start"),  _dateColumn, Qt::AlignCenter );
-    _period->addColumn(tr("End"),    _dateColumn, Qt::AlignCenter );
-    _period->addColumn(tr("Closed"), -1         , Qt::AlignCenter );
+    _period->addColumn(tr("Start"),  _dateColumn, Qt::AlignCenter, true, "yearperiod_start");
+    _period->addColumn(tr("End"),    _dateColumn, Qt::AlignCenter, true, "yearperiod_end");
+    _period->addColumn(tr("Closed"), -1         , Qt::AlignCenter, true, "closed");
 
     if (_privileges->check("MaintainAccountingPeriods"))
     {
@@ -248,7 +245,9 @@ void accountingYearPeriods::sOpenPeriod()
     int result = q.value("result").toInt();
     if (result < 0)
     {
-      systemError(this, storedProcErrorLookup("openAccountingYearPeriod", result), __FILE__, __LINE__);
+      systemError(this,
+                  storedProcErrorLookup("openAccountingYearPeriod", result),
+                  __FILE__, __LINE__);
       return;
     }
     sFillList();
@@ -276,8 +275,8 @@ void accountingYearPeriods::sFillList()
                      "       CASE WHEN (NOT yearperiod_closed) THEN 0"
                      "            ELSE 1"
                      "       END,"
-                     "       formatDate(yearperiod_start), formatDate(yearperiod_end),"
-                     "       formatBoolYN(yearperiod_closed) "
+                     "       *, "
+                     "       formatBoolYN(yearperiod_closed) AS closed "
                      "FROM yearperiod "
                      "ORDER BY yearperiod_start;", TRUE );
 }
