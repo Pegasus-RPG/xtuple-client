@@ -138,15 +138,20 @@ class OPENMFGWIDGETS_EXPORT ScreenControl : public QWidget, public Ui::screenCon
 		void languageChange();
 	
 	signals:
+                void movedNext();
+                void movedPrev();
+                void movingNext();
+                void movingPrev();
 		void newClicked();
 		void newDataWidgetMapper(XDataWidgetMapper *m);
 	//	void previewFormClicked();
 	//	void previewListClicked();
-	//	void printClicked();
+		void printClicked();
 	//	void printFormClicked();
 	//	void printListClicked();
 		void saveClicked();
 		void saved(bool);
+                void saving();
 		void searchTypeChanged(SearchTypes);
 
 	private:

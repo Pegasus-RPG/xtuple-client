@@ -135,6 +135,7 @@ class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
     Q_PROPERTY(bool     minimalLayout         READ minimalLayout        	WRITE setMinimalLayout)
     Q_PROPERTY(bool     phonesVisible         READ phonesVisible        	WRITE setPhonesVisible)
     Q_PROPERTY(bool     webaddrVisible        READ webaddrVisible       	WRITE setWebaddrVisible)
+    Q_PROPERTY(QString  fieldNameChange       READ fieldNameChange      	WRITE setFieldNameChange)   
     Q_PROPERTY(QString  fieldNameNumber       READ fieldNameNumber      	WRITE setFieldNameNumber)   
     Q_PROPERTY(QString  fieldNameActive       READ fieldNameActive      	WRITE setFieldNameActive)
     Q_PROPERTY(QString  fieldNameCrmAccount   READ fieldNameCrmAccount      	WRITE setFieldNameCrmAccount)
@@ -202,6 +203,7 @@ class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
 	inline virtual bool    webaddrVisible() const { return _webaddr->isVisible(); };
 
 	//Return Data Mapping values
+  	virtual QString  fieldNameChange()        const { return _fieldNameChange; };
 	virtual QString  fieldNameNumber()        const { return _fieldNameNumber; };
         virtual QString  fieldNameActive()        const { return _fieldNameActive; };
         virtual QString  fieldNameCrmAccount()    const { return _fieldNameCrmAccount; };
@@ -240,7 +242,7 @@ class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
 	inline virtual void setTitle(const QString& p)	{ _title->setText(p); };
 
 	virtual void	clear();
-	virtual void	sCheck();
+	virtual void	check();
 	virtual void	sEllipses();
 	virtual void	sInfo();
 	virtual void	sList();
@@ -262,6 +264,7 @@ class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
 	
         //Set Data Mapping 
 	virtual void setDataWidgetMap(XDataWidgetMapper* m);
+        virtual void setFieldNameChange(QString p)	  { _fieldNameChange = p ; };
 	virtual void setFieldNameNumber(QString p)	  { _fieldNameNumber = p ; };
         virtual void setFieldNameActive(QString p)        { _fieldNameActive = p ; };
 	virtual void setFieldNameCrmAccount(QString p)    { _fieldNameCrmAccount = p ; };
@@ -284,6 +287,9 @@ class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
 	virtual void setFieldNamePostalCode(QString p)    { _fieldNamePostalCode = p ; };
 	virtual void setFieldNameState(QString p)         { _fieldNameState = p ; };
 	virtual void setFieldNameCountry(QString p)       { _fieldNameCountry = p ; };
+        
+    private slots:
+        void sCheck();
 
     signals:
 	void changed();
@@ -293,6 +299,7 @@ class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
 	QHBoxLayout*	_nameBox;
 	QHBoxLayout*	_titleBox;
 	QHBoxLayout*	_buttonBox;
+        QLineEdit*      _change;
 	QLineEdit*	_number;
 	QLabel*		_firstLit;
 	XComboBox*	_honorific;
@@ -342,6 +349,7 @@ class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
 	bool		_valid;
 	
         //Data Mapping Values
+        QString  _fieldNameChange;
 	QString  _fieldNameNumber;
         QString  _fieldNameActive;
 	QString  _fieldNameCrmAccount;

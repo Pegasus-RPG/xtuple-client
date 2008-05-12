@@ -149,6 +149,7 @@ class OPENMFGWIDGETS_EXPORT AddressCluster : public VirtualCluster
 	AddressCluster(QWidget*, const char* = 0);
 	
 	inline virtual bool    activeVisible() const { return _active->isVisible(); };
+        inline virtual QString addrChange()  const { return _addrChange->text(); };
 	inline virtual QString city()        const { return _city->text(); };
 	inline virtual QString country()     const { return _country->currentText(); };
 	inline virtual QString description() const { return ""; };
@@ -178,6 +179,7 @@ class OPENMFGWIDGETS_EXPORT AddressCluster : public VirtualCluster
 	inline virtual void clearExtraClause()	{ };
 	inline virtual void setExtraClause(const QString&)  { };
 	virtual void        setActiveVisible(const bool p);
+        virtual void        setAddrChange(QString p);
 	inline virtual void setCity(const QString& p)	{ _city->setText(p); };
 	inline virtual void setCountry(const QString& p) { _country->setEditText(p); };
 	inline virtual void setDescription(const QString&) { };
@@ -197,6 +199,7 @@ class OPENMFGWIDGETS_EXPORT AddressCluster : public VirtualCluster
 	virtual void	sSearch();
 	virtual void	setId(const int);
         virtual int	save(enum SaveFlags = CHECK);
+        virtual void    check();
 
 	// Set data map values      
         virtual void 	setDataWidgetMap(XDataWidgetMapper* m);

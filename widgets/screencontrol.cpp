@@ -107,20 +107,25 @@ void ScreenControl::showEvent(QShowEvent *event)
 
 void ScreenControl::toNext()
 {
+  emit movingNext();
   _mapper.toNext();
   _prev->setEnabled(true);
   _next->setEnabled(_mapper.currentIndex() < _model.rowCount()-1);
+  emit movedNext();
 }
 
 void ScreenControl::toPrevious()
 {
+  emit movingPrev();
   _mapper.toPrevious();
   _next->setEnabled(true);
   _prev->setEnabled(_mapper.currentIndex());
+  emit movedPrev();
 }
 
 void ScreenControl::newRow()
 {
+  _mapper.submit();
   _new->setEnabled(true);
   _save->setEnabled(true);
   _view->setEnabled(true);
@@ -151,10 +156,12 @@ void ScreenControl::printList()
 */
 void ScreenControl::save()
 {
+  emit saving();
   _mapper.submit();
   _model.submitAll();
   if (_mode==New)
     newRow();
+  emit saved(true);
 }
 
 void ScreenControl::search()

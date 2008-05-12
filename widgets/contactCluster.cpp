@@ -98,9 +98,11 @@ void ContactCluster::init()
     _titleBox		= new QHBoxLayout;
     _titleBox->setSpacing(2);
 
+    _change             = new QLineEdit(this);
     _numberLit		= new QLabel(tr("Number:"), this, "_numberLit");
     _number		= new QLineEdit(this, "_number");
     
+    _change->hide();
     _number->hide();
     _numberLit->hide();
     
@@ -259,10 +261,34 @@ void ContactCluster::silentSetId(const int pId)
 	    _active->setChecked(idQ.value("cntct_active").toBool());
             _notes = idQ.value("cntct_notes").toString();
               
-            if (_mapper->model() &&
-                _mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_number))).toString() != _number->text())
-              _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_number)), _number->text());
-	    
+            if (_mapper->model())
+            {
+              if (_mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_number))).toString() != _number->text())
+                _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_number)), _number->text());
+              if (_mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_honorific))).toString() != _honorific->currentText())
+                _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_honorific)), _honorific->currentText());
+              if (_mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_first))).toString() != _first->text())
+                _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_first)), _first->text());
+              if (_mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_last))).toString() != _last->text())
+                _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_last)), _last->text());
+              if (_mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_initials))).toString() != _initials->text())
+                _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_initials)), _initials->text());
+              if (_mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_title))).toString() != _title->text())
+                _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_title)), _title->text());
+              if (_mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_phone))).toString() != _phone->text())
+                _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_phone)), _phone->text());
+              if (_mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_phone2))).toString() != _phone2->text())
+                _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_phone2)), _phone2->text());
+              if (_mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_fax))).toString() != _fax->text())
+                _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_fax)), _fax->text());
+              if (_mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_email))).toString() != _email->text())
+                _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_email)), _email->text());
+              if (_mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_webaddr))).toString() != _webaddr->text())
+                _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_webaddr)), _webaddr->text());
+              if (_mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_active))).toBool() != _active->isChecked())
+                _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_active)), _active->isChecked());
+            }
+            
             _ignoreSignals = false;
 	}
 	else if (idQ.lastError().type() != QSqlError::None)
@@ -336,6 +362,7 @@ QString ContactCluster::name() const
 void ContactCluster::setDataWidgetMap(XDataWidgetMapper* m)
 {  
   m->addFieldMapping(this      ,  _fieldNameNumber, "number");
+  m->addFieldMapping(_change      ,  _fieldNameChange);
   m->addFieldMapping(_active      ,  _fieldNameActive);
   m->addFieldMapping(_first       ,  _fieldNameFirst);
   m->addFieldMapping(_last        ,  _fieldNameLast);
@@ -384,6 +411,7 @@ void ContactCluster::setName(const QString& p)
 int ContactCluster::save(AddressCluster::SaveFlags flag)
 {
   int addrSave = _address->save(flag);
+  
   if (addrSave < 0)
     return addrSave;
 
@@ -425,27 +453,7 @@ int ContactCluster::save(AddressCluster::SaveFlags flag)
     else if (datamodQ.value("result").toInt() > 0)
       silentSetId(datamodQ.value("result").toInt());
     else if (datamodQ.value("result").toInt() == -10)
-    {
-      if (_mapper->model())
-      {
-        int answer;
-        answer = QMessageBox::question(this,
-		    tr("Question Saving %1").arg(label()),
-		    tr("<p>Would you like to update the existing Contact or "
-		       "create a new one?"),
-		    tr("Create New"),
-		    tr("Change Existing"),
-		    tr("Cancel"),
-		    2, 2);
-	if (0 == answer)
-	  return save(AddressCluster::CHANGEONE);
-	else if (1 == answer)
-	  return save(AddressCluster::CHANGEALL);
-	else
-	  silentSetId(_id);		// error
-      }
       return -10;
-    }
   }
   else
     return -1;
@@ -657,6 +665,61 @@ void ContactCluster::setSearchAcct(const int p)
     _extraClause = "";
 }
 
+void ContactCluster::check()
+{
+  //If this is mapped then we need to check whether change flags need to be set
+  if (_mapper->model())
+  {
+    XSqlQuery tx;
+    tx.exec("BEGIN;");
+    int result=save();
+    tx.exec("ROLLBACK;");
+    if (result == -2)
+    {
+      int answer = 2;	// Cancel
+      answer = QMessageBox::question(this, tr("Question Saving Address"),
+                  tr("There are multiple Contacts sharing this Address.\n"
+                     "What would you like to do?"),
+                  tr("Change This One"),
+                  tr("Change Address for All"),
+                  0, 0);
+       if (answer==0)
+       {
+         _address->setAddrChange(QString("CHANGEONE"));
+         _change->setText("CHANGEONE");
+       }
+       else if (answer==1)
+       {
+         _address->setAddrChange(QString("CHANGEALL"));  
+         _change->setText("CHANGEALL");
+       }
+    }
+    else if (result == -10)
+    {
+      int answer;
+      answer = QMessageBox::question(this,
+                  tr("Question Saving %1").arg(label()),
+                  tr("<p>Would you like to update the existing Contact or "
+                     "create a new one?"),
+                  tr("Create New"),
+                  tr("Change Existing"),
+                  0, 0);
+      if (0 == answer)
+        _change->setText("CHANGEONE");
+      else if (1 == answer)
+        _change->setText("CHANGEALL");
+      // Make sure the mapper is aware of this change
+      if (_mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_change))).toString() != _change->text())
+        _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_change)), _change->text());
+    }
+    else if (result < 0)
+    {
+      QMessageBox::critical(this, tr("Error"),tr("There was an error checking this Contact (%1).").arg(result));
+      return;
+    }
+  }  
+}
+
 void ContactCluster::sCheck()
 {
   if(_ignoreSignals)
@@ -673,9 +736,7 @@ void ContactCluster::sCheck()
       (! _email->isVisibleTo(this)   || _email->text().simplified().isEmpty()) &&
       (! _webaddr->isVisibleTo(this) || _webaddr->text().simplified().isEmpty()) &&
       (! _address->isVisibleTo(this) || _address->id() <= 0))
-  {
     setId(-1);
-  }
 }
 
 void ContactCluster::sEllipses()

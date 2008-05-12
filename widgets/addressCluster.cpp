@@ -236,6 +236,28 @@ void AddressCluster::silentSetId(const int pId)
             _active->setChecked(idQ.value("addr_active").toBool());
             _notes = idQ.value("addr_notes").toString();
 
+            if (_mapper->model())
+            {
+              if (_mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_number))).toString() != _number->text())
+                _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_number)), _number->text());
+              if (_mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_active))).toBool() != _active->isChecked())
+               _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_active)), _active->isChecked());
+              if (_mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_addr1))).toString() != _addr1->text())
+               _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_addr1)), _addr1->text());
+              if (_mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_addr2))).toString() != _addr2->text())
+               _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_addr2)), _addr2->text());
+              if (_mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_addr3))).toString() != _addr3->text())
+               _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_addr3)), _addr3->text());
+              if (_mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_city))).toString() != _city->text())
+               _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_city)), _city->text());
+              if (_mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_state))).toString() != _state->currentText())
+               _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_state)), _state->currentText());
+              if (_mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_postalcode))).toString() != _postalcode->text())
+               _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_postalcode)), _postalcode->text());
+              if (_mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_country))).toString() != _country->currentText())
+               _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_country)), _country->currentText());    
+            }
+
             c_number     = _number->text();
             c_addr1      = _addr1->text();
             c_addr2      = _addr2->text();
@@ -301,6 +323,7 @@ void AddressCluster::setDataWidgetMap(XDataWidgetMapper* m)
   _state->setDataWidgetMap(m);
   _country->setFieldName(_fieldNameCountry);
   _country->setDataWidgetMap(m);
+  _mapper=m;
 }
    
 /*
@@ -356,31 +379,46 @@ int AddressCluster::save(enum SaveFlags flag)
       return id();
     }
     if (datamodQ.value("result").toInt() == -2)
-    {
-      if (_mapper->model())
-      {
-        int answer = 2;	// Cancel
-        answer = QMessageBox::question(this, tr("Question Saving Address"),
-		    tr("There are multiple Contacts sharing this Address.\n"
-		       "What would you like to do?"),
-		    tr("Change This One"),
-		    tr("Change Address for All"),
-		    tr("Cancel"),
-		    2, 2);
-         if (answer==0)
-	   return save(CHANGEONE);
-	 else if (answer==1)
-	   return save(CHANGEALL);
-	 else
-	   silentSetId(_id);
-      }
-      else
-        return -2;
-    }
+      return -2;
     else
       return -1; //error
   }
   return id();
+}
+
+void AddressCluster::check()
+{
+  //If this is mapped then we need to check whether change flags need to be set
+  if (_mapper->model())
+  {
+    XSqlQuery tx;
+
+    tx.exec("BEGIN;");
+    int result=save();
+    tx.exec("ROLLBACK;");
+    if (result == -2)
+    {
+      int answer = 2;	// Cancel
+      answer = QMessageBox::question(this, tr("Question Saving Address"),
+                  tr("There are multiple Contacts sharing this Address.\n"
+                     "What would you like to do?"),
+                  tr("Change This One"),
+                  tr("Change Address for All"),
+                  0, 0);
+       if (answer==0)
+         _addrChange->setText("CHANGEONE");
+       else if (answer==1)
+         _addrChange->setText("CHANGEALL");
+       // Make sure the mapper is aware of this change
+       if (_mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_addrChange))).toString() != _addrChange->text())
+         _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_addrChange)), _addrChange->text());     
+    }
+    else if (result < 0)
+    {
+      QMessageBox::critical(this, tr("Error"), tr("There was an error checking this Address (%1).").arg(result));
+      return;
+    }
+  }
 }
 
 void AddressCluster::sEllipses()
@@ -461,6 +499,16 @@ void AddressCluster::setActiveVisible(const bool p)
     _grid->removeWidget(_country);
     _grid->addWidget(_country, 5, 1, 1, 4);
   }
+}
+
+void AddressCluster::setAddrChange(QString p)
+{
+  _addrChange->setText(p);
+
+  if (_mapper->model() &&
+      _mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_addrChange))).toString() != _addrChange->text())
+    _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_addrChange)), _addrChange->text());
+  
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -701,3 +749,4 @@ void AddressSearch::sFillList()
     }
 
 }
+
