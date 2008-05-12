@@ -142,7 +142,7 @@ enum SetResponse issueToShipping::set(const ParameterList &pParams)
   param = pParams.value("sohead_id", &valid);
   if (valid)
   {
-    _order->setId(q.value("coitem_cohead_id").toInt(), "SO");
+    _order->setId(param.toInt(), "SO");
     _soitem->setFocus();
   }
 
@@ -564,7 +564,13 @@ void issueToShipping::sShip()
 void issueToShipping::sFillList()
 {
   ParameterList listp;
-  if (_order->isSO())
+  if (_order->id() < 0)
+  {
+    _soitem->clear();
+    _order->setFocus();
+    return;
+  }
+  else if (_order->isSO())
   {
     q.prepare( "SELECT cohead_holdtype "
                "FROM cohead "
@@ -611,13 +617,13 @@ void issueToShipping::sFillList()
   }
   else if (_order->isTO())
   {
-    if (_order->id() < 0)
-    {
-      _order->setId(-1);
-      _order->setFocus();
-      return;
-    }
     listp.append("tohead_id", _order->id());
+  }
+  else
+  {
+    systemError(this, tr("Unrecognized order type %1").arg(_order->type()),
+                __FILE__, __LINE__);
+    return;
   }
 
   listp.append("ordertype", _order->type());

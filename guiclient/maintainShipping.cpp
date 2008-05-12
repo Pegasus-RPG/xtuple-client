@@ -59,8 +59,6 @@
 
 #include <QMessageBox>
 #include <QSqlError>
-#include <QStatusBar>
-#include <QVariant>
 
 #include <metasql.h>
 #include <parameter.h>
@@ -87,15 +85,16 @@ maintainShipping::maintainShipping(QWidget* parent, const char* name, Qt::WFlags
   connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
 
   _ship->setRootIsDecorated(TRUE);
-  _ship->addColumn(tr("Shipment #"),      _orderColumn, Qt::AlignLeft   );
-  _ship->addColumn(tr("Order/Line #"),     _itemColumn, Qt::AlignRight  );
-  _ship->addColumn(tr("Prnt'ed"),          _dateColumn, Qt::AlignCenter );
-  _ship->addColumn(tr("Cust./Item #"),     _itemColumn, Qt::AlignLeft   );
-  _ship->addColumn(tr("Name/Description"), -1,          Qt::AlignLeft   );
-  _ship->addColumn(tr("Ship Via"),         _itemColumn, Qt::AlignLeft   );
-  _ship->addColumn(tr("UOM"),              _uomColumn,  Qt::AlignLeft   );
-  _ship->addColumn(tr("Qty. At Ship"),     _qtyColumn,  Qt::AlignRight  );
-  _ship->addColumn(tr("Hold Type"),                 0,  Qt::AlignCenter );
+  _ship->addColumn(tr("Shipment #"),      _orderColumn, Qt::AlignLeft,  true, "shiphead_number");
+  _ship->addColumn(tr("Order Type"),     _statusColumn, Qt::AlignLeft,  true, "ordertype");
+  _ship->addColumn(tr("Order/Line #"),     _itemColumn, Qt::AlignRight, true, "linenumber");
+  _ship->addColumn(tr("Prnt'ed"),          _dateColumn, Qt::AlignCenter,true, "sfstatus");
+  _ship->addColumn(tr("Cust./Item #"),     _itemColumn, Qt::AlignLeft,  true, "dest");
+  _ship->addColumn(tr("Name/Description"), -1,          Qt::AlignLeft,  true, "description");
+  _ship->addColumn(tr("Ship Via"),         _itemColumn, Qt::AlignLeft,  true, "shiphead_shipvia");
+  _ship->addColumn(tr("UOM"),              _uomColumn,  Qt::AlignLeft,  true, "uom_name");
+  _ship->addColumn(tr("Qty. At Ship"),     _qtyColumn,  Qt::AlignRight, true, "shipqty");
+  _ship->addColumn(tr("Hold Type"),                 0,  Qt::AlignCenter,true, "holdtype");
 
   sFillList();
 }
@@ -116,7 +115,7 @@ void maintainShipping::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *selected)
 
   if (selected->text(0) != "")
     _itemtype = 1;
-  else if (selected->text(1) != "")
+  else if (selected->text(2) != "")
     _itemtype = 2;
   else
     _itemtype = 3;
@@ -267,7 +266,10 @@ void maintainShipping::sPrintShippingForm()
 void maintainShipping::sIssueStock()
 {
   ParameterList params;
-  params.append("sohead_id", _ship->altId());
+  if (_ship->currentItem()->data(1, Qt::UserRole).toMap().value("raw").toString() == "SO")
+    params.append("sohead_id", _ship->id());
+  else if (_ship->currentItem()->data(1, Qt::UserRole).toMap().value("raw").toString() == "TO")
+    params.append("tohead_id", _ship->id());
 
   issueToShipping *newdlg = new issueToShipping();
   newdlg->set(params);
@@ -360,11 +362,6 @@ void maintainShipping::sReturnAllStock()
 
 void maintainShipping::sFillList()
 {
-  int currentId = _ship->altId();
-
-  _ship->clear();
-
-//  Grab the contents of shipping for the selected warehous
   ParameterList params;
 
   if (_metrics->boolean("MultiWhs"))
@@ -380,93 +377,8 @@ void maintainShipping::sFillList()
   MetaSQLQuery mql = mqlLoad(":/sr/maintainShipping/FillListDetail.mql");
   q = mql.toQuery(params);
   q.exec();
-  if (q.first())
-  {
-    double        atShipping   = 0.0;
-    int           shipheadid   = -1;
-    int           lineitemid   = -1;
-    XTreeWidgetItem *order     = NULL;
-    XTreeWidgetItem *line      = NULL;
-    XTreeWidgetItem *ship      = NULL;
-    XTreeWidgetItem *selected  = NULL;
-
-    do
-    {
-      if (q.value("shiphead_id").toInt() != shipheadid)
-      {
-	//  if new order number, make a new list item header and
-	//  update the running qty at ship value
-        shipheadid = q.value("shiphead_id").toInt();
-        if (line != NULL)
-        {
-          line->setText(7, formatQty(atShipping));
-          atShipping = 0;
-          line = NULL;
-        }
-
-        order = new XTreeWidgetItem( _ship, order, shipheadid, shipheadid,
-                                   q.value("shiphead_number"),
-				   q.value("order_number"), q.value("sfstatus"),
-                                   q.value("dest"), q.value("destcntct"),
-                                   q.value("shiphead_shipvia"), "",
-                                   "", q.value("holdtype") );
-
-	//  If we are looking for a selected order and this is it, cache it
-        if ((_itemtype == 1) && (currentId == shipheadid))
-          selected = order;
-      }
-
-      //  if this is a new lineitem
-      if ((line == NULL) || (q.value("lineitem_id").toInt() != lineitemid))
-      {
-        lineitemid = q.value("lineitem_id").toInt();
-
-        if (line != NULL)
-        {
-          line->setText(7, formatQty(atShipping));
-          atShipping = 0;
-        }
-
-        line = new XTreeWidgetItem( order, line, shipheadid, lineitemid,
-                                  "", q.value("linenumber"), "",
-                                  q.value("item_number"), q.value("description"),
-                                  "", q.value("uom_name"),
-                                  "", q.value("holdtype") );
-
-	//  If we are looking for a selected order and this is it, cache it
-        if ((_itemtype == 2) && (currentId == lineitemid))
-          selected = line;
-      }
-
-	//  Add the shipping detail for the current lineitem
-        atShipping += q.value("shipqty").toDouble();
-
-        ship = new XTreeWidgetItem( line, ship, shipheadid,
-				  q.value("shipitem_id").toInt(),
-                                  "", "", "",
-                                  "",
-				  q.value("shipitem_transdate").toString() + " by " +
-				  q.value("shipitem_trans_username").toString(),
-                                  "", q.value("uom_name"),
-                                  formatQty(q.value("shipqty").toDouble()),
-				  q.value("holdtype") );
-
-	//  If we are looking for a selected shipping detail and this is it, cache it
-        if ((_itemtype == 3) && (currentId == q.value("shipitem_id").toInt()))
-          selected = ship;
-    }
-    while (q.next());
-
-    line->setText(7, formatQty(atShipping));
-
-    //  Select and show the select item, if any
-    if (selected != NULL)
-    {
-      _ship->setItemSelected(selected, TRUE);
-      _ship->scrollToItem(selected);
-    }
-  }
-  else if (q.lastError().type() != QSqlError::None)
+  _ship->populate(q, true);
+  if (q.lastError().type() != QSqlError::None)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
