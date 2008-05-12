@@ -413,6 +413,13 @@ void CurrCluster::setCurrencyDisabled(bool newValue)
     setCurrencyEnabled(! newValue);
 }
 
+void CurrCluster::setDataWidgetMap(XDataWidgetMapper* m)
+{
+  m->addFieldMapping(_currency, _fieldNameCurr);
+  m->addFieldMapping(this, _fieldNameValue, QByteArray("localValue"));
+  _mapper=m;
+}
+
 ///////////////////////////////
 
 int	CurrDisplay::_baseId	= -1;
@@ -490,6 +497,8 @@ CurrDisplay::CurrDisplay(QWidget * parent, const char* name)
     setLocalControl(TRUE);
     setMinimumSize(MINWIDTH, 0);
     setMaximumSize(MAXWIDTH, MAXHEIGHT);
+    
+    _mapper = new XDataWidgetMapper(this);
 }
 
 CurrDisplay::~CurrDisplay()
@@ -599,6 +608,10 @@ void CurrDisplay::setLocalValue(double newValue)
 	sValueLocalChanged(_valueLocal);
 	sReformat();
     }
+    
+    if (_mapper->model() &&
+        _mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this))).toDouble() != _valueLocal)
+      _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this)), _valueLocal);
 }
 
 void CurrDisplay::sValueBaseChanged()
@@ -849,4 +862,10 @@ double CurrDisplay::convert(const int from, const int to, const double amount, c
 			    convq.lastError().databaseText());
   }
   return 0.0;
+}
+
+void CurrDisplay::setDataWidgetMap(XDataWidgetMapper* m)
+{
+  m->addFieldMapping(this, _fieldNameValue, QByteArray("localValue"));
+  _mapper=m;
 }

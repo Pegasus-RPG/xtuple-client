@@ -78,9 +78,12 @@ class QDoubleValidator;
 class OPENMFGWIDGETS_EXPORT CurrDisplay : public QWidget
 {
     Q_OBJECT
-    Q_PROPERTY(int decimals	   READ decimals	WRITE setDecimals)
-    Q_PROPERTY(bool localControl   READ localControl    WRITE setLocalControl)
-    Q_PROPERTY(bool enabled        READ isEnabled       WRITE setEnabled)
+    Q_PROPERTY(int decimals                 READ decimals                 WRITE setDecimals)
+    Q_PROPERTY(bool localControl            READ localControl             WRITE setLocalControl)
+    Q_PROPERTY(bool enabled                 READ isEnabled                WRITE setEnabled)
+    Q_PROPERTY(QString fieldNameValue       READ fieldNameValue           WRITE setFieldNameValue)
+    Q_PROPERTY(double localValue            READ localValue               WRITE setLocalValue)
+    
 
     public:
 	CurrDisplay(QWidget * parent, const char* name = 0);
@@ -101,6 +104,7 @@ class OPENMFGWIDGETS_EXPORT CurrDisplay : public QWidget
 	virtual inline bool	isEnabled()	const { return _valueLocalWidget->isEnabled(); };
 	virtual inline bool	isBase() const { return _localId == _baseId; };
 	static double   	convert(const int, const int, const double, const QDate&);
+        virtual QString         fieldNameValue()   const { return _fieldNameValue; };
 
     public slots:
 	void clear();
@@ -115,6 +119,7 @@ class OPENMFGWIDGETS_EXPORT CurrDisplay : public QWidget
 	void setPaletteForegroundColor ( const QColor & );
 	void set(const double, const int, const QDate&, const bool = true);
 	void setNA(const bool = true);
+        virtual void setFieldNameValue(QString p) { _fieldNameValue = p; };
 
     signals:
 	void idChanged(int);
@@ -145,6 +150,9 @@ class OPENMFGWIDGETS_EXPORT CurrDisplay : public QWidget
 	State		_state;
 	bool		_baseKnown;
 	bool		_localKnown;
+        
+        QString           _fieldNameValue;
+        XDataWidgetMapper *_mapper;
 	
     protected slots:
 	virtual void sReformat() const;
@@ -152,6 +160,7 @@ class OPENMFGWIDGETS_EXPORT CurrDisplay : public QWidget
 	virtual void sValueBaseChanged(double);
 	virtual void sValueLocalChanged();
 	virtual void sValueLocalChanged(double);
+        virtual void setDataWidgetMap(XDataWidgetMapper* m);
 };
 
 /*
@@ -193,6 +202,7 @@ class OPENMFGWIDGETS_EXPORT CurrCluster : public CurrDisplay
 						      WRITE setCurrencyVisible)
     Q_PROPERTY(int  decimals	   READ decimals      WRITE setDecimals)
     Q_PROPERTY(bool enabled        READ isEnabled     WRITE setEnabled)
+    Q_PROPERTY(QString fieldNameCurr  READ fieldNameCurr  WRITE setFieldNameCurr);
 
     public:
 	CurrCluster(QWidget * parent, const char* name = 0);
@@ -206,6 +216,7 @@ class OPENMFGWIDGETS_EXPORT CurrCluster : public CurrDisplay
 	inline int	id()		const { return _currency->id(); };
 	inline bool	isBase()	const { return _currency->id() == _baseId; };
 	inline bool	isEnabled()	const { return _valueLocalWidget->isEnabled(); };
+        QString         fieldNameCurr() const { return _fieldNameCurr; };
 
     public slots:
 	void clear();
@@ -221,6 +232,8 @@ class OPENMFGWIDGETS_EXPORT CurrCluster : public CurrDisplay
 	void setId(int);
 	void setPaletteForegroundColor ( const QColor & );
 	void sLostFocus();
+        void setDataWidgetMap(XDataWidgetMapper* m);
+        void setFieldNameCurr(QString p) { _fieldNameCurr = p; };
 
     signals:
 	void lostFocus();
@@ -236,6 +249,9 @@ class OPENMFGWIDGETS_EXPORT CurrCluster : public CurrDisplay
     protected slots:
 	virtual void sId(int);
 	virtual void sReformat() const;
+        
+    private:
+    	QString _fieldNameCurr;
 };
 
 #endif
