@@ -356,6 +356,8 @@ void prospect::sSave()
   }
   else
   {
+/*
+// This is now done in a trigger
     q.prepare( "SELECT createCrmAcct(:number, :name, :active, :type, NULL, "
 	       "      NULL, NULL, :prospect_id, NULL, NULL, :cntct, NULL) AS crmacctid;");
     q.bindValue(":number",	_number->text().stripWhiteSpace());
@@ -392,6 +394,7 @@ void prospect::sSave()
       _contact->setFocus();
       return;
     }
+ */
   }
 
   q.exec("COMMIT;");
