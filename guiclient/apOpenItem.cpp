@@ -87,11 +87,11 @@ apOpenItem::apOpenItem(QWidget* parent, const char* name, bool modal, Qt::WFlags
 
   _cAmount = 0.0;
 
-  _apapply->addColumn( tr("Type"),         _dateColumn,  Qt::AlignCenter );
-  _apapply->addColumn( tr("Doc. #"),       -1,           Qt::AlignLeft   );
-  _apapply->addColumn( tr("Apply Date"),   _dateColumn,  Qt::AlignCenter );
-  _apapply->addColumn( tr("Amount"),       _moneyColumn, Qt::AlignRight );
-  _apapply->addColumn( tr("Currency"),     _currencyColumn, Qt::AlignLeft );
+  _apapply->addColumn( tr("Type"),        _dateColumn, Qt::AlignCenter,true, "doctype");
+  _apapply->addColumn( tr("Doc. #"),               -1, Qt::AlignLeft,  true, "docnumber");
+  _apapply->addColumn( tr("Apply Date"),  _dateColumn, Qt::AlignCenter,true, "apapply_postdate");
+  _apapply->addColumn( tr("Amount"),     _moneyColumn, Qt::AlignRight, true, "apapply_amount");
+  _apapply->addColumn( tr("Currency"),_currencyColumn, Qt::AlignLeft,  true, "currabbr");
 
   if (omfgThis->singleCurrency())
       _apapply->hideColumn(4);
@@ -404,9 +404,9 @@ void apOpenItem::populate()
                  "            ELSE :other"
                  "       END AS doctype,"
                  "       apapply_source_docnumber AS docnumber,"
-                 "       formatDate(apapply_postdate) AS f_applydate,"
-                 "       formatMoney(apapply_amount) AS f_amount, "
-		 "       currConcat(apapply_curr_id) "
+                 "       apapply_postdate, apapply_amount,"
+		 "       currConcat(apapply_curr_id) AS currabbr,"
+                 "       'curr' AS apapply_amount_xtnumericrole "
                  "FROM apapply "
                  "WHERE (apapply_target_apopen_id=:apopen_id) "
                  "ORDER BY apapply_postdate;" );
@@ -419,12 +419,12 @@ void apOpenItem::populate()
       q.prepare( "SELECT apapply_id, apapply_target_apopen_id,"
                  "       CASE WHEN (apapply_target_doctype='V') THEN :voucher"
                  "            WHEN (apapply_target_doctype='D') THEN :debitMemo"
-                 "            ELSE :error"
+                 "            ELSE :other"
                  "       END AS doctype,"
-                 "       apapply_target_docnumber,"
-                 "       formatDate(apapply_postdate) AS f_applydate,"
-                 "       formatMoney(apapply_amount) AS f_amount, "
-		 "       currConcat(apapply_curr_id) "
+                 "       apapply_target_docnumber AS docnumber,"
+                 "       apapply_postdate, apapply_amount,"
+		 "       currConcat(apapply_curr_id) AS currabbr,"
+                 "       'curr' AS apapply_amount_xtnumericrole "
                  "FROM apapply "
                  "WHERE (apapply_source_apopen_id=:apopen_id) "
                  "ORDER BY apapply_postdate;" );
@@ -439,6 +439,11 @@ void apOpenItem::populate()
     if (q.lastError().type() != QSqlError::NoError)
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     _apapply->populate(q, TRUE);
+    if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
 }
 
