@@ -129,6 +129,7 @@ public slots:
     virtual void sDeleteUOM();
     virtual void sFillUOMList();
     virtual void sPopulatePriceUOMs();
+    virtual void sConfiguredToggled(bool p);
     virtual void closeEvent( QCloseEvent * pEvent );
 
 protected:

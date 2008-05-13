@@ -145,6 +145,7 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_newUOM, SIGNAL(clicked()), this, SLOT(sNewUOM()));
   connect(_editUOM, SIGNAL(clicked()), this, SLOT(sEditUOM()));
   connect(_deleteUOM, SIGNAL(clicked()), this, SLOT(sDeleteUOM()));
+  connect(_configured, SIGNAL(toggled(bool)), this, SLOT(sConfiguredToggled(bool)));
 
   statusBar()->hide();
   _disallowPlanningType = false;
@@ -1035,7 +1036,6 @@ void item::sHandleItemtype()
   bool shipUOM  = FALSE;
   bool capUOM   = FALSE;
   bool planType = FALSE;
-  bool charPrice= FALSE;
   
   _configured->setEnabled(FALSE);
 
@@ -1067,7 +1067,6 @@ void item::sHandleItemtype()
     weight   = TRUE;
     capUOM   = TRUE;
     shipUOM  = TRUE;
-    charPrice= TRUE;
     _configured->setEnabled(TRUE);
   }
 
@@ -1106,6 +1105,7 @@ void item::sHandleItemtype()
     weight   = TRUE;
     capUOM   = TRUE;
     shipUOM  = TRUE;
+    _configured->setEnabled(TRUE);
   }
 
   if (itemType == "T")
@@ -1145,11 +1145,6 @@ void item::sHandleItemtype()
   _packWeight->setEnabled(weight);
 
   _planningType->setEnabled(planType);
-  
-  if (charPrice)
-    _charass->showColumn(3);
-  else
-    _charass->hideColumn(3);
 
 }
 
@@ -1830,5 +1825,13 @@ void item::closeEvent(QCloseEvent *pEvent)
   }
 
   XMainWindow::closeEvent(pEvent);
+}
+
+void item::sConfiguredToggled(bool p)
+{
+  if (p)
+    _charass->showColumn(3);
+  else
+    _charass->hideColumn(3);
 }
 
