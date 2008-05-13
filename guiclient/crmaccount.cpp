@@ -60,6 +60,7 @@
 #include <QMessageBox>
 #include <QSqlError>
 #include <QVariant>
+#include <QCloseEvent>
 
 #include <metasql.h>
 
@@ -138,6 +139,7 @@ crmaccount::crmaccount(QWidget* parent, Qt::WFlags fl)
   connect(_customer, SIGNAL(toggled(bool)), this, SLOT(sCustomerToggled()));
   connect(_prospect, SIGNAL(toggled(bool)), this, SLOT(sProspectToggled()));
   connect(_oplist, SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*, int)), this, SLOT(sPopulateOplistMenu(QMenu*)));
+  connect(_number, SIGNAL(lostFocus()), this, SLOT(sCheckNumber()));
 
   _contacts->addColumn(tr("First Name"),   50, Qt::AlignLeft, true, "cntct_first_name");
   _contacts->addColumn(tr("Last Name"),	   -1, Qt::AlignLeft, true, "cntct_last_name");
@@ -187,6 +189,7 @@ crmaccount::crmaccount(QWidget* parent, Qt::WFlags fl)
     _showTodo->setChecked(true);
   }
 
+  _NumberGen    = -1;
   _mode		= cNew;
   _crmacctId    = -1;
   _competitorId	= -1;
@@ -304,6 +307,18 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
       }
       _number->clear();
 
+      if(((_metrics->value("CRMAccountNumberGeneration") == "A") ||
+          (_metrics->value("CRMAccountNumberGeneration") == "O"))
+       && _number->text().isEmpty() )
+      {
+        q.exec("SELECT fetchCRMAccountNumber() AS number;");
+        if (q.first())
+        {
+          _number->setText(q.value("number"));
+          _NumberGen = q.value("number").toInt();
+        }
+      }
+
       connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
       connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
     }
@@ -342,6 +357,10 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
       _close->setFocus();
     }
   }
+
+  if(_metrics->value("CRMAccountNumberGeneration") == "A")
+    _number->setEnabled(FALSE);
+
   return NoError;
 }
 
@@ -723,6 +742,7 @@ void crmaccount::sSave()
   }
 
   q.exec("COMMIT;");
+  _NumberGen = -1;
   if (q.lastError().type() != QSqlError::None)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -1828,5 +1848,30 @@ void crmaccount::sDeleteReg()
   }
 
   sPopulateRegistrations();
+}
+
+void crmaccount::sCheckNumber()
+{
+  if(cNew == _mode && -1 != _NumberGen && _number->text().toInt() != _NumberGen)
+  {
+    XSqlQuery query;
+    query.prepare( "SELECT releaseCRMAccountNumber(:Number);" );
+    query.bindValue(":Number", _NumberGen);
+    query.exec();
+    _NumberGen = -1;
+  }
+}
+
+void crmaccount::closeEvent(QCloseEvent *pEvent)
+{
+  if(cNew == _mode && -1 != _NumberGen)
+  {
+    XSqlQuery query;
+    query.prepare( "SELECT releaseCRMAccountNumber(:Number);" );
+    query.bindValue(":Number", _NumberGen);
+    query.exec();
+    _NumberGen = -1;
+  }
+  QWidget::closeEvent(pEvent);
 }
 

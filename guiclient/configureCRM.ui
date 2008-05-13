@@ -5,58 +5,82 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>560</width>
-    <height>110</height>
+    <width>542</width>
+    <height>133</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>CRM Module Configuration</string>
   </property>
-  <layout class="QGridLayout" >
-   <property name="margin" >
-    <number>9</number>
-   </property>
-   <property name="spacing" >
-    <number>6</number>
-   </property>
-   <item row="0" column="0" >
-    <layout class="QGridLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
-     <property name="spacing" >
-      <number>6</number>
-     </property>
-     <item row="3" column="0" >
-      <spacer>
-       <property name="orientation" >
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeHint" >
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item row="0" column="0" >
+  <layout class="QHBoxLayout" >
+   <item>
+    <layout class="QVBoxLayout" >
+     <item>
       <layout class="QHBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
-       <property name="spacing" >
-        <number>0</number>
-       </property>
        <item>
-        <layout class="QHBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
-         <property name="spacing" >
-          <number>6</number>
-         </property>
-         <item>
+        <layout class="QGridLayout" >
+         <item row="0" column="0" >
+          <widget class="QLabel" name="_acctGenerationLit" >
+           <property name="text" >
+            <string>Account # Generation:</string>
+           </property>
+           <property name="alignment" >
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+           <property name="buddy" >
+            <cstring>_incidentGeneration</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1" >
+          <widget class="QComboBox" name="_acctGeneration" >
+           <item>
+            <property name="text" >
+             <string>Manual</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>Automatic</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>Automatic, Allow Override</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="0" column="2" >
+          <widget class="QLabel" name="_nextAcctNumberLit" >
+           <property name="text" >
+            <string>Next #:</string>
+           </property>
+           <property name="alignment" >
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+           <property name="buddy" >
+            <cstring>_nextInNumberLit</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="3" >
+          <widget class="XLineEdit" name="_nextAcctNumber" >
+           <property name="minimumSize" >
+            <size>
+             <width>100</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize" >
+            <size>
+             <width>100</width>
+             <height>16777215</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" >
           <widget class="QLabel" name="_incidentGenerationLit" >
            <property name="text" >
             <string>Incident # Generation:</string>
@@ -69,7 +93,7 @@
            </property>
           </widget>
          </item>
-         <item>
+         <item row="1" column="1" >
           <widget class="QComboBox" name="_incidentGeneration" >
            <property name="enabled" >
             <bool>false</bool>
@@ -81,7 +105,7 @@
            </item>
           </widget>
          </item>
-         <item>
+         <item row="1" column="2" >
           <widget class="QLabel" name="_nextInNumberLit" >
            <property name="text" >
             <string>Next #:</string>
@@ -94,7 +118,7 @@
            </property>
           </widget>
          </item>
-         <item>
+         <item row="1" column="3" >
           <widget class="XLineEdit" name="_nextInNumber" >
            <property name="minimumSize" >
             <size>
@@ -127,14 +151,14 @@
        </item>
       </layout>
      </item>
-     <item row="1" column="0" >
+     <item>
       <widget class="QCheckBox" name="_useProjects" >
        <property name="text" >
         <string>Use Projects</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="0" >
+     <item>
       <widget class="QCheckBox" name="_autoCreate" >
        <property name="enabled" >
         <bool>false</bool>
@@ -146,21 +170,39 @@
      </item>
     </layout>
    </item>
-   <item row="0" column="1" >
+   <item>
     <layout class="QVBoxLayout" >
-     <property name="margin" >
+     <property name="spacing" >
       <number>0</number>
      </property>
-     <property name="spacing" >
+     <property name="leftMargin" >
+      <number>0</number>
+     </property>
+     <property name="topMargin" >
+      <number>0</number>
+     </property>
+     <property name="rightMargin" >
+      <number>0</number>
+     </property>
+     <property name="bottomMargin" >
       <number>0</number>
      </property>
      <item>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
         <number>6</number>
+       </property>
+       <property name="leftMargin" >
+        <number>0</number>
+       </property>
+       <property name="topMargin" >
+        <number>0</number>
+       </property>
+       <property name="rightMargin" >
+        <number>0</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>0</number>
        </property>
        <item>
         <widget class="QPushButton" name="_cancel" >
@@ -185,8 +227,8 @@
        </property>
        <property name="sizeHint" >
         <size>
-         <width>87</width>
-         <height>158</height>
+         <width>20</width>
+         <height>0</height>
         </size>
        </property>
       </spacer>
@@ -203,29 +245,17 @@
   </customwidget>
  </customwidgets>
  <tabstops>
+  <tabstop>_acctGeneration</tabstop>
+  <tabstop>_nextAcctNumber</tabstop>
   <tabstop>_incidentGeneration</tabstop>
   <tabstop>_nextInNumber</tabstop>
+  <tabstop>_useProjects</tabstop>
+  <tabstop>_autoCreate</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_cancel</tabstop>
  </tabstops>
  <resources/>
  <connections>
-  <connection>
-   <sender>_save</sender>
-   <signal>clicked()</signal>
-   <receiver>configureCRM</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>351</x>
-     <y>38</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>233</x>
-     <y>29</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>_cancel</sender>
    <signal>clicked()</signal>
@@ -233,12 +263,12 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>330</x>
-     <y>66</y>
+     <x>530</x>
+     <y>37</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>197</x>
-     <y>125</y>
+     <x>504</x>
+     <y>96</y>
     </hint>
    </hints>
   </connection>
@@ -249,12 +279,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>223</x>
-     <y>56</y>
+     <x>233</x>
+     <y>98</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>223</x>
-     <y>83</y>
+     <x>233</x>
+     <y>122</y>
     </hint>
    </hints>
   </connection>

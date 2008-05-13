@@ -60,6 +60,7 @@
 #include <QMessageBox>
 #include <QSqlError>
 #include <QVariant>
+#include <QCloseEvent>
 
 #include <openreports.h>
 #include <comment.h>
@@ -113,6 +114,7 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
     
     _custid = -1;
     _crmacctid = -1;
+    _NumberGen = -1;
 
     _sellingWarehouse->setId(-1);
 
@@ -240,6 +242,18 @@ enum SetResponse customer::set(const ParameterList &pParams)
         }
       }
 
+      if(((_metrics->value("CRMAccountNumberGeneration") == "A") ||
+          (_metrics->value("CRMAccountNumberGeneration") == "O"))
+       && _number->text().isEmpty() )
+      {
+        q.exec("SELECT fetchCRMAccountNumber() AS number;");
+        if (q.first())
+        {
+          _number->setText(q.value("number"));
+          _NumberGen = q.value("number").toInt();
+        }
+      }
+
       _comments->setId(_custid);
 
       _salesrep->setId(_metrics->value("DefaultSalesRep").toInt());
@@ -359,6 +373,9 @@ enum SetResponse customer::set(const ParameterList &pParams)
   param = pParams.value("prospect_id", &valid);
   if (valid)
     sLoadProspect(param.toInt());
+
+  if(_metrics->value("CRMAccountNumberGeneration") == "A")
+    _number->setEnabled(FALSE);
 
   return NoError;
 }
@@ -718,6 +735,7 @@ void customer::sSave()
   }
 
   q.exec("COMMIT;");
+  _NumberGen = -1;
   omfgThis->sCustomersUpdated(_custid, TRUE);
   close();
 }
@@ -725,6 +743,14 @@ void customer::sSave()
 void customer::sCheck()
 {
   _number->setText(_number->text().stripWhiteSpace().upper());
+  if(cNew == _mode && -1 != _NumberGen && _number->text().toInt() != _NumberGen)
+  {
+    XSqlQuery query;
+    query.prepare( "SELECT releaseCRMAccountNumber(:Number);" );
+    query.bindValue(":Number", _NumberGen);
+    query.exec();
+    _NumberGen = -1;
+  }
 
   q.prepare( "SELECT cust_id, 1 AS type "
              "FROM custinfo "
@@ -1347,3 +1373,17 @@ void customer::sNumberEdited()
 {
   _notice = TRUE;
 }
+
+void customer::closeEvent(QCloseEvent *pEvent)
+{
+  if(cNew == _mode && -1 != _NumberGen)
+  {
+    XSqlQuery query;
+    query.prepare( "SELECT releaseCRMAccountNumber(:Number);" );
+    query.bindValue(":Number", _NumberGen);
+    query.exec();
+    _NumberGen = -1;
+  }
+  XMainWindow::closeEvent(pEvent);
+}
+

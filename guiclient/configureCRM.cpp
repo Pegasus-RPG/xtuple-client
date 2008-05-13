@@ -77,15 +77,30 @@ configureCRM::configureCRM(QWidget* parent, const char* name, bool modal, Qt::WF
 
   // signals and slots connections
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-  connect(_cancel, SIGNAL(clicked()), this, SLOT(reject()));
 
   _nextInNumber->setValidator(omfgThis->orderVal());
+  _nextAcctNumber->setValidator(omfgThis->orderVal());
 
   q.exec( "SELECT orderseq_number AS innumber "
           "  FROM orderseq"
           " WHERE (orderseq_name='IncidentNumber');" );
   if (q.first())
     _nextInNumber->setText(q.value("innumber"));
+    
+  q.exec( "SELECT orderseq_number AS acnumber "
+          "  FROM orderseq"
+          " WHERE (orderseq_name='CRMAccountNumber');" );
+  if (q.first())
+    _nextAcctNumber->setText(q.value("acnumber"));
+
+  QString metric = _metrics->value("CRMAccountNumberGeneration");
+  if (metric == "M")
+    _acctGeneration->setCurrentItem(0);
+  else if (metric == "A")
+    _acctGeneration->setCurrentItem(1);
+  else if (metric == "O")
+    _acctGeneration->setCurrentItem(2);
+
     
   _useProjects->setChecked(_metrics->boolean("UseProjects"));
   _autoCreate->setChecked(_metrics->boolean("AutoCreateProjectsForOrders"));  
@@ -112,9 +127,17 @@ void configureCRM::languageChange()
 
 void configureCRM::sSave()
 {
+  char *numberGenerationTypes[] = { "M", "A", "O" };
+
   q.prepare( "SELECT setNextIncidentNumber(:innumber);" );
   q.bindValue(":innumber", _nextInNumber->text().toInt());
   q.exec();
+  
+  q.prepare( "SELECT setNextCRMAccountNumber(:acnumber);" );
+  q.bindValue(":acnumber", _nextAcctNumber->text().toInt());
+  q.exec();
+
+  _metrics->set("CRMAccountNumberGeneration", QString(numberGenerationTypes[_acctGeneration->currentItem()]));
   
   _metrics->set("UseProjects", _useProjects->isChecked());
   _metrics->set("AutoCreateProjectsForOrders", (_autoCreate->isChecked() && _useProjects->isChecked()));

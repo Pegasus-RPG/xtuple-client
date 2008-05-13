@@ -111,11 +111,14 @@ protected slots:
     virtual void sSoProfileSelected();
 	virtual void sNumberEdited();
 
+protected:
+    virtual void closeEvent(QCloseEvent*);
 
 private:
     int _mode;
     int _custid;
     int	_crmacctid;
+    int _NumberGen;
     QString _cachedNumber;
     QString key;
 	bool _notice;

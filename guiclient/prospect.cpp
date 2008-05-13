@@ -61,6 +61,7 @@
 #include <QMessageBox>
 #include <QSqlError>
 #include <QVariant>
+#include <QCloseEvent>
 
 #include <openreports.h>
 
@@ -97,6 +98,8 @@ prospect::prospect(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _quotes->addColumn(tr("Quote #"),          _orderColumn, Qt::AlignLeft );
   _quotes->addColumn(tr("Quote Date"),       _dateColumn,  Qt::AlignLeft );
+
+  _NumberGen = -1;
 }
 
 prospect::~prospect()
@@ -154,6 +157,21 @@ enum SetResponse prospect::set(const ParameterList &pParams)
         systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
         return UndefinedError;
       }
+
+      if(((_metrics->value("CRMAccountNumberGeneration") == "A") ||
+          (_metrics->value("CRMAccountNumberGeneration") == "O"))
+       && _number->text().isEmpty() )
+      {
+        q.exec("SELECT fetchCRMAccountNumber() AS number;");
+        if (q.first())
+        {
+          _number->setText(q.value("number"));
+          _NumberGen = q.value("number").toInt();
+        }
+
+
+      }
+
     }
     else if (param.toString() == "edit")
     {
@@ -184,6 +202,9 @@ enum SetResponse prospect::set(const ParameterList &pParams)
       _close->setFocus();
     }
   }
+
+  if(_metrics->value("CRMAccountNumberGeneration") == "A")
+    _number->setEnabled(FALSE);
   
   return NoError;
 }
@@ -398,6 +419,7 @@ void prospect::sSave()
   }
 
   q.exec("COMMIT;");
+  _NumberGen = -1;
   omfgThis->sProspectsUpdated();
   if (_mode == cNew)
     omfgThis->sCrmAccountsUpdated(_crmacct->id());
@@ -411,6 +433,15 @@ void prospect::sCheckNumber()
 
   if (_mode == cNew)
   {
+    if(cNew == _mode && -1 != _NumberGen && _number->text().toInt() != _NumberGen)
+    {
+      XSqlQuery query;
+      query.prepare( "SELECT releaseCRMAccountNumber(:Number);" );
+      query.bindValue(":Number", _NumberGen);
+      query.exec();
+      _NumberGen = -1;
+    }
+
     q.prepare( "SELECT prospect_id "
                "FROM prospect "
                "WHERE (prospect_number=:prospect);" );
@@ -571,3 +602,17 @@ void prospect::populate()
 
   sFillQuotesList();
 }
+
+void prospect::closeEvent(QCloseEvent *pEvent)
+{
+  if(cNew == _mode && -1 != _NumberGen)
+  {
+    XSqlQuery query;
+    query.prepare( "SELECT releaseCRMAccountNumber(:Number);" );
+    query.bindValue(":Number", _NumberGen);
+    query.exec();
+    _NumberGen = -1;
+  }
+  XMainWindow::closeEvent(pEvent);
+}
+

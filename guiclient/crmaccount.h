@@ -127,6 +127,10 @@ protected slots:
     virtual void sProspectToggled();
     virtual void sOplistView();
     virtual void sOplistEdit();
+    virtual void sCheckNumber();
+
+protected:
+    virtual void closeEvent(QCloseEvent*);
 
 private:
     bool	_modal;
@@ -141,6 +145,7 @@ private:
     int		_cntct1Id;
     int		_cntct2Id;
     int		_myUsrId;
+    int         _NumberGen;
 
     int	saveNoErrorCheck();
 

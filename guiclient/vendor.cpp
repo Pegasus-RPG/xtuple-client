@@ -60,6 +60,7 @@
 #include <QVariant>
 #include <QMessageBox>
 #include <QSqlError>
+#include <QCloseEvent>
 
 #include <openreports.h>
 #include "addresscluster.h"
@@ -98,6 +99,7 @@ vendor::vendor(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _crmacctid = -1;
   _ignoreClose = false;
+  _NumberGen = -1;
   
   if (!_metrics->boolean("EnableBatchManager"))
     _tabs->removePage(_tabs->page(_tabs->count()-1));
@@ -158,6 +160,18 @@ void vendor::set(const ParameterList &pParams)
         systemError(this, tr("A System Error occurred at %1::%2.")
                           .arg(__FILE__)
                           .arg(__LINE__) );
+
+      if(((_metrics->value("CRMAccountNumberGeneration") == "A") ||
+          (_metrics->value("CRMAccountNumberGeneration") == "O"))
+       && _number->text().isEmpty() )
+      {
+        q.exec("SELECT fetchCRMAccountNumber() AS number;");
+        if (q.first())
+        {
+          _number->setText(q.value("number"));
+          _NumberGen = q.value("number").toInt();
+        }
+      }
 
       _comments->setId(_vendid);
       _defaultShipVia->setText(_metrics->value("DefaultPOShipVia"));
@@ -236,6 +250,9 @@ void vendor::set(const ParameterList &pParams)
       _close->setFocus();
     }
   }
+
+  if(_metrics->value("CRMAccountNumberGeneration") == "A")
+    _number->setEnabled(FALSE);
 
   if(cNew == _mode || !pParams.inList("showNextPrev"))
   {
@@ -553,6 +570,7 @@ void vendor::sSave()
   }
 
   q.exec("COMMIT;");
+  _NumberGen = -1;
   omfgThis->sVendorsUpdated();
 
   if(!_ignoreClose)
@@ -566,6 +584,14 @@ void vendor::sCheck()
   if (_number->text().length())
   {
     _number->setText(_number->text().stripWhiteSpace().upper());
+    if(cNew == _mode && -1 != _NumberGen && _number->text().toInt() != _NumberGen)
+    {
+      XSqlQuery query;
+      query.prepare( "SELECT releaseCRMAccountNumber(:Number);" );
+      query.bindValue(":Number", _NumberGen);
+      query.exec();
+      _NumberGen = -1;
+    }
 
     q.prepare( "SELECT vend_id "
                "FROM vend "
@@ -922,5 +948,18 @@ void vendor::clear()
 
   _comments->setId(-1);
   _tabs->setCurrentIndex(0);
+}
+
+void vendor::closeEvent(QCloseEvent *pEvent)
+{
+  if(cNew == _mode && -1 != _NumberGen)
+  {
+    XSqlQuery query;
+    query.prepare( "SELECT releaseCRMAccountNumber(:Number);" );
+    query.bindValue(":Number", _NumberGen);
+    query.exec();
+    _NumberGen = -1;
+  }
+  XMainWindow::closeEvent(pEvent);
 }
 

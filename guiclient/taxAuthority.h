@@ -76,13 +76,18 @@ public slots:
     virtual void sCheck();
     virtual void sSave();
     virtual void populate();
+    virtual void done(int);
 
 protected slots:
     virtual void languageChange();
 
+protected:
+    virtual void closeEvent(QCloseEvent*);
+
 private:
     int _mode;
     int _taxauthid;
+    int _NumberGen;
 
 };
 

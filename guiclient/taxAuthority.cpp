@@ -60,6 +60,7 @@
 #include <QVariant>
 #include <QMessageBox>
 #include <QSqlError>
+#include <QCloseEvent>
 
 #include "storedProcErrorLookup.h"
 
@@ -77,10 +78,10 @@ taxAuthority::taxAuthority(QWidget* parent, const char* name, bool modal, Qt::WF
 
   // signals and slots connections
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
   connect(_code, SIGNAL(lostFocus()), this, SLOT(sCheck()));
 
   _crmacct->setId(-1);
+  _NumberGen = -1;
 }
 
 /*
@@ -133,7 +134,21 @@ enum SetResponse taxAuthority::set(const ParameterList &pParams)
     {
       _mode = cNew;
 
-      _code->setFocus();
+      if(((_metrics->value("CRMAccountNumberGeneration") == "A") ||
+          (_metrics->value("CRMAccountNumberGeneration") == "O"))
+       && _code->text().isEmpty() )
+      {
+        q.exec("SELECT fetchCRMAccountNumber() AS number;");
+        if (q.first())
+        {
+          _code->setText(q.value("number"));
+          _NumberGen = q.value("number").toInt();
+        }
+
+
+      }
+      else
+        _code->setFocus();
     }
     else if (param.toString() == "edit")
     {
@@ -158,6 +173,9 @@ enum SetResponse taxAuthority::set(const ParameterList &pParams)
     }
   }
 
+  if(_metrics->value("CRMAccountNumberGeneration") == "A")
+    _code->setEnabled(FALSE);
+
   return NoError;
 }
 
@@ -166,6 +184,15 @@ void taxAuthority::sCheck()
   _code->setText(_code->text().stripWhiteSpace());
   if ( (_mode == cNew) && (_code->text().length()) )
   {
+    if(cNew == _mode && -1 != _NumberGen && _code->text().toInt() != _NumberGen)
+    {
+      XSqlQuery query;
+      query.prepare( "SELECT releaseCRMAccountNumber(:Number);" );
+      query.bindValue(":Number", _NumberGen);
+      query.exec();
+      _NumberGen = -1;
+    }
+
     q.prepare( "SELECT taxauth_id "
                "FROM taxauth "
                "WHERE (UPPER(taxauth_code)=UPPER(:taxauth_code));" );
@@ -342,6 +369,7 @@ void taxAuthority::sSave()
   }
 
   q.exec("COMMIT;");
+  _NumberGen = -1;
 
   omfgThis->sTaxAuthsUpdated(_taxauthid);
 
@@ -377,4 +405,23 @@ void taxAuthority::populate()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+}
+
+void taxAuthority::done( int r )
+{
+  XDialog::done( r );
+  close();
+}
+
+void taxAuthority::closeEvent(QCloseEvent *pEvent)
+{
+  if(cNew == _mode && -1 != _NumberGen)
+  {
+    XSqlQuery query;
+    query.prepare( "SELECT releaseCRMAccountNumber(:Number);" );
+    query.bindValue(":Number", _NumberGen);
+    query.exec();
+    _NumberGen = -1;
+  }
+  XDialog::closeEvent(pEvent);
 }

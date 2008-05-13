@@ -90,9 +90,13 @@ protected slots:
     virtual void languageChange();
     virtual int  saveContact(ContactCluster*);
 
+protected:
+    virtual void closeEvent(QCloseEvent*);
+
 private:
     int _mode;
     int _prospectid;
+    int _NumberGen;
     QString _cachedNumber;
 };
 

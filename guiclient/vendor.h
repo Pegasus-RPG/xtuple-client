@@ -99,10 +99,14 @@ protected slots:
     virtual void languageChange();
     virtual bool sCheckSave();
 
+protected:
+    virtual void closeEvent(QCloseEvent*);
+
 private:
     int _mode;
     int _vendid;
     int _crmacctid;
+    int _NumberGen;
     QString _cachedNumber;
     bool _ignoreClose;
 
