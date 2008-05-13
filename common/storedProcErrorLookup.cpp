@@ -192,6 +192,8 @@ void initErrorLookupHash()
 			   "Credit Warning.  The selected Customer must be "
 			   "taken off of Credit Warning before you may create "
 			   "convert this Quote."),		   0, "" },
+  { "convertQuote", -6, TR("Quote #%1 has expired and can not be converted."),
+								   0, "" },
 
   { "copyItemSite",  -1, TR("Could not copy the Item Site because it "
 			    "does not appear to exist."),		0, "" },
