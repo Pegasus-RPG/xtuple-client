@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>692</width>
-    <height>611</height>
+    <height>612</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -147,9 +147,6 @@
         </item>
         <item>
          <layout class="QHBoxLayout" >
-          <property name="spacing" >
-           <number>0</number>
-          </property>
           <item>
            <widget class="QLabel" name="_taxauthLit" >
             <property name="text" >
@@ -171,10 +168,48 @@
             <property name="orientation" >
              <enum>Qt::Horizontal</enum>
             </property>
+            <property name="sizeType" >
+             <enum>QSizePolicy::Fixed</enum>
+            </property>
             <property name="sizeHint" >
              <size>
-              <width>40</width>
+              <width>30</width>
               <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QLabel" name="_siteLit" >
+            <property name="text" >
+             <string>Site:</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="WComboBox" name="_site" >
+            <property name="allowNull" >
+             <bool>true</bool>
+            </property>
+            <item>
+             <property name="text" >
+              <string/>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>20</width>
+              <height>25</height>
              </size>
             </property>
            </spacer>
@@ -335,6 +370,11 @@
    <header>crmacctcluster.h</header>
   </customwidget>
   <customwidget>
+   <class>WComboBox</class>
+   <extends>XComboBox</extends>
+   <header>wcombobox.h</header>
+  </customwidget>
+  <customwidget>
    <class>XComboBox</class>
    <extends>QComboBox</extends>
    <header>xcombobox.h</header>
@@ -357,6 +397,7 @@
   <tabstop>_active</tabstop>
   <tabstop>_contact</tabstop>
   <tabstop>_taxauth</tabstop>
+  <tabstop>_site</tabstop>
   <tabstop>_notes</tabstop>
   <tabstop>_tabs</tabstop>
   <tabstop>_quotes</tabstop>

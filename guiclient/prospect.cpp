@@ -326,6 +326,7 @@ void prospect::sSave()
                "       prospect_comments=:prospect_comments,"
                "       prospect_taxauth_id=:prospect_taxauth_id,"
                "       prospect_salesrep_id=:prospect_salesrep_id,"
+               "       prospect_warehous_id=:prospect_warehous_id,"
 	       "       prospect_active=:prospect_active "
                "WHERE (prospect_id=:prospect_id);" );
   }
@@ -334,11 +335,11 @@ void prospect::sSave()
     q.prepare( "INSERT INTO prospect "
                "( prospect_id,	      prospect_number,	    prospect_name,"
 	       "  prospect_cntct_id,  prospect_taxauth_id,  prospect_comments,"
-	       "  prospect_salesrep_id, prospect_active) "
+	       "  prospect_salesrep_id, prospect_warehous_id, prospect_active) "
 	       " VALUES "
                "( :prospect_id,	      :prospect_number,	    :prospect_name,"
 	       "  :prospect_cntct_id, :prospect_taxauth_id, :prospect_comments,"
-	       "  :prospect_salesrep_id, :prospect_active);");
+	       "  :prospect_salesrep_id, :prospect_warehous_id, :prospect_active);");
   }
 
   q.bindValue(":prospect_id",		_prospectid);
@@ -350,6 +351,8 @@ void prospect::sSave()
     q.bindValue(":prospect_taxauth_id",	_taxauth->id());	// else NULL
   if (_salesrep->id() > 0)
     q.bindValue(":prospect_salesrep_id", _salesrep->id());      // else NULL
+  if (_site->id() > 0)
+    q.bindValue(":prospect_warehous_id", _site->id());          // else NULL
   q.bindValue(":prospect_comments",	_notes->text());
   q.bindValue(":prospect_active",	QVariant(_active->isChecked(), 0));
 
@@ -591,6 +594,7 @@ void prospect::populate()
     _contact->setId(prospect.value("prospect_cntct_id").toInt());
     _taxauth->setId(prospect.value("prospect_taxauth_id").toInt());
     _salesrep->setId(prospect.value("prospect_salesrep_id").toInt());
+    _site->setId(prospect.value("prospect_warehous_id").toInt());
     _notes->setText(prospect.value("prospect_comments").toString());
     _active->setChecked(prospect.value("prospect_active").toBool());
   }
