@@ -448,7 +448,7 @@ void AddressCluster::sInfo()
 
 void AddressCluster::sList()
 {
-  AddressList* newdlg = new AddressList(this, "AddressList", true);
+  AddressList* newdlg = new AddressList(this);
   if (newdlg)
   {
     int id = newdlg->exec();
@@ -514,10 +514,14 @@ void AddressCluster::setAddrChange(QString p)
 ///////////////////////////////////////////////////////////////////////////
 
 AddressList::AddressList(QWidget* pParent, const char* pName, bool, Qt::WFlags)
+  : VirtualList(pParent, 0)
 {
     _parent = (AddressCluster*)(pParent);
     if (!pName)
       setName("AddressList");
+    else
+      setName(pName);
+    _id = _parent->_id;
     setCaption(_parent->_titlePlural);
 
     _listTab->addColumn(tr("Line 1"),      -1, Qt::AlignLeft );

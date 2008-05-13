@@ -766,12 +766,11 @@ void ContactCluster::sInfo()
 
 void ContactCluster::sList()
 {
-    ContactList* newdlg = new ContactList(this, "ContactList", true);
+    ContactList* newdlg = new ContactList(this);
     if (newdlg)
     {
 	int id = newdlg->exec();
-	if (id != QDialog::Rejected)
-	  setId(id);
+	setId(id);
     }
     else
 	QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
@@ -798,10 +797,14 @@ void ContactCluster::sSearch()
 ///////////////////////////////////////////////////////////////////////////////
 
 ContactList::ContactList(QWidget* pParent, const char* pName, bool, Qt::WFlags) 
+  : VirtualList(pParent, 0)
 {
     _parent = (ContactCluster*)(pParent);
+    _id = _parent->_id;
     if (!pName)
 	setName("ContactList");
+    else
+        setName(pName);
     setCaption(_parent->_titlePlural);
 
     _listTab->addColumn(tr("First Name"),	80, Qt::AlignLeft  );

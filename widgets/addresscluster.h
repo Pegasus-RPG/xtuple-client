@@ -119,9 +119,6 @@ class OPENMFGWIDGETS_EXPORT AddressSearch : public VirtualSearch
 	XCheckBox*	_searchCountry;
 	XCheckBox*	_searchPostalCode;
 	XCheckBox*	_searchInactive;
-
-    private:
-	int _id;
 };
 
 class OPENMFGWIDGETS_EXPORT AddressCluster : public VirtualCluster

@@ -118,8 +118,6 @@ class OPENMFGWIDGETS_EXPORT ContactSearch : public VirtualSearch
 	XCheckBox*	_searchWebAddr;
 	XCheckBox*	_searchInactive;
 
-    private:
-	int _id;
 };
 
 class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
