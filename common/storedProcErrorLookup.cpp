@@ -498,6 +498,24 @@ void initErrorLookupHash()
 			       "there are still Quotes for it. You must delete "
 			       "all of this Prospect's Quotes before you may "
 			       "delete the Prospect."),		 0, "" },
+  { "deleteSalesRep",  -1, TR("The selected Sales Rep. cannot be deleted as "
+                              "he/she is still assigned to one or more "
+                              "Customers.  You must reassign different Sales "
+                              "Reps. to all Customers to which the selected "
+                              "Sales Rep. is assigned before you may delete "
+                              "the selected Sales Rep." ),      0, "" },
+  { "deleteSalesRep",  -2, TR("The selected Sales Rep. cannot be deleted as "
+                              "he/she is still assigned to one or more "
+                              "Ship-tos.  You must reassign different Sales "
+                              "Reps. to all Ship-tos to which the selected "
+                              "Sales Rep. is assigned before you may delete "
+                              "the selected Sales Rep." ),      0, "" },
+  { "deleteSalesRep",  -3, TR("The selected Sales Rep. cannot be deleted as "
+                              "there has been sales history recorded against "
+                              "him/her.  You may edit and set the selected "
+                              "Sales Rep's active status to inactive." ),
+                                                                0, "" },
+
   { "deleteShipto",	-1, TR("The selected Shipto cannot be deleted as there "
 			       "is still Archived Sales History assigned to it. You must "
 			       "delete all of the selected Customer's Ship-Tos "
@@ -761,6 +779,21 @@ void initErrorLookupHash()
 				   "it is frozen."),			0, "" },
 
   { "openAccountingYearPeriod", -1, "", -1, "openAccountingPeriod" },
+
+  { "postAPCreditMemoApplication", -1,
+      TR("There are no A/P Credit Memo applications to post."),         0, "" },
+  { "postAPCreditMemoApplication", -2,
+      TR("There are no A/P Credit Memo applications to post."),         0, "" },
+  { "postAPCreditMemoApplication", -3,
+      TR("The total value of the applications that are you attempting to post "
+         "is greater than the value of the A/P Credit Memo itself." ),  0, "" },
+  { "postAPCreditMemoApplication", -4,
+	TR("At least one A/P Credit Memo application cannot be posted because "
+           "there is no current exchange rate for its currency."),      0, "" },
+  { "postAPCreditMemoApplication", -5,
+	TR("The A/P Credit Memo to apply was not found."),              0, "" },
+  { "postAPCreditMemoApplication", -6,
+	TR("The amount to apply for this A/P Credit Memo is NULL."),    0, "" },
 
   { "postARCreditMemoApplication", -1,
 	    TR("There are no A/R Credit Memo applications to post."),	0, "" },

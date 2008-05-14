@@ -57,63 +57,30 @@
 
 #include "salesReps.h"
 
-#include <QVariant>
+#include <QMenu>
 #include <QMessageBox>
+#include <QSqlError>
 #include <QStatusBar>
+
 #include <parameter.h>
 #include <openreports.h>
-#include "salesRep.h"
-#include "guiclient.h"
 
-/*
- *  Constructs a salesReps as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
+#include "guiclient.h"
+#include "salesRep.h"
+#include "storedProcErrorLookup.h"
+
 salesReps::salesReps(QWidget* parent, const char* name, Qt::WFlags fl)
     : XMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_salesrep, SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *, int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-    connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_salesrep, SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *, int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_salesrep, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
-    connect(_salesrep, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-salesReps::~salesReps()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void salesReps::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void salesReps::init()
-{
-  statusBar()->hide();
-  
   if (_privileges->check("MaintainSalesReps"))
   {
     connect(_salesrep, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
@@ -126,79 +93,43 @@ void salesReps::init()
     connect(_salesrep, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
   }
 
-  _salesrep->addColumn(tr("Number"), 70,  Qt::AlignLeft   );
-  _salesrep->addColumn(tr("Name"),   -1,  Qt::AlignLeft   );
-  _salesrep->addColumn(tr("Active"), 50,  Qt::AlignCenter );
+  _salesrep->addColumn(tr("Number"), 70,  Qt::AlignLeft,  true, "salesrep_number");
+  _salesrep->addColumn(tr("Name"),   -1,  Qt::AlignLeft,  true, "salesrep_name");
+  _salesrep->addColumn(tr("Active"), 50,  Qt::AlignCenter,true, "active");
 
   sFillList();
 }
 
+salesReps::~salesReps()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void salesReps::languageChange()
+{
+  retranslateUi(this);
+}
+
 void salesReps::sDelete()
 {
-  q.prepare( "SELECT cust_id "
-             "FROM cust "
-             "WHERE (cust_salesrep_id=:salesrep_id) "
-             "LIMIT 1;" );
+  q.prepare("SELECT deleteSalesRep(:salesrep_id) AS result;" );
   q.bindValue(":salesrep_id", _salesrep->id());
   q.exec();
   if (q.first())
   {
-    QMessageBox::critical( this, tr("Cannot Delete Selected Sales Rep."),
-                           tr( "The selected Sales Rep. cannot be deleted as he/she is still assigned\n"
-                               "to one or more Customers.  You must reassign different Sales Reps. to all\n"
-                               "Customers to which the selected Sales Rep. is assigned before you may\n"
-                               "delete the selected Sales Rep." ) );
-    return;
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("deleteSalesRep", result),
+                  __FILE__, __LINE__);
+      return;
+    }
   }
-
-  q.prepare( "SELECT shipto_id "
-             "FROM shipto "
-             "WHERE (shipto_salesrep_id=:salesrep_id) "
-             "LIMIT 1;" );
-  q.bindValue(":salesrep_id", _salesrep->id());
-  q.exec();
-  if (q.first())
+  else if (q.lastError().type() != QSqlError::None)
   {
-    QMessageBox::critical( this, tr("Cannot Delete Selected Sales Rep."),
-                           tr( "The selected Sales Rep. cannot be deleted as he/she is still assigned\n"
-                               "to one or more Ship-tos.  You must reassign different Sales Reps. to all\n"
-                               "Ship-tos to which the selected Sales Rep. is assigned before you may\n"
-                               "delete the selected Sales Rep." ) );
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-
-  q.prepare( "SELECT aropen_id "
-             "FROM aropen "
-             "WHERE (aropen_salesrep_id=:salesrep_id) "
-
-             "UNION SELECT cohead_id "
-             "FROM cohead "
-             "WHERE (cohead_salesrep_id=:salesrep_id) "
- 
-             "UNION SELECT cmhead_id "
-             "FROM cmhead "
-             "WHERE (cmhead_salesrep_id=:salesrep_id) "
-
-             "UNION SELECT cohist_id "
-             "FROM cohist "
-             "WHERE (cohist_salesrep_id=:salesrep_id) "
-
-             "LIMIT 1;" );
-  q.bindValue(":salesrep_id", _salesrep->id());
-  q.exec();
-  if (q.first())
-  {
-    QMessageBox::critical( this, tr("Cannot Delete Selected Sales Rep."),
-                           tr( "The selected Sales Rep. cannot be deleted as there has been sales history\n"
-                               "recorded against him/her.  You may edit and set the selected Sales Rep's\n"
-                               "active status to inactive." ) );
-    return;
-  }
-
-  q.prepare( "DELETE FROM salesrep "
-             "WHERE (salesrep_id=:salesrep_id);" );
-  q.bindValue(":salesrep_id", _salesrep->id());
-  q.exec();
 
   sFillList();
 }
@@ -241,9 +172,15 @@ void salesReps::sView()
 
 void salesReps::sFillList()
 {
-  _salesrep->populate( "SELECT salesrep_id, salesrep_number, salesrep_name, formatBoolYN(salesrep_active) "
-                       "FROM salesrep "
-                       "ORDER BY salesrep_number;" );
+  q.exec("SELECT *, formatBoolYN(salesrep_active) AS active "
+         "FROM salesrep "
+         "ORDER BY salesrep_number;" );
+  _salesrep->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void salesReps::sPopulateMenu( QMenu * menu )
@@ -271,4 +208,3 @@ void salesReps::sPrint()
   else
     report.reportError(this);
 }
-
