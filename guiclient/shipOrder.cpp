@@ -232,7 +232,7 @@ void shipOrder::sShip()
       }
       if (shipq.lastError().type() != QSqlError::None)
       {
-	systemError(this, shipq.lastError().databaseText(), __FILE__, __LINE__);
+        systemError(this, shipq.lastError().databaseText(), __FILE__, __LINE__);
 	return;
       }
       sShip();	// beware of endless loop if you change createItemSite err check
@@ -249,7 +249,12 @@ void shipOrder::sShip()
   else if (shipq.lastError().type() != QSqlError::None)
   {
     rollback.exec();
-    systemError(this, shipq.lastError().databaseText(), __FILE__, __LINE__);
+    QString errorStr = shipq.lastError().databaseText();
+    if(errorStr.startsWith("ERROR:  null value in column \"gltrans_accnt_id\" violates not-null constraint"))
+      errorStr = tr("One or more required accounts are not set or set incorrectly."
+                    " Please make sure that all your Cost Category and Sales Account Assignments"
+                    " are complete and correct.");
+    systemError(this, errorStr, __FILE__, __LINE__);
     return;
   }
 
