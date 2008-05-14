@@ -57,54 +57,33 @@
 
 #include "salesRep.h"
 
-#include <qvariant.h>
-#include <qvalidator.h>
-#include <qmessagebox.h>
+#include <QMessageBox>
+#include <QSqlError>
+#include <QValidator>
+#include <QVariant>
 
-/*
- *  Constructs a salesRep as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 salesRep::salesRep(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_number, SIGNAL(lostFocus()), this, SLOT(sCheck()));
 
-    // signals and slots connections
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_number, SIGNAL(lostFocus()), this, SLOT(sCheck()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-salesRep::~salesRep()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void salesRep::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void salesRep::init()
-{
   _commPrcnt->setValidator(omfgThis->percentVal());
 }
 
-enum SetResponse salesRep::set(ParameterList &pParams)
+salesRep::~salesRep()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void salesRep::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse salesRep::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -163,6 +142,11 @@ void salesRep::sCheck()
 
       _number->setEnabled(FALSE);
     }
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
 }
 
@@ -189,11 +173,9 @@ void salesRep::sSave()
     q.exec("SELECT NEXTVAL('salesrep_salesrep_id_seq') AS salesrep_id;");
     if (q.first())
       _salesrepid = q.value("salesrep_id").toInt();
-    else
+    else if (q.lastError().type() != QSqlError::None)
     {
-      systemError(this, tr("A System Error occurred at %1::%2.")
-                        .arg(__FILE__)
-                        .arg(__LINE__) );
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
  
@@ -214,6 +196,11 @@ void salesRep::sSave()
   q.bindValue(":salesrep_commission", (_commPrcnt->toDouble() / 100));
   q.bindValue(":salesrep_active", QVariant(_active->isChecked(), 0));
   q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   done(_salesrepid);
 }
@@ -221,7 +208,7 @@ void salesRep::sSave()
 void salesRep::populate()
 {
   q.prepare( "SELECT salesrep_number, salesrep_active, salesrep_name,"
-             "       formatScrap(salesrep_commission) AS f_commission "
+             "       salesrep_commission "
              "FROM salesrep "
              "WHERE (salesrep_id=:salesrep_id);" );
   q.bindValue(":salesrep_id", _salesrepid);
@@ -231,6 +218,11 @@ void salesRep::populate()
     _number->setText(q.value("salesrep_number").toString());
     _active->setChecked(q.value("salesrep_active").toBool());
     _name->setText(q.value("salesrep_name").toString());
-    _commPrcnt->setText(q.value("f_commission").toString());
+    _commPrcnt->setDouble(q.value("salesrep_commission").toDouble() * 100);
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
 }
