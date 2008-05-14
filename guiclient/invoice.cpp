@@ -537,6 +537,10 @@ void invoice::sSave()
 	     "    invchead_payment=:invchead_payment,"
 	     "    invchead_curr_id=:invchead_curr_id,"
 	     "    invchead_shipvia=:invchead_shipvia, invchead_fob=:invchead_fob, invchead_notes=:invchead_notes,"
+             "    invchead_recurring=:invchead_recurring,"
+             "    invchead_recurring_interval=:invchead_recurring_interval,"
+             "    invchead_recurring_type=:invchead_recurring_type,"
+             "    invchead_recurring_until=:invchead_recurring_until,"
 	     "    invchead_prj_id=:invchead_prj_id "
 	     "WHERE (invchead_id=:invchead_id);" );
 
@@ -586,6 +590,15 @@ void invoice::sSave()
   q.bindValue(":invchead_fob",		_fob->text());
   q.bindValue(":invchead_notes",	_notes->text());
   q.bindValue(":invchead_prj_id",	_project->id());
+  q.bindValue(":invchead_recurring", QVariant(_recurring->isChecked(), 0));
+  if(_recurring->isChecked()) // only set the following if it's recurring otherwise they end upp null
+  {
+    QString rtype[] = {"D", "W", "M", "Y"};
+    q.bindValue(":invchead_recurring_interval", _recurringInterval->value());
+    q.bindValue(":invchead_recurring_type", rtype[_recurringType->currentIndex()]);
+    if(_recurringUntil->isValid())
+      q.bindValue(":invchead_recurring_until", _recurringUntil->date());
+  }
 
   if (_orderNumber->text().length())
     q.bindValue(":invchead_ordernumber", _orderNumber->text().toInt());
@@ -708,6 +721,22 @@ void invoice::populate()
     _poNumber->setText(q.value("invchead_ponumber").toString());
     _shipVia->setText(q.value("invchead_shipvia").toString());
     _fob->setText(q.value("invchead_fob").toString());
+
+    if(q.value("invchead_recurring").toBool())
+    {
+      _recurring->setChecked(true);
+      _recurringInterval->setValue(q.value("invchead_recurring_interval").toInt());
+      QString rtype = q.value("invchead_recurring_type").toString();
+      if("Y" == rtype)
+        _recurringType->setCurrentIndex(3);
+      else if("M" == rtype)
+        _recurringType->setCurrentIndex(2);
+      else if("W" == rtype)
+        _recurringType->setCurrentIndex(1);
+      else if("D" == rtype)
+        _recurringType->setCurrentIndex(0);
+      _recurringUntil->setDate(q.value("invchead_recurring_until").toDate());
+    }
 
     _salesrep->setId(q.value("invchead_salesrep_id").toInt());
     _commission->setText(formatPercent(q.value("invchead_commission").toDouble()));

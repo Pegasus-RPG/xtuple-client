@@ -195,6 +195,7 @@
 #include "arAccountAssignments.h"
 
 #include "updateLateCustCreditStatus.h"
+#include "createRecurringInvoices.h"
 
 // START_RW
 #include "postGLTransactionsToExternal.h"
@@ -497,6 +498,7 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
     { "separator",		  NULL,					NULL,					utilitiesMenu,		true,					       NULL, NULL, true, NULL },
     { "so.purgeInvoices", tr("Purge &Invoices..."), SLOT(sPurgeInvoices()), utilitiesMenu, _privileges->check("PurgeInvoices"), NULL, NULL, true , NULL },
     { "ar.updateLateCustCreditStatus", tr("&Update Late Customer Credit Status..."), SLOT(sUpdateLateCustCreditStatus()), utilitiesMenu, _privileges->check("UpdateCustomerCreditStatus"), NULL, NULL, _metrics->boolean("AutoCreditWarnLateCustomers"), NULL },
+    { "ar.createRecurringInvoices", tr("&Create Recurring Invoices..."), SLOT(sCreateRecurringInvoices()), utilitiesMenu, _privileges->check("MaintainMiscInvoices"), NULL, NULL, true, NULL },
   };
 
   addActionsToMenu(acts, sizeof(acts) / sizeof(acts[0]));
@@ -1247,6 +1249,12 @@ void menuAccounting::sARAccountAssignments()
 void menuAccounting::sUpdateLateCustCreditStatus()
 {
   updateLateCustCreditStatus newdlg(parent, "", TRUE);
+  newdlg.exec();
+}
+
+void menuAccounting::sCreateRecurringInvoices()
+{
+  createRecurringInvoices newdlg(parent, "", TRUE);
   newdlg.exec();
 }
 

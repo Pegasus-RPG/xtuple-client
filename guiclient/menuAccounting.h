@@ -222,6 +222,7 @@ class menuAccounting : public QObject
     void sARAccountAssignments();
 
     void sUpdateLateCustCreditStatus();
+    void sCreateRecurringInvoices();
 
 // START_RW
     void sPostTransactionsToExternal();

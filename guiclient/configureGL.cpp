@@ -167,6 +167,8 @@ configureGL::configureGL(QWidget* parent, const char* name, bool modal, Qt::WFla
   _mandatoryNotes->setChecked(_metrics->boolean("MandatoryGLEntryNotes"));
   _manualGlaccnt->setChecked(_metrics->boolean("AllowManualGLAccountEntry"));
   _taxauth->setId(_metrics->value("DefaultTaxAuthority").toInt());
+
+  _recurringBuffer->setValue(_metrics->value("RecurringInvoiceBuffer").toInt());
   
   //Remove this when old menu system goes away
   this->setCaption("Accounting Configuration");
@@ -222,6 +224,8 @@ void configureGL::sSave()
   _metrics->set("AutoCreditWarnLateCustomers", _warnLate->isChecked());
   if(_warnLate->isChecked())
     _metrics->set("DefaultAutoCreditWarnGraceDays", _graceDays->value());
+
+  _metrics->set("RecurringInvoiceBuffer", _recurringBuffer->value());
   
   // GL
   Action *profitcenter = 0;

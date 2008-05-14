@@ -12,8 +12,8 @@
   <property name="windowTitle" >
    <string>G/L Module Configuration</string>
   </property>
-  <layout class="QGridLayout" >
-   <item row="0" column="0" >
+  <layout class="QHBoxLayout" >
+   <item>
     <widget class="QTabWidget" name="_tab" >
      <property name="currentIndex" >
       <number>0</number>
@@ -728,263 +728,280 @@
       <attribute name="title" >
        <string>Accounts Receivable</string>
       </attribute>
-      <layout class="QGridLayout" >
-       <item row="0" column="0" >
-        <layout class="QVBoxLayout" >
+      <layout class="QVBoxLayout" >
+       <item>
+        <layout class="QHBoxLayout" >
          <property name="spacing" >
-          <number>0</number>
+          <number>5</number>
          </property>
          <item>
-          <layout class="QVBoxLayout" >
+          <widget class="QLabel" name="_nextARMemoNumberLit" >
+           <property name="text" >
+            <string>Next A/R Memo #:</string>
+           </property>
+           <property name="alignment" >
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+           <property name="buddy" >
+            <cstring>_address</cstring>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" >
            <property name="spacing" >
-            <number>5</number>
+            <number>0</number>
            </property>
            <item>
-            <layout class="QHBoxLayout" >
-             <property name="spacing" >
-              <number>5</number>
+            <widget class="XLineEdit" name="_nextARMemoNumber" >
+             <property name="maximumSize" >
+              <size>
+               <width>80</width>
+               <height>32767</height>
+              </size>
              </property>
-             <item>
-              <widget class="QLabel" name="_nextARMemoNumberLit" >
-               <property name="text" >
-                <string>Next A/R Memo #:</string>
-               </property>
-               <property name="alignment" >
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-               <property name="buddy" >
-                <cstring>_address</cstring>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <layout class="QHBoxLayout" >
-               <property name="spacing" >
-                <number>0</number>
-               </property>
-               <item>
-                <widget class="XLineEdit" name="_nextARMemoNumber" >
-                 <property name="maximumSize" >
-                  <size>
-                   <width>80</width>
-                   <height>32767</height>
-                  </size>
-                 </property>
-                 <property name="alignment" >
-                  <set>Qt::AlignRight</set>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <spacer>
-                 <property name="orientation" >
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeType" >
-                  <enum>QSizePolicy::Expanding</enum>
-                 </property>
-                 <property name="sizeHint" >
-                  <size>
-                   <width>34</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-              </layout>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <widget class="QCheckBox" name="_hideApplyto" >
-             <property name="text" >
-              <string>Hide 'Apply to Balance' button</string>
+             <property name="alignment" >
+              <set>Qt::AlignRight</set>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QCheckBox" name="_customerDeposits" >
-             <property name="text" >
-              <string>Enable Customer Deposits</string>
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Horizontal</enum>
              </property>
-            </widget>
+             <property name="sizeType" >
+              <enum>QSizePolicy::Expanding</enum>
+             </property>
+             <property name="sizeHint" >
+              <size>
+               <width>34</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
            </item>
-           <item>
-            <widget class="QGroupBox" name="_remitToGroup" >
-             <property name="title" >
-              <string>Remit-To Address</string>
-             </property>
-             <layout class="QVBoxLayout" >
-              <property name="spacing" >
-               <number>5</number>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="_hideApplyto" >
+         <property name="text" >
+          <string>Hide 'Apply to Balance' button</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="_customerDeposits" >
+         <property name="text" >
+          <string>Enable Customer Deposits</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="_remitToGroup" >
+         <property name="title" >
+          <string>Remit-To Address</string>
+         </property>
+         <layout class="QVBoxLayout" >
+          <property name="spacing" >
+           <number>5</number>
+          </property>
+          <property name="leftMargin" >
+           <number>5</number>
+          </property>
+          <property name="topMargin" >
+           <number>5</number>
+          </property>
+          <property name="rightMargin" >
+           <number>5</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>5</number>
+          </property>
+          <item>
+           <layout class="QHBoxLayout" >
+            <property name="spacing" >
+             <number>5</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="_nameLit" >
+              <property name="text" >
+               <string>Name:</string>
               </property>
-              <property name="leftMargin" >
-               <number>5</number>
+              <property name="alignment" >
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
-              <property name="topMargin" >
-               <number>5</number>
+             </widget>
+            </item>
+            <item>
+             <widget class="XLineEdit" name="_name" />
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="AddressCluster" name="_address" >
+            <property name="focusPolicy" >
+             <enum>Qt::StrongFocus</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" >
+            <property name="spacing" >
+             <number>5</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="_phoneLit" >
+              <property name="text" >
+               <string>Phone:</string>
               </property>
-              <property name="rightMargin" >
-               <number>5</number>
+              <property name="alignment" >
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
-              <property name="bottomMargin" >
-               <number>5</number>
-              </property>
-              <item>
-               <layout class="QHBoxLayout" >
-                <property name="spacing" >
-                 <number>5</number>
-                </property>
-                <item>
-                 <widget class="QLabel" name="_nameLit" >
-                  <property name="text" >
-                   <string>Name:</string>
-                  </property>
-                  <property name="alignment" >
-                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="XLineEdit" name="_name" />
-                </item>
-               </layout>
-              </item>
-              <item>
-               <widget class="AddressCluster" name="_address" >
-                <property name="focusPolicy" >
-                 <enum>Qt::StrongFocus</enum>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" >
-                <property name="spacing" >
-                 <number>5</number>
-                </property>
-                <item>
-                 <widget class="QLabel" name="_phoneLit" >
-                  <property name="text" >
-                   <string>Phone:</string>
-                  </property>
-                  <property name="alignment" >
-                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <layout class="QHBoxLayout" >
-                  <property name="spacing" >
-                   <number>0</number>
-                  </property>
-                  <item>
-                   <widget class="XLineEdit" name="_phone" />
-                  </item>
-                  <item>
-                   <spacer>
-                    <property name="orientation" >
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeType" >
-                     <enum>QSizePolicy::Expanding</enum>
-                    </property>
-                    <property name="sizeHint" >
-                     <size>
-                      <width>20</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                 </layout>
-                </item>
-               </layout>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QGroupBox" name="_warnLate" >
-             <property name="title" >
-              <string>Credit Warn Customers when Late</string>
-             </property>
-             <property name="checkable" >
-              <bool>true</bool>
-             </property>
-             <property name="checked" >
-              <bool>false</bool>
-             </property>
+             </widget>
+            </item>
+            <item>
              <layout class="QHBoxLayout" >
-              <property name="leftMargin" >
-               <number>5</number>
-              </property>
-              <property name="topMargin" >
-               <number>5</number>
-              </property>
-              <property name="rightMargin" >
-               <number>5</number>
-              </property>
-              <property name="bottomMargin" >
-               <number>5</number>
+              <property name="spacing" >
+               <number>0</number>
               </property>
               <item>
-               <widget class="QLabel" name="_graceDaysLit" >
-                <property name="text" >
-                 <string>Default Grace Period Days:</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QSpinBox" name="_graceDays" >
-                <property name="maximum" >
-                 <number>9999</number>
-                </property>
-                <property name="value" >
-                 <number>30</number>
-                </property>
-               </widget>
+               <widget class="XLineEdit" name="_phone" />
               </item>
               <item>
                <spacer>
                 <property name="orientation" >
                  <enum>Qt::Horizontal</enum>
                 </property>
+                <property name="sizeType" >
+                 <enum>QSizePolicy::Expanding</enum>
+                </property>
                 <property name="sizeHint" >
                  <size>
-                  <width>40</width>
+                  <width>20</width>
                   <height>20</height>
                  </size>
                 </property>
                </spacer>
               </item>
              </layout>
-            </widget>
-           </item>
-          </layout>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="_warnLate" >
+         <property name="title" >
+          <string>Credit Warn Customers when Late</string>
+         </property>
+         <property name="checkable" >
+          <bool>true</bool>
+         </property>
+         <property name="checked" >
+          <bool>false</bool>
+         </property>
+         <layout class="QHBoxLayout" >
+          <property name="leftMargin" >
+           <number>5</number>
+          </property>
+          <property name="topMargin" >
+           <number>5</number>
+          </property>
+          <property name="rightMargin" >
+           <number>5</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>5</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="_graceDaysLit" >
+            <property name="text" >
+             <string>Default Grace Period Days:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="_graceDays" >
+            <property name="maximum" >
+             <number>9999</number>
+            </property>
+            <property name="value" >
+             <number>30</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" >
+         <item>
+          <widget class="QLabel" name="_recurringBufferLit" >
+           <property name="text" >
+            <string>Recurring Invoice Buffer:</string>
+           </property>
+          </widget>
          </item>
          <item>
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Vertical</enum>
+          <widget class="QSpinBox" name="_recurringBuffer" >
+           <property name="maximum" >
+            <number>999</number>
            </property>
-           <property name="sizeType" >
-            <enum>QSizePolicy::Expanding</enum>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="_recurringBufferDaysLit" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
            </property>
-           <property name="sizeHint" >
-            <size>
-             <width>20</width>
-             <height>16</height>
-            </size>
+           <property name="text" >
+            <string>days</string>
            </property>
-          </spacer>
+          </widget>
          </item>
         </layout>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>575</width>
+           <height>31</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>
     </widget>
    </item>
-   <item row="0" column="1" >
+   <item>
     <layout class="QVBoxLayout" >
      <item>
       <widget class="QPushButton" name="_close" >
@@ -1081,6 +1098,7 @@
   <tabstop>_phone</tabstop>
   <tabstop>_warnLate</tabstop>
   <tabstop>_graceDays</tabstop>
+  <tabstop>_recurringBuffer</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>

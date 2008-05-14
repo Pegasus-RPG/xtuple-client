@@ -83,13 +83,14 @@ unpostedInvoices::unpostedInvoices(QWidget* parent, const char* name, Qt::WFlags
   connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
 
-  _invchead->addColumn(tr("Invoice #"),  _orderColumn, Qt::AlignLeft   );
-  _invchead->addColumn(tr("Prnt'd"),     _orderColumn, Qt::AlignCenter );
-  _invchead->addColumn(tr("S/O #"),      _orderColumn, Qt::AlignLeft   );
-  _invchead->addColumn(tr("Customer"),   -1,           Qt::AlignLeft   );
-  _invchead->addColumn(tr("Invc. Date"), _dateColumn,  Qt::AlignCenter );
-  _invchead->addColumn(tr("Ship Date"),  _dateColumn,  Qt::AlignCenter );
-  _invchead->addColumn(tr("G/L Dist Date"), _dateColumn,  Qt::AlignCenter );
+  _invchead->addColumn(tr("Invoice #"),  _orderColumn, Qt::AlignLeft,   true,  "invchead_invcnumber" );
+  _invchead->addColumn(tr("Prnt'd"),     _orderColumn, Qt::AlignCenter, true,  "invchead_printed" );
+  _invchead->addColumn(tr("S/O #"),      _orderColumn, Qt::AlignLeft,   true,  "invchead_ordernumber" );
+  _invchead->addColumn(tr("Customer"),   -1,           Qt::AlignLeft,   true,  "cust_name" );
+  _invchead->addColumn(tr("Invc. Date"), _dateColumn,  Qt::AlignCenter, true,  "invchead_invcdate" );
+  _invchead->addColumn(tr("Ship Date"),  _dateColumn,  Qt::AlignCenter, true,  "invchead_shipdate" );
+  _invchead->addColumn(tr("G/L Dist Date"),_dateColumn,Qt::AlignCenter, true,  "invchead_gldistdate" );
+  _invchead->addColumn(tr("Recurring"),  _ynColumn,    Qt::AlignCenter, false, "invchead_recurring" );
   _invchead->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
   if (! _privileges->check("ChangeARInvcDistDate"))
@@ -420,11 +421,12 @@ void unpostedInvoices::sFillList()
   _invchead->clear();
   XSqlQuery fill;
   fill.prepare("SELECT invchead_id, invchead_invcnumber,"
-	    "       formatBoolYN(invchead_printed),"
+	    "       formatBoolYN(invchead_printed) AS invchead_printed,"
 	    "       invchead_ordernumber, cust_name,"
-	    "       formatDate(invchead_invcdate), "
-	    "       formatDate(invchead_shipdate), "
-	    "       formatDate(COALESCE(invchead_gldistdate, invchead_invcdate)) "
+	    "       invchead_invcdate, "
+	    "       invchead_shipdate, "
+	    "       COALESCE(invchead_gldistdate, invchead_invcdate) AS invchead_gldistdate,"
+            "       formatBoolYN(invchead_recurring) AS invchead_recurring "
 	    "FROM invchead, cust "
 	    "WHERE ( (invchead_cust_id=cust_id)"
 	    " AND (NOT(invchead_posted)) ) "

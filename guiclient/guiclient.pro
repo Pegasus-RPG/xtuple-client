@@ -71,6 +71,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                createCountTagsByParameterList.ui createCountTagsByItem.ui                             \
                createItemSitesByClassCode.ui                                                          \
                createPlannedOrdersByItem.ui createPlannedOrdersByPlannerCode.ui                       \
+               createRecurringInvoices.ui                                                             \
                woMaterialItem.ui createLotSerial.ui creditMemo.ui                                     \
                creditMemoItem.ui creditMemoEditList.ui                                                \
                crmaccount.ui crmaccounts.ui                                                           \
@@ -382,6 +383,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h rwInterface
                createCountTagsByParameterList.h createCountTagsByItem.h                               \
                createItemSitesByClassCode.h                                                           \
                createPlannedOrdersByItem.h createPlannedOrdersByPlannerCode.h                         \
+               createRecurringInvoices.h                                                              \
                woMaterialItem.h createLotSerial.h creditMemo.h                                        \
                creditMemoItem.h creditMemoEditList.h                                                  \
                crmaccount.h crmaccounts.h                                                             \
@@ -699,6 +701,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp rwInte
                createCountTagsByParameterList.cpp createCountTagsByItem.cpp                           \
                createItemSitesByClassCode.cpp                                                         \
                createPlannedOrdersByItem.cpp createPlannedOrdersByPlannerCode.cpp                     \
+               createRecurringInvoices.cpp                                                            \
                woMaterialItem.cpp createLotSerial.cpp creditMemo.cpp                                  \
                creditMemoItem.cpp creditMemoEditList.cpp                                              \
                crmaccount.cpp crmaccounts.cpp                                                         \
