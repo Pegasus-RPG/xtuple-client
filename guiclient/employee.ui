@@ -5,15 +5,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>702</width>
-    <height>509</height>
+    <width>730</width>
+    <height>629</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Employee</string>
   </property>
   <layout class="QGridLayout" >
-   <item row="0" column="0" >
+   <item row="1" column="0" >
     <layout class="QGridLayout" >
      <property name="horizontalSpacing" >
       <number>12</number>
@@ -23,6 +23,26 @@
      </property>
      <item row="0" column="0" colspan="2" >
       <layout class="QHBoxLayout" >
+       <item>
+        <widget class="QLabel" name="_codeLit" >
+         <property name="text" >
+          <string>Employee:</string>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+         <property name="buddy" >
+          <cstring>_code</cstring>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="XLineEdit" name="_code" >
+         <property name="fieldName" >
+          <string>code</string>
+         </property>
+        </widget>
+       </item>
        <item>
         <widget class="QLabel" name="_numberLit" >
          <property name="text" >
@@ -34,12 +54,25 @@
         </widget>
        </item>
        <item>
-        <widget class="XLineEdit" name="_number" />
+        <widget class="XLineEdit" name="_number" >
+         <property name="fieldName" >
+          <string>number</string>
+         </property>
+        </widget>
        </item>
        <item>
-        <widget class="QCheckBox" name="_active" >
+        <widget class="XCheckBox" name="_active" >
          <property name="text" >
           <string>Active</string>
+         </property>
+         <property name="checked" >
+          <bool>true</bool>
+         </property>
+         <property name="fieldName" >
+          <string>active</string>
+         </property>
+         <property name="forgetful" >
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -121,6 +154,69 @@
           <property name="activeVisible" >
            <bool>false</bool>
           </property>
+          <property name="fieldNameChange" >
+           <string>contact_change</string>
+          </property>
+          <property name="fieldNameNumber" >
+           <string>contact_number</string>
+          </property>
+          <property name="fieldNameActive" >
+           <string/>
+          </property>
+          <property name="fieldNameHonorific" >
+           <string>honorific</string>
+          </property>
+          <property name="fieldNameFirst" >
+           <string>first</string>
+          </property>
+          <property name="fieldNameLast" >
+           <string>last</string>
+          </property>
+          <property name="fieldNameTitle" >
+           <string>job_title</string>
+          </property>
+          <property name="fieldNamePhone" >
+           <string>voice</string>
+          </property>
+          <property name="fieldNamePhone2" >
+           <string>alternate</string>
+          </property>
+          <property name="fieldNameFax" >
+           <string>fax</string>
+          </property>
+          <property name="fieldNameEmailAddress" >
+           <string>email</string>
+          </property>
+          <property name="fieldNameWebAddress" >
+           <string>web</string>
+          </property>
+          <property name="fieldNameAddressChange" stdset="0" >
+           <string>address_change</string>
+          </property>
+          <property name="fieldNameAddressNumber" stdset="0" >
+           <string>address_number</string>
+          </property>
+          <property name="fieldNameLine1" >
+           <string>address1</string>
+          </property>
+          <property name="fieldNameLine2" >
+           <string>address2</string>
+          </property>
+          <property name="fieldNameLine3" >
+           <string>address3</string>
+          </property>
+          <property name="fieldNameCity" >
+           <string>city</string>
+          </property>
+          <property name="fieldNameState" >
+           <string>state</string>
+          </property>
+          <property name="fieldNamePostalCode" >
+           <string>postalcode</string>
+          </property>
+          <property name="fieldNameCountry" >
+           <string>country</string>
+          </property>
          </widget>
         </item>
        </layout>
@@ -133,9 +229,15 @@
        </property>
        <layout class="QGridLayout" >
         <item row="0" column="0" >
-         <widget class="QCheckBox" name="_user" >
+         <widget class="XCheckBox" name="_user" >
           <property name="text" >
            <string/>
+          </property>
+          <property name="fieldName" >
+           <string>is_user</string>
+          </property>
+          <property name="forgetful" >
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -150,9 +252,15 @@
          </widget>
         </item>
         <item row="1" column="0" >
-         <widget class="QCheckBox" name="_salesrep" >
+         <widget class="XCheckBox" name="_salesrep" >
           <property name="text" >
            <string/>
+          </property>
+          <property name="fieldName" >
+           <string>is_salesrep</string>
+          </property>
+          <property name="forgetful" >
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -185,7 +293,7 @@
      <item row="2" column="0" colspan="3" >
       <widget class="QTabWidget" name="_tabWidget" >
        <property name="currentIndex" >
-        <number>4</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="_detail" >
         <attribute name="title" >
@@ -211,7 +319,39 @@
             <item row="0" column="1" >
              <layout class="QHBoxLayout" >
               <item>
-               <widget class="WComboBox" name="_site" />
+               <widget class="WComboBox" name="_site" >
+                <property name="allowNull" >
+                 <bool>true</bool>
+                </property>
+                <property name="fieldName" >
+                 <string>site</string>
+                </property>
+                <item>
+                 <property name="text" >
+                  <string/>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string/>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string/>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string/>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string/>
+                 </property>
+                </item>
+               </widget>
               </item>
               <item>
                <spacer>
@@ -229,12 +369,15 @@
              </layout>
             </item>
             <item row="1" column="0" colspan="2" >
-             <widget class="LotserialCluster" name="lotserialcluster" >
+             <widget class="EmpCluster" name="_mgr" >
               <property name="focusPolicy" >
                <enum>Qt::StrongFocus</enum>
               </property>
               <property name="label" >
                <string>Manager:</string>
+              </property>
+              <property name="fieldName" >
+               <string>manager_code</string>
               </property>
              </widget>
             </item>
@@ -282,6 +425,9 @@
               <property name="focusPolicy" >
                <enum>Qt::StrongFocus</enum>
               </property>
+              <property name="fieldName" >
+               <string>department</string>
+              </property>
              </widget>
             </item>
             <item row="1" column="0" >
@@ -319,6 +465,9 @@
               <property name="focusPolicy" >
                <enum>Qt::StrongFocus</enum>
               </property>
+              <property name="fieldName" >
+               <string>shift</string>
+              </property>
              </widget>
             </item>
             <item row="2" column="1" >
@@ -343,26 +492,6 @@
             <string/>
            </property>
            <layout class="QGridLayout" >
-            <item row="0" column="0" >
-             <widget class="QRadioButton" name="radioButton" >
-              <property name="text" >
-               <string>Hourly</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1" >
-             <spacer>
-              <property name="orientation" >
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" >
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
             <item row="0" column="2" >
              <widget class="QLabel" name="_rateLit" >
               <property name="text" >
@@ -375,33 +504,19 @@
             </item>
             <item row="0" column="3" >
              <widget class="CurrCluster" name="_rate" >
+              <property name="fieldNameValue" >
+               <string>wage</string>
+              </property>
               <property name="currencyEditable" stdset="0" >
                <bool>false</bool>
               </property>
               <property name="currencyVisible" >
                <bool>false</bool>
               </property>
-             </widget>
-            </item>
-            <item row="1" column="0" >
-             <widget class="QRadioButton" name="radioButton_2" >
-              <property name="text" >
-               <string>Salaried</string>
+              <property name="fieldNameCurr" >
+               <string>wage_currency</string>
               </property>
              </widget>
-            </item>
-            <item row="1" column="1" >
-             <spacer>
-              <property name="orientation" >
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" >
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
             </item>
             <item row="1" column="2" >
              <widget class="QLabel" name="_perLit" >
@@ -417,6 +532,17 @@
              <layout class="QHBoxLayout" >
               <item>
                <widget class="XComboBox" name="_per" >
+                <property name="allowNull" >
+                 <bool>true</bool>
+                </property>
+                <property name="fieldName" >
+                 <string>wage_period</string>
+                </property>
+                <item>
+                 <property name="text" >
+                  <string/>
+                 </property>
+                </item>
                 <item>
                  <property name="text" >
                   <string>Hour</string>
@@ -459,6 +585,31 @@
               </item>
              </layout>
             </item>
+            <item row="0" column="0" >
+             <widget class="XComboBox" name="_wagetype" >
+              <property name="allowNull" >
+               <bool>true</bool>
+              </property>
+              <property name="fieldName" >
+               <string>wage_type</string>
+              </property>
+              <item>
+               <property name="text" >
+                <string/>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>Hourly</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>Salaried</string>
+               </property>
+              </item>
+             </widget>
+            </item>
            </layout>
           </widget>
          </item>
@@ -485,7 +636,11 @@
           <number>9</number>
          </property>
          <item>
-          <widget class="QTextEdit" name="_notes" />
+          <widget class="XTextEdit" name="_notes" >
+           <property name="fieldName" >
+            <string>notes</string>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
@@ -668,7 +823,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="_attach" >
+            <widget class="QPushButton" name="_attachGroup" >
              <property name="text" >
               <string>Attach</string>
              </property>
@@ -720,9 +875,9 @@
    <header>deptcluster.h</header>
   </customwidget>
   <customwidget>
-   <class>LotserialCluster</class>
+   <class>EmpCluster</class>
    <extends>QWidget</extends>
-   <header>lotserialcluster.h</header>
+   <header>empcluster.h</header>
   </customwidget>
   <customwidget>
    <class>ShiftCluster</class>
@@ -733,6 +888,11 @@
    <class>WComboBox</class>
    <extends>XComboBox</extends>
    <header>wcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
   </customwidget>
   <customwidget>
    <class>XComboBox</class>
@@ -749,8 +909,14 @@
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
   </customwidget>
+  <customwidget>
+   <class>XTextEdit</class>
+   <extends>QTextEdit</extends>
+   <header>xtextedit.h</header>
+  </customwidget>
  </customwidgets>
  <tabstops>
+  <tabstop>_code</tabstop>
   <tabstop>_number</tabstop>
   <tabstop>_active</tabstop>
   <tabstop>_contact</tabstop>
@@ -760,9 +926,8 @@
   <tabstop>_salesrepButton</tabstop>
   <tabstop>_tabWidget</tabstop>
   <tabstop>_site</tabstop>
-  <tabstop>lotserialcluster</tabstop>
-  <tabstop>radioButton</tabstop>
-  <tabstop>radioButton_2</tabstop>
+  <tabstop>_mgr</tabstop>
+  <tabstop>_wagetype</tabstop>
   <tabstop>_rate</tabstop>
   <tabstop>_per</tabstop>
   <tabstop>_dept</tabstop>
@@ -772,11 +937,11 @@
   <tabstop>_newCharacteristic</tabstop>
   <tabstop>_editCharacteristic</tabstop>
   <tabstop>_deleteCharacteristic</tabstop>
-  <tabstop>_editGroup</tabstop>
-  <tabstop>_viewGroup</tabstop>
-  <tabstop>_detachGroup</tabstop>
-  <tabstop>_attach</tabstop>
   <tabstop>_groups</tabstop>
+  <tabstop>_attachGroup</tabstop>
+  <tabstop>_detachGroup</tabstop>
+  <tabstop>_viewGroup</tabstop>
+  <tabstop>_editGroup</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
@@ -789,12 +954,12 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>709</x>
-     <y>34</y>
+     <x>716</x>
+     <y>113</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>197</x>
-     <y>125</y>
+     <x>546</x>
+     <y>106</y>
     </hint>
    </hints>
   </connection>
@@ -805,12 +970,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>371</x>
-     <y>456</y>
+     <x>336</x>
+     <y>747</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>737</x>
-     <y>367</y>
+     <x>435</x>
+     <y>747</y>
     </hint>
    </hints>
   </connection>
@@ -821,12 +986,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>371</x>
-     <y>456</y>
+     <x>336</x>
+     <y>747</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>737</x>
-     <y>342</y>
+     <x>435</x>
+     <y>747</y>
     </hint>
    </hints>
   </connection>
@@ -837,12 +1002,12 @@
    <slot>animateClick()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>371</x>
-     <y>456</y>
+     <x>336</x>
+     <y>747</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>737</x>
-     <y>342</y>
+     <x>435</x>
+     <y>747</y>
     </hint>
    </hints>
   </connection>
@@ -853,12 +1018,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>562</x>
-     <y>106</y>
+     <x>597</x>
+     <y>183</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>588</x>
-     <y>104</y>
+     <x>707</x>
+     <y>192</y>
     </hint>
    </hints>
   </connection>
@@ -869,12 +1034,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>554</x>
-     <y>137</y>
+     <x>597</x>
+     <y>215</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>614</x>
-     <y>136</y>
+     <x>707</x>
+     <y>224</y>
     </hint>
    </hints>
   </connection>

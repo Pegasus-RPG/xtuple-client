@@ -14,7 +14,7 @@ DEPENDPATH += ../common
 dynamic {
   DESTDIR = $$[QT_INSTALL_PLUGINS]/designer
 
-  LIBS += -L../lib -L../$$OPENRPT_DIR/lib -lxtuplecommon -lcommon -lrenderer
+  LIBS += -L../lib -L../$$OPENRPT_DIR/lib -lxtuplecommon -lwrtembed -lrenderer -lcommon
   DEFINES += MAKEDLL
 
   MOC_DIR = tmp/dll
@@ -44,6 +44,7 @@ HEADERS += \
            plugins/dateclusterplugin.h \
            plugins/deptclusterplugin.h \
            plugins/dlineeditplugin.h \
+           plugins/empclusterplugin.h \
            plugins/expenseclusterplugin.h \
            plugins/expenselineeditplugin.h \
            plugins/fileclusterplugin.h \
@@ -130,6 +131,7 @@ SOURCES    += OpenMFGWidgets.cpp \
 	      xdatawidgetmapper.cpp \
               xtextedit.cpp \
 	      screencontrol.cpp \
+              empcluster.cpp
 
 HEADERS    += OpenMFGWidgets.h \
               addresscluster.h contactcluster.h crmacctcluster.h \
@@ -170,6 +172,7 @@ HEADERS    += OpenMFGWidgets.h \
               xtextedit.h \
 	      screencontrol.h \
               dcalendarpopup.h\
+              empcluster.h\
 
 FORMS += accountSearch.ui \
 	 screenControl.ui \

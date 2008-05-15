@@ -68,6 +68,8 @@
 #include <xsqlquery.h>
 #include "xcombobox.h"
 
+#define DEBUG false
+
 XComboBox::XComboBox(QWidget *pParent, const char *pName) :
   QComboBox(pParent, pName)
 {
@@ -599,20 +601,48 @@ void XComboBox::setLabel(QLabel* pLab)
 
 void XComboBox::setCode(QString pString)
 {
-  if (count())
+  if (DEBUG)
+    qDebug("%s::setCode(%d %d %s) with _codes.count %d and _ids.count %d",
+           objectName().toAscii().data(), pString.isNull(), pString.isEmpty(),
+           pString.toAscii().data(), _codes.count(), _ids.count());
+
+  if (pString.isEmpty())
+  {
+    setId(-1);
+    setCurrentText(pString);
+  }
+  else if (count() == _codes.count())
   {
     for (int counter = ((allowNull()) ? 1 : 0); counter < count(); counter++)
     {
       if (_codes.at(counter) == pString)
       {
+        if (DEBUG)
+          qDebug("%s::setCode(%s) found at %d with _ids.count %d & _lastId %d",
+                 objectName().toAscii().data(), pString.toAscii().data(),
+                 counter, _ids.count(), _lastId);
         setCurrentItem(counter);
         
-        if(_lastId!=_ids.at(counter))
+        if (_ids.count() && _lastId!=_ids.at(counter))
           setId(_ids.at(counter));
         
         return;
       }
     }
+  }
+  else  // this is an ad-hoc combobox without a query behind it?
+  {
+    setCurrentItem(findText(pString));
+    if (DEBUG)
+      qDebug("%s::setCode(%s) set current item to %d using findData()",
+             objectName().toAscii().data(), pString.toAscii().data(),
+             currentItem());
+    if (_ids.count() > currentItem())
+      setId(_ids.at(currentItem()));
+    if (DEBUG)
+      qDebug("%s::setCode(%s) current item is %d after setId",
+             objectName().toAscii().data(), pString.toAscii().data(),
+             currentItem());
   }
   
   if (editable())
@@ -897,15 +927,26 @@ int XComboBox::id() const
 
 QString XComboBox::code() const
 {
-  if (_codes.count())
-  {
-    if ( (allowNull()) && (currentItem() <= 0) )
-      return QString::Null();
-    else
-      return _codes.at(currentItem());
-  }
+  if (DEBUG)
+    qDebug("%s::code() with currentItem %d, allowNull %d, and _codes.count %d",
+           objectName().toAscii().data(), currentItem(), allowNull(),
+           _codes.count());
+
+  QString returnValue;
+
+  if ( allowNull() && (currentItem() <= 0) )
+    qDebug("a"), returnValue = QString::Null();
+  else if (_codes.count() > currentItem())
+    qDebug("b"), returnValue = _codes.at(currentItem());
+  else if (currentItem() > 0)
+    qDebug("c"), returnValue = currentText();
   else
-    return QString::Null();
+    qDebug("d"), returnValue = QString::Null();
+
+  if (DEBUG)
+    qDebug("%s::code() returning %s",
+           objectName().toAscii().data(), returnValue.toAscii().data());
+  return returnValue;
 }
 
 bool XComboBox::isValid() const
@@ -918,10 +959,17 @@ bool XComboBox::isValid() const
 
 void XComboBox::sHandleNewIndex(int pIndex)
 {
+  if (DEBUG)
+    qDebug("%s::sHandleNewIndex(%d)",objectName().toAscii().data(), pIndex);
+
   if ((pIndex >= 0) && (pIndex < _ids.count()) && (_ids.at(pIndex) != _lastId))
   {
     _lastId = _ids.at(pIndex);
     emit newID(_lastId);
+
+    if (DEBUG)
+      qDebug("%s::sHandleNewIndex() emitted %d",
+             objectName().toAscii().data(), _lastId);
     
     if (allowNull())
     {
@@ -929,6 +977,10 @@ void XComboBox::sHandleNewIndex(int pIndex)
       emit notNull((pIndex != 0));
     }
   }
+
+  if (DEBUG)
+    qDebug("%s::sHandleNewIndex() returning",
+           objectName().toAscii().data());
 }
 
 void XComboBox::mousePressEvent(QMouseEvent *event)

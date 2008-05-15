@@ -119,6 +119,8 @@ class menuSystem : public QObject
     void sRescanPrivileges();
     void sMaintainUsers();
     void sMaintainGroups();
+    void sNewEmployee();
+    void sListEmployees();
     void sScheduleServerMaintenance();
     void sScheduleServerBackup();
     void sErrorLog();
@@ -172,14 +174,15 @@ class menuSystem : public QObject
 
     QToolBar *toolBar;
 
-    QMenu *windowMenu;
-    QMenu *systemMenu;
+    QMenu *communityMenu;
     QMenu *configModulesMenu;
+    QMenu *designMenu;
+    QMenu *employeeMenu;
+    QMenu *helpMenu;
     QMenu *masterInfoMenu;
     QMenu *sysUtilsMenu;
-    QMenu *helpMenu;
-    QMenu *communityMenu;
-    QMenu *designMenu;
+    QMenu *systemMenu;
+    QMenu *windowMenu;
 
     QMenu *geometryMenu;
 

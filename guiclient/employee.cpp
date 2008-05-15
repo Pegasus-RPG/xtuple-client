@@ -1,0 +1,377 @@
+/*
+ * Common Public Attribution License Version 1.0. 
+ * 
+ * The contents of this file are subject to the Common Public Attribution 
+ * License Version 1.0 (the "License"); you may not use this file except 
+ * in compliance with the License. You may obtain a copy of the License 
+ * at http://www.xTuple.com/CPAL.  The License is based on the Mozilla 
+ * Public License Version 1.1 but Sections 14 and 15 have been added to 
+ * cover use of software over a computer network and provide for limited 
+ * attribution for the Original Developer. In addition, Exhibit A has 
+ * been modified to be consistent with Exhibit B.
+ * 
+ * Software distributed under the License is distributed on an "AS IS" 
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See 
+ * the License for the specific language governing rights and limitations 
+ * under the License. 
+ * 
+ * The Original Code is PostBooks Accounting, ERP, and CRM Suite. 
+ * 
+ * The Original Developer is not the Initial Developer and is __________. 
+ * If left blank, the Original Developer is the Initial Developer. 
+ * The Initial Developer of the Original Code is OpenMFG, LLC, 
+ * d/b/a xTuple. All portions of the code written by xTuple are Copyright 
+ * (c) 1999-2008 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
+ * 
+ * Contributor(s): ______________________.
+ * 
+ * Alternatively, the contents of this file may be used under the terms 
+ * of the xTuple End-User License Agreeement (the xTuple License), in which 
+ * case the provisions of the xTuple License are applicable instead of 
+ * those above.  If you wish to allow use of your version of this file only 
+ * under the terms of the xTuple License and not to allow others to use 
+ * your version of this file under the CPAL, indicate your decision by 
+ * deleting the provisions above and replace them with the notice and other 
+ * provisions required by the xTuple License. If you do not delete the 
+ * provisions above, a recipient may use your version of this file under 
+ * either the CPAL or the xTuple License.
+ * 
+ * EXHIBIT B.  Attribution Information
+ * 
+ * Attribution Copyright Notice: 
+ * Copyright (c) 1999-2008 by OpenMFG, LLC, d/b/a xTuple
+ * 
+ * Attribution Phrase: 
+ * Powered by PostBooks, an open source solution from xTuple
+ * 
+ * Attribution URL: www.xtuple.org 
+ * (to be included in the "Community" menu of the application if possible)
+ * 
+ * Graphic Image as provided in the Covered Code, if any. 
+ * (online at www.xtuple.com/poweredby)
+ * 
+ * Display of Attribution Information is required in Larger Works which 
+ * are defined in the CPAL as a work which combines Covered Code or 
+ * portions thereof with code not governed by the terms of the CPAL.
+ */
+
+#include <QSqlError>
+#include <QVariant>
+
+#include <parameter.h>
+
+#include "employee.h"
+
+#define DEBUG   false
+
+// TODO: XDialog should have a default implementation that returns FALSE
+bool employee::userHasPriv(const int pMode)
+{
+  if (DEBUG)
+    qDebug("employee::userHasPriv(%d)", pMode);
+  bool retval = false;
+  switch (pMode)
+  {
+    case cView:
+      retval = _privileges->check("ViewEmployees") ||
+               _privileges->check("MaintainEmployees");
+      break;
+    case cNew:
+    case cEdit:
+      retval = _privileges->check("MaintainEmployees");
+      break;
+    default:
+      retval = false;
+      break;
+  }
+  if (DEBUG)
+    qDebug("employee::userHasPriv(%d) returning %d", pMode, retval);
+  return retval;
+}
+
+// TODO: this code really belongs in XDialog
+void employee::setVisible(bool visible)
+{
+  if (DEBUG)
+    qDebug("employee::setVisible(%d) called with mode() == %d",
+           visible, _mode);
+  if (! visible)
+    XDialog::setVisible(false);
+
+  else if (! userHasPriv(_mode))
+  {
+    systemError(this,
+		tr("You do not have sufficient privilege to view this window"),
+		__FILE__, __LINE__);
+    close();
+  }
+  else
+    XDialog::setVisible(true);
+}
+
+employee::employee(QWidget* parent, Qt::WindowFlags fl)
+    : XDialog(parent, fl)
+{
+  setupUi(this);
+
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  _mode = cView;
+  q.prepare("SELECT curr_abbr FROM curr_symbol WHERE (curr_id=baseCurrId());");
+  q.exec();
+  if (q.first())
+    _currabbr = q.value("curr_abbr").toString();
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+}
+
+employee::~employee()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void employee::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse employee::set(const ParameterList &pParams)
+{
+  QVariant param;
+  bool     valid;
+
+  param = pParams.value("emp_id", &valid);
+  if (valid)
+  {
+    q.prepare("SELECT emp_code FROM emp WHERE (emp_id=:empid);");
+    q.bindValue(":empid", param.toInt());
+    q.exec();
+    if (q.first())
+      _empcode = q.value("emp_code").toString();
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return UndefinedError;
+    }
+    sPopulate();
+  }
+
+  param = pParams.value("mode", &valid);
+  if (valid)
+  {
+    if (param.toString() == "new")
+    {
+      _mode = cNew;
+      _code->setFocus();
+    }
+    else if (param.toString() == "edit")
+    {
+      _mode = cEdit;
+      _number->setFocus();
+    }
+    else if (param.toString() == "view")
+    {
+      _mode = cView;
+      _close->setText(tr("&Close"));
+      _close->setFocus();
+    }
+  }
+
+  if (_mode == cNew ||
+      _mode == cEdit)
+  {
+    connect(_charass,SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
+    connect(_charass,SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
+    connect(_groups, SIGNAL(valid(bool)), _attachGroup, SLOT(setEnabled(bool)));
+    connect(_groups, SIGNAL(valid(bool)), _detachGroup, SLOT(setEnabled(bool)));
+    connect(_groups, SIGNAL(valid(bool)), _editGroup,   SLOT(setEnabled(bool)));
+    connect(_groups, SIGNAL(valid(bool)), _viewGroup,   SLOT(setEnabled(bool)));
+  }
+
+  _code->setEnabled(_mode == cNew || _mode == cEdit);
+  _number->setEnabled(_mode == cNew || _mode == cEdit);
+  _active->setEnabled(_mode == cNew || _mode == cEdit);
+  _contact->setEnabled(_mode == cNew || _mode == cEdit);
+  _site->setEnabled(_mode == cNew || _mode == cEdit);
+  _mgr->setEnabled(_mode == cNew || _mode == cEdit);
+  _wagetype->setEnabled(_mode == cNew || _mode == cEdit);
+  _rate->setEnabled(_mode == cNew || _mode == cEdit);
+  _currabbr = q.value("curr_abbr").toString();
+  _per->setEnabled(_mode == cNew || _mode == cEdit);
+  _dept->setEnabled(_mode == cNew || _mode == cEdit);
+  _shift->setEnabled(_mode == cNew || _mode == cEdit);
+  _user->setEnabled(_mode == cNew || _mode == cEdit);
+  _salesrep->setEnabled(_mode == cNew || _mode == cEdit);
+  _notes->setEnabled(_mode == cNew || _mode == cEdit);
+  _save->setEnabled(_mode == cNew || _mode == cEdit);
+
+  return NoError;
+}
+
+void employee::sSave()
+{
+  // trying something different here - write through the view
+  q.exec("BEGIN;");
+  //try to save the contact to do the check
+  q.exec("ROLLBACK;");
+
+  if (_mode == cNew)
+    q.prepare("INSERT INTO api.employee ("
+              " code, number, active,"
+              " contact_number, honorific, first, last, job_title,"
+              " voice, alternate, fax, email,"
+              " web, contact_change,"
+              " address_number, address1, address2, address3,"
+              " city, state, postalcode,"
+              " country, address_change,"
+              " site, manager_code,"
+              " wage_type, wage, wage_currency, wage_period,"
+              " department, shift, is_user, is_salesrep, notes"
+              ") VALUES ("
+              " :code, :number, :active,"
+              " :cntctnumber, :hnfc, :first, :last, :jobtitle,"
+              " :voice, :alt, :fax, :email,"
+              " :web, :cntctmode,"
+              " :addrnumber, :addr1, :addr2, :addr3,"
+              " :city, :state, :zip,"
+              " :country, :addrmode,"
+              " :site, :mgrcode,"
+              " :wagetype, :wage, :wagecurr, :wageper,"
+              " :dept, :shift, :isusr, :isrep, :notes);");
+
+  else if (_mode == cEdit)
+    q.prepare("UPDATE api.employee SET"
+              " code=:code,"
+              " number=:number,"
+              " active=:active,"
+              " contact_number=:cntctnumber,"
+              " honorific=:hnfc,"
+              " first=:first,"
+              " last=:last,"
+              " job_title=:jobtitle,"
+              " voice=:voice,"
+              " alternate=:alt,"
+              " fax=:fax,"
+              " email=:email,"
+              " web=:web,"
+              " contact_change=:cntctmode,"
+              " address_number=:addrnumber,"
+              " address1=:addr1,"
+              " address2=:addr2,"
+              " address3=:addr3,"
+              " city=:city,"
+              " state=:state,"
+              " postalcode=:zip,"
+              " country=:country,"
+              " address_change=:addrmode,"
+              " site=:site,"
+              " manager_code=:mgrcode,"
+              " wage_type=:wagetype,"
+              " wage=:wage,"
+              " wage_currency=:wagecurr,"
+              " wage_period=:wageper,"
+              " department=:dept,"
+              " shift=:shift,"
+              " is_user=:isusr,"
+              " is_salesrep=:isrep,"
+              " notes=:notes"
+              " WHERE (code=:origcode);" );
+
+  q.bindValue(":code",        _code->text());
+  q.bindValue(":number",   _number->text());
+  q.bindValue(":active",      _active->isChecked());
+  q.bindValue(":cntctnumber", _contact->number());
+  q.bindValue(":hnfc",        _contact->honorific());
+  q.bindValue(":first",       _contact->first());
+  q.bindValue(":last",        _contact->last());
+  q.bindValue(":jobtitle",    _contact->title());
+  q.bindValue(":voice",       _contact->phone());
+  q.bindValue(":alt",         _contact->phone2());
+  q.bindValue(":fax",         _contact->fax());
+  q.bindValue(":email",       _contact->emailAddress());
+  q.bindValue(":web",         _contact->webAddress());
+  q.bindValue(":cntctmode",   "CHANGEONE");     // TODO: fix hardcode
+  //TODO: ??? q.bindValue(":addrnumber",  _contact->addressWidget()->number());
+  q.bindValue(":addr1",       _contact->addressWidget()->line1());
+  q.bindValue(":addr2",       _contact->addressWidget()->line2());
+  q.bindValue(":addr3",       _contact->addressWidget()->line3());
+  q.bindValue(":city",        _contact->addressWidget()->city());
+  q.bindValue(":state",       _contact->addressWidget()->state());
+  q.bindValue(":zip",         _contact->addressWidget()->postalCode());
+  q.bindValue(":country",     _contact->addressWidget()->country());
+  q.bindValue(":addrmode",   "CHANGEONE");      // TODO: fix hardcode
+  q.bindValue(":site",        _site->code());
+  q.bindValue(":mgrcode",     _mgr->number());
+  q.bindValue(":wagetype",    _wagetype->code());
+  q.bindValue(":wage",        _rate->localValue());
+  q.bindValue(":wagecurr",    _currabbr);
+  q.bindValue(":wageper",     _per->code());
+  q.bindValue(":dept",        _dept->number());
+  q.bindValue(":shift",       _shift->number());
+  q.bindValue(":isusr",       _user->isChecked());
+  q.bindValue(":isrep",       _salesrep->isChecked());
+  q.bindValue(":notes",       _notes->text());
+  q.bindValue(":origcode",    _empcode);
+  q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
+  accept();     // done(emp_id?)
+}
+
+void employee::sPopulate()
+{
+  q.prepare("SELECT *, curr_id, curr_abbr "
+            "FROM api.employee LEFT OUTER JOIN"
+            "     curr_symbol ON (wage_currency = curr_abbr) "
+            "WHERE (code=:code);");
+  q.bindValue(":code", _empcode);
+  q.exec();
+  if (q.first())
+  {
+    _code->setText(q.value("code").toString());
+    _number->setText(q.value("number").toString());
+    _active->setChecked(q.value("active").toBool());
+    _contact->setNumber(q.value("contact_number").toString());
+    _contact->setHonorific(q.value("honorific").toString());
+    _contact->setFirst(q.value("first").toString());
+    _contact->setLast(q.value("last").toString());
+    _contact->setTitle(q.value("job_title").toString());
+    _contact->setPhone(q.value("voice").toString());
+    _contact->setPhone2(q.value("alternate").toString());
+    _contact->setFax(q.value("fax").toString());
+    _contact->setEmailAddress(q.value("email").toString());
+    _contact->setWebAddress(q.value("web").toString());
+    _contact->addressWidget()->setLine1(q.value("address1").toString());
+    _contact->addressWidget()->setLine2(q.value("address2").toString());
+    _contact->addressWidget()->setLine3(q.value("address3").toString());
+    _contact->addressWidget()->setCity(q.value("city").toString());
+    _contact->addressWidget()->setState(q.value("state").toString());
+    _contact->addressWidget()->setPostalCode(q.value("postalcode").toString());
+    _contact->addressWidget()->setCountry(q.value("country").toString());
+    _site->setCode(q.value("site").toString());
+    _mgr->setNumber(q.value("manager_code").toString());
+    _wagetype->setCode(q.value("wage_type").toString());
+    _rate->set(q.value("wage").toDouble(),
+               q.value("curr_id").toInt(),
+               QDate::currentDate());
+    _currabbr = q.value("curr_abbr").toString();
+    _per->setCode(q.value("wage_period").toString());
+    _dept->setNumber(q.value("department").toString());
+    _shift->setNumber(q.value("shift").toString());
+
+    _user->setChecked(q.value("is_usr").toBool());
+    _salesrep->setChecked(q.value("is_salesrep").toBool());
+    _notes->setText(q.value("notes").toString());
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+}

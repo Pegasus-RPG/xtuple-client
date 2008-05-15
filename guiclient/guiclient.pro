@@ -196,7 +196,9 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                dspWoSoStatusMismatch.ui dspWoSoStatus.ui                                              \
                duplicateAccountNumbers.ui                                                             \
                ediForm.ui ediFormDetail.ui ediProfile.ui ediProfiles.ui                               \
-               editICMWatermark.ui countSlip.ui countTag.ui enterMiscCount.ui                         \
+               editICMWatermark.ui countSlip.ui countTag.ui                                           \
+               employee.ui employees.ui                                                               \
+               enterMiscCount.ui                                                                      \
                enterPoitemReceipt.ui enterPoReceipt.ui enterPoitemReturn.ui enterPoReturn.ui          \
                errorLog.ui eventManager.ui                                                            \
                expenseCategories.ui expenseCategory.ui expenseTrans.ui                                \
@@ -507,7 +509,9 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h rwInterface
                dspWoSoStatusMismatch.h dspWoSoStatus.h                                                \
                duplicateAccountNumbers.h                                                              \
                ediForm.h ediFormDetail.h ediProfile.h ediProfiles.h                                   \
-               editICMWatermark.h countSlip.h countTag.h enterMiscCount.h                             \
+               editICMWatermark.h countSlip.h countTag.h                                              \
+               employee.h employees.h                                                                 \
+               enterMiscCount.h                                                                       \
                enterPoitemReceipt.h enterPoReceipt.h enterPoitemReturn.h enterPoReturn.h              \
                errorLog.h eventManager.h                                                              \
                expenseCategories.h expenseCategory.h expenseTrans.h                                   \
@@ -826,7 +830,9 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp rwInte
                dspWoOperationBufrStsByWorkCenter.cpp                                                  \
                duplicateAccountNumbers.cpp                                                            \
                ediForm.cpp ediFormDetail.cpp ediProfile.cpp ediProfiles.cpp                           \
-               editICMWatermark.cpp countSlip.cpp countTag.cpp enterMiscCount.cpp                     \
+               editICMWatermark.cpp countSlip.cpp countTag.cpp                                        \
+               employee.cpp employees.cpp                                                             \
+               enterMiscCount.cpp                                                                     \
                enterPoitemReceipt.cpp enterPoReceipt.cpp enterPoitemReturn.cpp enterPoReturn.cpp      \
                errorLog.cpp eventManager.cpp                                                          \
                expenseCategories.cpp expenseCategory.cpp expenseTrans.cpp                             \

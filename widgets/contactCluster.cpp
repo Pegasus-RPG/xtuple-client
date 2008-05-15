@@ -670,10 +670,12 @@ void ContactCluster::check()
   //If this is mapped then we need to check whether change flags need to be set
   if (_mapper->model())
   {
+    QString oldNumber = _number->text();
     XSqlQuery tx;
     tx.exec("BEGIN;");
     int result=save();
     tx.exec("ROLLBACK;");
+    _number->setText(oldNumber);
     if (result == -2)
     {
       int answer = 2;	// Cancel

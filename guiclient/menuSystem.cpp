@@ -88,23 +88,25 @@
 #include "configureBackup.h"
 #include "configureAccountingSystem.h"
 
-#include "images.h"
-#include "reports.h"
-#include "forms.h"
-#include "labelForms.h"
+#include "accountNumbers.h"
 #include "calendars.h"
+#include "commentTypes.h"
+#include "countries.h"
 #include "currencies.h"
 #include "currencyConversions.h"
-#include "locales.h"
-#include "commentTypes.h"
-#include "accountNumbers.h"
-#include "ediProfiles.h"
-#include "departments.h"
-#include "shifts.h"
 #include "customCommands.h"
-#include "countries.h"
+#include "departments.h"
+#include "ediProfiles.h"
+#include "employee.h"
+#include "employees.h"
+#include "forms.h"
 #include "groups.h"
+#include "images.h"
+#include "labelForms.h"
+#include "locales.h"
+#include "reports.h"
 #include "scripts.h"
+#include "shifts.h"
 #include "uiforms.h"
 
 #include "fixSerial.h"
@@ -148,6 +150,7 @@ menuSystem::menuSystem(GUIClient *Pparent) :
   windowMenu		= new QMenu(parent);
   helpMenu		= new QMenu(parent);
   designMenu            = new QMenu(parent);
+  employeeMenu          = new QMenu(parent);
 
   systemMenu->setObjectName("menu.sys");
   configModulesMenu->setObjectName("menu.sys.configmodules");
@@ -185,21 +188,26 @@ menuSystem::menuSystem(GUIClient *Pparent) :
 
   actionProperties acts[] = {
 
-    { "sys.scheduleSystemMessage",	tr("Schedule S&ystem Message..."),	SLOT(sScheduleSystemMessage()),	systemMenu,	_privileges->check("IssueSystemMessages"),	NULL,	NULL,	_metrics->boolean("EnableBatchManager")		},
-    { "separator",			NULL,					NULL,				systemMenu,	true,						NULL,	NULL,	_metrics->boolean("EnableBatchManager")		},
-    { "sys.eventManager",		tr("E&vent Manager..."),			SLOT(sEventManager()),		systemMenu,	TRUE,						NULL,	NULL,	true	},
-    { "sys.batchManager",		tr("&Batch Manager..."),			SLOT(sBatchManager()),		systemMenu,	TRUE,						NULL,	NULL,	_metrics->boolean("EnableBatchManager")	},
-    { "sys.viewDatabaseLog",		tr("View Database &Log..."),		SLOT(sErrorLog()),		systemMenu,	TRUE,						NULL,	NULL,	true	},
-    { "separator",			NULL,					NULL,				systemMenu,	true,						NULL,	NULL,	true	},
-    { "sys.preferences",		tr("P&references..."),			SLOT(sPreferences()),		systemMenu,	(_privileges->check("MaintainPreferencesSelf") || _privileges->check("MaintainPreferencesOthers")),	NULL,	NULL,	true	},
-    { "sys.rescanPrivileges",		tr("Rescan &Privileges"),		SLOT(sRescanPrivileges()),	systemMenu,	TRUE,						NULL,	NULL,	true	},
-    { "separator",			NULL,					NULL,				systemMenu,	true,						NULL,	NULL,	true	},
-    { "sys.maintainUsers",		tr("Maintain &Users..."),		SLOT(sMaintainUsers()),		systemMenu,	_privileges->check("MaintainUsers"),		NULL,	NULL,	true	},
-    { "sys.maintainGroups",		tr("Maintain &Groups..."),		SLOT(sMaintainGroups()),	systemMenu,	_privileges->check("MaintainGroups"),		NULL,	NULL,	true	},
-    { "separator",			NULL,					NULL,				systemMenu,	true,						NULL,	NULL,	true	},
-    { "sys.scheduleServerMaintenance",	tr("Schedule S&erver Maintenance..."),	SLOT(sScheduleServerMaintenance()),systemMenu,	_privileges->check("MaintainServer"),		NULL,	NULL,	_metrics->boolean("EnableBatchManager")		},
-    { "sys.scheduleServerBackup",	tr("Schedule Server Bac&kup..."),	SLOT(sScheduleServerBackup()),	systemMenu,	_privileges->check("BackupServer"),		NULL,	NULL,	_metrics->boolean("EnableBatchManager")		},
-    { "separator",			NULL,					NULL,				systemMenu,	true,						NULL,	NULL,	_metrics->boolean("EnableBatchManager")		},
+    { "sys.scheduleSystemMessage",    tr("Schedule S&ystem Message..."),    SLOT(sScheduleSystemMessage()),    systemMenu, _privileges->check("IssueSystemMessages"), NULL, NULL, _metrics->boolean("EnableBatchManager") },
+    { "separator",                    NULL,                                 NULL,                              systemMenu, true,                                      NULL, NULL, _metrics->boolean("EnableBatchManager") },
+    { "sys.eventManager",             tr("E&vent Manager..."),              SLOT(sEventManager()),             systemMenu, TRUE,                                      NULL, NULL, true },
+    { "sys.batchManager",             tr("&Batch Manager..."),              SLOT(sBatchManager()),             systemMenu, TRUE,                                      NULL, NULL, _metrics->boolean("EnableBatchManager") },
+    { "sys.viewDatabaseLog",          tr("View Database &Log..."),          SLOT(sErrorLog()),                 systemMenu, TRUE,                                      NULL, NULL, true },
+    { "separator",                    NULL,                                 NULL,                              systemMenu, true,                                      NULL, NULL, true },
+    { "sys.preferences",              tr("P&references..."),                SLOT(sPreferences()),              systemMenu, (_privileges->check("MaintainPreferencesSelf") || _privileges->check("MaintainPreferencesOthers")),  NULL,   NULL,   true },
+    { "sys.rescanPrivileges",         tr("Rescan &Privileges"),             SLOT(sRescanPrivileges()),         systemMenu, TRUE,                                      NULL, NULL, true },
+    { "separator",                    NULL,                                 NULL,                              systemMenu, true,                                      NULL, NULL, true },
+    { "sys.maintainUsers",            tr("Maintain &Users..."),             SLOT(sMaintainUsers()),            systemMenu, _privileges->check("MaintainUsers"),       NULL, NULL, true },
+    { "sys.maintainGroups",           tr("Maintain &Groups..."),            SLOT(sMaintainGroups()),           systemMenu, _privileges->check("MaintainGroups"),      NULL, NULL, true },
+
+    { "menu",                         tr("&Employees"),                     (char*)employeeMenu,               systemMenu, true,                                      NULL, NULL, true },
+    { "sys.employee",                 tr("&New Employee..."),               SLOT(sNewEmployee()),            employeeMenu, employee::userHasPriv(cNew),               NULL, NULL, true },
+    { "sys.employee",                 tr("&List Employees..."),             SLOT(sListEmployees()),          employeeMenu, employee::userHasPriv(),                   NULL, NULL, true },
+
+    { "separator",                    NULL,                                 NULL,                              systemMenu, true,                                      NULL, NULL, true },
+    { "sys.scheduleServerMaintenance",tr("Schedule Server Mai&ntenance..."),SLOT(sScheduleServerMaintenance()),systemMenu, _privileges->check("MaintainServer"),      NULL, NULL, _metrics->boolean("EnableBatchManager") },
+    { "sys.scheduleServerBackup",     tr("Schedule Server Bac&kup..."),     SLOT(sScheduleServerBackup()),     systemMenu, _privileges->check("BackupServer"),        NULL, NULL, _metrics->boolean("EnableBatchManager") },
+    { "separator",                    NULL,                                 NULL,                              systemMenu, true,                                      NULL, NULL, _metrics->boolean("EnableBatchManager") },
 
   //  System | Configure Modules
     { "menu",			tr("&Configure Modules"),(char*)configModulesMenu,systemMenu,		true,					NULL,	NULL,	true	},
@@ -663,6 +671,20 @@ void menuSystem::sMaintainUsers()
 void menuSystem::sMaintainGroups()
 {
   omfgThis->handleNewWindow(new groups());
+}
+
+void menuSystem::sNewEmployee()
+{
+  ParameterList params;
+  employee newdlg(parent);
+  params.append("mode", "new");
+  newdlg.set(params);
+  newdlg.exec();
+}
+
+void menuSystem::sListEmployees()
+{
+  omfgThis->handleNewWindow(new employees());
 }
 
 void menuSystem::sScheduleServerMaintenance()
