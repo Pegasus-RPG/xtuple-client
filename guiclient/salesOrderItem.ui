@@ -1299,38 +1299,28 @@
         <attribute name="title" >
          <string>Pending Availability</string>
         </attribute>
-        <widget class="XTreeWidget" name="_availability" >
-         <property name="geometry" >
-          <rect>
-           <x>20</x>
-           <y>36</y>
-           <width>601</width>
-           <height>123</height>
-          </rect>
-         </property>
-         <property name="focusPolicy" >
-          <enum>Qt::NoFocus</enum>
-         </property>
-         <property name="rootIsDecorated" >
-          <bool>true</bool>
-         </property>
-        </widget>
-        <widget class="XCheckBox" name="_showIndented" >
-         <property name="geometry" >
-          <rect>
-           <x>18</x>
-           <y>9</y>
-           <width>612</width>
-           <height>21</height>
-          </rect>
-         </property>
-         <property name="focusPolicy" >
-          <enum>Qt::NoFocus</enum>
-         </property>
-         <property name="text" >
-          <string>Show Pending Availability as Indented BOM</string>
-         </property>
-        </widget>
+        <layout class="QVBoxLayout" >
+         <item>
+          <widget class="XCheckBox" name="_showIndented" >
+           <property name="focusPolicy" >
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="text" >
+            <string>Show Pending Availability as Indented BOM</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="XTreeWidget" name="_availability" >
+           <property name="focusPolicy" >
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="rootIsDecorated" >
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
        <widget class="QWidget" name="_costs" >
         <attribute name="title" >
@@ -1710,7 +1700,7 @@
   </customwidget>
   <customwidget>
    <class>DLineEdit</class>
-   <extends>XLineEdit</extends>
+   <extends>QWidget</extends>
    <header>datecluster.h</header>
    <container>1</container>
   </customwidget>
