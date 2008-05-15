@@ -76,14 +76,14 @@ class OPENMFGWIDGETS_EXPORT ScreenControl : public QWidget, public Ui::screenCon
 	Q_PROPERTY (QString		schemaName	READ schemaName		WRITE setSchemaName)
 	Q_PROPERTY (QString 		tableName 	READ tableName 		WRITE setTableName)
 	//Q_PROPERTY (QString 		formReportName	READ formReportName	WRITE setFormReportName)
-	//Q_PROPERTY (QString		listReportName	READ listReportName	WRITE setListReportName)
+	Q_PROPERTY (QString		listReportName	READ listReportName	WRITE setListReportName)
 	Q_PROPERTY (Modes		mode		READ mode		WRITE setMode)
 	Q_PROPERTY (SearchTypes 	searchType	READ searchType		WRITE setSearchType)
 	Q_PROPERTY (bool     		newVisible	READ newVisible		WRITE setNewVisible)
-	//Q_PROPERTY (bool     		printVisible	READ printVisible	WRITE setPrintVisible)
 	Q_PROPERTY (bool     		saveVisible	READ saveVisible	WRITE setSaveVisible)
 	//Q_PROPERTY (bool     		viewVisible	READ viewVisible	WRITE setViewVisible)
 	//Q_PROPERTY (bool			autoSave	READ autoSave	WRITE setAutoSave)
+        Q_PROPERTY (QString             sortColumn      READ sortColumn         WRITE setSortColumn)
 
 	public:
 		ScreenControl(QWidget * = 0);
@@ -102,9 +102,10 @@ class OPENMFGWIDGETS_EXPORT ScreenControl : public QWidget, public Ui::screenCon
 		SearchTypes searchType();
 	
 	        QString schemaName()      const { return _schemaName; };
+	        QString sortColumn()      const { return _sortColumn; };
 		QString tableName()   	  const { return _tableName; };
 	//	QString formReportName()  const	{ return _formReportName;    };
-	//	QString listReportName()  const	{ return _listReportName;    };
+		QString listReportName()  const	{ return _listReportName;    };
        	
 	public slots:
 		void toNext();
@@ -112,9 +113,9 @@ class OPENMFGWIDGETS_EXPORT ScreenControl : public QWidget, public Ui::screenCon
 		void newRow();
 	//	void previewForm();
 	//	void previewList();
-	//	void print();
+		void print();
 	//	void printForm();
-	//	void printList();
+		void printList();
 		void save();
 		void search();
 		void select();
@@ -122,7 +123,7 @@ class OPENMFGWIDGETS_EXPORT ScreenControl : public QWidget, public Ui::screenCon
 		void setFilter(QString p) 		{ _model.setFilter(p) ; };
 		void setMode(Modes p);
 	//	void setFormReportName(QString p) 	{ _formReportName = p ; };
-	//	void setListReportName(QString p) 	{ _listReportName = p ; };
+		void setListReportName(QString p) 	{ _listReportName = p ; _print->setVisible(! p.isEmpty()); };
 		void setNewVisible(bool p) 		{ _new->setVisible(p) ; };
 		void setSaveVisible(bool p) 		{ _save->setVisible(p) ; };
 	//	void setUndoVisible(bool p) 		{ _undo->setVisible(p) ; };
@@ -130,6 +131,8 @@ class OPENMFGWIDGETS_EXPORT ScreenControl : public QWidget, public Ui::screenCon
 	//	void setPrintVisible(bool p) 		{ _print->setVisible(p) ; };
 		void setSearchType(SearchTypes p);
 		void setSchemaName(QString p)  		{ _schemaName = p;};
+		void setSortColumn(QString p);
+
 		void setTableName(QString p)		{ _tableName = p;};
 		void setTable(QString s, QString t);
 		void setDataWidgetMapper(QSqlTableModel *p);
@@ -165,6 +168,7 @@ class OPENMFGWIDGETS_EXPORT ScreenControl : public QWidget, public Ui::screenCon
 		QString 		_formReportName;
 		QString           	_listReportName;
 		QString			_schemaName;
+                QString                 _sortColumn;
 		QString			_tableName;
 		XDataWidgetMapper	_mapper;
 };

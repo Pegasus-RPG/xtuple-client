@@ -56,7 +56,13 @@
  */
 
 #include "screencontrol.h"
+
 #include <QMessageBox>
+#include <QSqlError>
+
+#include <openreports.h>
+
+#define DEBUG true
 
 ScreenControl::ScreenControl(QWidget *parent) : 
   QWidget(parent)
@@ -65,16 +71,18 @@ ScreenControl::ScreenControl(QWidget *parent) :
   _autoSave=false;
   _searchType=Query;
   _shown=false;
+  _listReportName=QString();
+  _print->setVisible(! _listReportName.isEmpty());
   
   connect (_new,	SIGNAL(clicked()),	this,	SLOT(newRow()));
   connect (_save,       SIGNAL(clicked()),      this,   SIGNAL(saveClicked()));
   connect (_save,	SIGNAL(clicked()),	this,	SLOT(save()));
   connect (_print,	SIGNAL(clicked()),	this,	SIGNAL(printClicked()));
+  connect (_print,      SIGNAL(clicked()),      this,   SLOT(print()));
   connect (_prev,	SIGNAL(clicked()),	this,	SLOT(toPrevious()));
   connect (_next,	SIGNAL(clicked()),	this,	SLOT(toNext()));
   connect (_search,	SIGNAL(clicked()),	this,	SLOT(search()));
   
-  //_print->setVisible(FALSE);
   _view->setVisible(FALSE);
 
 }
@@ -97,12 +105,30 @@ void ScreenControl::languageChange()
 /* When the widget is first shown, set up table mappings if they exist*/
 void ScreenControl::showEvent(QShowEvent *event)
 {
+  if (DEBUG)
+    qDebug("ScreenControl::showEvent() entered with mode = %d and shown %d",
+           _mode, _shown);
   if(!_shown)
   {
     _shown = true;
     setTable(_schemaName, _tableName);
+
+    // now set the sort order
+    for (int i = 0; i < _model.columnCount(); i++)
+    { 
+      if (_model.headerData(i,Qt::Horizontal,Qt::DisplayRole).toString() == _sortColumn)
+      {
+        _model.setSort(i, Qt::AscendingOrder);
+        break;
+      }
+    }
+
+    if (_mode != New)
+      search();
   }
   QWidget::showEvent(event);
+  if (DEBUG)
+    qDebug("ScreenControl::showEvent() returning");
 }
 
 void ScreenControl::toNext()
@@ -126,8 +152,8 @@ void ScreenControl::toPrevious()
 void ScreenControl::newRow()
 {
   _mapper.submit();
-  _new->setEnabled(true);
-  _save->setEnabled(true);
+  _new->setEnabled(_mode!=View);
+  _save->setEnabled(_mode!=View);
   _view->setEnabled(true);
   _print->setEnabled(true);
   _model.insertRows(_model.rowCount(),1);
@@ -141,24 +167,42 @@ void ScreenControl::previewForm()
 void ScreenControl::previewList()
 {
 }
+*/
 
 void ScreenControl::print()
 {
+  // TODO: how do we choose between list and form print?
+  printList();
 }
 
+/*
 void ScreenControl::printForm()
 {
 }
+*/
 
 void ScreenControl::printList()
 {
+  orReport report(_listReportName);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
-*/
+
 void ScreenControl::save()
 {
   emit saving();
   _mapper.submit();
   _model.submitAll();
+  if (_model.lastError().type() != QSqlError::None)
+  {
+    QMessageBox::critical(this, tr("Error Saving %1").arg(_tableName),
+                          tr("Error saving %1 at %2::%3\n\n%4")
+                          .arg(_tableName).arg(__FILE__).arg(__LINE__)
+                          .arg(_model.lastError().databaseText()));
+    return;
+  }
   if (_mode==New)
     newRow();
   emit saved(true);
@@ -166,40 +210,43 @@ void ScreenControl::save()
 
 void ScreenControl::search()
 {
+  if (DEBUG)
+    qDebug("ScreenControl::search() entered with _searchText '%s'",
+           _searchText->text().toAscii().data());
+  QString filter;
   if (_searchText->text().stripWhiteSpace().length())
   {
-    QString filter="((true) ";
+    QStringList parts;
     for (int i = 0; i < _model.columnCount(); i++)
     { 
       if (_model.headerData(i,Qt::Horizontal,Qt::DisplayRole).toString().length())
-      {
-	filter += "AND (";
-	filter += _model.headerData(i,Qt::Horizontal,Qt::DisplayRole).toString();
-	filter += " ~ '";
-	filter += _searchText->text();
-	filter += "')";
-      }	
+        parts.append("(CAST(" +
+                     _model.headerData(i,Qt::Horizontal,Qt::DisplayRole).toString() +
+                     " AS TEXT) ~* '" + _searchText->text() + "')");
     }
-    filter += ")";
-    setFilter(filter);
+    filter=parts.join(" OR ");
   }
+  if (DEBUG)
+    qDebug("ScreenControl::search() filter = %s", filter.toAscii().data());
+  setFilter(filter);
   select();
+  if (DEBUG)
+    qDebug("ScreenControl::search() returning");
 }
 
 void ScreenControl::select()
 {
   _model.select();
+  _new->setEnabled(_mode!=View);
   if (_model.rowCount())
   {
     _mapper.toFirst();
-    _new->setEnabled(true);
-    _save->setEnabled(true);
+    _save->setEnabled(_mode!=View);
     _view->setEnabled(true);
     _next->setEnabled(_model.rowCount() > 1);
   }
   else
   {
-    _new->setEnabled(false);
     _view->setEnabled(false);
     _next->setEnabled(false);
     _prev->setEnabled(false);
@@ -217,27 +264,50 @@ void ScreenControl::setAutoSave(bool p)
 
 void ScreenControl::setMode(Modes p)
 {
+  if (DEBUG)
+    qDebug("ScreenControl::setMode(%d)", p);
+
   if (p==New)
   {
     _mode=New;
+    if (_new)  _new->setEnabled(true);
+    if (_save) _save->setEnabled(true);
     newRow();
   }
   else if (p==Edit)
   {
     _mode=Edit;
+    if (_new)  _new->setEnabled(true);
+    if (_save) _save->setEnabled(true);
   }
   else
   {
     _mode=View;
-    //to do: loop through each field, see if the is a widget     _mapper.mappedWidgetAt(int)  and disable
+    if (_new)  _new->setEnabled(false);
+    if (_save) _save->setEnabled(false);
   }
-    
+
+  if (DEBUG)
+    qDebug("ScreenControl::setMode() about to enable/disable widgets ");
+
+  for (int i = 0; _mapper.model() && i < _mapper.model()->columnCount(); i++)
+    if (_mapper.mappedWidgetAt(i))
+      _mapper.mappedWidgetAt(i)->setEnabled(_mode != View);
+
+  if (DEBUG)
+    qDebug("ScreenControl::setMode() returning");
 }
 
 void ScreenControl::setSearchType(SearchTypes p)
 {
   _searchType=p;
   //to do: set button to change label between list and query
+}
+
+void ScreenControl::setSortColumn(QString p)
+{
+  _sortColumn = p;
+  // _model.setSort is called in setVisible
 }
 
 /* Pass in a schema name and a table name.  If schema name is blank, it will be ignored.
@@ -270,8 +340,3 @@ void ScreenControl::setDataWidgetMapper(QSqlTableModel *p)
   _mapper.setSqlTableModel(p);
   emit newDataWidgetMapper(&_mapper);
 }
-
-
-
-
-
