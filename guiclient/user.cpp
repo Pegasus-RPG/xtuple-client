@@ -117,7 +117,6 @@ user::user(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   
   if (!_metrics->boolean("Routings"))
   {
-    _shift->hide();
     _woTimeClockOnly->setChecked(FALSE);
     _woTimeClockOnly->hide();
   }
@@ -251,12 +250,12 @@ void user::sSave()
     q.prepare( "INSERT INTO usr "
                "( usr_username, usr_propername,"
                "  usr_email, usr_initials, usr_locale_id,"
-               "  usr_agent, usr_active, usr_dept_id, usr_shift_id,"
+               "  usr_agent, usr_active,"
 	       "  usr_window ) "
                "VALUES "
                "( :usr_username, :usr_propername,"
                "  :usr_email, :usr_initials, :usr_locale_id,"
-               "  :usr_agent, :usr_active, :usr_dept_id, :usr_shift_id,"
+               "  :usr_agent, :usr_active,"
 	       "  :usr_window );" );
   }
   else if (_mode == cEdit)
@@ -291,7 +290,6 @@ void user::sSave()
                "SET usr_propername=:usr_propername, usr_initials=:usr_initials,"
 	       "    usr_email=:usr_email, usr_locale_id=:usr_locale_id,"
 	       "    usr_agent=:usr_agent, usr_active=:usr_active,"
-	       "    usr_dept_id=:usr_dept_id, usr_shift_id=:usr_shift_id,"
 	       "    usr_window=:usr_window "
                "WHERE (usr_username=:usr_username);" );
   }
@@ -305,10 +303,6 @@ void user::sSave()
   q.bindValue(":usr_active", QVariant(_active->isChecked(), 0));
   // keep synchronized with the select below, GUIClient, and main
   q.bindValue(":usr_window", _woTimeClockOnly->isChecked() ? "woTimeClock" : "");
-  if (_dept->id() != -1)
-    q.bindValue(":usr_dept_id", _dept->id());
-  if (_shift->id() != -1)
-    q.bindValue(":usr_shift_id", _shift->id());
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
   {
@@ -534,8 +528,6 @@ void user::populate()
     //_verify->setText(q.value("usr_passwd"));
     _locale->setId(q.value("usr_locale_id").toInt());
     _agent->setChecked(q.value("usr_agent").toBool());
-    _dept->setId(q.value("usr_dept_id").toInt());
-    _shift->setId(q.value("usr_shift_id").toInt());
     _createUsers->setChecked(q.value("createusers").toBool());
     _createUsers->setEnabled(q.value("enablecreateusers").toBool());
     // keep synchronized with the insert/update above, GUIClient, and main

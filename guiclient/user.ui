@@ -306,26 +306,6 @@
               </property>
              </spacer>
             </item>
-            <item>
-             <widget class="DeptCluster" name="_dept" >
-              <property name="focusPolicy" >
-               <enum>Qt::StrongFocus</enum>
-              </property>
-              <property name="label" >
-               <string>Dept.:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="ShiftCluster" name="_shift" >
-              <property name="focusPolicy" >
-               <enum>Qt::StrongFocus</enum>
-              </property>
-              <property name="label" >
-               <string>Shift:</string>
-              </property>
-             </widget>
-            </item>
            </layout>
           </item>
           <item>
@@ -1059,16 +1039,6 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>DeptCluster</class>
-   <extends>QWidget</extends>
-   <header>deptcluster.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ShiftCluster</class>
-   <extends>QWidget</extends>
-   <header>shiftcluster.h</header>
-  </customwidget>
-  <customwidget>
    <class>XComboBox</class>
    <extends>QComboBox</extends>
    <header>xcombobox.h</header>
@@ -1092,8 +1062,6 @@
   <tabstop>_email</tabstop>
   <tabstop>_passwd</tabstop>
   <tabstop>_verify</tabstop>
-  <tabstop>_dept</tabstop>
-  <tabstop>_shift</tabstop>
   <tabstop>_agent</tabstop>
   <tabstop>_createUsers</tabstop>
   <tabstop>_exportContents</tabstop>
