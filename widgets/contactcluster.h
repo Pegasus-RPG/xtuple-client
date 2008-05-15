@@ -231,13 +231,17 @@ class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
 	inline virtual void setExtraClause(const QString&) { };
 	inline virtual void setAddress(const int p)     { _address->setId(p); };
 	inline virtual void setDescription(const QString&) { };
+        inline virtual void setEmailAddress(const QString& p) { _email->setText(p); };
+	inline virtual void setFax(const QString& p)	{ _fax->setText(p); };
 	inline virtual void setFirst(const QString& p)	{ _first->setText(p); };
 	inline virtual void setHonorific(const QString& p) { _honorific->setEditText(p); };
 	inline virtual void setLabel(const QString& p)  { _label->setText(p); _label->setHidden(_label->text().isEmpty()); };
 	inline virtual void setLast(const QString& p)	{ _last->setText(p); };
 	inline virtual void setNotes(const QString& p)  { _notes = p; };
 	inline virtual void setPhone(const QString& p)	{ _phone->setText(p); };
+	inline virtual void setPhone2(const QString& p)	{ _phone2->setText(p); };
 	inline virtual void setTitle(const QString& p)	{ _title->setText(p); };
+        inline virtual void setWebAddress(const QString& p) { _webaddr->setText(p); };
 
 	virtual void	clear();
 	virtual void	check();
