@@ -292,6 +292,8 @@ void searchForItem::sFillList()
                "            WHEN (item_type='T') THEN :tooling"
                "            WHEN (item_type='A') THEN :assortment"
                "            WHEN (item_type='O') THEN :outside"
+               "            WHEN (item_type='J') THEN :job"
+               "            WHEN (item_type='L') THEN :planning"
                "            ELSE :error"
                "       END AS type "
                "FROM item "
@@ -317,6 +319,8 @@ void searchForItem::sFillList()
   q.bindValue(":tooling", tr("Tooling"));
   q.bindValue(":outside", tr("Outside Process"));
   q.bindValue(":assortment", tr("Assortment"));
+  q.bindValue(":job", tr("Job"));
+  q.bindValue(":planning", tr("Planning"));
   q.bindValue(":error", tr("Error"));
   q.bindValue(":useNumber", QVariant(_searchNumber->isChecked(), 0));
   q.bindValue(":useDescrip1", QVariant(_searchDescrip1->isChecked(), 0));
