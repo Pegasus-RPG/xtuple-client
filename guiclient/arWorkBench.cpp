@@ -104,9 +104,9 @@ arWorkBench::arWorkBench(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_preauth, SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*)),
           this, SLOT(sPopulatePreauthMenu(QMenu*)));
 
-  _cashrcpt->addColumn(tr("Dist. Date"), _dateColumn,     Qt::AlignCenter );
-  _cashrcpt->addColumn(tr("Amount"),     _bigMoneyColumn, Qt::AlignRight  );
-  _cashrcpt->addColumn(tr("Currency"),   _currencyColumn, Qt::AlignLeft   );
+  _cashrcpt->addColumn(tr("Dist. Date"), _dateColumn,     Qt::AlignCenter,true, "cashrcpt_distdate");
+  _cashrcpt->addColumn(tr("Amount"),     _bigMoneyColumn, Qt::AlignRight, true, "cashrcpt_amount");
+  _cashrcpt->addColumn(tr("Currency"),   _currencyColumn, Qt::AlignLeft,  true, "currabbr");
   if (_privileges->check("MaintainCashReceipts"))
   {
     connect(_cashrcpt, SIGNAL(valid(bool)), _editCashrcpt, SLOT(setEnabled(bool)));
@@ -122,26 +122,26 @@ arWorkBench::arWorkBench(QWidget* parent, const char* name, Qt::WFlags fl)
     connect(_cashrcpt, SIGNAL(itemSelected(int)), _editCashrcpt, SLOT(animateClick()));
   connect(omfgThis, SIGNAL(cashReceiptsUpdated(int, bool)), this, SLOT(sFillList()));
                                                                        
-  _aropenCM->addColumn( tr("Type"),     _ynColumn,    Qt::AlignCenter );
-  _aropenCM->addColumn( tr("Doc. #"),   _itemColumn,  Qt::AlignCenter );
-  _aropenCM->addColumn( tr("Amount"),   _moneyColumn, Qt::AlignRight  );
-  _aropenCM->addColumn( tr("Applied"),  _moneyColumn, Qt::AlignRight  );
-  _aropenCM->addColumn( tr("Balance"),  _moneyColumn, Qt::AlignRight  );
-  _aropenCM->addColumn( tr("Currency"), _currencyColumn, Qt::AlignLeft );
+  _aropenCM->addColumn( tr("Type"),          _ynColumn, Qt::AlignCenter,true, "doctype");
+  _aropenCM->addColumn( tr("Doc. #"),      _itemColumn, Qt::AlignCenter,true, "aropen_docnumber");
+  _aropenCM->addColumn( tr("Amount"),     _moneyColumn, Qt::AlignRight, true, "aropen_amount");
+  _aropenCM->addColumn( tr("Applied"),    _moneyColumn, Qt::AlignRight, true, "applied");
+  _aropenCM->addColumn( tr("Balance"),    _moneyColumn, Qt::AlignRight, true, "balance");
+  _aropenCM->addColumn( tr("Currency"),_currencyColumn, Qt::AlignLeft,  true, "currabbr");
   
-  _aropen->addColumn(tr("Doc. Type"), -1,              Qt::AlignCenter );
-  _aropen->addColumn(tr("Doc. #"),    _orderColumn,    Qt::AlignRight  );
-  _aropen->addColumn(tr("Order #"),   _orderColumn,    Qt::AlignRight  );
-  _aropen->addColumn(tr("Doc. Date"), _dateColumn,     Qt::AlignCenter );
-  _aropen->addColumn(tr("Due Date"),  _dateColumn,     Qt::AlignCenter );
-  _aropen->addColumn(tr("Amount"),    _bigMoneyColumn, Qt::AlignRight  );
-  _aropen->addColumn(tr("Paid"),      _bigMoneyColumn, Qt::AlignRight  );
-  _aropen->addColumn(tr("Balance"),   _bigMoneyColumn, Qt::AlignRight  );
-  _aropen->addColumn( tr("Currency"), _currencyColumn, Qt::AlignLeft   );
+  _aropen->addColumn(tr("Doc. Type"),            -1, Qt::AlignCenter,true, "doctype");
+  _aropen->addColumn(tr("Doc. #"),     _orderColumn, Qt::AlignRight, true, "aropen_docnumber");
+  _aropen->addColumn(tr("Order #"),    _orderColumn, Qt::AlignRight, true, "aropen_ordernumber");
+  _aropen->addColumn(tr("Doc. Date"),   _dateColumn, Qt::AlignCenter,true, "aropen_docdate");
+  _aropen->addColumn(tr("Due Date"),    _dateColumn, Qt::AlignCenter,true, "aropen_duedate");
+  _aropen->addColumn(tr("Amount"),  _bigMoneyColumn, Qt::AlignRight, true, "aropen_amount");
+  _aropen->addColumn(tr("Paid"),    _bigMoneyColumn, Qt::AlignRight, true, "aropen_paid");
+  _aropen->addColumn(tr("Balance"), _bigMoneyColumn, Qt::AlignRight, true, "balance");
+  _aropen->addColumn(tr("Currency"),_currencyColumn, Qt::AlignLeft,  true, "currabbr");
   
-  _preauth->addColumn(tr("Order-Seq."),  150, Qt::AlignRight  );
-  _preauth->addColumn(tr("Amount"),   _bigMoneyColumn, Qt::AlignRight  );
-  _preauth->addColumn(tr("Currency"), _currencyColumn, Qt::AlignLeft   );
+  _preauth->addColumn(tr("Order-Seq."),          150, Qt::AlignRight, true, "ordnum" );
+  _preauth->addColumn(tr("Amount"),  _bigMoneyColumn, Qt::AlignRight, true, "ccpay_amount");
+  _preauth->addColumn(tr("Currency"),_currencyColumn, Qt::AlignLeft,  true, "currabbr");
 
   if(_privileges->check("EditAROpenItem"))
   {
@@ -233,14 +233,13 @@ void arWorkBench::sFillAropenList()
              "       CASE WHEN (aropen_doctype='D') THEN :debitMemo"
              "            WHEN (aropen_doctype='I') THEN :invoice"
              "            ELSE :other"
-             "       END AS f_doctype,"
-             "       aropen_docnumber, aropen_ordernumber,"
-             "       formatDate(aropen_docdate) AS f_docdate,"
-             "       formatDate(aropen_duedate) AS f_duedate,"
-             "       formatMoney(aropen_amount) AS f_amount,"
-             "       formatMoney(aropen_paid) AS f_paid,"
-             "       formatMoney(aropen_amount - aropen_paid) AS balance,"
-             "       currConcat(aropen_curr_id) AS currAbbr "
+             "       END AS doctype,"
+             "       *, "
+             "       aropen_amount - aropen_paid AS balance,"
+             "       currConcat(aropen_curr_id) AS currabbr,"
+             "       'curr' AS aropen_amount_xtnumericrole,"
+             "       'curr' AS aropen_paid_xtnumericrole,"
+             "       'curr' AS balance_xtnumericrole "
              "FROM aropen "
              "WHERE ( (aropen_open)"
              " AND (NOT (aropen_doctype IN ('C', 'R'))) "
@@ -251,7 +250,6 @@ void arWorkBench::sFillAropenList()
   q.bindValue(":invoice", tr("Invoice"));
   q.bindValue(":other", tr("Other"));
   q.exec();
-  _aropen->clear();
   _aropen->populate(q, true);
   
   q.prepare("SELECT SUM(CASE WHEN (aropen_doctype IN ('C', 'R')) THEN"
@@ -316,14 +314,16 @@ void arWorkBench::sFillAropenCMList()
              "       CASE WHEN(aropen_doctype='C') THEN :creditmemo"
              "            WHEN(aropen_doctype='R') THEN :cashdeposit"
              "            ELSE aropen_doctype"
-             "       END,"
+             "       END AS doctype,"
              "       aropen_docnumber,"
-             "       formatMoney(aropen_amount),"
-             "       formatMoney(aropen_paid + COALESCE(prepared,0.0)),"
-             "       formatMoney(aropen_amount - aropen_paid - COALESCE(prepared,0.0)),"
-             "       currConcat(aropen_curr_id) "
+             "       aropen_amount, 'curr' AS aropen_amount_xtnumericrole,"
+             "       (aropen_paid + COALESCE(prepared,0.0)) AS applied,"
+             "       'curr' AS applied_xtnumericrole,"
+             "       (aropen_amount - aropen_paid - COALESCE(prepared,0.0)) AS balance,"
+             "       'curr' AS balance_xtnumericrole,"
+             "       currConcat(aropen_curr_id) AS currabbr "
              "FROM aropen "
- 	         "       LEFT OUTER JOIN (SELECT aropen_id AS prepared_aropen_id,"
+             "       LEFT OUTER JOIN (SELECT aropen_id AS prepared_aropen_id,"
              "                               SUM(currToCurr(checkitem_curr_id, aropen_curr_id, checkitem_amount + checkitem_discount, checkitem_docdate)) AS prepared"
              "                          FROM checkhead JOIN checkitem ON (checkitem_checkhead_id=checkhead_id)"
              "                                     JOIN aropen ON (checkitem_aropen_id=aropen_id)"
@@ -340,7 +340,6 @@ void arWorkBench::sFillAropenCMList()
   q.bindValue(":creditmemo", tr("C/M"));
   q.bindValue(":cashdeposit", tr("C/D"));
   q.exec();
-  _aropenCM->clear();
   _aropenCM->populate(q, true);
 }
 
@@ -454,14 +453,14 @@ void arWorkBench::sApplyAropenCM()
 
 void arWorkBench::sFillCashrcptList()
 {
-  q.prepare("SELECT cashrcpt_id, formatDate(cashrcpt_distdate),"
-            "       formatMoney(cashrcpt_amount), currConcat(cashrcpt_curr_id) "
+  q.prepare("SELECT cashrcpt_id, cashrcpt_distdate,"
+            "       cashrcpt_amount, currConcat(cashrcpt_curr_id) AS currabbr,"
+            "       'curr' AS cashrcpt_amount_xtnumericrole "
             "FROM cashrcpt "
             "WHERE (cashrcpt_cust_id=:cust_id) "
             "ORDER BY cashrcpt_distdate;" );
   q.bindValue(":cust_id", _cust->id());
   q.exec();
-  _cashrcpt->clear();
   _cashrcpt->populate(q);
 }
 
@@ -561,9 +560,9 @@ void arWorkBench::sFillPreauthList()
   if(ccValidDays < 1)
     ccValidDays = 7;
   q.prepare("SELECT ccpay_id,"
-            " TEXT(ccpay_order_number) || '-' || TEXT(ccpay_order_number_seq) as ordnum, "
-            "        formatMoney(ccpay_amount) AS f_amount,"
-            "        currConcat(ccpay_curr_id) AS currAbbr "
+            " TEXT(ccpay_order_number) || '-' || TEXT(ccpay_order_number_seq) AS ordnum, "
+            "        ccpay_amount, 'curr' AS ccpay_amount_xtnumericrole,"
+            "        currConcat(ccpay_curr_id) AS currabbr "
             "FROM ccpay "
             " WHERE ( (ccpay_status = 'A')"
             "   AND   (date_part('day', CURRENT_TIMESTAMP - ccpay_transaction_datetime) < :ccValidDays)"
@@ -572,9 +571,12 @@ void arWorkBench::sFillPreauthList()
   q.bindValue(":cust_id", _cust->id());
   q.bindValue(":ccValidDays", ccValidDays);
   q.exec();
-  _preauth->clear();
   _preauth->populate(q);
-  
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void arWorkBench::sgetCCAmount()
