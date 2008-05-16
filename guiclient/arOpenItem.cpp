@@ -57,20 +57,12 @@
 
 #include "arOpenItem.h"
 
-#include <QVariant>
 #include <QMessageBox>
-#include <QValidator>
 #include <QSqlError>
+#include <QVariant>
 
 #include "storedProcErrorLookup.h"
 
-/*
- *  Constructs a arOpenItem as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 arOpenItem::arOpenItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
@@ -82,14 +74,14 @@ arOpenItem::arOpenItem(QWidget* parent, const char* name, bool modal, Qt::WFlags
 
   _last = -1;
 
-  _arapply->addColumn( tr("Type"),         _dateColumn,  Qt::AlignCenter );
-  _arapply->addColumn( tr("Doc. #"),       -1,           Qt::AlignLeft   );
-  _arapply->addColumn( tr("Apply Date"),   _dateColumn,  Qt::AlignCenter );
-  _arapply->addColumn( tr("Amount"),       _moneyColumn, Qt::AlignRight );
-  _arapply->addColumn( tr("Currency"),     _currencyColumn, Qt::AlignLeft );
+  _arapply->addColumn(tr("Type"),        _dateColumn, Qt::AlignCenter,true, "doctype");
+  _arapply->addColumn(tr("Doc. #"),               -1, Qt::AlignLeft,  true, "docnumber");
+  _arapply->addColumn(tr("Apply Date"),  _dateColumn, Qt::AlignCenter,true, "arapply_postdate");
+  _arapply->addColumn(tr("Amount"),     _moneyColumn, Qt::AlignRight, true, "arapply_applied");
+  _arapply->addColumn(tr("Currency"),_currencyColumn, Qt::AlignLeft,  true, "currabbr");
 
   if (omfgThis->singleCurrency())
-      _arapply->hideColumn(4);
+      _arapply->hideColumn("currabbr");
 
   _terms->setType(XComboBox::ARTerms);
   _salesrep->setType(XComboBox::SalesReps);
@@ -495,14 +487,14 @@ void arOpenItem::populate()
                  "            WHEN (arapply_fundstype='K') THEN :cash"
                  "            WHEN (arapply_fundstype='W') THEN :wireTransfer"
                  "            WHEN (arapply_fundstype='O') THEN :other"
-                 "       END AS documenttype,"
+                 "       END AS doctype,"
                  "       CASE WHEN (arapply_source_doctype IN ('C','R')) THEN arapply_source_docnumber"
                  "            WHEN (arapply_source_doctype = 'K') THEN arapply_refnumber"
                  "            ELSE :other"
                  "       END AS docnumber,"
-                 "       formatDate(arapply_postdate) AS f_applydate,"
-                 "       formatMoney(arapply_applied) AS f_amount, "
-		 "       currConcat(arapply_curr_id) "
+                 "       arapply_postdate, arapply_applied, "
+		 "       currConcat(arapply_curr_id) AS currabbr,"
+                 "       'curr' AS arapply_applied_xtnumericrole "
                  "FROM arapply "
                  "WHERE (arapply_target_aropen_id=:aropen_id) "
                  "ORDER BY arapply_postdate;" );
@@ -527,11 +519,11 @@ void arOpenItem::populate()
                  "            WHEN (arapply_target_doctype = 'D') THEN :debitMemo"
                  "            WHEN (arapply_target_doctype = 'K') THEN :apcheck"
                  "            ELSE :other"
-                 "       END AS documenttype,"
-                 "       arapply_target_docnumber,"
-                 "       formatDate(arapply_postdate) AS f_applydate,"
-                 "       formatMoney(arapply_applied) AS f_amount, "
-		         "       currConcat(arapply_curr_id) "
+                 "       END AS doctype,"
+                 "       arapply_target_docnumber AS docnumber,"
+                 "       arapply_postdate, arapply_applied,"
+                 "       currConcat(arapply_curr_id) AS currabbr,"
+                 "       'curr' AS arapply_applied_xtnumericrole "
                  "FROM arapply "
                  "WHERE (arapply_source_aropen_id=:aropen_id) "
                  "ORDER BY arapply_postdate;" );
@@ -544,9 +536,9 @@ void arOpenItem::populate()
     q.bindValue(":error", tr("Error"));
     q.bindValue(":aropen_id", _aropenid);
     q.exec();
+    _arapply->populate(q, TRUE);
     if (q.lastError().type() != QSqlError::NoError)
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    _arapply->populate(q, TRUE);
   }
   else if (q.lastError().type() != QSqlError::None)
   {
