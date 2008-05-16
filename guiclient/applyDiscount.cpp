@@ -57,47 +57,25 @@
 
 #include "applyDiscount.h"
 
-#include <QVariant>
 #include <QMessageBox>
-#include <QVariant>
 #include <QSqlError>
+#include <QVariant>
 
-/*
- *  Constructs a applyDiscount as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 applyDiscount::applyDiscount(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
-
-  // signals and slots connections
-  connect(_cancel, SIGNAL(clicked()), this, SLOT(reject()));
   connect(_apply, SIGNAL(clicked()), this, SLOT(sApply()));
-  connect(_amount, SIGNAL(idChanged(int)), _owed, SLOT(setId(int)));
-  connect(_amount, SIGNAL(effectiveChanged(const QDate&)), _owed, SLOT(setEffective(const QDate&)));
-  connect(_amount, SIGNAL(idChanged(int)), _applieddiscounts, SLOT(setId(int)));
-  connect(_amount, SIGNAL(effectiveChanged(const QDate&)), _applieddiscounts, SLOT(setEffective(const QDate&)));
 
   _apopenid = -1;
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 applyDiscount::~applyDiscount()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void applyDiscount::languageChange()
 {
   retranslateUi(this);
@@ -140,13 +118,14 @@ void applyDiscount::populate()
             "            ELSE apopen_doctype"
             "       END AS f_doctype,"
             "       apopen_docnumber,"
-            "       formatDate(apopen_docdate) AS f_docdate,"
 	    "       apopen_docdate, "
             "       (terms_code|| '-' || terms_descrip) AS f_terms,"
-            "       formatDate(apopen_docdate + terms_discdays) AS f_discdate,"
-            "       formatPrcnt(terms_discprcnt) AS f_discprcnt,"
+            "       (apopen_docdate + terms_discdays) AS discdate,"
+            "       terms_discprcnt,"
             "       apopen_amount, apopen_curr_id, applied, "
-            "       noNeg(apopen_amount * CASE WHEN (CURRENT_DATE <= (apopen_docdate + terms_discdays)) THEN terms_discprcnt ELSE 0.0 END - applied) AS f_amount,"
+            "       noNeg(apopen_amount *"
+            "             CASE WHEN (CURRENT_DATE <= (apopen_docdate + terms_discdays)) THEN terms_discprcnt"
+            "             ELSE 0.0 END - applied) AS amount,"
             "       ((apopen_docdate + terms_discdays) < CURRENT_DATE) AS past"
             "  FROM apopen LEFT OUTER JOIN terms ON (apopen_terms_id=terms_id),"
 	    "       vend, "
@@ -166,18 +145,18 @@ void applyDiscount::populate()
 
     _doctype->setText(q.value("f_doctype").toString());
     _docnum->setText(q.value("apopen_docnumber").toString());
-    _docdate->setText(q.value("f_docdate").toString());
+    _docdate->setDate(q.value("apopen_docdate").toDate());
 
     _terms->setText(q.value("f_terms").toString());
-    _discdate->setText(q.value("f_discdate").toString());
+    _discdate->setDate(q.value("discdate").toDate());
     if(q.value("past").toBool())
       _discdate->setPaletteForegroundColor(QColor("red"));
-    _discprcnt->setText(q.value("f_discprcnt").toString());
+    _discprcnt->setText(formatPercent(q.value("terms_discprcnt").toDouble()));
 
     _owed->setLocalValue(q.value("apopen_amount").toDouble());
     _applieddiscounts->setLocalValue(q.value("applied").toDouble());
 
-    _amount->set(q.value("f_amount").toDouble(),
+    _amount->set(q.value("amount").toDouble(),
 		 q.value("apopen_curr_id").toInt(), 
 		 q.value("apopen_docdate").toDate(), false);
   }
