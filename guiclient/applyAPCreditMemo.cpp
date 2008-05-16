@@ -60,71 +60,50 @@
 #include <QVariant>
 #include <QMessageBox>
 #include <QSqlError>
-#include "apCreditMemoApplication.h"
 
-/*
- *  Constructs a applyAPCreditMemo as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
+#include "apCreditMemoApplication.h"
+#include "storedProcErrorLookup.h"
+
 applyAPCreditMemo::applyAPCreditMemo(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
-
-  // signals and slots connections
-  connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
-  connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
-  connect(_apopen, SIGNAL(valid(bool)), _apply, SLOT(setEnabled(bool)));
-  connect(_apopen, SIGNAL(valid(bool)), _clear, SLOT(setEnabled(bool)));
+  connect(_apply,          SIGNAL(clicked()), this, SLOT(sApply()));
   connect(_applyToBalance, SIGNAL(clicked()), this, SLOT(sApplyBalance()));
-  connect(_apply, SIGNAL(clicked()), this, SLOT(sApply()));
-  connect(_clear, SIGNAL(clicked()), this, SLOT(sClear()));
-  connect(_docDate, SIGNAL(newDate(const QDate&)), _available, SLOT(setEffective(const QDate&)));
-  connect(_available, SIGNAL(idChanged(int)), _applied, SLOT(setId(int)));
-  connect(_available, SIGNAL(idChanged(int)), _balance, SLOT(setId(int)));
-  connect(_available, SIGNAL(effectiveChanged(const QDate&)), _applied, SLOT(setEffective(const QDate&)));
-  connect(_available, SIGNAL(effectiveChanged(const QDate&)), _balance, SLOT(setEffective(const QDate&)));
   connect(_available, SIGNAL(idChanged(int)), this, SLOT(sPriceGroup()));
+  connect(_clear,          SIGNAL(clicked()), this, SLOT(sClear()));
+  connect(_close,          SIGNAL(clicked()), this, SLOT(sClose()));
+  connect(_post,           SIGNAL(clicked()), this, SLOT(sPost()));
 
   _captive = FALSE;
 
-  _apopen->addColumn(tr("Doc. Type"),   _docTypeColumn,  Qt::AlignCenter );
-  _apopen->addColumn(tr("Doc. Number"), -1,              Qt::AlignCenter );
-  _apopen->addColumn(tr("Doc. Date"),   _dateColumn,     Qt::AlignCenter );
-  _apopen->addColumn(tr("Due Date"),    _dateColumn,     Qt::AlignCenter );
-  _apopen->addColumn(tr("Open"),        _moneyColumn,    Qt::AlignRight  );
-  _apopen->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft   );
-  _apopen->addColumn(tr("Applied"),     _moneyColumn,    Qt::AlignRight  );
-  _apopen->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft   );
+  _apopen->addColumn(tr("Doc. Type"),   _docTypeColumn,  Qt::AlignCenter,true, "doctype");
+  _apopen->addColumn(tr("Doc. Number"), -1,              Qt::AlignCenter,true, "apopen_docnumber");
+  _apopen->addColumn(tr("Doc. Date"),   _dateColumn,     Qt::AlignCenter,true, "apopen_docdate");
+  _apopen->addColumn(tr("Due Date"),    _dateColumn,     Qt::AlignCenter,true, "apopen_duedate");
+  _apopen->addColumn(tr("Open"),        _moneyColumn,    Qt::AlignRight, true, "openamount");
+  _apopen->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft,  true, "opencurrabbr");
+  _apopen->addColumn(tr("Applied"),     _moneyColumn,    Qt::AlignRight, true, "apcreditapply_amount");
+  _apopen->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft,  true, "appliedcurrabbr");
   if (omfgThis->singleCurrency())
   {
-    _apopen->hideColumn(5);
-    _apopen->hideColumn(7);
+    _apopen->hideColumn("opencurrabbr");
+    _apopen->hideColumn("appliedcurrabbr");
   }
 
   _vend->setReadOnly(TRUE);
   sPriceGroup();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 applyAPCreditMemo::~applyAPCreditMemo()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void applyAPCreditMemo::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 enum SetResponse applyAPCreditMemo::set(const ParameterList &pParams)
@@ -157,37 +136,12 @@ void applyAPCreditMemo::sPost()
   q.exec();
   if (q.first())
   {
-    QString msg;
-    switch (q.value("result").toInt())
-    {
-      case -1:
-      case -2:
-        msg = tr("There are no A/P Credit Memo applications to post.");
-	break;
-
-      case -3:
-        msg = tr( "The total value of the applications that are you attempting to post is greater\n"
-		   "than the value of the A/P Credit Memo itself." );
-        break;
-
-      case -4:
-	msg = tr("At least one A/P Credit Memo application cannot be posted\n"
-		 "because there is no current exchange rate for its currency.");
-	break;
-
-      case -5:
-	msg = tr("The A/P Credit Memo to apply was not found.");
-	break;
-
-      case -6:
-	msg = tr("The amount to apply for this A/P Credit Memo is NULL.");
-	break;
-    }
-    if (!msg.isEmpty())
+    int result = q.value("result").toInt();
+    if (result < 0)
     {
       q.exec("ROLLBACK;");
-      QMessageBox::critical(this, tr("Cannot Post A/P Credit Memo Applications"),
-			     msg);
+      systemError(this, storedProcErrorLookup("postAPCreditMemoApplication",
+                                              result), __FILE__, __LINE__);
       return;
     }
   }
@@ -211,11 +165,24 @@ void applyAPCreditMemo::sPost()
 
 void applyAPCreditMemo::sApplyBalance()
 {
-  q.prepare("SELECT applyAPCreditMemoToBalance(:apopen_id)");
+  q.prepare("SELECT applyAPCreditMemoToBalance(:apopen_id) AS result;");
   q.bindValue(":apopen_id", _apopenid);
   q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  if (q.first())
+  {
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("applyAPCreditMemoToBalance",
+                                              result), __FILE__, __LINE__);
+      return;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   populate();
 }
@@ -294,12 +261,14 @@ void applyAPCreditMemo::populate()
              "            WHEN (apopen_doctype='D') THEN :debitMemo"
              "       END AS doctype,"
              "       apopen_docnumber,"
-             "       formatDate(apopen_docdate),"
-             "       formatDate(apopen_duedate),"
-             "       formatMoney(apopen_amount - apopen_paid - COALESCE(selected,0.0) - COALESCE(prepared,0.0)),"
-	     "       currConcat(apopen_curr_id), "
-             "       formatMoney(apcreditapply_amount), "
-	     "       currConcat(apcreditapply_curr_id) "
+             "       apopen_docdate, apopen_duedate,"
+             "       (apopen_amount - apopen_paid - COALESCE(selected,0.0) -"
+             "          COALESCE(prepared,0.0)) AS openamount,"
+	     "       currConcat(apopen_curr_id) AS opencurrabbr, "
+             "       apcreditapply_amount, "
+	     "       currConcat(apcreditapply_curr_id) AS appliedcurrabbr,"
+             "       'curr' AS openamount_xtnumericrole,"
+             "       'curr' AS apcreditapply_amount_xtnumericrole"
              "  FROM apopen LEFT OUTER JOIN apcreditapply "
              "         ON ( (apcreditapply_source_apopen_id=:parentApopenid) AND (apcreditapply_target_apopen_id=apopen_id) ) "
              "       LEFT OUTER JOIN (SELECT apopen_id AS selected_apopen_id,"
@@ -325,11 +294,9 @@ void applyAPCreditMemo::populate()
   q.bindValue(":voucher", tr("Voucher"));
   q.bindValue(":debitMemo", tr("D/M"));
   q.exec();
-  if (q.first())
-      _apopen->populate(q);
-  else if (q.lastError().type() != QSqlError::NoError)
+  _apopen->populate(q);
+  if (q.lastError().type() != QSqlError::NoError)
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-
 }
 
 void applyAPCreditMemo::sPriceGroup()
@@ -337,4 +304,3 @@ void applyAPCreditMemo::sPriceGroup()
   if (! omfgThis->singleCurrency())
     _priceGroup->setTitle(tr("In %1:").arg(_available->currAbbr()));
 }
-
