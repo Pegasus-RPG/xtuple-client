@@ -115,12 +115,15 @@ cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_received, SIGNAL(effectiveChanged(const QDate&)), this, SLOT(sFillApplyList()));
   connect(_received, SIGNAL(effectiveChanged(const QDate&)), this, SLOT(sFillMiscList()));
   connect(_received, SIGNAL(idChanged(int)), this, SLOT(sChangeCurrency(int)));
-  connect(_newCC, SIGNAL(clicked()), this, SLOT(sNewCreditCard()));
-  connect(_editCC, SIGNAL(clicked()), this, SLOT(sEditCreditCard()));
-  connect(_viewCC, SIGNAL(clicked()), this, SLOT(sViewCreditCard()));
-  connect(_upCC, SIGNAL(clicked()), this, SLOT(sMoveUp()));
-  connect(_downCC, SIGNAL(clicked()), this, SLOT(sMoveDown()));
-  connect(_fundsType, SIGNAL(activated(int)), this, SLOT(setCreditCard()));
+  if (_metrics->boolean("CCAccept"))
+  {
+    connect(_newCC, SIGNAL(clicked()), this, SLOT(sNewCreditCard()));
+    connect(_editCC, SIGNAL(clicked()), this, SLOT(sEditCreditCard()));
+    connect(_viewCC, SIGNAL(clicked()), this, SLOT(sViewCreditCard()));
+    connect(_upCC, SIGNAL(clicked()), this, SLOT(sMoveUp()));
+    connect(_downCC, SIGNAL(clicked()), this, SLOT(sMoveDown()));
+    connect(_fundsType, SIGNAL(activated(int)), this, SLOT(setCreditCard()));
+  }
 
   QButtonGroup * bg = new QButtonGroup(this);
   bg->addButton(_balCreditMemo);
@@ -135,28 +138,28 @@ cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
   _bankaccnt->setType(XComboBox::ARBankAccounts);
   _salescat->setType(XComboBox::SalesCategories);
 
-  _aropen->addColumn(tr("Doc. Type"), -1,              Qt::AlignCenter );
-  _aropen->addColumn(tr("Doc. #"),    _orderColumn,    Qt::AlignCenter );
-  _aropen->addColumn(tr("Ord. #"),    _orderColumn,    Qt::AlignCenter );
-  _aropen->addColumn(tr("Doc. Date"), _dateColumn,     Qt::AlignCenter );
-  _aropen->addColumn(tr("Due Date"),  _dateColumn,     Qt::AlignCenter );
-  _aropen->addColumn(tr("Open"),      _bigMoneyColumn, Qt::AlignRight  );
-  _aropen->addColumn(tr("Currency"),  _currencyColumn, Qt::AlignLeft,  !omfgThis->singleCurrency());
-  _aropen->addColumn(tr("Applied"),   _bigMoneyColumn, Qt::AlignRight  );
-  _aropen->addColumn(tr("Currency"),  _currencyColumn, Qt::AlignLeft,  !omfgThis->singleCurrency());
-  _aropen->addColumn(tr("All Pending"),_moneyColumn,   Qt::AlignRight  );
-  _aropen->addColumn(tr("Currency"),  _currencyColumn, Qt::AlignLeft,  !omfgThis->singleCurrency());
+  _aropen->addColumn(tr("Doc. Type"), -1,              Qt::AlignCenter, true, "doctype");
+  _aropen->addColumn(tr("Doc. #"),    _orderColumn,    Qt::AlignCenter, true, "aropen_docnumber");
+  _aropen->addColumn(tr("Ord. #"),    _orderColumn,    Qt::AlignCenter, true, "aropen_ordernumber");
+  _aropen->addColumn(tr("Doc. Date"), _dateColumn,     Qt::AlignCenter, true, "aropen_docdate");
+  _aropen->addColumn(tr("Due Date"),  _dateColumn,     Qt::AlignCenter, true, "aropen_duedate");
+  _aropen->addColumn(tr("Open"),      _bigMoneyColumn, Qt::AlignRight,  true, "balance");
+  _aropen->addColumn(tr("Currency"),  _currencyColumn, Qt::AlignLeft,  !omfgThis->singleCurrency(), "balance_curr");
+  _aropen->addColumn(tr("Applied"),   _bigMoneyColumn, Qt::AlignRight,  true, "applied");
+  _aropen->addColumn(tr("Currency"),  _currencyColumn, Qt::AlignLeft,  !omfgThis->singleCurrency(), "applied_curr");
+  _aropen->addColumn(tr("All Pending"),_moneyColumn,   Qt::AlignRight,  true, "pending");
+  _aropen->addColumn(tr("Currency"),  _currencyColumn, Qt::AlignLeft,  !omfgThis->singleCurrency(), "pending_curr");
 
-  _cashrcptmisc->addColumn(tr("Account #"), _itemColumn,     Qt::AlignCenter );
-  _cashrcptmisc->addColumn(tr("Notes"),     -1,              Qt::AlignLeft   );
-  _cashrcptmisc->addColumn(tr("Amount"),    _bigMoneyColumn, Qt::AlignRight  );
+  _cashrcptmisc->addColumn(tr("Account #"), _itemColumn,     Qt::AlignCenter, true, "account");
+  _cashrcptmisc->addColumn(tr("Notes"),     -1,              Qt::AlignLeft,  true, "firstline");
+  _cashrcptmisc->addColumn(tr("Amount"),    _bigMoneyColumn, Qt::AlignRight, true, "cashrcptmisc_amount");
 
-  _cc->addColumn(tr("Sequence"),        _itemColumn,  Qt::AlignLeft );
-  _cc->addColumn(tr("Type"),            _itemColumn,  Qt::AlignLeft );
-  _cc->addColumn(tr("Number"),          _itemColumn,  Qt::AlignRight );
-  _cc->addColumn(tr("Active"),          _itemColumn,  Qt::AlignLeft );
-  _cc->addColumn(tr("Name"),            _itemColumn,  Qt::AlignLeft );
-  _cc->addColumn(tr("Expiration Date"), -1,           Qt::AlignLeft );
+  _cc->addColumn(tr("Sequence"),_itemColumn, Qt::AlignLeft, true, "ccard_seq");
+  _cc->addColumn(tr("Type"),    _itemColumn, Qt::AlignLeft, true, "type");
+  _cc->addColumn(tr("Number"),  _itemColumn, Qt::AlignRight,true, "f_number");
+  _cc->addColumn(tr("Active"),  _itemColumn, Qt::AlignLeft, true, "active");
+  _cc->addColumn(tr("Name"),    _itemColumn, Qt::AlignLeft, true, "ccard_name");
+  _cc->addColumn(tr("Expiration Date"),  -1, Qt::AlignLeft, true, "expiration");
 
   for (unsigned int i = 0; i < sizeof(_fundsTypes) / sizeof(_fundsTypes[1]); i++)
   {
@@ -644,34 +647,24 @@ void cashReceipt::sFillApplyList()
     params.append("invoice",     tr("Invoice"));
     XSqlQuery apply;
     apply = mql.toQuery(params);
-    XTreeWidgetItem *last = 0;
-    _overapplied = false;
-    while (apply.next())
-    {
-      last = new XTreeWidgetItem(_aropen, last,
-                                 apply.value("aropen_id").toInt(),
-                                 apply.value("alt_id").toInt(),
-                                 apply.value("doctype"),
-                                 apply.value("aropen_docnumber"),
-                                 apply.value("aropen_ordernumber"),
-                                 apply.value("f_docdate"),
-                                 apply.value("f_duedate"),
-                                 apply.value("f_balance"),
-                                 apply.value("balance_curr"),
-                                 apply.value("f_applied"),
-                                 apply.value("applied_curr"),
-                                 apply.value("f_pending"),
-                                 apply.value("balance_curr"));
-      if (apply.value("pending").toDouble() > apply.value("balance").toDouble())
-      {
-        last->setTextColor("red");
-        _overapplied = true;
-      }
-    }
+    _aropen->populate(apply, true);
     if (apply.lastError().type() != QSqlError::None)
     {
       systemError(this, apply.lastError().databaseText(), __FILE__, __LINE__);
       return;
+    }
+
+    _overapplied = false;
+    XTreeWidgetItem *last;
+    for (int i = 0; i < _aropen->topLevelItemCount(); i++)
+    {
+      last = _aropen->topLevelItem(i);
+      if (last->data(9, Qt::UserRole).toMap().value("raw").toDouble() >
+          last->data(5, Qt::UserRole).toMap().value("raw").toDouble())
+      {
+        _overapplied = true;
+        break;
+      }
     }
 
     apply.prepare( "SELECT SUM(COALESCE(cashrcptitem_amount, 0)) AS total "
@@ -693,11 +686,13 @@ void cashReceipt::sFillApplyList()
 void cashReceipt::sFillMiscList()
 {
   XSqlQuery misc;
-  misc.prepare( "SELECT cashrcptmisc_id, formatGLAccount(cashrcptmisc_accnt_id),"
-             "       firstLine(cashrcptmisc_notes), "
-             "       formatMoney(cashrcptmisc_amount)"
-             "FROM cashrcptmisc "
-             "WHERE (cashrcptmisc_cashrcpt_id=:cashrcpt_id);" );
+  misc.prepare("SELECT cashrcptmisc_id,"
+               "       formatGLAccount(cashrcptmisc_accnt_id) AS account,"
+               "       firstLine(cashrcptmisc_notes) AS firstline, "
+               "       cashrcptmisc_amount,"
+               "       'curr' AS cashrcptmisc_amount_xtnumericrole "
+               "FROM cashrcptmisc "
+               "WHERE (cashrcptmisc_cashrcpt_id=:cashrcpt_id);" );
   misc.bindValue(":cashrcpt_id", _cashrcptid);
   misc.exec();
   _cashrcptmisc->populate(misc);
@@ -814,6 +809,9 @@ void cashReceipt::sChangeCurrency( int newId)
 
 void cashReceipt::setCreditCard()
 {
+  if (! _metrics->boolean("CCAccept"))
+    return;
+
   q.prepare( "SELECT expireCreditCard(:cust_id, setbytea(:key)) AS result;");
   q.bindValue(":cust_id", _cust->id());
   q.bindValue(":key", omfgThis->_key);
@@ -834,33 +832,18 @@ void cashReceipt::setCreditCard()
     return;
   }
 
-
-  q.prepare( "SELECT ccard_id,"
-             "       ccard_seq,"
-             "       CASE WHEN (ccard_type='M') THEN :masterCard"
-             "            WHEN (ccard_type='V') THEN :visa"
-             "            WHEN (ccard_type='A') THEN :americanExpress"
-             "            WHEN (ccard_type='D') THEN :discover"
-             "            ELSE :other"
-             "       END AS creditcard,"
-             "       formatccnumber(decrypt(setbytea(ccard_number), setbytea(:key), 'bf')) AS ccard_number,"
-             "       formatBoolYN(ccard_active), "
-             "       formatbytea(decrypt(setbytea(ccard_name), setbytea(:key), 'bf')) AS ccard_name,"
-             "       formatbytea(decrypt(setbytea(ccard_month_expired), setbytea(:key), 'bf')) ||  '-' ||formatbytea(decrypt(setbytea(ccard_year_expired), setbytea(:key), 'bf')) AS ccard_expired "
-             "FROM ccard "
-             "WHERE ((ccard_cust_id=:cust_id) "
-             " AND   (ccard_type=:ccard_type)) "
-             " AND   (ccard_active)"
-             "ORDER BY ccard_seq;" );
-  q.bindValue(":cust_id",    _cust->id());
-  q.bindValue(":ccard_type", _fundsType->itemData(_fundsType->currentIndex()));
-  q.bindValue(":masterCard", tr("MasterCard"));
-  q.bindValue(":visa",       tr("VISA"));
-  q.bindValue(":americanExpress", tr("American Express"));
-  q.bindValue(":discover",   tr("Discover"));
-  q.bindValue(":other",      tr("Other"));
-  q.bindValue(":key",        omfgThis->_key);
-  q.exec();
+  MetaSQLQuery mql = mqlLoad(":/ar/fillcreditcardlist.mql");
+  ParameterList params;
+  params.append("cust_id",    _cust->id());
+  params.append("ccard_type", _fundsType->itemData(_fundsType->currentIndex()));
+  params.append("masterCard", tr("MasterCard"));
+  params.append("visa",       tr("VISA"));
+  params.append("americanExpress", tr("American Express"));
+  params.append("discover",   tr("Discover"));
+  params.append("other",      tr("Other"));
+  params.append("key",        omfgThis->_key);
+  params.append("activeonly");
+  q = mql.toQuery(params);
   _cc->populate(q);
   if (q.lastError().type() != QSqlError::None)
   {
