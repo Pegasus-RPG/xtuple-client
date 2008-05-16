@@ -7,10 +7,7 @@ SELECT aropen_id,
        END AS doctype,
        aropen_docnumber, aropen_ordernumber,
        aropen_docdate, aropen_duedate,
-       formatDate(aropen_docdate) AS f_docdate,
-       formatDate(aropen_duedate) AS f_duedate,
        (aropen_amount - aropen_paid) AS balance,
-       formatMoney(aropen_amount - aropen_paid) AS f_balance,
        currConcat(aropen_curr_id) AS balance_curr,
 <? if exists("cashrcpt_id") ?>
        (SELECT COALESCE(SUM(p.cashrcptitem_amount), 0)
@@ -18,19 +15,16 @@ SELECT aropen_id,
                      WHERE (p.cashrcptitem_aropen_id=aropen_id)
                      AND (p.cashrcptitem_cashrcpt_id=<? value("cashrcpt_id") ?>))
                    AS applied,
-       formatMoney((SELECT COALESCE(SUM(p.cashrcptitem_amount),0)
-                      FROM cashrcptitem p
-                     WHERE (p.cashrcptitem_aropen_id=aropen_id)
-                     AND (p.cashrcptitem_cashrcpt_id=<? value("cashrcpt_id") ?>)))
-                   AS f_applied,
        currConcat(cashrcpt_curr_id) AS applied_curr,
 <? elseif exists("source_aropen_id") ?>
        COALESCE(arcreditapply_amount, 0) AS applied,
-       formatMoney(COALESCE(arcreditapply_amount, 0)) AS f_applied,
        currConcat(arcreditapply_curr_id) AS applied_curr,
 <? endif ?>
        calcpendingarapplications(aropen_id) AS pending,
-       formatMoney(calcpendingarapplications(aropen_id)) AS f_pending,
+       currConcat(aropen_curr_id) AS pending_curr,
+       'curr' AS balance_xtnumericrole,
+       'curr' AS applied_xtnumericrole,
+       'curr' AS pending_xtnumericrole,
        CASE WHEN (calcpendingarapplications(aropen_id) >
                   (aropen_amount - aropen_paid)) THEN 'error'
        END AS qtforegroundrole
