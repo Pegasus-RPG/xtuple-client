@@ -125,7 +125,7 @@ void cashReceiptsEditList::sPopulateMenu(QMenu *pMenu)
 
   menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
 
-  menuItem = pMenu->insertItem(tr("Delete..."), this, SLOT(sEdit()), 0);
+  menuItem = pMenu->insertItem(tr("Delete..."), this, SLOT(sDelete()), 0);
   if (!_privileges->check("MaintainCashReceipts"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
