@@ -199,6 +199,7 @@ crmaccount::crmaccount(QWidget* parent, Qt::WFlags fl)
   _taxauthId    = -1;
   _vendId       = -1;
   _comments->setId(-1);
+  _modal        = false;
   
   if (!_metrics->boolean("LotSerialControl"))
     _tab->removeTab(_tab->indexOf(_registrationsTab));
@@ -229,6 +230,8 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
+
+  _modal = pParams.inList("modal");
 
   // if _modal then disable any widgets that lead to opening XMainWindows
   if (_modal)
@@ -271,8 +274,6 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
     _crmacctId = param.toInt();
     sPopulate();
   }
-
-  _modal = pParams.inList("modal");
 
   param = pParams.value("mode", &valid);
   if (valid)
