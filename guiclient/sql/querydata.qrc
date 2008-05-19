@@ -5,6 +5,7 @@
   </qresource>
   <qresource prefix="ar">
     <file alias="aropenApplications.mql">aropenApplications.mql</file>
+    <file alias="fillcreditcardlist.mql">fillcreditcardlist.mql</file>
   </qresource>
   <qresource prefix="im">
     <file alias="displays/InventoryHistoryByItem/FillListDetail.mql">dspInventoryHistoryByItemFillList.mql</file>
