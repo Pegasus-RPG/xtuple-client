@@ -935,13 +935,13 @@ QString XComboBox::code() const
   QString returnValue;
 
   if ( allowNull() && (currentItem() <= 0) )
-    qDebug("a"), returnValue = QString::Null();
-  else if (_codes.count() > currentItem())
-    qDebug("b"), returnValue = _codes.at(currentItem());
-  else if (currentItem() > 0)
-    qDebug("c"), returnValue = currentText();
+    returnValue = QString::Null();
+  else if (currentItem() >= 0 && _codes.count() > currentItem())
+    returnValue = _codes.at(currentItem());
+  else if (currentItem() >= 0)
+    returnValue = currentText();
   else
-    qDebug("d"), returnValue = QString::Null();
+    returnValue = QString::Null();
 
   if (DEBUG)
     qDebug("%s::code() returning %s",
