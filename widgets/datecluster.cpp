@@ -55,10 +55,14 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
+#include <QApplication>
 #include <QCalendarWidget>
 #include <QDateTime>
+#include <QDesktopWidget>
 #include <QHBoxLayout>
+#include <QPoint>
 #include <QRegExp>
+#include <QSize>
 #include <QVBoxLayout>
 #include <QValidator>
 
@@ -84,6 +88,33 @@ DCalendarPopup::DCalendarPopup(const QDate &date, QWidget *parent)
   connect(_cal, SIGNAL(activated(QDate)), this, SLOT(dateSelected(QDate)));
   connect(_cal, SIGNAL(clicked(QDate)),   this, SLOT(dateSelected(QDate)));
   connect(_cal, SIGNAL(activated(QDate)), this, SLOT(dateSelected(QDate)));
+
+  // position the center of the popup near the center of its parent
+  if (parent)
+  {
+    QSize parentsize = parent->sizeHint();
+    QPoint parentcenter = parent->pos() + QPoint(parentsize.width() / 2,
+						 parentsize.height() / 2);
+    parentcenter = parent->mapToGlobal(parentcenter);
+    QRect screen = QApplication::desktop()->availableGeometry(parentcenter);
+
+    QSize mysize = sizeHint();
+    QPoint mycenter = parentcenter;
+
+    if (mycenter.x() + (mysize.width() / 2) > screen.right())
+      mycenter.setX(screen.right() - (mysize.width() / 2));
+    else if (mycenter.x() - (mysize.width() / 2) < screen.left())
+      mycenter.setX(screen.left() + (mysize.width() / 2));
+
+    if (mycenter.y() + (mysize.height() / 2) > screen.bottom())
+      mycenter.setY(screen.bottom() - (mysize.height() / 2));
+    else if (mycenter.y() - (mysize.height() / 2) < screen.top())
+      mycenter.setY(screen.top() + (mysize.height() / 2));
+
+    QPoint myorigin(mycenter.x() - mysize.width() / 2, mycenter.y() - mysize.height() / 2);
+
+    move(myorigin);
+  }
 
   _cal->setFocus();
 }
@@ -281,7 +312,7 @@ void DLineEdit::setReadOnly(const bool p)
 
 void DLineEdit::showCalendar()
 {
-  DCalendarPopup *cal = new DCalendarPopup(date());
+  DCalendarPopup *cal = new DCalendarPopup(date(), this);
   connect(cal, SIGNAL(newDate(const QDate &)), this, SLOT(setDate(QDate)));
   cal->show();
 }
