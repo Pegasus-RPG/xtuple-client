@@ -87,7 +87,7 @@ class OPENMFGWIDGETS_EXPORT Comments : public QWidget
       BOMHead,		BOMItem,
       BOOHead,		BOOItem,
       CRMAccount,	Contact,	Customer,
-      Incident,
+      Employee,         Incident,
       Item,		ItemSite,	ItemSource,
       Location,		LotSerial,
       Opportunity,

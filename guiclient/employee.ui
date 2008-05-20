@@ -645,7 +645,7 @@
          <item>
           <widget class="Comments" name="_comments" >
            <property name="type" >
-            <enum>Comments::Contact</enum>
+            <enum>Comments::Employee</enum>
            </property>
           </widget>
          </item>

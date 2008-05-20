@@ -142,6 +142,8 @@ employee::employee(QWidget* parent, Qt::WindowFlags fl)
                               _privileges->check("ViewSalesReps"));
   _userButton->setVisible(_privileges->check("MaintainUsers"));
 
+  _comments->setId(-1);
+
   _empid = -1;
   _mode = cView;
 }
@@ -171,6 +173,7 @@ enum SetResponse employee::set(const ParameterList &pParams)
     {
       _empid   = param.toInt();
       _empcode = q.value("emp_code").toString();
+      _comments->setId(_empid);
     }
     else if (q.lastError().type() != QSqlError::None)
     {
@@ -226,6 +229,7 @@ enum SetResponse employee::set(const ParameterList &pParams)
   _user->setEnabled(_mode == cNew || _mode == cEdit);
   _salesrep->setEnabled(_mode == cNew || _mode == cEdit);
   _notes->setEnabled(_mode == cNew || _mode == cEdit);
+  _comments->setEnabled(_mode == cNew || _mode == cEdit);
   _save->setEnabled(_mode == cNew || _mode == cEdit);
   _newCharass->setEnabled(_mode == cNew || _mode == cEdit);
 
@@ -350,6 +354,7 @@ void employee::sSave(const bool pClose)
     {
       _empid = q.value("result").toInt();
       _mode  = cEdit;
+      _comments->setId(_empid);
     }
     else if (q.lastError().type() != QSqlError::None)
     {
@@ -408,6 +413,7 @@ void employee::sPopulate()
     _notes->setText(q.value("notes").toString());
 
     sFillCharassList();
+    _comments->setId(_empid);
   }
   else if (q.lastError().type() != QSqlError::None)
   {

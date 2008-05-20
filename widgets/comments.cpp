@@ -81,6 +81,7 @@ const Comments::CommentMap Comments::_commentMap[] =
     CommentMap( CRMAccount,        "CRMA"),
     CommentMap( Contact,           "T"   ),
     CommentMap( Customer,          "C"   ),
+    CommentMap( Employee,          "EMP" ),
     CommentMap( Incident,          "INCDT"),
     CommentMap( Item,              "I"   ),
     CommentMap( ItemSite,          "IS"  ),
@@ -122,10 +123,10 @@ Comments::Comments(QWidget *pParent, const char *name) :
   _comment = new XTreeWidget(this);
   _comment->setObjectName("_comment");
   _comment->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-  _comment->addColumn(tr("Date/Time"), _timeDateColumn, Qt::AlignCenter );
-  _comment->addColumn(tr("Type"),    _itemColumn, Qt::AlignCenter );
-  _comment->addColumn(tr("User"),    _userColumn, Qt::AlignCenter );
-  _comment->addColumn(tr("Comment"), -1,          Qt::AlignLeft   );
+  _comment->addColumn(tr("Date/Time"), _timeDateColumn, Qt::AlignCenter,true, "comment_date");
+  _comment->addColumn(tr("Type"),    _itemColumn, Qt::AlignCenter,true, "type");
+  _comment->addColumn(tr("User"),    _userColumn, Qt::AlignCenter,true, "comment_user");
+  _comment->addColumn(tr("Comment"), -1,          Qt::AlignLeft,  true, "first");
   main->addWidget(_comment);
 
   _newComment = new QPushButton(tr("New"), buttons, "_newComment");
@@ -205,11 +206,12 @@ void Comments::refresh()
   XSqlQuery comment;
   if(_source != CRMAccount)
   {
-    comment.prepare( "SELECT comment_id, formatDateTime(comment_date),"
+    comment.prepare( "SELECT comment_id, comment_date,"
                      "       CASE WHEN (cmnttype_name IS NOT NULL) THEN cmnttype_name"
                      "            ELSE :none"
-                     "       END,"
-                     "       comment_user, firstLine(detag(comment_text)) "
+                     "       END AS type,"
+                     "       comment_user,"
+                     "       firstLine(detag(comment_text)) AS first "
                      "FROM comment LEFT OUTER JOIN cmnttype ON (comment_cmnttype_id=cmnttype_id) "
                      "WHERE ( (comment_source=:source)"
                      " AND (comment_source_id=:sourceid) ) "
@@ -218,44 +220,41 @@ void Comments::refresh()
   else
   {
     // If it's CRMAccount we want to do some extra joining in our SQL
-    comment.prepare( "SELECT comment_id, formatDateTime(comment_date),"
+    comment.prepare( "SELECT comment_id, comment_date,"
                      "       CASE WHEN (cmnttype_name IS NOT NULL) THEN cmnttype_name"
                      "            ELSE :none"
-                     "       END,"
-                     "       comment_user, firstLine(detag(comment_text)),"
-                     "       comment_date "
+                     "       END AS type,"
+                     "       comment_user,"
+                     "       firstLine(detag(comment_text)) AS first "
                      "  FROM comment LEFT OUTER JOIN cmnttype ON (comment_cmnttype_id=cmnttype_id) "
                      " WHERE((comment_source=:source)"
                      "   AND (comment_source_id=:sourceid) ) "
                      " UNION "
-                     "SELECT comment_id, formatDateTime(comment_date),"
+                     "SELECT comment_id, comment_date,"
                      "       CASE WHEN (cmnttype_name IS NOT NULL) THEN cmnttype_name"
                      "            ELSE :none"
                      "       END,"
-                     "       comment_user, firstLine(detag(comment_text)),"
-                     "       comment_date "
+                     "       comment_user, firstLine(detag(comment_text)) "
                      "  FROM crmacct, comment LEFT OUTER JOIN cmnttype ON (comment_cmnttype_id=cmnttype_id) "
                      " WHERE((comment_source=:sourceCust)"
                      "   AND (crmacct_id=:sourceid)"
                      "   AND (comment_source_id=crmacct_cust_id) ) "
                      " UNION "
-                     "SELECT comment_id, formatDateTime(comment_date),"
+                     "SELECT comment_id, comment_date,"
                      "       CASE WHEN (cmnttype_name IS NOT NULL) THEN cmnttype_name"
                      "            ELSE :none"
                      "       END,"
-                     "       comment_user, firstLine(detag(comment_text)),"
-                     "       comment_date "
+                     "       comment_user, firstLine(detag(comment_text)) "
                      "  FROM crmacct, comment LEFT OUTER JOIN cmnttype ON (comment_cmnttype_id=cmnttype_id) "
                      " WHERE((comment_source=:sourceVend)"
                      "   AND (crmacct_id=:sourceid)"
                      "   AND (comment_source_id=crmacct_vend_id) ) "
                      " UNION "
-                     "SELECT comment_id, formatDateTime(comment_date),"
+                     "SELECT comment_id, comment_date,"
                      "       CASE WHEN (cmnttype_name IS NOT NULL) THEN cmnttype_name"
                      "            ELSE :none"
                      "       END,"
-                     "       comment_user, firstLine(detag(comment_text)),"
-                     "       comment_date "
+                     "       comment_user, firstLine(detag(comment_text)) "
                      "  FROM cntct, comment LEFT OUTER JOIN cmnttype ON (comment_cmnttype_id=cmnttype_id) "
                      " WHERE((comment_source=:sourceContact)"
                      "   AND (cntct_crmacct_id=:sourceid)"
@@ -271,4 +270,3 @@ void Comments::refresh()
   comment.exec();
   _comment->populate(comment);
 }
-
