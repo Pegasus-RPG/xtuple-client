@@ -148,6 +148,19 @@ QObject * ScriptToolbox::menuAddAction(QObject * menu, const QString & text)
   return act;
 }
 
+QObject * ScriptToolbox::menuAddMenu(QObject * menu, const QString & text, const QString & name)
+{
+  QMenu * m = qobject_cast<QMenu*>(menu);
+  QMenu * nm = 0;
+  if(m)
+  {
+    nm = m->addMenu(text);
+    if(!name.isEmpty())
+      nm->setObjectName(name);
+  }
+  return nm;
+}
+
 QWidget * ScriptToolbox::createWidget(const QString & className, QWidget * parent, const QString & name)
 {
   XUiLoader ui;

@@ -117,6 +117,7 @@ class ScriptToolbox : public QObject
     void layoutStackedInsertWidget(QObject *, int index, QWidget *);
 
     QObject * menuAddAction(QObject * menu, const QString & text);
+    QObject * menuAddMenu(QObject * menu, const QString & text, const QString & text = QString());
 
     QWidget * createWidget(const QString & className, QWidget * parent = 0, const QString & name = QString());
     QWidget * lastWindow() const;
