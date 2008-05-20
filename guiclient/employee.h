@@ -80,15 +80,22 @@ class employee : public XDialog, public Ui::employee
   public slots:
     virtual enum SetResponse set(const ParameterList &);
     virtual void sPopulate();
-    virtual void sSave();
+    virtual void sSave(const bool = true);
 
   protected slots:
     virtual void languageChange();
+    virtual void sDeleteCharass();
+    virtual void sEditCharass();
+    virtual void sFillCharassList();
+    virtual void sNewCharass();
+    virtual void sSalesrep();
+    virtual void sUser();
 
   private:
-    int _mode;
-    QString _empcode;
     QString _currabbr;  // TODO: replace with currdisplay::currAbbrShort()
+    QString _empcode;
+    int     _empid;
+    int     _mode;
 };
 
 #endif

@@ -60,66 +60,54 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
-#include <QStatusBar>
 #include <QVariant>
 
 #include <parameter.h>
 #include <openreports.h>
+
 #include "characteristic.h"
 #include "storedProcErrorLookup.h"
 
-/*
- *  Constructs a characteristics as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 characteristics::characteristics(QWidget* parent, const char* name, Qt::WFlags fl)
     : XMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  connect(_char, SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *, int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_edit,   SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_new,    SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_print,  SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_view,   SIGNAL(clicked()), this, SLOT(sView()));
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-    connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_char, SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *, int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  if (_privileges->check("MaintainCharacteristics"))
+  {
+    connect(_char, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
+    connect(_char, SIGNAL(valid(bool)),     _delete, SLOT(setEnabled(bool)));
+    connect(_char, SIGNAL(valid(bool)),       _edit, SLOT(setEnabled(bool)));
+    connect(_char, SIGNAL(valid(bool)),       _view, SLOT(setEnabled(bool)));
+  }
+  else
+  {
+    _new->setEnabled(FALSE);
+    connect(_char, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
+    connect(_char, SIGNAL(valid(bool)),       _view, SLOT(setEnabled(bool)));
+  }
 
-    statusBar()->hide();
-    
-    if (_privileges->check("MaintainCharacteristics"))
-    {
-      connect(_char, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
-      connect(_char, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
-      connect(_char, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
-    }
-    else
-      _new->setEnabled(FALSE);
+  _char->addColumn(tr("Name"), _itemColumn, Qt::AlignLeft, true, "char_name");
+  _char->addColumn(tr("Description"),   -1, Qt::AlignLeft, true, "char_notes");
 
-    _char->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft );
-    _char->addColumn(tr("Description"), -1,          Qt::AlignLeft );
-
-    sFillList();
+  sFillList();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 characteristics::~characteristics()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void characteristics::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 void characteristics::sNew()
@@ -194,12 +182,18 @@ void characteristics::sPrint()
 
 void characteristics::sFillList()
 {
-  _char->populate( "SELECT char_id, char_name, char_notes "
-                   "FROM char "
-                   "ORDER BY char_name;"  );
+  q.prepare("SELECT char_id, char_name, char_notes "
+            "FROM char "
+            "ORDER BY char_name;");
+  q.exec();
+  _char->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void characteristics::sPopulateMenu(QMenu *)
 {
 }
-

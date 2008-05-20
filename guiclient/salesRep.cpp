@@ -95,6 +95,10 @@ enum SetResponse salesRep::set(const ParameterList &pParams)
     populate();
   }
 
+  param = pParams.value("emp_id", &valid);
+  if (valid)
+    _employee->setId(param.toInt());
+
   param = pParams.value("mode", &valid);
   if (valid)
   {
@@ -115,11 +119,16 @@ enum SetResponse salesRep::set(const ParameterList &pParams)
       _name->setEnabled(FALSE);
       _active->setEnabled(FALSE);
       _commPrcnt->setEnabled(FALSE);
+      _employee->setEnabled(FALSE);
       _close->setText(tr("&Close"));
       _save->hide();
       _close->setFocus();
     }
   }
+
+  param = pParams.value("emp_code", &valid);
+  if (_mode == cNew)
+    _number->setText(param.toString());
 
   return NoError;
 }

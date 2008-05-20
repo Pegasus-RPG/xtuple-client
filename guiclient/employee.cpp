@@ -55,12 +55,16 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
+#include <QMessageBox>
 #include <QSqlError>
 #include <QVariant>
 
 #include <parameter.h>
 
+#include "characteristicAssignment.h"
 #include "employee.h"
+#include "salesRep.h"
+#include "user.h"
 
 #define DEBUG   false
 
@@ -114,8 +118,16 @@ employee::employee(QWidget* parent, Qt::WindowFlags fl)
 {
   setupUi(this);
 
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-  _mode = cView;
+  connect(_deleteCharass, SIGNAL(clicked()), this, SLOT(sDeleteCharass()));
+  connect(_editCharass,   SIGNAL(clicked()), this, SLOT(sEditCharass()));
+  connect(_newCharass,    SIGNAL(clicked()), this, SLOT(sNewCharass()));
+  connect(_salesrepButton,SIGNAL(clicked()), this, SLOT(sSalesrep()));
+  connect(_save,          SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_userButton,    SIGNAL(clicked()), this, SLOT(sUser()));
+
+  _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft, true, "char_name");
+  _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft, true, "charass_value");
+
   q.prepare("SELECT curr_abbr FROM curr_symbol WHERE (curr_id=baseCurrId());");
   q.exec();
   if (q.first())
@@ -125,6 +137,13 @@ employee::employee(QWidget* parent, Qt::WindowFlags fl)
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+
+  _salesrepButton->setVisible(_privileges->check("MaintainSalesReps") ||
+                              _privileges->check("ViewSalesReps"));
+  _userButton->setVisible(_privileges->check("MaintainUsers"));
+
+  _empid = -1;
+  _mode = cView;
 }
 
 employee::~employee()
@@ -149,7 +168,10 @@ enum SetResponse employee::set(const ParameterList &pParams)
     q.bindValue(":empid", param.toInt());
     q.exec();
     if (q.first())
+    {
+      _empid   = param.toInt();
       _empcode = q.value("emp_code").toString();
+    }
     else if (q.lastError().type() != QSqlError::None)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -182,8 +204,8 @@ enum SetResponse employee::set(const ParameterList &pParams)
   if (_mode == cNew ||
       _mode == cEdit)
   {
-    connect(_charass,SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
-    connect(_charass,SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
+    connect(_charass,SIGNAL(valid(bool)), _deleteCharass, SLOT(setEnabled(bool)));
+    connect(_charass,SIGNAL(valid(bool)), _editCharass, SLOT(setEnabled(bool)));
     connect(_groups, SIGNAL(valid(bool)), _attachGroup, SLOT(setEnabled(bool)));
     connect(_groups, SIGNAL(valid(bool)), _detachGroup, SLOT(setEnabled(bool)));
     connect(_groups, SIGNAL(valid(bool)), _editGroup,   SLOT(setEnabled(bool)));
@@ -198,7 +220,6 @@ enum SetResponse employee::set(const ParameterList &pParams)
   _mgr->setEnabled(_mode == cNew || _mode == cEdit);
   _wagetype->setEnabled(_mode == cNew || _mode == cEdit);
   _rate->setEnabled(_mode == cNew || _mode == cEdit);
-  _currabbr = q.value("curr_abbr").toString();
   _per->setEnabled(_mode == cNew || _mode == cEdit);
   _dept->setEnabled(_mode == cNew || _mode == cEdit);
   _shift->setEnabled(_mode == cNew || _mode == cEdit);
@@ -206,16 +227,17 @@ enum SetResponse employee::set(const ParameterList &pParams)
   _salesrep->setEnabled(_mode == cNew || _mode == cEdit);
   _notes->setEnabled(_mode == cNew || _mode == cEdit);
   _save->setEnabled(_mode == cNew || _mode == cEdit);
+  _newCharass->setEnabled(_mode == cNew || _mode == cEdit);
 
   return NoError;
 }
 
-void employee::sSave()
+void employee::sSave(const bool pClose)
 {
   // trying something different here - write through the view
-  q.exec("BEGIN;");
+  // q.exec("BEGIN;");
   //try to save the contact to do the check
-  q.exec("ROLLBACK;");
+  // q.exec("ROLLBACK;");
 
   if (_mode == cNew)
     q.prepare("INSERT INTO api.employee ("
@@ -280,7 +302,7 @@ void employee::sSave()
               " WHERE (code=:origcode);" );
 
   q.bindValue(":code",        _code->text());
-  q.bindValue(":number",   _number->text());
+  q.bindValue(":number",      _number->text());
   q.bindValue(":active",      _active->isChecked());
   q.bindValue(":cntctnumber", _contact->number());
   q.bindValue(":hnfc",        _contact->honorific());
@@ -321,7 +343,23 @@ void employee::sSave()
     return;
   }
 
-  accept();     // done(emp_id?)
+  if (_mode == cNew)
+  {
+    q.exec("SELECT CURRVAL('emp_emp_id_seq') AS result;");
+    if (q.first())
+    {
+      _empid = q.value("result").toInt();
+      _mode  = cEdit;
+    }
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+  }
+
+  if (pClose)
+    done(_empid);
 }
 
 void employee::sPopulate()
@@ -365,13 +403,169 @@ void employee::sPopulate()
     _dept->setNumber(q.value("department").toString());
     _shift->setNumber(q.value("shift").toString());
 
-    _user->setChecked(q.value("is_usr").toBool());
+    _user->setChecked(q.value("is_user").toBool());
     _salesrep->setChecked(q.value("is_salesrep").toBool());
     _notes->setText(q.value("notes").toString());
+
+    sFillCharassList();
   }
   else if (q.lastError().type() != QSqlError::None)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
+  }
+}
+
+void employee::sDeleteCharass()
+{
+  q.prepare( "DELETE FROM charass "
+             "WHERE (charass_id=:charass_id);" );
+  q.bindValue(":charass_id", _charass->id());
+  q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
+  sFillCharassList();
+}
+
+void employee::sEditCharass()
+{
+  ParameterList params;
+  params.append("mode",       "edit");
+  params.append("charass_id", _charass->id());
+
+  characteristicAssignment newdlg(this, "", TRUE);
+  newdlg.set(params);
+
+  if (newdlg.exec() != XDialog::Rejected)
+    sFillCharassList();
+}
+
+void employee::sNewCharass()
+{
+  ParameterList params;
+  params.append("mode",   "new");
+  params.append("emp_id", _empid);
+
+  characteristicAssignment newdlg(this, "", TRUE);
+  newdlg.set(params);
+
+  if (newdlg.exec() != XDialog::Rejected)
+    sFillCharassList();
+}
+
+void employee::sFillCharassList()
+{
+  q.prepare( "SELECT charass_id, char_name, charass_value "
+             "FROM charass, char "
+             "WHERE ((charass_target_type='EMP')"
+             " AND   (charass_char_id=char_id)"
+             " AND   (charass_target_id=:emp_id) ) "
+             "ORDER BY char_name;" );
+  q.bindValue(":emp_id", _empid);
+  q.exec();
+  _charass->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+}
+
+void employee::sSalesrep()
+{
+  XSqlQuery srq;
+  srq.prepare("SELECT salesrep_id "
+              "FROM salesrep "
+              "WHERE (salesrep_emp_id=:id);");
+  srq.bindValue(":id", _empid);
+  srq.exec();
+  if (srq.first() &&
+      (_privileges->check("MaintainSalesReps") ||
+       _privileges->check("ViewSalesReps"))
+      )
+  {
+    ParameterList params;
+    if (_mode == cView || ! _privileges->check("MaintainSalesReps"))
+      params.append("mode", "view");
+    else
+      params.append("mode", "edit");
+    params.append("salesrep_id", srq.value("salesrep_id"));
+    params.append("emp_id",      _empid);
+    salesRep newdlg(this, "", TRUE);
+    newdlg.set(params);
+    newdlg.exec();
+  }
+  else if (srq.lastError().type() != QSqlError::None)
+  {
+    systemError(this, srq.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+  else if (_privileges->check("MaintainSalesReps") &&
+           (_mode == cEdit || _mode == cNew))
+  {
+    if (QMessageBox::question(this, tr("Create Sales Rep?"),
+                              tr("There does not appear to be a Sales "
+                                 "Rep associated with this Employee. "
+                                 "Would you like to create a new Sales "
+                                 "Rep?"),
+				  QMessageBox::Yes | QMessageBox::Default,
+				  QMessageBox::No) == QMessageBox::Yes)
+    {
+      sSave(false);
+      ParameterList params;
+      params.append("mode",     "new");
+      params.append("emp_code", _code->text());
+      params.append("emp_id",   _empid);
+      salesRep newdlg(this, "", TRUE);
+      newdlg.set(params);
+      newdlg.exec();
+    }
+  }
+}
+
+void employee::sUser()
+{
+  XSqlQuery usrq;
+  usrq.prepare("SELECT usr_username "
+              "FROM usr JOIN emp ON (emp_usr_id=usr_id) "
+              "WHERE (emp_id=:id);");
+  usrq.bindValue(":id", _empid);
+  usrq.exec();
+  if (usrq.first() && _privileges->check("MaintainUsers"))
+  {
+    ParameterList params;
+    params.append("mode",     (_mode == cView) ? "view" : "edit");
+    params.append("username", usrq.value("usr_username"));
+    user newdlg(this, "", TRUE);
+    newdlg.set(params);
+    newdlg.exec();
+  }
+  else if (usrq.lastError().type() != QSqlError::None)
+  {
+    systemError(this, usrq.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+  else if (_privileges->check("MaintainUsers") &&
+           (_mode == cEdit || _mode == cNew))
+  {
+    if (QMessageBox::question(this, tr("Create User?"),
+                              tr("There does not appear to be a User "
+                                 "associated with this Employee. "
+                                 "Would you like to create a new User?"),
+				  QMessageBox::Yes | QMessageBox::Default,
+				  QMessageBox::No) == QMessageBox::Yes)
+    {
+      sSave(false);
+      ParameterList params;
+      params.append("mode",     "new");
+      params.append("username", _code->text());
+      user newdlg(this, "", TRUE);
+      newdlg.set(params);
+      newdlg.exec();
+    }
   }
 }

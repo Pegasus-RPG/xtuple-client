@@ -13,36 +13,12 @@
    <string>Characteristic</string>
   </property>
   <layout class="QVBoxLayout" >
-   <property name="margin" >
-    <number>9</number>
-   </property>
-   <property name="spacing" >
-    <number>6</number>
-   </property>
    <item>
     <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
-     <property name="spacing" >
-      <number>6</number>
-     </property>
      <item>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
-       <property name="spacing" >
-        <number>6</number>
-       </property>
        <item>
         <layout class="QHBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
-         <property name="spacing" >
-          <number>6</number>
-         </property>
          <item>
           <widget class="QLabel" name="_nameLit" >
            <property name="text" >
@@ -63,12 +39,6 @@
        </item>
        <item>
         <layout class="QHBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
-         <property name="spacing" >
-          <number>6</number>
-         </property>
          <item>
           <spacer>
            <property name="orientation" >
@@ -91,11 +61,20 @@
             <string>May be used for:</string>
            </property>
            <layout class="QVBoxLayout" >
-            <property name="margin" >
-             <number>5</number>
-            </property>
             <property name="spacing" >
              <number>0</number>
+            </property>
+            <property name="leftMargin" >
+             <number>5</number>
+            </property>
+            <property name="topMargin" >
+             <number>5</number>
+            </property>
+            <property name="rightMargin" >
+             <number>5</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>5</number>
             </property>
             <item>
              <widget class="QCheckBox" name="_items" >
@@ -142,7 +121,14 @@
             <item>
              <widget class="QCheckBox" name="_opportunity" >
               <property name="text" >
-               <string>Opportunity Characteristic</string>
+               <string>Opportunity Characteristics</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="_employees" >
+              <property name="text" >
+               <string>Employee Characteristics</string>
               </property>
              </widget>
             </item>
@@ -171,12 +157,6 @@
      </item>
      <item>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
-       <property name="spacing" >
-        <number>6</number>
-       </property>
        <item>
         <widget class="QPushButton" name="_close" >
          <property name="text" >
@@ -220,9 +200,7 @@
    <item>
     <widget class="QFrame" name="frame" >
      <property name="sizePolicy" >
-      <sizepolicy>
-       <hsizetype>5</hsizetype>
-       <vsizetype>7</vsizetype>
+      <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
        <horstretch>0</horstretch>
        <verstretch>1</verstretch>
       </sizepolicy>
@@ -234,10 +212,19 @@
       <enum>QFrame::Plain</enum>
      </property>
      <layout class="QVBoxLayout" >
-      <property name="margin" >
+      <property name="spacing" >
        <number>0</number>
       </property>
-      <property name="spacing" >
+      <property name="leftMargin" >
+       <number>0</number>
+      </property>
+      <property name="topMargin" >
+       <number>0</number>
+      </property>
+      <property name="rightMargin" >
+       <number>0</number>
+      </property>
+      <property name="bottomMargin" >
        <number>0</number>
       </property>
       <item>
@@ -276,11 +263,11 @@
   <tabstop>_crmaccounts</tabstop>
   <tabstop>_contacts</tabstop>
   <tabstop>_opportunity</tabstop>
+  <tabstop>_employees</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
   <tabstop>_description</tabstop>
  </tabstops>
- <includes/>
  <resources/>
  <connections>
   <connection>

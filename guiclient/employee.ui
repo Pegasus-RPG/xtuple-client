@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>730</width>
-    <height>629</height>
+    <width>734</width>
+    <height>654</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -15,12 +15,6 @@
   <layout class="QGridLayout" >
    <item row="1" column="0" >
     <layout class="QGridLayout" >
-     <property name="horizontalSpacing" >
-      <number>12</number>
-     </property>
-     <property name="verticalSpacing" >
-      <number>12</number>
-     </property>
      <item row="0" column="0" colspan="2" >
       <layout class="QHBoxLayout" >
        <item>
@@ -83,7 +77,7 @@
          </property>
          <property name="sizeHint" >
           <size>
-           <width>51</width>
+           <width>0</width>
            <height>20</height>
           </size>
          </property>
@@ -93,21 +87,6 @@
      </item>
      <item row="0" column="2" >
       <layout class="QVBoxLayout" >
-       <property name="spacing" >
-        <number>0</number>
-       </property>
-       <property name="leftMargin" >
-        <number>0</number>
-       </property>
-       <property name="topMargin" >
-        <number>0</number>
-       </property>
-       <property name="rightMargin" >
-        <number>0</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>0</number>
-       </property>
        <item>
         <widget class="QPushButton" name="_close" >
          <property name="text" >
@@ -231,7 +210,7 @@
         <item row="0" column="0" >
          <widget class="XCheckBox" name="_user" >
           <property name="text" >
-           <string/>
+           <string>User</string>
           </property>
           <property name="fieldName" >
            <string>is_user</string>
@@ -247,14 +226,14 @@
            <bool>false</bool>
           </property>
           <property name="text" >
-           <string>User...</string>
+           <string>...</string>
           </property>
          </widget>
         </item>
         <item row="1" column="0" >
          <widget class="XCheckBox" name="_salesrep" >
           <property name="text" >
-           <string/>
+           <string>Sales Rep</string>
           </property>
           <property name="fieldName" >
            <string>is_salesrep</string>
@@ -270,7 +249,7 @@
            <bool>false</bool>
           </property>
           <property name="text" >
-           <string>Sales Rep...</string>
+           <string>...</string>
           </property>
          </widget>
         </item>
@@ -351,6 +330,11 @@
                   <string/>
                  </property>
                 </item>
+                <item>
+                 <property name="text" >
+                  <string/>
+                 </property>
+                </item>
                </widget>
               </item>
               <item>
@@ -392,9 +376,6 @@
            <layout class="QGridLayout" >
             <item row="0" column="0" >
              <layout class="QVBoxLayout" >
-              <property name="topMargin" >
-               <number>6</number>
-              </property>
               <item>
                <widget class="QLabel" name="_deptLit" >
                 <property name="text" >
@@ -432,9 +413,6 @@
             </item>
             <item row="1" column="0" >
              <layout class="QVBoxLayout" >
-              <property name="topMargin" >
-               <number>6</number>
-              </property>
               <item>
                <widget class="QLabel" name="shiftLit" >
                 <property name="text" >
@@ -702,30 +680,15 @@
          </item>
          <item>
           <layout class="QVBoxLayout" >
-           <property name="spacing" >
-            <number>0</number>
-           </property>
-           <property name="leftMargin" >
-            <number>0</number>
-           </property>
-           <property name="topMargin" >
-            <number>0</number>
-           </property>
-           <property name="rightMargin" >
-            <number>0</number>
-           </property>
-           <property name="bottomMargin" >
-            <number>0</number>
-           </property>
            <item>
-            <widget class="QPushButton" name="_newCharacteristic" >
+            <widget class="QPushButton" name="_newCharass" >
              <property name="text" >
               <string>New</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="_editCharacteristic" >
+            <widget class="QPushButton" name="_editCharass" >
              <property name="enabled" >
               <bool>false</bool>
              </property>
@@ -735,7 +698,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="_deleteCharacteristic" >
+            <widget class="QPushButton" name="_deleteCharass" >
              <property name="enabled" >
               <bool>false</bool>
              </property>
@@ -763,7 +726,7 @@
        </widget>
        <widget class="QWidget" name="_groupTab" >
         <attribute name="title" >
-         <string>Group membership</string>
+         <string>Group Membership</string>
         </attribute>
         <layout class="QHBoxLayout" >
          <property name="spacing" >
@@ -786,23 +749,11 @@
          </item>
          <item>
           <layout class="QVBoxLayout" >
-           <property name="spacing" >
-            <number>0</number>
-           </property>
-           <property name="leftMargin" >
-            <number>0</number>
-           </property>
-           <property name="topMargin" >
-            <number>0</number>
-           </property>
-           <property name="rightMargin" >
-            <number>0</number>
-           </property>
-           <property name="bottomMargin" >
-            <number>0</number>
-           </property>
            <item>
             <widget class="QPushButton" name="_editGroup" >
+             <property name="enabled" >
+              <bool>false</bool>
+             </property>
              <property name="text" >
               <string>Edit</string>
              </property>
@@ -810,6 +761,9 @@
            </item>
            <item>
             <widget class="QPushButton" name="_viewGroup" >
+             <property name="enabled" >
+              <bool>false</bool>
+             </property>
              <property name="text" >
               <string>View</string>
              </property>
@@ -817,6 +771,9 @@
            </item>
            <item>
             <widget class="QPushButton" name="_detachGroup" >
+             <property name="enabled" >
+              <bool>false</bool>
+             </property>
              <property name="text" >
               <string>Detach</string>
              </property>
@@ -824,6 +781,9 @@
            </item>
            <item>
             <widget class="QPushButton" name="_attachGroup" >
+             <property name="enabled" >
+              <bool>false</bool>
+             </property>
              <property name="text" >
               <string>Attach</string>
              </property>
@@ -934,9 +894,9 @@
   <tabstop>_shift</tabstop>
   <tabstop>_notes</tabstop>
   <tabstop>_charass</tabstop>
-  <tabstop>_newCharacteristic</tabstop>
-  <tabstop>_editCharacteristic</tabstop>
-  <tabstop>_deleteCharacteristic</tabstop>
+  <tabstop>_newCharass</tabstop>
+  <tabstop>_editCharass</tabstop>
+  <tabstop>_deleteCharass</tabstop>
   <tabstop>_groups</tabstop>
   <tabstop>_attachGroup</tabstop>
   <tabstop>_detachGroup</tabstop>
@@ -966,7 +926,7 @@
   <connection>
    <sender>_charass</sender>
    <signal>valid(bool)</signal>
-   <receiver>_deleteCharacteristic</receiver>
+   <receiver>_deleteCharass</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
@@ -982,7 +942,7 @@
   <connection>
    <sender>_charass</sender>
    <signal>valid(bool)</signal>
-   <receiver>_editCharacteristic</receiver>
+   <receiver>_editCharass</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
@@ -998,7 +958,7 @@
   <connection>
    <sender>_charass</sender>
    <signal>itemSelected(int)</signal>
-   <receiver>_editCharacteristic</receiver>
+   <receiver>_editCharass</receiver>
    <slot>animateClick()</slot>
    <hints>
     <hint type="sourcelabel" >

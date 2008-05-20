@@ -61,36 +61,20 @@
 #include <QSqlError>
 #include <QVariant>
 
-/*
- *  Constructs a characteristic as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 characteristic::characteristic(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
-
-  // signals and slots connections
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_name, SIGNAL(lostFocus()), this, SLOT(sCheck()));
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 characteristic::~characteristic()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void characteristic::languageChange()
 {
   retranslateUi(this);
@@ -121,8 +105,16 @@ enum SetResponse characteristic::set(const ParameterList &pParams)
 
       _name->setEnabled(FALSE);
       _useGroup->setEnabled(FALSE);
+
       _items->setEnabled(FALSE);
+      _customers->setEnabled(FALSE);
       _lotSerial->setEnabled(FALSE);
+      _addresses->setEnabled(FALSE);
+      _crmaccounts->setEnabled(FALSE);
+      _contacts->setEnabled(FALSE);
+      _opportunity->setEnabled(FALSE);
+      _employees->setEnabled(FALSE);
+
       _close->setText(tr("&Close"));
       _save->hide();
 
@@ -145,8 +137,8 @@ void characteristic::sSave()
   }
   if (! (_items->isChecked()       || _customers->isChecked() ||
 	 _lotSerial->isChecked()   || _addresses->isChecked() ||
-	 _crmaccounts->isChecked() || _contacts->isChecked() ||
-	 _opportunity->isChecked() ))
+	 _crmaccounts->isChecked() || _contacts->isChecked()  ||
+	 _opportunity->isChecked() || _employees->isChecked() ))
   {
     QMessageBox::critical(this, tr("Apply Characteristic"),
 			  tr("<p>You must apply this Characteristic to at "
@@ -160,18 +152,24 @@ void characteristic::sSave()
     q.exec("SELECT NEXTVAL('char_char_id_seq') AS char_id;");
     if (q.first())
       _charid = q.value("char_id").toInt();
-//  ToDo
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
 
     q.prepare( "INSERT INTO char "
                "( char_id, char_name, char_items, char_customers, "
 	       "  char_contacts, char_crmaccounts, char_addresses, "
 	       "  char_options, char_opportunity,"
-               "  char_attributes, char_lotserial, char_notes ) "
+               "  char_attributes, char_lotserial, char_employees,"
+               "  char_notes ) "
                "VALUES "
                "( :char_id, :char_name, :char_items, :char_customers, "
 	       "  :char_contacts, :char_crmaccounts, :char_addresses, "
 	       "  :char_options, :char_opportunity,"
-               "  :char_attributes, :char_lotserial, :char_notes );" );
+               "  :char_attributes, :char_lotserial, :char_employees,"
+               "  :char_notes );" );
   }
   else if (_mode == cEdit)
     q.prepare( "UPDATE char "
@@ -183,20 +181,23 @@ void characteristic::sSave()
 	       "    char_options=:char_options,"
                "    char_attributes=:char_attributes, "
                "    char_opportunity=:char_opportunity,"
-	       "    char_lotserial=:char_lotserial, char_notes=:char_notes "
+	       "    char_lotserial=:char_lotserial,"
+               "    char_employees=:char_employees,"
+               "    char_notes=:char_notes "
                "WHERE (char_id=:char_id);" );
 
   q.bindValue(":char_id", _charid);
   q.bindValue(":char_name", _name->text());
-  q.bindValue(":char_items", QVariant(_items->isChecked(), 0));
+  q.bindValue(":char_items",            QVariant(_items->isChecked(), 0));
   q.bindValue(":char_customers",	QVariant(_customers->isChecked(), 0));
   q.bindValue(":char_crmaccounts",	QVariant(_crmaccounts->isChecked(), 0));
   q.bindValue(":char_contacts",		QVariant(_contacts->isChecked(), 0));
   q.bindValue(":char_addresses",	QVariant(_addresses->isChecked(), 0));
-  q.bindValue(":char_options", QVariant(FALSE, 0));
-  q.bindValue(":char_attributes", QVariant(FALSE, 0));
-  q.bindValue(":char_lotserial", QVariant(_lotSerial->isChecked(), 0));
-  q.bindValue(":char_opportunity", QVariant(_opportunity->isChecked(), 0));
+  q.bindValue(":char_options",          QVariant(FALSE, 0));
+  q.bindValue(":char_attributes",       QVariant(FALSE, 0));
+  q.bindValue(":char_lotserial",        QVariant(_lotSerial->isChecked(), 0));
+  q.bindValue(":char_opportunity",      QVariant(_opportunity->isChecked(), 0));
+  q.bindValue(":char_employees",        QVariant(_employees->isChecked(), 0));
   q.bindValue(":char_notes", _description->text().stripWhiteSpace());
   q.exec();
   if (q.lastError().type() != QSqlError::None)
@@ -231,10 +232,7 @@ void characteristic::sCheck()
 
 void characteristic::populate()
 {
-  q.prepare( "SELECT char_name, char_items, char_customers, "
-	     "       char_contacts, char_crmaccounts, char_addresses, "
-	     "       char_options, char_opportunity,"
-             "       char_attributes, char_lotserial, char_notes "
+  q.prepare( "SELECT * "
              "FROM char "
              "WHERE (char_id=:char_id);" );
   q.bindValue(":char_id", _charid);
@@ -249,7 +247,13 @@ void characteristic::populate()
     _addresses->setChecked(q.value("char_addresses").toBool());
     _lotSerial->setChecked(q.value("char_lotserial").toBool());
     _opportunity->setChecked(q.value("char_opportunity").toBool());
+    _employees->setChecked(q.value("char_employees").toBool());
     _description->setText(q.value("char_notes").toString());
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
 }
 
