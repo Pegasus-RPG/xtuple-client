@@ -136,7 +136,7 @@
             <bool>true</bool>
            </property>
            <property name="nullStr" >
-            <string>[ Default ]</string>
+            <string>[ Any ]</string>
            </property>
            <property name="type" >
             <enum>XComboBox::LocaleCountries</enum>

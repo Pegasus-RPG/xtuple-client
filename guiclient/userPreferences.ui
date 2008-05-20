@@ -421,14 +421,14 @@
               </property>
              </widget>
             </item>
-            <item row="4" column="0" colspan="3" >
+            <item row="5" column="0" colspan="3" >
              <widget class="Line" name="line_2" >
               <property name="orientation" >
                <enum>Qt::Horizontal</enum>
               </property>
              </widget>
             </item>
-            <item row="5" column="0" >
+            <item row="6" column="0" >
              <widget class="QLabel" name="_idleTimeoutLit" >
               <property name="text" >
                <string>Idle Timeout:</string>
@@ -438,10 +438,10 @@
               </property>
              </widget>
             </item>
-            <item row="5" column="1" >
+            <item row="6" column="1" >
              <widget class="QSpinBox" name="_idleTimeout" />
             </item>
-            <item row="5" column="2" >
+            <item row="6" column="2" >
              <spacer>
               <property name="orientation" >
                <enum>Qt::Horizontal</enum>
@@ -453,6 +453,13 @@
                </size>
               </property>
              </spacer>
+            </item>
+            <item row="4" column="0" colspan="3" >
+             <widget class="QCheckBox" name="_ignoreTranslation" >
+              <property name="text" >
+               <string>Ignore Missing Translations</string>
+              </property>
+             </widget>
             </item>
            </layout>
           </widget>
@@ -1337,6 +1344,7 @@
   <tabstop>_interfaceWorkspace</tabstop>
   <tabstop>_interfaceTopLevel</tabstop>
   <tabstop>_rememberCheckBoxes</tabstop>
+  <tabstop>_ignoreTranslation</tabstop>
   <tabstop>_idleTimeout</tabstop>
   <tabstop>_fixedWidthFonts</tabstop>
   <tabstop>_listNumericItemsFirst</tabstop>

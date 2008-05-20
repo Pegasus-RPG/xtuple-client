@@ -75,7 +75,7 @@ sysLocale::sysLocale(QWidget* parent, const char* name, bool modal, Qt::WFlags f
   connect(_expired,        SIGNAL(editingFinished()), this, SLOT(sUpdateColors()));
   connect(_extPriceScale,  SIGNAL(valueChanged(int)), this, SLOT(sUpdateSamples()));
   connect(_future,         SIGNAL(editingFinished()), this, SLOT(sUpdateColors()));
-  connect(_language,       SIGNAL(newID(int)),        this, SLOT(sUpdateSamples()));
+  connect(_language,       SIGNAL(newID(int)),        this, SLOT(sUpdateCountries()));
   connect(_purchPriceScale,SIGNAL(valueChanged(int)), this, SLOT(sUpdateSamples()));
   connect(_qtyScale,       SIGNAL(valueChanged(int)), this, SLOT(sUpdateSamples()));
   connect(_qtyPerScale,    SIGNAL(valueChanged(int)), this, SLOT(sUpdateSamples()));
@@ -282,6 +282,49 @@ void sysLocale::close()
   reject();
 }
  
+void sysLocale::sUpdateCountries()
+{
+  QLocale::Language localeLang = QLocale::C;
+
+  if (_language->id() > 0)
+  {
+    q.prepare("SELECT lang_qt_number FROM lang WHERE (lang_id=:langid);");
+    q.bindValue(":langid", _language->id());
+    q.exec();
+    if (q.first())
+    {
+      localeLang = QLocale::Language(q.value("lang_qt_number").toInt());
+    }
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+  }
+
+  int currentCountry = _country->id();
+
+  QList<QLocale::Country> clist = QLocale::countriesForLanguage(localeLang);
+
+  _country->clear();
+  if(!clist.isEmpty())
+  {
+    QString sql = "SELECT country_id, country_name, country_name"
+                  "  FROM country"
+                  " WHERE((country_qt_number IS NOT NULL)"
+                  "   AND (country_qt_number IN (-1";
+    for (int i = 0; i < clist.size(); ++i)
+    {
+       sql.append(",");
+       sql.append(QString::number((int)clist.at(i)));
+    }
+    sql += ")))"
+           " ORDER BY country_name;";
+    _country->populate(sql, currentCountry);
+  }
+
+  sUpdateSamples();
+}
 
 void sysLocale::sUpdateSamples()
 {
@@ -330,6 +373,7 @@ void sysLocale::sUpdateSamples()
   if (q.first())
   {
     QLocale sampleLocale = QLocale(localeLang, localeCountry);
+
     _dateSample->setText(sampleLocale.toString(q.value("dateSample").toDate(), QLocale::ShortFormat));
     _timeSample->setText(sampleLocale.toString(q.value("timeSample").toTime(), QLocale::ShortFormat));
     _timestampSample->setText(sampleLocale.toString(q.value("timestampSample").toDate(), QLocale::ShortFormat) +

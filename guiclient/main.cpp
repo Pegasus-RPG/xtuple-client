@@ -371,7 +371,7 @@ int main(int argc, char *argv[])
         }
       }
 
-      if (!langFound)
+      if (!langFound && !_preferences->boolean("IngoreMissingTranslationFiles"))
         QMessageBox::warning( 0, QObject::tr("Cannot Load Dictionary"),
                               QObject::tr("<p>The Translation Dictionaries %1 "
                                           "cannot be loaded. Reverting "
@@ -382,11 +382,14 @@ int main(int argc, char *argv[])
     /* set the locale to langabbr_countryabbr, langabbr, {lang# country#}, or
        lang#, depending on what information is available
      */
-    if (! langq.value("lang_abbr2").toString().isEmpty() &&
-        ! langq.value("country_abbr").toString().isEmpty())
-      QLocale::setDefault(QLocale(langq.value("lang_abbr2").toString() + "_" +
-                                  langq.value("country_abbr").toString()));
-    else if (! langq.value("lang_abbr2").toString().isEmpty())
+    QString langAbbr = langq.value("lang_abbr2").toString();
+    QString cntryAbbr = langq.value("country_abbr").toString().toUpper();
+    if(cntryAbbr == "UK")
+      cntryAbbr = "GB";
+    if (! langAbbr.isEmpty() &&
+        ! cntryAbbr.isEmpty())
+      QLocale::setDefault(QLocale(langAbbr + "_" + cntryAbbr));
+    else if (! langAbbr.isEmpty())
       QLocale::setDefault(QLocale(langq.value("lang_abbr2").toString()));
     else if (langq.value("lang_qt_number").toInt() &&
              langq.value("country_qt_number").toInt())

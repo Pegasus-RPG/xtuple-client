@@ -78,6 +78,7 @@ public slots:
     virtual void sSave();
     virtual void sUpdateColors();
     virtual void sUpdateSamples();
+    virtual void sUpdateCountries();
     virtual void populate();
 
 protected slots:

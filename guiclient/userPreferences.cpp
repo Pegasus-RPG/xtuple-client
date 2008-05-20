@@ -236,6 +236,7 @@ void userPreferences::sPopulate()
   _fixedWidthFonts->setChecked(_pref->boolean("UsedFixedWidthFonts"));
   _listNumericItemsFirst->setChecked(_pref->boolean("ListNumericItemNumbersFirst"));
   _showSoitemAvailability->setChecked(_pref->boolean("ShowSOItemAvailability"));
+  _ignoreTranslation->setChecked(_pref->boolean("IngoreMissingTranslationFiles"));
 
   _idleTimeout->setValue(_pref->value("IdleTimeout").toInt());
 
@@ -291,6 +292,7 @@ void userPreferences::sSave()
   _pref->set("UsedFixedWidthFonts", _fixedWidthFonts->isChecked());
   _pref->set("ListNumericItemNumbersFirst", _listNumericItemsFirst->isChecked());
   _pref->set("ShowSOItemAvailability", _showSoitemAvailability->isChecked());
+  _pref->set("IngoreMissingTranslationFiles", _ignoreTranslation->isChecked());
 
   _pref->set("IdleTimeout", _idleTimeout->value());
   omfgThis->_timeoutHandler->setIdleMinutes(_idleTimeout->value());
