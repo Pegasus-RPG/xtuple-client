@@ -193,8 +193,17 @@ void dspInvoiceRegister::sViewCreditMemo()
             "SELECT 2 AS type, aropen_id AS id "
             "FROM aropen "
             "WHERE ((aropen_docnumber=:docnum)"
+            "  AND  (aropen_doctype=:doctype)"
             ") ORDER BY type LIMIT 1;");
   q.bindValue(":docnum", _gltrans->currentItem()->text(3));
+  if(_gltrans->altId()==1)
+    q.bindValue(":doctype", "I");
+  else if(_gltrans->altId()==2)
+    q.bindValue(":doctype", "C");
+  else if(_gltrans->altId()==3)
+    q.bindValue(":doctype", "D");
+  else if(_gltrans->altId()==4)
+    q.bindValue(":doctype", "R");
   q.exec();
   if (q.first())
   {
