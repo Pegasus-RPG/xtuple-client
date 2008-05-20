@@ -181,7 +181,7 @@ void employees::sNew()
 
 void employees::sPrint()
 {
-  orReport report("EmployeeMasterList");
+  orReport report("EmployeeList");
   if (report.isValid())
     report.print();
   else

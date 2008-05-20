@@ -288,7 +288,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                salesReps.ui salesRep.ui                                                               \
                salesHistoryInformation.ui scrapTrans.ui scrapWoMaterialFromWIP.ui                     \
                scriptEditor.ui scripts.ui                                                             \
-               searchForCRMAccount.ui searchForContact.ui searchForItem.ui                            \
+               searchForCRMAccount.ui searchForContact.ui searchForItem.ui searchForEmp.ui            \
                selectBankAccount.ui selectBillingQty.ui selectOrderForBilling.ui                      \
                selectedPayments.ui selectPayment.ui selectPayments.ui                                 \
                selectShippedOrders.ui shift.ui shifts.ui shipOrder.ui shippingInformation.ui          \
@@ -605,7 +605,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h rwInterface
                salesHistoryInformation.h scrapTrans.h scrapWoMaterialFromWIP.h                        \
                scriptEditor.h scripts.h                                                               \
                scriptquery.h scripttoolbox.h                                                          \
-               searchForCRMAccount.h searchForContact.h searchForItem.h                               \
+               searchForCRMAccount.h searchForContact.h searchForItem.h searchForEmp.h                \
                selectBankAccount.h selectBillingQty.h selectOrderForBilling.h                         \
                selectedPayments.h selectPayment.h selectPayments.h                                    \
                selectShippedOrders.h shift.h shifts.h shipOrder.h shippingInformation.h               \
@@ -927,7 +927,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp rwInte
                salesHistoryInformation.cpp scrapTrans.cpp scrapWoMaterialFromWIP.cpp                  \
                scriptEditor.cpp scripts.cpp                                                           \
                scriptquery.cpp scripttoolbox.cpp                                                      \
-               searchForCRMAccount.cpp searchForContact.cpp searchForItem.cpp                         \
+               searchForCRMAccount.cpp searchForContact.cpp searchForItem.cpp searchForEmp.cpp        \
                selectBankAccount.cpp selectBillingQty.cpp selectOrderForBilling.cpp                   \
                selectedPayments.cpp selectPayment.cpp selectPayments.cpp                              \
                selectShippedOrders.cpp shift.cpp shifts.cpp shipOrder.cpp shippingInformation.cpp     \

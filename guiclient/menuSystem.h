@@ -121,6 +121,7 @@ class menuSystem : public QObject
     void sMaintainGroups();
     void sNewEmployee();
     void sListEmployees();
+    void sSearchEmployees();
     void sScheduleServerMaintenance();
     void sScheduleServerBackup();
     void sErrorLog();

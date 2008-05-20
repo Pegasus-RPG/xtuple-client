@@ -1,0 +1,359 @@
+<ui version="4.0" >
+ <class>searchForEmp</class>
+ <widget class="QMainWindow" name="searchForEmp" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>698</width>
+    <height>397</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Search for Employees</string>
+  </property>
+  <widget class="QWidget" name="widget" >
+   <layout class="QVBoxLayout" >
+    <property name="spacing" >
+     <number>5</number>
+    </property>
+    <property name="leftMargin" >
+     <number>5</number>
+    </property>
+    <property name="topMargin" >
+     <number>5</number>
+    </property>
+    <property name="rightMargin" >
+     <number>5</number>
+    </property>
+    <property name="bottomMargin" >
+     <number>5</number>
+    </property>
+    <item>
+     <layout class="QHBoxLayout" >
+      <property name="spacing" >
+       <number>7</number>
+      </property>
+      <item>
+       <layout class="QVBoxLayout" >
+        <property name="spacing" >
+         <number>5</number>
+        </property>
+        <item>
+         <layout class="QHBoxLayout" >
+          <property name="spacing" >
+           <number>5</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="_searchLit" >
+            <property name="text" >
+             <string>S&amp;earch for:</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="buddy" >
+             <cstring>_search</cstring>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="XLineEdit" name="_search" />
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" >
+          <property name="spacing" >
+           <number>0</number>
+          </property>
+          <item>
+           <layout class="QHBoxLayout" >
+            <property name="spacing" >
+             <number>7</number>
+            </property>
+            <item>
+             <layout class="QVBoxLayout" >
+              <property name="spacing" >
+               <number>1</number>
+              </property>
+              <item>
+               <widget class="XCheckBox" name="_searchCode" >
+                <property name="text" >
+                 <string>Search through Employee Codes</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="XCheckBox" name="_searchNumber" >
+                <property name="text" >
+                 <string>Search through Employee Numbers</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="XCheckBox" name="_searchMgr" >
+                <property name="text" >
+                 <string>Search through Manager Codes and Numbers</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QVBoxLayout" >
+              <property name="spacing" >
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="XCheckBox" name="_searchDept" >
+                <property name="text" >
+                 <string>Search through Departments</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="XCheckBox" name="_searchShift" >
+                <property name="text" >
+                 <string>Search through Shifts</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="XCheckBox" name="_showInactive" >
+                <property name="text" >
+                 <string>Show &amp;Inactive Items</string>
+                </property>
+                <property name="shortcut" >
+                 <string>Alt+I</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer>
+                <property name="orientation" >
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeType" >
+                 <enum>QSizePolicy::Preferred</enum>
+                </property>
+                <property name="sizeHint" >
+                 <size>
+                  <width>20</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType" >
+             <enum>QSizePolicy::Expanding</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" >
+        <property name="spacing" >
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QPushButton" name="_close" >
+          <property name="text" >
+           <string>&amp;Close</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="_print" >
+          <property name="text" >
+           <string>Print</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeType" >
+           <enum>QSizePolicy::Preferred</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>20</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QVBoxLayout" >
+      <property name="spacing" >
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="_empLit" >
+        <property name="text" >
+         <string>Employees:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>_emp</cstring>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" >
+        <property name="spacing" >
+         <number>7</number>
+        </property>
+        <item>
+         <widget class="XTreeWidget" name="_emp" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" >
+          <property name="spacing" >
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QPushButton" name="_edit" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
+            <property name="text" >
+             <string>&amp;Edit</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="_view" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
+            <property name="text" >
+             <string>&amp;View</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeType" >
+             <enum>QSizePolicy::Expanding</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <layoutdefault spacing="5" margin="5" />
+ <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <customwidgets>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>xlineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>_search</tabstop>
+  <tabstop>_searchCode</tabstop>
+  <tabstop>_searchNumber</tabstop>
+  <tabstop>_searchMgr</tabstop>
+  <tabstop>_searchDept</tabstop>
+  <tabstop>_searchShift</tabstop>
+  <tabstop>_showInactive</tabstop>
+  <tabstop>_emp</tabstop>
+  <tabstop>_edit</tabstop>
+  <tabstop>_view</tabstop>
+  <tabstop>_print</tabstop>
+  <tabstop>_close</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>_emp</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_view</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_close</sender>
+   <signal>clicked()</signal>
+   <receiver>searchForEmp</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>653</x>
+     <y>21</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>348</x>
+     <y>198</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
