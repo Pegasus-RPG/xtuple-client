@@ -180,7 +180,7 @@ void dspARApplications::sViewCreditMemo()
 	    "SELECT 2 AS type, aropen_id AS id "
 	    "FROM aropen "
 	    "WHERE ((aropen_docnumber=:docnum)"
-	  //"  AND (aropen_doctype='C') "
+	    "  AND (aropen_doctype IN ('C', 'R')) "
 	    ") ORDER BY type LIMIT 1;");
   q.bindValue(":docnum", _arapply->currentItem()->text(5));
   q.exec();
