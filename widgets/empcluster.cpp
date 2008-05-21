@@ -65,6 +65,8 @@ EmpCluster::EmpCluster(QWidget* pParent, const char* pName) :
     VirtualCluster(pParent, pName)
 {
   addNumberWidget(new EmpClusterLineEdit(this, pName));
+  _number->setText(tr("Code"));
+  _name->setText(tr("Number"));
 }
 
 EmpClusterLineEdit::EmpClusterLineEdit(QWidget* pParent, const char* pName) :
@@ -72,4 +74,38 @@ EmpClusterLineEdit::EmpClusterLineEdit(QWidget* pParent, const char* pName) :
 {
   setTitles(tr("Employee"), tr("Employees"));
   _numClause = QString(" AND (UPPER(emp_code)=UPPER(:number)) ");
+}
+
+VirtualInfo *EmpClusterLineEdit::infoFactory()
+{
+  return new EmpInfo(this);
+}
+
+VirtualList *EmpClusterLineEdit::listFactory()
+{
+    return new EmpList(this);
+}
+
+VirtualSearch *EmpClusterLineEdit::searchFactory()
+{
+    return new EmpSearch(this);
+}
+
+EmpInfo::EmpInfo(QWidget *pParent, Qt::WindowFlags pFlags) : VirtualInfo(pParent, pFlags)
+{
+  _numberLit->setText(tr("Code:"));
+  _nameLit->setText(tr("Number:"));
+}
+
+EmpList::EmpList(QWidget *pParent, Qt::WindowFlags pFlags) : VirtualList(pParent, pFlags)
+{
+  QTreeWidgetItem *hitem = _listTab->headerItem();
+  hitem->setText(0, tr("Code"));
+  hitem->setText(1, tr("Number"));
+}
+
+EmpSearch::EmpSearch(QWidget *pParent, Qt::WindowFlags pFlags) : VirtualSearch(pParent, pFlags)
+{
+  _searchNumber->setText(tr("Search through Codes"));
+  _searchName->setText(tr("Search through Numbers"));
 }

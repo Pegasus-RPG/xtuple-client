@@ -65,12 +65,42 @@
 
 #include "virtualCluster.h"
 
+class EmpInfo : public VirtualInfo
+{
+    Q_OBJECT
+
+    public:
+      EmpInfo(QWidget*, Qt::WindowFlags = 0);
+};
+
+class EmpList : public VirtualList
+{
+    Q_OBJECT
+
+    public:
+      EmpList(QWidget*, Qt::WindowFlags = 0);
+};
+
+class EmpSearch : public VirtualSearch
+{
+    Q_OBJECT
+
+    public:
+      EmpSearch(QWidget*, Qt::WindowFlags = 0);
+};
+
+
 class OPENMFGWIDGETS_EXPORT EmpClusterLineEdit : public VirtualClusterLineEdit
 {
     Q_OBJECT
 
     public:
         EmpClusterLineEdit(QWidget*, const char* = 0);
+
+    protected:
+        virtual VirtualInfo   *infoFactory();
+        virtual VirtualList   *listFactory();
+        virtual VirtualSearch *searchFactory();
 };
 
 class OPENMFGWIDGETS_EXPORT EmpCluster : public VirtualCluster
@@ -80,5 +110,4 @@ class OPENMFGWIDGETS_EXPORT EmpCluster : public VirtualCluster
     public:
         EmpCluster(QWidget*, const char* = 0);
 };
-
 #endif

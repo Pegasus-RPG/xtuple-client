@@ -57,26 +57,17 @@
 
 #include "user.h"
 
-#include <QVariant>
 #include <QMessageBox>
-#include <QStatusBar>
 #include <QSqlError>
+#include <QVariant>
+
 #include <qmd5.h>
 
-/*
- *  Constructs a user as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 user::user(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
-
-  // signals and slots connections
   connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_add, SIGNAL(clicked()), this, SLOT(sAdd()));
@@ -122,18 +113,11 @@ user::user(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   }
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 user::~user()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void user::languageChange()
 {
   retranslateUi(this);
@@ -512,8 +496,9 @@ void user::sCheck()
 void user::populate()
 {
   q.prepare( "SELECT *, userCanCreateUsers(usr_username) AS createusers,"
-             "       userCanCreateUsers(CURRENT_USER) AS enablecreateusers "
-             "FROM usr "
+             "       userCanCreateUsers(CURRENT_USER) AS enablecreateusers,"
+             "       emp_id "
+             "FROM usr LEFT OUTER JOIN emp ON (usr_id=emp_usr_id) "
              "WHERE (usr_username=:usr_username);" );
   q.bindValue(":usr_username", _cUsername);
   q.exec();
@@ -532,6 +517,7 @@ void user::populate()
     _createUsers->setEnabled(q.value("enablecreateusers").toBool());
     // keep synchronized with the insert/update above, GUIClient, and main
     _woTimeClockOnly->setChecked(q.value("usr_window").toString()==("woTimeClock"));
+    _employee->setId(q.value("emp_id").toInt());
 
     _passwd->setText("        ");
     _verify->setText("        ");
@@ -593,4 +579,3 @@ void user::sEnhancedAuthUpdate()
          "The password must be updated in order for this change to take\n"
          "full effect.") );
 }
-
