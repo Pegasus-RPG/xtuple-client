@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>631</width>
-    <height>562</height>
+    <width>686</width>
+    <height>576</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -36,7 +36,10 @@
         <string/>
        </property>
        <layout class="QGridLayout" >
-        <item row="0" column="0" >
+        <property name="verticalSpacing" >
+         <number>5</number>
+        </property>
+        <item row="0" column="0" colspan="3" >
          <widget class="QLabel" name="_userNameLit" >
           <property name="text" >
            <string>&amp;Username:</string>
@@ -49,7 +52,7 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="1" >
+        <item row="0" column="3" >
          <widget class="XLineEdit" name="_username" >
           <property name="maximumSize" >
            <size>
@@ -59,7 +62,7 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="2" >
+        <item row="0" column="4" colspan="2" >
          <widget class="QCheckBox" name="_active" >
           <property name="text" >
            <string>&amp;Active</string>
@@ -72,7 +75,7 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="3" colspan="3" >
+        <item row="0" column="6" colspan="3" >
          <spacer>
           <property name="orientation" >
            <enum>Qt::Horizontal</enum>
@@ -88,7 +91,7 @@
           </property>
          </spacer>
         </item>
-        <item row="1" column="0" >
+        <item row="1" column="0" colspan="3" >
          <widget class="QLabel" name="_properNameLit" >
           <property name="text" >
            <string>Proper &amp;Name:</string>
@@ -101,10 +104,10 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="1" colspan="2" >
+        <item row="1" column="3" colspan="3" >
          <widget class="XLineEdit" name="_properName" />
         </item>
-        <item row="1" column="3" >
+        <item row="1" column="6" >
          <widget class="QLabel" name="_initialsLit" >
           <property name="text" >
            <string>&amp;Initials:</string>
@@ -117,7 +120,7 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="4" >
+        <item row="1" column="7" >
          <widget class="XLineEdit" name="_initials" >
           <property name="maximumSize" >
            <size>
@@ -127,7 +130,7 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="5" >
+        <item row="1" column="8" >
          <spacer>
           <property name="orientation" >
            <enum>Qt::Horizontal</enum>
@@ -143,7 +146,7 @@
           </property>
          </spacer>
         </item>
-        <item row="2" column="0" >
+        <item row="2" column="0" colspan="3" >
          <widget class="QLabel" name="_emailLit" >
           <property name="text" >
            <string>&amp;Email Address:</string>
@@ -156,496 +159,122 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="1" colspan="5" >
+        <item row="2" column="3" colspan="6" >
          <widget class="XLineEdit" name="_email" />
         </item>
-        <item row="3" column="0" colspan="6" >
-         <layout class="QHBoxLayout" >
-          <property name="spacing" >
-           <number>6</number>
+        <item row="3" column="0" colspan="2" >
+         <widget class="QLabel" name="_passwordLit" >
+          <property name="text" >
+           <string>&amp;Password:</string>
           </property>
-          <property name="leftMargin" >
-           <number>0</number>
+          <property name="alignment" >
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
-          <property name="topMargin" >
-           <number>0</number>
+          <property name="buddy" >
+           <cstring>_passwd</cstring>
           </property>
-          <property name="rightMargin" >
-           <number>0</number>
-          </property>
-          <property name="bottomMargin" >
-           <number>0</number>
-          </property>
-          <item>
-           <layout class="QVBoxLayout" >
-            <property name="spacing" >
-             <number>0</number>
-            </property>
-            <property name="leftMargin" >
-             <number>0</number>
-            </property>
-            <property name="topMargin" >
-             <number>0</number>
-            </property>
-            <property name="rightMargin" >
-             <number>0</number>
-            </property>
-            <property name="bottomMargin" >
-             <number>0</number>
-            </property>
-            <item>
-             <layout class="QHBoxLayout" >
-              <property name="spacing" >
-               <number>5</number>
-              </property>
-              <property name="leftMargin" >
-               <number>0</number>
-              </property>
-              <property name="topMargin" >
-               <number>0</number>
-              </property>
-              <property name="rightMargin" >
-               <number>0</number>
-              </property>
-              <property name="bottomMargin" >
-               <number>0</number>
-              </property>
-              <item>
-               <layout class="QVBoxLayout" >
-                <property name="spacing" >
-                 <number>0</number>
-                </property>
-                <property name="leftMargin" >
-                 <number>0</number>
-                </property>
-                <property name="topMargin" >
-                 <number>0</number>
-                </property>
-                <property name="rightMargin" >
-                 <number>0</number>
-                </property>
-                <property name="bottomMargin" >
-                 <number>0</number>
-                </property>
-                <item>
-                 <widget class="QLabel" name="_passwordLit" >
-                  <property name="text" >
-                   <string>&amp;Password:</string>
-                  </property>
-                  <property name="alignment" >
-                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                  </property>
-                  <property name="buddy" >
-                   <cstring>_passwd</cstring>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="_verifyLit" >
-                  <property name="text" >
-                   <string>&amp;Verify:</string>
-                  </property>
-                  <property name="alignment" >
-                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                  </property>
-                  <property name="buddy" >
-                   <cstring>_verify</cstring>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QVBoxLayout" >
-                <property name="spacing" >
-                 <number>0</number>
-                </property>
-                <property name="leftMargin" >
-                 <number>0</number>
-                </property>
-                <property name="topMargin" >
-                 <number>0</number>
-                </property>
-                <property name="rightMargin" >
-                 <number>0</number>
-                </property>
-                <property name="bottomMargin" >
-                 <number>0</number>
-                </property>
-                <item>
-                 <widget class="XLineEdit" name="_passwd" >
-                  <property name="echoMode" >
-                   <enum>QLineEdit::Password</enum>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="XLineEdit" name="_verify" >
-                  <property name="echoMode" >
-                   <enum>QLineEdit::Password</enum>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <spacer>
-              <property name="orientation" >
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeType" >
-               <enum>QSizePolicy::Minimum</enum>
-              </property>
-              <property name="sizeHint" >
-               <size>
-                <width>20</width>
-                <height>0</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QVBoxLayout" >
-            <property name="spacing" >
-             <number>0</number>
-            </property>
-            <property name="leftMargin" >
-             <number>0</number>
-            </property>
-            <property name="topMargin" >
-             <number>0</number>
-            </property>
-            <property name="rightMargin" >
-             <number>0</number>
-            </property>
-            <property name="bottomMargin" >
-             <number>0</number>
-            </property>
-            <item>
-             <layout class="QVBoxLayout" >
-              <property name="spacing" >
-               <number>0</number>
-              </property>
-              <property name="leftMargin" >
-               <number>0</number>
-              </property>
-              <property name="topMargin" >
-               <number>0</number>
-              </property>
-              <property name="rightMargin" >
-               <number>0</number>
-              </property>
-              <property name="bottomMargin" >
-               <number>0</number>
-              </property>
-              <item>
-               <layout class="QHBoxLayout" >
-                <property name="spacing" >
-                 <number>0</number>
-                </property>
-                <property name="leftMargin" >
-                 <number>0</number>
-                </property>
-                <property name="topMargin" >
-                 <number>0</number>
-                </property>
-                <property name="rightMargin" >
-                 <number>0</number>
-                </property>
-                <property name="bottomMargin" >
-                 <number>0</number>
-                </property>
-                <item>
-                 <widget class="QCheckBox" name="_agent" >
-                  <property name="text" >
-                   <string>Purchasing Agent</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <spacer>
-                  <property name="orientation" >
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeType" >
-                   <enum>QSizePolicy::Expanding</enum>
-                  </property>
-                  <property name="sizeHint" >
-                   <size>
-                    <width>20</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" >
-                <property name="spacing" >
-                 <number>6</number>
-                </property>
-                <property name="leftMargin" >
-                 <number>0</number>
-                </property>
-                <property name="topMargin" >
-                 <number>0</number>
-                </property>
-                <property name="rightMargin" >
-                 <number>0</number>
-                </property>
-                <property name="bottomMargin" >
-                 <number>0</number>
-                </property>
-                <item>
-                 <widget class="QCheckBox" name="_createUsers" >
-                  <property name="text" >
-                   <string>Can Create System Users</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <spacer>
-                  <property name="orientation" >
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeType" >
-                   <enum>QSizePolicy::Expanding</enum>
-                  </property>
-                  <property name="sizeHint" >
-                   <size>
-                    <width>20</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" >
-                <property name="spacing" >
-                 <number>6</number>
-                </property>
-                <property name="leftMargin" >
-                 <number>0</number>
-                </property>
-                <property name="topMargin" >
-                 <number>0</number>
-                </property>
-                <property name="rightMargin" >
-                 <number>0</number>
-                </property>
-                <property name="bottomMargin" >
-                 <number>0</number>
-                </property>
-                <item>
-                 <widget class="QCheckBox" name="_exportContents" >
-                  <property name="text" >
-                   <string>Disable Export Display Contents</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <spacer>
-                  <property name="orientation" >
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeType" >
-                   <enum>QSizePolicy::Expanding</enum>
-                  </property>
-                  <property name="sizeHint" >
-                   <size>
-                    <width>20</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" >
-                <property name="spacing" >
-                 <number>6</number>
-                </property>
-                <property name="leftMargin" >
-                 <number>0</number>
-                </property>
-                <property name="topMargin" >
-                 <number>0</number>
-                </property>
-                <property name="rightMargin" >
-                 <number>0</number>
-                </property>
-                <property name="bottomMargin" >
-                 <number>0</number>
-                </property>
-                <item>
-                 <widget class="QCheckBox" name="_enhancedAuth" >
-                  <property name="text" >
-                   <string>Use Enhanced Authentication</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <spacer>
-                  <property name="orientation" >
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeType" >
-                   <enum>QSizePolicy::Expanding</enum>
-                  </property>
-                  <property name="sizeHint" >
-                   <size>
-                    <width>20</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-               </layout>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <spacer>
-              <property name="orientation" >
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeType" >
-               <enum>QSizePolicy::Expanding</enum>
-              </property>
-              <property name="sizeHint" >
-               <size>
-                <width>16</width>
-                <height>0</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" >
-              <property name="spacing" >
-               <number>6</number>
-              </property>
-              <property name="leftMargin" >
-               <number>0</number>
-              </property>
-              <property name="topMargin" >
-               <number>0</number>
-              </property>
-              <property name="rightMargin" >
-               <number>0</number>
-              </property>
-              <property name="bottomMargin" >
-               <number>0</number>
-              </property>
-              <item>
-               <widget class="QCheckBox" name="_woTimeClockOnly" >
-                <property name="text" >
-                 <string>May only use Shop Floor Workbench</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <spacer>
-                <property name="orientation" >
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeType" >
-                 <enum>QSizePolicy::Expanding</enum>
-                </property>
-                <property name="sizeHint" >
-                 <size>
-                  <width>20</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </item>
-         </layout>
+         </widget>
         </item>
-        <item row="4" column="0" colspan="6" >
-         <layout class="QHBoxLayout" >
-          <property name="spacing" >
-           <number>5</number>
+        <item row="3" column="2" colspan="3" >
+         <widget class="XLineEdit" name="_passwd" >
+          <property name="echoMode" >
+           <enum>QLineEdit::Password</enum>
           </property>
-          <property name="leftMargin" >
-           <number>0</number>
+         </widget>
+        </item>
+        <item row="3" column="5" colspan="3" >
+         <widget class="QCheckBox" name="_agent" >
+          <property name="text" >
+           <string>Purchasing Agent</string>
           </property>
-          <property name="topMargin" >
-           <number>0</number>
+         </widget>
+        </item>
+        <item row="4" column="0" colspan="2" >
+         <widget class="QLabel" name="_verifyLit" >
+          <property name="text" >
+           <string>&amp;Verify:</string>
           </property>
-          <property name="rightMargin" >
-           <number>0</number>
+          <property name="alignment" >
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
-          <property name="bottomMargin" >
-           <number>0</number>
+          <property name="buddy" >
+           <cstring>_verify</cstring>
           </property>
-          <item>
-           <widget class="QLabel" name="_localeLit" >
-            <property name="toolTip" >
-             <string>5</string>
-            </property>
-            <property name="text" >
-             <string>L&amp;ocale:</string>
-            </property>
-            <property name="alignment" >
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-            <property name="buddy" >
-             <cstring>_locale</cstring>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" >
-            <property name="spacing" >
-             <number>0</number>
-            </property>
-            <property name="leftMargin" >
-             <number>0</number>
-            </property>
-            <property name="topMargin" >
-             <number>0</number>
-            </property>
-            <property name="rightMargin" >
-             <number>0</number>
-            </property>
-            <property name="bottomMargin" >
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="XComboBox" name="_locale" />
-            </item>
-            <item>
-             <spacer>
-              <property name="orientation" >
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeType" >
-               <enum>QSizePolicy::Expanding</enum>
-              </property>
-              <property name="sizeHint" >
-               <size>
-                <width>20</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </item>
-         </layout>
+         </widget>
+        </item>
+        <item row="4" column="2" colspan="3" >
+         <widget class="XLineEdit" name="_verify" >
+          <property name="echoMode" >
+           <enum>QLineEdit::Password</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="5" colspan="4" >
+         <widget class="QCheckBox" name="_createUsers" >
+          <property name="text" >
+           <string>Can Create System Users</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="5" colspan="4" >
+         <widget class="QCheckBox" name="_exportContents" >
+          <property name="text" >
+           <string>Disable Export Display Contents</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="5" colspan="4" >
+         <widget class="QCheckBox" name="_enhancedAuth" >
+          <property name="text" >
+           <string>Use Enhanced Authentication</string>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="5" colspan="4" >
+         <widget class="QCheckBox" name="_woTimeClockOnly" >
+          <property name="text" >
+           <string>May only use Shop Floor Workbench</string>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="0" colspan="2" >
+         <widget class="QLabel" name="_localeLit" >
+          <property name="toolTip" >
+           <string>5</string>
+          </property>
+          <property name="text" >
+           <string>L&amp;ocale:</string>
+          </property>
+          <property name="alignment" >
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+          <property name="buddy" >
+           <cstring>_locale</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="2" colspan="3" >
+         <widget class="XComboBox" name="_locale" />
+        </item>
+        <item rowspan="2" row="8" column="2" colspan="5" >
+         <widget class="EmpCluster" name="_employee" >
+          <property name="readOnly" >
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="8" column="0" colspan="2" >
+         <widget class="QLabel" name="_employeeLit" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+          <property name="text" >
+           <string>Employee:</string>
+          </property>
+          <property name="alignment" >
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -1039,6 +668,11 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
+   <class>EmpCluster</class>
+   <extends>QWidget</extends>
+   <header>empcluster.h</header>
+  </customwidget>
+  <customwidget>
    <class>XComboBox</class>
    <extends>QComboBox</extends>
    <header>xcombobox.h</header>
@@ -1068,6 +702,7 @@
   <tabstop>_enhancedAuth</tabstop>
   <tabstop>_woTimeClockOnly</tabstop>
   <tabstop>_locale</tabstop>
+  <tabstop>_employee</tabstop>
   <tabstop>_module</tabstop>
   <tabstop>_available</tabstop>
   <tabstop>_add</tabstop>
