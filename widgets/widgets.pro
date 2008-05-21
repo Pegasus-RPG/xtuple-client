@@ -45,6 +45,7 @@ HEADERS += \
            plugins/deptclusterplugin.h \
            plugins/dlineeditplugin.h \
            plugins/empclusterplugin.h \
+           plugins/empgroupclusterplugin.h \
            plugins/expenseclusterplugin.h \
            plugins/expenselineeditplugin.h \
            plugins/fileclusterplugin.h \
@@ -131,7 +132,7 @@ SOURCES    += OpenMFGWidgets.cpp \
 	      xdatawidgetmapper.cpp \
               xtextedit.cpp \
 	      screencontrol.cpp \
-              empcluster.cpp
+              empcluster.cpp empgroupcluster.cpp
 
 HEADERS    += OpenMFGWidgets.h \
               addresscluster.h contactcluster.h crmacctcluster.h \
@@ -172,7 +173,7 @@ HEADERS    += OpenMFGWidgets.h \
               xtextedit.h \
 	      screencontrol.h \
               dcalendarpopup.h\
-              empcluster.h\
+              empcluster.h empgroupcluster.h\
 
 FORMS += accountSearch.ui \
 	 screenControl.ui \
