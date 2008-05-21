@@ -78,16 +78,11 @@ public slots:
     virtual void sDelete();
     virtual void sFillList();
 
-protected:
-    virtual void init();
-
 protected slots:
     virtual void languageChange();
 
     virtual void sPopulateMenu( QMenu * pMenu );
     virtual void sPost();
-
-
 };
 
 #endif // BANKADJUSTMENTEDITLIST_H

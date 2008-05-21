@@ -57,78 +57,46 @@
 
 #include "bankAdjustmentEditList.h"
 
+#include <QMenu>
+#include <QMessageBox>
+#include <QSqlError>
 #include <QVariant>
-#include <QStatusBar>
+
 #include <parameter.h>
 #include <openreports.h>
-#include <QWorkspace>
-#include <QMessageBox>
+
 #include "guiclient.h"
 #include "bankAdjustment.h"
+#include "storedProcErrorLookup.h"
 
-/*
- *  Constructs a bankAdjustmentEditList as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 bankAdjustmentEditList::bankAdjustmentEditList(QWidget* parent, const char* name, Qt::WFlags fl)
     : XMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_bankaccnt, SIGNAL(newID(int)), this, SLOT(sFillList()));
+  connect(_adjustments, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
 
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-    connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-    connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_bankaccnt, SIGNAL(newID(int)), this, SLOT(sFillList()));
-    connect(_adjustments, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
-    connect(_adjustments, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-bankAdjustmentEditList::~bankAdjustmentEditList()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void bankAdjustmentEditList::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void bankAdjustmentEditList::init()
-{
-  statusBar()->hide();
+ _bankaccnt->populate("SELECT bankaccnt_id,"
+		     "       (bankaccnt_name || '-' || bankaccnt_descrip),"
+		     "       bankaccnt_name "
+		     "FROM bankaccnt "
+		     "ORDER BY bankaccnt_name;");
   
-   _bankaccnt->populate("SELECT bankaccnt_id,"
-                       "       (bankaccnt_name || '-' || bankaccnt_descrip) "
-                       "FROM bankaccnt "
-                       "ORDER BY bankaccnt_name;");
-  
-  _adjustments->addColumn(tr("Bank Account"), _itemColumn, Qt::AlignLeft );
-  _adjustments->addColumn(tr("Adj. Type"), _orderColumn, Qt::AlignLeft );
-  _adjustments->addColumn(tr("Dist. Date"), _dateColumn, Qt::AlignCenter );
-  _adjustments->addColumn(tr("Doc. Number"), -1, Qt::AlignRight );
-  _adjustments->addColumn(tr("Amount"),   _bigMoneyColumn, Qt::AlignRight );
-  _adjustments->addColumn(tr("Currency"), _currencyColumn, Qt::AlignLeft );
+  _adjustments->addColumn(tr("Bank Account"),_itemColumn, Qt::AlignLeft,  true, "f_bank");
+  _adjustments->addColumn(tr("Adj. Type"),  _orderColumn, Qt::AlignLeft,  true, "bankadjtype_name");
+  _adjustments->addColumn(tr("Dist. Date"),  _dateColumn, Qt::AlignCenter,true, "bankadj_date");
+  _adjustments->addColumn(tr("Doc. Number"),          -1, Qt::AlignRight, true, "bankadj_docnumber");
+  _adjustments->addColumn(tr("Amount"),  _bigMoneyColumn, Qt::AlignRight, true, "bankadj_amount");
+  _adjustments->addColumn(tr("Currency"),_currencyColumn, Qt::AlignLeft,  true, "currabbr");
 
   if (omfgThis->singleCurrency())
-      _adjustments->hideColumn(5);
+      _adjustments->hideColumn("currabbr");
   
   if (_privileges->check("MaintainBankAdjustments"))
   {
@@ -145,6 +113,16 @@ void bankAdjustmentEditList::init()
   connect(omfgThis, SIGNAL(bankAdjustmentsUpdated(int, bool)), this, SLOT(sFillList()));
   
   sFillList();
+}
+
+bankAdjustmentEditList::~bankAdjustmentEditList()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void bankAdjustmentEditList::languageChange()
+{
+  retranslateUi(this);
 }
 
 void bankAdjustmentEditList::sPrint()
@@ -206,10 +184,10 @@ void bankAdjustmentEditList::sDelete()
 
 void bankAdjustmentEditList::sFillList()
 {
-  q.prepare( "SELECT bankadj_id, (bankaccnt_name || '-' || bankaccnt_descrip) AS f_bank,"
-             " bankadjtype_name, formatDate(bankadj_date), bankadj_docnumber,"
-             " formatMoney(bankadj_amount), "
-	     " currConcat(bankadj_curr_id) "
+  q.prepare( "SELECT *,"
+	     "       (bankaccnt_name || '-' || bankaccnt_descrip) AS f_bank,"
+             "       'curr' AS bankadj_amount_xtnumericrole, "
+	     "       currConcat(bankadj_curr_id) AS currabbr "
              "FROM bankadj LEFT OUTER JOIN bankaccnt ON (bankadj_bankaccnt_id=bankaccnt_id)"
              "                       LEFT OUTER JOIN bankadjtype ON (bankadj_bankadjtype_id=bankadjtype_id) "
              "WHERE ( (NOT bankadj_posted)"
@@ -217,6 +195,11 @@ void bankAdjustmentEditList::sFillList()
   q.bindValue(":bankaccnt_id", _bankaccnt->id());
   q.exec();
   _adjustments->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void bankAdjustmentEditList::sPopulateMenu( QMenu * pMenu )
@@ -248,24 +231,18 @@ void bankAdjustmentEditList::sPost()
   q.exec();
   if (q.first())
   {
-    if (q.value("result").toInt() < 0)
+    int result = q.value("result").toInt();
+    if (result < 0)
     {
-      switch (q.value("result").toInt())
-      {
-        case -3:
-          // Amount of Adjustment is 0: Nothing to post
-        case -1:
-          // One or more of the records did not exist
-        default:
-          QMessageBox::critical( this, tr("Cannot Post Bank Adjustment"),
-            tr("The selected Bank Adjustment cannot be posted due to an unknown error.\n"
-               "Contact your Systems Administrator.") );
-      }
+      systemError(this, storedProcErrorLookup("postBankAdjustment", result),
+		  __FILE__, __LINE__);
+      return;
     }
     sFillList();
   }
-  else
-    systemError( this, tr("An error occurred at %1::%2 when posting the Bank Adjustment")
-                       .arg(__FILE__)
-                       .arg(__LINE__) );
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
