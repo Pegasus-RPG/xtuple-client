@@ -177,6 +177,7 @@ class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
 	inline virtual bool    addressVisible() const { return _address->isVisible(); };
 	inline virtual AddressCluster* addressWidget() const { return _address; };
 	inline virtual int     addressId()	const { return _address->id(); };
+        inline virtual QString change()         const { return _change->text(); };
 	inline virtual int     crmAcctId()	const { return _crmAcct->id(); };
 	inline virtual QString description()    const { return ""; };
 	inline virtual QString emailAddress()	const { return _email->text(); };
@@ -230,6 +231,7 @@ class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
 	inline virtual void clearExtraClause()	{ };
 	inline virtual void setExtraClause(const QString&) { };
 	inline virtual void setAddress(const int p)     { _address->setId(p); };
+        virtual void        setChange(QString p);
 	inline virtual void setDescription(const QString&) { };
         inline virtual void setEmailAddress(const QString& p) { _email->setText(p); };
 	inline virtual void setFax(const QString& p)	{ _fax->setText(p); };

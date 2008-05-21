@@ -289,7 +289,7 @@ class OPENMFGWIDGETS_EXPORT VirtualCluster : public QWidget
         inline virtual bool    listVisible() const { return _list->isVisible(); };
         inline virtual QString label()       const { return _label->text(); };
         inline virtual bool    nameVisible() const { return _name->isVisible(); };
-        inline virtual QString number()      const { return _number->text(); };
+               virtual QString number()      const { return _number->text(); };
         inline virtual QString description() const { return _description->text(); };
         inline virtual bool    isValid()     const { return _number->isValid(); };
         inline virtual QString name()        const { return _name->text(); };

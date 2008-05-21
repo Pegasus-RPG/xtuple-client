@@ -667,59 +667,60 @@ void ContactCluster::setSearchAcct(const int p)
 
 void ContactCluster::check()
 {
-  //If this is mapped then we need to check whether change flags need to be set
-  if (_mapper->model())
+  QString oldNumber = _number->text();
+  XSqlQuery tx;
+  tx.exec("BEGIN;");
+  int result=save();
+  tx.exec("ROLLBACK;");
+  _number->setText(oldNumber);
+  if (result == -2)
   {
-    QString oldNumber = _number->text();
-    XSqlQuery tx;
-    tx.exec("BEGIN;");
-    int result=save();
-    tx.exec("ROLLBACK;");
-    _number->setText(oldNumber);
-    if (result == -2)
-    {
-      int answer = 2;	// Cancel
-      answer = QMessageBox::question(this, tr("Question Saving Address"),
-                  tr("There are multiple Contacts sharing this Address.\n"
-                     "What would you like to do?"),
-                  tr("Change This One"),
-                  tr("Change Address for All"),
-                  0, 0);
-       if (answer==0)
-       {
-         _address->setAddrChange(QString("CHANGEONE"));
-         _change->setText("CHANGEONE");
-       }
-       else if (answer==1)
-       {
-         _address->setAddrChange(QString("CHANGEALL"));  
-         _change->setText("CHANGEALL");
-       }
-    }
-    else if (result == -10)
-    {
-      int answer;
-      answer = QMessageBox::question(this,
-                  tr("Question Saving %1").arg(label()),
-                  tr("<p>Would you like to update the existing Contact or "
-                     "create a new one?"),
-                  tr("Create New"),
-                  tr("Change Existing"),
-                  0, 0);
-      if (0 == answer)
-        _change->setText("CHANGEONE");
-      else if (1 == answer)
-        _change->setText("CHANGEALL");
-      // Make sure the mapper is aware of this change
-      if (_mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_change))).toString() != _change->text())
-        _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_change)), _change->text());
-    }
-    else if (result < 0)
-    {
-      QMessageBox::critical(this, tr("Error"),tr("There was an error checking this Contact (%1).").arg(result));
-      return;
-    }
-  }  
+    int answer = 2;	// Cancel
+    answer = QMessageBox::question(this, tr("Question Saving Address"),
+                tr("There are multiple Contacts sharing this Address.\n"
+                   "What would you like to do?"),
+                tr("Change This One"),
+                tr("Change Address for All"),
+                0, 0);
+     if (answer==0)
+     {
+       _address->setAddrChange(QString("CHANGEONE"));
+       _change->setText("CHANGEONE");
+     }
+     else if (answer==1)
+     {
+       _address->setAddrChange(QString("CHANGEALL"));  
+       _change->setText("CHANGEALL");
+     }
+  }
+  else if (result == -10)
+  {
+    int answer;
+    answer = QMessageBox::question(this,
+                tr("Question Saving %1").arg(label()),
+                tr("<p>Would you like to update the existing Contact or "
+                   "create a new one?"),
+                tr("Create New"),
+                tr("Change Existing"),
+                0, 0);
+    if (0 == answer)
+      _change->setText("CHANGEONE");
+    else if (1 == answer)
+      _change->setText("CHANGEALL");
+
+    // Make sure the mapper is aware of this change
+    if (_mapper && _mapper->model() &&
+        (_mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),
+                                                        _mapper->mappedSection(_change))).toString() != _change->text()))
+        _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),
+                                                          _mapper->mappedSection(_change)),
+                                  _change->text());
+  }
+  else if (result < 0)
+  {
+    QMessageBox::critical(this, tr("Error"),tr("There was an error checking this Contact (%1).").arg(result));
+    return;
+  }
 }
 
 void ContactCluster::sCheck()
@@ -794,6 +795,15 @@ void ContactCluster::sSearch()
 				      .arg(__FILE__)
 				      .arg(__LINE__),
 			      tr("Could not instantiate a Search Dialog"));
+}
+
+void ContactCluster::setChange(QString p)
+{
+  _change->setText(p);
+
+  if (_mapper->model() &&
+      _mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_change))).toString() != _change->text())
+    _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_change)), _change->text());
 }
 
 ///////////////////////////////////////////////////////////////////////////////

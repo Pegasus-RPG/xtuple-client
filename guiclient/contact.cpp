@@ -65,6 +65,7 @@
 #include "contactcluster.h"
 #include "crmaccount.h"
 #include "customer.h"
+#include "employee.h"
 #include "inputManager.h"
 #include "prospect.h"
 #include "shipTo.h"
@@ -264,6 +265,14 @@ void contact::sPopulateUsesMenu(QMenu* pMenu)
       menuItem = pMenu->insertItem(detachStr, this, SLOT(sDetachUse()));
       pMenu->setItemEnabled(menuItem, _privileges->check("MaintainWarehouses"));
       break;
+
+    case 11:
+      menuItem = pMenu->insertItem(editStr, this, SLOT(sEditEmployee()));
+      pMenu->setItemEnabled(menuItem, _privileges->check("MaintainEmployees"));
+      menuItem = pMenu->insertItem(viewStr, this, SLOT(sViewEmployee()));
+      pMenu->setItemEnabled(menuItem, _privileges->check("ViewEmployees"));
+      menuItem = pMenu->insertItem(detachStr, this, SLOT(sDetachUse()));
+      pMenu->setItemEnabled(menuItem, _privileges->check("MaintainEmployees"));
 
     default:
       break;
@@ -509,7 +518,12 @@ void contact::sFillList()
 	    "       warehous_descrip AS name, '' AS role,"
 	    "       formatBoolYN(warehous_active) AS active"
 	    "  FROM whsinfo WHERE (warehous_cntct_id=:id)"
-	    "ORDER BY type;");
+	    "UNION SELECT emp_id AS id, 11 AS altId, :emp AS type,"
+	    "       emp_code AS number,"
+	    "       emp_number AS name, '' AS role,"
+	    "       formatBoolYN(emp_active) AS active"
+	    "  FROM emp WHERE (emp_cntct_id=:id)"
+	    "ORDER BY type, number;");
   q.bindValue(":id",		_contact->id());
   q.bindValue(":primary",	tr("Primary Contact"));
   q.bindValue(":secondary",	tr("Secondary Contact"));
@@ -522,6 +536,7 @@ void contact::sFillList()
   q.bindValue(":shipto",	tr("Ship-To Address"));
   q.bindValue(":vendaddr",	tr("Vendor Address"));
   q.bindValue(":whs",		tr("Warehouse"));
+  q.bindValue(":emp",		tr("Employee"));
   q.exec();
   _uses->populate(q, true);
   if (q.lastError().type() != QSqlError::None)
@@ -605,6 +620,13 @@ void contact::sDetachUse()
 		      "WHERE (warehous_id=:id);");
       break;
 
+    case 11:
+      question = tr("Are you sure that you want to remove this Contact as "
+		    "the Contact for this Employee?");
+      detachq.prepare("UPDATE emp SET emp_cntct_id = NULL "
+		      "WHERE (emp_id=:id);");
+      break;
+
     default:
       break;
   }
@@ -660,6 +682,10 @@ void contact::sEditUse()
       sEditWarehouse();
       break;
 
+    case 11:
+      sEditEmployee();
+      break;
+
     default:
       break;
   }
@@ -700,6 +726,10 @@ void contact::sViewUse()
       sViewWarehouse();
       break;
 
+    case 11:
+      sViewEmployee();
+      break;
+
     default:
       break;
   }
@@ -717,7 +747,8 @@ void contact::sHandleValidUse(bool valid)
 		  (_uses->altId() == 7 && _privileges->check("MaintainProspects")) ||
 		  (_uses->altId() == 8 && _privileges->check("MaintainShiptos")) ||
 		  (_uses->altId() == 9 && _privileges->check("MaintainVendorAddresses")) ||
-		  (_uses->altId() ==10 && _privileges->check("MaintainWarehouses")) 
+		  (_uses->altId() ==10 && _privileges->check("MaintainWarehouses")) ||
+		  (_uses->altId() ==11 && _privileges->check("MaintainEmployees")) 
   );
   bool viewPriv = (
 		  (_uses->altId() == 1 && _privileges->check("ViewCRMAccounts")) ||
@@ -729,7 +760,8 @@ void contact::sHandleValidUse(bool valid)
 		  (_uses->altId() == 7 && _privileges->check("ViewProspects")) ||
 		  (_uses->altId() == 8 && _privileges->check("ViewShiptos")) ||
 		  (_uses->altId() == 9 && _privileges->check("ViewVendorAddresses")) ||
-		  (_uses->altId() ==10 && _privileges->check("ViewWarehouses")) 
+		  (_uses->altId() ==10 && _privileges->check("ViewWarehouses"))  ||
+		  (_uses->altId() ==11 && _privileges->check("ViewEmployees")) 
   );
 
   disconnect(_uses, SIGNAL(itemSelected(int)), _editUse, SLOT(animateClick()));
@@ -794,6 +826,27 @@ void contact::sViewCustomer()
   customer *newdlg = new customer(0, "custForContact", Qt::Dialog);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg, Qt::WindowModal);
+}
+
+void contact::sEditEmployee()
+{
+  ParameterList params;
+  params.append("mode", "edit");
+  params.append("emp_id",	_uses->id());
+  employee newdlg(this);
+  newdlg.set(params);
+  if (newdlg.exec() == XDialog::Accepted)
+    sFillList();
+}
+
+void contact::sViewEmployee()
+{
+  ParameterList params;
+  params.append("mode", "view");
+  params.append("emp_id",	_uses->id());
+  employee newdlg(this);
+  newdlg.set(params);
+  newdlg.exec();
 }
 
 void contact::sEditProspect()

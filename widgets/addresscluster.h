@@ -157,6 +157,7 @@ class OPENMFGWIDGETS_EXPORT AddressCluster : public VirtualCluster
 	inline virtual QString line3()       const { return _addr3->text(); };
 	inline virtual int     id()	     const { return _id; };
 	inline virtual QString notes()	     const { return _notes; };
+               virtual QString number()      const { return QString(); };
 	inline virtual QString postalCode()  const { return _postalcode->text(); };
 	inline virtual QString state()       const { return _state->currentText(); };
 	

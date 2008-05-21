@@ -87,6 +87,7 @@ protected slots:
     virtual void sEditCharass();
     virtual void sEditCRMAccount();
     virtual void sEditCustomer();
+    virtual void sEditEmployee();
     virtual void sEditProspect();
     virtual void sEditShipto();
     virtual void sEditUse();
@@ -101,6 +102,7 @@ protected slots:
     virtual void sSave();
     virtual void sViewCRMAccount();
     virtual void sViewCustomer();
+    virtual void sViewEmployee();
     virtual void sViewProspect();
     virtual void sViewShipto();
     virtual void sViewUse();

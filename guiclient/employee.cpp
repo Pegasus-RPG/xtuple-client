@@ -238,10 +238,7 @@ enum SetResponse employee::set(const ParameterList &pParams)
 
 void employee::sSave(const bool pClose)
 {
-  // trying something different here - write through the view
-  // q.exec("BEGIN;");
-  //try to save the contact to do the check
-  // q.exec("ROLLBACK;");
+  _contact->check();
 
   if (_mode == cNew)
     q.prepare("INSERT INTO api.employee ("
@@ -318,8 +315,8 @@ void employee::sSave(const bool pClose)
   q.bindValue(":fax",         _contact->fax());
   q.bindValue(":email",       _contact->emailAddress());
   q.bindValue(":web",         _contact->webAddress());
-  q.bindValue(":cntctmode",   "CHANGEONE");     // TODO: fix hardcode
-  //TODO: ??? q.bindValue(":addrnumber",  _contact->addressWidget()->number());
+  q.bindValue(":cntctmode",   _contact->change());
+  q.bindValue(":addrnumber",  _contact->addressWidget()->number());
   q.bindValue(":addr1",       _contact->addressWidget()->line1());
   q.bindValue(":addr2",       _contact->addressWidget()->line2());
   q.bindValue(":addr3",       _contact->addressWidget()->line3());
@@ -327,7 +324,7 @@ void employee::sSave(const bool pClose)
   q.bindValue(":state",       _contact->addressWidget()->state());
   q.bindValue(":zip",         _contact->addressWidget()->postalCode());
   q.bindValue(":country",     _contact->addressWidget()->country());
-  q.bindValue(":addrmode",   "CHANGEONE");      // TODO: fix hardcode
+  q.bindValue(":addrmode",    _contact->addressWidget()->addrChange());
   q.bindValue(":site",        _site->code());
   q.bindValue(":mgrcode",     _mgr->number());
   q.bindValue(":wagetype",    _wagetype->code());
