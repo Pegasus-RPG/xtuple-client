@@ -55,52 +55,61 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  employee.h
-//  Created 05/08/2008 GJM
-//  Copyright (c) 2008, OpenMFG, LLC
+// empgroupcluster.cpp
+// Created 05/21/2008 GJM
+// Copyright (c) 2008, OpenMFG, LLC
 
-#ifndef EMPLOYEE_H
-#define EMPLOYEE_H
+#include "empgroupcluster.h"
 
-#include "guiclient.h"
-#include "xdialog.h"
-#include "ui_employee.h"
-
-class employee : public XDialog, public Ui::employee
+EmpGroupCluster::EmpGroupCluster(QWidget* pParent, const char* pName) :
+    VirtualCluster(pParent, pName)
 {
-  Q_OBJECT
-  
-  public:
-    employee(QWidget* = 0, Qt::WindowFlags = 0);
-    ~employee();
+  addNumberWidget(new EmpGroupClusterLineEdit(this, pName));
+  _number->setText(tr("Name"));
+  _name->setText(tr("Description"));
+}
 
-    static bool userHasPriv(const int = cView);
-    virtual void setVisible(bool);
+int EmpGroupClusterLineEdit::idFromList(QWidget *pParent)
+{
+  return EmpGroupClusterLineEdit(pParent).listFactory()->exec();
+}
 
-  public slots:
-    virtual enum SetResponse set(const ParameterList &);
-    virtual void sPopulate();
-    virtual void sSave(const bool = true);
+EmpGroupClusterLineEdit::EmpGroupClusterLineEdit(QWidget* pParent, const char* pName) :
+    VirtualClusterLineEdit(pParent, "empgrp", "empgrp_id", "empgrp_name", "empgrp_descrip", 0, 0, pName)
+{
+  setTitles(tr("Employee Group"), tr("Employee Groups"));
+}
 
-  protected slots:
-    virtual void languageChange();
-    virtual void sAttachGroup();
-    virtual void sDeleteCharass();
-    virtual void sDetachGroup();
-    virtual void sEditCharass();
-    virtual void sEditGroup();
-    virtual void sFillCharassList();
-    virtual void sFillGroupsList();
-    virtual void sNewCharass();
-    virtual void sSalesrep();
-    virtual void sUser();
-    virtual void sViewGroup();
+VirtualInfo *EmpGroupClusterLineEdit::infoFactory()
+{
+  return new EmpGroupInfo(this);
+}
 
-  private:
-    QString _currabbr;  // TODO: replace with currdisplay::currAbbrShort()
-    QString _empcode;
-    int     _empid;
-    int     _mode;
-};
+VirtualList *EmpGroupClusterLineEdit::listFactory()
+{
+    return new EmpGroupList(this);
+}
 
-#endif
+VirtualSearch *EmpGroupClusterLineEdit::searchFactory()
+{
+    return new EmpGroupSearch(this);
+}
+
+EmpGroupInfo::EmpGroupInfo(QWidget *pParent, Qt::WindowFlags pFlags) : VirtualInfo(pParent, pFlags)
+{
+  _numberLit->setText(tr("Name:"));
+  _nameLit->setText(tr("Description:"));
+}
+
+EmpGroupList::EmpGroupList(QWidget *pParent, Qt::WindowFlags pFlags) : VirtualList(pParent, pFlags)
+{
+  QTreeWidgetItem *hitem = _listTab->headerItem();
+  hitem->setText(0, tr("Name"));
+  hitem->setText(1, tr("Description"));
+}
+
+EmpGroupSearch::EmpGroupSearch(QWidget *pParent, Qt::WindowFlags pFlags) : VirtualSearch(pParent, pFlags)
+{
+  _searchNumber->setText(tr("Search through Name"));
+  _searchName->setText(tr("Search through Description"));
+}

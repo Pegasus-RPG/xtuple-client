@@ -63,6 +63,8 @@
 
 #include "characteristicAssignment.h"
 #include "employee.h"
+#include "empGroup.h"
+#include "empgroupcluster.h"
 #include "salesRep.h"
 #include "user.h"
 
@@ -118,15 +120,22 @@ employee::employee(QWidget* parent, Qt::WindowFlags fl)
 {
   setupUi(this);
 
+  connect(_attachGroup,   SIGNAL(clicked()), this, SLOT(sAttachGroup()));
   connect(_deleteCharass, SIGNAL(clicked()), this, SLOT(sDeleteCharass()));
+  connect(_detachGroup,   SIGNAL(clicked()), this, SLOT(sDetachGroup()));
   connect(_editCharass,   SIGNAL(clicked()), this, SLOT(sEditCharass()));
+  connect(_editGroup,     SIGNAL(clicked()), this, SLOT(sEditGroup()));
   connect(_newCharass,    SIGNAL(clicked()), this, SLOT(sNewCharass()));
   connect(_salesrepButton,SIGNAL(clicked()), this, SLOT(sSalesrep()));
   connect(_save,          SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_userButton,    SIGNAL(clicked()), this, SLOT(sUser()));
+  connect(_viewGroup,     SIGNAL(clicked()), this, SLOT(sViewGroup()));
 
   _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft, true, "char_name");
   _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft, true, "charass_value");
+
+  _groups->addColumn(tr("Name"), _itemColumn, Qt::AlignLeft, true, "empgrp_name");
+  _groups->addColumn(tr("Description"),   -1, Qt::AlignLeft, true, "empgrp_descrip");
 
   q.prepare("SELECT curr_abbr FROM curr_symbol WHERE (curr_id=baseCurrId());");
   q.exec();
@@ -209,10 +218,14 @@ enum SetResponse employee::set(const ParameterList &pParams)
   {
     connect(_charass,SIGNAL(valid(bool)), _deleteCharass, SLOT(setEnabled(bool)));
     connect(_charass,SIGNAL(valid(bool)), _editCharass, SLOT(setEnabled(bool)));
-    connect(_groups, SIGNAL(valid(bool)), _attachGroup, SLOT(setEnabled(bool)));
     connect(_groups, SIGNAL(valid(bool)), _detachGroup, SLOT(setEnabled(bool)));
-    connect(_groups, SIGNAL(valid(bool)), _editGroup,   SLOT(setEnabled(bool)));
-    connect(_groups, SIGNAL(valid(bool)), _viewGroup,   SLOT(setEnabled(bool)));
+    _attachGroup->setEnabled(true);
+    if (empGroup::userHasPriv(cEdit))
+    {
+      connect(_groups, SIGNAL(valid(bool)), _editGroup,   SLOT(setEnabled(bool)));
+    }
+    if (empGroup::userHasPriv(cView))
+      connect(_groups, SIGNAL(valid(bool)), _viewGroup,   SLOT(setEnabled(bool)));
   }
 
   _code->setEnabled(_mode == cNew || _mode == cEdit);
@@ -478,6 +491,23 @@ void employee::sFillCharassList()
   }
 }
 
+void employee::sFillGroupsList()
+{
+  q.prepare( "SELECT empgrp.* "
+             "FROM empgrp, empgrpitem "
+             "WHERE ((empgrp_id=empgrpitem_empgrp_id)"
+             "  AND  (empgrpitem_emp_id=:emp_id) ) "
+             "ORDER BY empgrp_name;" );
+  q.bindValue(":emp_id", _empid);
+  q.exec();
+  _groups->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+}
+
 void employee::sSalesrep()
 {
   XSqlQuery srq;
@@ -571,4 +601,63 @@ void employee::sUser()
       newdlg.exec();
     }
   }
+}
+
+void employee::sAttachGroup()
+{
+  int empgrpid = EmpGroupClusterLineEdit::idFromList(this);
+  if (empgrpid != XDialog::Rejected && empgrpid != -1)
+  {
+    q.prepare("INSERT INTO empgrpitem (empgrpitem_empgrp_id, empgrpitem_emp_id)"
+              " VALUES "
+              "(:empgrpid, :empid);");
+    q.bindValue(":empgrpid", empgrpid);
+    q.bindValue(":empid",    _empid);
+    q.exec();
+    if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+    sFillGroupsList();
+  }
+}
+
+void employee::sDetachGroup()
+{
+  q.prepare("DELETE FROM empgrpitem "
+            "WHERE ((empgrpitem_empgrp_id=:grpid)"
+            "  AND  (empgrpitem_emp_id=:empid));");
+  q.bindValue(":grpid", _groups->id());
+  q.bindValue(":empid", _empid);
+  q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+  sFillGroupsList();
+}
+
+void employee::sEditGroup()
+{
+  ParameterList params;
+  params.append("mode", "edit");
+  params.append("empgrp_id", _groups->id());
+
+  empGroup newdlg(this, "", TRUE);
+  newdlg.set(params);
+  newdlg.exec();
+  sFillGroupsList();
+}
+
+void employee::sViewGroup()
+{
+  ParameterList params;
+  params.append("mode", "view");
+  params.append("empgrp_id", _groups->id());
+
+  empGroup newdlg(this, "", TRUE);
+  newdlg.set(params);
+  newdlg.exec();
 }

@@ -55,52 +55,61 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  employee.h
-//  Created 05/08/2008 GJM
-//  Copyright (c) 2008, OpenMFG, LLC
+// empgroupcluster.h
+// Created 05/21/2008 GJM
+// Copyright (c) 2008, OpenMFG, LLC
 
-#ifndef EMPLOYEE_H
-#define EMPLOYEE_H
+#ifndef _empGroupCluster_h
 
-#include "guiclient.h"
-#include "xdialog.h"
-#include "ui_employee.h"
+#define _empGroupCluster_h
 
-class employee : public XDialog, public Ui::employee
+#include "virtualCluster.h"
+
+class EmpGroupInfo : public VirtualInfo
 {
-  Q_OBJECT
-  
-  public:
-    employee(QWidget* = 0, Qt::WindowFlags = 0);
-    ~employee();
+    Q_OBJECT
 
-    static bool userHasPriv(const int = cView);
-    virtual void setVisible(bool);
-
-  public slots:
-    virtual enum SetResponse set(const ParameterList &);
-    virtual void sPopulate();
-    virtual void sSave(const bool = true);
-
-  protected slots:
-    virtual void languageChange();
-    virtual void sAttachGroup();
-    virtual void sDeleteCharass();
-    virtual void sDetachGroup();
-    virtual void sEditCharass();
-    virtual void sEditGroup();
-    virtual void sFillCharassList();
-    virtual void sFillGroupsList();
-    virtual void sNewCharass();
-    virtual void sSalesrep();
-    virtual void sUser();
-    virtual void sViewGroup();
-
-  private:
-    QString _currabbr;  // TODO: replace with currdisplay::currAbbrShort()
-    QString _empcode;
-    int     _empid;
-    int     _mode;
+    public:
+      EmpGroupInfo(QWidget*, Qt::WindowFlags = 0);
 };
 
+class EmpGroupList : public VirtualList
+{
+    Q_OBJECT
+
+    public:
+      EmpGroupList(QWidget*, Qt::WindowFlags = 0);
+};
+
+class EmpGroupSearch : public VirtualSearch
+{
+    Q_OBJECT
+
+    public:
+      EmpGroupSearch(QWidget*, Qt::WindowFlags = 0);
+};
+
+
+class OPENMFGWIDGETS_EXPORT EmpGroupClusterLineEdit : public VirtualClusterLineEdit
+{
+    Q_OBJECT
+
+    public:
+        EmpGroupClusterLineEdit(QWidget*, const char* = 0);
+
+        static int idFromList(QWidget* = 0); // TODO: put in VirtualClusterLineEdit?
+
+    protected:
+        virtual VirtualInfo   *infoFactory();
+        virtual VirtualList   *listFactory();
+        virtual VirtualSearch *searchFactory();
+};
+
+class OPENMFGWIDGETS_EXPORT EmpGroupCluster : public VirtualCluster
+{
+    Q_OBJECT
+
+    public:
+        EmpGroupCluster(QWidget*, const char* = 0);
+};
 #endif

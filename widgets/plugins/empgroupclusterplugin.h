@@ -55,52 +55,40 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  employee.h
-//  Created 05/08/2008 GJM
-//  Copyright (c) 2008, OpenMFG, LLC
+#ifndef __EMPGROUPCLUSTERPLUGIN_H__
+#define __EMPGROUPCLUSTERPLUGIN_H__
 
-#ifndef EMPLOYEE_H
-#define EMPLOYEE_H
+#include "empgroupcluster.h"
 
-#include "guiclient.h"
-#include "xdialog.h"
-#include "ui_employee.h"
+#include <QDesignerCustomWidgetInterface>
+#include <QtPlugin>
 
-class employee : public XDialog, public Ui::employee
+class EmpGroupClusterPlugin : public QObject, public QDesignerCustomWidgetInterface
 {
-  Q_OBJECT
-  
+    Q_OBJECT
+    Q_INTERFACES(QDesignerCustomWidgetInterface)
+
   public:
-    employee(QWidget* = 0, Qt::WindowFlags = 0);
-    ~employee();
+    EmpGroupClusterPlugin(QObject *parent = 0) : QObject(parent), initialized(false) {}
 
-    static bool userHasPriv(const int = cView);
-    virtual void setVisible(bool);
-
-  public slots:
-    virtual enum SetResponse set(const ParameterList &);
-    virtual void sPopulate();
-    virtual void sSave(const bool = true);
-
-  protected slots:
-    virtual void languageChange();
-    virtual void sAttachGroup();
-    virtual void sDeleteCharass();
-    virtual void sDetachGroup();
-    virtual void sEditCharass();
-    virtual void sEditGroup();
-    virtual void sFillCharassList();
-    virtual void sFillGroupsList();
-    virtual void sNewCharass();
-    virtual void sSalesrep();
-    virtual void sUser();
-    virtual void sViewGroup();
+    bool isContainer() const { return false; }
+    bool isInitialized() const { return initialized; }
+    QIcon icon() const { return QIcon(); }
+    QString domXml() const
+    {
+      return "<widget class=\"EmpGroupCluster\" name=\"empGroupCluster\">\n"
+             "</widget>\n";
+    }
+    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString includeFile() const { return "empgroupcluster.h"; }
+    QString name() const { return "EmpGroupCluster"; }
+    QString toolTip() const { return ""; }
+    QString whatsThis() const { return ""; }
+    QWidget *createWidget(QWidget *parent) { return new EmpGroupCluster(parent); }
+    void initialize(QDesignerFormEditorInterface *) { initialized = true; }
 
   private:
-    QString _currabbr;  // TODO: replace with currdisplay::currAbbrShort()
-    QString _empcode;
-    int     _empid;
-    int     _mode;
+    bool initialized;
 };
 
 #endif
