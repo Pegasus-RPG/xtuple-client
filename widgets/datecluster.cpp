@@ -217,9 +217,12 @@ DLineEdit::DLineEdit(QWidget *parent, const char *name) :
   _calbutton.setIcon(QIcon(pixmap));
   _calbutton.setFlat(true);
   _calbutton.setMaximumSize(pixmap.size());
+  _calbutton.setFocusPolicy(Qt::NoFocus);
 
   connect(&_calbutton,        SIGNAL(clicked()), this, SLOT(showCalendar()));
   connect(&_lineedit, SIGNAL(editingFinished()), this, SLOT(validateDate()));
+
+  setFocusProxy(&_lineedit);
 
   _allowNull   = FALSE;
   _parsed      = FALSE;
