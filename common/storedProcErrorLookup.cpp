@@ -365,6 +365,11 @@ void initErrorLookupHash()
 			       "it is used by an active Warehouse."),
 			       					 0, "" },
 
+  { "deleteBankAdjustmentType",  -1, TR("The selected Bank Adjustment Type "
+                                        "cannot be deleted because it is "
+                                        "currently used by a Bank Adjustment."),
+                                                                 0, "" },
+
   { "deleteCashrcpt",  -1, TR("The selected Cash Receipt cannot be deleted "
                               "because it is a Customer Deposit made with "
                               "a Credit Card and the card has already been "
@@ -811,6 +816,13 @@ void initErrorLookupHash()
 									0, "" },
   { "postARCreditMemoApplication", -5,
 	    TR("The A/R Credit Memo to apply was not found."),		0, "" },
+
+  { "postBankAdjustment", -1, TR("This Bank Adjustment could not be posted "
+				 "because the one or more required records do "
+				 "not exist."),				0, "" },
+  { "postBankAdjustment", -3, TR("This Bank Adjustment could not be posted "
+				 "because the total adjustment is 0 so there "
+				 "is nothing to post."),		0, "" },
 
   { "postBankReconciliation", -1, TR("This Bank Reconciliation could not be "
 				     "posted because the G/L Account could not "

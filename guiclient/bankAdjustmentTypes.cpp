@@ -57,61 +57,29 @@
 
 #include "bankAdjustmentTypes.h"
 
-#include <QVariant>
+#include <QMenu>
 #include <QMessageBox>
-#include <QStatusBar>
+#include <QSqlError>
+#include <QVariant>
+
 #include <parameter.h>
 #include <openreports.h>
-#include "bankAdjustmentType.h"
 
-/*
- *  Constructs a bankAdjustmentTypes as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
+#include "bankAdjustmentType.h"
+#include "storedProcErrorLookup.h"
+
 bankAdjustmentTypes::bankAdjustmentTypes(QWidget* parent, const char* name, Qt::WFlags fl)
     : XMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_bankadjtype, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
 
-    // signals and slots connections
-    connect(_bankadjtype, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
-    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-    connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-    connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_bankadjtype, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-bankAdjustmentTypes::~bankAdjustmentTypes()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void bankAdjustmentTypes::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void bankAdjustmentTypes::init()
-{
-  statusBar()->hide();
-  
   if (_privileges->check("MaintainAdjustmentTypes"))
   {
     connect(_bankadjtype, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
@@ -124,10 +92,20 @@ void bankAdjustmentTypes::init()
     connect(_bankadjtype, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
   }
 
-  _bankadjtype->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft );
-  _bankadjtype->addColumn(tr("Description"), -1,          Qt::AlignLeft );
+  _bankadjtype->addColumn(tr("Name"), _itemColumn, Qt::AlignLeft, true, "bankadjtype_name");
+  _bankadjtype->addColumn(tr("Description"),   -1, Qt::AlignLeft, true, "bankadjtype_name");
     
   sFillList();
+}
+
+bankAdjustmentTypes::~bankAdjustmentTypes()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void bankAdjustmentTypes::languageChange()
+{
+  retranslateUi(this);
 }
 
 void bankAdjustmentTypes::sNew()
@@ -171,15 +149,21 @@ void bankAdjustmentTypes::sDelete()
   q.prepare( "SELECT deleteBankAdjustmentType(:bankadjtype_id) AS result;" );
   q.bindValue(":bankadjtype_id", _bankadjtype->id());
   q.exec();
-  if (q.first() && (q.value("result").toInt() < 0) )
+  if (q.first())
   {
-    switch (q.value("result").toInt())
+    int result = q.value("result").toInt();
+    if (result < 0)
     {
-      case -1:
-      default:
-        QMessageBox::critical( this, tr("Cannot Delete Bank Adjustment Type"),
-          tr("The selected Bank Adjustment Type cannot be deleted as it is currently used by a Bank Adjustment.") );
+      systemError(this,
+		  storedProcErrorLookup("deleteBankAdjustmentType", result),
+		  __FILE__, __LINE__);
+      return;
     }
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
 
   sFillList();
