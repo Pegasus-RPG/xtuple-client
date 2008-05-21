@@ -395,6 +395,9 @@
         <property name="focusPolicy" >
          <enum>Qt::StrongFocus</enum>
         </property>
+        <property name="label" >
+         <string>Expense Category:</string>
+        </property>
        </widget>
       </item>
       <item>
