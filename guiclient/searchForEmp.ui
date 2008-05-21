@@ -244,6 +244,16 @@
            <number>0</number>
           </property>
           <item>
+           <widget class="QPushButton" name="_new" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
+            <property name="text" >
+             <string>&amp;New</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QPushButton" name="_edit" >
             <property name="enabled" >
              <bool>false</bool>
@@ -316,6 +326,7 @@
   <tabstop>_searchShift</tabstop>
   <tabstop>_showInactive</tabstop>
   <tabstop>_emp</tabstop>
+  <tabstop>_new</tabstop>
   <tabstop>_edit</tabstop>
   <tabstop>_view</tabstop>
   <tabstop>_print</tabstop>

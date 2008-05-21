@@ -99,6 +99,8 @@
 #include "ediProfiles.h"
 #include "employee.h"
 #include "employees.h"
+#include "empGroup.h"
+#include "empGroups.h"
 #include "searchForEmp.h"
 #include "forms.h"
 #include "groups.h"
@@ -205,6 +207,8 @@ menuSystem::menuSystem(GUIClient *Pparent) :
     { "sys.employee",                 tr("&New Employee..."),               SLOT(sNewEmployee()),            employeeMenu, employee::userHasPriv(cNew),               NULL, NULL, true },
     { "sys.listEmployees",            tr("&List Employees..."),             SLOT(sListEmployees()),          employeeMenu, employee::userHasPriv(),                   NULL, NULL, true },
     { "sys.searchEmployees",          tr("&Search For Employees..."),       SLOT(sSearchEmployees()),        employeeMenu, searchForEmp::userHasPriv(),               NULL, NULL, true },
+    { "separator",                    NULL,                                 NULL,                            employeeMenu, true,                                      NULL, NULL, true },
+    { "sys.employeeGroups",           tr("Employee &Groups..."),            SLOT(sEmployeeGroups()),         employeeMenu, empGroup::userHasPriv(),                   NULL, NULL, true },
 
     { "separator",                    NULL,                                 NULL,                              systemMenu, true,                                      NULL, NULL, true },
     { "sys.scheduleServerMaintenance",tr("Schedule Server Mai&ntenance..."),SLOT(sScheduleServerMaintenance()),systemMenu, _privileges->check("MaintainServer"),      NULL, NULL, _metrics->boolean("EnableBatchManager") },
@@ -692,6 +696,11 @@ void menuSystem::sListEmployees()
 void menuSystem::sSearchEmployees()
 {
   omfgThis->handleNewWindow(new searchForEmp());
+}
+
+void menuSystem::sEmployeeGroups()
+{
+  omfgThis->handleNewWindow(new empGroups());
 }
 
 void menuSystem::sScheduleServerMaintenance()

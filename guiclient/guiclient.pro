@@ -197,7 +197,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                duplicateAccountNumbers.ui                                                             \
                ediForm.ui ediFormDetail.ui ediProfile.ui ediProfiles.ui                               \
                editICMWatermark.ui countSlip.ui countTag.ui                                           \
-               employee.ui employees.ui                                                               \
+               employee.ui employees.ui empGroup.ui empGroups.ui                                      \
                enterMiscCount.ui                                                                      \
                enterPoitemReceipt.ui enterPoReceipt.ui enterPoitemReturn.ui enterPoReturn.ui          \
                errorLog.ui eventManager.ui                                                            \
@@ -510,7 +510,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h rwInterface
                duplicateAccountNumbers.h                                                              \
                ediForm.h ediFormDetail.h ediProfile.h ediProfiles.h                                   \
                editICMWatermark.h countSlip.h countTag.h                                              \
-               employee.h employees.h                                                                 \
+               employee.h employees.h empGroup.h  empGroups.h                                         \
                enterMiscCount.h                                                                       \
                enterPoitemReceipt.h enterPoReceipt.h enterPoitemReturn.h enterPoReturn.h              \
                errorLog.h eventManager.h                                                              \
@@ -831,7 +831,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp rwInte
                duplicateAccountNumbers.cpp                                                            \
                ediForm.cpp ediFormDetail.cpp ediProfile.cpp ediProfiles.cpp                           \
                editICMWatermark.cpp countSlip.cpp countTag.cpp                                        \
-               employee.cpp employees.cpp                                                             \
+               employee.cpp employees.cpp empGroup.cpp empGroups.cpp                                  \
                enterMiscCount.cpp                                                                     \
                enterPoitemReceipt.cpp enterPoReceipt.cpp enterPoitemReturn.cpp enterPoReturn.cpp      \
                errorLog.cpp eventManager.cpp                                                          \

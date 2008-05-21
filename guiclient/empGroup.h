@@ -55,61 +55,42 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-// empcluster.h
-// Created 05/14/2008 GJM
-// Copyright (c) 2008, OpenMFG, LLC
+#ifndef EMPGROUP_H
+#define EMPGROUP_H
 
-#ifndef _empCluster_h
+#include "guiclient.h"
+#include "xdialog.h"
+#include <parameter.h>
 
-#define _empCluster_h
+#include "ui_empGroup.h"
 
-#include "virtualCluster.h"
-
-class EmpInfo : public VirtualInfo
+class empGroup : public XDialog, public Ui::empGroup
 {
     Q_OBJECT
 
-    public:
-      EmpInfo(QWidget*, Qt::WindowFlags = 0);
+public:
+    empGroup(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
+    ~empGroup();
+
+    static  bool userHasPriv(const int = cView);
+    virtual void setVisible(bool);
+
+public slots:
+    virtual bool close();
+    virtual void populate();
+    virtual enum SetResponse set(const ParameterList & pParams );
+    virtual void sCheck();
+    virtual void sSave(const bool = true);
+    virtual void sDelete();
+    virtual void sNew();
+    virtual void sFillList();
+
+protected slots:
+    virtual void languageChange();
+
+private:
+    int _mode;
+    int _empgrpid;
 };
 
-class EmpList : public VirtualList
-{
-    Q_OBJECT
-
-    public:
-      EmpList(QWidget*, Qt::WindowFlags = 0);
-};
-
-class EmpSearch : public VirtualSearch
-{
-    Q_OBJECT
-
-    public:
-      EmpSearch(QWidget*, Qt::WindowFlags = 0);
-};
-
-
-class OPENMFGWIDGETS_EXPORT EmpClusterLineEdit : public VirtualClusterLineEdit
-{
-    Q_OBJECT
-
-    public:
-        EmpClusterLineEdit(QWidget*, const char* = 0);
-
-        static int idFromList(QWidget* = 0); // TODO: put in VirtualClusterLineEdit?
-
-    protected:
-        virtual VirtualInfo   *infoFactory();
-        virtual VirtualList   *listFactory();
-        virtual VirtualSearch *searchFactory();
-};
-
-class OPENMFGWIDGETS_EXPORT EmpCluster : public VirtualCluster
-{
-    Q_OBJECT
-
-    public:
-        EmpCluster(QWidget*, const char* = 0);
-};
-#endif
+#endif // EMPGROUP_H

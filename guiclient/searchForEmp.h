@@ -80,6 +80,7 @@ public slots:
     virtual void sEdit();
     virtual void sEditMgr();
     virtual void sFillList();
+    virtual void sNew();
     virtual void sPrint();
     virtual void sView();
     virtual void sViewMgr();

@@ -69,6 +69,11 @@ EmpCluster::EmpCluster(QWidget* pParent, const char* pName) :
   _name->setText(tr("Number"));
 }
 
+int EmpClusterLineEdit::idFromList(QWidget *pParent)
+{
+  return EmpClusterLineEdit(pParent).listFactory()->exec();
+}
+
 EmpClusterLineEdit::EmpClusterLineEdit(QWidget* pParent, const char* pName) :
     VirtualClusterLineEdit(pParent, "emp", "emp_id", "emp_code", "emp_number", 0, 0, pName)
 {

@@ -108,6 +108,7 @@ searchForEmp::searchForEmp(QWidget* parent, const char* name, Qt::WFlags fl)
 
   connect(_edit,         SIGNAL(clicked()),     this, SLOT(sEdit()));
   connect(_emp, SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *, int)), this, SLOT(sPopulateMenu(QMenu *, QTreeWidgetItem *)));
+  connect(_new,          SIGNAL(clicked()),     this, SLOT(sNew()));
   connect(_print,        SIGNAL(clicked()),     this, SLOT(sPrint()));
   connect(_searchCode,   SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_searchDept,   SIGNAL(toggled(bool)), this, SLOT(sFillList()));
@@ -126,6 +127,7 @@ searchForEmp::searchForEmp(QWidget* parent, const char* name, Qt::WFlags fl)
 
   if (_privileges->check("MaintainEmployees"))
   {
+    _new->setEnabled(true);
     connect(_emp, SIGNAL(valid(bool)),       _edit, SLOT(setEnabled(bool)));
     connect(_emp, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
   }
@@ -206,6 +208,18 @@ void searchForEmp::sEditMgr()
 
   employee newdlg(this);
   newdlg.set(params);
+  if (newdlg.exec() != XDialog::Rejected)
+    sFillList();
+}
+
+void searchForEmp::sNew()
+{
+  ParameterList params;
+  params.append("mode", "new");
+
+  employee newdlg(this);
+  newdlg.set(params);
+  
   if (newdlg.exec() != XDialog::Rejected)
     sFillList();
 }

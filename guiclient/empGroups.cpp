@@ -55,61 +55,120 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-// empcluster.h
-// Created 05/14/2008 GJM
-// Copyright (c) 2008, OpenMFG, LLC
+#include "empGroups.h"
 
-#ifndef _empCluster_h
+#include <QSqlError>
 
-#define _empCluster_h
+#include <parameter.h>
 
-#include "virtualCluster.h"
+#include "empGroup.h"
+#include "guiclient.h"
+#include "storedProcErrorLookup.h"
 
-class EmpInfo : public VirtualInfo
+empGroups::empGroups(QWidget* parent, const char* name, Qt::WFlags fl)
+    : XMainWindow(parent, name, fl)
 {
-    Q_OBJECT
+  setupUi(this);
 
-    public:
-      EmpInfo(QWidget*, Qt::WindowFlags = 0);
-};
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
+  
+  _empgrp->addColumn(tr("Name"), _itemColumn, Qt::AlignLeft, "empgrp_name");
+  _empgrp->addColumn(tr("Description"),   -1, Qt::AlignLeft, "empgrp_descrip");
+  
+  if (_privileges->check("MaintainEmployeeGroups"))
+  {
+    connect(_empgrp, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
+    connect(_empgrp, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
+    connect(_empgrp, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
+  }
+  else
+  {
+    _new->setEnabled(FALSE);
+    connect(_empgrp, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
+  }
 
-class EmpList : public VirtualList
+  sFillList();
+}
+
+empGroups::~empGroups()
 {
-    Q_OBJECT
+  // no need to delete child widgets, Qt does it all for us
+}
 
-    public:
-      EmpList(QWidget*, Qt::WindowFlags = 0);
-};
-
-class EmpSearch : public VirtualSearch
+void empGroups::languageChange()
 {
-    Q_OBJECT
+  retranslateUi(this);
+}
 
-    public:
-      EmpSearch(QWidget*, Qt::WindowFlags = 0);
-};
-
-
-class OPENMFGWIDGETS_EXPORT EmpClusterLineEdit : public VirtualClusterLineEdit
+void empGroups::sDelete()
 {
-    Q_OBJECT
+  q.prepare( "SELECT deleteEmpgrp(:grpid) AS result;");
+  q.bindValue(":grpid", _empgrp->id());
+  q.exec();
+  if (q.first())
+  {
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("deleteEmpgrp", result),
+                  __FILE__, __LINE__);
+      return;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
-    public:
-        EmpClusterLineEdit(QWidget*, const char* = 0);
+  sFillList();
+}
 
-        static int idFromList(QWidget* = 0); // TODO: put in VirtualClusterLineEdit?
-
-    protected:
-        virtual VirtualInfo   *infoFactory();
-        virtual VirtualList   *listFactory();
-        virtual VirtualSearch *searchFactory();
-};
-
-class OPENMFGWIDGETS_EXPORT EmpCluster : public VirtualCluster
+void empGroups::sNew()
 {
-    Q_OBJECT
+  ParameterList params;
+  params.append("mode", "new");
 
-    public:
-        EmpCluster(QWidget*, const char* = 0);
-};
-#endif
+  empGroup newdlg(this, "", TRUE);
+  newdlg.set(params);
+  newdlg.exec();
+  sFillList();
+}
+
+void empGroups::sEdit()
+{
+  ParameterList params;
+  params.append("mode", "edit");
+  params.append("empgrp_id", _empgrp->id());
+
+  empGroup newdlg(this, "", TRUE);
+  newdlg.set(params);
+  newdlg.exec();
+  sFillList();
+}
+
+void empGroups::sView()
+{
+  ParameterList params;
+  params.append("mode", "view");
+  params.append("empgrp_id", _empgrp->id());
+
+  empGroup newdlg(this, "", TRUE);
+  newdlg.set(params);
+  newdlg.exec();
+}
+
+void empGroups::sFillList()
+{
+  q.prepare("SELECT * FROM empgrp ORDER BY empgrp_name;" );
+  q.exec();
+  _empgrp->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+}
