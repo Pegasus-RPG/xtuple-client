@@ -146,7 +146,6 @@ void incidentWorkbench::sView()
 
 void incidentWorkbench::sReset()
 {
-  _assignedTo->setId(-1);
   _statusNew->setChecked(true);
   _statusFeedback->setChecked(true);
   _statusConfirmed->setChecked(true);
