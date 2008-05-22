@@ -55,56 +55,40 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#include "empcluster.h"
+#ifndef __IMAGECLUSTERPLUGIN_H__
+#define __IMAGECLUSTERPLUGIN_H__
 
-EmpCluster::EmpCluster(QWidget* pParent, const char* pName) :
-    VirtualCluster(pParent, pName)
-{
-  addNumberWidget(new EmpClusterLineEdit(this, pName));
-}
+#include "imagecluster.h"
 
-int EmpClusterLineEdit::idFromList(QWidget *pParent)
-{
-  return EmpClusterLineEdit(pParent).listFactory()->exec();
-}
+#include <QDesignerCustomWidgetInterface>
+#include <QtPlugin>
 
-EmpClusterLineEdit::EmpClusterLineEdit(QWidget* pParent, const char* pName) :
-    VirtualClusterLineEdit(pParent, "emp", "emp_id", "emp_code", "emp_number", 0, 0, pName)
+class ImageClusterPlugin : public QObject, public QDesignerCustomWidgetInterface
 {
-  setTitles(tr("Employee"), tr("Employees"));
-  _numClause = QString(" AND (UPPER(emp_code)=UPPER(:number)) ");
-}
+    Q_OBJECT
+    Q_INTERFACES(QDesignerCustomWidgetInterface)
 
-VirtualInfo *EmpClusterLineEdit::infoFactory()
-{
-  return new EmpInfo(this);
-}
+  public:
+    ImageClusterPlugin(QObject *parent = 0) : QObject(parent), initialized(false) {}
 
-VirtualList *EmpClusterLineEdit::listFactory()
-{
-    return new EmpList(this);
-}
+    bool isContainer() const { return false; }
+    bool isInitialized() const { return initialized; }
+    QIcon icon() const { return QIcon(); }
+    QString domXml() const
+    {
+      return "<widget class=\"ImageCluster\" name=\"ImageCluster\">\n"
+             "</widget>\n";
+    }
+    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString includeFile() const { return "imagecluster.h"; }
+    QString name() const { return "ImageCluster"; }
+    QString toolTip() const { return ""; }
+    QString whatsThis() const { return ""; }
+    QWidget *createWidget(QWidget *parent) { return new ImageCluster(parent); }
+    void initialize(QDesignerFormEditorInterface *) { initialized = true; }
 
-VirtualSearch *EmpClusterLineEdit::searchFactory()
-{
-    return new EmpSearch(this);
-}
+  private:
+    bool initialized;
+};
 
-EmpInfo::EmpInfo(QWidget *pParent, Qt::WindowFlags pFlags) : VirtualInfo(pParent, pFlags)
-{
-  _numberLit->setText(tr("Code:"));
-  _nameLit->setText(tr("Number:"));
-}
-
-EmpList::EmpList(QWidget *pParent, Qt::WindowFlags pFlags) : VirtualList(pParent, pFlags)
-{
-  QTreeWidgetItem *hitem = _listTab->headerItem();
-  hitem->setText(0, tr("Code"));
-  hitem->setText(1, tr("Number"));
-}
-
-EmpSearch::EmpSearch(QWidget *pParent, Qt::WindowFlags pFlags) : VirtualSearch(pParent, pFlags)
-{
-  _searchNumber->setText(tr("Search through Codes"));
-  _searchName->setText(tr("Search through Numbers"));
-}
+#endif

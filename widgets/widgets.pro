@@ -50,6 +50,7 @@ HEADERS += \
            plugins/expenselineeditplugin.h \
            plugins/fileclusterplugin.h \
            plugins/glclusterplugin.h \
+           plugins/imageclusterplugin.h \
            plugins/invoicelineeditplugin.h \
            plugins/incidentclusterplugin.h \
            plugins/itemclusterplugin.h \
@@ -104,6 +105,7 @@ SOURCES    += OpenMFGWidgets.cpp \
               warehouseCluster.cpp warehousegroup.cpp \
               woCluster.cpp woList.cpp \
               filecluster.cpp glCluster.cpp accountList.cpp accountSearch.cpp \
+              imagecluster.cpp \
               invoiceLineEdit.cpp incidentCluster.cpp \
               ordercluster.cpp \
               opportunitycluster.cpp \
@@ -144,6 +146,7 @@ HEADERS    += OpenMFGWidgets.h \
               warehouseCluster.h warehousegroup.h \
               woCluster.h woList.h \
               filecluster.h glcluster.h accountList.h accountSearch.h \
+              imagecluster.h \
               invoicelineedit.h incidentcluster.h \
               ordercluster.h \
               opportunitycluster.h \

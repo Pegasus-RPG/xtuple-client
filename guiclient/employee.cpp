@@ -264,7 +264,7 @@ void employee::sSave(const bool pClose)
               " country, address_change,"
               " site, manager_code,"
               " wage_type, wage, wage_currency, wage_period,"
-              " department, shift, is_user, is_salesrep, notes"
+              " department, shift, is_user, is_salesrep, notes, image"
               ") VALUES ("
               " :code, :number, :active,"
               " :cntctnumber, :hnfc, :first, :last, :jobtitle,"
@@ -275,7 +275,7 @@ void employee::sSave(const bool pClose)
               " :country, :addrmode,"
               " :site, :mgrcode,"
               " :wagetype, :wage, :wagecurr, :wageper,"
-              " :dept, :shift, :isusr, :isrep, :notes);");
+              " :dept, :shift, :isusr, :isrep, :notes, :image);");
 
   else if (_mode == cEdit)
     q.prepare("UPDATE api.employee SET"
@@ -312,7 +312,8 @@ void employee::sSave(const bool pClose)
               " shift=:shift,"
               " is_user=:isusr,"
               " is_salesrep=:isrep,"
-              " notes=:notes"
+              " notes=:notes,"
+              " image=:image"
               " WHERE (code=:origcode);" );
 
   q.bindValue(":code",        _code->text());
@@ -350,6 +351,7 @@ void employee::sSave(const bool pClose)
   q.bindValue(":isrep",       _salesrep->isChecked());
   q.bindValue(":notes",       _notes->text());
   q.bindValue(":origcode",    _empcode);
+  q.bindValue(":image",       _image->number());
   q.exec();
   if (q.lastError().type() != QSqlError::None)
   {
@@ -421,8 +423,13 @@ void employee::sPopulate()
     _user->setChecked(q.value("is_user").toBool());
     _salesrep->setChecked(q.value("is_salesrep").toBool());
     _notes->setText(q.value("notes").toString());
+    _image->setNumber(q.value("image").toString());
+    if (DEBUG) qDebug("image %s and %s",
+                      q.value("image").toString().toAscii().data(),
+                      _image->number().toAscii().data());
 
     sFillCharassList();
+    sFillGroupsList();
     _comments->setId(_empid);
   }
   else if (q.lastError().type() != QSqlError::None)

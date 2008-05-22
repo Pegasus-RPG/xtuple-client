@@ -76,6 +76,7 @@
 #include "plugins/expenselineeditplugin.h"
 #include "plugins/fileclusterplugin.h"
 #include "plugins/glclusterplugin.h"
+#include "plugins/imageclusterplugin.h"
 #include "plugins/invoicelineeditplugin.h"
 #include "plugins/incidentclusterplugin.h"
 #include "plugins/itemclusterplugin.h"
@@ -141,6 +142,7 @@ OpenMFGPlugin::OpenMFGPlugin(QObject * parent) : QObject(parent)
   m_plugins.append(new ExpenseLineEditPlugin(this));
   m_plugins.append(new FileClusterPlugin(this));
   m_plugins.append(new GLClusterPlugin(this));
+  m_plugins.append(new ImageClusterPlugin(this));
   m_plugins.append(new InvoiceLineEditPlugin(this));
   m_plugins.append(new IncidentClusterPlugin(this));
   m_plugins.append(new ItemClusterPlugin(this));

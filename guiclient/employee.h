@@ -55,10 +55,6 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  employee.h
-//  Created 05/08/2008 GJM
-//  Copyright (c) 2008, OpenMFG, LLC
-
 #ifndef EMPLOYEE_H
 #define EMPLOYEE_H
 

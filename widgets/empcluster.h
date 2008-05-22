@@ -55,10 +55,6 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-// empcluster.h
-// Created 05/14/2008 GJM
-// Copyright (c) 2008, OpenMFG, LLC
-
 #ifndef _empCluster_h
 
 #define _empCluster_h

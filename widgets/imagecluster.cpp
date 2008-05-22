@@ -55,56 +55,95 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#include "empcluster.h"
+#include "imagecluster.h"
 
-EmpCluster::EmpCluster(QWidget* pParent, const char* pName) :
+#include <QPixMap>
+#include <QScrollArea>
+
+#include <quuencode.h>
+
+#define DEBUG   false
+
+ImageCluster::ImageCluster(QWidget* pParent, const char* pName) :
     VirtualCluster(pParent, pName)
 {
-  addNumberWidget(new EmpClusterLineEdit(this, pName));
+  addNumberWidget(new ImageClusterLineEdit(this, pName));
+
+  _image = new QLabel("picture here");
+  _image->setPixmap(QPixmap());
+  _image->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+  QScrollArea * scrollArea = new QScrollArea();
+  scrollArea->setWidgetResizable(true);
+  scrollArea->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+  scrollArea->setWidget(_image);
+  _grid->addWidget(scrollArea, 1, 0, -1, -1);
+  _description->hide();
+  _name->hide();
+
+  connect(_number, SIGNAL(parsed()), this, SLOT(sRefresh()));
 }
 
-int EmpClusterLineEdit::idFromList(QWidget *pParent)
+void ImageCluster::clear()
 {
-  return EmpClusterLineEdit(pParent).listFactory()->exec();
+  VirtualCluster::clear();
+  _image->setPixmap(QPixmap());
 }
 
-EmpClusterLineEdit::EmpClusterLineEdit(QWidget* pParent, const char* pName) :
-    VirtualClusterLineEdit(pParent, "emp", "emp_id", "emp_code", "emp_number", 0, 0, pName)
+void ImageCluster::sRefresh()
 {
-  setTitles(tr("Employee"), tr("Employees"));
-  _numClause = QString(" AND (UPPER(emp_code)=UPPER(:number)) ");
+  if (DEBUG) qDebug("ImageCluster::sRefresh()");
+  VirtualCluster::sRefresh();
+  if (_description->text().isEmpty())
+  {
+    if (DEBUG) qDebug("ImageCluster::sRefresh() without a picture");
+    _image = new QLabel("picture here");
+    _image->setPixmap(QPixmap());
+  }
+  else
+  {
+    if (DEBUG) qDebug("ImageCluster::sRefresh() has a picture");
+    QImage tmpImage;
+    tmpImage.loadFromData(QUUDecode(_description->text()));
+    _image->setPixmap(QPixmap::fromImage(tmpImage));
+  }
+  if (DEBUG) qDebug("ImageCluster::sRefresh() returning");
 }
 
-VirtualInfo *EmpClusterLineEdit::infoFactory()
+ImageClusterLineEdit::ImageClusterLineEdit(QWidget* pParent, const char* pName) :
+    VirtualClusterLineEdit(pParent, "image", "image_id", "image_name", "image_descrip", "image_data", 0, pName)
 {
-  return new EmpInfo(this);
+  setTitles(tr("Image"), tr("Images"));
+  _numClause = QString(" AND (UPPER(image_name)=UPPER(:number)) ");
 }
 
-VirtualList *EmpClusterLineEdit::listFactory()
+VirtualInfo *ImageClusterLineEdit::infoFactory()
 {
-    return new EmpList(this);
+  return new ImageInfo(this);
 }
 
-VirtualSearch *EmpClusterLineEdit::searchFactory()
+VirtualList *ImageClusterLineEdit::listFactory()
 {
-    return new EmpSearch(this);
+  return new ImageList(this);
 }
 
-EmpInfo::EmpInfo(QWidget *pParent, Qt::WindowFlags pFlags) : VirtualInfo(pParent, pFlags)
+VirtualSearch *ImageClusterLineEdit::searchFactory()
 {
-  _numberLit->setText(tr("Code:"));
-  _nameLit->setText(tr("Number:"));
+  return new ImageSearch(this);
 }
 
-EmpList::EmpList(QWidget *pParent, Qt::WindowFlags pFlags) : VirtualList(pParent, pFlags)
+ImageInfo::ImageInfo(QWidget *pParent, Qt::WindowFlags pFlags) : VirtualInfo(pParent, pFlags)
 {
-  QTreeWidgetItem *hitem = _listTab->headerItem();
-  hitem->setText(0, tr("Code"));
-  hitem->setText(1, tr("Number"));
+  _descripLit->hide();
+  _descrip->hide();
 }
 
-EmpSearch::EmpSearch(QWidget *pParent, Qt::WindowFlags pFlags) : VirtualSearch(pParent, pFlags)
+ImageList::ImageList(QWidget *pParent, Qt::WindowFlags pFlags) : VirtualList(pParent, pFlags)
 {
-  _searchNumber->setText(tr("Search through Codes"));
-  _searchName->setText(tr("Search through Numbers"));
+  _listTab->hideColumn(2);
+}
+
+ImageSearch::ImageSearch(QWidget *pParent, Qt::WindowFlags pFlags) : VirtualSearch(pParent, pFlags)
+{
+  _listTab->hideColumn(2);
+  _searchDescrip->hide();
 }

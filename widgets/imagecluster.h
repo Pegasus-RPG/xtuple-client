@@ -55,56 +55,67 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#include "empcluster.h"
+#ifndef _imageCluster_h
 
-EmpCluster::EmpCluster(QWidget* pParent, const char* pName) :
-    VirtualCluster(pParent, pName)
-{
-  addNumberWidget(new EmpClusterLineEdit(this, pName));
-}
+#define _imageCluster_h
 
-int EmpClusterLineEdit::idFromList(QWidget *pParent)
-{
-  return EmpClusterLineEdit(pParent).listFactory()->exec();
-}
+#include "virtualCluster.h"
 
-EmpClusterLineEdit::EmpClusterLineEdit(QWidget* pParent, const char* pName) :
-    VirtualClusterLineEdit(pParent, "emp", "emp_id", "emp_code", "emp_number", 0, 0, pName)
-{
-  setTitles(tr("Employee"), tr("Employees"));
-  _numClause = QString(" AND (UPPER(emp_code)=UPPER(:number)) ");
-}
+#include <QImage>
 
-VirtualInfo *EmpClusterLineEdit::infoFactory()
+class ImageInfo : public VirtualInfo
 {
-  return new EmpInfo(this);
-}
+    Q_OBJECT
 
-VirtualList *EmpClusterLineEdit::listFactory()
-{
-    return new EmpList(this);
-}
+    public:
+      ImageInfo(QWidget*, Qt::WindowFlags = 0);
+};
 
-VirtualSearch *EmpClusterLineEdit::searchFactory()
+class ImageList : public VirtualList
 {
-    return new EmpSearch(this);
-}
+    Q_OBJECT
 
-EmpInfo::EmpInfo(QWidget *pParent, Qt::WindowFlags pFlags) : VirtualInfo(pParent, pFlags)
-{
-  _numberLit->setText(tr("Code:"));
-  _nameLit->setText(tr("Number:"));
-}
+    public:
+      ImageList(QWidget*, Qt::WindowFlags = 0);
+};
 
-EmpList::EmpList(QWidget *pParent, Qt::WindowFlags pFlags) : VirtualList(pParent, pFlags)
+class ImageSearch : public VirtualSearch
 {
-  QTreeWidgetItem *hitem = _listTab->headerItem();
-  hitem->setText(0, tr("Code"));
-  hitem->setText(1, tr("Number"));
-}
+    Q_OBJECT
 
-EmpSearch::EmpSearch(QWidget *pParent, Qt::WindowFlags pFlags) : VirtualSearch(pParent, pFlags)
+    public:
+      ImageSearch(QWidget*, Qt::WindowFlags = 0);
+};
+
+
+class OPENMFGWIDGETS_EXPORT ImageClusterLineEdit : public VirtualClusterLineEdit
 {
-  _searchNumber->setText(tr("Search through Codes"));
-  _searchName->setText(tr("Search through Numbers"));
-}
+  Q_OBJECT
+
+  public:
+    ImageClusterLineEdit(QWidget*, const char* = 0);
+
+  protected:
+    virtual VirtualInfo   *infoFactory();
+    virtual VirtualList   *listFactory();
+    virtual VirtualSearch *searchFactory();
+};
+
+class OPENMFGWIDGETS_EXPORT ImageCluster : public VirtualCluster
+{
+  Q_OBJECT
+
+  public:
+      ImageCluster(QWidget*, const char* = 0);
+
+  public slots:
+      virtual void sRefresh();
+
+  protected slots:
+      virtual void clear();
+
+  private:
+    QLabel *_image;
+};
+
+#endif
