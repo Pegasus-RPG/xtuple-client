@@ -80,15 +80,15 @@ bankAccounts::bankAccounts(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_serviceCharge, SIGNAL(clicked()), this, SLOT(sPostServiceCharge()));
   connect(_view,          SIGNAL(clicked()), this, SLOT(sView()));
   
-  _bankaccnt->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft   );
-  _bankaccnt->addColumn(tr("Description"), -1,          Qt::AlignLeft   );
-  _bankaccnt->addColumn(tr("Type"),        _dateColumn, Qt::AlignCenter );
-  _bankaccnt->addColumn(tr("A/P"),         _ynColumn,   Qt::AlignCenter );
-  _bankaccnt->addColumn(tr("A/R"),         _ynColumn,   Qt::AlignCenter );
-  _bankaccnt->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignCenter );
+  _bankaccnt->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft, true, "bankaccnt_name"  );
+  _bankaccnt->addColumn(tr("Description"),          -1, Qt::AlignLeft, true, "bankaccnt_descrip"  );
+  _bankaccnt->addColumn(tr("Type"),        _dateColumn, Qt::AlignCenter,true, "type");
+  _bankaccnt->addColumn(tr("A/P"),           _ynColumn, Qt::AlignCenter,true, "ap");
+  _bankaccnt->addColumn(tr("A/R"),           _ynColumn, Qt::AlignCenter,true, "ar");
+  _bankaccnt->addColumn(tr("Currency"),_currencyColumn, Qt::AlignCenter,true, "currabbr");
 
   if (omfgThis->singleCurrency())
-      _bankaccnt->hideColumn(5);
+      _bankaccnt->hideColumn("currabbr");
 
   if (_privileges->check("MaintainBankAccounts"))
   {
@@ -157,9 +157,10 @@ void bankAccounts::sFillList()
              "       CASE WHEN (bankaccnt_type='K') THEN :checking"
              "            WHEN (bankaccnt_type='C') THEN :cash"
              "            ELSE '?'"
-             "       END,"
-             "       formatBoolYN(bankaccnt_ap), formatBoolYN(bankaccnt_ar), "
-	     "       currConcat(bankaccnt_curr_id) "
+             "       END AS type,"
+             "       formatBoolYN(bankaccnt_ap) AS ap,"
+	     "       formatBoolYN(bankaccnt_ar) AS ar, "
+	     "       currConcat(bankaccnt_curr_id) AS currabbr "
              "FROM bankaccnt "
              "ORDER BY bankaccnt_name;" );
   q.bindValue(":checking", tr("Checking"));
