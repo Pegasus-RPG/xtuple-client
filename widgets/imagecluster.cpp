@@ -57,7 +57,7 @@
 
 #include "imagecluster.h"
 
-#include <QPixMap>
+#include <QPixmap>
 #include <QScrollArea>
 
 #include <quuencode.h>
