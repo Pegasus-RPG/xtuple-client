@@ -68,6 +68,7 @@
 #include <QDateTime>
 #include <QList>
 #include <QMenu>
+#include <QTabWidget>
 
 #include <parameter.h>
 #include <metasql.h>
@@ -159,6 +160,47 @@ QObject * ScriptToolbox::menuAddMenu(QObject * menu, const QString & text, const
       nm->setObjectName(name);
   }
   return nm;
+}
+
+QWidget * ScriptToolbox::tabWidget(QWidget * tab, int idx)
+{
+  QTabWidget *tw = qobject_cast<QTabWidget*>(tab);
+  QWidget * w = 0;
+  if(tw)
+    w = tw->widget(idx);
+  return w;
+}
+
+int ScriptToolbox::tabInsertTab(QWidget * tab, int idx, QWidget * page, const QString & text)
+{
+  QTabWidget *tw = qobject_cast<QTabWidget*>(tab);
+  int i = -1;
+  if(tw)
+    i = tw->insertTab(idx, page, text);
+  return i;
+}
+
+void ScriptToolbox::tabRemoveTab(QWidget * tab, int idx)
+{
+  QTabWidget *tw = qobject_cast<QTabWidget*>(tab);
+  if(tw)
+    tw->removeTab(idx);
+}
+
+void ScriptToolbox::tabSetTabText(QWidget * tab, int idx, const QString & text)
+{
+  QTabWidget *tw = qobject_cast<QTabWidget*>(tab);
+  if(tw)
+    tw->setTabText(idx, text);
+}
+
+QString ScriptToolbox::tabtabText(QWidget * tab, int idx)
+{
+  QTabWidget *tw = qobject_cast<QTabWidget*>(tab);
+  QString str;
+  if(tw)
+    tw->tabText(idx);
+  return str;
 }
 
 QWidget * ScriptToolbox::createWidget(const QString & className, QWidget * parent, const QString & name)
