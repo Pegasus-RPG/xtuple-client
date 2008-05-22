@@ -216,7 +216,7 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   _payments->addColumn(tr("Entered By"),   _userColumn,     Qt::AlignLeft  );
   _payments->addColumn(tr("Total Amount"), _moneyColumn,    Qt::AlignRight );
   _payments->addColumn(tr("Currency"),     _currencyColumn, Qt::AlignLeft  );
-  _payments->addColumn(tr("S/O #"),        -1,    Qt::AlignLeft  );
+  _payments->addColumn(tr("Document #"),   -1,              Qt::AlignLeft  );
   _payments->addColumn(tr("Reference"),    _orderColumn,    Qt::AlignLeft  );
   _payments->addColumn(tr("Allocated"),    _moneyColumn,    Qt::AlignRight );
   _payments->addColumn(tr("Currency"),     _currencyColumn, Qt::AlignLeft  );
