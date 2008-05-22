@@ -105,11 +105,13 @@ void bankAdjustment::init()
   statusBar()->hide();
   
   _bankaccnt->populate("SELECT bankaccnt_id,"
-                       "       (bankaccnt_name || '-' || bankaccnt_descrip) "
+                       "       (bankaccnt_name || '-' || bankaccnt_descrip),"
+		       "       bankaccnt_name "
                        "FROM bankaccnt "
                        "ORDER BY bankaccnt_name;");
   _bankadjtype->populate("SELECT bankadjtype_id,"
-                         "       (bankadjtype_name || '-' || bankadjtype_descrip) "
+                         "       (bankadjtype_name || '-' || bankadjtype_descrip),"
+			 "       bankadjtype_name "
                          "FROM bankadjtype "
                          "ORDER BY bankadjtype_name;");
   
