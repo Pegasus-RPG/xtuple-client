@@ -186,7 +186,7 @@
        <item>
         <widget class="QPushButton" name="_reassign" >
          <property name="text" >
-          <string>&amp;Ressign</string>
+          <string>&amp;Reassign</string>
          </property>
          <property name="default" >
           <bool>true</bool>
