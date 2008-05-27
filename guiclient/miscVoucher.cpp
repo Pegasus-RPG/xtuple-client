@@ -241,11 +241,15 @@ void miscVoucher::sSave()
   q.exec();
   if (q.first())
   {
-    QMessageBox::critical( this, tr("Cannot Save Voucher"),
-                           tr( "A Voucher for this Vendor has already been enter with the same Vendor Invoice Number\n"
-                               "Please verify the Vendor Invoice Number to ensure that this is not a duplicate entry." ) );
-    _invoiceNum->setFocus();
-    return;
+      if (QMessageBox::question( this, windowTitle(),
+                             tr( "A Voucher for this Vendor has already been entered with the same Vendor Invoice Number. "
+                                 "Are you sure you want to use this number again?" ),
+                              QMessageBox::Yes,
+                              QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+      {
+        _invoiceNum->setFocus();
+        return;
+      }
   }
 
   if (_mode == cNew)
