@@ -107,14 +107,14 @@ purchaseOrder::purchaseOrder(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _poCurrency->setLabel(_poCurrencyLit);
 
-  _poitem->addColumn(tr("#"),           _whsColumn,    Qt::AlignCenter );
-  _poitem->addColumn(tr("Status"),      _statusColumn, Qt::AlignCenter );
-  _poitem->addColumn(tr("Item"),        _itemColumn,   Qt::AlignLeft   );
-  _poitem->addColumn(tr("Description"), -1,            Qt::AlignLeft   );
-  _poitem->addColumn(tr("Due Date"),    _dateColumn,   Qt::AlignRight  );
-  _poitem->addColumn(tr("Ordered"),     _qtyColumn,    Qt::AlignRight  );
-  _poitem->addColumn(tr("Unit Price"),  _priceColumn,  Qt::AlignRight  );
-  _poitem->addColumn(tr("Ext. Price"),  _moneyColumn,  Qt::AlignRight  );
+  _poitem->addColumn(tr("#"),           _whsColumn,    Qt::AlignCenter,true, "poitem_linenumber");
+  _poitem->addColumn(tr("Status"),      _statusColumn, Qt::AlignCenter,true, "poitemstatus");
+  _poitem->addColumn(tr("Item"),        _itemColumn,   Qt::AlignLeft,  true, "item_number");
+  _poitem->addColumn(tr("Description"), -1,            Qt::AlignLeft,  true, "item_descrip");
+  _poitem->addColumn(tr("Due Date"),    _dateColumn,   Qt::AlignRight, true,"poitem_duedate");
+  _poitem->addColumn(tr("Ordered"),     _qtyColumn,    Qt::AlignRight, true, "poitem_qty_ordered");
+  _poitem->addColumn(tr("Unit Price"),  _priceColumn,  Qt::AlignRight, true, "poitem_unitprice");
+  _poitem->addColumn(tr("Ext. Price"),  _moneyColumn,  Qt::AlignRight, true, "extprice");
 
   _qeitem = new PoitemTableModel(this);
   _qeitemView->setModel(_qeitem);
@@ -926,8 +926,7 @@ void purchaseOrder::sHandleVendor(int pVendid)
 
 void purchaseOrder::sFillList()
 {
-  q.prepare( "SELECT poitem_id,"
-             "       poitem_linenumber,"
+  q.prepare( "SELECT poitem.*,"
              "       CASE WHEN(poitem_status='C') THEN :closed"
              "            WHEN(poitem_status='U') THEN :unposted"
              "            WHEN(poitem_status='O' AND ((poitem_qty_received-poitem_qty_returned) > 0) AND (poitem_qty_ordered>(poitem_qty_received-poitem_qty_returned))) THEN :partial"
@@ -937,14 +936,14 @@ void purchaseOrder::sFillList()
              "       END AS poitemstatus,"
              "       CASE WHEN (itemsite_id IS NULL) THEN poitem_vend_item_number"
              "            ELSE item_number"
-             "       END,"
+             "       END AS item_number,"
              "       CASE WHEN (itemsite_id IS NULL) THEN firstLine(poitem_vend_item_descrip)"
              "            ELSE (item_descrip1 || ' ' || item_descrip2)"
-             "       END,"
-             "       formatDate(poitem_duedate),"
-             "       formatQty(poitem_qty_ordered),"
-             "       formatPurchPrice(poitem_unitprice) AS purchPrice,"
-             "       formatMoney(poitem_unitprice * poitem_qty_ordered) "
+             "       END AS item_descrip,"
+             "       (poitem_unitprice * poitem_qty_ordered) AS extprice, "
+             "       'qty' AS poitem_qty_ordered_xtnumericrole,"
+             "       'purchprice' AS poitem_unitprice_xtnumericrole,"
+             "       'curr' AS extprice_xtnumericrole "
              "FROM poitem LEFT OUTER JOIN"
              "     ( itemsite JOIN item"
              "       ON (itemsite_item_id=item_id) )"
@@ -959,7 +958,6 @@ void purchaseOrder::sFillList()
   q.bindValue(":open", tr("Open"));
 
   q.exec();
-  _poitem->clear();
   _poitem->populate(q);
 
   sCalculateTotals();
@@ -1032,6 +1030,8 @@ void purchaseOrder::sHandleOrderNumber()
       q.bindValue(":pohead_id", _poheadid);
       q.bindValue(":orderNumber", _orderNumber->text().toInt());
       q.exec();
+      if (q.lastError().type() != QSqlError::None)
+	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 
       _mode = cEdit;
       setPoheadid(poheadid);
@@ -1090,6 +1090,8 @@ void purchaseOrder::closeEvent(QCloseEvent *pEvent)
     q.bindValue(":pohead_id", _poheadid);
     q.bindValue(":orderNumber", _orderNumber->text().toInt());
     q.exec();
+    if (q.lastError().type() != QSqlError::None)
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
   }
 
   // TODO: if sQeSave == false then find a way to return control to the user

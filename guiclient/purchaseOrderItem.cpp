@@ -352,7 +352,7 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
   param = pParams.value("qty", &valid);
   if (valid)
   {
-    _ordered->setText(formatQty(param.toDouble()/_invVendUOMRatio));
+    _ordered->setDouble((param.toDouble()/_invVendUOMRatio));
 
     if (_item->isValid())
       sDeterminePrice();
@@ -396,13 +396,12 @@ void purchaseOrderItem::populate()
 {
   q.prepare( "SELECT pohead_number, poitem_linenumber, poitem_itemsite_id,"
              "       poitem_itemsrc_id, poitem_vend_item_number, poitem_vend_item_descrip,"
-             "       poitem_vend_uom, formatUOMRatio(poitem_invvenduomratio) AS invvenduomratio,"
+             "       poitem_vend_uom,"
              "       poitem_invvenduomratio,"
              "       poitem_expcat_id, poitem_duedate,"
-             "       formatDate(poitem_date_promise) AS f_promisedate,"
              "       poitem_qty_ordered,"
-             "       formatQty(poitem_qty_received) AS f_qtyreceived,"
-	         "       pohead_curr_id, pohead_orderdate, "
+             "       poitem_qty_received,"
+	     "       pohead_curr_id, pohead_orderdate, "
              "       poitem_unitprice,"
              "       poitem_freight,"
              "       poitem_unitprice * poitem_qty_ordered AS f_extended,"
@@ -419,8 +418,8 @@ void purchaseOrderItem::populate()
     _poNumber->setText(q.value("pohead_number").toString());
     _lineNumber->setText(q.value("poitem_linenumber").toString());
     _dueDate->setDate(q.value("poitem_duedate").toDate());
-    _ordered->setText(formatQty(q.value("poitem_qty_ordered").toDouble()));
-    _received->setText(q.value("f_qtyreceived").toString());
+    _ordered->setDouble(q.value("poitem_qty_ordered").toDouble());
+    _received->setDouble(q.value("poitem_qty_received").toDouble());
     _unitPrice->set(q.value("poitem_unitprice").toDouble(),
 		    q.value("pohead_curr_id").toInt(),
 		    q.value("pohead_orderdate").toDate(), false);
@@ -460,15 +459,15 @@ void purchaseOrderItem::populate()
     if (_itemsrcid == -1)
     {
       _vendorUOM->setText(q.value("poitem_vend_uom").toString());
-      _invVendorUOMRatio->setText(q.value("invvenduomratio").toString());
+      _invVendorUOMRatio->setDouble(q.value("poitem_invvenduomratio").toDouble());
       _invVendUOMRatio = q.value("poitem_invvenduomratio").toDouble();
     }
     else
     {
       q.prepare( "SELECT itemsrc_id, itemsrc_vend_item_number,"
                  "       itemsrc_vend_item_descrip, itemsrc_vend_uom,"
-                 "       itemsrc_minordqty, formatQty(itemsrc_minordqty) AS f_minordqty,"
-                 "       itemsrc_multordqty, formatQty(itemsrc_multordqty) AS f_multordqty,"
+                 "       itemsrc_minordqty,"
+                 "       itemsrc_multordqty,"
                  "       itemsrc_invvendoruomratio "
                  "FROM itemsrc "
                  "WHERE (itemsrc_id=:itemsrc_id);" );
@@ -486,9 +485,9 @@ void purchaseOrderItem::populate()
         if(_vendorDescrip->text().isEmpty())
           _vendorDescrip->setText(q.value("itemsrc_vend_item_descrip").toString());
         _vendorUOM->setText(q.value("itemsrc_vend_uom").toString());
-        _minOrderQty->setText(q.value("f_minordqty").toString());
-        _orderQtyMult->setText(q.value("f_multordqty").toString());
-        _invVendorUOMRatio->setText(formatUOMRatio(q.value("itemsrc_invvendoruomratio").toDouble()));
+        _minOrderQty->setDouble(q.value("itemsrc_minordqty").toDouble());
+        _orderQtyMult->setDouble(q.value("itemsrc_multordqty").toDouble());
+        _invVendorUOMRatio->setDouble(q.value("itemsrc_invvendoruomratio").toDouble());
 
         _invVendUOMRatio = q.value("itemsrc_invvendoruomratio").toDouble();
         _minimumOrder = q.value("itemsrc_minordqty").toDouble();
@@ -575,7 +574,7 @@ void purchaseOrderItem::sSave()
 
   if ((int)_orderMultiple)
   {
-    if (_ordered->text().toInt() % (int)_orderMultiple)
+    if (qRound(_ordered->toDouble()) % (int)_orderMultiple)
     {
       if (QMessageBox::critical( this, tr("Invalid Order Quantity"),
                                  tr( "<p>The quantity that you are ordering does not fall within the Order Multiple for this "
@@ -685,7 +684,7 @@ void purchaseOrderItem::sSave()
   q.bindValue(":poitem_vend_item_number", _vendorItemNumber->text());
   q.bindValue(":poitem_vend_item_descrip", _vendorDescrip->text());
   q.bindValue(":poitem_vend_uom", _vendorUOM->text());
-  q.bindValue(":poitem_invvenduomratio", _invVendorUOMRatio->text().toDouble());
+  q.bindValue(":poitem_invvenduomratio", _invVendorUOMRatio->toDouble());
   q.bindValue(":poitem_qty_ordered", _ordered->toDouble());
   q.bindValue(":poitem_unitprice", _unitPrice->localValue());
   q.bindValue(":poitem_freight", _freight->localValue());
@@ -765,8 +764,8 @@ void purchaseOrderItem::sPopulateItemSourceInfo(int pItemid)
 
       q.prepare( "SELECT itemsrc_id, itemsrc_vend_item_number,"
                  "       itemsrc_vend_item_descrip, itemsrc_vend_uom,"
-                 "       itemsrc_minordqty, formatQty(itemsrc_minordqty) AS f_minordqty,"
-                 "       itemsrc_multordqty, formatQty(itemsrc_multordqty) AS f_multordqty,"
+                 "       itemsrc_minordqty,"
+                 "       itemsrc_multordqty,"
                  "       itemsrc_invvendoruomratio,"
                  "       (CURRENT_DATE + itemsrc_leadtime) AS earliestdate "
                  "FROM pohead, itemsrc "
@@ -783,9 +782,9 @@ void purchaseOrderItem::sPopulateItemSourceInfo(int pItemid)
         _vendorItemNumber->setText(q.value("itemsrc_vend_item_number").toString());
         _vendorDescrip->setText(q.value("itemsrc_vend_item_descrip").toString());
         _vendorUOM->setText(q.value("itemsrc_vend_uom").toString());
-        _minOrderQty->setText(q.value("f_minordqty").toString());
-        _orderQtyMult->setText(q.value("f_multordqty").toString());
-        _invVendorUOMRatio->setText(formatUOMRatio(q.value("itemsrc_invvendoruomratio").toDouble()));
+        _minOrderQty->setDouble(q.value("itemsrc_minordqty").toDouble());
+        _orderQtyMult->setDouble(q.value("itemsrc_multordqty").toDouble());
+        _invVendorUOMRatio->setDouble(q.value("itemsrc_invvendoruomratio").toDouble());
         _earliestDate->setDate(q.value("earliestdate").toDate());
 
         _invVendUOMRatio = q.value("itemsrc_invvendoruomratio").toDouble();
@@ -813,7 +812,7 @@ void purchaseOrderItem::sPopulateItemSourceInfo(int pItemid)
       _vendorUOM->setText(_item->uom());
       _minOrderQty->clear();
       _orderQtyMult->clear();
-      _invVendorUOMRatio->setText("1.0");
+      _invVendorUOMRatio->setDouble(1.0);
       _earliestDate->setDate(omfgThis->dbDate());
   
       _invVendUOMRatio = 1;
