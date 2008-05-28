@@ -139,7 +139,6 @@ void XDateEdit::setDataWidgetMap(XDataWidgetMapper* m)
 XDateEdit::XDateEdit(QWidget *parent, const char *name) :
   XLineEdit(parent, name)
 {
-  connect(this, SIGNAL(textEdited(const QString &)), this, SLOT(unparse()));
   connect(this, SIGNAL(editingFinished()), this, SLOT(parseDate()));
   connect(this, SIGNAL(requestList()),     this, SLOT(showCalendar()));
   connect(this, SIGNAL(requestSearch()),   this, SLOT(showCalendar()));
@@ -152,12 +151,6 @@ XDateEdit::XDateEdit(QWidget *parent, const char *name) :
 
 XDateEdit::~XDateEdit()
 {
-}
-
-void XDateEdit::unparse()
-{
-  _valid = false;
-  _parsed = false;
 }
 
 void XDateEdit::parseDate()
