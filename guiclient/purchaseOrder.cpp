@@ -278,7 +278,7 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
         int itemsrcid = newdlg.exec();
         if (itemsrcid == XDialog::Rejected)
       	{
-          close();
+          deleteLater();
           return UndefinedError;
         }
 
