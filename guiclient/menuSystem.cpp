@@ -252,7 +252,7 @@ menuSystem::menuSystem(GUIClient *Pparent) :
     { "menu",				tr("&Design"),	(char*)designMenu,		systemMenu,	true,						NULL,	NULL,	true	},
     { "sys.reports",		tr("&Reports..."),	SLOT(sReports()),	designMenu,	_privileges->check("MaintainReports"),	NULL,	NULL,	true	},
     { "separator",		NULL,			NULL,			designMenu,	true,					NULL,	NULL,	true	},
-    { "sys.uiforms",    	tr("Forms..."),         SLOT(sUIForms()),       designMenu, _privileges->check("MaintainUIForms"),	NULL, NULL, true },
+    { "sys.uiforms",    	tr("Screens..."),         SLOT(sUIForms()),       designMenu, _privileges->check("MaintainScreens"),	NULL, NULL, true },
     { "sys.scripts",    	tr("Scripts..."),	SLOT(sScripts()),       designMenu, _privileges->check("MaintainScripts"),	NULL, NULL, true },
     { "separator",		NULL,			NULL,			designMenu,	true,					NULL,	NULL,	true	},
     { "sys.customCommands",	tr("Custom Command&s..."),	SLOT(sCustomCommands()), designMenu, _privileges->check("MaintainCustomCommands"),	NULL, NULL, true },

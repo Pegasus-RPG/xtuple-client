@@ -10,7 +10,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>List UI Forms</string>
+   <string>List Screens</string>
   </property>
   <widget class="QWidget" name="widget" >
    <layout class="QHBoxLayout" >
@@ -49,7 +49,7 @@
       <item>
        <widget class="QLabel" name="_uiformLit" >
         <property name="text" >
-         <string>UI Forms:</string>
+         <string>Screens:</string>
         </property>
        </widget>
       </item>

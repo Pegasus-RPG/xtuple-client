@@ -10,7 +10,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>UI Form</string>
+   <string>Screen</string>
   </property>
   <layout class="QVBoxLayout" >
    <item>
@@ -228,14 +228,14 @@
      <item>
       <widget class="QPushButton" name="_import" >
        <property name="text" >
-        <string>&amp;Import UI</string>
+        <string>&amp;Import</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="_export" >
        <property name="text" >
-        <string>&amp;Export UI</string>
+        <string>&amp;Export</string>
        </property>
       </widget>
      </item>
