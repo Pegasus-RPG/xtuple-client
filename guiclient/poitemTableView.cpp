@@ -87,7 +87,7 @@ TODO:	refactor:
 
 #define QE_NONINVENTORY
 
-#define DEBUG   true
+#define DEBUG   false
 
 PoitemTableView::PoitemTableView(QWidget* parent) :
   QTableView(parent)
