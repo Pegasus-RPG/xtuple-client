@@ -429,6 +429,14 @@ void customer::sSave()
     _number->setFocus();
     return;
   }
+  
+  if (_name->text().stripWhiteSpace().length() == 0)
+  {
+    QMessageBox::critical( this, tr("Enter Customer Name"),
+                           tr("You must enter a name for this Customer before continuing") );
+    _number->setFocus();
+    return;
+  }
 
   if (_custtype->id() == -1)
   {
