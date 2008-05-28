@@ -72,7 +72,6 @@ dspSingleLevelWhereUsed::dspSingleLevelWhereUsed(QWidget* parent, const char* na
 {
   setupUi(this);
 
-  // signals and slots connections
   connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
   connect(_effective, SIGNAL(newDate(const QDate&)), this, SLOT(sFillList()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
@@ -83,19 +82,19 @@ dspSingleLevelWhereUsed::dspSingleLevelWhereUsed(QWidget* parent, const char* na
   else
     _item->setType(ItemLineEdit::cGeneralComponents | ItemLineEdit::cActive);
 
-  _effective->setNullString(tr("Now"));
-  _effective->setNullDate(omfgThis->startOfTime());
+  _effective->setNullString(tr("Today"));
+  _effective->setNullDate(QDate::currentDate());
   _effective->setAllowNullDate(TRUE);
   _effective->setNull();
 
-  _bomitem->addColumn(tr("Seq #"),       40,           Qt::AlignCenter );
-  _bomitem->addColumn(tr("Parent Item"), _itemColumn,  Qt::AlignLeft   );
-  _bomitem->addColumn(tr("Description"), -1,           Qt::AlignLeft   );
-  _bomitem->addColumn(tr("UOM"),         _uomColumn,   Qt::AlignLeft   );
-  _bomitem->addColumn(tr("Qty. Per"),    _qtyColumn,   Qt::AlignRight  );
-  _bomitem->addColumn(tr("Scrap %"),     _prcntColumn, Qt::AlignRight  );
-  _bomitem->addColumn(tr("Effective"),   _dateColumn,  Qt::AlignCenter );
-  _bomitem->addColumn(tr("Expires"),     _dateColumn,  Qt::AlignCenter );
+  _bomitem->addColumn(tr("Seq #"),       40,           Qt::AlignCenter, true, "bomitem_seqnumber");
+  _bomitem->addColumn(tr("Parent Item"), _itemColumn,  Qt::AlignLeft,  true, "item_number");
+  _bomitem->addColumn(tr("Description"), -1,           Qt::AlignLeft,  true, "descrip");
+  _bomitem->addColumn(tr("UOM"),         _uomColumn,   Qt::AlignLeft,  true, "uom_name");
+  _bomitem->addColumn(tr("Qty. Per"),    _qtyColumn,   Qt::AlignRight, true, "qtyper");
+  _bomitem->addColumn(tr("Scrap %"),     _prcntColumn, Qt::AlignRight, true, "bomitem_scrap");
+  _bomitem->addColumn(tr("Effective"),   _dateColumn,  Qt::AlignCenter,true, "bomitem_effective");
+  _bomitem->addColumn(tr("Expires"),     _dateColumn,  Qt::AlignCenter,true, "bomitem_expires");
   
   connect(omfgThis, SIGNAL(bomsUpdated(int, bool)), SLOT(sFillList(int, bool)));
 
@@ -219,16 +218,22 @@ void dspSingleLevelWhereUsed::sFillList(int pItemid, bool pLocal)
   if ((_item->isValid()) && (_effective->isValid()))
   {
     QString sql( "SELECT bomitem_parent_item_id, item_id, bomitem_seqnumber,"
-                 "       item_number, (item_descrip1 || ' ' || item_descrip2),"
-                 "       uom_name, formatQtyper(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper)),"
-                 "       formatScrap(bomitem_scrap),"
-                 "       formatDate(bomitem_effective, 'Always'),"
-                 "       formatDate(bomitem_expires, 'Never') "
-				 "FROM bomitem, item, uom "
+                 "       item_number,"
+                 "       (item_descrip1 || ' ' || item_descrip2) AS descrip,"
+                 "       uom_name,"
+                 "       itemuomtouom(bomitem_item_id, bomitem_uom_id,"
+                 "                    NULL, bomitem_qtyper) AS qtyper,"
+                 "       bomitem_scrap,"
+                 "       bomitem_effective, bomitem_expires,"
+                 "       'qtyper' AS qtyper_xtnumericrole,"
+                 "       'scrap' AS bomitem_scrap_xtnumericrole,"
+                 "       CASE WHEN (COALESCE(bomitem_effective, startoftime()) = startoftime()) THEN 'Always' END AS bomitem_effective_qtdisplayrole,"
+                 "       CASE WHEN (COALESCE(bomitem_expires, endoftime()) = endoftime()) THEN 'Never' END AS bomitem_expires_qtdisplayrole "
+		 "FROM bomitem, item, uom "
                  "WHERE ( (bomitem_parent_item_id=item_id)"
                  " AND (item_inv_uom_id=uom_id)"
                  " AND (bomitem_item_id=:item_id)"
-				 " AND (bomitem_rev_id=getActiveRevId('BOM',bomitem_parent_item_id))");
+                 " AND (bomitem_rev_id=getActiveRevId('BOM',bomitem_parent_item_id))");
 
     if (_effective->isNull())
       sql += "AND (CURRENT_DATE BETWEEN bomitem_effective AND (bomitem_expires-1))";

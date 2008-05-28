@@ -73,7 +73,7 @@
 #include "dcalendarpopup.h"
 #include "format.h"
 
-#define DEBUG true
+#define DEBUG false
 
 DCalendarPopup::DCalendarPopup(const QDate &date, QWidget *parent)
   : QWidget(parent, Qt::Popup)
@@ -228,6 +228,7 @@ void XDateEdit::setNull()
     _parsed = TRUE;
     setText(_nullString);
     _currentDate = _nullDate;
+    emit newDate(_currentDate);
   }
   else
   {
