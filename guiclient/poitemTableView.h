@@ -63,6 +63,21 @@
 #include <QModelIndex>
 #include <QTableView>
 
+// this has to be in the .h or MOC won't find it
+class PoitemTableDelegate : public QItemDelegate
+{
+  Q_OBJECT
+
+  public:
+    PoitemTableDelegate(QObject *parent = 0);
+
+    virtual QWidget *createEditor(QWidget *, const QStyleOptionViewItem &, const QModelIndex &) const;
+    virtual void    setEditorData(QWidget *, const QModelIndex &) const;
+    virtual void    setModelData(QWidget *, QAbstractItemModel *, const QModelIndex &) const;
+    virtual void    updateEditorGeometry(QWidget *, const QStyleOptionViewItem &, const QModelIndex &) const;
+
+};
+
 class PoitemTableView : public QTableView
 {
   Q_OBJECT
@@ -72,26 +87,11 @@ class PoitemTableView : public QTableView
     virtual void		setModel(QAbstractItemModel* model);
 
   protected slots:
-    virtual void	currentChanged(const QModelIndex &, const QModelIndex &) ;
-    virtual void	sHandleCloseEditor(QWidget *);
+    virtual void currentChanged(const QModelIndex &, const QModelIndex &) ;
+    virtual void closeEditor(QWidget *, QAbstractItemDelegate::EndEditHint);
 
   private:
     QList<int> _hideList;
-};
-
-// TODO: move the PoitemTableDelegate implemention into the declaration
-class PoitemTableDelegate : public QItemDelegate
-{
-  Q_OBJECT
-
-  public:
-    PoitemTableDelegate(QObject *parent = 0);
-
-    virtual QWidget	*createEditor(QWidget *, const QStyleOptionViewItem &, const QModelIndex &) const;
-    virtual void	setEditorData(QWidget *, const QModelIndex &) const;
-    virtual void	setModelData(QWidget *, QAbstractItemModel *, const QModelIndex &) const;
-    virtual void	updateEditorGeometry(QWidget *, const QStyleOptionViewItem &, const QModelIndex &) const;
-
 };
 
 #endif // POITEMTABLEVIEW_H

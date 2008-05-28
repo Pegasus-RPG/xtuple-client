@@ -73,6 +73,8 @@
 #include "dcalendarpopup.h"
 #include "format.h"
 
+#define DEBUG true
+
 DCalendarPopup::DCalendarPopup(const QDate &date, QWidget *parent)
   : QWidget(parent, Qt::Popup)
 {
@@ -121,19 +123,51 @@ DCalendarPopup::DCalendarPopup(const QDate &date, QWidget *parent)
 
 void DCalendarPopup::dateSelected(const QDate &pDate)
 {
+  if (DEBUG)
+    qDebug("DCalendarPopup::dateSelected(%s)", qPrintable(pDate.toString()));
   emit newDate(pDate);
   close();
 }
 
-void DLineEdit::setDataWidgetMap(XDataWidgetMapper* m)
+///////////////////////////////////////////////////////////////////////////////
+
+void XDateEdit::setDataWidgetMap(XDataWidgetMapper* m)
 {
   m->addFieldMapping(this, _fieldName, QByteArray("date"));
 }
 
-void DLineEdit::validateDate()
+XDateEdit::XDateEdit(QWidget *parent, const char *name) :
+  XLineEdit(parent, name)
 {
-  QString dateString = _lineedit.text().stripWhiteSpace();
+  connect(this, SIGNAL(textEdited(const QString &)), this, SLOT(unparse()));
+  connect(this, SIGNAL(editingFinished()), this, SLOT(parseDate()));
+  connect(this, SIGNAL(requestList()),     this, SLOT(showCalendar()));
+  connect(this, SIGNAL(requestSearch()),   this, SLOT(showCalendar()));
+
+  _allowNull   = FALSE;
+  _parsed      = FALSE;
+  _nullString  = QString::null;
+  _valid       = FALSE;
+}
+
+XDateEdit::~XDateEdit()
+{
+}
+
+void XDateEdit::unparse()
+{
+  _valid = false;
+  _parsed = false;
+}
+
+void XDateEdit::parseDate()
+{
+  QString dateString = text().stripWhiteSpace();
   bool    isNumeric;
+
+  if (DEBUG)
+    qDebug("XDateEdit::parseDate() with dateString %s, _currentDate = %s, and _allowNull %d",
+           qPrintable(dateString), qPrintable(_currentDate.toString()), _allowNull);
 
 #ifdef OpenMFGGUIClient_h
   QDate today = ofmgThis->dbDate();
@@ -185,18 +219,111 @@ void DLineEdit::validateDate()
   }
 
   if (!_valid)
-    _lineedit.setText("");
+    setText("");
 
   _parsed = true;
 }
 
-bool DLineEdit::fixMonthEnd(int *pDay, int pMonth, int pYear)
+void XDateEdit::setNull()
 {
-  if (! QDate::isValid(pYear, pMonth, *pDay))
-    *pDay = QDate(pYear, pMonth, 1).daysInMonth();
-
-  return TRUE;
+  if (DEBUG)
+    qDebug("XDateEdit::setNull() with _currentDate = %s and _allowNull %d",
+           qPrintable(_currentDate.toString()), _allowNull);
+  if (_allowNull)
+  {
+    _valid  = TRUE;
+    _parsed = TRUE;
+    setText(_nullString);
+    _currentDate = _nullDate;
+  }
+  else
+  {
+    _valid = FALSE;
+    _parsed = TRUE;
+    setText("");
+    _currentDate = QDate();
+  }
 }
+
+void XDateEdit::setDate(const QDate &pDate, bool pAnnounce)
+{
+  if (DEBUG)
+    qDebug("XDateEdit::setDate(%s, %d) with _currentDate = %s and _allowNull %d",
+           qPrintable(pDate.toString()), pAnnounce,
+           qPrintable(_currentDate.toString()), _allowNull);
+
+  _valid = false;
+  if (pDate.isNull())
+    setNull();
+  else
+  {
+    _currentDate = pDate;
+
+    if ((_allowNull) && (_currentDate == _nullDate))
+      setText(_nullString);
+    else
+      setText(formatDate(pDate));
+
+    _valid = _currentDate.isValid();
+    _parsed = _valid;
+  }
+
+  if (pAnnounce)
+  {
+    if (DEBUG)
+      qDebug("setDate() emitting newDate(%s)",
+             qPrintable(_currentDate.toString()));
+    emit newDate(_currentDate);
+  }
+}
+
+void XDateEdit::clear()
+{
+  if (DEBUG) qDebug("XDateEdit::clear()");
+  setDate(_nullDate, true);
+}
+
+QDate XDateEdit::date()
+{
+  if (DEBUG) qDebug("XDateEdit::date()");
+
+  if (!_parsed)
+    parseDate();
+
+  if (!_valid)
+    return _nullDate;
+
+  return _currentDate;
+}
+
+bool XDateEdit::isNull()
+{
+  if (DEBUG) qDebug("XDateEdit::isNull()");
+
+  if (!_parsed)
+    parseDate();
+
+  return date().isNull();
+}
+
+bool XDateEdit::isValid()
+{
+  if (DEBUG) qDebug("XDateEdit::isValid()");
+  if (!_parsed)
+    parseDate();
+
+  return _valid;
+}
+
+void XDateEdit::showCalendar()
+{
+  if (DEBUG) qDebug("XDateEdit::showCalendar()");
+  DCalendarPopup *cal = new DCalendarPopup(date(), this);
+  connect(cal, SIGNAL(newDate(const QDate &)), this, SLOT(setDate(QDate)));
+  cal->show();
+}
+
+///////////////////////////////////////////////////////////////////////////////
 
 DLineEdit::DLineEdit(QWidget *parent, const char *name) :
   QWidget(parent)
@@ -219,105 +346,17 @@ DLineEdit::DLineEdit(QWidget *parent, const char *name) :
   _calbutton.setMaximumSize(pixmap.size());
   _calbutton.setFocusPolicy(Qt::NoFocus);
 
-  connect(&_calbutton,        SIGNAL(clicked()), this, SLOT(showCalendar()));
-  connect(&_lineedit, SIGNAL(editingFinished()), this, SLOT(validateDate()));
+  connect(&_calbutton,            SIGNAL(clicked()), &_lineedit, SLOT(showCalendar()));
+  connect(&_lineedit,     SIGNAL(editingFinished()), &_lineedit, SLOT(parseDate()));
+  connect(&_lineedit,SIGNAL(newDate(const QDate &)), this,       SIGNAL(newDate(const QDate &)));
 
   setFocusProxy(&_lineedit);
-
-  _allowNull   = FALSE;
-  _parsed      = FALSE;
-  _nullString  = QString::null;
-  _valid       = FALSE;
 }
 
-void DLineEdit::setNull()
+void DLineEdit::setEnabled(const bool p)
 {
-  if (_allowNull)
-  {
-    _valid  = TRUE;
-    _parsed = TRUE;
-    _lineedit.setText(_nullString);
-
-    _currentDate = _nullDate;
-  }
-  else
-  {
-    _valid = FALSE;
-    _parsed = TRUE;
-    _lineedit.clear();
-  }
-}
-
-void DLineEdit::setDate(const QDate &pDate, bool pAnnounce)
-{
-  _valid = false;
-  if (pDate.isNull())
-    setNull();
-  else
-  {
-    _currentDate = pDate;
-
-    if ((_allowNull) && (_currentDate == _nullDate))
-      _lineedit.setText(_nullString);
-    else
-      _lineedit.setText(formatDate(pDate));
-
-    _valid = _currentDate.isValid();
-    _parsed = _valid;
-  }
-
-  if (pAnnounce)
-    emit newDate(_currentDate);
-}
-
-void DLineEdit::clear()
-{
-  setDate(_nullDate, true);
-}
-
-QDate DLineEdit::date()
-{
-  if (!_parsed)
-    parseDate();
-
-  if (!_valid)
-    return _nullDate;
-
-  return _currentDate;
-}
-
-bool DLineEdit::isNull()
-{
-  if (!_parsed)
-    parseDate();
-
-  return date().isNull();
-}
-
-bool DLineEdit::isValid()
-{
-  if (!_parsed)
-    parseDate();
-
-  return _valid;
-}
-
-void DLineEdit::parseDate()
-{
-  validateDate();
-}
-
-void DLineEdit::setReadOnly(const bool p)
-{
-  _lineedit.setReadOnly(p);
+  _lineedit.setEnabled(p);
   _calbutton.setEnabled(p);
-}
-
-void DLineEdit::showCalendar()
-{
-  DCalendarPopup *cal = new DCalendarPopup(date(), this);
-  connect(cal, SIGNAL(newDate(const QDate &)), this, SLOT(setDate(QDate)));
-  cal->show();
 }
 
 DateCluster::DateCluster(QWidget *pParent, const char *pName) : QWidget(pParent)
@@ -368,7 +407,7 @@ DateCluster::DateCluster(QWidget *pParent, const char *pName) : QWidget(pParent)
   _endDateLit->setBuddy(_endDate);
 
   connect(_startDate, SIGNAL(newDate(const QDate &)), this, SIGNAL(updated()));
-  connect(_endDate, SIGNAL(newDate(const QDate &)), this, SIGNAL(updated()));
+  connect(_endDate,   SIGNAL(newDate(const QDate &)), this, SIGNAL(updated()));
 
   //setTabOrder(_startDate, _endDate);
   //setTabOrder(_endDate, _startDate);

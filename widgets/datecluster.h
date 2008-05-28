@@ -65,10 +65,54 @@
 #include <QPushButton>
 
 #include "xdatawidgetmapper.h"
+#include "xlineedit.h"
 
 class ParameterList;
 class QFocusEvent;
 class XSqlQuery;
+
+class XDateEdit : public XLineEdit
+{
+  Q_OBJECT
+  Q_PROPERTY(QDate   date        READ date        WRITE setDate)
+  Q_PROPERTY(QString fieldName   READ fieldName   WRITE setFieldName);
+
+  public:
+    XDateEdit(QWidget *parent = 0, const char * = 0);
+    virtual ~XDateEdit();
+
+    virtual void    clear();
+    virtual QDate   date();
+    virtual QString fieldName()   const                   { return _fieldName;        };
+    virtual bool    isNull();
+    virtual bool    isValid();
+    inline void setAllowNullDate(bool pAllowNull)         { _allowNull = pAllowNull;  };
+    inline void setNullString(const QString &pNullString) { _nullString = pNullString;};
+    inline void setNullDate(const QDate &pNullDate)       { _nullDate = pNullDate;    };
+
+  public slots:
+    virtual void setDataWidgetMap(XDataWidgetMapper* m);
+    virtual void setFieldName(QString p) { _fieldName = p; };
+
+    void setNull();
+    void setDate(const QDate &, bool = false);
+    void parseDate();
+    void showCalendar();
+
+  signals:
+    void newDate(const QDate &);
+
+  private:
+    bool fixMonthEnd(int *, int, int);
+
+    QDate       _currentDate;
+    QString     _fieldName;
+    QDate       _nullDate;
+    QString     _nullString;
+    bool        _allowNull;
+    bool        _parsed;
+    bool        _valid;
+};
 
 class OPENMFGWIDGETS_EXPORT DLineEdit : public QWidget
 {
@@ -79,41 +123,30 @@ class OPENMFGWIDGETS_EXPORT DLineEdit : public QWidget
   public:
     DLineEdit(QWidget *parent = 0, const char * = 0);
 
-    virtual void  clear();
-    virtual QDate date();
-    virtual bool  isNull();
-    virtual bool  isValid();
-    inline void setAllowNullDate(bool pAllowNull)         { _allowNull = pAllowNull;                       }
-    inline void setNullString(const QString &pNullString) { _nullString = pNullString;                     }
-    inline void setNullDate(const QDate &pNullDate)       { _nullDate = pNullDate;                         }
-    virtual void setReadOnly(const bool);
-    virtual QString fieldName()   const                   { return _fieldName;                             };
+    virtual void    clear()                              { _lineedit.clear(); };
+    virtual QDate   date()                         { return _lineedit.date(); };
+    virtual QString fieldName() const         { return _lineedit.fieldName(); };
+    virtual bool    isNull()                     { return _lineedit.isNull(); };
+    virtual bool    isValid()                   { return _lineedit.isValid(); };
+    inline void setAllowNullDate(bool p)     { _lineedit.setAllowNullDate(p); };
+    inline void setNullString(const QString &p) { _lineedit.setNullString(p); };
+    inline void setNullDate(const QDate &p)       { _lineedit.setNullDate(p); };
 
   public slots:
-    virtual void setDataWidgetMap(XDataWidgetMapper* m);
-    virtual void setFieldName(QString p) { _fieldName = p; };
+    virtual void setDataWidgetMap(XDataWidgetMapper* m) { _lineedit.setDataWidgetMap(m); };
+    virtual void setEnabled(const bool);
+    virtual void setFieldName(QString p)         { _lineedit.setFieldName(p); };
 
-    void setNull();
-    void setDate(const QDate &, bool = false);
-    void showCalendar();
-    void validateDate();
+    void setNull()                                     { _lineedit.setNull(); };
+    void setDate(const QDate &p, bool b = false)   { _lineedit.setDate(p, b); };
+    void showCalendar()                           { _lineedit.showCalendar(); };
 
   signals:
     void newDate(const QDate &);
 
   private:
-    void parseDate();
-    bool fixMonthEnd(int *, int, int);
-
-    QDate       _currentDate;
     QPushButton _calbutton;
-    QString     _fieldName;
-    QLineEdit   _lineedit;
-    QDate       _nullDate;
-    QString     _nullString;
-    bool        _allowNull;
-    bool        _parsed;
-    bool        _valid;
+    XDateEdit   _lineedit;
 };
 
 

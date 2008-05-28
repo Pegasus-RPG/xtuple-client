@@ -86,7 +86,7 @@ printPackingList::printPackingList(QWidget* parent, const char* name, bool modal
     _salesOrderList->setMaximumWidth(25);
 #endif
 
-    _orderDate->setReadOnly(true);
+    _orderDate->setEnabled(false);
 
     omfgThis->inputManager()->notify(cBCSalesOrder, this, _so, SLOT(setId(int)));
     _to->setVisible(_metrics->boolean("MultiWhs"));

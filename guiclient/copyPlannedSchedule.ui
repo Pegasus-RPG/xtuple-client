@@ -55,8 +55,8 @@
          </property>
          <item>
           <widget class="DLineEdit" name="_oldDate" >
-           <property name="readOnly" >
-            <bool>true</bool>
+           <property name="enabled" >
+            <bool>false</bool>
            </property>
           </widget>
          </item>

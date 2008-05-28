@@ -85,8 +85,9 @@ TODO:	refactor:
 #include "wcombobox.h"
 #include "xtreewidget.h"	// for column widths
 
-// #define QE_PROJECT	// define this if you want project support on qe
 #define QE_NONINVENTORY
+
+#define DEBUG   true
 
 PoitemTableView::PoitemTableView(QWidget* parent) :
   QTableView(parent)
@@ -100,26 +101,27 @@ PoitemTableView::PoitemTableView(QWidget* parent) :
   f.setPointSize(f.pointSize() - 2);
   setFont(f);
 #endif
-
-  connect(delegate, SIGNAL(closeEditor(QWidget*, QAbstractItemDelegate::EndEditHint)), this, SLOT(sHandleCloseEditor(QWidget*)));
 }
 
-void PoitemTableView::sHandleCloseEditor(QWidget *editor)
+void PoitemTableView::closeEditor(QWidget *editor, QAbstractItemDelegate::EndEditHint hint)
 {
-#ifdef QE_PROJECT
-  if ((_metrics->boolean("UseProjects") && editor->objectName() == "prj_number") ||
-      (!_metrics->boolean("UseProjects") && editor->objectName() == "poitem_duedate"))
-#else
-  if (editor->objectName() == "poitem_duedate")
-#endif
+  if (DEBUG) qDebug("PoitemTableView::closeEditor(%p, %d)", editor, hint);
+
+  QTableView::closeEditor(editor, hint);
+
+  if (editor->objectName() == "poitem_duedate" &&
+      hint == QAbstractItemDelegate::EditNextItem)
   {
     setCurrentIndex(model()->index(model()->rowCount() - 1, ITEM_NUMBER_COL));
   }
+
+  if (DEBUG) qDebug("PoitemTableView::closeEditor() returning with index %d, %d",
+                    currentIndex().column(), currentIndex().row());
 }
 
 void PoitemTableView::setModel(QAbstractItemModel* model)
 {
-
+  if (DEBUG) qDebug("PoitemTableView::setModel(%p)", model);
   QTableView::setModel(model);
 
   setColumnWidth(ITEM_NUMBER_COL,		_itemColumn);
@@ -129,9 +131,6 @@ void PoitemTableView::setModel(QAbstractItemModel* model)
   setColumnWidth(EXTPRICE_COL,			_moneyColumn);
   setColumnWidth(POITEM_FREIGHT_COL,		_priceColumn);
   setColumnWidth(POITEM_DUEDATE_COL,		_dateColumn);
-#ifdef QE_PROJECT
-  setColumnWidth(PRJ_NUMBER_COL,		100);
-#endif
 #ifdef QE_NONINVENTORY
   setColumnWidth(EXPCAT_CODE_COL,		100);
 #endif
@@ -151,30 +150,30 @@ void PoitemTableView::setModel(QAbstractItemModel* model)
   header->moveSection(header->visualIndex(EXTPRICE_COL),		dest++);
   header->moveSection(header->visualIndex(POITEM_FREIGHT_COL),		dest++);
   header->moveSection(header->visualIndex(POITEM_DUEDATE_COL),		dest++);
-#ifdef QE_PROJECT
-  header->moveSection(header->visualIndex(PRJ_NUMBER_COL),		dest++);
-#endif
 
   // if we didn't explicitly place the logical section, hide it
   for (int i = dest; i < header->count(); i++)
     header->hideSection(header->logicalIndex(i));
 
-#ifdef QE_PROJECT
-  if (! _metrics->boolean("UseProjects"))
-    header->hideSection(header->visualIndex(PRJ_NUMBER_COL));
-#endif
-
   //header->setStretchLastSection(true);
+  if (DEBUG) qDebug("PoitemTableView::setModel returning");
 }
 
 void PoitemTableView::currentChanged(const QModelIndex &current, const QModelIndex &previous ) 
 {
+  if (DEBUG) qDebug("PoitemTableView::currentChanged(current %d,%d prev %d,%d)",
+                    current.row(),  current.column(),
+                    previous.row(), previous.column());
   if (current != QModelIndex() && current != previous)
   {
+    if (DEBUG) qDebug("PoitemTableView::currentChanged setting current");
     setCurrentIndex(current);
+    if (DEBUG) qDebug("PoitemTableView::currentChanged scrolling to current");
     scrollTo(current);
+    if (DEBUG) qDebug("PoitemTableView::currentChanged editing current");
     edit(current);
   }
+  if (DEBUG) qDebug("PoitemTableView::currentChanged returning");
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -249,14 +248,14 @@ QWidget *PoitemTableDelegate::createEditor(QWidget *parent,
 
     case POITEM_VEND_ITEM_NUMBER_COL:
     {
-      editor = new QLineEdit(parent);
+      editor = new XLineEdit(parent);
       editor->setObjectName("poitem_vend_item_number");
       break;
     }
 
     case POITEM_QTY_ORDERED_COL:
     {
-      QLineEdit *qty = new QLineEdit(parent);
+      XLineEdit *qty = new XLineEdit(parent);
       qty->setValidator(omfgThis->qtyVal());
       editor = qty;
       break;
@@ -265,7 +264,7 @@ QWidget *PoitemTableDelegate::createEditor(QWidget *parent,
     case POITEM_UNITPRICE_COL:
     case POITEM_FREIGHT_COL:
     {
-      QLineEdit *price = new QLineEdit(parent);
+      XLineEdit *price = new XLineEdit(parent);
       price->setValidator(omfgThis->priceVal());
       editor = price;
       break;
@@ -273,22 +272,12 @@ QWidget *PoitemTableDelegate::createEditor(QWidget *parent,
 
     case POITEM_DUEDATE_COL:
     {
-      DLineEdit *duedate = new DLineEdit(parent);
+      XDateEdit *duedate = new XDateEdit(parent);
+      duedate->setFocusPolicy(Qt::StrongFocus);
       editor = duedate;
       editor->setObjectName("poitem_duedate");
       break;
     }
-
-#ifdef QE_PROJECT
-    case PRJ_NUMBER_COL:
-    {
-      ProjectLineEdit *prj = new ProjectLineEdit(parent);
-      prj->setType(ProjectLineEdit::PurchaseOrder);
-      editor = prj;
-      editor->setObjectName("prj_number");
-      break;
-    }
-#endif
 
 #ifdef QE_NONINVENTORY
     case EXPCAT_CODE_COL:
@@ -315,6 +304,8 @@ QWidget *PoitemTableDelegate::createEditor(QWidget *parent,
     editor->setFont(f);
 #endif
     editor->installEventFilter(const_cast<PoitemTableDelegate*>(this));
+    if (DEBUG)
+      qDebug("createEditor: editor has focus policy %d", editor->focusPolicy());
   }
   return editor;
 }
@@ -322,7 +313,7 @@ QWidget *PoitemTableDelegate::createEditor(QWidget *parent,
 void PoitemTableDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
   const QAbstractItemModel *model = index.model();
-  QLineEdit *lineedit = 0;
+  XLineEdit *lineedit = 0;
   switch (index.column())
   {
     case ITEM_NUMBER_COL:
@@ -343,28 +334,23 @@ void PoitemTableDelegate::setEditorData(QWidget *editor, const QModelIndex &inde
     }
 
     case POITEM_VEND_ITEM_NUMBER_COL:
+      lineedit = static_cast<XLineEdit*>(editor);
+      lineedit->setText(model->data(index).toString());
+      break;
+
     case POITEM_QTY_ORDERED_COL:
     case POITEM_UNITPRICE_COL:
     case POITEM_FREIGHT_COL:
-      lineedit = static_cast<QLineEdit*>(editor);
-      lineedit->setText(model->data(index).toString());
+      lineedit = static_cast<XLineEdit*>(editor);
+      lineedit->setDouble(model->data(index).toDouble());
       break;
 
     case POITEM_DUEDATE_COL:
     {
-      DLineEdit *duedate = static_cast<DLineEdit*>(editor);
+      XDateEdit *duedate = static_cast<XDateEdit*>(editor);
       duedate->setDate(index.data().toDate());
       break;
     }
-
-#ifdef QE_PROJECT
-    case PRJ_NUMBER_COL:
-    {
-      ProjectLineEdit *prj = static_cast<ProjectLineEdit*>(editor);
-      prj->setId(model->data(model->index(index.row(), POITEM_PRJ_ID_COL)).toInt());
-      break;
-    }
-#endif
 
 #ifdef QE_NONINVENTORY
     case EXPCAT_CODE_COL:
@@ -382,6 +368,8 @@ void PoitemTableDelegate::setEditorData(QWidget *editor, const QModelIndex &inde
 
 void PoitemTableDelegate::setModelData(QWidget *editor, QAbstractItemModel *pModel, const QModelIndex &index) const
 {
+  if (DEBUG)
+    qDebug("PoitemTableDelegate::setModelData() entered");
   bool hitError = false;
   QVariant oldval = pModel->data(index);
   PoitemTableModel *model = static_cast<PoitemTableModel*>(pModel);
@@ -567,7 +555,7 @@ void PoitemTableDelegate::setModelData(QWidget *editor, QAbstractItemModel *pMod
 
     case POITEM_VEND_ITEM_NUMBER_COL:
     {
-      QLineEdit *lineedit = static_cast<QLineEdit*>(editor);
+      XLineEdit *lineedit = static_cast<XLineEdit*>(editor);
       if (lineedit->text() != oldval.toString())
 	model->setData(index, lineedit->text());
       break;
@@ -575,26 +563,26 @@ void PoitemTableDelegate::setModelData(QWidget *editor, QAbstractItemModel *pMod
     
     case POITEM_FREIGHT_COL:
     {
-      QLineEdit *lineedit = static_cast<QLineEdit*>(editor);
-      if (lineedit->text().toDouble() != oldval.toDouble())
-	model->setData(index, formatPurchPrice(lineedit->text().toDouble()));
+      XLineEdit *lineedit = static_cast<XLineEdit*>(editor);
+      if (lineedit->toDouble() != oldval.toDouble())
+	model->setData(index, lineedit->toDouble());
       break;
     }
 
 
     case POITEM_QTY_ORDERED_COL:
     {
-      QLineEdit *lineedit = static_cast<QLineEdit*>(editor);
+      XLineEdit *lineedit = static_cast<XLineEdit*>(editor);
       if (lineedit->text().isEmpty())
       {
 	model->setData(index, QVariant());
 	model->setData(model->index(index.row(), EXTPRICE_COL), QVariant());
 	break;
       }
-      double qty = lineedit->text().toDouble();
+      double qty = lineedit->toDouble();
       if (qty != oldval.toDouble())
       {
-	model->setData(index, formatQty(qty));
+	model->setData(index, qty);
 	if (model->data(model->index(index.row(), POITEM_QTY_ORDERED_COL)).toDouble() > 0 &&
 	  model->data(model->index(index.row(), POITEM_ITEMSRC_ID_COL)).toInt() > 0)
 	{
@@ -626,14 +614,14 @@ void PoitemTableDelegate::setModelData(QWidget *editor, QAbstractItemModel *pMod
 	}
 
 	double prc = model->data(model->index(index.row(), POITEM_UNITPRICE_COL)).toDouble();
-	model->setData(model->index(index.row(), EXTPRICE_COL), formatPurchPrice(qty * prc));
+	model->setData(model->index(index.row(), EXTPRICE_COL), (qty * prc));
       }
       break;
     }
     
     case POITEM_UNITPRICE_COL:
     {
-      QLineEdit *lineedit = static_cast<QLineEdit*>(editor);
+      XLineEdit *lineedit = static_cast<XLineEdit*>(editor);
       if (lineedit->text().isEmpty())
       {
 	model->setData(index, QVariant());
@@ -645,34 +633,26 @@ void PoitemTableDelegate::setModelData(QWidget *editor, QAbstractItemModel *pMod
       {
 	model->setData(index, prc);
 	double qty = model->data(model->index(index.row(),POITEM_QTY_ORDERED_COL)).toDouble();
-	model->setData(model->index(index.row(), EXTPRICE_COL), formatPurchPrice(qty * prc));
+	model->setData(model->index(index.row(), EXTPRICE_COL), (qty * prc));
       }
       break;
     }
 
     case POITEM_DUEDATE_COL:
     {
-      DLineEdit *duedate = static_cast<DLineEdit*>(editor);
+      XDateEdit *duedate = static_cast<XDateEdit*>(editor);
+      duedate->parseDate();
       if (duedate->date() != oldval.toDate())
       {
+        if (DEBUG)
+          qDebug("PoitemTableDelegate::setModelData() setting duedate to %s with null %d, valid %d", 
+                 qPrintable(duedate->date().toString()), duedate->isNull(),
+                 duedate->isValid());
 	model->setData(index, duedate->date());
       }
 
       break;
     }
-
-#ifdef QE_PROJECT
-    case PRJ_NUMBER_COL:
-    {
-      ProjectLineEdit *prj = static_cast<ProjectLineEdit*>(editor);
-      if (prj->id() != oldval.toInt())
-      {
-	model->setData(model->index(index.row(), POITEM_PRJ_ID_COL), prj->id());
-	model->setData(index, prj->text());
-      }
-      break;
-    }
-#endif
 
 #ifdef QE_NONINVENTORY
     case EXPCAT_CODE_COL:
