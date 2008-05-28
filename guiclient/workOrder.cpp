@@ -119,7 +119,11 @@ workOrder::workOrder(QWidget* parent, const char* name, Qt::WFlags fl)
 
   //If not Revision Control, hide controls
   if (!_metrics->boolean("RevControl"))
-   _tabs->removePage(_tabs->page(4));
+   _tabs->removeTab(_tabs->indexOf(_revision));
+   
+  //If not cost privileges, hide tab
+  if (!_privileges->boolean("ViewCosts"))
+   _tabs->removeTab(_tabs->indexOf(_costing));
 
 }
 
