@@ -279,13 +279,17 @@ void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId)
                                       "");
             userrole.insert("scale", scale);
 
-	    if (role->contains("qtdisplayrole"))
+	    /* if qtdisplayrole IS NULL then let the raw value shine through.
+	       this allows UNIONS to do interesting things, like put dates and
+	       text into the same visual column without SQL errors.
+	    */
+	    if (role->contains("qtdisplayrole") &&
+		! pQuery.value(role->value("qtdisplayrole").toString()).isNull())
 	      last->setData(col, Qt::DisplayRole,
-		pQuery.value(role->value("qtdisplayrole").toString()).isNull() ?
-                    nullValue :
-                    pQuery.value(role->value("qtdisplayrole").toString()));
+			pQuery.value(role->value("qtdisplayrole").toString()));
             else if (role->contains("xtnumericrole") &&
-                     pQuery.value(role->value("xtnumericrole").toString()).toString() == "percent")
+                     ((pQuery.value(role->value("xtnumericrole").toString()).toString() == "percent") ||
+                      (pQuery.value(role->value("xtnumericrole").toString()).toString() == "scrap")))
             {
 	      last->setData(col, Qt::DisplayRole,
                             rawValue.isNull() ?  nullValue :

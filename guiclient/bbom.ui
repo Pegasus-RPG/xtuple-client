@@ -127,13 +127,16 @@
                           </widget>
                         </item>
                         <item>
-                          <widget class="QLabel" name="_costsAbsorbed" >
+                          <widget class="XLineEdit" name="_costsAbsorbed" >
                             <property name="text" >
                               <string/>
                             </property>
                             <property name="alignment" >
                               <set>Qt::AlignVCenter|Qt::AlignLeft</set>
                             </property>
+			    <property name="enabled" >
+			      <bool>false</bool>
+			    </property>
                           </widget>
                         </item>
                       </layout>

@@ -71,8 +71,6 @@ public:
     bboms(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~bboms();
 
-    virtual void init();
-
 public slots:
     virtual void sFillList();
     virtual void sFillList( int pItemid, bool pLocal );

@@ -57,61 +57,27 @@
 
 #include "bboms.h"
 
-#include <QVariant>
 #include <QMessageBox>
-#include <QStatusBar>
+#include <QSqlError>
+
 #include <parameter.h>
-#include <QWorkspace>
+
 #include "bbom.h"
 #include "guiclient.h"
 
-/*
- *  Constructs a bboms as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 bboms::bboms(QWidget* parent, const char* name, Qt::WFlags fl)
     : XMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_searchFor, SIGNAL(textChanged(const QString&)), this, SLOT(sSearch(const QString&)));
+  connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
 
-    // signals and slots connections
-    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-    connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_searchFor, SIGNAL(textChanged(const QString&)), this, SLOT(sSearch(const QString&)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_bbom, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
-    connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-bboms::~bboms()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void bboms::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void bboms::init()
-{
-  statusBar()->hide();
-  
-  _bbom->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft );
-  _bbom->addColumn(tr("Description"), -1,          Qt::AlignLeft );
+  _bbom->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft, true, "item_number");
+  _bbom->addColumn(tr("Description"), -1,          Qt::AlignLeft, true, "descrip");
 
   connect(omfgThis, SIGNAL(bbomsUpdated(int, bool)), SLOT(sFillList(int, bool)));
 
@@ -132,6 +98,16 @@ void bboms::init()
   _searchFor->setFocus();
 }
 
+bboms::~bboms()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void bboms::languageChange()
+{
+  retranslateUi(this);
+}
+
 void bboms::sFillList()
 {
   sFillList(-1, TRUE);
@@ -139,28 +115,39 @@ void bboms::sFillList()
 
 void bboms::sFillList(int pItemid, bool pLocal)
 {
-  q.exec( "SELECT DISTINCT item_id, item_number, (item_descrip1 || ' ' || item_descrip2) "
-                 "FROM bbomitem, item "
-                 "WHERE (bbomitem_parent_item_id=item_id) "
-                 "ORDER BY item_number;" );
+  q.exec("SELECT DISTINCT item_id, item_number,"
+	 "                (item_descrip1 || ' ' || item_descrip2) AS descrip "
+	 "FROM bbomitem, item "
+	 "WHERE (bbomitem_parent_item_id=item_id) "
+	 "ORDER BY item_number;" );
   if (pLocal)
     _bbom->populate(q, pItemid);
   else
     _bbom->populate(q);
-
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void bboms::sDelete()
 {
-  if ( QMessageBox::warning( this, tr("Delete Selected Breeder BOM?"),
+  if (QMessageBox::question( this, tr("Delete Selected Breeder BOM?"),
                              tr( "Are you sure that you want to delete the selected\n"
                                  "Breeder Bill of Materials?" ),
-                             tr("&Yes"), tr("&No"), QString::null, 0, 1 ) == 0)
+                             QMessageBox::Yes,
+                             QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
   {
     q.prepare( "DELETE FROM bbomitem "
                "WHERE (bbomitem_parent_item_id=:item_id);" );
     q.bindValue(":item_id", _bbom->id());
     q.exec();
+    if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
     sFillList();
   }
 }

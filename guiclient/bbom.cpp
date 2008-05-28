@@ -57,37 +57,43 @@
 
 #include "bbom.h"
 
-#include <QVariant>
+#include <QMenu>
 #include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
+
 #include <openreports.h>
-#include <QStatusBar>
+
 #include "bbomItem.h"
 
-/*
- *  Constructs a bbom as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 bbom::bbom(QWidget* parent, const char* name, Qt::WFlags fl)
     : XMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
+  connect(_showExpired, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+  connect(_showFuture, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+  connect(_bbomitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-    connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
-    connect(_showExpired, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
-    connect(_showFuture, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
-    connect(_bbomitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
-    connect(_bbomitem, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
-    init();
+
+  _item->setType(ItemLineEdit::cBreeder);
+
+  _bbomitem->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft, true, "item_number");
+  _bbomitem->addColumn(tr("Description"), -1,           Qt::AlignLeft, true, "descrip");
+  _bbomitem->addColumn(tr("Type"),        _itemColumn,  Qt::AlignLeft, true, "type");
+  _bbomitem->addColumn(tr("UOM"),         _uomColumn,   Qt::AlignCenter,true, "uom_name");
+  _bbomitem->addColumn(tr("Qty."),        _qtyColumn,   Qt::AlignRight, true, "bbomitem_qtyper");
+  _bbomitem->addColumn(tr("Effective"),   _dateColumn,  Qt::AlignCenter,true, "bbomitem_effective");
+  _bbomitem->addColumn(tr("Expires"),     _dateColumn,  Qt::AlignCenter,true, "bbomitem_expires");
+  _bbomitem->addColumn(tr("Cost %"),      _prcntColumn, Qt::AlignRight, true, "bbomitem_costabsorb");
+  
+  connect(omfgThis, SIGNAL(bbomsUpdated(int, bool)), SLOT(sFillList(int, bool)));
 }
 
 /*
@@ -107,28 +113,8 @@ void bbom::languageChange()
     retranslateUi(this);
 }
 
-//Added by qt3to4:
-#include <QMenu>
 
-void bbom::init()
-{
-  statusBar()->hide();
-
-  _item->setType(ItemLineEdit::cBreeder);
-
-  _bbomitem->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft   );
-  _bbomitem->addColumn(tr("Description"), -1,           Qt::AlignLeft   );
-  _bbomitem->addColumn(tr("Type"),        _itemColumn,  Qt::AlignLeft   );
-  _bbomitem->addColumn(tr("UOM"),         _uomColumn,   Qt::AlignCenter );
-  _bbomitem->addColumn(tr("Qty."),        _qtyColumn,   Qt::AlignRight  );
-  _bbomitem->addColumn(tr("Effective"),   _dateColumn,  Qt::AlignCenter );
-  _bbomitem->addColumn(tr("Expires"),     _dateColumn,  Qt::AlignCenter );
-  _bbomitem->addColumn(tr("Cost %"),      _prcntColumn, Qt::AlignRight  );
-  
-  connect(omfgThis, SIGNAL(bbomsUpdated(int, bool)), SLOT(sFillList(int, bool)));
-}
-
-enum SetResponse bbom::set(ParameterList &pParams)
+enum SetResponse bbom::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -274,19 +260,21 @@ void bbom::sFillList(int pItemid, bool)
 {
   if (_item->isValid() && (pItemid == _item->id()))
   {
-    QString sql( "SELECT bbomitem_id, item_number,"
-                 "       (item_descrip1 || ' ' || item_descrip2),"
+    QString sql( "SELECT bbomitem.*, item_number,"
+                 "       (item_descrip1 || ' ' || item_descrip2) AS descrip,"
                  "       CASE WHEN (item_type='C') THEN :coProduct"
                  "            WHEN (item_type='Y') THEN :byProduct"
                  "            ELSE :error"
-                 "       END,"
+                 "       END AS type,"
                  "       uom_name,"
-                 "       formatQtyPer(bbomitem_qtyper),"
-                 "       formatDate(bbomitem_effective, 'Always'),"
-                 "       formatDate(bbomitem_expires, 'Never'),"
+		 "       'qty' AS bbomitem_qtyper_xtnumericrole,"
+		 "       CASE WHEN (COALESCE(bbomitem_effective, startoftime()) = startoftime()) THEN :always"
+		 "       END AS bbomitem_effective_qtdisplayrole,"
+		 "       CASE WHEN (COALESCE(bbomitem_expires, endoftime()) = endoftime()) THEN :never"
+		 "       END AS bbomitem_expires_qtdisplayrole,"
                  "       CASE WHEN (item_type='Y') THEN :na"
-                 "            ELSE formatScrap(bbomitem_costabsorb)"
-                 "       END "
+                 "       END AS bbomitem_costabsorb_qtdisplayrole,"
+		 "       'scrap' AS bbomitem_costabsorb_xtnumericrole "
                  "FROM bbomitem, item, uom "
                  "WHERE ( (bbomitem_item_id=item_id)"
                  " AND (item_inv_uom_id=uom_id)"
@@ -304,26 +292,37 @@ void bbom::sFillList(int pItemid, bool)
     q.prepare(sql);
     q.bindValue(":coProduct", tr("Co-Product"));
     q.bindValue(":byProduct", tr("By-Product"));
-    q.bindValue(":error", tr("Error"));
-    q.bindValue(":na", tr("N/A"));
-    q.bindValue(":item_id", _item->id());
+    q.bindValue(":always",    tr("Always"));
+    q.bindValue(":never",     tr("Never"));
+    q.bindValue(":error",     tr("Error"));
+    q.bindValue(":na",        tr("N/A"));
+    q.bindValue(":item_id",   _item->id());
     q.exec();
     _bbomitem->populate(q);
+    if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
 
-    q.prepare( "SELECT formatScrap(SUM(bbomitem_costabsorb)) AS f_absorb,"
-               "       SUM(bbomitem_costabsorb) AS absorb "
+    q.prepare( "SELECT SUM(bbomitem_costabsorb) AS absorb "
                "FROM bbomitem "
                "WHERE (bbomitem_parent_item_id=:item_id);" );
     q.bindValue(":item_id", _item->id());
     q.exec();
     if (q.first())
     {
-      _costsAbsorbed->setText(q.value("f_absorb").toString());
+      _costsAbsorbed->setDouble(q.value("absorb").toDouble());
 
       if (q.value("absorb").toDouble() == 1.0)
         _costsAbsorbed->setPaletteForegroundColor(QColor("black"));
       else
-        _costsAbsorbed->setPaletteForegroundColor(QColor("red"));
+        _costsAbsorbed->setPaletteForegroundColor(namedColor("error"));
+    }
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
     }
   }
   else if (!_item->isValid())
@@ -333,4 +332,3 @@ void bbom::sFillList(int pItemid, bool)
 void bbom::sPopulateMenu(QMenu *)
 {
 }
-
