@@ -57,52 +57,31 @@
 
 #include "miscVoucher.h"
 
-#include <QVariant>
-#include <QMessageBox>
-#include <QValidator>
-#include <QStatusBar>
-#include <QKeyEvent>
 #include <QCloseEvent>
+#include <QKeyEvent>
+#include <QMessageBox>
+#include <QVariant>
+
 #include "purchaseOrderList.h"
 #include "voucherMiscDistrib.h"
 
-/*
- *  Constructs a miscVoucher as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 miscVoucher::miscVoucher(QWidget* parent, const char* name, Qt::WFlags fl)
     : XMainWindow(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
-
-  // signals and slots connections
   connect(_amountDistributed, SIGNAL(valueChanged()), this, SLOT(sPopulateBalanceDue()));
-  connect(_amountToDistribute, SIGNAL(idChanged(int)), _amountDistributed, SLOT(setId(int)));
-  connect(_amountToDistribute, SIGNAL(effectiveChanged(const QDate&)), _amountDistributed, SLOT(setEffective(const QDate&)));
-  connect(_amountToDistribute, SIGNAL(idChanged(int)), _balance, SLOT(setId(int)));
-  connect(_amountToDistribute, SIGNAL(effectiveChanged(const QDate&)), _balance, SLOT(setEffective(const QDate&)));
   connect(_amountToDistribute, SIGNAL(valueChanged()), this, SLOT(sPopulateBalanceDue()));
   connect(_amountToDistribute, SIGNAL(effectiveChanged(const QDate&)), this, SLOT(sFillMiscList()));
   connect(_amountToDistribute, SIGNAL(idChanged(int)), this, SLOT(sFillMiscList()));
   connect(_amountToDistribute, SIGNAL(valueChanged()), this, SLOT(sPopulateBalanceDue()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDeleteMiscDistribution()));
-  connect(_distributionDate, SIGNAL(newDate(const QDate&)), _amountToDistribute, SLOT(setEffective(const QDate&)));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEditMiscDistribution()));
   connect(_invoiceDate, SIGNAL(newDate(const QDate&)), this, SLOT(sPopulateDistDate()));
   connect(_invoiceDate, SIGNAL(newDate(const QDate&)), this, SLOT(sPopulateDueDate()));
-  connect(_miscDistrib, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
-  connect(_miscDistrib, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
-  connect(_miscDistrib, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
   connect(_new, SIGNAL(clicked()), this, SLOT(sNewMiscDistribution()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_voucherNumber, SIGNAL(lostFocus()), this, SLOT(sHandleVoucherNumber()));
-  connect(_vendor, SIGNAL(valid(bool)), _save, SLOT(setEnabled(bool)));
-
-  statusBar()->hide();
 
   _terms->setType(XComboBox::APTerms);
 
@@ -110,21 +89,14 @@ miscVoucher::miscVoucher(QWidget* parent, const char* name, Qt::WFlags fl)
   _miscDistrib->addColumn(tr("Amount"),  _moneyColumn, Qt::AlignRight );
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 miscVoucher::~miscVoucher()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void miscVoucher::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 enum SetResponse miscVoucher::set(const ParameterList &pParams)

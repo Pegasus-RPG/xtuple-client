@@ -125,6 +125,9 @@ void DCalendarPopup::dateSelected(const QDate &pDate)
 {
   if (DEBUG)
     qDebug("DCalendarPopup::dateSelected(%s)", qPrintable(pDate.toString()));
+  if (parent())
+    ((XDateEdit*)parent())->setDate(pDate);
+
   emit newDate(pDate);
   close();
 }
@@ -143,6 +146,11 @@ XDateEdit::XDateEdit(QWidget *parent, const char *name) :
   connect(this, SIGNAL(requestList()),     this, SLOT(showCalendar()));
   connect(this, SIGNAL(requestSearch()),   this, SLOT(showCalendar()));
 
+  if (parent && ! parent->objectName().isEmpty())
+    setObjectName(parent->objectName());
+  else
+    setObjectName(metaObject()->className());
+
   _allowNull   = FALSE;
   _parsed      = FALSE;
   _nullString  = QString::null;
@@ -159,14 +167,24 @@ void XDateEdit::parseDate()
   bool    isNumeric;
 
   if (DEBUG)
-    qDebug("XDateEdit::parseDate() with dateString %s, _currentDate = %s, and _allowNull %d",
-           qPrintable(dateString), qPrintable(_currentDate.toString()), _allowNull);
+    qDebug("%s::parseDate() with dateString %s, _currentDate %s, _allowNull %d",
+           qPrintable(parent() ? parent()->objectName() : objectName()),
+           qPrintable(dateString),
+           qPrintable(_currentDate.toString()), _allowNull);
 
 #ifdef OpenMFGGUIClient_h
   QDate today = ofmgThis->dbDate();
 #else
   QDate today = QDate::currentDate();
 #endif
+
+  if (_parsed)
+  {
+    if (DEBUG)
+      qDebug("%s::parseDate() looks like we've already parsed this string",
+             qPrintable(parent() ? parent()->objectName() : objectName()));
+    return;
+  }
 
   _valid = false;
 
@@ -220,8 +238,10 @@ void XDateEdit::parseDate()
 void XDateEdit::setNull()
 {
   if (DEBUG)
-    qDebug("XDateEdit::setNull() with _currentDate = %s and _allowNull %d",
-           qPrintable(_currentDate.toString()), _allowNull);
+    qDebug("%s::setNull() with _currentDate %s, _allowNull %d",
+           qPrintable(parent() ? parent()->objectName() : objectName()),
+           qPrintable(_currentDate.toString()),
+           _allowNull);
   if (_allowNull)
   {
     _valid  = TRUE;
@@ -242,30 +262,36 @@ void XDateEdit::setNull()
 void XDateEdit::setDate(const QDate &pDate, bool pAnnounce)
 {
   if (DEBUG)
-    qDebug("XDateEdit::setDate(%s, %d) with _currentDate = %s and _allowNull %d",
+    qDebug("%s::setDate(%s, %d) with _currentDate %s, _allowNull %d",
+           qPrintable(parent() ? parent()->objectName() : objectName()),
            qPrintable(pDate.toString()), pAnnounce,
            qPrintable(_currentDate.toString()), _allowNull);
 
-  _valid = false;
   if (pDate.isNull())
     setNull();
   else
   {
     _currentDate = pDate;
+    _valid = _currentDate.isValid();
+    _parsed = _valid;
 
+    if (DEBUG)
+      qDebug("%s::setDate() setting text",
+             qPrintable(parent() ? parent()->objectName() : objectName()));
     if ((_allowNull) && (_currentDate == _nullDate))
       setText(_nullString);
     else
       setText(formatDate(pDate));
-
-    _valid = _currentDate.isValid();
-    _parsed = _valid;
+    if (DEBUG)
+      qDebug("%s::setDate() done setting text",
+             qPrintable(parent() ? parent()->objectName() : objectName()));
   }
 
   if (pAnnounce)
   {
     if (DEBUG)
-      qDebug("setDate() emitting newDate(%s)",
+      qDebug("%s::setDate() emitting newDate(%s)",
+             qPrintable(parent() ? parent()->objectName() : objectName()),
              qPrintable(_currentDate.toString()));
     emit newDate(_currentDate);
   }
@@ -273,13 +299,17 @@ void XDateEdit::setDate(const QDate &pDate, bool pAnnounce)
 
 void XDateEdit::clear()
 {
-  if (DEBUG) qDebug("XDateEdit::clear()");
+  if (DEBUG)
+    qDebug("%s::clear()",
+          qPrintable(parent() ? parent()->objectName() : objectName()));
   setDate(_nullDate, true);
 }
 
 QDate XDateEdit::date()
 {
-  if (DEBUG) qDebug("XDateEdit::date()");
+  if (DEBUG)
+    qDebug("%s::date()",
+            qPrintable(parent() ? parent()->objectName() : objectName()));
 
   if (!_parsed)
     parseDate();
@@ -292,7 +322,9 @@ QDate XDateEdit::date()
 
 bool XDateEdit::isNull()
 {
-  if (DEBUG) qDebug("XDateEdit::isNull()");
+  if (DEBUG)
+    qDebug("%s::isNull()",
+            qPrintable(parent() ? parent()->objectName() : objectName()));
 
   if (!_parsed)
     parseDate();
@@ -302,7 +334,9 @@ bool XDateEdit::isNull()
 
 bool XDateEdit::isValid()
 {
-  if (DEBUG) qDebug("XDateEdit::isValid()");
+  if (DEBUG)
+    qDebug("%s::isValid()",
+            qPrintable(parent() ? parent()->objectName() : objectName()));
   if (!_parsed)
     parseDate();
 
@@ -311,9 +345,11 @@ bool XDateEdit::isValid()
 
 void XDateEdit::showCalendar()
 {
-  if (DEBUG) qDebug("XDateEdit::showCalendar()");
+  if (DEBUG)
+    qDebug("%s::showCalendar()",
+            qPrintable(parent() ? parent()->objectName() : objectName()));
   DCalendarPopup *cal = new DCalendarPopup(date(), this);
-  connect(cal, SIGNAL(newDate(const QDate &)), this, SLOT(setDate(QDate)));
+  connect(cal, SIGNAL(newDate(const QDate &)), this, SIGNAL(newDate(const QDate &)));
   cal->show();
 }
 

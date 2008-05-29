@@ -110,8 +110,6 @@ class XDateEdit : public XLineEdit
     QDate       _nullDate;
     QString     _nullString;
     bool        _allowNull;
-    bool        _parsed;
-    bool        _valid;
 };
 
 class OPENMFGWIDGETS_EXPORT DLineEdit : public QWidget
