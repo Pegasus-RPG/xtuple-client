@@ -499,6 +499,10 @@ void initErrorLookupHash()
 			      "there is a non-zero Inventory Quantity posted "
 			      "against it."),	0, "" },
 
+  { "deleteItemUOMConv", -1, TR("This UOM Conversion cannot be deleted as "
+			       "there are records for this Item which use this "
+                               "UOM."), 	                        0, "" },
+
   { "deleteProspect",	-1, TR("The selected Prospect cannot be deleted as "
 			       "there are still Quotes for it. You must delete "
 			       "all of this Prospect's Quotes before you may "

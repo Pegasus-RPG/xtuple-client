@@ -67,20 +67,21 @@
 #include <metasql.h>
 #include <openreports.h>
 
-#include "itemSite.h"
-#include "characteristicAssignment.h"
-#include "itemImage.h"
-#include "comment.h"
-#include "itemAlias.h"
-#include "itemList.h"
-#include "itemSubstitute.h"
-#include "boo.h"
 #include "bom.h"
+#include "boo.h"
+#include "characteristicAssignment.h"
+#include "comment.h"
+#include "image.h"
+#include "itemAlias.h"
 #include "itemAvailabilityWorkbench.h"
 #include "itemFile.h"
-#include "itemtax.h"
-#include "image.h"
+#include "itemImage.h"
+#include "itemList.h"
+#include "itemSite.h"
+#include "itemSubstitute.h"
 #include "itemUOM.h"
+#include "itemtax.h"
+#include "storedProcErrorLookup.h"
 
 const char *_itemTypes[] = { "P", "M", "J", "F", "R", "S", "T", "O", "L", "B", "C", "Y" };
 const char *_planningTypes[] = { "M", "S", "N" };
@@ -612,77 +613,13 @@ void item::sSave()
   }
 
   sql = "SELECT DISTINCT uom_name "
-        "FROM uom NATURAL JOIN ("
-        "  SELECT bomitem_uom_id AS uom_id "
-        "  FROM bomitem "
-        "  WHERE (bomitem_item_id=<? value(\"item_id\") ?>)"
-        "  UNION "
-        "  SELECT cmitem_qty_uom_id "
-        "  FROM cmitem, itemsite "
-        "  WHERE ((cmitem_itemsite_id=itemsite_id)"
-        "     AND (itemsite_item_id=<? value(\"item_id\") ?>))"
-        "  UNION "
-        "  SELECT cmitem_price_uom_id "
-        "  FROM cmitem, itemsite "
-        "  WHERE ((cmitem_itemsite_id=itemsite_id)"
-        "     AND (itemsite_item_id=<? value(\"item_id\") ?>))"
-        "  UNION "
-        "  SELECT coitem_qty_uom_id "
-        "  FROM coitem, itemsite "
-        "  WHERE ((coitem_itemsite_id=itemsite_id)"
-        "     AND (itemsite_item_id=<? value(\"item_id\") ?>))"
-        "  UNION "
-        "  SELECT coitem_price_uom_id "
-        "  FROM coitem, itemsite "
-        "  WHERE ((coitem_itemsite_id=itemsite_id)"
-        "     AND (itemsite_item_id=<? value(\"item_id\") ?>))"
-        "  UNION "
-        "  SELECT invcitem_qty_uom_id "
-        "  FROM invcitem "
-        "  WHERE ((invcitem_item_id=<? value(\"item_id\") ?>))"
-        "  UNION "
-        "  SELECT invcitem_price_uom_id "
-        "  FROM invcitem "
-        "  WHERE ((invcitem_item_id=<? value(\"item_id\") ?>))"
-        "  UNION "
-        "  SELECT ipsitem_qty_uom_id "
-        "  FROM ipsitem "
-        "  WHERE (ipsitem_item_id=<? value(\"item_id\") ?>)"
-        "  UNION "
-        "  SELECT ipsitem_price_uom_id "
-        "  FROM ipsitem "
-        "  WHERE (ipsitem_item_id=<? value(\"item_id\") ?>)"
-        "  UNION "
-        "  SELECT quitem_qty_uom_id "
-        "  FROM quitem, itemsite "
-        "  WHERE ((quitem_itemsite_id=itemsite_id)"
-        "     AND (itemsite_item_id=<? value(\"item_id\") ?>))"
-        "  UNION "
-        "  SELECT quitem_price_uom_id "
-        "  FROM quitem, itemsite "
-        "  WHERE ((quitem_itemsite_id=itemsite_id)"
-        "     AND (itemsite_item_id=<? value(\"item_id\") ?>))"
-        "<? if exists(\"MultiWhs\") ?>"
-        "  UNION "
-        "  SELECT rahist_uom_id "
-        "  FROM rahist, itemsite "
-        "  WHERE ((rahist_itemsite_id=itemsite_id)"
-        "     AND (itemsite_item_id=<? value(\"item_id\") ?>))"
-        "<? endif ?>"
-        "  UNION "
-        "  SELECT womatl_uom_id "
-        "  FROM womatl, itemsite "
-        "  WHERE ((womatl_itemsite_id=itemsite_id)"
-        "     AND (itemsite_item_id=<? value(\"item_id\") ?>))"
-        ") AS subselect "
+        "FROM uomUsedForItem(<? value(\"item_id\") ?>) "
         "WHERE (uom_id NOT IN (<? literal(\"knownunits\") ?>));" ;
 
   MetaSQLQuery mql(sql);
   ParameterList params;
   params.append("item_id", _itemid);
   params.append("knownunits", knownunits.join(", "));
-  if (_metrics->boolean("MultiWhs"))
-    params.append("MultiWhs");
   q = mql.toQuery(params);
   q.exec();
   QStringList missingunitnames;
@@ -1852,6 +1789,21 @@ void item::sDeleteUOM()
   q.prepare("SELECT deleteItemUOMConv(:itemuomconv_id) AS result;");
   q.bindValue(":itemuomconv_id", _uomconv->id());
   q.exec();
+  if (q.first())
+  {
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("deleteItemUOMConv", result),
+                  __FILE__, __LINE__);
+      return;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   sFillUOMList();
 }
