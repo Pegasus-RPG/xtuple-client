@@ -1,0 +1,201 @@
+//
+// This function creates an object that acts like a ParameterList.
+// This object defines one or more properties that act as key=value pairs
+// and are used to pass to queries for execution and printing.
+// Having one function that creates the object list makes it easier
+// to manage and maintain when it is used in more than one location.
+//
+function getParams()
+{
+  // create an object hold the parameters
+  var params = new Object;
+
+  if(mywindow.findChild("_byDates").checked)
+  {
+    params.byDates = true;
+    params.startDate = mywindow.findChild("_startDate").date();
+    params.endDate = mywindow.findChild("_endDate").date();
+  }
+  else if(mywindow.findChild("_byDate").checked)
+    params.byDate = mywindow.findChild("_date").date();
+  else if(mywindow.findChild("_byDays").checked)
+    params.byDays = mywindow.findChild("_day").value;
+  else
+    params.byLeadTime = true;
+
+  if(mywindow.findChild("_warehouse").isSelected())
+    params.warehouse_id=mywindow.findChild("_warehouse").id();
+
+  if(mywindow.findChild("_showReorder").checked)
+    params.showReorder = true;
+  if(mywindow.findChild("_ignoreReorderAtZero").checked)
+    params.ignoreReorderAtZero = true;
+  if(mywindow.findChild("_showShortages").checked)
+    params.showShortages = true;
+
+  params.char_id = mywindow.findChild("_char").id;
+  params.value = mywindow.findChild("_value").text;
+  if(mywindow.findChild("_emptyValue").checked)
+    params.emptyValue = true;
+  if(mywindow.findChild("_charIsSet").checked)
+    params.hasCharacteristic = true;
+
+  params.char_id2 = mywindow.findChild("_char_2").id;
+  params.value2 = mywindow.findChild("_value_2").text;
+  if(mywindow.findChild("_emptyValue_2").checked)
+    params.emptyValue2 = true;
+  if(mywindow.findChild("_charIsSet_2").checked)
+    params.hasCharacteristic2 = true;
+
+  // return the params object
+  return params;
+}
+
+//
+// This function executes a query and passes the results of that query
+// to the list object for populating the list.
+//
+function query()
+{
+  // get a copy of the params from the getParams function.
+  var params = getParams();
+
+  // execute the following sql statement passing the params
+  // and saving the results into a variable
+  var qry = toolbox.executeQuery("SELECT warehous_code,"
+                                +"       item_number,"
+                                +"       itemsite_leadtime,"
+                                +"       formatQty(qtyonhand) AS f_qtyonhand,"
+                                +"       formatQty(noNeg(qtyonhand - allocated)) AS f_unallocated,"
+                                +"       formatQty(noNeg(allocated)) AS f_allocated,"
+                                +"       formatQty(ordered) AS f_ordered,"
+                                +"       formatQty(reorderlevel) AS f_reorderlevel,"
+                                +"       (qtyonhand - allocated + ordered) AS available,"
+                                +"       formatQty(qtyonhand - allocated + ordered) AS f_available"
+                                +"  FROM (SELECT warehous_code, item_number, itemsite_leadtime,"
+                                +"               CASE WHEN(itemsite_useparams) THEN itemsite_reorderlevel ELSE 0.0 END AS reorderlevel,"
+                                +"               itemsite_qtyonhand AS qtyonhand,"
+                                +"<? if exists(\"byDays\") ?>"
+                                +"               qtyAllocated(itemsite_id, <? value(\"byDays\") ?>) AS allocated,"
+                                +"               qtyOrdered(itemsite_id, <? value(\"byDays\") ?>) AS ordered"
+                                +"<? elseif exists(\"byDate\") ?>"
+                                +"               qtyAllocated(itemsite_id, (<? value(\"byDate\") ?> - CURRENT_DATE)) AS allocated,"
+                                +"               qtyOrdered(itemsite_id, (<? value(\"byDate\") ?> - CURRENT_DATE)) AS ordered"
+                                +"<? elseif exists(\"byDates\") ?>"
+                                +"               qtyAllocated(itemsite_id, <? value(\"startDate\") ?>, <? value(\"endDate\") ?>) AS allocated,"
+                                +"               qtyOrdered(itemsite_id, <? value(\"startDate\") ?>, <? value(\"endDate\") ?>) AS ordered"
+                                +"<? else ?>"
+                                +"               qtyAllocated(itemsite_id, itemsite_leadtime) AS allocated,"
+                                +"               qtyOrdered(itemsite_id, itemsite_leadtime) AS ordered"
+                                +"<? endif ?>"
+                                +"          FROM itemsite, warehous, item, char"
+                                +"<? if exists(\"hasCharacteristic\") ?>"
+                                +", charass"
+                                +"         WHERE((charass_target_type='I')"
+                                +"           AND (charass_target_id=item_id)"
+                                +"           AND (charass_char_id=char_id)"
+                                +"           AND (char_id=<? value(\"char_id\") ?>)"
+                                +" <? if exists(\"emptyValue\") ?>"
+                                +" AND (charass_value IS NULL OR LENGTH(TRIM(charass_value)) = 0)"
+                                +" <? else ?>"
+                                +" AND (charass_value ~* <? value(\"value\") ?>)"
+                                +" <? endif ?>"
+                                +"<? else ?>"
+                                +"         WHERE((item_id NOT IN (SELECT charass_target_id"
+                                +"                        FROM charass"
+                                +"                        WHERE ((charass_target_type='I')"
+                                +"                          AND  (charass_char_id=char_id))"
+                                +"               ))"
+                                +"           AND (char_id=<? value(\"char_id\") ?>)"
+                                +"<? endif ?>"
+                                +"           AND (itemsite_active)"
+                                +"           AND (itemsite_warehous_id=warehous_id)"
+                                +"           AND (itemsite_item_id=item_id)"
+                                +"           AND (item_id=<? value(\"item_id\") ?>)"
+                                +"<? if exists(\"warehous_id\") ?>"
+                                +"           AND (warehous_id=<? value(\"warehous_id\") ?>)"
+                                +"<? endif ?>"
+                                +"           )"
+                                +"       ) AS data"
+                                +" <? if exists(\"showReorder\") ?>"
+                                +" WHERE ( ((qoh - allocated + ordered) <= reorderlevel)"
+                                +"  <? if exists(\"ignoreReorderAtZero\") ?>"
+                                +"   AND (NOT ( ((qoh - allocated + ordered) = 0) AND (reorderlevel = 0)) )"
+                                +"  <? endif ?>"
+                                +"    )"
+                                +"<? elseif exists(\"showShortages ?>"
+                                +" WHERE ((qoh - allocated + ordered) < 0)"
+                                +"<? endif ?>"
+                                +" ORDER BY item_number, warehous_code DESC;", params);
+
+  // find the list object and populate the list with the query results
+  mywindow.findChild("_availability").populate(qry);
+}
+
+//
+// This function will call the print engine for a specified report name
+// and using the provided parameters.
+//
+function print()
+{
+  // Call the printReport function from the toolbox passing in
+  // the name of the report you want to print long with the
+  // parameters you want to use while printing.
+  toolbox.printReport("InventoryAvailabilityByItemChar", getParams());
+}
+
+//
+// This function gets the update checkbox widget then
+// check to make sure that it is valid and see if it's checked
+// calling the query function to update the list if it is.
+//
+function tick()
+{
+  // find the update widget if it exists
+  var updateWidget = mywindow.findChild("_update");
+
+  // make sure the widget exists and if it is in a checked state
+  // go ahead and call the query() function to refresh the screen.
+  if(updateWidget && updateWidget.checked)
+  {
+    query();
+  }
+}
+
+//
+// Now we have to setup our display and connect the various objects
+// together in a way that will make the display work when users
+// click the buttons
+//
+
+// first connect the buttons to the appropriate functions
+// the _close button can be connected directly to the mywindow close function
+mywindow.findChild("_close").clicked.connect(mywindow, "close");
+mywindow.findChild("_query").clicked.connect(query);
+mywindow.findChild("_print").clicked.connect(print);
+
+// to handle the auto update we are going to connect a system timer
+// to a local function that will check if we want the autoupdate
+// turned on and to call the query function if it is
+mainwindow.tick.connect(tick);
+
+// find the _list object and add the desired columns to it
+var list = mywindow.findChild("_availability");
+// the first argument is column name
+// the second argument is column width in pixels
+// the third argument is default column alignment See Qt::Alignment documentation
+// the fourth optional argument is default visible
+// the fifth optional argument is column name for enhanced processing
+list.addColumn("Whs.", 100, 4);
+list.addColumn("Item Number", 100, 1);
+list.addColumn("LT", 100, 4);
+list.addColumn("QOH", 100, 1);
+list.addColumn("Allocated", 100, 1);
+list.addColumn("Unallocated", 100, 1);
+list.addColumn("On Order", 100, 1);
+list.addColumn("Reorder Lvl.", 100, 1);
+list.addColumn("OUT Level", 100, 1);
+list.addColumn("Available", 100, 1);
+
+mywindow.findChild("_char").populate("SELECT char_id, char_name FROM char WHERE(char_items) ORDER BY char_name;");
+mywindow.findChild("_char_2").populate("SELECT char_id, char_name FROM char WHERE(char_items) ORDER BY char_name;");

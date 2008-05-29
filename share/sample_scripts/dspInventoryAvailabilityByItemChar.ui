@@ -1,0 +1,1018 @@
+<ui version="4.0" >
+ <class>dspInventoryAvailabilityByItemChar</class>
+ <widget class="QMainWindow" name="dspInventoryAvailabilityByItemChar" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>753</width>
+    <height>512</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Inventory Availability by Item Characteristic</string>
+  </property>
+  <widget class="QWidget" name="widget" >
+   <layout class="QVBoxLayout" >
+    <item>
+     <layout class="QHBoxLayout" >
+      <item>
+       <layout class="QVBoxLayout" >
+        <item>
+         <layout class="QHBoxLayout" >
+          <item>
+           <widget class="QGroupBox" name="groupBox" >
+            <property name="title" >
+             <string>Characteristic 1</string>
+            </property>
+            <layout class="QGridLayout" >
+             <item row="0" column="0" >
+              <widget class="QLabel" name="_characteristicLit" >
+               <property name="text" >
+                <string>Characteristic:</string>
+               </property>
+               <property name="alignment" >
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1" >
+              <widget class="XComboBox" name="_char" >
+               <property name="sizePolicy" >
+                <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0" colspan="2" >
+              <widget class="XCheckBox" name="_charIsSet" >
+               <property name="text" >
+                <string>Characteristic is set</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0" >
+              <widget class="QLabel" name="_valueLit" >
+               <property name="text" >
+                <string>Value:</string>
+               </property>
+               <property name="alignment" >
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1" >
+              <widget class="XLineEdit" name="_value" >
+               <property name="enabled" >
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1" >
+              <widget class="XCheckBox" name="_emptyValue" >
+               <property name="text" >
+                <string>Value is empty</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="groupBox_2" >
+            <property name="title" >
+             <string>Characteristic 2</string>
+            </property>
+            <layout class="QGridLayout" >
+             <item row="0" column="0" >
+              <widget class="QLabel" name="_characteristicLit_2" >
+               <property name="text" >
+                <string>Characteristic:</string>
+               </property>
+               <property name="alignment" >
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1" >
+              <widget class="XComboBox" name="_char_2" >
+               <property name="sizePolicy" >
+                <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0" colspan="2" >
+              <widget class="XCheckBox" name="_charIsSet_2" >
+               <property name="text" >
+                <string>Characteristic is set</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0" >
+              <widget class="QLabel" name="_valueLit_2" >
+               <property name="text" >
+                <string>Value:</string>
+               </property>
+               <property name="alignment" >
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1" >
+              <widget class="XLineEdit" name="_value_2" >
+               <property name="enabled" >
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1" >
+              <widget class="XCheckBox" name="_emptyValue_2" >
+               <property name="text" >
+                <string>Value is empty</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" >
+          <property name="spacing" >
+           <number>7</number>
+          </property>
+          <property name="leftMargin" >
+           <number>0</number>
+          </property>
+          <property name="topMargin" >
+           <number>0</number>
+          </property>
+          <property name="rightMargin" >
+           <number>0</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QGroupBox" name="_showByGroup" >
+            <property name="title" >
+             <string>Show Availability as of:</string>
+            </property>
+            <layout class="QVBoxLayout" >
+             <property name="spacing" >
+              <number>0</number>
+             </property>
+             <property name="leftMargin" >
+              <number>5</number>
+             </property>
+             <property name="topMargin" >
+              <number>5</number>
+             </property>
+             <property name="rightMargin" >
+              <number>5</number>
+             </property>
+             <property name="bottomMargin" >
+              <number>5</number>
+             </property>
+             <item>
+              <widget class="QRadioButton" name="_leadTime" >
+               <property name="text" >
+                <string>Item Site Lead Time</string>
+               </property>
+               <property name="checked" >
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" >
+               <property name="spacing" >
+                <number>5</number>
+               </property>
+               <property name="leftMargin" >
+                <number>0</number>
+               </property>
+               <property name="topMargin" >
+                <number>0</number>
+               </property>
+               <property name="rightMargin" >
+                <number>0</number>
+               </property>
+               <property name="bottomMargin" >
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QRadioButton" name="_byDays" >
+                 <property name="enabled" >
+                  <bool>true</bool>
+                 </property>
+                 <property name="text" >
+                  <string>Look Ahead Days:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" >
+                 <property name="spacing" >
+                  <number>0</number>
+                 </property>
+                 <property name="leftMargin" >
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin" >
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin" >
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin" >
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QSpinBox" name="_days" >
+                   <property name="enabled" >
+                    <bool>false</bool>
+                   </property>
+                   <property name="minimum" >
+                    <number>0</number>
+                   </property>
+                   <property name="maximum" >
+                    <number>1000</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer>
+                   <property name="orientation" >
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeType" >
+                    <enum>QSizePolicy::MinimumExpanding</enum>
+                   </property>
+                   <property name="sizeHint" >
+                    <size>
+                     <width>0</width>
+                     <height>10</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" >
+               <property name="spacing" >
+                <number>5</number>
+               </property>
+               <property name="leftMargin" >
+                <number>0</number>
+               </property>
+               <property name="topMargin" >
+                <number>0</number>
+               </property>
+               <property name="rightMargin" >
+                <number>0</number>
+               </property>
+               <property name="bottomMargin" >
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QRadioButton" name="_byDate" >
+                 <property name="text" >
+                  <string>Cutoff Date:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" >
+                 <property name="spacing" >
+                  <number>0</number>
+                 </property>
+                 <property name="leftMargin" >
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin" >
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin" >
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin" >
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="DLineEdit" name="_date" >
+                   <property name="enabled" >
+                    <bool>false</bool>
+                   </property>
+                   <property name="sizePolicy" >
+                    <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="maximumSize" >
+                    <size>
+                     <width>100</width>
+                     <height>32767</height>
+                    </size>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer>
+                   <property name="orientation" >
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeType" >
+                    <enum>QSizePolicy::MinimumExpanding</enum>
+                   </property>
+                   <property name="sizeHint" >
+                    <size>
+                     <width>0</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" >
+               <property name="spacing" >
+                <number>5</number>
+               </property>
+               <property name="leftMargin" >
+                <number>0</number>
+               </property>
+               <property name="topMargin" >
+                <number>0</number>
+               </property>
+               <property name="rightMargin" >
+                <number>0</number>
+               </property>
+               <property name="bottomMargin" >
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QRadioButton" name="_byDates" >
+                 <property name="text" >
+                  <string>Dates:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" >
+                 <property name="spacing" >
+                  <number>2</number>
+                 </property>
+                 <property name="leftMargin" >
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin" >
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin" >
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin" >
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="DLineEdit" name="_startDate" >
+                   <property name="enabled" >
+                    <bool>false</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="_toLit" >
+                   <property name="text" >
+                    <string>to</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="DLineEdit" name="_endDate" >
+                   <property name="enabled" >
+                    <bool>false</bool>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" >
+            <property name="spacing" >
+             <number>0</number>
+            </property>
+            <property name="leftMargin" >
+             <number>0</number>
+            </property>
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
+            </property>
+            <item>
+             <layout class="QVBoxLayout" >
+              <property name="spacing" >
+               <number>5</number>
+              </property>
+              <property name="leftMargin" >
+               <number>0</number>
+              </property>
+              <property name="topMargin" >
+               <number>0</number>
+              </property>
+              <property name="rightMargin" >
+               <number>0</number>
+              </property>
+              <property name="bottomMargin" >
+               <number>0</number>
+              </property>
+              <item>
+               <layout class="QVBoxLayout" >
+                <property name="spacing" >
+                 <number>0</number>
+                </property>
+                <property name="leftMargin" >
+                 <number>0</number>
+                </property>
+                <property name="topMargin" >
+                 <number>0</number>
+                </property>
+                <property name="rightMargin" >
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin" >
+                 <number>0</number>
+                </property>
+                <item>
+                 <layout class="QHBoxLayout" >
+                  <property name="spacing" >
+                   <number>0</number>
+                  </property>
+                  <property name="leftMargin" >
+                   <number>0</number>
+                  </property>
+                  <property name="topMargin" >
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin" >
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin" >
+                   <number>0</number>
+                  </property>
+                  <item>
+                   <widget class="XCheckBox" name="_showReorder" >
+                    <property name="text" >
+                     <string>Show Reorder Exceptions</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer>
+                    <property name="orientation" >
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeType" >
+                     <enum>QSizePolicy::Expanding</enum>
+                    </property>
+                    <property name="sizeHint" >
+                     <size>
+                      <width>26</width>
+                      <height>10</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <layout class="QHBoxLayout" >
+                  <property name="spacing" >
+                   <number>0</number>
+                  </property>
+                  <property name="leftMargin" >
+                   <number>0</number>
+                  </property>
+                  <property name="topMargin" >
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin" >
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin" >
+                   <number>0</number>
+                  </property>
+                  <item>
+                   <spacer>
+                    <property name="orientation" >
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeType" >
+                     <enum>QSizePolicy::Preferred</enum>
+                    </property>
+                    <property name="sizeHint" >
+                     <size>
+                      <width>20</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                  <item>
+                   <widget class="XCheckBox" name="_ignoreReorderAtZero" >
+                    <property name="enabled" >
+                     <bool>false</bool>
+                    </property>
+                    <property name="text" >
+                     <string>Ignore Reorder at 0</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer>
+                    <property name="orientation" >
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeType" >
+                     <enum>QSizePolicy::Preferred</enum>
+                    </property>
+                    <property name="sizeHint" >
+                     <size>
+                      <width>20</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" >
+                <property name="spacing" >
+                 <number>0</number>
+                </property>
+                <property name="leftMargin" >
+                 <number>0</number>
+                </property>
+                <property name="topMargin" >
+                 <number>0</number>
+                </property>
+                <property name="rightMargin" >
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin" >
+                 <number>0</number>
+                </property>
+                <item>
+                 <widget class="XCheckBox" name="_showShortages" >
+                  <property name="text" >
+                   <string>Show Shortages</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer>
+                  <property name="orientation" >
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeType" >
+                   <enum>QSizePolicy::Preferred</enum>
+                  </property>
+                  <property name="sizeHint" >
+                   <size>
+                    <width>20</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <spacer>
+              <property name="orientation" >
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" >
+               <size>
+                <width>16</width>
+                <height>16</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" >
+        <property name="spacing" >
+         <number>0</number>
+        </property>
+        <property name="leftMargin" >
+         <number>0</number>
+        </property>
+        <property name="topMargin" >
+         <number>0</number>
+        </property>
+        <property name="rightMargin" >
+         <number>0</number>
+        </property>
+        <property name="bottomMargin" >
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="WarehouseGroup" name="_warehouse" >
+          <property name="title" >
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" >
+        <property name="spacing" >
+         <number>0</number>
+        </property>
+        <property name="leftMargin" >
+         <number>0</number>
+        </property>
+        <property name="topMargin" >
+         <number>0</number>
+        </property>
+        <property name="rightMargin" >
+         <number>0</number>
+        </property>
+        <property name="bottomMargin" >
+         <number>0</number>
+        </property>
+        <item>
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType" >
+           <enum>QSizePolicy::Expanding</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>54</width>
+            <height>16</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" >
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <property name="leftMargin" >
+           <number>0</number>
+          </property>
+          <property name="topMargin" >
+           <number>0</number>
+          </property>
+          <property name="rightMargin" >
+           <number>0</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QPushButton" name="_close" >
+            <property name="text" >
+             <string>&amp;Close</string>
+            </property>
+            <property name="shortcut" >
+             <string>Alt+C</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="_query" >
+            <property name="text" >
+             <string>&amp;Query</string>
+            </property>
+            <property name="shortcut" >
+             <string>Alt+Q</string>
+            </property>
+            <property name="autoDefault" >
+             <bool>true</bool>
+            </property>
+            <property name="default" >
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="_print" >
+            <property name="text" >
+             <string>&amp;Print</string>
+            </property>
+            <property name="shortcut" >
+             <string>Alt+P</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>16</width>
+              <height>16</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QFrame" name="frame" >
+      <property name="sizePolicy" >
+       <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
+        <horstretch>0</horstretch>
+        <verstretch>1</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="frameShape" >
+       <enum>QFrame::NoFrame</enum>
+      </property>
+      <property name="frameShadow" >
+       <enum>QFrame::Plain</enum>
+      </property>
+      <layout class="QVBoxLayout" >
+       <property name="spacing" >
+        <number>0</number>
+       </property>
+       <property name="leftMargin" >
+        <number>0</number>
+       </property>
+       <property name="topMargin" >
+        <number>0</number>
+       </property>
+       <property name="rightMargin" >
+        <number>0</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="_availabilityLit" >
+         <property name="text" >
+          <string>Availability:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="XTreeWidget" name="_availability" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize" >
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize" >
+          <size>
+           <width>32767</width>
+           <height>32767</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <layoutdefault spacing="5" margin="5" />
+ <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <customwidgets>
+  <customwidget>
+   <class>DLineEdit</class>
+   <extends>QWidget</extends>
+   <header>datecluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>WarehouseGroup</class>
+   <extends>QGroupBox</extends>
+   <header>warehousegroup.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XComboBox</class>
+   <extends>QComboBox</extends>
+   <header>xcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>xlineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>_char</tabstop>
+  <tabstop>_charIsSet</tabstop>
+  <tabstop>_value</tabstop>
+  <tabstop>_emptyValue</tabstop>
+  <tabstop>_char_2</tabstop>
+  <tabstop>_charIsSet_2</tabstop>
+  <tabstop>_value_2</tabstop>
+  <tabstop>_emptyValue_2</tabstop>
+  <tabstop>_leadTime</tabstop>
+  <tabstop>_byDays</tabstop>
+  <tabstop>_days</tabstop>
+  <tabstop>_byDate</tabstop>
+  <tabstop>_date</tabstop>
+  <tabstop>_byDates</tabstop>
+  <tabstop>_startDate</tabstop>
+  <tabstop>_endDate</tabstop>
+  <tabstop>_showReorder</tabstop>
+  <tabstop>_ignoreReorderAtZero</tabstop>
+  <tabstop>_showShortages</tabstop>
+  <tabstop>_query</tabstop>
+  <tabstop>_availability</tabstop>
+  <tabstop>_print</tabstop>
+  <tabstop>_close</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>_byDays</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_days</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>40</x>
+     <y>156</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>170</x>
+     <y>155</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_byDate</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_date</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>40</x>
+     <y>185</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>134</x>
+     <y>184</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_close</sender>
+   <signal>clicked()</signal>
+   <receiver>dspInventoryAvailabilityByItemChar</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>764</x>
+     <y>32</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_showReorder</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_ignoreReorderAtZero</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>384</x>
+     <y>112</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>403</x>
+     <y>136</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_byDates</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_startDate</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>40</x>
+     <y>214</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>105</x>
+     <y>213</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_byDates</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_endDate</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>40</x>
+     <y>214</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>241</x>
+     <y>213</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

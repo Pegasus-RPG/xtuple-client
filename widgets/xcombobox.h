@@ -83,6 +83,7 @@ class OPENMFGWIDGETS_EXPORT XComboBox : public QComboBox
   Q_PROPERTY(XComboBoxTypes type READ type      WRITE setType      )
   Q_PROPERTY(QString        code READ code      WRITE setCode      )
   Q_PROPERTY(QString fieldName   READ fieldName WRITE setFieldName);
+  Q_PROPERTY(int id READ id WRITE setId DESIGNABLE false);
 
   public:
     XComboBox(QWidget * = 0, const char * = 0);

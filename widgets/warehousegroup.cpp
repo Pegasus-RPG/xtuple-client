@@ -161,3 +161,13 @@ int WarehouseGroup::id()
     return -1;
 }
 
+bool WarehouseGroup::isAll() const
+{
+  return _all->isChecked();
+}
+
+bool WarehouseGroup::isSelected() const
+{
+  return _selected->isChecked();
+}
+

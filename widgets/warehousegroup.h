@@ -71,6 +71,7 @@ class XSqlQuery;
 class OPENMFGWIDGETS_EXPORT WarehouseGroup : public QGroupBox
 {
   Q_OBJECT
+  Q_PROPERTY(int id READ id WRITE setId);
 
   public:
     WarehouseGroup(QWidget * = 0, const char * = 0);
@@ -79,8 +80,8 @@ class OPENMFGWIDGETS_EXPORT WarehouseGroup : public QGroupBox
     void appendValue(ParameterList &);
     void bindValue(XSqlQuery &);
 
-    inline bool isAll()      { return _all->isChecked();      }
-    inline bool isSelected() { return _selected->isChecked(); }
+    Q_INVOKABLE bool isAll() const;
+    Q_INVOKABLE bool isSelected() const;
 
   public slots:
     void setAll();
