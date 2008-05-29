@@ -349,6 +349,7 @@ DLineEdit::DLineEdit(QWidget *parent, const char *name) :
 
 void DLineEdit::setEnabled(const bool p)
 {
+  QWidget::setEnabled(p);
   _lineedit.setEnabled(p);
   _calbutton.setEnabled(p);
 }
