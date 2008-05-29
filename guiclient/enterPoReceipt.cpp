@@ -192,8 +192,8 @@ void enterPoReceipt::sPrint()
 
 void enterPoReceipt::post(const QString pType, const int pId)
 {
-  enterPoReceipt w(0, "enterPoReceipt");
-  w.setWindowModality(Qt::WindowModal);
+  enterPoReceipt * w = new enterPoReceipt(0, "enterPoReceipt");
+  w->setWindowModality(Qt::WindowModal);
   ParameterList params;
   if (pType == "PO")
     params.append("pohead_id", pId);
@@ -201,8 +201,8 @@ void enterPoReceipt::post(const QString pType, const int pId)
     params.append("rahead_id", pId);
   else if (pType == "TO")
     params.append("tohead_id", pId);
-  w.set(params);
-  w.sPost();
+  w->set(params);
+  w->sPost();
 }
 
 void enterPoReceipt::sPost()
@@ -274,15 +274,17 @@ void enterPoReceipt::sPost()
         getLotInfo newdlg(this, "", TRUE);
 
         // find out if any itemsites that are lot controlled are perishable
-        q.prepare("SELECT itemsite_perishable,itemsite_warrpurc AS result"
+        q.prepare("SELECT itemsite_perishable,itemsite_warrpurc"
             "  FROM itemlocdist, itemsite"
             " WHERE ((itemlocdist_itemsite_id=itemsite_id)"
             "   AND  (itemlocdist_series=:itemlocdist_series) ); ");
         q.bindValue(":itemlocdist_series", result);
         q.exec();
         if(q.first())
-          newdlg.enableExpiration(q.value("itemsite_perishable").toBool());       
+        {
+          newdlg.enableExpiration(q.value("itemsite_perishable").toBool()); 
           newdlg.enableWarranty(q.value("itemsite_warrpurc").toBool());
+        }
 
           if(newdlg.exec() == XDialog::Accepted)
           {
@@ -412,7 +414,10 @@ void enterPoReceipt::close()
     else
       return;
   }
-  XMainWindow::close();
+  if(!isVisible())
+    deleteLater();
+  else
+    XMainWindow::close();
 }
 
 void enterPoReceipt::sReceiveAll()
