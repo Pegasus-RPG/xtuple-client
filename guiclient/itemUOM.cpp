@@ -87,6 +87,12 @@ itemUOM::itemUOM(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_add, SIGNAL(clicked()), this, SLOT(sAdd()));
   connect(_remove, SIGNAL(clicked()), this, SLOT(sRemove()));
 
+  _fromValue->setValidator(omfgThis->qtyVal());
+  _toValue->setValidator(omfgThis->qtyVal());
+
+  _fromValue->setDouble(1);
+  _toValue->setDouble(1);
+
   _uomFrom->setType(XComboBox::UOMs);
   _uomTo->setType(XComboBox::UOMs);
 }
@@ -179,7 +185,7 @@ void itemUOM::sSave()
   if(_fromValue->toDouble() <= 0.0)
   {
     QMessageBox::warning(this, tr("Invalid Ratio"),
-      tr("You must specify a ration value greater than 0.0"));
+      tr("<p>You must specify a ratio value greater than 0."));
     _fromValue->setFocus();
     return;
   }
@@ -187,7 +193,7 @@ void itemUOM::sSave()
   if(_toValue->toDouble() <= 0.0)
   {
     QMessageBox::warning(this, tr("Invalid Ratio"),
-      tr("You must specify a ration value greater than 0.0"));
+      tr("<p>You must specify a ratio value greater than 0."));
     _toValue->setFocus();
     return;
   }
@@ -195,7 +201,7 @@ void itemUOM::sSave()
   if(_selected->count() == 0)
   {
     QMessageBox::warning(this, tr("No Types Selected"),
-      tr("You must select at least one UOM Type for this conversion."));
+      tr("<p>You must select at least one UOM Type for this conversion."));
     return;
   }
 
@@ -232,8 +238,8 @@ void itemUOM::populate()
     _uomidFrom = q.value("item_inv_uom_id").toInt();
     _uomFrom->setId(q.value("itemuomconv_from_uom_id").toInt());
     _uomTo->setId(q.value("itemuomconv_to_uom_id").toInt());
-    _fromValue->setText(q.value("itemuomconv_from_value").toString());
-    _toValue->setText(q.value("itemuomconv_to_value").toString());
+    _fromValue->setDouble(q.value("itemuomconv_from_value").toDouble());
+    _toValue->setDouble(q.value("itemuomconv_to_value").toDouble());
     _fractional->setChecked(q.value("itemuomconv_fractional").toBool());
     _toValue->setEnabled(!q.value("global").toBool());
     _fromValue->setEnabled(!q.value("global").toBool());
@@ -353,8 +359,8 @@ void itemUOM::sCheck()
   {
     _uomFrom->setId(q.value("uomconv_from_uom_id").toInt());
     _uomTo->setId(q.value("uomconv_to_uom_id").toInt());
-    _fromValue->setText(q.value("uomconv_from_value").toString());
-    _toValue->setText(q.value("uomconv_to_value").toString());
+    _fromValue->setDouble(q.value("uomconv_from_value").toDouble());
+    _toValue->setDouble(q.value("uomconv_to_value").toDouble());
     _fractional->setChecked(q.value("uomconv_fractional").toBool());
     _fromValue->setEnabled(false);
     _toValue->setEnabled(false);

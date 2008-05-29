@@ -901,7 +901,7 @@
         <property name="currentIndex" >
          <number>0</number>
         </property>
-        <widget class="QWidget" name="notesTab" >
+        <widget class="QWidget" name="_notesTab" >
          <attribute name="title" >
           <string>Notes</string>
          </attribute>
@@ -930,7 +930,7 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="extDescTab" >
+        <widget class="QWidget" name="_extDescTab" >
          <attribute name="title" >
           <string>Ext. Description</string>
          </attribute>
@@ -959,7 +959,7 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="tabUOM" >
+        <widget class="QWidget" name="_tabUOM" >
          <attribute name="title" >
           <string>UOM</string>
          </attribute>
@@ -1050,7 +1050,7 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="characteristicsTab" >
+        <widget class="QWidget" name="_characteristicsTab" >
          <attribute name="title" >
           <string>Characteristics</string>
          </attribute>
@@ -1150,7 +1150,7 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="itemsites" >
+        <widget class="QWidget" name="_itemsitesTab" >
          <attribute name="title" >
           <string>Item Sites</string>
          </attribute>
@@ -1275,7 +1275,7 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="taxtypes" >
+        <widget class="QWidget" name="_taxtypesTab" >
          <attribute name="title" >
           <string>Tax Types</string>
          </attribute>
@@ -1363,7 +1363,7 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="commentsTab" >
+        <widget class="QWidget" name="_commentsTab" >
          <attribute name="title" >
           <string>Comments</string>
          </attribute>
@@ -1395,7 +1395,7 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="aliasesTab" >
+        <widget class="QWidget" name="_aliasesTab" >
          <attribute name="title" >
           <string>Aliases</string>
          </attribute>
@@ -1486,7 +1486,7 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="substitutesTab" >
+        <widget class="QWidget" name="_substitutesTab" >
          <attribute name="title" >
           <string>Substitutes</string>
          </attribute>
@@ -1577,7 +1577,7 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="transformationsTab" >
+        <widget class="QWidget" name="_transformationsTab" >
          <attribute name="title" >
           <string>Transformations</string>
          </attribute>
@@ -1654,7 +1654,7 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="imagesTab" >
+        <widget class="QWidget" name="_imagesTab" >
          <attribute name="title" >
           <string>Images</string>
          </attribute>
@@ -1783,7 +1783,7 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="files" >
+        <widget class="QWidget" name="_filesTab" >
          <attribute name="title" >
           <string>Files</string>
          </attribute>

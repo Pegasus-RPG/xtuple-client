@@ -57,16 +57,16 @@
 
 #include "item.h"
 
-#include <QVariant>
-#include <QMessageBox>
-#include <QWorkspace>
-#include <QValidator>
-#include <QStatusBar>
-#include <QKeyEvent>
-#include <QSqlError>
 #include <QCloseEvent>
+#include <QKeyEvent>
+#include <QMessageBox>
+#include <QSqlError>
+#include <QValidator>
+#include <QVariant>
 
+#include <metasql.h>
 #include <openreports.h>
+
 #include "itemSite.h"
 #include "characteristicAssignment.h"
 #include "itemImage.h"
@@ -83,7 +83,6 @@
 #include "itemUOM.h"
 
 const char *_itemTypes[] = { "P", "M", "J", "F", "R", "S", "T", "O", "L", "B", "C", "Y" };
-//const int _itemTypeCount = 8;
 const char *_planningTypes[] = { "M", "S", "N" };
 
 /*
@@ -95,8 +94,6 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
     : XMainWindow(parent, name, fl)
 {
   setupUi(this);
-
-  (void)statusBar();
 
   // signals and slots connections
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
@@ -147,7 +144,6 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_deleteUOM, SIGNAL(clicked()), this, SLOT(sDeleteUOM()));
   connect(_configured, SIGNAL(toggled(bool)), this, SLOT(sConfiguredToggled(bool)));
 
-  statusBar()->hide();
   _disallowPlanningType = false;
   _inTransaction = false;
 
@@ -540,15 +536,16 @@ void item::sSave()
       q.bindValue(":item_id", _itemid);
       q.exec();
       if (q.first())
-	  {
-	    QMessageBox::information( this, tr("Cannot Save Item"),
-                              tr("There are itemsites with quantities with on hand quantities or \n"
-							     "pending inventory activity for this item.  This item type does not \n"
-								 "allow on hand balances or inventory activity.")  );
+      {
+        QMessageBox::information(this, tr("Cannot Save Item"),
+                                 tr("<p>This Item has Item Sites with either "
+                                    "on hand quantities or pending inventory "
+                                    "activity. This item type does not allow "
+                                    "on hand balances or inventory activity."));
         _itemtype->setFocus();
         return;
-	  }
-	}
+      }
+        }
 
     q.prepare( "SELECT itemcost_id "
                "  FROM itemcost "
@@ -558,10 +555,11 @@ void item::sSave()
     if (q.first())
     {
       if(QMessageBox::question( this, tr("Item Costs Exist"),
-                                tr("You have changed the Item Type of this Item.\n"
-                                   "This Item has Item Costs associated with it that will be\n"
-                                   "deleted before this change may occurr.\n"
-                                   "Do you wish to continue saving and delete the Item Costs?"),
+                                tr("<p>You have changed the Item Type of this "
+                                   "Item. This Item has Item Costs associated "
+                                   "with it that will be deleted before this "
+                                   "change may occur. Do you wish to continue "
+                                   "saving and delete the Item Costs?"),
                                 QMessageBox::Ok,
                                 QMessageBox::Cancel | QMessageBox::Escape | QMessageBox::Default ) == QMessageBox::Cancel)
         return;
@@ -575,15 +573,143 @@ void item::sSave()
     if (q.first())
     {
       if(QMessageBox::question( this, tr("Item Sites Exist"),
-                                tr("You have changed the Item Type of this Item. To ensure\n"
-                                   "item sites do not have invalid settings all Item Sites \n "
-								   "associated with it will be inactivated beore this change \n"
-                                   "may occurr.  You may afterward edit the itemsites, enter \n"
-								   "valid information and reactivate them.  "
-                                   "Do you wish to continue saving and inactivate the Item Sites?"),
+                                tr("<p>You have changed the Item Type of this "
+                                   "Item. To ensure Item Sites do not have "
+                                   "invalid settings, all Item Sites for it "
+                                   "will be inactivated before this change "
+                                   "may occur.  You may afterward edit "
+                                   "the Item Sites, enter valid information, "
+                                   "and reactivate them.  Do you wish to "
+                                   "continue saving and inactivate the Item "
+                                   "Sites?"),
                                 QMessageBox::Ok,
                                 QMessageBox::Cancel | QMessageBox::Escape | QMessageBox::Default ) == QMessageBox::Cancel)
         return;
+    }
+  }
+
+  // look for all of the uom ids we have associated with this item
+  QStringList knownunits;
+  q.prepare("SELECT :uom_id AS uom_id "
+            "UNION "
+            "SELECT itemuomconv_from_uom_id "
+            "FROM itemuomconv "
+            "WHERE (itemuomconv_item_id=:item_id) "
+            "UNION "
+            "SELECT itemuomconv_to_uom_id "
+            "FROM itemuomconv "
+            "WHERE (itemuomconv_item_id=:item_id);"
+           );
+  q.bindValue(":item_id", _itemid);
+  q.bindValue(":uom_id", _inventoryUOM->id());
+  q.exec();
+  while (q.next())
+    knownunits.append(q.value("uom_id").toString());
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
+  sql = "SELECT DISTINCT uom_name "
+        "FROM uom NATURAL JOIN ("
+        "  SELECT bomitem_uom_id AS uom_id "
+        "  FROM bomitem "
+        "  WHERE (bomitem_item_id=<? value(\"item_id\") ?>)"
+        "  UNION "
+        "  SELECT cmitem_qty_uom_id "
+        "  FROM cmitem, itemsite "
+        "  WHERE ((cmitem_itemsite_id=itemsite_id)"
+        "     AND (itemsite_item_id=<? value(\"item_id\") ?>))"
+        "  UNION "
+        "  SELECT cmitem_price_uom_id "
+        "  FROM cmitem, itemsite "
+        "  WHERE ((cmitem_itemsite_id=itemsite_id)"
+        "     AND (itemsite_item_id=<? value(\"item_id\") ?>))"
+        "  UNION "
+        "  SELECT coitem_qty_uom_id "
+        "  FROM coitem, itemsite "
+        "  WHERE ((coitem_itemsite_id=itemsite_id)"
+        "     AND (itemsite_item_id=<? value(\"item_id\") ?>))"
+        "  UNION "
+        "  SELECT coitem_price_uom_id "
+        "  FROM coitem, itemsite "
+        "  WHERE ((coitem_itemsite_id=itemsite_id)"
+        "     AND (itemsite_item_id=<? value(\"item_id\") ?>))"
+        "  UNION "
+        "  SELECT invcitem_qty_uom_id "
+        "  FROM invcitem "
+        "  WHERE ((invcitem_item_id=<? value(\"item_id\") ?>))"
+        "  UNION "
+        "  SELECT invcitem_price_uom_id "
+        "  FROM invcitem "
+        "  WHERE ((invcitem_item_id=<? value(\"item_id\") ?>))"
+        "  UNION "
+        "  SELECT ipsitem_qty_uom_id "
+        "  FROM ipsitem "
+        "  WHERE (ipsitem_item_id=<? value(\"item_id\") ?>)"
+        "  UNION "
+        "  SELECT ipsitem_price_uom_id "
+        "  FROM ipsitem "
+        "  WHERE (ipsitem_item_id=<? value(\"item_id\") ?>)"
+        "  UNION "
+        "  SELECT quitem_qty_uom_id "
+        "  FROM quitem, itemsite "
+        "  WHERE ((quitem_itemsite_id=itemsite_id)"
+        "     AND (itemsite_item_id=<? value(\"item_id\") ?>))"
+        "  UNION "
+        "  SELECT quitem_price_uom_id "
+        "  FROM quitem, itemsite "
+        "  WHERE ((quitem_itemsite_id=itemsite_id)"
+        "     AND (itemsite_item_id=<? value(\"item_id\") ?>))"
+        "<? if exists(\"MultiWhs\") ?>"
+        "  UNION "
+        "  SELECT rahist_uom_id "
+        "  FROM rahist, itemsite "
+        "  WHERE ((rahist_itemsite_id=itemsite_id)"
+        "     AND (itemsite_item_id=<? value(\"item_id\") ?>))"
+        "<? endif ?>"
+        "  UNION "
+        "  SELECT womatl_uom_id "
+        "  FROM womatl, itemsite "
+        "  WHERE ((womatl_itemsite_id=itemsite_id)"
+        "     AND (itemsite_item_id=<? value(\"item_id\") ?>))"
+        ") AS subselect "
+        "WHERE (uom_id NOT IN (<? literal(\"knownunits\") ?>));" ;
+
+  MetaSQLQuery mql(sql);
+  ParameterList params;
+  params.append("item_id", _itemid);
+  params.append("knownunits", knownunits.join(", "));
+  if (_metrics->boolean("MultiWhs"))
+    params.append("MultiWhs");
+  q = mql.toQuery(params);
+  q.exec();
+  QStringList missingunitnames;
+  while (q.next())
+    missingunitnames.append(q.value("uom_name").toString());
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+  if (missingunitnames.size() > 0)
+  {
+    int answer = QMessageBox::question(this, tr("Add conversions?"),
+                            tr("<p>There are records referring to this Item "
+                               "that do not have UOM Conversions to %1. Would "
+                               "you like to create UOM Conversions now?<p>If "
+                               "you  answer No then the Item will be saved and "
+                               "you may encounter errors later. The units "
+                               "without conversions are:<br>%2")
+                                .arg(_inventoryUOM->currentText())
+                                .arg(missingunitnames.join(", ")),
+                              QMessageBox::Yes | QMessageBox::Default,
+                              QMessageBox::No);
+    if (answer == QMessageBox::Yes)
+    {
+      _tab->setCurrentIndex(_tab->indexOf(_tabUOM));
+      return;
     }
   }
 
@@ -1834,4 +1960,3 @@ void item::sConfiguredToggled(bool p)
   else
     _charass->hideColumn(3);
 }
-
