@@ -79,6 +79,7 @@ Q_DECLARE_METATYPE(XSqlQuery);
 Q_DECLARE_METATYPE(enum SetResponse)
 Q_DECLARE_METATYPE(enum ParameterGroupStates);
 Q_DECLARE_METATYPE(enum ParameterGroupTypes);
+Q_DECLARE_METATYPE(enum Qt::WindowModality);
 
 QScriptValue ParameterListtoScriptValue(QScriptEngine *engine, const ParameterList &params);
 void ParameterListfromScriptValue(const QScriptValue &obj, ParameterList &params);
@@ -94,6 +95,9 @@ void ParameterGroupStatesfromScriptValue(const QScriptValue &obj, enum Parameter
 
 QScriptValue ParameterGroupTypestoScriptValue(QScriptEngine *engine, const enum ParameterGroupTypes &en);
 void ParameterGroupTypesfromScriptValue(const QScriptValue &obj, enum ParameterGroupTypes &en);
+
+QScriptValue QtWindowModalitytoScriptValue(QScriptEngine *engine, const enum Qt::WindowModality &en);
+void QtWindowModalityfromScriptValue(const QScriptValue &obj, enum Qt::WindowModality &en);
 
 class ScriptToolbox : public QObject
 {

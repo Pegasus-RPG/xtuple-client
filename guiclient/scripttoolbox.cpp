@@ -362,3 +362,13 @@ void ParameterGroupTypesfromScriptValue(const QScriptValue &obj, enum ParameterG
   en = (enum ParameterGroupTypes)obj.toInt32();
 }
 
+QScriptValue QtWindowModalitytoScriptValue(QScriptEngine *engine, const enum Qt::WindowModality &en)
+{
+  return QScriptValue(engine, (int)en);
+}
+
+void QtWindowModalityfromScriptValue(const QScriptValue &obj, enum Qt::WindowModality &en)
+{
+  en = (enum Qt::WindowModality)obj.toInt32();
+}
+
