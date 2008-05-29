@@ -273,6 +273,7 @@ void postOperations::sHandleWooperid(int)
       _qtyReceived->setText(w.value("received").toString());
       _qtyBalance->setText(w.value("f_balance").toString());
       _balance = w.value("balance").toDouble();
+      setProperty("_balance", _balance);
       if(_metrics->boolean("AutoFillPostOperationQty"))
         _qty->setText(QString::number(_balance));
       else
