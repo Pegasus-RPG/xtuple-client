@@ -55,28 +55,23 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#ifndef XDATAWIDGETMAPPER_H
+#ifndef XSQLTABLEMODEL_H
 
-#define XDATAWIDGETMAPPER_H
+#define XSQLTABLEMODEL_H
 
 #include <QSqlTableModel>
-#include <QDataWidgetMapper> 
 #include "OpenMFGWidgets.h"
 
-class OPENMFGWIDGETS_EXPORT XDataWidgetMapper : public QDataWidgetMapper
+class OPENMFGWIDGETS_EXPORT XSqlTableModel : public QSqlTableModel
 {
     Q_OBJECT
 
     public:
-      XDataWidgetMapper(QObject *parent = 0);
-      ~XDataWidgetMapper();
+      XSqlTableModel(QObject *parent = 0);
+      ~XSqlTableModel();
       
-      virtual void addMapping(QWidget *widget, QString fieldName) {QDataWidgetMapper::addMapping(widget, _model.fieldIndex(fieldName));};
-      virtual void addMapping(QWidget *widget, QString fieldName, const QByteArray &propertyName) {QDataWidgetMapper::addMapping(widget, _model.fieldIndex(fieldName), propertyName);};
-      virtual void setSqlTableModel(QSqlTableModel *model);
-
-    private:
-      QSqlTableModel _model;
+      virtual void setLastError(const QSqlError& p)  {QSqlTableModel::setLastError(p);};
+      virtual void setPrimaryKey(const QSqlIndex& p)  {QSqlTableModel::setPrimaryKey(p);};
 
 };
 

@@ -136,7 +136,7 @@ XCheckBox::~XCheckBox()
 
 void XCheckBox::setDataWidgetMap(XDataWidgetMapper* m)
 {
-  m->addFieldMapping(this, _fieldName);
+  m->addMapping(this, _fieldName);
   _mapper=m;
   connect(this, SIGNAL(stateChanged(int)), this, SLOT(setData())); 
 }

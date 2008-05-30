@@ -76,15 +76,5 @@ void XDataWidgetMapper::setSqlTableModel(QSqlTableModel *model)
   setModel(model);
 }
 
-void XDataWidgetMapper::addFieldMapping(QWidget *widget, QString fieldName)
-{
-  addMapping(widget, _model.fieldIndex(fieldName));
-}
-
-void XDataWidgetMapper::addFieldMapping(QWidget *widget, QString fieldName, const QByteArray &propertyName)
-{
-  addMapping(widget, _model.fieldIndex(fieldName), propertyName);
-}
-
 
 

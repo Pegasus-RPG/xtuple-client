@@ -134,7 +134,8 @@ SOURCES    += OpenMFGWidgets.cpp \
 	      xdatawidgetmapper.cpp \
               xtextedit.cpp \
 	      screencontrol.cpp \
-              empcluster.cpp empgroupcluster.cpp
+              empcluster.cpp empgroupcluster.cpp \
+	      xsqltablemodel.cpp \
 
 HEADERS    += OpenMFGWidgets.h \
               addresscluster.h contactcluster.h crmacctcluster.h \
@@ -177,6 +178,7 @@ HEADERS    += OpenMFGWidgets.h \
 	      screencontrol.h \
               dcalendarpopup.h\
               empcluster.h empgroupcluster.h\
+              xsqltablemodel.h \
 
 FORMS += accountSearch.ui \
 	 screenControl.ui \

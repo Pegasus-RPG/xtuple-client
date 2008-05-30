@@ -361,18 +361,18 @@ QString ContactCluster::name() const
 
 void ContactCluster::setDataWidgetMap(XDataWidgetMapper* m)
 {  
-  m->addFieldMapping(this      ,  _fieldNameNumber, "number");
-  m->addFieldMapping(_change      ,  _fieldNameChange);
-  m->addFieldMapping(_active      ,  _fieldNameActive);
-  m->addFieldMapping(_first       ,  _fieldNameFirst);
-  m->addFieldMapping(_last        ,  _fieldNameLast);
-  m->addFieldMapping(_initials    ,  _fieldNameInitials);
-  m->addFieldMapping(_title       ,  _fieldNameTitle);
-  m->addFieldMapping(_phone       ,  _fieldNamePhone);
-  m->addFieldMapping(_phone2      ,  _fieldNamePhone2);
-  m->addFieldMapping(_fax         ,  _fieldNameFax);
-  m->addFieldMapping(_email       ,  _fieldNameEmailAddress);
-  m->addFieldMapping(_webaddr     ,  _fieldNameWebAddress);
+  m->addMapping(this      ,  _fieldNameNumber, "number");
+  m->addMapping(_change      ,  _fieldNameChange);
+  m->addMapping(_active      ,  _fieldNameActive);
+  m->addMapping(_first       ,  _fieldNameFirst);
+  m->addMapping(_last        ,  _fieldNameLast);
+  m->addMapping(_initials    ,  _fieldNameInitials);
+  m->addMapping(_title       ,  _fieldNameTitle);
+  m->addMapping(_phone       ,  _fieldNamePhone);
+  m->addMapping(_phone2      ,  _fieldNamePhone2);
+  m->addMapping(_fax         ,  _fieldNameFax);
+  m->addMapping(_email       ,  _fieldNameEmailAddress);
+  m->addMapping(_webaddr     ,  _fieldNameWebAddress);
   _honorific->setFieldName(_fieldNameHonorific);
   _honorific->setDataWidgetMap(m);
   _crmAcct->setFieldName(_fieldNameCrmAccount);

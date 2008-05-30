@@ -365,7 +365,7 @@ void VendorInfo::setType(int pType)
 
 void VendorInfo::setDataWidgetMap(XDataWidgetMapper* m)
 {
-  m->addFieldMapping(_vendorNumber, _fieldName, QByteArray("number"));
+  m->addMapping(_vendorNumber, _fieldName, QByteArray("number"));
   _vendorNumber->_mapper=m;
 }
 
@@ -435,7 +435,7 @@ void VendorCluster::setType(int pType)
 
 void VendorCluster::setDataWidgetMap(XDataWidgetMapper* m)
 {
-  m->addFieldMapping(_vendorNumber, _fieldName, QByteArray("number"));
+  m->addMapping(_vendorNumber, _fieldName, QByteArray("number"));
   _vendorNumber->_mapper=m;
 }
 

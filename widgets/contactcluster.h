@@ -124,7 +124,7 @@ class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
 {
     Q_OBJECT
     
-    Q_PROPERTY(bool     numberVisible         READ numberVisible       		WRITE setNumberVisible)
+    //Q_PROPERTY(bool     numberVisible         READ numberVisible       		WRITE setNumberVisible)
     Q_PROPERTY(bool     accountVisible        READ accountVisible       	WRITE setAccountVisible)
     Q_PROPERTY(bool     activeVisible         READ activeVisible        	WRITE setActiveVisible)
     Q_PROPERTY(bool     addressVisible        READ addressVisible       	WRITE setAddressVisible)

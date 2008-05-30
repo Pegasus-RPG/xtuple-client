@@ -575,7 +575,7 @@ void CustInfo::sHandleCreditStatus(const QString &pStatus)
 
 void CustInfo::setDataWidgetMap(XDataWidgetMapper* m)
 {
-  m->addFieldMapping(_customerNumber, _fieldName, QByteArray("number"));
+  m->addMapping(_customerNumber, _fieldName, QByteArray("number"));
   _customerNumber->_mapper=m;
 }
 

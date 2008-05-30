@@ -109,7 +109,7 @@ double XLineEdit::toDouble(bool *pIsValid)
 
 void XLineEdit::setDataWidgetMap(XDataWidgetMapper* m)
 {
-  m->addFieldMapping(this, _fieldName);
+  m->addMapping(this, _fieldName);
 }
 
 void XLineEdit::setText(const QVariant &pVariant)

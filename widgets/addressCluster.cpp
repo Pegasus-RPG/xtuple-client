@@ -311,14 +311,14 @@ void AddressCluster::clear()
    
 void AddressCluster::setDataWidgetMap(XDataWidgetMapper* m)
 {
-  m->addFieldMapping(_addrChange,  _fieldNameAddrChange);
-  m->addFieldMapping(_active    ,  _fieldNameActive);
-  m->addFieldMapping(_number    ,  _fieldNameNumber);
-  m->addFieldMapping(_addr1 	,  _fieldNameLine1);
-  m->addFieldMapping(_addr2     ,  _fieldNameLine2);
-  m->addFieldMapping(_addr3     ,  _fieldNameLine3);
-  m->addFieldMapping(_city    	,  _fieldNameCity);
-  m->addFieldMapping(_postalcode,  _fieldNamePostalCode);
+  m->addMapping(_addrChange,  _fieldNameAddrChange);
+  m->addMapping(_active    ,  _fieldNameActive);
+  m->addMapping(_number    ,  _fieldNameNumber);
+  m->addMapping(_addr1 	,  _fieldNameLine1);
+  m->addMapping(_addr2     ,  _fieldNameLine2);
+  m->addMapping(_addr3     ,  _fieldNameLine3);
+  m->addMapping(_city    	,  _fieldNameCity);
+  m->addMapping(_postalcode,  _fieldNamePostalCode);
   _state->setFieldName(_fieldNameState);
   _state->setDataWidgetMap(m);
   _country->setFieldName(_fieldNameCountry);

@@ -415,8 +415,8 @@ void CurrCluster::setCurrencyDisabled(bool newValue)
 
 void CurrCluster::setDataWidgetMap(XDataWidgetMapper* m)
 {
-  m->addFieldMapping(_currency, _fieldNameCurr);
-  m->addFieldMapping(this, _fieldNameValue, QByteArray("localValue"));
+  m->addMapping(_currency, _fieldNameCurr);
+  m->addMapping(this, _fieldNameValue, QByteArray("localValue"));
   _mapper=m;
 }
 
@@ -866,6 +866,6 @@ double CurrDisplay::convert(const int from, const int to, const double amount, c
 
 void CurrDisplay::setDataWidgetMap(XDataWidgetMapper* m)
 {
-  m->addFieldMapping(this, _fieldNameValue, QByteArray("localValue"));
+  m->addMapping(this, _fieldNameValue, QByteArray("localValue"));
   _mapper=m;
 }

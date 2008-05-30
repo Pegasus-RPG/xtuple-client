@@ -639,7 +639,7 @@ ItemCluster::ItemCluster(QWidget *pParent, const char *name) : QWidget(pParent)
 
 void ItemCluster::setDataWidgetMap(XDataWidgetMapper* m)
 {
-  m->addFieldMapping(_itemNumber, _fieldName, QByteArray("number"));
+  m->addMapping(_itemNumber, _fieldName, QByteArray("number"));
   _itemNumber->_mapper=m;
 }
 

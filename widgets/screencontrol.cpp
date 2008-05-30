@@ -85,6 +85,7 @@ ScreenControl::ScreenControl(QWidget *parent) :
   
   _view->setVisible(FALSE);
 
+  _model.setEditStrategy(QSqlTableModel::OnManualSubmit);
 }
 
 ScreenControl::Modes ScreenControl::mode()
@@ -95,6 +96,14 @@ ScreenControl::Modes ScreenControl::mode()
 ScreenControl::SearchTypes ScreenControl::searchType()
 {
   return _searchType;
+}
+
+bool ScreenControl::isDirty()
+{
+  for (int i = 0; i < _model.columnCount()-1; i++)
+    if (_model.isDirty(_model.index(_mapper.currentIndex(),i)))
+      return true;
+  return false;
 }
 
 void ScreenControl::languageChange()
@@ -134,6 +143,20 @@ void ScreenControl::showEvent(QShowEvent *event)
 void ScreenControl::toNext()
 {
   emit movingNext();
+  if (isDirty())
+  {
+    int i=_mapper.currentIndex()+1;
+    if (QMessageBox::question(this, tr("Unsaved work"),
+                                   tr("Would you like to save your work so you do not lose your changes?"),
+                                   QMessageBox::Yes | QMessageBox::Default,
+                                   QMessageBox::No ) == QMessageBox::Yes)
+    {
+      save();
+      _mapper.setCurrentIndex(i);
+      return;
+    }
+  }
+
   _mapper.toNext();
   _prev->setEnabled(true);
   _next->setEnabled(_mapper.currentIndex() < _model.rowCount()-1);
@@ -143,6 +166,20 @@ void ScreenControl::toNext()
 void ScreenControl::toPrevious()
 {
   emit movingPrev();
+  if (isDirty())
+  {
+    int i=_mapper.currentIndex()-1;
+    if (QMessageBox::question(this, tr("Unsaved work"),
+                                   tr("Would you like to save your work so you do not lose your changes?"),
+                                   QMessageBox::Yes | QMessageBox::Default,
+                                   QMessageBox::No ) == QMessageBox::Yes)
+    {
+      save();
+      _mapper.setCurrentIndex(i);
+      return;
+    }
+  }
+  
   _mapper.toPrevious();
   _next->setEnabled(true);
   _prev->setEnabled(_mapper.currentIndex());
@@ -159,27 +196,12 @@ void ScreenControl::newRow()
   _model.insertRows(_model.rowCount(),1);
   _mapper.toLast();
 }
-/* Future functionality
-void ScreenControl::previewForm()
-{
-}
-
-void ScreenControl::previewList()
-{
-}
-*/
 
 void ScreenControl::print()
 {
   // TODO: how do we choose between list and form print?
   printList();
 }
-
-/*
-void ScreenControl::printForm()
-{
-}
-*/
 
 void ScreenControl::printList()
 {
@@ -195,7 +217,8 @@ void ScreenControl::save()
   emit saving();
   _mapper.submit();
   _model.submitAll();
-  if (_model.lastError().type() != QSqlError::None)
+  qDebug("error %d",_model.lastError().isValid());
+  if (_model.lastError().type() != QSqlError::NoError && _model.lastError().driverText() != "No Fields to update")
   {
     QMessageBox::critical(this, tr("Error Saving %1").arg(_tableName),
                           tr("Error saving %1 at %2::%3\n\n%4")
@@ -253,14 +276,6 @@ void ScreenControl::select()
     _next->setEnabled(false);
   }
 }
-
-/* Future functionality
-void ScreenControl::setAutoSave(bool p)
-{
-  _autoSave=p;
-  _save->setVisible(p);
-}
-*/ 
 
 void ScreenControl::setMode(Modes p)
 {
@@ -322,6 +337,8 @@ void ScreenControl::setTable(QString s, QString t)
     tableName+=t;
     if (_model.tableName() != tableName)
     {
+      //QSqlIndex _index;
+      //_model.setPrimaryKey(_index);
       _model.setTable(tableName);
       setDataWidgetMapper(&_model);
       _search->setEnabled(true);

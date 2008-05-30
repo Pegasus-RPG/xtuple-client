@@ -136,7 +136,7 @@ void DCalendarPopup::dateSelected(const QDate &pDate)
 
 void XDateEdit::setDataWidgetMap(XDataWidgetMapper* m)
 {
-  m->addFieldMapping(this, _fieldName, QByteArray("date"));
+  m->addMapping(this, _fieldName, QByteArray("date"));
 }
 
 XDateEdit::XDateEdit(QWidget *parent, const char *name) :
