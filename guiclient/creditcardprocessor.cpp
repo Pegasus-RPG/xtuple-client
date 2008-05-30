@@ -68,6 +68,7 @@
 #include "storedProcErrorLookup.h"
 
 #include "authorizedotnetprocessor.h"
+#include "externalccprocessor.h"
 #include "verisignprocessor.h"
 #include "yourpayprocessor.h"
 
@@ -182,6 +183,7 @@ static struct {
   {  30, TR("User chose not to post-authorize process the charge.")	},
   {  40, TR("User chose not to process the charge.")			},
   {  50, TR("User chose not to process the credit.")			},
+  {  60, TR("User chose not to process the void.")			},
   {  96, TR("This transaction failed the CVV check but will be "
 	    "processed anyway.")					},
   {  97, TR("This transaction failed the Address Verification check "
@@ -223,6 +225,9 @@ CreditCardProcessor * CreditCardProcessor::getProcessor(const QString pcompany)
   else if (pcompany == "YourPay")
     return new YourPayProcessor();
 
+  else if (pcompany == "External")
+    return new ExternalCCProcessor();
+
   else if (! pcompany.isEmpty())
   {
     _errorMsg = errorMsg(-14).arg(pcompany);
@@ -239,6 +244,9 @@ CreditCardProcessor * CreditCardProcessor::getProcessor(const QString pcompany)
 
   else if ((_metrics->value("CCCompany") == "YourPay"))
     processor = new YourPayProcessor();
+
+  else if ((_metrics->value("CCCompany") == "External"))
+    processor = new ExternalCCProcessor();
 
   else
     _errorMsg = errorMsg(-14).arg(_metrics->value("CCServer"));
@@ -293,7 +301,9 @@ int CreditCardProcessor::authorize(const int pccardid, const int pcvv, const dou
 
   ParameterList dbupdateinfo;
   returnVal = doAuthorize(pccardid, pcvv, pamount, ptax, ptaxexempt, pfreight, pduty, pcurrid, pneworder, preforder, pccpayid, dbupdateinfo);
-  if (returnVal > 0)
+  if (returnVal == 20)
+    return 20;
+  else if (returnVal > 0)
     _errorMsg = errorMsg(4).arg(_errorMsg);
 
   int ccpayReturn = updateCCPay(pccpayid, dbupdateinfo);
@@ -426,7 +436,9 @@ int CreditCardProcessor::charge(const int pccardid, const int pcvv, const double
 
   ParameterList dbupdateinfo;
   returnVal = doCharge(pccardid, pcvv, pamount, ptax, ptaxexempt, pfreight, pduty, pcurrid, pneworder, preforder, pccpayid, dbupdateinfo);
-  if (returnVal > 0)
+  if (returnVal == 40)
+    return 40;
+  else if (returnVal > 0)
     _errorMsg = errorMsg(4).arg(_errorMsg);
 
   int ccpayReturn = updateCCPay(pccpayid, dbupdateinfo);
@@ -603,7 +615,9 @@ int CreditCardProcessor::chargePreauthorized(const int pcvv, const double pamoun
 
   ParameterList dbupdateinfo;
   returnVal = doChargePreauthorized(ccardid, pcvv, pamount, pcurrid, pneworder, preforder, pccpayid, dbupdateinfo);
-  if (returnVal > 0)
+  if (returnVal == 30)
+    return 30;
+  else if (returnVal > 0)
     _errorMsg = errorMsg(4).arg(_errorMsg);
 
   int ccpayReturn = updateCCPay(pccpayid, dbupdateinfo);
@@ -870,7 +884,9 @@ int CreditCardProcessor::credit(const int pccardid, const int pcvv, const double
 
   ParameterList dbupdateinfo;
   returnVal = doCredit(pccardid, pcvv, pamount, ptax, ptaxexempt, pfreight, pduty, pcurrid, pneworder, preforder, pccpayid, dbupdateinfo);
-  if (returnVal < 0)
+  if (returnVal == 50)
+    return 50;
+  else if (returnVal < 0)
     return returnVal;
   else if (returnVal > 0)
     _errorMsg = errorMsg(4).arg(_errorMsg);
@@ -956,7 +972,9 @@ int CreditCardProcessor::voidPrevious(int &pccpayid)
 				 ccq.value("ccpay_curr_id").toInt(),
 				 neworder, reforder, approval,
                                  pccpayid, dbupdateinfo);
-  if (returnVal < 0)
+  if (returnVal == 60)
+    return 60;
+  else if (returnVal < 0)
     return returnVal;
   else if (returnVal > 0)
     _errorMsg = errorMsg(4).arg(_errorMsg);

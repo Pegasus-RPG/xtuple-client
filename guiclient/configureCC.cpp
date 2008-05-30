@@ -64,6 +64,7 @@
 // Change these definitions to match the indices in the _ccCompany combo box
 #define ANINDEX 0
 #define YPINDEX 1
+#define EXTINDEX 2
 
 configureCC::configureCC(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -374,7 +375,7 @@ void configureCC::sCCCompanyChanged(const int pindex)
     _avsCheckGroup->setEnabled(false);
     _avsFailGroup->setEnabled(false);
   }
-  else
+  else if (pindex == YPINDEX)
   {
     _fraudDetectionIgnoredLit->setText("");
     _ccPasswordLit->setText(tr("Password:"));
@@ -382,5 +383,8 @@ void configureCC::sCCCompanyChanged(const int pindex)
     _cvvFailGroup->setEnabled(true);
     _avsCheckGroup->setEnabled(true);
     _avsFailGroup->setEnabled(true);
+  }
+  else if (pindex == EXTINDEX)
+  {
   }
 }

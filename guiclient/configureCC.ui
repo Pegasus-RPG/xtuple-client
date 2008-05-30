@@ -73,6 +73,11 @@
                <string>YourPay</string>
               </property>
              </item>
+             <item>
+              <property name="text" >
+               <string>External</string>
+              </property>
+             </item>
             </widget>
            </item>
            <item>
@@ -1297,6 +1302,40 @@ p, li { white-space: pre-wrap; }
            </item>
           </layout>
          </widget>
+         <widget class="QWidget" name="page" >
+          <layout class="QVBoxLayout" >
+           <item>
+            <widget class="QLabel" name="_extLit" >
+             <property name="text" >
+              <string>External Processing Options:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="_extOptions" >
+             <property name="text" >
+              <string>None</string>
+             </property>
+             <property name="alignment" >
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" >
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </widget>
         </widget>
        </item>
       </layout>
@@ -1483,7 +1522,6 @@ p, li { white-space: pre-wrap; }
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
- <includes/>
  <resources/>
  <connections>
   <connection>
