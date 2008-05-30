@@ -222,10 +222,37 @@ void XDateEdit::parseDate()
 
   else                                                  // interpret with locale
   {
-    // Qt bug 193079: setDate(QDate::fromString(dateString, Qt::LocaleDate), true);
+    QString dateFormatStr = QLocale().dateFormat(QLocale::ShortFormat);
+    if (DEBUG)
+      qDebug("%s::parseDate() trying to parse with %s",
+             qPrintable(parent() ? parent()->objectName() : objectName()),
+             qPrintable(dateFormatStr));
 
-    QDate tmp = QDate::fromString(dateString,
-                                  QLocale().dateFormat(QLocale::ShortFormat));
+    QDate tmp = QDate::fromString(dateString, dateFormatStr);
+    if (tmp.isValid() && dateFormatStr.indexOf(QRegExp("y{2}")) >= 0)
+    {
+      qDebug("%s::parseDate() found valid 2-digit year %d",
+             qPrintable(parent() ? parent()->objectName() : objectName()),
+             tmp.year());
+      if (tmp.year() < 1950)     // Qt docs say 2-digit years are 1900-based so
+      {
+        tmp = tmp.addYears(100); // add backwards-compat with pre-3.0 DLineEdit
+        qDebug("%s::parseDate() altered year to %d",
+               qPrintable(parent() ? parent()->objectName() : objectName()),
+               tmp.year());
+      }
+    }
+    else
+    {
+      // try 4 digits, ignoring the possibility of '-literals in the format str
+      dateFormatStr.replace(QRegExp("y{2}"), "yyyy");
+      if (DEBUG)
+        qDebug("%s::parseDate() rewriting format string to %s",
+               qPrintable(parent() ? parent()->objectName() : objectName()),
+               qPrintable(dateFormatStr));
+      tmp = QDate::fromString(dateString, dateFormatStr);
+    }
+
     setDate(QDate(tmp.year(), tmp.month(), tmp.day()), true );
   }
 
