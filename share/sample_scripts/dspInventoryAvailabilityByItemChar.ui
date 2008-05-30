@@ -34,6 +34,9 @@
                <property name="alignment" >
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
+               <property name="buddy" >
+                <cstring>_char</cstring>
+               </property>
               </widget>
              </item>
              <item row="0" column="1" >
@@ -61,6 +64,9 @@
                <property name="alignment" >
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
+               <property name="buddy" >
+                <cstring>_value</cstring>
+               </property>
               </widget>
              </item>
              <item row="2" column="1" >
@@ -85,6 +91,9 @@
             <property name="title" >
              <string>Characteristic 2</string>
             </property>
+            <property name="checkable" >
+             <bool>true</bool>
+            </property>
             <layout class="QGridLayout" >
              <item row="0" column="0" >
               <widget class="QLabel" name="_characteristicLit_2" >
@@ -93,6 +102,9 @@
                </property>
                <property name="alignment" >
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+               <property name="buddy" >
+                <cstring>_char_2</cstring>
                </property>
               </widget>
              </item>
@@ -121,14 +133,13 @@
                <property name="alignment" >
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
+               <property name="buddy" >
+                <cstring>_value_2</cstring>
+               </property>
               </widget>
              </item>
              <item row="2" column="1" >
-              <widget class="XLineEdit" name="_value_2" >
-               <property name="enabled" >
-                <bool>true</bool>
-               </property>
-              </widget>
+              <widget class="XLineEdit" name="_value_2" />
              </item>
              <item row="3" column="1" >
               <widget class="XCheckBox" name="_emptyValue_2" >
@@ -827,6 +838,9 @@
          <property name="text" >
           <string>Availability:</string>
          </property>
+         <property name="buddy" >
+          <cstring>_availability</cstring>
+         </property>
         </widget>
        </item>
        <item>
@@ -896,6 +910,7 @@
   <tabstop>_charIsSet</tabstop>
   <tabstop>_value</tabstop>
   <tabstop>_emptyValue</tabstop>
+  <tabstop>groupBox_2</tabstop>
   <tabstop>_char_2</tabstop>
   <tabstop>_charIsSet_2</tabstop>
   <tabstop>_value_2</tabstop>
@@ -925,12 +940,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>40</x>
-     <y>156</y>
+     <x>60</x>
+     <y>241</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>170</x>
-     <y>155</y>
+     <x>202</x>
+     <y>242</y>
     </hint>
    </hints>
   </connection>
@@ -941,12 +956,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>40</x>
-     <y>185</y>
+     <x>60</x>
+     <y>270</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>134</x>
-     <y>184</y>
+     <x>213</x>
+     <y>271</y>
     </hint>
    </hints>
   </connection>
@@ -957,8 +972,8 @@
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>764</x>
-     <y>32</y>
+     <x>740</x>
+     <y>38</y>
     </hint>
     <hint type="destinationlabel" >
      <x>20</x>
@@ -973,12 +988,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>384</x>
-     <y>112</y>
+     <x>469</x>
+     <y>196</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>403</x>
-     <y>136</y>
+     <x>451</x>
+     <y>220</y>
     </hint>
    </hints>
   </connection>
@@ -989,12 +1004,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>40</x>
-     <y>214</y>
+     <x>60</x>
+     <y>299</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>105</x>
-     <y>213</y>
+     <x>172</x>
+     <y>300</y>
     </hint>
    </hints>
   </connection>
@@ -1005,12 +1020,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>40</x>
-     <y>214</y>
+     <x>60</x>
+     <y>299</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>241</x>
-     <y>213</y>
+     <x>275</x>
+     <y>300</y>
     </hint>
    </hints>
   </connection>

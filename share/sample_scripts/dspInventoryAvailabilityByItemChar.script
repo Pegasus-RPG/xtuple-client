@@ -40,6 +40,8 @@ function getParams()
   if(mywindow.findChild("_charIsSet").checked)
     params.hasCharacteristic = true;
 
+  if(mywindow.findChild("groupBox_2").checked)
+    params.char2 = true;
   params.char_id2 = mywindow.findChild("_char_2").id;
   params.value2 = mywindow.findChild("_value_2").text;
   if(mywindow.findChild("_emptyValue_2").checked)
@@ -62,17 +64,22 @@ function query()
 
   // execute the following sql statement passing the params
   // and saving the results into a variable
-  var qry = toolbox.executeQuery("SELECT warehous_code,"
+  var qry = toolbox.executeQuery("SELECT DISTINCT itemsite_id, warehous_code,"
                                 +"       item_number,"
                                 +"       itemsite_leadtime,"
-                                +"       formatQty(qtyonhand) AS f_qtyonhand,"
-                                +"       formatQty(noNeg(qtyonhand - allocated)) AS f_unallocated,"
-                                +"       formatQty(noNeg(allocated)) AS f_allocated,"
-                                +"       formatQty(ordered) AS f_ordered,"
-                                +"       formatQty(reorderlevel) AS f_reorderlevel,"
+                                +"       qtyonhand,"
+                                +"       (noNeg(qtyonhand - allocated)) AS unallocated,"
+                                +"       (noNeg(allocated)) AS allocated,"
+                                +"       ordered,"
+                                +"       reorderlevel,"
                                 +"       (qtyonhand - allocated + ordered) AS available,"
-                                +"       formatQty(qtyonhand - allocated + ordered) AS f_available"
-                                +"  FROM (SELECT warehous_code, item_number, itemsite_leadtime,"
+                                +"       'qty' AS qtyonhand_xtnumericrole,"
+                                +"       'qty' AS unallocated_xtnumericrole,"
+                                +"       'qty' AS allocated_xtnumericrole,"
+                                +"       'qty' AS ordered_xtnumericrole,"
+                                +"       'qty' AS reorderlevel_xtnumericrole,"
+                                +"       'qty' AS available_xtnumericrole"
+                                +"  FROM (SELECT itemsite_id, warehous_code, item_number, itemsite_leadtime,"
                                 +"               CASE WHEN(itemsite_useparams) THEN itemsite_reorderlevel ELSE 0.0 END AS reorderlevel,"
                                 +"               itemsite_qtyonhand AS qtyonhand,"
                                 +"<? if exists(\"byDays\") ?>"
@@ -111,7 +118,6 @@ function query()
                                 +"           AND (itemsite_active)"
                                 +"           AND (itemsite_warehous_id=warehous_id)"
                                 +"           AND (itemsite_item_id=item_id)"
-                                +"           AND (item_id=<? value(\"item_id\") ?>)"
                                 +"<? if exists(\"warehous_id\") ?>"
                                 +"           AND (warehous_id=<? value(\"warehous_id\") ?>)"
                                 +"<? endif ?>"
@@ -123,8 +129,79 @@ function query()
                                 +"   AND (NOT ( ((qoh - allocated + ordered) = 0) AND (reorderlevel = 0)) )"
                                 +"  <? endif ?>"
                                 +"    )"
-                                +"<? elseif exists(\"showShortages ?>"
+                                +"<? elseif exists(\"showShortages\") ?>"
                                 +" WHERE ((qoh - allocated + ordered) < 0)"
+                                +"<? endif ?>"
+                                +"<? if exists(\"char2\") ?>"
+                                +" UNION "
+                                +"SELECT DISTINCT itemsite_id, warehous_code,"
+                                +"       item_number,"
+                                +"       itemsite_leadtime,"
+                                +"       qtyonhand,"
+                                +"       (noNeg(qtyonhand - allocated)) AS unallocated,"
+                                +"       (noNeg(allocated)) AS allocated,"
+                                +"       ordered,"
+                                +"       reorderlevel,"
+                                +"       (qtyonhand - allocated + ordered) AS available,"
+                                +"       'qty' AS qtyonhand_xtnumericrole,"
+                                +"       'qty' AS unallocated_xtnumericrole,"
+                                +"       'qty' AS allocated_xtnumericrole,"
+                                +"       'qty' AS ordered_xtnumericrole,"
+                                +"       'qty' AS reorderlevel_xtnumericrole,"
+                                +"       'qty' AS available_xtnumericrole"
+                                +"  FROM (SELECT itemsite_id, warehous_code, item_number, itemsite_leadtime,"
+                                +"               CASE WHEN(itemsite_useparams) THEN itemsite_reorderlevel ELSE 0.0 END AS reorderlevel,"
+                                +"               itemsite_qtyonhand AS qtyonhand,"
+                                +"<? if exists(\"byDays\") ?>"
+                                +"               qtyAllocated(itemsite_id, <? value(\"byDays\") ?>) AS allocated,"
+                                +"               qtyOrdered(itemsite_id, <? value(\"byDays\") ?>) AS ordered"
+                                +"<? elseif exists(\"byDate\") ?>"
+                                +"               qtyAllocated(itemsite_id, (<? value(\"byDate\") ?> - CURRENT_DATE)) AS allocated,"
+                                +"               qtyOrdered(itemsite_id, (<? value(\"byDate\") ?> - CURRENT_DATE)) AS ordered"
+                                +"<? elseif exists(\"byDates\") ?>"
+                                +"               qtyAllocated(itemsite_id, <? value(\"startDate\") ?>, <? value(\"endDate\") ?>) AS allocated,"
+                                +"               qtyOrdered(itemsite_id, <? value(\"startDate\") ?>, <? value(\"endDate\") ?>) AS ordered"
+                                +"<? else ?>"
+                                +"               qtyAllocated(itemsite_id, itemsite_leadtime) AS allocated,"
+                                +"               qtyOrdered(itemsite_id, itemsite_leadtime) AS ordered"
+                                +"<? endif ?>"
+                                +"          FROM itemsite, warehous, item, char"
+                                +"<? if exists(\"hasCharacteristic\") ?>"
+                                +", charass"
+                                +"         WHERE((charass_target_type='I')"
+                                +"           AND (charass_target_id=item_id)"
+                                +"           AND (charass_char_id=char_id)"
+                                +"           AND (char_id=<? value(\"char_id2\") ?>)"
+                                +" <? if exists(\"emptyValue2\") ?>"
+                                +" AND (charass_value IS NULL OR LENGTH(TRIM(charass_value)) = 0)"
+                                +" <? else ?>"
+                                +" AND (charass_value ~* <? value(\"value2\") ?>)"
+                                +" <? endif ?>"
+                                +"<? else ?>"
+                                +"         WHERE((item_id NOT IN (SELECT charass_target_id"
+                                +"                        FROM charass"
+                                +"                        WHERE ((charass_target_type='I')"
+                                +"                          AND  (charass_char_id=char_id))"
+                                +"               ))"
+                                +"           AND (char_id=<? value(\"char_id2\") ?>)"
+                                +"<? endif ?>"
+                                +"           AND (itemsite_active)"
+                                +"           AND (itemsite_warehous_id=warehous_id)"
+                                +"           AND (itemsite_item_id=item_id)"
+                                +"<? if exists(\"warehous_id\") ?>"
+                                +"           AND (warehous_id=<? value(\"warehous_id\") ?>)"
+                                +"<? endif ?>"
+                                +"           )"
+                                +"       ) AS data"
+                                +" <? if exists(\"showReorder\") ?>"
+                                +" WHERE ( ((qoh - allocated + ordered) <= reorderlevel)"
+                                +"  <? if exists(\"ignoreReorderAtZero\") ?>"
+                                +"   AND (NOT ( ((qoh - allocated + ordered) = 0) AND (reorderlevel = 0)) )"
+                                +"  <? endif ?>"
+                                +"    )"
+                                +"<? elseif exists(\"showShortages\") ?>"
+                                +" WHERE ((qoh - allocated + ordered) < 0)"
+                                +"<? endif ?>"
                                 +"<? endif ?>"
                                 +" ORDER BY item_number, warehous_code DESC;", params);
 
@@ -186,16 +263,15 @@ var list = mywindow.findChild("_availability");
 // the third argument is default column alignment See Qt::Alignment documentation
 // the fourth optional argument is default visible
 // the fifth optional argument is column name for enhanced processing
-list.addColumn("Whs.", 100, 4);
-list.addColumn("Item Number", 100, 1);
-list.addColumn("LT", 100, 4);
-list.addColumn("QOH", 100, 1);
-list.addColumn("Allocated", 100, 1);
-list.addColumn("Unallocated", 100, 1);
-list.addColumn("On Order", 100, 1);
-list.addColumn("Reorder Lvl.", 100, 1);
-list.addColumn("OUT Level", 100, 1);
-list.addColumn("Available", 100, 1);
+list.addColumn("Whs.", 100, 4, true, "warehous_code");
+list.addColumn("Item Number", 100, 1, true, "item_number");
+list.addColumn("LT", 50, 4, true, "itemsite_leadtime");
+list.addColumn("QOH", 100, 2, true, "qtyonhand");
+list.addColumn("Unallocated", 100, 2, true, "unallocated");
+list.addColumn("Allocated", 100, 2, true, "allocated");
+list.addColumn("On Order", 100, 2, true, "ordered");
+list.addColumn("Reorder Lvl.", 100, 2, true, "reorderlevel");
+list.addColumn("Available", 100, 2, true, "available");
 
-mywindow.findChild("_char").populate("SELECT char_id, char_name FROM char WHERE(char_items) ORDER BY char_name;");
-mywindow.findChild("_char_2").populate("SELECT char_id, char_name FROM char WHERE(char_items) ORDER BY char_name;");
+mywindow.findChild("_char").populate("SELECT char_id, char_name FROM char WHERE(char_items) ORDER BY char_name;", -1);
+mywindow.findChild("_char_2").populate("SELECT char_id, char_name FROM char WHERE(char_items) ORDER BY char_name;", -1);
