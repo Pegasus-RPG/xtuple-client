@@ -152,7 +152,7 @@ class OPENMFGWIDGETS_EXPORT XComboBox : public QComboBox
     void append(int, const QString &);
     void append(int, const QString &, const QString &);
     void populate(XSqlQuery &, int = -1);
-    void populate(const char *, int = -1);
+    void populate(const QString &, int = -1);
     void populate();
     void setDataWidgetMap(XDataWidgetMapper* m);
     void setFieldName(QString p) { _fieldName = p; };

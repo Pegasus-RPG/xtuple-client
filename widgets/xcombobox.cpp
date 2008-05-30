@@ -879,7 +879,7 @@ void XComboBox::populate(XSqlQuery &pQuery, int pSelected)
   emit valid((_lastId != -1));
 }
 
-void XComboBox::populate(const char *pSql, int pSelected)
+void XComboBox::populate(const QString & pSql, int pSelected)
 {
   qApp->setOverrideCursor(Qt::waitCursor);
   XSqlQuery query(pSql);
