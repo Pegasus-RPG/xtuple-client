@@ -279,6 +279,8 @@ QScriptValue ScriptToolbox::variantToScriptValue(QScriptEngine * engine, QVarian
 
     case QVariant::Map:
 */
+    default:
+      return engine->newVariant(var);
   }
 
   // If we are not doing an explicity conversion just pass the variant back
