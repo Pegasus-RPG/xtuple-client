@@ -87,6 +87,7 @@ class OPENMFGWIDGETS_EXPORT ScreenControl : public QWidget, public Ui::screenCon
 
 	public:
 		ScreenControl(QWidget * = 0);
+                ~ScreenControl();
 		void showEvent ( QShowEvent * event );
 	
 		bool newVisible()	const   { return _new->isVisible();};
@@ -104,6 +105,9 @@ class OPENMFGWIDGETS_EXPORT ScreenControl : public QWidget, public Ui::screenCon
 	        QString sortColumn()      const { return _sortColumn; };
 		QString tableName()   	  const { return _tableName; };
 		QString listReportName()  const	{ return _listReportName;    }; 
+                
+        private slots:
+                void enableSave();
        	
 	public slots:
 		void toNext();
@@ -114,7 +118,7 @@ class OPENMFGWIDGETS_EXPORT ScreenControl : public QWidget, public Ui::screenCon
 		void save();
 		void search();
 		void select();
-		void setFilter(QString p) 		{ _model.setFilter(p) ; };
+		void setFilter(QString p);
 		void setMode(Modes p);
 		void setListReportName(QString p) 	{ _listReportName = p ; _print->setVisible(! p.isEmpty()); };
 		void setNewVisible(bool p) 		{ _new->setVisible(p) ; };
@@ -158,7 +162,7 @@ class OPENMFGWIDGETS_EXPORT ScreenControl : public QWidget, public Ui::screenCon
                 QString                 _sortColumn;
 		QString			_tableName;
 		XDataWidgetMapper	_mapper;
-                XSqlTableModel		_model;
+                XSqlTableModel*		_model;
 };
 
 #endif // SCREENNCONTROL_H

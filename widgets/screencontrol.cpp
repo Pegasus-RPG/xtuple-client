@@ -74,6 +74,8 @@ ScreenControl::ScreenControl(QWidget *parent) :
   _listReportName=QString();
   _print->setVisible(! _listReportName.isEmpty());
   
+  _model = new XSqlTableModel;
+  
   connect (_new,	SIGNAL(clicked()),	this,	SLOT(newRow()));
   connect (_save,       SIGNAL(clicked()),      this,   SIGNAL(saveClicked()));
   connect (_save,	SIGNAL(clicked()),	this,	SLOT(save()));
@@ -82,10 +84,23 @@ ScreenControl::ScreenControl(QWidget *parent) :
   connect (_prev,	SIGNAL(clicked()),	this,	SLOT(toPrevious()));
   connect (_next,	SIGNAL(clicked()),	this,	SLOT(toNext()));
   connect (_search,	SIGNAL(clicked()),	this,	SLOT(search()));
+  connect (_model,      SIGNAL(dataChanged(QModelIndex, QModelIndex)), this, SLOT(enableSave()));
   
   _view->setVisible(FALSE);
+  _save->setEnabled(false);
 
-  _model.setEditStrategy(QSqlTableModel::OnManualSubmit);
+  _model->setEditStrategy(QSqlTableModel::OnManualSubmit);
+}
+
+ScreenControl::~ScreenControl()
+{
+  qDebug("check desctroyed");
+  if (isDirty())
+    if (QMessageBox::question(this, tr("Unsaved work"),
+                                   tr("Would you like to save your work so you do not lose your changes?"),
+                                   QMessageBox::Yes | QMessageBox::Default,
+                                   QMessageBox::No ) == QMessageBox::Yes)
+      save();
 }
 
 ScreenControl::Modes ScreenControl::mode()
@@ -100,10 +115,15 @@ ScreenControl::SearchTypes ScreenControl::searchType()
 
 bool ScreenControl::isDirty()
 {
-  for (int i = 0; i < _model.columnCount()-1; i++)
-    if (_model.isDirty(_model.index(_mapper.currentIndex(),i)))
+  for (int i = 0; i < _model->columnCount()-1; i++)
+    if (_model->isDirty(_model->index(_mapper.currentIndex(),i)))
       return true;
   return false;
+}
+
+void ScreenControl::enableSave()
+{
+  _save->setEnabled(true);
 }
 
 void ScreenControl::languageChange()
@@ -123,11 +143,11 @@ void ScreenControl::showEvent(QShowEvent *event)
     setTable(_schemaName, _tableName);
 
     // now set the sort order
-    for (int i = 0; i < _model.columnCount(); i++)
+    for (int i = 0; i < _model->columnCount(); i++)
     { 
-      if (_model.headerData(i,Qt::Horizontal,Qt::DisplayRole).toString() == _sortColumn)
+      if (_model->headerData(i,Qt::Horizontal,Qt::DisplayRole).toString() == _sortColumn)
       {
-        _model.setSort(i, Qt::AscendingOrder);
+        _model->setSort(i, Qt::AscendingOrder);
         break;
       }
     }
@@ -143,43 +163,15 @@ void ScreenControl::showEvent(QShowEvent *event)
 void ScreenControl::toNext()
 {
   emit movingNext();
-  if (isDirty())
-  {
-    int i=_mapper.currentIndex()+1;
-    if (QMessageBox::question(this, tr("Unsaved work"),
-                                   tr("Would you like to save your work so you do not lose your changes?"),
-                                   QMessageBox::Yes | QMessageBox::Default,
-                                   QMessageBox::No ) == QMessageBox::Yes)
-    {
-      save();
-      _mapper.setCurrentIndex(i);
-      return;
-    }
-  }
-
   _mapper.toNext();
   _prev->setEnabled(true);
-  _next->setEnabled(_mapper.currentIndex() < _model.rowCount()-1);
+  _next->setEnabled(_mapper.currentIndex() < _model->rowCount()-1);
   emit movedNext();
 }
 
 void ScreenControl::toPrevious()
 {
   emit movingPrev();
-  if (isDirty())
-  {
-    int i=_mapper.currentIndex()-1;
-    if (QMessageBox::question(this, tr("Unsaved work"),
-                                   tr("Would you like to save your work so you do not lose your changes?"),
-                                   QMessageBox::Yes | QMessageBox::Default,
-                                   QMessageBox::No ) == QMessageBox::Yes)
-    {
-      save();
-      _mapper.setCurrentIndex(i);
-      return;
-    }
-  }
-  
   _mapper.toPrevious();
   _next->setEnabled(true);
   _prev->setEnabled(_mapper.currentIndex());
@@ -188,13 +180,10 @@ void ScreenControl::toPrevious()
 
 void ScreenControl::newRow()
 {
-  _mapper.submit();
-  _new->setEnabled(_mode!=View);
-  _save->setEnabled(_mode!=View);
-  _view->setEnabled(true);
-  _print->setEnabled(true);
-  _model.insertRows(_model.rowCount(),1);
+  qDebug("insert row %d", _model->insertRows(_model->rowCount(),1));
   _mapper.toLast();
+  _prev->setEnabled(_model->rowCount()-1);
+  _next->setEnabled(false);
 }
 
 void ScreenControl::print()
@@ -215,19 +204,22 @@ void ScreenControl::printList()
 void ScreenControl::save()
 {
   emit saving();
+  int i=_mapper.currentIndex();
   _mapper.submit();
-  _model.submitAll();
-  qDebug("error %d",_model.lastError().isValid());
-  if (_model.lastError().type() != QSqlError::NoError && _model.lastError().driverText() != "No Fields to update")
+  _model->submitAll();
+  _mapper.setCurrentIndex(i);
+  qDebug("error %d",_model->lastError().isValid());
+  if (_model->lastError().type() != QSqlError::NoError && _model->lastError().driverText() != "No Fields to update")
   {
     QMessageBox::critical(this, tr("Error Saving %1").arg(_tableName),
                           tr("Error saving %1 at %2::%3\n\n%4")
                           .arg(_tableName).arg(__FILE__).arg(__LINE__)
-                          .arg(_model.lastError().databaseText()));
+                          .arg(_model->lastError().databaseText()));
     return;
   }
   if (_mode==New)
     newRow();
+  _save->setEnabled(false);
   emit saved(true);
 }
 
@@ -240,11 +232,11 @@ void ScreenControl::search()
   if (_searchText->text().stripWhiteSpace().length())
   {
     QStringList parts;
-    for (int i = 0; i < _model.columnCount(); i++)
+    for (int i = 0; i < _model->columnCount(); i++)
     { 
-      if (_model.headerData(i,Qt::Horizontal,Qt::DisplayRole).toString().length())
+      if (_model->headerData(i,Qt::Horizontal,Qt::DisplayRole).toString().length())
         parts.append("(CAST(" +
-                     _model.headerData(i,Qt::Horizontal,Qt::DisplayRole).toString() +
+                     _model->headerData(i,Qt::Horizontal,Qt::DisplayRole).toString() +
                      " AS TEXT) ~* '" + _searchText->text() + "')");
     }
     filter=parts.join(" OR ");
@@ -259,14 +251,14 @@ void ScreenControl::search()
 
 void ScreenControl::select()
 {
-  _model.select();
+  _model->select();
   _new->setEnabled(_mode!=View);
-  if (_model.rowCount())
+  if (_model->rowCount())
   {
     _mapper.toFirst();
-    _save->setEnabled(_mode!=View);
+    //_save->setEnabled(_mode!=View);
     _view->setEnabled(true);
-    _next->setEnabled(_model.rowCount() > 1);
+    _next->setEnabled(_model->rowCount() > 1);
   }
   else
   {
@@ -275,6 +267,11 @@ void ScreenControl::select()
     _prev->setEnabled(false);
     _next->setEnabled(false);
   }
+}
+
+void ScreenControl::setFilter(QString p)
+{
+  _model->setFilter(p);
 }
 
 void ScreenControl::setMode(Modes p)
@@ -286,14 +283,12 @@ void ScreenControl::setMode(Modes p)
   {
     _mode=New;
     if (_new)  _new->setEnabled(true);
-    if (_save) _save->setEnabled(true);
     newRow();
   }
   else if (p==Edit)
   {
     _mode=Edit;
     if (_new)  _new->setEnabled(true);
-    if (_save) _save->setEnabled(true);
   }
   else
   {
@@ -322,7 +317,7 @@ void ScreenControl::setSearchType(SearchTypes p)
 void ScreenControl::setSortColumn(QString p)
 {
   _sortColumn = p;
-  // _model.setSort is called in setVisible
+  // _model->setSort is called in setVisible
 }
 
 /* Pass in a schema name and a table name.  If schema name is blank, it will be ignored.
@@ -335,12 +330,12 @@ void ScreenControl::setTable(QString s, QString t)
     if (s.length())
       tableName=s + ".";
     tableName+=t;
-    if (_model.tableName() != tableName)
+    if (_model->tableName() != tableName)
     {
       //QSqlIndex _index;
-      //_model.setPrimaryKey(_index);
-      _model.setTable(tableName);
-      setDataWidgetMapper(&_model);
+      //_model->setPrimaryKey(_index);
+      _model->setTable(tableName);
+      setDataWidgetMapper(_model);
       _search->setEnabled(true);
       _searchText->setEnabled(true);
     }
