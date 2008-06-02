@@ -10,7 +10,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Screen</string>
+   <string>Credit Card Transaction Information</string>
   </property>
   <layout class="QGridLayout" >
    <item row="0" column="0" colspan="4" >
