@@ -60,7 +60,7 @@
 #define XTREEVIEW_H
 
 #include <QTreeView>
-#include "XSqlTableModel.h"
+#include "xsqltablemodel.h"
 #include "OpenMFGWidgets.h"
 
 class OPENMFGWIDGETS_EXPORT XTreeView : public QTreeView
