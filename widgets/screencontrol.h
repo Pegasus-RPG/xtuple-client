@@ -77,7 +77,6 @@ class OPENMFGWIDGETS_EXPORT ScreenControl : public QWidget, public Ui::screenCon
 	
 	Q_PROPERTY (QString		schemaName	READ schemaName		WRITE setSchemaName)
 	Q_PROPERTY (QString 		tableName 	READ tableName 		WRITE setTableName)
-        Q_PROPERTY (QList<QString>      primaryKey      READ primaryKey         WRITE setPrimaryKey)
 	Q_PROPERTY (QString		listReportName	READ listReportName	WRITE setListReportName)
 	Q_PROPERTY (Modes		mode		READ mode		WRITE setMode)
 	Q_PROPERTY (SearchTypes 	searchType	READ searchType		WRITE setSearchType)
@@ -100,7 +99,7 @@ class OPENMFGWIDGETS_EXPORT ScreenControl : public QWidget, public Ui::screenCon
 		SearchTypes searchType();
 	
                 bool  isDirty();
-                QList<QString> primaryKey()    const { return _pklist; };
+      //          QList<QString> primaryKey()    const { return _pklist; };
 	        QString schemaName()      const { return _schemaName; };
 	        QString sortColumn()      const { return _sortColumn; };
 		QString tableName()   	  const { return _tableName; };
@@ -118,6 +117,7 @@ class OPENMFGWIDGETS_EXPORT ScreenControl : public QWidget, public Ui::screenCon
 		void save();
 		void search();
 		void select();
+                void setCurrentIndex(int p)             { _mapper.setCurrentIndex(p); };
 		void setFilter(QString p);
 		void setMode(Modes p);
 		void setListReportName(QString p) 	{ _listReportName = p ; _print->setVisible(! p.isEmpty()); };
@@ -127,7 +127,7 @@ class OPENMFGWIDGETS_EXPORT ScreenControl : public QWidget, public Ui::screenCon
 		void setSchemaName(QString p)  		{ _schemaName = p;};
 		void setSortColumn(QString p);
  
-                void setPrimaryKey(QList<QString> p)             { _pklist = p;};
+  //              void setPrimaryKey(QList<QString> p)             { _pklist = p;};
 		void setTableName(QString p)		{ _tableName = p;};
 		void setTable(QString s, QString t);
 		void setDataWidgetMapper(QSqlTableModel *p);
@@ -142,6 +142,7 @@ class OPENMFGWIDGETS_EXPORT ScreenControl : public QWidget, public Ui::screenCon
                 void movingPrev();
 		void newClicked();
 		void newDataWidgetMapper(XDataWidgetMapper *m);
+                void newModel(XSqlTableModel *m);
 		void printClicked();
 		void saveClicked();
 		void saved(bool);
@@ -155,7 +156,7 @@ class OPENMFGWIDGETS_EXPORT ScreenControl : public QWidget, public Ui::screenCon
 		bool			_shown;
 		enum  Modes		_mode;
 		enum  SearchTypes	_searchType;
-                QList<QString>          _pklist;
+   //             QList<QString>          _pklist;
 		QString 		_formReportName;
 		QString           	_listReportName;
 		QString			_schemaName;

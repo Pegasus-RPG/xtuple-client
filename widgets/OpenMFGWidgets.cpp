@@ -94,6 +94,7 @@
 #include "plugins/projectlineeditplugin.h"
 #include "plugins/raclusterplugin.h"
 #include "plugins/revisionclusterplugin.h"
+#include "plugins/screencontrolplugin.h"
 #include "plugins/shiftclusterplugin.h"
 #include "plugins/shipmentclusterplugin.h"
 #include "plugins/shiptoclusterplugin.h"
@@ -117,9 +118,9 @@
 #include "plugins/xcomboboxplugin.h"
 #include "plugins/xlineeditplugin.h"
 #include "plugins/xtreewidgetplugin.h"
+#include "plugins/xtreeviewplugin.h"
 #include "plugins/xurllabelplugin.h"
 #include "plugins/xtexteditplugin.h"
-#include "plugins/screencontrolplugin.h"
 
 OpenMFGPlugin::OpenMFGPlugin(QObject * parent) : QObject(parent)
 {
@@ -184,6 +185,7 @@ OpenMFGPlugin::OpenMFGPlugin(QObject * parent) : QObject(parent)
   m_plugins.append(new XComboBoxPlugin(this));
   m_plugins.append(new XLineEditPlugin(this));
   m_plugins.append(new XTreeWidgetPlugin(this));
+  m_plugins.append(new XTreeViewPlugin(this));
   m_plugins.append(new XURLLabelPlugin(this));
   m_plugins.append(new XTextEditPlugin(this));
 }

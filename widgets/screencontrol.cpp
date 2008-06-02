@@ -259,6 +259,7 @@ void ScreenControl::select()
     //_save->setEnabled(_mode!=View);
     _view->setEnabled(true);
     _next->setEnabled(_model->rowCount() > 1);
+    emit newModel(_model);
   }
   else
   {
@@ -338,6 +339,7 @@ void ScreenControl::setTable(QString s, QString t)
       setDataWidgetMapper(_model);
       _search->setEnabled(true);
       _searchText->setEnabled(true);
+      emit newModel(_model);
     }
   }
   else

@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>732</width>
+    <width>907</width>
     <height>59</height>
    </rect>
   </property>
@@ -104,6 +104,12 @@
       </item>
       <item>
        <widget class="QLineEdit" name="_searchText" >
+        <property name="minimumSize" >
+         <size>
+          <width>100</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="palette" >
          <palette>
           <active>
@@ -140,11 +146,6 @@
            </colorrole>
           </disabled>
          </palette>
-        </property>
-        <property name="font" >
-         <font>
-          <italic>true</italic>
-         </font>
         </property>
         <property name="text" >
          <string/>

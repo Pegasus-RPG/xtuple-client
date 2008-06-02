@@ -94,6 +94,7 @@ HEADERS += \
            plugins/xurllabelplugin.h \
            plugins/xtexteditplugin.h \
 	   plugins/screencontrolplugin.h\
+           plugins/xtreeviewplugin.h\
 
 SOURCES    += OpenMFGWidgets.cpp \
               addressCluster.cpp contactCluster.cpp crmacctCluster.cpp \
@@ -136,6 +137,7 @@ SOURCES    += OpenMFGWidgets.cpp \
 	      screencontrol.cpp \
               empcluster.cpp empgroupcluster.cpp \
 	      xsqltablemodel.cpp \
+              xtreeview.cpp \
 
 HEADERS    += OpenMFGWidgets.h \
               addresscluster.h contactcluster.h crmacctcluster.h \
@@ -179,6 +181,7 @@ HEADERS    += OpenMFGWidgets.h \
               dcalendarpopup.h\
               empcluster.h empgroupcluster.h\
               xsqltablemodel.h \
+              xtreeview.h \
 
 FORMS += accountSearch.ui \
 	 screenControl.ui \
