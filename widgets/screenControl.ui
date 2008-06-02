@@ -57,6 +57,9 @@
         <property name="enabled" >
          <bool>false</bool>
         </property>
+        <property name="focusPolicy" >
+         <enum>Qt::StrongFocus</enum>
+        </property>
         <property name="text" >
          <string>Prev</string>
         </property>
@@ -81,6 +84,9 @@
        <widget class="QPushButton" name="_next" >
         <property name="enabled" >
          <bool>false</bool>
+        </property>
+        <property name="focusPolicy" >
+         <enum>Qt::StrongFocus</enum>
         </property>
         <property name="text" >
          <string>Next</string>
@@ -157,6 +163,9 @@
         <property name="enabled" >
          <bool>false</bool>
         </property>
+        <property name="focusPolicy" >
+         <enum>Qt::StrongFocus</enum>
+        </property>
         <property name="text" >
          <string>Search</string>
         </property>
@@ -192,6 +201,9 @@
         <property name="enabled" >
          <bool>false</bool>
         </property>
+        <property name="focusPolicy" >
+         <enum>Qt::StrongFocus</enum>
+        </property>
         <property name="text" >
          <string>Print</string>
         </property>
@@ -217,6 +229,9 @@
         <property name="enabled" >
          <bool>false</bool>
         </property>
+        <property name="focusPolicy" >
+         <enum>Qt::StrongFocus</enum>
+        </property>
         <property name="text" >
          <string>View</string>
         </property>
@@ -238,6 +253,9 @@
        <widget class="QPushButton" name="_new" >
         <property name="enabled" >
          <bool>false</bool>
+        </property>
+        <property name="focusPolicy" >
+         <enum>Qt::StrongFocus</enum>
         </property>
         <property name="text" >
          <string>New</string>
@@ -263,6 +281,9 @@
        <widget class="QPushButton" name="_save" >
         <property name="enabled" >
          <bool>false</bool>
+        </property>
+        <property name="focusPolicy" >
+         <enum>Qt::StrongFocus</enum>
         </property>
         <property name="text" >
          <string>Save</string>
