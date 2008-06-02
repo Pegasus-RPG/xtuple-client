@@ -31,7 +31,7 @@
       <item>
        <widget class="QLabel" name="_listLit" >
         <property name="text" >
-         <string>Opportunity Types:</string>
+         <string>Groups:</string>
         </property>
        </widget>
       </item>
