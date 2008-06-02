@@ -502,6 +502,7 @@ void distributeInventory::sFillList()
 		 " AND (itemsite_loccntrl)"
 		 " AND (itemsite_warehous_id=location_warehous_id)"
 		 " AND (validLocation(location_id, itemsite_id))"
+                 " AND (itemsite_id=<? value(\"itemsite_id\") ?> ) "
 		 " AND (location_id NOT IN (SELECT DISTINCT itemloc_location_id FROM itemloc WHERE (itemloc_itemsite_id=itemsite_id)))"
 		 " AND (itemlocdist_id=<? value(\"itemlocdist_id\") ?>) ) "
 		 "<? endif ?>"
@@ -536,6 +537,7 @@ void distributeInventory::sFillList()
     params.append("na",             tr("N/A"));
     params.append("undefined",      tr("Undefined"));
     params.append("itemlocdist_id", _itemlocdistid);
+    params.append("itemsite_id",    q.value("itemsite_id").toInt());
 
     MetaSQLQuery mql(sql);
     q = mql.toQuery(params);
