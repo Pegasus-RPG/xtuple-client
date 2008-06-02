@@ -122,10 +122,15 @@ XDialog::~XDialog()
 
 void XDialog::closeEvent(QCloseEvent *event)
 {
+/* We currently aren't doing this
+ * Some additional code needs to be added elsewhere to allow
+ * users to enable/disable memory for individual screens
+ * and this closeEvent isn't called consistently for dialogs.
   QString objName = objectName();
   QSettings settings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
   settings.setValue(objName + "/geometry/size", size());
   settings.setValue(objName + "/geometry/pos", pos());
+ */
 
   QDialog::closeEvent(event);
 }
@@ -136,6 +141,10 @@ void XDialog::showEvent(QShowEvent *event)
   {
     _private->_shown = true;
 
+/* We currently aren't doing this
+ * The saving portion of this code elsewhere doesn't
+ * work consistently and there is no interaction available
+ * to users to enable/disable per screen
     QRect availableGeometry = QApplication::desktop()->availableGeometry();
 
     QSettings settings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
@@ -151,6 +160,7 @@ void XDialog::showEvent(QShowEvent *event)
     QRect r(pos, size());
     if(!pos.isNull() && availableGeometry.contains(r) && settings.value(objName + "/geometry/rememberPos", true).toBool())
       move(pos);
+ */
 
     QStringList parts = objectName().split(" ");
     QStringList search_parts;
