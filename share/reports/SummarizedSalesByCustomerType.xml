@@ -18,9 +18,11 @@
        formatQty(totalunits) AS f_totalunits,
        totalsales, formatMoney(totalsales) AS f_totalsales 
 FROM ( SELECT custtype_id, custtype_code, warehous_code,
-              MIN(cohist_unitprice) AS minprice, MAX(cohist_unitprice) AS maxprice,
-              AVG(cohist_unitprice) AS avgprice, SUM(cohist_qtyshipped) AS totalunits,
-              SUM(round(cohist_qtyshipped * cohist_unitprice,2)) AS totalsales 
+              MIN(currToBase(COALESCE(cohist_curr_id, baseCurrId()), cohist_unitprice, cohist_invcdate)) AS minprice,
+              MAX(currToBase(COALESCE(cohist_curr_id, baseCurrId()), cohist_unitprice, cohist_invcdate)) AS maxprice,
+              AVG(currToBase(COALESCE(cohist_curr_id, baseCurrId()), cohist_unitprice, cohist_invcdate)) AS avgprice,
+              SUM(currToBase(COALESCE(cohist_curr_id, baseCurrId()), cohist_qtyshipped, cohist_invcdate)) AS totalunits,
+              SUM(currToBase(COALESCE(cohist_curr_id, baseCurrId()), round(cohist_qtyshipped * cohist_unitprice,2), cohist_invcdate)) AS totalsales 
        FROM cohist, cust, custtype, itemsite, item, warehous 
        WHERE ( (cohist_cust_id=cust_id)
         AND (cust_custtype_id=custtype_id)
