@@ -204,9 +204,9 @@ menuSystem::menuSystem(GUIClient *Pparent) :
     { "sys.maintainGroups",           tr("Maintain &Groups..."),            SLOT(sMaintainGroups()),           systemMenu, _privileges->check("MaintainGroups"),      NULL, NULL, true },
 
     { "menu",                         tr("&Employees"),                     (char*)employeeMenu,               systemMenu, true,                                      NULL, NULL, true },
-    { "sys.employee",                 tr("&New Employee..."),               SLOT(sNewEmployee()),            employeeMenu, employee::userHasPriv(cNew),               NULL, NULL, true },
-    { "sys.listEmployees",            tr("&List Employees..."),             SLOT(sListEmployees()),          employeeMenu, employee::userHasPriv(),                   NULL, NULL, true },
-    { "sys.searchEmployees",          tr("&Search For Employees..."),       SLOT(sSearchEmployees()),        employeeMenu, searchForEmp::userHasPriv(),               NULL, NULL, true },
+    { "sys.employee",                 tr("&New..."),               SLOT(sNewEmployee()),            employeeMenu, employee::userHasPriv(cNew),               NULL, NULL, true },
+    { "sys.listEmployees",            tr("&List..."),             SLOT(sListEmployees()),          employeeMenu, employee::userHasPriv(),                   NULL, NULL, true },
+    { "sys.searchEmployees",          tr("&Search..."),       SLOT(sSearchEmployees()),        employeeMenu, searchForEmp::userHasPriv(),               NULL, NULL, true },
     { "separator",                    NULL,                                 NULL,                            employeeMenu, true,                                      NULL, NULL, true },
     { "sys.employeeGroups",           tr("Employee &Groups..."),            SLOT(sEmployeeGroups()),         employeeMenu, empGroup::userHasPriv(),                   NULL, NULL, true },
 
