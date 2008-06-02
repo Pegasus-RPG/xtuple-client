@@ -66,6 +66,7 @@
 #include "empGroup.h"
 #include "empgroupcluster.h"
 #include "salesRep.h"
+#include "storedProcErrorLookup.h"
 #include "user.h"
 
 #define DEBUG   false
@@ -109,7 +110,7 @@ void employee::setVisible(bool visible)
     systemError(this,
 		tr("You do not have sufficient privilege to view this window"),
 		__FILE__, __LINE__);
-    close();
+    reject();
   }
   else
     XDialog::setVisible(true);
@@ -147,14 +148,24 @@ employee::employee(QWidget* parent, Qt::WindowFlags fl)
     return;
   }
 
-  _salesrepButton->setVisible(_privileges->check("MaintainSalesReps") ||
-                              _privileges->check("ViewSalesReps"));
-  _userButton->setVisible(_privileges->check("MaintainUsers"));
+  _createUsers = false;
+  q.exec("SELECT userCanCreateUsers(CURRENT_USER) AS enabled;");
+  if (q.first())
+    _createUsers = q.value("enabled").toBool();
+  else if (q.lastError().type() != QSqlError::None)
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+
+  if (_privileges->check("MaintainSalesReps") ||
+      _privileges->check("ViewSalesReps"))
+    connect(_salesrep, SIGNAL(toggled(bool)), _salesrepButton, SLOT(setEnabled(bool)));
+  if (_privileges->check("MaintainUsers"))
+    connect(_user, SIGNAL(toggled(bool)), _userButton, SLOT(setEnabled(bool)));
 
   _comments->setId(-1);
 
   _empid = -1;
   _mode = cView;
+  _origmode = cView;
 }
 
 employee::~employee()
@@ -198,6 +209,8 @@ enum SetResponse employee::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
+      _user->setEnabled(_createUsers);
+      _salesrep->setEnabled(_privileges->check("MaintainSalesReps"));
       _code->setFocus();
     }
     else if (param.toString() == "edit")
@@ -213,8 +226,8 @@ enum SetResponse employee::set(const ParameterList &pParams)
     }
   }
 
-  if (_mode == cNew ||
-      _mode == cEdit)
+  bool editing = (_mode == cNew || _mode == cEdit);
+  if (editing)
   {
     connect(_charass,SIGNAL(valid(bool)), _deleteCharass, SLOT(setEnabled(bool)));
     connect(_charass,SIGNAL(valid(bool)), _editCharass, SLOT(setEnabled(bool)));
@@ -228,29 +241,123 @@ enum SetResponse employee::set(const ParameterList &pParams)
       connect(_groups, SIGNAL(valid(bool)), _viewGroup,   SLOT(setEnabled(bool)));
   }
 
-  _code->setEnabled(_mode == cNew || _mode == cEdit);
-  _number->setEnabled(_mode == cNew || _mode == cEdit);
-  _active->setEnabled(_mode == cNew || _mode == cEdit);
-  _contact->setEnabled(_mode == cNew || _mode == cEdit);
-  _site->setEnabled(_mode == cNew || _mode == cEdit);
-  _mgr->setEnabled(_mode == cNew || _mode == cEdit);
-  _wagetype->setEnabled(_mode == cNew || _mode == cEdit);
-  _rate->setEnabled(_mode == cNew || _mode == cEdit);
-  _per->setEnabled(_mode == cNew || _mode == cEdit);
-  _dept->setEnabled(_mode == cNew || _mode == cEdit);
-  _shift->setEnabled(_mode == cNew || _mode == cEdit);
-  _user->setEnabled(_mode == cNew || _mode == cEdit);
-  _salesrep->setEnabled(_mode == cNew || _mode == cEdit);
-  _notes->setEnabled(_mode == cNew || _mode == cEdit);
-  _comments->setEnabled(_mode == cNew || _mode == cEdit);
-  _save->setEnabled(_mode == cNew || _mode == cEdit);
-  _newCharass->setEnabled(_mode == cNew || _mode == cEdit);
+  _code->setEnabled(editing);
+  _number->setEnabled(editing);
+  _active->setEnabled(editing);
+  _contact->setEnabled(editing);
+  _site->setEnabled(editing);
+  _mgr->setEnabled(editing);
+  _wagetype->setEnabled(editing);
+  _rate->setEnabled(editing);
+  _per->setEnabled(editing);
+  _dept->setEnabled(editing);
+  _shift->setEnabled(editing);
+  _notes->setEnabled(editing);
+  _image->setEnabled(editing);
+  _comments->setEnabled(editing);
+  _save->setEnabled(editing);
+  _newCharass->setEnabled(editing);
+
+  _origmode = _mode;
+  if (DEBUG)
+    qDebug("employee::set() returning with _mode %d and _origmode %d",
+           _mode, _origmode);
 
   return NoError;
 }
 
 void employee::sSave(const bool pClose)
 {
+  if (_user->isChecked() && pClose)
+  {
+    q.prepare("SELECT usr_id FROM usr WHERE usr_username=:username;");
+    q.bindValue(":username", _code->text());
+    q.exec();
+    if (q.first())
+    {
+      // OK
+    }
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+    else if (_createUsers) // not found
+    {
+      if (QMessageBox::question(this, tr("No Corresponding User"),
+                            tr("There is no User named %1. Would you like to "
+                               "create one now?<p>If you answer 'No' then you "
+                               "should either Cancel creating this Employee, "
+                               "uncheck the User check box, or use a different "
+                               "Employee Code.")
+                            .arg(_code->text()),
+                            QMessageBox::Yes | QMessageBox::Default,
+                            QMessageBox::No) == QMessageBox::Yes)
+      {
+        // don't use sUser() because it asks too many questions
+        ParameterList params;
+        params.append("mode",     "new");
+        params.append("username", _code->text());
+        user newdlg(this, "", TRUE);
+        newdlg.set(params);
+        newdlg.exec();
+      }
+      return;
+    }
+    else // not found
+    {
+      systemError(this, tr("There is no User named %1. Either Cancel creating "
+                           "this Employee or use a different Employee Code.")
+                         .arg(_code->text()));
+      return;
+    }
+  }
+  
+  if (_salesrep->isChecked() && pClose)
+  {
+    q.prepare("SELECT salesrep_id FROM salesrep WHERE salesrep_number=:username;");
+    q.bindValue(":username", _code->text());
+    q.exec();
+    if (q.first())
+    {
+      // OK
+    }
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+    else if (_privileges->check("MaintainSalesReps")) // not found
+    {
+      if (QMessageBox::question(this, tr("No Corresponding SalesRep"),
+                            tr("There is no Sales Rep. named %1. Would you "
+                               "like to create one now?<p>If you answer 'No' "
+                               "then you should either Cancel creating this "
+                               "Employee, uncheck the Sales Rep check box, or "
+                               "use a different Employee Code.")
+                            .arg(_code->text()),
+                            QMessageBox::Yes | QMessageBox::Default,
+                            QMessageBox::No) == QMessageBox::Yes)
+      {
+        // don't use sSalesrep() because it asks too many questions
+        ParameterList params;
+        params.append("mode",     "new");
+        params.append("emp_id",   _empid);
+        salesRep newdlg(this, "", TRUE);
+        newdlg.set(params);
+        newdlg.exec();
+      }
+      return;
+    }
+    else // not found
+    {
+      systemError(this, tr("There is no User named %1. Either Cancel creating "
+                           "this Employee or use a different Employee Code.")
+                         .arg(_code->text()));
+      return;
+    }
+  }
+
   _contact->check();
 
   if (_mode == cNew)
@@ -379,6 +486,30 @@ void employee::sSave(const bool pClose)
     done(_empid);
 }
 
+void employee::reject()
+{
+  if (DEBUG)
+    qDebug("employee::reject() entered with _mode %d and _origmode %d",
+           _mode, _origmode);
+  if (_origmode == cNew)
+  {
+    q.prepare("SELECT deleteEmp(:empid) AS result;");
+    q.bindValue(":empid", _empid);
+    q.exec();
+    if (q.first())
+    {
+      int result = q.value("result").toInt();
+      if (result < 0)
+        systemError(this, storedProcErrorLookup("deleteEmp", result),
+                    __FILE__, __LINE__);
+    }
+    else if (q.lastError().type() != QSqlError::None)
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  }
+
+  XDialog::reject();
+}
+
 void employee::sPopulate()
 {
   q.prepare("SELECT *, curr_id, curr_abbr "
@@ -424,9 +555,21 @@ void employee::sPopulate()
     _salesrep->setChecked(q.value("is_salesrep").toBool());
     _notes->setText(q.value("notes").toString());
     _image->setNumber(q.value("image").toString());
-    if (DEBUG) qDebug("image %s and %s",
-                      q.value("image").toString().toAscii().data(),
-                      _image->number().toAscii().data());
+
+    _user->setEnabled(_createUsers && ! _user->isChecked());
+    _userButton->setEnabled(_privileges->check("MaintainUsers") &&
+                            _user->isChecked());
+
+    _salesrep->setEnabled(_privileges->check("MaintainSalesReps") &&
+                          ! _salesrep->isChecked());
+    _salesrepButton->setEnabled((_privileges->check("MaintainSalesReps") ||
+                                 _privileges->check("ViewSalesReps")) &&
+                                _salesrep->isChecked());
+
+    if (DEBUG)
+      qDebug("image %s and %s",
+             qPrintable(q.value("image").toString()),
+             qPrintable(_image->number()));
 
     sFillCharassList();
     sFillGroupsList();
@@ -518,16 +661,37 @@ void employee::sFillGroupsList()
 void employee::sSalesrep()
 {
   XSqlQuery srq;
-  srq.prepare("SELECT salesrep_id "
-              "FROM salesrep "
-              "WHERE (salesrep_emp_id=:id);");
-  srq.bindValue(":id", _empid);
+  if (_empid < 0 && _code->text().isEmpty())
+  {
+    QMessageBox::warning(this, tr("Specify an Employee Code"),
+                         tr("<p>You must either be editing an existing "
+                            "Employee or have at least given an Employee Code "
+                            "before trying to associate this Employee with a "
+                            "Sales Rep."));
+    return;
+  }
+  else if (_empid >= 0)
+  {
+    srq.prepare("SELECT salesrep_id "
+                "FROM salesrep "
+                "WHERE (salesrep_emp_id=:id);");
+    srq.bindValue(":id", _empid);
+  }
+  else
+  {
+    srq.prepare("SELECT salesrep_id "
+                "FROM salesrep "
+                "WHERE (salesrep_number=:code);");
+    srq.bindValue(":code", _code->text());
+  }
+
   srq.exec();
   if (srq.first() &&
       (_privileges->check("MaintainSalesReps") ||
        _privileges->check("ViewSalesReps"))
       )
   {
+    sSave(false);
     ParameterList params;
     if (_mode == cView || ! _privileges->check("MaintainSalesReps"))
       params.append("mode", "view");
@@ -537,7 +701,7 @@ void employee::sSalesrep()
     params.append("emp_id",      _empid);
     salesRep newdlg(this, "", TRUE);
     newdlg.set(params);
-    newdlg.exec();
+    _salesrep->setEnabled(newdlg.exec() == QDialog::Rejected);
   }
   else if (srq.lastError().type() != QSqlError::None)
   {
@@ -548,7 +712,7 @@ void employee::sSalesrep()
            (_mode == cEdit || _mode == cNew))
   {
     if (QMessageBox::question(this, tr("Create Sales Rep?"),
-                              tr("There does not appear to be a Sales "
+                              tr("<p>There does not appear to be a Sales "
                                  "Rep associated with this Employee. "
                                  "Would you like to create a new Sales "
                                  "Rep?"),
@@ -558,11 +722,10 @@ void employee::sSalesrep()
       sSave(false);
       ParameterList params;
       params.append("mode",     "new");
-      params.append("emp_code", _code->text());
       params.append("emp_id",   _empid);
       salesRep newdlg(this, "", TRUE);
       newdlg.set(params);
-      newdlg.exec();
+      _salesrep->setEnabled(newdlg.exec() == QDialog::Rejected);
     }
   }
 }
@@ -582,18 +745,17 @@ void employee::sUser()
     params.append("username", usrq.value("usr_username"));
     user newdlg(this, "", TRUE);
     newdlg.set(params);
-    newdlg.exec();
+    _user->setEnabled(newdlg.exec() != QDialog::Rejected);
   }
   else if (usrq.lastError().type() != QSqlError::None)
   {
     systemError(this, usrq.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-  else if (_privileges->check("MaintainUsers") &&
-           (_mode == cEdit || _mode == cNew))
+  else if (_createUsers && (_mode == cEdit || _mode == cNew))
   {
     if (QMessageBox::question(this, tr("Create User?"),
-                              tr("There does not appear to be a User "
+                              tr("<p>There does not appear to be a User "
                                  "associated with this Employee. "
                                  "Would you like to create a new User?"),
 				  QMessageBox::Yes | QMessageBox::Default,
@@ -605,8 +767,16 @@ void employee::sUser()
       params.append("username", _code->text());
       user newdlg(this, "", TRUE);
       newdlg.set(params);
-      newdlg.exec();
+      _user->setEnabled(newdlg.exec() == QDialog::Rejected);
     }
+  }
+  else
+  {
+    QMessageBox::warning(this, tr("Cannot Create User"),
+                         tr("<p>There does not appear to be a User associated "
+                            "with this Employee and you do not have permission "
+                            "to create a User."));
+    return;
   }
 }
 

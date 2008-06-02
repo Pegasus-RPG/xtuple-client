@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>638</width>
-    <height>437</height>
+    <width>600</width>
+    <height>400</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -420,6 +420,16 @@
                   <string/>
                  </property>
                 </item>
+                <item>
+                 <property name="text" >
+                  <string/>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string/>
+                 </property>
+                </item>
                </widget>
               </item>
               <item>
@@ -670,10 +680,13 @@
               <property name="orientation" >
                <enum>Qt::Vertical</enum>
               </property>
+              <property name="sizeType" >
+               <enum>QSizePolicy::Preferred</enum>
+              </property>
               <property name="sizeHint" >
                <size>
                 <width>20</width>
-                <height>40</height>
+                <height>0</height>
                </size>
               </property>
              </spacer>
@@ -770,6 +783,9 @@
               <property name="orientation" >
                <enum>Qt::Vertical</enum>
               </property>
+              <property name="sizeType" >
+               <enum>QSizePolicy::Preferred</enum>
+              </property>
               <property name="sizeHint" >
                <size>
                 <width>20</width>
@@ -780,6 +796,19 @@
             </item>
            </layout>
           </widget>
+         </item>
+         <item row="2" column="0" >
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>20</width>
+             <height>0</height>
+            </size>
+           </property>
+          </spacer>
          </item>
         </layout>
        </widget>
@@ -1163,38 +1192,6 @@
     <hint type="destinationlabel" >
      <x>435</x>
      <y>747</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_user</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>_userButton</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>597</x>
-     <y>183</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>707</x>
-     <y>192</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_salesrep</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>_salesrepButton</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>597</x>
-     <y>215</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>707</x>
-     <y>224</y>
     </hint>
    </hints>
   </connection>

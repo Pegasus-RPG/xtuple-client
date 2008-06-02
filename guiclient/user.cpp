@@ -144,7 +144,14 @@ enum SetResponse user::set(const ParameterList &pParams)
       _module->setCurrentItem(0);
       sModuleSelected(_module->text(0));
 
-      _username->setFocus();
+      if (_cUsername.isEmpty())
+        _username->setFocus();
+      else
+      {
+        _username->setEnabled(false);
+        _username->setText(_cUsername);
+        _active->setFocus();
+      }
     }
     else if (param.toString() == "edit")
     {

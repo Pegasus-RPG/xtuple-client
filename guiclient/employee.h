@@ -77,6 +77,7 @@ class employee : public XDialog, public Ui::employee
     virtual enum SetResponse set(const ParameterList &);
     virtual void sPopulate();
     virtual void sSave(const bool = true);
+    virtual void reject();
 
   protected slots:
     virtual void languageChange();
@@ -96,7 +97,9 @@ class employee : public XDialog, public Ui::employee
     QString _currabbr;  // TODO: replace with currdisplay::currAbbrShort()
     QString _empcode;
     int     _empid;
+    bool    _createUsers;
     int     _mode;
+    int     _origmode;
 };
 
 #endif

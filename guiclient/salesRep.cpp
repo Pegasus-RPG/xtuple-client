@@ -62,6 +62,8 @@
 #include <QValidator>
 #include <QVariant>
 
+#define DEBUG false
+
 salesRep::salesRep(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
@@ -88,16 +90,25 @@ enum SetResponse salesRep::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
 
+  param = pParams.value("emp_id", &valid);
+  if (valid)
+  {
+    _employee->setId(param.toInt());
+    _employee->setEnabled(false);
+    _number->setText(_employee->number());
+    _number->setEnabled(false);
+    _active->setFocus();
+    if (DEBUG)
+      qDebug("salesRep::set() got emp_id %d with number %s",
+             param.toInt(), qPrintable(_employee->number()));
+  }
+
   param = pParams.value("salesrep_id", &valid);
   if (valid)
   {
     _salesrepid = param.toInt();
     populate();
   }
-
-  param = pParams.value("emp_id", &valid);
-  if (valid)
-    _employee->setId(param.toInt());
 
   param = pParams.value("mode", &valid);
   if (valid)
@@ -125,10 +136,6 @@ enum SetResponse salesRep::set(const ParameterList &pParams)
       _close->setFocus();
     }
   }
-
-  param = pParams.value("emp_code", &valid);
-  if (_mode == cNew)
-    _number->setText(param.toString());
 
   return NoError;
 }
