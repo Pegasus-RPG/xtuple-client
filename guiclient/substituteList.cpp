@@ -144,8 +144,9 @@ enum SetResponse substituteList::set( ParameterList &pParams )
       _item->setItemsiteid(q.value("womatl_itemsite_id").toInt());
       _item->setReadOnly(TRUE);
       _warehouse->setEnabled(FALSE);
-
+      
       _bomitemid = q.value("bomitem_id").toInt();
+      _itemsiteid = q.value("womatl_itemsite_id").toInt();
       _source = q.value("bomitem_subtype").toString();
 
       sFillList();
@@ -242,7 +243,28 @@ void substituteList::sFillList()
            "WHERE ( (itemsite_item_id=item_id)"
            " AND (itemsite_item_id=bomitemsub_item_id)"
            " AND (bomitemsub_bomitem_id=:bomitem_id)"
-           " AND (itemsite_warehous_id=:warehous_id) ) ) AS data "
+           " AND (itemsite_warehous_id=:warehous_id)"
+           " AND (itemsite_id<>:itemsite_id) ) "
+           "UNION "
+           "SELECT item_id, item_number, item_descrip1, item_descrip2,"
+           "       si.itemsite_qtyonhand, 1/bomitemsub_uomratio AS uomratio, 0 AS rank,";
+
+    if (_byLeadTime->isChecked())
+      sql += " qtyAvailable(si.itemsite_id, si.itemsite_leadtime) AS available ";
+    else if (_byDays->isChecked())
+      sql += " qtyAvailable(si.itemsite_id, :days) AS available ";
+    else if (_byDate->isChecked())
+      sql += " qtyAvailable(si.itemsite_id, (:date - CURRENT_DATE)) AS available ";
+
+    sql += "FROM item, itemsite bi, bomitem, itemsite si, bomitemsub "
+           "WHERE ( (bi.itemsite_item_id=item_id)"
+           " AND (bi.itemsite_item_id=bomitem_item_id)"
+           " AND (bomitem_id=:bomitem_id)"
+           " AND (bi.itemsite_warehous_id=:warehous_id)"
+           " AND (si.itemsite_id=:itemsite_id)"
+           " AND (si.itemsite_item_id=bomitemsub_item_id)"
+           " AND (bomitemsub_bomitem_id=:bomitem_id) ) "
+           " ) AS data "
            "ORDER BY rank";
   }
 
@@ -250,6 +272,7 @@ void substituteList::sFillList()
   _sub.bindValue(":warehous_id", _warehouse->id());
   _sub.bindValue(":item_id", _item->id());
   _sub.bindValue(":bomitem_id", _bomitemid);
+  _sub.bindValue(":itemsite_id", _itemsiteid);
 
   if (_byDays->isChecked())
     _sub.bindValue(":days", _days->value());

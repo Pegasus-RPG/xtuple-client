@@ -84,6 +84,7 @@ protected slots:
     virtual void sItemIdChanged();
 
 private:
+    int _bomitemid;
     int _mode;
     int _womatlid;
     bool _captive;

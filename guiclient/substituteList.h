@@ -87,6 +87,7 @@ private:
     XSqlQuery _sub;
     QString _source;
     int _bomitemid;
+    int _itemsiteid;
 
 };
 

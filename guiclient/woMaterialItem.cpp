@@ -73,6 +73,7 @@ woMaterialItem::woMaterialItem(QWidget* parent, const char* name, bool modal, Qt
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
+  _bomitemid=-1;
 
 
   // signals and slots connections
@@ -131,6 +132,10 @@ enum SetResponse woMaterialItem::set(const ParameterList &pParams)
 
     _item->setFocus();
   }
+  
+  param = pParams.value("bomitem_id", &valid);
+  if (valid)
+    _bomitemid=param.toInt();
 
   param = pParams.value("item_id", &valid);
   if (valid)
@@ -253,13 +258,14 @@ void woMaterialItem::sSave()
 
     int itemsiteid = q.value("itemsiteid").toInt();
 
-    q.prepare("SELECT createWoMaterial(:wo_id, :itemsite_id, :issueMethod, :uom_id, :qtyPer, :scrap) AS womatlid;");
+    q.prepare("SELECT createWoMaterial(:wo_id, :itemsite_id, :issueMethod, :uom_id, :qtyPer, :scrap, :bomitem_id) AS womatlid;");
     q.bindValue(":wo_id", _wo->id());
     q.bindValue(":itemsite_id", itemsiteid);
     q.bindValue(":issueMethod", issueMethod);
     q.bindValue(":qtyPer", _qtyPer->toDouble());
     q.bindValue(":uom_id", _uom->id());
     q.bindValue(":scrap", (_scrap->toDouble() / 100));
+    q.bindValue(":bomitem_id", _bomitemid);
     q.exec();
     if (q.first())
       _womatlid = q.value("womatlid").toInt();

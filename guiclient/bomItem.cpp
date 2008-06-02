@@ -536,6 +536,12 @@ void bomItem::populate()
     else
       _tab->removeTab(_tab->indexOf(_configurationTab));
 
+    if (q.value("bomitem_subtype").toString() == "I")
+      _itemDefinedSubstitutes->setChecked(true);
+    else if (q.value("bomitem_subtype").toString() == "B")
+      _bomDefinedSubstitutes->setChecked(true);
+    else
+      _noSubstitutes->setChecked(true);
     sFillSubstituteList();
 
     if (_booitemseqid != -1)
