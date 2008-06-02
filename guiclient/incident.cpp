@@ -122,6 +122,14 @@ incident::incident(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     close();
   }
+  
+  if (_metrics->boolean("LotSerialControl"))
+  {
+    connect(_item, SIGNAL(valid(bool)), _lotserial, SLOT(setEnabled(bool)));
+    connect(_item, SIGNAL(newId(int)),  _lotserial, SLOT(setItemId(int)));
+  }
+  else
+    _lotserial->setVisible(false);
 
   _saved = false;
 }

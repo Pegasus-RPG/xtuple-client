@@ -397,7 +397,7 @@
         </sizepolicy>
        </property>
        <property name="currentIndex" >
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="_notesTab" >
         <attribute name="title" >
@@ -658,38 +658,5 @@
   <tabstop>_incdthist</tabstop>
  </tabstops>
  <resources/>
- <connections>
-  <connection>
-   <sender>_item</sender>
-   <signal>valid(bool)</signal>
-   <receiver>_lotserial</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>241</x>
-     <y>465</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>241</x>
-     <y>541</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_item</sender>
-   <signal>newId(int)</signal>
-   <receiver>_lotserial</receiver>
-   <slot>setItemId(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>302</x>
-     <y>440</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>302</x>
-     <y>496</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>
