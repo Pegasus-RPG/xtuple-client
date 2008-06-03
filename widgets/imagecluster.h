@@ -109,13 +109,14 @@ class OPENMFGWIDGETS_EXPORT ImageCluster : public VirtualCluster
       ImageCluster(QWidget*, const char* = 0);
 
   public slots:
+      virtual void clear();
       virtual void sRefresh();
 
   protected slots:
-      virtual void clear();
 
   private:
     QLabel *_image;
+    QPixmap _nullPixmap;
 };
 
 #endif

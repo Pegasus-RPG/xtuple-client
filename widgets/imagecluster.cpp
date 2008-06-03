@@ -70,7 +70,7 @@ ImageCluster::ImageCluster(QWidget* pParent, const char* pName) :
   addNumberWidget(new ImageClusterLineEdit(this, pName));
 
   _image = new QLabel("picture here");
-  _image->setPixmap(QPixmap());
+  _image->setPixmap(_nullPixmap);
   _image->setAlignment(Qt::AlignLeft | Qt::AlignTop);
   QScrollArea * scrollArea = new QScrollArea();
   scrollArea->setWidgetResizable(true);
@@ -80,33 +80,43 @@ ImageCluster::ImageCluster(QWidget* pParent, const char* pName) :
   _description->hide();
   _name->hide();
 
-  connect(_number, SIGNAL(parsed()), this, SLOT(sRefresh()));
+  _nullPixmap = QPixmap();
 }
 
 void ImageCluster::clear()
 {
+  if (DEBUG)
+    qDebug("%s::clear()", qPrintable(objectName()));
   VirtualCluster::clear();
-  _image->setPixmap(QPixmap());
+  _image->setPixmap(_nullPixmap);
 }
 
 void ImageCluster::sRefresh()
 {
-  if (DEBUG) qDebug("ImageCluster::sRefresh()");
+  if (DEBUG)
+    qDebug("%s::sRefresh()", qPrintable(objectName()));
+
   VirtualCluster::sRefresh();
   if (_description->text().isEmpty())
   {
-    if (DEBUG) qDebug("ImageCluster::sRefresh() without a picture");
-    _image = new QLabel("picture here");
-    _image->setPixmap(QPixmap());
+    if (DEBUG)
+      qDebug("ImageCluster::sRefresh() without a picture");
+    _image->setText(tr("picture here"));
+    _image->setPixmap(_nullPixmap);
   }
   else
   {
-    if (DEBUG) qDebug("ImageCluster::sRefresh() has a picture");
+    if (DEBUG)
+      qDebug("ImageCluster::sRefresh() has picture %s, %d",
+             qPrintable(_description->text().right(128)),
+             _description->text().length());
     QImage tmpImage;
     tmpImage.loadFromData(QUUDecode(_description->text()));
     _image->setPixmap(QPixmap::fromImage(tmpImage));
   }
-  if (DEBUG) qDebug("ImageCluster::sRefresh() returning");
+
+  if (DEBUG)
+    qDebug("ImageCluster::sRefresh() returning");
 }
 
 ImageClusterLineEdit::ImageClusterLineEdit(QWidget* pParent, const char* pName) :

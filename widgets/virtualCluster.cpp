@@ -55,10 +55,6 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-// VirtualCluster.cpp
-// Created 1/27/2006 GJM
-// Copyright (c) 2006-2008, OpenMFG, LLC
-
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QMessageBox>
@@ -71,8 +67,13 @@
 
 #include "virtualCluster.h"
 
+#define DEBUG false
+
 void VirtualCluster::init()
 {
+  if (DEBUG)
+    qDebug("VC %s::init()", qPrintable(objectName()));
+
     _number = NULL;	// initially there is none
 
     _label = new QLabel(this, "_label");
@@ -129,7 +130,8 @@ void VirtualCluster::init()
 VirtualCluster::VirtualCluster(QWidget* pParent, const char* pName) :
     QWidget(pParent, pName)
 {
-    init();
+  setObjectName(pName ? pName : "VirtualCluster");
+  init();
 }
 
 VirtualCluster::VirtualCluster(QWidget* pParent,
@@ -144,6 +146,9 @@ VirtualCluster::VirtualCluster(QWidget* pParent,
 
 void VirtualCluster::clear()
 {
+  if (DEBUG)
+    qDebug("VC %s::clear()", qPrintable(objectName()));
+
   _number->clear();
   _name->clear();
   _description->clear();
@@ -191,6 +196,9 @@ void VirtualCluster::addNumberWidget(VirtualClusterLineEdit* pNumberWidget)
 
 void VirtualCluster::sRefresh()
 {
+  if (DEBUG)
+    qDebug("VC %s::sRefresh() with id %d",
+           qPrintable(objectName()), _number ? _number->_id : -1);
   _name->setText(_number->_name);
   _description->setText(_number->_description);
   _info->setEnabled(_number && _number->_id > 0);
@@ -223,6 +231,16 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
 					       const char* pName) :
     XLineEdit(pParent, pName)
 {
+    if (DEBUG)
+      qDebug("VirtualClusterLineEdit(%p, %s, %s, %s, %s, %s, %s, %s)",
+             pParent ? pParent : 0,         pTabName ? pTabName : "",
+             pIdColumn ? pIdColumn : "",     pNumberColumn ? pNumberColumn : "",
+             pNameColumn ? pNameColumn : "",
+             pDescripColumn ? pDescripColumn : "",
+             pExtra ? pExtra : "",           pName ? pName : "");
+
+    setObjectName(pName ? pName : "VirtualClusterLineEdit");
+
     _valid  = false;
     _parsed = true;
     _strict = true;
@@ -287,6 +305,9 @@ void VirtualClusterLineEdit::setTitles(const QString& s, const QString& p)
 
 void VirtualClusterLineEdit::clear()
 {
+    if (DEBUG)
+      qDebug("VCLE %s::clear()", qPrintable(objectName()));
+
     int oldid = _id;
     bool oldvalid = _valid;
 
@@ -311,6 +332,9 @@ void VirtualClusterLineEdit::sEllipses()
 
 void VirtualClusterLineEdit::setId(const int pId)
 {
+  if (DEBUG)
+    qDebug("VCLE %s::setId(%d)", qPrintable(objectName()), pId);
+
     if (pId == -1)
 	clear();
     else if (pId == _id)
@@ -325,6 +349,9 @@ void VirtualClusterLineEdit::setId(const int pId)
 
 void VirtualClusterLineEdit::silentSetId(const int pId)
 {
+  if (DEBUG)
+    qDebug("VCLE %s::silentSetId(%d)", qPrintable(objectName()), pId);
+
     if (pId == -1)
 	XLineEdit::clear();
     else
@@ -368,6 +395,10 @@ void VirtualClusterLineEdit::setNumber(const QString& pNumber)
 
 void VirtualClusterLineEdit::sParse()
 {
+  if (DEBUG)
+    qDebug("VCLE %s::sParse() entered with _parsed %d and text() %s",
+           qPrintable(objectName()), _parsed, qPrintable(text()));
+
     if (! _parsed)
     {
       QString stripped = text().stripWhiteSpace().upper();
