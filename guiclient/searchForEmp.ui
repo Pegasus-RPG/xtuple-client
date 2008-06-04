@@ -122,7 +122,7 @@
               <item>
                <widget class="XCheckBox" name="_showInactive" >
                 <property name="text" >
-                 <string>Show &amp;Inactive Items</string>
+                 <string>Show &amp;Inactive Employees</string>
                 </property>
                 <property name="shortcut" >
                  <string>Alt+I</string>
