@@ -103,7 +103,7 @@ shippingInformation::~shippingInformation()
 
 void shippingInformation::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 enum SetResponse shippingInformation::set(const ParameterList &pParams)
@@ -439,8 +439,8 @@ void shippingInformation::sFillList()
   {
     q.prepare( "SELECT coitem_id AS itemid, coitem_cohead_id AS headid,"
 	       "       coitem_linenumber AS linenumber, item_number,"
-               "      (item_prodweight * qtyAtShipping('SO', coitem_id)) AS netweight,"
-               "      (item_packweight * qtyAtShipping('SO', coitem_id)) AS tareweight,"
+               "      (item_prodweight * itemuomtouom(item_id, coitem_price_uom_id, NULL, qtyAtShipping('SO', coitem_id))) AS netweight,"
+               "      (item_packweight * itemuomtouom(item_id, coitem_price_uom_id, NULL, qtyAtShipping('SO', coitem_id))) AS tareweight,"
                "      qtyAtShipping('SO', coitem_id) AS qtyatshipping,"
                "      formatQty(qtyAtShipping('SO', coitem_id)) AS f_qtyatshipping "
                "FROM coitem, itemsite, item "
@@ -454,8 +454,8 @@ void shippingInformation::sFillList()
   {
     q.prepare( "SELECT toitem_id AS itemid, toitem_tohead_id AS headid,"
 	       "       toitem_linenumber AS linenumber, item_number,"
-               "      (item_prodweight * qtyAtShipping('TO', toitem_id)) AS netweight,"
-               "      (item_packweight * qtyAtShipping('TO', toitem_id)) AS tareweight,"
+               "      (item_prodweight * qtyAtShipping('TO', toitem_id))) AS netweight,"
+               "      (item_packweight * qtyAtShipping('TO', toitem_id))) AS tareweight,"
                "      qtyAtShipping('TO', toitem_id) AS qtyatshipping,"
                "      formatQty(qtyAtShipping('TO', toitem_id)) AS f_qtyatshipping "
                "FROM toitem, item "
