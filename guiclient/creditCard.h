@@ -86,9 +86,6 @@ private:
     int _custid;
     int _mode;
     int _seq;
-
-    void init();
-
 };
 
 #endif // CREDITCARD_H

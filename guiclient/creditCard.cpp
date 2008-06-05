@@ -65,6 +65,8 @@
 
 #include "storedProcErrorLookup.h"
 
+#define DEBUG false
+
 creditCard::creditCard(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
@@ -151,7 +153,6 @@ enum SetResponse creditCard::set(const ParameterList &pParams)
     {
       _mode = cEdit;
       _fundsType2->setEnabled(FALSE);
-      _creditCardNumber->setEnabled(FALSE);
       _save->setFocus();
     }
     else if (param.toString() == "view")
@@ -255,33 +256,32 @@ void creditCard::sSave()
   QString key;
   key = omfgThis->_key;
 
+  QString ccnum = _creditCardNumber->text().stripWhiteSpace().remove(QRegExp("[-\\s]"));
+  bool allNumeric = QRegExp( "[0-9]{13,16}" ).exactMatch(ccnum);
+  bool hasBeenFormatted = QRegExp( "\\**([0-9]){4}" ).exactMatch(ccnum); // tricky - repeated *s
+
+  if (DEBUG)
+    qDebug("creditCard::sSave() %s allNumeric %d, hasBeenFormatted %d",
+           qPrintable(ccnum.left(4)),
+           allNumeric, hasBeenFormatted);
+
+  if (_mode == cNew ||
+      (_mode == cEdit && ! hasBeenFormatted))
+  {
+    if (!allNumeric || ccnum.length() == 14)
+    {
+      QMessageBox::warning( this, tr("Invalid Credit Card Number"),
+                          tr("The credit card number must be all numeric and must be 13, 15 or 16 characters in length") );
+      _creditCardNumber->setFocus();
+      return;
+    }
+  }
+
   if (_mode == cNew)
   {
-    QString ccnum;
     QString cctype;
     int cceditreturn = 0;
-    ccnum = _creditCardNumber->text().stripWhiteSpace();
     cctype = QString(*(_fundsTypes2 + _fundsType2->currentItem()));
-
-// We need to check the validity of the credit card number
-    QRegExp rx( "[0-9]{13,16}" );
-    bool returnMatch = rx.exactMatch(ccnum);
-
-    if (!returnMatch)
-    {
-      QMessageBox::warning( this, tr("Invalid Credit Card Number"),
-                          tr("The credit card number must be all numeric (no spaces or hyphens) and must be 13, 15 or 16 characters in length") );
-      _creditCardNumber->setFocus();
-      return;
-    }
-
-    if(ccnum.length() == 14)
-    {
-      QMessageBox::warning( this, tr("Invalid Credit Card Number"),
-                          tr("The credit card number must be all numeric (no spaces or hyphens) and must be 13, 15 or 16 characters in length") );
-      _creditCardNumber->setFocus();
-      return;
-    }
 
     q.prepare("SELECT editccnumber(text(:ccnum), text(:cctype)) AS cc_back;");
     q.bindValue(":ccnum", ccnum);
@@ -376,7 +376,7 @@ void creditCard::sSave()
   q.bindValue(":ccard_seq", _seq);
   q.bindValue(":ccard_cust_id", _custid);
   q.bindValue(":ccard_active", QVariant(_active->isChecked(), 0));
-  q.bindValue(":ccard_number", _creditCardNumber->text().stripWhiteSpace());
+  q.bindValue(":ccard_number", ccnum);
   q.bindValue(":ccard_name", _name->text());
   q.bindValue(":ccard_address1", _address->line1());
   q.bindValue(":ccard_address2", _address->line2());
@@ -393,6 +393,22 @@ void creditCard::sSave()
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
+  }
+
+  // TODO: combine with UPDATE above?
+  if (_mode == cEdit && ! hasBeenFormatted)     // user wants to change the cc number
+  {
+    q.prepare("UPDATE ccard SET ccard_number=encrypt(setbytea(:ccard_number), setbytea(:key), 'bf') "
+              "WHERE (ccard_id=:ccard_id);" );
+    q.bindValue(":ccard_number", ccnum);
+    q.bindValue(":key",          key);
+    q.bindValue(":ccard_id",     _ccardid);
+    q.exec();
+    if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
 
   done(_ccardid);
