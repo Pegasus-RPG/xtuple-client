@@ -208,6 +208,7 @@ void dspCostedSingleLevelBOM::sFillList(int pItemid, bool)
     _bomitem->clear();
 
     QString sql( "SELECT bomdata_bomitem_id, bomdata_bomwork_seqnumber, bomdata_item_number, bomdata_uom_name,"
+                 "       bomdata_item_id,"
                  "       bomdata_itemdescription AS itemdescription,"
                  "       bomdata_qtyper,"
                  "       bomdata_scrap,"
