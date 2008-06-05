@@ -31,7 +31,7 @@
        uom_name,
        itemcapuom(item_id) AS capuom,
        formatRatio(itemcapinvrat(item_id)) AS capratio,
-       itemaltcapuom(item_id) altcapuom,
+       itemaltcapuom(item_id) AS altcapuom,
        formatRatio(itemaltcapinvrat(item_id)) AS altcapratio,
        item_shipuom,
        formatRatio(iteminvpricerat(item_id)) AS shipratio
