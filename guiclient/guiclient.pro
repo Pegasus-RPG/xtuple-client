@@ -202,7 +202,8 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                enterPoitemReceipt.ui enterPoReceipt.ui enterPoitemReturn.ui enterPoReturn.ui          \
                errorLog.ui eventManager.ui                                                            \
                expenseCategories.ui expenseCategory.ui expenseTrans.ui                                \
-               explodeWo.ui exportCustomers.ui failedPostList.ui                                      \
+               explodeWo.ui exportCustomers.ui                                                        \
+	       externalShipping.ui failedPostList.ui                                                  \
                financialLayout.ui financialLayoutItem.ui financialLayoutGroup.ui financialLayouts.ui  \
                financialLayoutSpecial.ui financialLayoutLabels.ui financialLayoutColumns.ui           \
                firmPlannedOrder.ui firmPlannedOrdersByPlannerCode.ui fixSerial.ui                     \
@@ -516,7 +517,8 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h rwInterface
                enterPoitemReceipt.h enterPoReceipt.h enterPoitemReturn.h enterPoReturn.h              \
                errorLog.h eventManager.h                                                              \
                expenseCategories.h expenseCategory.h expenseTrans.h                                   \
-               explodeWo.h exportCustomers.h failedPostList.h                                         \
+               explodeWo.h exportCustomers.h                                                          \
+	       externalShipping.h failedPostList.h                                                    \
                financialLayout.h financialLayoutItem.h financialLayoutGroup.h financialLayouts.h      \
                financialLayoutSpecial.h financialLayoutLabels.h financialLayoutColumns.h              \
                firmPlannedOrder.h firmPlannedOrdersByPlannerCode.h fixSerial.h                        \
@@ -837,7 +839,8 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp rwInte
                enterPoitemReceipt.cpp enterPoReceipt.cpp enterPoitemReturn.cpp enterPoReturn.cpp      \
                errorLog.cpp eventManager.cpp                                                          \
                expenseCategories.cpp expenseCategory.cpp expenseTrans.cpp                             \
-               explodeWo.cpp exportCustomers.cpp failedPostList.cpp                                   \
+               explodeWo.cpp exportCustomers.cpp                                                      \
+	       externalShipping.cpp failedPostList.cpp                                                \
                financialLayout.cpp financialLayoutItem.cpp financialLayoutGroup.cpp financialLayouts.cpp \
                financialLayoutSpecial.cpp financialLayoutLabels.cpp financialLayoutColumns.cpp        \
                firmPlannedOrder.cpp firmPlannedOrdersByPlannerCode.cpp fixSerial.cpp                  \

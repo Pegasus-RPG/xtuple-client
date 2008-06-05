@@ -124,6 +124,7 @@ class menuInventory : public QObject
     void sShipOrders();
     void sRecallOrders();
     void sPurgeShippingRecords();
+    void sExternalShipping();
     void sDspShippingContents();
 
     void sEnterReceipt();

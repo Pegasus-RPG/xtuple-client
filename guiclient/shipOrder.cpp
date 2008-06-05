@@ -434,10 +434,14 @@ void shipOrder::sShip()
   }
 
   // Update the shipdatasum record to reflect shipped     
-  shipq.prepare( "UPDATE shipdatasum "
-	    "   SET shipdatasum_shipped=true "
-	    " WHERE  (shipdatasum_cosmisc_tracknum = :cosmisc_tracknum);");
+  shipq.prepare("UPDATE shipdatasum "
+		"   SET shipdatasum_shipped=true "
+		" WHERE ((shipdatasum_cosmisc_tracknum = :cosmisc_tracknum)"
+		"   AND  (   (shipdatasum_shiphead_number=:shiphead_number)"
+		"         OR (:shiphead_number IS NULL)));");
   shipq.bindValue(":cosmisc_tracknum", _tracknum->currentText());
+  if (! _shipment->number().isEmpty())
+    shipq.bindValue(":shiphead_number", _shipment->number());
   shipq.exec();
   if (shipq.lastError().type() != QSqlError::None)
   {
@@ -899,9 +903,14 @@ void shipOrder::sFillFreight()
 	       "FROM shipdatasum, cohead "
 	       "WHERE ( (shipdatasum_cohead_number=cohead_number)"
 	       " AND (cohead_id=:sohead_id)  "
-	       " AND (shipdatasum_cosmisc_tracknum=:tracknum) ) ;");
+	       " AND (shipdatasum_cosmisc_tracknum=:tracknum)"
+	       " AND  (   (shipdatasum_shiphead_number=:shiphead_number)"
+	       "       OR (:shiphead_number IS NULL))"
+	       ") ;");
     shipdataQ.bindValue(":sohead_id", _soNumber->id());
     shipdataQ.bindValue(":tracknum",  _tracknum->currentText());
+    if (! _shipment->number().isEmpty())
+      shipdataQ.bindValue(":shiphead_number", _shipment->number());
     shipdataQ.exec();
     if (shipdataQ.first())
     {
@@ -935,9 +944,13 @@ void shipOrder::sFillTracknum()
 		       "FROM shipdatasum, cohead  "
 		       "WHERE ( (shipdatasum_cohead_number=cohead_number)"
 		       " AND (cohead_id=:sohead_id) "
+		       " AND  (  (shipdatasum_shiphead_number=:shiphead_number)"
+		       "      OR (:shiphead_number IS NULL))"
 		       " AND (NOT shipdatasum_shipped) ) "
 		       "ORDER BY shipdatasum_lastupdated;" );
     shipdataQ.bindValue(":sohead_id", _soNumber->id());
+    if (! _shipment->number().isEmpty())
+      shipdataQ.bindValue(":shiphead_number", _shipment->number());
     shipdataQ.exec();
     _tracknum->populate(shipdataQ);
     if (shipdataQ.lastError().type() != QSqlError::None)
