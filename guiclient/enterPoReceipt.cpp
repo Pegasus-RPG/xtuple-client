@@ -68,7 +68,7 @@
 #include "enterPoitemReceipt.h"
 #include "getLotInfo.h"
 #include "mqlutil.h"
-#include "printLabelsByPo.h"
+#include "printLabelsByOrder.h"
 #include "storedProcErrorLookup.h"
 
 enterPoReceipt::enterPoReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
@@ -185,7 +185,7 @@ void enterPoReceipt::sPrint()
   ParameterList params;
   setParams(params);
 
-  printLabelsByPo newdlg(this, "", TRUE);
+  printLabelsByOrder newdlg(this, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
 }

@@ -119,7 +119,7 @@
 #include "printLabelsBySo.h"
 #include "printLabelsByTo.h"
 #include "printLabelsByInvoice.h"
-#include "printLabelsByPo.h"
+#include "printLabelsByOrder.h"
 
 #include "destinations.h"
 #include "carriers.h"
@@ -844,7 +844,7 @@ void menuInventory::sPrintShippingLabelsByInvoice()
 
 void menuInventory::sPrintReceivingLabelsByPo()
 {
-  printLabelsByPo(parent, "", TRUE).exec();
+  printLabelsByOrder(parent, "", TRUE).exec();
 }
 
 

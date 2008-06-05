@@ -55,7 +55,7 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#include "printLabelsByPo.h"
+#include "printLabelsByOrder.h"
 
 #include <QMessageBox>
 #include <QSqlError>
@@ -63,60 +63,62 @@
 
 #include <openreports.h>
 
-// TODO: rename to printLabelsByOrder
-printLabelsByPo::printLabelsByPo(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+printLabelsByOrder::printLabelsByOrder(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
   connect(_labelFrom, SIGNAL(valueChanged(int)), this, SLOT(sSetToMin(int)));
-  connect(_po,		    SIGNAL(valid(bool)), this, SLOT(sHandlePo()));
   connect(_print,	      SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_to,		    SIGNAL(valid(bool)), this, SLOT(sHandleTo()));
 
   _captive = FALSE;
 
   _report->populate( "SELECT labelform_id, labelform_name "
                      "FROM labelform "
                      "ORDER BY labelform_name;" );
-  _to->setVisible(_metrics->boolean("MultiWhs"));
+
+  _order->setAllowedTypes(OrderLineEdit::Purchase |
+                          OrderLineEdit::Return   |
+                          OrderLineEdit::Transfer);
+  _order->setAllowedStatuses(OrderLineEdit::Unposted |
+                             OrderLineEdit::Open);
 }
 
-printLabelsByPo::~printLabelsByPo()
+printLabelsByOrder::~printLabelsByOrder()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-void printLabelsByPo::languageChange()
+void printLabelsByOrder::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
-enum SetResponse printLabelsByPo::set(const ParameterList &pParams)
+enum SetResponse printLabelsByOrder::set(const ParameterList &pParams)
 {
   _captive = TRUE;
 
   QVariant param;
   bool     valid;
 
-  param = pParams.value("pohead_id", &valid);
+  param = pParams.value("ordertype", &valid);
   if (valid)
   {
-    _po->setId(param.toInt());
+    _order->setAllowedType(param.toString());
     _print->setFocus();
   }
 
-  param = pParams.value("tohead_id", &valid);
+  param = pParams.value("orderid", &valid);
   if (valid)
   {
-    _to->setId(param.toInt());
+    _order->setId(param.toInt());
     _print->setFocus();
   }
 
   return NoError;
 }
 
-void printLabelsByPo::sPrint()
+void printLabelsByOrder::sPrint()
 {
   q.prepare( "SELECT report_name "
              "FROM labelform, report "
@@ -127,8 +129,16 @@ void printLabelsByPo::sPrint()
   if (q.first())
   {
     ParameterList params;
-    params.append("pohead_id", _po->id());
-    params.append("tohead_id", _to->id());
+    params.append("orderhead_type", _order->type());
+    params.append("orderhead_id",   _order->id());
+
+    if (_order->isPO())
+      params.append("pohead_id", _order->id());
+    else if (_order->isTO())
+      params.append("tohead_id", _order->id());
+    else if (_order->isRA())
+      params.append("rahead_id", _order->id());
+
     params.append("labelFrom", _labelFrom->value());
     params.append("labelTo", _labelTo->value());
 
@@ -141,9 +151,8 @@ void printLabelsByPo::sPrint()
       reject();
     }
 
-    _po->setId(-1);
-    _to->setId(-1);
-    _po->setFocus();
+    _order->setId(-1);
+    _order->setFocus();
   }
   else if (q.lastError().type() != QSqlError::None)
   {
@@ -159,19 +168,7 @@ void printLabelsByPo::sPrint()
     accept();
 }
 
-void printLabelsByPo::sSetToMin(int pValue)
+void printLabelsByOrder::sSetToMin(int pValue)
 {
   _labelTo->setMinValue(pValue);
-}
-
-void printLabelsByPo::sHandlePo()
-{
-  _print->setEnabled(_po->isValid() || _to->isValid());
-  _to->setEnabled(! _po->isValid());
-}
-
-void printLabelsByPo::sHandleTo()
-{
-  _print->setEnabled(_po->isValid() || _to->isValid());
-  _po->setEnabled(! _to->isValid());
 }

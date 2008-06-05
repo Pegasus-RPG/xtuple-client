@@ -55,26 +55,24 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#ifndef PRINTLABELSBYPO_H
-#define PRINTLABELSBYPO_H
+#ifndef PRINTLABELSBYORDER_H
+#define PRINTLABELSBYORDER_H
 
 #include "guiclient.h"
 #include "xdialog.h"
 #include <parameter.h>
-#include "ui_printLabelsByPo.h"
+#include "ui_printLabelsByOrder.h"
 
-class printLabelsByPo : public XDialog, public Ui::printLabelsByPo
+class printLabelsByOrder : public XDialog, public Ui::printLabelsByOrder
 {
     Q_OBJECT
 
 public:
-    printLabelsByPo(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
-    ~printLabelsByPo();
+    printLabelsByOrder(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
+    ~printLabelsByOrder();
 
 public slots:
     virtual enum SetResponse set(const ParameterList & pParams );
-    virtual void sHandlePo();
-    virtual void sHandleTo();
     virtual void sPrint();
     virtual void sSetToMin( int pValue );
 
@@ -86,4 +84,4 @@ private:
 
 };
 
-#endif // PRINTLABELSBYPO_H
+#endif // PRINTLABELSBYORDER_H
