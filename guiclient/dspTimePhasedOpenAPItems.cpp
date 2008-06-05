@@ -104,6 +104,11 @@ dspTimePhasedOpenAPItems::dspTimePhasedOpenAPItems(QWidget* parent, const char* 
 
   if (!_metrics->boolean("EnableBatchManager"))
     _submit->hide();
+
+  if(_preferences->value("APAgingDefaultDate") == "doc")
+    _useDocDate->setChecked(true);
+  else
+    _useDistDate->setChecked(true);
 }
 
 /*
@@ -112,6 +117,10 @@ dspTimePhasedOpenAPItems::dspTimePhasedOpenAPItems(QWidget* parent, const char* 
 dspTimePhasedOpenAPItems::~dspTimePhasedOpenAPItems()
 {
   // no need to delete child widgets, Qt does it all for us
+  QString str("dist");
+  if(_useDocDate->isChecked())
+    str = "doc";
+  _preferences->set("APAgingDefaultDate", str);
 }
 
 /*
@@ -158,6 +167,11 @@ void dspTimePhasedOpenAPItems::sSubmit()
     else
       params.append("report_name", "APAging");
 
+    if(_useDocDate->isChecked())
+      params.append("useDocDate");
+    else
+      params.append("useDistDate");
+
     submitReport newdlg(this, "", TRUE);
     newdlg.set(params);
 
@@ -201,46 +215,45 @@ ParameterList dspTimePhasedOpenAPItems::buildParameters()
 
 void dspTimePhasedOpenAPItems::sViewOpenItems()
 {
-  	ParameterList params;
-    params.append("vend_id", _apopen->id());
-	if (_custom->isChecked())
-	{
-		params.append("startDate", _columnDates[_column - 2].startDate);
-		params.append("endDate", _columnDates[_column - 2].endDate);
-	}
-	else
-	{
-	    QDate asOfDate;
-	    asOfDate = _asOf->date();
-	    if (_column == 3)
-	    {
-			params.append("startDate", asOfDate );
-		}
-	    else if (_column == 4)
-	    {
-			params.append("startDate", asOfDate.addDays(-30) );
-			params.append("endDate", asOfDate);
-		}
-		else if (_column == 5)
-		{
-			params.append("startDate",asOfDate.addDays(-60) );
-			params.append("endDate", asOfDate.addDays(-31));
-		}
-		else if (_column == 6)
-		{
-			params.append("startDate",asOfDate.addDays(-90) );
-			params.append("endDate", asOfDate.addDays(-61));
-		}
-		else if (_column == 7)
-			params.append("endDate",asOfDate.addDays(-91) );
-	}
-	params.append("run");
-    params.append("asofDate",_asOf->date());
+  ParameterList params;
+  params.append("vend_id", _apopen->id());
+  if (_custom->isChecked())
+  {
+    params.append("startDate", _columnDates[_column - 2].startDate);
+    params.append("endDate", _columnDates[_column - 2].endDate);
+  }
+  else
+  {
+    QDate asOfDate;
+    asOfDate = _asOf->date();
+    if (_column == 3)
+    {
+      params.append("startDate", asOfDate );
+    }
+    else if (_column == 4)
+    {
+      params.append("startDate", asOfDate.addDays(-30) );
+      params.append("endDate", asOfDate);
+    }
+    else if (_column == 5)
+    {
+      params.append("startDate",asOfDate.addDays(-60) );
+      params.append("endDate", asOfDate.addDays(-31));
+    }
+    else if (_column == 6)
+    {
+      params.append("startDate",asOfDate.addDays(-90) );
+      params.append("endDate", asOfDate.addDays(-61));
+    }
+    else if (_column == 7)
+      params.append("endDate",asOfDate.addDays(-91) );
+  }
+  params.append("run");
+  params.append("asofDate",_asOf->date());
 
   dspAPOpenItemsByVendor *newdlg = new dspAPOpenItemsByVendor();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
-
 }
 
 void dspTimePhasedOpenAPItems::sPopulateMenu(QMenu *menuThis, QTreeWidgetItem *, int pColumn)
@@ -282,8 +295,8 @@ void dspTimePhasedOpenAPItems::sFillCustom()
   {
     PeriodListViewItem *cursor = (PeriodListViewItem*)selected[i];
     sql += QString(", openAPItemsValue(vend_id, %2) AS bucket%1")
-	   .arg(columns++)
-	   .arg(cursor->id());
+          .arg(columns++)
+          .arg(cursor->id());
 
     _apopen->addColumn(formatDate(cursor->startDate()), _bigMoneyColumn, Qt::AlignRight);
     _columnDates.append(DatePair(cursor->startDate(), cursor->endDate()));
@@ -315,7 +328,7 @@ void dspTimePhasedOpenAPItems::sFillCustom()
       double lineTotal = 0.0;
 
       last = new XTreeWidgetItem( _apopen, last, q.value("vend_id").toInt(),
-				 q.value("vend_number"), q.value("vend_name") );
+                                 q.value("vend_number"), q.value("vend_name") );
 
       for (int column = 1; column < columns; column++)
       {
@@ -328,7 +341,7 @@ void dspTimePhasedOpenAPItems::sFillCustom()
       if (lineTotal == 0.0)
       {
         delete last;
-	last = _apopen->topLevelItem(_apopen->topLevelItemCount() - 1);
+        last = _apopen->topLevelItem(_apopen->topLevelItemCount() - 1);
       }
     }
     while (q.next());
@@ -345,10 +358,10 @@ void dspTimePhasedOpenAPItems::sFillStd()
   _apopen->clear();
 
   QString sql("SELECT apaging_vend_id, apaging_vend_number, apaging_vend_name,formatMoney(SUM(apaging_total_val)),"
-			"formatMoney(SUM(apaging_cur_val)),formatMoney(SUM(apaging_thirty_val)),"
-			"formatMoney(SUM(apaging_sixty_val)),formatMoney(SUM(apaging_ninety_val)),"
-			"formatMoney(SUM(apaging_plus_val)),0 AS sequence"
-			  " FROM apaging(:asofDate) ");
+              "       formatMoney(SUM(apaging_cur_val)),formatMoney(SUM(apaging_thirty_val)),"
+              "       formatMoney(SUM(apaging_sixty_val)),formatMoney(SUM(apaging_ninety_val)),"
+              "       formatMoney(SUM(apaging_plus_val)),0 AS sequence"
+              "  FROM apaging(:asofDate, :useDocDate) ");
 
   if (_selectedVendor->isChecked())
     sql += "WHERE (apaging_vend_id=:vend_id)";
@@ -361,10 +374,10 @@ void dspTimePhasedOpenAPItems::sFillStd()
   
   //Get totals
   sql += " UNION SELECT 0, 'Totals:', '',formatMoney(SUM(apaging_total_val)),"
-			"formatMoney(SUM(apaging_cur_val)),formatMoney(SUM(apaging_thirty_val)),"
-			"formatMoney(SUM(apaging_sixty_val)),formatMoney(SUM(apaging_ninety_val)),"
-			"formatMoney(SUM(apaging_plus_val)),1 AS sequence"
-			  " FROM apaging(:asofDate) ";
+         "formatMoney(SUM(apaging_cur_val)),formatMoney(SUM(apaging_thirty_val)),"
+         "formatMoney(SUM(apaging_sixty_val)),formatMoney(SUM(apaging_ninety_val)),"
+         "formatMoney(SUM(apaging_plus_val)),1 AS sequence"
+         " FROM apaging(:asofDate, :useDocDate) ";
 
   if (_selectedVendor->isChecked())
     sql += "WHERE (apaging_vend_id=:vend_id)";
@@ -378,37 +391,40 @@ void dspTimePhasedOpenAPItems::sFillStd()
 
   q.prepare(sql);
   q.bindValue(":asofDate",_asOf->date());
+  q.bindValue(":useDocDate", QVariant(_useDocDate->isChecked(), 0));
   q.bindValue(":vend_id", _vend->id());
   q.bindValue(":vendtype_id", _vendorTypes->id());
   q.bindValue(":vendtype_pattern", _vendorType->text().upper());
   q.exec();
   if (q.first())
-	_apopen->populate(q);
+    _apopen->populate(q);
 }
 
 void dspTimePhasedOpenAPItems::sToggleCustom()
 {
   if (_custom->isChecked())
   {
-	_calendarLit->setHidden(FALSE);
-	_calendar->setHidden(FALSE);
-	_periods->setHidden(FALSE);
+    _calendarLit->setHidden(FALSE);
+    _calendar->setHidden(FALSE);
+    _periods->setHidden(FALSE);
     _asOf->setDate(omfgThis->dbDate(), true);
-	_asOf->setEnabled(FALSE);
+    _asOf->setEnabled(FALSE);
+    _useGroup->setHidden(TRUE);
   }
   else
   {
-  	_calendarLit->setHidden(TRUE);
-	_calendar->setHidden(TRUE);
-	_periods->setHidden(TRUE);
-	_asOf->setEnabled(TRUE);
+    _calendarLit->setHidden(TRUE);
+    _calendar->setHidden(TRUE);
+    _periods->setHidden(TRUE);
+    _asOf->setEnabled(TRUE);
+    _useGroup->setHidden(FALSE);
 
-	_apopen->setColumnCount(2);
-	_apopen->addColumn(tr("Total Open"), _bigMoneyColumn, Qt::AlignRight);
-	_apopen->addColumn(tr("0+ Days"), _bigMoneyColumn, Qt::AlignRight);
-	_apopen->addColumn(tr("0-30 Days"), _bigMoneyColumn, Qt::AlignRight);
-	_apopen->addColumn(tr("31-60 Days"), _bigMoneyColumn, Qt::AlignRight);
-	_apopen->addColumn(tr("61-90 Days"), _bigMoneyColumn, Qt::AlignRight);
-	_apopen->addColumn(tr("90+ Days"), _bigMoneyColumn, Qt::AlignRight);
+    _apopen->setColumnCount(2);
+    _apopen->addColumn(tr("Total Open"), _bigMoneyColumn, Qt::AlignRight);
+    _apopen->addColumn(tr("0+ Days"), _bigMoneyColumn, Qt::AlignRight);
+    _apopen->addColumn(tr("0-30 Days"), _bigMoneyColumn, Qt::AlignRight);
+    _apopen->addColumn(tr("31-60 Days"), _bigMoneyColumn, Qt::AlignRight);
+    _apopen->addColumn(tr("61-90 Days"), _bigMoneyColumn, Qt::AlignRight);
+    _apopen->addColumn(tr("90+ Days"), _bigMoneyColumn, Qt::AlignRight);
   }
 }

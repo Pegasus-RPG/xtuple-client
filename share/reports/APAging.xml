@@ -45,7 +45,7 @@
 	apaging_discdate,
 	apaging_discdays,
 	apaging_discprcnt
-FROM apaging(&lt;? value("relDate") ?>)
+FROM apaging(&lt;? value("relDate") ?>, &lt;? if exists("useDocDate") ?>true&lt;? else ?>false&lt;? endif ?>)
 &lt;? if exists("vend_id") ?>
    WHERE (apaging_vend_id=&lt;? value("vend_id") ?>)
 &lt;? elseif exists("vendtype_id") ?>
