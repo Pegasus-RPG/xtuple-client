@@ -272,7 +272,7 @@
          <item>
           <widget class="XCheckBox" name="_qtyOnly" >
            <property name="text" >
-            <string>Only show locations with Qty</string>
+            <string>Only Show Locations with Qty</string>
            </property>
           </widget>
          </item>
