@@ -164,6 +164,7 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
   _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft );
   _charass->addColumn(tr("Default"),        _ynColumn,   Qt::AlignCenter );
   _charass->addColumn(tr("List Price"),     _priceColumn,Qt::AlignRight );
+  _charass->hideColumn(3);
 
   _uomconv->addColumn(tr("Conversions/Where Used"), _itemColumn*2, Qt::AlignLeft);
   _uomconv->addColumn(tr("Ratio"),      _qtyColumn*2, Qt::AlignRight  );
