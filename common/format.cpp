@@ -72,6 +72,8 @@
 #define UOMRATIOSCALE   6
 #define PERCENTSCALE    2
 
+#define DEBUG false
+
 static QColor error("red");
 static QColor warning("orange");
 static QColor emphasis("blue");
@@ -194,6 +196,7 @@ QColor namedColor(QString pName)
 
 QString formatNumber(double value, int decimals)
 {
+   if (DEBUG) qDebug("formatNumber(%f, %d)", value, decimals);
    return QLocale().toString(value, 'f', decimals);
 }
 
@@ -211,6 +214,11 @@ QString formatMoney(double value, int /* curr_id */, int extraDecimals)
 QString formatCost(double value, int /* curr_id */)
 {
   return formatNumber(value, costscale);
+}
+
+QString formatExtPrice(double value, int /* curr_id */)
+{
+  return formatNumber(value, extpricescale);
 }
 
 QString formatWeight(double value)

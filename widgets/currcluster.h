@@ -78,7 +78,10 @@ class QDoubleValidator;
 class OPENMFGWIDGETS_EXPORT CurrDisplay : public QWidget
 {
     Q_OBJECT
-    Q_PROPERTY(int decimals                 READ decimals                 WRITE setDecimals)
+
+    Q_ENUMS(CurrDisplayFormats)
+
+    Q_PROPERTY(CurrDisplayFormats format    READ format                   WRITE setFormat)
     Q_PROPERTY(bool localControl            READ localControl             WRITE setLocalControl)
     Q_PROPERTY(bool enabled                 READ isEnabled                WRITE setEnabled)
     Q_PROPERTY(QString fieldNameValue       READ fieldNameValue           WRITE setFieldNameValue)
@@ -88,6 +91,14 @@ class OPENMFGWIDGETS_EXPORT CurrDisplay : public QWidget
     public:
 	CurrDisplay(QWidget * parent, const char* name = 0);
 	~CurrDisplay();
+
+        // correspond to format.cpp's monetary scales,
+        // which can be overridden in the db via locales
+        enum CurrDisplayFormats
+        {
+          Money, SalesPrice, PurchPrice, ExtPrice, Cost
+        };
+
 	virtual bool		isZero()	const;
         virtual inline bool     isEmpty()       const { return (New == _state); };
 	static QString		baseCurrAbbr();
@@ -98,7 +109,8 @@ class OPENMFGWIDGETS_EXPORT CurrDisplay : public QWidget
 	static int		baseId();
 	virtual inline double	baseValue()	const { return _valueBase; };
 	virtual inline double	localValue()	const { return _valueLocal; };
-	virtual inline int	decimals()	const { return _decimals; };
+        virtual        int      decimals()      const { return _decimals; };
+        virtual CurrDisplayFormats format()     const { return _format; };
 	virtual inline bool	localControl()	const { return _localControl; };
 	virtual inline QDate	effective()	const { return _effective; };
 	virtual inline bool	isEnabled()	const { return _valueLocalWidget->isEnabled(); };
@@ -112,7 +124,7 @@ class OPENMFGWIDGETS_EXPORT CurrDisplay : public QWidget
 	void setId(int);
 	void setBaseValue(double);
 	void setLocalValue(double);
-	void setDecimals(int);
+	virtual void setFormat(CurrDisplayFormats = Money);
 	void setLocalControl(bool);
 	void setEffective(const QDate&);
 	inline void setEnabled(bool B) { _valueLocalWidget->setEnabled(B); };
@@ -137,10 +149,11 @@ class OPENMFGWIDGETS_EXPORT CurrDisplay : public QWidget
 	QGridLayout*	_grid;
 	int		_localId;
 	QDate		_effective;
+        int             _decimals;
+	CurrDisplayFormats _format;
 	double		_valueLocal;
 	XLineEdit*	_valueLocalWidget;
 	double		_valueBase;
-	int		_decimals;
 	bool		_localControl;
 	int		_localScale;
 
@@ -177,8 +190,8 @@ Property descriptions:
 		  currency is selected, but are usually visible if the current
 		  currency selected is NOT the base.  If baseVisible is FALSE
 		  then the base value is never shown
-    decimals	  *additional* precision of the values displayed, beyond the
-		  default for the currency
+    format        locale format used to determine the number of decimal places
+		  displayed for currency values
     allowNegative whether input may include negative numbers or only >= 0
     localControl  if TRUE then changes to the xcombobox leave the local value
     		  unchanged and reconverts the local value to base; if FALSE
@@ -200,7 +213,6 @@ class OPENMFGWIDGETS_EXPORT CurrCluster : public CurrDisplay
 						      WRITE setCurrencyEnabled)
     Q_PROPERTY(bool currencyVisible READ currencyVisible
 						      WRITE setCurrencyVisible)
-    Q_PROPERTY(int  decimals	   READ decimals      WRITE setDecimals)
     Q_PROPERTY(bool enabled        READ isEnabled     WRITE setEnabled)
     Q_PROPERTY(QString fieldNameCurr  READ fieldNameCurr  WRITE setFieldNameCurr);
 
@@ -212,7 +224,6 @@ class OPENMFGWIDGETS_EXPORT CurrCluster : public CurrDisplay
 	inline bool	currencyDisabled() const { return ! _currencyEnabled; };
 	inline bool	currencyEnabled() const { return _currencyEnabled; };
 	inline bool	currencyVisible() const { return !_currency->isHidden(); };
-	inline int	decimals()	const {return _validator->decimals() - _localScale; };
 	inline int	id()		const { return _currency->id(); };
 	inline bool	isBase()	const { return _currency->id() == _baseId; };
 	inline bool	isEnabled()	const { return _valueLocalWidget->isEnabled(); };
@@ -227,8 +238,8 @@ class OPENMFGWIDGETS_EXPORT CurrCluster : public CurrDisplay
 	void setCurrencyEditable(bool); // deprecated: use setCurrencyEnabled
 	void setCurrencyEnabled(bool);
 	void setCurrencyVisible(bool);
-	void setDecimals(int);
 	void setEnabled(bool);
+	virtual void setFormat(CurrDisplayFormats);
 	void setId(int);
 	void setPaletteForegroundColor ( const QColor & );
 	void sLostFocus();

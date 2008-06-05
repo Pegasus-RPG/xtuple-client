@@ -337,7 +337,7 @@ void itemPricingScheduleItem::populate()
     if (q.first())
     {
       _item->setId(q.value("ipsitem_item_id").toInt());
-      _qtyBreak->setText(formatQty(q.value("ipsitem_qtybreak").toDouble()));
+      _qtyBreak->setDouble(q.value("ipsitem_qtybreak").toDouble());
       _price->setLocalValue(q.value("ipsitem_price").toDouble());
       _qtyUOM->setId(q.value("ipsitem_qty_uom_id").toInt());
       _priceUOM->setId(q.value("ipsitem_price_uom_id").toInt());
@@ -356,7 +356,7 @@ void itemPricingScheduleItem::populate()
     if (q.first())
     {
       _prodcat->setId(q.value("ipsprodcat_prodcat_id").toInt());
-      _qtyBreakCat->setText(formatQty(q.value("ipsprodcat_qtybreak").toDouble()));
+      _qtyBreakCat->setDouble(q.value("ipsprodcat_qtybreak").toDouble());
       _discount->setText(formatPercent(q.value("ipsprodcat_discntprcnt").toDouble()));
     }
   }

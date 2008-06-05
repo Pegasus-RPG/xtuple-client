@@ -95,17 +95,20 @@ itemSource::itemSource(QWidget* parent, const char* name, bool modal, Qt::WFlags
   else
     base = tr("Base");
 
-  _itemsrcp->addColumn(tr("Qty Break"),  _qtyColumn, Qt::AlignRight );
-  _itemsrcp->addColumn(tr("Unit Price"), -1,         Qt::AlignRight );
-  _itemsrcp->addColumn(tr("Currency"),   _currencyColumn, Qt::AlignLeft );
-  _itemsrcp->addColumn(tr("Unit Price\n(%1)").arg(base), 
-					 _moneyColumn, Qt::AlignRight );
+  _itemsrcp->addColumn(tr("Qty Break"),                   _qtyColumn, Qt::AlignRight,true, "itemsrcp_qtybreak");
+  _itemsrcp->addColumn(tr("Unit Price"),                          -1, Qt::AlignRight,true, "itemsrcp_price");
+  _itemsrcp->addColumn(tr("Currency"),               _currencyColumn, Qt::AlignLeft, true, "currabbr");
+  _itemsrcp->addColumn(tr("Unit Price\n(%1)").arg(base),_moneyColumn, Qt::AlignRight,true, "itemsrcp_price_base");
   if (omfgThis->singleCurrency())
   {
     _itemsrcp->hideColumn(1);
     _itemsrcp->hideColumn(2);
     _itemsrcp->headerItem()->setText(3, tr("Unit Price"));
   }
+
+  _invVendorUOMRatio->setValidator(omfgThis->ratioVal());
+  _minOrderQty->setValidator(omfgThis->qtyVal());
+  _multOrderQty->setValidator(omfgThis->qtyVal());
 
   _vendorCurrency->setType(XComboBox::Currencies);
   _vendorCurrency->setLabel(_vendorCurrencyLit);
@@ -394,15 +397,18 @@ void itemSource::sVendorList()
 void itemSource::sFillPriceList()
 {
   XSqlQuery priceq;
-  priceq.prepare( "SELECT itemsrcp_id, formatQty(itemsrcp_qtybreak), "
-	     " formatPurchPrice(itemsrcp_price), currConcat(itemsrcp_curr_id), "
-	     " formatPurchPrice(currToBase(itemsrcp_curr_id, itemsrcp_price, itemsrcp_updated)) "
-             "FROM itemsrcp "
-             "WHERE (itemsrcp_itemsrc_id=:itemsrc_id) "
-             "ORDER BY itemsrcp_qtybreak;" );
+  priceq.prepare("SELECT *,"
+                 " currConcat(itemsrcp_curr_id) AS currabbr, "
+                 " currToBase(itemsrcp_curr_id, itemsrcp_price,"
+                 "            itemsrcp_updated) AS itemsrcp_price_base,"
+                 " 'qty' AS itemsrcp_qtybreak_xtnumericrole,"
+                 " 'purchprice' AS itemsrcp_price_xtnumericrole,"
+                 " 'purchprice' AS itemsrcp_price_base_xtnumericrole "
+                 "FROM itemsrcp "
+                 "WHERE (itemsrcp_itemsrc_id=:itemsrc_id) "
+                 "ORDER BY itemsrcp_qtybreak;" );
   priceq.bindValue(":itemsrc_id", _itemsrcid);
   priceq.exec();
-  _itemsrcp->clear();
   _itemsrcp->populate(priceq);
   if (priceq.lastError().type() != QSqlError::None)
   {
@@ -416,7 +422,7 @@ void itemSource::populate()
   XSqlQuery itemsrcQ;
   itemsrcQ.prepare( "SELECT itemsrc_item_id, itemsrc_active, itemsrc_vend_id,"
              "       itemsrc_vend_item_number, itemsrc_vend_item_descrip,"
-             "       itemsrc_vend_uom, formatUOMRatio(itemsrc_invvendoruomratio) AS invpurchratio,"
+             "       itemsrc_vend_uom, itemsrc_invvendoruomratio,"
              "       itemsrc_minordqty, itemsrc_multordqty,"
              "       itemsrc_ranking, itemsrc_leadtime, itemsrc_comments "
              "FROM itemsrc "
@@ -431,9 +437,9 @@ void itemSource::populate()
     _vendorItemNumber->setText(itemsrcQ.value("itemsrc_vend_item_number").toString());
     _vendorItemDescrip->setText(itemsrcQ.value("itemsrc_vend_item_descrip").toString());
     _vendorUOM->setText(itemsrcQ.value("itemsrc_vend_uom").toString());
-    _invVendorUOMRatio->setText(itemsrcQ.value("invpurchratio").toString());
-    _minOrderQty->setText(formatQty(itemsrcQ.value("itemsrc_minordqty").toDouble()));
-    _multOrderQty->setText(formatQty(itemsrcQ.value("itemsrc_multordqty").toDouble()));
+    _invVendorUOMRatio->setDouble(itemsrcQ.value("itemsrc_invvendoruomratio").toDouble());
+    _minOrderQty->setDouble(itemsrcQ.value("itemsrc_minordqty").toDouble());
+    _multOrderQty->setDouble(itemsrcQ.value("itemsrc_multordqty").toDouble());
     _vendorRanking->setValue(itemsrcQ.value("itemsrc_ranking").toInt());
     _leadTime->setValue(itemsrcQ.value("itemsrc_leadtime").toInt());
     _notes->setText(itemsrcQ.value("itemsrc_comments").toString());

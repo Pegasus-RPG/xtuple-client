@@ -8,8 +8,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>644</width>
-    <height>692</height>
+    <width>728</width>
+    <height>804</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -638,11 +638,11 @@
           <property name="focusPolicy" >
            <enum>Qt::StrongFocus</enum>
           </property>
+          <property name="format" >
+           <enum>CurrDisplay::Cost</enum>
+          </property>
           <property name="currencyEditable" stdset="0" >
            <bool>false</bool>
-          </property>
-          <property name="decimals" >
-           <number>2</number>
           </property>
          </widget>
         </item>
@@ -1239,8 +1239,8 @@
             </item>
             <item row="0" column="1" >
              <widget class="CurrDisplay" name="_unitCost" >
-              <property name="decimals" >
-               <number>2</number>
+              <property name="format" >
+               <enum>CurrDisplay::Cost</enum>
               </property>
               <property name="localControl" >
                <bool>false</bool>
@@ -1259,8 +1259,8 @@
             </item>
             <item row="1" column="1" >
              <widget class="CurrDisplay" name="_listPrice" >
-              <property name="decimals" >
-               <number>2</number>
+              <property name="format" >
+               <enum>CurrDisplay::Cost</enum>
               </property>
               <property name="localControl" >
                <bool>false</bool>
@@ -1279,8 +1279,8 @@
             </item>
             <item row="2" column="1" >
              <widget class="CurrDisplay" name="_salePrice" >
-              <property name="decimals" >
-               <number>2</number>
+              <property name="format" >
+               <enum>CurrDisplay::Cost</enum>
               </property>
               <property name="localControl" >
                <bool>false</bool>

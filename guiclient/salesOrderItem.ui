@@ -642,11 +642,11 @@
             <height>0</height>
            </size>
           </property>
+          <property name="format" >
+           <enum>CurrDisplay::SalesPrice</enum>
+          </property>
           <property name="currencyEditable" stdset="0" >
            <bool>false</bool>
-          </property>
-          <property name="decimals" >
-           <number>2</number>
           </property>
          </widget>
         </item>
@@ -1195,14 +1195,14 @@
             </item>
             <item row="4" column="1" >
              <widget class="CurrCluster" name="_overridePoPrice" >
+              <property name="format" >
+               <enum>CurrDisplay::Cost</enum>
+              </property>
               <property name="currencyEditable" stdset="0" >
                <bool>false</bool>
               </property>
               <property name="currencyVisible" >
                <bool>false</bool>
-              </property>
-              <property name="decimals" >
-               <number>2</number>
               </property>
               <property name="enabled" >
                <bool>false</bool>
@@ -1253,11 +1253,11 @@
              <height>0</height>
             </size>
            </property>
+           <property name="format" >
+            <enum>CurrDisplay::Cost</enum>
+           </property>
            <property name="currencyEditable" stdset="0" >
             <bool>false</bool>
-           </property>
-           <property name="decimals" >
-            <number>2</number>
            </property>
            <property name="enabled" >
             <bool>false</bool>
@@ -1345,8 +1345,8 @@
             </item>
             <item row="0" column="1" >
              <widget class="CurrDisplay" name="_unitCost" >
-              <property name="decimals" >
-               <number>2</number>
+              <property name="format" >
+               <enum>CurrDisplay::Cost</enum>
               </property>
               <property name="localControl" >
                <bool>false</bool>
@@ -1365,8 +1365,8 @@
             </item>
             <item row="1" column="1" >
              <widget class="CurrDisplay" name="_listPrice" >
-              <property name="decimals" >
-               <number>2</number>
+              <property name="format" >
+               <enum>CurrDisplay::Cost</enum>
               </property>
               <property name="localControl" >
                <bool>false</bool>
@@ -1385,8 +1385,8 @@
             </item>
             <item row="2" column="1" >
              <widget class="CurrDisplay" name="_customerPrice" >
-              <property name="decimals" >
-               <number>2</number>
+              <property name="format" >
+               <enum>CurrDisplay::Cost</enum>
               </property>
               <property name="localControl" >
                <bool>false</bool>

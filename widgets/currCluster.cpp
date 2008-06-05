@@ -82,6 +82,8 @@
 
 #define UNKNOWNSTR "?????"
 
+#define DEBUG false
+
 /*
    If there's no conversion rate available for the given currency on the
    given date, then produce an error message.  However, since there are often
@@ -301,6 +303,10 @@ void CurrCluster::sLostFocus()
 
 void CurrCluster::sReformat() const
 {
+    if (DEBUG)
+      qDebug("CC %s::sReformat() entered with _state %d, _format %d",
+             qPrintable(objectName()), _state, _format);
+
     QString na = tr("N/A");
     QString unknown = tr(UNKNOWNSTR);
     QString base = "";
@@ -316,11 +322,57 @@ void CurrCluster::sReformat() const
 	break;
       case Initialized:
 	if (isZero())
-	  base = local = formatMoney(0.0, id(), decimals());
+          switch (_format)
+          {
+            case SalesPrice:
+              base = local = formatSalesPrice(0.0, id()); break;
+            case PurchPrice:
+              base = local = formatPurchPrice(0.0, id()); break;
+            case ExtPrice:
+              base = local = formatExtPrice(0.0, id());   break;
+            case Cost:
+              base = local = formatCost(0.0, id());       break;
+            case Money:
+            default:
+              base = local = formatMoney(0.0, id());      break;
+          }
 	else
 	{
-	  base = _baseKnown ? formatMoney(_valueBase, id(), decimals()) : unknown;
-	  local = _localKnown ? formatMoney(_valueLocal, id(), decimals()) : unknown;
+          if (_baseKnown)
+            switch (_format)
+            {
+              case SalesPrice:
+                base = formatSalesPrice(_valueBase, id()); break;
+              case PurchPrice:
+                base = formatPurchPrice(_valueBase, id()); break;
+              case ExtPrice:
+                base = formatExtPrice(_valueBase, id());   break;
+              case Cost:
+                base = formatCost(_valueBase, id());       break;
+              case Money:
+              default:
+                base = formatMoney(_valueBase, id());      break;
+            }
+          else
+            base = unknown;
+
+          if (_localKnown)
+            switch (_format)
+            {
+              case SalesPrice:
+                local = formatSalesPrice(_valueLocal, id()); break;
+              case PurchPrice:
+                local = formatPurchPrice(_valueLocal, id()); break;
+              case ExtPrice:
+                local = formatExtPrice(_valueLocal, id());   break;
+              case Cost:
+                local = formatCost(_valueLocal, id());       break;
+              case Money:
+              default:
+                local = formatMoney(_valueLocal, id());      break;
+            }
+          else
+            local = unknown;
 	}
 	break;
       case NAInit:
@@ -328,8 +380,25 @@ void CurrCluster::sReformat() const
 	  base = local = na;
 	else
 	{
-	  base = formatMoney(_valueBase, id(), decimals());
-	  local = formatMoney(_valueLocal, id(), decimals());
+          switch (_format)
+          {
+            case SalesPrice:
+              base  = formatSalesPrice(_valueBase,  id()); break;
+              local = formatSalesPrice(_valueLocal, id()); break;
+            case PurchPrice:
+              base  = formatPurchPrice(_valueBase,  id()); break;
+              local = formatPurchPrice(_valueLocal, id()); break;
+            case ExtPrice:
+              base  = formatExtPrice(_valueBase,  id());   break;
+              local = formatExtPrice(_valueLocal, id());   break;
+            case Cost:
+              base  = formatCost(_valueBase,  id());       break;
+              local = formatCost(_valueLocal, id());       break;
+            case Money:
+            default:
+              base  = formatMoney(_valueBase,  id());      break;
+              local = formatMoney(_valueLocal, id());      break;
+          }
 	}
 	break;
       default:
@@ -376,10 +445,14 @@ void CurrCluster::setAllowNegative(bool value)
 	_validator->setBottom(0);
 }
 
-void CurrCluster::setDecimals(int value)
+void CurrCluster::setFormat(CurrDisplayFormats pFormat)
 {
-    CurrDisplay::setDecimals(value);
-    _validator->setDecimals(value + _localScale);
+
+  CurrDisplay::setFormat(pFormat);
+  _validator->setDecimals(_decimals + _localScale);
+  if (DEBUG)
+    qDebug("%s::setFormat() returning with _validator set to %d",
+           qPrintable(objectName()), _validator->decimals());
 }
 
 void CurrCluster::setEnabled(bool newValue)
@@ -492,6 +565,7 @@ CurrDisplay::CurrDisplay(QWidget * parent, const char* name)
     clear();
     _effective = QDate().currentDate();
     _decimals = 0;
+    _format = Money;
 
     setEnabled(FALSE);
     setLocalControl(TRUE);
@@ -526,6 +600,35 @@ void CurrDisplay::reset()
     setEffective(QDate().currentDate());
 }
 
+void CurrDisplay::setFormat(CurrDisplayFormats pFormat)
+{
+  if (DEBUG)
+    qDebug("%s::setFormat(%d)", qPrintable(objectName()), pFormat);
+
+  int precision = _decimals + _localScale;
+  _format = pFormat;
+  switch (pFormat)
+  {
+    case SalesPrice:
+      precision = decimalPlaces("salesprice"); break;
+    case PurchPrice:
+      precision = decimalPlaces("purchprice"); break;
+    case ExtPrice:
+      precision = decimalPlaces("extprice"); break;
+    case Cost:
+      precision = decimalPlaces("cost"); break;
+    case Money:
+    default:
+      precision = decimalPlaces("curr"); break;
+  }
+
+  _decimals = precision - _localScale;
+
+  if (DEBUG)
+    qDebug("%s::setFormat(%d) returning with _format %d, _decimals %d",
+           qPrintable(objectName()), pFormat, _format, _decimals);
+}
+
 void CurrDisplay::setLocalControl(bool newValue)
 {
     _localControl = newValue;
@@ -533,6 +636,10 @@ void CurrDisplay::setLocalControl(bool newValue)
 
 void CurrDisplay::sReformat() const
 {
+    if (DEBUG)
+      qDebug("CD %s::sReformat() entered with _state %d, _format %d",
+             qPrintable(objectName()), _state, _format);
+
     QString na = tr("N/A");
     QString unknown = tr(UNKNOWNSTR);
     QString local = "";
@@ -547,15 +654,56 @@ void CurrDisplay::sReformat() const
 	break;
       case Initialized:
 	if (isZero())
-	  local = formatMoney(0.0, id(), decimals());
-	else
-	  local = _localKnown ? formatMoney(_valueLocal, id(), decimals()) : unknown;
+          switch (_format)
+          {
+            case SalesPrice:
+              local = formatSalesPrice(0.0, id()); break;
+            case PurchPrice:
+              local = formatPurchPrice(0.0, id()); break;
+            case ExtPrice:
+              local = formatExtPrice(0.0, id());   break;
+            case Cost:
+              local = formatCost(0.0, id());       break;
+            case Money:
+            default:
+              local = formatMoney(0.0, id());      break;
+          }
+	else if (_localKnown)
+          switch (_format)
+          {
+            case SalesPrice:
+              local = formatSalesPrice(_valueLocal, id()); break;
+            case PurchPrice:
+              local = formatPurchPrice(_valueLocal, id()); break;
+            case ExtPrice:
+              local = formatExtPrice(_valueLocal, id());   break;
+            case Cost:
+              local = formatCost(_valueLocal, id());       break;
+            case Money:
+            default:
+              local = formatMoney(_valueLocal, id());      break;
+          }
+        else
+          local = unknown;
 	break;
       case NAInit:
 	if (isZero())
 	  local = na;
 	else
-	  local = formatMoney(_valueLocal, id(), decimals());
+          switch (_format)
+          {
+            case SalesPrice:
+              local = formatSalesPrice(_valueLocal, id()); break;
+            case PurchPrice:
+              local = formatPurchPrice(_valueLocal, id()); break;
+            case ExtPrice:
+              local = formatExtPrice(_valueLocal, id());   break;
+            case Cost:
+              local = formatCost(_valueLocal, id());       break;
+            case Money:
+            default:
+              local = formatMoney(_valueLocal, id());      break;
+          }
 	break;
       default:
 	break;
@@ -751,11 +899,6 @@ void CurrDisplay::set(const double newValue, const int newId, const QDate& newDa
 
     if (emitDate)
 	emit effectiveChanged(newDate);
-}
-
-void CurrDisplay::setDecimals(int value)
-{
-    _decimals = value;
 }
 
 void CurrDisplay::setEffective(const QDate& newValue)

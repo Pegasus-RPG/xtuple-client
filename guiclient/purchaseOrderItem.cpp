@@ -99,6 +99,11 @@ purchaseOrderItem::purchaseOrderItem(QWidget* parent, const char* name, bool mod
   ItemCharacteristicDelegate * delegate = new ItemCharacteristicDelegate(this);
   _itemcharView->setItemDelegate(delegate);
 
+  _minOrderQty->setValidator(omfgThis->qtyVal());
+  _orderQtyMult->setValidator(omfgThis->qtyVal());
+  _received->setValidator(omfgThis->qtyVal());
+  _invVendorUOMRatio->setValidator(omfgThis->ratioVal());
+
   //If not multi-warehouse hide whs control
   if (!_metrics->boolean("MultiWhs"))
   {
