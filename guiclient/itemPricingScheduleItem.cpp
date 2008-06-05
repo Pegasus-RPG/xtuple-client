@@ -60,6 +60,7 @@
 
 #include <QVariant>
 #include <QMessageBox>
+#include <QSqlError>
 #include <QValidator>
 
 /*
@@ -110,6 +111,9 @@ itemPricingScheduleItem::itemPricingScheduleItem(QWidget* parent, const char* na
   _prodcat->setType(XComboBox::ProductCategories);
   
   _tab->setTabEnabled(_tab->indexOf(_configuredPrices),FALSE);
+ 
+  _rejectedMsg = tr("The application has encountered an error and must "
+                    "stop editing this Pricing Schedule.\n%1");
 }
 
 /*
@@ -234,6 +238,12 @@ void itemPricingScheduleItem::sSave( bool pClose)
                                    "You may not create duplicate Pricing Schedule Items." ) );
         return;
       }
+      else if (q.lastError().type() != QSqlError::None)
+      {
+	systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+                  __FILE__, __LINE__);
+        done(-1);
+      }
 
       q.exec("SELECT NEXTVAL('ipsitem_ipsitem_id_seq') AS ipsitem_id;");
       if (q.first())
@@ -263,10 +273,22 @@ void itemPricingScheduleItem::sSave( bool pClose)
                                    "You may not create duplicate Pricing Schedule Items." ) );
         return;
       }
+      else if (q.lastError().type() != QSqlError::None)
+      {
+	systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+                  __FILE__, __LINE__);
+        done(-1);
+      }
 
       q.exec("SELECT NEXTVAL('ipsprodcat_ipsprodcat_id_seq') AS ipsprodcat_id;");
       if (q.first())
         _ipsprodcatid = q.value("ipsprodcat_id").toInt();
+      else if (q.lastError().type() != QSqlError::None)
+      {
+	systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+                  __FILE__, __LINE__);
+        done(-1);
+      }
       //  ToDo
 
       q.prepare( "INSERT INTO ipsprodcat "
@@ -302,7 +324,13 @@ void itemPricingScheduleItem::sSave( bool pClose)
   q.bindValue(":qty_uom_id", _qtyUOM->id());
   q.bindValue(":price_uom_id", _priceUOM->id());
   q.exec();
-  
+  if (q.lastError().type() != QSqlError::None)
+  {
+	systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+                  __FILE__, __LINE__);
+        done(-1);
+  }
+
   if (pClose)
   {
     if(_itemSelected->isChecked())
@@ -344,6 +372,12 @@ void itemPricingScheduleItem::populate()
 
       sUpdateMargins();
     }
+    else if (q.lastError().type() != QSqlError::None)
+    {
+	systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+                  __FILE__, __LINE__);
+        done(-1);
+    }
   }
   else
   {
@@ -358,6 +392,12 @@ void itemPricingScheduleItem::populate()
       _prodcat->setId(q.value("ipsprodcat_prodcat_id").toInt());
       _qtyBreakCat->setDouble(q.value("ipsprodcat_qtybreak").toDouble());
       _discount->setText(formatPercent(q.value("ipsprodcat_discntprcnt").toDouble()));
+    }
+    else if (q.lastError().type() != QSqlError::None)
+    {
+	systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+                  __FILE__, __LINE__);
+        done(-1);
     }
   }
   sFillList();
@@ -387,6 +427,12 @@ void itemPricingScheduleItem::sUpdateCosts(int pItemid)
               " ORDER BY uom_name;");
   uom.bindValue(":item_id", _item->id());
   uom.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+	systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+                  __FILE__, __LINE__);
+        done(-1);
+  }
   _qtyUOM->populate(uom);
   _priceUOM->populate(uom);
 
@@ -412,6 +458,12 @@ void itemPricingScheduleItem::sUpdateCosts(int pItemid)
 
     _qtyUOM->setId(cost.value("item_inv_uom_id").toInt());
     _priceUOM->setId(cost.value("item_price_uom_id").toInt());
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+	systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+                  __FILE__, __LINE__);
+        done(-1);
   }
   
   if (_item->isConfigured())
@@ -512,6 +564,12 @@ void itemPricingScheduleItem::sPriceUOMChanged()
 
     sUpdateMargins();
   }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+                  __FILE__, __LINE__);
+    done(-1);
+  }
 }
 
 void itemPricingScheduleItem::sNew()
@@ -527,8 +585,12 @@ void itemPricingScheduleItem::sNew()
   characteristicPrice newdlg(this, "", TRUE);
   newdlg.set(params);
 
-  newdlg.exec();
-  sFillList();
+  int result;
+  if ((result = newdlg.exec()) != XDialog::Rejected)
+    if (result == -1)
+      done(-1);
+     else
+      sFillList();
 }
 
 void itemPricingScheduleItem::sEdit()
@@ -543,8 +605,12 @@ void itemPricingScheduleItem::sEdit()
   characteristicPrice newdlg(this, "", TRUE);
   newdlg.set(params);
 
-  newdlg.exec();
-  sFillList();
+  int result;
+  if ((result = newdlg.exec()) != XDialog::Rejected)
+    if (result == -1)
+      done(-1);
+     else
+      sFillList();
 }
 
 void itemPricingScheduleItem::sDelete()
@@ -553,6 +619,12 @@ void itemPricingScheduleItem::sDelete()
             "WHERE (ipsitemchar_id=:ipsitemchar_id);");
   q.bindValue(":ipsitemchar_id", _charprice->id());
   q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+	systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+                  __FILE__, __LINE__);
+        done(-1);
+  }
   sFillList();
 }
 
@@ -564,6 +636,12 @@ void itemPricingScheduleItem::sFillList()
             "AND (ipsitemchar_ipsitem_id=:ipsitem_id)); ");
   q.bindValue(":ipsitem_id", _ipsitemid);
   q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+	systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+                  __FILE__, __LINE__);
+        done(-1);
+  }
   _charprice->populate(q);
 }
 

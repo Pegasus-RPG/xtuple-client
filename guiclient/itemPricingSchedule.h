@@ -75,6 +75,7 @@ public:
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
     virtual void sSave();
+    virtual void sSave(bool p);
     virtual void sCheck();
     virtual void sNew();
     virtual void sEdit();
@@ -82,6 +83,7 @@ public slots:
     virtual void sFillList();
     virtual void sFillList( int pIpsitemid );
     virtual void populate();
+    virtual void reject();
 
 protected slots:
     virtual void languageChange();
@@ -90,6 +92,7 @@ private:
     int _ipsheadid;
     int _mode;
     QDate _updated;
+    QString _rejectedMsg;
 
 };
 

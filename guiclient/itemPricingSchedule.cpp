@@ -59,6 +59,7 @@
 
 #include <QVariant>
 #include <QMessageBox>
+#include <QSqlError>
 #include "itemPricingScheduleItem.h"
 
 /*
@@ -98,6 +99,10 @@ itemPricingSchedule::itemPricingSchedule(QWidget* parent, const char* name, bool
   _currency->setType(XComboBox::Currencies);
   _currency->setLabel(_currencyLit);
   _updated = QDate::currentDate();
+  
+  q.exec("BEGIN;");
+  _rejectedMsg = tr("The application has encountered an error and must "
+                    "stop editing this Pricing Schedule.\n%1");
 }
 
 /*
@@ -105,16 +110,6 @@ itemPricingSchedule::itemPricingSchedule(QWidget* parent, const char* name, bool
  */
 itemPricingSchedule::~itemPricingSchedule()
 {
-  if ( (_mode == cNew) || (_mode == cCopy) )
-  {
-    q.prepare( "DELETE FROM ipsitem "
-               "WHERE (ipsitem_ipshead_id=:ipshead_id);"
-               "DELETE FROM ipsprodcat "
-               "WHERE (ipsprodcat_ipshead_id=:ipshead_id);" );
-    q.bindValue(":ipshead_id", _ipsheadid);
-    q.exec();
-  }
-
   // no need to delete child widgets, Qt does it all for us
 }
 
@@ -189,6 +184,13 @@ enum SetResponse itemPricingSchedule::set(const ParameterList &pParams)
     q.exec("SELECT NEXTVAL('ipshead_ipshead_id_seq') AS ipshead_id;");
     if (q.first())
       _ipsheadid = q.value("ipshead_id").toInt();
+    else if (q.lastError().type() != QSqlError::None)
+    {
+	systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+                  __FILE__, __LINE__);
+        reject();
+        return UndefinedError;
+    }
 
     if(_mode == cCopy)
     {
@@ -213,13 +215,20 @@ enum SetResponse itemPricingSchedule::set(const ParameterList &pParams)
       q.bindValue(":ipshead_id", _ipsheadid);
       q.bindValue(":oldipshead_id", oldIpsheadid);
       q.exec();
+      if (q.lastError().type() != QSqlError::None)
+      {
+        systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+                    __FILE__, __LINE__);
+        reject();
+        return UndefinedError;
+      }
     }
   }
 
   return NoError;
 }
 
-void itemPricingSchedule::sSave()
+void itemPricingSchedule::sSave(bool p)
 {
   if (_name->text().stripWhiteSpace().isEmpty())
   {
@@ -269,11 +278,25 @@ void itemPricingSchedule::sSave()
   q.bindValue(":ipshead_expires", _dates->endDate());
   q.bindValue(":ipshead_curr_id", _currency->id());
   q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+	systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+                  __FILE__, __LINE__);
+        reject();
+  }
 
   _mode = cEdit;
-  _ipsheadid = -1;
+  
+  if (p)
+  {
+    q.exec("COMMIT;");
+    done(_ipsheadid);
+  }
+}
 
-  done(_ipsheadid);
+void itemPricingSchedule::sSave()
+{
+  sSave(true) ;  
 }
 
 void itemPricingSchedule::sCheck()
@@ -282,6 +305,7 @@ void itemPricingSchedule::sCheck()
 
 void itemPricingSchedule::sNew()
 {
+  sSave(false);
   ParameterList params;
   params.append("mode", "new");
   params.append("ipshead_id", _ipsheadid);
@@ -293,7 +317,10 @@ void itemPricingSchedule::sNew()
 
   int result;
   if ((result = newdlg.exec()) != XDialog::Rejected)
-    sFillList(result);
+    if (result == -1)
+      reject();
+    else
+      sFillList(result);
 }
 
 void itemPricingSchedule::sEdit()
@@ -316,7 +343,10 @@ void itemPricingSchedule::sEdit()
 
   int result;
   if ((result = newdlg.exec()) != XDialog::Rejected)
-    sFillList(result);
+    if (result == -1)
+      reject();
+    else
+      sFillList(result);
 }
 
 void itemPricingSchedule::sDelete()
@@ -331,6 +361,12 @@ void itemPricingSchedule::sDelete()
     return;
   q.bindValue(":ipsitem_id", _ipsitem->id());
   q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+	systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+                  __FILE__, __LINE__);
+        reject();
+  }
 
   sFillList();
 }
@@ -364,6 +400,12 @@ void itemPricingSchedule::sFillList(int pIpsitemid)
   q.bindValue(":item", tr("Item"));
   q.bindValue(":prodcat", tr("Prod. Cat."));
   q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+	systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+                  __FILE__, __LINE__);
+        reject();
+  }
 
   if (pIpsitemid == -1)
     _ipsitem->populate(q, true);
@@ -401,4 +443,16 @@ void itemPricingSchedule::populate()
 
     sFillList(-1);
   }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+	systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+                  __FILE__, __LINE__);
+		  reject();
+  }
+}
+
+void itemPricingSchedule::reject()
+{
+  q.exec("ROLLBACK;");
+  XDialog::reject();
 }

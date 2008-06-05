@@ -96,6 +96,7 @@ private:
     int _ipsitemid;
     int _ipsprodcatid;
     int _invuomid;
+    QString _rejectedMsg;
 
 };
 

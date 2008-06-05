@@ -88,6 +88,7 @@ private:
     int _itemid;
     int _ipsitemid;
     int _ipsitemcharid;
+    QString _rejectedMsg;
 
 };
 

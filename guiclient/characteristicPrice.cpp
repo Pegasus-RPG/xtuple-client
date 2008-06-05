@@ -80,6 +80,9 @@ characteristicPrice::characteristicPrice(QWidget* parent, const char* name, bool
   connect(_value, SIGNAL(activated(int)), this, SLOT(sCheck()));
 
   _char->setAllowNull(TRUE);
+  
+  _rejectedMsg = tr("The application has encountered an error and must "
+                    "stop editing this Pricing Schedule.\n%1");
 }
 
 /*
@@ -192,6 +195,12 @@ void characteristicPrice::sSave()
   q.bindValue(":ipsitemchar_value", _value->currentText());
   q.bindValue(":ipsitemchar_price", _price->localValue());;
   q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+                  __FILE__, __LINE__);
+    done(-1);
+  }
 
   done(_ipsitemcharid);
 }
@@ -212,6 +221,12 @@ void characteristicPrice::sCheck()
     _ipsitemcharid = q.value("ipsitemchar_id").toInt();
     _mode = cEdit;
     populate();
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+                  __FILE__, __LINE__);
+    done(-1);
   }
   else
     _mode = cNew;
@@ -235,8 +250,9 @@ void characteristicPrice::populate()
   }
   else if (q.lastError().type() != QSqlError::None)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
+    systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+                  __FILE__, __LINE__);
+    done(-1);
   }
   connect(_char, SIGNAL(newID(int)), this, SLOT(sCheck()));
   connect(_value, SIGNAL(activated(int)), this, SLOT(sCheck()));
@@ -258,8 +274,9 @@ void characteristicPrice::populateItemcharInfo()
     _listPrice->setLocalValue(q.value("charass_price").toDouble());
   else if (q.lastError().type() != QSqlError::None)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
+    systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+                  __FILE__, __LINE__);
+    done(-1);
   }
   else
     _listPrice->setLocalValue(0);
@@ -277,6 +294,12 @@ void characteristicPrice::sCharIdChanged()
   charass.bindValue(":item_id", _itemid);
   charass.bindValue(":char_id", _char->id());
   charass.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+                  __FILE__, __LINE__);
+    done(-1);
+  }
   _value->populate(charass);
 }
 
