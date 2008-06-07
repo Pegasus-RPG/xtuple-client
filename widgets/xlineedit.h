@@ -73,7 +73,8 @@
 class OPENMFGWIDGETS_EXPORT XLineEdit : public QLineEdit
 {
   Q_OBJECT
-  Q_PROPERTY(QString fieldName   READ fieldName   WRITE setFieldName);
+  Q_PROPERTY(QString fieldName    READ fieldName   WRITE setFieldName);
+  Q_PROPERTY(QString defaultText  READ defaultText WRITE setDefaultText);
   
   public:
     XLineEdit(QWidget *, const char * = 0);
@@ -83,14 +84,15 @@ class OPENMFGWIDGETS_EXPORT XLineEdit : public QLineEdit
 
     double toDouble(bool * = 0);
     virtual QString fieldName()   const { return _fieldName; };
-
+    virtual QString defaultText() const { return _default; };
     virtual void   setText(const QVariant &);
     virtual void   setDouble(const double, const int = -1);
 
   public slots:
     virtual void sParse();
     virtual void setDataWidgetMap(XDataWidgetMapper* m);
-    virtual void setFieldName(QString p) { _fieldName = p; };
+    virtual void setDefaultText(QString p)  { _default = p; };
+    virtual void setFieldName(QString p)    { _fieldName = p; };
 
   signals:
     void clicked();
@@ -100,9 +102,9 @@ class OPENMFGWIDGETS_EXPORT XLineEdit : public QLineEdit
     void requestAlias();
 
   protected:
-    int   _id;
-    bool _valid;
-    bool _parsed;
+    int     _id;
+    bool    _valid;
+    bool    _parsed;
 
     void mousePressEvent(QMouseEvent *);
     void keyPressEvent(QKeyEvent *);
@@ -110,6 +112,7 @@ class OPENMFGWIDGETS_EXPORT XLineEdit : public QLineEdit
     
   private:
     QString _fieldName;
+    QString _default;
 };
 
 #endif

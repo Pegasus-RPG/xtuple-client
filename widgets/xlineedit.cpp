@@ -84,6 +84,7 @@ XLineEdit::XLineEdit(QWidget *parent, const char *name) :
   _valid = FALSE;
 
   _id = -1;
+  setText(defaultText());
 }
 
 bool XLineEdit::isValid()
@@ -109,7 +110,7 @@ double XLineEdit::toDouble(bool *pIsValid)
 
 void XLineEdit::setDataWidgetMap(XDataWidgetMapper* m)
 {
-  m->addMapping(this, _fieldName);
+  m->addMapping(this, _fieldName, QByteArray("text"), QByteArray("defaultText"));
 }
 
 void XLineEdit::setText(const QVariant &pVariant)

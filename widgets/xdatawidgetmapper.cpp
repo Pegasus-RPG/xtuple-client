@@ -70,11 +70,40 @@ XDataWidgetMapper::~XDataWidgetMapper()
 {
 }
 
-void XDataWidgetMapper::setSqlTableModel(QSqlTableModel *model)
+/* This overload allows for a default property that can mapped. 
+   The value of the property at that mapping will be used when clear() is called.*/
+void XDataWidgetMapper::addMapping(QWidget *widget, QString fieldName, const QByteArray &propertyName, const QByteArray &defaultName)
 {
-  _model.setTable(static_cast<QSqlTableModel*>(model)->tableName());
-  setModel(model);
+  QDataWidgetMapper::addMapping(widget, static_cast<QSqlTableModel*>(model())->fieldIndex(fieldName), propertyName);
+  removeDefault(widget);
+  widgetMap.append(WidgetMapper(widget, static_cast<QSqlTableModel*>(model())->fieldIndex(fieldName), defaultName));
 }
+
+void XDataWidgetMapper::clear()
+{
+    for (int i = 0; i < widgetMap.count(); ++i)
+        clear(widgetMap[i]);
+}
+
+void XDataWidgetMapper::clear(WidgetMapper &m)
+{
+    if (m.widget.isNull())
+        return;
+        
+    if (!m.property.isEmpty())
+        model()->setData(model()->index(currentIndex(),m.section),m.widget->property(m.property));
+}
+
+void XDataWidgetMapper::removeDefault(QWidget *widget)
+{
+  for (int i = 0; i < widgetMap.count(); ++i) 
+    if (widgetMap.at(i).widget == widget)
+    {
+      widgetMap.removeAt(i);
+      return;
+    }
+}
+
 
 
 

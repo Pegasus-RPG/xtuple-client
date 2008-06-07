@@ -180,8 +180,9 @@ void ScreenControl::toPrevious()
 
 void ScreenControl::newRow()
 {
-  qDebug("insert row %d", _model->insertRows(_model->rowCount(),1));
+  _model->insertRows(_model->rowCount(),1);
   _mapper.toLast();
+  _mapper.clear();
   _prev->setEnabled(_model->rowCount()-1);
   _next->setEnabled(false);
 }
@@ -351,6 +352,6 @@ void ScreenControl::setTable(QString s, QString t)
 
 void ScreenControl::setDataWidgetMapper(QSqlTableModel *p)
 {
-  _mapper.setSqlTableModel(p);
+  _mapper.setModel(p);
   emit newDataWidgetMapper(&_mapper);
 }

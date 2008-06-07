@@ -98,9 +98,9 @@ void ContactCluster::init()
     _titleBox		= new QHBoxLayout;
     _titleBox->setSpacing(2);
 
-    _change             = new QLineEdit(this);
+    _change             = new XLineEdit(this);
     _numberLit		= new QLabel(tr("Number:"), this, "_numberLit");
-    _number		= new QLineEdit(this, "_number");
+    _number		= new XLineEdit(this, "_number");
     
     _change->hide();
     _number->hide();
@@ -108,14 +108,14 @@ void ContactCluster::init()
     
     _honorific		= new XComboBox(this, "_honorific");
     _firstLit		= new QLabel(tr("First:"), this, "_firstLit");
-    _first		= new QLineEdit(this, "_first");
+    _first		= new XLineEdit(this, "_first");
     _lastLit		= new QLabel(tr("Last:"), this, "_lastLit");
-    _last		= new QLineEdit(this, "_last");
+    _last		= new XLineEdit(this, "_last");
     _initialsLit	= new QLabel(tr("Initials:"), this, "_initialsLit");
-    _initials		= new QLineEdit(this, "_initials");
+    _initials		= new XLineEdit(this, "_initials");
     _initials->resize(_initials->size().width() / 3, _initials->size().height());
     _titleLit		= new QLabel(tr("Job Title:"), this, "_titleLit");
-    _title		= new QLineEdit(this, "_title");
+    _title		= new XLineEdit(this, "_title");
     
     _mapper		= new XDataWidgetMapper(this);
 
@@ -140,15 +140,15 @@ void ContactCluster::init()
     _buttonBox->addWidget(_active,	0);
 
     _phoneLit		= new QLabel(tr("Voice:"), this, "_phoneLit");
-    _phone		= new QLineEdit(this, "_phone");
+    _phone		= new XLineEdit(this, "_phone");
     _phone2Lit		= new QLabel(tr("Alternate:"), this, "_phone2Lit");
-    _phone2		= new QLineEdit(this, "_phone2");
+    _phone2		= new XLineEdit(this, "_phone2");
     _faxLit		= new QLabel(tr("Fax:"), this, "_faxLit");
-    _fax		= new QLineEdit(this, "_fax");
+    _fax		= new XLineEdit(this, "_fax");
     _emailLit		= new QLabel(tr("E-Mail:"), this, "_emailLit");
-    _email		= new QLineEdit(this, "_email");
+    _email		= new XLineEdit(this, "_email");
     _webaddrLit		= new QLabel(tr("Web:"), this, "_webaddrLit");
-    _webaddr		= new QLineEdit(this, "_webaddr");
+    _webaddr		= new XLineEdit(this, "_webaddr");
     _address		= new AddressCluster(this, "_address");
 
     _numberLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
@@ -361,18 +361,18 @@ QString ContactCluster::name() const
 
 void ContactCluster::setDataWidgetMap(XDataWidgetMapper* m)
 {  
-  m->addMapping(this      ,  _fieldNameNumber, "number");
-  m->addMapping(_change      ,  _fieldNameChange);
+  m->addMapping(this          ,  _fieldNameNumber,        "number", "defaultText");
+  m->addMapping(_change      ,  _fieldNameChange,         "text",   "defaultText");
   m->addMapping(_active      ,  _fieldNameActive);
-  m->addMapping(_first       ,  _fieldNameFirst);
-  m->addMapping(_last        ,  _fieldNameLast);
-  m->addMapping(_initials    ,  _fieldNameInitials);
-  m->addMapping(_title       ,  _fieldNameTitle);
-  m->addMapping(_phone       ,  _fieldNamePhone);
-  m->addMapping(_phone2      ,  _fieldNamePhone2);
-  m->addMapping(_fax         ,  _fieldNameFax);
-  m->addMapping(_email       ,  _fieldNameEmailAddress);
-  m->addMapping(_webaddr     ,  _fieldNameWebAddress);
+  m->addMapping(_first       ,  _fieldNameFirst,          "text",   "defaultText");
+  m->addMapping(_last        ,  _fieldNameLast,           "text",   "defaultText");
+  m->addMapping(_initials    ,  _fieldNameInitials,       "text",   "defaultText");
+  m->addMapping(_title       ,  _fieldNameTitle,          "text",   "defaultText");
+  m->addMapping(_phone       ,  _fieldNamePhone,          "text",   "defaultText");
+  m->addMapping(_phone2      ,  _fieldNamePhone2,         "text",   "defaultText");
+  m->addMapping(_fax         ,  _fieldNameFax,            "text",   "defaultText");
+  m->addMapping(_email       ,  _fieldNameEmailAddress,   "text",   "defaultText");
+  m->addMapping(_webaddr     ,  _fieldNameWebAddress,     "text",   "defaultText");
   _honorific->setFieldName(_fieldNameHonorific);
   _honorific->setDataWidgetMap(m);
   _crmAcct->setFieldName(_fieldNameCrmAccount);

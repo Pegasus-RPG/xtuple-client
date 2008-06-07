@@ -60,7 +60,7 @@
 #define XDATAWIDGETMAPPER_H
 
 #include <QSqlTableModel>
-#include <QDataWidgetMapper> 
+#include <QDataWidgetMapper>
 #include "OpenMFGWidgets.h"
 
 class OPENMFGWIDGETS_EXPORT XDataWidgetMapper : public QDataWidgetMapper
@@ -71,12 +71,28 @@ class OPENMFGWIDGETS_EXPORT XDataWidgetMapper : public QDataWidgetMapper
       XDataWidgetMapper(QObject *parent = 0);
       ~XDataWidgetMapper();
       
-      virtual void addMapping(QWidget *widget, QString fieldName) {QDataWidgetMapper::addMapping(widget, _model.fieldIndex(fieldName));};
-      virtual void addMapping(QWidget *widget, QString fieldName, const QByteArray &propertyName) {QDataWidgetMapper::addMapping(widget, _model.fieldIndex(fieldName), propertyName);};
-      virtual void setSqlTableModel(QSqlTableModel *model);
+      virtual void addMapping(QWidget *widget, QString fieldName) {QDataWidgetMapper::addMapping(widget, static_cast<QSqlTableModel*>(model())->fieldIndex(fieldName));};
+      virtual void addMapping(QWidget *widget, QString fieldName, const QByteArray &propertyName) {QDataWidgetMapper::addMapping(widget, static_cast<QSqlTableModel*>(model())->fieldIndex(fieldName), propertyName);};
+      virtual void addMapping(QWidget *widget, QString fieldName, const QByteArray &propertyName, const QByteArray &defaultName);
+      virtual void removeDefault(QWidget *widget);
+      
+    public slots:
+      virtual void clear();
 
     private:
-      QSqlTableModel _model;
+      struct WidgetMapper
+      {
+          inline WidgetMapper(QWidget *w, int c, const QByteArray &p)
+              : widget(w),  section(c), property(p) {}
+
+          QPointer<QWidget> widget;
+          int section;
+          QPersistentModelIndex currentIndex;
+          QByteArray property;
+      };
+
+      QList<WidgetMapper> widgetMap;
+      virtual void clear(WidgetMapper &m);
 
 };
 
