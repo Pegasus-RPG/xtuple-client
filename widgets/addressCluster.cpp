@@ -83,18 +83,18 @@ void AddressCluster::init()
     _grid->removeWidget(_info);
     delete _description;
 
-    _addrChange    = new QLineEdit(this);
-    _number        = new QLineEdit(this);
+    _addrChange    = new XLineEdit(this);
+    _number        = new XLineEdit(this);
     _addrLit       = new QLabel(tr("Street\nAddress:"), this);
-    _addr1         = new QLineEdit(this);
-    _addr2         = new QLineEdit(this);
-    _addr3         = new QLineEdit(this);
+    _addr1         = new XLineEdit(this);
+    _addr2         = new XLineEdit(this);
+    _addr3         = new XLineEdit(this);
     _cityLit       = new QLabel(tr("City:"), this);
-    _city          = new QLineEdit(this);
+    _city          = new XLineEdit(this);
     _stateLit      = new QLabel(tr("State:"));
     _state         = new XComboBox(this);
     _postalcodeLit = new QLabel(tr("Postal Code:"));
-    _postalcode    = new QLineEdit(this);
+    _postalcode    = new XLineEdit(this);
     _countryLit    = new QLabel(tr("Country:"));
     _country       = new XComboBox(this);
     _active        = new QCheckBox(tr("Active"), this);
@@ -312,14 +312,14 @@ void AddressCluster::clear()
    
 void AddressCluster::setDataWidgetMap(XDataWidgetMapper* m)
 {
-  m->addMapping(_addrChange,  _fieldNameAddrChange);
-  m->addMapping(_active    ,  _fieldNameActive);
-  m->addMapping(_number    ,  _fieldNameNumber);
-  m->addMapping(_addr1 	,  _fieldNameLine1);
-  m->addMapping(_addr2     ,  _fieldNameLine2);
-  m->addMapping(_addr3     ,  _fieldNameLine3);
-  m->addMapping(_city    	,  _fieldNameCity);
-  m->addMapping(_postalcode,  _fieldNamePostalCode);
+  m->addMapping(_addrChange , _fieldNameAddrChange,   "text", "defaultText");
+  m->addMapping(_active,      _fieldNameActive,       "text", "defaultText");
+  m->addMapping(_number,      _fieldNameNumber,       "text", "defaultText");
+  m->addMapping(_addr1,       _fieldNameLine1,        "text", "defaultText");
+  m->addMapping(_addr2,       _fieldNameLine2,        "text", "defaultText");
+  m->addMapping(_addr3,       _fieldNameLine3,        "text", "defaultText");
+  m->addMapping(_city,        _fieldNameCity,         "text", "defaultText");
+  m->addMapping(_postalcode,  _fieldNamePostalCode,   "text", "defaultText");
   _state->setFieldName(_fieldNameState);
   _state->setDataWidgetMap(m);
   _country->setFieldName(_fieldNameCountry);

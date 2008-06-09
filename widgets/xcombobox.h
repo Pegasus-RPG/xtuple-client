@@ -76,19 +76,23 @@ class OPENMFGWIDGETS_EXPORT XComboBox : public QComboBox
 {
   Q_OBJECT
 
+  Q_ENUMS(Defaults)
   Q_ENUMS(XComboBoxTypes)
 
-  Q_PROPERTY(bool      allowNull READ allowNull WRITE setAllowNull )
-  Q_PROPERTY(QString     nullStr READ nullStr   WRITE setNullStr   )
-  Q_PROPERTY(XComboBoxTypes type READ type      WRITE setType      )
-  Q_PROPERTY(QString        code READ code      WRITE setCode      )
-  Q_PROPERTY(QString fieldName   READ fieldName WRITE setFieldName);
-  Q_PROPERTY(int id READ id WRITE setId DESIGNABLE false);
+  Q_PROPERTY(bool           allowNull       READ allowNull      WRITE setAllowNull                      )
+  Q_PROPERTY(QString        nullStr         READ nullStr        WRITE setNullStr                        )
+  Q_PROPERTY(XComboBoxTypes type            READ type           WRITE setType                           )
+  Q_PROPERTY(QString        code            READ code           WRITE setCode                           )
+  Q_PROPERTY(Defaults       defaultCode     READ defaultCode    WRITE setDefaultCode                    )
+  Q_PROPERTY(QString        fieldName       READ fieldName      WRITE setFieldName                      )
+  Q_PROPERTY(int            id              READ id             WRITE setId             DESIGNABLE false)
+  Q_PROPERTY(QString        currentDefault  READ currentDefault                         DESIGNABLE false)
 
   public:
     XComboBox(QWidget * = 0, const char * = 0);
     XComboBox(bool, QWidget * = 0, const char * = 0);
 
+    enum Defaults { First, None };
     enum XComboBoxTypes
       {
       Adhoc,
@@ -126,26 +130,27 @@ class OPENMFGWIDGETS_EXPORT XComboBox : public QComboBox
     void setText(const QVariant &);
     
 
-    virtual bool allowNull() const { return _allowNull; };
-    virtual void setAllowNull(bool);
-    virtual void setNull();
+    virtual bool      allowNull() const             { return _allowNull; };
+    virtual Defaults  defaultCode()                 { return _default;};
+    virtual void      setAllowNull(bool);
+    virtual void      setNull();
 
-    QString nullStr() const { return _nullStr; };
-    void setNullStr(const QString &);
+    QString           nullStr() const               { return _nullStr; };
+    void              setNullStr(const QString &);
 
-    bool editable() const;
-    void setEditable(bool);
+    bool              editable() const;
+    void              setEditable(bool);
 
-    inline QLabel* label() const { return _label; };
-    void setLabel(QLabel* pLab);
+    inline            QLabel* label() const         { return _label; };
+    void              setLabel(QLabel* pLab);
 
-    bool    isValid() const;
-    int     id(int) const;
-    int     id() const;
-    QString code() const;
-    QString fieldName()   const { return _fieldName; };
+    bool              isValid() const;
+    int               id(int) const;
+    int               id() const;
+    QString           code() const;
+    QString           fieldName()   const           { return _fieldName; };
 
-    QSize sizeHint() const;
+    QSize             sizeHint() const;
 
   public slots:
     void clear();
@@ -155,7 +160,8 @@ class OPENMFGWIDGETS_EXPORT XComboBox : public QComboBox
     void populate(const QString &, int = -1);
     void populate();
     void setDataWidgetMap(XDataWidgetMapper* m);
-    void setFieldName(QString p) { _fieldName = p; };
+    void setDefaultCode(Defaults p)                 { _default = p; };
+    void setFieldName(QString p)                    { _fieldName = p; };
     void setId(int);
 
   private slots:
@@ -168,7 +174,8 @@ class OPENMFGWIDGETS_EXPORT XComboBox : public QComboBox
     void valid(bool);
 
   protected:
-    void mousePressEvent(QMouseEvent *);
+    QString   currentDefault();
+    void      mousePressEvent(QMouseEvent *);
 
     bool                _allowNull;
     int                 _lastId;
@@ -179,7 +186,8 @@ class OPENMFGWIDGETS_EXPORT XComboBox : public QComboBox
     QString             _nullStr;
     
   private:
-    QString _fieldName;
+    enum Defaults _default;
+    QString       _fieldName;
 };
 
 #endif

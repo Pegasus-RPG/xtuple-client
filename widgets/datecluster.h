@@ -74,21 +74,28 @@ class XSqlQuery;
 class XDateEdit : public XLineEdit
 {
   Q_OBJECT
-  Q_PROPERTY(QDate   date        READ date        WRITE setDate)
-  Q_PROPERTY(QString fieldName   READ fieldName   WRITE setFieldName);
+  Q_ENUMS   (Defaults)
+  Q_PROPERTY(QDate    date            READ date        WRITE setDate)
+  Q_PROPERTY(Defaults defaultDate     READ defaultDate WRITE setDefaultDate);
+  Q_PROPERTY(QDate    currentDefault  READ currentDefault);
+  Q_PROPERTY(QString  fieldName       READ fieldName   WRITE setFieldName);
 
   public:
     XDateEdit(QWidget *parent = 0, const char * = 0);
     virtual ~XDateEdit();
+    
+    enum Defaults     { Empty, Current, None };
 
-    virtual void    clear();
-    virtual QDate   date();
-    virtual QString fieldName()   const                   { return _fieldName;        };
-    virtual bool    isNull();
-    virtual bool    isValid();
-    inline void setAllowNullDate(bool pAllowNull)         { _allowNull = pAllowNull;  };
-    inline void setNullString(const QString &pNullString) { _nullString = pNullString;};
-    inline void setNullDate(const QDate &pNullDate)       { _nullDate = pNullDate;    };
+    virtual bool      isNull();
+    virtual bool      isValid();
+    virtual Defaults  defaultDate()                             { return _default;};
+    virtual QDate     currentDefault();
+    virtual QDate     date();
+    virtual QString   fieldName()   const                       { return _fieldName;        };
+    virtual void      clear();
+    inline  void      setAllowNullDate(bool pAllowNull)         { _allowNull  = pAllowNull;  };
+    inline  void      setNullString(const QString &pNullString) { _nullString = pNullString;};
+    inline  void      setNullDate(const QDate &pNullDate)       { _nullDate   = pNullDate;    };
 
   public slots:
     virtual void setDataWidgetMap(XDataWidgetMapper* m);
@@ -96,6 +103,7 @@ class XDateEdit : public XLineEdit
 
     void setNull();
     void setDate(const QDate &, bool = false);
+    void setDefaultDate(Defaults p)                             { _default = p; };
     void parseDate();
     void showCalendar();
 
@@ -104,40 +112,47 @@ class XDateEdit : public XLineEdit
 
   private:
     bool fixMonthEnd(int *, int, int);
+    
+    bool          _allowNull;
+    enum Defaults _default;
+    QDate         _currentDate;
+    QDate         _nullDate;
+    QString       _fieldName;
+    QString       _nullString;
 
-    QDate       _currentDate;
-    QString     _fieldName;
-    QDate       _nullDate;
-    QString     _nullString;
-    bool        _allowNull;
 };
 
 class OPENMFGWIDGETS_EXPORT DLineEdit : public QWidget
 {
   Q_OBJECT
-  Q_PROPERTY(QDate   date        READ date        WRITE setDate)
-  Q_PROPERTY(QString fieldName   READ fieldName   WRITE setFieldName);
+  Q_ENUMS(XDateEdit::Defaults)
+  Q_PROPERTY(QDate                 date            READ date        WRITE setDate);
+  Q_PROPERTY(XDateEdit::Defaults   defaultDate     READ defaultDate WRITE setDefaultDate);
+  Q_PROPERTY(QString               fieldName       READ fieldName   WRITE setFieldName);
 
   public:
     DLineEdit(QWidget *parent = 0, const char * = 0);
+    
+    inline void                 setAllowNullDate(bool p)            { _lineedit.setAllowNullDate(p); };
+    inline void                 setNullString(const QString &p)     { _lineedit.setNullString(p); };
+    inline void                 setNullDate(const QDate &p)         { _lineedit.setNullDate(p); };
 
-    virtual void    clear()                              { _lineedit.clear(); };
-    virtual QDate   date()                         { return _lineedit.date(); };
-    virtual QString fieldName() const         { return _lineedit.fieldName(); };
-    virtual bool    isNull()                     { return _lineedit.isNull(); };
-    virtual bool    isValid()                   { return _lineedit.isValid(); };
-    inline void setAllowNullDate(bool p)     { _lineedit.setAllowNullDate(p); };
-    inline void setNullString(const QString &p) { _lineedit.setNullString(p); };
-    inline void setNullDate(const QDate &p)       { _lineedit.setNullDate(p); };
-
+    virtual bool                isNull()                            { return _lineedit.isNull(); };
+    virtual bool                isValid()                           { return _lineedit.isValid(); };
+    virtual XDateEdit::Defaults defaultDate()                       { return _lineedit.defaultDate(); };
+    virtual QDate               date()                              { return _lineedit.date(); };
+    virtual QString             fieldName() const                   { return _lineedit.fieldName(); };
+    virtual void                clear()                             { _lineedit.clear(); };
+      
   public slots:
-    virtual void setDataWidgetMap(XDataWidgetMapper* m) { _lineedit.setDataWidgetMap(m); };
+    virtual void setDataWidgetMap(XDataWidgetMapper* m)             { _lineedit.setDataWidgetMap(m); };
+    virtual void setDefaultDate(XDateEdit::Defaults p)              { _lineedit.setDefaultDate(p); };
     virtual void setEnabled(const bool);
-    virtual void setFieldName(QString p)         { _lineedit.setFieldName(p); };
+    virtual void setFieldName(QString p)                            { _lineedit.setFieldName(p); };
 
-    void setNull()                                     { _lineedit.setNull(); };
-    void setDate(const QDate &p, bool b = false)   { _lineedit.setDate(p, b); };
-    void showCalendar()                           { _lineedit.showCalendar(); };
+    void setDate(const QDate &p, bool b = false)                    { _lineedit.setDate(p, b); };
+    void setNull()                                                  { _lineedit.setNull(); };
+    void showCalendar()                                             { _lineedit.showCalendar(); };
 
   signals:
     void newDate(const QDate &);

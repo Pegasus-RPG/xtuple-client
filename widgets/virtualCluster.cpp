@@ -74,8 +74,6 @@ void VirtualCluster::init()
   if (DEBUG)
     qDebug("VC %s::init()", qPrintable(objectName()));
 
-    _number = NULL;	// initially there is none
-
     _label = new QLabel(this, "_label");
     _label->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     _label->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
@@ -156,7 +154,7 @@ void VirtualCluster::clear()
 
 void VirtualCluster::setDataWidgetMap(XDataWidgetMapper* m)
 {
-  m->addMapping(_number, _fieldName, QByteArray("number"));
+  m->addMapping(_number, _fieldName, "number", "defaultNumber");
   _number->_mapper=m;
 }
 

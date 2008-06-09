@@ -67,17 +67,21 @@ class OPENMFGWIDGETS_EXPORT XTextEdit : public QTextEdit
 {
   Q_OBJECT
   Q_PROPERTY(QString fieldName   READ fieldName   WRITE setFieldName);
+  Q_PROPERTY(QString defaultText  READ defaultText WRITE setDefaultText);
 
   public:
     XTextEdit(QWidget * = 0);
     
+    virtual QString defaultText() const { return _default; };
     virtual QString fieldName()   const { return _fieldName; };
 
   public slots:
     virtual void setDataWidgetMap(XDataWidgetMapper* m);
+    virtual void setDefaultText(QString p)  { _default = p; };
     virtual void setFieldName(QString p) { _fieldName = p; };
 
   private:
+    QString _default;
     QString _fieldName;};
 
 #endif

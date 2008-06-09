@@ -83,8 +83,8 @@ class OPENMFGWIDGETS_EXPORT XLineEdit : public QLineEdit
     Q_INVOKABLE int  id();
 
     double toDouble(bool * = 0);
-    virtual QString fieldName()   const { return _fieldName; };
     virtual QString defaultText() const { return _default; };
+    virtual QString fieldName()   const { return _fieldName; };
     virtual void   setText(const QVariant &);
     virtual void   setDouble(const double, const int = -1);
 
@@ -111,8 +111,8 @@ class OPENMFGWIDGETS_EXPORT XLineEdit : public QLineEdit
     void focusInEvent(QFocusEvent *);
     
   private:
-    QString _fieldName;
     QString _default;
+    QString _fieldName;
 };
 
 #endif

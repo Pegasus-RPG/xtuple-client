@@ -225,105 +225,87 @@ void ContactCluster::setId(const int pId)
 
 void ContactCluster::silentSetId(const int pId)
 {
-    if (pId == -1 || pId == 0)
+    if (!_mapper->model())
     {
-      _id = -1;
-      _valid = false;
-      clear();
-    }
-    else if (pId == _id)
-      return;
-    else
-    {
-	XSqlQuery idQ;
-	idQ.prepare(_query + " WHERE cntct_id = :id;");
-	idQ.bindValue(":id", pId);
-	idQ.exec();
-	if (idQ.first())
-	{
-            _ignoreSignals = true;
+      if (pId == -1 || pId == 0)
+      {
+        _id = -1;
+        _valid = false;
+        clear();
+      }
+      else if (pId == _id)
+        return;
+      else
+      {
+          XSqlQuery idQ;
+          idQ.prepare(_query + " WHERE cntct_id = :id;");
+          idQ.bindValue(":id", pId);
+          idQ.exec();
+          if (idQ.first())
+          {
+              _ignoreSignals = true;
 
-	    _id = pId;
-	    _valid = true;
-	    _number->setText(idQ.value("cntct_number").toString());
-	    _honorific->setEditText(idQ.value("cntct_honorific").toString());
-	    _first->setText(idQ.value("cntct_first_name").toString());
-	    _last->setText(idQ.value("cntct_last_name").toString());
-	    _initials->setText(idQ.value("cntct_initials").toString());
-	    _crmAcct->setId(idQ.value("cntct_crmacct_id").toInt());
-	    _title->setText(idQ.value("cntct_title").toString());
-	    _phone->setText(idQ.value("cntct_phone").toString());
-	    _phone2->setText(idQ.value("cntct_phone2").toString());
-	    _fax->setText(idQ.value("cntct_fax").toString());
-	    _email->setText(idQ.value("cntct_email").toString());
-	    _webaddr->setText(idQ.value("cntct_webaddr").toString());
-	    _address->setId(idQ.value("cntct_addr_id").toInt());
-	    _active->setChecked(idQ.value("cntct_active").toBool());
-            _notes = idQ.value("cntct_notes").toString();
-              
-            if (_mapper->model())
-            {
-              if (_mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_number))).toString() != _number->text())
-                _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_number)), _number->text());
-              if (_mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_honorific))).toString() != _honorific->currentText())
-                _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_honorific)), _honorific->currentText());
-              if (_mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_first))).toString() != _first->text())
-                _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_first)), _first->text());
-              if (_mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_last))).toString() != _last->text())
-                _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_last)), _last->text());
-              if (_mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_initials))).toString() != _initials->text())
-                _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_initials)), _initials->text());
-              if (_mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_title))).toString() != _title->text())
-                _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_title)), _title->text());
-              if (_mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_phone))).toString() != _phone->text())
-                _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_phone)), _phone->text());
-              if (_mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_phone2))).toString() != _phone2->text())
-                _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_phone2)), _phone2->text());
-              if (_mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_fax))).toString() != _fax->text())
-                _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_fax)), _fax->text());
-              if (_mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_email))).toString() != _email->text())
-                _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_email)), _email->text());
-              if (_mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_webaddr))).toString() != _webaddr->text())
-                _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_webaddr)), _webaddr->text());
-              if (_mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_active))).toBool() != _active->isChecked())
-                _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_active)), _active->isChecked());
-            }
-            
-            _ignoreSignals = false;
-	}
-	else if (idQ.lastError().type() != QSqlError::None)
-	    QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
-					  .arg(__FILE__)
-					  .arg(__LINE__),
-				  idQ.lastError().databaseText());
-      _valid = true;
+              _id = pId;
+              _valid = true;
+              _number->setText(idQ.value("cntct_number").toString());
+              _honorific->setEditText(idQ.value("cntct_honorific").toString());
+              _first->setText(idQ.value("cntct_first_name").toString());
+              _last->setText(idQ.value("cntct_last_name").toString());
+              _initials->setText(idQ.value("cntct_initials").toString());
+              _crmAcct->setId(idQ.value("cntct_crmacct_id").toInt());
+              _title->setText(idQ.value("cntct_title").toString());
+              _phone->setText(idQ.value("cntct_phone").toString());
+              _phone2->setText(idQ.value("cntct_phone2").toString());
+              _fax->setText(idQ.value("cntct_fax").toString());
+              _email->setText(idQ.value("cntct_email").toString());
+              _webaddr->setText(idQ.value("cntct_webaddr").toString());
+              _address->setId(idQ.value("cntct_addr_id").toInt());
+              _active->setChecked(idQ.value("cntct_active").toBool());
+              _notes = idQ.value("cntct_notes").toString();
+    
+              _ignoreSignals = false;
+          }
+          else if (idQ.lastError().type() != QSqlError::None)
+              QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
+                                            .arg(__FILE__)
+                                            .arg(__LINE__),
+                                    idQ.lastError().databaseText());
+        _valid = true;
+      }
     }
+    else
+      _id = pId;
 
     // _parsed = TRUE;
 }
 
 void ContactCluster::setNumber(QString p)
 {
-  if (p == _number->text())
+  if (!_mapper->model())
   {
-    return;
+    if (p == _number->text())
+    {
+      return;
+    }
+    else
+    { 
+      XSqlQuery q;
+      q.prepare("SELECT cntct_id "
+                  "FROM cntct "
+                  "WHERE (cntct_number=:number);");
+      q.bindValue(":number", p);
+      q.exec();
+      if (q.first())
+      {
+        if (q.value("cntct_id").toInt() != _id)
+          silentSetId(q.value("cntct_id").toInt());
+        else
+          _number->setText(p);
+      }
+    }   
   }
   else
-  { 
-    XSqlQuery q;
-    q.prepare("SELECT cntct_id "
-		"FROM cntct "
-		"WHERE (cntct_number=:number);");
-    q.bindValue(":number", p);
-    q.exec();
-    if (q.first())
-    {
-      if (q.value("cntct_id").toInt() != _id)
-        silentSetId(q.value("cntct_id").toInt());
-      else
-        _number->setText(p);
-    }
-  }   
+    _number->setText(p);
 }
 
 void ContactCluster::clear()

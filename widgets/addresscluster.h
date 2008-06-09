@@ -124,7 +124,7 @@ class OPENMFGWIDGETS_EXPORT AddressSearch : public VirtualSearch
 class OPENMFGWIDGETS_EXPORT AddressCluster : public VirtualCluster
 {
     Q_OBJECT
-    Q_PROPERTY(bool     activeVisible 	      	READ activeVisible      WRITE setActiveVisible)
+    Q_PROPERTY(bool     activeVisible 	      READ activeVisible            WRITE setActiveVisible)
     Q_PROPERTY(QString  fieldNameAddressChange READ fieldNameAddrChange     WRITE setFieldNameAddrChange)
     Q_PROPERTY(QString  fieldNameNumber        READ fieldNameNumber         WRITE setFieldNameNumber)
     Q_PROPERTY(QString  fieldNameActive        READ fieldNameActive         WRITE setFieldNameActive)
@@ -219,18 +219,18 @@ class OPENMFGWIDGETS_EXPORT AddressCluster : public VirtualCluster
     protected:
 	QString		_query;	
 	QString		_extraClause;
-        QLineEdit*      _addrChange;
-	QLineEdit*      _number;
+        XLineEdit*      _addrChange;
+	XLineEdit*      _number;
 	QLabel*		_addrLit;
-	QLineEdit*	_addr1;
-	QLineEdit*	_addr2;
-	QLineEdit*	_addr3;
+	XLineEdit*	_addr1;
+	XLineEdit*	_addr2;
+	XLineEdit*	_addr3;
 	QLabel*		_cityLit;
-	QLineEdit*	_city;
+	XLineEdit*	_city;
 	QLabel*		_stateLit;
 	XComboBox*	_state;
 	QLabel*		_postalcodeLit;
-	QLineEdit*	_postalcode;
+	XLineEdit*	_postalcode;
 	QLabel*		_countryLit;
 	XComboBox*	_country;
 	QCheckBox*	_active;

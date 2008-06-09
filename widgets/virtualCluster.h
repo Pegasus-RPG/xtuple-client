@@ -186,7 +186,7 @@ class OPENMFGWIDGETS_EXPORT VirtualInfo : public QDialog
 class OPENMFGWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
 {
     Q_OBJECT
-    Q_PROPERTY(QString     number          READ text          WRITE setNumber);
+    Q_PROPERTY(QString  number READ text  WRITE setNumber DESIGNABLE false);
     
     friend class VirtualCluster;
     friend class VirtualInfo;
@@ -271,12 +271,13 @@ class OPENMFGWIDGETS_EXPORT VirtualCluster : public QWidget
 {
     Q_OBJECT
 
-    Q_PROPERTY(QString label       READ label       WRITE setLabel);
-    Q_PROPERTY(bool    infoVisible READ infoVisible WRITE setInfoVisible);
-    Q_PROPERTY(bool    listVisible READ listVisible WRITE setListVisible);
-    Q_PROPERTY(bool    nameVisible READ nameVisible WRITE setNameVisible);
-    Q_PROPERTY(bool    readOnly    READ readOnly    WRITE setReadOnly);
-    Q_PROPERTY(QString fieldName   READ fieldName   WRITE setFieldName);
+    Q_PROPERTY(QString label          READ label          WRITE setLabel);
+    Q_PROPERTY(bool    infoVisible    READ infoVisible    WRITE setInfoVisible);
+    Q_PROPERTY(bool    listVisible    READ listVisible    WRITE setListVisible);
+    Q_PROPERTY(bool    nameVisible    READ nameVisible    WRITE setNameVisible);
+    Q_PROPERTY(bool    readOnly       READ readOnly       WRITE setReadOnly);
+    Q_PROPERTY(QString defaultNumber  READ defaultNumber  WRITE setDefaultNumber);
+    Q_PROPERTY(QString fieldName      READ fieldName      WRITE setFieldName);
 
     friend class VirtualClusterLineEdit;
 
@@ -284,33 +285,35 @@ class OPENMFGWIDGETS_EXPORT VirtualCluster : public QWidget
         VirtualCluster(QWidget*, const char* = 0);
         VirtualCluster(QWidget*, VirtualClusterLineEdit* = 0, const char* = 0);
 
-        inline virtual int     id()          const { return _number->id(); };
-        inline virtual bool    infoVisible() const { return _info->isVisible(); };
-        inline virtual bool    listVisible() const { return _list->isVisible(); };
-        inline virtual QString label()       const { return _label->text(); };
-        inline virtual bool    nameVisible() const { return _name->isVisible(); };
-               virtual QString number()      const { return _number->text(); };
-        inline virtual QString description() const { return _description->text(); };
-        inline virtual bool    isValid()     const { return _number->isValid(); };
-        inline virtual QString name()        const { return _name->text(); };
-        inline virtual bool    isStrict()    const { return _number->isStrict(); };
-        inline virtual bool    readOnly()    const { return _readOnly; };
-        inline virtual QString fieldName()   const { return _fieldName; };
+        inline virtual int     id()             const { return _number->id(); };
+        inline virtual bool    infoVisible()    const { return _info->isVisible(); };
+        inline virtual bool    listVisible()    const { return _list->isVisible(); };
+        inline virtual QString label()          const { return _label->text(); };
+        inline virtual bool    nameVisible()    const { return _name->isVisible(); };
+               virtual QString number()         const { return _number->text(); };
+        inline virtual QString description()    const { return _description->text(); };
+        inline virtual bool    isValid()        const { return _number->isValid(); };
+        inline virtual QString name()           const { return _name->text(); };
+        inline virtual bool    isStrict()       const { return _number->isStrict(); };
+        inline virtual bool    readOnly()       const { return _readOnly; };
+        inline virtual QString defaultNumber()  const { return _default; };
+        inline virtual QString fieldName()      const { return _fieldName; };
 
     public slots:
         // most of the heavy lifting is done by VirtualClusterLineEdit _number
-        inline virtual void clearExtraClause() { _number->clearExtraClause(); };
-        inline virtual void setDescription(const QString& p) { _description->setText(p); };
-        inline virtual void setExtraClause(const QString& p) { _number->setExtraClause(p); };
-        inline virtual void setFieldName(QString p) { _fieldName = p; };
-        inline virtual void setId(const int p)           { _number->setId(p); };
-        inline virtual void setInfoVisible(const bool p) { _info->setHidden(!p); };
-        inline virtual void setListVisible(const bool p) { _list->setHidden(!p); };
-        inline virtual void setLabel(const QString& p)  { _label->setText(p); };
-        inline virtual void setName(const QString& p)   { _name->setText(p); };
-        inline virtual void setNameVisible(const bool p) { _name->setHidden(!p); };
-        inline virtual void setNumber(const int p)      { _number->setNumber(QString::number(p)); };
-        inline virtual void setNumber(const QString& p) { _number->setNumber(p); };
+        inline virtual void clearExtraClause()                { _number->clearExtraClause(); };
+        inline virtual void setDescription(const QString& p)  { _description->setText(p); };
+        inline virtual void setExtraClause(const QString& p)  { _number->setExtraClause(p); };
+        virtual void setDefaultNumber(QString p)              { _default = p; };
+        inline virtual void setFieldName(QString p)           { _fieldName = p; };
+        inline virtual void setId(const int p)                { _number->setId(p); };
+        inline virtual void setInfoVisible(const bool p)      { _info->setHidden(!p); };
+        inline virtual void setListVisible(const bool p)      { _list->setHidden(!p); };
+        inline virtual void setLabel(const QString& p)        { _label->setText(p); };
+        inline virtual void setName(const QString& p)         { _name->setText(p); };
+        inline virtual void setNameVisible(const bool p)      { _name->setHidden(!p); };
+        inline virtual void setNumber(const int p)            { _number->setNumber(QString::number(p)); };
+        inline virtual void setNumber(const QString& p)       { _number->setNumber(p); };
 
         virtual void clear();
         virtual void setDataWidgetMap(XDataWidgetMapper* m);
@@ -326,15 +329,16 @@ class OPENMFGWIDGETS_EXPORT VirtualCluster : public QWidget
     protected:
         virtual void addNumberWidget(VirtualClusterLineEdit* pNumberWidget);
 
-        QGridLayout*    _grid;
-        QLabel*         _label;
+        QGridLayout*            _grid;
+        QLabel*                 _label;
         VirtualClusterLineEdit* _number;
-        QPushButton*    _list;
-        QPushButton*    _info;
-        QLabel*         _description;
-        QLabel*         _name;
-        bool            _readOnly;
-	QString         _fieldName;
+        QPushButton*            _list;
+        QPushButton*            _info;
+        QLabel*                 _description;
+        QLabel*                 _name;
+        bool                    _readOnly;
+        QString                 _default;
+	QString                 _fieldName;
 
     private:
         virtual void init();

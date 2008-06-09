@@ -124,7 +124,6 @@ class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
 {
     Q_OBJECT
     
-    //Q_PROPERTY(bool     numberVisible         READ numberVisible       		WRITE setNumberVisible)
     Q_PROPERTY(bool     accountVisible        READ accountVisible       	WRITE setAccountVisible)
     Q_PROPERTY(bool     activeVisible         READ activeVisible        	WRITE setActiveVisible)
     Q_PROPERTY(bool     addressVisible        READ addressVisible       	WRITE setAddressVisible)
@@ -156,7 +155,7 @@ class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
     Q_PROPERTY(QString  fieldNameState        READ fieldNameState          	WRITE setFieldNameState)
     Q_PROPERTY(QString  fieldNamePostalCode   READ fieldNamePostalCode     	WRITE setFieldNamePostalCode)
     Q_PROPERTY(QString  fieldNameCountry      READ fieldNameCountry        	WRITE setFieldNameCountry)
-    Q_PROPERTY(QString	number		      READ number		        WRITE setNumber)
+    Q_PROPERTY(QString	number		      READ number		        WRITE setNumber               DESIGNABLE false)
 
     friend class ContactInfo;
     friend class ContactList;

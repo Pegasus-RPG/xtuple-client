@@ -489,7 +489,7 @@ void CurrCluster::setCurrencyDisabled(bool newValue)
 void CurrCluster::setDataWidgetMap(XDataWidgetMapper* m)
 {
   m->addMapping(_currency, _fieldNameCurr);
-  m->addMapping(this, _fieldNameValue, QByteArray("localValue"));
+  m->addMapping(this, _fieldNameValue, "localValue", "defaultValue");
   _mapper=m;
 }
 

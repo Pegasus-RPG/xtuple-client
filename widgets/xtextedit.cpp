@@ -64,7 +64,7 @@ XTextEdit::XTextEdit(QWidget *pParent) :
 
 void XTextEdit::setDataWidgetMap(XDataWidgetMapper* m)
 {
-  m->addMapping(this, _fieldName);
+  m->addMapping(this, _fieldName, "text", "defaultText");
 }
 
 

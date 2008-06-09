@@ -134,11 +134,6 @@ void DCalendarPopup::dateSelected(const QDate &pDate)
 
 ///////////////////////////////////////////////////////////////////////////////
 
-void XDateEdit::setDataWidgetMap(XDataWidgetMapper* m)
-{
-  m->addMapping(this, _fieldName, QByteArray("date"));
-}
-
 XDateEdit::XDateEdit(QWidget *parent, const char *name) :
   XLineEdit(parent, name)
 {
@@ -152,6 +147,7 @@ XDateEdit::XDateEdit(QWidget *parent, const char *name) :
     setObjectName(metaObject()->className());
 
   _allowNull   = FALSE;
+  _default     = Empty;
   _parsed      = FALSE;
   _nullString  = QString::null;
   _valid       = FALSE;
@@ -262,6 +258,11 @@ void XDateEdit::parseDate()
   _parsed = true;
 }
 
+void XDateEdit::setDataWidgetMap(XDataWidgetMapper* m)
+{
+  m->addMapping(this, _fieldName, "date", "currentDefault");
+}
+
 void XDateEdit::setNull()
 {
   if (DEBUG)
@@ -330,6 +331,21 @@ void XDateEdit::clear()
     qDebug("%s::clear()",
           qPrintable(parent() ? parent()->objectName() : objectName()));
   setDate(_nullDate, true);
+}
+
+QDate XDateEdit::currentDefault()
+{
+  XSqlQuery query;
+  
+  if (_default==Empty)
+    return _nullDate;
+  else if (_default==Current)
+  {
+    query.exec("SELECT current_date AS result;");
+    if (query.first())
+      return query.value("result").toDate();
+  }
+  return date();
 }
 
 QDate XDateEdit::date()

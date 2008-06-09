@@ -84,7 +84,6 @@ XLineEdit::XLineEdit(QWidget *parent, const char *name) :
   _valid = FALSE;
 
   _id = -1;
-  setText(defaultText());
 }
 
 bool XLineEdit::isValid()

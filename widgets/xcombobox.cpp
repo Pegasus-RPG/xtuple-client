@@ -63,6 +63,7 @@
 #include <QComboBox>
 #include <QCursor>
 #include <QLabel>
+#include <QMessageBox>
 #include <QMouseEvent>
 
 #include <xsqlquery.h>
@@ -73,11 +74,12 @@
 XComboBox::XComboBox(QWidget *pParent, const char *pName) :
   QComboBox(pParent, pName)
 {
-  _type = Adhoc;
-  _lastId = -1;
+  _default  = First;
+  _type     = Adhoc;
+  _lastId   = -1;
   setAllowNull(false);
-  _nullStr = "";
-  _label = 0;
+  _nullStr  = "";
+  _label    = 0;
 
   connect(this, SIGNAL(activated(int)), this, SLOT(sHandleNewIndex(int)));
 
@@ -110,9 +112,60 @@ enum XComboBox::XComboBoxTypes XComboBox::type()
   return _type;
 }
 
+QString XComboBox::currentDefault()
+{
+  if (_default == First)
+    return _codes.first();
+  else
+    return code();
+}
+
 void XComboBox::setDataWidgetMap(XDataWidgetMapper* m)
 {
-  m->addMapping(this, _fieldName, QByteArray("code"));
+  m->addMapping(this, _fieldName, "code", "currentDefault");
+  if (_type == Adhoc) //See if there is a matching table or view we can use to populate this
+  {
+    QString schemaname = static_cast<QSqlTableModel*>(m->model())->tableName();
+    QString tablename = _fieldName.remove("_").toLower();
+    int dot = schemaname.indexOf(QLatin1Char('.'));
+    if (dot != -1)
+      schemaname = schemaname.left(dot);
+    else
+      schemaname = "";
+    
+    QString sql("SELECT count(relname) "
+                "FROM pg_class c "
+                "LEFT JOIN pg_namespace n ON n.oid = c.relnamespace "
+                "WHERE ((c.relkind IN ('v','r')) "
+                "AND (c.relname=:tablename)");
+    if (!schemaname.isNull())
+      sql += "AND (n.nspname=:schemaname)";
+    sql += ");";
+      
+    XSqlQuery query;
+    query.prepare(sql);
+    query.bindValue(":schemaname", schemaname);
+    query.bindValue(":tablename", tablename);
+    query.exec();
+    if (query.first()) //Found a table or view, let's use it
+    {
+      if (!schemaname.isEmpty())
+        tablename=tablename.prepend(schemaname.append("."));
+      sql = QString("SELECT * FROM %1;").arg(tablename);
+      query.prepare(sql);
+      query.exec();
+      if (query.first())
+      {
+        int counter=0;
+        do
+        {
+          append(counter, query.value(0).toString() + "-" + query.value(1).toString(), query.value(0).toString());
+          counter ++;
+        }
+        while(query.next());
+      }
+    }
+  }
 }
 
 void XComboBox::setType(XComboBoxTypes pType)
@@ -998,4 +1051,5 @@ QSize XComboBox::sizeHint() const
 #endif
   return s;
 }
+
 
