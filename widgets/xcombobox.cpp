@@ -114,10 +114,15 @@ enum XComboBox::XComboBoxTypes XComboBox::type()
 
 QString XComboBox::currentDefault()
 {
-  if (_default == First)
-    return _codes.first();
+  if (_codes.count())
+  {
+    if (_default == First)
+      return _codes.first();
+    else
+      return code();
+  }
   else
-    return code();
+    return QString("");
 }
 
 void XComboBox::setDataWidgetMap(XDataWidgetMapper* m)
