@@ -57,217 +57,138 @@
 
 #include "profitCenter.h"
 
-#include <qvariant.h>
+#include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
 
-/*
- *  Constructs a profitCenter as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 profitCenter::profitCenter(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-profitCenter::~profitCenter()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void profitCenter::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-
-void profitCenter::init()
-
-{
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
 
   _number->setMaxLength(_metrics->value("GLProfitSize").toInt());
-
+  _cachedNumber = "";
 }
 
-
-
-enum SetResponse profitCenter::set( ParameterList &pParams )
-
+profitCenter::~profitCenter()
 {
+  // no need to delete child widgets, Qt does it all for us
+}
 
+void profitCenter::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse profitCenter::set(const ParameterList &pParams )
+{
   QVariant param;
-
   bool     valid;
 
-  
-
   param = pParams.value("prftcntr_id", &valid);
-
   if (valid)
-
   {
-
     _prftcntrid = param.toInt();
-
     populate();
-
   }
-
   
-
   param = pParams.value("mode", &valid);
-
   if (valid)
-
   {
-
     if (param.toString() == "new")
-
       _mode = cNew;
 
     else if (param.toString() == "edit")
-
     {
-
       _mode = cEdit;
 
-      
-
       _save->setFocus();
-
     }
 
     else if (param.toString() == "view")
-
     {
-
       _mode = cView;
 
-      
-
       _number->setEnabled(FALSE);
-
       _descrip->setEnabled(FALSE);
-
       _close->setText(tr("&Close"));
-
-      
-
       _close->setFocus();
-
     }
-
   }
-
   return NoError;
-
 }
-
-
 
 void profitCenter::sSave()
-
 {
-
   if (_mode == cNew)
-
   {
-
     q.exec("SELECT NEXTVAL('prftcntr_prftcntr_id_seq') AS prftcntr_id;");
-
     if (q.first())
-
       _prftcntrid = q.value("prftcntr_id").toInt();
-
-    else
-
+    else if (q.lastError().type() != QSqlError::None)
     {
-
-      systemError(this, tr("A System Error occurred at %1::%2.")
-
-                        .arg(__FILE__)
-
-                        .arg(__LINE__) );
-
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
     }
 
-    
-
     q.prepare( "INSERT INTO prftcntr "
-
                "( prftcntr_id, prftcntr_number, prftcntr_descrip ) "
-
                "VALUES "
-
                "( :prftcntr_id, :prftcntr_number, :prftcntr_descrip );" );
-
   }
-
   else if (_mode == cEdit)
+  {
+    if (_number->text() != _cachedNumber &&
+        QMessageBox::question(this, tr("Change All Accounts?"),
+                              tr("<p>The old Profit Center Number might be "
+                                 "used by existing Accounts. Would you like to "
+                                 "change all accounts that use it to Profit "
+                                 "Center Number %1?<p>If you answer 'No' then "
+                                 "change the Number back to %2 and Save again.")
+                                .arg(_number->text())
+                                .arg(_cachedNumber),
+                              QMessageBox::Yes,
+                              QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+      return;
 
     q.prepare( "UPDATE prftcntr "
-
-               "SET prftcntr_number=:prftcntr_number, prftcntr_descrip=:prftcntr_descrip "
-
+               "SET prftcntr_number=:prftcntr_number,"
+               "    prftcntr_descrip=:prftcntr_descrip "
                "WHERE (prftcntr_id=:prftcntr_id);" );
-
-  
-
-  q.bindValue(":prftcntr_id", _prftcntrid);
-
-  q.bindValue(":prftcntr_number", _number->text());
-
-  q.bindValue(":prftcntr_descrip", _descrip->text());
-
-  q.exec();
-
-  
-
-  done(_prftcntrid);
-
-}
-
-
-
-void profitCenter::populate()
-
-{
-
-  q.prepare( "SELECT prftcntr_number, prftcntr_descrip "
-
-             "FROM prftcntr "
-
-             "WHERE (prftcntr_id=:prftcntr_id);" );
-
-  q.bindValue(":prftcntr_id", _prftcntrid);
-
-  q.exec();
-
-  if (q.first())
-
-  {
-
-    _number->setText(q.value("prftcntr_number").toString());
-
-    _descrip->setText(q.value("prftcntr_descrip").toString());
-
   }
 
+  q.bindValue(":prftcntr_id", _prftcntrid);
+  q.bindValue(":prftcntr_number", _number->text());
+  q.bindValue(":prftcntr_descrip", _descrip->text());
+  q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
+  done(_prftcntrid);
 }
 
+void profitCenter::populate()
+{
+  q.prepare( "SELECT * "
+             "FROM prftcntr "
+             "WHERE (prftcntr_id=:prftcntr_id);" );
+  q.bindValue(":prftcntr_id", _prftcntrid);
+  q.exec();
+  if (q.first())
+  {
+    _number->setText(q.value("prftcntr_number").toString());
+    _descrip->setText(q.value("prftcntr_descrip").toString());
+
+    _cachedNumber = q.value("prftcntr_number").toString();
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+}

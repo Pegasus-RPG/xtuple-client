@@ -404,6 +404,7 @@ void initErrorLookupHash()
 			       "it. You must remove these assignments before "
 			       "you may delete the selected Characteristic."),
 			       					 0, "" },
+
   { "deleteCompany", -1, TR("The selected Company cannot be deleted as it "
                             "is in use by existing Account. You must reclass "
                             "these Accounts before you may delete the selected "
@@ -507,6 +508,12 @@ void initErrorLookupHash()
 			       "there are records for this Item which use this "
                                "UOM."), 	                        0, "" },
 
+  { "deleteProfitCenter", -1,
+                        TR("The selected Profit Center cannot be deleted as it "
+                           "is in use by existing Account. You must reclass "
+                           "these Accounts before you may delete the selected "
+                           "Profit Center." ),                          0, "" },
+
   { "deleteProspect",	-1, TR("The selected Prospect cannot be deleted as "
 			       "there are still Quotes for it. You must delete "
 			       "all of this Prospect's Quotes before you may "
@@ -575,6 +582,12 @@ void initErrorLookupHash()
 			"Card has been charged for it."),		0, "" },
   { "deleteSO",	 -5, TR("This Sales Order cannot be deleted because there is "
 			"Credit Card transaction history for it."),	0, "" },
+
+  { "deleteSubaccount", -1,
+                        TR("The selected Subaccount cannot be deleted as it "
+                           "is in use by existing Account. You must reclass "
+                           "these Accounts before you may delete the selected "
+                           "Subaccount."),                              0, "" },
 
   { "deleteTO",		-1, TR("This Transfer Order cannot be deleted as some of "
 			       "its line items have already been shipped."),

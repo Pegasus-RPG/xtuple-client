@@ -57,60 +57,27 @@
 
 #include "subaccounts.h"
 
-#include <QVariant>
+#include <QMenu>
 #include <QMessageBox>
-#include <QStatusBar>
+#include <QSqlError>
+#include <QVariant>
+
 #include <parameter.h>
-#include <QWorkspace>
+
+#include "storedProcErrorLookup.h"
 #include "subaccount.h"
 
-/*
- *  Constructs a subaccounts as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 subaccounts::subaccounts(QWidget* parent, const char* name, Qt::WFlags fl)
     : XMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_edit,   SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_new,    SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_subaccnt, SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *, int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_view,   SIGNAL(clicked()), this, SLOT(sView()));
 
-    // signals and slots connections
-    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-    connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-    connect(_subaccnt, SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *, int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
-    connect(_subaccnt, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-subaccounts::~subaccounts()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void subaccounts::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void subaccounts::init()
-{
-  statusBar()->hide();
-  
   if (_privileges->check("MaintainChartOfAccounts"))
   {
     connect(_subaccnt, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
@@ -123,10 +90,20 @@ void subaccounts::init()
     connect(_subaccnt, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
   }
 
-  _subaccnt->addColumn(tr("Number"),      _itemColumn,  Qt::AlignCenter );
-  _subaccnt->addColumn(tr("Description"), -1,           Qt::AlignLeft   );
+  _subaccnt->addColumn(tr("Number"),_itemColumn, Qt::AlignCenter,true, "subaccnt_number");
+  _subaccnt->addColumn(tr("Description"),    -1, Qt::AlignLeft,  true, "subaccnt_descrip");
 
   sFillList();
+}
+
+subaccounts::~subaccounts()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void subaccounts::languageChange()
+{
+  retranslateUi(this);
 }
 
 void subaccounts::sNew()
@@ -165,23 +142,24 @@ void subaccounts::sView()
 
 void subaccounts::sDelete()
 {
-  q.prepare( "SELECT accnt_id "
-             "FROM accnt "
-             "WHERE (accnt_sub=:subaccnt);" );
-  q.bindValue(":subaccnt", _subaccnt->currentItem()->text(0));
+  q.prepare( "SELECT deleteSubaccount(:id) AS result;");
+  q.bindValue(":id", _subaccnt->id());
   q.exec();
   if (q.first())
   {
-    QMessageBox::warning( this, tr("Cannot Delete Subaccount"),
-                          tr( "The selected Subaccount cannot be deleted as it is in use by existing Account.\n"
-                              "You must reclass these Accounts before you may delete the selected Subaccount." ) );
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("deleteSubaccount", result),
+                  __FILE__, __LINE__);
+      return;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-
-  q.prepare( "DELETE FROM subaccnt "
-             "WHERE (subaccnt_id=:subaccnt_id);" );
-  q.bindValue(":subaccnt_id", _subaccnt->id());
-  q.exec();
 
   sFillList();
 }
@@ -203,11 +181,14 @@ void subaccounts::sPopulateMenu(QMenu *pMenu)
 
 void subaccounts::sFillList()
 {
-  q.prepare( "SELECT subaccnt_id,"
-             "       subaccnt_number, subaccnt_descrip "
+  q.prepare( "SELECT * "
              "FROM subaccnt "
              "ORDER BY subaccnt_number;" );
   q.exec();
   _subaccnt->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
-

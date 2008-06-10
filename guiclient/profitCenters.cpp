@@ -57,60 +57,26 @@
 
 #include "profitCenters.h"
 
-#include <QVariant>
+#include <QMenu>
 #include <QMessageBox>
-#include <QStatusBar>
-#include <parameter.h>
-#include <QWorkspace>
-#include "profitCenter.h"
+#include <QSqlError>
 
-/*
- *  Constructs a profitCenters as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
+#include <parameter.h>
+
+#include "profitCenter.h"
+#include "storedProcErrorLookup.h"
+
 profitCenters::profitCenters(QWidget* parent, const char* name, Qt::WFlags fl)
     : XMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_edit,   SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_new,    SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_prftcntr, SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *, int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_view,   SIGNAL(clicked()), this, SLOT(sView()));
 
-    // signals and slots connections
-    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-    connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-    connect(_prftcntr, SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *, int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
-    connect(_prftcntr, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-profitCenters::~profitCenters()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void profitCenters::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void profitCenters::init()
-{
-  statusBar()->hide();
-  
   if (_privileges->check("MaintainChartOfAccounts"))
   {
     connect(_prftcntr, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
@@ -123,10 +89,20 @@ void profitCenters::init()
     connect(_prftcntr, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
   }
 
-  _prftcntr->addColumn(tr("Number"),      _itemColumn,  Qt::AlignCenter );
-  _prftcntr->addColumn(tr("Description"), -1,           Qt::AlignLeft   );
+  _prftcntr->addColumn(tr("Number"),_itemColumn, Qt::AlignCenter,true, "prftcntr_number");
+  _prftcntr->addColumn(tr("Description"),    -1, Qt::AlignLeft,  true, "prftcntr_descrip");
 
   sFillList();
+}
+
+profitCenters::~profitCenters()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void profitCenters::languageChange()
+{
+  retranslateUi(this);
 }
 
 void profitCenters::sNew()
@@ -165,23 +141,24 @@ void profitCenters::sView()
 
 void profitCenters::sDelete()
 {
-  q.prepare( "SELECT accnt_id "
-             "FROM accnt "
-             "WHERE (accnt_profit=:profit);" );
-  q.bindValue(":profit", _prftcntr->currentItem()->text(0));
+  q.prepare( "SELECT deleteProfitCenter(:id) AS result;" );
+  q.bindValue(":id", _prftcntr->id());
   q.exec();
   if (q.first())
   {
-    QMessageBox::warning( this, tr("Cannot Delete Profit Center"),
-                          tr( "The selected Profit Center cannot be deleted as it is in use by existing Account.\n"
-                              "You must reclass these Accounts before you may delete the selected Profit Center." ) );
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("deleteProfitCenter", result),
+                  __FILE__, __LINE__);
+      return;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-
-  q.prepare( "DELETE FROM prftcntr "
-             "WHERE (prftcntr_id=:prftcntr_id);" );
-  q.bindValue(":prftcntr_id", _prftcntr->id());
-  q.exec();
 
   sFillList();
 }
@@ -209,5 +186,9 @@ void profitCenters::sFillList()
                  "ORDER BY prftcntr_number;" );
   q.exec();
   _prftcntr->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
-

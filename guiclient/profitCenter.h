@@ -71,10 +71,8 @@ public:
     profitCenter(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~profitCenter();
 
-    virtual void init();
-
 public slots:
-    virtual SetResponse set( ParameterList & pParams );
+    virtual SetResponse set(const ParameterList & pParams );
     virtual void sSave();
     virtual void populate();
 
@@ -84,6 +82,7 @@ protected slots:
 private:
     int _mode;
     int _prftcntrid;
+    QString _cachedNumber;
 
 };
 

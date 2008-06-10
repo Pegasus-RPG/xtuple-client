@@ -83,6 +83,7 @@ protected slots:
 private:
     int _mode;
     int _companyid;
+    QString _cachedNumber;
 
 };
 

@@ -57,6 +57,7 @@
 
 #include "company.h"
 
+#include <QMessageBox>
 #include <QSqlError>
 #include <QVariant>
 
@@ -68,6 +69,7 @@ company::company(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
 
   _number->setMaxLength(_metrics->value("GLCompanySize").toInt());
+  _cachedNumber = "";
 }
 
 company::~company()
@@ -136,9 +138,25 @@ void company::sSave()
                "( :company_id, :company_number, :company_descrip); " );
   }
   else if (_mode == cEdit)
+  {
+    if (_number->text() != _cachedNumber &&
+        QMessageBox::question(this, tr("Change All Accounts?"),
+                              tr("<p>The old Company Number %1 might be used "
+                                 "by existing Accounts. Would you like to "
+                                 "change all accounts that use it to Company "
+                                 "Number %2?<p>If you answer 'No' then change "
+                                 "the Number back to %3 and Save again.")
+                                .arg(_cachedNumber)
+                                .arg(_number->text())
+                                .arg(_cachedNumber),
+                              QMessageBox::Yes,
+                              QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+      return;
+
     q.prepare( "UPDATE company "
                "SET company_number=:company_number, company_descrip=:company_descrip "
                "WHERE (company_id=:company_id);" );
+  }
   
   q.bindValue(":company_id", _companyid);
   q.bindValue(":company_number", _number->text());
@@ -164,6 +182,8 @@ void company::populate()
   {
     _number->setText(q.value("company_number").toString());
     _descrip->setText(q.value("company_descrip").toString());
+
+    _cachedNumber = q.value("company_number").toString();
   }
   else if (q.lastError().type() != QSqlError::None)
   {

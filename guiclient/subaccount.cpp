@@ -57,51 +57,32 @@
 
 #include "subaccount.h"
 
-#include <qvariant.h>
+#include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
 
-/*
- *  Constructs a subaccount as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 subaccount::subaccount(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
 
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    init();
+  _number->setMaxLength(_metrics->value("GLSubaccountSize").toInt());
+  _cachedNumber = "";
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 subaccount::~subaccount()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void subaccount::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
-
-void subaccount::init()
-{
-  _number->setMaxLength(_metrics->value("GLSubaccountSize").toInt());
-}
-
-enum SetResponse subaccount::set( ParameterList &pParams )
+enum SetResponse subaccount::set(const ParameterList &pParams )
 {
   QVariant param;
   bool     valid;
@@ -145,11 +126,9 @@ void subaccount::sSave()
     q.exec("SELECT NEXTVAL('subaccnt_subaccnt_id_seq') AS subaccnt_id;");
     if (q.first())
       _subaccntid = q.value("subaccnt_id").toInt();
-    else
+    else if (q.lastError().type() != QSqlError::None)
     {
-      systemError(this, tr("A System Error occurred at %1::%2.")
-                        .arg(__FILE__)
-                        .arg(__LINE__) );
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     
@@ -159,21 +138,43 @@ void subaccount::sSave()
                "( :subaccnt_id, :subaccnt_number, :subaccnt_descrip );" );
   }
   else if (_mode == cEdit)
+  {
+    if (_number->text() != _cachedNumber &&
+        QMessageBox::question(this, tr("Change All Accounts?"),
+                              tr("<p>The old Subaccount Number %1 might be "
+                                 "used by existing Accounts. Would you like to "
+                                 "change all accounts that use it to Subaccount"
+                                 " Number %2?<p>If you answer 'No' then change "
+                                 "the Number back to %3 and Save again.")
+                                .arg(_cachedNumber)
+                                .arg(_number->text())
+                                .arg(_cachedNumber),
+                              QMessageBox::Yes,
+                              QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+      return;
+
     q.prepare( "UPDATE subaccnt "
-               "SET subaccnt_number=:subaccnt_number, subaccnt_descrip=:subaccnt_descrip "
+               "SET subaccnt_number=:subaccnt_number,"
+               "    subaccnt_descrip=:subaccnt_descrip "
                "WHERE (subaccnt_id=:subaccnt_id);" );
+  }
   
   q.bindValue(":subaccnt_id", _subaccntid);
   q.bindValue(":subaccnt_number", _number->text());
   q.bindValue(":subaccnt_descrip", _descrip->text());
   q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
   
   done(_subaccntid);
 }
 
 void subaccount::populate()
 {
-  q.prepare( "SELECT subaccnt_number, subaccnt_descrip "
+  q.prepare( "SELECT * "
              "FROM subaccnt "
              "WHERE (subaccnt_id=:subaccnt_id);" );
   q.bindValue(":subaccnt_id", _subaccntid);
@@ -182,5 +183,6 @@ void subaccount::populate()
   {
     _number->setText(q.value("subaccnt_number").toString());
     _descrip->setText(q.value("subaccnt_descrip").toString());
+    _cachedNumber = q.value("subaccnt_number").toString();
   }
 }
