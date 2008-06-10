@@ -57,60 +57,26 @@
 
 #include "companies.h"
 
-#include <QVariant>
+#include <QMenu>
 #include <QMessageBox>
-#include <QStatusBar>
-#include <parameter.h>
-#include <QWorkspace>
-#include "company.h"
+#include <QSqlError>
 
-/*
- *  Constructs a companies as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
+#include <parameter.h>
+
+#include "company.h"
+#include "storedProcErrorLookup.h"
+
 companies::companies(QWidget* parent, const char* name, Qt::WFlags fl)
     : XMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  connect(_company, SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *, int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_edit,   SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_new,    SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_view,   SIGNAL(clicked()), this, SLOT(sView()));
 
-    // signals and slots connections
-    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-    connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-    connect(_company, SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *, int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
-    connect(_company, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-companies::~companies()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void companies::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void companies::init()
-{
-  statusBar()->hide();
-  
   if (_privileges->check("MaintainChartOfAccounts"))
   {
     connect(_company, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
@@ -123,10 +89,20 @@ void companies::init()
     connect(_company, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
   }
 
-  _company->addColumn(tr("Number"),      _itemColumn,  Qt::AlignCenter );
-  _company->addColumn(tr("Description"), -1,           Qt::AlignLeft   );
+  _company->addColumn(tr("Number"), _itemColumn, Qt::AlignCenter,true, "company_number" );
+  _company->addColumn(tr("Description"),     -1, Qt::AlignLeft,  true, "company_descrip");
 
   sFillList();
+}
+
+companies::~companies()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void companies::languageChange()
+{
+  retranslateUi(this);
 }
 
 void companies::sNew()
@@ -165,23 +141,24 @@ void companies::sView()
 
 void companies::sDelete()
 {
-  q.prepare( "SELECT accnt_id "
-             "FROM accnt "
-             "WHERE (accnt_company=:company);" );
-  q.bindValue(":company", _company->currentItem()->text(0));
+  q.prepare("SELECT deleteCompany(:id) AS result;");
+  q.bindValue(":id", _company->id());
   q.exec();
   if (q.first())
   {
-    QMessageBox::warning( this, tr("Cannot Delete Company"),
-                          tr( "The selected Company cannot be deleted as it is in use by existing Account.\n"
-                              "You must reclass these Accounts before you may delete the selected Company." ) );
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("deleteCompany", result),
+                  __FILE__, __LINE__);
+      return;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-
-  q.prepare( "DELETE FROM company "
-             "WHERE (company_id=:company_id);" );
-  q.bindValue(":company_id", _company->id());
-  q.exec();
 
   sFillList();
 }
@@ -203,11 +180,14 @@ void companies::sPopulateMenu(QMenu *pMenu)
 
 void companies::sFillList()
 {
-  q.prepare( "SELECT company_id,"
-             "       company_number, company_descrip "
+  q.prepare( "SELECT * "
              "FROM company "
              "ORDER BY company_number;" );
   q.exec();
   _company->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
-

@@ -57,51 +57,30 @@
 
 #include "company.h"
 
-#include <qvariant.h>
+#include <QSqlError>
+#include <QVariant>
 
-/*
- *  Constructs a company as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 company::company(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
 
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-company::~company()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void company::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void company::init()
-{
   _number->setMaxLength(_metrics->value("GLCompanySize").toInt());
 }
 
-enum SetResponse company::set(ParameterList &pParams)
+company::~company()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void company::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse company::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -145,7 +124,11 @@ void company::sSave()
     q.exec("SELECT NEXTVAL('company_company_id_seq') AS company_id;");
     if (q.first())
       _companyid = q.value("company_id").toInt();
-//  ToDo
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
     
     q.prepare( "INSERT INTO company "
                "( company_id, company_number, company_descrip) "
@@ -161,13 +144,18 @@ void company::sSave()
   q.bindValue(":company_number", _number->text());
   q.bindValue(":company_descrip", _descrip->text());
   q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
   
   done(_companyid);
 }
 
 void company::populate()
 {
-  q.prepare( "SELECT company_number, company_descrip "
+  q.prepare( "SELECT * "
              "FROM company "
              "WHERE (company_id=:company_id);" );
   q.bindValue(":company_id", _companyid);
@@ -176,5 +164,10 @@ void company::populate()
   {
     _number->setText(q.value("company_number").toString());
     _descrip->setText(q.value("company_descrip").toString());
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
 }

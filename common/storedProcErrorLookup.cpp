@@ -404,6 +404,10 @@ void initErrorLookupHash()
 			       "it. You must remove these assignments before "
 			       "you may delete the selected Characteristic."),
 			       					 0, "" },
+  { "deleteCompany", -1, TR("The selected Company cannot be deleted as it "
+                            "is in use by existing Account. You must reclass "
+                            "these Accounts before you may delete the selected "
+                            "Company." ),                        0, "" },
 
   { "deleteContact",	-1, TR("The selected Contact cannot be deleted as "
 			       "s/he is the primary or secondary Contact "

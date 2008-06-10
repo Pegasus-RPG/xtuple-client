@@ -72,10 +72,8 @@ public:
     company(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~company();
 
-    virtual void init();
-
 public slots:
-    virtual SetResponse set( ParameterList & pParams );
+    virtual SetResponse set(const  ParameterList & pParams );
     virtual void sSave();
     virtual void populate();
 
