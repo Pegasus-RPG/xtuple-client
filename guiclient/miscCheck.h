@@ -80,7 +80,7 @@ public slots:
     virtual void sPopulateBankInfo( int pBankaccntid );
     virtual void sSave();
 	virtual void sCustomerSelected();
-	virtual void sCreditMemoSelected(bool p);
+	virtual void sCreditMemoSelected();
 
 protected slots:
     virtual void languageChange();

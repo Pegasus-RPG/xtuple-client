@@ -77,7 +77,6 @@ miscCheck::miscCheck(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_vend,      SIGNAL(newId(int)),    this, SLOT(sHandleButtons()));
   connect(_vendRB,    SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
   connect(_cust,      SIGNAL(valid(bool)),   this, SLOT(sCustomerSelected()));
-  connect(_cmCluster, SIGNAL(valid(bool)),   this, SLOT(sCreditMemoSelected(bool)));
 
   _captive = FALSE;
   _raheadid = -1;
@@ -116,6 +115,7 @@ enum SetResponse miscCheck::set(const ParameterList &pParams)
   {
     _checkid = param.toInt();
     populate();
+    connect(_cmCluster, SIGNAL(newId(int)),   this, SLOT(sCreditMemoSelected()));
   }
 
   if (pParams.inList("new"))
@@ -125,6 +125,8 @@ enum SetResponse miscCheck::set(const ParameterList &pParams)
     _save->setText(tr("C&reate"));
 
     _vend->setFocus();
+    
+    connect(_cmCluster, SIGNAL(newId(int)),   this, SLOT(sCreditMemoSelected()));
   }
   else if (pParams.inList("edit"))
   {
@@ -293,7 +295,7 @@ void miscCheck::sPopulateBankInfo(int pBankaccntid)
     _checkNum->clear();
 
   if (_cmCluster->isValid())
-    sCreditMemoSelected(true);
+    sCreditMemoSelected();
 }
 
 void miscCheck::populate()
@@ -302,8 +304,12 @@ void miscCheck::populate()
 	     "       checkhead_bankaccnt_id, checkhead_number,"
              "       checkhead_checkdate, checkhead_expcat_id,"
              "       checkhead_for, checkhead_notes,"
-             "       checkhead_amount, checkhead_curr_id, checkhead_cmhead_id "
+             "       checkhead_amount, checkhead_curr_id, aropen_id AS checkhead_cmhead_id "
              "FROM checkhead "
+             "  LEFT OUTER JOIN checkitem ON (checkhead_id=checkitem_checkhead_id) "
+             "                            AND (checkitem_aropen_id IS NOT NULL) "
+             "  LEFT OUTER JOIN aropen ON (checkitem_aropen_id=aropen_id) "
+             "                         AND (aropen_doctype = 'C') "
              "WHERE checkhead_id=:check_id;");
   q.bindValue(":check_id", _checkid);
   q.exec();
@@ -334,7 +340,12 @@ void miscCheck::populate()
     _for->setText(q.value("checkhead_for"));
     _notes->setText(q.value("checkhead_notes").toString());
 
-    if (q.value("checkhead_expcat_id").isNull() ||
+    if (!q.value("checkhead_cmhead_id").isNull())
+    {
+      _applytocm->setChecked(TRUE);
+      _cmCluster->setId(q.value("checkhead_cmhead_id").toInt());
+    }
+    else if (q.value("checkhead_expcat_id").isNull() ||
 	q.value("checkhead_expcat_id").toInt() == -1)
       _memo->setChecked(TRUE);
     else
@@ -343,13 +354,13 @@ void miscCheck::populate()
       _expcat->setId(q.value("checkhead_expcat_id").toInt());
     }
 
-	if (!q.value("checkhead_cmhead_id").isNull())
-	{
+    if (!q.value("checkhead_cmhead_id").isNull())
+    {
       _recipGroup->setEnabled(FALSE);
-	  _chargeToGroup->setEnabled(FALSE);
-	  _amount->setEnabled(FALSE);
-	  _for->setEnabled(FALSE);
-	}
+      _chargeToGroup->setEnabled(FALSE);
+      _amount->setEnabled(FALSE);
+      _for->setEnabled(FALSE);
+    }
   }
 }
 
@@ -383,9 +394,9 @@ void miscCheck::sCustomerSelected()
   _cmCluster->setEnabled(_cust->isValid() && _applytocm->isChecked());
 }
 
-void miscCheck::sCreditMemoSelected(bool p)
+void miscCheck::sCreditMemoSelected()
 {
-  if (p) 
+  if (_cmCluster->id() != -1) 
   {  
 	if(!_date->isValid())
 	  _date->setDate(QDate::currentDate());

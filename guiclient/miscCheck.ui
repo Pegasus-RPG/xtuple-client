@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>778</width>
-    <height>438</height>
+    <height>439</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -484,7 +484,7 @@
   </customwidget>
   <customwidget>
    <class>DLineEdit</class>
-   <extends>XLineEdit</extends>
+   <extends>QWidget</extends>
    <header>datecluster.h</header>
   </customwidget>
   <customwidget>
@@ -513,20 +513,21 @@
   <tabstop>_custRB</tabstop>
   <tabstop>_taxauthRB</tabstop>
   <tabstop>_vend</tabstop>
-  <tabstop>_cust</tabstop>
-  <tabstop>_taxauth</tabstop>
   <tabstop>_expense</tabstop>
   <tabstop>_expcat</tabstop>
+  <tabstop>_applytocm</tabstop>
+  <tabstop>_cmCluster</tabstop>
   <tabstop>_memo</tabstop>
   <tabstop>_date</tabstop>
   <tabstop>_amount</tabstop>
   <tabstop>_for</tabstop>
   <tabstop>_bankaccnt</tabstop>
-  <tabstop>_save</tabstop>
-  <tabstop>_close</tabstop>
   <tabstop>_notes</tabstop>
+  <tabstop>_close</tabstop>
+  <tabstop>_save</tabstop>
+  <tabstop>_cust</tabstop>
+  <tabstop>_taxauth</tabstop>
  </tabstops>
- <includes/>
  <resources/>
  <connections>
   <connection>
