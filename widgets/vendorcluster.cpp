@@ -365,7 +365,7 @@ void VendorInfo::setType(int pType)
 
 void VendorInfo::setDataWidgetMap(XDataWidgetMapper* m)
 {
-  m->addMapping(_vendorNumber, _fieldName, QByteArray("number"));
+  m->addMapping(_vendorNumber, _fieldName, "number", "defaultNumber");
   _vendorNumber->_mapper=m;
 }
 

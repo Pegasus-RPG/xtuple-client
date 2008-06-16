@@ -193,7 +193,8 @@ friend class ItemCluster;
 class OPENMFGWIDGETS_EXPORT ItemCluster : public QWidget
 {
   Q_OBJECT
-  Q_PROPERTY(QString fieldName   READ fieldName   WRITE setFieldName);
+  Q_PROPERTY(QString defaultNumber  READ defaultNumber  WRITE setDefaultNumber);
+  Q_PROPERTY(QString fieldName      READ fieldName      WRITE setFieldName);
   
   public:
     ItemCluster(QWidget *, const char * = 0);
@@ -202,24 +203,26 @@ class OPENMFGWIDGETS_EXPORT ItemCluster : public QWidget
     void setEnabled(bool);
     void setDisabled(bool);
 
-    inline void setType(unsigned int pType) { _itemNumber->setType(pType); } 
-    inline void setQuery(const QString &pSql) { _itemNumber->setQuery(pSql);                }
-    inline void setValidationQuery(const QString &pSql) { _itemNumber->setValidationQuery(pSql); }
-    inline QString itemNumber() const         { return _itemNumber->itemNumber();           }
-    inline QString itemType() const           { return _itemNumber->itemType();             }
-    inline bool isConfigured()                { return _itemNumber->isConfigured();         }
-    Q_INVOKABLE inline int id()               { return _itemNumber->id();                   }
-    inline int isValid()                      { return _itemNumber->isValid();              }
-    inline QString uom()                      { return _itemNumber->uom();                  }
-    inline QString fieldName()   const        { return _fieldName;                          }
+    inline void    setType(unsigned int pType)             { _itemNumber->setType(pType);                } 
+    inline void    setQuery(const QString &pSql)           { _itemNumber->setQuery(pSql);                }
+    inline void    setValidationQuery(const QString &pSql) { _itemNumber->setValidationQuery(pSql);      }
+    inline QString itemNumber()     const                  { return _itemNumber->itemNumber();           }
+    inline QString itemType()       const                  { return _itemNumber->itemType();             }
+    inline bool     isConfigured()                         { return _itemNumber->isConfigured();         }
+    Q_INVOKABLE inline int id()                            { return _itemNumber->id();                   }
+    inline int      isValid()                              { return _itemNumber->isValid();              }
+    inline QString  uom()                                  { return _itemNumber->uom();                  }
+    inline QString  defaultNumber()  const                 { return _default; };
+    inline QString  fieldName()      const                 { return _fieldName;                          }
 
-    inline void addExtraClause(const QString & pClause) { _itemNumber->addExtraClause(pClause); }
-    inline QStringList getExtraClauseList() const { return _itemNumber->getExtraClauseList(); }
-    inline void clearExtraClauseList() { _itemNumber->clearExtraClauseList(); }
+    inline void addExtraClause(const QString & pClause)    { _itemNumber->addExtraClause(pClause);       }
+    inline QStringList getExtraClauseList() const          { return _itemNumber->getExtraClauseList();   }
+    inline void clearExtraClauseList()                     { _itemNumber->clearExtraClauseList();        }
 
   public slots:
     void setDataWidgetMap(XDataWidgetMapper* m);
-    void setFieldName(QString p) { _fieldName = p; };
+    void setDefaultNumber(QString p)                       { _default = p;                               };
+    void setFieldName(QString p)                           { _fieldName = p;                             };
     void setId(int);
     void setItemNumber(QString);
     void setItemsiteid(int);
@@ -240,7 +243,8 @@ class OPENMFGWIDGETS_EXPORT ItemCluster : public QWidget
     QLabel       *_uom;
     QLabel       *_descrip1;
     QLabel       *_descrip2;
-    QString _fieldName;
+    QString       _default;
+    QString       _fieldName;
 };
 
 #endif

@@ -66,6 +66,7 @@
 #include <QLabel>
 #include <QMouseEvent>
 #include <QList>
+#include <QSqlTableModel>
 
 #include "OpenMFGWidgets.h"
 #include "xdatawidgetmapper.h"
@@ -79,14 +80,18 @@ class OPENMFGWIDGETS_EXPORT XComboBox : public QComboBox
   Q_ENUMS(Defaults)
   Q_ENUMS(XComboBoxTypes)
 
-  Q_PROPERTY(bool           allowNull       READ allowNull      WRITE setAllowNull                      )
-  Q_PROPERTY(QString        nullStr         READ nullStr        WRITE setNullStr                        )
-  Q_PROPERTY(XComboBoxTypes type            READ type           WRITE setType                           )
-  Q_PROPERTY(QString        code            READ code           WRITE setCode                           )
-  Q_PROPERTY(Defaults       defaultCode     READ defaultCode    WRITE setDefaultCode                    )
-  Q_PROPERTY(QString        fieldName       READ fieldName      WRITE setFieldName                      )
-  Q_PROPERTY(int            id              READ id             WRITE setId             DESIGNABLE false)
-  Q_PROPERTY(QString        currentDefault  READ currentDefault                         DESIGNABLE false)
+  Q_PROPERTY(bool           allowNull             READ allowNull            WRITE setAllowNull                            )
+  Q_PROPERTY(QString        nullStr               READ nullStr              WRITE setNullStr                              )
+  Q_PROPERTY(XComboBoxTypes type                  READ type                 WRITE setType                                 )
+  Q_PROPERTY(QString        code                  READ code                 WRITE setCode                 DESIGNABLE false)
+  Q_PROPERTY(Defaults       defaultCode           READ defaultCode          WRITE setDefaultCode                          )
+  Q_PROPERTY(QString        fieldName             READ fieldName            WRITE setFieldName                            )
+  Q_PROPERTY(QString        listSchemaName        READ listSchemaName       WRITE setListSchemaName                       )
+  Q_PROPERTY(QString        listTableName         READ listTableName        WRITE setListTableName                        )
+  Q_PROPERTY(QString        listIdFieldName       READ listIdFieldName      WRITE setListIdFieldName                      )
+  Q_PROPERTY(QString        listDisplayFieldName  READ listDisplayFieldName WRITE setListDisplayFieldName                 )
+  Q_PROPERTY(int            id                    READ id                   WRITE setId                   DESIGNABLE false)
+  Q_PROPERTY(QString        currentDefault        READ currentDefault                                     DESIGNABLE false)
 
   public:
     XComboBox(QWidget * = 0, const char * = 0);
@@ -130,27 +135,31 @@ class OPENMFGWIDGETS_EXPORT XComboBox : public QComboBox
     void setText(const QVariant &);
     
 
-    virtual bool      allowNull() const             { return _allowNull; };
+    virtual bool      allowNull()            const  { return _allowNull; };
     virtual Defaults  defaultCode()                 { return _default;};
     virtual void      setAllowNull(bool);
     virtual void      setNull();
 
-    QString           nullStr() const               { return _nullStr; };
+    QString           nullStr()              const  { return _nullStr; };
     void              setNullStr(const QString &);
 
-    bool              editable() const;
+    bool              editable()             const;
     void              setEditable(bool);
 
-    inline            QLabel* label() const         { return _label; };
+    inline            QLabel* label()        const  { return _label; };
     void              setLabel(QLabel* pLab);
 
-    bool              isValid() const;
-    int               id(int) const;
-    int               id() const;
-    QString           code() const;
-    QString           fieldName()   const           { return _fieldName; };
+    bool              isValid()              const;
+    int               id(int)                const;
+    int               id()                   const;
+    QString           code()                 const;
+    QString           fieldName()            const  { return _fieldName;            };
+    QString           listDisplayFieldName() const  { return _listDisplayFieldName; };
+    QString           listIdFieldName()      const  { return _listIdFieldName;      };
+    QString           listSchemaName()       const  { return _listSchemaName;       };
+    QString           listTableName()        const  { return _listTableName;        };
 
-    QSize             sizeHint() const;
+    QSize             sizeHint()             const;
 
   public slots:
     void clear();
@@ -160,8 +169,12 @@ class OPENMFGWIDGETS_EXPORT XComboBox : public QComboBox
     void populate(const QString &, int = -1);
     void populate();
     void setDataWidgetMap(XDataWidgetMapper* m);
-    void setDefaultCode(Defaults p)                 { _default = p; };
-    void setFieldName(QString p)                    { _fieldName = p; };
+    void setDefaultCode(Defaults p)                 { _default = p;               };
+    void setFieldName(QString p)                    { _fieldName = p;             };
+    void setListDisplayFieldName(QString p)         { _listDisplayFieldName = p;  };
+    void setListIdFieldName(QString p)              { _listIdFieldName = p;       };
+    void setListSchemaName(QString p);
+    void setListTableName(QString p);
     void setId(int);
 
   private slots:
@@ -186,8 +199,13 @@ class OPENMFGWIDGETS_EXPORT XComboBox : public QComboBox
     QString             _nullStr;
     
   private:
-    enum Defaults _default;
-    QString       _fieldName;
+    enum Defaults       _default;
+    QString             _fieldName;
+    QString             _listDisplayFieldName;
+    QString             _listIdFieldName;
+    QString             _listSchemaName;
+    QString             _listTableName;
+    XDataWidgetMapper   *_mapper;
 };
 
 #endif

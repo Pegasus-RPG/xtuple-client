@@ -59,10 +59,10 @@
 
 #define XSQLTABLEMODEL_H
 
-#include <QSqlTableModel>
+#include <QSqlRelationalTableModel>
 #include "OpenMFGWidgets.h"
 
-class OPENMFGWIDGETS_EXPORT XSqlTableModel : public QSqlTableModel
+class OPENMFGWIDGETS_EXPORT XSqlTableModel : public QSqlRelationalTableModel
 {
     Q_OBJECT
 
@@ -70,8 +70,7 @@ class OPENMFGWIDGETS_EXPORT XSqlTableModel : public QSqlTableModel
       XSqlTableModel(QObject *parent = 0);
       ~XSqlTableModel();
       
-      virtual void setLastError(const QSqlError& p)  {QSqlTableModel::setLastError(p);};
-      virtual void setPrimaryKey(const QSqlIndex& p)  {QSqlTableModel::setPrimaryKey(p);};
+    virtual void setTable(const QString &tableName, int keyColumns);
 
 };
 

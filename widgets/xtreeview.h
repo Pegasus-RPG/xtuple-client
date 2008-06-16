@@ -60,24 +60,45 @@
 #define XTREEVIEW_H
 
 #include <QTreeView>
+#include "xdatawidgetmapper.h"
 #include "xsqltablemodel.h"
 #include "OpenMFGWidgets.h"
 
 class OPENMFGWIDGETS_EXPORT XTreeView : public QTreeView
 {
     Q_OBJECT
-
+    Q_PROPERTY(QString        schemaName            READ schemaName           WRITE setSchemaName       )
+    Q_PROPERTY(QString        tableName             READ tableName            WRITE setTableName        )
+    Q_PROPERTY(int            primaryKeyCoulmns     READ primaryKeyColumns    WRITE setPrimaryKeyColumns)
+    
     public:
       XTreeView(QWidget *parent = 0);
+
+      int          primaryKeyColumns()       const            { return _keyColumns;       };
+      QString      schemaName()              const            { return _schemaName;         };
+      QString      tableName()               const            { return _tableName;          };
       
     public slots:
-      virtual void setModel(XSqlTableModel* p)  {QTreeView::setModel(p);};
+      virtual void populate(int p);
+      virtual void setDataWidgetMap(XDataWidgetMapper* m);
+      virtual void setModel(XSqlTableModel* p)                { QTreeView::setModel(p);     };
+      virtual void setPrimaryKeyColumns(int p)                { _keyColumns = p;            };
+      virtual void setSchemaName(QString p)                   { _schemaName = p;            };
+      virtual void setTableName(QString p)                    { _tableName = p;             };
 
     signals:
       void rowSelected(int);
       
     protected:
       virtual void selectionChanged(const QItemSelection & selected, const QItemSelection & deselected);
+      
+    private:
+      int               _keyColumns;
+      QString           _schemaName;
+      QString           _tableName;
+      QSqlDatabase      *_db;
+      XDataWidgetMapper *_mapper;
+      XSqlTableModel    _model;
 };
 
 #endif

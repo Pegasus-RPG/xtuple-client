@@ -75,6 +75,7 @@ QPixmap *XCheckBox::_checkedIcon = 0;
 
 void XCheckBox::constructor()
 {
+  _default=false;
   setForgetful(false);
     
   _mapper = new XDataWidgetMapper(this);
@@ -136,7 +137,7 @@ XCheckBox::~XCheckBox()
 
 void XCheckBox::setDataWidgetMap(XDataWidgetMapper* m)
 {
-  m->addMapping(this, _fieldName);
+  m->addMapping(this, _fieldName, "checked", "defaultChecked");
   _mapper=m;
   connect(this, SIGNAL(stateChanged(int)), this, SLOT(setData())); 
 }

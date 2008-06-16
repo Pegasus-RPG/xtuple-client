@@ -65,9 +65,12 @@
 #include <QLabel>
 #include <QMessageBox>
 #include <QMouseEvent>
+#include <QSqlRelationalDelegate>
+#include <QSqlTableModel>
 
 #include <xsqlquery.h>
 #include "xcombobox.h"
+#include "xsqltablemodel.h"
 
 #define DEBUG false
 
@@ -127,50 +130,42 @@ QString XComboBox::currentDefault()
 
 void XComboBox::setDataWidgetMap(XDataWidgetMapper* m)
 {
-  m->addMapping(this, _fieldName, "code", "currentDefault");
-  if (_type == Adhoc) //See if there is a matching table or view we can use to populate this
+  if (!_listTableName.isEmpty())
   {
-    QString schemaname = static_cast<QSqlTableModel*>(m->model())->tableName();
-    QString tablename = _fieldName.remove("_").toLower();
-    int dot = schemaname.indexOf(QLatin1Char('.'));
-    if (dot != -1)
-      schemaname = schemaname.left(dot);
-    else
-      schemaname = "";
+    QString tableName="";
+    if (_listSchemaName.length())
+      tableName=_listSchemaName + ".";
+    tableName+=_listTableName;
+    static_cast<XSqlTableModel*>(m->model())->setRelation(static_cast<XSqlTableModel*>(m->model())->fieldIndex(_fieldName), 
+                                 QSqlRelation(tableName, _listIdFieldName, _listDisplayFieldName));
     
-    QString sql("SELECT count(relname) "
-                "FROM pg_class c "
-                "LEFT JOIN pg_namespace n ON n.oid = c.relnamespace "
-                "WHERE ((c.relkind IN ('v','r')) "
-                "AND (c.relname=:tablename)");
-    if (!schemaname.isNull())
-      sql += "AND (n.nspname=:schemaname)";
-    sql += ");";
-      
-    XSqlQuery query;
-    query.prepare(sql);
-    query.bindValue(":schemaname", schemaname);
-    query.bindValue(":tablename", tablename);
-    query.exec();
-    if (query.first()) //Found a table or view, let's use it
-    {
-      if (!schemaname.isEmpty())
-        tablename=tablename.prepend(schemaname.append("."));
-      sql = QString("SELECT * FROM %1;").arg(tablename);
-      query.prepare(sql);
-      query.exec();
-      if (query.first())
-      {
-        int counter=0;
-        do
-        {
-          append(counter, query.value(0).toString() + "-" + query.value(1).toString(), query.value(0).toString());
-          counter ++;
-        }
-        while(query.next());
-      }
-    }
+    QSqlTableModel *rel =static_cast<XSqlTableModel*>(m->model())->relationModel(static_cast<XSqlTableModel*>(m->model())->fieldIndex(_fieldName));
+    setModel(rel);
+    setModelColumn(rel->fieldIndex(_listDisplayFieldName));
+  
+    m->setItemDelegate(new QSqlRelationalDelegate(this));
   }
+  m->addMapping(this, _fieldName);
+}
+
+void XComboBox::setListSchemaName(QString p)
+{
+  if (_listSchemaName == p)
+    return;
+    
+  if (!p.isEmpty())
+    setType(Adhoc);
+  _listSchemaName = p;
+}
+
+void XComboBox::setListTableName(QString p)
+{
+  if (_listTableName == p)
+    return;
+    
+  _listTableName = p;
+  if (!p.isEmpty())
+    setType(Adhoc);
 }
 
 void XComboBox::setType(XComboBoxTypes pType)
@@ -178,6 +173,11 @@ void XComboBox::setType(XComboBoxTypes pType)
   if (_type == pType)
     return;
 
+  if (pType != Adhoc)
+  {
+    setListSchemaName("");
+    setListTableName("");
+  }
   _type = pType;
 
   if (_x_metrics == 0)

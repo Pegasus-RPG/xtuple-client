@@ -57,10 +57,13 @@
 
 // Copyright (c) 2006-2008, OpenMFG, LLC
 
+#include <QSqlIndex>
+#include <QSqlField>
+
 #include "xsqltablemodel.h"
 
 XSqlTableModel::XSqlTableModel(QObject *parent) : 
-  QSqlTableModel(parent)
+  QSqlRelationalTableModel(parent)
 {
 }
 
@@ -68,4 +71,16 @@ XSqlTableModel::~XSqlTableModel()
 {
 }
 
+void XSqlTableModel::setTable(const QString &tableName, int keyColumns)
+{
+  QSqlRelationalTableModel::setTable(tableName);
+  if (keyColumns)
+  {
+    QSqlIndex idx(tableName);
+    for (int i = 0; i < keyColumns; i++)
+      idx.append(database().record(tableName).field(i));
+    idx.setName(tableName + "_pkey");
+    QSqlRelationalTableModel::setPrimaryKey(idx);
+  }
+}
 

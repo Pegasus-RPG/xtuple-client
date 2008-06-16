@@ -58,16 +58,57 @@
 // Copyright (c) 2006-2008, OpenMFG, LLC
 
 #include "xtreeview.h"
+#include "xsqltablemodel.h"
+
+#include <QSqlDatabase>
+#include <QSqlDriver>
+#include <QSqlIndex>
 
 XTreeView::XTreeView(QWidget *parent) : 
   QTreeView(parent)
 {
+  _keyColumns=1;
+
+  _mapper = new XDataWidgetMapper(this);
 }
 
 void XTreeView::selectionChanged(const QItemSelection & selected, const QItemSelection & deselected)
 {
-  emit rowSelected(selected.indexes().first().row());
+  if (!selected.indexes().isEmpty())
+    emit rowSelected(selected.indexes().first().row());
   QTreeView::selectionChanged(selected, deselected);
 }
 
+void XTreeView::populate(int p)
+{ 
+  QSqlRecord idx;
+  XSqlTableModel *t=static_cast<XSqlTableModel*>(_mapper->model());
+  if (t)
+  {
+    idx=t->primaryKey();
+
+    for (int i = 0; i < idx.count(); ++i)
+      idx.setValue(i, t->data(t->index(p,i)));
+   
+    QString clause = QString(_model.database().driver()->sqlStatement(QSqlDriver::WhereStatement, static_cast<QSqlRelationalTableModel>(_mapper->model()).tableName(),idx, false)).mid(6);;
+    _model.setFilter(clause);
+    _model.select();
+  }
+}
+
+void XTreeView::setDataWidgetMap(XDataWidgetMapper* m)
+{  
+  if (!_tableName.isEmpty())
+  {
+    QString tablename=_tableName;
+    if (!_schemaName.isEmpty())
+      tablename = _schemaName + "." + tablename;
+    _model.setTable(tablename,_keyColumns);
+    setModel(&_model);
+    populate(m->currentIndex());
+    _mapper=m;
+    
+    connect(_mapper, SIGNAL(currentIndexChanged(int)), this, SLOT(populate(int)));
+  }
+}
 

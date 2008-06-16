@@ -59,6 +59,7 @@
 
 #include <QMessageBox>
 #include <QSqlError>
+#include <QSqlField>
 
 #include <openreports.h>
 
@@ -69,6 +70,7 @@ ScreenControl::ScreenControl(QWidget *parent) :
 {
   setupUi(this);
   _autoSave=false;
+  _keyColumns=1;
   _searchType=Query;
   _shown=false;
   _listReportName=QString();
@@ -328,15 +330,13 @@ void ScreenControl::setTable(QString s, QString t)
 {
   if (t.length())
   {
-    QString tableName="";
+    QString tablename="";
     if (s.length())
-      tableName=s + ".";
-    tableName+=t;
-    if (_model->tableName() != tableName)
+      tablename=s + ".";
+    tablename+=t;
+    if (_model->tableName() != tablename)
     {
-      //QSqlIndex _index;
-      //_model->setPrimaryKey(_index);
-      _model->setTable(tableName);
+      _model->setTable(tablename,_keyColumns);
       setDataWidgetMapper(_model);
       _search->setEnabled(true);
       _searchText->setEnabled(true);

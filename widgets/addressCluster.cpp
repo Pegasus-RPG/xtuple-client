@@ -179,7 +179,9 @@ void AddressCluster::populateCountryComboBox()
 {
   _country->clear();
   XSqlQuery country;
-  country.prepare("SELECT country_id, country_name, country_name "
+  country.prepare("SELECT -1, '','' AS country_name " 
+                  "UNION "
+                  "SELECT country_id, country_name, country_name "
                   "FROM country ORDER BY country_name;");
   country.exec();
   _country->populate(country);

@@ -276,7 +276,7 @@ class OPENMFGWIDGETS_EXPORT VirtualCluster : public QWidget
     Q_PROPERTY(bool    listVisible    READ listVisible    WRITE setListVisible);
     Q_PROPERTY(bool    nameVisible    READ nameVisible    WRITE setNameVisible);
     Q_PROPERTY(bool    readOnly       READ readOnly       WRITE setReadOnly);
-    Q_PROPERTY(QString defaultNumber  READ defaultNumber  WRITE setDefaultNumber);
+    Q_PROPERTY(QString defaultNumber  READ defaultNumber  WRITE setDefaultNumber  DESIGNABLE false);
     Q_PROPERTY(QString fieldName      READ fieldName      WRITE setFieldName);
 
     friend class VirtualClusterLineEdit;
@@ -304,7 +304,7 @@ class OPENMFGWIDGETS_EXPORT VirtualCluster : public QWidget
         inline virtual void clearExtraClause()                { _number->clearExtraClause(); };
         inline virtual void setDescription(const QString& p)  { _description->setText(p); };
         inline virtual void setExtraClause(const QString& p)  { _number->setExtraClause(p); };
-        virtual void setDefaultNumber(QString p)              { _default = p; };
+               virtual void setDefaultNumber(QString p)       { _default = p; };
         inline virtual void setFieldName(QString p)           { _fieldName = p; };
         inline virtual void setId(const int p)                { _number->setId(p); };
         inline virtual void setInfoVisible(const bool p)      { _info->setHidden(!p); };

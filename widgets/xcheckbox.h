@@ -67,21 +67,24 @@
 class OPENMFGWIDGETS_EXPORT XCheckBox : public QCheckBox
 {
   Q_OBJECT
-  Q_PROPERTY(QString fieldName   READ fieldName   WRITE setFieldName);
-  Q_PROPERTY(bool forgetful   READ forgetful   WRITE setForgetful);
+  Q_PROPERTY(bool    defaultChecked   READ defaultChecked   WRITE setDefaultChecked);
+  Q_PROPERTY(QString fieldName        READ fieldName        WRITE setFieldName);
+  Q_PROPERTY(bool    forgetful        READ forgetful        WRITE setForgetful);
 
   public:
     XCheckBox(QWidget * = 0);
     XCheckBox(const QString &, QWidget * = 0);
     ~XCheckBox();
 
-    virtual void setObjectName(const QString &);
-    virtual QString fieldName()   const { return _fieldName; };
-    virtual bool forgetful() const {return _forgetful; };
+    virtual bool    defaultChecked()                const { return _default; };
+    virtual bool    forgetful()                     const {return _forgetful; };
+    virtual QString fieldName()                     const { return _fieldName; };
+    virtual void    setObjectName(const QString &);
     
   public slots:
     virtual void setDataWidgetMap(XDataWidgetMapper* m);
-    virtual void setFieldName(QString p) { _fieldName = p; };
+    virtual void setDefaultChecked(bool p)                { _default = p; };
+    virtual void setFieldName(QString p)                  { _fieldName = p; };
     virtual void setForgetful(bool p);
     virtual void setData();
 
@@ -91,6 +94,7 @@ class OPENMFGWIDGETS_EXPORT XCheckBox : public QCheckBox
   private:
     virtual void constructor();
 
+    bool    _default;
     bool    _forgetful;
     QString _settingsName;
     QString _fieldName;
