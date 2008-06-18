@@ -289,37 +289,44 @@ void lotSerialRegistration::sSave()
   if(cView == _mode)
     return;
 
+  if (!_crmacct->isValid())
+  {
+    QMessageBox::warning(this, windowTitle(), tr("You must provide a CRM Account."));
+    _crmacct->setFocus();
+    return;
+  }
+  
   if (!_regDate->isValid())
   {
-    QMessageBox::warning(this, windowTitle(), "You must provide a registration date.");
+    QMessageBox::warning(this, windowTitle(), tr("You must provide a registration date."));
     _regDate->setFocus();
     return;
   }
   
   if (!_soldDate->isValid())
   {
-    QMessageBox::warning(this, windowTitle(), "You must provide a sold date.");
+    QMessageBox::warning(this, windowTitle(), tr("You must provide a sold date."));
     _soldDate->setFocus();
     return;
   }
 
   if (!_expireDate->isValid())
   {
-    QMessageBox::warning(this, windowTitle(), "You must provide a expiration date.");
+    QMessageBox::warning(this, windowTitle(), tr("You must provide a expiration date."));
     _expireDate->setFocus();
     return;
   }
   
   if (_lotSerial->id() == -1)
   {
-    QMessageBox::warning(this, windowTitle(), "You must provide a lot/serial number.");
+    QMessageBox::warning(this, windowTitle(), tr("You must provide a lot/serial number."));
     _lotSerial->setFocus();
     return;
   }
   
   if (!(_qty->toDouble() > 0))
   {
-    QMessageBox::warning(this, windowTitle(), "You must provide a quantity greater than zero.");
+    QMessageBox::warning(this, windowTitle(), tr("You must provide a quantity greater than zero."));
     _qty->setFocus();
     return;
   }
