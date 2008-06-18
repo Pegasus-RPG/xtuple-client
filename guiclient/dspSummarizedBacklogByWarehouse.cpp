@@ -85,19 +85,21 @@ dspSummarizedBacklogByWarehouse::dspSummarizedBacklogByWarehouse(QWidget* parent
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 
-  _so->addColumn(tr("S/O #/Shipped"),       _itemColumn, Qt::AlignRight  );
-  _so->addColumn(tr("Customer/Ship Via"),            -1, Qt::AlignLeft   );
-  _so->addColumn(tr("Hold Type/Ship #"), _orderColumn*2, Qt::AlignRight  );
-  _so->addColumn(tr("Ordered/Shipped"),     _dateColumn, Qt::AlignRight  );
-  _so->addColumn(tr("Scheduled"),           _dateColumn, Qt::AlignRight  );
-  _so->addColumn(tr("Pack Date"),           _dateColumn, Qt::AlignRight  );
+  _so->addColumn(tr("S/O #/Shipped"),       _itemColumn, Qt::AlignRight, true, "cohead_number");
+  _so->addColumn(tr("Customer/Ship Via"),            -1, Qt::AlignLeft,  true, "cust_name");
+  _so->addColumn(tr("Hold Type/Ship #"), _orderColumn*2, Qt::AlignRight, true, "f_holdtype");
+  _so->addColumn(tr("Ordered/Shipped"),     _dateColumn, Qt::AlignRight, true, "cohead_orderdate");
+  _so->addColumn(tr("Scheduled"),           _dateColumn, Qt::AlignRight, true, "scheddate");
+  _so->addColumn(tr("Pack Date"),           _dateColumn, Qt::AlignRight, true, "cohead_packdate");
   if (_privileges->check("ViewCustomerPrices") ||
       _privileges->check("MaintainCustomerPrices"))
   {
-    _so->addColumn(tr("Sales"),  _moneyColumn, Qt::AlignRight);
-    _so->addColumn(tr("Cost"),   _moneyColumn, Qt::AlignRight);
-    _so->addColumn(tr("Margin"), _moneyColumn, Qt::AlignRight);
+    _so->addColumn(tr("Sales"),  _moneyColumn, Qt::AlignRight, true, "sales");
+    _so->addColumn(tr("Cost"),   _moneyColumn, Qt::AlignRight, true, "cost");
+    _so->addColumn(tr("Margin"), _moneyColumn, Qt::AlignRight, true, "margin");
   }
+  _so->addColumn(tr("Time Recieved"),       _dateColumn, Qt::AlignRight, false, "cohead_created");
+  _so->addColumn(tr("Pack List Batch"),     _dateColumn, Qt::AlignRight, false, "packed");
 
   _so->setRootIsDecorated(TRUE);
   _so->setDragString("soheadid=");
@@ -337,6 +339,7 @@ void dspSummarizedBacklogByWarehouse::sFillList()
   if (setParams(params))
   {
     QString sql( "SELECT cohead_id, cohead_holdtype, cohead_number, cust_name,"
+	     "       cohead_created, cohead_orderdate, cohead_packdate, pack_head_id,"
 		 "       CASE WHEN (cohead_holdtype='N') THEN <? value(\"none\") ?>"
 		 "            WHEN (cohead_holdtype='C') THEN <? value(\"credit\") ?>"
 		 "            WHEN (cohead_holdtype='S') THEN <? value(\"ship\") ?>"
@@ -344,20 +347,15 @@ void dspSummarizedBacklogByWarehouse::sFillList()
 		 "            WHEN (cohead_holdtype='R') THEN <? value(\"return\") ?>"
 		 "            ELSE <? value(\"other\") ?>"
 		 "       END AS f_holdtype,"
-		 "       formatDate(cohead_orderdate) AS f_orderdate,"
-		 "       formatDate(MIN(coitem_scheddate)) AS f_scheddate,"
-		 "       formatDate(cohead_packdate) AS f_packdate,"
-		 "       formatMoney( SUM( round((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) *"
-		 "                         (coitem_price / coitem_price_invuomratio), 2) ) ) AS f_sales,"
-		 "       formatCost(SUM((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) * stdcost(item_id) ) ) AS f_cost,"
-		 "       formatMoney( SUM( (noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) *"
-		 "                         ((coitem_price / coitem_price_invuomratio) - stdcost(item_id)) ) ) AS f_margin,"
+		 "       MIN(coitem_scheddate) AS scheddate,"
 		 "       SUM( round((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) *"
 		 "            (coitem_price / coitem_price_invuomratio), 2) ) AS sales,"
 		 "       SUM((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) * stdcost(item_id) ) AS cost,"
 		 "       SUM((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) *"
 		 "            ((coitem_price / coitem_price_invuomratio) - stdcost(item_id)) ) AS margin,"
-		 "       MIN(coitem_scheddate) AS scheddate,"
+		 "       'sales' AS sales_xtnumericrole,"
+		 "       'cost' AS cost_xtnumericrole,"
+		 "       'margin' AS margin_xtnumericrole,"
 		 "       COALESCE(cosmisc_id, -1) AS cosmisc_id, "
 		 "       formatShipmentNumber(cosmisc_id) AS cosmisc_number, "
 		 "       CASE WHEN (cosmisc_shipped IS NULL) THEN 0"
@@ -370,10 +368,14 @@ void dspSummarizedBacklogByWarehouse::sFillList()
 		 "       END AS shipdate,"
 		 "       ( (COALESCE(cobmisc_cohead_id,0) > 0)"
 		 "       AND (SUM(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned)) > 0)"
-		 "       ) AS overbilled "
+		 "       ) AS overbilled,"
+		 "		 formatboolyn(CASE WHEN (pack_head_id IS NOT NULL) THEN TRUE"
+		 "            ELSE FALSE"
+		 "       END) AS packed "
 		 "FROM coitem, itemsite, item, cust, cohead "
                  "  LEFT OUTER JOIN cosmisc ON (cosmisc_cohead_id=cohead_id) "
                  "  LEFT OUTER JOIN (SELECT DISTINCT cobmisc_cohead_id FROM cobmisc) AS cobmisc ON (cobmisc_cohead_id=cohead_id) "
+				 "  LEFT OUTER JOIN pack ON (cohead_id = pack_head_id)"
 		 "WHERE ( (coitem_cohead_id=cohead_id)"
 		 " AND (cohead_cust_id=cust_id)"
 		 " AND (coitem_itemsite_id=itemsite_id)"
@@ -394,7 +396,7 @@ void dspSummarizedBacklogByWarehouse::sFillList()
 		 "GROUP BY cohead_id, cohead_number, cust_name,"
 		 "         cohead_holdtype, cohead_orderdate, cohead_packdate,"
 		 "         cosmisc_shipped, cosmisc_shipvia, cosmisc_shipdate,"
-		 "         cosmisc_id, cobmisc_cohead_id "
+		 "         cosmisc_id, cobmisc_cohead_id, cohead_created, pack_head_id "
 		 " ORDER BY "
 		 "<? if exists(\"orderByShipDate\") ?>scheddate,"
 		 "<? elseif exists(\"orderByPackDate\") ?>cohead_packdate,"
@@ -421,13 +423,14 @@ void dspSummarizedBacklogByWarehouse::sFillList()
           overbilled = FALSE;
 
           orderLine = new XTreeWidgetItem( _so, orderLine,
-					 q.value("cohead_id").toInt(),
-					 -1,
-                                         q.value("cohead_number"), q.value("cust_name"),
-                                         q.value("f_holdtype"), q.value("f_orderdate"),
-                                         q.value("f_scheddate"), q.value("f_packdate"),
-                                         q.value("f_sales"), q.value("f_cost"),
-                                         q.value("f_margin") );
+		  q.value("cohead_id").toInt(),
+		  -1,
+          q.value("cohead_number"), q.value("cust_name"),
+          q.value("f_holdtype"), q.value("cohead_orderdate"),
+          q.value("scheddate"), q.value("cohead_packdate"),
+          q.value("sales"), q.value("cost"),
+          q.value("margin"), q.value("cohead_created"),
+		  q.value("packed"));
 
           totalSales  += q.value("sales").toDouble();
           totalCost   += q.value("cost").toDouble();
