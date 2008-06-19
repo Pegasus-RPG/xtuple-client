@@ -158,9 +158,9 @@ void lotSerial::sSave()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+  _notes->clear();
   _changed=false;
   _item->setId(-1);
-  _notes->clear();
 }
 
 void lotSerial::sChanged()
