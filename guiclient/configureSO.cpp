@@ -126,8 +126,10 @@ configureSO::configureSO(QWidget* parent, const char* name, bool modal, Qt::WFla
   metric = _metrics->value("InvoiceDateSource");
   if (metric == "scheddate")
     _invcScheddate->setChecked(true);
-  else
+  else if (metric == "shipdate")
     _invcShipdate->setChecked(true);
+  else
+    _invcCurrdate->setChecked(true);
 
   q.exec( "SELECT sonumber.orderseq_number AS sonumber,"
           "       qunumber.orderseq_number AS qunumber,"
@@ -346,8 +348,10 @@ void configureSO::sSave()
 
   if(_invcScheddate->isChecked())
     _metrics->set("InvoiceDateSource", QString("scheddate"));
-  else
+  else if(_invcShipdate->isChecked())
     _metrics->set("InvoiceDateSource", QString("shipdate"));
+  else
+    _metrics->set("InvoiceDateSource", QString("currdate"));
 
   _metrics->set("InvoiceCopies", _invoiceNumOfCopies->value());
   if (_invoiceNumOfCopies->value())
