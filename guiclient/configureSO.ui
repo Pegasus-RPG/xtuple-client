@@ -1,4 +1,7 @@
 <ui version="4.0" >
+ <author></author>
+ <comment></comment>
+ <exportmacro></exportmacro>
  <class>configureSO</class>
  <widget class="QDialog" name="configureSO" >
   <property name="geometry" >
@@ -13,38 +16,26 @@
    <string>S/O Module Configuration</string>
   </property>
   <layout class="QGridLayout" >
+   <property name="margin" >
+    <number>5</number>
+   </property>
+   <property name="spacing" >
+    <number>5</number>
+   </property>
    <item row="0" column="0" >
     <layout class="QHBoxLayout" >
+     <property name="margin" >
+      <number>5</number>
+     </property>
      <property name="spacing" >
       <number>6</number>
      </property>
-     <property name="leftMargin" >
-      <number>0</number>
-     </property>
-     <property name="topMargin" >
-      <number>0</number>
-     </property>
-     <property name="rightMargin" >
-      <number>0</number>
-     </property>
-     <property name="bottomMargin" >
-      <number>0</number>
-     </property>
      <item>
       <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>5</number>
+       </property>
        <property name="spacing" >
-        <number>0</number>
-       </property>
-       <property name="leftMargin" >
-        <number>0</number>
-       </property>
-       <property name="topMargin" >
-        <number>0</number>
-       </property>
-       <property name="rightMargin" >
-        <number>0</number>
-       </property>
-       <property name="bottomMargin" >
         <number>0</number>
        </property>
        <item>
@@ -101,25 +92,18 @@
      </item>
      <item>
       <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>5</number>
+       </property>
        <property name="spacing" >
-        <number>0</number>
-       </property>
-       <property name="leftMargin" >
-        <number>0</number>
-       </property>
-       <property name="topMargin" >
-        <number>0</number>
-       </property>
-       <property name="rightMargin" >
-        <number>0</number>
-       </property>
-       <property name="bottomMargin" >
         <number>0</number>
        </property>
        <item>
         <widget class="QComboBox" name="_orderNumGeneration" >
          <property name="sizePolicy" >
-          <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+          <sizepolicy>
+           <hsizetype>0</hsizetype>
+           <vsizetype>0</vsizetype>
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -144,7 +128,9 @@
        <item>
         <widget class="QComboBox" name="_quoteNumGeneration" >
          <property name="sizePolicy" >
-          <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+          <sizepolicy>
+           <hsizetype>0</hsizetype>
+           <vsizetype>0</vsizetype>
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -177,7 +163,9 @@
           <bool>true</bool>
          </property>
          <property name="sizePolicy" >
-          <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+          <sizepolicy>
+           <hsizetype>0</hsizetype>
+           <vsizetype>0</vsizetype>
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -202,7 +190,9 @@
        <item>
         <widget class="QComboBox" name="_creditMemoNumGeneration" >
          <property name="sizePolicy" >
-          <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+          <sizepolicy>
+           <hsizetype>0</hsizetype>
+           <vsizetype>0</vsizetype>
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -235,7 +225,9 @@
           <bool>false</bool>
          </property>
          <property name="sizePolicy" >
-          <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+          <sizepolicy>
+           <hsizetype>0</hsizetype>
+           <vsizetype>0</vsizetype>
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -257,19 +249,10 @@
      </item>
      <item>
       <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>5</number>
+       </property>
        <property name="spacing" >
-        <number>0</number>
-       </property>
-       <property name="leftMargin" >
-        <number>0</number>
-       </property>
-       <property name="topMargin" >
-        <number>0</number>
-       </property>
-       <property name="rightMargin" >
-        <number>0</number>
-       </property>
-       <property name="bottomMargin" >
         <number>0</number>
        </property>
        <item>
@@ -326,19 +309,10 @@
      </item>
      <item>
       <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>5</number>
+       </property>
        <property name="spacing" >
-        <number>0</number>
-       </property>
-       <property name="leftMargin" >
-        <number>0</number>
-       </property>
-       <property name="topMargin" >
-        <number>0</number>
-       </property>
-       <property name="rightMargin" >
-        <number>0</number>
-       </property>
-       <property name="bottomMargin" >
         <number>0</number>
        </property>
        <item>
@@ -441,20 +415,11 @@
      </item>
      <item>
       <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>5</number>
+       </property>
        <property name="spacing" >
         <number>6</number>
-       </property>
-       <property name="leftMargin" >
-        <number>0</number>
-       </property>
-       <property name="topMargin" >
-        <number>0</number>
-       </property>
-       <property name="rightMargin" >
-        <number>0</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>0</number>
        </property>
        <item>
         <widget class="QPushButton" name="_close" >
@@ -499,7 +464,9 @@
    <item row="1" column="0" >
     <widget class="QTabWidget" name="_tab" >
      <property name="sizePolicy" >
-      <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+      <sizepolicy>
+       <hsizetype>0</hsizetype>
+       <vsizetype>0</vsizetype>
        <horstretch>0</horstretch>
        <verstretch>1</verstretch>
       </sizepolicy>
@@ -512,70 +479,34 @@
        <string>General</string>
       </attribute>
       <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>5</number>
+       </property>
        <property name="spacing" >
         <number>6</number>
        </property>
-       <property name="leftMargin" >
-        <number>9</number>
-       </property>
-       <property name="topMargin" >
-        <number>9</number>
-       </property>
-       <property name="rightMargin" >
-        <number>9</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>9</number>
-       </property>
        <item>
         <layout class="QVBoxLayout" >
+         <property name="margin" >
+          <number>5</number>
+         </property>
          <property name="spacing" >
-          <number>0</number>
-         </property>
-         <property name="leftMargin" >
-          <number>0</number>
-         </property>
-         <property name="topMargin" >
-          <number>0</number>
-         </property>
-         <property name="rightMargin" >
-          <number>0</number>
-         </property>
-         <property name="bottomMargin" >
           <number>0</number>
          </property>
          <item>
           <layout class="QHBoxLayout" >
+           <property name="margin" >
+            <number>5</number>
+           </property>
            <property name="spacing" >
             <number>6</number>
            </property>
-           <property name="leftMargin" >
-            <number>0</number>
-           </property>
-           <property name="topMargin" >
-            <number>0</number>
-           </property>
-           <property name="rightMargin" >
-            <number>0</number>
-           </property>
-           <property name="bottomMargin" >
-            <number>0</number>
-           </property>
            <item>
             <layout class="QVBoxLayout" >
+             <property name="margin" >
+              <number>5</number>
+             </property>
              <property name="spacing" >
-              <number>0</number>
-             </property>
-             <property name="leftMargin" >
-              <number>0</number>
-             </property>
-             <property name="topMargin" >
-              <number>0</number>
-             </property>
-             <property name="rightMargin" >
-              <number>0</number>
-             </property>
-             <property name="bottomMargin" >
               <number>0</number>
              </property>
              <item>
@@ -596,19 +527,10 @@
            </item>
            <item>
             <layout class="QVBoxLayout" >
+             <property name="margin" >
+              <number>5</number>
+             </property>
              <property name="spacing" >
-              <number>0</number>
-             </property>
-             <property name="leftMargin" >
-              <number>0</number>
-             </property>
-             <property name="topMargin" >
-              <number>0</number>
-             </property>
-             <property name="rightMargin" >
-              <number>0</number>
-             </property>
-             <property name="bottomMargin" >
               <number>0</number>
              </property>
              <item>
@@ -703,37 +625,19 @@
        </item>
        <item>
         <layout class="QVBoxLayout" >
+         <property name="margin" >
+          <number>5</number>
+         </property>
          <property name="spacing" >
-          <number>0</number>
-         </property>
-         <property name="leftMargin" >
-          <number>0</number>
-         </property>
-         <property name="topMargin" >
-          <number>0</number>
-         </property>
-         <property name="rightMargin" >
-          <number>0</number>
-         </property>
-         <property name="bottomMargin" >
           <number>0</number>
          </property>
          <item>
           <layout class="QHBoxLayout" >
+           <property name="margin" >
+            <number>5</number>
+           </property>
            <property name="spacing" >
             <number>6</number>
-           </property>
-           <property name="leftMargin" >
-            <number>0</number>
-           </property>
-           <property name="topMargin" >
-            <number>0</number>
-           </property>
-           <property name="rightMargin" >
-            <number>0</number>
-           </property>
-           <property name="bottomMargin" >
-            <number>0</number>
            </property>
            <item>
             <widget class="QGroupBox" name="_lineItemPriceing" >
@@ -741,20 +645,11 @@
               <string>Pricing on Editing Line Items</string>
              </property>
              <layout class="QVBoxLayout" >
+              <property name="margin" >
+               <number>5</number>
+              </property>
               <property name="spacing" >
                <number>0</number>
-              </property>
-              <property name="leftMargin" >
-               <number>5</number>
-              </property>
-              <property name="topMargin" >
-               <number>5</number>
-              </property>
-              <property name="rightMargin" >
-               <number>5</number>
-              </property>
-              <property name="bottomMargin" >
-               <number>5</number>
               </property>
               <item>
                <widget class="QRadioButton" name="_updatePrice" >
@@ -823,37 +718,19 @@
        <string>Invoice</string>
       </attribute>
       <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>5</number>
+       </property>
        <property name="spacing" >
         <number>6</number>
        </property>
-       <property name="leftMargin" >
-        <number>9</number>
-       </property>
-       <property name="topMargin" >
-        <number>9</number>
-       </property>
-       <property name="rightMargin" >
-        <number>9</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>9</number>
-       </property>
        <item>
         <layout class="QHBoxLayout" >
+         <property name="margin" >
+          <number>5</number>
+         </property>
          <property name="spacing" >
           <number>6</number>
-         </property>
-         <property name="leftMargin" >
-          <number>0</number>
-         </property>
-         <property name="topMargin" >
-          <number>0</number>
-         </property>
-         <property name="rightMargin" >
-          <number>0</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>0</number>
          </property>
          <item>
           <widget class="QGroupBox" name="_invcDateGroup" >
@@ -861,21 +738,19 @@
             <string>Invoice Date Source</string>
            </property>
            <layout class="QHBoxLayout" >
+            <property name="margin" >
+             <number>5</number>
+            </property>
             <property name="spacing" >
              <number>6</number>
             </property>
-            <property name="leftMargin" >
-             <number>9</number>
-            </property>
-            <property name="topMargin" >
-             <number>9</number>
-            </property>
-            <property name="rightMargin" >
-             <number>9</number>
-            </property>
-            <property name="bottomMargin" >
-             <number>9</number>
-            </property>
+            <item>
+             <widget class="QRadioButton" name="_invcCurrdate" >
+              <property name="text" >
+               <string>Current Date</string>
+              </property>
+             </widget>
+            </item>
             <item>
              <spacer>
               <property name="orientation" >
@@ -949,7 +824,9 @@
        <item>
         <widget class="QFrame" name="frame" >
          <property name="sizePolicy" >
-          <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
+          <sizepolicy>
+           <hsizetype>0</hsizetype>
+           <vsizetype>0</vsizetype>
            <horstretch>0</horstretch>
            <verstretch>1</verstretch>
           </sizepolicy>
@@ -961,25 +838,18 @@
           <enum>QFrame::Plain</enum>
          </property>
          <layout class="QHBoxLayout" >
+          <property name="margin" >
+           <number>5</number>
+          </property>
           <property name="spacing" >
-           <number>0</number>
-          </property>
-          <property name="leftMargin" >
-           <number>0</number>
-          </property>
-          <property name="topMargin" >
-           <number>0</number>
-          </property>
-          <property name="rightMargin" >
-           <number>0</number>
-          </property>
-          <property name="bottomMargin" >
            <number>0</number>
           </property>
           <item>
            <widget class="QGroupBox" name="_invoiceGroup" >
             <property name="sizePolicy" >
-             <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
+             <sizepolicy>
+              <hsizetype>0</hsizetype>
+              <vsizetype>0</vsizetype>
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -988,37 +858,19 @@
              <string>Default Invoice Copies:</string>
             </property>
             <layout class="QVBoxLayout" >
+             <property name="margin" >
+              <number>5</number>
+             </property>
              <property name="spacing" >
               <number>6</number>
              </property>
-             <property name="leftMargin" >
-              <number>9</number>
-             </property>
-             <property name="topMargin" >
-              <number>9</number>
-             </property>
-             <property name="rightMargin" >
-              <number>9</number>
-             </property>
-             <property name="bottomMargin" >
-              <number>9</number>
-             </property>
              <item>
               <layout class="QHBoxLayout" >
+               <property name="margin" >
+                <number>5</number>
+               </property>
                <property name="spacing" >
                 <number>6</number>
-               </property>
-               <property name="leftMargin" >
-                <number>0</number>
-               </property>
-               <property name="topMargin" >
-                <number>0</number>
-               </property>
-               <property name="rightMargin" >
-                <number>0</number>
-               </property>
-               <property name="bottomMargin" >
-                <number>0</number>
                </property>
                <item>
                 <widget class="QLabel" name="_invoiceNumOfCopiesLit" >
@@ -1035,11 +887,11 @@
                  <property name="enabled" >
                   <bool>true</bool>
                  </property>
-                 <property name="minimum" >
-                  <number>0</number>
-                 </property>
                  <property name="maximum" >
                   <number>9</number>
+                 </property>
+                 <property name="minimum" >
+                  <number>0</number>
                  </property>
                  <property name="value" >
                   <number>0</number>
@@ -1080,7 +932,9 @@
           <item>
            <widget class="QGroupBox" name="_creditMemoGroup" >
             <property name="sizePolicy" >
-             <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
+             <sizepolicy>
+              <hsizetype>0</hsizetype>
+              <vsizetype>0</vsizetype>
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -1089,37 +943,19 @@
              <string>Default Credit Memo Copies:</string>
             </property>
             <layout class="QVBoxLayout" >
+             <property name="margin" >
+              <number>5</number>
+             </property>
              <property name="spacing" >
               <number>6</number>
              </property>
-             <property name="leftMargin" >
-              <number>9</number>
-             </property>
-             <property name="topMargin" >
-              <number>9</number>
-             </property>
-             <property name="rightMargin" >
-              <number>9</number>
-             </property>
-             <property name="bottomMargin" >
-              <number>9</number>
-             </property>
              <item>
               <layout class="QHBoxLayout" >
+               <property name="margin" >
+                <number>5</number>
+               </property>
                <property name="spacing" >
                 <number>6</number>
-               </property>
-               <property name="leftMargin" >
-                <number>0</number>
-               </property>
-               <property name="topMargin" >
-                <number>0</number>
-               </property>
-               <property name="rightMargin" >
-                <number>0</number>
-               </property>
-               <property name="bottomMargin" >
-                <number>0</number>
                </property>
                <item>
                 <widget class="QLabel" name="_creditMemoNumOfCopiesLit" >
@@ -1136,11 +972,11 @@
                  <property name="enabled" >
                   <bool>true</bool>
                  </property>
-                 <property name="minimum" >
-                  <number>0</number>
-                 </property>
                  <property name="maximum" >
                   <number>9</number>
+                 </property>
+                 <property name="minimum" >
+                  <number>0</number>
                  </property>
                  <property name="value" >
                   <number>0</number>
@@ -1188,8 +1024,20 @@
        <string>Customer Defaults</string>
       </attribute>
       <layout class="QGridLayout" >
+       <property name="margin" >
+        <number>5</number>
+       </property>
+       <property name="spacing" >
+        <number>5</number>
+       </property>
        <item row="0" column="0" >
         <layout class="QGridLayout" >
+         <property name="margin" >
+          <number>5</number>
+         </property>
+         <property name="spacing" >
+          <number>5</number>
+         </property>
          <item row="0" column="0" >
           <widget class="QLabel" name="_custtypeLit" >
            <property name="text" >
@@ -1203,13 +1051,12 @@
          <item row="0" column="1" >
           <widget class="XComboBox" name="_custtype" >
            <property name="sizePolicy" >
-            <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+            <sizepolicy>
+             <hsizetype>0</hsizetype>
+             <vsizetype>0</vsizetype>
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
-           </property>
-           <property name="type" >
-            <enum>XComboBox::CustomerTypes</enum>
            </property>
           </widget>
          </item>
@@ -1224,11 +1071,7 @@
           </widget>
          </item>
          <item row="1" column="1" >
-          <widget class="XComboBox" name="_salesrep" >
-           <property name="type" >
-            <enum>XComboBox::SalesReps</enum>
-           </property>
-          </widget>
+          <widget class="XComboBox" name="_salesrep" />
          </item>
          <item row="2" column="0" >
           <widget class="QLabel" name="_shipViaLit" >
@@ -1243,13 +1086,12 @@
          <item row="2" column="1" >
           <widget class="XComboBox" name="_shipvia" >
            <property name="sizePolicy" >
-            <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+            <sizepolicy>
+             <hsizetype>0</hsizetype>
+             <vsizetype>0</vsizetype>
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
-           </property>
-           <property name="type" >
-            <enum>XComboBox::ShipVias</enum>
            </property>
           </widget>
          </item>
@@ -1266,13 +1108,12 @@
          <item row="3" column="1" >
           <widget class="XComboBox" name="_shipform" >
            <property name="sizePolicy" >
-            <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+            <sizepolicy>
+             <hsizetype>0</hsizetype>
+             <vsizetype>0</vsizetype>
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
-           </property>
-           <property name="type" >
-            <enum>XComboBox::ShippingForms</enum>
            </property>
           </widget>
          </item>
@@ -1289,13 +1130,12 @@
          <item row="4" column="1" >
           <widget class="XComboBox" name="_terms" >
            <property name="sizePolicy" >
-            <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+            <sizepolicy>
+             <hsizetype>0</hsizetype>
+             <vsizetype>0</vsizetype>
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
-           </property>
-           <property name="type" >
-            <enum>XComboBox::ARTerms</enum>
            </property>
           </widget>
          </item>
@@ -1312,7 +1152,9 @@
          <item row="5" column="1" >
           <widget class="QComboBox" name="_balanceMethod" >
            <property name="sizePolicy" >
-            <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+            <sizepolicy>
+             <hsizetype>0</hsizetype>
+             <vsizetype>0</vsizetype>
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -1333,36 +1175,18 @@
        </item>
        <item row="0" column="1" >
         <layout class="QVBoxLayout" >
+         <property name="margin" >
+          <number>5</number>
+         </property>
          <property name="spacing" >
-          <number>0</number>
-         </property>
-         <property name="leftMargin" >
-          <number>0</number>
-         </property>
-         <property name="topMargin" >
-          <number>0</number>
-         </property>
-         <property name="rightMargin" >
-          <number>0</number>
-         </property>
-         <property name="bottomMargin" >
           <number>0</number>
          </property>
          <item>
           <layout class="QHBoxLayout" >
+           <property name="margin" >
+            <number>5</number>
+           </property>
            <property name="spacing" >
-            <number>0</number>
-           </property>
-           <property name="leftMargin" >
-            <number>0</number>
-           </property>
-           <property name="topMargin" >
-            <number>0</number>
-           </property>
-           <property name="rightMargin" >
-            <number>0</number>
-           </property>
-           <property name="bottomMargin" >
             <number>0</number>
            </property>
            <item>
@@ -1392,19 +1216,10 @@
          </item>
          <item>
           <layout class="QHBoxLayout" >
+           <property name="margin" >
+            <number>5</number>
+           </property>
            <property name="spacing" >
-            <number>0</number>
-           </property>
-           <property name="leftMargin" >
-            <number>0</number>
-           </property>
-           <property name="topMargin" >
-            <number>0</number>
-           </property>
-           <property name="rightMargin" >
-            <number>0</number>
-           </property>
-           <property name="bottomMargin" >
             <number>0</number>
            </property>
            <item>
@@ -1434,19 +1249,10 @@
          </item>
          <item>
           <layout class="QHBoxLayout" >
+           <property name="margin" >
+            <number>5</number>
+           </property>
            <property name="spacing" >
-            <number>0</number>
-           </property>
-           <property name="leftMargin" >
-            <number>0</number>
-           </property>
-           <property name="topMargin" >
-            <number>0</number>
-           </property>
-           <property name="rightMargin" >
-            <number>0</number>
-           </property>
-           <property name="bottomMargin" >
             <number>0</number>
            </property>
            <item>
@@ -1494,36 +1300,18 @@
        </item>
        <item row="1" column="0" colspan="2" >
         <layout class="QHBoxLayout" >
+         <property name="margin" >
+          <number>5</number>
+         </property>
          <property name="spacing" >
           <number>5</number>
          </property>
-         <property name="leftMargin" >
-          <number>0</number>
-         </property>
-         <property name="topMargin" >
-          <number>0</number>
-         </property>
-         <property name="rightMargin" >
-          <number>0</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>0</number>
-         </property>
          <item>
           <layout class="QVBoxLayout" >
+           <property name="margin" >
+            <number>5</number>
+           </property>
            <property name="spacing" >
-            <number>0</number>
-           </property>
-           <property name="leftMargin" >
-            <number>0</number>
-           </property>
-           <property name="topMargin" >
-            <number>0</number>
-           </property>
-           <property name="rightMargin" >
-            <number>0</number>
-           </property>
-           <property name="bottomMargin" >
             <number>0</number>
            </property>
            <item>
@@ -1550,42 +1338,26 @@
          </item>
          <item>
           <layout class="QVBoxLayout" >
+           <property name="margin" >
+            <number>5</number>
+           </property>
            <property name="spacing" >
-            <number>0</number>
-           </property>
-           <property name="leftMargin" >
-            <number>0</number>
-           </property>
-           <property name="topMargin" >
-            <number>0</number>
-           </property>
-           <property name="rightMargin" >
-            <number>0</number>
-           </property>
-           <property name="bottomMargin" >
             <number>0</number>
            </property>
            <item>
             <layout class="QHBoxLayout" >
+             <property name="margin" >
+              <number>5</number>
+             </property>
              <property name="spacing" >
-              <number>0</number>
-             </property>
-             <property name="leftMargin" >
-              <number>0</number>
-             </property>
-             <property name="topMargin" >
-              <number>0</number>
-             </property>
-             <property name="rightMargin" >
-              <number>0</number>
-             </property>
-             <property name="bottomMargin" >
               <number>0</number>
              </property>
              <item>
               <widget class="XLineEdit" name="_creditLimit" >
                <property name="sizePolicy" >
-                <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                <sizepolicy>
+                 <hsizetype>0</hsizetype>
+                 <vsizetype>0</vsizetype>
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
@@ -1640,10 +1412,18 @@
        <string>Returns</string>
       </attribute>
       <layout class="QGridLayout" >
+       <property name="margin" >
+        <number>5</number>
+       </property>
+       <property name="spacing" >
+        <number>5</number>
+       </property>
        <item row="0" column="0" >
         <widget class="QGroupBox" name="_enableReturns" >
          <property name="sizePolicy" >
-          <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
+          <sizepolicy>
+           <hsizetype>0</hsizetype>
+           <vsizetype>0</vsizetype>
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -1661,6 +1441,12 @@
           <bool>false</bool>
          </property>
          <layout class="QGridLayout" >
+          <property name="margin" >
+           <number>5</number>
+          </property>
+          <property name="spacing" >
+           <number>5</number>
+          </property>
           <item row="0" column="0" colspan="2" >
            <widget class="QCheckBox" name="_returnAuthChangeLog" >
             <property name="focusPolicy" >
@@ -1683,31 +1469,6 @@
             <property name="focusPolicy" >
              <enum>Qt::ClickFocus</enum>
             </property>
-            <item>
-             <property name="text" >
-              <string>Credit</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>Return</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>Replace</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>Service</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>Substitute</string>
-             </property>
-            </item>
            </widget>
           </item>
           <item row="2" column="0" >
@@ -1722,16 +1483,6 @@
             <property name="focusPolicy" >
              <enum>Qt::ClickFocus</enum>
             </property>
-            <item>
-             <property name="text" >
-              <string>Immediately</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>Upon Receipt</string>
-             </property>
-            </item>
            </widget>
           </item>
           <item row="3" column="0" >
@@ -1746,26 +1497,6 @@
             <property name="focusPolicy" >
              <enum>Qt::ClickFocus</enum>
             </property>
-            <item>
-             <property name="text" >
-              <string>None</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>Credit Memo</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>Check</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>Credit Card</string>
-             </property>
-            </item>
            </widget>
           </item>
           <item row="4" column="0" colspan="2" >
@@ -1820,19 +1551,25 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>XComboBox</class>
-   <extends>QComboBox</extends>
-   <header>xcombobox.h</header>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
   </customwidget>
   <customwidget>
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
   </customwidget>
   <customwidget>
-   <class>XTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>xtreewidget.h</header>
+   <class>XComboBox</class>
+   <extends>QComboBox</extends>
+   <header>xcombobox.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -1890,7 +1627,6 @@
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
- <includes/>
  <resources/>
  <connections>
   <connection>
