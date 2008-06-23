@@ -895,9 +895,11 @@ bool salesOrder::save(bool partial)
     q.bindValue(":packdate", _orderDate->date());
 
   q.bindValue(":cust_id", _cust->id());
-  q.bindValue(":warehous_id", _warehouse->id());
+  if (_warehouse->id() != -1)
+    q.bindValue(":warehous_id", _warehouse->id());
   q.bindValue(":custponumber", _custPONumber->text().stripWhiteSpace());
-  q.bindValue(":shipto_id", _shiptoid);
+  if (_shiptoid != -1)
+    q.bindValue(":shipto_id", _shiptoid);
   q.bindValue(":billtoname",                _billToName->text());
   q.bindValue(":billtoaddress1",        _billToAddr->line1());
   q.bindValue(":billtoaddress2",        _billToAddr->line2());
@@ -919,21 +921,24 @@ bool salesOrder::save(bool partial)
   q.bindValue(":shipcomments", _shippingComments->text());
   q.bindValue(":fob", _fob->text());
   q.bindValue(":shipvia", _shipVia->currentText());
-  q.bindValue(":salesrep_id", _salesRep->id());
+  if (_salesRep->id() != -1)
+    q.bindValue(":salesrep_id", _salesRep->id());
   if (_taxAuth->isValid())
     q.bindValue(":taxauth_id", _taxAuth->id());
-  q.bindValue(":terms_id", _terms->id());
+  if (_terms->id() != -1)
+    q.bindValue(":terms_id", _terms->id());
   q.bindValue(":shipchrg_id", _shippingCharges->id());
   q.bindValue(":shipform_id", _shippingForm->id());
-  q.bindValue(":prj_id", -1);
   q.bindValue(":freight", _freight->localValue());
   q.bindValue(":commission", (_commission->toDouble() / 100.0));
   q.bindValue(":misc", _miscCharge->localValue());
-  q.bindValue(":misc_accnt_id", _miscChargeAccount->id());
+  if (_miscChargeAccount->id() != -1)
+    q.bindValue(":misc_accnt_id", _miscChargeAccount->id());
   q.bindValue(":misc_descrip", _miscChargeDescription->text().stripWhiteSpace());
   q.bindValue(":curr_id", _orderCurrency->id());
   q.bindValue(":cohead_shipcomplete", QVariant(_shipComplete->isChecked(), 0));
-  q.bindValue(":prj_id", _project->id());
+  if (_project->isValid())
+    q.bindValue(":prj_id", _project->id());
   if(_expire->isValid())
     q.bindValue(":expire", _expire->date());
 
@@ -1891,23 +1896,23 @@ void salesOrder::populate()
                 "       cohead_billtoname, cohead_billtoaddress1, cohead_billtoaddress2,"
                 "       cohead_billtoaddress3, cohead_billtocity, cohead_billtostate, cohead_billtozipcode,"
                 "       cohead_billtocountry,"
-                "       cohead_shipto_id, cohead_shiptoname, cohead_shiptoaddress1,"
+                "       COALESCE(cohead_shipto_id,-1) AS cohead_shipto_id, cohead_shiptoname, cohead_shiptoaddress1,"
                 "       cohead_shiptoaddress2, cohead_shiptoaddress3, cohead_shiptocity,"
                 "       cohead_shiptostate, cohead_shiptozipcode, cohead_shiptophone,"
                 "       cohead_shiptocountry,"
                 "       cohead_freight, cohead_holdtype,"
                 "       cohead_salesrep_id, formatScrap(cohead_commission) AS f_commission,"
                 "       COALESCE(cohead_taxauth_id,-1) AS cohead_taxauth_id, cohead_terms_id,"
-                "       cohead_origin, cohead_fob, cohead_shipvia, cohead_warehous_id,"
+                "       cohead_origin, cohead_fob, cohead_shipvia, COALESCE(cohead_warehous_id,-1) as cohead_warehous_id,"
                 "       cust_name, cust_ffshipto, cust_blanketpos,"
                 "       cohead_ordercomments, cohead_shipcomments,"
                 "       cohead_shipchrg_id, cohead_shipform_id,"
                 "       cohead_misc,"
-                "       cohead_misc_accnt_id, cohead_misc_descrip,"
+                "       COALESCE(cohead_misc_accnt_id,-1) AS cohead_misc_accnt_id, cohead_misc_descrip,"
                 "       CASE WHEN(cohead_wasquote) THEN COALESCE(cohead_quote_number, cohead_number)"
                 "            ELSE formatBoolYN(cohead_wasquote)"
                 "       END AS fromQuote,"
-                "       cohead_shipcomplete, cohead_prj_id,"
+                "       cohead_shipcomplete, COALESCE(cohead_prj_id,-1) AS cohead_prj_id,"
                 "       cohead_curr_id "
                 "FROM custinfo, cohead "
                 "WHERE ( (cohead_cust_id=cust_id)"
@@ -2066,7 +2071,7 @@ void salesOrder::populate()
                 "       quhead_billtoname, quhead_billtoaddress1, quhead_billtoaddress2,"
                 "       quhead_billtoaddress3, quhead_billtocity, quhead_billtostate, quhead_billtozip,"
                 "       quhead_billtocountry,"
-                "       quhead_shipto_id, quhead_shiptoname, quhead_shiptoaddress1,"
+                "       COALESCE(quhead_shipto_id,-1) AS quhead_shipto_id, quhead_shiptoname, quhead_shiptoaddress1,"
                 "       quhead_shiptoaddress2, quhead_shiptoaddress3, quhead_shiptocity,"
                 "       quhead_shiptostate, quhead_shiptozipcode, quhead_shiptophone,"
                 "       quhead_shiptocountry,"
@@ -2077,7 +2082,7 @@ void salesOrder::populate()
                 "       cust_ffshipto, cust_blanketpos,"
                 "       quhead_ordercomments, quhead_shipcomments,"
                 "       quhead_misc,"
-                "       quhead_misc_accnt_id, quhead_misc_descrip,"
+                "       COALESCE(quhead_misc_accnt_id,-1) AS quhead_misc_accnt_id, quhead_misc_descrip,"
                 "       quhead_prj_id, quhead_warehous_id, quhead_curr_id, quhead_expire "
                 "FROM quhead, custinfo "
                 "WHERE ( (quhead_cust_id=cust_id)"

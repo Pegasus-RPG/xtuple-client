@@ -349,9 +349,13 @@ void shipTo::sSave()
   q.bindValue(":shipto_shipvia", _shipVia->currentText());
   if (_taxauth->isValid())
     q.bindValue(":shipto_taxauth_id",  _taxauth->id());
-  q.bindValue(":shipto_salesrep_id", _salesRep->id());
-  q.bindValue(":shipto_shipzone_id", _shipZone->id());
+  if (_salesRep->id() != -1)
+    q.bindValue(":shipto_salesrep_id", _salesRep->id());
+  if (_shipZone->isValid())
+    q.bindValue(":shipto_shipzone_id", _shipZone->id());
+  if (_shipform->id() != -1)
   q.bindValue(":shipto_shipform_id", _shipform->id());
+  if (_shipchrg->id() != -1)
   q.bindValue(":shipto_shipchrg_id", _shipchrg->id());
   q.bindValue(":shipto_ediprofile_id", _ediProfile->id());
   q.exec();
@@ -374,8 +378,8 @@ void shipTo::populate()
              "       shipto_num, shipto_name, shipto_cntct_id,"
              "       shipto_shipvia, formatScrap(shipto_commission) AS commission,"
              "       shipto_comments, shipto_shipcomments,"
-             "       shipto_salesrep_id, shipto_taxauth_id, shipto_shipzone_id,"
-             "       shipto_shipform_id, shipto_shipchrg_id, "
+             "       COALESCE(shipto_salesrep_id,-1) AS shipto_salesrep_id, shipto_taxauth_id, COALESCE(shipto_shipzone_id,-1) AS shipto_shipzone_id,"
+             "       COALESCE(shipto_shipform_id,-1) AS shipto_shipform_id, shipto_shipchrg_id, "
 	     "       shipto_ediprofile_id, shipto_addr_id "
              "FROM shiptoinfo LEFT OUTER JOIN cust ON (shipto_cust_id=cust_id) "
              "WHERE (shipto_id=:shipto_id);" );
