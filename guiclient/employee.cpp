@@ -122,6 +122,7 @@ employee::employee(QWidget* parent, Qt::WindowFlags fl)
   setupUi(this);
 
   connect(_attachGroup,   SIGNAL(clicked()), this, SLOT(sAttachGroup()));
+  connect(_code,  SIGNAL(editingFinished()), this, SLOT(sHandleButtons()));
   connect(_deleteCharass, SIGNAL(clicked()), this, SLOT(sDeleteCharass()));
   connect(_detachGroup,   SIGNAL(clicked()), this, SLOT(sDetachGroup()));
   connect(_editCharass,   SIGNAL(clicked()), this, SLOT(sEditCharass()));
@@ -734,18 +735,18 @@ void employee::sUser()
 {
   XSqlQuery usrq;
   usrq.prepare("SELECT usr_username "
-              "FROM usr JOIN emp ON (emp_usr_id=usr_id) "
-              "WHERE (emp_id=:id);");
-  usrq.bindValue(":id", _empid);
+               "FROM usr "
+               "WHERE (usr_username=:empcode);");
+  usrq.bindValue(":empcode", _code->text());
   usrq.exec();
   if (usrq.first() && _privileges->check("MaintainUsers"))
   {
     ParameterList params;
     params.append("mode",     (_mode == cView) ? "view" : "edit");
-    params.append("username", usrq.value("usr_username"));
+    params.append("username", _code->text());
     user newdlg(this, "", TRUE);
     newdlg.set(params);
-    _user->setEnabled(newdlg.exec() != QDialog::Rejected);
+    newdlg.exec();
   }
   else if (usrq.lastError().type() != QSqlError::None)
   {
@@ -767,7 +768,7 @@ void employee::sUser()
       params.append("username", _code->text());
       user newdlg(this, "", TRUE);
       newdlg.set(params);
-      _user->setEnabled(newdlg.exec() == QDialog::Rejected);
+      newdlg.exec();
     }
   }
   else
@@ -837,4 +838,22 @@ void employee::sViewGroup()
   empGroup newdlg(this, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
+}
+
+void employee::sHandleButtons()
+{
+  XSqlQuery usrq;
+  usrq.prepare("SELECT usr_id FROM usr WHERE usr_username=:username;");
+  usrq.bindValue(":username", _code->text());
+  usrq.exec();
+  if (usrq.first())
+  {
+    _user->setChecked(true);
+    _userButton->setEnabled(_privileges->check("MaintainUsers"));
+  }
+  else if (usrq.lastError().type() != QSqlError::None)
+  {
+    systemError(this, usrq.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }

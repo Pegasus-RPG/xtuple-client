@@ -151,6 +151,7 @@ enum SetResponse user::set(const ParameterList &pParams)
         _username->setEnabled(false);
         _username->setText(_cUsername);
         _active->setFocus();
+        sCheck();
       }
     }
     else if (param.toString() == "edit")

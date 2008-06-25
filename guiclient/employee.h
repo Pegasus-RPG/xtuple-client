@@ -88,6 +88,7 @@ class employee : public XDialog, public Ui::employee
     virtual void sEditGroup();
     virtual void sFillCharassList();
     virtual void sFillGroupsList();
+    virtual void sHandleButtons();
     virtual void sNewCharass();
     virtual void sSalesrep();
     virtual void sUser();
