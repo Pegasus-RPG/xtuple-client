@@ -1141,7 +1141,7 @@
          <item row="0" column="0" >
           <widget class="QCheckBox" name="_authLotSerial" >
            <property name="text" >
-            <string>Authorize &amp;only these lot/serial numbers</string>
+            <string>Authorize &amp;only these Lot/Serial Numbers</string>
            </property>
           </widget>
          </item>
