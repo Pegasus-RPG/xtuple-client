@@ -1,5 +1,6 @@
 -- dspCheckRegister::sFillList() detail query
--- shows all the checks for a given date range
+-- shows all the checks for a given date range, bank account, 
+-- check number(optional), and recipient(optional)
 -- and additionally fills in the check item detail if showDetail exists
 SELECT checkhead_id AS checkid,
        CASE WHEN(checkhead_void) THEN -1
@@ -25,7 +26,25 @@ SELECT checkhead_id AS checkid,
        checkrecip ON ((checkhead_recip_id=checkrecip_id)
 		 AND  (checkhead_recip_type=checkrecip_type))
  WHERE ((checkhead_checkdate BETWEEN <? value("startDate") ?> AND <? value("endDate") ?>)
-   AND   (checkhead_bankaccnt_id=<? value("bankaccnt_id") ?>) )
+   AND   (checkhead_bankaccnt_id=<? value("bankaccnt_id") ?>)
+   <? if exists("check_number") ?>
+      AND   (checkhead_number=<? value("check_number") ?>)
+   <? endif ?>
+   <? if exists("recip") ?>
+      <? if exists("recip_type_v") ?>
+         AND   (checkhead_recip_type = 'V' )
+      <? endif ?>
+      <? if exists("recip_type_c") ?>
+         AND   (checkhead_recip_type = 'C' )
+      <? endif ?>
+      <? if exists("recip_type_t") ?>
+         AND   (checkhead_recip_type = 'T' )
+      <? endif ?>
+      <? if exists("recip_id") ?>
+         AND   (checkhead_recip_id = <? value("recip_id") ?> )
+      <? endif ?>
+   <? endif ?>
+)
 <? if exists("showDetail") ?>
 UNION
 SELECT checkitem_checkhead_id AS checkid, 0 AS extra, checkitem_id,
@@ -38,8 +57,26 @@ SELECT checkitem_checkhead_id AS checkid, 0 AS extra, checkitem_id,
        checkhead_number, 
        2 AS orderby 
   FROM checkitem, checkhead 
- WHERE ( (checkitem_checkhead_id=checkhead_id)
+ WHERE ((checkitem_checkhead_id=checkhead_id)
    AND   (checkhead_checkdate BETWEEN <? value("startDate") ?> AND <? value("endDate") ?>)
-   AND   (checkhead_bankaccnt_id=<? value("bankaccnt_id") ?>) )
+   AND   (checkhead_bankaccnt_id=<? value("bankaccnt_id") ?>)
+   <? if exists("check_number") ?>
+      AND   (checkhead_number=<? value("check_number") ?>)
+   <? endif ?>
+   <? if exists("recip") ?>
+      <? if exists("recip_type_v") ?>
+         AND   (checkhead_recip_type = 'V' )
+      <? endif ?>
+      <? if exists("recip_type_c") ?>
+         AND   (checkhead_recip_type = 'C' )
+      <? endif ?>
+      <? if exists("recip_type_t") ?>
+         AND   (checkhead_recip_type = 'T' )
+      <? endif ?>
+      <? if exists("recip_id") ?>
+         AND   (checkhead_recip_id = <? value("recip_id") ?> )
+      <? endif ?>
+   <? endif ?>
+   )
 <? endif ?>
  ORDER BY checkhead_number, checkid, orderby;
