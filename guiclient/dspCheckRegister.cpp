@@ -67,6 +67,7 @@
 #include <openreports.h>
 #include <parameter.h>
 #include <xdateinputdialog.h>
+#include <qstring.h>
 #include "mqlutil.h"
 
 #include "guiclient.h"
@@ -89,6 +90,9 @@ dspCheckRegister::dspCheckRegister(QWidget* parent, const char* name, Qt::WFlags
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_check, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_vendRB,    SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
+  connect(_taxauthRB, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
+  connect(_custRB,    SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
 
   _bankaccnt->setType(XComboBox::APBankAccounts);
 
@@ -102,6 +106,9 @@ dspCheckRegister::dspCheckRegister(QWidget* parent, const char* name, Qt::WFlags
   _check->addColumn(tr("Amount"),      _moneyColumn,    Qt::AlignRight  );
   _check->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignRight  );
   _check->sortByColumn(4);
+
+  sHandleButtons();
+  _recipGroup->setChecked(false);
 
   if (omfgThis->singleCurrency())
   {
@@ -130,9 +137,41 @@ bool dspCheckRegister::setParams(ParameterList &pParams)
     _dates->setFocus();
     return false;
   }
+  
+  if(_recipGroup->isChecked())
+  {
+    pParams.append("recip", 100);
+	if(_vendRB->isChecked())
+	{
+	  pParams.append("recip_type_v", 100);
+	  if(_vend->isValid())
+	  {
+        pParams.append("recip_id", _vend->id());
+	  }
+	}
+	if(_custRB->isChecked())
+	{
+	  pParams.append("recip_type_c", 100);
+	  if(_cust->isValid())
+	  {
+        pParams.append("recip_id", _cust->id());
+	  }
+	}
+	if(_taxauthRB->isChecked())
+	{
+	  pParams.append("recip_type_t", 100);
+	  pParams.append("recip_id", _taxauth_2->id());
+	}
+  }
 
+  if(_checkNumber->text() != "")
+  {
+    pParams.append("check_number", _checkNumber->text().toInt());
+  }
+  
   pParams.append("bankaccnt_id", _bankaccnt->id());
   _dates->appendValue(pParams);
+
   if(_showDetail->isChecked())
     pParams.append("showDetail");
   
@@ -159,7 +198,7 @@ void dspCheckRegister::sFillList()
   ParameterList params;
   if (!setParams(params))
     return;
-
+  
   q = mql.toQuery(params);
   if (q.lastError().type() != QSqlError::None)
   {
@@ -197,17 +236,34 @@ void dspCheckRegister::sFillList()
 
   if(_showDetail->isChecked())
     _check->expandAll();
-
-  QString tots("SELECT formatMoney(SUM(currToCurr(checkhead_curr_id,"
-	       "                                  bankaccnt_curr_id,"
-	       "	                          checkhead_amount,"
-	       "                                  checkhead_checkdate))) AS f_amount,"
-	       "       currConcat(bankaccnt_curr_id) AS currAbbr "
+	
+    QString tots("SELECT formatMoney(SUM(currToCurr(checkhead_curr_id,"
+	       "									bankaccnt_curr_id,"
+	       "									checkhead_amount,"
+	       "									checkhead_checkdate))) AS f_amount,"
+	       "									currConcat(bankaccnt_curr_id) AS currAbbr "
 	       "FROM checkhead, bankaccnt "
 	       "WHERE ((NOT checkhead_void)"
 	       " AND (checkhead_checkdate BETWEEN <? value(\"startDate\") ?> AND <? value(\"endDate\") ?>) "
 	       " AND (bankaccnt_id=checkhead_bankaccnt_id) "
-	       " AND (checkhead_bankaccnt_id=<? value(\"bankaccnt_id\") ?>) )"
+	       " AND (checkhead_bankaccnt_id=<? value(\"bankaccnt_id\") ?>)" 
+		   " <? if exists(\"check_number\") ?>"
+           " AND   (checkhead_number=<? value(\"check_number\") ?>)"
+           " <? endif ?>"
+           " <? if exists(\"recip\") ?>"
+           " <? if exists(\"recip_type_v\") ?>"
+           " AND   (checkhead_recip_type = 'V' )"
+           " <? endif ?>"
+           " <? if exists(\"recip_type_c\") ?>"
+           " AND   (checkhead_recip_type = 'C' )"
+		   " <? endif ?>"
+           " <? if exists(\"recip_type_t\") ?>"
+		   " AND   (checkhead_recip_type = 'T' )"
+           " <? endif ?>"
+           " <? if exists(\"recip_id\") ?>"
+           " AND   (checkhead_recip_id = <? value(\"recip_id\") ?> )"
+           " <? endif ?>"
+           " <? endif ?>)"
 	       " GROUP BY bankaccnt_curr_id;" );
   MetaSQLQuery totm(tots);
   q = totm.toQuery(params);	// reused from above
@@ -269,3 +325,20 @@ void dspCheckRegister::sVoidPosted()
   }
   sFillList();
 }
+
+void dspCheckRegister::sHandleButtons()
+{
+  if (_vendRB->isChecked())
+  {
+    _widgetStack->setCurrentIndex(0);
+  }
+  else if (_custRB->isChecked())
+  {
+	_widgetStack->setCurrentIndex(1);
+  }
+  else
+  {
+	_widgetStack->setCurrentIndex(2);
+  }
+}
+

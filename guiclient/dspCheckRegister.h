@@ -74,6 +74,7 @@ public slots:
     virtual void sPrint();
     virtual void sFillList();
     virtual void sVoidPosted();
+	virtual void sHandleButtons();
 
 protected:
     virtual bool setParams(ParameterList &);
