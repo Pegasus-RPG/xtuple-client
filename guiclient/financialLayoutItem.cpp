@@ -95,6 +95,7 @@ financialLayoutItem::financialLayoutItem(QWidget* parent, const char* name, bool
   _flheadid = -1;
   _flitemid = -1;
 
+  _account->setShowExternal(true);
   _company->setType(XComboBox::Companies);
   _company->append(-1,tr("All"));
   _company->setText(tr("All"));
