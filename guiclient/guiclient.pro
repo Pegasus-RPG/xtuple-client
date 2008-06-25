@@ -301,6 +301,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                standardJournalGroup.ui standardJournalGroupItem.ui standardJournalGroups.ui           \
                standardJournalItem.ui subaccount.ui subaccounts.ui subAccntTypes.ui subAccntType.ui   \
                submitAction.ui submitReport.ui substituteList.ui summarizeInvTransByClassCode.ui      \
+               syncCompanies.ui                                                                       \
                systemMessage.ui                                                                       \
                taxAuthorities.ui taxAuthority.ui taxCodes.ui taxCode.ui taxDetail.ui                  \
                taxBreakdown.ui                                                                        \
@@ -620,6 +621,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h rwInterface
                standardJournalGroup.h standardJournalGroupItem.h standardJournalGroups.h              \
                standardJournalItem.h subaccount.h subaccounts.h subAccntTypes.h subAccntType.h        \
                submitAction.h submitReport.h substituteList.h summarizeInvTransByClassCode.h          \
+               syncCompanies.h                                                                        \
                systemMessage.h                                                                        \
                taxAuthorities.h taxAuthority.h taxCodes.h taxCode.h taxDetail.h                       \
                taxBreakdown.h                                                                         \
@@ -943,6 +945,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp rwInte
                standardJournalGroup.cpp standardJournalGroupItem.cpp standardJournalGroups.cpp        \
                standardJournalItem.cpp subaccount.cpp subaccounts.cpp subAccntTypes.cpp subAccntType.cpp \
                submitAction.cpp submitReport.cpp substituteList.cpp summarizeInvTransByClassCode.cpp  \
+               syncCompanies.cpp                                                                      \
                systemMessage.cpp                                                                      \
                taxAuthorities.cpp taxAuthority.cpp taxCodes.cpp taxCode.cpp taxDetail.cpp             \
                taxBreakdown.cpp                                                                       \

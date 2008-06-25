@@ -795,6 +795,13 @@ void initErrorLookupHash()
 			       "related Return Authorization before any inven"
 			       "tory may be issued to this Order."),	0, "" },
 
+  { "login",  -1, TR("The specified Username does not exist in the specified "
+                     "Database. Contact your Systems Administrator to report "
+                     "this issue"),                                     0, "" },
+  { "login",  -2, TR("The specified Username exists in the specified Database "
+                     "but is not Active. Contact your Systems Administrator "
+                     "to report this issue."),                          0, "" },
+
   { "massReplaceBomitem",  -1, TR("Cannot make this BOM Item replacement "
 				  "because it would create a recursive BOM."),
 									0, "" },

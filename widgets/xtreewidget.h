@@ -158,6 +158,8 @@ class OPENMFGWIDGETS_EXPORT XTreeWidgetItem : public QTreeWidgetItem
     inline void setId(int pId)    { _id = pId;     }
     inline void setAltId(int pId) { _altId = pId;  }
 
+    virtual QVariant rawValue(const QString);
+
     inline XTreeWidgetItem *child(int idx) const
     {
       QTreeWidgetItem * item = QTreeWidgetItem::child(idx);
@@ -201,10 +203,15 @@ class OPENMFGWIDGETS_EXPORT XTreeWidget : public QTreeWidget
     int  id() const;
     int  altId() const;
     void setId(int);
+    int  column(const QString) const;
 
     inline XTreeWidgetItem * topLevelItem(int idx) const
     {
       return (XTreeWidgetItem*)QTreeWidget::topLevelItem(idx);
+    }
+    inline XTreeWidgetItem *currentItem() const
+    {
+      return (XTreeWidgetItem*)QTreeWidget::currentItem();
     }
 
     Q_INVOKABLE void setColumnVisible(int, bool);

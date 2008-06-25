@@ -61,7 +61,7 @@
 #include <QSqlError>
 #include <QVariant>
 
-#include <parameter.h>
+#include <metasql.h>
 #include <openreports.h>
 
 #include "accountNumber.h"
@@ -74,14 +74,20 @@ accountNumbers::accountNumbers(QWidget* parent, const char* name, Qt::WFlags fl)
 
   (void)statusBar();
 
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-
-  sBuildList();
+  connect(_account,        SIGNAL(valid(bool)), this, SLOT(sHandleButtons()));
+  connect(_delete,           SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_edit,             SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_new,              SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_print,            SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_showExternal, SIGNAL(toggled(bool)), this, SLOT(sBuildList()));
 
   connect(omfgThis, SIGNAL(configureGLUpdated()), this, SLOT(sBuildList()));
+
+  _showExternal->setVisible(_metrics->boolean("MultiCompanyFinancialConsolidation"));
+
+  _externalCol = -1;
+
+  sBuildList();
 }
 
 accountNumbers::~accountNumbers()
@@ -131,7 +137,12 @@ void accountNumbers::sNew()
 void accountNumbers::sEdit()
 {
   ParameterList params;
-  params.append("mode", "edit");
+  // don't allow editing external accounts
+  if (_externalCol >= 0 &&
+      _account->currentItem()->rawValue("accnt_company").toBool())
+    params.append("mode", "view");
+  else
+    params.append("mode", "edit");
   params.append("accnt_id", _account->id());
 
   accountNumber newdlg(this, "", TRUE);
@@ -141,8 +152,21 @@ void accountNumbers::sEdit()
     sFillList();
 }
 
+bool accountNumbers::setParams(ParameterList &pParams)
+{
+  if (_metrics->boolean("MultiCompanyFinancialConsolidation") &&
+      _showExternal->isChecked())
+    pParams.append("showExternal");
+
+  return true;
+}
+
 void accountNumbers::sPrint()
 {
+  ParameterList params;
+  if (! setParams(params))
+    return;
+
   orReport report("AccountNumberMasterList");
   if (report.isValid())
     report.print();
@@ -152,10 +176,20 @@ void accountNumbers::sPrint()
 
 void accountNumbers::sFillList()
 {
-  q.prepare("SELECT accnt_id, * "
-            "FROM accnt "
-            "ORDER BY accnt_number, accnt_sub, accnt_profit;");
-  q.exec();
+  QString sql = "SELECT accnt_id, * "
+                "FROM accnt LEFT OUTER JOIN"
+                "     company ON (accnt_company=company_number) "
+                "<? if not exists(\"showExternal\") ?>"
+                "WHERE (NOT COALESCE(company_external, false)) "
+                "<? endif ?>"
+                "ORDER BY accnt_number, accnt_sub, accnt_profit;" ;
+  ParameterList params;
+  if (! setParams(params))
+    return;
+
+  MetaSQLQuery mql(sql);
+  q = mql.toQuery(params);
+
   _account->populate(q);
   if (q.lastError().type() != QSqlError::None)
   {
@@ -167,16 +201,53 @@ void accountNumbers::sFillList()
 void accountNumbers::sBuildList()
 {
   _account->setColumnCount(0);
+  _externalCol = -1;
 
   if (_metrics->value("GLCompanySize").toInt() > 0)
+  {
     _account->addColumn(tr("Company"),       50, Qt::AlignCenter, true, "accnt_company");
+    _externalCol++;
+  }
+
   if (_metrics->value("GLProfitSize").toInt() > 0)
+  {
     _account->addColumn(tr("Profit"),        50, Qt::AlignCenter, true, "accnt_profit");
+    _externalCol++;
+  }
+
   _account->addColumn(tr("Account Number"), 100, Qt::AlignCenter, true, "accnt_number");
+  _externalCol++;
+
   if (_metrics->value("GLSubaccountSize").toInt() > 0)
+  {
     _account->addColumn(tr("Sub."),          50, Qt::AlignCenter, true, "accnt_sub");
+    _externalCol++;
+  }
+
   _account->addColumn(tr("Description"),     -1, Qt::AlignLeft,   true, "accnt_descrip");
+  _externalCol++;
+
   _account->addColumn(tr("Type"),     _ynColumn, Qt::AlignCenter, true, "accnt_type");
+  _externalCol++;
+
+  if (_metrics->value("Application") == "xTuple" ||
+      _metrics->value("Application") == "OpenMFG")
+  {
+    _account->addColumn(tr("External"), _ynColumn, Qt::AlignCenter, false, "company_external");
+    _externalCol++;
+  }
+  else
+    _externalCol = -1;
 
   sFillList();
+}
+
+void accountNumbers::sHandleButtons()
+{
+  // don't allow editing external accounts
+  if (_externalCol >= 0 && _account->currentItem() &&
+      _account->currentItem()->rawValue("accnt_company").toBool())
+    _edit->setText(tr("View"));
+  else
+    _edit->setText(tr("Edit"));
 }

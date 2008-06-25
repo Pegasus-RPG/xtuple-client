@@ -55,38 +55,34 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#ifndef COMPANY_H
-#define COMPANY_H
+#ifndef SYNCCOMPANIES_H
+#define SYNCCOMPANIES_H
 
 #include "guiclient.h"
-#include "xdialog.h"
 #include <parameter.h>
+#include "xmainwindow.h"
 
-#include "ui_company.h"
+#include "ui_syncCompanies.h"
 
-class company : public XDialog, public Ui::company
+class syncCompanies : public XMainWindow, public Ui::syncCompanies
 {
     Q_OBJECT
 
-public:
-    company(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
-    ~company();
+  public:
+    syncCompanies(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    ~syncCompanies();
 
-public slots:
-    virtual SetResponse set(const  ParameterList & pParams );
-    virtual void sSave();
-    virtual void populate();
+    static bool userHasPriv(const int = cView);
+    virtual void setVisible(bool);
 
-protected slots:
+  public slots:
+    virtual void sHandleButtons();
+
+  protected slots:
     virtual void languageChange();
-    virtual void sHandleTest();
-    virtual void sTest();
 
-private:
-    int _mode;
-    int _companyid;
-    QString _cachedNumber;
-
+    virtual void sFillList();
+    virtual void sSync();
 };
 
-#endif // COMPANY_H
+#endif // SYNCCOMPANIES_H

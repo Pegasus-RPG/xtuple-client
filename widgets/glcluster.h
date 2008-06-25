@@ -91,6 +91,8 @@ class OPENMFGWIDGETS_EXPORT GLCluster : public QWidget
 
     inline void setType(unsigned int pType) { _type = pType; }
     inline unsigned int type() const { return _type; }
+    inline bool showExternal()          { return _showExternal; }
+    inline void setShowExternal(bool p) { _showExternal = p; }
 
     void setReadOnly(bool);
 
@@ -120,6 +122,7 @@ class OPENMFGWIDGETS_EXPORT GLCluster : public QWidget
     int  _accntid;
     bool _valid;
     bool _parsed;
+    bool _showExternal;
     unsigned int _type;
 
     QLineEdit   *_company;

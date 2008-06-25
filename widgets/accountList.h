@@ -55,7 +55,6 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-
 #ifndef accountlist_h
 #define accountlist_h
 
@@ -89,6 +88,7 @@ class OPENMFGWIDGETS_EXPORT accountList : public QDialog
 
   private:
     int _accntid;
+    bool         _showExternal;
     unsigned int _type;
 
 };

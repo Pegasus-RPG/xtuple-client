@@ -303,6 +303,11 @@ void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId)
                             rawValue.isNull() ? nullValue :
                             QLocale().toString(rawValue.toDouble(), 'f', scale));
             }
+            else if (rawValue.type() == QVariant::Bool)
+            {
+	      last->setData(col, Qt::DisplayRole,
+                            rawValue.toBool() ? tr("Yes") : tr("No"));
+            }
             else
             {
               last->setData(col, Qt::EditRole,
@@ -485,16 +490,23 @@ void XTreeWidget::addColumn(const QString & pString, int pWidth, int pAlignment,
   setColumnVisible(column, _savedVisibleColumns.value(column, pVisible));
 }
 
-void XTreeWidget::hideColumn(const QString &pColumn)
+int XTreeWidget::column(const QString pName) const
 {
-  int colnum = -1;
-
+  int colIdx = -1;
   for (int i = 0; i < _roles.size(); i++)
-    if (_roles.value(0)->value("qteditrole").toString() == pColumn)
+  {
+    if (_roles.value(i)->value("qteditrole").toString() == pName)
     {
-      colnum = i;
+      colIdx = i;
       break;
     }
+  }
+  return colIdx;
+}
+
+void XTreeWidget::hideColumn(const QString &pColumn)
+{
+  int colnum = column(pColumn);
 
   if (colnum >= 0)
     QTreeWidget::hideColumn(colnum);
@@ -1202,3 +1214,11 @@ void XTreeWidgetItem::setText(int pColumn, const QVariant & pVariant)
   QTreeWidgetItem::setText(pColumn, pVariant.toString());
 }
 
+QVariant XTreeWidgetItem::rawValue(const QString pName)
+{
+  int colIdx = ((XTreeWidget*)treeWidget())->column(pName);
+  if (colIdx < 0)
+    return QVariant();
+  else
+    return data(colIdx, Qt::UserRole).toMap().value("raw");
+}

@@ -62,42 +62,27 @@
 
 #include "dbtools.h"
 
-/*
- *  Constructs a login2Options as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 login2Options::login2Options(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
 
-    // signals and slots connections
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
+  _saveSettings = true;
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 login2Options::~login2Options()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void login2Options::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
-void login2Options::set(ParameterList &pParams)
+void login2Options::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -122,16 +107,22 @@ void login2Options::set(ParameterList &pParams)
 
   if(pParams.inList("requireSSL"))
     _requireSSL->setChecked(TRUE);
+
+  if (pParams.inList("dontSaveSettings"))
+    _saveSettings = false;
 }
 
 void login2Options::sSave()
 {
   buildDatabaseURL(_databaseURL, "psql", _server->text(), _database->text(), _port->text());
-  QSettings setting(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
-  setting.writeEntry("/OpenMFG/_databaseURL", _databaseURL);
-  setting.writeEntry("/OpenMFG/_enhancedAuthentication", (bool)_enhancedAuth->isChecked());
-  setting.writeEntry("/OpenMFG/_requireSSL", (bool)_requireSSL->isChecked());
+  
+  if (_saveSettings)
+  {
+    QSettings setting(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
+    setting.writeEntry("/OpenMFG/_databaseURL", _databaseURL);
+    setting.writeEntry("/OpenMFG/_enhancedAuthentication", (bool)_enhancedAuth->isChecked());
+    setting.writeEntry("/OpenMFG/_requireSSL", (bool)_requireSSL->isChecked());
+  }
 
   accept();
 }
-

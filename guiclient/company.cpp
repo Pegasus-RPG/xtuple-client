@@ -58,18 +58,32 @@
 #include "company.h"
 
 #include <QMessageBox>
+#include <QSqlDatabase>
 #include <QSqlError>
 #include <QVariant>
+
+#include <dbtools.h>
+
+#include "login2.h"
+
+#define DEBUG true
 
 company::company(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_extDB,     SIGNAL(editingFinished()), this, SLOT(sHandleTest()));
+  connect(_extPort,   SIGNAL(editingFinished()), this, SLOT(sHandleTest()));
+  connect(_extServer, SIGNAL(editingFinished()), this, SLOT(sHandleTest()));
+  connect(_extTest,           SIGNAL(clicked()), this, SLOT(sTest()));
+  connect(_save,              SIGNAL(clicked()), this, SLOT(sSave()));
 
   _number->setMaxLength(_metrics->value("GLCompanySize").toInt());
   _cachedNumber = "";
+
+  _extGroup->setVisible(_metrics->boolean("MultiCompanyFinancialConsolidation"));
+  _extGroup->setVisible(_metrics->boolean("MultiCompanyFinancialConsolidation"));
 }
 
 company::~company()
@@ -111,6 +125,7 @@ enum SetResponse company::set(const ParameterList &pParams)
       
       _number->setEnabled(FALSE);
       _descrip->setEnabled(FALSE);
+      _extGroup->setEnabled(FALSE);
       _close->setText(tr("&Close"));
       
       _close->setFocus();
@@ -121,6 +136,37 @@ enum SetResponse company::set(const ParameterList &pParams)
 
 void company::sSave()
 {
+  struct {
+    bool	condition;
+    QString	msg;
+    QWidget*	widget;
+  } error[] = {
+    { _extGroup->isChecked() && _extServer->text().isEmpty(),
+      tr("<p>You must enter a Server if this is an external Company."),
+      _extServer
+    },
+    { _extGroup->isChecked() && _extPort->value() == 0,
+      tr("<p>You must enter a Port if this is an external Company."),
+      _extPort
+    },
+    { _extGroup->isChecked() && _extDB->text().isEmpty(),
+      tr("<p>You must enter a Database if this is an external Company."),
+      _extDB
+    },
+    { true, "", NULL }
+  }; // error[]
+
+  int errIndex;
+  for (errIndex = 0; ! error[errIndex].condition; errIndex++)
+    ;
+  if (! error[errIndex].msg.isEmpty())
+  {
+    QMessageBox::critical(this, tr("Cannot Save Company"),
+			  error[errIndex].msg);
+    error[errIndex].widget->setFocus();
+    return;
+  }
+
   if (_mode == cNew)
   {
     q.exec("SELECT NEXTVAL('company_company_id_seq') AS company_id;");
@@ -133,18 +179,38 @@ void company::sSave()
     }
     
     q.prepare( "INSERT INTO company "
-               "( company_id, company_number, company_descrip) "
+               "( company_id, company_number, company_descrip,"
+               "  company_external, company_server, company_port,"
+               "  company_database) "
                "VALUES "
-               "( :company_id, :company_number, :company_descrip); " );
+               "( :company_id, :company_number, :company_descrip,"
+               "  :company_external, :company_server, :company_port, "
+               "  :company_database);" );
   }
   else if (_mode == cEdit)
   {
     if (_number->text() != _cachedNumber &&
         QMessageBox::question(this, tr("Change All Accounts?"),
+                          _extGroup->isChecked() ?
+                              tr("<p>The old Company Number %1 might be used "
+                                 "by existing Accounts, including Accounts in "
+                                 "the %2 child database. Would you like to "
+                                 "change all accounts in the current database "
+                                 "that use it to Company Number %3?<p>If you "
+                                 "answer 'No' then either Cancel or change the "
+                                 "Number back to %4 and Save again. If you "
+                                 "answer 'Yes' then change the Company Number "
+                                 "in the child database as well.")
+                                .arg(_cachedNumber)
+                                .arg(_extDB->text())
+                                .arg(_number->text())
+                                .arg(_cachedNumber)
+                            :
                               tr("<p>The old Company Number %1 might be used "
                                  "by existing Accounts. Would you like to "
                                  "change all accounts that use it to Company "
-                                 "Number %2?<p>If you answer 'No' then change "
+                                 "Number %2?<p>If you answer 'No' then either "
+                                 "Cancel or change "
                                  "the Number back to %3 and Save again.")
                                 .arg(_cachedNumber)
                                 .arg(_number->text())
@@ -154,13 +220,22 @@ void company::sSave()
       return;
 
     q.prepare( "UPDATE company "
-               "SET company_number=:company_number, company_descrip=:company_descrip "
+               "SET company_number=:company_number,"
+               "    company_descrip=:company_descrip,"
+               "    company_external=:company_external,"
+               "    company_server=:company_server,"
+               "    company_port=:company_port,"
+               "    company_database=:company_database "
                "WHERE (company_id=:company_id);" );
   }
   
-  q.bindValue(":company_id", _companyid);
-  q.bindValue(":company_number", _number->text());
-  q.bindValue(":company_descrip", _descrip->text());
+  q.bindValue(":company_id",       _companyid);
+  q.bindValue(":company_number",   _number->text());
+  q.bindValue(":company_descrip",  _descrip->text());
+  q.bindValue(":company_external", _extGroup->isChecked());
+  q.bindValue(":company_server",   _extServer->text());
+  q.bindValue(":company_port",     _extPort->cleanText());
+  q.bindValue(":company_database", _extDB->text());
   q.exec();
   if (q.lastError().type() != QSqlError::None)
   {
@@ -182,12 +257,177 @@ void company::populate()
   {
     _number->setText(q.value("company_number").toString());
     _descrip->setText(q.value("company_descrip").toString());
+    _extGroup->setChecked(q.value("company_external").toBool());
+    _extServer->setText(q.value("company_server").toString());
+    _extPort->setValue(q.value("company_port").toInt());
+    _extDB->setText(q.value("company_database").toString());
 
     _cachedNumber = q.value("company_number").toString();
+
+    q.prepare("SELECT COUNT(*) AS result "
+              "FROM accnt "
+              "WHERE (accnt_company=:number);");
+    q.bindValue(":number", _cachedNumber);
+    q.exec();
+    if (q.first())
+      _extGroup->setEnabled(q.value("result").toInt() == 0);
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
   else if (q.lastError().type() != QSqlError::None)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+  sHandleTest();
+}
+
+void company::sHandleTest()
+{
+  _extTest->setEnabled(! _extServer->text().isEmpty() &&
+                       _extPort->value() != 0 &&
+                       ! _extDB->text().isEmpty());
+}
+
+void company::sTest()
+{
+  if (DEBUG)
+    qDebug("company::sTest()");
+
+  QString dbURL;
+  QString protocol;
+  QString host = _extServer->text();
+  QString db   = _extDB->text();
+  QString port = _extPort->cleanText();
+
+  buildDatabaseURL(dbURL, protocol, host, db, port);
+  if (DEBUG)
+    qDebug("company::sTest() dbURL before login2 = %s", qPrintable(dbURL));
+
+  ParameterList params;
+  params.append("databaseURL", dbURL);
+  params.append("multipleConnections");
+
+  login2 newdlg(this, "testLogin", false);
+  newdlg.set(params);
+  if (newdlg.exec() == QDialog::Rejected)
+    return;
+
+  dbURL = newdlg._databaseURL;
+  if (DEBUG)
+    qDebug("company::sTest() dbURL after login2 = %s", qPrintable(dbURL));
+  parseDatabaseURL(dbURL, protocol, host, db, port);
+
+  QSqlDatabase testDB = QSqlDatabase::addDatabase("QPSQL7", db);
+  testDB.setHostName(host);
+  testDB.setDatabaseName(db);
+  testDB.setUserName(newdlg.username());
+  testDB.setPassword(newdlg.password());
+  if (testDB.open())
+  {
+    if (DEBUG)
+      qDebug("company::sTest() opened testDB!");
+
+    XSqlQuery rmq(testDB);
+    rmq.prepare("SELECT fetchMetricText('OpenMFGServerVersion') AS result;");
+    rmq.exec();
+    if (rmq.first())
+    {
+      if (rmq.value("result").toString() != _metrics->value("OpenMFGServerVersion"))
+      {
+        QMessageBox::warning(this, tr("Versions Incompatible"),
+                             tr("<p>The version of the child database is not "
+                                "the same as the version of the parent "
+                                "database (%1 vs. %2). The data cannot safely "
+                                "be synchronized.")
+                             .arg(rmq.value("result").toString())
+                             .arg(_metrics->value("OpenMFGServerVersion")));
+        return;
+      }
+    }
+    else if (rmq.lastError().type() != QSqlError::None)
+    {
+      systemError(this, rmq.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+
+    rmq.exec("SELECT * FROM curr_symbol WHERE curr_base;");
+    q.exec("SELECT * FROM curr_symbol WHERE curr_base;");
+    if (q.first() && rmq.first())
+    {
+      if (rmq.value("curr_name").toString() != q.value("curr_name").toString() &&
+          rmq.value("curr_symbol").toString() != q.value("curr_symbol").toString() &&
+          rmq.value("curr_abbr").toString() != q.value("curr_abbr").toString())
+      {
+        QMessageBox::warning(this, tr("Currencies Incompatible"),
+                             tr("<p>The currency of the child database does "
+                                "not match the currency of the parent database "
+                                "(%1 %2 %3 vs. %4 %5 %6). The data cannot "
+                                "safely be synchronized.")
+                             .arg(rmq.value("curr_name").toString())
+                             .arg(rmq.value("curr_symbol").toString())
+                             .arg(rmq.value("curr_abbr").toString())
+                             .arg(q.value("curr_name").toString())
+                             .arg(q.value("curr_symbol").toString())
+                             .arg(q.value("curr_abbr").toString()));
+        return;
+      }
+    }
+    else if (rmq.lastError().type() != QSqlError::None)
+    {
+      systemError(this, rmq.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+    else if (!rmq.first())
+    {
+      QMessageBox::warning(this, tr("No Base Currency"),
+                           tr("<p>The child database does not appear to have "
+                              "a base currency defined. The data cannot safely "
+                              "be synchronized."));
+      return;
+    }
+    else if (!q.first())
+    {
+      QMessageBox::warning(this, tr("No Base Currency"),
+                           tr("<p>The parent database does not appear to have "
+                              "a base currency defined. The data cannot safely "
+                              "be synchronized."));
+      return;
+    }
+
+    rmq.prepare("SELECT * FROM company WHERE (company_number=:number);");
+    rmq.bindValue(":number", _number->text());
+    rmq.exec();
+    if (rmq.first())
+      ; // nothing to do
+    else if (rmq.lastError().type() != QSqlError::None)
+    {
+      systemError(this, rmq.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+    else
+    {
+      QMessageBox::warning(this, tr("No Corresponding Company"),
+                           tr("<p>The child database does not appear to have "
+                              "a Company %1 defined. The data cannot safely "
+                              "be synchronized.").arg(_number->text()));
+      return;
+    }
+  }
+  else
+  {
+    QMessageBox::warning(this, tr("Could Not Connect"),
+                         tr("<p>Could not connect to the child database "
+                            "with these connection parameters."));
+    return;
+  }
+
 }

@@ -196,6 +196,7 @@
 
 #include "updateLateCustCreditStatus.h"
 #include "createRecurringInvoices.h"
+#include "syncCompanies.h"
 
 // START_RW
 #include "postGLTransactionsToExternal.h"
@@ -499,6 +500,8 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
     { "so.purgeInvoices", tr("Purge &Invoices..."), SLOT(sPurgeInvoices()), utilitiesMenu, _privileges->check("PurgeInvoices"), NULL, NULL, true , NULL },
     { "ar.updateLateCustCreditStatus", tr("&Update Late Customer Credit Status..."), SLOT(sUpdateLateCustCreditStatus()), utilitiesMenu, _privileges->check("UpdateCustomerCreditStatus"), NULL, NULL, _metrics->boolean("AutoCreditWarnLateCustomers"), NULL },
     { "ar.createRecurringInvoices", tr("&Create Recurring Invoices..."), SLOT(sCreateRecurringInvoices()), utilitiesMenu, _privileges->check("MaintainMiscInvoices"), NULL, NULL, true, NULL },
+    { "separator",		  NULL,					NULL,					utilitiesMenu,		true,					       NULL, NULL, _metrics->boolean("MultiCompanyFinancialConsolidation"), NULL },
+    { "gl.syncCompanies",           tr("&Synchronize Companies"),        SLOT(sSyncCompanies()),           utilitiesMenu, syncCompanies::userHasPriv(), NULL, NULL, _metrics->boolean("MultiCompanyFinancialConsolidation"), NULL },
   };
 
   addActionsToMenu(acts, sizeof(acts) / sizeof(acts[0]));
@@ -1258,3 +1261,7 @@ void menuAccounting::sCreateRecurringInvoices()
   newdlg.exec();
 }
 
+void menuAccounting::sSyncCompanies()
+{
+  omfgThis->handleNewWindow(new syncCompanies());
+}

@@ -72,29 +72,23 @@
 #include "login2Options.h"
 #include "login2.h"
 #include "qmd5.h"
+#include "storedProcErrorLookup.h"
 
 #include "splashconst.h"
 
-/*
- *  Constructs a login2 as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 login2::login2(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
 {
   Q_INIT_RESOURCE(OpenMFGCommon);
   setupUi(this);
 
-  // signals and slots connections
   connect(_login, SIGNAL(clicked()), this, SLOT(sLogin()));
   connect(_options, SIGNAL(clicked()), this, SLOT(sOptions()));
 
   _splash = 0;
 
   _captive = false; _nonOpenMFGDB = false;
+  _multipleConnections = false;
   _evalDatabaseURL = "pgsql://demo.openmfg.com:5434/%1";
 
   _userid = -1;
@@ -109,21 +103,14 @@ login2::login2(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     _demoOption->setChecked(true);
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 login2::~login2()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void login2::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 int login2::set(ParameterList &pParams) { return set(pParams, 0); }
@@ -187,6 +174,10 @@ int login2::set(ParameterList &pParams, QSplashScreen *pSplash)
   if (valid)
     _nonOpenMFGDB = true;
 
+  param = pParams.value("multipleConnections", &valid);
+  if (valid)
+    _multipleConnections = true;
+
   return 0;
 }
 
@@ -194,7 +185,17 @@ void login2::sLogin()
 {
   QSqlDatabase db;
 
-// Open the Database Driver
+  QString databaseURL;
+  databaseURL = _databaseURL;
+  if (_demoOption->isChecked())
+    databaseURL = _evalDatabaseURL.arg(_username->text().stripWhiteSpace());
+
+  QString protocol;
+  QString hostName;
+  QString dbName;
+  QString port;
+  parseDatabaseURL(databaseURL, protocol, hostName, dbName, port);
+
   if (_splash)
   {
     _splash->show();
@@ -202,31 +203,25 @@ void login2::sLogin()
     _splash->showMessage(tr("Initializing the Database Connector"), SplashTextAlignment, SplashTextColor);
     qApp->processEvents();
   }
-  db = QSqlDatabase::addDatabase("QPSQL7");
+
+  // Open the Database Driver
+  if (_multipleConnections)
+    db = QSqlDatabase::addDatabase("QPSQL7", dbName);
+  else
+    db = QSqlDatabase::addDatabase("QPSQL7");
   if (!db.isValid())
   {
     if (_splash)
       _splash->hide();
     
     QMessageBox::warning( this, tr("No Database Driver"),
-                          tr( "A connection could not be established with the specified\n"
-                              "Database as the Proper Database Drivers have not been installed.\n"
-                                 "Contact your Systems Administator.\n"  ));
+                          tr("<p>A connection could not be established with "
+                             "the specified Database as the Proper Database "
+                             "Drivers have not been installed. Contact your "
+                             "Systems Administator."));
     
     return;
   }
-
-  QString databaseURL;
-  databaseURL = _databaseURL;
-  if (_demoOption->isChecked())
-    databaseURL = _evalDatabaseURL.arg(_username->text().stripWhiteSpace());
-
-//  Try to connect to the Database
-  QString protocol;
-  QString hostName;
-  QString dbName;
-  QString port;
-  parseDatabaseURL(databaseURL, protocol, hostName, dbName, port);
 
   if(hostName.isEmpty() || dbName.isEmpty())
   {
@@ -234,8 +229,10 @@ void login2::sLogin()
       _splash->hide();
     
     QMessageBox::warning(this, tr("Incomplete Connection Options"),
-      tr("One or more connection options are missing. Please check that you have specified"
-         " the host name, database name, and any other required options.") );
+                         tr("<p>One or more connection options are missing. "
+                            "Please check that you have specified the host "
+                            "name, database name, and any other required "
+                            "options.") );
 
     return;
   }
@@ -275,6 +272,7 @@ void login2::sLogin()
     qApp->processEvents();
   }
   
+  //  Try to connect to the Database
   bool result = db.open();
 
   if (!result)
@@ -287,13 +285,16 @@ void login2::sLogin()
     
     setCursor(QCursor(Qt::arrowCursor));
 
-    QMessageBox::critical( this, tr("Cannot Connect to OpenMFG Server"),
-                           tr( "A connection to the specified OpenMFG Server cannot be made.  This may be due to an\n"
-                               "incorrect Username and/or Password or that the OpenMFG Server in question cannot\n"
-                               "support anymore connections.\n\n"
-                               "Please verify your Username and Password and try again or wait until the specified\n"
-                               "OpenMFG Server is less busy.\n\n"
-                               "System Error '%1'" ).arg(db.lastError().driverText() ));
+    QMessageBox::critical(this, tr("Cannot Connect to xTuple ERP Server"),
+                          tr("<p>A connection to the specified xTuple ERP "
+                             "Server cannot be made.  This may be due to an "
+                             "incorrect Username and/or Password or the "
+                             "server in question cannot support any more "
+                             "connections.<p>Please verify your Username and "
+                             "Password and try again or wait until the "
+                             "specified xTuple ERP Server is less busy.<br>"
+                             "System Error<pre>%1" )
+                            .arg(db.lastError().driverText() ));
     if (!_captive)
     {
       _username->setText("");
@@ -322,44 +323,39 @@ void login2::sLogin()
     setCursor(QCursor(Qt::arrowCursor));
     if (login.first())
     {
-      switch (login.value("usr_id").toInt())
+      int result = login.value("usr_id").toInt();
+      if (result < 0)
       {
-        case -1:
-          if (_splash)
-            _splash->hide();
-  
-          QMessageBox::critical( this, tr("User does not Exist"),
-                                 tr( "The specified Username does not exist in the specified Database.\n"
-                                     "Contact your Systems Administrator to report this issue." ) );
-          break;
-  
-        case -2:
-          if (_splash)
-            _splash->hide();
-  
-          QMessageBox::critical( this, tr("User is Inactive"),
-                                 tr( "The specified Username does exists in the specified Database but is not Active.\n"
-                                     "Contact your Systems Administrator to report this issue." ) );
-          break;
-  
-        default:
-          _user = login.value("user").toString();
-          _userid = login.value("usr_id").toInt();
-          _databaseURL = databaseURL;
-          accept();
-          break;
+        if (_splash)
+          _splash->hide();
+        QMessageBox::critical(this, tr("Error Logging In"),
+                              storedProcErrorLookup("login", result));
+        return;
       }
+      _user = login.value("user").toString();
+      _userid = login.value("usr_id").toInt();
+      _databaseURL = databaseURL;
+      accept();
+    }
+    else if (login.lastError().type() != QSqlError::None)
+    {
+      if (_splash)
+        _splash->hide();
+      QMessageBox::critical(this, tr("System Error"),
+                            tr("A System Error occurred at %1::%2:\n%1")
+                              .arg(__FILE__).arg(__LINE__)
+                              .arg(login.lastError().databaseText()));
     }
     else
     {
       if (_splash)
         _splash->hide();
       
-      QMessageBox::critical( this, tr("System Error"),
-                             tr( "A System Error occurred at login2::%1.\n"
-                                 "You may not log into the specified OpenMFG Server at this time.\n"
-                                 "Report this to your Systems Administrator." )
-                             .arg(__LINE__) );
+      QMessageBox::critical(this, tr("System Error"),
+                            tr("<p>An unknown error occurred at %1::%2. You may"
+                               " not log in to the specified xTuple ERP Server "
+                               "at this time.")
+                              .arg(__FILE__).arg(__LINE__));
     }
   }
   else
@@ -374,6 +370,9 @@ void login2::sOptions()
 {
   ParameterList params;
   params.append("databaseURL", _databaseURL);
+
+  if (_multipleConnections)
+    params.append("dontSaveSettings");
 
   if(_enhancedAuth)
     params.append("useEnhancedAuthentication");
@@ -422,4 +421,3 @@ void login2::setLogo(const QImage & img)
   else
     _logo->setPixmap(QPixmap::fromImage(img));
 }
-

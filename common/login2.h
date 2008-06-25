@@ -103,6 +103,7 @@ class login2 : public QDialog, public Ui::login2
     bool _nonOpenMFGDB;
     bool _enhancedAuth;
     bool _requireSSL;
+    bool _multipleConnections;
     QSplashScreen *_splash;
     QString _cUsername;
     QString _cPassword;

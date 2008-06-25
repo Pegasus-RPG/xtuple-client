@@ -58,20 +58,12 @@
 #include "accountSearch.h"
 
 #include <QVariant>
-#include <QMessageBox>
 
 #include <parameter.h>
 
 #include "glcluster.h"
 #include "xsqlquery.h"
 
-/*
- *  Constructs a accountSearch as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 accountSearch::accountSearch(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   : QDialog(parent, name, modal, fl)
 {
@@ -95,35 +87,30 @@ accountSearch::accountSearch(QWidget* parent, const char* name, bool modal, Qt::
   if (_x_metrics)
   {
     if (_x_metrics->value("GLCompanySize").toInt() > 0)
-      _accnt->addColumn(tr("Company"), 50, Qt::AlignCenter);
+      _accnt->addColumn(tr("Company"), 50, Qt::AlignCenter, true, "accnt_company");
 
     if (_x_metrics->value("GLProfitSize").toInt() > 0)
-      _accnt->addColumn(tr("Profit"), 50, Qt::AlignCenter);
+      _accnt->addColumn(tr("Profit"), 50, Qt::AlignCenter, true, "accnt_profit");
   }
 
-  _accnt->addColumn(tr("Account Number"), 100, Qt::AlignCenter);
+  _accnt->addColumn(tr("Account Number"), 100, Qt::AlignCenter, true, "accnt_number");
 
   if (_x_metrics)
   {
     if (_x_metrics->value("GLSubaccountSize").toInt() > 0)
-      _accnt->addColumn(tr("Sub."), 50, Qt::AlignCenter);
+      _accnt->addColumn(tr("Sub."), 50, Qt::AlignCenter, true, "accnt_sub");
   }
 
-  _accnt->addColumn(tr("Description"), -1, Qt::AlignLeft);
+  _accnt->addColumn(tr("Description"), -1, Qt::AlignLeft, true, "accnt_descrip");
+
+  _showExternal = false;
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 accountSearch::~accountSearch()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void accountSearch::languageChange()
 {
   retranslateUi(this);
@@ -157,6 +144,8 @@ void accountSearch::set(const ParameterList &pParams)
     }
   }
 
+  _showExternal = pParams.inList("showExternal");
+
   sFillList();
 }
 
@@ -177,34 +166,15 @@ void accountSearch::sClear()
 
 void accountSearch::sFillList()
 {
-  QString sql("SELECT accnt_id, ");
+  QString sql("SELECT * "
+              "FROM accnt JOIN company ON (accnt_company=company_number) ");
 
-  if (_x_metrics)
-  {
-    if (_x_metrics->value("GLCompanySize").toInt() > 0)
-      sql += "accnt_company, ";
-
-    if (_x_metrics->value("GLProfitSize").toInt() > 0)
-      sql += "accnt_profit, ";
-  }
-
-  sql += "accnt_number, ";
-
-  if (_x_metrics)
-  {
-    if (_x_metrics->value("GLSubaccountSize").toInt() > 0)
-      sql += "accnt_sub, ";
-  }
-
-  sql += " accnt_descrip "
-         "FROM accnt ";
-
-  bool where = false;
   QStringList types;
+  QStringList where;
+
   if(_type->currentIndex() > 0)
   {
-    where = true;
-    sql += "WHERE (accnt_type = '" + _type->itemData(_type->currentItem()).toString() + "') ";
+    where << "(accnt_type = '" + _type->itemData(_type->currentItem()).toString() + "')";
   }
   else if(_typeval > 0)
   {
@@ -220,19 +190,16 @@ void accountSearch::sFillList()
       types << ("'Q'");
   }
   if(!types.isEmpty())
-  {
-    where = true;
-    sql += "WHERE (accnt_type IN (" + types.join(",") + ")) ";
-  }
+    where << "(accnt_type IN (" + types.join(",") + "))";
 
-  if(!_descrip->text().isEmpty())
-  {
-    if(where)
-      sql += " AND ";
-    else
-      sql += "WHERE ";
-    sql += "((accnt_descrip ~* :descrip) OR (accnt_extref ~* :descrip)) ";
-  }
+  if (!_descrip->text().isEmpty())
+    where << "((accnt_descrip ~* :descrip) OR (accnt_extref ~* :descrip))";
+
+  if (! _showExternal)
+    where << "(NOT company_external)";
+
+  if (!where.isEmpty())
+    sql += " WHERE " + where.join(" AND ");
 
   sql += "ORDER BY accnt_number, accnt_sub, accnt_profit;";
 
@@ -242,4 +209,3 @@ void accountSearch::sFillList()
   qry.exec();
   _accnt->populate(qry, _accntid);
 }
-

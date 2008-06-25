@@ -78,12 +78,15 @@ class login2Options : public QDialog, public Ui::login2Options
     QString _databaseURL;
 
   public slots:
-    virtual void set( ParameterList & pParams );
+    virtual void set(const ParameterList & pParams );
 
   protected slots:
     virtual void languageChange();
 
     virtual void sSave();
+
+  private:
+    bool _saveSettings;
 };
 
 #endif

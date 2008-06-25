@@ -59,6 +59,7 @@
 #define ACCOUNTNUMBERS_H
 
 #include "guiclient.h"
+#include <parameter.h>
 #include "xmainwindow.h"
 
 #include "ui_accountNumbers.h"
@@ -67,14 +68,16 @@ class accountNumbers : public XMainWindow, public Ui::accountNumbers
 {
     Q_OBJECT
 
-public:
+  public:
     accountNumbers(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~accountNumbers();
 
-public slots:
+  public slots:
+    virtual bool setParams(ParameterList &);
     virtual void sBuildList();
+    virtual void sHandleButtons();
 
-protected slots:
+  protected slots:
     virtual void languageChange();
 
     virtual void sDelete();
@@ -83,6 +86,8 @@ protected slots:
     virtual void sPrint();
     virtual void sFillList();
 
+  private:
+    int _externalCol;
 
 };
 

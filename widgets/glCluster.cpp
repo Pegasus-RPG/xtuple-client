@@ -193,6 +193,8 @@ GLCluster::GLCluster(QWidget *pParent, const char *name) :
   _accntid = -1;
   _valid = FALSE;
   _parsed = TRUE;
+
+  _showExternal = false;
 }
 
 void GLCluster::setReadOnly(bool pReadOnly)
@@ -208,10 +210,14 @@ void GLCluster::setReadOnly(bool pReadOnly)
 void GLCluster::setId(int pId)
 {
   XSqlQuery _query;
-  _query.prepare( "SELECT accnt_company, accnt_profit, accnt_number, accnt_sub, accnt_descrip,"
-                  "       formatGLAccount(accnt_id) AS f_accnt "
-                  "  FROM accnt "
-                  " WHERE (accnt_id=:accnt_id);" );
+  if (_showExternal)
+    _query.prepare("SELECT *, formatGLAccount(accnt_id) AS f_accnt "
+                   "  FROM accnt "
+                   " WHERE (accnt_id=:accnt_id);" );
+  else
+    _query.prepare("SELECT *, formatGLAccount(accnt_id) AS f_accnt "
+                   "  FROM accnt JOIN company ON (accnt_company=company_number)"
+                   " WHERE (NOT company_external AND (accnt_id=:accnt_id));" );
   _query.bindValue(":accnt_id", pId);
   _query.exec();
   if (_query.first())
@@ -267,9 +273,15 @@ void GLCluster::sParse()
     }
 
     XSqlQuery qgl;
-    qgl.prepare("SELECT DISTINCT accnt_id"
-                "  FROM accnt"
-                " WHERE (formatGLAccount(accnt_id)=:searchString);");
+    if (_showExternal)
+      qgl.prepare("SELECT DISTINCT accnt_id"
+                  "  FROM accnt"
+                  " WHERE (formatGLAccount(accnt_id)=:searchString);");
+    else
+      qgl.prepare("SELECT DISTINCT accnt_id"
+                  "  FROM accnt JOIN company ON (accnt_company=company_number)"
+                  " WHERE (NOT company_external"
+                  "   AND  (formatGLAccount(accnt_id)=:searchString));");
     qgl.bindValue(":searchString", _main->text().trimmed());
     qgl.exec();
     if(qgl.first())
@@ -312,6 +324,8 @@ void GLCluster::sSearch()
   ParameterList params;
   params.append("accnt_id", _accntid);
   params.append("type", _type);
+  if (_showExternal)
+    params.append("showExternal");
 
   accountSearch newdlg(parentWidget(), "", TRUE);
   newdlg.set(params);
@@ -323,6 +337,8 @@ void GLCluster::sList()
   ParameterList params;
   params.append("accnt_id", _accntid);
   params.append("type", _type);
+  if (_showExternal)
+    params.append("showExternal");
 
   accountList newdlg(parentWidget(), "", TRUE);
   newdlg.set(params);

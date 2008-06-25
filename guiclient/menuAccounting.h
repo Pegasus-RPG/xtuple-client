@@ -223,6 +223,7 @@ class menuAccounting : public QObject
 
     void sUpdateLateCustCreditStatus();
     void sCreateRecurringInvoices();
+    void sSyncCompanies();
 
 // START_RW
     void sPostTransactionsToExternal();

@@ -85,6 +85,7 @@ protected slots:
 
 private:
     int _accntid;
+    bool         _showExternal;
     unsigned int _typeval;
 
 };

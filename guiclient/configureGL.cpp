@@ -57,26 +57,17 @@
 
 #include "configureGL.h"
 
+#include <QMessageBox>
 #include <QSqlError>
 #include <QValidator>
-#include <QVariant>
-#include <QMessageBox>
+
 #include "guiclient.h"
 
-/*
- *  Constructs a configureGL as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 configureGL::configureGL(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
-
-  // signals and slots connections
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
 
   // AP
@@ -115,12 +106,21 @@ configureGL::configureGL(QWidget* parent, const char* name, bool modal, Qt::WFla
   // GL
   _mainSize->setValue(_metrics->value("GLMainSize").toInt());
 
+  bool extConsolAllowed = _metrics->value("Application") == "OpenMFG" ||
+                          _metrics->value("Application") == "xTupleERP";
+  _externalConsolidation->setVisible(extConsolAllowed);
   if (_metrics->value("GLCompanySize").toInt() == 0)
+  {
     _useCompanySegment->setChecked(FALSE);
+    _externalConsolidation->setChecked(FALSE);
+  }
   else
   {
     _useCompanySegment->setChecked(TRUE);
     _companySegmentSize->setValue(_metrics->value("GLCompanySize").toInt());
+
+    _externalConsolidation->setChecked(_metrics->boolean("MultiCompanyFinancialConsolidation") &&
+                                       extConsolAllowed);
   }
 
   if (_metrics->value("GLProfitSize").toInt() == 0)
@@ -142,25 +142,17 @@ configureGL::configureGL(QWidget* parent, const char* name, bool modal, Qt::WFla
   }
 
   _yearend->setId(_metrics->value("YearEndEquityAccount").toInt());
-  //if (omfgThis->singleCurrency())
-  //{
-  //    _gainLoss->hide();
-  //    _gainLossLit->hide();
-  //    _exchangeRateSense->hide();
-  //}
-  //else
-  //{
-      _gainLoss->setId(_metrics->value("CurrencyGainLossAccount").toInt());
-      switch(_metrics->value("CurrencyExchangeSense").toInt())
-      {
-        case 1:
-          _localToBase->setChecked(TRUE);
-          break;
-        case 0:
-        default:
-          _baseToLocal->setChecked(TRUE);
-      }
-  //}
+
+  _gainLoss->setId(_metrics->value("CurrencyGainLossAccount").toInt());
+  switch(_metrics->value("CurrencyExchangeSense").toInt())
+  {
+    case 1:
+      _localToBase->setChecked(TRUE);
+      break;
+    case 0:
+    default:
+      _baseToLocal->setChecked(TRUE);
+  }
 
   _discrepancy->setId(_metrics->value("GLSeriesDiscrepancyAccount").toInt());
 
@@ -169,23 +161,13 @@ configureGL::configureGL(QWidget* parent, const char* name, bool modal, Qt::WFla
   _taxauth->setId(_metrics->value("DefaultTaxAuthority").toInt());
 
   _recurringBuffer->setValue(_metrics->value("RecurringInvoiceBuffer").toInt());
-  
-  //Remove this when old menu system goes away
-  this->setCaption("Accounting Configuration");
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 configureGL::~configureGL()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void configureGL::languageChange()
 {
   retranslateUi(this);
@@ -244,9 +226,15 @@ void configureGL::sSave()
   _metrics->set("GLMainSize", _mainSize->value());
 
   if (_useCompanySegment->isChecked())
+  {
     _metrics->set("GLCompanySize", _companySegmentSize->value());
+    _metrics->set("MultiCompanyFinancialConsolidation", _externalConsolidation->isChecked());
+  }
   else
+  {
     _metrics->set("GLCompanySize", 0);
+    _metrics->set("MultiCompanyFinancialConsolidation", 0);
+  }
   if(companyseg)
     companyseg->setEnabled(_useCompanySegment->isChecked());
 

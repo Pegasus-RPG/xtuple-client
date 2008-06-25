@@ -55,20 +55,16 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-
 #include "accountList.h"
 
-#include <qvariant.h>
-//Added by qt3to4:
-#include <Q3HBoxLayout>
-#include <Q3VBoxLayout>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QPushButton>
+#include <QVBoxLayout>
+#include <QVariant>
+
 #include <parameter.h>
-#include <qpushbutton.h>
-#include <qlabel.h>
-#include <q3header.h>
-#include <qlayout.h>
-#include <qtooltip.h>
-#include <q3whatsthis.h>
+
 #include "xtreewidget.h"
 
 #include "OpenMFGWidgets.h"
@@ -86,9 +82,9 @@ accountList::accountList(QWidget* parent, const char* name, bool modal, Qt::WFla
 
   setCaption(tr("Account Numbers"));
 
-  Q3HBoxLayout *accountListLayout = new Q3HBoxLayout( this, 5, 7, "accountListLayout"); 
-  Q3VBoxLayout *Layout68 = new Q3VBoxLayout( 0, 0, 0, "Layout68"); 
-  Q3VBoxLayout *layout305 = new Q3VBoxLayout( 0, 0, 5, "layout305"); 
+  QHBoxLayout *accountListLayout = new QHBoxLayout( this, 5, 7, "accountListLayout"); 
+  QVBoxLayout *Layout68 = new QVBoxLayout( 0, 0, 0, "Layout68"); 
+  QVBoxLayout *layout305 = new QVBoxLayout( 0, 0, 5, "layout305"); 
 
   QLabel *accountsLit = new QLabel(tr("Chart of Accounts:"), this, "accountsLit");
   Layout68->addWidget(accountsLit);
@@ -113,7 +109,6 @@ accountList::accountList(QWidget* parent, const char* name, bool modal, Qt::WFla
   accountListLayout->addLayout( layout305 );
 
   resize( QSize(571, 351).expandedTo(minimumSizeHint()) );
-  //clearWState( WState_Polished );
 
   connect( _close, SIGNAL( clicked() ), this, SLOT( sClose() ) );
   connect( _select, SIGNAL( clicked() ), this, SLOT( sSelect() ) );
@@ -123,21 +118,23 @@ accountList::accountList(QWidget* parent, const char* name, bool modal, Qt::WFla
   if (_x_metrics)
   {
     if (_x_metrics->value("GLCompanySize").toInt() > 0)
-      _accnt->addColumn(tr("Company"), 50, Qt::AlignCenter);
+      _accnt->addColumn(tr("Company"), 50, Qt::AlignCenter, true, "accnt_company");
 
     if (_x_metrics->value("GLProfitSize").toInt() > 0)
-      _accnt->addColumn(tr("Profit"), 50, Qt::AlignCenter);
+      _accnt->addColumn(tr("Profit"), 50, Qt::AlignCenter,  true, "accnt_profit");
   }
 
-  _accnt->addColumn(tr("Account Number"), 100, Qt::AlignCenter);
+  _accnt->addColumn(tr("Account Number"), 100, Qt::AlignCenter, true, "accnt_number");
 
   if (_x_metrics)
   {
     if (_x_metrics->value("GLSubaccountSize").toInt() > 0)
-      _accnt->addColumn(tr("Sub."), 50, Qt::AlignCenter);
+      _accnt->addColumn(tr("Sub."), 50, Qt::AlignCenter, true, "accnt_sub");
   }
 
-  _accnt->addColumn(tr("Description"), -1, Qt::AlignLeft);
+  _accnt->addColumn(tr("Description"), -1, Qt::AlignLeft, true, "accnt_descrip");
+
+  _showExternal = false;
 }
 
 void accountList::set(const ParameterList &pParams)
@@ -152,6 +149,8 @@ void accountList::set(const ParameterList &pParams)
   param = pParams.value("type", &valid);
   if (valid)
     _type = param.toUInt();
+
+  _showExternal = pParams.inList("showExternal");
 
   sFillList();
 }
@@ -173,29 +172,12 @@ void accountList::sClear()
 
 void accountList::sFillList()
 {
-  QString sql("SELECT accnt_id, ");
-
-  if (_x_metrics)
-  {
-    if (_x_metrics->value("GLCompanySize").toInt() > 0)
-      sql += "accnt_company, ";
-
-    if (_x_metrics->value("GLProfitSize").toInt() > 0)
-      sql += "accnt_profit, ";
-  }
-
-  sql += "accnt_number, ";
-
-  if (_x_metrics)
-  {
-    if (_x_metrics->value("GLSubaccountSize").toInt() > 0)
-      sql += "accnt_sub, ";
-  }
-
-  sql += " accnt_descrip "
-         "FROM accnt ";
+  QString sql("SELECT * "
+              "FROM accnt JOIN company ON (accnt_company=company_number) ");
 
   QStringList types;
+  QStringList where;
+
   if(_type > 0)
   {
     if(_type & GLCluster::cAsset)
@@ -210,7 +192,13 @@ void accountList::sFillList()
       types << ("'Q'");
   }
   if(!types.isEmpty())
-    sql += "WHERE (accnt_type IN (" + types.join(",") + ")) ";
+    where << ("(accnt_type IN (" + types.join(",") + ")) ");
+
+  if (! _showExternal)
+    where << "(NOT company_external) ";
+
+  if (!where.isEmpty())
+    sql += " WHERE " + where.join(" AND ");
 
   sql += "ORDER BY accnt_number, accnt_sub, accnt_profit;";
 
