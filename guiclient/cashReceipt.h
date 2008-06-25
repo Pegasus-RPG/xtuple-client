@@ -71,6 +71,7 @@ class cashReceipt : public XMainWindow, public Ui::cashReceipt
 public:
     cashReceipt(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~cashReceipt();
+    virtual bool save( bool partial );
 
 public slots:
     virtual SetResponse set(const ParameterList & pParams );
@@ -98,12 +99,12 @@ public slots:
 
 protected slots:
     virtual void languageChange();
-
     virtual void sSearchDocNumChanged();
 
 
 private:
     int     _mode;
+    int     _transType;
     int     _cashrcptid;
     bool    _ccEdit;
     QString _origFunds;

@@ -217,6 +217,7 @@ enum SetResponse cashReceipt::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
+	  _transType = cNew;
 
       q.exec("SELECT NEXTVAL('cashrcpt_cashrcpt_id_seq') AS cashrcpt_id;");
       if (q.first())
@@ -228,26 +229,12 @@ enum SetResponse cashReceipt::set(const ParameterList &pParams)
       }
 
       _distDate->setDate(omfgThis->dbDate(), true);
-
-      q.prepare( "INSERT INTO cashrcpt "
-                 "( cashrcpt_id, cashrcpt_cust_id, cashrcpt_distdate, cashrcpt_amount,"
-                 "  cashrcpt_fundstype, cashrcpt_bankaccnt_id ) "
-                 "VALUES "
-                 "( :cashrcpt_id, -1, CURRENT_DATE, 0.0,"
-                 "  '', -1 );" );
-      q.bindValue(":cashrcpt_id", _cashrcptid);
-      q.exec();
-      if (q.lastError().type() != QSqlError::None)
-      {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-	return UndefinedError;
-      }
-
       _cust->setFocus();
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
+	  _transType = cEdit;
       _tab->removeTab(_tab->indexOf(_creditCardTab));
 
       _cust->setReadOnly(TRUE);
@@ -257,6 +244,7 @@ enum SetResponse cashReceipt::set(const ParameterList &pParams)
     else if (param.toString() == "view")
     {
       _mode = cView;
+	  _transType = cView;
       _tab->removeTab(_tab->indexOf(_creditCardTab));
 
       _cust->setReadOnly(TRUE);
@@ -306,6 +294,10 @@ enum SetResponse cashReceipt::set(const ParameterList &pParams)
 
 void cashReceipt::sApplyToBalance()
 {
+  if(_mode == cNew)
+    if(!save(true))
+      return;
+	  
   XSqlQuery applyToBal;
   applyToBal.prepare( "UPDATE cashrcpt "
              "SET cashrcpt_cust_id=:cust_id, cashrcpt_curr_id=:curr_id "
@@ -329,6 +321,14 @@ void cashReceipt::sApplyToBalance()
 
 void cashReceipt::sApply()
 {
+  if(_mode == cNew)
+  {
+    if(!save(TRUE))
+	{
+      return;
+	}
+  }
+	  
   bool update  = FALSE;
   QList<QTreeWidgetItem*> list = _aropen->selectedItems();
   XTreeWidgetItem *cursor = 0;
@@ -343,7 +343,9 @@ void cashReceipt::sApply()
       params.append("cashrcptitem_id", cursor->altId());
     }
     else
+	{
       params.append("mode", "new");
+	}
     params.append("cashrcpt_id", _cashrcptid);
     params.append("aropen_id", cursor->id());
     params.append("curr_id", _received->id());
@@ -361,6 +363,10 @@ void cashReceipt::sApply()
 
 void cashReceipt::sApplyLineBalance()
 {
+  if(_mode == cNew)
+    if(!save(true))
+      return;
+	  
   QList<QTreeWidgetItem*> list = _aropen->selectedItems();
   XTreeWidgetItem *cursor = 0;
   for(int i = 0; i < list.size(); i++)
@@ -417,6 +423,10 @@ void cashReceipt::sClear()
 
 void cashReceipt::sAdd()
 {
+  if(_mode == cNew)
+    if(!save(true))
+      return;
+	  
   ParameterList params;
   params.append("mode", "new");
   params.append("cashrcpt_id", _cashrcptid);
@@ -462,7 +472,7 @@ void cashReceipt::sDelete()
 
 void cashReceipt::close()
 {
-  if (_mode == cNew && _cashrcptid >= 0)
+  if (_transType == cNew && _cashrcptid >= 0)
   {
     q.prepare("SELECT deleteCashRcpt(:cashrcpt_id) AS result;");
     q.bindValue(":cashrcpt_id", _cashrcptid);
@@ -488,7 +498,17 @@ void cashReceipt::close()
 
 void cashReceipt::sSave()
 {
-  sFillApplyList(); // one more time to double-check _overapplied
+  if (save(false))
+  {
+    omfgThis->sCashReceiptsUpdated(_cashrcptid, TRUE);
+    _cashrcptid = -1;
+
+    close();
+  }
+}
+
+bool cashReceipt::save(bool partial)
+{
   if (_overapplied &&
       QMessageBox::question(this, tr("Overapplied?"),
                             tr("This Cash Receipt appears to apply too much to"
@@ -496,7 +516,7 @@ void cashReceipt::sSave()
                                "to save the current applications anyway?"),
                             QMessageBox::Yes,
                             QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
-    return;
+    return FALSE;
 
   int _bankaccnt_curr_id = -1;
   QString _bankaccnt_currAbbr;
@@ -514,7 +534,7 @@ void cashReceipt::sSave()
   else if (q.lastError().type() != QSqlError::None)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
+    return FALSE;
   }
 
   if (_received->id() != _bankaccnt_curr_id &&
@@ -530,54 +550,57 @@ void cashReceipt::sSave()
                           QMessageBox::No |QMessageBox::Default) != QMessageBox::Yes)
   {
     _received->setFocus();
-    return;
+    return FALSE;
   }
 
   QString fundsType = _fundsType->itemData(_fundsType->currentIndex()).toString();
-  if (!_ccEdit &&
-      (fundsType == "A" || fundsType == "D" || fundsType == "M" || fundsType == "V"))
+  if (!partial)
   {
-    CreditCardProcessor *cardproc = CreditCardProcessor::getProcessor();
-    if (! cardproc)
+    if (!_ccEdit &&
+        (fundsType == "A" || fundsType == "D" || fundsType == "M" || fundsType == "V"))
     {
-      QMessageBox::critical(this, tr("Credit Card Processing Error"),
-                            CreditCardProcessor::errorMsg());
-      return;
-    }
+      CreditCardProcessor *cardproc = CreditCardProcessor::getProcessor();
+      if (! cardproc)
+      {
+        QMessageBox::critical(this, tr("Credit Card Processing Error"),
+                              CreditCardProcessor::errorMsg());
+        return FALSE;
+      }
 
-    _save->setEnabled(false);
-    int ccpayid = -1;
-    QString ordernum = _docNumber->text().isEmpty() ?
-		      QString::number(_cashrcptid) : _docNumber->text();
-    int returnVal = cardproc->charge(_cc->id(),
+      _save->setEnabled(false);
+      int ccpayid = -1;
+      QString ordernum = _docNumber->text().isEmpty() ?
+	  	      QString::number(_cashrcptid) : _docNumber->text();
+      int returnVal = cardproc->charge(_cc->id(),
 				     _CCCVV->text().isEmpty() ? -1 : _CCCVV->text().toInt(),
 				     _received->localValue(),
 				     0, false, 0, 0,
 				     _received->id(),
 				     ordernum, ordernum, ccpayid,
 				     QString("cashrcpt"), _cashrcptid);
-    if (returnVal < 0)
-      QMessageBox::critical(this, tr("Credit Card Processing Error"),
-			    cardproc->errorMsg());
-    else if (returnVal > 0)
-      QMessageBox::warning(this, tr("Credit Card Processing Warning"),
+      if (returnVal < 0)
+        QMessageBox::critical(this, tr("Credit Card Processing Error"),
+		  	    cardproc->errorMsg());
+      else if (returnVal > 0)
+        QMessageBox::warning(this, tr("Credit Card Processing Warning"),
 			   cardproc->errorMsg());
-    else if (! cardproc->errorMsg().isEmpty())
-      QMessageBox::information(this, tr("Credit Card Processing Note"),
+      else if (! cardproc->errorMsg().isEmpty())
+        QMessageBox::information(this, tr("Credit Card Processing Note"),
 			   cardproc->errorMsg());
 
-    _save->setEnabled(true);
-    if (returnVal < 0)
-      return;
-
-    // cardproc->credit() does an update but doesn't have all the required data
-    q.prepare( "UPDATE cashrcpt "
-	       "SET cashrcpt_distdate=:cashrcpt_distdate,"
-	       "    cashrcpt_notes=:cashrcpt_notes || '\n' || cashrcpt_notes,"
-	       "    cashrcpt_salescat_id=:cashrcpt_salescat_id, "
-	       "    cashrcpt_usecustdeposit=:cashrcpt_usecustdeposit "
-	       "WHERE (cashrcpt_id=:cashrcpt_id);" );
+      _save->setEnabled(true);
+      if (returnVal < 0)
+        return FALSE;
+    }
   }
+
+  if (_mode == cNew)
+    q.prepare( "INSERT INTO cashrcpt "
+               "( cashrcpt_id, cashrcpt_cust_id, cashrcpt_distdate, cashrcpt_amount,"
+               "  cashrcpt_fundstype, cashrcpt_bankaccnt_id, cashrcpt_curr_id ) "
+               "VALUES "
+               "( :cashrcpt_id, :cashrcpt_cust_id, :cashrcpt_distdate, :cashrcpt_amount,"
+               "  :cashrcpt_fundstype, :cashrcpt_bankaccnt_id, :curr_id );" );
   else
     q.prepare( "UPDATE cashrcpt "
 	       "SET cashrcpt_cust_id=:cashrcpt_cust_id,"
@@ -610,13 +633,10 @@ void cashReceipt::sSave()
   if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
+    return FALSE;
   }
-
-  omfgThis->sCashReceiptsUpdated(_cashrcptid, TRUE);
-  _cashrcptid = -1;
-
-  close();
+  _mode=cEdit;
+  return TRUE;
 }
 
 void cashReceipt::sPopulateCustomerInfo(int)
