@@ -300,7 +300,7 @@ void bomItem::sSave()
                "                      :effective, :expires,"
                "                      :createWo, :booitem_seq_id, :scheduledWithBooItem,"
                "                      :ecn, :subtype, :revision_id,"
-               "                      :char_id, value ) AS result "
+               "                      :char_id, :value ) AS result "
                "FROM bomitem "
                "WHERE (bomitem_id=:sourceBomitem_id);" );
   else if (_mode == cEdit  || _saved)
@@ -473,8 +473,8 @@ void bomItem::populate()
   q.prepare( "SELECT bomitem_item_id, bomitem_parent_item_id, item_config,"
              "       bomitem_booitem_seq_id, bomitem_createwo, bomitem_issuemethod,"
              "       bomitem_schedatwooper, bomitem_ecn, item_type,"
-             "       formatQtyper(bomitem_qtyper) AS qtyper,"
-             "       formatScrap(bomitem_scrap) AS scrap,"
+             "       bomitem_qtyper,"
+             "       bomitem_scrap,"
              "       bomitem_effective, bomitem_expires, bomitem_subtype,"
              "       bomitem_uom_id, "
              "       bomitem_char_id, "
@@ -503,8 +503,8 @@ void bomItem::populate()
 
     _dates->setStartDate(q.value("bomitem_effective").toDate());
     _dates->setEndDate(q.value("bomitem_expires").toDate());
-    _qtyPer->setText(q.value("qtyper").toString());
-    _scrap->setText(q.value("scrap").toString());
+    _qtyPer->setDouble(q.value("bomitem_qtyper").toDouble());
+    _scrap->setDouble(q.value("bomitem_scrap").toDouble() * 100);
 
     if (_mode != cCopy)
       _ecn->setText(q.value("bomitem_ecn").toString());
