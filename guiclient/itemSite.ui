@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>702</width>
-    <height>592</height>
+    <height>618</height>
    </rect>
   </property>
   <property name="minimumSize" >
@@ -318,11 +318,119 @@
       </widget>
      </item>
      <item row="2" column="0" >
-      <widget class="QGroupBox" name="_control" >
+      <widget class="QGroupBox" name="_costing" >
        <property name="title" >
-        <string/>
+        <string>Costing Method</string>
+       </property>
+       <layout class="QVBoxLayout" >
+        <item>
+         <widget class="QRadioButton" name="_costNone" >
+          <property name="text" >
+           <string>None</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="_costAvg" >
+          <property name="text" >
+           <string>Average</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="_costStd" >
+          <property name="text" >
+           <string>Standard</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="_costJob" >
+          <property name="text" >
+           <string>Job</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item row="2" column="1" >
+      <widget class="QGroupBox" name="_reporting" >
+       <property name="title" >
+        <string>Control</string>
        </property>
        <layout class="QGridLayout" >
+        <item row="1" column="0" >
+         <widget class="QLabel" name="_plannerCodeLit" >
+          <property name="text" >
+           <string>&amp;Planner Code:</string>
+          </property>
+          <property name="alignment" >
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+          <property name="buddy" >
+           <cstring>_plannerCode</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1" >
+         <widget class="XComboBox" name="_plannerCode" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="allowNull" >
+           <bool>true</bool>
+          </property>
+          <property name="type" >
+           <enum>XComboBox::PlannerCodes</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2" >
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="2" column="0" >
+         <widget class="QLabel" name="_costcatLit" >
+          <property name="text" >
+           <string>Cost Cate&amp;gory:</string>
+          </property>
+          <property name="alignment" >
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+          <property name="buddy" >
+           <cstring>_costcat</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1" >
+         <widget class="XComboBox" name="_costcat" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="allowNull" >
+           <bool>true</bool>
+          </property>
+          <property name="type" >
+           <enum>XComboBox::CostCategories</enum>
+          </property>
+         </widget>
+        </item>
         <item row="0" column="0" >
          <widget class="QLabel" name="_controlMethodLit" >
           <property name="text" >
@@ -361,120 +469,6 @@
             <string>Serial #</string>
            </property>
           </item>
-         </widget>
-        </item>
-        <item row="1" column="0" >
-         <widget class="QLabel" name="_costingLit" >
-          <property name="text" >
-           <string>Costing:</string>
-          </property>
-          <property name="alignment" >
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1" >
-         <widget class="XComboBox" name="_costing" >
-          <item>
-           <property name="text" >
-            <string>Average</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Standard</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string>Job</string>
-           </property>
-          </item>
-          <item>
-           <property name="text" >
-            <string/>
-           </property>
-          </item>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item row="2" column="1" >
-      <widget class="QGroupBox" name="_reporting" >
-       <property name="title" >
-        <string/>
-       </property>
-       <layout class="QGridLayout" >
-        <item row="0" column="0" >
-         <widget class="QLabel" name="_plannerCodeLit" >
-          <property name="text" >
-           <string>&amp;Planner Code:</string>
-          </property>
-          <property name="alignment" >
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-          <property name="buddy" >
-           <cstring>_plannerCode</cstring>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1" >
-         <widget class="XComboBox" name="_plannerCode" >
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="allowNull" >
-           <bool>true</bool>
-          </property>
-          <property name="type" >
-           <enum>XComboBox::PlannerCodes</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="2" >
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" >
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="1" column="0" >
-         <widget class="QLabel" name="_costcatLit" >
-          <property name="text" >
-           <string>Cost Cate&amp;gory:</string>
-          </property>
-          <property name="alignment" >
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-          <property name="buddy" >
-           <cstring>_costcat</cstring>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1" >
-         <widget class="XComboBox" name="_costcat" >
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="allowNull" >
-           <bool>true</bool>
-          </property>
-          <property name="type" >
-           <enum>XComboBox::CostCategories</enum>
-          </property>
          </widget>
         </item>
        </layout>
@@ -1486,13 +1480,16 @@
   <tabstop>_createWo</tabstop>
   <tabstop>_sold</tabstop>
   <tabstop>_soldRanking</tabstop>
+  <tabstop>_costNone</tabstop>
+  <tabstop>_costAvg</tabstop>
+  <tabstop>_costStd</tabstop>
+  <tabstop>_costJob</tabstop>
   <tabstop>_controlMethod</tabstop>
-  <tabstop>_costing</tabstop>
   <tabstop>_plannerCode</tabstop>
   <tabstop>_costcat</tabstop>
-  <tabstop>_tab</tabstop>
   <tabstop>_locationControl</tabstop>
   <tabstop>_useDefaultLocation</tabstop>
+  <tabstop>_location</tabstop>
   <tabstop>_locations</tabstop>
   <tabstop>_miscLocation</tabstop>
   <tabstop>_miscLocationName</tabstop>
@@ -1503,6 +1500,7 @@
   <tabstop>_autoUpdateABCClass</tabstop>
   <tabstop>_cycleCountFreq</tabstop>
   <tabstop>_eventFence</tabstop>
+  <tabstop>_tab</tabstop>
   <tabstop>_useParameters</tabstop>
   <tabstop>_reorderLevel</tabstop>
   <tabstop>_orderUpToQty</tabstop>
@@ -1510,20 +1508,20 @@
   <tabstop>_maximumOrder</tabstop>
   <tabstop>_orderMultiple</tabstop>
   <tabstop>_useParametersOnManual</tabstop>
+  <tabstop>_planningType</tabstop>
   <tabstop>_orderGroup</tabstop>
   <tabstop>_mpsTimeFence</tabstop>
   <tabstop>_leadTime</tabstop>
   <tabstop>_safetyStock</tabstop>
-  <tabstop>_save</tabstop>
-  <tabstop>_close</tabstop>
   <tabstop>_notes</tabstop>
-  <tabstop>_toggleRestricted</tabstop>
   <tabstop>_comments</tabstop>
   <tabstop>_restricted</tabstop>
+  <tabstop>_toggleRestricted</tabstop>
   <tabstop>_perishable</tabstop>
   <tabstop>_purchWarranty</tabstop>
   <tabstop>_autoRegister</tabstop>
-  <tabstop>_location</tabstop>
+  <tabstop>_save</tabstop>
+  <tabstop>_close</tabstop>
  </tabstops>
  <resources/>
  <connections>

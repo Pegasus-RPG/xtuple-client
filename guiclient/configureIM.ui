@@ -6,19 +6,13 @@
     <x>0</x>
     <y>0</y>
     <width>673</width>
-    <height>531</height>
+    <height>550</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>I/M Module Configuration</string>
   </property>
   <layout class="QHBoxLayout" >
-   <property name="margin" >
-    <number>9</number>
-   </property>
-   <property name="spacing" >
-    <number>6</number>
-   </property>
    <item>
     <widget class="QTabWidget" name="_tab" >
      <property name="currentIndex" >
@@ -29,322 +23,408 @@
        <string>Inventory</string>
       </attribute>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>6</number>
-       </property>
-       <property name="spacing" >
-        <number>0</number>
-       </property>
        <item>
-        <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
+        <layout class="QHBoxLayout" >
          <property name="spacing" >
           <number>6</number>
          </property>
+         <property name="leftMargin" >
+          <number>0</number>
+         </property>
+         <property name="topMargin" >
+          <number>0</number>
+         </property>
+         <property name="rightMargin" >
+          <number>0</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>0</number>
+         </property>
          <item>
-          <layout class="QHBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
+          <widget class="QGroupBox" name="_defaultGroup" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Preferred" hsizetype="Minimum" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
            </property>
-           <property name="spacing" >
-            <number>6</number>
-           </property>
-           <item>
-            <widget class="QGroupBox" name="_defaultGroup" >
-             <property name="sizePolicy" >
-              <sizepolicy>
-               <hsizetype>1</hsizetype>
-               <vsizetype>5</vsizetype>
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="title" >
-              <string>Defaults</string>
-             </property>
-             <layout class="QVBoxLayout" >
-              <property name="margin" >
-               <number>5</number>
-              </property>
-              <property name="spacing" >
-               <number>5</number>
-              </property>
-              <item>
-               <layout class="QHBoxLayout" >
-                <property name="margin" >
-                 <number>0</number>
-                </property>
-                <property name="spacing" >
-                 <number>5</number>
-                </property>
-                <item>
-                 <widget class="QLabel" name="_eventFenceLit" >
-                  <property name="text" >
-                   <string>Event Fence:</string>
-                  </property>
-                  <property name="alignment" >
-                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QSpinBox" name="_eventFence" >
-                  <property name="maximum" >
-                   <number>999</number>
-                  </property>
-                  <property name="value" >
-                   <number>1</number>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="_daysLit" >
-                  <property name="text" >
-                   <string>Days</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <layout class="QVBoxLayout" >
-             <property name="margin" >
-              <number>0</number>
-             </property>
-             <property name="spacing" >
-              <number>0</number>
-             </property>
-             <item>
-              <widget class="QCheckBox" name="_itemSiteChangeLog" >
-               <property name="sizePolicy" >
-                <sizepolicy>
-                 <hsizetype>3</hsizetype>
-                 <vsizetype>0</vsizetype>
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text" >
-                <string>Post Item Site Changes to the Change Log</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QCheckBox" name="_warehouseChangeLog" >
-               <property name="sizePolicy" >
-                <sizepolicy>
-                 <hsizetype>3</hsizetype>
-                 <vsizetype>0</vsizetype>
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text" >
-                <string>Post Warehouse Changes to the Change Log</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer>
-               <property name="orientation" >
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeType" >
-                <enum>QSizePolicy::Preferred</enum>
-               </property>
-               <property name="sizeHint" >
-                <size>
-                 <width>10</width>
-                 <height>12</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <widget class="QGroupBox" name="_multiWhs" >
            <property name="title" >
-            <string>Enable Multiple Warehouses</string>
+            <string>Defaults</string>
            </property>
-           <property name="checkable" >
-            <bool>true</bool>
-           </property>
-           <property name="checked" >
-            <bool>false</bool>
-           </property>
-           <layout class="QGridLayout" >
-            <property name="margin" >
-             <number>6</number>
-            </property>
+           <layout class="QVBoxLayout" >
             <property name="spacing" >
-             <number>6</number>
+             <number>5</number>
             </property>
-            <item row="2" column="0" colspan="5" >
-             <layout class="QVBoxLayout" >
-              <property name="margin" >
+            <property name="leftMargin" >
+             <number>5</number>
+            </property>
+            <property name="topMargin" >
+             <number>5</number>
+            </property>
+            <property name="rightMargin" >
+             <number>5</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>5</number>
+            </property>
+            <item>
+             <layout class="QHBoxLayout" >
+              <property name="spacing" >
+               <number>5</number>
+              </property>
+              <property name="leftMargin" >
                <number>0</number>
               </property>
-              <property name="spacing" >
+              <property name="topMargin" >
+               <number>0</number>
+              </property>
+              <property name="rightMargin" >
+               <number>0</number>
+              </property>
+              <property name="bottomMargin" >
                <number>0</number>
               </property>
               <item>
-               <widget class="QCheckBox" name="_enableToShipping" >
-                <property name="sizePolicy" >
-                 <sizepolicy>
-                  <hsizetype>7</hsizetype>
-                  <vsizetype>0</vsizetype>
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
+               <widget class="QLabel" name="_eventFenceLit" >
                 <property name="text" >
-                 <string>Enable Shipping Interface from Transfer Order screen</string>
+                 <string>Event Fence:</string>
+                </property>
+                <property name="alignment" >
+                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                </property>
+                <property name="buddy" >
+                 <cstring>_eventFence</cstring>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QCheckBox" name="_transferOrderChangeLog" >
-                <property name="sizePolicy" >
-                 <sizepolicy>
-                  <hsizetype>7</hsizetype>
-                  <vsizetype>0</vsizetype>
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
+               <widget class="QSpinBox" name="_eventFence" >
+                <property name="maximum" >
+                 <number>999</number>
                 </property>
+                <property name="value" >
+                 <number>1</number>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="_daysLit" >
                 <property name="text" >
-                 <string>Post Transfer Order Changes to the Change Log</string>
+                 <string>Days</string>
                 </property>
                </widget>
               </item>
              </layout>
-            </item>
-            <item row="0" column="3" >
-             <widget class="XLineEdit" name="_toNextNum" >
-              <property name="sizePolicy" >
-               <sizepolicy>
-                <hsizetype>3</hsizetype>
-                <vsizetype>0</vsizetype>
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1" >
-             <widget class="WComboBox" name="_defaultTransWhs" >
-              <property name="sizePolicy" >
-               <sizepolicy>
-                <hsizetype>3</hsizetype>
-                <vsizetype>0</vsizetype>
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="type" >
-               <enum>WComboBox::Transit</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1" >
-             <widget class="QComboBox" name="_toNumGeneration" >
-              <property name="sizePolicy" >
-               <sizepolicy>
-                <hsizetype>3</hsizetype>
-                <vsizetype>0</vsizetype>
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <item>
-               <property name="text" >
-                <string>Manual</string>
-               </property>
-              </item>
-              <item>
-               <property name="text" >
-                <string>Automatic</string>
-               </property>
-              </item>
-              <item>
-               <property name="text" >
-                <string>Automatic, Allow Override</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item row="0" column="0" >
-             <widget class="QLabel" name="_toNumGenerationLit" >
-              <property name="text" >
-               <string>Transfer Order # Generation:</string>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="2" >
-             <widget class="QLabel" name="_toNextNumLit" >
-              <property name="text" >
-               <string>Next #:</string>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0" >
-             <widget class="QLabel" name="_defaultTransWhsLit" >
-              <property name="text" >
-               <string>Default Transit Warehouse:</string>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="4" >
-             <spacer>
-              <property name="orientation" >
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" >
-               <size>
-                <width>0</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
             </item>
            </layout>
           </widget>
          </item>
          <item>
-          <widget class="QCheckBox" name="_lotSerial" >
-           <property name="text" >
-            <string>Enable Lot/Serial Control</string>
+          <layout class="QVBoxLayout" >
+           <property name="spacing" >
+            <number>0</number>
            </property>
+           <property name="leftMargin" >
+            <number>0</number>
+           </property>
+           <property name="topMargin" >
+            <number>0</number>
+           </property>
+           <property name="rightMargin" >
+            <number>0</number>
+           </property>
+           <property name="bottomMargin" >
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QCheckBox" name="_itemSiteChangeLog" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text" >
+              <string>Post Item Site Changes to the Change Log</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="_warehouseChangeLog" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text" >
+              <string>Post Warehouse Changes to the Change Log</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType" >
+              <enum>QSizePolicy::Preferred</enum>
+             </property>
+             <property name="sizeHint" >
+              <size>
+               <width>10</width>
+               <height>10</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="_multiWhs" >
+         <property name="title" >
+          <string>Enable Multiple Warehouses</string>
+         </property>
+         <property name="checkable" >
+          <bool>true</bool>
+         </property>
+         <property name="checked" >
+          <bool>false</bool>
+         </property>
+         <layout class="QGridLayout" >
+          <property name="leftMargin" >
+           <number>6</number>
+          </property>
+          <property name="topMargin" >
+           <number>6</number>
+          </property>
+          <property name="rightMargin" >
+           <number>6</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>6</number>
+          </property>
+          <property name="horizontalSpacing" >
+           <number>6</number>
+          </property>
+          <property name="verticalSpacing" >
+           <number>6</number>
+          </property>
+          <item row="2" column="0" colspan="5" >
+           <layout class="QVBoxLayout" >
+            <property name="spacing" >
+             <number>0</number>
+            </property>
+            <property name="leftMargin" >
+             <number>0</number>
+            </property>
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QCheckBox" name="_enableToShipping" >
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text" >
+               <string>Enable Shipping Interface from Transfer Order screen</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="_transferOrderChangeLog" >
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text" >
+               <string>Post Transfer Order Changes to the Change Log</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="0" column="3" >
+           <widget class="XLineEdit" name="_toNextNum" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1" >
+           <widget class="WComboBox" name="_defaultTransWhs" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="type" >
+             <enum>WComboBox::Transit</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1" >
+           <widget class="QComboBox" name="_toNumGeneration" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <item>
+             <property name="text" >
+              <string>Manual</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>Automatic</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>Automatic, Allow Override</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="0" column="0" >
+           <widget class="QLabel" name="_toNumGenerationLit" >
+            <property name="text" >
+             <string>Transfer Order # Generation:</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="buddy" >
+             <cstring>_toNumGeneration</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2" >
+           <widget class="QLabel" name="_toNextNumLit" >
+            <property name="text" >
+             <string>Next #:</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="buddy" >
+             <cstring>_toNextNum</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" >
+           <widget class="QLabel" name="_defaultTransWhsLit" >
+            <property name="text" >
+             <string>Default Transit Warehouse:</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="buddy" >
+             <cstring>_defaultTransWhs</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="4" >
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>0</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="_lotSerial" >
+         <property name="text" >
+          <string>Enable Lot/Serial Control</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QGridLayout" >
+         <item rowspan="2" row="0" column="0" >
+          <widget class="QGroupBox" name="_cost" >
+           <property name="title" >
+            <string>Costing Methods Allowed</string>
+           </property>
+           <layout class="QVBoxLayout" >
+            <item>
+             <widget class="QCheckBox" name="_costAvg" >
+              <property name="text" >
+               <string>Average</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="_costStd" >
+              <property name="text" >
+               <string>Standard</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="_costJob" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
+              <property name="text" >
+               <string>Job</string>
+              </property>
+              <property name="checked" >
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </widget>
          </item>
-         <item>
+         <item row="0" column="1" >
           <widget class="QGroupBox" name="_countTagGroup" >
            <property name="title" >
             <string>When Count Tag Qty. exceeds Slip Qty.</string>
            </property>
            <layout class="QVBoxLayout" >
-            <property name="margin" >
-             <number>5</number>
-            </property>
             <property name="spacing" >
              <number>0</number>
+            </property>
+            <property name="leftMargin" >
+             <number>5</number>
+            </property>
+            <property name="topMargin" >
+             <number>5</number>
+            </property>
+            <property name="rightMargin" >
+             <number>5</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>5</number>
             </property>
             <item>
              <widget class="QRadioButton" name="_postToDefault" >
@@ -366,17 +446,26 @@
            </layout>
           </widget>
          </item>
-         <item>
+         <item rowspan="2" row="1" column="1" >
           <widget class="QGroupBox" name="_countSlipGroup" >
            <property name="title" >
             <string>Count Slip # Auditing</string>
            </property>
            <layout class="QVBoxLayout" >
-            <property name="margin" >
-             <number>5</number>
-            </property>
             <property name="spacing" >
              <number>0</number>
+            </property>
+            <property name="leftMargin" >
+             <number>5</number>
+            </property>
+            <property name="topMargin" >
+             <number>5</number>
+            </property>
+            <property name="rightMargin" >
+             <number>5</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>5</number>
             </property>
             <item>
              <widget class="QRadioButton" name="_noSlipChecks" >
@@ -419,6 +508,19 @@
            </layout>
           </widget>
          </item>
+         <item row="2" column="0" >
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
         </layout>
        </item>
        <item>
@@ -431,8 +533,8 @@
          </property>
          <property name="sizeHint" >
           <size>
-           <width>20</width>
-           <height>0</height>
+           <width>536</width>
+           <height>16</height>
           </size>
          </property>
         </spacer>
@@ -444,26 +546,59 @@
        <string>Shipping and Receiving</string>
       </attribute>
       <layout class="QGridLayout" >
-       <property name="margin" >
+       <property name="leftMargin" >
         <number>6</number>
        </property>
-       <property name="spacing" >
+       <property name="topMargin" >
+        <number>6</number>
+       </property>
+       <property name="rightMargin" >
+        <number>6</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>6</number>
+       </property>
+       <property name="horizontalSpacing" >
+        <number>6</number>
+       </property>
+       <property name="verticalSpacing" >
         <number>6</number>
        </property>
        <item row="0" column="0" >
         <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>5</number>
          </property>
+         <property name="leftMargin" >
+          <number>0</number>
+         </property>
+         <property name="topMargin" >
+          <number>0</number>
+         </property>
+         <property name="rightMargin" >
+          <number>0</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>0</number>
+         </property>
          <item>
           <layout class="QGridLayout" >
-           <property name="margin" >
+           <property name="leftMargin" >
             <number>0</number>
            </property>
-           <property name="spacing" >
+           <property name="topMargin" >
+            <number>0</number>
+           </property>
+           <property name="rightMargin" >
+            <number>0</number>
+           </property>
+           <property name="bottomMargin" >
+            <number>0</number>
+           </property>
+           <property name="horizontalSpacing" >
+            <number>0</number>
+           </property>
+           <property name="verticalSpacing" >
             <number>0</number>
            </property>
            <item row="0" column="0" >
@@ -492,9 +627,7 @@
               <bool>false</bool>
              </property>
              <property name="sizePolicy" >
-              <sizepolicy>
-               <hsizetype>5</hsizetype>
-               <vsizetype>0</vsizetype>
+              <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
@@ -509,9 +642,7 @@
            <item row="0" column="3" >
             <widget class="XLineEdit" name="_nextShipmentNum" >
              <property name="sizePolicy" >
-              <sizepolicy>
-               <hsizetype>3</hsizetype>
-               <vsizetype>0</vsizetype>
+              <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
@@ -523,9 +654,7 @@
          <item>
           <widget class="QCheckBox" name="_disallowReceiptExcess" >
            <property name="sizePolicy" >
-            <sizepolicy>
-             <hsizetype>3</hsizetype>
-             <vsizetype>0</vsizetype>
+            <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -538,9 +667,7 @@
          <item>
           <widget class="QCheckBox" name="_warnIfReceiptDiffers" >
            <property name="sizePolicy" >
-            <sizepolicy>
-             <hsizetype>3</hsizetype>
-             <vsizetype>0</vsizetype>
+            <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -552,11 +679,20 @@
          </item>
          <item>
           <layout class="QHBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
            <property name="spacing" >
             <number>2</number>
+           </property>
+           <property name="leftMargin" >
+            <number>0</number>
+           </property>
+           <property name="topMargin" >
+            <number>0</number>
+           </property>
+           <property name="rightMargin" >
+            <number>0</number>
+           </property>
+           <property name="bottomMargin" >
+            <number>0</number>
            </property>
            <item>
             <spacer>
@@ -631,27 +767,54 @@
             <string>Default Shipping Form Copies:</string>
            </property>
            <layout class="QVBoxLayout" >
-            <property name="margin" >
-             <number>5</number>
-            </property>
             <property name="spacing" >
              <number>0</number>
             </property>
+            <property name="leftMargin" >
+             <number>5</number>
+            </property>
+            <property name="topMargin" >
+             <number>5</number>
+            </property>
+            <property name="rightMargin" >
+             <number>5</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>5</number>
+            </property>
             <item>
              <layout class="QHBoxLayout" >
-              <property name="margin" >
+              <property name="spacing" >
                <number>0</number>
               </property>
-              <property name="spacing" >
+              <property name="leftMargin" >
+               <number>0</number>
+              </property>
+              <property name="topMargin" >
+               <number>0</number>
+              </property>
+              <property name="rightMargin" >
+               <number>0</number>
+              </property>
+              <property name="bottomMargin" >
                <number>0</number>
               </property>
               <item>
                <layout class="QHBoxLayout" >
-                <property name="margin" >
-                 <number>0</number>
-                </property>
                 <property name="spacing" >
                  <number>5</number>
+                </property>
+                <property name="leftMargin" >
+                 <number>0</number>
+                </property>
+                <property name="topMargin" >
+                 <number>0</number>
+                </property>
+                <property name="rightMargin" >
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin" >
+                 <number>0</number>
                 </property>
                 <item>
                  <widget class="QLabel" name="_shipformNumOfCopiesLit_2" >
@@ -661,6 +824,9 @@
                   <property name="alignment" >
                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                   </property>
+                  <property name="buddy" >
+                   <cstring>_shipformNumOfCopies</cstring>
+                  </property>
                  </widget>
                 </item>
                 <item>
@@ -668,11 +834,11 @@
                   <property name="enabled" >
                    <bool>true</bool>
                   </property>
-                  <property name="maximum" >
-                   <number>9</number>
-                  </property>
                   <property name="minimum" >
                    <number>0</number>
+                  </property>
+                  <property name="maximum" >
+                   <number>9</number>
                   </property>
                   <property name="value" >
                    <number>0</number>
@@ -702,9 +868,7 @@
             <item>
              <widget class="XTreeWidget" name="_shipformWatermarks" >
               <property name="sizePolicy" >
-               <sizepolicy>
-                <hsizetype>7</hsizetype>
-                <vsizetype>7</vsizetype>
+               <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -728,10 +892,19 @@
    </item>
    <item>
     <layout class="QHBoxLayout" >
-     <property name="margin" >
+     <property name="spacing" >
       <number>0</number>
      </property>
-     <property name="spacing" >
+     <property name="leftMargin" >
+      <number>0</number>
+     </property>
+     <property name="topMargin" >
+      <number>0</number>
+     </property>
+     <property name="rightMargin" >
+      <number>0</number>
+     </property>
+     <property name="bottomMargin" >
       <number>0</number>
      </property>
      <item>
@@ -752,19 +925,37 @@
      </item>
      <item>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
+       <property name="spacing" >
         <number>0</number>
        </property>
-       <property name="spacing" >
+       <property name="leftMargin" >
+        <number>0</number>
+       </property>
+       <property name="topMargin" >
+        <number>0</number>
+       </property>
+       <property name="rightMargin" >
+        <number>0</number>
+       </property>
+       <property name="bottomMargin" >
         <number>0</number>
        </property>
        <item>
         <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>5</number>
+         </property>
+         <property name="leftMargin" >
+          <number>0</number>
+         </property>
+         <property name="topMargin" >
+          <number>0</number>
+         </property>
+         <property name="rightMargin" >
+          <number>0</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>0</number>
          </property>
          <item>
           <widget class="QPushButton" name="_close" >
@@ -811,14 +1002,14 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>XLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>xlineedit.h</header>
-  </customwidget>
-  <customwidget>
    <class>WComboBox</class>
    <extends>XComboBox</extends>
    <header>wcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>xlineedit.h</header>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
@@ -830,9 +1021,16 @@
   <tabstop>_eventFence</tabstop>
   <tabstop>_itemSiteChangeLog</tabstop>
   <tabstop>_warehouseChangeLog</tabstop>
+  <tabstop>_multiWhs</tabstop>
   <tabstop>_toNumGeneration</tabstop>
   <tabstop>_toNextNum</tabstop>
   <tabstop>_defaultTransWhs</tabstop>
+  <tabstop>_enableToShipping</tabstop>
+  <tabstop>_transferOrderChangeLog</tabstop>
+  <tabstop>_lotSerial</tabstop>
+  <tabstop>_costAvg</tabstop>
+  <tabstop>_costStd</tabstop>
+  <tabstop>_costJob</tabstop>
   <tabstop>_postToDefault</tabstop>
   <tabstop>_doNotPost</tabstop>
   <tabstop>_noSlipChecks</tabstop>
@@ -840,6 +1038,14 @@
   <tabstop>_checkOnUnposted</tabstop>
   <tabstop>_checkOnAllWarehouse</tabstop>
   <tabstop>_checkOnAll</tabstop>
+  <tabstop>_tab</tabstop>
+  <tabstop>_shipmentNumGeneration</tabstop>
+  <tabstop>_nextShipmentNum</tabstop>
+  <tabstop>_disallowReceiptExcess</tabstop>
+  <tabstop>_warnIfReceiptDiffers</tabstop>
+  <tabstop>_tolerance</tabstop>
+  <tabstop>_shipformNumOfCopies</tabstop>
+  <tabstop>_shipformWatermarks</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>

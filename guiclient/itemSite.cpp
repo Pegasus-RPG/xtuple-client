@@ -137,10 +137,11 @@ itemSite::itemSite(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     _mpsTimeFence->hide();
     _mpsTimeFenceDaysLit->hide();
   }
-  
+
+  _costAvg->setVisible(_metrics->boolean("AllowAvgCostMethod"));
+  _costStd->setVisible(_metrics->boolean("AllowStdCostMethod"));
+
   //These things will be implemented at the site level later
-  _costing->hide();
-  _costingLit->hide();
   _planningType->hide();
   _planningTypeLit->hide();
 }
@@ -303,6 +304,23 @@ void itemSite::sSave()
     _warehouse->setFocus();
     return;
   }
+
+  if(!_costNone->isChecked() && !_costAvg->isChecked()
+   && !_costStd->isChecked() && !_costJob->isChecked())
+  {
+    QMessageBox::critical(this, tr("Cannot Save Item Site"),
+                          tr("<p>You must select a Cost Method for this "
+                             "Item Site before you may save it.") );
+    return;
+  }
+
+  if(_costAvg->isChecked() && _qohCache < 0)
+  {
+    QMessageBox::critical(this, tr("Cannot Save Item Site"), 
+                          tr("<p>You can not change an Item Site to "
+                             "Average Costing when it has a negative Qty. On Hand.") );
+    return;
+  }
     
   if (_costcat->id() == -1)
   {
@@ -393,6 +411,7 @@ void itemSite::sSave()
                          "  itemsite_freeze, itemsite_datelastused, itemsite_ordergroup,"
                          "  itemsite_mps_timefence,"
                          "  itemsite_disallowblankwip, "
+                         "  itemsite_costmethod, itemsite_value,"
                          "  itemsite_warrpurc, itemsite_autoreg) "
                          "VALUES "
                          "( :itemsite_id, :itemsite_item_id, :itemsite_warehous_id, 0.0,"
@@ -410,6 +429,7 @@ void itemSite::sSave()
                          "  FALSE, startOfTime(), :itemsite_ordergroup,"
                          "  :itemsite_mps_timefence,"
                          "  :itemsite_disallowblankwip, "
+                         "  :itemsite_costmethod, 0,"
                          "  :itemsite_warrpurc, :itemsite_autoreg  );" );
   }
   else if (_mode == cEdit)
@@ -486,6 +506,7 @@ void itemSite::sSave()
                          "    itemsite_mps_timefence=:itemsite_mps_timefence,"
                          "    itemsite_disallowblankwip=:itemsite_disallowblankwip, "
                          "    itemsite_warrpurc=:itemsite_warrpurc, itemsite_autoreg=:itemsite_autoreg, "
+                         "    itemsite_costmethod=:itemsite_costmethod,"
                          "    itemsite_warehous_id=:itemsite_warehous_id "
                          "WHERE (itemsite_id=:itemsite_id);" );
   }
@@ -556,7 +577,16 @@ void itemSite::sSave()
     newItemSite.bindValue(":itemsite_controlmethod", "L");
   else if (_controlMethod->currentItem() == 3)
     newItemSite.bindValue(":itemsite_controlmethod", "S");
-    
+
+  if(_costNone->isChecked())
+    newItemSite.bindValue(":itemsite_costmethod", "N");
+  else if(_costAvg->isChecked())
+    newItemSite.bindValue(":itemsite_costmethod", "A");
+  else if(_costStd->isChecked())
+    newItemSite.bindValue(":itemsite_costmethod", "S");
+  else if(_costJob->isChecked())
+    newItemSite.bindValue(":itemsite_costmethod", "J");
+
   newItemSite.bindValue(":itemsite_warrpurc", QVariant(_purchWarranty->isChecked(), 0));
   newItemSite.bindValue(":itemsite_autoreg", QVariant(_autoRegister->isChecked(), 0));
     
@@ -645,6 +675,34 @@ void itemSite::sHandleSupplied(bool pSupplied)
 
 void itemSite::sHandleControlMethod()
 {
+  if (_controlMethod->currentItem() == 0 || _itemType == 'R')
+  {
+    _costNone->setChecked(true);
+    _costNone->setEnabled(true);
+    _costAvg->setEnabled(false);
+    _costStd->setEnabled(false);
+    _costJob->setEnabled(false);
+  }
+  else if(_itemType == 'J')
+  {
+    _costJob->setChecked(true);
+    _costNone->setEnabled(false);
+    _costAvg->setEnabled(false);
+    _costStd->setEnabled(false);
+    _costJob->setEnabled(true);
+  }
+  else
+  {
+    if(_costStd->isVisibleTo(this) && !_costAvg->isChecked())
+      _costStd->setChecked(true);
+    else
+      _costAvg->setChecked(true);
+    _costNone->setEnabled(false);
+    _costAvg->setEnabled(true);
+    _costStd->setEnabled(true);
+    _costJob->setEnabled(false);
+  }
+
   if ( (_controlMethod->currentItem() == 2) ||
        (_controlMethod->currentItem() == 3) )  
   {
@@ -667,6 +725,34 @@ void itemSite::sCacheItemType(const QString &pItemType)
 void itemSite::sCacheItemType(char pItemType)
 {
   _itemType = pItemType;
+
+  if (_controlMethod->currentItem() == 0 || _itemType == 'R')
+  {
+    _costNone->setChecked(true);
+    _costNone->setEnabled(true);
+    _costAvg->setEnabled(false);
+    _costStd->setEnabled(false);
+    _costJob->setEnabled(false);
+  }
+  else if(_itemType == 'J')
+  {
+    _costJob->setChecked(true);
+    _costNone->setEnabled(false);
+    _costAvg->setEnabled(false);
+    _costStd->setEnabled(false);
+    _costJob->setEnabled(true);
+  }
+  else
+  {
+    if(_costStd->isVisibleTo(this) && !_costAvg->isChecked())
+      _costStd->setChecked(true);
+    else
+      _costAvg->setChecked(true);
+    _costNone->setEnabled(false);
+    _costAvg->setEnabled(true);
+    _costStd->setEnabled(true);
+    _costJob->setEnabled(false);
+  }
 
   if ( (_itemType == 'B') || (_itemType == 'F') || (_itemType == 'R') ||
 	   (_itemType == 'L') || (_itemType == 'J') )
@@ -797,6 +883,7 @@ void itemSite::populate()
                     "       itemsite_costcat_id, itemsite_notes,"
                     "       itemsite_ordergroup, itemsite_mps_timefence,"
                     "       itemsite_disallowblankwip, "
+                    "       itemsite_costmethod,"
                     "       itemsite_warrpurc, itemsite_autoreg "
                     "FROM itemsite, item "
                     "WHERE ( (itemsite_item_id=item_id)"
@@ -863,6 +950,15 @@ void itemSite::populate()
     }
     else
       _perishable->setEnabled(FALSE);
+
+    if(itemsite.value("itemsite_costmethod").toString() == "N")
+      _costNone->setChecked(true);
+    else if(itemsite.value("itemsite_costmethod").toString() == "A")
+      _costAvg->setChecked(true);
+    else if(itemsite.value("itemsite_costmethod").toString() == "S")
+      _costStd->setChecked(true);
+    else if(itemsite.value("itemsite_costmethod").toString() == "J")
+      _costJob->setChecked(true);
 
     _costcat->setId(itemsite.value("itemsite_costcat_id").toInt());
     _plannerCode->setId(itemsite.value("itemsite_plancode_id").toInt());

@@ -59,6 +59,7 @@
 
 #include <QSqlError>
 #include <QVariant>
+#include <QMessageBox>
 
 #include "guiclient.h"
 #include "editICMWatermark.h"
@@ -185,7 +186,35 @@ configureIM::configureIM(QWidget* parent, const char* name, bool modal, Qt::WFla
 
   _tolerance->setValidator(omfgThis->percentVal());
   _tolerance->setText(_metrics->value("ReceiptQtyTolerancePct"));
+
+  _costAvg->setChecked(_metrics->boolean("AllowAvgCostMethod"));
+  _costStd->setChecked(_metrics->boolean("AllowStdCostMethod"));
+  _costJob->setChecked(_metrics->boolean("AllowJobCostMethod"));
+
+  q.prepare("SELECT count(*) AS result FROM itemsite WHERE(itemsite_costmethod='A');");
+  q.exec();
+  if(q.first() && q.value("result").toInt() > 0)
+  {
+    _costAvg->setChecked(true);
+    _costAvg->setEnabled(false);
+  }
+
+  q.prepare("SELECT count(*) AS result FROM itemsite WHERE(itemsite_costmethod='S');");
+  q.exec();
+  if(q.first() && q.value("result").toInt() > 0)
+  {
+    _costStd->setChecked(true);
+    _costStd->setEnabled(false);
+  }
+
+  if(!_costAvg->isChecked() && !_costStd->isChecked())
+    _costStd->isChecked();
   
+  // Jobs at this time should always be checked and disabled
+  // when this is changed in the future this should be replaced with
+  // similar code checks as for Avg and Std cost
+  _costJob->setChecked(true);
+  _costJob->setEnabled(false);
     
   this->setCaption("Inventory Configuration");
 
@@ -205,6 +234,13 @@ void configureIM::languageChange()
 
 void configureIM::sSave()
 {
+  if(!_costAvg->isChecked() && !_costStd->isChecked())
+  { 
+    QMessageBox::warning(this, tr("No Cost selected"),
+                         tr("You must have checked Standard Cost, Average Cost or both before saving."));
+    return;
+  }
+
   // Inventory
   _metrics->set("DefaultEventFence", _eventFence->value());
   _metrics->set("ItemSiteChangeLog", _itemSiteChangeLog->isChecked());
@@ -212,6 +248,9 @@ void configureIM::sSave()
   _metrics->set("PostCountTagToDefault", _postToDefault->isChecked());
   _metrics->set("MultiWhs", ((!_multiWhs->isCheckable()) || (_multiWhs->isChecked())));
   _metrics->set("LotSerialControl", _lotSerial->isChecked());
+  _metrics->set("AllowAvgCostMethod", _costAvg->isChecked());
+  _metrics->set("AllowStdCostMethod", _costStd->isChecked());
+  _metrics->set("AllowJobCostMethod", _costJob->isChecked());
   
   if (_toNumGeneration->currentItem() == 0)
     _metrics->set("TONumberGeneration", QString("M"));
