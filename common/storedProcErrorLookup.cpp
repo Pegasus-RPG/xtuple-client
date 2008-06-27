@@ -298,8 +298,8 @@ void initErrorLookupHash()
                              "delete the selected G/L Account."),       0, "" },
   { "deleteAccount",  -4, TR("The selected G/L Account cannot be deleted as it "
                              "is currently used as the default Account one or "
-                             "more Warehouses. You must reassign the default "
-                             "Account for these Warehouses before you may delete "
+                             "more Sites. You must reassign the default "
+                             "Account for these Sites before you may delete "
                              "the selected G/L Account."),              0, "" },
   { "deleteAccount",  -5, TR("The selected G/L Account cannot be deleted as it "
                              "is currently used in one or more Bank Accounts. "
@@ -362,7 +362,7 @@ void initErrorLookupHash()
 			       "it is used by an active Vendor Address."),
 								 0, "" },
   { "deleteAddress",	-5, TR("The selected Address cannot be deleted as "
-			       "it is used by an active Warehouse."),
+			       "it is used by an active Site."),
 			       					 0, "" },
 
   { "deleteBankAdjustmentType",  -1, TR("The selected Bank Adjustment Type "
@@ -426,7 +426,7 @@ void initErrorLookupHash()
 			       "s/he is the Contact for a Vendor Address."),
 			       					 0, "" },
   { "deleteContact",	-6, TR("The selected Contact cannot be deleted as "
-			       "s/he is the Contact for a Warehouse."),
+			       "s/he is the Contact for a Site."),
 								 0, "" },
 
   { "deleteCRMAccount",	-1, TR("The selected CRM Account cannot be deleted as "
@@ -736,13 +736,13 @@ void initErrorLookupHash()
   { "explodeWo",  -2, TR("Work Order %1 cannot be Exploded as there are one "
 			 "or more Component Items on the Bill of Materials for "
 			 "the Work Order Item that do not exist in the Work "
-			 "Order Warehouse. You must create a valid Item Site "
+			 "Order Site. You must create a valid Item Site "
 			 "for all of the Component Items before you may "
 			 "explode this Work Order."),			0, "" },
   { "explodeWo",  -3, TR("Work Order %1 cannot be Exploded as there are one "
 			 "or more Co-Product/By-Product Items on the Breeder "
 			 "Bill of Materials for the Work Order Item that do "
-			 "not exist in the Work Order Warehouse. You must "
+			 "not exist in the Work Order Site. You must "
 			 "create a valid Item Site for all of the Co-Product/"
 			 "By-Product Items before you may explode this "
 			 "Work Order."),				0, "" },
@@ -993,7 +993,7 @@ void initErrorLookupHash()
 			       "because it has already been received "
 			       "at its destination."),		0, "" },
   { "recallShipment",	-5, TR("This shipment cannot be recalled because it "
-			       "contains one or more Line Items with Warehouse/"
+			       "contains one or more Line Items with Site/"
 			       "Product Category/Customer combinations that "
 			       "have not been properly described in Sales "
 			       "Account Assignments. These assignments must be "
@@ -1021,7 +1021,7 @@ void initErrorLookupHash()
 			-5, TR("Either a Cost Category for the Items you are "
 			       "trying to Return is not configured with a "
 			       "Shipping Asset Account Number or a Customer "
-			       "Type/Product Category/Warehouse Sales Account "
+			       "Type/Product Category/Site Sales Account "
 			       "assignment does not exist . Because of this, " 
 			       "G/L Transactions cannot be posted for this "
 			       "Return. You must contact your Systems "
@@ -1033,7 +1033,7 @@ void initErrorLookupHash()
 			-5, TR("Either a Cost Category for the Items you are "
 			       "trying to Return is not configured with a "
 			       "Shipping Asset Account Number or a Customer "
-			       "Type/Product Category/Warehouse Sales Account "
+			       "Type/Product Category/Site Sales Account "
 			       "assignment does not exist . Because of this, " 
 			       "G/L Transactions cannot be posted for this "
 			       "Return. You must contact your Systems "
@@ -1045,7 +1045,7 @@ void initErrorLookupHash()
 			-5, TR("Either a Cost Category for the Items you are "
 			       "trying to Return is not configured with a "
 			       "Shipping Asset Account Number or a Customer "
-			       "Type/Product Category/Warehouse Sales Account "
+			       "Type/Product Category/Site Sales Account "
 			       "assignment does not exist . Because of this, " 
 			       "G/L Transactions cannot be posted for this "
 			       "Return. You must contact your Systems "
@@ -1062,14 +1062,14 @@ void initErrorLookupHash()
   { "shipShipment",  -4, "",	 -4, "insertGLTransaction"	},
   { "shipShipment",  -5, TR("This Sales Order may not be shipped as it "
 			    "contains one or more Line Items that have "
-			    "Warehouse/Product Category/Customer combinations "
+			    "Site/Product Category/Customer combinations "
 			    "that have not been properly described in Sales "
 			    "Account Assignments.  These assignments must be "
 			    "made before G/L Transactions can be posted and "
 			    "this Sales Order is allowed to ship."),	0, "" },
   { "shipShipment",  -6, TR("This Transfer Order may not be shipped "
 			    "because there is no Item Site for the "
-			    "Transit Warehouse."),			0, "" },
+			    "Transit Site."),			0, "" },
   { "shipShipment",  -8, TR("This Shipment cannot be shipped because it "
 			    "appears to have already shipped."),	0, "" },
   { "shipShipment", -12, TR("The selected Order is on Credit Hold and must be "
@@ -1104,9 +1104,9 @@ void initErrorLookupHash()
 	    TR("Cannot figure out which line item to issue."),	0, "" },
   { "sufficientInventoryToShipItem", -2,
 	    TR("There is not enough Inventory to issue the amount required of "
-	       "Item %1 in Warehouse %2."),			0, "" },
+	       "Item %1 in Site %2."),			0, "" },
   { "sufficientInventoryToShipItem", -3, 
-            TR("Item Number %1 in Warehouse %2 is a Multiple Location or "
+            TR("Item Number %1 in Site %2 is a Multiple Location or "
                "Lot/Serial controlled Item which is short on Inventory. "
                "This transaction cannot be completed as is. Please make "
                "sure there is sufficient Quantity on Hand before proceeding."),
