@@ -215,11 +215,11 @@ int ExternalCCProcessor::handleTrans(const int pccardid, const QString &ptype, c
     QVariant param;
     bool valid;
 
-    param = pparams.value("avs", &valid);
+    param = pparams.value("passedavs", &valid);
     if (valid)
       _passedAvs = param.toBool();
 
-    param = pparams.value("cvv", &valid);
+    param = pparams.value("passedcvv", &valid);
     if (valid)
       _passedCvv = param.toBool();
 

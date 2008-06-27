@@ -177,9 +177,11 @@ void externalCCTransaction::getResults(ParameterList &pParams)
   }
 
   pParams.append("code",     _approvalCode->text());
-  pParams.append("avs",      QVariant(_passedAVS->isChecked()));
   pParams.append("xactionid",_transactionId->text());
-  pParams.append("cvv",      QVariant(_passedCVV->isChecked()));
+  pParams.append("avs",      _passedAVS->isChecked() ? tr("passed") :
+                                                 tr("failed or not entered"));
+  pParams.append("passedavs",QVariant(_passedAVS->isChecked()));
+  pParams.append("passedcvv",QVariant(_passedCVV->isChecked()));
   //pParams.append("error",    );
   //pParams.append("shipping",    );
   //pParams.append("tax",     );
