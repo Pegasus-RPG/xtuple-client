@@ -1,8 +1,8 @@
 <!DOCTYPE openRPTDef>
 <report>
- <title>Item Locations By Warehouse</title>
+ <title>Item Locations By Site</title>
  <name>ItemLocationsByWarehouse</name>
- <description>Item Locations By Warehouse</description>
+ <description>Item Locations By Site</description>
  <size>A4</size>
  <portrait/>
  <topmargin>50</topmargin>
@@ -53,7 +53,7 @@ ORDER BY warehous_code, item_number, itemloc_expiration, location_name, itemloc_
    </font>
    <left/>
    <vcenter/>
-   <string>Warehouse</string>
+   <string>Site</string>
   </label>
   <label>
    <rect>
@@ -140,7 +140,7 @@ ORDER BY warehous_code, item_number, itemloc_expiration, location_name, itemloc_
    </font>
    <left/>
    <top/>
-   <string>Item Location and Lot Detail by Warehouse</string>
+   <string>Item Location and Lot Detail by Site</string>
   </label>
   <label>
    <rect>
@@ -175,7 +175,7 @@ ORDER BY warehous_code, item_number, itemloc_expiration, location_name, itemloc_
    </font>
    <left/>
    <vcenter/>
-   <string>Warehouse</string>
+   <string>Site</string>
   </label>
   <label>
    <rect>

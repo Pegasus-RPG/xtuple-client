@@ -19,7 +19,7 @@
              FROM warehous
             WHERE (warehous_id=&lt;? value("warehous_id") ?>) )
        &lt;? else ?>
-         text('All Warehouses')
+         text('All Sites')
        &lt;? endif ?>
        AS warehouse,
        &lt;? if exists("byDays") ?>
@@ -204,7 +204,7 @@ SELECT DISTINCT warehous_code,
    </font>
    <right/>
    <vcenter/>
-   <string>Warehouse:</string>
+   <string>Site:</string>
   </label>
   <label>
    <rect>
@@ -390,7 +390,7 @@ SELECT DISTINCT warehous_code,
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Whs.</string>
+   <string>Site</string>
   </label>
   <label>
    <rect>
@@ -548,7 +548,7 @@ SELECT DISTINCT warehous_code,
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Whs.</string>
+   <string>Site</string>
   </label>
  </pghead>
  <section>

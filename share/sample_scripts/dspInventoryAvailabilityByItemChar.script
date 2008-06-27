@@ -263,7 +263,7 @@ var list = mywindow.findChild("_availability");
 // the third argument is default column alignment See Qt::Alignment documentation
 // the fourth optional argument is default visible
 // the fifth optional argument is column name for enhanced processing
-list.addColumn("Whs.", 100, 4, true, "warehous_code");
+list.addColumn("Site", 100, 4, true, "warehous_code");
 list.addColumn("Item Number", 100, 1, true, "item_number");
 list.addColumn("LT", 50, 4, true, "itemsite_leadtime");
 list.addColumn("QOH", 100, 2, true, "qtyonhand");
