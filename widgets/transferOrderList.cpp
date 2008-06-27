@@ -87,9 +87,9 @@ transferOrderList::transferOrderList( QWidget* parent, const char* name, bool mo
   QVBoxLayout *listLayout	= new QVBoxLayout( 0, 0, 0, "listLayout"); 
 
   _srcwhs = new WarehouseGroup(this, "_srcwhs");
-  _srcwhs->setTitle(tr("From Warehouse:"));
+  _srcwhs->setTitle(tr("From Site:"));
   _dstwhs = new WarehouseGroup(this, "_dstwhs");
-  _dstwhs->setTitle(tr("To Warehouse:"));
+  _dstwhs->setTitle(tr("To Site:"));
   _dstwhs->setAll();
   warehouseLayout->addWidget(_srcwhs);
   warehouseLayout->addWidget(_dstwhs);

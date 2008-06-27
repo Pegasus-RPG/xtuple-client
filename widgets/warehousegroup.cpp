@@ -79,7 +79,7 @@ WarehouseGroup::WarehouseGroup(QWidget *pParent, const char *pName) :
   QWidget * selectedGroup = new QWidget(this);
   QButtonGroup * buttonGroup = new QButtonGroup(this);
 
-  _all = new QRadioButton(tr("All Warehouses"), this, "_all");
+  _all = new QRadioButton(tr("All Sites"), this, "_all");
   _all->setChecked(TRUE);
   buttonGroup->addButton(_all);
 

@@ -376,7 +376,7 @@ void WoCluster::constructor()
   _woLayout->addWidget(_woList);
   _line1Layout->addLayout(_woLayout);
 
-  QLabel *warehouseLit = new QLabel(tr("Whs.:"), this, "warehouseLit");
+  QLabel *warehouseLit = new QLabel(tr("Site:"), this, "warehouseLit");
   _woNumber->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
   warehouseLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   _warehouseLayout->addWidget(warehouseLit);

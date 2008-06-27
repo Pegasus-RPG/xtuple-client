@@ -100,11 +100,11 @@ plannedOrderList::plannedOrderList(QWidget *parent, const char *name, bool modal
     _warehouseGroupLayout->setMargin( 5 );
     _warehouseGroupLayout->setAlignment( Qt::AlignTop );
 
-    _allWarehouses = new QRadioButton(tr("&All Warehouses"), _warehouseGroup, "_allWarehouses");
+    _allWarehouses = new QRadioButton(tr("&All Sites"), _warehouseGroup, "_allWarehouses");
     _allWarehouses->setChecked( TRUE );
     _warehouseGroupLayout->addWidget( _allWarehouses );
 
-    _selectedWarehouse = new QRadioButton(tr("Warehouse:"), _warehouseGroup, "_selectedWarehouse");
+    _selectedWarehouse = new QRadioButton(tr("Site:"), _warehouseGroup, "_selectedWarehouse");
     _selectedWarehouse->setChecked( FALSE );
     layout6384->addWidget( _selectedWarehouse );
 
