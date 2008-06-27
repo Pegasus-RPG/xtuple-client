@@ -79,6 +79,7 @@ public slots:
     virtual void sDspWoScheduleByWorkOrder();
     virtual void sFillList();
     virtual void sFirmOrder();
+    virtual void sHandleResort();
     virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pSelected );
     virtual void sPrint();
     virtual void sReleaseOrder();

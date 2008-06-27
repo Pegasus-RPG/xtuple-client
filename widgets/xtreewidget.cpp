@@ -596,6 +596,7 @@ void XTreeWidget::sortItems(int column, Qt::SortOrder order)
   }
 
   populateCalculatedColumns();
+  emit resorted();
 }
 
 void XTreeWidget::populateCalculatedColumns()

@@ -1,14 +1,24 @@
+SELECT orderid, altorderid, ordertype, ordernumber, sequence, item_number,
+       duedate, qtyordered,  qtyreceived, balance,
+       balance AS runningavail,
+       1 AS runningavail_xtrunningrole,
+       <? value("qoh") ?> AS runningavail_xtrunninginit,
+       CASE WHEN late THEN 'error' END AS duedate_qtforegroundrole,
+       CASE WHEN ordertype ~ 'Planned P/O' OR ordertype ~ 'Planned W/O' THEN
+          'emphasis' END AS qtforegroundrole,
+      'qty' AS qtyordered_xtnumericrole,
+      'qty' AS qtyreceived_xtnumericrole,
+      'qty' AS balance_xtnumericrole
+FROM (
 <? if exists("MultiWhs") ?>
 SELECT tohead_id AS orderid, toitem_id AS altorderid, 'T/O' AS ordertype,
        TEXT(tohead_number) AS ordernumber,
        1 AS sequence,
        tohead_srcname || '/' || tohead_destname AS item_number,
-       formatDate(toitem_duedate) AS duedate,
-       toitem_duedate AS r_duedate,
+       toitem_duedate AS duedate,
        (toitem_duedate < CURRENT_DATE) AS late,
-       formatQty(toitem_qty_ordered) AS f_qtyordered,
-       formatQty(toitem_qty_received) AS f_qtyreceived,
-       formatQty(noNeg(toitem_qty_ordered - toitem_qty_received)) AS f_balance,
+       toitem_qty_ordered AS qtyordered,
+       toitem_qty_received AS qtyreceived,
        noNeg(toitem_qty_ordered - toitem_qty_received) AS balance
 FROM tohead, toitem
 WHERE ((toitem_tohead_id=tohead_id)
@@ -22,13 +32,13 @@ SELECT tohead_id AS orderid, toitem_id AS altorderid, 'T/O' AS ordertype,
        TEXT(tohead_number) AS ordernumber,
        1 AS sequence,
        tohead_srcname || '/' || tohead_destname AS item_number,
-       formatDate(toitem_duedate) AS duedate,
-       toitem_duedate AS r_duedate,
+       toitem_duedate AS duedate,
        (toitem_duedate < CURRENT_DATE) AS late,
-       formatQty(toitem_qty_ordered) AS f_qtyordered,
-       formatQty(toitem_qty_received) AS f_qtyreceived,
-       formatQty(-1 * noNeg(toitem_qty_ordered - toitem_qty_shipped - qtyAtShipping('TO', toitem_id))) AS f_balance,
-       -1 * noNeg(toitem_qty_ordered - toitem_qty_received) AS balance
+       toitem_qty_ordered AS qtyordered,
+       toitem_qty_received AS qtyreceived,
+       -1 * noNeg(toitem_qty_ordered - toitem_qty_shipped - qtyAtShipping('TO', toitem_id)) AS balance
+       -- TODO: old code had ^^^^ for formatted balance and vvvv used to calc running avail! which is right?
+       -- -1 * noNeg(toitem_qty_ordered - toitem_qty_received) AS balance
 FROM tohead, toitem
 WHERE ((toitem_tohead_id=tohead_id)
   AND  (toitem_status = 'O')
@@ -43,12 +53,10 @@ SELECT wo_id AS orderid, -1 AS altorderid,
        formatWoNumber(wo_id) AS ordernumber,
        1 AS sequence,
        item_number,
-       formatDate(wo_duedate) AS duedate,
-       wo_duedate AS r_duedate,
+       wo_duedate AS duedate,
        (wo_duedate < CURRENT_DATE) AS late,
-       formatQty(wo_qtyord) AS f_qtyordered,
-       formatQty(wo_qtyrcv) AS f_qtyreceived,
-       formatQty(noNeg(wo_qtyord - wo_qtyrcv)) AS f_balance,
+       wo_qtyord AS qtyordered,
+       wo_qtyrcv AS qtyreceived,
        noNeg(wo_qtyord - wo_qtyrcv) AS balance
 FROM wo, itemsite, item
 WHERE ((wo_status<>'C')
@@ -64,12 +72,10 @@ SELECT wo_id AS orderid, -1 AS altorderid,
        formatWoNumber(wo_id) AS ordernumber,
        1 AS sequence,
        item_number,
-       formatDate(wo_duedate) AS duedate,
-       wo_duedate AS r_duedate,
+       wo_duedate AS duedate,
        (wo_duedate < CURRENT_DATE) AS late,
-       formatQty(wo_qtyord * brddist_stdqtyper) AS f_qtyordered,
-       formatQty(wo_qtyrcv * brddist_stdqtyper) AS f_qtyreceived,
-       formatQty(noNeg((wo_qtyord - wo_qtyrcv) * brddist_stdqtyper)) AS f_balance,
+       (wo_qtyord * brddist_stdqtyper) AS qtyordered,
+       (wo_qtyrcv * brddist_stdqtyper) AS qtyreceived,
        noNeg((wo_qtyord - wo_qtyrcv) * brddist_stdqtyper) AS balance
 FROM brddist, wo, itemsite, item
 WHERE ((wo_status<>'C')
@@ -87,12 +93,10 @@ SELECT wo_id AS orderid, womatl_id AS altorderid,
       formatWoNumber(wo_id) AS ordernumber,
       2 AS sequence,
       item_number,
-      formatDate(womatl_duedate) AS duedate,
-      womatl_duedate AS r_duedate,
+      womatl_duedate AS duedate,
       FALSE AS late,
-      formatQty(itemuomtouom(womatlis.itemsite_item_id, womatl_uom_id, NULL, womatl_qtyreq)) AS f_qtyordered,
-      formatQty(itemuomtouom(womatlis.itemsite_item_id, womatl_uom_id, NULL, womatl_qtyiss)) AS f_qtyreceived,
-      formatQty(itemuomtouom(womatlis.itemsite_item_id, womatl_uom_id, NULL, (noNeg(womatl_qtyreq - womatl_qtyiss) * -1))) AS f_balance,
+      itemuomtouom(womatlis.itemsite_item_id, womatl_uom_id, NULL, womatl_qtyreq) AS qtyordered,
+      itemuomtouom(womatlis.itemsite_item_id, womatl_uom_id, NULL, womatl_qtyiss) AS qtyreceived,
       itemuomtouom(womatlis.itemsite_item_id, womatl_uom_id, NULL, (noNeg(womatl_qtyreq - womatl_qtyiss) * -1)) AS balance
 FROM womatl, wo, itemsite AS wois, item, itemsite AS womatlis
 WHERE ((wo_status<>'C')
@@ -110,12 +114,10 @@ SELECT pohead_id AS orderid, poitem_id AS altorderid,
       TEXT(pohead_number) AS ordernumber,
       1 AS sequence,
       '' AS item_number,
-      formatDate(poitem_duedate) AS duedate,
-      poitem_duedate AS r_duedate,
+      poitem_duedate AS duedate,
       (poitem_duedate < CURRENT_DATE) AS late,
-      formatQty(poitem_qty_ordered * poitem_invvenduomratio) AS f_qtyordered,
-      formatQty(poitem_qty_received * poitem_invvenduomratio) AS f_qtyreceived,
-      formatQty(noNeg(poitem_qty_ordered - poitem_qty_received) * poitem_invvenduomratio) AS f_balance,
+      (poitem_qty_ordered * poitem_invvenduomratio) AS qtyordered,
+      (poitem_qty_received * poitem_invvenduomratio) AS qtyreceived,
       (noNeg(poitem_qty_ordered - poitem_qty_received) * poitem_invvenduomratio) AS balance
 FROM pohead, poitem, itemsite, item
 WHERE ((poitem_pohead_id=pohead_id)
@@ -132,12 +134,10 @@ SELECT cohead_id AS orderid, coitem_id AS altorderid,
        TEXT(cohead_number) AS ordernumber,
        2 AS sequence,
        cust_name AS item_number,
-       formatDate(coitem_scheddate) AS duedate,
-       coitem_scheddate AS r_duedate,
+       coitem_scheddate AS duedate,
        (coitem_scheddate < CURRENT_DATE) AS late,
-       formatQty(coitem_qtyord * coitem_qty_invuomratio) AS f_qtyordered,
-       formatQty(coitem_qty_invuomratio * (coitem_qtyshipped - coitem_qtyreturned + qtyAtShipping(coitem_id))) AS f_qtyreceived,
-       formatQty(coitem_qty_invuomratio * noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned - qtyAtShipping(coitem_id)) * -1) AS f_balance,
+       (coitem_qtyord * coitem_qty_invuomratio) AS qtyordered,
+       (coitem_qty_invuomratio * (coitem_qtyshipped - coitem_qtyreturned + qtyAtShipping(coitem_id))) AS qtyreceived,
        (coitem_qty_invuomratio * noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned - qtyAtShipping(coitem_id)) * -1) AS balance
 FROM coitem, cohead, cust, itemsite, item
 WHERE ((coitem_status='O')
@@ -153,22 +153,16 @@ WHERE ((coitem_status='O')
 <? if exists("showMRPplan") ?>
 UNION
 SELECT planord_id AS orderid, -1 AS altorderid,
---       'Planned P/O' AS ordertype,
--- 2.3 replace above with metasql that previously would have put these values in ordernumber
--- now this info will be in ordertype
        CASE WHEN (planord_firm) THEN <? value("firmPo") ?> 
  	   ELSE <? value("plannedPo") ?> 
        END AS ordertype,
---2.3 replaced case above with actual order number for higher level demand
        CAST(planord_number AS text) AS ordernumber,
        1 AS sequence,
        '' AS item_number,
-       formatDate(planord_duedate) AS duedate,
-       planord_duedate AS r_duedate,
+       planord_duedate AS duedate,
        FALSE AS late,
-       formatQty(planord_qty) AS f_qtyordered,
-       '' AS f_qtyreceived,
-       formatQty(planord_qty) AS f_balance,
+       planord_qty AS qtyordered,
+       NULL AS qtyreceived,
        planord_qty AS balance
 FROM planord, itemsite
 WHERE ((planord_type='P')
@@ -178,22 +172,16 @@ WHERE ((planord_type='P')
 
 UNION
 SELECT planord_id AS orderid, -1 AS altorderid,
---       'Planned W/O' AS ordertype,
--- 2.3 replace above with metasql that previously would have put these values in ordernumber
--- now this info will be in ordertype
        CASE WHEN (planord_firm) THEN <? value("firmWo") ?> 
 	    ELSE <? value("plannedWo") ?> 
        END AS ordertype,
---2.3 replaced case above with actual order number
        CAST(planord_number AS text) AS ordernumber,
        1 AS sequence,
        '' AS item_number,
-       formatDate(planord_duedate) AS duedate,
-       planord_duedate AS r_duedate,
+       planord_duedate AS duedate,
        FALSE AS late,
-       formatQty(planord_qty) AS f_qtyordered,
-       '' AS f_qtyreceived,
-       formatQty(planord_qty) AS f_balance,
+       planord_qty AS qtyordered,
+       NULL AS qtyreceived,
        planord_qty AS balance
 FROM planord, itemsite
 WHERE ((planord_type='W')
@@ -203,30 +191,21 @@ WHERE ((planord_type='W')
 
 UNION
 SELECT planreq_id AS orderid, -1 AS altorderid,
---       'Planned W/O' AS ordertype,
--- 2.3 replace above with metasql that previously would have put these values in ordernumber
--- now this info will be in ordertype
        CASE WHEN (planord_firm) THEN <? value("firmWoReq") ?> 
 	    ELSE <? value("plannedWoReq") ?> 
        END AS ordertype,
---2.3 replaced case above with actual order number for higher level demand
        CAST(planord_number AS text) AS ordernumber,
        1 AS sequence,
---2.3 Start
---Starting here a sub-select gets the planned order number for the higher level demand
+--get the planned order number for the higher level demand
              (SELECT item_number
                 FROM item, itemsite
                WHERE((itemsite_item_id=item_id)
                  AND (itemsite_id=planord_itemsite_id))
              ) AS item_number,
---End of subselect to get higher level item number
---2.3 Start
-       formatDate(planord_startdate) AS duedate,
-       planord_startdate AS r_duedate,
+       planord_startdate AS duedate,
        FALSE AS late,
-       formatQty(planreq_qty) AS f_qtyordered,
-       '' AS f_qtyreceived,
-       formatQty(planreq_qty * -1) AS f_balance,
+       planreq_qty AS f_qtyordered,
+       NULL AS qtyreceived,
        (planreq_qty * -1) AS balance
 FROM planreq, planord, itemsite, item
 WHERE ((planreq_source='P')
@@ -239,18 +218,14 @@ WHERE ((planreq_source='P')
 
 UNION
 SELECT pr_id AS orderid, -1 AS altorderid,
---       'P/R' AS ordertype,
        <? value("pr") ?> AS ordertype,
---2.3 replaced above with actual order number
        CAST(pr_number AS text) AS ordernumber,       
        1 AS sequence,
        '' AS item_number,
-       formatDate(pr_duedate) AS duedate,
-       pr_duedate AS r_duedate,
+       pr_duedate AS duedate,
        FALSE AS late,
-       formatQty(pr_qtyreq) AS f_qtyordered,
-       '' AS f_qtyreceived,
-       formatQty(pr_qtyreq) AS f_balance,
+       pr_qtyreq AS qtyordered,
+       NULL AS qtyreceived,
        pr_qtyreq AS balance
 FROM pr, itemsite, item
 WHERE ((pr_itemsite_id=itemsite_id)
@@ -259,6 +234,7 @@ WHERE ((pr_itemsite_id=itemsite_id)
   AND  (itemsite_warehous_id=<? value("warehous_id") ?>)
   AND  (itemsite_item_id=<? value("item_id") ?>) )
 <? endif ?>
+) AS dummy
 
-ORDER BY r_duedate, sequence;
+ORDER BY duedate, sequence;
 
