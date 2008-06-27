@@ -56,7 +56,7 @@
              FROM warehous
             WHERE (warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>) )
        &lt;? else ?>
-         text('All Warehouses')
+         text('All Sites')
        &lt;? endif ?>
        AS warehouse,
        &lt;? if exists(&quot;showInactive&quot;) ?>
@@ -398,7 +398,7 @@ ORDER BY item_number;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>Warehouse:</string>
+   <string>Site:</string>
   </label>
   <label>
    <rect>
@@ -465,7 +465,7 @@ ORDER BY item_number;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Whs.</string>
+   <string>Site</string>
   </label>
   <label>
    <rect>
@@ -782,7 +782,7 @@ ORDER BY item_number;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Whs.</string>
+   <string>Site</string>
   </label>
   <label>
    <rect>

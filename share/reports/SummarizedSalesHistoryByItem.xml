@@ -14,7 +14,7 @@
   <sql>SELECT &lt;? if exists(&quot;warehous_id&quot;) ?>
          ( SELECT warehous_code FROM warehous WHERE (warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>) )
        &lt;? else ?>
-         text('All Warehouses')
+         text('All Sites')
        &lt;? endif ?>
        AS warehouse,
        &lt;? if exists(&quot;prodcat_id&quot;) ?>
@@ -313,7 +313,7 @@ ORDER BY SUM(cohist_qtyshipped * cohist_unitprice) DESC
    </font>
    <right/>
    <vcenter/>
-   <string>Warehouse:</string>
+   <string>Site:</string>
   </label>
   <label>
    <rect>

@@ -242,7 +242,7 @@ ORDER BY cntslip_number;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>Warehouse:</string>
+   <string>Site:</string>
   </label>
   <field>
    <rect>

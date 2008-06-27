@@ -47,7 +47,7 @@ ORDER BY custtype_code, warehous_code;</sql>
   <sql>SELECT &lt;? if exists(&quot;warehous_id&quot;) ?>
          (select warehous_code from warehous where warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>)
        &lt;? else ?>
-         text('All Warehouses')
+         text('All Sites')
        &lt;? endif ?>
        AS warehouse,
        &lt;? if exists(&quot;custtype_id&quot;) ?>
@@ -95,7 +95,7 @@ ORDER BY custtype_code, warehous_code;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>Warehouse:</string>
+   <string>Site:</string>
   </label>
   <label>
    <rect>
@@ -236,7 +236,7 @@ ORDER BY custtype_code, warehous_code;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Whs.</string>
+   <string>Site</string>
   </label>
   <label>
    <rect>
@@ -384,7 +384,7 @@ ORDER BY custtype_code, warehous_code;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Whs.</string>
+   <string>Site</string>
   </label>
   <label>
    <rect>

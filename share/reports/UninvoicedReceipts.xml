@@ -16,7 +16,7 @@
              FROM warehous&#xd;
             WHERE (warehous_id=&lt;? value("warehous_id") ?>) )&#xd;
        &lt;? else ?>&#xd;
-         text('All Warehouses')&#xd;
+         text('All Sites')&#xd;
        &lt;? endif ?>&#xd;
        AS warehouse,&#xd;
        &lt;? if exists("agentUsername") ?>&#xd;
@@ -302,7 +302,7 @@ ORDER BY f_ponumber, poitem_linenumber;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>Warehouse:</string>
+   <string>Site:</string>
   </label>
   <field>
    <rect>

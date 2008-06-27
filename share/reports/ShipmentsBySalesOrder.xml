@@ -99,7 +99,7 @@ ORDER BY cosmisc_id DESC, coitem_linenumber DESC;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Whs.</string>
+   <string>Site</string>
   </label>
   <field>
    <rect>

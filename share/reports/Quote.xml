@@ -822,7 +822,7 @@ cntct, quhead, custinfo where cust_id = quhead_cust_id  and cust_cntct_id = cntc
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Whs.</string>
+   <string>Site</string>
   </label>
   <label>
    <rect>

@@ -1,6 +1,6 @@
 <!DOCTYPE openRPTDef>
 <report>
- <title>Summarized Backlog By Warehouse</title>
+ <title>Summarized Backlog By Site</title>
  <name>SummarizedBacklogByWarehouse</name>
  <description></description>
  <size>Letter</size>
@@ -26,7 +26,7 @@
              FROM warehous
             WHERE (warehous_id=&lt;? value("warehous_id") ?>) )
        &lt;? else ?>
-         text('All Warehouses')
+         text('All Sites')
        &lt;? endif ?>
        AS warehouse,
        &lt;? if exists("showPrices") ?>
@@ -254,7 +254,7 @@ GROUP BY cohead_id, cohead_number, cust_name, cohead_holdtype,
    </font>
    <right/>
    <vcenter/>
-   <string>Summarized Backlog By Warehouse</string>
+   <string>Summarized Backlog By Site</string>
   </label>
   <label>
    <rect>
@@ -545,7 +545,7 @@ GROUP BY cohead_id, cohead_number, cust_name, cohead_holdtype,
    </font>
    <right/>
    <vcenter/>
-   <string>Warehouse:</string>
+   <string>Site:</string>
   </label>
  </rpthead>
  <pghead>

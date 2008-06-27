@@ -47,7 +47,7 @@ ORDER BY wo_startdate DESC, wo_number, wo_subnumber;
             FROM warehous
            WHERE (warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>))
        &lt;? else ?>
-         text('All Warehouses')
+         text('All Sites')
        &lt;? endif ?>
        AS warehouse,
        &lt;? if exists(&quot;showOnlyTopLevel&quot;) ?>
@@ -220,7 +220,7 @@ ORDER BY wo_startdate DESC, wo_number, wo_subnumber;
    </font>
    <right/>
    <vcenter/>
-   <string>Warehouse:</string>
+   <string>Site:</string>
   </label>
   <field>
    <rect>
@@ -281,7 +281,7 @@ ORDER BY wo_startdate DESC, wo_number, wo_subnumber;
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Whs.</string>
+   <string>Site</string>
   </label>
   <label>
    <rect>
@@ -457,7 +457,7 @@ ORDER BY wo_startdate DESC, wo_number, wo_subnumber;
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Whs.</string>
+   <string>Site</string>
   </label>
   <label>
    <rect>

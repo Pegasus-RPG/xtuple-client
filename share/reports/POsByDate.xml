@@ -14,7 +14,7 @@
   <sql>SELECT &lt;? if exists("warehous_id") ?>
          (select warehous_code from warehous where warehous_id=&lt;? value("warehous_id") ?>)
        &lt;? else ?>
-         text('All Warehouses')
+         text('All Sites')
        &lt;? endif ?>
        AS warehouse,
        &lt;? if exists("agentUsername") ?>
@@ -187,7 +187,7 @@ ORDER BY min_duedate;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>Warehouse:</string>
+   <string>Site:</string>
   </label>
   <field>
    <rect>
@@ -273,7 +273,7 @@ ORDER BY min_duedate;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Whs.</string>
+   <string>Site</string>
   </label>
   <label>
    <rect>
@@ -383,7 +383,7 @@ ORDER BY min_duedate;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Whs.</string>
+   <string>Site</string>
   </label>
   <label>
    <rect>

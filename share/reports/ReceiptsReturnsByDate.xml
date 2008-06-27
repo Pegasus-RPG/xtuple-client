@@ -16,7 +16,7 @@
        &lt;? if exists(&quot;warehous_id&quot;) ?>
          (select warehous_code from warehous where warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>)
        &lt;? else ?>
-         text('All Warehouses')
+         text('All Sites')
        &lt;? endif ?>
        AS warehouse,
        &lt;? if exists(&quot;agentUsername&quot;) ?>
@@ -318,7 +318,7 @@ ORDER BY sortdate DESC</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>Warehouse:</string>
+   <string>Site:</string>
   </label>
   <field>
    <rect>

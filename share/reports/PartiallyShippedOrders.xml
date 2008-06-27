@@ -63,7 +63,7 @@ ORDER BY scheddate, cohead_number;</sql>
              FROM warehous
             WHERE (warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>) )
        &lt;? else ?>
-         text('All Warehouses')
+         text('All Sites')
        &lt;? endif ?>
        AS warehouse,
        &lt;? if exists(&quot;showPrices&quot;) ?>
@@ -177,7 +177,7 @@ ORDER BY scheddate, cohead_number;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>Warehouse:</string>
+   <string>Site:</string>
   </label>
   <label>
    <rect>

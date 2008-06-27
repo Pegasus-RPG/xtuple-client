@@ -65,7 +65,7 @@ ORDER BY invhist_transdate DESC, invhist_transtype;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Whs.</string>
+   <string>Site</string>
   </label>
   <label>
    <rect>
@@ -403,7 +403,7 @@ ORDER BY invhist_transdate DESC, invhist_transtype;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>Warehouse:</string>
+   <string>Site:</string>
   </label>
   <field>
    <rect>
@@ -651,7 +651,7 @@ ORDER BY invhist_transdate DESC, invhist_transtype;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Whs.</string>
+   <string>Site</string>
   </label>
   <label>
    <rect>

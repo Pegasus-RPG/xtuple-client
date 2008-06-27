@@ -15,7 +15,7 @@
        &lt;? if exists(&quot;warehous_id&quot;) ?>
          ( SELECT warehous_code FROM warehous WHERE warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>)
        &lt;? else ?>
-         text('All Warehouses')
+         text('All Sites')
        &lt;? endif ?>
        AS warehouse,
        &lt;? if exists(&quot;agentUsername&quot;) ?>
@@ -323,7 +323,7 @@ ORDER BY poitem_duedate;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Whs.</string>
+   <string>Site</string>
   </label>
   <field>
    <rect>
@@ -358,7 +358,7 @@ ORDER BY poitem_duedate;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>Warehouse:</string>
+   <string>Site:</string>
   </label>
   <field>
    <rect>
@@ -554,7 +554,7 @@ ORDER BY poitem_duedate;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Whs.</string>
+   <string>Site</string>
   </label>
  </pghead>
  <section>

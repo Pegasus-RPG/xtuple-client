@@ -92,7 +92,7 @@ ORDER BY
 FROM warehous
 WHERE (warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>);
 &lt;? else ?>
-       TEXT('All Warehouses') AS warehous_code;
+       TEXT('All Sites') AS warehous_code;
 &lt;? endif ?>
 </sql>
  </querysource>
@@ -252,7 +252,7 @@ WHERE (item_id=&lt;? value(&quot;item_id&quot;) ?>);
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Whs.</string>
+   <string>Site</string>
   </label>
   <label>
    <rect>
@@ -268,7 +268,7 @@ WHERE (item_id=&lt;? value(&quot;item_id&quot;) ?>);
    </font>
    <right/>
    <vcenter/>
-   <string>Warehouse</string>
+   <string>Site</string>
   </label>
   <field>
    <rect>
@@ -613,7 +613,7 @@ WHERE (item_id=&lt;? value(&quot;item_id&quot;) ?>);
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Whs.</string>
+   <string>Site</string>
   </label>
   <line>
    <xstart>5</xstart>

@@ -1075,7 +1075,7 @@ ORDER BY calitem_startdate, calitem_enddate </sql>
      </font>
      <right/>
      <vcenter/>
-     <string>Warehouse:</string>
+     <string>Site:</string>
     </label>
    </head>
    <foot>

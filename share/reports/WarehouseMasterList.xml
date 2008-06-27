@@ -1,6 +1,6 @@
 <!DOCTYPE openRPTDef>
 <report>
- <title>Warehouse Master List</title>
+ <title>Site Master List</title>
  <name>WarehouseMasterList</name>
  <description></description>
  <size>Letter</size>
@@ -34,9 +34,9 @@ ORDER BY warehous_code;</sql>
  <querysource>
   <name>head</name>
   <sql>SELECT &lt;? if exists(&quot;showInactive&quot;) ?>
-         text('Showing Active and Inactive Warehouses')
+         text('Showing Active and Inactive Sites')
        &lt;? else ?>
-         text('Showing Active Warehouses')
+         text('Showing Active Sites')
        &lt;? endif ?>
        AS f_show;</sql>
  </querysource>
@@ -82,7 +82,7 @@ ORDER BY warehous_code;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>Warehouse Master List</string>
+   <string>Site Master List</string>
   </label>
  </rpthead>
  <section>
@@ -106,7 +106,7 @@ ORDER BY warehous_code;</sql>
     </font>
     <right/>
     <vcenter/>
-    <string>Shipping Whs.:</string>
+    <string>Shipping Site:</string>
    </label>
    <label>
     <rect>

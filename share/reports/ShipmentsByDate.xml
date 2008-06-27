@@ -111,7 +111,7 @@ ORDER BY cosmisc_id, coitem_linenumber;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Whs.</string>
+   <string>Site</string>
   </label>
   <label>
    <rect>

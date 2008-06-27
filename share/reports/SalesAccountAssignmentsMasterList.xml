@@ -146,7 +146,7 @@ ORDER BY warehouscode, custtypecode, prodcatcode;</sql>
    </font>
    <left/>
    <vcenter/>
-   <string>Warehouse:</string>
+   <string>Site:</string>
   </label>
  </rpthead>
  <pghead>
@@ -169,7 +169,7 @@ ORDER BY warehouscode, custtypecode, prodcatcode;</sql>
    </font>
    <left/>
    <vcenter/>
-   <string>Warehouse:</string>
+   <string>Site:</string>
   </label>
   <label>
    <rect>

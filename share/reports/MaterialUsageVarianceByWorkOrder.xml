@@ -429,7 +429,7 @@ ORDER BY item_number;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>Whs.:</string>
+   <string>Site:</string>
   </label>
   <label>
    <rect>

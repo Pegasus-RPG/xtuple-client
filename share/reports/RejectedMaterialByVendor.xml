@@ -17,7 +17,7 @@
             from warehous
            where warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>)
        &lt;? else ?>
-         text('All Warehouses')
+         text('All Sites')
        &lt;? endif ?>
        AS warehouse,
        &lt;? if exists(&quot;agentUsername&quot;) ?>
@@ -346,7 +346,7 @@ ORDER BY poreject_date DESC;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>Warehouse:</string>
+   <string>Site:</string>
   </label>
   <field>
    <rect>

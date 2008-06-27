@@ -152,7 +152,7 @@ ORDER BY wo_subnumber;
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Whs.</string>
+   <string>Site</string>
   </label>
   <label>
    <rect>
@@ -413,7 +413,7 @@ ORDER BY wo_subnumber;
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Whs.</string>
+   <string>Site</string>
   </label>
   <label>
    <rect>

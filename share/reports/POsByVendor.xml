@@ -14,7 +14,7 @@
   <sql>SELECT &lt;? if exists("warehous_id") ?>
          (select warehous_code from warehous where warehous_id=&lt;? value("warehous_id") ?>)
        &lt;? else ?>
-         text('All Warehouses')
+         text('All Sites')
        &lt;? endif ?>
        AS warehouse,
        &lt;? if exists("vend_id") ?>
@@ -176,7 +176,7 @@ ORDER BY sortDate
    </font>
    <right/>
    <vcenter/>
-   <string>Warehouse:</string>
+   <string>Site:</string>
   </label>
   <field>
    <rect>
@@ -243,7 +243,7 @@ ORDER BY sortDate
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Whs.</string>
+   <string>Site</string>
   </label>
   <label>
    <rect>
@@ -481,7 +481,7 @@ ORDER BY sortDate
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Whs.</string>
+   <string>Site</string>
   </label>
  </pghead>
  <section>

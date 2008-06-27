@@ -1,6 +1,6 @@
 <!DOCTYPE openRPTDef>
 <report>
- <title>Count Tags By Warehouse</title>
+ <title>Count Tags By Site</title>
  <name>CountTagsByWarehouse</name>
  <description>With Barcoded Count Tag</description>
  <size>Letter</size>
@@ -18,7 +18,7 @@
              FROM warehous
             WHERE (warehous_id=&lt;? value("warehous_id") ?>) )
        &lt;? else ?>
-         text('All Warehouses')
+         text('All Sites')
        &lt;? endif ?>
        AS warehouse;</sql>
  </querysource>
@@ -87,7 +87,7 @@ ORDER BY invcnt_tagdate;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>Count Tags By Warehouse</string>
+   <string>Count Tags By Site</string>
   </label>
   <label>
    <rect>
@@ -151,7 +151,7 @@ ORDER BY invcnt_tagdate;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Whs.</string>
+   <string>Site</string>
   </label>
   <label>
    <rect>
@@ -375,7 +375,7 @@ ORDER BY invcnt_tagdate;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>Warehouse:</string>
+   <string>Site:</string>
   </label>
   <label>
    <rect>
@@ -494,7 +494,7 @@ ORDER BY invcnt_tagdate;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Whs.</string>
+   <string>Site</string>
   </label>
   <label>
    <rect>

@@ -40,7 +40,7 @@ FROM addr, vendaddrinfo LEFT OUTER JOIN crmacct ON (vendaddr_vend_id=crmacct_ven
 WHERE (vendaddr_addr_id=addr_id)
   &lt;? if exists("activeOnly") ?> AND addr_active &lt;? endif ?>
 UNION
-SELECT 'Warehouse' AS type, warehous_code AS first,
+SELECT 'Site' AS type, warehous_code AS first,
        warehous_descrip AS last, '' AS crmacct_number, '' AS phone,
        '' AS email, '' AS fax, addr.*
 FROM addr, whsinfo

@@ -16,7 +16,7 @@
              FROM warehous
             WHERE (warehous_id=&lt;? value("warehous_id") ?>) )
        &lt;? else ?>
-         text('All Warehouses')
+         text('All Sites')
        &lt;? endif ?>
        AS warehouse;
 </sql>
@@ -204,7 +204,7 @@ GROUP BY cohead_number, coitem_id, coitem_linenumber, item_number,
    </font>
    <right/>
    <vcenter/>
-   <string>Warehouse:</string>
+   <string>Site:</string>
   </label>
   <label>
    <rect>

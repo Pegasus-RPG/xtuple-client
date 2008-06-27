@@ -133,7 +133,7 @@ FROM ( SELECT coitem_id, itemsite_id, coitem_linenumber, item_number,
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Whs.</string>
+   <string>Site</string>
   </label>
   <field>
    <rect>

@@ -1,6 +1,6 @@
 <!DOCTYPE openRPTDef>
 <report>
- <title>Inventory History by Warehouse</title>
+ <title>Inventory History by Site</title>
  <name>InventoryHistoryByWarehouse</name>
  <description></description>
  <size>Letter</size>
@@ -87,7 +87,7 @@ ORDER BY invhist_transdate DESC, invhist_transtype, item_number;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>Inventory History by Warehouse</string>
+   <string>Inventory History by Site</string>
   </label>
   <label>
    <rect>
@@ -186,7 +186,7 @@ ORDER BY invhist_transdate DESC, invhist_transtype, item_number;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>Warehouse:</string>
+   <string>Site:</string>
   </label>
   <label>
    <rect>
@@ -234,7 +234,7 @@ ORDER BY invhist_transdate DESC, invhist_transtype, item_number;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Whs.</string>
+   <string>Site</string>
   </label>
   <label>
    <rect>
@@ -398,7 +398,7 @@ ORDER BY invhist_transdate DESC, invhist_transtype, item_number;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Whs.</string>
+   <string>Site</string>
   </label>
   <label>
    <rect>

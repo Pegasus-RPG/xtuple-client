@@ -1,6 +1,6 @@
 <!DOCTYPE openRPTDef>
 <report>
- <title>Item Usage Statistics by Warehouse</title>
+ <title>Item Usage Statistics by Site</title>
  <name>UsageStatisticsByWarehouse</name>
  <description></description>
  <size>Letter</size>
@@ -99,7 +99,7 @@ ORDER BY item_number;
    </font>
    <right/>
    <vcenter/>
-   <string>Warehouse:</string>
+   <string>Site:</string>
   </label>
   <line>
    <xstart>5</xstart>
@@ -173,7 +173,7 @@ ORDER BY item_number;
    </font>
    <right/>
    <vcenter/>
-   <string>Item Usage Statistics By Warehouse</string>
+   <string>Item Usage Statistics By Site</string>
   </label>
   <label>
    <rect>

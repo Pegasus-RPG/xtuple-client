@@ -115,7 +115,7 @@ order by wo_number, womatl_id, item_number, itemloc_expiration, location_name;</
    </font>
    <left/>
    <vcenter/>
-   <string>Warehouse:</string>
+   <string>Site:</string>
   </label>
   <label>
    <rect>

@@ -21,7 +21,7 @@
             FROM warehous
            WHERE (warehous_id=&lt;? value("warehous_id") ?>) )
        &lt;? else ?>
-         text('All Warehouses')
+         text('All Sites')
        &lt;? endif ?>
        AS warehouse,
        &lt;? if exists("showPrices") ?>
@@ -124,7 +124,7 @@ ORDER BY coitem_scheddate, cohead_number, coitem_linenumber;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>Warehouse:</string>
+   <string>Site:</string>
   </label>
   <field>
    <rect>

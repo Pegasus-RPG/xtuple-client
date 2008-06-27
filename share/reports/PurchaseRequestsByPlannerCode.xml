@@ -26,7 +26,7 @@
              FROM warehous
             WHERE warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>)
        &lt;? else ?>
-         text('All Warehouses')
+         text('All Sites')
        &lt;? endif ?>
        AS warehouse,
        formatDate(&lt;? value(&quot;startDate&quot;) ?>) AS startdate,
@@ -272,7 +272,7 @@ ORDER BY pr_duedate;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>Warehouse:</string>
+   <string>Site:</string>
   </label>
   <field>
    <rect>

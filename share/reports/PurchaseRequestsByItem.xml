@@ -20,7 +20,7 @@
             from warehous
            where warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>)
        &lt;? else ?>
-         text('All Warehouses')
+         text('All Sites')
        &lt;? endif ?>
        AS warehouse
   FROM item JOIN uom ON (item_inv_uom_id=uom_id)
@@ -214,7 +214,7 @@ ORDER BY pr_duedate;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>Warehouse:</string>
+   <string>Site:</string>
   </label>
   <label>
    <rect>

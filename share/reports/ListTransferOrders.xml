@@ -16,14 +16,14 @@
              FROM whsinfo
             WHERE (warehous_id=&lt;? value("src_warehous_id") ?>) )
        &lt;? else ?>
-         text('All Warehouses')
+         text('All Sites')
        &lt;? endif ?> AS src_warehous_code,
        &lt;? if exists("dest_warehous_id") ?>
          ( SELECT warehous_code
              FROM whsinfo
             WHERE (warehous_id=&lt;? value("dest_warehous_id") ?>) )
        &lt;? else ?>
-          text('All Warehouses')
+          text('All Sites')
        &lt;? endif ?> AS dest_warehous_code,
        CASE WHEN (&lt;? value ("tohead_status") ?>='C') THEN 'Closed'
             WHEN (&lt;? value ("tohead_status") ?>='O') THEN 'Open'
@@ -225,7 +225,7 @@ ORDER BY tohead_number;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>From Warehouse:</string>
+   <string>From Site:</string>
   </label>
   <line>
    <xstart>5</xstart>
@@ -267,7 +267,7 @@ ORDER BY tohead_number;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>To Warehouse:</string>
+   <string>To Site:</string>
   </label>
   <field>
    <rect>

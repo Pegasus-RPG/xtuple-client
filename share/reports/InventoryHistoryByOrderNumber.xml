@@ -19,7 +19,7 @@
              FROM warehous
             WHERE (warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>) )
        &lt;? else ?>
-         text('All Warehouses')
+         text('All Sites')
        &lt;? endif ?>
        AS warehouse;</sql>
  </querysource>
@@ -293,7 +293,7 @@ ORDER BY invhist_transdate DESC, invhist_transtype, item_number; </sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Whs.</string>
+   <string>Site</string>
   </label>
   <label>
    <rect>
@@ -325,7 +325,7 @@ ORDER BY invhist_transdate DESC, invhist_transtype, item_number; </sql>
    </font>
    <right/>
    <vcenter/>
-   <string>Warehouse:</string>
+   <string>Site:</string>
   </label>
   <field>
    <rect>
@@ -454,7 +454,7 @@ ORDER BY invhist_transdate DESC, invhist_transtype, item_number; </sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Whs.</string>
+   <string>Site</string>
   </label>
   <label>
    <rect>

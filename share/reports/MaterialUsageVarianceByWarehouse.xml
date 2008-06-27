@@ -1,6 +1,6 @@
 <!DOCTYPE openRPTDef>
 <report>
- <title>Material Usage Variance By Warehouse</title>
+ <title>Material Usage Variance By Site</title>
  <name>MaterialUsageVarianceByWarehouse</name>
  <description></description>
  <size>Letter</size>
@@ -18,7 +18,7 @@
              FROM warehous
             WHERE (warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>) )
        &lt;? else ?>
-         text('All Warehouses')
+         text('All Sites')
        &lt;? endif ?>
        AS warehouse;</sql>
  </querysource>
@@ -370,7 +370,7 @@ ORDER BY posted;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>Warehouse:</string>
+   <string>Site:</string>
   </label>
   <label>
    <rect>
@@ -402,7 +402,7 @@ ORDER BY posted;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>Material Usage Variance By Warehouse</string>
+   <string>Material Usage Variance By Site</string>
   </label>
  </rpthead>
  <pghead>

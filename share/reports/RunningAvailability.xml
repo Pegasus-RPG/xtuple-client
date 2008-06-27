@@ -334,7 +334,7 @@ WHERE ((itemsite_item_id=&lt;? value("item_id") ?>)
    </font>
    <right/>
    <vcenter/>
-   <string>Warehouse:</string>
+   <string>Site:</string>
   </label>
   <field>
    <rect>
