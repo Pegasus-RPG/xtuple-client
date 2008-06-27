@@ -112,7 +112,7 @@ dspWoScheduleByParameterList::dspWoScheduleByParameterList(QWidget* parent, cons
   _wo->addColumn(tr("W/O #"),       _orderColumn,  Qt::AlignLeft   );
   _wo->addColumn(tr("Status"),      _statusColumn, Qt::AlignCenter );
   _wo->addColumn(tr("Pri."),        _statusColumn, Qt::AlignCenter );
-  _wo->addColumn(tr("Whs."),        _whsColumn,    Qt::AlignCenter );
+  _wo->addColumn(tr("Site"),        _whsColumn,    Qt::AlignCenter );
   _wo->addColumn(tr("Item Number"), _itemColumn,   Qt::AlignLeft   );
   _wo->addColumn(tr("Description"), -1,            Qt::AlignLeft   );
   _wo->addColumn(tr("UOM"),         _uomColumn,    Qt::AlignCenter );

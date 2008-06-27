@@ -589,7 +589,7 @@
               <item>
                <widget class="QLabel" name="_sellingWarehouseLit" >
                 <property name="text" >
-                 <string>Preferred Selling Whs.:</string>
+                 <string>Preferred Selling Site:</string>
                 </property>
                 <property name="alignment" >
                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

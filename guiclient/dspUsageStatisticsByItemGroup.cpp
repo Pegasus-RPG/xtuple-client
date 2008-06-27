@@ -77,7 +77,7 @@ dspUsageStatisticsByItemGroup::dspUsageStatisticsByItemGroup(QWidget* parent, co
 
   _itemGroup->setType(ItemGroup);
 
-  _usage->addColumn(tr("Whs."),        _whsColumn,  Qt::AlignCenter );
+  _usage->addColumn(tr("Site"),        _whsColumn,  Qt::AlignCenter );
   _usage->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft   );
   _usage->addColumn(tr("Description"), -1,          Qt::AlignLeft   );
   _usage->addColumn(tr("Received"),    _qtyColumn,  Qt::AlignRight  );

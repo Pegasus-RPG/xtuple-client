@@ -79,7 +79,7 @@ dspReorderExceptionsByPlannerCode::dspReorderExceptionsByPlannerCode(QWidget* pa
 
   _plannerCode->setType(PlannerCode);
 
-  _exception->addColumn(tr("Whs."),           _whsColumn,  Qt::AlignCenter );
+  _exception->addColumn(tr("Site"),           _whsColumn,  Qt::AlignCenter );
   _exception->addColumn(tr("Item Number"),    _itemColumn, Qt::AlignLeft   );
   _exception->addColumn(tr("Description"),    -1,          Qt::AlignLeft   );
   _exception->addColumn(tr("Exception Date"), _dateColumn, Qt::AlignCenter );

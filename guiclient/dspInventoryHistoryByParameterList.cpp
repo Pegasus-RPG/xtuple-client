@@ -91,7 +91,7 @@ dspInventoryHistoryByParameterList::dspInventoryHistoryByParameterList(QWidget* 
   _invhist->addColumn(tr("Created Time"),    _timeDateColumn, Qt::AlignLeft  );
   _invhist->addColumn(tr("User"),        _orderColumn,       Qt::AlignCenter );
   _invhist->addColumn(tr("Type"),        _transColumn,       Qt::AlignCenter );
-  _invhist->addColumn(tr("Whs."),        _whsColumn,         Qt::AlignCenter );
+  _invhist->addColumn(tr("Site"),        _whsColumn,         Qt::AlignCenter );
   _invhist->addColumn(tr("Order #"),     _orderColumn,       Qt::AlignCenter );
   _invhist->addColumn(tr("Item Number"), -1,                 Qt::AlignLeft   );
   _invhist->addColumn(tr("UOM"),         _uomColumn,         Qt::AlignCenter );

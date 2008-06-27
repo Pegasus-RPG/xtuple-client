@@ -206,8 +206,8 @@ void location::sSave()
 {
   if (_warehouse->id() == -1)
   {
-    QMessageBox::critical( this, tr("Select a Warehouse"),
-                           tr( "<p>You must select a Warehouse for this "
+    QMessageBox::critical( this, tr("Select a Site"),
+                           tr( "<p>You must select a Site for this "
 			      "Location before creating it." ) );
     _warehouse->setFocus();
     return;
@@ -244,7 +244,7 @@ void location::sSave()
   {
     QMessageBox::critical( this, tr("Duplicate Location Name"),
                            tr("<p>You must enter a unique name to identify "
-			      "this Location in the specified Warehouse.") );
+			      "this Location in the specified Site.") );
     _location->setFocus();
     return;
   }

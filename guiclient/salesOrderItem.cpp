@@ -750,7 +750,7 @@ void salesOrderItem::sSave()
   if(_createOrder->isChecked() && ((_item->itemType() == "M") || (_item->itemType() == "J")) && _supplyWarehouse->id() == -1)
   {
     QMessageBox::warning( this, tr("Cannot Save Sales Order Item"),
-                          tr("<p>Before an Order may be created, a valid Supplied at Warehouse must be selected.") );
+                          tr("<p>Before an Order may be created, a valid Supplied at Site must be selected.") );
     return;
   }
   _error = false;

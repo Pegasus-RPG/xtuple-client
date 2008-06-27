@@ -356,7 +356,7 @@ void materialReceiptTrans::sPost()
       rollback.exec();
       systemError( this,
                   tr("<p>No transaction was done because Item %1 "
-                     "was not found at Warehouse %2.")
+                     "was not found at Site %2.")
                   .arg(_item->itemNumber()).arg(_warehouse->currentText()));
     }
   }

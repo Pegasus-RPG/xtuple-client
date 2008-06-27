@@ -86,7 +86,7 @@ dspQOHByItem::dspQOHByItem(QWidget* parent, const char* name, Qt::WFlags fl)
   omfgThis->inputManager()->notify(cBCItem, this, _item, SLOT(setItemid(int)));
   omfgThis->inputManager()->notify(cBCItemSite, this, _item, SLOT(setItemsiteid(int)));
 
-  _qoh->addColumn(tr("Whs."),             -1,           Qt::AlignCenter );
+  _qoh->addColumn(tr("Site"),             -1,           Qt::AlignCenter );
   _qoh->addColumn(tr("Default Location"), _itemColumn,  Qt::AlignLeft   );
   _qoh->addColumn(tr("Reorder Lvl."),     _qtyColumn,   Qt::AlignRight  );
   _qoh->addColumn(tr("QOH"),              _qtyColumn,   Qt::AlignRight  );
@@ -150,7 +150,7 @@ void dspQOHByItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
   
     if (_metrics->boolean("MultiWhs"))
     {
-      menuItem = pMenu->insertItem(tr("Transfer to another Warehouse..."), this, SLOT(sTransfer()), 0);
+      menuItem = pMenu->insertItem(tr("Transfer to another Site..."), this, SLOT(sTransfer()), 0);
       if (!_privileges->check("CreateInterWarehouseTrans"))
         pMenu->setItemEnabled(menuItem, FALSE);
     }

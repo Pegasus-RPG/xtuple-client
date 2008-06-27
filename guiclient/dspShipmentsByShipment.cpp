@@ -89,7 +89,7 @@ dspShipmentsByShipment::dspShipmentsByShipment(QWidget* parent, const char* name
   _soship->addColumn(tr("#"),                   _seqColumn,  Qt::AlignCenter );
   _soship->addColumn(tr("Item"),                _itemColumn, Qt::AlignLeft   );
   _soship->addColumn(tr("Description"),         -1,          Qt::AlignLeft   );
-  _soship->addColumn(tr("Whs."),                _whsColumn,  Qt::AlignCenter );
+  _soship->addColumn(tr("Site"),                _whsColumn,  Qt::AlignCenter );
   _soship->addColumn(tr("Ordered"),             _qtyColumn,  Qt::AlignRight  );
   _soship->addColumn(tr("Shipped"),             _qtyColumn,  Qt::AlignRight  );
   _soship->addColumn(tr("Tracking Number"),     _qtyColumn,  Qt::AlignRight  );

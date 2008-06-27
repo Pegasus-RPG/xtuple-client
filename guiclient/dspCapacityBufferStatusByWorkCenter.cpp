@@ -88,7 +88,7 @@ dspCapacityBufferStatusByWorkCenter::dspCapacityBufferStatusByWorkCenter(QWidget
                      "FROM wrkcnt "
                      "ORDER BY wrkcnt_code;" );
 
-  _roughCut->addColumn(tr("Whs."),          _whsColumn,  Qt::AlignCenter );
+  _roughCut->addColumn(tr("Site"),          _whsColumn,  Qt::AlignCenter );
   _roughCut->addColumn(tr("Work Center"),   -1,          Qt::AlignLeft   );
   _roughCut->addColumn(tr("Total Setup"),   _timeColumn, Qt::AlignRight  );
   _roughCut->addColumn(tr("Total Run"),     _timeColumn, Qt::AlignRight  );

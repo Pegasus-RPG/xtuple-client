@@ -196,7 +196,7 @@ salesOrder::salesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   _soitem->addColumn(tr("#"),           _seqColumn,     Qt::AlignCenter );
   _soitem->addColumn(tr("Item"),        _itemColumn,    Qt::AlignLeft   );
   _soitem->addColumn(tr("Description"), -1,             Qt::AlignLeft   );
-  _soitem->addColumn(tr("Whs."),        _whsColumn,     Qt::AlignCenter );
+  _soitem->addColumn(tr("Site"),        _whsColumn,     Qt::AlignCenter );
   _soitem->addColumn(tr("Status"),      _statusColumn,  Qt::AlignCenter );
   _soitem->addColumn(tr("Sched. Date"), _dateColumn,    Qt::AlignCenter );
   _soitem->addColumn(tr("Qty UOM"),     _uomColumn,     Qt::AlignLeft   );
@@ -3428,7 +3428,7 @@ void salesOrder::sIssueLineBalance()
           {
             QMessageBox::critical(this, tr("Insufficient Inventory"),
               tr("<p>There is not enough Inventory to issue the amount required"
-                 " of Item %1 in Warehouse %2.")
+                 " of Item %1 in Site %2.")
                  .arg(q.value("item_number").toString())
                  .arg(q.value("warehous_code").toString()) );
             return;
@@ -3461,7 +3461,7 @@ void salesOrder::sIssueLineBalance()
         if(!(q.value("isqtyavail").toBool()))
         {
           QMessageBox::critical(this, tr("Insufficient Inventory"),
-            tr("<p>Item Number %1 in Warehouse %2 is a Multiple Location or "
+            tr("<p>Item Number %1 in Site %2 is a Multiple Location or "
                "Lot/Serial controlled Item which is short on Inventory. "
                "This transaction cannot be completed as is. Please make "
                "sure there is sufficient Quantity on Hand before proceeding.")

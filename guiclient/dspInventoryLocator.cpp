@@ -86,7 +86,7 @@ dspInventoryLocator::dspInventoryLocator(QWidget* parent, const char* name, Qt::
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_item, SIGNAL(valid(bool)), _query, SLOT(setEnabled(bool)));
 
-  _itemloc->addColumn(tr("Whs."),         _whsColumn,   Qt::AlignCenter );
+  _itemloc->addColumn(tr("Site"),         _whsColumn,   Qt::AlignCenter );
   _itemloc->addColumn(tr("Location"),     200,          Qt::AlignLeft   );
   _itemloc->addColumn(tr("Netable"),      _orderColumn, Qt::AlignCenter );
   _itemloc->addColumn(tr("Lot/Serial #"), -1,           Qt::AlignLeft   );

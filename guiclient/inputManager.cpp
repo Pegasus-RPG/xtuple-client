@@ -762,7 +762,7 @@ void InputManager::dispatchItemSite()
     itemsiteid.exec();
     if (itemsiteid.first())
     {
-      message( tr("Scanned Item %1, Warehouse %2.")
+      message( tr("Scanned Item %1, Site %2.")
                .arg(itemNumber)
                .arg(warehouseCode), 1000 );
 
@@ -784,7 +784,7 @@ void InputManager::dispatchItemSite()
       }
     }
     else
-      message( tr("Item %1, Warehouse %2 does not exist in the Database.")
+      message( tr("Item %1, Site %2 does not exist in the Database.")
                .arg(itemNumber)
                .arg(warehouseCode), 1000 );
   }
@@ -900,7 +900,7 @@ void InputManager::dispatchLocation()
     locationid.exec();
     if (locationid.first())
     {
-      message( tr("Scanned Warehouse %1, Location %2.")
+      message( tr("Scanned Site %1, Location %2.")
                .arg(warehouseCode) 
                .arg(locationCode), 1000 );
 
@@ -911,7 +911,7 @@ void InputManager::dispatchLocation()
       }
     }
     else
-      message( tr("Warehouse %1, Location %2 does not exist in the Database.")
+      message( tr("Site %1, Location %2 does not exist in the Database.")
                .arg(warehouseCode)
                .arg(locationCode), 1000 );
   }
@@ -936,7 +936,7 @@ void InputManager::dispatchLocationIssue()
     locationid.exec();
     if (locationid.first())
     {
-      message( tr("Scanned Warehouse %1, Location %2.")
+      message( tr("Scanned Site %1, Location %2.")
                .arg(warehouseCode) 
                .arg(locationCode), 1000 );
 
@@ -958,7 +958,7 @@ void InputManager::dispatchLocationIssue()
       }
     }
     else
-      message( tr("Warehouse %1, Location %2 does not exist in the Database.")
+      message( tr("Site %1, Location %2 does not exist in the Database.")
                .arg(warehouseCode)
                .arg(locationCode), 1000 );
   }
@@ -983,7 +983,7 @@ void InputManager::dispatchLocationContents()
     locationid.exec();
     if (locationid.first())
     {
-      message( tr("Scanned Warehouse %1, Location %2.")
+      message( tr("Scanned Site %1, Location %2.")
                .arg(warehouseCode) 
                .arg(locationCode), 1000 );
 
@@ -1005,7 +1005,7 @@ void InputManager::dispatchLocationContents()
       }
     }
     else
-      message( tr("Warehouse %1, Location %2 does not exist in the Database.")
+      message( tr("Site %1, Location %2 does not exist in the Database.")
                .arg(warehouseCode)
                .arg(locationCode), 1000 );
   }

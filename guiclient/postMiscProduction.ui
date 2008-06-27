@@ -141,7 +141,7 @@
          <item>
           <widget class="QLabel" name="_warehouseLit" >
            <property name="text" >
-            <string>&amp;Warehouse:</string>
+            <string>&amp;Site:</string>
            </property>
            <property name="alignment" >
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -405,7 +405,7 @@
      <item>
       <widget class="XCheckBox" name="_immediateTransfer" >
        <property name="text" >
-        <string>Immediate &amp;Transfer to Warehouse:</string>
+        <string>Immediate &amp;Transfer to Site:</string>
        </property>
        <property name="shortcut" >
         <string>Alt+T</string>

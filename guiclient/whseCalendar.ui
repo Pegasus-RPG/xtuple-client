@@ -16,7 +16,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Warehouse Calendar Exception</string>
+   <string>Site Calendar Exception</string>
   </property>
   <layout class="QGridLayout" >
    <property name="margin" >

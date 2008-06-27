@@ -80,7 +80,7 @@ workCenters::workCenters(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
 
-  _wrkcnt->addColumn(tr("Whs."),        _whsColumn,  Qt::AlignCenter );
+  _wrkcnt->addColumn(tr("Site"),        _whsColumn,  Qt::AlignCenter );
   _wrkcnt->addColumn(tr("Work Cntr."),  _itemColumn, Qt::AlignLeft   );
   _wrkcnt->addColumn(tr("Description"), -1,          Qt::AlignLeft   );
 

@@ -88,7 +88,7 @@ dspInventoryHistoryByOrderNumber::dspInventoryHistoryByOrderNumber(QWidget* pare
   _invhist->addColumn(tr("Created Time"),    _timeDateColumn, Qt::AlignLeft   );
   _invhist->addColumn(tr("User"),        _orderColumn,       Qt::AlignCenter );
   _invhist->addColumn(tr("Type"),        _transColumn,       Qt::AlignCenter );
-  _invhist->addColumn(tr("Whse."),       _whsColumn,         Qt::AlignLeft   );
+  _invhist->addColumn(tr("Site."),       _whsColumn,         Qt::AlignLeft   );
   _invhist->addColumn(tr("Item Number"), _itemColumn,        Qt::AlignLeft   );
   _invhist->addColumn(tr("UOM"),         _uomColumn,         Qt::AlignCenter );
   _invhist->addColumn(tr("Trans-Qty"),   _qtyColumn,         Qt::AlignRight  );

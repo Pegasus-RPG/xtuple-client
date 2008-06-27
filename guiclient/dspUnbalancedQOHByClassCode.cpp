@@ -75,7 +75,7 @@ dspUnbalancedQOHByClassCode::dspUnbalancedQOHByClassCode(QWidget* parent, const 
 
   _classCode->setType(ClassCode);
 
-  _itemsite->addColumn(tr("Whs."),        _whsColumn,   Qt::AlignCenter );
+  _itemsite->addColumn(tr("Site"),        _whsColumn,   Qt::AlignCenter );
   _itemsite->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft   );
   _itemsite->addColumn(tr("Description"), -1,           Qt::AlignLeft   );
   _itemsite->addColumn(tr("UOM"),         _uomColumn,   Qt::AlignCenter );

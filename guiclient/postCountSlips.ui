@@ -13,7 +13,7 @@
       </rect>
     </property>
     <property name="windowTitle" >
-      <string>Post Count Slips by Warehouse</string>
+      <string>Post Count Slips by Site</string>
     </property>
     <layout class="QHBoxLayout" >
       <property name="margin" >

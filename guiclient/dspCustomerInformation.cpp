@@ -1308,7 +1308,7 @@ void dspCustomerInformation::sConvertQuote()
         {
           QMessageBox::warning( this, tr("Cannot Convert Quote"),
               tr("<p>Quote #%1 has one or more line items "
-                 "without a warehouse specified. These line "
+                 "without a Site specified. These line "
                  "items must be fixed before you may convert "
                  "this quote." )
               .arg(check.value("quhead_number").toString()) );

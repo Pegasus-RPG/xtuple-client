@@ -80,7 +80,7 @@ warehouses::warehouses(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
   connect(_showInactive, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   
-  _warehouse->addColumn(tr("Whs."),        _whsColumn, Qt::AlignCenter );
+  _warehouse->addColumn(tr("Site"),        _whsColumn, Qt::AlignCenter );
   _warehouse->addColumn(tr("Active"),      _ynColumn,  Qt::AlignCenter );
   _warehouse->addColumn(tr("Description"), 130,        Qt::AlignLeft   );
   _warehouse->addColumn(tr("Address"),     -1,         Qt::AlignLeft   );

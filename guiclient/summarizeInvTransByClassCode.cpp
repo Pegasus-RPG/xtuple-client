@@ -105,7 +105,7 @@ void summarizeInvTransByClassCode::init()
 void summarizeInvTransByClassCode::sSummarize()
 {
   if ( QMessageBox::warning( this, tr("Summarize Inventory Transactions?"),
-                             tr( "<p>You are about to summarize Inventory Transactions for the selected Warehouse and Class Code(s). "
+                             tr( "<p>You are about to summarize Inventory Transactions for the selected Site and Class Code(s). "
                                  "Summarizing Inventory Transactions will delete any detailed Transaction information.<br>"
                                  "Are you sure that you want to summarize the selected Transactions?</p>" ),
                              tr("&Yes"), tr("&No"), QString::null, 0, 1) == 1)

@@ -73,7 +73,7 @@ dspValidLocationsByItem::dspValidLocationsByItem(QWidget* parent, const char* na
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_location, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
 
-  _location->addColumn(tr("Whs."),        _whsColumn,   Qt::AlignCenter );
+  _location->addColumn(tr("Site"),        _whsColumn,   Qt::AlignCenter );
   _location->addColumn(tr("Location"),    _itemColumn,  Qt::AlignLeft   );
   _location->addColumn(tr("Description"), -1,           Qt::AlignLeft   );
   _location->addColumn(tr("Restricted"),  _orderColumn, Qt::AlignCenter  );

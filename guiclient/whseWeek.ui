@@ -13,7 +13,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Warehouse Work Week</string>
+   <string>Site Work Week</string>
   </property>
   <layout class="QHBoxLayout" >
    <property name="margin" >

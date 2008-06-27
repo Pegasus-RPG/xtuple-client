@@ -13,7 +13,7 @@
       </rect>
     </property>
     <property name="windowTitle" >
-      <string>Thaw Item Sites by Class Code/Warehouse</string>
+      <string>Thaw Item Sites by Class Code/Site</string>
     </property>
     <layout class="QVBoxLayout" >
       <property name="margin" >
@@ -125,7 +125,7 @@
                   <item>
                     <widget class="QLabel" name="_warehouseLit" >
                       <property name="text" >
-                        <string>Warehouse:</string>
+                        <string>Site:</string>
                       </property>
                       <property name="alignment" >
                         <set>Qt::AlignVCenter|Qt::AlignRight</set>

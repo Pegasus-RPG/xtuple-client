@@ -253,8 +253,8 @@ menuSchedule::menuSchedule(GUIClient *Pparent) :
     //  Master Information
     { "menu",	tr("&Master Information"), (char*)masterInfoMenu, mainMenu, true, NULL, NULL, true , NULL },
     { "ms.plannerCodes", tr("&Planner Codes..."), SLOT(sPlannerCodes()), masterInfoMenu, _privileges->check("MaintainPlannerCodes") && _privileges->check("ViewPlannerCodes"), NULL, NULL, true , NULL },
-    { "ms.warehouseWeek", tr("Warehouse &Week..."), SLOT(sWarehouseWeek()),masterInfoMenu, _privileges->check("MaintainWarehouseWorkWeek"), NULL, NULL, _metrics->boolean("BufferMgt") , NULL },
-    { "ms.warehouseCalendarExceptions", tr("Warehouse Calendar &Exceptions..."), SLOT(sWarehouseCalendarExceptions()), masterInfoMenu, _privileges->check("MaintainWarehouseCalendarExceptions") || _privileges->check("ViewWarehouseCalendarExceptions"), NULL, NULL, _metrics->boolean("BufferMgt") , NULL },
+    { "ms.warehouseWeek", tr("Site &Week..."), SLOT(sWarehouseWeek()),masterInfoMenu, _privileges->check("MaintainWarehouseWorkWeek"), NULL, NULL, _metrics->boolean("BufferMgt") , NULL },
+    { "ms.warehouseCalendarExceptions", tr("Site Calendar &Exceptions..."), SLOT(sWarehouseCalendarExceptions()), masterInfoMenu, _privileges->check("MaintainWarehouseCalendarExceptions") || _privileges->check("ViewWarehouseCalendarExceptions"), NULL, NULL, _metrics->boolean("BufferMgt") , NULL },
     { "cp.workCenters", tr("Work &Centers..."), SLOT(sWorkCenters()), masterInfoMenu, _privileges->check("MaintainWorkCenters") && _privileges->check("ViewWorkCenters"), NULL, NULL, _metrics->boolean("Routings") , NULL },
   };
   addActionsToMenu(acts, sizeof(acts) / sizeof(acts[0]));

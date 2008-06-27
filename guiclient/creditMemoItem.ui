@@ -524,7 +524,7 @@
          <item row="5" column="0" >
           <widget class="QLabel" name="_warehouseLit" >
            <property name="text" >
-            <string>Receiving &amp;Whse:</string>
+            <string>Receiving &amp;Site:</string>
            </property>
            <property name="alignment" >
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

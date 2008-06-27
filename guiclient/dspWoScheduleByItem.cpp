@@ -108,7 +108,7 @@ dspWoScheduleByItem::dspWoScheduleByItem(QWidget* parent, const char* name, Qt::
   _wo->addColumn(tr("W/O #"),      -1,            Qt::AlignLeft   );
   _wo->addColumn(tr("Status"),     _statusColumn, Qt::AlignCenter );
   _wo->addColumn(tr("Pri."),       _statusColumn, Qt::AlignCenter );
-  _wo->addColumn(tr("Whs."),       _whsColumn,    Qt::AlignCenter );
+  _wo->addColumn(tr("Site"),       _whsColumn,    Qt::AlignCenter );
   _wo->addColumn(tr("Ordered"),    _qtyColumn,    Qt::AlignRight  );
   _wo->addColumn(tr("Received"),   _qtyColumn,    Qt::AlignRight  );
   _wo->addColumn(tr("Start Date"), _dateColumn,   Qt::AlignCenter );

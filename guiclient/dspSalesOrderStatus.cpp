@@ -87,7 +87,7 @@ dspSalesOrderStatus::dspSalesOrderStatus(QWidget* parent, const char* name, Qt::
   _soitem->addColumn(tr("#"),                         _seqColumn,  Qt::AlignCenter );
   _soitem->addColumn(tr("Item"),                      _itemColumn, Qt::AlignLeft   );
   _soitem->addColumn(tr("Description"),               -1,          Qt::AlignLeft   );
-  _soitem->addColumn(tr("Whs."),                      _whsColumn,  Qt::AlignCenter );
+  _soitem->addColumn(tr("Site"),                      _whsColumn,  Qt::AlignCenter );
   _soitem->addColumn(tr("Ordered"),                   _qtyColumn,  Qt::AlignRight  );
   _soitem->addColumn(tr("Shipped"),                   _qtyColumn,  Qt::AlignRight  );
   _soitem->addColumn(tr("Returned"),                  _qtyColumn,  Qt::AlignRight  );

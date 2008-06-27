@@ -95,7 +95,7 @@ dspInventoryHistoryByItem::dspInventoryHistoryByItem(QWidget* parent, const char
   _invhist->addColumn(tr("Entered Time"),    _timeDateColumn,  Qt::AlignLeft, false);
   _invhist->addColumn(tr("User"),        _orderColumn,        Qt::AlignCenter);
   _invhist->addColumn(tr("Type"),        _transColumn,        Qt::AlignCenter);
-  _invhist->addColumn(tr("Whs."),        _whsColumn,          Qt::AlignCenter);
+  _invhist->addColumn(tr("Site"),        _whsColumn,          Qt::AlignCenter);
   _invhist->addColumn(tr("Order #/Location-Lot/Serial #"), -1,Qt::AlignLeft  );
   _invhist->addColumn(tr("UOM"),         _uomColumn,          Qt::AlignCenter);
   _invhist->addColumn(tr("Trans-Qty"),   _qtyColumn,          Qt::AlignRight );

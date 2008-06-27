@@ -86,7 +86,7 @@ configureIM::configureIM(QWidget* parent, const char* name, bool modal, Qt::WFla
     if (q.size() > 1)
     {
       _multiWhs->setCheckable(FALSE);
-      _multiWhs->setTitle("Multiple Warehouses");
+      _multiWhs->setTitle("Multiple Sites");
     }
     else
       _multiWhs->setChecked(_metrics->boolean("MultiWhs"));

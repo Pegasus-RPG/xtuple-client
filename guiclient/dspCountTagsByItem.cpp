@@ -81,7 +81,7 @@ dspCountTagsByItem::dspCountTagsByItem(QWidget* parent, const char* name, Qt::WF
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 
   _cnttag->addColumn(tr("Tag #"),        -1,           Qt::AlignLeft   );
-  _cnttag->addColumn(tr("Whs."),         _whsColumn,   Qt::AlignCenter );
+  _cnttag->addColumn(tr("Site"),         _whsColumn,   Qt::AlignCenter );
   _cnttag->addColumn(tr("Created (By)"), _itemColumn,  Qt::AlignCenter );
   _cnttag->addColumn(tr("Entered (By)"), _itemColumn,  Qt::AlignCenter );
   _cnttag->addColumn(tr("Posted (By)"),  _itemColumn,  Qt::AlignCenter );

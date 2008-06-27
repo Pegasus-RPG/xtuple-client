@@ -96,7 +96,7 @@ dspInventoryAvailabilityByItem::dspInventoryAvailabilityByItem(QWidget* parent, 
   omfgThis->inputManager()->notify(cBCItem, this, _item, SLOT(setItemid(int)));
   omfgThis->inputManager()->notify(cBCItemSite, this, _item, SLOT(setItemsiteid(int)));
 
-  _availability->addColumn(tr("Whs."),         -1,         Qt::AlignCenter );
+  _availability->addColumn(tr("Site"),         -1,         Qt::AlignCenter );
   _availability->addColumn(tr("LT"),           _whsColumn, Qt::AlignCenter );
   _availability->addColumn(tr("QOH"),          _qtyColumn, Qt::AlignRight  );
   _availability->addColumn(tr("Allocated"),    _qtyColumn, Qt::AlignRight  );

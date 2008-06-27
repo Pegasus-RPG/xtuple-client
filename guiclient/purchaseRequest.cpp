@@ -256,10 +256,10 @@ void purchaseRequest::sCreate()
   q.exec();
   if (!q.first())
   {
-    QMessageBox::warning(this, tr("Invalid Warehouse"),
-        tr("The selected Warehouse for this Purchase Request is not\n"
-           "a \"Supplied At\" Warehouse. You must select a different\n"
-           "Warehouse before creating the Purchase Request.") );
+    QMessageBox::warning(this, tr("Invalid Site"),
+        tr("The selected Site for this Purchase Request is not\n"
+           "a \"Supplied At\" Site. You must select a different\n"
+           "Site before creating the Purchase Request.") );
     return;
   }
 
@@ -387,10 +387,10 @@ void purchaseRequest::sCheckWarehouse( int pWarehousid )
 
   if(pWarehousid == -1)
   {
-    QMessageBox::warning(this, tr("Invalid Warehouse"),
-        tr("The selected Warehouse for this Purchase Request is not\n"
-           "a \"Supplied At\" Warehouse. You must select a different\n"
-           "Warehouse before creating the Purchase Request.") );
+    QMessageBox::warning(this, tr("Invalid Site"),
+        tr("The selected Site for this Purchase Request is not\n"
+           "a \"Supplied At\" Site. You must select a different\n"
+           "Site before creating the Purchase Request.") );
     _warehouse->setEnabled(TRUE);
   }
 }

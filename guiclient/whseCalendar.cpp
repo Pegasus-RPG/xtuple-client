@@ -143,7 +143,7 @@ void whseCalendar::sSave()
   if (!_dates->allValid())
   {
     QMessageBox::critical( this, tr("Enter Start/End Date"),
-                           tr("You must enter a valid start/end date for this Warehouse Calendar before saving it.") );
+                           tr("You must enter a valid start/end date for this Site Calendar before saving it.") );
     _dates->setFocus();
     return;
   }

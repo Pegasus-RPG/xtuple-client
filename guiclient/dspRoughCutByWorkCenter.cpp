@@ -76,7 +76,7 @@ dspRoughCutByWorkCenter::dspRoughCutByWorkCenter(QWidget* parent, const char* na
   connect(_query, SIGNAL(clicked()), this, SLOT(sQuery()));
   connect(_roughCut, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
 
-  _roughCut->addColumn(tr("Whs."),         _whsColumn,  Qt::AlignCenter );
+  _roughCut->addColumn(tr("Site"),         _whsColumn,  Qt::AlignCenter );
   _roughCut->addColumn(tr("Work Center"),  -1,          Qt::AlignLeft   );
   _roughCut->addColumn(tr("Total Setup"),  _timeColumn, Qt::AlignRight  );
   _roughCut->addColumn(tr("Setup $"),      _costColumn, Qt::AlignRight  );

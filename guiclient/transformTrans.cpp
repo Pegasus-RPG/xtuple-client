@@ -297,7 +297,7 @@ void transformTrans::sPost()
     rollback.exec();
     systemError( this,
                 tr("<p>No transaction was done because either Item %1 or Item "
-                   "%2 was not found at Warehouse %3.")
+                   "%2 was not found at Site %3.")
                 .arg(_item->itemNumber(), _target->currentText(),
                      _warehouse->currentText()));
   }

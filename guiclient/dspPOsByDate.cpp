@@ -85,7 +85,7 @@ dspPOsByDate::dspPOsByDate(QWidget* parent, const char* name, Qt::WFlags fl)
   _agent->setText(omfgThis->username());
 
   _poitem->addColumn(tr("P/O #"),       _orderColumn, Qt::AlignRight, true, "pohead_number");
-  _poitem->addColumn(tr("Whs."),        _whsColumn,   Qt::AlignCenter,true, "warehousecode");
+  _poitem->addColumn(tr("Site"),        _whsColumn,   Qt::AlignCenter,true, "warehousecode");
   _poitem->addColumn(tr("Status"),      _dateColumn,  Qt::AlignCenter,true, "poitemstatus");
   _poitem->addColumn(tr("Vendor"),      _itemColumn,  Qt::AlignLeft,  true, "vend_name");
   _poitem->addColumn(tr("Due Date"),    _dateColumn,  Qt::AlignCenter,true, "minDueDate");

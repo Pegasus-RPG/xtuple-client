@@ -238,7 +238,7 @@
         <item row="4" column="0" >
          <widget class="QLabel" name="_srcWhseLit" >
           <property name="text" >
-           <string>From Warehouse:</string>
+           <string>From Site:</string>
           </property>
           <property name="alignment" >
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -258,7 +258,7 @@
         <item row="4" column="2" >
          <widget class="QLabel" name="_transWhsLit" >
           <property name="text" >
-           <string>Transit Warehouse:</string>
+           <string>Transit Site:</string>
           </property>
          </widget>
         </item>
@@ -275,7 +275,7 @@
         <item row="4" column="4" >
          <widget class="QLabel" name="_dstWhsLit" >
           <property name="text" >
-           <string>To Warehouse:</string>
+           <string>To Site:</string>
           </property>
           <property name="buddy" >
            <cstring>_dstWhs</cstring>

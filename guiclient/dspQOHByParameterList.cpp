@@ -91,7 +91,7 @@ dspQOHByParameterList::dspQOHByParameterList(QWidget* parent, const char* name, 
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_showValue, SIGNAL(toggled(bool)), this, SLOT(sHandleValue(bool)));
 
-  _qoh->addColumn(tr("Whs."),             _whsColumn,  Qt::AlignCenter );
+  _qoh->addColumn(tr("Site"),             _whsColumn,  Qt::AlignCenter );
   _qoh->addColumn(tr("Class Code"),       _itemColumn, Qt::AlignLeft   );
   _qoh->addColumn(tr("Item Number"),      _itemColumn, Qt::AlignLeft   );
   _qoh->addColumn(tr("Description"),      -1,          Qt::AlignLeft   );
@@ -232,7 +232,7 @@ void dspQOHByParameterList::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelect
 
     if (_metrics->boolean("MultiWhs"))
     {
-      menuItem = pMenu->insertItem(tr("Transfer to another Warehouse..."), this, SLOT(sTransfer()), 0);
+      menuItem = pMenu->insertItem(tr("Transfer to another Site..."), this, SLOT(sTransfer()), 0);
       if (!_privileges->check("CreateInterWarehouseTrans"))
         pMenu->setItemEnabled(menuItem, FALSE);
     }

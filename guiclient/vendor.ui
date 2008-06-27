@@ -440,7 +440,7 @@
              <item>
               <widget class="QRadioButton" name="_useWarehouseFOB" >
                <property name="text" >
-                <string>Receiving Warehouse FOB</string>
+                <string>Receiving Site FOB</string>
                </property>
                <property name="checked" >
                 <bool>true</bool>

@@ -158,7 +158,7 @@
               </sizepolicy>
              </property>
              <property name="text" >
-              <string>Post Warehouse Changes to the Change Log</string>
+              <string>Post Site Changes to the Change Log</string>
              </property>
             </widget>
            </item>
@@ -185,7 +185,7 @@
        <item>
         <widget class="QGroupBox" name="_multiWhs" >
          <property name="title" >
-          <string>Enable Multiple Warehouses</string>
+          <string>Enable Multiple Sites</string>
          </property>
          <property name="checkable" >
           <bool>true</bool>
@@ -334,7 +334,7 @@
           <item row="1" column="0" >
            <widget class="QLabel" name="_defaultTransWhsLit" >
             <property name="text" >
-             <string>Default Transit Warehouse:</string>
+             <string>Default Transit Site:</string>
             </property>
             <property name="alignment" >
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -477,7 +477,7 @@
             <item>
              <widget class="QRadioButton" name="_checkOnUnpostedWarehouse" >
               <property name="text" >
-               <string>Disallow Unposted Slip # Duplications within a Warehouse</string>
+               <string>Disallow Unposted Slip # Duplications within a Site</string>
               </property>
               <property name="checked" >
                <bool>true</bool>
@@ -494,7 +494,7 @@
             <item>
              <widget class="QRadioButton" name="_checkOnAllWarehouse" >
               <property name="text" >
-               <string>Disallow All Slip # Duplications within a Warehouse</string>
+               <string>Disallow All Slip # Duplications within a Site</string>
               </property>
              </widget>
             </item>

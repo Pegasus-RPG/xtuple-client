@@ -113,7 +113,7 @@ selectOrderForBilling::selectOrderForBilling(QWidget* parent, const char* name, 
 
   _soitem->addColumn(tr("#"),          _seqColumn,   Qt::AlignCenter );
   _soitem->addColumn(tr("Item"),       -1,           Qt::AlignLeft   );
-  _soitem->addColumn(tr("Whs."),       _whsColumn,   Qt::AlignCenter );
+  _soitem->addColumn(tr("Site"),       _whsColumn,   Qt::AlignCenter );
   _soitem->addColumn(tr("UOM"),        _uomColumn,   Qt::AlignLeft   );
   _soitem->addColumn(tr("Ordered"),    _qtyColumn,   Qt::AlignRight  );
   _soitem->addColumn(tr("Shipped"),    _qtyColumn,   Qt::AlignRight  );

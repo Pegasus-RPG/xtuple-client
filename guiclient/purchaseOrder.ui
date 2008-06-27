@@ -118,7 +118,7 @@
           <item row="0" column="4" >
            <widget class="QLabel" name="_receivingWhseLit" >
             <property name="text" >
-             <string>Receiving Whse.:</string>
+             <string>Receiving Site:</string>
             </property>
             <property name="alignment" >
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

@@ -98,7 +98,7 @@ dspTimePhasedSalesByItem::dspTimePhasedSalesByItem(QWidget* parent, const char* 
   
   _sohist->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft   );
   _sohist->addColumn(tr("UOM"),         _uomColumn,  Qt::AlignCenter );
-  _sohist->addColumn(tr("Whs."),        _whsColumn,  Qt::AlignCenter );
+  _sohist->addColumn(tr("Site"),        _whsColumn,  Qt::AlignCenter );
 
   _salesDollars->setEnabled(_privileges->check("ViewCustomerPrices"));
 }

@@ -83,7 +83,7 @@ plannedSchedules::plannedSchedules(QWidget * parent, const char * name, Qt::WFla
 
   _list->addColumn(tr("Start Date"),   _dateColumn, Qt::AlignCenter );
   _list->addColumn(tr("End Date"),     _dateColumn, Qt::AlignCenter );
-  _list->addColumn(tr("Whs."),         _whsColumn,  Qt::AlignCenter );
+  _list->addColumn(tr("Site"),         _whsColumn,  Qt::AlignCenter );
   _list->addColumn(tr("Schd. Number"), _itemColumn, Qt::AlignLeft   );
   _list->addColumn(tr("Status"),        _whsColumn,  Qt::AlignCenter );
   _list->addColumn(tr("Description"),  -1,          Qt::AlignLeft   );

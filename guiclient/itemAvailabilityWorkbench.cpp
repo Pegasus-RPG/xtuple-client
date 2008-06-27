@@ -152,7 +152,7 @@ itemAvailabilityWorkbench::itemAvailabilityWorkbench(QWidget* parent, const char
   connect(omfgThis, SIGNAL(workOrdersUpdated(int, bool)), this, SLOT(sFillListRunning()));
   
   // Inventory Availability
-  _invAvailability->addColumn(tr("Whs."),         -1,         Qt::AlignCenter );
+  _invAvailability->addColumn(tr("Site"),         -1,         Qt::AlignCenter );
   _invAvailability->addColumn(tr("LT"),           _whsColumn, Qt::AlignCenter );
   _invAvailability->addColumn(tr("QOH"),          _qtyColumn, Qt::AlignRight  );
   _invAvailability->addColumn(tr("Allocated"),    _qtyColumn, Qt::AlignRight  );
@@ -183,7 +183,7 @@ itemAvailabilityWorkbench::itemAvailabilityWorkbench(QWidget* parent, const char
   _invhist->addColumn(tr("Time"),        (_dateColumn + 30),   Qt::AlignLeft   );
   _invhist->addColumn(tr("User"),        _orderColumn,         Qt::AlignCenter );
   _invhist->addColumn(tr("Type"),        _transColumn,         Qt::AlignCenter );
-  _invhist->addColumn(tr("Whs."),        _whsColumn,           Qt::AlignCenter );
+  _invhist->addColumn(tr("Site"),        _whsColumn,           Qt::AlignCenter );
   _invhist->addColumn(tr("Order #/Location-Lot/Serial #"), -1, Qt::AlignLeft   );
   _invhist->addColumn(tr("UOM"),         _uomColumn,           Qt::AlignCenter );
   _invhist->addColumn(tr("Trans-Qty"),   _qtyColumn,           Qt::AlignRight  );
@@ -202,7 +202,7 @@ itemAvailabilityWorkbench::itemAvailabilityWorkbench(QWidget* parent, const char
   _transType->setCurrentItem(0);
   
   // Itemloc
-  _itemloc->addColumn(tr("Whs."),         _whsColumn,   Qt::AlignCenter );
+  _itemloc->addColumn(tr("Site"),         _whsColumn,   Qt::AlignCenter );
   _itemloc->addColumn(tr("Location"),     200,          Qt::AlignLeft   );
   _itemloc->addColumn(tr("Netable"),      _orderColumn, Qt::AlignCenter );
   _itemloc->addColumn(tr("Lot/Serial #"), -1,           Qt::AlignLeft   );

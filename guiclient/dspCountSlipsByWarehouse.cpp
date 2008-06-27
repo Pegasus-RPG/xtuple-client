@@ -83,7 +83,7 @@ dspCountSlipsByWarehouse::dspCountSlipsByWarehouse(QWidget* parent, const char* 
 
   _cntslip->addColumn(tr("Slip #"),       _itemColumn,  Qt::AlignLeft   );
   _cntslip->addColumn(tr("Tag #"),        _orderColumn, Qt::AlignLeft   );
-  _cntslip->addColumn(tr("Whs."),         _whsColumn,   Qt::AlignCenter );
+  _cntslip->addColumn(tr("Site"),         _whsColumn,   Qt::AlignCenter );
   _cntslip->addColumn(tr("Item"),         _itemColumn,  Qt::AlignLeft   );
   _cntslip->addColumn(tr("Description"),  -1,           Qt::AlignLeft   );
   _cntslip->addColumn(tr("Entered (By)"), _userColumn,  Qt::AlignCenter );

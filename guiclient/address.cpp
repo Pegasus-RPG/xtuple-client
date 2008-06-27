@@ -308,7 +308,7 @@ void address::sPopulate()
   usesQ.bindValue(":shipto",	tr("Ship-To"));
   usesQ.bindValue(":vendor",	tr("Vendor"));
   usesQ.bindValue(":vendaddr",	tr("Vendor Address"));
-  usesQ.bindValue(":whs",	tr("Warehouse"));
+  usesQ.bindValue(":whs",	tr("Site"));
   usesQ.exec();
   _uses->clear();
   _uses->populate(usesQ, true);	// true => use alt id (to distinguish types)

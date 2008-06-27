@@ -154,7 +154,7 @@ void enterMiscCount::sPost()
     if (q.value("cnttagid") != -1)
     {
       QMessageBox::warning( this, tr("Count Tag Previously Created"),
-                            tr( "An unposted Count Tag already exists for this Item and Warehouse.\n"
+                            tr( "An unposted Count Tag already exists for this Item and Site.\n"
                                 "You may not a Misc. Count until the current Count Tag has been posted." ) );
       return;
     }

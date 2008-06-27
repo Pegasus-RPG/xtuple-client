@@ -72,7 +72,7 @@ dspFrozenItemSites::dspFrozenItemSites(QWidget* parent, const char* name, Qt::WF
   connect(_itemsite, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
 
-  _itemsite->addColumn(tr("Whs."),        _whsColumn,  Qt::AlignCenter );
+  _itemsite->addColumn(tr("Site"),        _whsColumn,  Qt::AlignCenter );
   _itemsite->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft   );
   _itemsite->addColumn(tr("Description"), -1,          Qt::AlignLeft   );
   _itemsite->addColumn(tr("Count Tag #"), _qtyColumn,  Qt::AlignRight  );

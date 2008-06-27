@@ -471,10 +471,10 @@ void workOrder::sCreate()
     q.exec();
     if (!q.first())
     {
-      QMessageBox::warning(this, tr("Invalid Warehouse"),
-          tr("The Warehouse which you selected for this Item is not\n"
-             "a \"Supplied At\" Warehouse. You must select a different\n"
-             " Warehouse before creating this Work Order.") );
+      QMessageBox::warning(this, tr("Invalid Site"),
+          tr("The Site which you selected for this Item is not\n"
+             "a \"Supplied At\" Site. You must select a different\n"
+             " Site before creating this Work Order.") );
       return;
     }
   
@@ -567,7 +567,7 @@ void workOrder::sCreate()
     else if (_woid == -2)
       QMessageBox::critical( this, tr("Work Order not Exploded"),
                              tr( "The Work Order was created but not Exploded as Component Items defined in the Bill of Materials for\n"
-                                 "the selected Work Order Item do not exist in the selected  Work Order Warehouse.\n"
+                                 "the selected Work Order Item do not exist in the selected  Work Order Site.\n"
                                  "You must create Item Sites for these Component Items before you may explode this Work Order." ));
     else
     {
@@ -785,10 +785,10 @@ void workOrder::sPopulateLeadTime(int pWarehousid)
     _leadTime->setValue(q.value("itemsite_leadtime").toInt());
   else
   {
-    QMessageBox::warning(this, tr("Invalid Warehouse"),
-        tr("The selected Warehouse for this Work Order is not\n"
-           "a \"Supplied At\" Warehouse. You must select a different\n"
-           "Warehouse before creating the Work Order.") );
+    QMessageBox::warning(this, tr("Invalid Site"),
+        tr("The selected Site for this Work Order is not\n"
+           "a \"Supplied At\" Site. You must select a different\n"
+           "Site before creating the Work Order.") );
     _warehouse->setEnabled(TRUE);
   }
 }

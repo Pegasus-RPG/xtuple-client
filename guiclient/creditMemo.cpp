@@ -110,7 +110,7 @@ creditMemo::creditMemo(QWidget* parent, const char* name, Qt::WFlags fl)
   _cmitem->addColumn(tr("#"),           _seqColumn,   Qt::AlignCenter );
   _cmitem->addColumn(tr("Item"),        _itemColumn,  Qt::AlignLeft   );
   _cmitem->addColumn(tr("Description"), -1,           Qt::AlignLeft   );
-  _cmitem->addColumn(tr("Whs."),        _whsColumn,   Qt::AlignCenter );
+  _cmitem->addColumn(tr("Site"),        _whsColumn,   Qt::AlignCenter );
   _cmitem->addColumn(tr("Qty UOM"),     _uomColumn,   Qt::AlignLeft   );
   _cmitem->addColumn(tr("Returned"),    _qtyColumn,   Qt::AlignRight  );
   _cmitem->addColumn(tr("Credited"),    _qtyColumn,   Qt::AlignRight  );

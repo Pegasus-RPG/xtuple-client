@@ -101,7 +101,7 @@ PoitemTableModel::PoitemTableModel(QObject * parent, QSqlDatabase db) :
 
   setHeaderData(POITEM_LINENUMBER_COL,	Qt::Horizontal, tr("#"));
   setHeaderData(ITEM_NUMBER_COL,	Qt::Horizontal, tr("Item"));
-  setHeaderData(WAREHOUS_CODE_COL,	Qt::Horizontal, tr("Supplying Whs."));
+  setHeaderData(WAREHOUS_CODE_COL,	Qt::Horizontal, tr("Supplying Site"));
   setHeaderData(POITEM_VEND_ITEM_NUMBER_COL, Qt::Horizontal, tr("Vend Item #"));
   setHeaderData(POITEM_VEND_ITEM_DESCRIP_COL,Qt::Horizontal, tr("Vend Descrip"));
   setHeaderData(POITEM_VEND_UOM_COL,	Qt::Horizontal, tr("Vend UOM"));
@@ -300,7 +300,7 @@ bool PoitemTableModel::validRow(QSqlRecord& record)
 
   else if (inventoryItem &&
 	   record.value("warehous_id").toInt() <= 0)
-    errormsg = tr("<p>You must select a Supplying Warehouse before you may save.");
+    errormsg = tr("<p>You must select a Supplying Site before you may save.");
 
   else if (record.value("poitem_qty_ordered").toDouble() <= 0)
     errormsg = tr("<p>You must enter a quantity before you may save this "
@@ -359,7 +359,7 @@ bool PoitemTableModel::validRow(QSqlRecord& record)
     else if (isq.lastError().type() != QSqlError::None)
       errormsg = isq.lastError().databaseText();
     else
-      errormsg = tr("<p>There is no Item Site for this Warehouse (%1) and "
+      errormsg = tr("<p>There is no Item Site for this Site (%1) and "
 	       "Item Number (%2).")
 	       .arg(record.value("warehous_code").toInt())
 	       .arg(record.value("item_number").toString());

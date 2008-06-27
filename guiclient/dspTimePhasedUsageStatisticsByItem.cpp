@@ -83,7 +83,7 @@ dspTimePhasedUsageStatisticsByItem::dspTimePhasedUsageStatisticsByItem(QWidget* 
   connect(_usage, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
 
   _usage->addColumn(tr("Transaction Type"), 120,        Qt::AlignLeft   );
-  _usage->addColumn(tr("Whs."),             _whsColumn, Qt::AlignCenter );
+  _usage->addColumn(tr("Site"),             _whsColumn, Qt::AlignCenter );
 
   if (!_metrics->boolean("EnableBatchManager"))
     _submit->hide();

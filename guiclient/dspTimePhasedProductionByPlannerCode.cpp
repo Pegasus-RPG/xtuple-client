@@ -99,7 +99,7 @@ dspTimePhasedProductionByPlannerCode::dspTimePhasedProductionByPlannerCode(QWidg
   _plannerCode->setType(PlannerCode);
 
   _production->addColumn(tr("Planner Code"), _itemColumn, Qt::AlignLeft   );
-  _production->addColumn(tr("Whs."),         _whsColumn,  Qt::AlignCenter );
+  _production->addColumn(tr("Site"),         _whsColumn,  Qt::AlignCenter );
   _production->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignLeft   );
 
   if (!_metrics->boolean("EnableBatchManager"))

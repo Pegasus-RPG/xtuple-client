@@ -10,7 +10,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Count Slips by Warehouse</string>
+   <string>Count Slips by Site</string>
   </property>
   <widget class="QWidget" name="widget" >
    <layout class="QVBoxLayout" >

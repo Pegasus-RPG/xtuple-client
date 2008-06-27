@@ -548,7 +548,7 @@
          <item row="0" column="0" >
           <widget class="QLabel" name="_warehouseLit" >
            <property name="text" >
-            <string>From &amp;Whs.:</string>
+            <string>From &amp;Site:</string>
            </property>
            <property name="alignment" >
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

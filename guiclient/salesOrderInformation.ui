@@ -78,7 +78,7 @@
              <item>
               <widget class="QLabel" name="_shippingWhseLit" >
                <property name="text" >
-                <string>Shipping Whse.:</string>
+                <string>Shipping Site:</string>
                </property>
                <property name="alignment" >
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

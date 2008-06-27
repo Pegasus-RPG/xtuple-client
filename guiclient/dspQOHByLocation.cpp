@@ -80,7 +80,7 @@ dspQOHByLocation::dspQOHByLocation(QWidget* parent, const char* name, Qt::WFlags
 
   _location->setAllowNull(TRUE);
 
-  _itemloc->addColumn(tr("Whs."),         _whsColumn,  Qt::AlignLeft   );
+  _itemloc->addColumn(tr("Site"),         _whsColumn,  Qt::AlignLeft   );
   _itemloc->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft   );
   _itemloc->addColumn(tr("Description"),  -1,          Qt::AlignLeft   );
   _itemloc->addColumn(tr("Lot/Serial #"), 150,         Qt::AlignLeft   );

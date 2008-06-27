@@ -325,7 +325,7 @@ menuManufacture::menuManufacture(GUIClient *Pparent) :
 
     //  Production | Reports | Breeder Distribution Variance
     { "menu",				tr("Breeder &Distribution Variance"),	(char*)reportsBrdrDistVarMenu,	reportsMenu,	true,	0, 0,	_metrics->boolean("BBOM"), NULL },
-    { "wo.dspBreederDistributionVarianceByWarehouse",	tr("by &Warehouse..."),	SLOT(sDspBreederDistributionVarianceByWarehouse()), reportsBrdrDistVarMenu, _privileges->check("ViewBreederVariances"), 0, 0, _metrics->boolean("BBOM"), NULL },
+    { "wo.dspBreederDistributionVarianceByWarehouse",	tr("by &Site..."),	SLOT(sDspBreederDistributionVarianceByWarehouse()), reportsBrdrDistVarMenu, _privileges->check("ViewBreederVariances"), 0, 0, _metrics->boolean("BBOM"), NULL },
     { "wo.dspBreederDistributionVarianceByItem",	tr("by &Item..."),	SLOT(sDspBreederDistributionVarianceByItem()), reportsBrdrDistVarMenu, _privileges->check("ViewBreederVariances"), 0, 0, _metrics->boolean("BBOM"), NULL },
 
     { "separator",					NULL,	NULL,	reportsMenu,	true,	0, 0,	true, NULL },

@@ -106,7 +106,7 @@
                           <item>
                             <widget class="QLabel" name="_warehouseLit" >
                               <property name="text" >
-                                <string>&amp;Warehouse:</string>
+                                <string>&amp;Site:</string>
                               </property>
                               <property name="alignment" >
                                 <set>Qt::AlignVCenter|Qt::AlignRight</set>

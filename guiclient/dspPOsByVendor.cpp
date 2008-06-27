@@ -77,7 +77,7 @@ dspPOsByVendor::dspPOsByVendor(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_poitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
 
   _poitem->addColumn(tr("P/O #"),       _orderColumn, Qt::AlignRight  );
-  _poitem->addColumn(tr("Whs."),        _whsColumn,   Qt::AlignCenter );
+  _poitem->addColumn(tr("Site"),        _whsColumn,   Qt::AlignCenter );
   _poitem->addColumn(tr("Status"),      _dateColumn,  Qt::AlignCenter );
   _poitem->addColumn(tr("Vendor"),      -1,           Qt::AlignLeft   );
   _poitem->addColumn(tr("Date"),        _dateColumn,  Qt::AlignCenter );

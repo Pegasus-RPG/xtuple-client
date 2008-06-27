@@ -13,7 +13,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Breeder Distribution Variance by Warehouse</string>
+   <string>Breeder Distribution Variance by Site</string>
   </property>
   <widget class="QWidget" name="widget" >
    <layout class="QVBoxLayout" >

@@ -10,7 +10,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Warehouse</string>
+   <string>Site</string>
   </property>
   <layout class="QVBoxLayout" >
    <property name="margin" >
@@ -281,7 +281,7 @@
          <item>
           <widget class="QRadioButton" name="_standard" >
            <property name="text" >
-            <string>Inventory Warehouse</string>
+            <string>Inventory Site</string>
            </property>
            <property name="checked" >
             <bool>true</bool>
@@ -291,7 +291,7 @@
          <item>
           <widget class="QRadioButton" name="_transit" >
            <property name="text" >
-            <string>Transit Warehouse</string>
+            <string>Transit Site</string>
            </property>
           </widget>
          </item>
@@ -443,7 +443,7 @@
                    <item>
                     <widget class="QCheckBox" name="_shipping" >
                      <property name="text" >
-                      <string>Shipping &amp;Warehouse</string>
+                      <string>Shipping &amp;Site</string>
                      </property>
                      <property name="shortcut" >
                       <string>Alt+W</string>
@@ -837,7 +837,7 @@
      </widget>
      <widget class="QWidget" name="_locationsTab" >
       <attribute name="title" >
-       <string>Warehouse Locations</string>
+       <string>Site Locations</string>
       </attribute>
       <layout class="QVBoxLayout" >
        <property name="margin" >
@@ -1084,7 +1084,7 @@
      </widget>
      <widget class="QWidget" name="_zonesTab" >
       <attribute name="title" >
-       <string>Warehouse Zones</string>
+       <string>Site Zones</string>
       </attribute>
       <layout class="QVBoxLayout" >
        <property name="margin" >

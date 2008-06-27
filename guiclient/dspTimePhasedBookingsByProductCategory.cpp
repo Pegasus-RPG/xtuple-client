@@ -97,7 +97,7 @@ dspTimePhasedBookingsByProductCategory::dspTimePhasedBookingsByProductCategory(Q
   _productCategory->setType(ProductCategory);
 
   _soitem->addColumn(tr("Prod. Cat."), _itemColumn, Qt::AlignLeft   );
-  _soitem->addColumn(tr("Whs."),       _whsColumn,  Qt::AlignCenter );
+  _soitem->addColumn(tr("Site"),       _whsColumn,  Qt::AlignCenter );
   _soitem->addColumn(tr("UOM"),        _uomColumn,  Qt::AlignLeft   );
 }
 

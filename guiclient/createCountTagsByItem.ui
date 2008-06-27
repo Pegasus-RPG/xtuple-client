@@ -13,7 +13,7 @@
       </rect>
     </property>
     <property name="windowTitle" >
-      <string>Create Count Tag by Item/Warehouse</string>
+      <string>Create Count Tag by Item/Site</string>
     </property>
     <layout class="QVBoxLayout" >
       <item>
@@ -126,7 +126,7 @@
                   <item>
                     <widget class="QLabel" name="_warehouseLit" >
                       <property name="text" >
-                        <string>Warehouse:</string>
+                        <string>Site:</string>
                       </property>
                       <property name="alignment" >
                         <set>Qt::AlignVCenter|Qt::AlignRight</set>

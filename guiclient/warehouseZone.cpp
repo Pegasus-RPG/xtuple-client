@@ -202,7 +202,7 @@ void warehouseZone::sSave()
 
     QMessageBox::information( this, tr("No Name Entered"),
 
-                              tr("You must enter a valid name before saving this Warehouse Zone.") );
+                              tr("You must enter a valid name before saving this Site Zone.") );
 
     _name->setFocus();
 

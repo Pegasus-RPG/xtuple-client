@@ -221,7 +221,7 @@ void plannedOrder::sCreate()
   if (!q.first())
   {
     QMessageBox::information( this, tr("Invalid Item Site"),
-                              tr("The Item and Warehouse entered is and invalid Item Site combination.")  );
+                              tr("The Item and Site entered is and invalid Item Site combination.")  );
     return;
   }
 
@@ -255,7 +255,7 @@ void plannedOrder::sCreate()
     case -2:
       QMessageBox::critical( this, tr("Planned Order not Exploded"),
                              tr( "The Planned Order was created but not Exploded as Component Items defined in the Bill of Materials\n"
-                                 "for the selected Planned Order Item do not exist in the selected Planned Order Warehouse.\n"
+                                 "for the selected Planned Order Item do not exist in the selected Planned Order Site.\n"
                                  "You must create Item Sites for these Component Items before you may explode this Planned Order." ));
       break;
 

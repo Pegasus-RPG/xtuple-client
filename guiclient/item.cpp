@@ -187,7 +187,7 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
   _itemtrans->addColumn(tr("Description"), -1,          Qt::AlignLeft   );
 
   _itemSite->addColumn(tr("Active"),        _dateColumn, Qt::AlignCenter );
-  _itemSite->addColumn(tr("Whs."),          _whsColumn*2,  Qt::AlignCenter );
+  _itemSite->addColumn(tr("Site"),          _whsColumn*2,  Qt::AlignCenter );
   _itemSite->addColumn(tr("Cntrl. Method"), _itemColumn, Qt::AlignCenter );
   _itemSite->setDragString("itemsiteid=");
 

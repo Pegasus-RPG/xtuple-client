@@ -313,9 +313,9 @@ bool transferOrder::insertPlaceholder()
 {
   if(_trnsWhs->id() == -1)
   {
-    QMessageBox::critical(this, tr("No Transit Warehouse"),
-      tr("There are no transit warehouses defined in the system."
-         " You must define at least one transit warehouse to use Transfer Orders.") );
+    QMessageBox::critical(this, tr("No Transit Site"),
+      tr("There are no transit sites defined in the system."
+         " You must define at least one transit site to use Transfer Orders.") );
     return false;
   }
 
@@ -400,22 +400,22 @@ bool transferOrder::save(bool partial)
     QWidget	*widget;
   } error[] = {
     { _srcWhs->id() == -1,
-      tr("You must select a Source Warehouse for this "
+      tr("You must select a Source Site for this "
 	 "Transfer Order before you may save it."),
     _srcWhs
     },
     { _trnsWhs->id() == -1,	// but see fr 5581
-      tr("You must select a Transit Warehouse for "
+      tr("You must select a Transit Site for "
 	 "this Transfer Order before you may save it."),
       _dstWhs
     },
     { _dstWhs->id() == -1,
-      tr("You must select a Destination Warehouse for "
+      tr("You must select a Destination Site for "
 	 "this Transfer Order before you may save it."),
       _dstWhs
     },
     { _srcWhs->id() == _dstWhs->id(),
-      tr("The Source and Destination Warehouses must be different."),
+      tr("The Source and Destination Sites must be different."),
       _dstWhs
     },
     { (!partial && _toitem->topLevelItemCount() == 0),
@@ -1457,7 +1457,7 @@ void transferOrder::dragEnterEvent(QDragEnterEvent *pEvent)
 {
   if (!_srcWhs->isValid())
   {
-    message(tr("<p>You must select a Source Warehouse for this Transfer Order before you "
+    message(tr("<p>You must select a Source Site for this Transfer Order before you "
                "may add Line Items to it."), 5000);
     pEvent->accept(FALSE);
   }

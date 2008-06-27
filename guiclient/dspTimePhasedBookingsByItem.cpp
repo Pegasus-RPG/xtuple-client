@@ -98,7 +98,7 @@ dspTimePhasedBookingsByItem::dspTimePhasedBookingsByItem(QWidget* parent, const 
 
   _soitem->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft   );
   _soitem->addColumn(tr("UOM"),         _uomColumn,  Qt::AlignCenter );
-  _soitem->addColumn(tr("Whs."),        _whsColumn,  Qt::AlignCenter );
+  _soitem->addColumn(tr("Site"),        _whsColumn,  Qt::AlignCenter );
 }
 
 /*

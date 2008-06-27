@@ -360,7 +360,7 @@
           <item row="0" column="0" >
            <widget class="QLabel" name="_warehouseLit" >
             <property name="text" >
-             <string>&amp;Recv. Whs.:</string>
+             <string>&amp;Recv. Site:</string>
             </property>
             <property name="alignment" >
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -396,7 +396,7 @@
           <item row="1" column="0" >
            <widget class="QLabel" name="_shipWhsLit" >
             <property name="text" >
-             <string>Ship Whs.:</string>
+             <string>Ship Site:</string>
             </property>
             <property name="alignment" >
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

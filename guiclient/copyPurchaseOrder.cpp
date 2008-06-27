@@ -88,7 +88,7 @@ copyPurchaseOrder::copyPurchaseOrder(QWidget* parent, const char* name, bool mod
     _poitem->addColumn(tr("#"),           _seqColumn,     Qt::AlignCenter );
     _poitem->addColumn(tr("Item"),        _itemColumn,    Qt::AlignLeft   );
     _poitem->addColumn(tr("Description"), -1,             Qt::AlignLeft   );
-    _poitem->addColumn(tr("Whs."),        _whsColumn,     Qt::AlignCenter );
+    _poitem->addColumn(tr("Site"),        _whsColumn,     Qt::AlignCenter );
     _poitem->addColumn(tr("Ordered"),     _qtyColumn,     Qt::AlignRight  );
     _poitem->addColumn(tr("Price"),       _qtyColumn,     Qt::AlignRight  );
     _poitem->addColumn(tr("Extended"),    _qtyColumn,     Qt::AlignRight  );

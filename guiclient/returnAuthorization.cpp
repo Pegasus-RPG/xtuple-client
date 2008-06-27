@@ -149,7 +149,7 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   _raitem->addColumn(tr("Item"),        _itemColumn,  Qt::AlignLeft   );
   _raitem->addColumn(tr("UOM"),         _statusColumn,Qt::AlignLeft   );
   _raitem->addColumn(tr("Description"), -1,           Qt::AlignLeft   );
-  _raitem->addColumn(tr("Whs."),        _whsColumn,   Qt::AlignCenter );
+  _raitem->addColumn(tr("Site"),        _whsColumn,   Qt::AlignCenter );
   _raitem->addColumn(tr("Status"),      _statusColumn,Qt::AlignCenter );
   _raitem->addColumn(tr("Disposition"), _itemColumn,  Qt::AlignLeft   );
   _raitem->addColumn(tr("Warranty"),    _qtyColumn,Qt::AlignCenter );

@@ -88,7 +88,7 @@ dspWoSoStatus::dspWoSoStatus(QWidget* parent, const char* name, Qt::WFlags fl)
   _wo->addColumn(tr("Status"),      _statusColumn, Qt::AlignCenter );
   _wo->addColumn(tr("Item Number"), -1,            Qt::AlignLeft   );
   _wo->addColumn(tr("UOM"),         _uomColumn,    Qt::AlignLeft   );
-  _wo->addColumn(tr("Whs."),        _whsColumn,    Qt::AlignCenter );
+  _wo->addColumn(tr("Site"),        _whsColumn,    Qt::AlignCenter );
   _wo->addColumn(tr("S/O #"),       _orderColumn,  Qt::AlignLeft   );
   _wo->addColumn(tr("Ordered"),     _qtyColumn,    Qt::AlignRight  );
   _wo->addColumn(tr("Received"),    _qtyColumn,    Qt::AlignRight  );

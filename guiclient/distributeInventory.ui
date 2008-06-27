@@ -10,7 +10,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Distribute Stock To/From Warehouse Locations</string>
+   <string>Distribute Stock To/From Site Locations</string>
   </property>
   <layout class="QVBoxLayout" >
    <item>
@@ -41,7 +41,7 @@
              <item>
               <widget class="QLabel" name="_warehouseLit" >
                <property name="text" >
-                <string>Warehouse:</string>
+                <string>Site:</string>
                </property>
                <property name="alignment" >
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

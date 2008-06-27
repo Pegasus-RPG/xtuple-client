@@ -97,7 +97,7 @@ dspTimePhasedDemandByPlannerCode::dspTimePhasedDemandByPlannerCode(QWidget* pare
   _plannerCode->setType(PlannerCode);
 
   _demand->addColumn(tr("Planner Code"), _itemColumn, Qt::AlignLeft   );
-  _demand->addColumn(tr("Whs."),         _whsColumn,  Qt::AlignCenter );
+  _demand->addColumn(tr("Site"),         _whsColumn,  Qt::AlignCenter );
   _demand->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignLeft   );
 
   if (!_metrics->boolean("EnableBatchManager"))

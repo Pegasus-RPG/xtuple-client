@@ -75,8 +75,8 @@ dspInvalidBillsOfMaterials::dspInvalidBillsOfMaterials(QWidget* parent, const ch
   connect(_update, SIGNAL(toggled(bool)), this, SLOT(sHandleUpdate()));
 
   _exceptions->addColumn("componentItemid",                 0, Qt::AlignCenter);
-  _exceptions->addColumn("componentWarehouseId",            0, Qt::AlignCenter);
-  _exceptions->addColumn(tr("Whs."),               _whsColumn, Qt::AlignCenter);
+  _exceptions->addColumn("componentSiteId",                 0, Qt::AlignCenter);
+  _exceptions->addColumn(tr("Site"),               _whsColumn, Qt::AlignCenter);
   _exceptions->addColumn(tr("Parent Item #"),     _itemColumn, Qt::AlignLeft  );
   _exceptions->addColumn(tr("Component Item #"),  _itemColumn, Qt::AlignLeft  );
   _exceptions->addColumn(tr("Component Item Description"), -1, Qt::AlignLeft  );

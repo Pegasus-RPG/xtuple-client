@@ -90,7 +90,7 @@ dspDetailedInventoryHistoryByLotSerial::dspDetailedInventoryHistoryByLotSerial(Q
   _transType->append(cTransScraps,    tr("Scraps")                 );
   _transType->setCurrentItem(0);
 
-  _invhist->addColumn(tr("Whs"),          _whsColumn,          Qt::AlignCenter    );
+  _invhist->addColumn(tr("Site"),         _whsColumn,          Qt::AlignCenter    );
   _invhist->addColumn(tr("Date"),         (_dateColumn + 30),  Qt::AlignRight  );
   _invhist->addColumn(tr("Type"),         _transColumn,        Qt::AlignCenter );
   _invhist->addColumn(tr("Order #"),      _orderColumn,        Qt::AlignLeft   );

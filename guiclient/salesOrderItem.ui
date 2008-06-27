@@ -318,7 +318,7 @@
           <item row="0" column="0" >
            <widget class="QLabel" name="_warehouseLit" >
             <property name="text" >
-             <string>&amp;Whs:</string>
+             <string>&amp;Site:</string>
             </property>
             <property name="alignment" >
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1163,7 +1163,7 @@
                <bool>false</bool>
               </property>
               <property name="text" >
-               <string>Supplying Whs.:</string>
+               <string>Supplying Site:</string>
               </property>
               <property name="alignment" >
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

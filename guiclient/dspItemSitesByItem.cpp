@@ -92,7 +92,7 @@ dspItemSitesByItem::dspItemSitesByItem(QWidget* parent, const char* name, Qt::WF
 
   omfgThis->inputManager()->notify(cBCItem, this, _item, SLOT(setId(int)));
 
-  _itemsite->addColumn(tr("Whs."),          _whsColumn,   Qt::AlignCenter );
+  _itemsite->addColumn(tr("Site"),          _whsColumn,   Qt::AlignCenter );
   _itemsite->addColumn(tr("QOH"),           -1,           Qt::AlignRight  );
   _itemsite->addColumn(tr("Loc. Cntrl."),   _orderColumn, Qt::AlignCenter );
   _itemsite->addColumn(tr("Cntrl. Meth."),  _itemColumn,  Qt::AlignCenter );

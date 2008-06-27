@@ -107,9 +107,9 @@ userPreferences::userPreferences(QWidget* parent, const char* name, bool modal, 
                     "FROM evnttype "
                     "ORDER BY evnttype_module, evnttype_name" );
 
-  _warehouses->addColumn(tr("Notify"),    50,         Qt::AlignCenter );
-  _warehouses->addColumn(tr("Whs."),      _whsColumn, Qt::AlignCenter );
-  _warehouses->addColumn(tr("Warehouse"), -1,         Qt::AlignLeft   );
+  _warehouses->addColumn(tr("Notify"),      50,         Qt::AlignCenter );
+  _warehouses->addColumn(tr("Site"),        _whsColumn, Qt::AlignCenter );
+  _warehouses->addColumn(tr("Description"), -1,         Qt::AlignLeft   );
   _warehouses->populate( "SELECT warehous_id, TEXT('-'), warehous_code, warehous_descrip "
                         "FROM warehous "
                         "ORDER BY warehous_code" );

@@ -84,7 +84,7 @@ dspSummarizedSalesByCustomerTypeByItem::dspSummarizedSalesByCustomerTypeByItem(Q
 
   _sohist->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft   );
   _sohist->addColumn(tr("Description"), -1 ,          Qt::AlignLeft   );
-  _sohist->addColumn(tr("Whs."),        _whsColumn,   Qt::AlignCenter );
+  _sohist->addColumn(tr("Site"),        _whsColumn,   Qt::AlignCenter );
   _sohist->addColumn(tr("Min. Price"),  _priceColumn, Qt::AlignRight  );
   _sohist->addColumn(tr("Max. Price"),  _priceColumn, Qt::AlignRight  );
   _sohist->addColumn(tr("Avg. Price"),  _priceColumn, Qt::AlignRight  );

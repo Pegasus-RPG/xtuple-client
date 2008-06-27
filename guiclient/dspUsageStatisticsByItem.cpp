@@ -79,7 +79,7 @@ dspUsageStatisticsByItem::dspUsageStatisticsByItem(QWidget* parent, const char* 
   omfgThis->inputManager()->notify(cBCItem, this, _item, SLOT(setItemid(int)));
   omfgThis->inputManager()->notify(cBCItemSite, this, _item, SLOT(setItemsiteid(int)));
 
-  _usage->addColumn(tr("Whs."),        -1,         Qt::AlignCenter );
+  _usage->addColumn(tr("Site"),        -1,         Qt::AlignCenter );
   _usage->addColumn(tr("Received"),    _qtyColumn, Qt::AlignRight  );
   _usage->addColumn(tr("Issued"),      _qtyColumn, Qt::AlignRight  );
   _usage->addColumn(tr("Sold"),        _qtyColumn, Qt::AlignRight  );

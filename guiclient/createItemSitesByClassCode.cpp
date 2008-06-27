@@ -157,8 +157,8 @@ void createItemSitesByClassCode::sSave()
 {
   if (_warehouse->id() == -1)
   {
-    QMessageBox::critical( this, tr("Select a Warehouse"),
-                           tr( "You must select a Warehouse for this Item Site before creating it.\n" ) );
+    QMessageBox::critical( this, tr("Select a Site"),
+                           tr( "You must select a Site for this Item Site before creating it.\n" ) );
     _warehouse->setFocus();
     return;
   }
@@ -209,7 +209,7 @@ void createItemSitesByClassCode::sSave()
     {
       QMessageBox::critical( this, tr("Cannot Save Item Site"),
                              tr( "You must first create at least one valid "
-				 "Location for this Warehouse before items may be "
+				 "Location for this Site before items may be "
 				 "multiply located." ) );
       return;
     }

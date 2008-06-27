@@ -299,7 +299,7 @@ void itemSite::sSave()
   if (_warehouse->id() == -1)
   {
     QMessageBox::critical( this, tr("Cannot Save Item Site"),
-                           tr( "<p>You must select a Warehouse for this "
+                           tr( "<p>You must select a Site for this "
 			      "Item Site before creating it." ) );
     _warehouse->setFocus();
     return;
@@ -373,7 +373,7 @@ void itemSite::sSave()
                              tr( "<p>You have indicated that this Item Site "
 				"should be multiply located but there are no "
                                  "non-restrictive Locations in the selected "
-				 "Warehouse nor restrictive Locations that "
+				 "Site nor restrictive Locations that "
 				 "will accept the selected Item."
 				 "<p>You must first create at least one valid "
 				 "Location for this Item Site before it may be "
@@ -1137,9 +1137,9 @@ int itemSite::createItemSite(QWidget* pparent, int pitemsiteid, int pwhsid, bool
   }
   else
   {
-    QMessageBox::warning(pparent, tr("No Warehouse"),
+    QMessageBox::warning(pparent, tr("No Site"),
 		       tr("<p>The desired Item Site cannot be created as "
-			  "there is no Warehouse with the internal ID %1.")
+			  "there is no Site with the internal ID %1.")
 			    .arg(whs));
     return -99;
   }

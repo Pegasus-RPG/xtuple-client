@@ -326,7 +326,7 @@ menuInventory::menuInventory(GUIClient *Pparent) :
     //  Inventory | Physical Inventory | Reports | Count Tags
     { "menu",				tr("Count &Tags"),		  (char*)physicalReportsTagsMenu,	    physicalReportsMenu,	  _privileges->check("ViewCountTags"),	NULL, NULL, true , NULL },
     { "im.dspCountTagsByItem",		tr("by &Item..."),	  SLOT(sDspCountTagsByItem()),	    physicalReportsTagsMenu, _privileges->check("ViewCountTags"),	NULL, NULL, true, NULL }, 
-    { "im.dspCountTagsByWarehouse",	tr("by &Warehouse..."), SLOT(sDspCountTagsByWarehouse()), physicalReportsTagsMenu, _privileges->check("ViewCountTags"),	NULL, NULL, true, NULL }, 
+    { "im.dspCountTagsByWarehouse",	tr("by &Site..."), SLOT(sDspCountTagsByWarehouse()), physicalReportsTagsMenu, _privileges->check("ViewCountTags"),	NULL, NULL, true, NULL }, 
     { "im.dspCountTagsByClassCode",	tr("by &Class Code..."), SLOT(sDspCountTagsByClassCode()), physicalReportsTagsMenu, _privileges->check("ViewCountTags"),	NULL, NULL, true, NULL },     
 
     { "separator",			NULL,				  NULL,				mainMenu, true, NULL, NULL, true , NULL },
@@ -397,7 +397,7 @@ menuInventory::menuInventory(GUIClient *Pparent) :
     { "separator",			NULL,				  NULL,				transactionsMenu, true, NULL, NULL, true , NULL },
     { "im.resetQOHBalances",		tr("&Reset QOH Balances..."),	  SLOT(sResetQOHBalances()),	transactionsMenu, _privileges->check("CreateAdjustmentTrans"),	NULL, NULL, true, NULL }, 
     { "separator",			NULL,				  NULL,				transactionsMenu, true, NULL, NULL, true , NULL },
-    { "im.interWarehouseTransfer",	tr("&Warehouse Transfer..."),SLOT(sTransferTrans()),	transactionsMenu, _privileges->check("CreateInterWarehouseTrans"),	NULL, NULL, _metrics->boolean("MultiWhs"), NULL },
+    { "im.interWarehouseTransfer",	tr("&Site Transfer..."),SLOT(sTransferTrans()),	transactionsMenu, _privileges->check("CreateInterWarehouseTrans"),	NULL, NULL, _metrics->boolean("MultiWhs"), NULL },
     { "im.relocateInventory",		tr("Re&locate Inventory..."),	  SLOT(sRelocateInventory()),	transactionsMenu, _privileges->check("RelocateInventory"),	NULL, NULL, true, NULL }, 
     
     {  "separator",			NULL,					  NULL,					mainMenu,	true, NULL, NULL, true , NULL },
@@ -464,7 +464,7 @@ menuInventory::menuInventory(GUIClient *Pparent) :
 
     //  Inventory | Reports | Usage Statistics
     { "menu",				tr("&Usage Statistics "),			  (char*)reportsItemUsgMenu,			reportsMenu,	 _privileges->check("ViewInventoryHistory"),	NULL, NULL, true , NULL },
-    { "im.dspItemUsageStatisticsByWarehouse",		tr("by &Warehouse..."),		SLOT(sDspItemUsageStatisticsByWarehouse()), reportsItemUsgMenu, _privileges->check("ViewInventoryHistory"),	NULL, NULL, true, NULL }, 
+    { "im.dspItemUsageStatisticsByWarehouse",		tr("by &Site..."),		SLOT(sDspItemUsageStatisticsByWarehouse()), reportsItemUsgMenu, _privileges->check("ViewInventoryHistory"),	NULL, NULL, true, NULL }, 
     { "im.dspItemUsageStatisticsByClassCode",		tr("by &Class Code..."),		SLOT(sDspItemUsageStatisticsByClassCode()), reportsItemUsgMenu, _privileges->check("ViewInventoryHistory"),	NULL, NULL, true, NULL },
     { "im.dspItemUsageStatisticsByItemGroup",		tr("by Item &Group..."),		SLOT(sDspItemUsageStatisticsByItemGroup()), reportsItemUsgMenu, _privileges->check("ViewInventoryHistory"),	NULL, NULL, true, NULL }, 
     { "im.dspItemUsageStatisticsByItem",		tr("by &Item..."),			SLOT(sDspItemUsageStatisticsByItem()), reportsItemUsgMenu, _privileges->check("ViewInventoryHistory"),	NULL, NULL, true, NULL }, 
@@ -474,7 +474,7 @@ menuInventory::menuInventory(GUIClient *Pparent) :
     { "separator",			NULL,				  NULL,				mainMenu, true, NULL, NULL, true , NULL },
 
     // Inventory | Warehouse
-    { "menu",			tr("&Warehouse"),	(char*)warehouseMenu,	     mainMenu,	     true,												NULL, NULL, true , NULL },
+    { "menu",			tr("&Site"),	(char*)warehouseMenu,	     mainMenu,	     true,												NULL, NULL, true , NULL },
     { whsModule,		whsLabel,		SLOT(sWarehouses()),	     warehouseMenu, (_privileges->check("MaintainWarehouses")) || (_privileges->check("ViewWarehouses") ),		NULL, NULL, true, NULL }, 
     { "im.warehousesLocations",	tr("L&ocations..."),	SLOT(sWarehouseLocations()), warehouseMenu, (_privileges->check("MaintainLocations")) || (_privileges->check("ViewLocations") ),			NULL, NULL, true, NULL }, 
 

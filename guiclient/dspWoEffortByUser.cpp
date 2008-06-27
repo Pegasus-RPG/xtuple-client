@@ -104,7 +104,7 @@ dspWoEffortByUser::dspWoEffortByUser(QWidget* parent, const char* name, Qt::WFla
   _wotc->addColumn(tr("W/O #"),       _orderColumn, Qt::AlignLeft, true, "wonumber");
   _wotc->addColumn(tr("Status"),     _statusColumn, Qt::AlignCenter,true, "wo_status");
   _wotc->addColumn(tr("Pri."),       _statusColumn, Qt::AlignCenter,true, "wo_priority");
-  _wotc->addColumn(tr("Whs."),          _whsColumn, Qt::AlignCenter,true, "warehous_code");
+  _wotc->addColumn(tr("Site"),          _whsColumn, Qt::AlignCenter,true, "warehous_code");
   _wotc->addColumn(tr("Operation"),             -1, Qt::AlignLeft,  true, "wooper");
   _wotc->addColumn(tr("Clock In"), _timeDateColumn, Qt::AlignLeft,  true, "wotc_timein");
   _wotc->addColumn(tr("Clock Out"),_timeDateColumn, Qt::AlignLeft,  true, "wotc_timeout");

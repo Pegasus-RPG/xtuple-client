@@ -161,7 +161,7 @@
        <enum>Qt::StrongFocus</enum>
       </property>
       <property name="title" >
-       <string>Warehouse</string>
+       <string>Site:</string>
       </property>
      </widget>
     </item>

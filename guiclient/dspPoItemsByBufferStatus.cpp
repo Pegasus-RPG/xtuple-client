@@ -83,7 +83,7 @@ dspPoItemsByBufferStatus::dspPoItemsByBufferStatus(QWidget* parent, const char* 
   _agent->setText(omfgThis->username());
 
   _poitem->addColumn(tr("P/O #"),         _orderColumn, Qt::AlignRight  );
-  _poitem->addColumn(tr("Whs."),          _whsColumn,   Qt::AlignCenter );
+  _poitem->addColumn(tr("Site"),          _whsColumn,   Qt::AlignCenter );
   _poitem->addColumn(tr("Status"),        _dateColumn,  Qt::AlignCenter );
   _poitem->addColumn(tr("Vendor"),        _itemColumn,  Qt::AlignLeft   );
   _poitem->addColumn(tr("Buffer Status"), _uomColumn,   Qt::AlignRight  );

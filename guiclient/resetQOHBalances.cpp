@@ -90,7 +90,7 @@ void resetQOHBalances::sReset()
   if (QMessageBox::question(this, tr("Reset Selected QOH Balances?"),
                             tr( "<p>You are about to issue Adjustment "
                                 "Transactions for all Item Sites within "
-                                "the selected Warehouse and Class Code(s) "
+                                "the selected Site and Class Code(s) "
                                 "that are not Lot/Serial or Location  "
                                 "Controlled to adjust their QOH values to "
                                 "0.<br>Are you sure that you want to do this?"),

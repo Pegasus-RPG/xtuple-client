@@ -111,7 +111,7 @@ void locations::init()
 {
   statusBar()->hide();
   
-  _location->addColumn(tr("Whs."),        _whsColumn,  Qt::AlignCenter );
+  _location->addColumn(tr("Site"),        _whsColumn,  Qt::AlignCenter );
   _location->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft   );
   _location->addColumn(tr("Description"), -1,          Qt::AlignLeft   );
   _location->addColumn(tr("Netable"),     80,          Qt::AlignCenter );

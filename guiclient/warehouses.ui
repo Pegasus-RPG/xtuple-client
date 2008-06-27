@@ -13,7 +13,7 @@
       </rect>
     </property>
     <property name="windowTitle" >
-      <string>List Warehouses</string>
+      <string>List Sites</string>
     </property>
     <widget class="QWidget" >
       <layout class="QHBoxLayout" >
@@ -58,7 +58,7 @@
                 <item>
                   <widget class="QCheckBox" name="_showInactive" >
                     <property name="text" >
-                      <string>Show &amp;Inactive Warehouses</string>
+                      <string>Show &amp;Inactive Sites</string>
                     </property>
                     <property name="shortcut" >
                       <string>Alt+I</string>
@@ -78,7 +78,7 @@
                 <item>
                   <widget class="QLabel" name="_warehousesLit" >
                     <property name="text" >
-                      <string>Warehouses:</string>
+                      <string>Sites:</string>
                     </property>
                   </widget>
                 </item>

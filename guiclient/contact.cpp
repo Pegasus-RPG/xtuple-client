@@ -535,7 +535,7 @@ void contact::sFillList()
   q.bindValue(":prospect",	tr("Prospect"));
   q.bindValue(":shipto",	tr("Ship-To Address"));
   q.bindValue(":vendaddr",	tr("Vendor Address"));
-  q.bindValue(":whs",		tr("Warehouse"));
+  q.bindValue(":whs",		tr("Site"));
   q.bindValue(":emp",		tr("Employee"));
   q.exec();
   _uses->populate(q, true);
@@ -615,7 +615,7 @@ void contact::sDetachUse()
 
     case 10:
       question = tr("Are you sure that you want to remove this Contact as "
-		    "the Contact for this Warehouse?");
+		    "the Contact for this Site?");
       detachq.prepare("UPDATE whsinfo SET warehous_cntct_id = NULL "
 		      "WHERE (warehous_id=:id);");
       break;

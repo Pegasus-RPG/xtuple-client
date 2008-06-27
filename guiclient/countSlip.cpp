@@ -262,9 +262,9 @@ void countSlip::sSave()
       if (q.first())
       {
         QMessageBox::critical( this, tr("Cannot Duplicate Count Slip #"),
-                               tr( "An unposted Count Slip for this Warehouse has already been entered\n"
+                               tr( "An unposted Count Slip for this Site has already been entered\n"
                                    "with this #.  OpenMFG's I/M Module has been configured to disallow the\n"
-                                   "duplication of unposted Count Slip #s within a given Warehouse.\n"
+                                   "duplication of unposted Count Slip #s within a given Site.\n"
                                    "Please verify the # of the Count Slip you are entering." ) );
         return;
       }
@@ -305,9 +305,9 @@ void countSlip::sSave()
       if (q.first())
       {
         QMessageBox::critical( this, tr("Cannot Duplicate Count Slip #"),
-                               tr( "An Count Slip for this Warehouse has already been entered with this #.\n"
+                               tr( "An Count Slip for this Site has already been entered with this #.\n"
                                    "OpenMFG's I/M Module has been configured to disallow the duplication\n"
-                                   "of Count Slip #s within a given Warehouse.\n"
+                                   "of Count Slip #s within a given Site.\n"
                                    "Please verify the # of the Count Slip you are entering." ) );
         return;
       }

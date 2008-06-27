@@ -160,7 +160,7 @@ void issueWoMaterialBatch::sIssue()
     if(!(issue.value("isqtyavail").toBool()))
     {
       QMessageBox::critical(this, tr("Insufficient Inventory"),
-        tr("Item Number %1 in Warehouse %2 is a Multiple Location or\n"
+        tr("Item Number %1 in Site %2 is a Multiple Location or\n"
            "Lot/Serial controlled Item which is short on Inventory.\n"
            "This transaction cannot be completed as is. Please make\n"
            "sure there is sufficient Quantity on Hand before proceeding.")

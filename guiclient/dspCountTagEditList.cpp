@@ -108,7 +108,7 @@ dspCountTagEditList::dspCountTagEditList(QWidget* parent, const char* name, Qt::
   _cnttag->addColumn(tr("Tag/Slip #"),  _orderColumn, Qt::AlignRight  );
   _cnttag->addColumn(tr("Tag Date"),    _dateColumn,  Qt::AlignCenter );
   _cnttag->addColumn(tr("Item Number"), -1,           Qt::AlignLeft   );
-  _cnttag->addColumn(tr("Whs."),        _whsColumn,   Qt::AlignCenter );
+  _cnttag->addColumn(tr("Site"),        _whsColumn,   Qt::AlignCenter );
   _cnttag->addColumn(tr("Location"),	  _ynColumn,    Qt::AlignCenter );
   _cnttag->addColumn(tr("QOH"),         _qtyColumn,   Qt::AlignRight  );
   _cnttag->addColumn(tr("Count Qty."),  _qtyColumn,   Qt::AlignRight  );

@@ -102,7 +102,7 @@ dspInventoryAvailabilityBySourceVendor::dspInventoryAvailabilityBySourceVendor(Q
   _availability->addColumn(tr("Vendor #"),     _itemColumn, Qt::AlignLeft   );
   _availability->addColumn(tr("Item"),         _itemColumn, Qt::AlignLeft   );
   _availability->addColumn(tr("Description"),  -1,          Qt::AlignLeft   );
-  _availability->addColumn(tr("Whs."),         _whsColumn,  Qt::AlignCenter );
+  _availability->addColumn(tr("Site"),         _whsColumn,  Qt::AlignCenter );
   _availability->addColumn(tr("LT"),           _whsColumn,  Qt::AlignCenter );
   _availability->addColumn(tr("QOH"),          _qtyColumn,  Qt::AlignRight  );
   _availability->addColumn(tr("Allocated"),    _qtyColumn,  Qt::AlignRight  );

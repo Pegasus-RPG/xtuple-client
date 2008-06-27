@@ -84,7 +84,7 @@ dspExpediteExceptionsByPlannerCode::dspExpediteExceptionsByPlannerCode(QWidget* 
   _plannerCode->setType(PlannerCode);
 
   _exception->addColumn(tr("Order Type/#"),   _itemColumn, Qt::AlignCenter );
-  _exception->addColumn(tr("Whs."),           _whsColumn,  Qt::AlignCenter );
+  _exception->addColumn(tr("Site"),           _whsColumn,  Qt::AlignCenter );
   _exception->addColumn(tr("Item Number"),    _itemColumn, Qt::AlignLeft   );
   _exception->addColumn(tr("Descriptions"),   -1,          Qt::AlignLeft   );
   _exception->addColumn(tr("Start/Due Date"), _itemColumn, Qt::AlignLeft   );

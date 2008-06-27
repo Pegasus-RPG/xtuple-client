@@ -551,8 +551,8 @@ void purchaseOrderItem::sSave()
 
   if (_inventoryItem->isChecked() && _warehouse->id() == -1)
   {
-    QMessageBox::critical( this, tr("No Warehouse Selected"),
-                           tr("<p>You must select a Supplying Warehouse before you may save.") );
+    QMessageBox::critical( this, tr("No Site Selected"),
+                           tr("<p>You must select a Supplying Site before you may save.") );
     return;
   }
 
@@ -653,10 +653,10 @@ void purchaseOrderItem::sSave()
         q.bindValue(":poitem_itemsite_id", itemsiteid.value("itemsite_id").toInt());
       else
       {
-        QMessageBox::critical( this, tr("Invalid Item/Warehouse"),
-                               tr("<p>The Item and Warehouse you have selected does not appear to be a valid combination. "
-                                  "Make sure you have a warehouse selected and that there is a valid itemsite for "
-                                  "this Item and Warehouse combination.") );
+        QMessageBox::critical( this, tr("Invalid Item/Site"),
+                               tr("<p>The Item and Site you have selected does not appear to be a valid combination. "
+                                  "Make sure you have a Site selected and that there is a valid itemsite for "
+                                  "this Item and Site combination.") );
         return;
       }
 

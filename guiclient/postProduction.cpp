@@ -320,8 +320,8 @@ void postProduction::sPost()
                   rollback.exec();
                   QMessageBox::warning( this, tr("Cannot Post Immediate Transfer"),
                       tr( "OpenMFG cannot post an immediate transfer for the newly posted production as the\n"
-                      "transfer Warehouse is the same as the production Warehouse.  You must manually\n"
-                      "transfer the production to the intended Warehouse." ) );
+                      "transfer Site is the same as the production Site.  You must manually\n"
+                      "transfer the production to the intended Site." ) );
                   return;
                 }
                 else

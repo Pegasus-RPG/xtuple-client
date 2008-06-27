@@ -251,7 +251,7 @@ void workCenter::sSave()
   if (_warehouse->id() == -1)
   {
     QMessageBox::critical( this, tr("Cannot Save Work Center"),
-                           tr("You must select a Warehouse for this Work Center before you may save it.") );
+                           tr("You must select a Site for this Work Center before you may save it.") );
     _warehouse->setFocus();
     return;
   }

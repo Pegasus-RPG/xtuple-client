@@ -80,7 +80,7 @@ dspCountTagsByWarehouse::dspCountTagsByWarehouse(QWidget* parent, const char* na
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 
   _cnttag->addColumn(tr("Tag #"),        -1,           Qt::AlignLeft   );
-  _cnttag->addColumn(tr("Whs."),         _whsColumn,   Qt::AlignCenter );
+  _cnttag->addColumn(tr("Site"),         _whsColumn,   Qt::AlignCenter );
   _cnttag->addColumn(tr("Item"),         _itemColumn,  Qt::AlignLeft   );
   _cnttag->addColumn(tr("Created (By)"), _dateColumn,  Qt::AlignCenter );
   _cnttag->addColumn(tr("Entered (By)"), _dateColumn,  Qt::AlignCenter );

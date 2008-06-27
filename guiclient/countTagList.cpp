@@ -104,7 +104,7 @@ void countTagList::init()
   _cnttag->addColumn(tr("Tag #"),       _orderColumn, Qt::AlignLeft   );
   _cnttag->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft   );
   _cnttag->addColumn(tr("Description"), -1,           Qt::AlignLeft   );
-  _cnttag->addColumn(tr("Whs."),        _whsColumn,   Qt::AlignCenter );
+  _cnttag->addColumn(tr("Site"),        _whsColumn,   Qt::AlignCenter );
 }
 
 enum SetResponse countTagList::set(ParameterList &pParams)

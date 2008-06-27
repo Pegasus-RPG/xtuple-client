@@ -64,7 +64,7 @@
            <item>
             <widget class="QLabel" name="_warehouseLit" >
              <property name="text" >
-              <string>&amp;Warehouse:</string>
+              <string>&amp;Site:</string>
              </property>
              <property name="alignment" >
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1005,7 +1005,7 @@
                  </sizepolicy>
                 </property>
                 <property name="text" >
-                 <string>Supplied at this Warehouse</string>
+                 <string>Supplied at this Site</string>
                 </property>
                 <property name="checked" >
                  <bool>true</bool>
@@ -1147,7 +1147,7 @@
                  </sizepolicy>
                 </property>
                 <property name="text" >
-                 <string>Sold from this Warehouse</string>
+                 <string>Sold from this Site</string>
                 </property>
                 <property name="checked" >
                  <bool>true</bool>

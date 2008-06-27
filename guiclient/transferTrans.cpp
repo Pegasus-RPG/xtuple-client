@@ -135,7 +135,7 @@ enum SetResponse transferTrans::set(const ParameterList &pParams)
     {
       _mode = cNew;
 
-      setCaption(tr("Enter Inter-Warehouse Transfer"));
+      setCaption(tr("Enter Inter-Site Transfer"));
       _usernameLit->clear();
       _transDate->setEnabled(_privileges->check("AlterTransactionDates"));
       _transDate->setDate(omfgThis->dbDate());
@@ -151,7 +151,7 @@ enum SetResponse transferTrans::set(const ParameterList &pParams)
     {
       _mode = cView;
 
-      setCaption(tr("Inter-Warehouse Transaction Information"));
+      setCaption(tr("Inter-Site Transaction Information"));
       _transDate->setEnabled(FALSE);
       _item->setEnabled(FALSE);
       _toWarehouse->setEnabled(FALSE);
@@ -224,8 +224,8 @@ void transferTrans::sPost()
       tr("<p>You must enter a positive Quantity before posting this Transaction."),
       _qty },
     { _fromWarehouse->id() == _toWarehouse->id(),
-      tr("<p>The Target Warehouse is the same as the Source Warehouse. "
-         "You must select a different Warehouse for each before "
+      tr("<p>The Target Site is the same as the Source Site. "
+         "You must select a different Site for each before "
          "posting this Transaction"), _fromWarehouse },
     { true, "", NULL }
   };
@@ -302,7 +302,7 @@ void transferTrans::sPost()
   else
   {
     rollback.exec();
-    systemError( this, tr("A System Error occurred at transferTrans::%1, Item Site ID #%2, To Warehouse ID #%3, From Warehouse #%4.")
+    systemError( this, tr("A System Error occurred at transferTrans::%1, Item Site ID #%2, To Site ID #%3, From Site #%4.")
                        .arg(__LINE__)
                        .arg(_item->id())
                        .arg(_toWarehouse->id())

@@ -97,7 +97,7 @@ dspExpiredInventoryByClassCode::dspExpiredInventoryByClassCode(QWidget* parent, 
   _classCode->setType(ClassCode);
   _inventoryValue->setEnabled(_showValue->isChecked());
 
-  _expired->addColumn(tr("Whs."),         _whsColumn,  Qt::AlignCenter );
+  _expired->addColumn(tr("Site"),         _whsColumn,  Qt::AlignCenter );
   _expired->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft   );
   _expired->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignCenter );
   _expired->addColumn(tr("Lot/Serial #"), -1,          Qt::AlignLeft   );
@@ -166,7 +166,7 @@ void dspExpiredInventoryByClassCode::sPopulateMenu(QMenu *, QTreeWidgetItem *)
 
   if (((XTreeWidgetItem *)pSelected)->id() != -1)
   {
-    menuItem = pMenu->insertItem(tr("Transfer to another Warehouse..."), this, SLOT(sTransfer()), 0);
+    menuItem = pMenu->insertItem(tr("Transfer to another Site..."), this, SLOT(sTransfer()), 0);
     if (!_privileges->check("CreateInterWarehouseTrans"))
       pMenu->setItemEnabled(menuItem, FALSE);
 

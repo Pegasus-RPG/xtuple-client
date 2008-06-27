@@ -100,7 +100,7 @@ eventManager::eventManager(QWidget* parent, const char* name, Qt::WFlags fl)
   _event->addColumn("orderId",         0,               Qt::AlignCenter );
   _event->addColumn("newDate",         0,               Qt::AlignCenter );
   _event->addColumn("newQty",          0,               Qt::AlignCenter );
-  _event->addColumn(tr("Whs."),        _whsColumn,      Qt::AlignCenter );
+  _event->addColumn(tr("Site"),        _whsColumn,      Qt::AlignCenter );
   _event->addColumn(tr("Time"),        _timeDateColumn, Qt::AlignLeft   );
   _event->addColumn(tr("Acknowleged"), _timeDateColumn, Qt::AlignLeft   );
   _event->addColumn(tr("Event Type"),  _itemColumn,     Qt::AlignLeft   );

@@ -10,7 +10,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Summarized Backlog by Warehouse</string>
+   <string>Summarized Backlog by Site</string>
   </property>
   <widget class="QWidget" name="widget" >
    <layout class="QVBoxLayout" >

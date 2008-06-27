@@ -88,7 +88,7 @@ dspMRPDetail::dspMRPDetail(QWidget* parent, const char* name, Qt::WFlags fl)
   _itemsite->addColumn("Itemtype",        0,           Qt::AlignCenter );
   _itemsite->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft   );
   _itemsite->addColumn(tr("Description"), -1,          Qt::AlignLeft   );
-  _itemsite->addColumn(tr("Whs."),        _whsColumn,  Qt::AlignCenter );
+  _itemsite->addColumn(tr("Site"),        _whsColumn,  Qt::AlignCenter );
 
   _mrp->addColumn("", 120, Qt::AlignRight);
 

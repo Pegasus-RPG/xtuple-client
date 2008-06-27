@@ -94,7 +94,7 @@ dspInventoryBufferStatusByParameterList::dspInventoryBufferStatusByParameterList
 
   _availability->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft   );
   _availability->addColumn(tr("Description"),  -1,          Qt::AlignLeft   );
-  _availability->addColumn(tr("Whs."),         _whsColumn,  Qt::AlignCenter );
+  _availability->addColumn(tr("Site"),         _whsColumn,  Qt::AlignCenter );
   _availability->addColumn(tr("LT"),           _whsColumn,  Qt::AlignCenter );
   _availability->addColumn(tr("Type"),         _qtyColumn,  Qt::AlignCenter );
   _availability->addColumn(tr("Status"),       _qtyColumn,  Qt::AlignRight  );

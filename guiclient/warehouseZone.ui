@@ -13,7 +13,7 @@
       </rect>
     </property>
     <property name="windowTitle" >
-      <string>Warehouse Zone</string>
+      <string>Site Zone</string>
     </property>
     <layout class="QHBoxLayout" >
       <property name="margin" >

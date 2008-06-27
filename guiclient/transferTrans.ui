@@ -10,7 +10,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Inter-Warehouse Transaction</string>
+   <string>Inter-Site Transaction</string>
   </property>
   <widget class="QWidget" name="widget" >
    <layout class="QVBoxLayout" >
@@ -139,7 +139,7 @@
       <item row="1" column="0" >
        <widget class="QLabel" name="_fromWarehouseLit" >
         <property name="text" >
-         <string>From Whse.:</string>
+         <string>From Site:</string>
         </property>
         <property name="alignment" >
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -149,7 +149,7 @@
       <item row="2" column="0" >
        <widget class="QLabel" name="_toWarehouseLit" >
         <property name="text" >
-         <string>To Whse.:</string>
+         <string>To Site:</string>
         </property>
         <property name="alignment" >
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

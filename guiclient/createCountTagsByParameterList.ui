@@ -10,7 +10,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Create Count Tags by Parameter List/Warehouse</string>
+   <string>Create Count Tags by Parameter List/Site</string>
   </property>
   <layout class="QVBoxLayout" >
    <property name="margin" >
@@ -125,7 +125,7 @@
          <item>
           <widget class="QLabel" name="_warehouseLit" >
            <property name="text" >
-            <string>Warehouse:</string>
+            <string>Site:</string>
            </property>
            <property name="alignment" >
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

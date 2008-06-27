@@ -79,7 +79,7 @@ dspSubstituteAvailabilityByItem::dspSubstituteAvailabilityByItem(QWidget* parent
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
 
-  _availability->addColumn(tr("Whs."),          _whsColumn,  Qt::AlignCenter );
+  _availability->addColumn(tr("Site"),          _whsColumn,  Qt::AlignCenter );
   _availability->addColumn(tr("Item Number"),   _itemColumn, Qt::AlignLeft   );
   _availability->addColumn(tr("Description"),   -1,          Qt::AlignLeft   );
   _availability->addColumn(tr("LT"),            _whsColumn,  Qt::AlignCenter );

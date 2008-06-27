@@ -100,7 +100,7 @@ issueToShipping::issueToShipping(QWidget* parent, const char* name, Qt::WFlags f
   _soitem->addColumn(tr("#"),           _seqColumn,   Qt::AlignCenter, true, "linenumber");
   _soitem->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft,   true, "item_number");
   _soitem->addColumn(tr("Description"),  -1,          Qt::AlignLeft,   true, "itemdescrip");
-  _soitem->addColumn(tr("Whs."),        _whsColumn,   Qt::AlignCenter, true, "warehous_code");
+  _soitem->addColumn(tr("Site"),        _whsColumn,   Qt::AlignCenter, true, "warehous_code");
   _soitem->addColumn(tr("Scheduled Date"),_qtyColumn, Qt::AlignRight,  true, "scheddate");
   _soitem->addColumn(tr("UOM"),         _uomColumn,   Qt::AlignLeft,   true, "uom_name");
   _soitem->addColumn(tr("Ordered"),     _qtyColumn,   Qt::AlignRight,  true, "qtyord");

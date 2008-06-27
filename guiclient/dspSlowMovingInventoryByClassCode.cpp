@@ -92,7 +92,7 @@ dspSlowMovingInventoryByClassCode::dspSlowMovingInventoryByClassCode(QWidget* pa
 
   _classCode->setType(ClassCode);
 
-  _itemsite->addColumn(tr("Whs."),          _whsColumn,  Qt::AlignCenter );
+  _itemsite->addColumn(tr("Site"),          _whsColumn,  Qt::AlignCenter );
   _itemsite->addColumn(tr("Item Number"),   _itemColumn, Qt::AlignLeft   );
   _itemsite->addColumn(tr("Description"),   -1,                  Qt::AlignLeft   );
   _itemsite->addColumn(tr("UOM"),           _uomColumn,  Qt::AlignCenter );
@@ -179,7 +179,7 @@ void dspSlowMovingInventoryByClassCode::sPopulateMenu(QMenu *pMenu, QTreeWidgetI
 
   if (((XTreeWidgetItem *)pSelected)->id() != -1)
   {
-    menuItem = pMenu->insertItem(tr("Transfer to another Warehouse..."), this, SLOT(sTransfer()), 0);
+    menuItem = pMenu->insertItem(tr("Transfer to another Site..."), this, SLOT(sTransfer()), 0);
     if (!_privileges->check("CreateInterWarehouseTrans"))
       pMenu->setItemEnabled(menuItem, FALSE);
 

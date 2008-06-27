@@ -243,8 +243,8 @@ void warehouse::sSave()
   //  Make sure that at least a warehouse code has been entered
   if (_code->text().stripWhiteSpace().length() == 0)
   {
-    QMessageBox::information( this, tr("Cannot Save Warehouse"),
-                              tr("<p>You must enter a code for this Warehouse "
+    QMessageBox::information( this, tr("Cannot Save Site"),
+                              tr("<p>You must enter a code for this Site "
 				 "before saving it.")  );
     _code->setFocus();
     return;
@@ -271,9 +271,9 @@ void warehouse::sSave()
   {
     QMessageBox::critical( this, tr("Count Tag Prefix not Unique"),
                            tr("<p>The Count Tag prefix entered has been used "
-			      "in another Warehouse. To enable Count Tag "
+			      "in another Site. To enable Count Tag "
 			      "audits, the application requires a unique Count "
-			      "Tag prefix for each Warehouse. Please enter a "
+			      "Tag prefix for each Site. Please enter a "
 			      "different Count Tag prefix." ) );
     _countTagPrefix->clear();
     _countTagPrefix->setFocus();
@@ -294,11 +294,11 @@ void warehouse::sSave()
   q.exec();
   if (q.first())
   {
-    QMessageBox::critical( this, tr("Cannot Save Warehouse"),
-			   tr( "<p>The new Warehouse information cannot be "
-			      "saved as the new Warehouse Code that you "
-			      "entered conflicts with an existing Warehouse. "
-			      "You must uniquely name this Warehouse before "
+    QMessageBox::critical( this, tr("Cannot Save Site"),
+			   tr( "<p>The new Site information cannot be "
+			      "saved as the new Site Code that you "
+			      "entered conflicts with an existing Site. "
+			      "You must uniquely name this Site before "
 			      "you may save it." ) );
     _code->setFocus();
     return;
@@ -312,18 +312,18 @@ void warehouse::sSave()
   //  Make sure that a default G/L Account has been entered
   if (_account->id() == -1)
   {
-    QMessageBox::information( this, tr("Cannot Save Warehouse"),
+    QMessageBox::information( this, tr("Cannot Save Site"),
                               tr("<p>You must enter a default Account for this "
-				 "Warehouse before saving it.")  );
+				 "Site before saving it.")  );
     _account->setFocus();
     return;
   }
 
   if (_transit->isChecked() && ! _costcat->isValid())
   {
-    QMessageBox::information(this, tr("Cannot Save Warehouse"),
+    QMessageBox::information(this, tr("Cannot Save Site"),
 			     tr("<p>You must select a Cost Category for this "
-				"Transit Warehouse before saving it.") );
+				"Transit Site before saving it.") );
     _costcat->setFocus();
     return;
   }
@@ -349,7 +349,7 @@ void warehouse::sSave()
   {
     int answer = QMessageBox::question(this,
 		    tr("Question Saving Address"),
-		    tr("There are multiple uses of this Warehouse "
+		    tr("There are multiple uses of this Site "
 		       "Address.\nWhat would you like to do?"),
 		    tr("Change This One"),
 		    tr("Change Address for All"),
@@ -602,12 +602,12 @@ void warehouse::sDeleteZone()
   q.exec();
   if (q.first())
   {
-    QMessageBox::warning( this, tr("Cannot Delete Warehouse Zone"),
-                          tr( "<p>The selected Warehouse Zone cannot be "
-			     "deleted as one or more Warehouse Locations have "
+    QMessageBox::warning( this, tr("Cannot Delete Site Zone"),
+                          tr( "<p>The selected Site Zone cannot be "
+			     "deleted as one or more Site Locations have "
 			     "been assigned to it. You must delete or reassign "
-			     "these Warehouse Location before you may delete "
-			     "the selected Warehouse Zone." ) );
+			     "these Site Location before you may delete "
+			     "the selected Site Zone." ) );
     return;
   }
   else if (q.lastError().type() != QSqlError::None)

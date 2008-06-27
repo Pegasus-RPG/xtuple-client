@@ -92,7 +92,7 @@ dspTimePhasedProductionByItem::dspTimePhasedProductionByItem(QWidget* parent, co
   _plannerCode->setType(PlannerCode);
 
   _production->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft   );
-  _production->addColumn(tr("Whs."),        _whsColumn,  Qt::AlignCenter );
+  _production->addColumn(tr("Site"),        _whsColumn,  Qt::AlignCenter );
   _production->addColumn(tr("UOM"),         _uomColumn,  Qt::AlignLeft   );
 
   if (!_metrics->boolean("EnableBatchManager"))

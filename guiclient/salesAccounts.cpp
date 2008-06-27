@@ -77,7 +77,7 @@ salesAccounts::salesAccounts(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
 
-  _salesaccnt->addColumn(tr("Whs."),            -1,          Qt::AlignCenter );
+  _salesaccnt->addColumn(tr("Site"),            -1,          Qt::AlignCenter );
   _salesaccnt->addColumn(tr("Cust. Type"),      _itemColumn, Qt::AlignCenter );
   _salesaccnt->addColumn(tr("Prod. Cat."),      _itemColumn, Qt::AlignCenter );
   _salesaccnt->addColumn(tr("Sales Accnt. #"),  _itemColumn, Qt::AlignCenter );

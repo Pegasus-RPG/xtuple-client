@@ -83,7 +83,7 @@ dspSummarizedSalesByCustomerType::dspSummarizedSalesByCustomerType(QWidget* pare
   _customerType->setType(CustomerType);
 
   _sohist->addColumn(tr("Customer Type"), -1,           Qt::AlignLeft   );
-  _sohist->addColumn(tr("Whs."),          _whsColumn,   Qt::AlignCenter );
+  _sohist->addColumn(tr("Site"),          _whsColumn,   Qt::AlignCenter );
   _sohist->addColumn(tr("Min. Price"),    _priceColumn, Qt::AlignRight  );
   _sohist->addColumn(tr("Max. Price"),    _priceColumn, Qt::AlignRight  );
   _sohist->addColumn(tr("Avg. Price"),    _priceColumn, Qt::AlignRight  );

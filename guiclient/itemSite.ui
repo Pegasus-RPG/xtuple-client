@@ -94,7 +94,7 @@
            <item row="0" column="0" >
             <widget class="QLabel" name="_warehouseLit" >
              <property name="text" >
-              <string>&amp;Warehouse:  </string>
+              <string>&amp;Site:  </string>
              </property>
              <property name="alignment" >
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -197,7 +197,7 @@
         <enum>Qt::TabFocus</enum>
        </property>
        <property name="title" >
-        <string>Supplied at this Warehouse</string>
+        <string>Supplied at this Site</string>
        </property>
        <property name="checkable" >
         <bool>true</bool>
@@ -244,7 +244,7 @@
         <enum>Qt::TabFocus</enum>
        </property>
        <property name="title" >
-        <string>Sold from this Warehouse</string>
+        <string>Sold from this Site</string>
        </property>
        <property name="checkable" >
         <bool>true</bool>
