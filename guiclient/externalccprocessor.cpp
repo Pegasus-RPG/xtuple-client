@@ -63,7 +63,7 @@
 #include "externalccprocessor.h"
 #include "externalCCTransaction.h"
 
-#define DEBUG true
+#define DEBUG false
 
 ExternalCCProcessor::ExternalCCProcessor() : CreditCardProcessor()
 {
