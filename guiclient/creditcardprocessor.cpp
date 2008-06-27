@@ -62,6 +62,7 @@
 
 #include <currcluster.h>
 #include <metasql.h>
+#include <openreports.h>
 
 #include "guiclient.h"
 #include "creditcardprocessor.h"
@@ -184,6 +185,7 @@ static struct {
   {  40, TR("User chose not to process the charge.")			},
   {  50, TR("User chose not to process the credit.")			},
   {  60, TR("User chose not to process the void.")			},
+  {  94, TR("There was a problem printing the credit card receipt.")    },
   {  96, TR("This transaction failed the CVV check but will be "
 	    "processed anyway.")					},
   {  97, TR("This transaction failed the Address Verification check "
@@ -389,6 +391,13 @@ int CreditCardProcessor::authorize(const int pccardid, const int pcvv, const dou
 	returnVal = 1;
       }
     }
+
+    if (_metrics->boolean("CCPrintReceipt"))
+    {
+      int receiptReturn = printReceipt(pccpayid);
+      if (receiptReturn != 0 && returnVal == 0)
+        returnVal = receiptReturn;
+    }
   }
 
   return returnVal;
@@ -496,6 +505,13 @@ int CreditCardProcessor::charge(const int pccardid, const int pcvv, const double
       // TODO: log an event?
       returnVal = 1;
     }
+  }
+
+  if (_metrics->boolean("CCPrintReceipt"))
+  {
+    int receiptReturn = printReceipt(pccpayid);
+    if (receiptReturn != 0 && returnVal == 0)
+      returnVal = receiptReturn;
   }
 
   return returnVal;
@@ -654,6 +670,13 @@ int CreditCardProcessor::chargePreauthorized(const int pcvv, const double pamoun
       _errorMsg = errorMsg(4).arg(ccq.lastError().databaseText());
       // TODO: log an event?
       returnVal = 1;
+    }
+
+    if (_metrics->boolean("CCPrintReceipt"))
+    {
+      int receiptReturn = printReceipt(pccpayid);
+      if (receiptReturn != 0 && returnVal == 0)
+        returnVal = receiptReturn;
     }
   }
 
@@ -929,6 +952,13 @@ int CreditCardProcessor::credit(const int pccardid, const int pcvv, const double
 	returnVal = 1;
       }
     }
+
+    if (_metrics->boolean("CCPrintReceipt"))
+    {
+      int receiptReturn = printReceipt(pccpayid);
+      if (receiptReturn != 0 && returnVal == 0)
+        returnVal = receiptReturn;
+    }
   }
 
   return returnVal;
@@ -1001,6 +1031,13 @@ int CreditCardProcessor::voidPrevious(int &pccpayid)
   {
     _errorMsg = errorMsg(4).arg(ccq.lastError().databaseText());
     returnVal = 1;
+  }
+
+  if (_metrics->boolean("CCPrintReceipt"))
+  {
+    int receiptReturn = printReceipt(pccpayid);
+    if (receiptReturn != 0 && returnVal == 0)
+      returnVal = receiptReturn;
   }
 
   return returnVal;
@@ -1511,6 +1548,43 @@ int CreditCardProcessor::fraudChecks()
 
   if (DEBUG)
     qDebug("CCP:fraudChecks() returning %d with _errorMsg %s",
+	   returnValue, _errorMsg.toAscii().data());
+
+  return returnValue;
+}
+
+int CreditCardProcessor::printReceipt(const int pccpayid)
+{
+  if (DEBUG)
+    qDebug("CCP:printReceipt()");
+
+  int returnValue = 0;
+
+  ParameterList params;
+  params.append("ccpay_id",  pccpayid);
+  params.append("preauth",   tr("Preauthorization"));
+  params.append("charge",    tr("Charge"));
+  params.append("refund",    tr("Refund"));
+  params.append("authorized",tr("Authorized"));
+  params.append("approved",  tr("Approved"));
+  params.append("declined",  tr("Declined"));
+  params.append("voided",    tr("Voided"));
+  params.append("noapproval",tr("No Approval Code"));
+  params.append("key",       omfgThis->_key);
+
+  orReport report("CCReceipt", params);
+
+  if (report.isValid())
+    report.print();
+  else
+  {
+    report.reportError(0);
+    _errorMsg = errorMsg(94);
+    returnValue = 94;
+  }
+
+  if (DEBUG)
+    qDebug("CCP:printReceipt() returning %d with _errorMsg %s",
 	   returnValue, _errorMsg.toAscii().data());
 
   return returnValue;

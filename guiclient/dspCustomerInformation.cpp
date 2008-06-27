@@ -59,28 +59,29 @@
 
 #include "xdialog.h"
 #include "xmainwindow.h"
+
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
 #include <QVariant>
-#include <QWorkspace>
 
 #include <openreports.h>
 
-#include "salesOrder.h"
-#include "invoice.h"
-#include "creditMemo.h"
 #include "arOpenItem.h"
+#include "arWorkBench.h"
+#include "cashReceipt.h"
+#include "creditMemo.h"
+#include "creditcardprocessor.h"
+#include "crmaccount.h"
 #include "customer.h"
 #include "dspInvoiceInformation.h"
-#include "crmaccount.h"
-#include "arWorkBench.h"
-#include "dspShipmentsBySalesOrder.h"
 #include "dspSalesOrderStatus.h"
-#include "cashReceipt.h"
-#include "printSoForm.h"
-#include "printInvoice.h"
+#include "dspShipmentsBySalesOrder.h"
+#include "invoice.h"
 #include "printCreditMemo.h"
+#include "printInvoice.h"
+#include "printSoForm.h"
+#include "salesOrder.h"
 
 dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
     : QWidget(parent, fl)
@@ -121,6 +122,7 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   connect(_printQuote, SIGNAL(clicked()), this ,SLOT(sPrintQuote()));
   connect(_printInvoice, SIGNAL(clicked()), this ,SLOT(sPrintInvoice()));
   connect(_printCreditMemo, SIGNAL(clicked()), this ,SLOT(sPrintCreditMemo()));
+  connect(_printReceipt,    SIGNAL(clicked()), this, SLOT(sPrintCCReceipt()));
 
 #ifndef Q_WS_MAC
   _custList->setMaximumWidth(25);
@@ -1471,6 +1473,11 @@ void dspCustomerInformation::sInvShipment()
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
+}
+
+void dspCustomerInformation::sPrintCCReceipt()
+{
+  CreditCardProcessor::printReceipt(_payments->id());
 }
 
 void dspCustomerInformation::sPrintSalesOrder()

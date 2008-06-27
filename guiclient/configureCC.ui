@@ -284,6 +284,48 @@
                </layout>
               </widget>
              </item>
+             <item>
+              <spacer>
+               <property name="orientation" >
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" >
+                <size>
+                 <width>10</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QGroupBox" name="_ccGeneralOptionsGroup" >
+               <property name="title" >
+                <string>General Options</string>
+               </property>
+               <layout class="QVBoxLayout" >
+                <item>
+                 <widget class="QCheckBox" name="_printReceipt" >
+                  <property name="text" >
+                   <string>Print Receipts</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer>
+                  <property name="orientation" >
+                   <enum>Qt::Vertical</enum>
+                  </property>
+                  <property name="sizeHint" >
+                   <size>
+                    <width>20</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </widget>
+             </item>
             </layout>
            </item>
            <item>
@@ -1521,6 +1563,51 @@ p, li { white-space: pre-wrap; }
   <tabstop>_ccMacEncKey</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
+  <tabstop>_confirmPreauth</tabstop>
+  <tabstop>_confirmCharge</tabstop>
+  <tabstop>_confirmChargePreauth</tabstop>
+  <tabstop>_confirmCredit</tabstop>
+  <tabstop>_enablePreauth</tabstop>
+  <tabstop>_enableCharge</tabstop>
+  <tabstop>_enableChargePreauth</tabstop>
+  <tabstop>_enableCredit</tabstop>
+  <tabstop>_printReceipt</tabstop>
+  <tabstop>_cvvNone</tabstop>
+  <tabstop>_cvvWarn</tabstop>
+  <tabstop>_cvvReject</tabstop>
+  <tabstop>_avsNone</tabstop>
+  <tabstop>_avsWarn</tabstop>
+  <tabstop>_avsReject</tabstop>
+  <tabstop>_cvvNotMatch</tabstop>
+  <tabstop>_cvvNotProcessed</tabstop>
+  <tabstop>_cvvNotOnCard</tabstop>
+  <tabstop>_cvvInvalidIssuer</tabstop>
+  <tabstop>_avsAddrNotMatch</tabstop>
+  <tabstop>_avsAddrNotAvail</tabstop>
+  <tabstop>_avsZIPNotMatch</tabstop>
+  <tabstop>_avsZIPNotAvail</tabstop>
+  <tabstop>_ccUseProxyServer</tabstop>
+  <tabstop>_anVersion</tabstop>
+  <tabstop>_anDelim</tabstop>
+  <tabstop>_anEncap</tabstop>
+  <tabstop>_anDuplicateWindow</tabstop>
+  <tabstop>_anMD5Hash</tabstop>
+  <tabstop>_anMD5HashSetOnGateway</tabstop>
+  <tabstop>_anMD5HashWarn</tabstop>
+  <tabstop>_anMD5HashFail</tabstop>
+  <tabstop>_anCurrTransaction</tabstop>
+  <tabstop>_anCurrFixed</tabstop>
+  <tabstop>_anCurrFixedValue</tabstop>
+  <tabstop>_anUsingWellsFargoSecureSource</tabstop>
+  <tabstop>_ccYPLinkShield</tabstop>
+  <tabstop>_ccYPLinkShieldMax</tabstop>
+  <tabstop>_ccYPWinPathPEM</tabstop>
+  <tabstop>_ccYPLinPathPEM</tabstop>
+  <tabstop>_ccYPMacPathPEM</tabstop>
+  <tabstop>_testsAllFail</tabstop>
+  <tabstop>_testsSomeFail</tabstop>
+  <tabstop>_testsAllPass</tabstop>
+  <tabstop>_cvvRequired</tabstop>
  </tabstops>
  <resources/>
  <connections>

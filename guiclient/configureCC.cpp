@@ -148,6 +148,8 @@ configureCC::configureCC(QWidget* parent, const char* name, bool modal, Qt::WFla
   _enableChargePreauth->setChecked(_metrics->boolean("CCEnableChargePreauth"));
   _enableCredit->setChecked(_metrics->boolean("CCEnableCredit"));
 
+  _printReceipt->setChecked(_metrics->boolean("CCPrintReceipt"));
+
   _cvvRequired->setChecked(_metrics->boolean("CCRequireCVV"));
   QString str = _metrics->value("CCCVVCheck");
   if (str == "F")
@@ -267,6 +269,8 @@ void configureCC::sSave()
   _metrics->set("CCEnableCharge",        _enableCharge->isChecked());
   _metrics->set("CCEnableChargePreauth", _enableChargePreauth->isChecked());
   _metrics->set("CCEnableCredit",        _enableCredit->isChecked());
+
+  _metrics->set("CCPrintReceipt",        _printReceipt->isChecked());
 
   _metrics->set("CCRequireCVV", _cvvRequired->isChecked());
   if(_cvvNone->isChecked())

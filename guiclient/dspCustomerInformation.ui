@@ -1915,7 +1915,7 @@
       <attribute name="title" >
        <string>C/C Payments</string>
       </attribute>
-      <layout class="QVBoxLayout" >
+      <layout class="QHBoxLayout" >
        <property name="spacing" >
         <number>5</number>
        </property>
@@ -1933,6 +1933,39 @@
        </property>
        <item>
         <widget class="XTreeWidget" name="_payments" />
+       </item>
+       <item>
+        <layout class="QVBoxLayout" >
+         <property name="leftMargin" >
+          <number>5</number>
+         </property>
+         <property name="rightMargin" >
+          <number>5</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="_printReceipt" >
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
+           <property name="text" >
+            <string>Print Receipt</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>
@@ -1999,12 +2032,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>246</x>
-     <y>592</y>
+     <x>335</x>
+     <y>764</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>771</x>
-     <y>384</y>
+     <x>434</x>
+     <y>764</y>
     </hint>
    </hints>
   </connection>
@@ -2015,12 +2048,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>268</x>
-     <y>621</y>
+     <x>335</x>
+     <y>764</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>762</x>
-     <y>419</y>
+     <x>434</x>
+     <y>764</y>
     </hint>
    </hints>
   </connection>
@@ -2031,12 +2064,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>136</x>
-     <y>447</y>
+     <x>335</x>
+     <y>764</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>762</x>
-     <y>419</y>
+     <x>434</x>
+     <y>764</y>
     </hint>
    </hints>
   </connection>
@@ -2047,8 +2080,8 @@
    <slot>animateClick()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>386</y>
+     <x>335</x>
+     <y>764</y>
     </hint>
     <hint type="destinationlabel" >
      <x>735</x>
@@ -2063,8 +2096,8 @@
    <slot>animateClick()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>83</x>
-     <y>386</y>
+     <x>335</x>
+     <y>764</y>
     </hint>
     <hint type="destinationlabel" >
      <x>735</x>
@@ -2079,8 +2112,8 @@
    <slot>animateClick()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>83</x>
-     <y>386</y>
+     <x>335</x>
+     <y>764</y>
     </hint>
     <hint type="destinationlabel" >
      <x>735</x>
@@ -2127,12 +2160,28 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>86</x>
-     <y>22</y>
+     <x>184</x>
+     <y>38</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>720</x>
-     <y>381</y>
+     <x>434</x>
+     <y>764</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_payments</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_printReceipt</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>520</x>
+     <y>480</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>702</x>
+     <y>453</y>
     </hint>
    </hints>
   </connection>

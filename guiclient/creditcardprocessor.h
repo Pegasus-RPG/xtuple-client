@@ -93,6 +93,7 @@ class CreditCardProcessor : public QObject
 
     static  QString errorMsg();		// most recent error
     static  QString errorMsg(const int);
+    static  int     printReceipt(const int);
 
   protected:
     CreditCardProcessor();

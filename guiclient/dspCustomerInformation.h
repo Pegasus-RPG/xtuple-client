@@ -117,6 +117,7 @@ public slots:
     virtual void sInvShipment();
     virtual void sInvShipmentStatus();
     virtual void sCashReceipt();
+    virtual void sPrintCCReceipt();
     virtual void sPrintSalesOrder();
     virtual void sPrintQuote();
     virtual void sPrintCreditMemo();
