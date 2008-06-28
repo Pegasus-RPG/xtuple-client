@@ -218,7 +218,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                incidentCategory.ui incidentCategories.ui incidentPriority.ui incidentPriorities.ui    \
                incidentSeverity.ui incidentSeverities.ui incidentResolution.ui incidentResolutions.ui \
                issueWoMaterialItem.ui issueToShipping.ui issueLineToShipping.ui                       \
-               item.ui itemAlias.ui itemAttribute.ui itemCost.ui itemAvailabilityWorkbench.ui         \
+               item.ui itemAlias.ui itemCost.ui itemAvailabilityWorkbench.ui                          \
                itemFile.ui itemGroups.ui itemGroup.ui itemImage.ui itemImages.ui                      \
                itemListPrice.ui items.ui                                                              \
                itemPricingSchedule.ui itemPricingScheduleItem.ui itemPricingSchedules.ui              \
@@ -534,7 +534,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h rwInterface
                incidentCategory.h incidentCategories.h incidentPriority.h incidentPriorities.h        \
                incidentSeverity.h incidentSeverities.h incidentResolution.h incidentResolutions.h     \
                issueWoMaterialItem.h issueToShipping.h issueLineToShipping.h                          \
-               item.h itemAlias.h itemAttribute.h itemCost.h itemAvailabilityWorkbench.h              \
+               item.h itemAlias.h itemCost.h itemAvailabilityWorkbench.h                              \
                itemCharacteristicDelegate.h                                                           \
                itemFile.h itemGroups.h itemGroup.h itemImage.h itemImages.h                           \
                itemListPrice.h items.h                                                                \
@@ -858,7 +858,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp rwInte
                incidentSeverity.cpp incidentSeverities.cpp                                            \
                incidentResolution.cpp incidentResolutions.cpp                                         \
                issueWoMaterialItem.cpp issueToShipping.cpp issueLineToShipping.cpp                    \
-               item.cpp itemAlias.cpp itemAttribute.cpp itemCost.cpp itemAvailabilityWorkbench.cpp    \
+               item.cpp itemAlias.cpp itemCost.cpp itemAvailabilityWorkbench.cpp                      \
                itemCharacteristicDelegate.cpp                                                         \
                itemFile.cpp itemGroups.cpp itemGroup.cpp itemImage.cpp itemImages.cpp                 \
                itemListPrice.cpp items.cpp                                                            \
