@@ -486,24 +486,25 @@ int CreditCardProcessor::charge(const int pccardid, const int pcvv, const double
       // TODO: log an event?
       returnVal = 1;
     }
-  }
-  else if (preftype == "cohead") // record unsuccessful attempt against cohead
-  {
-    XSqlQuery cashq;
 
-    cashq.prepare("INSERT INTO payco VALUES"
-	      " (:payco_ccpay_id, :payco_cohead_id,"
-	      "  :payco_amount, :payco_curr_id);");
-    cashq.bindValue(":payco_ccpay_id",  pccpayid);
-    cashq.bindValue(":payco_cohead_id", prefid);
-    cashq.bindValue(":payco_amount",    pamount);
-    cashq.bindValue(":payco_curr_id",   pcurrid);
-    cashq.exec();
-    if (cashq.lastError().type() != QSqlError::NoError)
+    if (preftype == "cohead")
     {
-      _errorMsg = errorMsg(4).arg(cashq.lastError().databaseText());
-      // TODO: log an event?
-      returnVal = 1;
+      XSqlQuery cashq;
+
+      cashq.prepare("INSERT INTO payco VALUES"
+                " (:payco_ccpay_id, :payco_cohead_id,"
+                "  :payco_amount, :payco_curr_id);");
+      cashq.bindValue(":payco_ccpay_id",  pccpayid);
+      cashq.bindValue(":payco_cohead_id", prefid);
+      cashq.bindValue(":payco_amount",    pamount);
+      cashq.bindValue(":payco_curr_id",   pcurrid);
+      cashq.exec();
+      if (cashq.lastError().type() != QSqlError::NoError)
+      {
+        _errorMsg = errorMsg(4).arg(cashq.lastError().databaseText());
+        // TODO: log an event?
+        returnVal = 1;
+      }
     }
   }
 
