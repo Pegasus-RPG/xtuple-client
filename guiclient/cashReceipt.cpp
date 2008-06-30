@@ -157,7 +157,7 @@ cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
   _cc->addColumn(tr("Sequence"),_itemColumn, Qt::AlignLeft, true, "ccard_seq");
   _cc->addColumn(tr("Type"),    _itemColumn, Qt::AlignLeft, true, "type");
   _cc->addColumn(tr("Number"),  _itemColumn, Qt::AlignRight,true, "f_number");
-  _cc->addColumn(tr("Active"),  _itemColumn, Qt::AlignLeft, true, "active");
+  _cc->addColumn(tr("Active"),  _itemColumn, Qt::AlignLeft, true, "ccard_active");
   _cc->addColumn(tr("Name"),    _itemColumn, Qt::AlignLeft, true, "ccard_name");
   _cc->addColumn(tr("Expiration Date"),  -1, Qt::AlignLeft, true, "expiration");
 
@@ -869,7 +869,7 @@ void cashReceipt::setCreditCard()
   params.append("discover",   tr("Discover"));
   params.append("other",      tr("Other"));
   params.append("key",        omfgThis->_key);
-  params.append("activeonly");
+  params.append("activeonly", true);
   q = mql.toQuery(params);
   _cc->populate(q);
   if (q.lastError().type() != QSqlError::None)

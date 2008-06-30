@@ -62,17 +62,19 @@
 #include <QVariant>
 #include <QCloseEvent>
 
-#include <openreports.h>
 #include <comment.h>
+#include <metasql.h>
+#include <openreports.h>
 
-#include "characteristicAssignment.h"
-#include "shipTo.h"
-#include "creditCard.h"
-#include "xcombobox.h"
 #include "addresscluster.h"
+#include "characteristicAssignment.h"
+#include "creditCard.h"
+#include "custCharacteristicDelegate.h"
+#include "mqlutil.h"
+#include "shipTo.h"
 #include "storedProcErrorLookup.h"
 #include "taxRegistration.h"
-#include "custCharacteristicDelegate.h"
+#include "xcombobox.h"
 
 /*
  *  Constructs a customer as a child of 'parent', with the
@@ -132,10 +134,10 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
     _shipto->addColumn(tr("Address"),          150,          Qt::AlignLeft );
     _shipto->addColumn(tr("City, State, Zip"), -1,           Qt::AlignLeft );
 
-    _cc->addColumn(tr("Sequence"),          _itemColumn,  Qt::AlignLeft );
-    _cc->addColumn(tr("Type"),           _itemColumn,  Qt::AlignLeft );
-    _cc->addColumn(tr("Number"),             150,          Qt::AlignRight );
-    _cc->addColumn(tr("Active"),          -1,          Qt::AlignLeft );
+    _cc->addColumn(tr("Sequence"),_itemColumn, Qt::AlignLeft, true, "ccard_seq");
+    _cc->addColumn(tr("Type"),    _itemColumn, Qt::AlignLeft, true, "type");
+    _cc->addColumn(tr("Number"),          150, Qt::AlignRight,true, "f_number");
+    _cc->addColumn(tr("Active"),           -1, Qt::AlignLeft, true, "ccard_active");
     
     _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft );
     _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft );
@@ -1308,7 +1310,6 @@ void customer::sMoveDown()
 
 void customer::sFillCcardList()
 {
-//  QString key;
   key = omfgThis->_key;
   
   q.prepare( "SELECT expireCreditCard(:cust_id, setbytea(:key));");
@@ -1316,30 +1317,22 @@ void customer::sFillCcardList()
   q.bindValue(":key", key);
   q.exec(); 
   
-  q.prepare( "SELECT ccard_id,"
-             "       ccard_seq,"
-             "       CASE WHEN (ccard_type='M') THEN :masterCard"
-             "            WHEN (ccard_type='V') THEN :visa"
-             "            WHEN (ccard_type='A') THEN :americanExpress"
-             "            WHEN (ccard_type='D') THEN :discover"
-             "            ELSE :other"
-             "       END AS creditcard," 
-//             "       formatCCnumber(decrypt(setbytea(ccard_number), setbytea(:key), 'bf')) AS CreditCard,"
-             "       formatccnumber(decrypt(setbytea(ccard_number), setbytea(:key), 'bf')) AS ccard_number,"
-             "       formatBoolYN(ccard_active) "
-             "FROM ccard "
-             "WHERE (ccard_cust_id=:cust_id) "
-             "ORDER BY ccard_seq;" );
-  q.bindValue(":cust_id", _custid);
-  q.bindValue(":masterCard", tr("MasterCard"));
-  q.bindValue(":visa", tr("VISA"));
-  q.bindValue(":americanExpress", tr("American Express"));
-  q.bindValue(":discover", tr("Discover"));
-  q.bindValue(":other", tr("Other"));
-  q.bindValue(":key", key);
-  q.exec();
-  _cc->clear();
+  MetaSQLQuery mql = mqlLoad(":/ar/fillcreditcardlist.mql");
+  ParameterList params;
+  params.append("cust_id",         _custid);
+  params.append("masterCard",      tr("MasterCard"));
+  params.append("visa",            tr("VISA"));
+  params.append("americanExpress", tr("American Express"));
+  params.append("discover",        tr("Discover"));
+  params.append("other",           tr("Other"));
+  params.append("key",             key);
+  q = mql.toQuery(params);
   _cc->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void customer::sLoadProspect(int prospectId)

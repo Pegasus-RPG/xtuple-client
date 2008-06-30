@@ -7,7 +7,7 @@ SELECT ccard_id, ccard_seq,
        END AS type,
        formatccnumber(decrypt(setbytea(ccard_number),
                               setbytea(<? value("key") ?>), 'bf')) AS f_number,
-       formatBoolYN(ccard_active) AS active, 
+       ccard_active,
        formatbytea(decrypt(setbytea(ccard_name),
                            setbytea(<? value("key") ?>), 'bf')) AS ccard_name,
        formatbytea(decrypt(setbytea(ccard_month_expired),
@@ -18,8 +18,11 @@ SELECT ccard_id, ccard_seq,
                                        'bf')) AS expiration 
 FROM ccard 
 WHERE ((ccard_cust_id=<? value("cust_id") ?>) 
- AND   (ccard_type=<? value("ccard_type") ?>)) 
+<? if exists("ccard_type") ?>
+ AND   (ccard_type=<? value("ccard_type") ?>)
+<? endif ?>
 <? if exists("activeonly") ?>
  AND   (ccard_active)
 <? endif ?>
+)
 ORDER BY ccard_seq;
