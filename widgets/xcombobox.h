@@ -119,7 +119,7 @@ class OPENMFGWIDGETS_EXPORT XComboBox : public QComboBox
       ReasonCodes,	RegistrationTypes,      Reports,                
       SalesCategories,	SalesReps,		SalesRepsActive,
       ShipVias,		ShippingCharges,	ShippingForms,
-      SoProjects,	Subaccounts,
+      SiteTypes,    SoProjects,	Subaccounts,
       TaxAuths,		TaxCodes,
       TaxTypes,		Terms, 			UOMs,
       Users,		VendorCommentTypes,	VendorGroups,

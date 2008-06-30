@@ -593,6 +593,12 @@ void XComboBox::setType(XComboBoxTypes pType)
                  " ORDER BY regtype_code;");
       break;
 
+    case SiteTypes:
+      query.exec("SELECT sitetype_id, sitetype_name, sitetype_name "
+                 "  FROM sitetype"
+                 " ORDER BY sitetype_name;");
+      break;
+
   }
 
   populate(query);
