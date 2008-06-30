@@ -82,6 +82,7 @@ warehouses::warehouses(QWidget* parent, const char* name, Qt::WFlags fl)
   
   _warehouse->addColumn(tr("Site"),        _whsColumn, Qt::AlignCenter );
   _warehouse->addColumn(tr("Active"),      _ynColumn,  Qt::AlignCenter );
+  _warehouse->addColumn(tr("Type"),        _whsColumn, Qt::AlignCenter );
   _warehouse->addColumn(tr("Description"), 130,        Qt::AlignLeft   );
   _warehouse->addColumn(tr("Address"),     -1,         Qt::AlignLeft   );
 
@@ -152,9 +153,9 @@ void warehouses::setParams(ParameterList & params)
 void warehouses::sFillList()
 {
   QString whss = "SELECT warehous_id, warehous_code,"
-                 "       formatBoolYN(warehous_active),"
+                 "       formatBoolYN(warehous_active), sitetype_name,"
                  "       warehous_descrip, warehous_addr1 "
-                 "FROM warehous "
+                 "FROM warehous LEFT OUTER JOIN sitetype ON (sitetype_id=warehous_sitetype_id) "
 		 "<? if not exists(\"showInactive\") ?>"
 		 "WHERE (warehous_active) "
 		 "<? endif ?>"

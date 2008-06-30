@@ -13,41 +13,27 @@
    <string>Site</string>
   </property>
   <layout class="QVBoxLayout" >
-   <property name="margin" >
-    <number>9</number>
-   </property>
-   <property name="spacing" >
-    <number>6</number>
-   </property>
    <item>
     <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
      <property name="spacing" >
-      <number>6</number>
+      <number>2</number>
      </property>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" >
      <item>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
-        <number>6</number>
+        <number>5</number>
        </property>
        <item>
         <layout class="QHBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
-          <number>5</number>
+          <number>2</number>
          </property>
          <item>
           <layout class="QVBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
            <property name="spacing" >
             <number>2</number>
            </property>
@@ -81,26 +67,15 @@
          </item>
          <item>
           <layout class="QVBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
            <property name="spacing" >
             <number>2</number>
            </property>
            <item>
             <layout class="QHBoxLayout" >
-             <property name="margin" >
-              <number>0</number>
-             </property>
-             <property name="spacing" >
-              <number>7</number>
-             </property>
              <item>
               <widget class="XLineEdit" name="_code" >
                <property name="sizePolicy" >
-                <sizepolicy>
-                 <hsizetype>5</hsizetype>
-                 <vsizetype>0</vsizetype>
+                <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
@@ -109,42 +84,56 @@
              </item>
              <item>
               <layout class="QHBoxLayout" >
-               <property name="margin" >
-                <number>0</number>
-               </property>
-               <property name="spacing" >
-                <number>0</number>
-               </property>
                <item>
-                <widget class="QCheckBox" name="_active" >
+                <widget class="QLabel" name="_sitetypeLit" >
                  <property name="text" >
-                  <string>&amp;Active</string>
+                  <string>Type:</string>
                  </property>
-                 <property name="shortcut" >
-                  <string>Alt+A</string>
-                 </property>
-                 <property name="checked" >
-                  <bool>true</bool>
+                 <property name="buddy" >
+                  <cstring>_sitetype</cstring>
                  </property>
                 </widget>
                </item>
                <item>
-                <spacer>
-                 <property name="orientation" >
-                  <enum>Qt::Horizontal</enum>
+                <widget class="XComboBox" name="_sitetype" >
+                 <property name="allowNull" stdset="0" >
+                  <bool>false</bool>
                  </property>
-                 <property name="sizeType" >
-                  <enum>QSizePolicy::Expanding</enum>
+                 <property name="type" >
+                  <enum>XComboBox::SiteTypes</enum>
                  </property>
-                 <property name="sizeHint" >
-                  <size>
-                   <width>20</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
+                </widget>
                </item>
               </layout>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="_active" >
+               <property name="text" >
+                <string>&amp;Active</string>
+               </property>
+               <property name="shortcut" >
+                <string>Alt+A</string>
+               </property>
+               <property name="checked" >
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer>
+               <property name="orientation" >
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeType" >
+                <enum>QSizePolicy::Expanding</enum>
+               </property>
+               <property name="sizeHint" >
+                <size>
+                 <width>41</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
              </item>
             </layout>
            </item>
@@ -156,14 +145,14 @@
         </layout>
        </item>
        <item>
-        <widget class="AddressCluster" name="_address" />
+        <widget class="AddressCluster" native="1" name="_address" />
        </item>
        <item>
-        <widget class="ContactCluster" name="_contact" >
-         <property name="label" >
+        <widget class="ContactCluster" native="1" name="_contact" >
+         <property name="label" stdset="0" >
           <string/>
          </property>
-         <property name="minimalLayout" >
+         <property name="minimalLayout" stdset="0" >
           <bool>true</bool>
          </property>
         </widget>
@@ -172,17 +161,11 @@
      </item>
      <item>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
         <number>0</number>
        </property>
        <item>
         <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>0</number>
          </property>
@@ -230,9 +213,6 @@
    </item>
    <item>
     <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
      <property name="spacing" >
       <number>5</number>
      </property>
@@ -250,7 +230,7 @@
       </widget>
      </item>
      <item>
-      <widget class="GLCluster" name="_account" />
+      <widget class="GLCluster" native="1" name="_account" />
      </item>
     </layout>
    </item>
@@ -264,17 +244,8 @@
        <string>General</string>
       </attribute>
       <layout class="QHBoxLayout" >
-       <property name="margin" >
-        <number>9</number>
-       </property>
-       <property name="spacing" >
-        <number>6</number>
-       </property>
        <item>
         <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>0</number>
          </property>
@@ -317,25 +288,13 @@
          </property>
          <widget class="QWidget" name="_standardWhsStack" >
           <layout class="QVBoxLayout" >
-           <property name="margin" >
-            <number>9</number>
-           </property>
-           <property name="spacing" >
-            <number>6</number>
-           </property>
            <item>
             <layout class="QHBoxLayout" >
-             <property name="margin" >
-              <number>0</number>
-             </property>
              <property name="spacing" >
               <number>5</number>
              </property>
              <item>
               <layout class="QVBoxLayout" >
-               <property name="margin" >
-                <number>0</number>
-               </property>
                <property name="spacing" >
                 <number>0</number>
                </property>
@@ -369,34 +328,23 @@
              </item>
              <item>
               <layout class="QVBoxLayout" >
-               <property name="margin" >
-                <number>0</number>
-               </property>
                <property name="spacing" >
                 <number>0</number>
                </property>
                <item>
                 <layout class="QHBoxLayout" >
-                 <property name="margin" >
-                  <number>0</number>
-                 </property>
                  <property name="spacing" >
                   <number>7</number>
                  </property>
                  <item>
                   <layout class="QHBoxLayout" >
-                   <property name="margin" >
-                    <number>0</number>
-                   </property>
                    <property name="spacing" >
                     <number>0</number>
                    </property>
                    <item>
                     <widget class="XLineEdit" name="_bolPrefix" >
                      <property name="sizePolicy" >
-                      <sizepolicy>
-                       <hsizetype>0</hsizetype>
-                       <vsizetype>0</vsizetype>
+                      <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
                        <horstretch>0</horstretch>
                        <verstretch>0</verstretch>
                       </sizepolicy>
@@ -415,9 +363,7 @@
                       <bool>true</bool>
                      </property>
                      <property name="sizePolicy" >
-                      <sizepolicy>
-                       <hsizetype>0</hsizetype>
-                       <vsizetype>0</vsizetype>
+                      <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
                        <horstretch>0</horstretch>
                        <verstretch>0</verstretch>
                       </sizepolicy>
@@ -434,9 +380,6 @@
                  </item>
                  <item>
                   <layout class="QHBoxLayout" >
-                   <property name="margin" >
-                    <number>0</number>
-                   </property>
                    <property name="spacing" >
                     <number>0</number>
                    </property>
@@ -472,26 +415,18 @@
                </item>
                <item>
                 <layout class="QHBoxLayout" >
-                 <property name="margin" >
-                  <number>0</number>
-                 </property>
                  <property name="spacing" >
                   <number>7</number>
                  </property>
                  <item>
                   <layout class="QHBoxLayout" >
-                   <property name="margin" >
-                    <number>0</number>
-                   </property>
                    <property name="spacing" >
                     <number>0</number>
                    </property>
                    <item>
                     <widget class="XLineEdit" name="_countTagPrefix" >
                      <property name="sizePolicy" >
-                      <sizepolicy>
-                       <hsizetype>0</hsizetype>
-                       <vsizetype>0</vsizetype>
+                      <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
                        <horstretch>0</horstretch>
                        <verstretch>0</verstretch>
                       </sizepolicy>
@@ -510,9 +445,7 @@
                       <bool>true</bool>
                      </property>
                      <property name="sizePolicy" >
-                      <sizepolicy>
-                       <hsizetype>0</hsizetype>
-                       <vsizetype>0</vsizetype>
+                      <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
                        <horstretch>0</horstretch>
                        <verstretch>0</verstretch>
                       </sizepolicy>
@@ -529,9 +462,6 @@
                  </item>
                  <item>
                   <layout class="QHBoxLayout" >
-                   <property name="margin" >
-                    <number>0</number>
-                   </property>
                    <property name="spacing" >
                     <number>0</number>
                    </property>
@@ -568,17 +498,8 @@
            </item>
            <item>
             <layout class="QVBoxLayout" >
-             <property name="margin" >
-              <number>0</number>
-             </property>
-             <property name="spacing" >
-              <number>6</number>
-             </property>
              <item>
               <layout class="QHBoxLayout" >
-               <property name="margin" >
-                <number>0</number>
-               </property>
                <property name="spacing" >
                 <number>0</number>
                </property>
@@ -609,12 +530,6 @@
              </item>
              <item>
               <layout class="QHBoxLayout" >
-               <property name="margin" >
-                <number>0</number>
-               </property>
-               <property name="spacing" >
-                <number>6</number>
-               </property>
                <item>
                 <widget class="QLabel" name="_shipcommlit" >
                  <property name="text" >
@@ -629,12 +544,6 @@
              </item>
              <item>
               <layout class="QHBoxLayout" >
-               <property name="margin" >
-                <number>0</number>
-               </property>
-               <property name="spacing" >
-                <number>6</number>
-               </property>
                <item>
                 <widget class="QLabel" name="_taxauthLit" >
                  <property name="text" >
@@ -644,14 +553,11 @@
                </item>
                <item>
                 <widget class="XComboBox" name="_taxauth" >
-                 <property name="allowNull" >
+                 <property name="allowNull" stdset="0" >
                   <bool>true</bool>
                  </property>
-                 <property name="nullStr" >
+                 <property name="nullStr" stdset="0" >
                   <string>None</string>
-                 </property>
-                 <property name="type" >
-                  <enum>XComboBox::TaxAuths</enum>
                  </property>
                 </widget>
                </item>
@@ -675,12 +581,6 @@
              </item>
              <item>
               <layout class="QHBoxLayout" >
-               <property name="margin" >
-                <number>0</number>
-               </property>
-               <property name="spacing" >
-                <number>6</number>
-               </property>
                <item>
                 <widget class="QLabel" name="_defaultFOBLit" >
                  <property name="text" >
@@ -718,10 +618,22 @@
          </widget>
          <widget class="QWidget" name="_transitWhsStack" >
           <layout class="QGridLayout" >
-           <property name="margin" >
+           <property name="leftMargin" >
             <number>5</number>
            </property>
-           <property name="spacing" >
+           <property name="topMargin" >
+            <number>5</number>
+           </property>
+           <property name="rightMargin" >
+            <number>5</number>
+           </property>
+           <property name="bottomMargin" >
+            <number>5</number>
+           </property>
+           <property name="horizontalSpacing" >
+            <number>2</number>
+           </property>
+           <property name="verticalSpacing" >
             <number>2</number>
            </property>
            <item row="3" column="0" >
@@ -736,11 +648,8 @@
            </item>
            <item row="1" column="1" >
             <widget class="XComboBox" name="_shipform" >
-             <property name="allowNull" >
+             <property name="allowNull" stdset="0" >
               <bool>true</bool>
-             </property>
-             <property name="type" >
-              <enum>XComboBox::ShippingForms</enum>
              </property>
             </widget>
            </item>
@@ -769,11 +678,8 @@
            </item>
            <item row="0" column="1" >
             <widget class="XComboBox" name="_shipvia" >
-             <property name="allowNull" >
+             <property name="allowNull" stdset="0" >
               <bool>true</bool>
-             </property>
-             <property name="type" >
-              <enum>XComboBox::ShipVias</enum>
              </property>
             </widget>
            </item>
@@ -821,11 +727,8 @@
            </item>
            <item row="2" column="1" >
             <widget class="XComboBox" name="_costcat" >
-             <property name="allowNull" >
+             <property name="allowNull" stdset="0" >
               <bool>true</bool>
-             </property>
-             <property name="type" >
-              <enum>XComboBox::CostCategories</enum>
              </property>
             </widget>
            </item>
@@ -840,20 +743,8 @@
        <string>Site Locations</string>
       </attribute>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>9</number>
-       </property>
-       <property name="spacing" >
-        <number>6</number>
-       </property>
        <item>
         <layout class="QHBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
-         <property name="spacing" >
-          <number>6</number>
-         </property>
          <item>
           <widget class="QGroupBox" name="_arblGroup" >
            <property name="title" >
@@ -863,25 +754,28 @@
             <bool>true</bool>
            </property>
            <layout class="QHBoxLayout" >
-            <property name="margin" >
-             <number>5</number>
-            </property>
             <property name="spacing" >
              <number>2</number>
             </property>
+            <property name="leftMargin" >
+             <number>5</number>
+            </property>
+            <property name="topMargin" >
+             <number>5</number>
+            </property>
+            <property name="rightMargin" >
+             <number>5</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>5</number>
+            </property>
             <item>
              <layout class="QHBoxLayout" >
-              <property name="margin" >
-               <number>0</number>
-              </property>
               <property name="spacing" >
                <number>5</number>
               </property>
               <item>
                <layout class="QVBoxLayout" >
-                <property name="margin" >
-                 <number>0</number>
-                </property>
                 <property name="spacing" >
                  <number>0</number>
                 </property>
@@ -929,9 +823,6 @@
               </item>
               <item>
                <layout class="QVBoxLayout" >
-                <property name="margin" >
-                 <number>0</number>
-                </property>
                 <property name="spacing" >
                  <number>1</number>
                 </property>
@@ -981,18 +872,13 @@
             </item>
             <item>
              <layout class="QVBoxLayout" >
-              <property name="margin" >
-               <number>0</number>
-              </property>
               <property name="spacing" >
                <number>0</number>
               </property>
               <item>
                <widget class="QCheckBox" name="_aisleAlpha" >
                 <property name="sizePolicy" >
-                 <sizepolicy>
-                  <hsizetype>1</hsizetype>
-                  <vsizetype>1</vsizetype>
+                 <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
@@ -1005,9 +891,7 @@
               <item>
                <widget class="QCheckBox" name="_rackAlpha" >
                 <property name="sizePolicy" >
-                 <sizepolicy>
-                  <hsizetype>1</hsizetype>
-                  <vsizetype>1</vsizetype>
+                 <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
@@ -1020,9 +904,7 @@
               <item>
                <widget class="QCheckBox" name="_binAlpha" >
                 <property name="sizePolicy" >
-                 <sizepolicy>
-                  <hsizetype>1</hsizetype>
-                  <vsizetype>1</vsizetype>
+                 <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
@@ -1035,9 +917,7 @@
               <item>
                <widget class="QCheckBox" name="_locationAlpha" >
                 <property name="sizePolicy" >
-                 <sizepolicy>
-                  <hsizetype>1</hsizetype>
-                  <vsizetype>1</vsizetype>
+                 <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
@@ -1087,26 +967,27 @@
        <string>Site Zones</string>
       </attribute>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
+       <property name="leftMargin" >
         <number>5</number>
        </property>
-       <property name="spacing" >
-        <number>6</number>
+       <property name="topMargin" >
+        <number>5</number>
+       </property>
+       <property name="rightMargin" >
+        <number>5</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>5</number>
        </property>
        <item>
         <layout class="QHBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>8</number>
          </property>
          <item>
           <widget class="XTreeWidget" name="_whsezone" >
            <property name="sizePolicy" >
-            <sizepolicy>
-             <hsizetype>7</hsizetype>
-             <vsizetype>7</vsizetype>
+            <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -1117,13 +998,15 @@
              <height>100</height>
             </size>
            </property>
+           <column>
+            <property name="text" >
+             <string>1</string>
+            </property>
+           </column>
           </widget>
          </item>
          <item>
           <layout class="QVBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
            <property name="spacing" >
             <number>0</number>
            </property>
@@ -1190,18 +1073,20 @@
        <string>Comments</string>
       </attribute>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
+       <property name="leftMargin" >
         <number>5</number>
        </property>
-       <property name="spacing" >
-        <number>6</number>
+       <property name="topMargin" >
+        <number>5</number>
+       </property>
+       <property name="rightMargin" >
+        <number>5</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>5</number>
        </property>
        <item>
-        <widget class="Comments" name="_comments" >
-         <property name="type" >
-          <enum>Comments::Warehouse</enum>
-         </property>
-        </widget>
+        <widget class="Comments" native="1" name="_comments" />
        </item>
       </layout>
      </widget>
@@ -1250,12 +1135,10 @@
  </customwidgets>
  <tabstops>
   <tabstop>_code</tabstop>
+  <tabstop>_sitetype</tabstop>
   <tabstop>_active</tabstop>
   <tabstop>_description</tabstop>
-  <tabstop>_address</tabstop>
-  <tabstop>_contact</tabstop>
   <tabstop>_account</tabstop>
-  <tabstop>_tab</tabstop>
   <tabstop>_standard</tabstop>
   <tabstop>_transit</tabstop>
   <tabstop>_bolPrefix</tabstop>
@@ -1268,6 +1151,7 @@
   <tabstop>_shipcomm</tabstop>
   <tabstop>_taxauth</tabstop>
   <tabstop>_defaultFOB</tabstop>
+  <tabstop>_tab</tabstop>
   <tabstop>_shipvia</tabstop>
   <tabstop>_shipform</tabstop>
   <tabstop>_costcat</tabstop>
@@ -1285,11 +1169,9 @@
   <tabstop>_new</tabstop>
   <tabstop>_edit</tabstop>
   <tabstop>_delete</tabstop>
-  <tabstop>_comments</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
- <includes/>
  <resources/>
  <connections>
   <connection>

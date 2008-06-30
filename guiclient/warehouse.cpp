@@ -165,6 +165,7 @@ enum SetResponse warehouse::set(const ParameterList &pParams)
       _mode = cView;
 
       _code->setEnabled(FALSE);
+      _sitetype->setEnabled(FALSE);
       _active->setEnabled(FALSE);
       _description->setEnabled(FALSE);
       _contact->setEnabled(FALSE);
@@ -247,6 +248,16 @@ void warehouse::sSave()
                               tr("<p>You must enter a code for this Site "
 				 "before saving it.")  );
     _code->setFocus();
+    return;
+  }
+
+  //  Make sure that a Site Type has been entered
+  if (!_sitetype->isValid())
+  {
+    QMessageBox::information( this, tr("Cannot Save Site"),
+                 tr("<p>You must enter a Type for this "
+				 "Site before saving it.")  );
+    _sitetype->setFocus();
     return;
   }
 
@@ -384,7 +395,7 @@ void warehouse::sSave()
 	       "  warehous_default_accnt_id, warehous_shipping_commission, "
 	       "  warehous_addr_id, warehous_taxauth_id, warehous_transit,"
 	       "  warehous_shipform_id, warehous_shipvia_id,"
-	       "  warehous_shipcomments, warehous_costcat_id ) "
+	       "  warehous_shipcomments, warehous_costcat_id, warehous_sitetype_id ) "
                "VALUES "
                "( :warehous_id, :warehous_code, :warehous_descrip,"
                "  :warehous_cntct_id, :warehous_fob, :warehous_active,"
@@ -398,7 +409,7 @@ void warehouse::sSave()
 	       "  :warehous_default_accnt_id, :warehous_shipping_commission, "
 	       "  :warehous_addr_id, :warehous_taxauth_id, :warehous_transit,"
 	       "  :warehous_shipform_id, :warehous_shipvia_id,"
-	       "  :warehous_shipcomments, :warehous_costcat_id );" );
+	       "  :warehous_shipcomments, :warehous_costcat_id, :warehous_sitetype_id );" );
   else if (_mode == cEdit)
     q.prepare( "UPDATE whsinfo "
                "SET warehous_code=:warehous_code,"
@@ -430,7 +441,8 @@ void warehouse::sSave()
 	       "    warehous_shipform_id=:warehous_shipform_id,"
 	       "    warehous_shipvia_id=:warehous_shipvia_id,"
 	       "    warehous_shipcomments=:warehous_shipcomments,"
-	       "    warehous_costcat_id=:warehous_costcat_id "
+	       "    warehous_costcat_id=:warehous_costcat_id, "
+		   "    warehous_sitetype_id=:warehous_sitetype_id "
                "WHERE (warehous_id=:warehous_id);" );
   
   q.bindValue(":warehous_id", _warehousid);
@@ -443,6 +455,8 @@ void warehouse::sSave()
 
   q.bindValue(":warehous_active", QVariant(_active->isChecked(), 0));
   q.bindValue(":warehous_default_accnt_id", _account->id());
+  if(_sitetype->isValid())
+    q.bindValue(":warehous_sitetype_id", _sitetype->id());
 
   if (_standard->isChecked())
   {
@@ -504,6 +518,7 @@ void warehouse::populate()
   if (q.first())
   {
     _code->setText(q.value("warehous_code"));
+    _sitetype->setId(q.value("warehous_sitetype_id").toInt());
     _active->setChecked(q.value("warehous_active").toBool());
     _description->setText(q.value("warehous_descrip"));
     _contact->setId(q.value("warehous_cntct_id").toInt());
