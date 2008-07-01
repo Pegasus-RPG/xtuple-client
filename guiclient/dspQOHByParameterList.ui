@@ -14,30 +14,60 @@
   </property>
   <widget class="QWidget" name="widget" >
    <layout class="QVBoxLayout" >
-    <property name="margin" >
-     <number>9</number>
-    </property>
     <property name="spacing" >
      <number>6</number>
     </property>
+    <property name="leftMargin" >
+     <number>9</number>
+    </property>
+    <property name="topMargin" >
+     <number>9</number>
+    </property>
+    <property name="rightMargin" >
+     <number>9</number>
+    </property>
+    <property name="bottomMargin" >
+     <number>9</number>
+    </property>
     <item>
      <layout class="QHBoxLayout" >
-      <property name="margin" >
-       <number>0</number>
-      </property>
       <property name="spacing" >
        <number>7</number>
       </property>
+      <property name="leftMargin" >
+       <number>0</number>
+      </property>
+      <property name="topMargin" >
+       <number>0</number>
+      </property>
+      <property name="rightMargin" >
+       <number>0</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>0</number>
+      </property>
       <item>
        <layout class="QVBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
         <property name="spacing" >
          <number>5</number>
         </property>
+        <property name="leftMargin" >
+         <number>0</number>
+        </property>
+        <property name="topMargin" >
+         <number>0</number>
+        </property>
+        <property name="rightMargin" >
+         <number>0</number>
+        </property>
+        <property name="bottomMargin" >
+         <number>0</number>
+        </property>
         <item>
          <widget class="ParameterGroup" name="_parameter" >
+          <property name="focusPolicy" >
+           <enum>Qt::StrongFocus</enum>
+          </property>
           <property name="title" >
            <string/>
           </property>
@@ -45,30 +75,60 @@
         </item>
         <item>
          <layout class="QHBoxLayout" >
-          <property name="margin" >
+          <property name="spacing" >
            <number>0</number>
           </property>
-          <property name="spacing" >
+          <property name="leftMargin" >
+           <number>0</number>
+          </property>
+          <property name="topMargin" >
+           <number>0</number>
+          </property>
+          <property name="rightMargin" >
+           <number>0</number>
+          </property>
+          <property name="bottomMargin" >
            <number>0</number>
           </property>
           <item>
            <layout class="QHBoxLayout" >
-            <property name="margin" >
-             <number>0</number>
-            </property>
             <property name="spacing" >
              <number>7</number>
             </property>
+            <property name="leftMargin" >
+             <number>0</number>
+            </property>
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
+            </property>
             <item>
              <layout class="QVBoxLayout" >
-              <property name="margin" >
+              <property name="spacing" >
                <number>0</number>
               </property>
-              <property name="spacing" >
+              <property name="leftMargin" >
+               <number>0</number>
+              </property>
+              <property name="topMargin" >
+               <number>0</number>
+              </property>
+              <property name="rightMargin" >
+               <number>0</number>
+              </property>
+              <property name="bottomMargin" >
                <number>0</number>
               </property>
               <item>
                <widget class="WarehouseGroup" name="_warehouse" >
+                <property name="focusPolicy" >
+                 <enum>Qt::StrongFocus</enum>
+                </property>
                 <property name="title" >
                  <string/>
                 </property>
@@ -91,10 +151,19 @@
             </item>
             <item>
              <layout class="QVBoxLayout" >
-              <property name="margin" >
+              <property name="spacing" >
                <number>0</number>
               </property>
-              <property name="spacing" >
+              <property name="leftMargin" >
+               <number>0</number>
+              </property>
+              <property name="topMargin" >
+               <number>0</number>
+              </property>
+              <property name="rightMargin" >
+               <number>0</number>
+              </property>
+              <property name="bottomMargin" >
                <number>0</number>
               </property>
               <item>
@@ -103,11 +172,20 @@
                  <string>Order By:</string>
                 </property>
                 <layout class="QVBoxLayout" >
-                 <property name="margin" >
-                  <number>5</number>
-                 </property>
                  <property name="spacing" >
                   <number>0</number>
+                 </property>
+                 <property name="leftMargin" >
+                  <number>5</number>
+                 </property>
+                 <property name="topMargin" >
+                  <number>5</number>
+                 </property>
+                 <property name="rightMargin" >
+                  <number>5</number>
+                 </property>
+                 <property name="bottomMargin" >
+                  <number>5</number>
                  </property>
                  <item>
                   <widget class="QRadioButton" name="_byItemNumber" >
@@ -168,11 +246,20 @@
       </item>
       <item>
        <layout class="QVBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
         <property name="spacing" >
          <number>5</number>
+        </property>
+        <property name="leftMargin" >
+         <number>0</number>
+        </property>
+        <property name="topMargin" >
+         <number>0</number>
+        </property>
+        <property name="rightMargin" >
+         <number>0</number>
+        </property>
+        <property name="bottomMargin" >
+         <number>0</number>
         </property>
         <item>
          <widget class="QGroupBox" name="_showGroup" >
@@ -180,11 +267,20 @@
            <string/>
           </property>
           <layout class="QVBoxLayout" >
-           <property name="margin" >
-            <number>5</number>
-           </property>
            <property name="spacing" >
             <number>0</number>
+           </property>
+           <property name="leftMargin" >
+            <number>5</number>
+           </property>
+           <property name="topMargin" >
+            <number>5</number>
+           </property>
+           <property name="rightMargin" >
+            <number>5</number>
+           </property>
+           <property name="bottomMargin" >
+            <number>5</number>
            </property>
            <item>
             <widget class="QRadioButton" name="_showAll" >
@@ -215,18 +311,36 @@
         </item>
         <item>
          <layout class="QVBoxLayout" >
-          <property name="margin" >
+          <property name="spacing" >
            <number>0</number>
           </property>
-          <property name="spacing" >
+          <property name="leftMargin" >
+           <number>0</number>
+          </property>
+          <property name="topMargin" >
+           <number>0</number>
+          </property>
+          <property name="rightMargin" >
+           <number>0</number>
+          </property>
+          <property name="bottomMargin" >
            <number>0</number>
           </property>
           <item>
            <layout class="QHBoxLayout" >
-            <property name="margin" >
+            <property name="spacing" >
              <number>0</number>
             </property>
-            <property name="spacing" >
+            <property name="leftMargin" >
+             <number>0</number>
+            </property>
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
              <number>0</number>
             </property>
             <item>
@@ -256,10 +370,19 @@
           </item>
           <item>
            <layout class="QHBoxLayout" >
-            <property name="margin" >
+            <property name="spacing" >
              <number>0</number>
             </property>
-            <property name="spacing" >
+            <property name="leftMargin" >
+             <number>0</number>
+            </property>
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
              <number>0</number>
             </property>
             <item>
@@ -271,19 +394,35 @@
                <string/>
               </property>
               <layout class="QVBoxLayout" >
-               <property name="margin" >
-                <number>5</number>
-               </property>
                <property name="spacing" >
                 <number>0</number>
                </property>
+               <property name="leftMargin" >
+                <number>5</number>
+               </property>
+               <property name="topMargin" >
+                <number>5</number>
+               </property>
+               <property name="rightMargin" >
+                <number>5</number>
+               </property>
+               <property name="bottomMargin" >
+                <number>5</number>
+               </property>
+               <item>
+                <widget class="QRadioButton" name="_usePostedCosts" >
+                 <property name="text" >
+                  <string>Use Posted Costs</string>
+                 </property>
+                 <property name="checked" >
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
                <item>
                 <widget class="QRadioButton" name="_useStandardCosts" >
                  <property name="text" >
                   <string>Use Standard Costs</string>
-                 </property>
-                 <property name="checked" >
-                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
@@ -321,19 +460,37 @@
       </item>
       <item>
        <layout class="QVBoxLayout" >
-        <property name="margin" >
+        <property name="spacing" >
          <number>0</number>
         </property>
-        <property name="spacing" >
+        <property name="leftMargin" >
+         <number>0</number>
+        </property>
+        <property name="topMargin" >
+         <number>0</number>
+        </property>
+        <property name="rightMargin" >
+         <number>0</number>
+        </property>
+        <property name="bottomMargin" >
          <number>0</number>
         </property>
         <item>
          <layout class="QVBoxLayout" >
-          <property name="margin" >
-           <number>0</number>
-          </property>
           <property name="spacing" >
            <number>5</number>
+          </property>
+          <property name="leftMargin" >
+           <number>0</number>
+          </property>
+          <property name="topMargin" >
+           <number>0</number>
+          </property>
+          <property name="rightMargin" >
+           <number>0</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>0</number>
           </property>
           <item>
            <widget class="QPushButton" name="_close" >
@@ -384,9 +541,7 @@
     <item>
      <widget class="QFrame" name="frame" >
       <property name="sizePolicy" >
-       <sizepolicy>
-        <hsizetype>5</hsizetype>
-        <vsizetype>7</vsizetype>
+       <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
         <horstretch>0</horstretch>
         <verstretch>1</verstretch>
        </sizepolicy>
@@ -398,10 +553,19 @@
        <enum>QFrame::Plain</enum>
       </property>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
+       <property name="spacing" >
         <number>0</number>
        </property>
-       <property name="spacing" >
+       <property name="leftMargin" >
+        <number>0</number>
+       </property>
+       <property name="topMargin" >
+        <number>0</number>
+       </property>
+       <property name="rightMargin" >
+        <number>0</number>
+       </property>
+       <property name="bottomMargin" >
         <number>0</number>
        </property>
        <item>
@@ -409,14 +573,15 @@
          <property name="text" >
           <string>Quantities on Hand</string>
          </property>
+         <property name="buddy" >
+          <cstring>_qoh</cstring>
+         </property>
         </widget>
        </item>
        <item>
         <widget class="XTreeWidget" name="_qoh" >
          <property name="sizePolicy" >
-          <sizepolicy>
-           <hsizetype>7</hsizetype>
-           <vsizetype>7</vsizetype>
+          <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -444,14 +609,14 @@
    <header>parametergroup.h</header>
   </customwidget>
   <customwidget>
-   <class>XCheckBox</class>
-   <extends>QCheckBox</extends>
-   <header>xcheckbox.h</header>
-  </customwidget>
-  <customwidget>
    <class>WarehouseGroup</class>
    <extends>QGroupBox</extends>
    <header>warehousegroup.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
@@ -462,16 +627,20 @@
  <tabstops>
   <tabstop>_parameter</tabstop>
   <tabstop>_warehouse</tabstop>
-  <tabstop>_showAll</tabstop>
   <tabstop>_byItemNumber</tabstop>
+  <tabstop>_byValue</tabstop>
+  <tabstop>_showAll</tabstop>
+  <tabstop>_showPositive</tabstop>
+  <tabstop>_showNegative</tabstop>
   <tabstop>_showValue</tabstop>
+  <tabstop>_usePostedCosts</tabstop>
   <tabstop>_useStandardCosts</tabstop>
-  <tabstop>_qoh</tabstop>
+  <tabstop>_useActualCosts</tabstop>
   <tabstop>_query</tabstop>
   <tabstop>_print</tabstop>
+  <tabstop>_qoh</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
- <includes/>
  <resources/>
  <connections>
   <connection>

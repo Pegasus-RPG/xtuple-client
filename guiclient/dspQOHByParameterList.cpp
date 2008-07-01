@@ -76,6 +76,7 @@ dspQOHByParameterList::dspQOHByParameterList(QWidget* parent, const char* name, 
   _costsGroupInt = new QButtonGroup(this);
   _costsGroupInt->addButton(_useStandardCosts);
   _costsGroupInt->addButton(_useActualCosts);
+  _costsGroupInt->addButton(_usePostedCosts);
 
   _showGroupInt = new QButtonGroup(this);
   _showGroupInt->addButton(_showAll);
@@ -103,6 +104,7 @@ dspQOHByParameterList::dspQOHByParameterList(QWidget* parent, const char* name, 
   _qoh->addColumn(tr("Unit Cost"),        _costColumn, Qt::AlignRight  );
   _qoh->addColumn(tr("Value"),            _costColumn, Qt::AlignRight  );
   _qoh->addColumn(tr("NN Value"),         _costColumn, Qt::AlignRight  );
+  _qoh->addColumn(tr("Cost Method"),      _costColumn, Qt::AlignCenter );
 
   sHandleValue(_showValue->isChecked());
 
@@ -144,6 +146,9 @@ void dspQOHByParameterList::sPrint()
 
   if (_useActualCosts->isChecked())
     params.append("useActualCosts");
+
+  if (_usePostedCosts->isChecked())
+    params.append("usePostedCosts");
 
   orReport report("QOHByParameterList", params);
 
@@ -330,6 +335,7 @@ void dspQOHByParameterList::sHandleValue(bool pShowValue)
   _qoh->setColumnHidden(9, !pShowValue);
   _qoh->setColumnHidden(10, !pShowValue);
   _qoh->setColumnHidden(11, !pShowValue);
+  _qoh->setColumnHidden(12, !pShowValue);
 
   _costsGroup->setEnabled(pShowValue);
 }
@@ -339,6 +345,7 @@ void dspQOHByParameterList::sFillList()
   int itemsiteid = _qoh->id();
 
   _qoh->clear();
+  _qoh->setColumnVisible(12, _showValue->isChecked() && _usePostedCosts->isChecked());
   
   QString sql( "SELECT itemsite_id, detail,"
                "       warehous_code, classcode_code, item_number, uom_name,"
@@ -350,8 +357,14 @@ void dspQOHByParameterList::sFillList()
                "       formatCost(cost) AS f_cost,"
                "       formatMoney(noNeg(cost * qoh)) AS f_value,"
                "       formatMoney(noNeg(cost * nnqoh)) AS f_nnvalue,"
-               "       cost, reorderlevel, qoh, nnqoh "
-               "FROM ( SELECT itemsite_id,"
+               "       cost, reorderlevel, qoh, nnqoh,"
+               "       CASE WHEN(itemsite_costmethod='A') THEN 'Average'"
+               "            WHEN(itemsite_costmethod='S') THEN 'Standard'"
+               "            WHEN(itemsite_costmethod='J') THEN 'Job'"
+               "            WHEN(itemsite_costmethod='N') THEN 'None'"
+               "            ELSE 'UNKNOWN'"
+               "       END AS f_costmethod "
+               "FROM ( SELECT itemsite_id, itemsite_costmethod,"
                "              ( (itemsite_loccntrl) OR (itemsite_controlmethod IN ('L', 'S')) ) AS detail,"
                "              warehous_code, classcode_code, item_number, uom_name, item_descrip1, item_descrip2,"
                "              CASE WHEN (NOT useDefaultLocation(itemsite_id)) THEN :none"
@@ -365,6 +378,8 @@ void dspQOHByParameterList::sFillList()
     sql += " stdcost(item_id) AS cost ";
   else if (_useActualCosts->isChecked())
     sql += " actcost(item_id) AS cost ";
+  else
+    sql += " (itemsite_value / CASE WHEN(itemsite_qtyonhand=0) THEN 1 ELSE itemsite_qtyonhand END) AS cost ";
 
   sql += "FROM itemsite, item, classcode, warehous, uom "
          "WHERE ( (itemsite_item_id=item_id)"
@@ -432,6 +447,7 @@ void dspQOHByParameterList::sFillList()
       last->setText(9, q.value("f_cost").toString());
       last->setText(10, q.value("f_value").toString());
       last->setText(11, q.value("f_nnvalue").toString());
+      last->setText(12, q.value("f_costmethod").toString());
 
       if (q.value("qoh").toDouble() < 0) 
         last->setTextColor(7, "red");
