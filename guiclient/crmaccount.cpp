@@ -214,6 +214,9 @@ crmaccount::crmaccount(QWidget* parent, Qt::WFlags fl)
   _secondary->setActiveVisible(FALSE);
   
   sHandleAutoUpdate();
+  
+  _primary->setInitialsVisible(false);
+  _secondary->setInitialsVisible(false);
 }
 
 crmaccount::~crmaccount()

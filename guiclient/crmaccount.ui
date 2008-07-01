@@ -440,12 +440,12 @@
                 <bool>true</bool>
                </property>
                <property name="accountVisible" >
-                <bool>true</bool>
+                <bool>false</bool>
                </property>
                <property name="activeVisible" >
-                <bool>true</bool>
+                <bool>false</bool>
                </property>
-               <property name="minimalLayout" >
+               <property name="initialsVisible" >
                 <bool>false</bool>
                </property>
               </widget>
@@ -468,7 +468,17 @@
            <widget class="QWidget" name="page_2" >
             <layout class="QGridLayout" >
              <item row="0" column="0" >
-              <widget class="ContactCluster" name="_secondary" />
+              <widget class="ContactCluster" name="_secondary" >
+               <property name="accountVisible" >
+                <bool>false</bool>
+               </property>
+               <property name="activeVisible" >
+                <bool>false</bool>
+               </property>
+               <property name="initialsVisible" >
+                <bool>false</bool>
+               </property>
+              </widget>
              </item>
              <item row="1" column="0" >
               <spacer>

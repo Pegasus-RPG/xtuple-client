@@ -138,7 +138,9 @@ class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
     Q_PROPERTY(QString  fieldNameCrmAccount   READ fieldNameCrmAccount      	WRITE setFieldNameCrmAccount)
     Q_PROPERTY(QString  fieldNameHonorific    READ fieldNameHonorific   	WRITE setFieldNameHonorific)
     Q_PROPERTY(QString  fieldNameFirst        READ fieldNameFirst       	WRITE setFieldNameFirst)
+    Q_PROPERTY(QString  fieldNameMiddle       READ fieldNameMiddle       	WRITE setFieldNameMiddle)
     Q_PROPERTY(QString  fieldNameLast         READ fieldNameLast        	WRITE setFieldNameLast)
+    Q_PROPERTY(QString  fieldNameSuffix       READ fieldNameSuffix       	WRITE setFieldNameSuffix)
     Q_PROPERTY(QString  fieldNameInitials     READ fieldNameInitials    	WRITE setFieldNameInitials)
     Q_PROPERTY(QString  fieldNameTitle        READ fieldNameTitle       	WRITE setFieldNameTitle)
     Q_PROPERTY(QString  fieldNamePhone        READ fieldNamePhone       	WRITE setFieldNamePhone)
@@ -207,7 +209,9 @@ class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
         virtual QString  fieldNameCrmAccount()    const { return _fieldNameCrmAccount; };
         virtual QString  fieldNameHonorific()     const { return _fieldNameHonorific; };
         virtual QString  fieldNameFirst()         const { return _fieldNameFirst; };
+        virtual QString  fieldNameMiddle()        const { return _fieldNameMiddle; };
         virtual QString  fieldNameLast()          const { return _fieldNameLast; };
+        virtual QString  fieldNameSuffix()        const { return _fieldNameSuffix; };
         virtual QString  fieldNameInitials()      const { return _fieldNameInitials; };
         virtual QString  fieldNameTitle()         const { return _fieldNameTitle; };
         virtual QString  fieldNamePhone()         const { return _fieldNamePhone; };
@@ -238,9 +242,11 @@ class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
 	inline virtual void setHonorific(const QString& p) { _honorific->setEditText(p); };
 	inline virtual void setLabel(const QString& p)  { _label->setText(p); _label->setHidden(_label->text().isEmpty()); };
 	inline virtual void setLast(const QString& p)	{ _last->setText(p); };
+	inline virtual void setMiddle(const QString& p)	{ _middle->setText(p); };
 	inline virtual void setNotes(const QString& p)  { _notes = p; };
 	inline virtual void setPhone(const QString& p)	{ _phone->setText(p); };
 	inline virtual void setPhone2(const QString& p)	{ _phone2->setText(p); };
+	inline virtual void setSuffix(const QString& p)	{ _suffix->setText(p); };
 	inline virtual void setTitle(const QString& p)	{ _title->setText(p); };
         inline virtual void setWebAddress(const QString& p) { _webaddr->setText(p); };
 
@@ -273,7 +279,9 @@ class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
 	virtual void setFieldNameCrmAccount(QString p)    { _fieldNameCrmAccount = p ; };
         virtual void setFieldNameHonorific(QString p)     { _fieldNameHonorific = p ; };
         virtual void setFieldNameFirst(QString p)         { _fieldNameFirst = p ; };
+	virtual void setFieldNameMiddle(QString p)        { _fieldNameMiddle = p ; };
         virtual void setFieldNameLast(QString p)          { _fieldNameLast = p ; };
+        virtual void setFieldNameSuffix(QString p)        { _fieldNameSuffix = p ; };
         virtual void setFieldNameInitials(QString p)      { _fieldNameInitials = p ; };
         virtual void setFieldNameTitle(QString p)         { _fieldNameTitle = p ; };
         virtual void setFieldNamePhone(QString p)         { _fieldNamePhone = p ; };
@@ -300,16 +308,18 @@ class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
 
     protected:
 	QHBoxLayout*	_nameBox;
+	QHBoxLayout*	_initialsBox;
 	QHBoxLayout*	_titleBox;
 	QHBoxLayout*	_buttonBox;
         XLineEdit*      _change;
 	XLineEdit*	_number;
-	QLabel*		_firstLit;
 	XComboBox*	_honorific;
 	QLabel*		_numberLit;
+	QLabel*		_nameLit;
 	XLineEdit*	_first;
-	QLabel*		_lastLit;
+	XLineEdit*      _middle;
 	XLineEdit*	_last;
+	XLineEdit*      _suffix;
 	QLabel*		_initialsLit;
 	XLineEdit*	_initials;
 	QLabel*		_crmAcctLit;
@@ -358,7 +368,9 @@ class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
 	QString  _fieldNameCrmAccount;
         QString  _fieldNameHonorific;
         QString  _fieldNameFirst;
+	QString  _fieldNameMiddle;
         QString  _fieldNameLast;
+	QString  _fieldNameSuffix;
         QString  _fieldNameInitials;
         QString  _fieldNameTitle;
         QString  _fieldNamePhone;
