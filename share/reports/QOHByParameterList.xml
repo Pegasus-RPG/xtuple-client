@@ -75,7 +75,7 @@
        &lt;? if exists("showValue") ?>
          &lt;? if exists("useActualCosts") ?>
            text('Showing Actual Costs')
-         &lt;? else exists("useStandardCosts") ?>
+         &lt;? elseif exists("useStandardCosts") ?>
            text('Showing Standard Costs')
          &lt;? else ?>
            text('Showing Posted Costs')
@@ -168,7 +168,7 @@ FROM ( SELECT itemsite_id, itemsite_costmethod,
               itemsite_nnqoh AS nonnetable,
               &lt;? if exists("useActualCosts") ?>
                 actcost(itemsite_item_id)
-              &lt;? else exists("useStandardCosts") ?>
+              &lt;? elseif exists("useStandardCosts") ?>
                 stdcost(itemsite_item_id)
               &lt;? else ?>
                 (itemsite_value / CASE WHEN(itemsite_qtyonhand=0) THEN 1 ELSE itemsite_qtyonhand END)

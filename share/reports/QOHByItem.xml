@@ -29,7 +29,7 @@
          text('Cost Method') AS lbl_costmethod,
          &lt;? if exists("useActualCosts") ?>
            text('Showing Actual Costs')
-         &lt;? else exists("useStandardCosts") ?>
+         &lt;? elseif exists("useStandardCosts") ?>
            text('Showing Standard Costs')
          &lt;? else ?>
            text('Showing Posted Costs')
@@ -123,7 +123,7 @@ FROM ( SELECT itemsite_id, itemsite_costmethod,
               itemsite_nnqoh AS nnqoh,
               &lt;? if exists("useActualCosts") ?>
                 actcost(item_id)
-              &lt;? else exists("useStandardCosts") ?>
+              &lt;? elseif exists("useStandardCosts") ?>
                 stdcost(item_id)
               &lt;? else ?>
                 (itemsite_value / CASE WHEN(itemsite_qtyonhand=0) THEN 1 ELSE itemsite_qtyonhand END)
@@ -144,191 +144,9 @@ ORDER BY warehous_code;
  </querysource>
  <rpthead>
   <height>221</height>
-  <label>
-   <rect>
-    <x>10</x>
-    <y>200</y>
-    <width>35</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Site</string>
-  </label>
-  <field>
-   <rect>
-    <x>100</x>
-    <y>120</y>
-    <width>300</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>item_descrip2</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>205</x>
-    <y>200</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Reorder Lvl.</string>
-  </label>
-  <field>
-   <rect>
-    <x>100</x>
-    <y>145</y>
-    <width>200</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>warehouse</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>365</x>
-    <y>200</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Non-Netable</string>
-  </label>
-  <label>
-   <rect>
-    <x>375</x>
-    <y>10</y>
-    <width>350</width>
-    <height>38</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>18</size>
-    <weight>bold</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Quantities on Hand by Item</string>
-  </label>
-  <line>
-   <xstart>5</xstart>
-   <ystart>215</ystart>
-   <xend>745</xend>
-   <yend>215</yend>
-   <weight>2</weight>
-  </line>
-  <field>
-   <rect>
-    <x>100</x>
-    <y>80</y>
-    <width>200</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>item_number</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>65</x>
-    <y>200</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Default Location</string>
-  </label>
-  <field>
-   <rect>
-    <x>685</x>
-    <y>200</y>
-    <width>65</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>lbl_costmethod</column>
-   </data>
-  </field>
   <field>
    <rect>
     <x>444</x>
-    <y>200</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>lbl_unitcost</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>605</x>
     <y>200</y>
     <width>75</width>
     <height>15</height>
@@ -364,9 +182,9 @@ ORDER BY warehous_code;
     <column>item_descrip1</column>
    </data>
   </field>
-  <field>
+  <label>
    <rect>
-    <x>525</x>
+    <x>205</x>
     <y>200</y>
     <width>75</width>
     <height>15</height>
@@ -378,26 +196,23 @@ ORDER BY warehous_code;
    </font>
    <hcenter/>
    <vcenter/>
-   <data>
-    <query>head</query>
-    <column>lbl_value</column>
-   </data>
-  </field>
+   <string>Reorder Lvl.</string>
+  </label>
   <label>
    <rect>
-    <x>15</x>
-    <y>145</y>
-    <width>80</width>
-    <height>20</height>
+    <x>285</x>
+    <y>200</y>
+    <width>75</width>
+    <height>15</height>
    </rect>
    <font>
     <face>Arial</face>
-    <size>10</size>
+    <size>8</size>
     <weight>normal</weight>
    </font>
-   <right/>
+   <hcenter/>
    <vcenter/>
-   <string>Site:</string>
+   <string>QOH</string>
   </label>
   <field>
    <rect>
@@ -420,6 +235,92 @@ ORDER BY warehous_code;
   </field>
   <label>
    <rect>
+    <x>65</x>
+    <y>200</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Default Location</string>
+  </label>
+  <field>
+   <rect>
+    <x>100</x>
+    <y>145</y>
+    <width>200</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>warehouse</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>375</x>
+    <y>10</y>
+    <width>350</width>
+    <height>38</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>18</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Quantities on Hand by Item</string>
+  </label>
+  <label>
+   <rect>
+    <x>10</x>
+    <y>200</y>
+    <width>35</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Site</string>
+  </label>
+  <field>
+   <rect>
+    <x>100</x>
+    <y>80</y>
+    <width>200</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>item_number</column>
+   </data>
+  </field>
+  <label>
+   <rect>
     <x>15</x>
     <y>80</y>
     <width>80</width>
@@ -436,31 +337,24 @@ ORDER BY warehous_code;
   </label>
   <label>
    <rect>
-    <x>285</x>
-    <y>200</y>
-    <width>75</width>
-    <height>15</height>
+    <x>15</x>
+    <y>145</y>
+    <width>80</width>
+    <height>20</height>
    </rect>
    <font>
     <face>Arial</face>
-    <size>8</size>
+    <size>10</size>
     <weight>normal</weight>
    </font>
-   <hcenter/>
+   <right/>
    <vcenter/>
-   <string>QOH</string>
+   <string>Site:</string>
   </label>
- </rpthead>
- <pghead>
-  <firstpage/>
-  <height>6</height>
- </pghead>
- <pghead>
-  <height>21</height>
   <field>
    <rect>
     <x>685</x>
-    <y>0</y>
+    <y>200</y>
     <width>65</width>
     <height>15</height>
    </rect>
@@ -476,9 +370,96 @@ ORDER BY warehous_code;
     <column>lbl_costmethod</column>
    </data>
   </field>
+  <field>
+   <rect>
+    <x>605</x>
+    <y>200</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>lbl_unitcost</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>525</x>
+    <y>200</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>lbl_value</column>
+   </data>
+  </field>
   <label>
    <rect>
-    <x>205</x>
+    <x>365</x>
+    <y>200</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Non-Netable</string>
+  </label>
+  <line>
+   <xstart>5</xstart>
+   <ystart>215</ystart>
+   <xend>745</xend>
+   <yend>215</yend>
+   <weight>2</weight>
+  </line>
+  <field>
+   <rect>
+    <x>100</x>
+    <y>120</y>
+    <width>300</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>item_descrip2</column>
+   </data>
+  </field>
+ </rpthead>
+ <pghead>
+  <firstpage/>
+  <height>6</height>
+ </pghead>
+ <pghead>
+  <height>21</height>
+  <field>
+   <rect>
+    <x>605</x>
     <y>0</y>
     <width>75</width>
     <height>15</height>
@@ -490,7 +471,26 @@ ORDER BY warehous_code;
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Reorder Lvl.</string>
+   <data>
+    <query>head</query>
+    <column>lbl_unitcost</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>285</x>
+    <y>0</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>QOH</string>
   </label>
   <label>
    <rect>
@@ -508,6 +508,13 @@ ORDER BY warehous_code;
    <vcenter/>
    <string>Non-Netable</string>
   </label>
+  <line>
+   <xstart>5</xstart>
+   <ystart>15</ystart>
+   <xend>745</xend>
+   <yend>15</yend>
+   <weight>2</weight>
+  </line>
   <field>
    <rect>
     <x>444</x>
@@ -527,6 +534,22 @@ ORDER BY warehous_code;
     <column>lbl_unitcost</column>
    </data>
   </field>
+  <label>
+   <rect>
+    <x>65</x>
+    <y>0</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Default Location</string>
+  </label>
   <label>
    <rect>
     <x>10</x>
@@ -564,9 +587,9 @@ ORDER BY warehous_code;
   </field>
   <field>
    <rect>
-    <x>605</x>
+    <x>685</x>
     <y>0</y>
-    <width>75</width>
+    <width>65</width>
     <height>15</height>
    </rect>
    <font>
@@ -578,35 +601,12 @@ ORDER BY warehous_code;
    <vcenter/>
    <data>
     <query>head</query>
-    <column>lbl_unitcost</column>
+    <column>lbl_costmethod</column>
    </data>
   </field>
-  <line>
-   <xstart>5</xstart>
-   <ystart>15</ystart>
-   <xend>745</xend>
-   <yend>15</yend>
-   <weight>2</weight>
-  </line>
   <label>
    <rect>
-    <x>65</x>
-    <y>0</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Default Location</string>
-  </label>
-  <label>
-   <rect>
-    <x>285</x>
+    <x>205</x>
     <y>0</y>
     <width>75</width>
     <height>15</height>
@@ -618,7 +618,7 @@ ORDER BY warehous_code;
    </font>
    <hcenter/>
    <vcenter/>
-   <string>QOH</string>
+   <string>Reorder Lvl.</string>
   </label>
  </pghead>
  <section>
@@ -627,7 +627,26 @@ ORDER BY warehous_code;
    <key>
     <query>detail</query>
    </key>
-   <height>16</height>
+   <height>17</height>
+   <field>
+    <rect>
+     <x>365</x>
+     <y>0</y>
+     <width>75</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_nnqoh</column>
+    </data>
+   </field>
    <field>
     <rect>
      <x>205</x>
@@ -664,82 +683,6 @@ ORDER BY warehous_code;
     <data>
      <query>detail</query>
      <column>f_nonnetvalue</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>685</x>
-     <y>0</y>
-     <width>65</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>f_costmethod</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>365</x>
-     <y>0</y>
-     <width>75</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>f_nnqoh</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>525</x>
-     <y>0</y>
-     <width>75</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>f_value</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>60</x>
-     <y>0</y>
-     <width>140</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>defaultlocation</column>
     </data>
    </field>
    <field>
@@ -782,6 +725,63 @@ ORDER BY warehous_code;
    </field>
    <field>
     <rect>
+     <x>525</x>
+     <y>0</y>
+     <width>75</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_value</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>685</x>
+     <y>0</y>
+     <width>65</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_costmethod</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>60</x>
+     <y>0</y>
+     <width>140</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>defaultlocation</column>
+    </data>
+   </field>
+   <field>
+    <rect>
      <x>285</x>
      <y>0</y>
      <width>75</width>
@@ -802,7 +802,23 @@ ORDER BY warehous_code;
   </detail>
  </section>
  <pgfoot>
-  <height>16</height>
+  <height>17</height>
+  <label>
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>85</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Report Date:</string>
+  </label>
   <field>
    <rect>
     <x>90</x>
@@ -822,6 +838,22 @@ ORDER BY warehous_code;
     <column>report_date</column>
    </data>
   </field>
+  <label>
+   <rect>
+    <x>615</x>
+    <y>0</y>
+    <width>85</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Page:</string>
+  </label>
   <field>
    <rect>
     <x>705</x>
@@ -841,41 +873,29 @@ ORDER BY warehous_code;
     <column>page_number</column>
    </data>
   </field>
-  <label>
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>85</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Report Date:</string>
-  </label>
-  <label>
-   <rect>
-    <x>615</x>
-    <y>0</y>
-    <width>85</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Page:</string>
-  </label>
  </pgfoot>
  <rptfoot>
-  <height>16</height>
+  <height>17</height>
+  <field>
+   <rect>
+    <x>605</x>
+    <y>0</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <data>
+    <query>detail</query>
+    <column>r_nonnetvalue</column>
+   </data>
+   <tracktotal>%.02f</tracktotal>
+  </field>
   <label>
    <rect>
     <x>10</x>
@@ -892,26 +912,6 @@ ORDER BY warehous_code;
    <vcenter/>
    <string>Total</string>
   </label>
-  <field>
-   <rect>
-    <x>365</x>
-    <y>0</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>bold</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <data>
-    <query>detail</query>
-    <column>r_nnqoh</column>
-   </data>
-   <tracktotal>%.02f</tracktotal>
-  </field>
   <field>
    <rect>
     <x>525</x>
@@ -954,7 +954,7 @@ ORDER BY warehous_code;
   </field>
   <field>
    <rect>
-    <x>605</x>
+    <x>365</x>
     <y>0</y>
     <width>75</width>
     <height>15</height>
@@ -968,7 +968,7 @@ ORDER BY warehous_code;
    <vcenter/>
    <data>
     <query>detail</query>
-    <column>r_nonnetvalue</column>
+    <column>r_nnqoh</column>
    </data>
    <tracktotal>%.02f</tracktotal>
   </field>
