@@ -55,104 +55,85 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-// Copyright (c) 2006-2008, OpenMFG, LLC
+#ifndef SCREEN_H
+#define SCREEN_H
 
-#include "xtreeview.h"
+#include "OpenMFGWidgets.h"
+#include "xdatawidgetmapper.h"
 #include "xsqltablemodel.h"
-//#include "xuiloader.h"
 
-#include <QSqlDatabase>
-#include <QSqlDriver>
+#include <QWidget>
 #include <QSqlIndex>
-#include <QBuffer>
-#include <QMessageBox>
+#include <QList>
 
-XTreeView::XTreeView(QWidget *parent) : 
-  QTreeView(parent)
+#include <QtGui/qwidget.h>
+
+QT_BEGIN_HEADER
+
+QT_MODULE(Gui)
+
+class OPENMFGWIDGETS_EXPORT Screen : public QWidget
 {
-  _keyColumns=1;
-  
-  setAlternatingRowColors(true);
-  setSortingEnabled(true);
+	Q_OBJECT
+		
+	Q_ENUMS(Modes)
+	Q_ENUMS(SearchTypes)
+	
+	Q_PROPERTY (QString		schemaName            READ schemaName		WRITE setSchemaName)
+	Q_PROPERTY (QString 		tableName             READ tableName 		WRITE setTableName)
+        Q_PROPERTY (int                 primaryKeyColumns     READ primaryKeyColumns    WRITE setPrimaryKeyColumns)
+	Q_PROPERTY (Modes		mode                  READ mode                 WRITE setMode)
+	Q_PROPERTY (SearchTypes 	searchType            READ searchType		WRITE setSearchType)
+        Q_PROPERTY (QString             sortColumn            READ sortColumn           WRITE setSortColumn)
 
-  _mapper = new XDataWidgetMapper(this);
-  _menu   = new QMenu(this);
-  _menu->insertItem(tr("Open..."),  this, SLOT(open()));
-}
+	public:
+		Screen(QWidget * = 0);
+                ~Screen();
+		
+		enum Modes { New, Edit, View };
+		enum SearchTypes { Query, List };
+		Modes mode();
+		SearchTypes searchType();
+	
+                bool    isDirty();
+                int     primaryKeyColumns() const { return _keyColumns;       };
+	        QString schemaName()        const { return _schemaName;       };
+	        QString sortColumn()        const { return _sortColumn;       };
+		QString tableName()         const { return _tableName;        };
+       	
+	public slots:
+		void toNext()                           { _mapper.toNext();          };
+		void toPrevious()                       { _mapper.toPrevious();       };
+		void insert();
+		void save();
+		void search(QString criteria);
+		void select();
+                void setCurrentIndex(int index)         { _mapper.setCurrentIndex(index);};
+		void setFilter(QString filter)          { _model->setFilter(filter);      };
+		void setMode(Modes p);
+                void setPrimaryKeyColumns(int count)    { _keyColumns = count;           };
+		void setSearchType(SearchTypes p);
+		void setSchemaName(QString schema)      { _schemaName = schema;           };
+		void setSortColumn(QString p);
+ 
+		void setTableName(QString table)	{ _tableName = table;            };
+		void setTable(QString schema, QString table);
+		void setDataWidgetMapper(QSqlTableModel *model);
+	
+	signals:
+		void newDataWidgetMapper(XDataWidgetMapper *mapper);
+                void newModel(XSqlTableModel *model);
+		void saved(bool);
 
-void XTreeView::selectionChanged(const QItemSelection & selected, const QItemSelection & deselected)
-{
-  if (!selected.indexes().isEmpty())
-    emit rowSelected(selected.indexes().first().row());
-  QTreeView::selectionChanged(selected, deselected);
-}
+	private:
+		enum  Modes		_mode;
+		enum  SearchTypes	_searchType;
+                int                     _keyColumns;
+		QString			_schemaName;
+                QString                 _sortColumn;
+		QString			_tableName;
+		XDataWidgetMapper	_mapper;
+                XSqlTableModel*		_model;
+};
 
-void XTreeView::open()
-{/*
-  XUiLoader loader;
-  QByteArray ba = _formName;
-  QBuffer uiFile(&ba);
-  if(!uiFile.open(QIODevice::ReadOnly))
-  {
-    QMessageBox::critical(this, tr("Could not load file"),
-        tr("There was an error loading the UI Form from the database."));
-    return;
-  }
-  QWidget *ui = loader.load(&uiFile);
-  uiFile.close();
-  */
-}
-
-void XTreeView::populate(int p)
-{ 
-  XSqlTableModel *t=static_cast<XSqlTableModel*>(_mapper->model());
-  if (t)
-  {
-    _idx=t->primaryKey();
-
-    for (int i = 0; i < _idx.count(); ++i)
-    {
-      _idx.setValue(i, t->data(t->index(p,i)));
-      setColumnHidden(i,true);
-    }
-   
-    QString clause = QString(_model.database().driver()->sqlStatement(QSqlDriver::WhereStatement, t->tableName(),_idx, false)).mid(6);
-    _model.setFilter(clause);
-    _model.select();
-  }
-}
-
-void XTreeView::setDataWidgetMap(XDataWidgetMapper* mapper)
-{  
-  if (!_tableName.isEmpty())
-  {
-    QString tablename=_tableName;
-    if (!_schemaName.isEmpty())
-      tablename = _schemaName + "." + tablename;
-    _model.setTable(tablename,_keyColumns);
-    
-    setModel(&_model);
-    populate(mapper ->currentIndex());
-    _mapper=mapper;
-    connect(_mapper, SIGNAL(currentIndexChanged(int)), this, SLOT(populate(int)));
-  }
-}
-
-void XTreeView::setModel(XSqlTableModel * model)
-{
-  QTreeView::setModel(model);
-  //Set headers case proper 
-  for (int i = 0; i < QTreeView::model()->columnCount(); ++i)
-  {
-      QString h=QTreeView::model()->headerData(i,Qt::Horizontal,Qt::DisplayRole).toString();
-      h=h.replace(0,1,h.left(1).upper());
-      while (h.lastIndexOf("_") != -1)
-      {
-        h=h.replace(h.lastIndexOf("_")+1,1,h.mid(h.lastIndexOf("_")+1,1).upper());
-        h=h.replace("_"," ");
-      }
-      QTreeView::model()->setHeaderData(i,Qt::Horizontal,h);
-  }
-}
-
-
+#endif // SCREEN_H

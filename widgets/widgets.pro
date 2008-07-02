@@ -138,6 +138,7 @@ SOURCES    += OpenMFGWidgets.cpp \
               empcluster.cpp empgroupcluster.cpp \
 	      xsqltablemodel.cpp \
               xtreeview.cpp \
+	      screen.cpp \
 
 HEADERS    += OpenMFGWidgets.h \
               addresscluster.h contactcluster.h crmacctcluster.h \
@@ -182,6 +183,7 @@ HEADERS    += OpenMFGWidgets.h \
               empcluster.h empgroupcluster.h\
               xsqltablemodel.h \
               xtreeview.h \
+              screen.h \
 
 FORMS += accountSearch.ui \
 	 screenControl.ui \
