@@ -521,7 +521,7 @@ void invoice::sSave()
 	     "    invchead_shipto_city=:invchead_shipto_city, invchead_shipto_state=:invchead_shipto_state,"
 	     "    invchead_shipto_zipcode=:invchead_shipto_zipcode, invchead_shipto_phone=:invchead_shipto_phone,"
 	     "    invchead_shipto_country=:invchead_shipto_country,"
-	     "    invchead_tax_id=:invchead_tax_id, invchead_salesrep_id=:invchead_salesrep_id,"
+	     "    invchead_salesrep_id=:invchead_salesrep_id,"
 	     "    invchead_terms_id=:invchead_terms_id, invchead_commission=:invchead_commission,"
 	     "    invchead_misc_amount=:invchead_misc_amount, invchead_misc_descrip=:invchead_misc_descrip,"
 	     "    invchead_misc_accnt_id=:invchead_misc_accnt_id,"
