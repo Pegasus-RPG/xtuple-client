@@ -71,7 +71,10 @@
 WarehouseGroup::WarehouseGroup(QWidget *pParent, const char *pName) :
   QGroupBox(pParent)
 {
-  bool selectedOnly = _x_preferences->boolean("selectedSites");
+  bool selectedOnly = false;
+  if (_x_preferences)
+    if (_x_preferences->boolean("selectedSites"))
+      selectedOnly=true;
   
   if(pName)
     setObjectName(pName);

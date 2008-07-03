@@ -112,8 +112,9 @@ void WComboBox::setType(WComboBoxTypes pType)
 
   ParameterList whsp;
   
-  if (_x_preferences->boolean("selectedSites"))
-    whsp.append("selectedOnly");
+  if (_x_preferences)
+    if (_x_preferences->boolean("selectedSites"))
+      whsp.append("selectedOnly");
 
   switch (_type)
   {
