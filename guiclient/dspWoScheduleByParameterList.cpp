@@ -123,7 +123,7 @@ dspWoScheduleByParameterList::dspWoScheduleByParameterList(QWidget* parent, cons
   _wo->addColumn(tr("Condition"),      _dateColumn,   Qt::AlignLeft   );
 
   connect(omfgThis, SIGNAL(workOrdersUpdated(int, bool)), this, SLOT(sFillList()));
-  
+ 
   if (!_metrics->boolean("Routings"))
     _postOperations->hide();
   sHandleAutoUpdate(_autoUpdate->isChecked());

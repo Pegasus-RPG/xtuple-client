@@ -88,11 +88,14 @@ WComboBox::WComboBoxTypes WComboBox::type()
 void WComboBox::setType(WComboBoxTypes pType)
 {
   _type = pType;
-
+  
   int warehousid = ((_x_preferences) ? _x_preferences->value("PreferredWarehouse").toInt() : -1);
 
   QString whss("SELECT warehous_id, warehous_code, warehous_code "
              "FROM whsinfo "
+	     "<? if exists(\"selectedOnly\") ?>"
+	     "JOIN usrsite ON (warehous_id=usrsite_warehous_id) "
+	     "<? endif ?>"
              "WHERE (true"
              "<? if exists(\"active\") ?>  AND (warehous_active)  <? endif ?>"
              "<? if exists(\"shipping\") ?>AND (warehous_shipping)<? endif ?>"
@@ -101,10 +104,16 @@ void WComboBox::setType(WComboBoxTypes pType)
              "<? elseif exists(\"nottransit\") ?>"
              "  AND (NOT warehous_transit)"
              "<? endif ?>"
+	     "<? if exists(\"selectedOnly\") ?>"
+	     "  AND (usrsite_username=current_user) "
+	     "<? endif ?>"
              ") "
              "ORDER BY warehous_code;" );
 
   ParameterList whsp;
+  
+  if (_x_preferences->boolean("selectedSites"))
+    whsp.append("selectedOnly");
 
   switch (_type)
   {

@@ -75,6 +75,7 @@ public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
     virtual void sCheck();
     virtual void populate();
+    virtual void populateSite();
 
 protected slots:
     virtual void languageChange();
@@ -89,7 +90,8 @@ protected slots:
     virtual void sEnhancedAuthUpdate();
     virtual void sAddGroup();
     virtual void sRevokeGroup();
-
+    virtual void sAddSite();
+    virtual void sRevokeSite();
 
 private:
     QString _cUsername;

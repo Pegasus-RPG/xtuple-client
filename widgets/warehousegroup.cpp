@@ -71,6 +71,8 @@
 WarehouseGroup::WarehouseGroup(QWidget *pParent, const char *pName) :
   QGroupBox(pParent)
 {
+  bool selectedOnly = _x_preferences->boolean("selectedSites");
+  
   if(pName)
     setObjectName(pName);
 
@@ -78,30 +80,57 @@ WarehouseGroup::WarehouseGroup(QWidget *pParent, const char *pName) :
 
   QWidget * selectedGroup = new QWidget(this);
   QButtonGroup * buttonGroup = new QButtonGroup(this);
-
+  
   _all = new QRadioButton(tr("All Sites"), this, "_all");
-  _all->setChecked(TRUE);
-  buttonGroup->addButton(_all);
-
+  _site = new QLabel(tr("Site:"),this,"_site");
   _selected = new QRadioButton(tr("Selected:"), selectedGroup, "_selected");
-  buttonGroup->addButton(_selected);
-
+	 
+  if (!selectedOnly)
+  {
+    _all->setChecked(TRUE);
+    buttonGroup->addButton(_all);
+    buttonGroup->addButton(_selected);
+  }
+  
   _warehouses = new WComboBox(selectedGroup, "_warehouses");
   _warehouses->setEnabled(FALSE);
 
-  QHBoxLayout *hLayout = new QHBoxLayout(selectedGroup);
-  hLayout->setMargin(0);
-  hLayout->setSpacing(5);
-  hLayout->addWidget(_selected);
-  hLayout->addWidget(_warehouses);
-  selectedGroup->setLayout(hLayout);
+  if(selectedOnly)
+  {
+    QHBoxLayout *hLayout = new QHBoxLayout(selectedGroup);
+    hLayout->setMargin(0);
+    hLayout->setSpacing(5);
+    hLayout->addWidget(_site);
+    hLayout->addWidget(_warehouses);
+    selectedGroup->setLayout(hLayout);
+    
+    QVBoxLayout *vLayout = new QVBoxLayout(this);
+    vLayout->setMargin(5);
+    vLayout->setSpacing(0);
+    vLayout->addWidget(selectedGroup);
+    setLayout(vLayout);
+    
+    _all->hide();
+    _selected->hide();
+  }
+  else
+  {
+    QHBoxLayout *hLayout = new QHBoxLayout(selectedGroup);
+    hLayout->setMargin(0);
+    hLayout->setSpacing(5);
+    hLayout->addWidget(_selected);
+    hLayout->addWidget(_warehouses);
+    selectedGroup->setLayout(hLayout);
 
-  QVBoxLayout *vLayout = new QVBoxLayout(this);
-  vLayout->setMargin(5);
-  vLayout->setSpacing(0);
-  vLayout->addWidget(_all);
-  vLayout->addWidget(selectedGroup);
-  setLayout(vLayout);
+    QVBoxLayout *vLayout = new QVBoxLayout(this);
+    vLayout->setMargin(5);
+    vLayout->setSpacing(0);
+    vLayout->addWidget(_all);
+    vLayout->addWidget(selectedGroup);
+    setLayout(vLayout);
+    
+    _site->hide();
+  }
 
   connect(_selected, SIGNAL(toggled(bool)), _warehouses, SLOT(setEnabled(bool)));
   connect(buttonGroup, SIGNAL(buttonClicked(int)), this, SIGNAL(updated()));

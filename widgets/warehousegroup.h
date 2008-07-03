@@ -60,6 +60,7 @@
 #define warehousegroup_h
 
 #include <QGroupBox>
+#include <QLabel>
 #include <QRadioButton>
 
 #include "OpenMFGWidgets.h"
@@ -92,6 +93,7 @@ class OPENMFGWIDGETS_EXPORT WarehouseGroup : public QGroupBox
     void updated();
 
   private:
+    QLabel	 *_site;
     QRadioButton *_all;
     QRadioButton *_selected;
     WComboBox    *_warehouses;

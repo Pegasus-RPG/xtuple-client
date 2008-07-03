@@ -62,6 +62,7 @@
 #include <QVariant>
 
 #include <qmd5.h>
+#include <metasql.h>
 
 user::user(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -83,6 +84,10 @@ user::user(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_availableGroup, SIGNAL(itemSelected(int)), this, SLOT(sAddGroup()));
   connect(_addGroup, SIGNAL(clicked()), this, SLOT(sAddGroup()));
   connect(_revokeGroup, SIGNAL(clicked()), this, SLOT(sRevokeGroup()));
+  connect(_grantedSite, SIGNAL(itemSelected(int)), this, SLOT(sRevokeSite()));
+  connect(_availableSite, SIGNAL(itemSelected(int)), this, SLOT(sAddSite()));
+  connect(_addSite, SIGNAL(clicked()), this, SLOT(sAddSite()));
+  connect(_revokeSite, SIGNAL(clicked()), this, SLOT(sRevokeSite()));
 
   _available->addColumn("Available Privileges", -1, Qt::AlignLeft);
   _granted->addColumn("Granted Privileges", -1, Qt::AlignLeft);
@@ -90,6 +95,9 @@ user::user(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _availableGroup->addColumn("Available Groups", -1, Qt::AlignLeft);
   _grantedGroup->addColumn("Granted Groups", -1, Qt::AlignLeft);
 
+  _availableSite->addColumn("Available Sites", -1, Qt::AlignLeft);
+  _grantedSite->addColumn("Granted Sites", 	-1, Qt::AlignLeft);
+  
   _locale->setType(XComboBox::Locales);
 
   q.exec( "SELECT DISTINCT priv_module "
@@ -111,6 +119,9 @@ user::user(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     _woTimeClockOnly->setChecked(FALSE);
     _woTimeClockOnly->hide();
   }
+  
+  if (!_metrics->boolean("MultiWhs"))
+    _tab->removeTab(_tab->indexOf(_siteTab));
 }
 
 user::~user()
@@ -315,6 +326,16 @@ void user::sSave()
   q.prepare("SELECT setUserPreference(:username, 'UseEnhancedAuthentication', :value) AS result");
   q.bindValue(":username", _username->text().stripWhiteSpace().lower());
   q.bindValue(":value", (_enhancedAuth->isChecked() ? "t" : "f"));
+  q.exec();
+  if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+  
+  q.prepare("SELECT setUserPreference(:username, 'selectedSites', :value) AS result");
+  q.bindValue(":username", _username->text().stripWhiteSpace().lower());
+  q.bindValue(":value", (_selectedSites->isChecked() ? "t" : "f"));
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
   {
@@ -577,6 +598,19 @@ void user::populate()
       sModuleSelected(_module->text(0));
     }
   }
+  
+  q.prepare( "SELECT usrpref_value "
+             "  FROM usrpref "
+             " WHERE ( (usrpref_name = 'selectedSites') "
+             "   AND (usrpref_username=:username) "
+             "   AND (usrpref_value='t') ); ");
+  q.bindValue(":username", _cUsername);
+  q.exec();
+  if(q.first())
+    _selectedSites->setChecked(TRUE);
+  
+  if (_metrics->boolean("MultiWhs"))
+    populateSite();
 }
 
 void user::sEnhancedAuthUpdate()
@@ -586,4 +620,65 @@ void user::sEnhancedAuthUpdate()
       tr("You have changed this user's Enhanced Authentication option.\n"
          "The password must be updated in order for this change to take\n"
          "full effect.") );
+}
+
+void user::sAddSite()
+{
+  q.prepare("SELECT grantSite(:username, :warehous_id) AS result;");
+  q.bindValue(":username", _cUsername);
+  q.bindValue(":warehous_id", _availableSite->id());
+  q.exec();
+
+  populateSite();
+}
+
+void user::sRevokeSite()
+{
+  q.prepare("SELECT revokeSite(:username, :warehous_id) AS result;");
+  q.bindValue(":username", _cUsername);
+  q.bindValue(":warehous_id", _grantedSite->id());
+  q.exec();
+
+  populateSite();
+}
+
+void user::populateSite()
+{
+
+  ParameterList params;
+  params.append("username", _username->text().stripWhiteSpace().lower());
+  QString sql;
+  MetaSQLQuery mql;
+  
+  sql = "SELECT warehous_id, warehous_code "
+	" FROM whsinfo "
+	" WHERE warehous_id NOT IN ( "
+	"	SELECT warehous_id "
+        "	FROM whsinfo, usrsite "
+        "	WHERE ( (usrsite_warehous_id=warehous_id) "
+        "	AND (usrsite_username=<? value(\"username\") ?>))) ";
+  
+  mql.setQuery(sql);
+  q = mql.toQuery(params);
+  _availableSite->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+  
+  sql = "SELECT warehous_id,warehous_code,0 AS warehous_level "
+        "FROM whsinfo, usrsite "
+        "WHERE ( (usrsite_warehous_id=warehous_id) "
+        " AND (usrsite_username=<? value(\"username\") ?>)) ";
+		
+  mql.setQuery(sql); 
+  q = mql.toQuery(params);
+  _grantedSite->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
 }
