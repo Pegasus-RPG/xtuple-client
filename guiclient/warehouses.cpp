@@ -163,13 +163,14 @@ void warehouses::sFillList()
                  "JOIN usrsite ON (warehous_id=usrsite_warehous_id) "
 		 "<? endif ?>"
 		 "  LEFT OUTER JOIN sitetype ON (sitetype_id=warehous_sitetype_id) "
+                 "WHERE ((TRUE) "
 		 "<? if not exists(\"showInactive\") ?>"
-		 "WHERE (warehous_active) "
+                 "  AND (warehous_active) "
 		 "<? endif ?>"
 		 "<? if exists(\"selectedOnly\") ?>"
 		 "  AND (usrsite_username=current_user) "
 		 "<? endif ?>"
-		 "ORDER BY warehous_code;" ;
+		 ") ORDER BY warehous_code;" ;
   ParameterList whsp;
   setParams(whsp);
   MetaSQLQuery whsm(whss);

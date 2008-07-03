@@ -103,6 +103,7 @@ enterPoReceipt::enterPoReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
   }
   _order->setFocus();
 
+  _orderitem->addColumn(tr("Site"),         _whsColumn,  Qt::AlignCenter );
   _orderitem->addColumn(tr("#"),            _whsColumn,  Qt::AlignCenter );
   _orderitem->addColumn(tr("Due Date"),     _dateColumn, Qt::AlignLeft   );
   _orderitem->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft   );
@@ -176,6 +177,8 @@ void enterPoReceipt::setParams(ParameterList & params)
     params.append("ordertype", _order->type());
   }
 
+  if (_preferences->boolean("selectedSites"))
+    params.append("selectedOnly");
   params.append("nonInventory",	tr("Non-Inventory"));
   params.append("na",		tr("N/A"));
 }

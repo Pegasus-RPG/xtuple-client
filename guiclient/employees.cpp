@@ -62,6 +62,7 @@
 
 #include <parameter.h>
 #include <openreports.h>
+#include <metasql.h>
 
 #include "employee.h"
 #include "guiclient.h"
@@ -77,9 +78,14 @@ employees::employees(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
+  connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
 
+  _emp->addColumn(tr("Site"),   _whsColumn,  Qt::AlignLeft, true, "warehous_code");
   _emp->addColumn(tr("Code"),   _itemColumn, Qt::AlignLeft, true, "emp_code");
-  _emp->addColumn(tr("Number"),          -1, Qt::AlignLeft, true, "emp_number");
+  _emp->addColumn(tr("Number"), -1,          Qt::AlignLeft, true, "emp_number");
+  _emp->addColumn(tr("First"),  _itemColumn, Qt::AlignLeft, true, "cntct_first_name");
+  _emp->addColumn(tr("Last"),   _itemColumn, Qt::AlignLeft, true, "cntct_last_name");
+  
 
   if (_privileges->check("MaintainEmployees"))
   {
@@ -155,10 +161,22 @@ void employees::sView()
 
 void employees::sFillList()
 {
-  q.prepare("SELECT emp_id, emp_code, emp_number "
-            "FROM emp "
-            "ORDER BY emp_code;" );
-  q.exec();
+  
+  QString sql("SELECT emp_id, warehous_code, emp_code, emp_number, "
+              "       cntct_first_name, cntct_last_name "
+              "FROM emp "
+              "  LEFT OUTER JOIN cntct ON (emp_cntct_id=cntct_id) "
+              "  LEFT OUTER JOIN whsinfo ON (emp_warehous_id=warehous_id) "
+	     "<? if exists(\"warehouse_id\") ?>"
+             "WHERE (warehous_id=<? value(\"warehouse_id\") ?>)"
+             "<? endif ?>"
+              "ORDER BY emp_code;" );
+              
+  MetaSQLQuery mql(sql);
+  ParameterList params;
+  if (!_warehouse->isAll())
+    params.append("warehouse_id", _warehouse->id());
+  q = mql.toQuery(params);
   _emp->populate(q);
   if (q.lastError().type() != QSqlError::None)
   {
@@ -181,7 +199,11 @@ void employees::sNew()
 
 void employees::sPrint()
 {
-  orReport report("EmployeeList");
+  ParameterList params;
+  if (!_warehouse->isAll())
+    params.append("warehouse_id", _warehouse->id());
+
+  orReport report("EmployeeList", params);
   if (report.isValid())
     report.print();
   else

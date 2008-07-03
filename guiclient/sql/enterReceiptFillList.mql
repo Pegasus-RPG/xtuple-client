@@ -1,5 +1,5 @@
 <? if exists("pohead_id") ?>
-SELECT poitem_id, poitem_linenumber,
+SELECT poitem_id, warehous_code, poitem_linenumber,
        formatDate(poitem_duedate),
        COALESCE(item_number, <? value("nonInventory") ?>),
        COALESCE(uom_name, <? value("na") ?>),
@@ -8,15 +8,24 @@ SELECT poitem_id, poitem_linenumber,
        formatQty(poitem_qty_ordered),
        formatQty(poitem_qty_received),
        formatQty(qtyToReceive(<? value("ordertype") ?>, poitem_id))
-FROM poitem LEFT OUTER JOIN 
-     ( itemsite JOIN item 
-       ON (itemsite_item_id=item_id) JOIN uom ON (item_inv_uom_id=uom_id)
+FROM poitem 
+  LEFT OUTER JOIN 
+     ( itemsite 
+<? if exists("selectedOnly") ?>
+       JOIN usrsite ON (itemsite_warehous_id=usrsite_warehous_id) 
+<? endif ?>
+       JOIN item ON (itemsite_item_id=item_id) 
+       JOIN uom ON (item_inv_uom_id=uom_id)
+       JOIN whsinfo ON (itemsite_warehous_id=warehous_id)
      ) ON (poitem_itemsite_id=itemsite_id) 
 WHERE ( (poitem_status <> 'C')
+<? if exists("selectedOnly") ?>
+ AND (usrsite_username=current_user) 
+<? endif ?>
  AND (poitem_pohead_id=<? value("pohead_id") ?>) )
 ORDER BY poitem_linenumber;
 <? elseif exists("rahead_id") ?>
-SELECT raitem_id, raitem_linenumber,
+SELECT raitem_id, warehous_code, raitem_linenumber,
        formatDate(rahead_expiredate),
        COALESCE(item_number, <? value("nonInventory") ?>),
        COALESCE(iu.uom_name, <? value("na") ?>),
@@ -25,9 +34,15 @@ SELECT raitem_id, raitem_linenumber,
        formatQty(raitem_qtyauthorized),
        formatQty(raitem_qtyreceived),
        formatQty(qtyToReceive(<? value("ordertype") ?>, raitem_id))
-FROM rahead, raitem LEFT OUTER JOIN 
-     ( itemsite JOIN item 
-       ON (itemsite_item_id=item_id) JOIN uom iu ON (item_inv_uom_id=uom_id)
+FROM rahead, raitem 
+  LEFT OUTER JOIN 
+     ( itemsite 
+<? if exists("selectedOnly") ?>
+       JOIN usrsite ON (itemsite_warehous_id=usrsite_warehous_id) 
+<? endif ?>
+       JOIN item ON (itemsite_item_id=item_id) 
+       JOIN uom iu ON (item_inv_uom_id=uom_id)
+       JOIN whsinfo ON (itemsite_warehous_id=warehous_id)
      ) ON (raitem_itemsite_id=itemsite_id), uom ru
 
 WHERE ( (raitem_status <> 'C')
@@ -35,10 +50,13 @@ WHERE ( (raitem_status <> 'C')
  AND (raitem_disposition IN ('R','P','V'))
  AND (raitem_rahead_id=rahead_id)
  AND (raitem_qty_uom_id=ru.uom_id)
+<? if exists("selectedOnly") ?>
+ AND (usrsite_username=current_user) 
+<? endif ?>
  AND (rahead_id=<? value("rahead_id") ?>) )
 ORDER BY raitem_linenumber;
 <? elseif exists("tohead_id") ?>
-SELECT toitem_id, toitem_linenumber,
+SELECT toitem_id, warehous_code, toitem_linenumber,
        formatDate(toitem_duedate),
        COALESCE(item_number, <? value("nonInventory") ?>),
        COALESCE(uom_name, <? value("na") ?>),
@@ -47,9 +65,20 @@ SELECT toitem_id, toitem_linenumber,
        formatQty(toitem_qty_ordered),
        formatQty(toitem_qty_received),
        formatQty(qtyToReceive(<? value("ordertype") ?>, toitem_id))
-FROM toitem, item JOIN uom ON (item_inv_uom_id=uom_id)
+FROM tohead, itemsite
+<? if exists("selectedOnly") ?>
+       JOIN usrsite ON (itemsite_warehous_id=usrsite_warehous_id) 
+<? endif ?>
+, whsinfo, toitem, item JOIN uom ON (item_inv_uom_id=uom_id)
 WHERE ((toitem_item_id=item_id)
+  AND  (tohead_id=toitem_tohead_id)
+  AND  (tohead_dest_warehous_id=itemsite_warehous_id)
+  AND  (tohead_dest_warehous_id=warehous_id)
+  AND  (toitem_item_id=itemsite_item_id)
   AND  (toitem_status <> 'C')
+<? if exists("selectedOnly") ?>
+ AND (usrsite_username=current_user) 
+<? endif ?>
   AND  (toitem_tohead_id=<? value("tohead_id") ?>) )
 ORDER BY toitem_linenumber;
 <? endif ?>

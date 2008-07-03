@@ -72,6 +72,8 @@ public:
     openSalesOrders(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~openSalesOrders();
     virtual void setParams(ParameterList &);
+    
+    virtual bool checkSitePrivs();
 
 public slots:
     virtual void sPrint();

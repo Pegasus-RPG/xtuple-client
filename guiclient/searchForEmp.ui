@@ -5,210 +5,156 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>698</width>
-    <height>397</height>
+    <width>860</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Search for Employees</string>
   </property>
   <widget class="QWidget" name="widget" >
-   <layout class="QVBoxLayout" >
-    <property name="spacing" >
-     <number>5</number>
-    </property>
-    <property name="leftMargin" >
-     <number>5</number>
-    </property>
-    <property name="topMargin" >
-     <number>5</number>
-    </property>
-    <property name="rightMargin" >
-     <number>5</number>
-    </property>
-    <property name="bottomMargin" >
-     <number>5</number>
-    </property>
-    <item>
+   <layout class="QGridLayout" >
+    <item row="0" column="0" colspan="4" >
      <layout class="QHBoxLayout" >
       <property name="spacing" >
-       <number>7</number>
+       <number>5</number>
       </property>
       <item>
-       <layout class="QVBoxLayout" >
-        <property name="spacing" >
-         <number>5</number>
+       <widget class="QLabel" name="_searchLit" >
+        <property name="text" >
+         <string>S&amp;earch for:</string>
         </property>
-        <item>
-         <layout class="QHBoxLayout" >
-          <property name="spacing" >
-           <number>5</number>
-          </property>
-          <item>
-           <widget class="QLabel" name="_searchLit" >
-            <property name="text" >
-             <string>S&amp;earch for:</string>
-            </property>
-            <property name="alignment" >
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-            <property name="buddy" >
-             <cstring>_search</cstring>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="XLineEdit" name="_search" />
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" >
-          <property name="spacing" >
-           <number>0</number>
-          </property>
-          <item>
-           <layout class="QHBoxLayout" >
-            <property name="spacing" >
-             <number>7</number>
-            </property>
-            <item>
-             <layout class="QVBoxLayout" >
-              <property name="spacing" >
-               <number>1</number>
-              </property>
-              <item>
-               <widget class="XCheckBox" name="_searchCode" >
-                <property name="text" >
-                 <string>Search through Employee Codes</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="XCheckBox" name="_searchNumber" >
-                <property name="text" >
-                 <string>Search through Employee Numbers</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="XCheckBox" name="_searchMgr" >
-                <property name="text" >
-                 <string>Search through Manager Codes and Numbers</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QVBoxLayout" >
-              <property name="spacing" >
-               <number>0</number>
-              </property>
-              <item>
-               <widget class="XCheckBox" name="_searchDept" >
-                <property name="text" >
-                 <string>Search through Departments</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="XCheckBox" name="_searchShift" >
-                <property name="text" >
-                 <string>Search through Shifts</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="XCheckBox" name="_showInactive" >
-                <property name="text" >
-                 <string>Show &amp;Inactive Employees</string>
-                </property>
-                <property name="shortcut" >
-                 <string>Alt+I</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <spacer>
-                <property name="orientation" >
-                 <enum>Qt::Vertical</enum>
-                </property>
-                <property name="sizeType" >
-                 <enum>QSizePolicy::Preferred</enum>
-                </property>
-                <property name="sizeHint" >
-                 <size>
-                  <width>20</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <spacer>
-            <property name="orientation" >
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeType" >
-             <enum>QSizePolicy::Expanding</enum>
-            </property>
-            <property name="sizeHint" >
-             <size>
-              <width>20</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </item>
-       </layout>
+        <property name="alignment" >
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+        <property name="buddy" >
+         <cstring>_search</cstring>
+        </property>
+       </widget>
       </item>
       <item>
-       <layout class="QVBoxLayout" >
-        <property name="spacing" >
-         <number>0</number>
-        </property>
-        <item>
-         <widget class="QPushButton" name="_close" >
-          <property name="text" >
-           <string>&amp;Close</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="_print" >
-          <property name="text" >
-           <string>Print</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeType" >
-           <enum>QSizePolicy::Preferred</enum>
-          </property>
-          <property name="sizeHint" >
-           <size>
-            <width>20</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
+       <widget class="XLineEdit" name="_search" />
       </item>
      </layout>
     </item>
-    <item>
+    <item rowspan="3" row="0" column="4" >
+     <layout class="QVBoxLayout" >
+      <property name="spacing" >
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QPushButton" name="_close" >
+        <property name="text" >
+         <string>&amp;Close</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="_print" >
+        <property name="text" >
+         <string>Print</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer>
+        <property name="orientation" >
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeType" >
+         <enum>QSizePolicy::Preferred</enum>
+        </property>
+        <property name="sizeHint" >
+         <size>
+          <width>132</width>
+          <height>71</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+    <item row="1" column="0" colspan="3" >
+     <widget class="XCheckBox" name="_showInactive" >
+      <property name="text" >
+       <string>Show &amp;Inactive Employees</string>
+      </property>
+      <property name="shortcut" >
+       <string>Alt+I</string>
+      </property>
+     </widget>
+    </item>
+    <item rowspan="2" row="1" column="3" >
+     <widget class="QGroupBox" name="_searchGroup" >
+      <property name="title" >
+       <string>Search through</string>
+      </property>
+      <layout class="QGridLayout" >
+       <item row="0" column="0" >
+        <widget class="XCheckBox" name="_searchCode" >
+         <property name="text" >
+          <string>Employee Codes</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1" >
+        <widget class="XCheckBox" name="_searchMgr" >
+         <property name="text" >
+          <string>Manager Codes and Numbers</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" >
+        <widget class="XCheckBox" name="_searchNumber" >
+         <property name="text" >
+          <string>Employee Numbers</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1" >
+        <widget class="XCheckBox" name="_searchDept" >
+         <property name="text" >
+          <string>Departments</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0" >
+        <widget class="XCheckBox" name="_searchName" >
+         <property name="text" >
+          <string>Employee Name</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1" >
+        <widget class="XCheckBox" name="_searchShift" >
+         <property name="text" >
+          <string>Shifts</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="2" column="0" >
+     <widget class="WarehouseGroup" name="_warehouse" />
+    </item>
+    <item row="2" column="1" >
+     <spacer>
+      <property name="orientation" >
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeType" >
+       <enum>QSizePolicy::Preferred</enum>
+      </property>
+      <property name="sizeHint" >
+       <size>
+        <width>20</width>
+        <height>16</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="3" column="0" colspan="5" >
      <layout class="QVBoxLayout" >
       <property name="spacing" >
        <number>0</number>
@@ -301,6 +247,11 @@
  <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
+  <customwidget>
+   <class>WarehouseGroup</class>
+   <extends>QGroupBox</extends>
+   <header>warehousegroup.h</header>
+  </customwidget>
   <customwidget>
    <class>XCheckBox</class>
    <extends>QCheckBox</extends>

@@ -627,6 +627,8 @@ void issueToShipping::sFillList()
   }
 
   listp.append("ordertype", _order->type());
+  if (_preferences->boolean("selectedSites"))
+    listp.append("selectedOnly");
 
   // TODO: add qty_returned to orderitem and all of this can become an orderitem select!
   QString sql = "SELECT *, "
@@ -652,7 +654,11 @@ void issueToShipping::sFillList()
              "       coitem_qtyshipped AS qtyshipped,"
              "       coitem_qtyreturned AS qtyreturned,"
              "       COALESCE(SUM(shipitem_qty), 0) AS atshipping "
-             "FROM itemsite, item, whsinfo, uom,"
+             "FROM itemsite "
+             "<? if exists(\"selectedOnly\") ?>"
+             "JOIN usrsite ON (itemsite_warehous_id=usrsite_warehous_id) "
+             "<? endif ?>"
+             ", item, whsinfo, uom,"
              "     coitem LEFT OUTER JOIN"
              "      ( shipitem JOIN shiphead"
              "        ON ( (shipitem_shiphead_id=shiphead_id) AND (NOT shiphead_shipped) )"
@@ -662,6 +668,9 @@ void issueToShipping::sFillList()
              " AND (itemsite_item_id=item_id)"
              " AND (itemsite_warehous_id=warehous_id)"
              " AND (coitem_status NOT IN ('C','X'))"
+             "<? if exists(\"selectedOnly\") ?>"
+             "  AND (usrsite_username=current_user) "
+             "<? endif ?>"
              " AND (coitem_cohead_id=<? value(\"sohead_id\") ?>) ) "
              "GROUP BY coitem_id, coitem_linenumber, item_number,"
              "         item_descrip1, item_descrip2, warehous_code,"
@@ -678,7 +687,11 @@ void issueToShipping::sFillList()
              "       toitem_qty_shipped AS qtyshipped,"
              "       0 AS qtyreturned,"
              "       COALESCE(SUM(shipitem_qty), 0) AS atshipping "
-             "FROM item, tohead, uom,"
+             "FROM item, tohead "
+             "<? if exists(\"selectedOnly\") ?>"
+             "JOIN usrsite ON (tohead_src_warehous_id=usrsite_warehous_id) "
+             "<? endif ?>"
+             ", uom,"
              "     toitem LEFT OUTER JOIN"
              "      ( shipitem JOIN shiphead"
              "        ON ( (shipitem_shiphead_id=shiphead_id) AND (NOT shiphead_shipped) )"
@@ -687,6 +700,9 @@ void issueToShipping::sFillList()
              " AND (toitem_status NOT IN ('C','X'))"
 	     " AND (toitem_tohead_id=tohead_id)"
              " AND (item_inv_uom_id=uom_id)"
+             "<? if exists(\"selectedOnly\") ?>"
+             "  AND (usrsite_username=current_user) "
+             "<? endif ?>"
              " AND (tohead_id=<? value(\"tohead_id\") ?>) ) "
              "GROUP BY toitem_id, toitem_linenumber, item_number,"
              "         item_descrip1, item_descrip2, tohead_srcname,"

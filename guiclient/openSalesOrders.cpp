@@ -149,12 +149,14 @@ void openSalesOrders::sNew()
 
 void openSalesOrders::sEdit()
 {
-  salesOrder::editSalesOrder(_so->id(), false);
+  if (checkSitePrivs())
+    salesOrder::editSalesOrder(_so->id(), false);
 }
 
 void openSalesOrders::sView()
 {
-  salesOrder::viewSalesOrder(_so->id());
+  if (checkSitePrivs())
+    salesOrder::viewSalesOrder(_so->id());
 }
 
 void openSalesOrders::sCopy()
@@ -449,4 +451,33 @@ void openSalesOrders::sPrintForms()
   printSoForm newdlg(this, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
+}
+
+bool openSalesOrders::checkSitePrivs()
+{
+  qDebug("Test");
+  if (_preferences->boolean("selectedSites"))
+  {
+    qDebug("In");
+    QString sql("SELECT coitem_id "
+                "FROM coitem, itemsite "
+                "WHERE ((coitem_cohead_id=<? value(\"sohead_id\") ?>) "
+                "  AND (coitem_itemsite_id=itemsite_id) "
+                "  AND (itemsite_warehous_id NOT IN ("
+                "       SELECT usrsite_warehous_id "
+                "       FROM usrsite "
+                "       WHERE (usrsite_username=current_user))));");
+    MetaSQLQuery mql(sql);
+    ParameterList params;
+    params.append("sohead_id", _so->id());
+    q = mql.toQuery(params);
+    if (q.first())
+    {
+      	    QMessageBox::critical(this, tr("Access Denied"),
+				  tr("You may not view or edit this Sales Order as it has line items "
+                                     "in a warehouse for which you have not been granted privileges.")) ;
+            return false;
+    }
+  }
+  return true;
 }

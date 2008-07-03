@@ -114,13 +114,18 @@ searchForEmp::searchForEmp(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_searchDept,   SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_searchMgr,    SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_searchNumber, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+  connect(_searchName, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_searchShift,  SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_search,       SIGNAL(lostFocus()),   this, SLOT(sFillList()));
   connect(_showInactive, SIGNAL(clicked()),     this, SLOT(sFillList()));
   connect(_view,         SIGNAL(clicked()),     this, SLOT(sView()));
+  connect(_warehouse,    SIGNAL(updated()),     this, SLOT(sFillList()));
 
+  _emp->addColumn(tr("Site"),   _whsColumn,  Qt::AlignLeft, true, "warehous_code");
   _emp->addColumn(tr("Code"),   _itemColumn, Qt::AlignLeft, true, "emp_code");
   _emp->addColumn(tr("Number"),          -1, Qt::AlignLeft, true, "emp_number");
+  _emp->addColumn(tr("First"),  _itemColumn, Qt::AlignLeft, true, "cntct_first_name");
+  _emp->addColumn(tr("Last"),   _itemColumn, Qt::AlignLeft, true, "cntct_last_name");
   _emp->addColumn(tr("Manager"),_itemColumn, Qt::AlignLeft, true, "mgr_code");
   _emp->addColumn(tr("Dept."),  _itemColumn, Qt::AlignLeft, true, "dept_number");
   _emp->addColumn(tr("Shift"),  _itemColumn, Qt::AlignLeft, true, "shift_number");
@@ -254,20 +259,25 @@ bool searchForEmp::setParams(ParameterList &pParams)
   if (_searchDept->isChecked())    pParams.append("searchDept");
   if (_searchMgr->isChecked())     pParams.append("searchMgr");
   if (_searchNumber->isChecked())  pParams.append("searchNumber");
+  if (_searchName->isChecked())    pParams.append("searchName");
   if (_searchShift->isChecked())   pParams.append("searchShift");
   if (!_showInactive->isChecked()) pParams.append("activeOnly");
+  if (!_warehouse->isAll())        pParams.append("warehouse_id", _warehouse->id());
 
   return true;
 }
 
 void searchForEmp::sFillList()
 {
-  QString sql("SELECT e.emp_id, m.emp_id, e.emp_code, e.emp_number,"
+  QString sql("SELECT e.emp_id, m.emp_id, warehous_code, e.emp_code, e.emp_number,"
+              "       cntct_first_name, cntct_last_name, "
               "       m.emp_code AS mgr_code, dept_number, shift_number "
-              "FROM emp e LEFT OUTER JOIN"
-              "     emp m ON (e.emp_mgr_emp_id=m.emp_id) LEFT OUTER JOIN"
-              "     shift ON (e.emp_shift_id=shift_id) LEFT OUTER JOIN"
-              "     dept  ON (e.emp_dept_id=dept_id) "
+              "FROM emp e "
+              "  LEFT OUTER JOIN cntct ON (emp_cntct_id=cntct_id) "
+              "  LEFT OUTER JOIN whsinfo ON (emp_warehous_id=warehous_id) "
+              "  LEFT OUTER JOIN emp m ON (e.emp_mgr_emp_id=m.emp_id) "
+              "  LEFT OUTER JOIN shift ON (e.emp_shift_id=shift_id) "
+              "  LEFT OUTER JOIN dept  ON (e.emp_dept_id=dept_id) "
               "WHERE ((LENGTH(TRIM(<? value(\"searchString\") ?>)) = 0)"
               "<? if exists(\"searchCode\") ?>"
               "   OR (e.emp_code ~* <? value(\"searchString\") ?>)"
@@ -287,10 +297,17 @@ void searchForEmp::sFillList()
               "   OR (shift_number ~* <? value(\"searchString\") ?>)"
               "   OR (shift_name   ~* <? value(\"searchString\") ?>)"
               "<? endif ?>"
+              "<? if exists(\"searchName\") ?>"
+              "   OR (cntct_first_name ~* <? value(\"searchString\") ?>)"
+              "   OR (cntct_last_name   ~* <? value(\"searchString\") ?>)"
+              "<? endif ?>"
               "      )"  // end searchString
               "<? if exists(\"activeOnly\") ?>"
               "   AND e.emp_active "
               "<? endif ?>"
+	     "<? if exists(\"warehouse_id\") ?>"
+             "    AND (warehous_id=<? value(\"warehouse_id\") ?>)"
+             "<? endif ?>"
               "ORDER BY emp_code");
 
   MetaSQLQuery mql(sql);
