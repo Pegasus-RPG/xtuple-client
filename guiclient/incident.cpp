@@ -65,6 +65,7 @@
 #include "storedProcErrorLookup.h"
 #include "todoItem.h"
 #include "returnAuthorization.h"
+#include "arOpenItem.h"
 
 /*
  *  Constructs a incident as a child of 'parent', with the
@@ -91,6 +92,7 @@ incident::incident(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_todoList,	SIGNAL(valid(bool)),	this, SLOT(sHandleTodoPrivs()));
   connect(_viewTodoItem, SIGNAL(clicked()),	this,	SLOT(sViewTodoItem()));
   connect(_return,      SIGNAL(clicked()),      this, SLOT(sReturn()));
+  connect(_viewAR,      SIGNAL(clicked()),      this, SLOT(sViewAR()));
 
   _incdtid = -1;
 
@@ -490,10 +492,23 @@ void incident::populate()
             "       incdt_item_id, incdt_ls_id,"
             "       incdt_status, incdt_assigned_username,"
             "       incdt_incdtcat_id, incdt_incdtseverity_id,"
-            "       incdt_incdtpriority_id, incdt_incdtresolution_id"
-            "  FROM incdt LEFT OUTER JOIN cntct ON (incdt_cntct_id=cntct_id)"
-            " WHERE (incdt_id=:incdt_id); ");
+            "       incdt_incdtpriority_id, incdt_incdtresolution_id,"
+			"       COALESCE(incdt_aropen_id, -1) AS docId,"
+			"       COALESCE(aropen_docnumber, '') AS docNumber,"
+            "       CASE WHEN (aropen_doctype='C') THEN :creditMemo"
+            "            WHEN (aropen_doctype='D') THEN :debitMemo"
+            "            WHEN (aropen_doctype='I') THEN :invoice"
+            "            WHEN (aropen_doctype='R') THEN :cashdeposit"
+            "            ELSE ''"
+            "       END AS docType "
+            "FROM incdt LEFT OUTER JOIN cntct ON (incdt_cntct_id=cntct_id)"
+			"           LEFT OUTER JOIN aropen ON (incdt_aropen_id=aropen_id) "
+            "WHERE (incdt_id=:incdt_id); ");
   q.bindValue(":incdt_id", _incdtid);
+  q.bindValue(":creditMemo", tr("C/M"));
+  q.bindValue(":debitMemo", tr("D/M"));
+  q.bindValue(":invoice", tr("Invoice"));
+  q.bindValue(":cashdeposit", tr("C/D"));
   q.exec();
   if(q.first())
   {
@@ -527,6 +542,12 @@ void incident::populate()
     _notes->setText(q.value("incdt_descrip").toString());
 
     _comments->setId(_incdtid);
+	
+	_docType->setText(q.value("docType").toString());
+	_docNumber->setText(q.value("docNumber").toString());
+	_aropenid = q.value("docId").toInt();
+	if (_aropenid > 0)
+      _viewAR->setEnabled(true);
 
     sFillHistoryList();
     sFillTodoList();
@@ -711,5 +732,16 @@ void incident::sReturn()
     QMessageBox::critical(this, tr("Could Not Open Window"),
                           tr("The new Return Authorization could not be created"));
   
+}
+
+void incident::sViewAR()
+{
+  ParameterList params;
+  params.append("mode", "view");
+  params.append("aropen_id", _aropenid);
+
+  arOpenItem newdlg(this, 0, true);
+  newdlg.set(params);
+  newdlg.exec();
 }
 

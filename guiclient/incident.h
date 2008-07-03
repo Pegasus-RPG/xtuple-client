@@ -90,6 +90,7 @@ public slots:
     virtual void sViewTodoItem();
     virtual bool save(bool);
     virtual void sReturn();
+    virtual void sViewAR();
 
 protected slots:
     virtual void languageChange();
@@ -99,7 +100,7 @@ private:
     int		_incdtid;
     int		_mode;
     int		_myUsrId;
-	int     _aropenid;
+    int     _aropenid;
     bool	_saved;
     QStringList	_statusCodes;
 };
