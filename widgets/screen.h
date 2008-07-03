@@ -66,11 +66,11 @@
 #include <QSqlIndex>
 #include <QList>
 
-#include <QtGui/qwidget.h>
+//#include <QtGui/qwidget.h>
 
-QT_BEGIN_HEADER
+//QT_BEGIN_HEADER
 
-QT_MODULE(Gui)
+//QT_MODULE(Gui)
 
 class OPENMFGWIDGETS_EXPORT Screen : public QWidget
 {
