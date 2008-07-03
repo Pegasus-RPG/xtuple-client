@@ -559,7 +559,10 @@ void ContactCluster::setMinimalLayout(const bool p)
 
 void ContactCluster::layout()
 {
-  QLayout* currLayout = (_layoutDone) ? _grid : parentWidget()->layout();
+  QLayout* pwl = 0;
+  if(parentWidget())
+    pwl = parentWidget()->layout();
+  QLayout* currLayout = (_layoutDone) ? _grid : pwl;
 
   if (_layoutDone)
   {
