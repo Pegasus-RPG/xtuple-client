@@ -55,7 +55,7 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#include "Screen.h"
+#include "screen.h"
 
 #include <QMessageBox>
 #include <QSqlError>
