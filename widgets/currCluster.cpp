@@ -501,7 +501,7 @@ int     CurrDisplay::_baseScale	= 2;
 
 int CurrDisplay::baseId()
 {
-  if (_baseId <= 0)
+  if (_baseId <= 0 && _x_metrics)
   {
     XSqlQuery baseQuery;
     baseQuery.prepare("SELECT curr_id, curr_symbol " //currConcat(curr_id) AS curr_symbol "
