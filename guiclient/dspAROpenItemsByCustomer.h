@@ -78,6 +78,9 @@ public slots:
     virtual void sEdit();
     virtual void sView();
     virtual void sViewInvoice();
+    virtual void sIncident();
+    virtual void sEditIncident();
+    virtual void sViewIncident();
     virtual void sPrint();
     virtual void sFillList();
 

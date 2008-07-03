@@ -99,6 +99,7 @@ private:
     int		_incdtid;
     int		_mode;
     int		_myUsrId;
+	int     _aropenid;
     bool	_saved;
     QStringList	_statusCodes;
 };

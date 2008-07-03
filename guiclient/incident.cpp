@@ -229,6 +229,18 @@ enum SetResponse incident::set(const ParameterList &pParams)
     _crmacct->setEnabled(false);
   }
 
+  param = pParams.value("cntct_id", &valid);
+  if (valid)
+  {
+    _cntct->setId(param.toInt());
+  }
+
+  param = pParams.value("aropen_id", &valid);
+  if (valid)
+  {
+    _aropenid = param.toInt();
+  }
+
   sHandleTodoPrivs();
   return NoError;
 }
@@ -364,13 +376,13 @@ bool incident::save(bool partial)
               "       incdt_status, incdt_assigned_username,"
               "       incdt_incdtcat_id, incdt_incdtseverity_id,"
               "       incdt_incdtpriority_id, incdt_incdtresolution_id,"
-              "       incdt_ls_id) "
+              "       incdt_ls_id, incdt_aropen_id) "
               "VALUES(:incdt_number, :incdt_crmacct_id, :incdt_cntct_id,"
               "       :incdt_description, :incdt_notes, :incdt_item_id,"
               "       :incdt_status, :incdt_assigned_username,"
               "       :incdt_incdtcat_id, :incdt_incdtseverity_id,"
               "       :incdt_incdtpriority_id, :incdt_incdtresolution_id,"
-              "       :incdt_ls_id);" );
+              "       :incdt_ls_id, :incdt_aropen_id);" );
   else if (cEdit == _mode || _saved)
     q.prepare("UPDATE incdt"
               "   SET incdt_cntct_id=:incdt_cntct_id,"
@@ -410,6 +422,7 @@ bool incident::save(bool partial)
     q.bindValue(":incdt_incdtresolution_id", _resolution->id());
   if ((_item->id() != -1) && (_lotserial->id() != -1))
     q.bindValue(":incdt_ls_id", _lotserial->id());
+  q.bindValue(":incdt_aropen_id", _aropenid);
 
   if(!q.exec() && q.lastError().type() != QSqlError::None)
   {

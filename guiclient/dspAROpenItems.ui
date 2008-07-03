@@ -16,13 +16,16 @@
    <layout class="QVBoxLayout" >
     <item>
      <layout class="QHBoxLayout" >
+      <property name="spacing" >
+       <number>5</number>
+      </property>
       <item>
        <layout class="QVBoxLayout" >
         <property name="spacing" >
          <number>0</number>
         </property>
         <item>
-         <widget class="DateCluster" name="_dates" >
+         <widget class="DateCluster" native="1" name="_dates" >
           <property name="focusPolicy" >
            <enum>Qt::StrongFocus</enum>
           </property>
@@ -47,62 +50,79 @@
        </layout>
       </item>
       <item>
-       <layout class="QHBoxLayout" >
-        <property name="spacing" >
-         <number>0</number>
-        </property>
+       <layout class="QVBoxLayout" >
+        <item>
+         <widget class="XCheckBox" name="_incidentsOnly" >
+          <property name="text" >
+           <string>Only show items with Incidents</string>
+          </property>
+         </widget>
+        </item>
         <item>
          <spacer>
           <property name="orientation" >
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeType" >
-           <enum>QSizePolicy::Expanding</enum>
+           <enum>Qt::Vertical</enum>
           </property>
           <property name="sizeHint" >
            <size>
             <width>20</width>
-            <height>0</height>
+            <height>40</height>
            </size>
           </property>
          </spacer>
         </item>
+       </layout>
+      </item>
+      <item>
+       <spacer>
+        <property name="orientation" >
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType" >
+         <enum>QSizePolicy::Expanding</enum>
+        </property>
+        <property name="sizeHint" >
+         <size>
+          <width>131</width>
+          <height>96</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" >
+        <property name="spacing" >
+         <number>-1</number>
+        </property>
         <item>
-         <layout class="QVBoxLayout" >
-          <property name="spacing" >
-           <number>-1</number>
+         <widget class="QPushButton" name="_close" >
+          <property name="text" >
+           <string>&amp;Close</string>
           </property>
-          <item>
-           <widget class="QPushButton" name="_close" >
-            <property name="text" >
-             <string>&amp;Close</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="_query" >
-            <property name="text" >
-             <string>&amp;Query</string>
-            </property>
-            <property name="shortcut" >
-             <string>Alt+Q</string>
-            </property>
-            <property name="autoDefault" >
-             <bool>true</bool>
-            </property>
-            <property name="default" >
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="_print" >
-            <property name="text" >
-             <string>&amp;Print</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="_query" >
+          <property name="text" >
+           <string>&amp;Query</string>
+          </property>
+          <property name="shortcut" >
+           <string>Alt+Q</string>
+          </property>
+          <property name="autoDefault" >
+           <bool>true</bool>
+          </property>
+          <property name="default" >
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="_print" >
+          <property name="text" >
+           <string>&amp;Print</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
@@ -161,14 +181,7 @@
         </widget>
        </item>
        <item>
-        <widget class="XTreeWidget" name="_aropen" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
-           <horstretch>0</horstretch>
-           <verstretch>1</verstretch>
-          </sizepolicy>
-         </property>
-        </widget>
+        <widget class="XTreeWidget" name="_aropen" />
        </item>
       </layout>
      </widget>
@@ -188,6 +201,11 @@
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
