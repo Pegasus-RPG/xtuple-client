@@ -100,6 +100,9 @@ dspInventoryHistoryByParameterList::dspInventoryHistoryByParameterList(QWidget* 
   _invhist->addColumn(tr("QOH Before"),  _qtyColumn,         Qt::AlignRight  );
   _invhist->addColumn(tr("To Area"),     _orderColumn,       Qt::AlignLeft   );
   _invhist->addColumn(tr("QOH After"),   _qtyColumn,         Qt::AlignRight  );
+  _invhist->addColumn(tr("Cost Method"), _qtyColumn,          Qt::AlignLeft  );
+  _invhist->addColumn(tr("Value Before"),_qtyColumn,          Qt::AlignRight );
+  _invhist->addColumn(tr("Value After"), _qtyColumn,          Qt::AlignRight );
 
   _transType->append(cTransAll,       tr("All Transactions")       );
   _transType->append(cTransReceipts,  tr("Receipts")               );
@@ -472,6 +475,9 @@ void dspInventoryHistoryByParameterList::sFillList()
           parentItem->setText(10, q.value("qohbefore").toString());
           parentItem->setText(11, q.value("locto").toString());
           parentItem->setText(12, q.value("qohafter").toString());
+          parentItem->setText(13, q.value("costmethod").toString());
+          parentItem->setText(14, q.value("valbefore").toString());
+          parentItem->setText(15, q.value("valafter").toString());
         }
         else
           parentItem->setTextColor("orange");

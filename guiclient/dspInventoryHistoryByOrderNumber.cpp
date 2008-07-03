@@ -95,6 +95,9 @@ dspInventoryHistoryByOrderNumber::dspInventoryHistoryByOrderNumber(QWidget* pare
   _invhist->addColumn(tr("Order #"),     -1,                 Qt::AlignCenter );
   _invhist->addColumn(tr("QOH Before"),  _qtyColumn,         Qt::AlignRight  );
   _invhist->addColumn(tr("QOH After"),   _qtyColumn,         Qt::AlignRight  );
+  _invhist->addColumn(tr("Cost Method"), _qtyColumn,          Qt::AlignLeft  );
+  _invhist->addColumn(tr("Value Before"),_qtyColumn,          Qt::AlignRight );
+  _invhist->addColumn(tr("Value After"), _qtyColumn,          Qt::AlignRight );
 
   _transType->append(cTransAll,       tr("All Transactions")       );
   _transType->append(cTransReceipts,  tr("Receipts")               );
@@ -255,6 +258,9 @@ void dspInventoryHistoryByOrderNumber::sFillList()
       {
         last->setText( 9, q.value("qohbefore").toString());
         last->setText(10, q.value("qohafter").toString());
+        last->setText(11, q.value("costmethod").toString());
+        last->setText(12, q.value("valbefore").toString());
+        last->setText(13, q.value("valafter").toString());
       }
       else
         last->setTextColor("orange");

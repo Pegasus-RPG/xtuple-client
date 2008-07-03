@@ -6,6 +6,14 @@ SELECT invhist.*, whs1.warehous_code AS warehous_code,
        END AS ordernumber,
        formatQty(invhist_qoh_before) AS qohbefore,
        formatQty(invhist_qoh_after) AS qohafter,
+       CASE WHEN(invhist_costmethod='A') THEN text('Average')
+            WHEN(invhist_costmethod='S') THEN text('Standard')
+            WHEN(invhist_costmethod='J') THEN text('Job')
+            WHEN(invhist_costmethod='N') THEN text('None')
+            ELSE 'UNKNOWN'
+       END AS costmethod,
+       formatMoney(invhist_value_before) AS valbefore,
+       formatMoney(invhist_value_after) AS valafter,
        0 AS invdetail_id, '' AS locationname,
        '' AS detailqty,
        '' AS locationqtybefore, '' AS locationqtyafter,
@@ -67,10 +75,18 @@ UNION SELECT invhist.*, whs1.warehous_code AS warehous_code,
              END AS ordernumber,
              formatQty(invhist_qoh_before) AS qohbefore,
              formatQty(invhist_qoh_after) AS qohafter,
+             CASE WHEN(invhist_costmethod='A') THEN text('Average')
+                  WHEN(invhist_costmethod='S') THEN text('Standard')
+                  WHEN(invhist_costmethod='J') THEN text('Job')
+                  WHEN(invhist_costmethod='N') THEN text('None')
+                  ELSE 'UNKNOWN'
+             END AS costmethod,
+             formatMoney(invhist_value_before) AS valbefore,
+             formatMoney(invhist_value_after) AS valafter,
              invdetail_id,
-             CASE WHEN (invdetail_location_id=-1) THEN invdetail_lotserial
-                  WHEN (invdetail_lotserial IS NULL) THEN formatLocationName(invdetail_location_id)
-                  ELSE (formatLocationName(invdetail_location_id) || '-' || invdetail_lotserial)
+             CASE WHEN (invdetail_location_id=-1) THEN formatlotserialnumber(invdetail_ls_id)
+                  WHEN (invdetail_ls_id IS NULL) THEN formatLocationName(invdetail_location_id)
+                  ELSE (formatLocationName(invdetail_location_id) || '-' || formatlotserialnumber(invdetail_ls_id))
              END AS locationname,
              formatQty(invdetail_qty) AS detailqty,
              formatQty(invdetail_qty_before) AS locationqtybefore,

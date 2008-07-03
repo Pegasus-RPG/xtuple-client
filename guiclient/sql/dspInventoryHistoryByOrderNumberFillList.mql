@@ -6,7 +6,15 @@ SELECT invhist.*,
             ELSE invhist_ordnumber
        END AS ordernumber,
        formatQty(invhist_qoh_before) AS qohbefore,
-       formatQty(invhist_qoh_after) AS qohafter
+       formatQty(invhist_qoh_after) AS qohafter,
+       CASE WHEN(invhist_costmethod='A') THEN text('Average')
+            WHEN(invhist_costmethod='S') THEN text('Standard')
+            WHEN(invhist_costmethod='J') THEN text('Job')
+            WHEN(invhist_costmethod='N') THEN text('None')
+            ELSE 'UNKNOWN'
+       END AS costmethod,
+       formatMoney(invhist_value_before) AS valbefore,
+       formatMoney(invhist_value_after) AS valafter
 FROM invhist, itemsite, item, warehous 
 WHERE ( (invhist_itemsite_id=itemsite_id)
   AND  (itemsite_item_id=item_id)
