@@ -1,57 +1,57 @@
 /*
- * Common Public Attribution License Version 1.0. 
- * 
- * The contents of this file are subject to the Common Public Attribution 
- * License Version 1.0 (the "License"); you may not use this file except 
- * in compliance with the License. You may obtain a copy of the License 
- * at http://www.xTuple.com/CPAL.  The License is based on the Mozilla 
- * Public License Version 1.1 but Sections 14 and 15 have been added to 
- * cover use of software over a computer network and provide for limited 
- * attribution for the Original Developer. In addition, Exhibit A has 
+ * Common Public Attribution License Version 1.0.
+ *
+ * The contents of this file are subject to the Common Public Attribution
+ * License Version 1.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License
+ * at http://www.xTuple.com/CPAL.  The License is based on the Mozilla
+ * Public License Version 1.1 but Sections 14 and 15 have been added to
+ * cover use of software over a computer network and provide for limited
+ * attribution for the Original Developer. In addition, Exhibit A has
  * been modified to be consistent with Exhibit B.
- * 
- * Software distributed under the License is distributed on an "AS IS" 
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See 
- * the License for the specific language governing rights and limitations 
- * under the License. 
- * 
- * The Original Code is xTuple ERP: PostBooks Edition 
- * 
- * The Original Developer is not the Initial Developer and is __________. 
- * If left blank, the Original Developer is the Initial Developer. 
- * The Initial Developer of the Original Code is OpenMFG, LLC, 
- * d/b/a xTuple. All portions of the code written by xTuple are Copyright 
- * (c) 1999-2008 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
- * 
+ *
+ * Software distributed under the License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
+ * the License for the specific language governing rights and limitations
+ * under the License.
+ *
+ * The Original Code is xTuple ERP: PostBooks Edition
+ *
+ * The Original Developer is not the Initial Developer and is __________.
+ * If left blank, the Original Developer is the Initial Developer.
+ * The Initial Developer of the Original Code is OpenMFG, LLC,
+ * d/b/a xTuple. All portions of the code written by xTuple are Copyright
+ * (c) 1999-2008 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved.
+ *
  * Contributor(s): ______________________.
- * 
- * Alternatively, the contents of this file may be used under the terms 
- * of the xTuple End-User License Agreeement (the xTuple License), in which 
- * case the provisions of the xTuple License are applicable instead of 
- * those above.  If you wish to allow use of your version of this file only 
- * under the terms of the xTuple License and not to allow others to use 
- * your version of this file under the CPAL, indicate your decision by 
- * deleting the provisions above and replace them with the notice and other 
- * provisions required by the xTuple License. If you do not delete the 
- * provisions above, a recipient may use your version of this file under 
+ *
+ * Alternatively, the contents of this file may be used under the terms
+ * of the xTuple End-User License Agreeement (the xTuple License), in which
+ * case the provisions of the xTuple License are applicable instead of
+ * those above.  If you wish to allow use of your version of this file only
+ * under the terms of the xTuple License and not to allow others to use
+ * your version of this file under the CPAL, indicate your decision by
+ * deleting the provisions above and replace them with the notice and other
+ * provisions required by the xTuple License. If you do not delete the
+ * provisions above, a recipient may use your version of this file under
  * either the CPAL or the xTuple License.
- * 
+ *
  * EXHIBIT B.  Attribution Information
- * 
- * Attribution Copyright Notice: 
+ *
+ * Attribution Copyright Notice:
  * Copyright (c) 1999-2008 by OpenMFG, LLC, d/b/a xTuple
- * 
- * Attribution Phrase: 
+ *
+ * Attribution Phrase:
  * Powered by xTuple ERP: PostBooks Edition
- * 
- * Attribution URL: www.xtuple.org 
+ *
+ * Attribution URL: www.xtuple.org
  * (to be included in the "Community" menu of the application if possible)
- * 
- * Graphic Image as provided in the Covered Code, if any. 
+ *
+ * Graphic Image as provided in the Covered Code, if any.
  * (online at www.xtuple.com/poweredby)
- * 
- * Display of Attribution Information is required in Larger Works which 
- * are defined in the CPAL as a work which combines Covered Code or 
+ *
+ * Display of Attribution Information is required in Larger Works which
+ * are defined in the CPAL as a work which combines Covered Code or
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
@@ -231,7 +231,7 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
     _payments->hideColumn(5);
     _payments->hideColumn(8);
   }
-  
+
   if (_privileges->check("MaintainCRMAccounts") || _privileges->check("ViewCRMAccounts"))
     connect (_cust, SIGNAL(valid(bool)), _crmAccount, SLOT(setEnabled(bool)));
   if (_privileges->check("MaintainCustomerMasters"))
@@ -253,6 +253,12 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
     connect (_cust, SIGNAL(valid(bool)), _newQuote, SLOT(setEnabled(bool)));
   if (_privileges->check("MaintainCreditMemos"))
     connect (_cust, SIGNAL(valid(bool)), _newCreditMemo, SLOT(setEnabled(bool)));
+
+  QMenu * _printMenu = new QMenu;
+  _printMenu->addAction(tr("Print Statement"),      this, SLOT(sPrintStatement()));
+  _printMenu->addAction(tr("Print Customer Info."), this, SLOT(sPrint()));
+  _print->setMenu(_printMenu);
+
 }
 
 dspCustomerInformation::~dspCustomerInformation()
@@ -277,7 +283,7 @@ enum SetResponse dspCustomerInformation::set( const ParameterList & pParams )
     _cust->setReadOnly(TRUE);
     _custList->setEnabled(FALSE);
   }
-  
+
   if(pParams.inList("modal"))
   {
     disconnect(_close, SIGNAL(clicked()), this, SLOT(close()));
@@ -432,7 +438,7 @@ void dspCustomerInformation::sPopulateCustInfo()
       query.exec();
       if (query.first())
         _backlog->setText(query.value("backlog").toString());
-      
+
       query.prepare( "SELECT formatMoney( COALESCE( SUM( CASE WHEN (aropen_doctype IN ('I', 'D')) THEN (aropen_amount - aropen_paid)"
                      "                                       ELSE ((aropen_amount - aropen_paid) * -1)"
                      "                                   END ), 0 ) ) AS f_balance "
@@ -678,7 +684,7 @@ void dspCustomerInformation::sFillOrderList()
              " WHERE ( ");
   if (!_orderShowclosed->isChecked())
     sql += " ((coitem_status = 'O') OR (coitem_status IS NULL)) AND ";
-    
+
   sql +=     " (cohead_cust_id=:cust_id) )"
              "GROUP BY cohead_id, cohead_number,"
              "         cohead_custponumber, cohead_orderdate "
@@ -750,10 +756,10 @@ void dspCustomerInformation::sFillInvoiceList()
             "         AND aropen_doctype='I'"
             "         AND aropen_cust_id=invchead_cust_id)"
             " WHERE (invchead_cust_id=:cust_id)");
-            
+
   if (!_invoiceShowclosed->isChecked())
     sql +=  "   AND (COALESCE(aropen_open,TRUE)) ";
-    
+
   sql +=    " UNION "
             "SELECT aropen_id AS id, -2 AS altId,"
             "       formatBoolYN(true) AS f_posted,"
@@ -773,10 +779,10 @@ void dspCustomerInformation::sFillInvoiceList()
             "         AND aropen_cust_id=invchead_cust_id)"
             " WHERE ((aropen_doctype='I')"
             "   AND  (invchead_id IS NULL)";
-            
+
   if (!_invoiceShowclosed->isChecked())
     sql +=  "   AND (aropen_open) ";
-    
+
   sql +=    "   AND  (aropen_cust_id=:cust_id) ) "
             "ORDER BY invcnumber DESC;";
   q.prepare(sql);
@@ -784,7 +790,7 @@ void dspCustomerInformation::sFillInvoiceList()
   q.exec();
   _invoice->clear();
 //  _invoice->populate(q, true);
-  
+
   XTreeWidgetItem *last = 0;
   while (q.next())
   {
@@ -873,7 +879,7 @@ void dspCustomerInformation::sFillCreditMemoList()
 {
   disconnect(_creditMemo, SIGNAL(valid(bool)), this, SLOT(sHandleCreditMemoPrint()));
   _printCreditMemo->setEnabled(FALSE);
-    
+
   QString sql( "SELECT cmhead_id, -1,"
              "       formatBoolYN(false), '', '',"
              "       text(cmhead_number) AS docnumber,"
@@ -896,7 +902,7 @@ void dspCustomerInformation::sFillCreditMemoList()
              "   AND  (aropen_docnumber=cmhead_number) ");
   if (!_creditMemoShowclosed->isChecked())
     sql +=   "   AND (aropen_open) ";
-    
+
   sql +=     "   AND  (aropen_cust_id=:cust_id) ) "
              "UNION "
              "SELECT aropen_id, -3,"
@@ -915,12 +921,12 @@ void dspCustomerInformation::sFillCreditMemoList()
              "   AND  (aropen_cust_id=:cust_id) ";
   if (!_creditMemoShowclosed->isChecked())
     sql +=   "   AND (aropen_open) ";
-    
+
   sql +=     "   AND  (NOT EXISTS (SELECT cmhead_id "
              "                     FROM cmhead "
              "                     WHERE (cmhead_number=aropen_docnumber) ) ) ) "
              "ORDER BY docnumber; ";
-             
+
   q.prepare(sql);
   q.bindValue(":cust_id", _cust->id());
   q.bindValue(":creditmemo", tr("CM"));
@@ -928,7 +934,7 @@ void dspCustomerInformation::sFillCreditMemoList()
   q.exec();
   _creditMemo->clear();
   _creditMemo->populate(q, true);
-  
+
   connect(_creditMemo, SIGNAL(valid(bool)), this, SLOT(sHandleCreditMemoPrint()));
 }
 
@@ -986,7 +992,7 @@ void dspCustomerInformation::sEditCreditMemo()
   if(memoType == -1)
   {
     params.append("cmhead_id", memoId);
-  
+
     creditMemo *newdlg = new creditMemo();
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
@@ -1195,7 +1201,7 @@ void dspCustomerInformation::sPopulateMenuInvoice( QMenu * pMenu,  QTreeWidgetIt
     pMenu->setItemEnabled(menuItem, FALSE);
   pMenu->insertItem(tr("View Invoice..."), this, SLOT(sViewInvoice()), 0);
   pMenu->insertSeparator();
-  
+
   if (selected->text(3).length() != 0)
   {
     menuItem = pMenu->insertItem(tr("Edit Sales Order..."), this, SLOT(sEditInvOrder()), 0);
@@ -1204,19 +1210,19 @@ void dspCustomerInformation::sPopulateMenuInvoice( QMenu * pMenu,  QTreeWidgetIt
     pMenu->insertItem(tr("View Sales Order..."), this, SLOT(sViewInvOrder()), 0);
     if(!_privileges->check("ViewSalesOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
-  
+
     pMenu->insertSeparator();
 
     pMenu->insertItem(tr("Sales Order Shipment Status..."), this, SLOT(sInvShipmentStatus()), 0);
     pMenu->insertItem(tr("Sales Order Shipments..."), this, SLOT(sInvShipment()), 0);
-  
+
   }
 }
 
 void dspCustomerInformation::sPopulateMenuCreditMemo( QMenu * pMenu )
 {
   int menuItem;
-  
+
   menuItem = pMenu->insertItem(tr("New Credit Memo..."), this, SLOT(sNewCreditMemo()), 0);
   if(!_privileges->check("MaintainCreditMemos"))
     pMenu->setItemEnabled(menuItem, FALSE);
@@ -1407,7 +1413,7 @@ void dspCustomerInformation::sCRMAccount()
     params.append("mode", "view");
   else
     params.append("mode", "edit");
-    
+
   params.append("crmacct_id", _crmacctId);
 
   crmaccount* newdlg = new crmaccount();
@@ -1558,4 +1564,30 @@ void dspCustomerInformation::sPrintCreditMemo()
 void dspCustomerInformation::sHandleCreditMemoPrint()
 {
   _printCreditMemo->setEnabled(_creditMemo->altId() == -1 || _creditMemo->altId() == -2);
+}
+
+void dspCustomerInformation::sPrintStatement()
+{
+	 if (!_cust->isValid())
+	  {
+	    QMessageBox::warning( this, tr("Enter a Valid Customer Number"),
+	                          tr("You must enter a valid Customer Number for this Statement.") );
+	    _cust->setFocus();
+	    return;
+	  }
+
+	  q.prepare("SELECT findCustomerForm(:cust_id, 'S') AS _reportname;");
+	  q.bindValue(":cust_id", _cust->id());
+	  q.exec();
+	  if (q.first())
+	  {
+	    ParameterList params;
+	    params.append("cust_id", _cust->id());
+
+	    orReport report(q.value("_reportname").toString(), params);
+	    if (report.isValid())
+		  report.print();
+	    else
+		  report.reportError(this);
+	  }
 }
