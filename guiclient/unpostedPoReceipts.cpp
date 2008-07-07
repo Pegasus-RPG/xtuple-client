@@ -95,20 +95,21 @@ unpostedPoReceipts::unpostedPoReceipts(QWidget* parent, const char* name, Qt::WF
   connect(_viewOrderItem,    SIGNAL(clicked()), this, SLOT(sViewOrderItem()));
   connect(omfgThis, SIGNAL(purchaseOrderReceiptsUpdated()), this, SLOT(sFillList()));
 
-  _recv->addColumn(tr("Order #"),       _orderColumn, Qt::AlignRight  );
-  _recv->addColumn(tr("Type"),          50,           Qt::AlignCenter );
-  _recv->addColumn(tr("From"),          -1,           Qt::AlignLeft   );
-  _recv->addColumn(tr("Line #"),        50,           Qt::AlignRight  );
-  _recv->addColumn(tr("Due Date"),      _dateColumn,  Qt::AlignCenter );
-  _recv->addColumn(tr("Item Number"),   _itemColumn,  Qt::AlignRight  );
-  _recv->addColumn(tr("UOM"),           _uomColumn,   Qt::AlignCenter );
-  _recv->addColumn(tr("Vend. Item #"),  _itemColumn,  Qt::AlignLeft   );
-  _recv->addColumn(tr("UOM"),           _uomColumn,   Qt::AlignCenter );
-  _recv->addColumn(tr("Ordered"),       _qtyColumn,   Qt::AlignRight  );
-  _recv->addColumn(tr("Received"),      _qtyColumn,   Qt::AlignRight  );
-  _recv->addColumn(tr("To Receive"),    _qtyColumn,   Qt::AlignRight  );
-  _recv->addColumn(tr("Receipt Date"),  _dateColumn,  Qt::AlignCenter );
-  _recv->addColumn(tr("G/L Post Date"), _dateColumn,  Qt::AlignCenter );
+  _recv->addColumn(tr("Order #"),       _orderColumn, Qt::AlignRight,  true, "recv_order_number"  );
+  _recv->addColumn(tr("Type"),          50,           Qt::AlignCenter, true, "recv_order_type" );
+  _recv->addColumn(tr("From"),          -1,           Qt::AlignLeft,   true, "orderhead_from"   );
+  _recv->addColumn(tr("Line #"),        50,           Qt::AlignRight,  true, "orderitem_linenumber");
+  _recv->addColumn(tr("Due Date"),      _dateColumn,  Qt::AlignCenter, true, "recv_duedate");
+  _recv->addColumn(tr("Site"),          _whsColumn,   Qt::AlignRight,  true, "warehous_code"  );
+  _recv->addColumn(tr("Item Number"),   _itemColumn,  Qt::AlignRight,  true, "item_number");
+  _recv->addColumn(tr("UOM"),           _uomColumn,   Qt::AlignCenter, true, "uom_name");
+  _recv->addColumn(tr("Vend. Item #"),  _itemColumn,  Qt::AlignLeft,   true, "recv_vend_item_number");
+  _recv->addColumn(tr("UOM"),           _uomColumn,   Qt::AlignCenter, true, "recv_vend_uom");
+  _recv->addColumn(tr("Ordered"),       _qtyColumn,   Qt::AlignRight,  true, "qty_ordered");
+  _recv->addColumn(tr("Received"),      _qtyColumn,   Qt::AlignRight,  true, "qty_received");
+  _recv->addColumn(tr("To Receive"),    _qtyColumn,   Qt::AlignRight,  true, "recv_qty");
+  _recv->addColumn(tr("Receipt Date"),  _dateColumn,  Qt::AlignCenter, true, "recv_date");
+  _recv->addColumn(tr("G/L Post Date"), _dateColumn,  Qt::AlignCenter, true, "recv_gldistdate");
 
   if (! _privileges->check("ChangePORecvPostDate"))
     _recv->hideColumn(RECV_GLDISTDATE_COL);
@@ -135,6 +136,8 @@ void unpostedPoReceipts::setParams(ParameterList & params)
   params.append("na",		tr("N/A"));
   if (_metrics->boolean("MultiWhs"))
     params.append("MultiWhs");
+  if (_preferences->boolean("selectedSites"))
+    params.append("selectedOnly");
 }
 
 void unpostedPoReceipts::sPrint()
@@ -347,31 +350,5 @@ void unpostedPoReceipts::sFillList()
   XSqlQuery fillq = fillm.toQuery(fillp);
 
   _recv->clear();
-
-  XTreeWidgetItem *line = 0;
-  while (fillq.next())
-  {
-    line = new XTreeWidgetItem(_recv, line,
-			       fillq.value("recv_id").toInt(),
-			       fillq.value("recv_orderitem_id").toInt(),
-			       fillq.value("recv_order_number"),
-			       fillq.value("recv_order_type"),
-			       fillq.value("orderhead_from"),
-			       fillq.value("orderitem_linenumber"),
-			       fillq.value("recv_duedate"),
-			       fillq.value("item_number"),
-			       fillq.value("uom_name"),
-			       fillq.value("recv_vend_item_number"),
-			       fillq.value("recv_vend_uom"),
-			       fillq.value("qty_ordered"),
-			       fillq.value("qty_received") );
-    line->setText(RECV_QTY_COL, fillq.value("recv_qty").toString());
-    line->setText(RECV_DATE_COL, fillq.value("recv_date").toString());
-    line->setText(RECV_GLDISTDATE_COL, fillq.value("recv_gldistdate").toString());
-  }
-  if (fillq.lastError().type() != QSqlError::None)
-  {
-    systemError(this, fillq.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
+  _recv->populate(fillq,true);
 }

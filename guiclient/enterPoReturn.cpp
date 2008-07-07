@@ -63,6 +63,7 @@
 #include <QVariant>
 
 #include <openreports.h>
+#include <metasql.h>
 
 #include "distributeInventory.h"
 #include "enterPoitemReturn.h"
@@ -82,6 +83,7 @@ enterPoReturn::enterPoReturn(QWidget* parent, const char* name, Qt::WFlags fl)
   _po->setType(cPOOpen);
 
   _poitem->addColumn(tr("#"),            _whsColumn,  Qt::AlignCenter );
+  _poitem->addColumn(tr("Site"),         _whsColumn,  Qt::AlignLeft   );
   _poitem->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft   );
   _poitem->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignCenter );
   _poitem->addColumn(tr("Vend. Item #"), -1,          Qt::AlignLeft   );
@@ -309,9 +311,10 @@ void enterPoReturn::sFillList()
       return;
     }
 
-    q.prepare( "SELECT poitem_id, poitem_linenumber,"
-               "       COALESCE(item_number, :nonInventory),"
-               "       COALESCE(uom_name, :na),"
+    QString sql( "SELECT poitem_id, poitem_linenumber,"
+               "       warehous_code, "
+               "       COALESCE(item_number, <? value(\"nonInventory\") ?>),"
+               "       COALESCE(uom_name, <? value(\"na\") ?>),"
                "       poitem_vend_item_number, poitem_vend_uom,"
                "       formatQty(poitem_qty_ordered),"
                "       formatQty(poitem_qty_received),"
@@ -321,15 +324,28 @@ void enterPoReturn::sFillList()
                "                              WHERE ( (poreject_poitem_id=poitem_id)"
                "                               AND (NOT poreject_posted) ) ), 0 ) ) "
                "FROM poitem LEFT OUTER JOIN "
-               "     ( itemsite JOIN item "
-               "       ON (itemsite_item_id=item_id) JOIN uom ON (item_inv_uom_id=uom_id)"
+               "     ( itemsite "
+               "        JOIN item ON (itemsite_item_id=item_id) "
+               "        JOIN uom ON (item_inv_uom_id=uom_id) "
+               "        JOIN whsinfo ON (itemsite_warehous_id=warehous_id) "
+               "<? if exists(\"selectedOnly\") ?>"
+               "        JOIN usrsite ON (warehous_id=usrsite_warehous_id) "
+               "<? endif ?>"
                "     ) ON (poitem_itemsite_id=itemsite_id) "
-               "WHERE (poitem_pohead_id=:pohead_id) "
+               "WHERE (poitem_pohead_id= <? value(\"pohead_id\") ?>) "
+               "<? if exists(\"selectedOnly\") ?>"
+	       "  AND (usrsite_username=current_user) "
+	       "<? endif ?>"
                "ORDER BY poitem_linenumber;" );
-    q.bindValue(":nonInventory", tr("Non-Inventory"));
-    q.bindValue(":na", tr("N/A"));
-    q.bindValue(":pohead_id", _po->id());
-    q.exec();
+          
+    ParameterList params;
+    params.append("na", tr("N/A"));
+    params.append("nonInventory", tr("Non-Inventory"));
+    params.append("pohead_id", _po->id());
+    if (_preferences->boolean("selectedSites"))
+        params.append("selectedOnly");
+    MetaSQLQuery mql(sql);
+    q = mql.toQuery(params);
     _poitem->populate(q);
     if (q.lastError().type() != QSqlError::None)
     {

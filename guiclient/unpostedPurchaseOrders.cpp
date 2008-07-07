@@ -135,8 +135,9 @@ void unpostedPurchaseOrders::sEdit()
   bool done = false;
   for (int i = 0; i < list.size(); i++)
   {
-    if ((list[i]->text(3) == "U" && _privileges->check("MaintainPurchaseOrders")) ||
-	(list[i]->text(3) == "O" && _privileges->check("MaintainPostedPurchaseOrders")))
+    if (((list[i]->text(3) == "U" && _privileges->check("MaintainPurchaseOrders")) ||
+	(list[i]->text(3) == "O" && _privileges->check("MaintainPostedPurchaseOrders"))) &&
+        (checkSitePrivs(((XTreeWidgetItem*)(list[i]))->id())))
     {
       ParameterList params;
       params.append("mode", "edit");
@@ -163,14 +164,18 @@ void unpostedPurchaseOrders::sView()
   QList<QTreeWidgetItem*> list = _pohead->selectedItems();
   for (int i = 0; i < list.size(); i++)
   {
-    ParameterList params;
-    params.append("mode", "view");
-    params.append("pohead_id", ((XTreeWidgetItem*)(list[i]))->id());
-  
-    purchaseOrder *newdlg = new purchaseOrder();
-    newdlg->set(params);
-    omfgThis->handleNewWindow(newdlg);
-    break;
+    if (checkSitePrivs(((XTreeWidgetItem*)(list[i]))->id()))
+    {
+      
+      ParameterList params;
+      params.append("mode", "view");
+      params.append("pohead_id", ((XTreeWidgetItem*)(list[i]))->id());
+    
+      purchaseOrder *newdlg = new purchaseOrder();
+      newdlg->set(params);
+      omfgThis->handleNewWindow(newdlg);
+      break;
+    }
   }
 }
 
@@ -187,20 +192,23 @@ void unpostedPurchaseOrders::sDelete()
     bool done = false;
     for (int i = 0; i < list.size(); i++)
     {
-      if (list[i]->text(3) == "U")
+      if (checkSitePrivs(((XTreeWidgetItem*)(list[i]))->id()))
       {
-	q.bindValue(":pohead_id", ((XTreeWidgetItem*)(list[i]))->id());
-	q.exec();
-	if (q.first() && ! q.value("result").toBool())
-	    systemError(this, tr("<p>Only Unposted Purchase Orders may be "
-				 "deleted. Check the status of Purchase Order "
-				 "%1. If it is 'U' then contact your system "
-				 "Administrator.").arg(list[i]->text(0)),
-			__FILE__, __LINE__);
-	else if (q.lastError().type() != QSqlError::None)
-	  systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-	else
-	  done = true;
+        if (list[i]->text(3) == "U")
+        {
+          q.bindValue(":pohead_id", ((XTreeWidgetItem*)(list[i]))->id());
+          q.exec();
+          if (q.first() && ! q.value("result").toBool())
+              systemError(this, tr("<p>Only Unposted Purchase Orders may be "
+                                   "deleted. Check the status of Purchase Order "
+                                   "%1. If it is 'U' then contact your system "
+                                   "Administrator.").arg(list[i]->text(0)),
+                          __FILE__, __LINE__);
+          else if (q.lastError().type() != QSqlError::None)
+            systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+          else
+            done = true;
+        }
       }
     }
     if (done)
@@ -214,17 +222,20 @@ void unpostedPurchaseOrders::sDelete()
 }
 
 void unpostedPurchaseOrders::sPrint()
-{
+{    
   QList<QTreeWidgetItem*> list = _pohead->selectedItems();
   for (int i = 0; i < list.size(); i++)
   {
-    ParameterList params;
-    params.append("pohead_id", ((XTreeWidgetItem*)(list[i]))->id());
-  
-    printPurchaseOrder newdlg(this, "", TRUE);
-    newdlg.set(params);
-    newdlg.exec();
-    break;
+    if (checkSitePrivs(((XTreeWidgetItem*)(list[i]))->id()))
+    {
+      ParameterList params;
+      params.append("pohead_id", ((XTreeWidgetItem*)(list[i]))->id());
+    
+      printPurchaseOrder newdlg(this, "", TRUE);
+      newdlg.set(params);
+      newdlg.exec();
+      break;
+    }
   }
 }
 
@@ -233,18 +244,21 @@ void unpostedPurchaseOrders::sDeliver()
   QList<QTreeWidgetItem*> list = _pohead->selectedItems();
   for (int i = 0; i < list.size(); i++)
   {
-    ParameterList params;
-    params.append("pohead_id", ((XTreeWidgetItem*)(list[i]))->id());
-  
-    deliverPurchaseOrder newdlg(this, "", TRUE);
-    newdlg.set(params);
-    newdlg.exec();
-    break;
+    if (checkSitePrivs(((XTreeWidgetItem*)(list[i]))->id()))
+    {
+      ParameterList params;
+      params.append("pohead_id", ((XTreeWidgetItem*)(list[i]))->id());
+    
+      deliverPurchaseOrder newdlg(this, "", TRUE);
+      newdlg.set(params);
+      newdlg.exec();
+      break;
+    }
   }
 }
 
 void unpostedPurchaseOrders::sPost()
-{
+{    
   if ( QMessageBox::warning( this, tr("Post Selected Purchase Orders"),
                              tr("<p>Are you sure that you want to post "
 			        "the selected Purchase Orders?" ),
@@ -256,7 +270,9 @@ void unpostedPurchaseOrders::sPost()
     bool done = false;
     for (int i = 0; i < list.size(); i++)
     {
-      if (list[i]->text(3) == "U" && _privileges->check("PostPurchaseOrders"))
+      if ((list[i]->text(3) == "U")
+        && (_privileges->check("PostPurchaseOrders"))
+        && (checkSitePrivs(((XTreeWidgetItem*)(list[i]))->id())))
       {
 	q.bindValue(":pohead_id", ((XTreeWidgetItem*)(list[i]))->id());
 	q.exec();
@@ -383,3 +399,40 @@ void unpostedPurchaseOrders::sFillList()
   }
   _pohead->populate(q);
 }
+
+bool unpostedPurchaseOrders::checkSitePrivs(int orderid)
+{
+  if (_preferences->boolean("selectedSites"))
+  {
+    QString sql("SELECT pohead_number "
+                "FROM pohead, poitem, itemsite "
+                "WHERE ((poitem_pohead_id=<? value(\"pohead_id\") ?>) "
+                "  AND (poitem_pohead_id=pohead_id) "
+                "  AND (poitem_itemsite_id=itemsite_id) "
+                "  AND (itemsite_warehous_id NOT IN ("
+                "       SELECT usrsite_warehous_id "
+                "       FROM usrsite "
+                "       WHERE (usrsite_username=current_user)))) "
+                "UNION "
+                "SELECT pohead_number "
+                "FROM pohead "
+                "WHERE ((pohead_id=<? value(\"pohead_id\") ?>) "
+                "  AND (pohead_warehous_id NOT IN ("
+                "       SELECT usrsite_warehous_id "
+                "       FROM usrsite "
+                "       WHERE (usrsite_username=current_user))));;");
+    MetaSQLQuery mql(sql);
+    ParameterList params;
+    params.append("pohead_id", orderid);
+    XSqlQuery chk = mql.toQuery(params);
+    if (chk.first())
+    {
+      	    QMessageBox::critical(this, tr("Access Denied"),
+				  tr("You may not view or edit Purchase Order %1 as it references "
+                                     "a warehouse for which you have not been granted privileges.").arg(q.value("pohead_number").toString())) ;
+            return false;
+    }
+  }
+  return true;
+}
+

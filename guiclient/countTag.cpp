@@ -62,6 +62,8 @@
 #include <QValidator>
 #include <QVariant>
 
+#include <metasql.h>
+
 #include "inputManager.h"
 #include "countTagList.h"
 
@@ -310,12 +312,26 @@ void countTag::sCountTagList()
 
 void countTag::sParseCountTagNumber()
 {
-  q.prepare( "SELECT invcnt_id "
+  QString sql( "SELECT invcnt_id "
              "FROM invcnt "
+             "<? if exists(\"selectedOnly\") ?>"
+             "JOIN itemsite ON (invcnt_itemsite_id=itemsite_id) "
+             "JOIN usrsite ON (itemsite_warehous_id=usrsite_warehous_id) "
+             "<? endif ?>"
              "WHERE ( (NOT invcnt_posted)"
-             " AND (UPPER(invcnt_tagnumber)=UPPER(:cnttag_tagnumber)) );" );
-  q.bindValue(":cnttag_tagnumber", _countTagNumber->text().stripWhiteSpace());
-  q.exec();
+             "<? if exists(\"selectedOnly\") ?>"
+             "  AND (usrsite_username=current_user) "
+             "<? endif ?>"
+             " AND (UPPER(invcnt_tagnumber)=UPPER(<? value(\"cnttag_tagnumber\") ?>)) );" );
+             
+  ParameterList ctp;
+  ctp.append("cnttag_tagnumber", _countTagNumber->text().stripWhiteSpace());
+  if (_x_preferences)
+    if (_x_preferences->boolean("selectedSites"))
+      ctp.append("selectedOnly");
+      
+  MetaSQLQuery ctq(sql);
+  q = ctq.toQuery(ctp);
   if (q.first())
   {
     _cnttagid = q.value("invcnt_id").toInt();

@@ -1,8 +1,9 @@
 <? if exists("pohead_id") ?>
-SELECT poitem_id, warehous_code, poitem_linenumber,
+SELECT poitem_id, poitem_linenumber,
        formatDate(poitem_duedate),
        COALESCE(item_number, <? value("nonInventory") ?>),
        COALESCE(uom_name, <? value("na") ?>),
+       warehous_code,
        poitem_vend_item_number,
        poitem_vend_uom,
        formatQty(poitem_qty_ordered),
@@ -25,8 +26,9 @@ WHERE ( (poitem_status <> 'C')
  AND (poitem_pohead_id=<? value("pohead_id") ?>) )
 ORDER BY poitem_linenumber;
 <? elseif exists("rahead_id") ?>
-SELECT raitem_id, warehous_code, raitem_linenumber,
+SELECT raitem_id, raitem_linenumber,
        formatDate(rahead_expiredate),
+       warehous_code,
        COALESCE(item_number, <? value("nonInventory") ?>),
        COALESCE(iu.uom_name, <? value("na") ?>),
        '' AS vend_item_number,
@@ -56,8 +58,9 @@ WHERE ( (raitem_status <> 'C')
  AND (rahead_id=<? value("rahead_id") ?>) )
 ORDER BY raitem_linenumber;
 <? elseif exists("tohead_id") ?>
-SELECT toitem_id, warehous_code, toitem_linenumber,
+SELECT toitem_id, toitem_linenumber,
        formatDate(toitem_duedate),
+       warehous_code,
        COALESCE(item_number, <? value("nonInventory") ?>),
        COALESCE(uom_name, <? value("na") ?>),
        '',

@@ -131,7 +131,7 @@ void openSalesOrders::setParams(ParameterList &params)
 }
 
 void openSalesOrders::sPrint()
-{
+{    
   ParameterList params;
   setParams(params);
 
@@ -161,6 +161,9 @@ void openSalesOrders::sView()
 
 void openSalesOrders::sCopy()
 {
+  if (!checkSitePrivs())
+    return;
+    
   ParameterList params;
   params.append("sohead_id", _so->id());
       
@@ -171,6 +174,9 @@ void openSalesOrders::sCopy()
 
 void openSalesOrders::sReschedule()
 {
+  if (!checkSitePrivs())
+    return;
+    
   ParameterList params;
   params.append("sohead_id", _so->id());
       
@@ -181,6 +187,9 @@ void openSalesOrders::sReschedule()
 
 void openSalesOrders::sDelete()
 {
+  if (!checkSitePrivs())
+    return;
+    
   if ( QMessageBox::warning(this, tr("Delete Sales Order?"),
                             tr("<p>Are you sure that you want to completely "
 			       "delete the selected Sales Order?"),
@@ -334,6 +343,9 @@ void openSalesOrders::sHandleAutoUpdate(bool pAutoUpdate)
 
 void openSalesOrders::sPrintPackingList()
 {
+  if (!checkSitePrivs())
+    return;
+    
   ParameterList params;
   params.append("sohead_id", _so->id());
 
@@ -344,6 +356,9 @@ void openSalesOrders::sPrintPackingList()
 
 void openSalesOrders::sAddToPackingListBatch()
 {
+  if (!checkSitePrivs())
+    return;
+    
   q.prepare("SELECT addToPackingListBatch(:sohead_id) AS result;");
   q.bindValue(":sohead_id", _so->id());
   q.exec();
@@ -435,6 +450,9 @@ void openSalesOrders::sFillList()
 
 void openSalesOrders::sDeliver()
 {
+  if (!checkSitePrivs())
+    return;
+    
   ParameterList params;
   params.append("sohead_id", _so->id());
 
@@ -445,6 +463,9 @@ void openSalesOrders::sDeliver()
 
 void openSalesOrders::sPrintForms()
 {
+  if (!checkSitePrivs())
+    return;
+    
   ParameterList params;
   params.append("sohead_id", _so->id());
 
@@ -455,7 +476,6 @@ void openSalesOrders::sPrintForms()
 
 bool openSalesOrders::checkSitePrivs()
 {
-  qDebug("Test");
   if (_preferences->boolean("selectedSites"))
   {
     qDebug("In");
@@ -466,6 +486,14 @@ bool openSalesOrders::checkSitePrivs()
                 "  AND (itemsite_warehous_id NOT IN ("
                 "       SELECT usrsite_warehous_id "
                 "       FROM usrsite "
+                "       WHERE (usrsite_username=current_user)))) "
+                "UNION "
+                "SELECT cohead_warehous_id "
+                "FROM cohead "
+                "WHERE ((cohead_id=<? value(\"sohead_id\") ?>) "
+                "  AND (cohead_warehous_id NOT IN ("
+                "       SELECT usrsite_warehous_id "
+                "       FROM usrsite "
                 "       WHERE (usrsite_username=current_user))));");
     MetaSQLQuery mql(sql);
     ParameterList params;
@@ -474,8 +502,8 @@ bool openSalesOrders::checkSitePrivs()
     if (q.first())
     {
       	    QMessageBox::critical(this, tr("Access Denied"),
-				  tr("You may not view or edit this Sales Order as it has line items "
-                                     "in a warehouse for which you have not been granted privileges.")) ;
+				  tr("You may not view or edit this Sales Order as it references "
+                                     "a warehouse for which you have not been granted privileges.")) ;
             return false;
     }
   }

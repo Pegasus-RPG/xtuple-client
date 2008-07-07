@@ -103,9 +103,9 @@ enterPoReceipt::enterPoReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
   }
   _order->setFocus();
 
-  _orderitem->addColumn(tr("Site"),         _whsColumn,  Qt::AlignCenter );
   _orderitem->addColumn(tr("#"),            _whsColumn,  Qt::AlignCenter );
   _orderitem->addColumn(tr("Due Date"),     _dateColumn, Qt::AlignLeft   );
+  _orderitem->addColumn(tr("Site"),         _whsColumn,  Qt::AlignCenter );
   _orderitem->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft   );
   _orderitem->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignCenter );
   _orderitem->addColumn(tr("Vend. Item #"), -1,          Qt::AlignLeft   );
@@ -382,7 +382,7 @@ void enterPoReceipt::sFillList()
 
 void enterPoReceipt::close()
 {
-  QList<QTreeWidgetItem*> zeroItems = _orderitem->findItems("^[0.]*$", Qt::MatchRegExp, 8);
+  QList<QTreeWidgetItem*> zeroItems = _orderitem->findItems("^[0.]*$", Qt::MatchRegExp, 9);
   if (_order->isValid() &&
       zeroItems.size() != _orderitem->topLevelItemCount())
   {

@@ -69,6 +69,8 @@ class unpostedPurchaseOrders : public XMainWindow, public Ui::unpostedPurchaseOr
 public:
     unpostedPurchaseOrders(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~unpostedPurchaseOrders();
+    
+    virtual bool checkSitePrivs(int orderid);
 
 public slots:
     virtual void sDelete();
