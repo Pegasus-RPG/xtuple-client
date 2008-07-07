@@ -159,7 +159,11 @@ void WComboBox::findItemsites(int pItemID)
   if (pItemID != -1)
   {
     QString iss("SELECT warehous_id, warehous_code, warehous_code "
-               "FROM whsinfo, itemsite "
+               "FROM whsinfo "
+               "<? if exists(\"selectedOnly\") ?>"
+               "JOIN usrsite ON (warehous_id=usrsite_warehous_id) "
+               "<? endif ?>"
+               ", itemsite "
                "WHERE ((itemsite_warehous_id=warehous_id)"
                "  AND  (itemsite_item_id=<? value(\"itemid\") ?>) "
                "<? if exists(\"active\") ?>  AND (warehous_active)  <? endif ?>"
@@ -172,10 +176,16 @@ void WComboBox::findItemsites(int pItemID)
                "<? if exists(\"active\") ?>  AND (itemsite_active)  <? endif ?>"
                "<? if exists(\"soldIS\") ?>  AND (itemsite_sold)    <? endif ?>"
                "<? if exists(\"supplyIS\") ?>AND (itemsite_supply)  <? endif ?>"
+               "<? if exists(\"selectedOnly\") ?>"
+	       "  AND (usrsite_username=current_user) "
+	       "<? endif ?>"
                ") "
                "ORDER BY warehous_code;" );
     ParameterList isp;
     isp.append("itemid", pItemID);
+    if (_x_preferences)
+      if (_x_preferences->boolean("selectedSites"))
+        isp.append("selectedOnly");
 
     switch (_type)
     {
