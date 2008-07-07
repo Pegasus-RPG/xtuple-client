@@ -93,6 +93,9 @@ materialReceiptTrans::materialReceiptTrans(QWidget* parent, const char* name, Qt
     _warehouse->hide();
   }
 
+  if (!_metrics->boolean("AllowAvgCostMethod"))
+    _tab->removeTab(0);
+
   _item->setFocus();
 }
 
@@ -180,6 +183,8 @@ enum SetResponse materialReceiptTrans::set(const ParameterList &pParams)
 
 void materialReceiptTrans::sPost()
 {
+  double cost = _cost->toDouble();
+
   struct {
     bool        condition;
     QString     msg;
@@ -190,6 +195,9 @@ void materialReceiptTrans::sPost()
     { _qty->text().length() == 0 || _qty->toDouble() <= 0,
       tr("<p>You must enter a positive Quantity before posting this Transaction."),
       _qty },
+    { _costAdjust->isEnabled() && _costAdjust->isChecked() && _costManual->isChecked() && (_cost->text().length() == 0 || cost ==0),
+      tr("<p>You must enter a total cost value for the inventory to be transacted."),
+      _cost },
     { true, "", NULL }
   };
 
@@ -291,7 +299,7 @@ void materialReceiptTrans::sPost()
 
     q.exec("BEGIN;");	// because of possible distribution cancelations
     q.prepare( "SELECT invReceipt(itemsite_id, :qty, '', :docNumber,"
-               "                  :comments, :date) AS result "
+               "                  :comments, :date, :cost) AS result "
                "FROM itemsite "
                "WHERE ( (itemsite_item_id=:item_id)"
                " AND (itemsite_warehous_id=:warehous_id) );" );
@@ -301,6 +309,10 @@ void materialReceiptTrans::sPost()
     q.bindValue(":item_id", _item->id());
     q.bindValue(":warehous_id", _warehouse->id());
     q.bindValue(":date",        _transDate->date());
+    if(!_costAdjust->isChecked())
+      q.bindValue(":cost", 0.0);
+    else if(_costManual->isChecked())
+      q.bindValue(":cost", cost);
     q.exec();
     if (q.first())
     {
@@ -364,7 +376,7 @@ void materialReceiptTrans::sPost()
 
 void materialReceiptTrans::sPopulateQty()
 {
-  q.prepare( "SELECT itemsite_qtyonhand "
+  q.prepare( "SELECT itemsite_qtyonhand, itemsite_costmethod "
              "FROM itemsite "
              "WHERE ( (itemsite_item_id=:item_id)"
              " AND (itemsite_warehous_id=:warehous_id) );" );
@@ -375,6 +387,8 @@ void materialReceiptTrans::sPopulateQty()
   {
     _cachedQOH = q.value("itemsite_qtyonhand").toDouble();
     _beforeQty->setText(formatQty(q.value("itemsite_qtyonhand").toDouble()));
+    _costAdjust->setChecked(true);
+    _costAdjust->setEnabled(q.value("itemsite_costmethod").toString() == "A");
 
     if (_issueToWo->isChecked())
       _afterQty->setText(formatQty(q.value("itemsite_qtyonhand").toDouble()));

@@ -6,14 +6,22 @@
     <x>0</x>
     <y>0</y>
     <width>467</width>
-    <height>510</height>
+    <height>524</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Material Receipt Transaction</string>
   </property>
   <widget class="QWidget" name="widget" >
-   <layout class="QVBoxLayout" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>467</width>
+     <height>524</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_3" >
     <item>
      <layout class="QHBoxLayout" >
       <item>
@@ -27,6 +35,9 @@
             </property>
             <property name="alignment" >
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="buddy" >
+             <cstring>_transDate</cstring>
             </property>
            </widget>
           </item>
@@ -61,7 +72,11 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="ItemCluster" name="_item" />
+           <widget class="ItemCluster" name="_item" >
+            <property name="focusPolicy" >
+             <enum>Qt::StrongFocus</enum>
+            </property>
+           </widget>
           </item>
           <item>
            <spacer>
@@ -71,7 +86,7 @@
             <property name="sizeType" >
              <enum>QSizePolicy::Expanding</enum>
             </property>
-            <property name="sizeHint" >
+            <property name="sizeHint" stdset="0" >
              <size>
               <width>20</width>
               <height>20</height>
@@ -116,7 +131,7 @@
           <property name="sizeType" >
            <enum>QSizePolicy::Preferred</enum>
           </property>
-          <property name="sizeHint" >
+          <property name="sizeHint" stdset="0" >
            <size>
             <width>20</width>
             <height>20</height>
@@ -154,6 +169,9 @@
             <property name="margin" >
              <number>3</number>
             </property>
+            <property name="buddy" >
+             <cstring>_warehouse</cstring>
+            </property>
            </widget>
           </item>
           <item>
@@ -167,6 +185,9 @@
             <property name="margin" >
              <number>2</number>
             </property>
+            <property name="buddy" >
+             <cstring>_qty</cstring>
+            </property>
            </widget>
           </item>
           <item>
@@ -174,7 +195,7 @@
             <property name="orientation" >
              <enum>Qt::Vertical</enum>
             </property>
-            <property name="sizeHint" >
+            <property name="sizeHint" stdset="0" >
              <size>
               <width>20</width>
               <height>40</height>
@@ -205,7 +226,7 @@
               <property name="sizeType" >
                <enum>QSizePolicy::Preferred</enum>
               </property>
-              <property name="sizeHint" >
+              <property name="sizeHint" stdset="0" >
                <size>
                 <width>20</width>
                 <height>0</height>
@@ -233,7 +254,7 @@
             <property name="orientation" >
              <enum>Qt::Vertical</enum>
             </property>
-            <property name="sizeHint" >
+            <property name="sizeHint" stdset="0" >
              <size>
               <width>86</width>
               <height>16</height>
@@ -256,7 +277,7 @@
             <property name="sizeType" >
              <enum>QSizePolicy::Preferred</enum>
             </property>
-            <property name="sizeHint" >
+            <property name="sizeHint" stdset="0" >
              <size>
               <width>10</width>
               <height>0</height>
@@ -343,7 +364,7 @@
         <property name="sizeType" >
          <enum>QSizePolicy::Expanding</enum>
         </property>
-        <property name="sizeHint" >
+        <property name="sizeHint" stdset="0" >
          <size>
           <width>101</width>
           <height>20</height>
@@ -390,7 +411,7 @@
           <property name="sizeType" >
            <enum>QSizePolicy::Expanding</enum>
           </property>
-          <property name="sizeHint" >
+          <property name="sizeHint" stdset="0" >
            <size>
             <width>71</width>
             <height>10</height>
@@ -404,6 +425,9 @@
        <widget class="WoCluster" name="_wo" >
         <property name="enabled" >
          <bool>false</bool>
+        </property>
+        <property name="focusPolicy" >
+         <enum>Qt::StrongFocus</enum>
         </property>
        </widget>
       </item>
@@ -422,6 +446,9 @@
         <property name="alignment" >
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
+        <property name="buddy" >
+         <cstring>_documentNum</cstring>
+        </property>
        </widget>
       </item>
       <item>
@@ -430,21 +457,109 @@
      </layout>
     </item>
     <item>
-     <layout class="QVBoxLayout" >
-      <property name="spacing" >
+     <widget class="QTabWidget" name="_tab" >
+      <property name="currentIndex" >
        <number>0</number>
       </property>
-      <item>
-       <widget class="QLabel" name="_notesLit" >
-        <property name="text" >
-         <string>Comments:</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QTextEdit" name="_notes" />
-      </item>
-     </layout>
+      <widget class="QWidget" name="tabCost" >
+       <property name="geometry" >
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>445</width>
+         <height>124</height>
+        </rect>
+       </property>
+       <attribute name="title" >
+        <string>Cost</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_2" >
+        <item>
+         <widget class="QGroupBox" name="_costAdjust" >
+          <property name="title" >
+           <string>Adjust Value</string>
+          </property>
+          <property name="checkable" >
+           <bool>true</bool>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_2" >
+           <item row="0" column="0" >
+            <widget class="QRadioButton" name="_costCalculated" >
+             <property name="text" >
+              <string>Calculated</string>
+             </property>
+             <property name="checked" >
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0" >
+            <widget class="QRadioButton" name="_costManual" >
+             <property name="text" >
+              <string>Manual</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1" >
+            <widget class="QLabel" name="_lblCost" >
+             <property name="text" >
+              <string>Cost:</string>
+             </property>
+             <property name="buddy" >
+              <cstring>_cost</cstring>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2" >
+            <widget class="XLineEdit" name="_cost" />
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer" >
+          <property name="orientation" >
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0" >
+           <size>
+            <width>20</width>
+            <height>1</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tabNotes" >
+       <property name="geometry" >
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>445</width>
+         <height>124</height>
+        </rect>
+       </property>
+       <attribute name="title" >
+        <string>Notes</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout" >
+        <item>
+         <widget class="QTextEdit" name="_notes" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+            <horstretch>0</horstretch>
+            <verstretch>1</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="tabChangesFocus" >
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -487,6 +602,11 @@
   <tabstop>_issueToWo</tabstop>
   <tabstop>_wo</tabstop>
   <tabstop>_documentNum</tabstop>
+  <tabstop>_costAdjust</tabstop>
+  <tabstop>_costCalculated</tabstop>
+  <tabstop>_costManual</tabstop>
+  <tabstop>_cost</tabstop>
+  <tabstop>_tab</tabstop>
   <tabstop>_notes</tabstop>
   <tabstop>_post</tabstop>
   <tabstop>_close</tabstop>
@@ -500,12 +620,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>31</x>
+     <y>211</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>30</x>
+     <y>233</y>
     </hint>
    </hints>
   </connection>
@@ -516,12 +636,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>32</x>
+     <y>64</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>401</x>
+     <y>64</y>
     </hint>
    </hints>
   </connection>
@@ -532,12 +652,12 @@
    <slot>findItemsites(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>32</x>
+     <y>64</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>113</x>
+     <y>143</y>
     </hint>
    </hints>
   </connection>
@@ -548,12 +668,12 @@
    <slot>setId(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>32</x>
+     <y>64</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>113</x>
+     <y>143</y>
     </hint>
    </hints>
   </connection>
@@ -564,8 +684,8 @@
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>401</x>
+     <y>31</y>
     </hint>
     <hint type="destinationlabel" >
      <x>20</x>

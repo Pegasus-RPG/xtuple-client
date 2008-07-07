@@ -95,6 +95,8 @@ adjustmentTrans::adjustmentTrans(QWidget* parent, Qt::WindowFlags fl)
     _warehouse->hide();
   }
 
+  if (!_metrics->boolean("AllowAvgCostMethod"))
+    _tab->removeTab(0);
   _item->setFocus();
 }
 
@@ -210,6 +212,7 @@ enum SetResponse adjustmentTrans::set(const ParameterList &pParams)
 void adjustmentTrans::sPost()
 {
   double qty = 0.0;
+  double cost = _cost->toDouble();
 
   if (_absolute->isChecked())
     qty = (_qty->toDouble() - _cachedQOH);
@@ -226,6 +229,9 @@ void adjustmentTrans::sPost()
     { _qty->text().length() == 0 || qty == 0,
       tr("<p>You must enter a Quantity before posting this Transaction."),
       _qty },
+    { _costAdjust->isEnabled() && _costAdjust->isChecked() && _costManual->isChecked() && (_cost->text().length() == 0 || cost == 0),
+      tr("<p>You must enter a total cost value for the inventory to be transacted."),
+      _cost },
     { true, "", NULL }
   };
 
@@ -245,7 +251,7 @@ void adjustmentTrans::sPost()
 
   q.exec("BEGIN;");	// because of possible distribution cancelations
   q.prepare( "SELECT invAdjustment(itemsite_id, :qty, :docNumber,"
-             "                     :comments, :date) AS result "
+             "                     :comments, :date, :cost) AS result "
              "FROM itemsite "
              "WHERE ( (itemsite_item_id=:item_id)"
              " AND (itemsite_warehous_id=:warehous_id) );" );
@@ -255,6 +261,10 @@ void adjustmentTrans::sPost()
   q.bindValue(":item_id", _item->id());
   q.bindValue(":warehous_id", _warehouse->id());
   q.bindValue(":date",        _transDate->date());
+  if(!_costAdjust->isChecked())
+    q.bindValue(":cost", 0.0);
+  else if(_costManual->isChecked())
+    q.bindValue(":cost", cost);
   q.exec();
   if (q.first())
   {
@@ -315,7 +325,7 @@ void adjustmentTrans::sPopulateQOH(int pWarehousid)
 {
   if (_mode != cView)
   {
-    q.prepare( "SELECT itemsite_freeze, itemsite_qtyonhand "
+    q.prepare( "SELECT itemsite_freeze, itemsite_qtyonhand, itemsite_costmethod "
                "FROM itemsite "
                "WHERE ( (itemsite_item_id=:item_id)"
                " AND (itemsite_warehous_id=:warehous_id));" );
@@ -326,6 +336,8 @@ void adjustmentTrans::sPopulateQOH(int pWarehousid)
     {
       _cachedQOH = q.value("itemsite_qtyonhand").toDouble();
       _beforeQty->setText(formatQty(q.value("itemsite_qtyonhand").toDouble()));
+      _costAdjust->setChecked(true);
+      _costAdjust->setEnabled(q.value("itemsite_costmethod").toString() == "A");
 
       if (q.value("itemsite_freeze").toBool())
         _absolute->setPaletteForegroundColor(QColor("red"));
