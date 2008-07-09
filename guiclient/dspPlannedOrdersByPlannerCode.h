@@ -82,6 +82,7 @@ public slots:
     virtual void sPrint();
     virtual void sReleaseOrder();
     virtual void sSoftenOrder();
+    virtual void sChangeType();
 
 protected slots:
     virtual void languageChange();

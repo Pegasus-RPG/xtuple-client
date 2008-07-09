@@ -78,6 +78,7 @@ public slots:
     virtual void sFirmOrder();
     virtual void sSoftenOrder();
     virtual void sReleaseOrder();
+    virtual void sChangeType();
     virtual void sDeleteOrder();
     virtual void sFillList();
     virtual bool setParams(ParameterList &);

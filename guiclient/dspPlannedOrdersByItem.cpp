@@ -143,6 +143,10 @@ void dspPlannedOrdersByItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelec
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 
+  menuItem = pMenu->insertItem(tr("Change Order Type..."), this, SLOT(sChangeType()), 0);
+  if (!_privileges->check("CreatePlannedOrders"))
+    pMenu->setItemEnabled(menuItem, FALSE);
+
   menuItem = pMenu->insertItem(tr("Release Order..."), this, SLOT(sReleaseOrder()), 0);
   if ( (!_privileges->check("ReleasePlannedOrders")) ||
        ((pSelected->text(1) == "W/O") && (!_privileges->check("MaintainWorkOrders")) ) ||
@@ -183,6 +187,50 @@ void dspPlannedOrdersByItem::sSoftenOrder()
              "WHERE (planord_id=:planord_id);" );
   q.bindValue(":planord_id", _planord->id());
   q.exec();
+
+  sFillList();
+}
+
+void dspPlannedOrdersByItem::sChangeType()
+{
+  XSqlQuery query;
+  query.prepare( "SELECT * "
+                 "FROM planord "
+			     "WHERE planord_id=:planord_id;" );
+  query.bindValue(":planord_id", _planord->id());
+  query.exec();
+  if (!query.first())
+  {
+    systemError( this, tr("A System Error occurred at %1::%2.")
+                       .arg(__FILE__)
+                       .arg(__LINE__) );
+    return;
+  }
+
+  q.prepare( "SELECT deletePlannedOrder(:planord_id, TRUE);" );
+  q.bindValue(":planord_id", _planord->id());
+  q.exec();
+
+  q.prepare( "SELECT createPlannedOrder( -1, :orderNumber, :itemsite_id, :qty, "
+             "                           :startDate, :dueDate, "
+			 "                           TRUE, FALSE, NULL, :itemType) AS result;" );
+  q.bindValue(":orderNumber", query.value("planord_number").toInt());
+  q.bindValue(":itemsite_id", query.value("planord_itemsite_id").toInt());
+  q.bindValue(":qty", query.value("planord_qty").toDouble());
+  q.bindValue(":dueDate", query.value("planord_duedate").toDate());
+  q.bindValue(":startDate", query.value("planord_startdate").toDate());
+  if (_planord->currentItem()->text(1) == "W/O")
+    q.bindValue(":itemType", "P");
+  else
+    q.bindValue(":itemType", "M");
+  q.exec();
+  if (!q.first())
+  {
+    systemError( this, tr("A System Error occurred at %1::%2.")
+                       .arg(__FILE__)
+                       .arg(__LINE__) );
+    return;
+  }
 
   sFillList();
 }
