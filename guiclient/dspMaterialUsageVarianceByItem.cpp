@@ -82,7 +82,8 @@ dspMaterialUsageVarianceByItem::dspMaterialUsageVarianceByItem(QWidget* parent, 
   connect(_item, SIGNAL(newId(int)), _warehouse, SLOT(findItemSites(int)));
   connect(_item, SIGNAL(warehouseIdChanged(int)), _warehouse, SLOT(setId(int)));
 
-  _item->setType(ItemLineEdit::cGeneralManufactured);
+  _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased | ItemLineEdit::cJob);
+  _item->setDefaultType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cJob);
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), 0);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), 0);
 

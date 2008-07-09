@@ -87,7 +87,8 @@ dspWoHistoryByItem::dspWoHistoryByItem(QWidget* parent, const char* name, Qt::WF
   connect(_item, SIGNAL(valid(bool)), _query, SLOT(setEnabled(bool)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
-  _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cJob);
+  _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased | ItemLineEdit::cJob);
+  _item->setDefaultType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cJob);
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 

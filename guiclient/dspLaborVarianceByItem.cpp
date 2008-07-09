@@ -86,7 +86,8 @@ dspLaborVarianceByItem::dspLaborVarianceByItem(QWidget* parent, const char* name
   connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
   connect(_dates, SIGNAL(updated()), this, SLOT(sFillList()));
 
-  _item->setType(ItemLineEdit::cGeneralManufactured);
+  _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased | ItemLineEdit::cJob);
+  _item->setDefaultType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cJob);
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 

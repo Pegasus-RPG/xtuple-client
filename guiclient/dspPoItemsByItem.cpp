@@ -85,7 +85,8 @@ dspPoItemsByItem::dspPoItemsByItem(QWidget* parent, const char* name, Qt::WFlags
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_poitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
 
-  _item->setType(ItemLineEdit::cGeneralPurchased);
+  _item->setType(ItemLineEdit::cGeneralPurchased | ItemLineEdit::cGeneralManufactured);
+  _item->setDefaultType(ItemLineEdit::cGeneralPurchased);
 
   _agent->setText(omfgThis->username());
 

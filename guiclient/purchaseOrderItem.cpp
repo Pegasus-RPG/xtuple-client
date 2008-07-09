@@ -197,7 +197,10 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
                                    .arg(q.value("vend_id").toInt()) );
       }
       else
-        _item->setType(ItemLineEdit::cGeneralPurchased | ItemLineEdit::cActive);
+	  {
+        _item->setType(ItemLineEdit::cGeneralPurchased | ItemLineEdit::cGeneralManufactured | ItemLineEdit::cActive);
+        _item->setDefaultType(ItemLineEdit::cGeneralPurchased | ItemLineEdit::cActive);
+      }
     }
     else
     {

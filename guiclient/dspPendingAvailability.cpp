@@ -82,7 +82,8 @@ dspPendingAvailability::dspPendingAvailability(QWidget* parent, const char* name
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_warehouse, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
 
-  _item->setType(ItemLineEdit::cGeneralManufactured);
+  _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased | ItemLineEdit::cJob);
+  _item->setDefaultType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cJob);
 
   _effective->setNullString(tr("Now"));
   _effective->setNullDate(QDate::currentDate());

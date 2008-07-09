@@ -82,7 +82,8 @@ itemSource::itemSource(QWidget* parent, const char* name, bool modal, Qt::WFlags
   connect(_vendorCurrency, SIGNAL(newID(int)), this, SLOT(sFillPriceList()));
   connect(_vendor, SIGNAL(newId(int)), this, SLOT(sVendorChanged(int)));
 
-  _item->setType(ItemLineEdit::cGeneralPurchased);
+  _item->setType(ItemLineEdit::cGeneralPurchased | ItemLineEdit::cGeneralManufactured);
+  _item->setDefaultType(ItemLineEdit::cGeneralPurchased);
 
 #ifndef Q_WS_MAC
   _vendorList->setMaximumWidth(25);

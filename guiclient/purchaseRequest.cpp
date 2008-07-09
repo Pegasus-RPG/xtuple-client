@@ -73,7 +73,8 @@ purchaseRequest::purchaseRequest(QWidget* parent, const char* name, bool modal, 
   connect(_warehouse, SIGNAL(newID(int)), this, SLOT(sCheckWarehouse(int)));
 
   _planordid = -1;
-  _item->setType(ItemLineEdit::cGeneralPurchased);
+  _item->setType(ItemLineEdit::cGeneralPurchased | ItemLineEdit::cGeneralManufactured);
+  _item->setDefaultType(ItemLineEdit::cGeneralPurchased);
   _lastWarehousid = _warehouse->id();
 
   _number->setValidator(omfgThis->orderVal());

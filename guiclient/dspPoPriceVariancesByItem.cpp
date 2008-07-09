@@ -82,7 +82,8 @@ dspPoPriceVariancesByItem::dspPoPriceVariancesByItem(QWidget* parent, const char
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_item, SIGNAL(valid(bool)), _query, SLOT(setEnabled(bool)));
 
-  _item->setType(ItemLineEdit::cGeneralPurchased);
+  _item->setType(ItemLineEdit::cGeneralPurchased | ItemLineEdit::cGeneralManufactured);
+  _item->setDefaultType(ItemLineEdit::cGeneralPurchased);
 
   _agent->setType(XComboBox::Agent);
   _agent->setText(omfgThis->username());
