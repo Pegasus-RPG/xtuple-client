@@ -84,6 +84,7 @@ ItemLineEdit::ItemLineEdit(QWidget *pParent, const char *name) : XLineEdit(pPare
   setAcceptDrops(TRUE);
   
   _type = cUndefined;
+  _defaultType = cUndefined;
   _useQuery = FALSE;
   _useValidationQuery = FALSE;
   _itemNumber = "";
@@ -319,7 +320,7 @@ void ItemLineEdit::sList()
   if (queryUsed())
     params.append("sql", _sql);
   else
-    params.append("itemType", _type);
+    params.append("itemType", _defaultType);
 
   if (!_extraClauses.isEmpty())
     params.append("extraClauses", _extraClauses);

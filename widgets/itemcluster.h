@@ -128,7 +128,8 @@ friend class ItemCluster;
       cActive         = 0x80000000
     };
 
-    inline void setType(unsigned int pType)            { _type = pType;                 } 
+    inline void setType(unsigned int pType)            { _type = pType; _defaultType = pType; } 
+    inline void setDefaultType(unsigned int pType)     { _defaultType = pType; } 
     inline void setQuery(const QString &pSql) { _sql = pSql; _useQuery = TRUE; }
     inline void setValidationQuery(const QString &pSql) { _validationSql = pSql; _useValidationQuery = TRUE; }
     inline int queryUsed() const              { return _useQuery;              }
@@ -185,6 +186,7 @@ friend class ItemCluster;
     QString _itemType;
     QStringList _extraClauses;
     unsigned int _type;
+    unsigned int _defaultType;
     bool    _configured;
     bool    _useQuery;
     bool    _useValidationQuery;
@@ -203,7 +205,8 @@ class OPENMFGWIDGETS_EXPORT ItemCluster : public QWidget
     void setEnabled(bool);
     void setDisabled(bool);
 
-    inline void    setType(unsigned int pType)             { _itemNumber->setType(pType);                } 
+    inline void    setType(unsigned int pType)             { _itemNumber->setType(pType); _itemNumber->setDefaultType(pType); } 
+    inline void    setDefaultType(unsigned int pType)      { _itemNumber->setDefaultType(pType);         } 
     inline void    setQuery(const QString &pSql)           { _itemNumber->setQuery(pSql);                }
     inline void    setValidationQuery(const QString &pSql) { _itemNumber->setValidationQuery(pSql);      }
     inline QString itemNumber()     const                  { return _itemNumber->itemNumber();           }
