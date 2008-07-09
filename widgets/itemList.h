@@ -80,6 +80,8 @@ public:
 
     QLineEdit* _searchFor;
     QCheckBox* _showInactive;
+    QCheckBox* _showMake;
+    QCheckBox* _showBuy;
     QPushButton* _close;
     QPushButton* _select;
     XTreeWidget* _item;

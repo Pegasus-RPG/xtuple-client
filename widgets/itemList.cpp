@@ -111,6 +111,10 @@ itemList::itemList( QWidget* parent, const char* name, bool modal, Qt::WFlags fl
 
     QSpacerItem* spacer = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
     Layout69->addItem( spacer );
+    _showMake = new QCheckBox(tr("Show &Make Items"), this, "_showMake");
+    _showBuy = new QCheckBox(tr("Show &Buy Items"), this, "_showBuy");
+    Layout70->addWidget( _showMake );
+    Layout70->addWidget( _showBuy );
     Layout70->addLayout( Layout69 );
     Layout71->addLayout( Layout70 );
 
@@ -146,6 +150,8 @@ itemList::itemList( QWidget* parent, const char* name, bool modal, Qt::WFlags fl
     connect( _close, SIGNAL( clicked() ), this, SLOT( sClose() ) );
     connect( _searchFor, SIGNAL( textChanged(const QString&) ), this, SLOT( sSearch(const QString&) ) );
     connect( _showInactive, SIGNAL( clicked() ), this, SLOT( sFillList() ) );
+    connect( _showMake, SIGNAL( clicked() ), this, SLOT( sFillList() ) );
+    connect( _showBuy, SIGNAL( clicked() ), this, SLOT( sFillList() ) );
     connect( _item, SIGNAL( valid(bool) ), _select, SLOT( setEnabled(bool) ) );
 
 
@@ -188,6 +194,9 @@ void itemList::set(ParameterList &pParams)
 
   _showInactive->setChecked(FALSE);
   _showInactive->setEnabled(!(_itemType & ItemLineEdit::cActive));
+
+  _showMake->setChecked(_itemType & ItemLineEdit::cGeneralManufactured);
+  _showBuy->setChecked(_itemType & ItemLineEdit::cGeneralPurchased);
 
   param = pParams.value("caption", &valid);
   if (valid)
@@ -250,6 +259,16 @@ void itemList::sFillList()
       clauses = _extraClauses;
       if(!(_itemType & ItemLineEdit::cActive) && !_showInactive->isChecked())
         clauses << "(item_active)";
+
+      _itemType = ItemLineEdit::cUndefined;
+	  if (!_showInactive->isChecked())
+	    _itemType = (_itemType | ItemLineEdit::cActive);	
+      if (_showMake->isChecked())
+	    _itemType = (_itemType | ItemLineEdit::cGeneralManufactured);
+      if (_showBuy->isChecked())
+	    _itemType = (_itemType | ItemLineEdit::cGeneralPurchased);
+
+      setCaption(buildItemLineEditTitle(_itemType, tr("Items")));
 
       _item->populate(buildItemLineEditQuery(pre, clauses, post, _itemType), _itemid);
   }
