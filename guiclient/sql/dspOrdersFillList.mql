@@ -11,7 +11,6 @@ WHERE ((poitem_pohead_id=pohead_id)
   AND  (poitem_itemsite_id=itemsite_id)
   AND  (itemsite_item_id=<? value("item_id") ?>)
   AND  (itemsite_warehous_id=<? value("warehous_id") ?>)
-  AND  (<? value("itemType") ?>='P')
 <? if exists("useLeadTime") ?>
   AND  (poitem_duedate <= (CURRENT_DATE + itemsite_leadtime))
 <? elseif exists("days") ?>
@@ -36,7 +35,7 @@ WHERE ((wo_status<>'C')
   AND  (wo_itemsite_id=itemsite_id)
   AND  (itemsite_item_id=<? value("item_id") ?>)
   AND  (itemsite_warehous_id=<? value("warehous_id") ?>)
-  AND  (<? value("itemType") ?>='M')
+  AND  (<? value("itemType") ?> NOT IN ('C', 'Y'))
 <? if exists("useLeadTime") ?>
   AND  (wo_duedate <= (CURRENT_DATE + itemsite_leadtime))
 <? elseif exists("days") ?>

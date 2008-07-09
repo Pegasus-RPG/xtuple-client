@@ -64,7 +64,7 @@ WHERE ((wo_status<>'C')
   AND  (itemsite_item_id=item_id)
   AND  (itemsite_warehous_id=<? value("warehous_id") ?>)
   AND  (itemsite_item_id=<? value("item_id") ?>)
-  AND  (item_type='M'))
+  AND  (item_type NOT IN ('C', 'Y')))
 
 UNION
 SELECT wo_id AS orderid, -1 AS altorderid,
@@ -105,8 +105,7 @@ WHERE ((wo_status<>'C')
   AND  (womatl_wo_id=wo_id)
   AND  (womatlis.itemsite_item_id=<? value("item_id") ?>)
   AND  (womatlis.itemsite_warehous_id=<? value("warehous_id") ?>)
-  AND  (womatl_itemsite_id=womatlis.itemsite_id)
-  AND  (item_type IN ('P', 'M', 'C', 'O')) )
+  AND  (womatl_itemsite_id=womatlis.itemsite_id) )
 
 UNION
 SELECT pohead_id AS orderid, poitem_id AS altorderid,
@@ -125,8 +124,7 @@ WHERE ((poitem_pohead_id=pohead_id)
   AND  (poitem_itemsite_id=itemsite_id)
   AND  (itemsite_warehous_id=<? value("warehous_id") ?>)
   AND  (itemsite_item_id=item_id)
-  AND  (item_id=<? value("item_id") ?>)
-  AND  (item_type IN ('P', 'M', 'C', 'O')) )
+  AND  (item_id=<? value("item_id") ?>) )
 
 UNION
 SELECT cohead_id AS orderid, coitem_id AS altorderid,
