@@ -93,8 +93,9 @@ HEADERS += \
            plugins/xtreewidgetplugin.h \
            plugins/xurllabelplugin.h \
            plugins/xtexteditplugin.h \
+	   plugins/screenplugin.h\
 	   plugins/screencontrolplugin.h\
-           plugins/xtreeviewplugin.h\
+           plugins/xtreeviewplugin.h
 
 SOURCES    += OpenMFGWidgets.cpp \
               addressCluster.cpp contactCluster.cpp crmacctCluster.cpp \
