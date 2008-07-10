@@ -445,7 +445,7 @@
          <enum>Qt::StrongFocus</enum>
         </property>
         <property name="currentIndex" >
-         <number>0</number>
+         <number>3</number>
         </property>
         <widget class="QWidget" name="tab" >
          <attribute name="title" >
@@ -641,7 +641,7 @@
           <item row="0" column="1" >
            <widget class="QGroupBox" name="_jobCosGroup" >
             <property name="title" >
-             <string>Cost of Sales Recognition</string>
+             <string>Cost Recognition</string>
             </property>
             <layout class="QGridLayout" >
              <item row="0" column="0" >
@@ -859,7 +859,7 @@
   </customwidget>
   <customwidget>
    <class>DLineEdit</class>
-   <extends>XLineEdit</extends>
+   <extends>QWidget</extends>
    <header>datecluster.h</header>
   </customwidget>
   <customwidget>
@@ -913,7 +913,6 @@
   <tabstop>_bomRevision</tabstop>
   <tabstop>_productionNotes</tabstop>
  </tabstops>
- <includes/>
  <resources/>
  <connections>
   <connection>

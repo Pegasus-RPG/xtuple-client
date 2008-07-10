@@ -429,7 +429,7 @@
    <item row="3" column="1" >
     <widget class="QGroupBox" name="_jobCosGroup" >
      <property name="title" >
-      <string>Job Item COS Recognition Defaults</string>
+      <string>W/O Item Cost Recognition Defaults</string>
      </property>
      <layout class="QGridLayout" >
       <item row="0" column="0" >

@@ -237,15 +237,15 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
         _productionNotes->setText(wo.value("wo_prodnotes").toString());
         _comments->setId(_woid);
         _project->setId(wo.value("wo_prj_id").toInt());
-		_bomRevision->setId(wo.value("wo_bom_rev_id").toInt());
-		_booRevision->setId(wo.value("wo_boo_rev_id").toInt());
+	_bomRevision->setId(wo.value("wo_bom_rev_id").toInt());
+	_booRevision->setId(wo.value("wo_boo_rev_id").toInt());
 
-		if (wo.value("wo_cosmethod").toString() == "D")
-		  _todate->setChecked(TRUE);
-		else if (wo.value("wo_cosmethod").toString() == "P")
-		  _proportional->setChecked(TRUE);
-		else
-	      _jobCosGroup->hide();
+	if (wo.value("wo_cosmethod").toString() == "D")
+	  _todate->setChecked(TRUE);
+	else if (wo.value("wo_cosmethod").toString() == "P")
+	  _proportional->setChecked(TRUE);
+	else
+          _jobCosGroup->hide();
 
         // If the W/O is closed or Released don't allow changing some items.
         if(wo.value("wo_status").toString() == "C" || wo.value("wo_status") == "R")
@@ -321,15 +321,15 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
         _productionNotes->setText(wo.value("wo_prodnotes").toString());
         _comments->setId(_woid);
         _project->setId(wo.value("wo_prj_id").toInt());
-		_bomRevision->setId(wo.value("wo_bom_rev_id").toInt());
-		_booRevision->setId(wo.value("wo_boo_rev_id").toInt());
+	_bomRevision->setId(wo.value("wo_bom_rev_id").toInt());
+	_booRevision->setId(wo.value("wo_boo_rev_id").toInt());
 
-		if (wo.value("wo_cosmethod").toString() == "D")
-		  _todate->setChecked(TRUE);
-		else if (wo.value("wo_cosmethod").toString() == "P")
-		  _proportional->setChecked(TRUE);
-		else
-	      _jobCosGroup->hide();
+	if (wo.value("wo_cosmethod").toString() == "D")
+	  _todate->setChecked(TRUE);
+	else if (wo.value("wo_cosmethod").toString() == "P")
+	  _proportional->setChecked(TRUE);
+	else
+          _jobCosGroup->hide();
  
         _woNumber->setEnabled(FALSE);
         _item->setReadOnly(TRUE);
@@ -350,7 +350,7 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
         _close->setText(tr("&Close"));
         _project->setEnabled(FALSE);
         _itemcharView->setEnabled(false);
-		_jobCosGroup->setEnabled(FALSE);
+	_jobCosGroup->setEnabled(FALSE);
         
         _close->setFocus();
       }
@@ -616,12 +616,12 @@ void workOrder::sCreate()
     q.bindValue(":wo_id", _woid);
     q.bindValue(":productionNotes", _productionNotes->text());
     q.bindValue(":prj_id", _project->id());
-	q.bindValue(":bom_rev_id", _bomRevision->id());
-	q.bindValue(":boo_rev_id", _booRevision->id());
-	if (_todate->isChecked() && _jobCosGroup->isEnabled())
-		q.bindValue(":wo_cosmethod",QString("D"));
-	else if (_proportional->isChecked() && _jobCosGroup->isEnabled())
-		q.bindValue(":wo_cosmethod",QString("P"));
+    q.bindValue(":bom_rev_id", _bomRevision->id());
+    q.bindValue(":boo_rev_id", _booRevision->id());
+    if (_todate->isChecked() && _jobCosGroup->isEnabled())
+      q.bindValue(":wo_cosmethod",QString("D"));
+    else if (_proportional->isChecked() && _jobCosGroup->isEnabled())
+      q.bindValue(":wo_cosmethod",QString("P"));
     q.exec();
 
     q.prepare("SELECT updateCharAssignment('W', :target_id, :char_id, :char_value);");
