@@ -235,6 +235,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                opportunity.ui opportunityList.ui                                                      \
                opportunitySource.ui opportunitySources.ui opportunityStage.ui opportunityStages.ui    \
                opportunityType.ui opportunityTypes.ui                                                 \
+               package.ui packages.ui                                                                 \
                packingListBatch.ui                                                                    \
                plannedOrder.ui plannerCodes.ui plannerCode.ui                                         \
                plannedSchedules.ui plannedSchedule.ui plannedScheduleItem.ui                          \
@@ -553,6 +554,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h rwInterface
                opportunity.h opportunityList.h                                                        \
                opportunitySource.h opportunitySources.h opportunityStage.h opportunityStages.h        \
                opportunityType.h opportunityTypes.h                                                   \
+               package.h packages.h                                                                   \
                packingListBatch.h                                                                     \
                plannedOrder.h plannerCodes.h plannerCode.h                                            \
                plannedSchedules.h plannedSchedule.h plannedScheduleItem.h                             \
@@ -877,6 +879,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp rwInte
                opportunity.cpp opportunityList.cpp                                                    \
                opportunitySource.cpp opportunitySources.cpp opportunityStage.cpp opportunityStages.cpp\
                opportunityType.cpp opportunityTypes.cpp                                               \
+               package.cpp packages.cpp                                                               \
                packingListBatch.cpp                                                                   \
                plannedOrder.cpp plannerCodes.cpp plannerCode.cpp                                      \
                plannedSchedules.cpp plannedSchedule.cpp plannedScheduleItem.cpp                       \

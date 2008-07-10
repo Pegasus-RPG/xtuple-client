@@ -107,6 +107,8 @@
 #include "images.h"
 #include "labelForms.h"
 #include "locales.h"
+#include "package.h"
+#include "packages.h"
 #include "reports.h"
 #include "scripts.h"
 #include "shifts.h"
@@ -249,13 +251,15 @@ menuSystem::menuSystem(GUIClient *Pparent) :
     { "sys.configureIE",	tr("Configure Data Import and E&xport..."),	SLOT(sConfigureIE()),	 masterInfoMenu, configureIE::userHasPriv(),	NULL, NULL, true },
 
   //  Design
-    { "menu",				tr("&Design"),	(char*)designMenu,		systemMenu,	true,						NULL,	NULL,	true	},
-    { "sys.reports",		tr("&Reports..."),	SLOT(sReports()),	designMenu,	_privileges->check("MaintainReports"),	NULL,	NULL,	true	},
-    { "separator",		NULL,			NULL,			designMenu,	true,					NULL,	NULL,	true	},
-    { "sys.uiforms",    	tr("Screens..."),         SLOT(sUIForms()),       designMenu, _privileges->check("MaintainScreens"),	NULL, NULL, true },
-    { "sys.scripts",    	tr("Scripts..."),	SLOT(sScripts()),       designMenu, _privileges->check("MaintainScripts"),	NULL, NULL, true },
-    { "separator",		NULL,			NULL,			designMenu,	true,					NULL,	NULL,	true	},
-    { "sys.customCommands",	tr("Custom Command&s..."),	SLOT(sCustomCommands()), designMenu, _privileges->check("MaintainCustomCommands"),	NULL, NULL, true },
+    { "menu",		   tr("&Design"),	     (char*)designMenu,	     systemMenu, true,				        NULL, NULL, true },
+    { "sys.reports",	   tr("&Reports..."),	     SLOT(sReports()),       designMenu, _privileges->check("MaintainReports"),	NULL, NULL, true },
+    { "separator",	   NULL,		     NULL,		     designMenu, true,					NULL, NULL, true },
+    { "sys.uiforms",       tr("Screens..."),         SLOT(sUIForms()),       designMenu, _privileges->check("MaintainScreens"),	NULL, NULL, true },
+    { "sys.scripts",       tr("Scripts..."),	     SLOT(sScripts()),       designMenu, _privileges->check("MaintainScripts"),	NULL, NULL, true },
+    { "separator",	   NULL,		     NULL,		     designMenu, true,					NULL, NULL, true },
+    { "sys.customCommands",tr("Custom Command&s..."),SLOT(sCustomCommands()),designMenu, _privileges->check("MaintainCustomCommands"),NULL, NULL, true },
+    { "separator",	   NULL,		     NULL,		     designMenu, true,					NULL, NULL, true },
+    { "sys.packages",      tr("&Packages..."),	     SLOT(sPackages()),      designMenu, package::userHasPriv(cView),           NULL, NULL, true },
 
   // Utilities
     { "menu",			tr("&System Utilities"),	(char*)sysUtilsMenu,	systemMenu,	true, NULL, NULL, true	},
@@ -592,6 +596,11 @@ void menuSystem::sConfigureIE()
 void menuSystem::sCustomCommands()
 {
   omfgThis->handleNewWindow(new customCommands());
+}
+
+void menuSystem::sPackages()
+{
+  omfgThis->handleNewWindow(new packages());
 }
 
 void menuSystem::sScripts()
