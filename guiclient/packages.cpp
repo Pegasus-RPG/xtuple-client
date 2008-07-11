@@ -97,7 +97,7 @@ packages::packages(QWidget* parent, const char* name, Qt::WFlags fl)
     disconnect(_package, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
     connect(_package,      SIGNAL(valid(bool)), _edit,  SLOT(setEnabled(bool)));
     connect(_package,      SIGNAL(valid(bool)), _delete,SLOT(setEnabled(bool)));
-    connect(_package,SIGNAL(itemSelected(int)), _edit,  SLOT(animateClick()));
+    connect(_package,SIGNAL(itemSelected(int)), _view,  SLOT(animateClick()));
   }
   else
   {
