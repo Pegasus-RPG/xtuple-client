@@ -114,6 +114,7 @@
 #include "shifts.h"
 #include "uiforms.h"
 
+#include "fixACL.h"
 #include "fixSerial.h"
 #include "importXML.h"
 
@@ -262,9 +263,10 @@ menuSystem::menuSystem(GUIClient *Pparent) :
     { "sys.packages",      tr("&Packages..."),	     SLOT(sPackages()),      designMenu, package::userHasPriv(cView),           NULL, NULL, true },
 
   // Utilities
-    { "menu",			tr("&System Utilities"),	(char*)sysUtilsMenu,	systemMenu,	true, NULL, NULL, true	},
-    { "sys.fixSerial",		tr("&Serial Columns"),	SLOT(sFixSerial()),	sysUtilsMenu,	_privileges->check("FixSerial"), NULL, NULL, true	},
-    { "sys.importXML",		tr("&Import XML"),	SLOT(sImportXML()),	sysUtilsMenu,	importXML::userHasPriv(),	NULL, NULL, true	},
+    { "menu",              tr("&System Utilities"),(char*)sysUtilsMenu, systemMenu,    true,                            NULL, NULL, true },
+    { "sys.fixACL",        tr("&Access Control"),  SLOT(sFixACL()),     sysUtilsMenu,  fixACL::userHasPriv(),           NULL, NULL, true },
+    { "sys.fixSerial",     tr("&Serial Columns"),  SLOT(sFixSerial()),  sysUtilsMenu,  _privileges->check("FixSerial"), NULL, NULL, true },
+    { "sys.importXML",     tr("&Import XML"),      SLOT(sImportXML()),  sysUtilsMenu,  importXML::userHasPriv(),        NULL, NULL, true },
 
     { "separator",		NULL,				NULL,				systemMenu,	true,	NULL,	NULL,	true	},
     { "sys.printAlignmentPage",	tr("Print &Alignment Page..."),	SLOT(sPrintAlignment()),	systemMenu,	TRUE,	NULL,	NULL,	true	},
@@ -771,6 +773,11 @@ void menuSystem::sConfigureAccountingSystemInterface()
   configureAccountingSystem(parent, "", TRUE).exec();
 }
 // END_RW
+
+void menuSystem::sFixACL()
+{
+  omfgThis->handleNewWindow(new fixACL());
+}
 
 void menuSystem::sFixSerial()
 {

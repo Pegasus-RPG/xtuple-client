@@ -149,6 +149,7 @@ class menuSystem : public QObject
     void sUIForms();
     void sPackages();
 
+    void sFixACL();
     void sFixSerial();
     void sImportXML();
 
