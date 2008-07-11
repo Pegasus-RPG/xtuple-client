@@ -62,7 +62,7 @@
 #include "xmainwindow.h"
 #include <parameter.h>
 
-#include "ui_fixacl.h"
+#include "ui_fixACL.h"
 
 class fixACL : public XMainWindow, public Ui::fixACL
 {
