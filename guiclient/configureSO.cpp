@@ -58,6 +58,7 @@
 #include "configureSO.h"
 
 #include <QSqlError>
+#include <QMessageBox>
 
 #include "editICMWatermark.h"
 
@@ -230,6 +231,11 @@ configureSO::configureSO(QWidget* parent, const char* name, bool modal, Qt::WFla
     _enableReturns->setChecked(false);
     _enableReservations->hide();
     _enableReservations->setChecked(false);
+    _locationGroup->hide();
+    _locationGroup->setChecked(false);
+    _lowest->setChecked(false);
+    _highest->setChecked(false);
+    _alpha->setChecked(false);
   }
   else
   {
@@ -286,6 +292,14 @@ configureSO::configureSO(QWidget* parent, const char* name, bool modal, Qt::WFla
     _printRA->setChecked(_metrics->boolean("DefaultPrintRAOnSave"));
 
     _enableReservations->setChecked(_metrics->boolean("EnableSOReservations"));
+
+    _locationGroup->setChecked(_metrics->boolean("EnableSOReservationsByLocation"));
+    if(_metrics->value("SOReservationLocationMethod").toInt() == 1)
+      _lowest->setChecked(true);
+    else if (_metrics->value("SOReservationLocationMethod").toInt() == 2)
+      _highest->setChecked(true);
+    else if(_metrics->value("SOReservationLocationMethod").toInt() == 3)
+      _alpha->setChecked(true);
   }
 }
 
@@ -305,6 +319,23 @@ void configureSO::sSave()
   char *dispositionTypes[] = { "C", "R", "P", "V", "M" };
   char *creditMethodTypes[] = { "N", "M", "K", "C" };
 
+  if ( (_metrics->boolean("EnableSOReservationsByLocation")) &&
+       (!_locationGroup->isChecked()) )
+  {
+    if (QMessageBox::warning(this, tr("Reserve by Location Disabled"),
+        tr("<p>All existing location reservations will be removed. Are you sure you want to continue?"),
+        QMessageBox::Yes, QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+	{
+      return;
+	}
+	else
+	{
+      q.prepare("DELETE FROM rsrv "
+	            " WHERE (rsrv_source='SO');");
+      q.exec();
+    }	
+  }
+	   
   _metrics->set("AllowDiscounts", _allowDiscounts->isChecked());
   _metrics->set("AllowASAPShipSchedules", _allowASAP->isChecked());
   _metrics->set("CustomerChangeLog", _customerChangeLog->isChecked());
@@ -332,6 +363,19 @@ void configureSO::sSave()
   _metrics->set("UsePromiseDate", _enablePromiseDate->isChecked());
   _metrics->set("EnableReturnAuth", _enableReturns->isChecked());
   _metrics->set("EnableSOReservations", _enableReservations->isChecked());
+
+  _metrics->set("EnableSOReservationsByLocation", _locationGroup->isChecked());
+  //SOReservationLocationMethod are three Options Either 
+  // Lowest quantity first,
+  // Highest quantity first,
+  // Alpha by Location Name
+  if(_lowest->isChecked())
+    _metrics->set("SOReservationLocationMethod", 1);
+  else if (_highest->isChecked())
+    _metrics->set("SOReservationLocationMethod", 2);
+  else if(_alpha->isChecked())
+    _metrics->set("SOReservationLocationMethod", 3);
+	
   _metrics->set("SOCreditLimit", _creditLimit->text());
   _metrics->set("SOCreditRate", _creditRating->text());
 
