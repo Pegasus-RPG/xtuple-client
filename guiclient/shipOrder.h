@@ -74,10 +74,10 @@ public:
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
     virtual void sShip();
-    virtual void sSoList();
     virtual void sFillList();
     virtual void sFillFreight();
     virtual void sFillTracknum();
+    virtual void sHandleOrder();
     virtual void sHandleSo();
     virtual void sHandleTo();
     virtual void sHandleButtons();

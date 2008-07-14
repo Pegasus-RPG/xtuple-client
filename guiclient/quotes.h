@@ -69,6 +69,8 @@ class quotes : public XMainWindow, public Ui::quotes
 public:
     quotes(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~quotes();
+    
+    virtual bool checkSitePrivs(int orderid);
 
 public slots:
     virtual void sPopulateMenu( QMenu * );

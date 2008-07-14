@@ -111,6 +111,7 @@ issueToShipping::issueToShipping(QWidget* parent, const char* name, Qt::WFlags f
   _soitem->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
   _order->setFocus();
+  _order->setFromSitePrivsEnforced(TRUE);
 
   _bcQty->setValidator(omfgThis->qtyVal());
 
@@ -122,6 +123,7 @@ issueToShipping::issueToShipping(QWidget* parent, const char* name, Qt::WFlags f
 
   _transDate->setEnabled(_privileges->check("AlterTransactionDates"));
   _transDate->setDate(omfgThis->dbDate());
+  
 }
 
 issueToShipping::~issueToShipping()

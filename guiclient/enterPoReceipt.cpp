@@ -87,6 +87,8 @@ enterPoReceipt::enterPoReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
   _order->setAllowedTypes(OrderLineEdit::Purchase |
 			  OrderLineEdit::Return |
 			  OrderLineEdit::Transfer);
+  _order->setToSitePrivsEnforced(TRUE);
+  
   if (_metrics->boolean("EnableReturnAuth"))
   {
       _order->setExtraClause("RA", "(SELECT SUM(raitem_qtyauthorized) > 0 "

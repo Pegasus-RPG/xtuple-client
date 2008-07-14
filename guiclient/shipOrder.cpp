@@ -81,10 +81,9 @@ shipOrder::shipOrder(QWidget* parent, const char* name, bool modal, Qt::WFlags f
   connect(_ship,     SIGNAL(clicked()),     this, SLOT(sShip()));
   connect(_shipment, SIGNAL(newId(int)),    this, SLOT(sFillList()));
   connect(_shipment, SIGNAL(newId(int)),    this, SLOT(sFillTracknum()));
-  connect(_soList,   SIGNAL(clicked()),     this, SLOT(sSoList()));
-  connect(_soNumber, SIGNAL(newId(int)),    this, SLOT(sHandleSo()));
-  connect(_soNumber, SIGNAL(requestList()), this, SLOT(sSoList()));
-  connect(_toNumber, SIGNAL(newId(int)),    this, SLOT(sHandleTo()));
+  //connect(_soList,   SIGNAL(clicked()),     this, SLOT(sSoList()));
+  connect(_order,    SIGNAL(newId(int,QString)),    this, SLOT(sHandleOrder()));
+  //connect(_soNumber, SIGNAL(requestList()), this, SLOT(sSoList()));
   connect(_tracknum, SIGNAL(activated(const QString&)), this, SLOT(sFillFreight()));
   connect(_tracknum, SIGNAL(currentIndexChanged(const QString&)), this, SLOT(sFillFreight()));
   connect(_tracknum, SIGNAL(highlighted(const QString&)), this, SLOT(sFillFreight()));
@@ -105,11 +104,18 @@ shipOrder::shipOrder(QWidget* parent, const char* name, bool modal, Qt::WFlags f
   _select->setEnabled(_privileges->check("SelectBilling"));
   _create->setEnabled(_privileges->check("SelectBilling"));
 
-  _toNumber->setVisible(_metrics->boolean("MultiWhs"));
-
   sCreateToggled(_create->isChecked());
   sHandleButtons();
   _reject = false;
+  
+  _order->setAllowedStatuses(OrderLineEdit::Open);
+  _order->setAllowedTypes(OrderLineEdit::Sales |
+                          OrderLineEdit::Transfer);
+  _order->setFromSitePrivsEnforced(TRUE);
+  _order->setLabel("");
+  
+  _transDate->setEnabled(_privileges->check("AlterTransactionDates"));
+  _transDate->setDate(omfgThis->dbDate(), true);
 }
 
 shipOrder::~shipOrder()
@@ -141,14 +147,12 @@ enum SetResponse shipOrder::set(const ParameterList &pParams)
       _captive = true;	// so order handling can reject if necessary
       if (q.value("shiphead_order_type").toString() == "SO")
       {
-	_toNumber->setId(-1);
-	_soNumber->setId(q.value("shiphead_order_id").toInt());
+        _order->setId(param.toInt(), "SO");
 	_select->setEnabled(_privileges->check("SelectBilling"));
       }
       else if (q.value("shiphead_order_type").toString() == "TO")
       {
-	_soNumber->setId(-1);
-	_toNumber->setId(q.value("shiphead_order_id").toInt());
+        _order->setId(param.toInt(), "TO");
 	_select->setEnabled(false);
       }
     }
@@ -277,7 +281,7 @@ void shipOrder::sShip()
     newdlg.set(params);
   }
 
-  if (_soNumber->isValid() && _select->isChecked())
+  if (_order->isSO() && _select->isChecked())
   {
     shipq.prepare("SELECT selectUninvoicedShipment(:shiphead_id) AS result;");
     shipq.bindValue(":shiphead_id", _shipment->id());
@@ -322,7 +326,7 @@ void shipOrder::sShip()
 	  newdlg.exec();
 
 	  omfgThis->sInvoicesUpdated(result, TRUE);
-	  omfgThis->sSalesOrdersUpdated(_soNumber->id());
+	  omfgThis->sSalesOrdersUpdated(_order->id());
 	}
 	else if (shipq.lastError().type() != QSqlError::None)
 	{
@@ -331,12 +335,12 @@ void shipOrder::sShip()
 			 "and selected for billing, the Invoice was not "
 			 "created properly. You may need to create an Invoice "
 			 "manually from the Billing Selection.")
-			.arg(_soNumber->id()),
+			.arg(_order->id()),
 		      __FILE__, __LINE__);
 	  return;
 	}
 
-	omfgThis->sBillingSelectionUpdated(_soNumber->id(), TRUE);
+	omfgThis->sBillingSelectionUpdated(_order->id(), TRUE);
       }
     }
     else if (shipq.lastError().type() != QSqlError::None)
@@ -345,13 +349,13 @@ void shipOrder::sShip()
 		  tr("<p>Although Sales Order %1 was successfully shipped, "
 		     "it was not selected for billing. You must manually "
 		     "select this Sales Order for Billing.")
-		    .arg(_soNumber->id()),
+		    .arg(_order->id()),
 		  __FILE__, __LINE__);
       return;
     }
   }
 
-  if (_toNumber->isValid() && _receive->isChecked())
+  if (_order->isTO() && _receive->isChecked())
   {
     QString recverr = tr("<p>Receiving inventory for this Transfer Order "
 			"failed although Shipping the Order succeeded. "
@@ -362,8 +366,8 @@ void shipOrder::sShip()
 
     if (_metrics->boolean("MultiWhs"))
       params.append("MultiWhs");
-    params.append("tohead_id",   _toNumber->id());
-    params.append("orderid",     _toNumber->id());
+    params.append("tohead_id",   _order->id());
+    params.append("orderid",     _order->id());
     params.append("ordertype",   "TO");
     params.append("shiphead_id", _shipment->id());
 
@@ -398,7 +402,7 @@ void shipOrder::sShip()
     }
 
     ParameterList recvParams;
-    recvParams.append("tohead_id", _toNumber->id());
+    recvParams.append("tohead_id", _order->id());
     enterPoReceipt *newdlg = new enterPoReceipt();
     newdlg->set(recvParams);
 
@@ -413,10 +417,8 @@ void shipOrder::sShip()
     accept();
   else
   {
-    _soNumber->setId(-1);
-    _toNumber->setId(-1);
-    _soNumber->setEnabled(true);
-    _toNumber->setEnabled(true);
+    _order->setId(-1);
+    _order->setEnabled(true);
     _select->setChecked(_privileges->check("SelectBilling") && _metrics->boolean("AutoSelectForBilling"));
     _select->setEnabled(_privileges->check("SelectBilling"));
     _create->setEnabled(_privileges->check("SelectBilling"));
@@ -430,7 +432,7 @@ void shipOrder::sShip()
     _shipment->setEnabled(false);
     _close->setText(tr("&Close"));
 
-    _soNumber->setFocus();
+    _order->setFocus();
   }
 
   // Update the shipdatasum record to reflect shipped     
@@ -450,16 +452,23 @@ void shipOrder::sShip()
   }
 }
 
-void shipOrder::sSoList()
+void shipOrder::sHandleOrder()
 {
-  ParameterList params;
-  params.append("sohead_id", _soNumber->id());
-  params.append("soType", cSoAtShipping);
-  
-  salesOrderList newdlg(this, "", TRUE);
-  newdlg.set(params);
-
-  _soNumber->setId(newdlg.exec());
+  if (_order->id() < 0)
+  {
+    _shipment->clear();
+    _billToName->setText("");
+    _shipToName->setText("");
+    _shipToAddr1->setText("");
+    _shipValue->setText("0.00");
+    _coitem->clear();
+    _order->setFocus();
+    return;
+  }
+  else if (_order->isSO())
+    sHandleSo();
+  else if (_order->isTO())
+    sHandleTo();
 }
 
 void shipOrder::sHandleSo()
@@ -470,177 +479,57 @@ void shipOrder::sHandleSo()
 
   sHandleButtons();
 
-  if (_soNumber->isValid())
+
+  q.prepare( "SELECT cohead_holdtype, cust_name, cohead_shiptoname, "
+             "       cohead_shiptoaddress1, cohead_curr_id, cohead_freight "
+             "FROM cohead, cust "
+             "WHERE ((cohead_cust_id=cust_id) "
+             "  AND  (cohead_id=:sohead_id));" );
+  q.bindValue(":sohead_id", _order->id());
+  q.exec();
+  if (q.first())
   {
-    _toNumber->setId(-1);
+    QString msg;
+    if ( (q.value("cohead_holdtype").toString() == "C"))
+      msg = storedProcErrorLookup("shipShipment", -12);
+    else if (q.value("cohead_holdtype").toString() == "P")
+      msg = storedProcErrorLookup("shipShipment", -13);
+    else if (q.value("cohead_holdtype").toString() == "R")
+      msg = storedProcErrorLookup("shipShipment", -14);
+    else if (q.value("cohead_holdtype").toString() == "S")
+      msg = storedProcErrorLookup("shipShipment", -15);
 
-    q.prepare( "SELECT cohead_holdtype, cust_name, cohead_shiptoname, "
-	       "       cohead_shiptoaddress1, cohead_curr_id, cohead_freight "
-               "FROM cohead, cust "
-               "WHERE ((cohead_cust_id=cust_id) "
-	       "  AND  (cohead_id=:sohead_id));" );
-    q.bindValue(":sohead_id", _soNumber->id());
-    q.exec();
-    if (q.first())
+    if (! msg.isEmpty())
     {
-      QString msg;
-      if ( (q.value("cohead_holdtype").toString() == "C"))
-	msg = storedProcErrorLookup("shipShipment", -12);
-      else if (q.value("cohead_holdtype").toString() == "P")
-	msg = storedProcErrorLookup("shipShipment", -13);
-      else if (q.value("cohead_holdtype").toString() == "R")
-	msg = storedProcErrorLookup("shipShipment", -14);
-      else if (q.value("cohead_holdtype").toString() == "S")
-	msg = storedProcErrorLookup("shipShipment", -15);
-
-      if (! msg.isEmpty())
+      QMessageBox::warning(this, tr("Cannot Ship Order"), msg);
+      if (_captive)
       {
-	QMessageBox::warning(this, tr("Cannot Ship Order"), msg);
-	if (_captive)
-	{
-	  _reject = true;	// so set() can return an error
-	  reject();	// this only works if shipOrder has been exec()'ed
-	}
-	else
-	{
-	  _soNumber->setId(-1);
-	  return;
-	}
-      }
-
-      _freight->setId(q.value("cohead_curr_id").toInt());
-      _freight->setLocalValue(q.value("cohead_freight").toDouble());
-      _billToName->setText(q.value("cust_name").toString());
-      _shipToName->setText(q.value("cohead_shiptoname").toString());
-      _shipToAddr1->setText(q.value("cohead_shiptoaddress1").toString());
-
-      QString sql( "SELECT shiphead_id "
-		   "FROM shiphead "
-		   "WHERE ( (NOT shiphead_shipped)"
-		   "<? if exists(\"shiphead_id\") ?>"
-		   " AND (shiphead_id=<? value(\"shiphead_id\") ?>)"
-		   "<? endif ?>"
-		   " AND (shiphead_order_id=<? value(\"sohead_id\") ?>)"
-		   " AND (shiphead_order_type='SO'));" );
-      ParameterList params;
-      params.append("sohead_id", _soNumber->id());
-      if (_shipment->isValid())
-	params.append("shiphead_id", _shipment->id());
-      MetaSQLQuery mql(sql);
-      q = mql.toQuery(params);
-      if (q.first())
-      {
-	if (_shipment->id() != q.value("shiphead_id").toInt())
-	  _shipment->setId(q.value("shiphead_id").toInt());
-
-	if (q.next())
-	{
-	  _shipment->setType("SO");
-	  _shipment->limitToOrder(_soNumber->id());
-	  _shipment->setEnabled(true);
-	}
-      }
-      else if (q.lastError().type() != QSqlError::None)
-      {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-	return;
-      }
-      else if (_shipment->isValid())
-      {
-	params.clear();
-	params.append("sohead_id", _soNumber->id());
-	MetaSQLQuery mql(sql);
-	q = mql.toQuery(params);
-	if (q.first())
-	{
-	  _shipment->setId(q.value("shiphead_id").toInt());
-	  if (q.next())
-	  {
-	    _shipment->setType("SO");
-	    _shipment->limitToOrder(_soNumber->id());
-	    _shipment->setEnabled(true);
-	  }
-	}
-	else if (q.lastError().type() != QSqlError::None)
-	{
-	  systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-	  return;
-	}
-	else
-	  _shipment->clear();
+        _reject = true;	// so set() can return an error
+        reject();	// this only works if shipOrder has been exec()'ed
       }
       else
       {
-	QMessageBox::warning(this, tr("Nothing to ship"),
-			  tr("<p>You may not ship this Sales Order because "
-			     "no stock has been issued to shipping for it."));
-	_soNumber->setFocus();
-	return;
+        _order->setId(-1);
+        return;
       }
     }
-    else if (q.lastError().type() != QSqlError::None)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
 
-    _soNumber->setEnabled(true);
-  }
-  else
-  {
-    _shipment->clear();
-  }
-
-  _toNumber->setEnabled(! _soNumber->isValid());
-}
-
-void shipOrder::sHandleTo()
-{
-  _coitem->clear();
-  _shipment->setEnabled(false);
-  _shipment->removeOrderLimit();
-
-  sHandleButtons();
-
-  if (_toNumber->isValid())
-  {
-    _soNumber->setId(-1);
-
-    q.prepare("SELECT tohead_freight_curr_id, tohead_destname,"
-	      "       tohead_destaddress1,"
-	      "       SUM(toitem_freight) + tohead_freight AS freight "
-	      "FROM tohead, toitem "
-	      "WHERE ((toitem_tohead_id=tohead_id)"
-	      "  AND  (toitem_status<>'X')"
-	      "  AND  (tohead_id=:tohead_id)) "
-	      "GROUP BY tohead_freight_curr_id, tohead_destname,"
-	      "         tohead_destaddress1, tohead_freight;");
-    q.bindValue(":tohead_id", _toNumber->id());
-    q.exec();
-    if (q.first())
-    {
-      _freight->setId(q.value("tohead_freight_curr_id").toInt());
-      _freight->setLocalValue(q.value("freight").toDouble());
-      _billToName->setText(tr("Transfer Order"));
-      _shipToName->setText(q.value("tohead_destname").toString());
-      _shipToAddr1->setText(q.value("tohead_destaddress1").toString());
-    }
-    else if (q.lastError().type() != QSqlError::None)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
+    _freight->setId(q.value("cohead_curr_id").toInt());
+    _freight->setLocalValue(q.value("cohead_freight").toDouble());
+    _billToName->setText(q.value("cust_name").toString());
+    _shipToName->setText(q.value("cohead_shiptoname").toString());
+    _shipToAddr1->setText(q.value("cohead_shiptoaddress1").toString());
 
     QString sql( "SELECT shiphead_id "
-		 "FROM shiphead "
-		 "WHERE ( (NOT shiphead_shipped)"
-		 "<? if exists(\"shiphead_id\") ?>"
-		 " AND (shiphead_id=<? value(\"shiphead_id\") ?>)"
-		 "<? endif ?>"
-		 " AND (shiphead_order_id=<? value(\"tohead_id\") ?>)"
-		 " AND (shiphead_order_type='TO'));" );
+                 "FROM shiphead "
+                 "WHERE ( (NOT shiphead_shipped)"
+                 "<? if exists(\"shiphead_id\") ?>"
+                 " AND (shiphead_id=<? value(\"shiphead_id\") ?>)"
+                 "<? endif ?>"
+                 " AND (shiphead_order_id=<? value(\"sohead_id\") ?>)"
+                 " AND (shiphead_order_type='SO'));" );
     ParameterList params;
-    params.append("tohead_id", _toNumber->id());
+    params.append("sohead_id", _order->id());
     if (_shipment->isValid())
       params.append("shiphead_id", _shipment->id());
     MetaSQLQuery mql(sql);
@@ -648,13 +537,13 @@ void shipOrder::sHandleTo()
     if (q.first())
     {
       if (_shipment->id() != q.value("shiphead_id").toInt())
-	_shipment->setId(q.value("shiphead_id").toInt());
+        _shipment->setId(q.value("shiphead_id").toInt());
 
       if (q.next())
       {
-	_shipment->setType("TO");
-	_shipment->limitToOrder(_toNumber->id());
-	_shipment->setEnabled(true);
+        _shipment->setType("SO");
+        _shipment->limitToOrder(_order->id());
+        _shipment->setEnabled(true);
       }
     }
     else if (q.lastError().type() != QSqlError::None)
@@ -665,43 +554,139 @@ void shipOrder::sHandleTo()
     else if (_shipment->isValid())
     {
       params.clear();
-      params.append("tohead_id", _toNumber->id());
+      params.append("sohead_id", _order->id());
       MetaSQLQuery mql(sql);
       q = mql.toQuery(params);
       if (q.first())
       {
-	_shipment->setId(q.value("shiphead_id").toInt());
-	if (q.next())
-	{
-	  _shipment->setType("TO");
-	  _shipment->limitToOrder(_toNumber->id());
-	  _shipment->setEnabled(true);
-	}
+        _shipment->setId(q.value("shiphead_id").toInt());
+        if (q.next())
+        {
+          _shipment->setType("SO");
+          _shipment->limitToOrder(_order->id());
+          _shipment->setEnabled(true);
+        }
       }
       else if (q.lastError().type() != QSqlError::None)
       {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-	return;
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        return;
       }
       else
-	_shipment->clear();
+        _shipment->clear();
     }
     else
     {
       QMessageBox::warning(this, tr("Nothing to ship"),
-			tr("<p>You may not ship this Transfer Order because "
-			   "no stock has been issued to shipping for it."));
-      _toNumber->setFocus();
+                        tr("<p>You may not ship this Sales Order because "
+                           "no stock has been issued to shipping for it."));
+      _order->setFocus();
       return;
     }
-    _toNumber->setEnabled(true);
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+}
+
+void shipOrder::sHandleTo()
+{
+  _coitem->clear();
+  _shipment->setEnabled(false);
+  _shipment->removeOrderLimit();
+
+  sHandleButtons();
+
+  q.prepare("SELECT tohead_freight_curr_id, tohead_destname,"
+            "       tohead_destaddress1,"
+            "       SUM(toitem_freight) + tohead_freight AS freight "
+            "FROM tohead, toitem "
+            "WHERE ((toitem_tohead_id=tohead_id)"
+            "  AND  (toitem_status<>'X')"
+            "  AND  (tohead_id=:tohead_id)) "
+            "GROUP BY tohead_freight_curr_id, tohead_destname,"
+            "         tohead_destaddress1, tohead_freight;");
+  q.bindValue(":tohead_id", _order->id());
+  q.exec();
+  if (q.first())
+  {
+    _freight->setId(q.value("tohead_freight_curr_id").toInt());
+    _freight->setLocalValue(q.value("freight").toDouble());
+    _billToName->setText(tr("Transfer Order"));
+    _shipToName->setText(q.value("tohead_destname").toString());
+    _shipToAddr1->setText(q.value("tohead_destaddress1").toString());
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
+  QString sql( "SELECT shiphead_id "
+               "FROM shiphead "
+               "WHERE ( (NOT shiphead_shipped)"
+               "<? if exists(\"shiphead_id\") ?>"
+               " AND (shiphead_id=<? value(\"shiphead_id\") ?>)"
+               "<? endif ?>"
+               " AND (shiphead_order_id=<? value(\"tohead_id\") ?>)"
+               " AND (shiphead_order_type='TO'));" );
+  ParameterList params;
+  params.append("tohead_id", _order->id());
+  if (_shipment->isValid())
+    params.append("shiphead_id", _shipment->id());
+  MetaSQLQuery mql(sql);
+  q = mql.toQuery(params);
+  if (q.first())
+  {
+    if (_shipment->id() != q.value("shiphead_id").toInt())
+      _shipment->setId(q.value("shiphead_id").toInt());
+
+    if (q.next())
+    {
+      _shipment->setType("TO");
+      _shipment->limitToOrder(_order->id());
+      _shipment->setEnabled(true);
+    }
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+  else if (_shipment->isValid())
+  {
+    params.clear();
+    params.append("tohead_id", _order->id());
+    MetaSQLQuery mql(sql);
+    q = mql.toQuery(params);
+    if (q.first())
+    {
+      _shipment->setId(q.value("shiphead_id").toInt());
+      if (q.next())
+      {
+        _shipment->setType("TO");
+        _shipment->limitToOrder(_order->id());
+        _shipment->setEnabled(true);
+      }
+    }
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+    else
+      _shipment->clear();
   }
   else
   {
-    _shipment->clear();
+    QMessageBox::warning(this, tr("Nothing to ship"),
+                      tr("<p>You may not ship this Transfer Order because "
+                         "no stock has been issued to shipping for it."));
+    _order->setFocus();
+    return;
   }
-
-  _soNumber->setEnabled(! _toNumber->isValid());
 }
 
 void shipOrder::sHandleButtons()
@@ -709,26 +694,26 @@ void shipOrder::sHandleButtons()
   _select->setChecked(_privileges->check("SelectBilling") &&
 		     _metrics->boolean("AutoSelectForBilling"));
 
-  _select->setEnabled(_soNumber->isValid() &&
+  _select->setEnabled(_order->isSO() &&
 		      _privileges->check("SelectBilling"));
-  _create->setEnabled(_soNumber->isValid() &&
+  _create->setEnabled(_order->isSO() &&
 		      _privileges->check("SelectBilling"));
-  _print->setEnabled(_soNumber->isValid() || _toNumber->isValid());
-  _receive->setEnabled(_toNumber->isValid() &&
+  _print->setEnabled(_order->isSO() || _order->isTO());
+  _receive->setEnabled(_order->isTO() &&
 		       _privileges->check("EnterReceipts"));
 
   // logic here is reversed to ensure that by default all checkboxes are visible
   if (_preferences->boolean("XCheckBox/forgetful"))
   {
-    _select->setChecked(! _toNumber->isValid());
-    _create->setChecked(! _toNumber->isValid());
-    _receive->setChecked(! _soNumber->isValid());
+    _select->setChecked(! _order->isTO());
+    _create->setChecked(! _order->isTO());
+    _receive->setChecked(! _order->isSO());
   }
   else
   {
-    _select->setVisible(! _toNumber->isValid());
-    _create->setVisible(! _toNumber->isValid());
-    _receive->setVisible(! _soNumber->isValid());
+    _select->setVisible(! _order->isTO());
+    _create->setVisible(! _order->isTO());
+    _receive->setVisible(! _order->isSO());
   }
 }
 
@@ -738,7 +723,7 @@ void shipOrder::sFillList()
   {
     QString ordertype;
     XSqlQuery shipq;
-    shipq.prepare("SELECT shiphead_shipvia, shiphead_order_type,"
+    shipq.prepare("SELECT shiphead_order_id, shiphead_shipvia, shiphead_order_type,"
 		  "       shiphead_freight, shiphead_freight_curr_id,"
 		  "       COALESCE(shipchrg_custfreight, TRUE) AS custfreight,"
 		  "       COALESCE(shiphead_shipdate,CURRENT_DATE) AS effective "
@@ -750,6 +735,7 @@ void shipOrder::sFillList()
     shipq.exec();
     if (shipq.first())
     {
+      _order->setId(shipq.value("shiphead_order_id").toInt(),shipq.value("shiphead_order_type").toString());
       _shipVia->setText(shipq.value("shiphead_shipvia").toString());
       ordertype = shipq.value("shiphead_order_type").toString();
 
@@ -780,7 +766,7 @@ void shipOrder::sFillList()
 			      "Order #%2 or has already shipped. Please change "
 			      "either the Order # or Shipment #.")
 			     .arg(_shipment->number())
-			     .arg(_soNumber->text()));
+			     .arg(_order->number()));
       _shipment->clear();
       _shipment->setEnabled(false);
       return;
@@ -789,9 +775,9 @@ void shipOrder::sFillList()
     ParameterList itemp;
     itemp.append("ordertype", ordertype);
     if (ordertype == "SO")
-      itemp.append("sohead_id", _soNumber->id());
+      itemp.append("sohead_id", _order->id());
     else if (ordertype == "TO")
-      itemp.append("tohead_id", _toNumber->id());
+      itemp.append("tohead_id", _order->id());
 
     QString items = "<? if exists(\"sohead_id\") ?>"
 		 "SELECT coitem_id,"
@@ -895,7 +881,7 @@ void shipOrder::sCreateToggled( bool yes )
 // TODO: integrate transfer orders with shipdatasum table
 void shipOrder::sFillFreight()
 {
-  if (_soNumber->isValid())
+  if (_order->isSO())
   {
     XSqlQuery shipdataQ;
     shipdataQ.prepare( "SELECT shipdatasum_base_freight,"
@@ -907,7 +893,7 @@ void shipOrder::sFillFreight()
 	       " AND  (   (shipdatasum_shiphead_number=:shiphead_number)"
 	       "       OR (:shiphead_number IS NULL))"
 	       ") ;");
-    shipdataQ.bindValue(":sohead_id", _soNumber->id());
+    shipdataQ.bindValue(":sohead_id", _order->id());
     shipdataQ.bindValue(":tracknum",  _tracknum->currentText());
     if (! _shipment->number().isEmpty())
       shipdataQ.bindValue(":shiphead_number", _shipment->number());
@@ -928,7 +914,7 @@ void shipOrder::sFillFreight()
 
 void shipOrder::sFillTracknum()
 {
-  if (_toNumber->isValid())
+  if (_order->isTO())
   {
     QMessageBox::warning(this, tr("Not Supported in Transfer Order"),
 			 tr("<p>Automatic insertion of Tracking Numbers is "
@@ -936,7 +922,7 @@ void shipOrder::sFillTracknum()
     return;
   }
 
-  if (_soNumber->isValid())
+  if (_order->isSO())
   {
     XSqlQuery shipdataQ;
     _tracknum->clear();
@@ -948,7 +934,7 @@ void shipOrder::sFillTracknum()
 		       "      OR (:shiphead_number IS NULL))"
 		       " AND (NOT shipdatasum_shipped) ) "
 		       "ORDER BY shipdatasum_lastupdated;" );
-    shipdataQ.bindValue(":sohead_id", _soNumber->id());
+    shipdataQ.bindValue(":sohead_id", _order->id());
     if (! _shipment->number().isEmpty())
       shipdataQ.bindValue(":shiphead_number", _shipment->number());
     shipdataQ.exec();

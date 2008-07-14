@@ -185,22 +185,25 @@ void quotes::sPrint()
     q.exec();
     if (q.first())
     {
-      ParameterList params;
-      params.append("quhead_id", quheadid);
-
-      orReport report(q.value("reportname").toString(), params);
-      if (report.isValid() && report.print(&printer, setupPrinter))
-	setupPrinter = FALSE;
-      else
+      if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
       {
-	report.reportError(this);
-	break;
+        ParameterList params;
+        params.append("quhead_id", quheadid);
+
+        orReport report(q.value("reportname").toString(), params);
+        if (report.isValid() && report.print(&printer, setupPrinter))
+          setupPrinter = FALSE;
+        else
+        {
+          report.reportError(this);
+          break;
+        }
       }
-    }
-    else if (q.lastError().type() != QSqlError::None)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      break;
+      else if (q.lastError().type() != QSqlError::None)
+      {
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        break;
+      }
     }
   }
   if (selected.size() > 0)
@@ -231,103 +234,106 @@ void quotes::sConvert()
 
       for (int i = 0; i < selected.size(); i++)
       {
-        int quheadid = ((XTreeWidgetItem*)(selected[i]))->id();
-        convert.bindValue(":quhead_id", quheadid);
-        convert.exec();
-        if (convert.first())
+        if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
         {
-          soheadid = convert.value("sohead_id").toInt();
-          if (soheadid == -3)
+          int quheadid = ((XTreeWidgetItem*)(selected[i]))->id();
+          convert.bindValue(":quhead_id", quheadid);
+          convert.exec();
+          if (convert.first())
           {
-            if ((_metrics->value("DefaultSalesRep").toInt() > 0) &&
-                (_metrics->value("DefaultTerms").toInt() > 0) &&
-                (_metrics->value("DefaultCustType").toInt() > 0) && 
-                (_metrics->value("DefaultShipFormId").toInt() > 0)  && 
-                (_privileges->check("MaintainCustomerMasters"))) 
-              {
-                if (QMessageBox::question(this, tr("Quote for Prospect"),
-                              tr("<p>This Quote is for a Prospect, not "
-                             "a Customer. Do you want to convert "
-                             "the Prospect to a Customer using global "
-                             "default values?"),
-                        QMessageBox::Yes,
-                        QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
+            soheadid = convert.value("sohead_id").toInt();
+            if (soheadid == -3)
+            {
+              if ((_metrics->value("DefaultSalesRep").toInt() > 0) &&
+                  (_metrics->value("DefaultTerms").toInt() > 0) &&
+                  (_metrics->value("DefaultCustType").toInt() > 0) && 
+                  (_metrics->value("DefaultShipFormId").toInt() > 0)  && 
+                  (_privileges->check("MaintainCustomerMasters"))) 
                 {
-                  prospectq.bindValue(":quhead_id", quheadid);
-                  prospectq.exec();
-                  if (prospectq.first())
+                  if (QMessageBox::question(this, tr("Quote for Prospect"),
+                                tr("<p>This Quote is for a Prospect, not "
+                               "a Customer. Do you want to convert "
+                               "the Prospect to a Customer using global "
+                               "default values?"),
+                          QMessageBox::Yes,
+                          QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
                   {
-                    int result = prospectq.value("result").toInt();
-                    if (result < 0)
+                    prospectq.bindValue(":quhead_id", quheadid);
+                    prospectq.exec();
+                    if (prospectq.first())
                     {
-                      systemError(this,
-                                  storedProcErrorLookup("convertProspectToCustomer",
-                                  result), __FILE__, __LINE__);
-                      notConverted.append(selected[i]);
-                      continue;
-                    }
-                    convert.exec();
-                    if (convert.first())
-                    {
-                      soheadid = convert.value("sohead_id").toInt();
-                      if (soheadid < 0)
+                      int result = prospectq.value("result").toInt();
+                      if (result < 0)
                       {
-                        QMessageBox::warning(this, tr("Cannot Convert Quote"),
-                                storedProcErrorLookup("convertQuote", soheadid)
-                                .arg(selected[i] ? selected[i]->text(0) : ""));
+                        systemError(this,
+                                    storedProcErrorLookup("convertProspectToCustomer",
+                                    result), __FILE__, __LINE__);
                         notConverted.append(selected[i]);
                         continue;
                       }
+                      convert.exec();
+                      if (convert.first())
+                      {
+                        soheadid = convert.value("sohead_id").toInt();
+                        if (soheadid < 0)
+                        {
+                          QMessageBox::warning(this, tr("Cannot Convert Quote"),
+                                  storedProcErrorLookup("convertQuote", soheadid)
+                                  .arg(selected[i] ? selected[i]->text(0) : ""));
+                          notConverted.append(selected[i]);
+                          continue;
+                        }
+                      }
+                    }
+                    else if (prospectq.lastError().type() != QSqlError::None)
+                    {
+                      systemError(this, prospectq.lastError().databaseText(),
+                              __FILE__, __LINE__);
+                      notConverted.append(selected[i]);
+                      continue;
                     }
                   }
-                  else if (prospectq.lastError().type() != QSqlError::None)
+                  else
                   {
-                    systemError(this, prospectq.lastError().databaseText(),
-                            __FILE__, __LINE__);
+                    QMessageBox::information(this, tr("Quote for Prospect"),
+                                tr("<p>The prospect must be manually "
+                                   "converted to customer from either the "
+                                   "CRM Account or Customer windows before "
+                                   "coverting this quote."));
                     notConverted.append(selected[i]);
                     continue;
                   }
-                }
-                else
-                {
-                  QMessageBox::information(this, tr("Quote for Prospect"),
-                              tr("<p>The prospect must be manually "
-                                 "converted to customer from either the "
-                                 "CRM Account or Customer windows before "
-                                 "coverting this quote."));
-                  notConverted.append(selected[i]);
-                  continue;
-                }
+              }
+              else
+              {
+                QMessageBox::information(this, tr("Quote for Prospect"),
+                            tr("<p>The prospect must be manually "
+                               "converted to customer from either the "
+                               "CRM Account or Customer windows before "
+                               "coverting this quote."));
+                notConverted.append(selected[i]);
+                continue;
+              }
             }
-            else
+            else if (soheadid < 0)
             {
-              QMessageBox::information(this, tr("Quote for Prospect"),
-                          tr("<p>The prospect must be manually "
-                             "converted to customer from either the "
-                             "CRM Account or Customer windows before "
-                             "coverting this quote."));
+              QMessageBox::warning(this, tr("Cannot Convert Quote"),
+                      storedProcErrorLookup("convertQuote", soheadid)
+                      .arg(selected[i] ? selected[i]->text(0) : ""));
               notConverted.append(selected[i]);
               continue;
             }
+            omfgThis->sQuotesUpdated(quheadid);
+            omfgThis->sSalesOrdersUpdated(soheadid);
+
+            salesOrder::editSalesOrder(soheadid, true);
           }
-          else if (soheadid < 0)
+          else if (convert.lastError().type() != QSqlError::None)
           {
-            QMessageBox::warning(this, tr("Cannot Convert Quote"),
-                    storedProcErrorLookup("convertQuote", soheadid)
-                    .arg(selected[i] ? selected[i]->text(0) : ""));
             notConverted.append(selected[i]);
+            systemError(this, convert.lastError().databaseText(), __FILE__, __LINE__);
             continue;
           }
-          omfgThis->sQuotesUpdated(quheadid);
-          omfgThis->sSalesOrdersUpdated(soheadid);
-
-          salesOrder::editSalesOrder(soheadid, true);
-        }
-        else if (convert.lastError().type() != QSqlError::None)
-        {
-          notConverted.append(selected[i]);
-          systemError(this, convert.lastError().databaseText(), __FILE__, __LINE__);
-          continue;
         }
       }
 
@@ -359,14 +365,17 @@ void quotes::sEdit()
   QList<QTreeWidgetItem *> selected = _quote->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
-    ParameterList params;
-    params.append("mode", "editQuote");
-    params.append("quhead_id", ((XTreeWidgetItem*)(selected[i]))->id());
-  
-    salesOrder *newdlg = new salesOrder();
-    newdlg->set(params);
-    omfgThis->handleNewWindow(newdlg);
-    break;
+    if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
+    {
+      ParameterList params;
+      params.append("mode", "editQuote");
+      params.append("quhead_id", ((XTreeWidgetItem*)(selected[i]))->id());
+    
+      salesOrder *newdlg = new salesOrder();
+      newdlg->set(params);
+      omfgThis->handleNewWindow(newdlg);
+      break;
+    }
   }
 }
 
@@ -375,14 +384,17 @@ void quotes::sView()
   QList<QTreeWidgetItem *> selected = _quote->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
-    ParameterList params;
-    params.append("mode", "viewQuote");
-    params.append("quhead_id", ((XTreeWidgetItem*)(selected[i]))->id());
-    
-    salesOrder *newdlg = new salesOrder();
-    newdlg->set(params);
-    omfgThis->handleNewWindow(newdlg);
-    break;
+    if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
+    {
+      ParameterList params;
+      params.append("mode", "viewQuote");
+      params.append("quhead_id", ((XTreeWidgetItem*)(selected[i]))->id());
+      
+      salesOrder *newdlg = new salesOrder();
+      newdlg->set(params);
+      omfgThis->handleNewWindow(newdlg);
+      break;
+    }
   }
 }
 
@@ -401,25 +413,28 @@ void quotes::sDelete()
     QList<QTreeWidgetItem *> selected = _quote->selectedItems();
     for (int i = 0; i < selected.size(); i++)
     {
-      q.bindValue(":quhead_id", ((XTreeWidgetItem*)(selected[i]))->id());
-      q.exec();
-      if (q.first())
+      if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
       {
-	int result = q.value("result").toInt();
-	if (result < 0)
-	{
-	  systemError(this, storedProcErrorLookup("deleteQuote", result),
-		      __FILE__, __LINE__);
-	  continue;
-	}
-	counter++;
-      }
-      else if (q.lastError().type() != QSqlError::None)
-      {
-	systemError(this, tr("A System Error occurred deleting Quote #%1\n%2.")
-			   .arg(selected[i]->text(0))
-			   .arg(q.lastError().databaseText()), __FILE__, __LINE__);
-	continue;
+        q.bindValue(":quhead_id", ((XTreeWidgetItem*)(selected[i]))->id());
+        q.exec();
+        if (q.first())
+        {
+          int result = q.value("result").toInt();
+          if (result < 0)
+          {
+            systemError(this, storedProcErrorLookup("deleteQuote", result),
+                        __FILE__, __LINE__);
+            continue;
+          }
+          counter++;
+        }
+        else if (q.lastError().type() != QSqlError::None)
+        {
+          systemError(this, tr("A System Error occurred deleting Quote #%1\n%2.")
+                             .arg(selected[i]->text(0))
+                             .arg(q.lastError().databaseText()), __FILE__, __LINE__);
+          continue;
+        }
       }
     }
 
@@ -469,4 +484,40 @@ void quotes::sFillList()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+}
+
+bool quotes::checkSitePrivs(int orderid)
+{
+  if (_preferences->boolean("selectedSites"))
+  {
+    QString sql("SELECT quhead_number "
+                "FROM quhead, quitem, itemsite "
+                "WHERE ((quitem_quhead_id=<? value(\"quhead_id\") ?>) "
+                "  AND (quitem_quhead_id=quhead_id) "
+                "  AND (quitem_itemsite_id=itemsite_id) "
+                "  AND (itemsite_warehous_id NOT IN ("
+                "       SELECT usrsite_warehous_id "
+                "       FROM usrsite "
+                "       WHERE (usrsite_username=current_user)))) "
+                "UNION "
+                "SELECT quhead_number "
+                "FROM quhead "
+                "WHERE ((quhead_id=<? value(\"quhead_id\") ?>) "
+                "  AND (quhead_warehous_id NOT IN ("
+                "       SELECT usrsite_warehous_id "
+                "       FROM usrsite "
+                "       WHERE (usrsite_username=current_user))));;");
+    MetaSQLQuery mql(sql);
+    ParameterList params;
+    params.append("quhead_id", orderid);
+    XSqlQuery chk = mql.toQuery(params);
+    if (chk.first())
+    {
+      	    QMessageBox::critical(this, tr("Access Denied"),
+				  tr("You may not view, edit or convert Quote %1 as it references "
+                                     "a warehouse for which you have not been granted privileges.").arg(chk.value("quhead_number").toString())) ;
+            return false;
+    }
+  }
+  return true;
 }

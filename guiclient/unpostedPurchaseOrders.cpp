@@ -429,7 +429,7 @@ bool unpostedPurchaseOrders::checkSitePrivs(int orderid)
     {
       	    QMessageBox::critical(this, tr("Access Denied"),
 				  tr("You may not view or edit Purchase Order %1 as it references "
-                                     "a warehouse for which you have not been granted privileges.").arg(q.value("pohead_number").toString())) ;
+                                     "a warehouse for which you have not been granted privileges.").arg(chk.value("pohead_number").toString())) ;
             return false;
     }
   }
