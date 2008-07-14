@@ -227,6 +227,7 @@ void quotes::sConvert()
 		      "WHERE (quhead_id=:quhead_id);");
 
     bool tryagain = false;
+    QList<int> converted;
     do {
       int soheadid = -1;
       QList<QTreeWidgetItem*> selected = _quote->selectedItems();
@@ -323,7 +324,7 @@ void quotes::sConvert()
               notConverted.append(selected[i]);
               continue;
             }
-            omfgThis->sQuotesUpdated(quheadid);
+            converted << quheadid;
             omfgThis->sSalesOrdersUpdated(soheadid);
 
             salesOrder::editSalesOrder(soheadid, true);
@@ -347,6 +348,10 @@ void quotes::sConvert()
 	notConverted.clear();
       }
     } while (tryagain);
+    for (int i = 0; i < converted.size(); i++)
+    {
+      omfgThis->sQuotesUpdated(converted[i]);
+    }
   } // if user wants to convert
 }
 
