@@ -201,6 +201,7 @@ class OPENMFGWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
 
     public slots:
         virtual void setId(const int);
+        inline virtual QString extraClause() const { return _extraClause; };
 
     protected slots:
         virtual void clear();
@@ -298,6 +299,7 @@ class OPENMFGWIDGETS_EXPORT VirtualCluster : public QWidget
         inline virtual bool    readOnly()       const { return _readOnly; };
         inline virtual QString defaultNumber()  const { return _default; };
         inline virtual QString fieldName()      const { return _fieldName; };
+        inline virtual QString extraClause()    const { return _number->extraClause(); };
 
     public slots:
         // most of the heavy lifting is done by VirtualClusterLineEdit _number

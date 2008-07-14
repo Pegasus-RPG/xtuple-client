@@ -65,7 +65,7 @@ OrderCluster::OrderCluster(QWidget *pParent, const char *pName) :
   VirtualCluster(pParent, pName)
 {
   addNumberWidget(new OrderLineEdit(this, pName));
-
+  
   _name->setVisible(true);
   _grid->removeWidget(_number);
   _grid->removeWidget(_list);
@@ -146,6 +146,16 @@ bool OrderCluster::isUnposted() const
   return ((OrderLineEdit*)_number)->isUnposted();
 }
 
+bool OrderCluster::fromSitePrivsEnforced() const
+{
+  return ((OrderLineEdit*)_number)->fromSitePrivsEnforced();
+}
+
+bool OrderCluster::toSitePrivsEnforced() const
+{
+  return ((OrderLineEdit*)_number)->toSitePrivsEnforced();
+}
+
 void OrderCluster::setExtraClause(const QString &pType, const QString &pClause)
 {
   ((OrderLineEdit*)_number)->setExtraClause(pType, pClause);
@@ -160,6 +170,16 @@ void OrderCluster::setExtraClause(const OrderLineEdit::OrderTypes pTypes,
 void OrderCluster::setAllowedStatuses(const OrderLineEdit::OrderStatuses p)
 {
   ((OrderLineEdit*)_number)->setAllowedStatuses(p);
+}
+
+void OrderCluster::setFromSitePrivsEnforced(const bool p)
+{
+  ((OrderLineEdit*)_number)->setFromSitePrivsEnforced(p);
+}
+
+void OrderCluster::setToSitePrivsEnforced(const bool p)
+{
+  ((OrderLineEdit*)_number)->setFromSitePrivsEnforced(p);
 }
 
 OrderLineEdit::OrderStatus  OrderCluster::status() const
@@ -272,6 +292,10 @@ OrderLineEdit::OrderLineEdit(QWidget *pParent, const char *pName) :
 			 "orderhead_number", "orderhead_type",
 			 "orderhead_status", pName)
 {
+
+  _toPrivs=false;
+  _fromPrivs=false;
+  
   setTitles(tr("Order"), tr("Orders"));
 
   connect(this, SIGNAL(newId(int)), this, SLOT(sNewId(int)));
@@ -467,6 +491,42 @@ void OrderLineEdit::setExtraClause(const OrderTypes pTypes, const QString &pClau
   }
 
   VirtualClusterLineEdit::setExtraClause(buildExtraClause());
+}
+
+void OrderLineEdit::setToSitePrivsEnforced(const bool p)
+{
+  if (_toPrivs == p)
+    return;
+  
+  _toPrivs=p;
+  if (p)
+    _toPrivsClause = " EXCEPT "
+                     "SELECT orderhead_id AS id, orderhead_number AS number,"
+                     "       orderhead_type AS name, orderhead_status AS description,"
+                     "       orderhead_from, orderhead_to "
+                     "FROM orderhead "
+                     "WHERE ((orderhead_type='TO') "
+                     "AND (NOT EXISTS (SELECT warehous_id FROM site() WHERE warehous_id=orderhead_to_id))) ";
+  else
+    _toPrivsClause.clear();
+}
+
+void OrderLineEdit::setFromSitePrivsEnforced(const bool p)
+{
+  if (_fromPrivs == p)
+    return;
+  
+  _fromPrivs=p;
+  if (p)
+    _fromPrivsClause = " EXCEPT "
+                       "SELECT orderhead_id AS id, orderhead_number AS number,"
+                       "       orderhead_type AS name, orderhead_status AS description,"
+                       "       orderhead_from, orderhead_to "
+                       "FROM orderhead "
+                       "WHERE ((orderhead_type='TO') "
+                     "AND (NOT EXISTS (SELECT warehous_id FROM site() WHERE warehous_id=orderhead_from_id))) ";
+  else
+    _fromPrivsClause.clear();
 }
 
 void OrderLineEdit::sList()
@@ -689,8 +749,15 @@ OrderList::OrderList(QWidget *pParent, Qt::WindowFlags pFlags) :
   headerItem->setText(1, tr("Order Type"));
   headerItem->setText(2, tr("Status"));
 
-  _listTab->addColumn(tr("From"), -1, Qt::AlignLeft);
-  _listTab->addColumn(tr("To"),   -1, Qt::AlignLeft);
+  _listTab->addColumn(tr("From"), -1, Qt::AlignLeft, true, "orderhead_from");
+  _listTab->addColumn(tr("To"),   -1, Qt::AlignLeft, true, "orderhead_to");
+  
+  if (! ((OrderLineEdit*)_parent)->fromPrivsClause().isEmpty())
+     ((OrderLineEdit*)_parent)->setExtraClause(((OrderLineEdit*)_parent)->extraClause() + ((OrderLineEdit*)_parent)->fromPrivsClause());
+  if (! ((OrderLineEdit*)_parent)->toPrivsClause().isEmpty())
+     ((OrderLineEdit*)_parent)->setExtraClause(((OrderLineEdit*)_parent)->extraClause() + ((OrderLineEdit*)_parent)->toPrivsClause());
+    
+  sFillList();
 }
 
 QString OrderList::type() const
@@ -720,8 +787,15 @@ OrderSearch::OrderSearch(QWidget *pParent, Qt::WindowFlags pFlags) :
   headerItem->setText(1, tr("Order Type"));
   headerItem->setText(2, tr("Status"));
 
-  _listTab->addColumn(tr("From"), -1, Qt::AlignLeft);
-  _listTab->addColumn(tr("To"),   -1, Qt::AlignLeft);
+  _listTab->addColumn(tr("From"), -1, Qt::AlignLeft, true, "orderhead_from");
+  _listTab->addColumn(tr("To"),   -1, Qt::AlignLeft, true, "orderhead_to");
+  
+  if (! ((OrderLineEdit*)_parent)->fromPrivsClause().isEmpty())
+     ((OrderLineEdit*)_parent)->setExtraClause(((OrderLineEdit*)_parent)->extraClause() + ((OrderLineEdit*)_parent)->fromPrivsClause());
+  if (! ((OrderLineEdit*)_parent)->toPrivsClause().isEmpty())
+     ((OrderLineEdit*)_parent)->setExtraClause(((OrderLineEdit*)_parent)->extraClause() + ((OrderLineEdit*)_parent)->toPrivsClause());
+       
+  sFillList();
 }
 
 QString OrderSearch::type() const

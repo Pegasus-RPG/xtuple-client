@@ -566,7 +566,7 @@ VirtualList::VirtualList(QWidget* pParent, Qt::WindowFlags pFlags ) :
 
     setObjectName("virtualList");
 
-    _listTab->addColumn(tr("Number"), -1, Qt::AlignLeft);
+    _listTab->addColumn(tr("Number"), -1, Qt::AlignLeft, true, "number");
 
     if (pParent->inherits("VirtualClusterLineEdit"))
     {
@@ -574,13 +574,13 @@ VirtualList::VirtualList(QWidget* pParent, Qt::WindowFlags pFlags ) :
       setCaption(_parent->_titlePlural);
       if (_parent->_hasName)
       {
-	_listTab->addColumn(tr("Name"),	 -1, Qt::AlignLeft);
+	_listTab->addColumn(tr("Name"),	 -1, Qt::AlignLeft, true, "name");
 	_listTab->setColumnWidth(_listTab->columnCount() - 1, 100);
       }
 
       if (_parent->_hasDescription)
       {
-	  _listTab->addColumn(tr("Description"),  -1, Qt::AlignLeft);
+	  _listTab->addColumn(tr("Description"),  -1, Qt::AlignLeft, true, "description");
 	  _listTab->setColumnWidth(_listTab->columnCount() - 1, 100);
       }
 
@@ -625,29 +625,7 @@ void VirtualList::sFillList()
 					    " AND " + _parent->_extraClause) +
 		    QString(" ORDER BY ") +
 		    QString((_parent->_hasName) ? "name" : "number"));
-    if (query.first())
-    {
-	XTreeWidgetItem *last = NULL;
-	do
-	{
-	    if (_parent->_hasName && _parent->_hasDescription)
-		last = new XTreeWidgetItem(_listTab, last, query.value("id").toInt(),
-					 query.value("number"),
-					 query.value("name").toString(),
-					 query.value("description").toString());
-	    else if (_parent->_hasDescription)
-		last = new XTreeWidgetItem(_listTab, last, query.value("id").toInt(),
-					 query.value("number"),
-					 query.value("description").toString());
-	    else if (_parent->_hasName)
-		last = new XTreeWidgetItem(_listTab, last, query.value("id").toInt(),
-					 query.value("number"),
-					 query.value("name").toString());
-	    else
-		last = new XTreeWidgetItem(_listTab, last, query.value("id").toInt(),
-					 query.value("number"));
-	} while (query.next());
-    }
+    _listTab->populate(query);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -715,7 +693,7 @@ VirtualSearch::VirtualSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
     connect(_search,	    SIGNAL(lostFocus()),	this, SLOT(sFillList()));
     connect(_listTab,	    SIGNAL(valid(bool)),	_select, SLOT(setEnabled(bool)));
 
-    _listTab->addColumn(tr("Number"), -1, Qt::AlignLeft);
+    _listTab->addColumn(tr("Number"), -1, Qt::AlignLeft, true, "number");
 
     if (pParent->inherits("VirtualClusterLineEdit"))
     {
@@ -723,13 +701,13 @@ VirtualSearch::VirtualSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
       setCaption(_parent->_titlePlural);
       if (_parent->_hasName)
       {
-	_listTab->addColumn(tr("Name"),	 -1, Qt::AlignLeft);
+	_listTab->addColumn(tr("Name"),	 -1, Qt::AlignLeft, true, "name");
 	_listTab->setColumnWidth(_listTab->columnCount() - 1, 100);
       }
 
       if (_parent->_hasDescription)
       {
-	  _listTab->addColumn(tr("Description"),  -1, Qt::AlignLeft);
+	  _listTab->addColumn(tr("Description"),  -1, Qt::AlignLeft, true, "description" );
 	  _listTab->setColumnWidth(_listTab->columnCount() - 1, 100);
       }
 
@@ -765,51 +743,25 @@ void VirtualSearch::sFillList()
     if (_search->text().length() == 0)
 	return;
 
+    QString search;
+    if (_searchNumber->isChecked())
+        search = QString("number~'%1'").arg(_search->text());
+    if (_parent->_hasName &&
+        (_searchName->isChecked()))
+        search = QString("name~'%1'").arg(_search->text());
+    if (_parent->_hasDescription &&
+        (_searchDescrip->isChecked()))
+        search = QString("description~'%1'").arg(_search->text());
+
+
     XSqlQuery qry(_parent->_query +
 		    (_parent->_extraClause.isEmpty() ? "" :
 					    " AND " + _parent->_extraClause) +
+                    search +
 		    QString(" ORDER BY ") +
 		    QString((_parent->_hasName) ? "name" : "number"));
-    if (qry.first())
-    {
-	XTreeWidgetItem *last = NULL;
-	bool addToList;
-	do
-	{
-	    addToList = FALSE;
-	    if ((_searchNumber->isChecked()) &&
-		(qry.value("number").toString().contains(_search->text(), FALSE)))
-		addToList = TRUE;
-	    if (_parent->_hasName &&
-	        (_searchName->isChecked()) &&
-		(qry.value("name").toString().contains(_search->text(), FALSE)))
-		addToList = TRUE;
-	    if (_parent->_hasDescription &&
-		(_searchDescrip->isChecked()) &&
-		(qry.value("description").toString().contains(_search->text(), FALSE)))
-		addToList = TRUE;
-	    if (addToList)
-	    {
-	      if (_parent->_hasName && _parent->_hasDescription)
-		  last = new XTreeWidgetItem(_listTab, last, qry.value("id").toInt(),
-					   qry.value("number"),
-					   qry.value("name").toString(),
-					   qry.value("description").toString());
-	      else if (_parent->_hasDescription)
-		  last = new XTreeWidgetItem(_listTab, last, qry.value("id").toInt(),
-					   qry.value("number"),
-					   qry.value("description").toString());
-	      else if (_parent->_hasName)
-		  last = new XTreeWidgetItem(_listTab, last, qry.value("id").toInt(),
-					   qry.value("number"),
-					   qry.value("name").toString());
-	      else
-		  last = new XTreeWidgetItem(_listTab, last, qry.value("id").toInt(),
-					   qry.value("number"));
-	    }
-	}
-	while (qry.next());
-    }
+                    
+    _listTab->populate(qry);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

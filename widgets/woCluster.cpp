@@ -220,9 +220,11 @@ void WoLineEdit::sParse()
       int subNumber = text().right(text().length() - text().find('-') - 1).toInt();
  //     bool statusCheck = FALSE;
       QString sql = QString( "SELECT wo_id "
-                             "FROM wo "
+                             "FROM wo,itemsite,site() "
                              "WHERE ((wo_number=%1)"
-                             " AND (wo_subnumber=%2)" )
+                             " AND (wo_subnumber=%2) "
+                             " AND (wo_itemsite_id=itemsite_id) "
+                             " AND (itemsite_warehous_id=warehous_id)" )
                     .arg(soNumber)
                     .arg(subNumber);
 
@@ -260,8 +262,10 @@ void WoLineEdit::sParse()
     {
       bool statusCheck = FALSE;
       QString sql = QString( "SELECT wo_id, wo_number "
-                             "FROM wo "
-                             "WHERE ((wo_number=%1)")
+                             "FROM wo,itemsite,site() "
+                             "WHERE ((wo_number=%1) "
+                             " AND (wo_itemsite_id=itemsite_id)"
+                             " AND (itemsite_warehous_id=warehous_id)")
                     .arg(text().toInt());
 
 //  Add in the Status checks

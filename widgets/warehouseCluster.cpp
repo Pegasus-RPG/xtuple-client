@@ -92,10 +92,7 @@ void WComboBox::setType(WComboBoxTypes pType)
   int warehousid = ((_x_preferences) ? _x_preferences->value("PreferredWarehouse").toInt() : -1);
 
   QString whss("SELECT warehous_id, warehous_code, warehous_code "
-             "FROM whsinfo "
-	     "<? if exists(\"selectedOnly\") ?>"
-	     "JOIN usrsite ON (warehous_id=usrsite_warehous_id) "
-	     "<? endif ?>"
+             "FROM site() "
              "WHERE (true"
              "<? if exists(\"active\") ?>  AND (warehous_active)  <? endif ?>"
              "<? if exists(\"shipping\") ?>AND (warehous_shipping)<? endif ?>"
@@ -104,17 +101,10 @@ void WComboBox::setType(WComboBoxTypes pType)
              "<? elseif exists(\"nottransit\") ?>"
              "  AND (NOT warehous_transit)"
              "<? endif ?>"
-	     "<? if exists(\"selectedOnly\") ?>"
-	     "  AND (usrsite_username=current_user) "
-	     "<? endif ?>"
              ") "
              "ORDER BY warehous_code;" );
 
   ParameterList whsp;
-  
-  if (_x_preferences)
-    if (_x_preferences->boolean("selectedSites"))
-      whsp.append("selectedOnly");
 
   switch (_type)
   {
@@ -159,11 +149,7 @@ void WComboBox::findItemsites(int pItemID)
   if (pItemID != -1)
   {
     QString iss("SELECT warehous_id, warehous_code, warehous_code "
-               "FROM whsinfo "
-               "<? if exists(\"selectedOnly\") ?>"
-               "JOIN usrsite ON (warehous_id=usrsite_warehous_id) "
-               "<? endif ?>"
-               ", itemsite "
+               "FROM site(), itemsite "
                "WHERE ((itemsite_warehous_id=warehous_id)"
                "  AND  (itemsite_item_id=<? value(\"itemid\") ?>) "
                "<? if exists(\"active\") ?>  AND (warehous_active)  <? endif ?>"
@@ -176,16 +162,10 @@ void WComboBox::findItemsites(int pItemID)
                "<? if exists(\"active\") ?>  AND (itemsite_active)  <? endif ?>"
                "<? if exists(\"soldIS\") ?>  AND (itemsite_sold)    <? endif ?>"
                "<? if exists(\"supplyIS\") ?>AND (itemsite_supply)  <? endif ?>"
-               "<? if exists(\"selectedOnly\") ?>"
-	       "  AND (usrsite_username=current_user) "
-	       "<? endif ?>"
                ") "
                "ORDER BY warehous_code;" );
     ParameterList isp;
     isp.append("itemid", pItemID);
-    if (_x_preferences)
-      if (_x_preferences->boolean("selectedSites"))
-        isp.append("selectedOnly");
 
     switch (_type)
     {

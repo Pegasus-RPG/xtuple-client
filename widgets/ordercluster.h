@@ -93,13 +93,20 @@ class OPENMFGWIDGETS_EXPORT OrderLineEdit : public VirtualClusterLineEdit
     virtual bool	  isSO()		const;
     virtual bool	  isTO()		const;
     virtual bool	  isUnposted()		const;
+    virtual bool          fromSitePrivsEnforced() const {return _fromPrivs; };
+    virtual bool          toSitePrivsEnforced()   const {return _toPrivs; };
+    virtual void          setExtraClause(const QString & p) {VirtualClusterLineEdit::setExtraClause(p);};
     virtual void	  setExtraClause(const QString &, const QString &);
     virtual void	  setExtraClause(const OrderTypes, const QString &);
+    virtual void          setFromSitePrivsEnforced(const bool p);
+    virtual void          setToSitePrivsEnforced(const bool p);
     virtual void	  sList();
     virtual void	  sSearch();
     virtual OrderStatus	  status();
     virtual QString	  to()			const;
     virtual QString	  type();
+    virtual QString       fromPrivsClause() {return _fromPrivsClause;};
+    virtual QString       toPrivsClause()   {return _toPrivsClause;};
 
   public slots:
     virtual void	  setAllowedStatuses(const OrderStatuses);
@@ -125,7 +132,12 @@ class OPENMFGWIDGETS_EXPORT OrderLineEdit : public VirtualClusterLineEdit
     virtual void	sNewId(const int);
     virtual void	sParse();
 
+
   private:
+    bool        _fromPrivs;
+    bool        _toPrivs;
+    QString     _toPrivsClause;
+    QString     _fromPrivsClause;
     QString	_allClause;
     QString	_poClause;
     QString	_raClause;
@@ -154,6 +166,8 @@ class OPENMFGWIDGETS_EXPORT OrderCluster : public VirtualCluster
     virtual bool	isSO()		const;
     virtual bool	isTO()		const;
     virtual bool	isUnposted()	const;
+    virtual bool        fromSitePrivsEnforced() const;
+    virtual bool        toSitePrivsEnforced() const;
     virtual void	setExtraClause(const QString &, const QString &);
     virtual void	setExtraClause(const OrderLineEdit::OrderTypes,
 				       const QString &);
@@ -166,6 +180,8 @@ class OPENMFGWIDGETS_EXPORT OrderCluster : public VirtualCluster
     virtual void	setAllowedType(const QString &);
     virtual void	setAllowedTypes(const OrderLineEdit::OrderTypes);
     virtual void	setId(const int, const QString& = "");
+    virtual void        setFromSitePrivsEnforced(const bool p);
+    virtual void        setToSitePrivsEnforced(const bool p);
     virtual void	sRefresh();
 
   signals:
@@ -177,6 +193,7 @@ class OPENMFGWIDGETS_EXPORT OrderCluster : public VirtualCluster
     QLabel	*_from;
     QLabel	*_toLit;
     QLabel	*_to;
+    
 };
 
 class OPENMFGWIDGETS_EXPORT OrderList : public VirtualList
