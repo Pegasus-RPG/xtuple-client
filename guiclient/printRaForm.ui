@@ -28,7 +28,7 @@
          <item>
           <widget class="QLabel" name="_raLit" >
            <property name="text" >
-            <string>Return Auth:</string>
+            <string>Return Auth.:</string>
            </property>
            <property name="alignment" >
             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
