@@ -81,18 +81,12 @@ shipOrder::shipOrder(QWidget* parent, const char* name, bool modal, Qt::WFlags f
   connect(_ship,     SIGNAL(clicked()),     this, SLOT(sShip()));
   connect(_shipment, SIGNAL(newId(int)),    this, SLOT(sFillList()));
   connect(_shipment, SIGNAL(newId(int)),    this, SLOT(sFillTracknum()));
-  //connect(_soList,   SIGNAL(clicked()),     this, SLOT(sSoList()));
   connect(_order,    SIGNAL(newId(int,QString)),    this, SLOT(sHandleOrder()));
-  //connect(_soNumber, SIGNAL(requestList()), this, SLOT(sSoList()));
   connect(_tracknum, SIGNAL(activated(const QString&)), this, SLOT(sFillFreight()));
   connect(_tracknum, SIGNAL(currentIndexChanged(const QString&)), this, SLOT(sFillFreight()));
   connect(_tracknum, SIGNAL(highlighted(const QString&)), this, SLOT(sFillFreight()));
 
   _captive = FALSE;
-
-#ifndef Q_WS_MAC
-  _soList->setMaximumWidth(25);
-#endif
   
   _coitem->addColumn( tr("#"),           _whsColumn,  Qt::AlignCenter );
   _coitem->addColumn( tr("Item Number"), _itemColumn, Qt::AlignLeft   );
