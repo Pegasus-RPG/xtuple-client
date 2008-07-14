@@ -123,7 +123,10 @@ workOrder::workOrder(QWidget* parent, const char* name, Qt::WFlags fl)
    
   //If not cost privileges, hide tab
   if (!_privileges->boolean("ViewCosts"))
-   _tabs->removeTab(_tabs->indexOf(_costing));
+  {
+   //_tabs->removeTab(_tabs->indexOf(_costing));
+   _costGroup->hide();
+  }
 
 }
 
@@ -191,7 +194,7 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
       _item->setType(ItemLineEdit::cGeneralPurchased | ItemLineEdit::cGeneralManufactured | ItemLineEdit::cActive);
       _item->setDefaultType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cActive);
       _qtyReceivedLit->clear();
-      _tabs->removePage(_tabs->page(3));
+      //_tabs->removePage(_tabs->page(3));
 
       populateWoNumber();
     }
@@ -366,7 +369,7 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
     else if (param.toString() == "release")
     {
       _mode = cRelease;
-      _tabs->removePage(_tabs->page(3));
+      //_tabs->removePage(_tabs->page(3));
 
       q.prepare( "SELECT planord_itemsite_id, planord_duedate,"
                  "       CASE WHEN(planord_mps) THEN 'P'"

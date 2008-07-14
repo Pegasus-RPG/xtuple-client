@@ -134,6 +134,9 @@ createItemSitesByClassCode::createItemSitesByClassCode(QWidget* parent, const ch
     _warehouse->setAllowNull(TRUE);
     _warehouse->setNull();
   }
+
+  _costAvg->setVisible(_metrics->boolean("AllowAvgCostMethod"));
+  _costStd->setVisible(_metrics->boolean("AllowStdCostMethod"));
 }
 
 /*
@@ -187,6 +190,15 @@ void createItemSitesByClassCode::sSave()
     return;
   }
 
+  if(!_costNone->isChecked() && !_costAvg->isChecked()
+   && !_costStd->isChecked() && !_costJob->isChecked())
+  {
+    QMessageBox::critical(this, tr("Cannot Save Item Site"),
+                          tr("<p>You must select a Cost Method for this "
+                             "Item Site before you may save it.") );
+    return;
+  }
+
   if (_stocked->isChecked() && _reorderLevel->toDouble() == 0)
   {
     QMessageBox::critical( this, tr("Cannot Save Item Site"),
@@ -217,7 +229,7 @@ void createItemSitesByClassCode::sSave()
 
   QString sql( "INSERT INTO itemsite "
                "( itemsite_item_id,"
-               "  itemsite_warehous_id, itemsite_qtyonhand,"
+               "  itemsite_warehous_id, itemsite_qtyonhand, itemsite_value,"
                "  itemsite_useparams, itemsite_useparamsmanual,"
                "  itemsite_reorderlevel, itemsite_ordertoqty,"
                "  itemsite_minordqty, itemsite_maxordqty, itemsite_multordqty,"
@@ -231,9 +243,9 @@ void createItemSitesByClassCode::sSave()
                "  itemsite_location_comments, itemsite_notes,"
                "  itemsite_abcclass, itemsite_freeze, itemsite_datelastused,"
                "  itemsite_ordergroup, itemsite_mps_timefence, "
-               "  itemsite_autoabcclass ) "
+               "  itemsite_autoabcclass, itemsite_costmethod ) "
                "SELECT item_id,"
-               "       :warehous_id, 0.0,"
+               "       :warehous_id, 0.0, 0.0,"
                "       :itemsite_useparams, :itemsite_useparamsmanual,"
                "       :itemsite_reorderlevel, :itemsite_ordertoqty,"
                "       :itemsite_minordqty, :itemsite_maxordqty, :itemsite_multordqty,"
@@ -247,7 +259,7 @@ void createItemSitesByClassCode::sSave()
                "       :itemsite_location_comments, '',"
                "       :itemsite_abcclass, FALSE, startOfTime(),"
                "       :itemsite_ordergroup, :itemsite_mps_timefence, "
-               "       FALSE "
+               "       FALSE, CASE WHEN(item_type='R') THEN 'N' WHEN(item_type='J') THEN 'J' ELSE :itemsite_costmethod END "
                "FROM item "
                "WHERE ( (item_id NOT IN ( SELECT itemsite_item_id"
                "                          FROM itemsite"
@@ -316,6 +328,15 @@ void createItemSitesByClassCode::sSave()
   else if (_controlMethod->currentItem() == 3)
     q.bindValue(":itemsite_controlmethod", "S");
 
+  if(_costNone->isChecked())
+    q.bindValue(":itemsite_costmethod", "N");
+  else if(_costAvg->isChecked())
+    q.bindValue(":itemsite_costmethod", "A");
+  else if(_costStd->isChecked())
+    q.bindValue(":itemsite_costmethod", "S");
+  else if(_costJob->isChecked())
+    q.bindValue(":itemsite_costmethod", "J");
+
   q.bindValue(":warehous_id", _warehouse->id());
   _classCode->bindValue(q);
   q.exec();
@@ -358,6 +379,26 @@ void createItemSitesByClassCode::sHandleMLC(bool pMLC)
 
 void createItemSitesByClassCode::sHandleControlMethod()
 {
+  if (_controlMethod->currentItem() == 0)
+  {
+    _costNone->setChecked(true);
+    _costNone->setEnabled(true);
+    _costAvg->setEnabled(false);
+    _costStd->setEnabled(false);
+    _costJob->setEnabled(false);
+  }
+  else
+  {
+    if(_costStd->isVisibleTo(this) && !_costAvg->isChecked())
+      _costStd->setChecked(true);
+    else
+      _costAvg->setChecked(true);
+    _costNone->setEnabled(false);
+    _costAvg->setEnabled(true);
+    _costStd->setEnabled(true);
+    _costJob->setEnabled(false);
+  }
+
   if ( (_controlMethod->currentItem() == 2) ||
        (_controlMethod->currentItem() == 3) )
     _perishable->setEnabled(TRUE);
@@ -409,6 +450,7 @@ void createItemSitesByClassCode::clear()
   _eventFence->setValue(_metrics->value("DefaultEventFence").toInt());
 
   _controlMethod->setCurrentItem(1);
+  sHandleControlMethod();
   _supply->setChecked(TRUE);
   _sold->setChecked(TRUE);
   _stocked->setChecked(FALSE);
