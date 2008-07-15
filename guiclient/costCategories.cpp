@@ -114,7 +114,7 @@ void costCategories::init()
 {
   statusBar()->hide();
   
-  _costcat->addColumn(tr("Category"),    _itemColumn, Qt::AlignCenter );
+  _costcat->addColumn(tr("Category"),    _itemColumn, Qt::AlignLeft   );
   _costcat->addColumn(tr("Description"), -1,          Qt::AlignLeft   );
 
   if (_privileges->check("MaintainCostCategories"))

@@ -109,7 +109,7 @@ void expenseCategories::init()
 {
   statusBar()->hide();
   
-  _expcat->addColumn(tr("Category"),    _itemColumn, Qt::AlignCenter );
+  _expcat->addColumn(tr("Category"),    _itemColumn, Qt::AlignLeft   );
   _expcat->addColumn(tr("Description"), -1,          Qt::AlignLeft   );
 
   if (_privileges->check("MaintainExpenseCategories"))
