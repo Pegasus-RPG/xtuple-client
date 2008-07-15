@@ -137,6 +137,8 @@ selectOrderForBilling::selectOrderForBilling(QWidget* parent, const char* name, 
     connect(_soitem, SIGNAL(valid(bool)), _select, SLOT(setEnabled(bool)));
     connect(_soitem, SIGNAL(valid(bool)), _cancel, SLOT(setEnabled(bool)));
   }
+  
+  _so->setSitePrivsEnforced(false);
 }
 
 selectOrderForBilling::~selectOrderForBilling()
@@ -612,7 +614,7 @@ void selectOrderForBilling::sFillList()
                  "                        AND (NOT cobmisc_posted))"
                  "                       ORDER BY cobill_toclose DESC"
                  "                       LIMIT 1) ) AS toclose "
-                 "FROM coitem, itemsite, item, warehous, uom "
+                 "FROM coitem, itemsite, item, site(), uom "
                  "WHERE ( (coitem_itemsite_id=itemsite_id)"
                  " AND (coitem_status <> 'X')"
                  " AND (coitem_qty_uom_id=uom_id)"

@@ -71,6 +71,8 @@ class openReturnAuthorizations : public XMainWindow, public Ui::openReturnAuthor
 public:
     openReturnAuthorizations(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~openReturnAuthorizations();
+    
+    virtual bool checkSitePrivs();
 
 public slots:
     virtual void sPrint();

@@ -63,6 +63,7 @@
 #include <QWorkspace>
 #include <QSqlError>
 #include <openreports.h>
+#include <metasql.h>
 #include "returnAuthorization.h"
 #include "openReturnAuthorizations.h"
 #include "printRaForm.h"
@@ -162,6 +163,9 @@ void openReturnAuthorizations::sNew()
 
 void openReturnAuthorizations::sEdit()
 {
+  if (!checkSitePrivs())
+    return;
+    
   ParameterList params;
   params.append("mode", "edit");
   params.append("rahead_id", _ra->id());
@@ -173,6 +177,9 @@ void openReturnAuthorizations::sEdit()
 
 void openReturnAuthorizations::sView()
 {  
+  if (!checkSitePrivs())
+    return;
+    
   ParameterList params;
   params.append("mode", "view");
   params.append("rahead_id", _ra->id());
@@ -184,7 +191,9 @@ void openReturnAuthorizations::sView()
 
 void openReturnAuthorizations::sDelete()
 {
-
+  if (!checkSitePrivs())
+    return;
+    
   if ( QMessageBox::warning( this, tr("Delete Return Authorization?"),
                              tr("Are you sure that you want to completely delete the selected Return Authorization?"),
                              tr("&Yes"), tr("&No"), QString::null, 0, 1 ) == 0 )
@@ -274,21 +283,12 @@ void openReturnAuthorizations::sFillList()
   _ra->populate(q);
   _ra->setDragString("raheadid=");
 }
-/*
-void openReturnAuthorizations::sDeliver()
-{
-  ParameterList params;
-  params.append("sohead_id", _so->id());
-
-  deliverSalesOrder newdlg(this, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-}
-*/
-
 
 void openReturnAuthorizations::sPrintForms()
 {
+  if (!checkSitePrivs())
+    return;
+    
   ParameterList params;
   params.append("rahead_id", _ra->id());
 
@@ -296,4 +296,42 @@ void openReturnAuthorizations::sPrintForms()
   newdlg.set(params);
   newdlg.exec();
 }
+
+bool openReturnAuthorizations::checkSitePrivs()
+{
+  if (_preferences->boolean("selectedSites"))
+  {
+    qDebug("In");
+    QString sql("SELECT raitem_id "
+                "FROM raitem, itemsite "
+                "WHERE ((raitem_rahead_id=<? value(\"rahead_id\") ?>) "
+                "  AND (raitem_itemsite_id=itemsite_id) "
+                "  AND (itemsite_warehous_id NOT IN ("
+                "       SELECT usrsite_warehous_id "
+                "       FROM usrsite "
+                "       WHERE (usrsite_username=current_user)))) "
+                "UNION "
+                "SELECT raitem_id "
+                "FROM raitem, itemsite "
+                "WHERE ((raitem_rahead_id=<? value(\"rahead_id\") ?>) "
+                "  AND (raitem_coitem_itemsite_id=itemsite_id) "
+                "  AND (itemsite_warehous_id NOT IN ("
+                "       SELECT usrsite_warehous_id "
+                "       FROM usrsite "
+                "       WHERE (usrsite_username=current_user))));");
+    MetaSQLQuery mql(sql);
+    ParameterList params;
+    params.append("rahead_id", _ra->id());
+    q = mql.toQuery(params);
+    if (q.first())
+    {
+      	    QMessageBox::critical(this, tr("Access Denied"),
+				  tr("You may not view or edit this Return Authorization as it references "
+                                     "a warehouse for which you have not been granted privileges.")) ;
+            return false;
+    }
+  }
+  return true;
+}
+
 
