@@ -79,6 +79,7 @@ cashReceiptsEditList::cashReceiptsEditList(QWidget* parent, const char* name, Qt
   connect(_new,    SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_print,  SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_view,   SIGNAL(clicked()), this, SLOT(sView()));
+  connect(_post,   SIGNAL(clicked()), this, SLOT(sPost()));
 
   _cashrcpt->addColumn(tr("Customer"),   -1,              Qt::AlignLeft  );
   _cashrcpt->addColumn(tr("Dist. Date"), _dateColumn,     Qt::AlignCenter );
@@ -88,6 +89,9 @@ cashReceiptsEditList::cashReceiptsEditList(QWidget* parent, const char* name, Qt
   if (omfgThis->singleCurrency())
       _cashrcpt->hideColumn(3);
 
+  if (_privileges->check("PostCashReceipts"))
+    connect(_cashrcpt, SIGNAL(valid(bool)), _post, SLOT(setEnabled(bool)));
+    
   if (_privileges->check("MaintainCashReceipts"))
   {
     connect(_cashrcpt, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
