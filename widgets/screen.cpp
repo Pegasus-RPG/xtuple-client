@@ -68,11 +68,11 @@ Screen::Screen(QWidget *parent) :
 {
   _keyColumns=1;
   _searchType=Query;
+  _shown=false;
   
   _model = new XSqlTableModel;
+  _mapper = new XDataWidgetMapper;
   
-  //connect (_model,      SIGNAL(dataChanged(QModelIndex, QModelIndex)), this, SLOT(enableSave()));
-
   _model->setEditStrategy(QSqlTableModel::OnManualSubmit);
 }
 
@@ -84,6 +84,27 @@ Screen::~Screen()
                                    QMessageBox::Yes | QMessageBox::Default,
                                    QMessageBox::No ) == QMessageBox::Yes)
       save();
+}
+
+/* When the widget is first shown, set up table mappings if they exist*/
+void Screen::showEvent(QShowEvent *event)
+{
+  if(!_shown)
+  {
+    _shown = true;
+    setTable(_schemaName, _tableName);
+
+    // now set the sort order
+    for (int i = 0; i < _model->columnCount(); i++)
+    { 
+      if (_model->headerData(i,Qt::Horizontal,Qt::DisplayRole).toString() == _sortColumn)
+      {
+        _model->setSort(i, Qt::AscendingOrder);
+        break;
+      }
+    }
+  }
+  QWidget::showEvent(event);
 }
 
 Screen::Modes Screen::mode()
@@ -99,7 +120,7 @@ Screen::SearchTypes Screen::searchType()
 bool Screen::isDirty()
 {
   for (int i = 0; i < _model->columnCount()-1; i++)
-    if (_model->isDirty(_model->index(_mapper.currentIndex(),i)))
+    if (_model->isDirty(_model->index(_mapper->currentIndex(),i)))
       return true;
   return false;
 }
@@ -107,17 +128,16 @@ bool Screen::isDirty()
 void Screen::insert()
 {
   _model->insertRows(_model->rowCount(),1);
-  _mapper.toLast();
-  _mapper.clear();
+  _mapper->toLast();
+  _mapper->clear();
 }
 
 void Screen::save()
 {
-  int i=_mapper.currentIndex();
-  _mapper.submit();
+  int i=_mapper->currentIndex();
+  _mapper->submit();
   _model->submitAll();
-  _mapper.setCurrentIndex(i);
-  qDebug("error %d",_model->lastError().isValid());
+  _mapper->setCurrentIndex(i);
   if (_model->lastError().type() != QSqlError::NoError && _model->lastError().driverText() != "No Fields to update")
   {
     QMessageBox::critical(this, tr("Error Saving %1").arg(_tableName),
@@ -155,7 +175,7 @@ void Screen::select()
   _model->select();
   if (_model->rowCount())
   {
-    _mapper.toFirst();
+    _mapper->toFirst();
     emit newModel(_model);
   }
 }
@@ -173,21 +193,44 @@ void Screen::setMode(Modes p)
   else
     _mode=View;
 
-  for (int i = 0; _mapper.model() && i < _mapper.model()->columnCount(); i++)
-    if (_mapper.mappedWidgetAt(i))
-      _mapper.mappedWidgetAt(i)->setEnabled(_mode != View);
+  for (int i = 0; _mapper->model() && i < _mapper->model()->columnCount(); i++)
+    if (_mapper->mappedWidgetAt(i))
+      _mapper->mappedWidgetAt(i)->setEnabled(_mode != View);
 }
 
 void Screen::setSearchType(SearchTypes p)
 {
   _searchType=p;
-  //to do: set button to change label between list and query
 }
 
 void Screen::setSortColumn(QString p)
 {
   _sortColumn = p;
-  // _model->setSort is called in setVisible
+}
+
+void Screen::setCurrentIndex(int index)
+{
+   _mapper->setCurrentIndex(index);
+}
+
+void Screen::toNext()
+{
+   _mapper->toNext();
+}
+
+void Screen::toPrevious()
+{
+  _mapper->toPrevious(); 
+}
+
+void Screen::setSchemaName(QString schema)
+{ 
+  _schemaName = schema;  
+}
+
+void Screen::setTableName(QString table)
+{
+  _tableName = table;
 }
 
 /* Pass in a schema name and a table name.  If schema name is blank, it will be ignored.
@@ -209,8 +252,8 @@ void Screen::setTable(QString schema, QString table)
   }
 }
 
-void Screen::setDataWidgetMapper(QSqlTableModel *model)
+void Screen::setDataWidgetMapper(QSqlTableModel *p)
 {
-  _mapper.setModel(model);
-  emit newDataWidgetMapper(&_mapper);
+  _mapper->setModel(p);
+  emit newDataWidgetMapper(_mapper);
 }

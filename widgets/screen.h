@@ -66,12 +66,6 @@
 #include <QSqlIndex>
 #include <QList>
 
-//#include <QtGui/qwidget.h>
-
-//QT_BEGIN_HEADER
-
-//QT_MODULE(Gui)
-
 class OPENMFGWIDGETS_EXPORT Screen : public QWidget
 {
 	Q_OBJECT
@@ -100,39 +94,42 @@ class OPENMFGWIDGETS_EXPORT Screen : public QWidget
 	        QString schemaName()        const { return _schemaName;       };
 	        QString sortColumn()        const { return _sortColumn;       };
 		QString tableName()         const { return _tableName;        };
+                
+                void showEvent ( QShowEvent * event );
        	
 	public slots:
-		void toNext()                           { _mapper.toNext();          };
-		void toPrevious()                       { _mapper.toPrevious();       };
+		void toNext();
+		void toPrevious();
 		void insert();
 		void save();
 		void search(QString criteria);
 		void select();
-                void setCurrentIndex(int index)         { _mapper.setCurrentIndex(index);};
+                void setCurrentIndex(int index);
 		void setFilter(QString filter)          { _model->setFilter(filter);      };
 		void setMode(Modes p);
                 void setPrimaryKeyColumns(int count)    { _keyColumns = count;           };
 		void setSearchType(SearchTypes p);
-		void setSchemaName(QString schema)      { _schemaName = schema;           };
+		void setSchemaName(QString schema);
 		void setSortColumn(QString p);
  
-		void setTableName(QString table)	{ _tableName = table;            };
+		void setTableName(QString table);
 		void setTable(QString schema, QString table);
-		void setDataWidgetMapper(QSqlTableModel *model);
+		void setDataWidgetMapper(QSqlTableModel *p);
 	
 	signals:
-		void newDataWidgetMapper(XDataWidgetMapper *mapper);
+		void newDataWidgetMapper(XDataWidgetMapper *m);
                 void newModel(XSqlTableModel *model);
 		void saved(bool);
 
 	private:
+                bool                    _shown;
 		enum  Modes		_mode;
 		enum  SearchTypes	_searchType;
                 int                     _keyColumns;
 		QString			_schemaName;
                 QString                 _sortColumn;
 		QString			_tableName;
-		XDataWidgetMapper	_mapper;
+		XDataWidgetMapper*	_mapper;
                 XSqlTableModel*		_model;
 };
 
