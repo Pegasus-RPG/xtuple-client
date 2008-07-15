@@ -1028,7 +1028,11 @@
              </widget>
             </item>
             <item row="0" column="1" >
-             <widget class="XComboBox" name="_custtype" />
+             <widget class="XComboBox" name="_custtype" >
+              <property name="type" >
+               <enum>XComboBox::CustomerTypes</enum>
+              </property>
+             </widget>
             </item>
             <item row="1" column="0" >
              <widget class="QLabel" name="_salesrepLit" >
@@ -1041,7 +1045,11 @@
              </widget>
             </item>
             <item row="1" column="1" >
-             <widget class="XComboBox" name="_salesrep" />
+             <widget class="XComboBox" name="_salesrep" >
+              <property name="type" >
+               <enum>XComboBox::SalesReps</enum>
+              </property>
+             </widget>
             </item>
             <item row="2" column="0" >
              <widget class="QLabel" name="_shipViaLit" >
@@ -1054,7 +1062,11 @@
              </widget>
             </item>
             <item row="2" column="1" >
-             <widget class="XComboBox" name="_shipvia" />
+             <widget class="XComboBox" name="_shipvia" >
+              <property name="type" >
+               <enum>XComboBox::ShipVias</enum>
+              </property>
+             </widget>
             </item>
             <item row="3" column="0" >
              <widget class="QLabel" name="_shippingFormLit" >
@@ -1067,7 +1079,11 @@
              </widget>
             </item>
             <item row="3" column="1" >
-             <widget class="XComboBox" name="_shipform" />
+             <widget class="XComboBox" name="_shipform" >
+              <property name="type" >
+               <enum>XComboBox::ShippingForms</enum>
+              </property>
+             </widget>
             </item>
             <item row="4" column="0" >
              <widget class="QLabel" name="_terms2" >
@@ -1080,7 +1096,11 @@
              </widget>
             </item>
             <item row="4" column="1" >
-             <widget class="XComboBox" name="_terms" />
+             <widget class="XComboBox" name="_terms" >
+              <property name="type" >
+               <enum>XComboBox::ARTerms</enum>
+              </property>
+             </widget>
             </item>
             <item row="5" column="0" >
              <widget class="QLabel" name="_balanceMethodLit" >
@@ -1361,6 +1381,31 @@
               <property name="focusPolicy" >
                <enum>Qt::ClickFocus</enum>
               </property>
+              <item>
+               <property name="text" >
+                <string>Credit</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>Return</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>Replace</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>Service</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>Substitute</string>
+               </property>
+              </item>
              </widget>
             </item>
             <item row="2" column="0" >
@@ -1375,6 +1420,16 @@
               <property name="focusPolicy" >
                <enum>Qt::ClickFocus</enum>
               </property>
+              <item>
+               <property name="text" >
+                <string>Immediately</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>Upon Receipt</string>
+               </property>
+              </item>
              </widget>
             </item>
             <item row="3" column="0" >
@@ -1389,6 +1444,26 @@
               <property name="focusPolicy" >
                <enum>Qt::ClickFocus</enum>
               </property>
+              <item>
+               <property name="text" >
+                <string>None</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>Credit Memo</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>Check</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>Credit Card</string>
+               </property>
+              </item>
              </widget>
             </item>
             <item row="4" column="0" colspan="2" >
