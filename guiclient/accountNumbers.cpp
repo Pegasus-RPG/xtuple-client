@@ -158,6 +158,12 @@ bool accountNumbers::setParams(ParameterList &pParams)
       _showExternal->isChecked())
     pParams.append("showExternal");
 
+  pParams.append("asset",     tr("Asset"));
+  pParams.append("expense",   tr("Expense"));
+  pParams.append("liability", tr("Liability"));
+  pParams.append("equity",    tr("Equity"));
+  pParams.append("revenue",   tr("Revenue"));
+
   return true;
 }
 
@@ -176,9 +182,17 @@ void accountNumbers::sPrint()
 
 void accountNumbers::sFillList()
 {
-  QString sql = "SELECT accnt_id, * "
-                "FROM accnt LEFT OUTER JOIN"
-                "     company ON (accnt_company=company_number) "
+  QString sql = "SELECT accnt_id, *,"
+                "       CASE WHEN(accnt_type='A') THEN <? value(\"asset\") ?>"
+                "            WHEN(accnt_type='E') THEN <? value(\"expense\") ?>"
+                "            WHEN(accnt_type='L') THEN <? value(\"liability\") ?>"
+                "            WHEN(accnt_type='Q') THEN <? value(\"equity\") ?>"
+                "            WHEN(accnt_type='R') THEN <? value(\"revenue\") ?>"
+                "            ELSE accnt_type"
+                "       END AS accnt_type_qtdisplayrole "
+                "FROM (accnt LEFT OUTER JOIN"
+                "     company ON (accnt_company=company_number)) "
+                "     LEFT OUTER JOIN subaccnttype ON (accnt_type=subaccnttype_accnt_type AND accnt_subaccnttype_code=subaccnttype_code) "
                 "<? if not exists(\"showExternal\") ?>"
                 "WHERE (NOT COALESCE(company_external, false)) "
                 "<? endif ?>"
@@ -227,7 +241,13 @@ void accountNumbers::sBuildList()
   _account->addColumn(tr("Description"),     -1, Qt::AlignLeft,   true, "accnt_descrip");
   _externalCol++;
 
-  _account->addColumn(tr("Type"),     _ynColumn, Qt::AlignCenter, true, "accnt_type");
+  _account->addColumn(tr("Type"),            75, Qt::AlignLeft ,  true, "accnt_type");
+  _externalCol++;
+
+  _account->addColumn(tr("Sub. Type Code"),  75, Qt::AlignLeft,  false, "subaccnttype_code");
+  _externalCol++;
+
+  _account->addColumn(tr("Sub. Type"),      100, Qt::AlignLeft,  false, "subaccnttype_descrip");
   _externalCol++;
 
   if (_metrics->value("Application") == "xTuple" ||
