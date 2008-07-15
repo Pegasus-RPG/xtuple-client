@@ -436,6 +436,7 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
 
   _eventButton = NULL;
   _registerButton = NULL;
+  _errorButton = NULL;
   __interval = _metrics->value("updateTickInterval").toInt();
   if(__interval < 1)
     __interval = 1;
@@ -749,6 +750,23 @@ void GUIClient::sTick()
                           "Try exiting the application and starting it again."
                           "<br><pre>%1</pre>" )
                       .arg(tickle.lastError().databaseText()));
+}
+
+void GUIClient::sNewErrorMessage()
+{
+  if (_errorButton)
+    _errorButton->setVisible(_metrics->value("Registered") != "Yes");
+  else
+  {
+    _errorButton = new QPushButton(QIcon(":/images/dspError.png"), "", statusBar());
+    _errorButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    _errorButton->setMinimumSize(QSize(32, 32));
+    _errorButton->setMaximumSize(QSize(32, 32));
+    statusBar()->setMinimumHeight(36);
+    statusBar()->addWidget(_errorButton);
+
+    connect(_errorButton, SIGNAL(clicked()), systemMenu, SLOT(sErrorLog()));
+  }
 }
 
 //  Global notification slots

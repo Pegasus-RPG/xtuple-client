@@ -318,6 +318,8 @@ class GUIClient : public QMainWindow
 
     void sFocusChanged(QWidget* old, QWidget* now);
 
+    void sNewErrorMessage();
+
   signals:
     void tick();
 
@@ -373,6 +375,7 @@ class GUIClient : public QMainWindow
     QTimer       _tick;
     QPushButton  *_eventButton;
     QPushButton  *_registerButton;
+    QPushButton  *_errorButton;
     QString      _databaseURL;
     QString      _username;
     bool         _showTopLevel;

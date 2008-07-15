@@ -56,6 +56,7 @@
  */
 
 #include "errorLog.h"
+#include "guiclient.h"
 
 #include <QObject>
 #include <QVariant>
@@ -128,5 +129,6 @@ void errorLogListener::error(const QString & sql, const QSqlError & error)
     _errorList.removeFirst();
 
   emit updated(msg);
+  omfgThis->sNewErrorMessage();
 }
 
