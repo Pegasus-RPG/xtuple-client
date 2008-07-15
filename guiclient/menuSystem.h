@@ -116,6 +116,7 @@ class menuSystem : public QObject
     void sEventManager();
     void sBatchManager();
     void sPreferences();
+    void sHotKeys();
     void sRescanPrivileges();
     void sMaintainUsers();
     void sMaintainGroups();

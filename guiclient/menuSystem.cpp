@@ -82,6 +82,7 @@
 #include "users.h"
 #include "submitAction.h"
 #include "userPreferences.h"
+#include "hotkeys.h"
 #include "errorLog.h"
 
 #include "databaseInformation.h"
@@ -201,6 +202,7 @@ menuSystem::menuSystem(GUIClient *Pparent) :
     { "sys.viewDatabaseLog",          tr("View Database &Log..."),          SLOT(sErrorLog()),                 systemMenu, TRUE,                                      NULL, NULL, true },
     { "separator",                    NULL,                                 NULL,                              systemMenu, true,                                      NULL, NULL, true },
     { "sys.preferences",              tr("P&references..."),                SLOT(sPreferences()),              systemMenu, (_privileges->check("MaintainPreferencesSelf") || _privileges->check("MaintainPreferencesOthers")),  NULL,   NULL,   true },
+    { "sys.hotkeys",                  tr("&Hot Keys..."),                   SLOT(sHotKeys()),                  systemMenu, true,  NULL,   NULL,   !(_privileges->check("MaintainPreferencesSelf") || _privileges->check("MaintainPreferencesOthers")) },
     { "sys.rescanPrivileges",         tr("Rescan &Privileges"),             SLOT(sRescanPrivileges()),         systemMenu, TRUE,                                      NULL, NULL, true },
     { "separator",                    NULL,                                 NULL,                              systemMenu, true,                                      NULL, NULL, true },
     { "sys.maintainUsers",            tr("Maintain &Users..."),             SLOT(sMaintainUsers()),            systemMenu, _privileges->check("MaintainUsers"),       NULL, NULL, true },
@@ -500,6 +502,18 @@ void menuSystem::sBatchManager()
 void menuSystem::sPreferences()
 {
   userPreferences(parent, "", TRUE).exec();
+}
+
+void menuSystem::sHotKeys()
+{
+  ParameterList params;
+
+  params.append("currentUser");
+
+  hotkeys newdlg(omfgThis, "", TRUE);
+  newdlg.set(params);
+  if (newdlg.exec() == QDialog::Accepted)
+    sRescanPrivileges();
 }
 
 void menuSystem::sRescanPrivileges()

@@ -211,7 +211,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                getLotInfo.ui glSeries.ui glSeriesItem.ui glTransaction.ui glTransactionDetail.ui      \
                group.ui groups.ui                                                                     \
                honorific.ui honorifics.ui                                                             \
-               hotkey.ui image.ui imageList.ui implodeWo.ui                                           \
+               hotkey.ui hotkeys.ui image.ui imageList.ui implodeWo.ui                                \
                images.ui invoiceList.ui issueWoMaterialBatch.ui                                       \
                importXML.ui                                                                           \
                incident.ui incidentWorkbench.ui                                                       \
@@ -528,7 +528,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h rwInterface
                getLotInfo.h glSeries.h glSeriesItem.h glTransaction.h glTransactionDetail.h           \
                group.h groups.h                                                                       \
                honorific.h honorifics.h                                                               \
-               hotkey.h image.h imageList.h implodeWo.h                                               \
+               hotkey.h hotkeys.h image.h imageList.h implodeWo.h                                     \
                images.h invoiceList.h issueWoMaterialBatch.h                                          \
                importXML.h                                                                            \
                incident.h incidentWorkbench.h                                                         \
@@ -852,7 +852,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp rwInte
                getLotInfo.cpp glSeries.cpp glSeriesItem.cpp glTransaction.cpp glTransactionDetail.cpp \
                group.cpp groups.cpp                                                                   \
                honorific.cpp honorifics.cpp                                                           \
-               hotkey.cpp image.cpp imageList.cpp implodeWo.cpp                                       \
+               hotkey.cpp hotkeys.cpp image.cpp imageList.cpp implodeWo.cpp                           \
                images.cpp invoiceList.cpp issueWoMaterialBatch.cpp                                    \
                importXML.cpp                                                                          \
                incident.cpp incidentWorkbench.cpp                                                     \
