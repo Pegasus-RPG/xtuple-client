@@ -64,9 +64,11 @@
 #include <QValidator>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <QMessageBox>
 
 #include <parameter.h>
 #include <xsqlquery.h>
+#include <metasql.h>
 
 #include "salesOrderList.h"
 #include "socluster.h"
@@ -77,6 +79,7 @@ SoLineEdit::SoLineEdit(QWidget *pParent, const char *name) : XLineEdit(pParent, 
   _id     = -1;
   _number = -1;
   _custid = -1;
+  _sitePrivs = true;
 
   setValidator(new QIntValidator(0, 9999999, this));
   _mapper = new XDataWidgetMapper(this);
@@ -88,6 +91,42 @@ void SoLineEdit::setId(int pId)
 {
   if (pId == _id)
     return;
+
+  if ((_x_preferences) && (pId != -1) && (_sitePrivs))
+  {
+    if (_x_preferences->boolean("selectedSites"))
+    {
+      QString sql("SELECT coitem_id "
+                  "FROM coitem, itemsite "
+                  "WHERE ((coitem_cohead_id=<? value(\"sohead_id\") ?>) "
+                  "  AND (coitem_itemsite_id=itemsite_id) "
+                  "  AND (itemsite_warehous_id NOT IN ("
+                  "       SELECT usrsite_warehous_id "
+                  "       FROM usrsite "
+                  "       WHERE (usrsite_username=current_user)))) "
+                  "UNION "
+                  "SELECT cohead_warehous_id "
+                  "FROM cohead "
+                  "WHERE ((cohead_id=<? value(\"sohead_id\") ?>) "
+                  "  AND (cohead_warehous_id NOT IN ("
+                  "       SELECT usrsite_warehous_id "
+                  "       FROM usrsite "
+                  "       WHERE (usrsite_username=current_user))));");
+      MetaSQLQuery mql(sql);
+      ParameterList params;
+      params.append("sohead_id", pId);
+      XSqlQuery chk = mql.toQuery(params);
+      if (chk.first())
+      {
+              QMessageBox::critical(this, tr("Access Denied"),
+                                    tr("You may not view or edit this Sales Order as it references "
+                                       "a warehouse for which you have not been granted privileges.")) ;
+              setId(-1);
+              return;
+      }
+    }
+  }
+
 
   XSqlQuery sohead;
   sohead.prepare( "SELECT cohead_number, cohead_cust_id, cohead_billtoname "

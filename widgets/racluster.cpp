@@ -55,15 +55,14 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-/*
-#include <QGridLayout>
+
 #include <QMessageBox>
 #include <QSqlError>
 
 #include <metasql.h>
 
 #include "xsqlquery.h"
-*/
+
 
 #include "racluster.h"
 
@@ -116,6 +115,51 @@ RaLineEdit::RaStatuses RaLineEdit::allowedStatuses() const
 {
   return _statuses;
 }
+
+void RaLineEdit::setId(const int pId)
+{
+  if ((_x_preferences) && (pId != -1))
+  {
+    if (_x_preferences->boolean("selectedSites"))
+    {
+      QString msql("SELECT raitem_id "
+                "FROM raitem, itemsite "
+                "WHERE ((raitem_rahead_id=<? value(\"rahead_id\") ?>) "
+                "  AND (raitem_itemsite_id=itemsite_id) "
+                "  AND (itemsite_warehous_id NOT IN ("
+                "       SELECT usrsite_warehous_id "
+                "       FROM usrsite "
+                "       WHERE (usrsite_username=current_user)))) "
+                "UNION "
+                "SELECT raitem_id "
+                "FROM raitem, itemsite "
+                "WHERE ((raitem_rahead_id=<? value(\"rahead_id\") ?>) "
+                "  AND (raitem_coitem_itemsite_id=itemsite_id) "
+                "  AND (itemsite_warehous_id NOT IN ("
+                "       SELECT usrsite_warehous_id "
+                "       FROM usrsite "
+                "       WHERE (usrsite_username=current_user))));");
+      MetaSQLQuery mql(msql);
+      ParameterList params;
+      params.append("rahead_id", pId);
+      XSqlQuery chk = mql.toQuery(params);
+      if (chk.first())
+      {
+              QMessageBox::critical(this, tr("Access Denied"),
+                                    tr("You may not view or edit this Return Authorization as it references "
+                                       "a warehouse for which you have not been granted privileges.")) ;
+              VirtualClusterLineEdit::setId(-1);
+      }
+      else
+        VirtualClusterLineEdit::setId(pId);
+    }
+    else
+      VirtualClusterLineEdit::setId(pId);
+  }
+  else 
+    VirtualClusterLineEdit::setId(pId);
+}
+
 
 void RaLineEdit::setAllowedStatuses(const RaLineEdit::RaStatuses p)
 {

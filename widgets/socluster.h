@@ -90,9 +90,11 @@ friend class SoCluster;
     SoLineEdit(QWidget *, const char * = 0);
 
   public slots:
+    bool sitePrivsEnforced() const { return _sitePrivs;};
     void setId(int);
     void setCustId(int);
     void setNumber(QString);
+    void setSitePrivsEnforced(const bool p)     { _sitePrivs = p;};
     void clear();
     void sParse();
 
@@ -105,6 +107,7 @@ friend class SoCluster;
     void numberChanged(const QString &);
     
   protected:
+    bool _sitePrivs;
     XDataWidgetMapper *_mapper;
 
   private:
@@ -126,9 +129,10 @@ class OPENMFGWIDGETS_EXPORT SoCluster : public QWidget
   public:
     SoCluster(QWidget *, const char * = 0);
     SoCluster(int, QWidget *);
-		
-    inline int id()                       { return _soNumber->_id;      };
-    inline int custid()                   { return _soNumber->_custid;  };
+      
+    inline bool sitePrivsEnforced() const { return _soNumber->_sitePrivs;};
+    inline int  id()                      { return _soNumber->_id;      };
+    inline int  custid()                  { return _soNumber->_custid;  };
     inline bool isValid()                 { return _soNumber->_valid;   };
     inline QString  number()              { return _soNumber->text();   };
     inline virtual QString label()  const { return _label;              };
@@ -143,6 +147,7 @@ class OPENMFGWIDGETS_EXPORT SoCluster : public QWidget
     void setDataWidgetMap(XDataWidgetMapper* m);
     void setDefaultNumber(QString p)            { _default = p;             };
     void setFieldName(QString p)                { _fieldName = p;           };
+    void setSitePrivsEnforced(const bool p)     { _soNumber->_sitePrivs = p;};
     void setNumber(QString);
     void setLabel(const QString p);
     void setType(int pType)                     { _soNumber->_type = pType; };

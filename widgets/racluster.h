@@ -83,6 +83,9 @@ class OPENMFGWIDGETS_EXPORT RaLineEdit : public VirtualClusterLineEdit
   signals:
     void numberChanged(const QString &);
 
+  public slots:
+    virtual void setId(const int pId);
+
   protected:
 
     RaStatuses	_statuses;

@@ -64,9 +64,11 @@
 #include <QValidator>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <QMessageBox>
 
 #include <parameter.h>
 #include <xsqlquery.h>
+#include <metasql.h>
 
 #include "purchaseOrderList.h"
 #include "pocluster.h"
@@ -99,6 +101,41 @@ void PoLineEdit::sMarkDirty()
 
 void PoLineEdit::setId(int pId)
 {
+  if ((_x_preferences) && (pId != -1))
+  {
+    if (_x_preferences->boolean("selectedSites"))
+    {
+      QString msql("SELECT poitem_id "
+                  "FROM poitem, itemsite "
+                  "WHERE ((poitem_pohead_id=<? value(\"pohead_id\") ?>) "
+                  "  AND (poitem_itemsite_id=itemsite_id) "
+                  "  AND (itemsite_warehous_id NOT IN ("
+                  "       SELECT usrsite_warehous_id "
+                  "       FROM usrsite "
+                  "       WHERE (usrsite_username=current_user)))) "
+                  "UNION "
+                  "SELECT pohead_warehous_id "
+                  "FROM pohead "
+                  "WHERE ((pohead_id=<? value(\"pohead_id\") ?>) "
+                  "  AND (pohead_warehous_id NOT IN ("
+                  "       SELECT usrsite_warehous_id "
+                  "       FROM usrsite "
+                  "       WHERE (usrsite_username=current_user))));");
+      MetaSQLQuery mql(msql);
+      ParameterList params;
+      params.append("pohead_id", pId);
+      XSqlQuery chk = mql.toQuery(params);
+      if (chk.first())
+      {
+              QMessageBox::critical(this, tr("Access Denied"),
+                                    tr("You may not view or edit this Purchase Order as it references "
+                                       "a warehouse for which you have not been granted privileges.")) ;
+              setId(-1);
+              return;
+      }
+    }
+  }
+
   QString sql( "SELECT pohead_number, pohead_vend_id,"
                "       vend_name, vend_address1, vend_address2, vend_address3,"
                "       (vend_city || '  ' || vend_state || '  ' || vend_zip) AS citystatezip "
