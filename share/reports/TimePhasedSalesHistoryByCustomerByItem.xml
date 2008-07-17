@@ -954,7 +954,7 @@ ORDER BY calitem_startdate, calitem_enddate </sql>
       <height>15</height>
      </rect>
      <font>
-      <face>Helvetica [Urw]</face>
+      <face>Arial</face>
       <size>8</size>
       <weight>normal</weight>
      </font>
@@ -1183,7 +1183,7 @@ ORDER BY calitem_startdate, calitem_enddate </sql>
       <height>15</height>
      </rect>
      <font>
-      <face>Helvetica [Urw]</face>
+      <face>Arial</face>
       <size>8</size>
       <weight>normal</weight>
      </font>
@@ -1461,7 +1461,7 @@ ORDER BY calitem_startdate, calitem_enddate </sql>
     <height>15</height>
    </rect>
    <font>
-    <face>Helvetica [Urw]</face>
+    <face>Arial</face>
     <size>8</size>
     <weight>normal</weight>
    </font>
