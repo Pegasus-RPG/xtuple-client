@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>467</width>
-    <height>524</height>
+    <height>549</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -18,7 +18,7 @@
      <x>0</x>
      <y>0</y>
      <width>467</width>
-     <height>524</height>
+     <height>549</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_3" >
@@ -467,7 +467,7 @@
          <x>0</x>
          <y>0</y>
          <width>445</width>
-         <height>124</height>
+         <height>149</height>
         </rect>
        </property>
        <attribute name="title" >
@@ -503,7 +503,7 @@
            <item row="1" column="1" >
             <widget class="QLabel" name="_lblCost" >
              <property name="text" >
-              <string>Cost:</string>
+              <string>Total Cost:</string>
              </property>
              <property name="buddy" >
               <cstring>_cost</cstring>
@@ -512,6 +512,23 @@
            </item>
            <item row="1" column="2" >
             <widget class="XLineEdit" name="_cost" />
+           </item>
+           <item row="2" column="1" >
+            <widget class="QLabel" name="_unitCostLit" >
+             <property name="text" >
+              <string>Unit Cost:</string>
+             </property>
+             <property name="alignment" >
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="2" >
+            <widget class="QLabel" name="_unitCost" >
+             <property name="text" >
+              <string>N/A</string>
+             </property>
+            </widget>
            </item>
           </layout>
          </widget>
@@ -537,7 +554,7 @@
          <x>0</x>
          <y>0</y>
          <width>445</width>
-         <height>124</height>
+         <height>149</height>
         </rect>
        </property>
        <attribute name="title" >

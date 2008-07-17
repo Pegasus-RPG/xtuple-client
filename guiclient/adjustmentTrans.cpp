@@ -79,7 +79,9 @@ adjustmentTrans::adjustmentTrans(QWidget* parent, Qt::WindowFlags fl)
   connect(_adjustmentTypeGroupInt,SIGNAL(buttonClicked(int)), this, SLOT(sPopulateQty()));
   connect(_post,                           SIGNAL(clicked()), this, SLOT(sPost()));
   connect(_qty,          SIGNAL(textChanged(const QString&)), this, SLOT(sPopulateQty()));
+  connect(_qty,          SIGNAL(textChanged(const QString&)), this, SLOT(sCostUpdated()));
   connect(_warehouse,                     SIGNAL(newID(int)), this, SLOT(sPopulateQOH(int)));
+  connect(_cost, SIGNAL(textChanged(const QString&)), this, SLOT(sCostUpdated()));
 
   _captive = FALSE;
 
@@ -335,6 +337,8 @@ void adjustmentTrans::sPopulateQOH(int pWarehousid)
     if (q.first())
     {
       _cachedQOH = q.value("itemsite_qtyonhand").toDouble();
+      if(_cachedQOH == 0.0)
+        _costManual->setChecked(true);
       _beforeQty->setText(formatQty(q.value("itemsite_qtyonhand").toDouble()));
       _costAdjust->setChecked(true);
       _costAdjust->setEnabled(q.value("itemsite_costmethod").toString() == "A");
@@ -373,3 +377,12 @@ void adjustmentTrans::sPopulateQty()
       _afterQty->clear();
   }
 }
+
+void adjustmentTrans::sCostUpdated()
+{
+  if(_cost->toDouble() == 0.0 || _qty->toDouble() == 0.0)
+    _unitCost->setText(tr("N/A"));
+  else
+    _unitCost->setText(formatCost(_cost->toDouble() / _qty->toDouble()));
+}
+

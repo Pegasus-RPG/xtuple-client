@@ -77,6 +77,7 @@ public slots:
     virtual void sPost();
     virtual void sPopulateQOH( int pWarehousid );
     virtual void sPopulateQty();
+    virtual void sCostUpdated();
 
 protected slots:
     virtual void languageChange();

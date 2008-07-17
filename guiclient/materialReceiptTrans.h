@@ -77,6 +77,7 @@ public slots:
     virtual void sPost();
     virtual void sPopulateQty();
     virtual void sUpdateQty( const QString & pQty );
+    virtual void sCostUpdated();
 
 protected slots:
     virtual void languageChange();

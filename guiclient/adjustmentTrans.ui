@@ -350,7 +350,7 @@
          <x>0</x>
          <y>0</y>
          <width>461</width>
-         <height>146</height>
+         <height>178</height>
         </rect>
        </property>
        <attribute name="title" >
@@ -386,12 +386,26 @@
            <item row="1" column="1" >
             <widget class="QLabel" name="_lblCost" >
              <property name="text" >
-              <string>Cost:</string>
+              <string>Total Cost:</string>
              </property>
             </widget>
            </item>
            <item row="1" column="2" >
             <widget class="XLineEdit" name="_cost" />
+           </item>
+           <item row="2" column="1" >
+            <widget class="QLabel" name="_unitCostLit" >
+             <property name="text" >
+              <string>Unit Cost:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="2" >
+            <widget class="QLabel" name="_unitCost" >
+             <property name="text" >
+              <string>N/A</string>
+             </property>
+            </widget>
            </item>
           </layout>
          </widget>
@@ -416,8 +430,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>463</width>
-         <height>116</height>
+         <width>461</width>
+         <height>178</height>
         </rect>
        </property>
        <attribute name="title" >
