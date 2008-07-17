@@ -79,6 +79,7 @@ databaseInformation::databaseInformation(QWidget* parent, const char* name, bool
   _comments->setText(_metrics->value("DatabaseComments"));
   _version->setText(_metrics->value("OpenMFGServerVersion"));
   _patch->setText(_metrics->value("ServerPatchVersion"));
+  _disallowMismatchClient->setChecked(_metrics->boolean("DisallowMismatchClientVersion"));
 
   int val = _metrics->value("updateTickInterval").toInt();
   if(val < 1) val = 1;
@@ -144,6 +145,7 @@ void databaseInformation::sSave()
   _metrics->set("DatabaseName", _description->text().stripWhiteSpace());
   _metrics->set("DefaultBatchFromEmailAddress", _defaultFromAddress->text().stripWhiteSpace());
   _metrics->set("DatabaseComments", _comments->text().stripWhiteSpace());
+  _metrics->set("DisallowMismatchClientVersion", _disallowMismatchClient->isChecked());
 
   _metrics->set("EnableBatchManager", _enableBatchManager->isChecked());
   _metrics->set("BatchManagerPurgeDays", _purgeDays->value());

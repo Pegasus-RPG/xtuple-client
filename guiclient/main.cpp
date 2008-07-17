@@ -285,17 +285,31 @@ int main(int argc, char *argv[])
            " WHERE (metric_name = 'OpenMFGServerVersion')" );
   if(!metric.first() || (metric.value("metric_value").toString() != _dbVersion))
   {
+    bool disallowMismatch = false;
+    metric.exec("SELECT metric_value FROM metric WHERE(metric_name='DisallowMismatchClientVersion')");
+    if(metric.first() && (metric.value("metric_value").toString() == "t"))
+      disallowMismatch = true;
+    
     _splash->hide();
     int result;
-    result = QMessageBox::warning( 0, QObject::tr("Version Mismatch"),
-      QObject::tr("The version of the database you are connecting to is not the version\n"
-                  "this client was designed to work against.\n\n"
-                  "This client was designed to work against the database version %1.\n"
-                  "If you continue some or all functionality may not work properly\n"
-                  "or at all. You may also cause other problems on the database.\n\n"
-                  "Do you want to continue anyway?").arg(_dbVersion),
-               QMessageBox::Yes,
-               QMessageBox::No | QMessageBox::Escape | QMessageBox::Default );
+    if(disallowMismatch)
+      result = QMessageBox::warning( 0, QObject::tr("Version Mismatch"),
+        QObject::tr("The version of the database you are connecting to is not the version\n"
+                    "this client was designed to work against.\n\n"
+                    "This client was designed to work against the database version %1.\n"
+                    "The system has been configured to disallow access in this case.\n"
+                    "Please contact your systems administrator.").arg(_dbVersion),
+                 QMessageBox::Ok | QMessageBox::Escape | QMessageBox::Default );
+    else
+      result = QMessageBox::warning( 0, QObject::tr("Version Mismatch"),
+        QObject::tr("The version of the database you are connecting to is not the version\n"
+                    "this client was designed to work against.\n\n"
+                    "This client was designed to work against the database version %1.\n"
+                    "If you continue some or all functionality may not work properly\n"
+                    "or at all. You may also cause other problems on the database.\n\n"
+                    "Do you want to continue anyway?").arg(_dbVersion),
+                 QMessageBox::Yes,
+                 QMessageBox::No | QMessageBox::Escape | QMessageBox::Default );
     if(result != QMessageBox::Yes)
       return 0;
     _splash->show();
