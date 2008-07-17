@@ -128,7 +128,7 @@ salesOrder::salesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_newCC, SIGNAL(clicked()), this, SLOT(sNewCreditCard()));
   connect(_orderNumber, SIGNAL(lostFocus()), this, SLOT(sHandleOrderNumber()));
   connect(_orderNumber, SIGNAL(textChanged(const QString&)), this, SLOT(sSetUserEnteredOrderNumber()));
-  connect(_save, SIGNAL(clicked()), this, SLOT(()));
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_saveAndAdd, SIGNAL(clicked()), this, SLOT(sSaveAndAdd()));
   connect(_shippingCharges, SIGNAL(newID(int)), this, SLOT(sHandleShipchrg(int)));
   connect(_shipToAddr, SIGNAL(changed()),        this, SLOT(sConvertShipTo()));
