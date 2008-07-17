@@ -310,7 +310,7 @@ menuManufacture::menuManufacture(GUIClient *Pparent) :
     
     //  Production | Reports | Material Usage Variance
     { "menu",				tr("Material &Usage Variance"),	(char*)reportsMatlUseVarMenu,	reportsMenu,	true,	0, 0,	true, NULL },
-    { "wo.dspMaterialUsageVarianceByWarehouse",	tr("by Ware&house..."),	SLOT(sDspMaterialUsageVarianceByWarehouse()), reportsMatlUseVarMenu, _privileges->check("ViewMaterialVariances"), 0, 0, true, NULL },
+    { "wo.dspMaterialUsageVarianceByWarehouse",	tr("by &Site..."),	SLOT(sDspMaterialUsageVarianceByWarehouse()), reportsMatlUseVarMenu, _privileges->check("ViewMaterialVariances"), 0, 0, true, NULL },
     { "wo.dspMaterialUsageVarianceByItem",	tr("by &Item..."),	SLOT(sDspMaterialUsageVarianceByItem()), reportsMatlUseVarMenu, _privileges->check("ViewMaterialVariances"), 0, 0, true, NULL },
     { "wo.dspMaterialUsageVarianceByBOMItem",	tr("by &BOM Item..."),	SLOT(sDspMaterialUsageVarianceByBOMItem()), reportsMatlUseVarMenu, _privileges->check("ViewMaterialVariances"), 0, 0, true, NULL },
     { "wo.dspMaterialUsageVarianceByComponentItem",	tr("by &Component Item..."),	SLOT(sDspMaterialUsageVarianceByComponentItem()), reportsMatlUseVarMenu, _privileges->check("ViewMaterialVariances"), 0, 0, true, NULL },
