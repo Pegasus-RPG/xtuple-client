@@ -59,6 +59,7 @@
 
 #include <QMenu>
 #include <QVariant>
+#include <QSqlError>
 
 #include <openreports.h>
 #include <parameter.h>
@@ -80,12 +81,15 @@ dspQOHByLocation::dspQOHByLocation(QWidget* parent, const char* name, Qt::WFlags
 
   _location->setAllowNull(TRUE);
 
-  _itemloc->addColumn(tr("Site"),         _whsColumn,  Qt::AlignLeft   );
+  _itemloc->setRootIsDecorated(TRUE);
+  _itemloc->addColumn(tr("Site"),         _itemColumn, Qt::AlignLeft   );
   _itemloc->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft   );
   _itemloc->addColumn(tr("Description"),  -1,          Qt::AlignLeft   );
   _itemloc->addColumn(tr("Lot/Serial #"), 150,         Qt::AlignLeft   );
   _itemloc->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignCenter );
   _itemloc->addColumn(tr("QOH"),          _qtyColumn,  Qt::AlignRight  );
+  if(_metrics->boolean("EnableSOReservationsByLocation"))
+    _itemloc->addColumn(tr("Reserved"),   _qtyColumn,  Qt::AlignRight  );
   
   sPopulateLocations();
 }
@@ -195,6 +199,8 @@ void dspQOHByLocation::sPopulateMenu(QMenu *menu)
 
 void dspQOHByLocation::sFillList()
 {
+  _itemloc->clear();
+
   if (_location->id() != -1)
   {
     q.prepare( "SELECT formatBoolYN(location_netable) AS netable,"
@@ -210,8 +216,19 @@ void dspQOHByLocation::sFillList()
       _restricted->setText(q.value("restricted").toString());
     }
 
-    q.prepare( "SELECT itemloc_id, warehous_code, item_number, (item_descrip1 || ' ' || item_descrip2),"
-               "       formatlotserialnumber(itemloc_ls_id) AS lotserial, uom_name, formatQty(itemloc_qty) "
+    XSqlQuery itemlocrsrv;
+    itemlocrsrv.prepare( "SELECT (itemlocrsrv_source || '-' || formatSOItemNumber(itemlocrsrv_source_id)) AS f_source,"
+						 "       formatQty(itemlocrsrv_qty) AS f_reserved "
+                         "FROM itemlocrsrv "
+                         "WHERE ( (itemlocrsrv_source='SO')"
+					     "  AND   (itemlocrsrv_itemloc_id=:itemloc_id) ) "
+						 "ORDER BY formatSOItemNumber(itemlocrsrv_source_id);" );
+
+    q.prepare( "SELECT itemloc_id, warehous_code, item_number,"
+				"      (item_descrip1 || ' ' || item_descrip2) AS f_descrip,"
+               "       formatlotserialnumber(itemloc_ls_id) AS f_lotserial, uom_name,"
+			   "       formatQty(itemloc_qty) AS f_qty,"
+			   "       formatQty(qtyReservedLocation(itemloc_id)) AS f_reservedqty "
                "FROM itemloc, itemsite, warehous, item, uom "
                "WHERE ( (itemloc_itemsite_id=itemsite_id)"
                " AND (itemsite_item_id=item_id)"
@@ -219,8 +236,11 @@ void dspQOHByLocation::sFillList()
                " AND (itemsite_warehous_id=warehous_id)"
                " AND (itemloc_location_id=:location_id) ) "
 
-               "UNION SELECT -1, warehous_code, item_number, (item_descrip1 || ' ' || item_descrip2),"
-               "             :na, uom_name, formatQty(itemsite_qtyonhand) "
+               "UNION SELECT -1 AS itemloc_id, warehous_code, item_number,"
+			   "             (item_descrip1 || ' ' || item_descrip2) AS f_descrip,"
+               "             :na AS f_lotserial, uom_name,"
+			   "             formatQty(itemsite_qtyonhand) AS f_qty,"
+			   "             formatQty(0) AS f_qtyreserved "
                "FROM itemsite, warehous, item, uom "
                "WHERE ((itemsite_item_id=item_id)"
                " AND (item_inv_uom_id=uom_id)"
@@ -232,7 +252,47 @@ void dspQOHByLocation::sFillList()
     q.bindValue(":location_id", _location->id());
     q.bindValue(":na", tr("N/A"));
     q.exec();
-    _itemloc->populate(q);
+    if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+
+    if (q.first())
+    {
+      XTreeWidgetItem *document = 0;
+      XTreeWidgetItem *last = 0;
+      do
+      {
+        last = document = new XTreeWidgetItem( _itemloc, last, q.value("itemloc_id").toInt(),
+                                               q.value("warehous_code"), q.value("item_number"),
+                                               q.value("f_descrip"), q.value("f_lotserial"),
+                                               q.value("uom_name"), q.value("f_qty"),
+                                               q.value("f_reservedqty") );
+
+        itemlocrsrv.bindValue(":itemloc_id", q.value("itemloc_id").toInt());
+	    itemlocrsrv.exec();
+	    if (itemlocrsrv.first())
+	    {
+	      do
+		  {
+            new XTreeWidgetItem( document, -1,
+                                 "", "",
+                                 itemlocrsrv.value("f_source"), "",
+                                 "", "",
+                                 itemlocrsrv.value("f_reserved") );
+          }
+		  while (itemlocrsrv.next());
+        }
+      }
+      while (q.next());
+    }
+  
+    if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
   else
   {

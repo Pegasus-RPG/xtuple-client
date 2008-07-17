@@ -149,6 +149,7 @@ private:
     int _invuomid;
     double _qtyinvuomratio;
     double _priceinvuomratio;
+	double _qtyreserved;
     
     //For holding variables for characteristic pricing
     QList<QVariant> _charVars;

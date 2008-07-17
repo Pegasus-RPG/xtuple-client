@@ -142,6 +142,7 @@ salesOrderItem::salesOrderItem(QWidget* parent, const char* name, bool modal, Qt
   _priceRatio = 1.0;
   _invuomid = -1;
   _invIsFractional = false;
+  _qtyreserved = 0.0;
 
   _authNumber->hide();
   _authNumberLit->hide();
@@ -895,6 +896,36 @@ void salesOrderItem::sSave()
       return;
     }
 
+//  Check to see if a Reservations need changes
+    if (_qtyOrdered->toDouble() < _cQtyOrdered)
+    {
+	  if (_qtyreserved > 0.0)
+      {
+        QMessageBox::warning( this, tr("Unreserve Sales Order Item"),
+                              tr("<p>The quantity ordered for this Sales "
+                                 "Order Line Item has been changed. "
+                                 "Reservations have been removed.") );
+        q.prepare("SELECT unreserveSoLineQty(:soitem_id) AS result;");
+        q.bindValue(":soitem_id", _soitemid);
+        q.exec();
+        if (q.first())
+        {
+          int result = q.value("result").toInt();
+          if (result < 0)
+          {
+            systemError(this, storedProcErrorLookup("unreservedSoLineQty", result) +
+                              tr("<br>Line Item %1").arg(""),
+                        __FILE__, __LINE__);
+          }
+        }
+        else if (q.lastError().type() != QSqlError::None)
+        {
+          systemError(this, tr("Line Item %1\n").arg("") +
+                            q.lastError().databaseText(), __FILE__, __LINE__);
+        }
+      }
+    }
+	
 //  Check to see if a W/O needs changes
     if (_orderId != -1)
     {
@@ -934,7 +965,7 @@ void salesOrderItem::sSave()
         }
       }
 
-      if (_qtyOrdered->toDouble() != _cQtyOrdered)
+      if (_qtyOrdered->toDouble() < _cQtyOrdered)
       {
         if((_item->itemType() == "M") || (_item->itemType() == "J"))
         {
@@ -2268,7 +2299,7 @@ void salesOrderItem::populate()
         "         WHERE (coship_coitem_id=coitem_id)) AS coship_qty,"
         "       coitem_tax_id,"
         "       getItemTaxType(item_id, cohead_taxauth_id) AS coitem_taxtype_id, "
-        "       coitem_cos_accnt_id, coitem_warranty "
+        "       coitem_cos_accnt_id, coitem_warranty, coitem_qtyreserved "
         "FROM coitem, warehous, itemsite, item, uom, cohead "
         "WHERE ( (coitem_itemsite_id=itemsite_id)"
         " AND (itemsite_warehous_id=warehous_id)"
@@ -2368,6 +2399,7 @@ void salesOrderItem::populate()
  
     _warranty->setChecked(item.value("coitem_warranty").toBool());
     _altCosAccnt->setId(item.value("coitem_cos_accnt_id").toInt());
+	_qtyreserved = item.value("coitem_qtyreserved").toDouble();
 
     sCalculateDiscountPrcnt();
     sLookupTax();

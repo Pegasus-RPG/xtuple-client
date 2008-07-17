@@ -79,12 +79,13 @@ dspReservations::dspReservations(QWidget* parent, const char* name, Qt::WFlags f
   _item->setReadOnly(TRUE);
   _warehouse->setEnabled(FALSE);
 
-  _allocations->addColumn(tr("Order #"),      _orderColumn,   Qt::AlignLeft   );
-  _allocations->addColumn(tr("Total Qty."),   _qtyColumn,     Qt::AlignRight  );
-  _allocations->addColumn(tr("Relieved"),     _qtyColumn,     Qt::AlignRight  );
-  _allocations->addColumn(tr("Reserved"),      _qtyColumn,     Qt::AlignRight  );
-  _allocations->addColumn(tr("Running Bal."), _qtyColumn,     Qt::AlignRight  );
-  _allocations->addColumn(tr("Required"),     _dateColumn,    Qt::AlignCenter );
+  _allocations->setRootIsDecorated(TRUE);
+  _allocations->addColumn(tr("Order/Location LotSerial"), -1,             Qt::AlignLeft   );
+  _allocations->addColumn(tr("Total Qty."),               _qtyColumn,     Qt::AlignRight  );
+  _allocations->addColumn(tr("Relieved"),                 _qtyColumn,     Qt::AlignRight  );
+  _allocations->addColumn(tr("Reserved"),                 _qtyColumn,     Qt::AlignRight  );
+  _allocations->addColumn(tr("Running Bal."),             _qtyColumn,     Qt::AlignRight  );
+  _allocations->addColumn(tr("Required"),                 _dateColumn,    Qt::AlignCenter );
 
   if (!_metrics->boolean("MultiWhs"))
   {
@@ -229,8 +230,17 @@ void dspReservations::sFillList()
 
   if (_item->isValid())
   {
-    MetaSQLQuery mql = mqlLoad(":so/displays/Reservations/FillListDetail.mql");
+    XSqlQuery itemlocrsrv;
+    itemlocrsrv.prepare( "SELECT (formatLocationName(itemloc_location_id) || ' ' || "
+                         "       formatLotSerialNumber(itemloc_ls_id)) AS f_locationlot,"
+						 "       formatQty(itemlocrsrv_qty) AS f_reserved "
+                         "FROM itemlocrsrv JOIN itemloc ON (itemloc_id=itemlocrsrv_itemloc_id) "
+                         "WHERE ( (itemlocrsrv_source='SO')"
+					     "  AND   (itemlocrsrv_source_id=:source_id) ) "
+						 "ORDER BY formatLocationName(itemloc_location_id),"
+						 "         formatLotSerialNumber(itemloc_ls_id);" );
 
+    MetaSQLQuery mql = mqlLoad(":so/displays/Reservations/FillListDetail.mql");
 
     ParameterList params;
     params.append("warehous_id", _warehouse->id());
@@ -240,18 +250,38 @@ void dspReservations::sFillList()
 
     double runningBal = 0;
     XTreeWidgetItem *last = 0;
+    XTreeWidgetItem *document = 0;
 
     while (q.next())
     {
       runningBal += q.value("coitem_qtyreserved").toDouble();
 
-      last = new XTreeWidgetItem(_allocations, last,
-				 q.value("source_id").toInt(),
-				 q.value("order_number"),
-				 q.value("totalqty"),
-				 q.value("relievedqty"), q.value("balanceqty"),
-				 formatQty(runningBal), q.value("duedate") );
+      last = document = new XTreeWidgetItem(_allocations, last,
+				            q.value("source_id").toInt(),
+				            q.value("order_number"),
+				            q.value("totalqty"),
+				            q.value("relievedqty"), q.value("balanceqty"),
+				            formatQty(runningBal), q.value("duedate") );
       last->setTextColor(5, "red");
+
+      if(_metrics->boolean("EnableSOReservationsByLocation"))
+	  {
+        itemlocrsrv.bindValue(":source_id", q.value("source_id").toInt());
+	    itemlocrsrv.exec();
+	    if (itemlocrsrv.first())
+	    {
+	      do
+		  {
+            new XTreeWidgetItem( document,
+                                 -1,
+                                 itemlocrsrv.value("f_locationlot"),
+                                 "",
+                                 "", itemlocrsrv.value("f_reserved"),
+                                 "", "" );
+          }
+		  while (itemlocrsrv.next());
+        }
+	  }
     }
     if (q.lastError().type() != QSqlError::None)
     {

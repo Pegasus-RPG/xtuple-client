@@ -128,7 +128,7 @@ salesOrder::salesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_newCC, SIGNAL(clicked()), this, SLOT(sNewCreditCard()));
   connect(_orderNumber, SIGNAL(lostFocus()), this, SLOT(sHandleOrderNumber()));
   connect(_orderNumber, SIGNAL(textChanged(const QString&)), this, SLOT(sSetUserEnteredOrderNumber()));
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_save, SIGNAL(clicked()), this, SLOT(()));
   connect(_saveAndAdd, SIGNAL(clicked()), this, SLOT(sSaveAndAdd()));
   connect(_shippingCharges, SIGNAL(newID(int)), this, SLOT(sHandleShipchrg(int)));
   connect(_shipToAddr, SIGNAL(changed()),        this, SLOT(sConvertShipTo()));
@@ -1774,6 +1774,8 @@ void salesOrder::sAction()
           tr("The item cannot be Closed at this time as there is inventory at shipping.") );
         return;
       }
+      if(_metrics->boolean("EnableSOReservations"))
+        sUnreserveStock();
       q.prepare( "UPDATE coitem "
                  "SET coitem_status='C' "
                  "WHERE (coitem_id=:coitem_id);" );
@@ -1794,10 +1796,14 @@ void salesOrder::sDelete()
                               QMessageBox::Yes,
                               QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
     {
+      if(_metrics->boolean("EnableSOReservations"))
+        sUnreserveStock();
+		
       q.prepare( "DELETE FROM coitem "
                  "WHERE (coitem_id=:coitem_id);" );
       q.bindValue(":coitem_id", _soitem->id());
       q.exec();
+
       sFillItemList();
 
       if (_soitem->topLevelItemCount() == 0)
@@ -3667,21 +3673,30 @@ void salesOrder::sReserveLineBalance()
 
 void salesOrder::sUnreserveStock()
 {
-  q.prepare("UPDATE coitem SET coitem_qtyreserved=0 WHERE coitem_id=:soitem_id;");
+  q.prepare("SELECT unreserveSoLineQty(:soitem_id) AS result;");
   QList<QTreeWidgetItem*> selected = _soitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     q.bindValue(":soitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.first())
+    {
+      int result = q.value("result").toInt();
+      if (result < 0)
+      {
+        systemError(this, storedProcErrorLookup("unreservedSoLineQty", result) +
+                          tr("<br>Line Item %1").arg(selected[i]->text(0)),
+                    __FILE__, __LINE__);
+        return;
+      }
+    }
+    else if (q.lastError().type() != QSqlError::None)
     {
       systemError(this, tr("Line Item %1\n").arg(selected[i]->text(0)) +
                         q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
-
-  sFillItemList();
 }
 
 void salesOrder::sShowReservations()

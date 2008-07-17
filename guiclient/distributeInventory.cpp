@@ -326,6 +326,14 @@ void distributeInventory::populate()
     return;
   }
 
+//  Auto distribute location reservations
+  if ( (_metrics->boolean("EnableSOReservationsByLocation")) && (_mode == cIncludeLotSerial) )
+  {
+    q.prepare("SELECT distributeToReservedItemLoc(:itemlocdist_id) AS result;");
+    q.bindValue(":itemlocdist_id", _itemlocdistid);
+    q.exec();
+  }
+
   sFillList();
 }
 
@@ -390,8 +398,9 @@ void distributeInventory::sDefaultAndPost()
 void distributeInventory::sFillList()
 {
   q.prepare( "SELECT itemsite_id, "
-	     "       COALESCE(itemsite_location_id,-1) AS itemsite_location_id,"
-	     "       formatlotserialnumber(itemlocdist_ls_id) AS lotserial,"
+             "       COALESCE(itemsite_location_id,-1) AS itemsite_location_id,"
+             "       formatlotserialnumber(itemlocdist_ls_id) AS lotserial,"
+             "       (itemlocdist_order_type || ' ' || formatSoItemNumber(itemlocdist_order_id)) AS order,"
              "       (itemsite_controlmethod IN ('L', 'S')) AS lscontrol,"
              "       parent.itemlocdist_qty AS qtytodistribute,"
              "       ( ( SELECT COALESCE(SUM(child.itemlocdist_qty), 0)"
@@ -409,6 +418,7 @@ void distributeInventory::sFillList()
   {
     _item->setItemsiteid(q.value("itemsite_id").toInt());
     _lotSerial->setText(q.value("lotserial").toString());
+    _order->setText(q.value("order").toString());
     _qtyToDistribute->setText(formatNumber(q.value("qtytodistribute").toDouble(),6));
     _qtyTagged->setText(formatNumber(q.value("qtytagged").toDouble(),6));
     _qtyRemaining->setText(formatNumber(q.value("qtybalance").toDouble(),6));
@@ -448,10 +458,7 @@ void distributeInventory::sFillList()
 		 "       location_netable,"
 		 "       TEXT('') AS lotserial,"
 		 "       TEXT(<? value(\"na\") ?>) AS f_expiration, FALSE AS expired,"
-		 "       ( SELECT COALESCE(SUM(itemloc_qty), 0)"
-		 "         FROM itemloc "
-		 "         WHERE ( (itemloc_location_id=location_id)"
-		 "          AND (itemloc_itemsite_id=itemsite_id) ) ) AS qty,"
+		 "       qtyLocation(location_id, itemsite_id, itemlocdist_order_type, itemlocdist_order_id) AS qty,"
 		 "       itemlocdistQty(location_id, itemlocdist_id) AS qtytagged "
 		 "FROM itemlocdist, location, itemsite "
 		 "WHERE ( (itemlocdist_itemsite_id=itemsite_id)"
@@ -473,7 +480,7 @@ void distributeInventory::sFillList()
 		 "       CASE WHEN (itemsite_perishable) THEN (itemloc_expiration < CURRENT_DATE)"
 		 "            ELSE FALSE" 
 		 "       END AS expired,"
-		 "       itemloc_qty AS qty,"
+		 "       qtyLocation(itemloc_location_id, itemsite_id, itemlocdist_order_type, itemlocdist_order_id) AS qty,"
 		 "       ( SELECT COALESCE(SUM(target.itemlocdist_qty), 0)"
 		 "         FROM itemlocdist AS target"
 		 "         WHERE ( (target.itemlocdist_source_type='I')"
@@ -492,10 +499,7 @@ void distributeInventory::sFillList()
 		 "       location_netable,"
 		 "       TEXT('') AS lotserial,"
 		 "       TEXT(<? value(\"na\") ?>) AS f_expiration, FALSE AS expired,"
-		 "       ( SELECT COALESCE(SUM(itemloc_qty), 0)"
-		 "         FROM itemloc "
-		 "         WHERE ( (itemloc_location_id=location_id)"
-		 "          AND (itemloc_itemsite_id=itemsite_id) ) ) AS qty,"
+		 "       qtyLocation(location_id, itemsite_id, itemlocdist_order_type, itemlocdist_order_id) AS qty,"
 		 "       itemlocdistQty(location_id, itemlocdist_id) AS qtytagged "
 		 "FROM itemlocdist, location, itemsite "
 		 "WHERE ( (itemlocdist_itemsite_id=itemsite_id)"
