@@ -58,7 +58,6 @@
 #include "dspCustomerInformation.h"
 
 #include "xdialog.h"
-#include "xmainwindow.h"
 
 #include <QMenu>
 #include <QMessageBox>
@@ -84,7 +83,7 @@
 #include "salesOrder.h"
 
 dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
-    : QWidget(parent, fl)
+    : XMainWindow (parent, fl)
 {
   setupUi(this);
 
@@ -286,7 +285,6 @@ enum SetResponse dspCustomerInformation::set( const ParameterList & pParams )
 
   if(pParams.inList("modal"))
   {
-    disconnect(_close, SIGNAL(clicked()), this, SLOT(close()));
     disconnect(_creditMemo, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuCreditMemo(QMenu*)));
     disconnect(_invoice, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuInvoice(QMenu*)));
     disconnect(_order, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuSalesOrder(QMenu*)));
@@ -304,8 +302,6 @@ enum SetResponse dspCustomerInformation::set( const ParameterList & pParams )
     else
       disconnect(_invoice, SIGNAL(itemSelected(int)), _viewInvoice, SLOT(animateClick()));
     disconnect(_creditMemo, SIGNAL(itemSelected(int)), _viewCreditMemo, SLOT(animateClick()));
-
-    connect(_close, SIGNAL(clicked()), parentWidget(), SLOT(close()));
 
     _edit->hide();
     _editCreditMemo->hide();

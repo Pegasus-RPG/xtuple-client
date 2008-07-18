@@ -59,12 +59,13 @@
 #define DSPCUSTOMERINFORMATION_H
 
 #include "guiclient.h"
-#include <QWidget>
+#include "xmainwindow.h"
+#include <QStandardItemModel>
 #include <parameter.h>
 
 #include "ui_dspCustomerInformation.h"
 
-class dspCustomerInformation : public QWidget, public Ui::dspCustomerInformation
+class dspCustomerInformation : public XMainWindow, public Ui::dspCustomerInformation
 {
     Q_OBJECT
 
