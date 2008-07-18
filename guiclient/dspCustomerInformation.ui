@@ -15,8 +15,8 @@
   <widget class="QWidget" name="layoutWidget" >
    <property name="geometry" >
     <rect>
-     <x>9</x>
-     <y>9</y>
+     <x>10</x>
+     <y>10</y>
      <width>781</width>
      <height>699</height>
     </rect>
@@ -159,6 +159,17 @@
            <string>N/A</string>
           </property>
          </widget>
+        </item>
+        <item row="0" column="2" colspan="2" >
+         <layout class="QGridLayout" >
+          <item row="0" column="2" >
+           <widget class="QLabel" name="_place" >
+            <property name="text" >
+             <string/>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </item>
