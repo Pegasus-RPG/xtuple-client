@@ -414,7 +414,7 @@ void dspInventoryHistoryByItem::sFillList()
           child = new XTreeWidgetItem(parentItem,
 				      q.value("invhist_id").toInt(),
 				      q.value("invdetail_id").toInt(),
-				      "", "", "", "",
+				      "", "", "", "", "",
 				      q.value("locationname"), "",
 				      q.value("detailqty") );
 
