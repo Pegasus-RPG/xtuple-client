@@ -93,6 +93,16 @@ BOM::BOM(QWidget* parent, const char* name, Qt::WFlags fl)
   
   _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased | ItemLineEdit::cPlanning | ItemLineEdit::cJob);
   _batchSize->setValidator(omfgThis->qtyVal());
+  _requiredQtyPer->setValidator(omfgThis->qtyPerVal());
+  _nonPickNumber->setValidator(omfgThis->qtyVal());
+  _nonPickQtyPer->setValidator(omfgThis->qtyPerVal());
+  _pickNumber->setValidator(omfgThis->qtyVal());
+  _pickQtyPer->setValidator(omfgThis->qtyPerVal());
+  _totalNumber->setValidator(omfgThis->qtyVal());
+  _totalQtyPer->setValidator(omfgThis->qtyPerVal());
+  _currentStdCost->setValidator(omfgThis->costVal());
+  _currentActCost->setValidator(omfgThis->costVal());
+  _maxCost->setValidator(omfgThis->costVal());
   
   _bomitem->addColumn(tr("#"),            _seqColumn,   Qt::AlignCenter, true, "bomitem_seqnumber");
   _bomitem->addColumn(tr("Item Number"),  _itemColumn,  Qt::AlignLeft,   true, "item_number");
@@ -383,10 +393,7 @@ void BOM::sFillList(int pItemid, bool)
 {
   if (_item->isValid() && (pItemid == _item->id()))
   {
-    q.prepare( "SELECT bomhead_id, bomhead_docnum, bomhead_rev_id,"
-               "       bomhead_revision, bomhead_revisiondate,"
-               "       formatQty(bomhead_batchsize) AS f_batchsize,"
-               "       bomhead_requiredqtyper "
+    q.prepare( "SELECT * "
                "FROM bomhead "
                "WHERE ( (bomhead_item_id=:item_id) "
 			   "AND (bomhead_rev_id=:revision_id) );" );
@@ -398,11 +405,11 @@ void BOM::sFillList(int pItemid, bool)
       _documentNum->setText(q.value("bomhead_docnum"));
 	  _revision->setNumber(q.value("bomhead_revision").toString());
       _revisionDate->setDate(q.value("bomhead_revisiondate").toDate());
-      _batchSize->setText(q.value("f_batchsize"));
+      _batchSize->setDouble(q.value("bomhead_batchsize").toDouble());
       if(q.value("bomhead_requiredqtyper").toDouble()!=0)
       {
         _doRequireQtyPer->setChecked(true);
-        _requiredQtyPer->setText(q.value("bomhead_requiredqtyper").toString());
+        _requiredQtyPer->setDouble(q.value("bomhead_requiredqtyper").toDouble());
       }
       if (_revision->description() == "Inactive")
 	  {
@@ -504,14 +511,14 @@ void BOM::sFillList(int pItemid, bool)
       if (q.value("item_picklist").toBool())
       {
         foundPick = TRUE;
-        _pickNumber->setText(q.value("total").toString());
-        _pickQtyPer->setText(formatQtyPer(q.value("qtyper").toDouble()));
+        _pickNumber->setDouble(q.value("total").toDouble());
+        _pickQtyPer->setDouble(q.value("qtyper").toDouble());
       }
       else
       {
         foundNonPick = TRUE;
-        _nonPickNumber->setText(q.value("total").toString());
-        _nonPickQtyPer->setText(formatQtyPer(q.value("qtyper").toDouble()));
+        _nonPickNumber->setDouble(q.value("total").toDouble());
+        _nonPickQtyPer->setDouble(q.value("qtyper").toDouble());
       }
     }
     if (q.lastError().type() != QSqlError::None)
@@ -522,25 +529,25 @@ void BOM::sFillList(int pItemid, bool)
     
     if (!foundPick)
     {
-      _pickNumber->setText("0");
-      _pickQtyPer->setText(formatQty(0.0));
+      _pickNumber->setDouble(0);
+      _pickQtyPer->setDouble(0.0);
     }
     
     if (!foundNonPick)
     {
-      _nonPickNumber->setText("0");
-      _nonPickQtyPer->setText(formatQtyPer(0.0));
+      _nonPickNumber->setDouble(0);
+      _nonPickQtyPer->setDouble(0.0);
     }
     
-    _totalNumber->setText(QString("%1").arg(totalNumber));
-    _totalQtyPer->setText(formatQtyPer(totalQtyPer));
+    _totalNumber->setDouble(totalNumber);
+    _totalQtyPer->setDouble(totalQtyPer);
     _totalQtyPerCache = totalQtyPer;
     
     if (_privileges->check("ViewCosts"))
     {
       sql = "SELECT formatCost(p.item_maxcost) AS f_maxcost,"
-            "       formatCost(COALESCE(SUM(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper * (1 + bomitem_scrap)) * stdCost(c.item_id)))) AS f_stdcost,"
-            "       formatCost(COALESCE(SUM(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper * (1 + bomitem_scrap)) * ROUND(actCost(c.item_id),4)))) AS f_actcost "
+            "       COALESCE(SUM(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper * (1 + bomitem_scrap)) * stdCost(c.item_id))) AS stdcost,"
+            "       COALESCE(SUM(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper * (1 + bomitem_scrap)) * ROUND(actCost(c.item_id),4))) AS actcost "
             "FROM bomitem(<? value(\"item_id\") ?>,"
             "             <? value(\"revision_id\") ?>), item AS c, item AS p "
             "WHERE ( (bomitem_item_id=c.item_id)"
@@ -557,9 +564,9 @@ void BOM::sFillList(int pItemid, bool)
       q = costsmql.toQuery(params);
       if (q.first())
       {
-        _currentStdCost->setText(q.value("f_stdcost").toString());
-        _currentActCost->setText(q.value("f_actcost").toString());
-        _maxCost->setText(q.value("f_maxcost").toString());
+        _currentStdCost->setDouble(q.value("stdcost").toDouble());
+        _currentActCost->setDouble(q.value("actcost").toDouble());
+        _maxCost->setDouble(q.value("maxcost").toDouble());
       }
       if (q.lastError().type() != QSqlError::None)
       {
@@ -604,10 +611,10 @@ bool BOM::sCheckRequiredQtyPer()
   if(cView == _mode || !_doRequireQtyPer->isChecked())
     return true;
 
-  if(_requiredQtyPer->text().toDouble() != _totalQtyPerCache)
+  if(_requiredQtyPer->toDouble() != _totalQtyPerCache)
   {
     QMessageBox::warning( this, tr("Total Qty. Per Required"),
-      tr("A required total Qty. Per was specified but not met.\n "
+      tr("<p>A required total Qty. Per was specified but not met. "
          "Please correct the problem before continuing.") );
     return false;
   }

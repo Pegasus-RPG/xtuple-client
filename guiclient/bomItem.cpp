@@ -104,10 +104,11 @@ bomItem::bomItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _qtyPer->setValidator(omfgThis->qtyPerVal());
   _scrap->setValidator(omfgThis->scrapVal());
 
-  _bomitemsub->addColumn(tr("Rank"),        _whsColumn,  Qt::AlignCenter );
-  _bomitemsub->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft   );
-  _bomitemsub->addColumn(tr("Description"), -1,          Qt::AlignLeft   );
-  _bomitemsub->addColumn(tr("Ratio"),       _qtyColumn,  Qt::AlignRight  );
+  _bomitemsub->addColumn(tr("Rank"),        _whsColumn,  Qt::AlignCenter, true, "bomitemsub_rank");
+  _bomitemsub->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft,  true, "item_number");
+  _bomitemsub->addColumn(tr("Description"), -1,          Qt::AlignLeft,  true, 
+		  "item_descrip1");
+  _bomitemsub->addColumn(tr("Ratio"),       _qtyColumn,  Qt::AlignRight, true, "bomitemsub_uomratio");
 
   _item->setFocus();
   
@@ -636,8 +637,8 @@ void bomItem::sDeleteSubstitute()
 
 void bomItem::sFillSubstituteList()
 {
-  q.prepare( "SELECT bomitemsub_id, bomitemsub_rank, item_number, item_descrip1,"
-             "       formatRatio(bomitemsub_uomratio) "
+  q.prepare( "SELECT bomitemsub.*, item_number, item_descrip1,"
+             "       'ratio' AS bomitemsub_uomratio_xtnumericrole "
              "FROM bomitemsub, item "
              "WHERE ( (bomitemsub_item_id=item_id)"
              " AND (bomitemsub_bomitem_id=:bomitem_id) ) "

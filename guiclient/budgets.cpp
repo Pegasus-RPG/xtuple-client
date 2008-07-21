@@ -57,43 +57,34 @@
 
 #include "budgets.h"
 
-#include <QVariant>
 #include <QMessageBox>
-#include <QStatusBar>
+#include <QSqlError>
+#include <QVariant>
 
 #include <parameter.h>
 #include <openreports.h>
-#include "maintainBudget.h"
-#include "guiclient.h"
-#include "copyBudget.h"
 
-/*
- *  Constructs a budgets as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
+#include "copyBudget.h"
+#include "guiclient.h"
+#include "maintainBudget.h"
+#include "storedProcErrorLookup.h"
+
 budgets::budgets(QWidget* parent, const char* name, Qt::WFlags fl)
     : XMainWindow(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
-
-  // signals and slots connections
-  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-  connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
+  connect(_copy,   SIGNAL(clicked()), this, SLOT(sCopy()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-  connect(_copy, SIGNAL(clicked()), this, SLOT(sCopy()));
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_edit,   SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_new,    SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_print,  SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_view,   SIGNAL(clicked()), this, SLOT(sView()));
 
-  statusBar()->hide();
-  
-  
-  _budget->addColumn(tr("Start Date"),  _dateColumn, Qt::AlignLeft );
-  _budget->addColumn(tr("End Date"),    _dateColumn, Qt::AlignLeft );
-  _budget->addColumn(tr("Code"),        _itemColumn, Qt::AlignLeft );
-  _budget->addColumn(tr("Description"), -1,          Qt::AlignLeft );
+  _budget->addColumn(tr("Start Date"),_dateColumn, Qt::AlignLeft, true, "startdate");
+  _budget->addColumn(tr("End Date"),  _dateColumn, Qt::AlignLeft, true, "enddate");
+  _budget->addColumn(tr("Code"),      _itemColumn, Qt::AlignLeft, true, "budghead_name");
+  _budget->addColumn(tr("Description"),        -1, Qt::AlignLeft, true, "budghead_descrip");
 
   if (_privileges->check("MaintainBudgets"))
   {
@@ -113,18 +104,11 @@ budgets::budgets(QWidget* parent, const char* name, Qt::WFlags fl)
    sFillList();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 budgets::~budgets()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void budgets::languageChange()
 {
   retranslateUi(this);
@@ -132,9 +116,24 @@ void budgets::languageChange()
 
 void budgets::sDelete()
 {
-  q.prepare( "SELECT deleteBudget(:budghead_id);");
+  q.prepare( "SELECT deleteBudget(:budghead_id) AS result;");
   q.bindValue(":budghead_id", _budget->id());
   q.exec();
+  if (q.first())
+  {
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("deleteBudget", result),
+                  __FILE__, __LINE__);
+      return;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   sFillList();
 }
@@ -165,15 +164,22 @@ void budgets::sView()
 
 void budgets::sFillList()
 {
-  _budget->populate( "SELECT budghead_id, "
-                     "       formatDate(min(period_start)), formatDate(max(period_end)), "
-                     "       budghead_name, budghead_descrip,"
-                     "       min(period_start) AS sort_value "
-	             "  FROM budghead LEFT OUTER JOIN budgitem "
-                     "         JOIN period ON (budgitem_period_id=period_id) "
-                     "       ON (budgitem_budghead_id=budghead_id) "
-                     " GROUP BY budghead_id, budghead_name, budghead_descrip "
-	             " ORDER BY sort_value DESC, budghead_name;" );
+  q.prepare("SELECT budghead_id, "
+            "       MIN(period_start) AS startdate,"
+	    "       MAX(period_end) AS enddate,"
+            "       budghead_name, budghead_descrip "
+	    "  FROM budghead LEFT OUTER JOIN budgitem "
+            "         JOIN period ON (budgitem_period_id=period_id) "
+            "       ON (budgitem_budghead_id=budghead_id) "
+            " GROUP BY budghead_id, budghead_name, budghead_descrip "
+	    " ORDER BY startdate DESC, budghead_name;" );
+  q.exec();
+  _budget->populate(q);
+  if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void budgets::sNew()
@@ -207,4 +213,3 @@ void budgets::sCopy()
   if(newdlg.exec() == XDialog::Accepted)
     sFillList();
 }
-

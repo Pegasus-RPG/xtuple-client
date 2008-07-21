@@ -83,8 +83,8 @@ bankAccounts::bankAccounts(QWidget* parent, const char* name, Qt::WFlags fl)
   _bankaccnt->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft, true, "bankaccnt_name"  );
   _bankaccnt->addColumn(tr("Description"),          -1, Qt::AlignLeft, true, "bankaccnt_descrip"  );
   _bankaccnt->addColumn(tr("Type"),        _dateColumn, Qt::AlignCenter,true, "type");
-  _bankaccnt->addColumn(tr("A/P"),           _ynColumn, Qt::AlignCenter,true, "ap");
-  _bankaccnt->addColumn(tr("A/R"),           _ynColumn, Qt::AlignCenter,true, "ar");
+  _bankaccnt->addColumn(tr("A/P"),           _ynColumn, Qt::AlignCenter,true, "bankaccnt_ap");
+  _bankaccnt->addColumn(tr("A/R"),           _ynColumn, Qt::AlignCenter,true, "bankaccnt_ar");
   _bankaccnt->addColumn(tr("Currency"),_currencyColumn, Qt::AlignCenter,true, "currabbr");
 
   if (omfgThis->singleCurrency())
@@ -158,8 +158,7 @@ void bankAccounts::sFillList()
              "            WHEN (bankaccnt_type='C') THEN :cash"
              "            ELSE '?'"
              "       END AS type,"
-             "       formatBoolYN(bankaccnt_ap) AS ap,"
-	     "       formatBoolYN(bankaccnt_ar) AS ar, "
+             "       bankaccnt_ap, bankaccnt_ar, "
 	     "       currConcat(bankaccnt_curr_id) AS currabbr "
              "FROM bankaccnt "
              "ORDER BY bankaccnt_name;" );

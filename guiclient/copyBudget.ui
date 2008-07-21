@@ -10,7 +10,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Copy Bill of Operations</string>
+   <string>Copy Budget</string>
   </property>
   <layout class="QHBoxLayout" >
    <property name="margin" >
