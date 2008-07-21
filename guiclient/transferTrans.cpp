@@ -80,7 +80,7 @@ transferTrans::transferTrans(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _captive = FALSE;
 
-  _item->setType(ItemLineEdit::cActive);
+  _item->setType(ItemLineEdit::cLocationControlled | ItemLineEdit::cActive);
   _qty->setValidator(omfgThis->qtyVal());
 
   omfgThis->inputManager()->notify(cBCItem, this, _item, SLOT(setItemid(int)));
