@@ -65,6 +65,7 @@
 #include "distributeInventory.h"
 #include "inputManager.h"
 #include "storedProcErrorLookup.h"
+#include "warehouseCluster.h"
 
 transferTrans::transferTrans(QWidget* parent, const char* name, Qt::WFlags fl)
     : XMainWindow(parent, name, fl)
@@ -80,7 +81,9 @@ transferTrans::transferTrans(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _captive = FALSE;
 
-  _item->setType(ItemLineEdit::cLocationControlled | ItemLineEdit::cActive);
+  _item->setType(ItemLineEdit::cActive);
+  _fromWarehouse->setType(WComboBox::AllActiveInventory);
+  _toWarehouse->setType(WComboBox::AllActiveInventory);
   _qty->setValidator(omfgThis->qtyVal());
 
   omfgThis->inputManager()->notify(cBCItem, this, _item, SLOT(setItemid(int)));
