@@ -296,7 +296,7 @@ void dspInventoryHistoryByParameterList::sPrint()
 
 void dspInventoryHistoryByParameterList::sViewTransInfo()
 {
-  QString transType(((XTreeWidgetItem *)_invhist->currentItem())->text(2));
+  QString transType(((XTreeWidgetItem *)_invhist->currentItem())->text(3));
 
   ParameterList params;
   params.append("mode", "view");
