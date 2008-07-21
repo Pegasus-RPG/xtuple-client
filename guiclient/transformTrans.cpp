@@ -327,7 +327,8 @@ void transformTrans::sPopulateTarget(int /*pItemid*/)
              "FROM item, itemsite "
              "WHERE ((item_id=itemsite_item_id)"
              "  AND  (itemsite_item_id=:item_id)"
-             "  AND  (itemsite_warehous_id=:warehous_id));" );
+             "  AND  (itemsite_warehous_id=:warehous_id)"
+			 "  AND  (itemsite_controlmethod<>'N'));" );
   q.bindValue(":item_id",     _target->id());
   q.bindValue(":warehous_id", _warehouse->id());
   q.exec();
