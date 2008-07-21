@@ -79,7 +79,7 @@
 #include "lotSerialRegistration.h"
 
 crmaccount::crmaccount(QWidget* parent, Qt::WFlags fl)
-    : QWidget(parent, fl)
+    : XMainWindow(parent, fl)
 {
   setupUi(this);
 
@@ -362,6 +362,13 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
     }
   }
 
+  int scripted;
+  scripted = pParams.inList("scripted");
+  if(scripted)
+  {
+	  _tab->setCurrentIndex(4);
+  }
+  
   if(_metrics->value("CRMAccountNumberGeneration") == "A")
     _number->setEnabled(FALSE);
 

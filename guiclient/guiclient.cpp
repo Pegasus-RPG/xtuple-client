@@ -296,13 +296,16 @@ class OpenMFGCRMAcctInfoAction : public CRMAcctInfoAction
 	w = w->parentWidget();
       if (w && w->isModal())
       {
-	crmaccount::doDialog(w, params);
+      	params.append("modal");
+        crmaccount * newdlg = new crmaccount(w);
+        newdlg->set(params);
+        omfgThis->handleNewWindow(newdlg);
       }
       else
       {
-	crmaccount* newdlg = new crmaccount();
-	newdlg->set(params);
-	omfgThis->handleNewWindow(newdlg);
+	    crmaccount* newdlg = new crmaccount();
+	    newdlg->set(params);
+	    omfgThis->handleNewWindow(newdlg);
       }
     }
 };

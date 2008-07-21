@@ -81,6 +81,7 @@
 #include "printInvoice.h"
 #include "printSoForm.h"
 #include "salesOrder.h"
+#include "crmaccount.h"
 
 dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
     : XMainWindow (parent, fl)
