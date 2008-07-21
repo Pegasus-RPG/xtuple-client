@@ -80,7 +80,7 @@ class OPENMFGWIDGETS_EXPORT WComboBox : public XComboBox
     {
       All, AllActive, NonTransit,
       Shipping, Sold, Supply,
-      Transit
+      Transit, AllActiveInventory
     };
 
     WComboBoxTypes type();

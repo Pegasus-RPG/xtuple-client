@@ -159,9 +159,10 @@ void WComboBox::findItemsites(int pItemID)
                "<? elseif exists(\"nottransit\") ?>"
                "  AND (NOT warehous_transit)"
                "<? endif ?>"
-               "<? if exists(\"active\") ?>  AND (itemsite_active)  <? endif ?>"
-               "<? if exists(\"soldIS\") ?>  AND (itemsite_sold)    <? endif ?>"
-               "<? if exists(\"supplyIS\") ?>AND (itemsite_supply)  <? endif ?>"
+               "<? if exists(\"active\") ?>    AND (itemsite_active)  <? endif ?>"
+               "<? if exists(\"soldIS\") ?>    AND (itemsite_sold)    <? endif ?>"
+               "<? if exists(\"supplyIS\") ?>  AND (itemsite_supply)  <? endif ?>"
+               "<? if exists(\"inventory\") ?> AND (itemsite_controlmethod<>'N')  <? endif ?>"
                ") "
                "ORDER BY warehous_code;" );
     ParameterList isp;
@@ -171,6 +172,11 @@ void WComboBox::findItemsites(int pItemID)
     {
       case AllActive:
         isp.append("active");
+        break;
+
+      case AllActiveInventory:
+        isp.append("active");
+        isp.append("inventory");
         break;
 
       case NonTransit:
