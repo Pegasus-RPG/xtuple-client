@@ -260,13 +260,15 @@ void itemList::sFillList()
       if(!(_itemType & ItemLineEdit::cActive) && !_showInactive->isChecked())
         clauses << "(item_active)";
 
-      _itemType = ItemLineEdit::cUndefined;
-	  if (!_showInactive->isChecked())
-	    _itemType = (_itemType | ItemLineEdit::cActive);	
       if (_showMake->isChecked())
 	    _itemType = (_itemType | ItemLineEdit::cGeneralManufactured);
+      else if (_itemType & ItemLineEdit::cGeneralManufactured)
+	    _itemType = (_itemType ^ ItemLineEdit::cGeneralManufactured);
+	  
       if (_showBuy->isChecked())
 	    _itemType = (_itemType | ItemLineEdit::cGeneralPurchased);
+      else if (_itemType & ItemLineEdit::cGeneralPurchased)
+	    _itemType = (_itemType ^ ItemLineEdit::cGeneralPurchased);
 
       setCaption(buildItemLineEditTitle(_itemType, tr("Items")));
 
