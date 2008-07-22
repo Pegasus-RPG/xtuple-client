@@ -211,7 +211,7 @@ void workCenters::sFillList()
 {
   _wrkcnt->populate( "SELECT wrkcnt_id, warehous_code,"
                      "       wrkcnt_code, wrkcnt_descrip "
-                     "FROM wrkcnt, warehous "
+                     "FROM wrkcnt, site() "
                      "WHERE (wrkcnt_warehous_id=warehous_id) "
                      "ORDER BY wrkcnt_code" );
 }

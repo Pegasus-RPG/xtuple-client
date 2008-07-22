@@ -60,6 +60,9 @@
 #include <QMenu>
 #include <QMessageBox>
 
+#include <metasql.h>
+#include "mqlutil.h"
+
 #include "dspSalesOrderStatus.h"
 #include "dspShipmentsBySalesOrder.h"
 #include "returnAuthorization.h"
@@ -171,55 +174,30 @@ void dspSalesOrdersByCustomerPO::sFillList()
 
   if (_dates->allValid()) 
   {
-    QString sql( "SELECT cohead_id, cust_number, cust_name, cohead_number,"
-                 "       formatDate(cohead_orderdate),"
-                 "       formatDate(MIN(soitem.coitem_scheddate)),"
-                 "       CASE"
-                 "        WHEN ( (SELECT COUNT(*)"
-                 "                FROM coitem"
-                 "                WHERE ((coitem_status<>'X') AND (coitem_cohead_id=cohead_id))) = 0) THEN :noLines"
-                 "        WHEN ( ( (SELECT COUNT(*)"
-                 "                  FROM coitem"
-                 "                  WHERE ((coitem_status='C')"
-                 "                   AND (coitem_cohead_id=cohead_id))) > 0) AND"
-                 "               ( (SELECT COUNT(*)"
-                 "                  FROM coitem"
-                 "                  WHERE ((coitem_status NOT IN ('C','X'))"
-                 "                   AND (coitem_cohead_id=cohead_id))) = 0) ) THEN :closed"
-                 "        WHEN ( ( (SELECT COUNT(*)"
-                 "                  FROM coitem"
-                 "                  WHERE ((coitem_status='C')"
-                 "                   AND (coitem_cohead_id=cohead_id))) = 0) AND"
-                 "               ( (SELECT COUNT(*)"
-                 "                  FROM coitem"
-                 "                  WHERE ((coitem_status NOT IN ('C','X'))"
-                 "                   AND (coitem_cohead_id=cohead_id))) > 0) ) THEN :open"
-                 "        ELSE :partial"
-                 "       END,"
-                 "       cohead_shiptoname, cohead_custponumber "
-                 "FROM cohead, coitem as soitem, cust "
-                 "WHERE ((soitem.coitem_cohead_id=cohead_id)"
-                 " AND (cohead_cust_id=cust_id)"
-                 " AND (cohead_orderdate BETWEEN :startDate AND :endDate)" );
+    MetaSQLQuery mql = mqlLoad(":/so/displays/SalesOrders.mql");
+    ParameterList params;
+    _dates->appendValue(params);
+    params.append("noLines", tr("No Lines"));
+    params.append("closed", tr("Closed"));
+    params.append("open", tr("Open"));
+    params.append("partial", tr("Partial"));
+    params.append("poNumber", _poNumber->text());
 
-    sql += " AND (cohead_custponumber ~* :poNumber)";
-
-    sql += ") "
-           "GROUP BY cohead_id, cust_number, cust_name, cohead_number, cohead_orderdate,"
-           "         cohead_shiptoname, cohead_custponumber "
-           "ORDER BY cohead_number;";
-
-    q.prepare(sql);
-    _dates->bindValue(q);
-    q.bindValue(":noLines", tr("No Lines"));
-    q.bindValue(":closed", tr("Closed"));
-    q.bindValue(":open", tr("Open"));
-    q.bindValue(":partial", tr("Partial"));
-    q.bindValue(":poNumber", _poNumber->text());
-    q.exec();
-    _so->populate(q);
+    q = mql.toQuery(params);
+    XTreeWidgetItem *last = 0;
+    while (q.next())
+    {
+      last = new XTreeWidgetItem(_so, last,
+				 q.value("sohead_id").toInt(),
+				 q.value("cust_number"),
+				 q.value("cust_name"),
+				 q.value("sohead_number"),
+				 q.value("f_sohead_orderdate"),
+				 q.value("f_min_scheddate"),
+				 q.value("order_status"),
+				 q.value("sohead_shiptoname"),
+                 q.value("sohead_custponumber") );
+    }
   }
-  else
-    _so->clear();
 }
 

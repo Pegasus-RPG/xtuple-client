@@ -181,7 +181,7 @@ void whseCalendars::sFillList(int pId)
   _whsecal->populate("SELECT whsecal_id,"
                      "       COALESCE(warehous_code, 'Any'),"
                      "       whsecal_descrip "
-                     "  FROM whsecal LEFT OUTER JOIN warehous ON (whsecal_warehous_id=warehous_id)"
+                     "  FROM whsecal JOIN site() ON (whsecal_warehous_id=warehous_id)"
                      " ORDER BY warehous_code,"
                      "          whsecal_effective,"
                      "          whsecal_expires;", pId  );

@@ -167,7 +167,7 @@ void plannedSchedules::sFillList()
             "       pschhead_number,"
             "       pschhead_status,"
             "       pschhead_descrip "
-            "  FROM pschhead JOIN warehous ON (pschhead_warehous_id=warehous_id) "
+            "  FROM pschhead JOIN site() ON (pschhead_warehous_id=warehous_id) "
             " ORDER BY pschhead_start_date, pschhead_end_date, warehous_code, pschhead_number; ");
   q.exec();
   _list->populate(q);

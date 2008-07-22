@@ -61,6 +61,9 @@
 #include <QMessageBox>
 #include <QVariant>
 
+#include <metasql.h>
+#include "mqlutil.h"
+
 #include "dspSalesOrderStatus.h"
 #include "dspShipmentsBySalesOrder.h"
 #include "returnAuthorization.h"
@@ -207,65 +210,21 @@ void dspSalesOrdersByParameterList::sFillList()
   _so->clear();
   if (_dates->allValid()) 
   {
-    QString sql( "SELECT cust_id, cohead_id, cust_number, cohead_number,"
-                 "       formatDate(cohead_orderdate) AS f_orderdate,"
-                 "       formatDate(MIN(soitem.coitem_scheddate)) AS f_scheddate,"
-                 "       CASE"
-                 "        WHEN ( (SELECT COUNT(*)"
-                 "                FROM coitem"
-                 "                WHERE ((coitem_status<>'X') AND (coitem_cohead_id=cohead_id))) = 0) THEN :noLines"
-                 "        WHEN ( ( (SELECT COUNT(*)"
-                 "                  FROM coitem"
-                 "                  WHERE ((coitem_status='C')"
-                 "                   AND (coitem_cohead_id=cohead_id))) > 0) AND"
-                 "               ( (SELECT COUNT(*)"
-                 "                  FROM coitem"
-                 "                  WHERE ((coitem_status NOT IN ('C','X'))"
-                 "                   AND (coitem_cohead_id=cohead_id))) = 0) ) THEN :closed"
-                 "        WHEN ( ( (SELECT COUNT(*)"
-                 "                  FROM coitem"
-                 "                  WHERE ((coitem_status='C')"
-                 "                   AND (coitem_cohead_id=cohead_id))) = 0) AND"
-                 "               ( (SELECT COUNT(*)"
-                 "                  FROM coitem"
-                 "                  WHERE ((coitem_status NOT IN ('C','X'))"
-                 "                   AND (coitem_cohead_id=cohead_id))) > 0) ) THEN :open"
-                 "        ELSE :partial"
-                 "       END AS f_status,"
-                 "       cohead_shiptoname, cohead_custponumber "
-                 "FROM cohead, coitem as soitem, cust "
-                 "WHERE ( (cohead_cust_id=cust_id)"
-                 " AND (soitem.coitem_cohead_id=cohead_id)"
-                 " AND (cohead_orderdate BETWEEN :startDate AND :endDate)" );
+    MetaSQLQuery mql = mqlLoad(":/so/displays/SalesOrders.mql");
+    ParameterList params;
+    _dates->appendValue(params);
+    _parameter->appendValue(params);
+    params.append("noLines", tr("No Lines"));
+    params.append("closed", tr("Closed"));
+    params.append("open", tr("Open"));
+    params.append("partial", tr("Partial"));
+    params.append("orderByCust");
 
-    if (_parameter->isSelected())
-    {
-      if (_parameter->type() == CustomerType)
-        sql += " AND (cust_custtype_id=:custtype_id)";
-    }
-    else if (_parameter->isPattern())
-    {
-      if (_parameter->type() == CustomerType)
-        sql += " AND (cust_custtype_id IN (SELECT custtype_id FROM custtype WHERE (custtype_code ~ :custtype_pattern)))";
-    }
-
-    sql += ") "
-           "GROUP BY cust_id, cust_number, cohead_id, cohead_number, cohead_orderdate,"
-           "         cohead_shiptoname, cohead_custponumber "
-           "ORDER BY cust_number, cohead_number;";
-
-    q.prepare(sql);
-    _dates->bindValue(q);
-    _parameter->bindValue(q);
-    q.bindValue(":noLines", tr("No Lines"));
-    q.bindValue(":closed", tr("Closed"));
-    q.bindValue(":open", tr("Open"));
-    q.bindValue(":partial", tr("Partial"));
-    q.exec();
+    q = mql.toQuery(params);
     int custid = -1;
     XTreeWidgetItem *lastcust = 0;
     XTreeWidgetItem *lastorder = 0;
-    while(q.next())
+    while (q.next())
     {
       if(q.value("cust_id").toInt() != custid)
       {
@@ -274,10 +233,10 @@ void dspSalesOrdersByParameterList::sFillList()
         lastorder = 0;
       }
 
-      lastorder = new XTreeWidgetItem(lastcust, lastorder, custid, q.value("cohead_id").toInt(),
-                                "", q.value("cohead_number"), q.value("f_orderdate"),
-                                q.value("f_scheddate"), q.value("f_status"),
-                                q.value("cohead_shiptoname"), q.value("cohead_custponumber") );
+      lastorder = new XTreeWidgetItem(lastcust, lastorder, custid, q.value("sohead_id").toInt(),
+                                "", q.value("sohead_number"), q.value("f_sohead_orderdate"),
+                                q.value("f_min_scheddate"), q.value("order_status"),
+                                q.value("sohead_shiptoname"), q.value("sohead_custponumber") );
     }
   }
 }

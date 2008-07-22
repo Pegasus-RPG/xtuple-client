@@ -61,6 +61,9 @@
 #include <QMessageBox>
 #include <QVariant>
 
+#include <metasql.h>
+#include "mqlutil.h"
+
 #include "dspSalesOrderStatus.h"
 #include "dspShipmentsBySalesOrder.h"
 #include "returnAuthorization.h"
@@ -187,32 +190,29 @@ void dspSalesOrdersByItem::sDspShipments()
 
 void dspSalesOrdersByItem::sFillList()
 {
+  _so->clear();
   if ((_item->isValid()) && (_dates->allValid()))
   {
-    q.prepare( "SELECT cohead_id, cohead_number,"
-               "       formatDate(cohead_orderdate), "
-               "       cust_name,"
-               "       formatQty(coitem_qtyord),"
-               "       formatQty(coitem_qtyshipped),"
-               "       formatQty(coitem_qtyreturned),"
-               "       CASE WHEN (coitem_status='C') THEN :closed"
-               "            ELSE formatQty(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned))"
-               "       END "
-               "FROM cohead, coitem, itemsite, cust "
-               "WHERE ( (coitem_cohead_id=cohead_id)"
-               " AND (cohead_cust_id=cust_id)"
-               " AND (coitem_itemsite_id=itemsite_id)"
-               " AND (coitem_status<>'X')"
-               " AND (cohead_orderdate BETWEEN :startDate AND :endDate)"
-               " AND (itemsite_item_id=:item_id) ) "
-               "ORDER BY cohead_number;" );
-   _dates->bindValue(q);
-    q.bindValue(":closed", tr("Closed"));
-    q.bindValue(":item_id", _item->id());
-    q.exec();
-    _so->populate(q);
+    MetaSQLQuery mql = mqlLoad(":/so/displays/SalesOrderItems.mql");
+    ParameterList params;
+    _dates->appendValue(params);
+    params.append("closed", tr("Closed"));
+    params.append("item_id", _item->id());
+
+    q = mql.toQuery(params);
+    XTreeWidgetItem *last = 0;
+    while (q.next())
+    {
+      last = new XTreeWidgetItem(_so, last,
+				 q.value("sohead_id").toInt(),
+				 q.value("sohead_number"),
+				 q.value("f_sohead_orderdate"),
+				 q.value("cust_name"),
+				 q.value("f_soitem_qtyord"),
+				 q.value("f_soitem_qtyshipped"),
+				 q.value("f_soitem_qtyreturned"),
+                 q.value("f_soitem_balance") );
+    }
   }
-  else
-    _so->clear();
 }
 
