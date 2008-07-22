@@ -107,6 +107,7 @@ friend class ItemCluster;
       cGeneralManufactured = cManufactured | cPhantom | cBreeder,
       cGeneralPurchased    = cPurchased | cOutsideProcess,
       cGeneralComponents   = cManufactured | cPhantom | cCoProduct | cPurchased | cOutsideProcess,
+      cGeneralInventory    = cAllItemTypes_Mask ^ cReference ^ cJob,
 
       // Planning Systems
       cPlanningMRP         = 0x00100000,
