@@ -85,7 +85,8 @@ transformTrans::transformTrans(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _captive = FALSE;
 
-  _item->setType(ItemLineEdit::cActive);
+  _item->setType(ItemLineEdit::cGeneralInventory | ItemLineEdit::cActive);
+  _warehouse->setType(WComboBox::AllActiveInventory);
   _qty->setValidator(omfgThis->qtyVal());
 
   omfgThis->inputManager()->notify(cBCItem, this, _item, SLOT(setItemid(int)));
@@ -323,6 +324,9 @@ void transformTrans::sPost()
 
 void transformTrans::sPopulateTarget(int /*pItemid*/)
 {
+  if (!_item->isValid())
+    return;
+	
   q.prepare( "SELECT item_descrip1, item_descrip2, itemsite_qtyonhand "
              "FROM item, itemsite "
              "WHERE ((item_id=itemsite_item_id)"
@@ -366,6 +370,7 @@ void transformTrans::sFillList()
              "WHERE ( (itemtrans_target_item_id=item_id)"
              " AND (itemsite_item_id=item_id)"
              " AND (itemsite_warehous_id=:warehous_id)"
+			 " AND (itemsite_controlmethod<>'N')"
              " AND (itemtrans_source_item_id=:item_id) ) "
              "ORDER BY item_number;" );
   q.bindValue(":item_id", _item->id());

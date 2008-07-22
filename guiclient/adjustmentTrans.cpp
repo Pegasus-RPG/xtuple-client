@@ -85,7 +85,8 @@ adjustmentTrans::adjustmentTrans(QWidget* parent, Qt::WindowFlags fl)
 
   _captive = FALSE;
 
-  _item->setType(ItemLineEdit::cActive);
+  _item->setType(ItemLineEdit::cGeneralInventory | ItemLineEdit::cActive);
+  _warehouse->setType(WComboBox::AllActiveInventory);
   _qty->setValidator(omfgThis->transQtyVal());
 
   omfgThis->inputManager()->notify(cBCItem, this, _item, SLOT(setItemid(int)));

@@ -80,7 +80,8 @@ materialReceiptTrans::materialReceiptTrans(QWidget* parent, const char* name, Qt
 
   _captive = FALSE;
 
-  _item->setType(ItemLineEdit::cActive);
+  _item->setType(ItemLineEdit::cGeneralInventory | ItemLineEdit::cActive);
+  _warehouse->setType(WComboBox::AllActiveInventory);
   _qty->setValidator(omfgThis->qtyVal());
   _wo->setType(cWoOpen | cWoExploded | cWoReleased | cWoIssued);
 

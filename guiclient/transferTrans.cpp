@@ -81,7 +81,7 @@ transferTrans::transferTrans(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _captive = FALSE;
 
-  _item->setType(ItemLineEdit::cActive);
+  _item->setType(ItemLineEdit::cGeneralInventory | ItemLineEdit::cActive);
   _fromWarehouse->setType(WComboBox::AllActiveInventory);
   _toWarehouse->setType(WComboBox::AllActiveInventory);
   _qty->setValidator(omfgThis->qtyVal());

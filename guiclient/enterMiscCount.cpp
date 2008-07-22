@@ -81,6 +81,9 @@ enterMiscCount::enterMiscCount(QWidget* parent, const char* name, bool modal, Qt
     connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
     init();
     
+    _item->setType(ItemLineEdit::cGeneralInventory | ItemLineEdit::cActive);
+    _warehouse->setType(WComboBox::AllActiveInventory);
+
     //If not multi-warehouse hide whs control
     if (!_metrics->boolean("MultiWhs"))
     {
