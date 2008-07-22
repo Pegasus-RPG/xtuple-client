@@ -88,7 +88,7 @@ maintainShipping::maintainShipping(QWidget* parent, const char* name, Qt::WFlags
   _ship->addColumn(tr("Shipment #"),      _orderColumn, Qt::AlignLeft,  true, "shiphead_number");
   _ship->addColumn(tr("Order Type"),     _statusColumn, Qt::AlignLeft,  true, "ordertype");
   _ship->addColumn(tr("Order/Line #"),     _itemColumn, Qt::AlignRight, true, "linenumber");
-  _ship->addColumn(tr("Prnt'ed"),          _dateColumn, Qt::AlignCenter,true, "sfstatus");
+  _ship->addColumn(tr("Printed"),          _dateColumn, Qt::AlignCenter,true, "sfstatus");
   _ship->addColumn(tr("Cust./Item #"),     _itemColumn, Qt::AlignLeft,  true, "dest");
   _ship->addColumn(tr("Name/Description"), -1,          Qt::AlignLeft,  true, "description");
   _ship->addColumn(tr("Ship Via"),         _itemColumn, Qt::AlignLeft,  true, "shiphead_shipvia");
