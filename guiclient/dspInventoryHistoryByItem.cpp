@@ -83,6 +83,9 @@ dspInventoryHistoryByItem::dspInventoryHistoryByItem(QWidget* parent, const char
 
   (void)statusBar();
 
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
+  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
+
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_invhist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
