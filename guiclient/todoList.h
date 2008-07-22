@@ -81,6 +81,7 @@ class todoList : public XMainWindow, public Ui::todoList
     virtual void	sDelete();
     virtual void	sEdit();
     virtual void	sEditIncident();
+    virtual void	sCustomerInfo();
     virtual void	sFillList();
     virtual void	sHandleAutoUpdate(bool);
     virtual void	sMoveDown();

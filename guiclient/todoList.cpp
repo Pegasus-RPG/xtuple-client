@@ -66,6 +66,7 @@
 
 #include "todoItem.h"
 #include "incident.h"
+#include "dspCustomerInformation.h"
 #include "storedProcErrorLookup.h"
 
 #define ENABLEUP(Priv, I) (Priv && I->id() > 0 && \
@@ -138,6 +139,7 @@ todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
   _todoList->addColumn(tr("Status"),  _statusColumn,	Qt::AlignLeft,   true, "status");
   _todoList->addColumn(tr("Due Date"),	_dateColumn,	Qt::AlignLeft,   true, "due");
   _todoList->addColumn(tr("Incident"), _orderColumn,	Qt::AlignLeft,   true, "incdt");
+  _todoList->addColumn(tr("Customer"), _orderColumn,	Qt::AlignLeft,   true, "cust");
 
   if (_preferences->boolean("XCheckBox/forgetful"))
   {
@@ -195,6 +197,12 @@ void todoList::sPopulateMenu(QMenu *pMenu)
     menuItem = pMenu->insertItem(tr("View Incident"), this, SLOT(sViewIncident()), 0);
     pMenu->setItemEnabled(menuItem, _privileges->check("ViewIncidents") ||
 				    _privileges->check("MaintainIncidents"));
+  }
+
+  if (! _todoList->currentItem()->text(8).isEmpty())
+  {
+    menuItem = pMenu->insertItem(tr("Customer Workbench"), this, SLOT(sCustomerInfo()), 0);
+    pMenu->setItemEnabled(menuItem, _privileges->check("MaintainCustomerMasters"));
   }
 }
 
@@ -414,14 +422,15 @@ void todoList::sFillList()
 		"       todoitem_name AS name, "
 		"       firstLine(todoitem_description) AS descrip, "
 		"       todoitem_status AS status, todoitem_due_date AS due, "
-		"       usr_username AS usr, incdt_number AS incdt,"
+		"       usr_username AS usr, incdt_number AS incdt, cust_number AS cust, "
                 "       CASE WHEN (todoitem_status != 'C'AND "
                 "                  todoitem_due_date < CURRENT_DATE) THEN 'expired'"
                 "            WHEN (todoitem_status != 'C'AND "
                 "                  todoitem_due_date > CURRENT_DATE) THEN 'future'"
                 "       END AS due_qtforegroundrole "
-		"FROM usr, todoitem LEFT OUTER JOIN "
-		"     incdt ON (incdt_id=todoitem_incdt_id) "
+		"FROM usr, todoitem LEFT OUTER JOIN incdt ON (incdt_id=todoitem_incdt_id) "
+		"                   LEFT OUTER JOIN crmacct ON (crmacct_id=todoitem_crmacct_id) "
+		"                   LEFT OUTER JOIN cust ON (cust_id=crmacct_cust_id) "
 		"WHERE ( (todoitem_usr_id=usr_id)"
 		"  AND   (todoitem_due_date BETWEEN <? value(\"startDate\") ?> "
 		"                               AND <? value(\"endDate\") ?>) "
@@ -444,9 +453,11 @@ void todoList::sFillList()
 		"       incdt_summary AS name, "
 		"       firstLine(incdt_descrip) AS descrip, "
 		"       incdt_status AS status,  NULL AS due, "
-		"       incdt_assigned_username AS usr, incdt_number AS incdt,"
+		"       incdt_assigned_username AS usr, incdt_number AS incdt, cust_number AS cust, "
                 "       NULL AS due_qtforegroundrole "
 		"FROM incdt LEFT OUTER JOIN usr ON (usr_username=incdt_assigned_username)"
+		"           LEFT OUTER JOIN crmacct ON (crmacct_id=incdt_crmacct_id) "
+		"           LEFT OUTER JOIN cust ON (cust_id=crmacct_cust_id) "
 		"WHERE ((incdt_timestamp BETWEEN <? value(\"incdtStartDate\") ?>"
 		"                            AND <? value(\"incdtEndDate\") ?>)"
 		"  <? if not exists(\"completed\") ?> "
@@ -532,3 +543,24 @@ void todoList::sViewIncident()
 
   newdlg.exec();
 }
+
+void todoList::sCustomerInfo()
+{
+  XSqlQuery cust;
+  cust.prepare("SELECT cust_id FROM cust WHERE (cust_number=:number);");
+  cust.bindValue(":number", _todoList->currentItem()->text(8));
+  if (cust.exec() && cust.first())
+  {
+    ParameterList params;
+    params.append("cust_id", cust.value("cust_id").toInt());
+
+    dspCustomerInformation *newdlg = new dspCustomerInformation();
+    newdlg->set(params);
+    omfgThis->handleNewWindow(newdlg);
+  }
+  else if (cust.lastError().type() != QSqlError::None)
+    systemError(this, cust.lastError().databaseText(), __FILE__, __LINE__);
+
+}
+
+
