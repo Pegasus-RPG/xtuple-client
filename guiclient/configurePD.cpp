@@ -185,42 +185,44 @@ void configurePD::sSave()
   if (!_metrics->boolean("RevControl") && (_revControl->isChecked()))
   {
     if (QMessageBox::warning(this, tr("Enable Revision Control"),
-	  tr("Enabling revision control will create control records "
-	     "for products that contain revision number data.  This "
-		 "change can not be undone.  Do you wish to proceed?"),
-	    QMessageBox::Yes | QMessageBox::Default,
-	    QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
-	{
+      tr("Enabling revision control will create control records "
+         "for products that contain revision number data.  This "
+         "change can not be undone.  Do you wish to proceed?"),
+        QMessageBox::Yes | QMessageBox::Default,
+        QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
+    {
       _metrics->set("RevControl", TRUE);
-	  q.exec("SELECT createbomrev(bomhead_item_id,bomhead_revision) AS result "
-		      "FROM bomhead "
-		      "WHERE ((COALESCE(bomhead_revision,'') <> '') "
-			  "AND (bomhead_rev_id=-1))"
-			  "UNION "
-              "SELECT createboorev(boohead_item_id,boohead_revision) "
-		      "FROM boohead "
-			  "WHERE ((COALESCE(boohead_revision,'') <> '') "
-			  "AND (boohead_rev_id=-1));");
-	  if (q.first())
-	    if (q.value("result").toInt() < 0)
-	    {
-	      systemError(this, storedProcErrorLookup("CreateRevision", q.value("result").toInt()),
-			  __FILE__, __LINE__);
-         _metrics->set("RevControl", FALSE);
-	      return;
-	    }
-	  if (q.lastError().type() != QSqlError::None)
-	  {
-	    QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
-	      .arg(__FILE__)
-		  .arg(__LINE__),
-		  q.lastError().databaseText());
-		_metrics->set("RevControl", FALSE);
-	    return;
-	  }
-	}
-	else
-	  return;
+      
+      QString rsql = "SELECT createbomrev(bomhead_item_id,bomhead_revision) AS result "
+                     "  FROM bomhead "
+                     " WHERE((COALESCE(bomhead_revision,'') <> '') "
+                     "   AND (bomhead_rev_id=-1))";
+      if (_metrics->value("Application") == "OpenMFG")
+        rsql += " UNION "
+                "SELECT createboorev(boohead_item_id,boohead_revision) "
+                "  FROM boohead "
+                " WHERE((COALESCE(boohead_revision,'') <> '') "
+                "   AND (boohead_rev_id=-1));";
+      q.exec(rsql);
+      if (q.first() && (q.value("result").toInt() < 0))
+      {
+        systemError(this, storedProcErrorLookup("CreateRevision", q.value("result").toInt()),
+            __FILE__, __LINE__);
+        _metrics->set("RevControl", FALSE);
+        return;
+      }
+      if (q.lastError().type() != QSqlError::None)
+      {
+        QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
+          .arg(__FILE__)
+          .arg(__LINE__),
+          q.lastError().databaseText());
+        _metrics->set("RevControl", FALSE);
+        return;
+      }
+    }
+    else
+      return;
   }
 
   _metrics->set("TrackMachineOverhead", ((_machineOverhead->isChecked()) ? QString("M") : QString("G")));
