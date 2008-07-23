@@ -201,7 +201,12 @@ void dspCustomerARHistory::sFillList()
   if (!checkParameters())
     return;
 
-  q.prepare( "SELECT 1 AS type, aropen_id, -1 AS applyid,"
+  q.prepare( "SELECT type, aropen_id, applyid,"
+             "       sortdate, sortnumber,"
+			 "       docnumber, f_open, documenttype,"
+             "       f_docdate, f_duedate, f_amount, f_balance "
+			 "FROM ("
+			 "SELECT 1 AS type, aropen_id, -1 AS applyid,"
              "       aropen_docdate AS sortdate, aropen_docnumber AS sortnumber,"
              "       aropen_docnumber AS docnumber,"
              "       formatBoolYN(aropen_open) AS f_open,"
@@ -217,7 +222,7 @@ void dspCustomerARHistory::sFillList()
              "       formatMoney((aropen_amount - aropen_paid)) AS f_balance "
              "FROM aropen "
              "WHERE ( (aropen_cust_id=:cust_id)" 
-             " AND (aropen_duedate BETWEEN :startDate AND :endDate) ) "
+             " AND (aropen_docdate BETWEEN :startDate AND :endDate) ) "
 
              "UNION "
              "SELECT 2 AS type, aropen_id, arapply_source_aropen_id AS applyid,"
@@ -249,7 +254,7 @@ void dspCustomerARHistory::sFillList()
              " AND (arapply_target_aropen_id=aropen_id)"
              " AND (arapply_cust_id=:cust_id)"
              " AND (aropen_cust_id=:cust_id)"
-             " AND (aropen_duedate BETWEEN :startDate AND :endDate) ) "
+             " AND (aropen_docdate BETWEEN :startDate AND :endDate) ) "
 
              "UNION "
              "SELECT 3 AS type, aropen_id, arapply_target_aropen_id AS applyid,"
@@ -269,8 +274,8 @@ void dspCustomerARHistory::sFillList()
              " AND (arapply_source_aropen_id=aropen_id)"
              " AND (arapply_cust_id=:cust_id)"
              " AND (aropen_cust_id=:cust_id)"
-             " AND (aropen_duedate BETWEEN :startDate AND :endDate) ) "
-
+             " AND (aropen_docdate BETWEEN :startDate AND :endDate) ) "
+             " ) AS data "
              "ORDER BY sortdate, sortnumber, type;" );
 
   _dates->bindValue(q);
