@@ -725,20 +725,24 @@ void GUIClient::sTick()
       else if ( (_eventButton) && (_eventButton->isVisible()) )
         _eventButton->hide();
 
-      if (_metrics->value("Application") != "OpenMFG")
+      if ( (_metrics->value("Application") != "OpenMFG")
+        && (_metrics->value("Application") != "xTupleERP") )
       {
-        if (_registerButton)
-          _registerButton->setVisible(_metrics->value("Registered") != "Yes");
-        else
+        if(_metrics->value("Registered") != "Yes")
         {
-          _registerButton = new QPushButton(QIcon(":/images/dspRegister.png"), "", statusBar());
-          _registerButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-          _registerButton->setMinimumSize(QSize(32, 32));
-          _registerButton->setMaximumSize(QSize(32, 32));
-          statusBar()->setMinimumHeight(36);
-          statusBar()->addWidget(_registerButton);
-
-          connect(_registerButton, SIGNAL(clicked()), systemMenu, SLOT(sRegister()));
+          if (_registerButton)
+            _registerButton->setVisible(true);
+          else
+          {
+            _registerButton = new QPushButton(QIcon(":/images/dspRegister.png"), "", statusBar());
+            _registerButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+            _registerButton->setMinimumSize(QSize(32, 32));
+            _registerButton->setMaximumSize(QSize(32, 32));
+            statusBar()->setMinimumHeight(36);
+            statusBar()->addWidget(_registerButton);
+  
+            connect(_registerButton, SIGNAL(clicked()), systemMenu, SLOT(sRegister()));
+          }
         }
       }
     }
