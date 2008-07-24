@@ -64,6 +64,7 @@
 #include <xsqlquery.h>
 
 MetaSQLQuery mqlLoad(const QString &, bool * = 0);
+MetaSQLQuery mqlLoad(const QString &, const QString &, bool * = 0);
 QString mqlLastError();
 void mqlClearLastError();
 

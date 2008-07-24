@@ -86,3 +86,29 @@ MetaSQLQuery mqlLoad(const QString & name, bool * valid)
 
   return MetaSQLQuery(fsrc);
 }
+
+MetaSQLQuery mqlLoad(const QString & group, const QString & name, bool * valid)
+{
+  if(valid)
+    *valid = true;
+  QString fsrc = QString::null;
+  XSqlQuery qry;
+  QString sql;
+  sql = QString("SELECT metasql_query "
+              "FROM metasql "
+              "WHERE ((metasql_group='%1') "
+              "AND (metasql_name='%2'));").arg(group).arg(name);
+  qry.exec(sql);
+  if (qry.first())
+    fsrc = qry.value("metasql_query").toString();
+  else
+  {
+    _lastError = QString("Could not open query '%1': %2").arg(group).arg(name);
+    qDebug(_lastError);
+    if(valid)
+      *valid = false;
+  }
+
+  return MetaSQLQuery(fsrc);
+}
+
