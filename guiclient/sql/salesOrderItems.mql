@@ -8,11 +8,7 @@ SELECT cohead_id AS sohead_id,
        formatQty(coitem_qtyord) AS f_soitem_qtyord,
        formatQty(coitem_qtyshipped) AS f_soitem_qtyshipped,
        formatQty(coitem_qtyreturned) AS f_soitem_qtyreturned,
-       CASE WHEN (coitem_status='C') THEN <? if exists("closed") ?> <? value("closed") ?>
-                                          <? else ?> 'Closed'
-                                          <? endif ?>
-            ELSE formatQty(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned))
-       END AS f_soitem_balance
+       formatQty(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) AS f_soitem_balance
 FROM coitem JOIN cohead ON (cohead_id=coitem_cohead_id)
             JOIN cust ON (cust_id=cohead_cust_id)
             JOIN itemsite ON (itemsite_id=coitem_itemsite_id)

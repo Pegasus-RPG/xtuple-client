@@ -25,6 +25,8 @@
     <file alias="displays/SummarizedTaxableSales/FillListDetail.mql">dspSummarizedTaxableSalesFillList.mql</file>
     <file alias="displays/SalesOrders.mql">salesOrders.mql</file>
     <file alias="displays/SalesOrderItems.mql">salesOrderItems.mql</file>
+    <file alias="displays/Quotes.mql">quotes.mql</file>
+    <file alias="displays/QuoteItems.mql">quoteItems.mql</file>
   </qresource>
   <qresource prefix="po">
     <file alias="displays/POsByVendor/FillListDetail.mql">dspPOsByVendorFillList.mql</file>
