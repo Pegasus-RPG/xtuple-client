@@ -131,13 +131,13 @@ void ToLineEdit::setNumber(int pNumber)
                     "FROM tohead, toitem "
                     "WHERE ( (toitem_tohead_id=tohead_id)"
                     " AND (toitem_status NOT IN ('C','X'))"
-                    " AND (tohead_number=:tohead_number) );" );
+                    " AND (tohead_number=text(:tohead_number)) );" );
   else if (_type == cToClosed)
     tohead.prepare( "SELECT DISTINCT tohead_id "
                     "FROM tohead, toitem "
                     "WHERE ( (toitem_tohead_id=tohead_id)"
                     " AND (toitem_status='C')"
-                    " AND (tohead_number=:tohead_number) );" );
+                    " AND (tohead_number=text(:tohead_number)) );" );
   else if (_type == cToAtShipping)
     tohead.prepare( "SELECT DISTINCT tohead_id "
                     "FROM tohead, toitem, shiphead, shipitem "
@@ -146,13 +146,13 @@ void ToLineEdit::setNumber(int pNumber)
                     "  AND  (shipitem_orderitem_id=toitem_id)"
                     "  AND  (NOT shiphead_shipped)"
 		    "  AND  (shiphead_order_type='TO')"
-                    "  AND  (tohead_number=:tohead_number) );" );
+                    "  AND  (tohead_number=text(:tohead_number)) );" );
   else
     tohead.prepare( "SELECT tohead_id "
                     "FROM tohead "
-                    "WHERE (tohead_number=:tohead_number);" );
+                    "WHERE (tohead_number=text(:tohead_number));" );
 
-  tohead.bindValue(":tohead_number", pNumber);
+  tohead.bindValue(":tohead_number",pNumber);
   tohead.exec();
   if (tohead.first())
     setId(tohead.value("tohead_id").toInt());
