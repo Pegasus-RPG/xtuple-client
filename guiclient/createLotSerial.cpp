@@ -271,7 +271,7 @@ void createLotSerial::sAssign()
 		  "FROM itemlocdist,itemsite,ls "
 		  "WHERE ((itemlocdist_itemsite_id=:itemsite_id) "
                   "  AND (itemlocdist_itemsite_id=itemsite_id)"
-                  "  AND (itemsite_item_id=ls_item_id)"
+                  "  AND (itemlocdist_ls_id=ls_id)"
 		  "  AND (ls_number=:lotserial) "
 		  "  AND (itemlocdist_source_type='D'))) as data;");
     q.bindValue(":itemsite_id", _itemsiteid);
