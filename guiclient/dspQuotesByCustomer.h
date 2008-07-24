@@ -73,6 +73,7 @@ public:
     ~dspQuotesByCustomer();
 
     virtual void init();
+    virtual bool checkSitePrivs(int orderid);
 
 public slots:
     virtual void sPopulatePo();

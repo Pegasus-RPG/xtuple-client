@@ -57,6 +57,9 @@
 
 #include "dspQuotesByCustomer.h"
 
+#include <metasql.h>
+#include "mqlutil.h"
+
 #include <QVariant>
 #include <QStatusBar>
 #include <QWorkspace>
@@ -159,6 +162,9 @@ void dspQuotesByCustomer::sPopulateMenu(QMenu *menuThis)
 
 void dspQuotesByCustomer::sEditOrder()
 {
+  if (!checkSitePrivs(_so->id()))
+    return;
+    
   ParameterList params;
   params.append("mode", "editQuote");
   params.append("quhead_id", _so->id());
@@ -170,6 +176,9 @@ void dspQuotesByCustomer::sEditOrder()
 
 void dspQuotesByCustomer::sViewOrder()
 {
+  if (!checkSitePrivs(_so->id()))
+    return;
+    
   ParameterList params;
   params.append("mode", "viewQuote");
   params.append("quhead_id", _so->id());
@@ -181,35 +190,31 @@ void dspQuotesByCustomer::sViewOrder()
 
 void dspQuotesByCustomer::sFillList()
 {
+  _so->clear();
+
   if ( ( (_allPOs->isChecked()) ||
          ( (_selectedPO->isChecked()) && (_poNumber->currentItem() != -1) ) ) &&
        (_dates->allValid())  )
   {
-    QString sql( "SELECT quhead_id, quhead_number,"
-                 "       formatDate(quhead_quotedate),"
-                 "       quhead_shiptoname, quhead_custponumber "
-                 "FROM quhead, quitem as soitem "
-                 "WHERE ( (quhead_cust_id=:cust_id)"
-                 " AND (soitem.quitem_quhead_id=quhead_id)"
-                 " AND (quhead_quotedate BETWEEN :startDate AND :endDate)" );
-
+    MetaSQLQuery mql = mqlLoad(":/so/displays/Quotes.mql");
+    ParameterList params;
+    _dates->appendValue(params);
+    params.append("cust_id", _cust->id());
     if (_selectedPO->isChecked())
-      sql += " AND (quhead_custponumber=:poNumber)";
+      params.append("poNumber", _poNumber->currentText());
 
-    sql += ") "
-           "GROUP BY quhead_id, quhead_number, quhead_quotedate,"
-           "         quhead_shiptoname, quhead_custponumber "
-           "ORDER BY quhead_number;";
-
-    q.prepare(sql);
-    _dates->bindValue(q);
-    q.bindValue(":cust_id", _cust->id());
-    q.bindValue(":poNumber", _poNumber->currentText());
-    q.exec();
-    _so->populate(q);
+    q = mql.toQuery(params);
+    XTreeWidgetItem *last = 0;
+    while (q.next())
+    {
+      last = new XTreeWidgetItem(_so, last,
+				 q.value("quhead_id").toInt(),
+				 q.value("quhead_number"),
+				 q.value("f_quhead_quotedate"),
+				 q.value("quhead_shiptoname"),
+                 q.value("quhead_custponumber") );
+    }
   }
-  else
-    _so->clear();
 }
 
 void dspQuotesByCustomer::sConvert()
@@ -233,62 +238,65 @@ void dspQuotesByCustomer::sConvert()
     QList<QTreeWidgetItem*> selected = _so->selectedItems();
     for (int i = 0; i < selected.size(); i++)
     {
-      XTreeWidgetItem *cursor = (XTreeWidgetItem*)selected[i];
-      check.bindValue(":quhead_id", cursor->id());
-      check.exec();
-      if (check.first())
+      if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
       {
-	if ( (check.value("cust_creditstatus").toString() == "H") && (!_privileges->check("CreateSOForHoldCustomer")) )
-	{
-	  QMessageBox::warning( this, tr("Cannot Convert Quote"),
-				tr( "Quote #%1 is for a Customer that has been placed on a Credit Hold and you do not have\n"
+        XTreeWidgetItem *cursor = (XTreeWidgetItem*)selected[i];
+        check.bindValue(":quhead_id", cursor->id());
+        check.exec();
+        if (check.first())
+        {
+	      if ( (check.value("cust_creditstatus").toString() == "H") && (!_privileges->check("CreateSOForHoldCustomer")) )
+	      {
+	        QMessageBox::warning( this, tr("Cannot Convert Quote"),
+					tr( "Quote #%1 is for a Customer that has been placed on a Credit Hold and you do not have\n"
 				    "privilege to create Sales Orders for Customers on Credit Hold.  The selected\n"
 				    "Customer must be taken off of Credit Hold before you may create convert this Quote." )
 				.arg(check.value("quhead_number").toString()) );
-	  return;
-	}	
+	        return;
+	      }	
 
-	if ( (check.value("cust_creditstatus").toString() == "W") && (!_privileges->check("CreateSOForWarnCustomer")) )
-	{
-	  QMessageBox::warning( this, tr("Cannot Convert Quote"),
-				tr( "Quote #%1 is for a Customer that has been placed on a Credit Warning and you do not have\n"
+	      if ( (check.value("cust_creditstatus").toString() == "W") && (!_privileges->check("CreateSOForWarnCustomer")) )
+	      {
+	        QMessageBox::warning( this, tr("Cannot Convert Quote"),
+			    	tr( "Quote #%1 is for a Customer that has been placed on a Credit Warning and you do not have\n"
 				    "privilege to create Sales Orders for Customers on Credit Warning.  The selected\n"
 				    "Customer must be taken off of Credit Warning before you may create convert this Quote." )
 				.arg(check.value("quhead_number").toString()) );
-	  return;
-	}	
-      }
-      else
-      {
-	systemError( this, tr("A System Error occurred at %1::%2.")
+	        return;
+	      }	
+        }
+        else
+        {
+	      systemError( this, tr("A System Error occurred at %1::%2.")
 			   .arg(__FILE__)
 			   .arg(__LINE__) );
-	continue;
-      }
+	      continue;
+        }
 
-      convert.bindValue(":quhead_id", cursor->id());
-      convert.exec();
-      if (convert.first())
-      { 
-	soheadid = convert.value("sohead_id").toInt();
-	if(soheadid < 0)
-	{
-	  QMessageBox::warning( this, tr("Cannot Convert Quote"),
+        convert.bindValue(":quhead_id", cursor->id());
+        convert.exec();
+        if (convert.first())
+        { 
+	      soheadid = convert.value("sohead_id").toInt();
+	      if(soheadid < 0)
+	      {
+	        QMessageBox::warning( this, tr("Cannot Convert Quote"),
 				tr( "Quote #%1 has one or more line items without a warehouse specified.\n"
 				    "These line items must be fixed before you may convert this quote." )
 				.arg(check.value("quhead_number").toString()) );
-	  return;
-	}
-	counter++;
-	omfgThis->sSalesOrdersUpdated(soheadid);
-      }
-      else
-      {
-	systemError( this, tr("A System Error occurred at %1::%2.")
+	        return;
+	      }
+	      counter++;
+	      omfgThis->sSalesOrdersUpdated(soheadid);
+		}
+        else
+        {
+	      systemError( this, tr("A System Error occurred at %1::%2.")
 			   .arg(__FILE__)
 			   .arg(__LINE__) );
-	return;
-      }
+	      return;
+        }
+	  }
     }
 
     if (counter)
@@ -297,4 +305,25 @@ void dspQuotesByCustomer::sConvert()
     if (counter == 1)
       salesOrder::editSalesOrder(soheadid, true);
   }
+}
+
+bool dspQuotesByCustomer::checkSitePrivs(int orderid)
+{
+  if (_preferences->boolean("selectedSites"))
+  {
+    q.prepare("SELECT checkQuoteSitePrivs(:quheadid) AS result;");
+    q.bindValue(":quheadid", orderid);
+    q.exec();
+    if (q.first())
+    {
+	  if (!q.value("result").toBool())
+      {
+        QMessageBox::critical(this, tr("Access Denied"),
+									tr("You may not view, edit, or convert this Quote as it references "
+                                       "a warehouse for which you have not been granted privileges.")) ;
+        return false;
+      }
+    }
+  }
+  return true;
 }

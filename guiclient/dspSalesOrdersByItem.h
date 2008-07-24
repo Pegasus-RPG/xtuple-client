@@ -71,6 +71,7 @@ class dspSalesOrdersByItem : public XMainWindow, public Ui::dspSalesOrdersByItem
 public:
     dspSalesOrdersByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspSalesOrdersByItem();
+    virtual bool checkSitePrivs(int orderid);
 
 public slots:
     virtual SetResponse set(const ParameterList & pParams );

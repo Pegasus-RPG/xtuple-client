@@ -495,33 +495,18 @@ bool quotes::checkSitePrivs(int orderid)
 {
   if (_preferences->boolean("selectedSites"))
   {
-    QString sql("SELECT quhead_number "
-                "FROM quhead, quitem, itemsite "
-                "WHERE ((quitem_quhead_id=<? value(\"quhead_id\") ?>) "
-                "  AND (quitem_quhead_id=quhead_id) "
-                "  AND (quitem_itemsite_id=itemsite_id) "
-                "  AND (itemsite_warehous_id NOT IN ("
-                "       SELECT usrsite_warehous_id "
-                "       FROM usrsite "
-                "       WHERE (usrsite_username=current_user)))) "
-                "UNION "
-                "SELECT quhead_number "
-                "FROM quhead "
-                "WHERE ((quhead_id=<? value(\"quhead_id\") ?>) "
-                "  AND (quhead_warehous_id NOT IN ("
-                "       SELECT usrsite_warehous_id "
-                "       FROM usrsite "
-                "       WHERE (usrsite_username=current_user))));;");
-    MetaSQLQuery mql(sql);
-    ParameterList params;
-    params.append("quhead_id", orderid);
-    XSqlQuery chk = mql.toQuery(params);
-    if (chk.first())
+    q.prepare("SELECT checkQuoteSitePrivs(:quheadid) AS result;");
+    q.bindValue(":quheadid", orderid);
+    q.exec();
+    if (q.first())
     {
-      	    QMessageBox::critical(this, tr("Access Denied"),
-				  tr("You may not view, edit or convert Quote %1 as it references "
-                                     "a warehouse for which you have not been granted privileges.").arg(chk.value("quhead_number").toString())) ;
-            return false;
+	  if (!q.value("result").toBool())
+      {
+        QMessageBox::critical(this, tr("Access Denied"),
+									tr("You may not view, edit, or convert this Quote as it references "
+                                       "a warehouse for which you have not been granted privileges.")) ;
+        return false;
+      }
     }
   }
   return true;

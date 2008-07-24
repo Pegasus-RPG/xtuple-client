@@ -97,7 +97,8 @@ void postInvoices::sPost()
 {
   q.exec( "SELECT invchead_printed, COUNT(*) AS number "
           "FROM invchead "
-          "WHERE (NOT invchead_posted) "
+          "WHERE ( (NOT invchead_posted) "
+          "  AND   (checkInvoiceSitePrivs(invchead_id)) ) "
           "GROUP BY invchead_printed;" );
   if (q.first())
   {
@@ -137,7 +138,8 @@ void postInvoices::sPost()
 	 "         FROM invchead LEFT OUTER JOIN"
          "              invcitem ON (invcitem_invchead_id=invchead_id) LEFT OUTER JOIN"
 	 "              item ON (invcitem_item_id=item_id)  "
-	 "        WHERE(NOT invchead_posted) "
+	 "        WHERE ( (NOT invchead_posted) "
+     "          AND   (checkInvoiceSitePrivs(invchead_id)) ) "
 	 "        GROUP BY invchead_id, invchead_freight, invchead_tax, invchead_misc_amount "
 	 "       HAVING (COALESCE(SUM(round((invcitem_billed * invcitem_qty_invuomratio) * (invcitem_price /  "
 	 "     	     CASE WHEN (item_id IS NULL) THEN 1 "
@@ -218,7 +220,8 @@ void postInvoices::sPost()
 //  Check to see if any aropen items are available to post
     q.exec( "SELECT aropen_id "
             "FROM aropen "
-            "WHERE (NOT aropen_posted) "
+            "WHERE ( (NOT aropen_posted) "
+            "  AND   (checkInvoiceSitePrivs(invchead_id)) ) "
             "LIMIT 1;" );
     if (!q.first())
     {

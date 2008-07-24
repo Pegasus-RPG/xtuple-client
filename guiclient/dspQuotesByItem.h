@@ -73,6 +73,7 @@ public:
     ~dspQuotesByItem();
 
     virtual void init();
+    virtual bool checkSitePrivs(int orderid);
 
 public slots:
     virtual SetResponse set( ParameterList & pParams );

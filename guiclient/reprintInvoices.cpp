@@ -128,7 +128,8 @@ void reprintInvoices::sQuery()
                "       invchead_invcnumber, formatDate(invchead_invcdate),"
                "       (TEXT(cust_number) || ' - ' || cust_name) "
                "  FROM invchead, cust "
-               " WHERE ( (invchead_cust_id=cust_id)" );
+               " WHERE ( (invchead_cust_id=cust_id)"
+               "   AND   (checkInvoiceSitePrivs(invchead_id))" );
 
   if(_dates->allValid())
     sql +=     "   AND   (invchead_invcdate BETWEEN :startDate AND :endDate) ";

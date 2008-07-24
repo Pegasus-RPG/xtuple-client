@@ -145,14 +145,17 @@ void unpostedInvoices::sEdit()
 {
   QList<QTreeWidgetItem *> selected = _invchead->selectedItems();
   for (int i = 0; i < selected.size(); i++)
-      invoice::editInvoice(((XTreeWidgetItem*)(selected[i]))->id());
+      if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
+        invoice::editInvoice(((XTreeWidgetItem*)(selected[i]))->id());
+      
 }
 
 void unpostedInvoices::sView()
 {
   QList<QTreeWidgetItem *> selected = _invchead->selectedItems();
   for (int i = 0; i < selected.size(); i++)
-      invoice::viewInvoice(((XTreeWidgetItem*)(selected[i]))->id());
+      if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
+        invoice::viewInvoice(((XTreeWidgetItem*)(selected[i]))->id());
 }
 
 void unpostedInvoices::sDelete()
@@ -167,21 +170,24 @@ void unpostedInvoices::sDelete()
     QList<QTreeWidgetItem *> selected = _invchead->selectedItems();
     for (int i = 0; i < selected.size(); i++)
     {
-      q.bindValue(":invchead_id", ((XTreeWidgetItem*)(selected[i]))->id());
-      q.exec();
-      if (q.first())
-      {
-	int result = q.value("result").toInt();
-	if (result < 0)
-	{
-	  systemError(this, storedProcErrorLookup("deleteInvoice", result),
-		      __FILE__, __LINE__);
-	}
+      if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
+	  {
+        q.bindValue(":invchead_id", ((XTreeWidgetItem*)(selected[i]))->id());
+        q.exec();
+        if (q.first())
+        {
+	      int result = q.value("result").toInt();
+	      if (result < 0)
+	      {
+	        systemError(this, storedProcErrorLookup("deleteInvoice", result),
+		            __FILE__, __LINE__);
+	      }
+        }
+        else if (q.lastError().type() != QSqlError::None)
+	      systemError(this,
+		          tr("Error deleting Invoice %1\n").arg(selected[i]->text(0)) +
+		          q.lastError().databaseText(), __FILE__, __LINE__);
       }
-      else if (q.lastError().type() != QSqlError::None)
-	systemError(this,
-		    tr("Error deleting Invoice %1\n").arg(selected[i]->text(0)) +
-		    q.lastError().databaseText(), __FILE__, __LINE__);
     }
 
     omfgThis->sInvoicesUpdated(-1, TRUE);
@@ -196,18 +202,21 @@ void unpostedInvoices::sPrint()
 
   for (int i = 0; i < selected.size(); i++)
   {
-    ParameterList params;
-    params.append("invchead_id", ((XTreeWidgetItem*)(selected[i]))->id());
-    params.append("persistentPrint");
+    if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
+	{
+      ParameterList params;
+      params.append("invchead_id", ((XTreeWidgetItem*)(selected[i]))->id());
+      params.append("persistentPrint");
 
-    newdlg.set(params);
+      newdlg.set(params);
 
-    if (!newdlg.isSetup())
-    {
-      if(newdlg.exec() == QDialog::Rejected)
-        break;
-      newdlg.setSetup(TRUE);
-    }
+      if (!newdlg.isSetup())
+      {
+        if(newdlg.exec() == QDialog::Rejected)
+          break;
+        newdlg.setSetup(TRUE);
+      }
+	}
   }
 
   omfgThis->sInvoicesUpdated(-1, TRUE);
@@ -280,99 +289,105 @@ void unpostedInvoices::sPost()
 
   for (int i = 0; i < selected.size(); i++)
   {
-    int id = ((XTreeWidgetItem*)(selected[i]))->id();
+    if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
+	{
+      int id = ((XTreeWidgetItem*)(selected[i]))->id();
 
-    if (changeDate)
-    {
-      setDate.bindValue(":distdate",    newDate);
-      setDate.bindValue(":invchead_id", id);
-      setDate.exec();
-      if (setDate.lastError().type() != QSqlError::None)
+      if (changeDate)
       {
-	systemError(this, setDate.lastError().databaseText(), __FILE__, __LINE__);
+        setDate.bindValue(":distdate",    newDate);
+        setDate.bindValue(":invchead_id", id);
+        setDate.exec();
+        if (setDate.lastError().type() != QSqlError::None)
+        {
+	      systemError(this, setDate.lastError().databaseText(), __FILE__, __LINE__);
+        }
       }
-    }
+	}
   }
 
   bool tryagain = false;
   do {
     for (int i = 0; i < selected.size(); i++)
     {
-      int id = ((XTreeWidgetItem*)(selected[i]))->id();
+      if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
+	  {
+        int id = ((XTreeWidgetItem*)(selected[i]))->id();
 
-      sum.bindValue(":invchead_id", id);
-      if (sum.exec() && sum.first() && sum.value("subtotal").toDouble() == 0)
-      {
-	if (QMessageBox::question(this, tr("Invoice Has Value 0"),
-				  tr("Invoice #%1 has a total value of 0.\n"
-				     "Would you like to post it anyway?")
+        sum.bindValue(":invchead_id", id);
+        if (sum.exec() && sum.first() && sum.value("subtotal").toDouble() == 0)
+        {
+	      if (QMessageBox::question(this, tr("Invoice Has Value 0"),
+		      		  tr("Invoice #%1 has a total value of 0.\n"
+			     	     "Would you like to post it anyway?")
 				    .arg(selected[i]->text(0)),
 				  QMessageBox::Yes,
 				  QMessageBox::No | QMessageBox::Default)
 	      == QMessageBox::No)
-	  continue;
-      }
-      else if (sum.lastError().type() != QSqlError::NoError)
-      {
-	systemError(this, sum.lastError().databaseText(), __FILE__, __LINE__);
-	continue;
-      }
-      else if (sum.value("subtotal").toDouble() != 0)
-      {
-	xrate.bindValue(":invchead_id", id);
-	xrate.exec();
-	if (xrate.lastError().type() != QSqlError::NoError)
-	{
-	  systemError(this, tr("System Error posting Invoice #%1\n%2")
-			      .arg(selected[i]->text(0))
-			      .arg(xrate.lastError().databaseText()),
-		      __FILE__, __LINE__);
-	  continue;
-	}
-	else if (!xrate.first() || xrate.value("curr_rate").isNull())
-	{
-	  systemError(this, tr("Could not post Invoice #%1 because of a missing exchange rate.")
-			      .arg(selected[i]->text(0)));
-	  continue;
-	}
-      }
+	        continue;
+        }
+        else if (sum.lastError().type() != QSqlError::NoError)
+        {
+	      systemError(this, sum.lastError().databaseText(), __FILE__, __LINE__);
+	      continue;
+        }
+        else if (sum.value("subtotal").toDouble() != 0)
+        {
+	      xrate.bindValue(":invchead_id", id);
+	      xrate.exec();
+	      if (xrate.lastError().type() != QSqlError::NoError)
+	      {
+	        systemError(this, tr("System Error posting Invoice #%1\n%2")
+			            .arg(selected[i]->text(0))
+			            .arg(xrate.lastError().databaseText()),
+		                __FILE__, __LINE__);
+	        continue;
+	      }
+	      else if (!xrate.first() || xrate.value("curr_rate").isNull())
+	      {
+	        systemError(this, tr("Could not post Invoice #%1 because of a missing exchange rate.")
+						.arg(selected[i]->text(0)));
+	        continue;
+	      }
+        }
 
-      post.bindValue(":invchead_id", id);
-      post.bindValue(":journal",     journal);
-      post.exec();
-      if (post.first())
-      {
-	int result = post.value("result").toInt();
-	if (result < 0)
-	  systemError(this, storedProcErrorLookup("postInvoice", result),
-		      __FILE__, __LINE__);
-      }
-      // contains() string is hard-coded in stored procedure
-      else if (post.lastError().databaseText().contains("post to closed period"))
-      {
-	if (changeDate)
-	{
-	  triedToClosed = selected;
-	  break;
-	}
-	else
-	  triedToClosed.append(selected[i]);
+        post.bindValue(":invchead_id", id);
+        post.bindValue(":journal",     journal);
+        post.exec();
+        if (post.first())
+        {
+	      int result = post.value("result").toInt();
+	      if (result < 0)
+	        systemError(this, storedProcErrorLookup("postInvoice", result),
+		            __FILE__, __LINE__);
+        }
+        // contains() string is hard-coded in stored procedure
+        else if (post.lastError().databaseText().contains("post to closed period"))
+        {
+	    if (changeDate)
+	    {
+	      triedToClosed = selected;
+	      break;
+	    }
+	    else
+	      triedToClosed.append(selected[i]);
       }
       else if (post.lastError().type() != QSqlError::None)
-	systemError(this, tr("A System Error occurred posting Invoice #%1.\n%2")
-			    .arg(selected[i]->text(0))
-			    .arg(post.lastError().databaseText()),
-		    __FILE__, __LINE__);
+	    systemError(this, tr("A System Error occurred posting Invoice #%1.\n%2")
+	    	    .arg(selected[i]->text(0))
+	     		.arg(post.lastError().databaseText()),
+		        __FILE__, __LINE__);
     }
 
-    if (triedToClosed.size() > 0)
-    {
-      failedPostList newdlg(this, "", true);
-      newdlg.sSetList(triedToClosed, _invchead->headerItem(), _invchead->header());
-      tryagain = (newdlg.exec() == XDialog::Accepted);
-      selected = triedToClosed;
-      triedToClosed.clear();
-    }
+      if (triedToClosed.size() > 0)
+      {
+        failedPostList newdlg(this, "", true);
+        newdlg.sSetList(triedToClosed, _invchead->headerItem(), _invchead->header());
+        tryagain = (newdlg.exec() == XDialog::Accepted);
+        selected = triedToClosed;
+        triedToClosed.clear();
+      }
+	}
   } while (tryagain);
 
   if (_printJournal->isChecked())
@@ -430,7 +445,11 @@ void unpostedInvoices::sFillList()
             "       formatBoolYN(invchead_recurring) AS invchead_recurring "
 	    "FROM invchead, cust "
 	    "WHERE ( (invchead_cust_id=cust_id)"
-	    " AND (NOT(invchead_posted)) ) "
+	    "  AND   (NOT(invchead_posted))"
+		"  AND   ((SELECT COUNT(*)"
+		"          FROM invcitem, site()"
+		"          WHERE ( (invcitem_invchead_id=invchead_id)"
+		"            AND   ((warehous_id=invcitem_warehous_id) OR (invcitem_warehous_id=-1)) )) > 0) ) "
 	    "ORDER BY invchead_invcnumber;" );
   fill.exec();
   _invchead->populate(fill);
@@ -439,4 +458,25 @@ void unpostedInvoices::sFillList()
     systemError(this, fill.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+}
+
+bool unpostedInvoices::checkSitePrivs(int invcid)
+{
+  if (_preferences->boolean("selectedSites"))
+  {
+    q.prepare("SELECT checkInvoiceSitePrivs(:invcheadid) AS result;");
+    q.bindValue(":invcheadid", invcid);
+    q.exec();
+    if (q.first())
+    {
+	  if (!q.value("result").toBool())
+      {
+        QMessageBox::critical(this, tr("Access Denied"),
+									tr("You may not view or edit this Invoice as it references "
+                                       "a warehouse for which you have not been granted privileges.")) ;
+        return false;
+      }
+    }
+  }
+  return true;
 }

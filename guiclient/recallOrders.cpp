@@ -97,6 +97,9 @@ void recallOrders::languageChange()
 
 void recallOrders::sRecall()
 {
+  if (!checkSitePrivs(_ship->id()))
+    return;
+    
   q.prepare("SELECT recallShipment(:shiphead_id) AS result;");
   q.bindValue(":shiphead_id", _ship->id());
   q.exec();
@@ -131,9 +134,11 @@ void recallOrders::sFillList()
 		"       formatDate(shiphead_shipdate) AS shiphead_shipdate, "
 		"       cohead_number, shiphead_number, cohead_billtoname, "
 		"       formatBoolYN(shipitem_invoiced) "
-	        "FROM shiphead, shipitem, coitem, cohead, cust "
+	        "FROM shiphead, shipitem, coitem, cohead, cust, itemsite, site() "
 	        "WHERE ((shipitem_shiphead_id=shiphead_id)"
 	        " AND (shipitem_orderitem_id=coitem_id)"
+			" AND (itemsite_id=coitem_itemsite_id)"
+			" AND (warehous_id=itemsite_warehous_id)"
 	        " AND (coitem_cohead_id=cohead_id)"
 	        " AND (cohead_cust_id=cust_id)"
 	        " AND (shiphead_shipped)"
@@ -164,4 +169,25 @@ void recallOrders::sFillList()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+}
+
+bool recallOrders::checkSitePrivs(int orderid)
+{
+  if (_preferences->boolean("selectedSites"))
+  {
+    q.prepare("SELECT checkShipmentSitePrivs(:shipheadid) AS result;");
+    q.bindValue(":shipheadid", orderid);
+    q.exec();
+    if (q.first())
+    {
+	  if (!q.value("result").toBool())
+      {
+        QMessageBox::critical(this, tr("Access Denied"),
+									tr("You may not recall this Shipment as it references "
+                                       "a warehouse for which you have not been granted privileges.")) ;
+        return false;
+      }
+    }
+  }
+  return true;
 }

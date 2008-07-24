@@ -57,8 +57,12 @@
 
 #include "dspQuotesByItem.h"
 
+#include <metasql.h>
+#include "mqlutil.h"
+
 #include <QVariant>
 #include <QStatusBar>
+#include <QMessageBox>
 #include <QWorkspace>
 #include "salesOrder.h"
 
@@ -149,6 +153,9 @@ void dspQuotesByItem::sPopulateMenu(QMenu *menuThis)
 
 void dspQuotesByItem::sEditOrder()
 {
+  if (!checkSitePrivs(_so->id()))
+    return;
+    
   ParameterList params;
   params.append("mode", "editQuote");
   params.append("quhead_id", _so->id());
@@ -160,6 +167,9 @@ void dspQuotesByItem::sEditOrder()
 
 void dspQuotesByItem::sViewOrder()
 {
+  if (!checkSitePrivs(_so->id()))
+    return;
+    
   ParameterList params;
   params.append("mode", "viewQuote");
   params.append("quhead_id", _so->id());
@@ -171,24 +181,47 @@ void dspQuotesByItem::sViewOrder()
 
 void dspQuotesByItem::sFillList()
 {
+  _so->clear();
+
   if ((_item->isValid()) && (_dates->allValid()))
   {
-    q.prepare( "SELECT quhead_id, quhead_number,"
-               "       formatDate(quhead_quotedate), "
-               "       cust_name,"
-               "       formatQty(quitem_qtyord)"
-               "FROM quhead, quitem, cust "
-               "WHERE ( (quitem_quhead_id=quhead_id)"
-               " AND (quhead_cust_id=cust_id)"
-               " AND (quhead_quotedate BETWEEN :startDate AND :endDate)"
-               " AND (quitem_item_id=:item_id) ) "
-               "ORDER BY quhead_number;" );
-   _dates->bindValue(q);
-    q.bindValue(":item_id", _item->id());
-    q.exec();
-    _so->populate(q);
+    MetaSQLQuery mql = mqlLoad(":/so/displays/QuoteItems.mql");
+    ParameterList params;
+    _dates->appendValue(params);
+    params.append("item_id", _item->id());
+
+    q = mql.toQuery(params);
+    XTreeWidgetItem *last = 0;
+    while (q.next())
+    {
+      last = new XTreeWidgetItem(_so, last,
+				 q.value("quhead_id").toInt(),
+				 q.value("quhead_number"),
+				 q.value("f_quhead_quotedate"),
+				 q.value("cust_name"),
+				 q.value("f_quitem_qtyord") );
+    }
   }
-  else
-    _so->clear();
+}
+
+bool dspQuotesByItem::checkSitePrivs(int orderid)
+{
+  if (_preferences->boolean("selectedSites"))
+  {
+    q.prepare("SELECT checkQuoteSitePrivs(:quheadid) AS result;");
+    q.bindValue(":quheadid", orderid);
+    q.exec();
+    if (q.first())
+    {
+	  if (!q.value("result").toBool())
+      {
+        QMessageBox::critical(this, tr("Access Denied"),
+									tr("You may not view, edit, or convert this Quote as it references "
+                                       "a warehouse for which you have not been granted privileges.")) ;
+        return false;
+      }
+    }
+  }
+  return true;
 }
 

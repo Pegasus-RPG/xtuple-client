@@ -69,6 +69,7 @@ class recallOrders : public XMainWindow, public Ui::recallOrders
 public:
     recallOrders(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~recallOrders();
+    virtual bool checkSitePrivs(int orderid);
 
 public slots:
     virtual void sRecall();

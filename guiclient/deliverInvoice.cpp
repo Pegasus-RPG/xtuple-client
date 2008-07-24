@@ -110,7 +110,8 @@ void deliverInvoice::init()
                       "       invchead_invcnumber, formatDate(invchead_invcdate),"
                       "       (TEXT(cust_number) || ' - ' || cust_name) "
                       "FROM invchead, cust "
-                      "WHERE (invchead_cust_id=cust_id) "
+                      "WHERE ( (invchead_cust_id=cust_id) "
+                      "  AND   (checkInvoiceSitePrivs(invchead_id)) ) "
                       "ORDER BY invchead_invcdate DESC;", TRUE );
 
   q.exec( "SELECT usr_email "

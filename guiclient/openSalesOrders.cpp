@@ -478,33 +478,18 @@ bool openSalesOrders::checkSitePrivs()
 {
   if (_preferences->boolean("selectedSites"))
   {
-    qDebug("In");
-    QString sql("SELECT coitem_id "
-                "FROM coitem, itemsite "
-                "WHERE ((coitem_cohead_id=<? value(\"sohead_id\") ?>) "
-                "  AND (coitem_itemsite_id=itemsite_id) "
-                "  AND (itemsite_warehous_id NOT IN ("
-                "       SELECT usrsite_warehous_id "
-                "       FROM usrsite "
-                "       WHERE (usrsite_username=current_user)))) "
-                "UNION "
-                "SELECT cohead_warehous_id "
-                "FROM cohead "
-                "WHERE ((cohead_id=<? value(\"sohead_id\") ?>) "
-                "  AND (cohead_warehous_id NOT IN ("
-                "       SELECT usrsite_warehous_id "
-                "       FROM usrsite "
-                "       WHERE (usrsite_username=current_user))));");
-    MetaSQLQuery mql(sql);
-    ParameterList params;
-    params.append("sohead_id", _so->id());
-    q = mql.toQuery(params);
+    q.prepare("SELECT checkSOSitePrivs(:coheadid) AS result;");
+    q.bindValue(":coheadid", _so->id());
+    q.exec();
     if (q.first())
     {
-      	    QMessageBox::critical(this, tr("Access Denied"),
-				  tr("You may not view or edit this Sales Order as it references "
-                                     "a warehouse for which you have not been granted privileges.")) ;
-            return false;
+	  if (!q.value("result").toBool())
+      {
+        QMessageBox::critical(this, tr("Access Denied"),
+									tr("You may not view or edit this Sales Order as it references "
+                                       "a warehouse for which you have not been granted privileges.")) ;
+        return false;
+      }
     }
   }
   return true;

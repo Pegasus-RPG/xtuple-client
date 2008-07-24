@@ -122,16 +122,25 @@ void dspSalesOrdersByCustomerPO::sPopulateMenu(QMenu *menuThis)
 
 void dspSalesOrdersByCustomerPO::sEditOrder()
 {
+  if (!checkSitePrivs(_so->id()))
+    return;
+    
   salesOrder::editSalesOrder(_so->id(), false);
 }
 
 void dspSalesOrdersByCustomerPO::sViewOrder()
 {
+  if (!checkSitePrivs(_so->id()))
+    return;
+    
   salesOrder::viewSalesOrder(_so->id());
 }
 
 void dspSalesOrdersByCustomerPO::sCreateRA()
 {
+  if (!checkSitePrivs(_so->id()))
+    return;
+    
   ParameterList params;
   params.append("mode", "new");
   params.append("sohead_id", _so->id());
@@ -146,6 +155,9 @@ void dspSalesOrdersByCustomerPO::sCreateRA()
 
 void dspSalesOrdersByCustomerPO::sDspShipmentStatus()
 {
+  if (!checkSitePrivs(_so->id()))
+    return;
+    
   ParameterList params;
   params.append("sohead_id", _so->id());
   params.append("run");
@@ -157,6 +169,9 @@ void dspSalesOrdersByCustomerPO::sDspShipmentStatus()
 
 void dspSalesOrdersByCustomerPO::sDspShipments()
 {
+  if (!checkSitePrivs(_so->id()))
+    return;
+    
   ParameterList params;
   params.append("sohead_id", _so->id());
   params.append("run");
@@ -199,5 +214,26 @@ void dspSalesOrdersByCustomerPO::sFillList()
                  q.value("sohead_custponumber") );
     }
   }
+}
+
+bool dspSalesOrdersByCustomerPO::checkSitePrivs(int orderid)
+{
+  if (_preferences->boolean("selectedSites"))
+  {
+    q.prepare("SELECT checkSOSitePrivs(:coheadid) AS result;");
+    q.bindValue(":coheadid", orderid);
+    q.exec();
+    if (q.first())
+    {
+	  if (!q.value("result").toBool())
+      {
+        QMessageBox::critical(this, tr("Access Denied"),
+									tr("You may not view or edit this Sales Order as it references "
+                                       "a warehouse for which you have not been granted privileges.")) ;
+        return false;
+      }
+    }
+  }
+  return true;
 }
 

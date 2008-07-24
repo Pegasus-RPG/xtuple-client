@@ -71,6 +71,7 @@ class dspSalesOrdersByParameterList : public XMainWindow, public Ui::dspSalesOrd
 public:
     dspSalesOrdersByParameterList(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspSalesOrdersByParameterList();
+    virtual bool checkSitePrivs(int orderid);
 
 public slots:
     virtual enum SetResponse set( const ParameterList & pParams );

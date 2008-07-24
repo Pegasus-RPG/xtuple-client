@@ -70,6 +70,7 @@ class unpostedInvoices : public XMainWindow, public Ui::unpostedInvoices
 public:
     unpostedInvoices(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~unpostedInvoices();
+    virtual bool checkSitePrivs(int invcid);
 
 public slots:
     virtual void sNew();
