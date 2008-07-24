@@ -79,7 +79,12 @@ protected slots:
     virtual void languageChange();
 
 private:
+    bool post();
+    bool transfer();
+    
     bool _captive;
+    int  _sense;
+    int  _itemsiteid;
 
 };
 

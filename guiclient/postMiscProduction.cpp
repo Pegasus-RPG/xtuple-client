@@ -71,6 +71,8 @@ postMiscProduction::postMiscProduction(QWidget* parent, const char* name, bool m
   connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
 
   _captive = FALSE;
+  _itemsiteid = -1;
+  _sense = 1;
 
   _item->setType(ItemLineEdit::cManufactured);
   _qtyToPost->setValidator(omfgThis->transQtyVal());
@@ -85,6 +87,8 @@ postMiscProduction::postMiscProduction(QWidget* parent, const char* name, bool m
     _immediateTransfer->hide();
     _transferWarehouse->hide();
   }
+  else
+    _transferWarehouse->setEnabled(_immediateTransfer->isChecked());
 
   if (_preferences->boolean("XCheckBox/forgetful"))
     _backflush->setChecked(true);
@@ -128,105 +132,83 @@ enum SetResponse postMiscProduction::set(const ParameterList &pParams)
 
 void postMiscProduction::sPost()
 {
+  if (_qtyToPost->toDouble() == 0)
+  {
+    QMessageBox::warning( this, tr("Invalid Quantity"),
+                        tr( "The quantity may not be zero." ) );
+    return;
+  }
+  
+  if (_immediateTransfer->isChecked())
+  {
+    if (_warehouse->id() == _transferWarehouse->id())
+    {
+      QMessageBox::warning( this, tr("Cannot Post Immediate Transfer"),
+                            tr( "Transaction canceled. Cannot post an immediate transfer for the newly posted production as the\n"
+                                "transfer Site is the same as the production Site.  You must manually\n"
+                                "transfer the production to the intended Site." ) );
+      return;
+    }
+  }
+  
   q.prepare( "SELECT itemsite_id "
              "FROM itemsite "
              "WHERE ( (itemsite_item_id=:item_id)"
              " AND (itemsite_warehous_id=:warehous_id) );" );
   q.bindValue(":item_id", _item->id());
-  q.bindValue(":warehous_id", _warehouse->id());
+  if (_qtyToPost->toDouble() > 0)
+    q.bindValue(":warehous_id", _warehouse->id());
+  else
+    q.bindValue(":warehous_id", _transferWarehouse->id());
   q.exec();
   if (q.first())
   {
-    int itemsiteid = q.value("itemsite_id").toInt();
+    _itemsiteid = q.value("itemsite_id").toInt();
 
     XSqlQuery rollback;
     rollback.prepare("ROLLBACK;");
 
     q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
-    q.prepare( "SELECT postMiscProduction( :itemsite_id, :qty, :backflushMaterials,"
-               "                           :docNumber, :comments ) AS result;" );
-    q.bindValue(":itemsite_id", itemsiteid);
-    q.bindValue(":qty", _qtyToPost->toDouble());
-    q.bindValue(":backflushMaterials", QVariant(_backflush->isChecked(), 0));
-    q.bindValue(":docNumber", _documentNum->text().stripWhiteSpace());
-    q.bindValue(":comments", _comments->text());
-    q.exec();
-    if (q.first())
+    
+    if (_qtyToPost->toDouble() > 0)
     {
-      if (q.value("result").toInt() < 0)
+      if (post())
       {
-        rollback.exec();
-        systemError(this, tr("A System Error occurred at %1::%2, Item Number %3, Error %4.")
-                          .arg(__FILE__)
-                          .arg(__LINE__)
-                          .arg(_item->itemNumber())
-                          .arg(q.value("result").toInt()) );
-        return;
-      }
-      else
-      {
-        if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == XDialog::Rejected)
-        {
-          rollback.exec();
-          QMessageBox::information( this, tr("Post Misc. Production"), tr("Transaction Canceled") );
-          return;
-        }
-
         if (_immediateTransfer->isChecked())
         {
-          if (_warehouse->id() == _transferWarehouse->id())
-          {
-            rollback.exec();
-            QMessageBox::warning( this, tr("Cannot Post Immediate Transfer"),
-                                  tr( "Transaction canceled. OpenMFG cannot post an immediate transfer for the newly posted production as the\n"
-                                      "transfer Site is the same as the production Site.  You must manually\n"
-                                      "transfer the production to the intended Site." ) );
-            return;
-          }
+          if (transfer())
+            q.exec("COMMIT;");
           else
-          {
-            q.prepare( "SELECT interWarehouseTransfer( :item_id, :from_warehous_id, :to_warehous_id,"
-                       "                               :qty, 'W', :documentNumber, 'Transfer from Misc. Production Posting' ) AS result;" );
-            q.bindValue(":item_id", _item->id());
-            q.bindValue(":from_warehous_id", _warehouse->id());
-            q.bindValue(":to_warehous_id", _transferWarehouse->id());
-            q.bindValue(":qty", _qtyToPost->toDouble());
-            q.bindValue(":documentNumber", _documentNum->text().stripWhiteSpace());
-            q.exec();
-            if (q.first())
-            {
-              if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == XDialog::Rejected)
-              {
-                rollback.exec();
-                QMessageBox::information( this, tr("Post Misc. Production"), tr("Transaction Canceled") );
-                return;
-              }
-
-              q.exec("COMMIT;");
-            }
-            else
-            {
-              rollback.exec();
-              systemError( this, tr("A System Error occurred at interWarehousTransfer::%1, Item Site ID #%2, Site ID #%3 to Site ID #%4.")
-                                 .arg(__LINE__)
-                                 .arg(_item->id())
-                                 .arg(_warehouse->id())
-                                 .arg(_transferWarehouse->id()));
-            }
-          }
+            rollback.exec();
         }
         else
           q.exec("COMMIT;");
       }
+      else
+        rollback.exec();
     }
     else
     {
-      rollback.exec();
-      systemError(this, tr("A System Error occurred at %1::%2, Item Number %3.")
-                        .arg(__FILE__)
-                        .arg(__LINE__)
-                        .arg(_item->itemNumber()) );
-      return;
+      _sense = -1;
+      if (_immediateTransfer->isChecked())
+      {
+        if (transfer())
+        {
+          if (post())
+            q.exec("COMMIT;");
+          else
+            rollback.exec();
+        }
+        else
+          rollback.exec();
+      }
+      else
+      {
+        if (post())
+          q.exec("COMMIT;");
+        else
+          rollback.exec();
+      }
     }
 
     if (_captive)
@@ -248,4 +230,69 @@ void postMiscProduction::sPost()
                       .arg(__LINE__)
                       .arg(_item->itemNumber()) );
 }
+
+bool postMiscProduction::post()
+{
+  q.prepare( "SELECT postMiscProduction( :itemsite_id, :qty, :backflushMaterials,"
+             "                           :docNumber, :comments ) AS result;" );
+  q.bindValue(":itemsite_id", _itemsiteid);
+  q.bindValue(":qty", _qtyToPost->toDouble());
+  q.bindValue(":backflushMaterials", QVariant(_backflush->isChecked(), 0));
+  q.bindValue(":docNumber", _documentNum->text().stripWhiteSpace());
+  q.bindValue(":comments", _comments->text());
+  q.exec();
+  if (q.first())
+  {
+    if (q.value("result").toInt() < 0)
+    {
+      systemError(this, tr("A System Error occurred at %1::%2, Item Number %3, Error %4.")
+                        .arg(__FILE__)
+                        .arg(__LINE__)
+                        .arg(_item->itemNumber())
+                        .arg(q.value("result").toInt()) );
+      return false;
+    }
+    else
+    {
+      if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == XDialog::Rejected)
+      {
+        QMessageBox::information( this, tr("Post Misc. Production"), tr("Transaction Canceled") );
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
+bool postMiscProduction::transfer()
+{
+  q.prepare( "SELECT interWarehouseTransfer( :item_id, :from_warehous_id, :to_warehous_id,"
+             "                               :qty, 'W', :documentNumber, 'Transfer from Misc. Production Posting' ) AS result;" );
+  q.bindValue(":item_id", _item->id());
+  q.bindValue(":from_warehous_id", _warehouse->id());
+  q.bindValue(":to_warehous_id", _transferWarehouse->id());
+  q.bindValue(":qty", _qtyToPost->toDouble() * _sense);
+  q.bindValue(":documentNumber", _documentNum->text().stripWhiteSpace());
+  q.exec();
+  if (q.first())
+  {
+    if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == XDialog::Rejected)
+    {
+      QMessageBox::information( this, tr("Post Misc. Production"), tr("Transaction Canceled") );
+      return false;
+    }
+  }
+  else
+  {
+    systemError( this, tr("A System Error occurred at interWarehousTransfer::%1, Item Site ID #%2, Site ID #%3 to Site ID #%4.")
+                       .arg(__LINE__)
+                       .arg(_item->id())
+                       .arg(_warehouse->id())
+                       .arg(_transferWarehouse->id()));
+    return false;
+  }
+  return true;
+}
+
+
 
