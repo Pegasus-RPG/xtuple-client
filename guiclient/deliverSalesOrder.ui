@@ -352,6 +352,13 @@
      </layout>
     </widget>
    </item>
+   <item>
+    <widget class="QCheckBox" name="_emailHTML" >
+     <property name="text" >
+      <string>Send Email as Multi-part HTML body</string>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <layoutdefault spacing="5" margin="5" />
@@ -382,10 +389,10 @@
   <tabstop>_subject</tabstop>
   <tabstop>_fileName</tabstop>
   <tabstop>_emailBody</tabstop>
+  <tabstop>_emailHTML</tabstop>
   <tabstop>_submit</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
- <includes/>
  <resources/>
  <connections>
   <connection>

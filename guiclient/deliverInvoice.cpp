@@ -159,7 +159,7 @@ void deliverInvoice::sSubmit()
     QString reportName = q.value("invoiceform").toString();
 
     q.prepare( "SELECT submitReportToBatch( :reportname, :fromEmail, :emailAddress, :ccAddress, :subject,"
-               "                            :emailBody, :fileName, CURRENT_TIMESTAMP) AS batch_id;" );
+               "                            :emailBody, :fileName, CURRENT_TIMESTAMP, :emailHTML) AS batch_id;" );
     q.bindValue(":reportname", reportName);
     q.bindValue(":fromEmail", _fromEmail->text());
     q.bindValue(":emailAddress", _email->text());
@@ -167,6 +167,7 @@ void deliverInvoice::sSubmit()
     q.bindValue(":subject", _subject->text().replace("</docnumber>", invoiceNumber).replace("</doctype>", "Invc"));
     q.bindValue(":fileName", _fileName->text().replace("</docnumber>", invoiceNumber).replace("</doctype>", "Invc"));
     q.bindValue(":emailBody", _emailBody->text().replace("</docnumber>", invoiceNumber).replace("</doctype>", "Invc"));
+    q.bindValue(":emailHTML", QVariant(_emailHTML->isChecked(), 0));
     q.exec();
     if (q.first())
     {
@@ -224,8 +225,8 @@ void deliverInvoice::sHandlePoheadid()
 {
   q.prepare( "SELECT invchead_printed,"
              "       cust_emaildelivery, cust_ediemail, cust_ediemailbody, "
-             "       cust_edisubject, cust_edifilename, cust_edicc "
-             "FROM invchead, cust "
+             "       cust_edisubject, cust_edifilename, cust_edicc, cust_ediemailhtml "
+             "FROM invchead, custinfo "
              "WHERE ( (invchead_cust_id=cust_id)"
              " AND (invchead_id=:invchead_id) );" );
   q.bindValue(":invchead_id", _invoice->id());
@@ -248,6 +249,7 @@ void deliverInvoice::sHandlePoheadid()
       _emailBody->setText(q.value("cust_ediemailbody").toString());
       _subject->setText(q.value("cust_edisubject").toString());
       _fileName->setText(q.value("cust_edifilename").toString());
+      _emailHTML->setChecked(q.value("cust_ediemailhtml").toBool());
     }
     else
     {
@@ -258,6 +260,7 @@ void deliverInvoice::sHandlePoheadid()
       _emailBody->clear();
       _subject->clear();
       _fileName->clear();
+      _emailHTML->setChecked(false);
     }
   }
 }

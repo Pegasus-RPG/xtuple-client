@@ -564,10 +564,12 @@ void customer::sSave()
                "       cust_edisubject=:cust_edisubject, cust_edifilename=:cust_edifilename,"
                "       cust_ediemailbody=:cust_ediemailbody, cust_edicc=:cust_edicc,"
                "       cust_ediprofile_id=:cust_ediprofile_id, "
+               "       cust_ediemailhtml=:cust_ediemailhtml,"
                "       cust_soemaildelivery=:cust_soemaildelivery, cust_soediemail=:cust_soediemail,"
                "       cust_soedisubject=:cust_soedisubject, cust_soedifilename=:cust_soedifilename,"
                "       cust_soediemailbody=:cust_soediemailbody, cust_soedicc=:cust_soedicc,"
                "       cust_soediprofile_id=:cust_soediprofile_id, "
+               "       cust_soediemailhtml=:cust_soediemailhtml,"
                "       cust_preferred_warehous_id=:cust_preferred_warehous_id, "
                "       cust_gracedays=:cust_gracedays,"
                "       cust_curr_id=:cust_curr_id "
@@ -593,6 +595,7 @@ void customer::sSave()
                "  cust_ediprofile_id,"
                "  cust_soemaildelivery, cust_soediemail, cust_soedisubject,"
                "  cust_soedifilename, cust_soediemailbody, cust_soedicc, "
+               "  cust_soediemailhtml, cust_ediemailhtml,"
                "  cust_soediprofile_id, cust_preferred_warehous_id, "
                "  cust_gracedays, cust_curr_id ) "
                "VALUES "
@@ -614,7 +617,7 @@ void customer::sSave()
                "  :cust_soediprofile_id,"
                "  :cust_soemaildelivery, :cust_soediemail, :cust_soedisubject,"
                "  :cust_soedifilename, :cust_soediemailbody, :cust_soedicc,"
-
+               "  :cust_soediemailhtml, :cust_ediemailhtml,"
                "  :cust_soediprofile_id, :cust_preferred_warehous_id, "
                "  :cust_gracedays, :cust_curr_id ) " );
 
@@ -674,6 +677,7 @@ void customer::sSave()
   q.bindValue(":cust_edifilename", _ediFilename->text().stripWhiteSpace());
   q.bindValue(":cust_ediemailbody", _ediEmailBody->text().stripWhiteSpace());
   q.bindValue(":cust_edicc", _ediCC->text().stripWhiteSpace());
+  q.bindValue(":cust_ediemailhtml", QVariant(_ediEmailHTML->isChecked(), 0));
   
   q.bindValue(":cust_soemaildelivery", QVariant((_soEdiProfile->id()==0), 0));
   q.bindValue(":cust_soediemail", _soEdiEmail->text().stripWhiteSpace());
@@ -681,6 +685,7 @@ void customer::sSave()
   q.bindValue(":cust_soedifilename", _soEdiFilename->text().stripWhiteSpace());
   q.bindValue(":cust_soediemailbody", _soEdiEmailBody->text().stripWhiteSpace());
   q.bindValue(":cust_soedicc", _soEdiCC->text().stripWhiteSpace());
+  q.bindValue(":cust_soediemailhtml", QVariant(_soEdiEmailHTML->isChecked(), 0));
 
   q.bindValue(":cust_preferred_warehous_id", _sellingWarehouse->id());
   q.bindValue(":cust_curr_id", _currency->id());
@@ -1210,6 +1215,7 @@ void customer::populate()
     _ediFilename->setText(cust.value("cust_edifilename"));
     _ediEmailBody->setText(cust.value("cust_ediemailbody").toString());
     _ediCC->setText(cust.value("cust_edicc").toString());
+    _ediEmailHTML->setChecked(cust.value("cust_ediemailhtml").toBool());
     
     if(cust.value("cust_soemaildelivery").toBool())
       _soEdiProfile->setId(0);
@@ -1225,6 +1231,7 @@ void customer::populate()
     _soEdiFilename->setText(cust.value("cust_soedifilename"));
     _soEdiEmailBody->setText(cust.value("cust_soediemailbody").toString());
     _soEdiCC->setText(cust.value("cust_soedicc").toString());
+    _soEdiEmailHTML->setChecked(cust.value("cust_soediemailhtml").toBool());
 
     _comments->setId(_custid);
     sFillShiptoList();

@@ -162,7 +162,7 @@ void deliverSalesOrder::sSubmit()
     QString soNumber = q.value("cohead_number").toString();
 
     q.prepare( "SELECT submitReportToBatch( :reportname, :fromEmail, :emailAddress, :ccAddress, :subject,"
-               "                            :emailBody, :fileName, CURRENT_TIMESTAMP) AS batch_id;" );
+               "                            :emailBody, :fileName, CURRENT_TIMESTAMP, :emailHTML) AS batch_id;" );
     q.bindValue(":reportname", reportName);
     q.bindValue(":fromEmail", _fromEmail->text());
     q.bindValue(":emailAddress", _email->text());
@@ -170,6 +170,7 @@ void deliverSalesOrder::sSubmit()
     q.bindValue(":subject", _subject->text().replace("</docnumber>", soNumber).replace("</doctype>", "SO"));
     q.bindValue(":fileName", _fileName->text().replace("</docnumber>", soNumber).replace("</doctype>", "SO"));
     q.bindValue(":emailBody", _emailBody->text().replace("</docnumber>", soNumber).replace("</doctype>", "SO"));
+    q.bindValue(":emailHTML", QVariant(_emailHTML->isChecked(), 0));
     q.exec();
     if (q.first())
     {
@@ -216,7 +217,7 @@ void deliverSalesOrder::sSubmit()
 void deliverSalesOrder::sHandleSoheadid()
 {
   q.prepare( "SELECT cust_soemaildelivery, cust_soediemail, cust_soediemailbody, "
-             "       cust_soedisubject, cust_soedifilename, cust_soedicc "
+             "       cust_soedisubject, cust_soedifilename, cust_soedicc, cust_soediemailhtml "
              "FROM cohead, custinfo "
              "WHERE ( (cohead_cust_id=cust_id)"
              " AND (cohead_id=:sohead_id) );" );
@@ -231,6 +232,7 @@ void deliverSalesOrder::sHandleSoheadid()
       _emailBody->setText(q.value("cust_soediemailbody").toString());
       _subject->setText(q.value("cust_soedisubject").toString());
       _fileName->setText(q.value("cust_soedifilename").toString());
+      _emailHTML->setChecked(q.value("cust_soediemailhtml").toBool());
     }
     else
     {
@@ -239,6 +241,7 @@ void deliverSalesOrder::sHandleSoheadid()
       _emailBody->clear();
       _subject->clear();
       _fileName->clear();
+     _emailHTML->setChecked(false);
     }
   }
 }
