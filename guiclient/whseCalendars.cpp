@@ -98,7 +98,7 @@ whseCalendars::whseCalendars(QWidget* parent, const char* name, Qt::WFlags fl)
     _new->setEnabled(FALSE);
   }
 
-  _whsecal->addColumn(tr("Whse."),       70, Qt::AlignLeft );
+  _whsecal->addColumn(tr("Site"),        70, Qt::AlignLeft );
   _whsecal->addColumn(tr("Description"), -1, Qt::AlignLeft );
 
   sFillList(-1);
