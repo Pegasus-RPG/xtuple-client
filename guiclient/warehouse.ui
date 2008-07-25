@@ -96,7 +96,7 @@
                </item>
                <item>
                 <widget class="XComboBox" name="_sitetype" >
-                 <property name="allowNull" stdset="0" >
+                 <property name="allowNull" >
                   <bool>false</bool>
                  </property>
                  <property name="type" >
@@ -145,14 +145,14 @@
         </layout>
        </item>
        <item>
-        <widget class="AddressCluster" native="1" name="_address" />
+        <widget class="AddressCluster" name="_address" />
        </item>
        <item>
-        <widget class="ContactCluster" native="1" name="_contact" >
-         <property name="label" stdset="0" >
+        <widget class="ContactCluster" name="_contact" >
+         <property name="label" >
           <string/>
          </property>
-         <property name="minimalLayout" stdset="0" >
+         <property name="minimalLayout" >
           <bool>true</bool>
          </property>
         </widget>
@@ -230,7 +230,7 @@
       </widget>
      </item>
      <item>
-      <widget class="GLCluster" native="1" name="_account" />
+      <widget class="GLCluster" name="_account" />
      </item>
     </layout>
    </item>
@@ -553,11 +553,14 @@
                </item>
                <item>
                 <widget class="XComboBox" name="_taxauth" >
-                 <property name="allowNull" stdset="0" >
+                 <property name="allowNull" >
                   <bool>true</bool>
                  </property>
-                 <property name="nullStr" stdset="0" >
+                 <property name="nullStr" >
                   <string>None</string>
+                 </property>
+                 <property name="type" >
+                  <enum>XComboBox::TaxAuths</enum>
                  </property>
                 </widget>
                </item>
@@ -648,8 +651,11 @@
            </item>
            <item row="1" column="1" >
             <widget class="XComboBox" name="_shipform" >
-             <property name="allowNull" stdset="0" >
+             <property name="allowNull" >
               <bool>true</bool>
+             </property>
+             <property name="type" >
+              <enum>XComboBox::ShippingForms</enum>
              </property>
             </widget>
            </item>
@@ -678,8 +684,11 @@
            </item>
            <item row="0" column="1" >
             <widget class="XComboBox" name="_shipvia" >
-             <property name="allowNull" stdset="0" >
+             <property name="allowNull" >
               <bool>true</bool>
+             </property>
+             <property name="type" >
+              <enum>XComboBox::ShipVias</enum>
              </property>
             </widget>
            </item>
@@ -727,8 +736,11 @@
            </item>
            <item row="2" column="1" >
             <widget class="XComboBox" name="_costcat" >
-             <property name="allowNull" stdset="0" >
+             <property name="allowNull" >
               <bool>true</bool>
+             </property>
+             <property name="type" >
+              <enum>XComboBox::CostCategories</enum>
              </property>
             </widget>
            </item>
@@ -998,11 +1010,9 @@
              <height>100</height>
             </size>
            </property>
-           <column>
-            <property name="text" >
-             <string>1</string>
-            </property>
-           </column>
+           <property name="columnCount" >
+            <number>0</number>
+           </property>
           </widget>
          </item>
          <item>
@@ -1086,7 +1096,7 @@
         <number>5</number>
        </property>
        <item>
-        <widget class="Comments" native="1" name="_comments" />
+        <widget class="Comments" name="_comments" />
        </item>
       </layout>
      </widget>
@@ -1098,29 +1108,9 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>XLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>xlineedit.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ContactCluster</class>
-   <extends>QWidget</extends>
-   <header>contactcluster.h</header>
-  </customwidget>
-  <customwidget>
    <class>AddressCluster</class>
    <extends>QWidget</extends>
    <header>addresscluster.h</header>
-  </customwidget>
-  <customwidget>
-   <class>XTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>xtreewidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>GLCluster</class>
-   <extends>QWidget</extends>
-   <header>glcluster.h</header>
   </customwidget>
   <customwidget>
    <class>Comments</class>
@@ -1128,9 +1118,29 @@
    <header>comments.h</header>
   </customwidget>
   <customwidget>
+   <class>ContactCluster</class>
+   <extends>QWidget</extends>
+   <header>contactcluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>GLCluster</class>
+   <extends>QWidget</extends>
+   <header>glcluster.h</header>
+  </customwidget>
+  <customwidget>
    <class>XComboBox</class>
    <extends>QComboBox</extends>
    <header>xcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>xlineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
