@@ -505,68 +505,34 @@ void vendor::sSave()
     return;
   }
 
-  if (_crmacctid > 0)
+//  Get the crmacct that was created by the vendinfo trigger
+  q.prepare("SELECT crmacct_id "
+	    "FROM crmacct "
+	    "WHERE (crmacct_vend_id=:vend_id);");
+  q.bindValue(":vend_id", _vendid);
+  q.exec();
+  if (!q.lastError().type() == QSqlError::None)
   {
-    q.prepare("UPDATE crmacct SET crmacct_vend_id = :vend_id "
-	      "WHERE (crmacct_id=:crmacct_id);");
-    q.bindValue(":vend_id",	_vendid);
-    q.bindValue(":crmacct_id",	_crmacctid);
-    q.exec();
-    if (q.lastError().type() != QSqlError::None)
-    {
-	rollback.exec();
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-	return;
-    }
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
-  else
+  _crmacctid = q.value("crmacct_id").toInt();
+  _contact1->setAccount(_crmacctid);
+  _contact2->setAccount(_crmacctid);
+
+// need to save contacts again with updated CRM Account
+  if (saveContact(_contact1) < 0)
   {
-  q.prepare( "SELECT createCrmAcct(:number, :name, :active, :type, NULL, "
-	       "      NULL, NULL, NULL, :vend_id, NULL, :contact1, :contact2) AS crmacctid;");
-    q.bindValue(":number",	_number->text().stripWhiteSpace());
-    q.bindValue(":name",	_name->text().stripWhiteSpace());
-    q.bindValue(":active",	QVariant(_active->isChecked(), 0));
-    q.bindValue(":type",	"O");	// TODO - when will this be "I"?
-    q.bindValue(":vend_id",	_vendid);
-    if (_contact1->id() > 0)
-      q.bindValue(":contact1",	_contact1->id());
-    if (_contact2->id() > 0)
-      q.bindValue(":contact2",	_contact2->id());
-    q.exec();
-    if (q.first())
-    {
-      int crmacctid = q.value("crmacctid").toInt();
-      if (crmacctid <= 0)
-      {
-	rollback.exec();
-	QMessageBox::critical(this, tr("Error Creating a CRM Account"),
-			    storedProcErrorLookup("createCrmAcct", _crmacctid));
-	return;
-      }
-      _contact1->setAccount(crmacctid);
-      _contact2->setAccount(crmacctid);
+    rollback.exec();
+    _contact1->setFocus();
+    return;
+  }
 
-      // need to save contacts again with updated CRM Account
-      if (saveContact(_contact1) < 0)
-      {
-	rollback.exec();
-	_contact1->setFocus();
-	return;
-      }
-
-      if (saveContact(_contact2) < 0)
-      {
-	rollback.exec();
-	_contact2->setFocus();
-	return;
-      }
-    }
-    else if (q.lastError().type() != QSqlError::None)
-    {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-	rollback.exec();
-	return;
-    }
+  if (saveContact(_contact2) < 0)
+  {
+    rollback.exec();
+    _contact2->setFocus();
+    return;
   }
 
   q.exec("COMMIT;");
