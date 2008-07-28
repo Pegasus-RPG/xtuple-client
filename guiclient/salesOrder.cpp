@@ -111,7 +111,9 @@ salesOrder::salesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
     : XMainWindow(parent, name, fl)
 {
   setupUi(this);
-
+  
+  _scriptButton->setVisible(false);
+  
   connect(_action,    SIGNAL(clicked()), this, SLOT(sAction()));
   connect(_authorize, SIGNAL(clicked()), this, SLOT(sAuthorizeCC()));
   connect(_charge,    SIGNAL(clicked()), this, SLOT(sChargeCC()));
@@ -153,6 +155,7 @@ salesOrder::salesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_allocatedCM, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
   connect(_outstandingCM, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
   connect(_authCC, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
+  connect(_scriptButton, SIGNAL(clicked()), this, SLOT(sAllocateCreditMemos()));
 
   _custType->setText("");
   _saved = false;
@@ -3713,3 +3716,70 @@ void salesOrder::sShowReservations()
     omfgThis->handleNewWindow(newdlg);
   }
 }
+
+void salesOrder::sAllocateCreditMemos()
+{
+   // Determine the balance I need to select
+   // This is the same as in sCalculateTotal except that the Unallocated amount is not included.
+   double balance = (_subtotal->localValue() + _tax->localValue() + _miscCharge->localValue() + _freight->localValue())
+                    - _allocatedCM->localValue() - _authCC->localValue();
+   double initBalance = balance;
+   if(balance > 0)
+   {
+     // Get the list of Unallocated CM's with amount
+     q.prepare("SELECT aropen_id,"
+               "       noNeg(aropen_amount - aropen_paid - SUM(COALESCE(aropenco_amount,0))) AS amount,"
+               "       currToCurr(aropen_curr_id, :curr_id,"
+               "                  noNeg(aropen_amount - aropen_paid - SUM(COALESCE(aropenco_amount,0))), :effective) AS amount_cocurr"
+               "  FROM cohead, aropen LEFT OUTER JOIN aropenco ON (aropenco_aropen_id=aropen_id)"
+               " WHERE ( (aropen_cust_id=cohead_cust_id)"
+               "   AND   (aropen_doctype IN ('C', 'R'))"
+               "   AND   (aropen_open)"
+               "   AND   (cohead_id=:cohead_id) )"
+               " GROUP BY aropen_id, aropen_duedate, aropen_amount, aropen_paid, aropen_curr_id "
+               "HAVING (noNeg(aropen_amount - aropen_paid - SUM(COALESCE(aropenco_amount,0))) > 0)"
+               " ORDER BY aropen_duedate; ");
+     q.bindValue(":cohead_id", _soheadid);
+     q.bindValue(":curr_id",   _balance->id());
+     q.bindValue(":effective", _balance->effective());
+     q.exec();
+     if (q.lastError().type() != QSqlError::NoError)
+     {
+       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+       return;
+     }
+
+     double amount = 0.0;
+     double initAmount = 0.0;
+     XSqlQuery allocCM;
+     allocCM.prepare("INSERT INTO aropenco"
+                     "      (aropenco_aropen_id, aropenco_cohead_id, "
+                     "       aropenco_amount, aropenco_curr_id)"
+                     "VALUES(:aropen_id, :cohead_id, :amount, :curr_id);");
+
+     while(balance > 0.0 && q.next())
+     {
+       amount = q.value("amount_cocurr").toDouble();
+       initAmount = amount;
+
+       if(amount <= 0.0) // if this credit memo does not have a positive value just ignore it
+         continue;
+
+       if(amount > balance) // make sure we don't apply more to a credit memo than we have left.
+         amount = balance;
+       // apply credit memo's to this sales order until the balance is 0.
+       allocCM.bindValue(":cohead_id", _soheadid);
+       allocCM.bindValue(":aropen_id", q.value("aropen_id").toInt());
+       allocCM.bindValue(":amount", amount);
+       allocCM.bindValue(":curr_id", _balance->id());
+       allocCM.exec();
+       if (allocCM.lastError().type() == QSqlError::NoError)
+        balance -= amount;
+       else
+         systemError(this, allocCM.lastError().databaseText(), __FILE__, __LINE__);
+     }
+     _outstandingCM->setLocalValue(initAmount-(initBalance-balance));
+     _balance->setLocalValue(initBalance-(initBalance-balance));
+     _allocatedCM->setLocalValue(initBalance-balance);
+   }
+ }
