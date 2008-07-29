@@ -94,21 +94,21 @@ dspInventoryHistoryByItem::dspInventoryHistoryByItem(QWidget* parent, const char
   omfgThis->inputManager()->notify(cBCItemSite, this, _item, SLOT(setItemsiteid(int)));
 
   _invhist->setRootIsDecorated(TRUE);
-  _invhist->addColumn(tr("Transaction Time"),_timeDateColumn,  Qt::AlignLeft  );
-  _invhist->addColumn(tr("Entered Time"),    _timeDateColumn,  Qt::AlignLeft, false);
-  _invhist->addColumn(tr("User"),        _orderColumn,        Qt::AlignCenter);
-  _invhist->addColumn(tr("Type"),        _transColumn,        Qt::AlignCenter);
-  _invhist->addColumn(tr("Site"),        _whsColumn,          Qt::AlignCenter);
-  _invhist->addColumn(tr("Order #/Location-Lot/Serial #"), -1,Qt::AlignLeft  );
-  _invhist->addColumn(tr("UOM"),         _uomColumn,          Qt::AlignCenter);
-  _invhist->addColumn(tr("Trans-Qty"),   _qtyColumn,          Qt::AlignRight );
-  _invhist->addColumn(tr("From Area"),   _orderColumn,        Qt::AlignLeft  );
-  _invhist->addColumn(tr("QOH Before"),  _qtyColumn,          Qt::AlignRight );
-  _invhist->addColumn(tr("To Area"),     _orderColumn,        Qt::AlignLeft  );
-  _invhist->addColumn(tr("QOH After"),   _qtyColumn,          Qt::AlignRight );
-  _invhist->addColumn(tr("Cost Method"), _qtyColumn,          Qt::AlignLeft  );
-  _invhist->addColumn(tr("Value Before"),_qtyColumn,          Qt::AlignRight );
-  _invhist->addColumn(tr("Value After"), _qtyColumn,          Qt::AlignRight );
+  _invhist->addColumn(tr("Transaction Time"),_timeDateColumn, Qt::AlignLeft, true, "invhist_transdate");
+  _invhist->addColumn(tr("Entered Time"),    _timeDateColumn, Qt::AlignLeft, false, "invhist_created");
+  _invhist->addColumn(tr("User"),        _orderColumn,        Qt::AlignCenter,true, "invhist_user");
+  _invhist->addColumn(tr("Type"),        _transColumn,        Qt::AlignCenter,true, "invhist_transtype");
+  _invhist->addColumn(tr("Site"),        _whsColumn,          Qt::AlignCenter,true, "warehous_code");
+  _invhist->addColumn(tr("Order #/Location-Lot/Serial #"), -1,Qt::AlignLeft,  true, "ordernumber");
+  _invhist->addColumn(tr("UOM"),         _uomColumn,          Qt::AlignCenter,true, "invhist_invuom");
+  _invhist->addColumn(tr("Trans-Qty"),   _qtyColumn,          Qt::AlignRight, true, "transqty");
+  _invhist->addColumn(tr("From Area"),   _orderColumn,        Qt::AlignLeft,  true, "locfrom");
+  _invhist->addColumn(tr("QOH Before"),  _qtyColumn,          Qt::AlignRight, true, "qohbefore");
+  _invhist->addColumn(tr("To Area"),     _orderColumn,        Qt::AlignLeft,  true, "locto");
+  _invhist->addColumn(tr("QOH After"),   _qtyColumn,          Qt::AlignRight, true, "qohafter");
+  _invhist->addColumn(tr("Cost Method"), _qtyColumn,          Qt::AlignLeft,  true, "costmethod");
+  _invhist->addColumn(tr("Value Before"),_qtyColumn,          Qt::AlignRight, true, "valbefore");
+  _invhist->addColumn(tr("Value After"), _qtyColumn,          Qt::AlignRight, true, "valafter");
 
   _transType->append(cTransAll,       tr("All Transactions")       );
   _transType->append(cTransReceipts,  tr("Receipts")               );
@@ -230,7 +230,7 @@ void dspInventoryHistoryByItem::sPrint()
 
 void dspInventoryHistoryByItem::sViewTransInfo()
 {
-  QString transType(((XTreeWidgetItem *)_invhist->currentItem())->text(2));
+  QString transType(((XTreeWidgetItem *)_invhist->currentItem())->text(_invhist->column("invhist_transtype")));
 
   ParameterList params;
   params.append("mode", "view");
@@ -293,7 +293,7 @@ void dspInventoryHistoryByItem::sEditTransInfo()
 
 void dspInventoryHistoryByItem::sViewWOInfo()
 {
-  QString orderNumber = _invhist->currentItem()->text(4);
+  QString orderNumber = _invhist->currentItem()->text(_invhist->column("ordernumber"));
   int sep1            = orderNumber.find('-');
   int sep2            = orderNumber.find('-', (sep1 + 1));
   int mainNumber      = orderNumber.mid((sep1 + 1), ((sep2 - sep1) - 1)).toInt();
@@ -330,10 +330,10 @@ void dspInventoryHistoryByItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pIt
   menuItem = pMenu->insertItem(tr("View Transaction Information..."), this, SLOT(sViewTransInfo()), 0);
   menuItem = pMenu->insertItem(tr("Edit Transaction Information..."), this, SLOT(sEditTransInfo()), 0);
 
-  if ( (pItem->text(3).length()) &&
-       ( (pItem->text(2) == "RM") || (pItem->text(2) == "IM") ) )
+  if ( (pItem->text(_invhist->column("warehous_code")).length()) &&
+       ( (pItem->text(_invhist->column("invhist_transtype")) == "RM") || (pItem->text(_invhist->column("invhist_transtype")) == "IM") ) )
   {
-    QString orderNumber = _invhist->currentItem()->text(4);
+    QString orderNumber = _invhist->currentItem()->text(_invhist->column("ordernumber"));
     int sep1            = orderNumber.find('-');
     int sep2            = orderNumber.find('-', (sep1 + 1));
     int mainNumber      = orderNumber.mid((sep1 + 1), ((sep2 - sep1) - 1)).toInt();

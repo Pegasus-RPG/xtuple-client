@@ -1,20 +1,26 @@
 SELECT invhist.*,
        warehous_code, item_number,
-       formatQty(invhist_invqty) AS transqty,
        CASE WHEN (invhist_ordtype NOT LIKE '') THEN
 				(invhist_ordtype || '-' || invhist_ordnumber)
             ELSE invhist_ordnumber
        END AS ordernumber,
-       formatQty(invhist_qoh_before) AS qohbefore,
-       formatQty(invhist_qoh_after) AS qohafter,
-       CASE WHEN(invhist_costmethod='A') THEN text('Average')
-            WHEN(invhist_costmethod='S') THEN text('Standard')
-            WHEN(invhist_costmethod='J') THEN text('Job')
-            WHEN(invhist_costmethod='N') THEN text('None')
+       CASE WHEN NOT invhist_posted THEN NULL
+            WHEN (invhist_costmethod='A') THEN text('Average')
+            WHEN (invhist_costmethod='S') THEN text('Standard')
+            WHEN (invhist_costmethod='J') THEN text('Job')
+            WHEN (invhist_costmethod='N') THEN text('None')
             ELSE 'UNKNOWN'
-       END AS costmethod,
-       formatMoney(invhist_value_before) AS valbefore,
-       formatMoney(invhist_value_after) AS valafter
+       END AS invhist_costmethod_qtdisplayrole,
+       CASE WHEN NOT invhist_posted THEN NULL END AS invhist_qoh_before_qtdisplayrole,
+       CASE WHEN NOT invhist_posted THEN NULL END AS invhist_qoh_after_qtdisplayrole,
+       CASE WHEN NOT invhist_posted THEN NULL END AS invhist_value_before_qtdisplayrole,
+       CASE WHEN NOT invhist_posted THEN NULL END AS invhist_value_after_qtdisplayrole,
+       'qty' AS invhist_invqty_xtnumericrole,
+       'qty' AS invhist_qoh_before_xtnumericrole,
+       'qty' AS invhist_qoh_after_xtnumericrole,
+       'curr' AS invhist_value_before_xtnumericrole,
+       'curr' AS invhist_value_after_xtnumericrole,
+       CASE WHEN invhist_posted THEN 'warning' END AS qtforegroundrole
 FROM invhist, itemsite, item, warehous 
 WHERE ( (invhist_itemsite_id=itemsite_id)
   AND  (itemsite_item_id=item_id)

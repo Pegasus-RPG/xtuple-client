@@ -84,20 +84,20 @@ dspInventoryHistoryByOrderNumber::dspInventoryHistoryByOrderNumber(QWidget* pare
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_invhist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
 
-  _invhist->addColumn(tr("Transaction Time"),_timeDateColumn, Qt::AlignLeft   );
-  _invhist->addColumn(tr("Created Time"),    _timeDateColumn, Qt::AlignLeft   );
-  _invhist->addColumn(tr("User"),        _orderColumn,       Qt::AlignCenter );
-  _invhist->addColumn(tr("Type"),        _transColumn,       Qt::AlignCenter );
-  _invhist->addColumn(tr("Site."),       _whsColumn,         Qt::AlignLeft   );
-  _invhist->addColumn(tr("Item Number"), _itemColumn,        Qt::AlignLeft   );
-  _invhist->addColumn(tr("UOM"),         _uomColumn,         Qt::AlignCenter );
-  _invhist->addColumn(tr("Trans-Qty"),   _qtyColumn,         Qt::AlignRight  );
-  _invhist->addColumn(tr("Order #"),     -1,                 Qt::AlignCenter );
-  _invhist->addColumn(tr("QOH Before"),  _qtyColumn,         Qt::AlignRight  );
-  _invhist->addColumn(tr("QOH After"),   _qtyColumn,         Qt::AlignRight  );
-  _invhist->addColumn(tr("Cost Method"), _qtyColumn,          Qt::AlignLeft  );
-  _invhist->addColumn(tr("Value Before"),_qtyColumn,          Qt::AlignRight );
-  _invhist->addColumn(tr("Value After"), _qtyColumn,          Qt::AlignRight );
+  _invhist->addColumn(tr("Transaction Time"),_timeDateColumn, Qt::AlignLeft,  true, "invhist_transdate");
+  _invhist->addColumn(tr("Created Time"),    _timeDateColumn, Qt::AlignLeft,  true, "invhist_created");
+  _invhist->addColumn(tr("User"),               _orderColumn, Qt::AlignCenter,true, "invhist_user");
+  _invhist->addColumn(tr("Type"),               _transColumn, Qt::AlignCenter,true, "invhist_transtype");
+  _invhist->addColumn(tr("Site."),                _whsColumn, Qt::AlignLeft,  true, "warehous_code");
+  _invhist->addColumn(tr("Item Number"),         _itemColumn, Qt::AlignLeft,  true, "item_number");
+  _invhist->addColumn(tr("UOM"),                  _uomColumn, Qt::AlignCenter,true, "invhist_invuom");
+  _invhist->addColumn(tr("Trans-Qty"),            _qtyColumn, Qt::AlignRight, true, "transqty" );
+  _invhist->addColumn(tr("Order #"),                      -1, Qt::AlignCenter,true, "ordernumber");
+  _invhist->addColumn(tr("QOH Before"),           _qtyColumn, Qt::AlignRight, true, "invhist_qoh_before");
+  _invhist->addColumn(tr("QOH After"),            _qtyColumn, Qt::AlignRight, true, "invhist_qoh_after");
+  _invhist->addColumn(tr("Cost Method"),          _qtyColumn, Qt::AlignLeft,  true, "costmethod");
+  _invhist->addColumn(tr("Value Before"),         _qtyColumn, Qt::AlignRight,true, "invhist_value_before");
+  _invhist->addColumn(tr("Value After"),          _qtyColumn, Qt::AlignRight,true, "invhist_value_after");
 
   _transType->append(cTransAll,       tr("All Transactions")       );
   _transType->append(cTransReceipts,  tr("Receipts")               );
@@ -152,7 +152,7 @@ void dspInventoryHistoryByOrderNumber::sPrint()
 
 void dspInventoryHistoryByOrderNumber::sViewTransInfo()
 {
-  QString transtype(((XTreeWidgetItem *)_invhist->currentItem())->text(2));
+  QString transtype(((XTreeWidgetItem *)_invhist->currentItem())->text(_invhist->column("invhist_transtype")));
 
   ParameterList params;
   params.append("mode", "view");
@@ -242,29 +242,7 @@ void dspInventoryHistoryByOrderNumber::sFillList()
     MetaSQLQuery mql = mqlLoad(":/im/displays/InventoryHistoryByOrderNumber/FillListDetail.mql");
 
     q = mql.toQuery(params);
-    XTreeWidgetItem *last = NULL;
-    while (q.next())
-    {
-      last = new XTreeWidgetItem(_invhist, last, q.value("invhist_id").toInt(),
-                                 q.value("invhist_transdate"), q.value("invhist_created"),
-                                 q.value("invhist_user"),
-                                 q.value("invhist_transtype"),
-				 q.value("warehous_code"),
-                                 q.value("item_number"),
-				 q.value("invhist_invuom"),
-                                 q.value("transqty"), q.value("ordernumber") );
-
-      if (q.value("invhist_posted").toBool())
-      {
-        last->setText( 9, q.value("qohbefore").toString());
-        last->setText(10, q.value("qohafter").toString());
-        last->setText(11, q.value("costmethod").toString());
-        last->setText(12, q.value("valbefore").toString());
-        last->setText(13, q.value("valafter").toString());
-      }
-      else
-        last->setTextColor("orange");
-    }
+    _invhist->populate(q);
     if (q.lastError().type() != QSqlError::None)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
