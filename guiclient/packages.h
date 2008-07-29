@@ -72,14 +72,15 @@ public:
     ~packages();
 
 public slots:
-    virtual void sFillList();
     virtual void sDelete();
     virtual void sEdit();
+    virtual void sFillList();
+    virtual void sHandleAutoUpdate(const bool);
     virtual void sLoad();
     virtual void sNew();
-    virtual void sView();
     virtual void sPopulateMenu( QMenu * );
     virtual void sPrint();
+    virtual void sView();
 
 protected slots:
     virtual void languageChange();

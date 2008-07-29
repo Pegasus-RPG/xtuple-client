@@ -71,6 +71,7 @@ packages::packages(QWidget* parent, const char* name, Qt::WFlags fl)
 {
   setupUi(this);
 
+  connect(_autoUpdate, SIGNAL(toggled(bool)), this, SLOT(sHandleAutoUpdate(bool)));
   connect(_close,   SIGNAL(clicked()), this, SLOT(close()));
   connect(_delete,  SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_edit,    SIGNAL(clicked()), this, SLOT(sEdit()));
@@ -104,6 +105,7 @@ packages::packages(QWidget* parent, const char* name, Qt::WFlags fl)
     connect(_package, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
   }
 
+  sHandleAutoUpdate(_autoUpdate->isChecked());
   sFillList();
 }
 
@@ -224,6 +226,8 @@ void packages::sLoad()
 		  .arg(QString(proc.readAllStandardError())));
     return;
   }
+
+  sFillList();
 }
 
 void packages::sNew()
@@ -280,3 +284,10 @@ void packages::sPrint()
     report.reportError(this);
 }
 
+void packages::sHandleAutoUpdate(const bool pAutoUpdate)
+{
+  if (pAutoUpdate)
+    connect(omfgThis, SIGNAL(tick()), this, SLOT(sFillList()));
+  else
+    disconnect(omfgThis, SIGNAL(tick()), this, SLOT(sFillList()));
+}
