@@ -92,6 +92,7 @@ class OPENMFGWIDGETS_EXPORT XComboBox : public QComboBox
   Q_PROPERTY(QString        listDisplayFieldName  READ listDisplayFieldName WRITE setListDisplayFieldName                 )
   Q_PROPERTY(int            id                    READ id                   WRITE setId                   DESIGNABLE false)
   Q_PROPERTY(QString        currentDefault        READ currentDefault                                     DESIGNABLE false)
+  Q_PROPERTY(QString        text                  READ currentText          WRITE setText                 DESIGNABLE false)
 
   public:
     XComboBox(QWidget * = 0, const char * = 0);
@@ -130,9 +131,6 @@ class OPENMFGWIDGETS_EXPORT XComboBox : public QComboBox
     void setType(XComboBoxTypes);
 
     void setCode(QString);
-    void setText(QVariant &);
-    void setText(const QString &);
-    void setText(const QVariant &);
     
 
     virtual bool      allowNull()            const  { return _allowNull; };
@@ -176,6 +174,9 @@ class OPENMFGWIDGETS_EXPORT XComboBox : public QComboBox
     void setListSchemaName(QString p);
     void setListTableName(QString p);
     void setId(int);
+    void setText(QVariant &);
+    void setText(const QString &);
+    void setText(const QVariant &);
 
   private slots:
     void sHandleNewIndex(int);

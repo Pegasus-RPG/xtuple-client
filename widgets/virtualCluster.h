@@ -186,7 +186,8 @@ class OPENMFGWIDGETS_EXPORT VirtualInfo : public QDialog
 class OPENMFGWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
 {
     Q_OBJECT
-    Q_PROPERTY(QString  number READ text  WRITE setNumber DESIGNABLE false);
+    Q_PROPERTY(QString  number         READ text           WRITE setNumber         DESIGNABLE false);
+    Q_PROPERTY(QString  defaultNumber  READ defaultNumber  WRITE setDefaultNumber  DESIGNABLE false);
     
     friend class VirtualCluster;
     friend class VirtualInfo;
@@ -198,10 +199,12 @@ class OPENMFGWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
                                const char*, const char*, const char*,
                                const char* = 0);
         virtual int  id() const { return _id; }
+        virtual QString defaultNumber()  const { return _default; };
 
     public slots:
         virtual void setId(const int);
         inline virtual QString extraClause() const { return _extraClause; };
+        
 
     protected slots:
         virtual void clear();
@@ -217,6 +220,7 @@ class OPENMFGWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
         virtual void sEllipses();
         virtual void sParse();
 
+        virtual void setDefaultNumber(QString p)       { _default = p; };
         virtual void setNumber(const QString&);
         virtual void setTitles(const QString&, const QString& = 0);
         inline virtual void setExtraClause(const QString& pExt) { _extraClause = pExt; };
@@ -242,6 +246,7 @@ class OPENMFGWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
         QString _numClause;
         QString _extraClause;
         QString _name;
+        QString _default;
         QString _description;
         QString _idColName;
         QString _numColName;
@@ -277,7 +282,6 @@ class OPENMFGWIDGETS_EXPORT VirtualCluster : public QWidget
     Q_PROPERTY(bool    listVisible    READ listVisible    WRITE setListVisible);
     Q_PROPERTY(bool    nameVisible    READ nameVisible    WRITE setNameVisible);
     Q_PROPERTY(bool    readOnly       READ readOnly       WRITE setReadOnly);
-    Q_PROPERTY(QString defaultNumber  READ defaultNumber  WRITE setDefaultNumber  DESIGNABLE false);
     Q_PROPERTY(QString fieldName      READ fieldName      WRITE setFieldName);
 
     friend class VirtualClusterLineEdit;
@@ -297,7 +301,6 @@ class OPENMFGWIDGETS_EXPORT VirtualCluster : public QWidget
         inline virtual QString name()           const { return _name->text(); };
         inline virtual bool    isStrict()       const { return _number->isStrict(); };
         inline virtual bool    readOnly()       const { return _readOnly; };
-        inline virtual QString defaultNumber()  const { return _default; };
         inline virtual QString fieldName()      const { return _fieldName; };
         inline virtual QString extraClause()    const { return _number->extraClause(); };
 
@@ -306,7 +309,6 @@ class OPENMFGWIDGETS_EXPORT VirtualCluster : public QWidget
         inline virtual void clearExtraClause()                { _number->clearExtraClause(); };
         inline virtual void setDescription(const QString& p)  { _description->setText(p); };
         inline virtual void setExtraClause(const QString& p)  { _number->setExtraClause(p); };
-               virtual void setDefaultNumber(QString p)       { _default = p; };
         inline virtual void setFieldName(QString p)           { _fieldName = p; };
         inline virtual void setId(const int p)                { _number->setId(p); };
         inline virtual void setInfoVisible(const bool p)      { _info->setHidden(!p); };
@@ -339,7 +341,6 @@ class OPENMFGWIDGETS_EXPORT VirtualCluster : public QWidget
         QLabel*                 _description;
         QLabel*                 _name;
         bool                    _readOnly;
-        QString                 _default;
 	QString                 _fieldName;
 
     private:

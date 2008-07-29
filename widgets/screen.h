@@ -98,9 +98,12 @@ class OPENMFGWIDGETS_EXPORT Screen : public QWidget
                 void showEvent ( QShowEvent * event );
        	
 	public slots:
+                bool checkSaved();
+                void insert();
+                void removeCurrent();
+                void removeRows(int row, int count);
 		void toNext();
 		void toPrevious();
-		void insert();
 		void save();
 		void search(QString criteria);
 		void select();
@@ -114,10 +117,10 @@ class OPENMFGWIDGETS_EXPORT Screen : public QWidget
  
 		void setTableName(QString table);
 		void setTable(QString schema, QString table);
-		void setDataWidgetMapper(QSqlTableModel *p);
+		void setDataWidgetMapper(QSqlTableModel *model);
 	
 	signals:
-		void newDataWidgetMapper(XDataWidgetMapper *m);
+		void newDataWidgetMapper(XDataWidgetMapper *mapper);
                 void newModel(XSqlTableModel *model);
 		void saved(bool);
 

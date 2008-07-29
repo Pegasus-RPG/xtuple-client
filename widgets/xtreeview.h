@@ -71,7 +71,6 @@ class OPENMFGWIDGETS_EXPORT XTreeView : public QTreeView
     Q_OBJECT
     Q_PROPERTY(QString        schemaName            READ schemaName           WRITE setSchemaName       )
     Q_PROPERTY(QString        tableName             READ tableName            WRITE setTableName        )
-    Q_PROPERTY(QString        formName              READ formName             WRITE setFormName         )
     Q_PROPERTY(int            primaryKeyCoulmns     READ primaryKeyColumns    WRITE setPrimaryKeyColumns)
     
     public:
@@ -80,12 +79,11 @@ class OPENMFGWIDGETS_EXPORT XTreeView : public QTreeView
       int          primaryKeyColumns()       const            { return _keyColumns;         };
       QString      schemaName()              const            { return _schemaName;         };
       QString      tableName()               const            { return _tableName;          };
-      QString      formName()                const            { return _formName;           };
       
     public slots:
       virtual void populate(int p);
+      virtual void save();
       virtual void setDataWidgetMap(XDataWidgetMapper* mapper);
-      virtual void setFormName(QString p)                     { _formName = p;              };
       virtual void setModel(XSqlTableModel* model);
       virtual void setPrimaryKeyColumns(int p)                { _keyColumns = p;            };
       virtual void setSchemaName(QString p)                   { _schemaName = p;            };
@@ -99,17 +97,13 @@ class OPENMFGWIDGETS_EXPORT XTreeView : public QTreeView
       
     private:
       int               _keyColumns;
-      QMenu             *_menu;
-      QString           _formName;
       QString           _schemaName;
       QString           _tableName;
       QSqlDatabase      *_db;
       QSqlRecord        _idx;
       XDataWidgetMapper *_mapper;
       XSqlTableModel    _model;
-      
-    private slots:
-      void open();  
+ 
 };
 
 #endif

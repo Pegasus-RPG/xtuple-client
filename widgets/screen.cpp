@@ -74,9 +74,14 @@ Screen::Screen(QWidget *parent) :
   _mapper = new XDataWidgetMapper;
   
   _model->setEditStrategy(QSqlTableModel::OnManualSubmit);
+  
 }
 
 Screen::~Screen()
+{
+}
+
+bool Screen::checkSaved()
 {
   if (isDirty())
     if (QMessageBox::question(this, tr("Unsaved work"),
@@ -84,6 +89,7 @@ Screen::~Screen()
                                    QMessageBox::Yes | QMessageBox::Default,
                                    QMessageBox::No ) == QMessageBox::Yes)
       save();
+  close();
 }
 
 /* When the widget is first shown, set up table mappings if they exist*/
@@ -94,6 +100,7 @@ void Screen::showEvent(QShowEvent *event)
     _shown = true;
     setTable(_schemaName, _tableName);
 
+/*
     // now set the sort order
     for (int i = 0; i < _model->columnCount(); i++)
     { 
@@ -102,8 +109,10 @@ void Screen::showEvent(QShowEvent *event)
         _model->setSort(i, Qt::AscendingOrder);
         break;
       }
-    }
+    } 
+    */
   }
+
   QWidget::showEvent(event);
 }
 
@@ -119,9 +128,14 @@ Screen::SearchTypes Screen::searchType()
 
 bool Screen::isDirty()
 {
-  for (int i = 0; i < _model->columnCount()-1; i++)
-    if (_model->isDirty(_model->index(_mapper->currentIndex(),i)))
-      return true;
+  for (int r = 0; r < _model->rowCount()-1; r++)
+  {
+    for (int c = 0; c < _model->columnCount()-1; c++)
+    {
+      if (_model->isDirty(_model->index(r,c)))
+        return true;
+    }
+  }
   return false;
 }
 
@@ -132,13 +146,23 @@ void Screen::insert()
   _mapper->clear();
 }
 
+void Screen::removeCurrent()
+{
+  removeRows(_mapper->currentIndex(),1);
+}
+
+void Screen::removeRows(int row, int count)
+{
+  _model->removeRows(row, count);
+}
+
 void Screen::save()
 {
   int i=_mapper->currentIndex();
   _mapper->submit();
   _model->submitAll();
   _mapper->setCurrentIndex(i);
-  if (_model->lastError().type() != QSqlError::NoError && _model->lastError().driverText() != "No Fields to update")
+  if (_model->lastError().type() != QSqlError::NoError) // && _model->lastError().driverText() != "No Fields to update")
   {
     QMessageBox::critical(this, tr("Error Saving %1").arg(_tableName),
                           tr("Error saving %1 at %2::%3\n\n%4")
@@ -179,7 +203,6 @@ void Screen::select()
     emit newModel(_model);
   }
 }
-
 
 void Screen::setMode(Modes p)
 {
@@ -247,13 +270,15 @@ void Screen::setTable(QString schema, QString table)
     {
       _model->setTable(tablename,_keyColumns);
       setDataWidgetMapper(_model);
+      qDebug("rows %d", _model->rowCount());
       emit newModel(_model);
+      qDebug("rows after %d", _model->rowCount());
     }
   }
 }
 
-void Screen::setDataWidgetMapper(QSqlTableModel *p)
+void Screen::setDataWidgetMapper(QSqlTableModel *model)
 {
-  _mapper->setModel(p);
+  _mapper->setModel(model);
   emit newDataWidgetMapper(_mapper);
 }

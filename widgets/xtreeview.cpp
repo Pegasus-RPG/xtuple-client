@@ -73,11 +73,9 @@ XTreeView::XTreeView(QWidget *parent) :
   _keyColumns=1;
   
   setAlternatingRowColors(true);
-  setSortingEnabled(true);
 
   _mapper = new XDataWidgetMapper(this);
-  _menu   = new QMenu(this);
-  _menu->insertItem(tr("Open..."),  this, SLOT(open()));
+  _model.setEditStrategy(QSqlTableModel::OnManualSubmit);
 }
 
 void XTreeView::selectionChanged(const QItemSelection & selected, const QItemSelection & deselected)
@@ -85,22 +83,6 @@ void XTreeView::selectionChanged(const QItemSelection & selected, const QItemSel
   if (!selected.indexes().isEmpty())
     emit rowSelected(selected.indexes().first().row());
   QTreeView::selectionChanged(selected, deselected);
-}
-
-void XTreeView::open()
-{/*
-  XUiLoader loader;
-  QByteArray ba = _formName;
-  QBuffer uiFile(&ba);
-  if(!uiFile.open(QIODevice::ReadOnly))
-  {
-    QMessageBox::critical(this, tr("Could not load file"),
-        tr("There was an error loading the UI Form from the database."));
-    return;
-  }
-  QWidget *ui = loader.load(&uiFile);
-  uiFile.close();
-  */
 }
 
 void XTreeView::populate(int p)
@@ -122,6 +104,11 @@ void XTreeView::populate(int p)
   }
 }
 
+void XTreeView::save()
+{
+  _model.submitAll();
+}
+
 void XTreeView::setDataWidgetMap(XDataWidgetMapper* mapper)
 {  
   if (!_tableName.isEmpty())
@@ -132,9 +119,10 @@ void XTreeView::setDataWidgetMap(XDataWidgetMapper* mapper)
     _model.setTable(tablename,_keyColumns);
     
     setModel(&_model);
-    populate(mapper ->currentIndex());
+    populate(mapper->currentIndex());
     _mapper=mapper;
     connect(_mapper, SIGNAL(currentIndexChanged(int)), this, SLOT(populate(int)));
+    connect(_mapper, SIGNAL(saved(bool)), this, SLOT(save()));
   }
 }
 
@@ -154,5 +142,6 @@ void XTreeView::setModel(XSqlTableModel * model)
       QTreeView::model()->setHeaderData(i,Qt::Horizontal,h);
   }
 }
+
 
 

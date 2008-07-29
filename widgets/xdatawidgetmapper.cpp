@@ -104,6 +104,13 @@ void XDataWidgetMapper::removeDefault(QWidget *widget)
     }
 }
 
+void XDataWidgetMapper::submit()
+{
+  QDataWidgetMapper::submit();
+  emit saved(true);
+}
+
+
 
 
 

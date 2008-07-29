@@ -86,6 +86,7 @@ class OPENMFGWIDGETS_EXPORT CurrDisplay : public QWidget
     Q_PROPERTY(bool enabled                 READ isEnabled                WRITE setEnabled)
     Q_PROPERTY(QString fieldNameValue       READ fieldNameValue           WRITE setFieldNameValue)
     Q_PROPERTY(double localValue            READ localValue               WRITE setLocalValue)
+    Q_PROPERTY(double defaultLocalValue     READ defaultLocalValue        WRITE setDefaultLocalValue)
     
 
     public:
@@ -99,11 +100,12 @@ class OPENMFGWIDGETS_EXPORT CurrDisplay : public QWidget
           Money, SalesPrice, PurchPrice, ExtPrice, Cost
         };
 
+        double  defaultLocalValue()             const { return _default;            };
 	virtual bool		isZero()	const;
         virtual inline bool     isEmpty()       const { return (New == _state); };
-	static QString		baseCurrAbbr();
+	static  QString		baseCurrAbbr();
 	virtual QString		currAbbr()	const;
-	static QString		currSymbol(const int);
+	static  QString		currSymbol(const int);
 
 	virtual inline int	id()		const { return _localId; };
 	static int		baseId();
@@ -115,7 +117,7 @@ class OPENMFGWIDGETS_EXPORT CurrDisplay : public QWidget
 	virtual inline QDate	effective()	const { return _effective; };
 	virtual inline bool	isEnabled()	const { return _valueLocalWidget->isEnabled(); };
 	virtual inline bool	isBase() const { return _localId == _baseId; };
-	static double   	convert(const int, const int, const double, const QDate&);
+	static  double   	convert(const int, const int, const double, const QDate&);
         virtual QString         fieldNameValue()   const { return _fieldNameValue; };
 
     public slots:
@@ -123,6 +125,7 @@ class OPENMFGWIDGETS_EXPORT CurrDisplay : public QWidget
 	void reset();
 	void setId(int);
 	void setBaseValue(double);
+        void setDefaultLocalValue(double p)            { _default = p;             };
 	void setLocalValue(double);
 	virtual void setFormat(CurrDisplayFormats = Money);
 	void setLocalControl(bool);
@@ -174,6 +177,9 @@ class OPENMFGWIDGETS_EXPORT CurrDisplay : public QWidget
 	virtual void sValueLocalChanged();
 	virtual void sValueLocalChanged(double);
         virtual void setDataWidgetMap(XDataWidgetMapper* m);
+        
+    private:
+        double _default;
 };
 
 /*

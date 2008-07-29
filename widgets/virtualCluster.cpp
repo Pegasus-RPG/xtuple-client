@@ -71,9 +71,6 @@
 
 void VirtualCluster::init()
 {
-  if (DEBUG)
-    qDebug("VC %s::init()", qPrintable(objectName()));
-
     _label = new QLabel(this, "_label");
     _label->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     _label->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);

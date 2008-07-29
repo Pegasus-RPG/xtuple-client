@@ -75,9 +75,13 @@ class OPENMFGWIDGETS_EXPORT XDataWidgetMapper : public QDataWidgetMapper
       virtual void addMapping(QWidget *widget, QString fieldName, const QByteArray &propertyName) {QDataWidgetMapper::addMapping(widget, static_cast<QSqlTableModel*>(model())->fieldIndex(fieldName), propertyName);};
       virtual void addMapping(QWidget *widget, QString fieldName, const QByteArray &propertyName, const QByteArray &defaultName);
       virtual void removeDefault(QWidget *widget);
+      virtual void submit();
       
     public slots:
       virtual void clear();
+      
+    signals:
+      bool saved(bool);
 
     private:
       struct WidgetMapper

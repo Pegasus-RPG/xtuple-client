@@ -83,16 +83,20 @@ class OPENMFGWIDGETS_EXPORT SoLineEdit : public XLineEdit
 {
   Q_OBJECT
   Q_PROPERTY(QString     number          READ text()          WRITE setNumber);
+  Q_PROPERTY(QString     defaultNumber   READ defaultNumber   WRITE setDefaultNumber DESIGNABLE false );
 
 friend class SoCluster;
 
   public:
     SoLineEdit(QWidget *, const char * = 0);
+       
+    QString defaultNumber()         const { return _default;            };
 
   public slots:
     bool sitePrivsEnforced() const { return _sitePrivs;};
     void setId(int);
     void setCustId(int);
+    void setDefaultNumber(QString p)            { _default = p;             };
     void setNumber(QString);
     void setSitePrivsEnforced(const bool p)     { _sitePrivs = p;};
     void clear();
@@ -113,6 +117,7 @@ friend class SoCluster;
   private:
     int  _custid;
     int  _type;
+    QString  _default;
     QString  _number;
 
 };
@@ -123,7 +128,6 @@ class OPENMFGWIDGETS_EXPORT SoCluster : public QWidget
   Q_OBJECT
   Q_PROPERTY(QString label          READ label          WRITE setLabel                          );
   Q_PROPERTY(bool    readOnly       READ isReadOnly     WRITE setReadOnly                       );
-  Q_PROPERTY(QString defaultNumber  READ defaultNumber  WRITE setDefaultNumber DESIGNABLE false );
   Q_PROPERTY(QString fieldName      READ fieldName      WRITE setFieldName                      );
 
   public:
@@ -137,7 +141,6 @@ class OPENMFGWIDGETS_EXPORT SoCluster : public QWidget
     inline QString  number()              { return _soNumber->text();   };
     inline virtual QString label()  const { return _label;              };
     inline bool isReadOnly()              { return _readOnly;           }; 
-    QString defaultNumber()         const { return _default;            };
     QString fieldName()             const { return _fieldName;          };
 
   public slots:
@@ -145,7 +148,6 @@ class OPENMFGWIDGETS_EXPORT SoCluster : public QWidget
     void setId(int);
     void setCustId(int);
     void setDataWidgetMap(XDataWidgetMapper* m);
-    void setDefaultNumber(QString p)            { _default = p;             };
     void setFieldName(QString p)                { _fieldName = p;           };
     void setSitePrivsEnforced(const bool p)     { _soNumber->_sitePrivs = p;};
     void setNumber(QString);
@@ -170,7 +172,6 @@ class OPENMFGWIDGETS_EXPORT SoCluster : public QWidget
     QPushButton  *_list;
     QLabel       *_custName;
     bool         _readOnly;
-    QString      _default;
     QString      _fieldName;
     QString      _label;
     
