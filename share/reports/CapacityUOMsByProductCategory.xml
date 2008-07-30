@@ -20,16 +20,16 @@
        formatRatio(itemcapinvrat(item_id)) AS capratio,
        itemaltcapuom(item_id) AS altcapuom,
        formatRatio(itemaltcapinvrat(item_id)) AS altcapratio,
-       item_shipuom,
-       formatRatio(item_shipinvrat) AS shipratio
+       itemsellinguom(item_id) AS shipuom,
+       formatRatio(iteminvpricerat(item_id)) AS shipratio
   FROM item, prodcat, uom
  WHERE ((item_sold)
    AND (item_inv_uom_id=uom_id)
    AND (item_prodcat_id=prodcat_id)
-&lt;? if exists(&quot;prodcat_id&quot;) ?>
-   AND (prodcat_id=&lt;? value(&quot;prodcat_id&quot;) ?>)
-&lt;? elseif exists(&quot;prodcat_pattern&quot;) ?>
-   AND (prodcat_code ~ &lt;? value(&quot;prodcat_pattern&quot;) ?>)
+&lt;? if exists("prodcat_id") ?>
+   AND (prodcat_id=&lt;? value("prodcat_id") ?>)
+&lt;? elseif exists("prodcat_pattern") ?>
+   AND (prodcat_code ~ &lt;? value("prodcat_pattern") ?>)
 &lt;? endif ?>
 )
 ORDER BY prodcat_code, item_number;
@@ -37,130 +37,24 @@ ORDER BY prodcat_code, item_number;
  </querysource>
  <querysource>
   <name>head</name>
-  <sql>SELECT &lt;? if exists(&quot;prodcat_id&quot;) ?>
+  <sql>SELECT &lt;? if exists("prodcat_id") ?>
          ( SELECT (prodcat_code||'-'||prodcat_descrip)
              FROM prodcat
-            WHERE (prodcat_id=&lt;? value(&quot;prodcat_id&quot;) ?>) )
-       &lt;? elseif exists(&quot;prodcat_pattern&quot;) ?>
-         text(&lt;? value(&quot;prodcat_pattern&quot;) ?>)
+            WHERE (prodcat_id=&lt;? value("prodcat_id") ?>) )
+       &lt;? elseif exists("prodcat_pattern") ?>
+         text(&lt;? value("prodcat_pattern") ?>)
        &lt;? else ?>
          text('All Product Categories')
        &lt;? endif ?>
        AS prodcat;</sql>
  </querysource>
  <rpthead>
-  <height>236</height>
-  <label>
-   <rect>
-    <x>400</x>
-    <y>215</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Inv./Cap. Ratio</string>
-  </label>
-  <line>
-   <xstart>5</xstart>
-   <ystart>229</ystart>
-   <xend>745</xend>
-   <yend>229</yend>
-   <weight>2</weight>
-  </line>
-  <label>
-   <rect>
-    <x>400</x>
-    <y>200</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Capacity UOM</string>
-  </label>
-  <field>
-   <rect>
-    <x>160</x>
-    <y>120</y>
-    <width>484</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>prodcat</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>70</x>
-    <y>200</y>
-    <width>229</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Item Number</string>
-  </label>
-  <label>
-   <rect>
-    <x>500</x>
-    <y>215</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Inv./Alt. Cap. Ratio</string>
-  </label>
-  <label>
-   <rect>
-    <x>300</x>
-    <y>200</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Inventory UOM</string>
-  </label>
+  <height>234</height>
   <label>
    <rect>
     <x>265</x>
     <y>10</y>
-    <width>459</width>
+    <width>458</width>
     <height>40</height>
    </rect>
    <font>
@@ -171,38 +65,6 @@ ORDER BY prodcat_code, item_number;
    <right/>
    <vcenter/>
    <string>Capacity UOMs by Product Category</string>
-  </label>
-  <label>
-   <rect>
-    <x>5</x>
-    <y>200</y>
-    <width>55</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Prod. Cat.</string>
-  </label>
-  <label>
-   <rect>
-    <x>70</x>
-    <y>215</y>
-    <width>229</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Item Description</string>
   </label>
   <label>
    <rect>
@@ -222,7 +84,7 @@ ORDER BY prodcat_code, item_number;
   </label>
   <label>
    <rect>
-    <x>600</x>
+    <x>500</x>
     <y>215</y>
     <width>100</width>
     <height>15</height>
@@ -234,7 +96,103 @@ ORDER BY prodcat_code, item_number;
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Inv./Ship. Ratio</string>
+   <string>Inv./Alt. Cap. Ratio</string>
+  </label>
+  <label>
+   <rect>
+    <x>70</x>
+    <y>215</y>
+    <width>228</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Item Description</string>
+  </label>
+  <label>
+   <rect>
+    <x>5</x>
+    <y>200</y>
+    <width>55</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Prod. Cat.</string>
+  </label>
+  <label>
+   <rect>
+    <x>400</x>
+    <y>200</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Capacity UOM</string>
+  </label>
+  <label>
+   <rect>
+    <x>300</x>
+    <y>200</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Inventory UOM</string>
+  </label>
+  <label>
+   <rect>
+    <x>600</x>
+    <y>200</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Shipping UOM</string>
+  </label>
+  <label>
+   <rect>
+    <x>70</x>
+    <y>200</y>
+    <width>228</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Item Number</string>
   </label>
   <label>
    <rect>
@@ -252,10 +210,29 @@ ORDER BY prodcat_code, item_number;
    <vcenter/>
    <string>Product Category(ies):</string>
   </label>
+  <field>
+   <rect>
+    <x>160</x>
+    <y>120</y>
+    <width>483</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>prodcat</column>
+   </data>
+  </field>
   <label>
    <rect>
-    <x>600</x>
-    <y>200</y>
+    <x>400</x>
+    <y>215</y>
     <width>100</width>
     <height>15</height>
    </rect>
@@ -266,7 +243,30 @@ ORDER BY prodcat_code, item_number;
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Shipping UOM</string>
+   <string>Inv./Cap. Ratio</string>
+  </label>
+  <line>
+   <xstart>5</xstart>
+   <ystart>228</ystart>
+   <xend>745</xend>
+   <yend>228</yend>
+   <weight>2</weight>
+  </line>
+  <label>
+   <rect>
+    <x>600</x>
+    <y>215</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Inv./Ship. Ratio</string>
   </label>
  </rpthead>
  <pghead>
@@ -275,22 +275,13 @@ ORDER BY prodcat_code, item_number;
  </pghead>
  <pghead>
   <height>36</height>
-  <label>
-   <rect>
-    <x>500</x>
-    <y>0</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Alt. Capacity UOM</string>
-  </label>
+  <line>
+   <xstart>5</xstart>
+   <ystart>30</ystart>
+   <xend>745</xend>
+   <yend>30</yend>
+   <weight>2</weight>
+  </line>
   <label>
    <rect>
     <x>600</x>
@@ -309,9 +300,57 @@ ORDER BY prodcat_code, item_number;
   </label>
   <label>
    <rect>
+    <x>5</x>
+    <y>0</y>
+    <width>55</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Prod. Cat.</string>
+  </label>
+  <label>
+   <rect>
+    <x>300</x>
+    <y>0</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Inventory UOM</string>
+  </label>
+  <label>
+   <rect>
+    <x>400</x>
+    <y>0</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Capacity UOM</string>
+  </label>
+  <label>
+   <rect>
     <x>70</x>
     <y>0</y>
-    <width>229</width>
+    <width>228</width>
     <height>15</height>
    </rect>
    <font>
@@ -322,6 +361,38 @@ ORDER BY prodcat_code, item_number;
    <left/>
    <vcenter/>
    <string>Item Number</string>
+  </label>
+  <label>
+   <rect>
+    <x>600</x>
+    <y>0</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Shipping UOM</string>
+  </label>
+  <label>
+   <rect>
+    <x>70</x>
+    <y>15</y>
+    <width>228</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Item Description</string>
   </label>
   <label>
    <rect>
@@ -341,23 +412,7 @@ ORDER BY prodcat_code, item_number;
   </label>
   <label>
    <rect>
-    <x>70</x>
-    <y>15</y>
-    <width>229</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Item Description</string>
-  </label>
-  <label>
-   <rect>
-    <x>600</x>
+    <x>500</x>
     <y>0</y>
     <width>100</width>
     <height>15</height>
@@ -369,46 +424,7 @@ ORDER BY prodcat_code, item_number;
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Shipping UOM</string>
-  </label>
-  <label>
-   <rect>
-    <x>300</x>
-    <y>0</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Inventory UOM</string>
-  </label>
-  <line>
-   <xstart>5</xstart>
-   <ystart>30</ystart>
-   <xend>745</xend>
-   <yend>30</yend>
-   <weight>2</weight>
-  </line>
-  <label>
-   <rect>
-    <x>5</x>
-    <y>0</y>
-    <width>55</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Prod. Cat.</string>
+   <string>Alt. Capacity UOM</string>
   </label>
   <label>
    <rect>
@@ -426,22 +442,6 @@ ORDER BY prodcat_code, item_number;
    <vcenter/>
    <string>Inv./Alt. Cap. Ratio</string>
   </label>
-  <label>
-   <rect>
-    <x>400</x>
-    <y>0</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Capacity UOM</string>
-  </label>
  </pghead>
  <section>
   <name>detail</name>
@@ -450,146 +450,6 @@ ORDER BY prodcat_code, item_number;
     <query>detail</query>
    </key>
    <height>51</height>
-   <field>
-    <rect>
-     <x>600</x>
-     <y>0</y>
-     <width>100</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <hcenter/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>item_shipuom</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>500</x>
-     <y>15</y>
-     <width>100</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>altcapratio</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>400</x>
-     <y>0</y>
-     <width>100</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <hcenter/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>capuom</column>
-    </data>
-   </field>
-   <line>
-    <xstart>5</xstart>
-    <ystart>45</ystart>
-    <xend>745</xend>
-    <yend>45</yend>
-    <weight>0</weight>
-   </line>
-   <field>
-    <rect>
-     <x>500</x>
-     <y>0</y>
-     <width>100</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <hcenter/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>altcapuom</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>70</x>
-     <y>15</y>
-     <width>229</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>item_descrip1</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>400</x>
-     <y>15</y>
-     <width>100</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>capratio</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>70</x>
-     <y>0</y>
-     <width>229</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>item_number</column>
-    </data>
-   </field>
    <field>
     <rect>
      <x>600</x>
@@ -631,8 +491,8 @@ ORDER BY prodcat_code, item_number;
    <field>
     <rect>
      <x>70</x>
-     <y>30</y>
-     <width>229</width>
+     <y>15</y>
+     <width>228</width>
      <height>15</height>
     </rect>
     <font>
@@ -644,7 +504,90 @@ ORDER BY prodcat_code, item_number;
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_descrip2</column>
+     <column>item_descrip1</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>500</x>
+     <y>15</y>
+     <width>100</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>altcapratio</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>70</x>
+     <y>0</y>
+     <width>228</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>item_number</column>
+    </data>
+   </field>
+   <line>
+    <xstart>5</xstart>
+    <ystart>45</ystart>
+    <xend>745</xend>
+    <yend>45</yend>
+    <weight>0</weight>
+   </line>
+   <field>
+    <rect>
+     <x>600</x>
+     <y>0</y>
+     <width>100</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>shipuom</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>400</x>
+     <y>15</y>
+     <width>100</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>capratio</column>
     </data>
    </field>
    <field>
@@ -666,10 +609,102 @@ ORDER BY prodcat_code, item_number;
      <column>uom_name</column>
     </data>
    </field>
+   <field>
+    <rect>
+     <x>500</x>
+     <y>0</y>
+     <width>100</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>altcapuom</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>70</x>
+     <y>30</y>
+     <width>228</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>item_descrip2</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>400</x>
+     <y>0</y>
+     <width>100</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>capuom</column>
+    </data>
+   </field>
   </detail>
  </section>
  <pgfoot>
   <height>16</height>
+  <field>
+   <rect>
+    <x>95</x>
+    <y>0</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>Context Query</query>
+    <column>report_date</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>615</x>
+    <y>0</y>
+    <width>85</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Page:</string>
+  </label>
   <field>
    <rect>
     <x>705</x>
@@ -691,22 +726,6 @@ ORDER BY prodcat_code, item_number;
   </field>
   <label>
    <rect>
-    <x>615</x>
-    <y>0</y>
-    <width>85</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Page:</string>
-  </label>
-  <label>
-   <rect>
     <x>5</x>
     <y>0</y>
     <width>85</width>
@@ -721,24 +740,5 @@ ORDER BY prodcat_code, item_number;
    <vcenter/>
    <string>Report Date:</string>
   </label>
-  <field>
-   <rect>
-    <x>95</x>
-    <y>0</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>Context Query</query>
-    <column>report_date</column>
-   </data>
-  </field>
  </pgfoot>
 </report>
