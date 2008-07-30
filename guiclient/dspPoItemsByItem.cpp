@@ -90,15 +90,15 @@ dspPoItemsByItem::dspPoItemsByItem(QWidget* parent, const char* name, Qt::WFlags
 
   _agent->setText(omfgThis->username());
 
-  _poitem->addColumn(tr("Site"),      _whsColumn,   Qt::AlignCenter );
-  _poitem->addColumn(tr("P/O #"),     _orderColumn, Qt::AlignRight  );
-  _poitem->addColumn(tr("Status"),    _dateColumn,  Qt::AlignCenter );
-  _poitem->addColumn(tr("Vendor"),    -1,           Qt::AlignLeft   );
-  _poitem->addColumn(tr("Due Date"),  _dateColumn,  Qt::AlignCenter );
-  _poitem->addColumn(tr("Ordered"),   _qtyColumn,   Qt::AlignRight  );
-  _poitem->addColumn(tr("Received"),  _qtyColumn,   Qt::AlignRight  );
-  _poitem->addColumn(tr("Returned"),  _qtyColumn,   Qt::AlignRight  );
-  _poitem->addColumn("poitem_status", 10,           Qt::AlignCenter );
+  _poitem->addColumn(tr("Site"),        _whsColumn,   Qt::AlignCenter );
+  _poitem->addColumn(tr("P/O #"),       _orderColumn, Qt::AlignRight  );
+  _poitem->addColumn(tr("Status"),      _dateColumn,  Qt::AlignCenter );
+  _poitem->addColumn(tr("Vendor"),      -1,           Qt::AlignLeft   );
+  _poitem->addColumn(tr("Due Date"),    _dateColumn,  Qt::AlignCenter );
+  _poitem->addColumn(tr("Ordered"),     _qtyColumn,   Qt::AlignRight  );
+  _poitem->addColumn(tr("Received"),    _qtyColumn,   Qt::AlignRight  );
+  _poitem->addColumn(tr("Returned"),    _qtyColumn,   Qt::AlignRight  );
+  _poitem->addColumn(tr("Item Status"), 10,           Qt::AlignCenter );
 
   _poitem->hideColumn(POITEM_STATUS_COL);
 }
