@@ -105,7 +105,6 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   connect(_newQuote, SIGNAL(clicked()), this, SLOT(sNewQuote()));
   connect(_order, SIGNAL(valid(bool)), _viewOrder, SLOT(setEnabled(bool)));
   connect(_order, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuSalesOrder(QMenu*)));
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_quote, SIGNAL(valid(bool)), _viewQuote, SLOT(setEnabled(bool)));
   connect(_quote, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuQuote(QMenu*)));
   connect(_viewCreditMemo, SIGNAL(clicked()), this, SLOT(sViewCreditMemo()));
