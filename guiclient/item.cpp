@@ -83,7 +83,7 @@
 #include "itemtax.h"
 #include "storedProcErrorLookup.h"
 
-const char *_itemTypes[] = { "P", "M", "J", "F", "R", "S", "T", "O", "L", "B", "C", "Y" };
+const char *_itemTypes[] = { "P", "M", "J", "F", "R", "S", "T", "O", "L", "K", "B", "C", "Y" };
 const char *_planningTypes[] = { "M", "S", "N" };
 
 /*
@@ -452,6 +452,13 @@ void item::sSave()
     return;
   }
 
+  if(QString(_itemTypes[_itemtype->currentItem()]) == "K" && !_sold->isChecked())
+  {
+    QMessageBox::warning( this, tr("Must be Sold"),
+      tr("Kit item types must be Sold. Please mark this item as sold and set the appropriate options and save again.") );
+    return;
+  }
+
   if (_mode == cEdit)
   {
     q.prepare( "SELECT item_id "
@@ -727,6 +734,7 @@ void item::sSave()
   if (q.lastError().type() != QSqlError::None)
   {
     q.exec("ROLLBACK;");
+    _inTransaction = false;
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
@@ -1191,6 +1199,19 @@ void item::sHandleItemtype()
     sold     = TRUE;
     planType = TRUE;
   }
+
+  if (itemType == "K")
+  {
+    sold     = true;
+    weight   = true;
+    _fractional->setChecked(false);
+  }
+  _fractional->setEnabled(itemType!="K");
+  _planningType->setEnabled(itemType!="K");
+  _boo->setVisible(itemType!="K");
+  _workbench->setVisible(itemType!="K");
+  _tab->setTabEnabled(_tab->indexOf(_tabUOM),(itemType!="K"));
+  _tab->setTabEnabled(_tab->indexOf(_transformationsTab),(itemType!="K"));
 
   if (itemType == "L")
     _planningType->setCurrentItem(1);

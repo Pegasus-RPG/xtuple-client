@@ -227,6 +227,7 @@ void items::sFillList( int pItemid, bool pLocal )
                "            WHEN (item_type='A') THEN text(<? value(\"assortment\") ?>)"
                "            WHEN (item_type='O') THEN text(<? value(\"outside\") ?>)"
                "            WHEN (item_type='L') THEN text(<? value(\"planning\") ?>)"
+               "            WHEN (item_type='K') THEN text(<? value(\"kit\") ?>)"
                "            ELSE text(<? value(\"error\") ?>)"
                "       END,"
                "       uom_name "
@@ -277,6 +278,7 @@ void items::sFillList( int pItemid, bool pLocal )
   params.append("outside", tr("Outside Process"));
   params.append("planning", tr("Planning"));
   params.append("assortment", tr("Assortment"));
+  params.append("kit", tr("Kit"));
   params.append("error", tr("Error"));
 
   MetaSQLQuery mql(sql);

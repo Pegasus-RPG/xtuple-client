@@ -98,6 +98,7 @@ friend class ItemCluster;
       cOutsideProcess      = 0x00000200,
       cPlanning            = 0x00000400,
       cJob                 = 0x00000800,
+      cKit                 = 0x00001000,
 
       // The first 16 bits are reserved for individual item types and we
       // have this mask defined here for convenience.

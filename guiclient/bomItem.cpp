@@ -266,6 +266,25 @@ enum SetResponse bomItem::set(const ParameterList &pParams)
     }
   }
 
+  // Check the parent item type and if it is a Kit then change some widgets
+  q.prepare("SELECT item_type "
+            "FROM item "
+            "WHERE (item_id=:item_id); ");
+  q.bindValue(":item_id", _itemid);
+  q.exec();
+  if (q.first() && (q.value("item_type").toString() == "K"))
+  {
+    _usedAtLit->setEnabled(false);
+    _usedAt->setEnabled(false);
+    _booitemList->setEnabled(false);
+    _scheduleAtWooper->setEnabled(false);
+    _createWo->setChecked(false);
+    _createWo->setEnabled(false);
+    _issueMethod->setCurrentItem(0);
+    _issueMethod->setEnabled(false);
+    _tab->setTabEnabled(_tab->indexOf(_substitutionsTab), false);
+  }
+  
   return NoError;
 }
 

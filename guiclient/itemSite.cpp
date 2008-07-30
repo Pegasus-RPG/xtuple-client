@@ -61,6 +61,7 @@
 #include <QSqlError>
 #include <QValidator>
 #include <QVariant>
+#include <QDebug>
 
 #include "distributeInitialQOH.h"
 #include "storedProcErrorLookup.h"
@@ -675,7 +676,7 @@ void itemSite::sHandleSupplied(bool pSupplied)
 
 void itemSite::sHandleControlMethod()
 {
-  if (_controlMethod->currentItem() == 0 || _itemType == 'R')
+  if (_controlMethod->currentItem() == 0 || _itemType == 'R' || _itemType == 'K')
   {
     _costNone->setChecked(true);
     _costNone->setEnabled(true);
@@ -726,7 +727,7 @@ void itemSite::sCacheItemType(char pItemType)
 {
   _itemType = pItemType;
 
-  if (_controlMethod->currentItem() == 0 || _itemType == 'R')
+  if (_controlMethod->currentItem() == 0 || _itemType == 'R' || _itemType == 'K')
   {
     _costNone->setChecked(true);
     _costNone->setEnabled(true);
@@ -755,14 +756,14 @@ void itemSite::sCacheItemType(char pItemType)
   }
 
   if ( (_itemType == 'B') || (_itemType == 'F') || (_itemType == 'R') ||
-	   (_itemType == 'L') || (_itemType == 'J') )
+	   (_itemType == 'L') || (_itemType == 'J') || (_itemType == 'K'))
   {  
     _safetyStock->setEnabled(FALSE);
     _abcClass->setEnabled(FALSE);
     _autoUpdateABCClass->setEnabled(FALSE);
     _cycleCountFreq->setEnabled(FALSE);
     _leadTime->setEnabled(_itemType == 'J');
-	_useParameters->setEnabled(!_itemType == 'J');
+    _useParameters->setEnabled(!_itemType == 'J');
 
     if(_itemType=='L')
     {
@@ -775,19 +776,23 @@ void itemSite::sCacheItemType(char pItemType)
       _mpsTimeFence->setEnabled(FALSE);
     }
 
-    _supply->setChecked((_itemType!='L'));
+    _supply->setChecked((_itemType!='L') && (_itemType!='K'));
     _supply->setEnabled(FALSE);
     _createPr->setChecked(FALSE);
     _createPr->setEnabled(FALSE);
     _createWo->setChecked(_itemType == 'J');
     _createWo->setEnabled(FALSE);
 
-    if((_itemType == 'R') || (_itemType == 'J'))
+    if((_itemType == 'R') || (_itemType == 'J') || (_itemType == 'K'))
+    {
       _sold->setEnabled(TRUE);
+      _controlMethod->setCurrentItem(0);
+    }
     else
     {
       _sold->setChecked(FALSE);
       _sold->setEnabled(FALSE);
+      _controlMethod->setCurrentItem(1);
     }
 	
     _stocked->setChecked(FALSE);
@@ -799,7 +804,6 @@ void itemSite::sCacheItemType(char pItemType)
     _locationControl->setChecked(FALSE);
     _locationControl->setEnabled(FALSE);
 	
-    _controlMethod->setCurrentItem(1);
     _controlMethod->setEnabled(FALSE);
   }
   else
@@ -836,6 +840,12 @@ void itemSite::sCacheItemType(char pItemType)
     _locationControl->setEnabled(TRUE);
     _controlMethod->setEnabled(TRUE);
   }
+
+  _tab->setTabEnabled(_tab->indexOf(_inventoryTab),(_itemType!='K'));
+  _tab->setTabEnabled(_tab->indexOf(_planningTab),(_itemType!='K'));
+  _tab->setTabEnabled(_tab->indexOf(_restrictedLocations),(_itemType!='K'));
+
+  sHandleControlMethod();
 }
 
 void itemSite::populateLocations()
@@ -1053,10 +1063,7 @@ void itemSite::clear()
   _orderGroup->setValue(1);
   _mpsTimeFence->setValue(0);
     
-  _controlMethod->setCurrentItem(1);
-  _supply->setChecked((_itemType!='L'));
-  _sold->setChecked(!(_itemType == 'B' || _itemType == 'F' || _itemType == 'L'));
-  _stocked->setChecked(FALSE);
+  sCacheItemType(_itemType);
     
   _locationControl->setChecked(FALSE);
   _useDefaultLocation->setChecked(FALSE);

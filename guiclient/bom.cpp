@@ -91,7 +91,7 @@ BOM::BOM(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _totalQtyPerCache = 0.0;
   
-  _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased | ItemLineEdit::cPlanning | ItemLineEdit::cJob);
+  _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased | ItemLineEdit::cPlanning | ItemLineEdit::cJob | ItemLineEdit::cKit);
   _batchSize->setValidator(omfgThis->qtyVal());
   _requiredQtyPer->setValidator(omfgThis->qtyPerVal());
   _nonPickNumber->setValidator(omfgThis->qtyVal());

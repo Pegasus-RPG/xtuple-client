@@ -741,6 +741,9 @@ QString buildItemLineEditQuery(const QString pPre, const QStringList pClauses, c
     if (pType & ItemLineEdit::cPlanning)
       types << "'L'";
 
+    if (pType & ItemLineEdit::cKit)
+      types << "'K'";
+
     if (!types.isEmpty())
       clauses << QString("(item_type IN (" + types.join(",") + "))");
   }
