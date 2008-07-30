@@ -1,6 +1,6 @@
 <ui version="4.0" >
  <class>dspCustomerInformation</class>
- <widget class="QWidget" name="dspCustomerInformation" >
+ <widget class="QMainWindow" name="dspCustomerInformation" >
   <property name="geometry" >
    <rect>
     <x>0</x>
