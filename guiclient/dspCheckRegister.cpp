@@ -166,7 +166,7 @@ bool dspCheckRegister::setParams(ParameterList &pParams)
 
   if(_checkNumber->text() != "")
   {
-    pParams.append("check_number", _checkNumber->text().toInt());
+    pParams.append("check_number", _checkNumber->text());
   }
   
   pParams.append("bankaccnt_id", _bankaccnt->id());
@@ -248,7 +248,7 @@ void dspCheckRegister::sFillList()
 	       " AND (bankaccnt_id=checkhead_bankaccnt_id) "
 	       " AND (checkhead_bankaccnt_id=<? value(\"bankaccnt_id\") ?>)" 
 		   " <? if exists(\"check_number\") ?>"
-           " AND   (checkhead_number=<? value(\"check_number\") ?>)"
+           " AND   (CAST(checkhead_number AS text) ~ <? value(\"check_number\") ?>)"
            " <? endif ?>"
            " <? if exists(\"recip\") ?>"
            " <? if exists(\"recip_type_v\") ?>"
