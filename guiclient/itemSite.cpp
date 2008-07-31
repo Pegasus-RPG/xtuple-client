@@ -1270,16 +1270,11 @@ void itemSite::sDefaultLocChanged()
   if (_useDefaultLocation->isChecked())
   {
     _location->setChecked(_locationControl->isChecked());
-    _location->setEnabled(_locationControl->isChecked());
-    _locations->setEnabled(_locationControl->isChecked());
-    _miscLocation->setChecked(!_locationControl->isChecked());
     _miscLocation->setEnabled(!_locationControl->isChecked());
     _miscLocationName->setEnabled(!_locationControl->isChecked());
   }
   else
   {
-    _location->setEnabled(FALSE);
-    _locations->setEnabled(FALSE);
     _miscLocation->setEnabled(FALSE);
     _miscLocationName->setEnabled(FALSE);
   }
