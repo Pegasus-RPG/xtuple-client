@@ -139,6 +139,7 @@ incident::incident(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _return->hide();
 
   _saved = false;
+  _aropenid = -1;
 }
 
 /*
@@ -424,7 +425,8 @@ bool incident::save(bool partial)
     q.bindValue(":incdt_incdtresolution_id", _resolution->id());
   if ((_item->id() != -1) && (_lotserial->id() != -1))
     q.bindValue(":incdt_ls_id", _lotserial->id());
-  q.bindValue(":incdt_aropen_id", _aropenid);
+  if (_aropenid > 0)
+    q.bindValue(":incdt_aropen_id", _aropenid);
 
   if(!q.exec() && q.lastError().type() != QSqlError::None)
   {
