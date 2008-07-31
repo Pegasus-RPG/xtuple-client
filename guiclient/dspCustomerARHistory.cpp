@@ -275,11 +275,31 @@ void dspCustomerARHistory::sFillList()
              " AND (arapply_cust_id=:cust_id)"
              " AND (aropen_cust_id=:cust_id)"
              " AND (aropen_docdate BETWEEN :startDate AND :endDate) ) "
+
+//  Zero dollar invoices that aren't posted to aropen
+             "UNION "
+             "SELECT 1 AS type, invchead_id, -1 AS applyid,"
+             "       invchead_invcdate AS sortdate, invchead_invcnumber AS sortnumber,"
+             "       invchead_invcnumber AS docnumber,"
+             "       formatBoolYN(false) AS f_open,"
+             "       :zeroinvoice AS documenttype,"
+             "       formatDate(invchead_invcdate) AS f_docdate,"
+             "       formatDate(invchead_invcdate) AS f_duedate,"
+             "       formatMoney(0) AS f_amount,"
+             "       formatMoney(0) AS f_balance "
+             "FROM invchead "
+             "WHERE ( (invchead_cust_id=:cust_id)" 
+             "  AND   (invchead_invcdate BETWEEN :startDate AND :endDate)"
+             "  AND   (invchead_posted)"
+             "  AND   ((SELECT SUM(invcitem_price) "
+             "          FROM invcitem "
+             "          WHERE (invcitem_invchead_id=invchead_id))=0) ) "
              " ) AS data "
              "ORDER BY sortdate, sortnumber, type;" );
 
   _dates->bindValue(q);
   q.bindValue(":invoice", tr("Invoice"));
+  q.bindValue(":zeroinvoice", tr("Zero Invoice"));
   q.bindValue(":creditMemo", tr("C/M"));
   q.bindValue(":debitMemo", tr("D/M"));
   q.bindValue(":check", tr("Check"));
