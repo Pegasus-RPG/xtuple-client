@@ -454,7 +454,7 @@ void creditMemoItem::sPopulateItemInfo()
 		    "                  invcitem_price / invcitem_price_invuomratio, invchead_invcdate) AS invcitem_price_local "
                     "FROM invchead, invcitem "
                     "WHERE ( (invcitem_invchead_id=invchead_id)"
-                    " AND (invchead_invcnumber=:invoiceNumber)"
+                    " AND (invchead_invcnumber=:invoiceNumber::TEXT)"
                     " AND (invcitem_item_id=:item_id) ) "
                     "LIMIT 1;" );
     cmitem.bindValue(":invoiceNumber", _invoiceNumber);

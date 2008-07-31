@@ -71,6 +71,8 @@ class billingEditList : public XMainWindow, public Ui::billingEditList
 public:
     billingEditList(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~billingEditList();
+  
+    virtual bool checkSitePrivs(int orderid);
 
 public slots:
     virtual void sEditBillingOrd();

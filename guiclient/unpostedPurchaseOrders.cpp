@@ -274,19 +274,19 @@ void unpostedPurchaseOrders::sPost()
         && (_privileges->check("PostPurchaseOrders"))
         && (checkSitePrivs(((XTreeWidgetItem*)(list[i]))->id())))
       {
-	q.bindValue(":pohead_id", ((XTreeWidgetItem*)(list[i]))->id());
-	q.exec();
-	if (q.first())
-	{
-	  int result = q.value("result").toInt();
-	  if (result < 0)
-	    systemError(this, storedProcErrorLookup("postPurchaseOrder", result),
-			__FILE__, __LINE__);
-	  else
-	    done = true;
-	}
-	else if (q.lastError().type() != QSqlError::None)
-	  systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        q.bindValue(":pohead_id", ((XTreeWidgetItem*)(list[i]))->id());
+        q.exec();
+        if (q.first())
+        {
+          int result = q.value("result").toInt();
+          if (result < 0)
+            systemError(this, storedProcErrorLookup("postPurchaseOrder", result),
+                        __FILE__, __LINE__);
+          else
+			done = true;
+		}
+        else if (q.lastError().type() != QSqlError::None)
+          systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       }
     }
     if (done)
@@ -404,33 +404,19 @@ bool unpostedPurchaseOrders::checkSitePrivs(int orderid)
 {
   if (_preferences->boolean("selectedSites"))
   {
-    QString sql("SELECT pohead_number "
-                "FROM pohead, poitem, itemsite "
-                "WHERE ((poitem_pohead_id=<? value(\"pohead_id\") ?>) "
-                "  AND (poitem_pohead_id=pohead_id) "
-                "  AND (poitem_itemsite_id=itemsite_id) "
-                "  AND (itemsite_warehous_id NOT IN ("
-                "       SELECT usrsite_warehous_id "
-                "       FROM usrsite "
-                "       WHERE (usrsite_username=current_user)))) "
-                "UNION "
-                "SELECT pohead_number "
-                "FROM pohead "
-                "WHERE ((pohead_id=<? value(\"pohead_id\") ?>) "
-                "  AND (pohead_warehous_id NOT IN ("
-                "       SELECT usrsite_warehous_id "
-                "       FROM usrsite "
-                "       WHERE (usrsite_username=current_user))));;");
-    MetaSQLQuery mql(sql);
-    ParameterList params;
-    params.append("pohead_id", orderid);
-    XSqlQuery chk = mql.toQuery(params);
-    if (chk.first())
+    XSqlQuery check;
+    check.prepare("SELECT checkPOSitePrivs(:poheadid) AS result;");
+    check.bindValue(":poheadid", orderid);
+    check.exec();
+    if (check.first())
     {
-      	    QMessageBox::critical(this, tr("Access Denied"),
-				  tr("You may not view or edit Purchase Order %1 as it references "
-                                     "a warehouse for which you have not been granted privileges.").arg(chk.value("pohead_number").toString())) ;
-            return false;
+    if (!check.value("result").toBool())
+      {
+        QMessageBox::critical(this, tr("Access Denied"),
+                                       tr("You may not view or edit this Purchase Order as it references "
+                                       "a Site for which you have not been granted privileges.")) ;
+        return false;
+      }
     }
   }
   return true;

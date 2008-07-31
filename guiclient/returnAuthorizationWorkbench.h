@@ -71,6 +71,8 @@ class returnAuthorizationWorkbench : public XMainWindow, public Ui::returnAuthor
 public:
     returnAuthorizationWorkbench(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~returnAuthorizationWorkbench();
+  
+    virtual bool checkSitePrivs(int ordid);
 
 public slots:
     virtual void sPrint();

@@ -127,7 +127,8 @@ void reprintCreditMemos::init()
                      "       cmhead_number, formatDate(cmhead_docdate),"
                      "       (TEXT(cust_number) || ' - ' || cust_name) "
                      "FROM cmhead, cust "
-                     "WHERE (cmhead_cust_id=cust_id) "
+                     "WHERE ( (cmhead_cust_id=cust_id) "
+                    "   AND   (checkCreditMemoSitePrivs(cmhead_id)) ) "
                      "ORDER BY cmhead_docdate DESC;", TRUE );
 }
 

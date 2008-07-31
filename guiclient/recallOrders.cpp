@@ -175,16 +175,17 @@ bool recallOrders::checkSitePrivs(int orderid)
 {
   if (_preferences->boolean("selectedSites"))
   {
-    q.prepare("SELECT checkShipmentSitePrivs(:shipheadid) AS result;");
-    q.bindValue(":shipheadid", orderid);
-    q.exec();
-    if (q.first())
+    XSqlQuery check;
+    check.prepare("SELECT checkShipmentSitePrivs(:shipheadid) AS result;");
+    check.bindValue(":shipheadid", orderid);
+    check.exec();
+    if (check.first())
     {
-	  if (!q.value("result").toBool())
+      if (!check.value("result").toBool())
       {
         QMessageBox::critical(this, tr("Access Denied"),
-									tr("You may not recall this Shipment as it references "
-                                       "a warehouse for which you have not been granted privileges.")) ;
+                                       tr("You may not recall this Shipment as it references "
+                                       "a Site for which you have not been granted privileges.")) ;
         return false;
       }
     }

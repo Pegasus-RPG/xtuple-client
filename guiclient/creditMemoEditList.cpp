@@ -104,6 +104,9 @@ void creditMemoEditList::languageChange()
 
 void creditMemoEditList::sEditCreditMemo()
 {
+  if (!checkSitePrivs(_cmhead->id()))
+    return;
+  
   ParameterList params;
   params.append("mode", "edit");
   params.append("cmhead_id", _cmhead->id());
@@ -115,6 +118,9 @@ void creditMemoEditList::sEditCreditMemo()
 
 void creditMemoEditList::sEditCreditMemoItem()
 {
+  if (!checkSitePrivs(_cmhead->id()))
+    return;
+  
   ParameterList params;
   params.append("mode", "edit");
   params.append("cmitem_id", _cmhead->altId());
@@ -220,4 +226,26 @@ void creditMemoEditList::sPrint()
     report.print();
   else
     report.reportError(this);
+}
+
+bool creditMemoEditList::checkSitePrivs(int ordid)
+{
+  if (_preferences->boolean("selectedSites"))
+  {
+    XSqlQuery check;
+    check.prepare("SELECT checkCreditMemoSitePrivs(:cmheadid) AS result;");
+    check.bindValue(":cmheadid", ordid);
+    check.exec();
+    if (check.first())
+    {
+      if (!check.value("result").toBool())
+      {
+        QMessageBox::critical(this, tr("Access Denied"),
+                              tr("You may not view or edit this Credit Memo as it references "
+                                 "a Site for which you have not been granted privileges.")) ;
+        return false;
+      }
+    }
+  }
+  return true;
 }

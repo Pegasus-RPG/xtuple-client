@@ -217,6 +217,9 @@ void returnAuthorizationWorkbench::sPrint()
 
 void returnAuthorizationWorkbench::sEdit()
 {
+  if (!checkSitePrivs(_ra->id()))
+    return;
+  
   ParameterList params;
   params.append("mode", "edit");
   params.append("rahead_id", _ra->id());
@@ -228,6 +231,9 @@ void returnAuthorizationWorkbench::sEdit()
 
 void returnAuthorizationWorkbench::sView()
 {
+  if (!checkSitePrivs(_ra->id()))
+    return;
+  
   ParameterList params;
   params.append("mode", "view");
   params.append("rahead_id", _ra->id());
@@ -252,6 +258,9 @@ void returnAuthorizationWorkbench::sPrintDue()
 
 void returnAuthorizationWorkbench::sEditDue()
 {
+  if (!checkSitePrivs(_radue->id()))
+    return;
+  
   ParameterList params;
   params.append("mode", "edit");
   params.append("rahead_id", _radue->id());
@@ -263,6 +272,9 @@ void returnAuthorizationWorkbench::sEditDue()
 
 void returnAuthorizationWorkbench::sViewDue()
 {
+  if (!checkSitePrivs(_radue->id()))
+    return;
+  
   ParameterList params;
   params.append("mode", "view");
   params.append("rahead_id", _radue->id());
@@ -290,6 +302,9 @@ void returnAuthorizationWorkbench::sHandleButton()
 
 void returnAuthorizationWorkbench::sProcess()
 {
+  if (!checkSitePrivs(_radue->id()))
+    return;
+  
   bool _post = ((_radue->altId() > 1) ||
 		(_radue->altId() == 1 && _postmemos->isChecked())) ;
 
@@ -535,8 +550,12 @@ void returnAuthorizationWorkbench::sFillListReview()
 			  "  LEFT OUTER JOIN custtype ON (cust_custtype_id=custtype_id), "
 			  " raitem "
 			  "  LEFT OUTER JOIN coitem ON (raitem_new_coitem_id=coitem_id) "
-			  "WHERE ( (rahead_id=raitem_rahead_id)");
-
+			  "WHERE ( (rahead_id=raitem_rahead_id)"
+        "  AND   ((SELECT COUNT(*)"
+        "          FROM raitem JOIN itemsite ON (itemsite_id=raitem_itemsite_id)"
+        "                      JOIN site() ON (warehous_id=itemsite_warehous_id)"
+        "          WHERE (raitem_rahead_id=rahead_id)) > 0)" );
+    
     if ((_cust->isChecked()))
 	  sql += " AND (cust_id=:cust_id) ";
     else if (_parameter->isSelected())
@@ -685,7 +704,11 @@ void returnAuthorizationWorkbench::sFillListDue()
 		  " <? if exists(\"doK\") ?>, 'K'<? endif ?>"
 		  " <? if exists(\"doC\") ?>, 'C'<? endif ?>"
 		  " ))"
-		  " ) "
+      " AND   ((SELECT COUNT(*)"
+      "         FROM raitem JOIN itemsite ON (itemsite_id=raitem_itemsite_id)"
+      "                     JOIN site() ON (warehous_id=itemsite_warehous_id)"
+      "         WHERE (raitem_rahead_id=rahead_id)) > 0)"
+      " ) "
 		  "ORDER BY rahead_authdate,rahead_number;"
 		  );
 
@@ -717,5 +740,27 @@ void returnAuthorizationWorkbench::sParameterTypeChanged()
     _parameter->show();
 	_custInfo->hide();
   }
+}
+
+bool returnAuthorizationWorkbench::checkSitePrivs(int orderid)
+{
+  if (_preferences->boolean("selectedSites"))
+  {
+    XSqlQuery check;
+    check.prepare("SELECT checkRASitePrivs(:raheadid) AS result;");
+    check.bindValue(":raheadid", orderid);
+    check.exec();
+    if (check.first())
+    {
+      if (!check.value("result").toBool())
+      {
+        QMessageBox::critical(this, tr("Access Denied"),
+                              tr("You may not view or edit this Return Authorization as it references "
+                                 "a Site for which you have not been granted privileges.")) ;
+        return false;
+      }
+    }
+  }
+  return true;
 }
 

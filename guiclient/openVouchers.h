@@ -70,6 +70,8 @@ class openVouchers : public XMainWindow, public Ui::openVouchers
 public:
     openVouchers(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~openVouchers();
+	
+    virtual bool checkSitePrivs(int orderid);
 
 public slots:
     virtual void sPrint();

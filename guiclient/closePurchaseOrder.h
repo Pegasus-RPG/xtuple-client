@@ -72,6 +72,8 @@ public:
     closePurchaseOrder(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~closePurchaseOrder();
 
+    virtual bool checkSitePrivs(int orderid);
+
 public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
     virtual void sClosePo();

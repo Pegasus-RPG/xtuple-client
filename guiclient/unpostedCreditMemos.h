@@ -69,6 +69,7 @@ class unpostedCreditMemos : public XMainWindow, public Ui::unpostedCreditMemos
 public:
     unpostedCreditMemos(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~unpostedCreditMemos();
+    virtual bool checkSitePrivs(int orderid);
 
 public slots:
     virtual void sPopulateMenu(QMenu * menuThis);

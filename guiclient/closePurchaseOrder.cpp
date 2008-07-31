@@ -57,6 +57,7 @@
 
 #include "closePurchaseOrder.h"
 
+#include <QMessageBox>
 #include <QVariant>
 
 /*
@@ -127,8 +128,11 @@ void closePurchaseOrder::sClosePo()
   QList<QTreeWidgetItem*>selected = _po->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
-    q.bindValue(":pohead_id", ((XTreeWidgetItem*)selected[i])->id());
-    q.exec();
+    if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
+    {
+      q.bindValue(":pohead_id", ((XTreeWidgetItem*)selected[i])->id());
+      q.exec();
+	}
   }
 
   if (_captive)
@@ -155,5 +159,27 @@ void closePurchaseOrder::sFillList()
                " ) "
                "ORDER BY pohead_number DESC;" );
   _po->populate(sql);
+}
+
+bool closePurchaseOrder::checkSitePrivs(int orderid)
+{
+  if (_preferences->boolean("selectedSites"))
+  {
+    XSqlQuery check;
+    check.prepare("SELECT checkPOSitePrivs(:poheadid) AS result;");
+    check.bindValue(":poheadid", orderid);
+    check.exec();
+    if (check.first())
+    {
+    if (!check.value("result").toBool())
+      {
+        QMessageBox::critical(this, tr("Access Denied"),
+                                       tr("You may not close this Purchase Order as it references "
+                                       "a Site for which you have not been granted privileges.")) ;
+        return false;
+      }
+    }
+  }
+  return true;
 }
 

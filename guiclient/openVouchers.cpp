@@ -161,6 +161,9 @@ void openVouchers::sNewMisc()
 
 void openVouchers::sEdit()
 {
+  if (!checkSitePrivs(_vohead->id()))
+    return;
+    
   ParameterList params;
   params.append("mode", "edit");
   params.append("vohead_id", _vohead->id());
@@ -181,6 +184,9 @@ void openVouchers::sEdit()
 
 void openVouchers::sView()
 {
+  if (!checkSitePrivs(_vohead->id()))
+    return;
+    
   ParameterList params;
   params.append("mode", "view");
   params.append("vohead_id", _vohead->id());
@@ -211,20 +217,24 @@ void openVouchers::sDelete()
     QList<QTreeWidgetItem*>selected = _vohead->selectedItems();
     for (int i = 0; i < selected.size(); i++)
     {
-      q.bindValue(":vohead_id", _vohead->id());
-      q.exec();
-      if (q.first())
+      if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
       {
-	int result = q.value("result").toInt();
-	if (result < 0)
-	{
-	  systemError(this, storedProcErrorLookup("deleteVoucher", result),
-		      __FILE__, __LINE__);
-	}
-      }
-      else if (q.lastError().type() != QSqlError::None)
-      {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+       int id = ((XTreeWidgetItem*)(selected[i]))->id();
+       q.bindValue(":vohead_id", id);
+        q.exec();
+        if (q.first())
+        {
+	      int result = q.value("result").toInt();
+	      if (result < 0)
+	      {
+	        systemError(this, storedProcErrorLookup("deleteVoucher", result),
+		            __FILE__, __LINE__);
+	      }
+        }
+        else if (q.lastError().type() != QSqlError::None)
+        {
+	      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        }
       }
     }
 
@@ -259,16 +269,19 @@ void openVouchers::sPost()
 
   for (int i = 0; i < selected.size(); i++)
   {
-    int id = ((XTreeWidgetItem*)(selected[i]))->id();
-
-    if (changeDate)
+    if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
     {
-      setDate.bindValue(":distdate",  newDate);
-      setDate.bindValue(":vohead_id", id);
-      setDate.exec();
-      if (setDate.lastError().type() != QSqlError::None)
+      int id = ((XTreeWidgetItem*)(selected[i]))->id();
+
+      if (changeDate)
       {
-	systemError(this, setDate.lastError().databaseText(), __FILE__, __LINE__);
+        setDate.bindValue(":distdate",  newDate);
+        setDate.bindValue(":vohead_id", id);
+        setDate.exec();
+        if (setDate.lastError().type() != QSqlError::None)
+        {
+	      systemError(this, setDate.lastError().databaseText(), __FILE__, __LINE__);
+        }
       }
     }
   }
@@ -291,32 +304,35 @@ void openVouchers::sPost()
   do {
     for (int i = 0; i < selected.size(); i++)
     {
-      int id = ((XTreeWidgetItem*)(selected[i]))->id();
+      if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
+      {
+        int id = ((XTreeWidgetItem*)(selected[i]))->id();
 
-      post.bindValue(":vohead_id", id);
-      post.bindValue(":journalNumber", journalNumber);
-      post.exec();
-      if (post.first())
-      {
-	int result = post.value("result").toInt();
-	if (result < 0)
-	  systemError(this, storedProcErrorLookup("postVoucher", result),
-		      __FILE__, __LINE__);
-      }
+        post.bindValue(":vohead_id", id);
+        post.bindValue(":journalNumber", journalNumber);
+        post.exec();
+        if (post.first())
+        {
+	      int result = post.value("result").toInt();
+	      if (result < 0)
+	        systemError(this, storedProcErrorLookup("postVoucher", result),
+		            __FILE__, __LINE__);
+        }
       // contains() string is hard-coded in stored procedure
-      else if (post.lastError().databaseText().contains("posted to closed period"))
-      {
-	if (changeDate)
-	{
-	  triedToClosed = selected;
-	  break;
-	}
-	else
-	  triedToClosed.append(selected[i]);
-      }
-      else if (post.lastError().type() != QSqlError::None)
-      {
-	systemError(this, post.lastError().databaseText(), __FILE__, __LINE__);
+        else if (post.lastError().databaseText().contains("posted to closed period"))
+        {
+	      if (changeDate)
+	      {
+	        triedToClosed = selected;
+	        break;
+	      }
+	      else
+	        triedToClosed.append(selected[i]);
+        }
+        else if (post.lastError().type() != QSqlError::None)
+        {
+	      systemError(this, post.lastError().databaseText(), __FILE__, __LINE__);
+        }
       }
     }
 
@@ -388,4 +404,26 @@ void openVouchers::sFillList()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+}
+
+bool openVouchers::checkSitePrivs(int orderid)
+{
+  if (_preferences->boolean("selectedSites"))
+  {
+    XSqlQuery check;
+    check.prepare("SELECT checkVoucherSitePrivs(:voheadid) AS result;");
+    check.bindValue(":voheadid", orderid);
+    check.exec();
+    if (check.first())
+    {
+    if (!check.value("result").toBool())
+      {
+        QMessageBox::critical(this, tr("Access Denied"),
+                                       tr("You may not view or edit this Voucher as it references "
+                                       "a Site for which you have not been granted privileges.")) ;
+        return false;
+      }
+    }
+  }
+  return true;
 }

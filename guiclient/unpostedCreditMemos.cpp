@@ -165,6 +165,9 @@ void unpostedCreditMemos::sNew()
 
 void unpostedCreditMemos::sEdit()
 {
+  if (!checkSitePrivs(_cmhead->id()))
+    return;
+	
   ParameterList params;
   params.append("mode", "edit");
   params.append("cmhead_id", _cmhead->id());
@@ -176,6 +179,9 @@ void unpostedCreditMemos::sEdit()
 
 void unpostedCreditMemos::sView()
 {
+  if (!checkSitePrivs(_cmhead->id()))
+    return;
+	
   ParameterList params;
   params.append("mode", "view");
   params.append("cmhead_id", _cmhead->id());
@@ -192,19 +198,21 @@ void unpostedCreditMemos::sPrint()
 
   for (int i = 0; i < selected.size(); i++)
   {
-    ParameterList params;
-    params.append("cmhead_id", ((XTreeWidgetItem*)(selected[i]))->id());
-    params.append("persistentPrint");
-
-    printCreditMemo newdlg(this, "", TRUE);
-    newdlg.set(params);
-
-    if (!newdlg.isSetup())
+    if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
     {
-      newdlg.exec();
-      newdlg.setSetup(TRUE);
-    }
+      ParameterList params;
+      params.append("cmhead_id", ((XTreeWidgetItem*)(selected[i]))->id());
+      params.append("persistentPrint");
 
+      printCreditMemo newdlg(this, "", TRUE);
+      newdlg.set(params);
+
+      if (!newdlg.isSetup())
+      {
+        newdlg.exec();
+        newdlg.setSetup(TRUE);
+      }
+    }
   }
   omfgThis->sCreditMemosUpdated();
 }
@@ -236,16 +244,19 @@ void unpostedCreditMemos::sPost()
 
   for (int i = 0; i < selected.size(); i++)
   {
-    int id = ((XTreeWidgetItem*)(selected[i]))->id();
-
-    if (changeDate)
+    if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
     {
-      setDate.bindValue(":distdate",  newDate);
-      setDate.bindValue(":cmhead_id", id);
-      setDate.exec();
-      if (setDate.lastError().type() != QSqlError::None)
+      int id = ((XTreeWidgetItem*)(selected[i]))->id();
+
+      if (changeDate)
       {
-	systemError(this, setDate.lastError().databaseText(), __FILE__, __LINE__);
+        setDate.bindValue(":distdate",  newDate);
+        setDate.bindValue(":cmhead_id", id);
+        setDate.exec();
+        if (setDate.lastError().type() != QSqlError::None)
+        {
+	      systemError(this, setDate.lastError().databaseText(), __FILE__, __LINE__);
+        }
       }
     }
   }
@@ -260,66 +271,68 @@ void unpostedCreditMemos::sPost()
   do {
     for (int i = 0; i < selected.size(); i++)
     {
-      int id = ((XTreeWidgetItem*)(selected[i]))->id();
- 
-      XSqlQuery tx;
-      tx.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
-      
-      postq.bindValue(":cmhead_id", id);
-      postq.exec();
-      if (postq.first())
+      if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
       {
-        int result = postq.value("result").toInt();
-        if (result < 0)
+        int id = ((XTreeWidgetItem*)(selected[i]))->id();
+ 
+        XSqlQuery tx;
+        tx.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
+      
+        postq.bindValue(":cmhead_id", id);
+        postq.exec();
+        if (postq.first())
         {
-          rollback.exec();
-          systemError( this, storedProcErrorLookup("postCreditMemo", result),
-                __FILE__, __LINE__);
-          return;
-        }
-        else
-        {
-          if (distributeInventory::SeriesAdjust(result, this) == XDialog::Rejected)
+          int result = postq.value("result").toInt();
+          if (result < 0)
           {
             rollback.exec();
-            QMessageBox::information( this, tr("Post Credit Memo"), tr("Transaction Canceled") );
+            systemError( this, storedProcErrorLookup("postCreditMemo", result),
+                  __FILE__, __LINE__);
             return;
           }
+          else
+          {
+            if (distributeInventory::SeriesAdjust(result, this) == XDialog::Rejected)
+            {
+              rollback.exec();
+              QMessageBox::information( this, tr("Post Credit Memo"), tr("Transaction Canceled") );
+              return;
+            }
 
-          q.exec("COMMIT;");
+            q.exec("COMMIT;");
+          }
         }
-      }
-      // contains() string is hard-coded in stored procedure
-      else if (postq.lastError().databaseText().contains("post to closed period"))
-      {
-        rollback.exec();
-        if (changeDate)
+        // contains() string is hard-coded in stored procedure
+        else if (postq.lastError().databaseText().contains("post to closed period"))
         {
-          triedToClosed = selected;
-          break;
+          rollback.exec();
+          if (changeDate)
+          {
+            triedToClosed = selected;
+            break;
+          }
+          else
+            triedToClosed.append(selected[i]);
         }
-        else
-          triedToClosed.append(selected[i]);
+        else if (postq.lastError().type() != QSqlError::None)
+        {
+          rollback.exec();
+          systemError(this, tr("A System Error occurred posting Credit Memo#%1.\n%2")
+                  .arg(selected[i]->text(0))
+                  .arg(postq.lastError().databaseText()),
+                __FILE__, __LINE__);
+        }
       }
-      else if (postq.lastError().type() != QSqlError::None)
+
+      if (triedToClosed.size() > 0)
       {
-        rollback.exec();
-        systemError(this, tr("A System Error occurred posting Credit Memo#%1.\n%2")
-                .arg(selected[i]->text(0))
-                .arg(postq.lastError().databaseText()),
-              __FILE__, __LINE__);
+        failedPostList newdlg(this, "", true);
+        newdlg.sSetList(triedToClosed, _cmhead->headerItem(), _cmhead->header());
+        tryagain = (newdlg.exec() == XDialog::Accepted);
+        selected = triedToClosed;
+        triedToClosed.clear();
       }
     }
-
-    if (triedToClosed.size() > 0)
-    {
-      failedPostList newdlg(this, "", true);
-      newdlg.sSetList(triedToClosed, _cmhead->headerItem(), _cmhead->header());
-      tryagain = (newdlg.exec() == XDialog::Accepted);
-      selected = triedToClosed;
-      triedToClosed.clear();
-    }
-
   } while (tryagain);
 
   omfgThis->sCreditMemosUpdated();
@@ -338,18 +351,21 @@ void unpostedCreditMemos::sDelete()
     QList<QTreeWidgetItem *> selected = _cmhead->selectedItems();
     for (int i = 0; i < selected.size(); i++)
     {
-      delq.bindValue(":cmhead_id", ((XTreeWidgetItem*)(selected[i]))->id());
-      delq.exec();
-      if (delq.first())
+      if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
       {
-	if (! delq.value("result").toBool())
-	  systemError(this, tr("Could not delete Credit Memo."),
-		      __FILE__, __LINE__);
+        delq.bindValue(":cmhead_id", ((XTreeWidgetItem*)(selected[i]))->id());
+        delq.exec();
+        if (delq.first())
+        {
+	      if (! delq.value("result").toBool())
+	        systemError(this, tr("Could not delete Credit Memo."),
+		            __FILE__, __LINE__);
+        }
+        else if (delq.lastError().type() != QSqlError::None)
+	      systemError(this,
+		          tr("Error deleting Credit Memo %1\n").arg(selected[i]->text(0)) +
+		          delq.lastError().databaseText(), __FILE__, __LINE__);
       }
-      else if (delq.lastError().type() != QSqlError::None)
-	systemError(this,
-		    tr("Error deleting Credit Memo %1\n").arg(selected[i]->text(0)) +
-		    delq.lastError().databaseText(), __FILE__, __LINE__);
     }
 
     omfgThis->sCreditMemosUpdated();
@@ -366,6 +382,33 @@ void unpostedCreditMemos::sFillList()
                      "       formatBoolYN(cmhead_hold),"
 		     "       formatDate(COALESCE(cmhead_gldistdate, cmhead_docdate)) "
                      "FROM cmhead "
-                     "WHERE (NOT cmhead_posted) "
+                     "WHERE ( (NOT cmhead_posted) "
+                     "  AND   ((SELECT COUNT(*)"
+                     "          FROM cmitem, itemsite, site()"
+                     "          WHERE ( (cmitem_cmhead_id=cmhead_id)"
+                     "            AND   (itemsite_id=cmitem_itemsite_id)"
+                     "            AND   (warehous_id=itemsite_warehous_id) )) > 0) ) "
                      "ORDER BY cmhead_number;" );
+}
+
+bool unpostedCreditMemos::checkSitePrivs(int orderid)
+{
+  if (_preferences->boolean("selectedSites"))
+  {
+    XSqlQuery check;
+    check.prepare("SELECT checkCreditMemoSitePrivs(:cmheadid) AS result;");
+    check.bindValue(":cmheadid", orderid);
+    check.exec();
+    if (check.first())
+    {
+    if (!check.value("result").toBool())
+      {
+        QMessageBox::critical(this, tr("Access Denied"),
+                                       tr("You may not view or edit this Credit Memo as it references "
+                                       "a Site for which you have not been granted privileges.")) ;
+        return false;
+      }
+    }
+  }
+  return true;
 }

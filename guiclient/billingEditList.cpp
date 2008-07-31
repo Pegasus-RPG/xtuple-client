@@ -104,6 +104,9 @@ void billingEditList::languageChange()
 
 void billingEditList::sEditBillingOrd()
 {
+  if (!checkSitePrivs(_cobill->id()))
+    return;
+  
   ParameterList params;
   params.append("mode", "edit");
   params.append("sohead_id", _cobill->id());
@@ -115,6 +118,9 @@ void billingEditList::sEditBillingOrd()
 
 void billingEditList::sCancelBillingOrd()
 {
+  if (!checkSitePrivs(_cobill->id()))
+    return;
+  
   if ( QMessageBox::critical( this, tr("Cancel Billing"),
                               tr("Are you sure that you want to cancel billing for the selected order?"),
                               tr("&Yes"), tr("&No"), QString::null, 0, 1) == 0)
@@ -145,6 +151,9 @@ void billingEditList::sCancelBillingOrd()
 
 void billingEditList::sEditBillingQty()
 { 
+  if (!checkSitePrivs(_cobill->id()))
+    return;
+  
   ParameterList params;
   params.append("soitem_id", _cobill->altId());
 
@@ -242,4 +251,26 @@ void billingEditList::sPrint()
     report.print();
   else
     report.reportError(this);
+}
+
+bool billingEditList::checkSitePrivs(int ordid)
+{
+  if (_preferences->boolean("selectedSites"))
+  {
+    XSqlQuery check;
+    check.prepare("SELECT checkSOSitePrivs(:coheadid) AS result;");
+    check.bindValue(":coheadid", ordid);
+    check.exec();
+    if (check.first())
+    {
+      if (!check.value("result").toBool())
+      {
+        QMessageBox::critical(this, tr("Access Denied"),
+                              tr("You may not view or edit this Billing as it references "
+                                 "a Site for which you have not been granted privileges.")) ;
+        return false;
+      }
+    }
+  }
+  return true;
 }

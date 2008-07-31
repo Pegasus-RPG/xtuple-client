@@ -73,12 +73,14 @@ printPackingList::printPackingList(QWidget* parent, const char* name, bool modal
 {
     setupUi(this);
 
-    connect(_print,	     SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_salesOrderList, SIGNAL(clicked()), this, SLOT(sSoList()));
-    connect(_shipment,	    SIGNAL(newId(int)), this, SLOT(sHandleShipment()));
-    connect(_so,	    SIGNAL(newId(int)), this, SLOT(sPopulate()));
-    connect(_so,	 SIGNAL(requestList()), this, SLOT(sSoList()));
-    connect(_to,	    SIGNAL(newId(int)), this, SLOT(sPopulate()));
+    connect(_print,	     SIGNAL(clicked()),   this, SLOT(sPrint()));
+    connect(_shipment,	 SIGNAL(newId(int)),  this, SLOT(sHandleShipment()));
+    connect(_order,      SIGNAL(valid(bool)), this, SLOT(sPopulate()));
+
+    _order->setAllowedStatuses(OrderLineEdit::Open);
+    _order->setAllowedTypes(OrderLineEdit::Sales |
+                            OrderLineEdit::Transfer);
+    _order->setFromSitePrivsEnforced(TRUE);
 
     _captive	= FALSE;
 
@@ -88,9 +90,8 @@ printPackingList::printPackingList(QWidget* parent, const char* name, bool modal
 
     _orderDate->setEnabled(false);
 
-    omfgThis->inputManager()->notify(cBCSalesOrder, this, _so, SLOT(setId(int)));
-    _to->setVisible(_metrics->boolean("MultiWhs"));
-    _so->setFocus();
+    omfgThis->inputManager()->notify(cBCSalesOrder, this, _order, SLOT(setId(int)));
+    _order->setFocus();
 }
 
 printPackingList::~printPackingList()
@@ -112,11 +113,11 @@ enum SetResponse printPackingList::set(const ParameterList &pParams)
 
   param = pParams.value("sohead_id", &valid);
   if (valid)
-    _so->setId(param.toInt());
+    _order->setId(param.toInt(), "SO");
 
   param = pParams.value("tohead_id", &valid);
   if (valid)
-    _to->setId(param.toInt());
+    _order->setId(param.toInt(), "TO");
 
   // TODO: deprecate cosmisc_id parameters
   param = pParams.value("cosmisc_id", &valid);
@@ -134,9 +135,9 @@ enum SetResponse printPackingList::set(const ParameterList &pParams)
   if (valid)
   {
     if (_headtype == "SO")
-      _so->setId(param.toInt());
+      _order->setId(param.toInt(), "SO");
     else if (_headtype == "TO")
-      _to->setId(param.toInt());
+      _order->setId(param.toInt(), "TO");
     else
       return UndefinedError;
   }
@@ -154,9 +155,9 @@ enum SetResponse printPackingList::set(const ParameterList &pParams)
     {
       _headtype = q.value("shiphead_order_type").toString();
       if (_headtype == "SO")
-	_so->setId(q.value("shiphead_order_id").toInt());
+        _order->setId(q.value("shiphead_order_id").toInt(), "SO");
       else if (_headtype == "TO")
-	_to->setId(q.value("shiphead_order_id").toInt());
+        _order->setId(q.value("shiphead_order_id").toInt(), "TO");
       else
 	return UndefinedError;
     }
@@ -173,7 +174,7 @@ enum SetResponse printPackingList::set(const ParameterList &pParams)
     return NoError_Print;
   }
 
-  if (_so->isValid() || _to->isValid() || _shipment->isValid())
+  if (_order->isValid() || _shipment->isValid())
     _print->setFocus();
 
   return NoError;
@@ -183,25 +184,25 @@ void printPackingList::sPrint()
 {
   if (_headtype == "SO")
   {
-    if (! _so->isValid())
+    if (! _order->isValid())
     {
       QMessageBox::warning( this, tr("Enter Sales Order"),
 			    tr("<p>You must enter a Sales Order Number."));
-      if (! _so->isValid())
-	_so->setFocus();
+      if (! _order->isValid())
+        _order->setFocus();
       else
-	_shipment->setFocus();
+        _shipment->setFocus();
       return;
     }
 
     q.prepare( "SELECT findCustomerForm(cohead_cust_id, :form) AS reportname "
 	       "FROM cohead "
 	       "WHERE (cohead_id=:head_id);" );
-    q.bindValue(":head_id", _so->id());
+    q.bindValue(":head_id", _order->id());
   }
   else if (_headtype == "TO")
   {
-    if (! _to->isValid())
+    if (! _order->isValid())
     {
       QMessageBox::warning(this, tr("Enter Transfer Order"),
 			   tr("<p>You must enter a Transfer Order Number."));
@@ -209,7 +210,7 @@ void printPackingList::sPrint()
       return;
     }
     q.prepare( "SELECT findTOForm(:head_id, :form) AS reportname;" );
-    q.bindValue(":head_id", _to->id());
+    q.bindValue(":head_id", _order->id());
   }
 
   q.bindValue(":form", (_shipment->id() > 0) ? "P" : "L");
@@ -218,12 +219,15 @@ void printPackingList::sPrint()
   if (q.first())
   {
     ParameterList params;
-    params.append("sohead_id", _so->id());
-    params.append("tohead_id", _to->id());
+    params.append("head_id", _order->id());
     if (_headtype == "SO")
-      params.append("head_id", _so->id());
-    else if (_headtype == "TO")
-      params.append("head_id", _to->id() );
+      params.append("sohead_id", _order->id());
+    else
+      params.append("sohead_id", -1);
+    if (_headtype == "TO")
+      params.append("tohead_id", _order->id());
+    else
+      params.append("tohead_id", -1);
     params.append("head_type", _headtype);
     if (_metrics->boolean("MultiWhs"))
       params.append("MultiWhs");
@@ -249,10 +253,9 @@ void printPackingList::sPrint()
     else
     {
       _close->setText(tr("&Close"));
-      _so->setId(-1);
-      _to->setId(-1);
+      _order->setId(-1);
       _headtype = "";
-      _so->setFocus();
+      _order->setFocus();
     }
   }
   else if (q.lastError().type() != QSqlError::None)
@@ -262,31 +265,19 @@ void printPackingList::sPrint()
   }
 }
 
-void printPackingList::sSoList()
-{
-  ParameterList params;
-  params.append("sohead_id", _so->id());
-  params.append("soType", (cSoOpen | cSoReleased));
-  
-  salesOrderList newdlg(this, "", TRUE);
-  newdlg.set(params);
-
-  _so->setId(newdlg.exec());
-}
-
 void printPackingList::sPopulate()
 {
-  if (_so->isValid())
+  if (_order->isSO())
   {
     _headtype = "SO";
     _shipment->setType(ShipmentClusterLineEdit::SalesOrder);
-    _shipment->limitToOrder(_so->id());
+    _shipment->limitToOrder(_order->id());
   }
-  else if (_to->isValid())
+  else if (_order->isTO())
   {
     _headtype = "TO";
     _shipment->setType(ShipmentClusterLineEdit::TransferOrder);
-    _shipment->limitToOrder(_to->id());
+    _shipment->limitToOrder(_order->id());
   }
   else
   {
@@ -295,19 +286,19 @@ void printPackingList::sPopulate()
     _shipment->removeOrderLimit();
   }
 
-// qDebug("sPopulate: _headtype %s, _shipment %d, _so %d, _to %d",
-// _headtype.toAscii().data(), _shipment->id(), _so->id(), _to->id());
+// qDebug("sPopulate: _headtype %s, _shipment %d, _order %d",
+// _headtype.toAscii().data(), _shipment->id(), _order->id());
 
-  _print->setEnabled(_so->isValid() || _to->isValid());
+  _print->setEnabled(_order->isValid());
 
   if (! _headtype.isEmpty())
   {
     ParameterList destp;
 
-    if (_so->isValid())
-      destp.append("sohead_id", _so->id());
-    else if (_to->isValid())
-      destp.append("tohead_id", _to->id());
+    if (_order->isSO())
+      destp.append("sohead_id", _order->id());
+    else if (_order->isTO())
+      destp.append("tohead_id", _order->id());
     destp.append("to", tr("Transfer Order"));
 
     QString dests = "<? if exists(\"sohead_id\") ?>"
@@ -356,7 +347,7 @@ void printPackingList::sPopulate()
 		"LIMIT 1;");
 
     ParameterList params;
-    params.append("order_id", _so->isValid() ? _so->id() : _to->id());
+    params.append("order_id", _order->id());
     params.append("ordertype", _headtype);
     if (_shipment->id() > 0)
       params.append("shiphead_id", _shipment->id());
@@ -402,37 +393,33 @@ void printPackingList::sHandleShipment()
   {
     _headtype = q.value("shiphead_order_type").toString();
     int orderid = q.value("shiphead_order_id").toInt();
-    if (_headtype == "SO" && ! _so->isValid())
-      _so->setId(orderid);
-    else if (_headtype == "TO" && ! _to->isValid())
-      _to->setId(orderid);
-    else if (orderid != _so->id() && orderid != _to->id())
+    if (_headtype == "SO" && ! _order->isValid())
+      _order->setId(orderid);
+    else if (_headtype == "TO" && ! _order->isValid())
+      _order->setId(orderid);
+    else if (orderid != _order->id())
     {
       if (_headtype == "SO")
       {
       if (QMessageBox::question(this, tr("Shipment for different Order"),
-				tr("<p>Shipment %1 is for Sales Order %2, not "
-				   "Sales Order %3. Are you sure the Shipment "
-				   "Number is correct?")
+				tr("<p>Shipment %1 is for Sales Order %2. "
+				   "Are you sure the Shipment Number is correct?")
 				   .arg(_shipment->number())
-				   .arg(q.value("number").toString())
-				   .arg(_so->text()),
+				   .arg(q.value("number").toString()),
 				QMessageBox::Yes, QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
-	_so->setId(q.value("shiphead_order_id").toInt());
+	_order->setId(q.value("shiphead_order_id").toInt());
       else
 	_shipment->clear();
       }
       else if (_headtype == "TO")
       {
       if (QMessageBox::question(this, tr("Shipment for different Order"),
-				tr("<p>Shipment %1 is for Transfer Order %2, not "
-				   "Transfer Order %3. Are you sure the Shipment "
-				   "Number is correct?")
+				tr("<p>Shipment %1 is for Transfer Order %2. "
+				   "Are you sure the Shipment Number is correct?")
 				   .arg(_shipment->number())
-				   .arg(q.value("number").toString())
-				   .arg(_so->text()),
+				   .arg(q.value("number").toString()),
 				QMessageBox::Yes, QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
-	_to->setId(q.value("shiphead_order_id").toInt());
+	_order->setId(q.value("shiphead_order_id").toInt());
       else
 	_shipment->clear();
       }

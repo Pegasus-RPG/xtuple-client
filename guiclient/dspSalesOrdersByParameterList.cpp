@@ -260,16 +260,17 @@ bool dspSalesOrdersByParameterList::checkSitePrivs(int orderid)
 {
   if (_preferences->boolean("selectedSites"))
   {
-    q.prepare("SELECT checkSOSitePrivs(:coheadid) AS result;");
-    q.bindValue(":coheadid", orderid);
-    q.exec();
-    if (q.first())
+    XSqlQuery check;
+    check.prepare("SELECT checkSOSitePrivs(:coheadid) AS result;");
+    check.bindValue(":coheadid", orderid);
+    check.exec();
+    if (check.first())
     {
-	  if (!q.value("result").toBool())
+      if (!check.value("result").toBool())
       {
         QMessageBox::critical(this, tr("Access Denied"),
-									tr("You may not view or edit this Sales Order as it references "
-                                       "a warehouse for which you have not been granted privileges.")) ;
+                                       tr("You may not view or edit this Sales Order as it references "
+                                       "a Site for which you have not been granted privileges.")) ;
         return false;
       }
     }

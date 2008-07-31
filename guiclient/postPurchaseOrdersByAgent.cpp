@@ -102,6 +102,7 @@ void postPurchaseOrdersByAgent::sPost()
   QString sql("SELECT COUNT(postPurchaseOrder(pohead_id)) AS result "
               "  FROM pohead, poitem "
               " WHERE ( (poitem_pohead_id=pohead_id)"
+			  "   AND   (checkPOSitePrivs(pohead_id))"
               "   AND   (poitem_status='U')");
   if(_selectedAgent->isChecked())
     sql +=    "   AND   (pohead_agent_username=:username)";

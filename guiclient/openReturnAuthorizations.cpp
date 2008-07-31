@@ -163,7 +163,7 @@ void openReturnAuthorizations::sNew()
 
 void openReturnAuthorizations::sEdit()
 {
-  if (!checkSitePrivs())
+  if (!checkSitePrivs(_ra->id()))
     return;
     
   ParameterList params;
@@ -177,7 +177,7 @@ void openReturnAuthorizations::sEdit()
 
 void openReturnAuthorizations::sView()
 {  
-  if (!checkSitePrivs())
+  if (!checkSitePrivs(_ra->id()))
     return;
     
   ParameterList params;
@@ -191,7 +191,7 @@ void openReturnAuthorizations::sView()
 
 void openReturnAuthorizations::sDelete()
 {
-  if (!checkSitePrivs())
+  if (!checkSitePrivs(_ra->id()))
     return;
     
   if ( QMessageBox::warning( this, tr("Delete Return Authorization?"),
@@ -286,7 +286,7 @@ void openReturnAuthorizations::sFillList()
 
 void openReturnAuthorizations::sPrintForms()
 {
-  if (!checkSitePrivs())
+  if (!checkSitePrivs(_ra->id()))
     return;
     
   ParameterList params;
@@ -297,41 +297,24 @@ void openReturnAuthorizations::sPrintForms()
   newdlg.exec();
 }
 
-bool openReturnAuthorizations::checkSitePrivs()
+bool openReturnAuthorizations::checkSitePrivs(int orderid)
 {
   if (_preferences->boolean("selectedSites"))
   {
-    qDebug("In");
-    QString sql("SELECT raitem_id "
-                "FROM raitem, itemsite "
-                "WHERE ((raitem_rahead_id=<? value(\"rahead_id\") ?>) "
-                "  AND (raitem_itemsite_id=itemsite_id) "
-                "  AND (itemsite_warehous_id NOT IN ("
-                "       SELECT usrsite_warehous_id "
-                "       FROM usrsite "
-                "       WHERE (usrsite_username=current_user)))) "
-                "UNION "
-                "SELECT raitem_id "
-                "FROM raitem, itemsite "
-                "WHERE ((raitem_rahead_id=<? value(\"rahead_id\") ?>) "
-                "  AND (raitem_coitem_itemsite_id=itemsite_id) "
-                "  AND (itemsite_warehous_id NOT IN ("
-                "       SELECT usrsite_warehous_id "
-                "       FROM usrsite "
-                "       WHERE (usrsite_username=current_user))));");
-    MetaSQLQuery mql(sql);
-    ParameterList params;
-    params.append("rahead_id", _ra->id());
-    q = mql.toQuery(params);
-    if (q.first())
+    XSqlQuery check;
+    check.prepare("SELECT checkRASitePrivs(:raheadid) AS result;");
+    check.bindValue(":raheadid", orderid);
+    check.exec();
+    if (check.first())
     {
-      	    QMessageBox::critical(this, tr("Access Denied"),
-				  tr("You may not view or edit this Return Authorization as it references "
-                                     "a warehouse for which you have not been granted privileges.")) ;
-            return false;
+      if (!check.value("result").toBool())
+      {
+        QMessageBox::critical(this, tr("Access Denied"),
+                              tr("You may not view or edit this Return Authorization as it references "
+                                 "a Site for which you have not been granted privileges.")) ;
+        return false;
+      }
     }
   }
   return true;
 }
-
-

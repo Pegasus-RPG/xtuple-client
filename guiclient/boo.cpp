@@ -279,6 +279,9 @@ void boo::sNew()
 
 void boo::sEdit()
 {
+  if (!checkSitePrivs(_booheadid))
+    return;
+    
   ParameterList params;
   params.append("mode", "edit");
   params.append("booitem_id", _booitem->id());
@@ -290,6 +293,9 @@ void boo::sEdit()
 
 void boo::sView()
 {
+  if (!checkSitePrivs(_booheadid))
+    return;
+    
   ParameterList params;
   params.append("mode", "view");
   params.append("booitem_id", _booitem->id());
@@ -301,6 +307,9 @@ void boo::sView()
 
 void boo::sExpire()
 {
+  if (!checkSitePrivs(_booheadid))
+    return;
+    
   q.prepare( "UPDATE booitem "
              "SET booitem_expires=CURRENT_DATE "
              "WHERE (booitem_id=:booitem_id);" );
@@ -312,6 +321,9 @@ void boo::sExpire()
 
 void boo::sMoveUp()
 {
+  if (!checkSitePrivs(_booheadid))
+    return;
+    
   q.prepare("SELECT moveBooitemUp(:booitem_id) AS result;");
   q.bindValue(":booitem_id", _booitem->id());
   q.exec();
@@ -321,6 +333,9 @@ void boo::sMoveUp()
 
 void boo::sMoveDown()
 {
+  if (!checkSitePrivs(_booheadid))
+    return;
+    
   q.prepare("SELECT moveBooitemDown(:booitem_id) AS result;");
   q.bindValue(":booitem_id", _booitem->id());
   q.exec();
@@ -371,6 +386,7 @@ void boo::sFillList(int pItemid, bool pLocalUpdate)
   q.exec();
   if (q.first())
   {
+    _booheadid = q.value("boohead_id").toInt();
     _documentNum->setText(q.value("boohead_docnum").toString());
     _revision->setNumber(q.value("boohead_revision").toString());
     _revisionDate->setDate(q.value("boohead_revisiondate").toDate());
@@ -458,5 +474,27 @@ void boo::sFillList(int pItemid, bool pLocalUpdate)
       _booitem->scrollTo(_booitem->currentIndex());
     }
   }
+}
+
+bool boo::checkSitePrivs(int booid)
+{
+  if (_preferences->boolean("selectedSites"))
+  {
+    XSqlQuery check;
+    check.prepare("SELECT checkBOOSitePrivs(:booheadid) AS result;");
+    check.bindValue(":booheadid", booid);
+    check.exec();
+    if (check.first())
+    {
+      if (!check.value("result").toBool())
+      {
+        QMessageBox::critical(this, tr("Access Denied"),
+                              tr("You may not view or edit this BOO Item as it references "
+                                 "a Site for which you have not been granted privileges.")) ;
+        return false;
+      }
+    }
+  }
+  return true;
 }
 

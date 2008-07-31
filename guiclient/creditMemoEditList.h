@@ -71,6 +71,8 @@ class creditMemoEditList : public XMainWindow, public Ui::creditMemoEditList
 public:
     creditMemoEditList(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~creditMemoEditList();
+  
+    virtual bool checkSitePrivs(int orderid);
 
 public slots:
     virtual void sEditCreditMemo();

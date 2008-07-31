@@ -220,8 +220,7 @@ void postInvoices::sPost()
 //  Check to see if any aropen items are available to post
     q.exec( "SELECT aropen_id "
             "FROM aropen "
-            "WHERE ( (NOT aropen_posted) "
-            "  AND   (checkInvoiceSitePrivs(invchead_id)) ) "
+            "WHERE (NOT aropen_posted) "
             "LIMIT 1;" );
     if (!q.first())
     {

@@ -243,7 +243,18 @@ void packingListBatch::sPrintEditList()
 void packingListBatch::sClearPrinted()
 {
   q.exec( "DELETE FROM pack "
-          "WHERE (pack_printed);" );
+          "WHERE ( (pack_printed)"
+		  "  AND   (pack_head_type='SO')"
+		  "  AND   (checkSOSitePrivs(pack_head_id)) );" );
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
+  q.exec( "DELETE FROM pack "
+          "WHERE ( (pack_printed)"
+		  "  AND   (pack_head_type='TO') );" );
   if (q.lastError().type() != QSqlError::None)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);

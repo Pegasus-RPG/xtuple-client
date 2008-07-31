@@ -76,7 +76,6 @@ public slots:
     virtual void sHandleShipment();
     virtual void sPopulate();
     virtual void sPrint();
-    virtual void sSoList();
 
 protected slots:
     virtual void languageChange();

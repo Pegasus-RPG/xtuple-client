@@ -464,16 +464,17 @@ bool unpostedInvoices::checkSitePrivs(int invcid)
 {
   if (_preferences->boolean("selectedSites"))
   {
-    q.prepare("SELECT checkInvoiceSitePrivs(:invcheadid) AS result;");
-    q.bindValue(":invcheadid", invcid);
-    q.exec();
-    if (q.first())
+    XSqlQuery check;
+    check.prepare("SELECT checkInvoiceSitePrivs(:invcheadid) AS result;");
+    check.bindValue(":invcheadid", invcid);
+    check.exec();
+    if (check.first())
     {
-	  if (!q.value("result").toBool())
+    if (!check.value("result").toBool())
       {
         QMessageBox::critical(this, tr("Access Denied"),
-									tr("You may not view or edit this Invoice as it references "
-                                       "a warehouse for which you have not been granted privileges.")) ;
+                                       tr("You may not view or edit this Invoice as it references "
+                                       "a Site for which you have not been granted privileges.")) ;
         return false;
       }
     }

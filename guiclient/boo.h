@@ -71,6 +71,8 @@ class boo : public XMainWindow, public Ui::boo
 public:
     boo(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~boo();
+    
+    virtual bool checkSitePrivs( int booid );
 
 public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
@@ -91,6 +93,7 @@ protected slots:
 
 private:
     int _mode;
+    int _booheadid;
 
 };
 

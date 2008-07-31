@@ -208,16 +208,17 @@ bool dspQuotesByItem::checkSitePrivs(int orderid)
 {
   if (_preferences->boolean("selectedSites"))
   {
-    q.prepare("SELECT checkQuoteSitePrivs(:quheadid) AS result;");
-    q.bindValue(":quheadid", orderid);
-    q.exec();
-    if (q.first())
+    XSqlQuery check;
+    check.prepare("SELECT checkQuoteSitePrivs(:quheadid) AS result;");
+    check.bindValue(":quheadid", orderid);
+    check.exec();
+    if (check.first())
     {
-	  if (!q.value("result").toBool())
+    if (!check.value("result").toBool())
       {
         QMessageBox::critical(this, tr("Access Denied"),
-									tr("You may not view, edit, or convert this Quote as it references "
-                                       "a warehouse for which you have not been granted privileges.")) ;
+                                       tr("You may not view, edit, or convert this Quote as it references "
+                                       "a Site for which you have not been granted privileges.")) ;
         return false;
       }
     }

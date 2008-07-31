@@ -1567,7 +1567,12 @@ void item::sEditItemSite()
     }
   }
   else
-    params.append("itemsite_id", _itemSite->id());
+  {
+    if (!checkSitePrivs(_itemSite->id()))
+      return;
+    else
+      params.append("itemsite_id", _itemSite->id());
+  }
 
   itemSite newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -1576,6 +1581,9 @@ void item::sEditItemSite()
 
 void item::sViewItemSite()
 {
+  if (!checkSitePrivs(_itemSite->id()))
+      return;
+
   ParameterList params;
   params.append("mode", "view");
   params.append("itemsite_id", _itemSite->id());
@@ -1587,6 +1595,9 @@ void item::sViewItemSite()
 
 void item::sDeleteItemSite()
 {
+  if (!checkSitePrivs(_itemSite->id()))
+      return;
+          
   q.prepare("SELECT deleteItemSite(:itemsite_id) AS result;");
   q.bindValue(":itemsite_id", _itemSite->id());
   q.exec();
@@ -1933,4 +1944,26 @@ void item::sConfiguredToggled(bool p)
     _charass->showColumn(3);
   else
     _charass->hideColumn(3);
+}
+
+bool item::checkSitePrivs(int itemsiteid)
+{
+  if (_preferences->boolean("selectedSites"))
+  {
+    XSqlQuery check;
+    check.prepare("SELECT warehous_id "
+                  "FROM itemsite, site() "
+                  "WHERE ( (itemsite_id=:itemsiteid) "
+                  "  AND   (warehous_id=itemsite_warehous_id) );");
+    check.bindValue(":itemsiteid", itemsiteid);
+    check.exec();
+    if (!check.first())
+    {
+      QMessageBox::critical(this, tr("Access Denied"),
+                            tr("You may not view or edit this Item Site as it references "
+                               "a Site for which you have not been granted privileges.")) ;
+      return false;
+    }
+  }
+  return true;
 }

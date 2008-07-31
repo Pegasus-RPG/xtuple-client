@@ -136,7 +136,8 @@ void printCreditMemos::sPrint()
                     "       findCustomerForm(cmhead_cust_id, 'C') AS _reportname "
                     "FROM cmhead "
                     "WHERE ( (NOT cmhead_hold)"
-                    " AND (NOT cmhead_printed) );");
+                    "  AND   (checkCreditMemoSitePrivs(cmhead_id))"
+                    "  AND   (NOT cmhead_printed) );");
   if (cmhead.first())
   {
     QPrinter printer(QPrinter::HighResolution);

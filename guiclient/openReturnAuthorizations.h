@@ -72,7 +72,7 @@ public:
     openReturnAuthorizations(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~openReturnAuthorizations();
     
-    virtual bool checkSitePrivs();
+    virtual bool checkSitePrivs(int ordid);
 
 public slots:
     virtual void sPrint();

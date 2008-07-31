@@ -92,14 +92,17 @@ booItem::booItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _prodUOM->setType(XComboBox::UOMs);
 
   _wrkcnt->populate( "SELECT wrkcnt_id, wrkcnt_code "
-		     "FROM wrkcnt "
-		     "ORDER BY wrkcnt_code" );
+                     "FROM wrkcnt JOIN site() ON (warehous_id=wrkcnt_warehous_id) "
+                     "ORDER BY wrkcnt_code" );
 
   _stdopn->populate( "SELECT -1, TEXT('None') AS stdopn_number "
-		     "UNION "
-		     "SELECT stdopn_id, stdopn_number "
-		     "FROM stdopn "
-		     "ORDER BY stdopn_number" );
+                     "UNION "
+                     "SELECT stdopn_id, stdopn_number "
+                     "FROM stdopn LEFT OUTER JOIN wrkcnt ON (wrkcnt_id=stdopn_wrkcnt_id)"
+                     "            LEFT OUTER JOIN site() ON (warehous_id=wrkcnt_warehous_id) "
+                     "WHERE ( (stdopn_wrkcnt_id=-1)"
+                     "   OR   (warehous_id IS NOT NULL) ) "
+                     "ORDER BY stdopn_number" );
 
   _setupReport->insertItem(tr("Direct Labor"));
   _setupReport->insertItem(tr("Overhead"));

@@ -77,6 +77,7 @@ public:
     static void newItem();
     static void editItem( int pId );
     static void viewItem( int pId );
+    virtual bool checkSitePrivs( int itemsiteid );
 
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
