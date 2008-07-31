@@ -2259,7 +2259,7 @@ void salesOrder::sFillItemList()
                 "            WHEN ( (coitem_status='O') AND ( (COALESCE(SUM(coship_qty), 0) > 0) OR (coitem_qtyshipped > 0) ) ) THEN 2"
                 "            ELSE 3"
                 "       END AS closestatus,"
-                "       coitem_linenumber, item_number, (item_descrip1 || ' ' || item_descrip2) AS description,"
+                "       coitem_linenumber, coitem_subnumber, formatSoLineNumber(coitem_id) AS f_linenumber, item_number, (item_descrip1 || ' ' || item_descrip2) AS description,"
                 "       warehous_code,"
                 "       CASE WHEN (coitem_status='O' AND (SELECT cust_creditstatus FROM custinfo WHERE cust_id=:cust_id)='H') THEN 'H'"
                 "            WHEN (coitem_status='O' AND ((SELECT SUM(invcitem_billed)"
@@ -2310,11 +2310,11 @@ void salesOrder::sFillItemList()
              
     sql += QString(" AND (coitem_cohead_id=:cohead_id) ) "
                    "GROUP BY coitem_id, coitem_cohead_id, itemsite_id, itemsite_qtyonhand, coitem_qtyshipped,"
-                   "         coitem_linenumber, item_id, item_number, item_descrip1, item_descrip2,"
+                   "         coitem_linenumber, coitem_subnumber, f_linenumber, item_id, item_number, item_descrip1, item_descrip2,"
                    "         warehous_id, warehous_code, coitem_status, coitem_qtyord, coitem_qtyreturned,"
                    "         quom.uom_name, puom.uom_name,"
                    "         coitem_price, coitem_scheddate, coitem_qty_invuomratio, coitem_price_invuomratio "
-                   "ORDER BY coitem_linenumber;" );
+                   "ORDER BY coitem_linenumber, coitem_subnumber;" );
     q.prepare(sql);
     q.bindValue(":cohead_id", _soheadid);
     q.bindValue(":cust_id", _cust->id());
@@ -2340,7 +2340,7 @@ void salesOrder::sFillItemList()
 
        last = new XTreeWidgetItem(_soitem, last,
                            q.value("coitem_id").toInt(), q.value("closestatus").toInt(),
-                           q.value("coitem_linenumber"), q.value("item_number"),
+                           q.value("f_linenumber"), q.value("item_number"),
                            q.value("description"), q.value("warehous_code"),
                            q.value("coitem_status"), q.value("f_scheddate"),
                            q.value("qty_uom"),
