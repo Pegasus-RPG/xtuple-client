@@ -106,11 +106,6 @@ package::package(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 {
   setupUi(this);
 
-  _obj->addColumn(tr("Schema"),      -1, Qt::AlignLeft, true, "");
-  _obj->addColumn(tr("Type"),        -1, Qt::AlignLeft, true, "");
-  _obj->addColumn(tr("Name"),        -1, Qt::AlignLeft, true, "");
-  _obj->addColumn(tr("Description"), -1, Qt::AlignLeft, true, "");
-
   _rec->addColumn(tr("Type"),        -1, Qt::AlignLeft, true, "type");
   _rec->addColumn(tr("Name"),        -1, Qt::AlignLeft, true, "pkgitem_name");
   _rec->addColumn(tr("Description"), -1, Qt::AlignLeft, true, "pkgitem_descrip");
@@ -293,7 +288,8 @@ void package::populate()
             "            WHEN pkgitem_type='V' THEN :view"
             "       ELSE pkgitem_type END AS type "
             "FROM pkgitem "
-            "WHERE (pkgitem_pkghead_id=:pkghead_id);");
+            "WHERE (pkgitem_pkghead_id=:pkghead_id) "
+            "ORDER BY type, pkgitem_name;");
   q.bindValue(":pkghead_id", _pkgheadid);
   q.bindValue(":script",     tr("Script"));
   q.bindValue(":cmd",        tr("Custom Command"));

@@ -157,7 +157,7 @@
    <item row="3" column="0" colspan="3" >
     <widget class="QTabWidget" name="_tab" >
      <property name="currentIndex" >
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="_tabNotes" >
       <attribute name="title" >
@@ -166,16 +166,6 @@
       <layout class="QGridLayout" >
        <item row="0" column="0" >
         <widget class="XTextEdit" name="_notes" />
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="_tabObjects" >
-      <attribute name="title" >
-       <string>Database Objects</string>
-      </attribute>
-      <layout class="QGridLayout" >
-       <item row="0" column="0" >
-        <widget class="XTreeWidget" name="_obj" />
        </item>
       </layout>
      </widget>
