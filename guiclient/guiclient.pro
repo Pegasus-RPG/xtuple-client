@@ -203,7 +203,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                errorLog.ui eventManager.ui                                                            \
                expenseCategories.ui expenseCategory.ui expenseTrans.ui                                \
                explodeWo.ui exportCustomers.ui                                                        \
-	       externalShipping.ui failedPostList.ui                                                  \
+	       externalShipping.ui externalShippingList.ui failedPostList.ui                          \
                financialLayout.ui financialLayoutItem.ui financialLayoutGroup.ui financialLayouts.ui  \
                financialLayoutSpecial.ui financialLayoutLabels.ui financialLayoutColumns.ui           \
                firmPlannedOrder.ui firmPlannedOrdersByPlannerCode.ui fixACL.ui fixSerial.ui           \
@@ -520,7 +520,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h rwInterface
                errorLog.h eventManager.h                                                              \
                expenseCategories.h expenseCategory.h expenseTrans.h                                   \
                explodeWo.h exportCustomers.h                                                          \
-	       externalShipping.h failedPostList.h                                                    \
+	       externalShipping.h externalShippingList.h failedPostList.h                             \
                financialLayout.h financialLayoutItem.h financialLayoutGroup.h financialLayouts.h      \
                financialLayoutSpecial.h financialLayoutLabels.h financialLayoutColumns.h              \
                firmPlannedOrder.h firmPlannedOrdersByPlannerCode.h fixACL.h fixSerial.h               \
@@ -844,7 +844,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp rwInte
                errorLog.cpp eventManager.cpp                                                          \
                expenseCategories.cpp expenseCategory.cpp expenseTrans.cpp                             \
                explodeWo.cpp exportCustomers.cpp                                                      \
-	       externalShipping.cpp failedPostList.cpp                                                \
+	       externalShipping.cpp externalShippingList.cpp failedPostList.cpp                       \
                financialLayout.cpp financialLayoutItem.cpp financialLayoutGroup.cpp financialLayouts.cpp \
                financialLayoutSpecial.cpp financialLayoutLabels.cpp financialLayoutColumns.cpp        \
                firmPlannedOrder.cpp firmPlannedOrdersByPlannerCode.cpp fixACL.cpp fixSerial.cpp       \

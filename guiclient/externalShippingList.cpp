@@ -55,39 +55,89 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#ifndef EXTERNALSHIPPING_H
-#define EXTERNALSHIPPING_H
+#include "externalShipping.h"
+#include "externalShippingList.h"
 
-#include "guiclient.h"
-#include "xdialog.h"
-#include <ui_externalShipping.h>
-
-class externalShipping : public XDialog, public Ui::externalShipping
+bool externalShippingList::userHasPriv()
 {
-    Q_OBJECT
+  bool retval = _privileges->check("MaintainExternalShipping");
+  return retval;
+}
 
-  public:
-    externalShipping(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
-    ~externalShipping();
+void externalShippingList::showEvent(QShowEvent *event)
+{
+  if (event)
+    _screen->select();
+}
 
-    static bool userHasPriv(const int = cView);
-    virtual void setVisible(bool);
-    void showEvent(QShowEvent *event);
+void externalShippingList::setVisible(bool visible)
+{
+  if (! visible)
+    XMainWindow::setVisible(false);
+  else if (!userHasPriv())
+  {
+    systemError(this,
+	        tr("You do not have sufficient privilege to view this window."),
+		__FILE__, __LINE__);
+    close();
+  }
+  else
+    XMainWindow::setVisible(true);
+}
 
-  public slots:
-    enum SetResponse set(const ParameterList &pParams);
-    virtual SetResponse setModel(XSqlTableModel *model );
+externalShippingList::externalShippingList(QWidget* parent, const char* name, Qt::WFlags fl)
+    : XMainWindow(parent, name, fl)
+{
+  setupUi(this);
+  
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+}
 
-  protected slots:
-    virtual void languageChange();
-    virtual void sHandleOrder();
-    virtual void sSave();
-    virtual void sClose();
+externalShippingList::~externalShippingList()
+{
+    // no need to delete child widgets, Qt does it all for us
+}
 
-  private:
-    XSqlTableModel   *_model;
-    int               _idx;
-    int               _mode;
-};
+void externalShippingList::languageChange()
+{
+    retranslateUi(this);
+}
 
-#endif // EXTERNALSHIPPING_H
+void externalShippingList::sNew()
+{
+  _screen->insert();
+
+  ParameterList params;
+  params.append("mode", cNew);
+  params.append("currentIndex",_screen->currentIndex());
+  
+  externalShipping newdlg(this, "", TRUE);
+  newdlg.setModel(_screen->model());
+  newdlg.set(params);
+  newdlg.exec();
+}
+
+void externalShippingList::sEdit()
+{
+  ParameterList params;
+  params.append("mode", cEdit);
+  params.append("currentIndex",_screen->currentIndex());
+  
+  externalShipping newdlg(this, "", TRUE);
+  newdlg.setModel(_screen->model());
+  newdlg.set(params);
+  newdlg.exec();
+}
+
+void externalShippingList::sView()
+{
+
+}
+
+void externalShippingList::sDelete()
+{
+  _screen->removeCurrent();
+  _screen->save();
+}

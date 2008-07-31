@@ -78,17 +78,39 @@ void externalShipping::setVisible(bool visible)
     XDialog::setVisible(true);
 }
 
+void externalShipping::showEvent(QShowEvent *event)
+{
+  if (event)
+  {
+    _screen->setModel(_model);
+    _screen->setCurrentIndex(_idx);
+    if (_mode == cNew)
+      _screen->setMode(Screen::New);
+    else if (_mode == cEdit)
+      _screen->setMode(Screen::Edit);
+    else if (_mode == cView)
+      _screen->setMode(Screen::View);
+  }
+}
+
 externalShipping::externalShipping(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
+  _mode=-1;
+
   connect(_order, SIGNAL(newId(int)), this, SLOT(sHandleOrder()));
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
+  connect(this, SIGNAL(rejected()), this, SLOT(sClose()));
 
   _order->setAllowedTypes(OrderLineEdit::Sales);
   _shipment->setType(ShipmentClusterLineEdit::SalesOrder);
 
   _weight->setValidator(omfgThis->weightVal());
+  
+  _model = new XSqlTableModel(this);
 }
 
 externalShipping::~externalShipping()
@@ -99,6 +121,28 @@ externalShipping::~externalShipping()
 void externalShipping::languageChange()
 {
     retranslateUi(this);
+}
+
+enum SetResponse externalShipping::set(const ParameterList &pParams)
+{
+  QVariant param;
+  bool     valid;
+
+  param = pParams.value("currentIndex", &valid);
+  if (valid)
+    _idx=param.toInt();
+  
+  param = pParams.value("mode", &valid);
+  if (valid)
+    _mode = param.toInt();
+
+  return NoError;
+}
+
+enum SetResponse externalShipping::setModel(XSqlTableModel *model)
+{
+  _model=model;
+  return NoError;
 }
 
 void externalShipping::sHandleOrder()
@@ -114,3 +158,19 @@ void externalShipping::sHandleOrder()
     _shipment->setType("SO");
   }
 }
+
+void externalShipping::sSave()
+{
+  _screen->save();
+  if (_screen->mode() != Screen::New)
+    close();
+  else
+    _order->setFocus();
+}
+
+void externalShipping::sClose()
+{
+  _screen->revertRow(_screen->currentIndex());
+  close();
+}
+

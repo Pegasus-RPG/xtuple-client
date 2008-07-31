@@ -106,7 +106,7 @@
 #include "shipOrder.h"
 #include "recallOrders.h"
 #include "purgeShippingRecords.h"
-#include "externalShipping.h"
+#include "externalShippingList.h"
 
 #include "enterPoReceipt.h"
 #include "enterPoReturn.h"
@@ -530,7 +530,7 @@ menuInventory::menuInventory(GUIClient *Pparent) :
     { "im.createItemSitesByClassCode",		  tr("&Create Item Sites..."),		SLOT(sCreateItemSitesByClassCode()),	utilitiesMenu, _privileges->check("MaintainItemSites"),			NULL, NULL, true, NULL },
     { "separator", NULL, NULL, utilitiesMenu, true, NULL, NULL, true, NULL },
     { "sr.purgeShippingRecords", tr("&Purge Shipping Records..."), SLOT(sPurgeShippingRecords()), utilitiesMenu, _privileges->check("PurgeShippingRecords"), NULL, NULL, true, NULL },
-    { "sr.externalShipping",     tr("Maintain E&xternal Shipping Records..."), SLOT(sExternalShipping()), utilitiesMenu, externalShipping::userHasPriv(), NULL, NULL, true, NULL }
+    { "sr.externalShipping",     tr("Maintain E&xternal Shipping Records..."), SLOT(sExternalShipping()), utilitiesMenu, externalShippingList::userHasPriv(), NULL, NULL, true, NULL }
   };
 
   addActionsToMenu(acts, sizeof(acts) / sizeof(acts[0]));
@@ -1367,6 +1367,5 @@ void menuInventory::sCharacteristics()
 
 void menuInventory::sExternalShipping()
 {
-  externalShipping newdlg(parent, "", TRUE);
-  newdlg.exec();
+  omfgThis->handleNewWindow(new externalShippingList());
 }
