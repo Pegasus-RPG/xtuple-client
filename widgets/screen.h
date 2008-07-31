@@ -90,10 +90,12 @@ class OPENMFGWIDGETS_EXPORT Screen : public QWidget
 		SearchTypes searchType();
 	
                 bool    isDirty();
+                int     currentIndex();
                 int     primaryKeyColumns() const { return _keyColumns;       };
 	        QString schemaName()        const { return _schemaName;       };
 	        QString sortColumn()        const { return _sortColumn;       };
 		QString tableName()         const { return _tableName;        };
+                XSqlTableModel *model();
                 
                 void showEvent ( QShowEvent * event );
        	
@@ -102,6 +104,9 @@ class OPENMFGWIDGETS_EXPORT Screen : public QWidget
                 void insert();
                 void removeCurrent();
                 void removeRows(int row, int count);
+                void revert();
+                void revertAll();
+                void revertRow(int row);
 		void toNext();
 		void toPrevious();
 		void save();
@@ -109,6 +114,7 @@ class OPENMFGWIDGETS_EXPORT Screen : public QWidget
 		void select();
                 void setCurrentIndex(int index);
 		void setFilter(QString filter)          { _model->setFilter(filter);      };
+                void setModel(XSqlTableModel *model);
 		void setMode(Modes p);
                 void setPrimaryKeyColumns(int count)    { _keyColumns = count;           };
 		void setSearchType(SearchTypes p);
@@ -117,7 +123,7 @@ class OPENMFGWIDGETS_EXPORT Screen : public QWidget
  
 		void setTableName(QString table);
 		void setTable(QString schema, QString table);
-		void setDataWidgetMapper(QSqlTableModel *model);
+		void setDataWidgetMapper(XSqlTableModel *model);
 	
 	signals:
 		void newDataWidgetMapper(XDataWidgetMapper *mapper);

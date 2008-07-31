@@ -72,9 +72,6 @@ Screen::Screen(QWidget *parent) :
   
   _model = new XSqlTableModel;
   _mapper = new XDataWidgetMapper;
-  
-  _model->setEditStrategy(QSqlTableModel::OnManualSubmit);
-  
 }
 
 Screen::~Screen()
@@ -88,8 +85,15 @@ bool Screen::checkSaved()
                                    tr("Would you like to save your work so you do not lose your changes?"),
                                    QMessageBox::Yes | QMessageBox::Default,
                                    QMessageBox::No ) == QMessageBox::Yes)
+    {
       save();
+      return true;
+    }
+    else
+      return false;
+      
   close();
+  return true;
 }
 
 /* When the widget is first shown, set up table mappings if they exist*/
@@ -139,6 +143,11 @@ bool Screen::isDirty()
   return false;
 }
 
+int Screen::currentIndex()
+{
+  return _mapper->currentIndex();
+}
+
 void Screen::insert()
 {
   _model->insertRows(_model->rowCount(),1);
@@ -153,7 +162,22 @@ void Screen::removeCurrent()
 
 void Screen::removeRows(int row, int count)
 {
-  _model->removeRows(row, count);
+  _mapper->model()->removeRows(row, count);
+}
+
+void Screen::revert()
+{
+  _mapper->revert();
+}
+
+void Screen::revertAll()
+{
+  _model->revertAll();
+}
+
+void Screen::revertRow(int row)
+{
+  _model->revertRow(row);
 }
 
 void Screen::save()
@@ -162,7 +186,7 @@ void Screen::save()
   _mapper->submit();
   _model->submitAll();
   _mapper->setCurrentIndex(i);
-  if (_model->lastError().type() != QSqlError::NoError) // && _model->lastError().driverText() != "No Fields to update")
+  if (_model->lastError().type() != QSqlError::NoError)
   {
     QMessageBox::critical(this, tr("Error Saving %1").arg(_tableName),
                           tr("Error saving %1 at %2::%3\n\n%4")
@@ -221,6 +245,14 @@ void Screen::setMode(Modes p)
       _mapper->mappedWidgetAt(i)->setEnabled(_mode != View);
 }
 
+void Screen::setModel(XSqlTableModel *model)
+{
+  _model=model;
+  _model->setEditStrategy(QSqlTableModel::OnManualSubmit);
+  setDataWidgetMapper(_model);
+  emit newModel(_model);
+}
+
 void Screen::setSearchType(SearchTypes p)
 {
   _searchType=p;
@@ -269,16 +301,20 @@ void Screen::setTable(QString schema, QString table)
     if (_model->tableName() != tablename)
     {
       _model->setTable(tablename,_keyColumns);
+      _model->setEditStrategy(QSqlTableModel::OnManualSubmit);
       setDataWidgetMapper(_model);
-      qDebug("rows %d", _model->rowCount());
       emit newModel(_model);
-      qDebug("rows after %d", _model->rowCount());
     }
   }
 }
 
-void Screen::setDataWidgetMapper(QSqlTableModel *model)
+void Screen::setDataWidgetMapper(XSqlTableModel *model)
 {
   _mapper->setModel(model);
   emit newDataWidgetMapper(_mapper);
+}
+
+XSqlTableModel *Screen::model()
+{
+  return dynamic_cast<XSqlTableModel*>(_mapper->model());
 }

@@ -91,6 +91,7 @@ class OPENMFGWIDGETS_EXPORT XTreeView : public QTreeView
 
     signals:
       void  rowSelected(int);
+      void  valid(bool);
       
     protected:
       virtual void selectionChanged(const QItemSelection & selected, const QItemSelection & deselected);

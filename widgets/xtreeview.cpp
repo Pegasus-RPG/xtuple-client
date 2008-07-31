@@ -81,7 +81,12 @@ XTreeView::XTreeView(QWidget *parent) :
 void XTreeView::selectionChanged(const QItemSelection & selected, const QItemSelection & deselected)
 {
   if (!selected.indexes().isEmpty())
+  {
     emit rowSelected(selected.indexes().first().row());
+    emit valid(true);
+  }
+  else
+    emit valid(FALSE);
   QTreeView::selectionChanged(selected, deselected);
 }
 
