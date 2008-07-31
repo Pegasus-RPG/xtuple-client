@@ -13,7 +13,8 @@ SELECT cohead_id, pack_shiphead_id,
 FROM pack, cohead, cust 
 WHERE ((pack_head_id=cohead_id)
   AND  (cohead_cust_id=cust_id)
-  AND  (pack_head_type='SO')) 
+  AND  (pack_head_type='SO')
+  AND  (checkSOSitePrivs(cohead_id)))
 <? if exists("MultiWhs") ?>
 UNION 
 SELECT tohead_id, pack_shiphead_id, 

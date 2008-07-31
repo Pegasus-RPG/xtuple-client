@@ -1,5 +1,6 @@
 SELECT DISTINCT -1, orderhead_shipvia AS shipvia
 FROM pack, orderhead
-WHERE ((NOT pack_printed)
-  AND  (orderhead_id=pack_head_id)
-  AND  (orderhead_type=pack_head_type));
+WHERE ( (NOT pack_printed)
+  AND   (orderhead_id=pack_head_id)
+  AND   (orderhead_type=pack_head_type)
+  AND   ((orderhead_type='TO') OR (checkSOSitePrivs(orderhead_id))) );

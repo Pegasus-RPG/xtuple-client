@@ -10,7 +10,8 @@ SELECT pack_head_id, pack_head_type, pack_shiphead_id,
 	   <? endif ?>
             ELSE '' END AS pickform
 FROM pack, orderhead
-WHERE ((NOT pack_printed)
-  AND  (orderhead_id=pack_head_id)
-  AND  (orderhead_type=pack_head_type)
-  AND  (orderhead_shipvia=<? value("shipvia") ?>));
+WHERE ( (NOT pack_printed)
+  AND   (orderhead_id=pack_head_id)
+  AND   (orderhead_type=pack_head_type)
+  AND   (orderhead_shipvia=<? value("shipvia") ?>)
+  AND   ((orderhead_type='TO') OR (checkSOSitePrivs(orderhead_id))) );
