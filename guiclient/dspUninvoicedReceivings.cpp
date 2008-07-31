@@ -92,7 +92,7 @@ dspUninvoicedReceivings::dspUninvoicedReceivings(QWidget* parent, const char* na
   _porecv->addColumn(tr("Vendor"),      -1,           Qt::AlignLeft,   true, "vend_name");
   _porecv->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft,   true, "itemnumber");
   _porecv->addColumn(tr("Uninvoiced"),  _qtyColumn,   Qt::AlignRight,  true, "qty");
-  _porecv->addColumn(tr("Type"),	_itemColumn,  Qt::AlignLeft,   true, "type"); 
+  _porecv->addColumn(tr("Type"),        _itemColumn,  Qt::AlignLeft,   true, "type"); 
   _porecv->addColumn(tr("Value"),       _moneyColumn, Qt::AlignRight,  true, "value");
 
   sFillList();
@@ -236,18 +236,18 @@ void dspUninvoicedReceivings::sFillList()
 	       "<? endif ?>"
 	       ") "
 	       "UNION "
-               "SELECT poreject_id,"
-               "       3,"
-               "       poreject_date,"
-               "       getUsername(poreject_trans_usr_id),"
+               "SELECT poreject_id AS id,"
+               "       3 AS doctype,"
+               "       poreject_date AS thedate,"
+               "       getUsername(poreject_trans_usr_id) AS f_user,"
                "       poreject_ponumber AS ponumber, poitem_linenumber,"
                "       vend_name,"
                "       COALESCE(item_number,"
                "       ('Misc. - ' || poreject_vend_item_number)) AS itemnumber,"
-               "       poreject_qty, 'qty',"
-               "       'Return', "
-               "       poreject_value * -1,"
-               "       'curr', 0 "
+               "       poreject_qty, 'qty' AS qty_xtnumericrole,"
+               "       'Return' AS type, "
+               "       poreject_value * -1 AS value,"
+               "       'curr' AS value_xtnumericrole, 0 AS value_xtotalrole "
                "FROM poreject, vend, poitem LEFT OUTER JOIN"
                "                   ( itemsite JOIN item"
                "                     ON (itemsite_item_id=item_id)"
@@ -269,7 +269,7 @@ void dspUninvoicedReceivings::sFillList()
   setParams(params);
   MetaSQLQuery mql(sql);
   q = mql.toQuery(params);
-  _porecv->populate(q);
+  _porecv->populate(q, true);
   if (q.lastError().type() != QSqlError::None)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
