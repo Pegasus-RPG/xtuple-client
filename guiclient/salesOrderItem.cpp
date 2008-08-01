@@ -1697,7 +1697,7 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
           "   AND (charass_target_type='I')"
           "   AND (charass_target_id=:item_id) ) ) AS data"
           "  LEFT OUTER JOIN charass  si ON ((:coitem_id=si.charass_target_id)"
-          "                              AND ('SI'=si.charass_target_type)"
+          "                              AND (:sotype=si.charass_target_type)"
           "                              AND (si.charass_char_id=char_id))"
           "  LEFT OUTER JOIN item     i1 ON (i1.item_id=:item_id)"
           "  LEFT OUTER JOIN charass  i2 ON ((i1.item_id=i2.charass_target_id)"
