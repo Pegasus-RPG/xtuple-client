@@ -1863,13 +1863,40 @@ void crmaccount::sDeleteReg()
 
 void crmaccount::sCheckNumber()
 {
-  if(cNew == _mode && -1 != _NumberGen && _number->text().toInt() != _NumberGen)
+  if (_number->text().length())
   {
-    XSqlQuery query;
-    query.prepare( "SELECT releaseCRMAccountNumber(:Number);" );
-    query.bindValue(":Number", _NumberGen);
-    query.exec();
-    _NumberGen = -1;
+    _number->setText(_number->text().stripWhiteSpace().upper());
+
+    q.prepare( "SELECT crmacct_id "
+               "FROM crmacct "
+               "WHERE (UPPER(crmacct_number)=UPPER(:crmacct_number));" );
+    q.bindValue(":crmacct_number", _number->text());
+    q.exec();
+    if (q.first())
+    {
+// Release number
+      XSqlQuery query;
+      if(cNew == _mode && -1 != _NumberGen && _number->text().toInt() != _NumberGen)
+      {
+        query.prepare( "SELECT releaseCRMAccountNumber(:Number);" );
+        query.bindValue(":Number", _NumberGen);
+        query.exec();
+        _NumberGen = -1;
+      }
+// Delete temporary
+      query.prepare( "DELETE FROM crmacct WHERE (crmacct_id=:crmacct_id);" );
+      query.bindValue(":crmacct_id", _crmacctId);
+      query.exec();
+      
+      _crmacctId = q.value("crmacct_id").toInt();
+      _mode = cEdit;
+      sPopulate();
+
+      connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
+      connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
+      _name->setFocus();
+      _number->setEnabled(FALSE);
+    }
   }
 }
 
