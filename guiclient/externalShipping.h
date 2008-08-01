@@ -83,6 +83,7 @@ class externalShipping : public XDialog, public Ui::externalShipping
     virtual void sHandleOrder();
     virtual void sSave();
     virtual void sClose();
+    virtual void sReject();
 
   private:
     XSqlTableModel   *_model;

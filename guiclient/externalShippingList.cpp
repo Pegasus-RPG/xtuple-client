@@ -93,6 +93,7 @@ externalShippingList::externalShippingList(QWidget* parent, const char* name, Qt
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
 }
 
 externalShippingList::~externalShippingList()
@@ -107,37 +108,36 @@ void externalShippingList::languageChange()
 
 void externalShippingList::sNew()
 {
-  _screen->insert();
-
-  ParameterList params;
-  params.append("mode", cNew);
-  params.append("currentIndex",_screen->currentIndex());
-  
-  externalShipping newdlg(this, "", TRUE);
-  newdlg.setModel(_screen->model());
-  newdlg.set(params);
-  newdlg.exec();
+  sOpen(cNew);
 }
 
 void externalShippingList::sEdit()
 {
-  ParameterList params;
-  params.append("mode", cEdit);
-  params.append("currentIndex",_screen->currentIndex());
-  
-  externalShipping newdlg(this, "", TRUE);
-  newdlg.setModel(_screen->model());
-  newdlg.set(params);
-  newdlg.exec();
+  sOpen(cEdit);
 }
 
 void externalShippingList::sView()
 {
-
+  sOpen(cView);
 }
 
 void externalShippingList::sDelete()
 {
   _screen->removeCurrent();
   _screen->save();
+}
+
+void externalShippingList::sOpen(int mode)
+{
+  if (mode == cNew)
+    _ship->clearSelection();
+    
+  ParameterList params;
+  params.append("mode", mode);
+  params.append("currentIndex",_screen->currentIndex());
+  
+  externalShipping newdlg(this, "", TRUE);
+  newdlg.setModel(_screen->model());
+  newdlg.set(params);
+  newdlg.exec();
 }

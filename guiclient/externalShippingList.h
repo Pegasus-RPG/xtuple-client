@@ -79,6 +79,7 @@ public slots:
     virtual void sEdit();
     virtual void sView();
     virtual void sDelete();
+    virtual void sOpen(int mode);
 
 protected slots:
     virtual void languageChange();

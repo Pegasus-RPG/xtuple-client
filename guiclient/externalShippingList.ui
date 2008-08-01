@@ -41,7 +41,14 @@
             </widget>
            </item>
            <item>
-            <widget class="XTreeView" name="_ship" />
+            <widget class="XTreeView" name="_ship" >
+             <property name="editTriggers" >
+              <set>QAbstractItemView::NoEditTriggers</set>
+             </property>
+             <property name="selectionBehavior" >
+              <enum>QAbstractItemView::SelectRows</enum>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>

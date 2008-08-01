@@ -16,7 +16,7 @@
    <item row="0" column="0" >
     <widget class="Screen" name="_screen" >
      <layout class="QGridLayout" >
-      <item row="0" column="0" colspan="3" >
+      <item row="0" column="0" colspan="2" >
        <layout class="QHBoxLayout" >
         <item>
          <widget class="OrderCluster" name="_order" >
@@ -43,7 +43,7 @@
         </item>
        </layout>
       </item>
-      <item rowspan="2" row="0" column="3" >
+      <item rowspan="2" row="0" column="2" >
        <layout class="QVBoxLayout" >
         <property name="spacing" >
          <number>0</number>
@@ -77,7 +77,7 @@
         </item>
        </layout>
       </item>
-      <item row="1" column="0" colspan="3" >
+      <item row="1" column="0" colspan="2" >
        <layout class="QHBoxLayout" >
         <item>
          <widget class="ShipmentCluster" name="_shipment" >
@@ -140,7 +140,7 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="1" colspan="3" >
+      <item row="3" column="1" colspan="2" >
        <widget class="XLineEdit" name="_packnumTracknum" >
         <property name="fieldName" >
          <string>package_tracking_number</string>
@@ -160,14 +160,14 @@
         </property>
        </widget>
       </item>
-      <item row="4" column="1" colspan="3" >
+      <item row="4" column="1" colspan="2" >
        <widget class="XLineEdit" name="_tracknum" >
         <property name="fieldName" >
          <string>tracking_number</string>
         </property>
        </widget>
       </item>
-      <item row="5" column="0" colspan="4" >
+      <item row="5" column="0" colspan="3" >
        <layout class="QGridLayout" >
         <item row="0" column="0" >
          <widget class="QLabel" name="_pkgTypeLit" >
@@ -317,46 +317,33 @@
           </property>
          </widget>
         </item>
+        <item row="3" column="0" >
+         <widget class="QLabel" name="label_2" >
+          <property name="text" >
+           <string>Last Updated:</string>
+          </property>
+          <property name="alignment" >
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+          <property name="buddy" >
+           <cstring>_lastupdated</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1" >
+         <widget class="DLineEdit" name="_lastupdated" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+          <property name="defaultDate" >
+           <enum>XDateEdit::Current</enum>
+          </property>
+          <property name="fieldName" >
+           <string>last_updated</string>
+          </property>
+         </widget>
+        </item>
        </layout>
-      </item>
-      <item row="6" column="0" >
-       <widget class="QLabel" name="label_2" >
-        <property name="text" >
-         <string>Last Updated:</string>
-        </property>
-        <property name="alignment" >
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-        <property name="buddy" >
-         <cstring>_lastupdated</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="6" column="1" >
-       <widget class="DLineEdit" name="_lastupdated" >
-        <property name="enabled" >
-         <bool>false</bool>
-        </property>
-        <property name="defaultDate" >
-         <enum>XDateEdit::Current</enum>
-        </property>
-        <property name="fieldName" >
-         <string>last_updated</string>
-        </property>
-       </widget>
-      </item>
-      <item row="6" column="2" >
-       <spacer>
-        <property name="orientation" >
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" >
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
       </item>
      </layout>
     </widget>

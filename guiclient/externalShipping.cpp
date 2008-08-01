@@ -103,7 +103,7 @@ externalShipping::externalShipping(QWidget* parent, const char* name, bool modal
   connect(_order, SIGNAL(newId(int)), this, SLOT(sHandleOrder()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
-  connect(this, SIGNAL(rejected()), this, SLOT(sClose()));
+  connect(this, SIGNAL(rejected()), this, SLOT(sReject()));
 
   _order->setAllowedTypes(OrderLineEdit::Sales);
   _shipment->setType(ShipmentClusterLineEdit::SalesOrder);
@@ -134,7 +134,10 @@ enum SetResponse externalShipping::set(const ParameterList &pParams)
   
   param = pParams.value("mode", &valid);
   if (valid)
+  {
     _mode = param.toInt();
+    _save->setHidden(_mode==cView);
+  }
 
   return NoError;
 }
@@ -163,14 +166,21 @@ void externalShipping::sSave()
 {
   _screen->save();
   if (_screen->mode() != Screen::New)
-    close();
+    accept();
   else
     _order->setFocus();
 }
 
 void externalShipping::sClose()
 {
-  _screen->revertRow(_screen->currentIndex());
-  close();
+  if (!_screen->isValid())
+    _screen->revertRow(_screen->currentIndex());
+  accept();
+}
+
+void externalShipping::sReject()
+{
+  if (!_screen->isValid())
+    _screen->revertRow(_screen->currentIndex());
 }
 
