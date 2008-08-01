@@ -78,21 +78,20 @@ Screen::~Screen()
 {
 }
 
-bool Screen::checkSaved()
+bool Screen::isValid()
 {
   if (isDirty())
+  {
     if (QMessageBox::question(this, tr("Unsaved work"),
                                    tr("Would you like to save your work so you do not lose your changes?"),
                                    QMessageBox::Yes | QMessageBox::Default,
                                    QMessageBox::No ) == QMessageBox::Yes)
-    {
       save();
-      return true;
-    }
     else
       return false;
-      
-  close();
+  }
+  else if (_mode == New)
+    return false;
   return true;
 }
 
@@ -132,12 +131,25 @@ Screen::SearchTypes Screen::searchType()
 
 bool Screen::isDirty()
 {
-  for (int r = 0; r < _model->rowCount()-1; r++)
+  if (_mode==New) //If New and nothing has been changed yet on new row, it's not really dirty
   {
-    for (int c = 0; c < _model->columnCount()-1; c++)
+    for (int i = 0; _mapper->model() && i < _mapper->model()->columnCount(); i++)
+      if (_mapper->mappedWidgetAt(i))
+      {
+        QString def = _mapper->mappedWidgetAt(i)->property(_mapper->mappedDefaultName(_mapper->mappedWidgetAt(i))).toString();
+        QString cur = _mapper->mappedWidgetAt(i)->property(_mapper->mappedPropertyName(_mapper->mappedWidgetAt(i))).toString();
+        if (!def.isEmpty() || !cur.isEmpty())
+          if (def != cur)
+            return true; 
+      }
+  }
+  else  //Use usual technique to determine if edits occured
+  {
+    for (int r = 0; r < _model->rowCount(); r++)
     {
-      if (_model->isDirty(_model->index(r,c)))
-        return true;
+      for (int c = 0; c < _model->columnCount(); c++)
+        if (_model->isDirty(_model->index(r,c)))
+          return true;
     }
   }
   return false;
@@ -153,6 +165,11 @@ void Screen::insert()
   _model->insertRows(_model->rowCount(),1);
   _mapper->toLast();
   _mapper->clear();
+}
+
+void Screen::newMappedWidget(QWidget *widget)
+{
+  widget->setEnabled(_mode != View);
 }
 
 void Screen::removeCurrent()

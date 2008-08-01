@@ -100,8 +100,9 @@ class OPENMFGWIDGETS_EXPORT Screen : public QWidget
                 void showEvent ( QShowEvent * event );
        	
 	public slots:
-                bool checkSaved();
+                bool isValid();
                 void insert();
+                void newMappedWidget(QWidget *widget);
                 void removeCurrent();
                 void removeRows(int row, int count);
                 void revert();

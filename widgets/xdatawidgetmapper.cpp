@@ -70,6 +70,18 @@ XDataWidgetMapper::~XDataWidgetMapper()
 {
 }
 
+void XDataWidgetMapper::addMapping(QWidget *widget, QString fieldName)
+{
+  QDataWidgetMapper::addMapping(widget, static_cast<QSqlTableModel*>(model())->fieldIndex(fieldName));
+  emit newMapping(widget);
+}
+
+void XDataWidgetMapper::addMapping(QWidget *widget, QString fieldName, const QByteArray &propertyName)
+{
+  QDataWidgetMapper::addMapping(widget, static_cast<QSqlTableModel*>(model())->fieldIndex(fieldName), propertyName);
+  emit newMapping(widget);
+}
+
 /* This overload allows for a default property that can mapped. 
    The value of the property at that mapping will be used when clear() is called.*/
 void XDataWidgetMapper::addMapping(QWidget *widget, QString fieldName, const QByteArray &propertyName, const QByteArray &defaultName)
@@ -77,6 +89,7 @@ void XDataWidgetMapper::addMapping(QWidget *widget, QString fieldName, const QBy
   QDataWidgetMapper::addMapping(widget, static_cast<QSqlTableModel*>(model())->fieldIndex(fieldName), propertyName);
   removeDefault(widget);
   widgetMap.append(WidgetMapper(widget, static_cast<QSqlTableModel*>(model())->fieldIndex(fieldName), defaultName));
+  emit newMapping(widget);
 }
 
 void XDataWidgetMapper::clear()
@@ -94,6 +107,15 @@ void XDataWidgetMapper::clear(WidgetMapper &m)
         model()->setData(model()->index(currentIndex(),m.section),m.widget->property(m.property));
 }
 
+QByteArray XDataWidgetMapper::mappedDefaultName(QWidget *widget)
+{
+  for (int i = 0; i < widgetMap.count(); ++i) 
+    if (widgetMap.at(i).widget == widget)
+    {
+      return widgetMap.at(i).property;
+    }
+}
+
 void XDataWidgetMapper::removeDefault(QWidget *widget)
 {
   for (int i = 0; i < widgetMap.count(); ++i) 
@@ -104,11 +126,7 @@ void XDataWidgetMapper::removeDefault(QWidget *widget)
     }
 }
 
-void XDataWidgetMapper::submit()
-{
-  QDataWidgetMapper::submit();
-  emit saved(true);
-}
+
 
 
 

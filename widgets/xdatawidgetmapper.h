@@ -71,17 +71,17 @@ class OPENMFGWIDGETS_EXPORT XDataWidgetMapper : public QDataWidgetMapper
       XDataWidgetMapper(QObject *parent = 0);
       ~XDataWidgetMapper();
       
-      virtual void addMapping(QWidget *widget, QString fieldName) {QDataWidgetMapper::addMapping(widget, static_cast<QSqlTableModel*>(model())->fieldIndex(fieldName));};
-      virtual void addMapping(QWidget *widget, QString fieldName, const QByteArray &propertyName) {QDataWidgetMapper::addMapping(widget, static_cast<QSqlTableModel*>(model())->fieldIndex(fieldName), propertyName);};
+      virtual QByteArray mappedDefaultName(QWidget *widget);
+      virtual void addMapping(QWidget *widget, QString fieldName);
+      virtual void addMapping(QWidget *widget, QString fieldName, const QByteArray &propertyName);
       virtual void addMapping(QWidget *widget, QString fieldName, const QByteArray &propertyName, const QByteArray &defaultName);
       virtual void removeDefault(QWidget *widget);
-      virtual void submit();
       
     public slots:
       virtual void clear();
       
     signals:
-      bool saved(bool);
+      bool newMapping(QWidget *widget);
 
     private:
       struct WidgetMapper

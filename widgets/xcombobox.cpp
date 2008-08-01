@@ -96,6 +96,7 @@ XComboBox::XComboBox(QWidget *pParent, const char *pName) :
 XComboBox::XComboBox(bool pEditable, QWidget *pParent, const char *pName) :
   QComboBox(pEditable, pParent, pName)
 {
+  _default  = First;
   _type = Adhoc;
   _lastId = -1;
   setAllowNull(false);
@@ -125,7 +126,10 @@ QString XComboBox::currentDefault()
       return code();
   }
   else
+  {
+    qDebug("No codes");
     return QString("");
+  }
 }
 
 void XComboBox::setDataWidgetMap(XDataWidgetMapper* m)
@@ -144,10 +148,10 @@ void XComboBox::setDataWidgetMap(XDataWidgetMapper* m)
     setModelColumn(rel->fieldIndex(_listDisplayFieldName));
   
     m->setItemDelegate(new QSqlRelationalDelegate(this));
-    m->addMapping(this, _fieldName);
+    m->addMapping(this, _fieldName, "code", "currentDefault");
   }
   else if (_codes.count())
-    m->addMapping(this, _fieldName);
+    m->addMapping(this, _fieldName, "code", "currentDefault");
   else
     m->addMapping(this, _fieldName, "text", "text");
 }
