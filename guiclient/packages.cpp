@@ -106,7 +106,6 @@ packages::packages(QWidget* parent, const char* name, Qt::WFlags fl)
   }
 
   sHandleAutoUpdate(_autoUpdate->isChecked());
-  sFillList();
 }
 
 packages::~packages()
@@ -290,4 +289,5 @@ void packages::sHandleAutoUpdate(const bool pAutoUpdate)
     connect(omfgThis, SIGNAL(tick()), this, SLOT(sFillList()));
   else
     disconnect(omfgThis, SIGNAL(tick()), this, SLOT(sFillList()));
+  sFillList();
 }
