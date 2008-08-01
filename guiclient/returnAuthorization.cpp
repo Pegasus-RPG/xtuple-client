@@ -1252,22 +1252,10 @@ void returnAuthorization::closeEvent(QCloseEvent *pEvent)
 {
   if ( (_mode == cNew) && (_raheadid != -1) )
   {
-    if ( (_metrics->value("RANumberGeneration") == "A") || 
-         (_metrics->value("RANumberGeneration") == "O")   )
-      q.prepare("SELECT releaseRaNumber(:number) AS result;");
-
-    q.bindValue(":number", _authNumber->text());
-    q.exec();
-    if (q.lastError().type() != QSqlError::None)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
-
-	q.prepare( "UPDATE raitem SET raitem_qtyauthorized=0 "
-		       "WHERE (raitem_rahead_id=:rahead_id); "
-		       "SELECT importcoitemstora(:rahead_id,NULL);"
-		       "DELETE FROM rahead "
+    q.prepare( "UPDATE raitem SET raitem_qtyauthorized=0 "
+               "WHERE (raitem_rahead_id=:rahead_id); "
+		           "SELECT importcoitemstora(:rahead_id,NULL);"
+		           "DELETE FROM rahead "
                "WHERE (rahead_id=:rahead_id);" );
     q.bindValue(":rahead_id", _raheadid);
     q.exec();
@@ -1276,11 +1264,24 @@ void returnAuthorization::closeEvent(QCloseEvent *pEvent)
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
-	else
-	{
+    else
+    {
       omfgThis->sReturnAuthorizationsUpdated();
       omfgThis->sProjectsUpdated(_project->id());
-	}
+    }
+
+    if ( (_metrics->value("RANumberGeneration") == "A") || 
+         (_metrics->value("RANumberGeneration") == "O")   )
+    {
+      q.prepare("SELECT releaseRaNumber(:number) AS result;");
+      q.bindValue(":number", _authNumber->text());
+      q.exec();
+      if (q.lastError().type() != QSqlError::None)
+      {
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        return;
+      }
+    }
   }
 
   XMainWindow::closeEvent(pEvent);
