@@ -102,7 +102,7 @@ voucher::voucher(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_miscDistrib, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
   connect(_invoiceDate, SIGNAL(newDate(const QDate&)), this, SLOT(sPopulateDistDate()));
   connect(_poNumber, SIGNAL(vendAddress2Changed(const QString&)), _vendAddress2, SLOT(setText(const QString&)));
-  connect(_invoiceDate, SIGNAL(newDate(const QDate&)), this, SLOT(sPopulateDueDate()));
+  connect(_terms, SIGNAL(newID(int)), this, SLOT(sPopulateDueDate()));
   connect(_poNumber, SIGNAL(newId(int)), this, SLOT(sPopulatePoInfo()));
   connect(_poNumber, SIGNAL(vendNameChanged(const QString&)), _vendName, SLOT(setText(const QString&)));
   connect(_poitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
@@ -832,8 +832,8 @@ void voucher::sPopulateDistDate()
   if ( (_invoiceDate->isValid()) && (!_distributionDate->isValid()) )
   {
     _distributionDate->setDate(_invoiceDate->date(), true);
-    sPopulateDueDate();
   }
+  sPopulateDueDate();
 }
 
 void voucher::sPopulateDueDate()
