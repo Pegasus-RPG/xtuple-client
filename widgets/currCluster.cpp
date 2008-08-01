@@ -488,7 +488,7 @@ void CurrCluster::setCurrencyDisabled(bool newValue)
 
 void CurrCluster::setDataWidgetMap(XDataWidgetMapper* m)
 {
-  m->addMapping(_currency, _fieldNameCurr, "code");
+  m->addMapping(_currency, _fieldNameCurr, "code", "currentDefault");
   m->addMapping(this, _fieldNameValue, "localValue", "defaultLocalValue");
   _mapper=m;
 }
@@ -566,6 +566,7 @@ CurrDisplay::CurrDisplay(QWidget * parent, const char* name)
     _effective = QDate().currentDate();
     _decimals = 0;
     _format = Money;
+    _default = 0;
 
     setEnabled(FALSE);
     setLocalControl(TRUE);
