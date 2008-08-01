@@ -165,15 +165,6 @@ enum SetResponse invoice::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
 
-  param = pParams.value("invchead_id", &valid);
-  if (valid)
-  {
-    _invcheadid = param.toInt();
-    populate();
-    populateCMInfo();
-    populateCCInfo();
-  }
-
   param = pParams.value("mode", &valid);
   if (valid)
   {
@@ -256,6 +247,7 @@ enum SetResponse invoice::set(const ParameterList &pParams)
       _commission->setEnabled(FALSE);
       _taxauth->setEnabled(FALSE);
       _terms->setEnabled(FALSE);
+      _terms->setType(XComboBox::Terms);
       _fob->setEnabled(FALSE);
       _shipVia->setEnabled(FALSE);
       _billToName->setEnabled(FALSE);
@@ -290,6 +282,15 @@ enum SetResponse invoice::set(const ParameterList &pParams)
   param = pParams.value("cust_id", &valid);
   if(cNew == _mode && valid)
     _cust->setId(param.toInt());
+
+  param = pParams.value("invchead_id", &valid);
+  if (valid)
+  {
+    _invcheadid = param.toInt();
+    populate();
+    populateCMInfo();
+    populateCCInfo();
+  }
 
   return NoError;
 }
