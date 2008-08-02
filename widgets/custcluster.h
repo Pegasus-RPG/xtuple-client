@@ -98,8 +98,8 @@ class OPENMFGWIDGETS_EXPORT CLineEdit : public XLineEdit
       AllCustomersAndProspects,	ActiveCustomersAndProspects
     };
 
-    inline bool			autoFocus() const { return _autoFocus; }
-    inline CLineEditTypes	type()	    const { return _type; };
+    inline bool			autoFocus() const { return _autoFocus;  }
+    inline CLineEditTypes	type()	    const { return _type;       }
 
   public slots:
     void sEllipses();
@@ -107,6 +107,7 @@ class OPENMFGWIDGETS_EXPORT CLineEdit : public XLineEdit
     void sList();
     void setSilentId(int);
     void setId(int);
+    void setMapper(XDataWidgetMapper *mapper);
     void setNumber(const QString& pNumber);
     void setType(CLineEditTypes);
     void sParse();
@@ -155,8 +156,6 @@ class OPENMFGWIDGETS_EXPORT CustInfo : public QWidget
 
   Q_PROPERTY(bool                       autoFocus      READ autoFocus     WRITE setAutoFocus                     )
   Q_PROPERTY(CLineEdit::CLineEditTypes	type           READ type          WRITE setType                          )
-  Q_PROPERTY(QString                    defaultNumber  READ defaultNumber WRITE setDefaultNumber DESIGNABLE false)
-  Q_PROPERTY(QString                    fieldName      READ fieldName     WRITE setFieldName                     )
 
   public:
     CustInfo(QWidget *parent, const char *name = 0);
@@ -164,22 +163,20 @@ class OPENMFGWIDGETS_EXPORT CustInfo : public QWidget
     void setReadOnly(bool);
 
     inline bool                      autoFocus() const  { return _customerNumber->autoFocus(); }
-    inline int                       id()               { return _customerNumber->_id;    }
-    inline bool                      isValid()          { return _customerNumber->_valid; }
-    inline CLineEdit::CLineEditTypes type()      const  { return _customerNumber->type(); }
+    inline int                       id()               { return _customerNumber->_id;         }
+    inline bool                      isValid()          { return _customerNumber->_valid;      }
+    inline QString                   number()    const  { return _customerNumber->text();      }
+    inline CLineEdit::CLineEditTypes type()      const  { return _customerNumber->type();      }
 
     static CustInfoAction * _custInfoAction;
-    QString defaultNumber()  const { return _default; };
-    QString fieldName()      const { return _fieldName; };
 
   public slots:
     void setSilentId(int);
     void setId(int);
     void setType(CLineEdit::CLineEditTypes);
     void setAutoFocus(bool);
-    void setDefaultNumber(QString p)            { _default = p; };
-    void setDataWidgetMap(XDataWidgetMapper* m);
-    void setFieldName(QString p)                { _fieldName = p; };
+    void setMapper(XDataWidgetMapper* mapper);
+    void setNumber(QString number)                   { _customerNumber->setNumber(number);}
 
   private slots:
     void sInfo();
@@ -201,11 +198,11 @@ class OPENMFGWIDGETS_EXPORT CustInfo : public QWidget
     void valid(bool);
 
   private:
-    CLineEdit   *_customerNumber;
     QPushButton *_list;
     QPushButton *_info;
-    QString     _default;
-    QString     _fieldName;
+    
+  protected:
+    CLineEdit   *_customerNumber;
 };
 
 
@@ -217,6 +214,7 @@ class OPENMFGWIDGETS_EXPORT CustCluster : public QWidget
   Q_PROPERTY(CLineEdit::CLineEditTypes	type           READ type	  WRITE setType                          )
   Q_PROPERTY(QString                    defaultNumber  READ defaultNumber WRITE setDefaultNumber DESIGNABLE false)
   Q_PROPERTY(QString                    fieldName      READ fieldName     WRITE setFieldName                     )
+  Q_PROPERTY(QString                    number         READ number        WRITE setNumber        DESIGNABLE false)
 
   public:
     CustCluster(QWidget *parent, const char *name = 0);
@@ -227,8 +225,9 @@ class OPENMFGWIDGETS_EXPORT CustCluster : public QWidget
     inline int                       id()                  { return _custInfo->id();            };
     inline bool                      isValid()             { return _custInfo->isValid();       };
     inline CLineEdit::CLineEditTypes type()          const { return _custInfo->type();          };
-    inline QString                   defaultNumber() const { return _custInfo->defaultNumber(); };
-    inline QString                   fieldName()     const { return _custInfo->fieldName();     };
+    inline QString                   defaultNumber() const { return _default;                   };
+    inline QString                   fieldName()     const { return _fieldName;                 };
+    inline QString                   number()        const { return _custInfo->number();        };
 
     void   setType(CLineEdit::CLineEditTypes);
     
@@ -240,14 +239,17 @@ class OPENMFGWIDGETS_EXPORT CustCluster : public QWidget
     void setId(int);
     void setSilentId(int);
     void setAutoFocus(bool);
-    void setDefaultNumber(const QString& p)     { _custInfo->setDefaultNumber(p); };
-    void setFieldName(const QString& p)         { _custInfo->setFieldName(p); };
-    void setDataWidgetMap(XDataWidgetMapper* m) { _custInfo->setDataWidgetMap(m); };
+    void setDefaultNumber(const QString& p)     { _default=p; };
+    void setFieldName(const QString& p)         { _fieldName=p; };
+    void setDataWidgetMap(XDataWidgetMapper* m);
+    void setNumber(const QString& number)       { _custInfo->setNumber(number);};
 
   private:
     CustInfo    *_custInfo;
     QLabel      *_name;
     QLabel      *_address1;
+    QString     _default;
+    QString     _fieldName;
 };
 
 #endif

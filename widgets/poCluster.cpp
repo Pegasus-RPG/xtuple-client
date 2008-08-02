@@ -91,6 +91,8 @@ PoLineEdit::PoLineEdit(QWidget *parent, const char *name) :
 
   connect(this, SIGNAL(lostFocus()), SLOT(sParse()));
   connect(this, SIGNAL(textChanged(QString)), SLOT(sMarkDirty()));
+  
+  _mapper = new XDataWidgetMapper(this);
 }
 
 // TODO: this really should be in XLineEdit
@@ -219,6 +221,10 @@ void PoLineEdit::setId(int pId)
   emit numberChanged(_number);
   emit valid(_valid);
 
+  if (_mapper->model() &&
+      _mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this))).toString() != text())
+    _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this)), text());
+              
   _parsed = TRUE;
 }
 
@@ -319,6 +325,24 @@ void PoCluster::sList()
   int id;
   if ((id  = newdlg.exec()) != QDialog::Rejected)
     _poNumber->setId(id);
+}
+
+void PoCluster::setDataWidgetMap(XDataWidgetMapper* m)
+{
+  m->addMapping(this, _fieldName, "number", "defaultNumber");
+  _poNumber->_mapper=m;
+}
+
+void PoCluster::setNumber(const QString& number)
+{
+  qDebug("number " + number);
+  qDebug("curr " + _poNumber->text());
+  if (_poNumber->text() == number)
+    return
+    
+  qDebug("setting po");
+  _poNumber->setText(number);
+  _poNumber->sParse();
 }
 
 void PoCluster::setReadOnly(bool pReadOnly)

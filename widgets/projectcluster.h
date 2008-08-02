@@ -62,6 +62,7 @@
 #define projectCluster_h
 
 #include "OpenMFGWidgets.h"
+
 #include "xlineedit.h"
 
 #include <xsqlquery.h>
@@ -102,17 +103,25 @@ friend class ProjectCluster;
   signals:
     void newId(int);
     void valid(bool);
+    
+  protected:
+    XDataWidgetMapper *_mapper;
 };
 
 class OPENMFGWIDGETS_EXPORT ProjectCluster : public QWidget
 {
   Q_OBJECT
+  Q_PROPERTY(QString fieldName      READ fieldName      WRITE setFieldName);
+  Q_PROPERTY(QString number         READ projectNumber  WRITE setProjectNumber  DESIGNABLE false);
+  Q_PROPERTY(QString defaultNumber  READ defaultNumber                          DESIGNABLE false);
 
   public:
     ProjectCluster(QWidget *, const char * = 0);
     ProjectCluster(enum ProjectLineEdit::Type, QWidget *, const char * = 0);
 
     QString projectNumber() const;
+    QString  defaultNumber()    { return QString();          }
+    QString  fieldName()        { return _fieldName;         }
 
     inline void setType(enum ProjectLineEdit::Type pPrjType) { _prjNumber->_prjType = pPrjType; }
     enum ProjectLineEdit::Type type() const { return _prjNumber->_prjType; }
@@ -123,12 +132,16 @@ class OPENMFGWIDGETS_EXPORT ProjectCluster : public QWidget
     void setId(int);
     void setReadOnly(bool);
     void sProjectList();
+    void setDataWidgetMap(XDataWidgetMapper* m);
+    void setFieldName(const QString& name)        { _fieldName = name; }
+    void setProjectNumber(const QString& number);
 
   private:
     void constructor();
 
-    ProjectLineEdit  *_prjNumber;
-    QPushButton *_prjList;
+    ProjectLineEdit   *_prjNumber;
+    QPushButton       *_prjList;
+    QString            _fieldName;
 
   signals:
     void newId(int);

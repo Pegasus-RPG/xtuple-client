@@ -195,6 +195,8 @@ GLCluster::GLCluster(QWidget *pParent, const char *name) :
   _parsed = TRUE;
 
   _showExternal = false;
+  
+  _mapper = new XDataWidgetMapper(this);
 }
 
 void GLCluster::setReadOnly(bool pReadOnly)
@@ -238,7 +240,12 @@ void GLCluster::setId(int pId)
 
     _account->setText(_query.value("accnt_descrip").toString());
     _accntid = pId;
+    _number = _query.value("f_accnt").toString();
     _valid = TRUE;
+
+    if (_mapper->model() &&
+      _mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this))).toString() != _number)
+        _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this)), _number);
   }
   else
   {
@@ -255,6 +262,7 @@ void GLCluster::setId(int pId)
     _account->setText("");
     _accntid = -1;
     _valid = FALSE;
+    _number = "";
   }
 
   _parsed = true;
@@ -303,6 +311,42 @@ void GLCluster::setEnabled(bool pEnabled)
   else
     _list->hide();
   QWidget::setEnabled(pEnabled);
+}
+
+void GLCluster::setNumber(QString number)
+{
+  if (_number==number)
+    return;
+    
+  if (number.isEmpty())
+  {
+    setId(-1);
+    return;
+  }
+    
+  XSqlQuery qgl;
+  if (_showExternal)
+    qgl.prepare("SELECT DISTINCT accnt_id"
+                "  FROM accnt"
+                " WHERE (formatGLAccount(accnt_id)=:number);");
+  else
+    qgl.prepare("SELECT DISTINCT accnt_id"
+                "  FROM accnt JOIN company ON (accnt_company=company_number)"
+                " WHERE (NOT company_external"
+                "   AND  (formatGLAccount(accnt_id)=:number));");
+  qgl.bindValue(":number", number);
+  qgl.exec();
+  if(qgl.first())
+    setId(qgl.value("accnt_id").toInt());
+  else
+  {
+    setId(-1);
+    focusNextPrevChild(FALSE);
+    QMessageBox::warning( this, tr("Invalid Account Number"),
+      tr("<p>The Account Number you entered is Invalid<p>") );
+  }
+
+  _parsed = true;
 }
 
 void GLCluster::sEllipses()
@@ -396,4 +440,9 @@ void GLCluster::focusInEvent(QFocusEvent *pEvent)
 void GLCluster::sTextChanged(const QString &)
 {
   _parsed = false;
+}
+
+void GLCluster::setDataWidgetMap(XDataWidgetMapper* m)
+{
+  m->addMapping(this, _fieldName, "number", "defaultNumber");
 }

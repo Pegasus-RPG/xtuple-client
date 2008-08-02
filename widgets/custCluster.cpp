@@ -107,6 +107,11 @@ void CLineEdit::setAutoFocus(bool yes)
   _autoFocus = yes;
 }
 
+void CLineEdit::setMapper(XDataWidgetMapper *mapper)
+{
+  _mapper=mapper;
+}
+
 void CLineEdit::sEllipses()
 {
   if(_x_preferences)
@@ -514,10 +519,15 @@ CustInfo::CustInfo(QWidget *pParent, const char *name) :
 
   setFocusProxy(_customerNumber);
 }
-
+  
 void CustInfo::setAutoFocus(bool yes)
 {
   _customerNumber->setAutoFocus(yes);
+}
+
+void CustInfo::setMapper(XDataWidgetMapper *mapper)
+{
+  _customerNumber->setMapper(mapper);
 }
 
 void CustInfo::setReadOnly(bool pReadOnly)
@@ -573,10 +583,10 @@ void CustInfo::sHandleCreditStatus(const QString &pStatus)
   }
 }
 
-void CustInfo::setDataWidgetMap(XDataWidgetMapper* m)
+void CustCluster::setDataWidgetMap(XDataWidgetMapper* m)
 {
-  m->addMapping(_customerNumber, _fieldName, "number", "defaultNumber");
-  _customerNumber->_mapper=m;
+  m->addMapping(this, _fieldName, "number", "defaultNumber");
+  _custInfo->setMapper(m);
 }
 
 

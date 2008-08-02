@@ -75,8 +75,10 @@ PlanOrdLineEdit::PlanOrdLineEdit(QWidget *pParent, const char *name) :
   XLineEdit(pParent, name)
 {
   _qtyOrdered = 0.0;
+  _mapper = new XDataWidgetMapper(this);
 
   connect(this, SIGNAL(lostFocus()), this, SLOT(sParse()));
+  
 }
 
 void PlanOrdLineEdit::setId(int pId)
@@ -129,6 +131,10 @@ void PlanOrdLineEdit::setId(int pId)
     emit qtyChanged("");
     emit valid(FALSE);
   }
+  
+  if (_mapper->model() &&
+    _mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this))).toString() != text())
+      _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this)), text());
 }
 
 void PlanOrdLineEdit::sParse()
@@ -293,6 +299,15 @@ void PlanOrdCluster::setId(int pId)
   _number->setId(pId);
 }
 
+void PlanOrdCluster::setNumber(const QString& number)
+{
+  if (_number->text() == number)
+    return;
+  
+  _number->setText(number);
+  _number->sParse();
+}
+
 void PlanOrdCluster::sList()
 {
   ParameterList params;
@@ -314,5 +329,11 @@ void PlanOrdCluster::sList()
 QString PlanOrdCluster::woNumber() const
 {
   return _number->text();
+}
+
+void PlanOrdCluster::setDataWidgetMap(XDataWidgetMapper* m)
+{
+  m->addMapping(this, _fieldName, "number", "defaultNumber");
+  _number->_mapper=m;
 }
 

@@ -186,8 +186,6 @@ class OPENMFGWIDGETS_EXPORT VirtualInfo : public QDialog
 class OPENMFGWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
 {
     Q_OBJECT
-    Q_PROPERTY(QString  number         READ text           WRITE setNumber         DESIGNABLE false);
-    Q_PROPERTY(QString  defaultNumber  READ defaultNumber  WRITE setDefaultNumber  DESIGNABLE false);
     
     friend class VirtualCluster;
     friend class VirtualInfo;
@@ -283,6 +281,8 @@ class OPENMFGWIDGETS_EXPORT VirtualCluster : public QWidget
     Q_PROPERTY(bool    nameVisible    READ nameVisible    WRITE setNameVisible);
     Q_PROPERTY(bool    readOnly       READ readOnly       WRITE setReadOnly);
     Q_PROPERTY(QString fieldName      READ fieldName      WRITE setFieldName);
+    Q_PROPERTY(QString number         READ number         WRITE setNumber         DESIGNABLE false);
+    Q_PROPERTY(QString defaultNumber  READ defaultNumber  WRITE setDefaultNumber  DESIGNABLE false);
 
     friend class VirtualClusterLineEdit;
 
@@ -301,12 +301,14 @@ class OPENMFGWIDGETS_EXPORT VirtualCluster : public QWidget
         inline virtual QString name()           const { return _name->text(); };
         inline virtual bool    isStrict()       const { return _number->isStrict(); };
         inline virtual bool    readOnly()       const { return _readOnly; };
+               virtual QString defaultNumber()  const { return _number->defaultNumber();};
         inline virtual QString fieldName()      const { return _fieldName; };
         inline virtual QString extraClause()    const { return _number->extraClause(); };
 
     public slots:
         // most of the heavy lifting is done by VirtualClusterLineEdit _number
         inline virtual void clearExtraClause()                { _number->clearExtraClause(); };
+        inline virtual void setDefaultNumber(const QString& p){ _number->setDefaultNumber(p);};
         inline virtual void setDescription(const QString& p)  { _description->setText(p); };
         inline virtual void setExtraClause(const QString& p)  { _number->setExtraClause(p); };
         inline virtual void setFieldName(QString p)           { _fieldName = p; };

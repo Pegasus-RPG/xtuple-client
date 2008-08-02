@@ -118,22 +118,32 @@ friend class PoCluster;
 
   private slots:
     void sMarkDirty();
+    
+  protected:
+    XDataWidgetMapper *_mapper;
+    
 };
 
 class OPENMFGWIDGETS_EXPORT PoCluster : public QWidget
 {
   Q_OBJECT
+  Q_PROPERTY(QString fieldName      READ fieldName      WRITE setFieldName);
+  Q_PROPERTY(QString number         READ number         WRITE setNumber       DESIGNABLE false);
+  Q_PROPERTY(QString defaultNumber  READ defaultNumber                          DESIGNABLE false);
 
   public:
     PoCluster(QWidget *, const char * = 0);
 
-    inline void setId(int pId)     { _poNumber->setId(pId);     }
-    inline int id()                { return _poNumber->_id;     }
-    inline int vendid()            { return _poNumber->_vendid; }
-    inline bool isValid()          { return _poNumber->_valid;  }
-    inline void setType(int pType) { _poNumber->setType(pType); }
+    inline void     setId(int pId)     { _poNumber->setId(pId);     }
+    inline int      id()               { return _poNumber->_id;     }
+    inline int      vendid()           { return _poNumber->_vendid; }
+    inline bool     isValid()          { return _poNumber->_valid;  }
+    inline QString  defaultNumber()    { return QString();          }
+    inline QString  fieldName()        { return _fieldName;         }
+    inline QString  number()           { return _poNumber->text();  }
+    inline void setType(int pType)     { _poNumber->setType(pType); }
 
-    inline QString poNumber()      { return QString("%1").arg(_poNumber->_number); }
+    inline QString poNumber()          { return QString("%1").arg(_poNumber->_number); }
 
     void setReadOnly(bool);
 
@@ -142,6 +152,11 @@ class OPENMFGWIDGETS_EXPORT PoCluster : public QWidget
     void newVendid(int);
     void valid(bool);
 
+  public slots:
+    void setDataWidgetMap(XDataWidgetMapper* m);
+    void setFieldName(const QString& name)        { _fieldName = name; }
+    void setNumber(const QString& number);
+    
   private slots:
     void sList();
 
@@ -149,6 +164,7 @@ class OPENMFGWIDGETS_EXPORT PoCluster : public QWidget
     PoLineEdit  *_poNumber;
     QPushButton *_poList;
     QLabel      *_vendName;
+    QString      _fieldName;
 };
 
 #endif

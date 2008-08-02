@@ -82,8 +82,6 @@ class SoCluster;
 class OPENMFGWIDGETS_EXPORT SoLineEdit : public XLineEdit
 {
   Q_OBJECT
-  Q_PROPERTY(QString     number          READ text()          WRITE setNumber);
-  Q_PROPERTY(QString     defaultNumber   READ defaultNumber   WRITE setDefaultNumber DESIGNABLE false );
 
 friend class SoCluster;
 
@@ -129,6 +127,8 @@ class OPENMFGWIDGETS_EXPORT SoCluster : public QWidget
   Q_PROPERTY(QString label          READ label          WRITE setLabel                          );
   Q_PROPERTY(bool    readOnly       READ isReadOnly     WRITE setReadOnly                       );
   Q_PROPERTY(QString fieldName      READ fieldName      WRITE setFieldName                      );
+  Q_PROPERTY(QString number         READ number()       WRITE setNumber);
+  Q_PROPERTY(QString defaultNumber  READ defaultNumber  WRITE setDefaultNumber DESIGNABLE false );
 
   public:
     SoCluster(QWidget *, const char * = 0);
@@ -138,6 +138,7 @@ class OPENMFGWIDGETS_EXPORT SoCluster : public QWidget
     inline int  id()                      { return _soNumber->_id;      };
     inline int  custid()                  { return _soNumber->_custid;  };
     inline bool isValid()                 { return _soNumber->_valid;   };
+    inline QString  defaultNumber()       { return _soNumber->defaultNumber();};
     inline QString  number()              { return _soNumber->text();   };
     inline virtual QString label()  const { return _label;              };
     inline bool isReadOnly()              { return _readOnly;           }; 
@@ -148,6 +149,7 @@ class OPENMFGWIDGETS_EXPORT SoCluster : public QWidget
     void setId(int);
     void setCustId(int);
     void setDataWidgetMap(XDataWidgetMapper* m);
+    void setDefaultNumber(QString number)       { _soNumber->setDefaultNumber(number);}
     void setFieldName(QString p)                { _fieldName = p;           };
     void setSitePrivsEnforced(const bool p)     { _soNumber->_sitePrivs = p;};
     void setNumber(QString);

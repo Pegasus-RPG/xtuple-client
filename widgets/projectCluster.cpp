@@ -78,6 +78,7 @@ ProjectLineEdit::ProjectLineEdit(QWidget *pParent, const char *name) :
 {
   _prjType = Undefined;
   _parsed = TRUE;
+  _mapper = new XDataWidgetMapper(this);
 
   connect(this, SIGNAL(lostFocus()), this, SLOT(sParse()));
 }
@@ -110,20 +111,22 @@ void ProjectLineEdit::setId(int pId)
 
       emit newId(_id);
       emit valid(TRUE);
-
-      _parsed = TRUE;
-
-      return;
     }
   }
+  else
+  {
+    _id    = -1;
+    _valid = FALSE;
 
-  _id    = -1;
-  _valid = FALSE;
+    setText("");
 
-  setText("");
+    emit newId(-1);
+    emit valid(FALSE);
+  }
 
-  emit newId(-1);
-  emit valid(FALSE);
+  if (_mapper->model() &&
+      _mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this))).toString() != text())
+    _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this)), text());
     
   _parsed = TRUE;
 }
@@ -273,6 +276,21 @@ void ProjectCluster::sProjectList()
 QString ProjectCluster::projectNumber() const
 {
   return _prjNumber->text();
+}
+
+void ProjectCluster::setDataWidgetMap(XDataWidgetMapper* m)
+{
+  m->addMapping(this, _fieldName, "number", "defaultNumber");
+  _prjNumber->_mapper=m;
+}
+
+void ProjectCluster::setProjectNumber(const QString& number)
+{
+  if (_prjNumber->text() == number)
+    return;
+    
+  _prjNumber->setText(number);
+  _prjNumber->sParse();
 }
 
 

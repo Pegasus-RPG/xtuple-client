@@ -123,11 +123,6 @@ void VendorLineEdit::setId(int pId)
       _valid  = TRUE;
   
       setText(vend.value("vend_number").toString());
-      _parsed = TRUE;
-      
-      if (_mapper->model() &&
-          _mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this))).toString() != text())
-        _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this)), text());
 
       emit nameChanged(vend.value("vend_name").toString());
       emit address1Changed(vend.value("vend_address1").toString());
@@ -139,32 +134,45 @@ void VendorLineEdit::setId(int pId)
       emit countryChanged(vend.value("vend_country").toString());
       emit newId(_id);
       emit valid(TRUE);
-
-      return;
     }
   }
+  else
+  {
+    _id     = -1;
+    _valid  = FALSE;
 
-  _id     = -1;
-  _valid  = FALSE;
+    setText("");
 
-  setText("");
-
-  emit nameChanged("");
-  emit address1Changed("");
-  emit address2Changed("");
-  emit address3Changed("");
-  emit cityChanged("");
-  emit stateChanged("");
-  emit zipCodeChanged("");
-  emit countryChanged("");
-  emit newId(-1);
-  emit valid(FALSE);
+    emit nameChanged("");
+    emit address1Changed("");
+    emit address2Changed("");
+    emit address3Changed("");
+    emit cityChanged("");
+    emit stateChanged("");
+    emit zipCodeChanged("");
+    emit countryChanged("");
+    emit newId(-1);
+    emit valid(FALSE);
+  }
+  
+  if (_mapper->model() &&
+    _mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this))).toString() != text())
+  _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this)), text());
 
   _parsed = TRUE;
 }
 
 void VendorLineEdit::setNumber(const QString &pNumber)
 {
+  if (pNumber == text())
+    return;
+    
+  if (pNumber.isEmpty())
+  {
+    setId(-1);
+    return;
+  }
+  
   XSqlQuery vend( QString( "SELECT vend_id "
                            "FROM vend "
                            "WHERE (vend_number='%1');" )
@@ -358,6 +366,15 @@ void VendorInfo::setId(int pId)
   _vendorNumber->setId(pId);
 }
 
+void VendorInfo::setNumber(const QString& number)
+{
+  if (_vendorNumber->text() == number)
+    return
+    
+  _vendorNumber->setText(number);
+  _vendorNumber->sParse();
+}
+
 void VendorInfo::setType(int pType)
 {
   _vendorNumber->_type = pType;
@@ -365,7 +382,7 @@ void VendorInfo::setType(int pType)
 
 void VendorInfo::setDataWidgetMap(XDataWidgetMapper* m)
 {
-  m->addMapping(_vendorNumber, _fieldName, "number", "defaultNumber");
+  m->addMapping(this, _fieldName, "number", "defaultNumber");
   _vendorNumber->_mapper=m;
 }
 
@@ -435,7 +452,11 @@ void VendorCluster::setType(int pType)
 
 void VendorCluster::setDataWidgetMap(XDataWidgetMapper* m)
 {
-  m->addMapping(_vendorNumber, _fieldName, QByteArray("number"));
+  m->addMapping(this, _fieldName, QByteArray("number"));
   _vendorNumber->_mapper=m;
 }
 
+void VendorCluster::setNumber(const QString& number)
+{
+  _vendorNumber->setNumber(number);
+}

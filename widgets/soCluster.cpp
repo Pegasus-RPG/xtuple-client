@@ -312,7 +312,7 @@ void SoCluster::setCustId(int pCustid)
 
 void SoCluster::setDataWidgetMap(XDataWidgetMapper* m)
 {
-  m->addMapping(_soNumber, _fieldName, "number", "defaultNumber");
+  m->addMapping(this, _fieldName, "number", "defaultNumber");
   _soNumber->_mapper=m;
 }
 

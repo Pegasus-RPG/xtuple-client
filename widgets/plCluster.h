@@ -87,6 +87,7 @@ friend class PlanOrdCluster;
   private:
     QChar  _status;
     double _qtyOrdered;
+    XDataWidgetMapper *_mapper;
 
   signals:
     void newId(int);
@@ -104,6 +105,9 @@ friend class PlanOrdCluster;
 class OPENMFGWIDGETS_EXPORT PlanOrdCluster : public QWidget
 {
   Q_OBJECT
+  Q_PROPERTY(QString  fieldName      READ fieldName      WRITE setFieldName);
+  Q_PROPERTY(QString  number         READ number         WRITE setNumber         DESIGNABLE false);
+  Q_PROPERTY(QString  defaultNumber  READ defaultNumber                          DESIGNABLE false);
 
   public:
     PlanOrdCluster(QWidget *, const char * = 0);
@@ -111,13 +115,19 @@ class OPENMFGWIDGETS_EXPORT PlanOrdCluster : public QWidget
 
     QString woNumber() const;
 
-    inline int id()        { return _number->_id;          }
-    inline bool isValid()  { return _number->_valid;       }
-    inline char status()   { return _number->_status.toAscii(); }
-    inline double qty()    { return _number->_qtyOrdered;  }
+    inline int id()                 { return _number->_id;          }
+    inline bool isValid()           { return _number->_valid;       }
+    inline char status()            { return _number->_status.toAscii(); }
+    inline double qty()             { return _number->_qtyOrdered;  }
+    inline QString number()  const  { return _number->text();       }
+    QString defaultNumber()  const  { return _default; }
+    QString fieldName()      const  { return _fieldName; };
 
   public slots:
+    void setDataWidgetMap(XDataWidgetMapper* m);
+    void setFieldName(QString p)    { _fieldName = p; };
     void setId(int);
+    void setNumber(const QString& number);
     void setReadOnly(bool);
 
   private slots:
@@ -134,6 +144,8 @@ class OPENMFGWIDGETS_EXPORT PlanOrdCluster : public QWidget
     QLabel           *_descrip1;
     QLabel           *_descrip2;
     QLabel           *_status;
+    QString          _default;
+    QString          _fieldName;
 
   signals:
     void newId(int);

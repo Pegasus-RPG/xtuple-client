@@ -75,7 +75,10 @@ class QFocusEvent;
 class OPENMFGWIDGETS_EXPORT GLCluster : public QWidget
 {
   Q_OBJECT
-
+  Q_PROPERTY(QString fieldName      READ fieldName      WRITE setFieldName);
+  Q_PROPERTY(QString defaultNumber  READ defaultNumber                        DESIGNABLE false);
+  Q_PROPERTY(QString number         READ number         WRITE setNumber       DESIGNABLE false);
+    
   public:
     GLCluster(QWidget *parent, const char *name = 0);
 
@@ -88,11 +91,14 @@ class OPENMFGWIDGETS_EXPORT GLCluster : public QWidget
       cRevenue    = 0x08,
       cEquity     = 0x10
     };
-
+   
+    QString defaultNumber() const    { return QString();} //Default to an empty string
+    QString fieldName()  const       { return _fieldName;}
+    QString number()     const       { return _number;};
     inline void setType(unsigned int pType) { _type = pType; }
-    inline unsigned int type() const { return _type; }
-    inline bool showExternal()          { return _showExternal; }
-    inline void setShowExternal(bool p) { _showExternal = p; }
+    inline unsigned int type()  const       { return _type; }
+    inline bool showExternal()              { return _showExternal; }
+    inline void setShowExternal(bool p)     { _showExternal = p; }
 
     void setReadOnly(bool);
 
@@ -100,8 +106,11 @@ class OPENMFGWIDGETS_EXPORT GLCluster : public QWidget
     bool isValid();
 
   public slots:
+    void setDataWidgetMap(XDataWidgetMapper* m);
     void setId(int);
     void setEnabled(bool);
+    void setFieldName(QString name)         { _fieldName=name;}
+    void setNumber(QString number);
 
   protected:
     void keyPressEvent(QKeyEvent *);
@@ -120,10 +129,13 @@ class OPENMFGWIDGETS_EXPORT GLCluster : public QWidget
 
   private:
     int  _accntid;
+    bool _mapped;
     bool _valid;
     bool _parsed;
     bool _showExternal;
     unsigned int _type;
+    QString      _fieldName;
+    QString      _number;
 
     QLineEdit   *_company;
     QLineEdit   *_profit;
@@ -131,6 +143,8 @@ class OPENMFGWIDGETS_EXPORT GLCluster : public QWidget
     QLineEdit   *_sub;
     QLineEdit   *_account;
     QPushButton *_list;
+    
+    XDataWidgetMapper *_mapper;
 };
 
 #endif

@@ -640,7 +640,7 @@ ItemCluster::ItemCluster(QWidget *pParent, const char *name) : QWidget(pParent)
 
 void ItemCluster::setDataWidgetMap(XDataWidgetMapper* m)
 {
-  m->addMapping(_itemNumber, _fieldName, "number", "defaultNumber");
+  m->addMapping(this, _fieldName, "number", "defaultNumber");
   _itemNumber->_mapper=m;
 }
 

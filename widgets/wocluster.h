@@ -106,6 +106,7 @@ friend class WoCluster;
     QChar   _status;
     double  _qtyOrdered;
     double  _qtyReceived;
+    XDataWidgetMapper *_mapper;
 
   signals:
     void newId(int);
@@ -127,12 +128,17 @@ friend class WoCluster;
 class OPENMFGWIDGETS_EXPORT WoCluster : public QWidget
 {
   Q_OBJECT
-
+  Q_PROPERTY(QString fieldName      READ fieldName      WRITE setFieldName);
+  Q_PROPERTY(QString number         READ woNumber       WRITE setWoNumber       DESIGNABLE false);
+  Q_PROPERTY(QString defaultNumber  READ defaultNumber                          DESIGNABLE false);
+  
   public:
     WoCluster(QWidget *, const char * = 0);
     WoCluster(int, QWidget *, const char * = 0);
 
-    QString woNumber() const;
+    QString  defaultNumber()    { return QString();          }
+    QString  fieldName()        { return _fieldName;         }
+    QString  woNumber() const;
 
     inline void setQuery(const QString &pSql)  { _woNumber->_sql = pSql; _woNumber->_useQuery = TRUE; }
     inline void setType(int pWoType)           { _woNumber->_woType = pWoType;           }
@@ -142,7 +148,6 @@ class OPENMFGWIDGETS_EXPORT WoCluster : public QWidget
     inline char status()                       { return _woNumber->_status.toAscii();    }
     inline double qtyOrdered()                 { return _woNumber->_qtyOrdered;          }
     inline double qtyReceived()                { return _woNumber->_qtyReceived;         }
-
     inline double qtyBalance()
     {
       if (_woNumber->_qtyOrdered <= _woNumber->_qtyReceived)
@@ -152,8 +157,11 @@ class OPENMFGWIDGETS_EXPORT WoCluster : public QWidget
     }
 
   public slots:
+    void setDataWidgetMap(XDataWidgetMapper* m);
+    void setFieldName(const QString& name)        { _fieldName = name; }
     void setId(int);
     void setReadOnly(bool);
+    void setWoNumber(const QString& number);
     void sWoList();
 
   private:
@@ -167,6 +175,7 @@ class OPENMFGWIDGETS_EXPORT WoCluster : public QWidget
     QLabel      *_descrip1;
     QLabel      *_descrip2;
     QLabel      *_status;
+    QString      _fieldName;
 
   signals:
     void newId(int);
@@ -183,6 +192,7 @@ class OPENMFGWIDGETS_EXPORT WoCluster : public QWidget
 class OPENMFGWIDGETS_EXPORT WomatlCluster : public QWidget
 {
   Q_OBJECT
+  Q_PROPERTY(QString fieldName      READ fieldName      WRITE setFieldName);
 
   public:
     enum SourceTypes
@@ -209,6 +219,7 @@ class OPENMFGWIDGETS_EXPORT WomatlCluster : public QWidget
     inline bool isValid()       { return _valid;    }
     inline double qtyRequired() { return _required; }
     inline double qtyIssued()   { return _issued;   }
+    inline QString fieldName()  { return _fieldName;}
 
   signals:
     void newId(int);
@@ -218,6 +229,8 @@ class OPENMFGWIDGETS_EXPORT WomatlCluster : public QWidget
     void newQtyScrappedFromWIP(const QString &);
 
   public slots:
+    void setDataWidgetMap(XDataWidgetMapper* m);
+    void setFieldName(const QString& name)        { _fieldName = name; }
     void setId(int);
     void setType(int);
     void setWooperid(int);
@@ -246,6 +259,7 @@ class OPENMFGWIDGETS_EXPORT WomatlCluster : public QWidget
     bool     _valid;
     double   _required;
     double   _issued;
+    QString  _fieldName;
 };
 
 

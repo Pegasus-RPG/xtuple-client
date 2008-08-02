@@ -88,6 +88,8 @@ WoLineEdit::WoLineEdit(QWidget *pParent, const char *name) :
 
   _qtyOrdered = 0.0;
   _qtyReceived = 0.0;
+  
+  _mapper = new XDataWidgetMapper(this);
 
   connect(this, SIGNAL(editingFinished()), this, SLOT(sParse()));
 }
@@ -101,6 +103,8 @@ WoLineEdit::WoLineEdit(int pWoType, QWidget *pParent, const char *name) :
 
   _qtyOrdered = 0.0;
   _qtyReceived = 0.0;
+  
+  _mapper = new XDataWidgetMapper(this);
 
   connect(this, SIGNAL(editingFinished()), this, SLOT(sParse()));
 }
@@ -111,14 +115,14 @@ void WoLineEdit::setId(int pId)
   if (pId != -1)
   {
     XSqlQuery wo;
-        if (_useQuery)
+    if (_useQuery)
     {
       wo.prepare(_sql);
       wo.exec();
       found = (wo.findFirst("wo_id", pId) != -1);
     }
-        else
-        {
+    else
+    {
       wo.prepare( "SELECT formatWONumber(wo_id) AS wonumber,"
                   "       warehous_code, item_id, item_number, uom_name,"
                   "       item_descrip1, item_descrip2,"
@@ -137,8 +141,8 @@ void WoLineEdit::setId(int pId)
       wo.bindValue(":wo_id", pId);
       wo.exec();
       found = (wo.first());
-        }
-        if (found)
+    }
+    if (found)
     {
       _id    = pId;
       _valid = TRUE;
@@ -163,35 +167,38 @@ void WoLineEdit::setId(int pId)
       _qtyOrdered  = wo.value("wo_qtyord").toDouble();
       _qtyReceived = wo.value("wo_qtyrcv").toDouble();
 
-      _parsed = TRUE;
-
-      return;
     }
   }
+  else
+  {
+    _id    = -1;
+    _valid = FALSE;
 
-  _id    = -1;
-  _valid = FALSE;
+    setText("");
 
-  setText("");
-
-  emit newId(-1);
-  emit newItemid(-1);
-  emit warehouseChanged("");
-  emit itemNumberChanged("");
-  emit uomChanged("");
-  emit itemDescrip1Changed("");
-  emit itemDescrip2Changed("");
-  emit startDateChanged(QDate());
-  emit dueDateChanged(QDate());
-  emit qtyOrderedChanged("");
-  emit qtyReceivedChanged("");
-  emit qtyBalanceChanged("");
-  emit statusChanged("");
-  emit valid(FALSE);
-    
-  _qtyOrdered  = 0;
-  _qtyReceived = 0;
-
+    emit newId(-1);
+    emit newItemid(-1);
+    emit warehouseChanged("");
+    emit itemNumberChanged("");
+    emit uomChanged("");
+    emit itemDescrip1Changed("");
+    emit itemDescrip2Changed("");
+    emit startDateChanged(QDate());
+    emit dueDateChanged(QDate());
+    emit qtyOrderedChanged("");
+    emit qtyReceivedChanged("");
+    emit qtyBalanceChanged("");
+    emit statusChanged("");
+    emit valid(FALSE);
+      
+    _qtyOrdered  = 0;
+    _qtyReceived = 0;
+  }
+  
+  if (_mapper->model() &&
+    _mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this))).toString() != text())
+      _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this)), text());
+  
   _parsed = TRUE;
 }
 
@@ -473,6 +480,21 @@ void WoCluster::setReadOnly(bool pReadOnly)
   }
 }
 
+void WoCluster::setDataWidgetMap(XDataWidgetMapper* m)
+{
+  m->addMapping(this, _fieldName, "number", "defaultNumber");
+  _woNumber->_mapper=m;
+}
+
+void WoCluster::setWoNumber(const QString& number)
+{
+  if (_woNumber->text() == number)
+    return;
+    
+  _woNumber->setText(number);
+  _woNumber->sParse();
+}
+
 void WoCluster::setId(int pId)
 {
   _woNumber->setId(pId);
@@ -549,6 +571,7 @@ void WomatlCluster::constructor()
   _itemNumber = new XComboBox(this, "_itemNumber");
   _itemNumber->setGeometry(145, 0, 120, 25);
   _itemNumber->setAllowNull(TRUE);
+  _itemNumber->setDefaultCode(XComboBox::None);
 
   QLabel *uomLit = new QLabel(tr("UOM:"), this, "uomLit");
   uomLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
@@ -914,5 +937,10 @@ void WomatlCluster::sPopulateInfo(int pWomatlid)
     emit newQtyScrappedFromWIP(_womatl.value("qtywipscrap").toString());
     emit valid(TRUE);
   }
+}
+
+void WomatlCluster::setDataWidgetMap(XDataWidgetMapper* m)
+{
+  m->addMapping(_itemNumber, _fieldName, "code", "currentDefault");
 }
 
