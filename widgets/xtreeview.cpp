@@ -66,6 +66,9 @@
 #include <QSqlIndex>
 #include <QBuffer>
 #include <QMessageBox>
+#include <QTreeWidgetItem>
+#include <QStack>
+#include <QModelIndex>
 
 XTreeView::XTreeView(QWidget *parent) : 
   QTreeView(parent)
@@ -92,6 +95,7 @@ void XTreeView::selectionChanged(const QItemSelection & selected, const QItemSel
 
 void XTreeView::populate(int p)
 { 
+  qDebug("Populating xtree");
   XSqlTableModel *t=static_cast<XSqlTableModel*>(_mapper->model());
   if (t)
   {
@@ -111,7 +115,16 @@ void XTreeView::populate(int p)
 
 void XTreeView::save()
 {
+  qDebug("Saving xtree");
   _model.submitAll();
+}
+
+void XTreeView::selectRow(int index)
+{
+  qDebug("index %d", index);
+    selectionModel()->select(QItemSelection(model()->index(index,0),model()->index(index,model()->columnCount())),
+                                        QItemSelectionModel::ClearAndSelect |
+                                        QItemSelectionModel::Rows);
 }
 
 void XTreeView::setDataWidgetMap(XDataWidgetMapper* mapper)
@@ -124,10 +137,7 @@ void XTreeView::setDataWidgetMap(XDataWidgetMapper* mapper)
     _model.setTable(tablename,_keyColumns);
     
     setModel(&_model);
-    populate(mapper->currentIndex());
-    _mapper=mapper;
-    connect(_mapper, SIGNAL(currentIndexChanged(int)), this, SLOT(populate(int)));
-    connect(_mapper, SIGNAL(saved(bool)), this, SLOT(save()));
+    _mapper=mapper; 
   }
 }
 

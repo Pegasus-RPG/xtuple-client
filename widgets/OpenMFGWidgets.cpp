@@ -95,7 +95,6 @@
 #include "plugins/raclusterplugin.h"
 #include "plugins/revisionclusterplugin.h"
 #include "plugins/screenplugin.h"
-#include "plugins/screencontrolplugin.h"
 #include "plugins/shiftclusterplugin.h"
 #include "plugins/shipmentclusterplugin.h"
 #include "plugins/shiptoclusterplugin.h"
@@ -163,7 +162,6 @@ OpenMFGPlugin::OpenMFGPlugin(QObject * parent) : QObject(parent)
   m_plugins.append(new RaClusterPlugin(this));
   m_plugins.append(new RevisionClusterPlugin(this));
   m_plugins.append(new ScreenPlugin(this));
-  m_plugins.append(new ScreenControlPlugin(this));
   m_plugins.append(new ShiftClusterPlugin(this));
   m_plugins.append(new ShipmentClusterPlugin(this));
   m_plugins.append(new ShiptoClusterPlugin(this));

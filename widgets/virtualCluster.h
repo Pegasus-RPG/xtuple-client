@@ -197,7 +197,6 @@ class OPENMFGWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
                                const char*, const char*, const char*,
                                const char* = 0);
         virtual int  id() const { return _id; }
-        virtual QString defaultNumber()  const { return _default; };
 
     public slots:
         virtual void setId(const int);
@@ -218,7 +217,6 @@ class OPENMFGWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
         virtual void sEllipses();
         virtual void sParse();
 
-        virtual void setDefaultNumber(QString p)       { _default = p; };
         virtual void setNumber(const QString&);
         virtual void setTitles(const QString&, const QString& = 0);
         inline virtual void setExtraClause(const QString& pExt) { _extraClause = pExt; };
@@ -244,7 +242,6 @@ class OPENMFGWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
         QString _numClause;
         QString _extraClause;
         QString _name;
-        QString _default;
         QString _description;
         QString _idColName;
         QString _numColName;
@@ -301,14 +298,14 @@ class OPENMFGWIDGETS_EXPORT VirtualCluster : public QWidget
         inline virtual QString name()           const { return _name->text(); };
         inline virtual bool    isStrict()       const { return _number->isStrict(); };
         inline virtual bool    readOnly()       const { return _readOnly; };
-               virtual QString defaultNumber()  const { return _number->defaultNumber();};
+               virtual QString defaultNumber()  const { return _default; };
         inline virtual QString fieldName()      const { return _fieldName; };
         inline virtual QString extraClause()    const { return _number->extraClause(); };
 
     public slots:
         // most of the heavy lifting is done by VirtualClusterLineEdit _number
         inline virtual void clearExtraClause()                { _number->clearExtraClause(); };
-        inline virtual void setDefaultNumber(const QString& p){ _number->setDefaultNumber(p);};
+        inline virtual void setDefaultNumber(const QString& p){ _default=p;};
         inline virtual void setDescription(const QString& p)  { _description->setText(p); };
         inline virtual void setExtraClause(const QString& p)  { _number->setExtraClause(p); };
         inline virtual void setFieldName(QString p)           { _fieldName = p; };
@@ -344,6 +341,7 @@ class OPENMFGWIDGETS_EXPORT VirtualCluster : public QWidget
         QLabel*                 _name;
         bool                    _readOnly;
 	QString                 _fieldName;
+        QString                 _default;
 
     private:
         virtual void init();

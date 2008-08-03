@@ -88,7 +88,7 @@ void VirtualCluster::init()
     _info = new QPushButton(tr("?"), this, "_info");
     _info->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 #ifndef Q_WS_MAC
-	_info->setMaximumWidth(25);
+    _info->setMaximumWidth(25);
 #else
     _info->setMinimumWidth(60);
     _info->setMinimumHeight(32);

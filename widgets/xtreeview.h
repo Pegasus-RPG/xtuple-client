@@ -83,6 +83,7 @@ class OPENMFGWIDGETS_EXPORT XTreeView : public QTreeView
     public slots:
       virtual void populate(int p);
       virtual void save();
+      virtual void selectRow(int index);
       virtual void setDataWidgetMap(XDataWidgetMapper* mapper);
       virtual void setModel(XSqlTableModel* model);
       virtual void setPrimaryKeyColumns(int p)                { _keyColumns = p;            };
@@ -104,6 +105,7 @@ class OPENMFGWIDGETS_EXPORT XTreeView : public QTreeView
       QSqlRecord        _idx;
       XDataWidgetMapper *_mapper;
       XSqlTableModel    _model;
+      QItemSelectionModel *_selectModel;
  
 };
 

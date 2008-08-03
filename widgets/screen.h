@@ -77,7 +77,7 @@ class OPENMFGWIDGETS_EXPORT Screen : public QWidget
 	Q_PROPERTY (QString 		tableName             READ tableName 		WRITE setTableName)
         Q_PROPERTY (int                 primaryKeyColumns     READ primaryKeyColumns    WRITE setPrimaryKeyColumns)
 	Q_PROPERTY (Modes		mode                  READ mode                 WRITE setMode)
-	Q_PROPERTY (SearchTypes 	searchType            READ searchType		WRITE setSearchType)
+	Q_PROPERTY (EditStrategies 	editStrategy          READ editStrategy		WRITE setEditStrategy)
         Q_PROPERTY (QString             sortColumn            READ sortColumn           WRITE setSortColumn)
 
 	public:
@@ -85,9 +85,9 @@ class OPENMFGWIDGETS_EXPORT Screen : public QWidget
                 ~Screen();
 		
 		enum Modes { New, Edit, View };
-		enum SearchTypes { Query, List };
+		enum EditStrategies { OnRowChange, OnManualSubmit };
 		Modes mode();
-		SearchTypes searchType();
+		EditStrategies editStrategy();
 	
                 bool    isDirty();
                 int     currentIndex();
@@ -118,7 +118,7 @@ class OPENMFGWIDGETS_EXPORT Screen : public QWidget
                 void setModel(XSqlTableModel *model);
 		void setMode(Modes p);
                 void setPrimaryKeyColumns(int count)    { _keyColumns = count;           };
-		void setSearchType(SearchTypes p);
+		void setEditStrategy(EditStrategies p);
 		void setSchemaName(QString schema);
 		void setSortColumn(QString p);
  
@@ -127,6 +127,7 @@ class OPENMFGWIDGETS_EXPORT Screen : public QWidget
 		void setDataWidgetMapper(XSqlTableModel *model);
 	
 	signals:
+                void currentIndexChanged(int index);
 		void newDataWidgetMapper(XDataWidgetMapper *mapper);
                 void newModel(XSqlTableModel *model);
 		void saved(bool);
@@ -134,7 +135,7 @@ class OPENMFGWIDGETS_EXPORT Screen : public QWidget
 	private:
                 bool                    _shown;
 		enum  Modes		_mode;
-		enum  SearchTypes	_searchType;
+		enum  EditStrategies	_editStrategy;
                 int                     _keyColumns;
 		QString			_schemaName;
                 QString                 _sortColumn;

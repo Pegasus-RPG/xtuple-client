@@ -148,7 +148,7 @@ void XComboBox::setDataWidgetMap(XDataWidgetMapper* m)
     setModelColumn(rel->fieldIndex(_listDisplayFieldName));
   
     m->setItemDelegate(new QSqlRelationalDelegate(this));
-    m->addMapping(this, _fieldName, "code", "currentDefault");
+    m->addMapping(this, _fieldName);
   }
   else if (_codes.count())
     m->addMapping(this, _fieldName, "code", "currentDefault");

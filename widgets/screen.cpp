@@ -67,15 +67,19 @@ Screen::Screen(QWidget *parent) :
   QWidget(parent)
 {
   _keyColumns=1;
-  _searchType=Query;
+  _editStrategy=OnRowChange;
   _shown=false;
+  _mode=Edit;
   
   _model = new XSqlTableModel;
   _mapper = new XDataWidgetMapper;
+  
+  connect(_mapper, SIGNAL(currentIndexChanged(int)), this, SIGNAL(currentIndexChanged(int)));
 }
 
 Screen::~Screen()
 {
+  isValid();
 }
 
 bool Screen::isValid()
@@ -124,9 +128,9 @@ Screen::Modes Screen::mode()
   return _mode;
 }
 
-Screen::SearchTypes Screen::searchType()
+Screen::EditStrategies Screen::editStrategy()
 {
-  return _searchType;
+  return _editStrategy;
 }
 
 bool Screen::isDirty()
@@ -199,6 +203,7 @@ void Screen::revertRow(int row)
 
 void Screen::save()
 {
+  connect(_mapper, SIGNAL(currentIndexChanged(int)), this, SIGNAL(currentIndexChanged(int)));
   int i=_mapper->currentIndex();
   _mapper->submit();
   _model->submitAll();
@@ -209,11 +214,14 @@ void Screen::save()
                           tr("Error saving %1 at %2::%3\n\n%4")
                           .arg(_tableName).arg(__FILE__).arg(__LINE__)
                           .arg(_model->lastError().databaseText()));
-    return;
   }
-  if (_mode==New)
-    insert();
-  emit saved(true);
+  else
+  {
+    if (_mode==New)
+      insert();
+    emit saved(true);
+  }
+  connect(_mapper, SIGNAL(currentIndexChanged(int)), this, SIGNAL(currentIndexChanged(int)));
 }
 
 void Screen::search(QString criteria)
@@ -270,9 +278,9 @@ void Screen::setModel(XSqlTableModel *model)
   emit newModel(_model);
 }
 
-void Screen::setSearchType(SearchTypes p)
+void Screen::setEditStrategy(EditStrategies p)
 {
-  _searchType=p;
+  _editStrategy=p;
 }
 
 void Screen::setSortColumn(QString p)
@@ -282,17 +290,35 @@ void Screen::setSortColumn(QString p)
 
 void Screen::setCurrentIndex(int index)
 {
-   _mapper->setCurrentIndex(index);
+   if (_mapper->currentIndex() != index)
+   {
+     if (_editStrategy == OnRowChange)
+       if (!isValid())
+         revertRow(currentIndex());
+     _mapper->setCurrentIndex(index);
+   }
 }
 
 void Screen::toNext()
 {
-   _mapper->toNext();
+   if (_mapper->currentIndex() < _model->rowCount()-1)
+   {
+     if (_editStrategy == OnRowChange)
+       if (!isValid())
+         revertRow(currentIndex());
+     _mapper->toNext();
+   }
 }
 
 void Screen::toPrevious()
 {
-  _mapper->toPrevious(); 
+   if (_mapper->currentIndex() > 0)
+   {
+     if (_editStrategy == OnRowChange)
+       if (!isValid())
+         revertRow(currentIndex());
+     _mapper->toPrevious(); 
+  }
 }
 
 void Screen::setSchemaName(QString schema)

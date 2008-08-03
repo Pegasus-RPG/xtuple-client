@@ -226,7 +226,7 @@ void LotserialLineEdit::sParse()
               }
               else
               {
-                int lsid;
+                int lsid=-1;
                 numQ.exec("SELECT nextval('ls_ls_id_seq') AS ls_id;");
                 if (numQ.first())
                   lsid= numQ.value("ls_id").toInt();
