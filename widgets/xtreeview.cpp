@@ -95,7 +95,6 @@ void XTreeView::selectionChanged(const QItemSelection & selected, const QItemSel
 
 void XTreeView::populate(int p)
 { 
-  qDebug("Populating xtree");
   XSqlTableModel *t=static_cast<XSqlTableModel*>(_mapper->model());
   if (t)
   {
@@ -106,16 +105,16 @@ void XTreeView::populate(int p)
       _idx.setValue(i, t->data(t->index(p,i)));
       setColumnHidden(i,true);
     }
-   
+    
     QString clause = QString(_model.database().driver()->sqlStatement(QSqlDriver::WhereStatement, t->tableName(),_idx, false)).mid(6);
     _model.setFilter(clause);
-    _model.select();
+    if (!_model.query().isActive())
+      _model.select();
   }
 }
 
 void XTreeView::save()
 {
-  qDebug("Saving xtree");
   _model.submitAll();
 }
 

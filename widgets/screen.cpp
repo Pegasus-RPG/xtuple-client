@@ -202,8 +202,8 @@ void Screen::revertRow(int row)
 }
 
 void Screen::save()
-{
-  connect(_mapper, SIGNAL(currentIndexChanged(int)), this, SIGNAL(currentIndexChanged(int)));
+{ 
+  disconnect(_mapper, SIGNAL(currentIndexChanged(int)), this, SIGNAL(currentIndexChanged(int)));
   int i=_mapper->currentIndex();
   _mapper->submit();
   _model->submitAll();

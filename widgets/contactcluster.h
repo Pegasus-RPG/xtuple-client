@@ -158,6 +158,7 @@ class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
     Q_PROPERTY(QString  fieldNamePostalCode   READ fieldNamePostalCode     	WRITE setFieldNamePostalCode)
     Q_PROPERTY(QString  fieldNameCountry      READ fieldNameCountry        	WRITE setFieldNameCountry)
     Q_PROPERTY(QString	number		      READ number		        WRITE setNumber               DESIGNABLE false)
+    Q_PROPERTY(QString  defaultText           READ defaultText                                                DESIGNABLE false)
 
     friend class ContactInfo;
     friend class ContactList;
@@ -183,6 +184,7 @@ class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
 	inline virtual QString description()    const { return ""; };
 	inline virtual QString emailAddress()	const { return _email->text(); };
 	inline virtual bool    emailVisible()   const { return _email->isVisible(); };
+        inline virtual QString defaultText()    const { return QString(); };
 	inline virtual QString fax()		const { return _fax->text(); };
 	inline virtual QString first()		const { return _first->text(); };
 	inline virtual QString honorific()	const { return _honorific->currentText(); };

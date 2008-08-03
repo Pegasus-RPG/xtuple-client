@@ -294,31 +294,22 @@ void ContactCluster::silentSetId(const int pId)
 
 void ContactCluster::setNumber(QString p)
 {
-  if (!_mapper->model())
-  {
-    if (p == _number->text())
-    {
-      return;
-    }
-    else
-    { 
-      XSqlQuery q;
-      q.prepare("SELECT cntct_id "
-                  "FROM cntct "
-                  "WHERE (cntct_number=:number);");
-      q.bindValue(":number", p);
-      q.exec();
-      if (q.first())
-      {
-        if (q.value("cntct_id").toInt() != _id)
-          silentSetId(q.value("cntct_id").toInt());
-        else
-          _number->setText(p);
-      }
-    }   
-  }
+  qDebug("Set Number" + p);
+  if (p == _number->text())
+    return;
+
+  _number->setText(p);
+  XSqlQuery q;
+  q.prepare("SELECT cntct_id "
+              "FROM cntct "
+              "WHERE (cntct_number=:number);");
+  q.bindValue(":number", p);
+  q.exec();
+  if (q.first())
+    if (q.value("cntct_id").toInt() != _id)
+      silentSetId(q.value("cntct_id").toInt());
   else
-    _number->setText(p);
+    silentSetId(-1);  
 }
 
 void ContactCluster::clear()
