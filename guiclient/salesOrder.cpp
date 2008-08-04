@@ -1363,7 +1363,7 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
                 "       formatScrap(0) AS commission,"
                 "       NULL AS cust_creditstatus, NULL AS cust_terms_id,"
                 "       prospect_taxauth_id AS cust_taxauth_id,"
-                "       NULL AS cust_ffshipto, NULL AS cust_ffbillto, "
+                "       TRUE AS cust_ffshipto, NULL AS cust_ffbillto, "
                 "       NULL AS cust_usespos, NULL AS cust_blanketpos,"
                 "       NULL AS cust_shipvia,"
                 "       -1 AS shiptoid,"
@@ -2104,7 +2104,7 @@ void salesOrder::populate()
                 "       quhead_billtoname, quhead_billtoaddress1, quhead_billtoaddress2,"
                 "       quhead_billtoaddress3, quhead_billtocity, quhead_billtostate, quhead_billtozip,"
                 "       quhead_billtocountry,"
-                "       quhead_shipto_id, quhead_shiptoname, quhead_shiptoaddress1,"
+                "       COALESCE(quhead_shipto_id,-1) AS quhead_shipto_id, quhead_shiptoname, quhead_shiptoaddress1,"
                 "       quhead_shiptoaddress2, quhead_shiptoaddress3, quhead_shiptocity,"
                 "       quhead_shiptostate, quhead_shiptozipcode, quhead_shiptophone,"
                 "       quhead_shiptocountry,"
@@ -2112,7 +2112,7 @@ void salesOrder::populate()
                 "       quhead_salesrep_id, formatScrap(quhead_commission) AS commission,"
                 "       COALESCE(quhead_taxauth_id, -1) AS quhead_taxauth_id, quhead_terms_id,"
                 "       quhead_origin, quhead_shipvia, quhead_fob,"
-                "       NULL AS cust_ffshipto, NULL AS cust_blanketpos,"
+                "       TRUE AS cust_ffshipto, NULL AS cust_blanketpos,"
                 "       quhead_ordercomments, quhead_shipcomments,"
                 "       quhead_misc,"
                 "       quhead_misc_accnt_id, quhead_misc_descrip,"
@@ -2158,11 +2158,8 @@ void salesOrder::populate()
 
       _ignoreSignals = TRUE;
       _shiptoid = qu.value("quhead_shipto_id").toInt();
-      if (_shiptoid == -1 && !ISVIEW(_mode))
-      {
-        _shipToAddr->setEnabled(TRUE);
-        _shipToPhone->setEnabled(TRUE);
-      }
+      if (_shiptoid == -1)
+        setFreeFormShipto(true);
       else
       {
         XSqlQuery shiptonum;
