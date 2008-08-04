@@ -576,7 +576,7 @@ void selectOrderForBilling::sFillList()
 
   if (_so->isValid())
   {
-    QString sql( "SELECT coitem_id, coitem_linenumber,"
+    QString sql( "SELECT coitem_id, formatSoLineNumber(coitem_id) AS linenumber,"
                  "       item_number, iteminvpricerat(item_id) AS invpricerat,"
                  "       warehous_code, coitem_price,"
                  "       uom_name,"
@@ -624,7 +624,7 @@ void selectOrderForBilling::sFillList()
 		 " AND (coitem_status <> 'C')"
 		 " <? endif ?>"
 		 " AND (coitem_cohead_id=<? value(\"sohead_id\") ?>) ) "
-		 "ORDER BY coitem_linenumber;" );
+		 "ORDER BY coitem_linenumber, coitem_subnumber;" );
 
     ParameterList params;
     if (!_showClosed->isChecked())
@@ -642,7 +642,7 @@ void selectOrderForBilling::sFillList()
         subtotal += q.value("extended").toDouble();
 
         last = new XTreeWidgetItem(_soitem, last, q.value("coitem_id").toInt(),
-                            q.value("coitem_linenumber"), q.value("item_number"),
+                            q.value("linenumber"), q.value("item_number"),
                             q.value("warehous_code"), q.value("uom_name"), q.value("f_qtyord"),
                             q.value("f_qtyshipped"), q.value("f_qtyreturned"),
                             q.value("f_qtyatship"), formatQty(q.value("qtytobill").toDouble()),
