@@ -231,6 +231,7 @@ enum SetResponse voucher::set(const ParameterList &pParams)
       _miscDistrib->setEnabled(FALSE);
       _new->setEnabled(FALSE);
       _terms->setEnabled(FALSE);
+      _terms->setType(XComboBox::Terms);
       _flagFor1099->setEnabled(FALSE);
       _distributeall->setEnabled(FALSE);
       _close->setText(tr("&Close"));

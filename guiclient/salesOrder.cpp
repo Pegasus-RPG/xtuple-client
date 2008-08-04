@@ -360,6 +360,7 @@ enum SetResponse salesOrder::set(const ParameterList &pParams)
       _commission->setEnabled(FALSE);
       _taxAuth->setEnabled(FALSE);
       _terms->setEnabled(FALSE);
+      _terms->setType(XComboBox::Terms);
       _origin->setEnabled(FALSE);
       _fob->setEnabled(FALSE);
       _shipVia->setEnabled(FALSE);

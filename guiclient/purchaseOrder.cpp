@@ -172,15 +172,6 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
   double   qty;
   QDate    dueDate;
 
-  param = pParams.value("pohead_id", &valid);
-  if (valid)
-  {
-    setPoheadid(param.toInt());
-    populate();
-  }
-  else
-    setPoheadid(-1);
-
   int _prid = -1;
   param = pParams.value("pr_id", &valid);
   if (valid)
@@ -421,6 +412,7 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
       _warehouse->setEnabled(FALSE);
       _agent->setEnabled(FALSE);
       _terms->setEnabled(FALSE);
+      _terms->setType(XComboBox::Terms);
       _vendor->setReadOnly(TRUE);
       _shipVia->setEnabled(FALSE);
       _fob->setEnabled(FALSE);
@@ -458,6 +450,15 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
 
   if(_prid != -1)
     _pridList.append(_prid);
+
+  param = pParams.value("pohead_id", &valid);
+  if (valid)
+  {
+    setPoheadid(param.toInt());
+    populate();
+  }
+  else
+    setPoheadid(-1);
 
   return NoError;
 }

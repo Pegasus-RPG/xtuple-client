@@ -104,13 +104,6 @@ enum SetResponse miscVoucher::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
 
-  param = pParams.value("vohead_id", &valid);
-  if (valid)
-  {
-    _voheadid = param.toInt();
-    populate();
-  }
-
   param = pParams.value("mode", &valid);
   if (valid)
   {
@@ -153,6 +146,7 @@ enum SetResponse miscVoucher::set(const ParameterList &pParams)
       _invoiceDate->setEnabled(FALSE);
       _dueDate->setEnabled(FALSE);
       _terms->setEnabled(FALSE);
+      _terms->setType(XComboBox::Terms);
       _invoiceNum->setEnabled(FALSE);
       _reference->setEnabled(FALSE);
       _miscDistrib->setEnabled(FALSE);
@@ -163,6 +157,13 @@ enum SetResponse miscVoucher::set(const ParameterList &pParams)
 
       _close->setFocus();
     }
+  }
+
+  param = pParams.value("vohead_id", &valid);
+  if (valid)
+  {
+    _voheadid = param.toInt();
+    populate();
   }
 
   return NoError;
