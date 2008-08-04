@@ -79,24 +79,23 @@ Screen::Screen(QWidget *parent) :
 
 Screen::~Screen()
 {
-  isValid();
 }
 
-bool Screen::isValid()
+Screen::Disposition Screen::check()
 {
   if (isDirty())
   {
     if (QMessageBox::question(this, tr("Unsaved work"),
-                                   tr("Would you like to save your work so you do not lose your changes?"),
+                                   tr("Would you like to save your work?"),
                                    QMessageBox::Yes | QMessageBox::Default,
                                    QMessageBox::No ) == QMessageBox::Yes)
-      save();
+      return Save;
     else
-      return false;
+      return Cancel;
   }
   else if (_mode == New)
-    return false;
-  return true;
+    return Cancel;
+  return NoChanges;
 }
 
 /* When the widget is first shown, set up table mappings if they exist*/
@@ -290,34 +289,51 @@ void Screen::setSortColumn(QString p)
 
 void Screen::setCurrentIndex(int index)
 {
-   if (_mapper->currentIndex() != index)
+  if (_mapper->currentIndex() != index)
+  {
+   if (_editStrategy == OnRowChange)
    {
-     if (_editStrategy == OnRowChange)
-       if (!isValid())
-         revertRow(currentIndex());
-     _mapper->setCurrentIndex(index);
-   }
+     Disposition disp = check();
+     if (disp == Screen::Save)
+       return;
+     else if (disp == Screen::Cancel)
+       revertRow(currentIndex());
+    }
+  }
+  _mode=Screen::Edit;
+  _mapper->setCurrentIndex(index);
 }
 
 void Screen::toNext()
 {
-   if (_mapper->currentIndex() < _model->rowCount()-1)
-   {
-     if (_editStrategy == OnRowChange)
-       if (!isValid())
+  if (_mapper->currentIndex() < _model->rowCount()-1)
+  {
+    if (_editStrategy == OnRowChange)
+    {
+       Disposition disp = check();
+       if (disp == Screen::Save)
+         return;
+       else if (disp == Screen::Cancel)
          revertRow(currentIndex());
-     _mapper->toNext();
-   }
+    }
+    _mapper->toNext();
+  }
 }
 
 void Screen::toPrevious()
 {
-   if (_mapper->currentIndex() > 0)
+  if (_mapper->currentIndex() > 0)
+  {
+   if (_editStrategy == OnRowChange)
    {
-     if (_editStrategy == OnRowChange)
-       if (!isValid())
-         revertRow(currentIndex());
-     _mapper->toPrevious(); 
+     Disposition disp = check();
+     if (disp == Screen::Save)
+       return;
+     else if (disp == Screen::Cancel)
+       revertRow(currentIndex());
+    }
+    _mode=Screen::Edit;
+    _mapper->toPrevious(); 
   }
 }
 

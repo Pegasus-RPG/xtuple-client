@@ -86,6 +86,7 @@ class OPENMFGWIDGETS_EXPORT Screen : public QWidget
 		
 		enum Modes { New, Edit, View };
 		enum EditStrategies { OnRowChange, OnManualSubmit };
+                enum Disposition { NoChanges, Save, Cancel };
 		Modes mode();
 		EditStrategies editStrategy();
 	
@@ -100,7 +101,7 @@ class OPENMFGWIDGETS_EXPORT Screen : public QWidget
                 void showEvent ( QShowEvent * event );
        	
 	public slots:
-                bool isValid();
+                Disposition check();
                 void insert();
                 void newMappedWidget(QWidget *widget);
                 void removeCurrent();
