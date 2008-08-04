@@ -67,6 +67,7 @@
 #include "invoice.h"
 #include "purchaseOrder.h"
 #include "voucher.h"
+#include "miscVoucher.h"
 #include "dspShipmentsByShipment.h"
 
 dspGLTransactions::dspGLTransactions(QWidget* parent, const char* name, Qt::WFlags fl)
@@ -267,7 +268,7 @@ void dspGLTransactions::sViewDocument()
   ParameterList params;
   if(item->text(2) == "VO")
   {
-    q.prepare("SELECT vohead_id"
+    q.prepare("SELECT vohead_id, vohead_misc"
               "  FROM vohead"
               " WHERE (vohead_number=:vohead_number)");
     q.bindValue(":vohead_number", item->text(3));
@@ -277,10 +278,21 @@ void dspGLTransactions::sViewDocument()
 
     params.append("vohead_id", q.value("vohead_id").toInt());
     params.append("mode", "view");
+    bool testtest = q.value("vohead_misc").toBool();
+    
+    if(testtest)
+    {
+      miscVoucher *newdlg = new miscVoucher();
+      newdlg->set(params);
+      omfgThis->handleNewWindow(newdlg);
+    }
+    else
+    {
+      voucher *newdlg = new voucher();
+      newdlg->set(params);
+      omfgThis->handleNewWindow(newdlg);
+    }
 
-    voucher *newdlg = new voucher();
-    newdlg->set(params);
-    omfgThis->handleNewWindow(newdlg);
   }
   else if(item->text(2) == "IN")
   {

@@ -231,12 +231,12 @@ void miscVoucher::sSave()
                "( vohead_id, vohead_number, vohead_pohead_id, vohead_vend_id,"
                "  vohead_terms_id, vohead_distdate, vohead_docdate, vohead_duedate,"
                "  vohead_invcnumber, vohead_reference,"
-               "  vohead_amount, vohead_1099, vohead_posted, vohead_curr_id ) "
+               "  vohead_amount, vohead_1099, vohead_posted, vohead_curr_id, vohead_misc ) "
                "VALUES "
                "( :vohead_id, :vohead_number, -1, :vohead_vend_id,"
                "  :vohead_terms_id, :vohead_distdate, :vohead_docdate, :vohead_duedate,"
                "  :vohead_invcnumber, :vohead_reference,"
-               "  :vohead_amount, :vohead_1099, FALSE, :vohead_curr_id );" );
+               "  :vohead_amount, :vohead_1099, FALSE, :vohead_curr_id, TRUE );" );
     q.bindValue(":vohead_number", _voucherNumber->text().toInt());
     q.bindValue(":vohead_vend_id", _vendor->id());
   }
