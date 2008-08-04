@@ -173,14 +173,21 @@ void externalShipping::sSave()
 
 void externalShipping::sClose()
 {
-  if (!_screen->isValid())
-    _screen->revertRow(_screen->currentIndex());
+  switch (_screen->check())
+  {
+    case Screen::Save:
+      return;
+    case Screen::Cancel:
+      _screen->revertRow(_screen->currentIndex());
+      break;
+    default:
+      break;
+  }
   accept();
 }
 
 void externalShipping::sReject()
 {
-  if (!_screen->isValid())
-    _screen->revertRow(_screen->currentIndex());
+  _screen->revertRow(_screen->currentIndex());
 }
 
