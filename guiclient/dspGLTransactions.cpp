@@ -278,9 +278,8 @@ void dspGLTransactions::sViewDocument()
 
     params.append("vohead_id", q.value("vohead_id").toInt());
     params.append("mode", "view");
-    bool testtest = q.value("vohead_misc").toBool();
     
-    if(testtest)
+    if(q.value("vohead_misc").toBool())
     {
       miscVoucher *newdlg = new miscVoucher();
       newdlg->set(params);

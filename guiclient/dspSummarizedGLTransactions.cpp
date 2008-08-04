@@ -66,6 +66,7 @@
 #include <parameter.h>
 #include "glTransactionDetail.h"
 #include "voucher.h"
+#include "miscVoucher.h"
 #include "invoice.h"
 #include "purchaseOrder.h"
 
@@ -288,7 +289,7 @@ void dspSummarizedGLTransactions::sViewDocument()
   ParameterList params;
   if(item->text(3) == "VO")
   {
-    q.prepare("SELECT vohead_id"
+    q.prepare("SELECT vohead_id, vohead_misc "
               "  FROM vohead"
               " WHERE (vohead_number=:vohead_number)");
     q.bindValue(":vohead_number", item->text(4));
@@ -299,9 +300,18 @@ void dspSummarizedGLTransactions::sViewDocument()
     params.append("vohead_id", q.value("vohead_id").toInt());
     params.append("mode", "view");
 
-    voucher *newdlg = new voucher();
-    newdlg->set(params);
-    omfgThis->handleNewWindow(newdlg);
+    if(q.value("vohead_misc").toBool())
+    {
+      miscVoucher *newdlg = new miscVoucher();
+      newdlg->set(params);
+      omfgThis->handleNewWindow(newdlg);
+    }
+    else
+    {
+      voucher *newdlg = new voucher();
+      newdlg->set(params);
+      omfgThis->handleNewWindow(newdlg);
+    }
   }
   else if(item->text(3) == "IN")
   {

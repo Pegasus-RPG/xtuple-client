@@ -62,6 +62,7 @@
 #include <QMenu>
 #include <openreports.h>
 #include "voucher.h"
+#include "miscVoucher.h"
 #include "invoice.h"
 #include "purchaseOrder.h"
 #include "glTransactionDetail.h"
@@ -256,7 +257,7 @@ void dspVoucherRegister::sViewDocument()
   ParameterList params;
   if(item->text(2) == "VO")
   {
-    q.prepare("SELECT vohead_id"
+    q.prepare("SELECT vohead_id, vohead_misc"
               "  FROM vohead"
               " WHERE (vohead_number=:vohead_number)");
     q.bindValue(":vohead_number", item->text(3));
@@ -267,9 +268,18 @@ void dspVoucherRegister::sViewDocument()
     params.append("vohead_id", q.value("vohead_id").toInt());
     params.append("mode", "view");
 
-    voucher *newdlg = new voucher();
-    newdlg->set(params);
-    omfgThis->handleNewWindow(newdlg);
+    if(q.value("vohead_misc").toBool())
+    {
+      miscVoucher *newdlg = new miscVoucher();
+      newdlg->set(params);
+      omfgThis->handleNewWindow(newdlg);
+    }
+    else
+    {
+      voucher *newdlg = new voucher();
+      newdlg->set(params);
+      omfgThis->handleNewWindow(newdlg);
+    }
   }
   else if(item->text(2) == "IN")
   {
