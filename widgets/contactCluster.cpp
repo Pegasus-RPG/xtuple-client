@@ -187,12 +187,14 @@ void ContactCluster::init()
     connect(_suffix,	SIGNAL(textChanged(const QString&)), this, SIGNAL(changed()));
     connect(_initials,	SIGNAL(textChanged(const QString&)), this, SIGNAL(changed()));
     connect(_crmAcct,	SIGNAL(newId(int)),		     this, SIGNAL(changed()));
+    connect(_title,	SIGNAL(textChanged(const QString&)), this, SIGNAL(changed()));
     connect(_phone,	SIGNAL(textChanged(const QString&)), this, SIGNAL(changed()));
     connect(_phone2,	SIGNAL(textChanged(const QString&)), this, SIGNAL(changed()));
     connect(_fax,	SIGNAL(textChanged(const QString&)), this, SIGNAL(changed()));
     connect(_email,	SIGNAL(textChanged(const QString&)), this, SIGNAL(changed()));
     connect(_webaddr,	SIGNAL(textChanged(const QString&)), this, SIGNAL(changed()));
-    connect(_address,	SIGNAL(changed()),	       this, SIGNAL(changed()));
+    connect(_address,	SIGNAL(changed()),                   this, SIGNAL(changed()));
+    connect(this,       SIGNAL(changed()),                   this, SLOT(setChanged()));
 
     connect(_honorific,	SIGNAL(newID(int)),  this, SLOT(sCheck()));
     connect(_first,	SIGNAL(lostFocus()), this, SLOT(sCheck()));
@@ -201,6 +203,7 @@ void ContactCluster::init()
     connect(_suffix,	SIGNAL(lostFocus()), this, SLOT(sCheck()));
     connect(_initials,	SIGNAL(lostFocus()), this, SLOT(sCheck()));
     connect(_crmAcct,	SIGNAL(newId(int)),  this, SLOT(sCheck()));
+    connect(_title,	SIGNAL(lostFocus()), this, SLOT(sCheck()));
     connect(_phone,	SIGNAL(lostFocus()), this, SLOT(sCheck()));
     connect(_phone2,	SIGNAL(lostFocus()), this, SLOT(sCheck()));
     connect(_fax,	SIGNAL(lostFocus()), this, SLOT(sCheck()));
@@ -221,6 +224,11 @@ ContactCluster::ContactCluster(QWidget* pParent, const char* pName) :
     VirtualCluster(pParent, pName)
 {
     init();
+}
+
+void ContactCluster::setChanged()
+{
+  _changed=true;
 }
 
 void ContactCluster::setId(const int pId)
@@ -289,6 +297,7 @@ void ContactCluster::silentSetId(const int pId)
     else
       _id = pId;
 
+    _changed=false;
     // _parsed = TRUE;
 }
 
@@ -736,6 +745,7 @@ void ContactCluster::sCheck()
       (! _suffix->isVisibleTo(this)   || _suffix->text().simplified().isEmpty()) &&
       (! _initials->isVisibleTo(this) || _initials->text().simplified().isEmpty()) &&
       (! _crmAcct->isVisibleTo(this) || _crmAcct->id() <= 0) &&
+      (! _title->isVisibleTo(this)   || _title->text().simplified().isEmpty()) &&
       (! _phone->isVisibleTo(this)   || _phone->text().simplified().isEmpty()) &&
       (! _phone2->isVisibleTo(this)  || _phone2->text().simplified().isEmpty()) &&
       (! _fax->isVisibleTo(this)     || _fax->text().simplified().isEmpty()) &&

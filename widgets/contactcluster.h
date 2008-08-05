@@ -251,9 +251,10 @@ class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
 	inline virtual void setSuffix(const QString& p)	{ _suffix->setText(p); };
 	inline virtual void setTitle(const QString& p)	{ _title->setText(p); };
         inline virtual void setWebAddress(const QString& p) { _webaddr->setText(p); };
-
+  
 	virtual void	clear();
 	virtual void	check();
+        virtual bool    sChanged() { return _changed; };
 	virtual void	sEllipses();
 	virtual void	sInfo();
 	virtual void	sList();
@@ -303,6 +304,7 @@ class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
         
     private slots:
         void sCheck();
+        void setChanged();
 
     signals:
 	void changed();
@@ -362,6 +364,7 @@ class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
 	bool		_minimalLayout;
 	QString		_notes;
 	bool		_valid;
+        bool            _changed;
 	
         //Data Mapping Values
         QString  _fieldNameChange;
