@@ -213,6 +213,8 @@ void initErrorLookupHash()
 		     "Item Source."),					0, "" },
   { "copyPO", -4, TR("At least one line item in the original P/O does not have "
 		     "an active Item Source Price for this Vendor."),	0, "" },
+  { "correctOperationPosting",  -1, TR("You may not correct a quantity greater than the amount "
+                                       "originally posted."),	0, "" },
   { "correctReceipt",  -12, TR("The receipt has been split and may not be corrected. "
 				      "Correct Receipt."),	0, "" },
   { "createAccountingPeriod",  -1, TR("The Start Date falls within another "
