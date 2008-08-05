@@ -402,7 +402,7 @@ int customer::saveContact(ContactCluster* pContact)
                        "What would you like to do?")
                     .arg(pContact->label()),
                     tr("Change This One"),
-                    tr("Change Address for All"),
+                    tr("Change for All"),
                     tr("Cancel"),
                     2, 2);
   else if (-10 == saveResult)
@@ -526,18 +526,24 @@ void customer::sSave()
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
-  if (saveContact(_billCntct) < 0)
+  if (_billCntct->sChanged())
   {
-    rollback.exec();
-    _billCntct->setFocus();
-    return;
+    if (saveContact(_billCntct) < 0)
+    {
+      rollback.exec();
+      _billCntct->setFocus();
+      return;
+    }
   }
 
-  if (saveContact(_corrCntct) < 0)
+  if (_corrCntct->sChanged())
   {
-    rollback.exec();
-    _corrCntct->setFocus();
-    return;
+    if (saveContact(_corrCntct) < 0)
+    {
+      rollback.exec();
+      _corrCntct->setFocus();
+      return;
+    }
   }
 
   if (_mode == cEdit)

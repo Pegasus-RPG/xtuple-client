@@ -254,8 +254,8 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
     connect (_cust, SIGNAL(valid(bool)), _newCreditMemo, SLOT(setEnabled(bool)));
 
   QMenu * _printMenu = new QMenu;
-  _printMenu->addAction(tr("Print Statement"),      this, SLOT(sPrintStatement()));
-  _printMenu->addAction(tr("Print Customer Info."), this, SLOT(sPrint()));
+  _printMenu->addAction(tr("Customer Infomation"), this, SLOT(sPrint()));
+  _printMenu->addAction(tr("Statement"),      this, SLOT(sPrintStatement()));
   _print->setMenu(_printMenu);
 
 }

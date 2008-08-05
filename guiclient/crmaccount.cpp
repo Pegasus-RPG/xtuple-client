@@ -78,8 +78,8 @@
 #include "mqlutil.h"
 #include "lotSerialRegistration.h"
 
-crmaccount::crmaccount(QWidget* parent, Qt::WFlags fl)
-    : XMainWindow(parent, fl)
+crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
+    : XMainWindow(parent, name, fl)
 {
   setupUi(this);
 
@@ -395,7 +395,7 @@ int crmaccount::saveContact(ContactCluster* pContact)
 		       " What would you like to do?")
 		    .arg(pContact->label()),
 		    tr("Change This One"),
-		    tr("Change Address for All"),
+		    tr("Change for All"),
 		    tr("Cancel"),
 		    2, 2);
   else if (-10 == saveResult)
@@ -652,19 +652,25 @@ void crmaccount::sSave()
   }
 
   int returnVal = 0;
-
-  returnVal = saveContact(_primary);
-  if (returnVal < 0)
+ 
+  if (_primary->sChanged())
   {
-    rollback.exec();
-    return;
+    returnVal = saveContact(_primary);
+    if (returnVal < 0)
+    {
+      rollback.exec();
+      return;
+    }
   }
 
-  returnVal = saveContact(_secondary);
-  if (returnVal < 0)
+  if (_secondary->sChanged())
   {
-    rollback.exec();
-    return;
+    returnVal = saveContact(_secondary);
+    if (returnVal < 0)
+    {
+      rollback.exec();
+      return;
+    }
   }
 
   if (! spName.isEmpty())
