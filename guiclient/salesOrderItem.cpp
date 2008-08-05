@@ -2894,12 +2894,10 @@ void salesOrderItem::sQtyUOMChanged()
   }
 
   if(_qtyUOM->id() != _invuomid)
-  {
-    _priceUOM->setId(_qtyUOM->id());
     _priceUOM->setEnabled(false);
-  }
   else
     _priceUOM->setEnabled(true);
+  _priceUOM->setId(_qtyUOM->id());
   sCalculateExtendedPrice();
 
   if (_qtyOrdered->toDouble() != qRound(_qtyOrdered->toDouble()) &&
