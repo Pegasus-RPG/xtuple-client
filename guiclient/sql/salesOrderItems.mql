@@ -18,11 +18,11 @@ SELECT coitem.*, cohead.*,
        round((coitem_qtyord * coitem_qty_invuomratio) *
                    (coitem_price / coitem_price_invuomratio), 2) AS amount,
        round((coitem_qtyord * coitem_qty_invuomratio) *
-                   (currtobase(cohead_curr_id, coitem_price, CURRENT_DATE) / coitem_price_invuomratio), 2) AS baseamount,
+                   (currtobase(cohead_curr_id, coitem_price, cohead_orderdate) / coitem_price_invuomratio), 2) AS baseamount,
        round((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) *
                    (coitem_price / coitem_price_invuomratio), 2) AS amtbalance,
        round((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) *
-                   (currtobase(cohead_curr_id, coitem_price, CURRENT_DATE) / coitem_price_invuomratio), 2) AS baseamtbalance
+                   (currtobase(cohead_curr_id, coitem_price, cohead_orderdate) / coitem_price_invuomratio), 2) AS baseamtbalance
 FROM coitem JOIN cohead ON (cohead_id=coitem_cohead_id)
             JOIN cust ON (cust_id=cohead_cust_id)
             JOIN itemsite ON (itemsite_id=coitem_itemsite_id)
