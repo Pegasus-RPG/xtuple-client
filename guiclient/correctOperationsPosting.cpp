@@ -64,6 +64,7 @@
 
 #include "inputManager.h"
 #include "distributeInventory.h"
+#include "storedprocerrorLookup.h"
 
 correctOperationsPosting::correctOperationsPosting(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -293,6 +294,8 @@ void correctOperationsPosting::sHandleQty()
 
 void correctOperationsPosting::sPost()
 {
+  int result;
+  
   if (_wooper->id() == -1)
   {
     QMessageBox::critical( this, tr("Select W/O Operation to Post"),
@@ -354,15 +357,29 @@ void correctOperationsPosting::sPost()
   }
 
   q.exec();
-  q.first();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.first())
+  {
+    result = q.value("result").toInt();
+    if (result < 0)
+    {
+      rollback.exec();
+      systemError(this, storedProcErrorLookup("correctOperationPosting", result),
+                  __FILE__, __LINE__);
+      return;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::None)
   {
     rollback.exec();
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-
-  int result = q.value("result").toInt();
+  else
+  {
+    rollback.exec();
+    systemError(this, tr("There was an error processing this transaction"), __FILE__, __LINE__);
+    return;
+  }
 
   if (!_correctSutime->isChecked() && _clearSuComplete->isChecked())
   {
