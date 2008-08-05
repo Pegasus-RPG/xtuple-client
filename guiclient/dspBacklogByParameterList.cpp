@@ -62,6 +62,8 @@
 #include <QVariant>
 
 #include <metasql.h>
+#include "mqlutil.h"
+
 #include <openreports.h>
 
 #include "salesOrder.h"
@@ -87,16 +89,16 @@ dspBacklogByParameterList::dspBacklogByParameterList(QWidget* parent, const char
 
   _soitem->setSelectionMode(QAbstractItemView::ExtendedSelection);
   _soitem->setRootIsDecorated(TRUE);
-  _soitem->addColumn(tr("S/O #/Line #"),         _itemColumn,  Qt::AlignRight  );
-  _soitem->addColumn(tr("Customer/Item Number"), -1,           Qt::AlignLeft   );
-  _soitem->addColumn(tr("Order"),                _dateColumn,  Qt::AlignRight  );
-  _soitem->addColumn(tr("Ship/Sched."),          _dateColumn,  Qt::AlignCenter );
-  _soitem->addColumn(tr("UOM"),                  _uomColumn,   Qt::AlignCenter );
-  _soitem->addColumn(tr("Ordered"),              _qtyColumn,   Qt::AlignRight  );
-  _soitem->addColumn(tr("Shipped"),              _qtyColumn,   Qt::AlignRight  );
-  _soitem->addColumn(tr("Balance"),              _qtyColumn,   Qt::AlignRight  );
+  _soitem->addColumn(tr("S/O #/Line #"),         _itemColumn,     Qt::AlignRight  );
+  _soitem->addColumn(tr("Customer/Item Number"), -1,              Qt::AlignLeft   );
+  _soitem->addColumn(tr("Order"),                _dateColumn,     Qt::AlignRight  );
+  _soitem->addColumn(tr("Ship/Sched."),          _dateColumn,     Qt::AlignCenter );
+  _soitem->addColumn(tr("UOM"),                  _uomColumn,      Qt::AlignCenter );
+  _soitem->addColumn(tr("Ordered"),              _qtyColumn,      Qt::AlignRight  );
+  _soitem->addColumn(tr("Shipped"),              _qtyColumn,      Qt::AlignRight  );
+  _soitem->addColumn(tr("Balance"),              _qtyColumn,      Qt::AlignRight  );
   if (_privileges->check("ViewCustomerPrices") || _privileges->check("MaintainCustomerPrices"))
-    _soitem->addColumn(tr("Amount (base)"),           _moneyColumn, Qt::AlignRight  );
+    _soitem->addColumn(tr("Amount (base)"),      _bigMoneyColumn, Qt::AlignRight  );
 
   _showPrices->setEnabled(_privileges->check("ViewCustomerPrices") || _privileges->check("MaintainCustomerPrices"));
 
@@ -358,61 +360,6 @@ void dspBacklogByParameterList::sFillList()
 
   if (_dates->allValid())
   {
-    QString sql( "SELECT cohead_id, coitem_id, cohead_number, "
-		 "       coitem_linenumber, cust_name,"
-                 "       formatDate(cohead_orderdate) AS f_orderdate,"
-                 "       formatDate((SELECT MIN(coitem_scheddate) "
-		 "                   FROM coitem "
-		 "                   WHERE (coitem_cohead_id=cohead_id))) AS f_shipdate,"
-                 "       formatDate(coitem_scheddate) AS f_scheddate,"
-                 "       item_number, uom_name,"
-                 "       formatQty(coitem_qtyord) AS f_ordered,"
-                 "       formatQty(coitem_qtyshipped) AS f_shipped,"
-                 "       formatQty(noNeg(coitem_qtyord - coitem_qtyshipped + "
-		 "                       coitem_qtyreturned)) AS f_balance, "
-                 "       formatMoney(round((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) * (currtobase(cohead_curr_id,coitem_price,current_date) / coitem_price_invuomratio),2)) AS f_backlog,"
-                 "       round((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) * (currtobase(cohead_curr_id,coitem_price,current_date) / coitem_price_invuomratio),2) AS backlog "
-                 "FROM cohead, coitem, itemsite, item, cust, uom "
-                 "WHERE ((coitem_cohead_id=cohead_id)"
-                 " AND (cohead_cust_id=cust_id)"
-                 " AND (coitem_itemsite_id=itemsite_id)"
-                 " AND (itemsite_item_id=item_id)"
-                 " AND (coitem_qty_uom_id=uom_id)"
-                 " AND (coitem_status NOT IN ('C','X'))"
-                 " AND (coitem_scheddate BETWEEN <? value(\"startDate\") ?>"
-		 "                             AND <? value(\"endDate\") ?>)"
-		 "<? if exists(\"warehous_id\") ?>"
-		 " AND (itemsite_warehous_id=<? value(\"warehous_id\") ?>) "
-		 "<? endif ?>"
-		 "<? if exists(\"custtype_id\") ?>"
-		 " AND (cust_custtype_id=<? value(\"custtype_id\") ?>)"
-		 "<? elseif exists(\"custtype_pattern\") ?>"
-		 " AND (cust_custtype_id IN (SELECT custtype_id "
-		 "      FROM custtype "
-		 "      WHERE (custtype_code ~ <? value(\"custtype_pattern\") ?>)))"
-		 "<? elseif exists(\"by_custgrp\" ?>"
-		 " AND (cust_id IN (SELECT DISTINCT custgrpitem_cust_id "
-		 "                  FROM custgrpitem))"
-		 "<? elseif exists(\"custgrp_id\") ?>"
-		 " AND (cust_id IN (SELECT DISTINCT custgrpitem_cust_id"
-		 "      FROM custgrpitem"
-		 "      WHERE (custgrpitem_custgrp_id=<? value(\"custgrp_id\") ?>)))"
-		 "<? elseif exists(\"custgrp_pattern\") ?>"
-		 " AND (cust_id IN (SELECT DISTINCT custgrpitem_cust_id"
-		 "      FROM custgrp, custgrpitem"
-		 "      WHERE ((custgrpitem_custgrp_id=custgrp_id)"
-		 "        AND (custgrp_name ~ <? value(\"custgrp_pattern\") ?>) )))"
-		 "<? elseif exists(\"prodcat_id\") ?>"
-		 " AND (item_prodcat_id=<? value(\"prodcat_id\") ?>)"
-		 "<? elseif exists(\"prodcat_pattern\") ?>"
-		 " AND (item_prodcat_id IN (SELECT DISTINCT prodcat_id"
-		 "      FROM prodcat"
-		 "      WHERE (prodcat_code ~ <? value(\"prodcat_pattern\") ?>)))"
-		 "<? endif ?>"
-		 " ) "
-		 "ORDER BY coitem_scheddate, cohead_number, "
-		 "         coitem_linenumber DESC;" );
-
     ParameterList params;
     if (_warehouse->isSelected())
       params.append("warehous_id", _warehouse->id());
@@ -444,8 +391,12 @@ void dspBacklogByParameterList::sFillList()
         params.append("prodcat_pattern", _parameter->pattern());
     }
 
-    MetaSQLQuery mql(sql);
+    params.append("openOnly");
+    params.append("orderByScheddate");
+
+    MetaSQLQuery mql = mqlLoad(":/so/displays/SalesOrderItems.mql");
     q = mql.toQuery(params);
+
     if (q.first())
     {
       XTreeWidgetItem *head = NULL;
@@ -459,17 +410,19 @@ void dspBacklogByParameterList::sFillList()
           soheadid = q.value("cohead_id").toInt();
           head = new XTreeWidgetItem( _soitem, head, soheadid, -1,
                                     q.value("cohead_number"), q.value("cust_name"),
-                                    q.value("f_orderdate"), q.value("f_shipdate") );
+                                    formatDate(q.value("cohead_orderdate").toDate()),
+                                    formatDate(q.value("min_scheddate").toDate()) );
         }
 
         new XTreeWidgetItem( head, soheadid, q.value("coitem_id").toInt(),
                            q.value("coitem_linenumber"), q.value("item_number"),
-                           "", q.value("f_scheddate"),
-                           q.value("uom_name"), q.value("f_ordered"),
-                           q.value("f_shipped"), q.value("f_balance"),
-                           q.value("f_backlog") );
+                           "", formatDate(q.value("coitem_scheddate").toDate()),
+                           q.value("uom_name"), formatQty(q.value("coitem_qtyord").toDouble()),
+                           formatQty(q.value("coitem_qtyshipped").toDouble()),
+                           formatQty(q.value("qtybalance").toDouble()),
+                           formatMoney(q.value("baseamtbalance").toDouble()) );
 
-        totalBacklog += q.value("backlog").toDouble();
+        totalBacklog += q.value("baseamtbalance").toDouble();
       }
       while (q.next());
 

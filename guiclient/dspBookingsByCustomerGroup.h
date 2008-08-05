@@ -76,11 +76,7 @@ public:
 
 public slots:
     virtual enum SetResponse set(const ParameterList & pParams );
-    virtual void sPopulateMenu( QMenu * pMenu );
-    virtual void sEdit();
-    virtual void sView();
     virtual void sPrint();
-    virtual void sHandlePrice( bool pShowPrice );
     virtual void sFillList();
 
 protected slots:

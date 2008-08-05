@@ -210,9 +210,9 @@ void dspQuotesByCustomer::sFillList()
       last = new XTreeWidgetItem(_so, last,
 				 q.value("quhead_id").toInt(),
 				 q.value("quhead_number"),
-				 q.value("f_quhead_quotedate"),
+				 formatDate(q.value("quhead_quotedate").toDate()),
 				 q.value("quhead_shiptoname"),
-                 q.value("quhead_custponumber") );
+         q.value("quhead_custponumber") );
     }
   }
 }

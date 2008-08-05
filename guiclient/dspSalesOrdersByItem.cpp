@@ -219,14 +219,14 @@ void dspSalesOrdersByItem::sFillList()
     while (q.next())
     {
       last = new XTreeWidgetItem(_so, last,
-				 q.value("sohead_id").toInt(),
-				 q.value("sohead_number"),
-				 q.value("f_sohead_orderdate"),
+				 q.value("cohead_id").toInt(),
+				 q.value("cohead_number"),
+				 formatDate(q.value("cohead_orderdate").toDate()),
 				 q.value("cust_name"),
-				 q.value("f_soitem_qtyord"),
-				 q.value("f_soitem_qtyshipped"),
-				 q.value("f_soitem_qtyreturned"),
-                 q.value("f_soitem_balance") );
+				 formatQty(q.value("coitem_qtyord").toDouble()),
+				 formatQty(q.value("coitem_qtyshipped").toDouble()),
+				 formatQty(q.value("coitem_qtyreturned").toDouble()),
+         formatQty(q.value("qtybalance").toDouble()) );
     }
   }
 }

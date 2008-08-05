@@ -60,6 +60,10 @@
 #include <QVariant>
 #include <QMessageBox>
 #include <QStatusBar>
+
+#include <metasql.h>
+#include "mqlutil.h"
+
 #include <openreports.h>
 
 /*
@@ -84,14 +88,14 @@ dspBookingsBySalesRep::dspBookingsBySalesRep(QWidget* parent, const char* name, 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 
-  _soitem->addColumn(tr("S/O #"),       _orderColumn, Qt::AlignRight  );
-  _soitem->addColumn(tr("Ord. Date"),   _dateColumn,  Qt::AlignCenter );
-  _soitem->addColumn(tr("Cust. #"),     _orderColumn, Qt::AlignRight  );
-  _soitem->addColumn(tr("Customer"),    -1,           Qt::AlignLeft   );
-  _soitem->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft   );
-  _soitem->addColumn(tr("Ordered"),     _qtyColumn,   Qt::AlignRight  );
-  _soitem->addColumn(tr("Unit Price"),  _priceColumn, Qt::AlignRight  );
-  _soitem->addColumn(tr("Ext'd Price"), _moneyColumn, Qt::AlignRight  );
+  _soitem->addColumn(tr("S/O #"),         _orderColumn,    Qt::AlignRight  );
+  _soitem->addColumn(tr("Ord. Date"),     _dateColumn,     Qt::AlignCenter );
+  _soitem->addColumn(tr("Cust. #"),       _orderColumn,    Qt::AlignRight  );
+  _soitem->addColumn(tr("Customer"),      -1,              Qt::AlignLeft   );
+  _soitem->addColumn(tr("Item Number"),   _itemColumn,     Qt::AlignLeft   );
+  _soitem->addColumn(tr("Ordered"),       _qtyColumn,      Qt::AlignRight  );
+  _soitem->addColumn(tr("Unit Price"),    _priceColumn,    Qt::AlignRight  );
+  _soitem->addColumn(tr("Amount (base)"), _bigMoneyColumn, Qt::AlignRight  );
 }
 
 /*
@@ -147,46 +151,31 @@ void dspBookingsBySalesRep::sFillList()
   if (!checkParameters())
       return;
 
-  if (_dates->allValid())
+  _soitem->clear();
+  
+  MetaSQLQuery mql = mqlLoad(":/so/displays/SalesOrderItems.mql");
+  ParameterList params;
+  params.append("salesrep_id", _salesrep->id());
+  _dates->appendValue(params);
+  _warehouse->appendValue(params);
+  _productCategory->appendValue(params);
+  params.append("orderByOrderdate");
+  q = mql.toQuery(params);
+
+  XTreeWidgetItem *last = 0;
+  while (q.next())
   {
-    QString sql( "SELECT coitem_id, cohead_number,"
-                 "       formatDate(cohead_orderdate),"
-                 "       cust_number, cust_name,"
-                 "       item_number,"
-                 "       formatQty(coitem_qtyord),"
-                 "       formatSalesPrice(coitem_price),"
-                 "       formatMoney((coitem_qtyord * coitem_qty_invuomratio) * (coitem_price / coitem_price_invuomratio)) "
-                 "FROM coitem, cohead, cust, itemsite, item, prodcat "
-                 "WHERE ( (coitem_cohead_id=cohead_id)"
-                 " AND (cohead_cust_id=cust_id)"
-                 " AND (coitem_itemsite_id=itemsite_id)"
-                 " AND (coitem_status <> 'X')"
-                 " AND (itemsite_item_id=item_id)"
-                 " AND (item_prodcat_id=prodcat_id)"
-                 " AND (cohead_salesrep_id=:salesrep_id)"
-                 " AND (cohead_orderdate BETWEEN :startDate AND :endDate)" );
-
-    if (_warehouse->isSelected())
-      sql += " AND (itemsite_warehous_id=:warehous_id)";
-
-    if (_productCategory->isSelected())
-      sql += " AND (prodcat_id=:prodcat_id)";
-    else if (_productCategory->isPattern())
-      sql += " AND (prodcat_code ~ :prodcat_pattern)";
-
-    sql += ") "
-           "ORDER BY cohead_orderdate";
-
-    q.prepare(sql);
-    _warehouse->bindValue(q);
-    _productCategory->bindValue(q);
-    _dates->bindValue(q);
-    q.bindValue(":salesrep_id", _salesrep->id());
-    q.exec();
-    _soitem->populate(q);
+    last = new XTreeWidgetItem(_soitem, last,
+         q.value("coitem_id").toInt(),
+         q.value("cohead_number"),
+         formatDate(q.value("cohead_orderdate").toDate()),
+         q.value("cust_number"),
+         q.value("cust_name"),
+         q.value("item_number"),
+         formatQty(q.value("coitem_qtyord").toDouble()),
+         formatSalesPrice(q.value("coitem_price").toDouble()),
+         formatMoney(q.value("baseamount").toDouble()) );
   }
-  else
-    _soitem->clear();
 }
 
 bool dspBookingsBySalesRep::checkParameters()

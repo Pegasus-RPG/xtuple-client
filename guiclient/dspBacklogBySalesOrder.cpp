@@ -61,6 +61,10 @@
 #include <QWorkspace>
 #include <QStatusBar>
 #include <QMenu>
+
+#include <metasql.h>
+#include "mqlutil.h"
+
 #include <parameter.h>
 #include <openreports.h>
 #include "inputManager.h"
@@ -186,48 +190,23 @@ void dspBacklogBySalesOrder::sFillList()
       _custPhone->setText(q.value("cust_phone").toString());
     }
 
-    q.prepare( "SELECT coitem_id, itemsite_id,"
-               "       coitem_linenumber, item_number, f_description, warehous_code,"
-               "       formatQty(coitem_qtyord) AS f_ordered,"
-               "       formatQty(coitem_qtyshipped) AS f_shipped,"
-               "       formatQty(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned)) AS f_balance,"
-               "       formatQty(atshipping) AS f_atshipping,"
-               "       formatQty(available) AS f_available,"
-               "       (available <= reorderlevel) AS reorder,"
-               "       (available < 0) AS stockout "
-               "FROM ( SELECT coitem_id, itemsite_id, coitem_linenumber, item_number,"
-               "              (item_descrip1 || ' ' || item_descrip2) AS f_description, warehous_code,"
-               "              coitem_qtyord, coitem_qtyshipped, coitem_qtyreturned,"
-               "              SUM(coship_qty) AS atshipping,"
-               "              CASE WHEN(itemsite_useparams) THEN itemsite_reorderlevel ELSE 0.0 END AS reorderlevel,"
-               "              qtyAvailable(itemsite_id, coitem_scheddate) AS available "
-               "       FROM itemsite, item, warehous,"
-               "            coitem LEFT OUTER JOIN"
-               "            ( coship JOIN"
-               "              cosmisc ON ( (coship_cosmisc_id=cosmisc_id) AND (NOT cosmisc_shipped) )"
-               "            ) ON (coship_coitem_id=coitem_id) "
-               "       WHERE ((coitem_itemsite_id=itemsite_id)"
-               "        AND (coitem_status <> 'X')"
-               "        AND (itemsite_item_id=item_id)"
-               "        AND (itemsite_warehous_id=warehous_id)"
-               "        AND (coitem_cohead_id=:sohead_id)) "
-               "       GROUP BY coitem_id, itemsite_id, coitem_linenumber, item_number,"
-               "                item_descrip1, item_descrip2, warehous_code,"
-               "                coitem_qtyord, coitem_qtyshipped, coitem_qtyreturned,"
-               "                reorderlevel, coitem_scheddate "
-               "       ORDER BY coitem_linenumber ) AS data;" );
-    q.bindValue(":sohead_id", _salesOrder->id());
-    q.exec();
+    MetaSQLQuery mql = mqlLoad(":/so/displays/SalesOrderItems.mql");
+    ParameterList params;
+    params.append("cohead_id", _salesOrder->id());
+    q = mql.toQuery(params);
+
     XTreeWidgetItem *last = 0;
     while (q.next())
     {
       last = new XTreeWidgetItem(_soitem, last,
 				 q.value("coitem_id").toInt(), q.value("itemsite_id").toInt(),
 				 q.value("coitem_linenumber"), q.value("item_number"),
-				 q.value("f_description"), q.value("warehous_code"),
-				 q.value("f_ordered"), q.value("f_shipped"),
-				 q.value("f_balance"), q.value("f_atshipping"),
-				 q.value("f_available") );
+				 q.value("itemdescription"), q.value("warehous_code"),
+				 formatQty(q.value("coitem_qtyord").toDouble()),
+         formatQty(q.value("coitem_qtyshipped").toDouble()),
+				 formatQty(q.value("qtybalance").toDouble()),
+         formatQty(q.value("qtyatshipping").toDouble()),
+				 formatQty(q.value("qtyavailable").toDouble()) );
 
       if (q.value("stockout").toBool())
         last->setTextColor(8, "red");

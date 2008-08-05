@@ -60,6 +60,10 @@
 #include <QVariant>
 #include <QStatusBar>
 #include <QMessageBox>
+
+#include <metasql.h>
+#include "mqlutil.h"
+
 #include <openreports.h>
 
 /*
@@ -83,13 +87,13 @@ dspBookingsByItem::dspBookingsByItem(QWidget* parent, const char* name, Qt::WFla
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 
-  _soitem->addColumn(tr("S/O #"),       _orderColumn, Qt::AlignRight  );
-  _soitem->addColumn(tr("Ord. Date"),   _dateColumn,  Qt::AlignCenter );
-  _soitem->addColumn(tr("Cust. #"),     _itemColumn,  Qt::AlignRight  );
-  _soitem->addColumn(tr("Customer"),    -1,           Qt::AlignLeft   );
-  _soitem->addColumn(tr("Ordered"),     _qtyColumn,   Qt::AlignRight  );
-  _soitem->addColumn(tr("Unit Price"),  _priceColumn, Qt::AlignRight  );
-  _soitem->addColumn(tr("Ext'd Price"), _moneyColumn, Qt::AlignRight  );
+  _soitem->addColumn(tr("S/O #"),         _orderColumn,    Qt::AlignRight  );
+  _soitem->addColumn(tr("Ord. Date"),     _dateColumn,     Qt::AlignCenter );
+  _soitem->addColumn(tr("Cust. #"),       _itemColumn,     Qt::AlignRight  );
+  _soitem->addColumn(tr("Customer"),      -1,              Qt::AlignLeft   );
+  _soitem->addColumn(tr("Ordered"),       _qtyColumn,      Qt::AlignRight  );
+  _soitem->addColumn(tr("Unit Price"),    _priceColumn,    Qt::AlignRight  );
+  _soitem->addColumn(tr("Amount (base)"), _bigMoneyColumn, Qt::AlignRight  );
 }
 
 /*
@@ -170,33 +174,29 @@ void dspBookingsByItem::sFillList()
   if (!checkParameters())
     return;
 
-  QString sql( "SELECT coitem_id, cohead_number,"
-               "       formatDate(cohead_orderdate),"
-               "       cust_number, cust_name,"
-               "       formatQty(coitem_qtyord),"
-               "       formatSalesPrice(coitem_price),"
-               "       formatMoney((coitem_qtyord * coitem_qty_invuomratio) * (coitem_price / coitem_price_invuomratio)) "
-               "FROM coitem, cohead, cust, itemsite, item "
-               "WHERE ((coitem_cohead_id=cohead_id)"
-               " AND (cohead_cust_id=cust_id)"
-               " AND (coitem_itemsite_id=itemsite_id)"
-               " AND (coitem_status <> 'X')"
-               " AND (itemsite_item_id=item_id)"
-               " AND (item_id=:item_id)"
-               " AND (cohead_orderdate BETWEEN :startDate AND :endDate)" );
+  _soitem->clear();
+  
+  MetaSQLQuery mql = mqlLoad(":/so/displays/SalesOrderItems.mql");
+  ParameterList params;
+  _dates->appendValue(params);
+  _warehouse->appendValue(params);
+  params.append("item_id", _item->id());
+  params.append("orderByOrderdate");
+  q = mql.toQuery(params);
 
-  if (_warehouse->isSelected())
-    sql += " AND (itemsite_warehous_id=:warehous_id)";
-
-  sql += ") "
-         "ORDER BY cohead_orderdate;";
-
-  q.prepare(sql);
-  _warehouse->bindValue(q);
-  _dates->bindValue(q);
-  q.bindValue(":item_id", _item->id());
-  q.exec();
-  _soitem->populate(q);
+  XTreeWidgetItem *last = 0;
+  while (q.next())
+  {
+    last = new XTreeWidgetItem(_soitem, last,
+         q.value("coitem_id").toInt(),
+         q.value("cohead_number"),
+         formatDate(q.value("cohead_orderdate").toDate()),
+         q.value("cust_number"),
+         q.value("cust_name"),
+         formatQty(q.value("coitem_qtyord").toDouble()),
+         formatSalesPrice(q.value("coitem_price").toDouble()),
+         formatMoney(q.value("baseamount").toDouble()) );
+  }
 }
 
 bool dspBookingsByItem::checkParameters()

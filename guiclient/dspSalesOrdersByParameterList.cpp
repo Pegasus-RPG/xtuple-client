@@ -248,10 +248,14 @@ void dspSalesOrdersByParameterList::sFillList()
         lastorder = 0;
       }
 
-      lastorder = new XTreeWidgetItem(lastcust, lastorder, custid, q.value("sohead_id").toInt(),
-                                "", q.value("sohead_number"), q.value("f_sohead_orderdate"),
-                                q.value("f_min_scheddate"), q.value("order_status"),
-                                q.value("sohead_shiptoname"), q.value("sohead_custponumber") );
+      lastorder = new XTreeWidgetItem(lastcust, lastorder, custid, q.value("cohead_id").toInt(),
+                                "",
+                                q.value("cohead_number"),
+                                formatDate(q.value("cohead_orderdate").toDate()),
+                                formatDate(q.value("min_scheddate").toDate()),
+                                q.value("order_status"),
+                                q.value("cohead_shiptoname"),
+                                q.value("cohead_custponumber") );
     }
   }
 }

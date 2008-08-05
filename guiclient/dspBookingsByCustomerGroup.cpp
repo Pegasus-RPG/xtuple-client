@@ -61,6 +61,10 @@
 #include <QMessageBox>
 #include <QVariant>
 #include <QWorkspace>
+
+#include <metasql.h>
+#include "mqlutil.h"
+
 #include <openreports.h>
 
 #include "salesHistoryInformation.h"
@@ -74,37 +78,20 @@ dspBookingsByCustomerGroup::dspBookingsByCustomerGroup(QWidget* parent, const ch
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-  connect(_sohist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-  connect(_showPrices, SIGNAL(toggled(bool)), this, SLOT(sHandlePrice(bool)));
 
   _customerGroup->setType(CustomerGroup);
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 
-  _sohist->addColumn(tr("S/O #"),       _orderColumn, Qt::AlignRight  );
-  _sohist->addColumn(tr("Invoice #"),   _orderColumn, Qt::AlignRight  );
-  _sohist->addColumn(tr("Ord. Date"),   _dateColumn,  Qt::AlignCenter );
-  _sohist->addColumn(tr("Invc. Date"),  _dateColumn,  Qt::AlignCenter );
-  _sohist->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft   );
-  _sohist->addColumn(tr("Description"), -1,           Qt::AlignLeft   );
-  _sohist->addColumn(tr("Shipped"),     _qtyColumn,   Qt::AlignRight  );
+  _soitem->addColumn(tr("S/O #"),         _orderColumn,    Qt::AlignRight  );
+  _soitem->addColumn(tr("Ord. Date"),     _dateColumn,     Qt::AlignCenter );
+  _soitem->addColumn(tr("Cust. #"),       _orderColumn,    Qt::AlignRight  );
+  _soitem->addColumn(tr("Customer"),      -1,              Qt::AlignLeft   );
+  _soitem->addColumn(tr("Item Number"),   _itemColumn,     Qt::AlignLeft   );
+  _soitem->addColumn(tr("Ordered"),       _qtyColumn,      Qt::AlignRight  );
+  _soitem->addColumn(tr("Unit Price"),    _priceColumn,    Qt::AlignRight  );
+  _soitem->addColumn(tr("Amount (base)"), _bigMoneyColumn, Qt::AlignRight  );
 
-  if (_privileges->check("ViewCustomerPrices"))
-  {
-    _sohist->addColumn(tr("Unit Price"),  _priceColumn, Qt::AlignRight  );
-    _sohist->addColumn(tr("Total"),       _moneyColumn, Qt::AlignRight  );
-  }
-
-  _showPrices->setEnabled(_privileges->check("ViewCustomerPrices"));
-  _showCosts->setEnabled(_privileges->check("ViewCosts"));
-
-  if (_preferences->boolean("XCheckBox/forgetful"))
-  {
-    _showPrices->setChecked(_privileges->check("ViewCustomerPrices"));
-    _showCosts->setChecked(_privileges->check("ViewCosts"));
-  }
-
-  sHandlePrice(_showPrices->isChecked());
 }
 
 dspBookingsByCustomerGroup::~dspBookingsByCustomerGroup()
@@ -151,53 +138,12 @@ enum SetResponse dspBookingsByCustomerGroup::set(const ParameterList &pParams)
   return NoError;
 }
 
-void dspBookingsByCustomerGroup::sPopulateMenu(QMenu *pMenu)
-{
-  int menuItem;
-
-  menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
-  if (!_privileges->check("EditSalesHistory"))
-    pMenu->setItemEnabled(menuItem, FALSE);
-
-  pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
-}
-
-void dspBookingsByCustomerGroup::sEdit()
-{
-  ParameterList params;
-  params.append("mode", "edit");
-  params.append("sohist_id", _sohist->id());
-
-  salesHistoryInformation newdlg(this, "", TRUE);
-  newdlg.set(params);
-
-  if (newdlg.exec() != XDialog::Rejected)
-    sFillList();
-}
-
-void dspBookingsByCustomerGroup::sView()
-{
-  ParameterList params;
-  params.append("mode", "view");
-  params.append("sohist_id", _sohist->id());
-
-  salesHistoryInformation newdlg(this, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-}
-
 void dspBookingsByCustomerGroup::sPrint()
 {
   ParameterList params;
   _warehouse->appendValue(params);
   _customerGroup->appendValue(params);
   _dates->appendValue(params);
-
-  if (_showCosts->isChecked())
-    params.append("showCosts");
-
-  if (_showPrices->isChecked())
-    params.append("showPrices");
 
   orReport report("BookingsByCustomerGroup", params);
   if (report.isValid())
@@ -206,84 +152,34 @@ void dspBookingsByCustomerGroup::sPrint()
     report.reportError(this);
 }
 
-void dspBookingsByCustomerGroup::sHandlePrice(bool pShowPrice)
-{
-  if (pShowPrice)
-  {
-    _sohist->showColumn(7);
-    _sohist->showColumn(8);
-  }
-  else
-  {
-    _sohist->hideColumn(7);
-    _sohist->hideColumn(8);
-  }
-}
-
 void dspBookingsByCustomerGroup::sFillList()
 {
-  _sohist->clear();
-
   if (!checkParameters())
     return;
 
-  QString sql( "SELECT cohist_id, cohist_ordernumber, cohist_invcnumber,"
-               "       formatDate(cohist_orderdate) AS f_orderdate,"
-               "       formatDate(cohist_invcdate) AS f_invcdate,"
-               "       item_number, (item_descrip1 || ' ' || item_descrip2) AS description,"
-               "       cohist_qtyshipped AS shipped,"
-               "       formatQty(cohist_qtyshipped) AS f_shipped,"
-               "       formatSalesPrice(cohist_unitprice) AS f_price,"
-               "       round(cohist_qtyshipped * cohist_unitprice,2) AS extended,"
-               "       formatMoney(round(cohist_qtyshipped * cohist_unitprice)) AS f_extended "
-               "FROM cohist, itemsite, item, cust, custgrpitem, custgrp "
-               "WHERE ( (cohist_itemsite_id=itemsite_id)"
-               " AND (itemsite_item_id=item_id)"
-               " AND (cohist_cust_id=cust_id)"
-               " AND (custgrpitem_custgrp_id=custgrp_id)"
-               " AND (custgrpitem_cust_id=cust_id)"
-               " AND (cohist_invcdate BETWEEN :startDate AND :endDate)" );
+  _soitem->clear();
+  
+  MetaSQLQuery mql = mqlLoad(":/so/displays/SalesOrderItems.mql");
+  ParameterList params;
+  _dates->appendValue(params);
+  _warehouse->appendValue(params);
+  _customerGroup->appendValue(params);
+  params.append("orderByOrderdate");
+  q = mql.toQuery(params);
 
-  if (_warehouse->isSelected())
-    sql += " AND (itemsite_warehous_id=:warehous_id)";
-
-  if (_customerGroup->isSelected())
-    sql += " AND (custgrp_id=:custgrp_id)";
-  else if (_customerGroup->isPattern())
-    sql += " AND (custgrp_name ~ :custgrp_pattern)";
-
-  sql += ") "
-         "ORDER BY cohist_invcdate, item_number";
-
-  q.prepare(sql);
-  _warehouse->bindValue(q);
-  _customerGroup->bindValue(q);
-  _dates->bindValue(q);
-  q.exec();
-  if (q.first())
+  XTreeWidgetItem *last = 0;
+  while (q.next())
   {
-    double        totalUnits = 0.0;
-    double        totalSales = 0.0;
-
-    XTreeWidgetItem *last  = 0;
-    do
-    {
-      last = new XTreeWidgetItem( _sohist, last, q.value("cohist_id").toInt(),
-			       q.value("cohist_ordernumber"), q.value("cohist_invcnumber"),
-			       q.value("f_orderdate"), q.value("f_invcdate"),
-			       q.value("item_number"), q.value("description"),
-			       q.value("f_shipped"), q.value("f_price"),
-			       q.value("f_extended") );
-
-       totalUnits += q.value("shipped").toDouble();
-       totalSales += q.value("extended").toDouble();
-    }
-    while (q.next());
-
-    XTreeWidgetItem *totals = new XTreeWidgetItem(_sohist, last, -1);
-    totals->setText(5, tr("Totals"));
-    totals->setText(6, formatQty(totalUnits));
-    totals->setText(8, formatMoney(totalSales));
+    last = new XTreeWidgetItem(_soitem, last,
+         q.value("coitem_id").toInt(),
+         q.value("cohead_number"),
+         formatDate(q.value("cohead_orderdate").toDate()),
+         q.value("cust_number"),
+         q.value("cust_name"),
+         q.value("item_number"),
+         formatQty(q.value("coitem_qtyord").toDouble()),
+         formatSalesPrice(q.value("coitem_price").toDouble()),
+         formatMoney(q.value("baseamount").toDouble()) );
   }
 }
 
