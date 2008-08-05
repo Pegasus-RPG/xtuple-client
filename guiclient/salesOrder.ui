@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>808</width>
+    <width>964</width>
     <height>647</height>
    </rect>
   </property>
@@ -1148,6 +1148,9 @@
           </property>
           <property name="alternatingRowColors" >
            <bool>false</bool>
+          </property>
+          <property name="rootIsDecorated" >
+           <bool>true</bool>
           </property>
          </widget>
         </item>

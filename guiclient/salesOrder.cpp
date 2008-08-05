@@ -69,7 +69,6 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
-#include <QStatusBar>
 #include <QValidator>
 #include <QVariant>
 #include <QWorkspace>
@@ -192,25 +191,28 @@ salesOrder::salesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _orderNumber->setValidator(omfgThis->orderVal());
   _CCCVV->setValidator(new QIntValidator(100, 9999, this));
+  _weight->setValidator(omfgThis->weightVal());
 
   _origin->insertItem(tr("Customer"));
   _origin->insertItem(tr("Internet"));
   _origin->insertItem(tr("Sales Rep."));
 
-  _soitem->addColumn(tr("#"),           _seqColumn,     Qt::AlignCenter );
-  _soitem->addColumn(tr("Item"),        _itemColumn,    Qt::AlignLeft   );
-  _soitem->addColumn(tr("Description"), -1,             Qt::AlignLeft   );
-  _soitem->addColumn(tr("Site"),        _whsColumn,     Qt::AlignCenter );
-  _soitem->addColumn(tr("Status"),      _statusColumn,  Qt::AlignCenter );
-  _soitem->addColumn(tr("Sched. Date"), _dateColumn,    Qt::AlignCenter );
-  _soitem->addColumn(tr("Qty UOM"),     _uomColumn,     Qt::AlignLeft   );
-  _soitem->addColumn(tr("Ordered"),     _qtyColumn,     Qt::AlignRight  );
-  _soitem->addColumn(tr("Shipped"),     _qtyColumn,     Qt::AlignRight  );
-  _soitem->addColumn(tr("At Shipping"), _qtyColumn,     Qt::AlignRight  );
-  _soitem->addColumn(tr("Balance"),     _qtyColumn,     Qt::AlignRight  );
-  _soitem->addColumn(tr("Price UOM"),   _uomColumn,     Qt::AlignLeft   );
-  _soitem->addColumn(tr("Price"),       _priceColumn,   Qt::AlignRight  );
-  _soitem->addColumn(tr("Extended"),    _priceColumn,   Qt::AlignRight  );
+  _soitem->addColumn(tr("#"),           _seqColumn, Qt::AlignCenter,true, "f_linenumber");
+  _soitem->addColumn(tr("Kit Seq. #"),  _seqColumn, Qt::AlignRight, false,"coitem_subnumber");
+  _soitem->addColumn(tr("Item"),       _itemColumn, Qt::AlignLeft,  true, "item_number");
+  _soitem->addColumn(tr("Type"),       _itemColumn, Qt::AlignLeft,  false,"item_type");
+  _soitem->addColumn(tr("Description"),         -1, Qt::AlignLeft,  true, "description");
+  _soitem->addColumn(tr("Site"),        _whsColumn, Qt::AlignCenter,true, "warehous_code");
+  _soitem->addColumn(tr("Status"),   _statusColumn, Qt::AlignCenter,true, "enhanced_status");
+  _soitem->addColumn(tr("Sched. Date"),_dateColumn, Qt::AlignCenter,true, "coitem_scheddate");
+  _soitem->addColumn(tr("Qty UOM"),     _uomColumn, Qt::AlignLeft,  true, "qty_uom");
+  _soitem->addColumn(tr("Ordered"),     _qtyColumn, Qt::AlignRight, true, "coitem_qtyord");
+  _soitem->addColumn(tr("Shipped"),     _qtyColumn, Qt::AlignRight, true, "qtyshipped");
+  _soitem->addColumn(tr("At Shipping"), _qtyColumn, Qt::AlignRight, true, "qtyatshipping");
+  _soitem->addColumn(tr("Balance"),     _qtyColumn, Qt::AlignRight, true, "balance");
+  _soitem->addColumn(tr("Price UOM"),   _uomColumn, Qt::AlignLeft,  true, "price_uom");
+  _soitem->addColumn(tr("Price"),     _priceColumn, Qt::AlignRight, true, "coitem_price");
+  _soitem->addColumn(tr("Extended"),  _priceColumn, Qt::AlignRight, true, "extprice");
 
   _cc->addColumn(tr("Sequence"),_itemColumn, Qt::AlignLeft, true, "ccard_seq");
   _cc->addColumn(tr("Type"),    _itemColumn, Qt::AlignLeft, true, "type");
@@ -514,8 +516,8 @@ enum SetResponse salesOrder::set(const ParameterList &pParams)
     _issueLineBalance->hide();
     _amountAtShippingLit->hide();
     _amountAtShipping->hide();
-    _soitem->hideColumn(9);
-    _soitem->hideColumn(10);
+    _soitem->hideColumn("qtyatshipping");
+    _soitem->hideColumn("balance");
   }
   else
     _soitem->setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -1646,6 +1648,9 @@ void salesOrder::sEdit()
     params.append("mode", "view");
   else if (_mode == cViewQuote)
     params.append("mode", "viewQuote");
+  else if ((_mode == cNew) || (_mode == cEdit) &&
+           _soitem->currentItem()->rawValue("coitem_subnumber").toInt() != 0)
+    params.append("mode", "view");
   else if ((_mode == cNew) || (_mode == cEdit))
     params.append("mode", "edit");
   else if ((_mode == cNewQuote) || (_mode == cEditQuote))
@@ -1726,12 +1731,33 @@ void salesOrder::sHandleButtons()
           _delete->setEnabled(FALSE);
         }
 
-        if(1 == lineMode || 4 == lineMode)
+        if (1 == lineMode       // closed
+            || 4 == lineMode    // cancelled
+            || selected->rawValue("item_type").toString() == "K"    // kit item
+           )
         {
           _issueStock->setEnabled(FALSE);
           _issueLineBalance->setEnabled(FALSE);
           _reserveStock->setEnabled(FALSE);
           _reserveLineBalance->setEnabled(FALSE);
+          for (int i = 0; i < selected->childCount(); i++)
+          {
+            if (selected->child(i)->altId() == 1 ||
+                selected->child(i)->altId() == 2 ||
+                selected->child(i)->altId() == 4)
+            {
+              _delete->setEnabled(FALSE);
+              break;
+            }
+          }
+        }
+
+        if (selected->rawValue("coitem_subnumber").toInt() == 0)
+          _edit->setText(tr("Edit"));
+        else
+        {
+          _edit->setText(tr("View"));
+          _delete->setEnabled(FALSE);
         }
       }
     }
@@ -2257,7 +2283,11 @@ void salesOrder::sFillItemList()
                 "            WHEN ( (coitem_status='O') AND ( (COALESCE(SUM(coship_qty), 0) > 0) OR (coitem_qtyshipped > 0) ) ) THEN 2"
                 "            ELSE 3"
                 "       END AS closestatus,"
-                "       coitem_linenumber, coitem_subnumber, formatSoLineNumber(coitem_id) AS f_linenumber, item_number, (item_descrip1 || ' ' || item_descrip2) AS description,"
+                "       coitem_scheddate, coitem_qtyord, coitem_price,"
+                "       coitem_subnumber,"
+                "       formatSoLineNumber(coitem_id) AS f_linenumber,"
+                "       item_number, item_type,"
+                "       (item_descrip1 || ' ' || item_descrip2) AS description,"
                 "       warehous_code,"
                 "       CASE WHEN (coitem_status='O' AND (SELECT cust_creditstatus FROM custinfo WHERE cust_id=:cust_id)='H') THEN 'H'"
                 "            WHEN (coitem_status='O' AND ((SELECT SUM(invcitem_billed)"
@@ -2280,21 +2310,36 @@ void salesOrder::sFillItemList()
                 "                                         + qtyOrdered(itemsite_id, CURRENT_DATE))"
                 "                                          >= (coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned)) THEN 'R'"
                 "            ELSE coitem_status"
-                "       END AS coitem_status,"
-                "       formatDate(coitem_scheddate) AS f_scheddate,"
+                "       END AS enhanced_status,"
                 "       quom.uom_name AS qty_uom,"
-                "       formatQty(coitem_qtyord) AS f_ordered,"
-                "       formatQty(noNeg(coitem_qtyshipped - coitem_qtyreturned)) AS f_shipped,"
-                "       formatQty(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned)) AS f_balance,"
-                "       formatQty(COALESCE(SUM(coship_qty),0)-coitem_qtyshipped) AS f_atshipping,"
+                "       noNeg(coitem_qtyshipped - coitem_qtyreturned) AS qtyshipped,"
+                "       noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) AS balance,"
+                "       (COALESCE(SUM(coship_qty),0)-coitem_qtyshipped) AS qtyatshipping,"
                 "       puom.uom_name AS price_uom,"
-                "       formatSalesPrice(coitem_price) AS f_unitprice,"
-                "       formatMoney(round((coitem_qtyord * coitem_qty_invuomratio) * (coitem_price / coitem_price_invuomratio),2)) AS f_extprice,"
-                "       round(((COALESCE(SUM(coship_qty),0)-coitem_qtyshipped) * coitem_qty_invuomratio) * (coitem_price / coitem_price_invuomratio),2) AS shippingAmount,"
-                "       (noNeg(coitem_qtyord) <> COALESCE(SUM(coship_qty), 0)) AS tagged,"
-                "       CASE WHEN coitem_scheddate > current_date THEN 1"
-                "            ELSE 0"
-                "       END AS in_future "
+                "       ROUND((coitem_qtyord * coitem_qty_invuomratio) *"
+                "             (coitem_price / coitem_price_invuomratio),2) AS extprice,"
+                "       'qty' AS coitem_qtyord_xtnumericrole,"
+                "       'qty' AS qtyshipped_xtnumericrole,"
+                "       'qty' AS balance_xtnumericrole,"
+                "       'qty' AS qtyatshipping_xtnumericrole,"
+                "       'salesprice' AS coitem_price_xtnumericrole,"
+                "       'curr' AS extprice_xtnumericrole,"
+                "       CASE WHEN fetchMetricBool('EnableSOShipping') AND"
+                "                 coitem_scheddate > CURRENT_DATE AND"
+                "                 (noNeg(coitem_qtyord) <> COALESCE(SUM(coship_qty), 0)) THEN"
+                "                 'future'"
+                "            WHEN fetchMetricBool('EnableSOShipping') AND"
+                "                 (noNeg(coitem_qtyord) <> COALESCE(SUM(coship_qty), 0)) THEN"
+                "                 'expired'"
+                "            WHEN (coitem_status NOT IN ('C', 'X') AND"
+                "                  EXISTS(SELECT coitem_id"
+                "                         FROM coitem"
+                "                         WHERE ((coitem_status='C')"
+                "                           AND  (coitem_cohead_id=:cohead_id)))) THEN"
+                "                  'error'"
+                "       END AS qtforegroundrole,"
+                "       CASE WHEN coitem_subnumber = 0 THEN 0"
+                "            ELSE 1 END AS xtindentrole "
                 "  FROM itemsite, item, warehous, uom AS quom, uom AS puom,"
                 "       coitem LEFT OUTER JOIN coship ON (coship_coitem_id=coitem_id) "
                 " WHERE ( (coitem_itemsite_id=itemsite_id)"
@@ -2304,64 +2349,52 @@ void salesOrder::sFillItemList()
                 "   AND   (itemsite_warehous_id=warehous_id)";
 
     if (!_showCanceled->isChecked())
-      sql += QString(" AND (coitem_status != 'X') ");
+      sql += " AND (coitem_status != 'X') " ;
              
-    sql += QString(" AND (coitem_cohead_id=:cohead_id) ) "
-                   "GROUP BY coitem_id, coitem_cohead_id, itemsite_id, itemsite_qtyonhand, coitem_qtyshipped,"
-                   "         coitem_linenumber, coitem_subnumber, f_linenumber, item_id, item_number, item_descrip1, item_descrip2,"
-                   "         warehous_id, warehous_code, coitem_status, coitem_qtyord, coitem_qtyreturned,"
-                   "         quom.uom_name, puom.uom_name,"
-                   "         coitem_price, coitem_scheddate, coitem_qty_invuomratio, coitem_price_invuomratio "
-                   "ORDER BY coitem_linenumber, coitem_subnumber;" );
+    sql += " AND (coitem_cohead_id=:cohead_id) ) "
+           "GROUP BY coitem_id, coitem_cohead_id, itemsite_id,"
+           "         itemsite_qtyonhand, coitem_qtyshipped,"
+           "         coitem_linenumber, coitem_subnumber, f_linenumber,"
+           "         item_id, item_number, item_descrip1, item_descrip2,"
+           "         warehous_id, warehous_code, coitem_status,"
+           "         coitem_qtyord, coitem_qtyreturned,"
+           "         quom.uom_name, puom.uom_name,"
+           "         coitem_price, coitem_scheddate,"
+           "         coitem_qty_invuomratio, coitem_price_invuomratio,"
+           "         coitem_subnumber, item_type "
+           "ORDER BY coitem_linenumber, coitem_subnumber;" ;
+
     q.prepare(sql);
     q.bindValue(":cohead_id", _soheadid);
     q.bindValue(":cust_id", _cust->id());
     q.exec();
     _amountAtShipping->setLocalValue(0.0);
-    if (q.first())
+    _soitem->populate(q, true);
+    if (q.lastError().type() != QSqlError::None)
     {
-      XSqlQuery partial;
-      partial.prepare( "SELECT coitem_id "
-                       "FROM coitem "
-                       "WHERE ( (coitem_status='C')"
-                       " AND (coitem_cohead_id=:cohead_id) ) "
-                       "LIMIT 1;" );
-      partial.bindValue(":cohead_id", _soheadid);
-      partial.exec();
-      bool backOrderFlag = partial.first();
-
-      XTreeWidgetItem *last = 0;
-      do
-      {
-        _amountAtShipping->setLocalValue(_amountAtShipping->localValue() +
-                                         q.value("shippingAmount").toDouble());
-
-       last = new XTreeWidgetItem(_soitem, last,
-                           q.value("coitem_id").toInt(), q.value("closestatus").toInt(),
-                           q.value("f_linenumber"), q.value("item_number"),
-                           q.value("description"), q.value("warehous_code"),
-                           q.value("coitem_status"), q.value("f_scheddate"),
-                           q.value("qty_uom"),
-                           q.value("f_ordered"), q.value("f_shipped"),
-                           q.value("f_atshipping"), q.value("f_balance"));
-       last->setText(11, q.value("price_uom"));
-       last->setText(12, q.value("f_unitprice"));
-       last->setText(13, q.value("f_extprice"));
-
-        if ( (backOrderFlag) && (q.value("coitem_status").toString() != "C") && (q.value("coitem_status").toString() != "X") )
-          last->setTextColor("red");
-
-        if(_metrics->boolean("EnableSOShipping"))
-        {
-          if (q.value("tagged").toBool())
-            last->setTextColor("red");
-          if ((q.value("in_future").toBool()) && (q.value("tagged").toBool()))
-            last->setTextColor("darkgreen");
-        }
-      }
-      while (q.next());
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
     }
-    else if (q.lastError().type() != QSqlError::None)
+
+    sql = "SELECT ROUND(((COALESCE(SUM(coship_qty),0)-coitem_qtyshipped) *"
+          "                  coitem_qty_invuomratio) *"
+          "           (coitem_price / coitem_price_invuomratio),2) AS shippingAmount "
+          "  FROM coitem LEFT OUTER JOIN coship ON (coship_coitem_id=coitem_id) "
+          " WHERE ((coitem_cohead_id=:cohead_id)" ;
+
+    if (!_showCanceled->isChecked())
+      sql += " AND (coitem_status != 'X') " ;
+             
+    sql += ") GROUP BY coitem_id, coitem_qtyshipped, coitem_qty_invuomratio,"
+           "coitem_price, coitem_price_invuomratio;" ;
+    q.prepare(sql);
+    q.bindValue(":cohead_id", _soheadid);
+    q.bindValue(":cust_id", _cust->id());
+    q.exec();
+    while (q.next())
+      _amountAtShipping->setLocalValue(_amountAtShipping->localValue() +
+                                       q.value("shippingAmount").toDouble());
+    if (q.lastError().type() != QSqlError::None)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -2370,15 +2403,24 @@ void salesOrder::sFillItemList()
   else if (ISQUOTE(_mode))
   {
     q.prepare( "SELECT quitem_id,"
-               "       quitem_linenumber, item_number, (item_descrip1 || ' ' || item_descrip2) AS description,"
-               "       warehous_code, '',"
-               "       formatDate(quitem_scheddate) AS f_scheddate,"
+               "       quitem_linenumber AS f_linenumber,"
+               "       0 AS coitem_subnumber, item_type,"
+               "       item_number, (item_descrip1 || ' ' || item_descrip2) AS description,"
+               "       warehous_code, '' AS enhanced_status,"
+               "       quitem_scheddate AS coitem_scheddate,"
                "       quom.uom_name AS qty_uom,"
-               "       formatQty(quitem_qtyord) AS f_ordered,"
-               "       formatQty(0) AS f_shipped,"
+               "       quitem_qtyord AS coitem_qtyord,"
+               "       0 AS qtyshipped, 0 AS qtyatshipping, 0 AS balance,"
                "       puom.uom_name AS price_uom,"
-               "       formatSalesPrice(quitem_price) AS f_unitprice,"
-               "       formatMoney(round((quitem_qtyord * quitem_qty_invuomratio) * (quitem_price / quitem_price_invuomratio),2)) AS f_extprice "
+               "       quitem_price AS coitem_price,"
+               "       ROUND((quitem_qtyord * quitem_qty_invuomratio) *"
+               "             (quitem_price / quitem_price_invuomratio),2) AS extprice,"
+               "       'qty' AS coitem_qtyord_xtnumericrole,"
+               "       'qty' AS qtyshipped_xtnumericrole,"
+               "       'qty' AS balance_xtnumericrole,"
+               "       'qty' AS qtyatshipping_xtnumericrole,"
+               "       'salesprice' AS coitem_price_xtnumericrole,"
+               "       'curr' AS extprice_xtnumericrole "
                "  FROM item, uom AS quom, uom AS puom,"
                "       quitem LEFT OUTER JOIN (itemsite JOIN warehous ON (itemsite_warehous_id=warehous_id)) ON (quitem_itemsite_id=itemsite_id) "
                " WHERE ( (quitem_item_id=item_id)"
@@ -2388,20 +2430,11 @@ void salesOrder::sFillItemList()
                "ORDER BY quitem_linenumber;" );
     q.bindValue(":quhead_id", _soheadid);
     q.exec();
-    XTreeWidgetItem *last = 0;
-    while (q.next())
+    _soitem->populate(q);
+    if (q.lastError().type() != QSqlError::None)
     {
-      last = new XTreeWidgetItem(_soitem, last,
-                         q.value("quitem_id").toInt(), 9,
-                         q.value("quitem_linenumber"), q.value("item_number"),
-                         q.value("description"), q.value("warehous_code"),
-                         "", q.value("f_scheddate"),
-                         q.value("qty_uom"),
-                         q.value("f_ordered"), q.value("f_shipped"),
-                         "", "");
-       last->setText(11, q.value("price_uom"));
-       last->setText(12, q.value("f_unitprice"));
-       last->setText(13, q.value("f_extprice"));
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
     }
   }
 
@@ -2434,29 +2467,29 @@ void salesOrder::sFillItemList()
   }
 
   if (ISORDER(_mode))
-    q.prepare("SELECT formatQty(SUM(COALESCE(coitem_qtyord * coitem_qty_invuomratio, 0.00) *"
-              "                        COALESCE(item_prodweight, 0.00))) AS netweight,"
-              "       formatQty(SUM(COALESCE(coitem_qtyord * coitem_qty_invuomratio, 0.00) *"
-              "                 (COALESCE(item_prodweight, 0.00) +"
-              "                  COALESCE(item_packweight, 0.00)))) AS grossweight "
+    q.prepare("SELECT SUM(COALESCE(coitem_qtyord * coitem_qty_invuomratio, 0.00) *"
+              "           COALESCE(item_prodweight, 0.00)) AS netweight,"
+              "       SUM(COALESCE(coitem_qtyord * coitem_qty_invuomratio, 0.00) *"
+              "           (COALESCE(item_prodweight, 0.00) +"
+              "            COALESCE(item_packweight, 0.00))) AS grossweight "
               "FROM coitem, itemsite, item "
               "WHERE ((coitem_itemsite_id=itemsite_id)"
               " AND (itemsite_item_id=item_id)"
               " AND (coitem_status<>'X')"
          " AND (coitem_cohead_id=:head_id));");
   else if (ISQUOTE(_mode))
-    q.prepare("SELECT formatQty(SUM(COALESCE(quitem_qtyord, 0.00) *"
-              "                 COALESCE(item_prodweight, 0.00))) AS netweight,"
-              "       formatQty(SUM(COALESCE(quitem_qtyord, 0.00) *"
-              "                 (COALESCE(item_prodweight, 0.00) +"
-              "                  COALESCE(item_packweight, 0.00)))) AS grossweight "
+    q.prepare("SELECT SUM(COALESCE(quitem_qtyord, 0.00) *"
+              "           COALESCE(item_prodweight, 0.00)) AS netweight,"
+              "       SUM(COALESCE(quitem_qtyord, 0.00) *"
+              "           (COALESCE(item_prodweight, 0.00) +"
+              "            COALESCE(item_packweight, 0.00))) AS grossweight "
               "  FROM quitem, item "
               " WHERE ( (quitem_item_id=item_id)"
               "   AND   (quitem_quhead_id=:head_id));");
   q.bindValue(":head_id", _soheadid);
   q.exec();
   if (q.first())
-    _weight->setText(q.value("grossweight").toString());
+    _weight->setDouble(q.value("grossweight").toDouble());
   else if (q.lastError().type() != QSqlError::None)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
