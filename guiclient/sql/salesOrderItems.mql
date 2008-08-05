@@ -1,25 +1,93 @@
-SELECT cohead_id AS sohead_id,
-       cohead_number AS sohead_number,
-       cohead_orderdate AS sohead_orderdate,
-       formatDate(cohead_orderdate) AS f_sohead_orderdate,
-       cohead_shiptoname AS sohead_shiptoname,
-       cohead_custponumber AS sohead_custponumber,
+SELECT coitem.*, cohead.*,
        cust_number, cust_name,
-       formatQty(coitem_qtyord) AS f_soitem_qtyord,
-       formatQty(coitem_qtyshipped) AS f_soitem_qtyshipped,
-       formatQty(coitem_qtyreturned) AS f_soitem_qtyreturned,
-       formatQty(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) AS f_soitem_balance
+       item_number, item_descrip1, (item_descrip1 || ' ' || item_descrip2) AS itemdescription,
+       uom_name,
+       warehous_code,
+       ( SELECT MIN(coitem_scheddate)
+           FROM coitem
+          WHERE (coitem_cohead_id=cohead_id) ) AS min_scheddate,
+       ( SELECT SUM(coship_qty)
+           FROM coship JOIN cosmisc ON ( (coship_cosmisc_id=cosmisc_id) AND (NOT cosmisc_shipped) )
+          WHERE (coship_coitem_id=coitem_id) ) AS qtyatshipping,
+       qtyAvailable(itemsite_id, coitem_scheddate) AS qtyavailable,
+       (qtyAvailable(itemsite_id, coitem_scheddate) < 0.0) AS stockout,
+       CASE WHEN (itemsite_useparams) THEN (qtyAvailable(itemsite_id, coitem_scheddate) <= itemsite_reorderlevel)
+            ELSE (qtyAvailable(itemsite_id, coitem_scheddate) <= 0.0)
+       END AS reorder,
+       noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) AS qtybalance,
+       round((coitem_qtyord * coitem_qty_invuomratio) *
+                   (coitem_price / coitem_price_invuomratio), 2) AS amount,
+       round((coitem_qtyord * coitem_qty_invuomratio) *
+                   (currtobase(cohead_curr_id, coitem_price, CURRENT_DATE) / coitem_price_invuomratio), 2) AS baseamount,
+       round((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) *
+                   (coitem_price / coitem_price_invuomratio), 2) AS amtbalance,
+       round((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) *
+                   (currtobase(cohead_curr_id, coitem_price, CURRENT_DATE) / coitem_price_invuomratio), 2) AS baseamtbalance
 FROM coitem JOIN cohead ON (cohead_id=coitem_cohead_id)
             JOIN cust ON (cust_id=cohead_cust_id)
             JOIN itemsite ON (itemsite_id=coitem_itemsite_id)
             JOIN site() ON (warehous_id=itemsite_warehous_id)
+            JOIN item ON (item_id=itemsite_item_id)
+            JOIN uom ON (uom_id=coitem_qty_uom_id)
 WHERE ( (coitem_status<>'X')
-<? if exists("item_id") ?>
-  AND  (itemsite_item_id=<? value("item_id") ?>)
+<? if exists("cohead_id") ?>
+  AND  (coitem_cohead_id=<? value("cohead_id") ?>)
+<? endif ?>
+<? if exists("openOnly") ?>
+  AND  (coitem_status<>'C')
 <? endif ?>
 <? if exists("startDate") ?>
-  AND  (cohead_orderdate BETWEEN <? value("startDate") ?> AND <? value("endDate") ?>)
+  AND  (coitem_scheddate BETWEEN <? value("startDate") ?> AND <? value("endDate") ?>)
+<? endif ?>
+
+<? if exists("salesrep_id") ?>
+  AND  (cohead_salesrep_id=<? value("salesrep_id") ?>)
+<? endif ?>
+<? if exists("shipto_id") ?>
+  AND  (cohead_shipto_id=<? value("shipto_id") ?>)
+<? endif ?>
+<? if exists("cust_id") ?>
+  AND  (cohead_cust_id=<? value("cust_id") ?>)
+<? elseif exists("custtype_id") ?>
+  AND  (cust_custtype_id=<? value("custtype_id") ?>)
+<? elseif exists("custtype_pattern") ?>
+  AND  (cust_custtype_id IN (SELECT DISTINCT custtype_id
+                             FROM custtype
+                             WHERE (custtype_code ~ <? value("custtype_pattern") ?>)))
+<? elseif exists("by_custgrp" ?>
+  AND (cust_id IN (SELECT DISTINCT custgrpitem_cust_id
+                   FROM custgrpitem))
+<? elseif exists("custgrp_id") ?>
+  AND (cust_id IN (SELECT DISTINCT custgrpitem_cust_id
+                   FROM custgrpitem
+                   WHERE (custgrpitem_custgrp_id=<? value("custgrp_id") ?>)))
+<? elseif exists("custgrp_pattern") ?>
+  AND (cust_id IN (SELECT DISTINCT custgrpitem_cust_id
+                   FROM custgrp, custgrpitem
+                   WHERE ( (custgrpitem_custgrp_id=custgrp_id)
+                     AND   (custgrp_name ~ <? value("custgrp_pattern") ?>) )) )
+<? endif ?>
+
+<? if exists("item_id") ?>
+  AND  (itemsite_item_id=<? value("item_id") ?>)
+<? elseif exists("prodcat_id") ?>
+  AND (item_prodcat_id=<? value("prodcat_id") ?>)
+<? elseif exists("prodcat_pattern") ?>
+  AND (item_prodcat_id IN (SELECT DISTINCT prodcat_id
+                           FROM prodcat
+                           WHERE (prodcat_code ~ <? value("prodcat_pattern") ?>)))
+<? endif ?>
+
+<? if exists("warehous_id") ?>
+  AND  (itemsite_warehous_id=<? value("warehous_id") ?>)
 <? endif ?>
       )
-ORDER BY cohead_number;
+<? if exists("orderByScheddate") ?>
+  ORDER BY coitem_scheddate, cohead_number, coitem_linenumber DESC
+<? elseif exists("orderByOrderdate") ?>
+  ORDER BY cohead_orderdate, cohead_number, coitem_linenumber DESC
+<? else ?>
+  ORDER BY cohead_number, coitem_linenumber
+<? endif ?>
+;
 

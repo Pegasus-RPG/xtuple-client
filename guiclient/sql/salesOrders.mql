@@ -1,13 +1,8 @@
-SELECT cohead_id AS sohead_id,
-       cohead_number AS sohead_number,
-       cohead_orderdate AS sohead_orderdate,
-       formatDate(cohead_orderdate) AS f_sohead_orderdate,
-       cohead_shiptoname AS sohead_shiptoname,
-       cohead_custponumber AS sohead_custponumber,
+SELECT cohead.*,
        cust_id, cust_number, cust_name,
-       ( SELECT formatDate(MIN(coitem_scheddate))
+       ( SELECT MIN(coitem_scheddate)
            FROM coitem
-          WHERE (coitem_cohead_id=cohead_id) ) AS f_min_scheddate,
+          WHERE (coitem_cohead_id=cohead_id) ) AS min_scheddate,
        CASE
          WHEN ( (SELECT COUNT(*)
                    FROM coitem

@@ -1,13 +1,8 @@
-SELECT quhead_id,
-       quhead_number,
-       quhead_quotedate,
-       formatDate(quhead_quotedate) AS f_quhead_quotedate,
-       quhead_shiptoname,
-       quhead_custponumber,
+SELECT quhead.*,
        cust_id, cust_number, cust_name,
-       ( SELECT formatDate(MIN(quitem_scheddate))
+       ( SELECT MIN(quitem_scheddate)
            FROM quitem
-          WHERE (quitem_quhead_id=quhead_id) ) AS f_min_scheddate
+          WHERE (quitem_quhead_id=quhead_id) ) AS min_scheddate
 FROM quhead JOIN cust ON (cust_id=quhead_cust_id)
 WHERE ( (1=1)
 <? if exists("cust_id") ?>

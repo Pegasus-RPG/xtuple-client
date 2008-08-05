@@ -1,11 +1,5 @@
-SELECT quhead_id,
-       quhead_number,
-       quhead_quotedate,
-       formatDate(quhead_quotedate) AS f_quhead_quotedate,
-       quhead_shiptoname,
-       quhead_custponumber,
-       cust_number, cust_name,
-       formatQty(quitem_qtyord) AS f_quitem_qtyord
+SELECT quitem.*, quhead.*,
+       cust_number, cust_name
 FROM quitem JOIN quhead ON (quhead_id=quitem_quhead_id)
             JOIN cust ON (cust_id=quhead_cust_id)
             JOIN itemsite ON (itemsite_id=quitem_itemsite_id)
