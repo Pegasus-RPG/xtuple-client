@@ -64,7 +64,7 @@
 
 #include "inputManager.h"
 #include "distributeInventory.h"
-#include "storedprocerrorLookup.h"
+#include "storedProcErrorLookup.h"
 
 correctOperationsPosting::correctOperationsPosting(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
