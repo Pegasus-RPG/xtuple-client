@@ -89,7 +89,7 @@ dspBacklogByItem::dspBacklogByItem(QWidget* parent, const char* name, Qt::WFlags
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 
-  _soitem->addColumn(tr("S/O #"),            _orderColumn,      Qt::AlignRight  );
+  _soitem->addColumn(tr("S/O #"),            _orderColumn,      Qt::AlignLeft   );
   _soitem->addColumn(tr("#"),                _seqColumn,        Qt::AlignCenter );
   _soitem->addColumn(tr("Customer"),         -1,                Qt::AlignLeft   );
   _soitem->addColumn(tr("Ordered"),          _dateColumn,       Qt::AlignCenter );
@@ -99,7 +99,7 @@ dspBacklogByItem::dspBacklogByItem(QWidget* parent, const char* name, Qt::WFlags
   _soitem->addColumn(tr("Shipped"),          _qtyColumn,        Qt::AlignRight  );
   _soitem->addColumn(tr("Balance"),          _qtyColumn,        Qt::AlignRight  );
   if (_privileges->check("ViewCustomerPrices") || _privileges->check("MaintainCustomerPrices"))
-    _soitem->addColumn(tr("Amount (base)"),  _bigMoneyColumn,   Qt::AlignRight  );
+    _soitem->addColumn(tr("Ext. Price"),     _bigMoneyColumn,   Qt::AlignRight  );
 
   _showPrices->setEnabled(_privileges->check("ViewCustomerPrices") || _privileges->check("MaintainCustomerPrices"));
 
@@ -256,8 +256,8 @@ void dspBacklogByItem::sFillList()
 				 formatQty(q.value("coitem_qtyord").toDouble()),
 				 formatQty(q.value("coitem_qtyshipped").toDouble()),
 				 formatQty(q.value("qtybalance").toDouble()),
-				 formatMoney(q.value("baseamtbalance").toDouble()) );
-      totalBacklog += q.value("baseamtbalance").toDouble();
+				 formatMoney(q.value("baseextpricebalance").toDouble()) );
+      totalBacklog += q.value("baseextpricebalance").toDouble();
     }
 
     if (_showPrices->isChecked())

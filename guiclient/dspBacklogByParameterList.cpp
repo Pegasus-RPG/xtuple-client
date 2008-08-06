@@ -89,16 +89,16 @@ dspBacklogByParameterList::dspBacklogByParameterList(QWidget* parent, const char
 
   _soitem->setSelectionMode(QAbstractItemView::ExtendedSelection);
   _soitem->setRootIsDecorated(TRUE);
-  _soitem->addColumn(tr("S/O #/Line #"),         _itemColumn,     Qt::AlignRight  );
+  _soitem->addColumn(tr("S/O #/Line #"),         _itemColumn,     Qt::AlignLeft   );
   _soitem->addColumn(tr("Customer/Item Number"), -1,              Qt::AlignLeft   );
-  _soitem->addColumn(tr("Order"),                _dateColumn,     Qt::AlignRight  );
+  _soitem->addColumn(tr("Order"),                _dateColumn,     Qt::AlignCenter );
   _soitem->addColumn(tr("Ship/Sched."),          _dateColumn,     Qt::AlignCenter );
   _soitem->addColumn(tr("UOM"),                  _uomColumn,      Qt::AlignCenter );
   _soitem->addColumn(tr("Ordered"),              _qtyColumn,      Qt::AlignRight  );
   _soitem->addColumn(tr("Shipped"),              _qtyColumn,      Qt::AlignRight  );
   _soitem->addColumn(tr("Balance"),              _qtyColumn,      Qt::AlignRight  );
   if (_privileges->check("ViewCustomerPrices") || _privileges->check("MaintainCustomerPrices"))
-    _soitem->addColumn(tr("Amount (base)"),      _bigMoneyColumn, Qt::AlignRight  );
+    _soitem->addColumn(tr("Ext. Price"),         _bigMoneyColumn, Qt::AlignRight  );
 
   _showPrices->setEnabled(_privileges->check("ViewCustomerPrices") || _privileges->check("MaintainCustomerPrices"));
 
@@ -420,9 +420,9 @@ void dspBacklogByParameterList::sFillList()
                            q.value("uom_name"), formatQty(q.value("coitem_qtyord").toDouble()),
                            formatQty(q.value("coitem_qtyshipped").toDouble()),
                            formatQty(q.value("qtybalance").toDouble()),
-                           formatMoney(q.value("baseamtbalance").toDouble()) );
+                           formatMoney(q.value("baseextpricebalance").toDouble()) );
 
-        totalBacklog += q.value("baseamtbalance").toDouble();
+        totalBacklog += q.value("baseextpricebalance").toDouble();
       }
       while (q.next());
 

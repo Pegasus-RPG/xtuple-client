@@ -86,16 +86,16 @@ dspEarnedCommissions::dspEarnedCommissions(QWidget* parent, const char* name, Qt
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 
-  _commission->addColumn(tr("Sales Rep."),  100,          Qt::AlignLeft   );
-  _commission->addColumn(tr("S/O #"),       _orderColumn, Qt::AlignRight  );
-  _commission->addColumn(tr("Cust. #"),     _orderColumn, Qt::AlignLeft   );
-  _commission->addColumn(tr("Ship-To"),     -1,           Qt::AlignLeft   );
-  _commission->addColumn(tr("Invc. Date"),  _dateColumn,  Qt::AlignCenter );
-  _commission->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft   );
-  _commission->addColumn(tr("Qty."),        _qtyColumn,   Qt::AlignRight  );
-  _commission->addColumn(tr("Ext. Price"),  _moneyColumn, Qt::AlignRight  );
-  _commission->addColumn(tr("Commission"),  _moneyColumn, Qt::AlignRight  );
-  _commission->addColumn(tr("Paid"),        _ynColumn,    Qt::AlignCenter );
+  _commission->addColumn(tr("Sales Rep."),  100,             Qt::AlignLeft   );
+  _commission->addColumn(tr("S/O #"),       _orderColumn,    Qt::AlignLeft   );
+  _commission->addColumn(tr("Cust. #"),     _orderColumn,    Qt::AlignLeft   );
+  _commission->addColumn(tr("Ship-To"),     -1,              Qt::AlignLeft   );
+  _commission->addColumn(tr("Invc. Date"),  _dateColumn,     Qt::AlignCenter );
+  _commission->addColumn(tr("Item Number"), _itemColumn,     Qt::AlignLeft   );
+  _commission->addColumn(tr("Qty."),        _qtyColumn,      Qt::AlignRight  );
+  _commission->addColumn(tr("Ext. Price"),  _bigMoneyColumn, Qt::AlignRight  );
+  _commission->addColumn(tr("Commission"),  _bigMoneyColumn, Qt::AlignRight  );
+  _commission->addColumn(tr("Paid"),        _ynColumn,       Qt::AlignCenter );
 }
 
 /*
@@ -145,24 +145,16 @@ void dspEarnedCommissions::sFillList()
   if (_dates->allValid())
   {
     QString sql( "SELECT cohist_id, salesrep_name, cohist_ordernumber, cust_number, cohist_shiptoname,"
-                 "       formatDate(cohist_invcdate) AS f_invoicedate,"
-                 "       item_number,"
-                 "       formatQty(cohist_qtyshipped) AS f_shipped,"
-                 "       round(cohist_qtyshipped * cohist_unitprice,2) AS sales,"
-                 "       formatMoney(round(cohist_qtyshipped * cohist_unitprice,2)) AS f_sales,"
+                 "       cohist_invcdate, item_number,"
+                 "       cohist_qtyshipped AS shipped, baseextprice AS sales,"
                  "       cohist_commission AS commission,"
-                 "       formatMoney(cohist_commission) AS f_commission,"
                  "       formatBoolYN(cohist_commissionpaid) AS f_commissionpaid "
-                 "FROM cohist, salesrep, cust, itemsite, item "
-                 "WHERE ( (cohist_cust_id=cust_id)"
-                 " AND (cohist_salesrep_id=salesrep_id)"
-                 " AND (cohist_itemsite_id=itemsite_id)"
-                 " AND (itemsite_item_id=item_id)"
-                 " AND (cohist_commission <> 0)"
-                 " AND (cohist_invcdate BETWEEN :startDate AND :endDate)" );
+                 "FROM saleshistory "
+                 "WHERE ( (cohist_commission <> 0)"
+                 "  AND   (cohist_invcdate BETWEEN :startDate AND :endDate)" );
     
     if (_selectedSalesrep->isChecked())
-      sql += " AND (salesrep_id=:salesrep_id)";
+      sql += " AND (cohist_salesrep_id=:salesrep_id)";
 
     sql +=  ") "
             "ORDER BY salesrep_name, cohist_invcdate";
@@ -184,11 +176,11 @@ void dspEarnedCommissions::sFillList()
 				   q.value("cohist_ordernumber"),
 				   q.value("cust_number"),
 				   q.value("cohist_shiptoname"),
-				   q.value("f_invoicedate"),
+				   formatDate(q.value("cohist_invcdate").toDate()),
 				   q.value("item_number"),
-				   q.value("f_shipped"),
-				   q.value("f_sales"),
-				   q.value("f_commission"),
+				   formatQty(q.value("shipped").toDouble()),
+				   formatMoney(q.value("sales").toDouble()),
+				   formatMoney(q.value("commission").toDouble()),
 				   q.value("f_commissionpaid") );
 
         sales += q.value("sales").toDouble();

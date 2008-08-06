@@ -87,8 +87,8 @@ dspBriefEarnedCommissions::dspBriefEarnedCommissions(QWidget* parent, const char
   _commission->addColumn(tr("Sales Rep."),  _itemColumn,     Qt::AlignLeft   );
   _commission->addColumn(tr("Cust. #"),     _orderColumn,    Qt::AlignLeft   );
   _commission->addColumn(tr("Customer"),    -1,              Qt::AlignLeft   );
-  _commission->addColumn(tr("S/O #"),       _orderColumn,    Qt::AlignRight  );
-  _commission->addColumn(tr("Invoice #"),   _orderColumn,    Qt::AlignRight  );
+  _commission->addColumn(tr("S/O #"),       _orderColumn,    Qt::AlignLeft   );
+  _commission->addColumn(tr("Invoice #"),   _orderColumn,    Qt::AlignLeft   );
   _commission->addColumn(tr("Invc. Date"),  _dateColumn,     Qt::AlignCenter );
   _commission->addColumn(tr("Ext. Price"),  _bigMoneyColumn, Qt::AlignRight  );
   _commission->addColumn(tr("Commission"),  _bigMoneyColumn, Qt::AlignRight  );
@@ -138,21 +138,19 @@ void dspBriefEarnedCommissions::sFillList()
 {
   if (_dates->allValid())
   {
-    QString sql( "SELECT salesrep_id, salesrep_number, salesrep_name, cust_number, cust_name,"
+    QString sql( "SELECT cohist_salesrep_id, salesrep_number, salesrep_name, cust_number, cust_name,"
                  "       cohist_ordernumber, cohist_invcnumber, formatDate(cohist_invcdate),"
-                 "       formatMoney(SUM(round(cohist_qtyshipped * cohist_unitprice,2))),"
+                 "       formatMoney(SUM(baseextprice)),"
                  "       formatMoney(SUM(cohist_commission)) "
-                 "FROM cohist, salesrep, cust "
-                 "WHERE ( (cohist_cust_id=cust_id)"
-                 " AND (cohist_salesrep_id=salesrep_id)"
-                 " AND (cohist_commission <> 0) "
-                 " AND (cohist_invcdate BETWEEN :startDate AND :endDate)" );
+                 "FROM saleshistory "
+                 "WHERE ( (cohist_commission <> 0) "
+                 "  AND   (cohist_invcdate BETWEEN :startDate AND :endDate)" );
 
     if (_selectedSalesrep->isChecked())
-      sql += " AND (salesrep_id=:salesrep_id)";
+      sql += " AND (cohist_salesrep_id=:salesrep_id)";
 
     sql += ") "
-           "GROUP BY salesrep_id, salesrep_number, salesrep_name, cust_number, cust_name,"
+           "GROUP BY cohist_salesrep_id, salesrep_number, salesrep_name, cust_number, cust_name,"
            "         cohist_ordernumber, cohist_invcnumber, cohist_invcdate "
            "ORDER BY salesrep_number, cust_number, cohist_invcdate";
 
@@ -162,9 +160,9 @@ void dspBriefEarnedCommissions::sFillList()
     q.exec();
     _commission->populate(q);
 
-    sql = "SELECT formatMoney(SUM(round(cohist_qtyshipped * cohist_unitprice,2))) AS extprice,"
+    sql = "SELECT formatMoney(SUM(baseextprice)) AS extprice,"
            "      formatMoney(SUM(cohist_commission)) AS commission "
-           "FROM cohist "
+           "FROM saleshistory "
            "WHERE ( (cohist_commission <> 0)"
            " AND (cohist_invcdate BETWEEN :startDate AND :endDate)";
 
