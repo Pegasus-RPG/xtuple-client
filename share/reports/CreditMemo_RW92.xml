@@ -324,7 +324,7 @@ ORDER BY cmhead_number;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>Arial Baltic</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>normal</weight>
    </font>
@@ -389,7 +389,7 @@ ORDER BY cmhead_number;</sql>
      <height>20</height>
     </rect>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>
@@ -503,7 +503,7 @@ ORDER BY cmhead_number;</sql>
      <height>20</height>
     </rect>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>
@@ -566,7 +566,7 @@ ORDER BY cmhead_number;</sql>
    </rect>
    <bottompad>15</bottompad>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>

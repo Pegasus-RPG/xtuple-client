@@ -374,7 +374,7 @@ WHERE (quhead_id=&lt;? value(&quot;quhead_id&quot;) ?>);</sql>
     <height>17</height>
    </rect>
    <font>
-    <face>Helvetica</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>normal</weight>
    </font>
@@ -911,7 +911,7 @@ WHERE (quhead_id=&lt;? value(&quot;quhead_id&quot;) ?>);</sql>
      <height>20</height>
     </rect>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>
@@ -949,7 +949,7 @@ WHERE (quhead_id=&lt;? value(&quot;quhead_id&quot;) ?>);</sql>
      <height>20</height>
     </rect>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>
@@ -1215,7 +1215,7 @@ WHERE (quhead_id=&lt;? value(&quot;quhead_id&quot;) ?>);</sql>
    </rect>
    <bottompad>15</bottompad>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -1320,7 +1320,7 @@ WHERE (quhead_id=&lt;? value(&quot;quhead_id&quot;) ?>);</sql>
     <height>17</height>
    </rect>
    <font>
-    <face>Helvetica</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>normal</weight>
    </font>

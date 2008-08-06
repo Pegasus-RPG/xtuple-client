@@ -186,7 +186,7 @@ ORDER BY coitem_linenumber;
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -247,7 +247,7 @@ ORDER BY coitem_linenumber;
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -296,7 +296,7 @@ ORDER BY coitem_linenumber;
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -315,7 +315,7 @@ ORDER BY coitem_linenumber;
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -485,7 +485,7 @@ ORDER BY coitem_linenumber;
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -815,7 +815,7 @@ ORDER BY coitem_linenumber;
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -890,7 +890,7 @@ ORDER BY coitem_linenumber;
      <height>15</height>
     </rect>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>8</size>
      <weight>normal</weight>
     </font>
@@ -947,7 +947,7 @@ ORDER BY coitem_linenumber;
      <height>15</height>
     </rect>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>8</size>
      <weight>normal</weight>
     </font>

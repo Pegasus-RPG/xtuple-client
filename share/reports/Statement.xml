@@ -114,7 +114,7 @@ WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
     <height>17</height>
    </rect>
    <font>
-    <face>Helvetica</face>
+    <face>Arial</face>
     <size>8</size>
     <weight>bold</weight>
    </font>
@@ -170,7 +170,7 @@ WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
     <height>17</height>
    </rect>
    <font>
-    <face>Helvetica</face>
+    <face>Arial</face>
     <size>6</size>
     <weight>bold</weight>
    </font>
@@ -231,7 +231,7 @@ WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
     <height>17</height>
    </rect>
    <font>
-    <face>Helvetica</face>
+    <face>Arial</face>
     <size>8</size>
     <weight>bold</weight>
    </font>
@@ -247,7 +247,7 @@ WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
     <height>17</height>
    </rect>
    <font>
-    <face>Helvetica</face>
+    <face>Arial</face>
     <size>8</size>
     <weight>bold</weight>
    </font>
@@ -324,7 +324,7 @@ WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
     <height>17</height>
    </rect>
    <font>
-    <face>Helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>bold</weight>
    </font>
@@ -361,7 +361,7 @@ WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
     <height>17</height>
    </rect>
    <font>
-    <face>Helvetica</face>
+    <face>Arial</face>
     <size>8</size>
     <weight>bold</weight>
    </font>
@@ -396,7 +396,7 @@ WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
     <height>17</height>
    </rect>
    <font>
-    <face>Helvetica</face>
+    <face>Arial</face>
     <size>8</size>
     <weight>bold</weight>
    </font>
@@ -412,7 +412,7 @@ WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
     <height>17</height>
    </rect>
    <font>
-    <face>Helvetica</face>
+    <face>Arial</face>
     <size>8</size>
     <weight>bold</weight>
    </font>
@@ -428,7 +428,7 @@ WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
     <height>15</height>
    </rect>
    <font>
-    <face>Helvetica</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>normal</weight>
    </font>
@@ -447,7 +447,7 @@ WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
     <height>17</height>
    </rect>
    <font>
-    <face>Helvetica</face>
+    <face>Arial</face>
     <size>8</size>
     <weight>bold</weight>
    </font>
@@ -482,7 +482,7 @@ WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
      <height>15</height>
     </rect>
     <font>
-     <face>Helvetica</face>
+     <face>Arial</face>
      <size>11</size>
      <weight>normal</weight>
     </font>
@@ -501,7 +501,7 @@ WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
      <height>15</height>
     </rect>
     <font>
-     <face>Helvetica</face>
+     <face>Arial</face>
      <size>11</size>
      <weight>normal</weight>
     </font>
@@ -520,7 +520,7 @@ WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
      <height>15</height>
     </rect>
     <font>
-     <face>Helvetica</face>
+     <face>Arial</face>
      <size>11</size>
      <weight>normal</weight>
     </font>
@@ -539,7 +539,7 @@ WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
      <height>15</height>
     </rect>
     <font>
-     <face>Helvetica</face>
+     <face>Arial</face>
      <size>11</size>
      <weight>normal</weight>
     </font>
@@ -558,7 +558,7 @@ WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
      <height>15</height>
     </rect>
     <font>
-     <face>Helvetica</face>
+     <face>Arial</face>
      <size>11</size>
      <weight>normal</weight>
     </font>
@@ -577,7 +577,7 @@ WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
      <height>15</height>
     </rect>
     <font>
-     <face>Helvetica</face>
+     <face>Arial</face>
      <size>11</size>
      <weight>normal</weight>
     </font>
@@ -596,7 +596,7 @@ WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
      <height>15</height>
     </rect>
     <font>
-     <face>Helvetica</face>
+     <face>Arial</face>
      <size>12</size>
      <weight>normal</weight>
     </font>
@@ -620,7 +620,7 @@ WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>Helvetica</face>
+    <face>Arial</face>
     <size>11</size>
     <weight>normal</weight>
    </font>
@@ -646,7 +646,7 @@ WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
     <height>17</height>
    </rect>
    <font>
-    <face>Helvetica</face>
+    <face>Arial</face>
     <size>8</size>
     <weight>bold</weight>
    </font>
@@ -662,7 +662,7 @@ WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
     <height>17</height>
    </rect>
    <font>
-    <face>Helvetica</face>
+    <face>Arial</face>
     <size>6</size>
     <weight>bold</weight>
    </font>
@@ -678,7 +678,7 @@ WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>Helvetica</face>
+    <face>Arial</face>
     <size>11</size>
     <weight>normal</weight>
    </font>
@@ -704,7 +704,7 @@ WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
     <height>17</height>
    </rect>
    <font>
-    <face>Helvetica</face>
+    <face>Arial</face>
     <size>6</size>
     <weight>bold</weight>
    </font>
@@ -720,7 +720,7 @@ WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>Helvetica</face>
+    <face>Arial</face>
     <size>11</size>
     <weight>normal</weight>
    </font>
@@ -739,7 +739,7 @@ WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
     <height>17</height>
    </rect>
    <font>
-    <face>Helvetica</face>
+    <face>Arial</face>
     <size>6</size>
     <weight>bold</weight>
    </font>
@@ -783,7 +783,7 @@ WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
     <height>17</height>
    </rect>
    <font>
-    <face>Helvetica</face>
+    <face>Arial</face>
     <size>6</size>
     <weight>bold</weight>
    </font>
@@ -799,7 +799,7 @@ WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
     <height>17</height>
    </rect>
    <font>
-    <face>Helvetica</face>
+    <face>Arial</face>
     <size>6</size>
     <weight>bold</weight>
    </font>
@@ -815,7 +815,7 @@ WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>Helvetica</face>
+    <face>Arial</face>
     <size>11</size>
     <weight>normal</weight>
    </font>
@@ -834,7 +834,7 @@ WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
     <height>15</height>
    </rect>
    <font>
-    <face>Helvetica</face>
+    <face>Arial</face>
     <size>11</size>
     <weight>normal</weight>
    </font>
@@ -854,7 +854,7 @@ WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>Helvetica</face>
+    <face>Arial</face>
     <size>11</size>
     <weight>normal</weight>
    </font>

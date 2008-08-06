@@ -97,7 +97,7 @@ order by wo_number, womatl_id, item_number, itemloc_expiration, location_name;</
     <height>40</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -116,7 +116,7 @@ order by wo_number, womatl_id, item_number, itemloc_expiration, location_name;</
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -135,7 +135,7 @@ order by wo_number, womatl_id, item_number, itemloc_expiration, location_name;</
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -151,7 +151,7 @@ order by wo_number, womatl_id, item_number, itemloc_expiration, location_name;</
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -167,7 +167,7 @@ order by wo_number, womatl_id, item_number, itemloc_expiration, location_name;</
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -186,7 +186,7 @@ order by wo_number, womatl_id, item_number, itemloc_expiration, location_name;</
     <height>40</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -202,7 +202,7 @@ order by wo_number, womatl_id, item_number, itemloc_expiration, location_name;</
     <height>17</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -221,7 +221,7 @@ order by wo_number, womatl_id, item_number, itemloc_expiration, location_name;</
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -240,7 +240,7 @@ order by wo_number, womatl_id, item_number, itemloc_expiration, location_name;</
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -259,7 +259,7 @@ order by wo_number, womatl_id, item_number, itemloc_expiration, location_name;</
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -278,7 +278,7 @@ order by wo_number, womatl_id, item_number, itemloc_expiration, location_name;</
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -297,7 +297,7 @@ order by wo_number, womatl_id, item_number, itemloc_expiration, location_name;</
     <height>17</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -316,7 +316,7 @@ order by wo_number, womatl_id, item_number, itemloc_expiration, location_name;</
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -332,7 +332,7 @@ order by wo_number, womatl_id, item_number, itemloc_expiration, location_name;</
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -351,7 +351,7 @@ order by wo_number, womatl_id, item_number, itemloc_expiration, location_name;</
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -367,7 +367,7 @@ order by wo_number, womatl_id, item_number, itemloc_expiration, location_name;</
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -383,7 +383,7 @@ order by wo_number, womatl_id, item_number, itemloc_expiration, location_name;</
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -399,7 +399,7 @@ order by wo_number, womatl_id, item_number, itemloc_expiration, location_name;</
     <height>40</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>20</size>
     <weight>bold</weight>
    </font>
@@ -415,7 +415,7 @@ order by wo_number, womatl_id, item_number, itemloc_expiration, location_name;</
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -446,7 +446,7 @@ order by wo_number, womatl_id, item_number, itemloc_expiration, location_name;</
       <height>20</height>
      </rect>
      <font>
-      <face>helvetica</face>
+      <face>Arial</face>
       <size>10</size>
       <weight>normal</weight>
      </font>
@@ -465,7 +465,7 @@ order by wo_number, womatl_id, item_number, itemloc_expiration, location_name;</
       <height>20</height>
      </rect>
      <font>
-      <face>helvetica</face>
+      <face>Arial</face>
       <size>10</size>
       <weight>normal</weight>
      </font>
@@ -484,7 +484,7 @@ order by wo_number, womatl_id, item_number, itemloc_expiration, location_name;</
       <height>20</height>
      </rect>
      <font>
-      <face>helvetica</face>
+      <face>Arial</face>
       <size>10</size>
       <weight>bold</weight>
      </font>
@@ -500,7 +500,7 @@ order by wo_number, womatl_id, item_number, itemloc_expiration, location_name;</
       <height>20</height>
      </rect>
      <font>
-      <face>helvetica</face>
+      <face>Arial</face>
       <size>10</size>
       <weight>bold</weight>
      </font>
@@ -516,7 +516,7 @@ order by wo_number, womatl_id, item_number, itemloc_expiration, location_name;</
       <height>20</height>
      </rect>
      <font>
-      <face>helvetica</face>
+      <face>Arial</face>
       <size>10</size>
       <weight>bold</weight>
      </font>
@@ -539,7 +539,7 @@ order by wo_number, womatl_id, item_number, itemloc_expiration, location_name;</
       <height>20</height>
      </rect>
      <font>
-      <face>helvetica</face>
+      <face>Arial</face>
       <size>10</size>
       <weight>bold</weight>
      </font>
@@ -555,7 +555,7 @@ order by wo_number, womatl_id, item_number, itemloc_expiration, location_name;</
       <height>20</height>
      </rect>
      <font>
-      <face>helvetica</face>
+      <face>Arial</face>
       <size>10</size>
       <weight>normal</weight>
      </font>
@@ -574,7 +574,7 @@ order by wo_number, womatl_id, item_number, itemloc_expiration, location_name;</
       <height>20</height>
      </rect>
      <font>
-      <face>helvetica</face>
+      <face>Arial</face>
       <size>10</size>
       <weight>bold</weight>
      </font>
@@ -590,7 +590,7 @@ order by wo_number, womatl_id, item_number, itemloc_expiration, location_name;</
       <height>20</height>
      </rect>
      <font>
-      <face>helvetica</face>
+      <face>Arial</face>
       <size>10</size>
       <weight>normal</weight>
      </font>
@@ -632,7 +632,7 @@ order by wo_number, womatl_id, item_number, itemloc_expiration, location_name;</
       <height>20</height>
      </rect>
      <font>
-      <face>helvetica</face>
+      <face>Arial</face>
       <size>10</size>
       <weight>bold</weight>
      </font>
@@ -648,7 +648,7 @@ order by wo_number, womatl_id, item_number, itemloc_expiration, location_name;</
       <height>20</height>
      </rect>
      <font>
-      <face>Helvetica</face>
+      <face>Arial</face>
       <size>10</size>
       <weight>bold</weight>
      </font>
@@ -667,7 +667,7 @@ order by wo_number, womatl_id, item_number, itemloc_expiration, location_name;</
       <height>14</height>
      </rect>
      <font>
-      <face>Helvetica</face>
+      <face>Arial</face>
       <size>8</size>
       <weight>normal</weight>
      </font>
@@ -705,7 +705,7 @@ order by wo_number, womatl_id, item_number, itemloc_expiration, location_name;</
       <height>20</height>
      </rect>
      <font>
-      <face>Helvetica</face>
+      <face>Arial</face>
       <size>10</size>
       <weight>normal</weight>
      </font>
@@ -737,7 +737,7 @@ order by wo_number, womatl_id, item_number, itemloc_expiration, location_name;</
       <height>14</height>
      </rect>
      <font>
-      <face>helvetica</face>
+      <face>Arial</face>
       <size>8</size>
       <weight>bold</weight>
      </font>
@@ -753,7 +753,7 @@ order by wo_number, womatl_id, item_number, itemloc_expiration, location_name;</
       <height>20</height>
      </rect>
      <font>
-      <face>helvetica</face>
+      <face>Arial</face>
       <size>10</size>
       <weight>normal</weight>
      </font>
@@ -772,7 +772,7 @@ order by wo_number, womatl_id, item_number, itemloc_expiration, location_name;</
       <height>14</height>
      </rect>
      <font>
-      <face>helvetica</face>
+      <face>Arial</face>
       <size>8</size>
       <weight>normal</weight>
      </font>
@@ -791,7 +791,7 @@ order by wo_number, womatl_id, item_number, itemloc_expiration, location_name;</
       <height>20</height>
      </rect>
      <font>
-      <face>helvetica</face>
+      <face>Arial</face>
       <size>10</size>
       <weight>bold</weight>
      </font>
@@ -807,7 +807,7 @@ order by wo_number, womatl_id, item_number, itemloc_expiration, location_name;</
       <height>20</height>
      </rect>
      <font>
-      <face>helvetica</face>
+      <face>Arial</face>
       <size>10</size>
       <weight>normal</weight>
      </font>
@@ -898,7 +898,7 @@ order by wo_number, womatl_id, item_number, itemloc_expiration, location_name;</
       <height>20</height>
      </rect>
      <font>
-      <face>helvetica</face>
+      <face>Arial</face>
       <size>10</size>
       <weight>normal</weight>
      </font>
@@ -917,7 +917,7 @@ order by wo_number, womatl_id, item_number, itemloc_expiration, location_name;</
       <height>20</height>
      </rect>
      <font>
-      <face>helvetica</face>
+      <face>Arial</face>
       <size>10</size>
       <weight>normal</weight>
      </font>
@@ -979,7 +979,7 @@ order by wo_number, womatl_id, item_number, itemloc_expiration, location_name;</
      <height>20</height>
     </rect>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>
@@ -998,7 +998,7 @@ order by wo_number, womatl_id, item_number, itemloc_expiration, location_name;</
      <height>20</height>
     </rect>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>
@@ -1043,7 +1043,7 @@ order by wo_number, womatl_id, item_number, itemloc_expiration, location_name;</
      <height>20</height>
     </rect>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>
@@ -1067,7 +1067,7 @@ order by wo_number, womatl_id, item_number, itemloc_expiration, location_name;</
    </rect>
    <bottompad>0</bottompad>
    <font>
-    <face>Luciduxsans</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>48</weight>
    </font>
@@ -1086,7 +1086,7 @@ order by wo_number, womatl_id, item_number, itemloc_expiration, location_name;</
     <height>22</height>
    </rect>
    <font>
-    <face>Luciduxsans</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>48</weight>
    </font>

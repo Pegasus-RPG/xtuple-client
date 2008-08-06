@@ -216,7 +216,7 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>bold</weight>
    </font>
@@ -247,7 +247,7 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -266,7 +266,7 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -285,7 +285,7 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -327,7 +327,7 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>Helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -346,7 +346,7 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>bold</weight>
    </font>
@@ -381,7 +381,7 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -397,7 +397,7 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>bold</weight>
    </font>
@@ -413,7 +413,7 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -429,7 +429,7 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -467,7 +467,7 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
     <height>15</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>8</size>
     <weight>bold</weight>
    </font>
@@ -483,7 +483,7 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -499,7 +499,7 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -518,7 +518,7 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -534,7 +534,7 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -566,7 +566,7 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -636,7 +636,7 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -655,7 +655,7 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
     <height>50</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>20</size>
     <weight>bold</weight>
    </font>
@@ -671,7 +671,7 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>bold</weight>
    </font>
@@ -687,7 +687,7 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -722,7 +722,7 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>bold</weight>
    </font>
@@ -738,7 +738,7 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -788,7 +788,7 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -804,7 +804,7 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>bold</weight>
    </font>
@@ -863,7 +863,7 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>Helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -891,7 +891,7 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
      </rect>
      <bottompad>14</bottompad>
      <font>
-      <face>helvetica</face>
+      <face>Arial</face>
       <size>10</size>
       <weight>normal</weight>
      </font>
@@ -911,7 +911,7 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
      </rect>
      <bottompad>14</bottompad>
      <font>
-      <face>helvetica</face>
+      <face>Arial</face>
       <size>10</size>
       <weight>normal</weight>
      </font>
@@ -958,7 +958,7 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
      </rect>
      <bottompad>14</bottompad>
      <font>
-      <face>helvetica</face>
+      <face>Arial</face>
       <size>10</size>
       <weight>normal</weight>
      </font>
@@ -1023,7 +1023,7 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
       <height>20</height>
      </rect>
      <font>
-      <face>helvetica</face>
+      <face>Arial</face>
       <size>10</size>
       <weight>normal</weight>
      </font>
@@ -1064,7 +1064,7 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
       <height>20</height>
      </rect>
      <font>
-      <face>helvetica</face>
+      <face>Arial</face>
       <size>10</size>
       <weight>normal</weight>
      </font>
@@ -1102,7 +1102,7 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
       <height>20</height>
      </rect>
      <font>
-      <face>helvetica</face>
+      <face>Arial</face>
       <size>10</size>
       <weight>normal</weight>
      </font>
@@ -1156,7 +1156,7 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
       <height>17</height>
      </rect>
      <font>
-      <face>helvetica</face>
+      <face>Arial</face>
       <size>10</size>
       <weight>normal</weight>
      </font>
@@ -1192,7 +1192,7 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
      </rect>
      <bottompad>14</bottompad>
      <font>
-      <face>helvetica</face>
+      <face>Arial</face>
       <size>10</size>
       <weight>normal</weight>
      </font>
@@ -1247,7 +1247,7 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
     </rect>
     <bottompad>14</bottompad>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>

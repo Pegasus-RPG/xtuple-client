@@ -108,7 +108,7 @@ WHERE ((gltrans_amount > 0)
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>bold</weight>
    </font>
@@ -124,7 +124,7 @@ WHERE ((gltrans_amount > 0)
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>bold</weight>
    </font>
@@ -147,7 +147,7 @@ WHERE ((gltrans_amount > 0)
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>bold</weight>
    </font>
@@ -163,7 +163,7 @@ WHERE ((gltrans_amount > 0)
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>bold</weight>
    </font>
@@ -195,7 +195,7 @@ WHERE ((gltrans_amount > 0)
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>bold</weight>
    </font>
@@ -211,7 +211,7 @@ WHERE ((gltrans_amount > 0)
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>bold</weight>
    </font>
@@ -235,7 +235,7 @@ WHERE ((gltrans_amount > 0)
       <height>20</height>
      </rect>
      <font>
-      <face>helvetica</face>
+      <face>Arial</face>
       <size>10</size>
       <weight>normal</weight>
      </font>
@@ -254,7 +254,7 @@ WHERE ((gltrans_amount > 0)
       <height>20</height>
      </rect>
      <font>
-      <face>helvetica</face>
+      <face>Arial</face>
       <size>10</size>
       <weight>normal</weight>
      </font>
@@ -273,7 +273,7 @@ WHERE ((gltrans_amount > 0)
       <height>20</height>
      </rect>
      <font>
-      <face>helvetica</face>
+      <face>Arial</face>
       <size>10</size>
       <weight>normal</weight>
      </font>
@@ -292,7 +292,7 @@ WHERE ((gltrans_amount > 0)
       <height>20</height>
      </rect>
      <font>
-      <face>helvetica</face>
+      <face>Arial</face>
       <size>10</size>
       <weight>normal</weight>
      </font>
@@ -311,7 +311,7 @@ WHERE ((gltrans_amount > 0)
       <height>20</height>
      </rect>
      <font>
-      <face>helvetica</face>
+      <face>Arial</face>
       <size>10</size>
       <weight>normal</weight>
      </font>
@@ -330,7 +330,7 @@ WHERE ((gltrans_amount > 0)
       <height>20</height>
      </rect>
      <font>
-      <face>helvetica</face>
+      <face>Arial</face>
       <size>10</size>
       <weight>normal</weight>
      </font>
@@ -349,7 +349,7 @@ WHERE ((gltrans_amount > 0)
       <height>20</height>
      </rect>
      <font>
-      <face>helvetica</face>
+      <face>Arial</face>
       <size>10</size>
       <weight>normal</weight>
      </font>
@@ -378,7 +378,7 @@ WHERE ((gltrans_amount > 0)
      <height>20</height>
     </rect>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>
@@ -397,7 +397,7 @@ WHERE ((gltrans_amount > 0)
      <height>20</height>
     </rect>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>
@@ -416,7 +416,7 @@ WHERE ((gltrans_amount > 0)
      <height>20</height>
     </rect>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>
@@ -435,7 +435,7 @@ WHERE ((gltrans_amount > 0)
      <height>20</height>
     </rect>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>
@@ -463,7 +463,7 @@ WHERE ((gltrans_amount > 0)
       <height>20</height>
      </rect>
      <font>
-      <face>helvetica</face>
+      <face>Arial</face>
       <size>10</size>
       <weight>normal</weight>
      </font>
@@ -482,7 +482,7 @@ WHERE ((gltrans_amount > 0)
       <height>20</height>
      </rect>
      <font>
-      <face>helvetica</face>
+      <face>Arial</face>
       <size>12</size>
       <weight>bold</weight>
      </font>
@@ -498,7 +498,7 @@ WHERE ((gltrans_amount > 0)
       <height>20</height>
      </rect>
      <font>
-      <face>helvetica</face>
+      <face>Arial</face>
       <size>10</size>
       <weight>normal</weight>
      </font>
@@ -517,7 +517,7 @@ WHERE ((gltrans_amount > 0)
       <height>20</height>
      </rect>
      <font>
-      <face>helvetica</face>
+      <face>Arial</face>
       <size>10</size>
       <weight>bold</weight>
      </font>
@@ -533,7 +533,7 @@ WHERE ((gltrans_amount > 0)
       <height>20</height>
      </rect>
      <font>
-      <face>helvetica</face>
+      <face>Arial</face>
       <size>10</size>
       <weight>bold</weight>
      </font>
@@ -559,7 +559,7 @@ WHERE ((gltrans_amount > 0)
      <height>20</height>
     </rect>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>
@@ -578,7 +578,7 @@ WHERE ((gltrans_amount > 0)
      <height>20</height>
     </rect>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>
@@ -597,7 +597,7 @@ WHERE ((gltrans_amount > 0)
      <height>20</height>
     </rect>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>
@@ -616,7 +616,7 @@ WHERE ((gltrans_amount > 0)
      <height>20</height>
     </rect>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>
@@ -712,7 +712,7 @@ WHERE ((gltrans_amount > 0)
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>bold</weight>
    </font>
@@ -728,7 +728,7 @@ WHERE ((gltrans_amount > 0)
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -747,7 +747,7 @@ WHERE ((gltrans_amount > 0)
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>

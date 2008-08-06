@@ -87,7 +87,7 @@ FROM ( SELECT ( cobmisc_freight + cobmisc_misc + cobmisc_tax +
     <height>20</height>
    </rect>
    <font>
-    <face>Luciduxsans</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>48</weight>
    </font>
@@ -106,7 +106,7 @@ FROM ( SELECT ( cobmisc_freight + cobmisc_misc + cobmisc_tax +
     <height>20</height>
    </rect>
    <font>
-    <face>Luciduxsans</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>48</weight>
    </font>
@@ -125,7 +125,7 @@ FROM ( SELECT ( cobmisc_freight + cobmisc_misc + cobmisc_tax +
     <height>20</height>
    </rect>
    <font>
-    <face>Luciduxsans</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>48</weight>
    </font>
@@ -144,7 +144,7 @@ FROM ( SELECT ( cobmisc_freight + cobmisc_misc + cobmisc_tax +
     <height>20</height>
    </rect>
    <font>
-    <face>Luciduxsans</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>48</weight>
    </font>
@@ -163,7 +163,7 @@ FROM ( SELECT ( cobmisc_freight + cobmisc_misc + cobmisc_tax +
     <height>20</height>
    </rect>
    <font>
-    <face>Luciduxsans</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>48</weight>
    </font>
@@ -182,7 +182,7 @@ FROM ( SELECT ( cobmisc_freight + cobmisc_misc + cobmisc_tax +
     <height>20</height>
    </rect>
    <font>
-    <face>Luciduxsans</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>48</weight>
    </font>
@@ -201,7 +201,7 @@ FROM ( SELECT ( cobmisc_freight + cobmisc_misc + cobmisc_tax +
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>normal</weight>
    </font>
@@ -220,7 +220,7 @@ FROM ( SELECT ( cobmisc_freight + cobmisc_misc + cobmisc_tax +
     <height>20</height>
    </rect>
    <font>
-    <face>Luciduxsans</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>48</weight>
    </font>
@@ -239,7 +239,7 @@ FROM ( SELECT ( cobmisc_freight + cobmisc_misc + cobmisc_tax +
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>normal</weight>
    </font>
@@ -258,7 +258,7 @@ FROM ( SELECT ( cobmisc_freight + cobmisc_misc + cobmisc_tax +
     <height>20</height>
    </rect>
    <font>
-    <face>Luciduxsans</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>48</weight>
    </font>
@@ -277,7 +277,7 @@ FROM ( SELECT ( cobmisc_freight + cobmisc_misc + cobmisc_tax +
     <height>20</height>
    </rect>
    <font>
-    <face>Luciduxsans</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>48</weight>
    </font>
@@ -296,7 +296,7 @@ FROM ( SELECT ( cobmisc_freight + cobmisc_misc + cobmisc_tax +
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>normal</weight>
    </font>
@@ -315,7 +315,7 @@ FROM ( SELECT ( cobmisc_freight + cobmisc_misc + cobmisc_tax +
     <height>20</height>
    </rect>
    <font>
-    <face>Luciduxsans</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>48</weight>
    </font>
@@ -334,7 +334,7 @@ FROM ( SELECT ( cobmisc_freight + cobmisc_misc + cobmisc_tax +
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>normal</weight>
    </font>
@@ -353,7 +353,7 @@ FROM ( SELECT ( cobmisc_freight + cobmisc_misc + cobmisc_tax +
     <height>20</height>
    </rect>
    <font>
-    <face>Abadi Mt Condensed Light</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>bold</weight>
    </font>
@@ -372,7 +372,7 @@ FROM ( SELECT ( cobmisc_freight + cobmisc_misc + cobmisc_tax +
     <height>20</height>
    </rect>
    <font>
-    <face>Luciduxsans</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>48</weight>
    </font>
@@ -391,7 +391,7 @@ FROM ( SELECT ( cobmisc_freight + cobmisc_misc + cobmisc_tax +
     <height>20</height>
    </rect>
    <font>
-    <face>Luciduxsans</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>48</weight>
    </font>
@@ -410,7 +410,7 @@ FROM ( SELECT ( cobmisc_freight + cobmisc_misc + cobmisc_tax +
     <height>20</height>
    </rect>
    <font>
-    <face>Luciduxsans</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>48</weight>
    </font>
@@ -429,7 +429,7 @@ FROM ( SELECT ( cobmisc_freight + cobmisc_misc + cobmisc_tax +
     <height>20</height>
    </rect>
    <font>
-    <face>Luciduxsans</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>48</weight>
    </font>
@@ -456,7 +456,7 @@ FROM ( SELECT ( cobmisc_freight + cobmisc_misc + cobmisc_tax +
      <height>19</height>
     </rect>
     <font>
-     <face>Abadi Mt Condensed Extra Bold</face>
+     <face>Arial</face>
      <size>9</size>
      <weight>87</weight>
     </font>
@@ -475,7 +475,7 @@ FROM ( SELECT ( cobmisc_freight + cobmisc_misc + cobmisc_tax +
      <height>20</height>
     </rect>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>
@@ -494,7 +494,7 @@ FROM ( SELECT ( cobmisc_freight + cobmisc_misc + cobmisc_tax +
      <height>20</height>
     </rect>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>
@@ -513,7 +513,7 @@ FROM ( SELECT ( cobmisc_freight + cobmisc_misc + cobmisc_tax +
      <height>20</height>
     </rect>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>
@@ -532,7 +532,7 @@ FROM ( SELECT ( cobmisc_freight + cobmisc_misc + cobmisc_tax +
      <height>20</height>
     </rect>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>
@@ -551,7 +551,7 @@ FROM ( SELECT ( cobmisc_freight + cobmisc_misc + cobmisc_tax +
      <height>20</height>
     </rect>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>
@@ -570,7 +570,7 @@ FROM ( SELECT ( cobmisc_freight + cobmisc_misc + cobmisc_tax +
      <height>20</height>
     </rect>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>
@@ -589,7 +589,7 @@ FROM ( SELECT ( cobmisc_freight + cobmisc_misc + cobmisc_tax +
      <height>20</height>
     </rect>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>
@@ -608,7 +608,7 @@ FROM ( SELECT ( cobmisc_freight + cobmisc_misc + cobmisc_tax +
      <height>19</height>
     </rect>
     <font>
-     <face>Abadi Mt Condensed Extra Bold</face>
+     <face>Arial</face>
      <size>9</size>
      <weight>87</weight>
     </font>
@@ -632,7 +632,7 @@ FROM ( SELECT ( cobmisc_freight + cobmisc_misc + cobmisc_tax +
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -651,7 +651,7 @@ FROM ( SELECT ( cobmisc_freight + cobmisc_misc + cobmisc_tax +
     <height>15</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -671,7 +671,7 @@ FROM ( SELECT ( cobmisc_freight + cobmisc_misc + cobmisc_tax +
    </rect>
    <bottompad>15</bottompad>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -690,7 +690,7 @@ FROM ( SELECT ( cobmisc_freight + cobmisc_misc + cobmisc_tax +
     <height>15</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -709,7 +709,7 @@ FROM ( SELECT ( cobmisc_freight + cobmisc_misc + cobmisc_tax +
     <height>15</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -728,7 +728,7 @@ FROM ( SELECT ( cobmisc_freight + cobmisc_misc + cobmisc_tax +
     <height>15</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -747,7 +747,7 @@ FROM ( SELECT ( cobmisc_freight + cobmisc_misc + cobmisc_tax +
     <height>15</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -766,7 +766,7 @@ FROM ( SELECT ( cobmisc_freight + cobmisc_misc + cobmisc_tax +
     <height>15</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>

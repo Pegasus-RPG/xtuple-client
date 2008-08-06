@@ -48,7 +48,7 @@ BETWEEN 1 AND 1));</sql>
      <height>25</height>
     </rect>
     <font>
-     <face>Helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>bold</weight>
     </font>
@@ -82,7 +82,7 @@ BETWEEN 1 AND 1));</sql>
      <height>17</height>
     </rect>
     <font>
-     <face>Helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>bold</weight>
     </font>
@@ -98,7 +98,7 @@ BETWEEN 1 AND 1));</sql>
      <height>17</height>
     </rect>
     <font>
-     <face>Helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>bold</weight>
     </font>
@@ -117,7 +117,7 @@ BETWEEN 1 AND 1));</sql>
      <height>17</height>
     </rect>
     <font>
-     <face>Helvetica</face>
+     <face>Arial</face>
      <size>9</size>
      <weight>bold</weight>
     </font>
@@ -136,7 +136,7 @@ BETWEEN 1 AND 1));</sql>
      <height>25</height>
     </rect>
     <font>
-     <face>Helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>bold</weight>
     </font>

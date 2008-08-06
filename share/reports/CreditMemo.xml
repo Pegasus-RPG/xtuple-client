@@ -94,7 +94,7 @@ ORDER BY cmitem_linenumber;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -113,7 +113,7 @@ ORDER BY cmitem_linenumber;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -129,7 +129,7 @@ ORDER BY cmitem_linenumber;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -155,7 +155,7 @@ ORDER BY cmitem_linenumber;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -171,7 +171,7 @@ ORDER BY cmitem_linenumber;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -187,7 +187,7 @@ ORDER BY cmitem_linenumber;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -203,7 +203,7 @@ ORDER BY cmitem_linenumber;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -222,7 +222,7 @@ ORDER BY cmitem_linenumber;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -241,7 +241,7 @@ ORDER BY cmitem_linenumber;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -257,7 +257,7 @@ ORDER BY cmitem_linenumber;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -276,7 +276,7 @@ ORDER BY cmitem_linenumber;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -295,7 +295,7 @@ ORDER BY cmitem_linenumber;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -314,7 +314,7 @@ ORDER BY cmitem_linenumber;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -333,7 +333,7 @@ ORDER BY cmitem_linenumber;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -352,7 +352,7 @@ ORDER BY cmitem_linenumber;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -368,7 +368,7 @@ ORDER BY cmitem_linenumber;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -384,7 +384,7 @@ ORDER BY cmitem_linenumber;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -400,7 +400,7 @@ ORDER BY cmitem_linenumber;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -416,7 +416,7 @@ ORDER BY cmitem_linenumber;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -439,7 +439,7 @@ ORDER BY cmitem_linenumber;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -455,7 +455,7 @@ ORDER BY cmitem_linenumber;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -471,7 +471,7 @@ ORDER BY cmitem_linenumber;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -490,7 +490,7 @@ ORDER BY cmitem_linenumber;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -506,7 +506,7 @@ ORDER BY cmitem_linenumber;</sql>
     <height>40</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>20</size>
     <weight>bold</weight>
    </font>
@@ -522,7 +522,7 @@ ORDER BY cmitem_linenumber;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -541,7 +541,7 @@ ORDER BY cmitem_linenumber;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>normal</weight>
    </font>
@@ -560,7 +560,7 @@ ORDER BY cmitem_linenumber;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -579,7 +579,7 @@ ORDER BY cmitem_linenumber;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -598,7 +598,7 @@ ORDER BY cmitem_linenumber;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -617,7 +617,7 @@ ORDER BY cmitem_linenumber;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -633,7 +633,7 @@ ORDER BY cmitem_linenumber;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -649,7 +649,7 @@ ORDER BY cmitem_linenumber;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>normal</weight>
    </font>
@@ -668,7 +668,7 @@ ORDER BY cmitem_linenumber;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -687,7 +687,7 @@ ORDER BY cmitem_linenumber;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -706,7 +706,7 @@ ORDER BY cmitem_linenumber;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -725,7 +725,7 @@ ORDER BY cmitem_linenumber;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -752,7 +752,7 @@ ORDER BY cmitem_linenumber;</sql>
      <height>15</height>
     </rect>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>8</size>
      <weight>normal</weight>
     </font>
@@ -771,7 +771,7 @@ ORDER BY cmitem_linenumber;</sql>
      <height>20</height>
     </rect>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>
@@ -790,7 +790,7 @@ ORDER BY cmitem_linenumber;</sql>
      <height>20</height>
     </rect>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>
@@ -810,7 +810,7 @@ ORDER BY cmitem_linenumber;</sql>
     </rect>
     <bottompad>14</bottompad>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>
@@ -845,7 +845,7 @@ ORDER BY cmitem_linenumber;</sql>
      <height>15</height>
     </rect>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>8</size>
      <weight>normal</weight>
     </font>
@@ -864,7 +864,7 @@ ORDER BY cmitem_linenumber;</sql>
      <height>20</height>
     </rect>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>
@@ -883,7 +883,7 @@ ORDER BY cmitem_linenumber;</sql>
      <height>20</height>
     </rect>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>
@@ -902,7 +902,7 @@ ORDER BY cmitem_linenumber;</sql>
      <height>20</height>
     </rect>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>
@@ -921,7 +921,7 @@ ORDER BY cmitem_linenumber;</sql>
      <height>20</height>
     </rect>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>
@@ -946,7 +946,7 @@ ORDER BY cmitem_linenumber;</sql>
    </rect>
    <bottompad>14</bottompad>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -965,7 +965,7 @@ ORDER BY cmitem_linenumber;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -984,7 +984,7 @@ ORDER BY cmitem_linenumber;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -1019,7 +1019,7 @@ ORDER BY cmitem_linenumber;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -1038,7 +1038,7 @@ ORDER BY cmitem_linenumber;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -1054,7 +1054,7 @@ ORDER BY cmitem_linenumber;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -1070,7 +1070,7 @@ ORDER BY cmitem_linenumber;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -1089,7 +1089,7 @@ ORDER BY cmitem_linenumber;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -1108,7 +1108,7 @@ ORDER BY cmitem_linenumber;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -1140,7 +1140,7 @@ ORDER BY cmitem_linenumber;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -1159,7 +1159,7 @@ ORDER BY cmitem_linenumber;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -1175,7 +1175,7 @@ ORDER BY cmitem_linenumber;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>

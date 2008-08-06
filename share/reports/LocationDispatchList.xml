@@ -35,7 +35,7 @@ ORDER BY location_name;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>Helvetica [Urw]</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -58,7 +58,7 @@ ORDER BY location_name;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>Helvetica [Urw]</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>bold</weight>
    </font>
@@ -74,7 +74,7 @@ ORDER BY location_name;</sql>
     <height>31</height>
    </rect>
    <font>
-    <face>Helvetica [Urw]</face>
+    <face>Arial</face>
     <size>16</size>
     <weight>bold</weight>
    </font>
@@ -90,7 +90,7 @@ ORDER BY location_name;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>Helvetica [Urw]</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>bold</weight>
    </font>
@@ -109,7 +109,7 @@ ORDER BY location_name;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>Helvetica [Urw]</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -125,7 +125,7 @@ ORDER BY location_name;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>Helvetica [Urw]</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -141,7 +141,7 @@ ORDER BY location_name;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>Helvetica [Urw]</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -157,7 +157,7 @@ ORDER BY location_name;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>Helvetica [Urw]</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -185,7 +185,7 @@ ORDER BY location_name;</sql>
      <height>20</height>
     </rect>
     <font>
-     <face>Helvetica [Urw]</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>
@@ -249,7 +249,7 @@ ORDER BY location_name;</sql>
      <height>20</height>
     </rect>
     <font>
-     <face>Helvetica [Urw]</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>

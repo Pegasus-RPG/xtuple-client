@@ -26,7 +26,7 @@ ORDER BY dept_number;</sql>
     <height>15</height>
    </rect>
    <font>
-    <face>Helvetica</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>normal</weight>
    </font>
@@ -49,7 +49,7 @@ ORDER BY dept_number;</sql>
     <height>26</height>
    </rect>
    <font>
-    <face>Helvetica</face>
+    <face>Arial</face>
     <size>16</size>
     <weight>bold</weight>
    </font>
@@ -72,7 +72,7 @@ ORDER BY dept_number;</sql>
     <height>15</height>
    </rect>
    <font>
-    <face>Helvetica</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>normal</weight>
    </font>
@@ -96,7 +96,7 @@ ORDER BY dept_number;</sql>
      <height>20</height>
     </rect>
     <font>
-     <face>Helvetica</face>
+     <face>Arial</face>
      <size>12</size>
      <weight>normal</weight>
     </font>
@@ -115,7 +115,7 @@ ORDER BY dept_number;</sql>
      <height>20</height>
     </rect>
     <font>
-     <face>Helvetica</face>
+     <face>Arial</face>
      <size>12</size>
      <weight>normal</weight>
     </font>

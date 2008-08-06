@@ -48,7 +48,7 @@ BETWEEN 1 AND &lt;? value(&quot;labelTo&quot;) ?>));</sql>
      <height>25</height>
     </rect>
     <font>
-     <face>Helvetica</face>
+     <face>Arial</face>
      <size>12</size>
      <weight>bold</weight>
     </font>
@@ -67,7 +67,7 @@ BETWEEN 1 AND &lt;? value(&quot;labelTo&quot;) ?>));</sql>
      <height>25</height>
     </rect>
     <font>
-     <face>Helvetica</face>
+     <face>Arial</face>
      <size>12</size>
      <weight>bold</weight>
     </font>
@@ -101,7 +101,7 @@ BETWEEN 1 AND &lt;? value(&quot;labelTo&quot;) ?>));</sql>
      <height>18</height>
     </rect>
     <font>
-     <face>Helvetica</face>
+     <face>Arial</face>
      <size>12</size>
      <weight>bold</weight>
     </font>
@@ -120,7 +120,7 @@ BETWEEN 1 AND &lt;? value(&quot;labelTo&quot;) ?>));</sql>
      <height>18</height>
     </rect>
     <font>
-     <face>Helvetica</face>
+     <face>Arial</face>
      <size>12</size>
      <weight>bold</weight>
     </font>
@@ -139,7 +139,7 @@ BETWEEN 1 AND &lt;? value(&quot;labelTo&quot;) ?>));</sql>
      <height>18</height>
     </rect>
     <font>
-     <face>Helvetica</face>
+     <face>Arial</face>
      <size>12</size>
      <weight>bold</weight>
     </font>

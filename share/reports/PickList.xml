@@ -58,7 +58,7 @@
     <height>14</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>8</size>
     <weight>bold</weight>
    </font>
@@ -74,7 +74,7 @@
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -93,7 +93,7 @@
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -112,7 +112,7 @@
     <height>17</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -131,7 +131,7 @@
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -147,7 +147,7 @@
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -166,7 +166,7 @@
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -185,7 +185,7 @@
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -201,7 +201,7 @@
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>bold</weight>
    </font>
@@ -217,7 +217,7 @@
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -236,7 +236,7 @@
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -252,7 +252,7 @@
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -271,7 +271,7 @@
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -287,7 +287,7 @@
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -303,7 +303,7 @@
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -319,7 +319,7 @@
     <height>40</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>20</size>
     <weight>bold</weight>
    </font>
@@ -335,7 +335,7 @@
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>bold</weight>
    </font>
@@ -351,7 +351,7 @@
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>bold</weight>
    </font>
@@ -367,7 +367,7 @@
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>bold</weight>
    </font>
@@ -383,7 +383,7 @@
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -402,7 +402,7 @@
     <height>17</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -421,7 +421,7 @@
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -440,7 +440,7 @@
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>bold</weight>
    </font>
@@ -456,7 +456,7 @@
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>bold</weight>
    </font>
@@ -479,7 +479,7 @@
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -495,7 +495,7 @@
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>bold</weight>
    </font>
@@ -511,7 +511,7 @@
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>bold</weight>
    </font>
@@ -527,7 +527,7 @@
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -550,7 +550,7 @@
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>bold</weight>
    </font>
@@ -566,7 +566,7 @@
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>bold</weight>
    </font>
@@ -589,7 +589,7 @@
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>bold</weight>
    </font>
@@ -605,7 +605,7 @@
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>bold</weight>
    </font>
@@ -621,7 +621,7 @@
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>bold</weight>
    </font>
@@ -637,7 +637,7 @@
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>bold</weight>
    </font>
@@ -653,7 +653,7 @@
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>bold</weight>
    </font>
@@ -669,7 +669,7 @@
     <height>14</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>8</size>
     <weight>bold</weight>
    </font>
@@ -685,7 +685,7 @@
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>bold</weight>
    </font>
@@ -709,7 +709,7 @@
      <height>20</height>
     </rect>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>
@@ -728,7 +728,7 @@
      <height>20</height>
     </rect>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>
@@ -754,7 +754,7 @@
      <height>20</height>
     </rect>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>
@@ -773,7 +773,7 @@
      <height>20</height>
     </rect>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>
@@ -792,7 +792,7 @@
      <height>20</height>
     </rect>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>
@@ -811,7 +811,7 @@
      <height>14</height>
     </rect>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>8</size>
      <weight>normal</weight>
     </font>
@@ -830,7 +830,7 @@
      <height>20</height>
     </rect>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>
@@ -856,7 +856,7 @@
      <height>20</height>
     </rect>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>
@@ -875,7 +875,7 @@
      <height>14</height>
     </rect>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>8</size>
      <weight>normal</weight>
     </font>
@@ -898,7 +898,7 @@
     <height>22</height>
    </rect>
    <font>
-    <face>Luciduxsans</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>48</weight>
    </font>
@@ -915,7 +915,7 @@
    </rect>
    <bottompad>0</bottompad>
    <font>
-    <face>Luciduxsans</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>48</weight>
    </font>

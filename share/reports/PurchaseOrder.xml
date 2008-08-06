@@ -684,7 +684,7 @@ WHERE
     <height>16</height>
    </rect>
    <font>
-    <face>Helvetica</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>normal</weight>
    </font>
@@ -1037,7 +1037,7 @@ WHERE
    </rect>
    <bottompad>14</bottompad>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -1270,7 +1270,7 @@ WHERE
     <height>16</height>
    </rect>
    <font>
-    <face>Helvetica</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>normal</weight>
    </font>

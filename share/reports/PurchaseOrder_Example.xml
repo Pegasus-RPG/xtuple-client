@@ -243,7 +243,7 @@ ORDER BY poitem_linenumber;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>Helvetica</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>normal</weight>
    </font>
@@ -342,7 +342,7 @@ ORDER BY poitem_linenumber;</sql>
     <height>17</height>
    </rect>
    <font>
-    <face>Helvetica</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>normal</weight>
    </font>
@@ -648,7 +648,7 @@ ORDER BY poitem_linenumber;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>Helvetica</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>normal</weight>
    </font>
@@ -680,7 +680,7 @@ ORDER BY poitem_linenumber;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>Helvetica</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>normal</weight>
    </font>
@@ -1007,7 +1007,7 @@ ORDER BY poitem_linenumber;</sql>
    </rect>
    <bottompad>14</bottompad>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -1096,7 +1096,7 @@ ORDER BY poitem_linenumber;</sql>
     <height>17</height>
    </rect>
    <font>
-    <face>Helvetica</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>normal</weight>
    </font>

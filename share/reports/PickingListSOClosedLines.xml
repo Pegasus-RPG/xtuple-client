@@ -172,7 +172,7 @@ WHERE ((image_name='logo'));</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -191,7 +191,7 @@ WHERE ((image_name='logo'));</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>bold</weight>
    </font>
@@ -227,7 +227,7 @@ WHERE ((image_name='logo'));</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>bold</weight>
    </font>
@@ -243,7 +243,7 @@ WHERE ((image_name='logo'));</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>bold</weight>
    </font>
@@ -274,7 +274,7 @@ WHERE ((image_name='logo'));</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>bold</weight>
    </font>
@@ -290,7 +290,7 @@ WHERE ((image_name='logo'));</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -306,7 +306,7 @@ WHERE ((image_name='logo'));</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -325,7 +325,7 @@ WHERE ((image_name='logo'));</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>bold</weight>
    </font>
@@ -341,7 +341,7 @@ WHERE ((image_name='logo'));</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -357,7 +357,7 @@ WHERE ((image_name='logo'));</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -376,7 +376,7 @@ WHERE ((image_name='logo'));</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -395,7 +395,7 @@ WHERE ((image_name='logo'));</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -430,7 +430,7 @@ WHERE ((image_name='logo'));</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -449,7 +449,7 @@ WHERE ((image_name='logo'));</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -468,7 +468,7 @@ WHERE ((image_name='logo'));</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -484,7 +484,7 @@ WHERE ((image_name='logo'));</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -500,7 +500,7 @@ WHERE ((image_name='logo'));</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>bold</weight>
    </font>
@@ -516,7 +516,7 @@ WHERE ((image_name='logo'));</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -539,7 +539,7 @@ WHERE ((image_name='logo'));</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -586,7 +586,7 @@ WHERE ((image_name='logo'));</sql>
     <height>40</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>20</size>
     <weight>bold</weight>
    </font>
@@ -637,7 +637,7 @@ WHERE ((image_name='logo'));</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -684,7 +684,7 @@ WHERE ((image_name='logo'));</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>bold</weight>
    </font>
@@ -700,7 +700,7 @@ WHERE ((image_name='logo'));</sql>
     <height>12</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>8</size>
     <weight>bold</weight>
    </font>
@@ -716,7 +716,7 @@ WHERE ((image_name='logo'));</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>helvetica</face>
+    <face>Arial</face>
     <size>14</size>
     <weight>normal</weight>
    </font>
@@ -741,7 +741,7 @@ WHERE ((image_name='logo'));</sql>
      </rect>
      <bottompad>14</bottompad>
      <font>
-      <face>helvetica</face>
+      <face>Arial</face>
       <size>10</size>
       <weight>normal</weight>
      </font>
@@ -845,7 +845,7 @@ WHERE ((image_name='logo'));</sql>
     </rect>
     <bottompad>14</bottompad>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>
@@ -878,7 +878,7 @@ WHERE ((image_name='logo'));</sql>
      <height>15</height>
     </rect>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>
@@ -951,7 +951,7 @@ WHERE ((image_name='logo'));</sql>
      <height>20</height>
     </rect>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>
@@ -1019,7 +1019,7 @@ WHERE ((image_name='logo'));</sql>
      <height>20</height>
     </rect>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>
@@ -1038,7 +1038,7 @@ WHERE ((image_name='logo'));</sql>
      <height>20</height>
     </rect>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>
@@ -1057,7 +1057,7 @@ WHERE ((image_name='logo'));</sql>
      <height>20</height>
     </rect>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>
@@ -1102,7 +1102,7 @@ WHERE ((image_name='logo'));</sql>
      <height>20</height>
     </rect>
     <font>
-     <face>helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>

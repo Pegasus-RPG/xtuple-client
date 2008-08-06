@@ -254,7 +254,7 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>Luciduxsans</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>48</weight>
    </font>
@@ -289,7 +289,7 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>Luciduxsans</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>48</weight>
    </font>
@@ -305,7 +305,7 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>Luciduxsans</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>48</weight>
    </font>
@@ -321,7 +321,7 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>Luciduxsans</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>48</weight>
    </font>
@@ -372,7 +372,7 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>Luciduxsans</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>48</weight>
    </font>
@@ -407,7 +407,7 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>Luciduxsans</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>48</weight>
    </font>
@@ -458,7 +458,7 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
     <height>25</height>
    </rect>
    <font>
-    <face>Luciduxsans</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>48</weight>
    </font>
@@ -493,7 +493,7 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
     <height>25</height>
    </rect>
    <font>
-    <face>Luciduxsans</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>48</weight>
    </font>
@@ -571,7 +571,7 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
     <height>25</height>
    </rect>
    <font>
-    <face>Luciduxsans</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>48</weight>
    </font>
@@ -622,7 +622,7 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>Luciduxsans</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>48</weight>
    </font>
@@ -651,7 +651,7 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>Luciduxsans</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>48</weight>
    </font>
@@ -758,7 +758,7 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
     <height>25</height>
    </rect>
    <font>
-    <face>Luciduxsans</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>48</weight>
    </font>
@@ -777,7 +777,7 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>MS Shell Dlg 2</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -831,7 +831,7 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>Luciduxsans</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>48</weight>
    </font>
@@ -876,7 +876,7 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>MS Shell Dlg 2</face>
+    <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
@@ -927,7 +927,7 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>Luciduxsans</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>48</weight>
    </font>

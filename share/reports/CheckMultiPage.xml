@@ -106,7 +106,7 @@ WHERE ((checkhead_curr_id = curr_id)
       <height>250</height>
      </rect>
      <font>
-      <face>Helvetica</face>
+      <face>Arial</face>
       <size>8</size>
       <weight>normal</weight>
      </font>
@@ -142,7 +142,7 @@ WHERE ((checkhead_curr_id = curr_id)
       <height>250</height>
      </rect>
      <font>
-      <face>Helvetica</face>
+      <face>Arial</face>
       <size>8</size>
       <weight>normal</weight>
      </font>
@@ -162,7 +162,7 @@ WHERE ((checkhead_curr_id = curr_id)
       <height>20</height>
      </rect>
      <font>
-      <face>Helvetica</face>
+      <face>Arial</face>
       <size>8</size>
       <weight>normal</weight>
      </font>
@@ -181,7 +181,7 @@ WHERE ((checkhead_curr_id = curr_id)
       <height>250</height>
      </rect>
      <font>
-      <face>Helvetica</face>
+      <face>Arial</face>
       <size>8</size>
       <weight>normal</weight>
      </font>
@@ -201,7 +201,7 @@ WHERE ((checkhead_curr_id = curr_id)
       <height>20</height>
      </rect>
      <font>
-      <face>Helvetica</face>
+      <face>Arial</face>
       <size>8</size>
       <weight>normal</weight>
      </font>
@@ -268,7 +268,7 @@ WHERE ((checkhead_curr_id = curr_id)
       <height>250</height>
      </rect>
      <font>
-      <face>Helvetica</face>
+      <face>Arial</face>
       <size>8</size>
       <weight>normal</weight>
      </font>
@@ -288,7 +288,7 @@ WHERE ((checkhead_curr_id = curr_id)
       <height>25</height>
      </rect>
      <font>
-      <face>Helvetica</face>
+      <face>Arial</face>
       <size>8</size>
       <weight>normal</weight>
      </font>
@@ -340,7 +340,7 @@ WHERE ((checkhead_curr_id = curr_id)
       <height>20</height>
      </rect>
      <font>
-      <face>Helvetica</face>
+      <face>Arial</face>
       <size>8</size>
       <weight>normal</weight>
      </font>
@@ -359,7 +359,7 @@ WHERE ((checkhead_curr_id = curr_id)
       <height>250</height>
      </rect>
      <font>
-      <face>Helvetica</face>
+      <face>Arial</face>
       <size>8</size>
       <weight>normal</weight>
      </font>
@@ -379,7 +379,7 @@ WHERE ((checkhead_curr_id = curr_id)
       <height>25</height>
      </rect>
      <font>
-      <face>Helvetica</face>
+      <face>Arial</face>
       <size>8</size>
       <weight>normal</weight>
      </font>
@@ -398,7 +398,7 @@ WHERE ((checkhead_curr_id = curr_id)
       <height>20</height>
      </rect>
      <font>
-      <face>Helvetica</face>
+      <face>Arial</face>
       <size>8</size>
       <weight>normal</weight>
      </font>
@@ -417,7 +417,7 @@ WHERE ((checkhead_curr_id = curr_id)
       <height>250</height>
      </rect>
      <font>
-      <face>Helvetica</face>
+      <face>Arial</face>
       <size>8</size>
       <weight>normal</weight>
      </font>
@@ -469,7 +469,7 @@ WHERE ((checkhead_curr_id = curr_id)
       <height>25</height>
      </rect>
      <font>
-      <face>Helvetica</face>
+      <face>Arial</face>
       <size>10</size>
       <weight>normal</weight>
      </font>
@@ -523,7 +523,7 @@ WHERE ((checkhead_curr_id = curr_id)
       <height>250</height>
      </rect>
      <font>
-      <face>Helvetica</face>
+      <face>Arial</face>
       <size>8</size>
       <weight>normal</weight>
      </font>
@@ -543,7 +543,7 @@ WHERE ((checkhead_curr_id = curr_id)
       <height>250</height>
      </rect>
      <font>
-      <face>Helvetica</face>
+      <face>Arial</face>
       <size>8</size>
       <weight>normal</weight>
      </font>
@@ -595,7 +595,7 @@ WHERE ((checkhead_curr_id = curr_id)
       <height>25</height>
      </rect>
      <font>
-      <face>Helvetica</face>
+      <face>Arial</face>
       <size>10</size>
       <weight>normal</weight>
      </font>
@@ -634,7 +634,7 @@ WHERE ((checkhead_curr_id = curr_id)
       <height>250</height>
      </rect>
      <font>
-      <face>Helvetica</face>
+      <face>Arial</face>
       <size>8</size>
       <weight>normal</weight>
      </font>
@@ -654,7 +654,7 @@ WHERE ((checkhead_curr_id = curr_id)
       <height>250</height>
      </rect>
      <font>
-      <face>Helvetica</face>
+      <face>Arial</face>
       <size>8</size>
       <weight>normal</weight>
      </font>
@@ -690,7 +690,7 @@ WHERE ((checkhead_curr_id = curr_id)
       <height>20</height>
      </rect>
      <font>
-      <face>Helvetica</face>
+      <face>Arial</face>
       <size>8</size>
       <weight>normal</weight>
      </font>
@@ -725,7 +725,7 @@ WHERE ((checkhead_curr_id = curr_id)
       <height>20</height>
      </rect>
      <font>
-      <face>Helvetica</face>
+      <face>Arial</face>
       <size>8</size>
       <weight>normal</weight>
      </font>
@@ -751,7 +751,7 @@ WHERE ((checkhead_curr_id = curr_id)
       <height>20</height>
      </rect>
      <font>
-      <face>Helvetica</face>
+      <face>Arial</face>
       <size>8</size>
       <weight>normal</weight>
      </font>
@@ -770,7 +770,7 @@ WHERE ((checkhead_curr_id = curr_id)
       <height>25</height>
      </rect>
      <font>
-      <face>Helvetica</face>
+      <face>Arial</face>
       <size>8</size>
       <weight>normal</weight>
      </font>
@@ -789,7 +789,7 @@ WHERE ((checkhead_curr_id = curr_id)
       <height>250</height>
      </rect>
      <font>
-      <face>Helvetica</face>
+      <face>Arial</face>
       <size>8</size>
       <weight>normal</weight>
      </font>
@@ -809,7 +809,7 @@ WHERE ((checkhead_curr_id = curr_id)
       <height>250</height>
      </rect>
      <font>
-      <face>Helvetica</face>
+      <face>Arial</face>
       <size>8</size>
       <weight>normal</weight>
      </font>
@@ -861,7 +861,7 @@ WHERE ((checkhead_curr_id = curr_id)
       <height>20</height>
      </rect>
      <font>
-      <face>Helvetica</face>
+      <face>Arial</face>
       <size>8</size>
       <weight>normal</weight>
      </font>
@@ -880,7 +880,7 @@ WHERE ((checkhead_curr_id = curr_id)
       <height>25</height>
      </rect>
      <font>
-      <face>Helvetica</face>
+      <face>Arial</face>
       <size>8</size>
       <weight>normal</weight>
      </font>
@@ -906,7 +906,7 @@ WHERE ((checkhead_curr_id = curr_id)
      <height>25</height>
     </rect>
     <font>
-     <face>Helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>
@@ -925,7 +925,7 @@ WHERE ((checkhead_curr_id = curr_id)
      <height>30</height>
     </rect>
     <font>
-     <face>Helvetica</face>
+     <face>Arial</face>
      <size>12</size>
      <weight>normal</weight>
     </font>
@@ -944,7 +944,7 @@ WHERE ((checkhead_curr_id = curr_id)
      <height>25</height>
     </rect>
     <font>
-     <face>Helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>
@@ -963,7 +963,7 @@ WHERE ((checkhead_curr_id = curr_id)
      <height>20</height>
     </rect>
     <font>
-     <face>Helvetica</face>
+     <face>Arial</face>
      <size>8</size>
      <weight>normal</weight>
     </font>
@@ -1018,7 +1018,7 @@ WHERE ((checkhead_curr_id = curr_id)
      <height>25</height>
     </rect>
     <font>
-     <face>Helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>
@@ -1037,7 +1037,7 @@ WHERE ((checkhead_curr_id = curr_id)
      <height>25</height>
     </rect>
     <font>
-     <face>Helvetica</face>
+     <face>Arial</face>
      <size>10</size>
      <weight>normal</weight>
     </font>
