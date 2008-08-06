@@ -112,6 +112,7 @@ enum SetResponse printChecks::set(const ParameterList pParams )
 void printChecks::sPrint()
 {
   QList<int> printedChecks;
+  bool firstRun = TRUE;
 
   ParameterList params;
   params.append("bankaccnt_id", _bankaccnt->id());
@@ -120,7 +121,7 @@ void printChecks::sPrint()
 
   QList<ORODocument*> singleCheckPrerendered;
   XSqlQuery checks;
-  checks.prepare( "SELECT checkhead_id, checkhead_number, report_name "
+  checks.prepare( "SELECT checkhead_id, checkhead_number, report_name, checkhead_recip_id "
                   "FROM checkhead, bankaccnt, form, report "
                   "WHERE ( (checkhead_bankaccnt_id=bankaccnt_id)"
                   " AND (bankaccnt_check_form_id=form_id)"
@@ -128,7 +129,7 @@ void printChecks::sPrint()
                   " AND (NOT checkhead_printed) "
                   " AND (NOT checkhead_void) "
                   " AND (bankaccnt_id=:bankaccnt_id) ) "
-                  "ORDER BY checkhead_number "
+                  "ORDER BY checkhead_recip_id "
                   "LIMIT :numtoprint; " );
   checks.bindValue(":bankaccnt_id", _bankaccnt->id());
   checks.bindValue(":numtoprint", _numberOfChecks->value());
@@ -168,7 +169,7 @@ void printChecks::sPrint()
       }
       // end getting the report definition out the database
 
-      if(_setCheckNumber != -1 && _setCheckNumber != _nextCheckNum->text().toInt())
+      if(_setCheckNumber != -1 && _setCheckNumber != _nextCheckNum->text().toInt() && firstRun)
       {
         q.prepare("SELECT setNextCheckNumber(:bankaccnt_id, :nextCheckNumber) AS result;");
         q.bindValue(":bankaccnt_id", _bankaccnt->id());
@@ -189,6 +190,7 @@ void printChecks::sPrint()
           systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
           return;
         }
+       firstRun = FALSE;
       }
     }
 

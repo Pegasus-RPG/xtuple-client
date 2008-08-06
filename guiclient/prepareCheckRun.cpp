@@ -67,12 +67,10 @@ prepareCheckRun::prepareCheckRun(QWidget* parent, const char* name, bool modal, 
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
-
-  connect(_bankaccnt, SIGNAL(newID(int)), this, SLOT(sPopulate()));
+  
   connect(_prepare, SIGNAL(clicked()), this, SLOT(sPrint()));
-
+  
   _checkDate->setDate(omfgThis->dbDate());
-  _nextCheckNum->setEnabled(false);
 }
 
 prepareCheckRun::~prepareCheckRun()
@@ -87,28 +85,6 @@ void prepareCheckRun::languageChange()
 
 void prepareCheckRun::sPrint()
 {
-// This should be moved to the print phase
-/*
-  q.prepare("SELECT setNextCheckNumber(:bankaccnt_id, :nextCheckNumber) AS result;");
-  q.bindValue(":bankaccnt_id", _bankaccnt->id());
-  q.bindValue(":nextCheckNumber", _nextCheckNum->text().toInt());
-  q.exec();
-  if (q.first())
-  {
-    int result = q.value("result").toInt();
-    if (result < 0)
-    {
-      systemError(this, storedProcErrorLookup("setNextCheckNumber", result),
-		  __FILE__, __LINE__);
-      return;
-    }
-  }
-  else if (q.lastError().type() != QSqlError::NoError)
-  {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-  }
-*/
 
   q.prepare("SELECT createChecks(:bankaccnt_id, :checkDate) AS result;");
   q.bindValue(":bankaccnt_id", _bankaccnt->id());
@@ -133,27 +109,5 @@ void prepareCheckRun::sPrint()
   omfgThis->sChecksUpdated(_bankaccnt->id(), -1, TRUE);
 
   accept();
-}
-
-void prepareCheckRun::sPopulate()
-{
-  if (_bankaccnt->id() != -1)
-  {
-    XSqlQuery checkNumber;
-    checkNumber.prepare( "SELECT bankaccnt_nextchknum "
-                         "FROM bankaccnt "
-                         "WHERE (bankaccnt_id=:bankaccnt_id);" );
-    checkNumber.bindValue(":bankaccnt_id", _bankaccnt->id());
-    checkNumber.exec();
-    if (checkNumber.first())
-      _nextCheckNum->setText(checkNumber.value("bankaccnt_nextchknum").toString());
-    else if (q.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
-  }
-  else
-    _nextCheckNum->clear();
 }
 

@@ -72,8 +72,7 @@ public:
 
 public slots:
     virtual void sPrint();
-    virtual void sPopulate();
-
+    
 protected slots:
     virtual void languageChange();
 
