@@ -250,10 +250,10 @@ void reassignLotSerial::sFillList()
 
       q.prepare( "SELECT itemloc_id, formatLocationName(itemloc_location_id) AS locationname, ls_number,"
                  "       formatDate(itemloc_expiration, :never), formatDate(itemloc_warrpurc, :never), formatQtyPer(itemloc_qty) "
-                 "FROM itemloc, itemsite, ls "
+                 "FROM itemloc "
+                 "  LEFT OUTER JOIN ls ON (itemloc_ls_id=ls_id), itemsite "
                  "WHERE ( (itemloc_itemsite_id=itemsite_id)"
-                 " AND (itemsite_id=:itemsite_id)"
-                 " AND (ls_id=itemloc_ls_id) ) "
+                 " AND (itemsite_id=:itemsite_id) ) "
                  "ORDER BY locationname;" );
       q.bindValue(":never", tr("Never"));
       q.bindValue(":itemsite_id", itemsiteid);
