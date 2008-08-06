@@ -282,7 +282,6 @@ void miscCheck::sPopulateBankInfo(int pBankaccntid)
     checkNumber.exec();
     if (checkNumber.first())
     {
-      _checkNum->setText(checkNumber.value("bankaccnt_nextchknum").toString());
       _amount->setId(checkNumber.value("bankaccnt_curr_id").toInt());
     }
     else if (q.lastError().type() != QSqlError::None)
@@ -291,8 +290,6 @@ void miscCheck::sPopulateBankInfo(int pBankaccntid)
       return;
     }
   }
-  else
-    _checkNum->clear();
 
   if (_cmCluster->isValid())
     sCreditMemoSelected();
@@ -332,7 +329,6 @@ void miscCheck::populate()
     }
     // bank accnt must be set before check number and currency
     _bankaccnt->setId(q.value("checkhead_bankaccnt_id").toInt());
-    _checkNum->setText(q.value("checkhead_number").toString());
     _date->setDate(q.value("checkhead_checkdate").toDate(), true);
     _amount->set(q.value("checkhead_amount").toDouble(),
 		 q.value("checkhead_curr_id").toInt(),
