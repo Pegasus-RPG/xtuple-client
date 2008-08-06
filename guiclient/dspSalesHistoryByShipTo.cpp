@@ -61,6 +61,10 @@
 #include <QStatusBar>
 #include <QMessageBox>
 #include <QMenu>
+
+#include <metasql.h>
+#include "mqlutil.h"
+
 #include <openreports.h>
 #include <parameter.h>
 #include "salesHistoryInformation.h"
@@ -93,8 +97,8 @@ dspSalesHistoryByShipTo::dspSalesHistoryByShipTo(QWidget* parent, const char* na
 
   _productCategory->setType(ProductCategory);
 
-  _sohist->addColumn(tr("S/O #"),       _orderColumn, Qt::AlignRight  );
-  _sohist->addColumn(tr("Invoice #"),   _orderColumn, Qt::AlignRight  );
+  _sohist->addColumn(tr("S/O #"),       _orderColumn, Qt::AlignLeft   );
+  _sohist->addColumn(tr("Invoice #"),   _orderColumn, Qt::AlignLeft   );
   _sohist->addColumn(tr("Ord. Date"),   _dateColumn,  Qt::AlignCenter );
   _sohist->addColumn(tr("Invc. Date"),  _dateColumn,  Qt::AlignCenter );
   _sohist->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft   );
@@ -107,8 +111,8 @@ dspSalesHistoryByShipTo::dspSalesHistoryByShipTo(QWidget* parent, const char* na
   }
   if (_privileges->check("ViewCosts"))
   {
-    _sohist->addColumn(tr("Unit Cost"),   _costColumn, Qt::AlignRight );
-    _sohist->addColumn(tr("Ext. Cost"),   _costColumn, Qt::AlignRight );
+    _sohist->addColumn(tr("Unit Cost"),   _costColumn,     Qt::AlignRight );
+    _sohist->addColumn(tr("Ext. Cost"),   _bigMoneyColumn, Qt::AlignRight );
   }
 
   _showCosts->setEnabled(_privileges->check("ViewCosts"));
@@ -229,72 +233,51 @@ void dspSalesHistoryByShipTo::sPrint()
 
 void dspSalesHistoryByShipTo::sFillList()
 {
-  _sohist->clear();
-
   if (!checkParameters())
     return;
 
-  QString sql = QString( "SELECT cohist_id, cohist_ordernumber, cohist_invcnumber,"
-                         "       formatDate(cohist_orderdate) AS f_orderdate,"
-                         "       formatDate(cohist_invcdate, 'Return') AS f_invcdate,"
-                         "       item_number, (item_descrip1 || ' ' || item_descrip2) AS description,"
-                         "       cohist_qtyshipped, formatQty(cohist_qtyshipped) AS f_shipped " );
+  _sohist->clear();
+  
+  MetaSQLQuery mql = mqlLoad(":/so/displays/SalesHistory.mql");
+  ParameterList params;
+  _dates->appendValue(params);
+  _warehouse->appendValue(params);
+  _productCategory->appendValue(params);
+  params.append("shipto_id", _shipTo->id());
+  params.append("orderByInvcdateItem");
+  q = mql.toQuery(params);
 
-  sql += ", formatSalesPrice(cohist_unitprice) AS f_price,"
-	 "  round(cohist_qtyshipped * cohist_unitprice, 2) AS extprice,"
-	 "  formatMoney(round(cohist_qtyshipped * cohist_unitprice, 2)) AS f_extprice ";
-
-  sql += ", formatCost(cohist_unitcost) AS f_cost,"
-	 "  (cohist_qtyshipped * cohist_unitcost) AS extcost,"
-	 "  formatMoney(cohist_qtyshipped * cohist_unitcost) AS f_extcost ";
-
-  sql += "FROM cohist, itemsite, item, prodcat "
-         "WHERE ( (cohist_itemsite_id=itemsite_id)"
-         " AND (itemsite_item_id=item_id)"
-         " AND (item_prodcat_id=prodcat_id)"
-         " AND (cohist_invcdate BETWEEN :startDate AND :endDate)";
-
-  if (_warehouse->isSelected())
-    sql += " AND (itemsite_warehous_id=:warehous_id)";
-
-  if (_productCategory->isSelected())
-    sql += " AND (prodcat_id=:prodcat_id)";
-  else if (_productCategory->isPattern())
-    sql += " AND (prodcat_code ~ :prodcat_pattern)";
-
-  sql += " AND (cohist_shipto_id=:shipto_id) ) "
-         "ORDER BY cohist_invcdate, item_number;";
-
-  q.prepare(sql);
-  _warehouse->bindValue(q);
-  _productCategory->bindValue(q);
-  _dates->bindValue(q);
-  q.bindValue(":shipto_id", _shipTo->id());
-  q.exec();
   if (q.first())
   {
     double totalUnits = 0.0;
     double totalSales = 0.0;
     double totalCosts = 0.0;
+    bool exchangeError = false;
     XTreeWidgetItem *last = 0;
 
     do
     {
+      if (q.value("baseunitprice").toDouble() < 0.0)
+        exchangeError = true;
+      QString invoicedate = tr("Return");
+      if (q.value("cohist_invcdate").toString() != "")
+        invoicedate = formatDate(q.value("cohist_invcdate").toDate());
+        
       last = new XTreeWidgetItem( _sohist, last, q.value("cohist_id").toInt(),
 				 q.value("cohist_ordernumber"),
-				 q.value("cohist_invcnumber"),
-				 q.value("f_orderdate"),
-				 q.value("f_invcdate"),
+				 q.value("invoicenumber"),
+				 formatDate(q.value("cohist_orderdate").toDate()),
+				 invoicedate,
 				 q.value("item_number"),
-				 q.value("description"),
-				 q.value("f_shipped"),
-				 q.value("f_price"),
-				 q.value("f_extprice"),
-				 q.value("f_cost"),
-				 q.value("f_extcost"));
+				 q.value("itemdescription"),
+				 formatQty(q.value("cohist_qtyshipped").toDouble()),
+				 formatSalesPrice(q.value("baseunitprice").toDouble()),
+				 formatMoney(q.value("baseextprice").toDouble()),
+				 formatCost(q.value("cohist_unitcost").toDouble()),
+				 formatMoney(q.value("extcost").toDouble()) );
  
       totalUnits += q.value("cohist_qtyshipped").toDouble();
-      totalSales += q.value("extprice").toDouble();
+      totalSales += q.value("baseextprice").toDouble();
       totalCosts += q.value("extcost").toDouble();
     }
     while (q.next());
@@ -304,6 +287,11 @@ void dspSalesHistoryByShipTo::sFillList()
     totals->setText(6, formatQty(totalUnits));
     totals->setText(EXTPRICE_COL, formatMoney(totalSales));
     totals->setText(EXTCOST_COL, formatCost(totalCosts));
+
+    if ( (exchangeError) && (_showPrices->isChecked()) )
+      QMessageBox::warning( this, tr("Currency Exchange Rate Error"),
+                            tr("One or more of the Prices could not be converted to Base Currency.\n"
+                               "These Prices have been set to a negative value.") );
   }
 }
 

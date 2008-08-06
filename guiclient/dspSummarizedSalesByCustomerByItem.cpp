@@ -80,14 +80,14 @@ dspSummarizedSalesByCustomerByItem::dspSummarizedSalesByCustomerByItem(QWidget* 
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
-  _sohist->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft   );
-  _sohist->addColumn(tr("Description"), -1 ,          Qt::AlignLeft   );
-  _sohist->addColumn(tr("Site"),        _whsColumn,   Qt::AlignCenter );
-  _sohist->addColumn(tr("Min. Price"),  _priceColumn, Qt::AlignRight  );
-  _sohist->addColumn(tr("Max. Price"),  _priceColumn, Qt::AlignRight  );
-  _sohist->addColumn(tr("Avg. Price"),  _priceColumn, Qt::AlignRight  );
-  _sohist->addColumn(tr("Total Units"), _qtyColumn,   Qt::AlignRight  );
-  _sohist->addColumn(tr("Total $"),     _moneyColumn, Qt::AlignRight  );
+  _sohist->addColumn(tr("Item Number"), _itemColumn,     Qt::AlignLeft   );
+  _sohist->addColumn(tr("Description"), -1 ,             Qt::AlignLeft   );
+  _sohist->addColumn(tr("Site"),        _whsColumn,      Qt::AlignCenter );
+  _sohist->addColumn(tr("Min. Price"),  _priceColumn,    Qt::AlignRight  );
+  _sohist->addColumn(tr("Max. Price"),  _priceColumn,    Qt::AlignRight  );
+  _sohist->addColumn(tr("Avg. Price"),  _priceColumn,    Qt::AlignRight  );
+  _sohist->addColumn(tr("Total Units"), _qtyColumn,      Qt::AlignRight  );
+  _sohist->addColumn(tr("Total Sales"), _bigMoneyColumn, Qt::AlignRight  );
   _sohist->setDragString("itemsiteid=");
   _sohist->setAltDragString("itemid=");
 
@@ -155,28 +155,21 @@ void dspSummarizedSalesByCustomerByItem::sFillList()
 
   _sohist->clear();
 
-  QString sql( "SELECT itemsite_id, item_id, item_number, item_descrip, warehous_code,"
-               "       formatSalesPrice(minprice) AS f_minprice,"
-               "       formatSalesPrice(maxprice) AS f_maxprice,"
-               "       formatSalesPrice(avgprice) AS f_avgprice,"
-               "       formatQty(totalunits) AS f_totalunits,"
-               "       totalsales, formatMoney(totalsales) AS f_totalsales "
-               "FROM ( SELECT itemsite_id, item_id, item_number, (item_descrip1 || ' ' || item_descrip2) AS item_descrip,"
-               "              warehous_code, MIN(cohist_unitprice) AS minprice, MAX(cohist_unitprice) AS maxprice,"
-               "              AVG(cohist_unitprice) AS avgprice, SUM(cohist_qtyshipped) AS totalunits,"
-               "              SUM(round(cohist_qtyshipped * cohist_unitprice,2)) AS totalsales "
-               "       FROM cohist, itemsite, item, warehous "
-               "       WHERE ( (cohist_itemsite_id=itemsite_id)"
-               "        AND (itemsite_item_id=item_id)"
-               "        AND (itemsite_warehous_id=warehous_id)"
-               "        AND (cohist_cust_id=:cust_id)"
+  QString sql( "SELECT cohist_itemsite_id, itemsite_item_id, item_number, itemdescription, warehous_code,"
+               "       minprice, maxprice, avgprice, totalunits, totalsales "
+               "FROM ( SELECT cohist_itemsite_id, itemsite_item_id, item_number, itemdescription,"
+               "              warehous_code, MIN(baseunitprice) AS minprice, MAX(baseunitprice) AS maxprice,"
+               "              AVG(baseunitprice) AS avgprice, SUM(cohist_qtyshipped) AS totalunits,"
+               "              SUM(baseextprice) AS totalsales "
+               "       FROM saleshistory "
+               "       WHERE ( (cohist_cust_id=:cust_id)"
                "        AND (cohist_invcdate BETWEEN :startDate AND :endDate)" );
 
   if (_warehouse->isSelected())
     sql += " AND (itemsite_warehous_id=:warehous_id)";
 
   sql += ") "
-         "GROUP BY itemsite_id, item_id, item_number, item_descrip1, item_descrip2, warehous_code ) AS data ";
+         "GROUP BY cohist_itemsite_id, itemsite_item_id, item_number, itemdescription, warehous_code ) AS data ";
 
   if (_orderByItemNumber->isChecked())
     sql += "ORDER BY item_number, warehous_code;";
@@ -198,16 +191,16 @@ void dspSummarizedSalesByCustomerByItem::sFillList()
     do
     {
       last = new XTreeWidgetItem(_sohist, last,
-				 q.value("itemsite_id").toInt(),
-				 q.value("item_id").toInt(),
+				 q.value("cohist_itemsite_id").toInt(),
+				 q.value("itemsite_item_id").toInt(),
 				 q.value("item_number"),
-				 q.value("item_descrip"),
+				 q.value("itemdescription"),
 				 q.value("warehous_code"),
-				 q.value("f_minprice"),
-				 q.value("f_maxprice"),
-				 q.value("f_avgprice"),
-				 q.value("f_totalunits"),
-				 q.value("f_totalsales") );
+				 formatSalesPrice(q.value("minprice").toDouble()),
+				 formatSalesPrice(q.value("maxprice").toDouble()),
+				 formatSalesPrice(q.value("avgprice").toDouble()),
+				 formatQty(q.value("totalunits").toDouble()),
+				 formatMoney(q.value("totalsales").toDouble()) );
 
       totalSales += q.value("totalsales").toDouble();
     }

@@ -87,12 +87,12 @@ dspSummarizedSalesByItem::dspSummarizedSalesByItem(QWidget* parent, const char* 
   _customerType->setType(CustomerType);
   _productCategory->setType(ProductCategory);
 
-  _sohist->addColumn(tr("Item"),        _itemColumn, Qt::AlignLeft   );
-  _sohist->addColumn(tr("Description"), -1,          Qt::AlignLeft   );
-  _sohist->addColumn(tr("First Sale"),  _dateColumn, Qt::AlignCenter );
-  _sohist->addColumn(tr("Last Sale"),   _dateColumn, Qt::AlignCenter );
-  _sohist->addColumn(tr("Total Qty."),  _qtyColumn,  Qt::AlignRight  );
-  _sohist->addColumn(tr("Total Sales"), _qtyColumn,  Qt::AlignRight  );
+  _sohist->addColumn(tr("Item"),        _itemColumn,      Qt::AlignLeft   );
+  _sohist->addColumn(tr("Description"), -1,               Qt::AlignLeft   );
+  _sohist->addColumn(tr("First Sale"),  _dateColumn,      Qt::AlignCenter );
+  _sohist->addColumn(tr("Last Sale"),   _dateColumn,      Qt::AlignCenter );
+  _sohist->addColumn(tr("Total Units"), _qtyColumn,       Qt::AlignRight  );
+  _sohist->addColumn(tr("Total Sales"), _bigMoneyColumn,  Qt::AlignRight  );
 }
 
 /*
@@ -175,18 +175,14 @@ void dspSummarizedSalesByItem::sFillList()
   if (!checkParameters())
     return;
 
-  QString sql( "SELECT item_id, item_number,"
-               "       (item_descrip1 || ' ' || item_descrip2) AS itemdescription,"
+  QString sql( "SELECT itemsite_item_id, item_number, itemdescription,"
                "       formatDate(MIN(cohist_invcdate)) AS f_firstdate,"
                "       formatDate(MAX(cohist_invcdate)) AS f_lastdate,"
                "       formatQty(SUM(cohist_qtyshipped)) AS f_totalunits,"
-               "       formatMoney(SUM(round(cohist_qtyshipped * cohist_unitprice,2))) AS f_totalsales,"
-               "       SUM(round(cohist_qtyshipped * cohist_unitprice,2)) AS totalsales "
-               "FROM cohist, cust, item, itemsite "
-               "WHERE ( (cohist_cust_id=cust_id)"
-               " AND (cohist_itemsite_id=itemsite_id)"
-               " AND (itemsite_item_id=item_id)"
-               " AND (cohist_invcdate BETWEEN :startDate AND :endDate)" );
+               "       formatMoney(SUM(baseextprice)) AS f_totalsales,"
+               "       SUM(baseextprice) AS totalsales "
+               "FROM saleshistory "
+               "WHERE ( (cohist_invcdate BETWEEN :startDate AND :endDate)" );
 
   if (_productCategory->isSelected())
     sql += " AND (item_prodcat_id=:prodcat_id)";
@@ -202,14 +198,14 @@ void dspSummarizedSalesByItem::sFillList()
     sql += " AND (itemsite_warehous_id=:warehous_id)";
 
   sql += ") "
-         "GROUP BY item_id, item_number, item_descrip1, item_descrip2 ";
+         "GROUP BY itemsite_item_id, item_number, itemdescription ";
 
   if (_orderByItemNumber->isChecked())
     sql += "ORDER BY item_number;";
   else if (_orderByQtyVolume->isChecked())
     sql += "ORDER BY SUM(cohist_qtyshipped) DESC;";
   else if (_orderBySalesVolume->isChecked())
-    sql += "ORDER BY SUM(cohist_qtyshipped * cohist_unitprice) DESC;";
+    sql += "ORDER BY SUM(baseextprice) DESC;";
 
   q.prepare(sql);
   _warehouse->bindValue(q);

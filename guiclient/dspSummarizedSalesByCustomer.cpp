@@ -87,12 +87,12 @@ dspSummarizedSalesByCustomer::dspSummarizedSalesByCustomer(QWidget* parent, cons
   _productCategory->setType(ProductCategory);
   _currency->setType(Currency);
 
-  _cohist->addColumn(tr("Customer"),    -1,          Qt::AlignLeft   );
-  _cohist->addColumn(tr("First Sale"),  _dateColumn, Qt::AlignCenter );
-  _cohist->addColumn(tr("Last Sale"),   _dateColumn, Qt::AlignCenter );
-  _cohist->addColumn(tr("Total Qty."),  _qtyColumn,  Qt::AlignRight  );
-  _cohist->addColumn(tr("Total Sales"), _qtyColumn,  Qt::AlignRight  );
-  _cohist->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft );
+  _cohist->addColumn(tr("Customer"),    -1,               Qt::AlignLeft   );
+  _cohist->addColumn(tr("First Sale"),  _dateColumn,      Qt::AlignCenter );
+  _cohist->addColumn(tr("Last Sale"),   _dateColumn,      Qt::AlignCenter );
+  _cohist->addColumn(tr("Total Qty."),  _qtyColumn,       Qt::AlignRight  );
+  _cohist->addColumn(tr("Total Sales"), _bigMoneyColumn,  Qt::AlignRight  );
+  _cohist->addColumn(tr("Currency"),    _currencyColumn,  Qt::AlignLeft );
 
   if (omfgThis->singleCurrency())
     _cohist->hideColumn(5);
@@ -170,18 +170,13 @@ void dspSummarizedSalesByCustomer::sFillList()
   if (!checkParameters())
     return;
 
-  QString sql( "SELECT cust_id, (cust_number || '-' || cust_name),"
+  QString sql( "SELECT cohist_cust_id, (cust_number || '-' || cust_name),"
                "       formatDate(MIN(cohist_invcdate)), formatDate(MAX(cohist_invcdate)),"
                "       formatQty(SUM(cohist_qtyshipped)),"
-               "       formatMoney(SUM(cohist_qtyshipped * "
-	       "		       currToCurr(cohist_curr_id, cust_curr_id,"
-	       "				  cohist_unitprice, 'now'))),"
-	       "       currConcat(cust_curr_id) "
-               "FROM cohist, itemsite, cust, item "
-               "WHERE ((cohist_itemsite_id=itemsite_id)"
-               " AND (cohist_cust_id=cust_id)"
-               " AND (itemsite_item_id=item_id)"
-               " AND (cohist_invcdate BETWEEN :startDate AND :endDate)" );
+               "       formatMoney(SUM(custextprice)),"
+               "       currConcat(cust_curr_id) "
+               "FROM saleshistory "
+               "WHERE ( (cohist_invcdate BETWEEN :startDate AND :endDate)" );
 
   if (_productCategory->isSelected())
     sql += " AND (item_prodcat_id=:prodcat_id)";
@@ -197,7 +192,7 @@ void dspSummarizedSalesByCustomer::sFillList()
     sql += " AND (itemsite_warehous_id=:warehous_id)";
 
   sql += ") "
-         "GROUP BY cust_number, cust_id, cust_name, cust_curr_id";
+         "GROUP BY cohist_cust_id, cust_number, cust_name, cust_curr_id";
 
   q.prepare(sql);
   _warehouse->bindValue(q);

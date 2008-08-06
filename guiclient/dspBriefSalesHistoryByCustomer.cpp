@@ -82,12 +82,12 @@ dspBriefSalesHistoryByCustomer::dspBriefSalesHistoryByCustomer(QWidget* parent, 
 
   _productCategory->setType(ProductCategory);
 
-  _sohist->addColumn(tr("S/O #"),      _orderColumn, Qt::AlignLeft   );
-  _sohist->addColumn(tr("Cust. P/O #"), -1,          Qt::AlignLeft   );
-  _sohist->addColumn(tr("Invoice #"),  _orderColumn, Qt::AlignRight  );
-  _sohist->addColumn(tr("Ord. Date"),  _dateColumn,  Qt::AlignCenter );
-  _sohist->addColumn(tr("Invc. Date"), _dateColumn,  Qt::AlignCenter );
-  _sohist->addColumn(tr("Total"),      _moneyColumn, Qt::AlignRight  );
+  _sohist->addColumn(tr("S/O #"),      _orderColumn,    Qt::AlignLeft   );
+  _sohist->addColumn(tr("Cust. P/O #"), -1,             Qt::AlignLeft   );
+  _sohist->addColumn(tr("Invoice #"),  _orderColumn,    Qt::AlignLeft   );
+  _sohist->addColumn(tr("Ord. Date"),  _dateColumn,     Qt::AlignCenter );
+  _sohist->addColumn(tr("Invc. Date"), _dateColumn,     Qt::AlignCenter );
+  _sohist->addColumn(tr("Total"),      _bigMoneyColumn, Qt::AlignRight  );
 }
 
 /*
@@ -145,16 +145,12 @@ void dspBriefSalesHistoryByCustomer::sFillList()
   if (!checkParameters())
     return;
 
-  QString sql( "SELECT cohist_ordernumber, cohist_ponumber, cohist_invcnumber,"
-               "       formatDate(cohist_orderdate) AS f_orderdate,"
-               "       formatDate(cohist_invcdate, 'Return') AS f_invcdate,"
-               "       SUM(round(cohist_qtyshipped * cohist_unitprice,2)) AS extended,"
-               "       formatMoney(SUM(round(cohist_qtyshipped * cohist_unitprice,2))) AS f_extended "
-               "FROM cohist, itemsite, item "
-               "WHERE ( (cohist_itemsite_id=itemsite_id)"
-               " AND (itemsite_item_id=item_id)"
-               " AND (cohist_invcdate BETWEEN :startDate AND :endDate)"
-               " AND (cohist_cust_id=:cust_id)" );
+  QString sql( "SELECT cohist_ordernumber, cohist_ponumber, invoicenumber,"
+               "       cohist_orderdate, cohist_invcdate,"
+               "       SUM(baseextprice) AS extended "
+               "FROM saleshistory "
+               "WHERE ( (cohist_invcdate BETWEEN :startDate AND :endDate)"
+               "  AND   (cohist_cust_id=:cust_id)" );
 
   if (_warehouse->isSelected())
     sql += " AND (itemsite_warehous_id=:warehous_id)";
@@ -165,7 +161,7 @@ void dspBriefSalesHistoryByCustomer::sFillList()
     sql += " AND (item_prodcat_id IN (SELECT prodcat_id FROM prodcat WHERE (prodcat_code ~ :prodcat_pattern)))";
 
   sql += ") "
-         "GROUP BY cohist_ordernumber, cohist_ponumber, cohist_invcnumber,"
+         "GROUP BY cohist_ordernumber, cohist_ponumber, invoicenumber,"
          "         cohist_orderdate, cohist_invcdate "
          "ORDER BY cohist_invcdate, cohist_orderdate;";
 
@@ -182,10 +178,14 @@ void dspBriefSalesHistoryByCustomer::sFillList()
     XTreeWidgetItem *last = 0;
     do
     {
+      QString invoicedate = tr("Return");
+      if (q.value("cohist_invcdate").toString() != "")
+        invoicedate = formatDate(q.value("cohist_invcdate").toDate());
+        
       last = new XTreeWidgetItem( _sohist, last, -1, 
 			       q.value("cohist_ordernumber"), q.value("cohist_ponumber"),
-			       q.value("cohist_invcnumber"), q.value("f_orderdate"),
-			       q.value("f_invcdate"), q.value("f_extended") );
+			       q.value("invoicenumber"), formatDate(q.value("cohist_orderdate").toDate()),
+			       invoicedate, formatMoney(q.value("extended").toDouble()) );
 
       totalSales += q.value("extended").toDouble();
     }

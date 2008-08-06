@@ -87,12 +87,12 @@ dspSummarizedSalesHistoryByShippingZone::dspSummarizedSalesHistoryByShippingZone
                        "FROM shipzone "
                        "ORDER BY shipzone_name;" );
 
-  _sohist->addColumn(tr("Zone"),        _itemColumn,  Qt::AlignCenter );
-  _sohist->addColumn(tr("Customer"),    200,          Qt::AlignLeft   );
-  _sohist->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft   );
-  _sohist->addColumn(tr("Description"), -1,           Qt::AlignLeft   );
-  _sohist->addColumn(tr("Shipped"),     _qtyColumn,   Qt::AlignRight  );
-  _sohist->addColumn(tr("Ext. Price"),  _moneyColumn, Qt::AlignRight  );
+  _sohist->addColumn(tr("Zone"),        _itemColumn,     Qt::AlignLeft   );
+  _sohist->addColumn(tr("Customer"),    200,             Qt::AlignLeft   );
+  _sohist->addColumn(tr("Item Number"), _itemColumn,     Qt::AlignLeft   );
+  _sohist->addColumn(tr("Description"), -1,              Qt::AlignLeft   );
+  _sohist->addColumn(tr("Shipped"),     _qtyColumn,      Qt::AlignRight  );
+  _sohist->addColumn(tr("Total Sales"), _bigMoneyColumn, Qt::AlignRight  );
 }
 
 /*
@@ -118,7 +118,7 @@ void dspSummarizedSalesHistoryByShippingZone::sFillList()
                "       shipzone_name, (cust_number || '-' || cust_name),"
                "       item_number, (item_descrip1 || ' ' || item_descrip2),"
                "       formatQty(SUM(cohist_qtyshipped)),"
-               "       formatMoney(SUM(round(cohist_qtyshipped * cohist_unitprice,2))) "
+               "       formatMoney(SUM(round((cohist_qtyshipped * currtobase(cohist_curr_id, cohist_unitprice, cohist_invcdate)), 2))) "
                "FROM cohist, cust, shipto, itemsite, item, shipzone "
                "WHERE ((cohist_cust_id=cust_id)"
                " AND (cohist_shipto_id=shipto_id)"

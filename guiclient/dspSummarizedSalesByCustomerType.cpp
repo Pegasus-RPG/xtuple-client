@@ -82,13 +82,13 @@ dspSummarizedSalesByCustomerType::dspSummarizedSalesByCustomerType(QWidget* pare
 
   _customerType->setType(CustomerType);
 
-  _sohist->addColumn(tr("Customer Type"), -1,           Qt::AlignLeft   );
-  _sohist->addColumn(tr("Site"),          _whsColumn,   Qt::AlignCenter );
-  _sohist->addColumn(tr("Min. Price"),    _priceColumn, Qt::AlignRight  );
-  _sohist->addColumn(tr("Max. Price"),    _priceColumn, Qt::AlignRight  );
-  _sohist->addColumn(tr("Avg. Price"),    _priceColumn, Qt::AlignRight  );
-  _sohist->addColumn(tr("Total Units"),   _qtyColumn,   Qt::AlignRight  );
-  _sohist->addColumn(tr("Total $"),       _moneyColumn, Qt::AlignRight  );
+  _sohist->addColumn(tr("Customer Type"), -1,              Qt::AlignLeft   );
+  _sohist->addColumn(tr("Site"),          _whsColumn,      Qt::AlignCenter );
+  _sohist->addColumn(tr("Min. Price"),    _priceColumn,    Qt::AlignRight  );
+  _sohist->addColumn(tr("Max. Price"),    _priceColumn,    Qt::AlignRight  );
+  _sohist->addColumn(tr("Avg. Price"),    _priceColumn,    Qt::AlignRight  );
+  _sohist->addColumn(tr("Total Units"),   _qtyColumn,      Qt::AlignRight  );
+  _sohist->addColumn(tr("Total Sales"),   _bigMoneyColumn, Qt::AlignRight  );
   _sohist->setDragString("custtypeid=");
 }
 
@@ -146,34 +146,27 @@ void dspSummarizedSalesByCustomerType::sFillList()
   if (!checkParameters())
     return;
 
-  QString sql( "SELECT custtype_id, custtype_code, warehous_code,"
-               "       formatSalesPrice(minprice) AS f_minprice,"
-               "       formatSalesPrice(maxprice) AS f_maxprice,"
-               "       formatSalesPrice(avgprice) AS f_avgprice,"
-               "       formatQty(totalunits) AS f_totalunits,"
-               "       formatQty(totalsales) AS f_totalsales, totalsales "
-               "FROM ( SELECT custtype_id, custtype_code, warehous_code,"
-               "              MIN(cohist_unitprice) AS minprice, MAX(cohist_unitprice) AS maxprice,"
-               "              AVG(cohist_unitprice) AS avgprice, SUM(cohist_qtyshipped) AS totalunits,"
-               "              SUM(round(cohist_qtyshipped * cohist_unitprice,2)) AS totalsales "
-               "       FROM cohist, cust, custtype, itemsite, item, warehous "
-               "       WHERE ( (cohist_cust_id=cust_id)"
-               "        AND (cust_custtype_id=custtype_id)"
-               "        AND (cohist_itemsite_id=itemsite_id)"
-               "        AND (itemsite_item_id=item_id)"
-               "        AND (itemsite_warehous_id=warehous_id)"
-               "        AND (cohist_invcdate BETWEEN :startDate AND :endDate)" );
+  QString sql( "SELECT cust_custtype_id, custtype_code, warehous_code,"
+               "       formatSalesPrice(minprice), formatSalesPrice(maxprice),"
+               "       formatSalesPrice(avgprice), formatQty(totalunits),"
+               "       formatMoney(totalsales), totalsales "
+               "FROM ( SELECT cust_custtype_id, custtype_code, warehous_code,"
+               "              MIN(baseunitprice) AS minprice, MAX(baseunitprice) AS maxprice,"
+               "              AVG(baseunitprice) AS avgprice, SUM(cohist_qtyshipped) AS totalunits,"
+               "              SUM(baseextprice) AS totalsales "
+               "       FROM saleshistory "
+               "       WHERE ( (cohist_invcdate BETWEEN :startDate AND :endDate)" );
 
   if (_warehouse->isSelected())
-    sql += "AND (warehous_id=:warehous_id)";
+    sql += "AND (itemsite_warehous_id=:warehous_id)";
 
   if (_customerType->isSelected())
-    sql += " AND (custtype_id=:custtype_id)";
+    sql += " AND (cust_custtype_id=:custtype_id)";
   else if (_customerType->isPattern())
     sql += " AND (custtype_code ~ :custtype_pattern)";
 
   sql += ") "
-         "GROUP BY custtype_id, custtype_code, warehous_code ) AS data "
+         "GROUP BY cust_custtype_id, custtype_code, warehous_code ) AS data "
          "ORDER BY custtype_code, warehous_code;";
 
   q.prepare(sql);

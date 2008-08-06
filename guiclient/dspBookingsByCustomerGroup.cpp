@@ -83,14 +83,14 @@ dspBookingsByCustomerGroup::dspBookingsByCustomerGroup(QWidget* parent, const ch
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 
-  _soitem->addColumn(tr("S/O #"),         _orderColumn,    Qt::AlignRight  );
+  _soitem->addColumn(tr("S/O #"),         _orderColumn,    Qt::AlignLeft   );
   _soitem->addColumn(tr("Ord. Date"),     _dateColumn,     Qt::AlignCenter );
-  _soitem->addColumn(tr("Cust. #"),       _orderColumn,    Qt::AlignRight  );
+  _soitem->addColumn(tr("Cust. #"),       _orderColumn,    Qt::AlignLeft   );
   _soitem->addColumn(tr("Customer"),      -1,              Qt::AlignLeft   );
   _soitem->addColumn(tr("Item Number"),   _itemColumn,     Qt::AlignLeft   );
   _soitem->addColumn(tr("Ordered"),       _qtyColumn,      Qt::AlignRight  );
   _soitem->addColumn(tr("Unit Price"),    _priceColumn,    Qt::AlignRight  );
-  _soitem->addColumn(tr("Amount (base)"), _bigMoneyColumn, Qt::AlignRight  );
+  _soitem->addColumn(tr("Ext. Price"),    _bigMoneyColumn, Qt::AlignRight  );
 
 }
 
@@ -168,8 +168,11 @@ void dspBookingsByCustomerGroup::sFillList()
   q = mql.toQuery(params);
 
   XTreeWidgetItem *last = 0;
+  bool exchangeError = false;
   while (q.next())
   {
+    if (q.value("baseunitprice").toDouble() < 0.0)
+      exchangeError = true;
     last = new XTreeWidgetItem(_soitem, last,
          q.value("coitem_id").toInt(),
          q.value("cohead_number"),
@@ -178,9 +181,13 @@ void dspBookingsByCustomerGroup::sFillList()
          q.value("cust_name"),
          q.value("item_number"),
          formatQty(q.value("coitem_qtyord").toDouble()),
-         formatSalesPrice(q.value("coitem_price").toDouble()),
-         formatMoney(q.value("baseamount").toDouble()) );
+         formatSalesPrice(q.value("baseunitprice").toDouble()),
+         formatMoney(q.value("baseextprice").toDouble()) );
   }
+  if (exchangeError)
+    QMessageBox::warning( this, tr("Currency Exchange Rate Error"),
+                          tr("One or more of the Prices could not be converted to Base Currency.\n"
+                             "These Prices have been set to a negative value.") );
 }
 
 bool dspBookingsByCustomerGroup::checkParameters()

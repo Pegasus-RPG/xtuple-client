@@ -82,13 +82,13 @@ dspBriefSalesHistoryByCustomerType::dspBriefSalesHistoryByCustomerType(QWidget* 
 
   _customerType->setType(CustomerType);
 
-  _sohist->addColumn(tr("Cust. Type"),  _orderColumn, Qt::AlignCenter );
-  _sohist->addColumn(tr("Customer"),    -1,           Qt::AlignLeft   );
-  _sohist->addColumn(tr("S/O #"),       _orderColumn, Qt::AlignRight  );
-  _sohist->addColumn(tr("Invoice #"),   _orderColumn, Qt::AlignRight  );
-  _sohist->addColumn(tr("Ord. Date"),   _dateColumn,  Qt::AlignCenter );
-  _sohist->addColumn(tr("Invc. Date"),  _dateColumn,  Qt::AlignCenter );
-  _sohist->addColumn(tr("Total"),       _moneyColumn, Qt::AlignRight  );
+  _sohist->addColumn(tr("Cust. Type"),  _orderColumn,    Qt::AlignLeft   );
+  _sohist->addColumn(tr("Customer"),    -1,              Qt::AlignLeft   );
+  _sohist->addColumn(tr("S/O #"),       _orderColumn,    Qt::AlignLeft   );
+  _sohist->addColumn(tr("Invoice #"),   _orderColumn,    Qt::AlignLeft   );
+  _sohist->addColumn(tr("Ord. Date"),   _dateColumn,     Qt::AlignCenter );
+  _sohist->addColumn(tr("Invc. Date"),  _dateColumn,     Qt::AlignCenter );
+  _sohist->addColumn(tr("Total"),       _bigMoneyColumn, Qt::AlignRight  );
 }
 
 /*
@@ -145,30 +145,24 @@ void dspBriefSalesHistoryByCustomerType::sFillList()
   if (!checkParameters())
     return;
 
-  QString sql( "SELECT custtype_id, custtype_code, cust_name,"
-               "       cohist_ordernumber, cohist_invcnumber,"
-               "       formatDate(cohist_orderdate) AS f_orderdate,"
-               "       formatDate(cohist_invcdate) AS f_invcdate,"
-               "       SUM(round(cohist_qtyshipped * cohist_unitprice,2)) AS extended,"
-               "       formatMoney(SUM(round(cohist_qtyshipped * cohist_unitprice,2))) AS f_extended "
-               "FROM cohist, cust, custtype, itemsite, item "
-               "WHERE ( (cohist_itemsite_id=itemsite_id)"
-               " AND (itemsite_item_id=item_id)"
-               " AND (cohist_cust_id=cust_id)"
-               " AND (cust_custtype_id=custtype_id)"
-               " AND (cohist_invcdate BETWEEN :startDate AND :endDate)" );
+  QString sql( "SELECT cust_custtype_id, custtype_code, cust_name,"
+               "       cohist_ordernumber, invoicenumber,"
+               "       cohist_orderdate, cohist_invcdate,"
+               "       SUM(baseextprice) AS extended "
+               "FROM saleshistory "
+               "WHERE ( (cohist_invcdate BETWEEN :startDate AND :endDate)" );
 
   if (_warehouse->isSelected())
     sql += " AND (itemsite_warehous_id=:warehous_id)";
 
   if (_customerType->isSelected())
-    sql += " AND (custtype_id=:custtype_id)";
+    sql += " AND (cust_custtype_id=:custtype_id)";
   else if (_customerType->isPattern())
     sql += " AND (custtype_code ~ :custtype_pattern)";
 
   sql += ") "
-         "GROUP BY custtype_id, custtype_code, cust_name,"
-         "         cohist_ordernumber, cohist_invcnumber,"
+         "GROUP BY cust_custtype_id, custtype_code, cust_name,"
+         "         cohist_ordernumber, invoicenumber,"
          "         cohist_orderdate, cohist_invcdate "
          "ORDER BY cohist_invcdate, cohist_orderdate;";
 
@@ -184,11 +178,15 @@ void dspBriefSalesHistoryByCustomerType::sFillList()
     XTreeWidgetItem *last = 0;
     do
     {
-      last = new XTreeWidgetItem( _sohist, last, q.value("custtype_id").toInt(),
+      QString invoicedate = tr("Return");
+      if (q.value("cohist_invcdate").toString() != "")
+        invoicedate = formatDate(q.value("cohist_invcdate").toDate());
+
+      last = new XTreeWidgetItem( _sohist, last, q.value("cust_custtype_id").toInt(),
 			       q.value("custtype_code"), q.value("cust_name"),
-			       q.value("cohist_ordernumber"), q.value("cohist_invcnumber"),
-			       q.value("f_orderdate"), q.value("f_invcdate"),
-			       q.value("f_extended") );
+			       q.value("cohist_ordernumber"), q.value("invoicenumber"),
+			       formatDate(q.value("cohist_orderdate").toDate()), invoicedate,
+			       formatMoney(q.value("extended").toDouble()) );
 
        totalSales += q.value("extended").toDouble();
     }

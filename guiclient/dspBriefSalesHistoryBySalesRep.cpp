@@ -83,13 +83,13 @@ dspBriefSalesHistoryBySalesRep::dspBriefSalesHistoryBySalesRep(QWidget* parent, 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 
-  _sohist->addColumn(tr("Customer"),    -1,           Qt::AlignLeft  );
-  _sohist->addColumn(tr("S/O #"),      _orderColumn, Qt::AlignRight  );
-  _sohist->addColumn(tr("Invoice #"),  _orderColumn, Qt::AlignRight  );
-  _sohist->addColumn(tr("Ord. Date"),  _dateColumn,  Qt::AlignCenter );
-  _sohist->addColumn(tr("Invc. Date"), _dateColumn,  Qt::AlignCenter );
-  _sohist->addColumn( tr("Ext. Price"), _moneyColumn, Qt::AlignRight );
-  _sohist->addColumn( tr("Ext. Cost"), _costColumn, Qt::AlignRight );
+  _sohist->addColumn(tr("Customer"),    -1,              Qt::AlignLeft   );
+  _sohist->addColumn(tr("S/O #"),       _orderColumn,    Qt::AlignLeft   );
+  _sohist->addColumn(tr("Invoice #"),   _orderColumn,    Qt::AlignLeft   );
+  _sohist->addColumn(tr("Ord. Date"),   _dateColumn,     Qt::AlignCenter );
+  _sohist->addColumn(tr("Invc. Date"),  _dateColumn,     Qt::AlignCenter );
+  _sohist->addColumn( tr("Ext. Price"), _bigMoneyColumn, Qt::AlignRight  );
+  _sohist->addColumn( tr("Ext. Cost"),  _bigMoneyColumn, Qt::AlignRight  );
 
   _showCosts->setEnabled(_privileges->check("ViewCosts"));
   _showPrices->setEnabled(_privileges->check("ViewCustomerPrices"));
@@ -201,34 +201,25 @@ void dspBriefSalesHistoryBySalesRep::sFillList()
   if (!checkParameters())
     return;
 
-  QString sql( "SELECT cust_id, cust_name, cohist_ordernumber,"
-               "       CASE WHEN (cohist_invcnumber='-1') THEN 'Credit'"
-               "            ELSE TEXT(cohist_invcnumber)"
-               "       END AS invoicenumber,"
-               "       formatDate(cohist_orderdate) AS f_orderdate,"
-               "       formatDate(cohist_invcdate, 'Return') AS f_invcdate,"
-	       "       SUM(round(cohist_qtyshipped * cohist_unitprice,2)) AS extprice,"
-	       "       formatMoney(SUM(round(cohist_qtyshipped * cohist_unitprice,2))) AS f_extprice,"
-	       "       SUM(cohist_qtyshipped * cohist_unitcost) AS extcost,"
-	       "       formatCost(SUM(cohist_qtyshipped * cohist_unitcost)) AS f_extcost "
-	       "FROM cohist, cust, itemsite, item, prodcat "
-	       "WHERE ( (cohist_itemsite_id=itemsite_id)"
-	       " AND (cohist_cust_id=cust_id)"
-	       " AND (itemsite_item_id=item_id)"
-	       " AND (item_prodcat_id=prodcat_id)"
-	       " AND (cohist_salesrep_id=:salesrep_id)"
-	       " AND (cohist_invcdate BETWEEN :startDate AND :endDate)" );
+  QString sql( "SELECT cohist_cust_id, cust_name, cohist_ordernumber,"
+               "       invoicenumber,"
+               "       cohist_orderdate, cohist_invcdate,"
+               "       SUM(baseextprice) AS extprice,"
+               "       SUM(extcost) AS extcost "
+               "FROM saleshistory "
+               "WHERE ( (cohist_salesrep_id=:salesrep_id)"
+               " AND (cohist_invcdate BETWEEN :startDate AND :endDate)" );
 
   if (_warehouse->isSelected())
     sql += " AND (itemsite_warehous_id=:warehous_id)";
 
   if (_productCategory->isSelected())
-    sql += " AND (prodcat_id=:prodcat_id)";
+    sql += " AND (item_prodcat_id=:prodcat_id)";
   else if (_productCategory->isPattern())
     sql += " AND (prodcat_code ~ :prodcat_pattern)";
 
   sql += ") "
-         "GROUP BY cust_id, cust_name, cohist_ordernumber, cohist_invcnumber,"
+         "GROUP BY cohist_cust_id, cust_name, cohist_ordernumber, invoicenumber,"
          "         cohist_orderdate, cohist_invcdate "
          "ORDER BY cohist_invcdate;";
 
@@ -246,14 +237,18 @@ void dspBriefSalesHistoryBySalesRep::sFillList()
     XTreeWidgetItem *last  = 0;
     do
     {
-      last = new XTreeWidgetItem(_sohist, 0, q.value("cust_id").toInt(),
+      QString invoicedate = tr("Return");
+      if (q.value("cohist_invcdate").toString() != "")
+        invoicedate = formatDate(q.value("cohist_invcdate").toDate());
+
+      last = new XTreeWidgetItem(_sohist, 0, q.value("cohist_cust_id").toInt(),
 				 q.value("cust_name"),
 				 q.value("cohist_ordernumber"),
 				 q.value("invoicenumber"),
-				 q.value("f_orderdate"),
-				 q.value("f_invcdate"),
-				 q.value("f_extprice"),
-				 q.value("f_extcost"));
+				 formatDate(q.value("cohist_orderdate").toDate()),
+				 invoicedate,
+				 formatMoney(q.value("extprice").toDouble()),
+				 formatMoney(q.value("extcost").toDouble()) );
  
       totalSales += q.value("extprice").toDouble();
       totalCosts += q.value("extcost").toDouble();

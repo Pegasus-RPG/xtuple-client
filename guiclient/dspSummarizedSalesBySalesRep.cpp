@@ -86,11 +86,11 @@ dspSummarizedSalesBySalesRep::dspSummarizedSalesBySalesRep(QWidget* parent, cons
 
   _productCategory->setType(ProductCategory);
 
-  _sohist->addColumn(tr("Sales Rep."),  -1,           Qt::AlignLeft   );
-  _sohist->addColumn(tr("First Sale"),  _dateColumn,  Qt::AlignCenter );
-  _sohist->addColumn(tr("Last Sale"),   _dateColumn,  Qt::AlignCenter );
-  _sohist->addColumn(tr("Total Qty."),  _qtyColumn,   Qt::AlignRight  );
-  _sohist->addColumn(tr("Total Sales"), _moneyColumn, Qt::AlignRight  );
+  _sohist->addColumn(tr("Sales Rep."),  -1,              Qt::AlignLeft   );
+  _sohist->addColumn(tr("First Sale"),  _dateColumn,     Qt::AlignCenter );
+  _sohist->addColumn(tr("Last Sale"),   _dateColumn,     Qt::AlignCenter );
+  _sohist->addColumn(tr("Total Units"), _qtyColumn,      Qt::AlignRight  );
+  _sohist->addColumn(tr("Total Sales"), _bigMoneyColumn, Qt::AlignRight  );
 }
 
 /*
@@ -164,15 +164,12 @@ void dspSummarizedSalesBySalesRep::sFillList()
   if (!checkParameters())
     return;
 
-  QString sql( "SELECT salesrep_id, (salesrep_number || '-' || salesrep_name),"
+  QString sql( "SELECT cohist_salesrep_id, (salesrep_number || '-' || salesrep_name),"
                "       formatDate(MIN(cohist_invcdate)), formatDate(MAX(cohist_invcdate)),"
                "       formatQty(SUM(cohist_qtyshipped)),"
-               "       formatMoney(SUM(round(cohist_qtyshipped * cohist_unitprice,2))) "
-               "FROM cohist, itemsite, item, salesrep "
-               "WHERE ( (cohist_itemsite_id=itemsite_id)"
-               " AND (itemsite_item_id=item_id)"
-               " AND (cohist_salesrep_id=salesrep_id)"
-               " AND (cohist_invcdate BETWEEN :startDate AND :endDate)" );
+               "       formatMoney(SUM(baseextprice)) "
+               "FROM saleshistory "
+               "WHERE ( (cohist_invcdate BETWEEN :startDate AND :endDate)" );
 
   if (_productCategory->isSelected())
     sql += " AND (item_prodcat_id=:prodcat_id)";
@@ -183,7 +180,7 @@ void dspSummarizedSalesBySalesRep::sFillList()
     sql += " AND (itemsite_warehous_id=:warehous_id)";
 
   sql += ") "
-         "GROUP BY salesrep_number, salesrep_id, salesrep_name";
+         "GROUP BY cohist_salesrep_id, salesrep_number, salesrep_name";
 
   q.prepare(sql);
   _warehouse->bindValue(q);
