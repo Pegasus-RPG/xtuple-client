@@ -27,6 +27,7 @@
     <file alias="displays/SalesOrderItems.mql">salesOrderItems.mql</file>
     <file alias="displays/Quotes.mql">quotes.mql</file>
     <file alias="displays/QuoteItems.mql">quoteItems.mql</file>
+    <file alias="displays/SalesHistory.mql">salesHistory.mql</file>
   </qresource>
   <qresource prefix="po">
     <file alias="displays/POsByVendor/FillListDetail.mql">dspPOsByVendorFillList.mql</file>
