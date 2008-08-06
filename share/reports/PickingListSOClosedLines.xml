@@ -53,7 +53,7 @@
  <querysource>
   <name>detail</name>
   <sql>SELECT 1 AS groupby,
-       coitem_linenumber,
+       formatsolinenumber(coitem_id) AS linenumber,
        coitem_memo,
        item_number,
        formatitemsitebarcode(itemsite_id) AS item_barcode,
@@ -72,14 +72,6 @@
                     WHERE ( (coship_coitem_id=coitem_id)
                      AND (coship_cosmisc_id=cosmisc_id)
                      AND (NOT cosmisc_shipped) ) ) ) AS atshipping,
-       formatQty(roundUp((coitem_qtyord * coitem_qty_invuomratio) / CASE WHEN(item_shipinvrat = 0) THEN 1 ELSE item_shipinvrat END)) AS shipordered,
-       formatQty(roundUp(((coitem_qtyshipped - coitem_qtyreturned) * coitem_qty_invuomratio) / CASE WHEN(item_shipinvrat = 0) THEN 1 ELSE item_shipinvrat END)) AS shipshipped,
-       formatQty(roundUp((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) / CASE WHEN(item_shipinvrat = 0) THEN 1 ELSE item_shipinvrat END)) AS shipbalance,
-       formatQty(roundUp( ( SELECT COALESCE(SUM(coship_qty), 0)
-                            FROM coship, cosmisc
-                            WHERE ( (coship_coitem_id=coitem_id)
-                              AND (coship_cosmisc_id=cosmisc_id)
-                              AND (NOT cosmisc_shipped) ) )/ CASE WHEN(item_shipinvrat = 0) THEN 1 ELSE item_shipinvrat END ) ) AS shipatshipping,
        CASE WHEN (coitem_status='O' AND (SELECT cust_creditstatus FROM cust,cohead WHERE coitem_cohead_id=cohead_id AND cust_id=cohead_cust_id)='H') THEN 'H'
             WHEN (coitem_status='O' AND ((SELECT SUM(invcitem_billed)
                                             FROM cohead, invchead, invcitem
@@ -87,7 +79,7 @@
                                              AND  (invcitem_invchead_id=invchead_id)
                                              AND  (invcitem_item_id=item_id)
                                              AND  (invcitem_warehous_id=itemsite_warehous_id)
-                                             AND  (invcitem_linenumber=coitem_linenumber)
+                                             AND  (invcitem_linenumber=CASE WHEN(coitem_subnumber > 0) THEN (coitem_linenumber * 1000) + coitem_subnumber ELSE coitem_linenumber END)
                                              AND  (cohead_id=coitem_cohead_id))) >= coitem_qtyord)) THEN 'I'
             WHEN (coitem_status='O' AND ((SELECT SUM(invcitem_billed)
                                             FROM cohead, invchead, invcitem
@@ -95,7 +87,7 @@
                                              AND  (invcitem_invchead_id=invchead_id)
                                              AND  (invcitem_item_id=item_id)
                                              AND  (invcitem_warehous_id=itemsite_warehous_id)
-                                             AND  (invcitem_linenumber=coitem_linenumber)
+                                             AND  (invcitem_linenumber=CASE WHEN(coitem_subnumber > 0) THEN (coitem_linenumber * 1000) + coitem_subnumber ELSE coitem_linenumber END)
                                              AND  (cohead_id=coitem_cohead_id))) > 0)) THEN 'P'
             WHEN (coitem_status='O' AND (itemsite_qtyonhand - qtyAllocated(itemsite_id, CURRENT_DATE)
                                          + qtyOrdered(itemsite_id, CURRENT_DATE))
@@ -106,16 +98,17 @@
  WHERE ( (coitem_itemsite_id=itemsite_id)
    AND (itemsite_item_id=item_id)
    AND (item_inv_uom_id=uom_id)
+   AND (item_type != 'K')
    AND (coitem_status &lt;> 'X')
    AND (coitem_cohead_id=&lt;? value("sohead_id") ?>)
 )
 --2.3 add coitem_qty_uom_id, to the GROUP BY clause
 GROUP BY coitem_qty_uom_id,
-         coitem_linenumber, coitem_id, coitem_memo, item_number, uom_name, shipuom,
+         linenumber, coitem_linenumber, coitem_subnumber, coitem_id, coitem_memo, item_number, uom_name, shipuom,
          item_descrip1, item_descrip2, coitem_qtyord, coitem_qty_invuomratio, coitem_qtyshipped,
-         coitem_qtyreturned, item_shipinvrat, coitem_status, coitem_cohead_id,
+         coitem_qtyreturned, coitem_status, coitem_cohead_id,
          itemsite_id, itemsite_qtyonhand, itemsite_warehous_id, item_id
-ORDER BY coitem_linenumber;</sql>
+ORDER BY linenumber;</sql>
  </querysource>
  <querysource>
   <name>logo</name>
@@ -763,7 +756,7 @@ WHERE ((image_name='logo'));</sql>
   </group>
   <group>
    <name>lineitem</name>
-   <column>coitem_linenumber</column>
+   <column>linenumber</column>
    <foot>
     <height>28</height>
     <line>

@@ -96,15 +96,6 @@ SELECT shiphead_number, 'T/O #:' AS ordertype,
        formatQty(coitem_qtyord) AS ordered,
        formatQty(coship_qty) AS shipped,
 
-       formatQty(roundUp((coitem_qtyord * coitem_qty_invuomratio) /
-                         CASE WHEN(item_shipinvrat = 0) THEN 1
-                                                        ELSE item_shipinvrat
-                         END)) AS shipordered,
-       formatQty(roundUp(coship_qty /
-                         CASE WHEN(item_shipinvrat = 0) THEN 1
-                                                        ELSE item_shipinvrat
-                         END ) ) AS shipatshipping,
-
        CASE WHEN (coitem_status='O' AND (SELECT cust_creditstatus
                                            FROM cust,cohead
                                           WHERE coitem_cohead_id=cohead_id
@@ -168,15 +159,6 @@ SELECT 2 AS groupby,
 
        formatQty(toitem_qty_ordered) AS ordered,
        formatQty(shipitem_qty) AS shipped,
-
-       formatQty(roundUp(toitem_qty_ordered /
-                         CASE WHEN (item_shipinvrat = 0) THEN 1
-                                                         ELSE item_shipinvrat
-                         END)) AS shipordered,
-       formatQty(roundUp(shipitem_qty /
-                         CASE WHEN (item_shipinvrat = 0) THEN 1
-                                                         ELSE item_shipinvrat
-                         END)) AS shipatshipping,
 
        toitem_status AS f_status,
        CASE

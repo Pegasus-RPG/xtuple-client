@@ -121,21 +121,6 @@ SELECT COALESCE(shiphead_number::TEXT, 'Not Issued To Shipping') AS shiphead_num
        item_descrip1,
        item_descrip2,
        formatQty(coitem_qtyord) AS ordered,
-       formatQty(&lt;? if exists("shiphead_id") ?>
-                 qtyInShipment('SO', coitem_id, &lt;? value("shiphead_id") ?>)
-                 &lt;? else ?> qtyAtShipping('SO', coitem_id) &lt;? endif ?>
-                ) AS atshipping,
-
-       formatQty(roundUp((coitem_qtyord * coitem_qty_invuomratio) /
-                         CASE WHEN(item_shipinvrat = 0) THEN 1
-                                                        ELSE item_shipinvrat
-                         END)) AS shipordered,
-       formatQty(roundUp(&lt;? if exists("shiphead_id") ?>
-                 qtyInShipment('SO', coitem_id, &lt;? value("shiphead_id") ?>)
-                 &lt;? else ?> qtyAtShipping('SO', coitem_id) &lt;? endif ?> /
-                         CASE WHEN(item_shipinvrat = 0) THEN 1
-                                                        ELSE item_shipinvrat
-                         END)) AS shipatshipping,
 
        CASE WHEN (coitem_status='O' AND (SELECT cust_creditstatus
                                            FROM cust,cohead
@@ -179,7 +164,7 @@ SELECT COALESCE(shiphead_number::TEXT, 'Not Issued To Shipping') AS shiphead_num
 )
 GROUP BY coitem_qty_uom_id, coitem_linenumber, coitem_id, coitem_memo, item_number, uom_name, shipuom,
          item_descrip1, item_descrip2, coitem_qtyord, coitem_qty_invuomratio, coitem_qtyshipped,
-         coitem_qtyreturned, item_shipinvrat, coitem_status, coitem_cohead_id,
+         coitem_qtyreturned, coitem_status, coitem_cohead_id,
          itemsite_id, itemsite_qtyonhand, itemsite_warehous_id, item_id
 &lt;? if exists("MultiWhs") ?>
 UNION
@@ -195,21 +180,6 @@ SELECT 2 AS groupby,
        item_descrip2,
 
        formatQty(toitem_qty_ordered) AS ordered,
-       formatQty(&lt;? if exists("shiphead_id") ?>
-                 qtyInShipment('TO', toitem_id, &lt;? value("shiphead_id") ?>)
-                 &lt;? else ?> qtyAtShipping('TO', toitem_id) &lt;? endif ?>
-                ) AS atshipping,
-       formatQty(roundUp(toitem_qty_ordered /
-                         CASE WHEN (item_shipinvrat = 0) THEN 1
-                                                         ELSE item_shipinvrat
-                         END)) AS shipordered,
-       formatQty(roundUp(&lt;? if exists("shiphead_id") ?>
-                         qtyInShipment('TO', toitem_id, &lt;? value("shiphead_id")?>)
-                         &lt;? else ?> qtyAtShipping('TO', toitem_id) &lt;? endif ?>
-                         /
-                         CASE WHEN (item_shipinvrat = 0) THEN 1
-                                                         ELSE item_shipinvrat
-                         END)) AS shipatshipping,
 
        toitem_status AS f_status
   FROM itemsite, item, toitem, tohead, uom
