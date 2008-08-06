@@ -6,7 +6,7 @@ SELECT tax_id, tax_code, tax_descrip,
 					       cohist_invcdate),2)), 0)
 	  FROM cohist
 	  WHERE ((cohist_tax_id=tax_id)
-	    AND  (cohist_itemsite_id<>-1)
+            AND  (COALESCE(cohist_misc_type,'M') = 'M')
 	    AND  (cohist_invcdate BETWEEN <? value("startDate") ?>
 				      AND <? value("endDate") ?>))
        )),
