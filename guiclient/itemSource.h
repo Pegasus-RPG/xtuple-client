@@ -74,7 +74,7 @@ public:
 
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
-    virtual void sSave();
+    virtual bool sSave();
     virtual void sClose();
     virtual void sAdd();
     virtual void sEdit();
@@ -92,6 +92,7 @@ protected slots:
 private:
     int _mode;
     int _itemsrcid;
+    bool _captive;
 
 };
 

@@ -89,6 +89,8 @@ itemSource::itemSource(QWidget* parent, const char* name, bool modal, Qt::WFlags
   _vendorList->setMaximumWidth(25);
 #endif
 
+  _captive = false;
+  
   QString base;
   q.exec("SELECT currConcat(baseCurrID()) AS base;");
   if (q.first())
@@ -156,10 +158,11 @@ enum SetResponse itemSource::set(const ParameterList &pParams)
         _itemsrcid = q.value("_itemsrc_id").toInt();
       else if (q.lastError().type() != QSqlError::None)
       {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-	return UndefinedError;
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        return UndefinedError;
       }
-
+      _captive = true;
+      
       connect(_itemsrcp, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
       connect(_itemsrcp, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
       connect(_itemsrcp, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
@@ -209,7 +212,7 @@ enum SetResponse itemSource::set(const ParameterList &pParams)
   return NoError;
 }
 
-void itemSource::sSave()
+bool itemSource::sSave()
 {
   if (!_item->isValid())
   {
@@ -217,7 +220,7 @@ void itemSource::sSave()
                            tr( "You must select an Item that this Item Source represents\n"
                                "before you may save this Item Source." ) );
     _item->setFocus();
-    return;
+    return false;
   }
 
   if (!_vendor->isValid())
@@ -226,7 +229,7 @@ void itemSource::sSave()
                            tr( "You must select this Vendor that this Item Source is sold by\n"
                                "before you may save this Item Source." ) );
     _item->setFocus();
-    return;
+    return false;
   }
 
   if(_mode == cNew)
@@ -242,12 +245,12 @@ void itemSource::sSave()
     {
       QMessageBox::critical( this, tr("Cannot Save Item Source"),
                             tr("An Item Source already exists for the Item Number and Vendor you have specified.\n"));
-      return;
+      return false;
     }
     else if (q.lastError().type() != QSqlError::None)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
+      return false;
     }
   }
 
@@ -257,7 +260,7 @@ void itemSource::sSave()
                           tr( "You must indicate the Unit of Measure that this Item Source is sold in\n"
                                "before you may save this Item Source." ) );
     _vendorUOM->setFocus();
-    return;
+    return false;
   }
 
   if (_invVendorUOMRatio->toDouble() == 0.0)
@@ -266,7 +269,7 @@ void itemSource::sSave()
                           tr( "You must indicate the Ratio of Inventory to Vendor Unit of Measures\n"
                                "before you may save this Item Source." ) );
     _invVendorUOMRatio->setFocus();
-    return;
+    return false;
   }
 
   if (_mode == cNew)
@@ -313,10 +316,21 @@ void itemSource::sSave()
   if (q.lastError().type() != QSqlError::None)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
+    return false;
   }
 
-  done(_itemsrcid);
+  if (_captive)
+  {
+    _mode = cEdit;
+    _item->setReadOnly(TRUE);
+    _vendor->setEnabled(FALSE);
+    _vendorList->hide();
+    _captive = false;
+  }
+  else
+    done(_itemsrcid);
+    
+  return true;
 }
 
 void itemSource::sClose()
@@ -327,6 +341,12 @@ void itemSource::sClose()
 
 void itemSource::sAdd()
 {
+  if (_mode == cNew)
+  {
+    if (!sSave())
+      return;
+  }
+  
   ParameterList params;
   params.append("mode", "new");
   params.append("itemsrc_id", _itemsrcid);
