@@ -20,7 +20,7 @@ SELECT invhist.*,
        'qty' AS invhist_qoh_after_xtnumericrole,
        'curr' AS invhist_value_before_xtnumericrole,
        'curr' AS invhist_value_after_xtnumericrole,
-       CASE WHEN invhist_posted THEN 'warning' END AS qtforegroundrole
+       CASE WHEN NOT invhist_posted THEN 'warning' END AS qtforegroundrole
 FROM invhist, itemsite, item, warehous 
 WHERE ( (invhist_itemsite_id=itemsite_id)
   AND  (itemsite_item_id=item_id)
