@@ -241,6 +241,7 @@ void dspItemsByCharacteristic::sFillList(int pItemid, bool pLocal)
                "            WHEN (item_type='T') THEN :tooling"
                "            WHEN (item_type='O') THEN :outsideProcess"
                "            WHEN (item_type='L') THEN :planning"
+               "            WHEN (item_type='K') THEN :kit"
                "            ELSE :error"
                "       END,"
                "       uom_name "
@@ -271,6 +272,7 @@ void dspItemsByCharacteristic::sFillList(int pItemid, bool pLocal)
   q.bindValue(":tooling", tr("Tooling"));
   q.bindValue(":outsideProcess", tr("Outside Process"));
   q.bindValue(":planning", tr("Planning"));
+  q.bindValue(":kit",tr("Kit"));
   q.bindValue(":error", tr("Error"));
   q.bindValue(":char_id", _char->id());
   q.bindValue(":charass_value", _value->text().stripWhiteSpace());

@@ -162,6 +162,7 @@ void dspItemsByProductCategory::sFillList(int pItemid, bool pLocal)
                "            WHEN (item_type='S') THEN :costing"
                "            WHEN (item_type='T') THEN :tooling"
                "            WHEN (item_type='O') THEN :outside"
+               "            WHEN (item_type='K') THEN :kit"
                "            ELSE :error"
                "       END,"
                "       uom_name "
@@ -191,6 +192,7 @@ void dspItemsByProductCategory::sFillList(int pItemid, bool pLocal)
   q.bindValue(":costing", tr("Costing"));
   q.bindValue(":tooling", tr("Tooling"));
   q.bindValue(":outside", tr("Outside Process"));
+  q.bindValue(":kit",tr("Kit"));
   q.bindValue(":error", tr("Error"));
   _productCategory->bindValue(q);
   q.exec();

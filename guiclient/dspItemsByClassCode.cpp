@@ -228,6 +228,7 @@ void dspItemsByClassCode::sFillList(int pItemid, bool pLocal)
                "            WHEN (item_type='T') THEN :tooling"
                "            WHEN (item_type='O') THEN :outside"
                "            WHEN (item_type='L') THEN :planning"
+               "            WHEN (item_type='K') THEN :kit"
                "            ELSE :error"
                "       END,"
                "       uom_name "
@@ -258,6 +259,7 @@ void dspItemsByClassCode::sFillList(int pItemid, bool pLocal)
   q.bindValue(":tooling", tr("Tooling"));
   q.bindValue(":outside", tr("Outside Process"));
   q.bindValue(":planning", tr("Planning"));
+  q.bindValue(":kit", tr("Kit"));
   q.bindValue(":error", tr("Error"));
   _classCode->bindValue(q);
   q.exec();
