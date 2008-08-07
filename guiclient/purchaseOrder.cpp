@@ -172,6 +172,7 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
   double   qty;
   QDate    dueDate;
 
+  setPoheadid(-1);
   int _prid = -1;
   param = pParams.value("pr_id", &valid);
   if (valid)
@@ -457,8 +458,6 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
     setPoheadid(param.toInt());
     populate();
   }
-  else
-    setPoheadid(-1);
 
   return NoError;
 }
