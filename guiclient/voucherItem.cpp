@@ -433,7 +433,7 @@ void voucherItem::sToggleReceiving(QTreeWidgetItem *pItem)
     {
     	n = _qtyToVoucher->toDouble();
     	_qtyToVoucher->setText(item->text(2));
-    	n = n + _qtyToVoucher->toDouble();
+    	n = n - _qtyToVoucher->toDouble();
     	_qtyToVoucher->setText(s.setNum(n));
 
       n = _uninvoicedRejected->toDouble();
@@ -461,12 +461,12 @@ void voucherItem::sToggleReceiving(QTreeWidgetItem *pItem)
     {
       n = _qtyToVoucher->toDouble();
       _qtyToVoucher->setText(item->text(2));
-      n = n - _qtyToVoucher->toDouble();
+      n = n + _qtyToVoucher->toDouble();
       _qtyToVoucher->setText(s.setNum(n));
 
       n = _uninvoicedRejected->toDouble();
       _uninvoicedRejected->setText(item->text(2));
-      n = n - _uninvoicedRejected->toDouble();
+      n = n + _uninvoicedRejected->toDouble();
       _uninvoicedRejected->setText(s.setNum(n));
     }
   }
