@@ -60,6 +60,9 @@
 #include <QVariant>
 #include <QStatusBar>
 #include <QWorkspace>
+
+#include <openreports.h>
+
 #include "bomItem.h"
 
 /*
@@ -186,6 +189,20 @@ void dspItemCostDetail::sPopulate()
 
 void dspItemCostDetail::sPrint()
 {
+  ParameterList params;
+  params.append("item_id", _item->id());
+  params.append("costelem_id", _costType->id());
+
+  if (_standardCosts->isChecked())
+    params.append("standardCost");
+  else
+    params.append("actualCost");
+
+  orReport report("ItemCostDetail", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspItemCostDetail::sPopulateMenu(QMenu *menuThis)
