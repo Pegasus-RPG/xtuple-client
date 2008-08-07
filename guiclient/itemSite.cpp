@@ -676,21 +676,21 @@ void itemSite::sHandleSupplied(bool pSupplied)
 
 void itemSite::sHandleControlMethod()
 {
-  if (_controlMethod->currentItem() == 0 || _itemType == 'R' || _itemType == 'K')
-  {
-    _costNone->setChecked(true);
-    _costNone->setEnabled(true);
-    _costAvg->setEnabled(false);
-    _costStd->setEnabled(false);
-    _costJob->setEnabled(false);
-  }
-  else if(_itemType == 'J')
+  if(_itemType == 'J')
   {
     _costJob->setChecked(true);
     _costNone->setEnabled(false);
     _costAvg->setEnabled(false);
     _costStd->setEnabled(false);
     _costJob->setEnabled(true);
+  }
+  else if (_controlMethod->currentItem() == 0 || _itemType == 'R' || _itemType == 'K')
+  {
+    _costNone->setChecked(true);
+    _costNone->setEnabled(true);
+    _costAvg->setEnabled(false);
+    _costStd->setEnabled(false);
+    _costJob->setEnabled(false);
   }
   else
   {
