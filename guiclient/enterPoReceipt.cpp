@@ -107,9 +107,9 @@ enterPoReceipt::enterPoReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _orderitem->addColumn(tr("#"),            _whsColumn,  Qt::AlignCenter );
   _orderitem->addColumn(tr("Due Date"),     _dateColumn, Qt::AlignLeft   );
-  _orderitem->addColumn(tr("Site"),         _whsColumn,  Qt::AlignCenter );
   _orderitem->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft   );
   _orderitem->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignCenter );
+  _orderitem->addColumn(tr("Site"),         _whsColumn,  Qt::AlignCenter );
   _orderitem->addColumn(tr("Vend. Item #"), -1,          Qt::AlignLeft   );
   _orderitem->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignCenter );
   _orderitem->addColumn(tr("Ordered"),      _qtyColumn,  Qt::AlignRight  );
