@@ -194,6 +194,8 @@ void itemList::set(ParameterList &pParams)
 
   _showInactive->setChecked(FALSE);
   _showInactive->setEnabled(!(_itemType & ItemLineEdit::cActive));
+  if(!_showInactive->isEnabled())
+    _showInactive->hide();
 
   _showMake->setChecked(_itemType & ItemLineEdit::cGeneralManufactured);
   _showBuy->setChecked(_itemType & ItemLineEdit::cGeneralPurchased);
