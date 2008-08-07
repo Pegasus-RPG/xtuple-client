@@ -57,52 +57,23 @@
 
 #include "copySalesOrder.h"
 
-#include <qvariant.h>
+#include <QSqlError>
+#include <QVariant>
+
 #include "inputManager.h"
 #include "salesOrderList.h"
 
-/*
- *  Constructs a copySalesOrder as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 copySalesOrder::copySalesOrder(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  connect(_so, SIGNAL(newId(int)), this, SLOT(sPopulateSoInfo(int)));
+  connect(_soList, SIGNAL(clicked()), this, SLOT(sSoList()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(_copy, SIGNAL(clicked()), this, SLOT(sCopy()));
+  connect(_so, SIGNAL(requestList()), this, SLOT(sSoList()));
 
-    // signals and slots connections
-    connect(_so, SIGNAL(newId(int)), this, SLOT(sPopulateSoInfo(int)));
-    connect(_soList, SIGNAL(clicked()), this, SLOT(sSoList()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_copy, SIGNAL(clicked()), this, SLOT(sCopy()));
-    connect(_reschedule, SIGNAL(toggled(bool)), _scheduleDate, SLOT(setEnabled(bool)));
-    connect(_so, SIGNAL(requestList()), this, SLOT(sSoList()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-copySalesOrder::~copySalesOrder()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void copySalesOrder::languageChange()
-{
-    retranslateUi(this);
-}
-
-void copySalesOrder::init()
-{
   _captive = FALSE;
 
 #ifndef Q_WS_MAC
@@ -111,13 +82,23 @@ void copySalesOrder::init()
 
   omfgThis->inputManager()->notify(cBCSalesOrder, this, _so, SLOT(setId(int)));
 
-  _soitem->addColumn(tr("#"),           _seqColumn,     Qt::AlignCenter );
-  _soitem->addColumn(tr("Item"),        _itemColumn,    Qt::AlignLeft   );
-  _soitem->addColumn(tr("Description"), -1,             Qt::AlignLeft   );
-  _soitem->addColumn(tr("Site"),        _whsColumn,     Qt::AlignCenter );
-  _soitem->addColumn(tr("Ordered"),     _qtyColumn,     Qt::AlignRight  );
-  _soitem->addColumn(tr("Price"),       _qtyColumn,     Qt::AlignRight  );
-  _soitem->addColumn(tr("Extended"),    _qtyColumn,     Qt::AlignRight  );
+  _soitem->addColumn(tr("#"),        _seqColumn, Qt::AlignRight, true, "coitem_linenumber" );
+  _soitem->addColumn(tr("Item"),    _itemColumn, Qt::AlignLeft,  true, "item_number");
+  _soitem->addColumn(tr("Description"),      -1, Qt::AlignLeft,  true, "item_descrip");
+  _soitem->addColumn(tr("Site"),     _whsColumn, Qt::AlignCenter,true, "warehous_code");
+  _soitem->addColumn(tr("Ordered"),  _qtyColumn, Qt::AlignRight, true, "coitem_qtyord");
+  _soitem->addColumn(tr("Price"),    _qtyColumn, Qt::AlignRight, true, "coitem_price");
+  _soitem->addColumn(tr("Extended"), _qtyColumn, Qt::AlignRight, true, "extended");
+}
+
+copySalesOrder::~copySalesOrder()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void copySalesOrder::languageChange()
+{
+  retranslateUi(this);
 }
 
 enum SetResponse copySalesOrder::set(ParameterList &pParams)
@@ -172,12 +153,19 @@ void copySalesOrder::sPopulateSoInfo(int)
       _custName->setText(q.value("cust_name").toString());
       _custPhone->setText(q.value("cust_phone").toString());
     }
+    else if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
 
-    q.prepare( "SELECT coitem_id, coitem_linenumber,"
-               "       item_number, (item_descrip1 || ' ' || item_descrip2), warehous_code,"
-               "       formatQty(coitem_qtyord),"
-               "       formatSalesPrice(coitem_price),"
-               "       formatMoney((coitem_qtyord * coitem_qty_invuomratio) * (coitem_price / coitem_price_invuomratio)) "
+    q.prepare( "SELECT coitem.*, item_number,"
+	       "       (item_descrip1 || ' ' || item_descrip2) AS item_descrip,"
+	       "       warehous_code,"
+               "       ((coitem_qtyord * coitem_qty_invuomratio) * (coitem_price / coitem_price_invuomratio)) AS extended,"
+               "       'qty' AS coitem_qtyord_xtnumericrole,"
+               "       'price' AS coitem_price_xtnumericrole,"
+               "       'curr' AS extended_xtnumericrole "
                "FROM coitem, itemsite, item, warehous "
                "WHERE ( (coitem_itemsite_id=itemsite_id)"
                " AND (itemsite_item_id=item_id)"
@@ -188,6 +176,11 @@ void copySalesOrder::sPopulateSoInfo(int)
     q.bindValue(":sohead_id", _so->id());
     q.exec();
     _soitem->populate(q);
+    if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
   else
   {
@@ -209,14 +202,20 @@ void copySalesOrder::sCopy()
     q.bindValue(":scheddate", _scheduleDate->date());
 
   q.exec();
-//  ToDo
 
   if (_captive)
   {
-    q.first();
-    int soheadid = q.value("sohead_id").toInt();
-    omfgThis->sSalesOrdersUpdated(soheadid);
-    done(soheadid);
+    if (q.first())
+    {
+      int soheadid = q.value("sohead_id").toInt();
+      omfgThis->sSalesOrdersUpdated(soheadid);
+      done(soheadid);
+    }
+    else if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
   else
   {
@@ -224,4 +223,3 @@ void copySalesOrder::sCopy()
     _so->setFocus();
   }
 }
-

@@ -116,6 +116,7 @@
 #include "plugins/workcenterlineeditplugin.h"
 #include "plugins/xcheckboxplugin.h"
 #include "plugins/xcomboboxplugin.h"
+#include "plugins/xlabelplugin.h"
 #include "plugins/xlineeditplugin.h"
 #include "plugins/xtreewidgetplugin.h"
 #include "plugins/xtreeviewplugin.h"
@@ -183,6 +184,7 @@ OpenMFGPlugin::OpenMFGPlugin(QObject * parent) : QObject(parent)
   m_plugins.append(new WorkCenterLineEditPlugin(this));
   m_plugins.append(new XCheckBoxPlugin(this));
   m_plugins.append(new XComboBoxPlugin(this));
+  m_plugins.append(new XLabelPlugin(this));
   m_plugins.append(new XLineEditPlugin(this));
   m_plugins.append(new XTreeWidgetPlugin(this));
   m_plugins.append(new XTreeViewPlugin(this));

@@ -55,35 +55,47 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#ifndef COPYSALESORDER_H
-#define COPYSALESORDER_H
+//  xlabel.h
+//  Created 08/05/2008 GJM from xlineedit.h
+//  Copyright (c) 2003-2008, OpenMFG, LLC
 
-#include "guiclient.h"
-#include "xdialog.h"
-#include <parameter.h>
+#ifndef xlabel_h
+#define xlabel_h
 
-#include "ui_copySalesOrder.h"
+#include <QLabel>
 
-class copySalesOrder : public XDialog, public Ui::copySalesOrder
+#include "OpenMFGWidgets.h"
+#include "xdatawidgetmapper.h"
+
+class QDoubleValidator;
+class QIntValidator;
+class QVariant;
+
+class OPENMFGWIDGETS_EXPORT XLabel : public QLabel
 {
-    Q_OBJECT
+  Q_OBJECT
+  Q_PROPERTY(QString fieldName    READ fieldName   WRITE setFieldName);
+  
+  public:
+    XLabel(QWidget *, const char * = 0);
 
-public:
-    copySalesOrder(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
-    ~copySalesOrder();
+    virtual QString fieldName()   const { return _fieldName; };
+    virtual void    setPrecision(const int);
+    virtual void    setPrecision(const QDoubleValidator *);
+    virtual void    setPrecision(const QIntValidator *);
+    double          toDouble(bool * = 0);
 
-public slots:
-    virtual SetResponse set( ParameterList & pParams );
-    virtual void sSoList();
-    virtual void sPopulateSoInfo( int pSoid );
-    virtual void sCopy();
+  public slots:
+    virtual void setDataWidgetMap(XDataWidgetMapper* m);
+    virtual void setDouble(const double, const int = -1);
+    virtual void setFieldName(QString p)    { _fieldName = p; };
+    virtual void setText(const QString &);
+    virtual void setText(const char *);
+    virtual void setText(const QVariant &);
 
-protected slots:
-    virtual void languageChange();
-
-private:
-    bool _captive;
-
+  private:
+    QString _fieldName;
+    int     _precision;
 };
 
-#endif // COPYSALESORDER_H
+#endif

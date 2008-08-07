@@ -58,60 +58,38 @@
 #include "customerType.h"
 #include "characteristicAssignment.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
 
-/*
- *  Constructs a customerType as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 customerType::customerType(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-
-    // signals and slots connections
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-    connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_code, SIGNAL(lostFocus()), this, SLOT(sCheck()));
-    
-    _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft );
-    _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft );
-    _charass->addColumn(tr("Default"),        _ynColumn,   Qt::AlignCenter );
-
-    init();
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_code, SIGNAL(lostFocus()), this, SLOT(sCheck()));
+  
+  _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft,  true, "char_name");
+  _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft,  true, "charass_value");
+  _charass->addColumn(tr("Default"),        _ynColumn,   Qt::AlignCenter,true, "charass_default");
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 customerType::~customerType()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void customerType::languageChange()
 {
     retranslateUi(this);
 }
 
-
-void customerType::init()
-{
-}
-
-enum SetResponse customerType::set(ParameterList &pParams)
+enum SetResponse customerType::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -213,13 +191,18 @@ void customerType::sDelete()
              "WHERE (charass_id=:charass_id);" );
   q.bindValue(":charass_id", _charass->id());
   q.exec();
+  if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   sFillList();
 }
 
 void customerType::sFillList()
 {
-  q.prepare( "SELECT charass_id, char_name, charass_value, formatBoolYN(charass_default) "
+  q.prepare( "SELECT charass_id, char_name, charass_value, charass_default "
              "FROM charass, char "
              "WHERE ( (charass_target_type='CT')"
              " AND (charass_char_id=char_id)"
@@ -228,6 +211,11 @@ void customerType::sFillList()
   q.bindValue(":custtype_id", _custtypeid);
   q.exec();
   _charass->populate(q);
+  if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void customerType::sSave()
@@ -258,6 +246,11 @@ void customerType::sSave()
   q.bindValue(":custtype_descrip", _description->text().stripWhiteSpace());
   q.bindValue(":custtype_char",  QVariant(_characteristicGroup->isChecked(), 0));
   q.exec();
+  if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   done(_custtypeid);
 }
@@ -275,6 +268,10 @@ void customerType::populate()
     _description->setText(q.value("custtype_descrip").toString());
     _characteristicGroup->setChecked(q.value("custtype_char").toBool());
   }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
   sFillList();
 }
-

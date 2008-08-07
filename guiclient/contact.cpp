@@ -98,11 +98,11 @@ contact::contact(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft );
   _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft );
 
-  _uses->addColumn(tr("Used by"),         100, Qt::AlignLeft  );
-  _uses->addColumn(tr("Number"), _orderColumn, Qt::AlignLeft  );
-  _uses->addColumn(tr("Name"),	           -1, Qt::AlignLeft  );
-  _uses->addColumn(tr("Role"),	           -1, Qt::AlignLeft  );
-  _uses->addColumn(tr("Active"),    _ynColumn, Qt::AlignCenter);
+  _uses->addColumn(tr("Used by"),         100, Qt::AlignLeft, true, "type");
+  _uses->addColumn(tr("Number"), _orderColumn, Qt::AlignLeft, true, "number");
+  _uses->addColumn(tr("Name"),	           -1, Qt::AlignLeft, true, "name");
+  _uses->addColumn(tr("Role"),	           -1, Qt::AlignLeft, true, "role");
+  _uses->addColumn(tr("Active"),    _ynColumn, Qt::AlignCenter,true, "active");
 
   _activeCache = false;
 }
@@ -463,65 +463,65 @@ void contact::sFillList()
   q.prepare("SELECT crmacct_id AS id, 1 AS altId, :crmacct AS type,"
 	    "       crmacct_number AS number,"
 	    "       crmacct_name AS name, :primary AS role,"
-	    "       formatBoolYN(crmacct_active) AS active"
+	    "       (crmacct_active) AS active"
 	    "  FROM crmacct WHERE (crmacct_cntct_id_1=:id)"
             "UNION "
 	    "SELECT crmacct_id AS id, 2 AS altId, :crmacct AS type,"
 	    "       crmacct_number AS number,"
 	    "       crmacct_name AS name, :secondary AS role,"
-	    "       formatBoolYN(crmacct_active) AS active"
+	    "       (crmacct_active) AS active"
 	    "  FROM crmacct WHERE (crmacct_cntct_id_2=:id)"
 	    "UNION "
 	    "SELECT cust_id AS id, 3 AS altId, :cust AS type,"
 	    "       cust_number AS number,"
 	    "       cust_name AS name, :billing AS role,"
-	    "       formatBoolYN(cust_active) AS active"
+	    "       (cust_active) AS active"
 	    "  FROM custinfo WHERE (cust_cntct_id=:id)"
 	    "UNION "
 	    "SELECT cust_id AS id, 4 AS altId, :cust AS type,"
 	    "       cust_number AS number,"
 	    "       cust_name AS name, :correspond AS role,"
-	    "       formatBoolYN(cust_active) AS active"
+	    "       (cust_active) AS active"
 	    "  FROM custinfo WHERE (cust_corrcntct_id=:id)"
 	    "UNION "
 	    "SELECT vend_id AS id, 5 AS altId, :vend AS type,"
 	    "       vend_number AS number,"
 	    "       vend_name AS name, :primary AS role,"
-	    "       formatBoolYN(vend_active) AS active"
+	    "       (vend_active) AS active"
 	    "  FROM vendinfo WHERE (vend_cntct1_id=:id)"
 	    "UNION "
 	    "SELECT vend_id AS id, 6 AS altId, :vend AS type,"
 	    "       vend_number AS number,"
 	    "       vend_name AS name, :secondary AS role,"
-	    "       formatBoolYN(vend_active) AS active"
+	    "       (vend_active) AS active"
 	    "  FROM vendinfo WHERE (vend_cntct2_id=:id)"
 	    "UNION "
 	    "SELECT prospect_id AS id, 7 AS altId, :prospect AS type,"
 	    "       prospect_number AS number,"
 	    "       prospect_name AS name, '' AS role,"
-	    "       formatBoolYN(prospect_active) AS active"
+	    "       (prospect_active) AS active"
 	    "  FROM prospect WHERE (prospect_cntct_id=:id)"
 	    "UNION "
 	    "SELECT shipto_id AS id, 8 AS altId, :shipto AS type,"
 	    "       shipto_num AS number,"
 	    "       shipto_name AS name, '' AS role,"
-	    "       formatBoolYN(shipto_active) AS active"
+	    "       (shipto_active) AS active"
 	    "  FROM shiptoinfo WHERE (shipto_cntct_id=:id)"
 	    "UNION "
 	    "SELECT vendaddr_id AS id, 9 AS altId, :vendaddr AS type,"
 	    "       vendaddr_code AS number,"
 	    "       vendaddr_name AS name, '' AS role,"
-	    "       formatBoolYN(true) AS active"
+	    "       (true) AS active"
 	    "  FROM vendaddrinfo WHERE (vendaddr_cntct_id=:id)"
 	    "UNION SELECT warehous_id AS id, 10 AS altId, :whs AS type,"
 	    "       warehous_code AS number,"
 	    "       warehous_descrip AS name, '' AS role,"
-	    "       formatBoolYN(warehous_active) AS active"
+	    "       (warehous_active) AS active"
 	    "  FROM whsinfo WHERE (warehous_cntct_id=:id)"
 	    "UNION SELECT emp_id AS id, 11 AS altId, :emp AS type,"
 	    "       emp_code AS number,"
 	    "       emp_number AS name, '' AS role,"
-	    "       formatBoolYN(emp_active) AS active"
+	    "       (emp_active) AS active"
 	    "  FROM emp WHERE (emp_cntct_id=:id)"
 	    "ORDER BY type, number;");
   q.bindValue(":id",		_contact->id());

@@ -84,6 +84,7 @@ XLineEdit::XLineEdit(QWidget *parent, const char *name) :
   _valid = FALSE;
 
   _id = -1;
+  connect(this, SIGNAL(editingFinished()), this, SLOT(sParse()));
 }
 
 bool XLineEdit::isValid()
@@ -100,6 +101,13 @@ int XLineEdit::id()
 
 void XLineEdit::sParse()
 {
+  if (validator() && validator()->inherits("QDoubleValidator"))
+  {
+    QRegExp zeroRegex(QString("^[0") + QLocale().groupSeparator() + "]*" +
+                      QLocale().decimalPoint() + "0*$");
+    if (! text().isEmpty() && toDouble() == 0 && ! text().contains(zeroRegex))
+      setText("");
+  }
 }
 
 double XLineEdit::toDouble(bool *pIsValid)
@@ -136,10 +144,7 @@ void XLineEdit::setDouble(const double pDouble, const int pPrec)
   int prec = pPrec;
 
   if (pPrec < 0 && v && v->inherits("QDoubleValidator"))
-  {
     prec = ((QDoubleValidator*)v)->decimals();
-    //qDebug("prec set to %d", prec);
-  }
 
   QLineEdit::setText(formatNumber(pDouble, prec));
 }

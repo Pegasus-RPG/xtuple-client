@@ -85,13 +85,13 @@ copyPurchaseOrder::copyPurchaseOrder(QWidget* parent, const char* name, bool mod
 
     //omfgThis->inputManager()->notify(cBCPurchaseOrder, this, _po, SLOT(setId(int)));
 
-    _poitem->addColumn(tr("#"),           _seqColumn,     Qt::AlignCenter );
-    _poitem->addColumn(tr("Item"),        _itemColumn,    Qt::AlignLeft   );
-    _poitem->addColumn(tr("Description"), -1,             Qt::AlignLeft   );
-    _poitem->addColumn(tr("Site"),        _whsColumn,     Qt::AlignCenter );
-    _poitem->addColumn(tr("Ordered"),     _qtyColumn,     Qt::AlignRight  );
-    _poitem->addColumn(tr("Price"),       _qtyColumn,     Qt::AlignRight  );
-    _poitem->addColumn(tr("Extended"),    _qtyColumn,     Qt::AlignRight  );
+    _poitem->addColumn(tr("#"),       _seqColumn, Qt::AlignRight,true, "poitem_linenumber" );
+    _poitem->addColumn(tr("Item"),   _itemColumn, Qt::AlignLeft, true, "item_number");
+    _poitem->addColumn(tr("Description"),     -1, Qt::AlignLeft, true, "item_descrip");
+    _poitem->addColumn(tr("Site"),    _whsColumn, Qt::AlignCenter,true, "warehous_code");
+    _poitem->addColumn(tr("Ordered"), _qtyColumn, Qt::AlignRight, true, "poitem_qty_ordered");
+    _poitem->addColumn(tr("Price"),   _qtyColumn, Qt::AlignRight, true, "poitem_unitprice");
+    _poitem->addColumn(tr("Extended"),_qtyColumn, Qt::AlignRight, true, "extended");
 
     _currency->setType(XComboBox::Currencies);
     _currency->setLabel(_currencyLit);
@@ -161,13 +161,14 @@ void copyPurchaseOrder::sPopulatePoInfo(int)
       return;
     }
 
-    q.prepare( "SELECT poitem_id, poitem_linenumber,"
-               "       COALESCE(item_number,poitem_vend_item_number),"
-               "       COALESCE((item_descrip1 || ' ' || item_descrip2),poitem_vend_item_descrip),"
+    q.prepare( "SELECT poitem.*,"
+               "       COALESCE(item_number,poitem_vend_item_number) AS item_number,"
+               "       COALESCE((item_descrip1 || ' ' || item_descrip2),poitem_vend_item_descrip) AS item_descrip,"
                "       warehous_code,"
-               "       formatQty(poitem_qty_ordered),"
-               "       formatSalesPrice(poitem_unitprice),"
-               "       formatMoney(poitem_qty_ordered * poitem_unitprice) "
+               "       poitem_qty_ordered * poitem_unitprice AS extended,"
+	       "       'qty' AS poitem_qty_ordered_xtnumericrole,"
+	       "       'price' AS poitem_unitprice_xtnumericrole,"
+	       "       'curr' AS extended_xtnumericrole "
                "FROM poitem LEFT OUTER JOIN "
                "      (itemsite JOIN item ON (itemsite_item_id=item_id) "
                "                JOIN warehous ON (itemsite_warehous_id=warehous_id) ) "
@@ -177,6 +178,11 @@ void copyPurchaseOrder::sPopulatePoInfo(int)
     q.bindValue(":pohead_id", _po->id());
     q.exec();
     _poitem->populate(q);
+    if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
   else
   {

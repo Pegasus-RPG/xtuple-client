@@ -57,63 +57,37 @@
 
 #include "calendar.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
+
 #include "absoluteCalendarItem.h"
 #include "relativeCalendarItem.h"
 
-/*
- *  Constructs a calendar as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
+static const char *originTypes[] = { "D", "E", "W", "X", "M", "N", "L", "Y", "Z" };
+
 calendar::calendar(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_relative, SIGNAL(toggled(bool)), _origin, SLOT(setEnabled(bool)));
-    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-    connect(_calitem, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
-    connect(_calitem, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
-    connect(_calitem, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
-    init();
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 calendar::~calendar()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void calendar::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
-
-static const char *originTypes[] = { "D", "E", "W", "X", "M", "N", "L", "Y", "Z" };
-
-void calendar::init()
-{
-  _calitem->addColumn(tr("Name"), _itemColumn, Qt::AlignLeft);
-}
-
-enum SetResponse calendar::set(ParameterList &pParams)
+enum SetResponse calendar::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -134,9 +108,6 @@ enum SetResponse calendar::set(ParameterList &pParams)
       _absolute->setChecked(TRUE);
       _relative->setEnabled(FALSE);
       _absolute->setEnabled(FALSE);
-
-      _calitem->addColumn(tr("Start Date"), _dateColumn, Qt::AlignCenter );
-      _calitem->addColumn(tr("Period"),     _qtyColumn,  Qt::AlignRight  );
     }
     else if (param.toString() == "relative")
     {
@@ -144,9 +115,6 @@ enum SetResponse calendar::set(ParameterList &pParams)
       _relative->setChecked(TRUE);
       _relative->setEnabled(FALSE);
       _absolute->setEnabled(FALSE);
-
-      _calitem->addColumn(tr("Offset"),        _itemColumn, Qt::AlignRight );
-      _calitem->addColumn(tr("Period Length"), -1,          Qt::AlignLeft  );
     }
   }
 
@@ -161,7 +129,11 @@ enum SetResponse calendar::set(ParameterList &pParams)
       q.exec("SELECT NEXTVAL('calhead_calhead_id_seq') AS _calhead_id;");
       if (q.first())
         _calheadid = q.value("_calhead_id").toInt();
-//  ToDo
+      else if (q.lastError().type() != QSqlError::NoError)
+      {
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        return UndefinedError;
+      }
     }
     else if (param.toString() == "edit")
     {
@@ -209,6 +181,11 @@ void calendar::sSave()
   q.bindValue(":calhead_descrip", _descrip->text());
   q.bindValue(":calhead_origin", originTypes[_origin->currentItem()]);
   q.exec();
+  if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   done(_calheadid);
 }
@@ -275,16 +252,25 @@ void calendar::sDelete()
 
   q.bindValue(":xcalitem_id", _calitem->id());
   q.exec();
+  if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   sFillList();
 }
 
 void calendar::sFillList()
 {
+  _calitem->setColumnCount(0);
+  _calitem->addColumn(tr("Name"), _itemColumn, Qt::AlignLeft, true, "name");
   if (_type == 'A')
   {
-    q.prepare( "SELECT acalitem_id, acalitem_name, formatDate(acalitem_periodstart),"
-               "       (TEXT(acalitem_periodlength) || TEXT(:days)) "
+    _calitem->addColumn(tr("Start Date"), _dateColumn, Qt::AlignCenter, true, "acalitem_periodstart");
+    _calitem->addColumn(tr("Period"),     _qtyColumn,  Qt::AlignRight,  true, "periodlength");
+    q.prepare( "SELECT acalitem_id, acalitem_name AS name, acalitem_periodstart,"
+               "       (TEXT(acalitem_periodlength) || TEXT(:days)) AS periodlength "
                "FROM acalitem "
                "WHERE (acalitem_calhead_id=:calhead_id) "
                "ORDER BY acalitem_periodstart;" );
@@ -292,15 +278,9 @@ void calendar::sFillList()
   }
   else if (_type == 'R')
   {
-    q.prepare( "SELECT rcalitem_id, rcalitem_name,"
-               "       CASE WHEN (rcalitem_offsettype='D') THEN (TEXT(rcalitem_offsetcount) || :days)"
-               "            WHEN (rcalitem_offsettype='B') THEN (TEXT(rcalitem_offsetcount) || :businessDays)"
-               "            WHEN (rcalitem_offsettype='W') THEN (TEXT(rcalitem_offsetcount) || :weeks)"
-               "            WHEN (rcalitem_offsettype='M') THEN (TEXT(rcalitem_offsetcount) || :months)"
-               "            WHEN (rcalitem_offsettype='Q') THEN (TEXT(rcalitem_offsetcount) || :quarters)"
-               "            WHEN (rcalitem_offsettype='Y') THEN (TEXT(rcalitem_offsetcount) || :years)"
-               "            ELSE :userDefined"
-               "       END,"
+    _calitem->addColumn(tr("Offset"),        _itemColumn, Qt::AlignRight, true, "offsetdays");
+    _calitem->addColumn(tr("Period Length"), -1,          Qt::AlignLeft,  true, "periodlength");
+    q.prepare( "SELECT rcalitem_id, rcalitem_name AS name,"
                "       CASE WHEN (rcalitem_periodtype='D') THEN (TEXT(rcalitem_periodcount) || :days)"
                "            WHEN (rcalitem_periodtype='B') THEN (TEXT(rcalitem_periodcount) || :businessDays)"
                "            WHEN (rcalitem_periodtype='W') THEN (TEXT(rcalitem_periodcount) || :weeks)"
@@ -308,7 +288,7 @@ void calendar::sFillList()
                "            WHEN (rcalitem_periodtype='Q') THEN (TEXT(rcalitem_periodcount) || :quarters)"
                "            WHEN (rcalitem_periodtype='Y') THEN (TEXT(rcalitem_periodcount) || :years)"
                "            ELSE :userDefined"
-               "       END,"
+               "       END AS periodlength,"
                "       CASE WHEN (rcalitem_offsettype='D') THEN (rcalitem_offsetcount)"
                "            WHEN (rcalitem_offsettype='B') THEN (rcalitem_offsetcount)"
                "            WHEN (rcalitem_offsettype='W') THEN (rcalitem_offsetcount * 7)"
@@ -316,7 +296,15 @@ void calendar::sFillList()
                "            WHEN (rcalitem_offsettype='Q') THEN (rcalitem_offsetcount * 120)"
                "            WHEN (rcalitem_offsettype='Y') THEN (rcalitem_offsetcount * 365)"
                "            ELSE (rcalitem_offsetcount)"
-               "       END AS offsetdays "
+               "       END AS offsetdays,"
+               "       CASE WHEN (rcalitem_offsettype='D') THEN (TEXT(rcalitem_offsetcount) || :days)"
+               "            WHEN (rcalitem_offsettype='B') THEN (TEXT(rcalitem_offsetcount) || :businessDays)"
+               "            WHEN (rcalitem_offsettype='W') THEN (TEXT(rcalitem_offsetcount) || :weeks)"
+               "            WHEN (rcalitem_offsettype='M') THEN (TEXT(rcalitem_offsetcount) || :months)"
+               "            WHEN (rcalitem_offsettype='Q') THEN (TEXT(rcalitem_offsetcount) || :quarters)"
+               "            WHEN (rcalitem_offsettype='Y') THEN (TEXT(rcalitem_offsetcount) || :years)"
+               "            ELSE :userDefined"
+               "       END AS offsetdays_qtdisplayrole "
                "FROM rcalitem "
                "WHERE (rcalitem_calhead_id=:calhead_id) "
                "ORDER BY offsetdays;" );
@@ -333,6 +321,11 @@ void calendar::sFillList()
   q.bindValue(":calhead_id", _calheadid);
   q.exec();
   _calitem->populate(q);
+  if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void calendar::populate()
@@ -352,9 +345,6 @@ void calendar::populate()
     if (_type == 'A')
     {
       _absolute->setChecked(TRUE);
-
-      _calitem->addColumn(tr("Start Date"),    _dateColumn, Qt::AlignCenter );
-      _calitem->addColumn(tr("Length"),        _qtyColumn,  Qt::AlignRight  );
     }
     else if (_type == 'R')
     {
@@ -366,12 +356,13 @@ void calendar::populate()
           _origin->setCurrentItem(counter);
           break;
         }
-
-      _calitem->addColumn(tr("Offset"),        _itemColumn, Qt::AlignRight );
-      _calitem->addColumn(tr("Period Length"), -1,          Qt::AlignLeft  );
     }
 
     sFillList();
   }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
-

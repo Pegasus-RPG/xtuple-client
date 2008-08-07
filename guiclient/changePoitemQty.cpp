@@ -57,7 +57,11 @@
 
 #include "changePoitemQty.h"
 
+#include <QMessageBox>
+#include <QSqlError>
 #include <QVariant>
+
+#include "storedProcErrorLookup.h"
 
 changePoitemQty::changePoitemQty(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -76,6 +80,11 @@ changePoitemQty::changePoitemQty(QWidget* parent, const char* name, bool modal, 
   _commentGroup->setEnabled(_postComment->isChecked());
   
   _newQty->setValidator(omfgThis->qtyVal());
+  _newQtyReceived->setPrecision(omfgThis->qtyVal());
+  _currentQtyOrdered->setPrecision(omfgThis->qtyVal());
+  _currentQtyReceived->setPrecision(omfgThis->qtyVal());
+  _currentQtyBalance->setPrecision(omfgThis->qtyVal());
+  _newQtyBalance->setPrecision(omfgThis->qtyVal());
 
   _cmnttype->setType(XComboBox::AllCommentTypes);
 }
@@ -125,7 +134,7 @@ enum SetResponse changePoitemQty::set(const ParameterList &pParams)
 
   param = pParams.value("newQty", &valid);
   if (valid)
-    _newQty->setText(formatQty(param.toDouble()));
+    _newQty->setDouble(param.toDouble());
 
   return NoError;
 }
@@ -170,12 +179,12 @@ void changePoitemQty::sPopulate(int pPoitemid)
     q.exec();
     if (q.first())
     {
-      _currentQtyOrdered->setText(formatQty(q.value("poitem_qty_ordered").toDouble()));
-      _currentQtyReceived->setText(formatQty(q.value("poitem_qty_received").toDouble()));
-      _currentQtyBalance->setText(formatQty((q.value("poitem_qty_ordered").toDouble() - q.value("poitem_qty_received").toDouble())));
-      _newQtyReceived->setText(formatQty(q.value("poitem_qty_received").toDouble()));
+      _currentQtyOrdered->setDouble(q.value("poitem_qty_ordered").toDouble());
+      _currentQtyReceived->setDouble(q.value("poitem_qty_received").toDouble());
+      _currentQtyBalance->setDouble(q.value("poitem_qty_ordered").toDouble() - q.value("poitem_qty_received").toDouble());
+      _newQtyReceived->setDouble(q.value("poitem_qty_received").toDouble());
       _cacheFreight = q.value("poitem_freight").toDouble();
-      _freight->setText(formatMoney(q.value("poitem_freight").toDouble()));
+      _freight->setDouble(q.value("poitem_freight").toDouble());
       sQtyChanged();
     }
   }
@@ -183,18 +192,54 @@ void changePoitemQty::sPopulate(int pPoitemid)
 
 void changePoitemQty::sChangeQty()
 {
-  q.prepare("SELECT changePoitemQty(:poitem_id, :qty);");
+  if (_newQty->toDouble() <= 0 &&
+      QMessageBox::question(this, tr("Quantity 0?"),
+			    tr("<p>You have changed the quantity to 0 or less. "
+			       "Are you sure you want to do this?"),
+			    QMessageBox::No | QMessageBox::Default,
+			    QMessageBox::Yes) == QMessageBox::No)
+    return;
+
+  q.prepare("SELECT changePoitemQty(:poitem_id, :qty) AS result;");
   q.bindValue(":poitem_id", _poitem->id());
   q.bindValue(":qty", _newQty->toDouble());
   q.exec();
+  if (q.first())
+  {
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("changePoitemQty", result), __FILE__, __LINE__);
+      return;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   if (_postComment->isChecked())
   {
-    q.prepare("SELECT postComment(:cmnttype_id, 'PI', :poitem_id, :comment) AS _result");
+    q.prepare("SELECT postComment(:cmnttype_id, 'PI', :poitem_id, :comment) AS result");
     q.bindValue(":cmnttype_id", _cmnttype->id());
     q.bindValue(":poitem_id", _poitem->id());
     q.bindValue(":comment", _comment->text());
     q.exec();
+    if (q.first())
+    {
+      int result = q.value("result").toInt();
+      if (result < 0)
+      {
+	systemError(this, storedProcErrorLookup("postcomment", result), __FILE__, __LINE__);
+	return;
+      }
+    }
+    else if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
 
   if (_freight->toDouble() != _cacheFreight)
@@ -204,9 +249,13 @@ void changePoitemQty::sChangeQty()
     q.bindValue(":poitem_id", _poitem->id());
     q.bindValue(":poitem_freight", _freight->toDouble());
     q.exec();
-    // TODO: Check is succedded and display an appropriate error message.
+    if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
-  
+
   omfgThis->sPurchaseOrdersUpdated(_po->id(), TRUE);
   
   accept();
@@ -214,10 +263,9 @@ void changePoitemQty::sChangeQty()
 
 void changePoitemQty::sQtyChanged()
 {
-  double qtyBalance = (_newQty->toDouble() - _newQtyReceived->text().toDouble());
+  double qtyBalance = (_newQty->toDouble() - _newQtyReceived->toDouble());
   if (qtyBalance < 0)
     qtyBalance = 0;
 
-  _newQtyBalance->setText(formatQty(qtyBalance));
+  _newQtyBalance->setDouble(qtyBalance);
 }
-

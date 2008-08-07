@@ -89,6 +89,7 @@ HEADERS += \
            plugins/workcenterlineeditplugin.h \
            plugins/xcheckboxplugin.h \
            plugins/xcomboboxplugin.h \
+           plugins/xlabelplugin.h \
            plugins/xlineeditplugin.h \
            plugins/xtreewidgetplugin.h \
            plugins/xurllabelplugin.h \
@@ -98,7 +99,7 @@ HEADERS += \
 
 SOURCES    += OpenMFGWidgets.cpp \
               addressCluster.cpp contactCluster.cpp crmacctCluster.cpp \
-              xlineedit.cpp xcheckbox.cpp xcombobox.cpp \
+              xlabel.cpp xlineedit.cpp xcheckbox.cpp xcombobox.cpp \
               xlistbox.cpp \
               cmCluster.cpp \
               custCluster.cpp \
@@ -141,7 +142,7 @@ SOURCES    += OpenMFGWidgets.cpp \
 
 HEADERS    += OpenMFGWidgets.h \
               addresscluster.h contactcluster.h crmacctcluster.h \
-              xlineedit.h xcheckbox.h xcombobox.h \
+              xlabel.h xlineedit.h xcheckbox.h xcombobox.h \
               xlistbox.h \
               cmcluster.h \
               custcluster.h \

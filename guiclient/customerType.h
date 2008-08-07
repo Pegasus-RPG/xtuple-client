@@ -73,7 +73,7 @@ public:
     ~customerType();
 
 public slots:
-    virtual enum SetResponse set( ParameterList & pParams );
+    virtual enum SetResponse set(const ParameterList & pParams );
     virtual void sCheck();
     virtual void sSave();
     virtual void sNew();
@@ -84,9 +84,6 @@ public slots:
 
 protected slots:
     virtual void languageChange();
-
-    virtual void init();
-
 
 private:
     int _mode;

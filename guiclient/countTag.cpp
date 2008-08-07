@@ -351,9 +351,7 @@ void countTag::populate()
   q.prepare( "SELECT invcnt_tagnumber, invcnt_itemsite_id,"
              "       invcnt_comments, itemsite_freeze,"
              "       warehous_useslips,"
-             "       CASE WHEN (invcnt_qoh_after IS NULL) THEN ''"
-             "            ELSE formatQty(invcnt_qoh_after)"
-             "       END AS qohafter,"
+             "       invcnt_qoh_after,"
              "       COALESCE( (SELECT CASE WHEN (LENGTH(location_descrip) > 0) THEN (formatLocationName(location_id) || '-' || location_descrip)"
              "                              ELSE formatLocationName(location_id)"
              "                              END "
@@ -374,7 +372,7 @@ void countTag::populate()
       _countTagNumber->setText(q.value("invcnt_tagnumber").toString());
 
     _item->setItemsiteid(q.value("invcnt_itemsite_id").toInt());
-    _qty->setText(q.value("qohafter").toString());
+    _qty->setDouble(q.value("invcnt_qoh_after").toDouble());
     _qty->setEnabled(!q.value("warehous_useslips").toBool());
     _thaw->setChecked(q.value("itemsite_freeze").toBool());
     _currentComments->setText(q.value("invcnt_comments").toString());

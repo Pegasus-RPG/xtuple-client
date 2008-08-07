@@ -81,13 +81,13 @@ cashReceiptsEditList::cashReceiptsEditList(QWidget* parent, const char* name, Qt
   connect(_view,   SIGNAL(clicked()), this, SLOT(sView()));
   connect(_post,   SIGNAL(clicked()), this, SLOT(sPost()));
 
-  _cashrcpt->addColumn(tr("Customer"),   -1,              Qt::AlignLeft  );
-  _cashrcpt->addColumn(tr("Dist. Date"), _dateColumn,     Qt::AlignCenter );
-  _cashrcpt->addColumn(tr("Amount"),     _bigMoneyColumn, Qt::AlignRight  );
-  _cashrcpt->addColumn(tr("Currency"),   _currencyColumn, Qt::AlignLeft   );
+  _cashrcpt->addColumn(tr("Customer"),   -1,              Qt::AlignLeft,  true, "cust_name");
+  _cashrcpt->addColumn(tr("Dist. Date"), _dateColumn,     Qt::AlignCenter,true, "cashrcpt_distdate");
+  _cashrcpt->addColumn(tr("Amount"),     _bigMoneyColumn, Qt::AlignRight, true, "cashrcpt_amount");
+  _cashrcpt->addColumn(tr("Currency"),   _currencyColumn, Qt::AlignLeft,  true, "cashrcpt_curr_id");
 
   if (omfgThis->singleCurrency())
-      _cashrcpt->hideColumn(3);
+      _cashrcpt->hideColumn("cashrcpt_curr_id");
 
   if (_privileges->check("PostCashReceipts"))
     connect(_cashrcpt, SIGNAL(valid(bool)), _post, SLOT(setEnabled(bool)));
@@ -239,12 +239,10 @@ void cashReceiptsEditList::sPrint()
 
 void cashReceiptsEditList::sFillList()
 {
-  _cashrcpt->populate( "SELECT cashrcpt_id, cust_name,"
-                       "       formatDate(cashrcpt_distdate), "
-		       "	formatMoney(cashrcpt_amount), "
-		       "	currConcat(cashrcpt_curr_id) "
-                       "FROM cashrcpt, cust "
+  _cashrcpt->populate( "SELECT cashrcpt_id, *,"
+                       "        'curr' AS cashrcpt_amount_xtnumericrole,"
+		       "	currConcat(cashrcpt_curr_id) AS cashrcpt_curr_id_qtdisplayrole "
+                       "FROM cashrcpt, custinfo "
                        "WHERE (cashrcpt_cust_id=cust_id) "
                        "ORDER BY cust_name;" );
 }
-

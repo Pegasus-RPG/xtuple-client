@@ -55,35 +55,40 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#ifndef COPYSALESORDER_H
-#define COPYSALESORDER_H
+#ifndef __XLABELPLUGIN_H__
+#define __XLABELPLUGIN_H__
 
-#include "guiclient.h"
-#include "xdialog.h"
-#include <parameter.h>
+#include "xlabel.h"
 
-#include "ui_copySalesOrder.h"
+#include <QDesignerCustomWidgetInterface>
+#include <QtPlugin>
 
-class copySalesOrder : public XDialog, public Ui::copySalesOrder
+class XLabelPlugin : public QObject, public QDesignerCustomWidgetInterface
 {
     Q_OBJECT
+    Q_INTERFACES(QDesignerCustomWidgetInterface)
 
-public:
-    copySalesOrder(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
-    ~copySalesOrder();
+  public:
+    XLabelPlugin(QObject *parent = 0) : QObject(parent), initialized(false) {}
 
-public slots:
-    virtual SetResponse set( ParameterList & pParams );
-    virtual void sSoList();
-    virtual void sPopulateSoInfo( int pSoid );
-    virtual void sCopy();
+    bool isContainer() const { return false; }
+    bool isInitialized() const { return initialized; }
+    QIcon icon() const { return QIcon(); }
+    QString domXml() const
+    {
+      return "<widget class=\"XLabel\" name=\"xlabel\">\n"
+             "</widget>\n";
+    }
+    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString includeFile() const { return "xlabel.h"; }
+    QString name() const { return "XLabel"; }
+    QString toolTip() const { return ""; }
+    QString whatsThis() const { return ""; }
+    QWidget *createWidget(QWidget *parent) { return new XLabel(parent); }
+    void initialize(QDesignerFormEditorInterface *) { initialized = true; }
 
-protected slots:
-    virtual void languageChange();
-
-private:
-    bool _captive;
-
+  private:
+    bool initialized;
 };
 
-#endif // COPYSALESORDER_H
+#endif

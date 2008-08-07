@@ -65,11 +65,6 @@
 #include "customerTypeList.h"
 #include "storedProcErrorLookup.h"
 
-/*
- *  Constructs a customers as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 customers::customers(QWidget* parent, const char* name, Qt::WFlags fl)
     : XMainWindow(parent, name, fl)
 {
@@ -94,12 +89,12 @@ customers::customers(QWidget* parent, const char* name, Qt::WFlags fl)
     connect(_cust, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
   }
 
-  _cust->addColumn(tr("Type"),    _itemColumn,  Qt::AlignCenter );
-  _cust->addColumn(tr("Number"),  _orderColumn, Qt::AlignCenter );
-  _cust->addColumn(tr("Active"),  _ynColumn,    Qt::AlignCenter );
-  _cust->addColumn(tr("Name"),    -1,           Qt::AlignLeft   );
-  _cust->addColumn(tr("Address"), 175,          Qt::AlignLeft   );
-  _cust->addColumn(tr("Phone #"), 100,          Qt::AlignLeft   );
+  _cust->addColumn(tr("Type"),    _itemColumn,  Qt::AlignCenter, true, "custtype");
+  _cust->addColumn(tr("Number"),  _orderColumn, Qt::AlignCenter, true, "cust_number");
+  _cust->addColumn(tr("Active"),  _ynColumn,    Qt::AlignCenter, true, "cust_active");
+  _cust->addColumn(tr("Name"),    -1,           Qt::AlignLeft,   true, "cust_name");
+  _cust->addColumn(tr("Address"), 175,          Qt::AlignLeft,   true, "cust_address1");
+  _cust->addColumn(tr("Phone #"), 100,          Qt::AlignLeft,   true, "cust_phone");
 
   connect(omfgThis, SIGNAL(customersUpdated(int, bool)), SLOT(sFillList(int, bool)));
 
@@ -220,8 +215,8 @@ void customers::sPopulateMenu(QMenu *pMenu)
 void customers::sFillList(int pCustid, bool pLocal)
 {
   q.prepare( "SELECT cust_id, cust_custtype_id,"
-             "       COALESCE(custtype_code, :error), cust_number,"
-             "       formatBoolYN(cust_active), cust_name, cust_address1, cust_phone "
+             "       COALESCE(custtype_code, :error) AS custtype, cust_number,"
+             "       cust_active, cust_name, cust_address1, cust_phone "
              "FROM cust LEFT OUTER JOIN custtype ON (cust_custtype_id=custtype_id) "
              "ORDER BY cust_number;" );
   q.bindValue(":error", tr("Error"));
@@ -231,5 +226,9 @@ void customers::sFillList(int pCustid, bool pLocal)
     _cust->populate(q, pCustid, TRUE);
   else
     _cust->populate(q, TRUE);
+  if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
-

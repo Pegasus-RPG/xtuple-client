@@ -13,25 +13,28 @@
    <string>Change P/O Item Quantity</string>
   </property>
   <layout class="QVBoxLayout" >
-   <property name="margin" >
-    <number>5</number>
-   </property>
    <property name="spacing" >
     <number>0</number>
    </property>
+   <property name="leftMargin" >
+    <number>5</number>
+   </property>
+   <property name="topMargin" >
+    <number>5</number>
+   </property>
+   <property name="rightMargin" >
+    <number>5</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>5</number>
+   </property>
    <item>
     <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
      <property name="spacing" >
       <number>5</number>
      </property>
      <item>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
         <number>5</number>
        </property>
@@ -40,9 +43,6 @@
        </item>
        <item>
         <layout class="QHBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>5</number>
          </property>
@@ -59,9 +59,7 @@
             <bool>false</bool>
            </property>
            <property name="sizePolicy" >
-            <sizepolicy>
-             <hsizetype>7</hsizetype>
-             <vsizetype>0</vsizetype>
+            <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -74,17 +72,11 @@
      </item>
      <item>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
         <number>0</number>
        </property>
        <item>
         <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>5</number>
          </property>
@@ -138,18 +130,15 @@
    </item>
    <item>
     <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
      <property name="spacing" >
       <number>5</number>
      </property>
      <item>
       <layout class="QGridLayout" >
-       <property name="margin" >
+       <property name="horizontalSpacing" >
         <number>0</number>
        </property>
-       <property name="spacing" >
+       <property name="verticalSpacing" >
         <number>0</number>
        </property>
        <item row="1" column="0" >
@@ -196,7 +185,7 @@
         </widget>
        </item>
        <item row="3" column="2" >
-        <widget class="QLabel" name="_newQtyBalance" >
+        <widget class="XLabel" name="_newQtyBalance" >
          <property name="minimumSize" >
           <size>
            <width>80</width>
@@ -209,7 +198,7 @@
         </widget>
        </item>
        <item row="2" column="2" >
-        <widget class="QLabel" name="_newQtyReceived" >
+        <widget class="XLabel" name="_newQtyReceived" >
          <property name="minimumSize" >
           <size>
            <width>80</width>
@@ -238,7 +227,7 @@
         </spacer>
        </item>
        <item row="1" column="1" >
-        <widget class="QLabel" name="_currentQtyOrdered" >
+        <widget class="XLabel" name="_currentQtyOrdered" >
          <property name="minimumSize" >
           <size>
            <width>80</width>
@@ -271,7 +260,7 @@
         </widget>
        </item>
        <item row="3" column="1" >
-        <widget class="QLabel" name="_currentQtyBalance" >
+        <widget class="XLabel" name="_currentQtyBalance" >
          <property name="minimumSize" >
           <size>
            <width>80</width>
@@ -284,7 +273,7 @@
         </widget>
        </item>
        <item row="2" column="1" >
-        <widget class="QLabel" name="_currentQtyReceived" >
+        <widget class="XLabel" name="_currentQtyReceived" >
          <property name="minimumSize" >
           <size>
            <width>80</width>
@@ -316,9 +305,6 @@
      </item>
      <item>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
         <number>0</number>
        </property>
@@ -354,17 +340,11 @@
    </item>
    <item>
     <layout class="QVBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
      <property name="spacing" >
       <number>0</number>
      </property>
      <item>
       <layout class="QHBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
         <number>0</number>
        </property>
@@ -399,9 +379,7 @@
         <bool>false</bool>
        </property>
        <property name="sizePolicy" >
-        <sizepolicy>
-         <hsizetype>5</hsizetype>
-         <vsizetype>7</vsizetype>
+        <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -410,25 +388,28 @@
         <string/>
        </property>
        <layout class="QVBoxLayout" >
-        <property name="margin" >
-         <number>5</number>
-        </property>
         <property name="spacing" >
          <number>0</number>
         </property>
+        <property name="leftMargin" >
+         <number>5</number>
+        </property>
+        <property name="topMargin" >
+         <number>5</number>
+        </property>
+        <property name="rightMargin" >
+         <number>5</number>
+        </property>
+        <property name="bottomMargin" >
+         <number>5</number>
+        </property>
         <item>
          <layout class="QHBoxLayout" >
-          <property name="margin" >
-           <number>0</number>
-          </property>
           <property name="spacing" >
            <number>0</number>
           </property>
           <item>
            <layout class="QHBoxLayout" >
-            <property name="margin" >
-             <number>0</number>
-            </property>
             <property name="spacing" >
              <number>5</number>
             </property>
@@ -476,6 +457,11 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
+   <class>PoCluster</class>
+   <extends>QWidget</extends>
+   <header>pocluster.h</header>
+  </customwidget>
+  <customwidget>
    <class>XCheckBox</class>
    <extends>QCheckBox</extends>
    <header>xcheckbox.h</header>
@@ -486,9 +472,9 @@
    <header>xcombobox.h</header>
   </customwidget>
   <customwidget>
-   <class>PoCluster</class>
-   <extends>QWidget</extends>
-   <header>pocluster.h</header>
+   <class>XLabel</class>
+   <extends>QLabel</extends>
+   <header>xlabel.h</header>
   </customwidget>
   <customwidget>
    <class>XLineEdit</class>
@@ -507,7 +493,6 @@
   <tabstop>_cmnttype</tabstop>
   <tabstop>_comment</tabstop>
  </tabstops>
- <includes/>
  <resources/>
  <connections>
   <connection>

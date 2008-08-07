@@ -73,7 +73,7 @@ public:
     ~calendar();
 
 public slots:
-    virtual enum SetResponse set( ParameterList & pParams );
+    virtual enum SetResponse set(const ParameterList & pParams );
     virtual void sSave();
     virtual void sNew();
     virtual void sEdit();
@@ -89,9 +89,6 @@ private:
     int _calitemid;
     int _calheadid;
     char _type;
-
-    void init();
-
 };
 
 #endif // CALENDAR_H

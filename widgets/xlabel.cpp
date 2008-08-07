@@ -55,35 +55,88 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#ifndef COPYSALESORDER_H
-#define COPYSALESORDER_H
+//  xlabel.cpp
+//  Created 08/05/2008 GJM from xlineedit.cpp
+//  Copyright (c) 2003-2008, OpenMFG, LLC
 
-#include "guiclient.h"
-#include "xdialog.h"
-#include <parameter.h>
+#include "xlabel.h"
 
-#include "ui_copySalesOrder.h"
+#include <QLocale>
+#include <QValidator>
 
-class copySalesOrder : public XDialog, public Ui::copySalesOrder
+#include "format.h"
+
+#define DEBUG true
+
+XLabel::XLabel(QWidget *parent, const char *name) :
+  QLabel(parent, name)
 {
-    Q_OBJECT
+  _fieldName = "";
+  _precision = 0;
+}
 
-public:
-    copySalesOrder(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
-    ~copySalesOrder();
+void XLabel::setDataWidgetMap(XDataWidgetMapper* m)
+{
+  m->addMapping(this, _fieldName, QByteArray("text"), QByteArray("defaultText"));
+}
 
-public slots:
-    virtual SetResponse set( ParameterList & pParams );
-    virtual void sSoList();
-    virtual void sPopulateSoInfo( int pSoid );
-    virtual void sCopy();
+void XLabel::setPrecision(const int pPrec)
+{
+  _precision = pPrec;
+}
 
-protected slots:
-    virtual void languageChange();
+void XLabel::setPrecision(const QDoubleValidator *pVal)
+{
+  _precision = pVal->decimals();
+}
 
-private:
-    bool _captive;
+void XLabel::setPrecision(const QIntValidator * /*pVal*/)
+{
+  _precision = 0;
+}
 
-};
+void XLabel::setDouble(const double pDouble, const int pPrec)
+{
+  QLabel::setText(formatNumber(pDouble, (pPrec < 0) ? _precision : pPrec));
+}
 
-#endif // COPYSALESORDER_H
+void XLabel::setText(const QVariant &pVariant)
+{
+  if (DEBUG)
+    qDebug("XLabel::setText(const QVariant & = %s)",
+           qPrintable(pVariant.toString()));
+  if (pVariant.type() == QVariant::Double ||
+      pVariant.type() == QVariant::Int)
+    QLabel::setText(formatNumber(pVariant.toDouble(), _precision));
+  else
+    QLabel::setText(pVariant.toString());
+}
+
+void XLabel::setText(const char *pText)
+{
+  if (DEBUG) qDebug("XLabel::setText(const char * = %s)", pText);
+  setText(QString(pText));
+}
+
+void XLabel::setText(const QString &pText)
+{
+  if (DEBUG)
+    qDebug("XLabel::setText(const QString & = %s)", qPrintable(pText));
+  if (_precision == 0)
+    QLabel::setText(pText);
+  else
+  {
+    bool ok;
+    double val = QLocale().toDouble(pText, &ok);
+    if (DEBUG) qDebug("XLabel::setText() %f %d", val, ok);
+    if (ok)
+      setDouble(val);
+    else
+      QLabel::setText(pText);
+  }
+}
+
+double XLabel::toDouble(bool *pIsValid)
+{
+  return QLocale().toDouble(text(), pIsValid);
+}
