@@ -72,7 +72,7 @@ dspSequencedBOM::dspSequencedBOM(QWidget* parent, const char* name, Qt::WFlags f
   connect(_showExpired, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_showFuture, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
 
-  _item->setType(ItemLineEdit::cGeneralManufactured  | ItemLineEdit::cGeneralPurchased);
+  _item->setType(ItemLineEdit::cGeneralManufactured  | ItemLineEdit::cGeneralPurchased | ItemLineEdit::cKit);
 
   _bomitem->addColumn(tr("BOO Seq. #"),  _qtyColumn,   Qt::AlignCenter );
   _bomitem->addColumn(tr("BOM Seq. #"),  _qtyColumn,   Qt::AlignCenter );
