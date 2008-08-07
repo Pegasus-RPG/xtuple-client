@@ -13,36 +13,38 @@
    <string>Slow Moving Inventory</string>
   </property>
   <widget class="QWidget" name="widget" >
-   <layout class="QVBoxLayout" >
-    <property name="margin" >
-     <number>5</number>
-    </property>
-    <property name="spacing" >
-     <number>5</number>
-    </property>
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>772</width>
+     <height>394</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_2" >
     <item>
      <layout class="QHBoxLayout" >
-      <property name="margin" >
-       <number>0</number>
-      </property>
       <property name="spacing" >
        <number>7</number>
       </property>
+      <property name="margin" >
+       <number>0</number>
+      </property>
       <item>
        <layout class="QVBoxLayout" >
-        <property name="margin" >
+        <property name="spacing" >
          <number>0</number>
         </property>
-        <property name="spacing" >
+        <property name="margin" >
          <number>0</number>
         </property>
         <item>
          <layout class="QVBoxLayout" >
-          <property name="margin" >
-           <number>0</number>
-          </property>
           <property name="spacing" >
            <number>5</number>
+          </property>
+          <property name="margin" >
+           <number>0</number>
           </property>
           <item>
            <widget class="ParameterGroup" name="_classCode" >
@@ -53,19 +55,19 @@
           </item>
           <item>
            <layout class="QHBoxLayout" >
-            <property name="margin" >
+            <property name="spacing" >
              <number>0</number>
             </property>
-            <property name="spacing" >
+            <property name="margin" >
              <number>0</number>
             </property>
             <item>
              <layout class="QHBoxLayout" >
-              <property name="margin" >
-               <number>0</number>
-              </property>
               <property name="spacing" >
                <number>5</number>
+              </property>
+              <property name="margin" >
+               <number>0</number>
               </property>
               <item>
                <widget class="QLabel" name="_cutoffDateLit" >
@@ -90,7 +92,7 @@
               <property name="sizeType" >
                <enum>QSizePolicy::Expanding</enum>
               </property>
-              <property name="sizeHint" >
+              <property name="sizeHint" stdset="0" >
                <size>
                 <width>11</width>
                 <height>10</height>
@@ -107,7 +109,7 @@
           <property name="orientation" >
            <enum>Qt::Vertical</enum>
           </property>
-          <property name="sizeHint" >
+          <property name="sizeHint" stdset="0" >
            <size>
             <width>20</width>
             <height>0</height>
@@ -119,11 +121,11 @@
       </item>
       <item>
        <layout class="QVBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
         <property name="spacing" >
          <number>5</number>
+        </property>
+        <property name="margin" >
+         <number>0</number>
         </property>
         <item>
          <widget class="WarehouseGroup" name="_warehouse" >
@@ -134,18 +136,18 @@
         </item>
         <item>
          <layout class="QHBoxLayout" >
-          <property name="margin" >
+          <property name="spacing" >
            <number>0</number>
           </property>
-          <property name="spacing" >
+          <property name="margin" >
            <number>0</number>
           </property>
           <item>
            <layout class="QVBoxLayout" >
-            <property name="margin" >
+            <property name="spacing" >
              <number>0</number>
             </property>
-            <property name="spacing" >
+            <property name="margin" >
              <number>0</number>
             </property>
             <item>
@@ -161,9 +163,7 @@
                <bool>false</bool>
               </property>
               <property name="sizePolicy" >
-               <sizepolicy>
-                <hsizetype>5</hsizetype>
-                <vsizetype>0</vsizetype>
+               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -172,11 +172,11 @@
                <string/>
               </property>
               <layout class="QVBoxLayout" >
-               <property name="margin" >
-                <number>5</number>
-               </property>
                <property name="spacing" >
                 <number>0</number>
+               </property>
+               <property name="margin" >
+                <number>5</number>
                </property>
                <item>
                 <widget class="QRadioButton" name="_useStandardCosts" >
@@ -208,7 +208,7 @@
             <property name="sizeType" >
              <enum>QSizePolicy::Preferred</enum>
             </property>
-            <property name="sizeHint" >
+            <property name="sizeHint" stdset="0" >
              <size>
               <width>25</width>
               <height>20</height>
@@ -223,7 +223,7 @@
           <property name="orientation" >
            <enum>Qt::Vertical</enum>
           </property>
-          <property name="sizeHint" >
+          <property name="sizeHint" stdset="0" >
            <size>
             <width>20</width>
             <height>0</height>
@@ -235,18 +235,16 @@
       </item>
       <item>
        <layout class="QVBoxLayout" >
-        <property name="margin" >
+        <property name="spacing" >
          <number>0</number>
         </property>
-        <property name="spacing" >
+        <property name="margin" >
          <number>0</number>
         </property>
         <item>
          <widget class="QGroupBox" name="_orderByGroup" >
           <property name="sizePolicy" >
-           <sizepolicy>
-            <hsizetype>5</hsizetype>
-            <vsizetype>0</vsizetype>
+           <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
@@ -255,11 +253,11 @@
            <string>Order By</string>
           </property>
           <layout class="QVBoxLayout" >
-           <property name="margin" >
-            <number>5</number>
-           </property>
            <property name="spacing" >
             <number>0</number>
+           </property>
+           <property name="margin" >
+            <number>5</number>
            </property>
            <item>
             <widget class="QRadioButton" name="_itemNumber" >
@@ -296,7 +294,7 @@
           <property name="orientation" >
            <enum>Qt::Vertical</enum>
           </property>
-          <property name="sizeHint" >
+          <property name="sizeHint" stdset="0" >
            <size>
             <width>16</width>
             <height>0</height>
@@ -308,19 +306,19 @@
       </item>
       <item>
        <layout class="QVBoxLayout" >
-        <property name="margin" >
+        <property name="spacing" >
          <number>0</number>
         </property>
-        <property name="spacing" >
+        <property name="margin" >
          <number>0</number>
         </property>
         <item>
          <layout class="QVBoxLayout" >
-          <property name="margin" >
-           <number>0</number>
-          </property>
           <property name="spacing" >
            <number>5</number>
+          </property>
+          <property name="margin" >
+           <number>0</number>
           </property>
           <item>
            <widget class="QPushButton" name="_close" >
@@ -356,7 +354,7 @@
           <property name="orientation" >
            <enum>Qt::Vertical</enum>
           </property>
-          <property name="sizeHint" >
+          <property name="sizeHint" stdset="0" >
            <size>
             <width>20</width>
             <height>0</height>
@@ -369,39 +367,51 @@
      </layout>
     </item>
     <item>
-     <layout class="QVBoxLayout" >
-      <property name="margin" >
-       <number>0</number>
+     <widget class="QFrame" name="frame" >
+      <property name="sizePolicy" >
+       <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
+        <horstretch>0</horstretch>
+        <verstretch>1</verstretch>
+       </sizepolicy>
       </property>
-      <property name="spacing" >
-       <number>0</number>
+      <property name="frameShape" >
+       <enum>QFrame::NoFrame</enum>
       </property>
-      <item>
-       <widget class="QLabel" name="_qohLit" >
-        <property name="text" >
-         <string>Quantities on Hand</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="XTreeWidget" name="_itemsite" >
-        <property name="sizePolicy" >
-         <sizepolicy>
-          <hsizetype>7</hsizetype>
-          <vsizetype>7</vsizetype>
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize" >
-         <size>
-          <width>0</width>
-          <height>100</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-     </layout>
+      <property name="frameShadow" >
+       <enum>QFrame::Plain</enum>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout" >
+       <property name="spacing" >
+        <number>0</number>
+       </property>
+       <property name="margin" >
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="_qohLit" >
+         <property name="text" >
+          <string>Quantities on Hand</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="XTreeWidget" name="_itemsite" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize" >
+          <size>
+           <width>0</width>
+           <height>100</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -411,7 +421,7 @@
  <customwidgets>
   <customwidget>
    <class>DLineEdit</class>
-   <extends>XLineEdit</extends>
+   <extends>QWidget</extends>
    <header>datecluster.h</header>
   </customwidget>
   <customwidget>
@@ -420,14 +430,14 @@
    <header>parametergroup.h</header>
   </customwidget>
   <customwidget>
-   <class>XCheckBox</class>
-   <extends>QCheckBox</extends>
-   <header>xcheckbox.h</header>
-  </customwidget>
-  <customwidget>
    <class>WarehouseGroup</class>
    <extends>QGroupBox</extends>
    <header>warehousegroup.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
@@ -443,7 +453,6 @@
   <tabstop>_useStandardCosts</tabstop>
   <tabstop>_itemNumber</tabstop>
   <tabstop>_query</tabstop>
-  <tabstop>_itemsite</tabstop>
   <tabstop>_print</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
