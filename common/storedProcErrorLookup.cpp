@@ -510,6 +510,10 @@ void initErrorLookupHash()
 			       "there are records for this Item which use this "
                                "UOM."), 	                        0, "" },
 
+  { "deletePackage", -1, TR("The selected Package cannot be deleted because "
+                            "there are other packages that depend on it to "
+                            "function properly."),                      0, "" },
+
   { "deleteProfitCenter", -1,
                         TR("The selected Profit Center cannot be deleted as it "
                            "is in use by existing Account. You must reclass "

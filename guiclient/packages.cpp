@@ -64,7 +64,9 @@
 
 #include <dbtools.h>
 #include <openreports.h>
+
 #include "package.h"
+#include "storedProcErrorLookup.h"
 
 packages::packages(QWidget* parent, const char* name, Qt::WFlags fl)
     : XMainWindow(parent, name, fl)
@@ -140,11 +142,20 @@ void packages::sDelete()
                             QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
     return;
 
-  q.prepare( "DELETE FROM pkghead "
-             "WHERE (pkghead_id=:pkghead_id);" );
+  q.prepare( "SELECT deletePackage(:pkghead_id) AS result;" );
   q.bindValue(":pkghead_id", _package->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.first())
+  {
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("deletePackage", result),
+                  __FILE__, __LINE__);
+      return;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::None)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

@@ -61,7 +61,7 @@
 #include <QSqlError>
 #include <QVariant>
 
-#define DEBUG true
+#define DEBUG false
 
 // TODO: XDialog should have a default implementation that returns FALSE
 bool package::userHasPriv(const int pMode)
@@ -110,8 +110,13 @@ package::package(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _rec->addColumn(tr("Name"),        -1, Qt::AlignLeft, true, "pkgitem_name");
   _rec->addColumn(tr("Description"), -1, Qt::AlignLeft, true, "pkgitem_descrip");
 
-  _dep->addColumn(tr("Package"),     -1, Qt::AlignLeft, true, "");
-  _dep->addColumn(tr("Description"), -1, Qt::AlignLeft, true, "");
+  _req->addColumn(tr("Package"),     -1, Qt::AlignLeft,  true, "pkghead_name");
+  _req->addColumn(tr("Description"), -1, Qt::AlignLeft,  true, "pkghead_descrip");
+  _req->addColumn(tr("Version"),     -1, Qt::AlignRight, true, "pkghead_version");
+
+  _dep->addColumn(tr("Package"),     -1, Qt::AlignLeft,  true, "pkghead_name");
+  _dep->addColumn(tr("Description"), -1, Qt::AlignLeft,  true, "pkghead_descrip");
+  _dep->addColumn(tr("Version"),     -1, Qt::AlignRight, true, "pkghead_version");
 }
 
 package::~package()
@@ -313,4 +318,37 @@ void package::populate()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+
+  // TODO: make this recursive
+  q.prepare("SELECT * "
+            "FROM pkgdep, pkghead "
+            "WHERE ((pkgdep_pkghead_id=pkghead_id)"
+            "  AND  (pkgdep_parent_pkghead_id=:pkghead_id));");
+  q.bindValue(":pkghead_id", _pkgheadid);
+  q.exec();
+  if (DEBUG)    qDebug("package::populate() select pkgdep exec'ed");
+  _dep->populate(q);
+  if (DEBUG)    qDebug("package::populate() populate pkgdep done");
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
+  // TODO: make this recursive
+  q.prepare("SELECT * "
+            "FROM pkgdep, pkghead "
+            "WHERE ((pkgdep_parent_pkghead_id=pkghead_id)"
+            "  AND  (pkgdep_pkghead_id=:pkghead_id));");
+  q.bindValue(":pkghead_id", _pkgheadid);
+  q.exec();
+  if (DEBUG)    qDebug("package::populate() select pkgdep exec'ed");
+  _req->populate(q);
+  if (DEBUG)    qDebug("package::populate() populate pkgdep done");
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
 }

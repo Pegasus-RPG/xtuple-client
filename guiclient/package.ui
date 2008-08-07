@@ -157,9 +157,9 @@
    <item row="3" column="0" colspan="3" >
     <widget class="QTabWidget" name="_tab" >
      <property name="currentIndex" >
-      <number>1</number>
+      <number>0</number>
      </property>
-     <widget class="QWidget" name="_tabNotes" >
+     <widget class="QWidget" name="_notesTab" >
       <attribute name="title" >
        <string>Notes</string>
       </attribute>
@@ -169,13 +169,30 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="_tabRecords" >
+     <widget class="QWidget" name="_recordsTab" >
       <attribute name="title" >
-       <string>System Records</string>
+       <string>Contents</string>
       </attribute>
       <layout class="QGridLayout" >
        <item row="0" column="0" >
         <widget class="XTreeWidget" name="_rec" />
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="_requirementsTab" >
+      <attribute name="title" >
+       <string>Requirements</string>
+      </attribute>
+      <layout class="QVBoxLayout" >
+       <item>
+        <widget class="QLabel" name="_reqLit" >
+         <property name="text" >
+          <string>This package requires the following packages:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="XTreeWidget" name="_req" />
        </item>
       </layout>
      </widget>
@@ -184,8 +201,15 @@
        <string>Dependencies</string>
       </attribute>
       <layout class="QGridLayout" >
-       <item row="0" column="0" >
+       <item row="1" column="0" >
         <widget class="XTreeWidget" name="_dep" />
+       </item>
+       <item row="0" column="0" >
+        <widget class="QLabel" name="_depLit" >
+         <property name="text" >
+          <string>The following packages depend on this package:</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
