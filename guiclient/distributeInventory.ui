@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>763</width>
-    <height>363</height>
+    <width>764</width>
+    <height>382</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -437,6 +437,9 @@
         <layout class="QVBoxLayout" >
          <item>
           <widget class="QPushButton" name="_distribute" >
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
            <property name="text" >
             <string>Distribute</string>
            </property>
@@ -572,8 +575,8 @@
      <y>20</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>126</x>
+     <y>114</y>
     </hint>
    </hints>
   </connection>
@@ -588,8 +591,8 @@
      <y>20</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>126</x>
+     <y>114</y>
     </hint>
    </hints>
   </connection>
@@ -606,6 +609,22 @@
     <hint type="destinationlabel" >
      <x>381</x>
      <y>181</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_itemloc</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_distribute</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>601</x>
+     <y>241</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>667</x>
+     <y>211</y>
     </hint>
    </hints>
   </connection>
