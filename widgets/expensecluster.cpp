@@ -65,7 +65,7 @@ ExpenseCluster::ExpenseCluster(QWidget *pParent, const char *pName) :
 }
 
 ExpenseLineEdit::ExpenseLineEdit(QWidget *pParent, const char *pName) :
-  VirtualClusterLineEdit(pParent, "expcat", "expcat_id", "expcat_code", "expcat_descrip", 0, 0, pName)
+  VirtualClusterLineEdit(pParent, "expcat", "expcat_id", "expcat_code", "", "expcat_descrip", 0, pName)
 {
   setTitles(tr("Expense Category"), tr("Expense Categories"));
 }

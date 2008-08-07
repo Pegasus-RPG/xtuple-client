@@ -563,7 +563,10 @@ VirtualList::VirtualList(QWidget* pParent, Qt::WindowFlags pFlags ) :
 
     setObjectName("virtualList");
 
-    _listTab->addColumn(tr("Number"), -1, Qt::AlignLeft, true, "number");
+    if(pParent->inherits("ExpenseLineEdit"))
+      _listTab->addColumn(tr("Category"), -1, Qt::AlignLeft, true, "number");
+    else
+      _listTab->addColumn(tr("Number"), -1, Qt::AlignLeft, true, "number");
 
     if (pParent->inherits("VirtualClusterLineEdit"))
     {
