@@ -513,7 +513,7 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
                 "  FROM coitem AS a, coitem AS b"
                 " WHERE ((a.coitem_cohead_id=b.coitem_cohead_id)"
                 "   AND  (b.coitem_id=:id))"
-                " ORDER BY a.coitem_linenumber "
+                " ORDER BY a.coitem_linenumber, a.coitem_subnumber"
                 " LIMIT 1;");
     q.bindValue(":id", _soitemid);
     q.exec();
@@ -537,7 +537,7 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
                 "  FROM coitem AS a, coitem AS b"
                 " WHERE ((a.coitem_cohead_id=b.coitem_cohead_id)"
                 "   AND  (b.coitem_id=:id))"
-                " ORDER BY a.coitem_linenumber DESC"
+                " ORDER BY a.coitem_linenumber DESC, a.coitem_subnumber DESC"
                 " LIMIT 1;");
     q.bindValue(":id", _soitemid);
     q.exec();
@@ -2282,7 +2282,7 @@ void salesOrderItem::populate()
         "       coitem_order_type, coitem_order_id, coitem_custpn,"
         "       coitem_memo, NULL AS quitem_createorder,"
         "       NULL AS quitem_order_warehous_id,"
-        "       coitem_linenumber,"
+        "       formatSoLineNumber(coitem_id) AS linenumber,"
         "       coitem_qtyord AS qtyord,"
         "       coitem_qty_uom_id AS qty_uom_id,"
         "       coitem_qty_invuomratio AS qty_invuomratio,"
@@ -2318,7 +2318,7 @@ void salesOrderItem::populate()
         "       '' AS coitem_custpn,"
         "       quitem_memo AS coitem_memo, quitem_createorder,"
         "       quitem_order_warehous_id,"
-        "       quitem_linenumber AS coitem_linenumber,"
+        "       quitem_linenumber AS linenumber,"
         "       quitem_qtyord AS qtyord,"
         "       quitem_qty_uom_id AS qty_uom_id,"
         "       quitem_qty_invuomratio AS qty_invuomratio,"
@@ -2350,7 +2350,7 @@ void salesOrderItem::populate()
   {
     _soheadid = item.value("coitem_cohead_id").toInt();
     _comments->setId(_soitemid);
-    _lineNumber->setText(item.value("coitem_linenumber").toString());
+    _lineNumber->setText(item.value("linenumber").toString());
     _priceRatio = item.value("invpricerat").toDouble();
     _shippedToDate->setText(formatQty(item.value("qtyshipped").toDouble()));
 
@@ -2570,7 +2570,7 @@ void salesOrderItem::sNext()
   }
 
   if (ISQUOTE(_mode))
-    q.prepare("SELECT a.quitem_id AS id"
+    q.prepare("SELECT a.quitem_id AS id, 0 AS sub"
               "  FROM quitem AS a, quitem as b"
               " WHERE ((a.quitem_quhead_id=b.quitem_quhead_id)"
               "   AND  (a.quitem_linenumber > b.quitem_linenumber)"
@@ -2578,12 +2578,14 @@ void salesOrderItem::sNext()
               " ORDER BY a.quitem_linenumber"
               " LIMIT 1;");
   else
-    q.prepare("SELECT a.coitem_id AS id"
+    q.prepare("SELECT a.coitem_id AS id, a.coitem_subnumber AS sub"
               "  FROM coitem AS a, coitem AS b"
               " WHERE ((a.coitem_cohead_id=b.coitem_cohead_id)"
-              "   AND  (a.coitem_linenumber > b.coitem_linenumber)"
+              "   AND ((a.coitem_linenumber > b.coitem_linenumber)"
+              "    OR ((a.coitem_linenumber = b.coitem_linenumber)"
+              "   AND  (a.coitem_subnumber > b.coitem_subnumber)))"
               "   AND  (b.coitem_id=:id))"
-              " ORDER BY a.coitem_linenumber"
+              " ORDER BY a.coitem_linenumber, a.coitem_subnumber"
               " LIMIT 1;");
   q.bindValue(":id", _soitemid);
   q.exec();
@@ -2602,7 +2604,7 @@ void salesOrderItem::sNext()
     } 
     else
     {
-      if(cNew == _mode || cEdit == _mode)
+      if((cNew == _mode || cEdit == _mode) && (q.value("sub").toInt() == 0))
         params.append("mode", "edit");
       else
         params.append("mode", "view");
@@ -2659,13 +2661,13 @@ void salesOrderItem::sPrev()
   if (ISQUOTE(_mode))
   {
     if(cNewQuote == _mode)
-      q.prepare("SELECT quitem_id AS id"
+      q.prepare("SELECT quitem_id AS id, 0 AS sub"
                 "  FROM quitem"
                 " WHERE (quitem_quhead_id=:sohead_id)"
                 " ORDER BY quitem_linenumber DESC"
                 " LIMIT 1;");
     else
-      q.prepare("SELECT a.quitem_id AS id"
+      q.prepare("SELECT a.quitem_id AS id, 0 AS sub"
                 "  FROM quitem AS a, quitem as b"
                 " WHERE ((a.quitem_quhead_id=b.quitem_quhead_id)"
                 "   AND  (a.quitem_linenumber < b.quitem_linenumber)"
@@ -2676,18 +2678,20 @@ void salesOrderItem::sPrev()
   else
   {
     if(cNew == _mode)
-      q.prepare("SELECT coitem_id AS id"
+      q.prepare("SELECT coitem_id AS id, coitem_subnumber AS sub"
                 "  FROM coitem"
                 " WHERE (coitem_cohead_id=:sohead_id)"
-                " ORDER BY coitem_linenumber DESC"
+                " ORDER BY coitem_linenumber DESC, coitem_subnumber DESC"
                 " LIMIT 1;");
     else
-      q.prepare("SELECT a.coitem_id AS id"
+      q.prepare("SELECT a.coitem_id AS id, a.coitem_subnumber AS sub"
                 "  FROM coitem AS a, coitem AS b"
                 " WHERE ((a.coitem_cohead_id=b.coitem_cohead_id)"
-                "   AND  (a.coitem_linenumber < b.coitem_linenumber)"
+                "   AND ((a.coitem_linenumber < b.coitem_linenumber)"
+                "    OR ((a.coitem_linenumber = b.coitem_linenumber)"
+                "   AND  (a.coitem_subnumber < b.coitem_subnumber)))"
                 "   AND  (b.coitem_id=:id))"
-                " ORDER BY a.coitem_linenumber DESC"
+                " ORDER BY a.coitem_linenumber DESC, a.coitem_subnumber DESC"
                 " LIMIT 1;");
   }
   q.bindValue(":id", _soitemid);
@@ -2708,7 +2712,7 @@ void salesOrderItem::sPrev()
     } 
     else
     {
-      if(cNew == _mode || cEdit == _mode)
+      if((cNew == _mode || cEdit == _mode) && (q.value("sub").toInt() == 0))
         params.append("mode", "edit");
       else
         params.append("mode", "view");
