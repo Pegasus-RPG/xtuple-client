@@ -74,11 +74,12 @@ arOpenItem::arOpenItem(QWidget* parent, const char* name, bool modal, Qt::WFlags
 
   _last = -1;
 
-  _arapply->addColumn(tr("Type"),        _dateColumn, Qt::AlignCenter,true, "doctype");
-  _arapply->addColumn(tr("Doc. #"),               -1, Qt::AlignLeft,  true, "docnumber");
-  _arapply->addColumn(tr("Apply Date"),  _dateColumn, Qt::AlignCenter,true, "arapply_postdate");
-  _arapply->addColumn(tr("Amount"),     _moneyColumn, Qt::AlignRight, true, "arapply_applied");
-  _arapply->addColumn(tr("Currency"),_currencyColumn, Qt::AlignLeft,  true, "currabbr");
+  _arapply->addColumn(tr("Type"),            _dateColumn, Qt::AlignCenter,true, "doctype");
+  _arapply->addColumn(tr("Doc. #"),                   -1, Qt::AlignLeft,  true, "docnumber");
+  _arapply->addColumn(tr("Apply Date"),      _dateColumn, Qt::AlignCenter,true, "arapply_postdate");
+  _arapply->addColumn(tr("Amount"),         _moneyColumn, Qt::AlignRight, true, "arapply_applied");
+  _arapply->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft,  true, "currabbr");
+  _arapply->addColumn(tr("Base Amount"), _bigMoneyColumn, Qt::AlignRight, true, "baseapplied");
 
   if (omfgThis->singleCurrency())
       _arapply->hideColumn("currabbr");
@@ -493,8 +494,10 @@ void arOpenItem::populate()
                  "            ELSE :other"
                  "       END AS docnumber,"
                  "       arapply_postdate, arapply_applied, "
-		 "       currConcat(arapply_curr_id) AS currabbr,"
-                 "       'curr' AS arapply_applied_xtnumericrole "
+                 "       currConcat(arapply_curr_id) AS currabbr,"
+                 "       currToBase(arapply_curr_id, arapply_applied, arapply_postdate) AS baseapplied,"
+                 "       'curr' AS arapply_applied_xtnumericrole,"
+                 "       'curr' AS baseapplied_xtnumericrole "
                  "FROM arapply "
                  "WHERE (arapply_target_aropen_id=:aropen_id) "
                  "ORDER BY arapply_postdate;" );
@@ -523,7 +526,9 @@ void arOpenItem::populate()
                  "       arapply_target_docnumber AS docnumber,"
                  "       arapply_postdate, arapply_applied,"
                  "       currConcat(arapply_curr_id) AS currabbr,"
-                 "       'curr' AS arapply_applied_xtnumericrole "
+                 "       currToBase(arapply_curr_id, arapply_applied, arapply_postdate) AS baseapplied,"
+                 "       'curr' AS arapply_applied_xtnumericrole,"
+                 "       'curr' AS baseapplied_xtnumericrole "
                  "FROM arapply "
                  "WHERE (arapply_source_aropen_id=:aropen_id) "
                  "ORDER BY arapply_postdate;" );
