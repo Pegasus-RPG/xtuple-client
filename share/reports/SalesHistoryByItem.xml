@@ -15,33 +15,33 @@
        item_descrip1,
        item_descrip2,
        uom_name,
-       &lt;? if exists(&quot;warehous_id&quot;) ?>
-           (select warehous_code from warehous where warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>)
+       &lt;? if exists("warehous_id") ?>
+           (select warehous_code from warehous where warehous_id=&lt;? value("warehous_id") ?>)
        &lt;? else ?>
            text('All Sites')
        &lt;? endif ?>
          AS warehouse,
-       formatDate(date(&lt;? value(&quot;startDate&quot;) ?>)) AS startDate,
-       formatDate(date(&lt;? value(&quot;endDate&quot;) ?>)) AS endDate,
-       &lt;? if exists(&quot;showPrices&quot;) ?>
+       formatDate(date(&lt;? value("startDate") ?>)) AS startDate,
+       formatDate(date(&lt;? value("endDate") ?>)) AS endDate,
+       &lt;? if exists("showPrices") ?>
            text('Unit Price') AS lbl_unitprice,
            text('Total') AS lbl_total,
        &lt;? else ?>
            text('') AS lbl_unitprice,
            text('') AS lbl_total,
        &lt;? endif ?>
-       &lt;? if exists(&quot;custtype_id&quot;) ?>
+       &lt;? if exists("custtype_id") ?>
          ( SELECT (custtype_code||'-'||custtype_descrip)
              FROM custtype
-            WHERE (custtype_id=&lt;? value(&quot;custtype_id&quot;) ?>) )
-       &lt;? elseif exists(&quot;custtype_pattern&quot;) ?>
-         text(&lt;? value(&quot;custtype_pattern&quot;) ?>)
+            WHERE (custtype_id=&lt;? value("custtype_id") ?>) )
+       &lt;? elseif exists("custtype_pattern") ?>
+         text(&lt;? value("custtype_pattern") ?>)
        &lt;? else ?>
          text('All Customer Types')
        &lt;? endif ?>
        AS custtype
   FROM item JOIN uom ON (item_inv_uom_id=uom_id)
- WHERE (item_id=&lt;? value(&quot;item_id&quot;) ?>);</sql>
+ WHERE (item_id=&lt;? value("item_id") ?>);</sql>
  </querysource>
  <querysource>
   <name>detail</name>
@@ -54,10 +54,10 @@
        formatDate(cohist_invcdate, 'Return') AS invcdate,
        formatQty(cohist_qtyshipped) AS f_shipped,
        cohist_qtyshipped as shipped,
-       &lt;? if exists(&quot;showPrices&quot;) ?>
-       formatPrice(cohist_unitprice) AS unitprice,
-       formatMoney(round(cohist_qtyshipped * cohist_unitprice,2)) AS f_total,
-       round(cohist_qtyshipped * cohist_unitprice,2) AS total
+       &lt;? if exists("showPrices") ?>
+       formatPrice(currtobase(cohist_curr_id,cohist_unitprice,cohist_invcdate)) AS unitprice,
+       formatMoney(round(cohist_qtyshipped * currtobase(cohist_curr_id,cohist_unitprice,cohist_invcdate),2)) AS f_total,
+       round(cohist_qtyshipped * currtobase(cohist_curr_id,cohist_unitprice,cohist_invcdate),2) AS total
        &lt;? else ?>
        '' AS unitprice,
        '' AS f_total,
@@ -68,109 +68,26 @@
    AND (itemsite_item_id=item_id)
    AND (cohist_cust_id=cust_id)
    AND (cohist_salesrep_id=salesrep_id)
-   AND (itemsite_item_id=&lt;? value(&quot;item_id&quot;) ?>)
-   AND (cohist_invcdate BETWEEN &lt;? value(&quot;startDate&quot;) ?> AND &lt;? value(&quot;endDate&quot;) ?>)
-&lt;? if exists(&quot;warehous_id&quot;) ?>
-   AND (itemsite_warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>)
+   AND (itemsite_item_id=&lt;? value("item_id") ?>)
+   AND (cohist_invcdate BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
+&lt;? if exists("warehous_id") ?>
+   AND (itemsite_warehous_id=&lt;? value("warehous_id") ?>)
 &lt;? endif ?>
-&lt;? if exists(&quot;custtype_id&quot;) ?>
-   AND (cust_custtype_id=&lt;? value(&quot;custtype_id&quot;) ?>)
-&lt;? elseif exists(&quot;custtype_pattern&quot;) ?>
+&lt;? if exists("custtype_id") ?>
+   AND (cust_custtype_id=&lt;? value("custtype_id") ?>)
+&lt;? elseif exists("custtype_pattern") ?>
    AND (cust_custtype_id IN (SELECT custtype_id
                                FROM custtype
-                              WHERE (custtype_code ~ &lt;? value(&quot;custtype_pattern&quot;) ?>)))
+                              WHERE (custtype_code ~ &lt;? value("custtype_pattern") ?>)))
 &lt;? endif ?>
  ) 
 ORDER BY cohist_invcdate, cust_number;</sql>
  </querysource>
  <rpthead>
-  <height>236</height>
+  <height>233</height>
   <label>
    <rect>
-    <x>315</x>
-    <y>200</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>S/O #</string>
-  </label>
-  <label>
-   <rect>
-    <x>5</x>
-    <y>155</y>
-    <width>125</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Customer Type:</string>
-  </label>
-  <label>
-   <rect>
-    <x>420</x>
-    <y>200</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Ord. Date</string>
-  </label>
-  <label>
-   <rect>
-    <x>5</x>
-    <y>200</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Customer</string>
-  </label>
-  <field>
-   <rect>
-    <x>585</x>
-    <y>200</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>lbl_unitprice</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>445</x>
+    <x>443</x>
     <y>85</y>
     <width>100</width>
     <height>20</height>
@@ -184,30 +101,11 @@ ORDER BY cohist_invcdate, cust_number;</sql>
    <vcenter/>
    <string>End Date:</string>
   </label>
-  <field>
-   <rect>
-    <x>135</x>
-    <y>65</y>
-    <width>150</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>item_number</column>
-   </data>
-  </field>
   <label>
    <rect>
-    <x>10</x>
+    <x>300</x>
     <y>65</y>
-    <width>120</width>
+    <width>50</width>
     <height>20</height>
    </rect>
    <font>
@@ -217,7 +115,23 @@ ORDER BY cohist_invcdate, cust_number;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>Item:</string>
+   <string>UOM:</string>
+  </label>
+  <label>
+   <rect>
+    <x>443</x>
+    <y>65</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Start Date:</string>
   </label>
   <field>
    <rect>
@@ -240,9 +154,9 @@ ORDER BY cohist_invcdate, cust_number;</sql>
   </field>
   <field>
    <rect>
-    <x>135</x>
+    <x>550</x>
     <y>85</y>
-    <width>300</width>
+    <width>100</width>
     <height>20</height>
    </rect>
    <font>
@@ -254,25 +168,137 @@ ORDER BY cohist_invcdate, cust_number;</sql>
    <vcenter/>
    <data>
     <query>head</query>
-    <column>item_descrip1</column>
+    <column>endDate</column>
+   </data>
+  </field>
+  <line>
+   <xstart>5</xstart>
+   <ystart>228</ystart>
+   <xend>745</xend>
+   <yend>228</yend>
+   <weight>2</weight>
+  </line>
+  <field>
+   <rect>
+    <x>585</x>
+    <y>200</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>lbl_unitprice</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>665</x>
+    <y>200</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>lbl_total</column>
    </data>
   </field>
   <label>
    <rect>
-    <x>445</x>
-    <y>65</y>
+    <x>5</x>
+    <y>200</y>
     <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Customer</string>
+  </label>
+  <label>
+   <rect>
+    <x>315</x>
+    <y>215</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Invoice #</string>
+  </label>
+  <label>
+   <rect>
+    <x>418</x>
+    <y>215</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Invc. Date</string>
+  </label>
+  <label>
+   <rect>
+    <x>505</x>
+    <y>200</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Shipped</string>
+  </label>
+  <field>
+   <rect>
+    <x>135</x>
+    <y>65</y>
+    <width>150</width>
     <height>20</height>
    </rect>
    <font>
     <face>Arial</face>
     <size>10</size>
-    <weight>normal</weight>
+    <weight>bold</weight>
    </font>
-   <right/>
+   <left/>
    <vcenter/>
-   <string>Start Date:</string>
-  </label>
+   <data>
+    <query>head</query>
+    <column>item_number</column>
+   </data>
+  </field>
   <label>
    <rect>
     <x>30</x>
@@ -305,25 +331,22 @@ ORDER BY cohist_invcdate, cust_number;</sql>
    <vcenter/>
    <string>Sales Rep.</string>
   </label>
-  <field>
+  <label>
    <rect>
-    <x>550</x>
-    <y>85</y>
-    <width>100</width>
-    <height>20</height>
+    <x>270</x>
+    <y>5</y>
+    <width>475</width>
+    <height>40</height>
    </rect>
    <font>
     <face>Arial</face>
-    <size>10</size>
+    <size>18</size>
     <weight>bold</weight>
    </font>
-   <left/>
+   <right/>
    <vcenter/>
-   <data>
-    <query>head</query>
-    <column>endDate</column>
-   </data>
-  </field>
+   <string>Sales History By Item</string>
+  </label>
   <field>
    <rect>
     <x>355</x>
@@ -343,33 +366,10 @@ ORDER BY cohist_invcdate, cust_number;</sql>
     <column>uom_name</column>
    </data>
   </field>
-  <line>
-   <xstart>5</xstart>
-   <ystart>230</ystart>
-   <xend>745</xend>
-   <yend>230</yend>
-   <weight>2</weight>
-  </line>
-  <label>
-   <rect>
-    <x>420</x>
-    <y>215</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Invc. Date</string>
-  </label>
   <field>
    <rect>
     <x>135</x>
-    <y>105</y>
+    <y>85</y>
     <width>300</width>
     <height>20</height>
    </rect>
@@ -382,7 +382,7 @@ ORDER BY cohist_invcdate, cust_number;</sql>
    <vcenter/>
    <data>
     <query>head</query>
-    <column>item_descrip2</column>
+    <column>item_descrip1</column>
    </data>
   </field>
   <field>
@@ -406,7 +406,7 @@ ORDER BY cohist_invcdate, cust_number;</sql>
   </field>
   <label>
    <rect>
-    <x>505</x>
+    <x>418</x>
     <y>200</y>
     <width>80</width>
     <height>15</height>
@@ -418,23 +418,7 @@ ORDER BY cohist_invcdate, cust_number;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Shipped</string>
-  </label>
-  <label>
-   <rect>
-    <x>270</x>
-    <y>5</y>
-    <width>475</width>
-    <height>40</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>18</size>
-    <weight>bold</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Sales History By Item</string>
+   <string>Ord. Date</string>
   </label>
   <field>
    <rect>
@@ -457,25 +441,9 @@ ORDER BY cohist_invcdate, cust_number;</sql>
   </field>
   <label>
    <rect>
-    <x>315</x>
-    <y>215</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Invoice #</string>
-  </label>
-  <label>
-   <rect>
-    <x>300</x>
+    <x>10</x>
     <y>65</y>
-    <width>50</width>
+    <width>120</width>
     <height>20</height>
    </rect>
    <font>
@@ -485,70 +453,12 @@ ORDER BY cohist_invcdate, cust_number;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>UOM:</string>
-  </label>
-  <field>
-   <rect>
-    <x>665</x>
-    <y>200</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>lbl_total</column>
-   </data>
-  </field>
- </rpthead>
- <pghead>
-  <firstpage/>
-  <height>6</height>
- </pghead>
- <pghead>
-  <height>36</height>
-  <label>
-   <rect>
-    <x>420</x>
-    <y>15</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Invc. Date</string>
-  </label>
-  <label>
-   <rect>
-    <x>5</x>
-    <y>15</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Sales Rep.</string>
+   <string>Item:</string>
   </label>
   <label>
    <rect>
     <x>315</x>
-    <y>0</y>
+    <y>200</y>
     <width>100</width>
     <height>15</height>
    </rect>
@@ -561,6 +471,48 @@ ORDER BY cohist_invcdate, cust_number;</sql>
    <vcenter/>
    <string>S/O #</string>
   </label>
+  <label>
+   <rect>
+    <x>5</x>
+    <y>155</y>
+    <width>125</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Customer Type:</string>
+  </label>
+  <field>
+   <rect>
+    <x>135</x>
+    <y>103</y>
+    <width>300</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>item_descrip2</column>
+   </data>
+  </field>
+ </rpthead>
+ <pghead>
+  <firstpage/>
+  <height>6</height>
+ </pghead>
+ <pghead>
+  <height>36</height>
   <field>
    <rect>
     <x>585</x>
@@ -580,6 +532,93 @@ ORDER BY cohist_invcdate, cust_number;</sql>
     <column>lbl_unitprice</column>
    </data>
   </field>
+  <label>
+   <rect>
+    <x>315</x>
+    <y>15</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Invoice #</string>
+  </label>
+  <label>
+   <rect>
+    <x>418</x>
+    <y>0</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Ord. Date</string>
+  </label>
+  <label>
+   <rect>
+    <x>5</x>
+    <y>15</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Sales Rep.</string>
+  </label>
+  <line>
+   <xstart>5</xstart>
+   <ystart>30</ystart>
+   <xend>745</xend>
+   <yend>30</yend>
+   <weight>2</weight>
+  </line>
+  <label>
+   <rect>
+    <x>5</x>
+    <y>0</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Customer</string>
+  </label>
+  <label>
+   <rect>
+    <x>505</x>
+    <y>0</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Shipped</string>
+  </label>
   <field>
    <rect>
     <x>665</x>
@@ -601,24 +640,8 @@ ORDER BY cohist_invcdate, cust_number;</sql>
   </field>
   <label>
    <rect>
-    <x>5</x>
-    <y>0</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Customer</string>
-  </label>
-  <label>
-   <rect>
     <x>315</x>
-    <y>15</y>
+    <y>0</y>
     <width>100</width>
     <height>15</height>
    </rect>
@@ -629,12 +652,12 @@ ORDER BY cohist_invcdate, cust_number;</sql>
    </font>
    <left/>
    <vcenter/>
-   <string>Invoice #</string>
+   <string>S/O #</string>
   </label>
   <label>
    <rect>
-    <x>420</x>
-    <y>0</y>
+    <x>418</x>
+    <y>15</y>
     <width>80</width>
     <height>15</height>
    </rect>
@@ -645,31 +668,8 @@ ORDER BY cohist_invcdate, cust_number;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Ord. Date</string>
+   <string>Invc. Date</string>
   </label>
-  <label>
-   <rect>
-    <x>505</x>
-    <y>0</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Shipped</string>
-  </label>
-  <line>
-   <xstart>5</xstart>
-   <ystart>30</ystart>
-   <xend>745</xend>
-   <yend>30</yend>
-   <weight>2</weight>
-  </line>
  </pghead>
  <section>
   <name>detail</name>
@@ -680,7 +680,7 @@ ORDER BY cohist_invcdate, cust_number;</sql>
    <height>36</height>
    <field>
     <rect>
-     <x>420</x>
+     <x>418</x>
      <y>0</y>
      <width>80</width>
      <height>15</height>
@@ -699,7 +699,7 @@ ORDER BY cohist_invcdate, cust_number;</sql>
    </field>
    <field>
     <rect>
-     <x>420</x>
+     <x>418</x>
      <y>15</y>
      <width>80</width>
      <height>15</height>
@@ -714,6 +714,25 @@ ORDER BY cohist_invcdate, cust_number;</sql>
     <data>
      <query>detail</query>
      <column>invcdate</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>315</x>
+     <y>0</y>
+     <width>100</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>sonumber</column>
     </data>
    </field>
    <field>
@@ -733,25 +752,6 @@ ORDER BY cohist_invcdate, cust_number;</sql>
     <data>
      <query>detail</query>
      <column>f_total</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>5</x>
-     <y>0</y>
-     <width>300</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>cust_name</column>
     </data>
    </field>
    <field>
@@ -776,7 +776,7 @@ ORDER BY cohist_invcdate, cust_number;</sql>
    <field>
     <rect>
      <x>5</x>
-     <y>15</y>
+     <y>0</y>
      <width>300</width>
      <height>15</height>
     </rect>
@@ -789,7 +789,7 @@ ORDER BY cohist_invcdate, cust_number;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>salesrep_name</column>
+     <column>cust_name</column>
     </data>
    </field>
    <field>
@@ -811,18 +811,11 @@ ORDER BY cohist_invcdate, cust_number;</sql>
      <column>unitprice</column>
     </data>
    </field>
-   <line>
-    <xstart>5</xstart>
-    <ystart>30</ystart>
-    <xend>745</xend>
-    <yend>30</yend>
-    <weight>0</weight>
-   </line>
    <field>
     <rect>
-     <x>315</x>
-     <y>0</y>
-     <width>100</width>
+     <x>5</x>
+     <y>15</y>
+     <width>300</width>
      <height>15</height>
     </rect>
     <font>
@@ -834,7 +827,7 @@ ORDER BY cohist_invcdate, cust_number;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>sonumber</column>
+     <column>salesrep_name</column>
     </data>
    </field>
    <field>
@@ -856,6 +849,13 @@ ORDER BY cohist_invcdate, cust_number;</sql>
      <column>invnumber</column>
     </data>
    </field>
+   <line>
+    <xstart>5</xstart>
+    <ystart>30</ystart>
+    <xend>745</xend>
+    <yend>30</yend>
+    <weight>0</weight>
+   </line>
   </detail>
  </section>
  <pgfoot>
@@ -895,25 +895,9 @@ ORDER BY cohist_invcdate, cust_number;</sql>
    <vcenter/>
    <string>Page:</string>
   </label>
-  <label>
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Report Date:</string>
-  </label>
   <field>
    <rect>
-    <x>105</x>
+    <x>103</x>
     <y>0</y>
     <width>100</width>
     <height>15</height>
@@ -930,6 +914,22 @@ ORDER BY cohist_invcdate, cust_number;</sql>
     <column>report_date</column>
    </data>
   </field>
+  <label>
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Report Date:</string>
+  </label>
  </pgfoot>
  <rptfoot>
   <height>16</height>

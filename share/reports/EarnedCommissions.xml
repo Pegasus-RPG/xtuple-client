@@ -11,16 +11,16 @@
  <leftmargin>50</leftmargin>
  <querysource>
   <name>head</name>
-  <sql>SELECT &lt;? if exists(&quot;salesrep_id&quot;) ?>
+  <sql>SELECT &lt;? if exists("salesrep_id") ?>
          ( SELECT salesrep_name
              FROM salesrep
-            WHERE (salesrep_id=&lt;? value(&quot;salesrep_id&quot;) ?>) )
+            WHERE (salesrep_id=&lt;? value("salesrep_id") ?>) )
        &lt;? else ?>
          text('All Sales Reps')
        &lt;? endif ?>
        AS salesrep,
-       formatDate(&lt;? value(&quot;startDate&quot;) ?>) AS startdate,
-       formatDate(&lt;? value(&quot;endDate&quot;) ?>) AS enddate;</sql>
+       formatDate(&lt;? value("startDate") ?>) AS startdate,
+       formatDate(&lt;? value("endDate") ?>) AS enddate;</sql>
  </querysource>
  <querysource>
   <name>detail</name>
@@ -28,8 +28,8 @@
        cust_number, cohist_shiptoname,
        formatDate(cohist_invcdate) AS f_invcdate,
        item_number, formatQty(cohist_qtyshipped) AS f_qty,
-       formatMoney(round(cohist_qtyshipped * cohist_unitprice,2)) AS f_extprice,
-       round(cohist_qtyshipped * cohist_unitprice,2) as extprice,
+       formatMoney(round(cohist_qtyshipped * currtobase(cohist_curr_id,cohist_unitprice,cohist_invcdate),2)) AS f_extprice,
+       round(cohist_qtyshipped * currtobase(cohist_curr_id,cohist_unitprice,cohist_invcdate),2) as extprice,
        formatMoney(cohist_commission) AS f_prcnt,
        round(cohist_commission,2) as prcnt,
        formatBoolYN(cohist_commissionpaid) AS f_earned
@@ -39,9 +39,9 @@
    AND (cohist_itemsite_id=itemsite_id)
    AND (itemsite_item_id=item_id)
    AND (cohist_commission &lt;> 0)
-   AND (cohist_invcdate BETWEEN &lt;? value(&quot;startDate&quot;) ?> AND &lt;? value(&quot;endDate&quot;) ?>)
-&lt;? if exists(&quot;salesrep_id&quot;) ?>
-   AND (salesrep_id=&lt;? value(&quot;salesrep_id&quot;) ?>)
+   AND (cohist_invcdate BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
+&lt;? if exists("salesrep_id") ?>
+   AND (salesrep_id=&lt;? value("salesrep_id") ?>)
 &lt;? endif ?>
 )
 ORDER BY salesrep_name, cohist_invcdate;</sql>
@@ -50,25 +50,9 @@ ORDER BY salesrep_name, cohist_invcdate;</sql>
   <height>221</height>
   <label>
    <rect>
-    <x>30</x>
-    <y>100</y>
-    <width>105</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Sales Rep:</string>
-  </label>
-  <label>
-   <rect>
-    <x>705</x>
+    <x>315</x>
     <y>200</y>
-    <width>40</width>
+    <width>80</width>
     <height>15</height>
    </rect>
    <font>
@@ -78,39 +62,7 @@ ORDER BY salesrep_name, cohist_invcdate;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Paid</string>
-  </label>
-  <label>
-   <rect>
-    <x>565</x>
-    <y>200</y>
-    <width>70</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Ext. Price</string>
-  </label>
-  <label>
-   <rect>
-    <x>105</x>
-    <y>200</y>
-    <width>50</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>S/O #</string>
+   <string>Invc. Date</string>
   </label>
   <label>
    <rect>
@@ -130,48 +82,9 @@ ORDER BY salesrep_name, cohist_invcdate;</sql>
   </label>
   <label>
    <rect>
-    <x>5</x>
+    <x>705</x>
     <y>200</y>
-    <width>106</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Sales Rep.</string>
-  </label>
-  <line>
-   <xstart>5</xstart>
-   <ystart>215</ystart>
-   <xend>745</xend>
-   <yend>215</yend>
-   <weight>2</weight>
-  </line>
-  <label>
-   <rect>
-    <x>395</x>
-    <y>200</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Item Number</string>
-  </label>
-  <label>
-   <rect>
-    <x>204</x>
-    <y>200</y>
-    <width>85</width>
+    <width>40</width>
     <height>15</height>
    </rect>
    <font>
@@ -181,23 +94,7 @@ ORDER BY salesrep_name, cohist_invcdate;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Ship-to</string>
-  </label>
-  <label>
-   <rect>
-    <x>30</x>
-    <y>140</y>
-    <width>105</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>End Date:</string>
+   <string>Paid</string>
   </label>
   <field>
    <rect>
@@ -234,6 +131,54 @@ ORDER BY salesrep_name, cohist_invcdate;</sql>
    <vcenter/>
    <string>Qty.</string>
   </label>
+  <label>
+   <rect>
+    <x>30</x>
+    <y>120</y>
+    <width>103</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Start Date:</string>
+  </label>
+  <label>
+   <rect>
+    <x>103</x>
+    <y>200</y>
+    <width>50</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>S/O #</string>
+  </label>
+  <label>
+   <rect>
+    <x>395</x>
+    <y>200</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Item Number</string>
+  </label>
   <field>
    <rect>
     <x>140</x>
@@ -255,9 +200,9 @@ ORDER BY salesrep_name, cohist_invcdate;</sql>
   </field>
   <label>
    <rect>
-    <x>315</x>
+    <x>565</x>
     <y>200</y>
-    <width>80</width>
+    <width>70</width>
     <height>15</height>
    </rect>
    <font>
@@ -267,7 +212,39 @@ ORDER BY salesrep_name, cohist_invcdate;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Invc. Date</string>
+   <string>Ext. Price</string>
+  </label>
+  <label>
+   <rect>
+    <x>30</x>
+    <y>100</y>
+    <width>103</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Sales Rep:</string>
+  </label>
+  <label>
+   <rect>
+    <x>30</x>
+    <y>140</y>
+    <width>103</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>End Date:</string>
   </label>
   <field>
    <rect>
@@ -288,28 +265,35 @@ ORDER BY salesrep_name, cohist_invcdate;</sql>
     <column>salesrep</column>
    </data>
   </field>
+  <line>
+   <xstart>5</xstart>
+   <ystart>215</ystart>
+   <xend>745</xend>
+   <yend>215</yend>
+   <weight>2</weight>
+  </line>
   <label>
    <rect>
-    <x>30</x>
-    <y>120</y>
-    <width>105</width>
-    <height>20</height>
+    <x>202</x>
+    <y>200</y>
+    <width>85</width>
+    <height>15</height>
    </rect>
    <font>
     <face>Arial</face>
-    <size>10</size>
+    <size>8</size>
     <weight>normal</weight>
    </font>
-   <right/>
+   <hcenter/>
    <vcenter/>
-   <string>Start Date:</string>
+   <string>Ship-to</string>
   </label>
   <label>
    <rect>
     <x>275</x>
     <y>10</y>
     <width>450</width>
-    <height>38</height>
+    <height>37</height>
    </rect>
    <font>
     <face>Arial</face>
@@ -319,6 +303,22 @@ ORDER BY salesrep_name, cohist_invcdate;</sql>
    <right/>
    <vcenter/>
    <string>Earned Commissions</string>
+  </label>
+  <label>
+   <rect>
+    <x>5</x>
+    <y>200</y>
+    <width>106</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Sales Rep.</string>
   </label>
   <label>
    <rect>
@@ -345,45 +345,6 @@ ORDER BY salesrep_name, cohist_invcdate;</sql>
   <height>21</height>
   <label>
    <rect>
-    <x>565</x>
-    <y>0</y>
-    <width>70</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Ext. Price</string>
-  </label>
-  <line>
-   <xstart>5</xstart>
-   <ystart>15</ystart>
-   <xend>745</xend>
-   <yend>15</yend>
-   <weight>2</weight>
-  </line>
-  <label>
-   <rect>
-    <x>315</x>
-    <y>0</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Invc. Date</string>
-  </label>
-  <label>
-   <rect>
     <x>5</x>
     <y>0</y>
     <width>106</width>
@@ -400,9 +361,9 @@ ORDER BY salesrep_name, cohist_invcdate;</sql>
   </label>
   <label>
    <rect>
-    <x>505</x>
+    <x>315</x>
     <y>0</y>
-    <width>60</width>
+    <width>80</width>
     <height>15</height>
    </rect>
    <font>
@@ -412,7 +373,7 @@ ORDER BY salesrep_name, cohist_invcdate;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Qty.</string>
+   <string>Invc. Date</string>
   </label>
   <label>
    <rect>
@@ -432,9 +393,9 @@ ORDER BY salesrep_name, cohist_invcdate;</sql>
   </label>
   <label>
    <rect>
-    <x>705</x>
+    <x>103</x>
     <y>0</y>
-    <width>40</width>
+    <width>50</width>
     <height>15</height>
    </rect>
    <font>
@@ -444,7 +405,62 @@ ORDER BY salesrep_name, cohist_invcdate;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Paid</string>
+   <string>S/O #</string>
+  </label>
+  <line>
+   <xstart>5</xstart>
+   <ystart>15</ystart>
+   <xend>745</xend>
+   <yend>15</yend>
+   <weight>2</weight>
+  </line>
+  <label>
+   <rect>
+    <x>505</x>
+    <y>0</y>
+    <width>60</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Qty.</string>
+  </label>
+  <label>
+   <rect>
+    <x>155</x>
+    <y>0</y>
+    <width>50</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Cust. #</string>
+  </label>
+  <label>
+   <rect>
+    <x>565</x>
+    <y>0</y>
+    <width>70</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Ext. Price</string>
   </label>
   <label>
    <rect>
@@ -464,9 +480,9 @@ ORDER BY salesrep_name, cohist_invcdate;</sql>
   </label>
   <label>
    <rect>
-    <x>105</x>
+    <x>705</x>
     <y>0</y>
-    <width>50</width>
+    <width>40</width>
     <height>15</height>
    </rect>
    <font>
@@ -476,11 +492,11 @@ ORDER BY salesrep_name, cohist_invcdate;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>S/O #</string>
+   <string>Paid</string>
   </label>
   <label>
    <rect>
-    <x>204</x>
+    <x>202</x>
     <y>0</y>
     <width>85</width>
     <height>15</height>
@@ -494,22 +510,6 @@ ORDER BY salesrep_name, cohist_invcdate;</sql>
    <vcenter/>
    <string>Ship-to</string>
   </label>
-  <label>
-   <rect>
-    <x>155</x>
-    <y>0</y>
-    <width>50</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Cust. #</string>
-  </label>
  </pghead>
  <section>
   <name>detail</name>
@@ -518,63 +518,6 @@ ORDER BY salesrep_name, cohist_invcdate;</sql>
     <query>detail</query>
    </key>
    <height>16</height>
-   <field>
-    <rect>
-     <x>105</x>
-     <y>0</y>
-     <width>50</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <hcenter/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>cohist_ordernumber</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>204</x>
-     <y>0</y>
-     <width>110</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>cohist_shiptoname</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>635</x>
-     <y>0</y>
-     <width>70</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>f_prcnt</column>
-    </data>
-   </field>
    <field>
     <rect>
      <x>395</x>
@@ -611,6 +554,44 @@ ORDER BY salesrep_name, cohist_invcdate;</sql>
     <data>
      <query>detail</query>
      <column>f_extprice</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>155</x>
+     <y>0</y>
+     <width>50</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>cust_number</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>103</x>
+     <y>0</y>
+     <width>50</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>cohist_ordernumber</column>
     </data>
    </field>
    <field>
@@ -691,9 +672,9 @@ ORDER BY salesrep_name, cohist_invcdate;</sql>
    </field>
    <field>
     <rect>
-     <x>155</x>
+     <x>635</x>
      <y>0</y>
-     <width>50</width>
+     <width>70</width>
      <height>15</height>
     </rect>
     <font>
@@ -701,17 +682,68 @@ ORDER BY salesrep_name, cohist_invcdate;</sql>
      <size>8</size>
      <weight>bold</weight>
     </font>
-    <hcenter/>
+    <right/>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>cust_number</column>
+     <column>f_prcnt</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>202</x>
+     <y>0</y>
+     <width>110</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>cohist_shiptoname</column>
     </data>
    </field>
   </detail>
  </section>
  <pgfoot>
   <height>16</height>
+  <label>
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>85</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Report Date:</string>
+  </label>
+  <label>
+   <rect>
+    <x>615</x>
+    <y>0</y>
+    <width>85</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Page:</string>
+  </label>
   <field>
    <rect>
     <x>90</x>
@@ -750,61 +782,9 @@ ORDER BY salesrep_name, cohist_invcdate;</sql>
     <column>page_number</column>
    </data>
   </field>
-  <label>
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>85</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Report Date:</string>
-  </label>
-  <label>
-   <rect>
-    <x>615</x>
-    <y>0</y>
-    <width>85</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Page:</string>
-  </label>
  </pgfoot>
  <rptfoot>
   <height>16</height>
-  <field>
-   <rect>
-    <x>635</x>
-    <y>0</y>
-    <width>70</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>bold</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <data>
-    <query>detail</query>
-    <column>prcnt</column>
-   </data>
-   <tracktotal builtin="true" >money</tracktotal>
-  </field>
   <label>
    <rect>
     <x>430</x>
@@ -838,6 +818,26 @@ ORDER BY salesrep_name, cohist_invcdate;</sql>
    <data>
     <query>detail</query>
     <column>extprice</column>
+   </data>
+   <tracktotal builtin="true" >money</tracktotal>
+  </field>
+  <field>
+   <rect>
+    <x>635</x>
+    <y>0</y>
+    <width>70</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <data>
+    <query>detail</query>
+    <column>prcnt</column>
    </data>
    <tracktotal builtin="true" >money</tracktotal>
   </field>

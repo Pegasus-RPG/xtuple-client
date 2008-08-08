@@ -11,26 +11,26 @@
  <leftmargin>50</leftmargin>
  <querysource>
   <name>head</name>
-  <sql>SELECT &lt;? if exists(&quot;warehous_id&quot;) ?>
+  <sql>SELECT &lt;? if exists("warehous_id") ?>
          ( SELECT warehous_code
              FROM warehous
-            WHERE warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>)
+            WHERE warehous_id=&lt;? value("warehous_id") ?>)
        &lt;? else ?>
          text('All Sites')
        &lt;? endif ?>
        AS warehouse,
-       &lt;? if exists(&quot;prodcat_id&quot;) ?>
+       &lt;? if exists("prodcat_id") ?>
          ( SELECT (prodcat_code||'-'||prodcat_descrip)
              FROM prodcat
-            WHERE prodcat_id=&lt;? value(&quot;prodcat_id&quot;) ?>)
-       &lt;? elseif exists(&quot;prodcat_pattern&quot;) ?>
-         text(&lt;? value(&quot;prodcat_pattern&quot;) ?>)
+            WHERE prodcat_id=&lt;? value("prodcat_id") ?>)
+       &lt;? elseif exists("prodcat_pattern") ?>
+         text(&lt;? value("prodcat_pattern") ?>)
        &lt;? else ?>
          text('All Categories')
        &lt;? endif ?>
        AS prodcat,
-       formatDate(&lt;? value(&quot;startDate&quot;) ?>) AS startdate,
-       formatDate(&lt;? value(&quot;endDate&quot;) ?>) AS enddate;</sql>
+       formatDate(&lt;? value("startDate") ?>) AS startdate,
+       formatDate(&lt;? value("endDate") ?>) AS enddate;</sql>
  </querysource>
  <querysource>
   <name>detail</name>
@@ -38,27 +38,97 @@
        formatDate(MIN(cohist_invcdate)) AS firstsale,
        formatDate(MAX(cohist_invcdate)) AS lastsale,
        formatQty(SUM(cohist_qtyshipped)) AS qty,
-       formatMoney(SUM(round(cohist_qtyshipped * cohist_unitprice,2))) AS sales 
+       formatMoney(SUM(round(cohist_qtyshipped * currtobase(cohist_curr_id,cohist_unitprice,cohist_invcdate),2))) AS sales 
 FROM cohist, itemsite, cust, item 
 WHERE ((cohist_itemsite_id=itemsite_id)
  AND (cohist_cust_id=cust_id)
  AND (itemsite_item_id=item_id)
- AND (cohist_invcdate BETWEEN &lt;? value(&quot;startDate&quot;) ?> AND &lt;? value(&quot;endDate&quot;) ?>)
-&lt;? if exists(&quot;warehous_id&quot;) ?>
- AND (itemsite_warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>)
+ AND (cohist_invcdate BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
+&lt;? if exists("warehous_id") ?>
+ AND (itemsite_warehous_id=&lt;? value("warehous_id") ?>)
 &lt;? endif ?>
-&lt;? if exists(&quot;prodcat_id&quot;) ?>
- AND (item_prodcat_id=&lt;? value(&quot;prodcat_id&quot;) ?>)
-&lt;? elseif exists(&quot;prodcat_pattern&quot;) ?>
+&lt;? if exists("prodcat_id") ?>
+ AND (item_prodcat_id=&lt;? value("prodcat_id") ?>)
+&lt;? elseif exists("prodcat_pattern") ?>
  AND (item_prodcat_id IN (SELECT prodcat_id
                             FROM prodcat
-                           WHERE (prodcat_code ~ &lt;? value(&quot;prodcat_pattern&quot;) ?>)))
+                           WHERE (prodcat_code ~ &lt;? value("prodcat_pattern") ?>)))
 &lt;? endif ?>
 )
 GROUP BY cust_number, cust_id, cust_name;</sql>
  </querysource>
  <rpthead>
   <height>221</height>
+  <label>
+   <rect>
+    <x>665</x>
+    <y>200</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Total Sales</string>
+  </label>
+  <label>
+   <rect>
+    <x>407</x>
+    <y>200</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>First Sale</string>
+  </label>
+  <field>
+   <rect>
+    <x>550</x>
+    <y>65</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>startdate</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>550</x>
+    <y>85</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>enddate</column>
+   </data>
+  </field>
   <field>
    <rect>
     <x>135</x>
@@ -80,126 +150,8 @@ GROUP BY cust_number, cust_id, cust_name;</sql>
   </field>
   <label>
    <rect>
-    <x>409</x>
-    <y>200</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>First Sale</string>
-  </label>
-  <label>
-   <rect>
-    <x>580</x>
-    <y>200</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Total Qty.</string>
-  </label>
-  <label>
-   <rect>
-    <x>10</x>
-    <y>65</y>
-    <width>120</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Product Category:</string>
-  </label>
-  <label>
-   <rect>
-    <x>229</x>
-    <y>5</y>
-    <width>515</width>
-    <height>40</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>18</size>
-    <weight>bold</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Summarized Sales History By Customer</string>
-  </label>
-  <field>
-   <rect>
-    <x>550</x>
-    <y>65</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>startdate</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>665</x>
-    <y>200</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Total Sales</string>
-  </label>
-  <field>
-   <rect>
-    <x>550</x>
-    <y>85</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>enddate</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>445</x>
-    <y>85</y>
+    <x>30</x>
+    <y>95</y>
     <width>100</width>
     <height>20</height>
    </rect>
@@ -210,39 +162,7 @@ GROUP BY cust_number, cust_id, cust_name;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>End Date:</string>
-  </label>
-  <label>
-   <rect>
-    <x>5</x>
-    <y>200</y>
-    <width>40</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>#</string>
-  </label>
-  <label>
-   <rect>
-    <x>495</x>
-    <y>200</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Last Sale</string>
+   <string>Site:</string>
   </label>
   <field>
    <rect>
@@ -265,6 +185,93 @@ GROUP BY cust_number, cust_id, cust_name;</sql>
   </field>
   <label>
    <rect>
+    <x>493</x>
+    <y>200</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Last Sale</string>
+  </label>
+  <label>
+   <rect>
+    <x>443</x>
+    <y>65</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Start Date:</string>
+  </label>
+  <label>
+   <rect>
+    <x>10</x>
+    <y>65</y>
+    <width>120</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Product Category:</string>
+  </label>
+  <line>
+   <xstart>5</xstart>
+   <ystart>215</ystart>
+   <xend>745</xend>
+   <yend>215</yend>
+   <weight>2</weight>
+  </line>
+  <label>
+   <rect>
+    <x>227</x>
+    <y>5</y>
+    <width>515</width>
+    <height>40</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>18</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Summarized Sales History By Customer</string>
+  </label>
+  <label>
+   <rect>
+    <x>580</x>
+    <y>200</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Total Qty.</string>
+  </label>
+  <label>
+   <rect>
     <x>50</x>
     <y>200</y>
     <width>100</width>
@@ -281,24 +288,24 @@ GROUP BY cust_number, cust_id, cust_name;</sql>
   </label>
   <label>
    <rect>
-    <x>445</x>
-    <y>65</y>
-    <width>100</width>
-    <height>20</height>
+    <x>5</x>
+    <y>200</y>
+    <width>40</width>
+    <height>15</height>
    </rect>
    <font>
     <face>Arial</face>
-    <size>10</size>
+    <size>8</size>
     <weight>normal</weight>
    </font>
-   <right/>
+   <hcenter/>
    <vcenter/>
-   <string>Start Date:</string>
+   <string>#</string>
   </label>
   <label>
    <rect>
-    <x>30</x>
-    <y>95</y>
+    <x>443</x>
+    <y>85</y>
     <width>100</width>
     <height>20</height>
    </rect>
@@ -309,15 +316,8 @@ GROUP BY cust_number, cust_id, cust_name;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>Site:</string>
+   <string>End Date:</string>
   </label>
-  <line>
-   <xstart>5</xstart>
-   <ystart>215</ystart>
-   <xend>745</xend>
-   <yend>215</yend>
-   <weight>2</weight>
-  </line>
  </rpthead>
  <pghead>
   <firstpage/>
@@ -327,9 +327,9 @@ GROUP BY cust_number, cust_id, cust_name;</sql>
   <height>21</height>
   <label>
    <rect>
-    <x>495</x>
+    <x>5</x>
     <y>0</y>
-    <width>80</width>
+    <width>40</width>
     <height>15</height>
    </rect>
    <font>
@@ -339,39 +339,7 @@ GROUP BY cust_number, cust_id, cust_name;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Last Sale</string>
-  </label>
-  <label>
-   <rect>
-    <x>50</x>
-    <y>0</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Customer</string>
-  </label>
-  <label>
-   <rect>
-    <x>580</x>
-    <y>0</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Total Qty.</string>
+   <string>#</string>
   </label>
   <label>
    <rect>
@@ -398,9 +366,25 @@ GROUP BY cust_number, cust_id, cust_name;</sql>
   </line>
   <label>
    <rect>
-    <x>5</x>
+    <x>50</x>
     <y>0</y>
-    <width>40</width>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Customer</string>
+  </label>
+  <label>
+   <rect>
+    <x>493</x>
+    <y>0</y>
+    <width>80</width>
     <height>15</height>
    </rect>
    <font>
@@ -410,11 +394,11 @@ GROUP BY cust_number, cust_id, cust_name;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>#</string>
+   <string>Last Sale</string>
   </label>
   <label>
    <rect>
-    <x>409</x>
+    <x>407</x>
     <y>0</y>
     <width>80</width>
     <height>15</height>
@@ -428,6 +412,22 @@ GROUP BY cust_number, cust_id, cust_name;</sql>
    <vcenter/>
    <string>First Sale</string>
   </label>
+  <label>
+   <rect>
+    <x>580</x>
+    <y>0</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Total Qty.</string>
+  </label>
  </pghead>
  <section>
   <name>detail</name>
@@ -436,6 +436,25 @@ GROUP BY cust_number, cust_id, cust_name;</sql>
     <query>detail</query>
    </key>
    <height>16</height>
+   <field>
+    <rect>
+     <x>665</x>
+     <y>0</y>
+     <width>80</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>sales</column>
+    </data>
+   </field>
    <field>
     <rect>
      <x>580</x>
@@ -476,7 +495,7 @@ GROUP BY cust_number, cust_id, cust_name;</sql>
    </field>
    <field>
     <rect>
-     <x>665</x>
+     <x>407</x>
      <y>0</y>
      <width>80</width>
      <height>15</height>
@@ -486,11 +505,11 @@ GROUP BY cust_number, cust_id, cust_name;</sql>
      <size>8</size>
      <weight>bold</weight>
     </font>
-    <right/>
+    <hcenter/>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>sales</column>
+     <column>firstsale</column>
     </data>
    </field>
    <field>
@@ -514,26 +533,7 @@ GROUP BY cust_number, cust_id, cust_name;</sql>
    </field>
    <field>
     <rect>
-     <x>409</x>
-     <y>0</y>
-     <width>80</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <hcenter/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>firstsale</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>495</x>
+     <x>493</x>
      <y>0</y>
      <width>80</width>
      <height>15</height>
@@ -572,7 +572,7 @@ GROUP BY cust_number, cust_id, cust_name;</sql>
   </label>
   <field>
    <rect>
-    <x>105</x>
+    <x>103</x>
     <y>0</y>
     <width>100</width>
     <height>15</height>
@@ -589,6 +589,22 @@ GROUP BY cust_number, cust_id, cust_name;</sql>
     <column>report_date</column>
    </data>
   </field>
+  <label>
+   <rect>
+    <x>600</x>
+    <y>0</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Page:</string>
+  </label>
   <field>
    <rect>
     <x>705</x>
@@ -608,21 +624,5 @@ GROUP BY cust_number, cust_id, cust_name;</sql>
     <column>page_number</column>
    </data>
   </field>
-  <label>
-   <rect>
-    <x>600</x>
-    <y>0</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Page:</string>
-  </label>
  </pgfoot>
 </report>

@@ -11,32 +11,32 @@
  <leftmargin>50</leftmargin>
  <querysource>
   <name>head</name>
-  <sql>SELECT &lt;? if exists(&quot;salesrep_id&quot;) ?>
+  <sql>SELECT &lt;? if exists("salesrep_id") ?>
          ( SELECT salesrep_name
              FROM salesrep
-            WHERE (salesrep_id=&lt;? value(&quot;salesrep_id&quot;) ?>) )
+            WHERE (salesrep_id=&lt;? value("salesrep_id") ?>) )
        &lt;? else ?>
          text('All Sales Reps')
        &lt;? endif ?>
        AS salesrep,
-       formatDate(&lt;? value(&quot;startDate&quot;) ?>) AS startdate,
-       formatDate(&lt;? value(&quot;endDate&quot;) ?>) AS enddate;</sql>
+       formatDate(&lt;? value("startDate") ?>) AS startdate,
+       formatDate(&lt;? value("endDate") ?>) AS enddate;</sql>
  </querysource>
  <querysource>
   <name>detail</name>
   <sql>SELECT salesrep_id, salesrep_number, salesrep_name, cust_number, cust_name,
        cohist_ordernumber, cohist_invcnumber, formatDate(cohist_invcdate) as f_invcdate,
-       formatMoney(SUM(round(cohist_qtyshipped * cohist_unitprice,2))) as f_extprice,
-       SUM(round(cohist_qtyshipped * cohist_unitprice,2)) AS extprice,
+       formatMoney(SUM(round(cohist_qtyshipped * currtobase(cohist_curr_id,cohist_unitprice,cohist_invcdate),2))) as f_extprice,
+       SUM(round(cohist_qtyshipped * currtobase(cohist_curr_id,cohist_unitprice,cohist_invcdate),2)) as extprice,
        formatMoney(SUM(round(cohist_commission,2))) as f_commission,
        SUM(round(cohist_commission,2)) AS commission
   FROM cohist, salesrep, cust
  WHERE ((cohist_cust_id=cust_id)
    AND (cohist_salesrep_id=salesrep_id)
-   AND (cohist_invcdate BETWEEN &lt;? value(&quot;startDate&quot;) ?> AND &lt;? value(&quot;endDate&quot;) ?>)
+   AND (cohist_invcdate BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
    AND (cohist_commission &lt;> 0)
-&lt;? if exists(&quot;salesrep_id&quot;) ?>
-   AND (salesrep_id=&lt;? value(&quot;salesrep_id&quot;) ?>)
+&lt;? if exists("salesrep_id") ?>
+   AND (salesrep_id=&lt;? value("salesrep_id") ?>)
 &lt;? endif ?>
 )
 GROUP BY salesrep_id, salesrep_number, salesrep_name, cust_number, cust_name,
@@ -47,73 +47,9 @@ ORDER BY salesrep_number, cust_number, cohist_invcdate</sql>
   <height>221</height>
   <label>
    <rect>
-    <x>220</x>
-    <y>200</y>
-    <width>50</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Customer</string>
-  </label>
-  <label>
-   <rect>
-    <x>585</x>
-    <y>200</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Ext. Price</string>
-  </label>
-  <label>
-   <rect>
-    <x>275</x>
-    <y>10</y>
-    <width>450</width>
-    <height>38</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>18</size>
-    <weight>bold</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Brief Earned Commissions</string>
-  </label>
-  <label>
-   <rect>
-    <x>60</x>
-    <y>200</y>
-    <width>106</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Sales Rep.</string>
-  </label>
-  <label>
-   <rect>
     <x>30</x>
     <y>140</y>
-    <width>105</width>
+    <width>103</width>
     <height>20</height>
    </rect>
    <font>
@@ -141,70 +77,13 @@ ORDER BY salesrep_number, cust_number, cohist_invcdate</sql>
    <vcenter/>
    <string>Cust. #</string>
   </label>
-  <label>
-   <rect>
-    <x>30</x>
-    <y>120</y>
-    <width>105</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Start Date:</string>
-  </label>
-  <label>
-   <rect>
-    <x>505</x>
-    <y>200</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Invc. Date</string>
-  </label>
-  <label>
-   <rect>
-    <x>345</x>
-    <y>200</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>S/O #</string>
-  </label>
-  <label>
-   <rect>
-    <x>665</x>
-    <y>200</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Commision</string>
-  </label>
+  <line>
+   <xstart>5</xstart>
+   <ystart>215</ystart>
+   <xend>745</xend>
+   <yend>215</yend>
+   <weight>2</weight>
+  </line>
   <label>
    <rect>
     <x>5</x>
@@ -221,13 +100,6 @@ ORDER BY salesrep_number, cust_number, cohist_invcdate</sql>
    <vcenter/>
    <string>#</string>
   </label>
-  <line>
-   <xstart>5</xstart>
-   <ystart>215</ystart>
-   <xend>745</xend>
-   <yend>215</yend>
-   <weight>2</weight>
-  </line>
   <field>
    <rect>
     <x>140</x>
@@ -247,49 +119,43 @@ ORDER BY salesrep_number, cust_number, cohist_invcdate</sql>
     <column>salesrep</column>
    </data>
   </field>
-  <field>
+  <label>
    <rect>
-    <x>140</x>
-    <y>140</y>
-    <width>200</width>
-    <height>20</height>
+    <x>665</x>
+    <y>200</y>
+    <width>80</width>
+    <height>15</height>
    </rect>
    <font>
     <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
+    <size>8</size>
+    <weight>normal</weight>
    </font>
-   <left/>
+   <hcenter/>
    <vcenter/>
-   <data>
-    <query>head</query>
-    <column>enddate</column>
-   </data>
-  </field>
-  <field>
+   <string>Commision</string>
+  </label>
+  <label>
    <rect>
-    <x>140</x>
-    <y>120</y>
-    <width>200</width>
-    <height>20</height>
+    <x>585</x>
+    <y>200</y>
+    <width>80</width>
+    <height>15</height>
    </rect>
    <font>
     <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
+    <size>8</size>
+    <weight>normal</weight>
    </font>
-   <left/>
+   <hcenter/>
    <vcenter/>
-   <data>
-    <query>head</query>
-    <column>startdate</column>
-   </data>
-  </field>
+   <string>Ext. Price</string>
+  </label>
   <label>
    <rect>
     <x>30</x>
     <y>100</y>
-    <width>105</width>
+    <width>103</width>
     <height>20</height>
    </rect>
    <font>
@@ -317,6 +183,140 @@ ORDER BY salesrep_number, cust_number, cohist_invcdate</sql>
    <vcenter/>
    <string>Invc. Number</string>
   </label>
+  <label>
+   <rect>
+    <x>345</x>
+    <y>200</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>S/O #</string>
+  </label>
+  <label>
+   <rect>
+    <x>60</x>
+    <y>200</y>
+    <width>106</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Sales Rep.</string>
+  </label>
+  <label>
+   <rect>
+    <x>30</x>
+    <y>120</y>
+    <width>103</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Start Date:</string>
+  </label>
+  <label>
+   <rect>
+    <x>220</x>
+    <y>200</y>
+    <width>50</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Customer</string>
+  </label>
+  <field>
+   <rect>
+    <x>140</x>
+    <y>120</y>
+    <width>200</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>startdate</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>275</x>
+    <y>10</y>
+    <width>450</width>
+    <height>37</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>18</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Brief Earned Commissions</string>
+  </label>
+  <field>
+   <rect>
+    <x>140</x>
+    <y>140</y>
+    <width>200</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>enddate</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>505</x>
+    <y>200</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Invc. Date</string>
+  </label>
  </rpthead>
  <pghead>
   <firstpage/>
@@ -324,6 +324,22 @@ ORDER BY salesrep_number, cust_number, cohist_invcdate</sql>
  </pghead>
  <pghead>
   <height>26</height>
+  <label>
+   <rect>
+    <x>165</x>
+    <y>5</y>
+    <width>50</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Cust. #</string>
+  </label>
   <label>
    <rect>
     <x>585</x>
@@ -342,38 +358,6 @@ ORDER BY salesrep_number, cust_number, cohist_invcdate</sql>
   </label>
   <label>
    <rect>
-    <x>505</x>
-    <y>5</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Invc. Date</string>
-  </label>
-  <label>
-   <rect>
-    <x>665</x>
-    <y>5</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Commision</string>
-  </label>
-  <label>
-   <rect>
     <x>5</x>
     <y>5</y>
     <width>50</width>
@@ -387,61 +371,6 @@ ORDER BY salesrep_number, cust_number, cohist_invcdate</sql>
    <hcenter/>
    <vcenter/>
    <string>#</string>
-  </label>
-  <line>
-   <xstart>5</xstart>
-   <ystart>20</ystart>
-   <xend>745</xend>
-   <yend>20</yend>
-   <weight>2</weight>
-  </line>
-  <label>
-   <rect>
-    <x>425</x>
-    <y>5</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Invc. Number</string>
-  </label>
-  <label>
-   <rect>
-    <x>220</x>
-    <y>5</y>
-    <width>50</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Customer</string>
-  </label>
-  <label>
-   <rect>
-    <x>165</x>
-    <y>5</y>
-    <width>50</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Cust. #</string>
   </label>
   <label>
    <rect>
@@ -461,6 +390,22 @@ ORDER BY salesrep_number, cust_number, cohist_invcdate</sql>
   </label>
   <label>
    <rect>
+    <x>425</x>
+    <y>5</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Invc. Number</string>
+  </label>
+  <label>
+   <rect>
     <x>60</x>
     <y>5</y>
     <width>106</width>
@@ -475,6 +420,61 @@ ORDER BY salesrep_number, cust_number, cohist_invcdate</sql>
    <vcenter/>
    <string>Sales Rep.</string>
   </label>
+  <label>
+   <rect>
+    <x>220</x>
+    <y>5</y>
+    <width>50</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Customer</string>
+  </label>
+  <label>
+   <rect>
+    <x>665</x>
+    <y>5</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Commision</string>
+  </label>
+  <line>
+   <xstart>5</xstart>
+   <ystart>20</ystart>
+   <xend>745</xend>
+   <yend>20</yend>
+   <weight>2</weight>
+  </line>
+  <label>
+   <rect>
+    <x>505</x>
+    <y>5</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Invc. Date</string>
+  </label>
  </pghead>
  <section>
   <name>detail</name>
@@ -485,26 +485,7 @@ ORDER BY salesrep_number, cust_number, cohist_invcdate</sql>
    <height>16</height>
    <field>
     <rect>
-     <x>60</x>
-     <y>0</y>
-     <width>100</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>salesrep_name</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>665</x>
+     <x>345</x>
      <y>0</y>
      <width>80</width>
      <height>15</height>
@@ -518,45 +499,7 @@ ORDER BY salesrep_number, cust_number, cohist_invcdate</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_commission</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>505</x>
-     <y>0</y>
-     <width>80</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <hcenter/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>f_invcdate</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>5</x>
-     <y>0</y>
-     <width>50</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <hcenter/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>salesrep_number</column>
+     <column>cohist_ordernumber</column>
     </data>
    </field>
    <field>
@@ -580,6 +523,63 @@ ORDER BY salesrep_number, cust_number, cohist_invcdate</sql>
    </field>
    <field>
     <rect>
+     <x>665</x>
+     <y>0</y>
+     <width>80</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_commission</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>165</x>
+     <y>0</y>
+     <width>50</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>cust_number</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>505</x>
+     <y>0</y>
+     <width>80</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_invcdate</column>
+    </data>
+   </field>
+   <field>
+    <rect>
      <x>220</x>
      <y>0</y>
      <width>120</width>
@@ -599,9 +599,9 @@ ORDER BY salesrep_number, cust_number, cohist_invcdate</sql>
    </field>
    <field>
     <rect>
-     <x>345</x>
+     <x>60</x>
      <y>0</y>
-     <width>80</width>
+     <width>100</width>
      <height>15</height>
     </rect>
     <font>
@@ -609,11 +609,11 @@ ORDER BY salesrep_number, cust_number, cohist_invcdate</sql>
      <size>8</size>
      <weight>bold</weight>
     </font>
-    <right/>
+    <left/>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>cohist_ordernumber</column>
+     <column>salesrep_name</column>
     </data>
    </field>
    <field>
@@ -637,7 +637,7 @@ ORDER BY salesrep_number, cust_number, cohist_invcdate</sql>
    </field>
    <field>
     <rect>
-     <x>165</x>
+     <x>5</x>
      <y>0</y>
      <width>50</width>
      <height>15</height>
@@ -651,32 +651,13 @@ ORDER BY salesrep_number, cust_number, cohist_invcdate</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>cust_number</column>
+     <column>salesrep_number</column>
     </data>
    </field>
   </detail>
  </section>
  <pgfoot>
   <height>16</height>
-  <field>
-   <rect>
-    <x>705</x>
-    <y>0</y>
-    <width>40</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>Context Query</query>
-    <column>page_number</column>
-   </data>
-  </field>
   <label>
    <rect>
     <x>615</x>
@@ -728,12 +709,31 @@ ORDER BY salesrep_number, cust_number, cohist_invcdate</sql>
    <vcenter/>
    <string>Report Date:</string>
   </label>
+  <field>
+   <rect>
+    <x>705</x>
+    <y>0</y>
+    <width>40</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>Context Query</query>
+    <column>page_number</column>
+   </data>
+  </field>
  </pgfoot>
  <rptfoot>
   <height>16</height>
   <label>
    <rect>
-    <x>470</x>
+    <x>468</x>
     <y>0</y>
     <width>80</width>
     <height>15</height>

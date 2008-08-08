@@ -13,18 +13,18 @@
   <name>head</name>
   <sql>SELECT cust_number,
        cust_name,
-       &lt;? if exists(&quot;warehous_id&quot;) ?>
+       &lt;? if exists("warehous_id") ?>
          ( SELECT warehous_code
              FROM warehous
-            WHERE warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>)
+            WHERE warehous_id=&lt;? value("warehous_id") ?>)
        &lt;? else ?>
          text('All Sites')
        &lt;? endif ?>
        AS warehouse,
-       formatDate(&lt;? value(&quot;startDate&quot;) ?>) AS startdate,
-       formatDate(&lt;? value(&quot;endDate&quot;) ?>) AS enddate
+       formatDate(&lt;? value("startDate") ?>) AS startdate,
+       formatDate(&lt;? value("endDate") ?>) AS enddate
   FROM cust
- WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
+ WHERE (cust_id=&lt;? value("cust_id") ?>);</sql>
  </querysource>
  <querysource>
   <name>detail</name>
@@ -37,27 +37,27 @@
        totalsales 
 FROM ( SELECT itemsite_id, item_number, item_descrip1, item_descrip2,
               warehous_code,
-              MIN(cohist_unitprice) AS minprice,
-              MAX(cohist_unitprice) AS maxprice,
-              AVG(cohist_unitprice) AS avgprice,
+              MIN(currtobase(cohist_curr_id,cohist_unitprice,cohist_invcdate)) AS minprice,
+              MAX(currtobase(cohist_curr_id,cohist_unitprice,cohist_invcdate)) AS maxprice,
+              AVG(currtobase(cohist_curr_id,cohist_unitprice,cohist_invcdate)) AS avgprice,
               SUM(cohist_qtyshipped) AS totalunits,
-              SUM(round(cohist_qtyshipped * cohist_unitprice,2)) AS totalsales 
+              SUM(round(cohist_qtyshipped * currtobase(cohist_curr_id,cohist_unitprice,cohist_invcdate),2)) AS totalsales 
          FROM cohist, itemsite, item, warehous 
         WHERE ((cohist_itemsite_id=itemsite_id)
           AND (itemsite_item_id=item_id)
           AND (itemsite_warehous_id=warehous_id)
-          AND (cohist_cust_id=&lt;? value(&quot;cust_id&quot;) ?>)
-          AND (cohist_invcdate BETWEEN &lt;? value(&quot;startDate&quot;) ?> AND &lt;? value(&quot;endDate&quot;) ?>)
-&lt;? if exists(&quot;warehous_id&quot;) ?>
-          AND (itemsite_warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>)
+          AND (cohist_cust_id=&lt;? value("cust_id") ?>)
+          AND (cohist_invcdate BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
+&lt;? if exists("warehous_id") ?>
+          AND (itemsite_warehous_id=&lt;? value("warehous_id") ?>)
 &lt;? endif ?>
               )
 GROUP BY itemsite_id, item_number, item_descrip1, item_descrip2, warehous_code ) AS data 
-&lt;? if exists(&quot;orderByItemNumber&quot;) ?>
+&lt;? if exists("orderByItemNumber") ?>
 ORDER BY item_number, warehous_code
-&lt;? elseif exists(&quot;orderByQtyVolume&quot;) ?>
+&lt;? elseif exists("orderByQtyVolume") ?>
 ORDER BY totalunits DESC
-&lt;? elseif exists(&quot;orderBySalesVolume&quot;) ?>
+&lt;? elseif exists("orderBySalesVolume") ?>
 ORDER BY totalsales DESC
 &lt;? endif ?></sql>
  </querysource>
@@ -65,7 +65,46 @@ ORDER BY totalsales DESC
   <height>221</height>
   <label>
    <rect>
-    <x>445</x>
+    <x>665</x>
+    <y>185</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Total $</string>
+  </label>
+  <label>
+   <rect>
+    <x>110</x>
+    <y>5</y>
+    <width>635</width>
+    <height>40</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>18</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Summarized Sales History By Customer By Item</string>
+  </label>
+  <line>
+   <xstart>5</xstart>
+   <ystart>215</ystart>
+   <xend>745</xend>
+   <yend>215</yend>
+   <weight>2</weight>
+  </line>
+  <label>
+   <rect>
+    <x>443</x>
     <y>65</y>
     <width>100</width>
     <height>20</height>
@@ -81,40 +120,24 @@ ORDER BY totalsales DESC
   </label>
   <label>
    <rect>
-    <x>10</x>
-    <y>85</y>
-    <width>120</width>
-    <height>20</height>
+    <x>407</x>
+    <y>185</y>
+    <width>80</width>
+    <height>15</height>
    </rect>
    <font>
     <face>Arial</face>
-    <size>10</size>
+    <size>8</size>
     <weight>normal</weight>
    </font>
-   <right/>
+   <hcenter/>
    <vcenter/>
-   <string>Name:</string>
-  </label>
-  <label>
-   <rect>
-    <x>445</x>
-    <y>85</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>End Date:</string>
+   <string>Max Price</string>
   </label>
   <field>
    <rect>
     <x>135</x>
-    <y>135</y>
+    <y>65</y>
     <width>300</width>
     <height>20</height>
    </rect>
@@ -127,7 +150,7 @@ ORDER BY totalsales DESC
    <vcenter/>
    <data>
     <query>head</query>
-    <column>warehouse</column>
+    <column>cust_number</column>
    </data>
   </field>
   <field>
@@ -151,88 +174,8 @@ ORDER BY totalsales DESC
   </field>
   <label>
    <rect>
-    <x>110</x>
-    <y>5</y>
-    <width>635</width>
-    <height>40</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>18</size>
-    <weight>bold</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Summarized Sales History By Customer By Item</string>
-  </label>
-  <label>
-   <rect>
-    <x>580</x>
-    <y>185</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Total Units</string>
-  </label>
-  <label>
-   <rect>
-    <x>495</x>
-    <y>185</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Avg. Price</string>
-  </label>
-  <label>
-   <rect>
-    <x>665</x>
-    <y>185</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Total $</string>
-  </label>
-  <label>
-   <rect>
-    <x>325</x>
-    <y>185</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Min. Price</string>
-  </label>
-  <label>
-   <rect>
     <x>5</x>
-    <y>185</y>
+    <y>200</y>
     <width>100</width>
     <height>15</height>
    </rect>
@@ -243,7 +186,7 @@ ORDER BY totalsales DESC
    </font>
    <left/>
    <vcenter/>
-   <string>Item #</string>
+   <string>Description</string>
   </label>
   <label>
    <rect>
@@ -263,22 +206,6 @@ ORDER BY totalsales DESC
   </label>
   <label>
    <rect>
-    <x>409</x>
-    <y>185</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Max Price</string>
-  </label>
-  <label>
-   <rect>
     <x>10</x>
     <y>65</y>
     <width>120</width>
@@ -292,6 +219,156 @@ ORDER BY totalsales DESC
    <right/>
    <vcenter/>
    <string>Customer #:</string>
+  </label>
+  <label>
+   <rect>
+    <x>325</x>
+    <y>185</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Min. Price</string>
+  </label>
+  <label>
+   <rect>
+    <x>580</x>
+    <y>185</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Total Units</string>
+  </label>
+  <field>
+   <rect>
+    <x>135</x>
+    <y>135</y>
+    <width>300</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>warehouse</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>5</x>
+    <y>185</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Item #</string>
+  </label>
+  <field>
+   <rect>
+    <x>550</x>
+    <y>85</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>enddate</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>443</x>
+    <y>85</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>End Date:</string>
+  </label>
+  <label>
+   <rect>
+    <x>10</x>
+    <y>85</y>
+    <width>120</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Name:</string>
+  </label>
+  <label>
+   <rect>
+    <x>240</x>
+    <y>185</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Site</string>
+  </label>
+  <label>
+   <rect>
+    <x>493</x>
+    <y>185</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Avg. Price</string>
   </label>
   <field>
    <rect>
@@ -312,64 +389,17 @@ ORDER BY totalsales DESC
     <column>cust_name</column>
    </data>
   </field>
-  <field>
-   <rect>
-    <x>550</x>
-    <y>85</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>enddate</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>135</x>
-    <y>65</y>
-    <width>300</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>cust_number</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>5</x>
-    <y>200</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Description</string>
-  </label>
+ </rpthead>
+ <pghead>
+  <firstpage/>
+  <height>6</height>
+ </pghead>
+ <pghead>
+  <height>36</height>
   <label>
    <rect>
     <x>240</x>
-    <y>185</y>
+    <y>0</y>
     <width>80</width>
     <height>15</height>
    </rect>
@@ -382,20 +412,6 @@ ORDER BY totalsales DESC
    <vcenter/>
    <string>Site</string>
   </label>
-  <line>
-   <xstart>5</xstart>
-   <ystart>215</ystart>
-   <xend>745</xend>
-   <yend>215</yend>
-   <weight>2</weight>
-  </line>
- </rpthead>
- <pghead>
-  <firstpage/>
-  <height>6</height>
- </pghead>
- <pghead>
-  <height>36</height>
   <label>
    <rect>
     <x>5</x>
@@ -414,7 +430,7 @@ ORDER BY totalsales DESC
   </label>
   <label>
    <rect>
-    <x>495</x>
+    <x>325</x>
     <y>0</y>
     <width>80</width>
     <height>15</height>
@@ -426,78 +442,7 @@ ORDER BY totalsales DESC
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Avg. Price</string>
-  </label>
-  <label>
-   <rect>
-    <x>5</x>
-    <y>15</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Description</string>
-  </label>
-  <line>
-   <xstart>5</xstart>
-   <ystart>30</ystart>
-   <xend>745</xend>
-   <yend>30</yend>
-   <weight>2</weight>
-  </line>
-  <label>
-   <rect>
-    <x>240</x>
-    <y>0</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Site</string>
-  </label>
-  <label>
-   <rect>
-    <x>665</x>
-    <y>0</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Total $</string>
-  </label>
-  <label>
-   <rect>
-    <x>409</x>
-    <y>0</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Max Price</string>
+   <string>Min. Price</string>
   </label>
   <label>
    <rect>
@@ -517,7 +462,23 @@ ORDER BY totalsales DESC
   </label>
   <label>
    <rect>
-    <x>325</x>
+    <x>5</x>
+    <y>15</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Description</string>
+  </label>
+  <label>
+   <rect>
+    <x>407</x>
     <y>0</y>
     <width>80</width>
     <height>15</height>
@@ -529,8 +490,47 @@ ORDER BY totalsales DESC
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Min. Price</string>
+   <string>Max Price</string>
   </label>
+  <label>
+   <rect>
+    <x>665</x>
+    <y>0</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Total $</string>
+  </label>
+  <label>
+   <rect>
+    <x>493</x>
+    <y>0</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Avg. Price</string>
+  </label>
+  <line>
+   <xstart>5</xstart>
+   <ystart>30</ystart>
+   <xend>745</xend>
+   <yend>30</yend>
+   <weight>2</weight>
+  </line>
  </pghead>
  <section>
   <name>detail</name>
@@ -539,6 +539,25 @@ ORDER BY totalsales DESC
     <query>detail</query>
    </key>
    <height>51</height>
+   <field>
+    <rect>
+     <x>407</x>
+     <y>0</y>
+     <width>80</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_maxprice</column>
+    </data>
+   </field>
    <field>
     <rect>
      <x>665</x>
@@ -556,25 +575,6 @@ ORDER BY totalsales DESC
     <data>
      <query>detail</query>
      <column>f_totalsales</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>5</x>
-     <y>0</y>
-     <width>150</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>item_number</column>
     </data>
    </field>
    <field>
@@ -598,6 +598,70 @@ ORDER BY totalsales DESC
    </field>
    <field>
     <rect>
+     <x>325</x>
+     <y>0</y>
+     <width>80</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_minprice</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>493</x>
+     <y>0</y>
+     <width>80</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_avgprice</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>5</x>
+     <y>0</y>
+     <width>150</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>item_number</column>
+    </data>
+   </field>
+   <line>
+    <xstart>5</xstart>
+    <ystart>45</ystart>
+    <xend>745</xend>
+    <yend>45</yend>
+    <weight>0</weight>
+   </line>
+   <field>
+    <rect>
      <x>580</x>
      <y>0</y>
      <width>80</width>
@@ -613,32 +677,6 @@ ORDER BY totalsales DESC
     <data>
      <query>detail</query>
      <column>f_totalunits</column>
-    </data>
-   </field>
-   <line>
-    <xstart>5</xstart>
-    <ystart>45</ystart>
-    <xend>745</xend>
-    <yend>45</yend>
-    <weight>0</weight>
-   </line>
-   <field>
-    <rect>
-     <x>495</x>
-     <y>0</y>
-     <width>80</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>f_avgprice</column>
     </data>
    </field>
    <field>
@@ -679,83 +717,10 @@ ORDER BY totalsales DESC
      <column>item_descrip2</column>
     </data>
    </field>
-   <field>
-    <rect>
-     <x>325</x>
-     <y>0</y>
-     <width>80</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>f_minprice</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>409</x>
-     <y>0</y>
-     <width>80</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>f_maxprice</column>
-    </data>
-   </field>
   </detail>
  </section>
  <pgfoot>
   <height>16</height>
-  <label>
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Report Date:</string>
-  </label>
-  <field>
-   <rect>
-    <x>105</x>
-    <y>0</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>Context Query</query>
-    <column>report_date</column>
-   </data>
-  </field>
   <field>
    <rect>
     <x>705</x>
@@ -791,14 +756,30 @@ ORDER BY totalsales DESC
    <vcenter/>
    <string>Page:</string>
   </label>
- </pgfoot>
- <rptfoot>
-  <height>16</height>
+  <field>
+   <rect>
+    <x>103</x>
+    <y>0</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>Context Query</query>
+    <column>report_date</column>
+   </data>
+  </field>
   <label>
    <rect>
-    <x>575</x>
+    <x>0</x>
     <y>0</y>
-    <width>80</width>
+    <width>100</width>
     <height>15</height>
    </rect>
    <font>
@@ -808,8 +789,11 @@ ORDER BY totalsales DESC
    </font>
    <right/>
    <vcenter/>
-   <string>Total:</string>
+   <string>Report Date:</string>
   </label>
+ </pgfoot>
+ <rptfoot>
+  <height>16</height>
   <field>
    <rect>
     <x>665</x>
@@ -830,5 +814,21 @@ ORDER BY totalsales DESC
    </data>
    <tracktotal builtin="true" >money</tracktotal>
   </field>
+  <label>
+   <rect>
+    <x>575</x>
+    <y>0</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Total:</string>
+  </label>
  </rptfoot>
 </report>

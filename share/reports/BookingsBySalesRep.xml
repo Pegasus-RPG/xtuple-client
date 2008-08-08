@@ -12,24 +12,24 @@
  <querysource>
   <name>head</name>
   <sql>SELECT salesrep_name,
-       formatDate(&lt;? value(&quot;startDate&quot;) ?>, 'Earliest') AS startdate,
-       formatDate(&lt;? value(&quot;endDate&quot;) ?>, 'Latest') AS enddate,
-       &lt;? if exists(&quot;warehous_id&quot;) ?>
-         (select warehous_code from warehous where warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>)
+       formatDate(&lt;? value("startDate") ?>, 'Earliest') AS startdate,
+       formatDate(&lt;? value("endDate") ?>, 'Latest') AS enddate,
+       &lt;? if exists("warehous_id") ?>
+         (select warehous_code from warehous where warehous_id=&lt;? value("warehous_id") ?>)
        &lt;? else ?>
          text('All Sites')
        &lt;? endif ?>
        AS warehouse,
-       &lt;? if exists(&quot;prodcat_id&quot;) ?>
-         (select (prodcat_code||'-'||prodcat_descrip) from prodcat where prodcat_id=&lt;? value(&quot;prodcat_id&quot;) ?>)
-       &lt;? elseif exists(&quot;prodcat_pattern&quot;) ?>
-         text(&lt;? value(&quot;prodcat_pattern&quot;) ?>)
+       &lt;? if exists("prodcat_id") ?>
+         (select (prodcat_code||'-'||prodcat_descrip) from prodcat where prodcat_id=&lt;? value("prodcat_id") ?>)
+       &lt;? elseif exists("prodcat_pattern") ?>
+         text(&lt;? value("prodcat_pattern") ?>)
        &lt;? else ?>
          text('All Categories')
        &lt;? endif ?>
        AS prodcat
    FROM salesrep
-WHERE (salesrep_id=&lt;? value(&quot;salesrep_id&quot;) ?>);
+WHERE (salesrep_id=&lt;? value("salesrep_id") ?>);
     </sql>
  </querysource>
  <querysource>
@@ -39,8 +39,9 @@ WHERE (salesrep_id=&lt;? value(&quot;salesrep_id&quot;) ?>);
        cust_number, cust_name,
        item_number, item_descrip1, item_descrip2,
        formatQty(coitem_qtyord) AS ordered,
-       formatPrice(coitem_price) AS unitprice,
-       formatExtPrice((coitem_qtyord * coitem_qty_invuomratio) * (coitem_price / coitem_price_invuomratio)) AS f_extprice
+formatPrice(currtobase(cohead_curr_id,coitem_price,cohead_orderdate) / coitem_price_invuomratio) AS unitprice,
+formatExtPrice(round((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio)
+                   * (currtobase(cohead_curr_id,coitem_price,cohead_orderdate) / coitem_price_invuomratio),2)) AS f_extprice
   FROM coitem, cohead, cust, itemsite, item, prodcat
  WHERE ((coitem_cohead_id=cohead_id)
    AND (cohead_cust_id=cust_id)
@@ -48,43 +49,56 @@ WHERE (salesrep_id=&lt;? value(&quot;salesrep_id&quot;) ?>);
    AND (coitem_status &lt;> 'X')
    AND (itemsite_item_id=item_id)
    AND (item_prodcat_id=prodcat_id)
-   AND (cohead_salesrep_id=&lt;? value(&quot;salesrep_id&quot;) ?>)
-   AND (cohead_orderdate BETWEEN &lt;? value(&quot;startDate&quot;) ?> AND &lt;? value(&quot;endDate&quot;) ?>)
-&lt;? if exists(&quot;warehous_id&quot;) ?>
-   AND (itemsite_warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>)
+   AND (cohead_salesrep_id=&lt;? value("salesrep_id") ?>)
+   AND (cohead_orderdate BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
+&lt;? if exists("warehous_id") ?>
+   AND (itemsite_warehous_id=&lt;? value("warehous_id") ?>)
 &lt;? endif ?>
-&lt;? if exists(&quot;prodcat_id&quot;) ?>
-   AND (prodcat_id=&lt;? value(&quot;prodcat_id&quot;) ?>)
-&lt;? elseif exists(&quot;prodcat_pattern&quot;) ?>
-   AND (prodcat_code ~ &lt;? value(&quot;prodcat_pattern&quot;) ?>)
+&lt;? if exists("prodcat_id") ?>
+   AND (prodcat_id=&lt;? value("prodcat_id") ?>)
+&lt;? elseif exists("prodcat_pattern") ?>
+   AND (prodcat_code ~ &lt;? value("prodcat_pattern") ?>)
 &lt;? endif ?>
 )
 ORDER BY cohead_orderdate;</sql>
  </querysource>
  <rpthead>
   <height>237</height>
-  <field>
+  <label>
    <rect>
-    <x>550</x>
-    <y>85</y>
+    <x>432</x>
+    <y>200</y>
     <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Item Number</string>
+  </label>
+  <label>
+   <rect>
+    <x>10</x>
+    <y>90</y>
+    <width>120</width>
     <height>20</height>
    </rect>
    <font>
     <face>Arial</face>
     <size>10</size>
-    <weight>bold</weight>
+    <weight>normal</weight>
    </font>
-   <left/>
+   <right/>
    <vcenter/>
-   <data>
-    <query>head</query>
-    <column>enddate</column>
-   </data>
-  </field>
-  <field>
+   <string>Product Category:</string>
+  </label>
+  <label>
    <rect>
-    <x>550</x>
+    <x>442</x>
     <y>65</y>
     <width>100</width>
     <height>20</height>
@@ -92,73 +106,12 @@ ORDER BY cohead_orderdate;</sql>
    <font>
     <face>Arial</face>
     <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>startdate</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>110</x>
-    <y>200</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
     <weight>normal</weight>
    </font>
-   <hcenter/>
+   <right/>
    <vcenter/>
-   <string>Ord. Date</string>
+   <string>Start Date:</string>
   </label>
-  <line>
-   <xstart>5</xstart>
-   <ystart>229</ystart>
-   <xend>745</xend>
-   <yend>229</yend>
-   <weight>2</weight>
-  </line>
-  <label>
-   <rect>
-    <x>665</x>
-    <y>215</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Ext'd Price</string>
-  </label>
-  <field>
-   <rect>
-    <x>135</x>
-    <y>90</y>
-    <width>300</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>prodcat</column>
-   </data>
-  </field>
   <field>
    <rect>
     <x>135</x>
@@ -196,25 +149,9 @@ ORDER BY cohead_orderdate;</sql>
   </label>
   <label>
    <rect>
-    <x>30</x>
-    <y>65</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Sales Rep.:</string>
-  </label>
-  <label>
-   <rect>
-    <x>434</x>
+    <x>200</x>
     <y>200</y>
-    <width>100</width>
+    <width>80</width>
     <height>15</height>
    </rect>
    <font>
@@ -224,28 +161,28 @@ ORDER BY cohead_orderdate;</sql>
    </font>
    <left/>
    <vcenter/>
-   <string>Item Number</string>
+   <string>Customer #</string>
   </label>
   <label>
    <rect>
-    <x>30</x>
-    <y>114</y>
-    <width>100</width>
-    <height>20</height>
+    <x>585</x>
+    <y>200</y>
+    <width>80</width>
+    <height>15</height>
    </rect>
    <font>
     <face>Arial</face>
-    <size>10</size>
+    <size>8</size>
     <weight>normal</weight>
    </font>
-   <right/>
+   <hcenter/>
    <vcenter/>
-   <string>Site:</string>
+   <string>Ordered</string>
   </label>
   <field>
    <rect>
     <x>135</x>
-    <y>114</y>
+    <y>112</y>
     <width>300</width>
     <height>20</height>
    </rect>
@@ -261,10 +198,77 @@ ORDER BY cohead_orderdate;</sql>
     <column>warehouse</column>
    </data>
   </field>
+  <field>
+   <rect>
+    <x>135</x>
+    <y>90</y>
+    <width>300</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>prodcat</column>
+   </data>
+  </field>
   <label>
    <rect>
-    <x>445</x>
-    <y>85</y>
+    <x>110</x>
+    <y>200</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Ord. Date</string>
+  </label>
+  <label>
+   <rect>
+    <x>432</x>
+    <y>215</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Description</string>
+  </label>
+  <label>
+   <rect>
+    <x>200</x>
+    <y>215</y>
+    <width>102</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Customer Name</string>
+  </label>
+  <label>
+   <rect>
+    <x>30</x>
+    <y>65</y>
     <width>100</width>
     <height>20</height>
    </rect>
@@ -275,24 +279,27 @@ ORDER BY cohead_orderdate;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>End Date:</string>
+   <string>Sales Rep.:</string>
   </label>
-  <label>
+  <field>
    <rect>
-    <x>10</x>
-    <y>90</y>
-    <width>120</width>
+    <x>550</x>
+    <y>85</y>
+    <width>100</width>
     <height>20</height>
    </rect>
    <font>
     <face>Arial</face>
     <size>10</size>
-    <weight>normal</weight>
+    <weight>bold</weight>
    </font>
-   <right/>
+   <left/>
    <vcenter/>
-   <string>Product Category:</string>
-  </label>
+   <data>
+    <query>head</query>
+    <column>enddate</column>
+   </data>
+  </field>
   <label>
    <rect>
     <x>5</x>
@@ -309,38 +316,13 @@ ORDER BY cohead_orderdate;</sql>
    <vcenter/>
    <string>S/O #</string>
   </label>
-  <label>
-   <rect>
-    <x>200</x>
-    <y>215</y>
-    <width>105</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Customer Name</string>
-  </label>
-  <label>
-   <rect>
-    <x>445</x>
-    <y>65</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Start Date:</string>
-  </label>
+  <line>
+   <xstart>5</xstart>
+   <ystart>227</ystart>
+   <xend>745</xend>
+   <yend>227</yend>
+   <weight>2</weight>
+  </line>
   <label>
    <rect>
     <x>665</x>
@@ -359,24 +341,43 @@ ORDER BY cohead_orderdate;</sql>
   </label>
   <label>
    <rect>
-    <x>434</x>
-    <y>215</y>
+    <x>442</x>
+    <y>85</y>
     <width>100</width>
-    <height>15</height>
+    <height>20</height>
    </rect>
    <font>
     <face>Arial</face>
-    <size>8</size>
+    <size>10</size>
     <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>End Date:</string>
+  </label>
+  <field>
+   <rect>
+    <x>550</x>
+    <y>65</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
    </font>
    <left/>
    <vcenter/>
-   <string>Description</string>
-  </label>
+   <data>
+    <query>head</query>
+    <column>startdate</column>
+   </data>
+  </field>
   <label>
    <rect>
-    <x>585</x>
-    <y>200</y>
+    <x>665</x>
+    <y>215</y>
     <width>80</width>
     <height>15</height>
    </rect>
@@ -387,23 +388,23 @@ ORDER BY cohead_orderdate;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Ordered</string>
+   <string>Ext'd Price</string>
   </label>
   <label>
    <rect>
-    <x>200</x>
-    <y>200</y>
-    <width>80</width>
-    <height>15</height>
+    <x>30</x>
+    <y>112</y>
+    <width>100</width>
+    <height>20</height>
    </rect>
    <font>
     <face>Arial</face>
-    <size>8</size>
+    <size>10</size>
     <weight>normal</weight>
    </font>
-   <left/>
+   <right/>
    <vcenter/>
-   <string>Customer #</string>
+   <string>Site:</string>
   </label>
  </rpthead>
  <pghead>
@@ -416,7 +417,7 @@ ORDER BY cohead_orderdate;</sql>
    <rect>
     <x>200</x>
     <y>15</y>
-    <width>105</width>
+    <width>102</width>
     <height>15</height>
    </rect>
    <font>
@@ -430,24 +431,8 @@ ORDER BY cohead_orderdate;</sql>
   </label>
   <label>
    <rect>
-    <x>665</x>
+    <x>5</x>
     <y>0</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Unit Price</string>
-  </label>
-  <label>
-   <rect>
-    <x>434</x>
-    <y>15</y>
     <width>100</width>
     <height>15</height>
    </rect>
@@ -458,24 +443,15 @@ ORDER BY cohead_orderdate;</sql>
    </font>
    <left/>
    <vcenter/>
-   <string>Description</string>
+   <string>S/O #</string>
   </label>
-  <label>
-   <rect>
-    <x>585</x>
-    <y>0</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Ordered</string>
-  </label>
+  <line>
+   <xstart>5</xstart>
+   <ystart>30</ystart>
+   <xend>745</xend>
+   <yend>30</yend>
+   <weight>2</weight>
+  </line>
   <label>
    <rect>
     <x>665</x>
@@ -494,6 +470,38 @@ ORDER BY cohead_orderdate;</sql>
   </label>
   <label>
    <rect>
+    <x>665</x>
+    <y>0</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Unit Price</string>
+  </label>
+  <label>
+   <rect>
+    <x>432</x>
+    <y>15</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Description</string>
+  </label>
+  <label>
+   <rect>
     <x>200</x>
     <y>0</y>
     <width>80</width>
@@ -507,29 +515,6 @@ ORDER BY cohead_orderdate;</sql>
    <left/>
    <vcenter/>
    <string>Customer #</string>
-  </label>
-  <line>
-   <xstart>5</xstart>
-   <ystart>30</ystart>
-   <xend>745</xend>
-   <yend>30</yend>
-   <weight>2</weight>
-  </line>
-  <label>
-   <rect>
-    <x>434</x>
-    <y>0</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Item Number</string>
   </label>
   <label>
    <rect>
@@ -549,7 +534,23 @@ ORDER BY cohead_orderdate;</sql>
   </label>
   <label>
    <rect>
-    <x>5</x>
+    <x>585</x>
+    <y>0</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Ordered</string>
+  </label>
+  <label>
+   <rect>
+    <x>432</x>
     <y>0</y>
     <width>100</width>
     <height>15</height>
@@ -561,7 +562,7 @@ ORDER BY cohead_orderdate;</sql>
    </font>
    <left/>
    <vcenter/>
-   <string>S/O #</string>
+   <string>Item Number</string>
   </label>
  </pghead>
  <section>
@@ -571,25 +572,6 @@ ORDER BY cohead_orderdate;</sql>
     <query>detail</query>
    </key>
    <height>52</height>
-   <field>
-    <rect>
-     <x>434</x>
-     <y>30</y>
-     <width>300</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>item_descrip2</column>
-    </data>
-   </field>
    <field>
     <rect>
      <x>665</x>
@@ -607,6 +589,70 @@ ORDER BY cohead_orderdate;</sql>
     <data>
      <query>detail</query>
      <column>f_extprice</column>
+    </data>
+   </field>
+   <line>
+    <xstart>5</xstart>
+    <ystart>45</ystart>
+    <xend>745</xend>
+    <yend>45</yend>
+    <weight>0</weight>
+   </line>
+   <field>
+    <rect>
+     <x>200</x>
+     <y>15</y>
+     <width>227</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>cust_name</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>432</x>
+     <y>15</y>
+     <width>225</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>item_descrip1</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>5</x>
+     <y>0</y>
+     <width>100</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>sonumber</column>
     </data>
    </field>
    <field>
@@ -630,51 +676,6 @@ ORDER BY cohead_orderdate;</sql>
    </field>
    <field>
     <rect>
-     <x>665</x>
-     <y>0</y>
-     <width>80</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>unitprice</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>5</x>
-     <y>0</y>
-     <width>100</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>sonumber</column>
-    </data>
-   </field>
-   <line>
-    <xstart>5</xstart>
-    <ystart>45</ystart>
-    <xend>745</xend>
-    <yend>45</yend>
-    <weight>0</weight>
-   </line>
-   <field>
-    <rect>
      <x>110</x>
      <y>0</y>
      <width>80</width>
@@ -694,9 +695,9 @@ ORDER BY cohead_orderdate;</sql>
    </field>
    <field>
     <rect>
-     <x>434</x>
-     <y>15</y>
-     <width>225</width>
+     <x>432</x>
+     <y>0</y>
+     <width>150</width>
      <height>15</height>
     </rect>
     <font>
@@ -708,7 +709,7 @@ ORDER BY cohead_orderdate;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_descrip1</column>
+     <column>item_number</column>
     </data>
    </field>
    <field>
@@ -732,9 +733,9 @@ ORDER BY cohead_orderdate;</sql>
    </field>
    <field>
     <rect>
-     <x>200</x>
-     <y>15</y>
-     <width>229</width>
+     <x>665</x>
+     <y>0</y>
+     <width>80</width>
      <height>15</height>
     </rect>
     <font>
@@ -742,18 +743,18 @@ ORDER BY cohead_orderdate;</sql>
      <size>8</size>
      <weight>bold</weight>
     </font>
-    <left/>
+    <right/>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>cust_name</column>
+     <column>unitprice</column>
     </data>
    </field>
    <field>
     <rect>
-     <x>434</x>
-     <y>0</y>
-     <width>150</width>
+     <x>432</x>
+     <y>30</y>
+     <width>300</width>
      <height>15</height>
     </rect>
     <font>
@@ -765,7 +766,7 @@ ORDER BY cohead_orderdate;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_number</column>
+     <column>item_descrip2</column>
     </data>
    </field>
   </detail>
@@ -790,25 +791,6 @@ ORDER BY cohead_orderdate;</sql>
   </label>
   <field>
    <rect>
-    <x>105</x>
-    <y>0</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>Context Query</query>
-    <column>report_date</column>
-   </data>
-  </field>
-  <field>
-   <rect>
     <x>705</x>
     <y>0</y>
     <width>40</width>
@@ -824,6 +806,25 @@ ORDER BY cohead_orderdate;</sql>
    <data>
     <query>Context Query</query>
     <column>page_number</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>102</x>
+    <y>0</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>Context Query</query>
+    <column>report_date</column>
    </data>
   </field>
   <label>
