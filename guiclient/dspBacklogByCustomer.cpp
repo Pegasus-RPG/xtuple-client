@@ -142,6 +142,8 @@ void dspBacklogByCustomer::sPrint()
   _warehouse->appendValue(params);
   _dates->appendValue(params);
   params.append("cust_id", _cust->id());
+  params.append("openOnly");
+  params.append("orderByScheddate");
 
   if (_showPrices->isChecked())
     params.append("showPrices");
