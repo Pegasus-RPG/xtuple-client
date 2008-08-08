@@ -322,9 +322,11 @@ void dspARApplications::sFillList()
                "         END AS source,"
                "       arapply_target_doctype,"
                "       TEXT(arapply_target_docnumber) AS target,"
-               "       formatMoney(arapply_applied) AS f_applied, arapply_applied "
-               "FROM arapply, custinfo "
+               "       (curr_symbol || formatMoney(arapply_applied)) AS f_applied,"
+               "       currtobase(arapply_curr_id,arapply_applied,arapply_postdate) AS applied "
+               "FROM arapply, custinfo, curr_symbol "
                "WHERE ( (arapply_cust_id=cust_id)"
+               " AND (arapply_curr_id=curr_id)"
                " AND (arapply_postdate BETWEEN <? value(\"startDate\") ?> AND <? value(\"endDate\") ?>)"
                " AND (arapply_source_doctype IN ("
 	       "<? if exists(\"creditMemos\") ?>"
@@ -428,11 +430,11 @@ void dspARApplications::sFillList()
 				 targetdoctype,
 				 q.value("target"), q.value("f_applied") );
 
-      total += q.value("arapply_applied").toDouble();
+      total += q.value("applied").toDouble();
     }
     while (q.next());
 
-    last = new XTreeWidgetItem(_arapply, last, -1, "", tr("Total Applications:"));
+    last = new XTreeWidgetItem(_arapply, last, -1, "", tr("Total Applications (base currency):"));
     last->setText(9, formatMoney(total));
   }
   else if (q.lastError().type() != QSqlError::None)
