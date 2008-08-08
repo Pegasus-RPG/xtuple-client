@@ -1218,9 +1218,9 @@ void GUIClient::launchBrowser(QWidget * w, const QString & url)
 #if defined(Q_OS_WIN32)
   // Windows - let the OS do the work
   QT_WA( {
-      ShellExecute(w->winId(), 0, (TCHAR*)url.ucs2(), 0, 0, SW_SHOWNORMAL );
+      ShellExecute(w->winId(), 0, (TCHAR*)url.utf16(), 0, 0, SW_SHOWNORMAL );
     } , {
-      ShellExecuteA( w->winId(), 0, url.local8Bit(), 0, 0, SW_SHOWNORMAL );
+      ShellExecuteA( w->winId(), 0, url.toLocal8Bit(), 0, 0, SW_SHOWNORMAL );
     } );
 #else
   const char *b = getenv("BROWSER");
