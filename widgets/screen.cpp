@@ -67,7 +67,6 @@ Screen::Screen(QWidget *parent) :
   QWidget(parent)
 {
   _keyColumns=1;
-  _editStrategy=OnRowChange;
   _shown=false;
   _mode=Edit;
   
@@ -105,18 +104,6 @@ void Screen::showEvent(QShowEvent *event)
   {
     _shown = true;
     setTable(_schemaName, _tableName);
-
-/*
-    // now set the sort order
-    for (int i = 0; i < _model->columnCount(); i++)
-    { 
-      if (_model->headerData(i,Qt::Horizontal,Qt::DisplayRole).toString() == _sortColumn)
-      {
-        _model->setSort(i, Qt::AscendingOrder);
-        break;
-      }
-    } 
-    */
   }
 
   QWidget::showEvent(event);
@@ -125,11 +112,6 @@ void Screen::showEvent(QShowEvent *event)
 Screen::Modes Screen::mode()
 {
   return _mode;
-}
-
-Screen::EditStrategies Screen::editStrategy()
-{
-  return _editStrategy;
 }
 
 bool Screen::isDirty()
@@ -148,12 +130,9 @@ bool Screen::isDirty()
   }
   else  //Use usual technique to determine if edits occured
   {
-    for (int r = 0; r < _model->rowCount(); r++)
-    {
-      for (int c = 0; c < _model->columnCount(); c++)
-        if (_model->isDirty(_model->index(r,c)))
-          return true;
-    }
+    for (int c = 0; c < _model->columnCount(); c++)
+      if (_model->isDirty(_model->index(currentIndex(),c)))
+        return true;
   }
   return false;
 }
@@ -277,11 +256,6 @@ void Screen::setModel(XSqlTableModel *model)
   emit newModel(_model);
 }
 
-void Screen::setEditStrategy(EditStrategies p)
-{
-  _editStrategy=p;
-}
-
 void Screen::setSortColumn(QString p)
 {
   _sortColumn = p;
@@ -289,17 +263,6 @@ void Screen::setSortColumn(QString p)
 
 void Screen::setCurrentIndex(int index)
 {
-  if (_mapper->currentIndex() != index)
-  {
-   if (_editStrategy == OnRowChange)
-   {
-     Disposition disp = check();
-     if (disp == Screen::Save)
-       return;
-     else if (disp == Screen::Cancel)
-       revertRow(currentIndex());
-    }
-  }
   _mode=Screen::Edit;
   _mapper->setCurrentIndex(index);
 }
@@ -307,31 +270,13 @@ void Screen::setCurrentIndex(int index)
 void Screen::toNext()
 {
   if (_mapper->currentIndex() < _model->rowCount()-1)
-  {
-    if (_editStrategy == OnRowChange)
-    {
-       Disposition disp = check();
-       if (disp == Screen::Save)
-         return;
-       else if (disp == Screen::Cancel)
-         revertRow(currentIndex());
-    }
     _mapper->toNext();
-  }
 }
 
 void Screen::toPrevious()
 {
   if (_mapper->currentIndex() > 0)
   {
-   if (_editStrategy == OnRowChange)
-   {
-     Disposition disp = check();
-     if (disp == Screen::Save)
-       return;
-     else if (disp == Screen::Cancel)
-       revertRow(currentIndex());
-    }
     _mode=Screen::Edit;
     _mapper->toPrevious(); 
   }

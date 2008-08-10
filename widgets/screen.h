@@ -77,18 +77,14 @@ class OPENMFGWIDGETS_EXPORT Screen : public QWidget
 	Q_PROPERTY (QString 		tableName             READ tableName 		WRITE setTableName)
         Q_PROPERTY (int                 primaryKeyColumns     READ primaryKeyColumns    WRITE setPrimaryKeyColumns)
 	Q_PROPERTY (Modes		mode                  READ mode                 WRITE setMode)
-	Q_PROPERTY (EditStrategies 	editStrategy          READ editStrategy		WRITE setEditStrategy)
-        Q_PROPERTY (QString             sortColumn            READ sortColumn           WRITE setSortColumn)
 
 	public:
 		Screen(QWidget * = 0);
                 ~Screen();
 		
 		enum Modes { New, Edit, View };
-		enum EditStrategies { OnRowChange, OnManualSubmit };
                 enum Disposition { NoChanges, Save, Cancel };
 		Modes mode();
-		EditStrategies editStrategy();
 	
                 bool    isDirty();
                 int     currentIndex();
@@ -119,7 +115,6 @@ class OPENMFGWIDGETS_EXPORT Screen : public QWidget
                 void setModel(XSqlTableModel *model);
 		void setMode(Modes p);
                 void setPrimaryKeyColumns(int count)    { _keyColumns = count;           };
-		void setEditStrategy(EditStrategies p);
 		void setSchemaName(QString schema);
 		void setSortColumn(QString p);
  
@@ -136,7 +131,6 @@ class OPENMFGWIDGETS_EXPORT Screen : public QWidget
 	private:
                 bool                    _shown;
 		enum  Modes		_mode;
-		enum  EditStrategies	_editStrategy;
                 int                     _keyColumns;
 		QString			_schemaName;
                 QString                 _sortColumn;
