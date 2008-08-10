@@ -295,10 +295,17 @@ void uiform::sScriptEdit()
 
 void uiform::sScriptDelete()
 {
-  q.prepare( "DELETE FROM script "
-             "WHERE (script_id=:script_id);" );
-  q.bindValue(":script_id", _script->id());
-  q.exec();
+  if ( QMessageBox::warning(this, tr("Delete Script?"),
+                            tr("<p>Are you sure that you want to completely "
+			       "delete the selected script?"),
+			    QMessageBox::Yes,
+			    QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
+  {
+    q.prepare( "DELETE FROM script "
+               "WHERE (script_id=:script_id);" );
+    q.bindValue(":script_id", _script->id());
+    q.exec();
+  }
 
   sFillList();
 }
@@ -328,17 +335,24 @@ void uiform::sCmdEdit()
 
 void uiform::sCmdDelete()
 {
-  q.prepare("BEGIN; "
-            "DELETE FROM cmdarg WHERE (cmdarg_cmd_id=:cmd_id); "
-            "DELETE FROM cmd WHERE (cmd_id=:cmd_id); "
-            "SELECT updateCustomPrivs(); "
-            "COMMIT; ");
-  q.bindValue(":cmd_id", _commands->id());
-  if(q.exec())
-    sFillList();
-  else
-    systemError( this, tr("A System Error occurred at customCommands::%1")
-                             .arg(__LINE__) );
+  if ( QMessageBox::warning(this, tr("Delete Command?"),
+                            tr("<p>Are you sure that you want to completely "
+			       "delete the selected command?"),
+			    QMessageBox::Yes,
+			    QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
+  {
+    q.prepare("BEGIN; "
+              "DELETE FROM cmdarg WHERE (cmdarg_cmd_id=:cmd_id); "
+              "DELETE FROM cmd WHERE (cmd_id=:cmd_id); "
+              "SELECT updateCustomPrivs(); "
+              "COMMIT; ");
+    q.bindValue(":cmd_id", _commands->id());
+    if(q.exec())
+      sFillList();
+    else
+      systemError( this, tr("A System Error occurred at customCommands::%1")
+                               .arg(__LINE__) );
+  }
 }
 
 void uiform::sFillList()
