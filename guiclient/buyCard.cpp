@@ -57,17 +57,15 @@
 
 #include "buyCard.h"
 
-#include <QVariant>
-#include <QStatusBar>
 #include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
+
+#include <metasql.h>
 #include <openreports.h>
+
 #include "guiclient.h"
 
-/*
- *  Constructs a buyCard as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 buyCard::buyCard(QWidget* parent, const char* name, Qt::WFlags fl)
     : XMainWindow(parent, name, fl)
 {
@@ -83,27 +81,20 @@ buyCard::buyCard(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _item->setReadOnly(TRUE);
 
-  _poitem->addColumn(tr("P/O #"),     _orderColumn,  Qt::AlignRight  );
-  _poitem->addColumn(tr("Line"),      _whsColumn,    Qt::AlignCenter );
-  _poitem->addColumn(tr("Status"),    _statusColumn, Qt::AlignCenter );
-  _poitem->addColumn(tr("Due Date"),  _dateColumn,   Qt::AlignRight  );
-  _poitem->addColumn(tr("Ordered"),   _qtyColumn,    Qt::AlignRight  );
-  _poitem->addColumn(tr("Received"),  _qtyColumn,    Qt::AlignRight  );
-  _poitem->addColumn(tr("Unit Cost"), _priceColumn,  Qt::AlignRight  );
+  _poitem->addColumn(tr("P/O #"),     _orderColumn,  Qt::AlignRight, true, "pohead_number");
+  _poitem->addColumn(tr("Line"),      _whsColumn,    Qt::AlignCenter,true, "poitem_linenumber");
+  _poitem->addColumn(tr("Status"),    _statusColumn, Qt::AlignCenter,true, "poitemstatus");
+  _poitem->addColumn(tr("Due Date"),  _dateColumn,   Qt::AlignRight, true, "poitem_duedate");
+  _poitem->addColumn(tr("Ordered"),   _qtyColumn,    Qt::AlignRight, true, "poitem_qty_ordered");
+  _poitem->addColumn(tr("Received"),  _qtyColumn,    Qt::AlignRight, true, "qty_received");
+  _poitem->addColumn(tr("Unit Cost"), _priceColumn,  Qt::AlignRight, true, "poitem_unitprice");
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 buyCard::~buyCard()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void buyCard::languageChange()
 {
   retranslateUi(this);
@@ -137,11 +128,26 @@ enum SetResponse buyCard::set(const ParameterList &pParams)
   return NoError;
 }
 
+bool buyCard::setParams(ParameterList &pparams)
+{
+  pparams.append("vend_id",    _vendor->id());
+  pparams.append("itemsrc_id", _itemSource->id());
+  pparams.append("itemNumber", _itemSource->currentText());
+
+  pparams.append("closed",     tr("Closed"));
+  pparams.append("unposted",   tr("Unposted"));
+  pparams.append("partial",    tr("Partial"));
+  pparams.append("received",   tr("Received"));
+  pparams.append("open",       tr("Open"));
+
+  return true;
+}
+
 void buyCard::sPrint()
 {
   ParameterList params;
-  params.append("vend_id", _vendor->id());
-  params.append("itemsrc_id", _itemSource->id());
+  if (! setParams(params))
+    return;
 
   orReport report("BuyCard", params);
   if (report.isValid())
@@ -176,36 +182,39 @@ void buyCard::sHandleItemSource(int pItemsrcid)
     _item->setId(item.value("itemsrc_item_id").toInt());
     _notes->setText(item.value("itemsrc_comments").toString());
 
-    XSqlQuery poitem;
-    poitem.prepare( "SELECT poitem_id, pohead_number, poitem_linenumber,"
-                    "       CASE WHEN(poitem_status='C') THEN :closed"
-                    "            WHEN(poitem_status='U') THEN :unposted"
-                    "            WHEN(poitem_status='O' AND ((poitem_qty_received-poitem_qty_returned) > 0) AND (poitem_qty_ordered>(poitem_qty_received-poitem_qty_returned))) THEN :partial"
-                    "            WHEN(poitem_status='O' AND ((poitem_qty_received-poitem_qty_returned) > 0) AND (poitem_qty_ordered=(poitem_qty_received-poitem_qty_returned))) THEN :received"
-                    "            WHEN(poitem_status='O') THEN :open"
-                    "            ELSE poitem_status"
-                    "       END AS poitemstatus,"
-                    "       formatDate(poitem_duedate),"
-                    "       formatQty(poitem_qty_ordered),"
-                    "       formatQty(COALESCE(SUM(porecv_qty), 0)),"
-                    "       formatPurchPrice(poitem_unitprice) "
-                    "FROM pohead, poitem LEFT OUTER JOIN porecv ON (porecv_poitem_id=poitem_id) "
-                    "WHERE ( (poitem_pohead_id=pohead_id)"
-                    " AND (pohead_vend_id=:vend_id)"
-                    " AND (poitem_vend_item_number=:itemNumber) ) "
-                    "GROUP BY poitem_id, pohead_number, poitem_linenumber,"
-                    "         poitem_status, poitem_qty_received, poitem_qty_returned,"
-                    "         poitem_duedate, poitem_qty_ordered, poitem_unitprice "
-                    "ORDER BY pohead_number, poitem_linenumber;" );
-    poitem.bindValue(":vend_id", _vendor->id());
-    poitem.bindValue(":itemNumber", _itemSource->currentText());
-    poitem.bindValue(":closed", tr("Closed"));
-    poitem.bindValue(":unposted", tr("Unposted"));
-    poitem.bindValue(":partial", tr("Partial"));
-    poitem.bindValue(":received", tr("Received"));
-    poitem.bindValue(":open", tr("Open"));
-    poitem.exec();
+    QString sql("SELECT poitem_id, pohead_number, poitem_linenumber,"
+                "       CASE WHEN(poitem_status='C') THEN <? value(\"closed\") ?>"
+                "            WHEN(poitem_status='U') THEN <? value(\"unposted\") ?>"
+                "            WHEN(poitem_status='O' AND ((poitem_qty_received-poitem_qty_returned) > 0) AND (poitem_qty_ordered>(poitem_qty_received-poitem_qty_returned))) THEN <? value(\"partial\") ?>"
+                "            WHEN(poitem_status='O' AND ((poitem_qty_received-poitem_qty_returned) > 0) AND (poitem_qty_ordered=(poitem_qty_received-poitem_qty_returned))) THEN <? value(\"received\") ?>"
+                "            WHEN(poitem_status='O') THEN <? value(\"open\") ?>"
+                "            ELSE poitem_status"
+                "       END AS poitemstatus,"
+                "       poitem_duedate,"
+                "       poitem_qty_ordered,"
+                "       COALESCE(SUM(porecv_qty), 0) AS qty_received,"
+                "       poitem_unitprice,"
+                "       'qty' AS poitem_qty_ordered_xtnumericrole,"
+                "       'qty' AS qty_received_xtnumericrole,"
+                "       'purchprice' AS poitem_unitprice_xtnumericrole "
+                "FROM pohead, poitem LEFT OUTER JOIN porecv ON (porecv_poitem_id=poitem_id) "
+                "WHERE ( (poitem_pohead_id=pohead_id)"
+                " AND (pohead_vend_id=<? value(\"vend_id\") ?>)"
+                " AND (poitem_vend_item_number=<? value(\"itemNumber\") ?>) ) "
+                "GROUP BY poitem_id, pohead_number, poitem_linenumber,"
+                "         poitem_status, poitem_qty_received, poitem_qty_returned,"
+                "         poitem_duedate, poitem_qty_ordered, poitem_unitprice "
+                "ORDER BY pohead_number, poitem_linenumber;" );
+    MetaSQLQuery mql(sql);
+    ParameterList params;
+    if (!setParams(params))
+      return;
+    XSqlQuery poitem = mql.toQuery(params);
     _poitem->populate(poitem);
+    if (poitem.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, poitem.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
 }
-

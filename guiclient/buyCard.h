@@ -71,6 +71,8 @@ class buyCard : public XMainWindow, public Ui::buyCard
 public:
     buyCard(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~buyCard();
+    
+    virtual bool setParams(ParameterList &);
 
 public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
