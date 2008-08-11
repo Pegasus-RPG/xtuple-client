@@ -284,7 +284,7 @@ void package::populate()
             "            WHEN pkgitem_type='F' THEN :function"
             "            WHEN pkgitem_type='G' THEN :trigger"
             "            WHEN pkgitem_type='I' THEN :image"
-            "            WHEN pkgitem_type='M' THEN :menu"
+            "            WHEN pkgitem_type='M' THEN :metasql"
             "            WHEN pkgitem_type='P' THEN :priv"
             "            WHEN pkgitem_type='R' THEN :report"
             "            WHEN pkgitem_type='S' THEN :schema"
@@ -301,7 +301,7 @@ void package::populate()
   q.bindValue(":function",   tr("Stored Procedure"));
   q.bindValue(":trigger",    tr("Trigger"));
   q.bindValue(":image",      tr("Image"));
-  q.bindValue(":menu",       tr("Menu"));
+  q.bindValue(":metasql",    tr("MetaSQL"));
   q.bindValue(":priv",       tr("Privilege"));
   q.bindValue(":report",     tr("Report"));
   q.bindValue(":schema",     tr("Schema"));
