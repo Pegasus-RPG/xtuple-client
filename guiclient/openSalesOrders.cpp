@@ -88,12 +88,12 @@ openSalesOrders::openSalesOrders(QWidget* parent, const char* name, Qt::WFlags f
   connect(_copy, SIGNAL(clicked()), this, SLOT(sCopy()));
   connect(_autoUpdate, SIGNAL(toggled(bool)), this, SLOT(sHandleAutoUpdate(bool)));
 
-  _so->addColumn(tr("S/O #"),            _orderColumn, Qt::AlignLeft   );
-  _so->addColumn(tr("Cust. #"),          _orderColumn, Qt::AlignLeft   );
-  _so->addColumn(tr("Customer"),         -1,           Qt::AlignLeft   );
-  _so->addColumn(tr("Cust. P/O Number"), _itemColumn,  Qt::AlignLeft   );
-  _so->addColumn(tr("Ordered"),          _dateColumn,  Qt::AlignCenter );
-  _so->addColumn(tr("Scheduled"),        _dateColumn,  Qt::AlignCenter );
+  _so->addColumn(tr("S/O #"),           _orderColumn, Qt::AlignLeft,  true, "cohead_number");
+  _so->addColumn(tr("Cust. #"),         _orderColumn, Qt::AlignLeft,  true, "cust_number");
+  _so->addColumn(tr("Customer"),         -1,          Qt::AlignLeft,  true, "cohead_billtoname");
+  _so->addColumn(tr("Cust. P/O Number"), _itemColumn, Qt::AlignLeft,  true, "cohead_custponumber");
+  _so->addColumn(tr("Ordered"),          _dateColumn, Qt::AlignCenter,true, "cohead_orderdate");
+  _so->addColumn(tr("Scheduled"),        _dateColumn, Qt::AlignCenter,true, "scheddate");
   
   if (_privileges->check("MaintainSalesOrders"))
   {
@@ -425,11 +425,9 @@ void openSalesOrders::sFillList()
   ParameterList params;
   setParams(params);
 
-  QString sql( "SELECT DISTINCT cohead_id, cohead_number,"
-               "       COALESCE(cust_number, :error),"
-               "       cohead_billtoname, cohead_custponumber,"
-               "       formatDate(cohead_orderdate) AS f_ordered,"
-               "       formatDate(MIN(coitem_scheddate)) AS f_scheduled "
+  QString sql( "SELECT DISTINCT cohead.*,"
+               "       COALESCE(cust_number, :error) AS cust_number,"
+               "       MIN(coitem_scheddate) AS scheddate "
                "FROM cohead LEFT OUTER JOIN cust ON (cohead_cust_id=cust_id) "
                "     LEFT OUTER JOIN coitem JOIN itemsite ON (coitem_itemsite_id=itemsite_id) "
                "     ON (coitem_cohead_id=cohead_id) "
@@ -438,13 +436,40 @@ void openSalesOrders::sFillList()
 	       " AND (itemsite_warehous_id=<? value(\"warehous_id\") ?>)"
 	       "<? endif ?>"
 	       " ) "
-	       "GROUP BY cohead_id, cohead_number, cust_number, cohead_billtoname,"
-	       "         cohead_custponumber, cohead_orderdate "
+	       "GROUP BY cust_number,"
+               "         cohead_id, cohead_number, cohead_cust_id,"
+               "         cohead_custponumber, cohead_type, cohead_orderdate,"
+               "         cohead_warehous_id, cohead_shipto_id, "
+               "         cohead_shiptoname,  cohead_shiptoaddress1,"
+               "         cohead_shiptoaddress2, cohead_shiptoaddress3,"
+               "         cohead_shiptoaddress4, cohead_shiptoaddress5,"
+               "         cohead_salesrep_id, cohead_terms_id, cohead_origin,"
+               "         cohead_fob, cohead_shipvia, cohead_shiptocity,"
+               "         cohead_shiptostate, cohead_shiptozipcode,"
+               "         cohead_freight, cohead_misc, cohead_imported,"
+               "         cohead_ordercomments, cohead_shipcomments,"
+               "         cohead_shiptophone, cohead_shipchrg_id,"
+               "         cohead_shipform_id, cohead_billtoname,"
+               "         cohead_billtoaddress1, cohead_billtoaddress2,"
+               "         cohead_billtoaddress3, cohead_billtocity,"
+               "         cohead_billtostate, cohead_billtozipcode,"
+               "         cohead_misc_accnt_id, cohead_misc_descrip,"
+               "         cohead_commission, cohead_miscdate, cohead_holdtype,"
+               "         cohead_packdate, cohead_prj_id, cohead_wasquote,"
+               "         cohead_lastupdated, cohead_shipcomplete,"
+               "         cohead_created, cohead_creator, cohead_quote_number,"
+               "         cohead_billtocountry, cohead_shiptocountry,"
+               "         cohead_curr_id, cohead_taxauth_id "
 	       "ORDER BY cohead_number " );
   MetaSQLQuery mql(sql);
   q = mql.toQuery(params);
 
   _so->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
   _so->setDragString("soheadid=");
 }
 
