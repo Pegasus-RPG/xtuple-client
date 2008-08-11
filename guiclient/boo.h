@@ -74,6 +74,8 @@ public:
     
     virtual bool checkSitePrivs( int booid );
 
+    virtual bool setParams(ParameterList &);
+
 public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
     virtual void sSave();

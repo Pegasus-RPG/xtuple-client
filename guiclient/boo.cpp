@@ -57,54 +57,44 @@
 
 #include "boo.h"
 
-#include <QVariant>
-#include <QMessageBox>
-#include <QWorkspace>
-#include <QStatusBar>
 #include <QMenu>
+#include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
+
+#include <metasql.h>
 #include <openreports.h>
+
 #include "booItem.h"
 
-/*
- *  Constructs a boo as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 boo::boo(QWidget* parent, const char* name, Qt::WFlags fl)
     : XMainWindow(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
-
-  // signals and slots connections
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_moveDown, SIGNAL(clicked()), this, SLOT(sMoveDown()));
   connect(_moveUp, SIGNAL(clicked()), this, SLOT(sMoveUp()));
   connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
   connect(_revision, SIGNAL(newId(int)), this, SLOT(sFillList()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
-  connect(_booitem, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
   connect(_showExpired, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_showFuture, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_booitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_expire, SIGNAL(clicked()), this, SLOT(sExpire()));
 
-  statusBar()->hide();
-
   _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased | ItemLineEdit::cJob);
 
-  _booitem->addColumn(tr("#"),           _seqColumn,  Qt::AlignCenter );
-  _booitem->addColumn(tr("Std Oper."),   _itemColumn, Qt::AlignLeft   );
-  _booitem->addColumn(tr("Work Cntr."),  _itemColumn, Qt::AlignLeft   );
-  _booitem->addColumn(tr("Description"), -1,          Qt::AlignLeft   );
-  _booitem->addColumn(tr("Effective"),   _dateColumn, Qt::AlignCenter );
-  _booitem->addColumn(tr("Expires"),     _dateColumn, Qt::AlignCenter );
-  _booitem->addColumn(tr("Exec. Day"),   _qtyColumn,  Qt::AlignCenter );
+  _booitem->addColumn(tr("#"),           _seqColumn,  Qt::AlignCenter,true, "booitem_seqnumber");
+  _booitem->addColumn(tr("Std Oper."),   _itemColumn, Qt::AlignLeft,  true, "f_stdopnnumber");
+  _booitem->addColumn(tr("Work Cntr."),  _itemColumn, Qt::AlignLeft,  true, "wrkcnt_code");
+  _booitem->addColumn(tr("Description"), -1,          Qt::AlignLeft,  true, "description");
+  _booitem->addColumn(tr("Effective"),   _dateColumn, Qt::AlignCenter,true, "booitem_effective");
+  _booitem->addColumn(tr("Expires"),     _dateColumn, Qt::AlignCenter,true, "booitem_expires");
+  _booitem->addColumn(tr("Exec. Day"),   _qtyColumn,  Qt::AlignCenter,true, "booitem_execday");
   
   connect(omfgThis, SIGNAL(boosUpdated(int, bool)), this, SLOT(sFillList(int, bool)));
 
@@ -230,16 +220,25 @@ void boo::sSave()
   close();
 }
 
+bool boo::setParams(ParameterList &pparams)
+{
+  pparams.append("item_id",     _item->id());
+  pparams.append("revision_id", _revision->id());
+  pparams.append("none",        tr("None"));
+
+  if (_showExpired->isChecked())
+    pparams.append("showExpired");
+  if (_showFuture->isChecked())
+    pparams.append("showFuture");
+
+  return true;
+}
+
 void boo::sPrint()
 {
   ParameterList params;
-  params.append("item_id", _item->id());
-  params.append("revision_id", _revision->id());
-  if (_showExpired->isChecked())
-    params.append("showExpired");
-
-  if (_showFuture->isChecked())
-    params.append("showFuture");
+  if (! setParams(params))
+    return;
 
   orReport report("BillOfOperations", params);
   if (report.isValid())
@@ -350,12 +349,10 @@ void boo::sFillList()
 
 void boo::sFillList(int pItemid, bool pLocalUpdate)
 {
-  _booitem->clear();
-
   if (_item->itemType() == "J")
   {
     _closeWO->setEnabled(FALSE);
-	_closeWO->setChecked(FALSE);
+    _closeWO->setChecked(FALSE);
   }
 
   int locid = _finalLocation->id();
@@ -425,54 +422,41 @@ void boo::sFillList(int pItemid, bool pLocalUpdate)
     _productionLeadTime->setText(q.value("leadtime").toString());
 
   QString sql( "SELECT booitem_id, booitem_seqnumber,"
-               "       COALESCE(stdopn_number, :none) AS f_stdopnnumber,"
+               "       COALESCE(stdopn_number, <? value(\"none\")?> ) AS f_stdopnnumber,"
                "       wrkcnt_code, (booitem_descrip1 || ' ' || booitem_descrip2) AS description,"
-               "       formatDate(booitem_effective, 'Always') AS f_effective,"
-               "       formatDate(booitem_expires, 'Never') AS f_expires,"
-               "       booitem_execday, (booitem_configtype<>'N') AS config "
+               "       booitem_effective, booitem_expires,"
+               "       booitem_execday,"
+	       "       CASE WHEN (booitem_configtype<>'N') THEN 'emphasis'"
+               "            WHEN (booitem_expires < CURRENT_DATE) THEN 'expired'"
+               "            WHEN (booitem_effective >= CURRENT_DATE) THEN 'future'"
+               "       END AS qtforegroundrole,"
+	       "       CASE WHEN COALESCE(booitem_effective, startOfTime()) ="
+               "                 startOfTime() THEN 'Always'"
+	       "       END AS booitem_effective_qtdisplayrole,"
+	       "       CASE WHEN COALESCE(booitem_expires, endOfTime()) >="
+               "                 endOfTime() THEN 'Never'"
+	       "       END AS booitem_expires_qtdisplayrole "
                "FROM wrkcnt,"
-			   "     booitem(:item_id,:revision_id) LEFT OUTER JOIN stdopn ON (booitem_stdopn_id=stdopn_id) "
-               "WHERE ((booitem_wrkcnt_id=wrkcnt_id)" );
-
-  if (!_showExpired->isChecked())
-    sql += " AND (booitem_expires > CURRENT_DATE)";
-
-  if (!_showFuture->isChecked())
-    sql += " AND (booitem_effective <= CURRENT_DATE)";
-
-  sql += ") "
-         "ORDER BY booitem_seqnumber, booitem_effective";
-
-  q.prepare(sql);
-  q.bindValue(":none", tr("None"));
-  q.bindValue(":item_id", _item->id());
-  q.bindValue(":revision_id",_revision->id());
-  q.exec();
-  if (q.first())
+	       "     booitem(<? value(\"item_id\") ?>,<? value(\"revision_id\") ?>) LEFT OUTER JOIN stdopn ON (booitem_stdopn_id=stdopn_id) "
+               "WHERE ((booitem_wrkcnt_id=wrkcnt_id)"
+	       "<? if not exists(\"showExpired\") ?> "
+	       " AND (booitem_expires > CURRENT_DATE)"
+	       "<? endif ?>"
+	       "<? if not exists(\"showFuture\") ?> "
+	       " AND (booitem_effective <= CURRENT_DATE)"
+	       "<? endif ?>"
+	       ") "
+	       "ORDER BY booitem_seqnumber, booitem_effective" );
+  MetaSQLQuery mql(sql);
+  ParameterList params;
+  if (! setParams(params))
+    return;
+  q = mql.toQuery(params);
+  _booitem->populate(q, true);
+  if (q.lastError().type() != QSqlError::NoError)
   {
-    XTreeWidgetItem *selected = 0;
-    XTreeWidgetItem *last = 0;
-    do
-    {
-      last = new XTreeWidgetItem( _booitem, last, q.value("booitem_id").toInt(),
-                                  q.value("booitem_seqnumber"), q.value("f_stdopnnumber"),
-                                  q.value("wrkcnt_code"), q.value("description"),
-                                  q.value("f_effective"), q.value("f_expires"),
-                                  q.value("booitem_execday") );
-
-      if (q.value("config").toBool())
-        last->setTextColor("blue");
-
-      if (q.value("booitem_id").toInt() == pItemid)
-        selected = last;
-    }
-    while (q.next());
-  
-    if ( (selected) && (pLocalUpdate) )
-    {
-      _booitem->setCurrentItem(selected);
-      _booitem->scrollTo(_booitem->currentIndex());
-    }
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
 }
 
@@ -497,4 +481,3 @@ bool boo::checkSitePrivs(int booid)
   }
   return true;
 }
-

@@ -1006,7 +1006,7 @@
                                   <number>5</number>
                                 </property>
                                 <item>
-                                  <widget class="QLabel" name="_invPerMinute" >
+                                  <widget class="XLabel" name="_invPerMinute" >
                                     <property name="minimumSize" >
                                       <size>
                                         <width>60</width>
@@ -1052,7 +1052,7 @@
                                   <number>5</number>
                                 </property>
                                 <item>
-                                  <widget class="QLabel" name="_invRunTime" >
+                                  <widget class="XLabel" name="_invRunTime" >
                                     <property name="minimumSize" >
                                       <size>
                                         <width>60</width>
