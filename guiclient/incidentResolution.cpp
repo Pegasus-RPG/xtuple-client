@@ -202,8 +202,7 @@ void incidentResolution::sSave()
 
   q.bindValue(":incdtresolution_id", _incdtresolutionId);
   q.bindValue(":incdtresolution_name", _name->text());
-  if (! _order->text().isEmpty())
-    q.bindValue(":incdtresolution_order", _order->text());
+  q.bindValue(":incdtresolution_order", _order->value());
   q.bindValue(":incdtresolution_descrip", _descrip->text());
   q.exec();
   if (q.lastError().type() != QSqlError::None)
@@ -225,8 +224,7 @@ void incidentResolution::populate()
   if (q.first())
   {
     _name->setText(q.value("incdtresolution_name").toString());
-    if (! q.value("incdtresolution_order").isNull())
-      _order->setText(q.value("incdtresolution_order").toString());
+    _order->setValue(q.value("incdtresolution_order").toInt());
     _descrip->setText(q.value("incdtresolution_descrip").toString());
   }
   else if (q.lastError().type() != QSqlError::None)

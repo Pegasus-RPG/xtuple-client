@@ -202,8 +202,7 @@ void incidentPriority::sSave()
 
   q.bindValue(":incdtpriority_id", _incdtpriorityId);
   q.bindValue(":incdtpriority_name", _name->text());
-  if (! _order->text().isEmpty())
-    q.bindValue(":incdtpriority_order", _order->text());
+  q.bindValue(":incdtpriority_order", _order->value());
   q.bindValue(":incdtpriority_descrip", _descrip->text());
   q.exec();
   if (q.lastError().type() != QSqlError::None)
@@ -225,8 +224,7 @@ void incidentPriority::populate()
   if (q.first())
   {
     _name->setText(q.value("incdtpriority_name").toString());
-    if (! q.value("incdtpriority_order").isNull())
-      _order->setText(q.value("incdtpriority_order").toString());
+    _order->setValue(q.value("incdtpriority_order").toInt());
     _descrip->setText(q.value("incdtpriority_descrip").toString());
   }
   else if (q.lastError().type() != QSqlError::None)

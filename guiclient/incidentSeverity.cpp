@@ -202,8 +202,7 @@ void incidentSeverity::sSave()
 
   q.bindValue(":incdtseverity_id", _incdtseverityId);
   q.bindValue(":incdtseverity_name", _name->text());
-  if (! _order->text().isEmpty())
-    q.bindValue(":incdtseverity_order", _order->text());
+  q.bindValue(":incdtseverity_order", _order->value());
   q.bindValue(":incdtseverity_descrip", _descrip->text());
   q.exec();
   if (q.lastError().type() != QSqlError::None)
@@ -225,8 +224,7 @@ void incidentSeverity::populate()
   if (q.first())
   {
     _name->setText(q.value("incdtseverity_name").toString());
-    if (! q.value("incdtseverity_order").isNull())
-      _order->setText(q.value("incdtseverity_order").toString());
+    _order->setValue(q.value("incdtseverity_order").toInt());
     _descrip->setText(q.value("incdtseverity_descrip").toString());
   }
   else if (q.lastError().type() != QSqlError::None)

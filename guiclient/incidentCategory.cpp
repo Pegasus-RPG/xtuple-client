@@ -202,8 +202,7 @@ void incidentCategory::sSave()
 
   q.bindValue(":incdtcat_id", _incdtcatId);
   q.bindValue(":incdtcat_name", _name->text());
-  if (! _order->text().isEmpty())
-    q.bindValue(":incdtcat_order", _order->text());
+  q.bindValue(":incdtcat_order", _order->value());
   q.bindValue(":incdtcat_descrip", _descrip->text());
   q.exec();
   if (q.lastError().type() != QSqlError::None)
@@ -225,8 +224,7 @@ void incidentCategory::populate()
   if (q.first())
   {
     _name->setText(q.value("incdtcat_name").toString());
-    if (! q.value("incdtcat_order").isNull())
-      _order->setText(q.value("incdtcat_order").toString());
+    _order->setValue(q.value("incdtcat_order").toInt());
     _descrip->setText(q.value("incdtcat_descrip").toString());
   }
   else if (q.lastError().type() != QSqlError::None)
