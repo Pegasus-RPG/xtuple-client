@@ -94,6 +94,7 @@ dspCashReceipts::dspCashReceipts(QWidget* parent, const char* name, Qt::WFlags f
   _arapply->addColumn(tr("Source"),      _itemColumn,     Qt::AlignCenter );
   _arapply->addColumn(tr("Apply-To"),    _itemColumn,     Qt::AlignCenter );
   _arapply->addColumn(tr("Amount"),      _bigMoneyColumn, Qt::AlignRight  );
+  _arapply->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft   );
 
   _allCustomers->setFocus();
 }
@@ -209,6 +210,7 @@ void dspCashReceipts::sFillList()
                "              ELSE :other"
                "         END || ' ' || TEXT(arapply_target_docnumber) ) AS target,"
                "       formatMoney(arapply_applied) AS f_applied, arapply_applied,"
+               "       currConcat(arapply_curr_id) AS currAbbr,"
                "       arapply_postdate AS sortdate "
                "FROM arapply, cust "
                "WHERE ( (arapply_cust_id=cust_id)"
@@ -238,6 +240,7 @@ void dspCashReceipts::sFillList()
          "         END || ' ' || cashrcpt_docnumber ) AS source,"
          "       '' AS target,"
          "       formatMoney(cashrcpt_amount) AS f_applied, cashrcpt_amount,"
+         "       currConcat(cashrcpt_curr_id) AS currAbbr,"
          "       cashrcpt_distdate AS sortdate "
          "  FROM cashrcpt, cust "
          " WHERE ((cashrcpt_cust_id=cust_id)"
@@ -267,6 +270,7 @@ void dspCashReceipts::sFillList()
          "         substr(aropen_notes, 18) ) AS source,"
          "       :unapplied AS target,"
          "       formatMoney(aropen_amount) AS f_applied, aropen_amount,"
+         "       currConcat(aropen_curr_id) AS currAbbr,"
          "       aropen_duedate AS sortdate "
          "  FROM aropen, cust"
          " WHERE ((aropen_cust_id=cust_id)"
@@ -320,7 +324,7 @@ void dspCashReceipts::sFillList()
       last = new XTreeWidgetItem( _arapply, last, q.value("arapply_id").toInt(),
 				 q.value("cust_number"), q.value("cust_name"),
 				 q.value("f_postdate"), q.value("source"),
-				 q.value("target"), q.value("f_applied") );
+				 q.value("target"), q.value("f_applied"), q.value("currAbbr") );
 
       total += q.value("arapply_applied").toDouble();
     }

@@ -83,10 +83,15 @@ dspInvoiceInformation::dspInvoiceInformation(QWidget* parent, const char* name, 
 
   _cust->setReadOnly(TRUE);
 
-  _arapply->addColumn( tr("Type"),        _dateColumn,  Qt::AlignCenter );
-  _arapply->addColumn( tr("Doc./Ref. #"), -1,           Qt::AlignCenter );
-  _arapply->addColumn( tr("Apply Date"),  _dateColumn,  Qt::AlignCenter );
-  _arapply->addColumn( tr("Amount"),      _moneyColumn, Qt::AlignCenter );
+  _arapply->addColumn(tr("Type"),            _dateColumn, Qt::AlignCenter,true, "doctype");
+  _arapply->addColumn(tr("Doc./Ref. #"),              -1, Qt::AlignLeft,  true, "docnumber");
+  _arapply->addColumn(tr("Apply Date"),      _dateColumn, Qt::AlignCenter,true, "arapply_postdate");
+  _arapply->addColumn(tr("Amount"),         _moneyColumn, Qt::AlignRight, true, "arapply_applied");
+  _arapply->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft,  true, "currabbr");
+  _arapply->addColumn(tr("Base Amount"), _bigMoneyColumn, Qt::AlignRight, true, "baseapplied");
+
+  if (omfgThis->singleCurrency())
+      _arapply->hideColumn("currabbr");
 
   _invcheadid = -1;
 }
@@ -195,8 +200,11 @@ void dspInvoiceInformation::sParseInvoiceNumber()
                "            WHEN (arapply_source_doctype = 'K') THEN arapply_refnumber"
                "            ELSE :error"
                "       END AS docnumber,"
-               "       arapply_postdate,"
-               "       formatMoney(arapply_applied) AS f_amount "
+               "       arapply_postdate, arapply_applied,"
+               "       currConcat(arapply_curr_id) AS currabbr,"
+               "       currToBase(arapply_curr_id, arapply_applied, arapply_postdate) AS baseapplied,"
+               "       'curr' AS arapply_applied_xtnumericrole,"
+               "       'curr' AS baseapplied_xtnumericrole "
                "FROM arapply "
                "WHERE ( (arapply_target_doctype='I') "
                " AND (arapply_target_docnumber=:aropen_docnumber) ) "
