@@ -3,6 +3,18 @@
  <title>Unposted Purchase Order Receipts</title>
  <name>UnpostedPoReceipts</name>
  <description></description>
+ <parameter default="" active="true" listtype="static" type="bool" name="MultiWhs" >
+  <description></description>
+ </parameter>
+ <parameter default="" active="true" listtype="static" type="string" name="na" >
+  <description></description>
+ </parameter>
+ <parameter default="" active="true" listtype="static" type="string" name="nonInventory" >
+  <description></description>
+ </parameter>
+ <parameter default="" active="true" listtype="static" type="bool" name="selectedOnly" >
+  <description></description>
+ </parameter>
  <size>Letter</size>
  <portrait/>
  <topmargin>50</topmargin>
@@ -11,39 +23,40 @@
  <leftmargin>50</leftmargin>
  <querysource>
   <name>detail</name>
-  <sql>SELECT porecv_id, porecv_poitem_id, porecv_ponumber,
-       (vend_number || '-' || vend_name) AS vend_number,
-       poitem_linenumber,
-       formatDate(porecv_duedate) AS porecv_duedate,
-       COALESCE(item_number, 'Non-Inventory') AS item_number,
-       COALESCE(uom_name, 'N/A') AS uom_name,
-       porecv_vend_item_number,
-       porecv_vend_uom,
-       formatQty(poitem_qty_ordered) AS poitem_qty_ordered,
-       formatQty(poitem_qty_received) AS poitem_qty_received,
-       formatQty(porecv_qty) AS porecv_qty,
-       formatDate(porecv_date) AS porecv_date,
-       formatDate(COALESCE(porecv_gldistdate, porecv_date)) AS porecv_gldistdate,
-      poitem_pohead_id 
-FROM vend, pohead, poitem, porecv LEFT OUTER JOIN 
-     (itemsite 
-       JOIN item ON (itemsite_item_id=item_id) 
-       JOIN uom ON (item_inv_uom_id=uom_id)
-       JOIN whsinfo ON (itemsite_warehous_id=warehous_id)
+  <sql>SELECT recv_id, recv_orderitem_id, recv_order_number, recv_order_type,
+       orderhead_from,
+       orderitem_linenumber,
+       formatDate(recv_duedate) AS recv_duedate,
+       warehous_code,
+       COALESCE(item_number, &lt;? value("nonInventory") ?>) AS item_number,
+       COALESCE(uom_name, &lt;? value("na") ?>) AS uom_name,
+       recv_vend_item_number,
+       recv_vend_uom,
+       formatQty(orderitem_qty_ordered)  AS qty_ordered,
+       formatQty(orderitem_qty_received) AS qty_received,
+       formatQty(recv_qty)     AS recv_qty,
+       formatDate(recv_date)   AS recv_date,
+       formatDate(COALESCE(recv_gldistdate, recv_date)) AS recv_gldistdate
+FROM orderhead JOIN
+     orderitem ON ((orderitem_orderhead_id=orderhead_id)
+	       AND (orderitem_orderhead_type=orderhead_type)) JOIN 
+     recv  ON ((recv_orderitem_id=orderitem_id)
+	   AND (recv_order_type=orderitem_orderhead_type)) LEFT OUTER JOIN
+     (itemsite JOIN item ON (itemsite_item_id=item_id)
+	       JOIN uom ON (item_inv_uom_id=uom_id)
+               JOIN whsinfo ON (itemsite_warehous_id=warehous_id)
 &lt;? if exists("selectedOnly") ?>
-       JOIN usrsite ON (warehous_id=usrsite_warehous_id) 
+               JOIN usrsite ON (warehous_id=usrsite_warehous_id) 
 &lt;? endif ?>
-)
-      ON (porecv_itemsite_id=itemsite_id)
-WHERE ( (porecv_poitem_id=poitem_id)
-  AND   (NOT porecv_posted)
-  AND   (poitem_pohead_id=pohead_id)
-  AND   (pohead_vend_id=vend_id)
+       )
+      ON (recv_itemsite_id=itemsite_id) LEFT OUTER JOIN
+     vend ON (orderhead_type='PO' AND orderhead_from_id=vend_id)
+WHERE (NOT recv_posted)
 &lt;? if exists("selectedOnly") ?>
   AND (usrsite_username=current_user) 
 &lt;? endif ?>
-)
-ORDER BY porecv_ponumber, poitem_linenumber;</sql>
+ORDER BY orderhead_from, recv_order_number, orderitem_linenumber;
+</sql>
  </querysource>
  <rpthead>
   <height>76</height>
@@ -75,63 +88,9 @@ ORDER BY porecv_ponumber, poitem_linenumber;</sql>
   <name>detail</name>
   <group>
    <name>ponumber</name>
-   <column>porecv_ponumber</column>
+   <column>recv_order_number</column>
    <head>
     <height>51</height>
-    <field>
-     <rect>
-      <x>100</x>
-      <y>0</y>
-      <width>100</width>
-      <height>15</height>
-     </rect>
-     <font>
-      <face>Arial</face>
-      <size>8</size>
-      <weight>bold</weight>
-     </font>
-     <left/>
-     <vcenter/>
-     <data>
-      <query>detail</query>
-      <column>porecv_ponumber</column>
-     </data>
-    </field>
-    <label>
-     <rect>
-      <x>685</x>
-      <y>31</y>
-      <width>80</width>
-      <height>15</height>
-     </rect>
-     <font>
-      <face>Arial</face>
-      <size>8</size>
-      <weight>normal</weight>
-     </font>
-     <left/>
-     <vcenter/>
-     <string>Receipt Date</string>
-    </label>
-    <field>
-     <rect>
-      <x>100</x>
-      <y>15</y>
-      <width>200</width>
-      <height>15</height>
-     </rect>
-     <font>
-      <face>Arial</face>
-      <size>8</size>
-      <weight>bold</weight>
-     </font>
-     <left/>
-     <vcenter/>
-     <data>
-      <query>detail</query>
-      <column>vend_number</column>
-     </data>
-    </field>
     <label>
      <rect>
       <x>395</x>
@@ -147,54 +106,6 @@ ORDER BY porecv_ponumber, poitem_linenumber;</sql>
      <left/>
      <vcenter/>
      <string>UOM</string>
-    </label>
-    <label>
-     <rect>
-      <x>0</x>
-      <y>15</y>
-      <width>80</width>
-      <height>15</height>
-     </rect>
-     <font>
-      <face>Arial</face>
-      <size>8</size>
-      <weight>normal</weight>
-     </font>
-     <left/>
-     <vcenter/>
-     <string>Vendor:</string>
-    </label>
-    <label>
-     <rect>
-      <x>240</x>
-      <y>31</y>
-      <width>40</width>
-      <height>15</height>
-     </rect>
-     <font>
-      <face>Arial</face>
-      <size>8</size>
-      <weight>normal</weight>
-     </font>
-     <left/>
-     <vcenter/>
-     <string>UOM</string>
-    </label>
-    <label>
-     <rect>
-      <x>440</x>
-      <y>31</y>
-      <width>70</width>
-      <height>15</height>
-     </rect>
-     <font>
-      <face>Arial</face>
-      <size>8</size>
-      <weight>normal</weight>
-     </font>
-     <right/>
-     <vcenter/>
-     <string>Qty Ordered</string>
     </label>
     <label>
      <rect>
@@ -214,7 +125,23 @@ ORDER BY porecv_ponumber, poitem_linenumber;</sql>
     </label>
     <label>
      <rect>
-      <x>520</x>
+      <x>685</x>
+      <y>31</y>
+      <width>80</width>
+      <height>15</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>8</size>
+      <weight>normal</weight>
+     </font>
+     <left/>
+     <vcenter/>
+     <string>Receipt Date</string>
+    </label>
+    <label>
+     <rect>
+      <x>440</x>
       <y>31</y>
       <width>70</width>
       <height>15</height>
@@ -226,45 +153,13 @@ ORDER BY porecv_ponumber, poitem_linenumber;</sql>
      </font>
      <right/>
      <vcenter/>
-     <string>Qty Received</string>
-    </label>
-    <label>
-     <rect>
-      <x>130</x>
-      <y>31</y>
-      <width>100</width>
-      <height>15</height>
-     </rect>
-     <font>
-      <face>Arial</face>
-      <size>8</size>
-      <weight>normal</weight>
-     </font>
-     <left/>
-     <vcenter/>
-     <string>Item Number</string>
-    </label>
-    <label>
-     <rect>
-      <x>600</x>
-      <y>31</y>
-      <width>75</width>
-      <height>15</height>
-     </rect>
-     <font>
-      <face>Arial</face>
-      <size>8</size>
-      <weight>normal</weight>
-     </font>
-     <right/>
-     <vcenter/>
-     <string>Qty To Receive</string>
+     <string>Qty Ordered</string>
     </label>
     <label>
      <rect>
       <x>0</x>
-      <y>0</y>
-      <width>100</width>
+      <y>15</y>
+      <width>80</width>
       <height>15</height>
      </rect>
      <font>
@@ -274,7 +169,7 @@ ORDER BY porecv_ponumber, poitem_linenumber;</sql>
      </font>
      <left/>
      <vcenter/>
-     <string>Purchase Order #:</string>
+     <string>Vendor:</string>
     </label>
     <label>
      <rect>
@@ -295,6 +190,124 @@ ORDER BY porecv_ponumber, poitem_linenumber;</sql>
     <label>
      <rect>
       <x>0</x>
+      <y>0</y>
+      <width>100</width>
+      <height>15</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>8</size>
+      <weight>normal</weight>
+     </font>
+     <left/>
+     <vcenter/>
+     <string>Order #:</string>
+    </label>
+    <field>
+     <rect>
+      <x>100</x>
+      <y>0</y>
+      <width>27</width>
+      <height>15</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>8</size>
+      <weight>bold</weight>
+     </font>
+     <left/>
+     <vcenter/>
+     <data>
+      <query>detail</query>
+      <column>recv_order_type</column>
+     </data>
+    </field>
+    <label>
+     <rect>
+      <x>130</x>
+      <y>31</y>
+      <width>100</width>
+      <height>15</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>8</size>
+      <weight>normal</weight>
+     </font>
+     <left/>
+     <vcenter/>
+     <string>Item Number</string>
+    </label>
+    <field>
+     <rect>
+      <x>100</x>
+      <y>15</y>
+      <width>200</width>
+      <height>15</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>8</size>
+      <weight>bold</weight>
+     </font>
+     <left/>
+     <vcenter/>
+     <data>
+      <query>detail</query>
+      <column>orderhead_from</column>
+     </data>
+    </field>
+    <label>
+     <rect>
+      <x>600</x>
+      <y>31</y>
+      <width>75</width>
+      <height>15</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>8</size>
+      <weight>normal</weight>
+     </font>
+     <right/>
+     <vcenter/>
+     <string>Qty To Receive</string>
+    </label>
+    <label>
+     <rect>
+      <x>520</x>
+      <y>31</y>
+      <width>70</width>
+      <height>15</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>8</size>
+      <weight>normal</weight>
+     </font>
+     <right/>
+     <vcenter/>
+     <string>Qty Received</string>
+    </label>
+    <label>
+     <rect>
+      <x>240</x>
+      <y>31</y>
+      <width>40</width>
+      <height>15</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>8</size>
+      <weight>normal</weight>
+     </font>
+     <left/>
+     <vcenter/>
+     <string>UOM</string>
+    </label>
+    <label>
+     <rect>
+      <x>0</x>
       <y>31</y>
       <width>35</width>
       <height>15</height>
@@ -308,6 +321,25 @@ ORDER BY porecv_ponumber, poitem_linenumber;</sql>
      <vcenter/>
      <string>Line #</string>
     </label>
+    <field>
+     <rect>
+      <x>135</x>
+      <y>0</y>
+      <width>100</width>
+      <height>15</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>8</size>
+      <weight>bold</weight>
+     </font>
+     <left/>
+     <vcenter/>
+     <data>
+      <query>detail</query>
+      <column>recv_order_number</column>
+     </data>
+    </field>
    </head>
   </group>
   <detail>
@@ -317,28 +349,9 @@ ORDER BY porecv_ponumber, poitem_linenumber;</sql>
    <height>21</height>
    <field>
     <rect>
-     <x>520</x>
+     <x>40</x>
      <y>0</y>
-     <width>70</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>normal</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>poitem_qty_received</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>600</x>
-     <y>0</y>
-     <width>75</width>
+     <width>80</width>
      <height>15</height>
     </rect>
     <font>
@@ -346,87 +359,11 @@ ORDER BY porecv_ponumber, poitem_linenumber;</sql>
      <size>8</size>
      <weight>bold</weight>
     </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>porecv_qty</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>240</x>
-     <y>0</y>
-     <width>40</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>normal</weight>
-    </font>
     <left/>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>uom_name</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>35</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>poitem_linenumber</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>285</x>
-     <y>0</y>
-     <width>100</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>normal</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>porecv_vend_item_number</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>440</x>
-     <y>0</y>
-     <width>70</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>normal</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>poitem_qty_ordered</column>
+     <column>recv_duedate</column>
     </data>
    </field>
    <field>
@@ -450,6 +387,44 @@ ORDER BY porecv_ponumber, poitem_linenumber;</sql>
    </field>
    <field>
     <rect>
+     <x>600</x>
+     <y>0</y>
+     <width>75</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>recv_qty</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>35</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>orderitem_linenumber</column>
+    </data>
+   </field>
+   <field>
+    <rect>
      <x>685</x>
      <y>0</y>
      <width>80</width>
@@ -464,7 +439,83 @@ ORDER BY porecv_ponumber, poitem_linenumber;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>porecv_date</column>
+     <column>recv_date</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>240</x>
+     <y>0</y>
+     <width>40</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>uom_name</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>285</x>
+     <y>0</y>
+     <width>100</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>recv_vend_item_number</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>440</x>
+     <y>0</y>
+     <width>70</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>qty_ordered</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>520</x>
+     <y>0</y>
+     <width>70</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>qty_received</column>
     </data>
    </field>
    <field>
@@ -483,26 +534,7 @@ ORDER BY porecv_ponumber, poitem_linenumber;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>porecv_vend_uom</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>40</x>
-     <y>0</y>
-     <width>80</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>porecv_duedate</column>
+     <column>recv_vend_uom</column>
     </data>
    </field>
   </detail>
@@ -525,22 +557,6 @@ ORDER BY porecv_ponumber, poitem_linenumber;</sql>
    <vcenter/>
    <string>Report Date:</string>
   </label>
-  <label>
-   <rect>
-    <x>615</x>
-    <y>0</y>
-    <width>85</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Page:</string>
-  </label>
   <field>
    <rect>
     <x>90</x>
@@ -560,6 +576,22 @@ ORDER BY porecv_ponumber, poitem_linenumber;</sql>
     <column>report_date</column>
    </data>
   </field>
+  <label>
+   <rect>
+    <x>615</x>
+    <y>0</y>
+    <width>85</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Page:</string>
+  </label>
   <field>
    <rect>
     <x>705</x>
