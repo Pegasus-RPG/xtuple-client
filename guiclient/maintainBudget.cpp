@@ -388,16 +388,26 @@ void maintainBudget::sGenerateTable()
   _table->setNumRows(accounts.count());
   //_table->setRowLabels(accounts);
 
+  bool isPeriodSelected = false;
   item = (XListBoxText*)_periods->firstItem();
   while(item)
   {
     if(item->isSelected())
     {
+      isPeriodSelected = true;
       _periodsRef.prepend(item->id());
       periods.prepend(item->text());
     }
     item = (XListBoxText*)item->next();
   }
+  if (!isPeriodSelected)
+  {
+    QMessageBox::critical(this, tr("Incomplete criteria"),
+                          tr("<p>Please select at least one Period "
+                             "before generating the table." ) );
+    return;
+  }
+  
   _periodsRef.prepend(-1);
   periods.prepend(tr("Account"));
   _table->setNumCols(periods.count());
