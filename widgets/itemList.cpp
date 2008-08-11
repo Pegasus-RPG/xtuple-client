@@ -111,8 +111,8 @@ itemList::itemList( QWidget* parent, const char* name, bool modal, Qt::WFlags fl
 
     QSpacerItem* spacer = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
     Layout69->addItem( spacer );
-    _showMake = new QCheckBox(tr("Show &Make Items"), this, "_showMake");
-    _showBuy = new QCheckBox(tr("Show &Buy Items"), this, "_showBuy");
+    _showMake = new QCheckBox(tr("&Make Items Only"), this, "_showMake");
+    _showBuy = new QCheckBox(tr("&Buy Items Only"), this, "_showBuy");
     Layout70->addWidget( _showMake );
     Layout70->addWidget( _showBuy );
     Layout70->addLayout( Layout69 );
