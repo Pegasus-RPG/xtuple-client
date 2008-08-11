@@ -348,14 +348,14 @@ void dspSummarizedBacklogByWarehouse::sFillList()
 		 "            ELSE <? value(\"other\") ?>"
 		 "       END AS f_holdtype,"
 		 "       MIN(coitem_scheddate) AS scheddate,"
-		 "       SUM( round((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) *"
-		 "            (coitem_price / coitem_price_invuomratio), 2) ) AS sales,"
+		 "       SUM((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) *"
+		 "            (currToBase(cohead_curr_id, coitem_price, cohead_orderdate) / coitem_price_invuomratio) ) AS sales,"
 		 "       SUM((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) * stdcost(item_id) ) AS cost,"
 		 "       SUM((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) *"
-		 "            ((coitem_price / coitem_price_invuomratio) - stdcost(item_id)) ) AS margin,"
-		 "       'sales' AS sales_xtnumericrole,"
-		 "       'cost' AS cost_xtnumericrole,"
-		 "       'margin' AS margin_xtnumericrole,"
+		 "            ((currToBase(cohead_curr_id, coitem_price, cohead_orderdate) / coitem_price_invuomratio) - stdcost(item_id)) ) AS margin,"
+		 "       'curr' AS sales_xtnumericrole,"
+		 "       'curr' AS cost_xtnumericrole,"
+		 "       'curr' AS margin_xtnumericrole,"
 		 "       COALESCE(cosmisc_id, -1) AS cosmisc_id, "
 		 "       formatShipmentNumber(cosmisc_id) AS cosmisc_number, "
 		 "       CASE WHEN (cosmisc_shipped IS NULL) THEN 0"
@@ -423,14 +423,14 @@ void dspSummarizedBacklogByWarehouse::sFillList()
           overbilled = FALSE;
 
           orderLine = new XTreeWidgetItem( _so, orderLine,
-		  q.value("cohead_id").toInt(),
-		  -1,
+          q.value("cohead_id").toInt(), -1,
           q.value("cohead_number"), q.value("cust_name"),
           q.value("f_holdtype"), q.value("cohead_orderdate"),
           q.value("scheddate"), q.value("cohead_packdate"),
-          q.value("sales"), q.value("cost"),
-          q.value("margin"), q.value("cohead_created"),
-		  q.value("packed"));
+          formatMoney(q.value("sales").toDouble()),
+          formatMoney(q.value("cost").toDouble()),
+          formatMoney(q.value("margin").toDouble()),
+          q.value("cohead_created"), q.value("packed"));
 
           totalSales  += q.value("sales").toDouble();
           totalCost   += q.value("cost").toDouble();
