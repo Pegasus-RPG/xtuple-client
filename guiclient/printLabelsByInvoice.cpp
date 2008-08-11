@@ -151,7 +151,7 @@ void printLabelsByInvoice::sParseInvoiceNumber()
   query.prepare( "SELECT invchead_id "
                  "FROM invchead "
                  "WHERE (invchead_invcnumber=:invoiceNumber);" );
-  query.bindValue(":invoiceNumber", _invoiceNumber->text().toInt());
+  query.bindValue(":invoiceNumber", _invoiceNumber->text());
   query.exec();
   if (query.first())
   {
