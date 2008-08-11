@@ -28,7 +28,7 @@ SELECT checkhead_id AS checkid,
  WHERE ((checkhead_checkdate BETWEEN <? value("startDate") ?> AND <? value("endDate") ?>)
    AND   (checkhead_bankaccnt_id=<? value("bankaccnt_id") ?>)
    <? if exists("check_number") ?>
-      AND   (checkhead_number=<? value("check_number") ?>)
+      AND   (CAST(checkhead_number AS text) ~ <? value("check_number") ?>)
    <? endif ?>
    <? if exists("recip") ?>
       <? if exists("recip_type_v") ?>
@@ -61,7 +61,7 @@ SELECT checkitem_checkhead_id AS checkid, 0 AS extra, checkitem_id,
    AND   (checkhead_checkdate BETWEEN <? value("startDate") ?> AND <? value("endDate") ?>)
    AND   (checkhead_bankaccnt_id=<? value("bankaccnt_id") ?>)
    <? if exists("check_number") ?>
-      AND   (checkhead_number=<? value("check_number") ?>)
+      AND   (CAST(checkhead_number AS text) ~ <? value("check_number") ?>)
    <? endif ?>
    <? if exists("recip") ?>
       <? if exists("recip_type_v") ?>
