@@ -118,7 +118,13 @@ booItem::booItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _booimage->addColumn(tr("Description"), -1,          Qt::AlignLeft );
   _booimage->addColumn(tr("Purpose"),     _itemColumn, Qt::AlignLeft );
 
-  
+  _runTimePer->setValidator(omfgThis->qtyPerVal());
+  _invProdUOMRatio->setValidator(omfgThis->ratioVal());
+  _invRunTime->setPrecision(omfgThis->costVal());
+  _invPerMinute->setPrecision(omfgThis->costVal());
+  _setupTime->setValidator(new QDoubleValidator(0, 99999.0, 1, this));
+  _runTime->setValidator(new QDoubleValidator(0, 99999.0, 1, this));
+
   _fixedFont->setChecked(_preferences->boolean("UsedFixedWidthFonts"));
 
   // hide the Allow Pull Through option as it doesn't perform
@@ -360,13 +366,7 @@ void booItem::sHandleStdopn(int pStdopnid)
 {
   if (_stdopn->id() != -1)
   {
-    q.prepare( "SELECT stdopn_descrip1, stdopn_descrip2, stdopn_instructions, stdopn_toolref,"
-               "       stdopn_wrkcnt_id, stdopn_stdtimes,"
-               "       stdopn_sucosttype, stdopn_rncosttype, stdopn_produom,"
-               "       formatTime(stdopn_sutime) AS f_sutime,"
-               "       formatTime(stdopn_rntime) AS f_rntime,"
-               "       formatQty(stdopn_rnqtyper) as rnqtyper,"
-               "       formatRatio(stdopn_invproduomratio) AS invproduomratio "
+    q.prepare( "SELECT * "
                "FROM stdopn "
                "WHERE (stdopn_id=:stdopn_id);" );
     q.bindValue(":stdopn_id", pStdopnid);
@@ -385,11 +385,11 @@ void booItem::sHandleStdopn(int pStdopnid)
 
       if (q.value("stdopn_stdtimes").toBool())
       {
-        _setupTime->setText(q.value("f_sutime"));
-        _runTime->setText(q.value("f_rntime"));
-        _runTimePer->setText(q.value("rnqtyper"));
+        _setupTime->setDouble(q.value("stdopen_sutime").toDouble());
+        _runTime->setDouble(q.value("stdopen_rntime").toDouble());
+        _runTimePer->setDouble(q.value("stdopen_rnqtyper").toDouble());
         _prodUOM->setText(q.value("stdopn_produom"));
-        _invProdUOMRatio->setText(q.value("invproduomratio"));
+        _invProdUOMRatio->setDouble(q.value("stdopn_invproduomratio").toDouble());
 
         if (q.value("stdopn_sucosttype").toString() == "D")
           _setupReport->setCurrentItem(0);
@@ -427,15 +427,15 @@ void booItem::sCalculateInvRunTime()
 {
   if ((_runTimePer->toDouble() != 0.0) && (_invProdUOMRatio->toDouble() != 0.0))
   {
-    _invRunTime->setText(formatCost(_runTime->toDouble() / _runTimePer->toDouble() / _invProdUOMRatio->toDouble()));
+    _invRunTime->setDouble(_runTime->toDouble() / _runTimePer->toDouble() / _invProdUOMRatio->toDouble());
 
-    _invPerMinute->setText(formatCost(_runTimePer->toDouble() / _runTime->toDouble() * _invProdUOMRatio->toDouble()));
+    _invPerMinute->setDouble(_runTimePer->toDouble() / _runTime->toDouble() * _invProdUOMRatio->toDouble());
 
   }
   else
   {
-    _invRunTime->setText(formatCost(0.0));
-    _invPerMinute->setText(formatCost(0.0));
+    _invRunTime->setDouble(0.0);
+    _invPerMinute->setDouble(0.0);
   }
 }
 
@@ -455,11 +455,11 @@ void booItem::populate()
                    "       booitem_execday, booitem_item_id, booitem_seqnumber,"
                    "       booitem_wrkcnt_id, booitem_stdopn_id,"
                    "       booitem_descrip1, booitem_descrip2, booitem_toolref,"
-                   "       formatTime(booitem_sutime) AS f_sutime, booitem_sucosttype, booitem_surpt,"
-                   "       formatTime(booitem_rntime) AS f_rntime, booitem_rncosttype, booitem_rnrpt,"
+                   "       booitem_sutime, booitem_sucosttype, booitem_surpt,"
+                   "       booitem_rntime, booitem_rncosttype, booitem_rnrpt,"
                    "       booitem_produom, uom_name,"
-                   "       formatRatio(booitem_invproduomratio) AS invproduomratio,"
-                   "       formatRatio(booitem_rnqtyper) AS rnqtyper,"
+                   "       booitem_invproduomratio,"
+                   "       booitem_rnqtyper,"
                    "       booitem_issuecomp, booitem_rcvinv,"
                    "       booitem_pullthrough, booitem_overlap,"
                    "       booitem_configtype, booitem_configid, booitem_configflag,"
@@ -487,13 +487,13 @@ void booItem::populate()
     _description1->setText(booitem.value("booitem_descrip1"));
     _description2->setText(booitem.value("booitem_descrip2"));
     _toolingReference->setText(booitem.value("booitem_toolref"));
-    _setupTime->setText(booitem.value("f_sutime"));
+    _setupTime->setDouble(q.value("booitem_sutime").toDouble());
     _prodUOM->setText(booitem.value("booitem_produom"));
     _invUOM1->setText(booitem.value("uom_name").toString());
     _invUOM2->setText(booitem.value("uom_name").toString());
-    _invProdUOMRatio->setText(booitem.value("invproduomratio"));
-    _runTime->setText(booitem.value("f_rntime"));
-    _runTimePer->setText(booitem.value("rnqtyper"));
+    _invProdUOMRatio->setDouble(booitem.value("booitem_invproduomratio").toDouble());
+    _runTime->setDouble(q.value("booitem_rntime").toDouble());
+    _runTimePer->setDouble(booitem.value("booitem_rnqtyper").toDouble());
 
     _reportSetup->setChecked(booitem.value("booitem_surpt").toBool());
     _reportRun->setChecked(booitem.value("booitem_rnrpt").toBool());

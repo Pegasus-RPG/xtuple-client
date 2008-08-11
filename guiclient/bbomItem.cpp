@@ -240,9 +240,9 @@ void bbomItem::populate()
 {
   q.prepare( "SELECT bbomitem_item_id, bbomitem_parent_item_id,"
              "       item_type, bbomitem_uniquemfg,"
-             "       formatQtyper(bbomitem_qtyper) AS qtyper,"
+             "       bbomitem_qtyper,"
              "       bbomitem_effective, bbomitem_expires,"
-             "       formatScrap(bbomitem_costabsorb) AS aborb,"
+             "       bbomitem_costabsorb,"
              "       bbomitem_comments "
              "FROM bbomitem, item "
              "WHERE ( (bbomitem_item_id=item_id)"
@@ -253,15 +253,14 @@ void bbomItem::populate()
   {
     _itemid = q.value("bbomitem_parent_item_id").toInt();
     _item->setId(q.value("bbomitem_item_id").toInt());
-    _qtyPer->setText(q.value("qtyper").toString());
+    _qtyPer->setDouble(q.value("bbomitem_qtyper").toDouble());
     _unique->setChecked(q.value("bbomitem_uniquemfg").toBool());
     _dates->setStartDate(q.value("bbomitem_effective").toDate());
     _dates->setEndDate(q.value("bbomitem_expires").toDate());
 
     if (q.value("item_type").toString() == "C")
-      _costAbsorption->setText(q.value("aborb").toString());
+      _costAbsorption->setDouble(q.value("bbomitem_costabsorb").toDouble() * 100.0);
 
     _comments->setText(q.value("bbomitem_comments").toString());
   }
 }
-
