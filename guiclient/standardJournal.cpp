@@ -119,7 +119,7 @@ void standardJournal::destroy()
   if (_mode == cNew)
   {
     q.prepare( "DELETE FROM stdjrnlitem "
-               "WHERE (stdjrnlitem_stdjrnlid=:stdjrnl_id);" );
+               "WHERE (stdjrnlitem_stdjrnl_id=:stdjrnl_id);" );
     q.bindValue(":stdjrnl_id", _stdjrnlid);
     q.exec();
   }
