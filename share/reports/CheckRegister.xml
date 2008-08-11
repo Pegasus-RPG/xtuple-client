@@ -134,7 +134,87 @@ SELECT checkitem_checkhead_id AS checkid, 0 AS extra, checkitem_id,
 GROUP BY bankaccnt_curr_id;</sql>
  </querysource>
  <rpthead>
-  <height>165</height>
+  <height>168</height>
+  <label>
+   <rect>
+    <x>655</x>
+    <y>140</y>
+    <width>90</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Amount</string>
+  </label>
+  <label>
+   <rect>
+    <x>270</x>
+    <y>5</y>
+    <width>475</width>
+    <height>40</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>18</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Check Register</string>
+  </label>
+  <label>
+   <rect>
+    <x>225</x>
+    <y>140</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Check. #</string>
+  </label>
+  <label>
+   <rect>
+    <x>560</x>
+    <y>140</y>
+    <width>90</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Check Date</string>
+  </label>
+  <label>
+   <rect>
+    <x>5</x>
+    <y>140</y>
+    <width>50</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Void</string>
+  </label>
   <line>
    <xstart>5</xstart>
    <ystart>155</ystart>
@@ -142,6 +222,73 @@ GROUP BY bankaccnt_curr_id;</sql>
    <yend>155</yend>
    <weight>2</weight>
   </line>
+  <label>
+   <rect>
+    <x>170</x>
+    <y>140</y>
+    <width>50</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Posted</string>
+  </label>
+  <label>
+   <rect>
+    <x>25</x>
+    <y>65</y>
+    <width>110</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Bank Account:</string>
+  </label>
+  <field>
+   <rect>
+    <x>550</x>
+    <y>65</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>startdate</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>442</x>
+    <y>85</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>End Date:</string>
+  </label>
   <label>
    <rect>
     <x>442</x>
@@ -177,38 +324,25 @@ GROUP BY bankaccnt_curr_id;</sql>
     <column>bankaccnt_name</column>
    </data>
   </field>
-  <label>
+  <field>
    <rect>
-    <x>170</x>
-    <y>140</y>
-    <width>50</width>
-    <height>15</height>
+    <x>550</x>
+    <y>85</y>
+    <width>100</width>
+    <height>20</height>
    </rect>
    <font>
     <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
+    <size>10</size>
+    <weight>bold</weight>
    </font>
    <left/>
    <vcenter/>
-   <string>Posted</string>
-  </label>
-  <label>
-   <rect>
-    <x>560</x>
-    <y>140</y>
-    <width>90</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Check Date</string>
-  </label>
+   <data>
+    <query>head</query>
+    <column>enddate</column>
+   </data>
+  </field>
   <field>
    <rect>
     <x>140</x>
@@ -246,140 +380,6 @@ GROUP BY bankaccnt_curr_id;</sql>
   </label>
   <label>
    <rect>
-    <x>25</x>
-    <y>65</y>
-    <width>110</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Bank Account:</string>
-  </label>
-  <label>
-   <rect>
-    <x>270</x>
-    <y>5</y>
-    <width>475</width>
-    <height>40</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>18</size>
-    <weight>bold</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Check Register</string>
-  </label>
-  <label>
-   <rect>
-    <x>5</x>
-    <y>140</y>
-    <width>50</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Void</string>
-  </label>
-  <field>
-   <rect>
-    <x>550</x>
-    <y>85</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>enddate</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>550</x>
-    <y>65</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>startdate</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>60</x>
-    <y>140</y>
-    <width>50</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Misc.</string>
-  </label>
-  <label>
-   <rect>
-    <x>225</x>
-    <y>140</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Check. #</string>
-  </label>
-  <label>
-   <rect>
-    <x>655</x>
-    <y>140</y>
-    <width>90</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Amount</string>
-  </label>
-  <label>
-   <rect>
     <x>112</x>
     <y>140</y>
     <width>50</width>
@@ -396,27 +396,27 @@ GROUP BY bankaccnt_curr_id;</sql>
   </label>
   <label>
    <rect>
-    <x>442</x>
-    <y>85</y>
-    <width>100</width>
-    <height>20</height>
+    <x>60</x>
+    <y>140</y>
+    <width>50</width>
+    <height>15</height>
    </rect>
    <font>
     <face>Arial</face>
-    <size>10</size>
+    <size>8</size>
     <weight>normal</weight>
    </font>
-   <right/>
+   <hcenter/>
    <vcenter/>
-   <string>End Date:</string>
+   <string>Misc.</string>
   </label>
  </rpthead>
  <pghead>
   <firstpage/>
-  <height>10</height>
+  <height>13</height>
  </pghead>
  <pghead>
-  <height>25</height>
+  <height>28</height>
   <label>
    <rect>
     <x>170</x>
@@ -435,9 +435,9 @@ GROUP BY bankaccnt_curr_id;</sql>
   </label>
   <label>
    <rect>
-    <x>560</x>
-    <y>140</y>
-    <width>90</width>
+    <x>225</x>
+    <y>0</y>
+    <width>100</width>
     <height>15</height>
    </rect>
    <font>
@@ -445,9 +445,9 @@ GROUP BY bankaccnt_curr_id;</sql>
     <size>8</size>
     <weight>normal</weight>
    </font>
-   <hcenter/>
+   <left/>
    <vcenter/>
-   <string>Check Date</string>
+   <string>Check. #</string>
   </label>
   <line>
    <xstart>5</xstart>
@@ -458,23 +458,7 @@ GROUP BY bankaccnt_curr_id;</sql>
   </line>
   <label>
    <rect>
-    <x>655</x>
-    <y>0</y>
-    <width>90</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Amount</string>
-  </label>
-  <label>
-   <rect>
-    <x>60</x>
+    <x>5</x>
     <y>0</y>
     <width>50</width>
     <height>15</height>
@@ -486,7 +470,7 @@ GROUP BY bankaccnt_curr_id;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Misc.</string>
+   <string>Void</string>
   </label>
   <label>
    <rect>
@@ -506,9 +490,9 @@ GROUP BY bankaccnt_curr_id;</sql>
   </label>
   <label>
    <rect>
-    <x>225</x>
+    <x>60</x>
     <y>0</y>
-    <width>100</width>
+    <width>50</width>
     <height>15</height>
    </rect>
    <font>
@@ -516,9 +500,9 @@ GROUP BY bankaccnt_curr_id;</sql>
     <size>8</size>
     <weight>normal</weight>
    </font>
-   <left/>
+   <hcenter/>
    <vcenter/>
-   <string>Check. #</string>
+   <string>Misc.</string>
   </label>
   <label>
    <rect>
@@ -538,9 +522,9 @@ GROUP BY bankaccnt_curr_id;</sql>
   </label>
   <label>
    <rect>
-    <x>5</x>
-    <y>0</y>
-    <width>50</width>
+    <x>560</x>
+    <y>140</y>
+    <width>90</width>
     <height>15</height>
    </rect>
    <font>
@@ -550,7 +534,23 @@ GROUP BY bankaccnt_curr_id;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Void</string>
+   <string>Check Date</string>
+  </label>
+  <label>
+   <rect>
+    <x>655</x>
+    <y>0</y>
+    <width>90</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Amount</string>
   </label>
  </pghead>
  <section>
@@ -559,7 +559,102 @@ GROUP BY bankaccnt_curr_id;</sql>
    <key>
     <query>detail</query>
    </key>
-   <height>20</height>
+   <height>23</height>
+   <field>
+    <rect>
+     <x>112</x>
+     <y>0</y>
+     <width>50</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_printed</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>170</x>
+     <y>0</y>
+     <width>50</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_posted</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>330</x>
+     <y>0</y>
+     <width>225</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>description</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>60</x>
+     <y>0</y>
+     <width>50</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_misc</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>560</x>
+     <y>0</y>
+     <width>90</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_checkdate</column>
+    </data>
+   </field>
    <field>
     <rect>
      <x>750</x>
@@ -619,63 +714,6 @@ GROUP BY bankaccnt_curr_id;</sql>
    </field>
    <field>
     <rect>
-     <x>330</x>
-     <y>0</y>
-     <width>225</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>description</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>60</x>
-     <y>0</y>
-     <width>50</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>f_misc</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>112</x>
-     <y>0</y>
-     <width>50</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <hcenter/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>f_printed</column>
-    </data>
-   </field>
-   <field>
-    <rect>
      <x>655</x>
      <y>0</y>
      <width>90</width>
@@ -693,67 +731,42 @@ GROUP BY bankaccnt_curr_id;</sql>
      <column>f_amount</column>
     </data>
    </field>
-   <field>
-    <rect>
-     <x>170</x>
-     <y>0</y>
-     <width>50</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>f_posted</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>560</x>
-     <y>0</y>
-     <width>90</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <hcenter/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>f_checkdate</column>
-    </data>
-   </field>
   </detail>
  </section>
  <pgfoot>
-  <height>25</height>
-  <field>
+  <height>28</height>
+  <label>
    <rect>
-    <x>705</x>
+    <x>600</x>
     <y>0</y>
-    <width>40</width>
+    <width>100</width>
     <height>15</height>
    </rect>
    <font>
     <face>Arial</face>
     <size>8</size>
-    <weight>bold</weight>
+    <weight>normal</weight>
    </font>
-   <left/>
+   <right/>
    <vcenter/>
-   <data>
-    <query>Context Query</query>
-    <column>page_number</column>
-   </data>
-  </field>
+   <string>Page:</string>
+  </label>
+  <label>
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Report Date:</string>
+  </label>
   <field>
    <rect>
     <x>102</x>
@@ -773,46 +786,11 @@ GROUP BY bankaccnt_curr_id;</sql>
     <column>report_date</column>
    </data>
   </field>
-  <label>
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Report Date:</string>
-  </label>
-  <label>
-   <rect>
-    <x>600</x>
-    <y>0</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Page:</string>
-  </label>
- </pgfoot>
- <rptfoot>
-  <height>25</height>
   <field>
    <rect>
-    <x>655</x>
+    <x>705</x>
     <y>0</y>
-    <width>90</width>
+    <width>40</width>
     <height>15</height>
    </rect>
    <font>
@@ -820,29 +798,16 @@ GROUP BY bankaccnt_curr_id;</sql>
     <size>8</size>
     <weight>bold</weight>
    </font>
-   <right/>
+   <left/>
    <vcenter/>
    <data>
-    <query>total</query>
-    <column>f_amount</column>
+    <query>Context Query</query>
+    <column>page_number</column>
    </data>
   </field>
-  <label>
-   <rect>
-    <x>500</x>
-    <y>0</y>
-    <width>90</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Total:</string>
-  </label>
+ </pgfoot>
+ <rptfoot>
+  <height>28</height>
   <line>
    <xstart>565</xstart>
    <ystart>0</ystart>
@@ -867,6 +832,41 @@ GROUP BY bankaccnt_curr_id;</sql>
    <data>
     <query>head</query>
     <column>curr_symbol</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>500</x>
+    <y>0</y>
+    <width>90</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Total:</string>
+  </label>
+  <field>
+   <rect>
+    <x>655</x>
+    <y>0</y>
+    <width>90</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <data>
+    <query>total</query>
+    <column>f_amount</column>
    </data>
   </field>
  </rptfoot>
