@@ -1648,7 +1648,7 @@ void salesOrder::sEdit()
     params.append("mode", "view");
   else if (_mode == cViewQuote)
     params.append("mode", "viewQuote");
-  else if ((_mode == cNew) || (_mode == cEdit) &&
+  else if (((_mode == cNew) || (_mode == cEdit)) &&
            _soitem->currentItem()->rawValue("coitem_subnumber").toInt() != 0)
     params.append("mode", "view");
   else if ((_mode == cNew) || (_mode == cEdit))
