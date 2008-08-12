@@ -726,7 +726,7 @@ void transferOrder::sHandleOrderNumber()
       query.prepare( "SELECT tohead_id "
                      "FROM tohead "
                      "WHERE (tohead_number=:tohead_number);" );
-      query.bindValue(":tohead_number", _orderNumber->text().toInt());
+      query.bindValue(":tohead_number", _orderNumber->text());
       query.exec();
       if (query.first())
       {
@@ -778,7 +778,7 @@ void transferOrder::sNew()
   ParameterList params;
   params.append("tohead_id",	_toheadid);
   params.append("srcwarehouse_id", _srcWhs->id());
-  params.append("orderNumber",	_orderNumber->text().toInt());
+  params.append("orderNumber",	_orderNumber->text());
   params.append("orderDate",	_orderDate->date());
   params.append("taxauth_id",	_taxauth->id());
   params.append("curr_id",	_freightCurrency->id());
@@ -1490,7 +1490,7 @@ void transferOrder::dropEvent(QDropEvent *pEvent)
 
       ParameterList params;
       params.append("tohead_id",	_toheadid);
-      params.append("orderNumber", _orderNumber->text().toInt());
+      params.append("orderNumber", _orderNumber->text());
       params.append("item_id", target.toInt());
       params.append("curr_id", _freight->id());
       params.append("orderDate", _orderDate->date());
