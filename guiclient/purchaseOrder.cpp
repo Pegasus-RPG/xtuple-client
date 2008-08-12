@@ -501,7 +501,7 @@ void purchaseOrder::createHeader()
 	     "  :pohead_orderdate, :pohead_curr_id, false );" );
   q.bindValue(":pohead_id", _poheadid);
   q.bindValue(":pohead_agent_username", _agent->currentText());
-  q.bindValue(":pohead_number", _orderNumber->text().toInt());
+  q.bindValue(":pohead_number", _orderNumber->text());
   q.bindValue(":pohead_vend_id", _vendor->id());
   q.bindValue(":pohead_orderdate", _orderDate->date());
   q.bindValue(":pohead_curr_id", _poCurrency->id());
@@ -734,7 +734,7 @@ void purchaseOrder::sNew()
                "WHERE (pohead_id=:pohead_id);" );
     q.bindValue(":pohead_warehous_id", _warehouse->id());
     q.bindValue(":pohead_vend_id", _vendor->id());
-    q.bindValue(":pohead_number", _orderNumber->text().toInt());
+    q.bindValue(":pohead_number", _orderNumber->text());
     q.bindValue(":pohead_id", _poheadid);
     q.bindValue(":pohead_curr_id", _poCurrency->id());
     q.bindValue(":pohead_orderdate", _orderDate->date());
@@ -1005,7 +1005,7 @@ void purchaseOrder::sHandleOrderNumber()
     q.prepare( "SELECT pohead_id "
                "FROM pohead "
                "WHERE (pohead_number=:pohead_number);" );
-    q.bindValue(":pohead_number", _orderNumber->text().toInt());
+    q.bindValue(":pohead_number", _orderNumber->text());
     q.exec();
     if (q.first())
     {
@@ -1047,7 +1047,7 @@ void purchaseOrder::sHandleOrderNumber()
               "   SET pohead_number=:pohead_number"
               " WHERE (pohead_id=:pohead_id);");
     q.bindValue(":pohead_id", _poheadid);
-    q.bindValue(":pohead_number", _orderNumber->text().toInt());
+    q.bindValue(":pohead_number", _orderNumber->text());
     if(!q.exec())
       systemError(this, tr("A System Error occurred at %1::%2.")
                         .arg(__FILE__)
