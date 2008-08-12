@@ -308,6 +308,16 @@ void incident::sCancel()
       return;
     }
   }
+  
+  if (cNew == _mode)
+  {
+    q.prepare("SELECT releaseIncidentNumber(:incidentNumber);" );
+    q.bindValue(":incidentNumber", _number->text().toInt());
+    q.exec();
+    if (q.lastError().type() != QSqlError::None)
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  }
+
   reject();
 }
 
