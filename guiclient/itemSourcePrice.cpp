@@ -204,7 +204,7 @@ void itemSourcePrice::populate()
 {
   q.prepare( "SELECT formatQty(itemsrcp_qtybreak) AS qtybreak,"
              "       itemsrcp_price, itemsrcp_curr_id,"
-             "       itemsrcp_itemsrc_id "
+             "       itemsrcp_updated, itemsrcp_itemsrc_id "
              "FROM itemsrcp "
              "WHERE (itemsrcp_id=:itemsrcp_id);" );
   q.bindValue(":itemsrcp_id", _itemsrcpid);
@@ -214,6 +214,7 @@ void itemSourcePrice::populate()
     _itemsrcid = q.value("itemsrcp_itemsrc_id").toInt();
     _qtyBreak->setText(q.value("qtybreak").toString());
     _price->setLocalValue(q.value("itemsrcp_price").toDouble());
+    _price->setEffective(q.value("itemsrcp_updated").toDate());
     _price->setId(q.value("itemsrcp_curr_id").toInt());
   }
 }
