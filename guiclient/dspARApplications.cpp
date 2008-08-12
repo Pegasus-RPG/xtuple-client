@@ -84,16 +84,17 @@ dspARApplications::dspARApplications(QWidget* parent, const char* name, Qt::WFla
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
     
-  _arapply->addColumn(tr("Cust. #"),   _orderColumn, Qt::AlignCenter );
-  _arapply->addColumn(tr("Customer"),            -1, Qt::AlignLeft   );
-  _arapply->addColumn(tr("Date"),       _dateColumn, Qt::AlignCenter );
-  _arapply->addColumn("hidden source type",      10, Qt::AlignCenter );
-  _arapply->addColumn(tr("Source"),	  _itemColumn, Qt::AlignCenter );
-  _arapply->addColumn(tr("Doc #"),     _orderColumn, Qt::AlignCenter );
-  _arapply->addColumn("hidden target type",      10, Qt::AlignCenter );
-  _arapply->addColumn(tr("Apply-To"),   _itemColumn, Qt::AlignCenter );
-  _arapply->addColumn(tr("Doc #"),     _orderColumn, Qt::AlignCenter );
-  _arapply->addColumn(tr("Amount"), _bigMoneyColumn, Qt::AlignRight  );
+  _arapply->addColumn(tr("Cust. #"),     _orderColumn, Qt::AlignCenter );
+  _arapply->addColumn(tr("Customer"),              -1, Qt::AlignLeft   );
+  _arapply->addColumn(tr("Date"),         _dateColumn, Qt::AlignCenter );
+  _arapply->addColumn("hidden source type",        10, Qt::AlignCenter );
+  _arapply->addColumn(tr("Source"),	      _itemColumn, Qt::AlignCenter );
+  _arapply->addColumn(tr("Doc #"),       _orderColumn, Qt::AlignCenter );
+  _arapply->addColumn("hidden target type",        10, Qt::AlignCenter );
+  _arapply->addColumn(tr("Apply-To"),     _itemColumn, Qt::AlignCenter );
+  _arapply->addColumn(tr("Doc #"),       _orderColumn, Qt::AlignCenter );
+  _arapply->addColumn(tr("Amount"),      _moneyColumn, Qt::AlignRight  );
+  _arapply->addColumn(tr("Currency"), _currencyColumn, Qt::AlignLeft   );
 
   _arapply->hideColumn(3);
   _arapply->hideColumn(6);
@@ -322,11 +323,11 @@ void dspARApplications::sFillList()
                "         END AS source,"
                "       arapply_target_doctype,"
                "       TEXT(arapply_target_docnumber) AS target,"
-               "       (curr_symbol || formatMoney(arapply_applied)) AS f_applied,"
+               "       formatMoney(arapply_applied) AS f_applied,"
+               "       currConcat(arapply_curr_id) AS currAbbr,"
                "       currtobase(arapply_curr_id,arapply_applied,arapply_postdate) AS applied "
-               "FROM arapply, custinfo, curr_symbol "
+               "FROM arapply, custinfo "
                "WHERE ( (arapply_cust_id=cust_id)"
-               " AND (arapply_curr_id=curr_id)"
                " AND (arapply_postdate BETWEEN <? value(\"startDate\") ?> AND <? value(\"endDate\") ?>)"
                " AND (arapply_source_doctype IN ("
 	       "<? if exists(\"creditMemos\") ?>"
@@ -428,7 +429,7 @@ void dspARApplications::sFillList()
 				 q.value("source"),
 				 q.value("arapply_target_doctype").toString(),
 				 targetdoctype,
-				 q.value("target"), q.value("f_applied") );
+				 q.value("target"), q.value("f_applied"), q.value("currAbbr") );
 
       total += q.value("applied").toDouble();
     }
