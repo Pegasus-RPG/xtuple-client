@@ -607,6 +607,16 @@ void salesOrderItem::prepare()
 {
   if (_mode == cNew)
   {
+//  Grab the next coitem_id
+    q.exec("SELECT NEXTVAL('coitem_coitem_id_seq') AS _coitem_id");
+    if (q.first())
+      _soitemid = q.value("_coitem_id").toInt();
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+    
     q.prepare( "SELECT (COALESCE(MAX(coitem_linenumber), 0) + 1) AS _linenumber "
                "FROM coitem "
                "WHERE (coitem_cohead_id=:coitem_id)" );
@@ -635,6 +645,16 @@ void salesOrderItem::prepare()
   }
   else if (_mode == cNewQuote)
   {
+  //  Grab the next quitem_id
+    q.exec("SELECT NEXTVAL('quitem_quitem_id_seq') AS _quitem_id");
+    if (q.first())
+      _soitemid = q.value("_quitem_id").toInt();
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+      
     q.prepare( "SELECT (COALESCE(MAX(quitem_linenumber), 0) + 1) AS n_linenumber "
                "FROM quitem "
                "WHERE (quitem_quhead_id=:quhead_id)" );
@@ -777,23 +797,6 @@ void salesOrderItem::sSave()
 
   if (_mode == cNew)
   {
-//  Grab the next coitem_id
-    q.exec("SELECT NEXTVAL('coitem_coitem_id_seq') AS _coitem_id");
-    if (q.first())
-      _soitemid = q.value("_coitem_id").toInt();
-    else if (q.lastError().type() != QSqlError::None)
-    {
-      rollback.exec();
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
-    else
-    {
-      rollback.exec();
-      reject();
-      return;
-    }
-
     q.prepare( "INSERT INTO coitem "
                "( coitem_id, coitem_cohead_id, coitem_linenumber, coitem_itemsite_id,"
                "  coitem_status, coitem_scheddate, coitem_promdate,"
