@@ -1155,6 +1155,7 @@ void salesOrder::populateOrderNumber()
         return;
       }
     }
+    _userEnteredOrderNumber = FALSE;
   }
 
   else if (_mode == cNewQuote)
@@ -1182,10 +1183,9 @@ void salesOrder::populateOrderNumber()
         systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
         return;
       }
+      _userEnteredOrderNumber = FALSE;
     }
   }
-
-  _userEnteredOrderNumber = FALSE;
 }
 
 void salesOrder::sSetUserEnteredOrderNumber()
@@ -1302,25 +1302,36 @@ void salesOrder::sHandleOrderNumber()
       query.exec();
       if (query.first())
       {
-        _mode = cEditQuote;
-        _soheadid = query.value("quhead_id").toInt();
-        populate();
-        _orderNumber->setEnabled(FALSE);
-        _cust->setReadOnly(TRUE);
+        QMessageBox::warning( this, tr("Quote Order Number Already exists."),
+                                 tr( "<p>The Quote Order Number you have entered"
+                                     "already exists. Please enter a new one." ) );
+        clear();
+        _orderNumber->setFocus();
+        return;
       }
       else
       {
         QString orderNumber = _orderNumber->text();
-        clear();
-        if(_metrics->value("QUNumberGeneration") == "S")
-          query.prepare( "SELECT releaseSoNumber(:orderNumber);" );
+        if((_metrics->value("QUNumberGeneration") == "S") ||
+           (_metrics->value("QUNumberGeneration") == "A")) 
+        {	
+          clear();
+          if(_metrics->value("QUNumberGeneration") == "S")
+            query.prepare( "SELECT releaseSoNumber(:orderNumber);" );
+          else
+            query.prepare( "SELECT releaseQUNumber(:orderNumber);" );
+          query.bindValue(":orderNumber", _orderNumber->text().toInt());
+          query.exec();
+          _orderNumber->setText(orderNumber);
+          _userEnteredOrderNumber = FALSE;
+          _orderNumber->setEnabled(FALSE);
+        }
         else
-          query.prepare( "SELECT releaseQUNumber(:orderNumber);" );
-        query.bindValue(":orderNumber", _orderNumber->text().toInt());
-        query.exec();
-        _orderNumber->setText(orderNumber);
-        _userEnteredOrderNumber = FALSE;
-        _orderNumber->setEnabled(FALSE);
+        {
+          _orderNumber->setText(orderNumber);
+          _mode = cNewQuote;
+          _orderNumber->setEnabled(FALSE);
+        }
       }
     }
   }
