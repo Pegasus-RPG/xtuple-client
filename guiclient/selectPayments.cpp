@@ -96,6 +96,7 @@ selectPayments::selectPayments(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_vend, SIGNAL(newId(int)), this, SLOT(sFillList()));
   connect(_vendorType, SIGNAL(lostFocus()), this, SLOT(sFillList()));
   connect(_vendorTypes, SIGNAL(newID(int)), this, SLOT(sFillList()));
+  connect(_bankaccnt, SIGNAL(newID(int)), this, SLOT(sFillList()));
   connect(dueButtonGroup, SIGNAL(buttonClicked(int)), this, SLOT(sFillList()));
   connect(vendorButtonGroup, SIGNAL(buttonClicked(int)), this, SLOT(sFillList()));
 
@@ -402,6 +403,18 @@ void selectPayments::sFillList()
     ||(_dueBetween->isChecked() && !_dueBetweenDates->allValid()))
     return;
 
+  int _currid = -1;
+  if (_bankaccnt->isValid())
+  {
+    q.prepare( "SELECT bankaccnt_curr_id "
+               "FROM bankaccnt "
+               "WHERE (bankaccnt_id=:bankaccnt_id);" );
+    q.bindValue(":bankaccnt_id", _bankaccnt->id());
+    q.exec();
+    if (q.first())
+      _currid = q.value("bankaccnt_curr_id").toInt();
+  }
+  
   _apopen->clear();
 
   QString sql( "SELECT apopen_id, COALESCE(apselect_id, -1) AS apselectid,"
@@ -450,6 +463,9 @@ void selectPayments::sFillList()
   else if(_dueBetween->isChecked())
     sql += " AND (apopen_duedate BETWEEN :startDate AND :endDate)";
 
+  if (_currid != -1)
+    sql += " AND (apopen_curr_id=:curr_id)";
+
   sql += ") "
          "GROUP BY apopen_id, apselect_id, vend_number, vend_name,"
          "         apopen_doctype, apopen_docnumber, apopen_ponumber,"
@@ -467,6 +483,7 @@ void selectPayments::sFillList()
     q.bindValue(":olderDate", _dueOlderDate->date());
   else if(_dueBetween->isChecked())
     _dueBetweenDates->bindValue(q);
+  q.bindValue(":curr_id", _currid);
   q.exec();
   double running = 0;
   XTreeWidgetItem * last = 0;
