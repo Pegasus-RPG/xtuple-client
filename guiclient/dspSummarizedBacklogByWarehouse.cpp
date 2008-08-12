@@ -98,7 +98,7 @@ dspSummarizedBacklogByWarehouse::dspSummarizedBacklogByWarehouse(QWidget* parent
     _so->addColumn(tr("Cost"),   _moneyColumn, Qt::AlignRight, true, "cost");
     _so->addColumn(tr("Margin"), _moneyColumn, Qt::AlignRight, true, "margin");
   }
-  _so->addColumn(tr("Time Recieved"),       _dateColumn, Qt::AlignRight, false, "cohead_created");
+  _so->addColumn(tr("Time Received"),       _dateColumn, Qt::AlignRight, false, "cohead_created");
   _so->addColumn(tr("Pack List Batch"),     _dateColumn, Qt::AlignRight, false, "packed");
 
   _so->setRootIsDecorated(TRUE);
