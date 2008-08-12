@@ -315,6 +315,8 @@ void dspARApplications::sFillList()
     return;
   }
 
+  _arapply->clear();
+
   QString sql( "SELECT arapply_id, cust_number, cust_name,"
                "       formatDate(arapply_postdate) AS f_postdate,"
 	       "       arapply_source_doctype, arapply_fundstype, "
@@ -374,8 +376,6 @@ void dspARApplications::sFillList()
   q = mql.toQuery(params);
   if (q.first())
   {
-    _arapply->clear();
-
     double total = 0;
 
     XTreeWidgetItem* last = 0;
