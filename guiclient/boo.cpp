@@ -187,7 +187,7 @@ enum SetResponse boo::set(const ParameterList &pParams)
 
 void boo::sSave()
 {
-  if (q.first())
+  if (_mode == cEdit )
   {
 	q.prepare( "UPDATE boohead "
                "SET boohead_docnum=:boohead_docnum, boohead_leadtime=:boohead_leadtime,"
@@ -342,12 +342,7 @@ void boo::sMoveDown()
   omfgThis->sBOOsUpdated(_booitem->id(), TRUE);
 }
 
-void boo::sFillList()
-{
-  sFillList(-1, TRUE);
-}
-
-void boo::sFillList(int pItemid, bool pLocalUpdate)
+void boo::sFillList(int pItemid)
 {
   if (_item->itemType() == "J")
   {
@@ -377,7 +372,7 @@ void boo::sFillList(int pItemid, bool pLocalUpdate)
              "       boohead_closewo "
              "FROM boohead "
              "WHERE ((boohead_item_id=:item_id) "
-			 "AND (boohead_rev_id=:revision_id));" );
+             "AND (boohead_rev_id=:revision_id));" );
   q.bindValue(":item_id", _item->id());
   q.bindValue(":revision_id", _revision->id());
   q.exec();
@@ -394,7 +389,7 @@ void boo::sFillList(int pItemid, bool pLocalUpdate)
   if (_revision->description() == "Inactive")
   {
 	  _save->setEnabled(FALSE);
-      _new->setEnabled(FALSE);
+          _new->setEnabled(FALSE);
 	  _documentNum->setEnabled(FALSE);
 	  _revisionDate->setEnabled(FALSE);
 	  _closeWO->setEnabled(FALSE);
@@ -405,7 +400,7 @@ void boo::sFillList(int pItemid, bool pLocalUpdate)
   if ((_revision->description() == "Pending") || (_revision->description() == "Active"))
   {
 	  _save->setEnabled(TRUE);
-      _new->setEnabled(TRUE);
+          _new->setEnabled(TRUE);
 	  _documentNum->setEnabled(TRUE);
 	  _revisionDate->setEnabled(TRUE);
 	  _closeWO->setEnabled(TRUE);
