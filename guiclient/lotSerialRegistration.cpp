@@ -164,6 +164,7 @@ enum SetResponse lotSerialRegistration::set(const ParameterList &pParams)
     {
       _mode = cEdit;
       populate();
+      _itemGroup->setEnabled(false);
       _save->setFocus();
     }
     else if (param.toString() == "view")
