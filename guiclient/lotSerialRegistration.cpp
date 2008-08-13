@@ -82,6 +82,7 @@ lotSerialRegistration::lotSerialRegistration(QWidget* parent, const char* name, 
   connect(_save,	SIGNAL(clicked()),              this, SLOT(sSave()));
   connect(_soldDate,    SIGNAL(newDate(const QDate&)),  this, SLOT(sDateUpdated()));
   connect(_crmacct,     SIGNAL(newId(int)),             this, SLOT(sSetSoCustId()));
+  connect(_so,          SIGNAL(newId(int)),             this, SLOT(sSetSoId()));
   connect(_deleteChar,  SIGNAL(clicked()),              this, SLOT(sDeleteCharass()));
   connect(_editChar,    SIGNAL(clicked()),              this, SLOT(sEditCharass()));
   connect(_newChar,     SIGNAL(clicked()),              this, SLOT(sNewCharass()));
@@ -125,6 +126,10 @@ enum SetResponse lotSerialRegistration::set(const ParameterList &pParams)
   param = pParams.value("crmacct_id", &valid);
   if (valid)
     _crmacct->setId(param.toInt());
+  
+  param = pParams.value("item_id", &valid);
+  if (valid)
+    _item->setId(param.toInt());
   
   param = pParams.value("ls_id", &valid);
   if (valid)
@@ -444,7 +449,8 @@ void lotSerialRegistration::sSetSoCustId()
     if (cq.first())
     {
       _so->setType(cSoCustomer);
-      _so->setCustId(cq.value("crmacct_cust_id").toInt()); 
+      _so->setCustId(cq.value("crmacct_cust_id").toInt());
+      _shipment->setId(-1);
     }
     else if(cq.lastError().type() != QSqlError::None)
     { 
@@ -454,7 +460,16 @@ void lotSerialRegistration::sSetSoCustId()
   }
   else
   {
+    _shipment->setId(-1);
     _so->setCustId(-1);
     _so->setType(cSoReleased);
+  }
+}
+
+void lotSerialRegistration::sSetSoId()
+{
+  if (_so->id() != -1)
+  {
+      _shipment->setId(-1);
   }
 }

@@ -213,6 +213,7 @@ void lotSerial::sNewReg()
 {
   ParameterList params;
   params.append("mode", "new");
+  params.append("item_id", _item->id());
   params.append("ls_id", _lotSerial->id());
 
   lotSerialRegistration newdlg(this, "", TRUE);

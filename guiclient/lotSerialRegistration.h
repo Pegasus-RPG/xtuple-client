@@ -85,6 +85,7 @@ public slots:
     virtual void sFillList();
     virtual void sDateUpdated();
     virtual void sSetSoCustId();
+    virtual void sSetSoId();
 
 protected slots:
     virtual void languageChange();
