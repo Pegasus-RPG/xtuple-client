@@ -74,6 +74,7 @@ public slots:
     virtual void sPrint();
     virtual void sNew();
     virtual void sView();
+    virtual void sVoid();
     virtual void sFillList();
     virtual void sApply();
 

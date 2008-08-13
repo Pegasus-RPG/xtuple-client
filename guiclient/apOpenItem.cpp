@@ -362,7 +362,8 @@ void apOpenItem::populate()
              "       apopen_terms_id, apopen_notes, apopen_accnt_id, "
 	     "       apopen_curr_id "
              "FROM apopen "
-             "WHERE (apopen_id=:apopen_id);" );
+             "WHERE (apopen_id=:apopen_id)"
+		  " AND (apopen_void = FALSE) ;" );
   q.bindValue(":apopen_id", _apopenid);
   q.exec();
   if (q.first())

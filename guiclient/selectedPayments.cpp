@@ -185,6 +185,7 @@ void selectedPayments::sFillList()
                "FROM apopen, apselect, vend, bankaccnt "
                "WHERE ( (apopen_vend_id=vend_id)"
                "  AND   (apselect_apopen_id=apopen_id)"
+		  " AND (apopen_void = FALSE) "
                "  AND   (apselect_bankaccnt_id=bankaccnt_id)" 
 	       "<? if exists(\"bankaccntid\") ?>"
 	       "  AND   (bankaccnt_id=<? value(\"bankaccntid\") ?>)"

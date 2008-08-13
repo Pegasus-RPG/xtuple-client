@@ -155,6 +155,7 @@ void postVouchers::sPost()
       q.exec( "SELECT apopen_id "
               "FROM apopen "
               "WHERE (NOT apopen_posted) "
+    		  " AND (apopen_void = FALSE) "
               "LIMIT 1;" );
       if (!q.first())
         QMessageBox::information( this, tr("No A/P Open Items"),

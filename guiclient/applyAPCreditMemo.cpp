@@ -237,6 +237,7 @@ void applyAPCreditMemo::populate()
 	     "				CURRENT_DATE)), 0) AS f_applied "
              "FROM apopen LEFT OUTER JOIN apcreditapply ON (apcreditapply_source_apopen_id=apopen_id) "
              "WHERE (apopen_id=:apopen_id) "
+		  " AND (apopen_void = FALSE) "
              "GROUP BY apopen_vend_id, apopen_docnumber, apopen_docdate,"
              "         apopen_curr_id, apopen_amount, apopen_paid;" );
   q.bindValue(":apopen_id", _apopenid);
@@ -286,6 +287,7 @@ void applyAPCreditMemo::populate()
              "         ON (prepared_apopen_id=apopen_id)"
              " WHERE ( (apopen_doctype IN ('V', 'D'))"
              "   AND   (apopen_open)"
+		     "   AND (apopen_void = FALSE) "
              "   AND   ((apopen_amount - apopen_paid - COALESCE(selected,0.0) - COALESCE(prepared,0.0)) > 0.0)"
              "   AND   (apopen_vend_id=:vend_id) ) "
              " ORDER BY apopen_duedate, apopen_docnumber;" );

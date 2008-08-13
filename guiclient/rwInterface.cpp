@@ -515,6 +515,7 @@ bool rwInterface::exportApopen(QWidget *pParent)
           "FROM apopen, vend "
           "WHERE ( (apopen_vend_id=vend_id)"
           " AND (NOT apopen_posted)"
+		  " AND (apopen_void = FALSE) "
           " AND (NOT vend_exported) ) "
           "LIMIT 1;" );
   qApp->restoreOverrideCursor();
@@ -541,6 +542,7 @@ bool rwInterface::exportApopen(QWidget *pParent)
             "WHERE ( (apopen_vend_id=vend_id)"
             " AND (findAPAccount(vend_id)=accnt_id)"
             " AND (NOT apopen_posted) ) "
+    		" AND (apopen_void = FALSE) "
             "ORDER BY vend_number;" );
     if (q.first())
     {

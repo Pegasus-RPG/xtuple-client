@@ -245,6 +245,7 @@ void dspAPOpenItemsByVendor::sFillList()
              " WHERE ( (COALESCE(apopen_closedate,date :asofdate + integer '1')>:asofdate) "
              "   AND   (apopen_docdate<=:asofdate)"
              "   AND   (apopen_vend_id=:vend_id) "
+		     "   AND (apopen_void = FALSE) "
              "   AND   (apopen_duedate BETWEEN :startDate AND :endDate) "
              "   AND   ((currtobase(apopen_curr_id,apopen_amount,:asofdate) - apapplied(apopen_id,:asofdate)) > 0)) "
              " ORDER BY apopen_docdate;" );

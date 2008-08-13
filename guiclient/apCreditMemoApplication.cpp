@@ -156,7 +156,8 @@ void apCreditMemoApplication::populate()
              "                           AND  (apopen_id=:apopen_id))"
              "                         GROUP BY apopen_id) AS sub2"
              "         ON (prepared_apopen_id=apopen_id)"
-             " WHERE (apopen_id=:apopen_id);" );
+             " WHERE (apopen_id=:apopen_id)"
+             " AND (apopen_void = FALSE) ;" );
   q.bindValue(":apopen_id", _targetApopenid);
   q.exec();
   if (q.first())
