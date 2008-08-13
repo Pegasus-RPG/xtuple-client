@@ -338,9 +338,14 @@ void characteristicAssignment::handleTargetType()
     setCaption(tr("CRM Account Characteristic"));
     boolColumn = "char_crmaccounts";
   }
-  else if (_targetType == "LS" || _targetType == "LSR")
+  else if (_targetType == "LS")
   {
     setCaption(tr("Lot Serial Characteristic"));
+    boolColumn = "char_lotserial";
+  }
+  else if (_targetType == "LSR")
+  {
+    setCaption(tr("Lot/Serial Registration Characteristic"));
     boolColumn = "char_lotserial";
   }
   else if (_targetType == "OPP")
