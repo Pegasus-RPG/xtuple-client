@@ -1382,16 +1382,13 @@ void salesOrderItem::sPopulateItemsiteInfo()
       {
         if (_item->itemType() == "M")
           _createOrder->setChecked(itemsite.value("itemsite_createwo").toBool());
-
-                else if (_item->itemType() == "J")
-                {
-                  _createOrder->setChecked(TRUE);
-                  _createOrder->setEnabled(FALSE);
-                }
-
+        else if (_item->itemType() == "J")
+        {
+          _createOrder->setChecked(TRUE);
+          _createOrder->setEnabled(FALSE);
+        }
         else if (_item->itemType() == "P")
           _createOrder->setChecked(itemsite.value("itemsite_createpr").toBool());
-
         else
         {
           _createOrder->setChecked(FALSE);
@@ -1660,7 +1657,7 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
       else
       {
         if ( (_mode == cNew) || (_mode == cEdit) )
-          _createOrder->setEnabled(TRUE);
+          _createOrder->setEnabled(_item->itemType() != "K");
 
         _createOrder->setTitle(tr("C&reate Order"));
         _orderQtyLit->setText(tr("Order Q&ty.:"));
@@ -1830,7 +1827,7 @@ void salesOrderItem::sDetermineAvailability( bool p )
       else
         _available->setPaletteForegroundColor(QColor("black"));
 
-      if ((_item->itemType() == "M") || (_item->itemType() == "J"))
+      if ((_item->itemType() == "M") || (_item->itemType() == "J") || (_item->itemType() == "K"))
       {
         if(_showIndented->isChecked())
         {
