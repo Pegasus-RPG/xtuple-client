@@ -80,8 +80,8 @@ enterPoReturn::enterPoReturn(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_post,	SIGNAL(clicked()),	this,	SLOT(sPost()));
   connect(_showClosed,SIGNAL(toggled(bool)),	this,	SLOT(sShowClosed()));
 
-  _po->setType(cPOOpen);
-
+  sShowClosed();
+  
   _poitem->addColumn(tr("#"),            _whsColumn,  Qt::AlignCenter );
   _poitem->addColumn(tr("Site"),         _whsColumn,  Qt::AlignLeft   );
   _poitem->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft   );
@@ -143,6 +143,13 @@ void enterPoReturn::sPost()
 			       "and enter a Return before trying to Post."));
       return;
     }
+  //Offer to create credit memo
+    if ( (_privileges->check("MaintainAPMemos")) && (q.value("poitem_status").toString() == "C") )
+      if ( QMessageBox::question( this, tr("Create Credit Memo"),
+                                        tr("One or more line items on this P/O are closed. \n"
+                                           "Would you like to automatically create a credit memo against this return?"),
+                                        tr("&Yes"), tr("&No"), QString::null, 0, 1 ) == 0 )
+        createMemo = true;
   }
   else if (q.lastError().type() != QSqlError::NoError)
   {
@@ -187,13 +194,6 @@ void enterPoReturn::sPost()
     }
   }
   
-  //Offer to create credit memo
-  if ( (_privileges->check("MaintainAPMemos")) && (q.value("poitem_status").toString() == "C") )
-    if ( QMessageBox::question( this, tr("Create Credit Memo"),
-                             tr("One or more line items on this P/O are closed. \n"
-								"Would you like to automatically create a credit memo against this return?"),
-                             tr("&Yes"), tr("&No"), QString::null, 0, 1 ) == 0 )
-      createMemo = true;
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
@@ -232,6 +232,15 @@ void enterPoReturn::sPost()
     return;
   }
 
+  if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == XDialog::Rejected)
+  {
+    rollback.exec();
+    QMessageBox::information( this, tr("Enter PO Return"), tr("Transaction Canceled") );
+    return;
+  }
+  
+  q.exec("COMMIT;");
+
   // if we are creating the credit memo go ahead and loop the returns that
   // we have just posted and create the credit memos.
   if(createMemo)
@@ -244,24 +253,10 @@ void enterPoReturn::sPost()
       postPoReturnCreditMemo newdlg(this, "", TRUE);
       newdlg.set(params);
 
-      if(newdlg.exec() != XDialog::Accepted)
-      {
-        rollback.exec();
-        return;
-      }
+      newdlg.exec();
     }
   }
 
-  if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == XDialog::Rejected)
-  {
-    rollback.exec();
-    QMessageBox::information( this, tr("Enter PO Return"), tr("Transaction Canceled") );
-    return;
-  }
-  
-  q.exec("COMMIT;");
-
-  //Offer option to post credit memo for closed line items.	
 
   if (_captive)
     close();
