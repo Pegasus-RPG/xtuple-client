@@ -268,9 +268,9 @@ void lotSerialRegistration::populate()
     _lsregid = q.value("lsreg_id").toInt();
     _regNumber->setText(q.value("lsreg_number").toString());
     _type->setId(q.value("lsreg_regtype_id").toInt());
-    _lotSerial->setId(q.value("lsreg_ls_id").toInt());
     _qty->setDouble(q.value("lsreg_qty").toDouble());
     _item->setId(q.value("ls_item_id").toInt());
+    _lotSerial->setId(q.value("lsreg_ls_id").toInt());
     _regDate->setDate(q.value("lsreg_regdate").toDate());
     _soldDate->setDate(q.value("lsreg_solddate").toDate());
     _expireDate->setDate(q.value("lsreg_expiredate").toDate());
