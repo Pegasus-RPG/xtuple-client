@@ -76,17 +76,19 @@ reconcileBankaccount::reconcileBankaccount(QWidget* parent, const char* name, Qt
 
     (void)statusBar();
 
-    connect(_addAdjustment, SIGNAL(clicked()), this, SLOT(sAddAdjustment()));
-    connect(_bankaccnt, SIGNAL(newID(int)), this, SLOT(sBankaccntChanged()));
-    connect(_cancel,	SIGNAL(clicked()),  this, SLOT(sCancel()));
-    connect(_checks,   SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(sChecksToggleCleared()));
-    connect(_endBal,	SIGNAL(lostFocus()), this, SLOT(populate()));
-    connect(_openBal,	SIGNAL(lostFocus()), this, SLOT(populate()));
+    connect(_addAdjustment, SIGNAL(clicked()),  this, SLOT(sAddAdjustment()));
+    connect(_bankaccnt, SIGNAL(newID(int)),     this, SLOT(sBankaccntChanged()));
+    connect(_cancel,	SIGNAL(clicked()),      this, SLOT(sCancel()));
+    connect(_checks,    SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(sChecksToggleCleared()));
+    connect(_endBal,	SIGNAL(lostFocus()),    this, SLOT(populate()));
+    connect(_openBal,	SIGNAL(lostFocus()),    this, SLOT(populate()));
     connect(_receipts,	SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(sReceiptsToggleCleared()));
-    connect(_reconcile,	SIGNAL(clicked()), this, SLOT(sReconcile()));
-    connect(_save,	SIGNAL(clicked()), this, SLOT(sSave()));
-    connect(_update,	SIGNAL(clicked()), this, SLOT(populate()));
-
+    connect(_reconcile,	SIGNAL(clicked()),      this, SLOT(sReconcile()));
+    connect(_save,	    SIGNAL(clicked()),      this, SLOT(sSave()));
+    connect(_update,	SIGNAL(clicked()),      this, SLOT(populate()));
+    connect(_startDate, SIGNAL(newDate(QDate)), this, SLOT(sDateChanged()));
+    connect(_endDate,   SIGNAL(newDate(QDate)), this, SLOT(sDateChanged()));
+    
     _receipts->addColumn(tr("Cleared"),   _ynColumn * 2, Qt::AlignCenter );
     _receipts->addColumn(tr("Date"),        _dateColumn, Qt::AlignCenter );
     _receipts->addColumn(tr("Doc. Number"), _itemColumn, Qt::AlignLeft   );
@@ -100,6 +102,7 @@ reconcileBankaccount::reconcileBankaccount(QWidget* parent, const char* name, Qt
     _checks->addColumn(tr("Amount"),  _bigMoneyColumn, Qt::AlignRight  );
     
     _bankrecid = -1;	// do this before _bankaccnt->populate()
+    _datesAreOK = false;
     
     _bankaccnt->populate("SELECT bankaccnt_id,"
 			 "       (bankaccnt_name || '-' || bankaccnt_descrip) "
@@ -222,6 +225,17 @@ bool reconcileBankaccount::sSave(bool closeWhenDone)
 
 void reconcileBankaccount::sReconcile()
 {
+  if(!_datesAreOK)
+  {
+    QMessageBox::critical( this, tr("Dates already reconciled"),
+	        tr("The date range you have entered already has "
+	           "reconciled dates in it. Please choose a different "
+	           "date range.") );
+    _startDate->setFocus();
+    _datesAreOK = false;
+    return;
+  }
+	
   if(_bankrecid == -1)
   {
     QMessageBox::critical( this, tr("Cannot Reconcile Account"),
@@ -796,3 +810,39 @@ void reconcileBankaccount::sBankaccntChanged()
 
   populate();
 }
+
+void reconcileBankaccount::sDateChanged()
+{
+  q.prepare("SELECT TRUE AS reconciled "
+            "FROM bankrec "
+            "WHERE ((bankrec_bankaccnt_id = :bankaccnt_id) "
+            "AND (bankrec_opendate <= :end_date) "
+            "AND (bankrec_enddate >= :start_date)) "
+            "GROUP BY bankrec_bankaccnt_id");
+  q.bindValue(":bankaccnt_id", _bankaccnt->id());
+  q.bindValue(":end_date", _endDate->date().toString(Qt::ISODate));
+  q.bindValue(":start_date", _startDate->date().toString(Qt::ISODate));
+
+  q.exec();
+  if(q.first())
+  {
+    QMessageBox::critical( this, tr("Dates already reconciled"),
+	        tr("The date range you have entered already has "
+	           "reconciled dates in it. Please choose a different "
+	           "date range.") );
+    _startDate->setFocus();
+    _datesAreOK = false;
+    return;
+  }
+  else if(q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    _datesAreOK = false;
+	return;
+  }
+  else
+  {
+	_datesAreOK = true;
+  }
+}
+

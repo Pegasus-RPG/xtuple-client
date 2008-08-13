@@ -81,12 +81,14 @@ public slots:
     virtual void sReceiptsToggleCleared();
     virtual void sReconcile();
     virtual bool sSave(bool = true);
+    virtual void sDateChanged();
 
 protected slots:
     virtual void languageChange();
 
 private:
     int _bankrecid;
+    bool _datesAreOK;
 
 };
 
