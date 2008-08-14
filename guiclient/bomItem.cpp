@@ -178,8 +178,8 @@ enum SetResponse bomItem::set(const ParameterList &pParams)
 	return UndefinedError;
       }
   
-      //Set up configuration tab if parent item is configured
-      q.prepare("SELECT item_config "
+      //Set up configuration tab if parent item is configured or kit
+      q.prepare("SELECT item_config, item_type "
                 "FROM item "
                 "WHERE (item_id=:item_id); ");
       q.bindValue(":item_id", _itemid);
@@ -197,6 +197,14 @@ enum SetResponse bomItem::set(const ParameterList &pParams)
                                    "ORDER BY char_name; ").arg(_itemid));
         else
           _tab->removeTab(_tab->indexOf(_configurationTab));
+          
+        if (q.value("item_type").toString() == "K")
+        {
+          if (_metrics->boolean("AllowInactiveBomItems"))
+            _item->setType(ItemLineEdit::cKitComponents);
+          else
+            _item->setType(ItemLineEdit::cKitComponents | ItemLineEdit::cActive);
+        }
       }
 
       _item->setFocus();
