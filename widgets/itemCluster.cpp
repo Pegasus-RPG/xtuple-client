@@ -835,6 +835,8 @@ QString buildItemLineEditTitle(unsigned int pType, const QString pPost)
     caption += ItemLineEdit::tr("Costing ");
   else if (items == ItemLineEdit::cGeneralComponents)
     caption += ItemLineEdit::tr("Component ");
+  else if (items == ItemLineEdit::cKitComponents)
+    caption += ItemLineEdit::tr("Kit Components ");
 
   if(!pPost.isEmpty())
     caption += pPost;

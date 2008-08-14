@@ -104,12 +104,6 @@ friend class ItemCluster;
       // have this mask defined here for convenience.
       cAllItemTypes_Mask   = 0x0000FFFF,
 
-      // Groups of Item Types
-      cGeneralManufactured = cManufactured | cPhantom | cBreeder,
-      cGeneralPurchased    = cPurchased | cOutsideProcess,
-      cGeneralComponents   = cManufactured | cPhantom | cCoProduct | cPurchased | cOutsideProcess,
-      cGeneralInventory    = cAllItemTypes_Mask ^ cReference ^ cJob,
-
       // Planning Systems
       cPlanningMRP         = 0x00100000,
       cPlanningMPS         = 0x00200000,
@@ -127,7 +121,14 @@ friend class ItemCluster;
       cDefaultLocation     = 0x40000000,
 
       // Active ItemSite
-      cActive         = 0x80000000
+      cActive         = 0x80000000,
+      
+      // Groups of Item Types
+      cGeneralManufactured = cManufactured | cPhantom | cBreeder,
+      cGeneralPurchased    = cPurchased | cOutsideProcess,
+      cGeneralComponents   = cManufactured | cPhantom | cCoProduct | cPurchased | cOutsideProcess,
+      cGeneralInventory    = cAllItemTypes_Mask ^ cReference ^ cJob,
+      cKitComponents       = cSold | cAllItemTypes_Mask ^ cKit
     };
 
     inline void setType(unsigned int pType)            { _type = pType; _defaultType = pType; } 
