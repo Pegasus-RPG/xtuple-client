@@ -2452,8 +2452,7 @@ void salesOrder::sFillItemList()
   //  Determine the subtotal
   if (ISORDER(_mode))
     q.prepare( "SELECT SUM(round((coitem_qtyord * coitem_qty_invuomratio) * (coitem_price / coitem_price_invuomratio),2)) AS subtotal,"
-               "       SUM(round((coitem_qtyord * coitem_qty_invuomratio) * (currToBase(cohead_curr_id, coitem_price, cohead_orderdate) / coitem_price_invuomratio),2)) AS subtotalbase,"
-               "       SUM(round((coitem_qtyord * coitem_qty_invuomratio) * stdCost(item_id),2)) AS totalcost "
+               "       SUM(round((coitem_qtyord * coitem_qty_invuomratio) * currToCurr(baseCurrId(), cohead_curr_id, stdCost(item_id), cohead_orderdate),2)) AS totalcost "
                "FROM coitem, cohead, itemsite, item "
                "WHERE ( (coitem_cohead_id=:head_id)"
                " AND (coitem_cohead_id=cohead_id)"
@@ -2462,8 +2461,7 @@ void salesOrder::sFillItemList()
                " AND (itemsite_item_id=item_id) );" );
   else
     q.prepare( "SELECT SUM(round((quitem_qtyord * quitem_qty_invuomratio) * (quitem_price / quitem_price_invuomratio),2)) AS subtotal,"
-               "       SUM(round((quitem_qtyord * quitem_qty_invuomratio) * (currToBase(quhead_curr_id, quitem_price, quhead_quotedate) / quitem_price_invuomratio),2)) AS subtotalbase,"
-               "       SUM(round((quitem_qtyord * quitem_qty_invuomratio) * stdCost(item_id),2)) AS totalcost "
+               "       SUM(round((quitem_qtyord * quitem_qty_invuomratio) * currToCurr(baseCurrId(), quhead_curr_id, stdCost(item_id), quhead_quotedate),2)) AS totalcost "
                "  FROM quitem, quhead, item "
                " WHERE ( (quitem_quhead_id=:head_id)"
                "   AND   (quitem_quhead_id=quhead_id)"
@@ -2473,7 +2471,7 @@ void salesOrder::sFillItemList()
   if (q.first())
   {
     _subtotal->setLocalValue(q.value("subtotal").toDouble());
-    _margin->setLocalValue(q.value("subtotalbase").toDouble() - q.value("totalcost").toDouble());
+    _margin->setLocalValue(q.value("subtotal").toDouble() - q.value("totalcost").toDouble());
   }
   else if (q.lastError().type() != QSqlError::None)
   {

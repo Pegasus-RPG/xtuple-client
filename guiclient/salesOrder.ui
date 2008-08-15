@@ -1495,12 +1495,15 @@
              </widget>
             </item>
             <item>
-             <widget class="CurrDisplay" name="_margin" >
-              <property name="minimumSize" >
-               <size>
-                <width>120</width>
-                <height>0</height>
-               </size>
+             <widget class="CurrCluster" name="_margin" >
+              <property name="currencyEditable" stdset="0" >
+               <bool>false</bool>
+              </property>
+              <property name="currencyVisible" >
+               <bool>false</bool>
+              </property>
+              <property name="enabled" >
+               <bool>false</bool>
               </property>
              </widget>
             </item>
@@ -2907,6 +2910,38 @@
     <hint type="destinationlabel" >
      <x>276</x>
      <y>573</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_orderCurrency</sender>
+   <signal>newID(int)</signal>
+   <receiver>_margin</receiver>
+   <slot>setId(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>462</x>
+     <y>401</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>453</x>
+     <y>431</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_orderDate</sender>
+   <signal>newDate(QDate)</signal>
+   <receiver>_margin</receiver>
+   <slot>setEffective(QDate)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>390</x>
+     <y>397</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>453</x>
+     <y>431</y>
     </hint>
    </hints>
   </connection>
