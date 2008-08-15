@@ -177,7 +177,7 @@
        </sizepolicy>
       </property>
       <property name="title" >
-       <string>Show Inventry Value</string>
+       <string>Show Inventory Value</string>
       </property>
       <property name="checkable" >
        <bool>true</bool>
@@ -186,20 +186,30 @@
        <bool>false</bool>
       </property>
       <layout class="QGridLayout" >
-       <item row="0" column="0" >
+       <item row="1" column="0" >
         <widget class="QRadioButton" name="_useStandardCosts" >
          <property name="text" >
           <string>Use Standard Costs</string>
          </property>
          <property name="checked" >
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
         </widget>
        </item>
-       <item row="1" column="0" >
+       <item row="2" column="0" >
         <widget class="QRadioButton" name="_useActualCosts" >
          <property name="text" >
           <string>Use Actual Costs</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0" >
+        <widget class="QRadioButton" name="_usePostedCosts" >
+         <property name="text" >
+          <string>Use Posted Costs</string>
+         </property>
+         <property name="checked" >
+          <bool>true</bool>
          </property>
         </widget>
        </item>

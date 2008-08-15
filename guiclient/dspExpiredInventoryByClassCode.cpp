@@ -82,6 +82,7 @@ dspExpiredInventoryByClassCode::dspExpiredInventoryByClassCode(QWidget* parent, 
   _costsGroupInt = new QButtonGroup(this);
   _costsGroupInt->addButton(_useStandardCosts);
   _costsGroupInt->addButton(_useActualCosts);
+  _costsGroupInt->addButton(_usePostedCosts);
 
   _orderByGroupInt = new QButtonGroup(this);
   _orderByGroupInt->addButton(_itemNumber);
@@ -142,8 +143,12 @@ void dspExpiredInventoryByClassCode::sPrint()
 
   if (_useActualCosts->isChecked())
     params.append("useActualCost");
-  else
+
+  if (_useStandardCosts->isChecked())
     params.append("useStandardCost");
+
+  if (_usePostedCosts->isChecked())
+    params.append("usePostedCosts");
 
   if (_inventoryValue->isChecked())
     params.append("orderByInventoryValue");
@@ -285,6 +290,8 @@ void dspExpiredInventoryByClassCode::sFillList()
     sql += " stdcost(itemsite_item_id) AS cost ";
   else if (_useActualCosts->isChecked())
     sql += " actcost(itemsite_item_id) AS cost ";
+  else
+    sql += " (itemsite_value / CASE WHEN(itemsite_qtyonhand=0) THEN 1 ELSE itemsite_qtyonhand END) AS cost ";
 
   sql += "FROM itemloc, itemsite, item, warehous, uom, ls "
          "WHERE ( (itemloc_itemsite_id=itemsite_id)"
