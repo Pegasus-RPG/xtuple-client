@@ -187,6 +187,7 @@ enum SetResponse apOpenItem::set(const ParameterList &pParams)
       _journalNumber->setEnabled(FALSE);
       _amount->setEnabled(FALSE);
       _terms->setEnabled(FALSE);
+      _terms->setType(XComboBox::Terms);
       _notes->setReadOnly(TRUE);
       _altPrepaid->setEnabled(FALSE);
       _save->hide();

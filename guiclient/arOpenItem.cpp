@@ -110,13 +110,6 @@ enum SetResponse arOpenItem::set( const ParameterList &pParams )
   QVariant param;
   bool     valid;
   
-  param = pParams.value("aropen_id", &valid);
-  if (valid)
-  {
-    _aropenid = param.toInt();
-    populate();
-  }
-
   param = pParams.value("docType", &valid);
   if (valid)
   {
@@ -187,6 +180,7 @@ enum SetResponse arOpenItem::set( const ParameterList &pParams )
       _journalNumber->setEnabled(FALSE);
       _amount->setEnabled(FALSE);
       _terms->setEnabled(FALSE);
+      _terms->setType(XComboBox::Terms);
       _salesrep->setEnabled(FALSE);
       _commissionDue->setEnabled(FALSE);
       _commissionPaid->setEnabled(FALSE);
@@ -201,6 +195,13 @@ enum SetResponse arOpenItem::set( const ParameterList &pParams )
       return UndefinedError;
   }
   
+  param = pParams.value("aropen_id", &valid);
+  if (valid)
+  {
+    _aropenid = param.toInt();
+    populate();
+  }
+
   return NoError;
 }
 
