@@ -182,6 +182,7 @@ void correctOperationsPosting::sHandleWooperid(int)
       _productionUOM->setText( tr("Post in Production UOMs (%1)") 
                                .arg(q.value("wooper_produom").toString()) );
 
+      _standardSutime->setText(formatQty(q.value("wooper_suconsumed").toDouble()));
       _correctSutime->setEnabled(q.value("wooper_suconsumed").toDouble() > 0.0);
       _correctSutime->setChecked(q.value("wooper_suconsumed").toDouble() > 0.0);
       _correctRntime->setEnabled(q.value("wooper_rnconsumed").toDouble() > 0.0);
