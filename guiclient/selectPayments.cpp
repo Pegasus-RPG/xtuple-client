@@ -448,7 +448,6 @@ void selectPayments::sFillList()
                "       currConcat(apopen_curr_id) AS curr_concat "
                "FROM vend, apopen LEFT OUTER JOIN apselect ON (apselect_apopen_id=apopen_id) "
                "WHERE ( (apopen_open)"
-		       " AND (apopen_void = FALSE) "
                " AND (apopen_doctype IN ('V', 'D'))"
                " AND (apopen_vend_id=vend_id)" );
 

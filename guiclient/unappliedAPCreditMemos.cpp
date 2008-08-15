@@ -59,8 +59,6 @@
 
 #include <QVariant>
 #include <QStatusBar>
-#include <QMessageBox>
-#include <QSqlError>
 #include <parameter.h>
 #include <openreports.h>
 #include "applyAPCreditMemo.h"
@@ -80,10 +78,8 @@ unappliedAPCreditMemos::unappliedAPCreditMemos(QWidget* parent, const char* name
   // signals and slots connections
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_apopen, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
-  connect(_apopen, SIGNAL(valid(bool)), _void, SLOT(setEnabled(bool)));
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
-  connect(_void, SIGNAL(clicked()), this, SLOT(sVoid()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_apply, SIGNAL(clicked()), this, SLOT(sApply()));
 
@@ -92,7 +88,6 @@ unappliedAPCreditMemos::unappliedAPCreditMemos(QWidget* parent, const char* name
   _new->setEnabled(_privileges->check("MaintainAPMemos"));
 
   connect(_apopen, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
-  connect(_apopen, SIGNAL(itemSelected(int)), _void, SLOT(animateClick()));
 
   _apopen->addColumn( tr("Doc. #"),  _itemColumn,  Qt::AlignCenter );
   _apopen->addColumn( tr("Vendor"),  -1,           Qt::AlignLeft   );
@@ -162,31 +157,6 @@ void unappliedAPCreditMemos::sView()
   newdlg.exec();
 }
 
-void unappliedAPCreditMemos::sVoid()
-{
-  if (QMessageBox::question(this, tr("Void Selected Credit Memo?"),
-	                              tr("<p>Are you sure that you want to void the "
-	                                 "selected Credit Memo?"),
-	                              QMessageBox::Yes,
-	                              QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
-  {
-    q.prepare("UPDATE apopen "
-    		  "SET apopen_void = TRUE "
-		      "WHERE apopen_id = :apopen_id");
-    q.bindValue(":apopen_id", _apopen->id());
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
-    else
-    {
-	  sFillList();
-    }
-  }
-}
-
 void unappliedAPCreditMemos::sFillList()
 {
   q.prepare( "SELECT apopen_id, apopen_docnumber,"
@@ -199,7 +169,6 @@ void unappliedAPCreditMemos::sFillList()
              "WHERE ( (apopen_doctype='C')"
              " AND (apopen_open)"
              " AND (apopen_vend_id=vend_id) ) "
-		     " AND (apopen_void = FALSE) "
              "ORDER BY apopen_docnumber;" );
   q.exec();
   _apopen->populate(q);
@@ -216,5 +185,4 @@ void unappliedAPCreditMemos::sApply()
   if (newdlg.exec() != XDialog::Rejected)
     sFillList();
 }
-
 

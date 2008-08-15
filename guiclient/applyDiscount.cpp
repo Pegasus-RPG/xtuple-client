@@ -135,7 +135,6 @@ void applyDiscount::populate()
             "           AND  (apapply_source_apopen_id=apopen_id)"
             "           AND  (apopen_discount)) ) AS data"
             " WHERE ((apopen_vend_id=vend_id)"
-		    " AND (apopen_void = FALSE) "
             "   AND  (apopen_id=:apopen_id)); ");
   q.bindValue(":apopen_id", _apopenid);
   q.exec();
