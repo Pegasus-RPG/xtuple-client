@@ -501,12 +501,12 @@ void creditMemoItem::populate()
   cmitem.exec();
   if (cmitem.first())
   {
-    _netUnitPrice->setLocalValue(cmitem.value("cmitem_unitprice").toDouble());
     // do _item and _taxauth before other tax stuff because of signal cascade
     _taxauthid = cmitem.value("cmhead_taxauth_id").toInt();
     _tax->setId(cmitem.value("taxcurr").toInt());
     _item->setItemsiteid(cmitem.value("cmitem_itemsite_id").toInt());
     _lineNumber->setText(cmitem.value("cmitem_linenumber").toString());
+    _netUnitPrice->setLocalValue(cmitem.value("cmitem_unitprice").toDouble());
     _qtyToCredit->setText(cmitem.value("tocredit").toString());
     _qtyReturned->setText(cmitem.value("toreturn").toString());
     _comments->setText(cmitem.value("cmitem_comments").toString());
