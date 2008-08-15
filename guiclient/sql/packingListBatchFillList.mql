@@ -11,11 +11,11 @@ SELECT cohead_id, pack_shiphead_id,
        END AS f_holdtype,
        formatBoolYN(pack_printed) 
 FROM pack, cohead, cust 
-WHERE ((pack_head_id=cohead_id)
-  AND  (cohead_cust_id=cust_id)
-  AND  (pack_head_type='SO')
-  AND  (checkSOSitePrivs(cohead_id)))
+WHERE pack_head_id=cohead_id 
+  AND  cohead_cust_id=cust_id 
+  AND  pack_head_type='SO' 
 <? if exists("MultiWhs") ?>
+  AND  checkSOSitePrivs(cohead_id)
 UNION 
 SELECT tohead_id, pack_shiphead_id, 
        tohead_number, pack_head_type,
@@ -25,6 +25,6 @@ SELECT tohead_id, pack_shiphead_id,
        formatBoolYN(pack_printed) 
 FROM pack, tohead 
 WHERE ((pack_head_id=tohead_id)
-  AND  (pack_head_type='TO'))
+  AND  (pack_head_type='TO')) 
 <? endif ?>
 ORDER BY 3;
