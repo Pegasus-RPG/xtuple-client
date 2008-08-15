@@ -276,6 +276,7 @@ void materialReceiptTrans::sPost()
           _issueToWo->setChecked(FALSE);
           _wo->setId(-1);
           _notes->clear();
+          _transDate->setDate(omfgThis->dbDate());
 
           _item->setFocus();
         }

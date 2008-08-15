@@ -317,6 +317,7 @@ void transformTrans::sPost()
     _toBeforeQty->clear();
     _toAfterQty->clear();
     _controlled = true;
+    _transDate->setDate(omfgThis->dbDate());
 
     _item->setFocus();
   }

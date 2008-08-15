@@ -253,6 +253,7 @@ void scrapTrans::sPost()
       _notes->clear();
       _beforeQty->clear();
       _afterQty->clear();
+      _transDate->setDate(omfgThis->dbDate());
 
       _item->setFocus();
     }

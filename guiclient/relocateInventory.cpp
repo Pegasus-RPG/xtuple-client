@@ -274,6 +274,7 @@ void relocateInventory::sMove()
     sFillList();
     _qty->clear();
     _notes->clear();
+    _transDate->setDate(omfgThis->dbDate());
     _item->setFocus();
   }
 }

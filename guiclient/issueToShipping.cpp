@@ -548,6 +548,7 @@ void issueToShipping::sShip()
     shipOrder newdlg(this, "", TRUE);
     if (newdlg.set(params) == NoError && newdlg.exec() != XDialog::Rejected)
     {
+      _transDate->setDate(omfgThis->dbDate());
       _order->setId(-1);
       _order->setFocus();
     }
