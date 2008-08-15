@@ -22,7 +22,7 @@
        --remitto.*,
 remitto_name,
 formatAddr(remitto_address1, remitto_address2, remitto_address3, remitto_citystatezip, remitto_country) AS remitto_adr,
-       TEXT(invchead_invcnumber) AS invoicenumber,
+       invchead_invcnumber AS invoicenumber,
        formatDate(invchead_invcdate) AS f_invoicedate,
        cust_number,
        invchead_billto_name,
@@ -30,7 +30,7 @@ formatAddr(remitto_address1, remitto_address2, remitto_address3, remitto_citysta
        invchead_billto_phone,
        invchead_shipto_name,
        formatAddr(invchead_shipto_address1, invchead_shipto_address2, invchead_shipto_address3, ( invchead_shipto_city || '  ' || invchead_shipto_state || ' ' || invchead_shipto_zipcode ), invchead_shipto_country) AS f_shiptoaddress,
-       TEXT(invchead_ordernumber) AS ordernumber,
+       invchead_ordernumber AS ordernumber,
        invchead_ponumber,
        formatDate(invchead_orderdate) AS f_orderdate,
        formatDate(invchead_shipdate) AS f_shipdate,
@@ -232,41 +232,6 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
   <height>452</height>
   <label>
    <rect>
-    <x>260</x>
-    <y>417</y>
-    <width>120</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Item Description</string>
-  </label>
-  <field>
-   <rect>
-    <x>434</x>
-    <y>190</y>
-    <width>300</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>12</size>
-    <weight>48</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>GroupHead</query>
-    <column>invchead_shipto_name</column>
-   </data>
-  </field>
-  <label>
-   <rect>
     <x>5</x>
     <y>350</y>
     <width>120</width>
@@ -284,44 +249,12 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
   <label>
    <rect>
     <x>5</x>
-    <y>150</y>
-    <width>121</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>12</size>
-    <weight>48</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Invoice #:</string>
-  </label>
-  <label>
-   <rect>
-    <x>350</x>
-    <y>125</y>
-    <width>121</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>12</size>
-    <weight>48</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Date:</string>
-  </label>
-  <label>
-   <rect>
-    <x>5</x>
     <y>125</y>
     <width>80</width>
     <height>20</height>
    </rect>
    <font>
-    <face>Arial</face>
+    <face>Luciduxsans</face>
     <size>12</size>
     <weight>48</weight>
    </font>
@@ -331,9 +264,9 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
   </label>
   <field>
    <rect>
-    <x>220</x>
+    <x>545</x>
     <y>370</y>
-    <width>209</width>
+    <width>203</width>
     <height>20</height>
    </rect>
    <font>
@@ -345,77 +278,7 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
    <vcenter/>
    <data>
     <query>GroupHead</query>
-    <column>terms_descrip</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>500</x>
-    <y>5</y>
-    <width>247</width>
-    <height>40</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>20</size>
-    <weight>bold</weight>
-   </font>
-   <right/>
-   <top/>
-   <string>Invoice</string>
-  </label>
-  <field>
-   <rect>
-    <x>145</x>
-    <y>150</y>
-    <width>111</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>12</size>
-    <weight>48</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>GroupHead</query>
-    <column>invoicenumber</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>580</x>
-    <y>415</y>
-    <width>75</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Unit Price</string>
-  </label>
-  <field>
-   <rect>
-    <x>467</x>
-    <y>150</y>
-    <width>190</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>12</size>
-    <weight>48</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>GroupHead</query>
-    <column>cust_number</column>
+    <column>invchead_shipvia</column>
    </data>
   </field>
   <label>
@@ -434,10 +297,177 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
    <vcenter/>
    <string>Item Number</string>
   </label>
+  <line>
+   <xstart>55</xstart>
+   <ystart>440</ystart>
+   <xend>850</xend>
+   <yend>440</yend>
+   <weight>2</weight>
+  </line>
+  <field>
+   <rect>
+    <x>440</x>
+    <y>315</y>
+    <width>357</width>
+    <height>25</height>
+   </rect>
+   <font>
+    <face>Luciduxsans</face>
+    <size>12</size>
+    <weight>48</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>GroupHead</query>
+    <column>invchead_fob</column>
+   </data>
+  </field>
+  <line>
+   <xstart>0</xstart>
+   <ystart>370</ystart>
+   <xend>800</xend>
+   <yend>370</yend>
+   <weight>2</weight>
+  </line>
   <label>
    <rect>
-    <x>680</x>
+    <x>350</x>
+    <y>190</y>
+    <width>80</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>MS Shell Dlg 2</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Ship To:</string>
+  </label>
+  <label>
+   <rect>
+    <x>130</x>
+    <y>350</y>
+    <width>70</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Order Date</string>
+  </label>
+  <field>
+   <rect>
+    <x>220</x>
+    <y>370</y>
+    <width>208</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>GroupHead</query>
+    <column>terms_descrip</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>55</x>
+    <y>190</y>
+    <width>270</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Luciduxsans</face>
+    <size>12</size>
+    <weight>48</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>GroupHead</query>
+    <column>invchead_billto_name</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>5</x>
+    <y>315</y>
+    <width>100</width>
+    <height>25</height>
+   </rect>
+   <font>
+    <face>Luciduxsans</face>
+    <size>12</size>
+    <weight>48</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Tracking #</string>
+  </label>
+  <label>
+   <rect>
+    <x>260</x>
+    <y>417</y>
+    <width>120</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Item Description</string>
+  </label>
+  <label>
+   <rect>
+    <x>580</x>
     <y>415</y>
+    <width>75</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Unit Price</string>
+  </label>
+  <label>
+   <rect>
+    <x>5</x>
+    <y>190</y>
+    <width>80</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>MS Shell Dlg 2</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Bill To:</string>
+  </label>
+  <label>
+   <rect>
+    <x>440</x>
+    <y>350</y>
     <width>100</width>
     <height>20</height>
    </rect>
@@ -448,24 +478,120 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
    </font>
    <left/>
    <vcenter/>
-   <string>Ext. Price</string>
+   <string>Ship Date</string>
   </label>
-  <label>
+  <field>
    <rect>
-    <x>5</x>
-    <y>315</y>
-    <width>100</width>
-    <height>25</height>
+    <x>10</x>
+    <y>5</y>
+    <width>200</width>
+    <height>20</height>
    </rect>
    <font>
     <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>GroupHead</query>
+    <column>remitto_name</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>50</x>
+    <y>400</y>
+    <width>120</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Qty. Shipped</string>
+  </label>
+  <text>
+   <rect>
+    <x>10</x>
+    <y>25</y>
+    <width>203</width>
+    <height>16</height>
+   </rect>
+   <bottompad>10</bottompad>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <top/>
+   <data>
+    <query>GroupHead</query>
+    <column>remitto_adr</column>
+   </data>
+  </text>
+  <field>
+   <rect>
+    <x>467</x>
+    <y>150</y>
+    <width>190</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Luciduxsans</face>
     <size>12</size>
     <weight>48</weight>
    </font>
    <left/>
    <vcenter/>
-   <string>Tracking #</string>
-  </label>
+   <data>
+    <query>GroupHead</query>
+    <column>cust_number</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>145</x>
+    <y>150</y>
+    <width>111</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Luciduxsans</face>
+    <size>12</size>
+    <weight>48</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>GroupHead</query>
+    <column>invoicenumber</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>5</x>
+    <y>370</y>
+    <width>120</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>GroupHead</query>
+    <column>invchead_ponumber</column>
+   </data>
+  </field>
   <field>
    <rect>
     <x>130</x>
@@ -487,103 +613,6 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
   </field>
   <label>
    <rect>
-    <x>385</x>
-    <y>315</y>
-    <width>80</width>
-    <height>25</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>12</size>
-    <weight>48</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>F.O.B.</string>
-  </label>
-  <line>
-   <xstart>0</xstart>
-   <ystart>370</ystart>
-   <xend>800</xend>
-   <yend>370</yend>
-   <weight>2</weight>
-  </line>
-  <label>
-   <rect>
-    <x>440</x>
-    <y>350</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Ship Date</string>
-  </label>
-  <field>
-   <rect>
-    <x>545</x>
-    <y>370</y>
-    <width>204</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>GroupHead</query>
-    <column>invchead_shipvia</column>
-   </data>
-  </field>
-  <text>
-   <rect>
-    <x>434</x>
-    <y>208</y>
-    <width>300</width>
-    <height>20</height>
-   </rect>
-   <bottompad>0</bottompad>
-   <font>
-    <face>Arial</face>
-    <size>12</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>GroupHead</query>
-    <column>f_shiptoaddress</column>
-   </data>
-  </text>
-  <field>
-   <rect>
-    <x>85</x>
-    <y>315</y>
-    <width>295</width>
-    <height>25</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>12</size>
-    <weight>48</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>tracknum</query>
-    <column>cosmisc_tracknum</column>
-   </data>
-  </field>
-  <label>
-   <rect>
     <x>171</x>
     <y>417</y>
     <width>80</width>
@@ -597,86 +626,6 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
    <hcenter/>
    <vcenter/>
    <string>UOM</string>
-  </label>
-  <label>
-   <rect>
-    <x>50</x>
-    <y>400</y>
-    <width>120</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Qty. Shipped</string>
-  </label>
-  <label>
-   <rect>
-    <x>350</x>
-    <y>150</y>
-    <width>121</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>12</size>
-    <weight>48</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Customer #:</string>
-  </label>
-  <image>
-   <rect>
-    <x>270</x>
-    <y>5</y>
-    <width>355</width>
-    <height>111</height>
-   </rect>
-   <mode>stretch</mode>
-   <data>
-    <query>logo</query>
-    <column>image_data</column>
-   </data>
-  </image>
-  <field>
-   <rect>
-    <x>467</x>
-    <y>125</y>
-    <width>185</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>12</size>
-    <weight>48</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>GroupHead</query>
-    <column>f_invoicedate</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>50</x>
-    <y>417</y>
-    <width>120</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Qty. B/O</string>
   </label>
   <label>
    <rect>
@@ -694,6 +643,86 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
    <vcenter/>
    <string>Ship Via</string>
   </label>
+  <field>
+   <rect>
+    <x>467</x>
+    <y>125</y>
+    <width>185</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Luciduxsans</face>
+    <size>12</size>
+    <weight>48</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>GroupHead</query>
+    <column>f_invoicedate</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>220</x>
+    <y>350</y>
+    <width>160</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Terms</string>
+  </label>
+  <label>
+   <rect>
+    <x>500</x>
+    <y>5</y>
+    <width>247</width>
+    <height>40</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>20</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <top/>
+   <string>Invoice</string>
+  </label>
+  <image>
+   <rect>
+    <x>270</x>
+    <y>5</y>
+    <width>355</width>
+    <height>111</height>
+   </rect>
+   <mode>stretch</mode>
+   <data>
+    <query>logo</query>
+    <column>image_data</column>
+   </data>
+  </image>
+  <label>
+   <rect>
+    <x>385</x>
+    <y>315</y>
+    <width>80</width>
+    <height>25</height>
+   </rect>
+   <font>
+    <face>Luciduxsans</face>
+    <size>12</size>
+    <weight>48</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>F.O.B.</string>
+  </label>
   <label>
    <rect>
     <x>365</x>
@@ -710,30 +739,96 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
    <vcenter/>
    <string>Invoice Currency:</string>
   </label>
-  <text>
+  <label>
    <rect>
-    <x>10</x>
-    <y>25</y>
-    <width>204</width>
-    <height>16</height>
+    <x>350</x>
+    <y>150</y>
+    <width>121</width>
+    <height>20</height>
    </rect>
-   <bottompad>10</bottompad>
+   <font>
+    <face>Luciduxsans</face>
+    <size>12</size>
+    <weight>48</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Customer #:</string>
+  </label>
+  <field>
+   <rect>
+    <x>433</x>
+    <y>190</y>
+    <width>300</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Luciduxsans</face>
+    <size>12</size>
+    <weight>48</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>GroupHead</query>
+    <column>invchead_shipto_name</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>5</x>
+    <y>150</y>
+    <width>121</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Luciduxsans</face>
+    <size>12</size>
+    <weight>48</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Invoice #:</string>
+  </label>
+  <field>
+   <rect>
+    <x>85</x>
+    <y>315</y>
+    <width>295</width>
+    <height>25</height>
+   </rect>
+   <font>
+    <face>Luciduxsans</face>
+    <size>12</size>
+    <weight>48</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>tracknum</query>
+    <column>cosmisc_tracknum</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>680</x>
+    <y>415</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
    <font>
     <face>Arial</face>
     <size>10</size>
     <weight>normal</weight>
    </font>
    <left/>
-   <top/>
-   <data>
-    <query>GroupHead</query>
-    <column>remitto_adr</column>
-   </data>
-  </text>
+   <vcenter/>
+   <string>Ext. Price</string>
+  </label>
   <text>
    <rect>
     <x>55</x>
-    <y>208</y>
+    <y>207</y>
     <width>300</width>
     <height>20</height>
    </rect>
@@ -752,28 +847,9 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
   </text>
   <field>
    <rect>
-    <x>440</x>
-    <y>315</y>
-    <width>358</width>
-    <height>25</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>12</size>
-    <weight>48</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>GroupHead</query>
-    <column>invchead_fob</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>350</x>
-    <y>190</y>
-    <width>80</width>
+    <x>493</x>
+    <y>415</y>
+    <width>31</width>
     <height>20</height>
    </rect>
    <font>
@@ -781,9 +857,44 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
     <size>10</size>
     <weight>normal</weight>
    </font>
+   <right/>
+   <vcenter/>
+   <data>
+    <query>currency</query>
+    <column>curr_symbol</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>350</x>
+    <y>125</y>
+    <width>121</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Luciduxsans</face>
+    <size>12</size>
+    <weight>48</weight>
+   </font>
    <left/>
    <vcenter/>
-   <string>Ship To:</string>
+   <string>Date:</string>
+  </label>
+  <label>
+   <rect>
+    <x>50</x>
+    <y>417</y>
+    <width>120</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Qty. B/O</string>
   </label>
   <field>
    <rect>
@@ -804,121 +915,26 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
     <column>f_shipdate</column>
    </data>
   </field>
-  <field>
+  <text>
    <rect>
-    <x>10</x>
-    <y>5</y>
-    <width>200</width>
+    <x>433</x>
+    <y>207</y>
+    <width>300</width>
     <height>20</height>
    </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>GroupHead</query>
-    <column>remitto_name</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>55</x>
-    <y>190</y>
-    <width>270</width>
-    <height>20</height>
-   </rect>
+   <bottompad>0</bottompad>
    <font>
     <face>Arial</face>
     <size>12</size>
-    <weight>48</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>GroupHead</query>
-    <column>invchead_billto_name</column>
-   </data>
-  </field>
-  <line>
-   <xstart>55</xstart>
-   <ystart>440</ystart>
-   <xend>850</xend>
-   <yend>440</yend>
-   <weight>2</weight>
-  </line>
-  <field>
-   <rect>
-    <x>5</x>
-    <y>370</y>
-    <width>120</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
     <weight>normal</weight>
    </font>
    <left/>
    <vcenter/>
    <data>
     <query>GroupHead</query>
-    <column>invchead_ponumber</column>
+    <column>f_shiptoaddress</column>
    </data>
-  </field>
-  <label>
-   <rect>
-    <x>5</x>
-    <y>190</y>
-    <width>80</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Bill To:</string>
-  </label>
-  <field>
-   <rect>
-    <x>494</x>
-    <y>415</y>
-    <width>31</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <data>
-    <query>currency</query>
-    <column>curr_symbol</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>130</x>
-    <y>350</y>
-    <width>70</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Order Date</string>
-  </label>
+  </text>
   <field>
    <rect>
     <x>145</x>
@@ -927,7 +943,7 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
     <height>20</height>
    </rect>
    <font>
-    <face>Arial</face>
+    <face>Luciduxsans</face>
     <size>12</size>
     <weight>48</weight>
    </font>
@@ -938,22 +954,6 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
     <column>ordernumber</column>
    </data>
   </field>
-  <label>
-   <rect>
-    <x>220</x>
-    <y>350</y>
-    <width>160</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Terms</string>
-  </label>
  </pghead>
  <section>
   <name>items</name>
@@ -961,24 +961,24 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
    <key>
     <query>Detail</query>
    </key>
-   <height>95</height>
+   <height>96</height>
    <field>
     <rect>
-     <x>260</x>
-     <y>35</y>
-     <width>300</width>
-     <height>11</height>
+     <x>493</x>
+     <y>5</y>
+     <width>31</width>
+     <height>20</height>
     </rect>
     <font>
      <face>Arial</face>
-     <size>8</size>
+     <size>10</size>
      <weight>normal</weight>
     </font>
-    <left/>
+    <right/>
     <vcenter/>
     <data>
-     <query>Detail</query>
-     <column>descrip2</column>
+     <query>currency</query>
+     <column>curr_symbol</column>
     </data>
    </field>
    <text>
@@ -1001,6 +1001,25 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
      <column>lotserial</column>
     </data>
    </text>
+   <field>
+    <rect>
+     <x>171</x>
+     <y>5</y>
+     <width>80</width>
+     <height>20</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>10</size>
+     <weight>normal</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>Detail</query>
+     <column>invuom</column>
+    </data>
+   </field>
    <label>
     <rect>
      <x>440</x>
@@ -1019,56 +1038,21 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
    </label>
    <field>
     <rect>
-     <x>540</x>
-     <y>5</y>
-     <width>100</width>
-     <height>20</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>10</size>
-     <weight>normal</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>Detail</query>
-     <column>f_unitprice</column>
-    </data>
-   </field>
-   <label>
-    <rect>
-     <x>70</x>
-     <y>50</y>
-     <width>40</width>
+     <x>260</x>
+     <y>45</y>
+     <width>300</width>
      <height>11</height>
     </rect>
     <font>
      <face>Arial</face>
-     <size>6</size>
-     <weight>normal</weight>
-    </font>
-    <left/>
-    <top/>
-    <string>Notes:</string>
-   </label>
-   <field>
-    <rect>
-     <x>260</x>
-     <y>5</y>
-     <width>300</width>
-     <height>20</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>10</size>
+     <size>8</size>
      <weight>normal</weight>
     </font>
     <left/>
     <vcenter/>
     <data>
      <query>Detail</query>
-     <column>number</column>
+     <column>coitem_characteristics</column>
     </data>
    </field>
    <field>
@@ -1092,9 +1076,9 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
    </field>
    <field>
     <rect>
-     <x>171</x>
+     <x>260</x>
      <y>5</y>
-     <width>80</width>
+     <width>300</width>
      <height>20</height>
     </rect>
     <font>
@@ -1102,52 +1086,29 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
      <size>10</size>
      <weight>normal</weight>
     </font>
-    <hcenter/>
+    <left/>
     <vcenter/>
     <data>
      <query>Detail</query>
-     <column>invuom</column>
+     <column>number</column>
     </data>
    </field>
-   <text>
+   <label>
     <rect>
-     <x>74</x>
-     <y>60</y>
-     <width>365</width>
+     <x>70</x>
+     <y>50</y>
+     <width>40</width>
      <height>11</height>
     </rect>
-    <bottompad>0</bottompad>
     <font>
      <face>Arial</face>
-     <size>8</size>
+     <size>6</size>
      <weight>normal</weight>
     </font>
     <left/>
     <top/>
-    <data>
-     <query>Detail</query>
-     <column>invcitem_notes</column>
-    </data>
-   </text>
-   <field>
-    <rect>
-     <x>494</x>
-     <y>5</y>
-     <width>31</width>
-     <height>20</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>10</size>
-     <weight>normal</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>currency</query>
-     <column>curr_symbol</column>
-    </data>
-   </field>
+    <string>Notes:</string>
+   </label>
    <field>
     <rect>
      <x>650</x>
@@ -1169,25 +1130,6 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
    </field>
    <field>
     <rect>
-     <x>260</x>
-     <y>45</y>
-     <width>300</width>
-     <height>11</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>normal</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>Detail</query>
-     <column>coitem_characteristics</column>
-    </data>
-   </field>
-   <field>
-    <rect>
      <x>50</x>
      <y>5</y>
      <width>120</width>
@@ -1205,6 +1147,64 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
      <column>f_billed</column>
     </data>
    </field>
+   <field>
+    <rect>
+     <x>540</x>
+     <y>5</y>
+     <width>100</width>
+     <height>20</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>10</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>Detail</query>
+     <column>f_unitprice</column>
+    </data>
+   </field>
+   <text>
+    <rect>
+     <x>73</x>
+     <y>60</y>
+     <width>365</width>
+     <height>11</height>
+    </rect>
+    <bottompad>0</bottompad>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <left/>
+    <top/>
+    <data>
+     <query>Detail</query>
+     <column>invcitem_notes</column>
+    </data>
+   </text>
+   <field>
+    <rect>
+     <x>260</x>
+     <y>35</y>
+     <width>300</width>
+     <height>11</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>Detail</query>
+     <column>descrip2</column>
+    </data>
+   </field>
   </detail>
  </section>
  <section>
@@ -1216,24 +1216,8 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
     <height>71</height>
     <label>
      <rect>
-      <x>600</x>
-      <y>34</y>
-      <width>140</width>
-      <height>20</height>
-     </rect>
-     <font>
-      <face>Arial</face>
-      <size>10</size>
-      <weight>normal</weight>
-     </font>
-     <hcenter/>
-     <vcenter/>
-     <string>Allocated</string>
-    </label>
-    <label>
-     <rect>
-      <x>380</x>
-      <y>34</y>
+      <x>40</x>
+      <y>33</y>
       <width>90</width>
       <height>20</height>
      </rect>
@@ -1244,12 +1228,12 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
      </font>
      <hcenter/>
      <vcenter/>
-     <string>Balance</string>
+     <string>C/M #</string>
     </label>
     <label>
      <rect>
       <x>180</x>
-      <y>34</y>
+      <y>33</y>
       <width>90</width>
       <height>20</height>
      </rect>
@@ -1264,8 +1248,40 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
     </label>
     <label>
      <rect>
+      <x>380</x>
+      <y>33</y>
+      <width>90</width>
+      <height>20</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>10</size>
+      <weight>normal</weight>
+     </font>
+     <hcenter/>
+     <vcenter/>
+     <string>Balance</string>
+    </label>
+    <label>
+     <rect>
+      <x>600</x>
+      <y>33</y>
+      <width>140</width>
+      <height>20</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>10</size>
+      <weight>normal</weight>
+     </font>
+     <hcenter/>
+     <vcenter/>
+     <string>Allocated</string>
+    </label>
+    <label>
+     <rect>
       <x>280</x>
-      <y>34</y>
+      <y>33</y>
       <width>90</width>
       <height>20</height>
      </rect>
@@ -1294,22 +1310,6 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
      <vcenter/>
      <string>Allocated Credit Memos</string>
     </label>
-    <label>
-     <rect>
-      <x>40</x>
-      <y>34</y>
-      <width>90</width>
-      <height>20</height>
-     </rect>
-     <font>
-      <face>Arial</face>
-      <size>10</size>
-      <weight>normal</weight>
-     </font>
-     <hcenter/>
-     <vcenter/>
-     <string>C/M #</string>
-    </label>
     <line>
      <xstart>60</xstart>
      <ystart>60</ystart>
@@ -1320,7 +1320,7 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
     <label>
      <rect>
       <x>490</x>
-      <y>34</y>
+      <y>33</y>
       <width>100</width>
       <height>20</height>
      </rect>
@@ -1356,6 +1356,22 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
      </data>
      <tracktotal builtin="true" >extprice</tracktotal>
     </field>
+    <label>
+     <rect>
+      <x>340</x>
+      <y>0</y>
+      <width>240</width>
+      <height>20</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>10</size>
+      <weight>normal</weight>
+     </font>
+     <right/>
+     <vcenter/>
+     <string>Total Allocated:</string>
+    </label>
     <field>
      <rect>
       <x>600</x>
@@ -1375,22 +1391,6 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
       <column>curr_symbol</column>
      </data>
     </field>
-    <label>
-     <rect>
-      <x>340</x>
-      <y>0</y>
-      <width>240</width>
-      <height>20</height>
-     </rect>
-     <font>
-      <face>Arial</face>
-      <size>10</size>
-      <weight>normal</weight>
-     </font>
-     <right/>
-     <vcenter/>
-     <string>Total Allocated:</string>
-    </label>
    </foot>
   </group>
   <detail>
@@ -1400,9 +1400,9 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
    <height>21</height>
    <field>
     <rect>
-     <x>140</x>
+     <x>280</x>
      <y>0</y>
-     <width>40</width>
+     <width>90</width>
      <height>20</height>
     </rect>
     <font>
@@ -1410,11 +1410,11 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
      <size>10</size>
      <weight>normal</weight>
     </font>
-    <hcenter/>
+    <right/>
     <vcenter/>
     <data>
      <query>allocatedCMs</query>
-     <column>aropen_currsymbol</column>
+     <column>f_paid</column>
     </data>
    </field>
    <field>
@@ -1438,9 +1438,9 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
    </field>
    <field>
     <rect>
-     <x>640</x>
+     <x>40</x>
      <y>0</y>
-     <width>100</width>
+     <width>90</width>
      <height>20</height>
     </rect>
     <font>
@@ -1452,7 +1452,26 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
     <vcenter/>
     <data>
      <query>allocatedCMs</query>
-     <column>f_allocated_invccurr</column>
+     <column>aropen_docnumber</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>140</x>
+     <y>0</y>
+     <width>40</width>
+     <height>20</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>10</size>
+     <weight>normal</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>allocatedCMs</query>
+     <column>aropen_currsymbol</column>
     </data>
    </field>
    <field>
@@ -1476,32 +1495,6 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
    </field>
    <field>
     <rect>
-     <x>40</x>
-     <y>0</y>
-     <width>90</width>
-     <height>20</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>10</size>
-     <weight>normal</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>allocatedCMs</query>
-     <column>aropen_docnumber</column>
-    </data>
-   </field>
-   <line>
-    <xstart>590</xstart>
-    <ystart>-10</ystart>
-    <xend>590</xend>
-    <yend>20</yend>
-    <weight>0</weight>
-   </line>
-   <field>
-    <rect>
      <x>480</x>
      <y>0</y>
      <width>100</width>
@@ -1517,25 +1510,6 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
     <data>
      <query>allocatedCMs</query>
      <column>f_allocated</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>280</x>
-     <y>0</y>
-     <width>90</width>
-     <height>20</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>10</size>
-     <weight>normal</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>allocatedCMs</query>
-     <column>f_paid</column>
     </data>
    </field>
    <field>
@@ -1557,6 +1531,32 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
      <column>f_balance</column>
     </data>
    </field>
+   <line>
+    <xstart>590</xstart>
+    <ystart>-10</ystart>
+    <xend>590</xend>
+    <yend>20</yend>
+    <weight>0</weight>
+   </line>
+   <field>
+    <rect>
+     <x>640</x>
+     <y>0</y>
+     <width>100</width>
+     <height>20</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>10</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>allocatedCMs</query>
+     <column>f_allocated_invccurr</column>
+    </data>
+   </field>
   </detail>
  </section>
  <pgfoot>
@@ -1565,7 +1565,7 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
   <field>
    <rect>
     <x>640</x>
-    <y>85</y>
+    <y>125</y>
     <width>100</width>
     <height>20</height>
    </rect>
@@ -1578,13 +1578,13 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
    <vcenter/>
    <data>
     <query>GroupExtended</query>
-    <column>f_allocated</column>
+    <column>f_payment</column>
    </data>
   </field>
   <field>
    <rect>
     <x>605</x>
-    <y>104</y>
+    <y>85</y>
     <width>31</width>
     <height>20</height>
    </rect>
@@ -1603,7 +1603,7 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
   <field>
    <rect>
     <x>640</x>
-    <y>45</y>
+    <y>103</y>
     <width>100</width>
     <height>20</height>
    </rect>
@@ -1616,7 +1616,42 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
    <vcenter/>
    <data>
     <query>GroupExtended</query>
-    <column>f_misc</column>
+    <column>f_totaldue</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>500</x>
+    <y>25</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Freight:</string>
+  </label>
+  <field>
+   <rect>
+    <x>640</x>
+    <y>65</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <data>
+    <query>GroupExtended</query>
+    <column>f_tax</column>
    </data>
   </field>
   <field>
@@ -1638,41 +1673,6 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
     <column>f_extprice</column>
    </data>
   </field>
-  <field>
-   <rect>
-    <x>605</x>
-    <y>65</y>
-    <width>31</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <data>
-    <query>currency</query>
-    <column>curr_symbol</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>500</x>
-    <y>5</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Subtotal:</string>
-  </label>
   <field>
    <rect>
     <x>605</x>
@@ -1714,7 +1714,7 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
   <field>
    <rect>
     <x>640</x>
-    <y>104</y>
+    <y>85</y>
     <width>100</width>
     <height>20</height>
    </rect>
@@ -1727,71 +1727,14 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
    <vcenter/>
    <data>
     <query>GroupExtended</query>
-    <column>f_totaldue</column>
+    <column>f_allocated</column>
    </data>
   </field>
   <field>
    <rect>
     <x>605</x>
-    <y>45</y>
-    <width>31</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <data>
-    <query>currency</query>
-    <column>curr_symbol</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>640</x>
-    <y>125</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <data>
-    <query>GroupExtended</query>
-    <column>f_payment</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>605</x>
-    <y>125</y>
-    <width>31</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <data>
-    <query>currency</query>
-    <column>curr_symbol</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>640</x>
     <y>65</y>
-    <width>100</width>
+    <width>31</width>
     <height>20</height>
    </rect>
    <font>
@@ -1802,48 +1745,13 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
    <right/>
    <vcenter/>
    <data>
-    <query>GroupExtended</query>
-    <column>f_tax</column>
+    <query>currency</query>
+    <column>curr_symbol</column>
    </data>
   </field>
   <field>
    <rect>
-    <x>20</x>
-    <y>25</y>
-    <width>540</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>GroupExtended</query>
-    <column>invchead_notes</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>500</x>
-    <y>25</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Freight:</string>
-  </label>
-  <label>
-   <rect>
-    <x>500</x>
+    <x>640</x>
     <y>45</y>
     <width>100</width>
     <height>20</height>
@@ -1855,8 +1763,46 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>Misc. Charge:</string>
+   <data>
+    <query>GroupExtended</query>
+    <column>f_misc</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>500</x>
+    <y>5</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Subtotal:</string>
   </label>
+  <field>
+   <rect>
+    <x>605</x>
+    <y>103</y>
+    <width>31</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <data>
+    <query>currency</query>
+    <column>curr_symbol</column>
+   </data>
+  </field>
   <field>
    <rect>
     <x>605</x>
@@ -1878,23 +1824,7 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
   </field>
   <label>
    <rect>
-    <x>500</x>
-    <y>65</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Sales Tax:</string>
-  </label>
-  <label>
-   <rect>
-    <x>434</x>
+    <x>433</x>
     <y>125</y>
     <width>165</width>
     <height>20</height>
@@ -1908,30 +1838,11 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
    <vcenter/>
    <string>Payment Received:</string>
   </label>
-  <field>
-   <rect>
-    <x>605</x>
-    <y>85</y>
-    <width>31</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <data>
-    <query>currency</query>
-    <column>curr_symbol</column>
-   </data>
-  </field>
   <label>
    <rect>
-    <x>500</x>
-    <y>104</y>
-    <width>100</width>
+    <x>457</x>
+    <y>85</y>
+    <width>140</width>
     <height>20</height>
    </rect>
    <font>
@@ -1941,7 +1852,7 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>Total Due:</string>
+   <string>Less Allocated C/M's</string>
   </label>
   <field>
    <rect>
@@ -1964,9 +1875,9 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
   </field>
   <label>
    <rect>
-    <x>458</x>
-    <y>85</y>
-    <width>140</width>
+    <x>500</x>
+    <y>65</y>
+    <width>100</width>
     <height>20</height>
    </rect>
    <font>
@@ -1976,7 +1887,96 @@ and invchead_id = &lt;? value("invchead_id") ?>;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>Less Allocated C/M's</string>
+   <string>Sales Tax:</string>
   </label>
+  <field>
+   <rect>
+    <x>605</x>
+    <y>45</y>
+    <width>31</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <data>
+    <query>currency</query>
+    <column>curr_symbol</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>500</x>
+    <y>103</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Total Due:</string>
+  </label>
+  <field>
+   <rect>
+    <x>605</x>
+    <y>125</y>
+    <width>31</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <data>
+    <query>currency</query>
+    <column>curr_symbol</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>500</x>
+    <y>45</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Misc. Charge:</string>
+  </label>
+  <field>
+   <rect>
+    <x>20</x>
+    <y>25</y>
+    <width>540</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>GroupExtended</query>
+    <column>invchead_notes</column>
+   </data>
+  </field>
  </pgfoot>
 </report>

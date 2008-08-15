@@ -12,9 +12,6 @@
  <parameter default="" active="true" listtype="static" type="string" name="nonInventory" >
   <description></description>
  </parameter>
- <parameter default="" active="true" listtype="static" type="bool" name="selectedOnly" >
-  <description></description>
- </parameter>
  <size>Letter</size>
  <portrait/>
  <topmargin>50</topmargin>
@@ -44,17 +41,11 @@ FROM orderhead JOIN
 	   AND (recv_order_type=orderitem_orderhead_type)) LEFT OUTER JOIN
      (itemsite JOIN item ON (itemsite_item_id=item_id)
 	       JOIN uom ON (item_inv_uom_id=uom_id)
-               JOIN whsinfo ON (itemsite_warehous_id=warehous_id)
-&lt;? if exists("selectedOnly") ?>
-               JOIN usrsite ON (warehous_id=usrsite_warehous_id) 
-&lt;? endif ?>
+               JOIN site() ON (itemsite_warehous_id=warehous_id)
        )
       ON (recv_itemsite_id=itemsite_id) LEFT OUTER JOIN
      vend ON (orderhead_type='PO' AND orderhead_from_id=vend_id)
 WHERE (NOT recv_posted)
-&lt;? if exists("selectedOnly") ?>
-  AND (usrsite_username=current_user) 
-&lt;? endif ?>
 ORDER BY orderhead_from, recv_order_number, orderitem_linenumber;
 </sql>
  </querysource>
@@ -93,9 +84,9 @@ ORDER BY orderhead_from, recv_order_number, orderitem_linenumber;
     <height>51</height>
     <label>
      <rect>
-      <x>395</x>
+      <x>130</x>
       <y>31</y>
-      <width>40</width>
+      <width>100</width>
       <height>15</height>
      </rect>
      <font>
@@ -105,45 +96,13 @@ ORDER BY orderhead_from, recv_order_number, orderitem_linenumber;
      </font>
      <left/>
      <vcenter/>
-     <string>UOM</string>
+     <string>Item Number</string>
     </label>
     <label>
      <rect>
-      <x>40</x>
+      <x>600</x>
       <y>31</y>
-      <width>80</width>
-      <height>15</height>
-     </rect>
-     <font>
-      <face>Arial</face>
-      <size>8</size>
-      <weight>normal</weight>
-     </font>
-     <left/>
-     <vcenter/>
-     <string>Due Date</string>
-    </label>
-    <label>
-     <rect>
-      <x>685</x>
-      <y>31</y>
-      <width>80</width>
-      <height>15</height>
-     </rect>
-     <font>
-      <face>Arial</face>
-      <size>8</size>
-      <weight>normal</weight>
-     </font>
-     <left/>
-     <vcenter/>
-     <string>Receipt Date</string>
-    </label>
-    <label>
-     <rect>
-      <x>440</x>
-      <y>31</y>
-      <width>70</width>
+      <width>75</width>
       <height>15</height>
      </rect>
      <font>
@@ -153,23 +112,7 @@ ORDER BY orderhead_from, recv_order_number, orderitem_linenumber;
      </font>
      <right/>
      <vcenter/>
-     <string>Qty Ordered</string>
-    </label>
-    <label>
-     <rect>
-      <x>0</x>
-      <y>15</y>
-      <width>80</width>
-      <height>15</height>
-     </rect>
-     <font>
-      <face>Arial</face>
-      <size>8</size>
-      <weight>normal</weight>
-     </font>
-     <left/>
-     <vcenter/>
-     <string>Vendor:</string>
+     <string>Qty To Receive</string>
     </label>
     <label>
      <rect>
@@ -186,22 +129,6 @@ ORDER BY orderhead_from, recv_order_number, orderitem_linenumber;
      <left/>
      <vcenter/>
      <string>Vendor Item Number</string>
-    </label>
-    <label>
-     <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>100</width>
-      <height>15</height>
-     </rect>
-     <font>
-      <face>Arial</face>
-      <size>8</size>
-      <weight>normal</weight>
-     </font>
-     <left/>
-     <vcenter/>
-     <string>Order #:</string>
     </label>
     <field>
      <rect>
@@ -224,9 +151,9 @@ ORDER BY orderhead_from, recv_order_number, orderitem_linenumber;
     </field>
     <label>
      <rect>
-      <x>130</x>
+      <x>240</x>
       <y>31</y>
-      <width>100</width>
+      <width>40</width>
       <height>15</height>
      </rect>
      <font>
@@ -236,7 +163,7 @@ ORDER BY orderhead_from, recv_order_number, orderitem_linenumber;
      </font>
      <left/>
      <vcenter/>
-     <string>Item Number</string>
+     <string>UOM</string>
     </label>
     <field>
      <rect>
@@ -259,23 +186,7 @@ ORDER BY orderhead_from, recv_order_number, orderitem_linenumber;
     </field>
     <label>
      <rect>
-      <x>600</x>
-      <y>31</y>
-      <width>75</width>
-      <height>15</height>
-     </rect>
-     <font>
-      <face>Arial</face>
-      <size>8</size>
-      <weight>normal</weight>
-     </font>
-     <right/>
-     <vcenter/>
-     <string>Qty To Receive</string>
-    </label>
-    <label>
-     <rect>
-      <x>520</x>
+      <x>440</x>
       <y>31</y>
       <width>70</width>
       <height>15</height>
@@ -287,13 +198,13 @@ ORDER BY orderhead_from, recv_order_number, orderitem_linenumber;
      </font>
      <right/>
      <vcenter/>
-     <string>Qty Received</string>
+     <string>Qty Ordered</string>
     </label>
     <label>
      <rect>
-      <x>240</x>
-      <y>31</y>
-      <width>40</width>
+      <x>0</x>
+      <y>0</y>
+      <width>100</width>
       <height>15</height>
      </rect>
      <font>
@@ -303,13 +214,13 @@ ORDER BY orderhead_from, recv_order_number, orderitem_linenumber;
      </font>
      <left/>
      <vcenter/>
-     <string>UOM</string>
+     <string>Order #:</string>
     </label>
     <label>
      <rect>
-      <x>0</x>
+      <x>40</x>
       <y>31</y>
-      <width>35</width>
+      <width>80</width>
       <height>15</height>
      </rect>
      <font>
@@ -317,9 +228,9 @@ ORDER BY orderhead_from, recv_order_number, orderitem_linenumber;
       <size>8</size>
       <weight>normal</weight>
      </font>
-     <right/>
+     <left/>
      <vcenter/>
-     <string>Line #</string>
+     <string>Due Date</string>
     </label>
     <field>
      <rect>
@@ -340,6 +251,86 @@ ORDER BY orderhead_from, recv_order_number, orderitem_linenumber;
       <column>recv_order_number</column>
      </data>
     </field>
+    <label>
+     <rect>
+      <x>0</x>
+      <y>15</y>
+      <width>80</width>
+      <height>15</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>8</size>
+      <weight>normal</weight>
+     </font>
+     <left/>
+     <vcenter/>
+     <string>Vendor:</string>
+    </label>
+    <label>
+     <rect>
+      <x>520</x>
+      <y>31</y>
+      <width>70</width>
+      <height>15</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>8</size>
+      <weight>normal</weight>
+     </font>
+     <right/>
+     <vcenter/>
+     <string>Qty Received</string>
+    </label>
+    <label>
+     <rect>
+      <x>0</x>
+      <y>31</y>
+      <width>35</width>
+      <height>15</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>8</size>
+      <weight>normal</weight>
+     </font>
+     <right/>
+     <vcenter/>
+     <string>Line #</string>
+    </label>
+    <label>
+     <rect>
+      <x>685</x>
+      <y>31</y>
+      <width>80</width>
+      <height>15</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>8</size>
+      <weight>normal</weight>
+     </font>
+     <left/>
+     <vcenter/>
+     <string>Receipt Date</string>
+    </label>
+    <label>
+     <rect>
+      <x>395</x>
+      <y>31</y>
+      <width>40</width>
+      <height>15</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>8</size>
+      <weight>normal</weight>
+     </font>
+     <left/>
+     <vcenter/>
+     <string>UOM</string>
+    </label>
    </head>
   </group>
   <detail>
@@ -349,7 +340,7 @@ ORDER BY orderhead_from, recv_order_number, orderitem_linenumber;
    <height>21</height>
    <field>
     <rect>
-     <x>40</x>
+     <x>685</x>
      <y>0</y>
      <width>80</width>
      <height>15</height>
@@ -363,7 +354,7 @@ ORDER BY orderhead_from, recv_order_number, orderitem_linenumber;
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>recv_duedate</column>
+     <column>recv_date</column>
     </data>
    </field>
    <field>
@@ -387,21 +378,21 @@ ORDER BY orderhead_from, recv_order_number, orderitem_linenumber;
    </field>
    <field>
     <rect>
-     <x>600</x>
+     <x>395</x>
      <y>0</y>
-     <width>75</width>
+     <width>40</width>
      <height>15</height>
     </rect>
     <font>
      <face>Arial</face>
      <size>8</size>
-     <weight>bold</weight>
+     <weight>normal</weight>
     </font>
-    <right/>
+    <left/>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>recv_qty</column>
+     <column>recv_vend_uom</column>
     </data>
    </field>
    <field>
@@ -425,44 +416,6 @@ ORDER BY orderhead_from, recv_order_number, orderitem_linenumber;
    </field>
    <field>
     <rect>
-     <x>685</x>
-     <y>0</y>
-     <width>80</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>recv_date</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>240</x>
-     <y>0</y>
-     <width>40</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>normal</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>uom_name</column>
-    </data>
-   </field>
-   <field>
-    <rect>
      <x>285</x>
      <y>0</y>
      <width>100</width>
@@ -478,25 +431,6 @@ ORDER BY orderhead_from, recv_order_number, orderitem_linenumber;
     <data>
      <query>detail</query>
      <column>recv_vend_item_number</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>440</x>
-     <y>0</y>
-     <width>70</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>normal</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>qty_ordered</column>
     </data>
    </field>
    <field>
@@ -520,7 +454,26 @@ ORDER BY orderhead_from, recv_order_number, orderitem_linenumber;
    </field>
    <field>
     <rect>
-     <x>395</x>
+     <x>40</x>
+     <y>0</y>
+     <width>80</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>recv_duedate</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>240</x>
      <y>0</y>
      <width>40</width>
      <height>15</height>
@@ -534,29 +487,51 @@ ORDER BY orderhead_from, recv_order_number, orderitem_linenumber;
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>recv_vend_uom</column>
+     <column>uom_name</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>600</x>
+     <y>0</y>
+     <width>75</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>recv_qty</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>440</x>
+     <y>0</y>
+     <width>70</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>qty_ordered</column>
     </data>
    </field>
   </detail>
  </section>
  <pgfoot>
   <height>16</height>
-  <label>
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>85</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Report Date:</string>
-  </label>
   <field>
    <rect>
     <x>90</x>
@@ -576,22 +551,6 @@ ORDER BY orderhead_from, recv_order_number, orderitem_linenumber;
     <column>report_date</column>
    </data>
   </field>
-  <label>
-   <rect>
-    <x>615</x>
-    <y>0</y>
-    <width>85</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Page:</string>
-  </label>
   <field>
    <rect>
     <x>705</x>
@@ -611,5 +570,37 @@ ORDER BY orderhead_from, recv_order_number, orderitem_linenumber;
     <column>page_number</column>
    </data>
   </field>
+  <label>
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>85</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Report Date:</string>
+  </label>
+  <label>
+   <rect>
+    <x>615</x>
+    <y>0</y>
+    <width>85</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Page:</string>
+  </label>
  </pgfoot>
 </report>
