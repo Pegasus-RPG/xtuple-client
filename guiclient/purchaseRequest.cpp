@@ -364,7 +364,7 @@ void purchaseRequest::populateNumber()
 
 void purchaseRequest::closeEvent(QCloseEvent *pEvent)
 {
-  if ( (_mode == cNew) &&
+  if ( ((_mode == cNew) || (_mode == cRelease)) &&
        ((_metrics->value("PrNumberGeneration") == "A") || (_metrics->value("PrNumberGeneration") == "O")) )
   {
     q.prepare("SELECT releasePrNumber(:orderNumber);");
