@@ -148,27 +148,18 @@ void warehouses::setParams(ParameterList & params)
 {
   if (_showInactive->isChecked())
     params.append("showInactive");
-    
-  if (_x_preferences->boolean("selectedSites"))
-    params.append("selectedOnly");
 }
 
 void warehouses::sFillList()
 {
   QString whss = "SELECT warehous_id, warehous_code,"
                  "       formatBoolYN(warehous_active), sitetype_name,"
-                 "       warehous_descrip, warehous_addr1 "
-                 "FROM warehous "
-                 "<? if exists(\"selectedOnly\") ?>"
-                 "JOIN usrsite ON (warehous_id=usrsite_warehous_id) "
-		 "<? endif ?>"
+                 "       warehous_descrip, addr_line1 "
+                 "FROM site() JOIN addr ON (addr_id=warehous_addr_id) "
 		 "  LEFT OUTER JOIN sitetype ON (sitetype_id=warehous_sitetype_id) "
                  "WHERE ((TRUE) "
 		 "<? if not exists(\"showInactive\") ?>"
                  "  AND (warehous_active) "
-		 "<? endif ?>"
-		 "<? if exists(\"selectedOnly\") ?>"
-		 "  AND (usrsite_username=current_user) "
 		 "<? endif ?>"
 		 ") ORDER BY warehous_code;" ;
   ParameterList whsp;

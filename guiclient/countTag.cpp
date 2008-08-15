@@ -314,21 +314,13 @@ void countTag::sParseCountTagNumber()
 {
   QString sql( "SELECT invcnt_id "
              "FROM invcnt "
-             "<? if exists(\"selectedOnly\") ?>"
              "JOIN itemsite ON (invcnt_itemsite_id=itemsite_id) "
-             "JOIN usrsite ON (itemsite_warehous_id=usrsite_warehous_id) "
-             "<? endif ?>"
+             "JOIN site() ON (itemsite_warehous_id=warehous_id) "
              "WHERE ( (NOT invcnt_posted)"
-             "<? if exists(\"selectedOnly\") ?>"
-             "  AND (usrsite_username=current_user) "
-             "<? endif ?>"
              " AND (UPPER(invcnt_tagnumber)=UPPER(<? value(\"cnttag_tagnumber\") ?>)) );" );
              
   ParameterList ctp;
   ctp.append("cnttag_tagnumber", _countTagNumber->text().stripWhiteSpace());
-  if (_x_preferences)
-    if (_x_preferences->boolean("selectedSites"))
-      ctp.append("selectedOnly");
       
   MetaSQLQuery ctq(sql);
   q = ctq.toQuery(ctp);

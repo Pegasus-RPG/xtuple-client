@@ -322,23 +322,15 @@ void enterPoReturn::sFillList()
                "     ( itemsite "
                "        JOIN item ON (itemsite_item_id=item_id) "
                "        JOIN uom ON (item_inv_uom_id=uom_id) "
-               "        JOIN whsinfo ON (itemsite_warehous_id=warehous_id) "
-               "<? if exists(\"selectedOnly\") ?>"
-               "        JOIN usrsite ON (warehous_id=usrsite_warehous_id) "
-               "<? endif ?>"
+               "        JOIN site() ON (itemsite_warehous_id=warehous_id) "
                "     ) ON (poitem_itemsite_id=itemsite_id) "
                "WHERE (poitem_pohead_id= <? value(\"pohead_id\") ?>) "
-               "<? if exists(\"selectedOnly\") ?>"
-	       "  AND (usrsite_username=current_user) "
-	       "<? endif ?>"
                "ORDER BY poitem_linenumber;" );
           
     ParameterList params;
     params.append("na", tr("N/A"));
     params.append("nonInventory", tr("Non-Inventory"));
     params.append("pohead_id", _po->id());
-    if (_preferences->boolean("selectedSites"))
-        params.append("selectedOnly");
     MetaSQLQuery mql(sql);
     q = mql.toQuery(params);
     _poitem->populate(q);

@@ -179,8 +179,6 @@ void enterPoReceipt::setParams(ParameterList & params)
     params.append("ordertype", _order->type());
   }
 
-  if (_preferences->boolean("selectedSites"))
-    params.append("selectedOnly");
   params.append("nonInventory",	tr("Non-Inventory"));
   params.append("na",		tr("N/A"));
 }

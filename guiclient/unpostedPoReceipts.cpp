@@ -136,8 +136,6 @@ void unpostedPoReceipts::setParams(ParameterList & params)
   params.append("na",		tr("N/A"));
   if (_metrics->boolean("MultiWhs"))
     params.append("MultiWhs");
-  if (_preferences->boolean("selectedSites"))
-    params.append("selectedOnly");
 }
 
 void unpostedPoReceipts::sPrint()
