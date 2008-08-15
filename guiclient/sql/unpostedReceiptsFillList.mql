@@ -19,15 +19,9 @@ FROM orderhead JOIN
 	   AND (recv_order_type=orderitem_orderhead_type)) LEFT OUTER JOIN
      (itemsite JOIN item ON (itemsite_item_id=item_id)
 	       JOIN uom ON (item_inv_uom_id=uom_id)
-               JOIN whsinfo ON (itemsite_warehous_id=warehous_id)
-<? if exists("selectedOnly") ?>
-               JOIN usrsite ON (warehous_id=usrsite_warehous_id) 
-<? endif ?>
+               JOIN site() ON (itemsite_warehous_id=warehous_id)
        )
       ON (recv_itemsite_id=itemsite_id) LEFT OUTER JOIN
      vend ON (orderhead_type='PO' AND orderhead_from_id=vend_id)
 WHERE (NOT recv_posted)
-<? if exists("selectedOnly") ?>
-  AND (usrsite_username=current_user) 
-<? endif ?>
 ORDER BY recv_order_number, orderitem_linenumber;

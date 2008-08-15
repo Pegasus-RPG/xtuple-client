@@ -12,17 +12,12 @@ SELECT poitem_id, poitem_linenumber,
 FROM poitem 
   LEFT OUTER JOIN 
      ( itemsite 
-<? if exists("selectedOnly") ?>
-       JOIN usrsite ON (itemsite_warehous_id=usrsite_warehous_id) 
-<? endif ?>
+       JOIN site() ON (itemsite_warehous_id=warehous_id) 
        JOIN item ON (itemsite_item_id=item_id) 
        JOIN uom ON (item_inv_uom_id=uom_id)
        JOIN whsinfo ON (itemsite_warehous_id=warehous_id)
      ) ON (poitem_itemsite_id=itemsite_id) 
 WHERE ( (poitem_status <> 'C')
-<? if exists("selectedOnly") ?>
- AND (usrsite_username=current_user) 
-<? endif ?>
  AND (poitem_pohead_id=<? value("pohead_id") ?>) )
 ORDER BY poitem_linenumber;
 <? elseif exists("rahead_id") ?>
@@ -39,9 +34,7 @@ SELECT raitem_id, raitem_linenumber,
 FROM rahead, raitem 
   LEFT OUTER JOIN 
      ( itemsite 
-<? if exists("selectedOnly") ?>
-       JOIN usrsite ON (itemsite_warehous_id=usrsite_warehous_id) 
-<? endif ?>
+       JOIN site() ON (itemsite_warehous_id=warehous_id) 
        JOIN item ON (itemsite_item_id=item_id) 
        JOIN uom iu ON (item_inv_uom_id=uom_id)
        JOIN whsinfo ON (itemsite_warehous_id=warehous_id)
@@ -52,9 +45,6 @@ WHERE ( (raitem_status <> 'C')
  AND (raitem_disposition IN ('R','P','V'))
  AND (raitem_rahead_id=rahead_id)
  AND (raitem_qty_uom_id=ru.uom_id)
-<? if exists("selectedOnly") ?>
- AND (usrsite_username=current_user) 
-<? endif ?>
  AND (rahead_id=<? value("rahead_id") ?>) )
 ORDER BY raitem_linenumber;
 <? elseif exists("tohead_id") ?>
@@ -69,9 +59,7 @@ SELECT toitem_id, toitem_linenumber,
        formatQty(toitem_qty_received),
        formatQty(qtyToReceive(<? value("ordertype") ?>, toitem_id))
 FROM tohead, itemsite
-<? if exists("selectedOnly") ?>
-       JOIN usrsite ON (itemsite_warehous_id=usrsite_warehous_id) 
-<? endif ?>
+       JOIN site() ON (itemsite_warehous_id=warehous_id) 
 , whsinfo, toitem, item JOIN uom ON (item_inv_uom_id=uom_id)
 WHERE ((toitem_item_id=item_id)
   AND  (tohead_id=toitem_tohead_id)
@@ -79,9 +67,6 @@ WHERE ((toitem_item_id=item_id)
   AND  (tohead_dest_warehous_id=warehous_id)
   AND  (toitem_item_id=itemsite_item_id)
   AND  (toitem_status <> 'C')
-<? if exists("selectedOnly") ?>
- AND (usrsite_username=current_user) 
-<? endif ?>
   AND  (toitem_tohead_id=<? value("tohead_id") ?>) )
 ORDER BY toitem_linenumber;
 <? endif ?>
