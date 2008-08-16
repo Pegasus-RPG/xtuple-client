@@ -139,12 +139,19 @@ void scripts::sEdit()
 
 void scripts::sDelete()
 {
-  q.prepare( "DELETE FROM script "
-             "WHERE (script_id=:script_id);" );
-  q.bindValue(":script_id", _script->id());
-  q.exec();
+  if ( QMessageBox::warning(this, tr("Delete Script?"),
+                            tr("<p>Are you sure that you want to completely "
+			       "delete the selected script?"),
+			    QMessageBox::Yes,
+			    QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
+  {
+    q.prepare( "DELETE FROM script "
+               "WHERE (script_id=:script_id);" );
+    q.bindValue(":script_id", _script->id());
+    q.exec();
 
-  sFillList();
+    sFillList();
+  }
 }
 
 void scripts::sFillList()

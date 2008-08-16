@@ -62,6 +62,7 @@
 #include <QVariant>
 #include <QFileDialog>
 #include <QTextStream>
+#include <QScriptEngine>
 
 scriptEditor::scriptEditor(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -137,14 +138,16 @@ void scriptEditor::sSave()
     return;
   }
 
-  if (_source->text().length() == 0)
+  QScriptEngine engine;
+  if (!engine.canEvaluate(_source->text()) || _source->text().length() == 0)
   {
-    QMessageBox::warning( this, tr("Script Source is Empty"),
-                          tr("<p>You must enter some source for this Script.") );
-    _source->setFocus();
+    if (QMessageBox::question(this, windowTitle(),
+                          tr("<p>The script appears incomplete are you sure you want to save?"),
+                             QMessageBox::Yes,
+                             QMessageBox::No  | QMessageBox::Default) != QMessageBox::Yes)
     return;
   }
-
+  
   if (_mode == cNew)
   {
     q.exec("SELECT NEXTVAL('script_script_id_seq') AS _script_id");
