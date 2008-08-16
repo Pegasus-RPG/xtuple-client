@@ -458,6 +458,28 @@ void item::sSave()
       tr("Kit item types must be Sold. Please mark this item as sold and set the appropriate options and save again.") );
     return;
   }
+  
+  if(!_sold->isChecked())
+  {
+    q.prepare("SELECT bomitem_id "
+              "FROM bomitem, item "
+              "WHERE ((bomitem_parent_item_id=item_id) "
+              "AND (item_active) "
+              "AND (item_type='K') "
+              "AND (bomitem_expires > current_date) "
+              "AND (getActiveRevId('BOM',bomitem_parent_item_id)=bomitem_rev_id) "
+              "AND (bomitem_item_id=:item_id)) "
+              "LIMIT 1; ");
+    q.bindValue(":item_id", _itemid);
+    q.exec();
+    if (q.first())         
+    { 
+      QMessageBox::warning( this, tr("Cannot Save Item"),
+        tr("This item is used in an active bill of materials for a kit and must be marked as sold. "
+        "Expire the bill of material items or deactivate the kit items to allow this item to not be sold.") );
+      return;
+    }
+  }
 
   if (_mode == cEdit)
   {
