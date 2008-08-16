@@ -326,7 +326,7 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
     { "ap.voucheringEditList", tr("Vouchering &Edit List..."), SLOT(sVoucheringEditList()), apReportsMenu, (_privileges->check("MaintainVouchers") || _privileges->check("ViewVouchers")), NULL, NULL, true , NULL },
     { "separator", NULL, NULL, apReportsMenu, true, NULL, NULL, true, NULL },
     { "ap.dspOpenAPItemsByVendor", tr("Open &Items by Vendor..."), SLOT(sDspAPOpenItemsByVendor()), apReportsMenu, _privileges->check("ViewAPOpenItems"), NULL, NULL, true , NULL },
-    { "ap.dspAPAging", tr("A/P &Aging..."), SLOT(sDspTimePhasedOpenAPItems()), apReportsMenu, _privileges->check("ViewAPOpenItems"), new QPixmap(":/images/apAging.png"), toolBar, true , NULL },
+    { "ap.dspAPAging", tr("&Aging..."), SLOT(sDspTimePhasedOpenAPItems()), apReportsMenu, _privileges->check("ViewAPOpenItems"), new QPixmap(":/images/apAging.png"), toolBar, true , "A/P Aging" },
     { "separator", NULL, NULL, apReportsMenu, true, NULL, NULL, true, NULL },
     { "ap.dspCheckRegister", tr("&Check Register..."), SLOT(sDspCheckRegister()), apReportsMenu, _privileges->check("MaintainPayments"), NULL, NULL, true , NULL },
     { "ap.dspVoucherRegister", tr("&Voucher Register..."), SLOT(sDspVoucherRegister()), apReportsMenu, (_privileges->check("MaintainVouchers") || _privileges->check("ViewVouchers")), NULL, NULL, true , NULL },
@@ -363,8 +363,9 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
     { "ar.postCashReceipts", tr("&Post..."), SLOT(sPostCashReceipts()), arCashReceiptsMenu, _privileges->check("PostCashReceipts"), NULL, NULL, true , NULL },
 
     { "separator", NULL, NULL, arMenu, true, NULL, NULL, true, NULL },
-    { "ar.arWorkBench", tr("A/R &Workbench..."), SLOT(sArWorkBench()), arMenu, _privileges->check("ViewAROpenItems") , new QPixmap(":/images/arWorkbench.png"), toolBar, true , NULL },
+    { "ar.arWorkBench", tr("&Workbench..."), SLOT(sArWorkBench()), arMenu, _privileges->check("ViewAROpenItems") , new QPixmap(":/images/arWorkbench.png"), toolBar, true , "A/R Workbench" },
 
+    { "separator", NULL, NULL, arMenu, true, NULL, NULL, true, NULL },
     // Accounting | Accounts Receivable | Forms
     { "menu", tr("&Forms"), (char*)arFormsMenu,	arMenu, true,	 NULL, NULL, true, NULL },
     { "ar.printInvoices", tr("Print &Invoices..."), SLOT(sPrintInvoices()), arFormsMenu, _privileges->check("PrintInvoices"), NULL, NULL, true , NULL },
@@ -381,11 +382,11 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
     { "separator", NULL, NULL, arReportsMenu, true, NULL, NULL, true, NULL },
     { "ar.dspOpenItems", tr("&Open Items..."), SLOT(sDspAROpenItems()), arReportsMenu, _privileges->check("ViewAROpenItems"), NULL, NULL, true , NULL },
     { "ar.dspOpenItemsByCustomer", tr("Open Items by &Customer..."), SLOT(sDspAROpenItemsByCustomer()), arReportsMenu, _privileges->check("ViewAROpenItems"), NULL, NULL, true , NULL },
-    { "ar.dspARAging", tr("A/R A&ging..."), SLOT(sDspTimePhasedOpenItems()), arReportsMenu, _privileges->check("ViewAROpenItems"), new QPixmap(":/images/arAging.png"), toolBar, true , NULL },
+    { "ar.dspARAging", tr("A&ging..."), SLOT(sDspTimePhasedOpenItems()), arReportsMenu, _privileges->check("ViewAROpenItems"), new QPixmap(":/images/arAging.png"), toolBar, true , "A/R Aging" },
     { "separator", NULL, NULL, arReportsMenu, true, NULL, NULL, true, NULL }, 
     { "ar.dspInvoiceRegister", tr("In&voice Register..."), SLOT(sDspInvoiceRegister()), arReportsMenu, _privileges->check("ViewInvoiceRegister"), NULL, NULL, true , NULL },
     { "ar.dspCashReceipts", tr("Cash &Receipts..."), SLOT(sDspCashReceipts()), arReportsMenu, _privileges->check("ViewAROpenItems"), NULL, NULL, true , NULL },
-    { "ar.dspARApplications", tr("A/R &Applications..."), SLOT(sDspARApplications()), arReportsMenu, _privileges->check("ViewAROpenItems"), NULL, NULL, true , NULL },
+    { "ar.dspARApplications", tr("&Applications..."), SLOT(sDspARApplications()), arReportsMenu, _privileges->check("ViewAROpenItems"), NULL, NULL, true , NULL },
     { "ar.dspDepositsRegister", tr("&Deposits Register..."), SLOT(sDspDepositsRegister()), arReportsMenu, _privileges->check("ViewDepositsRegister"), NULL, NULL, true , NULL },
     { "separator", NULL, NULL, arReportsMenu, true, NULL, NULL, true, NULL },
     { "ar.dspCustomerHistory", tr("Customer &History..."), SLOT(sDspCustomerHistory()), arReportsMenu, _privileges->check("ViewAROpenItems"), NULL, NULL, true , NULL },
