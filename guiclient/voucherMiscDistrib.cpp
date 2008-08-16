@@ -75,6 +75,8 @@ voucherMiscDistrib::voucherMiscDistrib(QWidget* parent, const char* name, bool m
 
   // signals and slots connections
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  
+  resize(minimumSize());
 }
 
 /*

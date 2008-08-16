@@ -5,160 +5,96 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>585</width>
-    <height>157</height>
+    <width>694</width>
+    <height>193</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Miscellaneous Voucher Distribution</string>
   </property>
-  <layout class="QHBoxLayout" >
-   <property name="margin" >
-    <number>9</number>
-   </property>
-   <property name="spacing" >
-    <number>6</number>
-   </property>
-   <item>
-    <layout class="QVBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
+  <layout class="QGridLayout" >
+   <item row="0" column="0" >
+    <widget class="QGroupBox" name="_groupButton" >
+     <property name="minimumSize" >
+      <size>
+       <width>550</width>
+       <height>0</height>
+      </size>
      </property>
-     <property name="spacing" >
-      <number>0</number>
+     <property name="title" >
+      <string/>
      </property>
-     <item>
-      <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
-       <property name="spacing" >
-        <number>6</number>
-       </property>
-       <item>
-        <widget class="QGroupBox" name="buttonGroup1" >
-         <property name="title" >
-          <string/>
-         </property>
-         <layout class="QGridLayout" >
-          <property name="margin" >
-           <number>9</number>
+     <layout class="QGridLayout" >
+      <item row="0" column="0" >
+       <widget class="QRadioButton" name="_accountSelected" >
+        <property name="text" >
+         <string>Account:</string>
+        </property>
+        <property name="checked" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1" >
+       <widget class="GLCluster" name="_account" />
+      </item>
+      <item row="1" column="0" colspan="2" >
+       <layout class="QHBoxLayout" >
+        <item>
+         <layout class="QVBoxLayout" >
+          <property name="topMargin" >
+           <number>8</number>
           </property>
-          <property name="spacing" >
-           <number>6</number>
-          </property>
-          <item row="1" column="2" >
-           <widget class="ExpenseCluster" name="_expcat" >
-            <property name="focusPolicy" >
-             <enum>Qt::StrongFocus</enum>
-            </property>
-            <property name="readonly" stdset="0" >
-             <bool>true</bool>
-            </property>
-            <property name="label" >
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0" colspan="2" >
+          <item>
            <widget class="QRadioButton" name="_expcatSelected" >
             <property name="text" >
              <string>Expense Category:</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="1" colspan="2" >
-           <widget class="GLCluster" name="_account" />
-          </item>
-          <item row="0" column="0" >
-           <widget class="QRadioButton" name="_accountSelected" >
-            <property name="text" >
-             <string>Account:</string>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Vertical</enum>
             </property>
-            <property name="checked" >
-             <bool>true</bool>
+            <property name="sizeHint" >
+             <size>
+              <width>20</width>
+              <height>0</height>
+             </size>
             </property>
-           </widget>
+           </spacer>
           </item>
          </layout>
-        </widget>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
-         <property name="spacing" >
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QLabel" name="_amountLit" >
-           <property name="text" >
-            <string>Amount to Distribute:</string>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="CurrCluster" name="_amount" >
-           <property name="currencyEditable" >
-            <bool>false</bool>
-           </property>
-           <property name="allowNegative" >
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeType" >
-            <enum>QSizePolicy::Expanding</enum>
-           </property>
-           <property name="sizeHint" >
-            <size>
-             <width>210</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <spacer>
-       <property name="orientation" >
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeHint" >
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
+        </item>
+        <item>
+         <widget class="ExpenseCluster" name="_expcat" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+          <property name="focusPolicy" >
+           <enum>Qt::StrongFocus</enum>
+          </property>
+          <property name="label" >
+           <string/>
+          </property>
+          <property name="readonly" stdset="0" >
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
    </item>
-   <item>
+   <item rowspan="2" row="0" column="1" >
     <layout class="QVBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
      <property name="spacing" >
       <number>0</number>
      </property>
      <item>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
         <number>5</number>
        </property>
@@ -199,6 +135,49 @@
      </item>
     </layout>
    </item>
+   <item row="1" column="0" >
+    <layout class="QHBoxLayout" >
+     <property name="spacing" >
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QLabel" name="_amountLit" >
+       <property name="text" >
+        <string>Amount to Distribute:</string>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="CurrCluster" name="_amount" >
+       <property name="allowNegative" >
+        <bool>true</bool>
+       </property>
+       <property name="currencyEditable" stdset="0" >
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType" >
+        <enum>QSizePolicy::Expanding</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>210</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
   </layout>
  </widget>
  <layoutdefault spacing="5" margin="5" />
@@ -228,7 +207,6 @@
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
- <includes/>
  <resources/>
  <connections>
   <connection>
@@ -264,14 +242,14 @@
    </hints>
   </connection>
   <connection>
-   <sender>_accountSelected</sender>
+   <sender>_expcatSelected</sender>
    <signal>toggled(bool)</signal>
    <receiver>_expcat</receiver>
-   <slot>setReadOnly(bool)</slot>
+   <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>83</x>
-     <y>31</y>
+     <x>97</x>
+     <y>87</y>
     </hint>
     <hint type="destinationlabel" >
      <x>285</x>
