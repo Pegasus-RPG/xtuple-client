@@ -144,8 +144,8 @@
        <property name="title" >
         <string/>
        </property>
-       <layout class="QGridLayout" >
-        <item row="0" column="0" >
+       <layout class="QHBoxLayout" >
+        <item>
          <widget class="QLabel" name="_termsLit" >
           <property name="text" >
            <string>Terms:</string>
@@ -155,7 +155,7 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="1" >
+        <item>
          <widget class="XComboBox" name="_terms" >
           <property name="sizePolicy" >
            <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
@@ -164,6 +164,19 @@
            </sizepolicy>
           </property>
          </widget>
+        </item>
+        <item>
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>0</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
         </item>
        </layout>
       </widget>
