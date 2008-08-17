@@ -162,14 +162,14 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft );
   _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft );
-  _charass->addColumn(tr("Default"),        _ynColumn,   Qt::AlignCenter );
+  _charass->addColumn(tr("Default"),        _ynColumn*2,   Qt::AlignCenter );
   _charass->addColumn(tr("List Price"),     _priceColumn,Qt::AlignRight );
   _charass->hideColumn(3);
 
   _uomconv->addColumn(tr("Conversions/Where Used"), _itemColumn*2, Qt::AlignLeft);
-  _uomconv->addColumn(tr("Ratio"),      _qtyColumn*2, Qt::AlignRight  );
-  _uomconv->addColumn(tr("Global"),     _ynColumn,    Qt::AlignCenter );
-  _uomconv->addColumn(tr("Fractional"), _qtyColumn,   Qt::AlignCenter );
+  _uomconv->addColumn(tr("Ratio"),      -1, Qt::AlignRight  );
+  _uomconv->addColumn(tr("Global"),     _ynColumn*2,    Qt::AlignCenter );
+  _uomconv->addColumn(tr("Fractional"), _ynColumn*2,   Qt::AlignCenter );
 
   _itemimage->addColumn(tr("Image Name"),  _itemColumn, Qt::AlignLeft );
   _itemimage->addColumn(tr("Description"), -1,          Qt::AlignLeft );
@@ -187,7 +187,8 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
   _itemtrans->addColumn(tr("Description"), -1,          Qt::AlignLeft   );
 
   _itemSite->addColumn(tr("Active"),        _dateColumn, Qt::AlignCenter );
-  _itemSite->addColumn(tr("Site"),          _whsColumn*2,  Qt::AlignCenter );
+  _itemSite->addColumn(tr("Site"),          _whsColumn,  Qt::AlignCenter );
+  _itemSite->addColumn(tr("Description"),   -1,          Qt::AlignLeft   );
   _itemSite->addColumn(tr("Cntrl. Method"), _itemColumn, Qt::AlignCenter );
   _itemSite->setDragString("itemsiteid=");
 
@@ -1677,7 +1678,7 @@ void item::sDeleteItemSite()
 void item::sFillListItemSites()
 {
   QString sql( "SELECT itemsite_id, formatBoolYN(itemsite_active),"
-               "       warehous_code,"
+               "       warehous_code, warehous_descrip, "
                "       CASE WHEN itemsite_controlmethod='R' THEN :regular"
                "            WHEN itemsite_controlmethod='N' THEN :none"
                "            WHEN itemsite_controlmethod='L' THEN :lotNumber"
