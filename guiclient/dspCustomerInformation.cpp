@@ -138,8 +138,8 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   _arhist->addColumn(tr("Currency"),  _currencyColumn, Qt::AlignLeft);
 
   // setup Quote list
-  _quote->addColumn(tr("Quote #"),    -1, Qt::AlignRight  );
-  _quote->addColumn(tr("P/O Number"), _itemColumn,  Qt::AlignLeft   );
+  _quote->addColumn(tr("Quote #"),    _itemColumn, Qt::AlignLeft  );
+  _quote->addColumn(tr("P/O Number"), -1,  Qt::AlignLeft   );
   _quote->addColumn(tr("Quote Date"), _dateColumn,  Qt::AlignCenter );
   if(_privileges->check("MaintainQuotes"))
   {
@@ -156,10 +156,10 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   connect(omfgThis, SIGNAL(quotesUpdated(int, bool)), this, SLOT(sFillQuoteList()));
 
   // setup Order list
-  _order->addColumn(tr("S/O #"),            -1, Qt::AlignLeft   );
-  _order->addColumn(tr("Cust. P/O Number"), _itemColumn,  Qt::AlignLeft   );
-  _order->addColumn(tr("Ordered"),          _dateColumn,  Qt::AlignCenter );
-  _order->addColumn(tr("Scheduled"),        _dateColumn,  Qt::AlignCenter );
+  _order->addColumn(tr("S/O #"),            _itemColumn, Qt::AlignLeft   );
+  _order->addColumn(tr("Cust. P/O Number"), -1,            Qt::AlignLeft   );
+  _order->addColumn(tr("Ordered"),          _dateColumn,   Qt::AlignCenter );
+  _order->addColumn(tr("Scheduled"),        _dateColumn,   Qt::AlignCenter );
   if(_privileges->check("MaintainSalesOrders"))
   {
     connect(_order, SIGNAL(valid(bool)), _editOrder, SLOT(setEnabled(bool)));
