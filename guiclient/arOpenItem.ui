@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>650</width>
-    <height>609</height>
+    <width>634</width>
+    <height>607</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -111,7 +111,7 @@
       </layout>
      </item>
      <item row="1" column="0" >
-      <widget class="QGroupBox" name="_docGroup" >
+      <widget class="QGroupBox" name="_dateGroup" >
        <property name="title" >
         <string/>
        </property>
@@ -201,7 +201,7 @@
       </widget>
      </item>
      <item row="2" column="0" >
-      <widget class="QGroupBox" name="groupBox" >
+      <widget class="QGroupBox" name="_docGroup" >
        <property name="title" >
         <string/>
        </property>
@@ -370,7 +370,7 @@
       </widget>
      </item>
      <item row="2" column="1" >
-      <widget class="QGroupBox" name="_priceGroup" >
+      <widget class="QGroupBox" name="_amountGroup" >
        <property name="title" >
         <string/>
        </property>
@@ -474,6 +474,16 @@
        <property name="currentIndex" >
         <number>0</number>
        </property>
+       <widget class="QWidget" name="_notesTab" >
+        <attribute name="title" >
+         <string>Notes</string>
+        </attribute>
+        <layout class="QGridLayout" >
+         <item row="0" column="0" >
+          <widget class="QTextEdit" name="_notes" />
+         </item>
+        </layout>
+       </widget>
        <widget class="QWidget" name="_accountTab" >
         <attribute name="title" >
          <string>Account</string>
@@ -546,16 +556,6 @@
             </size>
            </property>
           </spacer>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="_notesTab" >
-        <attribute name="title" >
-         <string>Notes</string>
-        </attribute>
-        <layout class="QGridLayout" >
-         <item row="0" column="0" >
-          <widget class="QTextEdit" name="_notes" />
          </item>
         </layout>
        </widget>
