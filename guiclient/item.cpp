@@ -95,6 +95,8 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
     : XMainWindow(parent, name, fl)
 {
   setupUi(this);
+  
+  _tab->setEnabled(false);
 
   // signals and slots connections
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
@@ -406,11 +408,20 @@ void item::saveCore()
     _inventoryUOM->setFocus();
     return;
   }
+  
+  else if (_classcode->id() == -1)
+  {
+    QMessageBox::information( this, tr("Cannot Save Item"),
+                              tr("You must select a Class Code before continuing.")  );
+    _classcode->setFocus();
+    return;
+  }
+  else
+  {
+    q.exec("BEGIN;");
+    _inTransaction = true;
 
-  q.exec("BEGIN;");
-  _inTransaction = true;
-
-  q.prepare("INSERT INTO item"
+    q.prepare("INSERT INTO item"
             "      (item_id, item_number, item_Descrip1, item_descrip2,"
             "       item_classcode_id,"
             "       item_picklist, item_sold, item_fractional, item_active,"
@@ -425,21 +436,23 @@ void item::saveCore()
             "       0.0, 0.0, -1,"
             "       true, 0.0, 0.0,"
             "       :item_inv_uom_id, :item_inv_uom_id);");
-  q.bindValue(":item_id", _itemid);
-  q.bindValue(":item_number", _itemNumber->text().stripWhiteSpace().upper());
-  q.bindValue(":item_type", _itemTypes[_itemtype->currentItem()]);
-  q.bindValue(":item_classcode_id", _classcode->id());
-  q.bindValue(":item_inv_uom_id", _inventoryUOM->id());
-  if(!q.exec() || q.lastError().type() != QSqlError::None)
-  {
-    q.exec("ROLLBACK;");
-    _inTransaction = false;
-    return;
-  }
+    q.bindValue(":item_id", _itemid);
+    q.bindValue(":item_number", _itemNumber->text().stripWhiteSpace().upper());
+    q.bindValue(":item_type", _itemTypes[_itemtype->currentItem()]);
+    q.bindValue(":item_classcode_id", _classcode->id());
+    q.bindValue(":item_inv_uom_id", _inventoryUOM->id());
+    if(!q.exec() || q.lastError().type() != QSqlError::None)
+    {
+      q.exec("ROLLBACK;");
+      _inTransaction = false;
+      return;
+    }
 
-  // TODO: We can enable certain functionality here that needs a saved record
-  _newUOM->setEnabled(true);
-}
+    // TODO: We can enable certain functionality here that needs a saved record
+    _newUOM->setEnabled(true);
+    _tab->setEnabled(true);
+  }
+} 
 
 void item::sSave()
 {
