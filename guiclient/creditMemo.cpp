@@ -315,6 +315,7 @@ void creditMemo::sSave()
 
   q.prepare( "UPDATE cmhead "
 	     "SET cmhead_invcnumber=:cmhead_invcnumber, cmhead_cust_id=:cmhead_cust_id,"
+       "    cmhead_number=:cmhead_number,"
 	     "    cmhead_custponumber=:cmhead_custponumber, cmhead_hold=:cmhead_hold,"
 	     "    cmhead_billtoname=:cmhead_billtoname, cmhead_billtoaddress1=:cmhead_billtoaddress1,"
 	     "    cmhead_billtoaddress2=:cmhead_billtoaddress2, cmhead_billtoaddress3=:cmhead_billtoaddress3,"
