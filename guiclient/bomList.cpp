@@ -154,7 +154,7 @@ void bomList::sFillList( int pItemid, bool pLocal )
 
   sql = "SELECT DISTINCT item_id, "
         " CASE WHEN "
-        "  bomitem_rev_id=-1 THEN "
+        "  COALESCE(bomitem_rev_id, -1)=-1 THEN "
         "   0 "
         " ELSE 1 "
         " END AS revcontrol, "
