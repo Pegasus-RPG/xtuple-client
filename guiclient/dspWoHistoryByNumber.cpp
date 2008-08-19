@@ -86,8 +86,7 @@ dspWoHistoryByNumber::dspWoHistoryByNumber(QWidget* parent, const char* name, Qt
   connect(_showCost, SIGNAL(toggled(bool)), this, SLOT(sHandleCosts(bool)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
-  _woNumber->setValidator(omfgThis->orderVal());
-
+  _wo->addColumn(tr("Order #"),     _orderColumn,  Qt::AlignLeft   );
   _wo->addColumn(tr("Sub. #"),      _uomColumn,    Qt::AlignLeft   );
   _wo->addColumn(tr("Item #"),      _itemColumn,   Qt::AlignLeft   );
   _wo->addColumn(tr("Description"), -1,            Qt::AlignLeft   );
@@ -184,8 +183,6 @@ void dspWoHistoryByNumber::sHandleCosts(bool pShowCosts)
     _wo->showColumn(9);
   else
     _wo->hideColumn(9);
-
-  sFillList();
 }
 
 void dspWoHistoryByNumber::sFillList()
@@ -196,7 +193,7 @@ void dspWoHistoryByNumber::sFillList()
     return;
   }
 
-  QString sql( "SELECT wo_id, wo_subnumber, item_number,"
+  QString sql( "SELECT wo_id, wo_number, wo_subnumber, item_number,"
                "       (item_descrip1 || ' ' || item_descrip2),"
                "       wo_status, warehous_code,"
                "       formatQty(wo_qtyord) AS ordered,"
@@ -208,16 +205,16 @@ void dspWoHistoryByNumber::sFillList()
                "WHERE ( (wo_itemsite_id=itemsite_id)"
                " AND (itemsite_item_id=item_id)"
                " AND (itemsite_warehous_id=warehous_id)"
-               " AND (wo_number=:wo_number)" );
+               " AND (CAST(wo_number AS TEXT) ~ :wo_number)" );
 
   if (_showOnlyTopLevel->isChecked())
     sql += " AND ( (wo_ordtype<>'W') OR (wo_ordtype IS NULL) )";
 
   sql += ") "
-         "ORDER BY wo_subnumber;";
+         "ORDER BY wo_number, wo_subnumber;";
 
   q.prepare(sql);
-  q.bindValue(":wo_number", _woNumber->text().toInt());
+  q.bindValue(":wo_number", _woNumber->text());
   q.exec();
   _wo->populate(q);
 }
