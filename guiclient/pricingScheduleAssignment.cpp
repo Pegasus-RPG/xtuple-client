@@ -85,7 +85,7 @@ pricingScheduleAssignment::pricingScheduleAssignment(QWidget* parent, const char
 
   _ipshead->populate( "SELECT ipshead_id, (ipshead_name || ' - ' || ipshead_descrip) "
                       "FROM ipshead "
-                      "WHERE (CURRENT_DATE BETWEEN ipshead_effective AND ipshead_expires) "
+                      "WHERE (CURRENT_DATE < ipshead_expires) "
                       "ORDER BY ipshead_name;" );
 }
 
