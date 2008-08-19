@@ -121,10 +121,11 @@ SELECT  cohead_id 								AS orderid,
        '' AS debit,
         (formatGLAccount(taxaccnt.accnt_id) || ' - ' || taxaccnt.accnt_descrip) AS credit,
         currConcat(cobmisc_tax_curr_id)     AS currabbr
-FROM cobmisc, cohead, accnt AS taxaccnt, tax 
+FROM cobmisc, cohead, coitem, tax, accnt AS taxaccnt 
 WHERE ( (cobmisc_cohead_id=cohead_id)
+ AND (coitem_cohead_id=cohead_id)
+ AND (tax_id=coitem_tax_id)
  AND (tax_sales_accnt_id=taxaccnt.accnt_id)
- AND (cohead_tax_id=tax_id)
  AND (NOT cobmisc_posted)
  AND (cobmisc_tax &lt;> 0)
 &lt;? if exists("showPrinted") ?>
@@ -241,7 +242,7 @@ SELECT  cmhead_id 								AS orderid,
         ''		 							AS f_ordernumber, 
         cmhead_number	 							AS ordernumber, 
 	cmitem_linenumber 							AS linenumber,
-	item_invuom                                                             AS iteminvuom,
+	uom_name                                                                AS iteminvuom,
         formatQty(cmitem_qtycredit) 						AS qtytobill,
         formatPrice(cmitem_unitprice) 						AS price,
         formatExtPrice((cmitem_qtycredit * cmitem_qty_invuomratio) * (cmitem_unitprice / cmitem_price_invuomratio)) 	AS extprice,
