@@ -106,8 +106,8 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
     _itemlocdistid = param.toInt();
 
     q.prepare( "SELECT item_fractional, itemsite_controlmethod, itemsite_item_id,"
-	       "       itemsite_id, itemsite_perishable, itemsite_warrpurc, "
-               "       invhist_transtype, invhist_docnumber "
+               "       itemsite_id, itemsite_perishable, itemsite_warrpurc, "
+               "       invhist_ordtype, invhist_transtype, invhist_docnumber "
                "FROM itemlocdist, itemsite, item, invhist "
                "WHERE ( (itemlocdist_itemsite_id=itemsite_id)"
                " AND (itemsite_item_id=item_id)"
