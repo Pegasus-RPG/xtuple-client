@@ -95,8 +95,6 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
     : XMainWindow(parent, name, fl)
 {
   setupUi(this);
-  
-  _tab->setEnabled(false);
 
   // signals and slots connections
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
@@ -146,7 +144,8 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_editUOM, SIGNAL(clicked()), this, SLOT(sEditUOM()));
   connect(_deleteUOM, SIGNAL(clicked()), this, SLOT(sDeleteUOM()));
   connect(_configured, SIGNAL(toggled(bool)), this, SLOT(sConfiguredToggled(bool)));
-
+  connect(_classcode, SIGNAL(newID(int)), this, SLOT(sNewClassCode()));
+  
   _disallowPlanningType = false;
   _inTransaction = false;
 
@@ -274,6 +273,8 @@ enum SetResponse item::set(const ParameterList &pParams)
   {
     if (param.toString() == "new")
     {
+      _tab->setEnabled(false);
+      
       setName("item new");
       _mode = cNew;
 
@@ -309,6 +310,8 @@ enum SetResponse item::set(const ParameterList &pParams)
     }
     else if (param.toString() == "edit")
     {
+      _tab->setEnabled(true);
+    	
       setName(QString("item edit %1").arg(_itemid));
       _mode = cEdit;
 
@@ -347,6 +350,8 @@ enum SetResponse item::set(const ParameterList &pParams)
     }
     else if (param.toString() == "view")
     {
+      _tab->setEnabled(true);
+      
       setName(QString("item view %1").arg(_itemid));
       _mode = cView;
 
@@ -416,6 +421,7 @@ void item::saveCore()
     _classcode->setFocus();
     return;
   }
+  
   else
   {
     q.exec("BEGIN;");
@@ -2002,4 +2008,9 @@ bool item::checkSitePrivs(int itemsiteid)
     }
   }
   return true;
+}
+
+void item::sNewClassCode()
+{
+  _inventoryUOM->setFocus();
 }

@@ -132,6 +132,7 @@ public slots:
     virtual void sPopulatePriceUOMs();
     virtual void sConfiguredToggled(bool p);
     virtual void closeEvent( QCloseEvent * pEvent );
+    virtual void sNewClassCode();
 
 protected:
     virtual void keyPressEvent( QKeyEvent * e );
