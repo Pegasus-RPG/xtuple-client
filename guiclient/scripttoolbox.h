@@ -134,6 +134,8 @@ class ScriptToolbox : public QObject
 
     bool printReport(const QString & name, const ParameterList & params);
 
+    bool coreDisconnect(QObject * sender, const QString & signal, QObject * receiver, const QString & method);
+
     int messageBox(const QString & type, QWidget * parent, const QString & title, const QString & text, int buttons = 0x00000400, int defaultButton = 0x00000000);
   private:
     QScriptEngine * _engine;

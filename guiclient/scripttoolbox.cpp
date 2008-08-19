@@ -227,6 +227,11 @@ bool ScriptToolbox::printReport(const QString & name, const ParameterList & para
   return true;
 }
 
+bool ScriptToolbox::coreDisconnect(QObject * sender, const QString & signal, QObject * receiver, const QString & method)
+{
+  return QObject::disconnect(sender, QString("2%1").arg(signal).toUtf8().data(), receiver, QString("1%1").arg(method).toUtf8().data());
+}
+
 int ScriptToolbox::messageBox(const QString & type, QWidget * parent, const QString & title, const QString & text, int buttons, int defaultButton)
 {
   int btn;
