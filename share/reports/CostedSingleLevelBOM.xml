@@ -12,7 +12,7 @@
  <querysource>
   <name>head</name>
   <sql>SELECT item_number,
-       item_invuom,
+       uom_name AS item_invuom,
        item_descrip1,
        item_descrip2,
        formatCost(stdcost(item_id)) AS standardcost,
@@ -23,7 +23,7 @@
          text('Standard Cost')
        &lt;? endif ?>
        AS costtype
-  FROM item
+  FROM item JOIN uom ON (uom_id=item_inv_uom_id)
  WHERE (item_id=&lt;? value("item_id") ?>);
     </sql>
  </querysource>

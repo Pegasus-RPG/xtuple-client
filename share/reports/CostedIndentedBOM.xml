@@ -12,7 +12,7 @@
  <querysource>
   <name>head</name>
   <sql>SELECT item_number,
-       item_invuom,
+       uom_name AS item_invuom,
        item_descrip1,
        item_descrip2,
        &lt;? if exists("useActualCosts") ?>
@@ -23,7 +23,7 @@
        AS lbl_usecosts,
        formatCost(actcost(item_id)) AS f_actual,
        formatCost(stdcost(item_id)) AS f_standard
-  FROM item
+  FROM item JOIN uom ON (uom_id=item_inv_uom_id)
  WHERE (item_id=&lt;? value("item_id") ?>);
     </sql>
  </querysource>

@@ -56,7 +56,7 @@
        coitem_memo,
        item_number,
        formatitemsitebarcode(itemsite_id) AS item_barcode,
-       (select uom_name from uom where uom_id = coitem_qty_uom_id) AS uom_name,
+       (select uom_name from uom where uom_id = coitem_qty_uom_id) AS item_invuom,
        item_descrip1,
        item_descrip2,
        formatQty(coitem_qtyord) AS ordered,
@@ -108,7 +108,7 @@
 -- &lt;? endif ?>
    AND (coitem_cohead_id=&lt;? value("sohead_id") ?>)
 )
-GROUP BY coitem_qty_uom_id, coitem_linenumber, coitem_subnumber, coitem_id, coitem_memo, item_number, uom_name,
+GROUP BY coitem_qty_uom_id, coitem_linenumber, coitem_subnumber, coitem_id, coitem_memo, item_number, item_invuom,
          item_descrip1, item_descrip2, coitem_qtyord, coitem_qty_invuomratio, coitem_qtyshipped,
          coitem_qtyreturned, coitem_status, coitem_cohead_id,
          itemsite_id, itemsite_qtyonhand, itemsite_warehous_id, item_id
