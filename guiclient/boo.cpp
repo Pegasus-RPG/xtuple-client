@@ -96,7 +96,7 @@ boo::boo(QWidget* parent, const char* name, Qt::WFlags fl)
   _booitem->addColumn(tr("Expires"),     _dateColumn, Qt::AlignCenter,true, "booitem_expires");
   _booitem->addColumn(tr("Exec. Day"),   _qtyColumn,  Qt::AlignCenter,true, "booitem_execday");
   
-  connect(omfgThis, SIGNAL(boosUpdated(int, bool)), this, SLOT(sFillList(int, bool)));
+  connect(omfgThis, SIGNAL(boosUpdated(int, bool)), this, SLOT(sFillList()));
 
   _activate->hide();
   _revision->setMode(RevisionLineEdit::Maintain);
@@ -342,7 +342,7 @@ void boo::sMoveDown()
   omfgThis->sBOOsUpdated(_booitem->id(), TRUE);
 }
 
-void boo::sFillList(int pItemid)
+void boo::sFillList()
 {
   if (_item->itemType() == "J")
   {
@@ -363,7 +363,7 @@ void boo::sFillList(int pItemid)
             "   AND   (locitem_location_id=location_id)"
             "   AND   (locitem_item_id=:item_id) ) "
             "ORDER BY locationname;");
-  q.bindValue(":item_id", pItemid);
+  q.bindValue(":item_id", _item->id());
   q.exec();
   _finalLocation->populate(q, locid);
 

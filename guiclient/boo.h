@@ -87,7 +87,7 @@ public slots:
     virtual void sExpire();
     virtual void sMoveUp();
     virtual void sMoveDown();
-    virtual void sFillList( int pItemid );
+    virtual void sFillList();
 
 protected slots:
     virtual void languageChange();
