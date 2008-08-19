@@ -49,7 +49,6 @@
   <sql>SELECT uom_name,
        formatUOMRatio(iteminvpricerat(item_id)) AS f_iteminvpricerat,
        (prodcat_code||' - '||prodcat_descrip) AS f_prodcat,
-       formatBoolYN(item_taxable) AS f_item_taxable,
        formatBoolYN(item_exclusive) AS f_item_exclusive,
        formatPrice(item_listprice) AS f_item_listprice,
        formatExtPrice(item_listprice / iteminvpricerat(item_id)) AS f_extprice
@@ -831,25 +830,6 @@ ORDER BY comment_date;</sql>
     <vcenter/>
     <string>Ext. Price:</string>
    </label>
-   <field>
-    <rect>
-     <x>640</x>
-     <y>25</y>
-     <width>100</width>
-     <height>20</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>10</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>sold</query>
-     <column>f_item_taxable</column>
-    </data>
-   </field>
    <label>
     <rect>
      <x>104</x>
