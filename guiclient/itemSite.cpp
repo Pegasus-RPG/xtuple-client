@@ -235,6 +235,20 @@ enum SetResponse itemSite::set(const ParameterList &pParams)
           _tab->setTabEnabled(_tab->indexOf(_expirationTab),FALSE);
         } 
       }
+      else
+      {
+        _mode = cNew;
+        _reorderLevel->setDouble(0.0);
+        _orderUpToQty->setDouble(0.0);
+        _minimumOrder->setDouble(0.0);
+        _maximumOrder->setDouble(0.0);
+        _orderMultiple->setDouble(0.0);
+        _safetyStock->setDouble(0.0);
+        _cycleCountFreq->setValue(0);
+        _leadTime->setValue(0);
+        _eventFence->setValue(_metrics->value("DefaultEventFence").toInt());
+        _tab->setTabEnabled(_tab->indexOf(_expirationTab),FALSE);
+      } 
     }
     else if (param.toString() == "edit")
     {
