@@ -225,6 +225,10 @@ void initErrorLookupHash()
 				      "Accounting Period."),	0, "" },
   { "createAccountingPeriod",  -4, TR("The Period dates are outside the "
 				      "selected Fiscal Year."),	0, "" },
+  { "createAccountingYearPeriod", -1, "", -1, "createAccountingPeriod" },
+  { "createAccountingYearPeriod", -2, "", -2, "createAccountingPeriod" },
+  { "createAccountingYearPeriod", -3, "", -3, "createAccountingPeriod" },
+  { "createAccountingYearPeriod", -4, "", -4, "createAccountingPeriod" },
 
   { "createAPCreditMemoApplication",
 			-1, TR("You may not apply more than the balance due "
