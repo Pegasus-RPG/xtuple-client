@@ -140,6 +140,9 @@ void dspItemCostsByClassCode::sPrint()
   if(_onlyShowZero->isChecked())
     params.append("onlyShowZeroCosts");
 
+  if(_onlyShowDiff->isChecked())
+    params.append("onlyShowDiffCosts");
+
   orReport report("ItemCostsByClassCode", params);
 
   if (report.isValid())
@@ -225,12 +228,16 @@ void dspItemCostsByClassCode::sFillList()
   else if (_classCode->isPattern())
     sql += " AND (classcode_code ~ :classcode_pattern)";
 
-  sql += ") ) AS data ";
+  sql += ") ) AS data "
+         "WHERE ( (true) ";
 
   if (_onlyShowZero->isChecked())
-    sql += "WHERE ( (scost=0) OR (acost=0) ) ";
+    sql += "AND ((scost=0) OR (acost=0)) ";
 
-  sql += "ORDER BY item_number";
+  if (_onlyShowDiff->isChecked())
+    sql += "AND (scost != acost) ";
+
+  sql += ") ORDER BY item_number";
 
   q.prepare(sql);
   _classCode->bindValue(q);
