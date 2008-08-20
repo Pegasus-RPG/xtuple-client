@@ -404,6 +404,15 @@ bool returnAuthorization::sSave()
     return false;
   }
   
+  if (_raitem->topLevelItemCount() == 0)
+  {
+    QMessageBox::warning( this, tr("Create Line Items for this Order"),
+                          tr("<p>You must create at least one Line Item for "
+                          "this Return Authorization before you may save it."));
+    _new->setFocus();
+    return FALSE;
+  }
+
   if (_total->localValue() < 0 )
   {
     QMessageBox::information(this, tr("Total Less than Zero"),
