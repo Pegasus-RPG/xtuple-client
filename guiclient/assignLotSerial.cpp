@@ -80,8 +80,8 @@ assignLotSerial::assignLotSerial(QWidget* parent, const char* name, bool modal, 
   _item->setReadOnly(TRUE);
 
   _itemlocdist->addColumn( tr("Lot/Serial #"),     -1, Qt::AlignLeft,  true, "ls_number");
-  _itemlocdist->addColumn( tr("Expires"), _dateColumn, Qt::AlignCenter,true, "itemlocdist_expiration");
-  _itemlocdist->addColumn( tr("Warranty"),_dateColumn, Qt::AlignCenter,true, "itemlodcist_warranty");
+  _itemlocdist->addColumn( tr("Expires"), _dateColumn, Qt::AlignCenter,true, "f_expiration");
+  _itemlocdist->addColumn( tr("Warranty"),_dateColumn, Qt::AlignCenter,true, "f_warranty");
   _itemlocdist->addColumn( tr("Qty."),     _qtyColumn, Qt::AlignRight, true, "itemlocdist_qty");
 
 }
@@ -270,13 +270,22 @@ void assignLotSerial::sFillList()
   }
 
 
-  q.prepare( "SELECT *,"
-             "       'qty' AS itemlocdist_qty_xtnumericrole "
-             "FROM itemlocdist, ls "
+  q.prepare( "SELECT ls_number,"
+             "CASE WHEN (itemsite_perishable) THEN formatDate(itemlocdist_expiration) "
+             "  ELSE :na "
+             "END AS f_expiration, "
+             "CASE WHEN (itemsite_warrpurc) THEN formatDate(itemlocdist_warranty) "
+             "  ELSE :na "
+             "END AS f_warranty, "
+		     "itemlocdist_qty "
+             "FROM itemlocdist "
+		     "LEFT OUTER JOIN itemsite ON (itemlocdist_itemsite_id = itemsite_id), "
+		     "ls "
              "WHERE (itemlocdist_series=:itemlocdist_series) "
              "AND (itemlocdist_ls_id=ls_id) "
              "ORDER BY ls_number;" );
   q.bindValue(":itemlocdist_series", _itemlocSeries);
+  q.bindValue(":na", "N/A");
   q.exec();
   _itemlocdist->populate(q);
   if (q.lastError().type() != QSqlError::None)
