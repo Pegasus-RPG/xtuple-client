@@ -82,6 +82,7 @@ public slots:
     virtual void sFillList( int pItemid, bool pLocal );
     virtual void sFillList();
     virtual void sPrint();
+    virtual void sHandleButtons();
     virtual void sSearch( const QString & pTarget );
     virtual void sPopulateMenu( QMenu *, QTreeWidgetItem * );
 

@@ -127,7 +127,7 @@ void booList::init()
   {
     connect(_boo, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_boo, SIGNAL(valid(bool)), _copy, SLOT(setEnabled(bool)));
-    connect(_boo, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
+    connect(_boo, SIGNAL(valid(bool)), this, SLOT(sHandleButtons()));
 
     connect(_boo, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
   }
@@ -218,7 +218,13 @@ void booList::sView()
 
 void booList::sFillList( int pItemid, bool pLocal )
 {
-  QString sql(  "SELECT DISTINCT item_id, item_number, (item_descrip1 || ' ' || item_descrip2) "
+  QString sql(  "SELECT DISTINCT item_id,"
+                " CASE WHEN "
+                "  COALESCE(booitem_rev_id, -1)=-1 THEN "
+                "   0 "
+                " ELSE 1 "
+                " END AS revcontrol, "
+                " item_number, (item_descrip1 || ' ' || item_descrip2) "
                 "FROM item "
                 "  LEFT OUTER JOIN booitem ON (item_id=booitem_item_id) "
                 "  LEFT OUTER JOIN boohead ON (item_id=boohead_item_id) "
@@ -232,9 +238,9 @@ void booList::sFillList( int pItemid, bool pLocal )
          "ORDER BY item_number;";
 
   if ((pItemid != -1) && (pLocal))
-    _boo->populate(sql, pItemid);
+    _boo->populate(sql, TRUE, pItemid);
   else
-    _boo->populate(sql);
+    _boo->populate(sql, TRUE);
 }
 
 void booList::sFillList()
@@ -273,4 +279,12 @@ void booList::sSearch( const QString & pTarget )
 
 void booList::sPopulateMenu( QMenu *, QTreeWidgetItem * )
 {
+}
+
+void booList::sHandleButtons()
+{
+  if (_boo->altId() == 0)
+    _delete->setEnabled(TRUE);
+  else
+    _delete->setEnabled(FALSE);
 }
