@@ -122,8 +122,9 @@ enum SetResponse firmPlannedOrder::set(ParameterList &pParams)
 
     q.prepare( "SELECT planord_type, planord_itemsite_id, planord_duedate,"
                "       formatQty(planord_qty) AS qty,"
-               "       planord_comments "
-               "FROM planord "
+               "       planord_comments,"
+               "       planord_number, itemsite_leadtime "
+               "FROM planord JOIN itemsite ON (itemsite_id=itemsite_id) "
                "WHERE (planord_id=:planord_id);" );
     q.bindValue(":planord_id", _planordid);
     q.exec();
@@ -133,6 +134,9 @@ enum SetResponse firmPlannedOrder::set(ParameterList &pParams)
       _quantity->setText(q.value("qty").toString());
       _dueDate->setDate(q.value("planord_duedate").toDate());
       _comments->setText(q.value("planord_comments").toString());
+      _number = q.value("planord_number").toInt();
+      _itemsiteid = q.value("planord_itemsite_id").toInt();
+      _leadTime = q.value("itemsite_leadtime").toInt();
   
       if (q.value("planord_type").toString() == "P")
         _orderType->setText(tr("Purchase Order"));
@@ -148,15 +152,38 @@ enum SetResponse firmPlannedOrder::set(ParameterList &pParams)
 
 void firmPlannedOrder::sFirm()
 {
-  q.prepare( "UPDATE planord "
-             "SET planord_qty=:planord_qty,"
-             "    planord_duedate=:planord_duedate,"
-             "    planord_comments=:planord_comments, planord_firm=TRUE "
-             "WHERE (planord_id=:planord_id);" );
-  q.bindValue(":planord_qty", _quantity->toDouble());
-  q.bindValue(":planord_duedate", _dueDate->date());
-  q.bindValue(":planord_comments", _comments->text());
+  q.prepare( "SELECT deletePlannedOrder( :planord_id, true) AS result;" );
   q.bindValue(":planord_id", _planordid);
+  q.exec();
+  if (!q.first())
+  {
+    systemError( this, tr("A System Error occurred at %1::%2.")
+                       .arg(__FILE__)
+                       .arg(__LINE__) );
+    return;
+  }
+
+  q.prepare( "SELECT createPlannedOrder( :orderNumber, :itemsite_id, :qty, "
+             "                           (DATE(:dueDate) - :leadTime), :dueDate) AS result;" );
+  q.bindValue(":orderNumber", _number);
+  q.bindValue(":itemsite_id", _itemsiteid);
+  q.bindValue(":qty", _quantity->toDouble());
+  q.bindValue(":dueDate", _dueDate->date());
+  q.bindValue(":leadTime", _leadTime);
+  q.exec();
+  if (!q.first())
+  {
+    systemError( this, tr("A System Error occurred at %1::%2.")
+                       .arg(__FILE__)
+                       .arg(__LINE__) );
+    return;
+  }
+
+  q.prepare( "UPDATE planord "
+             "SET planord_comments=:planord_comments, planord_firm=TRUE "
+             "WHERE (planord_number=:orderNumber);" );
+  q.bindValue(":planord_comments", _comments->text());
+  q.bindValue(":orderNumber", _number);
   q.exec();
 
   done(_planordid);

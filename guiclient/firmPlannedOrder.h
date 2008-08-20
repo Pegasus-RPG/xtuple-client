@@ -83,6 +83,9 @@ protected slots:
 
 private:
     int _planordid;
+    int _number;
+    int _leadTime;
+    int _itemsiteid;
 
 };
 
