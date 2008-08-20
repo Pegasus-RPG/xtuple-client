@@ -72,6 +72,7 @@ dspIndentedBOM::dspIndentedBOM(QWidget* parent, const char* name, Qt::WFlags fl)
 
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_item, SIGNAL(valid(bool)), _revision, SLOT(setEnabled(bool)));
 
   _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased | ItemLineEdit::cKit);
 
@@ -92,6 +93,7 @@ dspIndentedBOM::dspIndentedBOM(QWidget* parent, const char* name, Qt::WFlags fl)
   _effectiveDays->setEnabled(_showFuture->isChecked());
 
   _item->setFocus();
+  _revision->setEnabled(false);
   _revision->setMode(RevisionLineEdit::View);
   _revision->setType("BOM");
 

@@ -73,6 +73,7 @@ dspSummarizedBOM::dspSummarizedBOM(QWidget* parent, const char* name, Qt::WFlags
 
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_item, SIGNAL(valid(bool)), _revision, SLOT(setEnabled(bool)));
 
   _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased | ItemLineEdit::cKit);
 
@@ -89,6 +90,7 @@ dspSummarizedBOM::dspSummarizedBOM(QWidget* parent, const char* name, Qt::WFlags
   _effectiveDays->setEnabled(_showFuture->isChecked());
   
   connect(omfgThis, SIGNAL(bomsUpdated(int, bool)), this, SLOT(sFillList()));
+  _revision->setEnabled(false);
   _revision->setMode(RevisionLineEdit::View);
   _revision->setType("BOM");
 

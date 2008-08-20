@@ -71,6 +71,7 @@ dspSequencedBOM::dspSequencedBOM(QWidget* parent, const char* name, Qt::WFlags f
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_showExpired, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_showFuture, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+  connect(_item, SIGNAL(valid(bool)), _revision, SLOT(setEnabled(bool)));
 
   _item->setType(ItemLineEdit::cGeneralManufactured  | ItemLineEdit::cGeneralPurchased | ItemLineEdit::cKit);
 
@@ -86,6 +87,7 @@ dspSequencedBOM::dspSequencedBOM(QWidget* parent, const char* name, Qt::WFlags f
 
   connect(omfgThis, SIGNAL(bomsUpdated(int, bool)), SLOT(sFillList(int, bool)));
   connect(omfgThis, SIGNAL(boosUpdated(int, bool)), SLOT(sFillList(int, bool)));
+  _revision->setEnabled(false);
   _revision->setMode(RevisionLineEdit::View);
   _revision->setType("BOM");
 
