@@ -379,7 +379,7 @@ void returnAuthorization::setNumber()
     _authNumber->setFocus();
 }
 
-bool returnAuthorization::sSave()
+bool returnAuthorization::sSave(bool partial)
 {
   char *dispositionTypes[] = { "C", "R", "P", "V", "M" };
   char *creditMethods[] = { "N", "M", "K", "C" };
@@ -404,7 +404,7 @@ bool returnAuthorization::sSave()
     return false;
   }
   
-  if (_raitem->topLevelItemCount() == 0)
+  if (!partial && _raitem->topLevelItemCount() == 0)
   {
     QMessageBox::warning( this, tr("Create Line Items for this Order"),
                           tr("<p>You must create at least one Line Item for "
@@ -540,7 +540,7 @@ void returnAuthorization::sPostReceipts()
 
 void returnAuthorization::sSaveClick()
 {
-  if (sSave())
+  if (sSave(false))
   {
     if (_printRA->isChecked())
     {
@@ -624,7 +624,7 @@ void returnAuthorization::sOrigSoChanged()
   }
   if (!_ignoreSoSignals) 
   {
-   	  sSave();
+   	  sSave(true);
 	  sFillList();
 
       if (_origso->isValid())
@@ -689,7 +689,7 @@ void returnAuthorization::sOrigSoChanged()
 	        _shipToNumber->setEnabled(_ffShipto);
 	        _shipToAddr->setEnabled(_ffShipto);
             _ignoreShiptoSignals = FALSE;
-	        sSave();
+	        sSave(true);
         }
         else if (sohead.lastError().type() != QSqlError::None)
         {
@@ -911,7 +911,7 @@ void returnAuthorization::sCopyToShipto()
 
 void returnAuthorization::sNew()
 {
-  if (sSave())
+  if (sSave(true))
   {
     ParameterList params;
     params.append("mode", "new");
@@ -927,7 +927,7 @@ void returnAuthorization::sNew()
 
 void returnAuthorization::sEdit()
 {
-  if (sSave())
+  if (sSave(true))
   {
 	  bool fill;
 	  fill = FALSE;
@@ -1700,7 +1700,7 @@ void returnAuthorization::sHandleSalesOrderEvent(int pSoheadid, bool)
 
 void returnAuthorization::sRefund()
 {
-  if (! sSave())
+  if (! sSave(true))
     return;
 
   bool _post = _disposition->currentItem() == 0 && _timing->currentItem() == 0 &&
