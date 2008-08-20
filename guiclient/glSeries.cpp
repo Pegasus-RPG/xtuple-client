@@ -234,9 +234,18 @@ enum SetResponse glSeries::set(const ParameterList &pParams)
 
 void glSeries::sNew()
 {
+  if(!_date->isValid())
+  {
+    QMessageBox::information( this, tr("Cannot Maintain G/L Series"),
+                              tr("<p>You must enter a Distribution Date for this Series.") );
+    _date->setFocus();
+    return;
+  }
+
   ParameterList params;
   params.append("mode", "new");
   params.append("glSequence", _glsequence);
+  params.append("distDate", _date->date());
 
   if (_mode == cPostStandardJournal)
     params.append("postStandardJournal");
@@ -250,9 +259,18 @@ void glSeries::sNew()
 
 void glSeries::sEdit()
 {
+  if(!_date->isValid())
+  {
+    QMessageBox::information( this, tr("Cannot Maintain G/L Series"),
+                              tr("<p>You must enter a Distribution Date for this Series.") );
+    _date->setFocus();
+    return;
+  }
+
   ParameterList params;
   params.append("mode", "edit");
   params.append("glseries_id", _glseries->id());
+  params.append("distDate", _date->date());
 
   if (_mode == cPostStandardJournal)
     params.append("postStandardJournal");

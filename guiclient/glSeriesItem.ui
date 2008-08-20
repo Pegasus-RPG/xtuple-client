@@ -87,9 +87,6 @@
                    <verstretch>0</verstretch>
                   </sizepolicy>
                  </property>
-                 <property name="currencyEditable" >
-                  <bool>false</bool>
-                 </property>
                  <property name="allowNegative" >
                   <bool>false</bool>
                  </property>

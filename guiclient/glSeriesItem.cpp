@@ -59,6 +59,7 @@
 
 #include <math.h>
 
+#include <QMessageBox>
 #include <QSqlError>
 #include <QValidator>
 #include <QVariant>
@@ -99,6 +100,10 @@ enum SetResponse glSeriesItem::set(const ParameterList &pParams)
   if (valid)
     _glsequence = param.toInt();
 
+  param = pParams.value("distDate", &valid);
+  if (valid)
+    _amount->setEffective(param.toDate());
+
   param = pParams.value("mode", &valid);
   if (valid)
   {
@@ -119,6 +124,19 @@ enum SetResponse glSeriesItem::set(const ParameterList &pParams)
 
 void glSeriesItem::sSave()
 {
+  if (! _amount->isBase() &&
+      QMessageBox::question(this, tr("G/L Transaction Not In Base Currency"),
+		          tr("G/L transactions are recorded in the base currency.\n"
+			  "Do you wish to convert %1 %2 at the rate effective on %3?")
+			  .arg(_amount->localValue()).arg(_amount->currAbbr())
+			  .arg(_amount->effective().toString(Qt::LocalDate)),
+			  QMessageBox::Yes|QMessageBox::Escape,
+			  QMessageBox::No |QMessageBox::Default) != QMessageBox::Yes)
+  {
+	_amount->setFocus();
+	return;
+  }
+
   double amount = _amount->baseValue();
   if (_debit->isChecked())
     amount *= -1;
