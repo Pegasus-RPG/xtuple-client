@@ -101,6 +101,7 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_itemNumber, SIGNAL(lostFocus()), this, SLOT(sFormatItemNumber()));
   connect(_inventoryUOM, SIGNAL(newID(int)), this, SLOT(sPopulateUOMs()));
+  connect(_classcode, SIGNAL(newID(int)), this, SLOT(sPopulateUOMs()));
   connect(_newCharacteristic, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_newImage, SIGNAL(clicked()), this, SLOT(sNewImage()));
   connect(_editCharacteristic, SIGNAL(clicked()), this, SLOT(sEdit()));
@@ -454,6 +455,7 @@ void item::saveCore()
       return;
     }
 
+    sPopulateUOMs();
     // TODO: We can enable certain functionality here that needs a saved record
     _newUOM->setEnabled(true);
     _tab->setEnabled(true);
@@ -1131,7 +1133,7 @@ void item::clear()
 
 void item::sPopulateUOMs()
 {
-  if (_inventoryUOM->id()!=-1)
+  if ((_inventoryUOM->id() != -1) && (_classcode->id()!=-1))
   {
     saveCore();
     sPopulatePriceUOMs();
