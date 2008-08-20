@@ -288,6 +288,13 @@ void enterPoitemReceipt::sReceive()
     return;
   }
 
+  if(_ordertype == "RA" && _receivable < _toReceive->toDouble())
+  {
+    QMessageBox::critical( this, tr("Cannot Receive"),
+                           tr("<p>Cannot receive more quantity than authorized."));
+    return;
+  }
+
   double tolerance = _metrics->value("ReceiptQtyTolerancePct").toDouble() / 100.0;
   if(_metrics->boolean("WarnIfReceiptQtyDiffers") &&
       (_receivable < _toReceive->toDouble() * (1.0 - tolerance) ||
