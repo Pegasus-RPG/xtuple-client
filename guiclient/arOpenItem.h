@@ -80,6 +80,7 @@ public slots:
     virtual void sClose();
     virtual void sPopulateCustInfo( int pCustid );
     virtual void reset();
+    virtual void sPopulateDueDate();
 
 protected slots:
     virtual void languageChange();

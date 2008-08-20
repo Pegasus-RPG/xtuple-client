@@ -84,6 +84,8 @@ apOpenItem::apOpenItem(QWidget* parent, const char* name, bool modal, Qt::WFlags
   connect(_amount, SIGNAL(effectiveChanged(const QDate&)), _paid, SLOT(setEffective(const QDate&)));
   connect(_amount, SIGNAL(effectiveChanged(const QDate&)), _balance, SLOT(setEffective(const QDate&)));
   connect(_docDate, SIGNAL(newDate(const QDate&)), _amount, SLOT(setEffective(const QDate&)));
+  connect(_terms, SIGNAL(newID(int)), this, SLOT(sPopulateDueDate()));
+  connect(_docDate, SIGNAL(newDate(const QDate&)), this, SLOT(sPopulateDueDate()));
 
   _cAmount = 0.0;
 
@@ -464,4 +466,18 @@ void apOpenItem::sPopulateVendInfo(int vend_id)
     _terms->setId(vendor.value("vend_terms_id").toInt());
   }
 }
+
+void apOpenItem::sPopulateDueDate()
+{
+  if ( (_terms->isValid()) && (_docDate->isValid()) && (!_dueDate->isValid()) )
+  {
+    q.prepare("SELECT determineDueDate(:terms_id, :docDate) AS duedate;");
+    q.bindValue(":terms_id", _terms->id());
+    q.bindValue(":docDate", _docDate->date());
+    q.exec();
+    if (q.first())
+      _dueDate->setDate(q.value("duedate").toDate());
+  }
+}
+ 
 

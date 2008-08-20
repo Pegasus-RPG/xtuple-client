@@ -71,6 +71,8 @@ arOpenItem::arOpenItem(QWidget* parent, const char* name, bool modal, Qt::WFlags
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
   connect(_cust, SIGNAL(newId(int)), this, SLOT(sPopulateCustInfo(int)));
+  connect(_terms, SIGNAL(newID(int)), this, SLOT(sPopulateDueDate()));
+  connect(_docDate, SIGNAL(newDate(const QDate&)), this, SLOT(sPopulateDueDate()));
 
   _last = -1;
 
@@ -578,4 +580,17 @@ void arOpenItem::reset()
   ParameterList params;
   params.append("mode", "new");
   set(params);
+}
+
+void arOpenItem::sPopulateDueDate()
+{
+  if ( (_terms->isValid()) && (_docDate->isValid()) && (!_dueDate->isValid()) )
+  {
+    q.prepare("SELECT determineDueDate(:terms_id, :docDate) AS duedate;");
+    q.bindValue(":terms_id", _terms->id());
+    q.bindValue(":docDate", _docDate->date());
+    q.exec();
+    if (q.first())
+      _dueDate->setDate(q.value("duedate").toDate());
+  }
 }

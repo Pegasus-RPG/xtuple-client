@@ -79,6 +79,7 @@ public slots:
     virtual void sSave();
     virtual void sClose();
     virtual void sPopulateVendInfo( int vend_id );
+    virtual void sPopulateDueDate();
 
 protected slots:
     virtual void languageChange();
