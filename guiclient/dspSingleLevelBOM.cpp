@@ -59,6 +59,7 @@
 
 #include <QVariant>
 
+#include <metasql.h>
 #include <openreports.h>
 
 dspSingleLevelBOM::dspSingleLevelBOM(QWidget* parent, const char* name, Qt::WFlags fl)
@@ -72,15 +73,15 @@ dspSingleLevelBOM::dspSingleLevelBOM(QWidget* parent, const char* name, Qt::WFla
 
   _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased | ItemLineEdit::cKit);
 
-  _bomitem->addColumn(tr("#"),           30,           Qt::AlignCenter );
-  _bomitem->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft   );
-  _bomitem->addColumn(tr("Description"), -1,           Qt::AlignLeft   );
-  _bomitem->addColumn(tr("UOM"),         _uomColumn,   Qt::AlignCenter );
-  _bomitem->addColumn(tr("Qty. Per"),    _qtyColumn,   Qt::AlignRight  );
-  _bomitem->addColumn(tr("Scrap %"),     _prcntColumn, Qt::AlignRight  );
-  _bomitem->addColumn(tr("Effective"),   _dateColumn,  Qt::AlignCenter );
-  _bomitem->addColumn(tr("Expires"),     _dateColumn,  Qt::AlignCenter );
-  _bomitem->addColumn(tr("ECN #"),       _itemColumn,  Qt::AlignLeft   );
+  _bomitem->addColumn(tr("#"),           30,           Qt::AlignCenter, true,  "bomitem_seqnumber" );
+  _bomitem->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft,   true,  "item_number"   );
+  _bomitem->addColumn(tr("Description"), -1,           Qt::AlignLeft,   true,  "itemdescription"   );
+  _bomitem->addColumn(tr("UOM"),         _uomColumn,   Qt::AlignCenter, true,  "uom_name" );
+  _bomitem->addColumn(tr("Qty. Per"),    _qtyColumn,   Qt::AlignRight,  true,  "qtyper"  );
+  _bomitem->addColumn(tr("Scrap %"),     _prcntColumn, Qt::AlignRight,  true,  "bomitem_scrap"  );
+  _bomitem->addColumn(tr("Effective"),   _dateColumn,  Qt::AlignCenter, true,  "effective" );
+  _bomitem->addColumn(tr("Expires"),     _dateColumn,  Qt::AlignCenter, true,  "expires" );
+  _bomitem->addColumn(tr("ECN #"),       _itemColumn,  Qt::AlignLeft,   true,  "bomitem_ecn"   );
 
   _expiredDaysLit->setEnabled(_showExpired->isChecked());
   _expiredDays->setEnabled(_showExpired->isChecked());
@@ -155,60 +156,51 @@ void dspSingleLevelBOM::sFillList(int, bool)
 
   if (_item->isValid())
   {
-    QString sql( "SELECT bomitem_id, bomitem_seqnumber, item_number, uom_name,"
+    QString sql( "SELECT bomitem.*, item_number, uom_name,"
                  "       (item_descrip1 || ' ' || item_descrip2) AS itemdescription,"
-                 "       formatQtyper(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper)) AS f_qtyper,"
-                 "       formatScrap(bomitem_scrap) AS f_scrap,"
-                 "       formatDate(bomitem_effective, 'Always') AS f_effective,"
-                 "       formatDate(bomitem_expires, 'Never') AS f_expires,"
-                 "       bomitem_ecn,"
-                 "       CASE WHEN (bomitem_expires <= CURRENT_DATE) THEN TRUE"
-                 "            ELSE FALSE"
-                 "       END AS expired,"
-                 "       CASE WHEN (bomitem_effective > CURRENT_DATE) THEN TRUE"
-                 "            ELSE FALSE"
-                 "       END AS future "
-				 "FROM bomitem(:item_id,:revision_id), item, uom "
+                 "       itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper) AS qtyper,"
+                 "       'qtyper' AS qtyper_xtnumericrole,"
+                 "       'percent' AS bomitem_scrap_xtnumericrole,"
+                 "       CASE WHEN (bomitem_effective = startOfTime()) THEN NULL "
+                 "            ELSE bomitem_effective END AS effective,"
+                 "       CASE WHEN (bomitem_expires = endOfTime()) THEN NULL "
+                 "            ELSE bomitem_expires END AS expires,"
+                 "       <? value(\"always\") ?> AS effective_xtnullrole,"
+                 "       <? value(\"never\") ?>  AS expires_xtnullrole,"
+                 "       CASE WHEN (bomitem_expires < CURRENT_DATE) THEN 'expired'"
+                 "            WHEN (bomitem_effective >= CURRENT_DATE) THEN 'future'"
+                 "            WHEN (item_type='M') THEN 'altemphasis'"
+                 "       END AS qtforegroundrole "
+                 "FROM bomitem(<? value(\"item_id\" ?>,<? value(\"revision_id\" ?>), item, uom "
                  "WHERE ( (bomitem_item_id=item_id)"
-                 " AND (item_inv_uom_id=uom_id)" );
+                 " AND (item_inv_uom_id=uom_id)"
+                 "<? if exists(\"showExpired\") ?>"
+                 " AND (bomitem_expires > (CURRENT_DATE - <? value(\"expiredDays\") ?>))"
+                 "<? else ?>"
+                 " AND (bomitem_expires > CURRENT_DATE)"
+                 "<? endif ?>"
+                 "<? if exists(\"showFuture\") ?>"
+                 " AND (bomitem_effective <= (CURRENT_DATE + <? value(\"effectiveDays\" ?>))"
+                 "<? else ?>"
+                 " AND (bomitem_effective <= CURRENT_DATE)"
+                 "<? endif ?>"
+                 ") "
+                 "ORDER BY bomitem_seqnumber, bomitem_effective;" );
 
+    ParameterList params;
+    params.append("item_id", _item->id());
+    params.append("revision_id", _revision->id());
+    params.append("expiredDays", _expiredDays->value());
+    params.append("effectiveDays", _effectiveDays->value());
+    params.append("always", tr("Always"));
+    params.append("never",  tr("Never"));
     if (_showExpired->isChecked())
-      sql += " AND (bomitem_expires > (CURRENT_DATE - :expiredDays))";
-    else
-      sql += " AND (bomitem_expires > CURRENT_DATE)";
-
+      params.append("showExpired");
     if (_showFuture->isChecked())
-      sql += " AND (bomitem_effective <= (CURRENT_DATE + :effectiveDays))";
-    else
-      sql += " AND (bomitem_effective <= CURRENT_DATE)";
-
-    sql += ") "
-           "ORDER BY bomitem_seqnumber, bomitem_effective;";
-
-    q.prepare(sql);
-    q.bindValue(":item_id", _item->id());
-    q.bindValue(":revision_id", _revision->id());
-    q.bindValue(":expiredDays", _expiredDays->value());
-    q.bindValue(":effectiveDays", _effectiveDays->value());
-    q.exec();
-    XTreeWidgetItem *last = 0;
-    while (q.next())
-    {
-      last = new XTreeWidgetItem( _bomitem, last, q.value("bomitem_id").toInt(),
-				 q.value("bomitem_seqnumber"),
-				 q.value("item_number"),
-				 q.value("itemdescription"),
-				 q.value("uom_name"),
-				 q.value("f_qtyper"),
-				 q.value("f_scrap"),
-				 q.value("f_effective"),
-				 q.value("f_expires"),
-				 q.value("bomitem_ecn") );
-
-      if (q.value("expired").toBool())
-        last->setTextColor("red");
-      else if (q.value("future").toBool())
-        last->setTextColor("blue");
-    }
+      params.append("showFuture");
+    MetaSQLQuery mql(sql);
+    q = mql.toQuery(params);
+    
+    _bomitem->populate(q);
   }
 }
