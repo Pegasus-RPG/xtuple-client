@@ -488,6 +488,10 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
     _taxcode->setEnabled(false);
     _itemcharView->setEnabled(false);
     _promisedDate->setEnabled(false);
+    _qtyUOM->setEnabled(false);
+    _priceUOM->setEnabled(false);
+    _warranty->setEnabled(false);
+    _listPrices->setEnabled(false);
 
     _subItemList->hide();
     _save->hide();

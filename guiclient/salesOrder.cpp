@@ -1763,9 +1763,7 @@ void salesOrder::sHandleButtons()
           }
         }
 
-        if (selected->rawValue("coitem_subnumber").toInt() == 0)
-          _edit->setText(tr("Edit"));
-        else
+        if (!selected->rawValue("coitem_subnumber").toInt() == 0)
         {
           _edit->setText(tr("View"));
           _delete->setEnabled(FALSE);
@@ -2930,6 +2928,7 @@ void salesOrder::setViewMode()
   _shipComplete->setEnabled(false);
   setFreeFormShipto(false);
   _orderCurrency->setEnabled(FALSE);
+  _printSO->setEnabled(FALSE);
   _save->hide();
   _clear->hide();
   _project->setReadOnly(true);
