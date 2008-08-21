@@ -204,6 +204,22 @@ void user::sClose()
 
 void user::sSave()
 {
+  if (_username->text().length() == 0)
+  {
+    QMessageBox::warning( this, tr("Cannot save User"),
+                          tr( "You must enter a valid Username before you can save this User." ));
+    _username->setFocus();
+    return;
+  }
+
+  if (_passwd->text().length() == 0)
+  {
+    QMessageBox::warning( this, tr("Cannot save User"),
+                          tr( "You must enter a valid Password before you can save this User." ));
+    _passwd->setFocus();
+    return;
+  }
+
   if (_passwd->text() != _verify->text())
   {
     QMessageBox::warning( this, tr("Password do not Match"),
