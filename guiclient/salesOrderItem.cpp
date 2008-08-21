@@ -1423,7 +1423,9 @@ void salesOrderItem::sListPrices()
 
   priceList newdlg(this, "", TRUE);
   newdlg.set(params);
-  if (newdlg.exec() == XDialog::Accepted)
+  if ( (newdlg.exec() == XDialog::Accepted) &&
+       (_privileges->check("OverridePrice")) &&
+       (!_metrics->boolean("DisableSalesOrderPriceOverride")) )
   {
     _netUnitPrice->setLocalValue(newdlg._selectedPrice * (_priceinvuomratio / _priceRatio));
     sCalculateDiscountPrcnt();
