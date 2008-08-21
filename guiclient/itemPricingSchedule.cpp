@@ -284,10 +284,12 @@ void itemPricingSchedule::sNew()
 
   int result;
   if ((result = newdlg.exec()) != XDialog::Rejected)
+  {
     if (result == -1)
       reject();
     else
       sFillList(result);
+  }
 }
 
 void itemPricingSchedule::sEdit()
@@ -310,10 +312,12 @@ void itemPricingSchedule::sEdit()
 
   int result;
   if ((result = newdlg.exec()) != XDialog::Rejected)
+  {
     if (result == -1)
       reject();
     else
       sFillList(result);
+  }
 }
 
 void itemPricingSchedule::sDelete()

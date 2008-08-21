@@ -214,7 +214,7 @@ void itemUOM::sSave()
   q.bindValue(":tovalue", _toValue->toDouble());
   q.bindValue(":fromvalue", _fromValue->toDouble());
   q.bindValue(":fractional", QVariant(_fractional->isChecked(), 0));
-  if(q.exec());
+  if(q.exec())
     accept();
 }
 

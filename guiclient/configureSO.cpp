@@ -315,9 +315,9 @@ void configureSO::languageChange()
 
 void configureSO::sSave()
 {
-  char *numberGenerationTypes[] = { "M", "A", "O", "S" };
-  char *dispositionTypes[] = { "C", "R", "P", "V", "M" };
-  char *creditMethodTypes[] = { "N", "M", "K", "C" };
+  const char *numberGenerationTypes[] = { "M", "A", "O", "S" };
+  const char *dispositionTypes[] = { "C", "R", "P", "V", "M" };
+  const char *creditMethodTypes[] = { "N", "M", "K", "C" };
 
   if ( (_metrics->boolean("EnableSOReservationsByLocation")) &&
        (!_locationGroup->isChecked()) )

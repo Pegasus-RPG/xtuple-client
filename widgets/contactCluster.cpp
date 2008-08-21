@@ -315,8 +315,10 @@ void ContactCluster::setNumber(QString p)
   q.bindValue(":number", p);
   q.exec();
   if (q.first())
+  {
     if (q.value("cntct_id").toInt() != _id)
       silentSetId(q.value("cntct_id").toInt());
+  }
   else
     silentSetId(-1);  
 }

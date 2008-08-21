@@ -844,10 +844,10 @@ void item::sSave()
 
   omfgThis->sItemsUpdated(_itemid, TRUE);
 
-  if ( ( (_mode == cNew) || (_mode == cCopy) ) && ( (_itemTypes[_itemtype->currentItem()] != "B") ||
-                                                    (_itemTypes[_itemtype->currentItem()] != "F") ||
-                                                    (_itemTypes[_itemtype->currentItem()] != "R") ||
-                                                    (_itemTypes[_itemtype->currentItem()] != "S") ) )
+  if ( ( (_mode == cNew) || (_mode == cCopy) ) && ( (*_itemTypes[_itemtype->currentItem()] != 'B') ||
+                                                    (*_itemTypes[_itemtype->currentItem()] != 'F') ||
+                                                    (*_itemTypes[_itemtype->currentItem()] != 'R') ||
+                                                    (*_itemTypes[_itemtype->currentItem()] != 'S') ) )
   {
     if (QMessageBox::information( this, tr("Create New Item Sites"),
                                   tr("Would you like to create Item site inventory settings for the newly created Item now?"),

@@ -127,7 +127,7 @@ void configureCRM::languageChange()
 
 void configureCRM::sSave()
 {
-  char *numberGenerationTypes[] = { "M", "A", "O" };
+  const char *numberGenerationTypes[] = { "M", "A", "O" };
 
   q.prepare( "SELECT setNextIncidentNumber(:innumber);" );
   q.bindValue(":innumber", _nextInNumber->text().toInt());

@@ -587,10 +587,12 @@ void itemPricingScheduleItem::sNew()
 
   int result;
   if ((result = newdlg.exec()) != XDialog::Rejected)
+  {
     if (result == -1)
       done(-1);
      else
       sFillList();
+  }
 }
 
 void itemPricingScheduleItem::sEdit()
@@ -607,10 +609,12 @@ void itemPricingScheduleItem::sEdit()
 
   int result;
   if ((result = newdlg.exec()) != XDialog::Rejected)
+  {
     if (result == -1)
       done(-1);
      else
       sFillList();
+  }
 }
 
 void itemPricingScheduleItem::sDelete()

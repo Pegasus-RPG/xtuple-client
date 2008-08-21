@@ -118,7 +118,7 @@ void configureSR::languageChange()
 
 void configureSR::sSave()
 {
-  char *numberGenerationTypes[] = { "A" };
+  const char *numberGenerationTypes[] = { "A" };
 
   _metrics->set("ShipmentNumberGeneration", QString(numberGenerationTypes[_shipmentNumGeneration->currentItem()]));
 

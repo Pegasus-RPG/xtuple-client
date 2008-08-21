@@ -337,7 +337,7 @@ void returnAuthorizationItem::sSaveClicked()
 
 bool returnAuthorizationItem::sSave()
 { 
-  char *dispositionTypes[] = { "C", "R", "P", "V", "S" };
+  const char *dispositionTypes[] = { "C", "R", "P", "V", "S" };
   
   if (!(_scheduledDate->isValid()) && _scheduledDate->isEnabled())
   {

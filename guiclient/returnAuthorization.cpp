@@ -381,8 +381,8 @@ void returnAuthorization::setNumber()
 
 bool returnAuthorization::sSave(bool partial)
 {
-  char *dispositionTypes[] = { "C", "R", "P", "V", "M" };
-  char *creditMethods[] = { "N", "M", "K", "C" };
+  const char *dispositionTypes[] = { "C", "R", "P", "V", "M" };
+  const char *creditMethods[] = { "N", "M", "K", "C" };
 
   if (_authNumber->text().isEmpty())
   {

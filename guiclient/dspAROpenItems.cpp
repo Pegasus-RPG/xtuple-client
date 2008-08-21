@@ -194,7 +194,7 @@ void dspAROpenItems::sViewInvoice()
   q.prepare("SELECT aropen_docnumber FROM aropen WHERE (aropen_id=:aropen_id);");
   q.bindValue(":aropen_id", _aropen->id());
   q.exec();
-  if (q.first());
+  if (q.first())
   {
     ParameterList params;
     params.append("invoiceNumber", q.value("aropen_docnumber"));
@@ -209,7 +209,7 @@ void dspAROpenItems::sIncident()
   q.prepare("SELECT crmacct_id, crmacct_cntct_id_1 FROM crmacct WHERE (crmacct_cust_id=:cust_id);");
   q.bindValue(":cust_id", _aropen->altId());
   q.exec();
-  if (q.first());
+  if (q.first())
   {
     ParameterList params;
     params.append("mode", "new");

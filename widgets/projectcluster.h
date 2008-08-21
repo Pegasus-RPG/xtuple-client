@@ -117,7 +117,7 @@ class OPENMFGWIDGETS_EXPORT ProjectCluster : public QWidget
 
   public:
     ProjectCluster(QWidget *, const char * = 0);
-    ProjectCluster(enum ProjectLineEdit::Type, QWidget *, const char * = 0);
+    ProjectCluster(enum ProjectLineEdit::Type t, QWidget *, const char * = 0);
 
     QString projectNumber() const;
     QString  defaultNumber()    { return QString();          }

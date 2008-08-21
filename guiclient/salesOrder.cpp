@@ -1599,10 +1599,12 @@ void salesOrder::sConvertShipTo()
 void salesOrder::sNew()
 {
   if( !_saved && ((_mode == cNew) || (_mode == cNewQuote)) )
+  {
     if(!save(true))
       return;
     else
       populate();
+  }
 
   ParameterList params;
   params.append("sohead_id", _soheadid);

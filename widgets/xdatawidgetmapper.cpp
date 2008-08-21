@@ -114,6 +114,7 @@ QByteArray XDataWidgetMapper::mappedDefaultName(QWidget *widget)
     {
       return widgetMap.at(i).property;
     }
+  return QByteArray();
 }
 
 void XDataWidgetMapper::removeDefault(QWidget *widget)

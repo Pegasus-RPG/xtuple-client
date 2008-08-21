@@ -161,6 +161,7 @@ void RevisionCluster::setType(RevisionLineEdit::RevisionTypes ptype)
 void RevisionCluster::sModeChanged()
 {
   if  (_x_privileges)
+  {
     if (_x_metrics->boolean("RevControl"))
     {
           _list->setVisible(((RevisionLineEdit::View==(static_cast<RevisionLineEdit*>(_number))->mode()) && (_x_privileges->check("ViewInactiveRevisions") || _x_privileges->check("MaintainRevisions"))) ||
@@ -175,6 +176,7 @@ void RevisionCluster::sModeChanged()
       _list->hide();
       (static_cast<RevisionLineEdit*>(_number))->setEnabled(TRUE);
     }
+  }
 }
 
 void RevisionLineEdit::setMode(Modes pMode)

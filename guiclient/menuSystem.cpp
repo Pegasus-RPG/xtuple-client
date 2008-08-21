@@ -427,10 +427,12 @@ void menuSystem::sActivateWindow(int intWindowid)
     windows = omfgThis->windowList();
   QWidget *window = windows.at(intWindowid);
   if (window)
+  {
     if(omfgThis->showTopLevel())
       window->activateWindow();
     else
       window->setFocus();
+  }
 }
 
 void menuSystem::sRememberPositionToggle()

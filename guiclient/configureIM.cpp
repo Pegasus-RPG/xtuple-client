@@ -296,7 +296,7 @@ void configureIM::sSave()
     _metrics->set("CountSlipAuditing", QString("B"));
     
   //Shipping and Receiving
-  char *numberGenerationTypes[] = { "A" };
+  const char *numberGenerationTypes[] = { "A" };
 
   _metrics->set("ShipmentNumberGeneration", QString(numberGenerationTypes[_shipmentNumGeneration->currentItem()]));
 

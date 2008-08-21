@@ -63,7 +63,7 @@
 
 #include "booitemImage.h"
 
-static char *costReportTypes[] = { "D", "O", "N" };
+static const char *costReportTypes[] = { "D", "O", "N" };
 
 booItem::booItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)

@@ -128,7 +128,7 @@ friend class ItemCluster;
       cGeneralPurchased    = cPurchased | cOutsideProcess,
       cGeneralComponents   = cManufactured | cPhantom | cCoProduct | cPurchased | cOutsideProcess,
       cGeneralInventory    = cAllItemTypes_Mask ^ cReference ^ cJob,
-      cKitComponents       = cSold | cAllItemTypes_Mask ^ cKit
+      cKitComponents       = cSold | (cAllItemTypes_Mask ^ cKit)
     };
 
     inline void setType(unsigned int pType)            { _type = pType; _defaultType = pType; } 

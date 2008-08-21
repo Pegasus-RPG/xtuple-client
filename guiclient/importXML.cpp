@@ -237,10 +237,12 @@ void importXML::sImportAll()
   {
     QTreeWidgetItem* pItem = _file->topLevelItem(i);
     if (pItem->data(1, Qt::DisplayRole).toString().isEmpty())
+    {
       if (importOne(pItem->data(0, Qt::DisplayRole).toString()))
 	pItem->setData(1, Qt::DisplayRole, tr("Done"));
       else
 	pItem->setData(1, Qt::DisplayRole, tr("Error"));
+    }
   }
   if (oldAutoUpdate)
     sHandleAutoUpdate(true);
@@ -254,10 +256,12 @@ void importXML::sImportSelected()
   for (int i = 0; i < selected.size(); i++)
   {
     if (selected[i]->data(1, Qt::DisplayRole).toString().isEmpty())
+    {
       if (importOne(selected[i]->data(0, Qt::DisplayRole).toString()))
 	selected[i]->setData(1, Qt::DisplayRole, tr("Done"));
       else
 	selected[i]->setData(1, Qt::DisplayRole, tr("Error"));
+    }
   }
   if (oldAutoUpdate)
     sHandleAutoUpdate(true);
