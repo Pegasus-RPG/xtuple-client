@@ -214,6 +214,7 @@ salesOrderItem::salesOrderItem(QWidget* parent, const char* name, bool modal, Qt
   _overridePoPriceLit->hide();
 
   _taxauthid = -1;
+  _initialMode = -1;
 
   sPriceGroup();
 
@@ -474,30 +475,32 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
     }
   }
 
-  if(cView == _mode || cViewQuote == _mode)
-  {
-    _item->setReadOnly(true);
-    _qtyOrdered->setEnabled(false);
-    _netUnitPrice->setEnabled(false);
-    _discountFromCust->setEnabled(false);
-    _scheduledDate->setEnabled(false);
-    _createOrder->setEnabled(false);
-    _notes->setEnabled(false);
-    _comments->setReadOnly(true);
-    _taxtype->setEnabled(false);
-    _taxcode->setEnabled(false);
-    _itemcharView->setEnabled(false);
-    _promisedDate->setEnabled(false);
-    _qtyUOM->setEnabled(false);
-    _priceUOM->setEnabled(false);
-    _warranty->setEnabled(false);
-    _listPrices->setEnabled(false);
+  if(_initialMode == -1)
+    _initialMode = _mode;
 
-    _subItemList->hide();
-    _save->hide();
+  bool viewMode = (cView == _mode || cViewQuote == _mode);
+  _item->setReadOnly(viewMode);
+  _qtyOrdered->setEnabled(!viewMode);
+  _netUnitPrice->setEnabled(!viewMode);
+  _discountFromCust->setEnabled(!viewMode);
+  _scheduledDate->setEnabled(!viewMode);
+  _createOrder->setEnabled(!viewMode);
+  _notes->setEnabled(!viewMode);
+  _comments->setReadOnly(viewMode);
+  _taxtype->setEnabled(!viewMode);
+  _taxcode->setEnabled(!viewMode);
+  _itemcharView->setEnabled(!viewMode);
+  _promisedDate->setEnabled(!viewMode);
+  _qtyUOM->setEnabled(!viewMode);
+  _priceUOM->setEnabled(!viewMode);
+  _warranty->setEnabled(!viewMode);
+  _listPrices->setEnabled(!viewMode);
 
+  _subItemList->setVisible(!viewMode);
+  _save->setVisible(!viewMode);
+
+  if(viewMode)
     _close->setFocus();
-  }
 
   param = pParams.value("soitem_id", &valid);
   if (valid)
@@ -2608,7 +2611,7 @@ void salesOrderItem::sNext()
     } 
     else
     {
-      if((cNew == _mode || cEdit == _mode) && (q.value("sub").toInt() == 0))
+      if((cNew == _initialMode || cEdit == _initialMode) && (q.value("sub").toInt() == 0))
         params.append("mode", "edit");
       else
         params.append("mode", "view");
@@ -2716,7 +2719,7 @@ void salesOrderItem::sPrev()
     } 
     else
     {
-      if((cNew == _mode || cEdit == _mode) && (q.value("sub").toInt() == 0))
+      if((cNew == _initialMode || cEdit == _initialMode) && (q.value("sub").toInt() == 0))
         params.append("mode", "edit");
       else
         params.append("mode", "view");
@@ -2901,7 +2904,7 @@ void salesOrderItem::sQtyUOMChanged()
       systemError(this, invuom.lastError().databaseText(), __FILE__, __LINE__);
   }
 
-  if(_qtyUOM->id() != _invuomid)
+  if(_qtyUOM->id() != _invuomid || cView == _mode || cViewQuote == _mode )
     _priceUOM->setEnabled(false);
   else
     _priceUOM->setEnabled(true);

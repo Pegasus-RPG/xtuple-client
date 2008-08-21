@@ -125,6 +125,7 @@ private:
     int _soheadid;
     int _soitemid;
     int _mode;
+    int _initialMode;
     bool _modified;
     bool _canceling;
     bool _error;
