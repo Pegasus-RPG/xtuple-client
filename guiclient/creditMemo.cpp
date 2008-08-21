@@ -168,7 +168,7 @@ enum SetResponse creditMemo::set(const ParameterList &pParams)
 		"    :cmhead_id, :cmhead_number, :cmhead_docdate, false"
 		");");
       q.bindValue(":cmhead_id",		_cmheadid);
-      q.bindValue(":cmhead_number",	_memoNumber->text().toInt());
+      q.bindValue(":cmhead_number",	_memoNumber->text());
       q.bindValue(":cmhead_docdate",	_memoDate->date());
       q.exec();
       if (q.lastError().type() != QSqlError::None)
@@ -280,6 +280,36 @@ void creditMemo::setNumber()
 void creditMemo::sSave()
 {
   //  Make sure that all of the required field have been populated
+  if (_memoNumber->text().length() == 0)
+  {
+    QMessageBox::warning( this, tr("Invalid Memo # Entered"),
+                          tr( "<p>You must enter a valid Memo # for this Credit "
+                          "Memo before you may save it." ) );
+    _memoNumber->setFocus();
+    return;
+  }
+
+  if ( _mode == cNew &&
+       ( (_metrics->value("CMNumberGeneration") == "O") || 
+         (_metrics->value("CMNumberGeneration") == "M")   ) )
+  {
+    XSqlQuery query;
+    query.prepare( "SELECT cmhead_id "
+                   "FROM cmhead "
+                   "WHERE (cmhead_number=:cmhead_number)" );
+    query.bindValue(":cmhead_number", _memoNumber->text());
+    query.exec();
+    if (query.first())
+    {
+      QMessageBox::warning( this, tr("Invalid Memo # Entered"),
+                            tr( "<p>The Memo # is already in use.  "
+                            "You must enter an unused Memo # for this Credit "
+                            "Memo before you may save it." ) );
+      _memoNumber->setFocus();
+      return;
+    }
+  }
+
   if (!_cust->isValid())
   {
     QMessageBox::information(this, tr("Select a Customer"),
@@ -358,7 +388,7 @@ void creditMemo::sSave()
 
   q.bindValue(":cmhead_id", _cmheadid);
   q.bindValue(":cmhead_cust_id", _cust->id());
-  q.bindValue(":cmhead_number", _memoNumber->text().toInt());
+  q.bindValue(":cmhead_number", _memoNumber->text());
   q.bindValue(":cmhead_invcnumber", _invoiceNumber->invoiceNumber());
   q.bindValue(":cmhead_custponumber", _customerPO->text().stripWhiteSpace());
   q.bindValue(":cmhead_billtoname", _billtoName->text().stripWhiteSpace());
@@ -688,7 +718,7 @@ void creditMemo::sCheckCreditMemoNumber()
     query.prepare( "SELECT cmhead_id, cmhead_posted "
                    "FROM cmhead "
                    "WHERE (cmhead_number=:cmhead_number)" );
-    query.bindValue(":cmhead_number", _memoNumber->text().toInt());
+    query.bindValue(":cmhead_number", _memoNumber->text());
     query.exec();
     if (query.first())
     {
@@ -776,7 +806,7 @@ void creditMemo::sNew()
   params.append("shipto_id", _shiptoid);
   params.append("cust_id", _cust->id());
   params.append("invoiceNumber", _invoiceNumber->invoiceNumber());
-  params.append("creditMemoNumber", _memoNumber->text().toInt());
+  params.append("creditMemoNumber", _memoNumber->text());
   params.append("rsncode_id", _rsnCode->id());
   params.append("curr_id", _currency->id());
   params.append("effective", _memoDate->date());
@@ -794,7 +824,7 @@ void creditMemo::sEdit()
   params.append("cmitem_id", _cmitem->id());
   params.append("cust_id", _cust->id());
   params.append("invoiceNumber", _invoiceNumber->invoiceNumber());
-  params.append("creditMemoNumber", _memoNumber->text().toInt());
+  params.append("creditMemoNumber", _memoNumber->text());
   params.append("curr_id", _currency->id());
   params.append("effective", _memoDate->date());
 
@@ -1032,7 +1062,7 @@ void creditMemo::closeEvent(QCloseEvent *pEvent)
     else if (_metrics->value("CMNumberGeneration") == "S")
       q.prepare("SELECT releaseSoNumber(:number) AS result;");
 
-    q.bindValue(":number", _memoNumber->text().toInt());
+    q.bindValue(":number", _memoNumber->text());
     q.exec();
     if (q.lastError().type() != QSqlError::None)
     {
