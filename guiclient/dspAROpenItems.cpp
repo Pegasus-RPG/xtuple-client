@@ -67,6 +67,7 @@
 
 #include "arOpenItem.h"
 #include "dspInvoiceInformation.h"
+#include "invoice.h"
 #include "incident.h"
 
 dspAROpenItems::dspAROpenItems(QWidget* parent, const char* name, Qt::WFlags fl)
@@ -146,7 +147,10 @@ void dspAROpenItems::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pItem)
     XTreeWidgetItem* item = (XTreeWidgetItem*)pItem;
     {
       if (item->text(0) == "Invoice")
+      {
         pMenu->insertItem(tr("View Invoice..."), this, SLOT(sViewInvoice()), 0);
+        pMenu->insertItem(tr("View Invoice Details..."), this, SLOT(sViewInvoiceDetails()), 0);
+      }
     }
 
     menuItem = pMenu->insertItem(tr("Create Incident..."), this, SLOT(sIncident()), 0);
@@ -199,6 +203,22 @@ void dspAROpenItems::sViewInvoice()
     ParameterList params;
     params.append("invoiceNumber", q.value("aropen_docnumber"));
     dspInvoiceInformation* newdlg = new dspInvoiceInformation();
+    newdlg->set(params);
+    omfgThis->handleNewWindow(newdlg);
+  }
+}
+
+void dspAROpenItems::sViewInvoiceDetails()
+{
+  q.prepare("SELECT invchead_id FROM aropen, invchead WHERE ((aropen_id=:aropen_id) AND (invchead_invcnumber=aropen_docnumber));");
+  q.bindValue(":aropen_id", _aropen->id());
+  q.exec();
+  if (q.first());
+  {
+    ParameterList params;
+    params.append("invchead_id", q.value("invchead_id"));
+    params.append("mode", "view");
+    invoice* newdlg = new invoice();
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
