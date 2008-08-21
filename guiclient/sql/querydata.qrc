@@ -4,6 +4,7 @@
     <file alias="displays/CheckRegister/FillListDetail.mql">dspCheckRegisterFillList.mql</file>
   </qresource>
   <qresource prefix="ar">
+    <file alias="arHistory.mql">arHistory.mql</file>
     <file alias="aropenApplications.mql">aropenApplications.mql</file>
     <file alias="fillcreditcardlist.mql">fillcreditcardlist.mql</file>
   </qresource>
