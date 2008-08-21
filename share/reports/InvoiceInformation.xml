@@ -32,7 +32,7 @@
          || invchead_shipto_zipcode ) AS shiptocitystatezip,
        invchead_notes, invchead_invcnumber
 FROM invchead LEFT OUTER JOIN (invcitem LEFT OUTER JOIN item ON (invcitem_item_id=item_id) ) ON (invcitem_invchead_id=invchead_id)
-WHERE (invchead_id=&lt;? value(&quot;invchead_id&quot;) ?>)
+WHERE (invchead_id=&lt;? value("invchead_id") ?>)
 GROUP BY invchead_id, invchead_ponumber,
          invchead_shipdate, invchead_invcdate,
          invchead_misc_amount, invchead_freight, invchead_tax,
@@ -54,7 +54,7 @@ GROUP BY invchead_id, invchead_ponumber,
        cust_address3,
        cust_city || ' ' || cust_state || ', ' || cust_zipcode AS custcitystatezip
 FROM invchead, cust
-WHERE ( (invchead_id=&lt;? value(&quot;invchead_id&quot;) ?>)
+WHERE ( (invchead_id=&lt;? value("invchead_id") ?>)
  AND (invchead_cust_id=cust_id) );</sql>
  </querysource>
  <querysource>
@@ -74,6 +74,7 @@ WHERE ( (invchead_id=&lt;? value(&quot;invchead_id&quot;) ?>)
             WHEN (arapply_fundstype='O') THEN text('Other')
        END AS documenttype,
        CASE WHEN (arapply_source_doctype = 'C') THEN arapply_source_docnumber
+            WHEN (arapply_source_doctype = 'R') THEN arapply_source_docnumber
             WHEN (arapply_source_doctype = 'K') THEN arapply_refnumber
             ELSE text('Error')
        END AS docnumber,
@@ -82,50 +83,12 @@ WHERE ( (invchead_id=&lt;? value(&quot;invchead_id&quot;) ?>)
   FROM arapply, invchead
  WHERE ( (arapply_target_doctype='I')
    AND (arapply_target_docnumber=invchead_invcnumber)
-   AND (invchead_id=&lt;? value(&quot;invchead_id&quot;) ?>) )
+   AND (invchead_id=&lt;? value("invchead_id") ?>) )
 ORDER BY arapply_postdate;</sql>
  </querysource>
  <pghead>
   <firstpage/>
-  <height>388</height>
-  <field>
-   <rect>
-    <x>155</x>
-    <y>25</y>
-    <width>125</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>12</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>GroupHead</query>
-    <column>invchead_invcnumber</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>385</x>
-    <y>280</y>
-    <width>300</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>GroupHead</query>
-    <column>invchead_shipto_address2</column>
-   </data>
-  </field>
+  <height>389</height>
   <field>
    <rect>
     <x>590</x>
@@ -148,96 +111,7 @@ ORDER BY arapply_postdate;</sql>
   <field>
    <rect>
     <x>155</x>
-    <y>50</y>
-    <width>125</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>12</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>GroupHead</query>
-    <column>invchead_ponumber</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>340</x>
-    <y>10</y>
-    <width>400</width>
-    <height>40</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>20</size>
-    <weight>bold</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Invoice Information</string>
-  </label>
-  <field>
-   <rect>
-    <x>155</x>
-    <y>80</y>
-    <width>125</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>12</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>CustInfo</query>
-    <column>cust_number</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>5</x>
-    <y>350</y>
-    <width>50</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Notes:</string>
-  </label>
-  <field>
-   <rect>
-    <x>25</x>
-    <y>240</y>
-    <width>300</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>GroupHead</query>
-    <column>invchead_billto_name</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>155</x>
-    <y>160</y>
+    <y>140</y>
     <width>300</width>
     <height>20</height>
    </rect>
@@ -250,80 +124,7 @@ ORDER BY arapply_postdate;</sql>
    <vcenter/>
    <data>
     <query>CustInfo</query>
-    <column>cust_address3</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>155</x>
-    <y>120</y>
-    <width>300</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>CustInfo</query>
-    <column>cust_address1</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>25</x>
-    <y>260</y>
-    <width>300</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>GroupHead</query>
-    <column>invchead_billto_address1</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>457</x>
-    <y>125</y>
-    <width>125</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>12</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Invoice Amount:</string>
-  </label>
-  <field>
-   <rect>
-    <x>385</x>
-    <y>240</y>
-    <width>300</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>GroupHead</query>
-    <column>invchead_shipto_name</column>
+    <column>cust_address2</column>
    </data>
   </field>
   <label>
@@ -345,7 +146,45 @@ ORDER BY arapply_postdate;</sql>
   <field>
    <rect>
     <x>155</x>
-    <y>180</y>
+    <y>80</y>
+    <width>125</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>12</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>CustInfo</query>
+    <column>cust_number</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>25</x>
+    <y>280</y>
+    <width>300</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>GroupHead</query>
+    <column>invchead_billto_address2</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>155</x>
+    <y>120</y>
     <width>300</width>
     <height>20</height>
    </rect>
@@ -358,7 +197,7 @@ ORDER BY arapply_postdate;</sql>
    <vcenter/>
    <data>
     <query>CustInfo</query>
-    <column>custcitystatezip</column>
+    <column>cust_address1</column>
    </data>
   </field>
   <field>
@@ -383,8 +222,8 @@ ORDER BY arapply_postdate;</sql>
   <field>
    <rect>
     <x>25</x>
-    <y>320</y>
-    <width>325</width>
+    <y>240</y>
+    <width>300</width>
     <height>20</height>
    </rect>
    <font>
@@ -396,7 +235,64 @@ ORDER BY arapply_postdate;</sql>
    <vcenter/>
    <data>
     <query>GroupHead</query>
-    <column>billtocitystatezip</column>
+    <column>invchead_billto_name</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>155</x>
+    <y>25</y>
+    <width>125</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>12</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>GroupHead</query>
+    <column>invchead_invcnumber</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>155</x>
+    <y>160</y>
+    <width>300</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>CustInfo</query>
+    <column>cust_address3</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>155</x>
+    <y>100</y>
+    <width>300</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>12</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>CustInfo</query>
+    <column>cust_name</column>
    </data>
   </field>
   <label>
@@ -415,6 +311,251 @@ ORDER BY arapply_postdate;</sql>
    <vcenter/>
    <string>Ship To:</string>
   </label>
+  <label>
+   <rect>
+    <x>457</x>
+    <y>125</y>
+    <width>125</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>12</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Invoice Amount:</string>
+  </label>
+  <field>
+   <rect>
+    <x>155</x>
+    <y>180</y>
+    <width>300</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>CustInfo</query>
+    <column>custcitystatezip</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>5</x>
+    <y>350</y>
+    <width>50</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Notes:</string>
+  </label>
+  <field>
+   <rect>
+    <x>25</x>
+    <y>320</y>
+    <width>325</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>GroupHead</query>
+    <column>billtocitystatezip</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>5</x>
+    <y>225</y>
+    <width>50</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Bill To:</string>
+  </label>
+  <label>
+   <rect>
+    <x>457</x>
+    <y>100</y>
+    <width>125</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>12</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Ship Date:</string>
+  </label>
+  <field>
+   <rect>
+    <x>385</x>
+    <y>320</y>
+    <width>325</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>GroupHead</query>
+    <column>shiptocitystatezip</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>0</x>
+    <y>80</y>
+    <width>150</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>12</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Customer #:</string>
+  </label>
+  <field>
+   <rect>
+    <x>385</x>
+    <y>300</y>
+    <width>300</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>GroupHead</query>
+    <column>invchead_shipto_address3</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>0</x>
+    <y>25</y>
+    <width>150</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>12</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Invoice #:</string>
+  </label>
+  <field>
+   <rect>
+    <x>385</x>
+    <y>280</y>
+    <width>300</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>GroupHead</query>
+    <column>invchead_shipto_address2</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>155</x>
+    <y>50</y>
+    <width>125</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>12</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>GroupHead</query>
+    <column>invchead_ponumber</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>457</x>
+    <y>80</y>
+    <width>125</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>12</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Invoice Date:</string>
+  </label>
+  <field>
+   <rect>
+    <x>385</x>
+    <y>240</y>
+    <width>300</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>GroupHead</query>
+    <column>invchead_shipto_name</column>
+   </data>
+  </field>
   <text>
    <rect>
     <x>20</x>
@@ -456,25 +597,6 @@ ORDER BY arapply_postdate;</sql>
   </field>
   <field>
    <rect>
-    <x>155</x>
-    <y>140</y>
-    <width>300</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>CustInfo</query>
-    <column>cust_address2</column>
-   </data>
-  </field>
-  <field>
-   <rect>
     <x>385</x>
     <y>260</y>
     <width>300</width>
@@ -492,79 +614,41 @@ ORDER BY arapply_postdate;</sql>
     <column>invchead_shipto_address1</column>
    </data>
   </field>
-  <field>
-   <rect>
-    <x>155</x>
-    <y>100</y>
-    <width>300</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>12</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>CustInfo</query>
-    <column>cust_name</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>385</x>
-    <y>300</y>
-    <width>300</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>GroupHead</query>
-    <column>invchead_shipto_address3</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>385</x>
-    <y>320</y>
-    <width>325</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>GroupHead</query>
-    <column>shiptocitystatezip</column>
-   </data>
-  </field>
   <label>
    <rect>
-    <x>457</x>
-    <y>100</y>
-    <width>125</width>
-    <height>20</height>
+    <x>340</x>
+    <y>10</y>
+    <width>400</width>
+    <height>40</height>
    </rect>
    <font>
     <face>Arial</face>
-    <size>12</size>
-    <weight>normal</weight>
+    <size>20</size>
+    <weight>bold</weight>
    </font>
    <right/>
    <vcenter/>
-   <string>Ship Date:</string>
+   <string>Invoice Information</string>
   </label>
+  <field>
+   <rect>
+    <x>25</x>
+    <y>260</y>
+    <width>300</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>GroupHead</query>
+    <column>invchead_billto_address1</column>
+   </data>
+  </field>
   <field>
    <rect>
     <x>590</x>
@@ -584,89 +668,6 @@ ORDER BY arapply_postdate;</sql>
     <column>f_shipdate</column>
    </data>
   </field>
-  <label>
-   <rect>
-    <x>0</x>
-    <y>80</y>
-    <width>150</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>12</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Customer #:</string>
-  </label>
-  <label>
-   <rect>
-    <x>457</x>
-    <y>80</y>
-    <width>125</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>12</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Invoice Date:</string>
-  </label>
-  <label>
-   <rect>
-    <x>5</x>
-    <y>225</y>
-    <width>50</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Bill To:</string>
-  </label>
-  <label>
-   <rect>
-    <x>0</x>
-    <y>25</y>
-    <width>150</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>12</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Invoice #:</string>
-  </label>
-  <field>
-   <rect>
-    <x>25</x>
-    <y>280</y>
-    <width>300</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>GroupHead</query>
-    <column>invchead_billto_address2</column>
-   </data>
-  </field>
  </pghead>
  <section>
   <name>details</name>
@@ -674,23 +675,7 @@ ORDER BY arapply_postdate;</sql>
    <name>header</name>
    <column>grpnum</column>
    <head>
-    <height>46</height>
-    <label>
-     <rect>
-      <x>110</x>
-      <y>25</y>
-      <width>150</width>
-      <height>15</height>
-     </rect>
-     <font>
-      <face>Arial</face>
-      <size>8</size>
-      <weight>normal</weight>
-     </font>
-     <left/>
-     <vcenter/>
-     <string>Doc./Ref. Number</string>
-    </label>
+    <height>47</height>
     <label>
      <rect>
       <x>540</x>
@@ -709,7 +694,7 @@ ORDER BY arapply_postdate;</sql>
     </label>
     <label>
      <rect>
-      <x>645</x>
+      <x>5</x>
       <y>25</y>
       <width>100</width>
       <height>15</height>
@@ -719,9 +704,25 @@ ORDER BY arapply_postdate;</sql>
       <size>8</size>
       <weight>normal</weight>
      </font>
-     <hcenter/>
+     <left/>
      <vcenter/>
-     <string>Amount</string>
+     <string>Type</string>
+    </label>
+    <label>
+     <rect>
+      <x>110</x>
+      <y>25</y>
+      <width>150</width>
+      <height>15</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>8</size>
+      <weight>normal</weight>
+     </font>
+     <left/>
+     <vcenter/>
+     <string>Doc./Ref. Number</string>
     </label>
     <line>
      <xstart>5</xstart>
@@ -748,7 +749,7 @@ ORDER BY arapply_postdate;</sql>
     </label>
     <label>
      <rect>
-      <x>5</x>
+      <x>645</x>
       <y>25</y>
       <width>100</width>
       <height>15</height>
@@ -758,9 +759,9 @@ ORDER BY arapply_postdate;</sql>
       <size>8</size>
       <weight>normal</weight>
      </font>
-     <left/>
+     <hcenter/>
      <vcenter/>
-     <string>Type</string>
+     <string>Amount</string>
     </label>
    </head>
   </group>
@@ -768,45 +769,7 @@ ORDER BY arapply_postdate;</sql>
    <key>
     <query>Details</query>
    </key>
-   <height>16</height>
-   <field>
-    <rect>
-     <x>540</x>
-     <y>0</y>
-     <width>100</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>normal</weight>
-    </font>
-    <hcenter/>
-    <vcenter/>
-    <data>
-     <query>Details</query>
-     <column>f_postdate</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>5</x>
-     <y>0</y>
-     <width>100</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>normal</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>Details</query>
-     <column>documenttype</column>
-    </data>
-   </field>
+   <height>17</height>
    <field>
     <rect>
      <x>645</x>
@@ -845,10 +808,48 @@ ORDER BY arapply_postdate;</sql>
      <column>docnumber</column>
     </data>
    </field>
+   <field>
+    <rect>
+     <x>5</x>
+     <y>0</y>
+     <width>100</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>Details</query>
+     <column>documenttype</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>540</x>
+     <y>0</y>
+     <width>100</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>Details</query>
+     <column>f_postdate</column>
+    </data>
+   </field>
   </detail>
  </section>
  <pgfoot>
-  <height>16</height>
+  <height>17</height>
   <label>
    <rect>
     <x>0</x>
@@ -865,6 +866,25 @@ ORDER BY arapply_postdate;</sql>
    <vcenter/>
    <string>Report Date:</string>
   </label>
+  <field>
+   <rect>
+    <x>705</x>
+    <y>0</y>
+    <width>40</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>Context Query</query>
+    <column>page_number</column>
+   </data>
+  </field>
   <field>
    <rect>
     <x>90</x>
@@ -900,24 +920,5 @@ ORDER BY arapply_postdate;</sql>
    <vcenter/>
    <string>Page:</string>
   </label>
-  <field>
-   <rect>
-    <x>705</x>
-    <y>0</y>
-    <width>40</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>Context Query</query>
-    <column>page_number</column>
-   </data>
-  </field>
  </pgfoot>
 </report>
