@@ -498,8 +498,7 @@ void crmaccount::sClose()
   } // if cNew
 
   close();
-  if (_modal)
-    parentWidget()->close();
+
 }
 
 void crmaccount::sSave()
@@ -772,8 +771,7 @@ void crmaccount::sSave()
   omfgThis->sVendorsUpdated();
   omfgThis->sTaxAuthsUpdated(-1);
   close();
-  if (_modal)
-    parentWidget()->close();
+
 }
 
 int crmaccount::saveNoErrorCheck()
