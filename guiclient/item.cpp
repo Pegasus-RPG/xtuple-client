@@ -467,6 +467,42 @@ void item::sSave()
   QString sql;
   QString itemNumber = _itemNumber->text().stripWhiteSpace().upper();
 
+  if(!_active->isChecked())
+  {
+    q.prepare("SELECT bomitem_id "
+              "FROM bomitem, item "
+              "WHERE ((bomitem_parent_item_id=item_id) "
+              "AND (item_active) "
+              "AND (bomitem_expires > current_date) "
+              "AND (getActiveRevId('BOM',bomitem_parent_item_id)=bomitem_rev_id) "
+              "AND (bomitem_item_id=:item_id)) "
+              "LIMIT 1; ");
+    q.bindValue(":item_id", _itemid);
+    q.exec();
+    if (q.first())         
+    { 
+      QMessageBox::warning( this, tr("Cannot Save Item"),
+        tr("This Item is used in an active Bill of Materials and must be marked as active. "
+        "Expire the Bill of Material items to allow this Item to not be active.") );
+      return;
+    }
+
+    q.prepare("SELECT itemsite_id "
+              "FROM itemsite "
+              "WHERE ((itemsite_item_id=:item_id)"
+              "  AND  (itemsite_active)) "
+              "LIMIT 1; ");
+    q.bindValue(":item_id", _itemid);
+    q.exec();
+    if (q.first())         
+    { 
+      QMessageBox::warning( this, tr("Cannot Save Item"),
+        tr("This Item is used in an active Item Site and must be marked as active. "
+        "Deactivate the Item Sites to allow this Item to not be active.") );
+      return;
+    }
+  }
+
   if(_disallowPlanningType && QString(_itemTypes[_itemtype->currentItem()]) == "L")
   {
     QMessageBox::warning( this, tr("Planning Type Disallowed"),

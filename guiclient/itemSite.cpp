@@ -397,6 +397,71 @@ void itemSite::sSave()
     }
   }
     
+  if(!_active->isChecked())
+  {
+    if (_qohCache != 0)         
+    { 
+      QMessageBox::warning( this, tr("Cannot Save Item Site"),
+        tr("This Item Site has a quantity on hand and must be marked as active.") );
+      return;
+    }
+
+    q.prepare("SELECT coitem_id "
+              "FROM coitem "
+              "WHERE ((coitem_itemsite_id=:itemsite_id)"
+              "  AND  (coitem_status<>'C')) "
+              "UNION "
+              "SELECT wo_id "
+              "FROM wo "
+              "WHERE ((wo_itemsite_id=:itemsite_id)"
+              "  AND  (wo_status<>'C')) "
+              "UNION "
+              "SELECT womatl_id "
+              "FROM womatl, wo "
+              "WHERE ((womatl_itemsite_id=:itemsite_id)"
+              "  AND  (wo_id=womatl_wo_id)"
+              "  AND  (wo_status<>'C')) "
+              "UNION "
+              "SELECT poitem_id "
+              "FROM poitem "
+              "WHERE ((poitem_itemsite_id=:itemsite_id)"
+              "  AND  (poitem_status<>'C')) "
+              "LIMIT 1; ");
+    q.bindValue(":itemsite_id", _itemsiteid);
+    q.exec();
+    if (q.first())         
+    { 
+      QMessageBox::warning( this, tr("Cannot Save Item Site"),
+        tr("This Item Site is used in an active order and must be marked as active.") );
+      return;
+    }
+    
+    if (_metrics->boolean("MultiWhs"))
+    {
+      q.prepare("SELECT raitem_id "
+                "FROM raitem "
+                "WHERE ((raitem_itemsite_id=:itemsite_id)"
+                "  AND  (raitem_qtyreceived<raitem_qtyauthorized)) "
+                "UNION "
+                "SELECT planord_id "
+                "FROM planord "
+                "WHERE (planord_itemsite_id=:itemsite_id)"
+                "UNION "
+                "SELECT planreq_id "
+                "FROM planreq "
+                "WHERE (planreq_itemsite_id=:itemsite_id)"
+                "LIMIT 1; ");
+      q.bindValue(":itemsite_id", _itemsiteid);
+      q.exec();
+      if (q.first())         
+      { 
+        QMessageBox::warning( this, tr("Cannot Save Item Site"),
+          tr("This Item Site is used in an active order and must be marked as active.") );
+        return;
+      }
+    }
+  }
+
   XSqlQuery newItemSite;
     
   if (_mode == cNew)
