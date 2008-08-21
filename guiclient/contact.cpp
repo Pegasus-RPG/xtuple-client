@@ -793,7 +793,10 @@ void contact::sEditCRMAccount()
   ParameterList params;
   params.append("mode", "edit");
   params.append("crmacct_id",	_uses->id());
-  crmaccount::doDialog(this, params);
+  params.append("modal");
+  crmaccount * newdlg = new crmaccount(this);
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void contact::sViewCRMAccount()
@@ -801,7 +804,10 @@ void contact::sViewCRMAccount()
   ParameterList params;
   params.append("mode", "view");
   params.append("crmacct_id",	_uses->id());
-  crmaccount::doDialog(this, params);
+  params.append("modal");
+  crmaccount * newdlg = new crmaccount(this);
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void contact::sEditCustomer()
