@@ -97,6 +97,7 @@ public slots:
     virtual void sPostCashrcpt();
     virtual void sPostPreauth();
     virtual void sViewAropen();
+    virtual void sViewInvoice();
     virtual void sViewAropenCM();
     virtual void sViewCashrcpt();
     virtual void sVoidPreauth();

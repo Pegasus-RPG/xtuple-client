@@ -286,6 +286,16 @@ void arWorkBench::sEditAropen()
 void arWorkBench::sViewAropen()
 {
   ParameterList params;
+  params.append("mode", "view");
+  params.append("aropen_id", _aropen->id());
+  arOpenItem newdlg(this, "", TRUE);
+  newdlg.set(params);
+  newdlg.exec();
+}
+
+void arWorkBench::sViewInvoice()
+{
+  ParameterList params;
   XTreeWidgetItem * item = static_cast<XTreeWidgetItem*>(_aropen->currentItem());
   if(_aropen->altId() == 1 && item)
   {
@@ -713,7 +723,7 @@ void arWorkBench::sPopulateAropenMenu(QMenu *pMenu)
 
   else if (_aropen->altId() == 1)
   {
-    menuItem = pMenu->insertItem(tr("View Apply-To Invoice..."), this, SLOT(sViewAropen()), 0);
+    menuItem = pMenu->insertItem(tr("View Apply-To Invoice..."), this, SLOT(sViewInvoice()), 0);
     if (! _privileges->check("MaintainMiscInvoices") &&
         ! _privileges->check("ViewMiscInvoices"))
       pMenu->setItemEnabled(menuItem, FALSE);
