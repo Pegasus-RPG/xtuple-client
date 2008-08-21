@@ -62,6 +62,10 @@
 #include <QWorkspace>
 #include <QMessageBox>
 #include <QMenu>
+
+#include <metasql.h>
+#include "mqlutil.h"
+
 #include <openreports.h>
 #include "arOpenItem.h"
 
@@ -84,13 +88,13 @@ dspCustomerARHistory::dspCustomerARHistory(QWidget* parent, const char* name, Qt
   connect(_custhist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem *)));
 
   _custhist->setRootIsDecorated(TRUE);
-  _custhist->addColumn(tr("Open"),      _dateColumn,  Qt::AlignCenter );
-  _custhist->addColumn(tr("Doc. Type"), _itemColumn,  Qt::AlignCenter );
-  _custhist->addColumn(tr("Doc. #"),    _orderColumn, Qt::AlignRight  );
-  _custhist->addColumn(tr("Doc. Date"), _dateColumn,  Qt::AlignCenter );
-  _custhist->addColumn(tr("Due Date"),  _dateColumn,  Qt::AlignCenter );
-  _custhist->addColumn(tr("Amount"),    _moneyColumn, Qt::AlignRight  );
-  _custhist->addColumn(tr("Balance"),   _moneyColumn, Qt::AlignRight  );
+  _custhist->addColumn(tr("Open"),      _dateColumn,     Qt::AlignCenter );
+  _custhist->addColumn(tr("Doc. Type"), _itemColumn,     Qt::AlignCenter );
+  _custhist->addColumn(tr("Doc. #"),    _orderColumn,    Qt::AlignRight  );
+  _custhist->addColumn(tr("Doc. Date"), _dateColumn,     Qt::AlignCenter );
+  _custhist->addColumn(tr("Due Date"),  _dateColumn,     Qt::AlignCenter );
+  _custhist->addColumn(tr("Amount"),    _moneyColumn,    Qt::AlignRight  );
+  _custhist->addColumn(tr("Balance"),   _moneyColumn,    Qt::AlignRight  );
 
   _cust->setFocus();
 }
@@ -201,120 +205,27 @@ void dspCustomerARHistory::sFillList()
   if (!checkParameters())
     return;
 
-  q.prepare( "SELECT type, aropen_id, applyid,"
-             "       sortdate, sortnumber,"
-			 "       docnumber, f_open, documenttype,"
-             "       f_docdate, f_duedate, f_amount, f_balance "
-			 "FROM ("
-			 "SELECT 1 AS type, aropen_id, -1 AS applyid,"
-             "       aropen_docdate AS sortdate, aropen_docnumber AS sortnumber,"
-             "       aropen_docnumber AS docnumber,"
-             "       formatBoolYN(aropen_open) AS f_open,"
-             "       CASE WHEN (aropen_doctype='I') THEN :invoice"
-             "            WHEN (aropen_doctype='C') THEN :creditMemo"
-             "            WHEN (aropen_doctype='D') THEN :debitMemo"
-             "            WHEN (aropen_doctype='R') then :cashdeposit"
-             "            ELSE :other"
-             "       END AS documenttype,"
-             "       formatDate(aropen_docdate) AS f_docdate,"
-             "       formatDate(aropen_duedate) AS f_duedate,"
-             "       formatMoney(aropen_amount) AS f_amount,"
-             "       formatMoney((aropen_amount - aropen_paid)) AS f_balance "
-             "FROM aropen "
-             "WHERE ( (aropen_cust_id=:cust_id)" 
-             " AND (aropen_docdate BETWEEN :startDate AND :endDate) ) "
+  MetaSQLQuery mql = mqlLoad(":/ar/arHistory.mql");
+  ParameterList params;
+  _dates->appendValue(params);
+  params.append("invoice", tr("Invoice"));
+  params.append("zeroinvoice", tr("Zero Invoice"));
+  params.append("creditMemo", tr("C/M"));
+  params.append("debitMemo", tr("D/M"));
+  params.append("check", tr("Check"));
+  params.append("certifiedCheck", tr("Certified Check"));
+  params.append("masterCard", tr("Master Card"));
+  params.append("visa", tr("Visa"));
+  params.append("americanExpress", tr("American Express"));
+  params.append("discoverCard", tr("Discover Card"));
+  params.append("otherCreditCard", tr("Other Credit Card"));
+  params.append("cash", tr("Cash"));
+  params.append("wireTransfer", tr("Wire Transfer"));
+  params.append("cashdeposit", tr("Cash Deposit"));
+  params.append("other", tr("Other"));
+  params.append("cust_id", _cust->id());
+  q = mql.toQuery(params);
 
-             "UNION "
-             "SELECT 2 AS type, aropen_id, arapply_source_aropen_id AS applyid,"
-             "       aropen_docdate AS sortdate, aropen_docnumber AS sortnumber,"
-             "       CASE WHEN (arapply_source_doctype IN ('C','R')) THEN arapply_source_docnumber"
-             "            WHEN (arapply_source_doctype='K') THEN arapply_refnumber"
-             "            ELSE :error"
-             "       END AS docnumber,"
-             "       '' AS f_open,"
-             "       CASE WHEN (arapply_source_doctype='C') THEN :creditMemo"
-             "            WHEN (arapply_source_doctype='R') THEN :cashdeposit"
-             "            WHEN (arapply_fundstype='C') THEN :check"
-             "            WHEN (arapply_fundstype='T') THEN :certifiedCheck"
-             "            WHEN (arapply_fundstype='M') THEN :masterCard"
-             "            WHEN (arapply_fundstype='V') THEN :visa"
-             "            WHEN (arapply_fundstype='A') THEN :americanExpress"
-             "            WHEN (arapply_fundstype='D') THEN :discoverCard"
-             "            WHEN (arapply_fundstype='R') THEN :otherCreditCard"
-             "            WHEN (arapply_fundstype='K') THEN :cash"
-             "            WHEN (arapply_fundstype='W') THEN :wireTransfer"
-             "            WHEN (arapply_fundstype='O') THEN :other"
-             "       END AS documenttype,"
-             "       formatDate(arapply_postdate) AS f_docdate,"
-             "       '' AS f_duedate,"
-             "       formatMoney(arapply_applied) AS f_amount,"
-             "       '' AS f_balance "
-             "FROM arapply, aropen "
-             "WHERE ( (arapply_target_doctype IN ('I', 'D'))"
-             " AND (arapply_target_aropen_id=aropen_id)"
-             " AND (arapply_cust_id=:cust_id)"
-             " AND (aropen_cust_id=:cust_id)"
-             " AND (aropen_docdate BETWEEN :startDate AND :endDate) ) "
-
-             "UNION "
-             "SELECT 3 AS type, aropen_id, arapply_target_aropen_id AS applyid,"
-             "       aropen_docdate AS sortdate, aropen_docnumber AS sortnumber,"
-             "       arapply_target_docnumber AS docnumber,"
-             "       '' AS f_open,"
-             "       CASE WHEN (arapply_target_doctype='I') THEN :invoice"
-             "            WHEN (arapply_target_doctype='D') THEN :debitMemo"
-             "            ELSE :other"
-             "       END AS documenttype,"
-             "       formatDate(arapply_postdate) AS f_docdate,"
-             "       '' AS f_duedate,"
-             "       formatMoney(arapply_applied) AS f_amount,"
-             "       '' AS f_balance "
-             "FROM arapply, aropen "
-             "WHERE ( (arapply_source_doctype IN ('K', 'C', 'R'))"
-             " AND (arapply_source_aropen_id=aropen_id)"
-             " AND (arapply_cust_id=:cust_id)"
-             " AND (aropen_cust_id=:cust_id)"
-             " AND (aropen_docdate BETWEEN :startDate AND :endDate) ) "
-
-//  Zero dollar invoices that aren't posted to aropen
-             "UNION "
-             "SELECT 1 AS type, invchead_id, -1 AS applyid,"
-             "       invchead_invcdate AS sortdate, invchead_invcnumber AS sortnumber,"
-             "       invchead_invcnumber AS docnumber,"
-             "       formatBoolYN(false) AS f_open,"
-             "       :zeroinvoice AS documenttype,"
-             "       formatDate(invchead_invcdate) AS f_docdate,"
-             "       formatDate(invchead_invcdate) AS f_duedate,"
-             "       formatMoney(0) AS f_amount,"
-             "       formatMoney(0) AS f_balance "
-             "FROM invchead "
-             "WHERE ( (invchead_cust_id=:cust_id)" 
-             "  AND   (invchead_invcdate BETWEEN :startDate AND :endDate)"
-             "  AND   (invchead_posted)"
-             "  AND   ((SELECT SUM(invcitem_price) "
-             "          FROM invcitem "
-             "          WHERE (invcitem_invchead_id=invchead_id))=0) ) "
-             " ) AS data "
-             "ORDER BY sortdate, sortnumber, type;" );
-
-  _dates->bindValue(q);
-  q.bindValue(":invoice", tr("Invoice"));
-  q.bindValue(":zeroinvoice", tr("Zero Invoice"));
-  q.bindValue(":creditMemo", tr("C/M"));
-  q.bindValue(":debitMemo", tr("D/M"));
-  q.bindValue(":check", tr("Check"));
-  q.bindValue(":certifiedCheck", tr("Certified Check"));
-  q.bindValue(":masterCard", tr("Master Card"));
-  q.bindValue(":visa", tr("Visa"));
-  q.bindValue(":americanExpress", tr("American Express"));
-  q.bindValue(":discoverCard", tr("Discover Card"));
-  q.bindValue(":otherCreditCard", tr("Other Credit Card"));
-  q.bindValue(":cash", tr("Cash"));
-  q.bindValue(":wireTransfer", tr("Wire Transfer"));
-  q.bindValue(":cashdeposit", tr("Cash Deposit"));
-  q.bindValue(":other", tr("Other"));
-  q.bindValue(":cust_id", _cust->id());
-  q.exec();
   if (q.first())
   {
     XTreeWidgetItem *document = 0;
