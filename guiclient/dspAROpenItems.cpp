@@ -61,6 +61,9 @@
 #include <QSqlError>
 #include <QVariant>
 
+#include <metasql.h>
+#include "mqlutil.h"
+
 #include <openreports.h>
 
 #include <currcluster.h>
@@ -284,56 +287,22 @@ void dspAROpenItems::sFillList()
 {
   _aropen->clear();
 
+  MetaSQLQuery mql = mqlLoad(":/ar/arOpenItems.mql");
+  ParameterList params;
+  _dates->appendValue(params);
+  params.append("invoice", tr("Invoice"));
+  params.append("creditMemo", tr("C/M"));
+  params.append("debitMemo", tr("D/M"));
+  params.append("cashdeposit", tr("C/D"));
+  if (_incidentsOnly->isChecked())
+    params.append("incidentsOnly");
+  q = mql.toQuery(params);
+
   XSqlQuery incident;
   incident.prepare( "SELECT incdt_id, incdt_number::TEXT AS incdtnumber,"
                     "       incdt_summary, incdt_assigned_username "
                     "FROM incdt "
-					"WHERE (incdt_aropen_id=:aropen_id);" );
-
-  QString sql( "SELECT aropen_id, aropen_docnumber, aropen_ordernumber,"
-               "       CASE WHEN (aropen_doctype='C') THEN :creditMemo"
-               "            WHEN (aropen_doctype='D') THEN :debitMemo"
-               "            WHEN (aropen_doctype='I') THEN :invoice"
-               "            WHEN (aropen_doctype='R') THEN :cashdeposit"
-               "            ELSE :other"
-               "       END AS f_doctype,"
-               "       formatDate(aropen_docdate) AS f_docdate,"
-               "       formatDate(aropen_duedate) AS f_duedate,"
-               "       formatMoney(aropen_amount) AS f_amount,"
-               "       formatMoney(aropen_paid) AS f_paid,"
-               "       CASE WHEN (aropen_doctype IN ('C', 'R')) THEN ((aropen_amount - aropen_paid) * -1)"
-               "            WHEN (aropen_doctype IN ('I', 'D')) THEN (aropen_amount - aropen_paid)"
-               "            ELSE (aropen_amount - aropen_paid)"
-               "       END AS f_balance,"
-               "       currConcat(aropen_curr_id) AS currAbbr,"
-               "       currToBase(aropen_curr_id,"
-               "            CASE WHEN (aropen_doctype IN ('C', 'R')) THEN ((aropen_amount - aropen_paid) * -1)"
-               "                 WHEN (aropen_doctype IN ('I', 'D')) THEN (aropen_amount - aropen_paid)"
-               "                 ELSE (aropen_amount - aropen_paid)"
-               "            END, CURRENT_DATE) AS base_balance,"
-		       "        cust_id, cust_number, cust_name "
-               "FROM aropen LEFT OUTER JOIN custinfo ON (aropen_cust_id=cust_id) "
-               "WHERE ( (aropen_open)"
-               " AND (aropen_duedate BETWEEN :startDate AND :endDate)" );
-
-  if (_incidentsOnly->isChecked())
-      sql += " AND ((SELECT count(*) from incdt WHERE (incdt_aropen_id=aropen_id)) > 0)";
-
-  sql += " ) "
-         "ORDER BY aropen_docnumber;";
-		 
-  q.prepare(sql);
-  _dates->bindValue(q);
-  q.bindValue(":creditMemo", tr("C/M"));
-  q.bindValue(":debitMemo", tr("D/M"));
-  q.bindValue(":invoice", tr("Invoice"));
-  q.bindValue(":cashdeposit", tr("C/D"));
-  q.exec();
-  if (q.lastError().type() != QSqlError::None)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
+                    "WHERE (incdt_aropen_id=:aropen_id);" );
 
   if (q.first())
   {
@@ -343,23 +312,25 @@ void dspAROpenItems::sFillList()
     do
     {
       last = document = new XTreeWidgetItem( _aropen, last, q.value("aropen_id").toInt(), q.value("cust_id").toInt(),
-                                             q.value("f_doctype"),
+                                             q.value("doctype"),
                                              q.value("aropen_docnumber"),
                                              q.value("cust_number"), q.value("cust_name"),
                                              q.value("aropen_ordernumber"),
-                                             q.value("f_docdate"),
-                                             q.value("f_duedate"), q.value("f_amount"),
-                                             q.value("f_paid"),
-                                             q.value("f_balance"), q.value("currAbbr") );
+                                             formatDate(q.value("aropen_docdate").toDate()),
+                                             formatDate(q.value("aropen_duedate").toDate()),
+                                             formatMoney(q.value("aropen_amount").toDouble()),
+                                             formatMoney(q.value("aropen_paid").toDouble()),
+                                             formatMoney(q.value("balance").toDouble()),
+                                             q.value("currAbbr") );
 
       total += q.value("base_balance").toDouble();
 
       incident.bindValue(":aropen_id", q.value("aropen_id").toInt());
-	  incident.exec();
-	  if (incident.first())
-	  {
-	    do
-		{
+      incident.exec();
+      if (incident.first())
+      {
+        do
+        {
           new XTreeWidgetItem( document, -1, incident.value("incdt_id").toInt(),
                                "",
                                "",
@@ -370,7 +341,7 @@ void dspAROpenItems::sFillList()
                                "",
                                "", "" );
         }
-		while (incident.next());
+        while (incident.next());
       }
     }
     while (q.next());
