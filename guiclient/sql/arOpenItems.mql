@@ -1,0 +1,28 @@
+SELECT aropen.*,
+       CASE WHEN (aropen_doctype='I') THEN <? value("invoice") ?>
+            WHEN (aropen_doctype='C') THEN <? value("creditMemo") ?>
+            WHEN (aropen_doctype='D') THEN <? value("debitMemo") ?>
+            WHEN (aropen_doctype='R') then <? value("cashdeposit") ?>
+            ELSE <? value("other") ?>
+       END AS doctype,
+       CASE WHEN (aropen_doctype IN ('C', 'R')) THEN ((aropen_amount - aropen_paid) * -1)
+            WHEN (aropen_doctype IN ('I', 'D')) THEN (aropen_amount - aropen_paid)
+            ELSE (aropen_amount - aropen_paid)
+       END AS balance,
+       currConcat(aropen_curr_id) AS currAbbr,
+       currToBase(aropen_curr_id,
+                  CASE WHEN (aropen_doctype IN ('C', 'R')) THEN ((aropen_amount - aropen_paid) * -1)
+                       WHEN (aropen_doctype IN ('I', 'D')) THEN (aropen_amount - aropen_paid)
+                       ELSE (aropen_amount - aropen_paid)
+                  END, CURRENT_DATE) AS base_balance,
+       cust_id, cust_number, cust_name
+FROM aropen LEFT OUTER JOIN custinfo ON (aropen_cust_id=cust_id)
+WHERE ( (aropen_open)
+<? if exists("startDate") ?>
+  AND   (aropen_docdate BETWEEN <? value("startDate") ?> AND <? value("endDate") ?>)
+<? endif ?>
+<? if exists("incidentsOnly") ?>
+  AND ((SELECT count(*) from incdt WHERE (incdt_aropen_id=aropen_id)) > 0)
+<? endif ?>
+      )
+ORDER BY aropen_docnumber;
