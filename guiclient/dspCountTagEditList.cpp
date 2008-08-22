@@ -101,7 +101,7 @@ dspCountTagEditList::dspCountTagEditList(QWidget* parent, const char* name, Qt::
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_codeGroup, SIGNAL(buttonClicked(int)), this, SLOT(sParameterTypeChanged()));
 
-  _parameter->setType(ClassCode);
+  _parameter->setType(ParameterGroup::ClassCode);
 
   _cnttag->setRootIsDecorated(TRUE);
   _cnttag->addColumn(tr("Pri."),        (_whsColumn + 10),  Qt::AlignCenter );
@@ -156,7 +156,7 @@ void dspCountTagEditList::sToggleList()
 
 void dspCountTagEditList::setParams(ParameterList &params)
 {
-  if (_parameter->type() == ClassCode)
+  if (_parameter->type() == ParameterGroup::ClassCode)
     params.append("ParameterType", "ClassCode");
   else
     params.append("ParameterType", "PlannerCode");
@@ -752,8 +752,8 @@ void dspCountTagEditList::sHandleAutoUpdate(bool pAutoUpdate)
 void dspCountTagEditList::sParameterTypeChanged()
 {
   if(_plancode->isChecked())
-    _parameter->setType(PlannerCode);
+    _parameter->setType(ParameterGroup::PlannerCode);
   else
-    _parameter->setType(ClassCode);
+    _parameter->setType(ParameterGroup::ClassCode);
 
 }

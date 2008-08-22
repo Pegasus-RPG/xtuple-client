@@ -105,7 +105,7 @@ void thawItemSitesByClassCode::languageChange()
 
 void thawItemSitesByClassCode::init()
 {
-  _classCode->setType(ClassCode);
+  _classCode->setType(ParameterGroup::ClassCode);
 }
 
 void thawItemSitesByClassCode::sThaw()

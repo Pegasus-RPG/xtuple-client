@@ -95,8 +95,8 @@ dspTimePhasedSalesByCustomerGroup::dspTimePhasedSalesByCustomerGroup(QWidget* pa
   if (!_metrics->boolean("EnableBatchManager"))
     _submit->hide();
     
-  _customerGroup->setType(CustomerGroup);
-  _productCategory->setType(ProductCategory);
+  _customerGroup->setType(ParameterGroup::CustomerGroup);
+  _productCategory->setType(ParameterGroup::ProductCategory);
   
   _sohist->addColumn(tr("Cust. #"),  _orderColumn, Qt::AlignLeft );
   _sohist->addColumn(tr("Customer"), 180,          Qt::AlignLeft );

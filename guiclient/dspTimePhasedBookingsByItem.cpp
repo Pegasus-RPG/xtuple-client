@@ -94,7 +94,7 @@ dspTimePhasedBookingsByItem::dspTimePhasedBookingsByItem(QWidget* parent, const 
   if (!_metrics->boolean("EnableBatchManager"))
     _submit->hide();
 
-  _productCategory->setType(ProductCategory);
+  _productCategory->setType(ParameterGroup::ProductCategory);
 
   _soitem->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft   );
   _soitem->addColumn(tr("UOM"),         _uomColumn,  Qt::AlignCenter );

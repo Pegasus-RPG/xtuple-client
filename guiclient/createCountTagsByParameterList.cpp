@@ -79,7 +79,7 @@ createCountTagsByParameterList::createCountTagsByParameterList(QWidget* parent, 
   connect(_warehouse, SIGNAL(newID(int)), this, SLOT(sPopulateLocations()));
   connect(_byLocation, SIGNAL(toggled(bool)), _location, SLOT(setEnabled(bool)));
 
-  _parameter->setType(ClassCode);
+  _parameter->setType(ParameterGroup::ClassCode);
 
   _freeze->setEnabled(_privileges->check("FreezeInventory"));
 
@@ -120,19 +120,19 @@ enum SetResponse createCountTagsByParameterList::set(const ParameterList & pPara
 
   param = pParams.value("classcode", &valid);
   if (valid)
-    _parameter->setType(ClassCode);
+    _parameter->setType(ParameterGroup::ClassCode);
 
   param = pParams.value("plancode", &valid);
   if (valid)
-    _parameter->setType(PlannerCode);
+    _parameter->setType(ParameterGroup::PlannerCode);
 
   switch (_parameter->type())
   {
-    case ClassCode:
+    case ParameterGroup::ClassCode:
       setCaption(tr("Create Count Tags by Class Code"));
       break;
 
-    case PlannerCode:
+    case ParameterGroup::PlannerCode:
       setCaption(tr("Create Count Tags by Planner Code"));
       break;
 
@@ -147,7 +147,7 @@ void createCountTagsByParameterList::sCreate()
 {
   QString sql;
 //---------------Class Code--------------------------------------  
-  if ((_parameter->type() == ClassCode) && _parameter->isSelected())
+  if ((_parameter->type() == ParameterGroup::ClassCode) && _parameter->isSelected())
   {
     sql =  "SELECT createCountTag(itemsite_id, :comments, :priority, :freeze, :location_id) "
            "FROM ( SELECT itemsite_id";
@@ -170,7 +170,7 @@ void createCountTagsByParameterList::sCreate()
            "       ORDER BY item_number ) AS data;";
   }
 //----------------Class Code Pattern-------------------------------  
-  else if ((_parameter->type() == ClassCode) && _parameter->isPattern())
+  else if ((_parameter->type() == ParameterGroup::ClassCode) && _parameter->isPattern())
   {
     sql =  "SELECT createCountTag(itemsite_id, :comments, :priority, :freeze, :location_id) "
            "FROM ( SELECT itemsite_id";
@@ -193,7 +193,7 @@ void createCountTagsByParameterList::sCreate()
            "       ORDER BY item_number ) AS data;";
   }
 //-----------------Planner Code-------------------------------------
-  else if ((_parameter->type() == PlannerCode) && _parameter->isSelected())
+  else if ((_parameter->type() == ParameterGroup::PlannerCode) && _parameter->isSelected())
   {
     sql =  "SELECT createCountTag(itemsite_id, :comments, :priority, :freeze, :location_id) "
            "FROM ( SELECT itemsite_id";
@@ -216,7 +216,7 @@ void createCountTagsByParameterList::sCreate()
            "       ORDER BY item_number ) AS data;";
   }
 //----------------Planner Code Pattern-------------------------------
-  else if ((_parameter->type() == PlannerCode) && _parameter->isPattern())
+  else if ((_parameter->type() == ParameterGroup::PlannerCode) && _parameter->isPattern())
   {
     sql =  "SELECT createCountTag(itemsite_id, :comments, :priority, :freeze, :location_id) "
            "FROM ( SELECT itemsite_id";

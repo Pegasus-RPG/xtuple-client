@@ -69,7 +69,7 @@ resetQOHBalances::resetQOHBalances(QWidget* parent, const char* name, bool modal
 
   connect(_reset, SIGNAL(clicked()), this, SLOT(sReset()));
 
-  _classCode->setType(ClassCode);
+  _classCode->setType(ParameterGroup::ClassCode);
   _transDate->setEnabled(_privileges->check("AlterTransactionDates"));
   _transDate->setDate(omfgThis->dbDate());
   _username->setText(omfgThis->username());

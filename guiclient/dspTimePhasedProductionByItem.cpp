@@ -89,7 +89,7 @@ dspTimePhasedProductionByItem::dspTimePhasedProductionByItem(QWidget* parent, co
   connect(_calendar, SIGNAL(newCalendarId(int)), _periods, SLOT(populate(int)));
   connect(_calendar, SIGNAL(select(ParameterList&)), _periods, SLOT(load(ParameterList&)));
 
-  _plannerCode->setType(PlannerCode);
+  _plannerCode->setType(ParameterGroup::PlannerCode);
 
   _production->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft   );
   _production->addColumn(tr("Site"),        _whsColumn,  Qt::AlignCenter );

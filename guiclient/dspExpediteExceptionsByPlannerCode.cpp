@@ -81,7 +81,7 @@ dspExpediteExceptionsByPlannerCode::dspExpediteExceptionsByPlannerCode(QWidget* 
   connect(_exception, SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *, int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
-  _plannerCode->setType(PlannerCode);
+  _plannerCode->setType(ParameterGroup::PlannerCode);
 
   _exception->addColumn(tr("Order Type/#"),   _itemColumn, Qt::AlignCenter );
   _exception->addColumn(tr("Site"),           _whsColumn,  Qt::AlignCenter );

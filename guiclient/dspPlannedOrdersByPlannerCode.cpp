@@ -80,7 +80,7 @@ dspPlannedOrdersByPlannerCode::dspPlannedOrdersByPlannerCode(QWidget* parent, co
   connect(_planord, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
-  _plannerCode->setType(PlannerCode);
+  _plannerCode->setType(ParameterGroup::PlannerCode);
 
   _planord->addColumn(tr("Order #"),     _orderColumn, Qt::AlignLeft,  true, "ordernum");
   _planord->addColumn(tr("Type"),        _uomColumn,   Qt::AlignCenter,true, "ordtype");

@@ -95,7 +95,7 @@ dspSalesHistoryByShipTo::dspSalesHistoryByShipTo(QWidget* parent, const char* na
   connect(_showPrices, SIGNAL(toggled(bool)), this, SLOT(sHandleParams()));
   connect(_showCosts, SIGNAL(toggled(bool)), this, SLOT(sHandleParams()));
 
-  _productCategory->setType(ProductCategory);
+  _productCategory->setType(ParameterGroup::ProductCategory);
 
   _sohist->addColumn(tr("S/O #"),       _orderColumn, Qt::AlignLeft   );
   _sohist->addColumn(tr("Invoice #"),   _orderColumn, Qt::AlignLeft   );

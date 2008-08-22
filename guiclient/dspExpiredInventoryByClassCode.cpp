@@ -95,7 +95,7 @@ dspExpiredInventoryByClassCode::dspExpiredInventoryByClassCode(QWidget* parent, 
   connect(_showValue, SIGNAL(toggled(bool)), this, SLOT(sHandleValue(bool)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
-  _classCode->setType(ClassCode);
+  _classCode->setType(ParameterGroup::ClassCode);
   _inventoryValue->setEnabled(_showValue->isChecked());
 
   _expired->addColumn(tr("Site"),         _whsColumn,  Qt::AlignCenter );

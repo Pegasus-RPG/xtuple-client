@@ -124,56 +124,56 @@ enum SetResponse dspBacklogByParameterList::set(const ParameterList &pParams)
   param = pParams.value("custtype_id", &valid);
   if (valid)
   {
-    _parameter->setType(CustomerType);
+    _parameter->setType(ParameterGroup::CustomerType);
     _parameter->setId(param.toInt());
   }
 
   param = pParams.value("custtype_pattern", &valid);
   if (valid)
   {
-    _parameter->setType(CustomerType);
+    _parameter->setType(ParameterGroup::CustomerType);
     _parameter->setPattern(param.toString());
   }
 
   param = pParams.value("custtype", &valid);
   if (valid)
-    _parameter->setType(CustomerType);
+    _parameter->setType(ParameterGroup::CustomerType);
 
   param = pParams.value("custgrp_id", &valid);
   if (valid)
   {
-    _parameter->setType(CustomerGroup);
+    _parameter->setType(ParameterGroup::CustomerGroup);
     _parameter->setId(param.toInt());
   }
 
   param = pParams.value("custgrp_pattern", &valid);
   if (valid)
   {
-    _parameter->setType(CustomerGroup);
+    _parameter->setType(ParameterGroup::CustomerGroup);
     _parameter->setPattern(param.toString());
   }
 
   param = pParams.value("custgrp", &valid);
   if (valid)
-    _parameter->setType(CustomerGroup);
+    _parameter->setType(ParameterGroup::CustomerGroup);
 
   param = pParams.value("prodcat_id", &valid);
   if (valid)
   {
-    _parameter->setType(ProductCategory);
+    _parameter->setType(ParameterGroup::ProductCategory);
     _parameter->setId(param.toInt());
   }
 
   param = pParams.value("prodcat_pattern", &valid);
   if (valid)
   {
-    _parameter->setType(ProductCategory);
+    _parameter->setType(ParameterGroup::ProductCategory);
     _parameter->setPattern(param.toString());
   }
 
   param = pParams.value("prodcat", &valid);
   if (valid)
-    _parameter->setType(ProductCategory);
+    _parameter->setType(ParameterGroup::ProductCategory);
 
   if (pParams.inList("run"))
   {
@@ -183,15 +183,15 @@ enum SetResponse dspBacklogByParameterList::set(const ParameterList &pParams)
 
   switch (_parameter->type())
   {
-    case CustomerType:
+    case ParameterGroup::CustomerType:
       setCaption(tr("Backlog by Customer Type"));
       break;
 
-    case CustomerGroup:
+    case ParameterGroup::CustomerGroup:
       setCaption(tr("Backlog by Customer Group"));
       break;
 
-    case ProductCategory:
+    case ParameterGroup::ProductCategory:
       setCaption(tr("Backlog by Product Category"));
       break;
 
@@ -224,15 +224,15 @@ void dspBacklogByParameterList::sPrint()
   {
     switch (_parameter->type())
     {
-      case CustomerType:
+      case ParameterGroup::CustomerType:
         params.append("custtype");
         break;
 
-      case CustomerGroup:
+      case ParameterGroup::CustomerGroup:
         params.append("custgrp");
         break;
 
-      case ProductCategory:
+      case ParameterGroup::ProductCategory:
         params.append("prodcat");
         break;
 
@@ -367,14 +367,14 @@ void dspBacklogByParameterList::sFillList()
     params.append("startDate", _dates->startDate());
     params.append("endDate",   _dates->endDate());
 
-    if (_parameter->type() == CustomerType)
+    if (_parameter->type() == ParameterGroup::CustomerType)
     {
       if (_parameter->isSelected())
         params.append("custtype_id", _parameter->id());
       else if (_parameter->isPattern())
         params.append("custtype_pattern", _parameter->pattern());
     }
-    else if (_parameter->type() == CustomerGroup)
+    else if (_parameter->type() == ParameterGroup::CustomerGroup)
     {
       if (_parameter->isAll())
         params.append("by_custgrp");
@@ -383,7 +383,7 @@ void dspBacklogByParameterList::sFillList()
       else if (_parameter->isPattern())
         params.append("custgrp_pattern", _parameter->pattern());
     }
-    else if (_parameter->type() == ProductCategory)
+    else if (_parameter->type() == ParameterGroup::ProductCategory)
     {
       if (_parameter->isSelected())
         params.append("prodcat_id", _parameter->id());

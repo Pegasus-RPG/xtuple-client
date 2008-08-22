@@ -86,7 +86,7 @@ dspItemCostsByClassCode::dspItemCostsByClassCode(QWidget* parent, const char* na
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
-  _classCode->setType(ClassCode);
+  _classCode->setType(ParameterGroup::ClassCode);
 
   _itemcost->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft   );
   _itemcost->addColumn(tr("Description"), -1,           Qt::AlignLeft   );

@@ -90,7 +90,7 @@ dspSlowMovingInventoryByClassCode::dspSlowMovingInventoryByClassCode(QWidget* pa
   connect(_showValue, SIGNAL(toggled(bool)), this, SLOT(sHandleValue(bool)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
-  _classCode->setType(ClassCode);
+  _classCode->setType(ParameterGroup::ClassCode);
 
   _itemsite->addColumn(tr("Site"),          _whsColumn,  Qt::AlignCenter );
   _itemsite->addColumn(tr("Item Number"),   _itemColumn, Qt::AlignLeft   );

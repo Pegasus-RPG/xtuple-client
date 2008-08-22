@@ -83,7 +83,7 @@ dspWoHistoryByClassCode::dspWoHistoryByClassCode(QWidget* parent, const char* na
   connect(_showCost, SIGNAL(toggled(bool)), this, SLOT(sHandleCosts(bool)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
-  _classCode->setType(ClassCode);
+  _classCode->setType(ParameterGroup::ClassCode);
 
   _wo->addColumn(tr("W/O #"),       _orderColumn,  Qt::AlignLeft   );
   _wo->addColumn(tr("Item #"),      _itemColumn,   Qt::AlignLeft   );

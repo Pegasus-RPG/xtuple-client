@@ -94,7 +94,7 @@ dspTimePhasedSalesByProductCategory::dspTimePhasedSalesByProductCategory(QWidget
   if (!_metrics->boolean("EnableBatchManager"))
     _submit->hide();
   
-  _productCategory->setType(ProductCategory);
+  _productCategory->setType(ParameterGroup::ProductCategory);
   
   _sohist->addColumn(tr("Prod. Cat."), _itemColumn, Qt::AlignLeft   );
   _sohist->addColumn(tr("UOM"),        _uomColumn,  Qt::AlignCenter );

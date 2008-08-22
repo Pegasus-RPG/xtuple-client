@@ -96,7 +96,7 @@ dspTimePhasedProductionByPlannerCode::dspTimePhasedProductionByPlannerCode(QWidg
 
   statusBar()->hide();
 
-  _plannerCode->setType(PlannerCode);
+  _plannerCode->setType(ParameterGroup::PlannerCode);
 
   _production->addColumn(tr("Planner Code"), _itemColumn, Qt::AlignLeft   );
   _production->addColumn(tr("Site"),         _whsColumn,  Qt::AlignCenter );

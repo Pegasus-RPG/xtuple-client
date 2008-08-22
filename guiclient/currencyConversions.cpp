@@ -142,7 +142,7 @@ void currencyConversions::init()
     _dateCluster->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
     _dateCluster->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
     
-    _queryParameters->setType(CurrencyNotBase);
+    _queryParameters->setType(ParameterGroup::CurrencyNotBase);
 
     switch (_metrics->value("CurrencyExchangeSense").toInt())
     {

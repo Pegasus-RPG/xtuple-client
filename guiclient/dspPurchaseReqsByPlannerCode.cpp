@@ -88,7 +88,7 @@ dspPurchaseReqsByPlannerCode::dspPurchaseReqsByPlannerCode(QWidget* parent, cons
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), true);
 
-  _plannerCode->setType(PlannerCode);
+  _plannerCode->setType(ParameterGroup::PlannerCode);
 
   _pr->addColumn(tr("Item Number"),  _itemColumn,   Qt::AlignLeft   );
   _pr->addColumn(tr("Description"),  -1,            Qt::AlignLeft   );

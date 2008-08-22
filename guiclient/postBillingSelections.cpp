@@ -77,7 +77,7 @@ postBillingSelections::postBillingSelections(QWidget* parent, const char* name, 
   connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
 
-  _customerType->setType(CustomerType);
+  _customerType->setType(ParameterGroup::CustomerType);
   _post->setFocus();
 }
 

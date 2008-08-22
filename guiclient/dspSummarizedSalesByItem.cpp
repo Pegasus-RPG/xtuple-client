@@ -84,8 +84,8 @@ dspSummarizedSalesByItem::dspSummarizedSalesByItem(QWidget* parent, const char* 
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_sohist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
 
-  _customerType->setType(CustomerType);
-  _productCategory->setType(ProductCategory);
+  _customerType->setType(ParameterGroup::CustomerType);
+  _productCategory->setType(ParameterGroup::ProductCategory);
 
   _sohist->addColumn(tr("Item"),        _itemColumn,      Qt::AlignLeft   );
   _sohist->addColumn(tr("Description"), -1,               Qt::AlignLeft   );

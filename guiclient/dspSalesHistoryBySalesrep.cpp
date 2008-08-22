@@ -95,7 +95,7 @@ dspSalesHistoryBySalesrep::dspSalesHistoryBySalesrep(QWidget* parent, const char
   connect(_showCosts, SIGNAL(toggled(bool)), this, SLOT(sHandleParams()));
 
   _salesrep->setType(XComboBox::SalesRepsActive);
-  _productCategory->setType(ProductCategory);
+  _productCategory->setType(ParameterGroup::ProductCategory);
 
   _sohist->addColumn(tr("Customer"),    -1,           Qt::AlignLeft  );
   _sohist->addColumn(tr("S/O #"),       _orderColumn, Qt::AlignLeft  );

@@ -83,7 +83,7 @@ postCostsByClassCode::postCostsByClassCode(QWidget* parent, const char* name, bo
   if (!_metrics->boolean("EnableBatchManager"))
     _submit->hide();
 
-  _classCode->setType(ClassCode);
+  _classCode->setType(ParameterGroup::ClassCode);
 
   if (!_metrics->boolean("Routings"))
   {

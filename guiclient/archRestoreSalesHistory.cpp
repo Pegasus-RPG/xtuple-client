@@ -101,8 +101,8 @@ void archRestoreSalesHistory::languageChange()
 
 void archRestoreSalesHistory::init()
 {
-  _customerType->setType(CustomerType);
-  _productCategory->setType(ProductCategory);
+  _customerType->setType(ParameterGroup::CustomerType);
+  _productCategory->setType(ParameterGroup::ProductCategory);
 }
 
 enum SetResponse archRestoreSalesHistory::set(ParameterList &pParams)

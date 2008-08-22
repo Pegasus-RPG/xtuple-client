@@ -74,7 +74,7 @@ dspUsageStatisticsByClassCode::dspUsageStatisticsByClassCode(QWidget* parent, co
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_usage, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
 
-  _classCode->setType(ClassCode);
+  _classCode->setType(ParameterGroup::ClassCode);
 
   _usage->addColumn(tr("Site"),        _whsColumn,  Qt::AlignCenter );
   _usage->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft   );

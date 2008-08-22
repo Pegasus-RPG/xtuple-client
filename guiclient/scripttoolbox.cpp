@@ -349,24 +349,24 @@ void SetResponsefromScriptValue(const QScriptValue &obj, enum SetResponse &sr)
   sr = (enum SetResponse)obj.toInt32();
 }
 
-QScriptValue ParameterGroupStatestoScriptValue(QScriptEngine *engine, const enum ParameterGroupStates &en)
+QScriptValue ParameterGroupStatestoScriptValue(QScriptEngine *engine, const enum ParameterGroup::ParameterGroupStates &en)
 {
   return QScriptValue(engine, (int)en);
 }
 
-void ParameterGroupStatesfromScriptValue(const QScriptValue &obj, enum ParameterGroupStates &en)
+void ParameterGroupStatesfromScriptValue(const QScriptValue &obj, enum ParameterGroup::ParameterGroupStates &en)
 {
-  en = (enum ParameterGroupStates)obj.toInt32();
+  en = (enum ParameterGroup::ParameterGroupStates)obj.toInt32();
 }
 
-QScriptValue ParameterGroupTypestoScriptValue(QScriptEngine *engine, const enum ParameterGroupTypes &en)
+QScriptValue ParameterGroupTypestoScriptValue(QScriptEngine *engine, const enum ParameterGroup::ParameterGroupTypes &en)
 {
   return QScriptValue(engine, (int)en);
 }
 
-void ParameterGroupTypesfromScriptValue(const QScriptValue &obj, enum ParameterGroupTypes &en)
+void ParameterGroupTypesfromScriptValue(const QScriptValue &obj, enum ParameterGroup::ParameterGroupTypes &en)
 {
-  en = (enum ParameterGroupTypes)obj.toInt32();
+  en = (enum ParameterGroup::ParameterGroupTypes)obj.toInt32();
 }
 
 QScriptValue QtWindowModalitytoScriptValue(QScriptEngine *engine, const enum Qt::WindowModality &en)

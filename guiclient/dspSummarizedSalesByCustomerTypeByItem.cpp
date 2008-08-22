@@ -80,7 +80,7 @@ dspSummarizedSalesByCustomerTypeByItem::dspSummarizedSalesByCustomerTypeByItem(Q
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
-  _customerType->setType(CustomerType);
+  _customerType->setType(ParameterGroup::CustomerType);
 
   _sohist->addColumn(tr("Item Number"), _itemColumn,     Qt::AlignLeft   );
   _sohist->addColumn(tr("Description"), -1 ,             Qt::AlignLeft   );

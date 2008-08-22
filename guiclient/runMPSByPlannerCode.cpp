@@ -83,7 +83,7 @@ runMPSByPlannerCode::runMPSByPlannerCode(QWidget* parent, const char* name, bool
   if (!_metrics->boolean("EnableBatchManager"))
     _submit->hide();
 
-  _plannerCode->setType(PlannerCode);
+  _plannerCode->setType(ParameterGroup::PlannerCode);
 }
 
 /*

@@ -84,8 +84,8 @@ dspSummarizedSalesByCustomer::dspSummarizedSalesByCustomer(QWidget* parent, cons
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_cohist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
 
-  _productCategory->setType(ProductCategory);
-  _currency->setType(Currency);
+  _productCategory->setType(ParameterGroup::ProductCategory);
+  _currency->setType(ParameterGroup::Currency);
 
   _cohist->addColumn(tr("Customer"),    -1,               Qt::AlignLeft   );
   _cohist->addColumn(tr("First Sale"),  _dateColumn,      Qt::AlignCenter );

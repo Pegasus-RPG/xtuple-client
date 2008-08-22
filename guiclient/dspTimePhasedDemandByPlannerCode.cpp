@@ -94,7 +94,7 @@ dspTimePhasedDemandByPlannerCode::dspTimePhasedDemandByPlannerCode(QWidget* pare
   connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
   connect(_calendar, SIGNAL(select(ParameterList&)), _periods, SLOT(load(ParameterList&)));
 
-  _plannerCode->setType(PlannerCode);
+  _plannerCode->setType(ParameterGroup::PlannerCode);
 
   _demand->addColumn(tr("Planner Code"), _itemColumn, Qt::AlignLeft   );
   _demand->addColumn(tr("Site"),         _whsColumn,  Qt::AlignCenter );

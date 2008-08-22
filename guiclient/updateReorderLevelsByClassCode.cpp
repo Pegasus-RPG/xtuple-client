@@ -111,7 +111,7 @@ void updateReorderLevelsByClassCode::languageChange()
 
 void updateReorderLevelsByClassCode::init()
 {
-  _classCode->setType(ClassCode);
+  _classCode->setType(ParameterGroup::ClassCode);
 }
 
 void updateReorderLevelsByClassCode::sUpdate()

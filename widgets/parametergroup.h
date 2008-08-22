@@ -69,20 +69,12 @@ class QLineEdit;
 class ParameterList;
 class XSqlQuery;
 
-enum ParameterGroupTypes
-{
-  AdhocGroup, PlannerCode, ProductCategory, ClassCode, ItemGroup, CostCategory,
-  CustomerType, CustomerGroup, CurrencyNotBase, Currency, WorkCenter, User
-};
-
-enum ParameterGroupStates
-{
-  All, Selected, Pattern
-};
-
 class OPENMFGWIDGETS_EXPORT ParameterGroup : public QGroupBox
 {
   Q_OBJECT
+
+  Q_ENUMS(ParameterGroupTypes)
+  Q_ENUMS(ParameterGroupStates)
 
   Q_PROPERTY(QString pattern READ pattern WRITE setPattern)
   Q_PROPERTY(enum ParameterGroupTypes type READ type WRITE setType)
@@ -91,6 +83,17 @@ class OPENMFGWIDGETS_EXPORT ParameterGroup : public QGroupBox
 
   public:
     ParameterGroup(QWidget * = 0, const char * = 0);
+
+    enum ParameterGroupTypes
+    {
+      AdhocGroup, PlannerCode, ProductCategory, ClassCode, ItemGroup, CostCategory,
+      CustomerType, CustomerGroup, CurrencyNotBase, Currency, WorkCenter, User
+    };
+
+    enum ParameterGroupStates
+    {
+      All, Selected, Pattern
+    };
 
     enum ParameterGroupStates state();
     int                       id();

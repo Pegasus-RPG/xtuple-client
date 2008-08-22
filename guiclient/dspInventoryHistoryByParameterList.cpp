@@ -132,56 +132,56 @@ enum SetResponse dspInventoryHistoryByParameterList::set(const ParameterList &pP
   param = pParams.value("classcode_id", &valid);
   if (valid)
   {
-    _parameter->setType(ClassCode);
+    _parameter->setType(ParameterGroup::ClassCode);
     _parameter->setId(param.toInt());
   }
 
   param = pParams.value("classcode_pattern", &valid);
   if (valid)
   {
-    _parameter->setType(ClassCode);
+    _parameter->setType(ParameterGroup::ClassCode);
     _parameter->setPattern(param.toString());
   }
 
   param = pParams.value("classcode", &valid);
   if (valid)
-    _parameter->setType(ClassCode);
+    _parameter->setType(ParameterGroup::ClassCode);
 
   param = pParams.value("plancode_id", &valid);
   if (valid)
   {
-    _parameter->setType(PlannerCode);
+    _parameter->setType(ParameterGroup::PlannerCode);
     _parameter->setId(param.toInt());
   }
 
   param = pParams.value("plancode_pattern", &valid);
   if (valid)
   {
-    _parameter->setType(PlannerCode);
+    _parameter->setType(ParameterGroup::PlannerCode);
     _parameter->setPattern(param.toString());
   }
 
   param = pParams.value("plancode", &valid);
   if (valid)
-    _parameter->setType(PlannerCode);
+    _parameter->setType(ParameterGroup::PlannerCode);
 
   param = pParams.value("itemgrp_id", &valid);
   if (valid)
   {
-    _parameter->setType(ItemGroup);
+    _parameter->setType(ParameterGroup::ItemGroup);
     _parameter->setId(param.toInt());
   }
 
   param = pParams.value("itemgrp_pattern", &valid);
   if (valid)
   {
-    _parameter->setType(ItemGroup);
+    _parameter->setType(ParameterGroup::ItemGroup);
     _parameter->setPattern(param.toString());
   }
 
   param = pParams.value("itemgrp", &valid);
   if (valid)
-    _parameter->setType(ItemGroup);
+    _parameter->setType(ParameterGroup::ItemGroup);
 
   param = pParams.value("warehous_id", &valid);
   if (valid)
@@ -219,15 +219,15 @@ enum SetResponse dspInventoryHistoryByParameterList::set(const ParameterList &pP
 
   switch (_parameter->type())
   {
-    case ClassCode:
+    case ParameterGroup::ClassCode:
       setCaption(tr("Inventory History by Class Code"));
       break;
 
-    case PlannerCode:
+    case ParameterGroup::PlannerCode:
       setCaption(tr("Inventory History by Planner Code"));
       break;
 
-    case ItemGroup:
+    case ParameterGroup::ItemGroup:
       setCaption(tr("Inventory History by Item Group"));
       break;
 
@@ -245,9 +245,9 @@ void dspInventoryHistoryByParameterList::setParams(ParameterList & params)
   _dates->appendValue(params);
   params.append("transType", _transType->id());
 
-  if (_parameter->type() == ItemGroup)
+  if (_parameter->type() == ParameterGroup::ItemGroup)
     params.append("itemgrp");
-  else if(_parameter->type() == PlannerCode)
+  else if(_parameter->type() == ParameterGroup::PlannerCode)
     params.append("plancode");
   else
     params.append("classcode");
@@ -273,13 +273,13 @@ void dspInventoryHistoryByParameterList::sPrint()
   {
     switch(_parameter->type())
     {
-    case ItemGroup:
+    case ParameterGroup::ItemGroup:
       params.append("itemgrp");
       break;
-    case ClassCode:
+    case ParameterGroup::ClassCode:
       params.append("classcode");
       break;
-    case PlannerCode:
+    case ParameterGroup::PlannerCode:
       params.append("plancode");
       break;
     default:

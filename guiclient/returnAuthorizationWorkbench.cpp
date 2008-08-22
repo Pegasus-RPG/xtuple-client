@@ -81,7 +81,7 @@ returnAuthorizationWorkbench::returnAuthorizationWorkbench(QWidget* parent, cons
   _codeGroup->addButton(_cust);
   _codeGroup->addButton(_custtype);
   _custInfo->hide();
-  _parameter->setType(CustomerType);
+  _parameter->setType(ParameterGroup::CustomerType);
 
 //  connect(_ra, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
 //  connect(_radue, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));

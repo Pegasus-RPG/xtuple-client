@@ -87,7 +87,7 @@ dspBookingsByShipTo::dspBookingsByShipTo(QWidget* parent, const char* name, Qt::
 
   statusBar()->hide();
 
-  _productCategory->setType(ProductCategory);
+  _productCategory->setType(ParameterGroup::ProductCategory);
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 

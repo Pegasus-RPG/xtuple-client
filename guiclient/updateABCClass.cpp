@@ -100,7 +100,7 @@ void updateABCClass::languageChange()
 
 void updateABCClass::init()
 {
-  _classCode->setType(ClassCode);
+  _classCode->setType(ParameterGroup::ClassCode);
   _dates->setStartCaption(tr("Start Evaluation Date"));
   _dates->setEndCaption(tr("End Evaluation Date"));
 

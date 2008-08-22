@@ -110,7 +110,7 @@ void updateOUTLevels::languageChange()
 
 void updateOUTLevels::init()
 {
-  _plannerCode->setType(PlannerCode);
+  _plannerCode->setType(ParameterGroup::PlannerCode);
 }
 
 void updateOUTLevels::sUpdate()

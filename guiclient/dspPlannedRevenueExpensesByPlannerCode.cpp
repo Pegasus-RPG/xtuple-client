@@ -81,7 +81,7 @@ dspPlannedRevenueExpensesByPlannerCode::dspPlannedRevenueExpensesByPlannerCode(Q
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
-  _plannerCode->setType(PlannerCode);
+  _plannerCode->setType(ParameterGroup::PlannerCode);
 
   _planord->addColumn(tr("Order #"),     _orderColumn, Qt::AlignLeft, true, "plonumber");
   _planord->addColumn(tr("Type"),        _uomColumn,   Qt::AlignCenter,true, "plotype");

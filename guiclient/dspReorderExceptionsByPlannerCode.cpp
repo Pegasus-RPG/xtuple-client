@@ -77,7 +77,7 @@ dspReorderExceptionsByPlannerCode::dspReorderExceptionsByPlannerCode(QWidget* pa
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
-  _plannerCode->setType(PlannerCode);
+  _plannerCode->setType(ParameterGroup::PlannerCode);
 
   _exception->addColumn(tr("Site"),           _whsColumn,  Qt::AlignCenter );
   _exception->addColumn(tr("Item Number"),    _itemColumn, Qt::AlignLeft   );

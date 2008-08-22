@@ -83,7 +83,7 @@ updateActualCostsByClassCode::updateActualCostsByClassCode(QWidget* parent, cons
   if (!_metrics->boolean("EnableBatchManager"))
     _submit->hide();
 
-  _classCode->setType(ClassCode);
+  _classCode->setType(ParameterGroup::ClassCode);
 
   if (!_metrics->boolean("Routings"))
   {

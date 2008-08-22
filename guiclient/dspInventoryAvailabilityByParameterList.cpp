@@ -130,68 +130,68 @@ enum SetResponse dspInventoryAvailabilityByParameterList::set(const ParameterLis
   param = pParams.value("classcode_id", &valid);
   if (valid)
   {
-    _parameter->setType(ClassCode);
+    _parameter->setType(ParameterGroup::ClassCode);
     _parameter->setId(param.toInt());
   }
 
   param = pParams.value("classcode_pattern", &valid);
   if (valid)
   {
-    _parameter->setType(ClassCode);
+    _parameter->setType(ParameterGroup::ClassCode);
     _parameter->setPattern(param.toString());
   }
 
   param = pParams.value("classcode", &valid);
   if (valid)
-    _parameter->setType(ClassCode);
+    _parameter->setType(ParameterGroup::ClassCode);
 
   param = pParams.value("plancode_id", &valid);
   if (valid)
   {
-    _parameter->setType(PlannerCode);
+    _parameter->setType(ParameterGroup::PlannerCode);
     _parameter->setId(param.toInt());
   }
 
   param = pParams.value("plancode_pattern", &valid);
   if (valid)
   {
-    _parameter->setType(PlannerCode);
+    _parameter->setType(ParameterGroup::PlannerCode);
     _parameter->setPattern(param.toString());
   }
 
   param = pParams.value("plancode", &valid);
   if (valid)
-    _parameter->setType(PlannerCode);
+    _parameter->setType(ParameterGroup::PlannerCode);
 
   param = pParams.value("itemgrp_id", &valid);
   if (valid)
   {
-    _parameter->setType(ItemGroup);
+    _parameter->setType(ParameterGroup::ItemGroup);
     _parameter->setId(param.toInt());
   }
 
   param = pParams.value("itemgrp_pattern", &valid);
   if (valid)
   {
-    _parameter->setType(ItemGroup);
+    _parameter->setType(ParameterGroup::ItemGroup);
     _parameter->setPattern(param.toString());
   }
 
   param = pParams.value("itemgrp", &valid);
   if (valid)
-    _parameter->setType(ItemGroup);
+    _parameter->setType(ParameterGroup::ItemGroup);
 
   switch (_parameter->type())
   {
-    case ClassCode:
+    case ParameterGroup::ClassCode:
       setCaption(tr("Inventory Availability by Class Code"));
       break;
 
-    case PlannerCode:
+    case ParameterGroup::PlannerCode:
       setCaption(tr("Inventory Availability by Planner Code"));
       break;
 
-    case ItemGroup:
+    case ParameterGroup::ItemGroup:
       setCaption(tr("Inventory Availability by Item Group"));
       break;
 
@@ -216,11 +216,11 @@ void dspInventoryAvailabilityByParameterList::sPrint()
 
   if (_parameter->isAll())
   {
-    if (_parameter->type() == ItemGroup)
+    if (_parameter->type() == ParameterGroup::ItemGroup)
       params.append("itemgrp");
-    else if(_parameter->type() == PlannerCode)
+    else if(_parameter->type() == ParameterGroup::PlannerCode)
       params.append("plancode");
-    else if (_parameter->type() == ClassCode)
+    else if (_parameter->type() == ParameterGroup::ClassCode)
       params.append("classcode");
   }
 
@@ -533,25 +533,25 @@ void dspInventoryAvailabilityByParameterList::sFillList()
 
   if (_parameter->isSelected())
   {
-    if (_parameter->type() == ClassCode)
+    if (_parameter->type() == ParameterGroup::ClassCode)
       sql += " AND (item_classcode_id=:classcode_id)";
-    else if (_parameter->type() == ItemGroup)
+    else if (_parameter->type() == ParameterGroup::ItemGroup)
       sql += " AND (item_id IN (SELECT itemgrpitem_item_id FROM itemgrpitem WHERE (itemgrpitem_itemgrp_id=:itemgrp_id)))";
-    else if (_parameter->type() == PlannerCode)
+    else if (_parameter->type() == ParameterGroup::PlannerCode)
       sql += " AND (itemsite_plancode_id=:plancode_id)";
   }
   else if (_parameter->isPattern())
   {
-    if (_parameter->type() == ClassCode)
+    if (_parameter->type() == ParameterGroup::ClassCode)
       sql += " AND (item_classcode_id IN (SELECT classcode_id FROM classcode WHERE (classcode_code ~ :classcode_pattern)))";
-    else if (_parameter->type() == ItemGroup)
+    else if (_parameter->type() == ParameterGroup::ItemGroup)
       sql += " AND (item_id IN (SELECT itemgrpitem_item_id FROM itemgrpitem, itemgrp WHERE ( (itemgrpitem_itemgrp_id=itemgrp_id) AND (itemgrp_name ~ :itemgrp_pattern) ) ))";
-    else if (_parameter->type() == PlannerCode)
+    else if (_parameter->type() == ParameterGroup::PlannerCode)
       sql += " AND (itemsite_plancode_id IN (SELECT plancode_id FROM plancode WHERE (plancode_code ~ :plancode_pattern)))";
   }
   else
   {
-    if(_parameter->type() == ItemGroup)
+    if(_parameter->type() == ParameterGroup::ItemGroup)
       sql += " AND (item_id IN (SELECT DISTINCT itemgrpitem_item_id FROM itemgrpitem))";
   }
 

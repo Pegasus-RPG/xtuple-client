@@ -100,7 +100,7 @@ void updateListPricesByProductCategory::languageChange()
 
 void updateListPricesByProductCategory::init()
 {
-  _productCategory->setType(ProductCategory);
+  _productCategory->setType(ParameterGroup::ProductCategory);
 
   _updateBy->setValidator(new QDoubleValidator(-100, 9999, 2, _updateBy));
 }

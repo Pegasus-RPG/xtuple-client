@@ -79,7 +79,7 @@ opportunityList::opportunityList(QWidget* parent, const char* name, Qt::WFlags f
   _targetDates->setEndCaption(tr("Last Target Date:"));
 
   _usr->setEnabled(_privileges->check("MaintainOtherTodoLists"));
-  _usr->setType(User);
+  _usr->setType(ParameterGroup::User);
   q.prepare("SELECT usr_id "
 	    "FROM usr "
 	    "WHERE (usr_username=CURRENT_USER);");

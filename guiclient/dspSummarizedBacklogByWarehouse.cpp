@@ -81,7 +81,7 @@ dspSummarizedBacklogByWarehouse::dspSummarizedBacklogByWarehouse(QWidget* parent
   connect(_showPrices, SIGNAL(toggled(bool)), this, SLOT(sHandlePrices(bool)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
-  _customerType->setType(CustomerType);
+  _customerType->setType(ParameterGroup::CustomerType);
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 

@@ -81,7 +81,7 @@ dspSummarizedSalesHistoryByShippingZone::dspSummarizedSalesHistoryByShippingZone
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_selectedShippingZone, SIGNAL(toggled(bool)), _shipZone, SLOT(setEnabled(bool)));
 
-  _productCategory->setType(ProductCategory);
+  _productCategory->setType(ParameterGroup::ProductCategory);
 
   _shipZone->populate( "SELECT shipzone_id, (shipzone_name || '-' || shipzone_descrip) "
                        "FROM shipzone "

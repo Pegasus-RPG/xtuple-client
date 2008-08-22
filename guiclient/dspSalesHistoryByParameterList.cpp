@@ -93,7 +93,7 @@ dspSalesHistoryByParameterList::dspSalesHistoryByParameterList(QWidget* parent, 
   connect(_showPrices, SIGNAL(toggled(bool)), this, SLOT(sHandleParams()));
   connect(_showCosts, SIGNAL(toggled(bool)), this, SLOT(sHandleParams()));
 
-  _parameter->setType(ProductCategory);
+  _parameter->setType(ParameterGroup::ProductCategory);
 
   _sohist->addColumn(tr("S/O #"),       _orderColumn, Qt::AlignLeft   );
   _sohist->addColumn(tr("Invoice #"),   _orderColumn, Qt::AlignLeft   );
@@ -143,55 +143,55 @@ enum SetResponse dspSalesHistoryByParameterList::set(const ParameterList &pParam
 
   param = pParams.value("prodcat", &valid);
   if (valid)
-    _parameter->setType(ProductCategory);
+    _parameter->setType(ParameterGroup::ProductCategory);
 
   param = pParams.value("prodcat_id", &valid);
   if (valid)
   {
-    _parameter->setType(ProductCategory);
+    _parameter->setType(ParameterGroup::ProductCategory);
     _parameter->setId(param.toInt());
   }
 
   param = pParams.value("prodcat_pattern", &valid);
   if (valid)
   {
-    _parameter->setType(ProductCategory);
+    _parameter->setType(ParameterGroup::ProductCategory);
     _parameter->setPattern(param.toString());
   }
 
   param = pParams.value("custtype", &valid);
   if (valid)
-    _parameter->setType(CustomerType);
+    _parameter->setType(ParameterGroup::CustomerType);
 
   param = pParams.value("custtype_id", &valid);
   if (valid)
   {
-    _parameter->setType(CustomerType);
+    _parameter->setType(ParameterGroup::CustomerType);
     _parameter->setId(param.toInt());
   }
 
   param = pParams.value("custtype_pattern", &valid);
   if (valid)
   {
-    _parameter->setType(CustomerType);
+    _parameter->setType(ParameterGroup::CustomerType);
     _parameter->setPattern(param.toString());
   }
 
   param = pParams.value("custgrp", &valid);
   if (valid)
-    _parameter->setType(CustomerGroup);
+    _parameter->setType(ParameterGroup::CustomerGroup);
 
   param = pParams.value("custgrp_id", &valid);
   if (valid)
   {
-    _parameter->setType(CustomerGroup);
+    _parameter->setType(ParameterGroup::CustomerGroup);
     _parameter->setId(param.toInt());
   }
 
   param = pParams.value("custgrp_pattern", &valid);
   if (valid)
   {
-    _parameter->setType(CustomerGroup);
+    _parameter->setType(ParameterGroup::CustomerGroup);
     _parameter->setPattern(param.toString());
   }
 
@@ -213,11 +213,11 @@ enum SetResponse dspSalesHistoryByParameterList::set(const ParameterList &pParam
     return NoError_Run;
   }
 
-  if (_parameter->type() == ProductCategory)
+  if (_parameter->type() == ParameterGroup::ProductCategory)
     setCaption(tr("Sales History by Product Category"));
-  if (_parameter->type() == CustomerType)
+  if (_parameter->type() == ParameterGroup::CustomerType)
     setCaption(tr("Sales History by Customer Type"));
-  if (_parameter->type() == CustomerGroup)
+  if (_parameter->type() == ParameterGroup::CustomerGroup)
     setCaption(tr("Sales History by Customer Group"));
 
   return NoError;
@@ -299,7 +299,7 @@ void dspSalesHistoryByParameterList::sPrint()
   _warehouse->appendValue(params);
   _dates->appendValue(params);
 
-  if ( (_parameter->isAll()) && (_parameter->type() == CustomerGroup) )
+  if ( (_parameter->isAll()) && (_parameter->type() == ParameterGroup::CustomerGroup) )
     params.append("custgrp");
 
   if(_showCosts->isChecked())

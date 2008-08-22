@@ -84,7 +84,7 @@ createBufferStatusByPlannerCode::createBufferStatusByPlannerCode(QWidget* parent
   if (!_metrics->boolean("EnableBatchManager"))
     _submit->hide();
 
-  _plannerCode->setType(PlannerCode);
+  _plannerCode->setType(ParameterGroup::PlannerCode);
 }
 
 /*

@@ -82,7 +82,7 @@ createPlannedOrdersByPlannerCode::createPlannedOrdersByPlannerCode(QWidget* pare
   if (!_metrics->boolean("EnableBatchManager"))
     _submit->hide();
 
-  _plannerCode->setType(PlannerCode);
+  _plannerCode->setType(ParameterGroup::PlannerCode);
 }
 
 /*

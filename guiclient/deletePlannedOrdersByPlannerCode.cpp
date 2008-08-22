@@ -101,7 +101,7 @@ void deletePlannedOrdersByPlannerCode::init()
 {
   _captive = FALSE;
 
-  _plannerCode->setType(PlannerCode);
+  _plannerCode->setType(ParameterGroup::PlannerCode);
 }
 
 void deletePlannedOrdersByPlannerCode::sDelete()

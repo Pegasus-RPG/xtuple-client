@@ -72,7 +72,7 @@ printStatementsByCustomerType::printStatementsByCustomerType(QWidget* parent, co
 
   _captive = FALSE;
 
-  _customerTypes->setType(CustomerType);
+  _customerTypes->setType(ParameterGroup::CustomerType);
 
   if (_preferences->boolean("XCheckBox/forgetful"))
     _dueonly->setChecked(true);

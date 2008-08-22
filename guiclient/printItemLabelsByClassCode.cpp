@@ -102,7 +102,7 @@ void printItemLabelsByClassCode::init()
 {
   _captive = FALSE;
 
-  _classCode->setType(ClassCode);
+  _classCode->setType(ParameterGroup::ClassCode);
 
   _report->populate( "SELECT labelform_id, labelform_name "
                      "FROM labelform "

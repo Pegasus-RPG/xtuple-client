@@ -57,7 +57,7 @@
 
 #include "dspCustomerInformationExport.h"
 
-#include <qvariant.h>
+#include <QVariant>
 
 /*
  *  Constructs a dspCustomerInformationExport as a child of 'parent', with the
@@ -67,14 +67,15 @@
 dspCustomerInformationExport::dspCustomerInformationExport(QWidget* parent, const char* name, Qt::WFlags fl)
     : XMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sQuery()));
-    init();
+  // signals and slots connections
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sQuery()));
+
+  _customerType->setType(ParameterGroup::CustomerType);
 }
 
 /*
@@ -82,7 +83,7 @@ dspCustomerInformationExport::dspCustomerInformationExport(QWidget* parent, cons
  */
 dspCustomerInformationExport::~dspCustomerInformationExport()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 /*
@@ -91,13 +92,7 @@ dspCustomerInformationExport::~dspCustomerInformationExport()
  */
 void dspCustomerInformationExport::languageChange()
 {
-    retranslateUi(this);
-}
-
-
-void dspCustomerInformationExport::init()
-{
-  _customerType->setType(CustomerType);
+  retranslateUi(this);
 }
 
 void dspCustomerInformationExport::sQuery()

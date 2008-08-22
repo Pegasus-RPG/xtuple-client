@@ -98,7 +98,7 @@ void updateItemSiteLeadTimes::languageChange()
 
 void updateItemSiteLeadTimes::init()
 {
-  _classCode->setType(ClassCode);
+  _classCode->setType(ParameterGroup::ClassCode);
 }
 
 void updateItemSiteLeadTimes::sUpdate()

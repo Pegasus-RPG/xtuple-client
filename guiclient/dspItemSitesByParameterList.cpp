@@ -85,7 +85,7 @@ dspItemSitesByParameterList::dspItemSitesByParameterList(QWidget* parent, const 
   connect(_itemsite, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
-  _parameter->setType(ClassCode);
+  _parameter->setType(ParameterGroup::ClassCode);
 
   _itemsite->addColumn(tr("Site"),          _whsColumn,   Qt::AlignCenter );
   _itemsite->addColumn(tr("Item Number"),   _itemColumn,  Qt::AlignLeft   );
@@ -130,90 +130,90 @@ enum SetResponse dspItemSitesByParameterList::set(const ParameterList &pParams)
   param = pParams.value("classcode_id", &valid);
   if (valid)
   {
-    _parameter->setType(ClassCode);
+    _parameter->setType(ParameterGroup::ClassCode);
     _parameter->setId(param.toInt());
   }
 
   param = pParams.value("classcode_pattern", &valid);
   if (valid)
   {
-    _parameter->setType(ClassCode);
+    _parameter->setType(ParameterGroup::ClassCode);
     _parameter->setPattern(param.toString());
   }
 
   param = pParams.value("classcode", &valid);
   if (valid)
-    _parameter->setType(ClassCode);
+    _parameter->setType(ParameterGroup::ClassCode);
 
   param = pParams.value("plancode_id", &valid);
   if (valid)
   {
-    _parameter->setType(PlannerCode);
+    _parameter->setType(ParameterGroup::PlannerCode);
     _parameter->setId(param.toInt());
   }
 
   param = pParams.value("plancode_pattern", &valid);
   if (valid)
   {
-    _parameter->setType(PlannerCode);
+    _parameter->setType(ParameterGroup::PlannerCode);
     _parameter->setPattern(param.toString());
   }
 
   param = pParams.value("plancode", &valid);
   if (valid)
-    _parameter->setType(PlannerCode);
+    _parameter->setType(ParameterGroup::PlannerCode);
 
   param = pParams.value("itemgrp_id", &valid);
   if (valid)
   {
-    _parameter->setType(ItemGroup);
+    _parameter->setType(ParameterGroup::ItemGroup);
     _parameter->setId(param.toInt());
   }
 
   param = pParams.value("itemgrp_pattern", &valid);
   if (valid)
   {
-    _parameter->setType(ItemGroup);
+    _parameter->setType(ParameterGroup::ItemGroup);
     _parameter->setPattern(param.toString());
   }
 
   param = pParams.value("itemgrp", &valid);
   if (valid)
-    _parameter->setType(ItemGroup);
+    _parameter->setType(ParameterGroup::ItemGroup);
 
   param = pParams.value("costcat_id", &valid);
   if (valid)
   {
-    _parameter->setType(CostCategory);
+    _parameter->setType(ParameterGroup::CostCategory);
     _parameter->setId(param.toInt());
   }
 
   param = pParams.value("costcat_pattern", &valid);
   if (valid)
   {
-    _parameter->setType(CostCategory);
+    _parameter->setType(ParameterGroup::CostCategory);
     _parameter->setPattern(param.toString());
   }
 
   param = pParams.value("costcat", &valid);
   if (valid)
-    _parameter->setType(CostCategory);
+    _parameter->setType(ParameterGroup::CostCategory);
 
   switch (_parameter->type())
   {
-    case ClassCode:
+    case ParameterGroup::ClassCode:
       setCaption(tr("Item Sites by Class Code"));
       break;
 
-    case PlannerCode:
+    case ParameterGroup::PlannerCode:
       setCaption(tr("Item Sites by Planner Code"));
       break;
 
-    case ItemGroup:
+    case ParameterGroup::ItemGroup:
       setCaption(tr("Item Sites by Item Group"));
       break;
 
-    case CostCategory:
+    case ParameterGroup::CostCategory:
       setCaption(tr("Item Sites by Cost Category"));
       break;
 
@@ -338,24 +338,24 @@ void dspItemSitesByParameterList::sFillList()
 
   if (_parameter->isSelected())
   {
-    if (_parameter->type() == ClassCode)
+    if (_parameter->type() == ParameterGroup::ClassCode)
       sql += " AND (item_classcode_id=:classcode_id)";
-    else if (_parameter->type() == ItemGroup)
+    else if (_parameter->type() == ParameterGroup::ItemGroup)
       sql += " AND (item_id IN (SELECT itemgrpitem_item_id FROM itemgrpitem WHERE (itemgrpitem_itemgrp_id=:itemgrp_id)))";
-    else if (_parameter->type() == PlannerCode)
+    else if (_parameter->type() == ParameterGroup::PlannerCode)
       sql += " AND (itemsite_plancode_id=:plancode_id)";
-    else if (_parameter->type() == CostCategory)
+    else if (_parameter->type() == ParameterGroup::CostCategory)
       sql += " AND (itemsite_costcat_id=:costcat_id)";
   }
   else if (_parameter->isPattern())
   {
-    if (_parameter->type() == ClassCode)
+    if (_parameter->type() == ParameterGroup::ClassCode)
       sql += " AND (item_classcode_id IN (SELECT classcode_id FROM classcode WHERE (classcode_code ~ :classcode_pattern)))";
-    else if (_parameter->type() == ItemGroup)
+    else if (_parameter->type() == ParameterGroup::ItemGroup)
       sql += " AND (item_id IN (SELECT itemgrpitem_item_id FROM itemgrpitem, itemgrp WHERE ( (itemgrpitem_itemgrp_id=itemgrp_id) AND (itemgrp_name ~ :itemgrp_pattern) ) ))";
-    else if (_parameter->type() == PlannerCode)
+    else if (_parameter->type() == ParameterGroup::PlannerCode)
       sql += " AND (itemsite_plancode_id IN (SELECT plancode_id FROM plancode WHERE (plancode_code ~ :plancode_pattern)))";
-    else if (_parameter->type() == CostCategory)
+    else if (_parameter->type() == ParameterGroup::CostCategory)
       sql += " AND (itemsite_costcat_id IN (SELECT costcat_id FROM costcat WHERE (costcat_code ~ :costcat_pattern)))";
   }
 

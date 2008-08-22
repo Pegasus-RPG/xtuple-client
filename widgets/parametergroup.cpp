@@ -384,7 +384,7 @@ void ParameterGroup::bindValue(XSqlQuery &pQuery)
   }
 }
 
-enum ParameterGroupStates ParameterGroup::state()
+enum ParameterGroup::ParameterGroupStates ParameterGroup::state()
 {
   if (_all->isChecked())
     return All;

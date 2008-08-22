@@ -99,7 +99,7 @@ void selectShippedOrders::languageChange()
 
 void selectShippedOrders::init()
 {
-  _customerType->setType(CustomerType);
+  _customerType->setType(ParameterGroup::CustomerType);
 }
 
 void selectShippedOrders::sSelect()

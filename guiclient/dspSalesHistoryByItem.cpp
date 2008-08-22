@@ -95,7 +95,7 @@ dspSalesHistoryByItem::dspSalesHistoryByItem(QWidget* parent, const char* name, 
   connect(_showPrices, SIGNAL(toggled(bool)), this, SLOT(sHandleParams()));
 
   _item->setType(ItemLineEdit::cSold);
-  _customerType->setType(CustomerType);
+  _customerType->setType(ParameterGroup::CustomerType);
 
   _sohist->addColumn(tr("Customer"),   -1,           Qt::AlignLeft   );
   _sohist->addColumn(tr("S/O #"),      _orderColumn, Qt::AlignLeft   );

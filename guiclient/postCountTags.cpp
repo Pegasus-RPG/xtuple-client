@@ -103,7 +103,7 @@ void postCountTags::languageChange()
 
 void postCountTags::init()
 {
-  _parameter->setType(ClassCode);
+  _parameter->setType(ParameterGroup::ClassCode);
   
   if(!_privileges->check("ThawInventory"))
   {
@@ -124,13 +124,13 @@ void postCountTags::sPost()
   if (_warehouse->isSelected())
     sql += " AND (itemsite_warehous_id=:warehous_id)";
   
-    if ((_parameter->type() == ClassCode) && _parameter->isSelected())
+    if ((_parameter->type() == ParameterGroup::ClassCode) && _parameter->isSelected())
       sql += " AND (item_classcode_id=:classcode_id)";
-    else if ((_parameter->type() == ClassCode) && _parameter->isPattern())
+    else if ((_parameter->type() == ParameterGroup::ClassCode) && _parameter->isPattern())
       sql += " AND (item_classcode_id IN (SELECT classcode_id FROM classcode WHERE (classcode_code ~ :classcode_pattern)))";
-    else if ((_parameter->type() == PlannerCode) && _parameter->isSelected())
+    else if ((_parameter->type() == ParameterGroup::PlannerCode) && _parameter->isSelected())
       sql += " AND (itemsite_plancode_id=:plancode_id)";
-    else if ((_parameter->type() == PlannerCode) && _parameter->isPattern())
+    else if ((_parameter->type() == ParameterGroup::PlannerCode) && _parameter->isPattern())
       sql += " AND (itemsite_plancode_id IN (SELECT plancode_id FROM plancode WHERE (plancode_code ~ :plancode_pattern)))";
   
   sql += ");";
@@ -162,8 +162,8 @@ void postCountTags::sPost()
 void postCountTags::sParameterTypeChanged()
 {
   if(_plancode->isChecked())
-    _parameter->setType(PlannerCode);
+    _parameter->setType(ParameterGroup::PlannerCode);
   else
-    _parameter->setType(ClassCode);
+    _parameter->setType(ParameterGroup::ClassCode);
 
 }

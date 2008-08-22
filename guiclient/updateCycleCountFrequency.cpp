@@ -98,7 +98,7 @@ void updateCycleCountFrequency::languageChange()
 
 void updateCycleCountFrequency::init()
 {
-  _classCode->setType(ClassCode);
+  _classCode->setType(ParameterGroup::ClassCode);
 
 }
 

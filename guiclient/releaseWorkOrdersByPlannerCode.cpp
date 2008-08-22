@@ -74,7 +74,7 @@ releaseWorkOrdersByPlannerCode::releaseWorkOrdersByPlannerCode(QWidget* parent, 
 
   connect(_release, SIGNAL(clicked()), this, SLOT(sRelease()));
 
-  _plannerCode->setType(PlannerCode);
+  _plannerCode->setType(ParameterGroup::PlannerCode);
 }
 
 releaseWorkOrdersByPlannerCode::~releaseWorkOrdersByPlannerCode()

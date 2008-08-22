@@ -94,7 +94,7 @@ dspSalesHistoryByBilltoName::dspSalesHistoryByBilltoName(QWidget* parent, const 
   connect(_showPrices, SIGNAL(toggled(bool)), this, SLOT(sHandleParams()));
   connect(_showCosts, SIGNAL(toggled(bool)), this, SLOT(sHandleParams()));
 
-  _productCategory->setType(ProductCategory);
+  _productCategory->setType(ParameterGroup::ProductCategory);
 
   _sohist->addColumn(tr("Bill-To Name"), -1,           Qt::AlignLeft   );
   _sohist->addColumn(tr("S/O #"),        _orderColumn, Qt::AlignLeft   );

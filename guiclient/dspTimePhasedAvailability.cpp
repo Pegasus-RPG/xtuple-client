@@ -94,7 +94,7 @@ dspTimePhasedAvailability::dspTimePhasedAvailability(QWidget* parent, const char
   connect(_calendar, SIGNAL(select(ParameterList&)), _periods, SLOT(load(ParameterList&)));
   connect(_availability, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
 
-  _plannerCode->setType(PlannerCode);
+  _plannerCode->setType(ParameterGroup::PlannerCode);
 
   _availability->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft   );
   _availability->addColumn(tr("UOM"),         _uomColumn,  Qt::AlignLeft   );

@@ -73,8 +73,8 @@ salesAccount::salesAccount(QWidget* parent, const char* name, bool modal, Qt::WF
 			"FROM warehous "
 			"ORDER BY sort, warehous_code" );
 
-  _customerTypes->setType(CustomerType);
-  _productCategories->setType(ProductCategory);
+  _customerTypes->setType(ParameterGroup::CustomerType);
+  _productCategories->setType(ParameterGroup::ProductCategory);
 
   if (! _metrics->boolean("EnableReturnAuth"))
   {

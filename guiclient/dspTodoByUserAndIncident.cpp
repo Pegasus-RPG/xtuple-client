@@ -78,7 +78,7 @@ dspTodoByUserAndIncident::dspTodoByUserAndIncident(QWidget* parent, const char* 
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_todoitem, SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*, int)), this, SLOT(sPopulateMenu(QMenu*)));
 
-  _usr->setType(User);
+  _usr->setType(ParameterGroup::User);
 
   _dueDate->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dueDate->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);

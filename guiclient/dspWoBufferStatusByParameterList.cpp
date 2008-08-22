@@ -140,14 +140,14 @@ enum SetResponse dspWoBufferStatusByParameterList::set(const ParameterList &pPar
   param = pParams.value("classcode", &valid);
   if (valid)
   {
-    _parameter->setType(ClassCode);
+    _parameter->setType(ParameterGroup::ClassCode);
     setCaption(tr("W/O Buffer Status by ClassCode"));
   }
 
   param = pParams.value("plancode", &valid);
   if (valid)
   {
-    _parameter->setType(PlannerCode);
+    _parameter->setType(ParameterGroup::PlannerCode);
     setCaption(tr("W/O Buffer Status by Planner Code"));
   }
 
@@ -158,7 +158,7 @@ enum SetResponse dspWoBufferStatusByParameterList::set(const ParameterList &pPar
   param = pParams.value("itemgrp", &valid);
   if (valid)
   {
-    _parameter->setType(ItemGroup);
+    _parameter->setType(ParameterGroup::ItemGroup);
     setCaption(tr("W/O Buffer Status by Item Group"));
   }
 
@@ -183,11 +183,11 @@ void dspWoBufferStatusByParameterList::sPrint()
 
   if (_parameter->isAll())
   {
-    if (_parameter->type() == ItemGroup)
+    if (_parameter->type() == ParameterGroup::ItemGroup)
       params.append("itemgrp");
-    else if(_parameter->type() == PlannerCode)
+    else if(_parameter->type() == ParameterGroup::PlannerCode)
       params.append("plancode");
-    else if (_parameter->type() == ClassCode)
+    else if (_parameter->type() == ParameterGroup::ClassCode)
       params.append("classcode");
   }
 
@@ -616,23 +616,23 @@ void dspWoBufferStatusByParameterList::sFillList()
 
   if (_parameter->isSelected())
   {
-    if (_parameter->type() == ClassCode)
+    if (_parameter->type() == ParameterGroup::ClassCode)
       sql += " AND (item_classcode_id=:classcode_id)";
-    else if (_parameter->type() == ItemGroup)
+    else if (_parameter->type() == ParameterGroup::ItemGroup)
       sql += " AND (item_id IN (SELECT itemgrpitem_item_id FROM itemgrpitem WHERE (itemgrpitem_itemgrp_id=:itemgrp_id)))";
-    else if (_parameter->type() == PlannerCode)
+    else if (_parameter->type() == ParameterGroup::PlannerCode)
       sql += " AND (itemsite_plancode_id=:plancode_id)";
   }
   else if (_parameter->isPattern())
   {
-    if (_parameter->type() == ClassCode)
+    if (_parameter->type() == ParameterGroup::ClassCode)
       sql += " AND (item_classcode_id IN (SELECT classcode_id FROM classcode WHERE (classcode_code ~ :classcode_pattern)))";
-    else if (_parameter->type() == ItemGroup)
+    else if (_parameter->type() == ParameterGroup::ItemGroup)
       sql += " AND (item_id IN (SELECT itemgrpitem_item_id FROM itemgrpitem, itemgrp WHERE ( (itemgrpitem_itemgrp_id=itemgrp_id) AND (itemgrp_name ~ :itemgrp_pattern) ) ))";
-    else if (_parameter->type() == PlannerCode)
+    else if (_parameter->type() == ParameterGroup::PlannerCode)
       sql += " AND (itemsite_plancode_id IN (SELECT plancode_id FROM plancode WHERE (plancode_code ~ :plancode_pattern)))";
   }
-  else if (_parameter->type() == ItemGroup)
+  else if (_parameter->type() == ParameterGroup::ItemGroup)
     sql += " AND (item_id IN (SELECT DISTINCT itemgrpitem_item_id FROM itemgrpitem))";
 
   if (_showOnlyRI->isChecked())

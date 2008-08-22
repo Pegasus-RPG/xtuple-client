@@ -97,7 +97,7 @@ incidentWorkbench::incidentWorkbench(QWidget* parent, const char* name, Qt::WFla
     _statusAssigned->setChecked(true);
   }
 
-  _assignedTo->setType(User);
+  _assignedTo->setType(ParameterGroup::User);
 }
 
 incidentWorkbench::~incidentWorkbench()

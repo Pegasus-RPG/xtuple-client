@@ -112,7 +112,7 @@ void updateReorderLevels::languageChange()
 
 void updateReorderLevels::init()
 {
-  _plannerCode->setType(PlannerCode);
+  _plannerCode->setType(ParameterGroup::PlannerCode);
 }
 
 void updateReorderLevels::sUpdate()

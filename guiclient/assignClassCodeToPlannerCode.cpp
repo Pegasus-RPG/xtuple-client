@@ -98,7 +98,7 @@ void assignClassCodeToPlannerCode::languageChange()
 
 void assignClassCodeToPlannerCode::init()
 {
-  _classCode->setType(ClassCode);
+  _classCode->setType(ParameterGroup::ClassCode);
 
   _planCode->setAllowNull(TRUE);
   _planCode->setType(XComboBox::PlannerCodes);

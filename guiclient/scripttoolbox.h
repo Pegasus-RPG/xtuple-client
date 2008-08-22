@@ -77,8 +77,8 @@ class QScriptEngine;
 Q_DECLARE_METATYPE(ParameterList)
 Q_DECLARE_METATYPE(XSqlQuery);
 Q_DECLARE_METATYPE(enum SetResponse)
-Q_DECLARE_METATYPE(enum ParameterGroupStates);
-Q_DECLARE_METATYPE(enum ParameterGroupTypes);
+Q_DECLARE_METATYPE(enum ParameterGroup::ParameterGroupStates);
+Q_DECLARE_METATYPE(enum ParameterGroup::ParameterGroupTypes);
 Q_DECLARE_METATYPE(enum Qt::WindowModality);
 
 QScriptValue ParameterListtoScriptValue(QScriptEngine *engine, const ParameterList &params);
@@ -90,11 +90,11 @@ void XSqlQueryfromScriptValue(const QScriptValue &obj, XSqlQuery &qry);
 QScriptValue SetResponsetoScriptValue(QScriptEngine *engine, const enum SetResponse &sr);
 void SetResponsefromScriptValue(const QScriptValue &obj, enum SetResponse &sr);
 
-QScriptValue ParameterGroupStatestoScriptValue(QScriptEngine *engine, const enum ParameterGroupStates &en);
-void ParameterGroupStatesfromScriptValue(const QScriptValue &obj, enum ParameterGroupStates &en);
+QScriptValue ParameterGroupStatestoScriptValue(QScriptEngine *engine, const enum ParameterGroup::ParameterGroupStates &en);
+void ParameterGroupStatesfromScriptValue(const QScriptValue &obj, enum ParameterGroup::ParameterGroupStates &en);
 
-QScriptValue ParameterGroupTypestoScriptValue(QScriptEngine *engine, const enum ParameterGroupTypes &en);
-void ParameterGroupTypesfromScriptValue(const QScriptValue &obj, enum ParameterGroupTypes &en);
+QScriptValue ParameterGroupTypestoScriptValue(QScriptEngine *engine, const enum ParameterGroup::ParameterGroupTypes &en);
+void ParameterGroupTypesfromScriptValue(const QScriptValue &obj, enum ParameterGroup::ParameterGroupTypes &en);
 
 QScriptValue QtWindowModalitytoScriptValue(QScriptEngine *engine, const enum Qt::WindowModality &en);
 void QtWindowModalityfromScriptValue(const QScriptValue &obj, enum Qt::WindowModality &en);

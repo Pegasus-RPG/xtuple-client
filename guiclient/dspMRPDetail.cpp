@@ -83,7 +83,7 @@ dspMRPDetail::dspMRPDetail(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillItemsites()));
 
-  _plannerCode->setType(PlannerCode);
+  _plannerCode->setType(ParameterGroup::PlannerCode);
 
   _itemsite->addColumn("Itemtype",        0,           Qt::AlignCenter );
   _itemsite->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft   );

@@ -84,7 +84,7 @@ dspBookingsByCustomer::dspBookingsByCustomer(QWidget* parent, const char* name, 
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_cust, SIGNAL(valid(bool)), _query, SLOT(setEnabled(bool)));
 
-  _productCategory->setType(ProductCategory);
+  _productCategory->setType(ParameterGroup::ProductCategory);
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 

@@ -127,9 +127,9 @@ void dspQOHByParameterList::sPrint()
   _warehouse->appendValue(params);
   _parameter->appendValue(params);
 
-  if (_parameter->type() == ItemGroup)
+  if (_parameter->type() == ParameterGroup::ItemGroup)
     params.append("itemgrp");
-  else if(_parameter->type() == ClassCode)
+  else if(_parameter->type() == ParameterGroup::ClassCode)
     params.append("classcode");
 
   if (_showPositive->isChecked())
@@ -165,37 +165,37 @@ SetResponse dspQOHByParameterList::set(const ParameterList &pParams)
 
   param = pParams.value("classcode", &valid);
   if(valid)
-    _parameter->setType(ClassCode);
+    _parameter->setType(ParameterGroup::ClassCode);
 
   param = pParams.value("classcode_id", &valid);
   if (valid)
   {
-    _parameter->setType(ClassCode);
+    _parameter->setType(ParameterGroup::ClassCode);
     _parameter->setId(param.toInt());
   }
 
   param = pParams.value("classcode_pattern", &valid);
   if (valid)
   {
-    _parameter->setType(ClassCode);
+    _parameter->setType(ParameterGroup::ClassCode);
     _parameter->setPattern(param.toString());
   }
 
   param = pParams.value("itemgrp", &valid);
   if(valid)
-    _parameter->setType(ItemGroup);
+    _parameter->setType(ParameterGroup::ItemGroup);
 
   param = pParams.value("itemgrp_id", &valid);
   if (valid)
   {
-    _parameter->setType(ItemGroup);
+    _parameter->setType(ParameterGroup::ItemGroup);
     _parameter->setId(param.toInt());
   }
 
   param = pParams.value("itemgrp_pattern", &valid);
   if (valid)
   {
-    _parameter->setType(ItemGroup);
+    _parameter->setType(ParameterGroup::ItemGroup);
     _parameter->setPattern(param.toString());
   }
 
@@ -208,11 +208,11 @@ SetResponse dspQOHByParameterList::set(const ParameterList &pParams)
 
   switch (_parameter->type())
   {
-    case ClassCode:
+    case ParameterGroup::ClassCode:
       setCaption(tr("Quantities on Hand by Class Code"));
       break;
 
-    case ItemGroup:
+    case ParameterGroup::ItemGroup:
       setCaption(tr("Quantities on Hand by Item Group"));
       break;
 
@@ -393,19 +393,19 @@ void dspQOHByParameterList::sFillList()
 
   if (_parameter->isSelected())
   {
-    if (_parameter->type() == ClassCode)
+    if (_parameter->type() == ParameterGroup::ClassCode)
       sql += " AND (classcode_id=:classcode_id)";
-    else if (_parameter->type() == ItemGroup)
+    else if (_parameter->type() == ParameterGroup::ItemGroup)
       sql += " AND (item_id IN (SELECT itemgrpitem_item_id FROM itemgrpitem WHERE (itemgrpitem_itemgrp_id=:itemgrp_id)))";
   }
   else if (_parameter->isPattern())
   {
-    if (_parameter->type() == ClassCode)
+    if (_parameter->type() == ParameterGroup::ClassCode)
       sql += " AND (classcode_id IN (SELECT classcode_id FROM classcode WHERE classcode_code ~ :classcode_pattern))";
-    else if (_parameter->type() == ItemGroup)
+    else if (_parameter->type() == ParameterGroup::ItemGroup)
       sql += " AND (item_id IN (SELECT itemgrpitem_item_id FROM itemgrpitem, itemgrp WHERE ( (itemgrpitem_itemgrp_id=itemgrp_id) AND (itemgrp_name ~ :itemgrp_pattern) ) ))";
   }
-  else if(_parameter->type() == ItemGroup)
+  else if(_parameter->type() == ParameterGroup::ItemGroup)
     sql += " AND (item_id IN (SELECT DISTINCT itemgrpitem_item_id FROM itemgrpitem))";
 
   if (_showPositive->isChecked())

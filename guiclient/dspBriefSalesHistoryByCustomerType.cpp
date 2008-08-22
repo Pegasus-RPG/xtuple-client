@@ -80,7 +80,7 @@ dspBriefSalesHistoryByCustomerType::dspBriefSalesHistoryByCustomerType(QWidget* 
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
-  _customerType->setType(CustomerType);
+  _customerType->setType(ParameterGroup::CustomerType);
 
   _sohist->addColumn(tr("Cust. Type"),  _orderColumn,    Qt::AlignLeft   );
   _sohist->addColumn(tr("Customer"),    -1,              Qt::AlignLeft   );

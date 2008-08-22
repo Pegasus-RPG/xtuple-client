@@ -84,7 +84,7 @@ dspSummarizedSalesBySalesRep::dspSummarizedSalesBySalesRep(QWidget* parent, cons
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_sohist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
 
-  _productCategory->setType(ProductCategory);
+  _productCategory->setType(ParameterGroup::ProductCategory);
 
   _sohist->addColumn(tr("Sales Rep."),  -1,              Qt::AlignLeft   );
   _sohist->addColumn(tr("First Sale"),  _dateColumn,     Qt::AlignCenter );

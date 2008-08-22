@@ -80,7 +80,7 @@ dspBriefSalesHistoryByCustomer::dspBriefSalesHistoryByCustomer(QWidget* parent, 
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
-  _productCategory->setType(ProductCategory);
+  _productCategory->setType(ParameterGroup::ProductCategory);
 
   _sohist->addColumn(tr("S/O #"),      _orderColumn,    Qt::AlignLeft   );
   _sohist->addColumn(tr("Cust. P/O #"), -1,             Qt::AlignLeft   );

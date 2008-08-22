@@ -84,7 +84,7 @@ dspCustomersByCustomerType::dspCustomersByCustomerType(QWidget* parent, const ch
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_autoRefresh, SIGNAL(toggled(bool)), this, SLOT(sHandleRefreshButton(bool)));
 
-  _customerType->setType(CustomerType);
+  _customerType->setType(ParameterGroup::CustomerType);
 
   _cust->addColumn(tr("Type"),    _itemColumn, Qt::AlignLeft );
   _cust->addColumn(tr("Number"),  _itemColumn, Qt::AlignLeft );

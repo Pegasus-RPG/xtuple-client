@@ -94,7 +94,7 @@ dspTimePhasedBookingsByCustomer::dspTimePhasedBookingsByCustomer(QWidget* parent
   if (!_metrics->boolean("EnableBatchManager"))
     _submit->hide();
     
-  _customerType->setType(CustomerType);
+  _customerType->setType(ParameterGroup::CustomerType);
 
   _soitem->addColumn(tr("Cust. #"),  _orderColumn, Qt::AlignLeft );
   _soitem->addColumn(tr("Customer"), 180,          Qt::AlignLeft );

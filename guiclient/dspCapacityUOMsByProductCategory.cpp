@@ -85,7 +85,7 @@ dspCapacityUOMsByProductCategory::dspCapacityUOMsByProductCategory(QWidget* pare
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
-  _productCategory->setType(ProductCategory);
+  _productCategory->setType(ParameterGroup::ProductCategory);
 
   _item->addColumn(tr("Item Number"),    _itemColumn, Qt::AlignLeft   );
   _item->addColumn(tr("Description"),    -1,          Qt::AlignLeft   );

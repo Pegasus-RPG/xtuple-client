@@ -94,7 +94,7 @@ createItemSitesByClassCode::createItemSitesByClassCode(QWidget* parent, const ch
   //_cycleCountFreq->setValidator(omfgThis->dayVal());
   //_leadTime->setValidator(omfgThis->dayVal());
 
-  _classCode->setType(ClassCode);
+  _classCode->setType(ParameterGroup::ClassCode);
 
   _plannerCode->setAllowNull(TRUE);
   _plannerCode->setType(XComboBox::PlannerCodes);

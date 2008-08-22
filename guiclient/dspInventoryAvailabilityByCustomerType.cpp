@@ -99,7 +99,7 @@ dspInventoryAvailabilityByCustomerType::dspInventoryAvailabilityByCustomerType(Q
   connect(_avail, SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem*)));
   connect(_autoupdate, SIGNAL(toggled(bool)), this, SLOT(sAutoUpdateToggled(bool)));
 
-  _custtype->setType(CustomerType);
+  _custtype->setType(ParameterGroup::CustomerType);
 
   _avail->setRootIsDecorated(TRUE);
   _avail->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft   );

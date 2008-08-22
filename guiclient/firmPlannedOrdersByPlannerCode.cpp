@@ -99,7 +99,7 @@ void firmPlannedOrdersByPlannerCode::languageChange()
 
 void firmPlannedOrdersByPlannerCode::init()
 {
-  _plannerCode->setType(PlannerCode);
+  _plannerCode->setType(ParameterGroup::PlannerCode);
 }
 
 void firmPlannedOrdersByPlannerCode::sFirm()

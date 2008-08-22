@@ -147,14 +147,14 @@ enum SetResponse dspWoScheduleByParameterList::set(const ParameterList &pParams)
   param = pParams.value("classcode", &valid);
   if (valid)
   {
-    _parameter->setType(ClassCode);
+    _parameter->setType(ParameterGroup::ClassCode);
     setCaption(tr("W/O Schedule by Class Code"));
   }
 
   param = pParams.value("plancode", &valid);
   if (valid)
   {
-    _parameter->setType(PlannerCode);
+    _parameter->setType(ParameterGroup::PlannerCode);
     setCaption(tr("W/O Schedule by Planner Code"));
   }
 
@@ -165,14 +165,14 @@ enum SetResponse dspWoScheduleByParameterList::set(const ParameterList &pParams)
   param = pParams.value("itemgrp", &valid);
   if (valid)
   {
-    _parameter->setType(ItemGroup);
+    _parameter->setType(ParameterGroup::ItemGroup);
     setCaption(tr("W/O Schedule by Item Group"));
   }
 
   param = pParams.value("wrkcnt", &valid);
   if (valid)
   {
-    _parameter->setType(WorkCenter);
+    _parameter->setType(ParameterGroup::WorkCenter);
     setCaption(tr("W/O Schedule by Work Center"));
   }
 

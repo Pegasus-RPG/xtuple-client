@@ -71,8 +71,6 @@ public:
     dspCustomerInformationExport(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspCustomerInformationExport();
 
-    virtual void init();
-
 public slots:
     virtual void sQuery();
 

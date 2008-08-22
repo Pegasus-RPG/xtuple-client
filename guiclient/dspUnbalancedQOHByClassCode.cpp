@@ -73,7 +73,7 @@ dspUnbalancedQOHByClassCode::dspUnbalancedQOHByClassCode(QWidget* parent, const 
   connect(_itemsite, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
-  _classCode->setType(ClassCode);
+  _classCode->setType(ParameterGroup::ClassCode);
 
   _itemsite->addColumn(tr("Site"),        _whsColumn,   Qt::AlignCenter );
   _itemsite->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft   );

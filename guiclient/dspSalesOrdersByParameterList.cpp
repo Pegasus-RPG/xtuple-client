@@ -111,19 +111,19 @@ enum SetResponse dspSalesOrdersByParameterList::set(const ParameterList &pParams
 
   param = pParams.value("custtype", &valid);
   if (valid)
-    _parameter->setType(CustomerType);
+    _parameter->setType(ParameterGroup::CustomerType);
 
   param = pParams.value("custtype_id", &valid);
   if (valid)
   {
-    _parameter->setType(CustomerType);
+    _parameter->setType(ParameterGroup::CustomerType);
     _parameter->setId(param.toInt());
   }
 
   param = pParams.value("custtype_pattern", &valid);
   if (valid)
   {
-    _parameter->setType(CustomerType);
+    _parameter->setType(ParameterGroup::CustomerType);
     _parameter->setPattern(param.toString());
   }
 
@@ -135,7 +135,7 @@ enum SetResponse dspSalesOrdersByParameterList::set(const ParameterList &pParams
   if (valid)
     _dates->setEndDate(param.toDate());
 
-  if (_parameter->type() == CustomerType)
+  if (_parameter->type() == ParameterGroup::CustomerType)
     setCaption(tr("Sales Order Lookup by Customer Type"));
 
   return NoError;

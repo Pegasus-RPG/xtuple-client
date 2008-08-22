@@ -111,7 +111,7 @@ void updateOUTLevelsByClassCode::languageChange()
 
 void updateOUTLevelsByClassCode::init()
 {
-  _classCode->setType(ClassCode);
+  _classCode->setType(ParameterGroup::ClassCode);
 }
 
 void updateOUTLevelsByClassCode::sUpdate()

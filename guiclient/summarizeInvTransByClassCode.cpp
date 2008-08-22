@@ -99,7 +99,7 @@ void summarizeInvTransByClassCode::languageChange()
 
 void summarizeInvTransByClassCode::init()
 {
-  _classCode->setType(ClassCode);
+  _classCode->setType(ParameterGroup::ClassCode);
 }
 
 void summarizeInvTransByClassCode::sSummarize()

@@ -84,7 +84,7 @@ dspBookingsBySalesRep::dspBookingsBySalesRep(QWidget* parent, const char* name, 
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _salesrep->setType(XComboBox::SalesRepsActive);
-  _productCategory->setType(ProductCategory);
+  _productCategory->setType(ParameterGroup::ProductCategory);
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 

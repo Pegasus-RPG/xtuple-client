@@ -103,7 +103,7 @@ void dspUnusedPurchasedItems::init()
 {
   statusBar()->hide();
   
-  _classCode->setType(ClassCode);
+  _classCode->setType(ParameterGroup::ClassCode);
 
   _item->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft  );
   _item->addColumn(tr("Description"), -1,          Qt::AlignLeft  );

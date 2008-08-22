@@ -75,7 +75,7 @@ createCycleCountTags::createCycleCountTags(QWidget* parent, const char* name, bo
     connect(_warehouse, SIGNAL(newID(int)), this, SLOT(sPopulateLocations()));
     connect(_codeGroup, SIGNAL(buttonClicked(int)), this, SLOT(sParameterTypeChanged()));
 
-    _parameter->setType(ClassCode);
+    _parameter->setType(ParameterGroup::ClassCode);
 
     _freeze->setEnabled(_privileges->check("CreateReceiptTrans"));
     
@@ -138,22 +138,22 @@ enum SetResponse createCycleCountTags::set(const ParameterList &pParams)
 void createCycleCountTags::sCreate()
 {
   QString fname;
-  if ((_parameter->type() == ClassCode) && _parameter->isSelected())
+  if ((_parameter->type() == ParameterGroup::ClassCode) && _parameter->isSelected())
   {
     q.prepare("SELECT createCycleCountsByWarehouseByClassCode(:warehous_id, :classcode_id, :maxTags, :comments, :priority, :freeze, :location_id, :ignore) AS result;");
     fname = "createCycleCountsByWarehouseByClassCode";
   }
-  else if ((_parameter->type() == ClassCode) && _parameter->isPattern())
+  else if ((_parameter->type() == ParameterGroup::ClassCode) && _parameter->isPattern())
   {
     q.prepare("SELECT createCycleCountsByWarehouseByClassCode(:warehous_id, :classcode_pattern, :maxTags, :comments, :priority, :freeze, :location_id, :ignore) AS result;");
     fname = "createCycleCountsByWarehouseByClassCode";
   }
-  else if ((_parameter->type() == PlannerCode) && _parameter->isSelected())
+  else if ((_parameter->type() == ParameterGroup::PlannerCode) && _parameter->isSelected())
   {
     q.prepare("SELECT createCycleCountsByWarehouseByPlannerCode(:warehous_id, :plancode_id, :maxTags, :comments, :priority, :freeze, :location_id, :ignore) AS result;");
     fname = "createCycleCountsByWarehouseByPlannerCode";
   }
-  else if ((_parameter->type() == PlannerCode) && _parameter->isPattern())
+  else if ((_parameter->type() == ParameterGroup::PlannerCode) && _parameter->isPattern())
   {
     q.prepare("SELECT createCycleCountsByWarehouseByPlannerCode(:warehous_id, :plancode_pattern, :maxTags, :comments, :priority, :freeze, :location_id, :ignore) AS result;");
     fname = "createCycleCountsByWarehouseByPlannerCode";
@@ -214,7 +214,7 @@ void createCycleCountTags::sPopulateLocations()
 void createCycleCountTags::sParameterTypeChanged()
 {
   if(_plancode->isChecked())
-    _parameter->setType(PlannerCode);
+    _parameter->setType(ParameterGroup::PlannerCode);
   else //if(_classcode->isChecked())
-    _parameter->setType(ClassCode);
+    _parameter->setType(ParameterGroup::ClassCode);
 }

@@ -81,7 +81,7 @@ dspTimePhasedPlannedREByPlannerCode::dspTimePhasedPlannedREByPlannerCode(QWidget
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
 
-  _plannerCode->setType(PlannerCode);
+  _plannerCode->setType(ParameterGroup::PlannerCode);
 
   _plannedRE->addColumn("", 80, Qt::AlignRight);
 }

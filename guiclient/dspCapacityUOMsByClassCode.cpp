@@ -85,7 +85,7 @@ dspCapacityUOMsByClassCode::dspCapacityUOMsByClassCode(QWidget* parent, const ch
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
-  _classCode->setType(ClassCode);
+  _classCode->setType(ParameterGroup::ClassCode);
 
   _item->addColumn(tr("Class Code"),     _itemColumn, Qt::AlignCenter );
   _item->addColumn(tr("Item Number"),    _itemColumn, Qt::AlignLeft   );

@@ -78,7 +78,7 @@ dspBriefSalesHistoryBySalesRep::dspBriefSalesHistoryBySalesRep(QWidget* parent, 
   connect(_showCosts, SIGNAL(toggled(bool)), this, SLOT(sHandleParams()));
 
   _salesrep->setType(XComboBox::SalesRepsActive);
-  _productCategory->setType(ProductCategory);
+  _productCategory->setType(ParameterGroup::ProductCategory);
 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);

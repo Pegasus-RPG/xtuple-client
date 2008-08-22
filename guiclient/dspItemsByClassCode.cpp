@@ -87,7 +87,7 @@ dspItemsByClassCode::dspItemsByClassCode(QWidget* parent, const char* name, Qt::
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
-  _classCode->setType(ClassCode);
+  _classCode->setType(ParameterGroup::ClassCode);
 
   _item->addColumn( tr("Item Number"), _itemColumn, Qt::AlignLeft   );
   _item->addColumn( tr("Description"), -1,          Qt::AlignLeft   );
