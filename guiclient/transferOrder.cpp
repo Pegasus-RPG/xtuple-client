@@ -1447,6 +1447,8 @@ void transferOrder::closeEvent(QCloseEvent *pEvent)
     return;
   }
 
+  disconnect(_orderNumber,    SIGNAL(lostFocus()), this, SLOT(sHandleOrderNumber()));
+
   if (cNew == _mode && _saved)
     omfgThis->sTransferOrdersUpdated(-1);
 
