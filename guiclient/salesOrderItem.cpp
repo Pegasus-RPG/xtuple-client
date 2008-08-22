@@ -109,7 +109,7 @@ salesOrderItem::salesOrderItem(QWidget* parent, const char* name, bool modal, Qt
   connect(_orderQty, SIGNAL(textChanged(const QString&)), this, SLOT(sCalcWoUnitCost()));
   connect(_orderDueDate, SIGNAL(newDate(const QDate&)), this, SLOT(sChanged()));
   connect(_supplyWarehouse, SIGNAL(newID(int)), this, SLOT(sChanged()));
-  connect(_discountFromCust, SIGNAL(textChanged(const QString&)), this, SLOT(sChanged()));
+//  connect(_discountFromCust, SIGNAL(textChanged(const QString&)), this, SLOT(sChanged()));
   connect(_promisedDate, SIGNAL(newDate(const QDate&)), this, SLOT(sChanged()));
   connect(_scheduledDate, SIGNAL(newDate(const QDate&)), this, SLOT(sChanged()));
   connect(_netUnitPrice, SIGNAL(valueChanged()), this, SLOT(sChanged()));
