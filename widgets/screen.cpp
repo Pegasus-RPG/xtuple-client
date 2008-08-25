@@ -320,5 +320,5 @@ void Screen::setDataWidgetMapper(XSqlTableModel *model)
 
 XSqlTableModel *Screen::model()
 {
-  return dynamic_cast<XSqlTableModel*>(_mapper->model());
+  return static_cast<XSqlTableModel*>(_mapper->model());
 }
