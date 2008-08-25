@@ -243,7 +243,17 @@ void viewCheckRun::sHandleItemSelection()
   QTreeWidgetItem *selected = _check->currentItem();
 
   if (! selected)
+  {
+    _void->setEnabled(FALSE);
+    _delete->setEnabled(FALSE);
+    _replace->setEnabled(FALSE);
+    _printCheck->setEnabled(FALSE);
+
+    _edit->setEnabled(FALSE);
+    _postCheck->setEnabled(FALSE);
+
     return;
+  }
 
   if (selected->text(0) == tr("Yes"))
   {
