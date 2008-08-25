@@ -85,7 +85,7 @@ adjustmentTrans::adjustmentTrans(QWidget* parent, Qt::WindowFlags fl)
 
   _captive = FALSE;
 
-  _item->setType(ItemLineEdit::cGeneralInventory | ItemLineEdit::cActive);
+  _item->setType((ItemLineEdit::cGeneralInventory ^ ItemLineEdit::cBreeder) | ItemLineEdit::cActive);
   _warehouse->setType(WComboBox::AllActiveInventory);
   _qty->setValidator(omfgThis->transQtyVal());
 
@@ -237,7 +237,7 @@ void adjustmentTrans::sPost()
       _cost },
     { true, "", NULL }
   };
-
+ 
   int errIndex;
   for (errIndex = 0; ! error[errIndex].condition; errIndex++)
     ;
