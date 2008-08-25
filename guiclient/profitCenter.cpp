@@ -122,6 +122,20 @@ enum SetResponse profitCenter::set(const ParameterList &pParams )
 
 void profitCenter::sSave()
 {
+  q.prepare("SELECT prftcntr_id"
+            "  FROM prftcntr"
+            " WHERE((prftcntr_id != :prftcntr_id)"
+            "   AND (prftcntr_number=:prftcntr_number))");
+  q.bindValue(":prftcntr_id", _prftcntrid);
+  q.bindValue(":prftcntr_number", _number->text());
+  q.exec();
+  if(q.first())
+  {
+    QMessageBox::critical(this, tr("Duplicate Profit Center Number"),
+      tr("A Profit Center Number already exists for the one specified.") );
+    return;
+  }
+
   if (_mode == cNew)
   {
     q.exec("SELECT NEXTVAL('prftcntr_prftcntr_id_seq') AS prftcntr_id;");
