@@ -1,9 +1,11 @@
 <!DOCTYPE RCC>
 <RCC version="1.0">
   <qresource prefix="ap">
+    <file alias="displays/apAging.mql">apAging.mql</file>
     <file alias="displays/CheckRegister/FillListDetail.mql">dspCheckRegisterFillList.mql</file>
   </qresource>
   <qresource prefix="ar">
+    <file alias="displays/arAging.mql">arAging.mql</file>
     <file alias="arHistory.mql">arHistory.mql</file>
     <file alias="aropenApplications.mql">aropenApplications.mql</file>
     <file alias="arOpenItems.mql">arOpenItems.mql</file>
