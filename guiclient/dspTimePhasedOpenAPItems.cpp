@@ -64,6 +64,10 @@
 #include <datecluster.h>
 #include <QWorkspace>
 #include <q3valuevector.h>
+
+#include <metasql.h>
+#include "mqlutil.h"
+
 #include <openreports.h>
 #include "dspAPOpenItemsByVendor.h"
 #include "guiclient.h"
@@ -96,8 +100,8 @@ dspTimePhasedOpenAPItems::dspTimePhasedOpenAPItems(QWidget* parent, const char* 
   
   _vendorTypes->setType(XComboBox::VendorTypes);
   
-  _apopen->addColumn(tr("Vend. #"), _orderColumn, Qt::AlignLeft );
-  _apopen->addColumn(tr("Vendor"),  180,          Qt::AlignLeft );
+  _apopen->addColumn(tr("Vend. #"), _orderColumn, Qt::AlignLeft, true, "apaging_vend_number" );
+  _apopen->addColumn(tr("Vendor"),  180,          Qt::AlignLeft, true, "apaging_vend_name" );
     
   _asOf->setDate(omfgThis->dbDate(), true);
   sToggleCustom();
@@ -357,45 +361,17 @@ void dspTimePhasedOpenAPItems::sFillStd()
 {
   _apopen->clear();
 
-  QString sql("SELECT apaging_vend_id, apaging_vend_number, apaging_vend_name,formatMoney(SUM(apaging_total_val)),"
-              "       formatMoney(SUM(apaging_cur_val)),formatMoney(SUM(apaging_thirty_val)),"
-              "       formatMoney(SUM(apaging_sixty_val)),formatMoney(SUM(apaging_ninety_val)),"
-              "       formatMoney(SUM(apaging_plus_val)),0 AS sequence"
-              "  FROM apaging(:asofDate, :useDocDate) ");
-
+  MetaSQLQuery mql = mqlLoad(":/ap/displays/apAging.mql");
+  ParameterList params;
+  params.append("asofDate",_asOf->date());
+  params.append("useDocDate", QVariant(_useDocDate->isChecked(), 0));
   if (_selectedVendor->isChecked())
-    sql += "WHERE (apaging_vend_id=:vend_id)";
+    params.append("vend_id", _vend->id());
   else if (_selectedVendorType->isChecked())
-    sql += "WHERE (apaging_vend_vendtype_id=:vendtype_id)";
+    params.append("vendtype_id", _vendorTypes->id());
   else if (_vendorTypePattern->isChecked())
-    sql += "WHERE (apaging_vendtype_code ~ :vendtype_pattern) ";
-
-  sql += "GROUP BY apaging_vend_number,apaging_vend_id,apaging_vend_name ";
-  
-  //Get totals
-  sql += " UNION SELECT 0, 'Totals:', '',formatMoney(SUM(apaging_total_val)),"
-         "formatMoney(SUM(apaging_cur_val)),formatMoney(SUM(apaging_thirty_val)),"
-         "formatMoney(SUM(apaging_sixty_val)),formatMoney(SUM(apaging_ninety_val)),"
-         "formatMoney(SUM(apaging_plus_val)),1 AS sequence"
-         " FROM apaging(:asofDate, :useDocDate) ";
-
-  if (_selectedVendor->isChecked())
-    sql += "WHERE (apaging_vend_id=:vend_id)";
-  else if (_selectedVendorType->isChecked())
-    sql += "WHERE (apaging_vend_vendtype_id=:vendtype_id)";
-  else if (_vendorTypePattern->isChecked())
-    sql += "WHERE (apaging_vendtype_code ~ :vendtype_pattern) ";
-
-  sql += "ORDER BY sequence,apaging_vend_number";
-  sql += ";";
-
-  q.prepare(sql);
-  q.bindValue(":asofDate",_asOf->date());
-  q.bindValue(":useDocDate", QVariant(_useDocDate->isChecked(), 0));
-  q.bindValue(":vend_id", _vend->id());
-  q.bindValue(":vendtype_id", _vendorTypes->id());
-  q.bindValue(":vendtype_pattern", _vendorType->text().upper());
-  q.exec();
+    params.append("vendtype_pattern", _vendorType->text().upper());
+  q = mql.toQuery(params);
   if (q.first())
     _apopen->populate(q);
 }
@@ -420,11 +396,11 @@ void dspTimePhasedOpenAPItems::sToggleCustom()
     _useGroup->setHidden(FALSE);
 
     _apopen->setColumnCount(2);
-    _apopen->addColumn(tr("Total Open"), _bigMoneyColumn, Qt::AlignRight);
-    _apopen->addColumn(tr("0+ Days"), _bigMoneyColumn, Qt::AlignRight);
-    _apopen->addColumn(tr("0-30 Days"), _bigMoneyColumn, Qt::AlignRight);
-    _apopen->addColumn(tr("31-60 Days"), _bigMoneyColumn, Qt::AlignRight);
-    _apopen->addColumn(tr("61-90 Days"), _bigMoneyColumn, Qt::AlignRight);
-    _apopen->addColumn(tr("90+ Days"), _bigMoneyColumn, Qt::AlignRight);
+    _apopen->addColumn(tr("Total Open"), _bigMoneyColumn, Qt::AlignRight, true, "apaging_total_val_sum");
+    _apopen->addColumn(tr("0+ Days"),    _bigMoneyColumn, Qt::AlignRight, true, "apaging_cur_val_sum");
+    _apopen->addColumn(tr("0-30 Days"),  _bigMoneyColumn, Qt::AlignRight, true, "apaging_thirty_val_sum");
+    _apopen->addColumn(tr("31-60 Days"), _bigMoneyColumn, Qt::AlignRight, true, "apaging_sixty_val_sum");
+    _apopen->addColumn(tr("61-90 Days"), _bigMoneyColumn, Qt::AlignRight, true, "apaging_ninety_val_sum");
+    _apopen->addColumn(tr("90+ Days"),   _bigMoneyColumn, Qt::AlignRight, true, "apaging_plus_val_sum");
   }
 }

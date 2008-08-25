@@ -64,6 +64,10 @@
 #include <QWorkspace>
 #include <QMenu>
 #include <datecluster.h>
+
+#include <metasql.h>
+#include "mqlutil.h"
+
 #include <openreports.h>
 #include "printStatementByCustomer.h"
 #include "dspAROpenItemsByCustomer.h"
@@ -96,8 +100,8 @@ dspTimePhasedOpenARItems::dspTimePhasedOpenARItems(QWidget* parent, const char* 
   
   _customerTypes->setType(XComboBox::CustomerTypes);
   
-  _aropen->addColumn(tr("Cust. #"),  _orderColumn, Qt::AlignLeft );
-  _aropen->addColumn(tr("Customer"), 180,          Qt::AlignLeft );
+  _aropen->addColumn(tr("Cust. #"),  _orderColumn, Qt::AlignLeft, true, "araging_cust_number" );
+  _aropen->addColumn(tr("Customer"), 180,          Qt::AlignLeft, true, "araging_cust_name" );
 
   _allCustomers->setFocus();
   
@@ -357,44 +361,16 @@ void dspTimePhasedOpenARItems::sFillStd()
 {
   _aropen->clear();
 
-  QString sql("SELECT araging_cust_id, araging_cust_number, araging_cust_name,formatMoney(SUM(araging_total_val)),"
-              "       formatMoney(SUM(araging_cur_val)),formatMoney(SUM(araging_thirty_val)),"
-              "       formatMoney(SUM(araging_sixty_val)),formatMoney(SUM(araging_ninety_val)),"
-              "       formatMoney(SUM(araging_plus_val)),0 AS sequence"
-              "  FROM araging(:asofDate) ");
-
+  MetaSQLQuery mql = mqlLoad(":/ar/displays/arAging.mql");
+  ParameterList params;
+  params.append("asofDate",_asOf->date());
   if (_selectedCustomer->isChecked())
-    sql += "WHERE (araging_cust_id=:cust_id)";
+    params.append("cust_id", _cust->id());
   else if (_selectedCustomerType->isChecked())
-    sql += "WHERE (araging_cust_custtype_id=:custtype_id)";
+    params.append("custtype_id", _customerTypes->id());
   else if (_customerTypePattern->isChecked())
-    sql += "WHERE (araging_custtype_code ~ :custtype_pattern) ";
-
-  sql += "GROUP BY araging_cust_number,araging_cust_id,araging_cust_name ";
-  
-  //Get totals
-  sql += " UNION SELECT 0, 'Totals:', '',formatMoney(SUM(araging_total_val)),"
-         "              formatMoney(SUM(araging_cur_val)),formatMoney(SUM(araging_thirty_val)),"
-         "              formatMoney(SUM(araging_sixty_val)),formatMoney(SUM(araging_ninety_val)),"
-         "              formatMoney(SUM(araging_plus_val)),1 AS sequence"
-         "         FROM araging(:asofDate) ";
-
-  if (_selectedCustomer->isChecked())
-    sql += "WHERE (araging_cust_id=:cust_id)";
-  else if (_selectedCustomerType->isChecked())
-    sql += "WHERE (araging_cust_custtype_id=:custtype_id)";
-  else if (_customerTypePattern->isChecked())
-    sql += "WHERE (araging_custtype_code ~ :custtype_pattern) ";
-
-  sql += "ORDER BY sequence,araging_cust_number";
-  sql += ";";
-
-  q.prepare(sql);
-  q.bindValue(":asofDate",_asOf->date());
-  q.bindValue(":cust_id", _cust->id());
-  q.bindValue(":custtype_id", _customerTypes->id());
-  q.bindValue(":custtype_pattern", _customerType->text().upper());
-  q.exec();
+    params.append("custtype_pattern", _customerType->text().upper());
+  q = mql.toQuery(params);
   if (q.first())
     _aropen->populate(q);
 }
@@ -416,12 +392,12 @@ void dspTimePhasedOpenARItems::sToggleCustom()
     _periods->setHidden(TRUE);
     _asOf->setEnabled(TRUE);
     _aropen->setColumnCount(2);
-    _aropen->addColumn(tr("Total Open"), _bigMoneyColumn, Qt::AlignRight);
-    _aropen->addColumn(tr("0+ Days"), _bigMoneyColumn, Qt::AlignRight);
-    _aropen->addColumn(tr("0-30 Days"), _bigMoneyColumn, Qt::AlignRight);
-    _aropen->addColumn(tr("31-60 Days"), _bigMoneyColumn, Qt::AlignRight);
-    _aropen->addColumn(tr("61-90 Days"), _bigMoneyColumn, Qt::AlignRight);
-    _aropen->addColumn(tr("90+ Days"), _bigMoneyColumn, Qt::AlignRight);
+    _aropen->addColumn(tr("Total Open"), _bigMoneyColumn, Qt::AlignRight, true, "araging_total_val_sum");
+    _aropen->addColumn(tr("0+ Days"),    _bigMoneyColumn, Qt::AlignRight, true, "araging_cur_val_sum");
+    _aropen->addColumn(tr("0-30 Days"),  _bigMoneyColumn, Qt::AlignRight, true, "araging_thirty_val_sum");
+    _aropen->addColumn(tr("31-60 Days"), _bigMoneyColumn, Qt::AlignRight, true, "araging_sixty_val_sum");
+    _aropen->addColumn(tr("61-90 Days"), _bigMoneyColumn, Qt::AlignRight, true, "araging_ninety_val_sum");
+    _aropen->addColumn(tr("90+ Days"),   _bigMoneyColumn, Qt::AlignRight, true, "araging_plus_val_sum");
   }
 }
 
