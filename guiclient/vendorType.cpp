@@ -57,51 +57,32 @@
 
 #include "vendorType.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-/*
- *  Constructs a vendorType as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
+#include <QVariant>
+#include <QMessageBox>
+
 vendorType::vendorType(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
 
-    // signals and slots connections
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_code, SIGNAL(lostFocus()), this, SLOT(sCheck()));
-    init();
+  // signals and slots connections
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_code, SIGNAL(lostFocus()), this, SLOT(sCheck()));
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 vendorType::~vendorType()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void vendorType::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
-
-void vendorType::init()
-{
-}
-
-enum SetResponse vendorType::set(ParameterList &pParams)
+enum SetResponse vendorType::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -168,6 +149,20 @@ void vendorType::sSave()
     QMessageBox::information( this, tr("Invalid Vendor Type Code"),
                               tr("You must enter a valid Code for this Vendor Type before creating it.")  );
     _code->setFocus();
+    return;
+  }
+
+  q.prepare("SELECT vendtype_id"
+            "  FROM vendtype"
+            " WHERE((vendtype_id != :vendtype_id)"
+            "   AND (vendtype_code=:vendtype_code))");
+  q.bindValue(":vendtype_id", _vendtypeid);
+  q.bindValue(":vendtype_code", _code->text().stripWhiteSpace());
+  q.exec();
+  if(q.first())
+  {
+    QMessageBox::critical( this, tr("Duplicate Entry"),
+      tr("The Code you have entered for this Vendor Type is already in the system.") );
     return;
   }
 
