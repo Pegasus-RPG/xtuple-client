@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>808</width>
-    <height>600</height>
+    <height>607</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -53,55 +53,51 @@
           </property>
          </spacer>
         </item>
-        <item>
-         <layout class="QVBoxLayout" >
-          <item>
-           <layout class="QHBoxLayout" >
-            <item>
-             <widget class="QPushButton" name="_save" >
-              <property name="enabled" >
-               <bool>false</bool>
-              </property>
-              <property name="text" >
-               <string>&amp;Save</string>
-              </property>
-              <property name="shortcut" >
-               <string>Alt+S</string>
-              </property>
-              <property name="autoDefault" >
-               <bool>true</bool>
-              </property>
-              <property name="default" >
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="_close" >
-              <property name="text" >
-               <string>&amp;Cancel</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <spacer>
-            <property name="orientation" >
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeType" >
-             <enum>QSizePolicy::Preferred</enum>
-            </property>
-            <property name="sizeHint" >
-             <size>
-              <width>81</width>
-              <height>16</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
+       </layout>
+      </item>
+      <item row="0" column="2" >
+       <layout class="QGridLayout" >
+        <item row="0" column="0" >
+         <widget class="QPushButton" name="_save" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+          <property name="text" >
+           <string>&amp;Save</string>
+          </property>
+          <property name="shortcut" >
+           <string>Alt+S</string>
+          </property>
+          <property name="autoDefault" >
+           <bool>true</bool>
+          </property>
+          <property name="default" >
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1" >
+         <widget class="QPushButton" name="_close" >
+          <property name="text" >
+           <string>&amp;Cancel</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" colspan="2" >
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeType" >
+           <enum>QSizePolicy::Expanding</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>81</width>
+            <height>16</height>
+           </size>
+          </property>
+         </spacer>
         </item>
        </layout>
       </item>
@@ -247,7 +243,7 @@
         </layout>
        </widget>
       </item>
-      <item row="1" column="1" >
+      <item row="1" column="1" colspan="2" >
        <widget class="QGroupBox" name="_docGroup" >
         <property name="title" >
          <string/>
@@ -389,7 +385,7 @@
         </layout>
        </widget>
       </item>
-      <item row="2" column="1" >
+      <item row="2" column="1" colspan="2" >
        <widget class="QGroupBox" name="_altAccnt" >
         <property name="enabled" >
          <bool>true</bool>
@@ -440,7 +436,7 @@
         </layout>
        </widget>
       </item>
-      <item row="3" column="0" colspan="2" >
+      <item row="3" column="0" colspan="3" >
        <widget class="QTabWidget" name="_tab" >
         <property name="sizePolicy" >
          <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
@@ -846,19 +842,16 @@
  <tabstops>
   <tabstop>_cust</tabstop>
   <tabstop>_received</tabstop>
-  <tabstop>_miscDistribs</tabstop>
-  <tabstop>_applied</tabstop>
-  <tabstop>_balance</tabstop>
+  <tabstop>_balCreditMemo</tabstop>
+  <tabstop>_balCustomerDeposit</tabstop>
   <tabstop>_fundsType</tabstop>
   <tabstop>_docNumber</tabstop>
   <tabstop>_bankaccnt</tabstop>
   <tabstop>_distDate</tabstop>
-  <tabstop>_balCreditMemo</tabstop>
-  <tabstop>_balCustomerDeposit</tabstop>
   <tabstop>_altAccnt</tabstop>
   <tabstop>_salescat</tabstop>
+  <tabstop>_tab</tabstop>
   <tabstop>_searchDocNum</tabstop>
-  <tabstop>_aropen</tabstop>
   <tabstop>_apply</tabstop>
   <tabstop>_applyLineBalance</tabstop>
   <tabstop>_clear</tabstop>
@@ -867,7 +860,7 @@
   <tabstop>_add</tabstop>
   <tabstop>_edit</tabstop>
   <tabstop>_delete</tabstop>
-  <tabstop>_tab</tabstop>
+  <tabstop>_aropen</tabstop>
   <tabstop>_cc</tabstop>
   <tabstop>_newCC</tabstop>
   <tabstop>_editCC</tabstop>
