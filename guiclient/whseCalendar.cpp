@@ -79,21 +79,14 @@ whseCalendar::whseCalendar(QWidget* parent, const char* name, bool modal, Qt::WF
   _description->setFocus();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 whseCalendar::~whseCalendar()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void whseCalendar::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 enum SetResponse whseCalendar::set(const ParameterList &pParams)
@@ -145,6 +138,23 @@ void whseCalendar::sSave()
     QMessageBox::critical( this, tr("Enter Start/End Date"),
                            tr("You must enter a valid start/end date for this Site Calendar before saving it.") );
     _dates->setFocus();
+    return;
+  }
+
+  q.prepare("SELECT whsecal_id"
+            "  FROM whsecal"
+            " WHERE((whsecal_id != :whsecal_id)"
+            "   AND (whsecal_warehous_id=:warehous_id)"
+            "   AND (whsecal_effective=:startDate)"
+            "   AND (whsecal_expires=:endDate))");
+  _warehouse->bindValue(q);
+  _dates->bindValue(q);
+  q.bindValue(":whsecal_id", _whsecalid);
+  q.exec();
+  if(q.first())
+  {
+    QMessageBox::critical(this, tr("Date for Site Already Set"),
+      tr("The Dates specified for the Site is already in the system. Please edit that record or change you dates."));
     return;
   }
 
