@@ -57,9 +57,9 @@
 
 #include "expenseCategories.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QMessageBox>
+#include <QStatusBar>
 #include <openreports.h>
 #include "expenseCategory.h"
 
@@ -71,42 +71,20 @@
 expenseCategories::expenseCategories(QWidget* parent, const char* name, Qt::WFlags fl)
     : XMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-    connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-    connect(_copy, SIGNAL(clicked()), this, SLOT(sCopy()));
-    connect(_expcat, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
-    init();
-}
+  // signals and slots connections
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_copy, SIGNAL(clicked()), this, SLOT(sCopy()));
+  connect(_expcat, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
 
-/*
- *  Destroys the object and frees any allocated resources
- */
-expenseCategories::~expenseCategories()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void expenseCategories::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void expenseCategories::init()
-{
   statusBar()->hide();
   
   _expcat->addColumn(tr("Category"),    _itemColumn, Qt::AlignLeft   );
@@ -126,6 +104,16 @@ void expenseCategories::init()
   }
 
   sFillList();
+}
+
+expenseCategories::~expenseCategories()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void expenseCategories::languageChange()
+{
+  retranslateUi(this);
 }
 
 void expenseCategories::sDelete()
@@ -165,11 +153,29 @@ void expenseCategories::sDelete()
   }
   else
   {
-    q.prepare( "DELETE FROM expcat "
-               "WHERE (expcat_id=:expcat_id); ");
+    q.prepare( "SELECT checkhead_id AS id"
+               "  FROM checkhead"
+               " WHERE(checkhead_expcat_id=:expcat_id)"
+               " UNION "
+               "SELECT vodist_id AS id"
+               "  FROM vodist"
+               " WHERE(vodist_expcat_id=:expcat_id)");
     q.bindValue(":expcat_id", _expcat->id());
     q.exec();
-    sFillList();
+    if(q.first())
+    {
+      QMessageBox::warning( this, tr("Cannot Delete Expense Category"),
+        tr( "<p>The selected Expense Category cannot be deleted as there are Checks and Voucher Distributions assigned to it. "
+            "You must change these before you may delete the selected Expense Category.</p>" ) );
+    }
+    else
+    {
+      q.prepare( "DELETE FROM expcat "
+                 "WHERE (expcat_id=:expcat_id); ");
+      q.bindValue(":expcat_id", _expcat->id());
+      q.exec();
+      sFillList();
+    }
   }
 }
 

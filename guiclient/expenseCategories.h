@@ -72,8 +72,6 @@ public:
     expenseCategories(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~expenseCategories();
 
-    virtual void init();
-
 public slots:
     virtual void sDelete();
     virtual void sNew();
