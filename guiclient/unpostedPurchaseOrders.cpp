@@ -96,10 +96,10 @@ unpostedPurchaseOrders::unpostedPurchaseOrders(QWidget* parent, const char* name
 
     statusBar()->hide();
     
-    _pohead->addColumn(tr("Number"),    _orderColumn, Qt::AlignCenter );
-    _pohead->addColumn(tr("Vendor"),    -1,           Qt::AlignLeft   );
-    _pohead->addColumn(tr("Due Date"),  _dateColumn,  Qt::AlignCenter );
-    _pohead->addColumn(tr("Status"),    _ynColumn,    Qt::AlignCenter );
+    _pohead->addColumn(tr("P/O #"),     _orderColumn, Qt::AlignLeft,   true, "pohead_number" );
+    _pohead->addColumn(tr("Vendor"),    -1,           Qt::AlignLeft,   true, "vend_name"   );
+    _pohead->addColumn(tr("Due Date"),  _dateColumn,  Qt::AlignCenter, true, "min_duedate" );
+    _pohead->addColumn(tr("Status"),    _ynColumn,    Qt::AlignCenter, true, "pohead_status" );
 
     _pohead->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
@@ -376,20 +376,20 @@ void unpostedPurchaseOrders::sFillList()
     params.append("showPosted");
 
   QString sql( "SELECT pohead_id, pohead_number, vend_name,"
-               "       formatDate(MIN(poitem_duedate)), "
-	       "       pohead_status "
+               "       MIN(poitem_duedate) AS min_duedate, "
+               "       pohead_status "
                "FROM vend, pohead LEFT OUTER JOIN "
-	       "     poitem ON (poitem_pohead_id=pohead_id) "
+               "     poitem ON (poitem_pohead_id=pohead_id) "
                "WHERE ( (pohead_vend_id=vend_id)"
-	       "<? if exists(\"showPosted\") ?> "
+               "<? if exists(\"showPosted\") ?> "
                "  AND (pohead_status IN ('U', 'O') ) "
-	       "  AND (pohead_id NOT IN (SELECT vohead_pohead_id FROM vohead WHERE vohead_pohead_id IS NOT NULL))"
-	       "<? else ?> "
+               "  AND (pohead_id NOT IN (SELECT vohead_pohead_id FROM vohead WHERE vohead_pohead_id IS NOT NULL))"
+               "<? else ?> "
                "  AND (pohead_status='U') "
-	       "<? endif ?> "
-	       ") "
+               "<? endif ?> "
+               ") "
                "GROUP BY pohead_number, pohead_id, vend_name, pohead_status "
-	       "ORDER BY pohead_number;" );
+               "ORDER BY pohead_number;" );
   MetaSQLQuery mql(sql);
   q = mql.toQuery(params);
   if (q.lastError().type() != QSqlError::None)
