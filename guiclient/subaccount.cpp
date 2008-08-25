@@ -121,6 +121,20 @@ enum SetResponse subaccount::set(const ParameterList &pParams )
 
 void subaccount::sSave()
 {
+  q.prepare("SELECT subaccnt_id"
+            "  FROM subaccnt"
+            " WHERE((subaccnt_id != :subaccnt_id)"
+            "   AND (subaccnt_number=:subaccnt_number))");
+  q.bindValue(":subaccnt_id", _subaccntid);
+  q.bindValue(":subaccnt_number", _number->text());
+  q.exec();
+  if(q.first())
+  {
+    QMessageBox::critical(this, tr("Duplicate Sub Account Number"),
+      tr("A Sub Account Number already exists for the one specified.") );
+    return;
+  }
+
   if (_mode == cNew)
   {
     q.exec("SELECT NEXTVAL('subaccnt_subaccnt_id_seq') AS subaccnt_id;");
