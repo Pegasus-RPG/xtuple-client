@@ -64,19 +64,19 @@
 customerFormAssignment::customerFormAssignment(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
 }
 
 customerFormAssignment::~customerFormAssignment()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 void customerFormAssignment::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 enum SetResponse customerFormAssignment::set(const ParameterList &pParams)
@@ -134,6 +134,22 @@ void customerFormAssignment::sSave()
     custtypeid = _customerTypes->id();
   else if (_customerTypePattern->isChecked())
     custtype = _customerType->text().stripWhiteSpace();
+
+  q.prepare("SELECT custform_id"
+            "  FROM custform"
+            " WHERE((custform_id != :custform_id)"
+            "   AND (custform_custtype = :custform_custtype)"
+            "   AND (custform_custtype_id=:custform_custtype_id))");
+  q.bindValue(":custform_id", _custformid);
+  q.bindValue(":custform_custtype", custtype);
+  q.bindValue(":custform_custtype_id", custtypeid);
+  q.exec();
+  if(q.first())
+  {
+    QMessageBox::critical(this, tr("Duplicate Entry"),
+      tr("The Customer Type specified is already in the database.") );
+    return;
+  }
 
   if (_mode == cNew)
   {
