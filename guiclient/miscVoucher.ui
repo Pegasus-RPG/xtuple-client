@@ -16,6 +16,12 @@
    <layout class="QGridLayout" >
     <item row="0" column="0" >
      <layout class="QGridLayout" >
+      <property name="leftMargin" >
+       <number>12</number>
+      </property>
+      <property name="rightMargin" >
+       <number>12</number>
+      </property>
       <property name="horizontalSpacing" >
        <number>12</number>
       </property>

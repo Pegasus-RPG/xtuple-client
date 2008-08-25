@@ -16,6 +16,12 @@
    <layout class="QGridLayout" >
     <item row="0" column="0" >
      <layout class="QGridLayout" >
+      <property name="leftMargin" >
+       <number>12</number>
+      </property>
+      <property name="rightMargin" >
+       <number>12</number>
+      </property>
       <property name="horizontalSpacing" >
        <number>12</number>
       </property>
@@ -760,7 +766,7 @@
   </customwidget>
   <customwidget>
    <class>DLineEdit</class>
-   <extends>XLineEdit</extends>
+   <extends>QWidget</extends>
    <header>datecluster.h</header>
    <container>1</container>
   </customwidget>
@@ -809,7 +815,6 @@
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
- <includes/>
  <resources/>
  <connections>
   <connection>
