@@ -592,6 +592,18 @@ void initErrorLookupHash()
 			"Card has been charged for it."),		0, "" },
   { "deleteSO",	 -5, TR("This Sales Order cannot be deleted because there is "
 			"Credit Card transaction history for it."),	0, "" },
+  { "deleteSO",  -6, TR("This Sales Order cannot be deleted as some of its "
+			"line items are linked to a Return Authorization.  "
+			"You must resolve this conflict before "
+		        "you may delete this Sales Order."),		0, "" },
+
+  { "deleteSOItem",  -1, TR("This Sales Order Item cannot be deleted as it has already been shipped."),	0, "" },
+  { "deleteSOItem",  -2, TR("This Sales Order Item cannot be deleted as it has already been issued to shipping.  "
+			"You must return this stock before "
+		        "you may delete this Sales Order Item."),		0, "" },
+  { "deleteSOItem",  -6, TR("This Sales Order Item cannot be deleted as it is linked to a Return Authorization.  "
+			"You must resolve this conflict before "
+		        "you may delete this Sales Order Item."),		0, "" },
 
   { "deleteSubaccount", -1,
                         TR("The selected Subaccount cannot be deleted as it "
