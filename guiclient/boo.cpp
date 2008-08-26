@@ -86,7 +86,7 @@ boo::boo(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_expire, SIGNAL(clicked()), this, SLOT(sExpire()));
 
-  _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased | ItemLineEdit::cJob);
+  _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased | ItemLineEdit::cPlanning | ItemLineEdit::cJob);
 
   _booitem->addColumn(tr("#"),           _seqColumn,  Qt::AlignCenter,true, "booitem_seqnumber");
   _booitem->addColumn(tr("Std Oper."),   _itemColumn, Qt::AlignLeft,  true, "f_stdopnnumber");
