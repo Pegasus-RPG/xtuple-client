@@ -1,8 +1,28 @@
-SELECT aropen.*,
+<? if exists("totalOnly") ?>
+SELECT SUM(CASE WHEN (aropen_doctype IN ('C', 'R')) THEN
+                    (currToBase(aropen_curr_id, (aropen_amount - aropen_paid), aropen_docdate) * -1)
+                ELSE currToBase(aropen_curr_id, (aropen_amount - aropen_paid), aropen_docdate)
+           END) AS total_balance
+FROM aropen
+WHERE ( (aropen_open)
+<? if exists("cust_id") ?>
+  AND   (aropen_cust_id=<? value("cust_id") ?>)
+<? endif ?>
+      )
+;
+<? else ?>
+SELECT aropen_id AS id,
+       CASE WHEN (aropen_doctype='I') THEN 0
+            WHEN (aropen_doctype='C') THEN 1
+            WHEN (aropen_doctype='D') THEN 2
+            WHEN (aropen_doctype='R') THEN 3
+            ELSE -1
+       END AS altId,
+       aropen.*,
        CASE WHEN (aropen_doctype='I') THEN <? value("invoice") ?>
             WHEN (aropen_doctype='C') THEN <? value("creditMemo") ?>
             WHEN (aropen_doctype='D') THEN <? value("debitMemo") ?>
-            WHEN (aropen_doctype='R') then <? value("cashdeposit") ?>
+            WHEN (aropen_doctype='R') THEN <? value("cashdeposit") ?>
             ELSE <? value("other") ?>
        END AS doctype,
        CASE WHEN (aropen_doctype IN ('C', 'R')) THEN ((aropen_amount - aropen_paid) * -1)
@@ -14,10 +34,24 @@ SELECT aropen.*,
                   CASE WHEN (aropen_doctype IN ('C', 'R')) THEN ((aropen_amount - aropen_paid) * -1)
                        WHEN (aropen_doctype IN ('I', 'D')) THEN (aropen_amount - aropen_paid)
                        ELSE (aropen_amount - aropen_paid)
-                  END, CURRENT_DATE) AS base_balance,
-       cust_id, cust_number, cust_name
+                  END, aropen_docdate) AS base_balance,
+       cust_id, cust_number, cust_name,
+       'curr' AS aropen_amount_xtnumericrole,
+       'curr' AS aropen_paid_xtnumericrole,
+       'curr' AS balance_xtnumericrole,
+       'curr' AS base_balance_xtnumericrole,
+       0 AS base_balance_xttotalrole
 FROM aropen LEFT OUTER JOIN custinfo ON (aropen_cust_id=cust_id)
 WHERE ( (aropen_open)
+<? if exists("debitsOnly") ?>
+  AND   (NOT aropen_doctype IN ('C', 'R'))
+<? endif ?>
+<? if exists("creditsOnly") ?>
+  AND   (aropen_doctype IN ('C', 'R'))
+<? endif ?>
+<? if exists("cust_id") ?>
+  AND   (aropen_cust_id=<? value("cust_id") ?>)
+<? endif ?>
 <? if exists("startDate") ?>
   AND   (aropen_docdate BETWEEN <? value("startDate") ?> AND <? value("endDate") ?>)
 <? endif ?>
@@ -25,4 +59,10 @@ WHERE ( (aropen_open)
   AND ((SELECT count(*) from incdt WHERE (incdt_aropen_id=aropen_id)) > 0)
 <? endif ?>
       )
-ORDER BY aropen_docnumber;
+<? if exists("orderByDocDate") ?>
+  ORDER BY aropen_docdate
+<? else ?>
+  ORDER BY aropen_docnumber
+<? endif ?>
+;
+<? endif ?>
