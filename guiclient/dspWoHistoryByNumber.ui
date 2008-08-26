@@ -47,7 +47,7 @@
           <item>
            <widget class="QLabel" name="_woNumberLit" >
             <property name="text" >
-             <string>&amp;Work Order #:</string>
+             <string>&amp;Work Order Pattern:</string>
             </property>
             <property name="alignment" >
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

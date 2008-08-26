@@ -63,9 +63,15 @@
 #include <QWorkspace>
 #include <QMenu>
 #include <QMessageBox>
+
+#include <metasql.h>
+#include "mqlutil.h"
+
 #include <openreports.h>
 #include <parameter.h>
 #include "workOrder.h"
+
+#define COST_COL	10
 
 /*
  *  Constructs a dspWoHistoryByNumber as a child of 'parent', with the
@@ -86,17 +92,22 @@ dspWoHistoryByNumber::dspWoHistoryByNumber(QWidget* parent, const char* name, Qt
   connect(_showCost, SIGNAL(toggled(bool)), this, SLOT(sHandleCosts(bool)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
-  _wo->addColumn(tr("Order #"),     _orderColumn,  Qt::AlignLeft   );
-  _wo->addColumn(tr("Sub. #"),      _uomColumn,    Qt::AlignLeft   );
-  _wo->addColumn(tr("Item #"),      _itemColumn,   Qt::AlignLeft   );
-  _wo->addColumn(tr("Description"), -1,            Qt::AlignLeft   );
-  _wo->addColumn(tr("Status"),      _statusColumn, Qt::AlignCenter );
-  _wo->addColumn(tr("Site"),        _whsColumn,    Qt::AlignCenter );
-  _wo->addColumn(tr("Ordered"),     _qtyColumn,    Qt::AlignRight  );
-  _wo->addColumn(tr("Received"),    _qtyColumn,    Qt::AlignRight  );
-  _wo->addColumn(tr("Start Date"),  _dateColumn,   Qt::AlignRight  );
-  _wo->addColumn(tr("Due Date"),    _dateColumn,   Qt::AlignRight  );
-  _wo->addColumn(tr("Cost"),        _costColumn,   Qt::AlignRight );
+  _wo->addColumn(tr("W/O #"),       _orderColumn,  Qt::AlignLeft,   true,  "wo_number"   );
+  _wo->addColumn(tr("Sub. #"),      _uomColumn,    Qt::AlignLeft,   true,  "wo_subnumber"   );
+  _wo->addColumn(tr("Item #"),      _itemColumn,   Qt::AlignLeft,   true,  "item_number"   );
+  _wo->addColumn(tr("Description"), -1,            Qt::AlignLeft,   true,  "itemdescrip"   );
+  _wo->addColumn(tr("Status"),      _statusColumn, Qt::AlignCenter, true,  "wo_status" );
+  _wo->addColumn(tr("Site"),        _whsColumn,    Qt::AlignCenter, true,  "warehous_code" );
+  _wo->addColumn(tr("Ordered"),     _qtyColumn,    Qt::AlignRight,  true,  "wo_qtyord"  );
+  _wo->addColumn(tr("Received"),    _qtyColumn,    Qt::AlignRight,  true,  "wo_qtyrcv"  );
+  _wo->addColumn(tr("Start Date"),  _dateColumn,   Qt::AlignCenter, true,  "wo_startdate"  );
+  _wo->addColumn(tr("Due Date"),    _dateColumn,   Qt::AlignCenter, true,  "wo_duedate"  );
+  _wo->addColumn(tr("Cost"),        _costColumn,   Qt::AlignRight,  true,  "wo_postedvalue" );
+  _wo->addColumn(tr("WIP"),         _costColumn,   Qt::AlignRight,  false, "wo_wipvalue" );
+  _wo->addColumn(tr("Project"),     _orderColumn,  Qt::AlignLeft,   false, "project" );
+  _wo->addColumn(tr("Priority"),    _statusColumn, Qt::AlignCenter, false, "wo_priority" );
+  _wo->addColumn(tr("BOM Rev"),     _orderColumn,  Qt::AlignLeft,   false, "bom_rev_number" );
+  _wo->addColumn(tr("BOO Rev"),     _orderColumn,  Qt::AlignLeft,   false, "boo_rev_number" );
 
   sHandleCosts(_showCost->isChecked());
 
@@ -180,42 +191,24 @@ void dspWoHistoryByNumber::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
 void dspWoHistoryByNumber::sHandleCosts(bool pShowCosts)
 {
   if (pShowCosts)
-    _wo->showColumn(9);
+    _wo->showColumn(COST_COL);
   else
-    _wo->hideColumn(9);
+    _wo->hideColumn(COST_COL);
 }
 
 void dspWoHistoryByNumber::sFillList()
 {
   if (!checkParameters())
-  {
-    _wo->clear();
     return;
-  }
+    
+  _wo->clear();
 
-  QString sql( "SELECT wo_id, wo_number, wo_subnumber, item_number,"
-               "       (item_descrip1 || ' ' || item_descrip2),"
-               "       wo_status, warehous_code,"
-               "       formatQty(wo_qtyord) AS ordered,"
-               "       formatQty(wo_qtyrcv) AS received,"
-               "       formatDate(wo_startdate) AS startdate,"
-               "       formatDate(wo_duedate) AS duedate,"
-               "       formatCost(wo_postedvalue) "
-               "FROM wo, itemsite, warehous, item "
-               "WHERE ( (wo_itemsite_id=itemsite_id)"
-               " AND (itemsite_item_id=item_id)"
-               " AND (itemsite_warehous_id=warehous_id)"
-               " AND (CAST(wo_number AS TEXT) ~ :wo_number)" );
-
+  MetaSQLQuery mql = mqlLoad(":/wo/displays/WorkOrderHistory.mql");
+  ParameterList params;
+  params.append("wo_number", _woNumber->text());
   if (_showOnlyTopLevel->isChecked())
-    sql += " AND ( (wo_ordtype<>'W') OR (wo_ordtype IS NULL) )";
-
-  sql += ") "
-         "ORDER BY wo_number, wo_subnumber;";
-
-  q.prepare(sql);
-  q.bindValue(":wo_number", _woNumber->text());
-  q.exec();
+    params.append("showOnlyTopLevel");
+  q = mql.toQuery(params);
   _wo->populate(q);
 }
 
