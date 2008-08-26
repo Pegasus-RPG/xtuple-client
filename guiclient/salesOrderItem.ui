@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>673</width>
-    <height>654</height>
+    <width>740</width>
+    <height>639</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -17,7 +17,7 @@
   </property>
   <property name="minimumSize" >
    <size>
-    <width>650</width>
+    <width>740</width>
     <height>600</height>
    </size>
   </property>
@@ -27,6 +27,15 @@
   <layout class="QGridLayout" >
    <item row="0" column="0" >
     <layout class="QGridLayout" >
+     <property name="leftMargin" >
+      <number>12</number>
+     </property>
+     <property name="rightMargin" >
+      <number>12</number>
+     </property>
+     <property name="bottomMargin" >
+      <number>12</number>
+     </property>
      <property name="horizontalSpacing" >
       <number>12</number>
      </property>
@@ -313,7 +322,7 @@
         <item rowspan="3" row="0" column="2" >
          <layout class="QGridLayout" >
           <property name="topMargin" >
-           <number>5</number>
+           <number>7</number>
           </property>
           <item row="0" column="0" >
            <widget class="QLabel" name="_warehouseLit" >
@@ -444,24 +453,6 @@
         <string/>
        </property>
        <layout class="QGridLayout" >
-        <property name="leftMargin" >
-         <number>5</number>
-        </property>
-        <property name="topMargin" >
-         <number>5</number>
-        </property>
-        <property name="rightMargin" >
-         <number>5</number>
-        </property>
-        <property name="bottomMargin" >
-         <number>5</number>
-        </property>
-        <property name="horizontalSpacing" >
-         <number>5</number>
-        </property>
-        <property name="verticalSpacing" >
-         <number>5</number>
-        </property>
         <item row="0" column="0" >
          <widget class="QLabel" name="_qtyOrderedLit" >
           <property name="minimumSize" >
@@ -1731,6 +1722,11 @@
    <class>XComboBox</class>
    <extends>QComboBox</extends>
    <header>xcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XLabel</class>
+   <extends>QLabel</extends>
+   <header>xlabel.h</header>
   </customwidget>
   <customwidget>
    <class>XLineEdit</class>
