@@ -167,6 +167,20 @@ void company::sSave()
     return;
   }
 
+  q.prepare("SELECT company_id"
+            "  FROM company"
+            " WHERE((company_id != :company_id)"
+            "   AND (company_number=:company_number))");
+  q.bindValue(":company_id",       _companyid);
+  q.bindValue(":company_number",   _number->text());
+  q.exec();
+  if(q.first())
+  {
+    QMessageBox::critical(this, tr("Duplicate Company Number"),
+      tr("A Company Number already exists for the one specified.") );
+    return;
+  }
+
   if (_mode == cNew)
   {
     q.exec("SELECT NEXTVAL('company_company_id_seq') AS company_id;");
