@@ -595,16 +595,22 @@ void GUIClient::initMenuBar()
   qApp->processEvents();
   systemMenu = new menuSystem(this);
 
-  // QSettings config("OpenMFG", "OpenMFG");
-  // restoreState(config.value("MainWindowState", QByteArray()).toByteArray(), 1);
+  QSettings config("OpenMFG", "OpenMFG");
+  restoreState(config.value("MainWindowState", QByteArray()).toByteArray(), 1);
+
+  toolbars = qFindChildren<QToolBar *>(this);
+  for (int i = 0; i < toolbars.size(); ++i)
+  {
+    toolbars.at(i)->show();
+  }
 
   qApp->restoreOverrideCursor();
 }
 
 void GUIClient::saveToolbarPositions()
 {
-  // QSettings config("OpenMFG", "OpenMFG");
-  // config.setValue("MainWindowState", saveState(1));
+  QSettings config("OpenMFG", "OpenMFG");
+  config.setValue("MainWindowState", saveState(1));
 }
 
 void GUIClient::closeEvent(QCloseEvent *event)
