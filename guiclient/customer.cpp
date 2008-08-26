@@ -139,7 +139,7 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
     _cc->addColumn(tr("Number"),          150, Qt::AlignRight,true, "f_number");
     _cc->addColumn(tr("Active"),           -1, Qt::AlignLeft, true, "ccard_active");
     
-    _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft );
+    _charass->addColumn(tr("Characteristic"), _itemColumn*2, Qt::AlignLeft );
     _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft );
   
     _custchar = new QStandardItemModel(0, 2, this);
