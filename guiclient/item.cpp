@@ -222,9 +222,9 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
  
   if (!_metrics->boolean("BBOM"))
   {
+    _itemtype->removeItem(12);
     _itemtype->removeItem(11);
     _itemtype->removeItem(10);
-    _itemtype->removeItem(9);
   }
     
   if (_metrics->value("Application") != "OpenMFG")
