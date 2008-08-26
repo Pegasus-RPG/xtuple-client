@@ -3,6 +3,9 @@
  <title>Packing List (Shipment)</title>
  <name>PackingList-Shipment</name>
  <description>Non-Hybrid version - driven only by shiphead_id parameter - Packing List showing the contents of a particular shipment - Shows RA# if SO is a replacement order for and RA</description>
+ <parameter default="324" active="true" listtype="static" type="string" name="cosmisc_id" >
+  <description></description>
+ </parameter>
  <size>Letter</size>
  <portrait/>
  <topmargin>25</topmargin>
@@ -80,7 +83,10 @@ SELECT shiphead_number, 'T/O #:' AS ordertype,
  <querysource>
   <name>detail</name>
   <sql>SELECT 1 AS groupby,
-       coitem_linenumber AS linenumber,
+--     coitem_linenumber AS linenumber,
+--     In 3.1 replace line above with line below to support 
+--     kitting functionality
+       formatsolinenumber(coitem_id) AS linenumber,
        coitem_memo AS memo,
        item_number,
        formatitemsitebarcode(itemsite_id) AS item_barcode,
@@ -147,7 +153,9 @@ SELECT shiphead_number, 'T/O #:' AS ordertype,
 &lt;? if exists("MultiWhs") ?>
 UNION
 SELECT 2 AS groupby,
-       toitem_linenumber AS linenumber,
+--     For 3.1 added CAST to match column type of corresponding column in other SELECT 
+--     in this UNION
+       CAST(toitem_linenumber AS text) AS linenumber,
        '' AS memo,
        item_number,
        formatitemsitebarcode(itemsite_id) AS item_barcode,
@@ -208,6 +216,73 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
  </querysource>
  <rpthead>
   <height>463</height>
+  <field>
+   <rect>
+    <x>170</x>
+    <y>112</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>14</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>ordernumber</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>10</x>
+    <y>10</y>
+    <width>355</width>
+    <height>50</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>20</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Shipment Packing List</string>
+  </label>
+  <label>
+   <rect>
+    <x>85</x>
+    <y>440</y>
+    <width>200</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Item Description</string>
+  </label>
+  <label>
+   <rect>
+    <x>10</x>
+    <y>85</y>
+    <width>150</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>14</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Shipment #:</string>
+  </label>
   <label>
    <rect>
     <x>525</x>
@@ -224,59 +299,82 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
    <vcenter/>
    <string>Verified</string>
   </label>
+  <field>
+   <rect>
+    <x>170</x>
+    <y>175</y>
+    <width>170</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>14</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>cust_number</column>
+   </data>
+  </field>
   <barcode>
    <rect>
     <x>375</x>
-    <y>112</y>
-    <width>231</width>
+    <y>202</y>
+    <width>307</width>
     <height>25</height>
    </rect>
-   <format>128</format>
-   <maxlength>10</maxlength>
+   <format>3of9</format>
+   <maxlength>20</maxlength>
    <left/>
-   <data>
-    <query>head</query>
-    <column>order_barcode</column>
-   </data>
-  </barcode>
-  <field>
-   <rect>
-    <x>170</x>
-    <y>145</y>
-    <width>170</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>14</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>so_ra_relation</query>
-    <column>rahead_number</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>170</x>
-    <y>202</y>
-    <width>170</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>14</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
    <data>
     <query>head</query>
     <column>cohead_custponumber</column>
    </data>
+  </barcode>
+  <label>
+   <rect>
+    <x>375</x>
+    <y>400</y>
+    <width>75</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>12</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Terms:</string>
+  </label>
+  <field>
+   <rect>
+    <x>480</x>
+    <y>285</y>
+    <width>300</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>14</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>shiptoname</column>
+   </data>
   </field>
+  <line>
+   <xstart>0</xstart>
+   <ystart>425</ystart>
+   <xend>797</xend>
+   <yend>425</yend>
+   <weight>0</weight>
+  </line>
   <label>
    <rect>
     <x>10</x>
@@ -293,13 +391,69 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
    <vcenter/>
    <string>Customer P/O #:</string>
   </label>
-  <line>
-   <xstart>0</xstart>
-   <ystart>425</ystart>
-   <xend>797</xend>
-   <yend>425</yend>
-   <weight>0</weight>
-  </line>
+  <label>
+   <rect>
+    <x>10</x>
+    <y>252</y>
+    <width>150</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>14</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Sched. Date:</string>
+  </label>
+  <label>
+   <rect>
+    <x>10</x>
+    <y>231</y>
+    <width>150</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>14</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Order Date:</string>
+  </label>
+  <label>
+   <rect>
+    <x>25</x>
+    <y>400</y>
+    <width>95</width>
+    <height>25</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>12</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <top/>
+   <string>Attention:</string>
+  </label>
+  <barcode>
+   <rect>
+    <x>375</x>
+    <y>175</y>
+    <width>177</width>
+    <height>25</height>
+   </rect>
+   <format>3of9</format>
+   <maxlength>10</maxlength>
+   <left/>
+   <data>
+    <query>head</query>
+    <column>cust_number</column>
+   </data>
+  </barcode>
   <field>
    <rect>
     <x>170</x>
@@ -317,6 +471,25 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
    <data>
     <query>head</query>
     <column>shiphead_number</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>10</x>
+    <y>145</y>
+    <width>150</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>14</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>so_ra_relation</query>
+    <column>ratext</column>
    </data>
   </field>
   <field>
@@ -340,9 +513,9 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
   </field>
   <label>
    <rect>
-    <x>5</x>
+    <x>295</x>
     <y>425</y>
-    <width>75</width>
+    <width>40</width>
     <height>20</height>
    </rect>
    <font>
@@ -350,10 +523,65 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
     <size>10</size>
     <weight>bold</weight>
    </font>
+   <hcenter/>
+   <vcenter/>
+   <string>UOM</string>
+  </label>
+  <text>
+   <rect>
+    <x>480</x>
+    <y>305</y>
+    <width>300</width>
+    <height>15</height>
+   </rect>
+   <bottompad>10</bottompad>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <top/>
+   <data>
+    <query>head</query>
+    <column>shipping_address</column>
+   </data>
+  </text>
+  <label>
+   <rect>
+    <x>10</x>
+    <y>285</y>
+    <width>75</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>14</size>
+    <weight>normal</weight>
+   </font>
    <left/>
    <vcenter/>
-   <string>Order Line</string>
+   <string>Bill To:</string>
   </label>
+  <field>
+   <rect>
+    <x>480</x>
+    <y>252</y>
+    <width>300</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>14</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>shipvia</column>
+   </data>
+  </field>
   <field>
    <rect>
     <x>455</x>
@@ -373,59 +601,11 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
     <column>terms_descrip</column>
    </data>
   </field>
-  <label>
-   <rect>
-    <x>10</x>
-    <y>231</y>
-    <width>150</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>14</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Order Date:</string>
-  </label>
-  <label>
-   <rect>
-    <x>295</x>
-    <y>425</y>
-    <width>40</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>UOM</string>
-  </label>
-  <label>
-   <rect>
-    <x>10</x>
-    <y>252</y>
-    <width>150</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>14</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Sched. Date:</string>
-  </label>
   <field>
    <rect>
-    <x>480</x>
-    <y>285</y>
-    <width>300</width>
+    <x>170</x>
+    <y>231</y>
+    <width>100</width>
     <height>20</height>
    </rect>
    <font>
@@ -437,9 +617,98 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
    <vcenter/>
    <data>
     <query>head</query>
-    <column>shiptoname</column>
+    <column>orderdate</column>
    </data>
   </field>
+  <field>
+   <rect>
+    <x>170</x>
+    <y>202</y>
+    <width>170</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>14</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>cohead_custponumber</column>
+   </data>
+  </field>
+  <line>
+   <xstart>0</xstart>
+   <ystart>455</ystart>
+   <xend>797</xend>
+   <yend>455</yend>
+   <weight>0</weight>
+  </line>
+  <label>
+   <rect>
+    <x>375</x>
+    <y>252</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>14</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Ship Via:</string>
+  </label>
+  <label>
+   <rect>
+    <x>5</x>
+    <y>425</y>
+    <width>75</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Order Line</string>
+  </label>
+  <label>
+   <rect>
+    <x>345</x>
+    <y>425</y>
+    <width>80</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Ordered</string>
+  </label>
+  <barcode>
+   <rect>
+    <x>375</x>
+    <y>112</y>
+    <width>231</width>
+    <height>25</height>
+   </rect>
+   <format>128</format>
+   <maxlength>10</maxlength>
+   <left/>
+   <data>
+    <query>head</query>
+    <column>order_barcode</column>
+   </data>
+  </barcode>
   <field>
    <rect>
     <x>90</x>
@@ -459,38 +728,19 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
     <column>billtoname</column>
    </data>
   </field>
-  <label>
-   <rect>
-    <x>85</x>
-    <y>440</y>
-    <width>200</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Item Description</string>
-  </label>
-  <label>
+  <image>
    <rect>
     <x>375</x>
-    <y>285</y>
-    <width>100</width>
-    <height>20</height>
+    <y>0</y>
+    <width>425</width>
+    <height>100</height>
    </rect>
-   <font>
-    <face>Arial</face>
-    <size>14</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Ship To:</string>
-  </label>
+   <mode>stretch</mode>
+   <data>
+    <query>logo</query>
+    <column>image_data</column>
+   </data>
+  </image>
   <field>
    <rect>
     <x>170</x>
@@ -512,156 +762,19 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
   </field>
   <label>
    <rect>
-    <x>10</x>
-    <y>175</y>
-    <width>150</width>
+    <x>432</x>
+    <y>425</y>
+    <width>80</width>
     <height>20</height>
    </rect>
-   <font>
-    <face>Arial</face>
-    <size>14</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Customer #:</string>
-  </label>
-  <field>
-   <rect>
-    <x>170</x>
-    <y>231</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>14</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>orderdate</column>
-   </data>
-  </field>
-  <image>
-   <rect>
-    <x>375</x>
-    <y>0</y>
-    <width>425</width>
-    <height>100</height>
-   </rect>
-   <mode>stretch</mode>
-   <data>
-    <query>logo</query>
-    <column>image_data</column>
-   </data>
-  </image>
-  <field>
-   <rect>
-    <x>170</x>
-    <y>175</y>
-    <width>170</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>14</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>cust_number</column>
-   </data>
-  </field>
-  <text>
-   <rect>
-    <x>480</x>
-    <y>305</y>
-    <width>300</width>
-    <height>15</height>
-   </rect>
-   <bottompad>10</bottompad>
    <font>
     <face>Arial</face>
     <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <top/>
-   <data>
-    <query>head</query>
-    <column>shipping_address</column>
-   </data>
-  </text>
-  <barcode>
-   <rect>
-    <x>375</x>
-    <y>175</y>
-    <width>177</width>
-    <height>25</height>
-   </rect>
-   <format>3of9</format>
-   <maxlength>10</maxlength>
-   <left/>
-   <data>
-    <query>head</query>
-    <column>cust_number</column>
-   </data>
-  </barcode>
-  <label>
-   <rect>
-    <x>375</x>
-    <y>400</y>
-    <width>75</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>12</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Terms:</string>
-  </label>
-  <field>
-   <rect>
-    <x>480</x>
-    <y>252</y>
-    <width>300</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>14</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>shipvia</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>10</x>
-    <y>10</y>
-    <width>300</width>
-    <height>50</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>20</size>
     <weight>bold</weight>
    </font>
-   <left/>
+   <right/>
    <vcenter/>
-   <string>PACKING List</string>
+   <string>Shipped</string>
   </label>
   <label>
    <rect>
@@ -679,10 +792,29 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
    <vcenter/>
    <string>Item Number</string>
   </label>
+  <field>
+   <rect>
+    <x>170</x>
+    <y>145</y>
+    <width>170</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>14</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>so_ra_relation</query>
+    <column>rahead_number</column>
+   </data>
+  </field>
   <label>
    <rect>
     <x>375</x>
-    <y>252</y>
+    <y>285</y>
     <width>100</width>
     <height>20</height>
    </rect>
@@ -693,7 +825,7 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
    </font>
    <left/>
    <vcenter/>
-   <string>Ship Via:</string>
+   <string>Ship To:</string>
   </label>
   <field>
    <rect>
@@ -714,104 +846,6 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
     <column>cust_contact</column>
    </data>
   </field>
-  <label>
-   <rect>
-    <x>432</x>
-    <y>425</y>
-    <width>80</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Shipped</string>
-  </label>
-  <field>
-   <rect>
-    <x>170</x>
-    <y>112</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>14</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>ordernumber</column>
-   </data>
-  </field>
-  <barcode>
-   <rect>
-    <x>375</x>
-    <y>202</y>
-    <width>307</width>
-    <height>25</height>
-   </rect>
-   <format>3of9</format>
-   <maxlength>20</maxlength>
-   <left/>
-   <data>
-    <query>head</query>
-    <column>cohead_custponumber</column>
-   </data>
-  </barcode>
-  <label>
-   <rect>
-    <x>10</x>
-    <y>85</y>
-    <width>150</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>14</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Shipment #:</string>
-  </label>
-  <label>
-   <rect>
-    <x>10</x>
-    <y>285</y>
-    <width>75</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>14</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Bill To:</string>
-  </label>
-  <label>
-   <rect>
-    <x>345</x>
-    <y>425</y>
-    <width>80</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Ordered</string>
-  </label>
   <text>
    <rect>
     <x>90</x>
@@ -834,31 +868,8 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
   </text>
   <label>
    <rect>
-    <x>25</x>
-    <y>400</y>
-    <width>95</width>
-    <height>25</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>12</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <top/>
-   <string>Attention:</string>
-  </label>
-  <line>
-   <xstart>0</xstart>
-   <ystart>455</ystart>
-   <xend>797</xend>
-   <yend>455</yend>
-   <weight>0</weight>
-  </line>
-  <field>
-   <rect>
     <x>10</x>
-    <y>145</y>
+    <y>175</y>
     <width>150</width>
     <height>20</height>
    </rect>
@@ -869,11 +880,8 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
    </font>
    <left/>
    <vcenter/>
-   <data>
-    <query>so_ra_relation</query>
-    <column>ratext</column>
-   </data>
-  </field>
+   <string>Customer #:</string>
+  </label>
  </rpthead>
  <section>
   <name>detail</name>
@@ -881,27 +889,7 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
    <name>characteristic</name>
    <column>linenumber</column>
    <foot>
-    <height>33</height>
-    <text>
-     <rect>
-      <x>370</x>
-      <y>5</y>
-      <width>195</width>
-      <height>17</height>
-     </rect>
-     <bottompad>14</bottompad>
-     <font>
-      <face>Arial</face>
-      <size>10</size>
-      <weight>normal</weight>
-     </font>
-     <left/>
-     <vcenter/>
-     <data>
-      <query>detail</query>
-      <column>char_value</column>
-     </data>
-    </text>
+    <height>35</height>
     <text>
      <rect>
       <x>130</x>
@@ -942,18 +930,11 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
       <column>char_title</column>
      </data>
     </text>
-   </foot>
-  </group>
-  <group>
-   <name>lotserial</name>
-   <column>linenumber</column>
-   <foot>
-    <height>28</height>
     <text>
      <rect>
-      <x>228</x>
+      <x>370</x>
       <y>5</y>
-      <width>550</width>
+      <width>195</width>
       <height>17</height>
      </rect>
      <bottompad>14</bottompad>
@@ -966,9 +947,16 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
      <vcenter/>
      <data>
       <query>detail</query>
-      <column>lotserial</column>
+      <column>char_value</column>
      </data>
     </text>
+   </foot>
+  </group>
+  <group>
+   <name>lotserial</name>
+   <column>linenumber</column>
+   <foot>
+    <height>29</height>
     <text>
      <rect>
       <x>10</x>
@@ -989,32 +977,49 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
       <column>lotserial_title</column>
      </data>
     </text>
+    <text>
+     <rect>
+      <x>228</x>
+      <y>5</y>
+      <width>550</width>
+      <height>17</height>
+     </rect>
+     <bottompad>14</bottompad>
+     <font>
+      <face>Arial</face>
+      <size>10</size>
+      <weight>normal</weight>
+     </font>
+     <left/>
+     <vcenter/>
+     <data>
+      <query>detail</query>
+      <column>lotserial</column>
+     </data>
+    </text>
    </foot>
   </group>
   <group>
    <name>line</name>
    <column>linenumber</column>
    <foot>
-    <height>78</height>
-    <field>
+    <height>82</height>
+    <label>
      <rect>
-      <x>80</x>
+      <x>610</x>
       <y>0</y>
-      <width>200</width>
-      <height>20</height>
+      <width>50</width>
+      <height>17</height>
      </rect>
      <font>
       <face>Arial</face>
-      <size>11</size>
-      <weight>bold</weight>
+      <size>10</size>
+      <weight>normal</weight>
      </font>
      <left/>
      <vcenter/>
-     <data>
-      <query>detail</query>
-      <column>item_number</column>
-     </data>
-    </field>
+     <string>Status:</string>
+    </label>
     <field>
      <rect>
       <x>430</x>
@@ -1034,6 +1039,45 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
       <column>shipped</column>
      </data>
     </field>
+    <text>
+     <rect>
+      <x>70</x>
+      <y>55</y>
+      <width>665</width>
+      <height>17</height>
+     </rect>
+     <bottompad>14</bottompad>
+     <font>
+      <face>Arial</face>
+      <size>10</size>
+      <weight>normal</weight>
+     </font>
+     <left/>
+     <vcenter/>
+     <data>
+      <query>detail</query>
+      <column>memo</column>
+     </data>
+    </text>
+    <field>
+     <rect>
+      <x>80</x>
+      <y>0</y>
+      <width>200</width>
+      <height>20</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>11</size>
+      <weight>bold</weight>
+     </font>
+     <left/>
+     <vcenter/>
+     <data>
+      <query>detail</query>
+      <column>item_number</column>
+     </data>
+    </field>
     <line>
      <xstart>545</xstart>
      <ystart>15</ystart>
@@ -1041,21 +1085,6 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
      <yend>15</yend>
      <weight>1</weight>
     </line>
-    <barcode>
-     <rect>
-      <x>415</x>
-      <y>20</y>
-      <width>380</width>
-      <height>30</height>
-     </rect>
-     <format>128</format>
-     <maxlength>15</maxlength>
-     <right/>
-     <data>
-      <query>detail</query>
-      <column>item_barcode</column>
-     </data>
-    </barcode>
     <field>
      <rect>
       <x>290</x>
@@ -1077,25 +1106,6 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
     </field>
     <field>
      <rect>
-      <x>80</x>
-      <y>20</y>
-      <width>300</width>
-      <height>15</height>
-     </rect>
-     <font>
-      <face>Arial</face>
-      <size>11</size>
-      <weight>normal</weight>
-     </font>
-     <left/>
-     <vcenter/>
-     <data>
-      <query>detail</query>
-      <column>item_descrip1</column>
-     </data>
-    </field>
-    <field>
-     <rect>
       <x>340</x>
       <y>0</y>
       <width>80</width>
@@ -1113,22 +1123,6 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
       <column>ordered</column>
      </data>
     </field>
-    <label>
-     <rect>
-      <x>610</x>
-      <y>0</y>
-      <width>50</width>
-      <height>17</height>
-     </rect>
-     <font>
-      <face>Arial</face>
-      <size>10</size>
-      <weight>normal</weight>
-     </font>
-     <left/>
-     <vcenter/>
-     <string>Status:</string>
-    </label>
     <field>
      <rect>
       <x>80</x>
@@ -1167,42 +1161,40 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
       <column>f_status</column>
      </data>
     </field>
-    <label>
+    <barcode>
      <rect>
-      <x>10</x>
-      <y>55</y>
-      <width>55</width>
-      <height>17</height>
+      <x>415</x>
+      <y>20</y>
+      <width>380</width>
+      <height>30</height>
+     </rect>
+     <format>128</format>
+     <maxlength>15</maxlength>
+     <right/>
+     <data>
+      <query>detail</query>
+      <column>item_barcode</column>
+     </data>
+    </barcode>
+    <field>
+     <rect>
+      <x>80</x>
+      <y>20</y>
+      <width>300</width>
+      <height>15</height>
      </rect>
      <font>
       <face>Arial</face>
-      <size>10</size>
-      <weight>normal</weight>
-     </font>
-     <left/>
-     <vcenter/>
-     <string>Notes:</string>
-    </label>
-    <text>
-     <rect>
-      <x>70</x>
-      <y>55</y>
-      <width>665</width>
-      <height>17</height>
-     </rect>
-     <bottompad>14</bottompad>
-     <font>
-      <face>Arial</face>
-      <size>10</size>
+      <size>11</size>
       <weight>normal</weight>
      </font>
      <left/>
      <vcenter/>
      <data>
       <query>detail</query>
-      <column>memo</column>
+      <column>item_descrip1</column>
      </data>
-    </text>
+    </field>
     <field>
      <rect>
       <x>5</x>
@@ -1222,13 +1214,29 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
       <column>linenumber</column>
      </data>
     </field>
+    <label>
+     <rect>
+      <x>10</x>
+      <y>55</y>
+      <width>55</width>
+      <height>17</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>10</size>
+      <weight>normal</weight>
+     </font>
+     <left/>
+     <vcenter/>
+     <string>Notes:</string>
+    </label>
    </foot>
   </group>
   <detail>
    <key>
     <query>detail</query>
    </key>
-   <height>8</height>
+   <height>9</height>
   </detail>
  </section>
  <section>
@@ -1237,7 +1245,7 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
    <key>
     <query>head</query>
    </key>
-   <height>38</height>
+   <height>41</height>
    <text>
     <rect>
      <x>5</x>
@@ -1290,22 +1298,6 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
   </field>
   <label>
    <rect>
-    <x>25</x>
-    <y>5</y>
-    <width>61</width>
-    <height>17</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <top/>
-   <string>Print Date: </string>
-  </label>
-  <label>
-   <rect>
     <x>695</x>
     <y>5</y>
     <width>37</width>
@@ -1319,6 +1311,22 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
    <right/>
    <top/>
    <string>Page:</string>
+  </label>
+  <label>
+   <rect>
+    <x>25</x>
+    <y>5</y>
+    <width>61</width>
+    <height>17</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <top/>
+   <string>Print Date: </string>
   </label>
   <label>
    <rect>
@@ -1376,30 +1384,7 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
   </field>
  </pgfoot>
  <rptfoot>
-  <height>93</height>
-  <label>
-   <rect>
-    <x>415</x>
-    <y>45</y>
-    <width>165</width>
-    <height>30</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>14</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Checked By:</string>
-  </label>
-  <line>
-   <xstart>160</xstart>
-   <ystart>70</ystart>
-   <xend>407</xend>
-   <yend>70</yend>
-   <weight>0</weight>
-  </line>
+  <height>94</height>
   <label>
    <rect>
     <x>10</x>
@@ -1420,6 +1405,29 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
    <xstart>540</xstart>
    <ystart>70</ystart>
    <xend>790</xend>
+   <yend>70</yend>
+   <weight>0</weight>
+  </line>
+  <label>
+   <rect>
+    <x>415</x>
+    <y>45</y>
+    <width>165</width>
+    <height>30</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>14</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Checked By:</string>
+  </label>
+  <line>
+   <xstart>160</xstart>
+   <ystart>70</ystart>
+   <xend>407</xend>
    <yend>70</yend>
    <weight>0</weight>
   </line>
