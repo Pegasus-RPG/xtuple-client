@@ -63,6 +63,7 @@
 
 #include <stdlib.h>
 #include <metasql.h>
+#include "mqlutil.h"
 
 #include "arOpenItem.h"
 #include "applyARCreditMemo.h"
@@ -70,7 +71,6 @@
 #include "creditMemo.h"
 #include "creditcardprocessor.h"
 #include "dspInvoiceInformation.h"
-#include "mqlutil.h"
 #include "storedProcErrorLookup.h"
 
 arWorkBench::arWorkBench(QWidget* parent, const char* name, Qt::WFlags fl)
@@ -122,22 +122,24 @@ arWorkBench::arWorkBench(QWidget* parent, const char* name, Qt::WFlags fl)
     connect(_cashrcpt, SIGNAL(itemSelected(int)), _editCashrcpt, SLOT(animateClick()));
   connect(omfgThis, SIGNAL(cashReceiptsUpdated(int, bool)), this, SLOT(sFillList()));
                                                                        
-  _aropenCM->addColumn( tr("Type"),          _ynColumn, Qt::AlignCenter,true, "doctype");
-  _aropenCM->addColumn( tr("Doc. #"),      _itemColumn, Qt::AlignCenter,true, "aropen_docnumber");
-  _aropenCM->addColumn( tr("Amount"),     _moneyColumn, Qt::AlignRight, true, "aropen_amount");
-  _aropenCM->addColumn( tr("Applied"),    _moneyColumn, Qt::AlignRight, true, "applied");
-  _aropenCM->addColumn( tr("Balance"),    _moneyColumn, Qt::AlignRight, true, "balance");
-  _aropenCM->addColumn( tr("Currency"),_currencyColumn, Qt::AlignLeft,  true, "currabbr");
+  _aropenCM->addColumn( tr("Type"),              _ynColumn, Qt::AlignCenter,true, "doctype");
+  _aropenCM->addColumn( tr("Doc. #"),          _itemColumn, Qt::AlignCenter,true, "aropen_docnumber");
+  _aropenCM->addColumn( tr("Amount"),         _moneyColumn, Qt::AlignRight, true, "aropen_amount");
+  _aropenCM->addColumn( tr("Applied"),        _moneyColumn, Qt::AlignRight, true, "applied");
+  _aropenCM->addColumn( tr("Balance"),        _moneyColumn, Qt::AlignRight, true, "balance");
+  _aropenCM->addColumn( tr("Currency"),    _currencyColumn, Qt::AlignLeft,  true, "currabbr");
+  _aropenCM->addColumn(tr("Base Balance"), _bigMoneyColumn, Qt::AlignRight, true, "base_balance");
   
-  _aropen->addColumn(tr("Doc. Type"),            -1, Qt::AlignCenter,true, "doctype");
-  _aropen->addColumn(tr("Doc. #"),     _orderColumn, Qt::AlignRight, true, "aropen_docnumber");
-  _aropen->addColumn(tr("Order #"),    _orderColumn, Qt::AlignRight, true, "aropen_ordernumber");
-  _aropen->addColumn(tr("Doc. Date"),   _dateColumn, Qt::AlignCenter,true, "aropen_docdate");
-  _aropen->addColumn(tr("Due Date"),    _dateColumn, Qt::AlignCenter,true, "aropen_duedate");
-  _aropen->addColumn(tr("Amount"),  _bigMoneyColumn, Qt::AlignRight, true, "aropen_amount");
-  _aropen->addColumn(tr("Paid"),    _bigMoneyColumn, Qt::AlignRight, true, "aropen_paid");
-  _aropen->addColumn(tr("Balance"), _bigMoneyColumn, Qt::AlignRight, true, "balance");
-  _aropen->addColumn(tr("Currency"),_currencyColumn, Qt::AlignLeft,  true, "currabbr");
+  _aropen->addColumn(tr("Type"),               _ynColumn, Qt::AlignCenter,true, "doctype");
+  _aropen->addColumn(tr("Doc. #"),          _orderColumn, Qt::AlignRight, true, "aropen_docnumber");
+  _aropen->addColumn(tr("Order #"),         _orderColumn, Qt::AlignRight, true, "aropen_ordernumber");
+  _aropen->addColumn(tr("Doc. Date"),        _dateColumn, Qt::AlignCenter,true, "aropen_docdate");
+  _aropen->addColumn(tr("Due Date"),         _dateColumn, Qt::AlignCenter,true, "aropen_duedate");
+  _aropen->addColumn(tr("Amount"),          _moneyColumn, Qt::AlignRight, true, "aropen_amount");
+  _aropen->addColumn(tr("Paid"),            _moneyColumn, Qt::AlignRight, true, "aropen_paid");
+  _aropen->addColumn(tr("Balance"),         _moneyColumn, Qt::AlignRight, true, "balance");
+  _aropen->addColumn(tr("Currency"),     _currencyColumn, Qt::AlignLeft,  true, "currAbbr");
+  _aropen->addColumn(tr("Base Balance"), _bigMoneyColumn, Qt::AlignRight, true, "base_balance");
   
   _preauth->addColumn(tr("Order-Seq."),          150, Qt::AlignRight, true, "ordnum" );
   _preauth->addColumn(tr("Amount"),  _bigMoneyColumn, Qt::AlignRight, true, "ccpay_amount");
@@ -208,15 +210,6 @@ void arWorkBench::sFillList()
 {
   _CCAmount->clear();
 
-  XSqlQuery currQ;
-  currQ.prepare("SELECT cust_curr_id FROM cust WHERE (cust_id=:cust_id)");
-  currQ.bindValue(":cust_id", _cust->id());
-  currQ.exec();
-  if (currQ.first())
-    _aropenTotal->setId(currQ.value("cust_curr_id").toInt());
-  else if (currQ.lastError().type() != QSqlError::NoError)
-    systemError(this, currQ.lastError().databaseText(), __FILE__, __LINE__);
-
   sFillCashrcptList();
   sFillAropenCMList();
   sFillAropenList();
@@ -225,44 +218,21 @@ void arWorkBench::sFillList()
 
 void arWorkBench::sFillAropenList()
 {
-  q.prepare("SELECT aropen_id,"
-             "       CASE WHEN (aropen_doctype='D') THEN 0"
-             "            WHEN (aropen_doctype='I') THEN 1"
-             "            ELSE -1"
-             "       END AS altid,"
-             "       CASE WHEN (aropen_doctype='D') THEN :debitMemo"
-             "            WHEN (aropen_doctype='I') THEN :invoice"
-             "            ELSE :other"
-             "       END AS doctype,"
-             "       *, "
-             "       aropen_amount - aropen_paid AS balance,"
-             "       currConcat(aropen_curr_id) AS currabbr,"
-             "       'curr' AS aropen_amount_xtnumericrole,"
-             "       'curr' AS aropen_paid_xtnumericrole,"
-             "       'curr' AS balance_xtnumericrole "
-             "FROM aropen "
-             "WHERE ( (aropen_open)"
-             " AND (NOT (aropen_doctype IN ('C', 'R'))) "
-             " AND (aropen_cust_id=:cust_id) ) "
-             "ORDER BY aropen_docdate;" );
-  q.bindValue(":cust_id", _cust->id());
-  q.bindValue(":debitMemo", tr("D/M"));
-  q.bindValue(":invoice", tr("Invoice"));
-  q.bindValue(":other", tr("Other"));
-  q.exec();
+  MetaSQLQuery mql = mqlLoad(":/ar/arOpenItems.mql");
+  ParameterList params;
+  params.append("debitsOnly");
+  params.append("orderByDocDate");
+  params.append("cust_id", _cust->id());
+  params.append("invoice", tr("Invoice"));
+  params.append("creditMemo", tr("C/M"));
+  params.append("debitMemo", tr("D/M"));
+  params.append("cashdeposit", tr("C/D"));
+  params.append("other", tr("Other"));
+  q = mql.toQuery(params);
   _aropen->populate(q, true);
   
-  q.prepare("SELECT SUM(CASE WHEN (aropen_doctype IN ('C', 'R')) THEN"
-            "           (currToBase(aropen_curr_id, aropen_amount - aropen_paid, aropen_docdate) * -1)"
-            "      WHEN (aropen_doctype IN ('I', 'D')) THEN"
-            "           currToBase(aropen_curr_id, aropen_amount - aropen_paid, aropen_docdate)"
-            "      ELSE currToBase(aropen_curr_id, aropen_amount - aropen_paid, aropen_docdate)"
-            "       END) AS total_balance "
-            "FROM aropen "
-            "WHERE ( (aropen_open)"
-            " AND (aropen_cust_id=:cust_id) ) " );
-  q.bindValue(":cust_id", _cust->id());
-  q.exec();
+  params.append("totalOnly");
+  q = mql.toQuery(params);
   if(q.first())
   {
     _aropenTotal->setBaseValue(q.value("total_balance").toDouble());
@@ -297,7 +267,7 @@ void arWorkBench::sViewInvoice()
 {
   ParameterList params;
   XTreeWidgetItem * item = static_cast<XTreeWidgetItem*>(_aropen->currentItem());
-  if(_aropen->altId() == 1 && item)
+  if(_aropen->altId() == 0 && item)
   {
     params.append("invoiceNumber", item->text(1));
     dspInvoiceInformation * newdlg = new dspInvoiceInformation();
@@ -331,6 +301,9 @@ void arWorkBench::sFillAropenCMList()
              "       'curr' AS applied_xtnumericrole,"
              "       (aropen_amount - aropen_paid - COALESCE(prepared,0.0)) AS balance,"
              "       'curr' AS balance_xtnumericrole,"
+             "       currtobase(aropen_curr_id,(aropen_amount - aropen_paid - COALESCE(prepared,0.0)),aropen_docdate) AS base_balance,"
+             "       'curr' AS base_balance_xtnumericrole,"
+             "       0 AS base_balance_xttotalrole,"
              "       currConcat(aropen_curr_id) AS currabbr "
              "FROM aropen "
              "       LEFT OUTER JOIN (SELECT aropen_id AS prepared_aropen_id,"
@@ -713,7 +686,7 @@ void arWorkBench::sPopulateAropenMenu(QMenu *pMenu)
 {
   int menuItem;
 
-  if (_aropen->altId() == 0)
+  if (_aropen->altId() == 2)
   {
     menuItem = pMenu->insertItem(tr("View Apply-To Debit Memo..."), this, SLOT(sViewAropen()), 0);
     if (! _privileges->check("MaintainARMemos") &&
@@ -721,7 +694,7 @@ void arWorkBench::sPopulateAropenMenu(QMenu *pMenu)
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 
-  else if (_aropen->altId() == 1)
+  else if (_aropen->altId() == 0)
   {
     menuItem = pMenu->insertItem(tr("View Apply-To Invoice..."), this, SLOT(sViewInvoice()), 0);
     if (! _privileges->check("MaintainMiscInvoices") &&

@@ -79,6 +79,15 @@
           <property name="localControl" >
            <bool>false</bool>
           </property>
+          <property name="allowNegative" >
+           <bool>true</bool>
+          </property>
+          <property name="currencyDisabled" >
+           <bool>true</bool>
+          </property>
+          <property name="currencyVisible" >
+           <bool>false</bool>
+          </property>
           <property name="enabled" >
            <bool>false</bool>
           </property>
@@ -567,7 +576,6 @@
   <tabstop>_aropenTotal</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
- <includes/>
  <resources/>
  <connections>
   <connection>
