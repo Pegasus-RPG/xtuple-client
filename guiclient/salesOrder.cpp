@@ -1697,6 +1697,7 @@ void salesOrder::sHandleButtons()
     if(_numSelected == 1)
     {
       _edit->setEnabled(TRUE);
+      _delete->setEnabled(true);
       int lineMode = selected->altId();
 
       if (ISQUOTE(_mode))
@@ -1769,6 +1770,10 @@ void salesOrder::sHandleButtons()
         {
           _edit->setText(tr("View"));
           _delete->setEnabled(FALSE);
+        }
+        else if(cEdit == _mode || cEditQuote == _mode)
+        {
+          _edit->setText(tr("&Edit"));
         }
       }
     }
