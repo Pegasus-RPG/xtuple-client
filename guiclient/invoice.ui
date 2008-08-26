@@ -137,7 +137,7 @@
               <item row="1" column="1" >
                <widget class="DLineEdit" name="_invoiceDate" />
               </item>
-              <item row="0" column="2" >
+              <item row="0" column="3" >
                <widget class="QLabel" name="_orderNumberLit" >
                 <property name="text" >
                  <string>Order #:</string>
@@ -150,7 +150,7 @@
                 </property>
                </widget>
               </item>
-              <item row="1" column="2" >
+              <item row="1" column="3" >
                <widget class="QLabel" name="_orderDateLit" >
                 <property name="text" >
                  <string>Order Date:</string>
@@ -163,7 +163,7 @@
                 </property>
                </widget>
               </item>
-              <item row="0" column="3" >
+              <item row="0" column="4" >
                <widget class="XLineEdit" name="_orderNumber" >
                 <property name="sizePolicy" >
                  <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
@@ -179,10 +179,10 @@
                 </property>
                </widget>
               </item>
-              <item row="1" column="3" >
+              <item row="1" column="4" >
                <widget class="DLineEdit" name="_orderDate" />
               </item>
-              <item row="2" column="2" >
+              <item row="2" column="3" >
                <widget class="QLabel" name="_shipDateLit" >
                 <property name="text" >
                  <string>Ship Date:</string>
@@ -195,7 +195,7 @@
                 </property>
                </widget>
               </item>
-              <item row="2" column="3" >
+              <item row="2" column="4" >
                <widget class="DLineEdit" name="_shipDate" >
                 <property name="sizePolicy" >
                  <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
@@ -205,7 +205,7 @@
                 </property>
                </widget>
               </item>
-              <item row="0" column="4" >
+              <item row="0" column="6" >
                <widget class="QLabel" name="_salesrepLit" >
                 <property name="text" >
                  <string>Sales Rep.:</string>
@@ -218,7 +218,7 @@
                 </property>
                </widget>
               </item>
-              <item row="0" column="5" >
+              <item row="0" column="7" >
                <widget class="XComboBox" name="_salesrep" >
                 <property name="allowNull" >
                  <bool>true</bool>
@@ -228,7 +228,7 @@
                 </property>
                </widget>
               </item>
-              <item row="1" column="4" >
+              <item row="1" column="6" >
                <widget class="QLabel" name="_commissionLit" >
                 <property name="text" >
                  <string>Commission:</string>
@@ -241,7 +241,7 @@
                 </property>
                </widget>
               </item>
-              <item row="1" column="5" >
+              <item row="1" column="7" >
                <layout class="QHBoxLayout" >
                 <item>
                  <widget class="XLineEdit" name="_commission" >
@@ -271,7 +271,7 @@
                 </item>
                </layout>
               </item>
-              <item row="2" column="4" >
+              <item row="2" column="6" >
                <widget class="QLabel" name="_taxauthLit" >
                 <property name="text" >
                  <string>Tax Authority:</string>
@@ -284,7 +284,7 @@
                 </property>
                </widget>
               </item>
-              <item row="2" column="5" >
+              <item row="2" column="7" >
                <widget class="XComboBox" name="_taxauth" >
                 <property name="sizePolicy" >
                  <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
@@ -303,7 +303,7 @@
                 </property>
                </widget>
               </item>
-              <item row="3" column="4" >
+              <item row="3" column="6" >
                <widget class="QLabel" name="_termsLit" >
                 <property name="text" >
                  <string>Terms:</string>
@@ -316,7 +316,7 @@
                 </property>
                </widget>
               </item>
-              <item row="3" column="5" >
+              <item row="3" column="7" >
                <widget class="XComboBox" name="_terms" >
                 <property name="sizePolicy" >
                  <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
@@ -331,6 +331,45 @@
                  <enum>XComboBox::ARTerms</enum>
                 </property>
                </widget>
+              </item>
+              <item row="0" column="2" >
+               <spacer>
+                <property name="orientation" >
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" >
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item row="0" column="5" >
+               <spacer>
+                <property name="orientation" >
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" >
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item row="0" column="8" >
+               <spacer>
+                <property name="orientation" >
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" >
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
               </item>
              </layout>
             </item>
