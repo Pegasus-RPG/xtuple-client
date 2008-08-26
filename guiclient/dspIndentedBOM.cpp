@@ -58,9 +58,10 @@
 #include "dspIndentedBOM.h"
 
 #include <QMessageBox>
-#include <QStack>
+#include <QSqlError>
 #include <QVariant>
 
+#include <metasql.h>
 #include <openreports.h>
 
 dspIndentedBOM::dspIndentedBOM(QWidget* parent, const char* name, Qt::WFlags fl)
@@ -77,14 +78,14 @@ dspIndentedBOM::dspIndentedBOM(QWidget* parent, const char* name, Qt::WFlags fl)
   _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased | ItemLineEdit::cKit);
 
   _bomitem->setRootIsDecorated(TRUE);
-  _bomitem->addColumn(tr("Seq #"),        80,           Qt::AlignCenter );
-  _bomitem->addColumn(tr("Item Number"),  _itemColumn,  Qt::AlignLeft   );
-  _bomitem->addColumn(tr("Description"),  -1,           Qt::AlignLeft   );
-  _bomitem->addColumn(tr("UOM"),          _uomColumn,   Qt::AlignCenter );
-  _bomitem->addColumn(tr("Ext.Qty. Per"), _qtyColumn,   Qt::AlignRight  );
-  _bomitem->addColumn(tr("Scrap %"),      _prcntColumn, Qt::AlignRight  );
-  _bomitem->addColumn(tr("Effective"),    _dateColumn,  Qt::AlignCenter );
-  _bomitem->addColumn(tr("Expires"),      _dateColumn,  Qt::AlignCenter );
+  _bomitem->addColumn(tr("Seq #"),        80,           Qt::AlignCenter,true, "bomdata_bomwork_seqnumber");
+  _bomitem->addColumn(tr("Item Number"),  _itemColumn,  Qt::AlignLeft,  true, "bomdata_item_number");
+  _bomitem->addColumn(tr("Description"),  -1,           Qt::AlignLeft,  true, "bomdata_item_descrip1");
+  _bomitem->addColumn(tr("UOM"),          _uomColumn,   Qt::AlignCenter,true, "bomdata_uom_name");
+  _bomitem->addColumn(tr("Ext.Qty. Per"), _qtyColumn,   Qt::AlignRight, true, "bomdata_qtyper");
+  _bomitem->addColumn(tr("Scrap %"),      _prcntColumn, Qt::AlignRight, true, "bomdata_scrap");
+  _bomitem->addColumn(tr("Effective"),    _dateColumn,  Qt::AlignCenter,true, "bomdata_effective");
+  _bomitem->addColumn(tr("Expires"),      _dateColumn,  Qt::AlignCenter,true, "bomdata_expires");
   _bomitem->setIndentation(10);
 
   _expiredDaysLit->setEnabled(_showExpired->isChecked());
@@ -134,16 +135,14 @@ enum SetResponse dspIndentedBOM::set(const ParameterList &pParams)
   return NoError;
 }
 
-void dspIndentedBOM::sPrint()
+bool dspIndentedBOM::setParams(ParameterList &params)
 {
   if(!_item->isValid())
   {
     QMessageBox::warning(this, tr("Invalid Item"),
       tr("You must specify a valid item.") );
-    return;
+    return false;
   }
-
-  ParameterList params;
 
   params.append("item_id", _item->id());
   params.append("revision_id", _revision->id());
@@ -151,12 +150,25 @@ void dspIndentedBOM::sPrint()
   if(_showExpired->isChecked())
     params.append("expiredDays", _expiredDays->value());
   else
-	params.append("expiredDays", 0);
+    params.append("expiredDays", 0);
 
   if(_showFuture->isChecked())
     params.append("futureDays", _effectiveDays->value());
   else
-	params.append("futureDays", 0);
+    params.append("futureDays", 0);
+
+  params.append("always", tr("Always"));
+  params.append("never",  tr("Never"));
+
+  return true;
+}
+
+void dspIndentedBOM::sPrint()
+{
+
+  ParameterList params;
+  if (! setParams(params))
+    return;
 
   orReport report("IndentedBOM", params);
   if (report.isValid())
@@ -167,66 +179,35 @@ void dspIndentedBOM::sPrint()
 
 void dspIndentedBOM::sFillList()
 {
-  _bomitem->clear();
-  
-  if (_item->isValid())
+  ParameterList params;
+  if (! setParams(params))
+    return;
+
+  MetaSQLQuery mql("SELECT *,"
+                   "      'percent' AS bomdata_scrap_xtnumericrole,"
+                   "       'qtyper' AS bomdata_qtyper_xtnumericrole,"
+                   "       CASE WHEN COALESCE(bomdata_effective, startOfTime()) <="
+                   "                 startOfTime() THEN <? value(\"always\") ?>"
+                   "       END AS bomdata_effective_qtdisplayrole,"
+                   "       CASE WHEN COALESCE(bomdata_expires, endOfTime()) >="
+                   "                 endOfTime() THEN <? value(\"never\") ?>"
+                   "       END AS bomdata_expires_qtdisplayrole,"
+                   "       CASE WHEN (bomdata_expired) THEN 'expired'"
+                   "            WHEN (bomdata_future) THEN 'future'"
+                   "       END AS qtforegroundrole,"
+                   "       bomdata_bomwork_level - 1 AS xtindentrole "
+                   "FROM indentedBOM(<? value(\"item_id\") ?>, "
+                   "                 <? value(\"revision_id\") ?>,"
+                   "                 <? value(\"expiredDays\") ?>,"
+                   "                 <? value(\"futureDays\") ?>) "
+                   "WHERE (bomdata_item_id > 0);");
+
+  q = mql.toQuery(params);
+  _bomitem->populate(q);
+  if (q.lastError().type() != QSqlError::None)
   {
-	q.prepare("SELECT * FROM indentedBOM(:item_id, :revision_id, :expired, :effective) "
-		      "WHERE (bomdata_item_id > 0);");
-    q.bindValue(":item_id", _item->id());
-    q.bindValue(":revision_id", _revision->id());
-    if (!_showExpired->isChecked())
-	  q.bindValue(":expired", 0);
-	else
-      q.bindValue(":expired", _expiredDays->value());
-    if (!_showFuture->isChecked())
-      q.bindValue(":effective", 0);
-	else
-      q.bindValue(":effective", _effectiveDays->value());
-    q.exec();
-
-    QStack<XTreeWidgetItem*> parent;
-    XTreeWidgetItem *last = 0;
-    int level = 1;
-    while(q.next())
-    {
-      // If the level this item is on is lower than the last level we just did then we need
-      // to pop the stack a number of times till we are equal.
-      while(q.value("bomdata_bomwork_level").toInt() < level)
-      {
-        level--;
-        last = parent.pop();
-      }
-
-      // If the level this item is on is higher than the last level we need to push the last
-      // item onto the stack a number of times till we are equal. (Should only ever be 1.)
-      while(q.value("bomdata_bomwork_level").toInt() > level)
-      {
-        level++;
-        parent.push(last);
-        last = 0;
-      }
-
-      // If there is an item in the stack use that as the parameter to the new xlistviewitem
-      // otherwise we'll just use the xlistview _layout
-      if(!parent.isEmpty() && parent.top())
-        last = new XTreeWidgetItem(parent.top(), last, q.value("bomdata_bomwork_id").toInt(),
-                                    q.value("bomdata_bomwork_seqnumber"), q.value("bomdata_item_number"),
-                                    q.value("bomdata_itemdescription"), q.value("bomdata_uom_name"),
-                                    q.value("bomdata_qtyper"), q.value("bomdata_scrap"),
-                                    q.value("bomdata_effective"), q.value("bomdata_expires") );
-      else
-        last = new XTreeWidgetItem(_bomitem, last, q.value("bomdata_bomwork_id").toInt(),
-                                    q.value("bomdata_bomwork_seqnumber"), q.value("bomdata_item_number"),
-                                    q.value("bomdata_itemdescription"), q.value("bomdata_uom_name"),
-                                    q.value("bomdata_qtyper"), q.value("bomdata_scrap"),
-                                    q.value("bomdata_effective"), q.value("bomdata_expires") );
-	          
-	  if (q.value("bomdata_expired").toBool())
-        last->setTextColor("red");
-      else if (q.value("bomdata_future").toBool())
-        last->setTextColor("blue");
-    }
-    _bomitem->expandAll();
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
+  _bomitem->expandAll();
 }

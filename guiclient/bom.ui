@@ -353,7 +353,7 @@
            </spacer>
           </item>
           <item row="2" column="1" colspan="2" >
-           <widget class="XLineEdit" name="_maxCost" >
+           <widget class="XLabel" name="_maxCost" >
             <property name="minimumSize" >
              <size>
               <width>80</width>
@@ -363,13 +363,10 @@
             <property name="text" >
              <string/>
             </property>
-	    <property name="enabled" >
-		    <bool>false</bool>
-	    </property>
            </widget>
           </item>
           <item row="1" column="1" colspan="2" >
-           <widget class="XLineEdit" name="_currentActCost" >
+           <widget class="XLabel" name="_currentActCost" >
             <property name="minimumSize" >
              <size>
               <width>80</width>
@@ -379,13 +376,10 @@
             <property name="text" >
              <string/>
             </property>
-	    <property name="enabled">
-		    <bool>false</bool>
-	    </property>
            </widget>
           </item>
           <item row="0" column="1" colspan="2" >
-           <widget class="XLineEdit" name="_currentStdCost" >
+           <widget class="XLabel" name="_currentStdCost" >
             <property name="minimumSize" >
              <size>
               <width>80</width>
@@ -395,9 +389,6 @@
             <property name="text" >
              <string/>
             </property>
-	    <property name="enabled">
-		    <bool>false</bool>
-	    </property>
            </widget>
           </item>
           <item row="2" column="0" >
@@ -461,7 +452,7 @@
            <number>6</number>
           </property>
           <item row="1" column="2" >
-           <widget class="XLineEdit" name="_pickQtyPer" >
+           <widget class="XLabel" name="_pickQtyPer" >
             <property name="minimumSize" >
              <size>
               <width>80</width>
@@ -474,9 +465,6 @@
             <property name="alignment" >
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
-	    <property name="enabled">
-		    <bool>false</bool>
-	    </property>
            </widget>
           </item>
           <item row="0" column="2" >
@@ -496,7 +484,7 @@
            </widget>
           </item>
           <item row="3" column="1" >
-           <widget class="XLineEdit" name="_totalNumber" >
+           <widget class="XLabel" name="_totalNumber" >
             <property name="minimumSize" >
              <size>
               <width>80</width>
@@ -509,9 +497,6 @@
             <property name="alignment" >
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
-	    <property name="enabled">
-		    <bool>false</bool>
-	    </property>
            </widget>
           </item>
           <item row="1" column="0" >
@@ -525,7 +510,7 @@
            </widget>
           </item>
           <item row="3" column="2" >
-           <widget class="XLineEdit" name="_totalQtyPer" >
+           <widget class="XLabel" name="_totalQtyPer" >
             <property name="minimumSize" >
              <size>
               <width>80</width>
@@ -538,9 +523,6 @@
             <property name="alignment" >
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
-	    <property name="enabled">
-		    <bool>false</bool>
-		</property>
            </widget>
           </item>
           <item row="0" column="1" >
@@ -560,7 +542,7 @@
            </widget>
           </item>
           <item row="2" column="2" >
-           <widget class="XLineEdit" name="_nonPickQtyPer" >
+           <widget class="XLabel" name="_nonPickQtyPer" >
             <property name="minimumSize" >
              <size>
               <width>80</width>
@@ -569,9 +551,6 @@
             </property>
             <property name="text" >
              <string/>
-            </property>
-            <property name="enabled">
-            <bool>false</bool>
             </property>
             <property name="alignment" >
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -579,7 +558,7 @@
            </widget>
           </item>
           <item row="1" column="1" >
-           <widget class="XLineEdit" name="_pickNumber" >
+           <widget class="XLabel" name="_pickNumber" >
             <property name="minimumSize" >
              <size>
               <width>80</width>
@@ -591,14 +570,11 @@
             </property>
             <property name="alignment" >
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-	    <property name="enabled" >
-	     <bool>false</bool>
             </property>
            </widget>
           </item>
           <item row="2" column="1" >
-           <widget class="XLineEdit" name="_nonPickNumber" >
+           <widget class="XLabel" name="_nonPickNumber" >
             <property name="minimumSize" >
              <size>
               <width>80</width>
@@ -610,9 +586,6 @@
             </property>
             <property name="alignment" >
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-            <property name="enabled">
-            <bool>false</bool>
             </property>
            </widget>
           </item>

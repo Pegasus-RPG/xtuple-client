@@ -18,7 +18,7 @@ SELECT araging_cust_id, araging_cust_number, araging_cust_name,
        0 AS araging_ninety_val_sum_xttotalrole,
        0 AS araging_plus_val_sum_xttotalrole
 
-FROM araging(<? value("asofDate") ?>)
+FROM araging(<? value("relDate") ?>)
 <? if exists("cust_id") ?>
 WHERE (araging_cust_id=<? value("cust_id") ?>)
 <? elseif exists("custtype_id") ?>

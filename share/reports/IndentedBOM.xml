@@ -29,10 +29,16 @@
        bomdata_item_descrip2 AS item_descrip2,
        bomdata_issuemethod AS issuemethod,
        bomdata_createchild AS createchild,
-       bomdata_qtyper AS qtyper,
-       bomdata_scrap AS scrap,
-       bomdata_effective AS effective,
-       bomdata_expires AS expires
+       formatQtyPer(bomdata_qtyper) AS qtyper,
+       formatScrap(bomdata_scrap) AS scrap,
+       CASE WHEN COALESCE(bomdata_effective, startOfTime()) &lt;= startOfTime()
+            THEN &lt;? value("always") ?>
+            ELSE formatDate(bomdata_effective)
+       END AS effective,
+       CASE WHEN COALESCE(bomdata_expires, endOfTime()) >= endOfTime()
+            THEN &lt;? value("never") ?>
+            ELSE formatDate(bomdata_expires)
+       END AS expires
 FROM indentedBOM(&lt;? value("item_id") ?>,&lt;? value("revision_id") ?>,&lt;? value("expiredDays") ?>,&lt;? value("futureDays") ?>)
 WHERE (bomdata_item_id>0);</sql>
  </querysource>

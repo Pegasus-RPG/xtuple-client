@@ -57,21 +57,17 @@
 
 #include "dspCostedIndentedBOM.h"
 
-#include <QVariant>
-#include <QWorkspace>
-#include <QStatusBar>
 #include <QMenu>
-#include <QStack>
 #include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
+
+#include <metasql.h>
 #include <openreports.h>
+
 #include "dspItemCostSummary.h"
 #include "maintainItemCosts.h"
 
-/*
- *  Constructs a dspCostedIndentedBOM as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspCostedIndentedBOM::dspCostedIndentedBOM(QWidget* parent, const char* name, Qt::WFlags fl)
     : XMainWindow(parent, name, fl)
 {
@@ -86,46 +82,38 @@ dspCostedIndentedBOM::dspCostedIndentedBOM(QWidget* parent, const char* name, Qt
   _costsGroupInt->addButton(_useStandardCosts);
   _costsGroupInt->addButton(_useActualCosts);
 
-  // signals and slots connections
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
-  connect(_revision, SIGNAL(newId(int)), this, SLOT(sFillList()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-  connect(_costsGroupInt, SIGNAL(buttonClicked(int)), this, SLOT(sFillList()));
   connect(_bomitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-  connect(_item, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
+  connect(_costsGroupInt, SIGNAL(buttonClicked(int)), this, SLOT(sFillList()));
+  connect(_item,                  SIGNAL(newId(int)), this, SLOT(sFillList()));
+  connect(omfgThis,   SIGNAL(bomsUpdated(int, bool)), this, SLOT(sFillList(int, bool)));
+  connect(_print,                  SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_revision,              SIGNAL(newId(int)), this, SLOT(sFillList()));
 
   _item->setType(ItemLineEdit::cGeneralManufactured);
 
   _bomitem->setRootIsDecorated(TRUE);
-  _bomitem->addColumn(tr("Seq #"),         80,           Qt::AlignCenter );
-  _bomitem->addColumn(tr("Item Number"),   _itemColumn,  Qt::AlignLeft   );
-  _bomitem->addColumn(tr("Description"),   -1,           Qt::AlignLeft   );
-  _bomitem->addColumn(tr("UOM"),           _uomColumn,   Qt::AlignCenter );
-  _bomitem->addColumn(tr("Ext. Qty. Per"), _qtyColumn,   Qt::AlignRight  );
-  _bomitem->addColumn(tr("Scrap %"),       _prcntColumn, Qt::AlignRight  );
-  _bomitem->addColumn(tr("Effective"),     _dateColumn,  Qt::AlignCenter );
-  _bomitem->addColumn(tr("Expires"),       _dateColumn,  Qt::AlignCenter );
-  _bomitem->addColumn(tr("Unit Cost"),     _costColumn,  Qt::AlignRight  );
-  _bomitem->addColumn(tr("Ext'd Cost"),    _priceColumn, Qt::AlignRight  );
+  _bomitem->addColumn(tr("Seq #"),                80, Qt::AlignCenter,true, "bomdata_bomwork_seqnumber");
+  _bomitem->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft,  true, "bomdata_item_number");
+  _bomitem->addColumn(tr("Description"),          -1, Qt::AlignLeft,  true, "bomdata_itemdescription");
+  _bomitem->addColumn(tr("UOM"),          _uomColumn, Qt::AlignCenter,true, "bomdata_uom_name");
+  _bomitem->addColumn(tr("Ext. Qty. Per"),_qtyColumn, Qt::AlignRight, true, "bomdata_qtyper");
+  _bomitem->addColumn(tr("Scrap %"),    _prcntColumn, Qt::AlignRight, true, "bomdata_scrap");
+  _bomitem->addColumn(tr("Effective"),   _dateColumn, Qt::AlignCenter,true, "bomdata_effective");
+  _bomitem->addColumn(tr("Expires"),     _dateColumn, Qt::AlignCenter,true, "bomdata_expires");
+  _bomitem->addColumn(tr("Unit Cost"),   _costColumn, Qt::AlignRight, true, "unitcost");
+  _bomitem->addColumn(tr("Ext'd Cost"), _priceColumn, Qt::AlignRight, true, "extendedcost");
+
   _bomitem->setIndentation(10);
 
   //If not Revision Control, hide control
   _revision->setVisible(_metrics->boolean("RevControl"));
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspCostedIndentedBOM::~dspCostedIndentedBOM()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspCostedIndentedBOM::languageChange()
 {
   retranslateUi(this);
@@ -154,9 +142,15 @@ enum SetResponse dspCostedIndentedBOM::set(const ParameterList &pParams)
   return NoError;
 }
 
-void dspCostedIndentedBOM::sPrint()
+bool dspCostedIndentedBOM::setParams(ParameterList &params)
 {
-  ParameterList params;
+  if (! _item->isValid())
+  {
+    QMessageBox::critical(this, tr("Must Supply Item"),
+                          tr("<p>You must supply an Item to see its BOM."));
+    _item->setFocus();
+    return false;
+  }
 
   params.append("item_id", _item->id());
   params.append("revision_id", _revision->id());
@@ -166,6 +160,18 @@ void dspCostedIndentedBOM::sPrint()
 
   if(_useActualCosts->isChecked())
     params.append("useActualCosts");
+
+  params.append("always", tr("Always"));
+  params.append("never",  tr("Never"));
+
+  return true;
+}
+
+void dspCostedIndentedBOM::sPrint()
+{
+  ParameterList params;
+  if (! setParams(params))
+    return;
 
   orReport report("CostedIndentedBOM", params);
 
@@ -207,135 +213,71 @@ void dspCostedIndentedBOM::sViewItemCosting()
 
 void dspCostedIndentedBOM::sFillList()
 {
-  double totalCosts = 0;
+  if (! _item->isValid())
+    return;
 
-  _bomitem->clear();
-
-  if (_item->isValid())
+  MetaSQLQuery mql( "SELECT bomdata_bomwork_id AS id,"
+                    "       CASE WHEN bomdata_bomwork_parent_id = -1 AND "
+                    "                 bomdata_bomwork_id = -1 THEN"
+                    "                     -1"
+                    "            ELSE bomdata_item_id"
+                    "       END AS altid,"
+                    "       *,"
+                    "<? if exists(\"useStandardCosts\") ?>"
+                    "       bomdata_stdunitcost AS unitcost,"
+                    "       bomdata_stdextendedcost AS extendedcost, "
+                    "<? elseif exists(\"useActualCosts\") ?>"
+                    "       bomdata_actunitcost AS unitcost,"
+                    "       bomdata_actextendedcost AS extendedcost, "
+                    "<? endif ?>"
+                    "       'qtyper' AS bomdata_qtyper_xtnumericrole,"
+                    "       'percent' AS bomdata_scrap_xtnumericrole,"
+                    "       'cost' AS unitcost_xtnumericrole,"
+                    "       'cost' AS extendedcost_xtnumericrole,"
+                    "       CASE WHEN COALESCE(bomdata_effective, startOfTime()) <= startOfTime() THEN <? value(\"always\") ?> END AS bomdata_effective_qtdisplayrole,"
+                    "       CASE WHEN COALESCE(bomdata_expires, endOfTime()) <= endOfTime() THEN <? value(\"never\") ?> END AS bomdata_expires_qtdisplayrole,"
+                    "       CASE WHEN bomdata_expired THEN 'expired'"
+                    "            WHEN bomdata_future  THEN 'future'"
+                    "       END AS qtforegroundrole,"
+                    "       bomdata_bomwork_level - 1 AS xtindentrole,"
+                    "       0 as extendedcost_xttotalrole "
+                    "FROM indentedbom(<? value(\"item_id\") ?>,"
+                    "                 <? value(\"revision_id\") ?>,0,0);" );
+  ParameterList params;
+  if (! setParams(params))
+    return;
+  q = mql.toQuery(params);
+  _bomitem->populate(q, true);
+  if (q.lastError().type() != QSqlError::None)
   {
-      QString sql( "SELECT 2 AS seqord, "
-		           "       bomdata_bomwork_id, bomdata_item_id, bomdata_bomwork_parent_id,"
-                   "       bomdata_bomwork_seqnumber, bomdata_item_number, bomdata_uom_name,"
-                   "       bomdata_itemdescription,"
-                   "       bomdata_qtyper,"
-                   "       bomdata_scrap,"
-                   "       bomdata_effective,"
-                   "       bomdata_expires," );
-
-     if (_useStandardCosts->isChecked())
-       sql += " formatCost(bomdata_stdunitcost) AS f_unitcost,"
-              " formatCost(bomdata_stdextendedcost) AS f_extendedcost,"
-              " bomdata_stdextendedcost AS extendedcost, ";
-     else if (_useActualCosts->isChecked())
-       sql += " formatCost(bomdata_actunitcost) AS f_unitcost,"
-              " formatCost(bomdata_actextendedcost) AS f_extendedcost,"
-              " bomdata_actextendedcost AS extendedcost, ";
-
-	 sql += "bomdata_bomwork_level "
-		    "FROM indentedbom(:item_id,:revision_id,0,0) ";
-      q.prepare(sql);
-      q.bindValue(":item_id", _item->id());
-      q.bindValue(":revision_id", _revision->id());
-      q.exec();
-
-      QStack<XTreeWidgetItem*> parent;
-      XTreeWidgetItem *last = 0;
-      int level = 1;
-      while(q.next())
-      {
-        // If the level this item is on is lower than the last level we just did then we need
-        // to pop the stack a number of times till we are equal.
-        while(q.value("bomdata_bomwork_level").toInt() < level)
-        {
-          level--;
-          last = parent.pop();
-        }
-
-        // If the level this item is on is higher than the last level we need to push the last
-        // item onto the stack a number of times till we are equal. (Should only ever be 1.)
-        while(q.value("bomdata_bomwork_level").toInt() > level)
-        {
-          level++;
-          parent.push(last);
-          last = 0;
-        }
-
-        // If there is an item in the stack use that as the parameter to the new xlistviewitem
-        // otherwise we'll just use the xlistview _layout
-       if(!parent.isEmpty() && parent.top())
-	   {
-	     last = new XTreeWidgetItem(parent.top(), last, q.value("bomwork_id").toInt(),
-						q.value("bomdata_item_id").toInt(),
-						q.value("bomdata_bomwork_seqnumber"),
-						q.value("bomdata_item_number"),
-						q.value("bomdata_itemdescription"),
-						q.value("bomdata_uom_name"),
-						q.value("bomdata_qtyper"),
-						q.value("bomdata_scrap"),
-						q.value("bomdata_effective"),
-						q.value("bomdata_expires"),
-						q.value("f_unitcost"),
-						q.value("f_extendedcost") );
-	   }
-       else
-	   {
-         if (q.value("bomdata_bomwork_parent_id").toInt() == -1)
-         {
-           if (q.value("bomdata_bomwork_id").toInt() == -1)
-           {
-             last = new XTreeWidgetItem( _bomitem,last, -1, -1,
-                                      "", q.value("bomdata_item_number"),
-                                      "", "", "", "", "" );
-             last->setText(7, "");
-             last->setText(8, q.value("f_unitcost").toString());
-             last->setText(9, q.value("f_extendedcost").toString());
-           }
-           else
-           {
-             last = new XTreeWidgetItem( _bomitem, last, q.value("bomdata_bomwork_id").toInt(), q.value("bomdata_item_id").toInt(),
-                                      q.value("bomdata_bomwork_seqnumber"), q.value("bomdata_item_number"),
-                                      q.value("bomdata_itemdescription"), q.value("bomdata_uom_name"),
-                                      q.value("bomdata_qtyper"), q.value("bomdata_scrap"),
-                                      q.value("bomdata_effective"), q.value("bomdata_expires"),
-                                      q.value("f_unitcost"), q.value("f_extendedcost") );
-           }
-		 }
-		 else
-	     {
-            last = new XTreeWidgetItem(_bomitem, last, q.value("bomwork_id").toInt(),
-						q.value("bomdata_item_id").toInt(),
-						q.value("bomdata_bomwork_seqnumber"),
-						q.value("bomdata_item_number"),
-						q.value("bomdata_itemdescription"),
-						q.value("bomdata_uom_name"),
-						q.value("bomdata_qtyper"),
-						q.value("bomdata_scrap"),
-						q.value("bomdata_effective"),
-						q.value("bomdata_expires"),
-						q.value("f_unitcost"),
-						q.value("f_extendedcost") );
-         }
-	     totalCosts += q.value("extendedcost").toDouble();
-	  }
-	}
-    last = new XTreeWidgetItem(_bomitem, -1, -1);
-    last->setText(1, tr("Total Cost"));
-    last->setText(9, formatCost(totalCosts));
-
-    q.prepare( "SELECT formatCost(actcost(:item_id)) AS actual,"
-                 "       formatCost(stdcost(:item_id)) AS standard;" );
-      q.bindValue(":item_id", _item->id());
-      q.exec();
-      if (q.first())
-      {
-        last = new XTreeWidgetItem(_bomitem, -1, -1);
-        last->setText(1, tr("Actual Cost"));
-        last->setText(9, q.value("actual").toString());
-
-        last = new XTreeWidgetItem( _bomitem, -1, -1);
-        last->setText(1, tr("Standard Cost"));
-        last->setText(9, q.value("standard").toString());
-      }
-    _bomitem->expandAll();
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
+
+  q.prepare( "SELECT formatCost(actcost(:item_id)) AS actual,"
+             "       formatCost(stdcost(:item_id)) AS standard;" );
+  q.bindValue(":item_id", _item->id());
+  q.exec();
+  if (q.first())
+  {
+    XTreeWidgetItem *last = new XTreeWidgetItem(_bomitem, -1, -1);
+    last->setText(1, tr("Actual Cost"));
+    last->setText(9, q.value("actual").toString());
+
+    last = new XTreeWidgetItem( _bomitem, -1, -1);
+    last->setText(1, tr("Standard Cost"));
+    last->setText(9, q.value("standard").toString());
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+  _bomitem->expandAll();
+}
+
+void dspCostedIndentedBOM::sFillList(int p, bool)
+{
+  if (p == _item->id())
+    sFillList();
 }

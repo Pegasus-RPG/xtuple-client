@@ -85,9 +85,10 @@ protected slots:
     virtual void languageChange();
 
 private:
-    int _mode;
-    int _localeid;
-
+    int     _mode;
+    int     _localeid;
+    QString convert(const QString &);
+    QLocale generateLocale();
 };
 
 #endif // SYSLOCALE_H

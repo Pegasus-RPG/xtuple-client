@@ -83,12 +83,12 @@ public slots:
 
 protected slots:
     virtual void languageChange();
+    virtual bool setParams(ParameterList &);
 
 private:
     int _column;
     QList<DatePair> _columnDates;
 
-    ParameterList buildParameters();
 };
 
 #endif // DSPTIMEPHASEDOPENAPITEMS_H

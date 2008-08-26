@@ -87,7 +87,11 @@ adjustmentTrans::adjustmentTrans(QWidget* parent, Qt::WindowFlags fl)
 
   _item->setType((ItemLineEdit::cGeneralInventory ^ ItemLineEdit::cBreeder) | ItemLineEdit::cActive);
   _warehouse->setType(WComboBox::AllActiveInventory);
+  _afterQty->setPrecision(omfgThis->qtyVal());
+  _beforeQty->setPrecision(omfgThis->qtyVal());
+  _cost->setValidator(omfgThis->costVal());
   _qty->setValidator(omfgThis->transQtyVal());
+  _unitCost->setPrecision(omfgThis->costVal());
 
   omfgThis->inputManager()->notify(cBCItem, this, _item, SLOT(setItemid(int)));
   omfgThis->inputManager()->notify(cBCItemSite, this, _item, SLOT(setItemsiteid(int)));
@@ -135,9 +139,9 @@ enum SetResponse adjustmentTrans::set(const ParameterList &pParams)
   {
     _captive = TRUE;
 
-    _qty->setText(formatQty(param.toDouble()));
+    _qty->setDouble(param.toDouble());
     _qty->setEnabled(FALSE);
-    _afterQty->setText(formatQty(param.toDouble()));
+    _afterQty->setDouble(param.toDouble());
     _absolute->setChecked(TRUE);
     _adjustmentTypeGroup->setEnabled(FALSE);
 
@@ -192,9 +196,9 @@ enum SetResponse adjustmentTrans::set(const ParameterList &pParams)
       {
         _transDate->setDate(q.value("invhist_transdate").toDate());
         _username->setText(q.value("invhist_user").toString());
-        _qty->setText(formatQty(q.value("invhist_invqty").toDouble()));
-        _beforeQty->setText(formatQty(q.value("invhist_qoh_before").toDouble()));
-        _afterQty->setText(formatQty(q.value("invhist_qoh_after").toDouble()));
+        _qty->setDouble(q.value("invhist_invqty").toDouble());
+        _beforeQty->setDouble(q.value("invhist_qoh_before").toDouble());
+        _afterQty->setDouble(q.value("invhist_qoh_after").toDouble());
         _documentNum->setText(q.value("invhist_ordnumber"));
         _notes->setText(q.value("invhist_comments").toString());
         _item->setItemsiteid(q.value("invhist_itemsite_id").toInt());
@@ -341,7 +345,7 @@ void adjustmentTrans::sPopulateQOH(int pWarehousid)
       _cachedQOH = q.value("itemsite_qtyonhand").toDouble();
       if(_cachedQOH == 0.0)
         _costManual->setChecked(true);
-      _beforeQty->setText(formatQty(q.value("itemsite_qtyonhand").toDouble()));
+      _beforeQty->setDouble(q.value("itemsite_qtyonhand").toDouble());
       _costAdjust->setChecked(true);
       _costAdjust->setEnabled(q.value("itemsite_costmethod").toString() == "A");
 
@@ -370,10 +374,10 @@ void adjustmentTrans::sPopulateQty()
     if (_qty->text().stripWhiteSpace().length())
     {
       if (_absolute->isChecked())
-        _afterQty->setText(formatQty(_qty->toDouble()));
+        _afterQty->setDouble(_qty->toDouble());
 
       else if (_relative->isChecked())
-        _afterQty->setText(formatQty(_cachedQOH + _qty->toDouble()));
+        _afterQty->setDouble(_cachedQOH + _qty->toDouble());
     }
     else
       _afterQty->clear();
@@ -385,6 +389,6 @@ void adjustmentTrans::sCostUpdated()
   if(_cost->toDouble() == 0.0 || _qty->toDouble() == 0.0)
     _unitCost->setText(tr("N/A"));
   else
-    _unitCost->setText(formatCost(_cost->toDouble() / _qty->toDouble()));
+    _unitCost->setDouble(_cost->toDouble() / _qty->toDouble());
 }
 

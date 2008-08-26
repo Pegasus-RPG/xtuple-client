@@ -94,15 +94,15 @@ BOM::BOM(QWidget* parent, const char* name, Qt::WFlags fl)
   _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased | ItemLineEdit::cPlanning | ItemLineEdit::cJob | ItemLineEdit::cKit);
   _batchSize->setValidator(omfgThis->qtyVal());
   _requiredQtyPer->setValidator(omfgThis->qtyPerVal());
-  _nonPickNumber->setValidator(omfgThis->qtyVal());
-  _nonPickQtyPer->setValidator(omfgThis->qtyPerVal());
-  _pickNumber->setValidator(omfgThis->qtyVal());
-  _pickQtyPer->setValidator(omfgThis->qtyPerVal());
-  _totalNumber->setValidator(omfgThis->qtyVal());
-  _totalQtyPer->setValidator(omfgThis->qtyPerVal());
-  _currentStdCost->setValidator(omfgThis->costVal());
-  _currentActCost->setValidator(omfgThis->costVal());
-  _maxCost->setValidator(omfgThis->costVal());
+  _nonPickNumber->setPrecision(omfgThis->qtyVal());
+  _nonPickQtyPer->setPrecision(omfgThis->qtyPerVal());
+  _pickNumber->setPrecision(omfgThis->qtyVal());
+  _pickQtyPer->setPrecision(omfgThis->qtyPerVal());
+  _totalNumber->setPrecision(omfgThis->qtyVal());
+  _totalQtyPer->setPrecision(omfgThis->qtyPerVal());
+  _currentStdCost->setPrecision(omfgThis->costVal());
+  _currentActCost->setPrecision(omfgThis->costVal());
+  _maxCost->setPrecision(omfgThis->costVal());
   
   _bomitem->addColumn(tr("#"),            _seqColumn,   Qt::AlignCenter, true, "bomitem_seqnumber");
   _bomitem->addColumn(tr("Item Number"),  _itemColumn,  Qt::AlignLeft,   true, "item_number");
@@ -546,7 +546,7 @@ void BOM::sFillList(int pItemid, bool)
     
     if (_privileges->check("ViewCosts"))
     {
-      sql = "SELECT formatCost(p.item_maxcost) AS f_maxcost,"
+      sql = "SELECT p.item_maxcost,"
             "       COALESCE(SUM(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper * (1 + bomitem_scrap)) * stdCost(c.item_id))) AS stdcost,"
             "       COALESCE(SUM(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper * (1 + bomitem_scrap)) * ROUND(actCost(c.item_id),4))) AS actcost "
             "FROM bomitem(<? value(\"item_id\") ?>,"
@@ -567,7 +567,7 @@ void BOM::sFillList(int pItemid, bool)
       {
         _currentStdCost->setDouble(q.value("stdcost").toDouble());
         _currentActCost->setDouble(q.value("actcost").toDouble());
-        _maxCost->setDouble(q.value("maxcost").toDouble());
+        _maxCost->setDouble(q.value("item_maxcost").toDouble());
       }
       if (q.lastError().type() != QSqlError::None)
       {

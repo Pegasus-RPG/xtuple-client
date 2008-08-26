@@ -30,7 +30,7 @@
        bomdata_uom_name AS item_invuom,
        bomdata_item_descrip1 AS item_descrip1,
        bomdata_item_descrip2 AS item_descrip2,
-       bomdata_qtyper AS qtyper,
+       formatQtyPer(bomdata_qtyper) AS qtyper,
 &lt;? if exists("useActualCosts") ?>
        formatCost(bomdata_actunitcost) AS f_cost,
        formatCost(bomdata_actextendedcost) AS f_extcost

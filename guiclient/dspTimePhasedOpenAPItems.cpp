@@ -57,27 +57,23 @@
 
 #include "dspTimePhasedOpenAPItems.h"
 
-#include <QVariant>
-#include <QStatusBar>
-#include <QMessageBox>
 #include <QMenu>
-#include <datecluster.h>
-#include <QWorkspace>
-#include <q3valuevector.h>
+#include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
+
+#include <metasql.h>
 
 #include <metasql.h>
 #include "mqlutil.h"
 
 #include <openreports.h>
+#include <datecluster.h>
+
 #include "dspAPOpenItemsByVendor.h"
 #include "guiclient.h"
 #include "submitReport.h"
 
-/*
- *  Constructs a dspTimePhasedOpenAPItems as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspTimePhasedOpenAPItems::dspTimePhasedOpenAPItems(QWidget* parent, const char* name, Qt::WFlags fl)
     : XMainWindow(parent, name, fl)
 {
@@ -85,24 +81,14 @@ dspTimePhasedOpenAPItems::dspTimePhasedOpenAPItems(QWidget* parent, const char* 
 
   (void)statusBar();
 
-  // signals and slots connections
-  connect(_vendorTypePattern, SIGNAL(toggled(bool)), _vendorType, SLOT(setEnabled(bool)));
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
   connect(_apopen, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-  connect(_calendar, SIGNAL(newCalendarId(int)), _periods, SLOT(populate(int)));
-  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-  connect(_selectedVendor, SIGNAL(toggled(bool)), _vend, SLOT(setEnabled(bool)));
-  connect(_selectedVendorType, SIGNAL(toggled(bool)), _vendorTypes, SLOT(setEnabled(bool)));
-  connect(_calendar, SIGNAL(select(ParameterList&)), _periods, SLOT(load(ParameterList&)));
   connect(_custom, SIGNAL(toggled(bool)), this, SLOT(sToggleCustom()));
-  
+  connect(_print,  SIGNAL(clicked()),     this, SLOT(sPrint()));
+  connect(_query,  SIGNAL(clicked()),     this, SLOT(sFillList()));
+  connect(_submit, SIGNAL(clicked()),     this, SLOT(sSubmit()));
+
   _vendorTypes->setType(XComboBox::VendorTypes);
-  
-  _apopen->addColumn(tr("Vend. #"), _orderColumn, Qt::AlignLeft, true, "apaging_vend_number" );
-  _apopen->addColumn(tr("Vendor"),  180,          Qt::AlignLeft, true, "apaging_vend_name" );
-    
+
   _asOf->setDate(omfgThis->dbDate(), true);
   sToggleCustom();
 
@@ -115,9 +101,6 @@ dspTimePhasedOpenAPItems::dspTimePhasedOpenAPItems(QWidget* parent, const char* 
     _useDistDate->setChecked(true);
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspTimePhasedOpenAPItems::~dspTimePhasedOpenAPItems()
 {
   // no need to delete child widgets, Qt does it all for us
@@ -127,74 +110,22 @@ dspTimePhasedOpenAPItems::~dspTimePhasedOpenAPItems()
   _preferences->set("APAgingDefaultDate", str);
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspTimePhasedOpenAPItems::languageChange()
 {
   retranslateUi(this);
 }
 
-void dspTimePhasedOpenAPItems::sPrint()
+bool dspTimePhasedOpenAPItems::setParams(ParameterList &params)
 {
-  if ((_custom->isChecked() && _periods->isPeriodSelected()) || (!_custom->isChecked() && _asOf->isValid()))
+  if ((_custom->isChecked() && ! _periods->isPeriodSelected()) ||
+      (!_custom->isChecked() && ! _asOf->isValid()))
   {
-    QString reportName;
-    if(_custom->isChecked())
-      reportName = "TimePhasedOpenAPItems";
-    else
-      reportName = "APAging";
-    
-    orReport report(reportName, buildParameters());
-    if (report.isValid())
-      report.print();
-    else
-    {
-      report.reportError(this);
-      return;
-    }
+    QMessageBox::critical(this, tr("Incomplete criteria"),
+                          tr("<p>The criteria you specified are not complete. "
+                             "Please make sure all fields are correctly filled "
+                             "out before running the report." ) );
+    return false;
   }
-  else
-    QMessageBox::critical( this, tr("Incomplete criteria"),
-                           tr( "The criteria you specified is not complete. Please make sure all\n"
-                               "fields are correctly filled out before running the report." ) );
-}
-
-void dspTimePhasedOpenAPItems::sSubmit()
-{
-  if ((_custom->isChecked() && _periods->isPeriodSelected()) || (!_custom->isChecked() && _asOf->isValid()))
-  {
-    ParameterList params(buildParameters());
-    if(_custom->isChecked())
-      params.append("report_name", "TimePhasedOpenAPItems");
-    else
-      params.append("report_name", "APAging");
-
-    if(_useDocDate->isChecked())
-      params.append("useDocDate");
-    else
-      params.append("useDistDate");
-
-    submitReport newdlg(this, "", TRUE);
-    newdlg.set(params);
-
-    if (newdlg.check() == cNoReportDefinition)
-      QMessageBox::critical( this, tr("Report Definition Not Found"),
-                             tr( "The report defintions for this report, \"TimePhasedOpenAPItems\" cannot be found.\n"
-                                 "Please contact your Systems Administrator and report this issue." ) );
-    else
-      newdlg.exec();
-  }
-  else
-    QMessageBox::critical( this, tr("Incomplete criteria"),
-                           tr( "The criteria you specified is not complete. Please make sure all\n"
-                               "fields are correctly filled out before running the report." ) );
-}
-
-ParameterList dspTimePhasedOpenAPItems::buildParameters()
-{
-  ParameterList params;
 
   if (_selectedVendor->isChecked())
     params.append("vend_id", _vend->id());
@@ -210,11 +141,61 @@ ParameterList dspTimePhasedOpenAPItems::buildParameters()
     for (int i = 0; i < selected.size(); i++)
       periodList.append(((XTreeWidgetItem*)selected[i])->id());
     params.append("period_id_list", periodList);
+
+    params.append("report_name", "TimePhasedOpenAPItems");
   }
   else
+  {
     params.append("relDate", _asOf->date());
+    params.append("report_name", "APAging");
+  }
 
-  return params;
+  // have both in case we add a third option
+  params.append("useDocDate",  QVariant(_useDocDate->isChecked()));
+  params.append("useDistDate", QVariant(_useDistDate->isChecked()));
+
+  return true;
+}
+
+void dspTimePhasedOpenAPItems::sPrint()
+{
+  ParameterList params;
+  if (! setParams(params))
+    return;
+
+  QString reportName;
+  if(_custom->isChecked())
+    reportName = "TimePhasedOpenAPItems";
+  else
+    reportName = "APAging";
+  
+  orReport report(reportName, params);
+  if (report.isValid())
+    report.print();
+  else
+  {
+    report.reportError(this);
+    return;
+  }
+}
+
+void dspTimePhasedOpenAPItems::sSubmit()
+{
+  ParameterList params;
+  if (! setParams(params))
+    return;
+
+  submitReport newdlg(this, "", TRUE);
+  newdlg.set(params);
+
+  if (newdlg.check() == cNoReportDefinition)
+    QMessageBox::critical(this, tr("Report Definition Not Found"),
+                          tr("<p>The report defintions for this report, "
+                             "\"TimePhasedOpenAPItems\" cannot be found. "
+                             "Please contact your Systems Administrator and "
+                             "report this issue." ) );
+  else
+    newdlg.exec();
 }
 
 void dspTimePhasedOpenAPItems::sViewOpenItems()
@@ -288,92 +269,71 @@ void dspTimePhasedOpenAPItems::sFillCustom()
   }
 
   _columnDates.clear();
-  _apopen->clear();
   _apopen->setColumnCount(2);
 
   QString sql("SELECT vend_id, vend_number, vend_name");
+  QStringList linetotal;
 
   int columns = 1;
   QList<QTreeWidgetItem*> selected = _periods->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     PeriodListViewItem *cursor = (PeriodListViewItem*)selected[i];
-    sql += QString(", openAPItemsValue(vend_id, %2) AS bucket%1")
-          .arg(columns++)
-          .arg(cursor->id());
+    QString bucketname = QString("bucket%1").arg(columns++);
+    sql += QString(", openAPItemsValue(vend_id, %2) AS %1,"
+                   " 'curr' AS %3_xtnumericrole, 0 AS %4_xttotalrole")
+          .arg(bucketname)
+          .arg(cursor->id())
+          .arg(bucketname)
+          .arg(bucketname);
 
-    _apopen->addColumn(formatDate(cursor->startDate()), _bigMoneyColumn, Qt::AlignRight);
+    _apopen->addColumn(formatDate(cursor->startDate()), _bigMoneyColumn, Qt::AlignRight, true, bucketname);
     _columnDates.append(DatePair(cursor->startDate(), cursor->endDate()));
+    linetotal << QString("openAPItemsValue(vend_id, %1)").arg(cursor->id());
   }
 
-  sql += " FROM vend ";
+  _apopen->addColumn(tr("Total"), _bigMoneyColumn, Qt::AlignRight, true, "linetotal");
+  sql += ", " + linetotal.join("+") + " AS linetotal,"
+         " 'curr' AS linetotal_xtnumericrole,"
+         " 0 AS linetotal_xttotalrole,"
+         " (" + linetotal.join("+") + ") = 0.0 AS xthiddenrole "
+         "FROM vend "
+         "<? if exists(\"vend_id\") ?>"
+         "WHERE (vend_id=<? value (\"vend_id\") ?>)"
+         "<? elseif exists(\"vendtype_id\") ?>"
+         "WHERE (vend_vendtype_id=<? value (\"vendtype_id\") ?>"
+         "<? elseif exists(\"vendtype_code\") ?>"
+         "WHERE (vend_vendtype_id IN (SELECT vendtype_id FROM vendtype WHERE (vendtype_code ~ <? value (\"vendtype_pattern\") ?>)) "
+         "<? endif ?>"
+         "ORDER BY vend_number;";
 
-  if (_selectedVendor->isChecked())
-    sql += "WHERE (vend_id=:vend_id)";
-  else if (_selectedVendorType->isChecked())
-    sql += "WHERE (vend_vendtype_id=:vendtype_id)";
-  else if (_vendorTypePattern->isChecked())
-    sql += "WHERE (vend_vendtype_id IN (SELECT vendtype_id FROM vendtype WHERE (vendtype_code ~ :vendtype_code))) ";
+  MetaSQLQuery mql(sql);
+  ParameterList params;
+  if (! setParams(params))
+    return;
 
-  sql += "ORDER BY vend_number;";
-
-  q.prepare(sql);
-  q.bindValue(":vend_id", _vend->id());
-  q.bindValue(":vendtype_id", _vendorTypes->id());
-  q.bindValue(":vendtype_code", _vendorType->text().upper());
-  q.exec();
-  if (q.first())
+  q = mql.toQuery(params);
+  _apopen->populate(q);
+  if (q.lastError().type() != QSqlError::None)
   {
-    Q3ValueVector<Numeric> totals(columns);;
-    XTreeWidgetItem *last = 0;
-
-    do
-    {
-      double lineTotal = 0.0;
-
-      last = new XTreeWidgetItem( _apopen, last, q.value("vend_id").toInt(),
-                                 q.value("vend_number"), q.value("vend_name") );
-
-      for (int column = 1; column < columns; column++)
-      {
-        QString bucketName = QString("bucket%1").arg(column);
-        last->setText((column + 1), formatMoney(q.value(bucketName).toDouble()));
-        totals[column] += q.value(bucketName).toDouble();
-        lineTotal += q.value(bucketName).toDouble();
-      }
-
-      if (lineTotal == 0.0)
-      {
-        delete last;
-        last = _apopen->topLevelItem(_apopen->topLevelItemCount() - 1);
-      }
-    }
-    while (q.next());
-
-//  Add the totals row
-    XTreeWidgetItem *total = new XTreeWidgetItem(_apopen, last, -1, QVariant(tr("Totals:")));
-    for (int column = 1; column < columns; column++)
-      total->setText((column + 1), formatMoney(totals[column].toDouble()));
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
 }
 
 void dspTimePhasedOpenAPItems::sFillStd()
 {
-  _apopen->clear();
-
   MetaSQLQuery mql = mqlLoad(":/ap/displays/apAging.mql");
   ParameterList params;
-  params.append("asofDate",_asOf->date());
-  params.append("useDocDate", QVariant(_useDocDate->isChecked(), 0));
-  if (_selectedVendor->isChecked())
-    params.append("vend_id", _vend->id());
-  else if (_selectedVendorType->isChecked())
-    params.append("vendtype_id", _vendorTypes->id());
-  else if (_vendorTypePattern->isChecked())
-    params.append("vendtype_pattern", _vendorType->text().upper());
+  if (! setParams(params))
+    return;
   q = mql.toQuery(params);
-  if (q.first())
-    _apopen->populate(q);
+  _apopen->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void dspTimePhasedOpenAPItems::sToggleCustom()
@@ -386,6 +346,10 @@ void dspTimePhasedOpenAPItems::sToggleCustom()
     _asOf->setDate(omfgThis->dbDate(), true);
     _asOf->setEnabled(FALSE);
     _useGroup->setHidden(TRUE);
+
+    _apopen->setColumnCount(0);
+    _apopen->addColumn(tr("Vend. #"), _orderColumn, Qt::AlignLeft, true, "vend_number");
+    _apopen->addColumn(tr("Vendor"),  180,          Qt::AlignLeft, true, "vend_name");
   }
   else
   {
@@ -395,7 +359,15 @@ void dspTimePhasedOpenAPItems::sToggleCustom()
     _asOf->setEnabled(TRUE);
     _useGroup->setHidden(FALSE);
 
-    _apopen->setColumnCount(2);
+    _apopen->addColumn(tr("Total Open"), _bigMoneyColumn, Qt::AlignRight, true, "total_val");
+    _apopen->addColumn(tr("0+ Days"),    _bigMoneyColumn, Qt::AlignRight, true, "cur_val");
+    _apopen->addColumn(tr("0-30 Days"),  _bigMoneyColumn, Qt::AlignRight, true, "thirty_val");
+    _apopen->addColumn(tr("31-60 Days"), _bigMoneyColumn, Qt::AlignRight, true, "sixty_val");
+    _apopen->addColumn(tr("61-90 Days"), _bigMoneyColumn, Qt::AlignRight, true, "ninety_val");
+    _apopen->addColumn(tr("90+ Days"),   _bigMoneyColumn, Qt::AlignRight, true, "plus_val");
+    _apopen->setColumnCount(0);
+    _apopen->addColumn(tr("Vend. #"), _orderColumn, Qt::AlignLeft, true, "apaging_vend_number");
+    _apopen->addColumn(tr("Vendor"),  180,          Qt::AlignLeft, true, "apaging_vend_name");
     _apopen->addColumn(tr("Total Open"), _bigMoneyColumn, Qt::AlignRight, true, "apaging_total_val_sum");
     _apopen->addColumn(tr("0+ Days"),    _bigMoneyColumn, Qt::AlignRight, true, "apaging_cur_val_sum");
     _apopen->addColumn(tr("0-30 Days"),  _bigMoneyColumn, Qt::AlignRight, true, "apaging_thirty_val_sum");

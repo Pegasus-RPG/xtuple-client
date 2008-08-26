@@ -80,10 +80,13 @@ assignLotSerial::assignLotSerial(QWidget* parent, const char* name, bool modal, 
   _item->setReadOnly(TRUE);
 
   _itemlocdist->addColumn( tr("Lot/Serial #"),     -1, Qt::AlignLeft,  true, "ls_number");
-  _itemlocdist->addColumn( tr("Expires"), _dateColumn, Qt::AlignCenter,true, "f_expiration");
-  _itemlocdist->addColumn( tr("Warranty"),_dateColumn, Qt::AlignCenter,true, "f_warranty");
+  _itemlocdist->addColumn( tr("Expires"), _dateColumn, Qt::AlignCenter,true, "itemlocdist_expiration");
+  _itemlocdist->addColumn( tr("Warranty"),_dateColumn, Qt::AlignCenter,true, "itemlocdist_warranty");
   _itemlocdist->addColumn( tr("Qty."),     _qtyColumn, Qt::AlignRight, true, "itemlocdist_qty");
 
+  _qtyToAssign->setPrecision(omfgThis->qtyVal());
+  _qtyAssigned->setPrecision(omfgThis->qtyVal());
+  _qtyBalance->setPrecision(omfgThis->qtyVal());
 }
 
 assignLotSerial::~assignLotSerial()
@@ -245,7 +248,7 @@ void assignLotSerial::sFillList()
   if (q.first())
   {
     openQty = q.value("qty").toDouble();
-    _qtyToAssign->setText(formatQty(openQty));
+    _qtyToAssign->setDouble(openQty);
   }
   else if (q.lastError().type() != QSqlError::None)
   {
@@ -260,8 +263,8 @@ void assignLotSerial::sFillList()
   q.exec();
   if (q.first())
   {
-    _qtyAssigned->setText(formatQty(q.value("totalqty").toDouble()));
-    _qtyBalance->setText(formatQty(openQty - q.value("totalqty").toDouble()));
+    _qtyAssigned->setDouble(q.value("totalqty").toDouble());
+    _qtyBalance->setDouble(openQty - q.value("totalqty").toDouble());
   }
   else if (q.lastError().type() != QSqlError::None)
   {
@@ -270,17 +273,15 @@ void assignLotSerial::sFillList()
   }
 
 
-  q.prepare( "SELECT ls_number,"
-             "CASE WHEN (itemsite_perishable) THEN formatDate(itemlocdist_expiration) "
-             "  ELSE :na "
-             "END AS f_expiration, "
-             "CASE WHEN (itemsite_warrpurc) THEN formatDate(itemlocdist_warranty) "
-             "  ELSE :na "
-             "END AS f_warranty, "
-		     "itemlocdist_qty "
+  q.prepare( "SELECT itemlocdist.*, ls_number,"
+             "       CASE WHEN (NOT itemsite_perishable) THEN :na "
+             "       END AS itemlocdist_expiration_qtdisplayrole, "
+             "       CASE WHEN (NOT itemsite_warrpurc) THEN :na "
+             "       END AS itemlocdist_warranty_qtdisplayrole, "
+             "       'qty' AS itemlocdist_qty_xtnumericrole "
              "FROM itemlocdist "
-		     "LEFT OUTER JOIN itemsite ON (itemlocdist_itemsite_id = itemsite_id), "
-		     "ls "
+             "LEFT OUTER JOIN itemsite ON (itemlocdist_itemsite_id = itemsite_id), "
+             "ls "
              "WHERE (itemlocdist_series=:itemlocdist_series) "
              "AND (itemlocdist_ls_id=ls_id) "
              "ORDER BY ls_number;" );

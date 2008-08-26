@@ -58,8 +58,8 @@
 #include "itemAvailabilityWorkbench.h"
 
 #include <QMessageBox>
-#include <QVariant>
 #include <QSqlError>
+#include <QVariant>
 
 #include <metasql.h>
 #include <openreports.h>
@@ -82,15 +82,16 @@
 #include "item.h"
 #include "maintainItemCosts.h"
 #include "materialReceiptTrans.h"
+#include "mqlutil.h"
 #include "purchaseOrder.h"
 #include "purchaseRequest.h"
 #include "reassignLotSerial.h"
 #include "relocateInventory.h"
 #include "scrapTrans.h"
+#include "storedProcErrorLookup.h"
 #include "transactionInformation.h"
 #include "transferTrans.h"
 #include "workOrder.h"
-#include "mqlutil.h"
 
 #define ORDERTYPE_COL		0
 #define ORDERNUM_COL		1
@@ -166,16 +167,16 @@ itemAvailabilityWorkbench::itemAvailabilityWorkbench(QWidget* parent, const char
                                                                      
   // Costed BOM
   _bomitem->setRootIsDecorated(TRUE);
-  _bomitem->addColumn(tr("Seq #"),         80,           Qt::AlignCenter );
-  _bomitem->addColumn(tr("Item Number"),   _itemColumn,  Qt::AlignLeft   );
-  _bomitem->addColumn(tr("Description"),   -1,           Qt::AlignLeft   );
-  _bomitem->addColumn(tr("UOM"),           _uomColumn,   Qt::AlignCenter );
-  _bomitem->addColumn(tr("Ext. Qty. Per"), _qtyColumn,   Qt::AlignRight  );
-  _bomitem->addColumn(tr("Scrap %"),       _prcntColumn, Qt::AlignRight  );
-  _bomitem->addColumn(tr("Effective"),     _dateColumn,  Qt::AlignCenter );
-  _bomitem->addColumn(tr("Expires"),       _dateColumn,  Qt::AlignCenter );
-  _bomitem->addColumn(tr("Unit Cost"),     _costColumn,  Qt::AlignRight  );
-  _bomitem->addColumn(tr("Ext'd Cost"),    _priceColumn, Qt::AlignRight  );
+  _bomitem->addColumn(tr("Seq #"),                80, Qt::AlignCenter,true, "bomwork_seqnumber");
+  _bomitem->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft,  true, "item_number");
+  _bomitem->addColumn(tr("Description"),          -1, Qt::AlignLeft,  true, "itemdescription");
+  _bomitem->addColumn(tr("UOM"),          _uomColumn, Qt::AlignCenter,true, "uom_name");
+  _bomitem->addColumn(tr("Ext. Qty. Per"),_qtyColumn, Qt::AlignRight, true, "bomwork_qtyper");
+  _bomitem->addColumn(tr("Scrap %"),    _prcntColumn, Qt::AlignRight, true, "scrap");
+  _bomitem->addColumn(tr("Effective"),   _dateColumn, Qt::AlignCenter,true, "bomwork_effective");
+  _bomitem->addColumn(tr("Expires"),     _dateColumn, Qt::AlignCenter,true, "bomwork_expires");
+  _bomitem->addColumn(tr("Unit Cost"),   _costColumn, Qt::AlignRight, true, "unitcost");
+  _bomitem->addColumn(tr("Ext'd Cost"), _priceColumn, Qt::AlignRight, true, "extendedcost");
   _bomitem->setIndentation(10);
   
   // Invhist
@@ -642,170 +643,116 @@ void itemAvailabilityWorkbench::sFillListInvhist()
 
 void itemAvailabilityWorkbench::sFillListCosted()
 {
-  double totalCosts = 0;
+  if (! _item->isValid())
+    return;
 
-  _bomitem->clear();
-
-  if (_item->isValid() && (_item->itemType() == "M" || _item->itemType() == "B" || _item->itemType() == "F") )
+  ParameterList params;
+  if (! setParamsCosted(params))
+    return;
+  MetaSQLQuery ibomq("SELECT indentedBOM(<? value(\"item_id\") ?>) AS bomwork_set_id;");
+  q = ibomq.toQuery(params);
+  if (q.first())
   {
-    q.prepare("SELECT indentedBOM(:item_id) AS bomwork_set_id;");
-    q.bindValue(":item_id", _item->id());
-    q.exec();
-    if (q.first())
+    int worksetid = q.value("bomwork_set_id").toInt();
+    params.append("bomwork_set_id", worksetid);
+
+    MetaSQLQuery mql("SELECT *, "
+                     "       bomwork_scrap * 100 AS scrap,"
+                     " <? if exists(\"useStandardCosts\") ?>"
+                     "       bomwork_stdunitcost AS unitcost,"
+                     "       (bomwork_qtyper * (1 + bomwork_scrap) *"
+                     "                      bomwork_stdunitcost) AS extendedcost,"
+                     "<? elseif exists(\"useActualCosts\") ?>"
+                     "       bomwork_actunitcost AS unitcost,"
+                     "       (bomwork_qtyper * (1 + bomwork_scrap) *"
+                     "                      bomwork_actunitcost) AS extendedcost,"
+                     "<? else ?>"
+                     "       NULL AS unitcost,"
+                     "       0 AS extendedcost,"
+                     "<? endif ?>"
+                     "      'qtyper' AS bomwork_qtyper_xtnumericrole,"
+                     "      'percent' AS scrap_xtnumericrole,"
+                     "      CASE WHEN COALESCE(bomwork_effective,"
+                     "                         startOfTime()) <= startOfTime() THEN"
+                     "                         <? value(\"always\") ?>"
+                     "      END AS bomwork_effective_qtdisplayrole,"
+                     "      CASE WHEN COALESCE(bomwork_expires,"
+                     "                         endOfTime()) >= endOfTime() THEN"
+                     "                         <? value(\"never\") ?>"
+                     "      END AS bomwork_effective_qtdisplayrole,"
+                     "      'cost' AS unitcost_xtnumericrole,"
+                     "      'cost' AS extendedcost_xtnumericrole,"
+                     "      0 AS extendedcost_xttotalrole,"
+                     "      bomwork_level - 1 AS xtindentrole "
+                     " FROM ("
+                     " SELECT bomwork_id, item_id, bomwork_parent_id,"
+                     "       bomwork_parent_seqnumber, bomwork_seqnumber, bomwork_level, "
+                     "       item_number, uom_name,"
+                     "       (item_descrip1 || ' ' || item_descrip2) AS itemdescription,"
+                     "       bomwork_qtyper, bomwork_scrap, bomwork_effective, bomwork_expires,"
+                     "       bomwork_stdunitcost,"
+                     "       bomwork_actunitcost "
+                     "FROM bomwork, item, uom "
+                     "WHERE ((bomwork_item_id=item_id)"
+                     " AND (item_inv_uom_id=uom_id)"
+                     " AND (bomwork_set_id=<? value(\"bomwork_set_id\") ?>)"
+                     " AND (CURRENT_DATE BETWEEN bomwork_effective AND (bomwork_expires - 1))) "
+                     "UNION "
+                     "SELECT -1, -1, -1,"
+                     "       99999, 99999, 1,"
+                     "       costelem_type, '',"
+                     "       '',"
+                     "       NULL, NULL, NULL, NULL,"
+                     "       itemcost_stdcost AS bomwork_stdunitcost,"
+                     "       currToBase(itemcost_curr_id, itemcost_actcost,"
+                     "                  CURRENT_DATE) AS bomwork_actunitcost "
+                     "FROM itemcost, costelem "
+                     "WHERE ( (itemcost_costelem_id=costelem_id)"
+                     " AND (NOT itemcost_lowlevel)"
+                     " AND (itemcost_item_id=<? value(\"item_id\") ?>) ) "
+                     ") AS dummy "
+                     "ORDER BY bomwork_parent_seqnumber, bomwork_seqnumber, item_number;" );
+
+    q = mql.toQuery(params);
+    _bomitem->populate(q);
+    if (q.lastError().type() != QSqlError::None)
     {
-      int _worksetid = q.value("bomwork_set_id").toInt();
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
 
-      QString sql( "SELECT bomwork_id, item_id, bomwork_parent_id,"
-                   "       bomwork_seqnumber, item_number, uom_name,"
-                   "       (item_descrip1 || ' ' || item_descrip2) AS itemdescription,"
-                   "       formatQtyPer(bomwork_qtyper) AS qtyper,"
-                   "       formatScrap(bomwork_scrap) AS scrap,"
-                   "       formatDate(bomwork_effective, 'Always') AS effective,"
-                   "       formatDate(bomwork_expires, 'Never') AS expires," );
-
-      if(_costsGroup->isChecked())
-      {
-        if (_useStandardCosts->isChecked())
-          sql += " formatCost(bomwork_stdunitcost) AS f_unitcost,"
-                 " formatCost(bomwork_qtyper * (1 + bomwork_scrap) * bomwork_stdunitcost) AS f_extendedcost,"
-                 " (bomwork_qtyper * (1 + bomwork_scrap) * bomwork_stdunitcost) AS extendedcost,";
-        else if (_useActualCosts->isChecked())
-          sql += " formatCost(bomwork_actunitcost) AS f_unitcost,"
-                 " formatCost(bomwork_qtyper * (1 + bomwork_scrap) * bomwork_actunitcost) AS f_extendedcost,"
-                 " (bomwork_qtyper * (1 + bomwork_scrap) * bomwork_actunitcost) AS extendedcost,";
-      }
-      else
-      {
-          sql += " '' AS f_unitcost,"
-                 " '' AS f_extendedcost,"
-                 " 0 AS extendedcost,";
-      }
-
-      sql += " bomwork_level "
-             "FROM bomwork, item, uom "
-             "WHERE ((bomwork_item_id=item_id)"
-             " AND (item_inv_uom_id=uom_id)"
-             " AND (bomwork_set_id=:bomwork_set_id)"
-             " AND (CURRENT_DATE BETWEEN bomwork_effective AND (bomwork_expires - 1))) "
-
-             "UNION SELECT -1 AS bomwork_id, -1 AS item_id, -1 AS bomwork_parent_id,"
-             "             99999 AS bomwork_seqnumber, costelem_type AS item_number, '' AS uom_name,"
-             "             '' AS itemdescription,"
-             "             '' AS qtyper, '' AS scrap, '' AS effective, '' AS expires,";
-
-      if(_costsGroup->isChecked())
-      {
-        if (_useStandardCosts->isChecked())
-          sql += " formatCost(itemcost_stdcost) AS f_unitcost,"
-                 " formatCost(itemcost_stdcost) AS f_extendedcost,"
-                 " itemcost_stdcost AS extendedcost,";
-        else if (_useActualCosts->isChecked())
-          sql += " formatCost(currToBase(itemcost_curr_id, itemcost_actcost, CURRENT_DATE)) AS f_unitcost,"
-                 " formatCost(currToBase(itemcost_curr_id, itemcost_actcost, CURRENT_DATE)) AS f_extendedcost,"
-                 " currToBase(itemcost_curr_id, itemcost_actcost, CURRENT_DATE) AS extendedcost,";
-      }
-      else
-      {
-          sql += " '' AS f_unitcost,"
-                 " '' AS f_extendedcost,"
-                 " 0 AS extendedcost,";
-      }
-
-      sql += " -1 AS bomwork_level "
-             "FROM itemcost, costelem "
-             "WHERE ( (itemcost_costelem_id=costelem_id)"
-             " AND (NOT itemcost_lowlevel)"
-             " AND (itemcost_item_id=:item_id) ) "
-
-             "ORDER BY bomwork_level, bomwork_seqnumber, item_number;";
-
-      q.prepare(sql);
-      q.bindValue(":bomwork_set_id", _worksetid);
+    if(_costsGroup->isChecked())
+    {
+      XTreeWidgetItem *last = new XTreeWidgetItem(_bomitem, -1, -1);
+      q.prepare( "SELECT formatCost(actcost(:item_id)) AS actual,"
+                 "       formatCost(stdcost(:item_id)) AS standard;" );
       q.bindValue(":item_id", _item->id());
       q.exec();
-      XTreeWidgetItem *last = NULL;
-
-      while (q.next())
+      if (q.first())
       {
-        if (q.value("bomwork_parent_id").toInt() == -1)
-        {
-          if (q.value("bomwork_id").toInt() == -1)
-          {
-            last = new XTreeWidgetItem( _bomitem, last, -1, -1,
-                                      "", q.value("item_number"),
-                                      "", "", "", "", "" );
-            last->setText(7, "");
-            last->setText(8, q.value("f_unitcost").toString());
-            last->setText(9, q.value("f_extendedcost").toString());
-          }
-          else
-          {
-            last = new XTreeWidgetItem( _bomitem, last, q.value("bomwork_id").toInt(), q.value("item_id").toInt(),
-                                      q.value("bomwork_seqnumber"), q.value("item_number"),
-                                      q.value("itemdescription"), q.value("uom_name"),
-                                      q.value("qtyper"), q.value("scrap"),
-                                      q.value("effective"), q.value("expires"),
-                                      q.value("f_unitcost"), q.value("f_extendedcost") );
-          }
+        last = new XTreeWidgetItem(_bomitem, -1, -1);
+        last->setText(1, tr("Actual Cost"));
+        last->setText(9, q.value("actual").toString());
 
-          totalCosts += q.value("extendedcost").toDouble();
-        }
-        else
-        {
-          XTreeWidgetItem *cursor = _bomitem->topLevelItem(0);
-          if (cursor)
-          {
-            do
-            {
-              if (cursor->id() == q.value("bomwork_parent_id").toInt())
-              {
-                XTreeWidgetItem *sibling = NULL;
-                XTreeWidgetItem *child;
-
-                sibling = cursor->child(cursor->childCount() - 1);
-
-                child = new XTreeWidgetItem( cursor, sibling, q.value("bomwork_id").toInt(), q.value("item_id").toInt(),
-                                           q.value("bomwork_seqnumber"), q.value("item_number"),
-                                           q.value("itemdescription"), q.value("uom_name"),
-                                           q.value("qtyper"), q.value("scrap"),
-                                           q.value("effective"), q.value("expires"),
-                                           q.value("f_unitcost"), q.value("f_extendedcost") );
-                cursor->setExpanded(TRUE);
-
-                break;
-              }
-            }
-            while ((cursor = _bomitem->topLevelItem(_bomitem->indexOfTopLevelItem(cursor)+1)) != NULL);
-          }
-        }
+        last = new XTreeWidgetItem( _bomitem, last, -1, -1);
+        last->setText(1, tr("Standard Cost"));
+        last->setText(9, q.value("standard").toString());
       }
- 
-      if(_costsGroup->isChecked())
+      else if (q.lastError().type() != QSqlError::None)
       {
-        last = new XTreeWidgetItem(_bomitem, last, -1, -1);
-        last->setText(1, tr("Total Cost"));
-        last->setText(9, formatCost(totalCosts));
-
-        q.prepare( "SELECT formatCost(actcost(:item_id)) AS actual,"
-                   "       formatCost(stdcost(:item_id)) AS standard;" );
-        q.bindValue(":item_id", _item->id());
-        q.exec();
-        if (q.first())
-        {
-          last = new XTreeWidgetItem(_bomitem, last, -1, -1);
-          last->setText(1, tr("Actual Cost"));
-          last->setText(9, q.value("actual").toString());
-  
-          last = new XTreeWidgetItem( _bomitem, last, -1, -1);
-          last->setText(1, tr("Standard Cost"));
-          last->setText(9, q.value("standard").toString());
-        }
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        return;
       }
+    }
 
-      q.prepare( "DELETE FROM bomwork "
-                 "WHERE (bomwork_set_id=:bomwork_set_id);" );
-      q.bindValue(":bomwork_set_id", _worksetid);
-      q.exec();
+    q.prepare( "DELETE FROM bomwork "
+               "WHERE (bomwork_set_id=:bomwork_set_id);" );
+    q.bindValue(":bomwork_set_id", worksetid);
+    q.exec();
+    if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
     }
   }
 }
@@ -1066,6 +1013,59 @@ void itemAvailabilityWorkbench::sPrintAvail()
     report.reportError(this);
 }
 
+bool itemAvailabilityWorkbench::setParamsCosted(ParameterList &params)
+{
+  if (! _item->isValid())
+  {
+    QMessageBox::critical(this, tr("Select an Item"),
+                          tr("Please select an Item and try again."));
+    _item->setFocus();
+    return false;
+  }
+
+  if  (_item->itemType() != "M" && _item->itemType() != "B" &&
+       _item->itemType() != "F")
+  {
+    QMessageBox::critical(this, tr("Item of wrong type"),
+                          tr("This item is not of the proper type (%1) to have "
+                             "a Bill of Materials.").arg(_item->itemType()));
+    return false;
+  }
+
+  params.append("item_id", _item->id());
+
+  if(_useStandardCosts->isChecked())
+    params.append("useStandardCosts");
+
+  if(_useActualCosts->isChecked())
+    params.append("useActualCosts");
+
+  params.append("always", tr("Always"));
+  params.append("never", tr("Never"));
+
+  XSqlQuery rq;
+  rq.prepare("SELECT getActiveRevId('BOM', :item_id) AS result;");
+  rq.bindValue(":item_id", _item->id());
+  rq.exec();
+  if (rq.first())
+  {
+    int result = rq.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("getActiveRevId", result), __FILE__, __LINE__);
+      return false;
+    }
+    params.append("revision_id", result);
+  }
+  else if (rq.lastError().type() != QSqlError::None)
+  {
+    systemError(this, rq.lastError().databaseText(), __FILE__, __LINE__);
+    return false;
+  }
+
+  return true;
+}
+
 void itemAvailabilityWorkbench::sPrintCosted()
 {
   q.prepare("SELECT indentedBOM(:item_id) AS result;");
@@ -1074,15 +1074,9 @@ void itemAvailabilityWorkbench::sPrintCosted()
   if (q.first())
   {
     ParameterList params;
-
-    params.append("item_id", _item->id());
     params.append("bomworkset_id", q.value("result").toInt());
-
-    if(_useStandardCosts->isChecked())
-      params.append("useStandardCosts");
-
-    if(_useActualCosts->isChecked())
-      params.append("useActualCosts");
+    if (! setParamsCosted(params))
+      return;
 
     orReport report("CostedIndentedBOM", params);
 
@@ -1091,9 +1085,16 @@ void itemAvailabilityWorkbench::sPrintCosted()
     else
       report.reportError(this);
   }
-  else
-    QMessageBox::critical( this, tr("Error Executing Report"),
-                           tr( "Was unable to create/collect the required information to create this report." ) );
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this,
+                tr("<p>Could not collect the Indented BOM information to write "
+                   "write the report.</p><pre>%1</pre>")
+                  .arg(q.lastError().databaseText()),
+                __FILE__, __LINE__);
+
+    return;
+  }
 }
 
 void itemAvailabilityWorkbench::sPrintHistory()

@@ -72,6 +72,8 @@ public:
     dspCostedIndentedBOM(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspCostedIndentedBOM();
 
+    virtual bool setParams(ParameterList &params);
+
 public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
     virtual void sPrint();
@@ -79,6 +81,7 @@ public slots:
     virtual void sMaintainItemCosts();
     virtual void sViewItemCosting();
     virtual void sFillList();
+    virtual void sFillList(int, bool);
 
 protected slots:
     virtual void languageChange();

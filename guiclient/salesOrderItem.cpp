@@ -166,15 +166,15 @@ salesOrderItem::salesOrderItem(QWidget* parent, const char* name, bool modal, Qt
   _taxtype->setEnabled(_privileges->check("OverrideTax"));
   _taxcode->setEnabled(_privileges->check("OverrideTax"));
 
-  _availability->addColumn(tr("#"),            _seqColumn,  Qt::AlignCenter );
-  _availability->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft   );
-  _availability->addColumn(tr("Description"),  -1,          Qt::AlignLeft   );
-  _availability->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignCenter );
-  _availability->addColumn(tr("Pend. Alloc."), _qtyColumn,  Qt::AlignRight  );
-  _availability->addColumn(tr("Total Alloc."), _qtyColumn,  Qt::AlignRight  );
-  _availability->addColumn(tr("On Order"),     _qtyColumn,  Qt::AlignRight  );
-  _availability->addColumn(tr("QOH"),          _qtyColumn,  Qt::AlignRight  );
-  _availability->addColumn(tr("Availability"), _qtyColumn,  Qt::AlignRight  );
+  _availability->addColumn(tr("#"),           _seqColumn, Qt::AlignCenter,true, "seqnumber");
+  _availability->addColumn(tr("Item Number"),_itemColumn, Qt::AlignLeft,  true, "item_number");
+  _availability->addColumn(tr("Description"),         -1, Qt::AlignLeft,  true, "item_descrip");
+  _availability->addColumn(tr("UOM"),         _uomColumn, Qt::AlignCenter,true, "uom_name");
+  _availability->addColumn(tr("Pend. Alloc."),_qtyColumn, Qt::AlignRight, true, "pendalloc");
+  _availability->addColumn(tr("Total Alloc."),_qtyColumn, Qt::AlignRight, true, "totalalloc");
+  _availability->addColumn(tr("On Order"),    _qtyColumn, Qt::AlignRight, true, "ordered");
+  _availability->addColumn(tr("QOH"),         _qtyColumn, Qt::AlignRight, true, "qoh");
+  _availability->addColumn(tr("Availability"),_qtyColumn, Qt::AlignRight, true, "totalavail");
   
   _itemchar = new QStandardItemModel(0, 3, this);
   _itemchar->setHeaderData( CHAR_ID, Qt::Horizontal, tr("Name"), Qt::DisplayRole);
@@ -198,7 +198,7 @@ salesOrderItem::salesOrderItem(QWidget* parent, const char* name, bool modal, Qt
   _showAvailability->setChecked(_preferences->boolean("ShowSOItemAvailability"));
 
   _qtyOrdered->setValidator(omfgThis->qtyVal());
-  _orderQty->setValidator(omfgThis->qtyVal());
+  _orderQty->setPrecision(omfgThis->qtyVal());
 
 //  Disable the Discount Percent stuff if we don't allow them
   if ((!_metrics->boolean("AllowDiscounts")) && (!_privileges->check("OverridePrice")))
@@ -1845,20 +1845,24 @@ void salesOrderItem::sDetermineAvailability( bool p )
              "       bomdata_bomwork_level,"
              "       bomdata_bomwork_id,"
              "       bomdata_bomwork_parent_id,"
-             "       bomdata_bomwork_seqnumber,"
-             "       bomdata_item_number,"
-             "       bomdata_itemdescription,"
-             "       bomdata_uom_name,"
+             "       bomdata_bomwork_seqnumber AS seqnumber,"
+             "       bomdata_item_number AS item_number,"
+             "       bomdata_itemdescription AS item_descrip,"
+             "       bomdata_uom_name AS uom_name,"
              "       pendalloc,"
-             "       formatQty(pendalloc) AS f_pendalloc,"
              "       ordered,"
-             "       formatQty(ordered) AS f_ordered,"
-             "       qoh, formatQty(qoh) AS f_qoh,"
-             "       formatQty(totalalloc + pendalloc) AS f_totalalloc,"
-             "       (qoh + ordered - (totalalloc + pendalloc))"
-             "                             AS totalavail,"
-             "       formatQty(qoh + ordered - (totalalloc + pendalloc))"
-             "                             AS f_totalavail"
+             "       qoh, "
+             "       (totalalloc + pendalloc) AS totalalloc,"
+             "       (qoh + ordered - (totalalloc + pendalloc)) AS totalavail,"
+             "       'qty' AS pendalloc_xtnumericrole,"
+             "       'qty' AS qoh_xtnumericrole,"
+             "       'qty' AS totalalloc_xtnumericrole,"
+             "       'qty' AS totalavail_xtnumericrole,"
+             "       CASE WHEN qoh < pendalloc THEN 'error'"
+             "            WHEN (qoh + ordered - (totalalloc + pendalloc)) < 0  THEN 'error'"
+             "            WHEN (qoh + ordered - (totalalloc + pendalloc)) < reorderlevel THEN 'warning'"
+             "       END AS qtforegroundrole,"
+             "       bomdata_bomwork_level - 1 AS xtindentrole "
              "  FROM ( SELECT itemsite_id,"
              "                CASE WHEN(itemsite_useparams)"
              "                     THEN itemsite_reorderlevel"
@@ -1893,14 +1897,16 @@ void salesOrderItem::sDetermineAvailability( bool p )
             {
               charidx  = _itemchar->index(i, CHAR_ID);
               valueidx = _itemchar->index(i, CHAR_VALUE);
-              sql += QString(" OR ((bomdata_char_id=%1) AND (bomdata_value='%2'))").arg(_itemchar->data(charidx, Qt::UserRole).toString()).arg(_itemchar->data(valueidx, Qt::DisplayRole).toString());
+              sql += QString(" OR ((bomdata_char_id=%1) AND (bomdata_value='%2'))")
+                  .arg(_itemchar->data(charidx, Qt::UserRole).toString())
+                  .arg(_itemchar->data(valueidx, Qt::DisplayRole).toString());
             }
 
             sql +=  " ) ";
           }     
              
           sql += "       ) AS data "
-                 "ORDER BY bomdata_bomwork_level, bomdata_bomwork_seqnumber;";
+                 "ORDER BY bomworkSequence(bomdata_bomwork_id);";
                  
           availability.prepare(sql);
           availability.bindValue(":item_id",        _item->id());
@@ -1909,49 +1915,7 @@ void salesOrderItem::sDetermineAvailability( bool p )
           availability.bindValue(":schedDate",      _scheduledDate->date());
           availability.bindValue(":origQtyOrd",     _originalQtyOrd);
           availability.exec();
-          while(availability.next())
-          {
-            XTreeWidgetItem *last = NULL;
-
-            if (availability.value("bomdata_bomwork_parent_id").toInt() == -1)
-              last = new XTreeWidgetItem( _availability,
-                              availability.value("bomdata_bomwork_id").toInt(),
-                              availability.value("bomdata_bomwork_seqnumber"),
-                              availability.value("bomdata_item_number"),
-                              availability.value("bomdata_itemdescription"),
-                              availability.value("bomdata_uom_name"),
-                              availability.value("f_pendalloc"),
-                              availability.value("f_totalalloc"),
-                              availability.value("f_ordered"),
-                              availability.value("f_qoh"),
-                              availability.value("f_totalavail")  );
-
-            else
-            {
-              last = new XTreeWidgetItem(
-                          _availability->findXTreeWidgetItemWithId(_availability,
-                          availability.value("bomdata_bomwork_parent_id").toInt()),
-                          availability.value("bomdata_bomwork_id").toInt(),
-                          availability.value("bomdata_bomwork_seqnumber"),
-                          availability.value("bomdata_item_number"),
-                          availability.value("bomdata_itemdescription"),
-                          availability.value("bomdata_uom_name"),
-                          availability.value("f_pendalloc"),
-                          availability.value("f_totalalloc"),
-                          availability.value("f_ordered"),
-                          availability.value("f_qoh"),
-                          availability.value("f_totalavail")  );
-            }
-
-            if (last && availability.value("qoh").toDouble() < availability.value("pendalloc").toDouble())
-              last->setTextColor(7, "red");
-  
-            if (last && availability.value("totalavail").toDouble() < 0.0)
-              last->setTextColor(8, "red");
-            else if (last && availability.value("totalavail").toDouble() <= availability.value("reorderlevel").toDouble())
-              last->setTextColor(8, "orange");
-          }
-
+          _availability->populate(availability);
           if (availability.lastError().type() != QSqlError::None)
           {
             systemError(this, availability.lastError().databaseText(), __FILE__, __LINE__);
@@ -1962,31 +1926,39 @@ void salesOrderItem::sDetermineAvailability( bool p )
         else
         {
           int itemsiteid = availability.value("itemsite_id").toInt();
-          QString sql( "SELECT itemsiteid, reorderlevel,"
-                                "       bomitem_seqnumber, item_number, item_descrip, uom_name,"
-                                "       pendalloc, formatQty(pendalloc) AS f_pendalloc,"
-                                "       ordered, formatQty(ordered) AS f_ordered,"
-                                "       qoh, formatQty(qoh) AS f_qoh,"
-                                "       formatQty(totalalloc + pendalloc) AS f_totalalloc,"
-                                "       (qoh + ordered - (totalalloc + pendalloc)) AS totalavail,"
-                                "       formatQty(qoh + ordered - (totalalloc + pendalloc)) AS f_totalavail "
-                                "FROM ( SELECT cs.itemsite_id AS itemsiteid,"
-                                "              CASE WHEN(cs.itemsite_useparams) THEN cs.itemsite_reorderlevel ELSE 0.0 END AS reorderlevel,"
-                                "              bomitem_seqnumber, item_number,"
-                                "              (item_descrip1 || ' ' || item_descrip2) AS item_descrip, uom_name,"
-                                "              ((itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper * (1 + bomitem_scrap))) * :qty) AS pendalloc,"
-                                "              (qtyAllocated(cs.itemsite_id, DATE(:schedDate)) - ((itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper * (1 + bomitem_scrap))) * :origQtyOrd)) AS totalalloc,"
-                                "              noNeg(cs.itemsite_qtyonhand) AS qoh,"
-                                "              qtyOrdered(cs.itemsite_id, DATE(:schedDate)) AS ordered "
-                                "       FROM item, bomitem LEFT OUTER JOIN"
-                                 "            itemsite AS cs ON ((cs.itemsite_warehous_id=:warehous_id)"
-                                 "                           AND (cs.itemsite_item_id=bomitem_item_id)),"
-                                "            uom,"
-                                 "            itemsite AS ps "
-                                "       WHERE ( (bomitem_item_id=item_id)"
-                                "        AND (item_inv_uom_id=uom_id)"
-                                "        AND (bomitem_parent_item_id=ps.itemsite_item_id)"
-                                "        AND (:schedDate BETWEEN bomitem_effective AND (bomitem_expires-1))");
+          QString sql("SELECT itemsiteid, reorderlevel,"
+                      "       bomitem_seqnumber AS seqnumber, item_number, "
+                      "       item_descrip, uom_name,"
+                      "       pendalloc, "
+                      "       ordered, "
+                      "       qoh, "
+                      "       (totalalloc + pendalloc) AS totalalloc,"
+                      "       (qoh + ordered - (totalalloc + pendalloc)) AS totalavail,"
+                      "       'qty' AS pendalloc_xtnumericrole,"
+                      "       'qty' AS qoh_xtnumericrole,"
+                      "       'qty' AS totalalloc_xtnumericrole,"
+                      "       'qty' AS totalavail_xtnumericrole,"
+                      "       CASE WHEN qoh < pendalloc THEN 'error'"
+                      "            WHEN (qoh + ordered - (totalalloc + pendalloc)) < 0  THEN 'error'"
+                      "            WHEN (qoh + ordered - (totalalloc + pendalloc)) < reorderlevel THEN 'warning'"
+                      "       END AS qtforegroundrole "
+                      "FROM ( SELECT cs.itemsite_id AS itemsiteid,"
+                      "              CASE WHEN(cs.itemsite_useparams) THEN cs.itemsite_reorderlevel ELSE 0.0 END AS reorderlevel,"
+                      "              bomitem_seqnumber, item_number,"
+                      "              (item_descrip1 || ' ' || item_descrip2) AS item_descrip, uom_name,"
+                      "              ((itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper * (1 + bomitem_scrap))) * :qty) AS pendalloc,"
+                      "              (qtyAllocated(cs.itemsite_id, DATE(:schedDate)) - ((itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper * (1 + bomitem_scrap))) * :origQtyOrd)) AS totalalloc,"
+                      "              noNeg(cs.itemsite_qtyonhand) AS qoh,"
+                      "              qtyOrdered(cs.itemsite_id, DATE(:schedDate)) AS ordered "
+                      "       FROM item, bomitem LEFT OUTER JOIN"
+                      "            itemsite AS cs ON ((cs.itemsite_warehous_id=:warehous_id)"
+                      "                           AND (cs.itemsite_item_id=bomitem_item_id)),"
+                      "            uom,"
+                      "            itemsite AS ps "
+                      "       WHERE ( (bomitem_item_id=item_id)"
+                      "        AND (item_inv_uom_id=uom_id)"
+                      "        AND (bomitem_parent_item_id=ps.itemsite_item_id)"
+                      "        AND (:schedDate BETWEEN bomitem_effective AND (bomitem_expires-1))");
 
           if (_item->isConfigured()) // For configured items limit to bomitems associated with selected characteristic values
           {
@@ -2013,30 +1985,7 @@ void salesOrderItem::sDetermineAvailability( bool p )
           availability.bindValue(":schedDate", _scheduledDate->date());
           availability.bindValue(":origQtyOrd", _originalQtyOrd);
           availability.exec();
-          XTreeWidgetItem *last = 0;
-          while (availability.next())
-          {
-            last = new XTreeWidgetItem(_availability, last,
-                                       availability.value("itemsiteid").toInt(),
-                                       availability.value("bomitem_seqnumber"),
-                                       availability.value("item_number"),
-                                       availability.value("item_descrip"),
-                                       availability.value("uom_name"),
-                                       availability.value("f_pendalloc"),
-                                       availability.value("f_totalalloc"),
-                                       availability.value("f_ordered"),
-                                       availability.value("f_qoh"),
-                                       availability.value("f_totalavail")  );
-  
-            if (availability.value("qoh").toDouble() < availability.value("pendalloc").toDouble())
-              last->setTextColor(7, "red");
-  
-            if (availability.value("totalavail").toDouble() < 0.0)
-              last->setTextColor(8, "red");
-            else if (availability.value("totalavail").toDouble() <= availability.value("reorderlevel").toDouble())
-              last->setTextColor(8, "orange");
-          }
-
+          _availability->populate(availability);
           if (availability.lastError().type() != QSqlError::None)
           {
             systemError(this, availability.lastError().databaseText(), __FILE__, __LINE__);

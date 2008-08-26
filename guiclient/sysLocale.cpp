@@ -61,6 +61,8 @@
 #include <QSqlError>
 #include <QVariant>
 
+#define DEBUG true
+
 sysLocale::sysLocale(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
@@ -179,6 +181,8 @@ void sysLocale::sSave()
     return;
   }
 
+  QLocale sampleLocale = generateLocale();
+
   if (_mode == cNew)
   {
     q.exec("SELECT NEXTVAL('locale_locale_id_seq') AS _locale_id");
@@ -188,7 +192,9 @@ void sysLocale::sSave()
     q.prepare( "INSERT INTO locale "
                "( locale_id, locale_code, locale_descrip,"
                "  locale_lang_id, locale_country_id, "
-	       "  locale_curr_scale,"
+               "  locale_dateformat, locale_timeformat, locale_timestampformat,"
+	       "  locale_intervalformat, locale_qtyformat,"
+               "  locale_curr_scale,"
                "  locale_salesprice_scale, locale_purchprice_scale,"
                "  locale_extprice_scale, locale_cost_scale,"
                "  locale_qty_scale, locale_qtyper_scale,"
@@ -200,7 +206,9 @@ void sysLocale::sSave()
                "VALUES "
                "( :locale_id, :locale_code, :locale_descrip,"
                "  :locale_lang_id, :locale_country_id,"
-	       "  :locale_curr_scale,"
+               "  :locale_dateformat, :locale_timeformat, :locale_timestampformat,"
+	       "  :locale_intervalformat, :locale_qtyformat,"
+               "  :locale_curr_scale,"
                "  :locale_salesprice_scale, :locale_purchprice_scale,"
                "  :locale_extprice_scale, :locale_cost_scale,"
                "  :locale_qty_scale, :locale_qtyper_scale,"
@@ -216,6 +224,11 @@ void sysLocale::sSave()
                 "    locale_descrip=:locale_descrip,"
                 "    locale_lang_id=:locale_lang_id,"
                 "    locale_country_id=:locale_country_id,"
+                "    locale_dateformat=:locale_dateformat,"
+                "    locale_timeformat=:locale_timeformat,"
+                "    locale_timestampformat=:locale_timestampformat,"
+                "    locale_intervalformat=:locale_intervalformat,"
+                "    locale_qtyformat=:locale_qtyformat,"
 		"    locale_curr_scale=:locale_curr_scale,"
                 "    locale_salesprice_scale=:locale_salesprice_scale,"
                 "    locale_purchprice_scale=:locale_purchprice_scale,"
@@ -253,6 +266,13 @@ void sysLocale::sSave()
   q.bindValue(":locale_altemphasis_color", _alternate->text());
   q.bindValue(":locale_expired_color",     _expired->text());
   q.bindValue(":locale_future_color",      _future->text());
+  q.bindValue(":locale_dateformat",     convert(sampleLocale.dateFormat(QLocale::ShortFormat)));
+  q.bindValue(":locale_timeformat",     convert(sampleLocale.timeFormat(QLocale::ShortFormat)));
+  q.bindValue(":locale_timestampformat",convert(sampleLocale.dateFormat(QLocale::ShortFormat)) +
+                                  " " + convert(sampleLocale.timeFormat(QLocale::ShortFormat)));
+  q.bindValue(":locale_intervalformat", convert(sampleLocale.timeFormat(QLocale::ShortFormat).remove("ap", Qt::CaseInsensitive)));
+  q.bindValue(":locale_qtyformat",      QString(sampleLocale.decimalPoint()) +
+                                        QString(sampleLocale.negativeSign()));
   q.exec();
   if (q.lastError().type() != QSqlError::None)
   {
@@ -328,42 +348,7 @@ void sysLocale::sUpdateCountries()
 
 void sysLocale::sUpdateSamples()
 {
-  QLocale::Language localeLang = QLocale::C;
-  QLocale::Country  localeCountry = QLocale::AnyCountry;
-
-  if (_language->id() > 0)
-  {
-    q.prepare("SELECT lang_qt_number FROM lang WHERE (lang_id=:langid);");
-    q.bindValue(":langid", _language->id());
-    q.exec();
-    if (q.first())
-    {
-      localeLang = QLocale::Language(q.value("lang_qt_number").toInt());
-    }
-    else if (q.lastError().type() != QSqlError::None)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
-  }
-
-  if (_country->id() > 0)
-  {
-    q.prepare("SELECT country_qt_number "
-              "FROM country "
-              "WHERE (country_id=:countryid);");
-    q.bindValue(":countryid", _country->id());
-    q.exec();
-    if (q.first())
-    {
-      localeCountry = QLocale::Country(q.value("country_qt_number").toInt());
-    }
-    else if (q.lastError().type() != QSqlError::None)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
-  }
+  QLocale sampleLocale = generateLocale();
 
   q.prepare("SELECT CURRENT_DATE AS dateSample, CURRENT_TIME AS timeSample,"
             "       CURRENT_TIMESTAMP AS timestampSample,"
@@ -372,8 +357,6 @@ void sysLocale::sUpdateSamples()
   q.exec();
   if (q.first())
   {
-    QLocale sampleLocale = QLocale(localeLang, localeCountry);
-
     _dateSample->setText(sampleLocale.toString(q.value("dateSample").toDate(), QLocale::ShortFormat));
     _timeSample->setText(sampleLocale.toString(q.value("timeSample").toTime(), QLocale::ShortFormat));
     _timestampSample->setText(sampleLocale.toString(q.value("timestampSample").toDate(), QLocale::ShortFormat) +
@@ -449,4 +432,242 @@ void sysLocale::populate()
     systemError(this, popq.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+}
+
+// convert between Qt's date/time formatting strings and PostgreSQL's
+QString sysLocale::convert(const QString &input)
+{
+  char output[input.size()];
+  QString errMsg = tr("<p>.Could not translate Qt date/time formatting "
+                      "string %1 to PostgreSQL date/time formatting "
+                      "string. Error at or near character %2.");
+
+  int o = 0;
+  int i = 0;
+
+  output[o] = 0;
+  for (i = 0; i < input.size(); i++)
+  {
+    switch (input[i].toAscii())
+    {
+    case '\'':
+      if (input[++i] == '\'')
+        output[o++] = '\'';
+      else for (; input[i] != '\''; i++)
+        output[o++] = input[i].toAscii();
+      if (input[i] == '\'')
+        i++;
+      break;
+
+    case 'd':
+      if (input[i+1] != 'd')
+      {
+        output[o++] = 'D';
+        output[o++] = 'D';
+      }
+      else if (input[i+2] != 'd')
+      {
+        output[o++] = 'D';
+        output[o++] = 'D';
+        i++;
+      }
+      else if (input[i+3] != 'd')
+      {
+        output[o++] = 'D';
+        output[o++] = 'y';
+        i += 2;
+      }
+      else if (input[i+3] == 'd')
+      {
+        output[o++] = 'D';
+        output[o++] = 'a';
+        output[o++] = 'y';
+        i += 3;
+      }
+      break;
+
+    case 'M':
+      if (input[i+1] != 'M')
+      {
+        output[o++] = 'M';
+        output[o++] = 'M';
+      }
+      else if (input[i+2] != 'M')
+      {
+        output[o++] = 'M';
+        output[o++] = 'M';
+        i++;
+      }
+      else if (input[i+3] != 'M')
+      {
+        output[o++] = 'M';
+        output[o++] = 'o';
+        output[o++] = 'n';
+        i += 2;
+      }
+      else if (input[i+3] == 'M')
+      {
+        output[o++] = 'M';
+        output[o++] = 'o';
+        output[o++] = 'n';
+        output[o++] = 't';
+        output[o++] = 'h';
+        i += 3;
+      }
+      break;
+
+    case 'y':
+      if (input[i+1] != 'y')
+      {
+        systemError(this, errMsg.arg(input).arg(i), __FILE__, __LINE__);
+        return "";
+      }
+      else if (input[i+2] != 'y')
+      {
+        output[o++] = 'Y';
+        output[o++] = 'Y';
+        i++;
+      }
+      else if (input[i+3] != 'y')
+      {
+        systemError(this, errMsg.arg(input).arg(i), __FILE__, __LINE__);
+        return "";
+      }
+      else if (input[i+3] == 'y')
+      {
+        output[o++] = 'Y';
+        output[o++] = 'Y';
+        output[o++] = 'Y';
+        output[o++] = 'Y';
+        i += 3;
+      }
+      break;
+
+    case 'h':
+      {
+        bool ampm = false;
+        int j;
+        for (j = i; j < input.size() && !ampm; j++)
+        {
+          if (input[j] == '\'')
+            while (input[++j] != '\'' && j < input.size())
+              ;
+          ampm = ((input[j] == 'a' && input[j+1] == 'p') ||
+                  (input[j] == 'A' && input[j+1] == 'P'));
+        }
+        output[o++] = 'H';
+        output[o++] = 'H';
+        if (ampm)
+        {
+          output[o++] = '1';
+          output[o++] = '2';
+        }
+        else
+        {
+          output[o++] = '2';
+          output[o++] = '4';
+        }
+        if (input[i+1] == 'h')
+          i++;
+      }
+      break;
+
+    case 'm':
+      output[o++] = 'M';
+      output[o++] = 'I';
+      if (input[i+1] == 'm')
+        i++;
+      break;
+
+    case 's':
+      output[o++] = 'S';
+      output[o++] = 'S';
+      if (input[i+1] == 's')
+        i++;
+      break;
+
+    case 'z':
+      output[o++] = 'M';
+      output[o++] = 'S';
+      if (input[i+1] == 'z' && input[i+2] != 'z')
+      {
+        systemError(this, errMsg.arg(input).arg(i), __FILE__, __LINE__);
+        return "";
+      }
+      else if (input[i+1] == 'z' && input[i+2] == 'z')
+        i += 2;
+      break;
+
+    case 'A':
+      output[o++] = 'A';
+      if (input[i+1] == 'P')
+      {
+        output[o++] = 'M';
+        i++;
+      }
+      break;
+
+    case 'a':
+      output[o++] = 'a';
+      if (input[i+1] == 'p')
+      {
+        output[o++] = 'm';
+        i++;
+      }
+      break;
+
+    default:
+      output[o++] = input[i].toAscii();
+      break;
+    }
+  }
+
+  output[o] = 0;
+
+  if (DEBUG)
+    qDebug("sysLocale::convert() %s to %s", qPrintable(input), output);
+
+  return QString(output);
+}
+
+QLocale sysLocale::generateLocale()
+{
+  QLocale::Language localeLang = QLocale::C;
+  QLocale::Country  localeCountry = QLocale::AnyCountry;
+
+  if (_language->id() > 0)
+  {
+    q.prepare("SELECT lang_qt_number FROM lang WHERE (lang_id=:langid);");
+    q.bindValue(":langid", _language->id());
+    q.exec();
+    if (q.first())
+    {
+      localeLang = QLocale::Language(q.value("lang_qt_number").toInt());
+    }
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return QLocale("C");
+    }
+  }
+
+  if (_country->id() > 0)
+  {
+    q.prepare("SELECT country_qt_number "
+              "FROM country "
+              "WHERE (country_id=:countryid);");
+    q.bindValue(":countryid", _country->id());
+    q.exec();
+    if (q.first())
+    {
+      localeCountry = QLocale::Country(q.value("country_qt_number").toInt());
+    }
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return QLocale("C");
+    }
+  }
+
+  return QLocale(localeLang, localeCountry);
 }

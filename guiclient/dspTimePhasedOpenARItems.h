@@ -72,6 +72,8 @@ public:
     dspTimePhasedOpenARItems(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspTimePhasedOpenARItems();
 
+    virtual bool setParams(ParameterList &);
+
 public slots:
     virtual void sPrint();
     virtual void sSubmit();
@@ -89,8 +91,6 @@ protected slots:
 private:
     int _column;
     QList<DatePair> _columnDates;
-
-    ParameterList buildParameters();
 };
 
 #endif // DSPTIMEPHASEDOPENARITEMS_H

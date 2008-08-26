@@ -23,19 +23,13 @@
 	araging_cust_custtype_id,
 	araging_custtype_code,
 	araging_terms_descrip,
-	araging_aropen_amount,
-	araging_cur_amt,
-	araging_cur_val,
-	araging_thirty_amt,
-	araging_thirty_val,
-	araging_sixty_amt,
-	araging_sixty_val,
-	araging_ninety_amt,
-	araging_ninety_val,
-	araging_plus_amt,
-	araging_plus_val,
-	araging_total_amt,
-	araging_total_val
+	formatMoney(araging_aropen_amount) AS araging_aropen_amount,
+	araging_cur_val,   formatMoney(araging_cur_val)    AS araging_cur_amt,
+	araging_thirty_val,formatMoney(araging_thirty_val) AS araging_thirty_amt,
+	araging_sixty_val, formatMoney(araging_sixty_val)  AS araging_sixty_amt,
+	araging_ninety_val,formatMoney(araging_ninety_val) AS araging_ninety_amt,
+	araging_plus_val,  formatMoney(araging_plus_val)   AS araging_plus_amt,
+	araging_total_val, formatMoney(araging_total_val)  AS araging_total_amt
 FROM araging(&lt;? value("relDate") ?>)
 &lt;? if exists("cust_id") ?>
    WHERE (araging_cust_id=&lt;? value("cust_id") ?>)

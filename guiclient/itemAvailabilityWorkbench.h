@@ -72,6 +72,8 @@ public:
     itemAvailabilityWorkbench(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~itemAvailabilityWorkbench();
 
+    virtual bool setParamsCosted(ParameterList &);
+
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
     virtual void setParams(ParameterList & params);

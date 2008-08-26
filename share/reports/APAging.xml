@@ -19,7 +19,7 @@
 	apaging_duedate,
 	apaging_ponumber,
 	apaging_docnumber,
-          apaging_invcnumber,
+        apaging_invcnumber,
 	apaging_doctype,
 	apaging_vend_id,
 	apaging_vend_number,
@@ -27,25 +27,18 @@
 	apaging_vend_vendtype_id,
 	apaging_vendtype_code,
 	apaging_terms_descrip,
-	apaging_apopen_amount,
-	apaging_cur_amt,
-	apaging_cur_val,
-	apaging_thirty_amt,
-	apaging_thirty_val,
-	apaging_sixty_amt,
-	apaging_sixty_val,
-	apaging_ninety_amt,
-	apaging_ninety_val,
-	apaging_plus_amt,
-	apaging_plus_val,
-	apaging_total_amt,
-	apaging_total_val,
-	apaging_disc_amt,
-	apaging_disc_val,
+	formatMoney(apaging_apopen_amount) AS apaging_apopen_amount,
+	apaging_cur_val,   formatMoney(apaging_cur_val)    AS apaging_cur_amt,
+	apaging_thirty_val,formatMoney(apaging_thirty_val) AS apaging_thirty_amt,
+	apaging_sixty_val, formatMoney(apaging_sixty_val)  AS apaging_sixty_amt,
+	apaging_ninety_val,formatMoney(apaging_ninety_val) AS apaging_ninety_amt,
+	apaging_plus_val,  formatMoney(apaging_plus_val)   AS apaging_plus_amt,
+	apaging_total_val, formatMoney(apaging_total_val)  AS apaging_total_amt,
+	apaging_disc_val,  formatMoney(apaging_disc_val)   AS apaging_disc_amt,
 	apaging_discdate,
 	apaging_discdays,
 	apaging_discprcnt
-FROM apaging(&lt;? value("relDate") ?>, &lt;? if exists("useDocDate") ?>true&lt;? else ?>false&lt;? endif ?>)
+FROM apaging(&lt;? value("relDate") ?>, &lt;? value("useDocDate") ?>)
 &lt;? if exists("vend_id") ?>
    WHERE (apaging_vend_id=&lt;? value("vend_id") ?>)
 &lt;? elseif exists("vendtype_id") ?>

@@ -57,27 +57,24 @@
 
 #include "dspTimePhasedOpenARItems.h"
 
-#include <QVariant>
-#include <QStatusBar>
-#include <QMessageBox>
-#include <QVector>
-#include <QWorkspace>
 #include <QMenu>
-#include <datecluster.h>
+#include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
+
+#include <metasql.h>
 
 #include <metasql.h>
 #include "mqlutil.h"
 
 #include <openreports.h>
+
+#include <datecluster.h>
+
 #include "printStatementByCustomer.h"
 #include "dspAROpenItemsByCustomer.h"
 #include "submitReport.h"
 
-/*
- *  Constructs a dspTimePhasedOpenARItems as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspTimePhasedOpenARItems::dspTimePhasedOpenARItems(QWidget* parent, const char* name, Qt::WFlags fl)
     : XMainWindow(parent, name, fl)
 {
@@ -85,19 +82,12 @@ dspTimePhasedOpenARItems::dspTimePhasedOpenARItems(QWidget* parent, const char* 
 
   (void)statusBar();
 
-  // signals and slots connections
-  connect(_selectedCustomerType, SIGNAL(toggled(bool)), _customerTypes, SLOT(setEnabled(bool)));
-  connect(_customerTypePattern, SIGNAL(toggled(bool)), _customerType, SLOT(setEnabled(bool)));
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
   connect(_aropen, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-  connect(_calendar, SIGNAL(newCalendarId(int)), _periods, SLOT(populate(int)));
-  connect(_selectedCustomer, SIGNAL(toggled(bool)), _cust, SLOT(setEnabled(bool)));
-  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-  connect(_calendar, SIGNAL(select(ParameterList&)), _periods, SLOT(load(ParameterList&)));
   connect(_custom, SIGNAL(toggled(bool)), this, SLOT(sToggleCustom()));
-  
+  connect(_print,  SIGNAL(clicked()),     this, SLOT(sPrint()));
+  connect(_query,  SIGNAL(clicked()),     this, SLOT(sFillList()));
+  connect(_submit, SIGNAL(clicked()),     this, SLOT(sSubmit()));
+
   _customerTypes->setType(XComboBox::CustomerTypes);
   
   _aropen->addColumn(tr("Cust. #"),  _orderColumn, Qt::AlignLeft, true, "araging_cust_number" );
@@ -112,76 +102,27 @@ dspTimePhasedOpenARItems::dspTimePhasedOpenARItems(QWidget* parent, const char* 
     _submit->hide();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspTimePhasedOpenARItems::~dspTimePhasedOpenARItems()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspTimePhasedOpenARItems::languageChange()
 {
   retranslateUi(this);
 }
 
-void dspTimePhasedOpenARItems::sPrint()
+bool dspTimePhasedOpenARItems::setParams(ParameterList &params)
 {
-  if ((_custom->isChecked() && _periods->isPeriodSelected()) || (!_custom->isChecked()))
+  if ((_custom->isChecked() && ! _periods->isPeriodSelected()) ||
+      (!_custom->isChecked() && !_asOf->isValid()))
   {
-    QString reportName;
-    if(_custom->isChecked())
-      reportName = "TimePhasedOpenARItems";
-    else
-      reportName = "ARAging";
-    orReport report(reportName, buildParameters());
-    if (report.isValid())
-      report.print();
-    else
-    {
-      report.reportError(this);
-      return;
-    }
+    QMessageBox::critical(this, tr("Incomplete criteria"),
+                          tr("<p>The criteria you specified are not complete. "
+                             "Please make sure all fields are correctly filled "
+                             "out before running the report." ) );
+    return false;
   }
-  else
-    QMessageBox::critical( this, tr("Incomplete criteria"),
-                           tr( "The criteria you specified is not complete. Please make sure all\n"
-                               "fields are correctly filled out before running the report." ) );
-}
-
-void dspTimePhasedOpenARItems::sSubmit()
-{
-  if ((_custom->isChecked() && _periods->isPeriodSelected()) || (!_custom->isChecked()))
-  {
-    ParameterList params(buildParameters());
-    if(_custom->isChecked())
-      params.append("report_name", "TimePhasedOpenARItems");
-    else
-      params.append("report_name", "ARAging");
-
-    submitReport newdlg(this, "", TRUE);
-    newdlg.set(params);
-
-    if (newdlg.check() == cNoReportDefinition)
-      QMessageBox::critical( this, tr("Report Definition Not Found"),
-                             tr( "The report defintions for this report, \"TimePhasedOpenARItems\" cannot be found.\n"
-                                 "Please contact your Systems Administrator and report this issue." ) );
-    else
-      newdlg.exec();
-  }
-  else
-    QMessageBox::critical( this, tr("Incomplete criteria"),
-                           tr( "The criteria you specified is not complete. Please make sure all\n"
-                               "fields are correctly filled out before running the report." ) );
-}
-
-ParameterList dspTimePhasedOpenARItems::buildParameters()
-{
-  ParameterList params;
 
   if (_selectedCustomer->isChecked())
     params.append("cust_id", _cust->id());
@@ -192,6 +133,8 @@ ParameterList dspTimePhasedOpenARItems::buildParameters()
 
   if(_custom->isChecked())
   {
+    params.append("report_name", "TimePhasedOpenARItems");
+
     QList<QTreeWidgetItem*> selected = _periods->selectedItems();
     QList<QVariant> periodList;
     for (int i = 0; i < selected.size(); i++)
@@ -199,9 +142,52 @@ ParameterList dspTimePhasedOpenARItems::buildParameters()
     params.append("period_id_list", periodList);
   }
   else
+  {
+    params.append("report_name", "ARAging");
     params.append("relDate", _asOf->date());
+  }
 
-  return params;
+  return true;
+}
+
+void dspTimePhasedOpenARItems::sPrint()
+{
+  ParameterList params;
+  if (! setParams(params))
+    return;
+
+  QString reportName;
+  if(_custom->isChecked())
+    reportName = "TimePhasedOpenARItems";
+  else
+    reportName = "ARAging";
+  orReport report(reportName, params);
+  if (report.isValid())
+    report.print();
+  else
+  {
+    report.reportError(this);
+    return;
+  }
+}
+
+void dspTimePhasedOpenARItems::sSubmit()
+{
+  ParameterList params;
+  if (! setParams(params))
+    return;
+
+  submitReport newdlg(this, "", TRUE);
+  newdlg.set(params);
+
+  if (newdlg.check() == cNoReportDefinition)
+    QMessageBox::critical( this, tr("Report Definition Not Found"),
+                           tr("<p>The report defintions for this report, "
+                              "\"TimePhasedOpenARItems\" cannot be found. "
+                              "Please contact your Systems Administrator and "
+                              "report this issue." ) );
+  else
+    newdlg.exec();
 }
 
 void dspTimePhasedOpenARItems::sViewOpenItems()
@@ -289,90 +275,72 @@ void dspTimePhasedOpenARItems::sFillCustom()
   }
 
   _columnDates.clear();
-  _aropen->clear();
   _aropen->setColumnCount(2);
 
   QString sql("SELECT cust_id, cust_number, cust_name");
+  QStringList linetotal;
 
   int columns = 1;
   QList<QTreeWidgetItem*> selected = _periods->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
     PeriodListViewItem *cursor = (PeriodListViewItem*)selected[i];
-    sql += QString(", openARItemsValue(cust_id, %2) AS bucket%1")
-	   .arg(columns++)
-	   .arg(cursor->id());
+    QString bucketname = QString("bucket%1").arg(columns++);
+    sql += QString(", openARItemsValue(cust_id, %2) AS %1,"
+                   " 'curr' AS %3_xtnumericrole, 0 AS %4_xttotalrole")
+	   .arg(bucketname)
+	   .arg(cursor->id())
+           .arg(bucketname)
+           .arg(bucketname);
 
-    _aropen->addColumn(formatDate(cursor->startDate()), _bigMoneyColumn, Qt::AlignRight);
+    _aropen->addColumn(formatDate(cursor->startDate()), _bigMoneyColumn, Qt::AlignRight, true, bucketname);
     _columnDates.append(DatePair(cursor->startDate(), cursor->endDate()));
+    linetotal << QString("openARItemsValue(cust_id, %2)").arg(cursor->id());
   }
 
-  sql += " FROM cust ";
+  _aropen->addColumn(tr("Total"), _bigMoneyColumn, Qt::AlignRight, true, "linetotal");
 
-  if (_selectedCustomer->isChecked())
-    sql += "WHERE (cust_id=:cust_id)";
-  else if (_selectedCustomerType->isChecked())
-    sql += "WHERE (cust_custtype_id=:custtype_id)";
-  else if (_customerTypePattern->isChecked())
-    sql += "WHERE (cust_custtype_id IN (SELECT custtype_id FROM custtype WHERE (custtype_code ~ :custtype_pattern))) ";
+  sql += ", " + linetotal.join("+") + " AS linetotal,"
+         " 'curr' AS linetotal_xtnumericrole,"
+         " 0 AS linetotal_xttotalrole,"
+         " (" + linetotal.join("+") + ") = 0.0 AS xthiddenrole "
+         "FROM cust "
+         "<? if exists(\"cust_id\") ?>"
+         "WHERE (cust_id=<? value(\"cust_id\") ?>)"
+         "<? elseif exists(\"custtype_id\") ?>"
+         "WHERE (cust_custtype_id=<? value(\"custtype_id\") ?>)"
+         "<? elseif exists(\"custtype_pattern\") ?>"
+         "WHERE (cust_custtype_id IN (SELECT custtype_id FROM custtype WHERE (custtype_code ~ <? value(\"custtype_pattern\") ?>))) "
+         "<? endif ?>"
+         "ORDER BY cust_number;";
 
-  sql += "ORDER BY cust_number;";
-
-  q.prepare(sql);
-  q.bindValue(":cust_id", _cust->id());
-  q.bindValue(":custtype_id", _customerTypes->id());
-  q.bindValue(":custtype_pattern", _customerType->text().upper());
-  q.exec();
-  if (q.first())
+  MetaSQLQuery mql(sql);
+  ParameterList params;
+  if (! setParams(params))
+    return;
+  q = mql.toQuery(params);
+  _aropen->populate(q);
+  if (q.lastError().type() != QSqlError::None)
   {
-    QVector<Numeric> totals(columns);
-
-    XTreeWidgetItem * last = 0;
-    do
-    {
-      double lineTotal = 0.0;
-
-      XTreeWidgetItem *item = new XTreeWidgetItem( _aropen, last, q.value("cust_id").toInt(),
-                                                   q.value("cust_number"), q.value("cust_name") );
-
-      for (int column = 1; column < columns; column++)
-      {
-        QString bucketName = QString("bucket%1").arg(column);
-        item->setText((column + 1), formatMoney(q.value(bucketName).toDouble()));
-        totals[column] += q.value(bucketName).toDouble();
-        lineTotal += q.value(bucketName).toDouble();
-      }
-
-      if (lineTotal == 0.0)
-        delete item;
-      else
-        last = item;
-    }
-    while (q.next());
-
-//  Add the totals row
-    XTreeWidgetItem *total = new XTreeWidgetItem(_aropen, last, -1, QVariant(tr("Totals:")));
-    for (int column = 1; column < columns; column++)
-      total->setText((column + 1), formatMoney(totals[column].toDouble()));
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
 }
 
 void dspTimePhasedOpenARItems::sFillStd()
 {
-  _aropen->clear();
-
   MetaSQLQuery mql = mqlLoad(":/ar/displays/arAging.mql");
   ParameterList params;
-  params.append("asofDate",_asOf->date());
-  if (_selectedCustomer->isChecked())
-    params.append("cust_id", _cust->id());
-  else if (_selectedCustomerType->isChecked())
-    params.append("custtype_id", _customerTypes->id());
-  else if (_customerTypePattern->isChecked())
-    params.append("custtype_pattern", _customerType->text().upper());
+  if (! setParams(params))
+    return;
+
   q = mql.toQuery(params);
-  if (q.first())
-    _aropen->populate(q);
+  _aropen->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void dspTimePhasedOpenARItems::sToggleCustom()
@@ -384,6 +352,10 @@ void dspTimePhasedOpenARItems::sToggleCustom()
     _periods->setHidden(FALSE);
     _asOf->setDate(omfgThis->dbDate(), true);
     _asOf->setEnabled(FALSE);
+
+    _aropen->setColumnCount(0);
+    _aropen->addColumn(tr("Cust. #"), _orderColumn, Qt::AlignLeft, true, "cust_number");
+    _aropen->addColumn(tr("Customer"),         180, Qt::AlignLeft, true, "cust_name");
   }
   else
   {
@@ -391,7 +363,9 @@ void dspTimePhasedOpenARItems::sToggleCustom()
     _calendar->setHidden(TRUE);
     _periods->setHidden(TRUE);
     _asOf->setEnabled(TRUE);
-    _aropen->setColumnCount(2);
+    _aropen->setColumnCount(0);
+    _aropen->addColumn(tr("Cust. #"),       _orderColumn, Qt::AlignLeft,  true, "araging_cust_number");
+    _aropen->addColumn(tr("Customer"),               180, Qt::AlignLeft,  true, "araging_cust_name");
     _aropen->addColumn(tr("Total Open"), _bigMoneyColumn, Qt::AlignRight, true, "araging_total_val_sum");
     _aropen->addColumn(tr("0+ Days"),    _bigMoneyColumn, Qt::AlignRight, true, "araging_cur_val_sum");
     _aropen->addColumn(tr("0-30 Days"),  _bigMoneyColumn, Qt::AlignRight, true, "araging_thirty_val_sum");
@@ -400,4 +374,3 @@ void dspTimePhasedOpenARItems::sToggleCustom()
     _aropen->addColumn(tr("90+ Days"),   _bigMoneyColumn, Qt::AlignRight, true, "araging_plus_val_sum");
   }
 }
-

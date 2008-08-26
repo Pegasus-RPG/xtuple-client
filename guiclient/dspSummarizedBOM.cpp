@@ -78,10 +78,10 @@ dspSummarizedBOM::dspSummarizedBOM(QWidget* parent, const char* name, Qt::WFlags
   _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased | ItemLineEdit::cKit);
 
   _bomitem->setRootIsDecorated(TRUE);
-  _bomitem->addColumn(tr("Item Number"),   _itemColumn,  Qt::AlignLeft   );
-  _bomitem->addColumn(tr("Description"),   -1,           Qt::AlignLeft   );
-  _bomitem->addColumn(tr("UOM"),           _uomColumn,   Qt::AlignCenter );
-  _bomitem->addColumn(tr("Ext. Qty. Per"), _qtyColumn,   Qt::AlignRight  );
+  _bomitem->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft,  true, "bomdata_item_number");
+  _bomitem->addColumn(tr("Description"),          -1, Qt::AlignLeft,  true, "bomdata_itemdescription");
+  _bomitem->addColumn(tr("UOM"),          _uomColumn, Qt::AlignCenter,true, "bomdata_uom_name");
+  _bomitem->addColumn(tr("Ext. Qty. Per"),_qtyColumn, Qt::AlignRight, true, "bomdata_qtyper");
   _bomitem->setIndentation(10);
 
   _expiredDaysLit->setEnabled(_showExpired->isChecked());
@@ -174,31 +174,21 @@ void dspSummarizedBOM::sPrint()
 
 void dspSummarizedBOM::sFillList()
 {
-  _bomitem->clear();
-
   ParameterList params;
   if (!setParams(params))
     return;
 
-  QString sql( "SELECT * FROM summarizedBOM(<? value(\"item_id\") ?>,"
-			   "                     <? value(\"revision_id\") ?>,"
-			   "                     <? value(\"expiredDays\") ?>,"
-			   "                     <? value(\"futureDays\") ?>);" );
-
-  MetaSQLQuery mql(sql);
+  MetaSQLQuery mql("SELECT *,"
+                   "       'qtyper' AS bomdata_qtyper_xtnumericrole,"
+                   "       CASE WHEN bomdata_expired THEN 'expired'"
+                   "            WHEN bomdata_future  THEN 'future'"
+                   "        END AS qtforegroundrole "
+                   "FROM summarizedBOM(<? value(\"item_id\") ?>,"
+                   "                     <? value(\"revision_id\") ?>,"
+                   "                     <? value(\"expiredDays\") ?>,"
+                   "                     <? value(\"futureDays\") ?>);" );
   q = mql.toQuery(params);
-  XTreeWidgetItem *last = 0;
-  while (q.next())
-  {
-    last = new XTreeWidgetItem(_bomitem, last, -1, q.value("bomdata_item_number"),
-			       q.value("bomdata_itemdescription"), q.value("bomdata_uom_name"),
-			       q.value("bomdata_qtyper") );
-
-    if (q.value("bomdata_expired").toBool())
-      last->setTextColor("red");
-    else if (q.value("bomdata_future").toBool())
-      last->setTextColor("blue");
-  }
+  _bomitem->populate(q);
   if (q.lastError().type() != QSqlError::None)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);

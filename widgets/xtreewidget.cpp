@@ -73,6 +73,8 @@
 #include "xsqlquery.h"
 #include "format.h"
 
+#define DEBUG false
+
 XTreeWidget::XTreeWidget(QWidget *pParent) :
   QTreeWidget(pParent)
 {
@@ -186,9 +188,11 @@ void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId)
 
       if (_roles.size() > 0) // xtreewidget columns are tied to query columns
       {
-        // apply the indent role to col 0 if the caller requested indentation
+        // apply indent and hidden roles to col 0 if the caller requested them
         if (pQuery.record().indexOf("xtindentrole") >= 0)
           _roles.value(0)->insert("xtindentrole", "xtindentrole");
+        if (pQuery.record().indexOf("xthiddenrole") >= 0)
+          _roles.value(0)->insert("xthiddenrole", "xthiddenrole");
 
 	QStringList knownroles;
 	knownroles << "qtdisplayrole"      << "qttextalignmentrole"
@@ -197,7 +201,8 @@ void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId)
 		   << "qtfontrole"	   << "xtkeyrole"
 		   << "xtrunningrole"	   << "xtrunninginit"
 		   << "xtgrouprunningrole" << "xttotalrole"
-                   << "xtnumericrole"      << "xtnullrole";
+                   << "xtnumericrole"      << "xtnullrole"
+                   << "xthiddenrole";
 	for (int wcol = 0; wcol < _roles.size(); wcol++)
 	{
 	  QVariantMap *role = _roles.value(wcol);
@@ -237,6 +242,9 @@ void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId)
             if (last && last->data(0, Qt::UserRole).toMap().contains("xtindentrole"))
               lastindent = last->data(0, Qt::UserRole).toMap().value("xtindentrole").toInt();
           }
+          if (DEBUG)
+            qDebug("%s::populate() row with id %d and altId %d",
+                     qPrintable(objectName()), id, altId);
 
           if (indent == 0)
 	    last = new XTreeWidgetItem(this,
@@ -261,6 +269,16 @@ void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId)
           }
           else
 	    last = new XTreeWidgetItem(this, last, id, altId);
+
+          if (_roles.value(0)->contains("xthiddenrole") &&
+              ! pQuery.value("xthiddenrole").isNull())
+          {
+            if (DEBUG)
+              qDebug("%s::populate() found xthiddenrole, value = %s",
+                     qPrintable(objectName()), 
+                     qPrintable(pQuery.value("xthiddenrole").toString()));
+            last->setHidden(pQuery.value("xthiddenrole").toBool());
+          }
 
 	  for (int col = 0; col < _roles.size(); col++)
 	  {
@@ -1010,6 +1028,13 @@ void XTreeWidget::popupMenuActionTriggered(QAction * pAction)
     setColumnVisible(m.value("column").toInt(), pAction->isChecked());
   }
   //else if (some other command to handle)
+}
+
+void XTreeWidget::setColumnCount(int p)
+{
+  for (int i = columnCount(); i > p; i--)
+    _roles.remove(i - 1);
+  QTreeWidget::setColumnCount(p);
 }
 
 void XTreeWidget::setColumnLocked(int pColumn, bool pLocked)

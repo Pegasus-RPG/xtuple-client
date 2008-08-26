@@ -216,6 +216,7 @@ class OPENMFGWIDGETS_EXPORT XTreeWidget : public QTreeWidget
 
     Q_INVOKABLE void setColumnVisible(int, bool);
     Q_INVOKABLE void setColumnLocked(int, bool);
+    Q_INVOKABLE virtual void setColumnCount(int);
     XTreeWidgetItem *findXTreeWidgetItemWithId(const XTreeWidget *ptree, const int pid);
     XTreeWidgetItem *findXTreeWidgetItemWithId(const XTreeWidgetItem *ptreeitem, const int pid);
 

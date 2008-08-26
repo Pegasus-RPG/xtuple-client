@@ -39,16 +39,22 @@
   bomdata_item_descrip1 AS item_descrip1,
   bomdata_item_descrip2 AS item_descrip2,
   bomdata_issuemethod AS issuemethod,
-  bomdata_qtyper AS qtyper,
-  bomdata_scrap AS scrap,
+  formatQtyPer(bomdata_qtyper) AS qtyper,
+  formatScrap(bomdata_scrap) AS scrap,
   CASE
     WHEN item_inv_uom_id IS NOT NULL THEN
       formatqtyper(bomitem_qtyper * (1 + bomitem_scrap) * itemuomtouomratio(bomitem_item_id,bomitem_uom_id,item_inv_uom_id)) 
     ELSE
       ''
   END AS qtyreq,
-  bomdata_effective AS effective,
-  bomdata_expires AS expires,
+  CASE WHEN COALESCE(bomdata_effective, startOfTime()) &lt;= startOfTime() THEN
+             &lt;? value("always") ?>
+       ELSE formatDate(bomdata_effective)
+  END AS effective,
+  CASE WHEN COALESCE(bomdata_expires, endOfTime()) >= endOfTime() THEN
+             &lt;? value("never") ?>
+       ELSE formatDate(bomdata_expires)
+  END AS expires,
 &lt;? if exists("useActualCosts") ?>
   formatCost(bomdata_actunitcost)
 &lt;? else ?>
