@@ -1840,10 +1840,17 @@ void salesOrder::sDelete()
       if(_metrics->boolean("EnableSOReservations"))
         sUnreserveStock();
 		
-      q.prepare( "DELETE FROM coitem "
-                 "WHERE (coitem_id=:coitem_id);" );
-      q.bindValue(":coitem_id", _soitem->id());
+      q.prepare( "SELECT deleteSOItem(:soitem_id) AS result;");
+      q.bindValue(":soitem_id", _soitem->id());
       q.exec();
+      if (q.first())
+      {
+        int result = q.value("result").toInt();
+        if (result < 0)
+          systemError(this, storedProcErrorLookup("deleteSOItem", result), __FILE__, __LINE__);
+      }
+      else if (q.lastError().type() != QSqlError::NoError)
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 
       sFillItemList();
 
