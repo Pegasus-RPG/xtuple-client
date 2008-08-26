@@ -1086,10 +1086,7 @@
              </widget>
             </item>
             <item row="0" column="1" >
-             <widget class="XLineEdit" name="_orderQty" >
-              <property name="enabled" >
-               <bool>false</bool>
-              </property>
+             <widget class="XLabel" name="_orderQty" >
               <property name="maximumSize" >
                <size>
                 <width>80</width>

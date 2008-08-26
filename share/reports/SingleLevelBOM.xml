@@ -27,11 +27,11 @@ AND (item_inv_uom_id=uom_id));
             WHEN (bomitem_issuemethod='M') THEN 'Mixed'
             ELSE 'Special'
        END AS issuemethod,
-       formatQtyPer(bomitem_qtyper) AS qtyper,
+       formatQtyPer(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper)) AS qtyper,
        formatScrap(bomitem_scrap) AS scrap,
-       formatQtyPer(bomitem_qtyper + (1 * bomitem_scrap)) AS qtyreq,
-       formatDate(bomitem_effective, 'Always') AS effective,
-       formatDate(bomitem_expires, 'Never') AS expires,
+       formatQtyPer(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper) * (1 + bomitem_scrap)) AS qtyreq,
+       formatDate(bomitem_effective, &lt;? value("always") ?>) AS effective,
+       formatDate(bomitem_expires, &lt;? value("never") ?>) AS expires,
        bomitem_ecn
 &lt;? if exists("revision_id") ?>
   FROM bomitem(&lt;? value("item_id") ?>,&lt;? value("revision_id") ?>)
