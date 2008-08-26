@@ -121,15 +121,22 @@ void printChecks::sPrint()
 
   QList<ORODocument*> singleCheckPrerendered;
   XSqlQuery checks;
-  checks.prepare( "SELECT checkhead_id, checkhead_number, report_name, checkhead_recip_id "
-                  "FROM checkhead, bankaccnt, form, report "
+  checks.prepare( "SELECT checkhead_id, checkhead_number, report_name, checkhead_recip_id, checkhead_recip_type "
+                  "FROM checkhead "
+                  "LEFT OUTER JOIN vendinfo ON((checkhead_recip_id = vend_id) "
+                  "                       AND(checkhead_recip_type = 'V')) "
+                  "LEFT OUTER JOIN custinfo ON((checkhead_recip_id = cust_id) "
+                  "                         AND(checkhead_recip_type = 'C')) "
+                  "LEFT OUTER JOIN taxauth ON((checkhead_recip_id = taxauth_id) "
+                  "                        AND(checkhead_recip_type = 'T')), "
+                  " bankaccnt, form, report "
                   "WHERE ( (checkhead_bankaccnt_id=bankaccnt_id)"
                   " AND (bankaccnt_check_form_id=form_id)"
                   " AND (form_report_id=report_id)"
                   " AND (NOT checkhead_printed) "
                   " AND (NOT checkhead_void) "
                   " AND (bankaccnt_id=:bankaccnt_id) ) "
-                  "ORDER BY checkhead_recip_id "
+                  "ORDER BY checkhead_recip_type DESC, COALESCE(vend_number, cust_number, taxauth_code) "
                   "LIMIT :numtoprint; " );
   checks.bindValue(":bankaccnt_id", _bankaccnt->id());
   checks.bindValue(":numtoprint", _numberOfChecks->value());
