@@ -1,0 +1,110 @@
+SELECT arapply_id, 1 AS type, cust_number, cust_name,
+       arapply_postdate AS postdate,
+       ( CASE WHEN (arapply_source_doctype='C') THEN <? value("creditMemo") ?>
+              WHEN (arapply_source_doctype='R') THEN <? value("cashdeposit") ?>
+              WHEN (arapply_fundstype='C') THEN <? value("check") ?>
+              WHEN (arapply_fundstype='T') THEN <? value("certifiedCheck") ?>
+              WHEN (arapply_fundstype='M') THEN <? value("masterCard") ?>
+              WHEN (arapply_fundstype='V') THEN <? value("visa") ?>
+              WHEN (arapply_fundstype='A') THEN <? value("americanExpress") ?>
+              WHEN (arapply_fundstype='D') THEN <? value("discoverCard") ?>
+              WHEN (arapply_fundstype='R') THEN <? value("otherCreditCard") ?>
+              WHEN (arapply_fundstype='K') THEN <? value("cash") ?>
+              WHEN (arapply_fundstype='W') THEN <? value("wireTransfer") ?>
+              WHEN (arapply_fundstype='O') THEN <? value("other") ?>
+         END || ' ' ||
+         CASE WHEN (arapply_source_doctype IN ('C','R')) THEN TEXT(arapply_source_docnumber)
+              ELSE arapply_refnumber
+         END ) AS source,
+       ( CASE WHEN (arapply_target_doctype='D') THEN <? value("debitMemo") ?>
+              WHEN (arapply_target_doctype='I') THEN <? value("invoice") ?>
+              ELSE <? value("other") ?>
+         END || ' ' || TEXT(arapply_target_docnumber) ) AS target,
+       arapply_applied AS applied,
+       'curr' AS applied_xtnumericrole,
+       currtobase(arapply_curr_id,arapply_applied,arapply_postdate) AS base_applied,
+       'curr' AS base_applied_xtnumericrole,
+       0 AS base_applied_xttotalrole,
+       currConcat(arapply_curr_id) AS currAbbr,
+       arapply_postdate AS sortdate
+FROM arapply, cust
+WHERE ( (arapply_cust_id=cust_id)
+  AND   (arapply_postdate BETWEEN <? value("startDate") ?> AND <? value("endDate") ?>)
+  AND   (arapply_source_doctype ='K')
+<? if exists(\"cust_id\") ?>
+  AND   (cust_id=<? value("cust_id") ?>)
+<? elseif exists(\"custtype_id\") ?>
+  AND   (cust_custtype_id=<? value("custtype_id") ?>)
+<? elseif exists(\"custtype_pattern\") ?>
+  AND   (cust_custtype_id IN (SELECT custtype_id FROM custtype WHERE (custtype_code ~ <? value("custtype_pattern") ?>)))
+<? endif ?>
+      )
+UNION
+SELECT cashrcpt_id, 2 AS type, cust_number, cust_name,
+       cashrcpt_distdate AS postdate,
+       ( CASE WHEN (cashrcpt_fundstype='C') THEN <? value("check") ?>
+              WHEN (cashrcpt_fundstype='T') THEN <? value("certifiedCheck") ?>
+              WHEN (cashrcpt_fundstype='M') THEN <? value("masterCard") ?>
+              WHEN (cashrcpt_fundstype='V') THEN <? value("visa") ?>
+              WHEN (cashrcpt_fundstype='A') THEN <? value("americanExpress") ?>
+              WHEN (cashrcpt_fundstype='D') THEN <? value("discoverCard") ?>
+              WHEN (cashrcpt_fundstype='R') THEN <? value("otherCreditCard") ?>
+              WHEN (cashrcpt_fundstype='K') THEN <? value("cash") ?>
+              WHEN (cashrcpt_fundstype='W') THEN <? value("wireTransfer") ?>
+              WHEN (cashrcpt_fundstype='O') THEN <? value("other") ?>
+         END || ' ' || cashrcpt_docnumber ) AS source,
+       '' AS target,
+       cashrcpt_amount AS applied,
+       'curr' AS applied_xtnumericrole,
+       currtobase(cashrcpt_curr_id,cashrcpt_amount,cashrcpt_distdate) AS base_applied,
+       'curr' AS base_applied_xtnumericrole,
+       0 AS base_applied_xttotalrole,
+       currConcat(cashrcpt_curr_id) AS currAbbr,
+       cashrcpt_distdate AS sortdate
+FROM cashrcpt, cust
+WHERE ( (cashrcpt_cust_id=cust_id)
+  AND   (cashrcpt_distdate BETWEEN <? value("startDate") ?> AND <? value("endDate") ?>)
+<? if exists(\"cust_id\") ?>
+  AND   (cust_id=<? value("cust_id") ?>)
+<? elseif exists(\"custtype_id\") ?>
+  AND   (cust_custtype_id=<? value("custtype_id") ?>)
+<? elseif exists(\"custtype_pattern\") ?>
+  AND   (cust_custtype_id IN (SELECT custtype_id FROM custtype WHERE (custtype_code ~ <? value("custtype_pattern") ?>)))
+<? endif ?>
+      )
+UNION
+SELECT aropen_id, 3 AS type, cust_number, cust_name,
+       aropen_docdate AS postdate,
+       ( CASE WHEN (substr(aropen_notes, 16, 1)='C') THEN <? value("check") ?>
+              WHEN (substr(aropen_notes, 16, 1)='T') THEN <? value("certifiedCheck") ?>
+              WHEN (substr(aropen_notes, 16, 1)='M') THEN <? value("masterCard") ?>
+              WHEN (substr(aropen_notes, 16, 1)='V') THEN <? value("visa") ?>
+              WHEN (substr(aropen_notes, 16, 1)='A') THEN <? value("americanExpress") ?>
+              WHEN (substr(aropen_notes, 16, 1)='D') THEN <? value("discoverCard") ?>
+              WHEN (substr(aropen_notes, 16, 1)='R') THEN <? value("otherCreditCard") ?>
+              WHEN (substr(aropen_notes, 16, 1)='K') THEN <? value("cash") ?>
+              WHEN (substr(aropen_notes, 16, 1)='W') THEN <? value("wireTransfer") ?>
+              WHEN (substr(aropen_notes, 16, 1)='O') THEN <? value("other") ?>
+         END || ' ' ||
+         substr(aropen_notes, 18) ) AS source,
+       <? value("unapplied") ?> AS target,
+       aropen_amount AS applied,
+       'curr' AS applied_xtnumericrole,
+       currtobase(aropen_curr_id,aropen_amount,aropen_docdate) AS base_applied,
+       'curr' AS base_applied_xtnumericrole,
+       0 AS base_applied_xttotalrole,
+       currConcat(aropen_curr_id) AS currAbbr,
+       aropen_duedate AS sortdate
+FROM aropen, cust
+WHERE ( (aropen_cust_id=cust_id)
+  AND   (aropen_doctype='R')
+  AND   (aropen_docdate BETWEEN <? value("startDate") ?> AND <? value("endDate") ?>)
+<? if exists(\"cust_id\") ?>
+  AND   (cust_id=<? value("cust_id") ?>)
+<? elseif exists(\"custtype_id\") ?>
+  AND   (cust_custtype_id=<? value("custtype_id") ?>)
+<? elseif exists(\"custtype_pattern\") ?>
+  AND   (cust_custtype_id IN (SELECT custtype_id FROM custtype WHERE (custtype_code ~ <? value("custtype_pattern") ?>)))
+<? endif ?>
+      )
+ORDER BY sortdate, source;
