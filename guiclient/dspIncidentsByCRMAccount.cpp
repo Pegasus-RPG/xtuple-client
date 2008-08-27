@@ -94,7 +94,7 @@ dspIncidentsByCRMAccount::dspIncidentsByCRMAccount(QWidget* parent, const char* 
   _list->addColumn(tr("Account Number"),	    80, Qt::AlignLeft  );
   _list->addColumn(tr("Account Name"),		   100, Qt::AlignLeft  );
   _list->addColumn(tr("Incident"),	  _orderColumn, Qt::AlignRight );
-  _list->addColumn(tr(""),			    20, Qt::AlignCenter);
+  _list->addColumn(tr("Seq."),			    20, Qt::AlignCenter);
   _list->addColumn(tr("Summary"),	            -1, Qt::AlignLeft  );
   _list->addColumn(tr("Entered/Assigned"), _dateColumn, Qt::AlignLeft  );
   _list->addColumn(tr("Status"),         _statusColumn, Qt::AlignCenter);
@@ -383,7 +383,7 @@ void dspIncidentsByCRMAccount::sFillList()
 			       q.value("todoitem_id").toInt(), 3,
 			       "", "",
 			       "",
-			       tr(">"),
+			       q.value("todoitem_seq"),
 			       q.value("todoitem_name"),
 			       q.value("todoitem_assigned_date"),
 			       q.value("todoitem_status"),
