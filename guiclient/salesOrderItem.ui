@@ -177,18 +177,6 @@
        <item>
         <layout class="QVBoxLayout" >
          <property name="spacing" >
-          <number>5</number>
-         </property>
-         <property name="leftMargin" >
-          <number>0</number>
-         </property>
-         <property name="topMargin" >
-          <number>0</number>
-         </property>
-         <property name="rightMargin" >
-          <number>0</number>
-         </property>
-         <property name="bottomMargin" >
           <number>0</number>
          </property>
          <item>
@@ -322,7 +310,7 @@
         <item rowspan="3" row="0" column="2" >
          <layout class="QGridLayout" >
           <property name="topMargin" >
-           <number>7</number>
+           <number>3</number>
           </property>
           <item row="0" column="0" >
            <widget class="QLabel" name="_warehouseLit" >
@@ -626,42 +614,59 @@
          </widget>
         </item>
         <item row="1" column="1" >
-         <widget class="CurrCluster" name="_netUnitPrice" >
-          <property name="minimumSize" >
-           <size>
-            <width>140</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="format" >
-           <enum>CurrDisplay::SalesPrice</enum>
-          </property>
-          <property name="currencyEditable" stdset="0" >
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="2" >
-         <widget class="QPushButton" name="_listPrices" >
-          <property name="minimumSize" >
-           <size>
-            <width>60</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="maximumSize" >
-           <size>
-            <width>50</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="focusPolicy" >
-           <enum>Qt::NoFocus</enum>
-          </property>
-          <property name="text" >
-           <string> ... </string>
-          </property>
-         </widget>
+         <layout class="QHBoxLayout" >
+          <item>
+           <widget class="CurrCluster" name="_netUnitPrice" >
+            <property name="minimumSize" >
+             <size>
+              <width>140</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="format" >
+             <enum>CurrDisplay::SalesPrice</enum>
+            </property>
+            <property name="currencyEditable" stdset="0" >
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="_listPrices" >
+            <property name="minimumSize" >
+             <size>
+              <width>60</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize" >
+             <size>
+              <width>50</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="focusPolicy" >
+             <enum>Qt::NoFocus</enum>
+            </property>
+            <property name="text" >
+             <string> ... </string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
         </item>
         <item row="2" column="0" >
          <widget class="QLabel" name="_priceUOMLit" >
@@ -679,7 +684,7 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="1" colspan="2" >
+        <item row="2" column="1" >
          <layout class="QHBoxLayout" >
           <item>
            <widget class="XComboBox" name="_priceUOM" >
@@ -1443,6 +1448,12 @@
            <layout class="QGridLayout" >
             <item row="0" column="0" >
              <widget class="QLabel" name="_taxtypeLit" >
+              <property name="minimumSize" >
+               <size>
+                <width>0</width>
+                <height>24</height>
+               </size>
+              </property>
               <property name="text" >
                <string>Type:</string>
               </property>
@@ -1469,6 +1480,12 @@
             </item>
             <item row="1" column="0" >
              <widget class="QLabel" name="_taxcodeLit" >
+              <property name="minimumSize" >
+               <size>
+                <width>0</width>
+                <height>24</height>
+               </size>
+              </property>
               <property name="text" >
                <string>Code:</string>
               </property>
@@ -1514,6 +1531,19 @@
              </widget>
             </item>
             <item row="3" column="0" >
+             <spacer>
+              <property name="orientation" >
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" >
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="4" column="0" >
              <spacer>
               <property name="orientation" >
                <enum>Qt::Vertical</enum>

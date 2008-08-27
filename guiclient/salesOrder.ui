@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1016</width>
-    <height>704</height>
+    <width>988</width>
+    <height>574</height>
    </rect>
   </property>
   <property name="minimumSize" >
@@ -208,7 +208,7 @@
                 <property name="maximumSize" >
                  <size>
                   <width>40</width>
-                  <height>22</height>
+                  <height>20</height>
                  </size>
                 </property>
                 <property name="alignment" >
@@ -717,6 +717,19 @@
                    <enum>Qt::StrongFocus</enum>
                   </property>
                  </widget>
+                </item>
+                <item>
+                 <spacer>
+                  <property name="orientation" >
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" >
+                   <size>
+                    <width>40</width>
+                    <height>32</height>
+                   </size>
+                  </property>
+                 </spacer>
                 </item>
                 <item>
                  <widget class="QPushButton" name="_copyToShipto" >
@@ -1697,7 +1710,7 @@
               <item>
                <widget class="QLabel" name="_weightLit" >
                 <property name="text" >
-                 <string>Freight Weight:</string>
+                 <string> Freight Weight:</string>
                 </property>
                 <property name="alignment" >
                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1714,12 +1727,6 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
-                </property>
-                <property name="maximumSize" >
-                 <size>
-                  <width>100</width>
-                  <height>32767</height>
-                 </size>
                 </property>
                 <property name="alignment" >
                  <set>Qt::AlignRight</set>
