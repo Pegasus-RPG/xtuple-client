@@ -62,6 +62,10 @@
 #include <QSqlError>
 #include <QVariant>
 
+
+#include <metasql.h>
+#include "mqlutil.h"
+
 #include  <openreports.h>
 
 #include "failedPostList.h"
@@ -84,13 +88,15 @@ unpostedInvoices::unpostedInvoices(QWidget* parent, const char* name, Qt::WFlags
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
 
   _invchead->addColumn(tr("Invoice #"),  _orderColumn, Qt::AlignLeft,   true,  "invchead_invcnumber" );
-  _invchead->addColumn(tr("Prnt'd"),     _orderColumn, Qt::AlignCenter, true,  "invchead_printed" );
+  _invchead->addColumn(tr("Prnt'd"),     _orderColumn, Qt::AlignCenter, true,  "printed" );
   _invchead->addColumn(tr("S/O #"),      _orderColumn, Qt::AlignLeft,   true,  "invchead_ordernumber" );
   _invchead->addColumn(tr("Customer"),   -1,           Qt::AlignLeft,   true,  "cust_name" );
   _invchead->addColumn(tr("Invc. Date"), _dateColumn,  Qt::AlignCenter, true,  "invchead_invcdate" );
   _invchead->addColumn(tr("Ship Date"),  _dateColumn,  Qt::AlignCenter, true,  "invchead_shipdate" );
-  _invchead->addColumn(tr("G/L Dist Date"),_dateColumn,Qt::AlignCenter, true,  "invchead_gldistdate" );
-  _invchead->addColumn(tr("Recurring"),  _ynColumn,    Qt::AlignCenter, false, "invchead_recurring" );
+  _invchead->addColumn(tr("G/L Dist Date"),_dateColumn,Qt::AlignCenter, true,  "gldistdate" );
+  _invchead->addColumn(tr("Recurring"),  _ynColumn,    Qt::AlignCenter, false, "recurring" );
+  _invchead->addColumn(tr("Ship Date"),  _dateColumn,  Qt::AlignCenter, false, "invchead_shipdate" );
+  _invchead->addColumn(tr("P/O #"),      _orderColumn, Qt::AlignCenter, false, "invchead_ponumber" );
   _invchead->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
   if (! _privileges->check("ChangeARInvcDistDate"))
@@ -435,27 +441,15 @@ void unpostedInvoices::sPopulateMenu(QMenu *pMenu)
 void unpostedInvoices::sFillList()
 {
   _invchead->clear();
-  XSqlQuery fill;
-  fill.prepare("SELECT invchead_id, invchead_invcnumber,"
-	    "       formatBoolYN(invchead_printed) AS invchead_printed,"
-	    "       invchead_ordernumber, cust_name,"
-	    "       invchead_invcdate, "
-	    "       invchead_shipdate, "
-	    "       COALESCE(invchead_gldistdate, invchead_invcdate) AS invchead_gldistdate,"
-            "       formatBoolYN(invchead_recurring) AS invchead_recurring "
-	    "FROM invchead, cust "
-	    "WHERE ( (invchead_cust_id=cust_id)"
-	    "  AND   (NOT(invchead_posted))"
-		"  AND   ((SELECT COUNT(*)"
-		"          FROM invcitem, site()"
-		"          WHERE ( (invcitem_invchead_id=invchead_id)"
-		"            AND   ((warehous_id=invcitem_warehous_id) OR (invcitem_warehous_id=-1)) )) > 0) ) "
-	    "ORDER BY invchead_invcnumber;" );
-  fill.exec();
-  _invchead->populate(fill);
-  if (fill.lastError().type() != QSqlError::None)
+
+  MetaSQLQuery mql = mqlLoad(":/ar/invoices.mql");
+  ParameterList params;
+  params.append("unpostedOnly");
+  q = mql.toQuery(params);
+  _invchead->populate(q);
+  if (q.lastError().type() != QSqlError::None)
   {
-    systemError(this, fill.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 }
