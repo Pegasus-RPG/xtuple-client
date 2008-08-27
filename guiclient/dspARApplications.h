@@ -73,6 +73,9 @@ public:
     dspARApplications(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspARApplications();
 
+    virtual bool checkParams();
+    virtual void setParams(ParameterList &);
+
 public slots:
     virtual void sFillList();
     virtual void sPopulateMenu(QMenu*);

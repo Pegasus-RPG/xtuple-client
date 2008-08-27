@@ -64,6 +64,7 @@
 
 #include <datecluster.h>
 #include <metasql.h>
+#include "mqlutil.h"
 #include <parameter.h>
 #include <openreports.h>
 
@@ -84,17 +85,18 @@ dspARApplications::dspARApplications(QWidget* parent, const char* name, Qt::WFla
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
     
-  _arapply->addColumn(tr("Cust. #"),     _orderColumn, Qt::AlignCenter );
-  _arapply->addColumn(tr("Customer"),              -1, Qt::AlignLeft   );
-  _arapply->addColumn(tr("Date"),         _dateColumn, Qt::AlignCenter );
-  _arapply->addColumn("hidden source type",        10, Qt::AlignCenter );
-  _arapply->addColumn(tr("Source"),	      _itemColumn, Qt::AlignCenter );
-  _arapply->addColumn(tr("Doc #"),       _orderColumn, Qt::AlignCenter );
-  _arapply->addColumn("hidden target type",        10, Qt::AlignCenter );
-  _arapply->addColumn(tr("Apply-To"),     _itemColumn, Qt::AlignCenter );
-  _arapply->addColumn(tr("Doc #"),       _orderColumn, Qt::AlignCenter );
-  _arapply->addColumn(tr("Amount"),      _moneyColumn, Qt::AlignRight  );
-  _arapply->addColumn(tr("Currency"), _currencyColumn, Qt::AlignLeft   );
+  _arapply->addColumn(tr("Cust. #"),        _orderColumn, Qt::AlignCenter, true,  "cust_number" );
+  _arapply->addColumn(tr("Customer"),                 -1, Qt::AlignLeft,   true,  "cust_name"   );
+  _arapply->addColumn(tr("Date"),            _dateColumn, Qt::AlignCenter, true,  "arapply_postdate" );
+  _arapply->addColumn("hidden source type",           10, Qt::AlignCenter, true,  "arapply_source_doctype" );
+  _arapply->addColumn(tr("Source"),	         _itemColumn, Qt::AlignCenter, true,  "doctype" );
+  _arapply->addColumn(tr("Doc #"),          _orderColumn, Qt::AlignCenter, true,  "source" );
+  _arapply->addColumn("hidden target type",           10, Qt::AlignCenter, true,  "arapply_target_doctype" );
+  _arapply->addColumn(tr("Apply-To"),        _itemColumn, Qt::AlignCenter, true,  "targetdoctype" );
+  _arapply->addColumn(tr("Doc #"),          _orderColumn, Qt::AlignCenter, true,  "target" );
+  _arapply->addColumn(tr("Amount"),         _moneyColumn, Qt::AlignRight,  true,  "arapply_applied"  );
+  _arapply->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft,   true,  "currAbbr"   );
+  _arapply->addColumn(tr("Base Amount"), _bigMoneyColumn, Qt::AlignRight,  false, "base_applied"  );
 
   _arapply->hideColumn(3);
   _arapply->hideColumn(6);
@@ -114,53 +116,11 @@ void dspARApplications::languageChange()
 
 void dspARApplications::sPrint()
 {
-  if ( (_selectedCustomer->isChecked()) && (!_cust->isValid()) )
-  {
-    QMessageBox::warning( this, tr("Select Customer"),
-                          tr("You must select a Customer whose A/R Applications you wish to view.") );
-    _cust->setFocus();
+  if (!checkParams())
     return;
-  }
-
-  if (!_dates->startDate().isValid())
-  {
-    QMessageBox::critical( this, tr("Enter Start Date"),
-                           tr("You must enter a valid Start Date.") );
-    _dates->setFocus();
-    return;
-  }
-
-  if (!_dates->endDate().isValid())
-  {
-    QMessageBox::critical( this, tr("Enter End Date"),
-                           tr("You must enter a valid End Date.") );
-    _dates->setFocus();
-    return;
-  }
-
-  if ( (!_cashReceipts->isChecked()) && (!_creditMemos->isChecked()) )
-  {
-    QMessageBox::critical( this, tr("Select Document Type"),
-                           tr("You must indicate which Document Type(s) you wish to view.") );
-    _cashReceipts->setFocus();
-    return;
-  }
 
   ParameterList params;
-  _dates->appendValue(params);
-
-  if (_selectedCustomer->isChecked())
-    params.append("cust_id", _cust->id());
-  else if (_selectedCustomerType->isChecked())
-    params.append("custtype_id", _customerTypes->id());
-  else if (_customerTypePattern->isChecked())
-    params.append("custtype_pattern", _customerType->text());
-
-  if (_cashReceipts->isChecked())
-    params.append("showCashReceipts");
-
-  if (_creditMemos->isChecked())
-    params.append("showCreditMemos");
+  setParams(params);
 
   orReport report("ARApplications", params);
   if (report.isValid())
@@ -257,7 +217,7 @@ void dspARApplications::sPopulateMenu(QMenu* pMenu)
 {
   int menuItem;
 
-  if (_arapply->currentItem()->text(3) == "C/M")
+  if (_arapply->currentItem()->text(3) == "C")
   {
     menuItem = pMenu->insertItem(tr("View Source Credit Memo..."), this, SLOT(sViewCreditMemo()), 0);
     if (! _privileges->check("MaintainARMemos") &&
@@ -283,12 +243,33 @@ void dspARApplications::sPopulateMenu(QMenu* pMenu)
 
 void dspARApplications::sFillList()
 {
+  if (!checkParams())
+    return;
+    
+  _arapply->clear();
+
+  ParameterList params;
+  setParams(params);
+
+  MetaSQLQuery mql = mqlLoad(":/ar/displays/arApplications.mql");
+  q = mql.toQuery(params);
+  if (q.first())
+    _arapply->populate(q);
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+}
+
+bool dspARApplications::checkParams()
+{
   if ( (_selectedCustomer->isChecked()) && (!_cust->isValid()) )
   {
     QMessageBox::warning( this, tr("Select Customer"),
                           tr("You must select a Customer whose A/R Applications you wish to view.") );
     _cust->setFocus();
-    return;
+    return false;
   }
 
   if (!_dates->startDate().isValid())
@@ -296,7 +277,7 @@ void dspARApplications::sFillList()
     QMessageBox::critical( this, tr("Enter Start Date"),
                            tr("You must enter a valid Start Date.") );
     _dates->setFocus();
-    return;
+    return false;
   }
 
   if (!_dates->endDate().isValid())
@@ -304,7 +285,7 @@ void dspARApplications::sFillList()
     QMessageBox::critical( this, tr("Enter End Date"),
                            tr("You must enter a valid End Date.") );
     _dates->setFocus();
-    return;
+    return false;
   }
 
   if ( (!_cashReceipts->isChecked()) && (!_creditMemos->isChecked()) )
@@ -312,58 +293,37 @@ void dspARApplications::sFillList()
     QMessageBox::critical( this, tr("Select Document Type"),
                            tr("You must indicate which Document Type(s) you wish to view.") );
     _cashReceipts->setFocus();
-    return;
+    return false;
   }
+  
+  return true; 
+}
 
-  _arapply->clear();
-
-  QString sql( "SELECT arapply_id, cust_number, cust_name,"
-               "       formatDate(arapply_postdate) AS f_postdate,"
-	       "       arapply_source_doctype, arapply_fundstype, "
-               "       CASE WHEN (arapply_source_doctype IN ('C','R')) THEN TEXT(arapply_source_docnumber)"
-               "            ELSE arapply_refnumber"
-               "         END AS source,"
-               "       arapply_target_doctype,"
-               "       TEXT(arapply_target_docnumber) AS target,"
-               "       formatMoney(arapply_applied) AS f_applied,"
-               "       currConcat(arapply_curr_id) AS currAbbr,"
-               "       currtobase(arapply_curr_id,arapply_applied,arapply_postdate) AS applied "
-               "FROM arapply, custinfo "
-               "WHERE ( (arapply_cust_id=cust_id)"
-               " AND (arapply_postdate BETWEEN <? value(\"startDate\") ?> AND <? value(\"endDate\") ?>)"
-               " AND (arapply_source_doctype IN ("
-	       "<? if exists(\"creditMemos\") ?>"
-	       "  <? if exists(\"cashReceipts\") ?>"
-	       "	'K', 'C', 'R' "
-	       "  <? else ?>"
-	       "	'C', 'R' "
-	       "  <? endif ?>"
-	       "<? else ?>"
-	       "	'K' "
-	       "<? endif ?>"
-	       "))"
-	       "<? if exists(\"cust_id\") ?>"
-	       "  AND (cust_id=<? value(\"cust_id\") ?>)"
-	       "<? elseif exists(\"custtype_id\") ?>"
-	       "  AND (cust_custtype_id=<? value(\"custtype_id\") ?>)"
-	       "<? elseif exists(\"custtype_pattern\") ?>"
-	       "  AND (cust_custtype_id IN (SELECT custtype_id FROM custtype"
-	       "                            WHERE (custtype_code ~ <? value(\"custtype_id\") ?>)))"
-	       "<? endif ?>"
-	       ") "
-	       "ORDER BY arapply_postdate, source;"
-	       );
-
-  ParameterList params;
-
+void dspARApplications::setParams(ParameterList & params)
+{
   if (_cashReceipts->isChecked())
-    params.append("cashReceipts");
+    params.append("includeCashReceipts");
 
   if (_creditMemos->isChecked())
-    params.append("creditMemos");
+    params.append("includeCreditMemos");
 
-  params.append("startDate", _dates->startDate());
-  params.append("endDate", _dates->endDate());
+  _dates->appendValue(params);
+  params.append("creditMemo", tr("C/M"));
+  params.append("debitMemo", tr("D/M"));
+  params.append("cashdeposit", tr("Cash Deposit"));
+  params.append("invoice", tr("Invoice"));
+  params.append("cash", tr("C/R"));
+  params.append("check", tr("Check"));
+  params.append("certifiedCheck", tr("Cert. Check"));
+  params.append("masterCard", tr("M/C"));
+  params.append("visa", tr("Visa"));
+  params.append("americanExpress", tr("AmEx"));
+  params.append("discoverCard", tr("Discover"));
+  params.append("otherCreditCard", tr("Other C/C"));
+  params.append("cash", tr("Cash"));
+  params.append("wireTransfer", tr("Wire Trans."));
+  params.append("other", tr("Other"));
+	params.append("apcheck", tr("A/P Check"));
 
   if (_selectedCustomer->isChecked())
     params.append("cust_id", _cust->id());
@@ -371,76 +331,4 @@ void dspARApplications::sFillList()
     params.append("custtype_id", _customerTypes->id());
   else if (_customerTypePattern->isChecked())
     params.append("custtype_pattern", _customerType->text());
-
-  MetaSQLQuery mql(sql);
-  q = mql.toQuery(params);
-  if (q.first())
-  {
-    double total = 0;
-
-    XTreeWidgetItem* last = 0;
-    do
-    {
-      QString fundstype = q.value("arapply_fundstype").toString();
-      QString doctype;
-      if (q.value("arapply_source_doctype") == "C")
-	    doctype = tr("Credit Memo");
-      else if (q.value("arapply_source_doctype") == "R")
-        doctype = tr("Cash Deposit");
-      else if (fundstype == "A")
-	    doctype = tr("AmEx");
-      else if (fundstype == "C")
-	    doctype = tr("Check");
-      else if (fundstype == "D")
-	    doctype = tr("Discover");
-      else if (fundstype == "K")
-	    doctype = tr("Cash");
-      else if (fundstype == "M")
-	    doctype = tr("M/C");
-      else if (fundstype == "R")
-	    doctype = tr("Other C/C");
-      else if (fundstype == "T")
-	    doctype = tr("Cert. Check");
-      else if (fundstype == "V")
-	    doctype = tr("Visa");
-      else if (fundstype == "W")
-	    doctype = tr("Wire Trans.");
-      else if (fundstype == "O")
-	    doctype = tr("Other");
-
-      QString targetdoctype = q.value("arapply_target_doctype").toString();
-      if (targetdoctype == "D")
-	targetdoctype = tr("Debit Memo");
-      else if (targetdoctype == "I")
-	targetdoctype = tr("Invoice");
-      else if (targetdoctype == "K")
-	targetdoctype = tr("A/P Check");
-      else
-	targetdoctype = tr("Other");
-
-      last = new XTreeWidgetItem( _arapply, last,
-				 q.value("arapply_id").toInt(),
-				 q.value("cust_number"),
-				 q.value("cust_name"),
-				 q.value("f_postdate"),
-				 (q.value("arapply_source_doctype") == "C") ?
-					"C/M" : ((q.value("arapply_source_doctype") == "R") ? "Cash Deposit" : fundstype),
-				 doctype,
-				 q.value("source"),
-				 q.value("arapply_target_doctype").toString(),
-				 targetdoctype,
-				 q.value("target"), q.value("f_applied"), q.value("currAbbr") );
-
-      total += q.value("applied").toDouble();
-    }
-    while (q.next());
-
-    last = new XTreeWidgetItem(_arapply, last, -1, "", tr("Total Applications (base currency):"));
-    last->setText(9, formatMoney(total));
-  }
-  else if (q.lastError().type() != QSqlError::None)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
 }
