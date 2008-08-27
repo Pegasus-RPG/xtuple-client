@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1002</width>
-    <height>663</height>
+    <width>820</width>
+    <height>543</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -291,11 +291,17 @@
              <layout class="QVBoxLayout" >
               <item>
                <layout class="QVBoxLayout" >
+                <property name="topMargin" >
+                 <number>6</number>
+                </property>
                 <item>
                  <widget class="ProjectCluster" name="_project" />
                 </item>
                 <item>
                  <layout class="QHBoxLayout" >
+                  <property name="topMargin" >
+                   <number>6</number>
+                  </property>
                   <item>
                    <spacer>
                     <property name="orientation" >

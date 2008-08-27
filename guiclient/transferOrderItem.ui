@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>737</width>
-    <height>653</height>
+    <width>626</width>
+    <height>551</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -174,7 +174,7 @@
           <enum>Qt::Vertical</enum>
          </property>
          <property name="sizeType" >
-          <enum>QSizePolicy::Minimum</enum>
+          <enum>QSizePolicy::Expanding</enum>
          </property>
          <property name="sizeHint" >
           <size>
@@ -197,9 +197,6 @@
         </item>
         <item row="0" column="1" >
          <layout class="QVBoxLayout" >
-          <property name="topMargin" >
-           <number>5</number>
-          </property>
           <item>
            <layout class="QHBoxLayout" >
             <item>
@@ -251,14 +248,11 @@
         <string/>
        </property>
        <layout class="QGridLayout" >
+        <property name="verticalSpacing" >
+         <number>12</number>
+        </property>
         <item row="0" column="0" >
          <widget class="QLabel" name="_qtyOrderedLit" >
-          <property name="minimumSize" >
-           <size>
-            <width>0</width>
-            <height>0</height>
-           </size>
-          </property>
           <property name="text" >
            <string>&amp;Qty. Ordered:</string>
           </property>
@@ -272,18 +266,6 @@
         </item>
         <item row="0" column="1" >
          <widget class="XLineEdit" name="_qtyOrdered" >
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="maximumSize" >
-           <size>
-            <width>80</width>
-            <height>32767</height>
-           </size>
-          </property>
           <property name="alignment" >
            <set>Qt::AlignRight</set>
           </property>
@@ -293,12 +275,6 @@
          <widget class="QLabel" name="_shippedToDateLit" >
           <property name="enabled" >
            <bool>true</bool>
-          </property>
-          <property name="minimumSize" >
-           <size>
-            <width>0</width>
-            <height>0</height>
-           </size>
           </property>
           <property name="text" >
            <string>Qty. Shipped:</string>
@@ -313,35 +289,13 @@
           <property name="enabled" >
            <bool>true</bool>
           </property>
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize" >
-           <size>
-            <width>80</width>
-            <height>0</height>
-           </size>
-          </property>
           <property name="alignment" >
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
-        <item row="2" column="1" >
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" >
-           <size>
-            <width>71</width>
-            <height>51</height>
-           </size>
-          </property>
-         </spacer>
+        <item row="2" column="0" >
+         <widget class="XLabel" name="xlabel" />
         </item>
        </layout>
       </widget>
@@ -401,7 +355,7 @@
            <string>Tax:</string>
           </property>
           <property name="alignment" >
-           <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
@@ -471,6 +425,12 @@
      </item>
      <item row="4" column="0" colspan="3" >
       <widget class="QTabWidget" name="_tabs" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+         <horstretch>0</horstretch>
+         <verstretch>1</verstretch>
+        </sizepolicy>
+       </property>
        <property name="currentIndex" >
         <number>0</number>
        </property>
@@ -812,6 +772,11 @@
    <class>WComboBox</class>
    <extends>XComboBox</extends>
    <header>wcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XLabel</class>
+   <extends>QLabel</extends>
+   <header>xlabel.h</header>
   </customwidget>
   <customwidget>
    <class>XLineEdit</class>
