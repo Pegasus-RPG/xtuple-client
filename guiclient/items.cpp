@@ -237,7 +237,7 @@ void items::sFillList( int pItemid, bool pLocal )
                "<? if exists(\"showPurchased\") ?>"
                " AND (item_type IN ('P', 'O'))"
                "<? elseif exists(\"showManufactured\") ?>"
-               " AND (item_type IN ('M', 'F', 'B', 'J'))"
+               " AND (item_type IN ('M', 'F', 'B', 'J','K'))"
                "<? elseif exists(\"showSold\") ?>"
                " AND (item_sold)"
                "<? endif ?>"
