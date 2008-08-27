@@ -5,455 +5,459 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>483</width>
-    <height>528</height>
+    <width>503</width>
+    <height>563</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Adjustment Transaction</string>
   </property>
   <widget class="QWidget" name="widget" >
-   <property name="geometry" >
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>483</width>
-     <height>528</height>
-    </rect>
-   </property>
-   <layout class="QGridLayout" name="gridLayout" >
-    <item row="0" column="0" colspan="2" >
-     <layout class="QHBoxLayout" >
-      <property name="spacing" >
-       <number>5</number>
+   <layout class="QGridLayout" >
+    <item row="0" column="0" >
+     <layout class="QGridLayout" >
+      <property name="leftMargin" >
+       <number>12</number>
       </property>
-      <item>
-       <layout class="QHBoxLayout" >
-        <item>
-         <widget class="QLabel" name="_transDateLit" >
-          <property name="text" >
-           <string>Transaction &amp;Date:</string>
-          </property>
-          <property name="alignment" >
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-          <property name="buddy" >
-           <cstring>_transDate</cstring>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="DLineEdit" name="_transDate" >
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item>
+      <property name="rightMargin" >
+       <number>12</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>12</number>
+      </property>
+      <property name="horizontalSpacing" >
+       <number>12</number>
+      </property>
+      <property name="verticalSpacing" >
+       <number>12</number>
+      </property>
+      <item row="0" column="0" colspan="2" >
        <layout class="QHBoxLayout" >
         <property name="spacing" >
          <number>5</number>
         </property>
         <item>
-         <widget class="QLabel" name="_usernameLit" >
-          <property name="text" >
-           <string>Username:</string>
-          </property>
-          <property name="alignment" >
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
+         <layout class="QHBoxLayout" >
+          <item>
+           <widget class="QLabel" name="_transDateLit" >
+            <property name="text" >
+             <string>Transaction &amp;Date:</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="buddy" >
+             <cstring>_transDate</cstring>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="DLineEdit" name="_transDate" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item>
-         <widget class="QLabel" name="_username" >
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
+         <layout class="QHBoxLayout" >
+          <property name="spacing" >
+           <number>5</number>
           </property>
-          <property name="alignment" >
-           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-          </property>
-         </widget>
+          <item>
+           <widget class="QLabel" name="_usernameLit" >
+            <property name="text" >
+             <string>Username:</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="_username" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </item>
-     </layout>
-    </item>
-    <item rowspan="2" row="0" column="2" >
-     <layout class="QVBoxLayout" >
-      <property name="spacing" >
-       <number>5</number>
-      </property>
-      <item>
-       <widget class="QPushButton" name="_close" >
-        <property name="text" >
-         <string>&amp;Cancel</string>
+      <item rowspan="2" row="0" column="2" >
+       <layout class="QVBoxLayout" >
+        <property name="spacing" >
+         <number>5</number>
         </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="_post" >
-        <property name="enabled" >
-         <bool>false</bool>
-        </property>
-        <property name="text" >
-         <string>&amp;Post</string>
-        </property>
-        <property name="default" >
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <spacer>
-        <property name="orientation" >
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeType" >
-         <enum>QSizePolicy::Expanding</enum>
-        </property>
-        <property name="sizeHint" stdset="0" >
-         <size>
-          <width>20</width>
-          <height>35</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-     </layout>
-    </item>
-    <item row="1" column="0" colspan="2" >
-     <widget class="QGroupBox" name="_itemGroup" >
-      <property name="title" >
-       <string/>
-      </property>
-      <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>5</number>
-       </property>
-       <item>
-        <widget class="ItemCluster" name="_item" >
-         <property name="focusPolicy" >
-          <enum>Qt::StrongFocus</enum>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" >
-         <item>
-          <widget class="QLabel" name="_warehouseLit" >
-           <property name="text" >
-            <string>  &amp;Site:</string>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-           <property name="buddy" >
-            <cstring>_warehouse</cstring>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" >
-           <property name="spacing" >
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="WComboBox" name="_warehouse" />
-           </item>
-           <item>
-            <spacer>
-             <property name="orientation" >
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeType" >
-              <enum>QSizePolicy::Expanding</enum>
-             </property>
-             <property name="sizeHint" stdset="0" >
-              <size>
-               <width>20</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="2" column="0" >
-     <widget class="QGroupBox" name="_qtyGroup" >
-      <property name="title" >
-       <string/>
-      </property>
-      <layout class="QGridLayout" >
-       <item row="0" column="1" >
-        <widget class="XLineEdit" name="_qty" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="maximumSize" >
-          <size>
-           <width>80</width>
-           <height>32767</height>
-          </size>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight</set>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0" >
-        <widget class="QLabel" name="_adjustment_QtyLit" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text" >
-          <string>&amp;Adjustment Qty.:</string>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-         <property name="buddy" >
-          <cstring>_qty</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1" >
-        <widget class="XLabel" name="_afterQty" >
-         <property name="minimumSize" >
-          <size>
-           <width>80</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0" >
-        <widget class="QLabel" name="_afterLit" >
-         <property name="text" >
-          <string>After:</string>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1" >
-        <widget class="XLabel" name="_beforeQty" >
-         <property name="minimumSize" >
-          <size>
-           <width>80</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0" >
-        <widget class="QLabel" name="_beforeLit" >
-         <property name="text" >
-          <string>Before:</string>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="2" column="1" >
-     <widget class="QGroupBox" name="_adjustmentTypeGroup" >
-      <property name="title" >
-       <string/>
-      </property>
-      <layout class="QGridLayout" >
-       <item row="1" column="0" >
-        <widget class="QRadioButton" name="_absolute" >
-         <property name="text" >
-          <string>&amp;Absolute</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0" >
-        <widget class="QRadioButton" name="_relative" >
-         <property name="text" >
-          <string>&amp;Relative</string>
-         </property>
-         <property name="shortcut" >
-          <string>Alt+R</string>
-         </property>
-         <property name="checked" >
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="3" column="0" colspan="3" >
-     <layout class="QHBoxLayout" >
-      <item>
-       <widget class="QLabel" name="_documentNumLit" >
-        <property name="sizePolicy" >
-         <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text" >
-         <string>&amp;Document #:</string>
-        </property>
-        <property name="alignment" >
-         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-        </property>
-        <property name="buddy" >
-         <cstring>_documentNum</cstring>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="XLineEdit" name="_documentNum" />
-      </item>
-     </layout>
-    </item>
-    <item row="4" column="0" colspan="3" >
-     <widget class="QTabWidget" name="_tab" >
-      <property name="currentIndex" >
-       <number>0</number>
-      </property>
-      <widget class="QWidget" name="tabCost" >
-       <property name="geometry" >
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>461</width>
-         <height>178</height>
-        </rect>
-       </property>
-       <attribute name="title" >
-        <string>Cost</string>
-       </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_2" >
         <item>
-         <widget class="QGroupBox" name="_costAdjust" >
-          <property name="title" >
-           <string>Adjust Value</string>
+         <widget class="QPushButton" name="_close" >
+          <property name="text" >
+           <string>&amp;Cancel</string>
           </property>
-          <property name="checkable" >
-           <bool>true</bool>
-          </property>
-          <layout class="QGridLayout" name="gridLayout_2" >
-           <item row="0" column="0" >
-            <widget class="QRadioButton" name="_costCalculated" >
-             <property name="text" >
-              <string>Calculated</string>
-             </property>
-             <property name="checked" >
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0" >
-            <widget class="QRadioButton" name="_costManual" >
-             <property name="text" >
-              <string>Manual</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1" >
-            <widget class="QLabel" name="_lblCost" >
-             <property name="text" >
-              <string>Total Cost:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="2" >
-            <widget class="XLineEdit" name="_cost" />
-           </item>
-           <item row="2" column="1" >
-            <widget class="QLabel" name="_unitCostLit" >
-             <property name="text" >
-              <string>Unit Cost:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="2" >
-            <widget class="XLabel" name="_unitCost" >
-             <property name="text" >
-              <string>N/A</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
          </widget>
         </item>
         <item>
-         <spacer name="verticalSpacer" >
+         <widget class="QPushButton" name="_post" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+          <property name="text" >
+           <string>&amp;Post</string>
+          </property>
+          <property name="default" >
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer>
           <property name="orientation" >
            <enum>Qt::Vertical</enum>
           </property>
-          <property name="sizeHint" stdset="0" >
+          <property name="sizeType" >
+           <enum>QSizePolicy::Expanding</enum>
+          </property>
+          <property name="sizeHint" >
            <size>
             <width>20</width>
-            <height>1</height>
+            <height>35</height>
            </size>
           </property>
          </spacer>
         </item>
        </layout>
-      </widget>
-      <widget class="QWidget" name="tabNotes" >
-       <property name="geometry" >
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>461</width>
-         <height>178</height>
-        </rect>
-       </property>
-       <attribute name="title" >
-        <string>Notes</string>
-       </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout" >
+      </item>
+      <item row="1" column="0" colspan="2" >
+       <widget class="QGroupBox" name="_itemGroup" >
+        <property name="title" >
+         <string/>
+        </property>
+        <layout class="QVBoxLayout" >
+         <property name="leftMargin" >
+          <number>5</number>
+         </property>
+         <property name="topMargin" >
+          <number>5</number>
+         </property>
+         <property name="rightMargin" >
+          <number>5</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>5</number>
+         </property>
+         <item>
+          <widget class="ItemCluster" name="_item" >
+           <property name="focusPolicy" >
+            <enum>Qt::StrongFocus</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" >
+           <item>
+            <widget class="QLabel" name="_warehouseLit" >
+             <property name="text" >
+              <string>  &amp;Site:</string>
+             </property>
+             <property name="alignment" >
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <property name="buddy" >
+              <cstring>_warehouse</cstring>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" >
+             <property name="spacing" >
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="WComboBox" name="_warehouse" />
+             </item>
+             <item>
+              <spacer>
+               <property name="orientation" >
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeType" >
+                <enum>QSizePolicy::Expanding</enum>
+               </property>
+               <property name="sizeHint" >
+                <size>
+                 <width>20</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="2" column="0" >
+       <widget class="QGroupBox" name="_qtyGroup" >
+        <property name="title" >
+         <string/>
+        </property>
+        <layout class="QGridLayout" >
+         <item row="0" column="1" >
+          <widget class="XLineEdit" name="_qty" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="maximumSize" >
+            <size>
+             <width>80</width>
+             <height>32767</height>
+            </size>
+           </property>
+           <property name="alignment" >
+            <set>Qt::AlignRight</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0" >
+          <widget class="QLabel" name="_adjustment_QtyLit" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text" >
+            <string>&amp;Adjustment Qty.:</string>
+           </property>
+           <property name="alignment" >
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+           <property name="buddy" >
+            <cstring>_qty</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1" >
+          <widget class="XLabel" name="_afterQty" >
+           <property name="minimumSize" >
+            <size>
+             <width>80</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="alignment" >
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0" >
+          <widget class="QLabel" name="_afterLit" >
+           <property name="text" >
+            <string>After:</string>
+           </property>
+           <property name="alignment" >
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1" >
+          <widget class="XLabel" name="_beforeQty" >
+           <property name="minimumSize" >
+            <size>
+             <width>80</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="alignment" >
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" >
+          <widget class="QLabel" name="_beforeLit" >
+           <property name="text" >
+            <string>Before:</string>
+           </property>
+           <property name="alignment" >
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="2" column="1" >
+       <widget class="QGroupBox" name="_adjustmentTypeGroup" >
+        <property name="title" >
+         <string/>
+        </property>
+        <layout class="QGridLayout" >
+         <item row="1" column="0" >
+          <widget class="QRadioButton" name="_absolute" >
+           <property name="text" >
+            <string>&amp;Absolute</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0" >
+          <widget class="QRadioButton" name="_relative" >
+           <property name="text" >
+            <string>&amp;Relative</string>
+           </property>
+           <property name="shortcut" >
+            <string>Alt+R</string>
+           </property>
+           <property name="checked" >
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="3" column="0" colspan="3" >
+       <layout class="QHBoxLayout" >
         <item>
-         <widget class="QTextEdit" name="_notes" >
+         <widget class="QLabel" name="_documentNumLit" >
           <property name="sizePolicy" >
-           <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+           <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
             <horstretch>0</horstretch>
-            <verstretch>1</verstretch>
+            <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="tabChangesFocus" >
-           <bool>true</bool>
+          <property name="text" >
+           <string>&amp;Document #:</string>
+          </property>
+          <property name="alignment" >
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+          </property>
+          <property name="buddy" >
+           <cstring>_documentNum</cstring>
           </property>
          </widget>
         </item>
+        <item>
+         <widget class="XLineEdit" name="_documentNum" />
+        </item>
        </layout>
-      </widget>
-     </widget>
+      </item>
+      <item row="4" column="0" colspan="3" >
+       <widget class="QTabWidget" name="_tab" >
+        <property name="currentIndex" >
+         <number>0</number>
+        </property>
+        <widget class="QWidget" name="tabCost" >
+         <attribute name="title" >
+          <string>Cost</string>
+         </attribute>
+         <layout class="QVBoxLayout" >
+          <item>
+           <widget class="QGroupBox" name="_costAdjust" >
+            <property name="title" >
+             <string>Adjust Value</string>
+            </property>
+            <property name="checkable" >
+             <bool>true</bool>
+            </property>
+            <layout class="QGridLayout" >
+             <item row="0" column="0" >
+              <widget class="QRadioButton" name="_costCalculated" >
+               <property name="text" >
+                <string>Calculated</string>
+               </property>
+               <property name="checked" >
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0" >
+              <widget class="QRadioButton" name="_costManual" >
+               <property name="text" >
+                <string>Manual</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1" >
+              <widget class="QLabel" name="_lblCost" >
+               <property name="text" >
+                <string>Total Cost:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="2" >
+              <widget class="XLineEdit" name="_cost" />
+             </item>
+             <item row="2" column="1" >
+              <widget class="QLabel" name="_unitCostLit" >
+               <property name="text" >
+                <string>Unit Cost:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="2" >
+              <widget class="XLabel" name="_unitCost" >
+               <property name="text" >
+                <string>N/A</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>20</width>
+              <height>1</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="tabNotes" >
+         <attribute name="title" >
+          <string>Notes</string>
+         </attribute>
+         <layout class="QVBoxLayout" >
+          <item>
+           <widget class="QTextEdit" name="_notes" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+              <horstretch>0</horstretch>
+              <verstretch>1</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="tabChangesFocus" >
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>
@@ -476,6 +480,11 @@
    <class>WComboBox</class>
    <extends>XComboBox</extends>
    <header>wcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XLabel</class>
+   <extends>QLabel</extends>
+   <header>xlabel.h</header>
   </customwidget>
   <customwidget>
    <class>XLineEdit</class>
