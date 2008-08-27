@@ -811,6 +811,21 @@ void customer::sCheck()
         _name->setFocus();
       }
     }
+    else if ( (_mode == cEdit) && 
+              ((q.value("type").toInt() == 2) ||
+              (q.value("type").toInt() == 3)) && 
+              (_notice))
+    {
+      if (QMessageBox::critical(this, tr("Invalid Number"),
+              tr("<p>This number is currently "
+                   "assigned to another CRM account.")))
+      {
+        _number->setText(_cachedNumber);
+        _number->setFocus();
+        _notice = false;
+        return;
+      }
+    }
     else if ((q.value("type").toInt() == 2) && (_notice))
     {
       if (QMessageBox::question(this, tr("Convert"),
