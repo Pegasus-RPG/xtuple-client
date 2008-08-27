@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>742</width>
-    <height>665</height>
+    <width>646</width>
+    <height>547</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -19,6 +19,9 @@
       <number>12</number>
      </property>
      <property name="rightMargin" >
+      <number>12</number>
+     </property>
+     <property name="bottomMargin" >
       <number>12</number>
      </property>
      <property name="horizontalSpacing" >
@@ -154,9 +157,6 @@
         </item>
         <item row="0" column="1" >
          <layout class="QGridLayout" >
-          <property name="topMargin" >
-           <number>7</number>
-          </property>
           <item row="0" column="0" >
            <widget class="QLabel" name="_warehouseLit" >
             <property name="text" >
@@ -269,7 +269,7 @@
           <property name="maximumSize" >
            <size>
             <width>80</width>
-            <height>32767</height>
+            <height>20</height>
            </size>
           </property>
           <property name="alignment" >
@@ -279,6 +279,12 @@
         </item>
         <item row="1" column="0" >
          <widget class="QLabel" name="_qtyToCreditLit" >
+          <property name="minimumSize" >
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
           <property name="text" >
            <string>&amp;Qty. To Credit:</string>
           </property>
@@ -301,16 +307,13 @@
           <property name="maximumSize" >
            <size>
             <width>80</width>
-            <height>32767</height>
+            <height>20</height>
            </size>
           </property>
           <property name="alignment" >
            <set>Qt::AlignRight</set>
           </property>
          </widget>
-        </item>
-        <item row="2" column="1" colspan="2" >
-         <widget class="XComboBox" name="_qtyUOM" />
         </item>
         <item row="2" column="0" >
          <widget class="QLabel" name="_qtyUOMLit" >
@@ -322,6 +325,9 @@
           </property>
          </widget>
         </item>
+        <item row="2" column="1" >
+         <widget class="XComboBox" name="_qtyUOM" />
+        </item>
         <item row="3" column="0" >
          <widget class="QLabel" name="_shippedToDateLit" >
           <property name="text" >
@@ -332,7 +338,7 @@
           </property>
          </widget>
         </item>
-        <item row="3" column="1" colspan="2" >
+        <item row="3" column="1" >
          <widget class="QLabel" name="_qtyShipped" >
           <property name="minimumSize" >
            <size>
@@ -340,23 +346,16 @@
             <height>0</height>
            </size>
           </property>
+          <property name="maximumSize" >
+           <size>
+            <width>16777215</width>
+            <height>20</height>
+           </size>
+          </property>
           <property name="alignment" >
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
          </widget>
-        </item>
-        <item row="4" column="0" >
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" >
-           <size>
-            <width>20</width>
-            <height>0</height>
-           </size>
-          </property>
-         </spacer>
         </item>
        </layout>
       </widget>
@@ -410,27 +409,43 @@
          </widget>
         </item>
         <item row="1" column="1" colspan="2" >
-         <widget class="CurrCluster" name="_netUnitPrice" >
-          <property name="format" >
-           <enum>CurrDisplay::Cost</enum>
-          </property>
-          <property name="currencyEditable" stdset="0" >
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="3" >
-         <widget class="QPushButton" name="_listPrices" >
-          <property name="enabled" >
-           <bool>false</bool>
-          </property>
-          <property name="focusPolicy" >
-           <enum>Qt::NoFocus</enum>
-          </property>
-          <property name="text" >
-           <string>...</string>
-          </property>
-         </widget>
+         <layout class="QHBoxLayout" >
+          <item>
+           <widget class="CurrCluster" name="_netUnitPrice" >
+            <property name="minimumSize" >
+             <size>
+              <width>120</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="format" >
+             <enum>CurrDisplay::Cost</enum>
+            </property>
+            <property name="currencyEditable" stdset="0" >
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="_listPrices" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
+            <property name="maximumSize" >
+             <size>
+              <width>60</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="focusPolicy" >
+             <enum>Qt::NoFocus</enum>
+            </property>
+            <property name="text" >
+             <string>...</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item row="2" column="0" >
          <widget class="QLabel" name="_pricingUOMLit" >
@@ -445,7 +460,7 @@
         <item row="2" column="1" >
          <widget class="XComboBox" name="_pricingUOM" />
         </item>
-        <item row="2" column="2" colspan="2" >
+        <item row="2" column="2" >
          <spacer>
           <property name="orientation" >
            <enum>Qt::Horizontal</enum>
@@ -484,19 +499,6 @@
           </property>
          </widget>
         </item>
-        <item row="4" column="1" >
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" >
-           <size>
-            <width>20</width>
-            <height>0</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
        </layout>
       </widget>
      </item>
@@ -518,11 +520,17 @@
            <layout class="QGridLayout" >
             <item row="0" column="0" >
              <widget class="QLabel" name="_unitCostLit" >
+              <property name="minimumSize" >
+               <size>
+                <width>0</width>
+                <height>22</height>
+               </size>
+              </property>
               <property name="text" >
                <string>Unit Cost:</string>
               </property>
               <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>
@@ -538,6 +546,12 @@
             </item>
             <item row="1" column="0" >
              <widget class="QLabel" name="_listPriceLit" >
+              <property name="minimumSize" >
+               <size>
+                <width>0</width>
+                <height>24</height>
+               </size>
+              </property>
               <property name="text" >
                <string>List Price:</string>
               </property>
@@ -558,6 +572,12 @@
             </item>
             <item row="2" column="0" >
              <widget class="QLabel" name="_salePriceLit" >
+              <property name="minimumSize" >
+               <size>
+                <width>0</width>
+                <height>24</height>
+               </size>
+              </property>
               <property name="text" >
                <string>Sale Price:</string>
               </property>
@@ -578,6 +598,12 @@
             </item>
             <item row="3" column="0" >
              <widget class="QLabel" name="_discountFromListPrcntLit" >
+              <property name="minimumSize" >
+               <size>
+                <width>0</width>
+                <height>24</height>
+               </size>
+              </property>
               <property name="text" >
                <string>List Discount %</string>
               </property>
@@ -613,6 +639,12 @@
               <property name="enabled" >
                <bool>true</bool>
               </property>
+              <property name="minimumSize" >
+               <size>
+                <width>0</width>
+                <height>24</height>
+               </size>
+              </property>
               <property name="text" >
                <string>Tax Type:</string>
               </property>
@@ -639,6 +671,12 @@
             </item>
             <item row="1" column="0" >
              <widget class="QLabel" name="_taxCodeLit" >
+              <property name="minimumSize" >
+               <size>
+                <width>0</width>
+                <height>24</height>
+               </size>
+              </property>
               <property name="text" >
                <string>Tax Code:</string>
               </property>
@@ -665,6 +703,12 @@
             </item>
             <item row="2" column="0" >
              <widget class="XURLLabel" name="_taxLit" >
+              <property name="minimumSize" >
+               <size>
+                <width>0</width>
+                <height>24</height>
+               </size>
+              </property>
               <property name="text" >
                <string>Tax:</string>
               </property>
@@ -680,21 +724,12 @@
               </property>
              </widget>
             </item>
-            <item row="3" column="0" colspan="2" >
-             <spacer>
-              <property name="orientation" >
-               <enum>Qt::Vertical</enum>
+            <item row="3" column="0" >
+             <widget class="QLabel" name="label" >
+              <property name="text" >
+               <string/>
               </property>
-              <property name="sizeType" >
-               <enum>QSizePolicy::Expanding</enum>
-              </property>
-              <property name="sizeHint" >
-               <size>
-                <width>354</width>
-                <height>16</height>
-               </size>
-              </property>
-             </spacer>
+             </widget>
             </item>
            </layout>
           </widget>
