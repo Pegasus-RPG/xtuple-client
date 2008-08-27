@@ -6,6 +6,7 @@
   </qresource>
   <qresource prefix="ar">
     <file alias="displays/arAging.mql">arAging.mql</file>
+    <file alias="displays/arApplications.mql">arApplications.mql</file>
     <file alias="displays/CashReceipts/FillListDetail.mql">dspCashReceiptsFillList.mql</file>
     <file alias="arHistory.mql">arHistory.mql</file>
     <file alias="aropenApplications.mql">aropenApplications.mql</file>
