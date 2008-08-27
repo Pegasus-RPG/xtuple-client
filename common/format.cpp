@@ -106,7 +106,6 @@ static bool loadLocale()
 		     " AND (usr_locale_id=locale_id) );" );
     if (localeq.first())
     {
-qDebug("a");
       if (! localeq.value("locale_error_color").toString().isEmpty())
 	error = QColor(localeq.value("locale_error_color").toString());
       if (! localeq.value("locale_warning_color").toString().isEmpty())
