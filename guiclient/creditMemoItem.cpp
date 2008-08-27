@@ -116,6 +116,8 @@ creditMemoItem::creditMemoItem(QWidget* parent, const char* name, bool modal, Qt
     _warehouseLit->hide();
     _warehouse->hide();
   }
+  
+  resize(minimumSize());
 }
 
 creditMemoItem::~creditMemoItem()
@@ -431,7 +433,7 @@ void creditMemoItem::sPopulateItemInfo()
     _pricingUOM->setId(item.value("item_price_uom_id").toInt());
     _priceinvuomratio = item.value("iteminvpricerat").toDouble();
     _qtyinvuomratio = 1.0;
-    _ratio->setText(item.value("f_invpricerat").toString());
+    _ratio=item.value("f_invpricerat").toDouble();
     // {_listPrice,_unitCost}->setBaseValue() because they're stored in base
     _listPrice->setBaseValue(item.value("item_listprice").toDouble());
     _unitCost->setBaseValue(item.value("f_cost").toDouble());
@@ -466,7 +468,7 @@ void creditMemoItem::sPopulateItemInfo()
       _qtyUOM->setId(cmitem.value("invcitem_qty_uom_id").toInt());
       _pricingUOM->setId(cmitem.value("invcitem_price_uom_id").toInt());
       _priceinvuomratio = cmitem.value("invcitem_price_invuomratio").toDouble();
-      _ratio->setText(formatUOMRatio(_priceinvuomratio));
+      _ratio=_priceinvuomratio;
       _salePrice->setLocalValue(cmitem.value("invcitem_price_local").toDouble() * _priceinvuomratio);
 
       if (_mode == cNew)
@@ -808,7 +810,7 @@ void creditMemoItem::sPriceUOMChanged()
     else
       systemError(this, invuom.lastError().databaseText(), __FILE__, __LINE__);
   }
-  _ratio->setText(formatUOMRatio(_priceinvuomratio));
+  _ratio=_priceinvuomratio;
 
   updatePriceInfo();
 }

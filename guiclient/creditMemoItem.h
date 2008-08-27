@@ -110,6 +110,7 @@ private:
     int _invuomid;
     double _qtyinvuomratio;
     double _priceinvuomratio;
+    double _ratio;
 
 };
 
