@@ -606,7 +606,7 @@
            <string>Net Unit Price:</string>
           </property>
           <property name="alignment" >
-           <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
           <property name="margin" >
            <number>5</number>
