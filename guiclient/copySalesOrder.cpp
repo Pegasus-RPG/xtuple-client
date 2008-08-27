@@ -171,7 +171,8 @@ void copySalesOrder::sPopulateSoInfo(int)
                " AND (itemsite_item_id=item_id)"
                " AND (itemsite_warehous_id=warehous_id)"
                " AND (coitem_status != 'X')"
-               " AND (coitem_cohead_id=:sohead_id) ) "
+               " AND (coitem_cohead_id=:sohead_id) "
+               " AND (coitem_subnumber = 0) ) "
                "ORDER BY coitem_linenumber;" );
     q.bindValue(":sohead_id", _so->id());
     q.exec();
