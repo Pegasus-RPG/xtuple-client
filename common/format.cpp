@@ -104,9 +104,9 @@ static bool loadLocale()
 		     "     country ON (locale_country_id=country_id) "
 		     "WHERE ( (usr_username=CURRENT_USER)"
 		     " AND (usr_locale_id=locale_id) );" );
-    localeq.exec();
     if (localeq.first())
     {
+qDebug("a");
       if (! localeq.value("locale_error_color").toString().isEmpty())
 	error = QColor(localeq.value("locale_error_color").toString());
       if (! localeq.value("locale_warning_color").toString().isEmpty())
