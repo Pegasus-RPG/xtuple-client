@@ -87,9 +87,9 @@ transferOrders::transferOrders(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_view,	  SIGNAL(clicked()), this, SLOT(sView()));
   connect(omfgThis, SIGNAL(transferOrdersUpdated(int)), this, SLOT(sFillList()));
 
-  _to->addColumn(tr("T/O #"),            _orderColumn, Qt::AlignLeft   );
-  _to->addColumn(tr("Source Site"),	     _whsColumn,   Qt::AlignLeft   );
-  _to->addColumn(tr("Dest. Site"),	     _whsColumn,   Qt::AlignLeft   );
+  _to->addColumn(tr("Order #"),           -1,          Qt::AlignLeft   );
+  _to->addColumn(tr("Source Site"),	 _whsColumn*2, Qt::AlignLeft   );
+  _to->addColumn(tr("Dest. Site"),	 _whsColumn*2, Qt::AlignLeft   );
   _to->addColumn(tr("Ordered"),          _dateColumn,  Qt::AlignCenter );
   _to->addColumn(tr("Scheduled"),        _dateColumn,  Qt::AlignCenter );
   
