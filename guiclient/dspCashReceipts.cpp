@@ -61,6 +61,10 @@
 #include <QStatusBar>
 #include <QMessageBox>
 #include <QWorkspace>
+
+#include <metasql.h>
+#include "mqlutil.h"
+
 #include <datecluster.h>
 #include <openreports.h>
 
@@ -88,13 +92,14 @@ dspCashReceipts::dspCashReceipts(QWidget* parent, const char* name, Qt::WFlags f
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
   _customerTypes->setType(XComboBox::CustomerTypes);
   
-  _arapply->addColumn(tr("Cust. #"),     _orderColumn,    Qt::AlignCenter );
-  _arapply->addColumn(tr("Customer"),    -1,              Qt::AlignLeft   );
-  _arapply->addColumn(tr("Date"),        _dateColumn,     Qt::AlignCenter );
-  _arapply->addColumn(tr("Source"),      _itemColumn,     Qt::AlignCenter );
-  _arapply->addColumn(tr("Apply-To"),    _itemColumn,     Qt::AlignCenter );
-  _arapply->addColumn(tr("Amount"),      _bigMoneyColumn, Qt::AlignRight  );
-  _arapply->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft   );
+  _arapply->addColumn(tr("Cust. #"),     _orderColumn,    Qt::AlignCenter, true,  "cust_number" );
+  _arapply->addColumn(tr("Customer"),    -1,              Qt::AlignLeft,   true,  "cust_name"   );
+  _arapply->addColumn(tr("Date"),        _dateColumn,     Qt::AlignCenter, true,  "postdate" );
+  _arapply->addColumn(tr("Source"),      _itemColumn,     Qt::AlignCenter, true,  "source" );
+  _arapply->addColumn(tr("Apply-To"),    _itemColumn,     Qt::AlignCenter, true,  "target" );
+  _arapply->addColumn(tr("Amount"),      _bigMoneyColumn, Qt::AlignRight,  true,  "applied"  );
+  _arapply->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft,   true,  "currAbbr"   );
+  _arapply->addColumn(tr("Base Amount"), _bigMoneyColumn, Qt::AlignRight,  false, "base_applied"  );
 
   _allCustomers->setFocus();
 }
@@ -187,151 +192,27 @@ void dspCashReceipts::sFillList()
     return;
   }
 
-  QString sql( "SELECT arapply_id, 1 AS type, cust_number, cust_name,"
-               "       formatDate(arapply_postdate) AS f_postdate,"
-               "       ( CASE WHEN (arapply_source_doctype='C') THEN :creditMemo"
-               "              WHEN (arapply_source_doctype='R') THEN :cashdeposit"
-               "              WHEN (arapply_fundstype='C') THEN :check"
-               "              WHEN (arapply_fundstype='T') THEN :certifiedCheck"
-               "              WHEN (arapply_fundstype='M') THEN :masterCard"
-               "              WHEN (arapply_fundstype='V') THEN :visa"
-               "              WHEN (arapply_fundstype='A') THEN :americanExpress"
-               "              WHEN (arapply_fundstype='D') THEN :discoverCard"
-               "              WHEN (arapply_fundstype='R') THEN :otherCreditCard"
-               "              WHEN (arapply_fundstype='K') THEN :cash"
-               "              WHEN (arapply_fundstype='W') THEN :wireTransfer"
-               "              WHEN (arapply_fundstype='O') THEN :other"
-               "         END || ' ' ||"
-               "         CASE WHEN (arapply_source_doctype IN ('C','R')) THEN TEXT(arapply_source_docnumber)"
-               "              ELSE arapply_refnumber"
-               "         END ) AS source,"
-               "       ( CASE WHEN (arapply_target_doctype='D') THEN :debitMemo"
-               "              WHEN (arapply_target_doctype='I') THEN :invoice"
-               "              ELSE :other"
-               "         END || ' ' || TEXT(arapply_target_docnumber) ) AS target,"
-               "       formatMoney(arapply_applied) AS f_applied, arapply_applied,"
-               "       currConcat(arapply_curr_id) AS currAbbr,"
-               "       arapply_postdate AS sortdate "
-               "FROM arapply, cust "
-               "WHERE ( (arapply_cust_id=cust_id)"
-               " AND (arapply_postdate BETWEEN :startDate AND :endDate)"
-               " AND (arapply_source_doctype ='K') " );
-
-  if (_selectedCustomer->isChecked())
-    sql += " AND (cust_id=:cust_id)";
-  else if (_selectedCustomerType->isChecked())
-    sql += " AND (cust_custtype_id=:custtype_id)";
-  else if (_customerTypePattern->isChecked())
-    sql += " AND (cust_custtype_id IN (SELECT custtype_id FROM custtype WHERE (custtype_code ~ :custtype_pattern)))";
-
-  sql += " ) UNION "
-         "SELECT cashrcpt_id, 2 AS type, cust_number, cust_name,"
-         "       formatDate(cashrcpt_distdate) AS f_postdate,"
-         "       ( CASE WHEN (cashrcpt_fundstype='C') THEN :check"
-         "              WHEN (cashrcpt_fundstype='T') THEN :certifiedCheck"
-         "              WHEN (cashrcpt_fundstype='M') THEN :masterCard"
-         "              WHEN (cashrcpt_fundstype='V') THEN :visa"
-         "              WHEN (cashrcpt_fundstype='A') THEN :americanExpress"
-         "              WHEN (cashrcpt_fundstype='D') THEN :discoverCard"
-         "              WHEN (cashrcpt_fundstype='R') THEN :otherCreditCard"
-         "              WHEN (cashrcpt_fundstype='K') THEN :cash"
-         "              WHEN (cashrcpt_fundstype='W') THEN :wireTransfer"
-         "              WHEN (cashrcpt_fundstype='O') THEN :other"
-         "         END || ' ' || cashrcpt_docnumber ) AS source,"
-         "       '' AS target,"
-         "       formatMoney(cashrcpt_amount) AS f_applied, cashrcpt_amount,"
-         "       currConcat(cashrcpt_curr_id) AS currAbbr,"
-         "       cashrcpt_distdate AS sortdate "
-         "  FROM cashrcpt, cust "
-         " WHERE ((cashrcpt_cust_id=cust_id)"
-         "   AND  (cashrcpt_distdate BETWEEN :startDate AND :endDate) ";
-
-  if (_selectedCustomer->isChecked())
-    sql += " AND (cust_id=:cust_id)";
-  else if (_selectedCustomerType->isChecked())
-    sql += " AND (cust_custtype_id=:custtype_id)";
-  else if (_customerTypePattern->isChecked())
-    sql += " AND (cust_custtype_id IN (SELECT custtype_id FROM custtype WHERE (custtype_code ~ :custtype_pattern)))";
-
-  sql += " ) UNION "
-         "SELECT aropen_id, 3 AS type, cust_number, cust_name,"
-         "       formatDate(aropen_docdate) As f_postdate,"
-         "       ( CASE WHEN (substr(aropen_notes, 16, 1)='C') THEN :check"
-         "              WHEN (substr(aropen_notes, 16, 1)='T') THEN :certifiedCheck"
-         "              WHEN (substr(aropen_notes, 16, 1)='M') THEN :masterCard"
-         "              WHEN (substr(aropen_notes, 16, 1)='V') THEN :visa"
-         "              WHEN (substr(aropen_notes, 16, 1)='A') THEN :americanExpress"
-         "              WHEN (substr(aropen_notes, 16, 1)='D') THEN :discoverCard"
-         "              WHEN (substr(aropen_notes, 16, 1)='R') THEN :otherCreditCard"
-         "              WHEN (substr(aropen_notes, 16, 1)='K') THEN :cash"
-         "              WHEN (substr(aropen_notes, 16, 1)='W') THEN :wireTransfer"
-         "              WHEN (substr(aropen_notes, 16, 1)='O') THEN :other"
-         "         END || ' ' ||"
-         "         substr(aropen_notes, 18) ) AS source,"
-         "       :unapplied AS target,"
-         "       formatMoney(aropen_amount) AS f_applied, aropen_amount,"
-         "       currConcat(aropen_curr_id) AS currAbbr,"
-         "       aropen_duedate AS sortdate "
-         "  FROM aropen, cust"
-         " WHERE ((aropen_cust_id=cust_id)"
-         "   AND  (aropen_doctype='R')"
-         "   AND  (aropen_docdate BETWEEN :startDate AND :endDate) ";
-
-  if (_selectedCustomer->isChecked())
-    sql += " AND (cust_id=:cust_id)";
-  else if (_selectedCustomerType->isChecked())
-    sql += " AND (cust_custtype_id=:custtype_id)";
-  else if (_customerTypePattern->isChecked())
-    sql += " AND (cust_custtype_id IN (SELECT custtype_id FROM custtype WHERE (custtype_code ~ :custtype_pattern)))";
-
-  sql += " ) "
-         "ORDER BY sortdate, source;";
-
-  q.prepare(sql);
-  _dates->bindValue(q);
-  q.bindValue(":creditMemo", tr("C/M"));
-  q.bindValue(":debitMemo", tr("D/M"));
-  q.bindValue(":cashdeposit", tr("Cash Deposit"));
-  q.bindValue(":invoice", tr("Invoice"));
-  q.bindValue(":cash", tr("C/R"));
-  q.bindValue(":check", tr("Check"));
-  q.bindValue(":certifiedCheck", tr("Cert. Check"));
-  q.bindValue(":masterCard", tr("M/C"));
-  q.bindValue(":visa", tr("Visa"));
-  q.bindValue(":americanExpress", tr("AmEx"));
-  q.bindValue(":discoverCard", tr("Discover"));
-  q.bindValue(":otherCreditCard", tr("Other C/C"));
-  q.bindValue(":cash", tr("Cash"));
-  q.bindValue(":wireTransfer", tr("Wire Trans."));
-  q.bindValue(":other", tr("Other"));
-  q.bindValue(":unapplied", tr("Cash Deposit"));
-
-  if (_selectedCustomer->isChecked())
-    q.bindValue(":cust_id", _cust->id());
-  else if (_selectedCustomerType->isChecked())
-    q.bindValue(":custtype_id", _customerTypes->id());
-  else if (_customerTypePattern->isChecked())
-    q.bindValue(":custtype_pattern", _customerType->text());
-
-  q.exec();
+  MetaSQLQuery mql = mqlLoad(":/ar/displays/CashReceipts/FillListDetail.mql");
+  ParameterList params;
+  _dates->appendValue(params);
+  params.append("creditMemo", tr("C/M"));
+  params.append("debitMemo", tr("D/M"));
+  params.append("cashdeposit", tr("Cash Deposit"));
+  params.append("invoice", tr("Invoice"));
+  params.append("cash", tr("C/R"));
+  params.append("check", tr("Check"));
+  params.append("certifiedCheck", tr("Cert. Check"));
+  params.append("masterCard", tr("M/C"));
+  params.append("visa", tr("Visa"));
+  params.append("americanExpress", tr("AmEx"));
+  params.append("discoverCard", tr("Discover"));
+  params.append("otherCreditCard", tr("Other C/C"));
+  params.append("cash", tr("Cash"));
+  params.append("wireTransfer", tr("Wire Trans."));
+  params.append("other", tr("Other"));
+  params.append("unapplied", tr("Cash Deposit"));
+  q = mql.toQuery(params);
   if (q.first())
-  {
-    double total = 0;
-
-    XTreeWidgetItem *last = 0;
-    do
-    {
-      last = new XTreeWidgetItem( _arapply, last, q.value("arapply_id").toInt(),
-				 q.value("cust_number"), q.value("cust_name"),
-				 q.value("f_postdate"), q.value("source"),
-				 q.value("target"), q.value("f_applied"), q.value("currAbbr") );
-
-      total += q.value("arapply_applied").toDouble();
-    }
-    while (q.next());
-
-    //XTreeWidgetItem *totals = new XTreeWidgetItem(_arapply, _arapply->lastItem(), -1, "", tr("Total Applications:"));
-    //totals->setText(5, formatMoney(total));
-  }
+    _arapply->populate(q);
 }
 
