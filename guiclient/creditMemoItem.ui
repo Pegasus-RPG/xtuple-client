@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>646</width>
-    <height>547</height>
+    <width>775</width>
+    <height>646</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -269,7 +269,7 @@
           <property name="maximumSize" >
            <size>
             <width>80</width>
-            <height>20</height>
+            <height>22</height>
            </size>
           </property>
           <property name="alignment" >
@@ -307,7 +307,7 @@
           <property name="maximumSize" >
            <size>
             <width>80</width>
-            <height>20</height>
+            <height>22</height>
            </size>
           </property>
           <property name="alignment" >
@@ -414,7 +414,7 @@
            <widget class="CurrCluster" name="_netUnitPrice" >
             <property name="minimumSize" >
              <size>
-              <width>120</width>
+              <width>160</width>
               <height>0</height>
              </size>
             </property>
