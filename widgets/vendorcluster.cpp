@@ -164,9 +164,6 @@ void VendorLineEdit::setId(int pId)
 
 void VendorLineEdit::setNumber(const QString &pNumber)
 {
-  if (pNumber == text())
-    return;
-    
   if (pNumber.isEmpty())
   {
     setId(-1);
