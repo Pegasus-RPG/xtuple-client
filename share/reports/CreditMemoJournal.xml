@@ -12,7 +12,7 @@
  <querysource>
   <name>detail</name>
   <sql>SELECT cust_number, cust_name, aropen_docnumber, aropen_doctype, formatDate(aropen_docdate) AS docdate,
-       aropen_applyto, formatExtPrice(aropen_amount) AS openamount, aropen_ponumber,
+       aropen_applyto, formatExtPrice(currtobase(aropen_curr_id,aropen_amount,aropen_docdate)) AS openamount, aropen_ponumber,
        (formatGLAccount(accnt_id) || ' - ' || accnt_descrip) AS accntnumber,
        CASE WHEN (gltrans_amount &lt; 0) THEN formatExtPrice(ABS(gltrans_amount))
             ELSE ''
@@ -26,8 +26,8 @@ WHERE ( (aropen_cust_id=cust_id)
  AND (aropen_doctype IN ('C', 'R'))
  AND (gltrans_doctype='CM')
  AND (gltrans_accnt_id=accnt_id)
- AND (gltrans_journalnumber=&lt;? value(&quot;journalNumber&quot;) ?>)
- AND (aropen_journalnumber=&lt;? value(&quot;journalNumber&quot;) ?>) )
+ AND (gltrans_journalnumber=&lt;? value("journalNumber") ?>)
+ AND (aropen_journalnumber=&lt;? value("journalNumber") ?>) )
 ORDER BY aropen_docnumber, gltrans_amount, accnt_number;
     </sql>
  </querysource>
@@ -39,7 +39,7 @@ ORDER BY aropen_docnumber, gltrans_amount, accnt_number;
 FROM gltrans, accnt
 WHERE ( (gltrans_accnt_id=accnt_id)
  AND (gltrans_amount &lt; 0)
- AND (gltrans_journalnumber=&lt;? value(&quot;journalNumber&quot;) ?>) )
+ AND (gltrans_journalnumber=&lt;? value("journalNumber") ?>) )
 GROUP BY accntnumber
 
 UNION
@@ -49,15 +49,15 @@ SELECT (formatGLAccount(accnt_id) || ' - ' || accnt_descrip) AS accntnumber,
 FROM gltrans, accnt
 WHERE ( (gltrans_accnt_id=accnt_id)
  AND (gltrans_amount > 0)
- AND (gltrans_journalnumber=&lt;? value(&quot;journalNumber&quot;) ?>) )
+ AND (gltrans_journalnumber=&lt;? value("journalNumber") ?>) )
 GROUP BY accntnumber; </sql>
  </querysource>
  <querysource>
   <name>totaldocsales</name>
-  <sql>SELECT formatExtPrice(SUM(COALESCE(aropen_amount, 0))) AS amount
+  <sql>SELECT formatExtPrice(SUM(COALESCE(currtobase(aropen_curr_id,aropen_amount,aropen_docdate), 0))) AS amount
 FROM aropen
 WHERE ( (aropen_doctype IN ('C', 'R'))
- AND (aropen_journalnumber=&lt;? value(&quot;journalNumber&quot;) ?>) );
+ AND (aropen_journalnumber=&lt;? value("journalNumber") ?>) );
     </sql>
  </querysource>
  <querysource>
@@ -65,7 +65,7 @@ WHERE ( (aropen_doctype IN ('C', 'R'))
   <sql>SELECT formatExtPrice(SUM(ABS(gltrans_amount))) AS total
 FROM gltrans
 WHERE ( (gltrans_amount &lt; 0)
- AND (gltrans_journalnumber=&lt;? value(&quot;journalNumber&quot;) ?>) );
+ AND (gltrans_journalnumber=&lt;? value("journalNumber") ?>) );
     </sql>
  </querysource>
  <querysource>
@@ -73,7 +73,7 @@ WHERE ( (gltrans_amount &lt; 0)
   <sql>SELECT formatExtPrice(SUM(gltrans_amount)) AS total
 FROM gltrans
 WHERE ( (gltrans_amount > 0)
- AND (gltrans_journalnumber=&lt;? value(&quot;journalNumber&quot;) ?>) );
+ AND (gltrans_journalnumber=&lt;? value("journalNumber") ?>) );
     </sql>
  </querysource>
  <querysource>
@@ -82,54 +82,23 @@ WHERE ( (gltrans_amount > 0)
        formatDate(jrnluse_date) AS f_date
 FROM jrnluse
 WHERE ((jrnluse_use='AR-CM')
-  AND (jrnluse_number=&lt;? value(&quot;journalNumber&quot;) ?>));
+  AND (jrnluse_number=&lt;? value("journalNumber") ?>));
 </sql>
  </querysource>
  <rpthead>
   <height>126</height>
-  <field>
-   <rect>
-    <x>160</x>
-    <y>30</y>
-    <width>120</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>f_number</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>160</x>
-    <y>50</y>
-    <width>120</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>f_date</column>
-   </data>
-  </field>
+  <line>
+   <xstart>5</xstart>
+   <ystart>120</ystart>
+   <xend>745</xend>
+   <yend>120</yend>
+   <weight>2</weight>
+  </line>
   <label>
    <rect>
-    <x>0</x>
+    <x>540</x>
     <y>100</y>
-    <width>80</width>
+    <width>100</width>
     <height>20</height>
    </rect>
    <font>
@@ -139,7 +108,7 @@ WHERE ((jrnluse_use='AR-CM')
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Doc. Type</string>
+   <string>Debits</string>
   </label>
   <label>
    <rect>
@@ -156,6 +125,54 @@ WHERE ((jrnluse_use='AR-CM')
    <right/>
    <vcenter/>
    <string>Credit Memo Journal</string>
+  </label>
+  <label>
+   <rect>
+    <x>85</x>
+    <y>100</y>
+    <width>80</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Doc. #</string>
+  </label>
+  <label>
+   <rect>
+    <x>30</x>
+    <y>50</y>
+    <width>120</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Journal Date:</string>
+  </label>
+  <label>
+   <rect>
+    <x>250</x>
+    <y>100</y>
+    <width>200</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Customer</string>
   </label>
   <label>
    <rect>
@@ -189,18 +206,11 @@ WHERE ((jrnluse_use='AR-CM')
    <vcenter/>
    <string>Doc. Date</string>
   </label>
-  <line>
-   <xstart>5</xstart>
-   <ystart>120</ystart>
-   <xend>745</xend>
-   <yend>120</yend>
-   <weight>2</weight>
-  </line>
   <label>
    <rect>
-    <x>250</x>
+    <x>0</x>
     <y>100</y>
-    <width>200</width>
+    <width>80</width>
     <height>20</height>
    </rect>
    <font>
@@ -210,8 +220,46 @@ WHERE ((jrnluse_use='AR-CM')
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Customer</string>
+   <string>Doc. Type</string>
   </label>
+  <field>
+   <rect>
+    <x>160</x>
+    <y>50</y>
+    <width>120</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>f_date</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>160</x>
+    <y>30</y>
+    <width>120</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>f_number</column>
+   </data>
+  </field>
   <label>
    <rect>
     <x>30</x>
@@ -227,54 +275,6 @@ WHERE ((jrnluse_use='AR-CM')
    <right/>
    <vcenter/>
    <string>Journal Number:</string>
-  </label>
-  <label>
-   <rect>
-    <x>85</x>
-    <y>100</y>
-    <width>80</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Doc. #</string>
-  </label>
-  <label>
-   <rect>
-    <x>540</x>
-    <y>100</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Debits</string>
-  </label>
-  <label>
-   <rect>
-    <x>30</x>
-    <y>50</y>
-    <width>120</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Journal Date:</string>
   </label>
  </rpthead>
  <section>
@@ -305,9 +305,9 @@ WHERE ((jrnluse_use='AR-CM')
     </field>
     <field>
      <rect>
-      <x>645</x>
+      <x>253</x>
       <y>0</y>
-      <width>60</width>
+      <width>80</width>
       <height>20</height>
      </rect>
      <font>
@@ -315,11 +315,11 @@ WHERE ((jrnluse_use='AR-CM')
       <size>10</size>
       <weight>normal</weight>
      </font>
-     <left/>
+     <right/>
      <vcenter/>
      <data>
       <query>detail</query>
-      <column>docsence</column>
+      <column>cust_number</column>
      </data>
     </field>
     <field>
@@ -400,9 +400,9 @@ WHERE ((jrnluse_use='AR-CM')
     </field>
     <field>
      <rect>
-      <x>254</x>
+      <x>645</x>
       <y>0</y>
-      <width>80</width>
+      <width>60</width>
       <height>20</height>
      </rect>
      <font>
@@ -410,11 +410,11 @@ WHERE ((jrnluse_use='AR-CM')
       <size>10</size>
       <weight>normal</weight>
      </font>
-     <right/>
+     <left/>
      <vcenter/>
      <data>
       <query>detail</query>
-      <column>cust_number</column>
+      <column>docsence</column>
      </data>
     </field>
    </head>
@@ -427,25 +427,6 @@ WHERE ((jrnluse_use='AR-CM')
     <query>detail</query>
    </key>
    <height>21</height>
-   <field>
-    <rect>
-     <x>540</x>
-     <y>0</y>
-     <width>100</width>
-     <height>20</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>10</size>
-     <weight>normal</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>debit</column>
-    </data>
-   </field>
    <field>
     <rect>
      <x>75</x>
@@ -463,6 +444,25 @@ WHERE ((jrnluse_use='AR-CM')
     <data>
      <query>detail</query>
      <column>accntnumber</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>540</x>
+     <y>0</y>
+     <width>100</width>
+     <height>20</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>10</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>debit</column>
     </data>
    </field>
    <field>
@@ -493,22 +493,6 @@ WHERE ((jrnluse_use='AR-CM')
    <column>gid</column>
    <head>
     <height>72</height>
-    <label>
-     <rect>
-      <x>340</x>
-      <y>20</y>
-      <width>200</width>
-      <height>20</height>
-     </rect>
-     <font>
-      <face>Arial</face>
-      <size>10</size>
-      <weight>bold</weight>
-     </font>
-     <right/>
-     <vcenter/>
-     <string>Total Sales:</string>
-    </label>
     <field>
      <rect>
       <x>540</x>
@@ -528,6 +512,22 @@ WHERE ((jrnluse_use='AR-CM')
       <column>amount</column>
      </data>
     </field>
+    <label>
+     <rect>
+      <x>340</x>
+      <y>20</y>
+      <width>200</width>
+      <height>20</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>10</size>
+      <weight>bold</weight>
+     </font>
+     <right/>
+     <vcenter/>
+     <string>Total Sales:</string>
+    </label>
     <label>
      <rect>
       <x>5</x>
@@ -556,25 +556,6 @@ WHERE ((jrnluse_use='AR-CM')
    <height>21</height>
    <field>
     <rect>
-     <x>640</x>
-     <y>0</y>
-     <width>100</width>
-     <height>20</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>10</size>
-     <weight>normal</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>distributions</query>
-     <column>credit</column>
-    </data>
-   </field>
-   <field>
-    <rect>
      <x>75</x>
      <y>0</y>
      <width>450</width>
@@ -590,6 +571,25 @@ WHERE ((jrnluse_use='AR-CM')
     <data>
      <query>distributions</query>
      <column>accntnumber</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>640</x>
+     <y>0</y>
+     <width>100</width>
+     <height>20</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>10</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>distributions</query>
+     <column>credit</column>
     </data>
    </field>
    <field>
@@ -615,6 +615,25 @@ WHERE ((jrnluse_use='AR-CM')
  </section>
  <pgfoot>
   <height>16</height>
+  <field>
+   <rect>
+    <x>85</x>
+    <y>0</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>Context Query</query>
+    <column>report_date</column>
+   </data>
+  </field>
   <label>
    <rect>
     <x>0</x>
@@ -648,25 +667,6 @@ WHERE ((jrnluse_use='AR-CM')
    <data>
     <query>Context Query</query>
     <column>page_number</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>85</x>
-    <y>0</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>Context Query</query>
-    <column>report_date</column>
    </data>
   </field>
   <label>
@@ -707,6 +707,22 @@ WHERE ((jrnluse_use='AR-CM')
     <column>total</column>
    </data>
   </field>
+  <label>
+   <rect>
+    <x>340</x>
+    <y>15</y>
+    <width>200</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Total Distributions:</string>
+  </label>
   <field>
    <rect>
     <x>540</x>
@@ -726,21 +742,5 @@ WHERE ((jrnluse_use='AR-CM')
     <column>total</column>
    </data>
   </field>
-  <label>
-   <rect>
-    <x>340</x>
-    <y>15</y>
-    <width>200</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Total Distributions:</string>
-  </label>
  </rptfoot>
 </report>
