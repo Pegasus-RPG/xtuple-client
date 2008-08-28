@@ -786,6 +786,9 @@ OrderSearch::OrderSearch(QWidget *pParent, Qt::WindowFlags pFlags) :
   QTreeWidgetItem *headerItem = _listTab->headerItem();
   headerItem->setText(1, tr("Order Type"));
   headerItem->setText(2, tr("Status"));
+  
+  _searchName->setText(tr("Search through Order Type"));
+  _searchDescrip->setText(tr("Search through Status"));
 
   _listTab->addColumn(tr("From"), -1, Qt::AlignLeft, true, "orderhead_from");
   _listTab->addColumn(tr("To"),   -1, Qt::AlignLeft, true, "orderhead_to");

@@ -131,7 +131,7 @@ void ShipmentCluster::setType(ShipmentClusterLineEdit::ShipmentType ptype)
 
 ShipmentClusterLineEdit::ShipmentClusterLineEdit(QWidget* pParent, const char* pName) :
     VirtualClusterLineEdit(pParent, "shiphead", "shiphead_id", "shiphead_number",
-                           "shiphead_shipdate", "shiphead_tracknum", 0, pName)
+                           "formatdate(shiphead_shipdate)", "shiphead_tracknum", 0, pName)
 {
     _type = All;
     setStrict(false);

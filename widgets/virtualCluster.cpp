@@ -745,19 +745,26 @@ void VirtualSearch::sFillList()
 
     QString search;
     if (_searchNumber->isChecked())
-        search = QString("number~'%1'").arg(_search->text());
+        search += QString("%1~'%2'").arg(_parent->_numColName).arg(_search->text());
     if (_parent->_hasName &&
         (_searchName->isChecked()))
-        search = QString("name~'%1'").arg(_search->text());
+        search += (search.isEmpty() ?  QString("%1~'%2'").arg(_parent->_nameColName).arg(_search->text()) :  
+        " OR " +  QString("%1~'%2'").arg(_parent->_nameColName).arg(_search->text()));
     if (_parent->_hasDescription &&
         (_searchDescrip->isChecked()))
-        search = QString("description~'%1'").arg(_search->text());
+        search += (search.isEmpty() ?  QString("%1~'%2'").arg(_parent->_descripColName).arg(_search->text()) :  
+        " OR " +  QString("%1~'%2'").arg(_parent->_descripColName).arg(_search->text()));
+    if (!search.isEmpty())
+    {
+      search.prepend("(");
+      search.append(")");
+    }
 
 
     XSqlQuery qry(_parent->_query +
+		    (search.isEmpty() ? "" :  " AND " + search) +
 		    (_parent->_extraClause.isEmpty() ? "" :
 					    " AND " + _parent->_extraClause) +
-                    search +
 		    QString(" ORDER BY ") +
 		    QString((_parent->_hasName) ? "name" : "number"));
                     
