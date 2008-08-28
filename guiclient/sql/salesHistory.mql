@@ -2,13 +2,15 @@ SELECT cohist.*,
        CASE WHEN (cohist_invcnumber='-1') THEN  <? value("credit") ?>
             ELSE cohist_invcnumber
        END AS invoicenumber,
-       cust_number, cust_name,
+       cust_number, cust_name, salesrep_name,
        item_id, item_number, item_descrip1, (item_descrip1 || ' ' || item_descrip2) AS itemdescription,
        warehous_code,
        currtobase(cohist_curr_id, cohist_unitprice, cohist_invcdate) AS baseunitprice,
        round((cohist_qtyshipped * cohist_unitprice), 2) AS extprice,
        round((cohist_qtyshipped * currtobase(cohist_curr_id, cohist_unitprice, cohist_invcdate)), 2) AS baseextprice,
        round((cohist_qtyshipped * cohist_unitcost), 4) AS extcost,
+       currtobase(cohist_curr_id, cohist_commission, cohist_invcdate) AS basecommission,
+       formatBoolYN(cohist_commissionpaid) AS f_commissionpaid,
        currConcat(cohist_curr_id) AS currAbbr,
        <? value("return") ?> AS cohist_invcdate_xtnullrole,
        'qty' AS cohist_qtyshipped_xtnumericrole,
@@ -18,10 +20,14 @@ SELECT cohist.*,
        'curr' AS baseextprice_xtnumericrole,
        'cost' AS cohist_unitcost_xtnumericrole,
        'curr' AS extcost_xtnumericrole,
+       'curr' AS cohist_commission_xtnumericrole,
+       'curr' AS basecommission_xtnumericrole,
        0 AS cohist_qtyshipped_xttotalrole,
        0 AS baseextprice_xttotalrole,
-       0 AS extcost_xttotalrole
+       0 AS extcost_xttotalrole,
+       0 AS basecommission_xttotalrole
 FROM cohist JOIN cust ON (cust_id=cohist_cust_id)
+            JOIN salesrep ON (salesrep_id=cohist_salesrep_id)
             JOIN itemsite ON (itemsite_id=cohist_itemsite_id)
             JOIN site() ON (warehous_id=itemsite_warehous_id)
             JOIN item ON (item_id=itemsite_item_id)
@@ -80,6 +86,8 @@ WHERE ( (1=1)
   ORDER BY cohist_invcdate, cust_number
 <? elseif exists("orderByInvcdateBillto") ?>
   ORDER BY cohist_invcdate, cohist_billtoname, item_number
+<? elseif exists("orderBySalesRepInvcdate") ?>
+  ORDER BY salesrep_name, cohist_invcdate
 <? else ?>
   ORDER BY cohist_invcnumber
 <? endif ?>
