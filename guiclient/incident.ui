@@ -70,7 +70,7 @@
        </item>
        <item row="0" column="3" >
         <widget class="XComboBox" name="_category" >
-         <property name="allowNull" stdset="0" >
+         <property name="allowNull" >
           <bool>true</bool>
          </property>
         </widget>
@@ -128,6 +128,9 @@
          </property>
          <property name="text" >
           <string>Save</string>
+         </property>
+         <property name="default" >
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -192,11 +195,11 @@
          </layout>
         </item>
         <item row="0" column="1" >
-         <widget class="CRMAcctCluster" native="1" name="_crmacct" >
+         <widget class="CRMAcctCluster" name="_crmacct" >
           <property name="focusPolicy" >
            <enum>Qt::StrongFocus</enum>
           </property>
-          <property name="label" stdset="0" >
+          <property name="label" >
            <string/>
           </property>
          </widget>
@@ -235,11 +238,11 @@
          </layout>
         </item>
         <item row="1" column="1" >
-         <widget class="UsernameCluster" native="1" name="_assignedTo" >
+         <widget class="UsernameCluster" name="_assignedTo" >
           <property name="focusPolicy" >
            <enum>Qt::TabFocus</enum>
           </property>
-          <property name="label" stdset="0" >
+          <property name="label" >
            <string/>
           </property>
          </widget>
@@ -315,7 +318,7 @@
         </item>
         <item row="1" column="1" >
          <widget class="XComboBox" name="_severity" >
-          <property name="allowNull" stdset="0" >
+          <property name="allowNull" >
            <bool>true</bool>
           </property>
          </widget>
@@ -332,7 +335,7 @@
         </item>
         <item row="2" column="1" >
          <widget class="XComboBox" name="_priority" >
-          <property name="allowNull" stdset="0" >
+          <property name="allowNull" >
            <bool>true</bool>
           </property>
          </widget>
@@ -349,7 +352,7 @@
         </item>
         <item row="3" column="1" >
          <widget class="XComboBox" name="_resolution" >
-          <property name="allowNull" stdset="0" >
+          <property name="allowNull" >
            <bool>true</bool>
           </property>
          </widget>
@@ -370,17 +373,17 @@
        </property>
        <layout class="QGridLayout" >
         <item row="0" column="0" >
-         <widget class="ContactCluster" native="1" name="_cntct" >
+         <widget class="ContactCluster" name="_cntct" >
           <property name="sizePolicy" >
            <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="label" stdset="0" >
+          <property name="label" >
            <string/>
           </property>
-          <property name="minimalLayout" stdset="0" >
+          <property name="minimalLayout" >
            <bool>true</bool>
           </property>
          </widget>
@@ -397,7 +400,7 @@
         </sizepolicy>
        </property>
        <property name="currentIndex" >
-        <number>1</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="_notesTab" >
         <attribute name="title" >
@@ -418,6 +421,9 @@
              <height>125</height>
             </size>
            </property>
+           <property name="tabChangesFocus" >
+            <bool>true</bool>
+           </property>
           </widget>
          </item>
         </layout>
@@ -430,21 +436,21 @@
          <item row="0" column="0" >
           <layout class="QGridLayout" >
            <item row="0" column="0" >
-            <widget class="ItemCluster" native="1" name="_item" >
+            <widget class="ItemCluster" name="_item" >
              <property name="focusPolicy" >
               <enum>Qt::TabFocus</enum>
              </property>
             </widget>
            </item>
            <item row="1" column="0" >
-            <widget class="LotserialCluster" native="1" name="_lotserial" >
+            <widget class="LotserialCluster" name="_lotserial" >
              <property name="enabled" >
               <bool>false</bool>
              </property>
              <property name="focusPolicy" >
               <enum>Qt::StrongFocus</enum>
              </property>
-             <property name="label" stdset="0" >
+             <property name="label" >
               <string>  Lot/Serial #:</string>
              </property>
             </widget>
@@ -642,8 +648,7 @@
         </attribute>
         <layout class="QHBoxLayout" >
          <item>
-          <widget class="XTreeWidget" name="_todoList" >
-          </widget>
+          <widget class="XTreeWidget" name="_todoList" />
          </item>
          <item>
           <layout class="QVBoxLayout" >
@@ -701,8 +706,7 @@
         </attribute>
         <layout class="QVBoxLayout" >
          <item>
-          <widget class="XTreeWidget" name="_incdthist" >
-          </widget>
+          <widget class="XTreeWidget" name="_incdthist" />
          </item>
         </layout>
        </widget>
@@ -712,7 +716,7 @@
         </attribute>
         <layout class="QHBoxLayout" >
          <item>
-          <widget class="Comments" native="1" name="_comments" >
+          <widget class="Comments" name="_comments" >
            <property name="focusPolicy" >
             <enum>Qt::StrongFocus</enum>
            </property>
@@ -765,14 +769,14 @@
    <header>xcombobox.h</header>
   </customwidget>
   <customwidget>
-   <class>XTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>xtreewidget.h</header>
-  </customwidget>
-  <customwidget>
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
