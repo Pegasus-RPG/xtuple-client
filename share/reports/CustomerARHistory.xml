@@ -12,10 +12,10 @@
  <querysource>
   <name>head</name>
   <sql>SELECT cust_name,
-       formatDate(date(&lt;? value(&quot;startDate&quot;) ?>)) AS startDate,
-       formatDate(date(&lt;? value(&quot;endDate&quot;) ?>)) AS endDate
+       formatDate(date(&lt;? value("startDate") ?>)) AS startDate,
+       formatDate(date(&lt;? value("endDate") ?>)) AS endDate
   FROM cust
- WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);
+ WHERE (cust_id=&lt;? value("cust_id") ?>);
     </sql>
  </querysource>
  <querysource>
@@ -32,11 +32,11 @@
        END AS documenttype,
        formatDate(aropen_docdate) AS f_docdate,
        formatDate(aropen_duedate) AS f_duedate,
-       formatMoney(aropen_amount) AS f_amount,
-       formatMoney((aropen_amount - aropen_paid)) AS f_balance
+       formatMoney(currtobase(aropen_curr_id,aropen_amount,aropen_docdate)) AS f_amount,
+       formatMoney(currtobase(aropen_curr_id,(aropen_amount - aropen_paid),aropen_docdate)) AS f_balance
 FROM aropen
-WHERE ( (aropen_cust_id=&lt;? value(&quot;cust_id&quot;) ?>)
- AND (aropen_duedate BETWEEN &lt;? value(&quot;startDate&quot;) ?> AND &lt;? value(&quot;endDate&quot;) ?>) )
+WHERE ( (aropen_cust_id=&lt;? value("cust_id") ?>)
+ AND (aropen_duedate BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>) )
 
 UNION
 SELECT aropen_id, arapply_id,
@@ -60,15 +60,15 @@ SELECT aropen_id, arapply_id,
        END AS documenttype,
        formatDate(arapply_postdate) AS f_docdate,
        '' AS f_duedate,
-       formatMoney(arapply_applied) AS f_amount,
+       formatMoney(currtobase(arapply_curr_id,arapply_applied,arapply_postdate)) AS f_amount,
        '' AS f_balance 
 FROM arapply, aropen
 WHERE ( (arapply_target_doctype IN ('I', 'D'))
  AND (arapply_target_doctype=aropen_doctype)
  AND (arapply_target_docnumber=aropen_docnumber)
- AND (arapply_cust_id=&lt;? value(&quot;cust_id&quot;) ?>)
- AND (aropen_cust_id=&lt;? value(&quot;cust_id&quot;) ?>)
- AND (aropen_duedate BETWEEN &lt;? value(&quot;startDate&quot;) ?> AND &lt;? value(&quot;endDate&quot;) ?>) )
+ AND (arapply_cust_id=&lt;? value("cust_id") ?>)
+ AND (aropen_cust_id=&lt;? value("cust_id") ?>)
+ AND (aropen_duedate BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>) )
 
 UNION
 SELECT aropen_id, arapply_id,
@@ -81,15 +81,15 @@ SELECT aropen_id, arapply_id,
        END AS documenttype,
        formatDate(arapply_postdate) AS f_docdate,
        '' AS f_duedate,
-       formatMoney(arapply_applied) AS f_amount,
+       formatMoney(currtobase(arapply_curr_id,arapply_applied,arapply_postdate)) AS f_amount,
        '' AS f_balance
 FROM arapply, aropen
 WHERE ( (arapply_source_doctype IN ('K', 'C'))
  AND (arapply_source_doctype=aropen_doctype)
  AND (arapply_source_docnumber=aropen_docnumber)
- AND (arapply_cust_id=&lt;? value(&quot;cust_id&quot;) ?>)
- AND (aropen_cust_id=&lt;? value(&quot;cust_id&quot;) ?>)
- AND (aropen_duedate BETWEEN &lt;? value(&quot;startDate&quot;) ?> AND &lt;? value(&quot;endDate&quot;) ?>) )
+ AND (arapply_cust_id=&lt;? value("cust_id") ?>)
+ AND (aropen_cust_id=&lt;? value("cust_id") ?>)
+ AND (aropen_duedate BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>) )
 
 ORDER BY sortnumber DESC, arapply_id;</sql>
  </querysource>
@@ -97,7 +97,23 @@ ORDER BY sortnumber DESC, arapply_id;</sql>
   <height>156</height>
   <label>
    <rect>
-    <x>445</x>
+    <x>444</x>
+    <y>65</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Start Date:</string>
+  </label>
+  <label>
+   <rect>
+    <x>444</x>
     <y>135</y>
     <width>90</width>
     <height>15</height>
@@ -111,6 +127,25 @@ ORDER BY sortnumber DESC, arapply_id;</sql>
    <vcenter/>
    <string>Due Date</string>
   </label>
+  <field>
+   <rect>
+    <x>550</x>
+    <y>85</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>endDate</column>
+   </data>
+  </field>
   <label>
    <rect>
     <x>645</x>
@@ -126,6 +161,38 @@ ORDER BY sortnumber DESC, arapply_id;</sql>
    <hcenter/>
    <vcenter/>
    <string>Balance</string>
+  </label>
+  <label>
+   <rect>
+    <x>175</x>
+    <y>135</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Doc. #</string>
+  </label>
+  <label>
+   <rect>
+    <x>444</x>
+    <y>85</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>End Date:</string>
   </label>
   <label>
    <rect>
@@ -145,22 +212,6 @@ ORDER BY sortnumber DESC, arapply_id;</sql>
   </label>
   <label>
    <rect>
-    <x>30</x>
-    <y>65</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Customer:</string>
-  </label>
-  <label>
-   <rect>
     <x>345</x>
     <y>5</y>
     <width>400</width>
@@ -174,54 +225,6 @@ ORDER BY sortnumber DESC, arapply_id;</sql>
    <right/>
    <vcenter/>
    <string>Customer A/R History</string>
-  </label>
-  <label>
-   <rect>
-    <x>5</x>
-    <y>135</y>
-    <width>60</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Open</string>
-  </label>
-  <label>
-   <rect>
-    <x>445</x>
-    <y>65</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Start Date:</string>
-  </label>
-  <label>
-   <rect>
-    <x>70</x>
-    <y>135</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Doc. Type</string>
   </label>
   <field>
    <rect>
@@ -244,8 +247,8 @@ ORDER BY sortnumber DESC, arapply_id;</sql>
   </field>
   <label>
    <rect>
-    <x>445</x>
-    <y>85</y>
+    <x>30</x>
+    <y>65</y>
     <width>100</width>
     <height>20</height>
    </rect>
@@ -256,30 +259,7 @@ ORDER BY sortnumber DESC, arapply_id;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>End Date:</string>
-  </label>
-  <line>
-   <xstart>5</xstart>
-   <ystart>150</ystart>
-   <xend>745</xend>
-   <yend>150</yend>
-   <weight>2</weight>
-  </line>
-  <label>
-   <rect>
-    <x>175</x>
-    <y>135</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Doc. #</string>
+   <string>Customer:</string>
   </label>
   <field>
    <rect>
@@ -300,25 +280,45 @@ ORDER BY sortnumber DESC, arapply_id;</sql>
     <column>cust_name</column>
    </data>
   </field>
-  <field>
+  <label>
    <rect>
-    <x>550</x>
-    <y>85</y>
-    <width>100</width>
-    <height>20</height>
+    <x>5</x>
+    <y>135</y>
+    <width>60</width>
+    <height>15</height>
    </rect>
    <font>
     <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
+    <size>8</size>
+    <weight>normal</weight>
    </font>
-   <left/>
+   <hcenter/>
    <vcenter/>
-   <data>
-    <query>head</query>
-    <column>endDate</column>
-   </data>
-  </field>
+   <string>Open</string>
+  </label>
+  <line>
+   <xstart>5</xstart>
+   <ystart>150</ystart>
+   <xend>745</xend>
+   <yend>150</yend>
+   <weight>2</weight>
+  </line>
+  <label>
+   <rect>
+    <x>70</x>
+    <y>135</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Doc. Type</string>
+  </label>
   <label>
    <rect>
     <x>350</x>
@@ -344,6 +344,29 @@ ORDER BY sortnumber DESC, arapply_id;</sql>
   <height>21</height>
   <label>
    <rect>
+    <x>350</x>
+    <y>0</y>
+    <width>90</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Doc. Date</string>
+  </label>
+  <line>
+   <xstart>5</xstart>
+   <ystart>15</ystart>
+   <xend>745</xend>
+   <yend>15</yend>
+   <weight>2</weight>
+  </line>
+  <label>
+   <rect>
     <x>540</x>
     <y>0</y>
     <width>100</width>
@@ -357,61 +380,6 @@ ORDER BY sortnumber DESC, arapply_id;</sql>
    <hcenter/>
    <vcenter/>
    <string>Amount</string>
-  </label>
-  <label>
-   <rect>
-    <x>5</x>
-    <y>0</y>
-    <width>60</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Open</string>
-  </label>
-  <label>
-   <rect>
-    <x>645</x>
-    <y>0</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Balance</string>
-  </label>
-  <line>
-   <xstart>5</xstart>
-   <ystart>15</ystart>
-   <xend>745</xend>
-   <yend>15</yend>
-   <weight>2</weight>
-  </line>
-  <label>
-   <rect>
-    <x>445</x>
-    <y>0</y>
-    <width>90</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Due Date</string>
   </label>
   <label>
    <rect>
@@ -431,7 +399,23 @@ ORDER BY sortnumber DESC, arapply_id;</sql>
   </label>
   <label>
    <rect>
-    <x>350</x>
+    <x>645</x>
+    <y>0</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Balance</string>
+  </label>
+  <label>
+   <rect>
+    <x>444</x>
     <y>0</y>
     <width>90</width>
     <height>15</height>
@@ -443,7 +427,7 @@ ORDER BY sortnumber DESC, arapply_id;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Doc. Date</string>
+   <string>Due Date</string>
   </label>
   <label>
    <rect>
@@ -461,6 +445,22 @@ ORDER BY sortnumber DESC, arapply_id;</sql>
    <vcenter/>
    <string>Doc. Type</string>
   </label>
+  <label>
+   <rect>
+    <x>5</x>
+    <y>0</y>
+    <width>60</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Open</string>
+  </label>
  </pghead>
  <section>
   <name>detail</name>
@@ -471,7 +471,7 @@ ORDER BY sortnumber DESC, arapply_id;</sql>
    <height>16</height>
    <field>
     <rect>
-     <x>70</x>
+     <x>540</x>
      <y>0</y>
      <width>100</width>
      <height>15</height>
@@ -481,11 +481,11 @@ ORDER BY sortnumber DESC, arapply_id;</sql>
      <size>8</size>
      <weight>bold</weight>
     </font>
-    <hcenter/>
+    <right/>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>documenttype</column>
+     <column>f_amount</column>
     </data>
    </field>
    <field>
@@ -509,9 +509,9 @@ ORDER BY sortnumber DESC, arapply_id;</sql>
    </field>
    <field>
     <rect>
-     <x>175</x>
+     <x>350</x>
      <y>0</y>
-     <width>170</width>
+     <width>90</width>
      <height>15</height>
     </rect>
     <font>
@@ -519,16 +519,16 @@ ORDER BY sortnumber DESC, arapply_id;</sql>
      <size>8</size>
      <weight>bold</weight>
     </font>
-    <left/>
+    <hcenter/>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>docnumber</column>
+     <column>f_docdate</column>
     </data>
    </field>
    <field>
     <rect>
-     <x>445</x>
+     <x>444</x>
      <y>0</y>
      <width>90</width>
      <height>15</height>
@@ -566,9 +566,28 @@ ORDER BY sortnumber DESC, arapply_id;</sql>
    </field>
    <field>
     <rect>
-     <x>350</x>
+     <x>175</x>
      <y>0</y>
-     <width>90</width>
+     <width>170</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>docnumber</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>70</x>
+     <y>0</y>
+     <width>100</width>
      <height>15</height>
     </rect>
     <font>
@@ -580,51 +599,13 @@ ORDER BY sortnumber DESC, arapply_id;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_docdate</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>540</x>
-     <y>0</y>
-     <width>100</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>f_amount</column>
+     <column>documenttype</column>
     </data>
    </field>
   </detail>
  </section>
  <pgfoot>
   <height>16</height>
-  <field>
-   <rect>
-    <x>105</x>
-    <y>0</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>Context Query</query>
-    <column>report_date</column>
-   </data>
-  </field>
   <label>
    <rect>
     <x>0</x>
@@ -640,22 +621,6 @@ ORDER BY sortnumber DESC, arapply_id;</sql>
    <right/>
    <vcenter/>
    <string>Report Date:</string>
-  </label>
-  <label>
-   <rect>
-    <x>600</x>
-    <y>0</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Page:</string>
   </label>
   <field>
    <rect>
@@ -676,5 +641,40 @@ ORDER BY sortnumber DESC, arapply_id;</sql>
     <column>page_number</column>
    </data>
   </field>
+  <field>
+   <rect>
+    <x>104</x>
+    <y>0</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>Context Query</query>
+    <column>report_date</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>600</x>
+    <y>0</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Page:</string>
+  </label>
  </pgfoot>
 </report>
