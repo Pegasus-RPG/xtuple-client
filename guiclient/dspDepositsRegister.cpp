@@ -81,15 +81,17 @@ dspDepositsRegister::dspDepositsRegister(QWidget* parent, const char* name, Qt::
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
-  _gltrans->addColumn(tr("Date"),      _dateColumn,    Qt::AlignCenter );
-  _gltrans->addColumn(tr("Source"),    _orderColumn,   Qt::AlignCenter );
-  _gltrans->addColumn(tr("Doc Type"),  _orderColumn,   Qt::AlignLeft   );
-  _gltrans->addColumn(tr("Doc. #"),    _orderColumn,   Qt::AlignCenter );
-  _gltrans->addColumn(tr("Reference"), -1,             Qt::AlignLeft   );
-  _gltrans->addColumn(tr("Account"),   _itemColumn,    Qt::AlignLeft   );
-  _gltrans->addColumn(tr("Amount Rcv'd"),     _moneyColumn,   Qt::AlignRight  );
-  _gltrans->addColumn(tr("Credit to A/R"),    _moneyColumn,   Qt::AlignRight  );
-  _gltrans->addColumn(tr("Balance"),    _moneyColumn,   Qt::AlignRight  );
+  _gltrans->addColumn(tr("Date"),             _dateColumn,    Qt::AlignCenter, true,  "gltrans_date" );
+  _gltrans->addColumn(tr("Source"),           _orderColumn,   Qt::AlignCenter, true,  "gltrans_source" );
+  _gltrans->addColumn(tr("Doc Type"),         _orderColumn,   Qt::AlignLeft,   true,  "doctype"   );
+  _gltrans->addColumn(tr("Doc. #"),           _orderColumn,   Qt::AlignCenter, true,  "gltrans_docnumber" );
+  _gltrans->addColumn(tr("Reference"),        -1,             Qt::AlignLeft,   true,  "f_notes"   );
+  _gltrans->addColumn(tr("Account"),          _itemColumn,    Qt::AlignLeft,   true,  "f_accnt"   );
+  _gltrans->addColumn(tr("Amount Rcv'd"),     _moneyColumn,   Qt::AlignRight,  true,  "debit"  );
+  _gltrans->addColumn(tr("Credit to A/R"),    _moneyColumn,   Qt::AlignRight,  true,  "credit"  );
+  _gltrans->addColumn(tr("Balance"),          _moneyColumn,   Qt::AlignRight,  true,  "balance"  );
+  _gltrans->addColumn(tr("Currency"),      _currencyColumn,    Qt::AlignCenter, true,  "currAbbr"  );
+  _gltrans->addColumn(tr("Base Balance"),  _bigMoneyColumn,   Qt::AlignRight,  false, "base_balance"  );
 }
 
 /*
@@ -181,7 +183,7 @@ void dspDepositsRegister::sFillList()
 
   _gltrans->clear();
 
-  QString sql( "SELECT gltrans_id, formatDate(gltrans_date) AS f_date, gltrans_source,"
+  QString sql( "SELECT gltrans_id, gltrans_date, gltrans_source,"
                "       CASE WHEN(gltrans_doctype='IN') THEN :invoice"
                "            WHEN(gltrans_doctype='CM') THEN :creditmemo"
                "            ELSE gltrans_doctype"
@@ -194,13 +196,19 @@ void dspDepositsRegister::sFillList()
                "       CASE WHEN (gltrans_amount < 0) THEN ABS(gltrans_amount)"
                "            ELSE 0"
                "       END AS debit,"
-               "       CASE WHEN (gltrans_amount > 0) THEN formatMoney(gltrans_amount)"
-               "            ELSE ''"
-               "       END AS f_credit,"
                "       CASE WHEN (gltrans_amount > 0) THEN gltrans_amount"
                "            ELSE 0"
                "       END AS credit,"
-               "       formatMoney(aropen_amount - aropen_paid) AS f_balance "
+               "       (aropen_amount - aropen_paid) AS balance,"
+               "       currtobase(aropen_curr_id,(aropen_amount - aropen_paid),aropen_docdate) AS base_balance,"
+               "       currconcat(aropen_curr_id) AS currAbbr,"
+               "       'curr' AS debit_xtnumericrole,"
+               "       'curr' AS credit_xtnumericrole,"
+               "       'curr' AS balance_xtnumericrole,"
+               "       'curr' AS base_balance_xtnumericrole,"
+               "       0 AS debit_xttotalrole,"
+               "       0 AS credit_xttotalrole,"
+               "       0 AS base_balance_xttotalrole "
                "FROM gltrans LEFT OUTER JOIN aropen ON ((text(gltrans_docnumber) = 'I-' || text(aropen_docnumber)) "
                "                                    AND (aropen_doctype='I')), "
                "     accnt "
@@ -214,47 +222,6 @@ void dspDepositsRegister::sFillList()
   q.bindValue(":invoice", tr("Invoice"));
   q.bindValue(":creditmemo", tr("Credit Memo"));
   q.exec();
-
-  //XTreeWidgetItem * parent = 0;
-  XTreeWidgetItem * last = 0;
-  QString date;
-  double debit = 0.0, credit = 0.0;
-  double totdebit = 0.0, totcredit = 0.0;
-  while(q.next())
-  {
-/*
-    if(0 == parent || date != q.value("f_date").toString())
-    {
-      if(parent)
-      {
-        last = new XTreeWidgetItem(parent, last, -2, "", "", "", tr("Subtotal"), "", "", formatMoney(debit), formatMoney(credit));
-        parent->setOpen(TRUE);
-      }
-
-      date = q.value("f_date").toString();
-      parent = new XTreeWidgetItem(_gltrans, parent, -1, date);
-      last = 0;
-      debit = 0.0;
-      credit = 0.0;
-    }
-*/
-
-    last = new XTreeWidgetItem(_gltrans, last, q.value("gltrans_id").toInt(), q.value("f_date"), q.value("gltrans_source"), q.value("doctype"), q.value("gltrans_docnumber"), q.value("f_notes"), q.value("f_accnt"), q.value("f_debit"), q.value("f_credit"), q.value("f_balance"));
-
-    debit += q.value("debit").toDouble();
-    totdebit += q.value("debit").toDouble();
-    credit += q.value("credit").toDouble();
-    totcredit += q.value("credit").toDouble();
-  }
-
-/*
-  if(parent)
-  {
-    last = new XTreeWidgetItem(parent, last, -2, "", "", "", tr("Subtotal"), "", "", formatMoney(debit), formatMoney(credit));
-    parent->setOpen(TRUE);
-  }
-*/
-
-  last = new XTreeWidgetItem(_gltrans, last, -3, "", "", "", tr("Total"), "", "", formatMoney(totdebit), formatMoney(totcredit));
+  _gltrans->populate(q);
 }
 
