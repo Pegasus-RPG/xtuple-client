@@ -132,14 +132,15 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
 #endif
 
   // setup arhist list
-  _arhist->addColumn(tr("Open"),      _orderColumn, Qt::AlignCenter );
-  _arhist->addColumn(tr("Doc. Type"), _dateColumn,  Qt::AlignCenter );
-  _arhist->addColumn(tr("Doc. #"),    -1, Qt::AlignRight  );
-  _arhist->addColumn(tr("Doc. Date"), _dateColumn,  Qt::AlignCenter );
-  _arhist->addColumn(tr("Due. Date"), _dateColumn,  Qt::AlignCenter );
-  _arhist->addColumn(tr("Amount"),    _bigMoneyColumn, Qt::AlignRight  );
-  _arhist->addColumn(tr("Balance"),   _bigMoneyColumn, Qt::AlignRight  );
-  _arhist->addColumn(tr("Currency"),  _currencyColumn, Qt::AlignLeft);
+  _arhist->addColumn(tr("Open"),         _orderColumn,    Qt::AlignCenter, true,  "f_open" );
+  _arhist->addColumn(tr("Doc. Type"),    _dateColumn,     Qt::AlignCenter, true,  "documenttype" );
+  _arhist->addColumn(tr("Doc. #"),       -1,              Qt::AlignRight,  true,  "docnumber"  );
+  _arhist->addColumn(tr("Doc. Date"),    _dateColumn,     Qt::AlignCenter, true,  "docdate" );
+  _arhist->addColumn(tr("Due. Date"),    _dateColumn,     Qt::AlignCenter, true,  "duedate" );
+  _arhist->addColumn(tr("Amount"),       _moneyColumn,    Qt::AlignRight,  true,  "amount"  );
+  _arhist->addColumn(tr("Balance"),      _moneyColumn,    Qt::AlignRight,  true,  "balance"  );
+  _arhist->addColumn(tr("Currency"),     _currencyColumn, Qt::AlignLeft,   true,  "currAbbr");
+  _arhist->addColumn(tr("Base Balance"), _bigMoneyColumn, Qt::AlignRight,  true,  "base_balance"  );
 
   // setup Quote list
   _quote->addColumn(tr("Quote #"),    _itemColumn, Qt::AlignLeft  );
@@ -578,30 +579,8 @@ void dspCustomerInformation::sFillARHistory()
   params.append("other", tr("Other"));
   params.append("cust_id", _cust->id());
   q = mql.toQuery(params);
+  _arhist->populate(q, true);
 
-  if (q.first())
-  {
-    XTreeWidgetItem *document = 0;
-    XTreeWidgetItem *last = 0;
-    do
-    {
-      if (q.value("type").toInt() == 1)
-        last = document = new XTreeWidgetItem( _arhist, last,
-                                      q.value("aropen_id").toInt(), q.value("applyid").toInt(),
-                                      q.value("f_open"), q.value("documenttype"),
-                                      q.value("docnumber"), q.value("f_docdate"),
-                                      q.value("f_duedate"), q.value("f_amount"),
-                                      q.value("f_balance"), q.value("currAbbr") );
-      else if (document)
-        last = new XTreeWidgetItem( document,
-                           q.value("aropen_id").toInt(), q.value("applyid").toInt(),
-                           "", q.value("documenttype"),
-                           q.value("docnumber"), q.value("f_docdate"),
-                           "", q.value("f_amount"),
-                           "" );
-    }
-    while (q.next());
-  }
   // End Population of A/R History
 }
 void dspCustomerInformation::sFillOrderList()
