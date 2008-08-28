@@ -71,9 +71,7 @@ postChecks::postChecks(QWidget* parent, const char* name, bool modal, Qt::WFlags
 
   connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
   connect(_bankaccnt, SIGNAL(newID(int)), this, SLOT(sHandleBankAccount(int)));
-
-  _bankaccnt->setAllowNull(TRUE);
-  _bankaccnt->setType(XComboBox::APBankAccounts);
+  sHandleBankAccount(_bankaccnt->id());
 
   if (_preferences->boolean("XCheckBox/forgetful"))
     _printJournal->setChecked(true);
