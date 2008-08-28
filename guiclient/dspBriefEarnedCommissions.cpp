@@ -83,15 +83,18 @@ dspBriefEarnedCommissions::dspBriefEarnedCommissions(QWidget* parent, const char
 
   _salesrep->setType(XComboBox::SalesReps);
 
-  _commission->addColumn(tr("#"),           _seqColumn,      Qt::AlignCenter );
-  _commission->addColumn(tr("Sales Rep."),  _itemColumn,     Qt::AlignLeft   );
-  _commission->addColumn(tr("Cust. #"),     _orderColumn,    Qt::AlignLeft   );
-  _commission->addColumn(tr("Customer"),    -1,              Qt::AlignLeft   );
-  _commission->addColumn(tr("S/O #"),       _orderColumn,    Qt::AlignLeft   );
-  _commission->addColumn(tr("Invoice #"),   _orderColumn,    Qt::AlignLeft   );
-  _commission->addColumn(tr("Invc. Date"),  _dateColumn,     Qt::AlignCenter );
-  _commission->addColumn(tr("Ext. Price"),  _bigMoneyColumn, Qt::AlignRight  );
-  _commission->addColumn(tr("Commission"),  _bigMoneyColumn, Qt::AlignRight  );
+  _commission->addColumn(tr("#"),               _seqColumn,      Qt::AlignCenter, true,  "salesrep_number" );
+  _commission->addColumn(tr("Sales Rep."),      _itemColumn,     Qt::AlignLeft,   true,  "salesrep_name"   );
+  _commission->addColumn(tr("Cust. #"),         _orderColumn,    Qt::AlignLeft,   true,  "cust_number"   );
+  _commission->addColumn(tr("Customer"),        -1,              Qt::AlignLeft,   true,  "cust_name"   );
+  _commission->addColumn(tr("S/O #"),           _orderColumn,    Qt::AlignLeft,   true,  "cohist_ordernumber"   );
+  _commission->addColumn(tr("Invoice #"),       _orderColumn,    Qt::AlignLeft,   true,  "cohist_invcnumber"   );
+  _commission->addColumn(tr("Invc. Date"),      _dateColumn,     Qt::AlignCenter, true,  "cohist_invcdate" );
+  _commission->addColumn(tr("Ext. Price"),      _moneyColumn,    Qt::AlignRight,  true,  "sumextprice"  );
+  _commission->addColumn(tr("Commission"),      _moneyColumn,    Qt::AlignRight,  true,  "sumcommission"  );
+  _commission->addColumn(tr("Currency"),        _currencyColumn, Qt::AlignCenter, true,  "currAbbr" );
+  _commission->addColumn(tr("Base Ext. Price"), _bigMoneyColumn, Qt::AlignRight,  true,  "sumbaseextprice"  );
+  _commission->addColumn(tr("Base Commission"), _bigMoneyColumn, Qt::AlignRight,  true,  "sumbasecommission"  );
 }
 
 /*
@@ -139,9 +142,17 @@ void dspBriefEarnedCommissions::sFillList()
   if (_dates->allValid())
   {
     QString sql( "SELECT cohist_salesrep_id, salesrep_number, salesrep_name, cust_number, cust_name,"
-                 "       cohist_ordernumber, cohist_invcnumber, formatDate(cohist_invcdate),"
-                 "       formatMoney(SUM(baseextprice)),"
-                 "       formatMoney(SUM(cohist_commission)) "
+                 "       cohist_ordernumber, cohist_invcnumber, cohist_invcdate, currAbbr,"
+                 "       SUM(extprice) AS sumextprice,"
+                 "       SUM(cohist_commission) AS sumcommission,"
+                 "       SUM(baseextprice) AS sumbaseextprice,"
+                 "       SUM(basecommission) AS sumbasecommission,"
+                 "       'curr' AS sumextprice_xtnumericrole,"
+                 "       'curr' AS sumcommission_xtnumericrole,"
+                 "       'curr' AS sumbaseextprice_xtnumericrole,"
+                 "       'curr' AS sumbasecommission_xtnumericrole,"
+                 "       0 AS sumbaseextprice_xttotalrole,"
+                 "       0 AS sumbasecommission_xttotalrole "
                  "FROM saleshistory "
                  "WHERE ( (cohist_commission <> 0) "
                  "  AND   (cohist_invcdate BETWEEN :startDate AND :endDate)" );
@@ -151,7 +162,7 @@ void dspBriefEarnedCommissions::sFillList()
 
     sql += ") "
            "GROUP BY cohist_salesrep_id, salesrep_number, salesrep_name, cust_number, cust_name,"
-           "         cohist_ordernumber, cohist_invcnumber, cohist_invcdate "
+           "         cohist_ordernumber, cohist_invcnumber, cohist_invcdate, currAbbr "
            "ORDER BY salesrep_number, cust_number, cohist_invcdate";
 
     q.prepare(sql);
@@ -159,27 +170,5 @@ void dspBriefEarnedCommissions::sFillList()
     q.bindValue(":salesrep_id", _salesrep->id());
     q.exec();
     _commission->populate(q);
-
-    sql = "SELECT formatMoney(SUM(baseextprice)) AS extprice,"
-           "      formatMoney(SUM(cohist_commission)) AS commission "
-           "FROM saleshistory "
-           "WHERE ( (cohist_commission <> 0)"
-           " AND (cohist_invcdate BETWEEN :startDate AND :endDate)";
-
-    if (_selectedSalesrep->isChecked())
-      sql += " AND (cohist_salesrep_id=:salesrep_id)";
-
-    sql += ");";
-
-    q.prepare(sql);
-    _dates->bindValue(q);
-    q.bindValue(":salesrep_id", _salesrep->id());
-    q.exec();
-    if (q.first())
-      new XTreeWidgetItem(_commission,
-			  _commission->topLevelItem(_commission->topLevelItemCount() - 1),
-			  -1, QVariant(tr("Totals")),
-                         "", "", "", "", "", "",
-                         q.value("extprice"), q.value("commission") );
   }
 }
