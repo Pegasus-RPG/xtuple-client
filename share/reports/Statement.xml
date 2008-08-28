@@ -21,24 +21,25 @@
        CASE WHEN (aropen_doctype='I') THEN formatDate(aropen_duedate)
             ELSE ''
        END AS f_duedate,
-       CASE WHEN (aropen_doctype IN ('I', 'D')) THEN formatMoney(aropen_amount)
-            WHEN (aropen_doctype IN ('C', 'R')) THEN formatMoney(aropen_amount * -1)
-            ELSE formatMoney(aropen_amount)
+       CASE WHEN (aropen_doctype IN ('I', 'D')) THEN formatMoney(currtocurr(aropen_curr_id,cust_curr_id,aropen_amount,aropen_docdate))
+            WHEN (aropen_doctype IN ('C', 'R')) THEN formatMoney(currtocurr(aropen_curr_id,cust_curr_id,(aropen_amount * -1),aropen_docdate))
+            ELSE formatMoney(currtocurr(aropen_curr_id,cust_curr_id,aropen_amount,aropen_docdate))
        END AS f_amount,
-       CASE WHEN (aropen_doctype IN ('I', 'D')) THEN formatMoney(aropen_paid)
-            WHEN (aropen_doctype IN ('C', 'R')) THEN formatMoney(aropen_paid * -1)
-            ELSE formatMoney(aropen_paid)
+       CASE WHEN (aropen_doctype IN ('I', 'D')) THEN formatMoney(currtocurr(aropen_curr_id,cust_curr_id,aropen_paid,aropen_docdate))
+            WHEN (aropen_doctype IN ('C', 'R')) THEN formatMoney(currtocurr(aropen_curr_id,cust_curr_id,(aropen_paid * -1),aropen_docdate))
+            ELSE formatMoney(currtocurr(aropen_curr_id,cust_curr_id,aropen_paid,aropen_docdate))
        END AS f_applied,
-       CASE WHEN (aropen_doctype IN ('I', 'D')) THEN formatMoney(aropen_amount - aropen_paid)
-            WHEN (aropen_doctype IN ('C', 'R')) THEN formatMoney((aropen_amount - aropen_paid) * -1)
-            ELSE formatMoney(aropen_amount - aropen_paid)
+       CASE WHEN (aropen_doctype IN ('I', 'D')) THEN formatMoney(currtocurr(aropen_curr_id,cust_curr_id,(aropen_amount - aropen_paid),aropen_docdate))
+            WHEN (aropen_doctype IN ('C', 'R')) THEN formatMoney(currtocurr(aropen_curr_id,cust_curr_id,(aropen_amount - aropen_paid) * -1,aropen_docdate))
+            ELSE formatMoney(currtocurr(aropen_curr_id,cust_curr_id,(aropen_amount - aropen_paid),aropen_docdate))
        END AS f_balance,
-       CASE WHEN (aropen_doctype IN ('I', 'D')) THEN (aropen_amount - aropen_paid)
-            WHEN (aropen_doctype IN ('C', 'R')) THEN ((aropen_amount - aropen_paid) * -1)
-            ELSE (aropen_amount - aropen_paid)
+       CASE WHEN (aropen_doctype IN ('I', 'D')) THEN currtocurr(aropen_curr_id,cust_curr_id,(aropen_amount - aropen_paid),aropen_docdate)
+            WHEN (aropen_doctype IN ('C', 'R')) THEN currtocurr(aropen_curr_id,cust_curr_id,((aropen_amount - aropen_paid) * -1),aropen_docdate)
+            ELSE currtocurr(aropen_curr_id,cust_curr_id,(aropen_amount - aropen_paid),aropen_docdate)
        END AS balance
-FROM aropen
-WHERE ( (aropen_cust_id=&lt;? value(&quot;cust_id&quot;) ?>)
+FROM aropen, cust
+WHERE ( (aropen_cust_id=cust_id)
+ AND (aropen_cust_id=&lt;? value("cust_id") ?>)
  AND (aropen_open)
  AND ((aropen_amount - aropen_paid) > 0) )
 ORDER BY aropen_docdate;
@@ -50,83 +51,72 @@ ORDER BY aropen_docdate;
   <sql>SELECT cust_name, cust_address1, cust_address2, cust_address3,
        (cust_city || '  ' || cust_state || '  ' || cust_zipcode) AS citystatezip
 FROM cust
-WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
+WHERE (cust_id=&lt;? value("cust_id") ?>);</sql>
  </querysource>
  <querysource>
   <name>Current</name>
-  <sql>SELECT formatMoney(COALESCE(SUM((aropen_amount - aropen_paid) * CASE WHEN (aropen_doctype IN ('C', 'R')) THEN -1 ELSE 1 END), 0)) AS f_amount
-  FROM aropen
- WHERE ((aropen_cust_id=&lt;? value(&quot;cust_id&quot;) ?>)
+  <sql>SELECT formatMoney(COALESCE(SUM(currtocurr(aropen_curr_id,cust_curr_id,(aropen_amount - aropen_paid),aropen_docdate) * CASE WHEN (aropen_doctype IN ('C', 'R')) THEN -1 ELSE 1 END), 0)) AS f_amount
+  FROM aropen, cust
+ WHERE ((aropen_cust_id=cust_id)
+   AND (aropen_cust_id=&lt;? value("cust_id") ?>)
    AND (aropen_open)
    AND ((aropen_amount - aropen_paid) > 0)
    AND (aropen_duedate >= CURRENT_DATE) )</sql>
  </querysource>
  <querysource>
   <name>Past91Plus</name>
-  <sql>SELECT formatMoney(COALESCE(SUM((aropen_amount - aropen_paid) * CASE WHEN (aropen_doctype IN ('C', 'R')) THEN -1 ELSE 1 END), 0)) AS f_amount
-  FROM aropen
- WHERE ((aropen_cust_id=&lt;? value(&quot;cust_id&quot;) ?>)
+  <sql>SELECT formatMoney(COALESCE(SUM(currtocurr(aropen_curr_id,cust_curr_id,(aropen_amount - aropen_paid),aropen_docdate) * CASE WHEN (aropen_doctype IN ('C', 'R')) THEN -1 ELSE 1 END), 0)) AS f_amount
+  FROM aropen, cust
+ WHERE ((aropen_cust_id=cust_id)
+   AND (aropen_cust_id=&lt;? value("cust_id") ?>)
    AND (aropen_open)
    AND ((aropen_amount - aropen_paid) > 0)
    AND (aropen_duedate &lt;= (CURRENT_DATE - 91)) )</sql>
  </querysource>
  <querysource>
   <name>Past1to30</name>
-  <sql>SELECT formatMoney(COALESCE(SUM((aropen_amount - aropen_paid) * CASE WHEN (aropen_doctype IN ('C', 'R')) THEN -1 ELSE 1 END), 0)) AS f_amount
-  FROM aropen
- WHERE ((aropen_cust_id=&lt;? value(&quot;cust_id&quot;) ?>)
+  <sql>SELECT formatMoney(COALESCE(SUM(currtocurr(aropen_curr_id,cust_curr_id,(aropen_amount - aropen_paid),aropen_docdate) * CASE WHEN (aropen_doctype IN ('C', 'R')) THEN -1 ELSE 1 END), 0)) AS f_amount
+  FROM aropen, cust
+ WHERE ((aropen_cust_id=cust_id)
+   AND (aropen_cust_id=&lt;? value("cust_id") ?>)
    AND (aropen_open)
    AND ((aropen_amount - aropen_paid) > 0)
    AND (aropen_duedate between (CURRENT_DATE - 30) AND (CURRENT_DATE - 1)) )</sql>
  </querysource>
  <querysource>
   <name>Past31to60</name>
-  <sql>SELECT formatMoney(COALESCE(SUM((aropen_amount - aropen_paid) * CASE WHEN (aropen_doctype IN ('C', 'R')) THEN -1 ELSE 1 END), 0)) AS f_amount
-  FROM aropen
- WHERE ((aropen_cust_id=&lt;? value(&quot;cust_id&quot;) ?>)
+  <sql>SELECT formatMoney(COALESCE(SUM(currtocurr(aropen_curr_id,cust_curr_id,(aropen_amount - aropen_paid),aropen_docdate) * CASE WHEN (aropen_doctype IN ('C', 'R')) THEN -1 ELSE 1 END), 0)) AS f_amount
+  FROM aropen, cust
+ WHERE ((aropen_cust_id=cust_id)
+   ANd (aropen_cust_id=&lt;? value("cust_id") ?>)
    AND (aropen_open)
    AND ((aropen_amount - aropen_paid) > 0)
    AND (aropen_duedate between (CURRENT_DATE - 60) AND (CURRENT_DATE - 31)) )</sql>
  </querysource>
  <querysource>
   <name>Past61to90</name>
-  <sql>SELECT formatMoney(COALESCE(SUM((aropen_amount - aropen_paid) * CASE WHEN (aropen_doctype IN ('C', 'R')) THEN -1 ELSE 1 END), 0)) AS f_amount
-  FROM aropen
- WHERE ((aropen_cust_id=&lt;? value(&quot;cust_id&quot;) ?>)
+  <sql>SELECT formatMoney(COALESCE(SUM(currtocurr(aropen_curr_id,cust_curr_id,(aropen_amount - aropen_paid),aropen_docdate) * CASE WHEN (aropen_doctype IN ('C', 'R')) THEN -1 ELSE 1 END), 0)) AS f_amount
+  FROM aropen, cust
+ WHERE ((aropen_cust_id=cust_id)
+   ANd (aropen_cust_id=&lt;? value("cust_id") ?>)
    AND (aropen_open)
    AND ((aropen_amount - aropen_paid) > 0)
    AND (aropen_duedate between (CURRENT_DATE - 90) AND (CURRENT_DATE - 61)) )</sql>
  </querysource>
+ <querysource>
+  <name>Currency</name>
+  <sql>SELECT currconcat(cust_curr_id) AS currAbbr
+  FROM cust
+ WHERE (cust_id=&lt;? value("cust_id") ?>)
+</sql>
+ </querysource>
  <pghead>
   <height>277</height>
   <line>
-   <xstart>545</xstart>
+   <xstart>475</xstart>
    <ystart>245</ystart>
-   <xend>545</xend>
+   <xend>475</xend>
    <yend>270</yend>
-   <weight>0</weight>
-  </line>
-  <label>
-   <rect>
-    <x>315</x>
-    <y>250</y>
-    <width>75</width>
-    <height>17</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>bold</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Due Date</string>
-  </label>
-  <line>
-   <xstart>445</xstart>
-   <ystart>40</ystart>
-   <xend>585</xend>
-   <yend>40</yend>
    <weight>0</weight>
   </line>
   <field>
@@ -148,6 +138,38 @@ WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
     <column>citystatezip</column>
    </data>
   </field>
+  <label>
+   <rect>
+    <x>545</x>
+    <y>250</y>
+    <width>95</width>
+    <height>17</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Balance Due</string>
+  </label>
+  <label>
+   <rect>
+    <x>10</x>
+    <y>250</y>
+    <width>100</width>
+    <height>17</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Document Type</string>
+  </label>
   <line>
    <xstart>10</xstart>
    <ystart>245</ystart>
@@ -155,29 +177,68 @@ WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
    <yend>270</yend>
    <weight>0</weight>
   </line>
-  <line>
-   <xstart>10</xstart>
-   <ystart>270</ystart>
-   <xend>640</xend>
-   <yend>270</yend>
-   <weight>0</weight>
-  </line>
   <label>
    <rect>
-    <x>443</x>
-    <y>40</y>
-    <width>140</width>
+    <x>430</x>
+    <y>15</y>
+    <width>175</width>
     <height>17</height>
    </rect>
    <font>
     <face>Arial</face>
-    <size>6</size>
+    <size>14</size>
     <weight>bold</weight>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>STATEMENT DATE</string>
+   <string>Statement</string>
   </label>
+  <label>
+   <rect>
+    <x>215</x>
+    <y>250</y>
+    <width>90</width>
+    <height>17</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Document Date</string>
+  </label>
+  <line>
+   <xstart>445</xstart>
+   <ystart>40</ystart>
+   <xend>445</xend>
+   <yend>75</yend>
+   <weight>0</weight>
+  </line>
+  <label>
+   <rect>
+    <x>315</x>
+    <y>250</y>
+    <width>75</width>
+    <height>17</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Due Date</string>
+  </label>
+  <line>
+   <xstart>395</xstart>
+   <ystart>245</ystart>
+   <xend>395</xend>
+   <yend>270</yend>
+   <weight>0</weight>
+  </line>
   <line>
    <xstart>445</xstart>
    <ystart>75</ystart>
@@ -185,6 +246,55 @@ WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
    <yend>75</yend>
    <weight>0</weight>
   </line>
+  <line>
+   <xstart>310</xstart>
+   <ystart>245</ystart>
+   <xend>310</xend>
+   <yend>270</yend>
+   <weight>0</weight>
+  </line>
+  <line>
+   <xstart>105</xstart>
+   <ystart>245</ystart>
+   <xend>105</xend>
+   <yend>270</yend>
+   <weight>0</weight>
+  </line>
+  <label>
+   <rect>
+    <x>112</x>
+    <y>250</y>
+    <width>95</width>
+    <height>17</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Document No.</string>
+  </label>
+  <field>
+   <rect>
+    <x>25</x>
+    <y>150</y>
+    <width>300</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>cust_address1</column>
+   </data>
+  </field>
   <field>
    <rect>
     <x>25</x>
@@ -204,6 +314,81 @@ WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
     <column>cust_address2</column>
    </data>
   </field>
+  <label>
+   <rect>
+    <x>442</x>
+    <y>40</y>
+    <width>140</width>
+    <height>17</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>6</size>
+    <weight>bold</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>STATEMENT DATE</string>
+  </label>
+  <line>
+   <xstart>10</xstart>
+   <ystart>245</ystart>
+   <xend>640</xend>
+   <yend>245</yend>
+   <weight>0</weight>
+  </line>
+  <field>
+   <rect>
+    <x>25</x>
+    <y>135</y>
+    <width>300</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>cust_name</column>
+   </data>
+  </field>
+  <line>
+   <xstart>210</xstart>
+   <ystart>245</ystart>
+   <xend>210</xend>
+   <yend>270</yend>
+   <weight>0</weight>
+  </line>
+  <field>
+   <rect>
+    <x>475</x>
+    <y>60</y>
+    <width>90</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>12</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <data>
+    <query>Context Query</query>
+    <column>report_date</column>
+   </data>
+  </field>
+  <line>
+   <xstart>640</xstart>
+   <ystart>245</ystart>
+   <xend>640</xend>
+   <yend>270</yend>
+   <weight>0</weight>
+  </line>
   <field>
    <rect>
     <x>25</x>
@@ -225,22 +410,6 @@ WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
   </field>
   <label>
    <rect>
-    <x>10</x>
-    <y>250</y>
-    <width>100</width>
-    <height>17</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>bold</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Document Type</string>
-  </label>
-  <label>
-   <rect>
     <x>407</x>
     <y>250</y>
     <width>60</width>
@@ -256,100 +425,9 @@ WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
    <string>Amount</string>
   </label>
   <line>
-   <xstart>310</xstart>
+   <xstart>545</xstart>
    <ystart>245</ystart>
-   <xend>310</xend>
-   <yend>270</yend>
-   <weight>0</weight>
-  </line>
-  <line>
-   <xstart>445</xstart>
-   <ystart>40</ystart>
-   <xend>445</xend>
-   <yend>75</yend>
-   <weight>0</weight>
-  </line>
-  <line>
-   <xstart>585</xstart>
-   <ystart>40</ystart>
-   <xend>585</xend>
-   <yend>75</yend>
-   <weight>0</weight>
-  </line>
-  <line>
-   <xstart>640</xstart>
-   <ystart>245</ystart>
-   <xend>640</xend>
-   <yend>270</yend>
-   <weight>0</weight>
-  </line>
-  <field>
-   <rect>
-    <x>25</x>
-    <y>150</y>
-    <width>300</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>cust_address1</column>
-   </data>
-  </field>
-  <line>
-   <xstart>105</xstart>
-   <ystart>245</ystart>
-   <xend>105</xend>
-   <yend>270</yend>
-   <weight>0</weight>
-  </line>
-  <line>
-   <xstart>395</xstart>
-   <ystart>245</ystart>
-   <xend>395</xend>
-   <yend>270</yend>
-   <weight>0</weight>
-  </line>
-  <label>
-   <rect>
-    <x>430</x>
-    <y>15</y>
-    <width>175</width>
-    <height>17</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>14</size>
-    <weight>bold</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Statement</string>
-  </label>
-  <line>
-   <xstart>210</xstart>
-   <ystart>245</ystart>
-   <xend>210</xend>
-   <yend>270</yend>
-   <weight>0</weight>
-  </line>
-  <line>
-   <xstart>10</xstart>
-   <ystart>245</ystart>
-   <xend>640</xend>
-   <yend>245</yend>
-   <weight>0</weight>
-  </line>
-  <line>
-   <xstart>475</xstart>
-   <ystart>245</ystart>
-   <xend>475</xend>
+   <xend>545</xend>
    <yend>270</yend>
    <weight>0</weight>
   </line>
@@ -369,92 +447,27 @@ WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
    <vcenter/>
    <string>Applied</string>
   </label>
-  <field>
-   <rect>
-    <x>25</x>
-    <y>135</y>
-    <width>300</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>cust_name</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>112</x>
-    <y>250</y>
-    <width>95</width>
-    <height>17</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>bold</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Document No.</string>
-  </label>
-  <label>
-   <rect>
-    <x>545</x>
-    <y>250</y>
-    <width>95</width>
-    <height>17</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>bold</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Balance Due</string>
-  </label>
-  <field>
-   <rect>
-    <x>475</x>
-    <y>60</y>
-    <width>90</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>12</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <data>
-    <query>Context Query</query>
-    <column>report_date</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>215</x>
-    <y>250</y>
-    <width>90</width>
-    <height>17</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>bold</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Document Date</string>
-  </label>
+  <line>
+   <xstart>585</xstart>
+   <ystart>40</ystart>
+   <xend>585</xend>
+   <yend>75</yend>
+   <weight>0</weight>
+  </line>
+  <line>
+   <xstart>445</xstart>
+   <ystart>40</ystart>
+   <xend>585</xend>
+   <yend>40</yend>
+   <weight>0</weight>
+  </line>
+  <line>
+   <xstart>10</xstart>
+   <ystart>270</ystart>
+   <xend>640</xend>
+   <yend>270</yend>
+   <weight>0</weight>
+  </line>
   <line>
    <xstart>445</xstart>
    <ystart>55</ystart>
@@ -476,21 +489,21 @@ WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
    <height>16</height>
    <field>
     <rect>
-     <x>315</x>
+     <x>20</x>
      <y>0</y>
-     <width>75</width>
+     <width>80</width>
      <height>15</height>
     </rect>
     <font>
      <face>Arial</face>
-     <size>11</size>
+     <size>12</size>
      <weight>normal</weight>
     </font>
     <hcenter/>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_duedate</column>
+     <column>doctype</column>
     </data>
    </field>
    <field>
@@ -514,25 +527,6 @@ WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
    </field>
    <field>
     <rect>
-     <x>215</x>
-     <y>0</y>
-     <width>90</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>11</size>
-     <weight>normal</weight>
-    </font>
-    <hcenter/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>f_docdate</column>
-    </data>
-   </field>
-   <field>
-    <rect>
      <x>110</x>
      <y>0</y>
      <width>95</width>
@@ -548,25 +542,6 @@ WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
     <data>
      <query>detail</query>
      <column>aropen_docnumber</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>560</x>
-     <y>0</y>
-     <width>80</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>11</size>
-     <weight>normal</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>f_balance</column>
     </data>
    </field>
    <field>
@@ -590,34 +565,72 @@ WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
    </field>
    <field>
     <rect>
-     <x>20</x>
+     <x>315</x>
      <y>0</y>
-     <width>80</width>
+     <width>75</width>
      <height>15</height>
     </rect>
     <font>
      <face>Arial</face>
-     <size>12</size>
+     <size>11</size>
      <weight>normal</weight>
     </font>
     <hcenter/>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>doctype</column>
+     <column>f_duedate</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>215</x>
+     <y>0</y>
+     <width>90</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>11</size>
+     <weight>normal</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_docdate</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>560</x>
+     <y>0</y>
+     <width>80</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>11</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_balance</column>
     </data>
    </field>
   </detail>
  </section>
  <pgfoot>
   <lastpage/>
-  <height>110</height>
+  <height>111</height>
   <field>
    <rect>
-    <x>190</x>
+    <x>560</x>
     <y>15</y>
-    <width>85</width>
-    <height>20</height>
+    <width>67</width>
+    <height>15</height>
    </rect>
    <font>
     <face>Arial</face>
@@ -627,110 +640,25 @@ WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
    <right/>
    <vcenter/>
    <data>
-    <query>Past31to60</query>
-    <column>f_amount</column>
+    <query>detail</query>
+    <column>balance</column>
    </data>
+   <tracktotal builtin="true" >extprice</tracktotal>
   </field>
+  <line>
+   <xstart>190</xstart>
+   <ystart>5</ystart>
+   <xend>190</xend>
+   <yend>35</yend>
+   <weight>0</weight>
+  </line>
   <line>
    <xstart>10</xstart>
-   <ystart>35</ystart>
-   <xend>640</xend>
-   <yend>35</yend>
-   <weight>0</weight>
-  </line>
-  <label>
-   <rect>
-    <x>455</x>
-    <y>10</y>
-    <width>75</width>
-    <height>17</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>bold</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Total Due</string>
-  </label>
-  <label>
-   <rect>
-    <x>15</x>
-    <y>5</y>
-    <width>85</width>
-    <height>17</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>6</size>
-    <weight>bold</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Current</string>
-  </label>
-  <field>
-   <rect>
-    <x>280</x>
-    <y>15</y>
-    <width>80</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>11</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <data>
-    <query>Past61to90</query>
-    <column>f_amount</column>
-   </data>
-  </field>
-  <line>
-   <xstart>100</xstart>
    <ystart>5</ystart>
-   <xend>100</xend>
+   <xend>10</xend>
    <yend>35</yend>
    <weight>0</weight>
   </line>
-  <label>
-   <rect>
-    <x>370</x>
-    <y>5</y>
-    <width>85</width>
-    <height>17</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>6</size>
-    <weight>bold</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Over 90</string>
-  </label>
-  <field>
-   <rect>
-    <x>10</x>
-    <y>15</y>
-    <width>85</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>11</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <data>
-    <query>Current</query>
-    <column>f_amount</column>
-   </data>
-  </field>
   <label>
    <rect>
     <x>285</x>
@@ -748,30 +676,16 @@ WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
    <string>61 to 90 Days</string>
   </label>
   <line>
-   <xstart>455</xstart>
+   <xstart>100</xstart>
    <ystart>5</ystart>
-   <xend>455</xend>
+   <xend>100</xend>
    <yend>35</yend>
    <weight>0</weight>
   </line>
   <line>
-   <xstart>280</xstart>
+   <xstart>365</xstart>
    <ystart>5</ystart>
-   <xend>280</xend>
-   <yend>35</yend>
-   <weight>0</weight>
-  </line>
-  <line>
-   <xstart>640</xstart>
-   <ystart>5</ystart>
-   <xend>640</xend>
-   <yend>35</yend>
-   <weight>0</weight>
-  </line>
-  <line>
-   <xstart>10</xstart>
-   <ystart>5</ystart>
-   <xend>10</xend>
+   <xend>365</xend>
    <yend>35</yend>
    <weight>0</weight>
   </line>
@@ -793,7 +707,7 @@ WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
   </label>
   <label>
    <rect>
-    <x>103</x>
+    <x>15</x>
     <y>5</y>
     <width>85</width>
     <height>17</height>
@@ -805,8 +719,27 @@ WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>1 to 30 Days</string>
+   <string>Current</string>
   </label>
+  <field>
+   <rect>
+    <x>190</x>
+    <y>15</y>
+    <width>85</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>11</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <data>
+    <query>Past31to60</query>
+    <column>f_amount</column>
+   </data>
+  </field>
   <field>
    <rect>
     <x>365</x>
@@ -828,26 +761,6 @@ WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
   </field>
   <field>
    <rect>
-    <x>560</x>
-    <y>15</y>
-    <width>67</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>11</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <data>
-    <query>detail</query>
-    <column>balance</column>
-   </data>
-   <tracktotal builtin="true" >extprice</tracktotal>
-  </field>
-  <field>
-   <rect>
     <x>100</x>
     <y>15</y>
     <width>85</width>
@@ -866,19 +779,154 @@ WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
    </data>
   </field>
   <line>
-   <xstart>365</xstart>
-   <ystart>5</ystart>
-   <xend>365</xend>
+   <xstart>10</xstart>
+   <ystart>35</ystart>
+   <xend>640</xend>
    <yend>35</yend>
    <weight>0</weight>
   </line>
+  <field>
+   <rect>
+    <x>10</x>
+    <y>15</y>
+    <width>85</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>11</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <data>
+    <query>Current</query>
+    <column>f_amount</column>
+   </data>
+  </field>
   <line>
-   <xstart>190</xstart>
+   <xstart>640</xstart>
    <ystart>5</ystart>
-   <xend>190</xend>
+   <xend>640</xend>
    <yend>35</yend>
    <weight>0</weight>
   </line>
+  <label>
+   <rect>
+    <x>20</x>
+    <y>45</y>
+    <width>75</width>
+    <height>17</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Currency:</string>
+  </label>
+  <label>
+   <rect>
+    <x>455</x>
+    <y>10</y>
+    <width>75</width>
+    <height>17</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Total Due</string>
+  </label>
+  <line>
+   <xstart>280</xstart>
+   <ystart>5</ystart>
+   <xend>280</xend>
+   <yend>35</yend>
+   <weight>0</weight>
+  </line>
+  <label>
+   <rect>
+    <x>370</x>
+    <y>5</y>
+    <width>85</width>
+    <height>17</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>6</size>
+    <weight>bold</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Over 90</string>
+  </label>
+  <label>
+   <rect>
+    <x>102</x>
+    <y>5</y>
+    <width>85</width>
+    <height>17</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>6</size>
+    <weight>bold</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>1 to 30 Days</string>
+  </label>
+  <field>
+   <rect>
+    <x>280</x>
+    <y>15</y>
+    <width>80</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>11</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <data>
+    <query>Past61to90</query>
+    <column>f_amount</column>
+   </data>
+  </field>
+  <line>
+   <xstart>455</xstart>
+   <ystart>5</ystart>
+   <xend>455</xend>
+   <yend>35</yend>
+   <weight>0</weight>
+  </line>
+  <field>
+   <rect>
+    <x>100</x>
+    <y>45</y>
+    <width>67</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>11</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>Currency</query>
+    <column>currAbbr</column>
+   </data>
+  </field>
   <line>
    <xstart>10</xstart>
    <ystart>5</ystart>
