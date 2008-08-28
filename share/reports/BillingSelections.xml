@@ -24,7 +24,46 @@
 ORDER BY docnumber;</sql>
  </querysource>
  <rpthead>
-  <height>121</height>
+  <height>123</height>
+  <label>
+   <rect>
+    <x>113</x>
+    <y>99</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Cust. #</string>
+  </label>
+  <label>
+   <rect>
+    <x>8</x>
+    <y>99</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Order #</string>
+  </label>
+  <line>
+   <xstart>5</xstart>
+   <ystart>112</ystart>
+   <xend>745</xend>
+   <yend>112</yend>
+   <weight>2</weight>
+  </line>
   <label>
    <rect>
     <x>280</x>
@@ -43,56 +82,8 @@ ORDER BY docnumber;</sql>
   </label>
   <label>
    <rect>
-    <x>5</x>
-    <y>100</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Doc. #</string>
-  </label>
-  <label>
-   <rect>
-    <x>110</x>
-    <y>100</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Order #</string>
-  </label>
-  <label>
-   <rect>
-    <x>215</x>
-    <y>100</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Cust. #</string>
-  </label>
-  <label>
-   <rect>
-    <x>320</x>
-    <y>100</y>
+    <x>218</x>
+    <y>99</y>
     <width>100</width>
     <height>15</height>
    </rect>
@@ -105,36 +96,13 @@ ORDER BY docnumber;</sql>
    <vcenter/>
    <string>Cust Name</string>
   </label>
-  <line>
-   <xstart>5</xstart>
-   <ystart>114</ystart>
-   <xend>745</xend>
-   <yend>114</yend>
-   <weight>2</weight>
-  </line>
  </rpthead>
  <pghead>
   <firstpage/>
-  <height>6</height>
+  <height>102</height>
  </pghead>
  <pghead>
-  <height>26</height>
-  <label>
-   <rect>
-    <x>110</x>
-    <y>5</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Order #</string>
-  </label>
+  <height>80</height>
   <line>
    <xstart>5</xstart>
    <ystart>20</ystart>
@@ -144,7 +112,23 @@ ORDER BY docnumber;</sql>
   </line>
   <label>
    <rect>
-    <x>320</x>
+    <x>6</x>
+    <y>5</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Order #</string>
+  </label>
+  <label>
+   <rect>
+    <x>216</x>
     <y>5</y>
     <width>100</width>
     <height>15</height>
@@ -160,7 +144,7 @@ ORDER BY docnumber;</sql>
   </label>
   <label>
    <rect>
-    <x>215</x>
+    <x>111</x>
     <y>5</y>
     <width>100</width>
     <height>15</height>
@@ -174,22 +158,6 @@ ORDER BY docnumber;</sql>
    <vcenter/>
    <string>Cust. #</string>
   </label>
-  <label>
-   <rect>
-    <x>5</x>
-    <y>5</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Doc. #</string>
-  </label>
  </pghead>
  <section>
   <name>detail</name>
@@ -197,30 +165,11 @@ ORDER BY docnumber;</sql>
    <key>
     <query>detail</query>
    </key>
-   <height>16</height>
+   <height>18</height>
    <field>
     <rect>
      <x>110</x>
-     <y>0</y>
-     <width>100</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>cohead_number</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>215</x>
-     <y>0</y>
+     <y>1</y>
      <width>100</width>
      <height>15</height>
     </rect>
@@ -239,7 +188,7 @@ ORDER BY docnumber;</sql>
    <field>
     <rect>
      <x>5</x>
-     <y>0</y>
+     <y>1</y>
      <width>100</width>
      <height>15</height>
     </rect>
@@ -252,13 +201,13 @@ ORDER BY docnumber;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>docnumber</column>
+     <column>cohead_number</column>
     </data>
    </field>
    <field>
     <rect>
-     <x>320</x>
-     <y>0</y>
+     <x>214</x>
+     <y>1</y>
      <width>300</width>
      <height>15</height>
     </rect>
@@ -277,7 +226,23 @@ ORDER BY docnumber;</sql>
   </detail>
  </section>
  <pgfoot>
-  <height>16</height>
+  <height>18</height>
+  <label>
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>85</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Report Date:</string>
+  </label>
   <field>
    <rect>
     <x>705</x>
@@ -297,22 +262,6 @@ ORDER BY docnumber;</sql>
     <column>page_number</column>
    </data>
   </field>
-  <label>
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>85</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Report Date:</string>
-  </label>
   <label>
    <rect>
     <x>615</x>
