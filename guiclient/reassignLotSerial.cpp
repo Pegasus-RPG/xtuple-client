@@ -151,12 +151,15 @@ enum SetResponse reassignLotSerial::set(const ParameterList &pParams)
 
 void reassignLotSerial::sReassign()
 {
-  if (!_expirationDate->isValid() || _expirationDate->isNull())
+  if (_expirationDate->isEnabled())
   {
-    QMessageBox::critical( this, tr("Enter a valid date"),
-                           tr("You must enter a valid expiration date before you can continue.") );
-    _expirationDate->setFocus();
-    return;
+    if (!_expirationDate->isValid() || _expirationDate->isNull())
+    {
+      QMessageBox::critical( this, tr("Enter a valid date"),
+                             tr("You must enter a valid expiration date before you can continue.") );
+      _expirationDate->setFocus();
+      return;
+    }
   }
 	
   if (_source->currentItem() == 0)
