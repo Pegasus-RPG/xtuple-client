@@ -12,7 +12,7 @@
  <querysource>
   <name>detail</name>
   <sql>SELECT cust_number, cust_name, aropen_docnumber, aropen_doctype, formatDate(aropen_docdate) AS docdate,
-               aropen_applyto, formatExtPrice(aropen_amount) AS openamount, aropen_ponumber,
+               aropen_applyto, formatExtPrice(currtobase(aropen_curr_id,aropen_amount,aropen_docdate)) AS openamount, aropen_ponumber,
                accnt_number, accnt_descrip,
                CASE WHEN (gltrans_amount &lt; 0) THEN formatExtPrice(ABS(gltrans_amount))
                          ELSE ''
@@ -28,9 +28,9 @@ WHERE ((aropen_cust_id=cust_id)
  AND (aropen_docnumber=gltrans_docnumber)
  AND ( ( (aropen_doctype='I') AND (gltrans_doctype='IN') ) OR ( (aropen_doctype IN ('C', 'R')) AND (gltrans_doctype='CM') ) )
  AND (gltrans_accnt_id=accnt_id)
- AND (gltrans_date BETWEEN &lt;? value(&quot;startDate&quot;) ?> AND &lt;? value(&quot;endDate&quot;) ?>)
+ AND (gltrans_date BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
  AND (gltrans_source='S/O')
- AND (aropen_docdate BETWEEN &lt;? value(&quot;startDate&quot;) ?> AND &lt;? value(&quot;endDate&quot;) ?>) )
+ AND (aropen_docdate BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>) )
 ORDER BY aropen_docnumber, gltrans_amount, accnt_number;
     </sql>
  </querysource>
@@ -42,7 +42,7 @@ ORDER BY aropen_docnumber, gltrans_amount, accnt_number;
 FROM gltrans, accnt
 WHERE ((gltrans_accnt_id=accnt_id)
  AND (gltrans_amount &lt; 0)
- AND (gltrans_date BETWEEN &lt;? value(&quot;startDate&quot;) ?> AND &lt;? value(&quot;endDate&quot;) ?>)
+ AND (gltrans_date BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
  AND (gltrans_source='S/O'))
 GROUP BY accnt_number, accnt_descrip
 UNION SELECT 1 as gid, accnt_number, accnt_descrip,
@@ -51,33 +51,33 @@ UNION SELECT 1 as gid, accnt_number, accnt_descrip,
 FROM gltrans, accnt
 WHERE ((gltrans_accnt_id=accnt_id)
  AND (gltrans_amount >= 0)
- AND (gltrans_date BETWEEN &lt;? value(&quot;startDate&quot;) ?> AND &lt;? value(&quot;endDate&quot;) ?>)
+ AND (gltrans_date BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
  AND (gltrans_source='S/O'))
 GROUP BY accnt_number, accnt_descrip; </sql>
  </querysource>
  <querysource>
   <name>totaldocsales</name>
-  <sql>SELECT formatExtPrice(SUM(COALESCE(aropen_amount, 0))) AS amount
+  <sql>SELECT formatExtPrice(SUM(COALESCE(currtobase(aropen_curr_id,aropen_amount,aropen_docdate), 0))) AS amount
 FROM aropen
 WHERE ((aropen_doctype='I')
- AND (aropen_docdate BETWEEN &lt;? value(&quot;startDate&quot;) ?> AND &lt;? value(&quot;endDate&quot;) ?>));
+ AND (aropen_docdate BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>));
     </sql>
  </querysource>
  <querysource>
   <name>totaldoccredit</name>
-  <sql>SELECT formatExtPrice(SUM(COALESCE(aropen_amount, 0))) AS amount
+  <sql>SELECT formatExtPrice(SUM(COALESCE(currtobase(aropen_curr_id,aropen_amount,aropen_docdate), 0))) AS amount
 FROM aropen
 WHERE ((aropen_doctype IN ('C', 'R'))
- AND (aropen_docdate BETWEEN &lt;? value(&quot;startDate&quot;) ?> AND &lt;? value(&quot;endDate&quot;) ?>));
+ AND (aropen_docdate BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>));
     </sql>
  </querysource>
  <querysource>
   <name>foot</name>
-  <sql>SELECT formatExtPrice(SUM( CASE WHEN (aropen_doctype IN ('C', 'R')) THEN (aropen_amount * -1)
-                                                           WHEN (aropen_doctype='I') THEN (aropen_amount)
+  <sql>SELECT formatExtPrice(SUM( CASE WHEN (aropen_doctype IN ('C', 'R')) THEN (currtobase(aropen_curr_id,aropen_amount,aropen_docdate) * -1)
+                                                           WHEN (aropen_doctype='I') THEN (currtobase(aropen_curr_id,aropen_amount,aropen_docdate))
                                                  END )) AS totalamount
 FROM aropen
-WHERE (aropen_docdate BETWEEN &lt;? value(&quot;startDate&quot;) ?> AND &lt;? value(&quot;endDate&quot;) ?>);
+WHERE (aropen_docdate BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>);
     </sql>
  </querysource>
  <querysource>
@@ -86,7 +86,7 @@ WHERE (aropen_docdate BETWEEN &lt;? value(&quot;startDate&quot;) ?> AND &lt;? va
 FROM gltrans
 WHERE ((gltrans_amount &lt; 0)
  AND (gltrans_source='S/O')
- AND (gltrans_date BETWEEN &lt;? value(&quot;startDate&quot;) ?> AND &lt;? value(&quot;endDate&quot;) ?>));
+ AND (gltrans_date BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>));
     </sql>
  </querysource>
  <querysource>
@@ -95,7 +95,7 @@ WHERE ((gltrans_amount &lt; 0)
 FROM gltrans
 WHERE ((gltrans_amount > 0)
  AND (gltrans_source='S/O')
- AND (gltrans_date BETWEEN &lt;? value(&quot;startDate&quot;) ?> AND &lt;? value(&quot;endDate&quot;) ?>));
+ AND (gltrans_date BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>));
     </sql>
  </querysource>
  <rpthead>
@@ -116,22 +116,6 @@ WHERE ((gltrans_amount > 0)
    <vcenter/>
    <string>Doc. Type</string>
   </label>
-  <label>
-   <rect>
-    <x>250</x>
-    <y>100</y>
-    <width>200</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Customer</string>
-  </label>
   <line>
    <xstart>5</xstart>
    <ystart>120</ystart>
@@ -141,19 +125,19 @@ WHERE ((gltrans_amount > 0)
   </line>
   <label>
    <rect>
-    <x>540</x>
-    <y>100</y>
-    <width>100</width>
-    <height>20</height>
+    <x>525</x>
+    <y>5</y>
+    <width>217</width>
+    <height>40</height>
    </rect>
    <font>
     <face>Arial</face>
-    <size>10</size>
+    <size>20</size>
     <weight>bold</weight>
    </font>
-   <hcenter/>
+   <right/>
    <vcenter/>
-   <string>Debits</string>
+   <string>Sales Journal</string>
   </label>
   <label>
    <rect>
@@ -173,19 +157,19 @@ WHERE ((gltrans_amount > 0)
   </label>
   <label>
    <rect>
-    <x>525</x>
-    <y>5</y>
-    <width>218</width>
-    <height>40</height>
+    <x>165</x>
+    <y>100</y>
+    <width>80</width>
+    <height>20</height>
    </rect>
    <font>
     <face>Arial</face>
-    <size>20</size>
+    <size>10</size>
     <weight>bold</weight>
    </font>
-   <right/>
+   <hcenter/>
    <vcenter/>
-   <string>Sales Journal</string>
+   <string>Doc. Date</string>
   </label>
   <label>
    <rect>
@@ -205,9 +189,9 @@ WHERE ((gltrans_amount > 0)
   </label>
   <label>
    <rect>
-    <x>165</x>
+    <x>250</x>
     <y>100</y>
-    <width>80</width>
+    <width>200</width>
     <height>20</height>
    </rect>
    <font>
@@ -217,7 +201,23 @@ WHERE ((gltrans_amount > 0)
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Doc. Date</string>
+   <string>Customer</string>
+  </label>
+  <label>
+   <rect>
+    <x>540</x>
+    <y>100</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Debits</string>
   </label>
  </rpthead>
  <section>
@@ -248,7 +248,26 @@ WHERE ((gltrans_amount > 0)
     </field>
     <field>
      <rect>
-      <x>254</x>
+      <x>0</x>
+      <y>0</y>
+      <width>80</width>
+      <height>20</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>10</size>
+      <weight>normal</weight>
+     </font>
+     <hcenter/>
+     <vcenter/>
+     <data>
+      <query>detail</query>
+      <column>aropen_doctype</column>
+     </data>
+    </field>
+    <field>
+     <rect>
+      <x>252</x>
       <y>0</y>
       <width>80</width>
       <height>20</height>
@@ -282,44 +301,6 @@ WHERE ((gltrans_amount > 0)
      <data>
       <query>detail</query>
       <column>cust_name</column>
-     </data>
-    </field>
-    <field>
-     <rect>
-      <x>85</x>
-      <y>0</y>
-      <width>80</width>
-      <height>20</height>
-     </rect>
-     <font>
-      <face>Arial</face>
-      <size>10</size>
-      <weight>normal</weight>
-     </font>
-     <left/>
-     <vcenter/>
-     <data>
-      <query>detail</query>
-      <column>aropen_docnumber</column>
-     </data>
-    </field>
-    <field>
-     <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>80</width>
-      <height>20</height>
-     </rect>
-     <font>
-      <face>Arial</face>
-      <size>10</size>
-      <weight>normal</weight>
-     </font>
-     <hcenter/>
-     <vcenter/>
-     <data>
-      <query>detail</query>
-      <column>aropen_doctype</column>
      </data>
     </field>
     <field>
@@ -360,6 +341,25 @@ WHERE ((gltrans_amount > 0)
       <column>docdate</column>
      </data>
     </field>
+    <field>
+     <rect>
+      <x>85</x>
+      <y>0</y>
+      <width>80</width>
+      <height>20</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>10</size>
+      <weight>normal</weight>
+     </font>
+     <left/>
+     <vcenter/>
+     <data>
+      <query>detail</query>
+      <column>aropen_docnumber</column>
+     </data>
+    </field>
    </head>
    <foot>
     <height>23</height>
@@ -370,44 +370,6 @@ WHERE ((gltrans_amount > 0)
     <query>detail</query>
    </key>
    <height>23</height>
-   <field>
-    <rect>
-     <x>640</x>
-     <y>0</y>
-     <width>100</width>
-     <height>20</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>10</size>
-     <weight>normal</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>credit</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>540</x>
-     <y>0</y>
-     <width>100</width>
-     <height>20</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>10</size>
-     <weight>normal</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>debit</column>
-    </data>
-   </field>
    <field>
     <rect>
      <x>0</x>
@@ -429,7 +391,26 @@ WHERE ((gltrans_amount > 0)
    </field>
    <field>
     <rect>
-     <x>105</x>
+     <x>640</x>
+     <y>0</y>
+     <width>100</width>
+     <height>20</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>10</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>credit</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>103</x>
      <y>0</y>
      <width>200</width>
      <height>20</height>
@@ -446,6 +427,25 @@ WHERE ((gltrans_amount > 0)
      <column>accnt_descrip</column>
     </data>
    </field>
+   <field>
+    <rect>
+     <x>540</x>
+     <y>0</y>
+     <width>100</width>
+     <height>20</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>10</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>debit</column>
+    </data>
+   </field>
   </detail>
  </section>
  <section>
@@ -455,25 +455,22 @@ WHERE ((gltrans_amount > 0)
    <column>gid</column>
    <head>
     <height>88</height>
-    <field>
+    <label>
      <rect>
-      <x>540</x>
+      <x>340</x>
       <y>40</y>
-      <width>100</width>
+      <width>200</width>
       <height>20</height>
      </rect>
      <font>
       <face>Arial</face>
       <size>10</size>
-      <weight>normal</weight>
+      <weight>bold</weight>
      </font>
      <right/>
      <vcenter/>
-     <data>
-      <query>totaldoccredit</query>
-      <column>amount</column>
-     </data>
-    </field>
+     <string>Total Credits:</string>
+    </label>
     <label>
      <rect>
       <x>5</x>
@@ -489,6 +486,22 @@ WHERE ((gltrans_amount > 0)
      <left/>
      <vcenter/>
      <string>Summarized Distributions</string>
+    </label>
+    <label>
+     <rect>
+      <x>340</x>
+      <y>20</y>
+      <width>200</width>
+      <height>20</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>10</size>
+      <weight>bold</weight>
+     </font>
+     <right/>
+     <vcenter/>
+     <string>Total Sales:</string>
     </label>
     <field>
      <rect>
@@ -509,38 +522,25 @@ WHERE ((gltrans_amount > 0)
       <column>amount</column>
      </data>
     </field>
-    <label>
+    <field>
      <rect>
-      <x>340</x>
-      <y>20</y>
-      <width>200</width>
-      <height>20</height>
-     </rect>
-     <font>
-      <face>Arial</face>
-      <size>10</size>
-      <weight>bold</weight>
-     </font>
-     <right/>
-     <vcenter/>
-     <string>Total Sales:</string>
-    </label>
-    <label>
-     <rect>
-      <x>340</x>
+      <x>540</x>
       <y>40</y>
-      <width>200</width>
+      <width>100</width>
       <height>20</height>
      </rect>
      <font>
       <face>Arial</face>
       <size>10</size>
-      <weight>bold</weight>
+      <weight>normal</weight>
      </font>
      <right/>
      <vcenter/>
-     <string>Total Credits:</string>
-    </label>
+     <data>
+      <query>totaldoccredit</query>
+      <column>amount</column>
+     </data>
+    </field>
    </head>
    <foot>
     <height>23</height>
@@ -553,7 +553,7 @@ WHERE ((gltrans_amount > 0)
    <height>23</height>
    <field>
     <rect>
-     <x>105</x>
+     <x>103</x>
      <y>0</y>
      <width>200</width>
      <height>20</height>
@@ -591,25 +591,6 @@ WHERE ((gltrans_amount > 0)
    </field>
    <field>
     <rect>
-     <x>540</x>
-     <y>0</y>
-     <width>100</width>
-     <height>20</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>10</size>
-     <weight>normal</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>distributions</query>
-     <column>debit</column>
-    </data>
-   </field>
-   <field>
-    <rect>
      <x>640</x>
      <y>0</y>
      <width>100</width>
@@ -627,26 +608,29 @@ WHERE ((gltrans_amount > 0)
      <column>credit</column>
     </data>
    </field>
+   <field>
+    <rect>
+     <x>540</x>
+     <y>0</y>
+     <width>100</width>
+     <height>20</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>10</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>distributions</query>
+     <column>debit</column>
+    </data>
+   </field>
   </detail>
  </section>
  <pgfoot>
   <height>18</height>
-  <label>
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Report Date:</string>
-  </label>
   <field>
    <rect>
     <x>705</x>
@@ -666,6 +650,22 @@ WHERE ((gltrans_amount > 0)
     <column>page_number</column>
    </data>
   </field>
+  <label>
+   <rect>
+    <x>600</x>
+    <y>0</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Page:</string>
+  </label>
   <field>
    <rect>
     <x>85</x>
@@ -687,9 +687,9 @@ WHERE ((gltrans_amount > 0)
   </field>
   <label>
    <rect>
-    <x>600</x>
+    <x>0</x>
     <y>0</y>
-    <width>100</width>
+    <width>80</width>
     <height>15</height>
    </rect>
    <font>
@@ -699,7 +699,7 @@ WHERE ((gltrans_amount > 0)
    </font>
    <right/>
    <vcenter/>
-   <string>Page:</string>
+   <string>Report Date:</string>
   </label>
  </pgfoot>
  <rptfoot>
@@ -722,25 +722,6 @@ WHERE ((gltrans_amount > 0)
   </label>
   <field>
    <rect>
-    <x>540</x>
-    <y>15</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <data>
-    <query>totaldebit</query>
-    <column>total</column>
-   </data>
-  </field>
-  <field>
-   <rect>
     <x>640</x>
     <y>15</y>
     <width>100</width>
@@ -755,6 +736,25 @@ WHERE ((gltrans_amount > 0)
    <vcenter/>
    <data>
     <query>totalcredit</query>
+    <column>total</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>540</x>
+    <y>15</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <data>
+    <query>totaldebit</query>
     <column>total</column>
    </data>
   </field>
