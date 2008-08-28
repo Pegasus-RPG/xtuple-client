@@ -1,5 +1,5 @@
 SELECT cohist.*,
-       CASE WHEN (cohist_invcnumber='-1') THEN 'Credit'
+       CASE WHEN (cohist_invcnumber='-1') THEN  <? value("credit") ?>
             ELSE cohist_invcnumber
        END AS invoicenumber,
        cust_number, cust_name,
@@ -8,7 +8,19 @@ SELECT cohist.*,
        currtobase(cohist_curr_id, cohist_unitprice, cohist_invcdate) AS baseunitprice,
        round((cohist_qtyshipped * cohist_unitprice), 2) AS extprice,
        round((cohist_qtyshipped * currtobase(cohist_curr_id, cohist_unitprice, cohist_invcdate)), 2) AS baseextprice,
-       round((cohist_qtyshipped * cohist_unitcost), 4) AS extcost
+       round((cohist_qtyshipped * cohist_unitcost), 4) AS extcost,
+       currConcat(cohist_curr_id) AS currAbbr,
+       <? value("return") ?> AS cohist_invcdate_xtnullrole,
+       'qty' AS cohist_qtyshipped_xtnumericrole,
+       'salesprice' AS cohist_unitprice_xtnumericrole,
+       'salesprice' AS baseunitprice_xtnumericrole,
+       'curr' AS extprice_xtnumericrole,
+       'curr' AS baseextprice_xtnumericrole,
+       'cost' AS cohist_unitcost_xtnumericrole,
+       'curr' AS extcost_xtnumericrole,
+       0 AS cohist_qtyshipped_xttotalrole,
+       0 AS baseextprice_xttotalrole,
+       0 AS extcost_xttotalrole
 FROM cohist JOIN cust ON (cust_id=cohist_cust_id)
             JOIN itemsite ON (itemsite_id=cohist_itemsite_id)
             JOIN site() ON (warehous_id=itemsite_warehous_id)
