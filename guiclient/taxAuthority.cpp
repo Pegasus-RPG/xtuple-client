@@ -211,6 +211,13 @@ void taxAuthority::sCheck()
 
 void taxAuthority::sSave()
 {
+  if (_code->text().length() == 0)
+  {
+      QMessageBox::warning( this, tr("Cannot Save Tax Authority"),
+                            tr("You must enter a valid Code.") );
+      return;
+  }
+  
   if (_mode == cEdit)
   {
     q.prepare( "SELECT taxauth_id "

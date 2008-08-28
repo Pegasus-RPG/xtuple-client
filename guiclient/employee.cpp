@@ -269,6 +269,13 @@ enum SetResponse employee::set(const ParameterList &pParams)
 
 void employee::sSave(const bool pClose)
 {
+  if (_code->text().length() == 0)
+  {
+      QMessageBox::warning( this, tr("Cannot Save Employee"),
+                            tr("You must enter a valid Employee Code.") );
+      return;
+  }
+  
   if (_user->isChecked() && pClose)
   {
     q.prepare("SELECT usr_id FROM usr WHERE usr_username=:username;");

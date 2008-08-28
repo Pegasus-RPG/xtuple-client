@@ -161,6 +161,13 @@ void honorific::sCheck()
 
 void honorific::sSave()
 {
+  if (_code->text().length() == 0)
+  {
+      QMessageBox::warning( this, tr("Cannot Save Title"),
+                            tr("You must enter a valid Title.") );
+      return;
+  }
+  
   if (_mode == cNew)
   {
     q.exec("SELECT NEXTVAL('hnfc_hnfc_id_seq') AS _hnfc_id");

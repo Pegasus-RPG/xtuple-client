@@ -186,6 +186,13 @@ enum SetResponse standardJournal::set(ParameterList &pParams)
 
 void standardJournal::sSave()
 {
+  if (_name->text().length() == 0)
+  {
+      QMessageBox::warning( this, tr("Cannot Save Standard Journal"),
+                            tr("You must enter a valid Name.") );
+      return;
+  }
+  
   if (_mode == cNew)
     q.prepare( "INSERT INTO stdjrnl "
                "(stdjrnl_id, stdjrnl_name, stdjrnl_descrip, stdjrnl_notes) "

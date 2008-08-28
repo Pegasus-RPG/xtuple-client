@@ -136,6 +136,13 @@ enum SetResponse company::set(const ParameterList &pParams)
 
 void company::sSave()
 {
+  if (_number->text().length() == 0)
+  {
+      QMessageBox::warning( this, tr("Cannot Save Company"),
+                            tr("You must enter a valid Number.") );
+      return;
+  }
+  
   struct {
     bool	condition;
     QString	msg;

@@ -121,6 +121,13 @@ enum SetResponse subaccount::set(const ParameterList &pParams )
 
 void subaccount::sSave()
 {
+  if (_number->text().length() == 0)
+  {
+      QMessageBox::warning( this, tr("Cannot Save Sub Account"),
+                            tr("You must enter a valid Number.") );
+      return;
+  }
+  
   q.prepare("SELECT subaccnt_id"
             "  FROM subaccnt"
             " WHERE((subaccnt_id != :subaccnt_id)"

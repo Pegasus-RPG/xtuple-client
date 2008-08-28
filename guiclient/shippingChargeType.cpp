@@ -169,6 +169,13 @@ void shippingChargeType::sCheck()
 
 void shippingChargeType::sSave()
 {
+  if (_name->text().length() == 0)
+  {
+      QMessageBox::warning( this, tr("Cannot Save Shipping Charge"),
+                            tr("You must enter a valid Name.") );
+      return;
+  }
+  
   if (_mode == cNew)
   {
     q.exec("SELECT NEXTVAL('shipchrg_shipchrg_id_seq') AS shipchrg_id;");

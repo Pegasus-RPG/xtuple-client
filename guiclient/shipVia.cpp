@@ -168,6 +168,13 @@ void shipVia::sCheck()
 
 void shipVia::sSave()
 {
+  if (_code->text().length() == 0)
+  {
+      QMessageBox::warning( this, tr("Cannot Save Ship Via"),
+                            tr("You must enter a valid Code.") );
+      return;
+  }
+  
   if (_mode == cNew)
   {
     q.exec("SELECT NEXTVAL('shipvia_shipvia_id_seq') AS _shipvia_id;");

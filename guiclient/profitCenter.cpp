@@ -122,6 +122,13 @@ enum SetResponse profitCenter::set(const ParameterList &pParams )
 
 void profitCenter::sSave()
 {
+  if (_number->text().length() == 0)
+  {
+      QMessageBox::warning( this, tr("Cannot Save Profit Center"),
+                            tr("You must enter a valid Number.") );
+      return;
+  }
+  
   q.prepare("SELECT prftcntr_id"
             "  FROM prftcntr"
             " WHERE((prftcntr_id != :prftcntr_id)"
