@@ -61,6 +61,10 @@
 #include <QStatusBar>
 #include <QMessageBox>
 #include <parameter.h>
+
+#include <metasql.h>
+#include "mqlutil.h"
+
 #include <openreports.h>
 #include "guiclient.h"
 
@@ -86,16 +90,19 @@ dspEarnedCommissions::dspEarnedCommissions(QWidget* parent, const char* name, Qt
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 
-  _commission->addColumn(tr("Sales Rep."),  100,             Qt::AlignLeft   );
-  _commission->addColumn(tr("S/O #"),       _orderColumn,    Qt::AlignLeft   );
-  _commission->addColumn(tr("Cust. #"),     _orderColumn,    Qt::AlignLeft   );
-  _commission->addColumn(tr("Ship-To"),     -1,              Qt::AlignLeft   );
-  _commission->addColumn(tr("Invc. Date"),  _dateColumn,     Qt::AlignCenter );
-  _commission->addColumn(tr("Item Number"), _itemColumn,     Qt::AlignLeft   );
-  _commission->addColumn(tr("Qty."),        _qtyColumn,      Qt::AlignRight  );
-  _commission->addColumn(tr("Ext. Price"),  _bigMoneyColumn, Qt::AlignRight  );
-  _commission->addColumn(tr("Commission"),  _bigMoneyColumn, Qt::AlignRight  );
-  _commission->addColumn(tr("Paid"),        _ynColumn,       Qt::AlignCenter );
+  _commission->addColumn(tr("Sales Rep."),      100,             Qt::AlignLeft,   true,  "salesrep_name"   );
+  _commission->addColumn(tr("S/O #"),           _orderColumn,    Qt::AlignLeft,   true,  "cohist_ordernumber"   );
+  _commission->addColumn(tr("Cust. #"),         _orderColumn,    Qt::AlignLeft,   true,  "cust_number"   );
+  _commission->addColumn(tr("Ship-To"),         -1,              Qt::AlignLeft,   true,  "cohist_shiptoname"   );
+  _commission->addColumn(tr("Invc. Date"),      _dateColumn,     Qt::AlignCenter, true,  "cohist_invcdate" );
+  _commission->addColumn(tr("Item Number"),     _itemColumn,     Qt::AlignLeft,   true,  "item_number"   );
+  _commission->addColumn(tr("Qty."),            _qtyColumn,      Qt::AlignRight,  true,  "cohist_qtyshipped"  );
+  _commission->addColumn(tr("Ext. Price"),      _moneyColumn,    Qt::AlignRight,  true,  "extprice"  );
+  _commission->addColumn(tr("Commission"),      _moneyColumn,    Qt::AlignRight,  true,  "cohist_commission"  );
+  _commission->addColumn(tr("Currency"),        _currencyColumn, Qt::AlignCenter, true,  "currAbbr" );
+  _commission->addColumn(tr("Base Ext. Price"), _bigMoneyColumn, Qt::AlignRight,  true,  "baseextprice"  );
+  _commission->addColumn(tr("Base Commission"), _bigMoneyColumn, Qt::AlignRight,  true,  "basecommission"  );
+  _commission->addColumn(tr("Paid"),            _ynColumn,       Qt::AlignCenter, true,  "f_commissionpaid" );
 }
 
 /*
@@ -140,57 +147,22 @@ void dspEarnedCommissions::sPrint()
 
 void dspEarnedCommissions::sFillList()
 {
+  if (!_dates->allValid())
+  {
+    QMessageBox::warning( this, tr("Enter a Valid Start and End Date"),
+                          tr("You must enter a valid Start and End Date for this report.") );
+    _dates->setFocus();
+    return;
+  }
+
   _commission->clear();
 
-  if (_dates->allValid())
-  {
-    QString sql( "SELECT cohist_id, salesrep_name, cohist_ordernumber, cust_number, cohist_shiptoname,"
-                 "       cohist_invcdate, item_number,"
-                 "       cohist_qtyshipped AS shipped, baseextprice AS sales,"
-                 "       cohist_commission AS commission,"
-                 "       formatBoolYN(cohist_commissionpaid) AS f_commissionpaid "
-                 "FROM saleshistory "
-                 "WHERE ( (cohist_commission <> 0)"
-                 "  AND   (cohist_invcdate BETWEEN :startDate AND :endDate)" );
-    
-    if (_selectedSalesrep->isChecked())
-      sql += " AND (cohist_salesrep_id=:salesrep_id)";
-
-    sql +=  ") "
-            "ORDER BY salesrep_name, cohist_invcdate";
-
-    q.prepare(sql);
-    _dates->bindValue(q);
-    q.bindValue(":salesrep_id", _salesrep->id());
-    q.exec();
-    if (q.first())
-    {
-      double sales = 0.0;
-      double comm  = 0.0;
-      XTreeWidgetItem *last = 0;
-      do
-      {
-	last = new XTreeWidgetItem(_commission, last,
-				   q.value("cohist_id").toInt(),
-				   q.value("salesrep_name"),
-				   q.value("cohist_ordernumber"),
-				   q.value("cust_number"),
-				   q.value("cohist_shiptoname"),
-				   formatDate(q.value("cohist_invcdate").toDate()),
-				   q.value("item_number"),
-				   formatQty(q.value("shipped").toDouble()),
-				   formatMoney(q.value("sales").toDouble()),
-				   formatMoney(q.value("commission").toDouble()),
-				   q.value("f_commissionpaid") );
-
-        sales += q.value("sales").toDouble();
-        comm+= q.value("commission").toDouble();
-      }
-      while (q.next());
-
-      last = new XTreeWidgetItem(_commission, last, -1, QVariant(tr("Totals")),
-				 "", "", "", "", "", "",
-				 formatMoney(sales), formatMoney(comm) );
-    }
-  }
+  MetaSQLQuery mql = mqlLoad(":/so/displays/SalesHistory.mql");
+  ParameterList params;
+  _dates->appendValue(params);
+  if (_selectedSalesrep->isChecked())
+    params.append("salesrep_id", _salesrep->id());
+  params.append("orderBySalesRepInvcdate");
+  q = mql.toQuery(params);
+  _commission->populate(q);
 }
