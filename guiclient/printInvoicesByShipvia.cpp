@@ -113,8 +113,6 @@ void printInvoicesByShipvia::init()
   _invoiceWatermarks->addColumn( tr("Watermark"),   -1,          Qt::AlignLeft   );
   _invoiceWatermarks->addColumn( tr("Show Prices"), _dateColumn, Qt::AlignCenter );
 
-  _firstInvoiceNum->setValidator(omfgThis->orderVal());
-
   _invoiceNumOfCopies->setValue(_metrics->value("InvoiceCopies").toInt());
   if (_invoiceNumOfCopies->value())
   {
@@ -123,18 +121,6 @@ void printInvoicesByShipvia::init()
       _invoiceWatermarks->topLevelItem(i)->setText(1, _metrics->value(QString("InvoiceWatermark%1").arg(i)));
       _invoiceWatermarks->topLevelItem(i)->setText(2, ((_metrics->value(QString("InvoiceShowPrices%1").arg(i)) == "t") ? tr("Yes") : tr("No")));
     }
-  }
-
-  _firstInvoiceNum->setEnabled(FALSE);
-  q.exec( "SELECT orderseq_number "
-          "FROM orderseq "
-          "WHERE (orderseq_name='InvcNumber')" );
-  if (q.first())
-    _firstInvoiceNum->setText(q.value("orderseq_number").toString());
-  else if (q.lastError().type() != QSqlError::None)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
   }
 
   _shipvia->populate( "SELECT DISTINCT -1, invchead_shipvia "
@@ -151,21 +137,6 @@ void printInvoicesByShipvia::init()
 
 void printInvoicesByShipvia::sPrint()
 {
-  if ( (_metrics->value("InvcNumberGeneration") == "O") ||
-       (_metrics->value("InvcNumberGeneration") == "M") )
-  {
-    q.prepare( "UPDATE orderseq "
-               "SET orderseq_number=:invoicenumber "
-               "WHERE (orderseq_name='InvcNumber');" );
-    q.bindValue(":invoicenumber", _firstInvoiceNum->text().toInt());
-    q.exec();
-    if (q.lastError().type() != QSqlError::None)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
-  }
-
   XSqlQuery invoices;
   invoices.prepare( "SELECT invchead_id, invchead_invcnumber, findCustomerForm(invchead_cust_id, 'I') AS reportname "
                     "FROM invchead "
