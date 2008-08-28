@@ -49,7 +49,7 @@
 --Balance:
        gltrans_amount * -1 as balance_amt,
 --AROPEN Amount
-       formatMoney(aropen_amount - aropen_paid) AS f_aropen_bal
+       formatMoney(currtobase(aropen_curr_id,(aropen_amount - aropen_paid),aropen_docdate)) AS f_aropen_bal
 
     FROM gltrans LEFT OUTER JOIN aropen ON ((text(gltrans_docnumber) = 'I-' || text(aropen_docnumber))
                                         AND (aropen_doctype='I')), accnt
@@ -61,38 +61,6 @@ ORDER BY gltrans_created DESC, gltrans_sequence, gltrans_amount;</sql>
  </querysource>
  <rpthead>
   <height>206</height>
-  <label>
-   <rect>
-    <x>893</x>
-    <y>185</y>
-    <width>55</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Username</string>
-  </label>
-  <label>
-   <rect>
-    <x>705</x>
-    <y>175</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Total Credit</string>
-  </label>
   <label>
    <rect>
     <x>0</x>
@@ -108,22 +76,6 @@ ORDER BY gltrans_created DESC, gltrans_sequence, gltrans_amount;</sql>
    <left/>
    <vcenter/>
    <string>Jrnl</string>
-  </label>
-  <label>
-   <rect>
-    <x>705</x>
-    <y>185</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>to A/R</string>
   </label>
   <line>
    <xstart>0</xstart>
@@ -150,88 +102,8 @@ ORDER BY gltrans_created DESC, gltrans_sequence, gltrans_amount;</sql>
   </label>
   <label>
    <rect>
-    <x>35</x>
-    <y>70</y>
-    <width>130</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Start Date:</string>
-  </label>
-  <label>
-   <rect>
-    <x>535</x>
-    <y>5</y>
-    <width>465</width>
-    <height>37</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>18</size>
-    <weight>bold</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Deposits Register</string>
-  </label>
-  <label>
-   <rect>
-    <x>800</x>
-    <y>175</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Current </string>
-  </label>
-  <label>
-   <rect>
-    <x>600</x>
-    <y>185</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Received</string>
-  </label>
-  <label>
-   <rect>
-    <x>490</x>
-    <y>185</y>
-    <width>106</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Reference</string>
-  </label>
-  <label>
-   <rect>
-    <x>203</x>
-    <y>185</y>
+    <x>160</x>
+    <y>170</y>
     <width>55</width>
     <height>15</height>
    </rect>
@@ -242,39 +114,7 @@ ORDER BY gltrans_created DESC, gltrans_sequence, gltrans_amount;</sql>
    </font>
    <left/>
    <vcenter/>
-   <string>Doc. #</string>
-  </label>
-  <label>
-   <rect>
-    <x>160</x>
-    <y>185</y>
-    <width>35</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Type</string>
-  </label>
-  <label>
-   <rect>
-    <x>35</x>
-    <y>90</y>
-    <width>130</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>End Date:</string>
+   <string>Doc.</string>
   </label>
   <label>
    <rect>
@@ -294,9 +134,9 @@ ORDER BY gltrans_created DESC, gltrans_sequence, gltrans_amount;</sql>
   </label>
   <label>
    <rect>
-    <x>55</x>
-    <y>185</y>
-    <width>40</width>
+    <x>600</x>
+    <y>175</y>
+    <width>80</width>
     <height>15</height>
    </rect>
    <font>
@@ -306,13 +146,13 @@ ORDER BY gltrans_created DESC, gltrans_sequence, gltrans_amount;</sql>
    </font>
    <left/>
    <vcenter/>
-   <string>Date</string>
+   <string>Amount</string>
   </label>
   <label>
    <rect>
-    <x>160</x>
-    <y>170</y>
-    <width>55</width>
+    <x>490</x>
+    <y>185</y>
+    <width>106</width>
     <height>15</height>
    </rect>
    <font>
@@ -322,13 +162,13 @@ ORDER BY gltrans_created DESC, gltrans_sequence, gltrans_amount;</sql>
    </font>
    <left/>
    <vcenter/>
-   <string>Doc.</string>
+   <string>Reference</string>
   </label>
   <label>
    <rect>
-    <x>960</x>
-    <y>185</y>
-    <width>40</width>
+    <x>800</x>
+    <y>175</y>
+    <width>100</width>
     <height>15</height>
    </rect>
    <font>
@@ -338,7 +178,7 @@ ORDER BY gltrans_created DESC, gltrans_sequence, gltrans_amount;</sql>
    </font>
    <left/>
    <vcenter/>
-   <string>Posted</string>
+   <string>Current Base</string>
   </label>
   <field>
    <rect>
@@ -375,6 +215,182 @@ ORDER BY gltrans_created DESC, gltrans_sequence, gltrans_amount;</sql>
    <vcenter/>
    <string>Balance Due</string>
   </label>
+  <label>
+   <rect>
+    <x>35</x>
+    <y>90</y>
+    <width>130</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>End Date:</string>
+  </label>
+  <label>
+   <rect>
+    <x>535</x>
+    <y>5</y>
+    <width>465</width>
+    <height>37</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>18</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Deposits Register</string>
+  </label>
+  <label>
+   <rect>
+    <x>55</x>
+    <y>185</y>
+    <width>40</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Date</string>
+  </label>
+  <label>
+   <rect>
+    <x>705</x>
+    <y>185</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>to A/R</string>
+  </label>
+  <label>
+   <rect>
+    <x>160</x>
+    <y>185</y>
+    <width>35</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Type</string>
+  </label>
+  <label>
+   <rect>
+    <x>600</x>
+    <y>185</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Received</string>
+  </label>
+  <label>
+   <rect>
+    <x>892</x>
+    <y>185</y>
+    <width>55</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Username</string>
+  </label>
+  <label>
+   <rect>
+    <x>35</x>
+    <y>70</y>
+    <width>130</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Start Date:</string>
+  </label>
+  <label>
+   <rect>
+    <x>960</x>
+    <y>185</y>
+    <width>40</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Posted</string>
+  </label>
+  <label>
+   <rect>
+    <x>705</x>
+    <y>175</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Total Credit</string>
+  </label>
+  <label>
+   <rect>
+    <x>202</x>
+    <y>185</y>
+    <width>55</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Doc. #</string>
+  </label>
   <field>
    <rect>
     <x>175</x>
@@ -394,22 +410,6 @@ ORDER BY gltrans_created DESC, gltrans_sequence, gltrans_amount;</sql>
     <column>startdate</column>
    </data>
   </field>
-  <label>
-   <rect>
-    <x>600</x>
-    <y>175</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Amount</string>
-  </label>
  </rpthead>
  <pghead>
   <firstpage/>
@@ -419,24 +419,8 @@ ORDER BY gltrans_created DESC, gltrans_sequence, gltrans_amount;</sql>
   <height>57</height>
   <label>
    <rect>
-    <x>206</x>
-    <y>36</y>
-    <width>55</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Doc. #</string>
-  </label>
-  <label>
-   <rect>
     <x>802</x>
-    <y>36</y>
+    <y>25</y>
     <width>100</width>
     <height>15</height>
    </rect>
@@ -447,23 +431,7 @@ ORDER BY gltrans_created DESC, gltrans_sequence, gltrans_amount;</sql>
    </font>
    <left/>
    <vcenter/>
-   <string>Balance Due</string>
-  </label>
-  <label>
-   <rect>
-    <x>312</x>
-    <y>36</y>
-    <width>106</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Account</string>
+   <string>Current Base</string>
   </label>
   <label>
    <rect>
@@ -483,54 +451,6 @@ ORDER BY gltrans_created DESC, gltrans_sequence, gltrans_amount;</sql>
   </label>
   <label>
    <rect>
-    <x>492</x>
-    <y>36</y>
-    <width>106</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Reference</string>
-  </label>
-  <label>
-   <rect>
-    <x>600</x>
-    <y>35</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Received</string>
-  </label>
-  <label>
-   <rect>
-    <x>162</x>
-    <y>36</y>
-    <width>35</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Type</string>
-  </label>
-  <label>
-   <rect>
     <x>897</x>
     <y>36</y>
     <width>55</width>
@@ -544,54 +464,6 @@ ORDER BY gltrans_created DESC, gltrans_sequence, gltrans_amount;</sql>
    <left/>
    <vcenter/>
    <string>Username</string>
-  </label>
-  <label>
-   <rect>
-    <x>122</x>
-    <y>36</y>
-    <width>35</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Source</string>
-  </label>
-  <label>
-   <rect>
-    <x>0</x>
-    <y>36</y>
-    <width>40</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Jrnl</string>
-  </label>
-  <label>
-   <rect>
-    <x>707</x>
-    <y>36</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>to A/R</string>
   </label>
   <label>
    <rect>
@@ -611,7 +483,23 @@ ORDER BY gltrans_created DESC, gltrans_sequence, gltrans_amount;</sql>
   </label>
   <label>
    <rect>
-    <x>961</x>
+    <x>162</x>
+    <y>36</y>
+    <width>35</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Type</string>
+  </label>
+  <label>
+   <rect>
+    <x>0</x>
     <y>36</y>
     <width>40</width>
     <height>15</height>
@@ -623,7 +511,7 @@ ORDER BY gltrans_created DESC, gltrans_sequence, gltrans_amount;</sql>
    </font>
    <left/>
    <vcenter/>
-   <string>Posted</string>
+   <string>Jrnl</string>
   </label>
   <label>
    <rect>
@@ -644,7 +532,7 @@ ORDER BY gltrans_created DESC, gltrans_sequence, gltrans_amount;</sql>
   <label>
    <rect>
     <x>802</x>
-    <y>25</y>
+    <y>36</y>
     <width>100</width>
     <height>15</height>
    </rect>
@@ -655,7 +543,23 @@ ORDER BY gltrans_created DESC, gltrans_sequence, gltrans_amount;</sql>
    </font>
    <left/>
    <vcenter/>
-   <string>Current </string>
+   <string>Balance Due</string>
+  </label>
+  <label>
+   <rect>
+    <x>122</x>
+    <y>36</y>
+    <width>35</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Source</string>
   </label>
   <line>
    <xstart>0</xstart>
@@ -664,6 +568,22 @@ ORDER BY gltrans_created DESC, gltrans_sequence, gltrans_amount;</sql>
    <yend>50</yend>
    <weight>2</weight>
   </line>
+  <label>
+   <rect>
+    <x>492</x>
+    <y>36</y>
+    <width>106</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Reference</string>
+  </label>
   <label>
    <rect>
     <x>600</x>
@@ -680,6 +600,86 @@ ORDER BY gltrans_created DESC, gltrans_sequence, gltrans_amount;</sql>
    <vcenter/>
    <string>Amount</string>
   </label>
+  <label>
+   <rect>
+    <x>961</x>
+    <y>36</y>
+    <width>40</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Posted</string>
+  </label>
+  <label>
+   <rect>
+    <x>707</x>
+    <y>36</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>to A/R</string>
+  </label>
+  <label>
+   <rect>
+    <x>600</x>
+    <y>35</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Received</string>
+  </label>
+  <label>
+   <rect>
+    <x>312</x>
+    <y>36</y>
+    <width>106</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Account</string>
+  </label>
+  <label>
+   <rect>
+    <x>206</x>
+    <y>36</y>
+    <width>55</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Doc. #</string>
+  </label>
  </pghead>
  <section>
   <name>detail</name>
@@ -690,9 +690,9 @@ ORDER BY gltrans_created DESC, gltrans_sequence, gltrans_amount;</sql>
    <height>21</height>
    <field>
     <rect>
-     <x>160</x>
+     <x>12500</x>
      <y>0</y>
-     <width>25</width>
+     <width>80</width>
      <height>15</height>
     </rect>
     <font>
@@ -709,102 +709,7 @@ ORDER BY gltrans_created DESC, gltrans_sequence, gltrans_amount;</sql>
    </field>
    <field>
     <rect>
-     <x>120</x>
-     <y>0</y>
-     <width>25</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>gltrans_source</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>600</x>
-     <y>0</y>
-     <width>80</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>f_debit</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>893</x>
-     <y>0</y>
-     <width>65</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>gltrans_username</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>45</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>gltrans_journalnumber</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>695</x>
-     <y>0</y>
-     <width>80</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>f_credit</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>203</x>
+     <x>202</x>
      <y>0</y>
      <width>100</width>
      <height>15</height>
@@ -823,9 +728,9 @@ ORDER BY gltrans_created DESC, gltrans_sequence, gltrans_amount;</sql>
    </field>
    <field>
     <rect>
-     <x>964</x>
+     <x>892</x>
      <y>0</y>
-     <width>60</width>
+     <width>65</width>
      <height>15</height>
     </rect>
     <font>
@@ -837,26 +742,7 @@ ORDER BY gltrans_created DESC, gltrans_sequence, gltrans_amount;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_posted</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>310</x>
-     <y>0</y>
-     <width>175</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>account</column>
+     <column>gltrans_username</column>
     </data>
    </field>
    <field>
@@ -880,6 +766,44 @@ ORDER BY gltrans_created DESC, gltrans_sequence, gltrans_amount;</sql>
    </field>
    <field>
     <rect>
+     <x>160</x>
+     <y>0</y>
+     <width>25</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>gltrans_doctype</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>310</x>
+     <y>0</y>
+     <width>175</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>account</column>
+    </data>
+   </field>
+   <field>
+    <rect>
      <x>490</x>
      <y>0</y>
      <width>95</width>
@@ -899,9 +823,28 @@ ORDER BY gltrans_created DESC, gltrans_sequence, gltrans_amount;</sql>
    </field>
    <field>
     <rect>
-     <x>12500</x>
+     <x>695</x>
      <y>0</y>
      <width>80</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_credit</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>963</x>
+     <y>0</y>
+     <width>60</width>
      <height>15</height>
     </rect>
     <font>
@@ -913,7 +856,45 @@ ORDER BY gltrans_created DESC, gltrans_sequence, gltrans_amount;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>gltrans_doctype</column>
+     <column>f_posted</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>600</x>
+     <y>0</y>
+     <width>80</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_debit</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>45</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>gltrans_journalnumber</column>
     </data>
    </field>
    <field>
@@ -935,17 +916,52 @@ ORDER BY gltrans_created DESC, gltrans_sequence, gltrans_amount;</sql>
      <column>f_aropen_bal</column>
     </data>
    </field>
+   <field>
+    <rect>
+     <x>120</x>
+     <y>0</y>
+     <width>25</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>gltrans_source</column>
+    </data>
+   </field>
   </detail>
  </section>
  <pgfoot>
   <lastpage/>
   <height>78</height>
+  <label>
+   <rect>
+    <x>867</x>
+    <y>60</y>
+    <width>85</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Page:</string>
+  </label>
   <field>
    <rect>
     <x>695</x>
     <y>25</y>
     <width>75</width>
-    <height>13</height>
+    <height>12</height>
    </rect>
    <font>
     <face>Arial</face>
@@ -960,89 +976,12 @@ ORDER BY gltrans_created DESC, gltrans_sequence, gltrans_amount;</sql>
    </data>
    <tracktotal builtin="true" >money</tracktotal>
   </field>
-  <label>
-   <rect>
-    <x>0</x>
-    <y>60</y>
-    <width>85</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Report Date:</string>
-  </label>
-  <label>
-   <rect>
-    <x>868</x>
-    <y>60</y>
-    <width>85</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Page:</string>
-  </label>
-  <field>
-   <rect>
-    <x>960</x>
-    <y>60</y>
-    <width>40</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>Context Query</query>
-    <column>page_number</column>
-   </data>
-  </field>
-  <line>
-   <xstart>605</xstart>
-   <ystart>5</ystart>
-   <xend>1015</xend>
-   <yend>6</yend>
-   <weight>2</weight>
-  </line>
-  <field>
-   <rect>
-    <x>90</x>
-    <y>60</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>Context Query</query>
-    <column>report_date</column>
-   </data>
-  </field>
   <field>
    <rect>
     <x>600</x>
     <y>25</y>
     <width>80</width>
-    <height>13</height>
+    <height>12</height>
    </rect>
    <font>
     <face>Arial</face>
@@ -1057,29 +996,48 @@ ORDER BY gltrans_created DESC, gltrans_sequence, gltrans_amount;</sql>
    </data>
    <tracktotal builtin="true" >money</tracktotal>
   </field>
-  <label>
+  <field>
    <rect>
-    <x>580</x>
-    <y>10</y>
-    <width>55</width>
-    <height>13</height>
+    <x>960</x>
+    <y>60</y>
+    <width>40</width>
+    <height>15</height>
    </rect>
    <font>
     <face>Arial</face>
     <size>8</size>
     <weight>bold</weight>
    </font>
-   <right/>
-   <top/>
-   <string>Total:</string>
-  </label>
- </pgfoot>
- <pgfoot>
-  <height>21</height>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>Context Query</query>
+    <column>page_number</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>90</x>
+    <y>60</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>Context Query</query>
+    <column>report_date</column>
+   </data>
+  </field>
   <label>
    <rect>
     <x>0</x>
-    <y>0</y>
+    <y>60</y>
     <width>85</width>
     <height>15</height>
    </rect>
@@ -1092,6 +1050,32 @@ ORDER BY gltrans_created DESC, gltrans_sequence, gltrans_amount;</sql>
    <vcenter/>
    <string>Report Date:</string>
   </label>
+  <label>
+   <rect>
+    <x>580</x>
+    <y>10</y>
+    <width>55</width>
+    <height>12</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <top/>
+   <string>Total:</string>
+  </label>
+  <line>
+   <xstart>605</xstart>
+   <ystart>5</ystart>
+   <xend>1015</xend>
+   <yend>6</yend>
+   <weight>2</weight>
+  </line>
+ </pgfoot>
+ <pgfoot>
+  <height>21</height>
   <field>
    <rect>
     <x>960</x>
@@ -1111,6 +1095,38 @@ ORDER BY gltrans_created DESC, gltrans_sequence, gltrans_amount;</sql>
     <column>page_number</column>
    </data>
   </field>
+  <label>
+   <rect>
+    <x>867</x>
+    <y>0</y>
+    <width>85</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Page:</string>
+  </label>
+  <label>
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>85</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Report Date:</string>
+  </label>
   <field>
    <rect>
     <x>90</x>
@@ -1130,21 +1146,5 @@ ORDER BY gltrans_created DESC, gltrans_sequence, gltrans_amount;</sql>
     <column>report_date</column>
    </data>
   </field>
-  <label>
-   <rect>
-    <x>868</x>
-    <y>0</y>
-    <width>85</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Page:</string>
-  </label>
  </pgfoot>
 </report>
