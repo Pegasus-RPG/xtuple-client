@@ -230,8 +230,8 @@ void uom::sFillList()
 {
   q.prepare("SELECT uomconv_id,"
             "       (nuom.uom_name||'/'||duom.uom_name),"
-            "       (uomconv_from_value||'/'||uomconv_to_value),"
-            "       formatBoolYN(uomconv_fractional) AS f_fractional"
+		    "       (formatUOMRatio(uomconv_from_value)||'/'||formatUOMRatio(uomconv_to_value)),"
+            "       formatBoolYN(uomconv_fractional) AS f_fractional "
             "  FROM uomconv"
             "  JOIN uom AS nuom ON (uomconv_from_uom_id=nuom.uom_id)"
             "  JOIN uom AS duom ON (uomconv_to_uom_id=duom.uom_id)"
