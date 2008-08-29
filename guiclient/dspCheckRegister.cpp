@@ -96,15 +96,16 @@ dspCheckRegister::dspCheckRegister(QWidget* parent, const char* name, Qt::WFlags
 
   _bankaccnt->setType(XComboBox::APBankAccounts);
 
-  _check->addColumn(tr("Void"),        _ynColumn,    Qt::AlignCenter );
-  _check->addColumn(tr("Misc."),       _ynColumn,    Qt::AlignCenter );
-  _check->addColumn(tr("Prt'd"),       _ynColumn,    Qt::AlignCenter );
-  _check->addColumn(tr("Posted"),      _ynColumn,    Qt::AlignCenter );
-  _check->addColumn(tr("Chk./Vchr."),  _itemColumn,  Qt::AlignCenter );
-  _check->addColumn(tr("Recipient"),   -1,           Qt::AlignLeft   );
-  _check->addColumn(tr("Check Date") , _dateColumn,     Qt::AlignCenter );
-  _check->addColumn(tr("Amount"),      _moneyColumn,    Qt::AlignRight  );
-  _check->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignRight  );
+  _check->addColumn(tr("Void"),        _ynColumn,       Qt::AlignCenter, true,  "f_void" );
+  _check->addColumn(tr("Misc."),       _ynColumn,       Qt::AlignCenter, true,  "f_misc" );
+  _check->addColumn(tr("Prt'd"),       _ynColumn,       Qt::AlignCenter, true,  "f_printed" );
+  _check->addColumn(tr("Posted"),      _ynColumn,       Qt::AlignCenter, true,  "f_posted" );
+  _check->addColumn(tr("Chk./Vchr."),  _itemColumn,     Qt::AlignCenter, true,  "number" );
+  _check->addColumn(tr("Recipient"),   -1,              Qt::AlignLeft,   true,  "description"   );
+  _check->addColumn(tr("Check Date") , _dateColumn,     Qt::AlignCenter, true,  "checkdate" );
+  _check->addColumn(tr("Amount"),      _moneyColumn,    Qt::AlignRight,  true,  "amount"  );
+  _check->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignRight,  true,  "currAbbr"  );
+  _check->addColumn(tr("Base Amount"), _bigMoneyColumn, Qt::AlignRight,  true,  "base_amount"  );
   _check->sortByColumn(4);
 
   sHandleButtons();
@@ -207,32 +208,7 @@ void dspCheckRegister::sFillList()
   }
   
   _check->clear();
-  XTreeWidgetItem *header = NULL;
-  int           checkid = -1;
-  while (q.next())
-  {
-    if (q.value("checkid").toInt() != checkid)
-    {
-      checkid = q.value("checkid").toInt();
-      header = new XTreeWidgetItem( _check, header, checkid, q.value("extra").toInt(),
-				  q.value("f_void"), q.value("f_misc"),
-				  q.value("f_printed"), q.value("f_posted"), q.value("number"),
-				  q.value("description"), q.value("f_checkdate"),
-				  q.value("f_amount"), q.value("currAbbr"));
-    }
-    else if (header)
-    {
-      XTreeWidgetItem *item = new XTreeWidgetItem( header, checkid, 0);
-      item->setText(4, q.value("number"));
-      item->setText(5, q.value("description"));
-      item->setText(7, q.value("f_amount"));
-    }
-  }
-  if (q.lastError().type() != QSqlError::None)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
+  _check->populate(q, true);
 
   if(_showDetail->isChecked())
     _check->expandAll();

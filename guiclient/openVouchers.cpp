@@ -88,13 +88,13 @@ openVouchers::openVouchers(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_newMisc, SIGNAL(clicked()), this, SLOT(sNewMisc()));
   connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
 
-  _vohead->addColumn(tr("Vchr. #"),        _orderColumn, Qt::AlignRight  );
-  _vohead->addColumn(tr("P/O #"),          _orderColumn, Qt::AlignRight  );
-  _vohead->addColumn(tr("Vendor"),         -1,           Qt::AlignLeft   );
-  _vohead->addColumn(tr("Vend. Type"),     _itemColumn,  Qt::AlignLeft   );
-  _vohead->addColumn(tr("Vendor Invc. #"), _itemColumn,  Qt::AlignRight  );
-  _vohead->addColumn(tr("Dist. Date"),     _dateColumn,  Qt::AlignCenter );
-  _vohead->addColumn(tr("G/L Post Date"),  _dateColumn,  Qt::AlignCenter );
+  _vohead->addColumn(tr("Vchr. #"),        _orderColumn, Qt::AlignRight,  true,  "vohead_number"  );
+  _vohead->addColumn(tr("P/O #"),          _orderColumn, Qt::AlignRight,  true,  "ponumber"  );
+  _vohead->addColumn(tr("Vendor"),         -1,           Qt::AlignLeft,   true,  "vendor"   );
+  _vohead->addColumn(tr("Vend. Type"),     _itemColumn,  Qt::AlignLeft,   true,  "vendtype_code"   );
+  _vohead->addColumn(tr("Vendor Invc. #"), _itemColumn,  Qt::AlignRight,  true,  "vohead_invcnumber"  );
+  _vohead->addColumn(tr("Dist. Date"),     _dateColumn,  Qt::AlignCenter, true,  "vohead_distdate" );
+  _vohead->addColumn(tr("G/L Post Date"),  _dateColumn,  Qt::AlignCenter, true,  "postdate" );
 
   if (! _privileges->check("ChangeVOPostDate"))
     _vohead->hideColumn(6);
@@ -386,10 +386,9 @@ void openVouchers::sPopulateMenu(QMenu *pMenu)
 void openVouchers::sFillList()
 {
   q.prepare( "SELECT vohead_id, COALESCE(pohead_id, -1), vohead_number,"
-             "       COALESCE(TEXT(pohead_number), TEXT(:misc)),"
-             "       (vend_number || '-' || vend_name), vendtype_code, vohead_invcnumber,"
-             "       formatDate(vohead_distdate), "
-	     "       formatDate(COALESCE(vohead_gldistdate, vohead_distdate)) "
+             "       COALESCE(TEXT(pohead_number), TEXT(:misc)) AS ponumber,"
+             "       (vend_number || '-' || vend_name) AS vendor, vendtype_code, vohead_invcnumber,"
+             "       vohead_distdate, COALESCE(vohead_gldistdate, vohead_distdate) AS postdate "
              "  FROM vendinfo, vendtype, vohead LEFT OUTER JOIN pohead ON (vohead_pohead_id=pohead_id) "
              " WHERE ((vohead_vend_id=vend_id)"
              "   AND  (vend_vendtype_id=vendtype_id)"

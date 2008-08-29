@@ -87,17 +87,17 @@ dspAPOpenItemsByVendor::dspAPOpenItemsByVendor(QWidget* parent, const char* name
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 
-  _apopen->addColumn(tr("Doc. Type"), -1,              Qt::AlignCenter );
-  _apopen->addColumn(tr("Doc. #"), _orderColumn,    Qt::AlignRight  );
-  _apopen->addColumn(tr("P/O #"),     _orderColumn,    Qt::AlignRight  );
-  _apopen->addColumn(tr("Invoice #"),     _orderColumn,    Qt::AlignRight  );
-  _apopen->addColumn(tr("Doc. Date"), _dateColumn,     Qt::AlignCenter );
-  _apopen->addColumn(tr("Due Date"),  _dateColumn,     Qt::AlignCenter );
-  _apopen->addColumn(tr("Amount"),    _bigMoneyColumn, Qt::AlignRight  );
-  _apopen->addColumn(tr("Paid"),      _bigMoneyColumn, Qt::AlignRight  );
-  _apopen->addColumn(tr("Balance"),   _bigMoneyColumn, Qt::AlignRight  );
-  _apopen->addColumn(tr("Currency"),  _currencyColumn, Qt::AlignLeft   );
-  _apopen->addColumn(tr("Balance"),   _bigMoneyColumn, Qt::AlignRight  );
+  _apopen->addColumn(tr("Doc. Type"),    -1,              Qt::AlignCenter, true,  "f_doctype" );
+  _apopen->addColumn(tr("Doc. #"),       _orderColumn,    Qt::AlignRight,  true,  "apopen_docnumber"  );
+  _apopen->addColumn(tr("P/O #"),        _orderColumn,    Qt::AlignRight,  true,  "apopen_ponumber"  );
+  _apopen->addColumn(tr("Invoice #"),    _orderColumn,    Qt::AlignRight,  true,  "invoicenumber"  );
+  _apopen->addColumn(tr("Doc. Date"),    _dateColumn,     Qt::AlignCenter, true,  "apopen_docdate" );
+  _apopen->addColumn(tr("Due Date"),     _dateColumn,     Qt::AlignCenter, true,  "apopen_duedate" );
+  _apopen->addColumn(tr("Amount"),       _bigMoneyColumn, Qt::AlignRight,  true,  "apopen_amount"  );
+  _apopen->addColumn(tr("Paid"),         _bigMoneyColumn, Qt::AlignRight,  true,  "paid"  );
+  _apopen->addColumn(tr("Balance"),      _bigMoneyColumn, Qt::AlignRight,  true,  "balance"  );
+  _apopen->addColumn(tr("Currency"),     _currencyColumn, Qt::AlignLeft,   true,  "currAbbr"   );
+  _apopen->addColumn(tr("Base Balance"), _bigMoneyColumn, Qt::AlignRight,  true,  "base_balance"  );
 
   if (omfgThis->singleCurrency())
   {
@@ -228,19 +228,23 @@ void dspAPOpenItemsByVendor::sFillList()
              "            ELSE :other"
              "       END AS f_doctype,"
              "       apopen_invcnumber AS invoicenumber,"
-             "       formatDate(apopen_docdate) AS f_docdate,"
-             "       formatDate(apopen_duedate) AS f_duedate,"
-             "       formatMoney(apopen_amount) AS f_amount,"
-             "       formatMoney(apapplied(apopen_id,:asofdate)) AS f_paid,"
+             "       apopen_docdate, apopen_duedate, apopen_amount,"
+             "       apapplied(apopen_id,:asofdate) AS paid,"
              "       CASE WHEN (apopen_doctype='C') THEN ((apopen_amount - apapplied(apopen_id,:asofdate)) * -1)"
              "            WHEN (apopen_doctype IN ('V', 'D')) THEN (apopen_amount - apapplied(apopen_id,:asofdate))"
              "            ELSE (apopen_amount - apapplied(apopen_id,:asofdate))"
-             "       END AS balance, currConcat(apopen_curr_id) AS currAbbr,"
+             "       END AS balance,"
+             "       currConcat(apopen_curr_id) AS currAbbr,"
              "       currToBase(apopen_curr_id,"
-	     "           CASE WHEN (apopen_doctype='C') THEN ((apopen_amount - apapplied(apopen_id,:asofdate)) * -1)"
+             "       CASE WHEN (apopen_doctype='C') THEN ((apopen_amount - apapplied(apopen_id,:asofdate)) * -1)"
              "            WHEN (apopen_doctype IN ('V', 'D')) THEN (apopen_amount - apapplied(apopen_id,:asofdate))"
              "            ELSE (apopen_amount - apopen_paid)"
-             "            END, apopen_docdate) AS base_balance "
+             "            END, apopen_docdate) AS base_balance,"
+             "       'curr' AS apopen_amount_xtnumericrole,"
+             "       'curr' AS paid_xtnumericrole,"
+             "       'curr' AS balance_xtnumericrole,"
+             "       'curr' AS base_balance_xtnumericrole,"
+             "       0 AS base_balance_xttotalrole "
              "FROM apopen "
              " WHERE ( (COALESCE(apopen_closedate,date :asofdate + integer '1')>:asofdate) "
              "   AND   (apopen_docdate<=:asofdate)"
@@ -256,27 +260,6 @@ void dspAPOpenItemsByVendor::sFillList()
   q.bindValue(":asofdate", _asOf->date());
   q.exec();
   if (q.first())
-  {
-    double total= 0.0;
-
-    XTreeWidgetItem *last = 0;
-    do
-    {
-      last = new XTreeWidgetItem( _apopen, last, q.value("apopen_id").toInt(),
-				 q.value("f_doctype"), q.value("apopen_docnumber"),
-				 q.value("apopen_ponumber"), q.value("invoicenumber"), q.value("f_docdate"),
-				 q.value("f_duedate"), q.value("f_amount"),
-				 q.value("f_paid"), formatMoney(q.value("balance").toDouble()),
-				 q.value("currAbbr"),
-				 formatMoney(q.value("base_balance").toDouble()));
- 
-      total += q.value("base_balance").toDouble();
-    }
-    while (q.next());
-
-    last = new XTreeWidgetItem( _apopen, last, -1,
-                       QVariant(tr("Total")), "", "", "", "", "", "", "", "", "",
-                       formatMoney(total) );
-  }
+    _apopen->populate(q);
 }
 

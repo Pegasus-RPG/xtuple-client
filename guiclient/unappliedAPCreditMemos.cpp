@@ -89,12 +89,13 @@ unappliedAPCreditMemos::unappliedAPCreditMemos(QWidget* parent, const char* name
 
   connect(_apopen, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
 
-  _apopen->addColumn( tr("Doc. #"),  _itemColumn,  Qt::AlignCenter );
-  _apopen->addColumn( tr("Vendor"),  -1,           Qt::AlignLeft   );
-  _apopen->addColumn( tr("Amount"),  _moneyColumn, Qt::AlignRight  );
-  _apopen->addColumn( tr("Applied"), _moneyColumn, Qt::AlignRight  );
-  _apopen->addColumn( tr("Balance"), _moneyColumn, Qt::AlignRight  );
-  _apopen->addColumn( tr("Currency"), _currencyColumn, Qt::AlignLeft );
+  _apopen->addColumn( tr("Doc. #"),       _itemColumn,     Qt::AlignLeft,   true,  "apopen_docnumber" );
+  _apopen->addColumn( tr("Vendor"),       -1,              Qt::AlignLeft,   true,  "vendor"   );
+  _apopen->addColumn( tr("Amount"),       _moneyColumn,    Qt::AlignRight,  true,  "apopen_amount"  );
+  _apopen->addColumn( tr("Applied"),      _moneyColumn,    Qt::AlignRight,  true,  "apopen_paid"  );
+  _apopen->addColumn( tr("Balance"),      _moneyColumn,    Qt::AlignRight,  true,  "balance"  );
+  _apopen->addColumn( tr("Currency"),     _currencyColumn, Qt::AlignCenter, true,  "currAbbr" );
+  _apopen->addColumn( tr("Base Balance"), _bigMoneyColumn, Qt::AlignRight,  true,  "basebalance"  );
 
   if (omfgThis->singleCurrency())
       _apopen->hideColumn(5);
@@ -160,11 +161,16 @@ void unappliedAPCreditMemos::sView()
 void unappliedAPCreditMemos::sFillList()
 {
   q.prepare( "SELECT apopen_id, apopen_docnumber,"
-             "       (vend_number || '-' || vend_name),"
-             "       formatMoney(apopen_amount),"
-             "       formatMoney(apopen_paid),"
-             "       formatMoney(apopen_amount - apopen_paid), "
-	     "	     currConcat(apopen_curr_id) "
+             "       (vend_number || '-' || vend_name) AS vendor,"
+             "       apopen_amount, apopen_paid,"
+             "       (apopen_amount - apopen_paid) AS balance,"
+             "       currtobase(apopen_curr_id,(apopen_amount - apopen_paid),apopen_docdate) AS basebalance,"
+             "	     currConcat(apopen_curr_id) AS currAbbr,"
+             "       'curr' AS apopen_amount_xtnumericrole,"
+             "       'curr' AS apopen_paid_xtnumericrole,"
+             "       'curr' AS balance_xtnumericrole,"
+             "       'curr' AS basebalance_xtnumericrole,"
+             "       0 AS basebalance_xttotalrole "
              "FROM apopen, vend "
              "WHERE ( (apopen_doctype='C')"
              " AND (apopen_open)"

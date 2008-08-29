@@ -91,15 +91,17 @@ dspVendorAPHistory::dspVendorAPHistory(QWidget* parent, const char* name, Qt::WF
   connect(_searchInvoiceNum, SIGNAL(textChanged(const QString&)), this, SLOT(sSearchInvoiceNum()));
 
   _vendhist->setRootIsDecorated(TRUE);
-  _vendhist->addColumn(tr("Open"),      _dateColumn,  Qt::AlignCenter );
-  _vendhist->addColumn(tr("Doc. Type"), _itemColumn,  Qt::AlignCenter );
-  _vendhist->addColumn(tr("Doc. #"),    _orderColumn, Qt::AlignRight  );
-  _vendhist->addColumn(tr("Invoice #"), _orderColumn, Qt::AlignRight  );
-  _vendhist->addColumn(tr("P/O #"),     _orderColumn, Qt::AlignRight  );
-  _vendhist->addColumn(tr("Doc. Date"), _dateColumn,  Qt::AlignCenter );
-  _vendhist->addColumn(tr("Due Date"),  _dateColumn,  Qt::AlignCenter );
-  _vendhist->addColumn(tr("Amount"),    _moneyColumn, Qt::AlignRight  );
-  _vendhist->addColumn(tr("Balance"),   _moneyColumn, Qt::AlignRight  );
+  _vendhist->addColumn(tr("Open"),         _dateColumn,     Qt::AlignCenter, true,  "f_open" );
+  _vendhist->addColumn(tr("Doc. Type"),    _itemColumn,     Qt::AlignCenter, true,  "documenttype" );
+  _vendhist->addColumn(tr("Doc. #"),       _orderColumn,    Qt::AlignRight,  true,  "docnumber"  );
+  _vendhist->addColumn(tr("Invoice #"),    _orderColumn,    Qt::AlignRight,  true,  "invoicenumber"  );
+  _vendhist->addColumn(tr("P/O #"),        _orderColumn,    Qt::AlignRight,  true,  "ponumber"  );
+  _vendhist->addColumn(tr("Doc. Date"),    _dateColumn,     Qt::AlignCenter, true,  "docdate" );
+  _vendhist->addColumn(tr("Due Date"),     _dateColumn,     Qt::AlignCenter, true,  "duedate" );
+  _vendhist->addColumn(tr("Amount"),       _moneyColumn,    Qt::AlignRight,  true,  "amount"  );
+  _vendhist->addColumn(tr("Balance"),      _moneyColumn,    Qt::AlignRight,  true,  "balance"  );
+  _vendhist->addColumn(tr("Currency"),     _currencyColumn, Qt::AlignCenter, true,  "currAbbr" );
+  _vendhist->addColumn(tr("Base Balance"), _bigMoneyColumn, Qt::AlignRight,  true,  "base_balance"  );
 
   _vend->setFocus();
 }
@@ -229,7 +231,7 @@ void dspVendorAPHistory::sFillList()
   if (!checkParameters())
     return;
 
-  q.prepare( "SELECT 1 AS type, apopen_id, -1 AS applyid,"
+  q.prepare( "SELECT apopen_id, -1 AS applyid, 0 AS type,"
              "       apopen_docdate AS sortdate, apopen_docnumber AS sortnumber,"
              "       apopen_docnumber AS docnumber,"
              "       formatBoolYN(apopen_open) AS f_open,"
@@ -240,16 +242,21 @@ void dspVendorAPHistory::sFillList()
              "       END AS documenttype,"
              "       apopen_invcnumber AS invoicenumber,"
              "       apopen_ponumber AS ponumber,"
-             "       formatDate(apopen_docdate) AS f_docdate,"
-             "       formatDate(apopen_duedate) AS f_duedate,"
-             "       formatMoney(apopen_amount) AS f_amount,"
-             "       formatMoney((apopen_amount - apopen_paid)) AS f_balance "
+             "       apopen_docdate AS docdate, apopen_duedate AS duedate, apopen_amount AS amount,"
+             "       (apopen_amount - apopen_paid) AS balance,"
+             "       currconcat(apopen_curr_id) AS currAbbr,"
+             "       currtobase(apopen_curr_id,(apopen_amount - apopen_paid),apopen_docdate) AS base_balance,"
+             "       'curr' AS amount_xtnumericrole,"
+             "       'curr' AS balance_xtnumericrole,"
+             "       'curr' AS base_balance_xtnumericrole,"
+             "       'curr' AS base_balance_xttotalrole,"
+             "       0 AS xtindentrole "
              "FROM apopen "
              "WHERE ( (apopen_vend_id=:vend_id)" 
              " AND (apopen_docdate BETWEEN :startDate AND :endDate) ) "
 
              "UNION "
-             "SELECT 2 AS type, apopen_id, apapply_source_apopen_id AS applyid,"
+             "SELECT apopen_id, apapply_target_apopen_id AS applyid, 1 AS type,"
              "       apopen_docdate AS sortdate, apopen_docnumber AS sortnumber,"
              "       apapply_source_docnumber AS docnumber,"
              "       '' AS f_open,"
@@ -259,10 +266,16 @@ void dspVendorAPHistory::sFillList()
              "       END AS documenttype,"
              "       ' ' AS invoicenumber,"
              "       '' AS ponumber,"
-             "       formatDate(apapply_postdate) AS f_docdate,"
-             "       '' AS f_duedate,"
-             "       formatMoney(apapply_amount) AS f_amount,"
-             "       '' AS f_balance "
+             "       apapply_postdate AS docdate, CAST(NULL AS DATE) AS duedate,"
+             "       apapply_amount AS amount,"
+             "       0 AS balance,"
+             "       currconcat(apapply_curr_id) AS currAbbr,"
+             "       0 AS base_balance,"
+             "       'curr' AS amount_xtnumericrole,"
+             "       'curr' AS balance_xtnumericrole,"
+             "       'curr' AS base_balance_xtnumericrole,"
+             "       'curr' AS base_balance_xttotalrole,"
+             "       1 AS xtindentrole "
              "FROM apapply, apopen "
              "WHERE ( (apapply_target_apopen_id=apopen_id)"
              " AND (apapply_vend_id=:vend_id)"
@@ -270,7 +283,7 @@ void dspVendorAPHistory::sFillList()
              " AND (apopen_docdate BETWEEN :startDate AND :endDate) ) "
 
              "UNION "
-             "SELECT 3 AS type, apopen_id, apapply_target_apopen_id AS applyid,"
+             "SELECT apopen_id, apapply_target_apopen_id AS applyid, 2 AS type,"
              "       apopen_docdate AS sortdate, apopen_docnumber AS sortnumber,"
              "       apapply_target_docnumber AS docnumber,"
              "       '' AS f_open,"
@@ -280,10 +293,16 @@ void dspVendorAPHistory::sFillList()
              "       END AS documenttype,"
              "       apopen_invcnumber AS invoicenumber,"
              "       '' AS ponumber,"
-             "       formatDate(apapply_postdate) AS f_docdate,"
-             "       '' AS f_duedate,"
-             "       formatMoney(apapply_amount) AS f_amount,"
-             "       '' AS f_balance "
+             "       apapply_postdate AS docdate, CAST(NULL AS DATE) AS duedate,"
+             "       apapply_amount AS amount,"
+             "       0 AS balance,"
+             "       currconcat(apapply_curr_id) AS currAbbr,"
+             "       0 AS base_balance,"
+             "       'curr' AS amount_xtnumericrole,"
+             "       'curr' AS balance_xtnumericrole,"
+             "       'curr' AS base_balance_xtnumericrole,"
+             "       'curr' AS base_balance_xttotalrole,"
+             "       1 AS xtindentrole "
              "FROM apapply, apopen "
              "WHERE ( (apapply_source_doctype IN ('C', 'K'))"
              " AND (apapply_source_doctype=apopen_doctype)"
@@ -303,29 +322,8 @@ void dspVendorAPHistory::sFillList()
   q.bindValue(":vend_id", _vend->id());
   q.exec();
   if (q.first())
-  {
-    XTreeWidgetItem *document = NULL;
-    do
-    {
-      if (q.value("type").toInt() == 1)
-        document = new XTreeWidgetItem( _vendhist, document,
-                                      q.value("apopen_id").toInt(), q.value("applyid").toInt(),
-                                      q.value("f_open"), q.value("documenttype"),
-                                      q.value("docnumber"), q.value("invoicenumber"),
-                                      q.value("ponumber"), q.value("f_docdate"),
-                                      q.value("f_duedate"), q.value("f_amount"),
-                                      q.value("f_balance") );
-      else if (document)
-      {
-        new XTreeWidgetItem( document,
-                           -1, q.value("applyid").toInt(),
-                           "", q.value("documenttype"),
-                           q.value("docnumber"),q.value("invoicenumber"), "", q.value("f_docdate"),
-                           "", q.value("f_amount") );
-      }
-    }
-    while (q.next());
-  }
+    _vendhist->populate(q, true);
+
   sSearchInvoiceNum();
 }
 

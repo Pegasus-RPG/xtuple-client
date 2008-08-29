@@ -86,16 +86,16 @@ dspVoucherRegister::dspVoucherRegister(QWidget* parent, const char* name, Qt::WF
   connect(_selectedAccount, SIGNAL(toggled(bool)), _account, SLOT(setEnabled(bool)));
   connect(_showUsername, SIGNAL(toggled(bool)), this, SLOT(sShowUsername(bool)));
 
-  _gltrans->addColumn(tr("Date"),      _dateColumn,    Qt::AlignCenter );
-  _gltrans->addColumn(tr("Vend. #"),   _orderColumn,   Qt::AlignRight  );
-  _gltrans->addColumn(tr("Vend. Name"),_itemColumn,    Qt::AlignLeft   );
-  _gltrans->addColumn(tr("Doc. Type"), _docTypeColumn, Qt::AlignCenter );
-  _gltrans->addColumn(tr("Doc. #"),    _orderColumn,   Qt::AlignCenter );
-  _gltrans->addColumn(tr("Reference"), -1,             Qt::AlignLeft   );
-  _gltrans->addColumn(tr("Account"),   _itemColumn,    Qt::AlignLeft   );
-  _gltrans->addColumn(tr("Debit"),     _moneyColumn,   Qt::AlignRight  );
-  _gltrans->addColumn(tr("Credit"),    _moneyColumn,   Qt::AlignRight  );
-  _gltrans->addColumn(tr("Username"),  _userColumn,    Qt::AlignLeft );
+  _gltrans->addColumn(tr("Date"),        _dateColumn,    Qt::AlignCenter, true, "gltrans_date" );
+  _gltrans->addColumn(tr("Vend. #"),     _orderColumn,   Qt::AlignRight,  true, "vend_number"  );
+  _gltrans->addColumn(tr("Vend. Name"),  _itemColumn,    Qt::AlignLeft,   true, "vend_name"   );
+  _gltrans->addColumn(tr("Doc. Type"),   _docTypeColumn, Qt::AlignCenter, true, "gltrans_doctype" );
+  _gltrans->addColumn(tr("Doc. #"),      _orderColumn,   Qt::AlignCenter, true, "gltrans_docnumber" );
+  _gltrans->addColumn(tr("Reference"),   -1,             Qt::AlignLeft,   true, "reference"   );
+  _gltrans->addColumn(tr("Account"),     _itemColumn,    Qt::AlignLeft,   true, "account"   );
+  _gltrans->addColumn(tr("Debit"),       _moneyColumn,   Qt::AlignRight,  true, "debit"  );
+  _gltrans->addColumn(tr("Credit"),      _moneyColumn,   Qt::AlignRight,  true, "credit"  );
+  _gltrans->addColumn(tr("Username"),    _userColumn,    Qt::AlignLeft,   true, "gltrans_username" );
 
   sShowUsername(_showUsername->isChecked());
 }
@@ -198,17 +198,19 @@ void dspVoucherRegister::sPrint()
 
 void dspVoucherRegister::sFillList()
 {
-  QString sql( "SELECT gltrans_id, formatDate(gltrans_date),"
+  QString sql( "SELECT gltrans_id, gltrans_date,"
                "       vend_number, vend_name,"
-               "       gltrans_doctype, gltrans_docnumber, firstLine(gltrans_notes),"
-               "       (formatGLAccount(accnt_id) || ' - ' || accnt_descrip),"
-               "       CASE WHEN (gltrans_amount < 0) THEN formatMoney(ABS(gltrans_amount))"
-               "            ELSE ''"
-               "       END,"
-               "       CASE WHEN (gltrans_amount > 0) THEN formatMoney(gltrans_amount)"
-               "            ELSE ''"
-               "       END,"
-               "       gltrans_username "
+               "       gltrans_doctype, gltrans_docnumber, firstLine(gltrans_notes) AS reference,"
+               "       (formatGLAccount(accnt_id) || ' - ' || accnt_descrip) AS account,"
+               "       CASE WHEN (gltrans_amount < 0) THEN ABS(gltrans_amount)"
+               "            ELSE 0"
+               "       END AS debit,"
+               "       CASE WHEN (gltrans_amount > 0) THEN gltrans_amount"
+               "            ELSE 0"
+               "       END AS credit,"
+               "       gltrans_username,"
+               "       'curr' AS debit_xtnumericrole,"
+               "       'curr' AS credit_xtnumericrole "
                "FROM accnt, gltrans LEFT OUTER JOIN vohead JOIN vend"
                "      ON (vohead_vend_id=vend_id)"
                "      ON (gltrans_doctype='VO' and gltrans_docnumber=vohead_number) "
