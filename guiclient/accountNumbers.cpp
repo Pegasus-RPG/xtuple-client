@@ -139,7 +139,7 @@ void accountNumbers::sEdit()
   ParameterList params;
   // don't allow editing external accounts
   if (_externalCol >= 0 &&
-      _account->currentItem()->rawValue("accnt_company").toBool())
+      _account->currentItem()->rawValue("company_external").toBool())
     params.append("mode", "view");
   else
     params.append("mode", "edit");
@@ -266,7 +266,7 @@ void accountNumbers::sHandleButtons()
 {
   // don't allow editing external accounts
   if (_externalCol >= 0 && _account->currentItem() &&
-      _account->currentItem()->rawValue("accnt_company").toBool())
+      _account->currentItem()->rawValue("company_external").toBool())
     _edit->setText(tr("View"));
   else
     _edit->setText(tr("Edit"));
