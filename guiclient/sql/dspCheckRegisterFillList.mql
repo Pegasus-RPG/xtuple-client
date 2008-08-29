@@ -17,11 +17,15 @@ SELECT checkhead_id AS checkid,
        ELSE TEXT(checkhead_number) END AS number,
        COALESCE(checkrecip_number || '-' || checkrecip_name,
 		checkhead_recip_type || '-' || checkhead_recip_id ) AS description,
-       formatDate(checkhead_checkdate) AS f_checkdate,
-       formatMoney(checkhead_amount) AS f_amount, 
+       checkhead_checkdate AS checkdate,
+       checkhead_amount AS amount, 
+       currtobase(checkhead_curr_id,checkhead_amount,checkhead_checkdate) AS base_amount, 
        currConcat(checkhead_curr_id) AS currAbbr,
        checkhead_number,
-       1 AS orderby
+       1 AS orderby,
+       'curr' AS amount_xtnumericrole,
+       'curr' AS base_amount_xtnumericrole,
+       0 AS xtindentrole
   FROM checkhead LEFT OUTER JOIN
        checkrecip ON ((checkhead_recip_id=checkrecip_id)
 		 AND  (checkhead_recip_type=checkrecip_type))
@@ -51,11 +55,15 @@ SELECT checkitem_checkhead_id AS checkid, 0 AS extra, checkitem_id,
        '' AS f_void, '' AS f_misc, '' AS f_printed, '' AS f_posted,
        checkitem_vouchernumber AS number,
        checkitem_invcnumber AS description,
-       '' AS f_checkdate,
-       formatMoney(checkitem_amount) AS f_amount,
+       CAST(NULL AS DATE) AS checkdate,
+       checkitem_amount AS amount,
+       currtobase(checkhead_curr_id,checkitem_amount,checkhead_checkdate) AS base_amount, 
        currConcat(checkitem_curr_id) AS currAbbr, 
        checkhead_number, 
-       2 AS orderby 
+       2 AS orderby,
+       'curr' AS amount_xtnumericrole,
+       'curr' AS base_amount_xtnumericrole,
+       1 AS xtindentrole
   FROM checkitem, checkhead 
  WHERE ((checkitem_checkhead_id=checkhead_id)
    AND   (checkhead_checkdate BETWEEN <? value("startDate") ?> AND <? value("endDate") ?>)
