@@ -787,6 +787,7 @@ void transferOrderItem::sDetermineAvailability()
                                 "        AND (cs.itemsite_item_id=item_id)"
                                 "        AND (cs.itemsite_warehous_id=ps.itemsite_warehous_id)"
                                 "        AND (bomitem_parent_item_id=ps.itemsite_item_id)"
+		                "        AND (bomitem_rev_id=getActiveRevId('BOM',bomitem_parent_item_id))"
                                 "        AND (:schedDate BETWEEN bomitem_effective AND (bomitem_expires-1))"
                                 "        AND (ps.itemsite_id=:itemsite_id) ) ) AS data "
                                 "ORDER BY bomitem_seqnumber;" );

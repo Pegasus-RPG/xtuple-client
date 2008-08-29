@@ -1958,6 +1958,7 @@ void salesOrderItem::sDetermineAvailability( bool p )
                       "       WHERE ( (bomitem_item_id=item_id)"
                       "        AND (item_inv_uom_id=uom_id)"
                       "        AND (bomitem_parent_item_id=ps.itemsite_item_id)"
+		      "        AND (bomitem_rev_id=getActiveRevId('BOM',bomitem_parent_item_id))"
                       "        AND (:schedDate BETWEEN bomitem_effective AND (bomitem_expires-1))");
 
           if (_item->isConfigured()) // For configured items limit to bomitems associated with selected characteristic values
