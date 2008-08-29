@@ -78,11 +78,11 @@ closePurchaseOrder::closePurchaseOrder(QWidget* parent, const char* name, bool m
 
   _captive = FALSE;
 
-  _po->addColumn(tr("Number"), _orderColumn, Qt::AlignRight  );
-  _po->addColumn(tr("Vendor"), -1,           Qt::AlignLeft   );
-  _po->addColumn(tr("Agent"),  _itemColumn,  Qt::AlignCenter );
-  _po->addColumn(tr("Order Date"),  _dateColumn,    Qt::AlignLeft  );
-  _po->addColumn(tr("First Item"),  _itemColumn,    Qt::AlignLeft  );
+  _po->addColumn(tr("Number"),      _orderColumn,   Qt::AlignRight,  true,  "pohead_number"  );
+  _po->addColumn(tr("Vendor"),      -1,             Qt::AlignLeft,   true,  "vend_name"   );
+  _po->addColumn(tr("Agent"),       _itemColumn,    Qt::AlignCenter, true,  "pohead_agent_username" );
+  _po->addColumn(tr("Order Date"),  _dateColumn,    Qt::AlignLeft,   true,  "pohead_orderdate"  );
+  _po->addColumn(tr("First Item"),  _itemColumn,    Qt::AlignLeft,   true,  "item_number"  );
 
   sFillList();
 }

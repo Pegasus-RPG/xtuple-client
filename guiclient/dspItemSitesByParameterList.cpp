@@ -87,16 +87,16 @@ dspItemSitesByParameterList::dspItemSitesByParameterList(QWidget* parent, const 
 
   _parameter->setType(ParameterGroup::ClassCode);
 
-  _itemsite->addColumn(tr("Site"),          _whsColumn,   Qt::AlignCenter );
-  _itemsite->addColumn(tr("Item Number"),   _itemColumn,  Qt::AlignLeft   );
-  _itemsite->addColumn(tr("Description"),   -1,           Qt::AlignLeft   );
-  _itemsite->addColumn(tr("UOM"),           _uomColumn,   Qt::AlignCenter );
-  _itemsite->addColumn(tr("QOH"),           _qtyColumn,   Qt::AlignRight  );
-  _itemsite->addColumn(tr("Loc. Cntrl."),   _dateColumn,  Qt::AlignCenter );
-  _itemsite->addColumn(tr("Cntrl. Meth."),  _dateColumn,  Qt::AlignCenter );
-  _itemsite->addColumn(tr("Sold Ranking"),  _dateColumn,  Qt::AlignCenter );
-  _itemsite->addColumn(tr("Last Cnt'd"),    _dateColumn,  Qt::AlignCenter );
-  _itemsite->addColumn(tr("Last Used"),     _dateColumn,  Qt::AlignCenter );
+  _itemsite->addColumn(tr("Site"),          _whsColumn,   Qt::AlignCenter, true,  "warehous_code" );
+  _itemsite->addColumn(tr("Item Number"),   _itemColumn,  Qt::AlignLeft,   true,  "item_number"   );
+  _itemsite->addColumn(tr("Description"),   -1,           Qt::AlignLeft,   true,  "description"   );
+  _itemsite->addColumn(tr("UOM"),           _uomColumn,   Qt::AlignCenter, true,  "uom_name" );
+  _itemsite->addColumn(tr("QOH"),           _qtyColumn,   Qt::AlignRight,  true,  "itemsite_qtyonhand"  );
+  _itemsite->addColumn(tr("Loc. Cntrl."),   _dateColumn,  Qt::AlignCenter, true,  "loccntrl" );
+  _itemsite->addColumn(tr("Cntrl. Meth."),  _dateColumn,  Qt::AlignCenter, true,  "controlmethod" );
+  _itemsite->addColumn(tr("Sold Ranking"),  _dateColumn,  Qt::AlignCenter, true,  "soldranking" );
+  _itemsite->addColumn(tr("Last Cnt'd"),    _dateColumn,  Qt::AlignCenter, true,  "datelastcount" );
+  _itemsite->addColumn(tr("Last Used"),     _dateColumn,  Qt::AlignCenter, true,  "datelastused" );
 }
 
 /*
@@ -318,19 +318,25 @@ void dspItemSitesByParameterList::sPopulateMenu(QMenu *pMenu)
 void dspItemSitesByParameterList::sFillList()
 {
  QString sql( "SELECT itemsite_id, warehous_code, item_number,"
-               "      (item_descrip1 || ' ' || item_descrip2), uom_name,"
-               "      formatQty(itemsite_qtyonhand),"
-               "      formatBoolYN(itemsite_loccntrl),"
+               "      (item_descrip1 || ' ' || item_descrip2) AS description, uom_name,"
+               "      itemsite_qtyonhand, formatBoolYN(itemsite_loccntrl) AS loccntrl,"
                "      CASE WHEN itemsite_controlmethod='R' THEN :regular"
                "           WHEN itemsite_controlmethod='N' THEN :none"
                "           WHEN itemsite_controlmethod='L' THEN :lot"
                "           WHEN itemsite_controlmethod='S' THEN :serial"
-               "      END,"
+               "      END AS controlmethod,"
                "      CASE WHEN (itemsite_sold) THEN TEXT(itemsite_soldranking)"
                "           ELSE :na"
-               "      END,"
-               "      formatDate(itemsite_datelastcount, 'Never'),"
-               "      formatDate(itemsite_datelastused, 'Never') "
+               "      END AS soldranking,"
+               "      CASE WHEN (itemsite_datelastcount=startOfTime()) THEN NULL"
+               "           ELSE itemsite_datelastcount"
+               "      END AS datelastcount,"
+               "      CASE WHEN (itemsite_datelastused=startOfTime()) THEN NULL"
+               "           ELSE itemsite_datelastused"
+               "      END AS datelastused,"
+               "      'qty' AS itemsite_qtyonhand_xtnumericrole,"
+               "      'Never' AS datelastcount_xtnullrole,"
+               "      'Never' AS datelastused_xtnullrole "
                "FROM itemsite, warehous, item, uom "
                "WHERE ( (itemsite_item_id=item_id)"
                " AND (item_inv_uom_id=uom_id)"
