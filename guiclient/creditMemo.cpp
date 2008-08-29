@@ -107,16 +107,16 @@ creditMemo::creditMemo(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _currency->setLabel(_currencyLit);
 
-  _cmitem->addColumn(tr("#"),           _seqColumn,   Qt::AlignCenter );
-  _cmitem->addColumn(tr("Item"),        _itemColumn,  Qt::AlignLeft   );
-  _cmitem->addColumn(tr("Description"), -1,           Qt::AlignLeft   );
-  _cmitem->addColumn(tr("Site"),        _whsColumn,   Qt::AlignCenter );
-  _cmitem->addColumn(tr("Qty UOM"),     _uomColumn,   Qt::AlignLeft   );
-  _cmitem->addColumn(tr("Returned"),    _qtyColumn,   Qt::AlignRight  );
-  _cmitem->addColumn(tr("Credited"),    _qtyColumn,   Qt::AlignRight  );
-  _cmitem->addColumn(tr("Price UOM"),     _uomColumn,   Qt::AlignLeft   );
-  _cmitem->addColumn(tr("Price"),       _priceColumn, Qt::AlignRight  );
-  _cmitem->addColumn(tr("Extended"),    _moneyColumn, Qt::AlignRight  );
+  _cmitem->addColumn(tr("#"),           _seqColumn,   Qt::AlignCenter, true,  "cmitem_linenumber" );
+  _cmitem->addColumn(tr("Item"),        _itemColumn,  Qt::AlignLeft,   true,  "item_number"   );
+  _cmitem->addColumn(tr("Description"), -1,           Qt::AlignLeft,   true,  "description"   );
+  _cmitem->addColumn(tr("Site"),        _whsColumn,   Qt::AlignCenter, true,  "warehous_code" );
+  _cmitem->addColumn(tr("Qty UOM"),     _uomColumn,   Qt::AlignLeft,   true,  "qtyuom"   );
+  _cmitem->addColumn(tr("Returned"),    _qtyColumn,   Qt::AlignRight,  true,  "cmitem_qtyreturned"  );
+  _cmitem->addColumn(tr("Credited"),    _qtyColumn,   Qt::AlignRight,  true,  "cmitem_qtycredit"  );
+  _cmitem->addColumn(tr("Price UOM"),   _uomColumn,   Qt::AlignLeft,   true,  "priceuom"   );
+  _cmitem->addColumn(tr("Price"),       _priceColumn, Qt::AlignRight,  true,  "cmitem_unitprice"  );
+  _cmitem->addColumn(tr("Extended"),    _moneyColumn, Qt::AlignRight,  true,  "extprice"  );
 
 }
 
@@ -887,13 +887,16 @@ void creditMemo::sDelete()
 void creditMemo::sFillList()
 {
   q.prepare( "SELECT cmitem_id, cmitem_linenumber, item_number,"
-             "       (item_descrip1 || ' ' || item_descrip2), warehous_code,"
-             "       quom.uom_name,"
-             "       formatQty(cmitem_qtyreturned),"
-             "       formatQty(cmitem_qtycredit),"
-             "       puom.uom_name,"
-             "       formatSalesPrice(cmitem_unitprice),"
-             "       formatMoney((cmitem_qtycredit * cmitem_qty_invuomratio) * (cmitem_unitprice / cmitem_price_invuomratio)) "
+             "       (item_descrip1 || ' ' || item_descrip2) AS description,"
+             "       warehous_code, quom.uom_name AS qtyuom,"
+             "       cmitem_qtyreturned, cmitem_qtycredit,"
+             "       puom.uom_name AS priceuom,"
+             "       cmitem_unitprice,"
+             "       (cmitem_qtycredit * cmitem_qty_invuomratio) * (cmitem_unitprice / cmitem_price_invuomratio) AS extprice,"
+             "       'qty' AS cmitem_qtyreturned_xtnumericrole,"
+             "       'qty' AS cmitem_qtycredit_xtnumericrole,"
+             "       'salesprice' AS cmitem_unitprice_xtnumericrole,"
+             "       'curr' AS extprice "
              "FROM cmitem, itemsite, item, warehous, uom AS quom, uom AS puom "
              "WHERE ( (cmitem_itemsite_id=itemsite_id)"
              " AND (cmitem_qty_uom_id=quom.uom_id)"

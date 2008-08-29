@@ -79,9 +79,9 @@ glSeries::glSeries(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_post,	SIGNAL(clicked()),	this, SLOT(sPost()));
   connect(_save,	SIGNAL(clicked()),	this, SLOT(sSave()));
 
-  _glseries->addColumn(tr("Account"), -1,           Qt::AlignLeft  );
-  _glseries->addColumn(tr("Debit"),   _moneyColumn, Qt::AlignRight );
-  _glseries->addColumn(tr("Credit"),  _moneyColumn, Qt::AlignRight );
+  _glseries->addColumn(tr("Account"), -1,           Qt::AlignLeft,  true,  "account"  );
+  _glseries->addColumn(tr("Debit"),   _moneyColumn, Qt::AlignRight, true,  "debit" );
+  _glseries->addColumn(tr("Credit"),  _moneyColumn, Qt::AlignRight, true,  "credit" );
 
   _source->setText("G/L");
   _source->setEnabled(false);
@@ -453,13 +453,15 @@ void glSeries::sClose()
 
 void glSeries::sFillList()
 {
-  q.prepare( "SELECT glseries_id, (formatGLAccount(accnt_id) || '-' || accnt_descrip),"
-             "       CASE WHEN (glseries_amount < 0) THEN formatMoney(glseries_amount * -1)"
-             "            ELSE ''"
+  q.prepare( "SELECT glseries_id, (formatGLAccount(accnt_id) || '-' || accnt_descrip) AS account,"
+             "       CASE WHEN (glseries_amount < 0) THEN (glseries_amount * -1)"
+             "            ELSE 0"
              "       END AS debit,"
-             "       CASE WHEN (glseries_amount > 0) THEN formatMoney(glseries_amount)"
-             "            ELSE ''"
-             "       END AS credit "
+             "       CASE WHEN (glseries_amount > 0) THEN glseries_amount"
+             "            ELSE 0"
+             "       END AS credit,"
+             "       'curr' AS debit_xtnumericrole,"
+             "       'curr' AS credit_xtnumericrole "
              "FROM glseries, accnt "
              "WHERE ( (glseries_accnt_id=accnt_id)"
              " AND (glseries_sequence=:glseries_sequence) );" );
