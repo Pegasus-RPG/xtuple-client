@@ -1024,7 +1024,9 @@ bool itemAvailabilityWorkbench::setParamsCosted(ParameterList &params)
   }
 
   if  (_item->itemType() != "M" && _item->itemType() != "B" &&
-       _item->itemType() != "F")
+       _item->itemType() != "F" && _item->itemType() != "K" &&
+       _item->itemType() != "P" && _item->itemType() != "O" &&
+       _item->itemType() != "L" && _item->itemType() != "J")
   {
     QMessageBox::critical(this, tr("Item of wrong type"),
                           tr("This item is not of the proper type (%1) to have "
@@ -1050,7 +1052,7 @@ bool itemAvailabilityWorkbench::setParamsCosted(ParameterList &params)
   if (rq.first())
   {
     int result = rq.value("result").toInt();
-    if (result < 0)
+    if (result < -1)
     {
       systemError(this, storedProcErrorLookup("getActiveRevId", result), __FILE__, __LINE__);
       return false;
