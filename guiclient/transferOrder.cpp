@@ -738,7 +738,6 @@ void transferOrder::sHandleOrderNumber()
       else
       {
         QString orderNumber = _orderNumber->text();
-        clear();
         query.prepare( "SELECT releaseToNumber(:orderNumber) AS result;" );
         query.bindValue(":orderNumber", _orderNumberGen);
         query.exec();
