@@ -131,15 +131,15 @@ invoice::invoice(QWidget* parent, const char* name, Qt::WFlags fl)
   _taxauthidCache = -1;
   _loading = false;
 
-  _invcitem->addColumn(tr("#"),           _seqColumn,      Qt::AlignCenter );
-  _invcitem->addColumn(tr("Item"),        _itemColumn,     Qt::AlignLeft   );
-  _invcitem->addColumn(tr("Description"), -1,              Qt::AlignLeft   );
-  _invcitem->addColumn(tr("Qty. UOM"),    _uomColumn,      Qt::AlignLeft   );
-  _invcitem->addColumn(tr("Ordered"),     _qtyColumn,      Qt::AlignRight  );
-  _invcitem->addColumn(tr("Billed"),      _qtyColumn,      Qt::AlignRight  );
-  _invcitem->addColumn(tr("Price UOM"),   _uomColumn,      Qt::AlignLeft   );
-  _invcitem->addColumn(tr("Price"),       _moneyColumn,    Qt::AlignRight  );
-  _invcitem->addColumn(tr("Extended"),    _bigMoneyColumn, Qt::AlignRight  );
+  _invcitem->addColumn(tr("#"),           _seqColumn,      Qt::AlignCenter, true,  "invcitem_linenumber" );
+  _invcitem->addColumn(tr("Item"),        _itemColumn,     Qt::AlignLeft,   true,  "itemnumber"   );
+  _invcitem->addColumn(tr("Description"), -1,              Qt::AlignLeft,   true,  "itemdescription"   );
+  _invcitem->addColumn(tr("Qty. UOM"),    _uomColumn,      Qt::AlignLeft,   true,  "qtyuom"   );
+  _invcitem->addColumn(tr("Ordered"),     _qtyColumn,      Qt::AlignRight,  true,  "invcitem_ordered"  );
+  _invcitem->addColumn(tr("Billed"),      _qtyColumn,      Qt::AlignRight,  true,  "invcitem_billed"  );
+  _invcitem->addColumn(tr("Price UOM"),   _uomColumn,      Qt::AlignLeft,   true,  "priceuom"   );
+  _invcitem->addColumn(tr("Price"),       _moneyColumn,    Qt::AlignRight,  true,  "invcitem_price"  );
+  _invcitem->addColumn(tr("Extended"),    _bigMoneyColumn, Qt::AlignRight,  true,  "extprice"  );
 
   _custCurrency->setLabel(_custCurrencyLit);
 
@@ -854,14 +854,17 @@ void invoice::sFillItemList()
              "       CASE WHEN (item_id IS NULL) THEN invcitem_descrip"
              "            ELSE (item_descrip1 || ' ' || item_descrip2)"
              "       END AS itemdescription,"
-             "       quom.uom_name,"
-             "       formatQty(invcitem_ordered) AS f_ordered,"
-             "       formatQty(invcitem_billed) AS f_billed,"
-             "       puom.uom_name,"
-             "       formatSalesPrice(invcitem_price) AS f_price,"
-             "       formatMoney(round((invcitem_billed * invcitem_qty_invuomratio) * (invcitem_price / "
-	     "                  (CASE WHEN(item_id IS NULL) THEN 1 "
-	     "			      ELSE invcitem_price_invuomratio END)), 2)) AS f_extend "
+             "       quom.uom_name AS qtyuom,"
+             "       invcitem_ordered, invcitem_billed,"
+             "       puom.uom_name AS priceuom,"
+             "       invcitem_price,"
+             "       round((invcitem_billed * invcitem_qty_invuomratio) * (invcitem_price / "
+	           "            (CASE WHEN(item_id IS NULL) THEN 1 "
+	           "			            ELSE invcitem_price_invuomratio END)), 2) AS extprice,"
+             "       'qty' AS invcitem_ordered_xtnumericrole,"
+             "       'qty' AS invcitem_billed_xtnumericrole,"
+             "       'salesprice' AS invcitem_price_xtnumericrole,"
+             "       'curr' AS extprice_xtnumericrole "
              "FROM invcitem LEFT OUTER JOIN item on (invcitem_item_id=item_id) "
              "  LEFT OUTER JOIN uom AS quom ON (invcitem_qty_uom_id=quom.uom_id)"
              "  LEFT OUTER JOIN uom AS puom ON (invcitem_price_uom_id=puom.uom_id)"
