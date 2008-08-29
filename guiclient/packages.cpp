@@ -87,25 +87,25 @@ packages::packages(QWidget* parent, const char* name, Qt::WFlags fl)
   _package->addColumn(tr("Description"),      -1, Qt::AlignLeft, true, "pkghead_descrip");
   _package->addColumn(tr("Version"), _itemColumn, Qt::AlignRight,true, "pkghead_version");
 
-  _load->setEnabled(_privileges->check("MaintainPackages"));
-  // TODO: initial spec says no editing of packages, only loading
+  _load->setEnabled(package::userHasPriv(cNew));
+  // TODO: spec says no editing of packages, only loading
   // It would be nice to be able to create new packages, fix 'em, and export 'em
-  //_new->setEnabled(_privileges->check("MaintainPackages"));
-  //_edit->setEnabled(_privileges->check("MaintainPackages"));
+  //_new->setEnabled(package::userHasPriv(cNew));
+  //_edit->setEnabled(package::userHasPriv(cEdit));
   _new->setVisible(false);
   _edit->setVisible(false);
 
-  if (_privileges->check("MaintainPackages"))
+  if (package::userHasPriv(cEdit))
   {
     disconnect(_package, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
     connect(_package,      SIGNAL(valid(bool)), _edit,  SLOT(setEnabled(bool)));
-    connect(_package,      SIGNAL(valid(bool)), _delete,SLOT(setEnabled(bool)));
     connect(_package,SIGNAL(itemSelected(int)), _view,  SLOT(animateClick()));
   }
   else
-  {
     connect(_package, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
-  }
+
+  if (package::userHasPriv(cNew))
+    connect(_package, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
 
   sHandleAutoUpdate(_autoUpdate->isChecked());
 }
@@ -213,7 +213,7 @@ void packages::sLoad()
   QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
   proc.start(proc_path, proc_args);
   if (proc.waitForStarted() &&
-      proc.waitForFinished() &&
+      proc.waitForFinished(-1) &&
       proc.exitStatus() == QProcess::NormalExit &&
       proc.exitCode() == 0)
   {
@@ -279,10 +279,10 @@ void packages::sPopulateMenu(QMenu *pMenu)
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
-  pMenu->setItemEnabled(menuItem, _privileges->check("ViewPackages"));
+  pMenu->setItemEnabled(menuItem, package::userHasPriv(cView));
 
   menuItem = pMenu->insertItem(tr("Delete"), this, SLOT(sDelete()), 0);
-  pMenu->setItemEnabled(menuItem, _privileges->check("MaintainPackages"));
+  pMenu->setItemEnabled(menuItem, package::userHasPriv(cNew));
 }
 
 void packages::sPrint()

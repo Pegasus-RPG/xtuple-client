@@ -67,16 +67,30 @@
 bool package::userHasPriv(const int pMode)
 {
   bool retval = false;
+  bool canmaintain = false;
+
+  if (pMode == cNew || pMode == cEdit)
+  {
+    XSqlQuery su;
+    su.exec("SELECT rolsuper FROM pg_roles WHERE (rolname=CURRENT_USER);");
+    if (su.first())
+      canmaintain = su.value("rolsuper").toBool();
+    else if (su.lastError().type() != QSqlError::None)
+    {
+      systemError(0, su.lastError().databaseText(), __FILE__, __LINE__);
+      return false;
+    }
+  }
+
   switch (pMode)
   {
     case cView:
-      retval = _privileges->check("ViewPackages") ||
-               _privileges->check("MaintainPackages");
+      retval = _privileges->check("ViewPackages") || canmaintain;
       break;
     case cNew:
-      retval = _privileges->check("MaintainPackages");
+      retval = canmaintain;
       break;
-    case cEdit: // initial spec says that nobody has permission to edit packages
+    case cEdit: // spec says that nobody has permission to edit packages
     default:
       retval = false;
       break;
