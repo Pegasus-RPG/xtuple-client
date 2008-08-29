@@ -88,10 +88,10 @@ dspPurchaseReqsByItem::dspPurchaseReqsByItem(QWidget* parent, const char* name, 
   connect(_item, SIGNAL(warehouseIdChanged(int)), _warehouse, SLOT(setId(int)));
   connect(_item, SIGNAL(newId(int)), _warehouse, SLOT(findItemSites(int)));
 
-  _pr->addColumn(tr("Status"),       _statusColumn, Qt::AlignCenter );
-  _pr->addColumn(tr("Parent Order"), -1,            Qt::AlignLeft   );
-  _pr->addColumn(tr("Due Date"),     _dateColumn,   Qt::AlignCenter );
-  _pr->addColumn(tr("Qty."),         _qtyColumn,    Qt::AlignRight  );
+  _pr->addColumn(tr("Status"),       _statusColumn, Qt::AlignCenter, true,  "pr_status" );
+  _pr->addColumn(tr("Parent Order"), -1,            Qt::AlignLeft,   true,  "parent"   );
+  _pr->addColumn(tr("Due Date"),     _dateColumn,   Qt::AlignCenter, true,  "pr_duedate" );
+  _pr->addColumn(tr("Qty."),         _qtyColumn,    Qt::AlignRight,  true,  "pr_qtyreq"  );
   
   connect(omfgThis, SIGNAL(purchaseRequestsUpdated()), this, SLOT(sFillList()));
 }
@@ -191,8 +191,9 @@ void dspPurchaseReqsByItem::sFillList()
                  "            WHEN (pr_order_type='F') THEN ('Planned Order')"
                  "            WHEN (pr_order_type='M') THEN :manual"
                  "            ELSE :other"
-                 "       END,"
-                 " formatDate(pr_duedate), formatQty(pr_qtyreq) "
+                 "       END AS parent,"
+                 "       pr_duedate, pr_qtyreq,"
+                 "       'qty' AS pr_qtyreq_xtnumericrole "
                  "FROM pr, itemsite "
                  "WHERE ( (pr_itemsite_id=itemsite_id)"
                  " AND (itemsite_item_id=:item_id)" );

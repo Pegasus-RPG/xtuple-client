@@ -90,12 +90,12 @@ dspPurchaseReqsByPlannerCode::dspPurchaseReqsByPlannerCode(QWidget* parent, cons
 
   _plannerCode->setType(ParameterGroup::PlannerCode);
 
-  _pr->addColumn(tr("Item Number"),  _itemColumn,   Qt::AlignLeft   );
-  _pr->addColumn(tr("Description"),  -1,            Qt::AlignLeft   );
-  _pr->addColumn(tr("Status"),       _statusColumn, Qt::AlignCenter );
-  _pr->addColumn(tr("Parent Order"), _itemColumn,   Qt::AlignLeft   );
-  _pr->addColumn(tr("Due Date"),     _dateColumn,   Qt::AlignCenter );
-  _pr->addColumn(tr("Qty."),         _qtyColumn,    Qt::AlignRight  );
+  _pr->addColumn(tr("Item Number"),  _itemColumn,   Qt::AlignLeft,   true,  "item_number"   );
+  _pr->addColumn(tr("Description"),  -1,            Qt::AlignLeft,   true,  "description"   );
+  _pr->addColumn(tr("Status"),       _statusColumn, Qt::AlignCenter, true,  "pr_status" );
+  _pr->addColumn(tr("Parent Order"), _itemColumn,   Qt::AlignLeft,   true,  "parent"   );
+  _pr->addColumn(tr("Due Date"),     _dateColumn,   Qt::AlignCenter, true,  "pr_duedate" );
+  _pr->addColumn(tr("Qty."),         _qtyColumn,    Qt::AlignRight,  true,  "pr_qtyreq"  );
 }
 
 /*
@@ -210,7 +210,7 @@ void dspPurchaseReqsByPlannerCode::sFillList()
   }
 
   QString sql( "SELECT pr_id, itemsite_id,"
-               "       item_number, (item_descrip1 || ' ' || item_descrip2), pr_status,"
+               "       item_number, (item_descrip1 || ' ' || item_descrip2) AS description, pr_status,"
                "       CASE WHEN (pr_order_type='W') THEN ('W/O ' || ( SELECT formatWoNumber(womatl_wo_id)"
                "                                                       FROM womatl"
                "                                                       WHERE (womatl_id=pr_order_id) ) )"
@@ -218,8 +218,9 @@ void dspPurchaseReqsByPlannerCode::sFillList()
                "            WHEN (pr_order_type='F') THEN ('Planned Order')"
                "            WHEN (pr_order_type='M') THEN :manual"
                "            ELSE :other"
-               "       END,"
-               " formatDate(pr_duedate), formatQty(pr_qtyreq) "
+               "       END AS parent,"
+               "       pr_duedate, pr_qtyreq,"
+               "       'qty' AS pr_qtyreq_xtnumericrole "
                "FROM pr, itemsite, item "
                "WHERE ( (pr_itemsite_id=itemsite_id)"
                " AND (itemsite_item_id=item_id)"
