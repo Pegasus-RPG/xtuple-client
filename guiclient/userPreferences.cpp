@@ -211,9 +211,6 @@ void userPreferences::sPopulate()
     _interfaceWorkspace->setChecked(true);
 
   _rememberCheckBoxes->setChecked(! _pref->boolean("XCheckBox/forgetful"));
-
-  _itemCache->setChecked(_pref->boolean("UseItemCache"));
-  _customerCache->setChecked(_pref->boolean("UseCustCache"));
   
   _inventoryMenu->setChecked(_pref->boolean("ShowIMMenu"));
   _productsMenu->setChecked(_pref->boolean("ShowPDMenu"));
@@ -286,8 +283,6 @@ void userPreferences::sSave()
   
   _pref->set("PreferredWarehouse", ((_noWarehouse->isChecked()) ? -1 : _warehouse->id())  );
   _pref->set("XCheckBox/forgetful", !_rememberCheckBoxes->isChecked());
-  _pref->set("UseItemCache", _itemCache->isChecked());
-  _pref->set("UseCustCache", _customerCache->isChecked());
 
   _pref->set("UsedFixedWidthFonts", _fixedWidthFonts->isChecked());
   _pref->set("ListNumericItemNumbersFirst", _listNumericItemsFirst->isChecked());
