@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>643</width>
-    <height>515</height>
+    <width>596</width>
+    <height>456</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -468,19 +468,6 @@
             </item>
            </layout>
           </widget>
-         </item>
-         <item row="3" column="0" >
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" >
-            <size>
-             <width>20</width>
-             <height>0</height>
-            </size>
-           </property>
-          </spacer>
          </item>
         </layout>
        </widget>
