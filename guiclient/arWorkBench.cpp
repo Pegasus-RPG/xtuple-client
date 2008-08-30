@@ -104,9 +104,11 @@ arWorkBench::arWorkBench(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_preauth, SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*)),
           this, SLOT(sPopulatePreauthMenu(QMenu*)));
 
-  _cashrcpt->addColumn(tr("Dist. Date"), _dateColumn,     Qt::AlignCenter,true, "cashrcpt_distdate");
-  _cashrcpt->addColumn(tr("Amount"),     _bigMoneyColumn, Qt::AlignRight, true, "cashrcpt_amount");
-  _cashrcpt->addColumn(tr("Currency"),   _currencyColumn, Qt::AlignLeft,  true, "currabbr");
+  _cashrcpt->addColumn(tr("Check/Document#"),  _orderColumn, Qt::AlignLeft,  true, "cashrcpt_docnumber");
+  _cashrcpt->addColumn(tr("Bank Account"),               -1, Qt::AlignLeft,  true, "bankaccnt_name");
+  _cashrcpt->addColumn(tr("Dist. Date"),        _dateColumn, Qt::AlignCenter,true, "cashrcpt_distdate");
+  _cashrcpt->addColumn(tr("Amount"),        _bigMoneyColumn, Qt::AlignRight, true, "cashrcpt_amount");
+  _cashrcpt->addColumn(tr("Currency"),      _currencyColumn, Qt::AlignLeft,  true, "currabbr");
   if (_privileges->check("MaintainCashReceipts"))
   {
     connect(_cashrcpt, SIGNAL(valid(bool)), _editCashrcpt, SLOT(setEnabled(bool)));
@@ -122,26 +124,26 @@ arWorkBench::arWorkBench(QWidget* parent, const char* name, Qt::WFlags fl)
     connect(_cashrcpt, SIGNAL(itemSelected(int)), _editCashrcpt, SLOT(animateClick()));
   connect(omfgThis, SIGNAL(cashReceiptsUpdated(int, bool)), this, SLOT(sFillList()));
                                                                        
-  _aropenCM->addColumn( tr("Type"),              _ynColumn, Qt::AlignCenter,true, "doctype");
-  _aropenCM->addColumn( tr("Doc. #"),          _itemColumn, Qt::AlignCenter,true, "aropen_docnumber");
+  _aropenCM->addColumn( tr("Type"),                     -1, Qt::AlignLeft,true, "doctype");
+  _aropenCM->addColumn( tr("Doc. #"),         _orderColumn, Qt::AlignCenter,true, "aropen_docnumber");
   _aropenCM->addColumn( tr("Amount"),         _moneyColumn, Qt::AlignRight, true, "aropen_amount");
   _aropenCM->addColumn( tr("Applied"),        _moneyColumn, Qt::AlignRight, true, "applied");
   _aropenCM->addColumn( tr("Balance"),        _moneyColumn, Qt::AlignRight, true, "balance");
   _aropenCM->addColumn( tr("Currency"),    _currencyColumn, Qt::AlignLeft,  true, "currabbr");
   _aropenCM->addColumn(tr("Base Balance"), _bigMoneyColumn, Qt::AlignRight, true, "base_balance");
   
-  _aropen->addColumn(tr("Type"),               _ynColumn, Qt::AlignCenter,true, "doctype");
+  _aropen->addColumn(tr("Type"),                      -1, Qt::AlignLeft,true, "doctype");
   _aropen->addColumn(tr("Doc. #"),          _orderColumn, Qt::AlignRight, true, "aropen_docnumber");
   _aropen->addColumn(tr("Order #"),         _orderColumn, Qt::AlignRight, true, "aropen_ordernumber");
   _aropen->addColumn(tr("Doc. Date"),        _dateColumn, Qt::AlignCenter,true, "aropen_docdate");
   _aropen->addColumn(tr("Due Date"),         _dateColumn, Qt::AlignCenter,true, "aropen_duedate");
-  _aropen->addColumn(tr("Amount"),          _moneyColumn, Qt::AlignRight, true, "aropen_amount");
-  _aropen->addColumn(tr("Paid"),            _moneyColumn, Qt::AlignRight, true, "aropen_paid");
+  _aropen->addColumn(tr("Amount"),          _moneyColumn, Qt::AlignRight, false, "aropen_amount");
+  _aropen->addColumn(tr("Paid"),            _moneyColumn, Qt::AlignRight, false, "aropen_paid");
   _aropen->addColumn(tr("Balance"),         _moneyColumn, Qt::AlignRight, true, "balance");
   _aropen->addColumn(tr("Currency"),     _currencyColumn, Qt::AlignLeft,  true, "currAbbr");
   _aropen->addColumn(tr("Base Balance"), _bigMoneyColumn, Qt::AlignRight, true, "base_balance");
   
-  _preauth->addColumn(tr("Order-Seq."),          150, Qt::AlignRight, true, "ordnum" );
+  _preauth->addColumn(tr("Order-Seq."),           -1, Qt::AlignRight, true, "ordnum" );
   _preauth->addColumn(tr("Amount"),  _bigMoneyColumn, Qt::AlignRight, true, "ccpay_amount");
   _preauth->addColumn(tr("Currency"),_currencyColumn, Qt::AlignLeft,  true, "currabbr");
 
@@ -171,17 +173,7 @@ arWorkBench::arWorkBench(QWidget* parent, const char* name, Qt::WFlags fl)
   if (_metrics->boolean("CCAccept") && _privileges->check("ProcessCreditCards"))
     connect(_aropenCM, SIGNAL(valid(bool)), _ccRefundCM, SLOT(setEnabled(bool)));
   else
-  {
-    _ccRefundCM->setEnabled(false);
-    _preauthLit->setEnabled(false);
-    _preauth->setEnabled(false);
-    _postPreauth->setEnabled(false);
-    _CCAmountLit->setEnabled(false);
-    _CCAmount->setEnabled(false);
-  }
-
-  if(_metrics->boolean("EnableCustomerDeposits"))
-    _aropenCMLit->setText(tr("A/R Open Credit Memos and Deposits"));
+    _tab->removeTab(_tab->indexOf(_creditCardTab));
 }
 
 arWorkBench::~arWorkBench()
@@ -224,9 +216,9 @@ void arWorkBench::sFillAropenList()
   params.append("orderByDocDate");
   params.append("cust_id", _cust->id());
   params.append("invoice", tr("Invoice"));
-  params.append("creditMemo", tr("C/M"));
-  params.append("debitMemo", tr("D/M"));
-  params.append("cashdeposit", tr("C/D"));
+  params.append("creditMemo", tr("Credit Memo"));
+  params.append("debitMemo", tr("Debit Memo"));
+  params.append("cashdeposit", tr("Customer Deposit"));
   params.append("other", tr("Other"));
   q = mql.toQuery(params);
   _aropen->populate(q, true);
@@ -320,8 +312,8 @@ void arWorkBench::sFillAropenCMList()
              " AND (aropen_cust_id=:cust_id) ) "
              "ORDER BY aropen_docnumber;" );
   q.bindValue(":cust_id", _cust->id());
-  q.bindValue(":creditmemo", tr("C/M"));
-  q.bindValue(":cashdeposit", tr("C/D"));
+  q.bindValue(":creditmemo", tr("Credit Memo"));
+  q.bindValue(":cashdeposit", tr("Customer Deposit"));
   q.exec();
   _aropenCM->populate(q, true);
 }
@@ -436,11 +428,12 @@ void arWorkBench::sApplyAropenCM()
 
 void arWorkBench::sFillCashrcptList()
 {
-  q.prepare("SELECT cashrcpt_id, cashrcpt_distdate,"
+  q.prepare("SELECT cashrcpt_id, cashrcpt_docnumber, bankaccnt_name,cashrcpt_distdate,"
             "       cashrcpt_amount, currConcat(cashrcpt_curr_id) AS currabbr,"
             "       'curr' AS cashrcpt_amount_xtnumericrole "
-            "FROM cashrcpt "
-            "WHERE (cashrcpt_cust_id=:cust_id) "
+            "FROM cashrcpt, bankaccnt "
+            "WHERE ((cashrcpt_cust_id=:cust_id) "
+            "AND (cashrcpt_bankaccnt_id=bankaccnt_id)) "
             "ORDER BY cashrcpt_distdate;" );
   q.bindValue(":cust_id", _cust->id());
   q.exec();
