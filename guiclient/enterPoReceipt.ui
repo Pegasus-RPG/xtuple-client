@@ -15,198 +15,214 @@
   <widget class="QWidget" name="widget" >
    <layout class="QGridLayout" >
     <item row="0" column="0" >
-     <layout class="QHBoxLayout" >
-      <item>
-       <widget class="OrderCluster" name="_order" />
+     <layout class="QGridLayout" >
+      <property name="leftMargin" >
+       <number>12</number>
+      </property>
+      <property name="rightMargin" >
+       <number>12</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>12</number>
+      </property>
+      <property name="horizontalSpacing" >
+       <number>12</number>
+      </property>
+      <property name="verticalSpacing" >
+       <number>12</number>
+      </property>
+      <item row="0" column="0" >
+       <layout class="QHBoxLayout" >
+        <item>
+         <widget class="OrderCluster" name="_order" />
+        </item>
+        <item>
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType" >
+           <enum>QSizePolicy::Expanding</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>10</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
       </item>
-      <item>
+      <item row="0" column="1" >
        <spacer>
         <property name="orientation" >
          <enum>Qt::Horizontal</enum>
         </property>
-        <property name="sizeType" >
-         <enum>QSizePolicy::Expanding</enum>
-        </property>
         <property name="sizeHint" >
          <size>
-          <width>10</width>
+          <width>40</width>
           <height>20</height>
          </size>
         </property>
        </spacer>
       </item>
-     </layout>
-    </item>
-    <item row="0" column="1" >
-     <spacer>
-      <property name="orientation" >
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeHint" >
-       <size>
-        <width>40</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item rowspan="3" row="0" column="2" >
-     <layout class="QVBoxLayout" >
-      <property name="spacing" >
-       <number>0</number>
-      </property>
-      <item>
-       <widget class="QPushButton" name="_close" >
-        <property name="text" >
-         <string>&amp;Cancel</string>
-        </property>
-        <property name="shortcut" >
-         <string>Alt+C</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="_print" >
-        <property name="enabled" >
-         <bool>false</bool>
-        </property>
-        <property name="text" >
-         <string>&amp;Print Paperwork</string>
-        </property>
-        <property name="shortcut" >
-         <string>Alt+P</string>
-        </property>
-        <property name="autoDefault" >
-         <bool>true</bool>
-        </property>
-        <property name="default" >
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="_post" >
-        <property name="enabled" >
-         <bool>false</bool>
-        </property>
-        <property name="text" >
-         <string>&amp;Post</string>
-        </property>
-        <property name="shortcut" >
-         <string>Alt+P</string>
-        </property>
-        <property name="autoDefault" >
-         <bool>true</bool>
-        </property>
-        <property name="default" >
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="_save" >
-        <property name="enabled" >
-         <bool>false</bool>
-        </property>
-        <property name="text" >
-         <string>Save</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item row="1" column="0" >
-     <spacer>
-      <property name="orientation" >
-       <enum>Qt::Vertical</enum>
-      </property>
-      <property name="sizeType" >
-       <enum>QSizePolicy::Preferred</enum>
-      </property>
-      <property name="sizeHint" >
-       <size>
-        <width>20</width>
-        <height>16</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item row="2" column="0" colspan="2" >
-     <widget class="XCheckBox" name="_singleLot" >
-      <property name="text" >
-       <string>Assign all Lot-controlled Items to single Lot #</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="0" colspan="3" >
-     <layout class="QVBoxLayout" >
-      <property name="spacing" >
-       <number>0</number>
-      </property>
-      <item>
-       <widget class="QLabel" name="_orderitemLit" >
-        <property name="text" >
-         <string>Order Line Items:</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" >
+      <item rowspan="3" row="0" column="2" >
+       <layout class="QVBoxLayout" >
         <property name="spacing" >
-         <number>5</number>
+         <number>0</number>
         </property>
         <item>
-         <widget class="XTreeWidget" name="_orderitem" />
+         <widget class="QPushButton" name="_close" >
+          <property name="text" >
+           <string>&amp;Cancel</string>
+          </property>
+          <property name="shortcut" >
+           <string>Alt+C</string>
+          </property>
+         </widget>
         </item>
         <item>
-         <layout class="QVBoxLayout" >
+         <widget class="QPushButton" name="_print" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+          <property name="text" >
+           <string>&amp;Print Paperwork</string>
+          </property>
+          <property name="shortcut" >
+           <string>Alt+P</string>
+          </property>
+          <property name="autoDefault" >
+           <bool>true</bool>
+          </property>
+          <property name="default" >
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="_post" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+          <property name="text" >
+           <string>&amp;Post</string>
+          </property>
+          <property name="shortcut" >
+           <string>Alt+P</string>
+          </property>
+          <property name="autoDefault" >
+           <bool>true</bool>
+          </property>
+          <property name="default" >
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="_save" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+          <property name="text" >
+           <string>Save</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>20</width>
+            <height>0</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item row="2" column="0" colspan="2" >
+       <widget class="XCheckBox" name="_singleLot" >
+        <property name="text" >
+         <string>Assign all Lot-controlled Items to single Lot #</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" colspan="3" >
+       <layout class="QVBoxLayout" >
+        <property name="spacing" >
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="_orderitemLit" >
+          <property name="text" >
+           <string>Order Line Items:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" >
           <property name="spacing" >
-           <number>0</number>
+           <number>5</number>
           </property>
           <item>
-           <widget class="QPushButton" name="_enter" >
-            <property name="enabled" >
-             <bool>false</bool>
-            </property>
-            <property name="text" >
-             <string>&amp;Enter Receipt</string>
-            </property>
-            <property name="shortcut" >
-             <string>Alt+E</string>
-            </property>
-            <property name="autoDefault" >
-             <bool>true</bool>
-            </property>
-            <property name="default" >
-             <bool>true</bool>
-            </property>
-           </widget>
+           <widget class="XTreeWidget" name="_orderitem" />
           </item>
           <item>
-           <widget class="QPushButton" name="_all" >
-            <property name="enabled" >
-             <bool>false</bool>
+           <layout class="QVBoxLayout" >
+            <property name="spacing" >
+             <number>0</number>
             </property>
-            <property name="text" >
-             <string>Receive All</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer>
-            <property name="orientation" >
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeType" >
-             <enum>QSizePolicy::Expanding</enum>
-            </property>
-            <property name="sizeHint" >
-             <size>
-              <width>20</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
+            <item>
+             <widget class="QPushButton" name="_enter" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
+              <property name="text" >
+               <string>&amp;Enter Receipt</string>
+              </property>
+              <property name="shortcut" >
+               <string>Alt+E</string>
+              </property>
+              <property name="autoDefault" >
+               <bool>true</bool>
+              </property>
+              <property name="default" >
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="_all" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
+              <property name="text" >
+               <string>Receive All</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer>
+              <property name="orientation" >
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeType" >
+               <enum>QSizePolicy::Expanding</enum>
+              </property>
+              <property name="sizeHint" >
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
           </item>
          </layout>
         </item>
