@@ -597,10 +597,14 @@ bool cashReceipt::save(bool partial)
   if (_mode == cNew)
     q.prepare( "INSERT INTO cashrcpt "
                "( cashrcpt_id, cashrcpt_cust_id, cashrcpt_distdate, cashrcpt_amount,"
-               "  cashrcpt_fundstype, cashrcpt_bankaccnt_id, cashrcpt_curr_id ) "
+               "  cashrcpt_fundstype, cashrcpt_bankaccnt_id, cashrcpt_curr_id, "
+               "  cashrcpt_usecustdeposit, cashrcpt_docnumber, cashrcpt_notes, "
+               "  cashrcpt_salescat_id ) "
                "VALUES "
                "( :cashrcpt_id, :cashrcpt_cust_id, :cashrcpt_distdate, :cashrcpt_amount,"
-               "  :cashrcpt_fundstype, :cashrcpt_bankaccnt_id, :curr_id );" );
+               "  :cashrcpt_fundstype, :cashrcpt_bankaccnt_id, :curr_id, "
+               "  :cashrcpt_usecustdeposit, :cashrcpt_docnumber, :cashrcpt_notes, "
+               "  :cashrcpt_salescat_id );" );
   else
     q.prepare( "UPDATE cashrcpt "
 	       "SET cashrcpt_cust_id=:cashrcpt_cust_id,"
