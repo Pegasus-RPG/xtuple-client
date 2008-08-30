@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>662</width>
-    <height>630</height>
+    <width>622</width>
+    <height>650</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -190,8 +190,8 @@
        <property name="title" >
         <string/>
        </property>
-       <layout class="QVBoxLayout" >
-        <item>
+       <layout class="QGridLayout" >
+        <item row="0" column="0" colspan="3" >
          <layout class="QHBoxLayout" >
           <item>
            <widget class="ItemCluster" name="_item" >
@@ -218,155 +218,101 @@
           </item>
          </layout>
         </item>
-        <item>
-         <layout class="QGridLayout" >
-          <property name="horizontalSpacing" >
-           <number>5</number>
+        <item row="1" column="0" >
+         <widget class="QLabel" name="_vendItemNumberLit" >
+          <property name="text" >
+           <string>Vend. Item Number:</string>
           </property>
-          <property name="verticalSpacing" >
-           <number>5</number>
+          <property name="alignment" >
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
-          <item row="0" column="1" >
-           <widget class="QLabel" name="_vendorItemNumber" >
-            <property name="alignment" >
-             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1" >
-           <widget class="QTextEdit" name="_vendorDescrip" >
-            <property name="readOnly" >
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0" >
-           <layout class="QVBoxLayout" >
-            <property name="spacing" >
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="QLabel" name="_vendItemDescripLit" >
-              <property name="text" >
-               <string>Vendor Item Description:</string>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer>
-              <property name="orientation" >
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeType" >
-               <enum>QSizePolicy::MinimumExpanding</enum>
-              </property>
-              <property name="sizeHint" >
-               <size>
-                <width>20</width>
-                <height>0</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </item>
-          <item row="0" column="0" >
-           <widget class="QLabel" name="_vendItemNumberLit" >
+         </widget>
+        </item>
+        <item row="1" column="1" colspan="2" >
+         <widget class="QLabel" name="_vendorItemNumber" >
+          <property name="alignment" >
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0" >
+         <layout class="QVBoxLayout" >
+          <property name="spacing" >
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="_vendItemDescripLit" >
             <property name="text" >
-             <string>Vend. Item Number:</string>
+             <string>Vendor Item Description:</string>
             </property>
             <property name="alignment" >
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
            </widget>
           </item>
-          <item row="2" column="0" >
-           <widget class="QLabel" name="_vendorUOMLit" >
-            <property name="text" >
-             <string>Vendor UOM:</string>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Vertical</enum>
             </property>
-            <property name="alignment" >
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            <property name="sizeType" >
+             <enum>QSizePolicy::MinimumExpanding</enum>
             </property>
-           </widget>
-          </item>
-          <item row="2" column="1" >
-           <layout class="QHBoxLayout" >
-            <property name="spacing" >
-             <number>0</number>
+            <property name="sizeHint" >
+             <size>
+              <width>20</width>
+              <height>0</height>
+             </size>
             </property>
-            <item>
-             <layout class="QHBoxLayout" >
-              <property name="spacing" >
-               <number>7</number>
-              </property>
-              <item>
-               <widget class="QLabel" name="_vendorUOM" >
-                <property name="minimumSize" >
-                 <size>
-                  <width>40</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="text" >
-                 <string/>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" >
-                <property name="spacing" >
-                 <number>5</number>
-                </property>
-                <item>
-                 <widget class="QLabel" name="_invVendorUOMRatioLit" >
-                  <property name="text" >
-                   <string>Inv./Vendor UOM Ratio:</string>
-                  </property>
-                  <property name="alignment" >
-                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="_invVendorUOMRatio" >
-                  <property name="minimumSize" >
-                   <size>
-                    <width>80</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="text" >
-                   <string/>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <spacer>
-              <property name="orientation" >
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeType" >
-               <enum>QSizePolicy::Expanding</enum>
-              </property>
-              <property name="sizeHint" >
-               <size>
-                <width>20</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
+           </spacer>
           </item>
          </layout>
+        </item>
+        <item row="2" column="1" colspan="2" >
+         <widget class="QTextEdit" name="_vendorDescrip" >
+          <property name="readOnly" >
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0" >
+         <widget class="QLabel" name="_invVendorUOMRatioLit" >
+          <property name="text" >
+           <string>Inv./Vendor UOM Ratio:</string>
+          </property>
+          <property name="alignment" >
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1" >
+         <widget class="QLabel" name="_invVendorUOMRatio" >
+          <property name="minimumSize" >
+           <size>
+            <width>80</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text" >
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="2" >
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType" >
+           <enum>QSizePolicy::Expanding</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>211</width>
+            <height>22</height>
+           </size>
+          </property>
+         </spacer>
         </item>
        </layout>
       </widget>
@@ -400,7 +346,7 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="0" >
+        <item row="2" column="0" >
          <widget class="QLabel" name="_orderedLit" >
           <property name="text" >
            <string>Qty. Ordered:</string>
@@ -410,7 +356,7 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="1" >
+        <item row="2" column="1" >
          <widget class="QLabel" name="_ordered" >
           <property name="minimumSize" >
            <size>
@@ -423,7 +369,7 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="0" >
+        <item row="3" column="0" >
          <widget class="QLabel" name="_receivedLit" >
           <property name="text" >
            <string>Qty. Received:</string>
@@ -433,7 +379,7 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="1" >
+        <item row="3" column="1" >
          <widget class="QLabel" name="_received" >
           <property name="minimumSize" >
            <size>
@@ -443,6 +389,29 @@
           </property>
           <property name="alignment" >
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" >
+         <widget class="QLabel" name="_vendorUOMLit" >
+          <property name="text" >
+           <string>Vendor UOM:</string>
+          </property>
+          <property name="alignment" >
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1" >
+         <widget class="QLabel" name="_vendorUOM" >
+          <property name="minimumSize" >
+           <size>
+            <width>40</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text" >
+           <string/>
           </property>
          </widget>
         </item>
@@ -570,6 +539,7 @@
    <class>DLineEdit</class>
    <extends>QWidget</extends>
    <header>datecluster.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>ItemCluster</class>
