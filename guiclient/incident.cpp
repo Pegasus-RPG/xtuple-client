@@ -91,7 +91,7 @@ incident::incident(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 	    this,	SLOT(sPopulateTodoMenu(QMenu*)));
   connect(_todoList,	SIGNAL(valid(bool)),	this, SLOT(sHandleTodoPrivs()));
   connect(_viewTodoItem, SIGNAL(clicked()),	this,	SLOT(sViewTodoItem()));
-  connect(_return,      SIGNAL(clicked()),      this, SLOT(sReturn()));
+  //connect(_return,      SIGNAL(clicked()),      this, SLOT(sReturn()));
   connect(_viewAR,      SIGNAL(clicked()),      this, SLOT(sViewAR()));
 
   _incdtid = -1;
@@ -136,10 +136,11 @@ incident::incident(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     _lotserial->setVisible(false);
 
   // because this causes a pop-behind situation we are hiding for now.
-  _return->hide();
+  //_return->hide();
 
   _saved = false;
   _aropenid = -1;
+  resize(minimumSize());
 }
 
 /*
@@ -745,6 +746,7 @@ void incident::sReturn()
                           tr("The new Return Authorization could not be created"));
   
 }
+
 
 void incident::sViewAR()
 {
