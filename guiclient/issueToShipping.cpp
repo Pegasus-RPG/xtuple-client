@@ -101,12 +101,12 @@ issueToShipping::issueToShipping(QWidget* parent, const char* name, Qt::WFlags f
   _soitem->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft,   true, "item_number");
   _soitem->addColumn(tr("Description"),  -1,          Qt::AlignLeft,   true, "itemdescrip");
   _soitem->addColumn(tr("Site"),        _whsColumn,   Qt::AlignCenter, true, "warehous_code");
-  _soitem->addColumn(tr("Scheduled Date"),_qtyColumn, Qt::AlignRight,  true, "scheddate");
+  _soitem->addColumn(tr("Sched. Date"), _qtyColumn, Qt::AlignRight,  true, "scheddate");
   _soitem->addColumn(tr("UOM"),         _uomColumn,   Qt::AlignLeft,   true, "uom_name");
   _soitem->addColumn(tr("Ordered"),     _qtyColumn,   Qt::AlignRight,  true, "qtyord");
   _soitem->addColumn(tr("Shipped"),     _qtyColumn,   Qt::AlignRight,  true, "qtyshipped");
-  _soitem->addColumn(tr("Returned"),    _qtyColumn,   Qt::AlignRight,  true, "qtyreturned");
-  _soitem->addColumn(tr("Balance"),     _qtyColumn,   Qt::AlignRight,  true, "balance");
+  _soitem->addColumn(tr("Returned"),    _qtyColumn,   Qt::AlignRight,  false, "qtyreturned");
+  _soitem->addColumn(tr("Balance"),     _qtyColumn,   Qt::AlignRight,  false, "balance");
   _soitem->addColumn(tr("At Shipping"), _qtyColumn,   Qt::AlignRight,  true, "atshipping");
   _soitem->setSelectionMode(QAbstractItemView::ExtendedSelection);
 

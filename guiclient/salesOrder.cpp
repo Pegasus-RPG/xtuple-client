@@ -205,12 +205,12 @@ salesOrder::salesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   _soitem->addColumn(tr("Site"),        _whsColumn, Qt::AlignCenter,true, "warehous_code");
   _soitem->addColumn(tr("Status"),   _statusColumn, Qt::AlignCenter,true, "enhanced_status");
   _soitem->addColumn(tr("Sched. Date"),_dateColumn, Qt::AlignCenter,true, "coitem_scheddate");
-  _soitem->addColumn(tr("Qty UOM"),     _uomColumn, Qt::AlignLeft,  true, "qty_uom");
   _soitem->addColumn(tr("Ordered"),     _qtyColumn, Qt::AlignRight, true, "coitem_qtyord");
+  _soitem->addColumn(tr("Qty UOM"),     _uomColumn*1.5, Qt::AlignLeft,  true, "qty_uom");
   _soitem->addColumn(tr("Shipped"),     _qtyColumn, Qt::AlignRight, true, "qtyshipped");
-  _soitem->addColumn(tr("At Shipping"), _qtyColumn, Qt::AlignRight, true, "qtyatshipping");
-  _soitem->addColumn(tr("Balance"),     _qtyColumn, Qt::AlignRight, true, "balance");
-  _soitem->addColumn(tr("Price UOM"),   _uomColumn, Qt::AlignLeft,  true, "price_uom");
+  _soitem->addColumn(tr("At Shipping"), _qtyColumn, Qt::AlignRight, false, "qtyatshipping");
+  _soitem->addColumn(tr("Balance"),     _qtyColumn, Qt::AlignRight, false, "balance");
+  _soitem->addColumn(tr("Price UOM"),   _uomColumn, Qt::AlignLeft,  false, "price_uom");
   _soitem->addColumn(tr("Price"),     _priceColumn, Qt::AlignRight, true, "coitem_price");
   _soitem->addColumn(tr("Extended"),  _priceColumn, Qt::AlignRight, true, "extprice");
 

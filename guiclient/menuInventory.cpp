@@ -346,7 +346,7 @@ menuInventory::menuInventory(GUIClient *Pparent) :
 
     //  Inventory | Shipping
     { "menu",	tr("&Shipping"),  (char*)shippingMenu,	mainMenu,	true,	NULL, NULL, true , NULL },
-    { "sr.issueStockToShipping", tr("&Issue Stock to Shipping..."), SLOT(sIssueStockToShipping()), shippingMenu, _privileges->check("IssueStockToShipping"), new QPixmap(":/images/issueStockToShipping.png"), toolBar,  true, NULL },
+    { "sr.issueToShipping", tr("&Issue to Shipping..."), SLOT(sIssueStockToShipping()), shippingMenu, _privileges->check("IssueStockToShipping"), new QPixmap(":/images/issueStockToShipping.png"), toolBar,  true, NULL },
     { "sr.maintainShippingContents", tr("&Maintain Shipping Contents..."), SLOT(sDspShippingContents()), shippingMenu, _privileges->check("ViewShipping"), NULL, NULL, true, NULL },
     { "separator", NULL, NULL, shippingMenu, true, NULL, NULL, true, NULL },
     { "sr.shipOrder", tr("&Ship Order..."), SLOT(sShipOrders()), shippingMenu, _privileges->check("ShipOrders"), NULL, NULL, true, NULL },

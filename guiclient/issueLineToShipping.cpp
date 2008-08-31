@@ -82,6 +82,8 @@ issueLineToShipping::issueLineToShipping(QWidget* parent, const char* name, bool
   _item->setReadOnly(TRUE);
 
   _qtyToIssue->setValidator(omfgThis->qtyVal());
+  
+  resize(minimumSize());
 }
 
 issueLineToShipping::~issueLineToShipping()
