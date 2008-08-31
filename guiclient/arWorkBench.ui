@@ -149,9 +149,9 @@
         <property name="currentIndex" >
          <number>0</number>
         </property>
-        <widget class="QWidget" name="_openItemsTab" >
+        <widget class="QWidget" name="_receivablesTab" >
          <attribute name="title" >
-          <string>Open Items</string>
+          <string>Receivables</string>
          </attribute>
          <layout class="QGridLayout" >
           <item row="0" column="0" >

@@ -91,9 +91,9 @@ dspAROpenItemsByCustomer::dspAROpenItemsByCustomer(QWidget* parent, const char* 
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 
   _aropen->setRootIsDecorated(TRUE);
-  _aropen->addColumn(tr("Doc. Type"),      _itemColumn,     Qt::AlignCenter );
-  _aropen->addColumn(tr("Doc. #"),         _orderColumn,    Qt::AlignRight  );
-  _aropen->addColumn(tr("Order/Incdt."),   _itemColumn,     Qt::AlignRight  );
+  _aropen->addColumn(tr("Doc. Type"),      _itemColumn,     Qt::AlignLeft );
+  _aropen->addColumn(tr("Doc. #"),         _orderColumn,    Qt::AlignLeft  );
+  _aropen->addColumn(tr("Order/Incdt."),   _itemColumn,     Qt::AlignLeft  );
   _aropen->addColumn(tr("Doc. Date"),      _dateColumn,     Qt::AlignCenter );
   _aropen->addColumn(tr("Due Date"),       _dateColumn,     Qt::AlignCenter );
   _aropen->addColumn(tr("Amount"),         _bigMoneyColumn, Qt::AlignRight  );

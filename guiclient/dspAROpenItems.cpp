@@ -88,8 +88,8 @@ dspAROpenItems::dspAROpenItems(QWidget* parent, const char* name, Qt::WFlags fl)
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 
   _aropen->setRootIsDecorated(TRUE);
-  _aropen->addColumn(tr("Doc. Type"),      _itemColumn,     Qt::AlignCenter );
-  _aropen->addColumn(tr("Doc. #"),         _orderColumn,    Qt::AlignRight  );
+  _aropen->addColumn(tr("Doc. Type"),      _itemColumn,     Qt::AlignLeft );
+  _aropen->addColumn(tr("Doc. #"),         _orderColumn,    Qt::AlignLeft  );
   _aropen->addColumn(tr("Cust./Incdt."),   _itemColumn,     Qt::AlignLeft   );
   _aropen->addColumn(tr("Name/Desc."),     _itemColumn,     Qt::AlignLeft   );
   _aropen->addColumn(tr("Order/AssignTo"), _itemColumn,     Qt::AlignRight  );
