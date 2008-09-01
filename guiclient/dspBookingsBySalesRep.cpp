@@ -88,14 +88,17 @@ dspBookingsBySalesRep::dspBookingsBySalesRep(QWidget* parent, const char* name, 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 
-  _soitem->addColumn(tr("S/O #"),         _orderColumn,    Qt::AlignLeft   );
-  _soitem->addColumn(tr("Ord. Date"),     _dateColumn,     Qt::AlignCenter );
-  _soitem->addColumn(tr("Cust. #"),       _orderColumn,    Qt::AlignLeft   );
-  _soitem->addColumn(tr("Customer"),      -1,              Qt::AlignLeft   );
-  _soitem->addColumn(tr("Item Number"),   _itemColumn,     Qt::AlignLeft   );
-  _soitem->addColumn(tr("Ordered"),       _qtyColumn,      Qt::AlignRight  );
-  _soitem->addColumn(tr("Unit Price"),    _priceColumn,    Qt::AlignRight  );
-  _soitem->addColumn(tr("Ext. Price"),    _bigMoneyColumn, Qt::AlignRight  );
+  _soitem->addColumn(tr("S/O #"),            _orderColumn,    Qt::AlignLeft,   true,  "cohead_number"   );
+  _soitem->addColumn(tr("Ord. Date"),        _dateColumn,     Qt::AlignCenter, true,  "cohead_orderdate" );
+  _soitem->addColumn(tr("Cust. #"),          _orderColumn,    Qt::AlignLeft,   true,  "cust_number"   );
+  _soitem->addColumn(tr("Customer"),         -1,              Qt::AlignLeft,   true,  "cust_name"   );
+  _soitem->addColumn(tr("Item Number"),      _itemColumn,     Qt::AlignLeft,   true,  "item_number"   );
+  _soitem->addColumn(tr("Ordered"),          _qtyColumn,      Qt::AlignRight,  true,  "coitem_qtyord"  );
+  _soitem->addColumn(tr("Unit Price"),       _priceColumn,    Qt::AlignRight,  true,  "coitem_price"  );
+  _soitem->addColumn(tr("Ext. Price"),       _bigMoneyColumn, Qt::AlignRight,  true,  "extprice"  );
+  _soitem->addColumn(tr("Currency"),         _currencyColumn, Qt::AlignCenter, true,  "currAbbr" );
+  _soitem->addColumn(tr("Base Unit Price"),  _priceColumn,    Qt::AlignRight,  true,  "baseunitprice" );
+  _soitem->addColumn(tr("Base Ext. Price"),  _bigMoneyColumn, Qt::AlignRight,  true,  "baseextprice" );
 }
 
 /*
@@ -161,28 +164,7 @@ void dspBookingsBySalesRep::sFillList()
   _productCategory->appendValue(params);
   params.append("orderByOrderdate");
   q = mql.toQuery(params);
-
-  XTreeWidgetItem *last = 0;
-  bool exchangeError = false;
-  while (q.next())
-  {
-    if (q.value("baseunitprice").toDouble() < 0.0)
-      exchangeError = true;
-    last = new XTreeWidgetItem(_soitem, last,
-         q.value("coitem_id").toInt(),
-         q.value("cohead_number"),
-         formatDate(q.value("cohead_orderdate").toDate()),
-         q.value("cust_number"),
-         q.value("cust_name"),
-         q.value("item_number"),
-         formatQty(q.value("coitem_qtyord").toDouble()),
-         formatSalesPrice(q.value("baseunitprice").toDouble()),
-         formatMoney(q.value("baseextprice").toDouble()) );
-  }
-  if (exchangeError)
-    QMessageBox::warning( this, tr("Currency Exchange Rate Error"),
-                          tr("One or more of the Prices could not be converted to Base Currency.\n"
-                             "These Prices have been set to a negative value.") );
+  _soitem->populate(q);
 }
 
 bool dspBookingsBySalesRep::checkParameters()

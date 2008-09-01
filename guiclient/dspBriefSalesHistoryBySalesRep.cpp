@@ -83,13 +83,13 @@ dspBriefSalesHistoryBySalesRep::dspBriefSalesHistoryBySalesRep(QWidget* parent, 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 
-  _sohist->addColumn(tr("Customer"),    -1,              Qt::AlignLeft   );
-  _sohist->addColumn(tr("S/O #"),       _orderColumn,    Qt::AlignLeft   );
-  _sohist->addColumn(tr("Invoice #"),   _orderColumn,    Qt::AlignLeft   );
-  _sohist->addColumn(tr("Ord. Date"),   _dateColumn,     Qt::AlignCenter );
-  _sohist->addColumn(tr("Invc. Date"),  _dateColumn,     Qt::AlignCenter );
-  _sohist->addColumn( tr("Ext. Price"), _bigMoneyColumn, Qt::AlignRight  );
-  _sohist->addColumn( tr("Ext. Cost"),  _bigMoneyColumn, Qt::AlignRight  );
+  _sohist->addColumn(tr("Customer"),    -1,              Qt::AlignLeft,   true,  "cust_name"   );
+  _sohist->addColumn(tr("S/O #"),       _orderColumn,    Qt::AlignLeft,   true,  "cohist_ordernumber"   );
+  _sohist->addColumn(tr("Invoice #"),   _orderColumn,    Qt::AlignLeft,   true,  "invoicenumber"   );
+  _sohist->addColumn(tr("Ord. Date"),   _dateColumn,     Qt::AlignCenter, true,  "cohist_orderdate" );
+  _sohist->addColumn(tr("Invc. Date"),  _dateColumn,     Qt::AlignCenter, true,  "cohist_invcdate" );
+  _sohist->addColumn( tr("Ext. Price"), _bigMoneyColumn, Qt::AlignRight,  true,  "extprice"  );
+  _sohist->addColumn( tr("Ext. Cost"),  _bigMoneyColumn, Qt::AlignRight,  true,  "extcost"  );
 
   _showCosts->setEnabled(_privileges->check("ViewCosts"));
   _showPrices->setEnabled(_privileges->check("ViewCustomerPrices"));
@@ -205,7 +205,11 @@ void dspBriefSalesHistoryBySalesRep::sFillList()
                "       invoicenumber,"
                "       cohist_orderdate, cohist_invcdate,"
                "       SUM(baseextprice) AS extprice,"
-               "       SUM(extcost) AS extcost "
+               "       SUM(extcost) AS extcost,"
+               "       'curr' AS extprice_xtnumericrole,"
+               "       'curr' AS extcost_xtnumericrole,"
+               "       0 AS extprice_xttotalrole,"
+               "       0 AS extcost_xttotalrole "
                "FROM saleshistory "
                "WHERE ( (cohist_salesrep_id=:salesrep_id)"
                " AND (cohist_invcdate BETWEEN :startDate AND :endDate)" );
@@ -229,40 +233,7 @@ void dspBriefSalesHistoryBySalesRep::sFillList()
   _dates->bindValue(q);
   q.bindValue(":salesrep_id", _salesrep->id());
   q.exec();
-  if (q.first())
-  {
-    double totalSales = 0.0;
-    double totalCosts = 0.0;
-
-    XTreeWidgetItem *last  = 0;
-    do
-    {
-      QString invoicedate = tr("Return");
-      if (q.value("cohist_invcdate").toString() != "")
-        invoicedate = formatDate(q.value("cohist_invcdate").toDate());
-
-      last = new XTreeWidgetItem(_sohist, 0, q.value("cohist_cust_id").toInt(),
-				 q.value("cust_name"),
-				 q.value("cohist_ordernumber"),
-				 q.value("invoicenumber"),
-				 formatDate(q.value("cohist_orderdate").toDate()),
-				 invoicedate,
-				 formatMoney(q.value("extprice").toDouble()),
-				 formatMoney(q.value("extcost").toDouble()) );
- 
-      totalSales += q.value("extprice").toDouble();
-      totalCosts += q.value("extcost").toDouble();
-    }
-    while (q.next());
-
-    if ( (_showPrices->isChecked()) || (_showCosts->isChecked()) )
-    {
-      XTreeWidgetItem *totals = new XTreeWidgetItem(_sohist, last, -1, QVariant(tr("Total Sales")));
-
-      totals->setText(5, formatMoney(totalSales));
-      totals->setText(6, formatCost(totalCosts));
-    }
-  }
+  _sohist->populate(q);
 }
 
 bool dspBriefSalesHistoryBySalesRep::checkParameters()
