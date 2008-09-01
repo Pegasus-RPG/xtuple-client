@@ -72,8 +72,11 @@
 
 #define UNITPRICE_COL	7
 #define EXTPRICE_COL	8
-#define UNITCOST_COL	( 9 - (_privileges->check("ViewCustomerPrices") ? 0 : 2))
-#define EXTCOST_COL	(10 - (_privileges->check("ViewCustomerPrices") ? 0 : 2))
+#define CURRENCY_COL	9
+#define BUNITPRICE_COL	10
+#define BEXTPRICE_COL	11
+#define UNITCOST_COL	( 12 - (_privileges->check("ViewCustomerPrices") ? 0 : 5))
+#define EXTCOST_COL	(13 - (_privileges->check("ViewCustomerPrices") ? 0 : 5))
 
 /*
  *  Constructs a dspSalesHistoryByCustomer as a child of 'parent', with the
@@ -97,22 +100,25 @@ dspSalesHistoryByCustomer::dspSalesHistoryByCustomer(QWidget* parent, const char
 
   _productCategory->setType(ParameterGroup::ProductCategory);
 
-  _sohist->addColumn(tr("S/O #"),       _orderColumn, Qt::AlignLeft   );
-  _sohist->addColumn(tr("Invoice #"),   _orderColumn, Qt::AlignLeft   );
-  _sohist->addColumn(tr("Ord. Date"),   _dateColumn,  Qt::AlignCenter );
-  _sohist->addColumn(tr("Invc. Date"),  _dateColumn,  Qt::AlignCenter );
-  _sohist->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft   );
-  _sohist->addColumn(tr("Description"), -1,           Qt::AlignLeft   );
-  _sohist->addColumn(tr("Shipped"),     _qtyColumn,   Qt::AlignRight  );
+  _sohist->addColumn(tr("S/O #"),               _orderColumn,    Qt::AlignLeft,   true,  "cohist_ordernumber"   );
+  _sohist->addColumn(tr("Invoice #"),           _orderColumn,    Qt::AlignLeft,   true,  "invoicenumber"   );
+  _sohist->addColumn(tr("Ord. Date"),           _dateColumn,     Qt::AlignCenter, true,  "cohist_orderdate" );
+  _sohist->addColumn(tr("Invc. Date"),          _dateColumn,     Qt::AlignCenter, true,  "cohist_invcdate" );
+  _sohist->addColumn(tr("Item Number"),         _itemColumn,     Qt::AlignLeft,   true,  "item_number"   );
+  _sohist->addColumn(tr("Description"),         -1,              Qt::AlignLeft,   true,  "itemdescription"   );
+  _sohist->addColumn(tr("Shipped"),             _qtyColumn,      Qt::AlignRight,  true,  "cohist_qtyshipped"  );
   if (_privileges->check("ViewCustomerPrices"))
   {
-    _sohist->addColumn( tr("Unit Price"), _priceColumn,    Qt::AlignRight );
-    _sohist->addColumn( tr("Ext. Price"), _bigMoneyColumn, Qt::AlignRight );
+    _sohist->addColumn(tr("Unit Price"),        _priceColumn,    Qt::AlignRight,  true,  "cohist_unitprice" );
+    _sohist->addColumn(tr("Ext. Price"),        _bigMoneyColumn, Qt::AlignRight,  true,  "extprice" );
+    _sohist->addColumn(tr("Currency"),          _currencyColumn, Qt::AlignRight,  true,  "currAbbr" );
+    _sohist->addColumn(tr("Base Unit Price"),   _bigMoneyColumn, Qt::AlignRight,  true,  "baseunitprice" );
+    _sohist->addColumn(tr("Base Ext. Price"),   _bigMoneyColumn, Qt::AlignRight,  true,  "baseextprice" );
   }
   if (_privileges->check("ViewCosts"))
   {
-    _sohist->addColumn( tr("Unit Cost"),  _costColumn,     Qt::AlignRight );
-    _sohist->addColumn( tr("Ext. Cost"),  _bigMoneyColumn, Qt::AlignRight );
+    _sohist->addColumn( tr("Unit Cost"),  _costColumn,           Qt::AlignRight,  true,  "cohist_unitcost" );
+    _sohist->addColumn( tr("Ext. Cost"),  _bigMoneyColumn,       Qt::AlignRight,  true,  "extcost" );
   }
 
   _showCosts->setEnabled(_privileges->check("ViewCosts"));
@@ -189,11 +195,17 @@ void dspSalesHistoryByCustomer::sHandleParams()
   {
     _sohist->showColumn(UNITPRICE_COL);
     _sohist->showColumn(EXTPRICE_COL);
+    _sohist->showColumn(CURRENCY_COL);
+    _sohist->showColumn(BUNITPRICE_COL);
+    _sohist->showColumn(BEXTPRICE_COL);
   }
   else
   {
     _sohist->hideColumn(UNITPRICE_COL);
     _sohist->hideColumn(EXTPRICE_COL);
+    _sohist->hideColumn(CURRENCY_COL);
+    _sohist->hideColumn(BUNITPRICE_COL);
+    _sohist->hideColumn(BEXTPRICE_COL);
   }
 
   if (_showCosts->isChecked())
@@ -302,55 +314,7 @@ void dspSalesHistoryByCustomer::sFillList()
   params.append("cust_id", _cust->id());
   params.append("orderByInvcdateItem");
   q = mql.toQuery(params);
-
-  XTreeWidgetItem *last = 0;
-  if (q.first())
-  {
-    double totalSales = 0.0;
-    double totalCosts = 0.0;
-    bool exchangeError = false;
-
-    do
-    {
-      if (q.value("baseunitprice").toDouble() < 0.0)
-        exchangeError = true;
-      QString invoicedate = tr("Return");
-      if (q.value("cohist_invcdate").toString() != "")
-        invoicedate = formatDate(q.value("cohist_invcdate").toDate());
-        
-      last = new XTreeWidgetItem( _sohist, last,
-				 q.value("cohist_id").toInt(),
-				 q.value("cohist_invcnumber").toInt(),
-				 q.value("cohist_ordernumber"),
-				 q.value("invoicenumber"),
-				 formatDate(q.value("cohist_orderdate").toDate()),
-				 invoicedate,
-				 q.value("item_number"),
-				 q.value("itemdescription"),
-				 formatQty(q.value("cohist_qtyshipped").toDouble()),
-				 formatSalesPrice(q.value("baseunitprice").toDouble()),
-				 formatMoney(q.value("baseextprice").toDouble()),
-				 formatCost(q.value("cohist_unitcost").toDouble()),
-				 formatMoney(q.value("extcost").toDouble()) );
- 
-        totalSales += q.value("baseextprice").toDouble();
-        totalCosts += q.value("extcost").toDouble();
-    }
-    while (q.next());
-
-    if ( (_showPrices->isChecked()) || (_showCosts->isChecked()) )
-    {
-      XTreeWidgetItem *totals = new XTreeWidgetItem(_sohist, last, -1);
-      totals->setText(5, tr("Total"));
-      totals->setText(EXTPRICE_COL, formatMoney(totalSales));
-      totals->setText(EXTCOST_COL, formatCost(totalCosts));
-    }
-
-    if ( (exchangeError) && (_showPrices->isChecked()) )
-      QMessageBox::warning( this, tr("Currency Exchange Rate Error"),
-                            tr("One or more of the Prices could not be converted to Base Currency.\n"
-                               "These Prices have been set to a negative value.") );
-  }
+  _sohist->populate(q);
 }
 
 bool dspSalesHistoryByCustomer::checkParameters()
