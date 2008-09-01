@@ -86,11 +86,11 @@ dspSummarizedSalesBySalesRep::dspSummarizedSalesBySalesRep(QWidget* parent, cons
 
   _productCategory->setType(ParameterGroup::ProductCategory);
 
-  _sohist->addColumn(tr("Sales Rep."),  -1,              Qt::AlignLeft   );
-  _sohist->addColumn(tr("First Sale"),  _dateColumn,     Qt::AlignCenter );
-  _sohist->addColumn(tr("Last Sale"),   _dateColumn,     Qt::AlignCenter );
-  _sohist->addColumn(tr("Total Units"), _qtyColumn,      Qt::AlignRight  );
-  _sohist->addColumn(tr("Total Sales"), _bigMoneyColumn, Qt::AlignRight  );
+  _sohist->addColumn(tr("Sales Rep."),  -1,              Qt::AlignLeft,   true,  "rep"   );
+  _sohist->addColumn(tr("First Sale"),  _dateColumn,     Qt::AlignCenter, true,  "firstdate" );
+  _sohist->addColumn(tr("Last Sale"),   _dateColumn,     Qt::AlignCenter, true,  "lastdate" );
+  _sohist->addColumn(tr("Total Units"), _qtyColumn,      Qt::AlignRight,  true,  "totalunits"  );
+  _sohist->addColumn(tr("Total Sales"), _bigMoneyColumn, Qt::AlignRight,  true,  "totalsales"  );
 }
 
 /*
@@ -164,10 +164,14 @@ void dspSummarizedSalesBySalesRep::sFillList()
   if (!checkParameters())
     return;
 
-  QString sql( "SELECT cohist_salesrep_id, (salesrep_number || '-' || salesrep_name),"
-               "       formatDate(MIN(cohist_invcdate)), formatDate(MAX(cohist_invcdate)),"
-               "       formatQty(SUM(cohist_qtyshipped)),"
-               "       formatMoney(SUM(baseextprice)) "
+  QString sql( "SELECT cohist_salesrep_id, (salesrep_number || '-' || salesrep_name) AS rep,"
+               "       MIN(cohist_invcdate) AS firstdate, MAX(cohist_invcdate) AS lastdate,"
+               "       SUM(cohist_qtyshipped) AS totalunits,"
+               "       SUM(baseextprice) AS totalsales,"
+               "       'qty' AS totalunits_xtnumericrole,"
+               "       'curr' AS totalsales_xtnumericrole,"
+               "       0 AS totalunits_xttotalrole,"
+               "       0 AS totalsales_xttotalrole "
                "FROM saleshistory "
                "WHERE ( (cohist_invcdate BETWEEN :startDate AND :endDate)" );
 

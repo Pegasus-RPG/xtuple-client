@@ -87,12 +87,12 @@ dspSummarizedSalesByItem::dspSummarizedSalesByItem(QWidget* parent, const char* 
   _customerType->setType(ParameterGroup::CustomerType);
   _productCategory->setType(ParameterGroup::ProductCategory);
 
-  _sohist->addColumn(tr("Item"),        _itemColumn,      Qt::AlignLeft   );
-  _sohist->addColumn(tr("Description"), -1,               Qt::AlignLeft   );
-  _sohist->addColumn(tr("First Sale"),  _dateColumn,      Qt::AlignCenter );
-  _sohist->addColumn(tr("Last Sale"),   _dateColumn,      Qt::AlignCenter );
-  _sohist->addColumn(tr("Total Units"), _qtyColumn,       Qt::AlignRight  );
-  _sohist->addColumn(tr("Total Sales"), _bigMoneyColumn,  Qt::AlignRight  );
+  _sohist->addColumn(tr("Item"),        _itemColumn,      Qt::AlignLeft,   true,  "item_number"   );
+  _sohist->addColumn(tr("Description"), -1,               Qt::AlignLeft,   true,  "itemdescription"   );
+  _sohist->addColumn(tr("First Sale"),  _dateColumn,      Qt::AlignCenter, true,  "firstdate" );
+  _sohist->addColumn(tr("Last Sale"),   _dateColumn,      Qt::AlignCenter, true,  "lastdate" );
+  _sohist->addColumn(tr("Total Units"), _qtyColumn,       Qt::AlignRight,  true,  "totalunits"  );
+  _sohist->addColumn(tr("Total Sales"), _bigMoneyColumn,  Qt::AlignRight,  true,  "totalsales"  );
 }
 
 /*
@@ -176,11 +176,14 @@ void dspSummarizedSalesByItem::sFillList()
     return;
 
   QString sql( "SELECT itemsite_item_id, item_number, itemdescription,"
-               "       formatDate(MIN(cohist_invcdate)) AS f_firstdate,"
-               "       formatDate(MAX(cohist_invcdate)) AS f_lastdate,"
-               "       formatQty(SUM(cohist_qtyshipped)) AS f_totalunits,"
-               "       formatMoney(SUM(baseextprice)) AS f_totalsales,"
-               "       SUM(baseextprice) AS totalsales "
+               "       MIN(cohist_invcdate) AS firstdate,"
+               "       MAX(cohist_invcdate) AS lastdate,"
+               "       SUM(cohist_qtyshipped) AS totalunits,"
+               "       SUM(baseextprice) AS totalsales,"
+               "       'qty' AS totalunits_xtnumericrole,"
+               "       'curr' AS totalsales_xtnumericrole,"
+               "       0 AS totalunits_xttotalrole,"
+               "       0 AS totalsales_xttotalrole "
                "FROM saleshistory "
                "WHERE ( (cohist_invcdate BETWEEN :startDate AND :endDate)" );
 
@@ -214,22 +217,6 @@ void dspSummarizedSalesByItem::sFillList()
   _dates->bindValue(q);
   q.exec();
   _sohist->populate(q);
-
-  if (q.first())
-  {
-    double totalSales = 0.0;
-
-    do
-      totalSales += q.value("totalsales").toDouble();
-    while (q.next());
-
-    new XTreeWidgetItem(_sohist,
-			_sohist->topLevelItem(_sohist->topLevelItemCount() - 1),
-			-1,
-                        QVariant(tr("Totals")), "", "", "", "", 
-                        formatMoney(totalSales) );
-  }
-
 }
 
 bool dspSummarizedSalesByItem::checkParameters()

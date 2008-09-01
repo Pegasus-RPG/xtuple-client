@@ -87,12 +87,12 @@ dspSummarizedSalesHistoryByShippingZone::dspSummarizedSalesHistoryByShippingZone
                        "FROM shipzone "
                        "ORDER BY shipzone_name;" );
 
-  _sohist->addColumn(tr("Zone"),        _itemColumn,     Qt::AlignLeft   );
-  _sohist->addColumn(tr("Customer"),    200,             Qt::AlignLeft   );
-  _sohist->addColumn(tr("Item Number"), _itemColumn,     Qt::AlignLeft   );
-  _sohist->addColumn(tr("Description"), -1,              Qt::AlignLeft   );
-  _sohist->addColumn(tr("Shipped"),     _qtyColumn,      Qt::AlignRight  );
-  _sohist->addColumn(tr("Total Sales"), _bigMoneyColumn, Qt::AlignRight  );
+  _sohist->addColumn(tr("Zone"),        _itemColumn,     Qt::AlignLeft,   true,  "shipzone_name"   );
+  _sohist->addColumn(tr("Customer"),    200,             Qt::AlignLeft,   true,  "customer"   );
+  _sohist->addColumn(tr("Item Number"), _itemColumn,     Qt::AlignLeft,   true,  "item_number"   );
+  _sohist->addColumn(tr("Description"), -1,              Qt::AlignLeft,   true,  "itemdescription"   );
+  _sohist->addColumn(tr("Shipped"),     _qtyColumn,      Qt::AlignRight,  true,  "totalunits"  );
+  _sohist->addColumn(tr("Total Sales"), _bigMoneyColumn, Qt::AlignRight,  true,  "totalsales"  );
 }
 
 /*
@@ -115,17 +115,16 @@ void dspSummarizedSalesHistoryByShippingZone::languageChange()
 void dspSummarizedSalesHistoryByShippingZone::sFillList()
 {
   QString sql( "SELECT shipzone_id, cust_id, "
-               "       shipzone_name, (cust_number || '-' || cust_name),"
-               "       item_number, (item_descrip1 || ' ' || item_descrip2),"
-               "       formatQty(SUM(cohist_qtyshipped)),"
-               "       formatMoney(SUM(round((cohist_qtyshipped * currtobase(cohist_curr_id, cohist_unitprice, cohist_invcdate)), 2))) "
-               "FROM cohist, cust, shipto, itemsite, item, shipzone "
-               "WHERE ((cohist_cust_id=cust_id)"
-               " AND (cohist_shipto_id=shipto_id)"
-               " AND (cohist_itemsite_id=itemsite_id)"
-               " AND (itemsite_item_id=item_id)"
-               " AND (shipto_shipzone_id=shipzone_id)"
-               " AND (cohist_shipdate BETWEEN :startDate and :endDate)" );
+               "       shipzone_name, (cust_number || '-' || cust_name) AS customer,"
+               "       item_number, itemdescription,"
+               "       SUM(cohist_qtyshipped) AS totalunits,"
+               "       SUM(baseextprice) AS totalsales,"
+               "       'qty' AS totalunits_xtnumericrole,"
+               "       'curr' AS totalsales_xtnumericrole,"
+               "       0 AS totalunits_xttotalrole,"
+               "       0 AS totalsales_xttotalrole "
+               "FROM saleshistory "
+               "WHERE ((cohist_shipdate BETWEEN :startDate and :endDate)" );
 
   if (_warehouse->isSelected())
     sql += " AND (itemsite_warehous_id=:warehous_id)";
@@ -139,7 +138,7 @@ void dspSummarizedSalesHistoryByShippingZone::sFillList()
     sql += " AND (shipzone_id=:shipzone_id)";
 
   sql += ") "
-         "GROUP BY shipzone_id, cust_id, shipzone_name, cust_number, cust_name, item_number, item_descrip1, item_descrip2;";
+         "GROUP BY shipzone_id, cust_id, shipzone_name, cust_number, cust_name, item_number, itemdescription;";
 
   q.prepare(sql);
   _warehouse->bindValue(q);

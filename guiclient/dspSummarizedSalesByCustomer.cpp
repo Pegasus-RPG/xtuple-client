@@ -87,12 +87,12 @@ dspSummarizedSalesByCustomer::dspSummarizedSalesByCustomer(QWidget* parent, cons
   _productCategory->setType(ParameterGroup::ProductCategory);
   _currency->setType(ParameterGroup::Currency);
 
-  _cohist->addColumn(tr("Customer"),    -1,               Qt::AlignLeft   );
-  _cohist->addColumn(tr("First Sale"),  _dateColumn,      Qt::AlignCenter );
-  _cohist->addColumn(tr("Last Sale"),   _dateColumn,      Qt::AlignCenter );
-  _cohist->addColumn(tr("Total Qty."),  _qtyColumn,       Qt::AlignRight  );
-  _cohist->addColumn(tr("Total Sales"), _bigMoneyColumn,  Qt::AlignRight  );
-  _cohist->addColumn(tr("Currency"),    _currencyColumn,  Qt::AlignLeft );
+  _cohist->addColumn(tr("Customer"),    -1,               Qt::AlignLeft,   true,  "customer"   );
+  _cohist->addColumn(tr("First Sale"),  _dateColumn,      Qt::AlignCenter, true,  "firstsale" );
+  _cohist->addColumn(tr("Last Sale"),   _dateColumn,      Qt::AlignCenter, true,  "lastsale" );
+  _cohist->addColumn(tr("Total Qty."),  _qtyColumn,       Qt::AlignRight,  true,  "qtyshipped"  );
+  _cohist->addColumn(tr("Total Sales"), _bigMoneyColumn,  Qt::AlignRight,  true,  "extprice"  );
+  _cohist->addColumn(tr("Currency"),    _currencyColumn,  Qt::AlignLeft,   true,  "currAbbr"  );
 
   if (omfgThis->singleCurrency())
     _cohist->hideColumn(5);
@@ -170,11 +170,13 @@ void dspSummarizedSalesByCustomer::sFillList()
   if (!checkParameters())
     return;
 
-  QString sql( "SELECT cohist_cust_id, (cust_number || '-' || cust_name),"
-               "       formatDate(MIN(cohist_invcdate)), formatDate(MAX(cohist_invcdate)),"
-               "       formatQty(SUM(cohist_qtyshipped)),"
-               "       formatMoney(SUM(custextprice)),"
-               "       currConcat(cust_curr_id) "
+  QString sql( "SELECT cohist_cust_id, (cust_number || '-' || cust_name) AS customer,"
+               "       MIN(cohist_invcdate) AS firstsale, MAX(cohist_invcdate) AS lastsale,"
+               "       SUM(cohist_qtyshipped) AS qtyshipped,"
+               "       SUM(custextprice) AS extprice,"
+               "       currConcat(cust_curr_id) AS currAbbr,"
+               "       'qty' AS qtyshipped_xtnumericrole,"
+               "       'curr' AS extprice_xtnumericrole "
                "FROM saleshistory "
                "WHERE ( (cohist_invcdate BETWEEN :startDate AND :endDate)" );
 
