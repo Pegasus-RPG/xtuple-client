@@ -143,9 +143,9 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   _arhist->addColumn(tr("Base Balance"), _bigMoneyColumn, Qt::AlignRight,  true,  "base_balance"  );
 
   // setup Quote list
-  _quote->addColumn(tr("Quote #"),    _itemColumn, Qt::AlignLeft  );
-  _quote->addColumn(tr("P/O Number"), -1,  Qt::AlignLeft   );
-  _quote->addColumn(tr("Quote Date"), _dateColumn,  Qt::AlignCenter );
+  _quote->addColumn(tr("Quote #"),       _itemColumn,     Qt::AlignLeft,   true,  "quhead_number"  );
+  _quote->addColumn(tr("P/O Number"),    -1,              Qt::AlignLeft,   true,  "quhead_custponumber"   );
+  _quote->addColumn(tr("Quote Date"),    _dateColumn,     Qt::AlignCenter, true,  "quhead_quotedate" );
   if(_privileges->check("MaintainQuotes"))
   {
     connect(_quote, SIGNAL(valid(bool)), _editQuote, SLOT(setEnabled(bool)));
@@ -161,10 +161,10 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   connect(omfgThis, SIGNAL(quotesUpdated(int, bool)), this, SLOT(sFillQuoteList()));
 
   // setup Order list
-  _order->addColumn(tr("S/O #"),            _itemColumn, Qt::AlignLeft   );
-  _order->addColumn(tr("Cust. P/O Number"), -1,            Qt::AlignLeft   );
-  _order->addColumn(tr("Ordered"),          _dateColumn,   Qt::AlignCenter );
-  _order->addColumn(tr("Scheduled"),        _dateColumn,   Qt::AlignCenter );
+  _order->addColumn(tr("S/O #"),            _itemColumn,   Qt::AlignLeft,   true,  "cohead_number"   );
+  _order->addColumn(tr("Cust. P/O Number"), -1,            Qt::AlignLeft,   true,  "cohead_custponumber"   );
+  _order->addColumn(tr("Ordered"),          _dateColumn,   Qt::AlignCenter, true,  "cohead_orderdate" );
+  _order->addColumn(tr("Scheduled"),        _dateColumn,   Qt::AlignCenter, true,  "scheduled" );
   if(_privileges->check("MaintainSalesOrders"))
   {
     connect(_order, SIGNAL(valid(bool)), _editOrder, SLOT(setEnabled(bool)));
@@ -178,15 +178,15 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sFillOrderList()));
 
   // setup Invoice list
-  _invoice->addColumn(tr("Posted"),     _ynColumn,    Qt::AlignCenter );
-  _invoice->addColumn(tr("Open"),       _ynColumn,    Qt::AlignCenter );
-  _invoice->addColumn(tr("Invoice #"),  -1, Qt::AlignLeft   );
-  _invoice->addColumn(tr("S/O #"),      _orderColumn, Qt::AlignLeft   );
-  _invoice->addColumn(tr("Invc. Date"), _dateColumn,  Qt::AlignCenter );
-  _invoice->addColumn(tr("Due Date"),   _dateColumn,  Qt::AlignCenter );
-  _invoice->addColumn(tr("Amount"),     _moneyColumn, Qt::AlignRight  );
-  _invoice->addColumn(tr("Balance"),    _moneyColumn, Qt::AlignRight  );
-  _invoice->addColumn(tr("Currency"),   _currencyColumn, Qt::AlignLeft);
+  _invoice->addColumn(tr("Posted"),     _ynColumn,       Qt::AlignCenter, true,  "f_posted" );
+  _invoice->addColumn(tr("Open"),       _ynColumn,       Qt::AlignCenter, true,  "f_open" );
+  _invoice->addColumn(tr("Invoice #"),  -1,              Qt::AlignLeft,   true,  "invcnumber"   );
+  _invoice->addColumn(tr("S/O #"),      _orderColumn,    Qt::AlignLeft,   true,  "ordernumber"   );
+  _invoice->addColumn(tr("Invc. Date"), _dateColumn,     Qt::AlignCenter, true,  "docdate"  );
+  _invoice->addColumn(tr("Due Date"),   _dateColumn,     Qt::AlignCenter, true,  "duedate" );
+  _invoice->addColumn(tr("Amount"),     _moneyColumn,    Qt::AlignRight,  true,  "amount"  );
+  _invoice->addColumn(tr("Balance"),    _moneyColumn,    Qt::AlignRight,  true,  "balance"  );
+  _invoice->addColumn(tr("Currency"),   _currencyColumn, Qt::AlignLeft,   true,  "currAbbr");
   if(_privileges->check("MaintainMiscInvoices"))
   {
     connect(_invoice, SIGNAL(valid(bool)), _editInvoice, SLOT(setEnabled(bool)));
@@ -202,30 +202,30 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   connect(omfgThis, SIGNAL(invoicesUpdated(int, bool)), this, SLOT(sFillInvoiceList()));
 
   // setup CreditMemo list
-  _creditMemo->addColumn(tr("Posted"),    _ynColumn,    Qt::AlignCenter );
-  _creditMemo->addColumn(tr("Open"),      _ynColumn,    Qt::AlignCenter );
-  _creditMemo->addColumn(tr("Type"),      _ynColumn,    Qt::AlignCenter );
-  _creditMemo->addColumn(tr("Memo #"),     -1, Qt::AlignLeft   );
-  _creditMemo->addColumn(tr("Doc. Date"), _dateColumn,  Qt::AlignCenter );
-  _creditMemo->addColumn(tr("Amount"),    _moneyColumn, Qt::AlignRight  );
-  _creditMemo->addColumn(tr("Balance"),   _moneyColumn, Qt::AlignRight  );
-  _creditMemo->addColumn(tr("Currency"),  _currencyColumn, Qt::AlignLeft);
+  _creditMemo->addColumn(tr("Posted"),    _ynColumn,       Qt::AlignCenter, true,  "f_posted" );
+  _creditMemo->addColumn(tr("Open"),      _ynColumn,       Qt::AlignCenter, true,  "f_open" );
+  _creditMemo->addColumn(tr("Type"),      _ynColumn,       Qt::AlignCenter, true,  "type" );
+  _creditMemo->addColumn(tr("Memo #"),     -1,             Qt::AlignLeft,   true,  "docnumber"   );
+  _creditMemo->addColumn(tr("Doc. Date"), _dateColumn,     Qt::AlignCenter, true,  "docdate" );
+  _creditMemo->addColumn(tr("Amount"),    _moneyColumn,    Qt::AlignRight,  true,  "amount"  );
+  _creditMemo->addColumn(tr("Balance"),   _moneyColumn,    Qt::AlignRight,  true,  "balance"  );
+  _creditMemo->addColumn(tr("Currency"),  _currencyColumn, Qt::AlignLeft,   true,  "currAbbr"  );
   if(!_privileges->check("MaintainCreditMemos"))
     _newCreditMemo->setEnabled(false);
   connect(_creditMemo, SIGNAL(valid(bool)), this, SLOT(sCreditMemoSelected(bool)));
   connect(_creditMemo, SIGNAL(itemSelected(int)), _viewCreditMemo, SLOT(animateClick()));
   connect(omfgThis, SIGNAL(creditMemosUpdated()), this, SLOT(sFillCreditMemoList()));
 
-  _payments->addColumn(tr("Type"),         _whsColumn,      Qt::AlignLeft  );
-  _payments->addColumn(tr("Status"),       _whsColumn,      Qt::AlignLeft  );
-  _payments->addColumn(tr("Timestamp"),    _timeDateColumn, Qt::AlignLeft  );
-  _payments->addColumn(tr("Entered By"),   _userColumn,     Qt::AlignLeft  );
-  _payments->addColumn(tr("Total Amount"), _moneyColumn,    Qt::AlignRight );
-  _payments->addColumn(tr("Currency"),     _currencyColumn, Qt::AlignLeft  );
-  _payments->addColumn(tr("Document #"),   -1,              Qt::AlignLeft  );
-  _payments->addColumn(tr("Reference"),    _orderColumn,    Qt::AlignLeft  );
-  _payments->addColumn(tr("Allocated"),    _moneyColumn,    Qt::AlignRight );
-  _payments->addColumn(tr("Currency"),     _currencyColumn, Qt::AlignLeft  );
+  _payments->addColumn(tr("Type"),         _whsColumn,      Qt::AlignLeft,   true,  "type"  );
+  _payments->addColumn(tr("Status"),       _whsColumn,      Qt::AlignLeft,   true,  "status"  );
+  _payments->addColumn(tr("Timestamp"),    _timeDateColumn, Qt::AlignLeft,   true,  "ccpay_transaction_datetime"  );
+  _payments->addColumn(tr("Entered By"),   _userColumn,     Qt::AlignLeft,   true,  "ccpay_by_username"  );
+  _payments->addColumn(tr("Total Amount"), _moneyColumn,    Qt::AlignRight,  true,  "ccpay_amount" );
+  _payments->addColumn(tr("Currency"),     _currencyColumn, Qt::AlignLeft,   true,  "ccpay_currAbbr"  );
+  _payments->addColumn(tr("Document #"),   -1,              Qt::AlignLeft,   true,  "docnumber"  );
+  _payments->addColumn(tr("Reference"),    _orderColumn,    Qt::AlignLeft,   true,  "ccpay_r_ref"  );
+  _payments->addColumn(tr("Allocated"),    _moneyColumn,    Qt::AlignRight,  true,  "allocated" );
+  _payments->addColumn(tr("Currency"),     _currencyColumn, Qt::AlignLeft,   true,  "payco_currAbbr"  );
 
   if (omfgThis->singleCurrency())
   {
@@ -511,7 +511,7 @@ void dspCustomerInformation::sFillQuoteList()
   _quote->clear();
 
   q.prepare( "SELECT DISTINCT quhead_id, quhead_number,"
-             "                quhead_custponumber, formatDate(quhead_quotedate) "
+             "                quhead_custponumber, quhead_quotedate "
              "FROM quhead "
              "WHERE (quhead_cust_id=:cust_id) "
              "ORDER BY quhead_number;" );
@@ -586,9 +586,8 @@ void dspCustomerInformation::sFillARHistory()
 void dspCustomerInformation::sFillOrderList()
 {
   QString sql( "SELECT DISTINCT cohead_id, cohead_number,"
-             "       cohead_custponumber,"
-             "       formatDate(cohead_orderdate) AS f_ordered,"
-             "       formatDate(MIN(coitem_scheddate)) AS f_scheduled "
+             "       cohead_custponumber, cohead_orderdate,"
+             "       MIN(coitem_scheddate) AS scheduled "
              "  FROM cohead LEFT OUTER JOIN coitem ON (coitem_cohead_id=cohead_id) "
              " WHERE ( ");
   if (!_orderShowclosed->isChecked())
@@ -652,14 +651,17 @@ void dspCustomerInformation::sFillInvoiceList()
             "       formatBoolYN(invchead_posted) AS f_posted,"
             "       formatBoolYN(COALESCE(aropen_open, FALSE)) AS f_open,"
             "       text(invchead_invcnumber) AS invcnumber,"
-            "       text(invchead_ordernumber) AS invchead_ordernumber,"
-            "       formatDate(invchead_invcdate) AS f_docdate,"
-            "       formatdate(aropen_duedate) AS f_duedate,"
-            "       formatMoney(COALESCE(aropen_amount,0)) AS f_amount,"
-            "       formatMoney(COALESCE(aropen_amount - aropen_paid,0)) AS f_balance,"
-            "       currConcat(COALESCE(aropen_curr_id,-1)) AS f_curr,"
-            "       ((COALESCE(aropen_duedate,current_date) < current_date) "
-            "       AND COALESCE(aropen_open,FALSE)) AS pastdue "
+            "       text(invchead_ordernumber) AS ordernumber,"
+            "       invchead_invcdate AS docdate,"
+            "       aropen_duedate AS duedate,"
+            "       COALESCE(aropen_amount,0) AS amount,"
+            "       COALESCE(aropen_amount - aropen_paid,0) AS balance,"
+            "       currConcat(COALESCE(aropen_curr_id,-1)) AS currAbbr,"
+            "       CASE WHEN ((COALESCE(aropen_duedate,current_date) < current_date) "
+            "                   AND COALESCE(aropen_open,FALSE)) THEN 'warning' "
+            "       END AS qtforegroundrole,"
+            "       'curr' AS amount_xtnumericrole,"
+            "       'curr' AS balance_xtnumericrole "
             "  FROM invchead LEFT OUTER JOIN aropen"
             "         ON (aropen_docnumber=invchead_invcnumber"
             "         AND aropen_doctype='I'"
@@ -674,14 +676,17 @@ void dspCustomerInformation::sFillInvoiceList()
             "       formatBoolYN(true) AS f_posted,"
             "       formatBoolYN(aropen_open) AS f_open,"
             "       text(aropen_docnumber) AS invcnumber,"
-            "       aropen_ordernumber,"
-            "       formatDate(aropen_docdate) AS f_docdate,"
-            "       formatDate(aropen_duedate) AS f_duedate,"
-            "       formatMoney(aropen_amount) AS f_amount,"
-            "       formatMoney(aropen_amount - aropen_paid) AS f_balance,"
-            "       currConcat(aropen_curr_id) AS f_curr,"
-            "       ((COALESCE(aropen_duedate,current_date) < current_date) "
-            "       AND aropen_open) AS pastdue "
+            "       aropen_ordernumber AS ordernumber,"
+            "       aropen_docdate AS docdate,"
+            "       aropen_duedate AS duedate,"
+            "       aropen_amount AS amount,"
+            "       (aropen_amount - aropen_paid) AS balance,"
+            "       currConcat(aropen_curr_id) AS currAbbr,"
+            "       CASE WHEN ((COALESCE(aropen_duedate,current_date) < current_date) "
+            "                   AND aropen_open) THEN 'warning' "
+            "       END AS qtforegroundrole,"
+            "       'curr' AS amount_xtnumericrole,"
+            "       'curr' AS balance_xtnumericrole "
             "  FROM aropen LEFT OUTER JOIN invchead"
             "         ON (aropen_docnumber=invchead_invcnumber"
             "         AND aropen_doctype='I'"
@@ -698,27 +703,7 @@ void dspCustomerInformation::sFillInvoiceList()
   q.bindValue(":cust_id", _cust->id());
   q.exec();
   _invoice->clear();
-//  _invoice->populate(q, true);
-
-  XTreeWidgetItem *last = 0;
-  while (q.next())
-  {
-    last = new XTreeWidgetItem(_invoice, last, q.value("id").toInt(),
-                               q.value("altId").toInt(),
-                               q.value("f_posted"),
-                               q.value("f_open"),
-                               q.value("invcnumber"),
-                               q.value("invchead_ordernumber"),
-                               q.value("f_docdate"),
-                               q.value("f_duedate"),
-                               q.value("f_amount"),
-                               q.value("f_balance"),
-             q.value("f_curr") );
-
-    if (q.value("pastdue").toBool())
-      last->setTextColor(5, "red");
-  }
-
+  _invoice->populate(q, true);
 }
 
 void dspCustomerInformation::sNewInvoice()
@@ -790,22 +775,26 @@ void dspCustomerInformation::sFillCreditMemoList()
   _printCreditMemo->setEnabled(FALSE);
 
   QString sql( "SELECT cmhead_id, -1,"
-             "       formatBoolYN(false), '', '',"
+             "       formatBoolYN(false) AS f_posted, '' AS f_open, '' AS type,"
              "       text(cmhead_number) AS docnumber,"
-             "       formatDate(cmhead_docdate),"
-             "       '', '', ''"
+             "       cmhead_docdate AS docdate,"
+             "       0 AS amount, 0 AS balance, '' AS currAbbr,"
+             "       'curr' AS amount_xtnumericrole,"
+             "       'curr' AS balance_xtnumericrole "
              "  FROM cmhead"
              " WHERE ((NOT cmhead_posted)"
              "   AND  (cmhead_cust_id=:cust_id)) "
              "UNION "
              "SELECT aropen_id, -2,"
-             "       formatBoolYN(true), formatBoolYN(aropen_open),"
-             "       :creditmemo,"
+             "       formatBoolYN(true) AS f_posted, formatBoolYN(aropen_open) AS f_open,"
+             "       :creditmemo AS type,"
              "       text(aropen_docnumber) AS docnumber,"
-             "       formatDate(aropen_docdate),"
-             "       formatMoney(aropen_amount),"
-             "       formatMoney(aropen_amount - aropen_paid),"
-             "       currConcat(aropen_curr_id)"
+             "       aropen_docdate AS docdate,"
+             "       aropen_amount AS amount,"
+             "       (aropen_amount - aropen_paid) AS balance,"
+             "       currConcat(aropen_curr_id) AS currAbbr,"
+             "       'curr' AS amount_xtnumericrole,"
+             "       'curr' AS balance_xtnumericrole "
              "  FROM aropen, cmhead "
              " WHERE ((aropen_doctype = 'C')"
              "   AND  (aropen_docnumber=cmhead_number) ");
@@ -815,16 +804,18 @@ void dspCustomerInformation::sFillCreditMemoList()
   sql +=     "   AND  (aropen_cust_id=:cust_id) ) "
              "UNION "
              "SELECT aropen_id, -3,"
-             "       formatBoolYN(true), formatBoolYN(aropen_open),"
+             "       formatBoolYN(true) AS f_posted, formatBoolYN(aropen_open) AS f_open,"
              "       CASE WHEN (aropen_doctype='C') THEN :creditmemo"
              "            WHEN (aropen_doctype='R') THEN :cashdeposit"
              "            else aropen_doctype"
-             "       END,"
+             "       END AS type,"
              "       text(aropen_docnumber) AS docnumber,"
-             "       formatDate(aropen_docdate),"
-             "       formatMoney(aropen_amount),"
-             "       formatMoney(aropen_amount - aropen_paid),"
-             "       currConcat(aropen_curr_id)"
+             "       aropen_docdate AS docdate,"
+             "       aropen_amount AS amount,"
+             "       (aropen_amount - aropen_paid) AS balance,"
+             "       currConcat(aropen_curr_id) AS currAbbr,"
+             "       'curr' AS amount_xtnumericrole,"
+             "       'curr' AS balance_xtnumericrole "
              "  FROM aropen "
              " WHERE ((aropen_doctype IN ('C', 'R'))"
              "   AND  (aropen_cust_id=:cust_id) ";
@@ -1011,21 +1002,22 @@ void dspCustomerInformation::sFillPaymentsList()
             "            WHEN (ccpay_type='C') THEN :charge"
             "            WHEN (ccpay_type='R') THEN :refund"
             "            ELSE ccpay_type"
-            "       END AS f_type,"
+            "       END AS type,"
             "       CASE WHEN (ccpay_status='A') THEN :authorized"
             "            WHEN (ccpay_status='C') THEN :approved"
             "            WHEN (ccpay_status='D') THEN :declined"
             "            WHEN (ccpay_status='V') THEN :voided"
             "            WHEN (ccpay_status='X') THEN :noapproval"
             "            ELSE ccpay_status"
-            "       END AS f_status,"
-            "       formatDateTime(ccpay_transaction_datetime) AS f_datetime,"
-            "       ccpay_by_username, ccpay_amount,"
+            "       END AS status,"
+            "       ccpay_transaction_datetime, ccpay_by_username, ccpay_amount,"
             "       currConcat(ccpay_curr_id) AS ccpay_currAbbr,"
-            "       COALESCE(cohead_number, ccpay_order_number),"
+            "       COALESCE(cohead_number, ccpay_order_number) AS docnumber,"
             "       ccpay_r_ref,"
-            "       ABS(COALESCE(payco_amount, ccpay_amount)),"
-            "       currConcat(COALESCE(payco_curr_id, ccpay_curr_id)) AS payco_currAbbr"
+            "       ABS(COALESCE(payco_amount, ccpay_amount)) AS allocated,"
+            "       currConcat(COALESCE(payco_curr_id, ccpay_curr_id)) AS payco_currAbbr,"
+            "       'curr' AS ccpay_amount_xtnumericrole,"
+            "       'curr' AS allocated_xtnumericrole "
             "  FROM ccpay LEFT OUTER JOIN "
             "       (payco JOIN cohead ON (payco_cohead_id=cohead_id))"
             "         ON (payco_ccpay_id=ccpay_id)"

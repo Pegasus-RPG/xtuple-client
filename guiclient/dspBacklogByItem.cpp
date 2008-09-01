@@ -70,7 +70,7 @@
 #include "salesOrderItem.h"
 #include "printPackingList.h"
 
-#define AMOUNT_COL	8
+#define AMOUNT_COL	9
 
 dspBacklogByItem::dspBacklogByItem(QWidget* parent, const char* name, Qt::WFlags fl)
     : XMainWindow(parent, name, fl)
@@ -89,17 +89,17 @@ dspBacklogByItem::dspBacklogByItem(QWidget* parent, const char* name, Qt::WFlags
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 
-  _soitem->addColumn(tr("S/O #"),            _orderColumn,      Qt::AlignLeft   );
-  _soitem->addColumn(tr("#"),                _seqColumn,        Qt::AlignCenter );
-  _soitem->addColumn(tr("Customer"),         -1,                Qt::AlignLeft   );
-  _soitem->addColumn(tr("Ordered"),          _dateColumn,       Qt::AlignCenter );
-  _soitem->addColumn(tr("Scheduled"),        _dateColumn,       Qt::AlignCenter );
-  _soitem->addColumn(tr("Qty. UOM"),         _qtyColumn,        Qt::AlignRight  );
-  _soitem->addColumn(tr("Ordered"),          _qtyColumn,        Qt::AlignRight  );
-  _soitem->addColumn(tr("Shipped"),          _qtyColumn,        Qt::AlignRight  );
-  _soitem->addColumn(tr("Balance"),          _qtyColumn,        Qt::AlignRight  );
+  _soitem->addColumn(tr("S/O #"),            _orderColumn,      Qt::AlignLeft,   true,  "cohead_number"   );
+  _soitem->addColumn(tr("#"),                _seqColumn,        Qt::AlignCenter, true,  "coitem_linenumber" );
+  _soitem->addColumn(tr("Customer"),         -1,                Qt::AlignLeft,   true,  "cust_name"   );
+  _soitem->addColumn(tr("Ordered"),          _dateColumn,       Qt::AlignCenter, true,  "cohead_orderdate" );
+  _soitem->addColumn(tr("Scheduled"),        _dateColumn,       Qt::AlignCenter, true,  "coitem_scheddate" );
+  _soitem->addColumn(tr("Qty. UOM"),         _qtyColumn,        Qt::AlignRight,  true,  "uom_name"  );
+  _soitem->addColumn(tr("Ordered"),          _qtyColumn,        Qt::AlignRight,  true,  "coitem_qtyord"  );
+  _soitem->addColumn(tr("Shipped"),          _qtyColumn,        Qt::AlignRight,  true,  "coitem_qtyshipped"  );
+  _soitem->addColumn(tr("Balance"),          _qtyColumn,        Qt::AlignRight,  true,  "qtybalance"  );
   if (_privileges->check("ViewCustomerPrices") || _privileges->check("MaintainCustomerPrices"))
-    _soitem->addColumn(tr("Ext. Price"),     _bigMoneyColumn,   Qt::AlignRight  );
+    _soitem->addColumn(tr("Ext. Price"),     _bigMoneyColumn,   Qt::AlignRight,  true,  "baseextpricebalance"  );
 
   _showPrices->setEnabled(_privileges->check("ViewCustomerPrices") || _privileges->check("MaintainCustomerPrices"));
 
@@ -156,19 +156,19 @@ void dspBacklogByItem::sPrint()
 
 void dspBacklogByItem::sEditOrder()
 {
-  salesOrder::editSalesOrder(_soitem->id(), false);
+  salesOrder::editSalesOrder(_soitem->altId(), false);
 }
 
 void dspBacklogByItem::sViewOrder()
 {
-  salesOrder::viewSalesOrder(_soitem->id());
+  salesOrder::viewSalesOrder(_soitem->altId());
 }
 
 void dspBacklogByItem::sEditItem()
 {
   ParameterList params;
   params.append("mode", "edit");
-  params.append("soitem_id", _soitem->altId());
+  params.append("soitem_id", _soitem->id());
       
   salesOrderItem newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -179,7 +179,7 @@ void dspBacklogByItem::sViewItem()
 {
   ParameterList params;
   params.append("mode", "view");
-  params.append("soitem_id", _soitem->altId());
+  params.append("soitem_id", _soitem->id());
       
   salesOrderItem newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -189,7 +189,7 @@ void dspBacklogByItem::sViewItem()
 void dspBacklogByItem::sPrintPackingList()
 {
   ParameterList params;
-  params.append("sohead_id", _soitem->id());
+  params.append("sohead_id", _soitem->altId());
 
   printPackingList newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -239,34 +239,6 @@ void dspBacklogByItem::sFillList()
     params.append("openOnly");
     params.append("orderByScheddate");
     q = mql.toQuery(params);
-
-    XTreeWidgetItem *last = 0;
-    double totalBacklog = 0.0;
-    while (q.next())
-    {
-      last = new XTreeWidgetItem(_soitem, last,
-				 q.value("cohead_id").toInt(),
-				 q.value("coitem_id").toInt(),
-				 q.value("cohead_number"),
-				 q.value("coitem_linenumber"),
-				 q.value("cust_name"),
-				 formatDate(q.value("cohead_orderdate").toDate()),
-				 formatDate(q.value("coitem_scheddate").toDate()),
-         q.value("uom_name"),
-				 formatQty(q.value("coitem_qtyord").toDouble()),
-				 formatQty(q.value("coitem_qtyshipped").toDouble()),
-				 formatQty(q.value("qtybalance").toDouble()),
-				 formatMoney(q.value("baseextpricebalance").toDouble()) );
-      totalBacklog += q.value("baseextpricebalance").toDouble();
-    }
-
-    if (_showPrices->isChecked())
-    {
-      last = new XTreeWidgetItem(_soitem, last, -1, -1,
-				 "", "", tr("Total Backlog"), "", "", "", "", "",
-				 formatMoney(totalBacklog) );
-    }
+    _soitem->populate(q, true);
   }
-  else
-    _soitem->clear();
 }

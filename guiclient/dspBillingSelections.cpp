@@ -96,15 +96,15 @@ dspBillingSelections::dspBillingSelections(QWidget* parent, const char* name, Qt
 
   statusBar()->hide();
   
-  _cobill->addColumn(tr("Order #"),    _orderColumn,  Qt::AlignLeft   );
-  _cobill->addColumn(tr("Cust. #"),    _itemColumn,   Qt::AlignLeft   );
-  _cobill->addColumn(tr("Name"),        -1,           Qt::AlignLeft   );
-  _cobill->addColumn(tr("Subtotal"),   _priceColumn,  Qt::AlignLeft, false );
-  _cobill->addColumn(tr("Misc."),      _priceColumn,  Qt::AlignLeft, false ); 
-  _cobill->addColumn(tr("Freight"),    _priceColumn,  Qt::AlignLeft, false );
-  _cobill->addColumn(tr("Tax"),        _priceColumn,  Qt::AlignLeft, false );
-  _cobill->addColumn(tr("Total"),      _priceColumn,  Qt::AlignLeft, false );
-  _cobill->addColumn(tr("Payment rec'd"), _priceColumn, Qt::AlignLeft, false );
+  _cobill->addColumn(tr("Order #"),       _orderColumn,  Qt::AlignLeft,   true,  "cohead_number"   );
+  _cobill->addColumn(tr("Cust. #"),       _itemColumn,   Qt::AlignLeft,   true,  "cust_number"   );
+  _cobill->addColumn(tr("Name"),          -1,            Qt::AlignLeft,   true,  "cust_name"   );
+  _cobill->addColumn(tr("Subtotal"),      _priceColumn,  Qt::AlignLeft,   false, "subtotal" );
+  _cobill->addColumn(tr("Misc."),         _priceColumn,  Qt::AlignLeft,   false, "cobmisc_misc" ); 
+  _cobill->addColumn(tr("Freight"),       _priceColumn,  Qt::AlignLeft,   false, "cobmisc_freight" );
+  _cobill->addColumn(tr("Tax"),           _priceColumn,  Qt::AlignLeft,   false, "cobmisc_tax" );
+  _cobill->addColumn(tr("Total"),         _priceColumn,  Qt::AlignLeft,   false, "total" );
+  _cobill->addColumn(tr("Payment rec'd"), _priceColumn,  Qt::AlignLeft,   false, "payment" );
 
   if (_privileges->check("PostARDocuments"))
     connect(_cobill, SIGNAL(valid(bool)), _post, SLOT(setEnabled(bool)));
@@ -147,11 +147,15 @@ void dspBillingSelections::sFillList()
 {
   q.exec( "SELECT cobmisc_id, cohead_id,"
           "       cohead_number, cust_number, cust_name,"
-          "       formatmoney(sum(round(coitem_price*cobill_qty,2))),"
-          "       formatmoney(cobmisc_misc),formatmoney(cobmisc_freight),"
-          "       formatmoney(cobmisc_tax),"
-          "       formatmoney(sum(round(coitem_price*cobill_qty,2))+cobmisc_misc+cobmisc_freight+cobmisc_tax),"
-          "       formatmoney(cobmisc_payment)"
+          "       sum(round(coitem_price*cobill_qty,2)) AS subtotal,"
+          "       cobmisc_misc, cobmisc_freight, cobmisc_tax, cobmisc_payment,"
+          "       (sum(round(coitem_price*cobill_qty,2))+cobmisc_misc+cobmisc_freight+cobmisc_tax) AS total,"
+          "       'curr' AS subtotal_xtnumericrole,"
+          "       'curr' AS total_xtnumericrole,"
+          "       'curr' AS cobmisc_misc_xtnumericrole,"
+          "       'curr' AS cobmisc_freight_xtnumericrole,"
+          "       'curr' AS cobmisc_tax_xtnumericrole,"
+          "       'curr' AS cobmisc_payment_xtnumericrole "
           "  FROM cobmisc, cohead, cust, coitem, cobill "
           " WHERE((cobmisc_cohead_id=cohead_id)"
           "   AND (cohead_cust_id=cust_id)"
