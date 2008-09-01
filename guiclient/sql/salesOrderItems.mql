@@ -1,4 +1,5 @@
-SELECT coitem.*, cohead.*,
+SELECT coitem_id, cohead_id,
+       coitem.*, cohead.*,
        cust_number, cust_name,
        item_number, item_descrip1, (item_descrip1 || ' ' || item_descrip2) AS itemdescription,
        uom_name,
@@ -23,7 +24,24 @@ SELECT coitem.*, cohead.*,
        round((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) *
                    (coitem_price / coitem_price_invuomratio), 2) AS extpricebalance,
        round((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) *
-                   (currtobase(cohead_curr_id, coitem_price, cohead_orderdate) / coitem_price_invuomratio), 2) AS baseextpricebalance
+                   (currtobase(cohead_curr_id, coitem_price, cohead_orderdate) / coitem_price_invuomratio), 2) AS baseextpricebalance,
+       currconcat(cohead_curr_id) AS currAbbr,
+       'qty' AS coitem_qtyord_xtnumericrole,
+       'qty' AS coitem_qtyshipped_xtnumericrole,
+       'qty' AS coitem_qtyreturned_xtnumericrole,
+       'qty' AS qtybalance_xtnumericrole,
+       'salesprice' AS coitem_price_xtnumericrole,
+       'salesprice' AS baseunitprice_xtnumericrole,
+       'curr' AS extprice_xtnumericrole,
+       'curr' AS baseextprice_xtnumericrole,
+       'curr' AS extpricebalance_xtnumericrole,
+       'curr' AS baseextpricebalance_xtnumericrole,
+       0 AS coitem_qtyord_xttotalrole,
+       0 AS coitem_qtyshipped_xttotalrole,
+       0 AS coitem_qtyreturned_xttotalrole,
+       0 AS qtybalance_xttotalrole,
+       0 AS baseextprice_xttotalrole,
+       0 AS baseextpricebalance_xttotalrole
 FROM coitem JOIN cohead ON (cohead_id=coitem_cohead_id)
             JOIN cust ON (cust_id=cohead_cust_id)
             JOIN itemsite ON (itemsite_id=coitem_itemsite_id)
