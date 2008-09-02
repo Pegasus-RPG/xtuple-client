@@ -550,7 +550,7 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
     q.exec();
     if(q.first() && q.value("id").toInt() == _soitemid)
     {
-      if(cView == _mode || cViewQuote == _mode)
+      if(cView == _initialMode || cViewQuote == _initialMode)
         _next->setEnabled(false);
       else
         _next->setText(tr("New"));
@@ -2575,7 +2575,7 @@ void salesOrderItem::sNext()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-  else if(cView != _mode && cViewQuote != _mode)
+  else if(cView != _initialMode && cViewQuote != _initialMode)
   {
     ParameterList params;
     if(_custid != -1)
