@@ -1,5 +1,5 @@
-SELECT type, aropen_id, applyid,
-       sortdate, sortnumber,
+SELECT aropen_id, applyid,
+       sortdate, sortnumber, type,
        docnumber, f_open, documenttype,
        docdate, duedate, amount, balance, base_balance, currAbbr,
        'curr' AS amount_xtnumericrole,
@@ -31,7 +31,7 @@ SELECT type, aropen_id, applyid,
     <? endif ?> )
 
     UNION
-    SELECT 1 AS type, aropen_id, arapply_source_aropen_id AS applyid,
+    SELECT 1 AS type, -1 AS aropen_id, arapply_source_aropen_id AS applyid,
            aropen_docdate AS sortdate, aropen_docnumber AS sortnumber,
            CASE WHEN (arapply_source_doctype IN ('C','R')) THEN arapply_source_docnumber
                 WHEN (arapply_source_doctype='K') THEN arapply_refnumber
@@ -67,7 +67,7 @@ SELECT type, aropen_id, applyid,
     <? endif ?> )
 
     UNION
-    SELECT 2 AS type, aropen_id, arapply_target_aropen_id AS applyid,
+    SELECT 2 AS type, -1 AS aropen_id, arapply_target_aropen_id AS applyid,
            aropen_docdate AS sortdate, aropen_docnumber AS sortnumber,
            arapply_target_docnumber AS docnumber,
            '' AS f_open,
@@ -91,7 +91,7 @@ SELECT type, aropen_id, applyid,
     <? endif ?> )
 
     UNION
-    SELECT 0 AS type, invchead_id, -1 AS applyid,
+    SELECT 0 AS type, invchead_id AS aropen_id, -1 AS applyid,
            invchead_invcdate AS sortdate, invchead_invcnumber AS sortnumber,
            invchead_invcnumber AS docnumber,
            formatBoolYN(false) AS f_open,
