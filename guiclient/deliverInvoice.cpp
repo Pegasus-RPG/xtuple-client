@@ -167,7 +167,7 @@ void deliverInvoice::sSubmit()
     q.bindValue(":ccAddress", _cc->text());
     q.bindValue(":subject", _subject->text().replace("</docnumber>", invoiceNumber).replace("</doctype>", "Invc"));
     q.bindValue(":fileName", _fileName->text().replace("</docnumber>", invoiceNumber).replace("</doctype>", "Invc"));
-    q.bindValue(":emailBody", _emailBody->text().replace("</docnumber>", invoiceNumber).replace("</doctype>", "Invc"));
+    q.bindValue(":emailBody", _emailBody->toPlainText().replace("</docnumber>", invoiceNumber).replace("</doctype>", "Invc"));
     q.bindValue(":emailHTML", QVariant(_emailHTML->isChecked(), 0));
     q.exec();
     if (q.first())
@@ -247,7 +247,7 @@ void deliverInvoice::sHandlePoheadid()
       _submit->setEnabled(TRUE);
       _email->setText(q.value("cust_ediemail").toString());
       _cc->setText(q.value("cust_edicc").toString());
-      _emailBody->setText(q.value("cust_ediemailbody").toString());
+      _emailBody->setPlainText(q.value("cust_ediemailbody").toString());
       _subject->setText(q.value("cust_edisubject").toString());
       _fileName->setText(q.value("cust_edifilename").toString());
       _emailHTML->setChecked(q.value("cust_ediemailhtml").toBool());

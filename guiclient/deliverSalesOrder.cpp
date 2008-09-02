@@ -169,7 +169,7 @@ void deliverSalesOrder::sSubmit()
     q.bindValue(":ccAddress", _cc->text());
     q.bindValue(":subject", _subject->text().replace("</docnumber>", soNumber).replace("</doctype>", "SO"));
     q.bindValue(":fileName", _fileName->text().replace("</docnumber>", soNumber).replace("</doctype>", "SO"));
-    q.bindValue(":emailBody", _emailBody->text().replace("</docnumber>", soNumber).replace("</doctype>", "SO"));
+    q.bindValue(":emailBody", _emailBody->toPlainText().replace("</docnumber>", soNumber).replace("</doctype>", "SO"));
     q.bindValue(":emailHTML", QVariant(_emailHTML->isChecked(), 0));
     q.exec();
     if (q.first())
@@ -229,7 +229,7 @@ void deliverSalesOrder::sHandleSoheadid()
     {
       _email->setText(q.value("cust_soediemail").toString());
       _cc->setText(q.value("cust_soedicc").toString());
-      _emailBody->setText(q.value("cust_soediemailbody").toString());
+      _emailBody->setPlainText(q.value("cust_soediemailbody").toString());
       _subject->setText(q.value("cust_soedisubject").toString());
       _fileName->setText(q.value("cust_soedifilename").toString());
       _emailHTML->setChecked(q.value("cust_soediemailhtml").toBool());

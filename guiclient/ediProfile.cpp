@@ -221,7 +221,7 @@ bool ediProfile::save()
       q.bindValue(":ediprofile_type", "email");
       q.bindValue(":ediprofile_option1", _emailTo->text());
       q.bindValue(":ediprofile_option2", _emailSubject->text());
-      q.bindValue(":ediprofile_option3", _emailBody->text());
+      q.bindValue(":ediprofile_option3", _emailBody->toPlainText());
       q.bindValue(":ediprofile_option4", _emailCC->text());
       break;
     default:
@@ -344,7 +344,7 @@ void ediProfile::populate()
       _stack->raiseWidget(1);
       _emailTo->setText(q.value("ediprofile_option1").toString());
       _emailSubject->setText(q.value("ediprofile_option2").toString());
-      _emailBody->setText(q.value("ediprofile_option3").toString());
+      _emailBody->setPlainText(q.value("ediprofile_option3").toString());
       _emailCC->setText(q.value("ediprofile_option4").toString());
     }
     else

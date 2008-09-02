@@ -146,7 +146,7 @@ void deliverPurchaseOrder::sSubmit()
   q.bindValue(":ccAddress", _cc->text());
   q.bindValue(":subject", _subject->text().replace("</docnumber>", _po->poNumber()).replace("</doctype>", "PO"));
   q.bindValue(":fileName", _fileName->text().replace("</docnumber>", _po->poNumber()).replace("</doctype>", "PO"));
-  q.bindValue(":emailBody", _emailBody->text().replace("</docnumber>", _po->poNumber()).replace("</doctype>", "PO"));
+  q.bindValue(":emailBody", _emailBody->toPlainText().replace("</docnumber>", _po->poNumber()).replace("</doctype>", "PO"));
   q.exec();
   if (q.first())
   {
@@ -213,7 +213,7 @@ void deliverPurchaseOrder::sHandlePoheadid(int pPoheadid)
       _submit->setEnabled(TRUE);
       _email->setText(q.value("vend_ediemail"));
       _cc->setText(q.value("vend_edicc").toString());
-      _emailBody->setText(q.value("vend_ediemailbody").toString());
+      _emailBody->setPlainText(q.value("vend_ediemailbody").toString());
       _subject->setText(q.value("vend_edisubject"));
       _fileName->setText(q.value("vend_edifilename"));
     }

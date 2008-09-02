@@ -681,7 +681,7 @@ void customer::sSave()
   q.bindValue(":cust_ediemail", _ediEmail->text().stripWhiteSpace());
   q.bindValue(":cust_edisubject", _ediSubject->text().stripWhiteSpace());
   q.bindValue(":cust_edifilename", _ediFilename->text().stripWhiteSpace());
-  q.bindValue(":cust_ediemailbody", _ediEmailBody->text().stripWhiteSpace());
+  q.bindValue(":cust_ediemailbody", _ediEmailBody->toPlainText().stripWhiteSpace());
   q.bindValue(":cust_edicc", _ediCC->text().stripWhiteSpace());
   q.bindValue(":cust_ediemailhtml", QVariant(_ediEmailHTML->isChecked(), 0));
   
@@ -689,7 +689,7 @@ void customer::sSave()
   q.bindValue(":cust_soediemail", _soEdiEmail->text().stripWhiteSpace());
   q.bindValue(":cust_soedisubject", _soEdiSubject->text().stripWhiteSpace());
   q.bindValue(":cust_soedifilename", _soEdiFilename->text().stripWhiteSpace());
-  q.bindValue(":cust_soediemailbody", _soEdiEmailBody->text().stripWhiteSpace());
+  q.bindValue(":cust_soediemailbody", _soEdiEmailBody->toPlainText().stripWhiteSpace());
   q.bindValue(":cust_soedicc", _soEdiCC->text().stripWhiteSpace());
   q.bindValue(":cust_soediemailhtml", QVariant(_soEdiEmailHTML->isChecked(), 0));
 
@@ -1234,7 +1234,7 @@ void customer::populate()
     _ediEmail->setText(cust.value("cust_ediemail"));
     _ediSubject->setText(cust.value("cust_edisubject"));
     _ediFilename->setText(cust.value("cust_edifilename"));
-    _ediEmailBody->setText(cust.value("cust_ediemailbody").toString());
+    _ediEmailBody->setPlainText(cust.value("cust_ediemailbody").toString());
     _ediCC->setText(cust.value("cust_edicc").toString());
     _ediEmailHTML->setChecked(cust.value("cust_ediemailhtml").toBool());
     
@@ -1250,7 +1250,7 @@ void customer::populate()
     _soEdiEmail->setText(cust.value("cust_soediemail"));
     _soEdiSubject->setText(cust.value("cust_soedisubject"));
     _soEdiFilename->setText(cust.value("cust_soedifilename"));
-    _soEdiEmailBody->setText(cust.value("cust_soediemailbody").toString());
+    _soEdiEmailBody->setPlainText(cust.value("cust_soediemailbody").toString());
     _soEdiCC->setText(cust.value("cust_soedicc").toString());
     _soEdiEmailHTML->setChecked(cust.value("cust_soediemailhtml").toBool());
 

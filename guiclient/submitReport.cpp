@@ -167,7 +167,7 @@ enum SetResponse submitReport::set(ParameterList &pParams)
   
   param = pParams.value("responseBody", &valid);
   if (valid)
-    _responseBody->setText(param.toString());
+    _responseBody->setPlainText(param.toString());
 
   return NoError;
 }
@@ -202,7 +202,7 @@ void submitReport::sSubmit()
   q.bindValue(":reportName", _cachedReportName);
   q.bindValue(":fromEmail", _fromEmail->text());
   q.bindValue(":emailAddress", _email->text());
-  q.bindValue(":responseBody", _responseBody->text());
+  q.bindValue(":responseBody", _responseBody->toPlainText());
   q.exec();
   if (q.first())
   {

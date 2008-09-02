@@ -1,7 +1,4 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>submitReport</class>
  <widget class="QDialog" name="submitReport" >
   <property name="geometry" >
@@ -16,26 +13,26 @@
    <string>Submit Report to Batch Manager</string>
   </property>
   <layout class="QVBoxLayout" >
-   <property name="margin" >
+   <property name="spacing" >
     <number>5</number>
    </property>
-   <property name="spacing" >
+   <property name="margin" >
     <number>5</number>
    </property>
    <item>
     <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
      <property name="spacing" >
       <number>7</number>
      </property>
+     <property name="margin" >
+      <number>0</number>
+     </property>
      <item>
       <layout class="QHBoxLayout" >
-       <property name="margin" >
+       <property name="spacing" >
         <number>0</number>
        </property>
-       <property name="spacing" >
+       <property name="margin" >
         <number>0</number>
        </property>
        <item>
@@ -44,11 +41,11 @@
           <string>Scheduled</string>
          </property>
          <layout class="QVBoxLayout" >
-          <property name="margin" >
-           <number>5</number>
-          </property>
           <property name="spacing" >
            <number>0</number>
+          </property>
+          <property name="margin" >
+           <number>5</number>
           </property>
           <item>
            <widget class="QRadioButton" name="_asap" >
@@ -62,11 +59,11 @@
           </item>
           <item>
            <layout class="QHBoxLayout" >
-            <property name="margin" >
-             <number>0</number>
-            </property>
             <property name="spacing" >
              <number>5</number>
+            </property>
+            <property name="margin" >
+             <number>0</number>
             </property>
             <item>
              <widget class="QRadioButton" name="_scheduled" >
@@ -102,7 +99,7 @@
          <property name="sizeType" >
           <enum>QSizePolicy::Expanding</enum>
          </property>
-         <property name="sizeHint" >
+         <property name="sizeHint" stdset="0" >
           <size>
            <width>36</width>
            <height>10</height>
@@ -114,19 +111,19 @@
      </item>
      <item>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
+       <property name="spacing" >
         <number>0</number>
        </property>
-       <property name="spacing" >
+       <property name="margin" >
         <number>0</number>
        </property>
        <item>
         <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>5</number>
+         </property>
+         <property name="margin" >
+          <number>0</number>
          </property>
          <item>
           <widget class="QPushButton" name="_close" >
@@ -164,7 +161,7 @@
          <property name="sizeType" >
           <enum>QSizePolicy::Preferred</enum>
          </property>
-         <property name="sizeHint" >
+         <property name="sizeHint" stdset="0" >
           <size>
            <width>10</width>
            <height>0</height>
@@ -187,9 +184,7 @@
      <item row="0" column="1" >
       <widget class="QLabel" name="_documentName" >
        <property name="sizePolicy" >
-        <sizepolicy>
-         <hsizetype>7</hsizetype>
-         <vsizetype>5</vsizetype>
+        <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -214,10 +209,10 @@
      </item>
      <item row="1" column="1" >
       <layout class="QHBoxLayout" >
-       <property name="margin" >
+       <property name="spacing" >
         <number>0</number>
        </property>
-       <property name="spacing" >
+       <property name="margin" >
         <number>0</number>
        </property>
        <item>
@@ -231,7 +226,7 @@
          <property name="sizeType" >
           <enum>QSizePolicy::Expanding</enum>
          </property>
-         <property name="sizeHint" >
+         <property name="sizeHint" stdset="0" >
           <size>
            <width>76</width>
            <height>10</height>
@@ -263,10 +258,10 @@
      </item>
      <item row="2" column="1" >
       <layout class="QHBoxLayout" >
-       <property name="margin" >
+       <property name="spacing" >
         <number>0</number>
        </property>
-       <property name="spacing" >
+       <property name="margin" >
         <number>0</number>
        </property>
        <item>
@@ -280,7 +275,7 @@
          <property name="sizeType" >
           <enum>QSizePolicy::Expanding</enum>
          </property>
-         <property name="sizeHint" >
+         <property name="sizeHint" stdset="0" >
           <size>
            <width>76</width>
            <height>10</height>
@@ -294,10 +289,10 @@
    </item>
    <item>
     <layout class="QVBoxLayout" >
-     <property name="margin" >
+     <property name="spacing" >
       <number>0</number>
      </property>
-     <property name="spacing" >
+     <property name="margin" >
       <number>0</number>
      </property>
      <item>
@@ -321,18 +316,14 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
+   <class>DLineEdit</class>
+   <extends>QWidget</extends>
+   <header>datecluster.h</header>
+  </customwidget>
+  <customwidget>
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>DLineEdit</class>
-   <extends>XLineEdit</extends>
-   <header>datecluster.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -345,7 +336,6 @@
   <tabstop>_submit</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
- <includes/>
  <resources/>
  <connections>
   <connection>
