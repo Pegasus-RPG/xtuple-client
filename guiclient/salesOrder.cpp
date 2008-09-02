@@ -682,49 +682,52 @@ bool salesOrder::save(bool partial)
     return FALSE;
   }
 
-  if (_usesPos && !partial)
+  if (ISORDER(_mode))
   {
-    if (_custPONumber->text().stripWhiteSpace().length() == 0)
+    if (_usesPos && !partial)
     {
-      QMessageBox::warning( this, tr("Cannot Save Sales Order"),
-                            tr("You must enter a Customer P/O for this Sales Order before you may save it.") );
-      _custPONumber->setFocus();
-      return FALSE;
-    }
-
-    if (!_blanketPos)
-    {
-      q.prepare( "SELECT cohead_id"
-                 "  FROM cohead"
-                 " WHERE ((cohead_cust_id=:cohead_cust_id)"
-                 "   AND  (cohead_id<>:cohead_id)"
-                 "   AND  (UPPER(cohead_custponumber) = UPPER(:cohead_custponumber)) )"
-                 " UNION "
-                 "SELECT quhead_id"
-                 "  FROM quhead"
-                 " WHERE ((quhead_cust_id=:cohead_cust_id)"
-                 "   AND  (quhead_id<>:cohead_id)"
-                 "   AND  (UPPER(quhead_custponumber) = UPPER(:cohead_custponumber)) );" );
-      q.bindValue(":cohead_cust_id", _cust->id());
-      q.bindValue(":cohead_id", _soheadid);
-      q.bindValue(":cohead_custponumber", _custPONumber->text());
-      q.exec();
-      if (q.first())
+      if (_custPONumber->text().stripWhiteSpace().length() == 0)
       {
         QMessageBox::warning( this, tr("Cannot Save Sales Order"),
-                              tr("<p>This Customer does not use Blanket P/O "
-                                 "Numbers and the P/O Number you entered has "
-                                 "already been used for another Sales Order."
-                                 "Please verify the P/O Number and either"
-                                 "enter a new P/O Number or add to the"
-                                 "existing Sales Order." ) );
+                              tr("You must enter a Customer P/O for this Sales Order before you may save it.") );
         _custPONumber->setFocus();
         return FALSE;
       }
-      else if (q.lastError().type() != QSqlError::None)
+
+      if (!_blanketPos)
       {
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-        return FALSE;
+        q.prepare( "SELECT cohead_id"
+                   "  FROM cohead"
+                   " WHERE ((cohead_cust_id=:cohead_cust_id)"
+                   "   AND  (cohead_id<>:cohead_id)"
+                   "   AND  (UPPER(cohead_custponumber) = UPPER(:cohead_custponumber)) )"
+                   " UNION "
+                   "SELECT quhead_id"
+                   "  FROM quhead"
+                   " WHERE ((quhead_cust_id=:cohead_cust_id)"
+                   "   AND  (quhead_id<>:cohead_id)"
+                   "   AND  (UPPER(quhead_custponumber) = UPPER(:cohead_custponumber)) );" );
+        q.bindValue(":cohead_cust_id", _cust->id());
+        q.bindValue(":cohead_id", _soheadid);
+        q.bindValue(":cohead_custponumber", _custPONumber->text());
+        q.exec();
+        if (q.first())
+        {
+          QMessageBox::warning( this, tr("Cannot Save Sales Order"),
+                                tr("<p>This Customer does not use Blanket P/O "
+                                   "Numbers and the P/O Number you entered has "
+                                   "already been used for another Sales Order."
+                                   "Please verify the P/O Number and either"
+                                   "enter a new P/O Number or add to the"
+                                   "existing Sales Order." ) );
+          _custPONumber->setFocus();
+          return FALSE;
+        }
+        else if (q.lastError().type() != QSqlError::None)
+        {
+          systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+          return FALSE;
+        }
       }
     }
   }
