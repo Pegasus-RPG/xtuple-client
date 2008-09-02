@@ -105,8 +105,8 @@ salesOrderItem::salesOrderItem(QWidget* parent, const char* name, bool modal, Qt
   connect(_prev, SIGNAL(clicked()), this, SLOT(sPrev()));
   connect(_notes, SIGNAL(textChanged()), this, SLOT(sChanged()));
   connect(_createOrder, SIGNAL(toggled(bool)), this, SLOT(sChanged()));
-  connect(_orderQty, SIGNAL(textChanged(const QString&)), this, SLOT(sChanged()));
-  connect(_orderQty, SIGNAL(textChanged(const QString&)), this, SLOT(sCalcWoUnitCost()));
+//  connect(_orderQty, SIGNAL(textChanged(const QString&)), this, SLOT(sChanged()));
+//  connect(_orderQty, SIGNAL(textChanged(const QString&)), this, SLOT(sCalcWoUnitCost()));
   connect(_orderDueDate, SIGNAL(newDate(const QDate&)), this, SLOT(sChanged()));
   connect(_supplyWarehouse, SIGNAL(newID(int)), this, SLOT(sChanged()));
 //  connect(_discountFromCust, SIGNAL(textChanged(const QString&)), this, SLOT(sChanged()));
@@ -207,8 +207,10 @@ salesOrderItem::salesOrderItem(QWidget* parent, const char* name, bool modal, Qt
     _discountFromCust->setEnabled(FALSE);
   }
 
-  if (_metrics->boolean("DisableSalesOrderPriceOverride"))
+  if ((_metrics->boolean("DisableSalesOrderPriceOverride")) || (!_privileges->check("OverridePrice")))
+  {
     _netUnitPrice->setEnabled(false);
+  }
 
   _overridePoPrice->hide();
   _overridePoPriceLit->hide();
@@ -479,28 +481,30 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
     _initialMode = _mode;
 
   bool viewMode = (cView == _mode || cViewQuote == _mode);
-  _item->setReadOnly(viewMode);
-  _qtyOrdered->setEnabled(!viewMode);
-  _netUnitPrice->setEnabled(!viewMode);
-  _discountFromCust->setEnabled(!viewMode);
-  _scheduledDate->setEnabled(!viewMode);
-  _createOrder->setEnabled(!viewMode);
-  _notes->setEnabled(!viewMode);
-  _comments->setReadOnly(viewMode);
-  _taxtype->setEnabled(!viewMode);
-  _taxcode->setEnabled(!viewMode);
-  _itemcharView->setEnabled(!viewMode);
-  _promisedDate->setEnabled(!viewMode);
-  _qtyUOM->setEnabled(!viewMode);
-  _priceUOM->setEnabled(!viewMode);
-  _warranty->setEnabled(!viewMode);
-  _listPrices->setEnabled(!viewMode);
-
-  _subItemList->setVisible(!viewMode);
-  _save->setVisible(!viewMode);
-
   if(viewMode)
+  {
+    _item->setReadOnly(viewMode);
+    _qtyOrdered->setEnabled(!viewMode);
+    _netUnitPrice->setEnabled(!viewMode);
+    _discountFromCust->setEnabled(!viewMode);
+    _scheduledDate->setEnabled(!viewMode);
+    _createOrder->setEnabled(!viewMode);
+    _notes->setEnabled(!viewMode);
+    _comments->setReadOnly(viewMode);
+    _taxtype->setEnabled(!viewMode);
+    _taxcode->setEnabled(!viewMode);
+    _itemcharView->setEnabled(!viewMode);
+    _promisedDate->setEnabled(!viewMode);
+    _qtyUOM->setEnabled(!viewMode);
+    _priceUOM->setEnabled(!viewMode);
+    _warranty->setEnabled(!viewMode);
+    _listPrices->setEnabled(!viewMode);
+
+    _subItemList->setVisible(!viewMode);
+    _save->setVisible(!viewMode);
+
     _close->setFocus();
+  }
 
   param = pParams.value("soitem_id", &valid);
   if (valid)
