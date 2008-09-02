@@ -92,7 +92,7 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
 {
   setupUi(this);
 
-  connect(_arhist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuArhist(QMenu*)));
+  connect(_arhist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuArhist(QMenu*, QTreeWidgetItem*)));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_creditMemo, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuCreditMemo(QMenu*)));
   connect(_cust, SIGNAL(newId(int)), this, SLOT(sPopulate()));
@@ -1137,14 +1137,17 @@ void dspCustomerInformation::sPopulateMenuCreditMemo( QMenu * pMenu )
   pMenu->insertItem(tr("View Credit Memo..."), this, SLOT(sViewCreditMemo()), 0);
 }
 
-void dspCustomerInformation::sPopulateMenuArhist( QMenu * pMenu )
+void dspCustomerInformation::sPopulateMenuArhist( QMenu * pMenu,  QTreeWidgetItem *selected)
 {
   int menuItem;
 
-  menuItem = pMenu->insertItem(tr("Edit A/R Open Item..."), this, SLOT(sEditAropen()), 0);
-  if(!_privileges->check("EditAROpenItem"))
-    pMenu->setItemEnabled(menuItem, FALSE);
-  pMenu->insertItem(tr("View A/R Open Item..."), this, SLOT(sViewAropen()), 0);
+  if (((XTreeWidgetItem *)selected)->id() != -1)
+  {
+    menuItem = pMenu->insertItem(tr("Edit A/R Open Item..."), this, SLOT(sEditAropen()), 0);
+    if(!_privileges->check("EditAROpenItem"))
+      pMenu->setItemEnabled(menuItem, FALSE);
+    pMenu->insertItem(tr("View A/R Open Item..."), this, SLOT(sViewAropen()), 0);
+  }
 }
 
 void dspCustomerInformation::sConvertQuote()

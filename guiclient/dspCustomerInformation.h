@@ -106,7 +106,7 @@ public slots:
     virtual void sPopulateMenuSalesOrder(QMenu*);
     virtual void sPopulateMenuInvoice(QMenu*, QTreeWidgetItem *selected);
     virtual void sPopulateMenuCreditMemo(QMenu*);
-    virtual void sPopulateMenuArhist(QMenu*);
+    virtual void sPopulateMenuArhist(QMenu*, QTreeWidgetItem *selected);
     virtual void sConvertQuote();
     virtual void sCreditMemoSelected(bool);
     virtual void sFillARHistory();
