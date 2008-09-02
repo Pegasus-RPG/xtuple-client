@@ -174,7 +174,7 @@ void issueLineToShipping::sIssue()
     q.prepare("SELECT sufficientInventoryToShipItem(:ordertype, :orderitemid, :orderqty) AS result;");
     q.bindValue(":ordertype",   _ordertype);
     q.bindValue(":orderitemid", _itemid);
-    if(!_requireInventory)
+//    if(!_requireInventory)
       q.bindValue(":orderqty",  _qtyToIssue->toDouble());
     q.exec();
     if (q.first())
