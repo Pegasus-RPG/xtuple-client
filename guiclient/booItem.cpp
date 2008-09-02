@@ -60,6 +60,7 @@
 #include <QMessageBox>
 #include <QSqlError>
 #include <QVariant>
+#include <QDebug>
 
 #include "booitemImage.h"
 
@@ -385,9 +386,9 @@ void booItem::sHandleStdopn(int pStdopnid)
 
       if (q.value("stdopn_stdtimes").toBool())
       {
-        _setupTime->setDouble(q.value("stdopen_sutime").toDouble());
-        _runTime->setDouble(q.value("stdopen_rntime").toDouble());
-        _runTimePer->setDouble(q.value("stdopen_rnqtyper").toDouble());
+        _setupTime->setDouble(q.value("stdopn_sutime").toDouble());
+        _runTime->setDouble(q.value("stdopn_rntime").toDouble());
+        _runTimePer->setDouble(q.value("stdopn_rnqtyper").toDouble());
         _prodUOM->setText(q.value("stdopn_produom"));
         _invProdUOMRatio->setDouble(q.value("stdopn_invproduomratio").toDouble());
 
@@ -487,12 +488,12 @@ void booItem::populate()
     _description1->setText(booitem.value("booitem_descrip1"));
     _description2->setText(booitem.value("booitem_descrip2"));
     _toolingReference->setText(booitem.value("booitem_toolref"));
-    _setupTime->setDouble(q.value("booitem_sutime").toDouble());
+    _setupTime->setDouble(booitem.value("booitem_sutime").toDouble());
     _prodUOM->setText(booitem.value("booitem_produom"));
     _invUOM1->setText(booitem.value("uom_name").toString());
     _invUOM2->setText(booitem.value("uom_name").toString());
     _invProdUOMRatio->setDouble(booitem.value("booitem_invproduomratio").toDouble());
-    _runTime->setDouble(q.value("booitem_rntime").toDouble());
+    _runTime->setDouble(booitem.value("booitem_rntime").toDouble());
     _runTimePer->setDouble(booitem.value("booitem_rnqtyper").toDouble());
 
     _reportSetup->setChecked(booitem.value("booitem_surpt").toBool());
