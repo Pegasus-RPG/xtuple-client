@@ -74,6 +74,7 @@ printPackingList::printPackingList(QWidget* parent, const char* name, bool modal
     setupUi(this);
 
     connect(_print,	     SIGNAL(clicked()),   this, SLOT(sPrint()));
+    connect(_reprint,	   SIGNAL(clicked()),   this, SLOT(sHandleReprint()));
     connect(_shipment,	 SIGNAL(newId(int)),  this, SLOT(sHandleShipment()));
     connect(_order,      SIGNAL(valid(bool)), this, SLOT(sPopulate()));
 
@@ -426,4 +427,12 @@ void printPackingList::sHandleShipment()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+}
+
+void printPackingList::sHandleReprint()
+{
+  if (_reprint->isChecked())
+    _order->setAllowedStatuses(OrderLineEdit::AnyStatus);
+  else
+    _order->setAllowedStatuses(OrderLineEdit::Open);
 }

@@ -74,6 +74,7 @@ public:
 public slots:
     virtual enum SetResponse set(const ParameterList & pParams );
     virtual void sHandleShipment();
+    virtual void sHandleReprint();
     virtual void sPopulate();
     virtual void sPrint();
 
