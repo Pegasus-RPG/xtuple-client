@@ -337,24 +337,20 @@ void dspAROpenItemsByCustomer::sFillList()
              "            WHEN (aropen_doctype='R') THEN :cashdeposit"
              "            ELSE :other"
              "       END AS f_doctype,"
-             "       formatDate(aropen_docdate) AS f_docdate,"
-             "       formatDate(aropen_duedate) AS f_duedate,"
-             "       formatMoney(aropen_amount) AS f_amount,"
-             "       formatMoney(aropen_paid + SUM(currtocurr(arapply_curr_id,aropen_curr_id,arapply_applied,arapply_postdate))) AS f_paid,"
-             "       CASE WHEN (aropen_doctype IN ('C', 'R')) THEN ((aropen_amount - aropen_paid + SUM(currtocurr(arapply_curr_id,aropen_curr_id,arapply_applied,arapply_postdate))) * -1)"
-             "            WHEN (aropen_doctype IN ('I', 'D')) THEN (aropen_amount - aropen_paid + SUM(currtocurr(arapply_curr_id,aropen_curr_id,arapply_applied,arapply_postdate)))"
-             "            ELSE (aropen_amount - aropen_paid + SUM(currtocurr(arapply_curr_id,aropen_curr_id,arapply_applied,arapply_postdate)))"
+             "       aropen_docdate, aropen_duedate, aropen_amount,"
+             "       SUM(currtocurr(arapply_curr_id,aropen_curr_id,arapply_applied,aropen_docdate)) AS paid,"
+             "       CASE WHEN (aropen_doctype IN ('C', 'R')) THEN ((aropen_amount - SUM(currtocurr(arapply_curr_id,aropen_curr_id,arapply_applied,aropen_docdate))) * -1)"
+             "            ELSE (aropen_amount - SUM(currtocurr(arapply_curr_id,aropen_curr_id,arapply_applied,aropen_docdate)))"
              "       END AS balance,"
              "       currConcat(aropen_curr_id) AS currAbbr,"
              "       currToBase(aropen_curr_id,"
-             "       CASE WHEN (aropen_doctype IN ('C', 'R')) THEN ((aropen_amount - aropen_paid + SUM(currtocurr(arapply_curr_id,aropen_curr_id,arapply_applied,arapply_postdate))) * -1)"
-             "            WHEN (aropen_doctype IN ('I', 'D')) THEN (aropen_amount - aropen_paid + SUM(currtocurr(arapply_curr_id,aropen_curr_id,arapply_applied,arapply_postdate)))"
-             "            ELSE (aropen_amount - aropen_paid + SUM(currtocurr(arapply_curr_id,aropen_curr_id,arapply_applied,arapply_postdate)))"
+             "       CASE WHEN (aropen_doctype IN ('C', 'R')) THEN ((aropen_amount - SUM(currtocurr(arapply_curr_id,aropen_curr_id,arapply_applied,aropen_docdate))) * -1)"
+             "            ELSE (aropen_amount - SUM(currtocurr(arapply_curr_id,aropen_curr_id,arapply_applied,aropen_docdate)))"
              "       END, aropen_docdate) AS base_balance "
              "  FROM aropen "
              "  LEFT OUTER JOIN arapply ON (((aropen_id=arapply_source_aropen_id) "
-             "                              OR (aropen_id=arapply_target_aropen_id)) "
-             "                             AND (arapply_distdate>:asofdate)) "
+             "                             OR (aropen_id=arapply_target_aropen_id)) "
+             "                             AND (arapply_distdate<=:asofdate)) "
              " WHERE ( (COALESCE(aropen_closedate,date :asofdate + integer '1')>:asofdate) "
              "   AND   (aropen_docdate<=:asofdate)"
              "   AND   (aropen_cust_id=:cust_id) "
@@ -378,11 +374,11 @@ void dspAROpenItemsByCustomer::sFillList()
     {
       last = document = new XTreeWidgetItem( _aropen, last, q.value("aropen_id").toInt(), -1,
                                              q.value("f_doctype"), q.value("aropen_docnumber"),
-                                             q.value("aropen_ordernumber"), q.value("f_docdate"),
-                                             q.value("f_duedate"), q.value("f_amount"),
-                                             q.value("f_paid"), formatMoney(q.value("balance").toDouble()),
-			                                 q.value("currAbbr"),
-			                                 formatMoney(q.value("base_balance").toDouble()));
+                                             q.value("aropen_ordernumber"), formatDate(q.value("aropen_docdate").toDate()),
+                                             formatDate(q.value("aropen_duedate").toDate()), formatMoney(q.value("aropen_amount").toDouble()),
+                                             formatMoney(q.value("paid").toDouble()), formatMoney(q.value("balance").toDouble()),
+                                             q.value("currAbbr"),
+			                                       formatMoney(q.value("base_balance").toDouble()));
  
       total += q.value("base_balance").toDouble();
 
