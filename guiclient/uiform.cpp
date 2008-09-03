@@ -83,13 +83,15 @@ uiform::uiform(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_scriptEdit, SIGNAL(clicked()), this, SLOT(sScriptEdit()));
   connect(_scriptDelete, SIGNAL(clicked()), this, SLOT(sScriptDelete()));
 
-  _script->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft );
-  _script->addColumn(tr("Description"), -1,          Qt::AlignLeft );
-  _script->addColumn(tr("Order"),       _ynColumn,   Qt::AlignCenter );
-  _script->addColumn(tr("Enabled"),     _ynColumn,   Qt::AlignCenter );
+  _script->addColumn(tr("Name"), _itemColumn, Qt::AlignLeft,  true, "script_name");
+  _script->addColumn(tr("Description"),   -1, Qt::AlignLeft,  true, "script_notes");
+  _script->addColumn(tr("Order"),  _ynColumn, Qt::AlignCenter,true, "script_order");
+  _script->addColumn(tr("Enabled"),_ynColumn, Qt::AlignCenter,true, "script_enabled");
+  _script->addColumn(tr("Package"),_ynColumn, Qt::AlignCenter,false,"nspname");
 
-  _commands->addColumn(tr("Module"), _itemColumn, Qt::AlignCenter );
-  _commands->addColumn(tr("Menu Label"), -1,     Qt::AlignLeft );
+  _commands->addColumn(tr("Module"),_itemColumn, Qt::AlignCenter,true, "cmd_module");
+  _commands->addColumn(tr("Menu Label"),     -1, Qt::AlignLeft,  true, "cmd_title");
+  _commands->addColumn(tr("Package"), _ynColumn, Qt::AlignCenter,false,"nspname");
 }
 
 uiform::~uiform()
@@ -107,6 +109,19 @@ enum SetResponse uiform::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
 
+  param = pParams.value("mode", &valid);
+  if (valid)
+  {
+
+    if (param.toString() == "new")
+      setMode(cNew);
+    else if (param.toString() == "edit")
+      setMode(cEdit);
+    else if (param.toString() == "view")
+      setMode(cView);
+  }
+
+  // follow setMode because populate() might change it
   param = pParams.value("uiform_id", &valid);
   if (valid)
   {
@@ -114,36 +129,41 @@ enum SetResponse uiform::set(const ParameterList &pParams)
     populate();
   }
 
-  param = pParams.value("mode", &valid);
-  if (valid)
-  {
-    if (param.toString() == "new")
-    {
-      _mode = cNew;
-      _name->setFocus();
-    }
-    else if (param.toString() == "edit")
-    {
-      _mode = cEdit;
-      _save->setFocus();
-    }
-    else if (param.toString() == "view")
-    {
-      _mode = cView;
+  return NoError;
+}
 
-      _name->setEnabled(FALSE);
-      _order->setEnabled(FALSE);
-      _notes->setReadOnly(TRUE);
-      _import->setEnabled(FALSE);
-      _enabled->setEnabled(FALSE);
+void uiform::setMode(const int pmode)
+{
+  switch (pmode)
+  {
+    case cNew:
+    case cEdit:
+      _name->setEnabled(true);
+      _order->setEnabled(true);
+      _notes->setReadOnly(false);
+      _import->setEnabled(true);
+      _enabled->setEnabled(true);
+      _close->setText(tr("&Cancel"));
+      _save->show();
+      if (pmode == cNew)
+        _name->setFocus();
+      else
+        _save->setFocus();
+      break;
+
+    case cView:
+    default:
+      _name->setEnabled(false);
+      _order->setEnabled(false);
+      _notes->setReadOnly(true);
+      _import->setEnabled(false);
+      _enabled->setEnabled(false);
       _close->setText(tr("&Close"));
       _save->hide();
-
       _close->setFocus();
-    }
+      break;
   }
-
-  return NoError;
+  _mode = pmode;
 }
 
 void uiform::sSave()
@@ -206,9 +226,10 @@ void uiform::sSave()
 
 void uiform::populate()
 {
-  q.prepare( "SELECT * "
-      	     "  FROM uiform "
-             " WHERE (uiform_id=:uiform_id);" );
+  q.prepare( "SELECT uiform.*, relname ~* 'pkguiform' AS inPackage "
+      	     "  FROM uiform, pg_class "
+             " WHERE ((uiform.tableoid=pg_class.oid)"
+             "   AND  (uiform_id=:uiform_id));" );
   q.bindValue(":uiform_id", _uiformid);
   q.exec();
   if (q.first())
@@ -218,6 +239,8 @@ void uiform::populate()
     _enabled->setChecked(q.value("uiform_enabled").toBool());
     _source = q.value("uiform_source").toString();
     _notes->setText(q.value("uiform_notes").toString());
+    if (q.value("inPackage").toBool())
+      setMode(cView);
 
     sFillList();
   }
@@ -358,23 +381,39 @@ void uiform::sCmdDelete()
 void uiform::sFillList()
 {
   q.prepare( "SELECT script_id, script_name, script_notes,"
-             "       script_order, formatBoolYN(script_enabled)"
-             "  FROM script"
-             " WHERE(script_name=:name)"
+             "       script_order, script_enabled,"
+             "       CASE WHEN nspname = 'public' THEN ''"
+             "            ELSE nspname END AS nspname"
+             "  FROM script, pg_class, pg_namespace"
+             " WHERE ((script.tableoid=pg_class.oid)"
+             "   AND  (relnamespace=pg_namespace.oid)"
+             "   AND  (script_name=:name))"
              " ORDER BY script_name, script_order, script_id;" );
   q.bindValue(":name", _name->text());
   q.exec();
   _script->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
-  q.prepare("SELECT DISTINCT cmd_id, cmd_module, cmd_title"
-            "  FROM cmd JOIN cmdarg ON (cmdarg_cmd_id=cmd_id)"
-            "  WHERE((cmd_module IN ('CRM', 'Products','Inventory','Schedule','Purchase', "
+  q.prepare("SELECT DISTINCT cmd_id, cmd_module, cmd_title,"
+            "       CASE WHEN nspname = 'public' THEN ''"
+            "            ELSE nspname END AS nspname"
+            "  FROM cmd JOIN cmdarg ON (cmdarg_cmd_id=cmd_id), pg_class, pg_namespace"
+            "  WHERE((cmd.tableoid=pg_class.oid)"
+            "    AND (relnamespace=pg_namespace.oid)"
+            "    AND (cmd_module IN ('Products','Inventory','Schedule','Purchase', "
             "                        'Manufacture','CRM','Sales','Accounting','System'))"
             "    AND (cmdarg_arg='uiform='||:name)) "
             " ORDER BY cmd_module, cmd_title;");
   q.bindValue(":name", _name->text());
   q.exec();
   _commands->populate(q);
-
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
-

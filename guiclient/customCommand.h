@@ -90,6 +90,7 @@ protected:
 
 protected slots:
     virtual void languageChange();
+    virtual void setMode(const int);
 
 };
 

@@ -57,33 +57,22 @@
 
 #include "customCommand.h"
 
-#include <QVariant>
 #include <QMessageBox>
-#include <QVariant>
+#include <QSqlError>
 #include <QSqlQuery>
+#include <QVariant>
+
 #include "customCommandArgument.h"
 
-/*
- *  Constructs a customCommand as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 customCommand::customCommand(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
-
-  // signals and slots connections
-  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
   connect(_accept, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-  connect(_arguments, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
-  connect(_arguments, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
 
   _mode = cNew;
   _cmdid = -1;
@@ -104,18 +93,11 @@ customCommand::customCommand(QWidget* parent, const char* name, bool modal, Qt::
   _module->addItem("System");
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 customCommand::~customCommand()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void customCommand::languageChange()
 {
   retranslateUi(this);
@@ -126,31 +108,75 @@ enum SetResponse customCommand::set( const ParameterList & pParams )
   QVariant param;
   bool     valid;
 
+  param = pParams.value("mode", &valid);
+  if(valid)
+  {
+    QString mode = param.toString();
+    if("new" == mode)
+      setMode(cNew);
+    else if("edit" == mode)
+      setMode(cEdit);
+    else if("view" == mode)
+      setMode(cView);
+  }
+
+  // after setMode because populate() may change mode
   param = pParams.value("cmd_id", &valid);
   if(valid)
   {
     _cmdid = param.toInt();
     populate();
   }
+  
+  return NoError;
+}
 
-  param = pParams.value("mode", &valid);
-  if(valid)
+void customCommand::setMode(const int pmode)
+{
+  switch (pmode)
   {
-    QString mode = param.toString();
-    if("new" == mode)
-    {
-      _mode = cNew;
+    case cNew:
       q.prepare("SELECT nextval('cmd_cmd_id_seq') AS result;");
       q.exec();
       if(q.first())
         _cmdid = q.value("result").toInt();
-      // TODO: catch error
-    }
-    else if("edit" == mode)
-      _mode = cEdit;
+      else if (q.lastError().type() != QSqlError::None)
+      {
+	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	return;
+      }
+      /* fallthru */
+
+    case cEdit:
+      _module->setEnabled(true);
+      _title->setEnabled(true);
+      _privname->setEnabled(true);
+      _name->setEnabled(true);
+      _description->setEnabled(true);
+      _executable->setEnabled(true);
+      _accept->show();
+      _close->setText(tr("&Cancel"));
+
+      if (pmode == cNew)
+        _module->setFocus();
+      else
+        _accept->setFocus();
+      break;
+
+    case cView:
+    default:
+      _module->setEnabled(false);
+      _title->setEnabled(false);
+      _privname->setEnabled(false);
+      _name->setEnabled(false);
+      _description->setEnabled(false);
+      _executable->setEnabled(false);
+      _accept->hide();
+      _close->setText(tr("&Close"));
+      _close->setFocus();
+      break;
   }
-  
-  return NoError;
+  _mode = pmode;
 }
 
 void customCommand::sSave()
@@ -193,15 +219,20 @@ void customCommand::sSave()
     q.bindValue(":cmd_name", _name->text());
   q.bindValue(":cmd_descrip", _description->text());
   q.bindValue(":cmd_executable", _executable->text());
-  if(!q.exec())
+  q.exec();
+  if (q.lastError().type() != QSqlError::None)
   {
-    systemError( this, tr("A System Error occurred at customCommand::%1")
-                             .arg(__LINE__) );
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
   // make sure the custom privs get updated
   q.exec("SELECT updateCustomPrivs();");
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   accept();
 }
@@ -214,6 +245,11 @@ void customCommand::reject()
     query.prepare("DELETE FROM cmdarg WHERE (cmdarg_cmd_id=:cmd_id);");
     query.bindValue(":cmd_id", _cmdid);
     query.exec();
+    if (query.lastError().type() != QSqlError::None)
+    {
+      systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
 
   XDialog::reject();
@@ -249,19 +285,19 @@ void customCommand::sDelete()
   q.bindValue(":cmdarg_id", _arguments->id());
   if(q.exec())
     sFillList();
-  else
-    systemError( this, tr("A System Error occurred at customCommand::%1")
-                             .arg(__LINE__) );
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void customCommand::populate()
 {
-  q.prepare("SELECT cmd_module, cmd_title,"
-            "       cmd_descrip, cmd_privname,"
-            "       cmd_name,"
-            "       cmd_executable"
-            "  FROM cmd"
-            " WHERE (cmd_id=:cmd_id);");
+  q.prepare("SELECT cmd.*, relname ~* 'pkgcmd' AS inPackage"
+            "  FROM cmd, pg_class"
+            " WHERE ((cmd.tableoid=pg_class.oid)"
+            "   AND  (cmd_id=:cmd_id));");
   q.bindValue(":cmd_id", _cmdid);
   q.exec();
   if(q.first())
@@ -273,10 +309,16 @@ void customCommand::populate()
     _name->setText(q.value("cmd_name").toString());
     _executable->setText(q.value("cmd_executable").toString());
     _description->setText(q.value("cmd_descrip").toString());
+    if (q.value("inPackage").toBool())
+      setMode(cView);
 
     sFillList();
   }
-  // TODO: handle error if any
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void customCommand::sFillList()
@@ -288,5 +330,9 @@ void customCommand::sFillList()
   q.bindValue(":cmd_id", _cmdid);
   q.exec();
   _arguments->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
-

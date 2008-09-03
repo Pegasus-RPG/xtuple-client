@@ -57,56 +57,37 @@
 
 #include "scripts.h"
 
-#include <QVariant>
 #include <QMessageBox>
-#include <QStatusBar>
+#include <QSqlError>
+#include <QVariant>
+
 #include <parameter.h>
 #include "scriptEditor.h"
 #include "guiclient.h"
 
-/*
- *  Constructs a scripts as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 scripts::scripts(QWidget* parent, const char* name, Qt::WFlags fl)
     : XMainWindow(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
-
-  // signals and slots connections
-  connect(_script, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
-  connect(_script, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
-  connect(_script, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
 
-  statusBar()->hide();
-  
-  _script->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft );
-  _script->addColumn(tr("Description"), -1,          Qt::AlignLeft );
-  _script->addColumn(tr("Order"),       _ynColumn,   Qt::AlignCenter );
-  _script->addColumn(tr("Enabled"),     _ynColumn,   Qt::AlignCenter );
+  _script->addColumn(tr("Name"),   _itemColumn, Qt::AlignLeft,  true, "script_name");
+  _script->addColumn(tr("Description"),     -1, Qt::AlignLeft,  true, "script_notes");
+  _script->addColumn(tr("Order"),    _ynColumn, Qt::AlignCenter,true, "script_order");
+  _script->addColumn(tr("Enabled"),  _ynColumn, Qt::AlignCenter,true, "script_enabled");
+  _script->addColumn(tr("Package"),_itemColumn, Qt::AlignLeft,  false,"nspname");
 
   sFillList();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 scripts::~scripts()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void scripts::languageChange()
 {
   retranslateUi(this);
@@ -149,6 +130,11 @@ void scripts::sDelete()
                "WHERE (script_id=:script_id);" );
     q.bindValue(":script_id", _script->id());
     q.exec();
+    if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
 
     sFillList();
   }
@@ -156,7 +142,17 @@ void scripts::sDelete()
 
 void scripts::sFillList()
 {
-  _script->populate( "SELECT script_id, script_name, script_notes, script_order, formatBoolYN(script_enabled) "
-                   "  FROM script "
-                   " ORDER BY script_name, script_order, script_id;" );
+  q.exec("SELECT script.*,"
+         "       CASE WHEN nspname='public' THEN ''"
+         "            ELSE nspname END AS nspname"
+         "  FROM script, pg_class, pg_namespace"
+         "  WHERE ((script.tableoid=pg_class.oid)"
+         "    AND  (relnamespace=pg_namespace.oid))"
+         " ORDER BY script_name, script_order, script_id;" );
+  _script->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }

@@ -70,16 +70,12 @@ public:
     images(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~images();
 
-    virtual void init();
-
 public slots:
     virtual void sNew();
     virtual void sEdit();
     virtual void sView();
     virtual void sDelete();
     virtual void sFillList();
-    virtual void sPopulateMenu( QMenu * );
-    virtual void sPrint();
 
 protected slots:
     virtual void languageChange();

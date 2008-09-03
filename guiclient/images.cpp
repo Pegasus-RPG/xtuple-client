@@ -57,69 +57,47 @@
 
 #include "images.h"
 
-#include <QVariant>
-#include <QMessageBox>
+#include <QMenu>
+#include <QSqlError>
+
 #include <parameter.h>
-#include <QStatusBar>
+
 #include "image.h"
 #include "guiclient.h"
 
-/*
- *  Constructs a images as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 images::images(QWidget* parent, const char* name, Qt::WFlags fl)
     : XMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  connect(_image, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
+  connect(_image, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_image, SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *, int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_image, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
 
-    // signals and slots connections
-    connect(_image, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
-    connect(_image, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
-    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-    connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_image, SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *, int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-    connect(_image, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-images::~images()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void images::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void images::init()
-{
-  statusBar()->hide();
-  
-  _image->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft  );
-  _image->addColumn(tr("Description"), -1,          Qt::AlignLeft  );
-  _image->addColumn(tr("Size"),        _qtyColumn,  Qt::AlignRight );
+  _image->addColumn(tr("Name"),  _itemColumn, Qt::AlignLeft, true, "image_name");
+  _image->addColumn(tr("Description"),    -1, Qt::AlignLeft, true, "image_descrip");
+  _image->addColumn(tr("Size"),   _qtyColumn, Qt::AlignRight,true, "image_size");
+  _image->addColumn(tr("Package"),_qtyColumn, Qt::AlignRight,false,"nspname");
 
   connect(_image, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
 
   sFillList();
+}
+
+images::~images()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void images::languageChange()
+{
+  retranslateUi(this);
 }
 
 void images::sNew()
@@ -164,25 +142,28 @@ void images::sDelete()
              "WHERE (image_id=:image_id);" );
   q.bindValue(":image_id", _image->id());
   q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   sFillList();
 }
 
 void images::sFillList()
 {
-  _image->populate( "SELECT image_id, image_name, image_descrip, LENGTH(image_data) "
-                    "FROM image "
-                    "ORDER BY image_name;" );
+  q.exec("SELECT image.*, LENGTH(image_data) AS image_size, "
+         "       CASE WHEN nspname='public' THEN ''"
+         "            ELSE nspname END AS nspname"
+         "  FROM image, pg_class, pg_namespace "
+         " WHERE ((image.tableoid=pg_class.oid)"
+         "   AND  (relnamespace=pg_namespace.oid))"
+         "ORDER BY image_name;" );
+  _image->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
-
-void images::sPopulateMenu(QMenu *)
-{
-
-}
-
-void images::sPrint()
-{
-
-}
-
-

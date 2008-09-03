@@ -64,6 +64,8 @@
 #include <QTextStream>
 #include <QScriptEngine>
 
+#define DEBUG false
+
 scriptEditor::scriptEditor(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
@@ -89,6 +91,18 @@ enum SetResponse scriptEditor::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
 
+  param = pParams.value("mode", &valid);
+  if (valid)
+  {
+    if (param.toString() == "new")
+      setMode(cNew);
+    else if (param.toString() == "edit")
+      setMode(cEdit);
+    else if (param.toString() == "view")
+      setMode(cView);
+  }
+
+  // follow setMode because populate() might change it
   param = pParams.value("script_id", &valid);
   if (valid)
   {
@@ -96,23 +110,34 @@ enum SetResponse scriptEditor::set(const ParameterList &pParams)
     populate();
   }
 
-  param = pParams.value("mode", &valid);
-  if (valid)
-  {
-    if (param.toString() == "new")
-    {
-      _mode = cNew;
-      _name->setFocus();
-    }
-    else if (param.toString() == "edit")
-    {
-      _mode = cEdit;
-      _save->setFocus();
-    }
-    else if (param.toString() == "view")
-    {
-      _mode = cView;
+  return NoError;
+}
 
+void scriptEditor::setMode(const int pmode)
+{
+  if (DEBUG)
+    qDebug("scriptEditor::setMode(%d)", pmode);
+  switch (pmode)
+  {
+    case cNew:
+    case cEdit:
+      if (DEBUG) qDebug("scriptEditor::setMode(%d) case new/edit", pmode);
+      _name->setEnabled(true);
+      _order->setEnabled(true);
+      _notes->setReadOnly(false);
+      _source->setReadOnly(false);
+      _enabled->setEnabled(true);
+      _close->setText(tr("&Cancel"));
+      _save->show();
+      if (pmode == cNew)
+        _name->setFocus();
+      else
+        _save->setFocus();
+      break;
+
+    case cView:
+    default:
+      if (DEBUG) qDebug("scriptEditor::setMode(%d) case view/default", pmode);
       _name->setEnabled(FALSE);
       _order->setEnabled(FALSE);
       _notes->setReadOnly(TRUE);
@@ -120,12 +145,10 @@ enum SetResponse scriptEditor::set(const ParameterList &pParams)
       _enabled->setEnabled(FALSE);
       _close->setText(tr("&Close"));
       _save->hide();
-
       _close->setFocus();
-    }
-  }
+  };
 
-  return NoError;
+  _mode = pmode;
 }
 
 void scriptEditor::sSave()
@@ -191,9 +214,10 @@ void scriptEditor::sSave()
 
 void scriptEditor::populate()
 {
-  q.prepare( "SELECT * "
-      	     "  FROM script "
-             " WHERE (script_id=:script_id);" );
+  q.prepare( "SELECT script.*, relname ~* 'pkgscript' AS inPackage "
+      	     "  FROM script, pg_class"
+             " WHERE ((script.tableoid=pg_class.oid)"
+             "    AND (script_id=:script_id));" );
   q.bindValue(":script_id", _scriptid);
   q.exec();
   if (q.first())
@@ -203,6 +227,11 @@ void scriptEditor::populate()
     _enabled->setChecked(q.value("script_enabled").toBool());
     _source->setText(q.value("script_source").toString());
     _notes->setText(q.value("script_notes").toString());
+    if (DEBUG)
+      qDebug("scriptEditor::populate() inPackage = %d",
+             q.value("inPackage").toBool());
+    if (q.value("inPackage").toBool())
+      setMode(cView);
   }
   else if (q.lastError().type() != QSqlError::None)
   {

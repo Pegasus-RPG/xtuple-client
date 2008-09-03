@@ -57,8 +57,7 @@
 
 #include "customCommands.h"
 
-#include <QVariant>
-#include <QMessageBox>
+#include <QSqlError>
 
 #include <parameter.h>
 
@@ -76,8 +75,9 @@ customCommands::customCommands(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
 
-  _commands->addColumn(tr("Module"), _itemColumn, Qt::AlignCenter );
-  _commands->addColumn(tr("Menu Label"), -1,     Qt::AlignLeft );
+  _commands->addColumn(tr("Module"), _itemColumn, Qt::AlignCenter,true, "cmd_module");
+  _commands->addColumn(tr("Menu Label"),      -1, Qt::AlignLeft,  true, "cmd_title");
+  _commands->addColumn(tr("Package"),_itemColumn, Qt::AlignLeft,  false,"nspname");
 
   sFillList();
 }
@@ -125,22 +125,29 @@ void customCommands::sDelete()
   q.bindValue(":cmd_id", _commands->id());
   if(q.exec())
     sFillList();
-  else
-    systemError( this, tr("A System Error occurred at customCommands::%1")
-                             .arg(__LINE__) );
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void customCommands::sFillList()
 {
-  QString sql = ("SELECT cmd_id, cmd_module, cmd_title"
-            "  FROM cmd"
-            "  WHERE ((cmd_module='CRM') "
-            "  OR (cmd_module ");
-            
-  sql +=    " IN ('Products','Inventory','Schedule','Purchase', "
-            " 'Manufacture','CRM','Sales','Accounting','System'))) "
-            " ORDER BY cmd_module, cmd_title;";
-  q.prepare(sql);
-  q.exec();
+  q.exec("SELECT cmd.*,"
+         "       CASE WHEN nspname='public' THEN ''"
+         "            ELSE nspname END AS nspname"
+         "  FROM cmd, pg_class, pg_namespace"
+         "  WHERE ((cmd.tableoid=pg_class.oid)"
+         "    AND  (relnamespace=pg_namespace.oid)"
+         "    AND  (cmd_module IN ("
+         "        'Products','Inventory','Schedule','Purchase', "
+         "        'Manufacture','CRM','Sales','Accounting','System'))) "
+         " ORDER BY cmd_module, cmd_title;");
   _commands->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }

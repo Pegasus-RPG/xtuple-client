@@ -57,59 +57,39 @@
 
 #include "uiforms.h"
 
-#include <QVariant>
-#include <QMessageBox>
-#include <QStatusBar>
 #include <QBuffer>
+#include <QMessageBox>
+#include <QSqlError>
+
 #include <parameter.h>
 #include "xuiloader.h"
 #include "uiform.h"
 #include "guiclient.h"
 
-/*
- *  Constructs a uiforms as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 uiforms::uiforms(QWidget* parent, const char* name, Qt::WFlags fl)
     : XMainWindow(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
-
-  // signals and slots connections
-  connect(_uiform, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
-  connect(_uiform, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
-  connect(_uiform, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_test, SIGNAL(clicked()), this, SLOT(sTest()));
 
-  statusBar()->hide();
-  
-  _uiform->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft );
-  _uiform->addColumn(tr("Description"), -1,          Qt::AlignLeft );
-  _uiform->addColumn(tr("Order"),       _ynColumn,   Qt::AlignCenter );
-  _uiform->addColumn(tr("Enabled"),     _ynColumn,   Qt::AlignCenter );
+  _uiform->addColumn(tr("Name"),   _itemColumn, Qt::AlignLeft,  true, "uiform_name");
+  _uiform->addColumn(tr("Description"),     -1, Qt::AlignLeft,  true, "uiform_notes");
+  _uiform->addColumn(tr("Order"),    _ynColumn, Qt::AlignCenter,true, "uiforom_order");
+  _uiform->addColumn(tr("Enabled"),  _ynColumn, Qt::AlignCenter,true, "uiform_enabled");
+  _uiform->addColumn(tr("Package"),_itemColumn, Qt::AlignLeft,  false,"nspname");
 
   sFillList();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 uiforms::~uiforms()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void uiforms::languageChange()
 {
   retranslateUi(this);
@@ -146,15 +126,30 @@ void uiforms::sDelete()
              "WHERE (uiform_id=:uiform_id);" );
   q.bindValue(":uiform_id", _uiform->id());
   q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   sFillList();
 }
 
 void uiforms::sFillList()
 {
-  _uiform->populate( "SELECT uiform_id, uiform_name, uiform_notes, uiform_order, formatBoolYN(uiform_enabled) "
-                   "  FROM uiform "
-                   " ORDER BY uiform_name, uiform_order, uiform_id;" );
+  q.exec("SELECT uiform.*,"
+         "       CASE WHEN nspname='public' THEN ''"
+         "            ELSE nspname END AS nspname"
+         "  FROM uiform, pg_class, pg_namespace"
+         " WHERE ((uiform.tableoid=pg_class.oid)"
+         "   AND  (relnamespace=pg_namespace.oid))"
+         " ORDER BY uiform_name, uiform_order, uiform_id;" );
+  _uiform->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void uiforms::sTest()
@@ -164,7 +159,14 @@ void uiforms::sTest()
             " WHERE(uiform_id=:uiform_id);");
   q.bindValue(":uiform_id", _uiform->id());
   q.exec();
-  if(!q.first())
+  if (q.first())
+    ; // everything's OK
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+  else
     return;
   
   XMainWindow * wnd = new XMainWindow();
