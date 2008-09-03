@@ -103,7 +103,10 @@ enum SetResponse copyItem::set(const ParameterList &pParams)
 
 void copyItem::sHandleItemType(const QString &pItemType)
 {
-  if ((pItemType == "M") || (pItemType == "F") || (pItemType == "J"))
+  if  (pItemType == "M" || pItemType == "B" ||
+       pItemType == "F" || pItemType == "K" ||
+       pItemType == "P" || pItemType == "O" ||
+       pItemType == "L" || pItemType == "J")
   {
     _copyBOM->setChecked(TRUE);
     _copyBOM->setEnabled(TRUE);
@@ -138,11 +141,6 @@ void copyItem::sHandleItemType(const QString &pItemType)
       _copyBOO->hide();
       _copyUsedAt->hide();
     }
-  }
-  if(pItemType == "L")
-  {
-    _copyBOM->setChecked(TRUE);
-    _copyBOM->setEnabled(TRUE);
   }
 }
 

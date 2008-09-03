@@ -539,6 +539,32 @@ void item::sSave()
     }
   }
 
+  if (cEdit == _mode && _itemtype->currentText() != _originalItemType && QString(_itemTypes[_itemtype->currentItem()]) == "K")
+  {
+    q.prepare("SELECT bomitem_id "
+              "FROM bomitem, item "
+              "WHERE ((bomitem_item_id=item_id) "
+              "AND (item_active) "
+              "AND (NOT item_sold) "
+              "AND (bomitem_expires > current_date) "
+              "AND (getActiveRevId('BOM',bomitem_parent_item_id)=bomitem_rev_id) "
+              "AND (bomitem_parent_item_id=:item_id)) "
+              "LIMIT 1; ");
+    q.bindValue(":item_id", _itemid);
+    q.exec();
+    if (q.first())         
+    { 
+      if(QMessageBox::question( this, tr("BOM Items should be marked as Sold"),
+                                tr("<p>You have changed the Item Type of this "
+                                   "Item to Kit. This Item has BOM Items associated "
+                                   "with it that are not marked as Sold. "
+                                   "Do you wish to continue saving?"),
+                                QMessageBox::Ok,
+                                QMessageBox::Cancel | QMessageBox::Escape | QMessageBox::Default ) == QMessageBox::Cancel)
+        return;
+    }
+  }
+
   if (_mode == cEdit)
   {
     q.prepare( "SELECT item_id "
