@@ -270,7 +270,7 @@ void dspWoEffortByWorkOrder::sFillList()
     // we have to piece together the TOTAL line because one select won't work
     XTreeWidgetItem* lastLine = new XTreeWidgetItem(_wotc,
 		       _wotc->topLevelItem(_wotc->topLevelItemCount() - 1),
-		       _wo->id(), "", tr("Total"));
+		       -1, "", tr("Total"));
 
     q.prepare("SELECT MIN(wotc_timein) AS timein,"
 	      "       MAX(wotc_timeout) AS timeout,"

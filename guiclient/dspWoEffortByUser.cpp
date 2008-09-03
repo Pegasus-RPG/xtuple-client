@@ -276,29 +276,29 @@ void dspWoEffortByUser::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *selected)
     pMenu->setItemEnabled(menuItem, _privileges->check("MaintainWoTimeClock"));
 
     pMenu->insertSeparator();
-  }
 
-  menuItem = pMenu->insertItem(tr("View W/O"), this, SLOT(sViewWO()), 0);
+    menuItem = pMenu->insertItem(tr("View W/O"), this, SLOT(sViewWO()), 0);
 
-  if ((status == "R") || (status == "I"))
-  {
-    menuItem = pMenu->insertItem(tr("Close W/O..."), this, SLOT(sCloseWO()), 0);
-    if (!_privileges->check("CloseWorkOrders"))
-      pMenu->setItemEnabled(menuItem, FALSE);
-  }
+    if ((status == "R") || (status == "I"))
+    {
+      menuItem = pMenu->insertItem(tr("Close W/O..."), this, SLOT(sCloseWO()), 0);
+      if (!_privileges->check("CloseWorkOrders"))
+        pMenu->setItemEnabled(menuItem, FALSE);
+    }
 
 
-  if ((status == "E") || (status == "R") || (status == "I"))
-  {
-    pMenu->insertSeparator();
+    if ((status == "E") || (status == "R") || (status == "I"))
+    {
+      pMenu->insertSeparator();
 
-    menuItem = pMenu->insertItem(tr("View W/O Material Requirements..."), this, SLOT(sViewWomatl()), 0);
-    if (!_privileges->check("ViewWoMaterials"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem = pMenu->insertItem(tr("View W/O Material Requirements..."), this, SLOT(sViewWomatl()), 0);
+      if (!_privileges->check("ViewWoMaterials"))
+        pMenu->setItemEnabled(menuItem, FALSE);
 
-    menuItem = pMenu->insertItem(tr("View W/O Operations..."), this, SLOT(sViewWooper()), 0);
-    if (!_privileges->check("ViewWoOperations"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+      menuItem = pMenu->insertItem(tr("View W/O Operations..."), this, SLOT(sViewWooper()), 0);
+      if (!_privileges->check("ViewWoOperations"))
+        pMenu->setItemEnabled(menuItem, FALSE);
+    }
   }
 }
 
