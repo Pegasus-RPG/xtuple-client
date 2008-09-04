@@ -83,6 +83,9 @@ printPackingList::printPackingList(QWidget* parent, const char* name, bool modal
                             OrderLineEdit::Transfer);
     _order->setFromSitePrivsEnforced(TRUE);
 
+    _shipment->setType(ShipmentClusterLineEdit::SalesOrder);
+    _shipment->limitToOrder(1);
+
     _captive	= FALSE;
 
     _orderDate->setEnabled(false);
