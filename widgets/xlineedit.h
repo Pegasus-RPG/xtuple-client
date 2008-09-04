@@ -96,6 +96,7 @@ class OPENMFGWIDGETS_EXPORT XLineEdit : public QLineEdit
 
   signals:
     void clicked();
+    void doubleClicked();
     void requestList();
     void requestSearch();
     void requestInfo();
@@ -105,7 +106,8 @@ class OPENMFGWIDGETS_EXPORT XLineEdit : public QLineEdit
     int     _id;
     bool    _valid;
     bool    _parsed;
-
+    
+    void mouseDoubleClickEvent(QMouseEvent *);
     void mousePressEvent(QMouseEvent *);
     void keyPressEvent(QKeyEvent *);
     void focusInEvent(QFocusEvent *);

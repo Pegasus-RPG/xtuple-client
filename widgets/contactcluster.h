@@ -258,6 +258,8 @@ class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
 	virtual void	sEllipses();
 	virtual void	sInfo();
 	virtual void	sList();
+        virtual void    sLaunchEmail();
+        virtual void    sLaunchWebaddr();
 	virtual void	sSearch();
 	virtual int	save(AddressCluster::SaveFlags = AddressCluster::CHECK);
 	virtual void	setAccount(const int);

@@ -150,6 +150,13 @@ void XLineEdit::setDouble(const double pDouble, const int pPrec)
   QLineEdit::setText(formatNumber(pDouble, prec));
 }
 
+void XLineEdit::mouseDoubleClickEvent(QMouseEvent *event)
+{
+  emit doubleClicked();
+
+  QLineEdit::mouseDoubleClickEvent(event);
+}
+
 void XLineEdit::mousePressEvent(QMouseEvent *event)
 {
   emit clicked();

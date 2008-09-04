@@ -64,6 +64,8 @@
 #include <QMessageBox>
 #include <QSqlError>
 #include <QVBoxLayout>
+#include <QUrl>
+#include <QDesktopServices>
 
 #include <metasql.h>
 #include <QMessageBox>
@@ -159,6 +161,20 @@ void ContactCluster::init()
     _webaddr		= new XLineEdit(this, "_webaddr");
     _address		= new AddressCluster(this, "_address");
 
+#if defined Q_OS_MAC
+    _phone->setMinimumWidth(140);
+#endif    
+
+    QPalette p = _email->palette();
+    p.setColor(QColorGroup::Text, Qt::blue);
+    _email->setPalette(p);
+    _webaddr->setPalette(p);
+    
+    QFont newFont = _email->font();
+    newFont.setUnderline(TRUE);
+    _email->setFont(newFont);
+    _webaddr->setFont(newFont);
+
     _numberLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     _label->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     _nameLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
@@ -210,6 +226,9 @@ void ContactCluster::init()
     connect(_email,	SIGNAL(lostFocus()), this, SLOT(sCheck()));
     connect(_webaddr,	SIGNAL(lostFocus()), this, SLOT(sCheck()));
     connect(_address,	SIGNAL(changed()),   this, SLOT(sCheck()));
+    
+    connect(_email,     SIGNAL(doubleClicked()), this, SLOT(sLaunchEmail()));
+    connect(_webaddr,   SIGNAL(doubleClicked()), this, SLOT(sLaunchWebaddr()));
 
     setFocusPolicy(Qt::StrongFocus);
     setFocusProxy(_honorific);
@@ -821,6 +840,17 @@ void ContactCluster::setChange(QString p)
     _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(_change)), _change->text());
 }
 
+void ContactCluster::sLaunchEmail()
+{
+  QDesktopServices::openUrl(QUrl("mailto:" + _email->text()));
+}
+
+void ContactCluster::sLaunchWebaddr()
+{
+  qDebug("web");
+  QDesktopServices::openUrl(QUrl("http://" + _webaddr->text()));
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 ContactList::ContactList(QWidget* pParent, const char* pName, bool, Qt::WFlags) 
@@ -1099,3 +1129,5 @@ void ContactSearch::sFillList()
 			 query.value("cntct_webaddr"));
     }
 }
+
+
