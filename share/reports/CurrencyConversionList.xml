@@ -38,12 +38,12 @@ WHERE curr_base = FALSE
 ORDER BY currConcat;</sql>
  </querysource>
  <rpthead>
-  <height>111</height>
+  <height>113</height>
   <label>
    <rect>
-    <x>0</x>
+    <x>35</x>
     <y>0</y>
-    <width>647</width>
+    <width>575</width>
     <height>41</height>
    </rect>
    <font>
@@ -54,22 +54,6 @@ ORDER BY currConcat;</sql>
    <hcenter/>
    <vcenter/>
    <string>Currency Exchange Rates</string>
-  </label>
-  <label>
-   <rect>
-    <x>0</x>
-    <y>90</y>
-    <width>140</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <top/>
-   <string>Foreign Currencies:</string>
   </label>
   <field>
    <rect>
@@ -90,25 +74,6 @@ ORDER BY currConcat;</sql>
     <column>curr_name</column>
    </data>
   </field>
-  <field>
-   <rect>
-    <x>150</x>
-    <y>60</y>
-    <width>117</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <top/>
-   <data>
-    <query>baseCurrency</query>
-    <column>currConcat</column>
-   </data>
-  </field>
   <label>
    <rect>
     <x>0</x>
@@ -125,6 +90,41 @@ ORDER BY currConcat;</sql>
    <top/>
    <string>Base Currency:</string>
   </label>
+  <label>
+   <rect>
+    <x>0</x>
+    <y>90</y>
+    <width>140</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <top/>
+   <string>Foreign Currencies:</string>
+  </label>
+  <field>
+   <rect>
+    <x>150</x>
+    <y>60</y>
+    <width>116</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <top/>
+   <data>
+    <query>baseCurrency</query>
+    <column>currConcat</column>
+   </data>
+  </field>
  </rpthead>
  <section>
   <name>Known Currencies</name>
@@ -151,6 +151,22 @@ ORDER BY currConcat;</sql>
     </label>
     <label>
      <rect>
+      <x>350</x>
+      <y>30</y>
+      <width>37</width>
+      <height>15</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>10</size>
+      <weight>bold</weight>
+     </font>
+     <left/>
+     <top/>
+     <string>End</string>
+    </label>
+    <label>
+     <rect>
       <x>0</x>
       <y>30</y>
       <width>80</width>
@@ -165,13 +181,6 @@ ORDER BY currConcat;</sql>
      <top/>
      <string>Currency</string>
     </label>
-    <line>
-     <xstart>0</xstart>
-     <ystart>50</ystart>
-     <xend>407</xend>
-     <yend>50</yend>
-     <weight>2</weight>
-    </line>
     <label>
      <rect>
       <x>100</x>
@@ -188,22 +197,13 @@ ORDER BY currConcat;</sql>
      <top/>
      <string>Exchange Rate</string>
     </label>
-    <label>
-     <rect>
-      <x>350</x>
-      <y>30</y>
-      <width>37</width>
-      <height>15</height>
-     </rect>
-     <font>
-      <face>Arial</face>
-      <size>10</size>
-      <weight>bold</weight>
-     </font>
-     <left/>
-     <top/>
-     <string>End</string>
-    </label>
+    <line>
+     <xstart>0</xstart>
+     <ystart>50</ystart>
+     <xend>407</xend>
+     <yend>50</yend>
+     <weight>2</weight>
+    </line>
    </foot>
   </group>
   <detail>
@@ -211,25 +211,6 @@ ORDER BY currConcat;</sql>
     <query>knownCurrencies</query>
    </key>
    <height>21</height>
-   <field>
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>150</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>10</size>
-     <weight>normal</weight>
-    </font>
-    <left/>
-    <top/>
-    <data>
-     <query>knownCurrencies</query>
-     <column>curr_name</column>
-    </data>
-   </field>
    <field>
     <rect>
      <x>150</x>
@@ -247,6 +228,25 @@ ORDER BY currConcat;</sql>
     <data>
      <query>knownCurrencies</query>
      <column>currConcat</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>150</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>10</size>
+     <weight>normal</weight>
+    </font>
+    <left/>
+    <top/>
+    <data>
+     <query>knownCurrencies</query>
+     <column>curr_name</column>
     </data>
    </field>
   </detail>
@@ -272,44 +272,6 @@ ORDER BY currConcat;</sql>
     <query>exchangeRates</query>
    </key>
    <height>21</height>
-   <field>
-    <rect>
-     <x>230</x>
-     <y>0</y>
-     <width>90</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>10</size>
-     <weight>normal</weight>
-    </font>
-    <left/>
-    <top/>
-    <data>
-     <query>exchangeRates</query>
-     <column>curr_effective</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>90</x>
-     <y>0</y>
-     <width>120</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>10</size>
-     <weight>normal</weight>
-    </font>
-    <right/>
-    <top/>
-    <data>
-     <query>exchangeRates</query>
-     <column>curr_rate</column>
-    </data>
-   </field>
    <field>
     <rect>
      <x>0</x>
@@ -346,6 +308,44 @@ ORDER BY currConcat;</sql>
     <data>
      <query>exchangeRates</query>
      <column>curr_expires</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>90</x>
+     <y>0</y>
+     <width>120</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>10</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <top/>
+    <data>
+     <query>exchangeRates</query>
+     <column>curr_rate</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>230</x>
+     <y>0</y>
+     <width>90</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>10</size>
+     <weight>normal</weight>
+    </font>
+    <left/>
+    <top/>
+    <data>
+     <query>exchangeRates</query>
+     <column>curr_effective</column>
     </data>
    </field>
   </detail>
