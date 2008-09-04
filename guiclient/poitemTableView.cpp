@@ -195,7 +195,8 @@ QWidget *PoitemTableDelegate::createEditor(QWidget *parent,
     case ITEM_NUMBER_COL:
     {
       ItemLineEdit *item = new ItemLineEdit(parent);
-      item->setType(ItemLineEdit::cGeneralPurchased | ItemLineEdit::cActive);
+      item->setType(ItemLineEdit::cGeneralPurchased | ItemLineEdit::cGeneralManufactured | ItemLineEdit::cActive);
+      item->setDefaultType(ItemLineEdit::cGeneralPurchased | ItemLineEdit::cActive);
       if ((qobject_cast<const PoitemTableModel*>(model))->_vendrestrictpurch)
       {
 	int vendid = (qobject_cast<const PoitemTableModel*>(model))->_vendid;
@@ -226,8 +227,6 @@ QWidget *PoitemTableDelegate::createEditor(QWidget *parent,
 					  "ORDER BY item_number;" )
 				   .arg(vendid) );
       }
-      else
-        item->setType(ItemLineEdit::cGeneralPurchased | ItemLineEdit::cActive);
 
       editor = item;
       break;
