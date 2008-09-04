@@ -203,7 +203,7 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
       _mode = cEdit;
 
       _item->setType(ItemLineEdit::cGeneralPurchased | ItemLineEdit::cGeneralManufactured |
-	                 ItemLineEdit::cJob | ItemLineEdit::cActive);
+                         ItemLineEdit::cJob | ItemLineEdit::cActive);
       XSqlQuery wo;
       wo.prepare( "SELECT wo_itemsite_id, wo_priority, wo_status,"
                   "       formatWoNumber(wo_id) AS f_wonumber,"
@@ -211,11 +211,11 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
                   "       formatQty(wo_qtyrcv) AS f_received,"
                   "       wo_startdate, wo_duedate,"
                   "       formatMoney(wo_wipvalue) AS f_wipvalue,"
-				  "       formatMoney(wo_postedvalue) AS f_postedvalue,"
-				  "       formatMoney(wo_postedvalue-wo_wipvalue) AS f_rcvdvalue,"
+                  "       formatMoney(wo_postedvalue) AS f_postedvalue,"
+                  "       formatMoney(wo_postedvalue-wo_wipvalue) AS f_rcvdvalue,"
                   "       wo_prodnotes, wo_prj_id, "
-				  "       wo_bom_rev_id, wo_boo_rev_id, "
-				  "       wo_cosmethod "
+                  "       wo_bom_rev_id, wo_boo_rev_id, "
+                  "       wo_cosmethod "
                   "FROM wo "
                   "WHERE (wo_id=:wo_id);" );
       wo.bindValue(":wo_id", _woid);
@@ -230,8 +230,8 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
         _woNumber->setText(wo.value("f_wonumber").toString());
         _item->setItemsiteid(wo.value("wo_itemsite_id").toInt());
         _priority->setValue(_oldPriority);
-		_postedValue->setText(wo.value("f_postedvalue").toString());
-		_rcvdValue->setText(wo.value("f_rcvdvalue").toString());
+        _postedValue->setText(wo.value("f_postedvalue").toString());
+        _rcvdValue->setText(wo.value("f_rcvdvalue").toString());
         _wipValue->setText(wo.value("f_wipvalue").toString());
         _qty->setText(wo.value("f_ordered").toString());
         _qtyReceived->setText(wo.value("f_received").toString());
@@ -240,14 +240,14 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
         _productionNotes->setText(wo.value("wo_prodnotes").toString());
         _comments->setId(_woid);
         _project->setId(wo.value("wo_prj_id").toInt());
-	_bomRevision->setId(wo.value("wo_bom_rev_id").toInt());
-	_booRevision->setId(wo.value("wo_boo_rev_id").toInt());
+        _bomRevision->setId(wo.value("wo_bom_rev_id").toInt());
+        _booRevision->setId(wo.value("wo_boo_rev_id").toInt());
 
-	if (wo.value("wo_cosmethod").toString() == "D")
-	  _todate->setChecked(TRUE);
-	else if (wo.value("wo_cosmethod").toString() == "P")
-	  _proportional->setChecked(TRUE);
-	else
+        if (wo.value("wo_cosmethod").toString() == "D")
+          _todate->setChecked(TRUE);
+        else if (wo.value("wo_cosmethod").toString() == "P")
+          _proportional->setChecked(TRUE);
+        else
           _jobCosGroup->hide();
 
         // If the W/O is closed or Released don't allow changing some items.
@@ -262,7 +262,7 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
         _startDate->setEnabled(true);
         _woNumber->setEnabled(false);
         _item->setReadOnly(true);
-	    _bomRevision->setEnabled(wo.value("wo_status").toString() == "O");
+        _bomRevision->setEnabled(wo.value("wo_status").toString() == "O");
         _booRevision->setEnabled(wo.value("wo_status").toString() == "O");
         _warehouse->setEnabled(false);
         _comments->setReadOnly(false);
@@ -299,10 +299,10 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
                   "       formatQty(wo_qtyrcv) AS f_received,"
                   "       wo_startdate, wo_duedate,"
                   "       formatMoney(wo_wipvalue) AS f_wipvalue,"
-				  "       formatMoney(wo_postedvalue) AS f_postedvalue,"
-				  "       formatMoney(wo_postedvalue-wo_wipvalue) AS f_rcvdvalue,"
+                  "       formatMoney(wo_postedvalue) AS f_postedvalue,"
+                  "       formatMoney(wo_postedvalue-wo_wipvalue) AS f_rcvdvalue,"
                   "       wo_prodnotes, wo_prj_id, wo_bom_rev_id, "
-				  "       wo_boo_rev_id, wo_cosmethod "
+                  "       wo_boo_rev_id, wo_cosmethod "
                   "FROM wo "
                   "WHERE (wo_id=:wo_id);" );
       wo.bindValue(":wo_id", _woid);
@@ -314,8 +314,8 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
         _woNumber->setText(wo.value("f_wonumber").toString());
         _item->setItemsiteid(wo.value("wo_itemsite_id").toInt());
         _priority->setValue(wo.value("wo_priority").toInt());
-		_postedValue->setText(wo.value("f_postedvalue").toString());
-		_rcvdValue->setText(wo.value("f_rcvdvalue").toString());
+        _postedValue->setText(wo.value("f_postedvalue").toString());
+        _rcvdValue->setText(wo.value("f_rcvdvalue").toString());
         _wipValue->setText(wo.value("f_wipvalue").toString());
         _qty->setText(wo.value("f_ordered").toString());
         _qtyReceived->setText(wo.value("f_received").toString());
@@ -324,14 +324,14 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
         _productionNotes->setText(wo.value("wo_prodnotes").toString());
         _comments->setId(_woid);
         _project->setId(wo.value("wo_prj_id").toInt());
-	_bomRevision->setId(wo.value("wo_bom_rev_id").toInt());
-	_booRevision->setId(wo.value("wo_boo_rev_id").toInt());
+        _bomRevision->setId(wo.value("wo_bom_rev_id").toInt());
+        _booRevision->setId(wo.value("wo_boo_rev_id").toInt());
 
-	if (wo.value("wo_cosmethod").toString() == "D")
-	  _todate->setChecked(TRUE);
-	else if (wo.value("wo_cosmethod").toString() == "P")
-	  _proportional->setChecked(TRUE);
-	else
+        if (wo.value("wo_cosmethod").toString() == "D")
+          _todate->setChecked(TRUE);
+        else if (wo.value("wo_cosmethod").toString() == "P")
+          _proportional->setChecked(TRUE);
+        else
           _jobCosGroup->hide();
  
         _woNumber->setEnabled(FALSE);
@@ -353,7 +353,7 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
         _close->setText(tr("&Close"));
         _project->setEnabled(FALSE);
         _itemcharView->setEnabled(false);
-	_jobCosGroup->setEnabled(FALSE);
+        _jobCosGroup->setEnabled(FALSE);
         
         _close->setFocus();
       }
@@ -505,7 +505,7 @@ void workOrder::sCreate()
   
     q.prepare( "SELECT createWo( :woNumber, :itemsite_id, :priority, :orderQty,"
                "                 :leadTime, :dueDate, :productionNotes, :ordtype, :ordid, :prj_id,"
-			   "                 :bom_rev_id, :boo_rev_id) AS result;" );
+               "                 :bom_rev_id, :boo_rev_id) AS result;" );
     q.bindValue(":woNumber", _woNumber->text().toInt());
     q.bindValue(":itemsite_id", itemsiteid);
     q.bindValue(":priority", _priority->value());
@@ -514,8 +514,8 @@ void workOrder::sCreate()
     q.bindValue(":dueDate", _dueDate->date());
     q.bindValue(":productionNotes", _productionNotes->text());
     q.bindValue(":prj_id", _project->id());
-	q.bindValue(":bom_rev_id", _bomRevision->id());
-	q.bindValue(":boo_rev_id", _booRevision->id());
+    q.bindValue(":bom_rev_id", _bomRevision->id());
+    q.bindValue(":boo_rev_id", _booRevision->id());
     if(cRelease == _mode)
     {
       q.bindValue(":ordtype", _planordtype);
@@ -612,9 +612,9 @@ void workOrder::sCreate()
     q.prepare("UPDATE wo"
               "   SET wo_prodnotes=:productionNotes,"
               "       wo_prj_id=:prj_id,"
-			  "       wo_bom_rev_id=:bom_rev_id,"
-			  "       wo_boo_rev_id=:boo_rev_id,"
-			  "       wo_cosmethod=:wo_cosmethod"
+              "       wo_bom_rev_id=:bom_rev_id,"
+              "       wo_boo_rev_id=:boo_rev_id,"
+              "       wo_cosmethod=:wo_cosmethod"
               " WHERE (wo_id=:wo_id); ");
     q.bindValue(":wo_id", _woid);
     q.bindValue(":productionNotes", _productionNotes->text());
