@@ -184,6 +184,26 @@
          </widget>
         </item>
         <item>
+         <widget class="QPushButton" name="_enable" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+          <property name="text" >
+           <string>Enable</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="_disable" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+          <property name="text" >
+           <string>Disable</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QPushButton" name="_delete" >
           <property name="enabled" >
            <bool>false</bool>

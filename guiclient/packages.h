@@ -73,9 +73,12 @@ public:
 
 public slots:
     virtual void sDelete();
+    virtual void sDisable();
     virtual void sEdit();
+    virtual void sEnable();
     virtual void sFillList();
     virtual void sHandleAutoUpdate(const bool);
+    virtual void sHandleButtons(const bool);
     virtual void sLoad();
     virtual void sNew();
     virtual void sPopulateMenu( QMenu * );

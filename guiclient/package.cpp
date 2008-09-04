@@ -131,6 +131,7 @@ package::package(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _dep->addColumn(tr("Package"),     -1, Qt::AlignLeft,  true, "pkghead_name");
   _dep->addColumn(tr("Description"), -1, Qt::AlignLeft,  true, "pkghead_descrip");
   _dep->addColumn(tr("Version"),     -1, Qt::AlignRight, true, "pkghead_version");
+
 }
 
 package::~package()
@@ -177,6 +178,7 @@ enum SetResponse package::set(const ParameterList &pParams)
       _description->setEnabled(false);
       _developer->setEnabled(false);
       _notes->setEnabled(false);
+      _enabled->setEnabled(false);
 
       _save->hide();
       _close->setText(tr("&Close"));
@@ -272,7 +274,8 @@ void package::populate()
 {
   if (DEBUG)    qDebug("package::populate() entered");
 
-  q.prepare("SELECT * FROM pkghead WHERE (pkghead_id=:pkghead_id);");
+  q.prepare("SELECT *, packageIsEnabled(pkghead_name) AS enabled "
+            "FROM pkghead WHERE (pkghead_id=:pkghead_id);");
   q.bindValue(":pkghead_id", _pkgheadid);
   q.exec();
   if (q.first())
@@ -284,6 +287,7 @@ void package::populate()
     _version->setText(q.value("pkghead_version").toString());
     _developer->setText(q.value("pkghead_developer").toString());
     _notes->setText(q.value("pkghead_notes").toString());
+    _enabled->setChecked(q.value("enabled").toBool());
     if (DEBUG)    qDebug("package::populate() select pkghead complete");
   }
   else if (q.lastError().type() != QSqlError::None)
@@ -333,7 +337,7 @@ void package::populate()
     return;
   }
 
-  // TODO: make this recursive
+  // TODO: make this recursive?
   q.prepare("SELECT * "
             "FROM pkgdep, pkghead "
             "WHERE ((pkgdep_pkghead_id=pkghead_id)"
@@ -349,7 +353,7 @@ void package::populate()
     return;
   }
 
-  // TODO: make this recursive
+  // TODO: make this recursive?
   q.prepare("SELECT * "
             "FROM pkgdep, pkghead "
             "WHERE ((pkgdep_parent_pkghead_id=pkghead_id)"

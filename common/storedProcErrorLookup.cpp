@@ -718,6 +718,12 @@ void initErrorLookupHash()
 				"use the selected Work Center before you may "
 				"delete it." ),				0, "" },
 
+  { "disablePackage", -1, TR("This version of the PostgreSQL database server "
+                             "does not support package enabling or disabling. "
+                             "Upgrade to PostgreSQL 8.2 or later."),    0, "" },
+  { "disablePackage", -2, TR("Could not find a package with the internal id % "
+                             "to enable or disable."),                  0, "" },
+
 
   { "editccnumber",	-1, TR("You must select Master Card, Visa, American "
 			       "Express or Discover as the credit card type."),
@@ -742,6 +748,9 @@ void initErrorLookupHash()
 			       "Express number must be 6011."),	 0, "" },
   { "editccnumber",    -10, TR("The credit card number that you have provided "
 			       "is not valid."),		 0, "" },
+
+  { "enablePackage",  -1, "", -1, "disablePackage" },
+  { "enablePackage",  -2, "", -2, "disablePackage" },
 
   { "enterReceipt",  -1, TR("Information for this order line item could not "
 			       "be found. If it is a Purchase Order Item then "

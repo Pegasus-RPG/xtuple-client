@@ -84,8 +84,8 @@ protected slots:
     virtual void languageChange();
 
 private:
-    int _mode;
-    int _pkgheadid;
+    int  _mode;
+    int  _pkgheadid;
 
 };
 

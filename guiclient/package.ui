@@ -141,19 +141,6 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="2" >
-    <spacer>
-     <property name="orientation" >
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" >
-      <size>
-       <width>321</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
    <item row="3" column="0" colspan="3" >
     <widget class="QTabWidget" name="_tab" >
      <property name="currentIndex" >
@@ -215,6 +202,13 @@
      </widget>
     </widget>
    </item>
+   <item row="2" column="2" >
+    <widget class="QCheckBox" name="_enabled" >
+     <property name="text" >
+      <string>Enabled</string>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <customwidgets>
@@ -234,6 +228,20 @@
    <header>xtextedit.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>_name</tabstop>
+  <tabstop>_version</tabstop>
+  <tabstop>_description</tabstop>
+  <tabstop>_developer</tabstop>
+  <tabstop>_enabled</tabstop>
+  <tabstop>_tab</tabstop>
+  <tabstop>_notes</tabstop>
+  <tabstop>_save</tabstop>
+  <tabstop>_rec</tabstop>
+  <tabstop>_req</tabstop>
+  <tabstop>_dep</tabstop>
+  <tabstop>_close</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

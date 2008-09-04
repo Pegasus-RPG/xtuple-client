@@ -76,7 +76,9 @@ packages::packages(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_autoUpdate, SIGNAL(toggled(bool)), this, SLOT(sHandleAutoUpdate(bool)));
   connect(_close,   SIGNAL(clicked()), this, SLOT(close()));
   connect(_delete,  SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_disable, SIGNAL(clicked()), this, SLOT(sDisable()));
   connect(_edit,    SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_enable,  SIGNAL(clicked()), this, SLOT(sEnable()));
   connect(_load,    SIGNAL(clicked()), this, SLOT(sLoad()));
   connect(_new,     SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_package, SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *, int)), this, SLOT(sPopulateMenu(QMenu*)));
@@ -86,6 +88,7 @@ packages::packages(QWidget* parent, const char* name, Qt::WFlags fl)
   _package->addColumn(tr("Name"),    _itemColumn, Qt::AlignLeft, true, "pkghead_name");
   _package->addColumn(tr("Description"),      -1, Qt::AlignLeft, true, "pkghead_descrip");
   _package->addColumn(tr("Version"), _itemColumn, Qt::AlignRight,true, "pkghead_version");
+  _package->addColumn(tr("Enabled"),   _ynColumn, Qt::AlignCenter,true, "enabled");
 
   _load->setEnabled(package::userHasPriv(cNew));
   // TODO: spec says no editing of packages, only loading
@@ -105,7 +108,9 @@ packages::packages(QWidget* parent, const char* name, Qt::WFlags fl)
     connect(_package, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
 
   if (package::userHasPriv(cNew))
-    connect(_package, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
+  {
+    connect(_package, SIGNAL(valid(bool)), this, SLOT(sHandleButtons(bool)));
+  }
 
   sHandleAutoUpdate(_autoUpdate->isChecked());
 }
@@ -122,13 +127,16 @@ void packages::languageChange()
 
 void packages::sFillList()
 {
-  q.prepare( "SELECT * "
+  q.prepare( "SELECT *, packageIsEnabled(pkghead_name) AS enabled "
              "FROM pkghead "
              "ORDER BY pkghead_name, pkghead_version DESC;" );
-  q.bindValue(":days", tr("Days"));
-  q.bindValue(":proximo", tr("Proximo"));
   q.exec();
   _package->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void packages::sDelete()
@@ -283,6 +291,12 @@ void packages::sPopulateMenu(QMenu *pMenu)
 
   menuItem = pMenu->insertItem(tr("Delete"), this, SLOT(sDelete()), 0);
   pMenu->setItemEnabled(menuItem, package::userHasPriv(cNew));
+
+  menuItem = pMenu->insertItem(tr("Enable"), this, SLOT(sEnable()), 0);
+  pMenu->setItemEnabled(menuItem, package::userHasPriv(cNew));
+
+  menuItem = pMenu->insertItem(tr("Disable"), this, SLOT(sDisable()), 0);
+  pMenu->setItemEnabled(menuItem, package::userHasPriv(cNew));
 }
 
 void packages::sPrint()
@@ -301,4 +315,63 @@ void packages::sHandleAutoUpdate(const bool pAutoUpdate)
   else
     disconnect(omfgThis, SIGNAL(tick()), this, SLOT(sFillList()));
   sFillList();
+}
+
+void packages::sEnable()
+{
+  XSqlQuery eq;
+  eq.prepare("SELECT enablePackage(:id) AS result;");
+  eq.bindValue(":id", _package->id());
+  eq.exec();
+  if (eq.first())
+  {
+    int result = eq.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("enablePackage", result)
+                          .arg(_package->id()),
+                  __FILE__, __LINE__);
+      return;
+    }
+  }
+  else if (eq.lastError().type() != QSqlError::None)
+  {
+    systemError(this, eq.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+  sFillList();
+}
+
+void packages::sDisable()
+{
+  XSqlQuery dq;
+  dq.prepare("SELECT disablePackage(:id) AS result;");
+  dq.bindValue(":id", _package->id());
+  dq.exec();
+  if (dq.first())
+  {
+    int result = dq.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("disablePackage", result)
+                          .arg(_package->id()),
+                  __FILE__, __LINE__);
+      return;
+    }
+  }
+  else if (dq.lastError().type() != QSqlError::None)
+  {
+    systemError(this, dq.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+  sFillList();
+}
+
+void packages::sHandleButtons(const bool pvalid)
+{
+  _delete->setEnabled(pvalid);
+  _disable->setEnabled(pvalid &&
+                       _package->currentItem()->rawValue("enabled").toBool());
+  _enable->setEnabled(pvalid &&
+                      ! _package->currentItem()->rawValue("enabled").toBool());
 }
