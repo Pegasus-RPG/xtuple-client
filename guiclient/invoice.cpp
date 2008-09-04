@@ -635,7 +635,7 @@ void invoice::sNew()
   params.append("invoiceNumber", _invoiceNumber->text());
   params.append("cust_id", _cust->id());
   params.append("cust_curr_id", _custCurrency->id());
-  params.append("curr_date", _orderDate->date());
+  params.append("curr_date", _invoiceDate->date());
 
   invoiceItem newdlg(this, "", TRUE);
   newdlg.set(params);
