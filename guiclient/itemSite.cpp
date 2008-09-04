@@ -223,6 +223,7 @@ enum SetResponse itemSite::set(const ParameterList &pParams)
         else
         {
           _mode = cNew;
+          _controlMethod->setCurrentItem(1);
           _reorderLevel->setDouble(0.0);
           _orderUpToQty->setDouble(0.0);
           _minimumOrder->setDouble(0.0);
@@ -238,6 +239,7 @@ enum SetResponse itemSite::set(const ParameterList &pParams)
       else
       {
         _mode = cNew;
+        _controlMethod->setCurrentItem(1);
         _reorderLevel->setDouble(0.0);
         _orderUpToQty->setDouble(0.0);
         _minimumOrder->setDouble(0.0);
