@@ -72,7 +72,7 @@ public:
     ~woOperation();
 
 public slots:
-    virtual enum SetResponse set( ParameterList & pParams );
+    virtual enum SetResponse set(const ParameterList & pParams );
     virtual void sCalculateInvRunTime();
     virtual void sPopulateWoInfo( int pWoid );
     virtual void populate();
@@ -80,7 +80,6 @@ public slots:
 protected slots:
     virtual void languageChange();
 
-    virtual void init();
     virtual void sSave();
     virtual void sHandleFont( bool pFixed );
     virtual void sHandleStdopn( int pStdopnid );

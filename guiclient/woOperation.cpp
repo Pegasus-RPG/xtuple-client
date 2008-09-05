@@ -57,65 +57,38 @@
 
 #include "woOperation.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
+
 #include "inputManager.h"
-/*
- *  Constructs a woOperation as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
+
 woOperation::woOperation(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  connect(_stdopn, SIGNAL(newID(int)), this, SLOT(sHandleStdopn(int)));
+  connect(_fixedFont, SIGNAL(toggled(bool)), this, SLOT(sHandleFont(bool)));
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_runTime, SIGNAL(textChanged(const QString&)), this, SLOT(sCalculateInvRunTime()));
+  connect(_invProdUOMRatio, SIGNAL(textChanged(const QString&)), this, SLOT(sCalculateInvRunTime()));
+  connect(_wo, SIGNAL(newId(int)), this, SLOT(sPopulateWoInfo(int)));
 
-    // signals and slots connections
-    connect(_stdopn, SIGNAL(newID(int)), this, SLOT(sHandleStdopn(int)));
-    connect(_fixedFont, SIGNAL(toggled(bool)), this, SLOT(sHandleFont(bool)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    connect(_wo, SIGNAL(valid(bool)), _save, SLOT(setEnabled(bool)));
-    connect(_runTime, SIGNAL(textChanged(const QString&)), this, SLOT(sCalculateInvRunTime()));
-    connect(_invProdUOMRatio, SIGNAL(textChanged(const QString&)), this, SLOT(sCalculateInvRunTime()));
-    connect(_wo, SIGNAL(qtyOrderedChanged(const QString&)), _qtyOrdered, SLOT(setText(const QString&)));
-    connect(_wo, SIGNAL(newId(int)), this, SLOT(sPopulateWoInfo(int)));
-    init();
-}
+  _qtyOrdered->setPrecision(omfgThis->qtyVal());
+  _setupTime->setValidator(omfgThis->runTimeVal());
+  _runTime->setValidator(omfgThis->runTimeVal());
+  _invProdUOMRatio->setValidator(omfgThis->ratioVal());
+  _invRunTime->setPrecision(omfgThis->runTimeVal());
+  _invPerMinute->setPrecision(omfgThis->runTimeVal());
 
-/*
- *  Destroys the object and frees any allocated resources
- */
-woOperation::~woOperation()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void woOperation::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void woOperation::init()
-{
   omfgThis->inputManager()->notify(cBCWorkOrder, this, _wo, SLOT(setId(int)));
 
   _wo->setType(cWoExploded | cWoReleased | cWoIssued);
   _fixedFont->setChecked(_preferences->boolean("UsedFixedWidthFonts"));
 
   _prodUOM->setType(XComboBox::UOMs);
-
-  _wrkcnt->populate( "SELECT wrkcnt_id, wrkcnt_code "
-                     "FROM wrkcnt "
-                     "ORDER BY wrkcnt_code" );
+  _wrkcnt->setType(XComboBox::WorkCenters);
 
   _stdopn->populate( "SELECT -1, TEXT('None') AS stdopn_number "
                      "UNION SELECT stdopn_id, stdopn_number "
@@ -123,7 +96,17 @@ void woOperation::init()
                      "ORDER BY stdopn_number" );
 }
 
-enum SetResponse woOperation::set(ParameterList &pParams)
+woOperation::~woOperation()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void woOperation::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse woOperation::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -208,6 +191,11 @@ void woOperation::sSave()
                "WHERE (wooper_wo_id=:wo_id);" );
     q.bindValue(":wo_id", _wo->id());
     q.exec();
+    if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
 
   if (_mode == cNew)
@@ -215,11 +203,9 @@ void woOperation::sSave()
     q.exec("SELECT NEXTVAL('wooper_wooper_id_seq') AS wooper_id;");
     if (q.first())
       _wooperid = q.value("wooper_id").toInt();
-    else
+    else if (q.lastError().type() != QSqlError::NoError)
     {
-      systemError(this, tr("A System Error occurred at %1::%2.")
-                        .arg(__FILE__)
-                        .arg(__LINE__) );
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
@@ -288,6 +274,11 @@ void woOperation::sSave()
   q.bindValue(":wooper_rcvinv", QVariant(_receiveStock->isChecked(), 0));
   q.bindValue(":wooper_issuecomp", QVariant(_issueComp->isChecked(), 0));
   q.exec();
+  if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   omfgThis->sWorkOrderOperationsUpdated(_wo->id(), _wooperid, TRUE);
 
@@ -306,12 +297,7 @@ void woOperation::sHandleStdopn(int pStdopnid)
 {
   if (_stdopn->id() != -1)
   {
-    q.prepare( "SELECT stdopn_descrip1, stdopn_descrip2, stdopn_toolref,"
-               "       stdopn_wrkcnt_id, stdopn_stdtimes,"
-               "       stdopn_produom,"
-               "       formatQty(stdopn_sutime) AS sutime,"
-               "       formatQty(stdopn_rntime) AS rntime,"
-               "       formatUOMRatio(stdopn_invproduomratio) AS invproduomratio "
+    q.prepare( "SELECT * "
                "FROM stdopn "
                "WHERE (stdopn_id=:stdopn_id);" );
     q.bindValue(":stdopn_id", pStdopnid);
@@ -326,10 +312,15 @@ void woOperation::sHandleStdopn(int pStdopnid)
 
       if (q.value("stdopn_stdtimes").toBool())
       {
-        _setupTime->setText(q.value("sutime"));
+        _setupTime->setDouble(q.value("stdopn_sutime").toDouble());
         _prodUOM->setText(q.value("stdopn_produom"));
-        _invProdUOMRatio->setText(q.value("invproduomratio"));
+        _invProdUOMRatio->setDouble(q.value("stdopn_invproduomratio").toDouble());
       }
+    }
+    else if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
     }
   }
 }
@@ -338,13 +329,13 @@ void woOperation::sCalculateInvRunTime()
 {
   if ((_runTime->toDouble() != 0.0) && (_invProdUOMRatio->toDouble() != 0.0))
   {
-    _invRunTime->setText(formatCost(_runTime->toDouble() / _cachedQtyOrdered / _invProdUOMRatio->toDouble()));
-    _invPerMinute->setText(formatCost((1 / (_runTime->toDouble() / _cachedQtyOrdered / _invProdUOMRatio->toDouble()))));
+    _invRunTime->setDouble(_runTime->toDouble() / _cachedQtyOrdered / _invProdUOMRatio->toDouble());
+    _invPerMinute->setDouble((1 / (_runTime->toDouble() / _cachedQtyOrdered / _invProdUOMRatio->toDouble())));
   }
   else
   {
-    _invRunTime->setText(formatCost(0.0));
-    _invPerMinute->setText(formatCost(0.0));
+    _invRunTime->setDouble(0.0);
+    _invPerMinute->setDouble(0.0);
   }
 }
 
@@ -368,10 +359,11 @@ void woOperation::sPopulateWoInfo(int pWoid)
     _invUOM1->setText(q.value("uom_name").toString());
     _invUOM2->setText(q.value("uom_name").toString());
   }
-  else
-    systemError(this, tr("A System Error occurred at %1::%2.")
-                      .arg(__FILE__)
-                      .arg(__LINE__) );
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 
@@ -380,7 +372,7 @@ void woOperation::populate()
   XSqlQuery wooper;
   wooper.prepare( "SELECT wooper_wo_id, wooper_seqnumber, wooper_wrkcnt_id, wooper_stdopn_id,"
                   "       wooper_descrip1, wooper_descrip2, wooper_toolref,"
-                  "       wooper_produom, formatUOMRatio(wooper_invproduomratio) AS invproduomratio,"
+                  "       wooper_produom, wooper_invproduomratio,"
                   "       formatTime(wooper_sutime) AS sutime, wooper_surpt,"
                   "       formatTime(wooper_rntime) AS rntime, wooper_rnrpt,"
                   "       formatTime(wooper_suconsumed) AS suconsumed, wooper_suconsumed, wooper_sucomplete,"
@@ -403,7 +395,7 @@ void woOperation::populate()
     _description1->setText(wooper.value("wooper_descrip1"));
     _description2->setText(wooper.value("wooper_descrip2"));
     _prodUOM->setText(wooper.value("wooper_produom"));
-    _invProdUOMRatio->setText(wooper.value("invproduomratio"));
+    _invProdUOMRatio->setDouble(wooper.value("wooper_invproduomratio").toDouble());
     _toolingReference->setText(wooper.value("wooper_toolref"));
     _wrkcnt->setId(wooper.value("wooper_wrkcnt_id").toInt());
 
@@ -435,5 +427,9 @@ void woOperation::populate()
       _wrkcnt->setEnabled(FALSE);
     }
   }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
-
