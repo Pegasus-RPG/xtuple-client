@@ -1314,7 +1314,8 @@ void item::sHandleItemtype()
   }
   _fractional->setEnabled(itemType!="K");
   _planningType->setEnabled(itemType!="K");
-  _boo->setVisible(itemType!="K");
+  if (_boo->isVisible())
+    _boo->setVisible(itemType!="K");
   _workbench->setVisible(itemType!="K");
   _tab->setTabEnabled(_tab->indexOf(_tabUOM),(itemType!="K"));
   _tab->setTabEnabled(_tab->indexOf(_transformationsTab),(itemType!="K"));
@@ -2078,3 +2079,4 @@ void item::sNewClassCode()
 {
   _inventoryUOM->setFocus();
 }
+  
