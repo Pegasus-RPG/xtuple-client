@@ -75,10 +75,10 @@ copyTransferOrder::copyTransferOrder(QWidget* parent, const char* name, bool mod
 
   _captive = FALSE;
 
-  _item->addColumn(tr("#"),           _seqColumn,     Qt::AlignCenter );
-  _item->addColumn(tr("Item"),        _itemColumn,    Qt::AlignLeft   );
-  _item->addColumn(tr("Description"), -1,             Qt::AlignLeft   );
-  _item->addColumn(tr("Ordered"),     _qtyColumn,     Qt::AlignRight  );
+  _item->addColumn(tr("#"),       _seqColumn, Qt::AlignRight, true, "toitem_linenumber");
+  _item->addColumn(tr("Item"),   _itemColumn, Qt::AlignLeft,  true, "item_number");
+  _item->addColumn(tr("Description"),     -1, Qt::AlignLeft,  true, "description");
+  _item->addColumn(tr("Ordered"), _qtyColumn, Qt::AlignRight, true, "toitem_qty_ordered");
 }
 
 copyTransferOrder::~copyTransferOrder()
@@ -131,10 +131,10 @@ void copyTransferOrder::populate()
       return;
     }
 
-    q.prepare("SELECT toitem_id,"
-	      "       toitem_linenumber, item_number,"
+    q.prepare("SELECT toitem.*,"
+	      "       item_number,"
 	      "       (item_descrip1 || ' ' || item_descrip2) AS description,"
-	      "       formatQty(toitem_qty_ordered) AS f_ordered "
+	      "       'qty' AS toitem_qty_ordered_xtnumericrole "
 	      "FROM item, toitem "
 	      "WHERE ((toitem_item_id=item_id)"
 	      "  AND  (toitem_tohead_id=:tohead_id)) "

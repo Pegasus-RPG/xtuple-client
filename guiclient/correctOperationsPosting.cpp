@@ -82,14 +82,19 @@ correctOperationsPosting::correctOperationsPosting(QWidget* parent, const char* 
   _wo->setType(cWoIssued);
   _wooper->setAllowNull(TRUE);
   _qty->setValidator(omfgThis->qtyVal());
+  _qtyOrdered->setPrecision(omfgThis->qtyVal());
+  _qtyReceived->setPrecision(omfgThis->qtyVal());
+  _qtyBalance->setPrecision(omfgThis->qtyVal());
 
   _specifiedSutime->setValidator(omfgThis->runTimeVal());
   _specifiedRntime->setValidator(omfgThis->runTimeVal());
 
-  _womatl->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft  );
-  _womatl->addColumn(tr("Description"), -1,          Qt::AlignLeft  );
-  _womatl->addColumn(tr("Iss. UOM"),    _uomColumn,  Qt::AlignLeft  );
-  _womatl->addColumn(tr("Qty. per"),    _qtyColumn,  Qt::AlignRight );
+  _standardRntime->setPrecision(omfgThis->qtyVal());
+
+  _womatl->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft, true, "item_number");
+  _womatl->addColumn(tr("Description"), -1,          Qt::AlignLeft, true, "descrip");
+  _womatl->addColumn(tr("Iss. UOM"),    _uomColumn,  Qt::AlignLeft, true, "uom_name");
+  _womatl->addColumn(tr("Qty. per"),    _qtyColumn,  Qt::AlignRight,true, "womatl_qtyper");
 }
 
 correctOperationsPosting::~correctOperationsPosting()
@@ -158,13 +163,12 @@ void correctOperationsPosting::sHandleWooperid(int)
 {
   if (_wooper->id() != -1)
   {
-    q.prepare( "SELECT formatQty(wo_qtyord) AS ordered,"
-               "       formatQty(COALESCE(wooper_qtyrcv,0)) AS received,"
-               "       formatQty(noNeg(wo_qtyord - COALESCE(wooper_qtyrcv,0))) AS balance,"
+    q.prepare( "SELECT wo_qtyord,"
+               "       (COALESCE(wooper_qtyrcv,0)) AS received,"
+               "       noNeg(wo_qtyord - COALESCE(wooper_qtyrcv,0)) AS balance,"
                "       wooper_issuecomp, wooper_rcvinv, wooper_produom,"
                "       wooper_sucomplete, wooper_rncomplete,"
-               "       wooper_suconsumed, formatTime(wooper_suconsumed) AS suconsumed,"
-               "       wooper_rnconsumed, formatTime(wooper_rnconsumed) AS rnconsumed,"
+               "       wooper_suconsumed, wooper_rnconsumed, "
                "       wooper_rnqtyper, wooper_invproduomratio "
                "FROM wo, wooper "
                "WHERE ( (wooper_wo_id=wo_id)"
@@ -176,9 +180,9 @@ void correctOperationsPosting::sHandleWooperid(int)
       _rnqtyper = q.value("wooper_rnqtyper").toDouble();
       _invProdUOMRatio = q.value("wooper_invproduomratio").toDouble();
 
-      _qtyOrdered->setText(q.value("ordered").toString());
-      _qtyReceived->setText(q.value("received").toString());
-      _qtyBalance->setText(q.value("balance").toString());
+      _qtyOrdered->setDouble(q.value("wo_qtyord").toDouble());
+      _qtyReceived->setDouble(q.value("received").toDouble());
+      _qtyBalance->setDouble(q.value("balance").toDouble());
       _productionUOM->setText( tr("Post in Production UOMs (%1)") 
                                .arg(q.value("wooper_produom").toString()) );
 
@@ -198,8 +202,10 @@ void correctOperationsPosting::sHandleWooperid(int)
 
       if (q.value("wooper_issuecomp").toBool())
       {
-        q.prepare( "SELECT womatl_id, item_number, (item_descrip1 || ' ' || item_descrip2),"
-                   "       uom_name, formatQtyPer(womatl_qtyper) "
+        q.prepare( "SELECT womatl_id, item_number,"
+		   "      (item_descrip1 || ' ' || item_descrip2) AS descrip,"
+                   "       uom_name, womatl_qtyper,"
+		   "       'qtyper' AS womatl_qtyper_xtnumericrole "
                    "FROM womatl, itemsite, item, uom "
                    "WHERE ( (womatl_itemsite_id=itemsite_id)"
                    " AND (womatl_uom_id=uom_id)"
@@ -282,9 +288,9 @@ void correctOperationsPosting::sHandleQty()
     double qty = _qty->toDouble();
 
     if (_productionUOM->isChecked())
-      _standardRntime->setText(formatQty(_rnqtyper * qty));
+      _standardRntime->setDouble(_rnqtyper * qty);
     else
-      _standardRntime->setText(formatQty(_rnqtyper / _invProdUOMRatio * qty));
+      _standardRntime->setDouble(_rnqtyper / _invProdUOMRatio * qty);
 
     if (qty < _qtyOrdered->text().toDouble())
       _clearRnComplete->setChecked(TRUE);

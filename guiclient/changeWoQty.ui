@@ -13,25 +13,28 @@
    <string>Change W/O Quantity Ordered</string>
   </property>
   <layout class="QVBoxLayout" >
-   <property name="margin" >
+   <property name="spacing" >
     <number>5</number>
    </property>
-   <property name="spacing" >
+   <property name="leftMargin" >
+    <number>5</number>
+   </property>
+   <property name="topMargin" >
+    <number>5</number>
+   </property>
+   <property name="rightMargin" >
+    <number>5</number>
+   </property>
+   <property name="bottomMargin" >
     <number>5</number>
    </property>
    <item>
     <layout class="QVBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
      <property name="spacing" >
       <number>5</number>
      </property>
      <item>
       <layout class="QHBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
         <number>2</number>
        </property>
@@ -56,9 +59,6 @@
        </item>
        <item>
         <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>5</number>
          </property>
@@ -104,18 +104,15 @@
      </item>
      <item>
       <layout class="QHBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
         <number>0</number>
        </property>
        <item>
         <layout class="QGridLayout" >
-         <property name="margin" >
+         <property name="horizontalSpacing" >
           <number>0</number>
          </property>
-         <property name="spacing" >
+         <property name="verticalSpacing" >
           <number>0</number>
          </property>
          <item row="1" column="0" >
@@ -162,7 +159,7 @@
           </widget>
          </item>
          <item row="3" column="2" >
-          <widget class="QLabel" name="_newQtyBalance" >
+          <widget class="XLabel" name="_newQtyBalance" >
            <property name="minimumSize" >
             <size>
              <width>80</width>
@@ -175,7 +172,7 @@
           </widget>
          </item>
          <item row="2" column="2" >
-          <widget class="QLabel" name="_newQtyReceived" >
+          <widget class="XLabel" name="_newQtyReceived" >
            <property name="minimumSize" >
             <size>
              <width>80</width>
@@ -204,7 +201,7 @@
           </spacer>
          </item>
          <item row="1" column="1" >
-          <widget class="QLabel" name="_currentQtyOrdered" >
+          <widget class="XLabel" name="_currentQtyOrdered" >
            <property name="minimumSize" >
             <size>
              <width>80</width>
@@ -237,7 +234,7 @@
           </widget>
          </item>
          <item row="3" column="1" >
-          <widget class="QLabel" name="_currentQtyBalance" >
+          <widget class="XLabel" name="_currentQtyBalance" >
            <property name="minimumSize" >
             <size>
              <width>80</width>
@@ -250,7 +247,7 @@
           </widget>
          </item>
          <item row="2" column="1" >
-          <widget class="QLabel" name="_currentQtyReceived" >
+          <widget class="XLabel" name="_currentQtyReceived" >
            <property name="minimumSize" >
             <size>
              <width>80</width>
@@ -286,17 +283,11 @@
    </item>
    <item>
     <layout class="QVBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
      <property name="spacing" >
       <number>0</number>
      </property>
      <item>
       <layout class="QHBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
         <number>0</number>
        </property>
@@ -331,9 +322,7 @@
         <bool>false</bool>
        </property>
        <property name="sizePolicy" >
-        <sizepolicy>
-         <hsizetype>5</hsizetype>
-         <vsizetype>7</vsizetype>
+        <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -342,25 +331,28 @@
         <string/>
        </property>
        <layout class="QVBoxLayout" >
-        <property name="margin" >
-         <number>5</number>
-        </property>
         <property name="spacing" >
          <number>0</number>
         </property>
+        <property name="leftMargin" >
+         <number>5</number>
+        </property>
+        <property name="topMargin" >
+         <number>5</number>
+        </property>
+        <property name="rightMargin" >
+         <number>5</number>
+        </property>
+        <property name="bottomMargin" >
+         <number>5</number>
+        </property>
         <item>
          <layout class="QHBoxLayout" >
-          <property name="margin" >
-           <number>0</number>
-          </property>
           <property name="spacing" >
            <number>0</number>
           </property>
           <item>
            <layout class="QHBoxLayout" >
-            <property name="margin" >
-             <number>0</number>
-            </property>
             <property name="spacing" >
              <number>5</number>
             </property>
@@ -408,6 +400,11 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
+   <class>WoCluster</class>
+   <extends>QWidget</extends>
+   <header>wocluster.h</header>
+  </customwidget>
+  <customwidget>
    <class>XCheckBox</class>
    <extends>QCheckBox</extends>
    <header>xcheckbox.h</header>
@@ -418,9 +415,9 @@
    <header>xcombobox.h</header>
   </customwidget>
   <customwidget>
-   <class>WoCluster</class>
-   <extends>QWidget</extends>
-   <header>wocluster.h</header>
+   <class>XLabel</class>
+   <extends>QLabel</extends>
+   <header>xlabel.h</header>
   </customwidget>
   <customwidget>
    <class>XLineEdit</class>
@@ -437,14 +434,13 @@
   <tabstop>_change</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
- <includes/>
  <resources/>
  <connections>
   <connection>
    <sender>_wo</sender>
-   <signal>qtyOrderedChanged(QString)</signal>
+   <signal>qtyOrderedChanged(double)</signal>
    <receiver>_currentQtyOrdered</receiver>
-   <slot>setText(QString)</slot>
+   <slot>setDouble(double)</slot>
    <hints>
     <hint type="sourcelabel" >
      <x>20</x>
@@ -458,9 +454,9 @@
   </connection>
   <connection>
    <sender>_wo</sender>
-   <signal>qtyReceivedChanged(QString)</signal>
+   <signal>qtyReceivedChanged(double)</signal>
    <receiver>_currentQtyReceived</receiver>
-   <slot>setText(QString)</slot>
+   <slot>setDouble(double)</slot>
    <hints>
     <hint type="sourcelabel" >
      <x>20</x>
@@ -506,9 +502,9 @@
   </connection>
   <connection>
    <sender>_wo</sender>
-   <signal>qtyReceivedChanged(QString)</signal>
+   <signal>qtyReceivedChanged(double)</signal>
    <receiver>_newQtyReceived</receiver>
-   <slot>setText(QString)</slot>
+   <slot>setDouble(double)</slot>
    <hints>
     <hint type="sourcelabel" >
      <x>20</x>
@@ -522,9 +518,9 @@
   </connection>
   <connection>
    <sender>_wo</sender>
-   <signal>qtyBalanceChanged(QString)</signal>
+   <signal>qtyBalanceChanged(double)</signal>
    <receiver>_newQtyBalance</receiver>
-   <slot>setText(QString)</slot>
+   <slot>setDouble(double)</slot>
    <hints>
     <hint type="sourcelabel" >
      <x>20</x>
@@ -538,9 +534,9 @@
   </connection>
   <connection>
    <sender>_wo</sender>
-   <signal>qtyBalanceChanged(QString)</signal>
+   <signal>qtyBalanceChanged(double)</signal>
    <receiver>_currentQtyBalance</receiver>
-   <slot>setText(QString)</slot>
+   <slot>setDouble(double)</slot>
    <hints>
     <hint type="sourcelabel" >
      <x>20</x>

@@ -1,7 +1,4 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>changeQtyToDistributeFromBreeder</class>
  <widget class="QDialog" name="changeQtyToDistributeFromBreeder" >
   <property name="geometry" >
@@ -9,35 +6,35 @@
     <x>0</x>
     <y>0</y>
     <width>373</width>
-    <height>123</height>
+    <height>148</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Change Qty. to Distribute from Breeder Production</string>
   </property>
   <layout class="QVBoxLayout" >
-   <property name="margin" >
-    <number>5</number>
-   </property>
    <property name="spacing" >
     <number>0</number>
    </property>
+   <property name="leftMargin" >
+    <number>5</number>
+   </property>
+   <property name="topMargin" >
+    <number>5</number>
+   </property>
+   <property name="rightMargin" >
+    <number>5</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>5</number>
+   </property>
    <item>
     <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
      <property name="spacing" >
       <number>7</number>
      </property>
      <item>
       <layout class="QGridLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
-       <property name="spacing" >
-        <number>6</number>
-       </property>
        <item row="0" column="0" >
         <widget class="QLabel" name="_openWoQtyLit" >
          <property name="text" >
@@ -49,7 +46,7 @@
         </widget>
        </item>
        <item row="0" column="1" >
-        <widget class="QLabel" name="_openWoQty" >
+        <widget class="XLabel" name="_openWoQty" >
          <property name="minimumSize" >
           <size>
            <width>80</width>
@@ -66,14 +63,11 @@
        </item>
        <item row="2" column="1" >
         <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>0</number>
          </property>
          <item>
-          <widget class="QLabel" name="_actualQtyPer" >
+          <widget class="XLabel" name="_actualQtyPer" >
            <property name="minimumSize" >
             <size>
              <width>80</width>
@@ -91,9 +85,7 @@
          <item>
           <widget class="XLineEdit" name="_actualQtyToDistribute" >
            <property name="sizePolicy" >
-            <sizepolicy>
-             <hsizetype>5</hsizetype>
-             <vsizetype>0</vsizetype>
+            <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -113,9 +105,6 @@
        </item>
        <item row="1" column="0" >
         <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>0</number>
          </property>
@@ -143,9 +132,6 @@
        </item>
        <item row="2" column="0" >
         <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>0</number>
          </property>
@@ -176,14 +162,11 @@
        </item>
        <item row="1" column="1" >
         <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>0</number>
          </property>
          <item>
-          <widget class="QLabel" name="_standardQtyPer" >
+          <widget class="XLabel" name="_standardQtyPer" >
            <property name="minimumSize" >
             <size>
              <width>80</width>
@@ -199,7 +182,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="_standardQtyToDistribute" >
+          <widget class="XLabel" name="_standardQtyToDistribute" >
            <property name="minimumSize" >
             <size>
              <width>80</width>
@@ -220,9 +203,6 @@
      </item>
      <item>
       <layout class="QHBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
         <number>0</number>
        </property>
@@ -244,9 +224,6 @@
        </item>
        <item>
         <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>5</number>
          </property>
@@ -314,11 +291,14 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
+   <class>XLabel</class>
+   <extends>QLabel</extends>
+   <header>xlabel.h</header>
+  </customwidget>
+  <customwidget>
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -326,7 +306,6 @@
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
- <includes/>
  <resources/>
  <connections>
   <connection>

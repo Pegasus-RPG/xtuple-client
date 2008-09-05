@@ -6,33 +6,37 @@
     <x>0</x>
     <y>0</y>
     <width>453</width>
-    <height>236</height>
+    <height>241</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Correct Production Posting</string>
   </property>
   <layout class="QVBoxLayout" >
-   <property name="margin" >
+   <property name="spacing" >
     <number>5</number>
    </property>
-   <property name="spacing" >
+   <property name="leftMargin" >
+    <number>5</number>
+   </property>
+   <property name="topMargin" >
+    <number>5</number>
+   </property>
+   <property name="rightMargin" >
+    <number>5</number>
+   </property>
+   <property name="bottomMargin" >
     <number>5</number>
    </property>
    <item>
     <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
      <property name="spacing" >
       <number>7</number>
      </property>
      <item>
       <widget class="WoCluster" name="_wo" >
        <property name="sizePolicy" >
-        <sizepolicy>
-         <hsizetype>0</hsizetype>
-         <vsizetype>0</vsizetype>
+        <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -47,9 +51,6 @@
      </item>
      <item>
       <layout class="QHBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
         <number>0</number>
        </property>
@@ -71,9 +72,6 @@
        </item>
        <item>
         <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>5</number>
          </property>
@@ -118,41 +116,26 @@
    </item>
    <item>
     <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
      <property name="spacing" >
       <number>7</number>
      </property>
      <item>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
         <number>0</number>
        </property>
        <item>
         <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>5</number>
          </property>
          <item>
           <layout class="QHBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
            <property name="spacing" >
             <number>5</number>
            </property>
            <item>
             <layout class="QVBoxLayout" >
-             <property name="margin" >
-              <number>0</number>
-             </property>
              <property name="spacing" >
               <number>0</number>
              </property>
@@ -190,14 +173,11 @@
            </item>
            <item>
             <layout class="QVBoxLayout" >
-             <property name="margin" >
-              <number>0</number>
-             </property>
              <property name="spacing" >
               <number>0</number>
              </property>
              <item>
-              <widget class="QLabel" name="_qtyOrdered" >
+              <widget class="XLabel" name="_qtyOrdered" >
                <property name="minimumSize" >
                 <size>
                  <width>100</width>
@@ -210,7 +190,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="_qtyReceived" >
+              <widget class="XLabel" name="_qtyReceived" >
                <property name="minimumSize" >
                 <size>
                  <width>100</width>
@@ -223,7 +203,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="_qtyBalance" >
+              <widget class="XLabel" name="_qtyBalance" >
                <property name="minimumSize" >
                 <size>
                  <width>100</width>
@@ -241,9 +221,6 @@
          </item>
          <item>
           <layout class="QHBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
            <property name="spacing" >
             <number>5</number>
            </property>
@@ -297,33 +274,21 @@
      </item>
      <item>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
         <number>0</number>
        </property>
        <item>
         <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>5</number>
          </property>
          <item>
           <layout class="QVBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
            <property name="spacing" >
             <number>0</number>
            </property>
            <item>
             <layout class="QHBoxLayout" >
-             <property name="margin" >
-              <number>0</number>
-             </property>
              <property name="spacing" >
               <number>0</number>
              </property>
@@ -357,9 +322,6 @@
            </item>
            <item>
             <layout class="QHBoxLayout" >
-             <property name="margin" >
-              <number>0</number>
-             </property>
              <property name="spacing" >
               <number>0</number>
              </property>
@@ -411,9 +373,6 @@
          </item>
          <item>
           <layout class="QHBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
            <property name="spacing" >
             <number>0</number>
            </property>
@@ -473,14 +432,19 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
+   <class>WoCluster</class>
+   <extends>QWidget</extends>
+   <header>wocluster.h</header>
+  </customwidget>
+  <customwidget>
    <class>XCheckBox</class>
    <extends>QCheckBox</extends>
    <header>xcheckbox.h</header>
   </customwidget>
   <customwidget>
-   <class>WoCluster</class>
-   <extends>QWidget</extends>
-   <header>wocluster.h</header>
+   <class>XLabel</class>
+   <extends>QLabel</extends>
+   <header>xlabel.h</header>
   </customwidget>
   <customwidget>
    <class>XLineEdit</class>
@@ -497,7 +461,6 @@
   <tabstop>_correct</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
- <includes/>
  <resources/>
  <connections>
   <connection>

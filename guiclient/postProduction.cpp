@@ -58,6 +58,7 @@
 #include "postProduction.h"
 
 #include <QMessageBox>
+#include <QSqlError>
 #include <QVariant>
 
 #include "closeWo.h"
@@ -85,6 +86,9 @@ postProduction::postProduction(QWidget* parent, const char* name, bool modal, Qt
     _closeWo->setEnabled(_privileges->check("CloseWorkOrders"));
 
     _qty->setValidator(omfgThis->qtyVal());
+    _qtyOrdered->setPrecision(decimalPlaces("qty"));
+    _qtyReceived->setPrecision(decimalPlaces("qty"));
+    _qtyBalance->setPrecision(decimalPlaces("qty"));
     _fromWOTC = false;
     
     //If not multi-warehouse hide whs control
@@ -384,12 +388,10 @@ void postProduction::sPost()
             }
           }
         }
-        else
+        else if (q.lastError().type() != QSqlError::NoError)
         {
           rollback.exec();
-          systemError( this, tr("A System Error occurred at postProduction::%1, Work Order ID #%2.")
-             .arg(__LINE__)
-             .arg(_wo->id()) );
+          systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
           return;
         }
 

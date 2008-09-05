@@ -79,6 +79,9 @@ correctProductionPosting::correctProductionPosting(QWidget* parent, const char* 
 
   _wo->setType(cWoIssued);
   _qty->setValidator(omfgThis->qtyVal());
+  _qtyOrdered->setPrecision(omfgThis->qtyVal());
+  _qtyReceived->setPrecision(omfgThis->qtyVal());
+  _qtyBalance->setPrecision(omfgThis->qtyVal());
 
   if (_preferences->boolean("XCheckBox/forgetful"))
   {
@@ -221,19 +224,18 @@ void correctProductionPosting::sCorrect()
 
 void correctProductionPosting::populate()
 {
-  q.prepare("SELECT formatQtyPer(wo_qtyord) AS ordered,"
-            "       formatQtyPer(wo_qtyrcv) AS received,"
+  q.prepare("SELECT wo_qtyord,"
             "       wo_qtyrcv,"
-            "       formatQtyPer(noNeg(wo_qtyord - wo_qtyrcv)) AS balance"
+            "       noNeg(wo_qtyord - wo_qtyrcv) AS balance"
             "  FROM wo"
             " WHERE (wo_id=:wo_id); ");
   q.bindValue(":wo_id", _wo->id());
   q.exec();
   if(q.first())
   {
-    _qtyOrdered->setText(q.value("ordered").toString());
-    _qtyReceived->setText(q.value("received").toString());
-    _qtyBalance->setText(q.value("balance").toString());
+    _qtyOrdered->setDouble(q.value("wo_qtyord").toDouble());
+    _qtyReceived->setDouble(q.value("wo_qtyrcv").toDouble());
+    _qtyBalance->setDouble(q.value("balance").toDouble());
 
     _qtyReceivedCache = q.value("wo_qtyrcv").toDouble();
   }

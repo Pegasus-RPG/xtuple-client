@@ -147,7 +147,7 @@
             <number>0</number>
            </property>
            <item>
-            <widget class="QLabel" name="_qtyOrdered" >
+            <widget class="XLabel" name="_qtyOrdered" >
              <property name="minimumSize" >
               <size>
                <width>80</width>
@@ -160,7 +160,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="_qtyReceived" >
+            <widget class="XLabel" name="_qtyReceived" >
              <property name="minimumSize" >
               <size>
                <width>80</width>
@@ -173,7 +173,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="_qtyBalance" >
+            <widget class="XLabel" name="_qtyBalance" >
              <property name="minimumSize" >
               <size>
                <width>80</width>
@@ -709,9 +709,9 @@
  <connections>
   <connection>
    <sender>_wo</sender>
-   <signal>qtyOrderedChanged(QString)</signal>
+   <signal>qtyOrderedChanged(double)</signal>
    <receiver>_qtyOrdered</receiver>
-   <slot>setText(QString)</slot>
+   <slot>setDouble(double)</slot>
    <hints>
     <hint type="sourcelabel" >
      <x>20</x>
@@ -725,9 +725,9 @@
   </connection>
   <connection>
    <sender>_wo</sender>
-   <signal>qtyReceivedChanged(QString)</signal>
+   <signal>qtyReceivedChanged(double)</signal>
    <receiver>_qtyReceived</receiver>
-   <slot>setText(QString)</slot>
+   <slot>setDouble(double)</slot>
    <hints>
     <hint type="sourcelabel" >
      <x>20</x>
@@ -741,9 +741,9 @@
   </connection>
   <connection>
    <sender>_wo</sender>
-   <signal>qtyBalanceChanged(QString)</signal>
+   <signal>qtyBalanceChanged(double)</signal>
    <receiver>_qtyBalance</receiver>
-   <slot>setText(QString)</slot>
+   <slot>setDouble(double)</slot>
    <hints>
     <hint type="sourcelabel" >
      <x>20</x>

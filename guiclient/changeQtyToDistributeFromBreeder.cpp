@@ -76,6 +76,12 @@ changeQtyToDistributeFromBreeder::changeQtyToDistributeFromBreeder(QWidget* pare
     connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
     connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
     connect(_actualQtyToDistribute, SIGNAL(lostFocus()), this, SLOT(sUpdateQtyPer()));
+
+    _openWoQty->setPrecision(omfgThis->qtyVal());
+    _actualQtyPer->setPrecision(omfgThis->qtyPerVal());
+    _standardQtyPer->setPrecision(omfgThis->qtyPerVal());
+    _standardQtyToDistribute->setPrecision(omfgThis->qtyPerVal());
+    //_actualQtyToDistribute->setValidator(omfgThis->qtyVal()); // doesn't compile!
     init();
 }
 
@@ -112,10 +118,10 @@ enum SetResponse changeQtyToDistributeFromBreeder::set(ParameterList &pParams)
     _brddistid = param.toInt();
 
     XSqlQuery brddist;
-    brddist.prepare( "SELECT brddist_wo_qty, formatQty(brddist_wo_qty) AS f_woqty,"
-                     "       formatQtyPer(brddist_stdqtyper) AS f_stdqtyper,"
-                     "       formatQty(brddist_stdqtyper * brddist_wo_qty) AS f_stdqty,"
-                     "       formatQtyPer(brddist_qty / brddist_wo_qty) AS f_actqtyper,"
+    brddist.prepare( "SELECT brddist_wo_qty, brddist_wo_qty,"
+                     "       brddist_stdqtyper,"
+                     "       brddist_stdqtyper * brddist_wo_qty AS stdqty,"
+                     "       (brddist_qty / brddist_wo_qty) AS actqtyper,"
                      "       brddist_qty "
                      "FROM brddist "
                      "WHERE (brddist_id=:brddist_id);" );
@@ -124,11 +130,11 @@ enum SetResponse changeQtyToDistributeFromBreeder::set(ParameterList &pParams)
     if (brddist.first())
     {
       _cachedOpenWoQty = brddist.value("brddist_qty").toDouble();
-      _openWoQty->setText(brddist.value("f_woqty").toString());
-      _standardQtyPer->setText(brddist.value("f_stdqtyper").toString());
-      _standardQtyToDistribute->setText(brddist.value("f_stdqty").toString());
-      _actualQtyPer->setText(brddist.value("f_actqtyper").toString());
-      _actualQtyToDistribute->setText(formatQty(brddist.value("brddist_qty").toDouble()));
+      _openWoQty->setDouble(brddist.value("brddist_wo_woqty").toDouble());
+      _standardQtyPer->setDouble(brddist.value("brddist_stdqtyper").toDouble());
+      _standardQtyToDistribute->setDouble(brddist.value("stdqty").toDouble());
+      _actualQtyPer->setDouble(brddist.value("actqtyper").toDouble());
+      _actualQtyToDistribute->setDouble(brddist.value("brddist_qty").toDouble());
     }
 //  ToDo
   }
@@ -138,7 +144,7 @@ enum SetResponse changeQtyToDistributeFromBreeder::set(ParameterList &pParams)
 
 void changeQtyToDistributeFromBreeder::sUpdateQtyPer()
 {
-  _actualQtyPer->setText(formatQty(_actualQtyToDistribute->toDouble() / _cachedOpenWoQty));
+  _actualQtyPer->setDouble(_actualQtyToDistribute->toDouble() / _cachedOpenWoQty);
 }
 
 void changeQtyToDistributeFromBreeder::sSave()
