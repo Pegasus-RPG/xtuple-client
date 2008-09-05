@@ -97,6 +97,7 @@ public slots:
     virtual void sPopulateCommission();
     virtual void sPopulateShiptoMenu( QMenu * menuThis );
     virtual void sPrintShipto();
+    virtual bool sSave( bool partial );
     virtual void sSave();
     virtual void sViewCreditCard();
     virtual void sViewShipto();

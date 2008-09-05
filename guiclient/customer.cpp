@@ -422,130 +422,87 @@ int customer::saveContact(ContactCluster* pContact)
   return saveResult;
 }
 
-void customer::sSave()
+bool customer::sSave(bool partial)
 {
-  if (_number->text().stripWhiteSpace().length() == 0)
+  if (true)
   {
-    QMessageBox::critical( this, tr("Enter Customer Number"),
-                           tr("You must enter a number for this Customer before continuing") );
-    _number->setFocus();
-    return;
-  }
-  
-  if (_name->text().stripWhiteSpace().length() == 0)
-  {
-    QMessageBox::critical( this, tr("Enter Customer Name"),
-                           tr("You must enter a name for this Customer before continuing") );
-    _number->setFocus();
-    return;
-  }
-
-  if (_custtype->id() == -1)
-  {
-    QMessageBox::critical( this, tr("Select Customer Type"),
-                           tr("You must select a Customer Type code for this Customer before continuing.") );
-    _terms->setFocus();
-    return;
-  }
-
-  if (_terms->id() == -1)
-  {
-    QMessageBox::critical( this, tr("Select Terms"),
-                           tr("You must select a Terms code for this Customer before continuing.") );
-    _terms->setFocus();
-    return;
-  }
-
-  if (_salesrep->id() == -1)
-  {
-    QMessageBox::critical( this, tr("Select Sales Rep."),
-                           tr("You must select a Sales Rep. for this Customer before continuing.") );
-    _salesrep->setFocus();
-    return;
-  }
-
-  if (_shipform->id() == -1)
-  {
-    QMessageBox::critical( this, tr("Select Default Shipping Form"),
-                           tr("You must select a default Shipping Form for this Customer before continuing.") );
-    _shipform->setFocus();
-    return;
-  }
-
-  if (_salesrep->currentItem() == -1)
-  {
-    QMessageBox::warning( this, tr("Select Sales Representative"),
-                          tr( "You must select a Sales Representative before adding this Customer." ));
-    _salesrep->setFocus();
-    return;
-  }
-
-  if (_number->text().stripWhiteSpace() != _cachedNumber)
-  {
-    q.prepare( "SELECT cust_name "
-               "FROM custinfo "
-               "WHERE (UPPER(cust_number)=UPPER(:cust_number)) "
-               "  AND (cust_id<>:cust_id);" );
-    q.bindValue(":cust_name", _number->text().stripWhiteSpace());
-    q.bindValue(":cust_id", _custid);
-    q.exec();
-    if (q.first())
+    if (_number->text().stripWhiteSpace().length() == 0)
     {
-      QMessageBox::critical( this, tr("Customer Number Used"),
-                             tr( "The newly entered Customer Number cannot be used as it is currently\n"
-                                 "in use by the Customer '%1'.  Please correct or enter a new Customer Number." )
-                                .arg(q.value("cust_name").toString()) );
+      QMessageBox::critical( this, tr("Enter Customer Number"),
+                             tr("You must enter a number for this Customer before continuing") );
       _number->setFocus();
-      return;
+      return false;
+    }
+  
+    if (_name->text().stripWhiteSpace().length() == 0)
+    {
+      QMessageBox::critical( this, tr("Enter Customer Name"),
+                             tr("You must enter a name for this Customer before continuing") );
+      _number->setFocus();
+      return false;
+    }
+
+    if (_custtype->id() == -1)
+    {
+      QMessageBox::critical( this, tr("Select Customer Type"),
+                             tr("You must select a Customer Type code for this Customer before continuing.") );
+      _terms->setFocus();
+      return false;
+    }
+
+    if (_terms->id() == -1)
+    {
+      QMessageBox::critical( this, tr("Select Terms"),
+                             tr("You must select a Terms code for this Customer before continuing.") );
+      _terms->setFocus();
+      return false;
+    }
+
+    if (_salesrep->id() == -1)
+    {
+      QMessageBox::critical( this, tr("Select Sales Rep."),
+                             tr("You must select a Sales Rep. for this Customer before continuing.") );
+      _salesrep->setFocus();
+      return false;
+    }
+
+    if (_shipform->id() == -1)
+    {
+      QMessageBox::critical( this, tr("Select Default Shipping Form"),
+                             tr("You must select a default Shipping Form for this Customer before continuing.") );
+      _shipform->setFocus();
+      return false;
+    }
+
+    if (_salesrep->currentItem() == -1)
+    {
+      QMessageBox::warning( this, tr("Select Sales Representative"),
+                            tr( "You must select a Sales Representative before adding this Customer." ));
+      _salesrep->setFocus();
+      return false;
+    }
+
+    if (_number->text().stripWhiteSpace() != _cachedNumber)
+    {
+      q.prepare( "SELECT cust_name "
+                 "FROM custinfo "
+                 "WHERE (UPPER(cust_number)=UPPER(:cust_number)) "
+                 "  AND (cust_id<>:cust_id);" );
+      q.bindValue(":cust_name", _number->text().stripWhiteSpace());
+      q.bindValue(":cust_id", _custid);
+      q.exec();
+      if (q.first())
+      {
+        QMessageBox::critical( this, tr("Customer Number Used"),
+                               tr( "The newly entered Customer Number cannot be used as it is currently\n"
+                                   "in use by the Customer '%1'.  Please correct or enter a new Customer Number." )
+                                  .arg(q.value("cust_name").toString()) );
+        _number->setFocus();
+        return false;
+      }
     }
   }
  
-  //Check to see if this is a prospect with quotes
-  bool convertQuotes = false;
-  
-  q.prepare("SELECT * FROM prospect, quhead "
-            " WHERE ((prospect_id=quhead_cust_id) "
-            " AND (prospect_id=:prospect_id)); ");
-  q.bindValue(":prospect_id", _custid);
-  q.exec();
-  if (q.first())
-    if (_privileges->check("ConvertQuotes") &&
-        QMessageBox::question(this, tr("Convert"),
-                              tr("<p>Do you want to convert all of the Quotes "
-                                 "for the Prospect to Sales Orders?"),
-                              QMessageBox::Yes | QMessageBox::Default,
-                              QMessageBox::No) == QMessageBox::Yes)
-      convertQuotes = true;
-
-  if (! q.exec("BEGIN"))
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-
-  XSqlQuery rollback;
-  rollback.prepare("ROLLBACK;");
-
-  if (_billCntct->sChanged())
-  {
-    if (saveContact(_billCntct) < 0)
-    {
-      rollback.exec();
-      _billCntct->setFocus();
-      return;
-    }
-  }
-
-  if (_corrCntct->sChanged())
-  {
-    if (saveContact(_corrCntct) < 0)
-    {
-      rollback.exec();
-      _corrCntct->setFocus();
-      return;
-    }
-  }
-
   if (_mode == cEdit)
   {
     q.prepare( "UPDATE custinfo SET "
@@ -708,11 +665,67 @@ void customer::sSave()
   q.exec();
   if (q.lastError().type() != QSqlError::None)
   {
-    rollback.exec();
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return false;
+  }
+  
+  if (_mode == cNew)
+    _mode = cEdit;
+  
+  return true;
+}
+   
+void customer::sSave()
+{
+  if (!sSave(false))
+    return;
+  
+  //Check to see if this is a prospect with quotes
+  bool convertQuotes = false;
+  
+  q.prepare("SELECT * FROM prospect, quhead "
+            " WHERE ((prospect_id=quhead_cust_id) "
+            " AND (prospect_id=:prospect_id)); ");
+  q.bindValue(":prospect_id", _custid);
+  q.exec();
+  if (q.first())
+    if (_privileges->check("ConvertQuotes") &&
+        QMessageBox::question(this, tr("Convert"),
+                              tr("<p>Do you want to convert all of the Quotes "
+                                 "for the Prospect to Sales Orders?"),
+                              QMessageBox::Yes | QMessageBox::Default,
+                              QMessageBox::No) == QMessageBox::Yes)
+      convertQuotes = true;
+
+  if (! q.exec("BEGIN"))
+  {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-   
+
+  XSqlQuery rollback;
+  rollback.prepare("ROLLBACK;");
+
+  if (_billCntct->sChanged())
+  {
+    if (saveContact(_billCntct) < 0)
+    {
+      rollback.exec();
+      _billCntct->setFocus();
+      return;
+    }
+  }
+
+  if (_corrCntct->sChanged())
+  {
+    if (saveContact(_corrCntct) < 0)
+    {
+      rollback.exec();
+      _corrCntct->setFocus();
+      return;
+    }
+  }
+
   //Save characteristics
   if (_widgetStack->currentIndex() == 1)
   {
@@ -877,6 +890,12 @@ void customer::sPrintShipto()
 
 void customer::sNewShipto()
 {
+  if (_mode == cNew)
+  {
+    if (!sSave(true))
+      return;
+  }
+  
   ParameterList params;
   params.append("mode", "new");
   params.append("cust_id", _custid);
@@ -951,6 +970,12 @@ void customer::sDeleteShipto()
 
 void customer::sNewCharacteristic()
 {
+  if (_mode == cNew)
+  {
+    if (!sSave(true))
+      return;
+  }
+  
   ParameterList params;
   params.append("mode", "new");
   params.append("cust_id", _custid);
@@ -1068,6 +1093,12 @@ void customer::sFillShiptoList()
 
 void customer::sNewTaxreg()
 {
+  if (_mode == cNew)
+  {
+    if (!sSave(true))
+      return;
+  }
+  
   ParameterList params;
   params.append("mode", "new");
   params.append("taxreg_rel_id", _custid);
@@ -1279,6 +1310,12 @@ void customer::sSoProfileSelected()
 
 void customer::sNewCreditCard()
 {
+  if (_mode == cNew)
+  {
+    if (!sSave(true))
+      return;
+  }
+  
   ParameterList params;
   params.append("mode", "new");
   params.append("cust_id", _custid);
