@@ -504,8 +504,8 @@ void workOrder::sCreate()
     }
   
     q.prepare( "SELECT createWo( :woNumber, :itemsite_id, :priority, :orderQty,"
-               "                 :leadTime, :dueDate, :productionNotes, :ordtype, :ordid, :prj_id,"
-               "                 :bom_rev_id, :boo_rev_id) AS result;" );
+               "                 date(:dueDate) - :leadTime, :dueDate, :productionNotes, :ordtype, :ordid, :prj_id,"
+               "                 :bom_rev_id, :boo_rev_id, :wo_cosmethod) AS result;" );
     q.bindValue(":woNumber", _woNumber->text().toInt());
     q.bindValue(":itemsite_id", itemsiteid);
     q.bindValue(":priority", _priority->value());
@@ -516,6 +516,11 @@ void workOrder::sCreate()
     q.bindValue(":prj_id", _project->id());
     q.bindValue(":bom_rev_id", _bomRevision->id());
     q.bindValue(":boo_rev_id", _booRevision->id());
+    if (_todate->isChecked() && _jobCosGroup->isEnabled())
+      q.bindValue(":wo_cosmethod",QString("D"));
+    else if (_proportional->isChecked() && _jobCosGroup->isEnabled())
+      q.bindValue(":wo_cosmethod",QString("P"));
+
     if(cRelease == _mode)
     {
       q.bindValue(":ordtype", _planordtype);
