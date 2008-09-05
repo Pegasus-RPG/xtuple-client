@@ -358,7 +358,7 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   _costVal     = new QDoubleValidator(0,               9999999.0, decimalPlaces("cost"), this);
   _ratioVal    = new QDoubleValidator(0,            9999999999.0, decimalPlaces("uomratio"), this);
   _weightVal   = new QDoubleValidator(0,              99999999.0, decimalPlaces("weight"), this);
-  _runTimeVal  = new QDoubleValidator(0,              99999999.0, 1, this);
+  _runTimeVal  = new QDoubleValidator(0,              99999999.0, 2, this);
   _orderVal    = new QIntValidator(0, 999999, this);
   _dayVal      = new QIntValidator(0, 9999, this);
 
