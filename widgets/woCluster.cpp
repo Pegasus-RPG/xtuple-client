@@ -158,9 +158,9 @@ void WoLineEdit::setId(int pId)
       emit itemDescrip2Changed(wo.value("item_descrip2").toString());
       emit startDateChanged(wo.value("wo_startdate").toDate());
       emit dueDateChanged(wo.value("wo_duedate").toDate());
-      emit qtyOrderedChanged(wo.value("ordered").toString());
-      emit qtyReceivedChanged(wo.value("received").toString());
-      emit qtyBalanceChanged(wo.value("balance").toString());
+      emit qtyOrderedChanged(wo.value("ordered").toDouble());
+      emit qtyReceivedChanged(wo.value("received").toDouble());
+      emit qtyBalanceChanged(wo.value("balance").toDouble());
       emit statusChanged(wo.value("wo_status").toString());
       emit valid(TRUE);
 
@@ -185,9 +185,9 @@ void WoLineEdit::setId(int pId)
     emit itemDescrip2Changed("");
     emit startDateChanged(QDate());
     emit dueDateChanged(QDate());
-    emit qtyOrderedChanged("");
-    emit qtyReceivedChanged("");
-    emit qtyBalanceChanged("");
+    emit qtyOrderedChanged(0);
+    emit qtyReceivedChanged(0);
+    emit qtyBalanceChanged(0);
     emit statusChanged("");
     emit valid(FALSE);
       
@@ -455,9 +455,9 @@ void WoCluster::constructor()
   connect(_woNumber, SIGNAL(newItemid(int)), this, SIGNAL(newItemid(int)));
   connect(_woNumber, SIGNAL(startDateChanged(const QDate &)), this, SIGNAL(startDateChanged(const QDate &)));
   connect(_woNumber, SIGNAL(dueDateChanged(const QDate &)), this, SIGNAL(dueDateChanged(const QDate &)));
-  connect(_woNumber, SIGNAL(qtyOrderedChanged(const QString &)), this, SIGNAL(qtyOrderedChanged(const QString &)));
-  connect(_woNumber, SIGNAL(qtyReceivedChanged(const QString &)), this, SIGNAL(qtyReceivedChanged(const QString &)));
-  connect(_woNumber, SIGNAL(qtyBalanceChanged(const QString &)), this, SIGNAL(qtyBalanceChanged(const QString &)));
+  connect(_woNumber, SIGNAL(qtyOrderedChanged(const double)),  this, SIGNAL(qtyOrderedChanged(const double)));
+  connect(_woNumber, SIGNAL(qtyReceivedChanged(const double)), this, SIGNAL(qtyReceivedChanged(const double)));
+  connect(_woNumber, SIGNAL(qtyBalanceChanged(const double)),  this, SIGNAL(qtyBalanceChanged(const double)));
   connect(_woNumber, SIGNAL(valid(bool)), this, SIGNAL(valid(bool)));
 
   connect(_woList, SIGNAL(clicked()), SLOT(sWoList()));

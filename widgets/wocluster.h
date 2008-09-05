@@ -118,9 +118,9 @@ friend class WoCluster;
     void itemDescrip2Changed(const QString &);
     void startDateChanged(const QDate &);
     void dueDateChanged(const QDate &);
-    void qtyOrderedChanged(const QString &);
-    void qtyReceivedChanged(const QString &);
-    void qtyBalanceChanged(const QString &);
+    void qtyOrderedChanged(const double);
+    void qtyReceivedChanged(const double);
+    void qtyBalanceChanged(const double);
     void statusChanged(const QString &);
     void valid(bool);
 };
@@ -182,9 +182,9 @@ class OPENMFGWIDGETS_EXPORT WoCluster : public QWidget
     void newItemid(int);
     void startDateChanged(const QDate &);
     void dueDateChanged(const QDate &);
-    void qtyOrderedChanged(const QString &);
-    void qtyReceivedChanged(const QString &);
-    void qtyBalanceChanged(const QString &);
+    void qtyOrderedChanged(const double &);
+    void qtyReceivedChanged(const double &);
+    void qtyBalanceChanged(const double &);
 
     void valid(bool);
 };
