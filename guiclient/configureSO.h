@@ -76,6 +76,7 @@ public slots:
     virtual void sHandleInvoiceCopies( int pValue );
     virtual void sHandleCreditMemoCopies( int pValue );
     virtual void sEditInvoiceWatermark();
+    virtual void sEditCreditLimit();
     virtual void sEditCreditMemoWatermark();
 
 protected slots:

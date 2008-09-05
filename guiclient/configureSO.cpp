@@ -71,6 +71,7 @@ configureSO::configureSO(QWidget* parent, const char* name, bool modal, Qt::WFla
   connect(_invoiceNumOfCopies, SIGNAL(valueChanged(int)), this, SLOT(sHandleInvoiceCopies(int)));
   connect(_creditMemoNumOfCopies, SIGNAL(valueChanged(int)), this, SLOT(sHandleCreditMemoCopies(int)));
   connect(_invoiceWatermarks, SIGNAL(itemSelected(int)), this, SLOT(sEditInvoiceWatermark()));
+  connect(_creditLimit,          SIGNAL(editingFinished()), this, SLOT(sEditCreditLimit()));
   connect(_creditMemoWatermarks, SIGNAL(itemSelected(int)), this, SLOT(sEditCreditMemoWatermark()));
 
   _invoiceWatermarks->addColumn( tr("Copy #"),      _dateColumn, Qt::AlignCenter );
@@ -532,4 +533,9 @@ void configureSO::sEditCreditMemoWatermark()
       cursor->setText(2, ((newdlg.showPrices()) ? tr("Yes") : tr("No")));
     }
   }
+}
+
+void configureSO::sEditCreditLimit()
+{
+  _creditLimit->setDouble(qRound(_creditLimit->toDouble()));
 }

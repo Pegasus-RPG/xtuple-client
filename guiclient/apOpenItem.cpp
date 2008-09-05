@@ -57,35 +57,20 @@
 
 #include "apOpenItem.h"
 
-#include <QVariant>
 #include <QMessageBox>
-#include <QValidator>
 #include <QSqlError>
+#include <QVariant>
 
-/*
- *  Constructs a apOpenItem as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 apOpenItem::apOpenItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
-
-  // signals and slots connections
-  connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-  connect(_vend, SIGNAL(newId(int)), this, SLOT(sPopulateVendInfo(int)));
-  connect(_amount, SIGNAL(idChanged(int)), _paid, SLOT(setId(int)));
-  connect(_amount, SIGNAL(idChanged(int)), _balance, SLOT(setId(int)));
-  connect(_amount, SIGNAL(effectiveChanged(const QDate&)), _paid, SLOT(setEffective(const QDate&)));
-  connect(_amount, SIGNAL(effectiveChanged(const QDate&)), _balance, SLOT(setEffective(const QDate&)));
-  connect(_docDate, SIGNAL(newDate(const QDate&)), _amount, SLOT(setEffective(const QDate&)));
-  connect(_terms, SIGNAL(newID(int)), this, SLOT(sPopulateDueDate()));
+  connect(_close,   SIGNAL(clicked()), this, SLOT(sClose()));
   connect(_docDate, SIGNAL(newDate(const QDate&)), this, SLOT(sPopulateDueDate()));
+  connect(_save,    SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_terms,  SIGNAL(newID(int)), this, SLOT(sPopulateDueDate()));
+  connect(_vend,   SIGNAL(newId(int)), this, SLOT(sPopulateVendInfo(int)));
 
   _cAmount = 0.0;
 
@@ -214,7 +199,8 @@ void apOpenItem::sSave()
     if (!_docDate->isValid())
     {
       QMessageBox::critical( this, tr("Cannot Save A/P Memo"),
-                             tr("You must enter a date for this A/P Memo before you may save it") );
+                             tr("<p>You must enter a date for this A/P Memo "
+                                "before you may save it") );
       _docDate->setFocus();
       return;
     }
@@ -222,7 +208,8 @@ void apOpenItem::sSave()
     if (!_dueDate->isValid())
     {
       QMessageBox::critical( this, tr("Cannot Save A/P Memo"),
-                             tr("You must enter a date for this A/P Memo before you may save it") );
+                             tr("<p>You must enter a date for this A/P Memo "
+                                "before you may save it") );
       _dueDate->setFocus();
       return;
     }
@@ -230,7 +217,8 @@ void apOpenItem::sSave()
     if (_amount->isZero())
     {
       QMessageBox::critical( this, tr("Cannot Save A/P Memo"),
-                             tr("You must enter an amount for this A/P Memo before you may save it") );
+                             tr("<p>You must enter an amount for this A/P Memo "
+                                "before you may save it") );
       _amount->setFocus();
       return;
     }
@@ -238,7 +226,9 @@ void apOpenItem::sSave()
     if (_altPrepaid->isChecked() && (!_altAccntid->isValid()))
     {
       QMessageBox::critical( this, tr("Cannot Save A/P Memo"),
-        tr("You must choose a valid Alternate Prepaid Account Number for this A/P Memo before you may save it.") );
+                            tr("<p>You must choose a valid Alternate Prepaid "
+                               "Account Number for this A/P Memo before you "
+                               "may save it.") );
       return;
     }
 
@@ -271,10 +261,13 @@ void apOpenItem::sSave()
   {
     if (_cAmount != _amount->localValue())
       if ( QMessageBox::warning( this, tr("A/P Open Amount Changed"),
-                                 tr( "You are changing the open amount of this A/P Open Item.  If you do not post a G/L Transaction\n"
-                                     "to distribute this change then the A/P Open Item total will be out of balance with the\n"
-                                     "A/P Trial Balance(s).\n"
-                                     "Are you sure that you want to save this change?" ),
+                                 tr( "<p>You are changing the open amount of "
+                                    "this A/P Open Item.  If you do not post a "
+                                    "G/L Transaction to distribute this change "
+                                    "then the A/P Open Item total will be out "
+                                    "of balance with the A/P Trial Balance(s). "
+                                    "Are you sure that you want to save this "
+                                    "change?" ),
                                  tr("Yes"), tr("No"), QString::null ) == 1 )
         return;
 
@@ -324,9 +317,12 @@ void apOpenItem::sSave()
       if (q.value("result").toInt() == -1)
       {
         QMessageBox::critical( this, tr("Cannot Create A/P Memo"),
-                               tr( "The A/P Memo cannot be created as there are missing A/P Account Assignments for the selected Vendor.\n"
-                                   "You must create an A/P Account Assignment for the selected Vendor's Vendor Type before\n"
-                                   "you may create this A/P Memo." ) );
+                               tr( "<p>The A/P Memo cannot be created as there "
+                                  "are missing A/P Account Assignments for the "
+                                  "selected Vendor. You must create an A/P "
+                                  "Account Assignment for the selected "
+                                  "Vendor's Vendor Type before you may create "
+                                  "this A/P Memo." ) );
         return;
       }
     }
@@ -471,12 +467,18 @@ void apOpenItem::sPopulateDueDate()
 {
   if ( (_terms->isValid()) && (_docDate->isValid()) && (!_dueDate->isValid()) )
   {
-    q.prepare("SELECT determineDueDate(:terms_id, :docDate) AS duedate;");
-    q.bindValue(":terms_id", _terms->id());
-    q.bindValue(":docDate", _docDate->date());
-    q.exec();
-    if (q.first())
-      _dueDate->setDate(q.value("duedate").toDate());
+    XSqlQuery dueq;
+    dueq.prepare("SELECT determineDueDate(:terms_id, :docDate) AS duedate;");
+    dueq.bindValue(":terms_id", _terms->id());
+    dueq.bindValue(":docDate", _docDate->date());
+    dueq.exec();
+    if (dueq.first())
+      _dueDate->setDate(dueq.value("duedate").toDate());
+    else if (dueq.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, dueq.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
 }
  
