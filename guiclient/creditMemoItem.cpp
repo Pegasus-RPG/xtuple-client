@@ -105,6 +105,8 @@ creditMemoItem::creditMemoItem(QWidget* parent, const char* name, bool modal, Qt
 
   _qtyToCredit->setValidator(omfgThis->qtyVal());
   _qtyReturned->setValidator(omfgThis->qtyVal());
+  _qtyShipped->setPrecision(omfgThis->qtyVal());
+  _discountFromList->setPrecision(omfgThis->percentVal());
   _discountFromSale->setValidator(new QDoubleValidator(-9999, 100, 2, this));
 
   _taxType->setEnabled(_privileges->check("OverrideTax"));
@@ -417,7 +419,7 @@ void creditMemoItem::sPopulateItemInfo()
 
   XSqlQuery item;
   item.prepare( "SELECT item_inv_uom_id, item_price_uom_id,"
-                "       iteminvpricerat(item_id) AS iteminvpricerat, formatUOMRatio(iteminvpricerat(item_id)) AS f_invpricerat,"
+                "       iteminvpricerat(item_id) AS iteminvpricerat,"
                 "       item_listprice, "
                 "       stdCost(item_id) AS f_cost,"
 		"       getItemTaxType(item_id, :taxauth) AS taxtype_id "
@@ -433,7 +435,7 @@ void creditMemoItem::sPopulateItemInfo()
     _pricingUOM->setId(item.value("item_price_uom_id").toInt());
     _priceinvuomratio = item.value("iteminvpricerat").toDouble();
     _qtyinvuomratio = 1.0;
-    _ratio=item.value("f_invpricerat").toDouble();
+    _ratio=item.value("iteminvpricerat").toDouble();
     // {_listPrice,_unitCost}->setBaseValue() because they're stored in base
     _listPrice->setBaseValue(item.value("item_listprice").toDouble());
     _unitCost->setBaseValue(item.value("f_cost").toDouble());
@@ -476,7 +478,7 @@ void creditMemoItem::sPopulateItemInfo()
 
       _warehouse->setId(cmitem.value("invcitem_warehous_id").toInt());
       _qtyShippedCache = cmitem.value("f_billed").toDouble();
-      _qtyShipped->setText(formatQty(cmitem.value("f_billed").toDouble() / _qtyinvuomratio));
+      _qtyShipped->setDouble(cmitem.value("f_billed").toDouble() / _qtyinvuomratio);
     }
     else if (cmitem.lastError().type() != QSqlError::None)
     {
@@ -491,11 +493,8 @@ void creditMemoItem::populate()
 {
   XSqlQuery cmitem;
   cmitem.prepare("SELECT cmitem.*, "
-                 "       formatQty(cmitem_qtycredit) AS tocredit,"
-                 "       formatQty(cmitem_qtyreturned) AS toreturn,"
 		 "       cmhead_taxauth_id,"
 		 "       COALESCE(cmhead_tax_curr_id, cmhead_curr_id) AS taxcurr "
-
                  "FROM cmitem, cmhead "
                  "WHERE ((cmitem_cmhead_id=cmhead_id)"
 		 "  AND  (cmitem_id=:cmitem_id));" );
@@ -509,8 +508,8 @@ void creditMemoItem::populate()
     _item->setItemsiteid(cmitem.value("cmitem_itemsite_id").toInt());
     _lineNumber->setText(cmitem.value("cmitem_linenumber").toString());
     _netUnitPrice->setLocalValue(cmitem.value("cmitem_unitprice").toDouble());
-    _qtyToCredit->setText(cmitem.value("tocredit").toString());
-    _qtyReturned->setText(cmitem.value("toreturn").toString());
+    _qtyToCredit->setDouble(cmitem.value("cmitem_qtycredit").toDouble());
+    _qtyReturned->setDouble(cmitem.value("cmitem_qtyreturned").toDouble());
     _comments->setText(cmitem.value("cmitem_comments").toString());
     _taxCode->setId(cmitem.value("cmitem_tax_id").toInt());
     _taxType->setId(cmitem.value("cmitem_taxtype_id").toInt());
@@ -553,12 +552,12 @@ void creditMemoItem::sCalculateDiscountPrcnt()
     if (_listPrice->isZero())
       _discountFromList->setText("N/A");
     else
-      _discountFromList->setText(formatPercent(1 - (unitPrice / _listPrice->localValue())) );
+      _discountFromList->setDouble((1 - (unitPrice / _listPrice->localValue())) * 100);
 
     if (_salePrice->isZero())
       _discountFromSale->setText("N/A");
     else
-      _discountFromSale->setText(formatPercent(1 - (unitPrice / _salePrice->localValue())) );
+      _discountFromSale->setDouble((1 - (unitPrice / _salePrice->localValue())) * 100);
   }
 }
 
@@ -580,7 +579,7 @@ void creditMemoItem::sPriceGroup()
 
 void creditMemoItem::sListPrices()
 {
-  q.prepare( "SELECT formatSalesPrice(currToCurr(ipshead_curr_id, :curr_id, ipsprice_price, :effective)) AS price"
+  q.prepare( "SELECT currToCurr(ipshead_curr_id, :curr_id, ipsprice_price, :effective) AS price"
              "       FROM ipsass, ipshead, ipsprice "
              "       WHERE ( (ipsass_ipshead_id=ipshead_id)"
              "        AND (ipsprice_ipshead_id=ipshead_id)"
@@ -589,7 +588,7 @@ void creditMemoItem::sListPrices()
              "        AND (COALESCE(LENGTH(ipsass_shipto_pattern), 0) = 0)"
              "        AND (CURRENT_DATE BETWEEN ipshead_effective AND (ipshead_expires - 1) ) )"
 
-             "       UNION SELECT formatSalesPrice(ipsprice_price) AS price"
+             "       UNION SELECT ipsprice_price AS price"
              "       FROM ipsass, ipshead, ipsprice "
              "       WHERE ( (ipsass_ipshead_id=ipshead_id)"
              "        AND (ipsprice_ipshead_id=ipshead_id)"
@@ -598,7 +597,7 @@ void creditMemoItem::sListPrices()
              "        AND (ipsass_shipto_id != -1)"
              "        AND (CURRENT_DATE BETWEEN ipshead_effective AND (ipshead_expires - 1)) )"
              
-             "       UNION SELECT formatSalesPrice(ipsprice_price) AS price"
+             "       UNION SELECT ipsprice_price AS price"
              "       FROM ipsass, ipshead, ipsprice, cust "
              "       WHERE ( (ipsass_ipshead_id=ipshead_id)"
              "        AND (ipsprice_ipshead_id=ipshead_id)"
@@ -607,7 +606,7 @@ void creditMemoItem::sListPrices()
              "        AND (cust_id=:cust_id)"
              "        AND (CURRENT_DATE BETWEEN ipshead_effective AND (ipshead_expires - 1)) )"
              
-             "       UNION SELECT formatSalesPrice(ipsprice_price) AS price"
+             "       UNION SELECT ipsprice_price AS price"
              "       FROM ipsass, ipshead, ipsprice, custtype, cust "
              "       WHERE ( (ipsass_ipshead_id=ipshead_id)"
              "        AND (ipsprice_ipshead_id=ipshead_id)"
@@ -618,7 +617,7 @@ void creditMemoItem::sListPrices()
              "        AND (cust_id=:cust_id)"
              "        AND (CURRENT_DATE BETWEEN ipshead_effective AND (ipshead_expires - 1)))"
              
-             "       UNION SELECT formatSalesPrice(ipsprice_price) AS price"
+             "       UNION SELECT ipsprice_price AS price"
              "       FROM ipsass, ipshead, ipsprice, shipto "
              "       WHERE ( (ipsass_ipshead_id=ipshead_id)"
              "        AND (ipsprice_ipshead_id=ipshead_id)"
@@ -629,14 +628,14 @@ void creditMemoItem::sListPrices()
              "        AND (ipsass_cust_id=:cust_id)"
              "        AND (CURRENT_DATE BETWEEN ipshead_effective AND (ipshead_expires - 1)) )"
 
-             "       UNION SELECT formatSalesPrice(ipsprice_price) AS price"
+             "       UNION SELECT ipsprice_price AS price"
              "       FROM sale, ipshead, ipsprice "
              "       WHERE ((sale_ipshead_id=ipshead_id)"
              "        AND (ipsprice_ipshead_id=ipshead_id)"
              "        AND (ipsprice_item_id=:item_id)"
              "        AND (CURRENT_DATE BETWEEN sale_startdate AND (sale_enddate - 1)) ) "
 
-             "       UNION SELECT formatSalesPrice(item_listprice - (item_listprice * cust_discntprcnt)) AS price "
+             "       UNION SELECT (item_listprice - (item_listprice * cust_discntprcnt)) AS price "
              "       FROM item, cust "
              "       WHERE ( (item_sold)"
              "        AND (NOT item_exclusive)"

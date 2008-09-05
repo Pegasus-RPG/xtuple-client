@@ -339,7 +339,7 @@
          </widget>
         </item>
         <item row="3" column="1" >
-         <widget class="QLabel" name="_qtyShipped" >
+         <widget class="XLabel" name="_qtyShipped" >
           <property name="minimumSize" >
            <size>
             <width>80</width>
@@ -597,7 +597,7 @@
              </widget>
             </item>
             <item row="3" column="0" >
-             <widget class="QLabel" name="_discountFromListPrcntLit" >
+             <widget class="XLabel" name="_discountFromListPrcntLit" >
               <property name="minimumSize" >
                <size>
                 <width>0</width>
@@ -613,7 +613,7 @@
              </widget>
             </item>
             <item row="3" column="1" >
-             <widget class="QLabel" name="_discountFromList" >
+             <widget class="XLabel" name="_discountFromList" >
               <property name="minimumSize" >
                <size>
                 <width>80</width>

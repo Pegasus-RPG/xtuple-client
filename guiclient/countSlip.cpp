@@ -57,19 +57,13 @@
 
 #include "countSlip.h"
 
-#include <QVariant>
 #include <QMessageBox>
 #include <QValidator>
+#include <QVariant>
+
 #include "inputManager.h"
 #include "countTagList.h"
 
-/*
- *  Constructs a countSlip as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 countSlip::countSlip(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
@@ -427,7 +421,7 @@ void countSlip::populate()
              "       cntslip_location_id, cntslip_lotserial,"
              "       cntslip_lotserial_expiration,"
              "       cntslip_lotserial_warrpurc,"
-             "       formatQty(cntslip_qty) AS qty "
+             "       cntslip_qty "
              "FROM cntslip, invcnt "
              "WHERE ( (cntslip_cnttag_id=invcnt_id)"
              " AND (cntslip_id=:cntslip_id) );" );
@@ -439,7 +433,7 @@ void countSlip::populate()
 
     _countTagNumber->setText(r.value("invcnt_tagnumber").toString());
     _number->setText(r.value("cntslip_number").toString());
-    _qty->setText(r.value("qty").toString());
+    _qty->setDouble(r.value("cntslip_qty").toDouble());
     _comments->setText(r.value("cntslip_comments").toString());
     _lotSerial->setText(r.value("cntslip_lotserial").toString());
     if(r.value("cntslip_lotserial_expiration").toString().isEmpty())

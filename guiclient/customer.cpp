@@ -128,11 +128,11 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
     _taxreg->addColumn(tr("Tax Authority"), 100, Qt::AlignLeft );
     _taxreg->addColumn(tr("Registration #"), -1, Qt::AlignLeft );
 
-    _shipto->addColumn(tr("Default"),          _itemColumn,  Qt::AlignLeft );
-    _shipto->addColumn(tr("Number"),           _itemColumn,  Qt::AlignLeft );
-    _shipto->addColumn(tr("Name"),             150,          Qt::AlignLeft );
-    _shipto->addColumn(tr("Address"),          150,          Qt::AlignLeft );
-    _shipto->addColumn(tr("City, State, Zip"), -1,           Qt::AlignLeft );
+    _shipto->addColumn(tr("Default"), _itemColumn, Qt::AlignLeft, true, "shipto_default");
+    _shipto->addColumn(tr("Number"),  _itemColumn, Qt::AlignLeft, true, "shipto_num");
+    _shipto->addColumn(tr("Name"),            150, Qt::AlignLeft, true, "shipto_name");
+    _shipto->addColumn(tr("Address"),         150, Qt::AlignLeft, true, "shipto_address1");
+    _shipto->addColumn(tr("City, State, Zip"), -1, Qt::AlignLeft, true, "shipto_csz");
 
     _cc->addColumn(tr("Sequence"),_itemColumn, Qt::AlignLeft, true, "ccard_seq");
     _cc->addColumn(tr("Type"),    _itemColumn, Qt::AlignLeft, true, "type");
@@ -141,6 +141,9 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
     
     _charass->addColumn(tr("Characteristic"), _itemColumn*2, Qt::AlignLeft );
     _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft );
+
+    _defaultCommissionPrcnt->setValidator(omfgThis->percentVal());
+    _defaultDiscountPrcnt->setValidator(omfgThis->percentVal());
   
     _custchar = new QStandardItemModel(0, 2, this);
     _custchar->setHeaderData( 0, Qt::Horizontal, tr("Characteristc"), Qt::DisplayRole);
@@ -1079,7 +1082,7 @@ void customer::sPopulateShiptoMenu(QMenu *menuThis)
 
 void customer::sFillShiptoList()
 {
-  q.prepare( "SELECT shipto_id, formatBoolYN(shipto_default),"
+  q.prepare( "SELECT shipto_id, shipto_default,"
              "       shipto_num, shipto_name, shipto_address1,"
              "       (shipto_city || ', ' || shipto_state || '  ' || shipto_zipcode) "
              "FROM shipto "
@@ -1087,7 +1090,6 @@ void customer::sFillShiptoList()
              "ORDER BY shipto_num;" );
   q.bindValue(":cust_id", _custid);
   q.exec();
-  _shipto->clear();
   _shipto->populate(q);
 }
 
@@ -1177,7 +1179,7 @@ void customer::sPopulateCommission()
     q.bindValue(":salesrep_id", _salesrep->id());
     q.exec();
     if (q.first())
-      _defaultCommissionPrcnt->setText(formatPercent(q.value("salesrep_commission").toDouble()));
+      _defaultCommissionPrcnt->setDouble(q.value("salesrep_commission").toDouble() * 100);
   }
 }
 
@@ -1186,8 +1188,7 @@ void customer::populate()
   XSqlQuery cust;
   _notice = FALSE;
   cust.prepare( "SELECT custinfo.*, "
-                "       formatScrap(cust_commprcnt) AS commprcnt,"
-                "       formatScrap(cust_discntprcnt) AS discountpercent,"
+                "       cust_commprcnt, cust_discntprcnt,"
                 "       (cust_gracedays IS NOT NULL) AS hasGraceDays,"
                 "       crmacct_id "
                 "FROM custinfo, crmacct "
@@ -1210,7 +1211,7 @@ void customer::populate()
     _creditRating->setText(cust.value("cust_creditrating"));
     _autoUpdateStatus->setChecked(cust.value("cust_autoupdatestatus").toBool());
     _autoHoldOrders->setChecked(cust.value("cust_autoholdorders").toBool());
-    _defaultDiscountPrcnt->setText(cust.value("discountpercent"));
+    _defaultDiscountPrcnt->setDouble(cust.value("cust_discntprcnt").toDouble() * 100);
 
     if(cust.value("hasGraceDays").toBool())
     {
@@ -1222,7 +1223,7 @@ void customer::populate()
 
     _custtype->setId(cust.value("cust_custtype_id").toInt());
     _salesrep->setId(cust.value("cust_salesrep_id").toInt());
-    _defaultCommissionPrcnt->setText(cust.value("commprcnt"));
+    _defaultCommissionPrcnt->setDouble(cust.value("cust_commprcnt").toDouble() * 100);
     _terms->setId(cust.value("cust_terms_id").toInt());
     _taxauth->setId(cust.value("cust_taxauth_id").toInt());
     _shipform->setId(cust.value("cust_shipform_id").toInt());

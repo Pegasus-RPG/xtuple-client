@@ -104,6 +104,7 @@ creditMemo::creditMemo(QWidget* parent, const char* name, Qt::WFlags fl)
   _shiptoid		= -1;
 
   _memoNumber->setValidator(omfgThis->orderVal());
+  _commission->setValidator(omfgThis->scrapVal());
 
   _currency->setLabel(_currencyLit);
 
@@ -487,8 +488,7 @@ void creditMemo::sInvoiceList()
   {
 
     XSqlQuery sohead;
-    sohead.prepare( "SELECT invchead.*, "
-                    "       formatScrap(invchead_commission) AS f_commission "
+    sohead.prepare( "SELECT invchead.* "
                     "FROM invchead "
                     "WHERE (invchead_id=:invcid) "
                     "LIMIT 1;" );
@@ -498,7 +498,7 @@ void creditMemo::sInvoiceList()
     {
       _invoiceNumber->setInvoiceNumber(sohead.value("invchead_invcnumber").toString());
       _salesRep->setId(sohead.value("invchead_salesrep_id").toInt());
-      _commission->setText(sohead.value("f_commission"));
+      _commission->setDouble(sohead.value("invchead_commission").toDouble() * 100);
 
       _taxauth->setId(sohead.value("invchead_taxauth_id").toInt());
       _customerPO->setText(sohead.value("invchead_ponumber"));
@@ -602,7 +602,7 @@ void creditMemo::sPopulateCustomerInfo()
     {
       XSqlQuery query;
       query.prepare( "SELECT cust_salesrep_id,"
-                     "       formatScrap(cust_commprcnt) AS f_commission,"
+                     "       cust_commprcnt,"
                      "       cust_taxauth_id, cust_curr_id, "
                      "       cust_name, cntct_addr_id, "
                      "       cust_ffshipto, cust_ffbillto "
@@ -617,7 +617,7 @@ void creditMemo::sPopulateCustomerInfo()
         _copyToShipto->setEnabled(_ffShipto);
 
         _salesRep->setId(query.value("cust_salesrep_id").toInt());
-        _commission->setText(query.value("f_commission"));
+        _commission->setDouble(query.value("cust_commprcnt").toDouble() * 100);
 
         _custtaxauthid = query.value("cust_taxauth_id").toInt();
         _taxauth->setId(query.value("cust_taxauth_id").toInt());
@@ -892,11 +892,12 @@ void creditMemo::sFillList()
              "       cmitem_qtyreturned, cmitem_qtycredit,"
              "       puom.uom_name AS priceuom,"
              "       cmitem_unitprice,"
-             "       (cmitem_qtycredit * cmitem_qty_invuomratio) * (cmitem_unitprice / cmitem_price_invuomratio) AS extprice,"
+             "       (cmitem_qtycredit * cmitem_qty_invuomratio) *"
+             "        (cmitem_unitprice / cmitem_price_invuomratio) AS extprice,"
              "       'qty' AS cmitem_qtyreturned_xtnumericrole,"
              "       'qty' AS cmitem_qtycredit_xtnumericrole,"
              "       'salesprice' AS cmitem_unitprice_xtnumericrole,"
-             "       'curr' AS extprice "
+             "       'curr' AS extprice_xtnumericrole "
              "FROM cmitem, itemsite, item, warehous, uom AS quom, uom AS puom "
              "WHERE ( (cmitem_itemsite_id=itemsite_id)"
              " AND (cmitem_qty_uom_id=quom.uom_id)"
@@ -911,6 +912,11 @@ void creditMemo::sFillList()
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 
   _cmitem->populate(q);
+  if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   sCalculateSubtotal();
   recalculateTax();
@@ -954,8 +960,7 @@ void creditMemo::populate()
 {
   XSqlQuery cmhead;
   cmhead.prepare( "SELECT cmhead.*,"
-                  "       cust_name, cust_ffbillto, cust_ffshipto,"
-                  "       formatScrap(cmhead_commission) AS f_commission "
+                  "       cust_name, cust_ffbillto, cust_ffshipto "
                   "FROM cust, cmhead "
                   "WHERE ( (cmhead_cust_id=cust_id)"
                   " AND (cmhead_id=:cmhead_id) );" );
@@ -969,7 +974,7 @@ void creditMemo::populate()
       _status->setText(tr("Unposted"));
 
     _salesRep->setId(cmhead.value("cmhead_salesrep_id").toInt());
-    _commission->setText(cmhead.value("f_commission"));
+    _commission->setDouble(cmhead.value("cmhead_commission").toDouble() * 100);
     // do taxauth first so we can overwrite the result of the signal cascade
     _taxauth->setId(cmhead.value("cmhead_taxauth_id").toInt());
     if (cmhead.value("cmhead_tax_curr_id").isNull())
