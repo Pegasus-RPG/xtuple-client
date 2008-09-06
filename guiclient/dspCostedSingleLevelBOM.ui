@@ -5,58 +5,39 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>400</height>
+    <width>800</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Costed Single Level Bill of Materials</string>
   </property>
   <widget class="QWidget" name="widget" >
-   <layout class="QVBoxLayout" >
-    <property name="spacing" >
-     <number>5</number>
-    </property>
-    <property name="leftMargin" >
-     <number>5</number>
-    </property>
-    <property name="topMargin" >
-     <number>5</number>
-    </property>
-    <property name="rightMargin" >
-     <number>5</number>
-    </property>
-    <property name="bottomMargin" >
-     <number>5</number>
-    </property>
-    <item>
-     <layout class="QHBoxLayout" >
-      <property name="spacing" >
-       <number>7</number>
-      </property>
+   <layout class="QGridLayout" >
+    <item row="0" column="0" >
+     <layout class="QGridLayout" >
       <property name="leftMargin" >
-       <number>0</number>
+       <number>12</number>
       </property>
       <property name="topMargin" >
-       <number>0</number>
+       <number>12</number>
       </property>
       <property name="rightMargin" >
-       <number>0</number>
+       <number>12</number>
       </property>
       <property name="bottomMargin" >
-       <number>0</number>
+       <number>12</number>
       </property>
-      <item>
-       <widget class="ItemCluster" name="_item" >
-        <property name="focusPolicy" >
-         <enum>Qt::StrongFocus</enum>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <layout class="QVBoxLayout" >
+      <property name="horizontalSpacing" >
+       <number>12</number>
+      </property>
+      <property name="verticalSpacing" >
+       <number>12</number>
+      </property>
+      <item row="0" column="0" >
+       <layout class="QHBoxLayout" >
         <property name="spacing" >
-         <number>0</number>
+         <number>7</number>
         </property>
         <property name="leftMargin" >
          <number>0</number>
@@ -71,112 +52,11 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="RevisionCluster" name="_revision" >
+         <widget class="ItemCluster" name="_item" >
           <property name="focusPolicy" >
            <enum>Qt::StrongFocus</enum>
           </property>
-          <property name="readOnly" >
-           <bool>false</bool>
-          </property>
-          <property name="mode" >
-           <enum>RevisionLineEdit::View</enum>
-          </property>
-          <property name="type" >
-           <enum>RevisionLineEdit::BOM</enum>
-          </property>
          </widget>
-        </item>
-        <item>
-         <widget class="QGroupBox" name="_costsGroup" >
-          <property name="title" >
-           <string/>
-          </property>
-          <layout class="QVBoxLayout" >
-           <property name="spacing" >
-            <number>0</number>
-           </property>
-           <property name="leftMargin" >
-            <number>5</number>
-           </property>
-           <property name="topMargin" >
-            <number>5</number>
-           </property>
-           <property name="rightMargin" >
-            <number>5</number>
-           </property>
-           <property name="bottomMargin" >
-            <number>5</number>
-           </property>
-           <item>
-            <widget class="QRadioButton" name="_useStandardCosts" >
-             <property name="text" >
-              <string>Use Standard Costs</string>
-             </property>
-             <property name="checked" >
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="_useActualCosts" >
-             <property name="text" >
-              <string>Use Actual Costs</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeType" >
-           <enum>QSizePolicy::Preferred</enum>
-          </property>
-          <property name="sizeHint" >
-           <size>
-            <width>20</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" >
-        <property name="spacing" >
-         <number>0</number>
-        </property>
-        <property name="leftMargin" >
-         <number>0</number>
-        </property>
-        <property name="topMargin" >
-         <number>0</number>
-        </property>
-        <property name="rightMargin" >
-         <number>0</number>
-        </property>
-        <property name="bottomMargin" >
-         <number>0</number>
-        </property>
-        <item>
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeType" >
-           <enum>QSizePolicy::Expanding</enum>
-          </property>
-          <property name="sizeHint" >
-           <size>
-            <width>20</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
         </item>
         <item>
          <layout class="QVBoxLayout" >
@@ -196,40 +76,49 @@
            <number>0</number>
           </property>
           <item>
-           <layout class="QVBoxLayout" >
-            <property name="spacing" >
-             <number>5</number>
+           <widget class="RevisionCluster" name="_revision" >
+            <property name="focusPolicy" >
+             <enum>Qt::StrongFocus</enum>
             </property>
-            <property name="leftMargin" >
-             <number>0</number>
+            <property name="readOnly" >
+             <bool>false</bool>
             </property>
-            <property name="topMargin" >
-             <number>0</number>
+            <property name="mode" >
+             <enum>RevisionLineEdit::View</enum>
             </property>
-            <property name="rightMargin" >
-             <number>0</number>
+            <property name="type" >
+             <enum>RevisionLineEdit::BOM</enum>
             </property>
-            <property name="bottomMargin" >
-             <number>0</number>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="_costsGroup" >
+            <property name="title" >
+             <string/>
             </property>
-            <item>
-             <widget class="QPushButton" name="_close" >
-              <property name="text" >
-               <string>&amp;Close</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="_print" >
-              <property name="enabled" >
-               <bool>false</bool>
-              </property>
-              <property name="text" >
-               <string>&amp;Print</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
+            <layout class="QVBoxLayout" >
+             <property name="spacing" >
+              <number>12</number>
+             </property>
+             <item>
+              <widget class="QRadioButton" name="_useStandardCosts" >
+               <property name="text" >
+                <string>Use Standard Costs</string>
+               </property>
+               <property name="checked" >
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="_useActualCosts" >
+               <property name="text" >
+                <string>Use Actual Costs</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
           </item>
           <item>
            <spacer>
@@ -249,42 +138,137 @@
           </item>
          </layout>
         </item>
+        <item>
+         <layout class="QHBoxLayout" >
+          <property name="spacing" >
+           <number>0</number>
+          </property>
+          <property name="leftMargin" >
+           <number>0</number>
+          </property>
+          <property name="topMargin" >
+           <number>0</number>
+          </property>
+          <property name="rightMargin" >
+           <number>0</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>0</number>
+          </property>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType" >
+             <enum>QSizePolicy::Expanding</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" >
+            <property name="spacing" >
+             <number>0</number>
+            </property>
+            <property name="leftMargin" >
+             <number>0</number>
+            </property>
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
+            </property>
+            <item>
+             <layout class="QVBoxLayout" >
+              <property name="spacing" >
+               <number>5</number>
+              </property>
+              <property name="leftMargin" >
+               <number>0</number>
+              </property>
+              <property name="topMargin" >
+               <number>0</number>
+              </property>
+              <property name="rightMargin" >
+               <number>0</number>
+              </property>
+              <property name="bottomMargin" >
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QPushButton" name="_close" >
+                <property name="text" >
+                 <string>&amp;Close</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="_print" >
+                <property name="enabled" >
+                 <bool>false</bool>
+                </property>
+                <property name="text" >
+                 <string>&amp;Print</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <spacer>
+              <property name="orientation" >
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeType" >
+               <enum>QSizePolicy::Expanding</enum>
+              </property>
+              <property name="sizeHint" >
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
        </layout>
       </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QVBoxLayout" >
-      <property name="spacing" >
-       <number>0</number>
-      </property>
-      <property name="leftMargin" >
-       <number>0</number>
-      </property>
-      <property name="topMargin" >
-       <number>0</number>
-      </property>
-      <property name="rightMargin" >
-       <number>0</number>
-      </property>
-      <property name="bottomMargin" >
-       <number>0</number>
-      </property>
-      <item>
-       <widget class="QLabel" name="_costedBOMLit" >
-        <property name="text" >
-         <string>Costed Bill of Materials:</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="XTreeWidget" name="_bomitem" >
+      <item row="1" column="0" >
+       <widget class="QGroupBox" name="_bomitemGroup" >
         <property name="sizePolicy" >
-         <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+         <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
           <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
+          <verstretch>1</verstretch>
          </sizepolicy>
         </property>
+        <property name="title" >
+         <string>Costed Bill of Materials</string>
+        </property>
+        <layout class="QGridLayout" >
+         <item row="0" column="0" >
+          <widget class="XTreeWidget" name="_bomitem" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </item>
      </layout>
@@ -321,7 +305,6 @@
   <tabstop>_close</tabstop>
   <tabstop>_bomitem</tabstop>
  </tabstops>
- <includes/>
  <resources/>
  <connections>
   <connection>

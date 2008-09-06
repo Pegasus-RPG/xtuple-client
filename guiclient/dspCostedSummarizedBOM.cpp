@@ -85,9 +85,9 @@ dspCostedSummarizedBOM::dspCostedSummarizedBOM(QWidget* parent, const char* name
   _bomitem->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft,  true, "bomdata_item_number");
   _bomitem->addColumn(tr("Description"),           -1, Qt::AlignLeft,  true, "bomdata_itemdescription");
   _bomitem->addColumn(tr("UOM"),           _uomColumn, Qt::AlignCenter,true, "bomdata_uom_name");
-  _bomitem->addColumn(tr("Ext'd Qty. Per"),_qtyColumn, Qt::AlignRight, true, "bomdata_qtyper");
+  _bomitem->addColumn(tr("Ext. Qty. Per"),_qtyColumn, Qt::AlignRight, true, "bomdata_qtyper");
   _bomitem->addColumn(tr("Unit Cost"),    _costColumn, Qt::AlignRight, true, "unitcost");
-  _bomitem->addColumn(tr("Ext'd Cost"),  _priceColumn, Qt::AlignRight, true, "extendedcost");
+  _bomitem->addColumn(tr("Ext. Cost"),    _priceColumn, Qt::AlignRight, true, "extendedcost");
   _bomitem->setIndentation(10);
 
   _expiredDaysLit->setEnabled(_showExpired->isChecked());

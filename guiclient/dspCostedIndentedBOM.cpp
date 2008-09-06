@@ -92,7 +92,7 @@ dspCostedIndentedBOM::dspCostedIndentedBOM(QWidget* parent, const char* name, Qt
   _item->setType(ItemLineEdit::cGeneralManufactured);
 
   _bomitem->setRootIsDecorated(TRUE);
-  _bomitem->addColumn(tr("Seq #"),                80, Qt::AlignCenter,true, "bomdata_bomwork_seqnumber");
+  _bomitem->addColumn(tr("Seq #"),       _itemColumn, Qt::AlignLeft,  true, "bomdata_bomwork_seqnumber");
   _bomitem->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft,  true, "bomdata_item_number");
   _bomitem->addColumn(tr("Description"),          -1, Qt::AlignLeft,  true, "bomdata_itemdescription");
   _bomitem->addColumn(tr("UOM"),          _uomColumn, Qt::AlignCenter,true, "bomdata_uom_name");
@@ -101,7 +101,7 @@ dspCostedIndentedBOM::dspCostedIndentedBOM(QWidget* parent, const char* name, Qt
   _bomitem->addColumn(tr("Effective"),   _dateColumn, Qt::AlignCenter,true, "bomdata_effective");
   _bomitem->addColumn(tr("Expires"),     _dateColumn, Qt::AlignCenter,true, "bomdata_expires");
   _bomitem->addColumn(tr("Unit Cost"),   _costColumn, Qt::AlignRight, true, "unitcost");
-  _bomitem->addColumn(tr("Ext'd Cost"), _priceColumn, Qt::AlignRight, true, "extendedcost");
+  _bomitem->addColumn(tr("Ext. Cost"), _priceColumn, Qt::AlignRight, true, "extendedcost");
 
   _bomitem->setIndentation(10);
 
@@ -261,11 +261,11 @@ void dspCostedIndentedBOM::sFillList()
   if (q.first())
   {
     XTreeWidgetItem *last = new XTreeWidgetItem(_bomitem, -1, -1);
-    last->setText(1, tr("Actual Cost"));
+    last->setText(0, tr("Actual Cost"));
     last->setText(9, q.value("actual").toString());
 
     last = new XTreeWidgetItem( _bomitem, -1, -1);
-    last->setText(1, tr("Standard Cost"));
+    last->setText(0, tr("Standard Cost"));
     last->setText(9, q.value("standard").toString());
   }
   else if (q.lastError().type() != QSqlError::None)

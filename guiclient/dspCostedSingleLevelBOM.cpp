@@ -87,7 +87,7 @@ dspCostedSingleLevelBOM::dspCostedSingleLevelBOM(QWidget* parent, const char* na
 
   _item->setType(ItemLineEdit::cGeneralManufactured);
 
-  _bomitem->addColumn(tr("#"),           _seqColumn, Qt::AlignCenter,true, "bomdata_bomwork_seqnumber");
+  _bomitem->addColumn(tr("#"),          _itemColumn, Qt::AlignLeft,  true, "bomdata_bomwork_seqnumber");
   _bomitem->addColumn(tr("Item Number"),_itemColumn, Qt::AlignLeft,  true, "bomdata_item_number");
   _bomitem->addColumn(tr("Description"),         -1, Qt::AlignLeft,  true, "bomdata_itemdescription");
   _bomitem->addColumn(tr("UOM"),         _uomColumn, Qt::AlignCenter,true, "bomdata_uom_name");
@@ -96,7 +96,7 @@ dspCostedSingleLevelBOM::dspCostedSingleLevelBOM(QWidget* parent, const char* na
   _bomitem->addColumn(tr("Effective"),  _dateColumn, Qt::AlignCenter,true, "bomdata_effective");
   _bomitem->addColumn(tr("Expires"),    _dateColumn, Qt::AlignCenter,true, "bomdata_expires");
   _bomitem->addColumn(tr("Unit Cost"),  _costColumn, Qt::AlignRight, true, "unitcost");
-  _bomitem->addColumn(tr("Ext'd Cost"), _costColumn, Qt::AlignRight, true, "extendedcost");
+  _bomitem->addColumn(tr("Ext. Cost"),  _priceColumn,Qt::AlignRight, true, "extendedcost");
 
   connect(omfgThis, SIGNAL(bomsUpdated(int, bool)), this, SLOT(sFillList(int, bool)));
 
@@ -258,10 +258,10 @@ void dspCostedSingleLevelBOM::sFillList()
   q.exec();
   if (q.first())
   {
-    XTreeWidgetItem *last = new XTreeWidgetItem(_bomitem, -1, -1, "", tr("Actual Cost"));
+    XTreeWidgetItem *last = new XTreeWidgetItem(_bomitem, -1, -1, tr("Actual Cost"), "");
     last->setText(9, q.value("actual").toString());
 
-    last = new XTreeWidgetItem(_bomitem, last, -1, -1, "", tr("Standard Cost") );
+    last = new XTreeWidgetItem(_bomitem, last, -1, -1, tr("Standard Cost"), "" );
     last->setText(9, q.value("standard").toString());
   }
   else if (q.lastError().type() != QSqlError::None)
