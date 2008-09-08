@@ -70,6 +70,10 @@ transactionInformation::transactionInformation(QWidget* parent, const char* name
 
   _item->setReadOnly(TRUE);
 
+  _transactionQty->setPrecision(omfgThis->qtyVal());
+  _qohBefore->setPrecision(omfgThis->qtyVal());
+  _qohAfter->setPrecision(omfgThis->qtyVal());
+
   if (!_metrics->boolean("MultiWhs"))
   {
     _warehouseLit->hide();

@@ -80,6 +80,9 @@ terms::terms(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     connect(_days, SIGNAL(toggled(bool)), this, SLOT(sTypeChanged()));
     connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
     connect(_code, SIGNAL(lostFocus()), this, SLOT(sCheck()));
+    
+    _discountPercent->setValidator(omfgThis->percentVal());
+    
     init();
 }
 
@@ -273,7 +276,7 @@ void terms::populate()
   q.prepare( "SELECT terms_code, terms_descrip, terms_type,"
              "       terms_ap, terms_ar,"
              "       terms_duedays, terms_discdays, terms_cutoffday,"
-             "       formatScrap(terms_discprcnt) AS f_discount "
+             "       terms_discprcnt "
              "FROM terms "
              "WHERE (terms_id=:terms_id);" );
   q.bindValue(":terms_id", _termsid);
@@ -285,7 +288,7 @@ void terms::populate()
     _ap->setChecked(q.value("terms_ap").toBool());
     _ar->setChecked(q.value("terms_ar").toBool());
     _dueDays->setValue(q.value("terms_duedays").toInt());
-    _discountPercent->setText(q.value("f_discount").toString());
+    _discountPercent->setText(q.value("terms_discprcnt").toDouble() * 100);
     _discountDays->setValue(q.value("terms_discdays").toInt());
 
     if (q.value("terms_type").toString() == "D")

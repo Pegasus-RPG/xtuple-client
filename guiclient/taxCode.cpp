@@ -56,7 +56,7 @@
  */
 
 #include "taxCode.h"
-
+#include <QDoubleValidator>
 #include <QVariant>
 #include <QMessageBox>
 
@@ -76,6 +76,11 @@ taxCode::taxCode(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   // signals and slots connections
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_code, SIGNAL(lostFocus()), this, SLOT(sCheck()));
+  
+  _taxRateA->setValidator(omfgThis->percentVal());
+  _taxRateB->setValidator(omfgThis->percentVal());
+  _taxRateC->setValidator(omfgThis->percentVal());
+  
 }
 
 /*
@@ -272,11 +277,11 @@ void taxCode::sCheck()
 void taxCode::populate()
 {
   q.prepare( "SELECT tax_code, tax_descrip,"
-             "       formatScrap(tax_ratea) AS ratea,"
+             "       tax_ratea * 100 AS ratea,"
              "       tax_sales_accnt_id,"
-             "       formatScrap(tax_rateb) AS rateb,"
+             "       tax_rateb * 100 AS rateb,"
              "       tax_salesb_accnt_id,"
-             "       formatScrap(tax_ratec) AS ratec,"
+             "       tax_ratec * 100 AS ratec,"
              "       tax_salesc_accnt_id,"
              "       tax_cumulative "
              "FROM tax "
@@ -287,11 +292,11 @@ void taxCode::populate()
   {
     _code->setText(q.value("tax_code").toString());
     _description->setText(q.value("tax_descrip").toString());
-    _taxRateA->setText(q.value("ratea").toString());
+    _taxRateA->setText(q.value("ratea").toDouble());
     _accountA->setId(q.value("tax_sales_accnt_id").toInt());
-    _taxRateB->setText(q.value("rateb").toString());
+    _taxRateB->setText(q.value("rateb").toDouble());
     _accountB->setId(q.value("tax_salesb_accnt_id").toInt());
-    _taxRateC->setText(q.value("ratec").toString());
+    _taxRateC->setText(q.value("ratec").toDouble());
     _accountC->setId(q.value("tax_salesc_accnt_id").toInt());
     _cumulative->setChecked(q.value("tax_cumulative").toBool());
   }

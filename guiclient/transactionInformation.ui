@@ -20,7 +20,7 @@
        <item>
         <layout class="QGridLayout" >
          <item row="0" column="0" >
-          <widget class="QLabel" name="_transactionTypeLit" >
+          <widget class="XLabel" name="_transactionTypeLit" >
            <property name="text" >
             <string>Transaction Type:</string>
            </property>
@@ -30,7 +30,7 @@
           </widget>
          </item>
          <item row="0" column="2" >
-          <widget class="QLabel" name="_usernameLit" >
+          <widget class="XLabel" name="_usernameLit" >
            <property name="text" >
             <string>Username:</string>
            </property>
@@ -40,7 +40,7 @@
           </widget>
          </item>
          <item row="0" column="3" >
-          <widget class="QLabel" name="_username" >
+          <widget class="XLabel" name="_username" >
            <property name="sizePolicy" >
             <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
              <horstretch>0</horstretch>
@@ -56,7 +56,7 @@
           </widget>
          </item>
          <item row="1" column="0" >
-          <widget class="QLabel" name="_transactionDateLit" >
+          <widget class="XLabel" name="_transactionDateLit" >
            <property name="text" >
             <string>Transaction Date:</string>
            </property>
@@ -76,7 +76,7 @@
           </widget>
          </item>
          <item row="1" column="2" >
-          <widget class="QLabel" name="_createdDateLit" >
+          <widget class="XLabel" name="_createdDateLit" >
            <property name="text" >
             <string>Created Date:</string>
            </property>
@@ -96,7 +96,7 @@
           </widget>
          </item>
          <item row="0" column="1" >
-          <widget class="QLabel" name="_transactionType" >
+          <widget class="XLabel" name="_transactionType" >
            <property name="sizePolicy" >
             <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
              <horstretch>0</horstretch>
@@ -197,7 +197,7 @@
         <number>5</number>
        </property>
        <item>
-        <widget class="QLabel" name="_warehouseLit" >
+        <widget class="XLabel" name="_warehouseLit" >
          <property name="text" >
           <string>Site:</string>
          </property>
@@ -249,7 +249,7 @@
           <number>0</number>
          </property>
          <item>
-          <widget class="QLabel" name="_transactionQtyLit" >
+          <widget class="XLabel" name="_transactionQtyLit" >
            <property name="text" >
             <string>Transaction Qty.:</string>
            </property>
@@ -259,7 +259,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="_qohBeforeLit" >
+          <widget class="XLabel" name="_qohBeforeLit" >
            <property name="text" >
             <string>QOH Before:</string>
            </property>
@@ -269,7 +269,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="_qohAfterLit" >
+          <widget class="XLabel" name="_qohAfterLit" >
            <property name="text" >
             <string>QOH After:</string>
            </property>
@@ -286,7 +286,7 @@
           <number>0</number>
          </property>
          <item>
-          <widget class="QLabel" name="_transactionQty" >
+          <widget class="XLabel" name="_transactionQty" >
            <property name="minimumSize" >
             <size>
              <width>80</width>
@@ -302,7 +302,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="_qohBefore" >
+          <widget class="XLabel" name="_qohBefore" >
            <property name="minimumSize" >
             <size>
              <width>80</width>
@@ -318,7 +318,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="_qohAfter" >
+          <widget class="XLabel" name="_qohAfter" >
            <property name="minimumSize" >
             <size>
              <width>80</width>
@@ -398,7 +398,7 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="QLabel" name="_notesLit" >
+      <widget class="XLabel" name="_notesLit" >
        <property name="text" >
         <string>Notes:</string>
        </property>
@@ -422,6 +422,7 @@
    <class>DLineEdit</class>
    <extends>QWidget</extends>
    <header>datecluster.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>ItemCluster</class>
@@ -433,6 +434,11 @@
    <class>WComboBox</class>
    <extends>XComboBox</extends>
    <header>wcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XLabel</class>
+   <extends>QLabel</extends>
+   <header>xlabel.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

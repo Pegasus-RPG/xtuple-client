@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>626</width>
-    <height>551</height>
+    <width>737</width>
+    <height>645</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -33,7 +33,7 @@
      <item row="0" column="0" colspan="2" >
       <layout class="QHBoxLayout" >
        <item>
-        <widget class="QLabel" name="_orderNumberLit" >
+        <widget class="XLabel" name="_orderNumberLit" >
          <property name="text" >
           <string>Order #:</string>
          </property>
@@ -43,7 +43,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="_orderNumber" >
+        <widget class="XLabel" name="_orderNumber" >
          <property name="sizePolicy" >
           <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
            <horstretch>0</horstretch>
@@ -53,7 +53,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="_lineNumberLit" >
+        <widget class="XLabel" name="_lineNumberLit" >
          <property name="text" >
           <string>Line #:</string>
          </property>
@@ -63,7 +63,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="_lineNumber" >
+        <widget class="XLabel" name="_lineNumber" >
          <property name="sizePolicy" >
           <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
            <horstretch>0</horstretch>
@@ -200,7 +200,7 @@
           <item>
            <layout class="QHBoxLayout" >
             <item>
-             <widget class="QLabel" name="_warehouseLit" >
+             <widget class="XLabel" name="_warehouseLit" >
               <property name="text" >
                <string>From &amp;Site:</string>
               </property>
@@ -252,7 +252,7 @@
          <number>12</number>
         </property>
         <item row="0" column="0" >
-         <widget class="QLabel" name="_qtyOrderedLit" >
+         <widget class="XLabel" name="_qtyOrderedLit" >
           <property name="text" >
            <string>&amp;Qty. Ordered:</string>
           </property>
@@ -272,7 +272,7 @@
          </widget>
         </item>
         <item row="1" column="0" >
-         <widget class="QLabel" name="_shippedToDateLit" >
+         <widget class="XLabel" name="_shippedToDateLit" >
           <property name="enabled" >
            <bool>true</bool>
           </property>
@@ -285,7 +285,7 @@
          </widget>
         </item>
         <item row="1" column="1" >
-         <widget class="QLabel" name="_shippedToDate" >
+         <widget class="XLabel" name="_shippedToDate" >
           <property name="enabled" >
            <bool>true</bool>
           </property>
@@ -307,7 +307,7 @@
        </property>
        <layout class="QGridLayout" >
         <item row="0" column="0" >
-         <widget class="QLabel" name="_stdcostLit" >
+         <widget class="XLabel" name="_stdcostLit" >
           <property name="text" >
            <string>Standard Cost:</string>
           </property>
@@ -333,7 +333,7 @@
          </widget>
         </item>
         <item row="1" column="0" >
-         <widget class="QLabel" name="_freightLit" >
+         <widget class="XLabel" name="_freightLit" >
           <property name="text" >
            <string>Line Item Freight:</string>
           </property>
@@ -376,7 +376,7 @@
        </property>
        <layout class="QHBoxLayout" >
         <item>
-         <widget class="QLabel" name="_scheduledDateLit" >
+         <widget class="XLabel" name="_scheduledDateLit" >
           <property name="text" >
            <string>Sc&amp;heduled Date:</string>
           </property>
@@ -392,7 +392,7 @@
          <widget class="DLineEdit" name="_scheduledDate" />
         </item>
         <item>
-         <widget class="QLabel" name="_promisedDateLit" >
+         <widget class="XLabel" name="_promisedDateLit" >
           <property name="text" >
            <string>&amp;Promised Date:</string>
           </property>
@@ -481,7 +481,7 @@
              </property>
              <layout class="QGridLayout" >
               <item row="0" column="0" >
-               <widget class="QLabel" name="_onHandLit" >
+               <widget class="XLabel" name="_onHandLit" >
                 <property name="text" >
                  <string>On Hand:</string>
                 </property>
@@ -491,7 +491,7 @@
                </widget>
               </item>
               <item row="0" column="1" >
-               <widget class="QLabel" name="_onHand" >
+               <widget class="XLabel" name="_onHand" >
                 <property name="minimumSize" >
                  <size>
                   <width>80</width>
@@ -504,7 +504,7 @@
                </widget>
               </item>
               <item row="1" column="0" >
-               <widget class="QLabel" name="_allocatedLit" >
+               <widget class="XLabel" name="_allocatedLit" >
                 <property name="text" >
                  <string>Allocated:</string>
                 </property>
@@ -514,7 +514,7 @@
                </widget>
               </item>
               <item row="1" column="1" >
-               <widget class="QLabel" name="_allocated" >
+               <widget class="XLabel" name="_allocated" >
                 <property name="minimumSize" >
                  <size>
                   <width>80</width>
@@ -527,7 +527,7 @@
                </widget>
               </item>
               <item row="2" column="0" >
-               <widget class="QLabel" name="_unallocatedLit" >
+               <widget class="XLabel" name="_unallocatedLit" >
                 <property name="text" >
                  <string>Unallocated:</string>
                 </property>
@@ -537,7 +537,7 @@
                </widget>
               </item>
               <item row="2" column="1" >
-               <widget class="QLabel" name="_unallocated" >
+               <widget class="XLabel" name="_unallocated" >
                 <property name="minimumSize" >
                  <size>
                   <width>80</width>
@@ -550,7 +550,7 @@
                </widget>
               </item>
               <item row="3" column="0" >
-               <widget class="QLabel" name="_onOrderLit" >
+               <widget class="XLabel" name="_onOrderLit" >
                 <property name="text" >
                  <string>On Order:</string>
                 </property>
@@ -560,7 +560,7 @@
                </widget>
               </item>
               <item row="3" column="1" >
-               <widget class="QLabel" name="_onOrder" >
+               <widget class="XLabel" name="_onOrder" >
                 <property name="minimumSize" >
                  <size>
                   <width>80</width>
@@ -573,7 +573,7 @@
                </widget>
               </item>
               <item row="4" column="0" >
-               <widget class="QLabel" name="_availableLit" >
+               <widget class="XLabel" name="_availableLit" >
                 <property name="text" >
                  <string>Available:</string>
                 </property>
@@ -583,7 +583,7 @@
                </widget>
               </item>
               <item row="4" column="1" >
-               <widget class="QLabel" name="_available" >
+               <widget class="XLabel" name="_available" >
                 <property name="minimumSize" >
                  <size>
                   <width>80</width>
@@ -782,6 +782,7 @@
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>

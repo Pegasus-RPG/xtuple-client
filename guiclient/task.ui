@@ -1,7 +1,4 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>task</class>
  <widget class="QDialog" name="task" >
   <property name="geometry" >
@@ -9,45 +6,48 @@
     <x>0</x>
     <y>0</y>
     <width>503</width>
-    <height>309</height>
+    <height>380</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Task</string>
   </property>
   <layout class="QVBoxLayout" >
-   <property name="margin" >
-    <number>5</number>
-   </property>
    <property name="spacing" >
     <number>0</number>
    </property>
+   <property name="leftMargin" >
+    <number>5</number>
+   </property>
+   <property name="topMargin" >
+    <number>5</number>
+   </property>
+   <property name="rightMargin" >
+    <number>5</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>5</number>
+   </property>
    <item>
     <layout class="QVBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
      <property name="spacing" >
       <number>5</number>
      </property>
      <item>
       <layout class="QHBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
         <number>5</number>
        </property>
        <item>
         <layout class="QGridLayout" >
-         <property name="margin" >
-          <number>0</number>
+         <property name="horizontalSpacing" >
+          <number>5</number>
          </property>
-         <property name="spacing" >
+         <property name="verticalSpacing" >
           <number>5</number>
          </property>
          <item row="1" column="0" >
-          <widget class="QLabel" name="_nameLit" >
+          <widget class="XLabel" name="_nameLit" >
            <property name="text" >
             <string>Name:</string>
            </property>
@@ -57,7 +57,7 @@
           </widget>
          </item>
          <item row="0" column="0" >
-          <widget class="QLabel" name="_numberLit" >
+          <widget class="XLabel" name="_numberLit" >
            <property name="text" >
             <string>Number:</string>
            </property>
@@ -69,9 +69,7 @@
          <item row="2" column="1" >
           <widget class="QTextEdit" name="_descrip" >
            <property name="sizePolicy" >
-            <sizepolicy>
-             <hsizetype>7</hsizetype>
-             <vsizetype>1</vsizetype>
+            <sizepolicy vsizetype="Minimum" hsizetype="Expanding" >
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -80,17 +78,11 @@
          </item>
          <item row="0" column="1" >
           <layout class="QHBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
            <property name="spacing" >
             <number>7</number>
            </property>
            <item>
             <layout class="QHBoxLayout" >
-             <property name="margin" >
-              <number>0</number>
-             </property>
              <property name="spacing" >
               <number>0</number>
              </property>
@@ -117,14 +109,11 @@
            </item>
            <item>
             <layout class="QHBoxLayout" >
-             <property name="margin" >
-              <number>0</number>
-             </property>
              <property name="spacing" >
               <number>5</number>
              </property>
              <item>
-              <widget class="QLabel" name="_statusLit" >
+              <widget class="XLabel" name="_statusLit" >
                <property name="text" >
                 <string>Status:</string>
                </property>
@@ -158,18 +147,13 @@
          </item>
          <item row="2" column="0" >
           <layout class="QVBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
            <property name="spacing" >
             <number>0</number>
            </property>
            <item>
-            <widget class="QLabel" name="_descriptionLit" >
+            <widget class="XLabel" name="_descriptionLit" >
              <property name="sizePolicy" >
-              <sizepolicy>
-               <hsizetype>5</hsizetype>
-               <vsizetype>0</vsizetype>
+              <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
@@ -207,17 +191,11 @@
        </item>
        <item>
         <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>0</number>
          </property>
          <item>
           <layout class="QVBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
            <property name="spacing" >
             <number>5</number>
            </property>
@@ -268,17 +246,11 @@
      </item>
      <item>
       <layout class="QHBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
         <number>0</number>
        </property>
        <item>
         <layout class="QHBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>5</number>
          </property>
@@ -288,26 +260,33 @@
             <string>Hours</string>
            </property>
            <layout class="QGridLayout" >
-            <property name="margin" >
+            <property name="leftMargin" >
              <number>5</number>
             </property>
-            <property name="spacing" >
+            <property name="topMargin" >
+             <number>5</number>
+            </property>
+            <property name="rightMargin" >
+             <number>5</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>5</number>
+            </property>
+            <property name="horizontalSpacing" >
+             <number>5</number>
+            </property>
+            <property name="verticalSpacing" >
              <number>5</number>
             </property>
             <item row="0" column="1" >
              <layout class="QVBoxLayout" >
-              <property name="margin" >
-               <number>0</number>
-              </property>
               <property name="spacing" >
                <number>0</number>
               </property>
               <item>
                <widget class="XLineEdit" name="_budgetHours" >
                 <property name="sizePolicy" >
-                 <sizepolicy>
-                  <hsizetype>5</hsizetype>
-                  <vsizetype>0</vsizetype>
+                 <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
@@ -326,9 +305,7 @@
               <item>
                <widget class="XLineEdit" name="_actualHours" >
                 <property name="sizePolicy" >
-                 <sizepolicy>
-                  <hsizetype>5</hsizetype>
-                  <vsizetype>0</vsizetype>
+                 <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
@@ -348,14 +325,11 @@
             </item>
             <item row="0" column="0" >
              <layout class="QVBoxLayout" >
-              <property name="margin" >
-               <number>0</number>
-              </property>
               <property name="spacing" >
                <number>5</number>
               </property>
               <item>
-               <widget class="QLabel" name="_budgetHoursLit" >
+               <widget class="XLabel" name="_budgetHoursLit" >
                 <property name="text" >
                  <string>Budgeted:</string>
                 </property>
@@ -365,7 +339,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="_actualHoursLit" >
+               <widget class="XLabel" name="_actualHoursLit" >
                 <property name="text" >
                  <string>Actual:</string>
                 </property>
@@ -377,7 +351,7 @@
              </layout>
             </item>
             <item row="1" column="0" >
-             <widget class="QLabel" name="_balanceHoursLit" >
+             <widget class="XLabel" name="_balanceHoursLit" >
               <property name="text" >
                <string>Balance:</string>
               </property>
@@ -387,7 +361,7 @@
              </widget>
             </item>
             <item row="1" column="1" >
-             <widget class="QLabel" name="_balanceHours" >
+             <widget class="XLabel" name="_balanceHours" >
               <property name="text" >
                <string/>
               </property>
@@ -405,14 +379,26 @@
             <string>Expenses</string>
            </property>
            <layout class="QGridLayout" >
-            <property name="margin" >
+            <property name="leftMargin" >
              <number>5</number>
             </property>
-            <property name="spacing" >
+            <property name="topMargin" >
+             <number>5</number>
+            </property>
+            <property name="rightMargin" >
+             <number>5</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>5</number>
+            </property>
+            <property name="horizontalSpacing" >
+             <number>5</number>
+            </property>
+            <property name="verticalSpacing" >
              <number>5</number>
             </property>
             <item row="1" column="0" >
-             <widget class="QLabel" name="_balanceExpLit" >
+             <widget class="XLabel" name="_balanceExpLit" >
               <property name="text" >
                <string>Balance:</string>
               </property>
@@ -422,7 +408,7 @@
              </widget>
             </item>
             <item row="1" column="1" >
-             <widget class="QLabel" name="_balanceExp" >
+             <widget class="XLabel" name="_balanceExp" >
               <property name="text" >
                <string/>
               </property>
@@ -433,14 +419,11 @@
             </item>
             <item row="0" column="0" >
              <layout class="QVBoxLayout" >
-              <property name="margin" >
-               <number>0</number>
-              </property>
               <property name="spacing" >
                <number>0</number>
               </property>
               <item>
-               <widget class="QLabel" name="_budgetExpLit" >
+               <widget class="XLabel" name="_budgetExpLit" >
                 <property name="text" >
                  <string>Budgeted:</string>
                 </property>
@@ -450,7 +433,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="_actualExpLit" >
+               <widget class="XLabel" name="_actualExpLit" >
                 <property name="text" >
                  <string>Actual:</string>
                 </property>
@@ -463,18 +446,13 @@
             </item>
             <item row="0" column="1" >
              <layout class="QVBoxLayout" >
-              <property name="margin" >
-               <number>0</number>
-              </property>
               <property name="spacing" >
                <number>0</number>
               </property>
               <item>
                <widget class="XLineEdit" name="_budgetExp" >
                 <property name="sizePolicy" >
-                 <sizepolicy>
-                  <hsizetype>5</hsizetype>
-                  <vsizetype>0</vsizetype>
+                 <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
@@ -493,9 +471,7 @@
               <item>
                <widget class="XLineEdit" name="_actualExp" >
                 <property name="sizePolicy" >
-                 <sizepolicy>
-                  <hsizetype>5</hsizetype>
-                  <vsizetype>0</vsizetype>
+                 <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
@@ -560,18 +536,20 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>XLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>xlineedit.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
    <class>XComboBox</class>
    <extends>QComboBox</extends>
    <header>xcombobox.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>XLabel</class>
+   <extends>QLabel</extends>
+   <header>xlabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>xlineedit.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -586,7 +564,6 @@
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
- <includes/>
  <resources/>
  <connections>
   <connection>

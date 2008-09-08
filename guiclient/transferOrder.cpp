@@ -154,6 +154,8 @@ transferOrder::transferOrder(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _taxCache.clear();
 
+  _weight->setValidator(omfgThis->qtyVal());
+  
   // TODO: remove when 5695 is fixed
   _freight->hide();
   _freightLit->hide();
@@ -1270,7 +1272,7 @@ void transferOrder::sFillItemList()
   q.exec();
   if (q.first())
   {
-    _weight->setText(q.value("grossweight").toString());
+    _weight->setText(q.value("grossweight").toDouble());
     _itemFreight->setLocalValue(q.value("linefreight").toDouble());
   }
   else if (q.lastError().type() != QSqlError::None)

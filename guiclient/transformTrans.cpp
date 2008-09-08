@@ -88,6 +88,10 @@ transformTrans::transformTrans(QWidget* parent, const char* name, Qt::WFlags fl)
   _item->setType(ItemLineEdit::cGeneralInventory | ItemLineEdit::cActive);
   _warehouse->setType(WComboBox::AllActiveInventory);
   _qty->setValidator(omfgThis->qtyVal());
+  _fromBeforeQty->setPrecision(omfgThis->qtyVal());
+  _toBeforeQty->setPrecision(omfgThis->qtyVal());
+  _fromAfterQty->setPrecision(omfgThis->qtyVal());
+  _toAfterQty->setPrecision(omfgThis->qtyVal());
 
   omfgThis->inputManager()->notify(cBCItem, this, _item, SLOT(setItemid(int)));
   omfgThis->inputManager()->notify(cBCItemSite, this, _item, SLOT(setItemsiteid(int)));
@@ -191,10 +195,10 @@ enum SetResponse transformTrans::set(const ParameterList &pParams)
         _transDate->setDate(q.value("invhist_transdate").toDate());
         _username->setText(q.value("invhist_user").toString());
         _qty->setText(q.value("transqty"));
-        _fromBeforeQty->setText(q.value("fromqohbefore").toString());
-        _fromAfterQty->setText(q.value("fromqohafter").toString());
-        _toBeforeQty->setText(q.value("qohbefore").toString());
-        _toAfterQty->setText(q.value("qohafter").toString());
+        _fromBeforeQty->setText(q.value("fromqohbefore").toDouble());
+        _fromAfterQty->setText(q.value("fromqohafter").toDouble());
+        _toBeforeQty->setText(q.value("qohbefore").toDouble());
+        _toAfterQty->setText(q.value("qohafter").toDouble());
         _documentNum->setText(q.value("invhist_docnumber").toString());
         _notes->setText(q.value("invhist_comments").toString());
         _item->setItemsiteid(q.value("invhist_itemsite_id").toInt());

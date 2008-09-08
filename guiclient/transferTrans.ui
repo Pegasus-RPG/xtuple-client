@@ -27,7 +27,7 @@
         <item>
          <layout class="QHBoxLayout" >
           <item>
-           <widget class="QLabel" name="_transDateLit" >
+           <widget class="XLabel" name="_transDateLit" >
             <property name="text" >
              <string>Transaction Date:</string>
             </property>
@@ -40,7 +40,7 @@
            <widget class="DLineEdit" name="_transDate" />
           </item>
           <item>
-           <widget class="QLabel" name="_usernameLit" >
+           <widget class="XLabel" name="_usernameLit" >
             <property name="text" >
              <string>Username:</string>
             </property>
@@ -50,7 +50,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="_username" >
+           <widget class="XLabel" name="_username" >
             <property name="sizePolicy" >
              <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
               <horstretch>0</horstretch>
@@ -137,7 +137,7 @@
     <item>
      <layout class="QGridLayout" >
       <item row="1" column="0" >
-       <widget class="QLabel" name="_fromWarehouseLit" >
+       <widget class="XLabel" name="_fromWarehouseLit" >
         <property name="text" >
          <string>From Site:</string>
         </property>
@@ -147,7 +147,7 @@
        </widget>
       </item>
       <item row="2" column="0" >
-       <widget class="QLabel" name="_toWarehouseLit" >
+       <widget class="XLabel" name="_toWarehouseLit" >
         <property name="text" >
          <string>To Site:</string>
         </property>
@@ -163,7 +163,7 @@
        <widget class="WComboBox" name="_toWarehouse" />
       </item>
       <item row="1" column="2" >
-       <widget class="QLabel" name="_fromBeforeQty" >
+       <widget class="XLabel" name="_fromBeforeQty" >
         <property name="minimumSize" >
          <size>
           <width>80</width>
@@ -176,7 +176,7 @@
        </widget>
       </item>
       <item row="2" column="2" >
-       <widget class="QLabel" name="_toBeforeQty" >
+       <widget class="XLabel" name="_toBeforeQty" >
         <property name="minimumSize" >
          <size>
           <width>80</width>
@@ -189,7 +189,7 @@
        </widget>
       </item>
       <item row="0" column="2" >
-       <widget class="QLabel" name="_beforeLit" >
+       <widget class="XLabel" name="_beforeLit" >
         <property name="minimumSize" >
          <size>
           <width>80</width>
@@ -205,7 +205,7 @@
        </widget>
       </item>
       <item row="0" column="3" >
-       <widget class="QLabel" name="_afterLit" >
+       <widget class="XLabel" name="_afterLit" >
         <property name="minimumSize" >
          <size>
           <width>80</width>
@@ -221,7 +221,7 @@
        </widget>
       </item>
       <item row="1" column="3" >
-       <widget class="QLabel" name="_fromAfterQty" >
+       <widget class="XLabel" name="_fromAfterQty" >
         <property name="minimumSize" >
          <size>
           <width>80</width>
@@ -234,7 +234,7 @@
        </widget>
       </item>
       <item row="2" column="3" >
-       <widget class="QLabel" name="_toAfterQty" >
+       <widget class="XLabel" name="_toAfterQty" >
         <property name="minimumSize" >
          <size>
           <width>80</width>
@@ -247,7 +247,7 @@
        </widget>
       </item>
       <item row="3" column="0" >
-       <widget class="QLabel" name="_qtyLit" >
+       <widget class="XLabel" name="_qtyLit" >
         <property name="text" >
          <string>Transferred Qty.:</string>
         </property>
@@ -270,7 +270,7 @@
        </widget>
       </item>
       <item row="4" column="0" >
-       <widget class="QLabel" name="_documentNumLit" >
+       <widget class="XLabel" name="_documentNumLit" >
         <property name="text" >
          <string>Document #:</string>
         </property>
@@ -290,7 +290,7 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="QLabel" name="_notesLit" >
+       <widget class="XLabel" name="_notesLit" >
         <property name="sizePolicy" >
          <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
           <horstretch>0</horstretch>
@@ -323,6 +323,7 @@
    <class>DLineEdit</class>
    <extends>QWidget</extends>
    <header>datecluster.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>ItemCluster</class>
@@ -336,9 +337,15 @@
    <header>wcombobox.h</header>
   </customwidget>
   <customwidget>
+   <class>XLabel</class>
+   <extends>QLabel</extends>
+   <header>xlabel.h</header>
+  </customwidget>
+  <customwidget>
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>

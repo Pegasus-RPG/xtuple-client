@@ -80,6 +80,14 @@ task::task(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     connect(_budgetExp, SIGNAL(lostFocus()), this, SLOT(sExpensesAdjusted()));
     connect(_actualHours, SIGNAL(lostFocus()), this, SLOT(sHoursAdjusted()));
     connect(_budgetHours, SIGNAL(lostFocus()), this, SLOT(sHoursAdjusted()));
+    
+    _budgetHours->setValidator(omfgThis->qtyVal());
+    _actualHours->setValidator(omfgThis->qtyVal());
+    _budgetExp->setValidator(omfgThis->qtyVal());
+    _actualExp->setValidator(omfgThis->qtyVal());
+    _balanceHours->setPrecision(omfgThis->qtyVal());
+    _balanceExp->setPrecision(omfgThis->qtyVal());
+     
     init();
 }
 

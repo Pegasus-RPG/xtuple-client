@@ -47,7 +47,7 @@
           <number>2</number>
          </property>
          <item row="1" column="1" >
-          <widget class="QLabel" name="_description" >
+          <widget class="XLabel" name="_description" >
            <property name="sizePolicy" >
             <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
              <horstretch>0</horstretch>
@@ -60,7 +60,7 @@
           </widget>
          </item>
          <item row="1" column="0" >
-          <widget class="QLabel" name="_descriptionLit" >
+          <widget class="XLabel" name="_descriptionLit" >
            <property name="text" >
             <string>Description:</string>
            </property>
@@ -70,7 +70,7 @@
           </widget>
          </item>
          <item row="2" column="0" >
-          <widget class="QLabel" name="_cumulativeLit" >
+          <widget class="XLabel" name="_cumulativeLit" >
            <property name="text" >
             <string>Cumulative:</string>
            </property>
@@ -80,7 +80,7 @@
           </widget>
          </item>
          <item row="2" column="1" >
-          <widget class="QLabel" name="_cumulative" >
+          <widget class="XLabel" name="_cumulative" >
            <property name="sizePolicy" >
             <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
              <horstretch>0</horstretch>
@@ -106,7 +106,7 @@
           </widget>
          </item>
          <item row="0" column="0" >
-          <widget class="QLabel" name="_taxCodeLit" >
+          <widget class="XLabel" name="_taxCodeLit" >
            <property name="text" >
             <string>Tax Code:</string>
            </property>
@@ -123,7 +123,7 @@
           </widget>
          </item>
          <item row="3" column="0" >
-          <widget class="QLabel" name="_subtotalLit" >
+          <widget class="XLabel" name="_subtotalLit" >
            <property name="text" >
             <string>Taxable Amount:</string>
            </property>
@@ -198,7 +198,7 @@
          </property>
          <layout class="QGridLayout" >
           <item row="0" column="0" >
-           <widget class="QLabel" name="_accntALit" >
+           <widget class="XLabel" name="_accntALit" >
             <property name="text" >
              <string>Account:</string>
             </property>
@@ -208,7 +208,7 @@
            </widget>
           </item>
           <item row="0" column="1" colspan="3" >
-           <widget class="QLabel" name="_accntA" >
+           <widget class="XLabel" name="_accntA" >
             <property name="sizePolicy" >
              <sizepolicy vsizetype="Preferred" hsizetype="MinimumExpanding" >
               <horstretch>0</horstretch>
@@ -221,7 +221,7 @@
            </widget>
           </item>
           <item row="1" column="0" >
-           <widget class="QLabel" name="_prcntALit" >
+           <widget class="XLabel" name="_prcntALit" >
             <property name="text" >
              <string>Percentage:</string>
             </property>
@@ -231,14 +231,14 @@
            </widget>
           </item>
           <item row="1" column="1" >
-           <widget class="QLabel" name="_prcntA" >
+           <widget class="XLabel" name="_prcntA" >
             <property name="text" >
              <string>0.0%</string>
             </property>
            </widget>
           </item>
           <item row="1" column="2" >
-           <widget class="QLabel" name="_amountALit" >
+           <widget class="XLabel" name="_amountALit" >
             <property name="text" >
              <string>Amount:</string>
             </property>
@@ -273,7 +273,7 @@
          </property>
          <layout class="QGridLayout" >
           <item row="0" column="0" >
-           <widget class="QLabel" name="_accntBLit" >
+           <widget class="XLabel" name="_accntBLit" >
             <property name="text" >
              <string>Account:</string>
             </property>
@@ -283,7 +283,7 @@
            </widget>
           </item>
           <item row="0" column="1" colspan="3" >
-           <widget class="QLabel" name="_accntB" >
+           <widget class="XLabel" name="_accntB" >
             <property name="sizePolicy" >
              <sizepolicy vsizetype="Preferred" hsizetype="MinimumExpanding" >
               <horstretch>0</horstretch>
@@ -312,7 +312,7 @@
            </widget>
           </item>
           <item row="1" column="0" >
-           <widget class="QLabel" name="_prcntBLit" >
+           <widget class="XLabel" name="_prcntBLit" >
             <property name="text" >
              <string>Percentage:</string>
             </property>
@@ -322,14 +322,14 @@
            </widget>
           </item>
           <item row="1" column="1" >
-           <widget class="QLabel" name="_prcntB" >
+           <widget class="XLabel" name="_prcntB" >
             <property name="text" >
              <string>0.0%</string>
             </property>
            </widget>
           </item>
           <item row="1" column="2" >
-           <widget class="QLabel" name="_amountBLit" >
+           <widget class="XLabel" name="_amountBLit" >
             <property name="text" >
              <string>Amount:</string>
             </property>
@@ -348,7 +348,7 @@
          </property>
          <layout class="QGridLayout" >
           <item row="0" column="0" >
-           <widget class="QLabel" name="_accntCLit" >
+           <widget class="XLabel" name="_accntCLit" >
             <property name="text" >
              <string>Account:</string>
             </property>
@@ -358,7 +358,7 @@
            </widget>
           </item>
           <item row="0" column="1" colspan="3" >
-           <widget class="QLabel" name="_accntC" >
+           <widget class="XLabel" name="_accntC" >
             <property name="sizePolicy" >
              <sizepolicy vsizetype="Preferred" hsizetype="MinimumExpanding" >
               <horstretch>0</horstretch>
@@ -371,7 +371,7 @@
            </widget>
           </item>
           <item row="1" column="2" >
-           <widget class="QLabel" name="_amountCLit" >
+           <widget class="XLabel" name="_amountCLit" >
             <property name="text" >
              <string>Amount:</string>
             </property>
@@ -397,7 +397,7 @@
            </widget>
           </item>
           <item row="1" column="0" >
-           <widget class="QLabel" name="_prcntCLit" >
+           <widget class="XLabel" name="_prcntCLit" >
             <property name="text" >
              <string>Percentage:</string>
             </property>
@@ -407,7 +407,7 @@
            </widget>
           </item>
           <item row="1" column="1" >
-           <widget class="QLabel" name="_prcntC" >
+           <widget class="XLabel" name="_prcntC" >
             <property name="text" >
              <string>0.0%</string>
             </property>
@@ -449,7 +449,7 @@
           <number>2</number>
          </property>
          <item>
-          <widget class="QLabel" name="_totalLit" >
+          <widget class="XLabel" name="_totalLit" >
            <property name="text" >
             <string>Total:</string>
            </property>

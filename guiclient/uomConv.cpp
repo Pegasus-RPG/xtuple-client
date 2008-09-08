@@ -84,6 +84,8 @@ uomConv::uomConv(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 
   _uomFrom->setType(XComboBox::UOMs);
   _uomTo->setType(XComboBox::UOMs);
+  _fromValue->setValidator(omfgThis->ratioVal());
+  _toValue->setValidator(omfgThis->ratioVal());
 }
 
 /*
@@ -277,8 +279,8 @@ void uomConv::populate()
   {
     _uomFrom->setId(q.value("uomconv_from_uom_id").toInt());
     _uomTo->setId(q.value("uomconv_to_uom_id").toInt());
-    _fromValue->setText(q.value("uomconv_from_value").toString());
-    _toValue->setText(q.value("uomconv_to_value").toString());
+    _fromValue->setText(q.value("uomconv_from_value").toDouble());
+    _toValue->setText(q.value("uomconv_to_value").toDouble());
     _fractional->setChecked(q.value("uomconv_fractional").toBool());
   }
 }

@@ -76,6 +76,8 @@ voidChecks::voidChecks(QWidget* parent, const char* name, bool modal, Qt::WFlags
   connect(_void,      SIGNAL(clicked()),  this, SLOT(sVoid()));
 
   _bankaccnt->setType(XComboBox::APBankAccounts);
+  
+  _numberOfChecks->setPrecision(0);
 }
 
 voidChecks::~voidChecks()

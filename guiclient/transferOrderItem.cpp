@@ -125,6 +125,14 @@ transferOrderItem::transferOrderItem(QWidget* parent, const char* name, bool mod
   ItemCharacteristicDelegate * delegate = new ItemCharacteristicDelegate(this);
   _itemcharView->setItemDelegate(delegate);
 
+  _qtyOrdered->setValidator(omfgThis->qtyVal());
+  _shippedToDate->setPrecision(omfgThis->qtyVal());
+  _onHand->setPrecision(omfgThis->qtyVal());
+  _allocated->setPrecision(omfgThis->qtyVal());
+  _unallocated->setPrecision(omfgThis->qtyVal());
+  _onOrder->setPrecision(omfgThis->qtyVal());
+  _available->setPrecision(omfgThis->qtyVal());
+
   if (!_metrics->boolean("UsePromiseDate"))
   {
     _promisedDateLit->hide();
@@ -133,7 +141,6 @@ transferOrderItem::transferOrderItem(QWidget* parent, const char* name, bool mod
 
   _showAvailability->setChecked(_preferences->boolean("ShowSOItemAvailability"));
 
-  _qtyOrdered->setValidator(omfgThis->qtyVal());
   _comments->setType(Comments::TransferOrderItem);
 
   _dstwhsid	= -1;
@@ -644,12 +651,11 @@ void transferOrderItem::sDetermineAvailability()
   {
     XSqlQuery availability;
     availability.prepare( "SELECT itemsite_id,"
-                          "       formatQty(qoh) AS f_qoh,"
-                          "       formatQty(allocated) AS f_allocated,"
-                          "       formatQty(noNeg(qoh - allocated)) AS f_unallocated,"
-                          "       formatQty(ordered) AS f_ordered,"
-                          "       (qoh - allocated + ordered) AS available,"
-                          "       formatQty(qoh - allocated + ordered) AS f_available "
+                          "       qoh,"
+                          "       allocated,"
+                          "       noNeg(qoh - allocated) AS unallocated,"
+                          "       ordered,"
+                          "       (qoh - allocated + ordered) AS available "
                           "FROM ( SELECT itemsite_id, itemsite_qtyonhand AS qoh,"
                           "              qtyAllocated(itemsite_id, DATE(:date)) AS allocated,"
                           "              qtyOrdered(itemsite_id, DATE(:date)) AS ordered "
@@ -663,11 +669,11 @@ void transferOrderItem::sDetermineAvailability()
     availability.exec();
     if (availability.first())
     {
-      _onHand->setText(availability.value("f_qoh").toString());
-      _allocated->setText(availability.value("f_allocated").toString());
-      _unallocated->setText(availability.value("f_unallocated").toString());
-      _onOrder->setText(availability.value("f_ordered").toString());
-      _available->setText(availability.value("f_available").toString());
+      _onHand->setText(availability.value("qoh").toString());
+      _allocated->setText(availability.value("allocated").toString());
+      _unallocated->setText(availability.value("unallocated").toString());
+      _onOrder->setText(availability.value("ordered").toString());
+      _available->setText(availability.value("available").toString());
 
       if (availability.value("available").toDouble() < _qtyOrdered->toDouble())
         _available->setPaletteForegroundColor(QColor("red"));

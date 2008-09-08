@@ -85,6 +85,12 @@ standardOperation::standardOperation(QWidget* parent, const char* name, bool mod
     connect(_stdTimes, SIGNAL(toggled(bool)), _reportSetup, SLOT(setEnabled(bool)));
     connect(_stdTimes, SIGNAL(toggled(bool)), _reportRun, SLOT(setEnabled(bool)));
     connect(_number, SIGNAL(lostFocus()), this, SLOT(sCheck()));
+      
+    _invProdUOMRatio->setValidator(omfgThis->ratioVal());
+    _setupTime->setValidator(omfgThis->runTimeVal());
+    _runTime->setValidator(omfgThis->runTimeVal());
+    _runQtyPer->setValidator(omfgThis->qtyPerVal());
+    
     init();
 }
 

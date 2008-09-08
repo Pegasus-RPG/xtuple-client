@@ -21,7 +21,7 @@
         <item>
          <layout class="QHBoxLayout" >
           <item>
-           <widget class="QLabel" name="_transDateLit" >
+           <widget class="XLabel" name="_transDateLit" >
             <property name="text" >
              <string>Transaction Date:</string>
             </property>
@@ -37,7 +37,7 @@
            <widget class="DLineEdit" name="_transDate" />
           </item>
           <item>
-           <widget class="QLabel" name="_usernameLit" >
+           <widget class="XLabel" name="_usernameLit" >
             <property name="text" >
              <string>Username:</string>
             </property>
@@ -50,7 +50,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="_username" >
+           <widget class="XLabel" name="_username" >
             <property name="text" >
              <string/>
             </property>
@@ -160,7 +160,7 @@
        </spacer>
       </item>
       <item row="1" column="0" >
-       <widget class="QLabel" name="_warehouseLit" >
+       <widget class="XLabel" name="_warehouseLit" >
         <property name="text" >
          <string>Site:</string>
         </property>
@@ -173,7 +173,7 @@
        <widget class="WComboBox" name="_warehouse" />
       </item>
       <item row="1" column="2" >
-       <widget class="QLabel" name="_fromBeforeQty" >
+       <widget class="XLabel" name="_fromBeforeQty" >
         <property name="minimumSize" >
          <size>
           <width>80</width>
@@ -189,7 +189,7 @@
        </widget>
       </item>
       <item row="1" column="3" >
-       <widget class="QLabel" name="_fromAfterQty" >
+       <widget class="XLabel" name="_fromAfterQty" >
         <property name="minimumSize" >
          <size>
           <width>80</width>
@@ -205,7 +205,7 @@
        </widget>
       </item>
       <item row="0" column="2" >
-       <widget class="QLabel" name="_beforeLit" >
+       <widget class="XLabel" name="_beforeLit" >
         <property name="text" >
          <string>Before</string>
         </property>
@@ -215,7 +215,7 @@
        </widget>
       </item>
       <item row="0" column="3" >
-       <widget class="QLabel" name="_afterLit" >
+       <widget class="XLabel" name="_afterLit" >
         <property name="text" >
          <string>After</string>
         </property>
@@ -225,7 +225,7 @@
        </widget>
       </item>
       <item row="2" column="0" >
-       <widget class="QLabel" name="_targetLit" >
+       <widget class="XLabel" name="_targetLit" >
         <property name="text" >
          <string>Target Item Number:</string>
         </property>
@@ -242,7 +242,7 @@
        </widget>
       </item>
       <item row="4" column="0" >
-       <widget class="QLabel" name="_qtyLit" >
+       <widget class="XLabel" name="_qtyLit" >
         <property name="text" >
          <string>Qty. to Transform:</string>
         </property>
@@ -252,7 +252,7 @@
        <widget class="XLineEdit" name="_qty" />
       </item>
       <item row="5" column="0" >
-       <widget class="QLabel" name="_documentNumLit" >
+       <widget class="XLabel" name="_documentNumLit" >
         <property name="text" >
          <string>Document #:</string>
         </property>
@@ -265,7 +265,7 @@
        <widget class="QLineEdit" name="_documentNum" />
       </item>
       <item row="2" column="2" >
-       <widget class="QLabel" name="_toBeforeQty" >
+       <widget class="XLabel" name="_toBeforeQty" >
         <property name="text" >
          <string/>
         </property>
@@ -275,7 +275,7 @@
        </widget>
       </item>
       <item row="2" column="3" >
-       <widget class="QLabel" name="_toAfterQty" >
+       <widget class="XLabel" name="_toAfterQty" >
         <property name="text" >
          <string/>
         </property>
@@ -285,14 +285,14 @@
        </widget>
       </item>
       <item row="3" column="1" >
-       <widget class="QLabel" name="_descrip1" >
+       <widget class="XLabel" name="_descrip1" >
         <property name="text" >
          <string/>
         </property>
        </widget>
       </item>
       <item row="3" column="2" colspan="2" >
-       <widget class="QLabel" name="_descrip2" >
+       <widget class="XLabel" name="_descrip2" >
         <property name="text" >
          <string/>
         </property>
@@ -303,7 +303,7 @@
     <item>
      <layout class="QVBoxLayout" >
       <item>
-       <widget class="QLabel" name="_sourceLit" >
+       <widget class="XLabel" name="_sourceLit" >
         <property name="text" >
          <string>Source:</string>
         </property>
@@ -330,7 +330,7 @@
     <item>
      <layout class="QVBoxLayout" >
       <item>
-       <widget class="QLabel" name="_notesLit" >
+       <widget class="XLabel" name="_notesLit" >
         <property name="text" >
          <string>Notes:</string>
         </property>
@@ -351,6 +351,7 @@
    <class>DLineEdit</class>
    <extends>QWidget</extends>
    <header>datecluster.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>ItemCluster</class>
@@ -369,9 +370,15 @@
    <header>xcombobox.h</header>
   </customwidget>
   <customwidget>
+   <class>XLabel</class>
+   <extends>QLabel</extends>
+   <header>xlabel.h</header>
+  </customwidget>
+  <customwidget>
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>

@@ -77,6 +77,10 @@ taxDetail::taxDetail(QWidget* parent, const char* name, bool modal, Qt::WFlags f
     clear();
     _taxCodeInitialized = false;
     
+    _prcntA->setPrecision(omfgThis->percentVal());
+    _prcntB->setPrecision(omfgThis->percentVal());
+    _prcntC->setPrecision(omfgThis->percentVal());
+    
     sCalculateTotal();
 }
 
@@ -140,21 +144,21 @@ enum SetResponse taxDetail::set(const ParameterList & pParams )
   if (valid)
   {
     _aPctCache = param.toDouble();
-    _prcntA->setText(QString::number(_aPctCache));
+    _prcntA->setDouble(_aPctCache * 100);
   }
 
   param = pParams.value("pctB", &valid);
   if (valid)
   {
     _bPctCache = param.toDouble();
-    _prcntB->setText(QString::number(_bPctCache));
+    _prcntB->setDouble(_bPctCache * 100);
   }
 
   param = pParams.value("pctC", &valid);
   if (valid)
   {
     _cPctCache = param.toDouble();
-    _prcntC->setText(QString::number(_cPctCache));
+    _prcntC->setDouble(_cPctCache * 100);
   }
   
   param = pParams.value("subtotal", &valid);
@@ -293,13 +297,13 @@ void taxDetail::sPopulate()
   XSqlQuery popq;
   popq.prepare("SELECT tax_descrip,"
 	    "       formatBoolYN(tax_cumulative) AS f_cumulative,"
-	    "       formatScrap(tax_ratea) AS ratea,"
+	    "       tax_ratea * 100 AS ratea,"
 	    "       formatGLAccountLong(tax_sales_accnt_id) AS accnta,"
 	    "       COALESCE(tax_sales_accnt_id,-1) AS accnta_id,"
-	    "       formatScrap(tax_rateb) AS rateb,"
+	    "       tax_rateb * 100 AS rateb,"
 	    "       formatGLAccountLong(tax_salesb_accnt_id) AS accntb,"
 	    "       COALESCE(tax_salesb_accnt_id,-1) AS accntb_id,"
-	    "       formatScrap(tax_ratec) AS ratec,"
+	    "       tax_ratec * 100 AS ratec,"
 	    "       formatGLAccountLong(tax_salesc_accnt_id) AS accntc,"
 	    "       COALESCE(tax_salesc_accnt_id,-1) AS accntc_id"
 	    "  FROM tax"
@@ -320,21 +324,21 @@ void taxDetail::sPopulate()
 
     if(popq.value("accnta_id").toInt() != -1)
     { 
-      _prcntA->setText(popq.value("ratea").toString());
+      _prcntA->setText(popq.value("ratea").toDouble());
       _accntA->setText(popq.value("accnta").toString());
       _amountA->setEnabled(! _readonly);
     }
 
     if(popq.value("accntb_id").toInt() != -1)
     { 
-      _prcntB->setText(popq.value("rateb").toString());
+      _prcntB->setText(popq.value("rateb").toDouble());
       _accntB->setText(popq.value("accntb").toString());
       _amountB->setEnabled(! _readonly);
     }
 
     if(popq.value("accntc_id").toInt() != -1)
     { 
-      _prcntC->setText(popq.value("ratec").toString());
+      _prcntC->setText(popq.value("ratec").toDouble());
       _accntC->setText(popq.value("accntc").toString());
       _amountC->setEnabled(! _readonly);
     }

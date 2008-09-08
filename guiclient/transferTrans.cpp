@@ -85,6 +85,10 @@ transferTrans::transferTrans(QWidget* parent, const char* name, Qt::WFlags fl)
   _fromWarehouse->setType(WComboBox::AllActiveInventory);
   _toWarehouse->setType(WComboBox::AllActiveInventory);
   _qty->setValidator(omfgThis->qtyVal());
+  _fromBeforeQty->setPrecision(omfgThis->qtyVal());
+  _toBeforeQty->setPrecision(omfgThis->qtyVal());
+  _fromAfterQty->setPrecision(omfgThis->qtyVal());
+  _toAfterQty->setPrecision(omfgThis->qtyVal());
 
   omfgThis->inputManager()->notify(cBCItem, this, _item, SLOT(setItemid(int)));
   omfgThis->inputManager()->notify(cBCItemSite, this, _item, SLOT(setItemsiteid(int)));
