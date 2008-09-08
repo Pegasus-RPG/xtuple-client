@@ -300,7 +300,7 @@
                      <item>
                       <widget class="QLabel" name="_minimumOrderLit" >
                        <property name="text" >
-                        <string>Minimum Order::</string>
+                        <string>Minimum Order:</string>
                        </property>
                        <property name="alignment" >
                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -313,7 +313,7 @@
                      <item>
                       <widget class="QLabel" name="_maximumOrderLit" >
                        <property name="text" >
-                        <string>Maximum Order::</string>
+                        <string>Maximum Order:</string>
                        </property>
                        <property name="alignment" >
                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

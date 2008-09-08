@@ -57,18 +57,12 @@
 
 #include "createItemSitesByClassCode.h"
 
-#include <QVariant>
 #include <QMessageBox>
 #include <QValidator>
+#include <QVariant>
+
 #include "distributeInitialQOH.h"
 
-/*
- *  Constructs a createItemSitesByClassCode as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 createItemSitesByClassCode::createItemSitesByClassCode(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
@@ -78,7 +72,6 @@ createItemSitesByClassCode::createItemSitesByClassCode(QWidget* parent, const ch
   _locationGroupInt->addButton(_location);
   _locationGroupInt->addButton(_miscLocation);
 
-  // signals and slots connections
   connect(_create, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_locationControl, SIGNAL(toggled(bool)), this, SLOT(sHandleMLC(bool)));
   connect(_warehouse, SIGNAL(newID(int)), this, SLOT(populateLocations()));
@@ -91,8 +84,6 @@ createItemSitesByClassCode::createItemSitesByClassCode(QWidget* parent, const ch
   _maximumOrder->setValidator(omfgThis->qtyVal());
   _orderMultiple->setValidator(omfgThis->qtyVal());
   _safetyStock->setValidator(omfgThis->qtyVal());
-  //_cycleCountFreq->setValidator(omfgThis->dayVal());
-  //_leadTime->setValidator(omfgThis->dayVal());
 
   _classCode->setType(ParameterGroup::ClassCode);
 
@@ -100,9 +91,7 @@ createItemSitesByClassCode::createItemSitesByClassCode(QWidget* parent, const ch
   _plannerCode->setType(XComboBox::PlannerCodes);
 
   _costcat->setAllowNull(TRUE);
-  _costcat->populate( "SELECT costcat_id, (costcat_code || '-' || costcat_descrip) "
-                      "FROM costcat "
-                      "ORDER BY costcat_code;" );
+  _costcat->setType(XComboBox::CostCategories);
 
   _controlMethod->insertItem("None");
   _controlMethod->insertItem("Regular");
@@ -110,12 +99,12 @@ createItemSitesByClassCode::createItemSitesByClassCode(QWidget* parent, const ch
   _controlMethod->insertItem("Serial #");
   _controlMethod->setCurrentItem(-1);
 
-  _reorderLevel->setText("0.00");
-  _orderUpToQty->setText("0.00");
-  _minimumOrder->setText("0.00");
-  _maximumOrder->setText("0.00");
-  _orderMultiple->setText("0.00");
-  _safetyStock->setText("0.00");
+  _reorderLevel->setDouble(0.0);
+  _orderUpToQty->setDouble(0.0);
+  _minimumOrder->setDouble(0.0);
+  _maximumOrder->setDouble(0.0);
+  _orderMultiple->setDouble(0.0);
+  _safetyStock->setDouble(0.0);
 
   _cycleCountFreq->setValue(0);
   _leadTime->setValue(0);
@@ -123,7 +112,6 @@ createItemSitesByClassCode::createItemSitesByClassCode(QWidget* parent, const ch
   _eventFence->setValue(_metrics->value("DefaultEventFence").toInt());
   _costcat->setEnabled(_metrics->boolean("InterfaceToGL"));
   
-  //If not multi-warehouse hide whs control
   if (!_metrics->boolean("MultiWhs"))
   {
     _warehouseLit->hide();
@@ -139,18 +127,11 @@ createItemSitesByClassCode::createItemSitesByClassCode(QWidget* parent, const ch
   _costStd->setVisible(_metrics->boolean("AllowStdCostMethod"));
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 createItemSitesByClassCode::~createItemSitesByClassCode()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void createItemSitesByClassCode::languageChange()
 {
   retranslateUi(this);
@@ -161,7 +142,8 @@ void createItemSitesByClassCode::sSave()
   if (_warehouse->id() == -1)
   {
     QMessageBox::critical( this, tr("Select a Site"),
-                           tr( "You must select a Site for this Item Site before creating it.\n" ) );
+                           tr("<p>You must select a Site for this Item Site "
+                              "before creating it." ) );
     _warehouse->setFocus();
     return;
   }
@@ -169,7 +151,8 @@ void createItemSitesByClassCode::sSave()
   if ( (_metrics->boolean("InterfaceToGL")) && (_costcat->id() == -1) )
   {
     QMessageBox::critical( this, tr("Cannot Create Item Sites"),
-                           tr("You must select a Cost Category for these Item Sites before you may create them.") );
+                           tr("<p>You must select a Cost Category for these "
+                              "Item Sites before you may create them.") );
     _costcat->setFocus();
     return;
   } 
@@ -177,7 +160,8 @@ void createItemSitesByClassCode::sSave()
   if (_plannerCode->id() == -1)
   {
     QMessageBox::critical( this, tr("Cannot Create Item Sites"),
-                           tr("You must select a Planner Code for these Item Sites before you may create them.") );
+                           tr("<p>You must select a Planner Code for these "
+                              "Item Sites before you may create them.") );
     _plannerCode->setFocus();
     return;
   } 
@@ -185,7 +169,8 @@ void createItemSitesByClassCode::sSave()
   if (_controlMethod->currentItem() == -1)
   {
     QMessageBox::critical( this, tr("Cannot Create Item Sites"),
-                           tr("You must select a Control Method for these Item Sites before you may create them.") );
+                           tr("<p>You must select a Control Method for these "
+                              "Item Sites before you may create them.") );
     _controlMethod->setFocus();
     return;
   }
@@ -436,12 +421,12 @@ void createItemSitesByClassCode::clear()
 {
   _useParameters->setChecked(FALSE);
   _useParametersOnManual->setChecked(FALSE);
-  _reorderLevel->setText("0.00");
-  _orderUpToQty->setText("0.00");
-  _minimumOrder->setText("0.00");
-  _maximumOrder->setText("0.00");
-  _orderMultiple->setText("0.00");
-  _safetyStock->setText("0.00");
+  _reorderLevel->setDouble(0.0);
+  _orderUpToQty->setDouble(0.0);
+  _minimumOrder->setDouble(0.0);
+  _maximumOrder->setDouble(0.0);
+  _orderMultiple->setDouble(0.0);
+  _safetyStock->setDouble(0.0);
 
   _orderGroup->setValue(1);
 
@@ -464,4 +449,3 @@ void createItemSitesByClassCode::clear()
 
   populateLocations();
 }
-
