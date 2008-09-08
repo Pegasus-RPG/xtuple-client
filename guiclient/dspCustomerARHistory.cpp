@@ -88,15 +88,15 @@ dspCustomerARHistory::dspCustomerARHistory(QWidget* parent, const char* name, Qt
   connect(_custhist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem *)));
 
   _custhist->setRootIsDecorated(TRUE);
-  _custhist->addColumn(tr("Open"),         _dateColumn,     Qt::AlignCenter, true,  "f_open" );
-  _custhist->addColumn(tr("Doc. Type"),    _itemColumn,     Qt::AlignCenter, true,  "documenttype" );
-  _custhist->addColumn(tr("Doc. #"),       _orderColumn,    Qt::AlignRight,  true,  "docnumber"  );
-  _custhist->addColumn(tr("Doc. Date"),    _dateColumn,     Qt::AlignCenter, true,  "docdate" );
-  _custhist->addColumn(tr("Due Date"),     _dateColumn,     Qt::AlignCenter, true,  "duedate" );
-  _custhist->addColumn(tr("Amount"),       _moneyColumn,    Qt::AlignRight,  true,  "amount"  );
-  _custhist->addColumn(tr("Balance"),      _moneyColumn,    Qt::AlignRight,  true,  "balance"  );
-  _custhist->addColumn(tr("Currency"),     _currencyColumn, Qt::AlignCenter, true,  "currAbbr"  );
-  _custhist->addColumn(tr("Base Balance"), _bigMoneyColumn, Qt::AlignRight,  true,  "base_balance"  );
+  _custhist->addColumn(tr("Open"),          _dateColumn,     Qt::AlignCenter, true,  "f_open" );
+  _custhist->addColumn(tr("Doc. Type"),     _itemColumn,     Qt::AlignCenter, true,  "documenttype" );
+  _custhist->addColumn(tr("Doc. #"),        _orderColumn,    Qt::AlignRight,  true,  "docnumber"  );
+  _custhist->addColumn(tr("Doc. Date"),     _dateColumn,     Qt::AlignCenter, true,  "docdate" );
+  _custhist->addColumn(tr("Due/Dist Date"), _dateColumn,     Qt::AlignCenter, true,  "duedate" );
+  _custhist->addColumn(tr("Amount"),        _moneyColumn,    Qt::AlignRight,  true,  "amount"  );
+  _custhist->addColumn(tr("Balance"),       _moneyColumn,    Qt::AlignRight,  true,  "balance"  );
+  _custhist->addColumn(tr("Currency"),      _currencyColumn, Qt::AlignCenter, true,  "currAbbr"  );
+  _custhist->addColumn(tr("Base Balance"),  _bigMoneyColumn, Qt::AlignRight,  true,  "base_balance"  );
 
   _cust->setFocus();
 }

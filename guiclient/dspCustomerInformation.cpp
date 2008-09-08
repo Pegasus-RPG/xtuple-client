@@ -132,15 +132,15 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
 #endif
 
   // setup arhist list
-  _arhist->addColumn(tr("Open"),         _orderColumn,    Qt::AlignCenter, true,  "f_open" );
-  _arhist->addColumn(tr("Doc. Type"),    _dateColumn,     Qt::AlignCenter, true,  "documenttype" );
-  _arhist->addColumn(tr("Doc. #"),       -1,              Qt::AlignRight,  true,  "docnumber"  );
-  _arhist->addColumn(tr("Doc. Date"),    _dateColumn,     Qt::AlignCenter, true,  "docdate" );
-  _arhist->addColumn(tr("Due. Date"),    _dateColumn,     Qt::AlignCenter, true,  "duedate" );
-  _arhist->addColumn(tr("Amount"),       _moneyColumn,    Qt::AlignRight,  true,  "amount"  );
-  _arhist->addColumn(tr("Balance"),      _moneyColumn,    Qt::AlignRight,  true,  "balance"  );
-  _arhist->addColumn(tr("Currency"),     _currencyColumn, Qt::AlignLeft,   true,  "currAbbr");
-  _arhist->addColumn(tr("Base Balance"), _bigMoneyColumn, Qt::AlignRight,  true,  "base_balance"  );
+  _arhist->addColumn(tr("Open"),          _orderColumn,    Qt::AlignCenter, true,  "f_open" );
+  _arhist->addColumn(tr("Doc. Type"),     _dateColumn,     Qt::AlignCenter, true,  "documenttype" );
+  _arhist->addColumn(tr("Doc. #"),        -1,              Qt::AlignRight,  true,  "docnumber"  );
+  _arhist->addColumn(tr("Doc. Date"),     _dateColumn,     Qt::AlignCenter, true,  "docdate" );
+  _arhist->addColumn(tr("Due/Dist Date"), _dateColumn,     Qt::AlignCenter, true,  "duedate" );
+  _arhist->addColumn(tr("Amount"),        _moneyColumn,    Qt::AlignRight,  true,  "amount"  );
+  _arhist->addColumn(tr("Balance"),       _moneyColumn,    Qt::AlignRight,  true,  "balance"  );
+  _arhist->addColumn(tr("Currency"),      _currencyColumn, Qt::AlignLeft,   true,  "currAbbr");
+  _arhist->addColumn(tr("Base Balance"),  _bigMoneyColumn, Qt::AlignRight,  true,  "base_balance"  );
 
   // setup Quote list
   _quote->addColumn(tr("Quote #"),       _itemColumn,     Qt::AlignLeft,   true,  "quhead_number"  );

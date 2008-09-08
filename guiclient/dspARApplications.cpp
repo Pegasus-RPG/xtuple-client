@@ -87,7 +87,8 @@ dspARApplications::dspARApplications(QWidget* parent, const char* name, Qt::WFla
     
   _arapply->addColumn(tr("Cust. #"),        _orderColumn, Qt::AlignCenter, true,  "cust_number" );
   _arapply->addColumn(tr("Customer"),                 -1, Qt::AlignLeft,   true,  "cust_name"   );
-  _arapply->addColumn(tr("Date"),            _dateColumn, Qt::AlignCenter, true,  "arapply_postdate" );
+  _arapply->addColumn(tr("Post Date"),       _dateColumn, Qt::AlignCenter, true,  "arapply_postdate" );
+  _arapply->addColumn(tr("Dist. Date"),      _dateColumn, Qt::AlignCenter, true,  "arapply_distdate" );
   _arapply->addColumn("hidden source type",           10, Qt::AlignCenter, true,  "arapply_source_doctype" );
   _arapply->addColumn(tr("Source"),	         _itemColumn, Qt::AlignCenter, true,  "doctype" );
   _arapply->addColumn(tr("Doc #"),          _orderColumn, Qt::AlignCenter, true,  "source" );
@@ -96,10 +97,10 @@ dspARApplications::dspARApplications(QWidget* parent, const char* name, Qt::WFla
   _arapply->addColumn(tr("Doc #"),          _orderColumn, Qt::AlignCenter, true,  "target" );
   _arapply->addColumn(tr("Amount"),         _moneyColumn, Qt::AlignRight,  true,  "arapply_applied"  );
   _arapply->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft,   true,  "currAbbr"   );
-  _arapply->addColumn(tr("Base Amount"), _bigMoneyColumn, Qt::AlignRight,  false, "base_applied"  );
+  _arapply->addColumn(tr("Base Amount"), _bigMoneyColumn, Qt::AlignRight,  true,  "base_applied"  );
 
-  _arapply->hideColumn(3);
-  _arapply->hideColumn(6);
+  _arapply->hideColumn(4);
+  _arapply->hideColumn(7);
 
   _allCustomers->setFocus();
 }
@@ -143,7 +144,7 @@ void dspARApplications::sViewCreditMemo()
 	    "WHERE ((aropen_docnumber=:docnum)"
 	    "  AND (aropen_doctype IN ('C', 'R')) "
 	    ") ORDER BY type LIMIT 1;");
-  q.bindValue(":docnum", _arapply->currentItem()->text(5));
+  q.bindValue(":docnum", _arapply->currentItem()->text(6));
   q.exec();
   if (q.first())
   {
@@ -172,7 +173,7 @@ void dspARApplications::sViewCreditMemo()
   {
     QMessageBox::information(this, tr("Credit Memo Not Found"),
 			     tr("<p>The Credit Memo #%1 could not be found.")
-			     .arg(_arapply->currentItem()->text(5)));
+			     .arg(_arapply->currentItem()->text(6)));
     return;
   }
 }
@@ -185,7 +186,7 @@ void dspARApplications::sViewDebitMemo()
   q.prepare("SELECT aropen_id "
 	    "FROM aropen "
 	    "WHERE ((aropen_docnumber=:docnum) AND (aropen_doctype='D'));");
-  q.bindValue(":docnum", _arapply->currentItem()->text(8));
+  q.bindValue(":docnum", _arapply->currentItem()->text(9));
   q.exec();
   if (q.first())
   {
@@ -207,7 +208,7 @@ void dspARApplications::sViewInvoice()
   ParameterList params;
 
   params.append("mode", "view");
-  params.append("invoiceNumber", _arapply->currentItem()->text(8));
+  params.append("invoiceNumber", _arapply->currentItem()->text(9));
   dspInvoiceInformation* newdlg = new dspInvoiceInformation();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
@@ -217,7 +218,7 @@ void dspARApplications::sPopulateMenu(QMenu* pMenu)
 {
   int menuItem;
 
-  if (_arapply->currentItem()->text(3) == "C")
+  if (_arapply->currentItem()->text(4) == "C")
   {
     menuItem = pMenu->insertItem(tr("View Source Credit Memo..."), this, SLOT(sViewCreditMemo()), 0);
     if (! _privileges->check("MaintainARMemos") &&
@@ -225,14 +226,14 @@ void dspARApplications::sPopulateMenu(QMenu* pMenu)
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 
-  if (_arapply->currentItem()->text(6) == "D")
+  if (_arapply->currentItem()->text(7) == "D")
   {
     menuItem = pMenu->insertItem(tr("View Apply-To Debit Memo..."), this, SLOT(sViewDebitMemo()), 0);
     if (! _privileges->check("MaintainARMemos") &&
 	! _privileges->check("ViewARMemos"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
-  else if (_arapply->currentItem()->text(6) == "I")
+  else if (_arapply->currentItem()->text(7) == "I")
   {
     menuItem = pMenu->insertItem(tr("View Apply-To Invoice..."), this, SLOT(sViewInvoice()), 0);
     if (! _privileges->check("MaintainMiscInvoices") &&
