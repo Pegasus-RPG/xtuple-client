@@ -119,12 +119,12 @@ booItem::booItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _booimage->addColumn(tr("Description"), -1,          Qt::AlignLeft );
   _booimage->addColumn(tr("Purpose"),     _itemColumn, Qt::AlignLeft );
 
-  _runTimePer->setValidator(omfgThis->qtyPerVal());
+  _runTimePer->setValidator(omfgThis->qtyVal());
   _invProdUOMRatio->setValidator(omfgThis->ratioVal());
-  _invRunTime->setPrecision(omfgThis->costVal());
-  _invPerMinute->setPrecision(omfgThis->costVal());
-  _setupTime->setValidator(new QDoubleValidator(0, 99999.0, 1, this));
-  _runTime->setValidator(new QDoubleValidator(0, 99999.0, 1, this));
+  _invRunTime->setPrecision(omfgThis->runTimeVal());
+  _invPerMinute->setPrecision(omfgThis->runTimeVal());
+  _setupTime->setValidator(omfgThis->runTimeVal());
+  _runTime->setValidator(omfgThis->runTimeVal());
 
   _fixedFont->setChecked(_preferences->boolean("UsedFixedWidthFonts"));
 
