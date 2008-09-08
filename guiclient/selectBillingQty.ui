@@ -233,7 +233,7 @@
               <number>0</number>
              </property>
              <item>
-              <widget class="QLabel" name="_ordered" >
+              <widget class="XLabel" name="_ordered" >
                <property name="minimumSize" >
                 <size>
                  <width>80</width>
@@ -246,7 +246,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="_shipped" >
+              <widget class="XLabel" name="_shipped" >
                <property name="minimumSize" >
                 <size>
                  <width>80</width>
@@ -259,7 +259,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="_balance" >
+              <widget class="XLabel" name="_balance" >
                <property name="minimumSize" >
                 <size>
                  <width>80</width>
@@ -272,7 +272,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="_uninvoiced" >
+              <widget class="XLabel" name="_uninvoiced" >
                <property name="minimumSize" >
                 <size>
                  <width>80</width>
@@ -570,6 +570,11 @@
    <class>XComboBox</class>
    <extends>QComboBox</extends>
    <header>xcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XLabel</class>
+   <extends>QLabel</extends>
+   <header>xlabel.h</header>
   </customwidget>
   <customwidget>
    <class>ItemCluster</class>

@@ -316,7 +316,7 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="QLabel" name="_totalNetWeight" >
+        <widget class="XLabel" name="_totalNetWeight" >
          <property name="minimumSize" >
           <size>
            <width>80</width>
@@ -329,7 +329,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="_totalTareWeight" >
+        <widget class="XLabel" name="_totalTareWeight" >
          <property name="minimumSize" >
           <size>
            <width>80</width>
@@ -342,7 +342,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="_totalGrossWeight" >
+        <widget class="XLabel" name="_totalGrossWeight" >
          <property name="minimumSize" >
           <size>
            <width>80</width>
@@ -665,6 +665,11 @@
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XLabel</class>
+   <extends>QLabel</extends>
+   <header>xlabel.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

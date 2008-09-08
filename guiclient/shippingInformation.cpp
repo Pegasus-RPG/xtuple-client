@@ -94,6 +94,10 @@ shippingInformation::shippingInformation(QWidget* parent, const char* name, bool
   _item->addColumn(tr("Net Wght."),   _qtyColumn, Qt::AlignRight  );
   _item->addColumn(tr("Tare Wght."),  _qtyColumn, Qt::AlignRight  );
   _item->addColumn(tr("Gross Wght."), _qtyColumn, Qt::AlignRight  );
+
+  _totalNetWeight->setPrecision(omfgThis->weightVal());
+  _totalTareWeight->setPrecision(omfgThis->weightVal());
+  _totalGrossWeight->setPrecision(omfgThis->weightVal());
 }
 
 shippingInformation::~shippingInformation()
@@ -491,7 +495,7 @@ void shippingInformation::sFillList()
     return;
   }
 
-  _totalNetWeight->setText(formatWeight(totalNetWeight));
-  _totalTareWeight->setText(formatWeight(totalTareWeight));
-  _totalGrossWeight->setText(formatWeight(totalNetWeight + totalTareWeight));
+  _totalNetWeight->setDouble(totalNetWeight);
+  _totalTareWeight->setDouble(totalTareWeight);
+  _totalGrossWeight->setDouble(totalNetWeight + totalTareWeight);
 }

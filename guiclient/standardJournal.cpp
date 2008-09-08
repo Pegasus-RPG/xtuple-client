@@ -57,43 +57,40 @@
 
 #include "standardJournal.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QMessageBox>
 #include "standardJournalItem.h"
 
-/*
- *  Constructs a standardJournal as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 standardJournal::standardJournal(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
 
-    // signals and slots connections
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-    connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-    connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_stdjrnlitem, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
-    connect(_name, SIGNAL(lostFocus()), this, SLOT(sCheck()));
-    connect(_name, SIGNAL(lostFocus()), this, SLOT(sCheck()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    init();
+  // signals and slots connections
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_stdjrnlitem, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
+  connect(_name, SIGNAL(lostFocus()), this, SLOT(sCheck()));
+  connect(_name, SIGNAL(lostFocus()), this, SLOT(sCheck()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
+
+  _stdjrnlitem->addColumn(tr("Account"), 200,          Qt::AlignLeft  );
+  _stdjrnlitem->addColumn(tr("Notes"),   -1,           Qt::AlignLeft  );
+  _stdjrnlitem->addColumn(tr("Debit"),   _priceColumn, Qt::AlignRight );
+  _stdjrnlitem->addColumn(tr("Credit"),  _priceColumn, Qt::AlignRight );
+
+  _debits->setValidator(omfgThis->moneyVal());
+  _credits->setValidator(omfgThis->moneyVal());
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 standardJournal::~standardJournal()
 {
-    destroy();
-    // no need to delete child widgets, Qt does it all for us
+  destroy();
+  // no need to delete child widgets, Qt does it all for us
 }
 
 /*
@@ -102,16 +99,7 @@ standardJournal::~standardJournal()
  */
 void standardJournal::languageChange()
 {
-    retranslateUi(this);
-}
-
-
-void standardJournal::init()
-{
-  _stdjrnlitem->addColumn(tr("Account"), 200,          Qt::AlignLeft  );
-  _stdjrnlitem->addColumn(tr("Notes"),   -1,           Qt::AlignLeft  );
-  _stdjrnlitem->addColumn(tr("Debit"),   _priceColumn, Qt::AlignRight );
-  _stdjrnlitem->addColumn(tr("Credit"),  _priceColumn, Qt::AlignRight );
+  retranslateUi(this);
 }
 
 void standardJournal::destroy()
@@ -299,12 +287,12 @@ void standardJournal::sFillList()
   q.exec();
   _stdjrnlitem->populate(q);
 
-  q.prepare( "SELECT formatMoney( SUM( CASE WHEN (stdjrnlitem_amount < 0) THEN (stdjrnlitem_amount * -1)"
-             "                              ELSE 0"
-             "                         END ) ) AS f_debit,"
-             "       formatMoney( SUM( CASE WHEN (stdjrnlitem_amount > 0) THEN stdjrnlitem_amount"
-             "                              ELSE 0"
-             "                         END ) ) AS f_credit,"
+  q.prepare( "SELECT SUM( CASE WHEN (stdjrnlitem_amount < 0) THEN (stdjrnlitem_amount * -1)"
+             "                 ELSE 0"
+             "            END ) AS debit,"
+             "       SUM( CASE WHEN (stdjrnlitem_amount > 0) THEN stdjrnlitem_amount"
+             "                 ELSE 0"
+             "            END ) AS credit,"
              "       (SUM(stdjrnlitem_amount) <> 0) AS oob "
              "FROM stdjrnlitem "
              "WHERE (stdjrnlitem_stdjrnl_id=:stdjrnl_id);" );
@@ -312,8 +300,8 @@ void standardJournal::sFillList()
   q.exec();
   if (q.first())
   {
-    _debits->setText(q.value("f_debit").toString());
-    _credits->setText(q.value("f_credit").toString());
+    _debits->setDouble(q.value("debit").toDouble());
+    _credits->setDouble(q.value("credit").toDouble());
 
     if (q.value("oob").toBool())
     {

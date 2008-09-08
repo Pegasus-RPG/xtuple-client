@@ -95,6 +95,8 @@ priceList::priceList(QWidget* parent, const char* name, bool modal, Qt::WFlags f
   }
 
   _shiptoid = -1;
+
+  _qty->setValidator(omfgThis->qtyVal());
 }
 
 /*
@@ -161,7 +163,7 @@ enum SetResponse priceList::set(const ParameterList &pParams)
   param = pParams.value("qty", &valid);
   if (valid)
   {
-    _qty->setText(formatQty(param.toDouble()));
+    _qty->setDouble(param.toDouble());
     _qty->setEnabled(FALSE);
   }
 

@@ -205,7 +205,7 @@ void rate::sSave()
 void rate::populate()
 {
   q.prepare( "SELECT rate_destination_id, rate_carrier_id,"
-             "       rate_stops, formatMoney(rate_price) AS price, rate_comments,"
+             "       rate_stops, rate_price, rate_comments,"
              "       rate_effective, rate_expires "
              "FROM rate "
              "WHERE (rate_id=:rate_id);" );
@@ -216,7 +216,7 @@ void rate::populate()
     _destination->setId(q.value("rate_destination_id").toInt());
     _carrier->setId(q.value("rate_carrier_id").toInt());
     _stops->setValue(q.value("rate_stops").toInt());
-    _price->setText(q.value("price").toString());
+    _price->setDouble(q.value("rate_price").toDouble());
     _dates->setStartDate(q.value("rate_effective").toDate());
     _dates->setEndDate(q.value("rate_expires").toDate());
   }

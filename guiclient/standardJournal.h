@@ -71,7 +71,6 @@ public:
     standardJournal(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~standardJournal();
 
-    virtual void init();
     virtual void destroy();
 
 public slots:

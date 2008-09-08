@@ -77,6 +77,12 @@ selectBillingQty::selectBillingQty(QWidget* parent, const char* name, bool modal
   _taxCode->setEnabled(_privileges->check("OverrideTax"));
 
   _taxauthid = -1;
+
+  _toBill->setValidator(omfgThis->qtyVal());
+  _ordered->setPrecision(omfgThis->qtyVal());
+  _shipped->setPrecision(omfgThis->qtyVal());
+  _balance->setPrecision(omfgThis->qtyVal());
+  _uninvoiced->setPrecision(omfgThis->qtyVal());
 }
 
 selectBillingQty::~selectBillingQty()
@@ -121,9 +127,8 @@ enum SetResponse selectBillingQty::set(const ParameterList &pParams)
     soitem.prepare( "SELECT itemsite_item_id, cust_partialship,"
                     "       cohead_number, coitem_linenumber,"
                     "       uom_name,"
-                    "       formatQty(coitem_qtyord) AS f_qtyordered,"
-                    "       formatQty(coitem_qtyshipped) AS f_qtyshipped,"
-                    "       formatQty(coitem_qtyord - coitem_qtyshipped) AS f_qtybalance,"
+                    "       coitem_qtyord,"
+                    "       coitem_qtyshipped,"
                     "       (coitem_qtyord - coitem_qtyshipped) AS qtybalance,"
                     "       COALESCE(coitem_tax_id, -1) AS tax_id "
                     "FROM coitem, itemsite, cohead, cust, uom "
@@ -143,9 +148,9 @@ enum SetResponse selectBillingQty::set(const ParameterList &pParams)
       _salesOrderNumber->setText(soitem.value("cohead_number").toString());
       _lineNumber->setText(soitem.value("coitem_linenumber").toString());
       _qtyUOM->setText(soitem.value("uom_name").toString());
-      _ordered->setText(soitem.value("f_qtyordered").toString());
-      _shipped->setText(soitem.value("f_qtyshipped").toString());
-      _balance->setText(soitem.value("f_qtybalance").toString());
+      _ordered->setDouble(soitem.value("coitem_qtyord").toDouble());
+      _shipped->setDouble(soitem.value("coitem_qtyshipped").toDouble());
+      _balance->setDouble(soitem.value("qtybalance").toDouble());
       _taxCode->setId(soitem.value("tax_id").toInt());
 
       _cachedPartialShip = soitem.value("cust_partialship").toBool();
@@ -165,12 +170,12 @@ enum SetResponse selectBillingQty::set(const ParameterList &pParams)
       if (coship.first())
       {
         uninvoiced = coship.value("uninvoiced").toDouble();
-        _uninvoiced->setText(formatQty(coship.value("uninvoiced").toDouble()));
+        _uninvoiced->setDouble(coship.value("uninvoiced").toDouble());
       }
       else
       {
         uninvoiced = 0.0;
-        _uninvoiced->setText(formatQty(0.0));
+        _uninvoiced->setDouble(0.0);
       }
 
       // take uninvoiced into account
@@ -187,7 +192,7 @@ enum SetResponse selectBillingQty::set(const ParameterList &pParams)
       cobill.exec();
       if (cobill.first())
       {
-	_toBill->setText(formatQty(cobill.value("cobill_qty").toDouble()));
+	_toBill->setDouble(cobill.value("cobill_qty").toDouble());
 
         if (soitem.value("cust_partialship").toBool())
 	  _closeLine->setChecked(cobill.value("cobill_toclose").toBool());
@@ -203,7 +208,7 @@ enum SetResponse selectBillingQty::set(const ParameterList &pParams)
       }
       else
       {
-	_toBill->setText(formatQty(uninvoiced));
+	_toBill->setDouble(uninvoiced);
 
         if (soitem.value("cust_partialship").toBool())
 	  _closeLine->setChecked((uninvoiced == _cachedBalanceDue));

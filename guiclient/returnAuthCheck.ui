@@ -316,7 +316,7 @@
   </customwidget>
   <customwidget>
    <class>DLineEdit</class>
-   <extends>XLineEdit</extends>
+   <extends>QWidget</extends>
    <header>datecluster.h</header>
   </customwidget>
   <customwidget>

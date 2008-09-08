@@ -17,10 +17,7 @@
     <layout class="QGridLayout" >
      <item rowspan="2" row="0" column="0" colspan="2" >
       <layout class="QGridLayout" >
-       <property name="horizontalSpacing" >
-        <number>0</number>
-       </property>
-       <property name="verticalSpacing" >
+       <property name="spacing" >
         <number>0</number>
        </property>
        <item row="0" column="0" >
@@ -65,7 +62,7 @@
            <property name="orientation" >
             <enum>Qt::Vertical</enum>
            </property>
-           <property name="sizeHint" >
+           <property name="sizeHint" stdset="0" >
             <size>
              <width>20</width>
              <height>40</height>
@@ -108,7 +105,7 @@
            <property name="orientation" >
             <enum>Qt::Vertical</enum>
            </property>
-           <property name="sizeHint" >
+           <property name="sizeHint" stdset="0" >
             <size>
              <width>20</width>
              <height>40</height>
@@ -206,7 +203,7 @@
          <property name="sizeType" >
           <enum>QSizePolicy::Expanding</enum>
          </property>
-         <property name="sizeHint" >
+         <property name="sizeHint" stdset="0" >
           <size>
            <width>20</width>
            <height>20</height>
@@ -221,7 +218,7 @@
        <property name="orientation" >
         <enum>Qt::Vertical</enum>
        </property>
-       <property name="sizeHint" >
+       <property name="sizeHint" stdset="0" >
         <size>
          <width>20</width>
          <height>41</height>
@@ -265,7 +262,7 @@
          <property name="sizeType" >
           <enum>QSizePolicy::Expanding</enum>
          </property>
-         <property name="sizeHint" >
+         <property name="sizeHint" stdset="0" >
           <size>
            <width>20</width>
            <height>20</height>
@@ -306,16 +303,7 @@
         <property name="spacing" >
          <number>0</number>
         </property>
-        <property name="leftMargin" >
-         <number>0</number>
-        </property>
-        <property name="topMargin" >
-         <number>0</number>
-        </property>
-        <property name="rightMargin" >
-         <number>0</number>
-        </property>
-        <property name="bottomMargin" >
+        <property name="margin" >
          <number>0</number>
         </property>
         <item>
@@ -347,11 +335,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="_shipValue" >
-            <property name="text" >
-             <string>0.00</string>
-            </property>
-           </widget>
+           <widget class="XLabel" name="_shipValue" />
           </item>
          </layout>
         </item>
@@ -426,7 +410,7 @@
                <property name="sizeType" >
                 <enum>QSizePolicy::Preferred</enum>
                </property>
-               <property name="sizeHint" >
+               <property name="sizeHint" stdset="0" >
                 <size>
                  <width>66</width>
                  <height>10</height>
@@ -527,6 +511,11 @@
    <class>XComboBox</class>
    <extends>QComboBox</extends>
    <header>xcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XLabel</class>
+   <extends>QLabel</extends>
+   <header>xlabel.h</header>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>

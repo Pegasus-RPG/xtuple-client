@@ -110,6 +110,9 @@ shipOrder::shipOrder(QWidget* parent, const char* name, bool modal, Qt::WFlags f
   
   _transDate->setEnabled(_privileges->check("AlterTransactionDates"));
   _transDate->setDate(omfgThis->dbDate(), true);
+
+  _shipValue->setPrecision(omfgThis->moneyVal());
+  _shipValue->setDouble(0);
 }
 
 shipOrder::~shipOrder()
@@ -454,7 +457,7 @@ void shipOrder::sHandleOrder()
     _billToName->setText("");
     _shipToName->setText("");
     _shipToAddr1->setText("");
-    _shipValue->setText("0.00");
+    _shipValue->setDouble(0);
     _coitem->clear();
     _order->setFocus();
     return;
@@ -817,7 +820,7 @@ void shipOrder::sFillList()
     }
     
     QString vals = "<? if exists(\"sohead_id\") ?>"
-	    "SELECT formatMoney(SUM(round((shipitem_qty * coitem_qty_invuomratio) * (coitem_price / coitem_price_invuomratio),2))) AS f_value "
+	    "SELECT SUM(round((shipitem_qty * coitem_qty_invuomratio) * (coitem_price / coitem_price_invuomratio),2)) AS value "
 	    "FROM coitem, shiphead, shipitem, itemsite, item "
 	    "WHERE ( (shipitem_orderitem_id=coitem_id)"
 	    " AND (shipitem_shiphead_id=shiphead_id)"
@@ -827,7 +830,7 @@ void shipOrder::sFillList()
 	    " AND (itemsite_item_id=item_id)"
 	    " AND (shiphead_order_id=<? value(\"sohead_id\") ?>) );"
 	    "<? elseif exists(\"tohead_id\") ?>"
-	    "SELECT formatMoney(SUM(toitem_stdcost * shipitem_qty)) AS f_value "
+	    "SELECT SUM(toitem_stdcost * shipitem_qty) AS value "
 	    "FROM toitem, shiphead, shipitem "
 	    "WHERE ((shipitem_orderitem_id=toitem_id)"
 	    "  AND  (shipitem_shiphead_id=shiphead_id)"
@@ -838,7 +841,7 @@ void shipOrder::sFillList()
     MetaSQLQuery valm(vals);
     shipq = valm.toQuery(itemp);	// shared parameters
     if(shipq.first())
-      _shipValue->setText(shipq.value("f_value").toString());
+      _shipValue->setDouble(shipq.value("value").toDouble());
     else if (shipq.lastError().type() != QSqlError::None)
     {
       systemError(this, shipq.lastError().databaseText(), __FILE__, __LINE__);

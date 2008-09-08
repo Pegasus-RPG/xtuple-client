@@ -376,7 +376,7 @@ void shipTo::populate()
   q.prepare( "SELECT cust_number, cust_name, shipto_active, shipto_default,"
              "       shipto_cust_id,"
              "       shipto_num, shipto_name, shipto_cntct_id,"
-             "       shipto_shipvia, formatScrap(shipto_commission) AS commission,"
+             "       shipto_shipvia, shipto_commission,"
              "       shipto_comments, shipto_shipcomments,"
              "       COALESCE(shipto_salesrep_id,-1) AS shipto_salesrep_id, shipto_taxauth_id, COALESCE(shipto_shipzone_id,-1) AS shipto_shipzone_id,"
              "       COALESCE(shipto_shipform_id,-1) AS shipto_shipform_id, shipto_shipchrg_id, "
@@ -387,7 +387,7 @@ void shipTo::populate()
   q.exec();
   if (q.first())
   {
-    QString commission = q.value("commission").toString();
+    double commission = q.value("shipto_commission").toDouble();
     _custid = q.value("shipto_cust_id").toInt();
     _custNum->setText(q.value("cust_number").toString());
     _custName->setText(q.value("cust_name").toString());
@@ -422,7 +422,7 @@ void shipTo::populate()
     }
 
     _salesRep->setId(q.value("shipto_salesrep_id").toInt());
-    _commission->setText(commission);
+    _commission->setDouble(commission * 100);
   }
   else if (q.lastError().type() != QSqlError::None)
   {
@@ -479,13 +479,13 @@ void shipTo::sPopulateCommission(int pSalesrepid)
 {
   if (_mode != cView)
   {
-    q.prepare( "SELECT formatScrap(salesrep_commission) AS commission "
+    q.prepare( "SELECT salesrep_commission "
                "FROM salesrep "
                "WHERE (salesrep_id=:salesrep_id);" );
     q.bindValue(":salesrep_id", pSalesrepid);
     q.exec();
     if (q.first())
-      _commission->setText(q.value("commission"));
+      _commission->setDouble(q.value("salesrep_commission").toDouble());
     else if (q.lastError().type() != QSqlError::None)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
