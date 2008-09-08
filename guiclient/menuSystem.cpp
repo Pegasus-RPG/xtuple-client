@@ -125,13 +125,9 @@
 #include "configureMS.h"
 #include "configureWO.h"
 #include "configureSO.h"
-#include "configureSR.h"
 #include "configurePO.h"
-#include "configureAP.h"
-#include "configureAR.h"
 #include "configureGL.h"
 #include "configureCC.h"
-#include "configurePM.h"
 #include "configureCRM.h"
 
 #include "registration.h"
@@ -661,21 +657,6 @@ void menuSystem::sConfigureSO()
   configureSO(parent, "", TRUE).exec();
 }
 
-void menuSystem::sConfigureSR()
-{
-  configureSR(parent, "", TRUE).exec();
-}
-
-void menuSystem::sConfigureAP()
-{
-  configureAP(parent, "", TRUE).exec();
-}
-
-void menuSystem::sConfigureAR()
-{
-  configureAR(parent, "", TRUE).exec();
-}
-
 void menuSystem::sConfigureGL()
 {
   configureGL(parent, "", TRUE).exec();
@@ -684,11 +665,6 @@ void menuSystem::sConfigureGL()
 void menuSystem::sConfigureCC()
 {
   configureCC(parent, "", TRUE).exec();
-}
-
-void menuSystem::sConfigurePM()
-{
-  configurePM(parent, "", TRUE).exec();
 }
 
 void menuSystem::sConfigureCRM()

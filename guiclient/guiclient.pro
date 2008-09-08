@@ -57,9 +57,9 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                characteristicPrice.ui checkFormat.ui checkFormats.ui                                  \
                classCodes.ui classCode.ui closePurchaseOrder.ui closeWo.ui                            \
                commentType.ui commentTypes.ui company.ui companies.ui configureAccountingSystem.ui    \
-               configureAP.ui configureAR.ui configureCC.ui configureSO.ui configureIM.ui             \
-               configureGL.ui configureMS.ui configurePD.ui configurePM.ui configurePO.ui             \
-               configureSR.ui configureWO.ui configureBackup.ui configureCRM.ui                       \
+               configureCC.ui configureSO.ui configureIM.ui                                           \
+               configureGL.ui configureMS.ui configurePD.ui configurePO.ui                            \
+               configureWO.ui configureBackup.ui configureCRM.ui                                      \
                configureIE.ui                                                                         \
                contact.ui contacts.ui copyPurchaseOrder.ui copyBudget.ui                              \
                copyBOM.ui copyBOO.ui copyItem.ui copyPlannedSchedule.ui copySalesOrder.ui             \
@@ -375,9 +375,9 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h rwInterface
                characteristicPrice.h checkFormat.h checkFormats.h                                     \
                classCodes.h classCode.h closePurchaseOrder.h closeWo.h                                \
                commentType.h commentTypes.h company.h companies.h configureAccountingSystem.h         \
-               configureAP.h configureAR.h configureCC.h configureSO.h configureIM.h                  \
-               configureGL.h configureMS.h configurePD.h configurePM.h configurePO.h                  \
-               configureSR.h configureWO.h configureBackup.h configureCRM.h                           \
+               configureCC.h configureSO.h configureIM.h                                              \
+               configureGL.h configureMS.h configurePD.h configurePO.h                                \
+               configureWO.h configureBackup.h configureCRM.h                                         \
                configureIE.h                                                                          \
                contact.h contacts.h copyPurchaseOrder.h copyBudget.h                                  \
                copyBOM.h copyBOO.h copyItem.h copyPlannedSchedule.h copySalesOrder.h                  \
@@ -698,9 +698,9 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp rwInte
                characteristicPrice.cpp checkFormat.cpp checkFormats.cpp                               \
                classCodes.cpp classCode.cpp closePurchaseOrder.cpp closeWo.cpp                        \
                commentType.cpp commentTypes.cpp company.cpp companies.cpp configureAccountingSystem.cpp \
-               configureAP.cpp configureAR.cpp configureCC.cpp configureSO.cpp configureIM.cpp        \
-               configureGL.cpp configureMS.cpp configurePD.cpp configurePM.cpp configurePO.cpp        \
-               configureSR.cpp configureWO.cpp configureBackup.cpp configureCRM.cpp                   \
+               configureCC.cpp configureSO.cpp configureIM.cpp                                        \
+               configureGL.cpp configureMS.cpp configurePD.cpp configurePO.cpp                        \
+               configureWO.cpp configureBackup.cpp configureCRM.cpp                                   \
                configureIE.cpp                                                                        \
                contact.cpp contacts.cpp copyPurchaseOrder.cpp copyBudget.cpp                          \
                copyBOM.cpp copyBOO.cpp copyItem.cpp copyPlannedSchedule.cpp copySalesOrder.cpp        \

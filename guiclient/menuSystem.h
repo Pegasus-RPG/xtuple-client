@@ -102,14 +102,10 @@ class menuSystem : public QObject
     void sConfigurePD();
     void sConfigureMS();
     void sConfigureWO();
-    void sConfigureSR();
     void sConfigureSO();
     void sConfigurePO();
-    void sConfigureAP();
-    void sConfigureAR();
     void sConfigureGL();
     void sConfigureCC();
-    void sConfigurePM();
     void sConfigureCRM();
 
     void sScheduleSystemMessage();
