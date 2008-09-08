@@ -141,10 +141,8 @@ class menuInventory : public QObject
     void sPrintShippingLabelsByTo();
 
     void sDestinations();
-    void sCarriers();
     void sAddRate();
     void sDspRatesByDestination();
-    void sDspRatesByCarrier();
 
     void sDspBacklogByItem();
     void sDspBacklogByCustomer();

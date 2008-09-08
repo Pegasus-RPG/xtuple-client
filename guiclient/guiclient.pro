@@ -50,7 +50,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                bboms.ui bbomItem.ui bbom.ui                                                           \
                bom.ui bomItem.ui bomList.ui boo.ui booItem.ui booItemList.ui booList.ui buyCard.ui    \
                booitemImage.ui budgets.ui                                                             \
-               calendars.ui calendar.ui carriers.ui carrier.ui                                        \
+               calendars.ui calendar.ui                                                               \
                cashReceipt.ui cashReceiptsEditList.ui cashReceiptItem.ui cashReceiptMiscDistrib.ui    \
                changePoitemQty.ui changeWoQty.ui changeQtyToDistributeFromBreeder.ui                  \
                characteristic.ui characteristics.ui characteristicAssignment.ui                       \
@@ -368,7 +368,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h rwInterface
                bboms.h bbomItem.h bbom.h                                                              \
                bom.h bomItem.h bomList.h boo.h booItem.h booItemList.h booList.h buyCard.h            \
                booitemImage.h budgets.h                                                               \
-               calendars.h calendar.h carriers.h carrier.h                                            \
+               calendars.h calendar.h                                                                 \
                cashReceipt.h cashReceiptsEditList.h cashReceiptItem.h cashReceiptMiscDistrib.h        \
                changePoitemQty.h changeWoQty.h changeQtyToDistributeFromBreeder.h                     \
                characteristic.h characteristics.h characteristicAssignment.h                          \
@@ -691,7 +691,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp rwInte
                bboms.cpp bbomItem.cpp bbom.cpp                                                        \
                bom.cpp bomItem.cpp bomList.cpp boo.cpp booItem.cpp booItemList.cpp booList.cpp buyCard.cpp \
                booitemImage.cpp budgets.cpp                                                           \
-               calendars.cpp calendar.cpp carriers.cpp carrier.cpp                                    \
+               calendars.cpp calendar.cpp                                                             \
                cashReceipt.cpp cashReceiptsEditList.cpp cashReceiptItem.cpp cashReceiptMiscDistrib.cpp \
                changePoitemQty.cpp changeWoQty.cpp changeQtyToDistributeFromBreeder.cpp               \
                characteristic.cpp characteristics.cpp characteristicAssignment.cpp                    \

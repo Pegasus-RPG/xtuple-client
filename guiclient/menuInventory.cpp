@@ -122,7 +122,6 @@
 #include "printLabelsByOrder.h"
 
 #include "destinations.h"
-#include "carriers.h"
 
 #include "dspShipmentsBySalesOrder.h"
 #include "dspBacklogByItem.h"
@@ -899,20 +898,11 @@ void menuInventory::sDestinations()
   omfgThis->handleNewWindow(new destinations());
 }
 
-void menuInventory::sCarriers()
-{
-  omfgThis->handleNewWindow(new carriers());
-}
-
 void menuInventory::sAddRate()
 {
 }
 
 void menuInventory::sDspRatesByDestination()
-{
-}
-
-void menuInventory::sDspRatesByCarrier()
 {
 }
 
