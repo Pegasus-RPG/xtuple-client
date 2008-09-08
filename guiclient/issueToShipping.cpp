@@ -532,10 +532,11 @@ void issueToShipping::sReturnStock()
 void issueToShipping::sShip()
 {
   q.prepare( "SELECT shiphead_id "
-             "FROM shiphead "
+             "FROM shiphead JOIN shipitem ON (shipitem_shiphead_id=shiphead_id) "
              "WHERE ((NOT shiphead_shipped)"
-	     "  AND  (shiphead_order_type=:ordertype)"
-             "  AND  (shiphead_order_id=:order_id) );" );
+             "  AND  (shiphead_order_type=:ordertype)"
+             "  AND  (shiphead_order_id=:order_id) ) "
+             "LIMIT 1;" );
   q.bindValue(":order_id",  _order->id());
   q.bindValue(":ordertype", _order->type());
 
