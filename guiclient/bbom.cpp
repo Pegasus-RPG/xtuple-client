@@ -81,7 +81,7 @@ bbom::bbom(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_bbomitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
 
-
+  _costsAbsorbed->setPrecision(omfgThis->percentVal());
   _item->setType(ItemLineEdit::cBreeder);
 
   _bbomitem->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft, true, "item_number");
@@ -305,7 +305,7 @@ void bbom::sFillList(int pItemid, bool)
       return;
     }
 
-    q.prepare( "SELECT SUM(bbomitem_costabsorb) AS absorb "
+    q.prepare( "SELECT SUM(bbomitem_costabsorb) * 100 AS absorb "
                "FROM bbomitem "
                "WHERE (bbomitem_parent_item_id=:item_id);" );
     q.bindValue(":item_id", _item->id());

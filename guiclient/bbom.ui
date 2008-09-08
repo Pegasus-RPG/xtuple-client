@@ -119,7 +119,7 @@
                         <item>
                           <widget class="QLabel" name="_costAbsorbedLit" >
                             <property name="text" >
-                              <string>Costs Absorbed:</string>
+                              <string>Costs Absorbed (%):</string>
                             </property>
                             <property name="alignment" >
                               <set>Qt::AlignVCenter|Qt::AlignRight</set>
@@ -127,16 +127,13 @@
                           </widget>
                         </item>
                         <item>
-                          <widget class="XLineEdit" name="_costsAbsorbed" >
+                          <widget class="XLabel" name="_costsAbsorbed" >
                             <property name="text" >
                               <string/>
                             </property>
                             <property name="alignment" >
                               <set>Qt::AlignVCenter|Qt::AlignLeft</set>
                             </property>
-			    <property name="enabled" >
-			      <bool>false</bool>
-			    </property>
                           </widget>
                         </item>
                       </layout>
