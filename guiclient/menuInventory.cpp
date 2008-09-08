@@ -121,8 +121,6 @@
 #include "printLabelsByInvoice.h"
 #include "printLabelsByOrder.h"
 
-#include "destinations.h"
-
 #include "dspShipmentsBySalesOrder.h"
 #include "dspBacklogByItem.h"
 #include "dspBacklogByCustomer.h"
@@ -891,11 +889,6 @@ void menuInventory::sPostReceipts()
   unpostedPoReceipts *newdlg = new unpostedPoReceipts();
   //newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
-}
-
-void menuInventory::sDestinations()
-{
-  omfgThis->handleNewWindow(new destinations());
 }
 
 void menuInventory::sAddRate()

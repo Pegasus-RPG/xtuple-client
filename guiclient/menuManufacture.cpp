@@ -85,7 +85,6 @@
 #include "purgeClosedWorkOrders.h"
 
 #include "woMaterialItem.h"
-#include "deleteWoMaterialItem.h"
 #include "workOrderMaterials.h"
 
 #include "issueWoMaterialBatch.h"
@@ -210,9 +209,6 @@ menuManufacture::menuManufacture(GUIClient *Pparent) :
     { "menu",				tr("&Materials"),				(char*)materialsMenu,			mainMenu,	true,	0, 0,	true, NULL },
     { "wo.createWoMaterialRequirement",	tr("&New..."),	SLOT(sCreateWoMaterialRequirement()), materialsMenu, _privileges->check("MaintainWoMaterials"), 0, 0, true, NULL },
     { "wo.maintainWoMaterialRequirements",tr("&Maintain..."),	SLOT(sMaintainWoMaterials()), 		materialsMenu, _privileges->check("MaintainWoMaterials"), 0, 0, true, NULL },
-/*  This can be done in maintain matl req.  Remove by version 3.0 if no objections.    
-    { "wo.deleteWoMaterialRequirement",	tr("&Delete..."),	SLOT(sDeleteWoMaterialRequirement()), materialsMenu, _privileges->check("MaintainWoMaterials"), 0, 0, true, NULL },
-*/
     //  Production | Operations
     { "menu",				tr("&Operations"),			(char*)operationsMenu,	mainMenu,	true,	0, 0, _metrics->boolean("Routings"), NULL },
     { "wo.createWoOperation",		tr("&New..."),		SLOT(sCreateWoOperation()), operationsMenu, _privileges->check("MaintainWoOperations"), 0, 0, _metrics->boolean("Routings"), NULL },
@@ -479,11 +475,6 @@ void menuManufacture::sCreateWoMaterialRequirement()
   woMaterialItem newdlg(parent, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
-}
-
-void menuManufacture::sDeleteWoMaterialRequirement()
-{
-  deleteWoMaterialItem(parent, "", TRUE).exec();
 }
 
 void menuManufacture::sMaintainWoMaterials()

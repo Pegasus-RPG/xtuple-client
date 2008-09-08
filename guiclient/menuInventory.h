@@ -140,7 +140,6 @@ class menuInventory : public QObject
     void sPrintReceivingLabelsByPo();
     void sPrintShippingLabelsByTo();
 
-    void sDestinations();
     void sAddRate();
     void sDspRatesByDestination();
 

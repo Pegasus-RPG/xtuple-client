@@ -106,7 +106,6 @@ class menuManufacture : public QObject
     void sPurgeClosedWorkOrders();
 
     void sCreateWoMaterialRequirement();
-    void sDeleteWoMaterialRequirement();
     void sMaintainWoMaterials();
     void sIssueWoMaterialBatch();
     void sIssueWoMaterialItem();
