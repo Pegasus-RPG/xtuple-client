@@ -57,54 +57,33 @@
 
 #include "changeQtyToDistributeFromBreeder.h"
 
-#include <qvariant.h>
+#include <QSqlError>
+#include <QValidator>
+#include <QVariant>
 
-/*
- *  Constructs a changeQtyToDistributeFromBreeder as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 changeQtyToDistributeFromBreeder::changeQtyToDistributeFromBreeder(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  connect(_actualQtyToDistribute, SIGNAL(lostFocus()), this, SLOT(sUpdateQtyPer()));
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
 
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    connect(_actualQtyToDistribute, SIGNAL(lostFocus()), this, SLOT(sUpdateQtyPer()));
-
-    _openWoQty->setPrecision(omfgThis->qtyVal());
-    _actualQtyPer->setPrecision(omfgThis->qtyPerVal());
-    _standardQtyPer->setPrecision(omfgThis->qtyPerVal());
-    _standardQtyToDistribute->setPrecision(omfgThis->qtyPerVal());
-    //_actualQtyToDistribute->setValidator(omfgThis->qtyVal()); // doesn't compile!
-    init();
+  _actualQtyPer->setPrecision(omfgThis->qtyPerVal());
+  _openWoQty->setPrecision(omfgThis->qtyVal());
+  _standardQtyPer->setPrecision(omfgThis->qtyPerVal());
+  _standardQtyToDistribute->setPrecision(omfgThis->qtyVal());
+  _actualQtyToDistribute->setValidator(omfgThis->qtyVal());
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 changeQtyToDistributeFromBreeder::~changeQtyToDistributeFromBreeder()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void changeQtyToDistributeFromBreeder::languageChange()
 {
-    retranslateUi(this);
-}
-
-
-void changeQtyToDistributeFromBreeder::init()
-{
+  retranslateUi(this);
 }
 
 enum SetResponse changeQtyToDistributeFromBreeder::set(ParameterList &pParams)
@@ -136,7 +115,11 @@ enum SetResponse changeQtyToDistributeFromBreeder::set(ParameterList &pParams)
       _actualQtyPer->setDouble(brddist.value("actqtyper").toDouble());
       _actualQtyToDistribute->setDouble(brddist.value("brddist_qty").toDouble());
     }
-//  ToDo
+    else if (brddist.lastError().type() != QSqlError::None)
+    {
+      systemError(this, brddist.lastError().databaseText(), __FILE__, __LINE__);
+      return UndefinedError;
+    }
   }
 
   return NoError;
@@ -156,7 +139,11 @@ void changeQtyToDistributeFromBreeder::sSave()
   changeQty.bindValue(":qty", _actualQtyToDistribute->toDouble());
   changeQty.bindValue(":brddist_id", _brddistid);
   changeQty.exec();
+  if (changeQty.lastError().type() != QSqlError::None)
+  {
+    systemError(this, changeQty.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   accept();
 }
-

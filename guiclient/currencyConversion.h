@@ -88,8 +88,6 @@ private:
     int _mode;
     int _curr_id;
 
-    void init();
-
 };
 
 #endif // CURRENCYCONVERSION_H

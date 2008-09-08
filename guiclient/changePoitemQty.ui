@@ -6,28 +6,13 @@
     <x>0</x>
     <y>0</y>
     <width>412</width>
-    <height>336</height>
+    <height>359</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Change P/O Item Quantity</string>
   </property>
   <layout class="QVBoxLayout" >
-   <property name="spacing" >
-    <number>0</number>
-   </property>
-   <property name="leftMargin" >
-    <number>5</number>
-   </property>
-   <property name="topMargin" >
-    <number>5</number>
-   </property>
-   <property name="rightMargin" >
-    <number>5</number>
-   </property>
-   <property name="bottomMargin" >
-    <number>5</number>
-   </property>
    <item>
     <layout class="QHBoxLayout" >
      <property name="spacing" >
@@ -129,212 +114,157 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" >
-     <property name="spacing" >
-      <number>5</number>
+    <layout class="QGridLayout" >
+     <property name="horizontalSpacing" >
+      <number>0</number>
      </property>
-     <item>
-      <layout class="QGridLayout" >
-       <property name="horizontalSpacing" >
-        <number>0</number>
+     <property name="verticalSpacing" >
+      <number>0</number>
+     </property>
+     <item row="1" column="0" >
+      <widget class="QLabel" name="_qtyOrderedLit" >
+       <property name="text" >
+        <string>Qty. Ordered:</string>
        </property>
-       <property name="verticalSpacing" >
-        <number>0</number>
+       <property name="alignment" >
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
-       <item row="1" column="0" >
-        <widget class="QLabel" name="_qtyOrderedLit" >
-         <property name="text" >
-          <string>Qty. Ordered:</string>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="2" >
-        <widget class="QLabel" name="_newLit" >
-         <property name="text" >
-          <string>New</string>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="2" >
-        <widget class="XLineEdit" name="_newQty" >
-         <property name="maximumSize" >
-          <size>
-           <width>80</width>
-           <height>32767</height>
-          </size>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight</set>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0" >
-        <widget class="QLabel" name="_qtyReceivedLit" >
-         <property name="text" >
-          <string>Qty. Received:</string>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="2" >
-        <widget class="XLabel" name="_newQtyBalance" >
-         <property name="minimumSize" >
-          <size>
-           <width>80</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="2" >
-        <widget class="XLabel" name="_newQtyReceived" >
-         <property name="minimumSize" >
-          <size>
-           <width>80</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0" >
-        <spacer>
-         <property name="orientation" >
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeType" >
-          <enum>QSizePolicy::Preferred</enum>
-         </property>
-         <property name="sizeHint" >
-          <size>
-           <width>20</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="1" column="1" >
-        <widget class="XLabel" name="_currentQtyOrdered" >
-         <property name="minimumSize" >
-          <size>
-           <width>80</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1" >
-        <widget class="QLabel" name="_currentLit" >
-         <property name="text" >
-          <string>Current</string>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0" >
-        <widget class="QLabel" name="_qtyBalanceLit" >
-         <property name="text" >
-          <string>Qty. Balance:</string>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1" >
-        <widget class="XLabel" name="_currentQtyBalance" >
-         <property name="minimumSize" >
-          <size>
-           <width>80</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1" >
-        <widget class="XLabel" name="_currentQtyReceived" >
-         <property name="minimumSize" >
-          <size>
-           <width>80</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-      </layout>
+      </widget>
      </item>
-     <item>
-      <spacer>
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
+     <item row="0" column="2" >
+      <widget class="QLabel" name="_newLit" >
+       <property name="text" >
+        <string>New</string>
        </property>
-       <property name="sizeType" >
-        <enum>QSizePolicy::Expanding</enum>
+       <property name="alignment" >
+        <set>Qt::AlignCenter</set>
        </property>
-       <property name="sizeHint" >
+      </widget>
+     </item>
+     <item row="1" column="2" >
+      <widget class="XLineEdit" name="_newQty" >
+       <property name="maximumSize" >
         <size>
-         <width>16</width>
-         <height>20</height>
+         <width>80</width>
+         <height>32767</height>
         </size>
        </property>
-      </spacer>
-     </item>
-     <item>
-      <layout class="QVBoxLayout" >
-       <property name="spacing" >
-        <number>0</number>
+       <property name="alignment" >
+        <set>Qt::AlignRight</set>
        </property>
-       <item>
-        <widget class="QLabel" name="textLabel1" >
-         <property name="text" >
-          <string>Line Item Freight:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="XLineEdit" name="_freight" />
-       </item>
-       <item>
-        <spacer>
-         <property name="orientation" >
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeType" >
-          <enum>QSizePolicy::Expanding</enum>
-         </property>
-         <property name="sizeHint" >
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
+      </widget>
+     </item>
+     <item row="2" column="0" >
+      <widget class="QLabel" name="_qtyReceivedLit" >
+       <property name="text" >
+        <string>Qty. Received:</string>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="2" >
+      <widget class="XLabel" name="_newQtyBalance" >
+       <property name="minimumSize" >
+        <size>
+         <width>80</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="2" >
+      <widget class="XLabel" name="_newQtyReceived" >
+       <property name="minimumSize" >
+        <size>
+         <width>80</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1" >
+      <widget class="XLabel" name="_currentQtyOrdered" >
+       <property name="minimumSize" >
+        <size>
+         <width>80</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1" >
+      <widget class="QLabel" name="_currentLit" >
+       <property name="text" >
+        <string>Current</string>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0" >
+      <widget class="QLabel" name="_qtyBalanceLit" >
+       <property name="text" >
+        <string>Qty. Balance:</string>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1" >
+      <widget class="XLabel" name="_currentQtyBalance" >
+       <property name="minimumSize" >
+        <size>
+         <width>80</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1" >
+      <widget class="XLabel" name="_currentQtyReceived" >
+       <property name="minimumSize" >
+        <size>
+         <width>80</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="3" >
+      <widget class="QLabel" name="textLabel1" >
+       <property name="text" >
+        <string>Line Item Freight:</string>
+       </property>
+      </widget>
+     </item>
+     <item rowspan="2" row="1" column="3" >
+      <widget class="CurrCluster" name="_freight" >
+       <property name="baseVisible" >
+        <bool>false</bool>
+       </property>
+       <property name="currencyEditable" stdset="0" >
+        <bool>false</bool>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
@@ -456,6 +386,11 @@
  <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
+  <customwidget>
+   <class>CurrCluster</class>
+   <extends>CurrDisplay</extends>
+   <header>currcluster.h</header>
+  </customwidget>
   <customwidget>
    <class>PoCluster</class>
    <extends>QWidget</extends>

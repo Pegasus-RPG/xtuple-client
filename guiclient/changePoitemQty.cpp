@@ -171,10 +171,12 @@ void changePoitemQty::sPopulate(int pPoitemid)
   }
   else
   {
-    q.prepare( "SELECT poitem_qty_ordered, poitem_qty_received, poitem_qty_returned,"
-               "             poitem_freight "
-               "FROM poitem "
-               "WHERE (poitem_id=:poitem_id);" );
+    q.prepare( "SELECT poitem_qty_ordered, poitem_qty_received,"
+               "        poitem_qty_returned, poitem_freight, pohead_curr_id,"
+               "        CURRENT_DATE AS date "
+               "FROM poitem, pohead "
+               "WHERE ((poitem_pohead_id=pohead_id)"
+               "  AND  (poitem_id=:poitem_id));" );
     q.bindValue(":poitem_id", pPoitemid);
     q.exec();
     if (q.first())
@@ -184,7 +186,9 @@ void changePoitemQty::sPopulate(int pPoitemid)
       _currentQtyBalance->setDouble(q.value("poitem_qty_ordered").toDouble() - q.value("poitem_qty_received").toDouble());
       _newQtyReceived->setDouble(q.value("poitem_qty_received").toDouble());
       _cacheFreight = q.value("poitem_freight").toDouble();
-      _freight->setDouble(q.value("poitem_freight").toDouble());
+      _freight->set(q.value("poitem_freight").toDouble(),
+                    q.value("pohead_curr_id").toInt(),
+                    q.value("date").toDate());
       sQtyChanged();
     }
   }
@@ -242,12 +246,12 @@ void changePoitemQty::sChangeQty()
     }
   }
 
-  if (_freight->toDouble() != _cacheFreight)
+  if (_freight->localValue() != _cacheFreight)
   {
     q.prepare("UPDATE poitem SET poitem_freight=:poitem_freight"
               " WHERE (poitem_id=:poitem_id); ");
     q.bindValue(":poitem_id", _poitem->id());
-    q.bindValue(":poitem_freight", _freight->toDouble());
+    q.bindValue(":poitem_freight", _freight->localValue());
     q.exec();
     if (q.lastError().type() != QSqlError::NoError)
     {
