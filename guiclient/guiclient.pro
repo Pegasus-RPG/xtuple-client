@@ -204,7 +204,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                explodeWo.ui exportCustomers.ui                                                        \
 	       externalShipping.ui externalShippingList.ui failedPostList.ui                          \
                financialLayout.ui financialLayoutItem.ui financialLayoutGroup.ui financialLayouts.ui  \
-               financialLayoutSpecial.ui financialLayoutLabels.ui financialLayoutColumns.ui           \
+               financialLayoutSpecial.ui                          financialLayoutColumns.ui           \
                firmPlannedOrder.ui firmPlannedOrdersByPlannerCode.ui fixACL.ui fixSerial.ui           \
                getGLDistDate.ui                                                                       \
                getLotInfo.ui glSeries.ui glSeriesItem.ui glTransaction.ui glTransactionDetail.ui      \
@@ -520,7 +520,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h rwInterface
                explodeWo.h exportCustomers.h                                                          \
 	       externalShipping.h externalShippingList.h failedPostList.h                             \
                financialLayout.h financialLayoutItem.h financialLayoutGroup.h financialLayouts.h      \
-               financialLayoutSpecial.h financialLayoutLabels.h financialLayoutColumns.h              \
+               financialLayoutSpecial.h                         financialLayoutColumns.h              \
                firmPlannedOrder.h firmPlannedOrdersByPlannerCode.h fixACL.h fixSerial.h               \
                getGLDistDate.h                                                                        \
                getLotInfo.h glSeries.h glSeriesItem.h glTransaction.h glTransactionDetail.h           \
@@ -843,7 +843,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp rwInte
                explodeWo.cpp exportCustomers.cpp                                                      \
 	       externalShipping.cpp externalShippingList.cpp failedPostList.cpp                       \
                financialLayout.cpp financialLayoutItem.cpp financialLayoutGroup.cpp financialLayouts.cpp \
-               financialLayoutSpecial.cpp financialLayoutLabels.cpp financialLayoutColumns.cpp        \
+               financialLayoutSpecial.cpp                           financialLayoutColumns.cpp        \
                firmPlannedOrder.cpp firmPlannedOrdersByPlannerCode.cpp fixACL.cpp fixSerial.cpp       \
                getGLDistDate.cpp                                                                      \
                getLotInfo.cpp glSeries.cpp glSeriesItem.cpp glTransaction.cpp glTransactionDetail.cpp \

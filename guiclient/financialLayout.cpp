@@ -90,7 +90,6 @@ financialLayout::financialLayout(QWidget* parent, const char* name, bool modal, 
   // signals and slots connections
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-  //connect(_editLabels, SIGNAL(clicked()), this, SLOT(sEditLabels()));
   connect(_name, SIGNAL(lostFocus()), this, SLOT(sCheck()));
   connect(_layout, SIGNAL(itemSelectionChanged()), this, SLOT(sHandleButtons()));
   connect(_addTopLevelGroup, SIGNAL(clicked()), this, SLOT(sAddTopLevelGroup()));
@@ -922,18 +921,6 @@ void financialLayout::sMoveDown()
 
   sFillList();
 }
-
-/*
-void financialLayout::sEditLabels()
-{
-  ParameterList params;
-  params.append("flhead_id", _flheadid);
-
-  financialLayoutLabels newdlg(this, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-}
-*/
 
 void financialLayout::sSetType()
 {
