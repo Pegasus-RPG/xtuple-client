@@ -28,7 +28,7 @@
             <number>0</number>
            </property>
            <item>
-            <widget class="QLabel" name="_poNumberLit" >
+            <widget class="XLabel" name="_poNumberLit" >
              <property name="text" >
               <string>P/O Number:</string>
              </property>
@@ -38,7 +38,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="_lineNumberLit" >
+            <widget class="XLabel" name="_lineNumberLit" >
              <property name="text" >
               <string>Line #:</string>
              </property>
@@ -55,7 +55,7 @@
             <number>0</number>
            </property>
            <item>
-            <widget class="QLabel" name="_poNumber" >
+            <widget class="XLabel" name="_poNumber" >
              <property name="sizePolicy" >
               <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
                <horstretch>0</horstretch>
@@ -68,7 +68,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="_lineNumber" >
+            <widget class="XLabel" name="_lineNumber" >
              <property name="sizePolicy" >
               <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
                <horstretch>0</horstretch>
@@ -118,7 +118,7 @@
              <number>0</number>
             </property>
             <item row="2" column="1" >
-             <widget class="QLabel" name="_lineFreight" >
+             <widget class="XLabel" name="_lineFreight" >
               <property name="text" >
                <string>0.00</string>
               </property>
@@ -128,7 +128,7 @@
              </widget>
             </item>
             <item row="1" column="1" >
-             <widget class="QLabel" name="_extPrice" >
+             <widget class="XLabel" name="_extPrice" >
               <property name="text" >
                <string>0.00</string>
               </property>
@@ -138,7 +138,7 @@
              </widget>
             </item>
             <item row="0" column="1" >
-             <widget class="QLabel" name="_unitPrice" >
+             <widget class="XLabel" name="_unitPrice" >
               <property name="text" >
                <string>0.00</string>
               </property>
@@ -148,7 +148,7 @@
              </widget>
             </item>
             <item row="2" column="0" >
-             <widget class="QLabel" name="_lineFreightLit" >
+             <widget class="XLabel" name="_lineFreightLit" >
               <property name="text" >
                <string>Line Item Freight:</string>
               </property>
@@ -158,7 +158,7 @@
              </widget>
             </item>
             <item row="1" column="0" >
-             <widget class="QLabel" name="_extPriceLit" >
+             <widget class="XLabel" name="_extPriceLit" >
               <property name="text" >
                <string>Ext. Price:</string>
               </property>
@@ -168,7 +168,7 @@
              </widget>
             </item>
             <item row="0" column="0" >
-             <widget class="QLabel" name="_unitPriceLit" >
+             <widget class="XLabel" name="_unitPriceLit" >
               <property name="text" >
                <string>Unit Price:</string>
               </property>
@@ -245,7 +245,7 @@
       <number>5</number>
      </property>
      <item row="0" column="0" >
-      <widget class="QLabel" name="_vendItemNumberLit" >
+      <widget class="XLabel" name="_vendItemNumberLit" >
        <property name="text" >
         <string>Vend. Item Number:</string>
        </property>
@@ -265,7 +265,7 @@
           <number>5</number>
          </property>
          <item>
-          <widget class="QLabel" name="_vendItemNumber" >
+          <widget class="XLabel" name="_vendItemNumber" >
            <property name="sizePolicy" >
             <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
              <horstretch>0</horstretch>
@@ -275,14 +275,14 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="_vendUOMLit" >
+          <widget class="XLabel" name="_vendUOMLit" >
            <property name="text" >
             <string>UOM:</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="_vendUOM" >
+          <widget class="XLabel" name="_vendUOM" >
            <property name="minimumSize" >
             <size>
              <width>40</width>
@@ -317,7 +317,7 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="QLabel" name="_vendItemDescripLit" >
+        <widget class="XLabel" name="_vendItemDescripLit" >
          <property name="sizePolicy" >
           <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
            <horstretch>0</horstretch>
@@ -398,7 +398,7 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="QLabel" name="_uninvoiceReceivingsLit" >
+         <widget class="XLabel" name="_uninvoiceReceivingsLit" >
           <property name="text" >
            <string>Uninvoiced Receipts and Returns</string>
           </property>
@@ -411,7 +411,7 @@
       </widget>
      </item>
      <item row="0" column="0" >
-      <widget class="QLabel" name="_dueDateLit" >
+      <widget class="XLabel" name="_dueDateLit" >
        <property name="text" >
         <string>Due Date:</string>
        </property>
@@ -558,7 +558,7 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="QLabel" name="_uninvoicedReceivedLit" >
+        <widget class="XLabel" name="_uninvoicedReceivedLit" >
          <property name="text" >
           <string>Uninvoiced Qty. Received:</string>
          </property>
@@ -568,7 +568,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="_uninvoicedRejectedLit" >
+        <widget class="XLabel" name="_uninvoicedRejectedLit" >
          <property name="text" >
           <string>Uninvoiced Qty. Rejected:</string>
          </property>
@@ -653,7 +653,7 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="QLabel" name="_orderedLit" >
+        <widget class="XLabel" name="_orderedLit" >
          <property name="text" >
           <string>Total Quantity Ordered:</string>
          </property>
@@ -663,7 +663,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="_receivedLit" >
+        <widget class="XLabel" name="_receivedLit" >
          <property name="text" >
           <string>Total Quantity Received:</string>
          </property>
@@ -673,7 +673,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="_rejectedLit" >
+        <widget class="XLabel" name="_rejectedLit" >
          <property name="text" >
           <string>Total Quantity Rejected:</string>
          </property>
@@ -715,7 +715,7 @@
       </layout>
      </item>
      <item row="4" column="0" >
-      <widget class="QLabel" name="_freightToVoucherLit" >
+      <widget class="XLabel" name="_freightToVoucherLit" >
        <property name="text" >
         <string>PO Line Freight to Voucher:</string>
        </property>
@@ -774,7 +774,7 @@
       </layout>
      </item>
      <item row="3" column="0" >
-      <widget class="QLabel" name="_toVoucherLit" >
+      <widget class="XLabel" name="_toVoucherLit" >
        <property name="text" >
         <string>Qty. to Voucher:</string>
        </property>
@@ -816,7 +816,7 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="QLabel" name="_distributionListLit" >
+       <widget class="XLabel" name="_distributionListLit" >
         <property name="text" >
          <string>Distribution List:</string>
         </property>
@@ -848,7 +848,7 @@
              <number>5</number>
             </property>
             <item>
-             <widget class="QLabel" name="_totalDistributedLit" >
+             <widget class="XLabel" name="_totalDistributedLit" >
               <property name="sizePolicy" >
                <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
                 <horstretch>0</horstretch>
@@ -953,18 +953,26 @@
   </customwidget>
   <customwidget>
    <class>DLineEdit</class>
-   <extends>XLineEdit</extends>
+   <extends>QWidget</extends>
    <header>datecluster.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>ItemCluster</class>
    <extends>QWidget</extends>
    <header>itemcluster.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>XLabel</class>
+   <extends>QLabel</extends>
+   <header>xlabel.h</header>
   </customwidget>
   <customwidget>
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>

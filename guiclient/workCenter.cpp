@@ -99,6 +99,18 @@ workCenter::workCenter(QWidget* parent, const char* name, Qt::WFlags fl)
     connect(_stdRunRate, SIGNAL(newID(int)), this, SLOT(sPopulateRunRate()));
     connect(_stdSetupRate, SIGNAL(newID(int)), this, SLOT(sPopulateSetupRate()));
     connect(_warehouse, SIGNAL(newID(int)), this, SLOT(sPopulateLocations()));
+    
+    _runRate->setValidator(omfgThis->runTimeVal());
+    _setupRate->setValidator(omfgThis->runTimeVal());
+    _overheadPrcntOfLabor->setValidator(omfgThis->percentVal());
+    _overheadPerLaborHour->setValidator(omfgThis->costVal());
+    _overheadPerMachHour->setValidator(omfgThis->costVal());
+    _overheadRate->setPrecision(omfgThis->costVal());
+    _overheadPerUnit->setValidator(omfgThis->costVal());
+    _avgSetup->setValidator(omfgThis->runTimeVal());
+    _dailyCapacity->setValidator(omfgThis->runTimeVal());
+    _efficiencyFactor->setValidator(omfgThis->percentVal());
+    
     init();
 
     //If not multi-warehouse hide whs control
@@ -372,13 +384,13 @@ void workCenter::sPopulateSetupRate()
 void workCenter::sPopulateRunRate()
 {
   XSqlQuery rate;
-  rate.prepare( "SELECT formatMoney(lbrrate_rate) AS rate "
+  rate.prepare( "SELECT lbrrate_rate AS rate "
                 "FROM lbrrate "
                 "WHERE (lbrrate_id=:lbrrate_id);" );
   rate.bindValue(":lbrrate_id", _stdRunRate->id());
   rate.exec();
   if (rate.first())
-    _runRate->setText(rate.value("rate"));
+    _runRate->setText(rate.value("rate").toDouble());
 }
 
 void workCenter::populate()
@@ -386,16 +398,16 @@ void workCenter::populate()
   q.prepare( "SELECT wrkcnt_code, wrkcnt_descrip, COALESCE(wrkcnt_dept_id, -1) AS wrkcnt_dept_id,"
              "       wrkcnt_warehous_id, wrkcnt_caploaduom, wrkcnt_comments,"
              "       wrkcnt_nummachs, wrkcnt_numpeople,"
-             "       formatScrap(wrkcnt_brd_prcntlbr) AS brd_prcntlbr,"
-             "       formatMoney(wrkcnt_brd_rateperlbrhr) AS brd_rateperlbrhr,"
-             "       formatMoney(wrkcnt_brd_ratepermachhr) AS brd_ratepermachhr,"
-             "       formatCost(wrkcnt_brd_rateperunitprod) AS brd_rateperunit,"
+             "       wrkcnt_brd_prcntlbr * 100 AS f_brd_prcntlbr,"
+             "       wrkcnt_brd_rateperlbrhr,"
+             "       wrkcnt_brd_ratepermachhr,"
+             "       wrkcnt_brd_rateperunitprod,"
              "       wrkcnt_avgqueuedays,"
-             "       formatTime(wrkcnt_avgsutime) AS avgsutime,"
-             "       formatTime(wrkcnt_dailycap) AS dailycap,"
-             "       formatPrcnt(wrkcnt_efficfactor) AS efficiencyfactor,"
-             "       formatMoney(wrkcnt_setuprate) AS setuprate,"
-             "       formatMoney(wrkcnt_runrate) AS runrate,"
+             "       wrkcnt_avgsutime,"
+             "       wrkcnt_dailycap,"
+             "       wrkcnt_efficfactor * 100 AS f_efficfactor,"
+             "       wrkcnt_setuprate,"
+             "       wrkcnt_runrate,"
              "       wrkcnt_setup_lbrrate_id, wrkcnt_run_lbrrate_id,"
              "       wrkcnt_wip_location_id "
              "FROM wrkcnt "
@@ -409,14 +421,14 @@ void workCenter::populate()
     _department->setId(q.value("wrkcnt_dept_id").toInt());
     _numOfMachines->setValue(q.value("wrkcnt_nummachs").toInt());
     _numOfPeople->setValue(q.value("wrkcnt_numpeople").toInt());
-    _overheadPrcntOfLabor->setText(q.value("brd_prcntlbr"));
-    _overheadPerLaborHour->setText(q.value("brd_rateperlbrhr"));
-    _overheadPerMachHour->setText(q.value("brd_ratepermachhr"));
-    _overheadPerUnit->setText(q.value("brd_rateperunit"));
+    _overheadPrcntOfLabor->setText(q.value("f_brd_prcntlbr").toDouble());
+    _overheadPerLaborHour->setText(q.value("wrkcnt_brd_rateperlbrhr").toDouble());
+    _overheadPerMachHour->setText(q.value("wrkcnt_brd_ratepermachhr").toDouble());
+    _overheadPerUnit->setText(q.value("wrkcnt_brd_rateperunitprod").toDouble());
     _avgQueueDays->setValue(q.value("wrkcnt_avgqueuedays").toInt());
-    _avgSetup->setText(q.value("avgsutime"));
-    _dailyCapacity->setText(q.value("dailycap"));
-    _efficiencyFactor->setText(q.value("efficiencyfactor"));
+    _avgSetup->setText(q.value("wrkcnt_avgsutime").toDouble());
+    _dailyCapacity->setText(q.value("wrkcnt_dailycap").toDouble());
+    _efficiencyFactor->setText(q.value("f_efficfactor").toDouble());
     _warehouse->setId(q.value("wrkcnt_warehous_id").toInt());
     _wipLocation->setId(q.value("wrkcnt_wip_location_id").toInt());
 
@@ -428,7 +440,7 @@ void workCenter::populate()
     else
       _setupSpecifyRate->setChecked(TRUE);
 
-    _setupRate->setText(q.value("setuprate"));
+    _setupRate->setText(q.value("wrkcnt_setuprate").toDouble());
     sPopulateOverheadRate();
 
     if (q.value("wrkcnt_run_lbrrate_id").toInt() != -1)
@@ -439,7 +451,7 @@ void workCenter::populate()
     else
       _runSpecifyRate->setChecked(TRUE);
 
-    _runRate->setText(q.value("runrate"));
+    _runRate->setText(q.value("wrkcnt_runrate").toDouble());
     sPopulateOverheadRate();
 
     if (q.value("wrkcnt_caploaduom").toString() == "M")

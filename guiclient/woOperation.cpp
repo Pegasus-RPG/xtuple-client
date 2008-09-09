@@ -81,6 +81,10 @@ woOperation::woOperation(QWidget* parent, const char* name, bool modal, Qt::WFla
   _invProdUOMRatio->setValidator(omfgThis->ratioVal());
   _invRunTime->setPrecision(omfgThis->runTimeVal());
   _invPerMinute->setPrecision(omfgThis->runTimeVal());
+  _setupTimeConsumed->setPrecision(omfgThis->runTimeVal());
+  _runTimeConsumed->setPrecision(omfgThis->runTimeVal());
+  _setupTimeRemaining->setPrecision(omfgThis->runTimeVal());
+  _runTimeRemaining->setPrecision(omfgThis->runTimeVal());
 
   omfgThis->inputManager()->notify(cBCWorkOrder, this, _wo, SLOT(setId(int)));
 
@@ -373,12 +377,12 @@ void woOperation::populate()
   wooper.prepare( "SELECT wooper_wo_id, wooper_seqnumber, wooper_wrkcnt_id, wooper_stdopn_id,"
                   "       wooper_descrip1, wooper_descrip2, wooper_toolref,"
                   "       wooper_produom, wooper_invproduomratio,"
-                  "       formatTime(wooper_sutime) AS sutime, wooper_surpt,"
-                  "       formatTime(wooper_rntime) AS rntime, wooper_rnrpt,"
-                  "       formatTime(wooper_suconsumed) AS suconsumed, wooper_suconsumed, wooper_sucomplete,"
-                  "       formatTime(wooper_rnconsumed) AS rnconsumed, wooper_rnconsumed, wooper_rncomplete,"
-                  "       formatTime(noNeg(wooper_sutime - wooper_suconsumed)) AS suremaining,"
-                  "       formatTime(noNeg(wooper_rntime - wooper_rnconsumed)) AS rnremaining,"
+                  "       wooper_sutime, wooper_surpt,"
+                  "       wooper_rntime, wooper_rnrpt,"
+                  "       wooper_suconsumed, wooper_sucomplete,"
+                  "       wooper_rnconsumed, wooper_rnconsumed, wooper_rncomplete,"
+                  "       noNeg(wooper_sutime - wooper_suconsumed) AS suremaining,"
+                  "       noNeg(wooper_rntime - wooper_rnconsumed) AS rnremaining,"
                   "       wooper_rcvinv, wooper_issuecomp,"
                   "       (DATE(wooper_scheduled) - wo_startdate + 1) AS executionday,"
                   "       wooper_instruc "
@@ -399,16 +403,16 @@ void woOperation::populate()
     _toolingReference->setText(wooper.value("wooper_toolref"));
     _wrkcnt->setId(wooper.value("wooper_wrkcnt_id").toInt());
 
-    _setupTime->setText(wooper.value("sutime"));
-    _setupTimeConsumed->setText(wooper.value("suconsumed").toString());
+    _setupTime->setText(wooper.value("wooper_sutime").toDouble());
+    _setupTimeConsumed->setText(wooper.value("wooper_suconsumed").toDouble());
     _setupComplete->setChecked(wooper.value("wooper_sucomplete").toBool());
-    _setupTimeRemaining->setText(wooper.value("suremaining").toString());
+    _setupTimeRemaining->setText(wooper.value("suremaining").toDouble());
     _reportSetup->setChecked(wooper.value("wooper_surpt").toBool());
 
-    _runTime->setText(wooper.value("rntime"));
-    _runTimeConsumed->setText(wooper.value("rnconsumed").toString());
+    _runTime->setText(wooper.value("wooper_rntime").toDouble());
+    _runTimeConsumed->setText(wooper.value("wooper_rnconsumed").toDouble());
     _runComplete->setChecked(wooper.value("wooper_rncomplete").toBool());
-    _runTimeRemaining->setText(wooper.value("rnremaining").toString());
+    _runTimeRemaining->setText(wooper.value("rnremaining").toDouble());
     _reportRun->setChecked(wooper.value("wooper_rnrpt").toBool());
 
     _receiveStock->setChecked(wooper.value("wooper_rcvinv").toBool());

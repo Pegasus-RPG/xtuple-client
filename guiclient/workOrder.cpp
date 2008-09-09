@@ -91,6 +91,10 @@ workOrder::workOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   _comments->setReadOnly(TRUE);
   _woNumber->setValidator(omfgThis->orderVal());
   _qty->setValidator(omfgThis->qtyVal());
+  _qtyReceived->setPrecision(omfgThis->qtyVal());
+  _postedValue->setPrecision(omfgThis->costVal());
+  _wipValue->setPrecision(omfgThis->costVal());
+  _rcvdValue->setPrecision(omfgThis->costVal());
 
   _printTraveler->setEnabled(_privileges->check("PrintWorkOrderPaperWork"));
 
@@ -207,12 +211,12 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
       XSqlQuery wo;
       wo.prepare( "SELECT wo_itemsite_id, wo_priority, wo_status,"
                   "       formatWoNumber(wo_id) AS f_wonumber,"
-                  "       formatQty(wo_qtyord) AS f_ordered,"
-                  "       formatQty(wo_qtyrcv) AS f_received,"
+                  "       wo_qtyord,"
+                  "       wo_qtyrcv,"
                   "       wo_startdate, wo_duedate,"
-                  "       formatMoney(wo_wipvalue) AS f_wipvalue,"
-                  "       formatMoney(wo_postedvalue) AS f_postedvalue,"
-                  "       formatMoney(wo_postedvalue-wo_wipvalue) AS f_rcvdvalue,"
+                  "       wo_wipvalue,"
+                  "       wo_postedvalue,"
+                  "       wo_postedvalue-wo_wipvalue AS rcvdvalue,"
                   "       wo_prodnotes, wo_prj_id, "
                   "       wo_bom_rev_id, wo_boo_rev_id, "
                   "       wo_cosmethod "
@@ -225,16 +229,16 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
         _oldPriority = wo.value("wo_priority").toInt();
         _oldStartDate = wo.value("wo_startdate").toDate();
         _oldDueDate = wo.value("wo_duedate").toDate();
-        _oldQty = wo.value("f_ordered").toString();
+        _oldQty = wo.value("wo_qtyord").toDouble();
 
         _woNumber->setText(wo.value("f_wonumber").toString());
         _item->setItemsiteid(wo.value("wo_itemsite_id").toInt());
         _priority->setValue(_oldPriority);
-        _postedValue->setText(wo.value("f_postedvalue").toString());
-        _rcvdValue->setText(wo.value("f_rcvdvalue").toString());
-        _wipValue->setText(wo.value("f_wipvalue").toString());
-        _qty->setText(wo.value("f_ordered").toString());
-        _qtyReceived->setText(wo.value("f_received").toString());
+        _postedValue->setText(wo.value("wo_postedvalue").toDouble());
+        _rcvdValue->setText(wo.value("rcvdvalue").toDouble());
+        _wipValue->setText(wo.value("wo_wipvalue").toDouble());
+        _qty->setText(wo.value("wo_qtyord").toDouble());
+        _qtyReceived->setText(wo.value("wo_qtyrcv").toDouble());
         _startDate->setDate(_oldStartDate);
         _dueDate->setDate(_oldDueDate);
         _productionNotes->setText(wo.value("wo_prodnotes").toString());
@@ -295,12 +299,12 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
       XSqlQuery wo;
       wo.prepare( "SELECT wo_itemsite_id, wo_priority,"
                   "       formatWoNumber(wo_id) AS f_wonumber,"
-                  "       formatQty(wo_qtyord) AS f_ordered,"
-                  "       formatQty(wo_qtyrcv) AS f_received,"
+                  "       wo_qtyord,"
+                  "       wo_qtyrcv,"
                   "       wo_startdate, wo_duedate,"
-                  "       formatMoney(wo_wipvalue) AS f_wipvalue,"
-                  "       formatMoney(wo_postedvalue) AS f_postedvalue,"
-                  "       formatMoney(wo_postedvalue-wo_wipvalue) AS f_rcvdvalue,"
+                  "       wo_wipvalue,"
+                  "       wo_postedvalue,"
+                  "       wo_postedvalue-wo_wipvalue AS rcvdvalue,"
                   "       wo_prodnotes, wo_prj_id, wo_bom_rev_id, "
                   "       wo_boo_rev_id, wo_cosmethod "
                   "FROM wo "
@@ -314,11 +318,11 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
         _woNumber->setText(wo.value("f_wonumber").toString());
         _item->setItemsiteid(wo.value("wo_itemsite_id").toInt());
         _priority->setValue(wo.value("wo_priority").toInt());
-        _postedValue->setText(wo.value("f_postedvalue").toString());
-        _rcvdValue->setText(wo.value("f_rcvdvalue").toString());
-        _wipValue->setText(wo.value("f_wipvalue").toString());
-        _qty->setText(wo.value("f_ordered").toString());
-        _qtyReceived->setText(wo.value("f_received").toString());
+        _postedValue->setText(wo.value("wo_postedvalue").toDouble());
+        _rcvdValue->setText(wo.value("rcvdvalue").toDouble());
+        _wipValue->setText(wo.value("wo_wipvalue").toDouble());
+        _qty->setText(wo.value("wo_qtyord").toDouble());
+        _qtyReceived->setText(wo.value("wo_qtyrcv").toDouble());
         _startDate->setDate(wo.value("wo_startdate").toDate());
         _dueDate->setDate(wo.value("wo_duedate").toDate());
         _productionNotes->setText(wo.value("wo_prodnotes").toString());
@@ -663,7 +667,7 @@ void workOrder::sCreate()
       q.exec();
     }
 
-    if(_qty->text() != _oldQty)
+    if(_qty->text().toDouble() != _oldQty)
     {
       double newQty = _qty->toDouble();
       q.prepare( "SELECT validateOrderQty(wo_itemsite_id, :qty, TRUE) AS qty "

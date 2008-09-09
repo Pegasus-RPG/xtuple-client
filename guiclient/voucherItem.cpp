@@ -80,8 +80,19 @@ voucherItem::voucherItem(QWidget* parent, const char* name, bool modal, Qt::WFla
   connect(_freightToVoucher, SIGNAL(lostFocus()), this, SLOT(sFillList()));
 
   _item->setReadOnly(TRUE);
-  _qtyToVoucher->setValidator(omfgThis->qtyVal());
+  
+  _unitPrice->setPrecision(omfgThis->priceVal());
+  _extPrice->setPrecision(omfgThis->moneyVal());
+  _lineFreight->setPrecision(omfgThis->moneyVal());
 
+  _ordered->setValidator(omfgThis->qtyVal());
+  _received->setValidator(omfgThis->qtyVal());
+  _rejected->setValidator(omfgThis->qtyVal());
+  _uninvoicedReceived->setValidator(omfgThis->qtyVal());
+  _uninvoicedRejected->setValidator(omfgThis->qtyVal());
+
+  _qtyToVoucher->setValidator(omfgThis->qtyVal());
+  
   _vodist->addColumn(tr("Cost Element"), -1,           Qt::AlignLeft, true, "costelem_type");
   _vodist->addColumn(tr("Amount"),       _priceColumn, Qt::AlignRight,true, "vodist_amount");
 
@@ -135,24 +146,24 @@ enum SetResponse voucherItem::set(const ParameterList &pParams)
                "       COALESCE(itemsite_id, -1) AS itemsiteid,"
                "       poitem_vend_item_number, poitem_vend_uom, poitem_vend_item_descrip,"
                "       poitem_duedate,"
-               "       formatQty(poitem_qty_ordered) AS qtyordered,"
-               "       formatQty(poitem_qty_received) AS qtyreceived,"
-               "       formatQty(poitem_qty_returned) AS qtyreturned,"
-               "       formatQty( ( SELECT COALESCE(SUM(porecv_qty), 0)"
+               "       poitem_qty_ordered,"
+               "       poitem_qty_received,"
+               "       poitem_qty_returned,"
+               "       ( SELECT COALESCE(SUM(porecv_qty), 0)"
                "                    FROM porecv"
                "                    WHERE ( (porecv_posted)"
                "                     AND (NOT porecv_invoiced)"
        	       "                     AND (porecv_vohead_id IS NULL)"
-               "                     AND (porecv_poitem_id=poitem_id) ) ) ) AS f_received,"
-               "       formatQty( ( SELECT COALESCE(SUM(poreject_qty), 0)"
+               "                     AND (porecv_poitem_id=poitem_id) ) ) AS f_received,"
+               "       ( SELECT COALESCE(SUM(poreject_qty), 0)"
                "                    FROM poreject"
                "                    WHERE ( (poreject_posted)"
                "                     AND (NOT poreject_invoiced)"
                "                     ANd (poreject_vohead_id IS NULL)"
-               "                     AND (poreject_poitem_id=poitem_id) ) ) ) AS f_rejected,"
-               "       formatMoney(poitem_unitprice) AS f_unitprice,"
-               "       formatMoney(poitem_unitprice * poitem_qty_ordered) AS f_extprice,"
-               "       formatMoney(poitem_freight) AS f_linefreight "
+               "                     AND (poreject_poitem_id=poitem_id) ) ) AS f_rejected,"
+               "       poitem_unitprice,"
+               "       poitem_unitprice * poitem_qty_ordered AS f_extprice,"
+               "       poitem_freight "
                "FROM pohead, "
 	       " poitem LEFT OUTER JOIN itemsite ON (poitem_itemsite_id=itemsite_id) "
            "WHERE ( (poitem_pohead_id=pohead_id)"
@@ -167,14 +178,14 @@ enum SetResponse voucherItem::set(const ParameterList &pParams)
       _vendUOM->setText(q.value("poitem_vend_uom").toString());
       _vendDescription->setText(q.value("poitem_vend_item_descrip").toString());
       _dueDate->setDate(q.value("poitem_duedate").toDate());
-      _ordered->setText(q.value("qtyordered").toString());
-      _received->setText(q.value("qtyreceived").toString());
-      _rejected->setText(q.value("qtyreturned").toString());
-      _uninvoicedReceived->setText(q.value("f_received").toString());
-      _uninvoicedRejected->setText(q.value("f_rejected").toString());
-      _unitPrice->setText(q.value("f_unitprice").toString());
-      _extPrice->setText(q.value("f_extprice").toString());
-      _lineFreight->setText(q.value("f_linefreight").toString());
+      _ordered->setText(q.value("poitem_qty_ordered").toDouble());
+      _received->setText(q.value("poitem_qty_received").toDouble());
+      _rejected->setText(q.value("poitem_qty_returned").toDouble());
+      _uninvoicedReceived->setText(q.value("f_received").toDouble());
+      _uninvoicedRejected->setText(q.value("f_rejected").toDouble());
+      _unitPrice->setText(q.value("poitem_unitprice").toDouble());
+      _extPrice->setText(q.value("f_extprice").toDouble());
+      _lineFreight->setText(q.value("poitem_freight").toDouble());
 
       if (q.value("itemsiteid") != -1)
         _item->setItemsiteid(q.value("itemsiteid").toInt());
@@ -193,7 +204,7 @@ enum SetResponse voucherItem::set(const ParameterList &pParams)
   if ( (_voheadid != -1) && (_poitemid != -1) )
   {
     q.prepare( "SELECT voitem_id, voitem_close,"
-               "       formatQty(voitem_qty) AS f_qty,"
+               "       voitem_qty,"
                "       voitem_freight "
                "FROM voitem "
                "WHERE ( (voitem_vohead_id=:vohead_id)"
@@ -205,7 +216,7 @@ enum SetResponse voucherItem::set(const ParameterList &pParams)
     {
       _voitemid = q.value("voitem_id").toInt();
       _closePoitem->setChecked(q.value("voitem_close").toBool());
-      _qtyToVoucher->setText(q.value("f_qty").toString());
+      _qtyToVoucher->setText(q.value("voitem_qty").toDouble());
       _freightToVoucher->setLocalValue(q.value("voitem_freight").toDouble());
     }
     else if (q.lastError().type() != QSqlError::None)

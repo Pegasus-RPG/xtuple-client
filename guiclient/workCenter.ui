@@ -45,7 +45,7 @@
            <number>5</number>
           </property>
           <item row="0" column="0" >
-           <widget class="QLabel" name="_workCenterNumLit" >
+           <widget class="XLabel" name="_workCenterNumLit" >
             <property name="text" >
              <string>Work Center #:</string>
             </property>
@@ -55,7 +55,7 @@
            </widget>
           </item>
           <item row="1" column="0" >
-           <widget class="QLabel" name="_descriptionLit" >
+           <widget class="XLabel" name="_descriptionLit" >
             <property name="text" >
              <string>Description:</string>
             </property>
@@ -101,7 +101,7 @@
            </layout>
           </item>
           <item row="3" column="0" >
-           <widget class="QLabel" name="_warehouseLit" >
+           <widget class="XLabel" name="_warehouseLit" >
             <property name="text" >
              <string>Site:</string>
             </property>
@@ -194,7 +194,7 @@
              <number>0</number>
             </property>
             <item>
-             <widget class="QLabel" name="_numOfMachinesLit" >
+             <widget class="XLabel" name="_numOfMachinesLit" >
               <property name="text" >
                <string># of Machines:</string>
               </property>
@@ -204,7 +204,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="_numOfPeopleLit" >
+             <widget class="XLabel" name="_numOfPeopleLit" >
               <property name="text" >
                <string># of People:</string>
               </property>
@@ -560,7 +560,7 @@
                <number>0</number>
               </property>
               <item>
-               <widget class="QLabel" name="_overheadPrcntOfLaborLit" >
+               <widget class="XLabel" name="_overheadPrcntOfLaborLit" >
                 <property name="text" >
                  <string>Overhead % of Labor:</string>
                 </property>
@@ -570,7 +570,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="_overheadPerLaborHourLit" >
+               <widget class="XLabel" name="_overheadPerLaborHourLit" >
                 <property name="text" >
                  <string>Overhead per Labor Hr.:</string>
                 </property>
@@ -580,7 +580,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="_overheadPerMachHourLit" >
+               <widget class="XLabel" name="_overheadPerMachHourLit" >
                 <property name="text" >
                  <string>Overhead per Mach. Hr.:</string>
                 </property>
@@ -590,7 +590,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="_overheadRateLit" >
+               <widget class="XLabel" name="_overheadRateLit" >
                 <property name="text" >
                  <string>Overhead Rate/Hr.:</string>
                 </property>
@@ -673,7 +673,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="_overheadRate" >
+               <widget class="XLabel" name="_overheadRate" >
                 <property name="minimumSize" >
                  <size>
                   <width>80</width>
@@ -724,7 +724,7 @@
              </spacer>
             </item>
             <item>
-             <widget class="QLabel" name="_overheadPerUnitLit" >
+             <widget class="XLabel" name="_overheadPerUnitLit" >
               <property name="sizePolicy" >
                <sizepolicy>
                 <hsizetype>5</hsizetype>
@@ -793,7 +793,7 @@
              <number>0</number>
             </property>
             <item>
-             <widget class="QLabel" name="_avgQueueDaysLit" >
+             <widget class="XLabel" name="_avgQueueDaysLit" >
               <property name="text" >
                <string>Avg. Queue Days:</string>
               </property>
@@ -803,7 +803,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="_avgSetupTimeLit" >
+             <widget class="XLabel" name="_avgSetupTimeLit" >
               <property name="text" >
                <string>Avg. Setup Time:</string>
               </property>
@@ -813,7 +813,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="_dailyCapacityLit" >
+             <widget class="XLabel" name="_dailyCapacityLit" >
               <property name="text" >
                <string>Daily Capacity:</string>
               </property>
@@ -823,7 +823,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="_efficiencyFactorLit" >
+             <widget class="XLabel" name="_efficiencyFactorLit" >
               <property name="text" >
                <string>Efficiency Factor:</string>
               </property>
@@ -958,7 +958,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="_minutesLit" >
+                 <widget class="XLabel" name="_minutesLit" >
                   <property name="text" >
                    <string>Minutes</string>
                   </property>
@@ -1025,7 +1025,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="_efficiencyFactorPerLit" >
+                 <widget class="XLabel" name="_efficiencyFactorPerLit" >
                   <property name="text" >
                    <string>%</string>
                   </property>
@@ -1089,7 +1089,7 @@
          <number>6</number>
         </property>
         <item>
-         <widget class="QLabel" name="_wipLocationLit" >
+         <widget class="XLabel" name="_wipLocationLit" >
           <property name="text" >
            <string>WIP Location:</string>
           </property>
@@ -1142,7 +1142,7 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="QLabel" name="_commentsLit" >
+       <widget class="XLabel" name="_commentsLit" >
         <property name="text" >
          <string>Comments:</string>
         </property>

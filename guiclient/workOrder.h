@@ -98,7 +98,7 @@ private:
     int _oldPriority;
     QDate _oldStartDate;
     QDate _oldDueDate;
-    QString _oldQty;
+    double _oldQty;
 
 };
 

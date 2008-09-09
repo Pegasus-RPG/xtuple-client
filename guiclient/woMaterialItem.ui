@@ -120,14 +120,14 @@
           <number>6</number>
          </property>
          <item row="0" column="2" >
-          <widget class="QLabel" name="_uomLit" >
+          <widget class="XLabel" name="_uomLit" >
            <property name="text" >
             <string>Issue UOM:</string>
            </property>
           </widget>
          </item>
          <item row="2" column="1" >
-          <widget class="QLabel" name="_qtyRequired" >
+          <widget class="XLabel" name="_qtyRequired" >
            <property name="minimumSize" >
             <size>
              <width>80</width>
@@ -140,7 +140,7 @@
           </widget>
          </item>
          <item row="2" column="0" >
-          <widget class="QLabel" name="_qtyRequiredLit" >
+          <widget class="XLabel" name="_qtyRequiredLit" >
            <property name="text" >
             <string>Qty. Required:</string>
            </property>
@@ -150,7 +150,7 @@
           </widget>
          </item>
          <item row="0" column="0" >
-          <widget class="QLabel" name="_qtyPerLit" >
+          <widget class="XLabel" name="_qtyPerLit" >
            <property name="text" >
             <string>Qty. Per:</string>
            </property>
@@ -181,7 +181,7 @@
           </widget>
          </item>
          <item row="1" column="0" >
-          <widget class="QLabel" name="_scrapLit" >
+          <widget class="XLabel" name="_scrapLit" >
            <property name="text" >
             <string>Scrap %:</string>
            </property>
@@ -212,7 +212,7 @@
           </widget>
          </item>
          <item row="3" column="0" >
-          <widget class="QLabel" name="_issueMethodLit" >
+          <widget class="XLabel" name="_issueMethodLit" >
            <property name="text" >
             <string>Issue Method:</string>
            </property>

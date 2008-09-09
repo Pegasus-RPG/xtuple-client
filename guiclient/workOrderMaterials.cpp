@@ -83,7 +83,16 @@ workOrderMaterials::workOrderMaterials(QWidget* parent, const char* name, Qt::WF
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
 
   _wo->setType(cWoExploded | cWoIssued | cWoReleased);
-
+  _pickNumber->setPrecision(omfgThis->qtyVal());
+  _nonPickNumber->setPrecision(omfgThis->qtyVal());
+  _totalNumber->setPrecision(omfgThis->qtyVal());
+  _pickQtyPer->setPrecision(omfgThis->qtyPerVal());
+  _nonPickQtyPer->setPrecision(omfgThis->qtyPerVal());
+  _totalQtyPer->setPrecision(omfgThis->qtyPerVal());
+  _currentActCost->setPrecision(omfgThis->costVal());
+  _currentStdCost->setPrecision(omfgThis->costVal());
+  _maxCost->setPrecision(omfgThis->costVal());
+  
   omfgThis->inputManager()->notify(cBCWorkOrder, this, _wo, SLOT(setId(int)));
 
   _womatl->addColumn(tr("Component Item"), _itemColumn,  Qt::AlignLeft,  true, "item_number");
@@ -449,13 +458,13 @@ void workOrderMaterials::sFillList()
       if (q.value("item_picklist").toBool())
       {
         foundPick = TRUE;
-        _pickNumber->setText(q.value("total").toString());
+        _pickNumber->setText(q.value("total").toDouble());
         _pickQtyPer->setText(formatQtyPer(q.value("qtyper").toDouble()));
       }
       else
       {
         foundNonPick = TRUE;
-        _nonPickNumber->setText(q.value("total").toString());
+        _nonPickNumber->setText(q.value("total").toDouble());
         _nonPickQtyPer->setText(formatQtyPer(q.value("qtyper").toDouble()));
       }
     }
@@ -467,24 +476,24 @@ void workOrderMaterials::sFillList()
 
     if (!foundPick)
     {
-      _pickNumber->setText("0");
+      _pickNumber->setText(QString("0").toDouble());
       _pickQtyPer->setText(formatQtyPer(0.0));
     }
 
     if (!foundNonPick)
     {
-      _nonPickNumber->setText("0");
+      _nonPickNumber->setText(QString("0").toDouble());
       _nonPickQtyPer->setText(formatQtyPer(0.0));
     }
 
-    _totalNumber->setText(QString("%1").arg(totalNumber));
-    _totalQtyPer->setText(formatQtyPer(totalQtyPer));
+    _totalNumber->setText(QString("%1").arg(totalNumber).toDouble());
+    _totalQtyPer->setText(totalQtyPer);
 
     if (_privileges->check("ViewCosts"))
     {
-      q.prepare( "SELECT formatCost(p.item_maxcost) AS f_maxcost,"
-                 "       formatCost(COALESCE(SUM(itemuomtouom(ci.itemsite_item_id, womatl_uom_id, NULL, womatl_qtyper * (1 + womatl_scrap)) * stdCost(c.item_id)))) AS f_stdcost,"
-                 "       formatCost(COALESCE(SUM(itemuomtouom(ci.itemsite_item_id, womatl_uom_id, NULL, womatl_qtyper * (1 + womatl_scrap)) * actCost(c.item_id)))) AS f_actcost "
+      q.prepare( "SELECT p.item_maxcost AS f_maxcost,"
+                 "       COALESCE(SUM(itemuomtouom(ci.itemsite_item_id, womatl_uom_id, NULL, womatl_qtyper * (1 + womatl_scrap)) * stdCost(c.item_id))) AS f_stdcost,"
+                 "       COALESCE(SUM(itemuomtouom(ci.itemsite_item_id, womatl_uom_id, NULL, womatl_qtyper * (1 + womatl_scrap)) * actCost(c.item_id))) AS f_actcost "
                  "FROM wo, womatl, itemsite AS ci, itemsite AS pi, item AS c, item AS p "
                  "WHERE ( (womatl_wo_id=wo_id)"
                  " AND (womatl_itemsite_id=ci.itemsite_id)"
@@ -497,9 +506,9 @@ void workOrderMaterials::sFillList()
       q.exec();
       if (q.first())
       {
-        _currentStdCost->setText(q.value("f_stdcost").toString());
-        _currentActCost->setText(q.value("f_actcost").toString());
-        _maxCost->setText(q.value("f_maxcost").toString());
+        _currentStdCost->setText(q.value("f_stdcost").toDouble());
+        _currentActCost->setText(q.value("f_actcost").toDouble());
+        _maxCost->setText(q.value("f_maxcost").toDouble());
       }
       else if (q.lastError().type() != QSqlError::None)
       {

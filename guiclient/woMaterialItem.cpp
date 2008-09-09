@@ -92,6 +92,7 @@ woMaterialItem::woMaterialItem(QWidget* parent, const char* name, bool modal, Qt
 
   _qtyPer->setValidator(omfgThis->qtyPerVal());
   _scrap->setValidator(omfgThis->scrapVal());
+  _qtyRequired->setPrecision(omfgThis->qtyVal());
 
   QString issueMethod = _metrics->value("DefaultWomatlIssueMethod");
   if (issueMethod == "S")
@@ -148,7 +149,7 @@ enum SetResponse woMaterialItem::set(const ParameterList &pParams)
 
   param = pParams.value("qtyPer", &valid);
   if (valid)
-    _qtyPer->setText(formatQtyPer(param.toDouble()));
+    _qtyPer->setText(param.toDouble());
 
   param = pParams.value("uom_id", &valid);
   if (valid)
@@ -156,7 +157,7 @@ enum SetResponse woMaterialItem::set(const ParameterList &pParams)
 
   param = pParams.value("scrap", &valid);
   if (valid)
-    _scrap->setText(formatPercent(param.toDouble()));
+    _scrap->setText(param.toDouble());
 
   param = pParams.value("issueMethod", &valid);
   if (valid)
@@ -304,15 +305,15 @@ void woMaterialItem::sSave()
 
 void woMaterialItem::sUpdateQtyRequired()
 {
-  _qtyRequired->setText(formatQty(_wo->qtyOrdered() * (_qtyPer->toDouble() * (1 + (_scrap->toDouble() / 100)))));
+  _qtyRequired->setText(_wo->qtyOrdered() * (_qtyPer->toDouble() * (1 + (_scrap->toDouble() / 100))));
 }
 
 void woMaterialItem::populate()
 {
   q.prepare( "SELECT womatl_wo_id, itemsite_item_id,"
-             "       formatQtyPer(womatl_qtyper) AS qtyper,"
+             "       womatl_qtyper AS qtyper,"
              "       womatl_uom_id,"
-             "       formatScrap(womatl_scrap) AS scrap,"
+             "       womatl_scrap * 100 AS scrap,"
              "       womatl_issuemethod "
              "FROM womatl, itemsite "
              "WHERE ( (womatl_itemsite_id=itemsite_id)"
@@ -323,9 +324,9 @@ void woMaterialItem::populate()
   {
     _wo->setId(q.value("womatl_wo_id").toInt());
     _item->setId(q.value("itemsite_item_id").toInt());
-    _qtyPer->setText(q.value("qtyper").toString());
+    _qtyPer->setText(q.value("qtyper").toDouble());
     _uom->setId(q.value("womatl_uom_id").toInt());
-    _scrap->setText(q.value("scrap").toString());
+    _scrap->setText(q.value("scrap").toDouble());
 
     if (q.value("womatl_issuemethod").toString() == "S")
       _issueMethod->setCurrentItem(0);

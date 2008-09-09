@@ -112,7 +112,7 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="QLabel" name="_materialRequirementsLit" >
+       <widget class="XLabel" name="_materialRequirementsLit" >
         <property name="minimumSize" >
          <size>
           <width>0</width>
@@ -271,7 +271,7 @@
            <number>5</number>
           </property>
           <item row="2" column="1" >
-           <widget class="QLabel" name="_nonPickNumber" >
+           <widget class="XLabel" name="_nonPickNumber" >
             <property name="minimumSize" >
              <size>
               <width>80</width>
@@ -287,7 +287,7 @@
            </widget>
           </item>
           <item row="3" column="0" >
-           <widget class="QLabel" name="_totalLit" >
+           <widget class="XLabel" name="_totalLit" >
             <property name="text" >
              <string>Totals:</string>
             </property>
@@ -297,7 +297,7 @@
            </widget>
           </item>
           <item row="1" column="1" >
-           <widget class="QLabel" name="_pickNumber" >
+           <widget class="XLabel" name="_pickNumber" >
             <property name="minimumSize" >
              <size>
               <width>80</width>
@@ -313,7 +313,7 @@
            </widget>
           </item>
           <item row="2" column="2" >
-           <widget class="QLabel" name="_nonPickQtyPer" >
+           <widget class="XLabel" name="_nonPickQtyPer" >
             <property name="minimumSize" >
              <size>
               <width>80</width>
@@ -329,7 +329,7 @@
            </widget>
           </item>
           <item row="2" column="0" >
-           <widget class="QLabel" name="_nonPickListItems" >
+           <widget class="XLabel" name="_nonPickListItems" >
             <property name="text" >
              <string>Non-Pick List Items:</string>
             </property>
@@ -339,7 +339,7 @@
            </widget>
           </item>
           <item row="0" column="1" >
-           <widget class="QLabel" name="_numberOfItemsLit" >
+           <widget class="XLabel" name="_numberOfItemsLit" >
             <property name="minimumSize" >
              <size>
               <width>80</width>
@@ -371,7 +371,7 @@
            </spacer>
           </item>
           <item row="3" column="2" >
-           <widget class="QLabel" name="_totalQtyPer" >
+           <widget class="XLabel" name="_totalQtyPer" >
             <property name="minimumSize" >
              <size>
               <width>80</width>
@@ -387,7 +387,7 @@
            </widget>
           </item>
           <item row="1" column="0" >
-           <widget class="QLabel" name="_PickListItemsLit" >
+           <widget class="XLabel" name="_PickListItemsLit" >
             <property name="text" >
              <string>Pick List Items:</string>
             </property>
@@ -397,7 +397,7 @@
            </widget>
           </item>
           <item row="3" column="1" >
-           <widget class="QLabel" name="_totalNumber" >
+           <widget class="XLabel" name="_totalNumber" >
             <property name="minimumSize" >
              <size>
               <width>80</width>
@@ -413,7 +413,7 @@
            </widget>
           </item>
           <item row="0" column="2" >
-           <widget class="QLabel" name="_totalQtyPerLit" >
+           <widget class="XLabel" name="_totalQtyPerLit" >
             <property name="minimumSize" >
              <size>
               <width>80</width>
@@ -429,7 +429,7 @@
            </widget>
           </item>
           <item row="1" column="2" >
-           <widget class="QLabel" name="_pickQtyPer" >
+           <widget class="XLabel" name="_pickQtyPer" >
             <property name="minimumSize" >
              <size>
               <width>80</width>
@@ -471,7 +471,7 @@
                <number>0</number>
               </property>
               <item>
-               <widget class="QLabel" name="_currentStdCostLit" >
+               <widget class="XLabel" name="_currentStdCostLit" >
                 <property name="text" >
                  <string>Current Std. Material Cost:</string>
                 </property>
@@ -481,7 +481,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="_currentActCostLit" >
+               <widget class="XLabel" name="_currentActCostLit" >
                 <property name="text" >
                  <string>Current Act. Material Cost:</string>
                 </property>
@@ -491,7 +491,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="_maxCostLit" >
+               <widget class="XLabel" name="_maxCostLit" >
                 <property name="text" >
                  <string>Maximum Desired Cost:</string>
                 </property>
@@ -511,7 +511,7 @@
                <number>0</number>
               </property>
               <item>
-               <widget class="QLabel" name="_currentStdCost" >
+               <widget class="XLabel" name="_currentStdCost" >
                 <property name="minimumSize" >
                  <size>
                   <width>80</width>
@@ -524,7 +524,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="_currentActCost" >
+               <widget class="XLabel" name="_currentActCost" >
                 <property name="minimumSize" >
                  <size>
                   <width>80</width>
@@ -537,7 +537,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="_maxCost" >
+               <widget class="XLabel" name="_maxCost" >
                 <property name="minimumSize" >
                  <size>
                   <width>80</width>

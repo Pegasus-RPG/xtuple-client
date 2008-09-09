@@ -8,7 +8,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>668</width>
+    <width>679</width>
     <height>684</height>
    </rect>
   </property>
@@ -103,7 +103,7 @@
             <number>0</number>
            </property>
            <item>
-            <widget class="QLabel" name="_operSeqNumLit" >
+            <widget class="XLabel" name="_operSeqNumLit" >
              <property name="text" >
               <string>Oper. Seq. #:</string>
              </property>
@@ -113,7 +113,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="_executionDayLit" >
+            <widget class="XLabel" name="_executionDayLit" >
              <property name="text" >
               <string>Execution Day:</string>
              </property>
@@ -126,7 +126,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="_qtyOrderedLit" >
+            <widget class="XLabel" name="_qtyOrderedLit" >
              <property name="text" >
               <string>Qty. Ordered:</string>
              </property>
@@ -172,7 +172,7 @@
               <number>0</number>
              </property>
              <item>
-              <widget class="QLabel" name="_operSeqNum" >
+              <widget class="XLabel" name="_operSeqNum" >
                <property name="minimumSize" >
                 <size>
                  <width>40</width>
@@ -412,7 +412,7 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="QLabel" name="_standardOperLit" >
+        <widget class="XLabel" name="_standardOperLit" >
          <property name="text" >
           <string>Standard &amp;Oper.:</string>
          </property>
@@ -471,7 +471,7 @@
           <number>0</number>
          </property>
          <item>
-          <widget class="QLabel" name="_descriptionLit" >
+          <widget class="XLabel" name="_descriptionLit" >
            <property name="text" >
             <string>&amp;Description:</string>
            </property>
@@ -546,7 +546,7 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="QLabel" name="_workCenterLit" >
+        <widget class="XLabel" name="_workCenterLit" >
          <property name="text" >
           <string>&amp;Work Center:</string>
          </property>
@@ -588,7 +588,7 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="QLabel" name="_prodUOMLit" >
+        <widget class="XLabel" name="_prodUOMLit" >
          <property name="text" >
           <string>Production &amp;UOM:</string>
          </property>
@@ -638,7 +638,7 @@
             <number>0</number>
            </property>
            <item>
-            <widget class="QLabel" name="_toolingReferenceLit" >
+            <widget class="XLabel" name="_toolingReferenceLit" >
              <property name="text" >
               <string>&amp;Tooling Reference:</string>
              </property>
@@ -679,7 +679,7 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="QLabel" name="_invProdUOMRatioLit" >
+      <widget class="XLabel" name="_invProdUOMRatioLit" >
        <property name="text" >
         <string>Inventory/Production UOM &amp;Ratio:</string>
        </property>
@@ -788,7 +788,7 @@
             <number>0</number>
            </property>
            <item>
-            <widget class="QLabel" name="_totalSetupTimeLit" >
+            <widget class="XLabel" name="_totalSetupTimeLit" >
              <property name="text" >
               <string>Total Setup Time:</string>
              </property>
@@ -798,7 +798,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="_totalRunTimeLit" >
+            <widget class="XLabel" name="_totalRunTimeLit" >
              <property name="text" >
               <string>Total Run Time:</string>
              </property>
@@ -1037,7 +1037,7 @@
             <number>0</number>
            </property>
            <item>
-            <widget class="QLabel" name="_setupTimeConsumedLit" >
+            <widget class="XLabel" name="_setupTimeConsumedLit" >
              <property name="text" >
               <string>Setup Time Consumed:</string>
              </property>
@@ -1047,7 +1047,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="_runTimeConsumedLit" >
+            <widget class="XLabel" name="_runTimeConsumedLit" >
              <property name="text" >
               <string>Run Time Consumed:</string>
              </property>
@@ -1093,7 +1093,7 @@
               <number>0</number>
              </property>
              <item>
-              <widget class="QLabel" name="_setupTimeConsumed" >
+              <widget class="XLabel" name="_setupTimeConsumed" >
                <property name="minimumSize" >
                 <size>
                  <width>80</width>
@@ -1109,7 +1109,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="_runTimeConsumed" >
+              <widget class="XLabel" name="_runTimeConsumed" >
                <property name="minimumSize" >
                 <size>
                  <width>80</width>
@@ -1274,7 +1274,7 @@
             <number>0</number>
            </property>
            <item>
-            <widget class="QLabel" name="_setupTimeRemainingLit" >
+            <widget class="XLabel" name="_setupTimeRemainingLit" >
              <property name="text" >
               <string>Setup Time Remaining:</string>
              </property>
@@ -1284,7 +1284,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="_runTimeRemainingLit" >
+            <widget class="XLabel" name="_runTimeRemainingLit" >
              <property name="text" >
               <string>Run Time Remaining:</string>
              </property>
@@ -1330,7 +1330,7 @@
               <number>0</number>
              </property>
              <item>
-              <widget class="QLabel" name="_setupTimeRemaining" >
+              <widget class="XLabel" name="_setupTimeRemaining" >
                <property name="minimumSize" >
                 <size>
                  <width>80</width>
@@ -1346,7 +1346,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="_runTimeRemaining" >
+              <widget class="XLabel" name="_runTimeRemaining" >
                <property name="minimumSize" >
                 <size>
                  <width>80</width>
@@ -1547,7 +1547,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="_invUOM2" >
+             <widget class="XLabel" name="_invUOM2" >
               <property name="minimumSize" >
                <size>
                 <width>60</width>
@@ -1560,7 +1560,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="_invPerMinuteLit" >
+             <widget class="XLabel" name="_invPerMinuteLit" >
               <property name="text" >
                <string>per Minute</string>
               </property>
@@ -1602,7 +1602,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="_invRunTimePerLit" >
+             <widget class="XLabel" name="_invRunTimePerLit" >
               <property name="text" >
                <string>(min.) per</string>
               </property>
@@ -1612,7 +1612,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="_invUOM1" >
+             <widget class="XLabel" name="_invUOM1" >
               <property name="minimumSize" >
                <size>
                 <width>60</width>
@@ -1684,7 +1684,7 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="QLabel" name="_instructionsLit" >
+        <widget class="XLabel" name="_instructionsLit" >
          <property name="sizePolicy" >
           <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
            <horstretch>0</horstretch>
@@ -1726,6 +1726,11 @@
    <header>xcombobox.h</header>
   </customwidget>
   <customwidget>
+   <class>XLabel</class>
+   <extends>QLabel</extends>
+   <header>xlabel.h</header>
+  </customwidget>
+  <customwidget>
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
@@ -1754,7 +1759,6 @@
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
- <includes/>
  <resources/>
  <connections>
   <connection>
