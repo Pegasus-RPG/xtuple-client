@@ -423,7 +423,7 @@ void item::saveCore()
     return;
   }
   
-  else
+  else if (_mode != cEdit)
   {
     q.exec("BEGIN;");
     _inTransaction = true;
@@ -2079,4 +2079,3 @@ void item::sNewClassCode()
 {
   _inventoryUOM->setFocus();
 }
-  
