@@ -102,14 +102,19 @@ postOperations::postOperations(QWidget* parent, const char* name, bool modal, Qt
   _specifiedRntime->setEnabled(_privileges->check("OverrideWOTCTime"));
 
   _qty->setValidator(omfgThis->qtyVal());
-
+  _qtyOrdered->setPrecision(omfgThis->qtyVal());
+  _qtyReceived->setPrecision(omfgThis->qtyVal());
+  _qtyBalance->setPrecision(omfgThis->qtyVal());
+  
+  _standardRntime->setPrecision(omfgThis->runTimeVal());
+  _standardSutime->setPrecision(omfgThis->runTimeVal());
   _specifiedSutime->setValidator(omfgThis->runTimeVal());
   _specifiedRntime->setValidator(omfgThis->runTimeVal());
 
-  _womatl->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft  );
-  _womatl->addColumn(tr("Description"), -1,          Qt::AlignLeft  );
-  _womatl->addColumn(tr("Iss. UOM"),    _uomColumn,  Qt::AlignLeft  );
-  _womatl->addColumn(tr("Qty. per"),    _qtyColumn,  Qt::AlignRight );
+  _womatl->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft,   true,  "item_number"  );
+  _womatl->addColumn(tr("Description"), -1,          Qt::AlignLeft,   true,  "itemdescrip"  );
+  _womatl->addColumn(tr("Iss. UOM"),    _uomColumn,  Qt::AlignLeft,   true,  "uom_name"  );
+  _womatl->addColumn(tr("Qty. per"),    _qtyColumn,  Qt::AlignRight,  true,  "womatl_qtyper" );
 }
 
 postOperations::~postOperations()
@@ -176,7 +181,7 @@ enum SetResponse postOperations::set(const ParameterList &pParams)
       _wooper->setEnabled(false);
       _wotcTime = q.value("time").toDouble();
       _specifiedSutime->clear();
-      _specifiedRntime->setText(QString::number(_wotcTime));
+      _specifiedRntime->setDouble(_wotcTime);
       _qty->setFocus();
     }
     else if (q.lastError().type() != QSqlError::NoError)
@@ -246,17 +251,16 @@ void postOperations::sHandleWooperid(int)
     double wooperSuConsumed = 0.0;
 
     XSqlQuery w;
-    w.prepare( "SELECT formatQty(wo_qtyord) AS ordered,"
-               "       formatQty(COALESCE(wooper_qtyrcv,0)) AS received,"
-               "       formatQty(noNeg(wo_qtyord - COALESCE(wooper_qtyrcv,0))) AS f_balance,"
+    w.prepare( "SELECT wo_qtyord,"
+               "       COALESCE(wooper_qtyrcv, 0) AS received,"
                "       noNeg(wo_qtyord - COALESCE(wooper_qtyrcv, 0)) AS balance,"
                "       wooper_issuecomp, wooper_rcvinv, wooper_produom,"
                "       wooper_sucomplete, wooper_rncomplete,"
-	           "       wooper_sutime, wooper_suconsumed,"
+               "       wooper_sutime, wooper_suconsumed,"
                "       formatTime(noNeg(wooper_sutime - wooper_suconsumed)) AS suremaining,"
                "       wooper_rnqtyper, wooper_invproduomratio, wooper_wrkcnt_id,"
                "       (COALESCE(wooper_qtyrcv,0) = 0) AS noqty, "
-			   "       item_type "
+               "       item_type "
                "FROM wo, wooper, itemsite, item "
                "WHERE ( (wooper_wo_id=wo_id)"
                " AND (wooper_id=:wooper_id) "
@@ -269,13 +273,13 @@ void postOperations::sHandleWooperid(int)
       _rnqtyper = w.value("wooper_rnqtyper").toDouble();
       _invProdUOMRatio = w.value("wooper_invproduomratio").toDouble();
 
-      _qtyOrdered->setText(w.value("ordered").toString());
-      _qtyReceived->setText(w.value("received").toString());
-      _qtyBalance->setText(w.value("f_balance").toString());
+      _qtyOrdered->setDouble(w.value("wo_qtyord").toDouble());
+      _qtyReceived->setDouble(w.value("received").toDouble());
+      _qtyBalance->setDouble(w.value("balance").toDouble());
       _balance = w.value("balance").toDouble();
       setProperty("_balance", _balance);
       if(_metrics->boolean("AutoFillPostOperationQty"))
-        _qty->setText(QString::number(_balance));
+        _qty->setDouble(_balance);
       else
         _qty->setFocus();
       _productionUOM->setText( tr("Post in Production UOMs (%1)")
@@ -292,7 +296,7 @@ void postOperations::sHandleWooperid(int)
         _postSutime->setEnabled(TRUE);
         _postSutime->setChecked(TRUE);
         _markSuComplete->setChecked(TRUE);
-        _standardSutime->setText(w.value("suremaining").toString());
+        _standardSutime->setDouble(w.value("suremaining").toDouble());
       }
       else
       {
@@ -311,8 +315,8 @@ void postOperations::sHandleWooperid(int)
 
       if (w.value("wooper_issuecomp").toBool())
       {
-        w.prepare( "SELECT womatl_id, item_number, (item_descrip1 || ' ' || item_descrip2),"
-                   "       uom_name, formatQtyPer(womatl_qtyper) "
+        w.prepare( "SELECT womatl_id, item_number, (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
+                   "       uom_name, womatl_qtyper, 'qtyper' AS womatl_qtyper_xtnumericrole "
                    "FROM womatl, itemsite, item, uom "
                    "WHERE ( (womatl_itemsite_id=itemsite_id)"
                    " AND (womatl_issuemethod IN ('L', 'M'))"
@@ -321,14 +325,13 @@ void postOperations::sHandleWooperid(int)
                    " AND (womatl_wooper_id=:wooper_id) ) "
                    "ORDER BY item_number;" );
         w.bindValue(":wooper_id", _wooper->id());
-	w.exec();
-	_womatl->clear();
+        w.exec();
         _womatl->populate(w);
-	if (w.lastError().type() != QSqlError::None)
-	{
-	  systemError(this, w.lastError().databaseText(), __FILE__, __LINE__);
-	  return;
-	}
+        if (w.lastError().type() != QSqlError::None)
+        {
+          systemError(this, w.lastError().databaseText(), __FILE__, __LINE__);
+          return;
+        }
 
         if (w.size() > 0)
         {
@@ -365,8 +368,8 @@ void postOperations::sHandleWooperid(int)
     {
       _usingWotc = true;
       _wotcTime = w.value("time").toDouble();
-      _specifiedSutime->setText(QString::number(wooperSuConsumed));
-      _specifiedRntime->setText(QString::number(w.value("time").toDouble() - wooperSuConsumed));
+      _specifiedSutime->setDouble(wooperSuConsumed);
+      _specifiedRntime->setDouble(w.value("time").toDouble() - wooperSuConsumed);
       _postSpecifiedSutime->setChecked(TRUE);
       _postSpecifiedRntime->setChecked(TRUE);
     }
@@ -419,7 +422,7 @@ void postOperations::sHandleWooperid(int)
 void postOperations::sHandleQty()
 {
   double qty = _qty->toDouble();
-  _markRnComplete->setChecked(qty >= _qtyBalance->text().toDouble());
+  _markRnComplete->setChecked(qty >= _qtyBalance->toDouble());
   
   if (_wooper->id() == -1)
   {
@@ -431,9 +434,9 @@ void postOperations::sHandleQty()
   else if (_closeWO->isEnabled())
   {
     if (_productionUOM->isChecked())
-      _standardRntime->setText(formatQty(_rnqtyper * qty));
+      _standardRntime->setDouble(_rnqtyper * qty);
     else
-      _standardRntime->setText(formatQty(_rnqtyper / _invProdUOMRatio * qty));
+      _standardRntime->setDouble(_rnqtyper / _invProdUOMRatio * qty);
 
     _closeWO->setChecked(FALSE);
 
@@ -512,8 +515,8 @@ void postOperations::sPost()
     return;
   }
 
-  double sutime = _specifiedSutime->text().toDouble();
-  double rntime = _specifiedRntime->text().toDouble();
+  double sutime = _specifiedSutime->toDouble();
+  double rntime = _specifiedRntime->toDouble();
   if (_usingWotc && fabs(sutime + rntime - _wotcTime) >= 0.016 /* 1 sec */ &&
       _postSpecifiedSutime->isChecked() && _postSpecifiedRntime->isChecked())
   {
@@ -536,7 +539,7 @@ void postOperations::sPost()
 			    QMessageBox::No) == QMessageBox::Yes)
       {
 	_specifiedSutime->clear();
-	_specifiedRntime->setText(QString::number(_wotcTime));
+	_specifiedRntime->setDouble(_wotcTime);
 	_specifiedSutime->setFocus();
 	return;
       }
@@ -553,7 +556,7 @@ void postOperations::sPost()
 			    .arg(_wotcTime)
 			    .arg(_wotcTime));
       _specifiedSutime->clear();
-      _specifiedRntime->setText(QString::number(_wotcTime));
+      _specifiedRntime->setDouble(_wotcTime);
       _specifiedSutime->setFocus();
       return;
     }
@@ -748,7 +751,7 @@ void postOperations::sPost()
   if (_postSutime->isChecked())
   {
     if (_postStandardSutime->isChecked())
-      suTime = _standardSutime->text().toDouble();
+      suTime = _standardSutime->toDouble();
     else
       suTime = _specifiedSutime->toDouble();
   }
@@ -758,7 +761,7 @@ void postOperations::sPost()
   if (_postRntime->isChecked())
   {
     if (_postStandardRntime->isChecked())
-      rnTime = _standardRntime->text().toDouble();
+      rnTime = _standardRntime->toDouble();
     else
       rnTime = _specifiedRntime->toDouble();
   }
@@ -934,12 +937,12 @@ void postOperations::sSetupChanged()
   if (_wotcTime > 0)
   {
     if (! _privileges->check("OverrideWOTCTime") &&
-        _specifiedSutime->text().toDouble() > _wotcTime)
-      _specifiedSutime->setText(QString::number(_wotcTime));
+        _specifiedSutime->toDouble() > _wotcTime)
+      _specifiedSutime->setDouble(_wotcTime);
     else
     {
-      double runtimeDbl = _wotcTime - _specifiedSutime->text().toDouble();
-      _specifiedRntime->setText(runtimeDbl > 0 ? QString::number(runtimeDbl) : "0");
+      double runtimeDbl = _wotcTime - _specifiedSutime->toDouble();
+      _specifiedRntime->setDouble(runtimeDbl > 0 ? runtimeDbl : 0);
     }
   }
 }

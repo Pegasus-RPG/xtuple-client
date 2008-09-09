@@ -77,6 +77,8 @@ dspInvoiceInformation::dspInvoiceInformation(QWidget* parent, const char* name, 
   connect(_invoiceList, SIGNAL(clicked()), this, SLOT(sInvoiceList()));
   connect(_view, SIGNAL(clicked()), this, SLOT(sViewDetails()));
 
+  _invoiceAmount->setPrecision(omfgThis->moneyVal());
+
 #ifndef Q_WS_MAC
   _invoiceList->setMaximumWidth(25);
 #endif
@@ -126,7 +128,7 @@ void dspInvoiceInformation::sParseInvoiceNumber()
 {
   q.prepare( "SELECT invchead_id, invchead_cust_id, invchead_ponumber,"
              "       invchead_shipdate, invchead_invcdate,"
-             "       formatMoney((invchead_misc_amount + invchead_freight + invchead_tax + SUM(COALESCE(round((invcitem_billed * invcitem_qty_invuomratio) * (invcitem_price / COALESCE(invcitem_price_invuomratio, 1)),2),0)))) AS f_amount,"
+             "       (invchead_misc_amount + invchead_freight + invchead_tax + SUM(COALESCE(round((invcitem_billed * invcitem_qty_invuomratio) * (invcitem_price / COALESCE(invcitem_price_invuomratio, 1)),2),0))) AS amount,"
              "       invchead_billto_name, invchead_billto_address1,"
              "       invchead_billto_address2, invchead_billto_address3,"
              "       invchead_billto_city, invchead_billto_state, invchead_billto_zipcode,"
@@ -162,7 +164,7 @@ void dspInvoiceInformation::sParseInvoiceNumber()
     _cust->setId(q.value("invchead_cust_id").toInt());
     _invoiceDate->setDate(q.value("invchead_invcdate").toDate());
     _shipDate->setDate(q.value("invchead_shipdate").toDate());
-    _invoiceAmount->setText(q.value("f_amount").toString());
+    _invoiceAmount->setDouble(q.value("amount").toDouble());
 
     _billToName->setText(q.value("invchead_billto_name"));
     _billToAddress1->setText(q.value("invchead_billto_address1"));

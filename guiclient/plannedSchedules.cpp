@@ -81,12 +81,12 @@ plannedSchedules::plannedSchedules(QWidget * parent, const char * name, Qt::WFla
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_list, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
 
-  _list->addColumn(tr("Start Date"),   _dateColumn, Qt::AlignCenter );
-  _list->addColumn(tr("End Date"),     _dateColumn, Qt::AlignCenter );
-  _list->addColumn(tr("Site"),         _whsColumn,  Qt::AlignCenter );
-  _list->addColumn(tr("Schd. Number"), _itemColumn, Qt::AlignLeft   );
-  _list->addColumn(tr("Status"),        _whsColumn,  Qt::AlignCenter );
-  _list->addColumn(tr("Description"),  -1,          Qt::AlignLeft   );
+  _list->addColumn(tr("Start Date"),   _dateColumn, Qt::AlignCenter, true,  "pschhead_start_date" );
+  _list->addColumn(tr("End Date"),     _dateColumn, Qt::AlignCenter, true,  "pschhead_end_date" );
+  _list->addColumn(tr("Site"),         _whsColumn,  Qt::AlignCenter, true,  "warehous_code" );
+  _list->addColumn(tr("Schd. Number"), _itemColumn, Qt::AlignLeft,   true,  "pschhead_number"   );
+  _list->addColumn(tr("Status"),       _whsColumn,  Qt::AlignCenter, true,  "pschhead_status" );
+  _list->addColumn(tr("Description"),  -1,          Qt::AlignLeft,   true,  "pschhead_descrip"   );
 
   sFillList();
 }
@@ -161,8 +161,8 @@ void plannedSchedules::sPrint()
 void plannedSchedules::sFillList()
 {
   q.prepare("SELECT pschhead_id,"
-            "       formatDate(pschhead_start_date),"
-            "       formatDate(pschhead_end_date),"
+            "       pschhead_start_date,"
+            "       pschhead_end_date,"
             "       warehous_code,"
             "       pschhead_number,"
             "       pschhead_status,"

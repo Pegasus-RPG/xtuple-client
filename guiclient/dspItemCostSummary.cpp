@@ -85,12 +85,12 @@ dspItemCostSummary::dspItemCostSummary(QWidget* parent, const char* name, Qt::WF
   connect(_item, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
   connect(_itemcost, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
 
-  _itemcost->addColumn(tr("Element"),   -1,           Qt::AlignLeft   );
-  _itemcost->addColumn(tr("Lower"),     _costColumn,  Qt::AlignCenter );
-  _itemcost->addColumn(tr("Std. Cost"), _costColumn,  Qt::AlignRight  );
-  _itemcost->addColumn(tr("Posted"),    _dateColumn,  Qt::AlignCenter );
-  _itemcost->addColumn(tr("Act. Cost"), _costColumn,  Qt::AlignRight  );
-  _itemcost->addColumn(tr("Updated"),   _dateColumn,  Qt::AlignCenter );
+  _itemcost->addColumn(tr("Element"),   -1,           Qt::AlignLeft,   true,  "costelem_type"   );
+  _itemcost->addColumn(tr("Lower"),     _costColumn,  Qt::AlignCenter, true,  "lowlevel" );
+  _itemcost->addColumn(tr("Std. Cost"), _costColumn,  Qt::AlignRight,  true,  "itemcost_stdcost"  );
+  _itemcost->addColumn(tr("Posted"),    _dateColumn,  Qt::AlignCenter, true,  "itemcost_posted" );
+  _itemcost->addColumn(tr("Act. Cost"), _costColumn,  Qt::AlignRight,  true,  "itemcost_actcost"  );
+  _itemcost->addColumn(tr("Updated"),   _dateColumn,  Qt::AlignCenter, true,  "itemcost_updated" );
 }
 
 /*
@@ -167,41 +167,26 @@ void dspItemCostSummary::sFillList()
 {
   if (_item->isValid())
   {
-    double standardCost = 0.0;
-    double actualCost = 0.0;
-
     q.prepare( "SELECT itemcost_id,"
                "       CASE WHEN (costelem_sys) THEN 1"
                "            ELSE 0"
                "       END,"
-               "       costelem_type, formatBoolYN(itemcost_lowlevel),"
-               "       formatCost(itemcost_stdcost), formatDate(itemcost_posted, 'Never'),"
-               "       formatcost(itemcost_actcost), formatDate(itemcost_updated, 'Never'),"
-               "       itemcost_stdcost AS stdcost, itemcost_actcost AS actcost "
+               "       costelem_type, formatBoolYN(itemcost_lowlevel) AS lowlevel,"
+               "       itemcost_stdcost, itemcost_posted,"
+               "       itemcost_actcost, itemcost_updated,"
+               "       'cost' AS itemcost_stdcost_xtnumericrole,"
+               "       'cost' AS itemcost_actcost_xtnumericrole,"
+               "       0 AS itemcost_stdcost_xttotalrole,"
+               "       0 AS itemcost_actcost_xttotalrole,"
+               "       CASE WHEN COALESCE(itemcost_posted, endOfTime()) >= endOfTime() THEN :never END AS itemcost_posted_qtdisplayrole,"
+               "       CASE WHEN COALESCE(itemcost_updated, endOfTime()) >= endOfTime() THEN :never END AS itemcost_updated_qtdisplayrole "
                "FROM itemcost, costelem "
                "WHERE ( (itemcost_costelem_id=costelem_id)"
                " AND (itemcost_item_id=:item_id) ) "
                "ORDER BY itemcost_lowlevel, costelem_type;" );
     q.bindValue(":item_id", _item->id());
+    q.bindValue(":never", tr("Never"));
     q.exec();
     _itemcost->populate(q, TRUE);
-
-    if (q.first())
-    {
-      do
-      {
-        standardCost += q.value("stdcost").toDouble();
-        actualCost += q.value("actcost").toDouble();
-      }
-      while (q.next());
-
-      new XTreeWidgetItem( _itemcost,
-			   _itemcost->topLevelItem(_itemcost->topLevelItemCount() - 1),
-			   -1,
-			   QVariant(tr("Totals")), "", formatCost(standardCost),
-			   "", formatCost(actualCost) );
-    }
   }
-  else
-    _itemcost->clear();
 }

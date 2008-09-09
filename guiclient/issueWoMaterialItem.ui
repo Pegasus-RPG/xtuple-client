@@ -387,7 +387,7 @@
             <number>0</number>
            </property>
            <item>
-            <widget class="QLabel" name="_qtyRequired" >
+            <widget class="XLabel" name="_qtyRequired" >
              <property name="minimumSize" >
               <size>
                <width>80</width>
@@ -400,7 +400,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="_qtyIssued" >
+            <widget class="XLabel" name="_qtyIssued" >
              <property name="minimumSize" >
               <size>
                <width>80</width>
@@ -531,7 +531,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="_beforeQty" >
+              <widget class="XLabel" name="_beforeQty" >
                <property name="minimumSize" >
                 <size>
                  <width>80</width>
@@ -573,7 +573,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="_afterQty" >
+              <widget class="XLabel" name="_afterQty" >
                <property name="minimumSize" >
                 <size>
                  <width>80</width>

@@ -88,11 +88,11 @@ dspItemCostsByClassCode::dspItemCostsByClassCode(QWidget* parent, const char* na
 
   _classCode->setType(ParameterGroup::ClassCode);
 
-  _itemcost->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft   );
-  _itemcost->addColumn(tr("Description"), -1,           Qt::AlignLeft   );
-  _itemcost->addColumn(tr("UOM"),         _uomColumn,   Qt::AlignCenter );
-  _itemcost->addColumn(tr("Std. Cost"),   _costColumn,  Qt::AlignRight  );
-  _itemcost->addColumn(tr("Act. Cost"),   _costColumn,  Qt::AlignRight  );
+  _itemcost->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft,   true,  "item_number"   );
+  _itemcost->addColumn(tr("Description"), -1,           Qt::AlignLeft,   true,  "description"   );
+  _itemcost->addColumn(tr("UOM"),         _uomColumn,   Qt::AlignCenter, true,  "uom_name" );
+  _itemcost->addColumn(tr("Std. Cost"),   _costColumn,  Qt::AlignRight,  true,  "scost"  );
+  _itemcost->addColumn(tr("Act. Cost"),   _costColumn,  Qt::AlignRight,  true,  "acost"  );
 }
 
 /*
@@ -216,7 +216,9 @@ void dspItemCostsByClassCode::sPostCosts()
 void dspItemCostsByClassCode::sFillList()
 {
   QString sql( "SELECT item_id, item_number, description,"
-               "       uom_name, formatCost(scost), formatCost(acost) "
+               "       uom_name, scost, acost,"
+               "       'cost' AS scost_xtnumericrole,"
+               "       'cost' AS acost_xtnumericrole "
                "FROM ( SELECT item_id, item_number, (item_descrip1 || ' ' || item_descrip2) AS description,"
                "              uom_name, stdcost(item_id) AS scost, actcost(item_id) AS acost"
                "       FROM item, classcode, uom"

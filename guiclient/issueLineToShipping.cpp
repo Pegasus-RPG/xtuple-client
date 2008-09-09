@@ -82,6 +82,11 @@ issueLineToShipping::issueLineToShipping(QWidget* parent, const char* name, bool
   _item->setReadOnly(TRUE);
 
   _qtyToIssue->setValidator(omfgThis->qtyVal());
+  _qtyOrdered->setPrecision(omfgThis->qtyVal());
+  _qtyShipped->setPrecision(omfgThis->qtyVal());
+  _qtyReturned->setPrecision(omfgThis->qtyVal());
+  _balance->setPrecision(omfgThis->qtyVal());
+  _qtyAtShip->setPrecision(omfgThis->qtyVal());
   
   resize(minimumSize());
 }
@@ -147,7 +152,7 @@ enum SetResponse issueLineToShipping::set(ParameterList &pParams)
 
   param = pParams.value("qty", &valid);
   if (valid)
-    _qtyToIssue->setText(param.toString());
+    _qtyToIssue->setDouble(param.toDouble());
 
   _snooze = pParams.inList("snooze");
 
@@ -320,13 +325,12 @@ void issueLineToShipping::populate()
   QString sql = "<? if exists(\"soitem_id\") ?>"
 		"SELECT cohead_number AS order_number,"
 		"       itemsite_item_id AS item_id,"
-		"       warehous_code,"
-                "       uom_name,"
-		"       formatQty(coitem_qtyord) AS qtyordered,"
-		"       formatQty(coitem_qtyshipped) AS qtyshipped,"
-		"       formatQty(coitem_qtyreturned) AS qtyreturned,"
-		"       formatQty(noNeg(coitem_qtyord - coitem_qtyshipped +"
-		"                       coitem_qtyreturned)) AS balance "
+		"       warehous_code, uom_name,"
+		"       coitem_qtyord AS qtyordered,"
+    "       coitem_qtyshipped AS qtyshipped,"
+    "       coitem_qtyreturned AS qtyreturned,"
+		"       noNeg(coitem_qtyord - coitem_qtyshipped +"
+		"             coitem_qtyreturned) AS balance "
 		"FROM cohead, coitem, itemsite, item, warehous, uom "
 		"WHERE ((coitem_cohead_id=cohead_id)"
 		"  AND  (coitem_itemsite_id=itemsite_id)"
@@ -338,13 +342,12 @@ void issueLineToShipping::populate()
 		"<? elseif exists(\"toitem_id\") ?>"
 		"SELECT tohead_number AS order_number,"
 		"       toitem_item_id AS item_id,"
-		"       warehous_code,"
-                "       toitem_uom AS uom_name,"
-		"       formatQty(toitem_qty_ordered) AS qtyordered,"
-		"       formatQty(toitem_qty_shipped) AS qtyshipped,"
+		"       warehous_code, toitem_uom AS uom_name,"
+		"       toitem_qty_ordered AS qtyordered,"
+		"       toitem_qty_shipped AS qtyshipped,"
 		"       0 AS qtyreturned,"
-		"       formatQty(noNeg(toitem_qty_ordered -"
-		"                       toitem_qty_shipped)) AS balance "
+		"       noNeg(toitem_qty_ordered -"
+		"             toitem_qty_shipped) AS balance "
 		"FROM tohead, toitem, warehous, item "
 		"WHERE ((toitem_tohead_id=tohead_id)"
 		"  AND  (toitem_status <> 'X')"
@@ -361,10 +364,10 @@ void issueLineToShipping::populate()
     _item->setId(itemq.value("item_id").toInt());
     _warehouse->setText(itemq.value("warehous_code").toString());
     _shippingUOM->setText(itemq.value("uom_name").toString());
-    _qtyOrdered->setText(itemq.value("qtyordered").toString());
-    _qtyShipped->setText(itemq.value("qtyshipped").toString());
-    _qtyReturned->setText(itemq.value("qtyreturned").toString());
-    _balance->setText(itemq.value("balance").toString());
+    _qtyOrdered->setDouble(itemq.value("qtyordered").toDouble());
+    _qtyShipped->setDouble(itemq.value("qtyshipped").toDouble());
+    _qtyReturned->setDouble(itemq.value("qtyreturned").toDouble());
+    _balance->setDouble(itemq.value("balance").toDouble());
   }
   else if (itemq.lastError().type() != QSqlError::None)
   {
@@ -377,13 +380,13 @@ void issueLineToShipping::populate()
   shipp.append("orderitem_id", _itemid);
 
   sql = "SELECT shiphead_id AS misc_id,"
-	"       formatQty(SUM(shipitem_qty)) AS qtyatship "
-	"FROM shiphead, shipitem "
-	"WHERE ((shipitem_shiphead_id=shiphead_id)"
-	"  AND  (NOT shiphead_shipped)"
-	"  AND  (shiphead_order_type=<? value(\"ordertype\") ?>)"
-	"  AND  (shipitem_orderitem_id=<? value(\"orderitem_id\") ?>) ) "
-	"GROUP BY shiphead_id;" ;
+        "       SUM(shipitem_qty) AS qtyatship "
+        "FROM shiphead, shipitem "
+        "WHERE ((shipitem_shiphead_id=shiphead_id)"
+        "  AND  (NOT shiphead_shipped)"
+        "  AND  (shiphead_order_type=<? value(\"ordertype\") ?>)"
+        "  AND  (shipitem_orderitem_id=<? value(\"orderitem_id\") ?>) ) "
+        "GROUP BY shiphead_id;" ;
 
   MetaSQLQuery shipm(sql);
   XSqlQuery shipq = shipm.toQuery(shipp);
@@ -392,7 +395,7 @@ void issueLineToShipping::populate()
   {
     _shipment->setType(_ordertype);
     _shipment->setId(shipq.value("misc_id").toInt());
-    _qtyAtShip->setText(shipq.value("qtyatship").toString());
+    _qtyAtShip->setDouble(shipq.value("qtyatship").toDouble());
   }
   else if (shipq.lastError().type() != QSqlError::None)
   {
@@ -400,6 +403,6 @@ void issueLineToShipping::populate()
     return;
   }
 
-  if (_qtyAtShip->text().toDouble() == 0.0)
-    _qtyToIssue->setText(itemq.value("balance").toString());
+  if (_qtyAtShip->toDouble() == 0.0)
+    _qtyToIssue->setDouble(itemq.value("balance").toDouble());
 }

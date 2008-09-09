@@ -59,6 +59,7 @@
 
 #include <QVariant>
 #include <QMessageBox>
+#include <QValidator>
 
 plannedScheduleItem::plannedScheduleItem(QWidget * parent, const char * name, bool modal, Qt::WFlags fl)
   : XDialog(parent, name, modal, fl)
@@ -73,6 +74,8 @@ plannedScheduleItem::plannedScheduleItem(QWidget * parent, const char * name, bo
 
   connect(_cancel, SIGNAL(clicked()), this, SLOT(reject()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+
+  _qty->setValidator(omfgThis->qtyVal());
 }
 
 plannedScheduleItem::~plannedScheduleItem()
@@ -168,7 +171,7 @@ void plannedScheduleItem::sSave()
   q.bindValue(":item_id", _item->id());
   q.bindValue(":warehous_id", _warehousid);
   q.bindValue(":scheddate", _date->date());
-  q.bindValue(":qty", _qty->text().toDouble());
+  q.bindValue(":qty", _qty->toDouble());
 
   if(!q.exec())
   {
@@ -202,7 +205,7 @@ void plannedScheduleItem::populate()
 
     _item->setItemsiteid(q.value("pschitem_itemsite_id").toInt());
     _date->setDate(q.value("pschitem_scheddate").toDate());
-    _qty->setText(q.value("pschitem_qty").toString());
+    _qty->setDouble(q.value("pschitem_qty").toDouble());
   }
 }
 

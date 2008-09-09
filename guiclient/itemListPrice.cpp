@@ -83,6 +83,14 @@ itemListPrice::itemListPrice(QWidget* parent, const char* name, bool modal, Qt::
 
   _item->setType(ItemLineEdit::cSold);
   _listPrice->setValidator(omfgThis->priceVal());
+  _extPrice->setPrecision(omfgThis->priceVal());
+  _stdCost->setPrecision(omfgThis->costVal());
+  _actCost->setPrecision(omfgThis->costVal());
+  _extStdCost->setPrecision(omfgThis->costVal());
+  _extActCost->setPrecision(omfgThis->costVal());
+  _stdMargin->setPrecision(omfgThis->percentVal());
+  _actMargin->setPrecision(omfgThis->percentVal());
+  _pricingRatio->setPrecision(omfgThis->percentVal());
 
   if (!_privileges->check("MaintainListPrices"))
   {
@@ -138,36 +146,32 @@ void itemListPrice::sSave()
 
 void itemListPrice::sPopulate()
 {
-  q.prepare( "SELECT uom_name, invpricerat,"
-             "       formatSalesPrice(item_listprice) AS f_listprice,"
-             "       formatUOMRatio(iteminvpricerat(item_id)) AS f_ratio,"
-             "       formatSalesPrice(item_listprice / iteminvpricerat(item_id)) AS f_extprice,"
-             "       standardcost, formatCost(standardcost) AS f_standardcost,"
-             "       actualcost, formatCost(actualCost) AS f_actualcost,"
-             "       formatCost(standardcost * iteminvpricerat(item_id)) AS f_extstandardcost,"
-             "       formatCost(actualCost * iteminvpricerat(item_id)) AS f_extactualcost "
-             "FROM ( SELECT item_id, uom_name, item_listprice, iteminvpricerat(item_id) AS invpricerat,"
-             "              stdCost(item_id) AS standardcost,"
-             "              actCost(item_id) AS actualcost "
-             "       FROM item JOIN uom ON (item_price_uom_id=uom_id)"
-             "       WHERE (item_id=:item_id) ) AS data;" );
+  q.prepare( "SELECT uom_name, iteminvpricerat(item_id) AS invpriceratio,"
+             "       item_listprice,"
+             "       (item_listprice / iteminvpricerat(item_id)) AS extprice,"
+             "       stdCost(item_id) AS standardcost,"
+             "       actCost(item_id) AS actualcost,"
+             "       (stdCost(item_id) * iteminvpricerat(item_id)) AS extstandardcost,"
+             "       (actCost(item_id) * iteminvpricerat(item_id)) AS extactualcost "
+             "FROM item JOIN uom ON (item_price_uom_id=uom_id)"
+             "WHERE (item_id=:item_id);" );
   q.bindValue(":item_id", _item->id());
   q.exec();
   if (q.first())
   {
-    _cachedRatio = q.value("invpricerat").toDouble();
+    _cachedRatio = q.value("invpriceratio").toDouble();
     _cachedStdCost = q.value("standardcost").toDouble();
     _cachedActCost = q.value("actualcost").toDouble();
 
-    _listPrice->setText(q.value("f_listprice").toString());
+    _listPrice->setDouble(q.value("item_listprice").toDouble());
     _priceUOM->setText(q.value("uom_name").toString());
-    _pricingRatio->setText(q.value("f_ratio").toString());
-    _extPrice->setText(q.value("f_extprice").toString());
+    _pricingRatio->setDouble(q.value("invpriceratio").toDouble());
+    _extPrice->setDouble(q.value("extprice").toDouble());
 
-    _stdCost->setText(q.value("f_standardcost").toString());
-    _actCost->setText(q.value("f_actualcost").toString());
-    _extStdCost->setText(q.value("f_extstandardcost").toString());
-    _extActCost->setText(q.value("f_extactualcost").toString());
+    _stdCost->setDouble(q.value("standardcost").toDouble());
+    _actCost->setDouble(q.value("actualcost").toDouble());
+    _extStdCost->setDouble(q.value("extstandardcost").toDouble());
+    _extActCost->setDouble(q.value("extactualcost").toDouble());
   }
 
   sUpdateMargins();
@@ -179,11 +183,11 @@ void itemListPrice::sUpdateMargins()
   {
     double price = _listPrice->toDouble() / _cachedRatio;
 
-    _extPrice->setText(formatSalesPrice(price));
+    _extPrice->setDouble(price);
 
     if (_cachedStdCost > 0.0)
     {
-      _stdMargin->setText(formatPercent((price - _cachedStdCost) / price));
+      _stdMargin->setDouble((price - _cachedStdCost) / price * 100);
 
       if (_cachedStdCost > price)
         _stdMargin->setPaletteForegroundColor(QColor("red"));
@@ -198,7 +202,7 @@ void itemListPrice::sUpdateMargins()
 
     if (_cachedActCost > 0.0)
     {
-      _actMargin->setText(formatPercent((price - _cachedActCost) / price));
+      _actMargin->setDouble((price - _cachedActCost) / price * 100);
 
       if (_cachedActCost > price)
         _actMargin->setPaletteForegroundColor(QColor("red"));

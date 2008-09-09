@@ -71,6 +71,9 @@ postChecks::postChecks(QWidget* parent, const char* name, bool modal, Qt::WFlags
 
   connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
   connect(_bankaccnt, SIGNAL(newID(int)), this, SLOT(sHandleBankAccount(int)));
+
+  _numberOfChecks->setPrecision(0);
+
   sHandleBankAccount(_bankaccnt->id());
 
   if (_preferences->boolean("XCheckBox/forgetful"))
@@ -133,7 +136,7 @@ void postChecks::sHandleBankAccount(int pBankaccntid)
   q.bindValue(":bankaccnt_id", pBankaccntid);
   q.exec();
   if (q.first())
-    _numberOfChecks->setText(q.value("numofchecks").toString());
+    _numberOfChecks->setDouble(q.value("numofchecks").toDouble());
   else if (q.lastError().type() != QSqlError::None)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);

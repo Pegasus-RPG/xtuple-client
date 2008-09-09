@@ -89,10 +89,10 @@ dspItemSourcesByItem::dspItemSourcesByItem(QWidget* parent, const char* name, Qt
 
   _item->setType(ItemLineEdit::cGeneralPurchased);
 
-  _itemsrc->addColumn(tr("Vendor"),      -1,          Qt::AlignLeft   );
-  _itemsrc->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft   );
-  _itemsrc->addColumn(tr("UOM"),         _uomColumn,  Qt::AlignCenter );
-  _itemsrc->addColumn(tr("UOM Ratio"),   _qtyColumn,  Qt::AlignRight  );
+  _itemsrc->addColumn(tr("Vendor"),      -1,          Qt::AlignLeft,   true,  "vend_name"   );
+  _itemsrc->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft,   true,  "itemsrc_vend_item_number"   );
+  _itemsrc->addColumn(tr("UOM"),         _uomColumn,  Qt::AlignCenter, true,  "itemsrc_vend_uom" );
+  _itemsrc->addColumn(tr("UOM Ratio"),   _qtyColumn,  Qt::AlignRight,  true,  "itemsrc_invvendoruomratio"  );
 
   _item->setFocus();
 }
@@ -172,7 +172,7 @@ void dspItemSourcesByItem::sFillList()
   if (_item->isValid())
   {
     q.prepare( "SELECT itemsrc_id, vend_name, itemsrc_vend_item_number, itemsrc_vend_uom,"
-               "       formatQty(itemsrc_invvendoruomratio) "
+               "       itemsrc_invvendoruomratio, 'qty' AS itemsrc_invvendoruomratio_xtnumericrole "
                "FROM itemsrc, vend "
                "WHERE ( (itemsrc_vend_id=vend_id)"
                " AND (itemsrc_item_id=:item_id) );" );

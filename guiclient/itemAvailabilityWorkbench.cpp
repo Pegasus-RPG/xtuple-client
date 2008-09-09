@@ -111,6 +111,7 @@ itemAvailabilityWorkbench::itemAvailabilityWorkbench(QWidget* parent, const char
 
   connect(_availPrint,	SIGNAL(clicked()), this, SLOT(sPrintAvail()));
   connect(_availability,SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuRunning(QMenu*,QTreeWidgetItem*)));
+  connect(_availability,SIGNAL(resorted()), this, SLOT(sHandleResort()));
   connect(_bomitem,	SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuCosted(QMenu*,QTreeWidgetItem*)));
   connect(_byDates,	SIGNAL(toggled(bool)), _endDate, SLOT(setEnabled(bool)));
   connect(_byDates,	SIGNAL(toggled(bool)), _startDate, SLOT(setEnabled(bool)));
@@ -141,14 +142,14 @@ itemAvailabilityWorkbench::itemAvailabilityWorkbench(QWidget* parent, const char
   //  _item->setType(ItemLineEdit::cGeneralComponents | ItemLineEdit::cActive);
   
   // Running Availability
-  _availability->addColumn(tr("Order Type"),        _itemColumn, Qt::AlignLeft  );
-  _availability->addColumn(tr("Order #"),           _itemColumn, Qt::AlignLeft  );
-  _availability->addColumn(tr("Source/Destination"), -1,          Qt::AlignLeft  );
-  _availability->addColumn(tr("Due Date"),           _dateColumn, Qt::AlignLeft  );
-  _availability->addColumn(tr("Ordered"),            _qtyColumn,  Qt::AlignRight );
-  _availability->addColumn(tr("Received"),           _qtyColumn,  Qt::AlignRight );
-  _availability->addColumn(tr("Balance"),            _qtyColumn,  Qt::AlignRight );
-  _availability->addColumn(tr("Running Avail."),     _qtyColumn,  Qt::AlignRight );
+  _availability->addColumn(tr("Order Type"),    _itemColumn, Qt::AlignLeft,  true, "ordertype");
+  _availability->addColumn(tr("Order #"),       _itemColumn, Qt::AlignLeft,  true, "ordernumber");
+  _availability->addColumn(tr("Source/Destination"),     -1, Qt::AlignLeft,  true, "item_number");
+  _availability->addColumn(tr("Due Date"),      _dateColumn, Qt::AlignLeft,  true, "duedate");
+  _availability->addColumn(tr("Ordered"),        _qtyColumn, Qt::AlignRight, true, "qtyordered");
+  _availability->addColumn(tr("Received"),       _qtyColumn, Qt::AlignRight, true, "qtyreceived");
+  _availability->addColumn(tr("Balance"),        _qtyColumn, Qt::AlignRight, true, "balance");
+  _availability->addColumn(tr("Running Avail."), _qtyColumn, Qt::AlignRight, true, "runningavail");
 
   connect(omfgThis, SIGNAL(workOrdersUpdated(int, bool)), this, SLOT(sFillListRunning()));
   
@@ -181,17 +182,17 @@ itemAvailabilityWorkbench::itemAvailabilityWorkbench(QWidget* parent, const char
   
   // Invhist
   _invhist->setRootIsDecorated(TRUE);
-  _invhist->addColumn(tr("Time"),        (_dateColumn + 30),   Qt::AlignLeft   );
-  _invhist->addColumn(tr("User"),        _orderColumn,         Qt::AlignCenter );
-  _invhist->addColumn(tr("Type"),        _transColumn,         Qt::AlignCenter );
-  _invhist->addColumn(tr("Site"),        _whsColumn,           Qt::AlignCenter );
-  _invhist->addColumn(tr("Order #/Location-Lot/Serial #"), -1, Qt::AlignLeft   );
-  _invhist->addColumn(tr("UOM"),         _uomColumn,           Qt::AlignCenter );
-  _invhist->addColumn(tr("Trans-Qty"),   _qtyColumn,           Qt::AlignRight  );
-  _invhist->addColumn(tr("From Area"),_orderColumn,        Qt::AlignLeft   );
-  _invhist->addColumn(tr("QOH Before"),  _qtyColumn,           Qt::AlignRight  );
-  _invhist->addColumn(tr("To Area"), _orderColumn,         Qt::AlignLeft   );
-  _invhist->addColumn(tr("QOH After"),   _qtyColumn,           Qt::AlignRight  );
+  _invhist->addColumn(tr("Time"),          (_dateColumn + 30),   Qt::AlignLeft,   true,  "invhist_transdate"   );
+  _invhist->addColumn(tr("User"),          _orderColumn,         Qt::AlignCenter );
+  _invhist->addColumn(tr("Type"),          _transColumn,         Qt::AlignCenter );
+  _invhist->addColumn(tr("Site"),          _whsColumn,           Qt::AlignCenter );
+  _invhist->addColumn(tr("Order #/Location-Lot/Serial #"), -1,   Qt::AlignLeft   );
+  _invhist->addColumn(tr("UOM"),           _uomColumn,           Qt::AlignCenter );
+  _invhist->addColumn(tr("Trans-Qty"),     _qtyColumn,           Qt::AlignRight  );
+  _invhist->addColumn(tr("From Area"),     _orderColumn,         Qt::AlignLeft   );
+  _invhist->addColumn(tr("QOH Before"),    _qtyColumn,           Qt::AlignRight  );
+  _invhist->addColumn(tr("To Area"),       _orderColumn,         Qt::AlignLeft   );
+  _invhist->addColumn(tr("QOH After"),     _qtyColumn,           Qt::AlignRight  );
 
   _transType->append(cTransAll,       tr("All Transactions")       );
   _transType->append(cTransReceipts,  tr("Receipts")               );
@@ -203,13 +204,13 @@ itemAvailabilityWorkbench::itemAvailabilityWorkbench(QWidget* parent, const char
   _transType->setCurrentItem(0);
   
   // Itemloc
-  _itemloc->addColumn(tr("Site"),         _whsColumn,   Qt::AlignCenter );
-  _itemloc->addColumn(tr("Location"),     200,          Qt::AlignLeft   );
-  _itemloc->addColumn(tr("Netable"),      _orderColumn, Qt::AlignCenter );
-  _itemloc->addColumn(tr("Lot/Serial #"), -1,           Qt::AlignLeft   );
-  _itemloc->addColumn(tr("Expiration"),   _dateColumn,  Qt::AlignCenter );
-  _itemloc->addColumn(tr("Warranty"),   _dateColumn,  Qt::AlignCenter );
-  _itemloc->addColumn(tr("Qty."),         _qtyColumn,   Qt::AlignRight  );
+  _itemloc->addColumn(tr("Site"),          _whsColumn,   Qt::AlignCenter, true,  "warehous_code" );
+  _itemloc->addColumn(tr("Location"),      200,          Qt::AlignLeft,   true,  "locationname"   );
+  _itemloc->addColumn(tr("Netable"),       _orderColumn, Qt::AlignCenter, true,  "netable" );
+  _itemloc->addColumn(tr("Lot/Serial #"),  -1,           Qt::AlignLeft,   true,  "lotserial"   );
+  _itemloc->addColumn(tr("Expiration"),    _dateColumn,  Qt::AlignCenter, true,  "itemloc_expiration" );
+  _itemloc->addColumn(tr("Warranty"),      _dateColumn,  Qt::AlignCenter, true,  "itemloc_warrpurc" );
+  _itemloc->addColumn(tr("Qty."),          _qtyColumn,   Qt::AlignRight,  true,  "qoh"  );
   
   // Where Used
   _effective->setNullString(tr("Now"));
@@ -217,14 +218,14 @@ itemAvailabilityWorkbench::itemAvailabilityWorkbench(QWidget* parent, const char
   _effective->setAllowNullDate(TRUE);
   _effective->setNull();
   
-  _whereused->addColumn(tr("Seq #"),       40,           Qt::AlignCenter );
-  _whereused->addColumn(tr("Parent Item"), _itemColumn,  Qt::AlignLeft   );
-  _whereused->addColumn(tr("Description"), -1,           Qt::AlignLeft   );
-  _whereused->addColumn(tr("UOM"),         _uomColumn,   Qt::AlignLeft   );
-  _whereused->addColumn(tr("Qty. Per"),    _qtyColumn,   Qt::AlignRight  );
-  _whereused->addColumn(tr("Scrap %"),     _prcntColumn, Qt::AlignRight  );
-  _whereused->addColumn(tr("Effective"),   _dateColumn,  Qt::AlignCenter );
-  _whereused->addColumn(tr("Expires"),     _dateColumn,  Qt::AlignCenter );
+  _whereused->addColumn(tr("Seq #"),       40,           Qt::AlignCenter, true,  "bomitem_seqnumber" );
+  _whereused->addColumn(tr("Parent Item"), _itemColumn,  Qt::AlignLeft,   true,  "item_number"   );
+  _whereused->addColumn(tr("Description"), -1,           Qt::AlignLeft,   true,  "itemdescrip"   );
+  _whereused->addColumn(tr("UOM"),         _uomColumn,   Qt::AlignLeft,   true,  "uom_name"   );
+  _whereused->addColumn(tr("Qty. Per"),    _qtyColumn,   Qt::AlignRight,  true,  "qtyper"  );
+  _whereused->addColumn(tr("Scrap %"),     _prcntColumn, Qt::AlignRight,  true,  "scrap"  );
+  _whereused->addColumn(tr("Effective"),   _dateColumn,  Qt::AlignCenter, true,  "bomitem_effective" );
+  _whereused->addColumn(tr("Expires"),     _dateColumn,  Qt::AlignCenter, true,  "bomitem_expires" );
   
 //  connect(omfgThis, SIGNAL(bomsUpdated(int, bool)), SLOT(sFillListWhereUsed(int, bool)));
   connect(omfgThis, SIGNAL(bomsUpdated(int, bool)), SLOT(sFillListWhereUsed()));
@@ -272,6 +273,12 @@ itemAvailabilityWorkbench::itemAvailabilityWorkbench(QWidget* parent, const char
     _ignoreReorderAtZero->setChecked(true);
 
   _ignoreReorderAtZero->setEnabled(_showReorder->isChecked());
+  
+  _qoh->setPrecision(omfgThis->qtyVal());
+  _orderMultiple->setPrecision(omfgThis->qtyVal());
+  _reorderLevel->setPrecision(omfgThis->qtyVal());
+  _orderToQty->setPrecision(omfgThis->qtyVal());
+
 }
 
 itemAvailabilityWorkbench::~itemAvailabilityWorkbench()
@@ -324,11 +331,14 @@ void itemAvailabilityWorkbench::sFillListWhereUsed()
   if ((_item->isValid()) && (_effective->isValid()))
   {
     QString sql( "SELECT bomitem_parent_item_id, item_id, bomitem_seqnumber,"
-                 "       item_number, (item_descrip1 || ' ' || item_descrip2),"
-                 "       uom_name, formatQtyper(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper)),"
-                 "       formatScrap(bomitem_scrap),"
-                 "       formatDate(bomitem_effective, 'Always'),"
-                 "       formatDate(bomitem_expires, 'Never') "
+                 "       item_number, (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
+                 "       uom_name, itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper) AS qtyper,"
+                 "       (bomitem_scrap * 100) AS scrap,"
+                 "       bomitem_effective, bomitem_expires,"
+                 "       'qtyper' AS qtyper_xtnumericrole,"
+                 "       'percent' AS scrap_xtnumericrole,"
+                 "       CASE WHEN COALESCE(bomitem_effective, startOfTime()) <= startOfTime() THEN :always END AS bomitem_effective_qtdisplayrole,"
+                 "       CASE WHEN COALESCE(bomitem_expires, endOfTime()) >= endOfTime() THEN :never END AS bomitem_expires_qtdisplayrole "
                  "FROM bomitem, item, uom "
                  "WHERE ( (bomitem_parent_item_id=item_id)"
                  " AND (item_inv_uom_id=uom_id)"
@@ -344,6 +354,8 @@ void itemAvailabilityWorkbench::sFillListWhereUsed()
     q.prepare(sql);
     q.bindValue(":item_id", _item->id());
     q.bindValue(":effective", _effective->date());
+    q.bindValue(":always", tr("Always"));
+    q.bindValue(":never", tr("Never"));
     q.exec();
 
     //if (pLocal)
@@ -370,19 +382,16 @@ void itemAvailabilityWorkbench::sFillListItemloc()
                  "       CASE WHEN (itemsite_controlmethod NOT IN ('L', 'S')) THEN :na"
                  "            ELSE formatlotserialnumber(itemloc_ls_id)"
                  "       END AS lotserial,"
-                 "       CASE WHEN (itemsite_perishable) THEN formatDate(itemloc_expiration)"
-                 "            ELSE :na"
-                 "       END AS f_expiration,"
-                 "       CASE WHEN (itemsite_warrpurc) THEN formatDate(itemloc_warrpurc)"
-                 "            ELSE :na"
-                 "       END AS f_warranty,"
-                 "       CASE WHEN (itemsite_perishable) THEN (itemloc_expiration <= CURRENT_DATE)"
-                 "            ELSE FALSE"
-                 "       END AS expired,"
-                 "       CASE WHEN (itemsite_warrpurc) THEN (itemloc_warrpurc <= CURRENT_DATE)"
-                 "            ELSE FALSE"
-                 "       END AS warrantyexp,"
-                 "       formatQty(itemloc_qty) AS f_qoh "
+                 "       itemloc_expiration,"
+                 "       CASE WHEN (NOT itemsite_perishable) THEN :na END AS itemloc_expiration_qtdisplayrole,"
+                 "       itemloc_warrpurc,"
+                 "       CASE WHEN (NOT itemsite_warrpurc) THEN :na END AS itemloc_warrpurc_qtdisplayrole,"
+                 "       CASE WHEN ((itemsite_perishable) AND (itemloc_expiration <= CURRENT_DATE)) THEN 'red'"
+                 "       END AS itemloc_expiration_qtforegroundrole,"
+                 "       CASE WHEN ((itemsite_warrpurc) AND (itemloc_warrpurc <= CURRENT_DATE)) THEN 'red'"
+                 "       END AS itemloc_warrpurc_qtforegroundrole,"
+                 "       itemloc_qty AS qoh,"
+                 "       'qty' AS qoh_xtnumericrole "
                  "FROM itemsite, warehous,"
                  "     itemloc LEFT OUTER JOIN location ON (itemloc_location_id=location_id) "
                  "WHERE ( ( (itemsite_loccntrl) OR (itemsite_controlmethod IN ('L', 'S')) )"
@@ -398,11 +407,14 @@ void itemAvailabilityWorkbench::sFillListItemloc()
            "             :na AS locationname,"
            "             :na AS netable,"
            "             :na AS lotserial,"
-           "             :na AS f_expiration,"
-           "             :na AS f_warranty,"
-           "             FALSE  AS expired,"
-           "             FALSE  AS warrantyexp,"
-           "             formatQty(itemsite_qtyonhand) AS f_qoh "
+           "             CAST(NULL AS DATE) AS itemloc_expiration,"
+           "             :na AS itemloc_expiration_qtdisplayrole,"
+           "             CAST(NULL AS DATE) AS itemloc_warrpurc,"
+           "             :na AS itemloc_warrpurc_qtdisplayrole,"
+           "             NULL AS itemloc_expiration_qtforegroundrole,"
+           "             NULL AS itemloc_warrpurc_qtforegroundrole,"
+           "             itemsite_qtyonhand AS qoh,"
+           "             'qty' AS qoh_xtnumericrole "
            "FROM itemsite, warehous "
            "WHERE ( (NOT itemsite_loccntrl)"
            " AND (itemsite_controlmethod NOT IN ('L', 'S'))"
@@ -423,19 +435,7 @@ void itemAvailabilityWorkbench::sFillListItemloc()
     q.bindValue(":item_id", _item->id());
     _itemlocWarehouse->bindValue(q);
     q.exec();
-
-    _itemloc->clear();
-    XTreeWidgetItem *last = 0;
-    while (q.next())
-    {
-      last = new XTreeWidgetItem( _itemloc, last,
-                                               q.value("itemloc_id").toInt(), q.value("type").toInt(),
-                                               q.value("warehous_code"), q.value("locationname"),
-                                               q.value("netable"), q.value("lotserial"),
-                                               q.value("f_expiration"), q.value("f_warranty"),q.value("f_qoh") );
-      if (q.value("expired").toBool() || q.value("warrantyexp").toBool())
-        last->setTextColor("red");
-    }
+    _itemloc->populate(q, true);
   }
   else
     _itemloc->clear();
@@ -766,11 +766,10 @@ void itemAvailabilityWorkbench::sFillListRunning()
   {
     q.prepare( "SELECT item_type, item_sold,"
                "       itemsite_id, itemsite_qtyonhand,"
+               "       itemsite_qtyonhand, itemsite_qtyonhand,"
                "       CASE WHEN(itemsite_useparams) THEN itemsite_reorderlevel ELSE 0.0 END AS reorderlevel,"
-               "       itemsite_qtyonhand, formatQty(itemsite_qtyonhand) AS f_qoh,"
-               "       formatQty(CASE WHEN(itemsite_useparams) THEN itemsite_reorderlevel ELSE 0.0 END) AS f_reorderlevel,"
-               "       formatQty(CASE WHEN(itemsite_useparams) THEN itemsite_ordertoqty ELSE 0.0 END) AS f_ordertoqty,"
-               "       formatQty(CASE WHEN(itemsite_useparams) THEN itemsite_multordqty ELSE 0.0 END) AS f_multorderqty "
+               "       CASE WHEN(itemsite_useparams) THEN itemsite_ordertoqty ELSE 0.0 END AS ordertoqty,"
+               "       CASE WHEN(itemsite_useparams) THEN itemsite_multordqty ELSE 0.0 END AS multorderqty "
                "FROM item, itemsite "
                "WHERE ( (itemsite_item_id=item_id)"
                " AND (itemsite_warehous_id=:warehous_id)"
@@ -780,62 +779,49 @@ void itemAvailabilityWorkbench::sFillListRunning()
     q.exec();
     if (q.first())
     {
-      _qoh->setText(q.value("f_qoh").toString());
-      _reorderLevel->setText(q.value("f_reorderlevel").toString());
-      _orderMultiple->setText(q.value("f_multorderqty").toString());
-      _orderToQty->setText(q.value("f_ordertoqty").toString());
+      _qoh->setDouble(q.value("itemsite_qtyonhand").toDouble());
+      _reorderLevel->setDouble(q.value("reorderlevel").toDouble());
+      _orderMultiple->setDouble(q.value("multorderqty").toDouble());
+      _orderToQty->setDouble(q.value("ordertoqty").toDouble());
 
-      double  reorderLevel        = q.value("reorderlevel").toDouble();
-      double  runningAvailability = q.value("itemsite_qtyonhand").toDouble();
       QString itemType            = q.value("item_type").toString();
       QString sql;
 
       MetaSQLQuery mql = mqlLoad(":/ms/displays/RunningAvailability/FillListDetail.mql");
       ParameterList params;
       setParams(params);
+      params.append("qoh",          q.value("itemsite_qtyonhand").toDouble());
+
       q = mql.toQuery(params);
-      XTreeWidgetItem *last = 0;
-      while (q.next())
-      {
-	runningAvailability += q.value("balance").toDouble();
-
-	last = new XTreeWidgetItem(_availability, last,
-				   q.value("orderid").toInt(),
-				   q.value("altorderid").toInt(),
-				   q.value("ordertype"),
-				   q.value("ordernumber"),
-				   q.value("item_number"),
-				   q.value("duedate"),
-				   q.value("f_qtyordered"),
-				   q.value("f_qtyreceived"),
-				   q.value("f_balance"),
-				   formatQty(runningAvailability) );
-
-	if (q.value("late").toBool())
-	  last->setTextColor(DUEDATE_COL, "red");
-
-	if (runningAvailability < 0.0)
-	  last->setTextColor(RUNNINGAVAIL_COL, "red");
-	else if (runningAvailability < reorderLevel)
-	  last->setTextColor(RUNNINGAVAIL_COL, "orange");
-
-	if (last->text(ORDERTYPE_COL).contains("Planned P/O") ||
-	    last->text(ORDERTYPE_COL).contains("Planned W/O") )
-	  last->setTextColor("blue");
-      }
+      _availability->populate(q, true);
+      sHandleResort();
       if (q.lastError().type() != QSqlError::None)
       {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-	return;
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        return;
       }
     }
   }
   else
   {
-    _qoh->setText("0.00");
-    _reorderLevel->setText("0.00");
-    _orderMultiple->setText("0.00");
-    _orderToQty->setText("0.00");
+    _qoh->setDouble(0);
+    _reorderLevel->setDouble(0);
+    _orderMultiple->setDouble(0);
+    _orderToQty->setDouble(0);
+  }
+}
+
+void itemAvailabilityWorkbench::sHandleResort()
+{
+  for (int i = 0; i < _availability->topLevelItemCount(); i++)
+  {
+    XTreeWidgetItem *item = _availability->topLevelItem(i);
+    if (item->data(RUNNINGAVAIL_COL, Qt::DisplayRole).toDouble() < 0)
+      item->setTextColor(RUNNINGAVAIL_COL, namedColor("error"));
+    else if (item->data(RUNNINGAVAIL_COL, Qt::DisplayRole).toDouble() < _reorderLevel->toDouble())
+      item->setTextColor(RUNNINGAVAIL_COL, namedColor("warning"));
+    else
+      item->setTextColor(RUNNINGAVAIL_COL, namedColor(""));
   }
 }
 

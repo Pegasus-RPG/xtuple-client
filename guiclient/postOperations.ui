@@ -382,7 +382,7 @@
                 <number>0</number>
                </property>
                <item>
-                <widget class="QLabel" name="_qtyOrdered" >
+                <widget class="XLabel" name="_qtyOrdered" >
                  <property name="minimumSize" >
                   <size>
                    <width>80</width>
@@ -395,7 +395,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QLabel" name="_qtyReceived" >
+                <widget class="XLabel" name="_qtyReceived" >
                  <property name="minimumSize" >
                   <size>
                    <width>80</width>
@@ -408,7 +408,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QLabel" name="_qtyBalance" >
+                <widget class="XLabel" name="_qtyBalance" >
                  <property name="minimumSize" >
                   <size>
                    <width>80</width>
@@ -729,7 +729,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="_standardSutime" >
+             <widget class="XLabel" name="_standardSutime" >
               <property name="minimumSize" >
                <size>
                 <width>80</width>
@@ -921,7 +921,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="_standardRntime" >
+             <widget class="XLabel" name="_standardRntime" >
               <property name="minimumSize" >
                <size>
                 <width>80</width>

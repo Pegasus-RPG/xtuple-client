@@ -85,8 +85,8 @@ miscVoucher::miscVoucher(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _terms->setType(XComboBox::APTerms);
 
-  _miscDistrib->addColumn(tr("Account"), -1,           Qt::AlignLeft  );
-  _miscDistrib->addColumn(tr("Amount"),  _moneyColumn, Qt::AlignRight );
+  _miscDistrib->addColumn(tr("Account"), -1,           Qt::AlignLeft,   true,  "account"  );
+  _miscDistrib->addColumn(tr("Amount"),  _moneyColumn, Qt::AlignRight,  true,  "vodist_amount" );
 }
 
 miscVoucher::~miscVoucher()
@@ -391,14 +391,14 @@ void miscVoucher::sDeleteMiscDistribution()
 void miscVoucher::sFillMiscList()
 {
   q.prepare( "SELECT vodist_id, (formatGLAccount(accnt_id) || ' - ' || accnt_descrip) AS account,"
-             "       formatMoney(vodist_amount) "
+             "       vodist_amount, 'curr' AS vodist_amount_xtnumericrole "
              "FROM vodist, accnt "
              "WHERE ( (vodist_poitem_id=-1)"
              " AND (vodist_accnt_id=accnt_id)"
              " AND (vodist_vohead_id=:vohead_id) ) "
              "UNION ALL "
              "SELECT vodist_id, (expcat_code || ' - ' || expcat_descrip) AS account,"
-             "       formatMoney(vodist_amount) "
+             "       vodist_amount, 'curr' AS vodist_amount_xtnumericrole "
              "  FROM vodist, expcat "
              " WHERE ( (vodist_poitem_id=-1)"
              "   AND   (vodist_expcat_id=expcat_id)"

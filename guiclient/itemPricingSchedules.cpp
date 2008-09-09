@@ -90,10 +90,10 @@ itemPricingSchedules::itemPricingSchedules(QWidget* parent, const char* name, Qt
 
   statusBar()->hide();
   
-  _ipshead->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft   );
-  _ipshead->addColumn(tr("Description"), -1,          Qt::AlignLeft   );
-  _ipshead->addColumn(tr("Effective"),   _dateColumn, Qt::AlignCenter );
-  _ipshead->addColumn(tr("Expires"),     _dateColumn, Qt::AlignCenter );
+  _ipshead->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft,   true,  "ipshead_name"   );
+  _ipshead->addColumn(tr("Description"), -1,          Qt::AlignLeft,   true,  "ipshead_descrip"   );
+  _ipshead->addColumn(tr("Effective"),   _dateColumn, Qt::AlignCenter, true,  "ipshead_effective" );
+  _ipshead->addColumn(tr("Expires"),     _dateColumn, Qt::AlignCenter, true,  "ipshead_expires" );
 
   if (_privileges->check("MaintainPricingSchedules"))
   {
@@ -239,8 +239,9 @@ void itemPricingSchedules::sFillList()
 void itemPricingSchedules::sFillList(int pIpsheadid)
 {
   QString sql( "SELECT ipshead_id, ipshead_name, ipshead_descrip,"
-               "       formatDate(ipshead_effective, :always),"
-               "       formatDate(ipshead_expires, :never) "
+               "       ipshead_effective, ipshead_expires,"
+               "       CASE WHEN COALESCE(ipshead_effective, startOfTime()) <= startOfTime() THEN :always END AS ipshead_effective_qtdisplayrole,"
+               "       CASE WHEN COALESCE(ipshead_expires, endOfTime()) >= endOfTime() THEN :never END AS ipshead_expires_qtdisplayrole "
                "FROM ipshead " );
 
   if (!_showExpired->isChecked())

@@ -152,7 +152,7 @@ enum SetResponse plannedOrder::set(ParameterList &pParams)
 
       q.prepare( "SELECT fo_itemsite_id,"
                  "       formatFoNumber(fo_id) AS fonumber,"
-                 "       formatQty(fo_qtyord) AS ordered,"
+                 "       fo_qtyord,"
                  "       fo_startdate, fo_duedate "
                  "FROM fo "
                  "WHERE (fo_id=:fo_id);" );
@@ -161,7 +161,7 @@ enum SetResponse plannedOrder::set(ParameterList &pParams)
       if (q.first())
       {
         _number->setText(q.value("fonumber").toString());
-        _qty->setText(q.value("ordered").toString());
+        _qty->setDouble(q.value("fo_qtyord").toDouble());
         _startDate->setDate(q.value("fo_startdate").toDate());
         _dueDate->setDate(q.value("fo_duedate").toDate());
         _item->setItemsiteid(q.value("fo_itemsite_id").toInt());

@@ -107,6 +107,9 @@ itemPricingScheduleItem::itemPricingScheduleItem(QWidget* parent, const char* na
   _qtyBreak->setValidator(omfgThis->qtyVal());
   _qtyBreakCat->setValidator(omfgThis->qtyVal());
   _discount->setValidator(omfgThis->percentVal());
+  _pricingRatio->setPrecision(omfgThis->percentVal());
+  _stdMargin->setPrecision(omfgThis->percentVal());
+  _actMargin->setPrecision(omfgThis->percentVal());
   _item->setType(ItemLineEdit::cSold);
   _prodcat->setType(XComboBox::ProductCategories);
   
@@ -382,7 +385,7 @@ void itemPricingScheduleItem::populate()
   else
   {
     q.prepare( "SELECT ipsprodcat_prodcat_id,"
-               "       ipsprodcat_qtybreak, ipsprodcat_discntprcnt "
+               "       ipsprodcat_qtybreak, (ipsprodcat_discntprcnt * 100) AS discntprcnt "
                "FROM ipsprodcat "
                "WHERE (ipsprodcat_id=:ipsprodcat_id);" );
     q.bindValue(":ipsprodcat_id", _ipsprodcatid);
@@ -391,7 +394,7 @@ void itemPricingScheduleItem::populate()
     {
       _prodcat->setId(q.value("ipsprodcat_prodcat_id").toInt());
       _qtyBreakCat->setDouble(q.value("ipsprodcat_qtybreak").toDouble());
-      _discount->setText(formatPercent(q.value("ipsprodcat_discntprcnt").toDouble()));
+      _discount->setDouble(q.value("discntprcnt").toDouble());
     }
     else if (q.lastError().type() != QSqlError::None)
     {
@@ -438,7 +441,7 @@ void itemPricingScheduleItem::sUpdateCosts(int pItemid)
 
   XSqlQuery cost;
   cost.prepare( "SELECT item_inv_uom_id, item_price_uom_id,"
-                "       formatUOMRatio(iteminvpricerat(item_id)) AS f_ratio,"
+                "       iteminvpricerat(item_id) AS ratio,"
                 "       item_listprice, "
                 "       (stdcost(item_id) * iteminvpricerat(item_id)) AS standard,"
                 "       (actcost(item_id, :curr_id) * iteminvpricerat(item_id)) AS actual "
@@ -451,7 +454,7 @@ void itemPricingScheduleItem::sUpdateCosts(int pItemid)
   {
     _invuomid = cost.value("item_inv_uom_id").toInt();
     _listPrice->setBaseValue(cost.value("item_listprice").toDouble());
-    _pricingRatio->setText(cost.value("f_ratio").toString());
+    _pricingRatio->setDouble(cost.value("ratio").toDouble());
 
     _stdCost->setBaseValue(cost.value("standard").toDouble());
     _actCost->setLocalValue(cost.value("actual").toDouble());
@@ -480,7 +483,7 @@ void itemPricingScheduleItem::sUpdateMargins()
 
     if (_stdCost->baseValue() > 0.0)
     {
-      _stdMargin->setText(formatPercent((price - _stdCost->baseValue()) / price));
+      _stdMargin->setDouble((price - _stdCost->baseValue()) / price * 100);
 
       if (_stdCost->baseValue() > price)
         _stdMargin->setPaletteForegroundColor(QColor("red"));
@@ -495,7 +498,7 @@ void itemPricingScheduleItem::sUpdateMargins()
 
     if (_actCost->baseValue() > 0.0)
     {
-      _actMargin->setText(formatPercent((price - _actCost->baseValue()) / price));
+      _actMargin->setDouble((price - _actCost->baseValue()) / price * 100);
 
       if (_actCost->baseValue() > price)
         _actMargin->setPaletteForegroundColor(QColor("red"));
@@ -543,7 +546,7 @@ void itemPricingScheduleItem::sPriceUOMChanged()
 
   XSqlQuery cost;
   cost.prepare( "SELECT "
-                "       formatUOMRatio(itemuomtouomratio(item_id, :qtyuomid, :priceuomid)) AS f_ratio,"
+                "       itemuomtouomratio(item_id, :qtyuomid, :priceuomid) AS ratio,"
                 "       ((item_listprice / iteminvpricerat(item_id)) * itemuomtouomratio(item_id, :priceuomid, item_inv_uom_id)) AS listprice, "
                 "       (stdcost(item_id) * itemuomtouomratio(item_id, :priceuomid, item_inv_uom_id)) AS standard,"
                 "       (actcost(item_id, :curr_id) * itemuomtouomratio(item_id, :priceuomid, item_inv_uom_id)) AS actual "
@@ -557,7 +560,7 @@ void itemPricingScheduleItem::sPriceUOMChanged()
   if (cost.first())
   {
     _listPrice->setBaseValue(cost.value("listprice").toDouble());
-    _pricingRatio->setText(cost.value("f_ratio").toString());
+    _pricingRatio->setDouble(cost.value("ratio").toDouble());
 
     _stdCost->setBaseValue(cost.value("standard").toDouble());
     _actCost->setLocalValue(cost.value("actual").toDouble());

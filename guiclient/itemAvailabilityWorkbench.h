@@ -82,6 +82,7 @@ public slots:
     virtual void sFillListInvhist();
     virtual void sFillListCosted();
     virtual void sFillListRunning();
+    virtual void sHandleResort();
     virtual void sHandleShowReorder( bool pValue );
     virtual void sFillListAvail();
     virtual void sPrintRunning();

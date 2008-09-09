@@ -109,9 +109,9 @@ void laborRates::init()
 {
   statusBar()->hide();
   
-  _lbrrate->addColumn(tr("Labor Rate"),  _itemColumn, Qt::AlignLeft  );
-  _lbrrate->addColumn(tr("Description"), -1,          Qt::AlignLeft  );
-  _lbrrate->addColumn(tr("Rate"),        _costColumn, Qt::AlignRight );
+  _lbrrate->addColumn(tr("Labor Rate"),  _itemColumn, Qt::AlignLeft,   true,  "lbrrate_code"  );
+  _lbrrate->addColumn(tr("Description"), -1,          Qt::AlignLeft,   true,  "lbrrate_descrip"  );
+  _lbrrate->addColumn(tr("Rate"),        _costColumn, Qt::AlignRight,  true,  "lbrrate_rate" );
 
   if (_privileges->check("MaintainLaborRates"))
   {
@@ -202,7 +202,7 @@ void laborRates::sDelete()
 void laborRates::sFillList()
 {
   _lbrrate->populate( "SELECT lbrrate_id, lbrrate_code, lbrrate_descrip,"
-                      "       formatMoney(lbrrate_rate) "
+                      "       lbrrate_rate, 'curr' AS lbrrate_rate_xtnumericrole "
                       "FROM lbrrate "
                       "ORDER BY lbrrate_code" );
 }

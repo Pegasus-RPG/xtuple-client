@@ -76,6 +76,8 @@ postPoReturnCreditMemo::postPoReturnCreditMemo(QWidget* parent, const char* name
   // signals and slots connections
   connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
 
+  _qty->setPrecision(omfgThis->qtyVal());
+
   _porejectid = -1;
 
   _post->setFocus();
@@ -109,7 +111,7 @@ enum SetResponse postPoReturnCreditMemo::set(const ParameterList & pParams)
     _porejectid = param.toInt();
     q.prepare("SELECT pohead_curr_id,"
               "       COALESCE(item_number, poitem_vend_item_number) AS itemnumber,"
-              "       formatQty(poreject_qty) AS qty,"
+              "       poreject_qty,"
               "       (poitem_unitprice * poreject_qty) AS itemAmount"
               "  FROM pohead, poreject, poitem"
               "       LEFT OUTER JOIN itemsite ON (poitem_itemsite_id=itemsite_id)"
@@ -122,7 +124,7 @@ enum SetResponse postPoReturnCreditMemo::set(const ParameterList & pParams)
     if(q.first())
     {
       _item->setText(q.value("itemNumber").toString());
-      _qty->setText(q.value("qty").toString());
+      _qty->setDouble(q.value("poreject_qty").toDouble());
       _amount->set(q.value("itemAmount").toDouble(), q.value("pohead_curr_id").toInt(), QDate::currentDate());
     }
   }

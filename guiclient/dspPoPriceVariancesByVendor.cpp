@@ -89,15 +89,15 @@ dspPoPriceVariancesByVendor::dspPoPriceVariancesByVendor(QWidget* parent, const 
                     " AND (usr_agent) ) "
                     "ORDER BY usename;" );
   
-  _porecv->addColumn(tr("P/O #"),              _orderColumn, Qt::AlignRight  );
-  _porecv->addColumn(tr("Date"),               _dateColumn,  Qt::AlignCenter );
-  _porecv->addColumn(tr("Item Number"),        _itemColumn,  Qt::AlignLeft   );
-  _porecv->addColumn(tr("Description"),        -1,           Qt::AlignLeft   );
-  _porecv->addColumn(tr("Qty."),               _qtyColumn,   Qt::AlignRight  );
-  _porecv->addColumn(tr("Purch. Cost"),        _priceColumn, Qt::AlignRight  );
-  _porecv->addColumn(tr("Vouchered Cost"),     _priceColumn, Qt::AlignRight  );
-  _porecv->addColumn(tr("Std. Cost at Rcpt."), _priceColumn, Qt::AlignRight  );
-  _porecv->addColumn(tr("Currency"),           _currencyColumn, Qt::AlignRight  );
+  _porecv->addColumn(tr("P/O #"),              _orderColumn,    Qt::AlignRight,  true,  "porecv_ponumber"  );
+  _porecv->addColumn(tr("Date"),               _dateColumn,     Qt::AlignCenter, true,  "receivedate" );
+  _porecv->addColumn(tr("Item Number"),        _itemColumn,     Qt::AlignLeft,   true,  "itemnumber"   );
+  _porecv->addColumn(tr("Description"),        -1,              Qt::AlignLeft,   true,  "itemdescrip"   );
+  _porecv->addColumn(tr("Qty."),               _qtyColumn,      Qt::AlignRight,  true,  "porecv_qty"  );
+  _porecv->addColumn(tr("Purch. Cost"),        _priceColumn,    Qt::AlignRight,  true,  "porecv_purchcost"  );
+  _porecv->addColumn(tr("Vouchered Cost"),     _priceColumn,    Qt::AlignRight,  true,  "vouchercost"  );
+  _porecv->addColumn(tr("Std. Cost at Rcpt."), _priceColumn,    Qt::AlignRight,  true,  "porecv_recvcost"  );
+  _porecv->addColumn(tr("Currency"),           _currencyColumn, Qt::AlignRight,  true,  "currAbbr"  );
 
   if (omfgThis->singleCurrency())
       _porecv->hideColumn(8);
@@ -149,14 +149,16 @@ void dspPoPriceVariancesByVendor::sPrint()
 void dspPoPriceVariancesByVendor::sFillList()
 {
   QString sql( "SELECT porecv_id, porecv_ponumber,"
-               "       formatDate(porecv_date),"
+               "       DATE(porecv_date) AS receivedate,"
                "       COALESCE(item_number, (:nonInv || porecv_vend_item_number)) AS itemnumber,"
                "       COALESCE(item_descrip1, porecv_vend_item_descrip) AS itemdescrip,"
-               "       formatQty(porecv_qty),"
-               "       formatPurchPrice(porecv_purchcost),"
-               "       formatPurchPrice(currToCurr(vohead_curr_id, porecv_curr_id, SUM(vodist_amount) / vodist_qty, vohead_docdate)),"
-               "       formatPurchPrice(porecv_recvcost), "
-	       "       currConcat(porecv_curr_id) "
+               "       porecv_qty, porecv_purchcost, porecv_recvcost,"
+               "       currToCurr(vohead_curr_id, porecv_curr_id, SUM(vodist_amount) / vodist_qty, vohead_docdate) AS vouchercost,"
+               "       currConcat(porecv_curr_id) AS currAbbr,"
+               "       'qty' AS porecv_qty_xtnumericrole,"
+               "       'purchprice' AS porecv_purchcost_xtnumericrole,"
+               "       'purchprice' AS vouchercost_xtnumericrole,"
+               "       'purchprice' AS porecv_recvcost_xtnumericrole "
                "FROM vend,"
                "     porecv LEFT OUTER JOIN"
                "     ( itemsite JOIN item"

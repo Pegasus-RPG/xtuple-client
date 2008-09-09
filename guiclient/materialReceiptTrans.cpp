@@ -83,6 +83,10 @@ materialReceiptTrans::materialReceiptTrans(QWidget* parent, const char* name, Qt
   _item->setType(ItemLineEdit::cGeneralInventory | ItemLineEdit::cActive);
   _warehouse->setType(WComboBox::AllActiveInventory);
   _qty->setValidator(omfgThis->qtyVal());
+  _beforeQty->setPrecision(omfgThis->qtyVal());
+  _afterQty->setPrecision(omfgThis->qtyVal());
+  _unitCost->setPrecision(omfgThis->costVal());
+  _cost->setValidator(omfgThis->costVal());
   _wo->setType(cWoOpen | cWoExploded | cWoReleased | cWoIssued);
 
   omfgThis->inputManager()->notify(cBCWorkOrder, this, _wo, SLOT(setId(int)));
@@ -167,9 +171,9 @@ enum SetResponse materialReceiptTrans::set(const ParameterList &pParams)
         _item->setItemsiteid(popq.value("invhist_itemsite_id").toInt());
         _transDate->setDate(popq.value("invhist_transdate").toDate());
         _username->setText(popq.value("invhist_user").toString());
-        _qty->setText(formatQty(popq.value("invhist_invqty").toDouble()));
-        _beforeQty->setText(formatQty(popq.value("invhist_qoh_before").toDouble()));
-        _afterQty->setText(formatQty(popq.value("invhist_qoh_after").toDouble()));
+        _qty->setDouble(popq.value("invhist_invqty").toDouble());
+        _beforeQty->setDouble(popq.value("invhist_qoh_before").toDouble());
+        _afterQty->setDouble(popq.value("invhist_qoh_after").toDouble());
         _documentNum->setText(popq.value("invhist_ordnumber"));
         _notes->setText(popq.value("invhist_comments").toString());
       }
@@ -392,14 +396,14 @@ void materialReceiptTrans::sPopulateQty()
     _cachedQOH = q.value("itemsite_qtyonhand").toDouble();
     if(_cachedQOH == 0.0)
       _costManual->setChecked(true);
-    _beforeQty->setText(formatQty(q.value("itemsite_qtyonhand").toDouble()));
+    _beforeQty->setDouble(q.value("itemsite_qtyonhand").toDouble());
     _costAdjust->setChecked(true);
     _costAdjust->setEnabled(q.value("itemsite_costmethod").toString() == "A");
 
     if (_issueToWo->isChecked())
-      _afterQty->setText(formatQty(q.value("itemsite_qtyonhand").toDouble()));
-    else if (_qty->text().length())
-      _afterQty->setText(formatQty(_cachedQOH + _qty->toDouble()));
+      _afterQty->setDouble(q.value("itemsite_qtyonhand").toDouble());
+    else if (_qty->toDouble() != 0)
+      _afterQty->setDouble(_cachedQOH + _qty->toDouble());
   }
   else if (q.lastError().type() != QSqlError::None)
   {
@@ -413,9 +417,9 @@ void materialReceiptTrans::sPopulateQty()
 void materialReceiptTrans::sUpdateQty(const QString &pQty)
 {
   if (_issueToWo->isChecked())
-    _afterQty->setText(_beforeQty->text());
+    _afterQty->setDouble(_beforeQty->toDouble());
   else
-    _afterQty->setText(formatQty(_cachedQOH + pQty.toDouble()));
+    _afterQty->setDouble(_cachedQOH + pQty.toDouble());
 }
 
 void materialReceiptTrans::sCostUpdated()
@@ -423,6 +427,6 @@ void materialReceiptTrans::sCostUpdated()
   if(_cost->toDouble() == 0.0 || _qty->toDouble() == 0.0)
     _unitCost->setText(tr("N/A"));
   else
-    _unitCost->setText(formatCost(_cost->toDouble() / _qty->toDouble()));
+    _unitCost->setDouble(_cost->toDouble() / _qty->toDouble());
 }
 

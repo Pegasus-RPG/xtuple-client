@@ -795,7 +795,7 @@ void issueToShipping::sBcFind()
 
   if (_requireInventory->isChecked())
     params.append("requireInventory");
-  params.append("qty", _bcQty->text());
+  params.append("qty", _bcQty->toDouble());
   params.append("issue");
   params.append("snooze");
 

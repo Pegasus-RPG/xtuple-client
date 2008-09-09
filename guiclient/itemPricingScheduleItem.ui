@@ -261,7 +261,7 @@
               </layout>
              </item>
              <item row="2" column="3" >
-              <widget class="QLabel" name="_pricingRatio" >
+              <widget class="XLabel" name="_pricingRatio" >
                <property name="minimumSize" >
                 <size>
                  <width>80</width>
@@ -509,7 +509,7 @@
                 </widget>
                </item>
                <item row="2" column="1" >
-                <widget class="QLabel" name="_stdMargin" >
+                <widget class="XLabel" name="_stdMargin" >
                  <property name="minimumSize" >
                   <size>
                    <width>80</width>
@@ -525,7 +525,7 @@
                 </widget>
                </item>
                <item row="2" column="2" >
-                <widget class="QLabel" name="_actMargin" >
+                <widget class="XLabel" name="_actMargin" >
                  <property name="minimumSize" >
                   <size>
                    <width>80</width>

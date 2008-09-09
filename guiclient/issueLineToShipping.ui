@@ -217,7 +217,7 @@
            </widget>
           </item>
           <item row="0" column="1" >
-           <widget class="QLabel" name="_qtyOrdered" >
+           <widget class="XLabel" name="_qtyOrdered" >
             <property name="maximumSize" >
              <size>
               <width>80</width>
@@ -266,7 +266,7 @@
            </widget>
           </item>
           <item row="1" column="1" >
-           <widget class="QLabel" name="_qtyShipped" >
+           <widget class="XLabel" name="_qtyShipped" >
             <property name="maximumSize" >
              <size>
               <width>80</width>
@@ -289,7 +289,7 @@
            </widget>
           </item>
           <item row="2" column="1" >
-           <widget class="QLabel" name="_qtyReturned" >
+           <widget class="XLabel" name="_qtyReturned" >
             <property name="maximumSize" >
              <size>
               <width>80</width>
@@ -318,7 +318,7 @@
            </widget>
           </item>
           <item row="3" column="1" >
-           <widget class="QLabel" name="_balance" >
+           <widget class="XLabel" name="_balance" >
             <property name="maximumSize" >
              <size>
               <width>80</width>
@@ -357,7 +357,7 @@
            </widget>
           </item>
           <item row="5" column="1" >
-           <widget class="QLabel" name="_qtyAtShip" >
+           <widget class="XLabel" name="_qtyAtShip" >
             <property name="maximumSize" >
              <size>
               <width>80</width>

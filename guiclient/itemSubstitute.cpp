@@ -77,6 +77,9 @@ itemSubstitute::itemSubstitute(QWidget* parent, const char* name, bool modal, Qt
     connect(_substitute, SIGNAL(valid(bool)), _save, SLOT(setEnabled(bool)));
     connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
     connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+
+    _uomRatio->setValidator(omfgThis->percentVal());
+
     init();
 }
 
@@ -308,7 +311,7 @@ void itemSubstitute::populate()
   if (_type == cItemSub)
   {
     q.prepare( "SELECT itemsub_parent_item_id, itemsub_sub_item_id,"
-               "       formatUOMRatio(itemsub_uomratio) AS uomratio, itemsub_rank "
+               "       itemsub_uomratio, itemsub_rank "
                "FROM itemsub "
                "WHERE (itemsub_id=:itemsub_id);" );
     q.bindValue(":itemsub_id", _itemsubid);
@@ -318,13 +321,13 @@ void itemSubstitute::populate()
       _item->setId(q.value("itemsub_parent_item_id").toInt());
       _substitute->setId(q.value("itemsub_sub_item_id").toInt());
       _ranking->setValue(q.value("itemsub_rank").toInt());
-      _uomRatio->setText(q.value("uomratio").toString());
+      _uomRatio->setDouble(q.value("itemsub_uomratio").toDouble());
     }
   }
   else if (_type == cBOMItemSub)
   {
     q.prepare( "SELECT bomitemsub_bomitem_id, item_id,  bomitemsub_item_id,"
-               "       formatUOMRatio(bomitemsub_uomratio) AS uomratio, bomitemsub_rank "
+               "       bomitemsub_uomratio, bomitemsub_rank "
                "FROM bomitemsub, bomitem, item "
                "WHERE ( (bomitemsub_bomitem_id=bomitem_id)"
                " AND (bomitem_item_id=item_id)"
@@ -336,7 +339,7 @@ void itemSubstitute::populate()
       _item->setId(q.value("item_id").toInt());
       _substitute->setId(q.value("bomitemsub_item_id").toInt());
       _ranking->setValue(q.value("bomitemsub_rank").toInt());
-      _uomRatio->setText(q.value("uomratio").toString());
+      _uomRatio->setDouble(q.value("bomitemsub_uomratio").toDouble());
     }
   }
 }

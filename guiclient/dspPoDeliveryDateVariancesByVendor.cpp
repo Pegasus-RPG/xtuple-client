@@ -85,14 +85,14 @@ dspPoDeliveryDateVariancesByVendor::dspPoDeliveryDateVariancesByVendor(QWidget* 
   _agent->setType(XComboBox::Agent);
   _agent->setText(omfgThis->username());
   
-  _porecv->addColumn(tr("P/O #"),              _orderColumn, Qt::AlignRight  );
-  _porecv->addColumn(tr("Vendor"),             _orderColumn, Qt::AlignLeft   );
-  _porecv->addColumn(tr("Date"),               _dateColumn,  Qt::AlignCenter );
-  _porecv->addColumn(tr("Vend. Item #"),       _itemColumn,  Qt::AlignLeft   );
-  _porecv->addColumn(tr("Vendor Description"), -1,           Qt::AlignLeft   );
-  _porecv->addColumn(tr("Qty."),               _qtyColumn,   Qt::AlignRight  );
-  _porecv->addColumn(tr("Due Date"),           _dateColumn,  Qt::AlignRight  );
-  _porecv->addColumn(tr("Recv. Date"),         _dateColumn,  Qt::AlignRight  );
+  _porecv->addColumn(tr("P/O #"),              _orderColumn, Qt::AlignRight,  true,  "porecv_ponumber"  );
+  _porecv->addColumn(tr("Vendor"),             _orderColumn, Qt::AlignLeft,   true,  "vend_name"   );
+  _porecv->addColumn(tr("Date"),               _dateColumn,  Qt::AlignCenter, true,  "receivedate" );
+  _porecv->addColumn(tr("Vend. Item #"),       _itemColumn,  Qt::AlignLeft,   true,  "venditemnumber"   );
+  _porecv->addColumn(tr("Vendor Description"), -1,           Qt::AlignLeft,   true,  "venditemdescrip"   );
+  _porecv->addColumn(tr("Qty."),               _qtyColumn,   Qt::AlignRight,  true,  "porecv_qty"  );
+  _porecv->addColumn(tr("Due Date"),           _dateColumn,  Qt::AlignRight,  true,  "porecv_duedate"  );
+  _porecv->addColumn(tr("Recv. Date"),         _dateColumn,  Qt::AlignRight,  true,  "porecv_date"  );
 }
 
 /*
@@ -133,12 +133,11 @@ void dspPoDeliveryDateVariancesByVendor::sPrint()
 void dspPoDeliveryDateVariancesByVendor::sFillList()
 {
   QString sql( "SELECT porecv_id, porecv_ponumber, vend_name,"
-               "       formatDate(porecv_date),"
-               "       firstLine(porecv_vend_item_number),"
-               "       firstLine(porecv_vend_item_descrip),"
-               "       formatQty(porecv_qty),"
-               "       formatDate(porecv_duedate),"
-               "       formatDate(porecv_date) "
+               "       DATE(porecv_date) AS receivedate,"
+               "       firstLine(porecv_vend_item_number) AS venditemnumber,"
+               "       firstLine(porecv_vend_item_descrip) AS venditemdescrip,"
+               "       porecv_qty, porecv_duedate, porecv_date,"
+               "       'qty' AS porecv_qty_xtnumericrole "
                "FROM porecv, vend "
                "WHERE ( (porecv_vend_id=vend_id)"
                " AND (vend_id=:vend_id)"

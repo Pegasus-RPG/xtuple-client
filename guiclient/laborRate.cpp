@@ -78,6 +78,9 @@ laborRate::laborRate(QWidget* parent, const char* name, bool modal, Qt::WFlags f
     connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
     connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
     connect(_code, SIGNAL(lostFocus()), this, SLOT(sCheck()));
+
+    _rate->setValidator(omfgThis->moneyVal());
+
     init();
 }
 
@@ -101,7 +104,6 @@ void laborRate::languageChange()
 
 void laborRate::init()
 {
-  _rate->setValidator(omfgThis->moneyVal());
 }
 
 enum SetResponse laborRate::set(ParameterList &pParams)
@@ -177,7 +179,7 @@ void laborRate::sSave()
     return;
   }
 
-  if (_rate->text().length() == 0)
+  if (_rate->toDouble() == 0)
   {
     QMessageBox::critical( this, tr("Cannot Add Labor Rate"),
                            tr("You must enter a Rate for the new Labor Rate.") );
@@ -214,7 +216,7 @@ void laborRate::sSave()
 void laborRate::populate()
 {
   q.prepare( "SELECT lbrrate_code, lbrrate_descrip,"
-             "       formatMoney(lbrrate_rate) AS rate "
+             "       lbrrate_rate "
              "FROM lbrrate "
              "WHERE (lbrrate_id=:lbrrate_id);" );
   q.bindValue(":lbrrate_id", _lbrrateid);
@@ -223,7 +225,7 @@ void laborRate::populate()
   {
     _code->setText(q.value("lbrrate_code").toString());
     _description->setText(q.value("lbrrate_descrip").toString());
-    _rate->setText(q.value("rate").toString());
+    _rate->setDouble(q.value("lbrrate_rate").toDouble());
   }
 }
 

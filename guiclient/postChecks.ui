@@ -89,7 +89,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="_numberOfChecks" >
+            <widget class="XLabel" name="_numberOfChecks" >
              <property name="text" >
               <string/>
              </property>

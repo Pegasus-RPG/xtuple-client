@@ -111,11 +111,11 @@ void locations::init()
 {
   statusBar()->hide();
   
-  _location->addColumn(tr("Site"),        _whsColumn,  Qt::AlignCenter );
-  _location->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft   );
-  _location->addColumn(tr("Description"), -1,          Qt::AlignLeft   );
-  _location->addColumn(tr("Netable"),     80,          Qt::AlignCenter );
-  _location->addColumn(tr("Restricted"),  80,          Qt::AlignCenter );
+  _location->addColumn(tr("Site"),        _whsColumn,  Qt::AlignCenter, true,  "warehous_code" );
+  _location->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft,   true,  "name"   );
+  _location->addColumn(tr("Description"), -1,          Qt::AlignLeft,   true,  "locationname"   );
+  _location->addColumn(tr("Netable"),     80,          Qt::AlignCenter, true,  "netable" );
+  _location->addColumn(tr("Restricted"),  80,          Qt::AlignCenter, true,  "restricted" );
 
   if (_privileges->check("MaintainLocations"))
   {
@@ -232,9 +232,10 @@ void locations::sPrint()
 
 void locations::sFillList()
 {
-  QString sql( "SELECT location_id, warehous_code, formatLocationName(location_id), firstLine(location_descrip) AS locationname,"
-               "       formatBoolYN(location_netable),"
-               "       formatBoolYN(location_restrict) "
+  QString sql( "SELECT location_id, warehous_code, formatLocationName(location_id) AS name,"
+               "       firstLine(location_descrip) AS locationname,"
+               "       formatBoolYN(location_netable) AS netable,"
+               "       formatBoolYN(location_restrict) AS restricted "
                "FROM location, warehous "
                "WHERE ( (location_warehous_id=warehous_id)" );
 

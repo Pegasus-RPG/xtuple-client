@@ -150,7 +150,7 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
   _disallowPlanningType = false;
   _inTransaction = false;
 
-  _listprice->setValidator(omfgThis->moneyVal());
+  _listprice->setValidator(omfgThis->priceVal());
   _prodWeight->setValidator(omfgThis->weightVal());
   _packWeight->setValidator(omfgThis->weightVal());
 
@@ -1124,8 +1124,8 @@ void item::populate()
     _pickListItem->setChecked(item.value("item_picklist").toBool());
     _fractional->setChecked(item.value("item_fractional").toBool());
     _configured->setChecked(item.value("item_config").toBool());
-    _prodWeight->setText(formatWeight(item.value("item_prodweight").toDouble()));
-    _packWeight->setText(formatWeight(item.value("item_packweight").toDouble()));
+    _prodWeight->setDouble(item.value("item_prodweight").toDouble());
+    _packWeight->setDouble(item.value("item_packweight").toDouble());
     _maximumDesiredCost->setLocalValue(item.value("item_maxcost").toDouble());
     _notes->setText(item.value("item_comments").toString());
     _extDescription->setText(item.value("item_extdescrip").toString());
@@ -1133,7 +1133,7 @@ void item::populate()
     _prodcat->setId(item.value("item_prodcat_id").toInt());
     _upcCode->setText(item.value("item_upccode"));
     _exclusive->setChecked(item.value("item_exclusive").toBool());
-    _listprice->setText(formatSalesPrice(item.value("item_listprice").toDouble()));
+    _listprice->setDouble(item.value("item_listprice").toDouble());
     _priceUOM->setId(item.value("item_price_uom_id").toInt());
     _warranty->setValue(item.value("item_warrdays").toInt());
 

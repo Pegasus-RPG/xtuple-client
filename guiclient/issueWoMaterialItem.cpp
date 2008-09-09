@@ -93,6 +93,10 @@ issueWoMaterialItem::issueWoMaterialItem(QWidget* parent, const char* name, bool
     _wo->setType(cWoExploded | cWoIssued | cWoReleased);
     _compItemNumber->setAllowNull(TRUE);
     _qtyToIssue->setValidator(omfgThis->qtyVal());
+    _qtyIssued->setPrecision(omfgThis->qtyVal());
+    _qtyRequired->setPrecision(omfgThis->qtyVal());
+    _beforeQty->setPrecision(omfgThis->qtyVal());
+    _afterQty->setPrecision(omfgThis->qtyVal());
 }
 
 /*
@@ -268,10 +272,10 @@ void issueWoMaterialItem::sPopulateCompInfo(int pWomatlid)
 {
   if (pWomatlid != -1)
   {
-    q.prepare( "SELECT item_descrip1, item_descrip2, uom_name, itemuomtouom(itemsite_item_id, NULL, womatl_uom_id, itemsite_qtyonhand) AS qtyonhand,"
-               "       formatQty(womatl_qtyreq) AS qtyreq,"
-               "       formatQty(womatl_qtyiss) AS qtyiss,"
-               "       formatQty(noNeg(womatl_qtyreq - womatl_qtyiss)) AS qtybalance "
+    q.prepare( "SELECT item_descrip1, item_descrip2, uom_name,"
+               "       itemuomtouom(itemsite_item_id, NULL, womatl_uom_id, itemsite_qtyonhand) AS qtyonhand,"
+               "       womatl_qtyreq, womatl_qtyiss,"
+               "       noNeg(womatl_qtyreq - womatl_qtyiss) AS qtybalance "
                "FROM womatl, itemsite, item, uom "
                "WHERE ( (womatl_itemsite_id=itemsite_id)"
                " AND (itemsite_item_id=item_id)"
@@ -285,12 +289,12 @@ void issueWoMaterialItem::sPopulateCompInfo(int pWomatlid)
       _compDescription2->setText(q.value("item_descrip2").toString());
       _compUOM->setText(q.value("uom_name").toString());
       _uomQty->setText(q.value("uom_name").toString());
-      _qtyRequired->setText(q.value("qtyreq").toString());
-      _qtyIssued->setText(q.value("qtyiss").toString());
-      _qtyToIssue->setText(q.value("qtybalance").toString());
+      _qtyRequired->setDouble(q.value("womatl_qtyreq").toDouble());
+      _qtyIssued->setDouble(q.value("womatl_qtyiss").toDouble());
+      _qtyToIssue->setDouble(q.value("qtybalance").toDouble());
       
       _cachedQOH = q.value("qtyonhand").toDouble();
-      _beforeQty->setText(formatQty(_cachedQOH));
+      _beforeQty->setDouble(_cachedQOH);
 
       sPopulateQOH();
 
@@ -317,6 +321,6 @@ void issueWoMaterialItem::sPopulateCompInfo(int pWomatlid)
 
 void issueWoMaterialItem::sPopulateQOH()
 {
-  _afterQty->setText(formatQty(_cachedQOH - _qtyToIssue->toDouble()));
+  _afterQty->setDouble(_cachedQOH - _qtyToIssue->toDouble());
 }
 

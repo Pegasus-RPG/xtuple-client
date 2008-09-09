@@ -88,12 +88,12 @@ dspItemSourcesByVendor::dspItemSourcesByVendor(QWidget* parent, const char* name
   connect(_vendor, SIGNAL(newId(int)), this, SLOT(sFillList()));
   connect(_vendor, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
 
-  _itemsrc->addColumn(tr("Item Number"),        _itemColumn, Qt::AlignLeft   );
-  _itemsrc->addColumn(tr("Description"),        -1,          Qt::AlignLeft   );
-  _itemsrc->addColumn(tr("UOM"),                _uomColumn,  Qt::AlignCenter );
-  _itemsrc->addColumn(tr("Vendor Item Number"), _itemColumn, Qt::AlignLeft   );
-  _itemsrc->addColumn(tr("Vendor UOM"),         _uomColumn,  Qt::AlignLeft   );
-  _itemsrc->addColumn(tr("UOM Ratio"),          _qtyColumn,  Qt::AlignRight  );
+  _itemsrc->addColumn(tr("Item Number"),        _itemColumn, Qt::AlignLeft,   true,  "item_number"   );
+  _itemsrc->addColumn(tr("Description"),        -1,          Qt::AlignLeft,   true,  "itemdescrip"   );
+  _itemsrc->addColumn(tr("UOM"),                _uomColumn,  Qt::AlignCenter, true,  "uom_name" );
+  _itemsrc->addColumn(tr("Vendor Item Number"), _itemColumn, Qt::AlignLeft,   true,  "itemsrc_vend_item_number"   );
+  _itemsrc->addColumn(tr("Vendor UOM"),         _uomColumn,  Qt::AlignLeft,   true,  "itemsrc_vend_uom"   );
+  _itemsrc->addColumn(tr("UOM Ratio"),          _qtyColumn,  Qt::AlignRight,  true,  "itemsrc_invvendoruomratio"  );
 }
 
 /*
@@ -167,10 +167,10 @@ void dspItemSourcesByVendor::sFillList()
   if (_vendor->isValid())
   {
     q.prepare( "SELECT itemsrc_id, item_number,"
-               "       (item_descrip1 || ' ' || item_descrip2),"
+               "       (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
                "       uom_name,"
                "       itemsrc_vend_item_number, itemsrc_vend_uom,"
-               "       formatQty(itemsrc_invvendoruomratio) "
+               "       itemsrc_invvendoruomratio, 'qty' AS itemsrc_invvendoruomratio_xtnumericrole "
                "FROM itemsrc, item, uom "
                "WHERE ( (itemsrc_item_id=item_id)"
                " AND (item_inv_uom_id=uom_id)"

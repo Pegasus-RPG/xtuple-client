@@ -78,11 +78,11 @@ plannedSchedule::plannedSchedule(QWidget * parent, const char * name, bool modal
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));  
   connect(_number, SIGNAL(lostFocus()), this, SLOT(sNumberChanged()));
 
-  _list->addColumn(tr("#"),           _whsColumn,  Qt::AlignRight  );
-  _list->addColumn(tr("Sched. Date"), _dateColumn, Qt::AlignCenter );
-  _list->addColumn(tr("Item Number"), -1,          Qt::AlignLeft   );
-  _list->addColumn(tr("Qty"),         _qtyColumn,  Qt::AlignRight  );
-  _list->addColumn(tr("Status"),      _whsColumn,  Qt::AlignCenter );
+  _list->addColumn(tr("#"),           _whsColumn,  Qt::AlignRight,  true,  "pschitem_linenumber"  );
+  _list->addColumn(tr("Sched. Date"), _dateColumn, Qt::AlignCenter, true,  "pschitem_scheddate" );
+  _list->addColumn(tr("Item Number"), -1,          Qt::AlignLeft,   true,  "item_number"   );
+  _list->addColumn(tr("Qty"),         _qtyColumn,  Qt::AlignRight,  true,  "pschitem_qty"  );
+  _list->addColumn(tr("Status"),      _whsColumn,  Qt::AlignCenter, true,  "pschitem_status" );
 
   //If not multi-warehouse hide whs control
   if (!_metrics->boolean("MultiWhs"))
@@ -386,10 +386,11 @@ void plannedSchedule::sFillList()
 {
   q.prepare("SELECT pschitem_id,"
             "       pschitem_linenumber,"
-            "       formatDate(pschitem_scheddate), "
+            "       pschitem_scheddate, "
             "       item_number,"
             "       pschitem_qty,"
-            "       pschitem_status "
+            "       pschitem_status,"
+            "       'qty' AS pschitem_qty_xtnumericrole "
             "  FROM pschitem JOIN "
             "       (itemsite JOIN item "
             "         ON (itemsite_item_id=item_id)) "

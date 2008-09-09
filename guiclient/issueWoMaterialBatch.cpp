@@ -108,13 +108,13 @@ void issueWoMaterialBatch::init()
 
   omfgThis->inputManager()->notify(cBCWorkOrder, this, _wo, SLOT(setId(int)));
 
-  _womatl->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft   );
-  _womatl->addColumn(tr("Description"),  -1,          Qt::AlignLeft   );
-  _womatl->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignCenter );
-  _womatl->addColumn(tr("Issue Method"), _itemColumn, Qt::AlignCenter );
-  _womatl->addColumn(tr("Required"),     _qtyColumn,  Qt::AlignRight  );
-  _womatl->addColumn(tr("QOH"),          _qtyColumn,  Qt::AlignRight  );
-  _womatl->addColumn(tr("Short"),        _qtyColumn,  Qt::AlignRight  );
+  _womatl->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft,   true,  "item_number"   );
+  _womatl->addColumn(tr("Description"),  -1,          Qt::AlignLeft,   true,  "itemdescrip"   );
+  _womatl->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignCenter, true,  "uom_name" );
+  _womatl->addColumn(tr("Issue Method"), _itemColumn, Qt::AlignCenter, true,  "issuemethod" );
+  _womatl->addColumn(tr("Required"),     _qtyColumn,  Qt::AlignRight,  true,  "required"  );
+  _womatl->addColumn(tr("QOH"),          _qtyColumn,  Qt::AlignRight,  true,  "itemsite_qtyonhand"  );
+  _womatl->addColumn(tr("Short"),        _qtyColumn,  Qt::AlignRight,  true,  "short"  );
 }
 
 enum SetResponse issueWoMaterialBatch::set(ParameterList &pParams)
@@ -223,7 +223,7 @@ void issueWoMaterialBatch::sIssue()
 void issueWoMaterialBatch::sFillList()
 {
   _womatl->clear();
-  _hasPush = FALSE;
+  _issue->setEnabled(false);
 
   if (_wo->isValid())
   {
@@ -235,9 +235,16 @@ void issueWoMaterialBatch::sFillList()
                     "      WHEN (womatl_issuemethod = 'M') THEN :mixed"
                     "      ELSE :error"
                     " END AS issuemethod,"
-                    " formatQty(noNeg(womatl_qtyreq - womatl_qtyiss)) AS required,"
-                    " formatQty(itemsite_qtyonhand) AS qoh,"
-                    " formatQty(abs(noneg((itemsite_qtyonhand - womatl_qtyreq) * -1))) AS short "
+                    " noNeg(womatl_qtyreq - womatl_qtyiss) AS required,"
+                    " itemsite_qtyonhand,"
+                    " abs(noneg((itemsite_qtyonhand - womatl_qtyreq) * -1)) AS short,"
+                    " 'qty' AS required_xtnumericrole,"
+                    " 'qty' AS itemsite_qtyonhand_xtnumericrole,"
+                    " 'qty' AS short_xtnumericrole,"
+                    " CASE WHEN (womatl_issuemethod = 'L') THEN 'blue'"
+                    " END AS issuemethod_qtforegroundrole, "
+                    " CASE WHEN (abs(noneg((itemsite_qtyonhand - womatl_qtyreq) * -1)) > 0.0) THEN 'red'"
+                    " END AS short_qtforegroundrole "
                     "FROM womatl, itemsite, item, uom "
                     "WHERE ((womatl_itemsite_id=itemsite_id)"
                     " AND (itemsite_item_id=item_id)"
@@ -250,36 +257,7 @@ void issueWoMaterialBatch::sFillList()
     womatl.bindValue(":error", tr("Error"));
     womatl.bindValue(":wo_id", _wo->id());
     womatl.exec();
-
-    XTreeWidgetItem *last = 0;
-    while (womatl.next())
-    {
-      last = new XTreeWidgetItem(_womatl, last,
-				 womatl.value("womatl_id").toInt(),
-				 womatl.value("item_number"),
-				 womatl.value("itemdescrip"),
-				 womatl.value("uom_name"),
-				 womatl.value("issuemethod"),
-				 womatl.value("required"),
-				 womatl.value("qoh"),
-				 womatl.value("short") );
-
-      if (womatl.value("issuemethod") == "Pull")
-      {
-	// TODO: there's no equivalent to setSelectable with QTreeView
-	// does it matter here?
-        // last->setSelectable(FALSE);
-        last->setTextColor("blue");
-      }
-      else
-      {
-        _hasPush = TRUE;
-
-        if (womatl.value("short").toDouble() > 0.0)
-          last->setTextColor(6, "red");
-      }
-    }
+    _womatl->populate(womatl);
+    _issue->setEnabled(true);
   }
-
-  _issue->setEnabled(_hasPush);
 }

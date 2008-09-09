@@ -252,7 +252,7 @@
                  <number>0</number>
                 </property>
                 <item>
-                 <widget class="QLabel" name="_qoh" >
+                 <widget class="XLabel" name="_qoh" >
                   <property name="minimumSize" >
                    <size>
                     <width>80</width>
@@ -265,7 +265,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="_orderMultiple" >
+                 <widget class="XLabel" name="_orderMultiple" >
                   <property name="minimumSize" >
                    <size>
                     <width>80</width>
@@ -319,7 +319,7 @@
                  <number>0</number>
                 </property>
                 <item>
-                 <widget class="QLabel" name="_reorderLevel" >
+                 <widget class="XLabel" name="_reorderLevel" >
                   <property name="minimumSize" >
                    <size>
                     <width>80</width>
@@ -332,7 +332,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="_orderToQty" >
+                 <widget class="XLabel" name="_orderToQty" >
                   <property name="minimumSize" >
                    <size>
                     <width>80</width>

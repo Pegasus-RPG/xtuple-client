@@ -95,12 +95,12 @@ openReturnAuthorizations::openReturnAuthorizations(QWidget* parent, const char* 
 
   statusBar()->hide();
   
-  _ra->addColumn(tr("R/A #"),            _orderColumn, Qt::AlignLeft   );
-  _ra->addColumn(tr("Cust. #"),          _orderColumn, Qt::AlignLeft   );
-  _ra->addColumn(tr("Customer"),         -1,           Qt::AlignLeft   );
-  _ra->addColumn(tr("Disposition"), _itemColumn,  Qt::AlignLeft   );
-  _ra->addColumn(tr("Created"),          _dateColumn,  Qt::AlignCenter );
-  _ra->addColumn(tr("Expires"),        _dateColumn,  Qt::AlignCenter );
+  _ra->addColumn(tr("R/A #"),            _orderColumn, Qt::AlignLeft,   true,  "rahead_number"   );
+  _ra->addColumn(tr("Cust. #"),          _orderColumn, Qt::AlignLeft,   true,  "customer"   );
+  _ra->addColumn(tr("Customer"),         -1,           Qt::AlignLeft,   true,  "rahead_billtoname"   );
+  _ra->addColumn(tr("Disposition"),      _itemColumn,  Qt::AlignLeft,   true,  "disposition"   );
+  _ra->addColumn(tr("Created"),          _dateColumn,  Qt::AlignCenter, true,  "rahead_authdate" );
+  _ra->addColumn(tr("Expires"),          _dateColumn,  Qt::AlignCenter, true,  "rahead_expiredate" );
   
   if (_privileges->check("MaintainReturns"))
   {
@@ -239,22 +239,16 @@ void openReturnAuthorizations::sPopulateMenu(QMenu *pMenu)
 void openReturnAuthorizations::sFillList()
 {
   QString sql( "SELECT DISTINCT rahead_id, rahead_number,"
-               "       COALESCE(cust_number, :undefined),"
+               "       COALESCE(cust_number, :undefined) AS customer,"
                "       rahead_billtoname, "
-			   "       CASE "
-			   "       WHEN rahead_disposition = 'C' THEN "
-			   "         :credit "
-			   "       WHEN rahead_disposition = 'R' THEN "
-			   "         :return "
-			   "       WHEN rahead_disposition = 'P' THEN "
-			   "         :replace "
-			   "       WHEN rahead_disposition = 'V' THEN "
-			   "         :service "
-			   "       WHEN rahead_disposition = 'M' THEN "
-			   "         :substitute "
-			   "       END AS disposition, "
-               "       formatDate(rahead_authdate) AS f_authorized,"
-               "       formatDate(rahead_expiredate) AS f_expires "
+               "       CASE "
+               "       WHEN rahead_disposition = 'C' THEN :credit "
+               "       WHEN rahead_disposition = 'R' THEN :return "
+               "       WHEN rahead_disposition = 'P' THEN :replace "
+               "       WHEN rahead_disposition = 'V' THEN :service "
+               "       WHEN rahead_disposition = 'M' THEN :substitute "
+               "       END AS disposition, "
+               "       rahead_authdate, rahead_expiredate "
                "FROM rahead LEFT OUTER JOIN cust ON (rahead_cust_id=cust_id) "
                "     LEFT OUTER JOIN raitem JOIN itemsite ON (raitem_itemsite_id=itemsite_id) "
                "     ON (raitem_rahead_id=rahead_id) "
