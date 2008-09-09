@@ -125,7 +125,7 @@ enum SetResponse purchaseRequest::set(ParameterList &pParams)
 
   param = pParams.value("qty", &valid);
   if (valid)
-    _qty->setText(formatQty(param.toDouble()));
+    _qty->setDouble(param.toDouble());
 
   param = pParams.value("dueDate", &valid);
   if (valid)
@@ -159,7 +159,7 @@ enum SetResponse purchaseRequest::set(ParameterList &pParams)
 
       q.prepare( "SELECT pr_itemsite_id,"
                  "       pr_number,"
-                 "       formatQty(wo_qtyreq) AS ordered,"
+                 "       wo_qtyreq,"
                  "       pr_duedate,"
                  "       pr_prj_id "
                  "FROM pr "
@@ -169,7 +169,7 @@ enum SetResponse purchaseRequest::set(ParameterList &pParams)
       {
         _number->setText(q.value("pr_number").toString());
         _item->setItemsiteid(q.value("pr_itemsite_id").toInt());
-        _qty->setText(q.value("ordered").toString());
+        _qty->setDouble(q.value("wo_qtyreq").toDouble());
         _dueDate->setDate(q.value("pr_duedate").toDate());
         _project->setId(q.value("pr_prj_id").toInt());
       }
@@ -186,7 +186,7 @@ enum SetResponse purchaseRequest::set(ParameterList &pParams)
       _dueDate->setEnabled(FALSE);
 
       q.prepare( "SELECT planord_itemsite_id, planord_duedate,"
-                 "       formatQty(planord_qty) AS qty "
+                 "       planord_qty "
                  "FROM planord "
                  "WHERE (planord_id=:planord_id);" );
       q.bindValue(":planord_id", _planordid);
@@ -194,7 +194,7 @@ enum SetResponse purchaseRequest::set(ParameterList &pParams)
       if (q.first())
       {
         _item->setItemsiteid(q.value("planord_itemsite_id").toInt());
-        _qty->setText(q.value("qty").toString());
+        _qty->setDouble(q.value("planord_qty").toDouble());
         _dueDate->setDate(q.value("planord_duedate").toDate());
 
         populateNumber();

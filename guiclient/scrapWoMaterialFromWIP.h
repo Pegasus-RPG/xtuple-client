@@ -71,17 +71,14 @@ public:
     scrapWoMaterialFromWIP(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~scrapWoMaterialFromWIP();
 
-    virtual void init();
-
 public slots:
-    virtual SetResponse set( ParameterList & pParams );
+    virtual SetResponse set( const ParameterList & pParams );
     virtual void sHandleButtons();
 
 protected slots:
     virtual void languageChange();
 
     virtual void sScrap();
-
 
 private:
     bool _captive;

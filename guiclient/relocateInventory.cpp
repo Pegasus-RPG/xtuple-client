@@ -190,7 +190,7 @@ enum SetResponse relocateInventory::set(const ParameterList &pParams)
   param = pParams.value("qty", &valid);
   if (valid)
   {
-    _qty->setText(param.toString());
+    _qty->setDouble(param.toDouble());
     _qty->setEnabled(false);
   }
 

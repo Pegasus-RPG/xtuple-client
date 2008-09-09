@@ -100,6 +100,12 @@ reconcileBankaccount::reconcileBankaccount(QWidget* parent, const char* name, Qt
     _checks->addColumn(tr("Doc. Number"), _itemColumn, Qt::AlignLeft   );
     _checks->addColumn(tr("Notes"),                -1, Qt::AlignLeft   );
     _checks->addColumn(tr("Amount"),  _bigMoneyColumn, Qt::AlignRight  );
+
+    _clearedReceipts->setPrecision(omfgThis->moneyVal());
+    _clearedChecks->setPrecision(omfgThis->moneyVal());
+    _endBal2->setPrecision(omfgThis->moneyVal());
+    _clearBal->setPrecision(omfgThis->moneyVal());
+    _diffBal->setPrecision(omfgThis->moneyVal());
     
     _bankrecid = -1;	// do this before _bankaccnt->populate()
     _datesAreOK = false;
@@ -466,7 +472,7 @@ void reconcileBankaccount::populate()
 
 
   // fill receipts cleared value
-  q.prepare("SELECT formatMoney(COALESCE(SUM(amount),0.0)) AS cleared_amount"
+  q.prepare("SELECT COALESCE(SUM(amount),0.0) AS cleared_amount"
             "  FROM ( SELECT currToLocal(bankaccnt_curr_id, gltrans_amount * -1, gltrans_date) AS amount"
             "           FROM bankaccnt, gltrans, bankrecitem"
             "          WHERE ((gltrans_accnt_id=bankaccnt_accnt_id)"
@@ -492,7 +498,7 @@ void reconcileBankaccount::populate()
   q.bindValue(":bankrecid", _bankrecid);
   q.exec();
   if (q.first())
-    _clearedReceipts->setText(q.value("cleared_amount").toString());
+    _clearedReceipts->setDouble(q.value("cleared_amount").toDouble());
   else if (q.lastError().type() != QSqlError::None)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -556,7 +562,7 @@ void reconcileBankaccount::populate()
     _checks->scrollToItem(_checks->currentItem());
 
   // fill checks cleared value
-  q.prepare("SELECT formatMoney(COALESCE(SUM(amount),0.0)) AS cleared_amount"
+  q.prepare("SELECT COALESCE(SUM(amount),0.0) AS cleared_amount"
             "  FROM ( SELECT currToLocal(bankaccnt_curr_id, gltrans_amount, gltrans_date) AS amount"
             "           FROM bankaccnt, gltrans, bankrecitem"
             "          WHERE ((gltrans_accnt_id=bankaccnt_accnt_id)"
@@ -582,7 +588,7 @@ void reconcileBankaccount::populate()
   q.bindValue(":bankrecid", _bankrecid);
   q.exec();
   if (q.first())
-    _clearedChecks->setText(q.value("cleared_amount").toString());
+    _clearedChecks->setDouble(q.value("cleared_amount").toDouble());
   else if (q.lastError().type() != QSqlError::None)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -590,9 +596,9 @@ void reconcileBankaccount::populate()
   }
 
   // calculate cleared balance
-  q.prepare("SELECT formatMoney(COALESCE(SUM(amount),0.0) + :begBal) AS cleared_amount,"
-            "       formatMoney(:endBal) AS end_amount,"
-            "       formatMoney(:endBal - (:begBal + (COALESCE(SUM(amount),0.0)))) AS diff_amount,"
+  q.prepare("SELECT (COALESCE(SUM(amount),0.0) + :begBal) AS cleared_amount,"
+            "       :endBal AS end_amount,"
+            "       (:endBal - (:begBal + (COALESCE(SUM(amount),0.0)))) AS diff_amount,"
             "       round(:endBal - (:begBal + COALESCE(SUM(amount),0.0)), 2) AS diff_value"
             "  FROM ( SELECT currToLocal(bankaccnt_curr_id, gltrans_amount * -1, gltrans_date) AS amount"
             "           FROM bankaccnt, gltrans, bankrecitem"
@@ -624,9 +630,9 @@ void reconcileBankaccount::populate()
   bool enableRec = FALSE;
   if(q.first())
   {
-    _clearBal->setText(q.value("cleared_amount").toString());
-    _endBal2->setText(q.value("end_amount").toString());
-    _diffBal->setText(q.value("diff_amount").toString());
+    _clearBal->setDouble(q.value("cleared_amount").toDouble());
+    _endBal2->setDouble(q.value("end_amount").toDouble());
+    _diffBal->setDouble(q.value("diff_amount").toDouble());
     if(q.value("diff_value").toDouble() == 0.0)
     {
       _diffBal->setPaletteForegroundColor(QColor("black"));

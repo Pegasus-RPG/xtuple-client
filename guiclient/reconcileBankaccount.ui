@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>824</width>
-    <height>492</height>
+    <height>496</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -18,16 +18,7 @@
      <layout class="QHBoxLayout" >
       <item>
        <layout class="QGridLayout" >
-        <property name="leftMargin" >
-         <number>6</number>
-        </property>
-        <property name="topMargin" >
-         <number>6</number>
-        </property>
-        <property name="rightMargin" >
-         <number>6</number>
-        </property>
-        <property name="bottomMargin" >
+        <property name="margin" >
          <number>6</number>
         </property>
         <property name="horizontalSpacing" >
@@ -138,16 +129,7 @@
       </item>
       <item>
        <layout class="QGridLayout" >
-        <property name="leftMargin" >
-         <number>6</number>
-        </property>
-        <property name="topMargin" >
-         <number>6</number>
-        </property>
-        <property name="rightMargin" >
-         <number>6</number>
-        </property>
-        <property name="bottomMargin" >
+        <property name="margin" >
          <number>6</number>
         </property>
         <item row="0" column="0" >
@@ -202,7 +184,7 @@
       <property name="sizeType" >
        <enum>QSizePolicy::Expanding</enum>
       </property>
-      <property name="sizeHint" >
+      <property name="sizeHint" stdset="0" >
        <size>
         <width>16</width>
         <height>70</height>
@@ -264,7 +246,7 @@
         <property name="orientation" >
          <enum>Qt::Vertical</enum>
         </property>
-        <property name="sizeHint" >
+        <property name="sizeHint" stdset="0" >
          <size>
           <width>102</width>
           <height>16</height>
@@ -282,7 +264,7 @@
       <property name="sizeType" >
        <enum>QSizePolicy::Preferred</enum>
       </property>
-      <property name="sizeHint" >
+      <property name="sizeHint" stdset="0" >
        <size>
         <width>20</width>
         <height>0</height>
@@ -375,7 +357,7 @@
             <property name="sizeType" >
              <enum>QSizePolicy::Preferred</enum>
             </property>
-            <property name="sizeHint" >
+            <property name="sizeHint" stdset="0" >
              <size>
               <width>20</width>
               <height>0</height>
@@ -393,15 +375,12 @@
           <item>
            <layout class="QGridLayout" >
             <item row="0" column="1" >
-             <widget class="QLabel" name="_clearedReceipts" >
+             <widget class="XLabel" name="_clearedReceipts" >
               <property name="minimumSize" >
                <size>
                 <width>100</width>
                 <height>0</height>
                </size>
-              </property>
-              <property name="text" >
-               <string>0.00</string>
               </property>
               <property name="alignment" >
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -419,15 +398,12 @@
              </widget>
             </item>
             <item row="1" column="1" >
-             <widget class="QLabel" name="_clearedChecks" >
+             <widget class="XLabel" name="_clearedChecks" >
               <property name="minimumSize" >
                <size>
                 <width>100</width>
                 <height>0</height>
                </size>
-              </property>
-              <property name="text" >
-               <string>0.00</string>
               </property>
               <property name="alignment" >
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -454,7 +430,7 @@
             <property name="sizeType" >
              <enum>QSizePolicy::Preferred</enum>
             </property>
-            <property name="sizeHint" >
+            <property name="sizeHint" stdset="0" >
              <size>
               <width>20</width>
               <height>0</height>
@@ -474,7 +450,7 @@
         <property name="sizeType" >
          <enum>QSizePolicy::Expanding</enum>
         </property>
-        <property name="sizeHint" >
+        <property name="sizeHint" stdset="0" >
          <size>
           <width>30</width>
           <height>20</height>
@@ -495,15 +471,12 @@
          </widget>
         </item>
         <item row="2" column="1" >
-         <widget class="QLabel" name="_diffBal" >
+         <widget class="XLabel" name="_diffBal" >
           <property name="minimumSize" >
            <size>
             <width>100</width>
             <height>0</height>
            </size>
-          </property>
-          <property name="text" >
-           <string>0.00</string>
           </property>
           <property name="alignment" >
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -511,15 +484,12 @@
          </widget>
         </item>
         <item row="1" column="1" >
-         <widget class="QLabel" name="_clearBal" >
+         <widget class="XLabel" name="_clearBal" >
           <property name="minimumSize" >
            <size>
             <width>100</width>
             <height>0</height>
            </size>
-          </property>
-          <property name="text" >
-           <string>0.00</string>
           </property>
           <property name="alignment" >
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -527,15 +497,12 @@
          </widget>
         </item>
         <item row="0" column="1" >
-         <widget class="QLabel" name="_endBal2" >
+         <widget class="XLabel" name="_endBal2" >
           <property name="minimumSize" >
            <size>
             <width>100</width>
             <height>0</height>
            </size>
-          </property>
-          <property name="text" >
-           <string>0.00</string>
           </property>
           <property name="alignment" >
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -579,13 +546,18 @@
   </customwidget>
   <customwidget>
    <class>DLineEdit</class>
-   <extends>XLineEdit</extends>
+   <extends>QWidget</extends>
    <header>datecluster.h</header>
   </customwidget>
   <customwidget>
    <class>XComboBox</class>
    <extends>QComboBox</extends>
    <header>xcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XLabel</class>
+   <extends>QLabel</extends>
+   <header>xlabel.h</header>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
@@ -607,7 +579,6 @@
   <tabstop>_cancel</tabstop>
   <tabstop>_currency</tabstop>
  </tabstops>
- <includes/>
  <resources/>
  <connections>
   <connection>

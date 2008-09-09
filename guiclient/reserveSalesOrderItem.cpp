@@ -78,6 +78,14 @@ reserveSalesOrderItem::reserveSalesOrderItem(QWidget* parent, const char* name, 
   _item->setReadOnly(TRUE);
 
   _qtyToIssue->setValidator(omfgThis->qtyVal());
+
+  _qtyOrdered->setPrecision(omfgThis->qtyVal());
+  _qtyShipped->setPrecision(omfgThis->qtyVal());
+  _balance->setPrecision(omfgThis->qtyVal());
+  _reserved->setPrecision(omfgThis->qtyVal());
+  _onHand->setPrecision(omfgThis->qtyVal());
+  _allocated->setPrecision(omfgThis->qtyVal());
+  _unreserved->setPrecision(omfgThis->qtyVal());
 }
 
 reserveSalesOrderItem::~reserveSalesOrderItem()
@@ -105,7 +113,7 @@ enum SetResponse reserveSalesOrderItem::set(const ParameterList &pParams)
 
   param = pParams.value("qty", &valid);
   if (valid)
-    _qtyToIssue->setText(param.toString());
+    _qtyToIssue->setDouble(param.toDouble());
 
   return NoError;
 }
@@ -156,15 +164,15 @@ void reserveSalesOrderItem::populate()
 		"       itemsite_item_id AS item_id,"
 		"       warehous_code,"
                 "       uom_name,"
-                "       formatQty(itemsite_qtyonhand) AS qtyonhand,"
-                "       formatQty(qtyReserved(itemsite_id)) AS totreserved,"
-                "       formatQty(qtyUnreserved(itemsite_id)) AS totunreserved,"
-		"       formatQty(coitem_qtyord) AS qtyordered,"
-		"       formatQty(coitem_qtyshipped) AS qtyshipped,"
+                "       itemsite_qtyonhand,"
+                "       qtyReserved(itemsite_id) AS totreserved,"
+                "       qtyUnreserved(itemsite_id) AS totunreserved,"
+		"       coitem_qtyord,"
+		"       coitem_qtyshipped,"
 		"       formatQty(coitem_qtyreturned) AS qtyreturned,"
-                "       formatQty(coitem_qtyreserved) AS qtyreserved,"
-		"       formatQty(noNeg(coitem_qtyord - coitem_qtyshipped +"
-		"                       coitem_qtyreturned - coitem_qtyreserved)) AS balance "
+                "       coitem_qtyreserved,"
+		"       noNeg(coitem_qtyord - coitem_qtyshipped +"
+		"             coitem_qtyreturned - coitem_qtyreserved) AS balance "
 		"FROM cohead, coitem, itemsite, item, warehous, uom "
 		"WHERE ((coitem_cohead_id=cohead_id)"
 		"  AND  (coitem_itemsite_id=itemsite_id)"
@@ -184,13 +192,13 @@ void reserveSalesOrderItem::populate()
     _item->setId(itemq.value("item_id").toInt());
     _warehouse->setText(itemq.value("warehous_code").toString());
     _qtyUOM->setText(itemq.value("uom_name").toString());
-    _qtyOrdered->setText(itemq.value("qtyordered").toString());
-    _qtyShipped->setText(itemq.value("qtyshipped").toString());
-    _balance->setText(itemq.value("balance").toString());
-    _reserved->setText(itemq.value("qtyreserved").toString());
-    _onHand->setText(itemq.value("qtyonhand").toString());
-    _allocated->setText(itemq.value("totreserved").toString());
-    _unreserved->setText(itemq.value("totunreserved").toString());
+    _qtyOrdered->setDouble(itemq.value("coitem_qtyord").toDouble());
+    _qtyShipped->setDouble(itemq.value("coitem_qtyshipped").toDouble());
+    _balance->setDouble(itemq.value("balance").toDouble());
+    _reserved->setDouble(itemq.value("coitem_qtyreserved").toDouble());
+    _onHand->setDouble(itemq.value("itemsite_qtyonhand").toDouble());
+    _allocated->setDouble(itemq.value("totreserved").toDouble());
+    _unreserved->setDouble(itemq.value("totunreserved").toDouble());
   }
   else if (itemq.lastError().type() != QSqlError::None)
   {
@@ -198,5 +206,5 @@ void reserveSalesOrderItem::populate()
     return;
   }
 
-  _qtyToIssue->setText(itemq.value("balance").toString());
+  _qtyToIssue->setDouble(itemq.value("balance").toDouble());
 }

@@ -406,7 +406,7 @@
                   <number>0</number>
                  </property>
                  <item>
-                  <widget class="QLabel" name="_qtyOrdered" >
+                  <widget class="XLabel" name="_qtyOrdered" >
                    <property name="maximumSize" >
                     <size>
                      <width>80</width>
@@ -419,7 +419,7 @@
                   </widget>
                  </item>
                  <item>
-                  <widget class="QLabel" name="_qtyShipped" >
+                  <widget class="XLabel" name="_qtyShipped" >
                    <property name="maximumSize" >
                     <size>
                      <width>80</width>
@@ -432,7 +432,7 @@
                   </widget>
                  </item>
                  <item>
-                  <widget class="QLabel" name="_balance" >
+                  <widget class="XLabel" name="_balance" >
                    <property name="maximumSize" >
                     <size>
                      <width>80</width>
@@ -447,7 +447,7 @@
                 </layout>
                </item>
                <item>
-                <widget class="QLabel" name="_reserved" >
+                <widget class="XLabel" name="_reserved" >
                  <property name="maximumSize" >
                   <size>
                    <width>80</width>
@@ -656,7 +656,7 @@
                  <number>0</number>
                 </property>
                 <item>
-                 <widget class="QLabel" name="_onHand" >
+                 <widget class="XLabel" name="_onHand" >
                   <property name="minimumSize" >
                    <size>
                     <width>80</width>
@@ -669,7 +669,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="_allocated" >
+                 <widget class="XLabel" name="_allocated" >
                   <property name="minimumSize" >
                    <size>
                     <width>80</width>
@@ -682,7 +682,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="_unreserved" >
+                 <widget class="XLabel" name="_unreserved" >
                   <property name="text" >
                    <string/>
                   </property>

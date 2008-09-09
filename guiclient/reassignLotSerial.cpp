@@ -245,7 +245,7 @@ void reassignLotSerial::sFillList()
       if (q.value("itemsite_controlmethod").toString() == "S")
       {
         _qty->setEnabled(FALSE);
-        _qty->setText("1.0");
+        _qty->setDouble(1.0);
       }
       else if (q.value("itemsite_controlmethod").toString() == "L")
         _qty->setEnabled(TRUE);

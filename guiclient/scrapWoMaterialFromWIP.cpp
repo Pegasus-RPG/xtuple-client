@@ -57,70 +57,40 @@
 
 #include "scrapWoMaterialFromWIP.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QMessageBox>
 #include <QSqlError>
-#include <qvalidator.h>
+#include <QValidator>
 #include "inputManager.h"
 #include "distributeInventory.h"
 #include "returnWoMaterialItem.h"
 
-/*
- *  Constructs a scrapWoMaterialFromWIP as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 scrapWoMaterialFromWIP::scrapWoMaterialFromWIP(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  // signals and slots connections
+  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(_qty, SIGNAL(textChanged(const QString&)), this, SLOT(sHandleButtons()));
+  connect(_scrap, SIGNAL(clicked()), this, SLOT(sScrap()));
+  connect(_scrapComponent, SIGNAL(toggled(bool)), _qtyScrappedFromWIPLit, SLOT(setEnabled(bool)));
+  connect(_scrapComponent, SIGNAL(toggled(bool)), _qty, SLOT(setEnabled(bool)));
+  connect(_scrapComponent, SIGNAL(toggled(bool)), _womatl, SLOT(setEnabled(bool)));
+  connect(_scrapComponent, SIGNAL(toggled(bool)), _qtyScrappedFromWIPLit, SLOT(setEnabled(bool)));
+  connect(_scrapComponent, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
+  connect(_scrapComponent, SIGNAL(toggled(bool)), _qtyLit, SLOT(setEnabled(bool)));
+  connect(_scrapTopLevel, SIGNAL(toggled(bool)), _topLevelQtyLit, SLOT(setEnabled(bool)));
+  connect(_scrapTopLevel, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
+  connect(_scrapTopLevel, SIGNAL(toggled(bool)), _topLevelQty, SLOT(setEnabled(bool)));
+  connect(_topLevelQty, SIGNAL(textChanged(const QString&)), this, SLOT(sHandleButtons()));
+  connect(_topLevelQty, SIGNAL(textChanged(const QString&)), this, SLOT(sHandleButtons()));
+  connect(_wo, SIGNAL(newId(int)), _womatl, SLOT(setWoid(int)));
+  connect(_wo, SIGNAL(valid(bool)), this, SLOT(sHandleButtons()));
+  connect(_womatl, SIGNAL(valid(bool)), this, SLOT(sHandleButtons()));
+  connect(_womatl, SIGNAL(valid(bool)), _scrap, SLOT(setEnabled(bool)));
+  connect(_womatl, SIGNAL(newQtyScrappedFromWIP(const QString&)), _qtyScrappedFromWIP, SLOT(setText(const QString&)));
 
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_qty, SIGNAL(textChanged(const QString&)), this, SLOT(sHandleButtons()));
-    connect(_scrap, SIGNAL(clicked()), this, SLOT(sScrap()));
-    connect(_scrapComponent, SIGNAL(toggled(bool)), _qtyScrappedFromWIPLit, SLOT(setEnabled(bool)));
-    connect(_scrapComponent, SIGNAL(toggled(bool)), _qty, SLOT(setEnabled(bool)));
-    connect(_scrapComponent, SIGNAL(toggled(bool)), _womatl, SLOT(setEnabled(bool)));
-    connect(_scrapComponent, SIGNAL(toggled(bool)), _qtyScrappedFromWIPLit, SLOT(setEnabled(bool)));
-    connect(_scrapComponent, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
-    connect(_scrapComponent, SIGNAL(toggled(bool)), _qtyLit, SLOT(setEnabled(bool)));
-    connect(_scrapTopLevel, SIGNAL(toggled(bool)), _topLevelQtyLit, SLOT(setEnabled(bool)));
-    connect(_scrapTopLevel, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
-    connect(_scrapTopLevel, SIGNAL(toggled(bool)), _topLevelQty, SLOT(setEnabled(bool)));
-    connect(_topLevelQty, SIGNAL(textChanged(const QString&)), this, SLOT(sHandleButtons()));
-    connect(_topLevelQty, SIGNAL(textChanged(const QString&)), this, SLOT(sHandleButtons()));
-    connect(_wo, SIGNAL(newId(int)), _womatl, SLOT(setWoid(int)));
-    connect(_wo, SIGNAL(valid(bool)), this, SLOT(sHandleButtons()));
-    connect(_womatl, SIGNAL(valid(bool)), this, SLOT(sHandleButtons()));
-    connect(_womatl, SIGNAL(valid(bool)), _scrap, SLOT(setEnabled(bool)));
-    connect(_womatl, SIGNAL(newQtyScrappedFromWIP(const QString&)), _qtyScrappedFromWIP, SLOT(setText(const QString&)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-scrapWoMaterialFromWIP::~scrapWoMaterialFromWIP()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void scrapWoMaterialFromWIP::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void scrapWoMaterialFromWIP::init()
-{
   _captive = FALSE;
   _fromWOTC = FALSE;
 
@@ -132,7 +102,17 @@ void scrapWoMaterialFromWIP::init()
   _topLevelQty->setValidator(omfgThis->qtyVal());
 }
 
-enum SetResponse scrapWoMaterialFromWIP::set(ParameterList &pParams)
+scrapWoMaterialFromWIP::~scrapWoMaterialFromWIP()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void scrapWoMaterialFromWIP::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse scrapWoMaterialFromWIP::set(const ParameterList &pParams)
 {
   _captive = TRUE;
 

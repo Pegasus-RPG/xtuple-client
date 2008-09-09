@@ -127,7 +127,7 @@ userPreferences::userPreferences(QWidget* parent, const char* name, bool modal, 
   _ellipsesAction->append(1, tr("List"));
   _ellipsesAction->append(2, tr("Search"));
 
-  resize(minimumSize());
+  //resize(minimumSize());
   sPopulate();
 }
 
