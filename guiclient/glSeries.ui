@@ -245,7 +245,7 @@
               <number>5</number>
              </property>
              <item>
-              <widget class="XLineEdit" name="_debits" >
+              <widget class="XLabel" name="_debits" >
                <property name="enabled" >
                 <bool>false</bool>
                </property>
@@ -272,7 +272,7 @@
               </widget>
              </item>
              <item>
-              <widget class="XLineEdit" name="_credits" >
+              <widget class="XLabel" name="_credits" >
                <property name="enabled" >
                 <bool>false</bool>
                </property>

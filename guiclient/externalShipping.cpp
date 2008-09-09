@@ -108,7 +108,11 @@ externalShipping::externalShipping(QWidget* parent, const char* name, bool modal
   _order->setAllowedTypes(OrderLineEdit::Sales);
   _shipment->setType(ShipmentClusterLineEdit::SalesOrder);
 
+  // Trolltech bug 150373, fixed in Qt 4.4: Numerics are returned as strings
+  // TODO: retest in 4.4: are numerics displayed using the current locale?
+#if QT_VERSION >= 0x040400
   _weight->setValidator(omfgThis->weightVal());
+#endif
   
   _model = new XSqlTableModel(this);
 }
@@ -190,4 +194,3 @@ void externalShipping::sReject()
 {
   _screen->revertRow(_screen->currentIndex());
 }
-

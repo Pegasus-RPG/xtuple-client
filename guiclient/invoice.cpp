@@ -61,9 +61,7 @@
 #include <QKeyEvent>
 #include <QMessageBox>
 #include <QSqlError>
-#include <QStatusBar>
 #include <QVariant>
-#include <QWorkspace>
 
 #include "invoiceItem.h"
 #include "shipToList.h"
@@ -79,8 +77,6 @@ invoice::invoice(QWidget* parent, const char* name, Qt::WFlags fl)
     setObjectName(name);
 
   setupUi(this);
-
-  (void)statusBar();
 
   connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
@@ -116,8 +112,6 @@ invoice::invoice(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_taxauth,  SIGNAL(newID(int)),	 this, SLOT(sTaxAuthChanged()));
   connect(_shipChrgs, SIGNAL(newID(int)), this, SLOT(sHandleShipchrg(int)));
 
-  statusBar()->hide();
-
   setFreeFormShipto(false);
 
 #ifndef Q_WS_MAC
@@ -148,6 +142,9 @@ invoice::invoice(QWidget* parent, const char* name, Qt::WFlags fl)
     _project->hide();
 
   _miscAmount->setAllowNegative(true);
+
+  _commission->setValidator(omfgThis->percentVal());
+  _weight->setValidator(omfgThis->weightVal());
 }
 
 invoice::~invoice()
@@ -317,7 +314,7 @@ void invoice::sPopulateCustomerInfo(int pCustid)
   if (pCustid != -1)
   {
       XSqlQuery cust;
-      cust.prepare( "SELECT cust_salesrep_id, formatScrap(cust_commprcnt) AS commission,"
+      cust.prepare( "SELECT cust_salesrep_id, cust_commprcnt * 100 AS commission,"
 		    "       cust_creditstatus, cust_terms_id, COALESCE(cust_taxauth_id, -1) AS cust_taxauth_id,"
 		    "       cust_ffshipto, cust_ffbillto, "
 		    "       COALESCE(shipto_id, -1) AS shiptoid, "
@@ -329,7 +326,7 @@ void invoice::sPopulateCustomerInfo(int pCustid)
       if (cust.first())
       {
 	_salesrep->setId(cust.value("cust_salesrep_id").toInt());
-	_commission->setText(cust.value("commission").toString());
+	_commission->setDouble(cust.value("commission").toDouble());
 	_terms->setId(cust.value("cust_terms_id").toInt());
 	_custtaxauthid = cust.value("cust_taxauth_id").toInt();
 	_taxauth->setId(cust.value("cust_taxauth_id").toInt());
@@ -411,7 +408,7 @@ void invoice::populateShipto(int pShiptoid)
     shipto.prepare( "SELECT shipto_num, shipto_name, shipto_addr_id, "
                     "       cntct_phone, shipto_shipvia,"
                     "       shipto_salesrep_id, COALESCE(shipto_taxauth_id, -1) AS shipto_taxauth_id,"
-		    "       formatScrap(shipto_commission) AS commission "
+		    "       shipto_commission * 100 AS commission "
                     "FROM shiptoinfo LEFT OUTER JOIN "
 		    "     cntct ON (shipto_cntct_id=cntct_id)"
                     "WHERE (shipto_id=:shipto_id);" );
@@ -424,7 +421,7 @@ void invoice::populateShipto(int pShiptoid)
       _shipToPhone->setText(shipto.value("cntct_phone"));
       _shipToNumber->setText(shipto.value("shipto_num"));
       _salesrep->setId(shipto.value("shipto_salesrep_id").toInt());
-      _commission->setText(shipto.value("commission"));
+      _commission->setDouble(shipto.value("commission").toDouble());
       _shipVia->setText(shipto.value("shipto_shipvia"));
       _taxauth->setId(shipto.value("shipto_taxauth_id").toInt());
     }
@@ -755,7 +752,7 @@ void invoice::populate()
     }
 
     _salesrep->setId(q.value("invchead_salesrep_id").toInt());
-    _commission->setText(formatPercent(q.value("invchead_commission").toDouble()));
+    _commission->setDouble(q.value("invchead_commission").toDouble() * 100);
     _taxauthidCache = q.value("taxauth_id").toInt(); 
     _taxauth->setId(_taxauthidCache);
     _taxcurrid = q.value("invchead_tax_curr_id").toInt();

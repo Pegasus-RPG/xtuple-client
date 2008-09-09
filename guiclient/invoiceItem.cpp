@@ -442,10 +442,9 @@ void invoiceItem::populate()
     _qtyinvuomratio = invcitem.value("invcitem_qty_invuomratio").toDouble();
     _pricingUOM->setId(invcitem.value("invcitem_price_uom_id").toInt());
     _priceinvuomratio = invcitem.value("invcitem_price_invuomratio").toDouble();
-    //_priceRatio->setText(formatUOMRatio(_priceinvuomratio));
 
-    _ordered->setText(formatQty(invcitem.value("invcitem_ordered").toDouble()));
-    _billed->setText(formatQty(invcitem.value("invcitem_billed").toDouble()));
+    _ordered->setDouble(invcitem.value("invcitem_ordered").toDouble());
+    _billed->setDouble(invcitem.value("invcitem_billed").toDouble());
     _price->setLocalValue(invcitem.value("invcitem_price").toDouble());
     _custPrice->setLocalValue(invcitem.value("invcitem_custprice").toDouble());
     _listPrice->setBaseValue(invcitem.value("f_listprice").toDouble() * (_priceinvuomratio / _priceRatioCache));
@@ -510,7 +509,7 @@ void invoiceItem::sPopulateItemInfo(int pItemid)
     _pricingUOM->populate(uom);
 
     q.prepare( "SELECT item_inv_uom_id, item_price_uom_id,"
-               "       iteminvpricerat(item_id) AS invpricerat, formatUOMRatio(iteminvpricerat(item_id)) AS f_invpricerat,"
+               "       iteminvpricerat(item_id) AS invpricerat,"
                "       item_listprice, "
                "       stdcost(item_id) AS f_unitcost,"
 	       "       getItemTaxType(item_id, :taxauth) AS taxtype_id "
@@ -525,7 +524,6 @@ void invoiceItem::sPopulateItemInfo(int pItemid)
         sDeterminePrice();
 
       _priceRatioCache = q.value("invpricerat").toDouble();
-     // _priceRatio->setText(q.value("f_invpricerat").toString());
       _listPrice->setBaseValue(q.value("item_listprice").toDouble());
 
       _invuomid = q.value("item_inv_uom_id").toInt();
@@ -547,7 +545,6 @@ void invoiceItem::sPopulateItemInfo(int pItemid)
     _priceRatioCache = 1.0;
     _qtyinvuomratio = 1.0;
     _priceinvuomratio = 1.0;
-  //_priceRatio->setText(formatUOMRatio(_priceinvuomratio));
     _qtyUOM->clear();
     _pricingUOM->clear();
     _listPrice->clear();
@@ -749,7 +746,6 @@ void invoiceItem::sPriceUOMChanged()
     else
       systemError(this, invuom.lastError().databaseText(), __FILE__, __LINE__);
   }
-//  _priceRatio->setText(formatUOMRatio(_priceinvuomratio));
 
   XSqlQuery item;
   item.prepare("SELECT item_listprice"

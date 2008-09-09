@@ -59,6 +59,7 @@
 
 #include <QMessageBox>
 #include <QSqlError>
+#include <QValidator>
 #include <QVariant>
 
 distributeToLocation::distributeToLocation(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
@@ -70,6 +71,11 @@ distributeToLocation::distributeToLocation(QWidget* parent, const char* name, bo
   _availToDistribute   =  0;
   _sourceItemlocdistid = -1;
   _itemlocdistid       = -1;
+
+  _qtyToDistribute->setPrecision(omfgThis->qtyVal());
+  _qtyTagged->setPrecision(omfgThis->qtyVal());
+  _qtyBalance->setPrecision(omfgThis->qtyVal());
+  _locationQty->setValidator(omfgThis->qtyVal());
 }
 
 distributeToLocation::~distributeToLocation()
@@ -112,7 +118,7 @@ enum SetResponse distributeToLocation::set(const ParameterList &pParams)
   {
     // convert the sign of qty to match the desired outcome then choose the lesser of
     // the qty available to distribute and the qty the caller requested
-    double locQty = _locationQty->text().toDouble();
+    double locQty = _locationQty->toDouble();
     if (_mode == cItemloc)	// lot/serial
     {
       if (locQty < 0 && param.toDouble() > 0)
@@ -120,7 +126,7 @@ enum SetResponse distributeToLocation::set(const ParameterList &pParams)
       else if (locQty < 0 && param.toDouble() < 0)
 	locQty = qMax(param.toDouble(), locQty);
     }
-    _locationQty->setText(formatNumber(locQty, 6));
+    _locationQty->setDouble(locQty);
   }
 
   param = pParams.value("distribute", &valid);
@@ -324,7 +330,7 @@ void distributeToLocation::populate()
   q.exec();
   if (q.first())
   {
-    _locationQty->setText(q.value("qty").toString());
+    _locationQty->setDouble(q.value("qty").toDouble());
     _location->setText(q.value("locationname").toString());
     _availToDistribute = q.value("availqty").toDouble();
   }
@@ -345,9 +351,9 @@ void distributeToLocation::populate()
   {
     _lotSerial = q.value("lotserial").toString();
 
-    _qtyToDistribute->setText(formatNumber(q.value("qtydistrib").toDouble(), 6));
-    _qtyTagged->setText(formatNumber(q.value("qtytagged").toDouble(),6));
-    _qtyBalance->setText(formatNumber(q.value("qtybalance").toDouble(),6));
+    _qtyToDistribute->setDouble(q.value("qtydistrib").toDouble());
+    _qtyTagged->setDouble(q.value("qtytagged").toDouble());
+    _qtyBalance->setDouble(q.value("qtybalance").toDouble());
     _balance = q.value("qtybalance").toDouble();
 
     double locQty = _balance;
@@ -360,7 +366,7 @@ void distributeToLocation::populate()
       else if (locQty < 0)
 	locQty = 0;
     }
-    _locationQty->setText(formatNumber(locQty, 6));
+    _locationQty->setDouble(locQty);
   }
   else if (q.lastError().type() != QSqlError::None)
   {

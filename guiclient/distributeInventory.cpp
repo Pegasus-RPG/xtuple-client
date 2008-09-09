@@ -91,15 +91,18 @@ distributeInventory::distributeInventory(QWidget* parent, const char* name, bool
   _trapClose = TRUE;
 
   _item->setReadOnly(TRUE);
+  _qtyToDistribute->setPrecision(omfgThis->qtyVal());
+  _qtyTagged->setPrecision(omfgThis->qtyVal());
+  _qtyRemaining->setPrecision(omfgThis->qtyVal());
   
-  _itemloc->addColumn(tr("Location"),     _itemColumn, Qt::AlignLeft   );
-  _itemloc->addColumn(tr("Default"),      _ynColumn,   Qt::AlignLeft   );
-  _itemloc->addColumn(tr("Netable"),      _ynColumn,   Qt::AlignCenter );
-  _itemloc->addColumn(tr("Lot/Serial #"), -1,          Qt::AlignLeft   );
-  _itemloc->addColumn(tr("Expiration"),   _dateColumn, Qt::AlignCenter );
-  _itemloc->addColumn(tr("Qty. Before"),  _qtyColumn,  Qt::AlignRight  );
-  _itemloc->addColumn(tr("Tagged Qty."),  _qtyColumn,  Qt::AlignRight  );
-  _itemloc->addColumn(tr("Qty. After"),   _qtyColumn,  Qt::AlignRight  );
+  _itemloc->addColumn(tr("Location"),     _itemColumn, Qt::AlignLeft,  true, "locationname");
+  _itemloc->addColumn(tr("Default"),      _ynColumn,   Qt::AlignLeft,  true, "defaultlocation");
+  _itemloc->addColumn(tr("Netable"),      _ynColumn,   Qt::AlignCenter,true, "location_netable");
+  _itemloc->addColumn(tr("Lot/Serial #"), -1,          Qt::AlignLeft,  true, "lotserial");
+  _itemloc->addColumn(tr("Expiration"),   _dateColumn, Qt::AlignCenter,true, "f_expiration");
+  _itemloc->addColumn(tr("Qty. Before"),  _qtyColumn,  Qt::AlignRight, true, "qty");
+  _itemloc->addColumn(tr("Tagged Qty."),  _qtyColumn,  Qt::AlignRight, true, "qtytagged");
+  _itemloc->addColumn(tr("Qty. After"),   _qtyColumn,  Qt::AlignRight, true, "balance");
   
   //If not multi-warehouse hide whs control
   if (!_metrics->boolean("MultiWhs"))
@@ -359,7 +362,7 @@ void distributeInventory::sSelectLocation()
 
 void distributeInventory::sPost()
 {
-  if (_qtyRemaining->text().toDouble() != 0.0)
+  if (_qtyRemaining->toDouble() != 0.0)
   {
     QMessageBox::critical( this, tr("Cannot Perform Partial Distribution"),
                            tr( "<p>You must completely distribute the quantity "
@@ -421,9 +424,9 @@ void distributeInventory::sFillList()
     _item->setItemsiteid(q.value("itemsite_id").toInt());
     _lotSerial->setText(q.value("lotserial").toString());
     _order->setText(q.value("order").toString());
-    _qtyToDistribute->setText(formatNumber(q.value("qtytodistribute").toDouble(),6));
-    _qtyTagged->setText(formatNumber(q.value("qtytagged").toDouble(),6));
-    _qtyRemaining->setText(formatNumber(q.value("qtybalance").toDouble(),6));
+    _qtyToDistribute->setDouble(q.value("qtytodistribute").toDouble());
+    _qtyTagged->setDouble(q.value("qtytagged").toDouble());
+    _qtyRemaining->setDouble(q.value("qtybalance").toDouble());
 
     if ( (q.value("itemsite_location_id").toInt() != -1) &&
          ( (_mode == cNoIncludeLotSerial) || ( (_mode == cIncludeLotSerial) && (!q.value("lscontrol").toBool()) ) ) )
@@ -440,18 +443,13 @@ void distributeInventory::sFillList()
     if (q.value("qtytodistribute").toDouble() < 0)
       _qtyOnly->hide();
 
-    QString sql( "SELECT id, type,"
-                 "       locationname,"
-		 "       CASE WHEN defaultlocation THEN <? value(\"yes\") ?>"
-		 "            ELSE <? value(\"no\") ?>"
-		 "       END AS defaultlocation,"
-		 "       CASE WHEN (location_netable) THEN <? value(\"yes\") ?>"
-		 "            ELSE <? value(\"no\") ?>"
-		 "       END AS netable,"
-		 "       lotserial, f_expiration, expired,"
-                 "       qty,"
-                 "       qtytagged,"
-                 "       (qty + qtytagged) AS balance "
+    QString sql( "SELECT id, type, locationname, defaultlocation,"
+		 "       location_netable, lotserial, f_expiration, expired,"
+                 "       qty, qtytagged, (qty + qtytagged) AS balance,"
+                 "       'qty' AS qty_xtnumericrole,"
+                 "       'qty' AS qtytagged_xtnumericrole,"
+                 "       'qty' AS balance_xtnumericrole,"
+                 "       CASE WHEN expired THEN 'error' END AS qtforegroundrole "
                  "FROM (" 
 		 "<? if exists(\"cNoIncludeLotSerial\") ?>"
 		 "SELECT location_id AS id, <? value(\"locationType\") ?> AS type,"
@@ -548,21 +546,17 @@ void distributeInventory::sFillList()
     MetaSQLQuery mql(sql);
     q = mql.toQuery(params);
 
-    _itemloc->clear();
-    XTreeWidgetItem *last = 0;
-    while (q.next())
+    _itemloc->populate(q, true);
+    if (q.lastError().type() != QSqlError::None)
     {
-      last = new XTreeWidgetItem(_itemloc, last,
-				 q.value("id").toInt(), q.value("type").toInt(),
-				 q.value("locationname"), q.value("defaultlocation"),
-				 q.value("netable"), q.value("lotserial"),
-				 q.value("f_expiration"),
-				 formatNumber(q.value("qty").toDouble(),6),
-				 formatNumber(q.value("qtytagged").toDouble(),6),
-				 formatNumber(q.value("balance").toDouble(),6) );
-      if (q.value("expired").toBool())
-        last->setTextColor("red");
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
     }
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
 }
 

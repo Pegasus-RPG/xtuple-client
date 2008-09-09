@@ -187,7 +187,7 @@
           <number>5</number>
          </property>
          <item>
-          <widget class="QLabel" name="_date" >
+          <widget class="DLineEdit" name="_date" >
            <property name="sizePolicy" >
             <sizepolicy>
              <hsizetype>3</hsizetype>
@@ -196,8 +196,8 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="text" >
-            <string>_date</string>
+           <property name="enabled" >
+            <bool>false</bool>
            </property>
           </widget>
          </item>
@@ -248,7 +248,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="_amount" >
+            <widget class="XLabel" name="_amount" >
              <property name="text" >
               <string>_amount</string>
              </property>
@@ -272,9 +272,9 @@
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="_created" >
-             <property name="text" >
-              <string>_created</string>
+            <widget class="DLineEdit" name="_created" >
+             <property name="enabled" >
+              <bool>false</bool>
              </property>
             </widget>
            </item>

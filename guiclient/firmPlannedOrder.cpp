@@ -57,59 +57,36 @@
 
 #include "firmPlannedOrder.h"
 
-#include <qvariant.h>
+#include <QSqlError>
+#include <QValidator>
+#include <QVariant>
 
-/*
- *  Constructs a firmPlannedOrder as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 firmPlannedOrder::firmPlannedOrder(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  connect(_firm, SIGNAL(clicked()), this, SLOT(sFirm()));
+  _quantity->setValidator(omfgThis->qtyVal());
 
-    // signals and slots connections
-    connect(_firm, SIGNAL(clicked()), this, SLOT(sFirm()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_item, SIGNAL(newId(int)), _warehouse, SLOT(findItemsites(int)));
-    connect(_item, SIGNAL(warehouseIdChanged(int)), _warehouse, SLOT(setId(int)));
-    init();
-
-    //If not multi-warehouse hide whs control
-    if (!_metrics->boolean("MultiWhs"))
-    {
-      _warehouseLit->hide();
-      _warehouse->hide();
-    }
+  if (!_metrics->boolean("MultiWhs"))
+  {
+    _warehouseLit->hide();
+    _warehouse->hide();
+  }
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 firmPlannedOrder::~firmPlannedOrder()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void firmPlannedOrder::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
-
-void firmPlannedOrder::init()
-{
-}
-
-enum SetResponse firmPlannedOrder::set(ParameterList &pParams)
+enum SetResponse firmPlannedOrder::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -120,10 +97,8 @@ enum SetResponse firmPlannedOrder::set(ParameterList &pParams)
     _planordid = param.toInt();
     _item->setReadOnly(TRUE);
 
-    q.prepare( "SELECT planord_type, planord_itemsite_id, planord_duedate,"
-               "       formatQty(planord_qty) AS qty,"
-               "       planord_comments,"
-               "       planord_number, itemsite_leadtime "
+    q.prepare( "SELECT planord.*,"
+               "       itemsite_leadtime "
                "FROM planord JOIN itemsite ON (itemsite_id=itemsite_id) "
                "WHERE (planord_id=:planord_id);" );
     q.bindValue(":planord_id", _planordid);
@@ -131,7 +106,7 @@ enum SetResponse firmPlannedOrder::set(ParameterList &pParams)
     if (q.first())
     {
       _item->setItemsiteid(q.value("planord_itemsite_id").toInt());
-      _quantity->setText(q.value("qty").toString());
+      _quantity->setDouble(q.value("planord_qty").toDouble());
       _dueDate->setDate(q.value("planord_duedate").toDate());
       _comments->setText(q.value("planord_comments").toString());
       _number = q.value("planord_number").toInt();
@@ -143,8 +118,11 @@ enum SetResponse firmPlannedOrder::set(ParameterList &pParams)
       else if (q.value("planord_type").toString() == "W")
         _orderType->setText(tr("Work Order"));
     }
-    else
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       reject();
+    }
   }
 
   return NoError;
@@ -155,11 +133,20 @@ void firmPlannedOrder::sFirm()
   q.prepare( "SELECT deletePlannedOrder( :planord_id, true) AS result;" );
   q.bindValue(":planord_id", _planordid);
   q.exec();
-  if (!q.first())
+  if (q.first())
   {
-    systemError( this, tr("A System Error occurred at %1::%2.")
-                       .arg(__FILE__)
-                       .arg(__LINE__) );
+    bool result = q.value("result").toBool();
+    if (! result)
+    {
+      systemError(this, tr("DeletePlannedOrder returned FALSE, indicating an "
+                           "error occurred."),
+                  __FILE__, __LINE__);
+      return;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -171,11 +158,20 @@ void firmPlannedOrder::sFirm()
   q.bindValue(":dueDate", _dueDate->date());
   q.bindValue(":leadTime", _leadTime);
   q.exec();
-  if (!q.first())
+  if (q.first())
   {
-    systemError( this, tr("A System Error occurred at %1::%2.")
-                       .arg(__FILE__)
-                       .arg(__LINE__) );
+    double result = q.value("result").toDouble();
+    if (result < 0.0)
+    {
+      systemError(this, tr("CreatePlannedOrder returned %, indicating an "
+                           "error occurred.").arg(result),
+                  __FILE__, __LINE__);
+      return;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -185,7 +181,11 @@ void firmPlannedOrder::sFirm()
   q.bindValue(":planord_comments", _comments->text());
   q.bindValue(":orderNumber", _number);
   q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   done(_planordid);
 }
-

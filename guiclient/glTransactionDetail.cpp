@@ -57,48 +57,27 @@
 
 #include "glTransactionDetail.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QMessageBox>
+#include <QVariant>
 
-/*
- *  Constructs a glTransactionDetail as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 glTransactionDetail::glTransactionDetail(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  _amount->setPrecision(omfgThis->moneyVal());
 
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    init();
+  _gltransid = -1;
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 glTransactionDetail::~glTransactionDetail()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void glTransactionDetail::languageChange()
 {
-    retranslateUi(this);
-}
-
-
-void glTransactionDetail::init()
-{
-  _gltransid = -1;
+  retranslateUi(this);
 }
 
 enum SetResponse glTransactionDetail::set( const ParameterList & pParams )
@@ -118,30 +97,24 @@ enum SetResponse glTransactionDetail::set( const ParameterList & pParams )
 
 void glTransactionDetail::populate()
 {
-  q.prepare("SELECT formatDate(gltrans_date) AS f_date,"
+  q.prepare("SELECT *,"
             "       (gltrans_doctype || ' ' || gltrans_docnumber) AS f_document,"
-            "       gltrans_source, gltrans_journalnumber, gltrans_username,"
-            "       formatDateTime(gltrans_created) AS f_created,"
-            "       formatBoolYN(gltrans_posted) AS f_posted,"
-            "       formatMoney(gltrans_amount) AS f_amount,"
-            "       formatGLAccountLong(gltrans_accnt_id) AS f_accnt,"
-            "       gltrans_notes"
+            "       formatGLAccountLong(gltrans_accnt_id) AS f_accnt "
             "  FROM gltrans"
             " WHERE (gltrans_id=:gltrans_id);");
   q.bindValue(":gltrans_id", _gltransid);
   q.exec();
   if(q.first())
   {
-    _date->setText(q.value("f_date").toString());
+    _date->setDate(q.value("gltrans_date").toDate());
     _source->setText(q.value("gltrans_source").toString());
     _document->setText(q.value("f_document").toString());
     _journalnumber->setText(q.value("gltrans_journalnumber").toString());
     _accnt->setText(q.value("f_accnt").toString());
-    _amount->setText(q.value("f_amount").toString());
+    _amount->setDouble(q.value("gltrans_amount").toDouble());
     _username->setText(q.value("gltrans_username").toString());
-    _created->setText(q.value("f_created").toString());
-    _posted->setText(q.value("f_posted").toString());
+    _created->setDate(q.value("gltrans_created").toDate());
+    _posted->setText(q.value("gltrans_posted").toBool() ? tr("Yes") : tr("No"));
     _notes->setText(q.value("gltrans_notes").toString());
   }
 }
-

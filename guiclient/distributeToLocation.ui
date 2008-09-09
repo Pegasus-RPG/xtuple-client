@@ -39,7 +39,7 @@
         <number>5</number>
        </property>
        <item row="2" column="1" >
-        <widget class="QLabel" name="_qtyTagged" >
+        <widget class="XLabel" name="_qtyTagged" >
          <property name="minimumSize" >
           <size>
            <width>80</width>
@@ -55,7 +55,7 @@
         </widget>
        </item>
        <item row="3" column="1" >
-        <widget class="QLabel" name="_qtyBalance" >
+        <widget class="XLabel" name="_qtyBalance" >
          <property name="minimumSize" >
           <size>
            <width>80</width>
@@ -151,7 +151,7 @@
         </widget>
        </item>
        <item row="1" column="1" >
-        <widget class="QLabel" name="_qtyToDistribute" >
+        <widget class="XLabel" name="_qtyToDistribute" >
          <property name="minimumSize" >
           <size>
            <width>80</width>

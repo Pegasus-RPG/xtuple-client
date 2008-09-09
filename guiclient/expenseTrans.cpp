@@ -81,12 +81,14 @@ expenseTrans::expenseTrans(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _item->setType(ItemLineEdit::cGeneralInventory | ItemLineEdit::cActive);
   _warehouse->setType(WComboBox::AllActiveInventory);
+
   _qty->setValidator(omfgThis->qtyVal());
+  _afterQty->setPrecision(omfgThis->qtyVal());
+  _beforeQty->setPrecision(omfgThis->qtyVal());
 
   omfgThis->inputManager()->notify(cBCItem, this, _item, SLOT(setItemid(int)));
   omfgThis->inputManager()->notify(cBCItemSite, this, _item, SLOT(setItemsiteid(int)));
 
-  //If not multi-warehouse hide whs control
   if (!_metrics->boolean("MultiWhs"))
   {
     _warehouseLit->hide();
@@ -155,9 +157,9 @@ enum SetResponse expenseTrans::set(const ParameterList &pParams)
       {
         _transDate->setDate(q.value("invhist_transdate").toDate());
         _username->setText(q.value("invhist_user").toString());
-        _qty->setText(formatQty(q.value("invhist_invqty").toDouble()));
-        _beforeQty->setText(formatQty(q.value("invhist_qoh_before").toDouble()));
-        _afterQty->setText(formatQty(q.value("invhist_qoh_after").toDouble()));
+        _qty->setDouble(q.value("invhist_invqty").toDouble());
+        _beforeQty->setDouble(q.value("invhist_qoh_before").toDouble());
+        _afterQty->setDouble(q.value("invhist_qoh_after").toDouble());
         _documentNum->setText(q.value("invhist_ordnumber"));
         _notes->setText(q.value("invhist_comments").toString());
         _item->setItemsiteid(q.value("invhist_itemsite_id").toInt());
@@ -293,7 +295,7 @@ void expenseTrans::sPopulateQOH(int pWarehousid)
     if (q.first())
     {
       _cachedQOH = q.value("itemsite_qtyonhand").toDouble();
-      _beforeQty->setText(formatQty(q.value("itemsite_qtyonhand").toDouble()));
+      _beforeQty->setDouble(q.value("itemsite_qtyonhand").toDouble());
       sPopulateQty();
     }
     else if (q.lastError().type() != QSqlError::None)
@@ -306,6 +308,6 @@ void expenseTrans::sPopulateQOH(int pWarehousid)
 
 void expenseTrans::sPopulateQty()
 {
-  _afterQty->setText(formatQty(_cachedQOH - _qty->toDouble()));
+  _afterQty->setDouble(_cachedQOH - _qty->toDouble());
 }
 

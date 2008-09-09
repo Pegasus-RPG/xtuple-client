@@ -79,8 +79,6 @@ public slots:
 protected:
     int _gltransid;
 
-    virtual void init();
-
 protected slots:
     virtual void languageChange();
 

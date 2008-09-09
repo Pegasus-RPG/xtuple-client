@@ -57,65 +57,43 @@
 
 #include "enterMiscCount.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
 
-/*
- *  Constructs a enterMiscCount as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
+#include "storedProcErrorLookup.h"
+
 enterMiscCount::enterMiscCount(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
 
-    // signals and slots connections
-    connect(_item, SIGNAL(valid(bool)), _post, SLOT(setEnabled(bool)));
-    connect(_item, SIGNAL(newId(int)), _warehouse, SLOT(findItemsites(int)));
-    connect(_item, SIGNAL(warehouseIdChanged(int)), _warehouse, SLOT(setId(int)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
-    init();
-    
-    _item->setType(ItemLineEdit::cGeneralInventory | ItemLineEdit::cActive);
-    _warehouse->setType(WComboBox::AllActiveInventory);
+  _captive = FALSE;
+  
+  _item->setType(ItemLineEdit::cGeneralInventory | ItemLineEdit::cActive);
+  _warehouse->setType(WComboBox::AllActiveInventory);
+  _qty->setValidator(omfgThis->qtyVal());
 
-    //If not multi-warehouse hide whs control
-    if (!_metrics->boolean("MultiWhs"))
-    {
-      _warehouseLit->hide();
-      _warehouse->hide();
-    }
+  if (!_metrics->boolean("MultiWhs"))
+  {
+    _warehouseLit->hide();
+    _warehouse->hide();
+  }
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 enterMiscCount::~enterMiscCount()
 {
     // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void enterMiscCount::languageChange()
 {
     retranslateUi(this);
 }
 
-
-void enterMiscCount::init()
-{
-  _captive = FALSE;
-}
-
-enum SetResponse enterMiscCount::set(ParameterList &pParams)
+enum SetResponse enterMiscCount::set(const ParameterList &pParams)
 {
   _captive = TRUE;
 
@@ -149,20 +127,28 @@ void enterMiscCount::sPost()
     if (q.value("detailed").toBool())
     {
       QMessageBox::warning( this, tr("Cannot Enter Misc. Count"),
-                            tr( "The selected Item Site is controlled via a combination of Lot/Serial and/or Location control.\n"
-                                "Misc. Counts can only be entered for Item Sites that are not Lot/Serial or Location controlled." ) );
+                            tr("<p>The selected Item Site is controlled via a "
+                               "combination of Lot/Serial and/or Location "
+                               "control. Misc. Counts can only be entered for "
+                               "Item Sites that are not Lot/Serial or Location "
+                               "controlled." ) );
       return;
     }
 
     if (q.value("cnttagid") != -1)
     {
-      QMessageBox::warning( this, tr("Count Tag Previously Created"),
-                            tr( "An unposted Count Tag already exists for this Item and Site.\n"
-                                "You may not a Misc. Count until the current Count Tag has been posted." ) );
+      QMessageBox::warning(this, tr("Count Tag Previously Created"),
+                           tr("<p>An unposted Count Tag already exists for "
+                              "this Item and Site. You may not a Misc. Count "
+                              "until the current Count Tag has been posted."));
       return;
     }
   }
-//  ToDo
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   q.prepare( "SELECT postMiscCount(itemsite_id, :qty, :comments) AS cnttag_id "
              "FROM itemsite "
@@ -173,6 +159,21 @@ void enterMiscCount::sPost()
   q.bindValue(":item_id", _item->id());
   q.bindValue(":warehous_id", _warehouse->id());
   q.exec();
+  if (q.first())
+  {
+    int result = q.value("cnttag_id").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("postMiscCount", result),
+                  __FILE__, __LINE__);
+      return;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   if (_captive)
     done(q.value("cnttag_id").toInt());
@@ -184,4 +185,3 @@ void enterMiscCount::sPost()
     _item->setFocus();
   }
 }
-

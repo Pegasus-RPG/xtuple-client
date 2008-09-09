@@ -83,6 +83,9 @@ glSeries::glSeries(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _glseries->addColumn(tr("Debit"),   _moneyColumn, Qt::AlignRight, true,  "debit" );
   _glseries->addColumn(tr("Credit"),  _moneyColumn, Qt::AlignRight, true,  "credit" );
 
+  _credits->setPrecision(omfgThis->moneyVal());
+  _debits->setPrecision(omfgThis->moneyVal());
+
   _source->setText("G/L");
   _source->setEnabled(false);
 
@@ -472,7 +475,6 @@ void glSeries::sFillList()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-  _glseries->clear();
   _glseries->populate(q);
   if (q.lastError().type() != QSqlError::None)
   {
@@ -480,26 +482,26 @@ void glSeries::sFillList()
     return;
   }
 
-  q.prepare( "SELECT formatMoney( SUM( CASE WHEN (glseries_amount < 0) THEN (glseries_amount * -1)"
-             "                              ELSE 0"
-             "                         END ) ) AS f_debit,"
-             "       formatMoney( SUM( CASE WHEN (glseries_amount > 0) THEN glseries_amount"
-             "                              ELSE 0"
-             "                         END ) ) AS f_credit,"
-             "       (SUM(glseries_amount) <> 0) AS oob "
-             "FROM glseries "
-             "WHERE (glseries_sequence=:glseries_sequence);" );
+  q.prepare("SELECT SUM(CASE WHEN (glseries_amount < 0) THEN (glseries_amount * -1)"
+            "                              ELSE 0"
+            "                         END) AS debit,"
+            "       SUM(CASE WHEN (glseries_amount > 0) THEN glseries_amount"
+            "                              ELSE 0"
+            "                         END ) AS credit,"
+            "       (SUM(glseries_amount) <> 0) AS oob "
+            "FROM glseries "
+            "WHERE (glseries_sequence=:glseries_sequence);" );
   q.bindValue(":glseries_sequence", _glsequence);
   q.exec();
   if (q.first())
   {
-    _debits->setText(q.value("f_debit").toString());
-    _credits->setText(q.value("f_credit").toString());
+    _debits->setDouble(q.value("debit").toDouble());
+    _credits->setDouble(q.value("credit").toDouble());
 
     if (q.value("oob").toBool())
     {
-      _debits->setPaletteForegroundColor(QColor("red"));
-      _credits->setPaletteForegroundColor(QColor("red"));
+      _debits->setPaletteForegroundColor(namedColor("error"));
+      _credits->setPaletteForegroundColor(namedColor("error"));
     }
     else
     {
