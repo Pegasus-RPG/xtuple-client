@@ -63,7 +63,6 @@
 #include <QVariant>
 #include <QDebug>
 
-#include "distributeInitialQOH.h"
 #include "storedProcErrorLookup.h"
 
 itemSite::itemSite(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)

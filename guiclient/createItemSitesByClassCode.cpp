@@ -61,8 +61,6 @@
 #include <QValidator>
 #include <QVariant>
 
-#include "distributeInitialQOH.h"
-
 createItemSitesByClassCode::createItemSitesByClassCode(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {

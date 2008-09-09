@@ -84,7 +84,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                databaseInformation.ui deletePlannedOrder.ui deletePlannedOrdersByPlannerCode.ui       \
                deliverInvoice.ui deliverPurchaseOrder.ui deliverSalesOrder.ui                         \
                department.ui departments.ui                                                           \
-               distributeBreederProduction.ui distributeInitialQOH.ui distributeInventory.ui          \
+               distributeBreederProduction.ui                         distributeInventory.ui          \
                distributeToLocation.ui                                                                \
                dspAllocations.ui dspAPOpenItemsByVendor.ui dspAROpenItemsByCustomer.ui                \
                dspAROpenItems.ui                                                                      \
@@ -401,7 +401,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h rwInterface
                databaseInformation.h deletePlannedOrder.h deletePlannedOrdersByPlannerCode.h          \
                deliverInvoice.h deliverPurchaseOrder.h deliverSalesOrder.h                            \
                department.h departments.h                                                             \
-               distributeBreederProduction.h distributeInitialQOH.h distributeInventory.h             \
+               distributeBreederProduction.h                        distributeInventory.h             \
                distributeToLocation.h                                                                 \
                dspAllocations.h dspAPOpenItemsByVendor.h dspAROpenItemsByCustomer.h                   \
                dspAROpenItems.h                                                                       \
@@ -724,7 +724,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp rwInte
                databaseInformation.cpp deletePlannedOrder.cpp deletePlannedOrdersByPlannerCode.cpp    \
                deliverInvoice.cpp deliverPurchaseOrder.cpp deliverSalesOrder.cpp                      \
                department.cpp departments.cpp                                                         \
-               distributeBreederProduction.cpp distributeInitialQOH.cpp distributeInventory.cpp       \
+               distributeBreederProduction.cpp                          distributeInventory.cpp       \
                distributeToLocation.cpp                                                               \
                dspAllocations.cpp dspAPOpenItemsByVendor.cpp dspAROpenItemsByCustomer.cpp             \
                dspAROpenItems.cpp                                                                     \
