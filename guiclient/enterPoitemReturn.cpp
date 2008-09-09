@@ -70,7 +70,11 @@ enterPoitemReturn::enterPoitemReturn(QWidget* parent, const char* name, bool mod
 
   connect(_return, SIGNAL(clicked()), this, SLOT(sReturn()));
 
+  _invVendorUOMRatio->setPrecision(omfgThis->ratioVal());
+  _ordered->setPrecision(omfgThis->qtyVal());
+  _received->setPrecision(omfgThis->qtyVal());
   _toReturn->setValidator(omfgThis->qtyVal());
+
   _item->setReadOnly(TRUE);
 
   _rejectCode->setAllowNull(TRUE);
@@ -103,9 +107,9 @@ enum SetResponse enterPoitemReturn::set(const ParameterList &pParams)
                "       COALESCE(itemsite_id, -1) AS itemsiteid,"
                "       noNeg(poitem_qty_received - poitem_qty_returned) AS returnable,"
                "       poitem_vend_item_number, poitem_vend_uom, poitem_vend_item_descrip,"
-               "       formatQty(poitem_qty_ordered) AS f_qtyordered,"
-               "       formatQty(noNeg(poitem_qty_received - poitem_qty_returned)) AS f_returnableqty,"
-               "       formatRatio(poitem_invvenduomratio) AS invvenduomratio "
+               "       poitem_qty_ordered,"
+               "       noNeg(poitem_qty_received - poitem_qty_returned) AS returnableqty,"
+               "       poitem_invvenduomratio "
                "FROM pohead, poitem LEFT OUTER JOIN "
                "             ( itemsite JOIN item "
                "               ON (itemsite_item_id=item_id)"
@@ -121,9 +125,9 @@ enum SetResponse enterPoitemReturn::set(const ParameterList &pParams)
       _vendorItemNumber->setText(q.value("poitem_vend_item_number").toString());
       _vendorDescrip->setText(q.value("poitem_vend_item_descrip").toString());
       _vendorUOM->setText(q.value("poitem_vend_uom").toString());
-      _ordered->setText(q.value("f_qtyordered").toString());
-      _received->setText(q.value("f_returnableqty").toString());
-      _invVendorUOMRatio->setText(q.value("invvenduomratio").toString());
+      _ordered->setDouble(q.value("poitem_qty_ordered").toDouble());
+      _received->setDouble(q.value("returnableqty").toDouble());
+      _invVendorUOMRatio->setDouble(q.value("poitem_invvenduomratio").toDouble());
 
       if (q.value("itemsiteid").toInt() != -1)
         _item->setItemsiteid(q.value("itemsiteid").toInt());

@@ -86,10 +86,10 @@ correctOperationsPosting::correctOperationsPosting(QWidget* parent, const char* 
   _qtyReceived->setPrecision(omfgThis->qtyVal());
   _qtyBalance->setPrecision(omfgThis->qtyVal());
 
+  _standardSutime->setPrecision(omfgThis->runTimeVal());
+  _standardRntime->setPrecision(omfgThis->runTimeVal());
   _specifiedSutime->setValidator(omfgThis->runTimeVal());
   _specifiedRntime->setValidator(omfgThis->runTimeVal());
-
-  _standardRntime->setPrecision(omfgThis->qtyVal());
 
   _womatl->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft, true, "item_number");
   _womatl->addColumn(tr("Description"), -1,          Qt::AlignLeft, true, "descrip");
@@ -186,7 +186,7 @@ void correctOperationsPosting::sHandleWooperid(int)
       _productionUOM->setText( tr("Post in Production UOMs (%1)") 
                                .arg(q.value("wooper_produom").toString()) );
 
-      _standardSutime->setText(formatQty(q.value("wooper_suconsumed").toDouble()));
+      _standardSutime->setDouble(q.value("wooper_suconsumed").toDouble());
       _correctSutime->setEnabled(q.value("wooper_suconsumed").toDouble() > 0.0);
       _correctSutime->setChecked(q.value("wooper_suconsumed").toDouble() > 0.0);
       _correctRntime->setEnabled(q.value("wooper_rnconsumed").toDouble() > 0.0);

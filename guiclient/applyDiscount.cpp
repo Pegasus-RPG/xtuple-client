@@ -67,6 +67,7 @@ applyDiscount::applyDiscount(QWidget* parent, const char* name, bool modal, Qt::
   setupUi(this);
 
   connect(_apply, SIGNAL(clicked()), this, SLOT(sApply()));
+  _discprcnt->setPrecision(omfgThis->percentVal());
 
   _apopenid = -1;
 }
@@ -149,9 +150,18 @@ void applyDiscount::populate()
 
     _terms->setText(q.value("f_terms").toString());
     _discdate->setDate(q.value("discdate").toDate());
+
     if(q.value("past").toBool())
-      _discdate->setPaletteForegroundColor(QColor("red"));
-    _discprcnt->setText(formatPercent(q.value("terms_discprcnt").toDouble()));
+    {
+      QPalette tmpPalette = _discdate->palette();
+      tmpPalette.setColor(QPalette::HighlightedText, namedColor("error"));
+      _discdate->setPalette(tmpPalette);
+      _discdate->setForegroundRole(QPalette::HighlightedText);  // why doesn't the date turn ERROR?
+      _discdateLit->setPalette(tmpPalette);
+      _discdateLit->setForegroundRole(QPalette::HighlightedText);
+    }
+
+    _discprcnt->setDouble(q.value("terms_discprcnt").toDouble() * 100);
 
     _owed->setLocalValue(q.value("apopen_amount").toDouble());
     _applieddiscounts->setLocalValue(q.value("applied").toDouble());

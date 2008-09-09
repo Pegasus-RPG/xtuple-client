@@ -642,7 +642,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="_standardSutime" >
+             <widget class="XLabel" name="_standardSutime" >
               <property name="sizePolicy" >
                <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
                 <horstretch>0</horstretch>
