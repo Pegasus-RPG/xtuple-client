@@ -80,6 +80,8 @@ returnWoMaterialItem::returnWoMaterialItem(QWidget* parent, const char* name, bo
 
   _wo->setType(cWoExploded | cWoReleased | cWoIssued);
   _qty->setValidator(omfgThis->qtyVal());
+  _beforeQty->setPrecision(omfgThis->qtyVal());
+  _afterQty->setPrecision(omfgThis->qtyVal());
 }
 
 returnWoMaterialItem::~returnWoMaterialItem()
@@ -203,7 +205,7 @@ void returnWoMaterialItem::sSetQOH(int pWomatlid)
     {
       _uom->setText(qoh.value("uom_name").toString());
       _cachedQOH = qoh.value("qtyonhand").toDouble();
-      _beforeQty->setText(formatQty(_cachedQOH));
+      _beforeQty->setDouble(_cachedQOH);
     }
     else
       systemError(this, tr("A System Error occurred at %1::%2.")
@@ -215,6 +217,6 @@ void returnWoMaterialItem::sSetQOH(int pWomatlid)
 void returnWoMaterialItem::sUpdateQty()
 {
   if (_womatl->isValid())
-    _afterQty->setText(formatQty(_cachedQOH + _qty->toDouble()));
+    _afterQty->setDouble(_cachedQOH + _qty->toDouble());
 }
 

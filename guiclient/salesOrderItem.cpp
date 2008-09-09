@@ -200,6 +200,14 @@ salesOrderItem::salesOrderItem(QWidget* parent, const char* name, bool modal, Qt
   _qtyOrdered->setValidator(omfgThis->qtyVal());
   _orderQty->setPrecision(omfgThis->qtyVal());
 
+  _shippedToDate->setPrecision(omfgThis->qtyVal());
+  _discountFromList->setPrecision(omfgThis->percentVal());
+  _onHand->setPrecision(omfgThis->qtyVal());
+  _allocated->setPrecision(omfgThis->qtyVal());
+  _unallocated->setPrecision(omfgThis->qtyVal());
+  _onOrder->setPrecision(omfgThis->qtyVal());
+  _available->setPrecision(omfgThis->qtyVal());
+
 //  Disable the Discount Percent stuff if we don't allow them
   if ((!_metrics->boolean("AllowDiscounts")) && (!_privileges->check("OverridePrice")))
   {
@@ -1807,12 +1815,11 @@ void salesOrderItem::sDetermineAvailability( bool p )
   {
     XSqlQuery availability;
     availability.prepare( "SELECT itemsite_id,"
-                          "       formatQty(qoh) AS f_qoh,"
-                          "       formatQty(allocated) AS f_allocated,"
-                          "       formatQty(noNeg(qoh - allocated)) AS f_unallocated,"
-                          "       formatQty(ordered) AS f_ordered,"
+                          "       qoh,"
+                          "       allocated,"
+                          "       (noNeg(qoh - allocated)) AS unallocated,"
+                          "       ordered,"
                           "       (qoh - allocated + ordered) AS available,"
-                          "       formatQty(qoh - allocated + ordered) AS f_available, "
                           "       itemsite_leadtime "
                           "FROM ( SELECT itemsite_id, itemsite_qtyonhand AS qoh,"
                           "              qtyAllocated(itemsite_id, DATE(:date)) AS allocated,"
@@ -1828,11 +1835,11 @@ void salesOrderItem::sDetermineAvailability( bool p )
     availability.exec();
     if (availability.first())
     {
-      _onHand->setText(availability.value("f_qoh").toString());
-      _allocated->setText(availability.value("f_allocated").toString());
-      _unallocated->setText(availability.value("f_unallocated").toString());
-      _onOrder->setText(availability.value("f_ordered").toString());
-      _available->setText(availability.value("f_available").toString());
+      _onHand->setDouble(availability.value("qoh").toDouble());
+      _allocated->setDouble(availability.value("allocated").toDouble());
+      _unallocated->setDouble(availability.value("unallocated").toDouble());
+      _onOrder->setDouble(availability.value("ordered").toDouble());
+      _available->setDouble(availability.value("available").toDouble());
       _leadtime->setText(availability.value("itemsite_leadtime").toString());
 
       if (availability.value("available").toDouble() < _availabilityQtyOrdered)
@@ -2025,20 +2032,20 @@ void salesOrderItem::sCalculateDiscountPrcnt()
 
   if (netUnitPrice == 0.0)
   {
-    _discountFromList->setText(QString::number(100));
-    _discountFromCust->setText(QString::number(100));
+    _discountFromList->setDouble(100);
+    _discountFromCust->setDouble(100);
   }
   else
   {
     if (_listPrice->isZero())
       _discountFromList->setText(tr("N/A"));
     else
-      _discountFromList->setText(formatSalesPrice((1 - (netUnitPrice / _listPrice->baseValue())) * 100));
+      _discountFromList->setDouble((1 - (netUnitPrice / _listPrice->baseValue())) * 100);
 
     if (_customerPrice->isZero())
       _discountFromCust->setText(tr("N/A"));
     else
-      _discountFromCust->setText(formatSalesPrice((1 - (netUnitPrice / _customerPrice->baseValue())) * 100));
+      _discountFromCust->setDouble((1 - (netUnitPrice / _customerPrice->baseValue())) * 100);
   }
   
   if (_item->isConfigured()) //Total up price for configured item characteristics
@@ -2177,7 +2184,7 @@ void salesOrderItem::sPopulateOrderInfo()
       qty.bindValue(":warehous_id", ((_item->itemType() == "M") || (_item->itemType() == "J") ? _supplyWarehouse->id() : _warehouse->id()));
       qty.exec();
       if (qty.first())
-        _orderQty->setText(qty.value("qty").toString());
+        _orderQty->setDouble(qty.value("qty").toDouble());
 
       else if (qty.lastError().type() != QSqlError::None)
       {
@@ -2315,7 +2322,7 @@ void salesOrderItem::populate()
     _comments->setId(_soitemid);
     _lineNumber->setText(item.value("linenumber").toString());
     _priceRatio = item.value("invpricerat").toDouble();
-    _shippedToDate->setText(formatQty(item.value("qtyshipped").toDouble()));
+    _shippedToDate->setDouble(item.value("qtyshipped").toDouble());
 
     _item->setId(item.value("item_id").toInt()); // should precede _taxtype/code
     _invuomid = item.value("item_inv_uom_id").toInt();
@@ -2329,7 +2336,7 @@ void salesOrderItem::populate()
     _taxcode->setId(item.value("coitem_tax_id").toInt());
     _orderId = item.value("coitem_order_id").toInt();
     _orderQtyChanged = item.value("qtyord").toDouble();
-    _qtyOrdered->setText(formatQty(_orderQtyChanged));
+    _qtyOrdered->setDouble(_orderQtyChanged);
     _scheduledDate->setDate(item.value("coitem_scheddate").toDate());
     _notes->setText(item.value("coitem_memo").toString());
     if (!item.value("quitem_createorder").isNull())
@@ -2388,7 +2395,7 @@ void salesOrderItem::populate()
       _overridePoPrice->hide();
       _overridePoPriceLit->hide();
       query.prepare( "SELECT wo_status,"
-                     "       formatQty(wo_qtyord) AS f_qty,"
+                     "       wo_qtyord AS qty,"
                      "       wo_duedate, warehous_id, warehous_code "
                      "FROM wo, itemsite, warehous "
                      "WHERE ((wo_itemsite_id=itemsite_id)"
@@ -2400,7 +2407,7 @@ void salesOrderItem::populate()
       {
         _createOrder->setChecked(TRUE);
 
-        _orderQty->setText(query.value("f_qty").toString());
+        _orderQty->setDouble(query.value("qty").toDouble());
         _orderDueDate->setDate(query.value("wo_duedate").toDate());
         _orderStatus->setText(query.value("wo_status").toString());
 
@@ -2427,7 +2434,7 @@ void salesOrderItem::populate()
       _overridePoPrice->show();
       _overridePoPriceLit->show();
       query.prepare( "SELECT pr_status,"
-                     "       formatQty(pr_qtyreq) AS qty,"
+                     "       pr_qtyreq AS qty,"
                      "       pr_duedate "
                      "FROM pr "
                      "WHERE (pr_id=:pr_id);" );
@@ -2437,7 +2444,7 @@ void salesOrderItem::populate()
       {
         _createOrder->setChecked(TRUE);
 
-        _orderQty->setText(query.value("qty").toString());
+        _orderQty->setDouble(query.value("qty").toDouble());
         _orderDueDate->setDate(query.value("pr_duedate").toDate());
         _orderStatus->setText(query.value("pr_status").toString());
 

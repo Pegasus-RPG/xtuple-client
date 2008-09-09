@@ -82,6 +82,10 @@ returnAuthItemLotSerial::returnAuthItemLotSerial(QWidget* parent, const char* na
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_lotSerial, SIGNAL(newId(int)), this, SLOT(sCheck()));
   connect(_cancel, SIGNAL(clicked()), this, SLOT(close()));
+
+  _qtyAuth->setValidator(omfgThis->qtyVal());
+  _qtyRegistered->setPrecision(omfgThis->qtyVal());
+  _qtyReceived->setPrecision(omfgThis->qtyVal());
   
   resize(minimumSize());
 }
@@ -213,7 +217,7 @@ void returnAuthItemLotSerial::sSave()
   q.bindValue(":raitemls_id", _raitemlsid);
   q.bindValue(":raitem_id", _raitemid);
   q.bindValue(":ls_id", _lotSerial->id());
-  q.bindValue(":qty", _qtyAuth->text().toDouble());
+  q.bindValue(":qty", _qtyAuth->toDouble());
   q.exec();
   if (q.lastError().type() != QSqlError::None)
   {
@@ -243,16 +247,16 @@ void returnAuthItemLotSerial::sCheck()
   {
     _raitemlsid = -1;
     _mode = cNew;
-    _qtyAuth->setText("0");
+    _qtyAuth->setDouble(0);
     populateLotSerial();
   }
 }
 
 void returnAuthItemLotSerial::populate()
 {    
-  q.prepare( "SELECT itemsite_item_id, uom_name,raitemls_ls_id,formatqty(raitemls_qtyauthorized) AS qtyauthorized,"
-		"formatqty(raitemls_qtyreceived) as qtyreceived,"
-                "formatqty(COALESCE(SUM(lsreg_qty / raitem_qty_invuomratio),0)) AS qtyregistered, "
+  q.prepare( "SELECT itemsite_item_id, uom_name,raitemls_ls_id, raitemls_qtyauthorized,"
+		"raitemls_qtyreceived,"
+                "COALESCE(SUM(lsreg_qty / raitem_qty_invuomratio),0) AS qtyregistered, "
 		"itemsite_warehous_id "
 		"FROM raitemls "
 		"  LEFT OUTER JOIN lsreg ON (lsreg_crmacct_id=:crmacct_id) "
@@ -271,10 +275,10 @@ void returnAuthItemLotSerial::populate()
   {
     _item->setId(q.value("itemsite_item_id").toInt());
     _lotSerial->setId(q.value("raitemls_ls_id").toInt());
-    _qtyAuth->setText(q.value("qtyauthorized").toString());
+    _qtyAuth->setDouble(q.value("raitemls_qtyauthorized").toDouble());
     _qtyUOM->setText(q.value("uom_name").toString());
-    _qtyReceived->setText(q.value("qtyreceived").toString());
-    _qtyRegistered->setText(q.value("qtyregistered").toString());
+    _qtyReceived->setDouble(q.value("raitemls_qtyreceived").toDouble());
+    _qtyRegistered->setDouble(q.value("qtyregistered").toDouble());
     _warehouseid = q.value("itemsite_warehous_id").toInt();
     populateItemsite();
   }
@@ -298,7 +302,7 @@ void returnAuthItemLotSerial::populateItemsite()
     if (q.value("itemsite_controlmethod").toString() == "S")
     {
       _qtyAuth->setEnabled(false);
-      _qtyAuth->setText("1");
+      _qtyAuth->setDouble(1);
     }
   }
   else if (q.lastError().type() != QSqlError::None)
@@ -310,7 +314,7 @@ void returnAuthItemLotSerial::populateItemsite()
 
 void returnAuthItemLotSerial::populateLotSerial()
 {
-  q.prepare( "SELECT formatqty(COALESCE(SUM(lsreg_qty / raitem_qty_invuomratio),0)) AS qtyregistered "
+  q.prepare( "SELECT COALESCE(SUM(lsreg_qty / raitem_qty_invuomratio),0) AS qtyregistered "
 		"FROM lsreg, raitem "
 		"WHERE ((lsreg_ls_id=:ls_id) "
 		"AND (lsreg_crmacct_id=:crmacct_id) "
@@ -321,8 +325,8 @@ void returnAuthItemLotSerial::populateLotSerial()
   q.exec();
   if (q.first())
   {
-    _qtyRegistered->setText(q.value("qtyregistered").toString());
-    _qtyReceived->setText("0");
+    _qtyRegistered->setDouble(q.value("qtyregistered").toDouble());
+    _qtyReceived->setDouble(0);
   }
   else if (q.lastError().type() != QSqlError::None)
   {

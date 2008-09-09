@@ -264,7 +264,7 @@
       </widget>
      </item>
      <item row="1" column="3" >
-      <widget class="QLabel" name="_beforeQty" >
+      <widget class="XLabel" name="_beforeQty" >
        <property name="minimumSize" >
         <size>
          <width>80</width>
@@ -277,7 +277,7 @@
       </widget>
      </item>
      <item row="1" column="4" >
-      <widget class="QLabel" name="_afterQty" >
+      <widget class="XLabel" name="_afterQty" >
        <property name="minimumSize" >
         <size>
          <width>80</width>
@@ -326,6 +326,11 @@
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XLabel</class>
+   <extends>QLabel</extends>
+   <header>xlabel.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

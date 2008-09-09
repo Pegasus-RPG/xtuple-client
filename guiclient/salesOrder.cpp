@@ -192,6 +192,7 @@ salesOrder::salesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   _orderNumber->setValidator(omfgThis->orderVal());
   _CCCVV->setValidator(new QIntValidator(100, 9999, this));
   _weight->setValidator(omfgThis->weightVal());
+  _commission->setValidator(omfgThis->percentVal());
 
   _origin->insertItem(tr("Customer"));
   _origin->insertItem(tr("Internet"));
@@ -1359,7 +1360,7 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
   if (pCustid != -1)
   {
     QString sql("SELECT cust_salesrep_id, cust_shipchrg_id, cust_shipform_id,"
-                "       formatScrap(cust_commprcnt) AS commission,"
+                "       cust_commprcnt AS commission,"
                 "       cust_creditstatus, cust_terms_id,"
                 "       cust_taxauth_id,"
                 "       cust_ffshipto, cust_ffbillto, cust_usespos,"
@@ -1376,7 +1377,7 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
                 "UNION "
                 "SELECT NULL AS cust_salesrep_id, NULL AS cust_shipchrg_id,"
                 "       NULL AS cust_shipform_id,"
-                "       formatScrap(0) AS commission,"
+                "       0.0 AS commission,"
                 "       NULL AS cust_creditstatus, NULL AS cust_terms_id,"
                 "       prospect_taxauth_id AS cust_taxauth_id,"
                 "       TRUE AS cust_ffshipto, NULL AS cust_ffbillto, "
@@ -1442,7 +1443,7 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
       _salesRep->setId(cust.value("cust_salesrep_id").toInt());
       _shippingCharges->setId(cust.value("cust_shipchrg_id").toInt());
       _shippingForm->setId(cust.value("cust_shipform_id").toInt());
-      _commission->setText(cust.value("commission"));
+      _commission->setDouble(cust.value("commission").toDouble() * 100);
       _terms->setId(cust.value("cust_terms_id").toInt());
       _custtaxauthid = cust.value("cust_taxauth_id").toInt();
       _custEmail = cust.value("cust_soemaildelivery").toBool();
@@ -1544,7 +1545,7 @@ void salesOrder::populateShipto(int pShiptoid)
                     "       shipto_shipvia, shipto_shipcomments,"
                     "       shipto_shipchrg_id, shipto_shipform_id,"
                     "       COALESCE(shipto_taxauth_id, -1) AS shipto_taxauth_id,"
-                    "       shipto_salesrep_id, formatScrap(shipto_commission) AS commission "
+                    "       shipto_salesrep_id, shipto_commission AS commission "
                     "FROM shiptoinfo LEFT OUTER JOIN "
                     "     cntct ON (shipto_cntct_id = cntct_id) "
                     "WHERE (shipto_id=:shipto_id);" );
@@ -1561,7 +1562,7 @@ void salesOrder::populateShipto(int pShiptoid)
       _shippingCharges->setId(shipto.value("shipto_shipchrg_id").toInt());
       _shippingForm->setId(shipto.value("shipto_shipform_id").toInt());
       _salesRep->setId(shipto.value("shipto_salesrep_id").toInt());
-      _commission->setText(shipto.value("commission"));
+      _commission->setDouble(shipto.value("commission").toDouble() * 100);
       _shipVia->setText(shipto.value("shipto_shipvia"));
       _shippingComments->setText(shipto.value("shipto_shipcomments").toString());
       _taxAuth->setId(shipto.value("shipto_taxauth_id").toInt());
@@ -1964,7 +1965,7 @@ void salesOrder::populate()
                 "       cohead_shiptostate, cohead_shiptozipcode, cohead_shiptophone,"
                 "       cohead_shiptocountry,"
                 "       cohead_freight, cohead_holdtype,"
-                "       cohead_salesrep_id, formatScrap(cohead_commission) AS f_commission,"
+                "       cohead_salesrep_id, cohead_commission AS commission,"
                 "       COALESCE(cohead_taxauth_id,-1) AS cohead_taxauth_id, cohead_terms_id,"
                 "       cohead_origin, cohead_fob, cohead_shipvia, COALESCE(cohead_warehous_id,-1) as cohead_warehous_id,"
                 "       cust_name, cust_ffshipto, cust_blanketpos,"
@@ -1999,7 +2000,7 @@ void salesOrder::populate()
 
       _warehouse->setId(so.value("cohead_warehous_id").toInt());
       _salesRep->setId(so.value("cohead_salesrep_id").toInt());
-      _commission->setText(so.value("f_commission"));
+      _commission->setDouble(so.value("commission").toDouble());
       _taxauthidCache = so.value("cohead_taxauth_id").toInt();
       _taxAuth->setId(so.value("cohead_taxauth_id").toInt());
       _terms->setId(so.value("cohead_terms_id").toInt());
@@ -2139,7 +2140,7 @@ void salesOrder::populate()
                 "       quhead_shiptostate, quhead_shiptozipcode, quhead_shiptophone,"
                 "       quhead_shiptocountry,"
                 "       quhead_freight,"
-                "       quhead_salesrep_id, formatScrap(quhead_commission) AS commission,"
+                "       quhead_salesrep_id, quhead_commission AS commission,"
                 "       quhead_taxauth_id, quhead_terms_id,"
                 "       quhead_origin, quhead_shipvia, quhead_fob,"
                 "       cust_ffshipto, cust_blanketpos,"
@@ -2161,7 +2162,7 @@ void salesOrder::populate()
                 "       quhead_shiptostate, quhead_shiptozipcode, quhead_shiptophone,"
                 "       quhead_shiptocountry,"
                 "       quhead_freight,"
-                "       quhead_salesrep_id, formatScrap(quhead_commission) AS commission,"
+                "       quhead_salesrep_id, quhead_commission AS commission,"
                 "       COALESCE(quhead_taxauth_id, -1) AS quhead_taxauth_id, quhead_terms_id,"
                 "       quhead_origin, quhead_shipvia, quhead_fob,"
                 "       TRUE AS cust_ffshipto, NULL AS cust_blanketpos,"
@@ -2192,7 +2193,7 @@ void salesOrder::populate()
 
       _warehouse->setId(qu.value("quhead_warehous_id").toInt());
       _salesRep->setId(qu.value("quhead_salesrep_id").toInt());
-      _commission->setText(qu.value("commission"));
+      _commission->setDouble(qu.value("commission").toDouble() * 100);
       _taxauthidCache = qu.value("quhead_taxauth_id").toInt();
       _taxAuth->setId(qu.value("quhead_taxauth_id").toInt());
       _terms->setId(qu.value("quhead_terms_id").toInt());

@@ -57,57 +57,20 @@
 
 #include "salesHistoryInformation.h"
 
-#include <qvariant.h>
-#include <qvalidator.h>
+#include <QVariant>
+#include <QValidator>
 
-/*
- *  Constructs a salesHistoryInformation as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 salesHistoryInformation::salesHistoryInformation(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  // signals and slots connections
+  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_item, SIGNAL(newId(int)), _warehouse, SLOT(findItemsites(int)));
+  connect(_item, SIGNAL(warehouseIdChanged(int)), _warehouse, SLOT(setId(int)));
 
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    connect(_item, SIGNAL(newId(int)), _warehouse, SLOT(findItemsites(int)));
-    connect(_item, SIGNAL(warehouseIdChanged(int)), _warehouse, SLOT(setId(int)));
-    init();
-
-    //If not multi-warehouse hide whs control
-    if (!_metrics->boolean("MultiWhs"))
-    {
-      _warehouseLit->hide();
-      _warehouse->hide();
-    }
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-salesHistoryInformation::~salesHistoryInformation()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void salesHistoryInformation::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void salesHistoryInformation::init()
-{
   _orderNumber->setValidator(omfgThis->orderVal());
   _invoiceNumber->setValidator(omfgThis->orderVal());
   _shipped->setValidator(omfgThis->qtyVal());
@@ -115,10 +78,30 @@ void salesHistoryInformation::init()
   _unitCost->setValidator(omfgThis->priceVal());
   _commission->setValidator(omfgThis->negMoneyVal());
 
+  _extendedPrice->setPrecision(omfgThis->moneyVal());
+  _extendedCost->setPrecision(omfgThis->moneyVal());
+
   _salesrep->setType(XComboBox::SalesReps);
+
+  //If not multi-warehouse hide whs control
+  if (!_metrics->boolean("MultiWhs"))
+  {
+    _warehouseLit->hide();
+    _warehouse->hide();
+  }
 }
 
-enum SetResponse salesHistoryInformation::set(ParameterList &pParams)
+salesHistoryInformation::~salesHistoryInformation()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void salesHistoryInformation::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse salesHistoryInformation::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -245,9 +228,9 @@ void salesHistoryInformation::populate()
              "       cohist_shiptocity, cohist_shiptostate, cohist_shiptozip,"
              "       cohist_itemsite_id, cohist_salesrep_id, cohist_commissionpaid,"
              "       cohist_qtyshipped, cohist_unitprice, cohist_unitcost,"
-             "       formatMoney(cohist_qtyshipped * cohist_unitprice) AS extprice,"
-             "       formatMoney(cohist_qtyshipped * cohist_unitcost) AS extcost,"
-             "       formatMoney(cohist_commission) AS f_commission "
+             "       (cohist_qtyshipped * cohist_unitprice) AS extprice,"
+             "       (cohist_qtyshipped * cohist_unitcost) AS extcost,"
+             "       cohist_commission "
              "FROM cohist "
              "WHERE (cohist_id=:sohist_id);" );
   q.bindValue(":sohist_id", _sohistid);
@@ -274,13 +257,13 @@ void salesHistoryInformation::populate()
     _shiptoZip->setText(q.value("cohist_shiptozip"));
 
     _item->setItemsiteid(q.value("cohist_itemsite_id").toInt());
-    _shipped->setText(formatQty(q.value("cohist_qtyshipped").toDouble()));
-    _unitPrice->setText(formatSalesPrice(q.value("cohist_unitprice").toDouble()));
-    _unitCost->setText(formatSalesPrice(q.value("cohist_unitcost").toDouble()));
-    _extendedPrice->setText(q.value("extprice").toString());
-    _extendedCost->setText(q.value("extcost").toString());
+    _shipped->setDouble(q.value("cohist_qtyshipped").toDouble());
+    _unitPrice->setDouble(q.value("cohist_unitprice").toDouble());
+    _unitCost->setDouble(q.value("cohist_unitcost").toDouble());
+    _extendedPrice->setDouble(q.value("extprice").toDouble());
+    _extendedCost->setDouble(q.value("extcost").toDouble());
     _salesrep->setId(q.value("cohist_salesrep_id").toInt());
-    _commission->setText(q.value("f_commission"));
+    _commission->setDouble(q.value("cohist_commission").toDouble());
     _commissionPaid->setChecked(q.value("cohist_commissionpaid").toBool());
   }
 }

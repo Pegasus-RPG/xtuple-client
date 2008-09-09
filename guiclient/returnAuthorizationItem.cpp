@@ -134,11 +134,22 @@ returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* na
   _raitemls->addColumn(tr("Authorized"),  _qtyColumn,   Qt::AlignRight  );
   _raitemls->addColumn(tr("Received"),    _qtyColumn,   Qt::AlignRight  );
 
+  _orderQty->setValidator(omfgThis->qtyVal());
   _qtyAuth->setValidator(omfgThis->qtyVal());
   _discountFromSale->setValidator(new QDoubleValidator(-9999, 100, 2, this));
   _taxType->setEnabled(_privileges->check("OverrideTax"));
   _taxCode->setEnabled(_privileges->check("OverrideTax"));
   _showAvailability->setChecked(_preferences->boolean("ShowSOItemAvailability"));
+
+  _qtySold->setPrecision(omfgThis->qtyVal());
+  _qtyReceived->setPrecision(omfgThis->qtyVal());
+  _qtyShipped->setPrecision(omfgThis->qtyVal());
+  _onHand->setPrecision(omfgThis->qtyVal());
+  _allocated->setPrecision(omfgThis->qtyVal());
+  _unallocated->setPrecision(omfgThis->qtyVal());
+  _onOrder->setPrecision(omfgThis->qtyVal());
+  _available->setPrecision(omfgThis->qtyVal());
+  _discountFromList->setPrecision(omfgThis->percentVal());
   
   //If not multi-warehouse hide whs controls
   if (!_metrics->boolean("MultiWhs"))
@@ -545,7 +556,7 @@ bool returnAuthorizationItem::sSave()
                      "WHERE ( (itemsite_item_id=:item_id)"
                      " AND (itemsite_warehous_id=:warehous_id) );" );
           q.bindValue(":orderNumber", so.value("cohead_number").toInt());
-          q.bindValue(":qty", _orderQty->text().toDouble());
+          q.bindValue(":qty", _orderQty->toDouble());
           q.bindValue(":dueDate", _scheduledDate->date());
           q.bindValue(":comments", so.value("cust_name").toString() + "\n" + _notes->text());
           q.bindValue(":item_id", _item->id());
@@ -718,10 +729,10 @@ void returnAuthorizationItem::populate()
                  "       och.cohead_number AS orig_number, oc.coitem_linenumber AS orig_linenumber, "
                  "       nch.cohead_number AS new_number, nc.coitem_linenumber AS new_linenumber, "
                  "       COALESCE(raitem_orig_coitem_id,-1) AS ra_coitem_id, oc.coitem_price, "
-                 "       formatQty(oc.coitem_qtyshipped) AS qtysold,"   
-                 "       formatQty(raitem_qtyauthorized) AS qtyauth,"
-                 "       formatQty(raitem_qtyreceived) AS qtyrcvd,"
-                 "       formatQty(nc.coitem_qtyshipped) AS qtyshipd,"
+                 "       oc.coitem_qtyshipped AS qtysold,"   
+                 "       raitem_qtyauthorized AS qtyauth,"
+                 "       raitem_qtyreceived AS qtyrcvd,"
+                 "       nc.coitem_qtyshipped AS qtyshipd,"
                  "       rahead_taxauth_id,"
                  "       rahead_curr_id AS taxcurr, "
                  "       item_inv_uom_id, "
@@ -788,9 +799,9 @@ void returnAuthorizationItem::populate()
     _qtyinvuomratio = raitem.value("raitem_qty_invuomratio").toDouble();
     _priceinvuomratio = raitem.value("raitem_price_invuomratio").toDouble();
     _lineNumber->setText(raitem.value("raitem_linenumber").toString());
-    _qtyAuth->setText(raitem.value("qtyauth").toString());
-    _qtyReceived->setText(raitem.value("qtyrcvd").toString());
-    _qtyShipped->setText(raitem.value("qtyshipd").toString());
+    _qtyAuth->setDouble(raitem.value("qtyauth").toDouble());
+    _qtyReceived->setDouble(raitem.value("qtyrcvd").toDouble());
+    _qtyShipped->setDouble(raitem.value("qtyshipd").toDouble());
     _notes->setText(raitem.value("raitem_notes").toString());
     _taxCode->setId(raitem.value("raitem_tax_id").toInt());
     _rsnCode->setId(raitem.value("raitem_rsncode_id").toInt());
@@ -809,7 +820,7 @@ void returnAuthorizationItem::populate()
     {
       _origSoNumber->setText(raitem.value("orig_number").toString());
       _origSoLineNumber->setText(raitem.value("orig_linenumber").toString());
-      _qtySold->setText(raitem.value("qtysold").toString());
+      _qtySold->setDouble(raitem.value("qtysold").toDouble());
       _soldQty=raitem.value("qtysold").toDouble();
       _qtyUOM->setEnabled(FALSE);
       _pricingUOM->setEnabled(FALSE);
@@ -847,7 +858,7 @@ void returnAuthorizationItem::populate()
       if (raitem.value("coitem_order_type").toString() == "W")
       {
         query.prepare( "SELECT wo_status,"
-                       "       formatQty(wo_qtyord) AS f_qty,"
+                       "       wo_qtyord AS qty,"
                        "       wo_duedate, warehous_id, warehous_code "
                        "FROM wo, itemsite, warehous "
                        "WHERE ((wo_itemsite_id=itemsite_id)"
@@ -859,7 +870,7 @@ void returnAuthorizationItem::populate()
         {
           _createOrder->setChecked(TRUE);
 
-          _orderQty->setText(query.value("f_qty").toString());
+          _orderQty->setDouble(query.value("qty").toDouble());
           _orderDueDate->setDate(query.value("wo_duedate").toDate());
           _orderStatus->setText(query.value("wo_status").toString());
 
@@ -901,12 +912,12 @@ void returnAuthorizationItem::sCalculateDiscountPrcnt()
     if (_listPrice->isZero())
       _discountFromList->setText("N/A");
     else
-      _discountFromList->setText(formatPercent(1 - (unitPrice / _listPrice->localValue())) );
+      _discountFromList->setDouble((1 - (unitPrice / _listPrice->localValue())) * 100 );
 
     if (_salePrice->isZero())
       _discountFromSale->setText("N/A");
     else
-      _discountFromSale->setText(formatPercent(1 - (unitPrice / _salePrice->localValue())) );
+      _discountFromSale->setDouble((1 - (unitPrice / _salePrice->localValue())) * 100 );
   }
 }
 
@@ -1311,8 +1322,8 @@ void returnAuthorizationItem::sHandleWo(bool pCreate)
               _orderQty->clear();
               _orderDueDate->clear();
               _orderStatus->clear();
-              if (_qtyReceived->text().toDouble() == 0 && 
-                  _qtyShipped->text().toDouble() == 0 && 
+              if (_qtyReceived->toDouble() == 0 && 
+                  _qtyShipped->toDouble() == 0 && 
                   _qtycredited == 0 &&
                   _status == "O")
                 _disposition->setEnabled(TRUE); 
@@ -1355,7 +1366,7 @@ void returnAuthorizationItem::sPopulateOrderInfo()
       qty.bindValue(":warehous_id", ((_item->itemType() == "M") || (_item->itemType() == "J") ? _shipWhs->id() : _shipWhs->id()));
       qty.exec();
       if (qty.first())
-        _orderQty->setText(qty.value("qty").toString());
+        _orderQty->setDouble(qty.value("qty").toDouble());
 
       else if (qty.lastError().type() != QSqlError::None)
       {
@@ -1385,12 +1396,11 @@ void returnAuthorizationItem::sDetermineAvailability()
   {
     XSqlQuery availability;
     availability.prepare( "SELECT itemsite_id,"
-                          "       formatQty(qoh) AS f_qoh,"
-                          "       formatQty(allocated) AS f_allocated,"
-                          "       formatQty(noNeg(qoh - allocated)) AS f_unallocated,"
-                          "       formatQty(ordered) AS f_ordered,"
+                          "       qoh,"
+                          "       allocated,"
+                          "       noNeg(qoh - allocated) AS unallocated,"
+                          "       ordered,"
                           "       (qoh - allocated + ordered) AS available,"
-                          "       formatQty(qoh - allocated + ordered) AS f_available, "
                           "       itemsite_leadtime "
                           "FROM ( SELECT itemsite_id, itemsite_qtyonhand AS qoh,"
                           "              qtyAllocated(itemsite_id, DATE(:date)) AS allocated,"
@@ -1406,11 +1416,11 @@ void returnAuthorizationItem::sDetermineAvailability()
     availability.exec();
     if (availability.first())
     {
-      _onHand->setText(availability.value("f_qoh").toString());
-      _allocated->setText(availability.value("f_allocated").toString());
-      _unallocated->setText(availability.value("f_unallocated").toString());
-      _onOrder->setText(availability.value("f_ordered").toString());
-      _available->setText(availability.value("f_available").toString());
+      _onHand->setDouble(availability.value("qoh").toDouble());
+      _allocated->setDouble(availability.value("allocated").toDouble());
+      _unallocated->setDouble(availability.value("unallocated").toDouble());
+      _onOrder->setDouble(availability.value("ordered").toDouble());
+      _available->setDouble(availability.value("available").toDouble());
       _leadtime->setText(availability.value("itemsite_leadtime").toString());
 
       if (availability.value("available").toDouble() < _availabilityQtyOrdered)

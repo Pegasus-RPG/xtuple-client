@@ -515,7 +515,7 @@
          </widget>
         </item>
         <item row="2" column="1" colspan="2" >
-         <widget class="QLabel" name="_qtySold" >
+         <widget class="XLabel" name="_qtySold" >
           <property name="minimumSize" >
            <size>
             <width>80</width>
@@ -541,7 +541,7 @@
          </widget>
         </item>
         <item row="3" column="1" colspan="2" >
-         <widget class="QLabel" name="_qtyReceived" >
+         <widget class="XLabel" name="_qtyReceived" >
           <property name="minimumSize" >
            <size>
             <width>80</width>
@@ -567,7 +567,7 @@
          </widget>
         </item>
         <item row="4" column="1" colspan="2" >
-         <widget class="QLabel" name="_qtyShipped" >
+         <widget class="XLabel" name="_qtyShipped" >
           <property name="minimumSize" >
            <size>
             <width>80</width>
@@ -871,7 +871,7 @@
              </widget>
             </item>
             <item row="0" column="1" >
-             <widget class="QLabel" name="_onHand" >
+             <widget class="XLabel" name="_onHand" >
               <property name="minimumSize" >
                <size>
                 <width>80</width>
@@ -894,7 +894,7 @@
              </widget>
             </item>
             <item row="1" column="1" >
-             <widget class="QLabel" name="_allocated" >
+             <widget class="XLabel" name="_allocated" >
               <property name="minimumSize" >
                <size>
                 <width>80</width>
@@ -930,7 +930,7 @@
              </widget>
             </item>
             <item row="2" column="1" >
-             <widget class="QLabel" name="_unallocated" >
+             <widget class="XLabel" name="_unallocated" >
               <property name="minimumSize" >
                <size>
                 <width>80</width>
@@ -953,7 +953,7 @@
              </widget>
             </item>
             <item row="3" column="1" >
-             <widget class="QLabel" name="_onOrder" >
+             <widget class="XLabel" name="_onOrder" >
               <property name="minimumSize" >
                <size>
                 <width>80</width>
@@ -976,7 +976,7 @@
              </widget>
             </item>
             <item row="4" column="1" >
-             <widget class="QLabel" name="_available" >
+             <widget class="XLabel" name="_available" >
               <property name="minimumSize" >
                <size>
                 <width>80</width>
@@ -1307,7 +1307,7 @@
              </widget>
             </item>
             <item row="3" column="1" >
-             <widget class="QLabel" name="_discountFromList" >
+             <widget class="XLabel" name="_discountFromList" >
               <property name="minimumSize" >
                <size>
                 <width>80</width>
@@ -1598,6 +1598,11 @@
    <class>XURLLabel</class>
    <extends>QLabel</extends>
    <header>xurllabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XLabel</class>
+   <extends>QLabel</extends>
+   <header>xlabel.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

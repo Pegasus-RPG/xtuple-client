@@ -633,7 +633,7 @@
                 </widget>
                </item>
                <item row="2" column="1" >
-                <widget class="QLabel" name="_extendedPrice" >
+                <widget class="XLabel" name="_extendedPrice" >
                  <property name="minimumSize" >
                   <size>
                    <width>80</width>
@@ -729,7 +729,7 @@
                   <number>5</number>
                  </property>
                  <item row="1" column="1" >
-                  <widget class="QLabel" name="_extendedCost" >
+                  <widget class="XLabel" name="_extendedCost" >
                    <property name="minimumSize" >
                     <size>
                      <width>80</width>
@@ -1002,7 +1002,7 @@
   </customwidget>
   <customwidget>
    <class>DLineEdit</class>
-   <extends>XLineEdit</extends>
+   <extends>QWidget</extends>
    <header>datecluster.h</header>
    <container>0</container>
    <pixmap></pixmap>
@@ -1025,6 +1025,13 @@
    <class>WComboBox</class>
    <extends>XComboBox</extends>
    <header>wcombobox.h</header>
+   <container>0</container>
+   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>XLabel</class>
+   <extends>QLabel</extends>
+   <header>xlabel.h</header>
    <container>0</container>
    <pixmap></pixmap>
   </customwidget>
