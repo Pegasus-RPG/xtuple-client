@@ -84,6 +84,7 @@ private:
     int _number;
     int _leadTime;
     int _itemsiteid;
+    QString _type;
 
 };
 
