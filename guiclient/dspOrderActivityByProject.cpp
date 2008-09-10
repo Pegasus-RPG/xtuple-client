@@ -89,10 +89,11 @@ dspOrderActivityByProject::dspOrderActivityByProject(QWidget* parent, const char
   connect(_showSo, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_showWo, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_orders, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-  _orders->addColumn(tr("Type"),        _orderColumn, Qt::AlignLeft   );
-  _orders->addColumn(tr("Order #"),     _itemColumn,  Qt::AlignLeft   );
-  _orders->addColumn(tr("Status"),      _orderColumn, Qt::AlignCenter );
-  _orders->addColumn(tr("Qty"),         _qtyColumn,   Qt::AlignLeft   );
+
+  _orders->addColumn(tr("Type"),        _orderColumn, Qt::AlignLeft,   true,  "type"   );
+  _orders->addColumn(tr("Order #"),     _itemColumn,  Qt::AlignLeft,   true,  "ordernumber"   );
+  _orders->addColumn(tr("Status"),      _orderColumn, Qt::AlignCenter, true,  "status" );
+  _orders->addColumn(tr("Qty"),         _qtyColumn,   Qt::AlignRight,  true,  "qty"  );
   
   if (_preferences->boolean("XCheckBox/forgetful"))
   {
@@ -241,6 +242,12 @@ void dspOrderActivityByProject::sFillList()
     return;
   }
 
+  if( (!_showSo->isChecked()) && (!_showWo->isChecked()) && (!_showPo->isChecked()) )
+  {
+    _orders->clear();
+    return;
+  }
+
   QString sql;
 
   if(_showSo->isChecked())
@@ -248,7 +255,8 @@ void dspOrderActivityByProject::sFillList()
     sql += "SELECT cohead_id AS id, 1 AS typeid,"
            "       text(:so) AS type, text(cohead_number) AS ordernumber,"
            "       text('') AS status,"
-           "       text('') AS qty "
+           "       0 AS qty,"
+           "       'qty' AS qty_xtnumericrole "
            "  FROM cohead "
            " WHERE (cohead_prj_id=:prj_id) ";
 
@@ -256,7 +264,8 @@ void dspOrderActivityByProject::sFillList()
            "SELECT quhead_id AS id, 2 AS typeid,"
            "       text(:quote) AS type, text(quhead_number) AS ordernumber,"
            "       text('') AS status,"
-           "       text('') AS qty "
+           "       0 AS qty,"
+           "       'qty' AS qty_xtnumericrole "
            "  FROM quhead "
            " WHERE (quhead_prj_id=:prj_id) ";
 
@@ -264,7 +273,8 @@ void dspOrderActivityByProject::sFillList()
            "SELECT invchead_id AS id, 3 AS typeid,"
            "       text(:invoice) AS type, text(invchead_invcnumber) AS ordernumber,"
            "       text('') AS status,"
-           "       text('') AS qty "
+           "       0 AS qty,"
+           "       'qty' AS qty_xtnumericrole "
            "  FROM invchead "
            " WHERE (invchead_prj_id=:prj_id) ";
   }
@@ -277,7 +287,8 @@ void dspOrderActivityByProject::sFillList()
     sql += "SELECT wo_id AS id, 4 AS typeid,"
            "       text(:wo) AS type, formatWoNumber(wo_id) AS ordernumber,"
            "       wo_status AS status,"
-           "       formatQty(wo_qtyord) AS qty "
+           "       wo_qtyord AS qty,"
+           "       'qty' AS qty_xtnumericrole "
            "  FROM wo "
            " WHERE (wo_prj_id=:prj_id) ";
   }
@@ -290,7 +301,8 @@ void dspOrderActivityByProject::sFillList()
     sql += "SELECT poitem_id AS id, 5 AS typeid,"
            "       text(:po) AS type, (text(pohead_number) || '-' || text(poitem_linenumber)) AS ordernumber,"
            "       poitem_status AS status,"
-           "       formatQty(poitem_qty_ordered) AS qty "
+           "       poitem_qty_ordered AS qty,"
+           "       'qty' AS qty_xtnumericrole "
            "  FROM pohead, poitem "
            " WHERE ((poitem_pohead_id=pohead_id) "
            "   AND  (poitem_prj_id=:prj_id)) ";
@@ -299,7 +311,8 @@ void dspOrderActivityByProject::sFillList()
            "SELECT pr_id AS id, 6 AS typeid,"
            "       text(:pr) AS type, text(pr_number) AS ordernumber,"
            "       pr_status AS status,"
-           "       formatQty(pr_qtyreq) AS qty "
+           "       pr_qtyreq AS qty,"
+           "       'qty' AS qty_xtnumericrole "
            "  FROM pr "
            " WHERE (pr_prj_id=:prj_id) ";
   }
