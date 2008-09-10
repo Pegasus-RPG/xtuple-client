@@ -422,6 +422,7 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
       _freight->setEnabled(FALSE);
       _tax->setEnabled(FALSE);
       _vendaddrList->hide();
+      _purchaseOrderInformation->removePage(_quickEntryTab);
       _poCurrency->setEnabled(FALSE);
       _qeitemView->setEnabled(FALSE);
       _qesave->setEnabled(FALSE);
