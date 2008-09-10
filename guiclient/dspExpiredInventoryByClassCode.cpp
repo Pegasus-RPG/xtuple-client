@@ -71,6 +71,7 @@
 
 #define COST_COL	6
 #define VALUE_COL	7
+#define METHOD_COL 8
 
 dspExpiredInventoryByClassCode::dspExpiredInventoryByClassCode(QWidget* parent, const char* name, Qt::WFlags fl)
     : XMainWindow(parent, name, fl)
@@ -98,20 +99,22 @@ dspExpiredInventoryByClassCode::dspExpiredInventoryByClassCode(QWidget* parent, 
   _classCode->setType(ParameterGroup::ClassCode);
   _inventoryValue->setEnabled(_showValue->isChecked());
 
-  _expired->addColumn(tr("Site"),         _whsColumn,  Qt::AlignCenter );
-  _expired->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft   );
-  _expired->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignCenter );
-  _expired->addColumn(tr("Lot/Serial #"), -1,          Qt::AlignLeft   );
-  _expired->addColumn(tr("Expiration"),   _dateColumn, Qt::AlignCenter );
-  _expired->addColumn(tr("Qty."),         _qtyColumn,  Qt::AlignRight  );
-  _expired->addColumn(tr("Unit Cost"), _costColumn, Qt::AlignRight );
-  _expired->addColumn(tr("Value"),     _costColumn, Qt::AlignRight );
+  _expired->addColumn(tr("Site"),         _whsColumn,  Qt::AlignCenter, true,  "warehous_code" );
+  _expired->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft,   true,  "item_number"   );
+  _expired->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignCenter, true,  "uom_name" );
+  _expired->addColumn(tr("Lot/Serial #"), -1,          Qt::AlignLeft,   true,  "ls_number"   );
+  _expired->addColumn(tr("Expiration"),   _dateColumn, Qt::AlignCenter, true,  "itemloc_expiration" );
+  _expired->addColumn(tr("Qty."),         _qtyColumn,  Qt::AlignRight,  true,  "itemloc_qty"  );
+  _expired->addColumn(tr("Unit Cost"),    _costColumn, Qt::AlignRight,  true,  "cost" );
+  _expired->addColumn(tr("Value"),        _costColumn, Qt::AlignRight,  true,  "value" );
+  _expired->addColumn(tr("Cost Method"),  _costColumn, Qt::AlignCenter, true,  "costmethod" );
 
   _showValue->setEnabled(_privileges->check("ViewInventoryValue"));
   if (! _privileges->check("ViewInventoryValue") || ! _showValue->isChecked())
   {
     _expired->hideColumn(COST_COL);
     _expired->hideColumn(VALUE_COL);
+    _expired->hideColumn(METHOD_COL);
   }
 }
 
@@ -259,11 +262,13 @@ void dspExpiredInventoryByClassCode::sHandleValue(bool pShowValue)
   {
     _expired->showColumn(COST_COL);
     _expired->showColumn(VALUE_COL);
+    _expired->showColumn(METHOD_COL);
   }
   else
   {
     _expired->hideColumn(COST_COL);
     _expired->hideColumn(VALUE_COL);
+    _expired->hideColumn(METHOD_COL);
   }
 }
 
@@ -272,19 +277,26 @@ void dspExpiredInventoryByClassCode::sFillList()
   _expired->clear();
 
   QString sql( "SELECT itemsite_id, itemloc_id, warehous_code, item_number, uom_name,"
-               "       ls_number, formatdate(itemloc_expiration) AS f_expiration, "
-               "       formatQty(itemloc_qty) AS f_qty,"
-               "       formatCost(cost) AS f_unitcost,"
+               "       ls_number, itemloc_expiration, "
+               "       itemloc_qty, costmethod, cost,"
                "       noNeg(cost * itemloc_qty) AS value,"
-               "       formatMoney(noNeg(cost * itemloc_qty)) AS f_value,"
-               "       cost "
+               "       'qty' AS itemloc_qty_xtnumericrole,"
+               "       'cost' AS cost_xtnumericrole,"
+               "       'curr' AS value_xtnumericrole,"
+               "       'red' AS qtforegroundrole "
                "FROM ( SELECT itemsite_id, itemloc_id, warehous_code, item_number,"
                "              uom_name, ls_number, "
                "       CASE WHEN :expiretype='Perishability' THEN "
                "         itemloc_expiration "
                "       ELSE itemloc_warrpurc "
                "       END AS itemloc_expiration, "
-               "              itemloc_qty," );
+               "              itemloc_qty,"
+               "       CASE WHEN(itemsite_costmethod='A') THEN 'Average'"
+               "            WHEN(itemsite_costmethod='S') THEN 'Standard'"
+               "            WHEN(itemsite_costmethod='J') THEN 'Job'"
+               "            WHEN(itemsite_costmethod='N') THEN 'None'"
+               "            ELSE 'UNKNOWN'"
+               "       END AS costmethod," );
 
   if (_useStandardCosts->isChecked())
     sql += " stdcost(itemsite_item_id) AS cost ";
@@ -334,20 +346,5 @@ void dspExpiredInventoryByClassCode::sFillList()
   _warehouse->bindValue(q);
   _classCode->bindValue(q);
   q.exec();
-  XTreeWidgetItem *last = 0;
-  while (q.next())
-  {
-    last = new XTreeWidgetItem(_expired, last,
-			       q.value("itemsite_id").toInt(),
-			       q.value("itemloc_id").toInt(),
-			       q.value("warehous_code"),
-			       q.value("item_number"),
-			       q.value("uom_name"),
-			       q.value("ls_number"),
-			       q.value("f_expiration"),
-			       q.value("f_qty"),
-			       q.value("f_unitcost"),
-			       q.value("f_value"));
-    last->setTextColor("red");
-  }
+  _expired->populate(q, true);
 }
