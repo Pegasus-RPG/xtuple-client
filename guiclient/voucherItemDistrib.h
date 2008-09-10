@@ -77,6 +77,7 @@ public slots:
     virtual SetResponse set( ParameterList & pParams );
     virtual void populate();
     virtual void sSave();
+    virtual bool sCheck();
 
 protected slots:
     virtual void languageChange();

@@ -73,6 +73,7 @@ voucherItemDistrib::voucherItemDistrib(QWidget* parent, const char* name, bool m
 
 
     // signals and slots connections
+    connect(_costelem, SIGNAL(newID(int)), this, SLOT(sCheck()));
     connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
     connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
     init();
@@ -157,6 +158,7 @@ enum SetResponse voucherItemDistrib::set(ParameterList &pParams)
     {
       _mode = cEdit;
 
+      _costelem->setEnabled(false);
       _save->setFocus();
     }
   }
@@ -178,10 +180,39 @@ void voucherItemDistrib::populate()
   }
 }
 
+bool voucherItemDistrib::sCheck()
+{
+  if (_mode == cNew)
+  {
+    q.prepare( "SELECT vodist_id "
+               "FROM vodist "
+               "WHERE ( (vodist_vohead_id=:vodist_vohead_id)"
+               "  AND   (vodist_poitem_id=:vodist_poitem_id)"
+               "  AND   (vodist_costelem_id=:vodist_costelem_id) );" );
+    q.bindValue(":vodist_vohead_id", _voheadid);
+    q.bindValue(":vodist_poitem_id", _poitemid);
+    q.bindValue(":vodist_costelem_id", _costelem->id());
+    q.exec();
+    if (q.first())
+    {
+      _vodistid = q.value("vodist_id").toInt();
+      _mode = cEdit;
+      populate();
+
+      _costelem->setEnabled(FALSE);
+      return false;
+    }
+  }
+  return true;
+}
+
 void voucherItemDistrib::sSave()
 {
   if (_mode == cNew)
   {
+    if (!sCheck())
+      return;
+      
     q.exec("SELECT NEXTVAL('vodist_vodist_id_seq') AS _vodistid;");
     if (q.first())
       _vodistid = q.value("_vodistid").toInt();
