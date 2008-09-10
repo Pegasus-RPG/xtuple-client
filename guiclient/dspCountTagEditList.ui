@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>797</width>
+    <width>803</width>
     <height>532</height>
    </rect>
   </property>
@@ -14,57 +14,27 @@
   </property>
   <widget class="QWidget" name="widget" >
    <layout class="QGridLayout" >
-    <property name="margin" >
-     <number>9</number>
-    </property>
-    <property name="spacing" >
-     <number>6</number>
-    </property>
     <item row="0" column="0" >
      <layout class="QHBoxLayout" >
-      <property name="margin" >
-       <number>0</number>
-      </property>
-      <property name="spacing" >
-       <number>6</number>
-      </property>
       <item>
        <layout class="QVBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
-        <property name="spacing" >
-         <number>6</number>
-        </property>
         <item>
          <layout class="QHBoxLayout" >
-          <property name="margin" >
-           <number>0</number>
-          </property>
           <property name="spacing" >
            <number>7</number>
           </property>
           <item>
            <layout class="QVBoxLayout" >
-            <property name="margin" >
-             <number>0</number>
-            </property>
             <property name="spacing" >
              <number>0</number>
             </property>
             <item>
              <layout class="QVBoxLayout" >
-              <property name="margin" >
-               <number>0</number>
-              </property>
               <property name="spacing" >
                <number>5</number>
               </property>
               <item>
                <layout class="QHBoxLayout" >
-                <property name="margin" >
-                 <number>0</number>
-                </property>
                 <property name="spacing" >
                  <number>5</number>
                 </property>
@@ -88,9 +58,6 @@
               </item>
               <item>
                <layout class="QHBoxLayout" >
-                <property name="margin" >
-                 <number>0</number>
-                </property>
                 <property name="spacing" >
                  <number>0</number>
                 </property>
@@ -144,17 +111,11 @@
           </item>
           <item>
            <layout class="QVBoxLayout" >
-            <property name="margin" >
-             <number>0</number>
-            </property>
             <property name="spacing" >
              <number>5</number>
             </property>
             <item>
              <layout class="QHBoxLayout" >
-              <property name="margin" >
-               <number>0</number>
-              </property>
               <property name="spacing" >
                <number>0</number>
               </property>
@@ -192,11 +153,20 @@
                <string/>
               </property>
               <layout class="QVBoxLayout" >
-               <property name="margin" >
-                <number>5</number>
-               </property>
                <property name="spacing" >
                 <number>0</number>
+               </property>
+               <property name="leftMargin" >
+                <number>5</number>
+               </property>
+               <property name="topMargin" >
+                <number>5</number>
+               </property>
+               <property name="rightMargin" >
+                <number>5</number>
+               </property>
+               <property name="bottomMargin" >
+                <number>5</number>
                </property>
                <item>
                 <widget class="QRadioButton" name="_noHighlight" >
@@ -210,37 +180,29 @@
                </item>
                <item>
                 <layout class="QHBoxLayout" >
-                 <property name="margin" >
-                  <number>0</number>
-                 </property>
                  <property name="spacing" >
                   <number>5</number>
                  </property>
                  <item>
                   <widget class="QRadioButton" name="_highlightValue" >
                    <property name="text" >
-                    <string>Highlight Count Tag when Variance Value Exceeds</string>
+                    <string>Highlight Tag when Variance Value Exceeds</string>
                    </property>
                   </widget>
                  </item>
                  <item>
-                  <widget class="XLineEdit" name="_varianceValue" >
-                   <property name="enabled" >
-                    <bool>false</bool>
-                   </property>
+                  <widget class="CurrCluster" name="_varianceValue" >
                    <property name="sizePolicy" >
-                    <sizepolicy>
-                     <hsizetype>5</hsizetype>
-                     <vsizetype>0</vsizetype>
+                    <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
                      <horstretch>0</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
                    </property>
-                   <property name="maximumSize" >
-                    <size>
-                     <width>80</width>
-                     <height>32767</height>
-                    </size>
+                   <property name="currencyEnabled" >
+                    <bool>false</bool>
+                   </property>
+                   <property name="enabled" >
+                    <bool>true</bool>
                    </property>
                   </widget>
                  </item>
@@ -248,24 +210,18 @@
                </item>
                <item>
                 <layout class="QHBoxLayout" >
-                 <property name="margin" >
-                  <number>0</number>
-                 </property>
                  <property name="spacing" >
                   <number>0</number>
                  </property>
                  <item>
                   <layout class="QHBoxLayout" >
-                   <property name="margin" >
-                    <number>0</number>
-                   </property>
                    <property name="spacing" >
                     <number>2</number>
                    </property>
                    <item>
                     <widget class="QRadioButton" name="_highlightPercent" >
                      <property name="text" >
-                      <string>&amp;Highlight Count Tag when Variance % Exceeds</string>
+                      <string>&amp;Highlight Tag when Variance % Exceeds</string>
                      </property>
                      <property name="shortcut" >
                       <string>Alt+H</string>
@@ -278,9 +234,7 @@
                       <bool>false</bool>
                      </property>
                      <property name="sizePolicy" >
-                      <sizepolicy>
-                       <hsizetype>5</hsizetype>
-                       <vsizetype>0</vsizetype>
+                      <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
                        <horstretch>0</horstretch>
                        <verstretch>0</verstretch>
                       </sizepolicy>
@@ -329,29 +283,29 @@
         </item>
         <item>
          <layout class="QHBoxLayout" >
-          <property name="margin" >
-           <number>0</number>
-          </property>
-          <property name="spacing" >
-           <number>6</number>
-          </property>
           <item>
            <widget class="QGroupBox" name="_type" >
             <property name="title" >
              <string>Item Sites in</string>
             </property>
             <layout class="QHBoxLayout" >
-             <property name="margin" >
+             <property name="spacing" >
               <number>5</number>
              </property>
-             <property name="spacing" >
+             <property name="leftMargin" >
+              <number>5</number>
+             </property>
+             <property name="topMargin" >
+              <number>5</number>
+             </property>
+             <property name="rightMargin" >
+              <number>5</number>
+             </property>
+             <property name="bottomMargin" >
               <number>5</number>
              </property>
              <item>
               <layout class="QVBoxLayout" >
-               <property name="margin" >
-                <number>0</number>
-               </property>
                <property name="spacing" >
                 <number>5</number>
                </property>
@@ -409,17 +363,11 @@
       </item>
       <item>
        <layout class="QVBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
         <property name="spacing" >
          <number>0</number>
         </property>
         <item>
          <layout class="QVBoxLayout" >
-          <property name="margin" >
-           <number>0</number>
-          </property>
           <property name="spacing" >
            <number>0</number>
           </property>
@@ -483,9 +431,6 @@
     </item>
     <item row="1" column="0" >
      <layout class="QVBoxLayout" >
-      <property name="margin" >
-       <number>0</number>
-      </property>
       <property name="spacing" >
        <number>0</number>
       </property>
@@ -498,9 +443,6 @@
       </item>
       <item>
        <layout class="QHBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
         <property name="spacing" >
          <number>7</number>
         </property>
@@ -519,25 +461,16 @@
         </item>
         <item>
          <layout class="QVBoxLayout" >
-          <property name="margin" >
-           <number>0</number>
-          </property>
           <property name="spacing" >
            <number>0</number>
           </property>
           <item>
            <layout class="QVBoxLayout" >
-            <property name="margin" >
-             <number>0</number>
-            </property>
             <property name="spacing" >
              <number>5</number>
             </property>
             <item>
              <layout class="QVBoxLayout" >
-              <property name="margin" >
-               <number>0</number>
-              </property>
               <property name="spacing" >
                <number>0</number>
               </property>
@@ -604,9 +537,6 @@
       </item>
       <item>
        <layout class="QHBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
         <property name="spacing" >
          <number>0</number>
         </property>
@@ -650,9 +580,9 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>XLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>xlineedit.h</header>
+   <class>CurrCluster</class>
+   <extends>CurrDisplay</extends>
+   <header>currcluster.h</header>
   </customwidget>
   <customwidget>
    <class>ParameterGroup</class>
@@ -660,14 +590,19 @@
    <header>parametergroup.h</header>
   </customwidget>
   <customwidget>
+   <class>WarehouseGroup</class>
+   <extends>QGroupBox</extends>
+   <header>warehousegroup.h</header>
+  </customwidget>
+  <customwidget>
    <class>XCheckBox</class>
    <extends>QCheckBox</extends>
    <header>xcheckbox.h</header>
   </customwidget>
   <customwidget>
-   <class>WarehouseGroup</class>
-   <extends>QGroupBox</extends>
-   <header>warehousegroup.h</header>
+   <class>XLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>xlineedit.h</header>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
@@ -697,7 +632,6 @@
   <tabstop>_print</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
- <includes/>
  <resources/>
  <connections>
   <connection>

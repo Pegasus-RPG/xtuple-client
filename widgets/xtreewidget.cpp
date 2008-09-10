@@ -321,7 +321,7 @@ void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId)
                             rawValue.isNull() ? nullValue :
                             QLocale().toString(rawValue.toDouble(), 'f', scale));
             }
-            else if (rawValue.type() == QVariant::Bool)
+            else if (rawValue.type() == QVariant::Bool && ! rawValue.isNull())
             {
 	      last->setData(col, Qt::DisplayRole,
                             rawValue.toBool() ? tr("Yes") : tr("No"));

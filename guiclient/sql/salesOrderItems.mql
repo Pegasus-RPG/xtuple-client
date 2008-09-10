@@ -29,7 +29,9 @@ SELECT coitem_id, cohead_id,
        'qty' AS coitem_qtyord_xtnumericrole,
        'qty' AS coitem_qtyshipped_xtnumericrole,
        'qty' AS coitem_qtyreturned_xtnumericrole,
+       'qty' AS qtyatshipping_xtnumericrole,
        'qty' AS qtybalance_xtnumericrole,
+       'qty' AS qtyavailable_xtnumericrole,
        'salesprice' AS coitem_price_xtnumericrole,
        'salesprice' AS baseunitprice_xtnumericrole,
        'curr' AS extprice_xtnumericrole,
@@ -41,7 +43,12 @@ SELECT coitem_id, cohead_id,
        0 AS coitem_qtyreturned_xttotalrole,
        0 AS qtybalance_xttotalrole,
        0 AS baseextprice_xttotalrole,
-       0 AS baseextpricebalance_xttotalrole
+       0 AS baseextpricebalance_xttotalrole,
+       CASE WHEN (qtyAvailable(itemsite_id, coitem_scheddate) < 0.0) THEN 'error'
+            WHEN itemsite_useparams AND (qtyAvailable(itemsite_id, coitem_scheddate) <= itemsite_reorderlevel) THEN 'warning'
+            WHEN NOT itemsite_useparams AND (qtyAvailable(itemsite_id, coitem_scheddate) <= 0.0) THEN 'warning'
+       END AS qtyavailable_qtforegroundrole
+       
 FROM coitem JOIN cohead ON (cohead_id=coitem_cohead_id)
             JOIN cust ON (cust_id=cohead_cust_id)
             JOIN itemsite ON (itemsite_id=coitem_itemsite_id)

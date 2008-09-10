@@ -62,8 +62,6 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
-#include <QTimer>
-#include <QVariant>
 
 #include <metasql.h>
 #include <parameter.h>
@@ -102,19 +100,20 @@ dspCountTagEditList::dspCountTagEditList(QWidget* parent, const char* name, Qt::
   connect(_codeGroup, SIGNAL(buttonClicked(int)), this, SLOT(sParameterTypeChanged()));
 
   _parameter->setType(ParameterGroup::ClassCode);
+  _variancePercent->setValidator(omfgThis->percentVal());
 
   _cnttag->setRootIsDecorated(TRUE);
-  _cnttag->addColumn(tr("Pri."),        (_whsColumn + 10),  Qt::AlignCenter );
-  _cnttag->addColumn(tr("Tag/Slip #"),  _orderColumn, Qt::AlignRight  );
-  _cnttag->addColumn(tr("Tag Date"),    _dateColumn,  Qt::AlignCenter );
-  _cnttag->addColumn(tr("Item Number"), -1,           Qt::AlignLeft   );
-  _cnttag->addColumn(tr("Site"),        _whsColumn,   Qt::AlignCenter );
-  _cnttag->addColumn(tr("Location"),	  _ynColumn,    Qt::AlignCenter );
-  _cnttag->addColumn(tr("QOH"),         _qtyColumn,   Qt::AlignRight  );
-  _cnttag->addColumn(tr("Count Qty."),  _qtyColumn,   Qt::AlignRight  );
-  _cnttag->addColumn(tr("Variance"),    _qtyColumn,   Qt::AlignRight  );
-  _cnttag->addColumn(tr("%"),           _prcntColumn, Qt::AlignRight  );
-  _cnttag->addColumn(tr("Amount"),       _costColumn,  Qt::AlignRight );
+  _cnttag->addColumn(tr("Pri."), (_whsColumn + 10), Qt::AlignCenter,true, "invcnt_priority");
+  _cnttag->addColumn(tr("Tag/Slip #"),_orderColumn, Qt::AlignRight, true, "tagnumber");
+  _cnttag->addColumn(tr("Tag Date"),   _dateColumn, Qt::AlignCenter,true, "tagdate");
+  _cnttag->addColumn(tr("Item Number"),         -1, Qt::AlignLeft,  true, "item_number");
+  _cnttag->addColumn(tr("Site"),        _whsColumn, Qt::AlignCenter,true, "warehous_code");
+  _cnttag->addColumn(tr("Location"),     _ynColumn, Qt::AlignCenter,true, "loc_specific");
+  _cnttag->addColumn(tr("QOH"),         _qtyColumn, Qt::AlignRight, true, "qoh");
+  _cnttag->addColumn(tr("Count Qty."),  _qtyColumn, Qt::AlignRight, true, "qohafter");
+  _cnttag->addColumn(tr("Variance"),    _qtyColumn, Qt::AlignRight, true, "variance");
+  _cnttag->addColumn(tr("%"),         _prcntColumn, Qt::AlignRight, true, "varianceprcnt");
+  _cnttag->addColumn(tr("Amount"),     _costColumn, Qt::AlignRight, true, "variancecost");
   _cnttag->setIndentation(10);
   
   if (_privileges->check("EnterCountTags"))
@@ -581,47 +580,51 @@ void dspCountTagEditList::sSearch(const QString &pTarget)
 
 void dspCountTagEditList::sFillList()
 {
-  _cnttag->clear();
-
-  QString sql( "SELECT invcnt_id, -1 AS cntslip_id, formatBoolYN(invcnt_priority) AS priority,"
-               "       CASE WHEN (invcnt_tagnumber IS NULL) THEN 'Misc.'"
-               "            ELSE invcnt_tagnumber"
-               "       END AS tagnumber,"
-               "       TEXT('') AS cntslip_number,"
-               "       formatDate(invcnt_tagdate) AS tagdate,"
+  QString sql( "SELECT *, "
+               "       CASE WHEN (xtindentrole = 1) THEN NULL "
+               "<? if exists(\"varianceValue\") ?>"
+               "            WHEN (ABS(variancecost) >  <? value(\"varianceValue\") ?>) THEN 'error'"
+               "<? elseif exists(\"variancePercent\") ?>"
+               "            WHEN (ABS(varianceprcnt) >  <? value(\"variancePercent\") ?>) THEN 'error'"
+               "<? else ?>"
+               "            ELSE NULL"
+               "<? endif ?> END AS qtforegroundrole,"
+               "       CASE WHEN (xtindentrole = 1) THEN NULL "
+               "            WHEN (qohafter IS NOT NULL) THEN 'emphasis'"
+               "       END AS qohafter_qtforegroundrole,"
+               "       CASE WHEN (xtindentrole = 0) THEN NULL ELSE '' END AS invcnt_priority_qtdisplayrole,"
+               "       'qty' AS qoh_xtnumericrole,"
+               "       'qty' AS qohafter_xtnumericrole,"
+               "       'curr' AS variancecost_xtnumericrole "
+               " FROM ("
+               "SELECT invcnt_id, -1 AS cntslip_id, invcnt_priority,"
+               "       COALESCE(invcnt_tagnumber, 'Misc.') AS tagnumber,"
+               "       invcnt_tagdate AS tagdate,"
                "       item_number, warehous_code,"
 	       "       CASE WHEN (location_id IS NOT NULL) THEN"
 	       "                 location_name"
 	       "             ELSE <? value(\"all\") ?>  END AS loc_specific, "
                "       CASE WHEN (invcnt_location_id IS NOT NULL)"
-               "                 THEN (SELECT formatQty(SUM(itemloc_qty))"
+               "                 THEN (SELECT SUM(itemloc_qty)"
                "                         FROM itemloc"
                "                        WHERE ((itemloc_itemsite_id=itemsite_id)"
                "                          AND  (itemloc_location_id=invcnt_location_id)) )"
-               "            ELSE formatQty(itemsite_qtyonhand)"
+               "            ELSE itemsite_qtyonhand"
                "       END AS qoh,"
-               "       CASE WHEN (invcnt_qoh_after IS NOT NULL) THEN formatQty(invcnt_qoh_after)"
-	       "            WHEN ( ( SELECT SUM(cntslip_qty)"
-               "                     FROM cntslip"
-               "                     WHERE (cntslip_cnttag_id=invcnt_id) ) IS NOT NULL ) THEN ( SELECT formatQty(SUM(cntslip_qty))"
-               "                                                                                FROM cntslip"
-               "                                                                                WHERE (cntslip_cnttag_id=invcnt_id) )"
-               "            ELSE ''"
-               "       END AS qohafter,"
-               "       CASE WHEN (invcnt_qoh_after IS NULL) THEN ''"
-               "            ELSE formatQty(invcnt_qoh_after - itemsite_qtyonhand)"
-               "       END AS variance,"
-               "       CASE WHEN (invcnt_qoh_after IS NULL) THEN ''"
-               "            WHEN ((itemsite_qtyonhand = 0) AND (invcnt_qoh_after > 0)) THEN formatScrap(1)"
-               "            WHEN ((itemsite_qtyonhand = 0) AND (invcnt_qoh_after < 0)) THEN formatScrap(-1)"
-               "            WHEN ((itemsite_qtyonhand = 0) AND (invcnt_qoh_after = 0)) THEN formatScrap(0)"
-               "            ELSE (formatScrap((1 - (invcnt_qoh_after / itemsite_qtyonhand)) * -1))"
-               "       END AS varianceprcnt,"
+               "       COALESCE(invcnt_qoh_after, (SELECT SUM(cntslip_qty)"
+               "                                   FROM cntslip"
+               "                                   WHERE (cntslip_cnttag_id=invcnt_id) )"
+               "               ) AS qohafter,"
+               "       (invcnt_qoh_after - itemsite_qtyonhand) AS variance,"
+               "       CASE WHEN (invcnt_qoh_after IS NULL) THEN NULL"
+               "            WHEN ((itemsite_qtyonhand = 0) AND (invcnt_qoh_after > 0)) THEN 1"
+               "            WHEN ((itemsite_qtyonhand = 0) AND (invcnt_qoh_after < 0)) THEN -1"
+               "            WHEN ((itemsite_qtyonhand = 0) AND (invcnt_qoh_after = 0)) THEN 0"
+               "            ELSE ((1 - (invcnt_qoh_after / itemsite_qtyonhand)) * -1)"
+               "       END  * 100 AS varianceprcnt,"
                "       (stdcost(item_id) * (invcnt_qoh_after - itemsite_qtyonhand)) AS variancecost,"
                "       item_number AS orderby,"
-               "       CASE WHEN (invcnt_qoh_after IS NULL) THEN FALSE"
-               "            ELSE TRUE"
-               "       END AS hascount "
+               "       0 AS xtindentrole "
                "FROM invcnt LEFT OUTER JOIN location ON (invcnt_location_id=location_id),"
 	       "     item, warehous, itemsite "
                "WHERE ( (invcnt_itemsite_id=itemsite_id)"
@@ -643,19 +646,19 @@ void dspCountTagEditList::sFillList()
 	       " <? if exists(\"showSlips\") ?>"
 	       " ) "
 	       "UNION "
-	       "SELECT invcnt_id, cntslip_id, formatBoolYN(invcnt_priority) AS priority,"
-	       "       '' AS tagnumber, cntslip_number,"
-	       "       formatDate(cntslip_entered) AS tagdate,"
+	       "SELECT invcnt_id, cntslip_id, invcnt_priority,"
+               "       cntslip_number AS tagnumber,"
+	       "       cntslip_entered AS tagdate,"
 	       "       CASE WHEN (cntslip_posted) THEN <? value(\"posted\") ?>"
 	       "            ELSE <? value(\"unposted\") ?>"
 	       "       END AS item_number,"
 	       "       '' AS warehous_code, "
 	       "       '' AS loc_specific, "
-	       "       '' AS qoh,"
-	       "       formatQty(cntslip_qty) AS qohafter,"
-	       "       '' AS variance, '' AS varianceprcnt, 0 AS variancecost,"
+	       "       NULL AS qoh,"
+	       "       cntslip_qty AS qohafter,"
+	       "       NULL AS variance, NULL AS varianceprcnt, 0 AS variancecost,"
 	       "       item_number AS orderby,"
-	       "       FALSE AS hascount "
+               "       1 AS xtindentrole "
 	       "FROM cntslip, invcnt, itemsite, item "
 	       "WHERE ( (cntslip_cnttag_id=invcnt_id)"
 	       " AND (invcnt_itemsite_id=itemsite_id)"
@@ -675,7 +678,8 @@ void dspCountTagEditList::sFillList()
 	       " <? endif ?>"
 	       " <? endif ?>"
 	       " ) "
-	       "ORDER BY priority DESC, orderby, invcnt_id, cntslip_id;" );
+               " ) AS dummy "
+	       "ORDER BY invcnt_priority DESC, orderby, invcnt_id, cntslip_id;" );
 
   ParameterList params;
   setParams(params);
@@ -684,51 +688,14 @@ void dspCountTagEditList::sFillList()
   params.append("unposted", tr("Unposted"));
   if (_showSlips->isChecked())
     params.append("showSlips");
+  if (_highlightValue->isChecked())
+    params.append("varianceValue",   _varianceValue->localValue());
+  else if (_highlightPercent->isChecked())
+    params.append("variancePercent", _variancePercent->toDouble());
 
   MetaSQLQuery mql(sql);
   q = mql.toQuery(params);
-
-  if (q.first())
-  {
-    XTreeWidgetItem *countTag = NULL;
-    int             invcntid  = -1;
-
-    do
-    {
-      if (q.value("cntslip_id").toInt() == -1)
-      {
-        if (invcntid != q.value("invcnt_id").toInt())
-        {
-          invcntid = q.value("invcnt_id").toInt();
-          countTag = new XTreeWidgetItem( _cnttag, countTag,
-                                        q.value("invcnt_id").toInt(), q.value("cntslip_id").toInt(),
-                                        q.value("priority"), q.value("tagnumber"),
-                                        q.value("tagdate"), q.value("item_number"),
-                                        q.value("warehous_code"),
-					q.value("loc_specific"),
-					q.value("qoh"),
-                                        q.value("qohafter"), q.value("variance"),
-                                        q.value("varianceprcnt"), formatCost(q.value("variancecost").toDouble()) );
-
-          if ( ( (_highlightValue->isChecked()) && (_varianceValue->text().length()) &&
-                 (fabs(q.value("variancecost").toDouble()) > _varianceValue->toDouble()) ) ||
-               ( (_highlightPercent->isChecked()) && (_variancePercent->text().length()) &&
-                 (fabs(q.value("varianceprcnt").toDouble()) > _variancePercent->toDouble()) ) )
-            countTag->setTextColor("red");
-
-          if (!q.value("hascount").toBool())
-            countTag->setTextColor(7, "blue");
-        }
-      }
-      else if (countTag)
-        new XTreeWidgetItem( countTag, q.value("invcnt_id").toInt(), q.value("cntslip_id").toInt(),
-                           "", q.value("cntslip_number"),
-                           q.value("tagdate"), q.value("item_number"),
-                           "", "", "",
-                           q.value("qohafter"), "" );
-    }
-    while (q.next());
-  }
+  _cnttag->populate(q, true);
   if (q.lastError().type() != QSqlError::None)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);

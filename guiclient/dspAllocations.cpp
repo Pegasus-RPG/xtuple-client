@@ -80,14 +80,14 @@ dspAllocations::dspAllocations(QWidget* parent, const char* name, Qt::WFlags fl)
   _item->setReadOnly(TRUE);
   _warehouse->setEnabled(FALSE);
 
-  _allocations->addColumn(tr("Type"),         _docTypeColumn, Qt::AlignCenter );
-  _allocations->addColumn(tr("Order #"),      _orderColumn,   Qt::AlignLeft   );
-  _allocations->addColumn(tr("Parent Item"),  -1,             Qt::AlignLeft   );
-  _allocations->addColumn(tr("Total Qty."),   _qtyColumn,     Qt::AlignRight  );
-  _allocations->addColumn(tr("Relieved"),     _qtyColumn,     Qt::AlignRight  );
-  _allocations->addColumn(tr("Balance"),      _qtyColumn,     Qt::AlignRight  );
-  _allocations->addColumn(tr("Running Bal."), _qtyColumn,     Qt::AlignRight  );
-  _allocations->addColumn(tr("Required"),     _dateColumn,    Qt::AlignCenter );
+  _allocations->addColumn(tr("Type"),         _docTypeColumn, Qt::AlignCenter,true, "type");
+  _allocations->addColumn(tr("Order #"),      _orderColumn,   Qt::AlignLeft,  true, "order_number");
+  _allocations->addColumn(tr("Parent Item"),  -1,             Qt::AlignLeft,  true, "item_number");
+  _allocations->addColumn(tr("Total Qty."),   _qtyColumn,     Qt::AlignRight, true, "totalqty");
+  _allocations->addColumn(tr("Relieved"),     _qtyColumn,     Qt::AlignRight, true, "relievedqty");
+  _allocations->addColumn(tr("Balance"),      _qtyColumn,     Qt::AlignRight, true, "balanceqty");
+  _allocations->addColumn(tr("Running Bal."), _qtyColumn,     Qt::AlignRight, true, "runningbal");
+  _allocations->addColumn(tr("Required"),     _dateColumn,    Qt::AlignCenter,true, "duedate");
 
   if (!_metrics->boolean("MultiWhs"))
   {
@@ -270,22 +270,7 @@ void dspAllocations::sFillList()
     }
 
     q = mql.toQuery(params);
-
-    double runningBal = 0;
-    XTreeWidgetItem *last = 0;
-
-    while (q.next())
-    {
-      runningBal += q.value("balanceqty").toDouble();
-
-      last = new XTreeWidgetItem(_allocations, last,
-				 q.value("source_id").toInt(),
-				 q.value("type"), q.value("order_number"),
-				 q.value("item_number"), q.value("totalqty"),
-				 q.value("relievedqty"), q.value("balanceqty"),
-				 formatQty(runningBal), q.value("duedate") );
-      last->setTextColor(7, "red");
-    }
+    _allocations->populate(q);
     if (q.lastError().type() != QSqlError::None)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);

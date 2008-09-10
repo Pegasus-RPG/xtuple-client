@@ -132,7 +132,7 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
 #endif
 
   // setup arhist list
-  _arhist->addColumn(tr("Open"),          _orderColumn,    Qt::AlignCenter, true,  "f_open" );
+  _arhist->addColumn(tr("Open"),          _orderColumn,    Qt::AlignCenter, true,  "open" );
   _arhist->addColumn(tr("Doc. Type"),     _dateColumn,     Qt::AlignCenter, true,  "documenttype" );
   _arhist->addColumn(tr("Doc. #"),        -1,              Qt::AlignRight,  true,  "docnumber"  );
   _arhist->addColumn(tr("Doc. Date"),     _dateColumn,     Qt::AlignCenter, true,  "docdate" );
@@ -178,8 +178,8 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sFillOrderList()));
 
   // setup Invoice list
-  _invoice->addColumn(tr("Posted"),     _ynColumn,       Qt::AlignCenter, true,  "f_posted" );
-  _invoice->addColumn(tr("Open"),       _ynColumn,       Qt::AlignCenter, true,  "f_open" );
+  _invoice->addColumn(tr("Posted"),     _ynColumn,       Qt::AlignCenter, true,  "posted" );
+  _invoice->addColumn(tr("Open"),       _ynColumn,       Qt::AlignCenter, true,  "open" );
   _invoice->addColumn(tr("Invoice #"),  -1,              Qt::AlignLeft,   true,  "invcnumber"   );
   _invoice->addColumn(tr("S/O #"),      _orderColumn,    Qt::AlignLeft,   true,  "ordernumber"   );
   _invoice->addColumn(tr("Invc. Date"), _dateColumn,     Qt::AlignCenter, true,  "docdate"  );
@@ -202,8 +202,8 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   connect(omfgThis, SIGNAL(invoicesUpdated(int, bool)), this, SLOT(sFillInvoiceList()));
 
   // setup CreditMemo list
-  _creditMemo->addColumn(tr("Posted"),    _ynColumn,       Qt::AlignCenter, true,  "f_posted" );
-  _creditMemo->addColumn(tr("Open"),      _ynColumn,       Qt::AlignCenter, true,  "f_open" );
+  _creditMemo->addColumn(tr("Posted"),    _ynColumn,       Qt::AlignCenter, true,  "posted" );
+  _creditMemo->addColumn(tr("Open"),      _ynColumn,       Qt::AlignCenter, true,  "open" );
   _creditMemo->addColumn(tr("Type"),      _ynColumn,       Qt::AlignCenter, true,  "type" );
   _creditMemo->addColumn(tr("Memo #"),     -1,             Qt::AlignLeft,   true,  "docnumber"   );
   _creditMemo->addColumn(tr("Doc. Date"), _dateColumn,     Qt::AlignCenter, true,  "docdate" );
@@ -263,6 +263,12 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   _printMenu->addAction(tr("Statement"),      this, SLOT(sPrintStatement()));
   _print->setMenu(_printMenu);
 
+  _backlog->setPrecision(omfgThis->moneyVal());
+  _creditLimit->setPrecision(omfgThis->moneyVal());
+  _lastYearSales->setPrecision(omfgThis->moneyVal());
+  _lateBalance->setPrecision(omfgThis->moneyVal());
+  _openBalance->setPrecision(omfgThis->moneyVal());
+  _ytdSales->setPrecision(omfgThis->moneyVal());
 }
 
 dspCustomerInformation::~dspCustomerInformation()
@@ -344,7 +350,7 @@ void dspCustomerInformation::sPopulateCustInfo()
                    "       cust_creditstatus, cust_comments, cust_shipvia,"
                    "       (custtype_code || '-' || custtype_descrip) AS f_custtype,"
                    "       (terms_code || '-' || terms_descrip) AS f_terms,"
-                   "       formatMoney(cust_creditlmt) AS f_custcreditlmt "
+                   "       cust_creditlmt "
                    "  FROM cust, custtype, terms "
                    " WHERE ((cust_custtype_id=custtype_id)"
                    "   AND  (cust_terms_id=terms_id)"
@@ -379,7 +385,7 @@ void dspCustomerInformation::sPopulateCustInfo()
       _type->setText(query.value("f_custtype").toString());
       _terms->setText(query.value("f_terms").toString());
       _shipvia->setText(query.value("cust_shipvia").toString());
-      _creditLimit->setText(query.value("f_custcreditlmt").toString());
+      _creditLimit->setDouble(query.value("cust_creditlmt").toDouble());
 
       if (query.value("cust_creditstatus").toString() == "G")
       {
@@ -397,18 +403,18 @@ void dspCustomerInformation::sPopulateCustInfo()
         _creditStatus->setPaletteForegroundColor(QColor("red"));
       }
 
-      query.prepare( "SELECT formatDate(MIN(cohist_invcdate)) AS firstdate,"
-                     "       formatDate(MAX(cohist_invcdate)) AS lastdate "
+      query.prepare( "SELECT MIN(cohist_invcdate) AS firstdate,"
+                     "       MAX(cohist_invcdate) AS lastdate "
                      "FROM cohist "
                      "WHERE (cohist_cust_id=:cust_id);" );
       query.bindValue(":cust_id", _cust->id());
       query.exec();
       if (query.first())
       {
-        _firstSaleDate->setText(query.value("firstdate").toString());
-        _lastSaleDate->setText(query.value("lastdate").toString());
+        _firstSaleDate->setDate(query.value("firstdate").toDate());
+        _lastSaleDate->setDate(query.value("lastdate").toDate());
       }
-      query.prepare( "SELECT formatMoney(COALESCE(SUM(round(cohist_qtyshipped * cohist_unitprice,2)), 0)) AS lysales "
+      query.prepare( "SELECT COALESCE(SUM(round(cohist_qtyshipped * cohist_unitprice,2)), 0) AS lysales "
                      "FROM cohist "
                      "WHERE ( (cohist_invcdate BETWEEN (DATE_TRUNC('year', CURRENT_TIMESTAMP) - INTERVAL '1 year') AND"
                      "                                 (DATE_TRUNC('year', CURRENT_TIMESTAMP) - INTERVAL '1 day'))"
@@ -416,19 +422,19 @@ void dspCustomerInformation::sPopulateCustInfo()
       query.bindValue(":cust_id", _cust->id());
       query.exec();
       if (query.first())
-        _lastYearSales->setText(query.value("lysales").toString());
+        _lastYearSales->setDouble(query.value("lysales").toDouble());
 
-      query.prepare( "SELECT formatMoney(COALESCE(SUM(round(cohist_qtyshipped * cohist_unitprice,2)), 0)) AS ytdsales "
+      query.prepare( "SELECT COALESCE(SUM(round(cohist_qtyshipped * cohist_unitprice,2)), 0) AS ytdsales "
                      "FROM cohist "
                      "WHERE ( (cohist_invcdate>=DATE_TRUNC('year', CURRENT_TIMESTAMP))"
                      " AND (cohist_cust_id=:cust_id) );" );
       query.bindValue(":cust_id", _cust->id());
       query.exec();
       if (query.first())
-        _ytdSales->setText(query.value("ytdsales").toString());
+        _ytdSales->setDouble(query.value("ytdsales").toDouble());
 
-      query.prepare( "SELECT formatMoney( COALESCE( SUM( (noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) *"
-                     "                                   (coitem_price / coitem_price_invuomratio) ), 0 ) ) AS backlog "
+      query.prepare( "SELECT COALESCE( SUM( (noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) *"
+                     "                                   (coitem_price / coitem_price_invuomratio) ), 0 ) AS backlog "
                      "FROM cohead, coitem, itemsite, item "
                      "WHERE ( (coitem_cohead_id=cohead_id)"
                      " AND (coitem_itemsite_id=itemsite_id)"
@@ -438,22 +444,22 @@ void dspCustomerInformation::sPopulateCustInfo()
       query.bindValue(":cust_id", _cust->id());
       query.exec();
       if (query.first())
-        _backlog->setText(query.value("backlog").toString());
+        _backlog->setDouble(query.value("backlog").toDouble());
 
-      query.prepare( "SELECT formatMoney( COALESCE( SUM( CASE WHEN (aropen_doctype IN ('I', 'D')) THEN (aropen_amount - aropen_paid)"
+      query.prepare( "SELECT COALESCE( SUM( CASE WHEN (aropen_doctype IN ('I', 'D')) THEN (aropen_amount - aropen_paid)"
                      "                                       ELSE ((aropen_amount - aropen_paid) * -1)"
-                     "                                   END ), 0 ) ) AS f_balance "
+                     "                                   END ), 0 ) AS balance "
                      "FROM aropen "
                      "WHERE ( (aropen_open)"
                      " AND (aropen_cust_id=:cust_id) );" );
       query.bindValue(":cust_id", _cust->id());
       query.exec();
       if (query.first())
-        _openBalance->setText(query.value("f_balance").toString());
+        _openBalance->setDouble(query.value("balance").toDouble());
 
-      query.prepare( "SELECT formatMoney( noNeg( COALESCE( SUM( CASE WHEN (aropen_doctype IN ('I', 'D')) THEN (aropen_amount - aropen_paid)"
+      query.prepare( "SELECT noNeg( COALESCE( SUM( CASE WHEN (aropen_doctype IN ('I', 'D')) THEN (aropen_amount - aropen_paid)"
                      "                                      ELSE ((aropen_amount - aropen_paid) * -1)"
-                     "                                   END ), 0 ) ) ) AS f_balance "
+                     "                                   END ), 0 ) ) AS balance "
                      "FROM aropen "
                      "WHERE ( (aropen_open)"
                      " AND (aropen_duedate < CURRENT_DATE)"
@@ -461,7 +467,7 @@ void dspCustomerInformation::sPopulateCustInfo()
       query.bindValue(":cust_id", _cust->id());
       query.exec();
       if (query.first())
-        _lateBalance->setText(query.value("f_balance").toString());
+        _lateBalance->setDouble(query.value("balance").toDouble());
     }
   }
 }
@@ -648,8 +654,8 @@ void dspCustomerInformation::sViewInvOrder()
 void dspCustomerInformation::sFillInvoiceList()
 {
   QString sql("SELECT invchead_id AS id, -1 AS altId,"
-            "       formatBoolYN(invchead_posted) AS f_posted,"
-            "       formatBoolYN(COALESCE(aropen_open, FALSE)) AS f_open,"
+            "       invchead_posted AS posted,"
+            "       COALESCE(aropen_open, FALSE) AS open,"
             "       text(invchead_invcnumber) AS invcnumber,"
             "       text(invchead_ordernumber) AS ordernumber,"
             "       invchead_invcdate AS docdate,"
@@ -673,8 +679,8 @@ void dspCustomerInformation::sFillInvoiceList()
 
   sql +=    " UNION "
             "SELECT aropen_id AS id, -2 AS altId,"
-            "       formatBoolYN(true) AS f_posted,"
-            "       formatBoolYN(aropen_open) AS f_open,"
+            "       true AS posted,"
+            "       aropen_open AS open,"
             "       text(aropen_docnumber) AS invcnumber,"
             "       aropen_ordernumber AS ordernumber,"
             "       aropen_docdate AS docdate,"
@@ -775,7 +781,7 @@ void dspCustomerInformation::sFillCreditMemoList()
   _printCreditMemo->setEnabled(FALSE);
 
   QString sql( "SELECT cmhead_id, -1,"
-             "       formatBoolYN(false) AS f_posted, '' AS f_open, '' AS type,"
+             "       false AS posted, NULL AS open, '' AS type,"
              "       text(cmhead_number) AS docnumber,"
              "       cmhead_docdate AS docdate,"
              "       0 AS amount, 0 AS balance, '' AS currAbbr,"
@@ -786,7 +792,7 @@ void dspCustomerInformation::sFillCreditMemoList()
              "   AND  (cmhead_cust_id=:cust_id)) "
              "UNION "
              "SELECT aropen_id, -2,"
-             "       formatBoolYN(true) AS f_posted, formatBoolYN(aropen_open) AS f_open,"
+             "       true AS posted, aropen_open AS open,"
              "       :creditmemo AS type,"
              "       text(aropen_docnumber) AS docnumber,"
              "       aropen_docdate AS docdate,"
@@ -804,7 +810,7 @@ void dspCustomerInformation::sFillCreditMemoList()
   sql +=     "   AND  (aropen_cust_id=:cust_id) ) "
              "UNION "
              "SELECT aropen_id, -3,"
-             "       formatBoolYN(true) AS f_posted, formatBoolYN(aropen_open) AS f_open,"
+             "       true AS posted, aropen_open AS open,"
              "       CASE WHEN (aropen_doctype='C') THEN :creditmemo"
              "            WHEN (aropen_doctype='R') THEN :cashdeposit"
              "            else aropen_doctype"

@@ -57,10 +57,10 @@
 
 #include "dspBacklogBySalesOrder.h"
 
-#include <QVariant>
-#include <QWorkspace>
-#include <QStatusBar>
 #include <QMenu>
+#include <QStatusBar>
+#include <QSqlError>
+#include <QVariant>
 
 #include <metasql.h>
 #include "mqlutil.h"
@@ -97,15 +97,15 @@ dspBacklogBySalesOrder::dspBacklogBySalesOrder(QWidget* parent, const char* name
 
   omfgThis->inputManager()->notify(cBCSalesOrder, this, _salesOrder, SLOT(setId(int)));
 
-  _soitem->addColumn(tr("#"),           _seqColumn,  Qt::AlignCenter );
-  _soitem->addColumn(tr("Item"),        _itemColumn, Qt::AlignLeft   );
-  _soitem->addColumn(tr("Description"), -1,          Qt::AlignLeft   );
-  _soitem->addColumn(tr("Site"),        _whsColumn,  Qt::AlignLeft   );
-  _soitem->addColumn(tr("Ordered"),     _qtyColumn,  Qt::AlignRight  );
-  _soitem->addColumn(tr("Shipped"),     _qtyColumn,  Qt::AlignRight  );
-  _soitem->addColumn(tr("Balance"),     _qtyColumn,  Qt::AlignRight  );
-  _soitem->addColumn(tr("At Shipping"), _qtyColumn,  Qt::AlignRight  );
-  _soitem->addColumn(tr("Available"),   _qtyColumn,  Qt::AlignRight  );
+  _soitem->addColumn(tr("#"),           _seqColumn,  Qt::AlignCenter,true, "coitem_linenumber");
+  _soitem->addColumn(tr("Item"),        _itemColumn, Qt::AlignLeft,  true, "item_number");
+  _soitem->addColumn(tr("Description"), -1,          Qt::AlignLeft,  true, "itemdescription");
+  _soitem->addColumn(tr("Site"),        _whsColumn,  Qt::AlignLeft,  true, "warehous_code");
+  _soitem->addColumn(tr("Ordered"),     _qtyColumn,  Qt::AlignRight, true, "coitem_qtyord");
+  _soitem->addColumn(tr("Shipped"),     _qtyColumn,  Qt::AlignRight, true, "coitem_qtyshipped");
+  _soitem->addColumn(tr("Balance"),     _qtyColumn,  Qt::AlignRight, true, "qtybalance");
+  _soitem->addColumn(tr("At Shipping"), _qtyColumn,  Qt::AlignRight, true, "qtyatshipping");
+  _soitem->addColumn(tr("Available"),   _qtyColumn,  Qt::AlignRight, true, "qtyavailable");
 }
 
 /*
@@ -169,12 +169,10 @@ void dspBacklogBySalesOrder::sRunningAvailability()
 
 void dspBacklogBySalesOrder::sFillList()
 {
-  _soitem->clear();
-
   if (_salesOrder->isValid())
   {
     q.prepare( "SELECT cohead_number,"
-               "       formatDate(cohead_orderdate) AS orderdate,"
+               "       cohead_orderdate,"
                "       cohead_custponumber,"
                "       cust_name, cust_phone "
                "FROM cohead, cust "
@@ -184,7 +182,7 @@ void dspBacklogBySalesOrder::sFillList()
     q.exec();
     if (q.first())
     {
-      _orderDate->setText(q.value("orderdate").toString());
+      _orderDate->setDate(q.value("cohead_orderdate").toDate());
       _poNumber->setText(q.value("cohead_custponumber").toString());
       _custName->setText(q.value("cust_name").toString());
       _custPhone->setText(q.value("cust_phone").toString());
@@ -194,24 +192,11 @@ void dspBacklogBySalesOrder::sFillList()
     ParameterList params;
     params.append("cohead_id", _salesOrder->id());
     q = mql.toQuery(params);
-
-    XTreeWidgetItem *last = 0;
-    while (q.next())
+    _soitem->populate(q, true);
+    if (q.lastError().type() != QSqlError::None)
     {
-      last = new XTreeWidgetItem(_soitem, last,
-				 q.value("coitem_id").toInt(), q.value("itemsite_id").toInt(),
-				 q.value("coitem_linenumber"), q.value("item_number"),
-				 q.value("itemdescription"), q.value("warehous_code"),
-				 formatQty(q.value("coitem_qtyord").toDouble()),
-         formatQty(q.value("coitem_qtyshipped").toDouble()),
-				 formatQty(q.value("qtybalance").toDouble()),
-         formatQty(q.value("qtyatshipping").toDouble()),
-				 formatQty(q.value("qtyavailable").toDouble()) );
-
-      if (q.value("stockout").toBool())
-        last->setTextColor(8, "red");
-      else if (q.value("reorder").toBool())
-        last->setTextColor(8, "orange");
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
     }
   }
   else
@@ -223,4 +208,3 @@ void dspBacklogBySalesOrder::sFillList()
     _soitem->clear();
   }
 }
-

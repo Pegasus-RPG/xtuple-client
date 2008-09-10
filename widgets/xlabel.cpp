@@ -66,7 +66,7 @@
 
 #include "format.h"
 
-#define DEBUG true
+#define DEBUG false
 
 XLabel::XLabel(QWidget *parent, const char *name) :
   QLabel(parent, name)

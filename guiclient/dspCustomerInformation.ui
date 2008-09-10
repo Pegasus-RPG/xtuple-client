@@ -863,33 +863,33 @@
                <number>0</number>
               </property>
               <item>
-               <widget class="QLabel" name="_firstSaleDate" >
+               <widget class="DLineEdit" name="_firstSaleDate" >
+                <property name="enabled" >
+                 <bool>false</bool>
+                </property>
                 <property name="sizePolicy" >
                  <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
-                <property name="text" >
-                 <string/>
-                </property>
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="_lastSaleDate" >
+               <widget class="DLineEdit" name="_lastSaleDate" >
+                <property name="enabled" >
+                 <bool>false</bool>
+                </property>
                 <property name="sizePolicy" >
                  <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
-                <property name="text" >
-                 <string/>
-                </property>
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="_backlog" >
+               <widget class="XLabel" name="_backlog" >
                 <property name="text" >
                  <string/>
                 </property>
@@ -1017,7 +1017,7 @@
              <number>0</number>
             </property>
             <item>
-             <widget class="QLabel" name="_lastYearSales" >
+             <widget class="XLabel" name="_lastYearSales" >
               <property name="sizePolicy" >
                <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
                 <horstretch>0</horstretch>
@@ -1033,7 +1033,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="_ytdSales" >
+             <widget class="XLabel" name="_ytdSales" >
               <property name="sizePolicy" >
                <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
                 <horstretch>0</horstretch>
@@ -1049,7 +1049,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="_creditLimit" >
+             <widget class="XLabel" name="_creditLimit" >
               <property name="sizePolicy" >
                <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
                 <horstretch>0</horstretch>
@@ -1199,7 +1199,7 @@
                  <number>0</number>
                 </property>
                 <item>
-                 <widget class="QLabel" name="_openBalance" >
+                 <widget class="XLabel" name="_openBalance" >
                   <property name="sizePolicy" >
                    <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
                     <horstretch>0</horstretch>
@@ -1215,7 +1215,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="_lateBalance" >
+                 <widget class="XLabel" name="_lateBalance" >
                   <property name="sizePolicy" >
                    <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
                     <horstretch>0</horstretch>
@@ -2014,9 +2014,20 @@
    <header>comments.h</header>
   </customwidget>
   <customwidget>
+   <class>DLineEdit</class>
+   <extends>QWidget</extends>
+   <header>datecluster.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>XCheckBox</class>
    <extends>QCheckBox</extends>
    <header>xcheckbox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XLabel</class>
+   <extends>QLabel</extends>
+   <header>xlabel.h</header>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
