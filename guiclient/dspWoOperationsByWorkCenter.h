@@ -75,7 +75,7 @@ public:
 public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
     virtual void sPrint();
-    virtual void sPopulateMenu( QMenu * pMenu );
+    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * selected );
     virtual void sViewOperation();
     virtual void sEditOperation();
     virtual void sDeleteOperation();

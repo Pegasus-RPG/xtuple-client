@@ -84,7 +84,7 @@ dspWoOperationsByWorkCenter::dspWoOperationsByWorkCenter(QWidget* parent, const 
 
   // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_wooper, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_wooper, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem*)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
@@ -96,6 +96,7 @@ dspWoOperationsByWorkCenter::dspWoOperationsByWorkCenter(QWidget* parent, const 
 
   _wooper->addColumn(tr("Source"),        _orderColumn, Qt::AlignLeft   );
   _wooper->addColumn(tr("W/O #"),         _orderColumn, Qt::AlignLeft   );
+  _wooper->addColumn(tr("Status"),        _seqColumn,   Qt::AlignCenter );
   _wooper->addColumn(tr("Due Date"),      _dateColumn,  Qt::AlignCenter );
   _wooper->addColumn(tr("Item Number"),   _itemColumn,  Qt::AlignLeft   );
   _wooper->addColumn(tr("Seq #"),         _seqColumn,   Qt::AlignCenter );
@@ -104,7 +105,6 @@ dspWoOperationsByWorkCenter::dspWoOperationsByWorkCenter(QWidget* parent, const 
   _wooper->addColumn(tr("Setup Remain."), _itemColumn,  Qt::AlignRight  );
   _wooper->addColumn(tr("Run Remain."),   _itemColumn,  Qt::AlignRight  );
   _wooper->addColumn(tr("Qty. Remain."),  _qtyColumn,   Qt::AlignRight  );
-  _wooper->addColumn(tr("UOM"),           _uomColumn,   Qt::AlignCenter );
   
   if (_preferences->boolean("XCheckBox/forgetful"))
     _loadOnly->setChecked(true);
@@ -173,8 +173,9 @@ void dspWoOperationsByWorkCenter::sPrint()
     report.reportError(this);
 }
 
-void dspWoOperationsByWorkCenter::sPopulateMenu(QMenu *pMenu)
+void dspWoOperationsByWorkCenter::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem *selected)
 {
+  QString status(selected->text(2));
   int menuItem;
   bool multi = false;
 
@@ -185,25 +186,34 @@ void dspWoOperationsByWorkCenter::sPopulateMenu(QMenu *pMenu)
   if (multi || ((!_privileges->check("ViewWoOperations")) && (!_privileges->check("MaintainWoOperations"))))
     pMenu->setItemEnabled(menuItem, FALSE);
 
-  menuItem = pMenu->insertItem(tr("Edit Operation..."), this, SLOT(sEditOperation()), 0);
-  if (multi || !_privileges->check("MaintainWoOperations"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+  if ( (status == "E") || (status == "I") || (status == "R") )
+  {
+    menuItem = pMenu->insertItem(tr("Edit Operation..."), this, SLOT(sEditOperation()), 0);
+    if (multi || !_privileges->check("MaintainWoOperations"))
+      pMenu->setItemEnabled(menuItem, FALSE);
 
-  menuItem = pMenu->insertItem(tr("Delete Operation..."), this, SLOT(sDeleteOperation()), 0);
-  if (multi || !_privileges->check("MaintainWoOperations"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem = pMenu->insertItem(tr("Delete Operation..."), this, SLOT(sDeleteOperation()), 0);
+    if (multi || !_privileges->check("MaintainWoOperations"))
+      pMenu->setItemEnabled(menuItem, FALSE);
 
-  pMenu->insertSeparator();
+    pMenu->insertSeparator();
 
-  menuItem = pMenu->insertItem(tr("Post Production..."), this, SLOT(sPostProduction()), 0);
-  if (multi || !_privileges->check("PostProduction"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+    menuItem = pMenu->insertItem(tr("Print Pick List(s)..."), this, SLOT(sPrintPickLists()), 0);
+    if (!_privileges->check("PrintWorkOrderPaperWork"))
+      pMenu->setItemEnabled(menuItem, FALSE);
 
-  menuItem = pMenu->insertItem(tr("Post Operations..."), this, SLOT(sPostOperations()), 0);
-  if (multi || !_privileges->check("PostWoOperations"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+    pMenu->insertSeparator();
 
-  pMenu->insertSeparator();
+    menuItem = pMenu->insertItem(tr("Post Production..."), this, SLOT(sPostProduction()), 0);
+    if (multi || !_privileges->check("PostProduction"))
+      pMenu->setItemEnabled(menuItem, FALSE);
+
+    menuItem = pMenu->insertItem(tr("Post Operations..."), this, SLOT(sPostOperations()), 0);
+    if (multi || !_privileges->check("PostWoOperations"))
+      pMenu->setItemEnabled(menuItem, FALSE);
+
+    pMenu->insertSeparator();
+  }
 
   menuItem = pMenu->insertItem(tr("Running Availability..."), this, SLOT(sRunningAvailability()), 0);
   if (!_privileges->check("ViewInventoryAvailability"))
@@ -211,12 +221,6 @@ void dspWoOperationsByWorkCenter::sPopulateMenu(QMenu *pMenu)
 
   menuItem = pMenu->insertItem(tr("MPS Detail..."), this, SLOT(sMPSDetail()), 0);
   if (!_privileges->check("ViewMPS"))
-    pMenu->setItemEnabled(menuItem, FALSE);
-
-  pMenu->insertSeparator();
-
-  menuItem = pMenu->insertItem(tr("Print Pick List(s)..."), this, SLOT(sPrintPickLists()), 0);
-  if (!_privileges->check("PrintWorkOrderPaperWork"))
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 
@@ -339,7 +343,7 @@ void dspWoOperationsByWorkCenter::sFillList()
                "       CASE WHEN (wooper_stdopn_id <> -1) THEN ( SELECT stdopn_number FROM stdopn WHERE (stdopn_id=wooper_stdopn_id) )"
                "            ELSE ''"
                "       END AS stdoper,"
-               "       (wooper_descrip1 || ' ' || wooper_descrip2) AS descrip,"
+               "       (wooper_descrip1 || ' ' || wooper_descrip2) AS descrip, wo_status,"
                "       CASE WHEN (wooper_sucomplete) THEN :complete"
                "            ELSE formatTime(noNeg(wooper_sutime - wooper_suconsumed))"
                "       END AS setupremain,"
@@ -386,11 +390,11 @@ void dspWoOperationsByWorkCenter::sFillList()
     last = new XTreeWidgetItem(_wooper, last, q.value("wooper_id").toInt(),
                              q.value("wooper_wo_id").toInt(),
                              q.value("source"),
-                             q.value("wonumber"), q.value("f_scheduled"),
+                             q.value("wonumber"), q.value("wo_status"), q.value("f_scheduled"),
                              q.value("item_number"), q.value("wooper_seqnumber"),
                              q.value("stdoper"), q.value("descrip"),
                              q.value("setupremain"), q.value("runremain"),
-                             q.value("qtyremain"), q.value("uom_name") );
+                             q.value("qtyremain") );
     if(q.value("overdue").toBool())
       last->setTextColor("red");
   }
