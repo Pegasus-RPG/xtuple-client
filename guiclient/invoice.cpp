@@ -475,6 +475,15 @@ void invoice::sSave()
     return;
   }
   
+  //Invoices must have atleast one line item.
+  if (_invcitem->topLevelItemCount() <= 0 )
+  {
+    QMessageBox::information(this, tr("No Line Items"),
+                             tr("<p>There must be at least one line item for an invoice.") );
+    _new->setFocus();
+    return;
+  }
+  
   //  We can't post a Misc. Charge without a Sales Account
   if ( (! _miscAmount->isZero()) && (!_miscChargeAccount->isValid()) )
   {
