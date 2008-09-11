@@ -76,7 +76,7 @@ public slots:
     virtual void sCheck();
     virtual void populate();
     virtual void sSave();
-    virtual void sClose();
+    virtual void closeEvent( QCloseEvent * pEvent );
     virtual void sModuleSelected(const QString &);
     virtual void sAdd();
     virtual void sAddAll();

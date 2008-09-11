@@ -60,6 +60,7 @@
 #include <QVariant>
 #include <QMessageBox>
 #include <QSqlError>
+#include <QCloseEvent>
 
 /*
  *  Constructs a group as a child of 'parent', with the
@@ -178,11 +179,11 @@ enum SetResponse group::set(const ParameterList &pParams)
   return NoError;
 }
 
-void group::sClose()
+void group::closeEvent(QCloseEvent *pEvent)
 {
   if(cNew == _mode)
   {
-    q.prepare("ROLLBACK;");
+    q.exec("ROLLBACK;");
   }
 
   reject();

@@ -513,7 +513,7 @@
    <sender>_close</sender>
    <signal>clicked()</signal>
    <receiver>group</receiver>
-   <slot>reject()</slot>
+   <slot>close()</slot>
    <hints>
     <hint type="sourcelabel" >
      <x>424</x>
