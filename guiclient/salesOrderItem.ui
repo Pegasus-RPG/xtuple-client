@@ -726,6 +726,9 @@
           <property name="focusPolicy" >
            <enum>Qt::NoFocus</enum>
           </property>
+          <property name="format" >
+           <enum>CurrDisplay::ExtPrice</enum>
+          </property>
           <property name="localControl" >
            <bool>false</bool>
           </property>
