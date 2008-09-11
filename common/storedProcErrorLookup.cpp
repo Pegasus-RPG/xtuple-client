@@ -804,12 +804,14 @@ void initErrorLookupHash()
   { "issueAllBalanceToShipping", -12, "",	-12, "issueToShipping" },
   { "issueAllBalanceToShipping", -13, "",	-13, "issueToShipping" },
   { "issueAllBalanceToShipping", -14, "",	-14, "issueToShipping" },
+  { "issueAllBalanceToShipping", -15, "",	-15, "issueToShipping" },
 
   { "issueLineBalanceToShipping",  -1, "",	 -1, "issueToShipping" },
   { "issueLineBalanceToShipping", -10, "",	-10, "issueToShipping" },
   { "issueLineBalanceToShipping", -12, "",	-12, "issueToShipping" },
   { "issueLineBalanceToShipping", -13, "",	-13, "issueToShipping" },
   { "issueLineBalanceToShipping", -14, "",	-14, "issueToShipping" },
+  { "issueLineBalanceToShipping", -15, "",	-15, "issueToShipping" },
 
   { "issueToShipping",	-1, "",		 	 -1, "postInvTrans" },
   { "issueToShipping", -10, TR("The Next Shipment Number has not been set in "
@@ -824,6 +826,10 @@ void initErrorLookupHash()
   { "issueToShipping", -14, TR("The selected Sales Order is on Return Hold. "
 			       "The Customer must return all materials for a "
 			       "related Return Authorization before any inven"
+			       "tory may be issued to this Order."),	0, "" },
+  { "issueToShipping", -15, TR("The selected Sales Order is configured for Auto Registration. "
+			       "The Customer Account does not have a Primary Contact. "
+			       "A Primary Contact must be assigned to this Customer Account before any inven"
 			       "tory may be issued to this Order."),	0, "" },
 
   { "login",  -1, TR("The specified Username does not exist in the specified "
