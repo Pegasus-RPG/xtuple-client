@@ -1492,8 +1492,11 @@ void returnAuthorizationItem::sEdit()
 		for (int i = 0; i < selected.size(); i++)
 		{
 			ParameterList params;
-                        params.append("raitem_id", _raitemid);			
-                        params.append("ls_id", ((XTreeWidgetItem*)(selected[i]))->altId());
+      params.append("raitem_id", _raitemid);			
+      params.append("item_id", _item->id());
+      params.append("warehouse_id", _warehouse->id());
+      params.append("uom", _qtyUOM->currentText());
+      params.append("ls_id", ((XTreeWidgetItem*)(selected[i]))->altId());
 
 			if (_mode==cView)
 				params.append("mode", "view");
