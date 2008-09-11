@@ -85,6 +85,7 @@ itemSources::itemSources(QWidget* parent, const char* name, Qt::WFlags fl)
     connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_itemsrc, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
+    connect(_searchFor, SIGNAL(textChanged(const QString&)), this, SLOT(sSearch(const QString&)));
     init();
 }
 
@@ -128,6 +129,7 @@ void itemSources::init()
   }
 
   sFillList();
+  _searchFor->setFocus();
 }
 
 void itemSources::sPrint()
@@ -228,3 +230,24 @@ void itemSources::sFillList()
                       " AND (itemsrc_vend_id=vend_id) ) "
                       "ORDER BY item_number, vend_name;" );
 }
+
+void itemSources::sSearch( const QString &pTarget )
+{
+  _itemsrc->clearSelection();
+  int i;
+  for (i = 0; i < _itemsrc->topLevelItemCount(); i++)
+  {
+    if ( (_itemsrc->topLevelItem(i)->text(0).startsWith(pTarget, Qt::CaseInsensitive)) ||
+         (_itemsrc->topLevelItem(i)->text(1).startsWith(pTarget, Qt::CaseInsensitive)) ||
+         (_itemsrc->topLevelItem(i)->text(2).startsWith(pTarget, Qt::CaseInsensitive)) ||
+         (_itemsrc->topLevelItem(i)->text(3).startsWith(pTarget, Qt::CaseInsensitive)) )
+      break;
+  }
+
+  if (i < _itemsrc->topLevelItemCount())
+  {
+    _itemsrc->setCurrentItem(_itemsrc->topLevelItem(i));
+    _itemsrc->scrollToItem(_itemsrc->topLevelItem(i));
+  }
+}
+

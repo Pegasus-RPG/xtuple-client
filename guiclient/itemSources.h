@@ -82,6 +82,7 @@ protected slots:
     virtual void sDelete();
     virtual void sPopulateMenu( QMenu * menuThis );
     virtual void sFillList();
+    virtual void sSearch( const QString & pTarget );
 
 
 };
