@@ -1098,20 +1098,20 @@ void ContactSearch::sFillList()
 			    query.lastError().databaseText());
       return;
     }
-    else if (query.size() < 1)	// no rows found with limit so try without
-    {
-      sql = _parent->_query + limits;
-      MetaSQLQuery mqlAllAccnts(sql);
-      query = mqlAllAccnts.toQuery(params);
-      if (query.lastError().type() != QSqlError::None)
-      {
-	QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
-				      .arg(__FILE__)
-				      .arg(__LINE__),
-			      query.lastError().databaseText());
-	return;
-      }
-    }
+//    else if (query.size() < 1)	// no rows found with limit so try without
+//    {
+//      sql = _parent->_query + limits;
+//      MetaSQLQuery mqlAllAccnts(sql);
+//      query = mqlAllAccnts.toQuery(params);
+//      if (query.lastError().type() != QSqlError::None)
+//      {
+//        QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
+//				      .arg(__FILE__)
+//				      .arg(__LINE__),
+//			      query.lastError().databaseText());
+//        return;
+//      }
+//    }
 
     XTreeWidgetItem *last = 0;
     while (query.next())
