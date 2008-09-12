@@ -3549,7 +3549,7 @@ void salesOrder::sIssueLineBalance()
         if (result < 0)
         {
           rollback.exec();
-          systemError(this, storedProcErrorLookup("issueLineBalance", result) +
+          systemError(this, storedProcErrorLookup("issueLineBalanceToShipping", result) +
                             tr("<br>Line Item %1").arg(selected[i]->text(0)),
                       __FILE__, __LINE__);
           return;
