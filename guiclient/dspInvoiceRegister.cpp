@@ -282,7 +282,7 @@ void dspInvoiceRegister::sFillList()
 {
   _gltrans->clear();
 
-  QString sql( "SELECT gltrans_id, formatDate(gltrans_date) AS f_date, gltrans_source,"
+  QString sql( "SELECT gltrans_id, gltrans_date, gltrans_source,"
                "       CASE WHEN(gltrans_doctype='IN') THEN 1"
                "            WHEN(gltrans_doctype='CM') THEN 2"
                "            WHEN(gltrans_doctype='DM') THEN 3"
@@ -307,15 +307,9 @@ void dspInvoiceRegister::sFillList()
                "            ELSE firstLine(gltrans_notes)"
                "       END AS f_notes,"
                "       (formatGLAccount(accnt_id) || ' - ' || accnt_descrip) AS f_accnt,"
-               "       CASE WHEN (gltrans_amount < 0) THEN formatMoney(ABS(gltrans_amount))"
-               "            ELSE ''"
-               "       END AS f_debit,"
                "       CASE WHEN (gltrans_amount < 0) THEN ABS(gltrans_amount)"
                "            ELSE 0"
                "       END AS debit,"
-               "       CASE WHEN (gltrans_amount > 0) THEN formatMoney(gltrans_amount)"
-               "            ELSE ''"
-               "       END AS f_credit,"
                "       CASE WHEN (gltrans_amount > 0) THEN gltrans_amount"
                "            ELSE 0"
                "       END AS credit "
@@ -347,7 +341,7 @@ void dspInvoiceRegister::sFillList()
   double totdebit = 0.0, totcredit = 0.0;
   while(q.next())
   {
-    if(0 == parent || date != q.value("f_date").toString())
+    if(0 == parent || date != formatDate(q.value("gltrans_date").toDate()))
     {
       if(parent)
       {
@@ -355,8 +349,8 @@ void dspInvoiceRegister::sFillList()
         parent->setExpanded(TRUE);
       }
 
-      date = q.value("f_date").toString();
-      parent = new XTreeWidgetItem(_gltrans, parent, -1, -2, QVariant(date));
+      date = formatDate(q.value("gltrans_date").toDate());
+      parent = new XTreeWidgetItem(_gltrans, parent, -1, -2, formatDate(q.value("gltrans_date").toDate()));
       last = 0;
       debit = 0.0;
       credit = 0.0;
@@ -366,7 +360,8 @@ void dspInvoiceRegister::sFillList()
                                q.value("altId").toInt(),
                                QVariant(""), q.value("gltrans_source"), q.value("doctype"),
                                q.value("gltrans_docnumber"), q.value("f_notes"), q.value("f_accnt"),
-                               q.value("f_debit"), q.value("f_credit"));
+                               formatMoney(q.value("debit").toDouble()),
+                               formatMoney(q.value("credit").toDouble()));
 
     debit += q.value("debit").toDouble();
     totdebit += q.value("debit").toDouble();
