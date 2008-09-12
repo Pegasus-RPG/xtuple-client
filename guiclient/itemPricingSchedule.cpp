@@ -88,13 +88,13 @@ itemPricingSchedule::itemPricingSchedule(QWidget* parent, const char* name, bool
   _dates->setEndNull(tr("Never"), omfgThis->endOfTime(), TRUE);
   _dates->setEndCaption(tr("Expires"));
 
-  _ipsitem->addColumn(tr("Type"),            _ynColumn,    Qt::AlignLeft  );
-  _ipsitem->addColumn(tr("Item/Prod. Cat."), _itemColumn,  Qt::AlignLeft  );
-  _ipsitem->addColumn(tr("Description"),     -1,           Qt::AlignLeft  );
-  _ipsitem->addColumn(tr("UOM"),             _uomColumn,   Qt::AlignCenter);
-  _ipsitem->addColumn(tr("Qty. Break"),      _qtyColumn,   Qt::AlignRight );
-  _ipsitem->addColumn(tr("UOM"),             _uomColumn,   Qt::AlignCenter);
-  _ipsitem->addColumn(tr("Price/Discount"),  _priceColumn, Qt::AlignRight );
+  _ipsitem->addColumn(tr("Type"),            _ynColumn,    Qt::AlignLeft,   true,  "type"  );
+  _ipsitem->addColumn(tr("Item/Prod. Cat."), _itemColumn,  Qt::AlignLeft,   true,  "number"  );
+  _ipsitem->addColumn(tr("Description"),     -1,           Qt::AlignLeft,   true,  "descrip"  );
+  _ipsitem->addColumn(tr("UOM"),             _uomColumn,   Qt::AlignCenter, true,  "qtyuom");
+  _ipsitem->addColumn(tr("Qty. Break"),      _qtyColumn,   Qt::AlignRight,  true,  "qtybreak" );
+  _ipsitem->addColumn(tr("UOM"),             _uomColumn,   Qt::AlignCenter, true,  "priceuom");
+  _ipsitem->addColumn(tr("Price/Discount"),  _priceColumn, Qt::AlignRight,  true,  "price" );
 
   _currency->setType(XComboBox::Currencies);
   _currency->setLabel(_currencyLit);
@@ -349,20 +349,24 @@ void itemPricingSchedule::sFillList()
 
 void itemPricingSchedule::sFillList(int pIpsitemid)
 {
-  q.prepare( "SELECT ipsitem_id, 1 AS altid, :item, item_number AS number,"
-             "       (item_descrip1 || ' ' || item_descrip2),"
-             "       qty.uom_name, formatQty(ipsitem_qtybreak), price.uom_name, formatSalesPrice(ipsitem_price),"
-             "       ipsitem_qtybreak AS qtybreak"
+  q.prepare( "SELECT ipsitem_id AS id, 1 AS altid, :item AS type, item_number AS number,"
+             "       (item_descrip1 || ' ' || item_descrip2) AS descrip,"
+             "       qty.uom_name AS qtyuom, ipsitem_qtybreak AS qtybreak,"
+             "       price.uom_name AS priceuom, ipsitem_price AS price,"
+             "       'qty' AS qtybreak_xtnumericrole,"
+             "       'salesprice' AS price_xtnumericrole "
              "  FROM ipsitem, item, uom AS qty, uom AS price "
              " WHERE ( (ipsitem_item_id=item_id)"
              "   AND   (ipsitem_qty_uom_id=qty.uom_id)"
              "   AND   (ipsitem_price_uom_id=price.uom_id)"
              "   AND   (ipsitem_ipshead_id=:ipshead_id) )"
              " UNION "
-             "SELECT ipsprodcat_id, 2 AS altid, :prodcat, prodcat_code AS number,"
-             "       prodcat_descrip,"
-             "       '', formatQty(ipsprodcat_qtybreak), '', formatPrcnt(ipsprodcat_discntprcnt)||'%',"
-             "       ipsprodcat_qtybreak AS qtybreak"
+             "SELECT ipsprodcat_id AS id, 2 AS altid, :prodcat AS type, prodcat_code AS number,"
+             "       prodcat_descrip AS descrip,"
+             "       '' AS qtyuom, ipsprodcat_qtybreak AS qtybreak,"
+             "       '' AS priceuom, ipsprodcat_discntprcnt AS price,"
+             "       'qty' AS qtybreak_xtnumericrole,"
+             "       'percent' AS price_xtnumericrole "
              "  FROM ipsprodcat, prodcat"
              " WHERE ( (ipsprodcat_prodcat_id=prodcat_id)"
              "   AND   (ipsprodcat_ipshead_id=:ipshead_id) )"
