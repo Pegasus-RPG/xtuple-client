@@ -37,6 +37,30 @@
        </layout>
       </item>
       <item>
+       <layout class="QHBoxLayout" >
+        <item>
+         <widget class="XCheckBox" name="_showInactive" >
+          <property name="text" >
+           <string>Show &amp;Inactive Item Sources</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item>
        <layout class="QVBoxLayout" >
         <property name="spacing" >
          <number>0</number>
@@ -152,20 +176,15 @@
     </item>
    </layout>
   </widget>
-  <widget class="QMenuBar" name="menuBar" >
-   <property name="geometry" >
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>519</width>
-     <height>22</height>
-    </rect>
-   </property>
-  </widget>
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
+  </customwidget>
   <customwidget>
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
@@ -178,13 +197,15 @@
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>_itemsrc</tabstop>
+  <tabstop>_searchFor</tabstop>
+  <tabstop>_showInactive</tabstop>
   <tabstop>_new</tabstop>
   <tabstop>_edit</tabstop>
   <tabstop>_view</tabstop>
   <tabstop>_delete</tabstop>
-  <tabstop>_print</tabstop>
   <tabstop>_close</tabstop>
+  <tabstop>_print</tabstop>
+  <tabstop>_itemsrc</tabstop>
  </tabstops>
  <resources/>
  <connections>

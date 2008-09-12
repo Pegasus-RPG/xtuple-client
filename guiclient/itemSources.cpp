@@ -61,6 +61,7 @@
 #include <QMessageBox>
 #include <QStatusBar>
 #include <QMenu>
+#include <metasql.h>
 #include <parameter.h>
 #include <openreports.h>
 #include "itemSource.h"
@@ -86,6 +87,7 @@ itemSources::itemSources(QWidget* parent, const char* name, Qt::WFlags fl)
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_itemsrc, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
     connect(_searchFor, SIGNAL(textChanged(const QString&)), this, SLOT(sSearch(const QString&)));
+    connect(_showInactive, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
     init();
 }
 
@@ -223,12 +225,27 @@ void itemSources::sPopulateMenu(QMenu *menuThis)
 
 void itemSources::sFillList()
 {
-  _itemsrc->populate( "SELECT itemsrc_id, item_number, (item_descrip1 || ' ' || item_descrip2),"
-                      "       vend_name, itemsrc_vend_item_number "
-                      "FROM item, vend, itemsrc "
-                      "WHERE ( (itemsrc_item_id=item_id)"
-                      " AND (itemsrc_vend_id=vend_id) ) "
-                      "ORDER BY item_number, vend_name;" );
+  QString sql( "SELECT itemsrc_id, item_number, (item_descrip1 || ' ' || item_descrip2),"
+               "       vend_name, itemsrc_vend_item_number "
+               "FROM item, vend, itemsrc "
+               "WHERE ( (itemsrc_item_id=item_id)"
+               " AND (itemsrc_vend_id=vend_id)"
+               "<? if exists(\"onlyShowActive\") ?>"
+               " AND (itemsrc_active)"
+               "<? endif ?>"
+               ") ORDER BY item_number, vend_name;" );
+               
+  ParameterList params;
+  if (!_showInactive->isChecked())
+    params.append("onlyShowActive");
+
+  MetaSQLQuery mql(sql);
+  q = mql.toQuery(params);
+
+  if (q.first())
+    _itemsrc->populate(q);
+  else
+    _itemsrc->clear();
 }
 
 void itemSources::sSearch( const QString &pTarget )
