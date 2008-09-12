@@ -8,8 +8,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>739</width>
-    <height>721</height>
+    <width>578</width>
+    <height>596</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -378,7 +378,11 @@
        </property>
        <layout class="QGridLayout" >
         <item row="0" column="0" >
-         <widget class="DateCluster" name="_dates" />
+         <widget class="DateCluster" name="_dates" >
+          <property name="focusPolicy" >
+           <enum>Qt::StrongFocus</enum>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -392,7 +396,7 @@
         </sizepolicy>
        </property>
        <property name="currentIndex" >
-        <number>1</number>
+        <number>2</number>
        </property>
        <widget class="QWidget" name="general" >
         <attribute name="title" >
@@ -1027,16 +1031,14 @@
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>_item</tabstop>
-  <tabstop>_executionDay</tabstop>
-  <tabstop>_dates</tabstop>
   <tabstop>_stdopn</tabstop>
   <tabstop>_description1</tabstop>
   <tabstop>_description2</tabstop>
   <tabstop>_wrkcnt</tabstop>
   <tabstop>_toolingReference</tabstop>
-  <tabstop>_prodUOM</tabstop>
-  <tabstop>_invProdUOMRatio</tabstop>
+  <tabstop>_executionDay</tabstop>
+  <tabstop>_dates</tabstop>
+  <tabstop>_tab</tabstop>
   <tabstop>_setupTime</tabstop>
   <tabstop>_setupReport</tabstop>
   <tabstop>_reportSetup</tabstop>
@@ -1044,14 +1046,15 @@
   <tabstop>_runReport</tabstop>
   <tabstop>_reportRun</tabstop>
   <tabstop>_runTimePer</tabstop>
+  <tabstop>_prodUOM</tabstop>
+  <tabstop>_invProdUOMRatio</tabstop>
   <tabstop>_receiveStock</tabstop>
   <tabstop>_issueComp</tabstop>
   <tabstop>_overlap</tabstop>
   <tabstop>_pullThrough</tabstop>
   <tabstop>_wipLocation</tabstop>
-  <tabstop>_tab</tabstop>
-  <tabstop>_instructions</tabstop>
   <tabstop>_fixedFont</tabstop>
+  <tabstop>_instructions</tabstop>
   <tabstop>_booimage</tabstop>
   <tabstop>_newImage</tabstop>
   <tabstop>_editImage</tabstop>
