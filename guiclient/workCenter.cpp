@@ -142,8 +142,6 @@ void workCenter::languageChange()
 void workCenter::init()
 {
   statusBar()->hide();
-
-  _warehouse->setNull();
   
   _lbrrate.exec( "SELECT lbrrate_id, lbrrate_code, lbrrate_rate "
                  "FROM lbrrate "
