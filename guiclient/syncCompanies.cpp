@@ -234,6 +234,7 @@ void syncCompanies::sSync()
     testDB.setDatabaseName(db);
     testDB.setUserName(newdlg.username());
     testDB.setPassword(newdlg.password());
+    testDB.setPort(port.toInt());
     if (testDB.open())
     {
       if (DEBUG)
