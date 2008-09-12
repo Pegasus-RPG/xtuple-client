@@ -71,6 +71,7 @@ glTransaction::glTransaction(QWidget* parent, const char* name, bool modal, Qt::
 
     connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
 
+    _amount->setFocus();
     _captive = FALSE;
 }
 
