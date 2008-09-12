@@ -244,7 +244,14 @@ void syncCompanies::sSync()
       rmq.prepare("SELECT usrpriv_id "
                   "FROM usrpriv JOIN priv ON (usrpriv_priv_id=priv_id) "
                   "WHERE ((usrpriv_username=:username)"
-                  "  AND  (priv_name='MaintainChartOfAccounts'));");
+                  "  AND  (priv_name='MaintainChartOfAccounts')) "
+                  "UNION"
+                  "SELECT priv_id"
+                  "  FROM priv, grppriv, usrgrp"
+                  " WHERE((usrgrp_grp_id=grppriv_grp_id)"
+                  "   AND (grppriv_priv_id=priv_id)"
+                  "   AND (usrgrp_username=:username)"
+                  "   AND (priv_name='MaintainChartOfAccounts')) ;");
       rmq.bindValue(":username", newdlg.username());
       rmq.exec();
       if (rmq.first())
@@ -695,7 +702,7 @@ void syncCompanies::sSync()
     }
   } // for each selected company
 
-  statusBar()->showMessage(tr("Synchronizing Complete - "
+  statusBar()->showMessage(tr("Synchronizing Complete: "
                               "%1 Companies attempted, %2 errors encountered")
                            .arg(company.size()).arg(errorCount));
   sFillList();
