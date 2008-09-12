@@ -4,7 +4,7 @@
  * The contents of this file are subject to the Common Public Attribution 
  * License Version 1.0 (the "License"); you may not use this file except 
  * in compliance with the License. You may obtain a copy of the License 
- * at http://www.xTuple.com/CPAL.  The License is based on the Mozilla 
+295
  * Public License Version 1.1 but Sections 14 and 15 have been added to 
  * cover use of software over a computer network and provide for limited 
  * attribution for the Original Developer. In addition, Exhibit A has 
@@ -82,8 +82,8 @@ company::company(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _number->setMaxLength(_metrics->value("GLCompanySize").toInt());
   _cachedNumber = "";
 
-  _extGroup->setVisible(_metrics->boolean("MultiCompanyFinancialConsolidation"));
-  _extGroup->setVisible(_metrics->boolean("MultiCompanyFinancialConsolidation"));
+  _external->setVisible(_metrics->boolean("MultiCompanyFinancialConsolidation"));
+  _authGroup->setVisible(_metrics->boolean("MultiCompanyFinancialConsolidation"));
 }
 
 company::~company()
@@ -125,7 +125,8 @@ enum SetResponse company::set(const ParameterList &pParams)
       
       _number->setEnabled(FALSE);
       _descrip->setEnabled(FALSE);
-      _extGroup->setEnabled(FALSE);
+      _external->setEnabled(FALSE);
+      _authGroup->setEnabled(FALSE);
       _close->setText(tr("&Close"));
       
       _close->setFocus();
@@ -148,15 +149,15 @@ void company::sSave()
     QString	msg;
     QWidget*	widget;
   } error[] = {
-    { _extGroup->isChecked() && _extServer->text().isEmpty(),
+    { _external->isChecked() && _extServer->text().isEmpty(),
       tr("<p>You must enter a Server if this is an external Company."),
       _extServer
     },
-    { _extGroup->isChecked() && _extPort->value() == 0,
+    { _external->isChecked() && _extPort->value() == 0,
       tr("<p>You must enter a Port if this is an external Company."),
       _extPort
     },
-    { _extGroup->isChecked() && _extDB->text().isEmpty(),
+    { _external->isChecked() && _extDB->text().isEmpty(),
       tr("<p>You must enter a Database if this is an external Company."),
       _extDB
     },
@@ -212,7 +213,7 @@ void company::sSave()
   {
     if (_number->text() != _cachedNumber &&
         QMessageBox::question(this, tr("Change All Accounts?"),
-                          _extGroup->isChecked() ?
+                          _external->isChecked() ?
                               tr("<p>The old Company Number %1 might be used "
                                  "by existing Accounts, including Accounts in "
                                  "the %2 child database. Would you like to "
@@ -253,7 +254,7 @@ void company::sSave()
   q.bindValue(":company_id",       _companyid);
   q.bindValue(":company_number",   _number->text());
   q.bindValue(":company_descrip",  _descrip->text());
-  q.bindValue(":company_external", _extGroup->isChecked());
+  q.bindValue(":company_external", _external->isChecked());
   q.bindValue(":company_server",   _extServer->text());
   q.bindValue(":company_port",     _extPort->cleanText());
   q.bindValue(":company_database", _extDB->text());
@@ -278,7 +279,7 @@ void company::populate()
   {
     _number->setText(q.value("company_number").toString());
     _descrip->setText(q.value("company_descrip").toString());
-    _extGroup->setChecked(q.value("company_external").toBool());
+    _external->setChecked(q.value("company_external").toBool());
     _extServer->setText(q.value("company_server").toString());
     _extPort->setValue(q.value("company_port").toInt());
     _extDB->setText(q.value("company_database").toString());
@@ -291,7 +292,7 @@ void company::populate()
     q.bindValue(":number", _cachedNumber);
     q.exec();
     if (q.first())
-      _extGroup->setEnabled(q.value("result").toInt() == 0);
+      _external->setEnabled(q.value("result").toInt() == 0);
     else if (q.lastError().type() != QSqlError::None)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -429,7 +430,10 @@ void company::sTest()
     rmq.bindValue(":number", _number->text());
     rmq.exec();
     if (rmq.first())
-      ; // nothing to do
+    {
+      QMessageBox::warning(this, windowTitle(), tr("Test Successful."));
+      return;
+    }
     else if (rmq.lastError().type() != QSqlError::None)
     {
       systemError(this, rmq.lastError().databaseText(), __FILE__, __LINE__);
@@ -444,12 +448,4 @@ void company::sTest()
       return;
     }
   }
-  else
-  {
-    QMessageBox::warning(this, tr("Could Not Connect"),
-                         tr("<p>Could not connect to the child database "
-                            "with these connection parameters."));
-    return;
-  }
-
 }
