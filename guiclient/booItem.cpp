@@ -131,6 +131,7 @@ booItem::booItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   // hide the Allow Pull Through option as it doesn't perform
   // any function at this time.
   _pullThrough->hide();
+  resize(minimumSize());
 }
 
 booItem::~booItem()
