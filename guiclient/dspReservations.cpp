@@ -76,8 +76,8 @@ dspReservations::dspReservations(QWidget* parent, const char* name, Qt::WFlags f
   connect(_allocations, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
-  _item->setReadOnly(TRUE);
-  _warehouse->setEnabled(FALSE);
+//  _item->setReadOnly(TRUE);
+//  _warehouse->setEnabled(FALSE);
 
   _allocations->setRootIsDecorated(TRUE);
   _allocations->addColumn(tr("Order/Location LotSerial"), -1,             Qt::AlignLeft   );

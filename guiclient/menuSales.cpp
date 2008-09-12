@@ -129,6 +129,7 @@
 #include "dspInventoryAvailabilityByItem.h"
 #include "dspInventoryAvailabilityBySalesOrder.h"
 #include "dspInventoryAvailabilityByCustomerType.h"
+#include "dspReservations.h"
 #include "dspSalesOrderStatus.h"
 #include "dspBacklogByItem.h"
 #include "dspBacklogBySalesOrder.h"
@@ -393,6 +394,7 @@ menuSales::menuSales(GUIClient *pParent) :
     { "so.dspBacklogByItem", tr("by &Item..."),	SLOT(sDspBacklogByItem()), reportsBacklogMenu, _privileges->check("ViewSalesOrders"), NULL, NULL,	 true, NULL },
     
     { "so.dspPartiallyShippedOrders", tr("&Partially Shipped Orders..."),	SLOT(sDspPartiallyShippedOrders()), reportsMenu, _privileges->check("ViewSalesOrders"),	NULL, NULL, true, NULL },
+    { "so.dspReservations", tr("Reservations by Item..."),	SLOT(sDspReservations()), reportsMenu, _privileges->check("ViewInventoryAvailability"),	NULL, NULL, true, NULL },    
     { "separator",	NULL,	NULL,	reportsMenu,	true,		NULL, NULL, true, NULL },   
     
     // Sales | Reports | Inventory Availability
@@ -883,6 +885,11 @@ void menuSales::sDspInventoryAvailabilityBySalesOrder()
 void menuSales::sDspInventoryAvailabilityByCustomerType()
 {
   omfgThis->handleNewWindow(new dspInventoryAvailabilityByCustomerType());
+}
+
+void menuSales::sDspReservations()
+{
+  omfgThis->handleNewWindow(new dspReservations());
 }
 
 void menuSales::sDspOrderLookupByCustomer()
