@@ -245,7 +245,7 @@ void syncCompanies::sSync()
                   "FROM usrpriv JOIN priv ON (usrpriv_priv_id=priv_id) "
                   "WHERE ((usrpriv_username=:username)"
                   "  AND  (priv_name='MaintainChartOfAccounts')) "
-                  "UNION"
+                  "UNION "
                   "SELECT priv_id"
                   "  FROM priv, grppriv, usrgrp"
                   " WHERE((usrgrp_grp_id=grppriv_grp_id)"
