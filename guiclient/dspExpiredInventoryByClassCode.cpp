@@ -276,6 +276,8 @@ void dspExpiredInventoryByClassCode::sFillList()
 {
   _expired->clear();
 
+  _expired->setColumnVisible(METHOD_COL, _showValue->isChecked() && _usePostedCosts->isChecked());
+
   QString sql( "SELECT itemsite_id, itemloc_id, warehous_code, item_number, uom_name,"
                "       ls_number, itemloc_expiration, "
                "       itemloc_qty, costmethod, cost,"
