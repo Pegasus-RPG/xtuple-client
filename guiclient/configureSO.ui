@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>846</width>
-    <height>655</height>
+    <width>810</width>
+    <height>598</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -506,106 +506,14 @@
            </property>
           </widget>
          </item>
+         <item row="0" column="1" >
+          <widget class="QCheckBox" name="_enableReservations" >
+           <property name="text" >
+            <string>Enable Sales Reservations</string>
+           </property>
+          </widget>
+         </item>
          <item row="1" column="0" >
-          <widget class="QGroupBox" name="groupBox_5" >
-           <property name="title" >
-            <string>Credit Control</string>
-           </property>
-           <layout class="QGridLayout" >
-            <item row="0" column="0" >
-             <widget class="QCheckBox" name="_restrictCreditMemos" >
-              <property name="text" >
-               <string>Restrict Credit Memos to Items that appear on their Apply-To Document</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0" >
-             <widget class="QCheckBox" name="_autoAllocateCM" >
-              <property name="text" >
-               <string>Automatically Allocate Credit Memos to New Sales Order on Save</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="1" column="1" >
-          <widget class="QGroupBox" name="groupBox_4" >
-           <property name="title" >
-            <string>Change Log</string>
-           </property>
-           <layout class="QGridLayout" >
-            <item row="0" column="0" >
-             <widget class="QCheckBox" name="_customerChangeLog" >
-              <property name="text" >
-               <string>Post Customer Changes</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0" >
-             <widget class="QCheckBox" name="_salesOrderChangeLog" >
-              <property name="text" >
-               <string>Post Sales Order Changes</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="2" column="0" >
-          <widget class="QGroupBox" name="groupBox_3" >
-           <property name="title" >
-            <string>Ship Control</string>
-           </property>
-           <layout class="QGridLayout" >
-            <item row="0" column="0" >
-             <widget class="QCheckBox" name="_saveAndAdd" >
-              <property name="text" >
-               <string>Always show 'Save and Add to Packing List' button on Sales Order screen</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0" >
-             <widget class="QCheckBox" name="_enableSOShipping" >
-              <property name="text" >
-               <string>Enable Shipping interface from Sales Order screen</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0" >
-             <widget class="QCheckBox" name="_autoSelectForBilling" >
-              <property name="text" >
-               <string>Automatically check 'Select for Billing' option on Ship Order screen</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="2" column="1" >
-          <widget class="QGroupBox" name="groupBox_2" >
-           <property name="title" >
-            <string>Date Control</string>
-           </property>
-           <layout class="QGridLayout" >
-            <item row="0" column="0" >
-             <widget class="QCheckBox" name="_allowASAP" >
-              <property name="text" >
-               <string>Allow ASAP Schedule Dates</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0" >
-             <widget class="QCheckBox" name="_enablePromiseDate" >
-              <property name="text" >
-               <string>Enable Promise Dates</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="3" column="0" >
           <widget class="QGroupBox" name="groupBox" >
            <property name="title" >
             <string>Price Control</string>
@@ -635,72 +543,55 @@
            </layout>
           </widget>
          </item>
-         <item rowspan="2" row="3" column="1" >
-          <layout class="QVBoxLayout" >
-           <item>
-            <widget class="QCheckBox" name="_enableReservations" >
-             <property name="text" >
-              <string>Enable Sales Reservations</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QGroupBox" name="_locationGroup" >
-             <property name="enabled" >
-              <bool>false</bool>
-             </property>
-             <property name="title" >
-              <string>Reserve by Location</string>
-             </property>
-             <property name="checkable" >
-              <bool>true</bool>
-             </property>
-             <property name="checked" >
-              <bool>false</bool>
-             </property>
-             <layout class="QGridLayout" >
-              <property name="horizontalSpacing" >
-               <number>12</number>
+         <item row="1" column="1" >
+          <widget class="QGroupBox" name="_locationGroup" >
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
+           <property name="title" >
+            <string>Reserve by Location</string>
+           </property>
+           <property name="checkable" >
+            <bool>true</bool>
+           </property>
+           <property name="checked" >
+            <bool>false</bool>
+           </property>
+           <layout class="QGridLayout" >
+            <item row="0" column="0" >
+             <widget class="QRadioButton" name="_lowest" >
+              <property name="text" >
+               <string>Lowest Quantity First</string>
               </property>
-              <property name="verticalSpacing" >
-               <number>12</number>
+              <property name="checked" >
+               <bool>true</bool>
               </property>
-              <item row="0" column="0" >
-               <widget class="QRadioButton" name="_lowest" >
-                <property name="text" >
-                 <string>Lowest Quantity First</string>
-                </property>
-                <property name="checked" >
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="0" >
-               <widget class="QRadioButton" name="_highest" >
-                <property name="text" >
-                 <string>Highest Quantity First</string>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="0" >
-               <widget class="QRadioButton" name="_alpha" >
-                <property name="text" >
-                 <string>Alpha by Location Name</string>
-                </property>
-                <property name="shortcut" >
-                 <string>Ctrl+R, Ctrl+R</string>
-                </property>
-                <property name="checked" >
-                 <bool>false</bool>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </item>
-          </layout>
+             </widget>
+            </item>
+            <item row="1" column="0" >
+             <widget class="QRadioButton" name="_highest" >
+              <property name="text" >
+               <string>Highest Quantity First</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0" >
+             <widget class="QRadioButton" name="_alpha" >
+              <property name="text" >
+               <string>Alpha by Location Name</string>
+              </property>
+              <property name="shortcut" >
+               <string>Ctrl+R, Ctrl+R</string>
+              </property>
+              <property name="checked" >
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
          </item>
-         <item rowspan="2" row="4" column="0" >
+         <item row="2" column="0" >
           <widget class="QGroupBox" name="_lineItemPriceing" >
            <property name="title" >
             <string>Pricing on Line Item Edits</string>
@@ -736,18 +627,104 @@
            </layout>
           </widget>
          </item>
-         <item row="5" column="1" >
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Vertical</enum>
+         <item row="2" column="1" >
+          <widget class="QGroupBox" name="groupBox_3" >
+           <property name="title" >
+            <string>Ship Control</string>
            </property>
-           <property name="sizeHint" >
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
+           <layout class="QGridLayout" >
+            <item row="0" column="0" >
+             <widget class="QCheckBox" name="_saveAndAdd" >
+              <property name="text" >
+               <string>Always show 'Save and Add to Packing List' button on Sales Order screen</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0" >
+             <widget class="QCheckBox" name="_enableSOShipping" >
+              <property name="text" >
+               <string>Enable Shipping interface from Sales Order screen</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0" >
+             <widget class="QCheckBox" name="_autoSelectForBilling" >
+              <property name="text" >
+               <string>Automatically check 'Select for Billing' option on Ship Order screen</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="3" column="0" >
+          <widget class="QGroupBox" name="groupBox_2" >
+           <property name="title" >
+            <string>Date Control</string>
            </property>
-          </spacer>
+           <layout class="QGridLayout" >
+            <item row="0" column="0" >
+             <widget class="QCheckBox" name="_allowASAP" >
+              <property name="text" >
+               <string>Allow ASAP Schedule Dates</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0" >
+             <widget class="QCheckBox" name="_enablePromiseDate" >
+              <property name="text" >
+               <string>Enable Promise Dates</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="3" column="1" >
+          <widget class="QGroupBox" name="groupBox_4" >
+           <property name="title" >
+            <string>Change Log</string>
+           </property>
+           <layout class="QGridLayout" >
+            <item row="0" column="0" >
+             <widget class="QCheckBox" name="_customerChangeLog" >
+              <property name="text" >
+               <string>Post Customer Changes</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0" >
+             <widget class="QCheckBox" name="_salesOrderChangeLog" >
+              <property name="text" >
+               <string>Post Sales Order Changes</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="4" column="0" colspan="2" >
+          <widget class="QGroupBox" name="groupBox_5" >
+           <property name="title" >
+            <string>Credit Control</string>
+           </property>
+           <layout class="QGridLayout" >
+            <item row="0" column="0" >
+             <widget class="QCheckBox" name="_restrictCreditMemos" >
+              <property name="text" >
+               <string>Restrict Credit Memos to Items that appear on their Apply-To Document</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0" >
+             <widget class="QCheckBox" name="_autoAllocateCM" >
+              <property name="text" >
+               <string>Automatically Allocate Credit Memos to New Sales Order on Save</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
          </item>
         </layout>
        </widget>

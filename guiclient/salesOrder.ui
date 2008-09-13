@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>988</width>
-    <height>574</height>
+    <height>576</height>
    </rect>
   </property>
   <property name="minimumSize" >
@@ -132,7 +132,7 @@
       <item row="1" column="0" >
        <widget class="QTabWidget" name="_salesOrderInformation" >
         <property name="currentIndex" >
-         <number>0</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="_headerPage" >
          <attribute name="title" >
@@ -1667,7 +1667,7 @@
             <item row="4" column="0" >
              <widget class="QLabel" name="_allocatedCMLit" >
               <property name="text" >
-               <string>Allocated C/Ms:</string>
+               <string>Allocated Credit:</string>
               </property>
               <property name="alignment" >
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1767,7 +1767,7 @@
             <item row="5" column="0" >
              <widget class="QLabel" name="_outstandingCMLit" >
               <property name="text" >
-               <string>Outstanding C/Ms:</string>
+               <string>Outstanding Credit:</string>
               </property>
               <property name="alignment" >
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
