@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>900</width>
     <height>600</height>
    </rect>
   </property>
@@ -432,6 +432,22 @@
              </widget>
             </item>
             <item>
+             <spacer>
+              <property name="orientation" >
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType" >
+               <enum>QSizePolicy::Preferred</enum>
+              </property>
+              <property name="sizeHint" >
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
              <widget class="QCheckBox" name="_closeOpenItems" >
               <property name="text" >
                <string>Close all Open Items</string>
@@ -529,7 +545,7 @@
                    <bool>false</bool>
                   </property>
                   <property name="text" >
-                   <string>Edit Se&amp;lection</string>
+                   <string>&amp;Edit</string>
                   </property>
                  </widget>
                 </item>
@@ -539,7 +555,7 @@
                    <bool>false</bool>
                   </property>
                   <property name="text" >
-                   <string>Ca&amp;ncel Selection</string>
+                   <string>Ca&amp;ncel</string>
                   </property>
                  </widget>
                 </item>
@@ -618,7 +634,7 @@
               <item row="1" column="2" >
                <widget class="QLabel" name="_miscChargeAmountLit" >
                 <property name="text" >
-                 <string>Misc. Charge Amount:</string>
+                 <string>Misc. Amount:</string>
                 </property>
                 <property name="alignment" >
                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -764,7 +780,7 @@
               <item row="2" column="0" >
                <widget class="QLabel" name="_miscChargeAccountLit" >
                 <property name="text" >
-                 <string>Misc. Charge Sales Account:</string>
+                 <string>Misc. Charge Account:</string>
                 </property>
                 <property name="alignment" >
                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
