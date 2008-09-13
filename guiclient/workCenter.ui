@@ -5,259 +5,69 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>637</width>
-    <height>581</height>
+    <width>600</width>
+    <height>400</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Work Center</string>
   </property>
   <widget class="QWidget" name="widget" >
-   <layout class="QVBoxLayout" >
-    <property name="spacing" >
-     <number>5</number>
-    </property>
-    <property name="leftMargin" >
-     <number>5</number>
-    </property>
-    <property name="topMargin" >
-     <number>5</number>
-    </property>
-    <property name="rightMargin" >
-     <number>5</number>
-    </property>
-    <property name="bottomMargin" >
-     <number>5</number>
-    </property>
-    <item>
-     <layout class="QHBoxLayout" >
-      <property name="spacing" >
-       <number>5</number>
+   <layout class="QGridLayout" >
+    <item row="0" column="0" >
+     <layout class="QGridLayout" >
+      <property name="leftMargin" >
+       <number>12</number>
       </property>
-      <item>
-       <layout class="QVBoxLayout" >
-        <property name="spacing" >
-         <number>5</number>
+      <property name="topMargin" >
+       <number>12</number>
+      </property>
+      <property name="rightMargin" >
+       <number>12</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>12</number>
+      </property>
+      <property name="horizontalSpacing" >
+       <number>12</number>
+      </property>
+      <property name="verticalSpacing" >
+       <number>12</number>
+      </property>
+      <item row="0" column="0" >
+       <widget class="XLabel" name="_workCenterNumLit" >
+        <property name="text" >
+         <string>Work Center #:</string>
         </property>
+        <property name="alignment" >
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1" >
+       <layout class="QHBoxLayout" >
         <item>
-         <layout class="QGridLayout" >
-          <property name="horizontalSpacing" >
-           <number>5</number>
-          </property>
-          <property name="verticalSpacing" >
-           <number>5</number>
-          </property>
-          <item row="0" column="0" >
-           <widget class="XLabel" name="_workCenterNumLit" >
-            <property name="text" >
-             <string>Work Center #:</string>
-            </property>
-            <property name="alignment" >
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0" >
-           <widget class="XLabel" name="_descriptionLit" >
-            <property name="text" >
-             <string>Description:</string>
-            </property>
-            <property name="alignment" >
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0" colspan="2" >
-           <layout class="QHBoxLayout" >
-            <property name="spacing" >
-             <number>2</number>
-            </property>
-            <item>
-             <widget class="DeptCluster" name="_department" >
-              <property name="label" >
-               <string>Department:</string>
-              </property>
-              <property name="infoVisible" >
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer>
-              <property name="orientation" >
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeType" >
-               <enum>QSizePolicy::Expanding</enum>
-              </property>
-              <property name="sizeHint" >
-               <size>
-                <width>20</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </item>
-          <item row="3" column="0" >
-           <widget class="XLabel" name="_warehouseLit" >
-            <property name="text" >
-             <string>Site:</string>
-            </property>
-            <property name="alignment" >
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1" >
-           <layout class="QHBoxLayout" >
-            <property name="spacing" >
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="XLineEdit" name="_code" />
-            </item>
-            <item>
-             <spacer>
-              <property name="orientation" >
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeType" >
-               <enum>QSizePolicy::Expanding</enum>
-              </property>
-              <property name="sizeHint" >
-               <size>
-                <width>20</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </item>
-          <item row="1" column="1" >
-           <widget class="XLineEdit" name="_description" />
-          </item>
-          <item row="3" column="1" >
-           <layout class="QHBoxLayout" >
-            <property name="spacing" >
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="WComboBox" name="_warehouse" >
-              <property name="allowNull" >
-               <bool>false</bool>
-              </property>
-              <property name="type" >
-               <enum>WComboBox::All</enum>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer>
-              <property name="orientation" >
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeType" >
-               <enum>QSizePolicy::Expanding</enum>
-              </property>
-              <property name="sizeHint" >
-               <size>
-                <width>20</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </item>
-         </layout>
+         <widget class="XLineEdit" name="_code" />
         </item>
         <item>
-         <layout class="QHBoxLayout" >
-          <property name="spacing" >
-           <number>5</number>
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
           </property>
-          <item>
-           <layout class="QVBoxLayout" >
-            <property name="spacing" >
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="XLabel" name="_numOfMachinesLit" >
-              <property name="text" >
-               <string># of Machines:</string>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="XLabel" name="_numOfPeopleLit" >
-              <property name="text" >
-               <string># of People:</string>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" >
-            <property name="spacing" >
-             <number>0</number>
-            </property>
-            <item>
-             <layout class="QVBoxLayout" >
-              <property name="spacing" >
-               <number>0</number>
-              </property>
-              <item>
-               <widget class="QSpinBox" name="_numOfMachines" >
-                <property name="minimum" >
-                 <number>1</number>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QSpinBox" name="_numOfPeople" >
-                <property name="minimum" >
-                 <number>1</number>
-                </property>
-                <property name="maximum" >
-                 <number>9999</number>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <spacer>
-              <property name="orientation" >
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeType" >
-               <enum>QSizePolicy::Expanding</enum>
-              </property>
-              <property name="sizeHint" >
-               <size>
-                <width>20</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </item>
-         </layout>
+          <property name="sizeType" >
+           <enum>QSizePolicy::Expanding</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>20</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
         </item>
        </layout>
       </item>
-      <item>
+      <item rowspan="3" row="0" column="2" >
        <layout class="QVBoxLayout" >
         <property name="spacing" >
          <number>5</number>
@@ -297,703 +107,57 @@
         </item>
        </layout>
       </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" >
-      <property name="spacing" >
-       <number>7</number>
-      </property>
-      <item>
-       <widget class="QGroupBox" name="_runRateGroup" >
-        <property name="title" >
-         <string>Run Labor Rate</string>
+      <item row="1" column="0" >
+       <widget class="XLabel" name="_descriptionLit" >
+        <property name="text" >
+         <string>Description:</string>
         </property>
-        <layout class="QVBoxLayout" >
-         <property name="spacing" >
-          <number>0</number>
-         </property>
-         <property name="leftMargin" >
-          <number>5</number>
-         </property>
-         <property name="topMargin" >
-          <number>5</number>
-         </property>
-         <property name="rightMargin" >
-          <number>5</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>5</number>
-         </property>
-         <item>
-          <layout class="QHBoxLayout" >
-           <property name="spacing" >
-            <number>5</number>
-           </property>
-           <item>
-            <widget class="QRadioButton" name="_runSpecifyRate" >
-             <property name="text" >
-              <string>Specify Labor Rate:</string>
-             </property>
-             <property name="checked" >
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="XLineEdit" name="_runRate" >
-             <property name="maximumSize" >
-              <size>
-               <width>80</width>
-               <height>32767</height>
-              </size>
-             </property>
-             <property name="alignment" >
-              <set>Qt::AlignRight</set>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer>
-             <property name="orientation" >
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeType" >
-              <enum>QSizePolicy::Expanding</enum>
-             </property>
-             <property name="sizeHint" >
-              <size>
-               <width>20</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" >
-           <property name="spacing" >
-            <number>5</number>
-           </property>
-           <item>
-            <widget class="QRadioButton" name="_runUseSelectedRate" >
-             <property name="text" >
-              <string>Select Standard Rate:</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="XComboBox" name="_stdRunRate" >
-             <property name="enabled" >
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-        </layout>
+        <property name="alignment" >
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
        </widget>
       </item>
-      <item>
-       <widget class="QGroupBox" name="_setupRateGroup" >
-        <property name="title" >
-         <string>Setup Labor Rate</string>
+      <item row="1" column="1" >
+       <widget class="XLineEdit" name="_description" />
+      </item>
+      <item row="2" column="0" >
+       <widget class="XLabel" name="_warehouseLit" >
+        <property name="text" >
+         <string>Site:</string>
         </property>
-        <layout class="QVBoxLayout" >
-         <property name="spacing" >
-          <number>0</number>
-         </property>
-         <property name="leftMargin" >
-          <number>5</number>
-         </property>
-         <property name="topMargin" >
-          <number>5</number>
-         </property>
-         <property name="rightMargin" >
-          <number>5</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>5</number>
-         </property>
-         <item>
-          <layout class="QHBoxLayout" >
-           <property name="spacing" >
-            <number>5</number>
-           </property>
-           <item>
-            <widget class="QRadioButton" name="_setupSpecifyRate" >
-             <property name="text" >
-              <string>Specify Labor Rate:</string>
-             </property>
-             <property name="checked" >
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="XLineEdit" name="_setupRate" >
-             <property name="maximumSize" >
-              <size>
-               <width>80</width>
-               <height>32767</height>
-              </size>
-             </property>
-             <property name="alignment" >
-              <set>Qt::AlignRight</set>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer>
-             <property name="orientation" >
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeType" >
-              <enum>QSizePolicy::Expanding</enum>
-             </property>
-             <property name="sizeHint" >
-              <size>
-               <width>20</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" >
-           <property name="spacing" >
-            <number>5</number>
-           </property>
-           <item>
-            <widget class="QRadioButton" name="_setupUseSelectedRate" >
-             <property name="text" >
-              <string>Select Standard Rate:</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="XComboBox" name="_stdSetupRate" >
-             <property name="enabled" >
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-        </layout>
+        <property name="alignment" >
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
        </widget>
       </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" >
-      <property name="spacing" >
-       <number>7</number>
-      </property>
-      <item>
-       <layout class="QVBoxLayout" >
-        <property name="spacing" >
-         <number>5</number>
-        </property>
+      <item row="2" column="1" >
+       <layout class="QHBoxLayout" >
         <item>
-         <layout class="QHBoxLayout" >
-          <property name="spacing" >
-           <number>0</number>
+         <widget class="WComboBox" name="_warehouse" >
+          <property name="allowNull" >
+           <bool>false</bool>
           </property>
-          <item>
-           <spacer>
-            <property name="orientation" >
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeType" >
-             <enum>QSizePolicy::Preferred</enum>
-            </property>
-            <property name="sizeHint" >
-             <size>
-              <width>0</width>
-              <height>10</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" >
-            <property name="spacing" >
-             <number>5</number>
-            </property>
-            <item>
-             <layout class="QVBoxLayout" >
-              <property name="spacing" >
-               <number>0</number>
-              </property>
-              <item>
-               <widget class="XLabel" name="_overheadPrcntOfLaborLit" >
-                <property name="text" >
-                 <string>Overhead % of Labor:</string>
-                </property>
-                <property name="alignment" >
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="XLabel" name="_overheadPerLaborHourLit" >
-                <property name="text" >
-                 <string>Overhead per Labor Hr.:</string>
-                </property>
-                <property name="alignment" >
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="XLabel" name="_overheadPerMachHourLit" >
-                <property name="text" >
-                 <string>Overhead per Mach. Hr.:</string>
-                </property>
-                <property name="alignment" >
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="XLabel" name="_overheadRateLit" >
-                <property name="text" >
-                 <string>Overhead Rate/Hr.:</string>
-                </property>
-                <property name="alignment" >
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QVBoxLayout" >
-              <property name="spacing" >
-               <number>0</number>
-              </property>
-              <item>
-               <widget class="XLineEdit" name="_overheadPrcntOfLabor" >
-                <property name="sizePolicy" >
-                 <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="maximumSize" >
-                 <size>
-                  <width>80</width>
-                  <height>32767</height>
-                 </size>
-                </property>
-                <property name="alignment" >
-                 <set>Qt::AlignRight</set>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="XLineEdit" name="_overheadPerLaborHour" >
-                <property name="sizePolicy" >
-                 <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="maximumSize" >
-                 <size>
-                  <width>80</width>
-                  <height>32767</height>
-                 </size>
-                </property>
-                <property name="alignment" >
-                 <set>Qt::AlignRight</set>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="XLineEdit" name="_overheadPerMachHour" >
-                <property name="sizePolicy" >
-                 <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="maximumSize" >
-                 <size>
-                  <width>80</width>
-                  <height>32767</height>
-                 </size>
-                </property>
-                <property name="alignment" >
-                 <set>Qt::AlignRight</set>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="XLabel" name="_overheadRate" >
-                <property name="minimumSize" >
-                 <size>
-                  <width>80</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="alignment" >
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" >
-          <property name="spacing" >
-           <number>5</number>
+          <property name="type" >
+           <enum>WComboBox::All</enum>
           </property>
-          <item>
-           <layout class="QHBoxLayout" >
-            <property name="spacing" >
-             <number>0</number>
-            </property>
-            <item>
-             <spacer>
-              <property name="orientation" >
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeType" >
-               <enum>QSizePolicy::Preferred</enum>
-              </property>
-              <property name="sizeHint" >
-               <size>
-                <width>0</width>
-                <height>10</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
-             <widget class="XLabel" name="_overheadPerUnitLit" >
-              <property name="sizePolicy" >
-               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text" >
-               <string>Overhead per Unit:</string>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <widget class="XLineEdit" name="_overheadPerUnit" >
-            <property name="sizePolicy" >
-             <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="maximumSize" >
-             <size>
-              <width>80</width>
-              <height>32767</height>
-             </size>
-            </property>
-            <property name="alignment" >
-             <set>Qt::AlignRight</set>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QVBoxLayout" >
-        <property name="spacing" >
-         <number>0</number>
-        </property>
-        <item>
-         <layout class="QHBoxLayout" >
-          <property name="spacing" >
-           <number>5</number>
-          </property>
-          <item>
-           <layout class="QVBoxLayout" >
-            <property name="spacing" >
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="XLabel" name="_avgQueueDaysLit" >
-              <property name="text" >
-               <string>Avg. Queue Days:</string>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="XLabel" name="_avgSetupTimeLit" >
-              <property name="text" >
-               <string>Avg. Setup Time:</string>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="XLabel" name="_dailyCapacityLit" >
-              <property name="text" >
-               <string>Daily Capacity:</string>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="XLabel" name="_efficiencyFactorLit" >
-              <property name="text" >
-               <string>Efficiency Factor:</string>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QVBoxLayout" >
-            <property name="spacing" >
-             <number>0</number>
-            </property>
-            <item>
-             <layout class="QHBoxLayout" >
-              <property name="spacing" >
-               <number>0</number>
-              </property>
-              <item>
-               <widget class="QSpinBox" name="_avgQueueDays" >
-                <property name="maximum" >
-                 <number>999</number>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <spacer>
-                <property name="orientation" >
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeType" >
-                 <enum>QSizePolicy::Expanding</enum>
-                </property>
-                <property name="sizeHint" >
-                 <size>
-                  <width>20</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" >
-              <property name="spacing" >
-               <number>5</number>
-              </property>
-              <item>
-               <widget class="XLineEdit" name="_avgSetup" >
-                <property name="maximumSize" >
-                 <size>
-                  <width>60</width>
-                  <height>32767</height>
-                 </size>
-                </property>
-                <property name="alignment" >
-                 <set>Qt::AlignRight</set>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="XComboBox" name="_setupType" >
-                <property name="sizePolicy" >
-                 <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <item>
-                 <property name="text" >
-                  <string>Labor Time</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text" >
-                  <string>Machine Time</string>
-                 </property>
-                </item>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" >
-              <property name="spacing" >
-               <number>0</number>
-              </property>
-              <item>
-               <layout class="QHBoxLayout" >
-                <property name="spacing" >
-                 <number>2</number>
-                </property>
-                <item>
-                 <widget class="XLineEdit" name="_dailyCapacity" >
-                  <property name="sizePolicy" >
-                   <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="maximumSize" >
-                   <size>
-                    <width>60</width>
-                    <height>32767</height>
-                   </size>
-                  </property>
-                  <property name="alignment" >
-                   <set>Qt::AlignRight</set>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="XLabel" name="_minutesLit" >
-                  <property name="text" >
-                   <string>Minutes</string>
-                  </property>
-                  <property name="alignment" >
-                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <spacer>
-                <property name="orientation" >
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeType" >
-                 <enum>QSizePolicy::Expanding</enum>
-                </property>
-                <property name="sizeHint" >
-                 <size>
-                  <width>75</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" >
-              <property name="spacing" >
-               <number>0</number>
-              </property>
-              <item>
-               <layout class="QHBoxLayout" >
-                <property name="spacing" >
-                 <number>2</number>
-                </property>
-                <item>
-                 <widget class="XLineEdit" name="_efficiencyFactor" >
-                  <property name="sizePolicy" >
-                   <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="maximumSize" >
-                   <size>
-                    <width>60</width>
-                    <height>32767</height>
-                   </size>
-                  </property>
-                  <property name="alignment" >
-                   <set>Qt::AlignRight</set>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="XLabel" name="_efficiencyFactorPerLit" >
-                  <property name="text" >
-                   <string>%</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <spacer>
-                <property name="orientation" >
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeType" >
-                 <enum>QSizePolicy::Expanding</enum>
-                </property>
-                <property name="sizeHint" >
-                 <size>
-                  <width>20</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </item>
-         </layout>
+         </widget>
         </item>
         <item>
          <spacer>
           <property name="orientation" >
-           <enum>Qt::Vertical</enum>
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType" >
+           <enum>QSizePolicy::MinimumExpanding</enum>
           </property>
           <property name="sizeHint" >
            <size>
-            <width>20</width>
-            <height>0</height>
+            <width>10</width>
+            <height>20</height>
            </size>
           </property>
          </spacer>
         </item>
-       </layout>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" >
-      <property name="spacing" >
-       <number>0</number>
-      </property>
-      <item>
-       <layout class="QHBoxLayout" >
         <item>
          <widget class="XLabel" name="_wipLocationLit" >
           <property name="text" >
@@ -1002,55 +166,761 @@
          </widget>
         </item>
         <item>
-         <widget class="XComboBox" name="_wipLocation" >
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-            <horstretch>1</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="sizeAdjustPolicy" >
-           <enum>QComboBox::AdjustToContents</enum>
-          </property>
-          <property name="allowNull" >
-           <bool>true</bool>
-          </property>
-         </widget>
+         <layout class="QHBoxLayout" >
+          <item>
+           <widget class="XComboBox" name="_wipLocation" >
+            <property name="sizeAdjustPolicy" >
+             <enum>QComboBox::AdjustToContents</enum>
+            </property>
+            <property name="allowNull" >
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType" >
+             <enum>QSizePolicy::Expanding</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>16</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
         </item>
        </layout>
       </item>
-      <item>
-       <spacer>
-        <property name="orientation" >
-         <enum>Qt::Horizontal</enum>
+      <item row="3" column="0" colspan="3" >
+       <widget class="QTabWidget" name="_tab" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+          <horstretch>0</horstretch>
+          <verstretch>1</verstretch>
+         </sizepolicy>
         </property>
-        <property name="sizeType" >
-         <enum>QSizePolicy::MinimumExpanding</enum>
+        <property name="currentIndex" >
+         <number>0</number>
         </property>
-        <property name="sizeHint" >
-         <size>
-          <width>31</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QVBoxLayout" >
-      <property name="spacing" >
-       <number>0</number>
-      </property>
-      <item>
-       <widget class="XLabel" name="_commentsLit" >
-        <property name="text" >
-         <string>Comments:</string>
-        </property>
+        <widget class="QWidget" name="_ratesTab" >
+         <attribute name="title" >
+          <string>Rates</string>
+         </attribute>
+         <layout class="QGridLayout" >
+          <item row="0" column="0" >
+           <layout class="QVBoxLayout" >
+            <item>
+             <layout class="QGridLayout" >
+              <item row="0" column="0" >
+               <widget class="QGroupBox" name="_setupRateGroup" >
+                <property name="title" >
+                 <string>Setup Labor Rate</string>
+                </property>
+                <layout class="QGridLayout" >
+                 <item row="0" column="0" >
+                  <layout class="QHBoxLayout" >
+                   <item>
+                    <widget class="QRadioButton" name="_setupSpecifyRate" >
+                     <property name="text" >
+                      <string>Specify Labor Rate:</string>
+                     </property>
+                     <property name="checked" >
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="XLineEdit" name="_setupRate" >
+                     <property name="sizePolicy" >
+                      <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="alignment" >
+                      <set>Qt::AlignRight</set>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer>
+                     <property name="orientation" >
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeType" >
+                      <enum>QSizePolicy::Expanding</enum>
+                     </property>
+                     <property name="sizeHint" >
+                      <size>
+                       <width>125</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
+                 </item>
+                 <item row="1" column="0" >
+                  <layout class="QHBoxLayout" >
+                   <item>
+                    <widget class="QRadioButton" name="_setupUseSelectedRate" >
+                     <property name="text" >
+                      <string>Select Standard Rate:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="XComboBox" name="_stdSetupRate" >
+                     <property name="enabled" >
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer>
+                     <property name="orientation" >
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" >
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item rowspan="2" row="0" column="1" >
+               <widget class="QGroupBox" name="groupBox" >
+                <property name="title" >
+                 <string>Overhead</string>
+                </property>
+                <layout class="QGridLayout" >
+                 <item row="0" column="0" >
+                  <widget class="XLabel" name="_overheadPrcntOfLaborLit" >
+                   <property name="text" >
+                    <string> % of Labor:</string>
+                   </property>
+                   <property name="alignment" >
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1" >
+                  <widget class="XLineEdit" name="_overheadPrcntOfLabor" >
+                   <property name="sizePolicy" >
+                    <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="maximumSize" >
+                    <size>
+                     <width>80</width>
+                     <height>32767</height>
+                    </size>
+                   </property>
+                   <property name="alignment" >
+                    <set>Qt::AlignRight</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="0" >
+                  <widget class="XLabel" name="_overheadPerLaborHourLit" >
+                   <property name="text" >
+                    <string>per Labor Hr.:</string>
+                   </property>
+                   <property name="alignment" >
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="1" >
+                  <widget class="XLineEdit" name="_overheadPerLaborHour" >
+                   <property name="sizePolicy" >
+                    <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="maximumSize" >
+                    <size>
+                     <width>80</width>
+                     <height>32767</height>
+                    </size>
+                   </property>
+                   <property name="alignment" >
+                    <set>Qt::AlignRight</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="0" >
+                  <widget class="XLabel" name="_overheadPerMachHourLit" >
+                   <property name="text" >
+                    <string>per Mach. Hr.:</string>
+                   </property>
+                   <property name="alignment" >
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="1" >
+                  <widget class="XLineEdit" name="_overheadPerMachHour" >
+                   <property name="sizePolicy" >
+                    <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="maximumSize" >
+                    <size>
+                     <width>80</width>
+                     <height>32767</height>
+                    </size>
+                   </property>
+                   <property name="alignment" >
+                    <set>Qt::AlignRight</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="3" column="0" >
+                  <widget class="XLabel" name="_overheadRateLit" >
+                   <property name="text" >
+                    <string>Rate/Hr.:</string>
+                   </property>
+                   <property name="alignment" >
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="3" column="1" >
+                  <widget class="XLabel" name="_overheadRate" >
+                   <property name="minimumSize" >
+                    <size>
+                     <width>80</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="alignment" >
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="4" column="0" >
+                  <widget class="XLabel" name="_overheadPerUnitLit" >
+                   <property name="sizePolicy" >
+                    <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="text" >
+                    <string>per Unit:</string>
+                   </property>
+                   <property name="alignment" >
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="4" column="1" >
+                  <widget class="XLineEdit" name="_overheadPerUnit" >
+                   <property name="sizePolicy" >
+                    <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="maximumSize" >
+                    <size>
+                     <width>80</width>
+                     <height>32767</height>
+                    </size>
+                   </property>
+                   <property name="alignment" >
+                    <set>Qt::AlignRight</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="5" column="1" >
+                  <spacer>
+                   <property name="orientation" >
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" >
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item row="1" column="0" >
+               <widget class="QGroupBox" name="_runRateGroup" >
+                <property name="title" >
+                 <string>Run Labor Rate</string>
+                </property>
+                <layout class="QGridLayout" >
+                 <item row="0" column="0" >
+                  <layout class="QHBoxLayout" >
+                   <item>
+                    <widget class="QRadioButton" name="_runSpecifyRate" >
+                     <property name="text" >
+                      <string>Specify Labor Rate:</string>
+                     </property>
+                     <property name="checked" >
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="XLineEdit" name="_runRate" >
+                     <property name="sizePolicy" >
+                      <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="alignment" >
+                      <set>Qt::AlignRight</set>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer>
+                     <property name="orientation" >
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeType" >
+                      <enum>QSizePolicy::Expanding</enum>
+                     </property>
+                     <property name="sizeHint" >
+                      <size>
+                       <width>125</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
+                 </item>
+                 <item row="1" column="0" >
+                  <layout class="QHBoxLayout" >
+                   <item>
+                    <widget class="QRadioButton" name="_runUseSelectedRate" >
+                     <property name="text" >
+                      <string>Select Standard Rate:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="XComboBox" name="_stdRunRate" >
+                     <property name="enabled" >
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer>
+                     <property name="orientation" >
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" >
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <spacer>
+              <property name="orientation" >
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" >
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="_capacityTab" >
+         <attribute name="title" >
+          <string>Capacity</string>
+         </attribute>
+         <layout class="QGridLayout" >
+          <item row="0" column="0" >
+           <layout class="QVBoxLayout" >
+            <item>
+             <layout class="QGridLayout" >
+              <item row="0" column="0" >
+               <widget class="QGroupBox" name="_departmentGroup" >
+                <property name="title" >
+                 <string/>
+                </property>
+                <layout class="QGridLayout" >
+                 <item row="0" column="0" >
+                  <widget class="DeptCluster" name="_department" >
+                   <property name="sizePolicy" >
+                    <sizepolicy vsizetype="Preferred" hsizetype="Minimum" >
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="focusPolicy" >
+                    <enum>Qt::StrongFocus</enum>
+                   </property>
+                   <property name="label" >
+                    <string>Department:</string>
+                   </property>
+                   <property name="infoVisible" >
+                    <bool>false</bool>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item row="0" column="1" >
+               <widget class="QGroupBox" name="_timeGroup" >
+                <property name="title" >
+                 <string/>
+                </property>
+                <layout class="QGridLayout" >
+                 <item row="0" column="0" >
+                  <widget class="XLabel" name="_avgQueueDaysLit" >
+                   <property name="text" >
+                    <string>Avg. Queue Days:</string>
+                   </property>
+                   <property name="alignment" >
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1" >
+                  <layout class="QHBoxLayout" >
+                   <item>
+                    <widget class="QSpinBox" name="_avgQueueDays" >
+                     <property name="maximum" >
+                      <number>999</number>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer>
+                     <property name="orientation" >
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeType" >
+                      <enum>QSizePolicy::Expanding</enum>
+                     </property>
+                     <property name="sizeHint" >
+                      <size>
+                       <width>20</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
+                 </item>
+                 <item row="1" column="0" >
+                  <widget class="XLabel" name="_avgSetupTimeLit" >
+                   <property name="text" >
+                    <string>Avg. Setup Time:</string>
+                   </property>
+                   <property name="alignment" >
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="1" >
+                  <layout class="QHBoxLayout" >
+                   <item>
+                    <widget class="XLineEdit" name="_avgSetup" >
+                     <property name="sizePolicy" >
+                      <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="alignment" >
+                      <set>Qt::AlignRight</set>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="XComboBox" name="_setupType" >
+                     <property name="sizePolicy" >
+                      <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <item>
+                      <property name="text" >
+                       <string>Labor Time</string>
+                      </property>
+                     </item>
+                     <item>
+                      <property name="text" >
+                       <string>Machine Time</string>
+                      </property>
+                     </item>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer>
+                     <property name="orientation" >
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" >
+                      <size>
+                       <width>400</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item row="1" column="0" >
+               <widget class="QGroupBox" name="_numberGroup" >
+                <property name="title" >
+                 <string/>
+                </property>
+                <layout class="QGridLayout" >
+                 <item row="0" column="0" >
+                  <widget class="XLabel" name="_numOfMachinesLit" >
+                   <property name="text" >
+                    <string># of Machines:</string>
+                   </property>
+                   <property name="alignment" >
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1" >
+                  <widget class="QSpinBox" name="_numOfMachines" >
+                   <property name="minimum" >
+                    <number>1</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="0" >
+                  <widget class="XLabel" name="_numOfPeopleLit" >
+                   <property name="text" >
+                    <string># of People:</string>
+                   </property>
+                   <property name="alignment" >
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="1" >
+                  <widget class="QSpinBox" name="_numOfPeople" >
+                   <property name="minimum" >
+                    <number>1</number>
+                   </property>
+                   <property name="maximum" >
+                    <number>9999</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="2" >
+                  <spacer>
+                   <property name="orientation" >
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" >
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item row="1" column="1" >
+               <widget class="QGroupBox" name="_caparityGroup" >
+                <property name="title" >
+                 <string/>
+                </property>
+                <layout class="QGridLayout" >
+                 <item row="0" column="0" >
+                  <widget class="XLabel" name="_dailyCapacityLit" >
+                   <property name="text" >
+                    <string>Daily Capacity:</string>
+                   </property>
+                   <property name="alignment" >
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1" >
+                  <layout class="QHBoxLayout" >
+                   <item>
+                    <layout class="QHBoxLayout" >
+                     <item>
+                      <widget class="XLineEdit" name="_dailyCapacity" >
+                       <property name="sizePolicy" >
+                        <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
+                       <property name="alignment" >
+                        <set>Qt::AlignRight</set>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="XLabel" name="_minutesLit" >
+                       <property name="text" >
+                        <string>Minutes</string>
+                       </property>
+                       <property name="alignment" >
+                        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </item>
+                   <item>
+                    <spacer>
+                     <property name="orientation" >
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeType" >
+                      <enum>QSizePolicy::Expanding</enum>
+                     </property>
+                     <property name="sizeHint" >
+                      <size>
+                       <width>100</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
+                 </item>
+                 <item row="1" column="0" >
+                  <widget class="XLabel" name="_efficiencyFactorLit" >
+                   <property name="text" >
+                    <string>Efficiency Factor:</string>
+                   </property>
+                   <property name="alignment" >
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="1" >
+                  <layout class="QHBoxLayout" >
+                   <item>
+                    <layout class="QHBoxLayout" >
+                     <item>
+                      <widget class="XLineEdit" name="_efficiencyFactor" >
+                       <property name="sizePolicy" >
+                        <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
+                       <property name="alignment" >
+                        <set>Qt::AlignRight</set>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="XLabel" name="_efficiencyFactorPerLit" >
+                       <property name="text" >
+                        <string>%</string>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </item>
+                   <item>
+                    <spacer>
+                     <property name="orientation" >
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeType" >
+                      <enum>QSizePolicy::Expanding</enum>
+                     </property>
+                     <property name="sizeHint" >
+                      <size>
+                       <width>300</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <spacer>
+              <property name="orientation" >
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" >
+               <size>
+                <width>522</width>
+                <height>0</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="_notesTab" >
+         <attribute name="title" >
+          <string>Notes</string>
+         </attribute>
+         <layout class="QGridLayout" >
+          <item row="0" column="0" >
+           <widget class="QTextEdit" name="_comments" />
+          </item>
+         </layout>
+        </widget>
        </widget>
-      </item>
-      <item>
-       <widget class="QTextEdit" name="_comments" />
       </item>
      </layout>
     </item>
@@ -1089,28 +959,29 @@
  <tabstops>
   <tabstop>_code</tabstop>
   <tabstop>_description</tabstop>
-  <tabstop>_department</tabstop>
   <tabstop>_warehouse</tabstop>
-  <tabstop>_numOfMachines</tabstop>
-  <tabstop>_numOfPeople</tabstop>
-  <tabstop>_runSpecifyRate</tabstop>
-  <tabstop>_runRate</tabstop>
-  <tabstop>_runUseSelectedRate</tabstop>
-  <tabstop>_stdRunRate</tabstop>
+  <tabstop>_wipLocation</tabstop>
+  <tabstop>_department</tabstop>
+  <tabstop>_tab</tabstop>
   <tabstop>_setupSpecifyRate</tabstop>
   <tabstop>_setupRate</tabstop>
   <tabstop>_setupUseSelectedRate</tabstop>
   <tabstop>_stdSetupRate</tabstop>
+  <tabstop>_runSpecifyRate</tabstop>
+  <tabstop>_runRate</tabstop>
+  <tabstop>_runUseSelectedRate</tabstop>
+  <tabstop>_stdRunRate</tabstop>
   <tabstop>_overheadPrcntOfLabor</tabstop>
   <tabstop>_overheadPerLaborHour</tabstop>
   <tabstop>_overheadPerMachHour</tabstop>
   <tabstop>_overheadPerUnit</tabstop>
+  <tabstop>_numOfMachines</tabstop>
+  <tabstop>_numOfPeople</tabstop>
+  <tabstop>_dailyCapacity</tabstop>
+  <tabstop>_efficiencyFactor</tabstop>
   <tabstop>_avgQueueDays</tabstop>
   <tabstop>_avgSetup</tabstop>
   <tabstop>_setupType</tabstop>
-  <tabstop>_dailyCapacity</tabstop>
-  <tabstop>_efficiencyFactor</tabstop>
-  <tabstop>_wipLocation</tabstop>
   <tabstop>_comments</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>

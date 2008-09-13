@@ -91,8 +91,6 @@ todoItem::todoItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     reject();
   }
-  
-  resize(minimumSize());
 }
 
 void todoItem::languageChange()

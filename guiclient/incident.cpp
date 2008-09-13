@@ -140,7 +140,6 @@ incident::incident(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 
   _saved = false;
   _aropenid = -1;
-  resize(minimumSize());
 }
 
 /*

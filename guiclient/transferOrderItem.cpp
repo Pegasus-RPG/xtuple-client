@@ -149,6 +149,7 @@ transferOrderItem::transferOrderItem(QWidget* parent, const char* name, bool mod
   _toheadid	= -1;
   _taxauthid	= -1;
   _taxCache.clear();
+  resize(minimumSize());
 }
 
 transferOrderItem::~transferOrderItem()

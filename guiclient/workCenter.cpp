@@ -119,6 +119,7 @@ workCenter::workCenter(QWidget* parent, const char* name, Qt::WFlags fl)
       _warehouseLit->hide();
       _warehouse->hide();
     }
+    sPopulateLocations();
 }
 
 /*
