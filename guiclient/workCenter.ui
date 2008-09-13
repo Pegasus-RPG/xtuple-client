@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>400</height>
+    <width>634</width>
+    <height>449</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -581,7 +581,7 @@
               <item row="0" column="0" >
                <widget class="QGroupBox" name="_departmentGroup" >
                 <property name="title" >
-                 <string/>
+                 <string>Departement</string>
                 </property>
                 <layout class="QGridLayout" >
                  <item row="0" column="0" >
@@ -596,7 +596,7 @@
                     <enum>Qt::StrongFocus</enum>
                    </property>
                    <property name="label" >
-                    <string>Department:</string>
+                    <string/>
                    </property>
                    <property name="infoVisible" >
                     <bool>false</bool>
@@ -609,13 +609,13 @@
               <item row="0" column="1" >
                <widget class="QGroupBox" name="_timeGroup" >
                 <property name="title" >
-                 <string/>
+                 <string>Average</string>
                 </property>
                 <layout class="QGridLayout" >
                  <item row="0" column="0" >
                   <widget class="XLabel" name="_avgQueueDaysLit" >
                    <property name="text" >
-                    <string>Avg. Queue Days:</string>
+                    <string>Queue Days:</string>
                    </property>
                    <property name="alignment" >
                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -652,7 +652,7 @@
                  <item row="1" column="0" >
                   <widget class="XLabel" name="_avgSetupTimeLit" >
                    <property name="text" >
-                    <string>Avg. Setup Time:</string>
+                    <string>Setup Time:</string>
                    </property>
                    <property name="alignment" >
                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -668,6 +668,12 @@
                        <horstretch>0</horstretch>
                        <verstretch>0</verstretch>
                       </sizepolicy>
+                     </property>
+                     <property name="minimumSize" >
+                      <size>
+                       <width>75</width>
+                       <height>0</height>
+                      </size>
                      </property>
                      <property name="alignment" >
                       <set>Qt::AlignRight</set>
@@ -715,13 +721,13 @@
               <item row="1" column="0" >
                <widget class="QGroupBox" name="_numberGroup" >
                 <property name="title" >
-                 <string/>
+                 <string>Number of</string>
                 </property>
                 <layout class="QGridLayout" >
                  <item row="0" column="0" >
                   <widget class="XLabel" name="_numOfMachinesLit" >
                    <property name="text" >
-                    <string># of Machines:</string>
+                    <string>Machines:</string>
                    </property>
                    <property name="alignment" >
                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -738,7 +744,7 @@
                  <item row="1" column="0" >
                   <widget class="XLabel" name="_numOfPeopleLit" >
                    <property name="text" >
-                    <string># of People:</string>
+                    <string>People:</string>
                    </property>
                    <property name="alignment" >
                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -774,7 +780,7 @@
               <item row="1" column="1" >
                <widget class="QGroupBox" name="_caparityGroup" >
                 <property name="title" >
-                 <string/>
+                 <string>Capacity</string>
                 </property>
                 <layout class="QGridLayout" >
                  <item row="0" column="0" >
@@ -855,6 +861,12 @@
                          <horstretch>0</horstretch>
                          <verstretch>0</verstretch>
                         </sizepolicy>
+                       </property>
+                       <property name="minimumSize" >
+                        <size>
+                         <width>75</width>
+                         <height>0</height>
+                        </size>
                        </property>
                        <property name="alignment" >
                         <set>Qt::AlignRight</set>
