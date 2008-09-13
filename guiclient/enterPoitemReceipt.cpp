@@ -85,8 +85,6 @@ enterPoitemReceipt::enterPoitemReceipt(QWidget* parent, const char* name, bool m
   _ordertype	= "";
   _receivable	= 0.0;
   _recvid	= -1;
-  
-  resize(minimumSize());
 }
 
 enterPoitemReceipt::~enterPoitemReceipt()
