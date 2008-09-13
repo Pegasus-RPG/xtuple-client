@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>850</width>
     <height>600</height>
    </rect>
   </property>
@@ -529,7 +529,7 @@
                    <bool>false</bool>
                   </property>
                   <property name="text" >
-                   <string>Edit Se&amp;lection</string>
+                   <string>&amp;Edit</string>
                   </property>
                  </widget>
                 </item>
@@ -539,7 +539,7 @@
                    <bool>false</bool>
                   </property>
                   <property name="text" >
-                   <string>Ca&amp;ncel Selection</string>
+                   <string>Ca&amp;ncel</string>
                   </property>
                  </widget>
                 </item>
@@ -618,7 +618,7 @@
               <item row="1" column="2" >
                <widget class="QLabel" name="_miscChargeAmountLit" >
                 <property name="text" >
-                 <string>Misc. Charge Amount:</string>
+                 <string>Misc. Charge:</string>
                 </property>
                 <property name="alignment" >
                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -734,7 +734,7 @@
               <item row="5" column="2" >
                <widget class="QLabel" name="_paymentLit" >
                 <property name="text" >
-                 <string>Payment Received:</string>
+                 <string>Received:</string>
                 </property>
                 <property name="alignment" >
                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -776,7 +776,7 @@
               <item row="2" column="0" >
                <widget class="QLabel" name="_miscChargeAccountLit" >
                 <property name="text" >
-                 <string>Misc. Charge Sales Account:</string>
+                 <string>Misc. Charge Account:</string>
                 </property>
                 <property name="alignment" >
                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -899,23 +899,24 @@
   <tabstop>_orderDate</tabstop>
   <tabstop>_shipDate</tabstop>
   <tabstop>_invoiceDate</tabstop>
-  <tabstop>_custCurrency</tabstop>
   <tabstop>_taxauth</tabstop>
+  <tabstop>_shipvia</tabstop>
+  <tabstop>_tab</tabstop>
   <tabstop>_showClosed</tabstop>
+  <tabstop>_closeOpenItems</tabstop>
   <tabstop>_soitem</tabstop>
   <tabstop>_select</tabstop>
   <tabstop>_cancel</tabstop>
   <tabstop>_selectBalance</tabstop>
-  <tabstop>_shipvia</tabstop>
-  <tabstop>_closeOpenItems</tabstop>
+  <tabstop>_custCurrency</tabstop>
   <tabstop>_miscChargeDescription</tabstop>
-  <tabstop>_miscChargeAccount</tabstop>
-  <tabstop>_comments</tabstop>
   <tabstop>_miscCharge</tabstop>
   <tabstop>_freight</tabstop>
+  <tabstop>_total</tabstop>
   <tabstop>_payment</tabstop>
-  <tabstop>_save</tabstop>
+  <tabstop>_comments</tabstop>
   <tabstop>_edit</tabstop>
+  <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
  <resources/>
