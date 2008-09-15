@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>634</width>
-    <height>449</height>
+    <width>600</width>
+    <height>400</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -60,6 +60,39 @@
           <property name="sizeHint" >
            <size>
             <width>20</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="XLabel" name="_warehouseLit" >
+          <property name="text" >
+           <string>Site:</string>
+          </property>
+          <property name="alignment" >
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="WComboBox" name="_warehouse" >
+          <property name="allowNull" >
+           <bool>false</bool>
+          </property>
+          <property name="type" >
+           <enum>WComboBox::All</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>40</width>
             <height>20</height>
            </size>
           </property>
@@ -121,9 +154,9 @@
        <widget class="XLineEdit" name="_description" />
       </item>
       <item row="2" column="0" >
-       <widget class="XLabel" name="_warehouseLit" >
+       <widget class="XLabel" name="_wipLocationLit" >
         <property name="text" >
-         <string>Site:</string>
+         <string>WIP Location:</string>
         </property>
         <property name="alignment" >
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -133,12 +166,18 @@
       <item row="2" column="1" >
        <layout class="QHBoxLayout" >
         <item>
-         <widget class="WComboBox" name="_warehouse" >
-          <property name="allowNull" >
-           <bool>false</bool>
+         <widget class="XComboBox" name="_wipLocation" >
+          <property name="minimumSize" >
+           <size>
+            <width>100</width>
+            <height>0</height>
+           </size>
           </property>
-          <property name="type" >
-           <enum>WComboBox::All</enum>
+          <property name="sizeAdjustPolicy" >
+           <enum>QComboBox::AdjustToContents</enum>
+          </property>
+          <property name="allowNull" >
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -148,52 +187,15 @@
            <enum>Qt::Horizontal</enum>
           </property>
           <property name="sizeType" >
-           <enum>QSizePolicy::MinimumExpanding</enum>
+           <enum>QSizePolicy::Expanding</enum>
           </property>
           <property name="sizeHint" >
            <size>
-            <width>10</width>
+            <width>16</width>
             <height>20</height>
            </size>
           </property>
          </spacer>
-        </item>
-        <item>
-         <widget class="XLabel" name="_wipLocationLit" >
-          <property name="text" >
-           <string>WIP Location:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" >
-          <item>
-           <widget class="XComboBox" name="_wipLocation" >
-            <property name="sizeAdjustPolicy" >
-             <enum>QComboBox::AdjustToContents</enum>
-            </property>
-            <property name="allowNull" >
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer>
-            <property name="orientation" >
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeType" >
-             <enum>QSizePolicy::Expanding</enum>
-            </property>
-            <property name="sizeHint" >
-             <size>
-              <width>16</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
         </item>
        </layout>
       </item>
@@ -970,10 +972,9 @@
  </customwidgets>
  <tabstops>
   <tabstop>_code</tabstop>
-  <tabstop>_description</tabstop>
   <tabstop>_warehouse</tabstop>
+  <tabstop>_description</tabstop>
   <tabstop>_wipLocation</tabstop>
-  <tabstop>_department</tabstop>
   <tabstop>_tab</tabstop>
   <tabstop>_setupSpecifyRate</tabstop>
   <tabstop>_setupRate</tabstop>
@@ -987,13 +988,14 @@
   <tabstop>_overheadPerLaborHour</tabstop>
   <tabstop>_overheadPerMachHour</tabstop>
   <tabstop>_overheadPerUnit</tabstop>
+  <tabstop>_department</tabstop>
+  <tabstop>_avgQueueDays</tabstop>
+  <tabstop>_avgSetup</tabstop>
+  <tabstop>_setupType</tabstop>
   <tabstop>_numOfMachines</tabstop>
   <tabstop>_numOfPeople</tabstop>
   <tabstop>_dailyCapacity</tabstop>
   <tabstop>_efficiencyFactor</tabstop>
-  <tabstop>_avgQueueDays</tabstop>
-  <tabstop>_avgSetup</tabstop>
-  <tabstop>_setupType</tabstop>
   <tabstop>_comments</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
