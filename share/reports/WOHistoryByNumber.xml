@@ -11,14 +11,15 @@
  <leftmargin>50</leftmargin>
  <querysource>
   <name>Detail</name>
-  <sql>SELECT wo_subnumber AS subnumber,
+  <sql>SELECT formatWoNumber(wo_id) AS number,
+       wo_subnumber AS subnumber,
        wo_status, warehous_code,
        item_number, item_descrip1, item_descrip2, uom_name,
        formatQty(wo_qtyord) AS ordered,
        formatQty(wo_qtyrcv) AS received,
        formatDate(wo_startdate) AS startdate,
        formatDate(wo_duedate) AS duedate,
-       &lt;? if exists(&quot;showCosts&quot;) ?>
+       &lt;? if exists("showCosts") ?>
          formatCost(wo_postedvalue)
        &lt;? else ?>
          text('')
@@ -29,8 +30,8 @@
    AND (itemsite_item_id=item_id)
    AND (item_inv_uom_id=uom_id)
    AND (itemsite_warehous_id=warehous_id)
-   AND (wo_number=&lt;? value(&quot;woNumber&quot;) ?>)
-&lt;? if exists(&quot;showOnlyTopLeve&quot;) ?>
+   AND (CAST(wo_number AS TEXT) ~ &lt;? value("woNumber") ?>)
+&lt;? if exists("showOnlyTopLeve") ?>
    AND ((wo_ordtype&lt;>'W') OR (wo_ordtype IS NULL))
 &lt;? endif ?>
  )
@@ -41,23 +42,7 @@ ORDER BY wo_subnumber;
   <height>172</height>
   <label>
    <rect>
-    <x>30</x>
-    <y>85</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>W/O Number:</string>
-  </label>
-  <label>
-   <rect>
-    <x>229</x>
+    <x>85</x>
     <y>150</y>
     <width>40</width>
     <height>15</height>
@@ -69,11 +54,11 @@ ORDER BY wo_subnumber;
    </font>
    <hcenter/>
    <vcenter/>
-   <string>UOM</string>
+   <string>Site</string>
   </label>
   <label>
    <rect>
-    <x>350</x>
+    <x>508</x>
     <y>150</y>
     <width>80</width>
     <height>15</height>
@@ -85,7 +70,23 @@ ORDER BY wo_subnumber;
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Received</string>
+   <string>Due Date</string>
+  </label>
+  <label>
+   <rect>
+    <x>430</x>
+    <y>150</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Start Date</string>
   </label>
   <label>
    <rect>
@@ -102,6 +103,102 @@ ORDER BY wo_subnumber;
    <hcenter/>
    <vcenter/>
    <string>W/O Cost</string>
+  </label>
+  <label>
+   <rect>
+    <x>30</x>
+    <y>85</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>W/O Pattern:</string>
+  </label>
+  <label>
+   <rect>
+    <x>270</x>
+    <y>150</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Ordered</string>
+  </label>
+  <label>
+   <rect>
+    <x>45</x>
+    <y>150</y>
+    <width>40</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Status</string>
+  </label>
+  <label>
+   <rect>
+    <x>240</x>
+    <y>10</y>
+    <width>483</width>
+    <height>37</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>18</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Work Order History By W/O Number</string>
+  </label>
+  <label>
+   <rect>
+    <x>5</x>
+    <y>150</y>
+    <width>40</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>W/O #</string>
+  </label>
+  <label>
+   <rect>
+    <x>125</x>
+    <y>150</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Item</string>
   </label>
   <field>
    <rect>
@@ -124,55 +221,7 @@ ORDER BY wo_subnumber;
   </field>
   <label>
    <rect>
-    <x>125</x>
-    <y>150</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Item</string>
-  </label>
-  <label>
-   <rect>
-    <x>85</x>
-    <y>150</y>
-    <width>40</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Site</string>
-  </label>
-  <label>
-   <rect>
-    <x>5</x>
-    <y>150</y>
-    <width>40</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Sub. #</string>
-  </label>
-  <label>
-   <rect>
-    <x>430</x>
+    <x>350</x>
     <y>150</y>
     <width>80</width>
     <height>15</height>
@@ -184,71 +233,7 @@ ORDER BY wo_subnumber;
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Start Date</string>
-  </label>
-  <label>
-   <rect>
-    <x>240</x>
-    <y>10</y>
-    <width>484</width>
-    <height>38</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>18</size>
-    <weight>bold</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Work Order History By W/O Number</string>
-  </label>
-  <label>
-   <rect>
-    <x>45</x>
-    <y>150</y>
-    <width>40</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Status</string>
-  </label>
-  <label>
-   <rect>
-    <x>509</x>
-    <y>150</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Due Date</string>
-  </label>
-  <label>
-   <rect>
-    <x>270</x>
-    <y>150</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Ordered</string>
+   <string>Received</string>
   </label>
   <line>
    <xstart>5</xstart>
@@ -257,6 +242,22 @@ ORDER BY wo_subnumber;
    <yend>165</yend>
    <weight>2</weight>
   </line>
+  <label>
+   <rect>
+    <x>228</x>
+    <y>150</y>
+    <width>40</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>UOM</string>
+  </label>
  </rpthead>
  <pghead>
   <firstpage/>
@@ -266,7 +267,7 @@ ORDER BY wo_subnumber;
   <height>32</height>
   <label>
    <rect>
-    <x>5</x>
+    <x>228</x>
     <y>10</y>
     <width>40</width>
     <height>15</height>
@@ -278,39 +279,7 @@ ORDER BY wo_subnumber;
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Sub. #</string>
-  </label>
-  <label>
-   <rect>
-    <x>509</x>
-    <y>10</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Due Date</string>
-  </label>
-  <label>
-   <rect>
-    <x>430</x>
-    <y>10</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Start Date</string>
+   <string>UOM</string>
   </label>
   <label>
    <rect>
@@ -330,9 +299,9 @@ ORDER BY wo_subnumber;
   </label>
   <label>
    <rect>
-    <x>350</x>
+    <x>85</x>
     <y>10</y>
-    <width>80</width>
+    <width>40</width>
     <height>15</height>
    </rect>
    <font>
@@ -342,23 +311,7 @@ ORDER BY wo_subnumber;
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Received</string>
-  </label>
-  <label>
-   <rect>
-    <x>270</x>
-    <y>10</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Ordered</string>
+   <string>Site</string>
   </label>
   <label>
    <rect>
@@ -376,6 +329,54 @@ ORDER BY wo_subnumber;
    <vcenter/>
    <string>Item</string>
   </label>
+  <label>
+   <rect>
+    <x>508</x>
+    <y>10</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Due Date</string>
+  </label>
+  <label>
+   <rect>
+    <x>350</x>
+    <y>10</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Received</string>
+  </label>
+  <label>
+   <rect>
+    <x>5</x>
+    <y>10</y>
+    <width>40</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>W/O #</string>
+  </label>
   <line>
    <xstart>5</xstart>
    <ystart>25</ystart>
@@ -383,6 +384,22 @@ ORDER BY wo_subnumber;
    <yend>25</yend>
    <weight>2</weight>
   </line>
+  <label>
+   <rect>
+    <x>430</x>
+    <y>10</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Start Date</string>
+  </label>
   <label>
    <rect>
     <x>45</x>
@@ -401,9 +418,9 @@ ORDER BY wo_subnumber;
   </label>
   <label>
    <rect>
-    <x>85</x>
+    <x>270</x>
     <y>10</y>
-    <width>40</width>
+    <width>80</width>
     <height>15</height>
    </rect>
    <font>
@@ -413,23 +430,7 @@ ORDER BY wo_subnumber;
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Site</string>
-  </label>
-  <label>
-   <rect>
-    <x>229</x>
-    <y>10</y>
-    <width>40</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>UOM</string>
+   <string>Ordered</string>
   </label>
  </pghead>
  <section>
@@ -441,66 +442,9 @@ ORDER BY wo_subnumber;
    <height>52</height>
    <field>
     <rect>
-     <x>270</x>
-     <y>0</y>
-     <width>80</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>Detail</query>
-     <column>ordered</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>509</x>
-     <y>0</y>
-     <width>80</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <hcenter/>
-    <vcenter/>
-    <data>
-     <query>Detail</query>
-     <column>duedate</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>350</x>
-     <y>0</y>
-     <width>80</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>Detail</query>
-     <column>received</column>
-    </data>
-   </field>
-   <field>
-    <rect>
      <x>125</x>
-     <y>0</y>
-     <width>100</width>
+     <y>15</y>
+     <width>300</width>
      <height>15</height>
     </rect>
     <font>
@@ -512,14 +456,14 @@ ORDER BY wo_subnumber;
     <vcenter/>
     <data>
      <query>Detail</query>
-     <column>item_number</column>
+     <column>item_descrip1</column>
     </data>
    </field>
    <field>
     <rect>
-     <x>45</x>
+     <x>5</x>
      <y>0</y>
-     <width>40</width>
+     <width>55</width>
      <height>15</height>
     </rect>
     <font>
@@ -527,11 +471,11 @@ ORDER BY wo_subnumber;
      <size>8</size>
      <weight>bold</weight>
     </font>
-    <hcenter/>
+    <left/>
     <vcenter/>
     <data>
      <query>Detail</query>
-     <column>wo_status</column>
+     <column>number</column>
     </data>
    </field>
    <field>
@@ -555,7 +499,7 @@ ORDER BY wo_subnumber;
    </field>
    <field>
     <rect>
-     <x>430</x>
+     <x>270</x>
      <y>0</y>
      <width>80</width>
      <height>15</height>
@@ -565,18 +509,18 @@ ORDER BY wo_subnumber;
      <size>8</size>
      <weight>bold</weight>
     </font>
-    <hcenter/>
+    <right/>
     <vcenter/>
     <data>
      <query>Detail</query>
-     <column>startdate</column>
+     <column>ordered</column>
     </data>
    </field>
    <field>
     <rect>
-     <x>5</x>
+     <x>350</x>
      <y>0</y>
-     <width>40</width>
+     <width>80</width>
      <height>15</height>
     </rect>
     <font>
@@ -584,18 +528,37 @@ ORDER BY wo_subnumber;
      <size>8</size>
      <weight>bold</weight>
     </font>
-    <left/>
+    <right/>
     <vcenter/>
     <data>
      <query>Detail</query>
-     <column>subnumber</column>
+     <column>received</column>
     </data>
    </field>
    <field>
     <rect>
-     <x>229</x>
+     <x>670</x>
      <y>0</y>
-     <width>40</width>
+     <width>70</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>Detail</query>
+     <column>value</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>65</x>
+     <y>0</y>
+     <width>20</width>
      <height>15</height>
     </rect>
     <font>
@@ -607,7 +570,7 @@ ORDER BY wo_subnumber;
     <vcenter/>
     <data>
      <query>Detail</query>
-     <column>uom_name</column>
+     <column>wo_status</column>
     </data>
    </field>
    <field>
@@ -629,6 +592,25 @@ ORDER BY wo_subnumber;
      <column>warehous_code</column>
     </data>
    </field>
+   <field>
+    <rect>
+     <x>430</x>
+     <y>0</y>
+     <width>80</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>Detail</query>
+     <column>startdate</column>
+    </data>
+   </field>
    <line>
     <xstart>5</xstart>
     <ystart>45</ystart>
@@ -638,9 +620,47 @@ ORDER BY wo_subnumber;
    </line>
    <field>
     <rect>
+     <x>508</x>
+     <y>0</y>
+     <width>80</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>Detail</query>
+     <column>duedate</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>228</x>
+     <y>0</y>
+     <width>40</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>Detail</query>
+     <column>uom_name</column>
+    </data>
+   </field>
+   <field>
+    <rect>
      <x>125</x>
-     <y>15</y>
-     <width>300</width>
+     <y>0</y>
+     <width>100</width>
      <height>15</height>
     </rect>
     <font>
@@ -652,26 +672,7 @@ ORDER BY wo_subnumber;
     <vcenter/>
     <data>
      <query>Detail</query>
-     <column>item_descrip1</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>670</x>
-     <y>0</y>
-     <width>70</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>Detail</query>
-     <column>value</column>
+     <column>item_number</column>
     </data>
    </field>
   </detail>
@@ -696,25 +697,6 @@ ORDER BY wo_subnumber;
   </label>
   <field>
    <rect>
-    <x>95</x>
-    <y>0</y>
-    <width>113</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>Context Query</query>
-    <column>report_date</column>
-   </data>
-  </field>
-  <field>
-   <rect>
     <x>705</x>
     <y>0</y>
     <width>40</width>
@@ -730,6 +712,25 @@ ORDER BY wo_subnumber;
    <data>
     <query>Context Query</query>
     <column>page_number</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>95</x>
+    <y>0</y>
+    <width>112</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>Context Query</query>
+    <column>report_date</column>
    </data>
   </field>
   <label>
