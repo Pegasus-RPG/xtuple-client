@@ -208,7 +208,7 @@
          </sizepolicy>
         </property>
         <property name="currentIndex" >
-         <number>0</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="_ratesTab" >
          <attribute name="title" >
@@ -641,7 +641,7 @@
               <item row="0" column="0" >
                <widget class="QGroupBox" name="_departmentGroup" >
                 <property name="title" >
-                 <string/>
+                 <string>Department</string>
                 </property>
                 <layout class="QGridLayout" >
                  <item row="0" column="0" >
@@ -656,7 +656,7 @@
                     <enum>Qt::StrongFocus</enum>
                    </property>
                    <property name="label" >
-                    <string>Department #:</string>
+                    <string/>
                    </property>
                    <property name="infoVisible" >
                     <bool>false</bool>
@@ -669,7 +669,7 @@
               <item row="0" column="1" >
                <widget class="QGroupBox" name="_timeGroup" >
                 <property name="title" >
-                 <string/>
+                 <string>Average</string>
                 </property>
                 <layout class="QGridLayout" >
                  <item row="0" column="0" >
