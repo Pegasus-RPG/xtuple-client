@@ -208,7 +208,7 @@ void dspTimePhasedOpenARItems::sViewOpenItems()
     else if (_column == 4)
     {
       params.append("startDate", asOfDate.addDays(-30) );
-      params.append("endDate", asOfDate);
+      params.append("endDate", asOfDate.addDays(-1));
     }
     else if (_column == 5)
     {
