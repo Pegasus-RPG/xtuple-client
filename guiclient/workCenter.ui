@@ -210,9 +210,9 @@
         <property name="currentIndex" >
          <number>0</number>
         </property>
-        <widget class="QWidget" name="_ratesTab" >
+        <widget class="QWidget" name="_costsTab" >
          <attribute name="title" >
-          <string>Rates</string>
+          <string>Costs</string>
          </attribute>
          <layout class="QGridLayout" >
           <item row="0" column="0" >
@@ -629,9 +629,9 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="_capacityTab" >
+        <widget class="QWidget" name="_schedulingTab" >
          <attribute name="title" >
-          <string>Capacity</string>
+          <string>Scheduling</string>
          </attribute>
          <layout class="QGridLayout" >
           <item row="0" column="0" >
@@ -781,7 +781,7 @@
               <item row="1" column="0" colspan="2" >
                <widget class="QGroupBox" name="_caparityGroup" >
                 <property name="title" >
-                 <string/>
+                 <string>Capacity</string>
                 </property>
                 <layout class="QGridLayout" >
                  <item row="0" column="0" >
