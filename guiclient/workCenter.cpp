@@ -84,6 +84,8 @@ workCenter::workCenter(QWidget* parent, const char* name, Qt::WFlags fl)
     // signals and slots connections
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_code, SIGNAL(lostFocus()), this, SLOT(sCheck()));
+    connect(_numOfMachines, SIGNAL(valueChanged(const int&)), this, SLOT(sPopulateOverheadRate()));
+    connect(_numOfPeople, SIGNAL(valueChanged(const int&)), this, SLOT(sPopulateOverheadRate()));
     connect(_overheadPerLaborHour, SIGNAL(textChanged(const QString&)), this, SLOT(sPopulateOverheadRate()));
     connect(_overheadPerMachHour, SIGNAL(textChanged(const QString&)), this, SLOT(sPopulateOverheadRate()));
     connect(_overheadPrcntOfLabor, SIGNAL(textChanged(const QString&)), this, SLOT(sPopulateOverheadRate()));

@@ -311,7 +311,7 @@
                  <item row="0" column="0" >
                   <widget class="XLabel" name="_numOfMachinesLit" >
                    <property name="text" >
-                    <string>Machines:</string>
+                    <string># of Machines:</string>
                    </property>
                    <property name="alignment" >
                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -345,7 +345,7 @@
                  <item row="1" column="0" >
                   <widget class="XLabel" name="_numOfPeopleLit" >
                    <property name="text" >
-                    <string>People:</string>
+                    <string># of People:</string>
                    </property>
                    <property name="alignment" >
                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
