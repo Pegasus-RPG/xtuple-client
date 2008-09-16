@@ -309,6 +309,77 @@
                 </property>
                 <layout class="QGridLayout" >
                  <item row="0" column="0" >
+                  <widget class="XLabel" name="_numOfMachinesLit" >
+                   <property name="text" >
+                    <string>Machines:</string>
+                   </property>
+                   <property name="alignment" >
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1" >
+                  <layout class="QHBoxLayout" >
+                   <item>
+                    <widget class="QSpinBox" name="_numOfMachines" >
+                     <property name="minimum" >
+                      <number>1</number>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer>
+                     <property name="orientation" >
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" >
+                      <size>
+                       <width>0</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
+                 </item>
+                 <item row="1" column="0" >
+                  <widget class="XLabel" name="_numOfPeopleLit" >
+                   <property name="text" >
+                    <string>People:</string>
+                   </property>
+                   <property name="alignment" >
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="1" >
+                  <layout class="QHBoxLayout" >
+                   <item>
+                    <widget class="QSpinBox" name="_numOfPeople" >
+                     <property name="minimum" >
+                      <number>1</number>
+                     </property>
+                     <property name="maximum" >
+                      <number>9999</number>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer>
+                     <property name="orientation" >
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" >
+                      <size>
+                       <width>0</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
+                 </item>
+                 <item row="2" column="0" >
                   <widget class="XLabel" name="_overheadPrcntOfLaborLit" >
                    <property name="text" >
                     <string> % of Labor:</string>
@@ -318,7 +389,7 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="0" column="1" >
+                 <item row="2" column="1" >
                   <widget class="XLineEdit" name="_overheadPrcntOfLabor" >
                    <property name="sizePolicy" >
                     <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
@@ -337,7 +408,7 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="1" column="0" >
+                 <item row="3" column="0" >
                   <widget class="XLabel" name="_overheadPerLaborHourLit" >
                    <property name="text" >
                     <string>per Labor Hr.:</string>
@@ -347,7 +418,7 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="1" column="1" >
+                 <item row="3" column="1" >
                   <widget class="XLineEdit" name="_overheadPerLaborHour" >
                    <property name="sizePolicy" >
                     <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
@@ -366,7 +437,7 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="2" column="0" >
+                 <item row="4" column="0" >
                   <widget class="XLabel" name="_overheadPerMachHourLit" >
                    <property name="text" >
                     <string>per Mach. Hr.:</string>
@@ -376,7 +447,7 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="2" column="1" >
+                 <item row="4" column="1" >
                   <widget class="XLineEdit" name="_overheadPerMachHour" >
                    <property name="sizePolicy" >
                     <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
@@ -395,7 +466,7 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="3" column="0" >
+                 <item row="5" column="0" >
                   <widget class="XLabel" name="_overheadRateLit" >
                    <property name="text" >
                     <string>Rate/Hr.:</string>
@@ -405,7 +476,7 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="3" column="1" >
+                 <item row="5" column="1" >
                   <widget class="XLabel" name="_overheadRate" >
                    <property name="minimumSize" >
                     <size>
@@ -418,7 +489,7 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="4" column="0" >
+                 <item row="6" column="0" >
                   <widget class="XLabel" name="_overheadPerUnitLit" >
                    <property name="sizePolicy" >
                     <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
@@ -434,7 +505,7 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="4" column="1" >
+                 <item row="6" column="1" >
                   <widget class="XLineEdit" name="_overheadPerUnit" >
                    <property name="sizePolicy" >
                     <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
@@ -452,19 +523,6 @@
                     <set>Qt::AlignRight</set>
                    </property>
                   </widget>
-                 </item>
-                 <item row="5" column="1" >
-                  <spacer>
-                   <property name="orientation" >
-                    <enum>Qt::Vertical</enum>
-                   </property>
-                   <property name="sizeHint" >
-                    <size>
-                     <width>20</width>
-                     <height>40</height>
-                    </size>
-                   </property>
-                  </spacer>
                  </item>
                 </layout>
                </widget>
@@ -562,7 +620,7 @@
               <property name="sizeHint" >
                <size>
                 <width>20</width>
-                <height>40</height>
+                <height>0</height>
                </size>
               </property>
              </spacer>
@@ -583,7 +641,7 @@
               <item row="0" column="0" >
                <widget class="QGroupBox" name="_departmentGroup" >
                 <property name="title" >
-                 <string>Departement</string>
+                 <string/>
                 </property>
                 <layout class="QGridLayout" >
                  <item row="0" column="0" >
@@ -598,7 +656,7 @@
                     <enum>Qt::StrongFocus</enum>
                    </property>
                    <property name="label" >
-                    <string/>
+                    <string>Department #:</string>
                    </property>
                    <property name="infoVisible" >
                     <bool>false</bool>
@@ -611,7 +669,7 @@
               <item row="0" column="1" >
                <widget class="QGroupBox" name="_timeGroup" >
                 <property name="title" >
-                 <string>Average</string>
+                 <string/>
                 </property>
                 <layout class="QGridLayout" >
                  <item row="0" column="0" >
@@ -720,69 +778,10 @@
                 </layout>
                </widget>
               </item>
-              <item row="1" column="0" >
-               <widget class="QGroupBox" name="_numberGroup" >
-                <property name="title" >
-                 <string>Number of</string>
-                </property>
-                <layout class="QGridLayout" >
-                 <item row="0" column="0" >
-                  <widget class="XLabel" name="_numOfMachinesLit" >
-                   <property name="text" >
-                    <string>Machines:</string>
-                   </property>
-                   <property name="alignment" >
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="1" >
-                  <widget class="QSpinBox" name="_numOfMachines" >
-                   <property name="minimum" >
-                    <number>1</number>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="0" >
-                  <widget class="XLabel" name="_numOfPeopleLit" >
-                   <property name="text" >
-                    <string>People:</string>
-                   </property>
-                   <property name="alignment" >
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="1" >
-                  <widget class="QSpinBox" name="_numOfPeople" >
-                   <property name="minimum" >
-                    <number>1</number>
-                   </property>
-                   <property name="maximum" >
-                    <number>9999</number>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="2" >
-                  <spacer>
-                   <property name="orientation" >
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                   <property name="sizeHint" >
-                    <size>
-                     <width>40</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                </layout>
-               </widget>
-              </item>
-              <item row="1" column="1" >
+              <item row="1" column="0" colspan="2" >
                <widget class="QGroupBox" name="_caparityGroup" >
                 <property name="title" >
-                 <string>Capacity</string>
+                 <string/>
                 </property>
                 <layout class="QGridLayout" >
                  <item row="0" column="0" >
@@ -915,7 +914,7 @@
               <property name="sizeHint" >
                <size>
                 <width>522</width>
-                <height>0</height>
+                <height>53</height>
                </size>
               </property>
              </spacer>
@@ -984,16 +983,16 @@
   <tabstop>_runRate</tabstop>
   <tabstop>_runUseSelectedRate</tabstop>
   <tabstop>_stdRunRate</tabstop>
+  <tabstop>_numOfMachines</tabstop>
+  <tabstop>_numOfPeople</tabstop>
   <tabstop>_overheadPrcntOfLabor</tabstop>
   <tabstop>_overheadPerLaborHour</tabstop>
   <tabstop>_overheadPerMachHour</tabstop>
   <tabstop>_overheadPerUnit</tabstop>
-  <tabstop>_department</tabstop>
-  <tabstop>_avgQueueDays</tabstop>
   <tabstop>_avgSetup</tabstop>
   <tabstop>_setupType</tabstop>
-  <tabstop>_numOfMachines</tabstop>
-  <tabstop>_numOfPeople</tabstop>
+  <tabstop>_department</tabstop>
+  <tabstop>_avgQueueDays</tabstop>
   <tabstop>_dailyCapacity</tabstop>
   <tabstop>_efficiencyFactor</tabstop>
   <tabstop>_comments</tabstop>
