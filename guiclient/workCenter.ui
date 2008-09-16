@@ -989,10 +989,10 @@
   <tabstop>_overheadPerLaborHour</tabstop>
   <tabstop>_overheadPerMachHour</tabstop>
   <tabstop>_overheadPerUnit</tabstop>
-  <tabstop>_avgSetup</tabstop>
-  <tabstop>_setupType</tabstop>
   <tabstop>_department</tabstop>
   <tabstop>_avgQueueDays</tabstop>
+  <tabstop>_avgSetup</tabstop>
+  <tabstop>_setupType</tabstop>
   <tabstop>_dailyCapacity</tabstop>
   <tabstop>_efficiencyFactor</tabstop>
   <tabstop>_comments</tabstop>
