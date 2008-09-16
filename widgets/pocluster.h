@@ -83,12 +83,14 @@ class OPENMFGWIDGETS_EXPORT PoLineEdit : public XLineEdit
 {
   Q_OBJECT
 
+  Q_PROPERTY(int type READ type WRITE setType DESIGNABLE false);
+
 friend class PoCluster;
 
   public:
     PoLineEdit(QWidget *, const char * = 0);
 
-    inline int vendId()     { return _vendid; }
+    Q_INVOKABLE inline int vendId()     { return _vendid; }
     inline int type()       { return _type;   }
 
     inline void setType(int pType) { _type = pType;  }
@@ -129,19 +131,22 @@ class OPENMFGWIDGETS_EXPORT PoCluster : public QWidget
   Q_OBJECT
   Q_PROPERTY(QString fieldName      READ fieldName      WRITE setFieldName);
   Q_PROPERTY(QString number         READ number         WRITE setNumber       DESIGNABLE false);
-  Q_PROPERTY(QString defaultNumber  READ defaultNumber                          DESIGNABLE false);
+  Q_PROPERTY(QString defaultNumber  READ defaultNumber                        DESIGNABLE false);
+  Q_PROPERTY(int     id             READ id             WRITE setId           DESIGNABLE false);
+  Q_PROPERTY(int     type           READ type           WRITE setType         DESIGNABLE false);
 
   public:
     PoCluster(QWidget *, const char * = 0);
 
     inline void     setId(int pId)     { _poNumber->setId(pId);     }
     inline int      id()               { return _poNumber->_id;     }
-    inline int      vendid()           { return _poNumber->_vendid; }
-    inline bool     isValid()          { return _poNumber->_valid;  }
+    Q_INVOKABLE inline int  vendid()   { return _poNumber->_vendid; }
+    Q_INVOKABLE inline bool isValid()  { return _poNumber->_valid;  }
     inline QString  defaultNumber()    { return QString();          }
     inline QString  fieldName()        { return _fieldName;         }
     inline QString  number()           { return _poNumber->text();  }
     inline void setType(int pType)     { _poNumber->setType(pType); }
+    inline int  type()                 { return _poNumber->type();  }
 
     inline QString poNumber()          { return QString("%1").arg(_poNumber->_number); }
 

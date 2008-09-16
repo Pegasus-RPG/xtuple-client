@@ -76,6 +76,7 @@ class OPENMFGWIDGETS_EXPORT ItemLineEdit : public XLineEdit
 {
   Q_OBJECT
   Q_PROPERTY(QString     number          READ text          WRITE setItemNumber);
+  Q_PROPERTY(unsigned int type           READ type          WRITE setType       DESIGNABLE false);
 
 friend class ItemCluster;
 
@@ -131,6 +132,7 @@ friend class ItemCluster;
       cKitComponents       = cSold | (cAllItemTypes_Mask ^ cKit)
     };
 
+    inline unsigned int type() const                   { return _type;                        }
     inline void setType(unsigned int pType)            { _type = pType; _defaultType = pType; } 
     inline void setDefaultType(unsigned int pType)     { _defaultType = pType; } 
     inline void setQuery(const QString &pSql) { _sql = pSql; _useQuery = TRUE; }
@@ -201,6 +203,7 @@ class OPENMFGWIDGETS_EXPORT ItemCluster : public QWidget
   Q_PROPERTY(QString defaultNumber  READ defaultNumber  WRITE setDefaultNumber   DESIGNABLE false);
   Q_PROPERTY(QString fieldName      READ fieldName      WRITE setFieldName);
   Q_PROPERTY(QString number         READ itemNumber     WRITE setItemNumber      DESIGNABLE false);
+  Q_PROPERTY(unsigned int type      READ type           WRITE setType            DESIGNABLE false);
   
   public:
     ItemCluster(QWidget *, const char * = 0);
@@ -210,15 +213,16 @@ class OPENMFGWIDGETS_EXPORT ItemCluster : public QWidget
     void setDisabled(bool);
 
     inline void    setType(unsigned int pType)             { _itemNumber->setType(pType); _itemNumber->setDefaultType(pType); } 
+    inline unsigned int type() const                       { return _itemNumber->type();                 }
     inline void    setDefaultType(unsigned int pType)      { _itemNumber->setDefaultType(pType);         } 
     inline void    setQuery(const QString &pSql)           { _itemNumber->setQuery(pSql);                }
     inline void    setValidationQuery(const QString &pSql) { _itemNumber->setValidationQuery(pSql);      }
-    inline QString itemNumber()     const                  { return _itemNumber->itemNumber();           }
-    inline QString itemType()       const                  { return _itemNumber->itemType();             }
-    inline bool     isConfigured()                         { return _itemNumber->isConfigured();         }
-    Q_INVOKABLE inline int id()                            { return _itemNumber->id();                   }
-    inline int      isValid()                              { return _itemNumber->isValid();              }
-    inline QString  uom()                                  { return _itemNumber->uom();                  }
+    Q_INVOKABLE inline QString itemNumber() const          { return _itemNumber->itemNumber();           }
+    Q_INVOKABLE inline QString itemType() const            { return _itemNumber->itemType();             }
+    Q_INVOKABLE inline bool isConfigured() const           { return _itemNumber->isConfigured();         }
+    Q_INVOKABLE inline int id() const                      { return _itemNumber->id();                   }
+    Q_INVOKABLE inline int isValid() const                 { return _itemNumber->isValid();              }
+    Q_INVOKABLE inline QString  uom() const                { return _itemNumber->uom();                  }
     inline QString  defaultNumber()  const                 { return _default; };
     inline QString  fieldName()      const                 { return _fieldName;                          }
 

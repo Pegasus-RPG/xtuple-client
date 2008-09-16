@@ -84,6 +84,8 @@ class OPENMFGWIDGETS_EXPORT WoLineEdit : public XLineEdit
 {
   Q_OBJECT;
 
+  Q_PROPERTY(int type READ type WRITE setType DESIGNABLE false);
+
 friend class WoCluster;
 
   public:
@@ -91,6 +93,7 @@ friend class WoCluster;
     WoLineEdit(int, QWidget *, const char * = 0);
 
     inline void setQuery(const QString  &pSql) { _sql = pSql; _useQuery = TRUE; }
+    inline int  type() const                   { return _woType;              }
     inline void setType(int pWoType)           { _woType = pWoType;           }
     inline void setWarehouse(int pWarehouseid) { _warehouseid = pWarehouseid; }
 
@@ -131,6 +134,7 @@ class OPENMFGWIDGETS_EXPORT WoCluster : public QWidget
   Q_PROPERTY(QString fieldName      READ fieldName      WRITE setFieldName);
   Q_PROPERTY(QString number         READ woNumber       WRITE setWoNumber       DESIGNABLE false);
   Q_PROPERTY(QString defaultNumber  READ defaultNumber                          DESIGNABLE false);
+  Q_PROPERTY(int     type           READ type           WRITE setType           DESIGNABLE false);
   
   public:
     WoCluster(QWidget *, const char * = 0);
@@ -138,17 +142,18 @@ class OPENMFGWIDGETS_EXPORT WoCluster : public QWidget
 
     QString  defaultNumber()    { return QString();          }
     QString  fieldName()        { return _fieldName;         }
-    QString  woNumber() const;
+    Q_INVOKABLE QString woNumber() const;
 
     inline void setQuery(const QString &pSql)  { _woNumber->_sql = pSql; _woNumber->_useQuery = TRUE; }
     inline void setType(int pWoType)           { _woNumber->_woType = pWoType;           }
+    inline int  type() const                   { return _woNumber->_woType;              }
     inline void setWarehouse(int pWarehouseid) { _woNumber->_warehouseid = pWarehouseid; }
-    inline int id()                            { return _woNumber->_id;                  }
-    inline bool isValid()                      { return _woNumber->_valid;               }
-    inline char status()                       { return _woNumber->_status.toAscii();    }
-    inline double qtyOrdered()                 { return _woNumber->_qtyOrdered;          }
-    inline double qtyReceived()                { return _woNumber->_qtyReceived;         }
-    inline double qtyBalance()
+    Q_INVOKABLE inline int id() const          { return _woNumber->_id;                  }
+    Q_INVOKABLE inline bool isValid() const    { return _woNumber->_valid;               }
+    Q_INVOKABLE inline char status() const     { return _woNumber->_status.toAscii();    }
+    Q_INVOKABLE inline double qtyOrdered() const { return _woNumber->_qtyOrdered;        }
+    Q_INVOKABLE inline double qtyReceived() const { return _woNumber->_qtyReceived;      }
+    Q_INVOKABLE inline double qtyBalance() const
     {
       if (_woNumber->_qtyOrdered <= _woNumber->_qtyReceived)
         return 0;
