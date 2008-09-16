@@ -239,8 +239,12 @@ enum SetResponse transferOrder::set(const ParameterList &pParams)
 
     _status->setText("O");
 
-    if (! insertPlaceholder())
-      return UndefinedError;
+    if ( (_metrics->value("TONumberGeneration") == "A") ||
+         (_metrics->value("TONumberGeneration") == "O")   )
+    {
+      if (! insertPlaceholder())
+        return UndefinedError;
+    }
 
     setAcceptDrops(true);
     _captive = FALSE;
@@ -707,23 +711,9 @@ void transferOrder::sHandleOrderNumber()
     XSqlQuery query;
     if ( (_mode == cNew) && (_userEnteredOrderNumber) )
     {
-      query.prepare("SELECT deleteTO(:tohead_id) AS result;");
-      query.bindValue(":tohead_id", _toheadid);
-      query.exec();
-      if (query.first())
-      {
-        int result = query.value("result").toInt();
-        if (result < 0)
-        {
-          systemError(this, storedProcErrorLookup("deleteTO", result), __FILE__, __LINE__);
-          return;
-        }
-      }
-      else if (query.lastError().type() != QSqlError::NoError)
-      {
-        systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
-        return;
-      }
+      if ((_metrics->value("TONumberGeneration") != "A") && 
+    	  (_metrics->value("TONumberGeneration") != "O"))
+        insertPlaceholder();
 
       query.prepare( "SELECT tohead_id "
                      "FROM tohead "
@@ -768,6 +758,9 @@ void transferOrder::sHandleOrderNumber()
 
   if (cView != _mode)
     _new->setEnabled(! _orderNumber->text().isEmpty());
+  
+  sHandleTrnsWhs(_trnsWhs->id());
+  sHandleSrcWhs(_srcWhs->id());
 }
 
 void transferOrder::sNew()
@@ -1422,9 +1415,13 @@ void transferOrder::clear()
   else if (headid.lastError().type() != QSqlError::None)
     systemError(this, headid.lastError().databaseText(), __FILE__, __LINE__);
 
-  if (! insertPlaceholder())
-    return;
-
+  if ( (_metrics->value("TONumberGeneration") == "A") ||
+       (_metrics->value("TONumberGeneration") == "O")   )
+  {
+    if (! insertPlaceholder())
+      return;
+  }
+  
   _toitem->clear();
 
   _saved = false;
