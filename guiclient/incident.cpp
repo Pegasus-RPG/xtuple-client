@@ -93,6 +93,7 @@ incident::incident(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_viewTodoItem, SIGNAL(clicked()),	this,	SLOT(sViewTodoItem()));
   //connect(_return,      SIGNAL(clicked()),      this, SLOT(sReturn()));
   connect(_viewAR,      SIGNAL(clicked()),      this, SLOT(sViewAR()));
+  connect(_cntct, 		SIGNAL(changed()), 		this, SLOT(sContactChanged()));
 
   _incdtid = -1;
 
@@ -758,3 +759,13 @@ void incident::sViewAR()
   newdlg.exec();
 }
 
+void incident::sContactChanged()
+{
+  q.prepare("SELECT cntct_crmacct_id "
+     	    "FROM cntct "
+     	    "WHERE cntct_id = :contact_id");
+  q.bindValue(":contact_id", _cntct->id());
+  q.exec();
+  if(q.first())
+    _crmacct->setId(q.value("cntct_crmacct_id").toInt());
+}

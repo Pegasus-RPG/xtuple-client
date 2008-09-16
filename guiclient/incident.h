@@ -91,6 +91,7 @@ public slots:
     virtual bool save(bool);
     virtual void sReturn();
     virtual void sViewAR();
+    virtual void sContactChanged();
 
 protected slots:
     virtual void languageChange();
