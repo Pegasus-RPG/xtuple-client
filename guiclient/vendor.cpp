@@ -70,6 +70,8 @@
 #include "storedProcErrorLookup.h"
 #include "taxRegistration.h"
 
+#define DEBUG false
+
 vendor::vendor(QWidget* parent, const char* name, Qt::WFlags fl)
     : XMainWindow(parent, name, fl)
 {
@@ -302,6 +304,8 @@ int vendor::saveContact(ContactCluster* pContact)
 
 void vendor::sSave()
 {
+  if (DEBUG) qDebug("vendor::sSave() entered");
+
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
@@ -403,6 +407,7 @@ void vendor::sSave()
     return;
   }
 
+  if (DEBUG) qDebug("vendor::sSave() about to insert/update vendinfo");
   if (_mode == cEdit)
   {
     q.prepare( "UPDATE vendinfo "
@@ -498,6 +503,7 @@ void vendor::sSave()
   }
 
   q.exec();
+  if (DEBUG) qDebug("vendor::sSave() finished insert/update vendinfo");
   if (q.lastError().type() != QSqlError::None)
   {
     rollback.exec();
@@ -505,20 +511,27 @@ void vendor::sSave()
     return;
   }
 
+  if (DEBUG) qDebug("vendor::sSave() getting crmacct for this vendor");
 //  Get the crmacct that was created by the vendinfo trigger
   q.prepare("SELECT crmacct_id "
 	    "FROM crmacct "
 	    "WHERE (crmacct_vend_id=:vend_id);");
   q.bindValue(":vend_id", _vendid);
   q.exec();
-  if (!q.lastError().type() == QSqlError::None)
+  if (q.first())
+  {
+    if (DEBUG) qDebug("vendor::sSave() updating cntct_crmacct_id");
+    _crmacctid = q.value("crmacct_id").toInt();
+    _contact1->setAccount(_crmacctid);
+    _contact2->setAccount(_crmacctid);
+  }
+  else if (!q.lastError().type() == QSqlError::None)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-  _crmacctid = q.value("crmacct_id").toInt();
-  _contact1->setAccount(_crmacctid);
-  _contact2->setAccount(_crmacctid);
+
+  if (DEBUG) qDebug("vendor::sSave() resaving vendor contacts");
 
 // need to save contacts again with updated CRM Account
   if (saveContact(_contact1) < 0)
@@ -538,6 +551,8 @@ void vendor::sSave()
   q.exec("COMMIT;");
   _NumberGen = -1;
   omfgThis->sVendorsUpdated();
+
+  if (DEBUG) qDebug("vendor::sSave() done");
 
   if(!_ignoreClose)
     close();

@@ -78,6 +78,8 @@
 #include "mqlutil.h"
 #include "lotSerialRegistration.h"
 
+#define DEBUG false
+
 crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
     : XMainWindow(parent, name, fl)
 {
@@ -691,15 +693,6 @@ void crmaccount::sSave()
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
-    /*
-    if (_neither->isChecked())
-    {
-      if (_prospectId > 0)
-	_prospectId = -1;
-      else if (_custId > 0)
-	_custId = -1;
-    }
-    */
   }
 
   if (! _taxauth->isChecked() && _taxauthId > 0)
@@ -771,7 +764,6 @@ void crmaccount::sSave()
   omfgThis->sVendorsUpdated();
   omfgThis->sTaxAuthsUpdated(-1);
   close();
-
 }
 
 int crmaccount::saveNoErrorCheck()
@@ -1646,8 +1638,6 @@ void crmaccount::sUpdateRelationships()
     return;
   }
   
-  
-
   sPopulateContacts();
 }
 
@@ -1867,18 +1857,21 @@ void crmaccount::sDeleteReg()
 
 void crmaccount::sCheckNumber()
 {
+  if (DEBUG) qDebug("crmaccount::sCheckNumber()");
   if (_number->text().length())
   {
     _number->setText(_number->text().stripWhiteSpace().upper());
 
-    q.prepare( "SELECT crmacct_id "
-               "FROM crmacct "
-               "WHERE (UPPER(crmacct_number)=UPPER(:crmacct_number));" );
-    q.bindValue(":crmacct_number", _number->text());
-    q.exec();
-    if (q.first())
+    XSqlQuery newq;
+    newq.prepare("SELECT crmacct_id "
+                 "FROM crmacct "
+                 "WHERE ((UPPER(crmacct_number)=UPPER(:crmacct_number))"
+                 "   AND (crmacct_id!=:crmacct_id));" );
+    newq.bindValue(":crmacct_number", _number->text());
+    newq.bindValue(":crmacct_id",     _crmacctId);
+    newq.exec();
+    if (newq.first())
     {
-// Release number
       XSqlQuery query;
       if(cNew == _mode && -1 != _NumberGen && _number->text().toInt() != _NumberGen)
       {
@@ -1887,12 +1880,17 @@ void crmaccount::sCheckNumber()
         query.exec();
         _NumberGen = -1;
       }
-// Delete temporary
+      // Delete temporary
       query.prepare( "DELETE FROM crmacct WHERE (crmacct_id=:crmacct_id);" );
       query.bindValue(":crmacct_id", _crmacctId);
       query.exec();
+      if (query.lastError().type() != QSqlError::None)
+      {
+	systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
+	return;
+      }
       
-      _crmacctId = q.value("crmacct_id").toInt();
+      _crmacctId = newq.value("crmacct_id").toInt();
       _mode = cEdit;
       sPopulate();
 
@@ -1900,6 +1898,11 @@ void crmaccount::sCheckNumber()
       connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
       _name->setFocus();
       _number->setEnabled(FALSE);
+    }
+    else if (newq.lastError().type() != QSqlError::None)
+    {
+      systemError(this, newq.lastError().databaseText(), __FILE__, __LINE__);
+      return;
     }
   }
 }
@@ -1916,4 +1919,3 @@ void crmaccount::closeEvent(QCloseEvent *pEvent)
   }
   QWidget::closeEvent(pEvent);
 }
-
