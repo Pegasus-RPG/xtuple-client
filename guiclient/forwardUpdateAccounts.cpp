@@ -115,7 +115,7 @@ void forwardUpdateAccounts::sUpdate()
   else if(_typeSelected->isChecked())
   {
     q.prepare("SELECT forwardUpdateAccount(accnt_id) AS result"
-              "  FROM accnt"
+              "  FROM accnt JOIN company ON ( (company_number=accnt_company) AND (NOT company_external) )"
               " WHERE (accnt_type=:accnt_type);");
     if (_type->currentItem() == 0)
       q.bindValue(":accnt_type", "A");
@@ -129,7 +129,8 @@ void forwardUpdateAccounts::sUpdate()
       q.bindValue(":accnt_type", "Q");
   }
   else
-    q.prepare("SELECT forwardUpdateAccount(accnt_id) AS result FROM accnt;");
+    q.prepare("SELECT forwardUpdateAccount(accnt_id) AS result"
+              "  FROM accnt JOIN company ON ( (company_number=accnt_company) AND (NOT company_external) );");
   
   q.exec();
 }
