@@ -527,14 +527,20 @@ void dspFinancialReport::sFillListTrend()
   if(customlabel.isEmpty())
     customlabel = tr("Custom");
 
-  QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+  QTreeWidgetItem* selected;
   QString label;
-  for (int i = 0; i < selected.size(); i++)
+  for (int i = 0; i < _periods->topLevelItemCount(); i++)
   {
-    label = selected[i]->text(1).isEmpty() ? selected[i]->text(0) : selected[i]->text(1);
-    periodsRef.prepend(((XTreeWidgetItem*)(selected[i]))->id());
-    periods.prepend(label);
-  }
+    if (_periods->topLevelItem(i)->isSelected())
+    {
+      selected =  _periods->topLevelItem(i);
+      label = selected->text(1).isEmpty() ? selected->text(0) : selected->text(1);
+      periodsRef.prepend(((XTreeWidgetItem*)(selected))->id());
+      periods.prepend(label);
+    }
+  }  
+  
+  
   if(periodsRef.count() < 1)
     return;
 
@@ -931,11 +937,16 @@ void dspFinancialReport::sPrint()
   if(_showzeros->isChecked())
     params.append("showzeros");
   
-
-  QList<QVariant> periodList;
-  QList<QTreeWidgetItem*> selected = _periods->selectedItems();
-  for (int i = 0; i < selected.size(); i++)
-    periodList.prepend(((XTreeWidgetItem*)(selected[i]))->id());
+  QList<QVariant> periodList;    
+  QTreeWidgetItem* selected;
+  for (int i = 0; i < _periods->topLevelItemCount(); i++)
+  {
+    if (_periods->topLevelItem(i)->isSelected())
+    {
+      selected =  _periods->topLevelItem(i);
+      periodList.prepend(((XTreeWidgetItem*)(selected))->id());
+    }
+  }  
   
   if(periodList.isEmpty())
   {
