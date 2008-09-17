@@ -155,7 +155,7 @@ void warehouses::sFillList()
   QString whss = "SELECT warehous_id, warehous_code,"
                  "       formatBoolYN(warehous_active), sitetype_name,"
                  "       warehous_descrip, addr_line1 "
-                 "FROM site() JOIN addr ON (addr_id=warehous_addr_id) "
+                 "FROM site() LEFT OUTER JOIN addr ON (addr_id=warehous_addr_id) "
 		 "  LEFT OUTER JOIN sitetype ON (sitetype_id=warehous_sitetype_id) "
                  "WHERE ((TRUE) "
 		 "<? if not exists(\"showInactive\") ?>"
