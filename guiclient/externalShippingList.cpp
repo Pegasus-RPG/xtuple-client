@@ -68,6 +68,7 @@ void externalShippingList::showEvent(QShowEvent *event)
 {
   if (event)
     _screen->select();
+  XMainWindow::showEvent(event);
 }
 
 void externalShippingList::setVisible(bool visible)
