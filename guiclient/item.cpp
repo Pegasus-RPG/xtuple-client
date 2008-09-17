@@ -96,6 +96,8 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
 {
   setupUi(this);
 
+  _mode=0;
+  
   // signals and slots connections
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
@@ -423,7 +425,7 @@ void item::saveCore()
     return;
   }
   
-  else if (_mode != cEdit)
+  else
   {
     q.exec("BEGIN;");
     _inTransaction = true;
