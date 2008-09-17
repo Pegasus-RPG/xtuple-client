@@ -761,11 +761,17 @@ void incident::sViewAR()
 
 void incident::sContactChanged()
 {
-  q.prepare("SELECT cntct_crmacct_id "
-     	    "FROM cntct "
-     	    "WHERE cntct_id = :contact_id");
-  q.bindValue(":contact_id", _cntct->id());
-  q.exec();
-  if(q.first())
-    _crmacct->setId(q.value("cntct_crmacct_id").toInt());
+  XSqlQuery acctq;
+  acctq.prepare("SELECT cntct_crmacct_id "
+                "FROM cntct "
+                "WHERE cntct_id = :contact_id");
+  acctq.bindValue(":contact_id", _cntct->id());
+  acctq.exec();
+  if(acctq.first())
+    _crmacct->setId(acctq.value("cntct_crmacct_id").toInt());
+  else if (acctq.lastError().type() != QSqlError::None)
+  {
+    systemError(this, acctq.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
