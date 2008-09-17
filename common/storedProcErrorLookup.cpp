@@ -954,6 +954,10 @@ void initErrorLookupHash()
   { "postGLSeries", -5, TR("Could not post this G/L Series because the G/L "
 			   "Series Discrepancy Account was not found."),
 								 0, "" },
+  { "postGLSeriesNoSumm", -1, TR("Could not post this G/L Series because the "
+				 "Debits and Credits are unbalanced."), 0, "" },
+  { "postGLSeriesNoSumm", -4, "", -4, "postGLSeries" },
+  { "postGLSeriesNoSumm", -5, "", -5, "postGLSeries" },
 
   { "postInvoice",  -1, "", -1, "insertIntoGLSeries" },
   { "postInvoice",  -4, "", -4, "insertIntoGLSeries" },
