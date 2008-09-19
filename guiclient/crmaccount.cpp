@@ -236,6 +236,7 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
 
+/*
   _modal = pParams.inList("modal");
 
   // if _modal then disable any widgets that lead to opening XWidgets
@@ -247,6 +248,7 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
     _vendorButton->setEnabled(false);
     _prospectButton->setEnabled(false);
   }
+*/
 
   if (_mode == cView)
   {
@@ -1147,7 +1149,7 @@ void crmaccount::sCustomer()
     params.append("mode",		  (_mode == cView) ? "view" : "edit");
   }
 
-  customer *newdlg = new customer();
+  customer *newdlg = new customer(this);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
   
@@ -1220,7 +1222,7 @@ void crmaccount::sProspect()
   params.append("prospect_id",	  _prospectId);
   params.append("mode",		  (_mode == cView) ? "view" : "edit");
 
-  prospect *newdlg = new prospect();
+  prospect *newdlg = new prospect(this);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }
@@ -1254,7 +1256,7 @@ void crmaccount::sTaxAuth()
     params.append("mode", "view");
   }
 
-  taxAuthority *newdlg = new taxAuthority();
+  taxAuthority *newdlg = new taxAuthority(this);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }
@@ -1288,7 +1290,7 @@ void crmaccount::sVendor()
     params.append("mode", "view");
   }
 
-  vendor *newdlg = new vendor();
+  vendor *newdlg = new vendor(this);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }
@@ -1688,16 +1690,17 @@ void crmaccount::sPopulateOplistMenu(QMenu *pMenu)
 
 void crmaccount::doDialog(QWidget *parent, const ParameterList & pParams)
 {
-  XDialog newdlg(parent);
-  QVBoxLayout * vbox = new QVBoxLayout(&newdlg);
-  crmaccount * ci = new crmaccount(&newdlg);
-  vbox->addWidget(ci);
-  newdlg.setWindowTitle(ci->windowTitle());
-  ParameterList params;
-  params = pParams;
-  params.append("modal");
-  ci->set(params);
-  newdlg.exec();
+  //XDialog newdlg(parent);
+  //QVBoxLayout * vbox = new QVBoxLayout(&newdlg);
+  crmaccount * ci = new crmaccount(parent);
+  //vbox->addWidget(ci);
+  //newdlg.setWindowTitle(ci->windowTitle());
+  //ParameterList params;
+  //params = pParams;
+  //params.append("modal");
+  ci->set(pParams);
+  //newdlg.exec();
+  omfgThis->handleNewWindow(ci);
 }
 
 void crmaccount::sHandleAutoUpdate()
@@ -1713,7 +1716,7 @@ void crmaccount::sCustomerInfo()
   ParameterList params;
   params.append("cust_id", _custId);
 
-  dspCustomerInformation *newdlg = new dspCustomerInformation();
+  dspCustomerInformation *newdlg = new dspCustomerInformation(this);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }

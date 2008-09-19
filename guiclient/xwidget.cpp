@@ -97,15 +97,27 @@ XWidgetPrivate::~XWidgetPrivate()
 }
 
 XWidget::XWidget(QWidget * parent, Qt::WindowFlags flags)
-  : QWidget(parent, flags)
+  : QWidget(parent, flags | (parent && parent->isModal() ? Qt::Dialog : Qt::Window))
 {
+  if(parent && parent->isModal())
+  {
+    setWindowModality(Qt::ApplicationModal);
+    //setWindowFlags(windowFlags() | Qt::Dialog);
+  }
+
   _private = new XWidgetPrivate();
   ScriptToolbox::setLastWindow(this);
 }
 
 XWidget::XWidget(QWidget * parent, const char * name, Qt::WindowFlags flags)
-  : QWidget(parent, flags)
+  : QWidget(parent, flags | (parent && parent->isModal() ? Qt::Dialog : Qt::Window))
 {
+  if(parent && parent->isModal())
+  {
+    setWindowModality(Qt::ApplicationModal);
+    //setWindowFlags(windowFlags() | Qt::Dialog);
+  }
+
   if(name)
     setObjectName(name);
 

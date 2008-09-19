@@ -294,8 +294,9 @@ class OpenMFGCRMAcctInfoAction : public CRMAcctInfoAction
       QWidget *w = parent;
       while (w && !w->isWindow())
 	w = w->parentWidget();
-      if (w && w->isModal())
+      if (w && w->isWindow())
       {
+/*
       	params.append("modal");
         crmaccount * newdlg = new crmaccount(w);
         newdlg->set(params);
@@ -303,7 +304,8 @@ class OpenMFGCRMAcctInfoAction : public CRMAcctInfoAction
       }
       else
       {
-	    crmaccount* newdlg = new crmaccount();
+*/
+	    crmaccount* newdlg = new crmaccount(w);
 	    newdlg->set(params);
 	    omfgThis->handleNewWindow(newdlg);
       }
@@ -1308,7 +1310,8 @@ bool SaveSizePositionEventFilter::eventFilter(QObject *obj, QEvent *event)
 
 void GUIClient::handleNewWindow(QWidget * w, Qt::WindowModality m)
 {
-  w->setWindowModality(m);
+  if(!w->isModal())
+    w->setWindowModality(m);
 
   connect(w, SIGNAL(destroyed(QObject*)), this, SLOT(windowDestroyed(QObject*)));
 
