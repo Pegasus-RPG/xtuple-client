@@ -81,7 +81,7 @@
 #include "itemSubstitute.h"
 #include "itemUOM.h"
 #include "itemtax.h"
-#include "itemsource.h"
+#include "itemSource.h"
 #include "storedProcErrorLookup.h"
 
 const char *_itemTypes[] = { "P", "M", "J", "F", "R", "S", "T", "O", "L", "K", "B", "C", "Y" };
