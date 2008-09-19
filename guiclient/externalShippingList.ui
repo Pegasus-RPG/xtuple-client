@@ -12,7 +12,6 @@
   <property name="windowTitle" >
    <string>External Shipping List</string>
   </property>
-  <widget class="QWidget" name="centralwidget" >
    <layout class="QGridLayout" >
     <item row="0" column="0" >
      <widget class="Screen" name="_screen" >
@@ -132,8 +131,6 @@
      </widget>
     </item>
    </layout>
-  </widget>
-  <widget class="QStatusBar" name="statusbar" />
  </widget>
  <customwidgets>
   <customwidget>

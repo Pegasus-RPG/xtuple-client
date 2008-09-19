@@ -12,14 +12,7 @@
   <property name="windowTitle" >
    <string>Opportunity List</string>
   </property>
-  <widget class="QWidget" name="centralwidget" >
    <layout class="QVBoxLayout" >
-    <property name="margin" >
-     <number>9</number>
-    </property>
-    <property name="spacing" >
-     <number>6</number>
-    </property>
     <item>
      <layout class="QHBoxLayout" >
       <property name="margin" >
@@ -249,8 +242,6 @@
      </widget>
     </item>
    </layout>
-  </widget>
-  <widget class="QStatusBar" name="statusbar" />
  </widget>
  <layoutdefault spacing="5" margin="5" />
  <customwidgets>

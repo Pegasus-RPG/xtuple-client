@@ -12,7 +12,6 @@
   <property name="windowTitle" >
    <string>Import XML</string>
   </property>
-  <widget class="QWidget" name="centralwidget" >
    <layout class="QHBoxLayout" >
     <item>
      <layout class="QVBoxLayout" >
@@ -148,8 +147,6 @@
      </layout>
     </item>
    </layout>
-  </widget>
-  <widget class="QStatusBar" name="statusbar" />
  </widget>
  <customwidgets>
   <customwidget>

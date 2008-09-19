@@ -18,7 +18,6 @@
   <property name="windowTitle" >
    <string>Return Authorization</string>
   </property>
-  <widget class="QWidget" name="centralwidget" >
    <layout class="QGridLayout" >
     <item row="0" column="0" >
      <layout class="QHBoxLayout" >
@@ -1580,8 +1579,6 @@
      </widget>
     </item>
    </layout>
-  </widget>
-  <widget class="QStatusBar" name="statusbar" />
  </widget>
  <customwidgets>
   <customwidget>

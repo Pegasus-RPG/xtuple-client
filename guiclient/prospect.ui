@@ -12,7 +12,6 @@
   <property name="windowTitle" >
    <string>Prospect</string>
   </property>
-  <widget class="QWidget" name="centralwidget" >
    <layout class="QVBoxLayout" >
     <item>
      <layout class="QHBoxLayout" >
@@ -355,8 +354,6 @@
      </widget>
     </item>
    </layout>
-  </widget>
-  <widget class="QStatusBar" name="statusbar" />
  </widget>
  <customwidgets>
   <customwidget>

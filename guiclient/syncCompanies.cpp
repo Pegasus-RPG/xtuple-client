@@ -60,6 +60,7 @@
 #include <QMessageBox>
 #include <QSqlError>
 #include <QVariant>
+#include <QStatusBar>
 
 #include <dbtools.h>
 #include <metasql.h>
