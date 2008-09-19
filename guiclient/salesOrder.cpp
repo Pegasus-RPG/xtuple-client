@@ -56,7 +56,6 @@
  */
 
 #include "salesOrder.h"
-
 #include <stdlib.h>
 
 #include <Q3DragObject>
@@ -3822,7 +3821,7 @@ void salesOrder::sAllocateCreditMemos()
 
      while(balance > 0.0 && q.next())
      {
-       amount = q.value("amount_cocurr").toDouble();
+       amount = _outstandingCM->localValue();
        initAmount = amount;
 
        if(amount <= 0.0) // if this credit memo does not have a positive value just ignore it
