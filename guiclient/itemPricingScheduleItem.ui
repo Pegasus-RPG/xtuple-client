@@ -254,7 +254,7 @@
                     </layout>
                    </item>
                    <item row="2" column="3" >
-                    <widget class="QLabel" name="_pricingRatio" >
+                    <widget class="XLabel" name="_pricingRatio" >
                      <property name="minimumSize" >
                       <size>
                        <width>80</width>
@@ -270,7 +270,7 @@
                     </widget>
                    </item>
                    <item row="1" column="0" >
-                    <widget class="QLabel" name="_priceLit" >
+                    <widget class="XLabel" name="_priceLit" >
                      <property name="text" >
                       <string>&amp;Price:</string>
                      </property>
@@ -313,7 +313,7 @@
                     </layout>
                    </item>
                    <item row="2" column="0" >
-                    <widget class="QLabel" name="_listPriceLit" >
+                    <widget class="XLabel" name="_listPriceLit" >
                      <property name="text" >
                       <string>List Price:</string>
                      </property>
@@ -349,7 +349,7 @@
                     </layout>
                    </item>
                    <item row="1" column="2" >
-                    <widget class="QLabel" name="_priceUOMLit" >
+                    <widget class="XLabel" name="_priceUOMLit" >
                      <property name="text" >
                       <string>Price UOM:</string>
                      </property>
@@ -369,7 +369,7 @@
                     </widget>
                    </item>
                    <item row="2" column="2" >
-                    <widget class="QLabel" name="_priceRatioLit" >
+                    <widget class="XLabel" name="_priceRatioLit" >
                      <property name="text" >
                       <string>Price/Inv. Ratio:</string>
                      </property>
@@ -379,7 +379,7 @@
                     </widget>
                    </item>
                    <item row="0" column="2" >
-                    <widget class="QLabel" name="label" >
+                    <widget class="XLabel" name="label" >
                      <property name="text" >
                       <string>Qty. UOM:</string>
                      </property>
@@ -389,7 +389,7 @@
                     </widget>
                    </item>
                    <item row="0" column="0" >
-                    <widget class="QLabel" name="_qtyBreakLit" >
+                    <widget class="XLabel" name="_qtyBreakLit" >
                      <property name="text" >
                       <string>&amp;Qty. Break:</string>
                      </property>
@@ -424,7 +424,7 @@
                       <number>5</number>
                      </property>
                      <item row="1" column="0" >
-                      <widget class="QLabel" name="_costLit" >
+                      <widget class="XLabel" name="_costLit" >
                        <property name="text" >
                         <string>Cost (Pricing UOM):</string>
                        </property>
@@ -434,7 +434,7 @@
                       </widget>
                      </item>
                      <item row="2" column="0" >
-                      <widget class="QLabel" name="_marginLit" >
+                      <widget class="XLabel" name="_marginLit" >
                        <property name="text" >
                         <string>Margin:</string>
                        </property>
@@ -444,7 +444,7 @@
                       </widget>
                      </item>
                      <item row="0" column="1" >
-                      <widget class="QLabel" name="_stdLit" >
+                      <widget class="XLabel" name="_stdLit" >
                        <property name="minimumSize" >
                         <size>
                          <width>80</width>
@@ -460,7 +460,7 @@
                       </widget>
                      </item>
                      <item row="0" column="2" >
-                      <widget class="QLabel" name="_actLit" >
+                      <widget class="XLabel" name="_actLit" >
                        <property name="minimumSize" >
                         <size>
                          <width>80</width>
@@ -502,7 +502,7 @@
                       </widget>
                      </item>
                      <item row="2" column="1" >
-                      <widget class="QLabel" name="_stdMargin" >
+                      <widget class="XLabel" name="_stdMargin" >
                        <property name="minimumSize" >
                         <size>
                          <width>80</width>
@@ -518,7 +518,7 @@
                       </widget>
                      </item>
                      <item row="2" column="2" >
-                      <widget class="QLabel" name="_actMargin" >
+                      <widget class="XLabel" name="_actMargin" >
                        <property name="minimumSize" >
                         <size>
                          <width>80</width>
@@ -620,6 +620,163 @@
          </item>
         </layout>
        </widget>
+       <widget class="QWidget" name="prodcat" >
+        <layout class="QGridLayout" >
+         <item row="0" column="0" >
+          <widget class="QGroupBox" name="_prodCatGroup" >
+           <property name="title" >
+            <string/>
+           </property>
+           <layout class="QGridLayout" >
+            <item row="0" column="0" >
+             <widget class="XLabel" name="_prodcatLit" >
+              <property name="text" >
+               <string>Product Category:</string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1" >
+             <layout class="QHBoxLayout" >
+              <item>
+               <widget class="XComboBox" name="_prodcat" />
+              </item>
+              <item>
+               <spacer>
+                <property name="orientation" >
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeType" >
+                 <enum>QSizePolicy::Expanding</enum>
+                </property>
+                <property name="sizeHint" >
+                 <size>
+                  <width>151</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item row="1" column="0" >
+             <widget class="XLabel" name="_qtyBreakCatLit" >
+              <property name="text" >
+               <string>&amp;Qty. Break (Inventory UOM):</string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+              <property name="buddy" >
+               <cstring>_qtyBreak</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1" >
+             <layout class="QHBoxLayout" >
+              <item>
+               <widget class="XLineEdit" name="_qtyBreakCat" >
+                <property name="sizePolicy" >
+                 <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="maximumSize" >
+                 <size>
+                  <width>80</width>
+                  <height>32767</height>
+                 </size>
+                </property>
+                <property name="alignment" >
+                 <set>Qt::AlignRight</set>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer>
+                <property name="orientation" >
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeType" >
+                 <enum>QSizePolicy::Expanding</enum>
+                </property>
+                <property name="sizeHint" >
+                 <size>
+                  <width>91</width>
+                  <height>16</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item row="2" column="0" >
+             <widget class="XLabel" name="_discountLit" >
+              <property name="text" >
+               <string>Discount Percent (List Price):</string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+              <property name="buddy" >
+               <cstring>_price</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1" >
+             <layout class="QHBoxLayout" >
+              <item>
+               <widget class="XLineEdit" name="_discount" >
+                <property name="sizePolicy" >
+                 <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="alignment" >
+                 <set>Qt::AlignRight</set>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer>
+                <property name="orientation" >
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" >
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="1" column="0" >
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeType" >
+            <enum>QSizePolicy::Expanding</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>497</width>
+             <height>111</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
        <widget class="QWidget" name="page" >
         <layout class="QGridLayout" >
          <item row="0" column="0" >
@@ -635,7 +792,7 @@
                  </property>
                  <layout class="QGridLayout" >
                   <item row="0" column="0" >
-                   <widget class="QLabel" name="_qtyBreakFreightLit" >
+                   <widget class="XLabel" name="_qtyBreakFreightLit" >
                     <property name="text" >
                      <string>&amp;Qty. Break:</string>
                     </property>
@@ -697,7 +854,7 @@
                    </layout>
                   </item>
                   <item row="1" column="0" >
-                   <widget class="QLabel" name="_priceFreight" >
+                   <widget class="XLabel" name="_priceFreight" >
                     <property name="text" >
                      <string>Price:</string>
                     </property>
@@ -938,163 +1095,6 @@
             </spacer>
            </item>
           </layout>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="prodcat" >
-        <layout class="QGridLayout" >
-         <item row="0" column="0" >
-          <widget class="QGroupBox" name="_prodCatGroup" >
-           <property name="title" >
-            <string/>
-           </property>
-           <layout class="QGridLayout" >
-            <item row="0" column="0" >
-             <widget class="QLabel" name="_prodcatLit" >
-              <property name="text" >
-               <string>Product Category:</string>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1" >
-             <layout class="QHBoxLayout" >
-              <item>
-               <widget class="XComboBox" name="_prodcat" />
-              </item>
-              <item>
-               <spacer>
-                <property name="orientation" >
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeType" >
-                 <enum>QSizePolicy::Expanding</enum>
-                </property>
-                <property name="sizeHint" >
-                 <size>
-                  <width>151</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-             </layout>
-            </item>
-            <item row="1" column="0" >
-             <widget class="QLabel" name="_qtyBreakCatLit" >
-              <property name="text" >
-               <string>&amp;Qty. Break (Inventory UOM):</string>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-              <property name="buddy" >
-               <cstring>_qtyBreak</cstring>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1" >
-             <layout class="QHBoxLayout" >
-              <item>
-               <widget class="XLineEdit" name="_qtyBreakCat" >
-                <property name="sizePolicy" >
-                 <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="maximumSize" >
-                 <size>
-                  <width>80</width>
-                  <height>32767</height>
-                 </size>
-                </property>
-                <property name="alignment" >
-                 <set>Qt::AlignRight</set>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <spacer>
-                <property name="orientation" >
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeType" >
-                 <enum>QSizePolicy::Expanding</enum>
-                </property>
-                <property name="sizeHint" >
-                 <size>
-                  <width>91</width>
-                  <height>16</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-             </layout>
-            </item>
-            <item row="2" column="0" >
-             <widget class="QLabel" name="_discountLit" >
-              <property name="text" >
-               <string>Discount Percent (List Price):</string>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-              <property name="buddy" >
-               <cstring>_price</cstring>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1" >
-             <layout class="QHBoxLayout" >
-              <item>
-               <widget class="XLineEdit" name="_discount" >
-                <property name="sizePolicy" >
-                 <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="alignment" >
-                 <set>Qt::AlignRight</set>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <spacer>
-                <property name="orientation" >
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" >
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="1" column="0" >
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeType" >
-            <enum>QSizePolicy::Expanding</enum>
-           </property>
-           <property name="sizeHint" >
-            <size>
-             <width>497</width>
-             <height>111</height>
-            </size>
-           </property>
-          </spacer>
          </item>
         </layout>
        </widget>
