@@ -133,6 +133,12 @@ public slots:
     virtual void sConfiguredToggled(bool p);
     virtual void closeEvent( QCloseEvent * pEvent );
     virtual void sNewClassCode();
+    virtual void sHandleButtons();
+    virtual void sFillSourceList();
+    virtual void sNewSource();
+    virtual void sEditSource();
+    virtual void sViewSource();
+    virtual void sDeleteSource();
 
 protected:
     virtual void keyPressEvent( QKeyEvent * e );

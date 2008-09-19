@@ -81,6 +81,7 @@
 #include "itemSubstitute.h"
 #include "itemUOM.h"
 #include "itemtax.h"
+#include "itemsource.h"
 #include "storedProcErrorLookup.h"
 
 const char *_itemTypes[] = { "P", "M", "J", "F", "R", "S", "T", "O", "L", "K", "B", "C", "Y" };
@@ -116,25 +117,19 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_newAlias, SIGNAL(clicked()), this, SLOT(sNewAlias()));
   connect(_editAlias, SIGNAL(clicked()), this, SLOT(sEditAlias()));
   connect(_deleteAlias, SIGNAL(clicked()), this, SLOT(sDeleteAlias()));
-  connect(_itemalias, SIGNAL(itemSelected(int)), _editAlias, SLOT(animateClick()));
   connect(_newSubstitute, SIGNAL(clicked()), this, SLOT(sNewSubstitute()));
   connect(_editSubstitute, SIGNAL(clicked()), this, SLOT(sEditSubstitute()));
   connect(_deleteSubstitute, SIGNAL(clicked()), this, SLOT(sDeleteSubstitute()));
-  connect(_itemsub, SIGNAL(itemSelected(int)), _editSubstitute, SLOT(animateClick()));
   connect(_newTransform, SIGNAL(clicked()), this, SLOT(sNewTransformation()));
   connect(_deleteTransform, SIGNAL(clicked()), this, SLOT(sDeleteTransformation()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_boo, SIGNAL(clicked()), this, SLOT(sEditBOO()));
   connect(_bom, SIGNAL(clicked()), this, SLOT(sEditBOM()));
   connect(_site, SIGNAL(clicked()), this, SLOT(sEditItemSite()));
   connect(_workbench, SIGNAL(clicked()), this, SLOT(sWorkbench()));
-  connect(_itemSite, SIGNAL(valid(bool)), _viewItemSite, SLOT(setEnabled(bool)));
   connect(_deleteItemSite, SIGNAL(clicked()), this, SLOT(sDeleteItemSite()));
   connect(_viewItemSite, SIGNAL(clicked()), this, SLOT(sViewItemSite()));
   connect(_editItemSite, SIGNAL(clicked()), this, SLOT(sEditItemSite()));
   connect(_newItemSite, SIGNAL(clicked()), this, SLOT(sNewItemSite()));
-  connect(_file, SIGNAL(valid(bool)), _viewFile, SLOT(setEnabled(bool)));
-  connect(_file, SIGNAL(valid(bool)), _openFile, SLOT(setEnabled(bool)));
   connect(_deleteFile, SIGNAL(clicked()), this, SLOT(sDeleteFile()));
   connect(_editFile, SIGNAL(clicked()), this, SLOT(sEditFile()));
   connect(_newFile, SIGNAL(clicked()), this, SLOT(sNewFile()));
@@ -148,6 +143,18 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_deleteUOM, SIGNAL(clicked()), this, SLOT(sDeleteUOM()));
   connect(_configured, SIGNAL(toggled(bool)), this, SLOT(sConfiguredToggled(bool)));
   connect(_classcode, SIGNAL(newID(int)), this, SLOT(sNewClassCode()));
+  connect(_notesButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_extDescripButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_commentsButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_aliasesButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_substitutesButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_transformationsButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_imagesButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_filesButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_editSrc, SIGNAL(clicked()), this, SLOT(sEditSource()));
+  connect(_newSrc, SIGNAL(clicked()), this, SLOT(sNewSource()));
+  connect(_viewSrc, SIGNAL(clicked()), this, SLOT(sViewSource()));
+  connect(_deleteSrc, SIGNAL(clicked()), this, SLOT(sDeleteSource()));
   
   _disallowPlanningType = false;
   _inTransaction = false;
@@ -174,6 +181,10 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
   _uomconv->addColumn(tr("Ratio"),      -1, Qt::AlignRight  );
   _uomconv->addColumn(tr("Global"),     _ynColumn*2,    Qt::AlignCenter );
   _uomconv->addColumn(tr("Fractional"), _ynColumn*2,   Qt::AlignCenter );
+  
+  _itemsrc->addColumn(tr("Vendor"),      _itemColumn, Qt::AlignLeft );
+  _itemsrc->addColumn(tr("Name"), 	 -1,          Qt::AlignLeft );
+  _itemsrc->addColumn(tr("Vendor Item"), _itemColumn*2, Qt::AlignLeft );
 
   _itemimage->addColumn(tr("Image Name"),  _itemColumn, Qt::AlignLeft );
   _itemimage->addColumn(tr("Description"), -1,          Qt::AlignLeft );
@@ -212,16 +223,46 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
     
   if((!_privileges->check("MaintainItemSites")) || (_metrics->boolean("MultiWhs")))
     _site->hide();
+    
+  if (_privileges->check("MaintainItemSources"))
+  {
+    connect(_itemsrc, SIGNAL(valid(bool)), _editSrc, SLOT(setEnabled(bool)));
+    connect(_itemsrc, SIGNAL(valid(bool)), _viewSrc, SLOT(setEnabled(bool)));
+    connect(_itemsrc, SIGNAL(valid(bool)), _deleteSrc, SLOT(setEnabled(bool)));
+    connect(_itemsrc, SIGNAL(itemSelected(int)), _editSrc, SLOT(animateClick()));
+    _newSrc->setEnabled(_privileges->check("MaintainItemSources"));
+  }
+  else if (_privileges->check("ViewItemSources"))
+  {
+    connect(_itemsrc, SIGNAL(valid(bool)), _viewSrc, SLOT(setEnabled(bool)));
+    connect(_itemsrc, SIGNAL(itemSelected(int)), _viewSrc, SLOT(animateClick()));
+  }
+  else
+    _tab->setTabEnabled(_tab->indexOf(_sourcesTab), FALSE);
 
   if(!_privileges->check("ViewItemAvailabilityWorkbench"))
     _workbench->hide();
     
   if (!_metrics->boolean("Transforms"))
-    _tab->removePage(_tab->page(9));
+    _transformationsButton->hide();
     
   if (!_metrics->boolean("MultiWhs"))
-    _tab->removePage(_tab->page(4));
- 
+    _tab->removeTab(_tab->indexOf(_itemsitesTab));
+  else if (_privileges->check("MaintainItemSites"))
+  {
+    connect(_itemSite, SIGNAL(valid(bool)), _editItemSite, SLOT(setEnabled(bool)));
+    connect(_itemSite, SIGNAL(valid(bool)), _viewItemSite, SLOT(setEnabled(bool)));
+    connect(_itemSite, SIGNAL(itemSelected(int)), _editItemSite, SLOT(animateClick()));
+    _newItemSite->setEnabled(_privileges->check("MaintainItemSites"));
+  }
+  else if (_privileges->check("ViewItemSites"))
+  {
+    connect(_itemSite, SIGNAL(valid(bool)), _viewItemSite, SLOT(setEnabled(bool)));
+    connect(_itemSite, SIGNAL(itemSelected(int)), _viewItemSite, SLOT(animateClick()));
+  }
+  else
+    _tab->setTabEnabled(_tab->indexOf(_itemsitesTab), FALSE);
+  
   if (!_metrics->boolean("BBOM"))
   {
     _itemtype->removeItem(12);
@@ -281,7 +322,6 @@ enum SetResponse item::set(const ParameterList &pParams)
       setName("item new");
       _mode = cNew;
 
-      _line1->hide();
       _bom->hide();
       _boo->hide();
       _workbench->hide();
@@ -347,7 +387,6 @@ enum SetResponse item::set(const ParameterList &pParams)
         connect(_itemSite, SIGNAL(valid(bool)), _deleteItemSite, SLOT(setEnabled(bool)));
 
       _itemNumber->setEnabled(FALSE);
-      _newItemSite->setEnabled(TRUE);
       _newFile->setEnabled(TRUE);
       _save->setFocus();
     }
@@ -872,10 +911,12 @@ void item::sSave()
 
   omfgThis->sItemsUpdated(_itemid, TRUE);
 
-  if ( ( (_mode == cNew) || (_mode == cCopy) ) && ( (*_itemTypes[_itemtype->currentItem()] != 'B') ||
-                                                    (*_itemTypes[_itemtype->currentItem()] != 'F') ||
-                                                    (*_itemTypes[_itemtype->currentItem()] != 'R') ||
-                                                    (*_itemTypes[_itemtype->currentItem()] != 'S') ) )
+  if ( ( (_mode == cNew) || (_mode == cCopy) ) && 
+     (_privileges->check("MaintainItemSites")) &&
+     ( (*_itemTypes[_itemtype->currentItem()] != 'B') ||
+     (*_itemTypes[_itemtype->currentItem()] != 'F') ||
+     (*_itemTypes[_itemtype->currentItem()] != 'R') ||
+     (*_itemTypes[_itemtype->currentItem()] != 'S') ) )
   {
     if (QMessageBox::information( this, tr("Create New Item Sites"),
                                   tr("Would you like to create Item site inventory settings for the newly created Item now?"),
@@ -1146,6 +1187,7 @@ void item::populate()
     sFillList();
     sFillImageList();
     sFillUOMList();
+    sFillSourceList();
     sFillAliasList();
     sFillSubstituteList();
     sFillTransformationList();
@@ -1209,13 +1251,14 @@ void item::sPopulateUOMs()
 void item::sHandleItemtype()
 {
   QString itemType = QString(*(_itemTypes + _itemtype->currentItem()));
-  bool pickList = FALSE;
-  bool sold     = FALSE;
-  bool weight   = FALSE;
-  bool config   = FALSE;
-  bool shipUOM  = FALSE;
-  bool capUOM   = FALSE;
-  bool planType = FALSE;
+  bool pickList  = FALSE;
+  bool sold      = FALSE;
+  bool weight    = FALSE;
+  bool config    = FALSE;
+  bool shipUOM   = FALSE;
+  bool capUOM    = FALSE;
+  bool planType  = FALSE;
+  bool purchased = FALSE;
   
   _configured->setEnabled(FALSE);
 
@@ -1227,6 +1270,7 @@ void item::sHandleItemtype()
     capUOM   = TRUE;
     shipUOM  = TRUE;
     planType = TRUE;
+    purchased = TRUE;
   }
 
   if (itemType == "M")
@@ -1238,7 +1282,7 @@ void item::sHandleItemtype()
     capUOM   = TRUE;
     shipUOM  = TRUE;
     planType = TRUE;
-
+    purchased = TRUE;
   }
 
   if (itemType == "J")
@@ -1256,7 +1300,8 @@ void item::sHandleItemtype()
   if (itemType == "B")
   {
     capUOM   = TRUE;
-  	planType = TRUE;
+    planType = TRUE;
+    purchased = TRUE;
   }
 
   if (itemType == "C")
@@ -1266,7 +1311,8 @@ void item::sHandleItemtype()
     weight   = TRUE;
     capUOM   = TRUE;
     shipUOM  = TRUE;
-	planType = TRUE;
+    planType = TRUE;
+    purchased = TRUE;
   }
 
   if (itemType == "Y")
@@ -1276,7 +1322,8 @@ void item::sHandleItemtype()
     weight   = TRUE;
     capUOM   = TRUE;
     shipUOM  = TRUE;
-	planType = TRUE;
+    planType = TRUE;
+    purchased = TRUE;
   }
 
   if (itemType == "R")
@@ -1300,6 +1347,7 @@ void item::sHandleItemtype()
   {
     capUOM   = TRUE;
     planType = TRUE;
+    purchased = TRUE;
   }
 
   if (itemType == "A")
@@ -1320,7 +1368,7 @@ void item::sHandleItemtype()
     _boo->setVisible(itemType!="K");
   _workbench->setVisible(itemType!="K");
   _tab->setTabEnabled(_tab->indexOf(_tabUOM),(itemType!="K"));
-  _tab->setTabEnabled(_tab->indexOf(_transformationsTab),(itemType!="K"));
+  _transformationsButton->setEnabled(itemType!="K");
 
   if (itemType == "L")
     _planningType->setCurrentItem(1);
@@ -1340,6 +1388,10 @@ void item::sHandleItemtype()
 
   _planningType->setEnabled(planType);
 
+  _tab->setTabEnabled(_tab->indexOf(_sourcesTab), 
+        (_privileges->check("ViewItemSources") || 
+	 _privileges->check("MaintainItemSources")) && 
+	 purchased);
 }
 
 
@@ -2081,3 +2133,103 @@ void item::sNewClassCode()
 {
   _inventoryUOM->setFocus();
 }
+
+void item::sHandleButtons()
+{
+  if (_notesButton->isChecked())
+    _textStack->setCurrentIndex(0);
+  else if (_extDescripButton->isChecked())
+    _textStack->setCurrentIndex(1);
+  else if (_commentsButton->isChecked())
+    _textStack->setCurrentIndex(2);
+    
+  if (_aliasesButton->isChecked())
+    _relationshipsStack->setCurrentIndex(0);
+  else if (_substitutesButton->isChecked())
+    _relationshipsStack->setCurrentIndex(1);
+  else if (_transformationsButton->isChecked())
+    _relationshipsStack->setCurrentIndex(2);
+ 
+  if (_imagesButton->isChecked())
+    _documentsStack->setCurrentIndex(0);
+  else if (_filesButton->isChecked())
+    _documentsStack->setCurrentIndex(1);
+}
+
+void item::sFillSourceList()
+{
+  QString sql( "SELECT itemsrc_id, vend_number,"
+               "       vend_name, itemsrc_vend_item_number, "
+	       "       formatboolyn(itemsrc_active) "
+               "FROM item, vend, itemsrc "
+               "WHERE ( (itemsrc_item_id=item_id)"
+               " AND (itemsrc_vend_id=vend_id)"
+	       " AND (itemsrc_item_id=<? value(\"item_id\") ?>) "
+               ") ORDER BY vend_number, vend_name;" );
+               
+  ParameterList params;
+  MetaSQLQuery mql(sql);
+  params.append("item_id", _itemid);
+  q = mql.toQuery(params);
+
+  if (q.first())
+    _itemsrc->populate(q);
+  else
+    _itemsrc->clear();
+}
+
+void item::sNewSource()
+{
+  ParameterList params;
+  params.append("mode", "new");
+  params.append("item_id", _itemid);
+
+  itemSource newdlg(this, "", TRUE);
+  newdlg.set(params);
+
+  if (newdlg.exec() != XDialog::Rejected)
+    sFillSourceList();
+}
+
+void item::sEditSource()
+{
+  ParameterList params;
+  params.append("mode", "edit");
+  params.append("itemsrc_id", _itemsrc->id());
+
+  itemSource newdlg(this, "", TRUE);
+  newdlg.set(params);
+
+  if (newdlg.exec() != XDialog::Rejected)
+    sFillSourceList();
+}
+
+void item::sViewSource()
+{
+  ParameterList params;
+  params.append("mode", "view");
+  params.append("itemsrc_id", _itemsrc->id());
+
+  itemSource newdlg(this, "", TRUE);
+  newdlg.set(params);
+  newdlg.exec();
+}
+
+void item::sDeleteSource()
+{
+  if (QMessageBox::information( this, tr("Delete Item Source"),
+                                 tr( "Are you sure that you want to delete the Item Source?"),
+                                tr("&Delete"), tr("&Cancel"), 0, 0, 1 ) == 0  )
+  {
+    q.prepare( "DELETE FROM itemsrc "
+               "WHERE (itemsrc_id=:itemsrc_id);"
+               "DELETE FROM itemsrcp "
+               "WHERE (itemsrcp_itemsrc_id=:itemsrc_id);" );
+    q.bindValue(":itemsrc_id", _itemsrc->id());
+    q.exec();
+
+    sFillSourceList();
+  }
+}
+
+
