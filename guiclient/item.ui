@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>840</width>
     <height>600</height>
    </rect>
   </property>
@@ -283,7 +283,7 @@
         </item>
        </layout>
       </item>
-      <item row="1" column="0" colspan="2" >
+      <item row="1" column="0" >
        <widget class="QGroupBox" name="_itemGroup" >
         <property name="title" >
          <string/>
@@ -527,33 +527,76 @@
               </layout>
              </item>
              <item row="3" column="0" >
-              <widget class="QLabel" name="_planningTypeLit" >
+              <widget class="QLabel" name="_freightClassLit" >
                <property name="text" >
-                <string>Planning System:</string>
+                <string>Freight Class:</string>
                </property>
                <property name="alignment" >
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
               </widget>
              </item>
-             <item row="3" column="1" >
-              <widget class="QComboBox" name="_planningType" >
+             <item row="3" column="1" colspan="4" >
+              <layout class="QHBoxLayout" >
                <item>
-                <property name="text" >
-                 <string>MRP</string>
-                </property>
+                <widget class="XComboBox" name="_freightClass" />
                </item>
                <item>
-                <property name="text" >
-                 <string>MPS</string>
-                </property>
+                <spacer>
+                 <property name="orientation" >
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" >
+                  <size>
+                   <width>0</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
                </item>
                <item>
-                <property name="text" >
-                 <string>None</string>
-                </property>
+                <widget class="QLabel" name="_planningTypeLit" >
+                 <property name="text" >
+                  <string>Planning System:</string>
+                 </property>
+                 <property name="alignment" >
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
+                </widget>
                </item>
-              </widget>
+               <item>
+                <widget class="QComboBox" name="_planningType" >
+                 <item>
+                  <property name="text" >
+                   <string>MRP</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text" >
+                   <string>MPS</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text" >
+                   <string>None</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item>
+                <spacer>
+                 <property name="orientation" >
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" >
+                  <size>
+                   <width>0</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
              </item>
             </layout>
            </item>
@@ -564,8 +607,8 @@
              </property>
              <property name="sizeHint" >
               <size>
-               <width>0</width>
-               <height>20</height>
+               <width>16</width>
+               <height>123</height>
               </size>
              </property>
             </spacer>
@@ -1875,48 +1918,55 @@
   <tabstop>_pickListItem</tabstop>
   <tabstop>_fractional</tabstop>
   <tabstop>_configured</tabstop>
+  <tabstop>_freightClass</tabstop>
   <tabstop>_planningType</tabstop>
   <tabstop>_sold</tabstop>
   <tabstop>_prodcat</tabstop>
   <tabstop>_exclusive</tabstop>
-  <tabstop>_upcCode</tabstop>
+  <tabstop>_warranty</tabstop>
   <tabstop>_listprice</tabstop>
   <tabstop>_priceUOM</tabstop>
-  <tabstop>_warranty</tabstop>
+  <tabstop>_upcCode</tabstop>
   <tabstop>_prodWeight</tabstop>
   <tabstop>_packWeight</tabstop>
   <tabstop>_tab</tabstop>
+  <tabstop>_notesButton</tabstop>
   <tabstop>_notes</tabstop>
+  <tabstop>_extDescripButton</tabstop>
   <tabstop>_extDescription</tabstop>
-  <tabstop>_uomconv</tabstop>
-  <tabstop>_newUOM</tabstop>
-  <tabstop>_editUOM</tabstop>
-  <tabstop>_deleteUOM</tabstop>
+  <tabstop>_commentsButton</tabstop>
+  <tabstop>_comments</tabstop>
   <tabstop>_charass</tabstop>
   <tabstop>_newCharacteristic</tabstop>
   <tabstop>_editCharacteristic</tabstop>
   <tabstop>_deleteCharacteristic</tabstop>
+  <tabstop>_uomconv</tabstop>
+  <tabstop>_newUOM</tabstop>
+  <tabstop>_editUOM</tabstop>
+  <tabstop>_deleteUOM</tabstop>
   <tabstop>_itemSite</tabstop>
   <tabstop>_newItemSite</tabstop>
   <tabstop>_editItemSite</tabstop>
   <tabstop>_viewItemSite</tabstop>
   <tabstop>_deleteItemSite</tabstop>
+  <tabstop>_itemsrc</tabstop>
+  <tabstop>_newSrc</tabstop>
+  <tabstop>_editSrc</tabstop>
+  <tabstop>_viewSrc</tabstop>
+  <tabstop>_deleteSrc</tabstop>
   <tabstop>_itemtax</tabstop>
   <tabstop>_itemtaxNew</tabstop>
   <tabstop>_itemtaxEdit</tabstop>
   <tabstop>_itemtaxDelete</tabstop>
-  <tabstop>_comments</tabstop>
+  <tabstop>_aliasesButton</tabstop>
+  <tabstop>_substitutesButton</tabstop>
+  <tabstop>_transformationsButton</tabstop>
   <tabstop>_itemalias</tabstop>
   <tabstop>_newAlias</tabstop>
   <tabstop>_editAlias</tabstop>
   <tabstop>_deleteAlias</tabstop>
-  <tabstop>_itemsub</tabstop>
-  <tabstop>_newSubstitute</tabstop>
-  <tabstop>_editSubstitute</tabstop>
-  <tabstop>_deleteSubstitute</tabstop>
-  <tabstop>_itemtrans</tabstop>
-  <tabstop>_newTransform</tabstop>
-  <tabstop>_deleteTransform</tabstop>
+  <tabstop>_imagesButton</tabstop>
+  <tabstop>_filesButton</tabstop>
   <tabstop>_itemimage</tabstop>
   <tabstop>_newImage</tabstop>
   <tabstop>_editImage</tabstop>
@@ -1930,12 +1980,19 @@
   <tabstop>_deleteFile</tabstop>
   <tabstop>_openFile</tabstop>
   <tabstop>_save</tabstop>
-  <tabstop>_close</tabstop>
   <tabstop>_print</tabstop>
+  <tabstop>_close</tabstop>
   <tabstop>_boo</tabstop>
   <tabstop>_bom</tabstop>
   <tabstop>_site</tabstop>
   <tabstop>_workbench</tabstop>
+  <tabstop>_itemsub</tabstop>
+  <tabstop>_editSubstitute</tabstop>
+  <tabstop>_deleteSubstitute</tabstop>
+  <tabstop>_deleteTransform</tabstop>
+  <tabstop>_itemtrans</tabstop>
+  <tabstop>_newTransform</tabstop>
+  <tabstop>_newSubstitute</tabstop>
  </tabstops>
  <resources/>
  <connections>
@@ -1962,12 +2019,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>41</x>
-     <y>556</y>
+     <x>387</x>
+     <y>738</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>679</x>
-     <y>480</y>
+     <x>486</x>
+     <y>738</y>
     </hint>
    </hints>
   </connection>
@@ -1978,12 +2035,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>41</x>
-     <y>556</y>
+     <x>387</x>
+     <y>738</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>679</x>
-     <y>555</y>
+     <x>486</x>
+     <y>738</y>
     </hint>
    </hints>
   </connection>
@@ -1998,8 +2055,8 @@
      <y>557</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>764</x>
-     <y>414</y>
+     <x>800</x>
+     <y>506</y>
     </hint>
    </hints>
   </connection>
@@ -2014,8 +2071,8 @@
      <y>503</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>764</x>
-     <y>414</y>
+     <x>800</x>
+     <y>506</y>
     </hint>
    </hints>
   </connection>
@@ -2030,8 +2087,8 @@
      <y>532</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>764</x>
-     <y>414</y>
+     <x>800</x>
+     <y>506</y>
     </hint>
    </hints>
   </connection>
@@ -2042,12 +2099,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>648</x>
-     <y>435</y>
+     <x>328</x>
+     <y>547</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>732</x>
-     <y>435</y>
+     <x>787</x>
+     <y>536</y>
     </hint>
    </hints>
   </connection>
@@ -2058,12 +2115,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>656</x>
-     <y>462</y>
+     <x>336</x>
+     <y>547</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>702</x>
-     <y>461</y>
+     <x>787</x>
+     <y>554</y>
     </hint>
    </hints>
   </connection>
@@ -2074,12 +2131,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>642</x>
-     <y>444</y>
+     <x>334</x>
+     <y>547</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>700</x>
-     <y>440</y>
+     <x>787</x>
+     <y>546</y>
     </hint>
    </hints>
   </connection>
@@ -2090,12 +2147,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>665</x>
-     <y>442</y>
+     <x>357</x>
+     <y>547</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>716</x>
-     <y>436</y>
+     <x>787</x>
+     <y>536</y>
     </hint>
    </hints>
   </connection>
@@ -2106,12 +2163,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>656</x>
-     <y>466</y>
+     <x>348</x>
+     <y>547</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>704</x>
-     <y>466</y>
+     <x>787</x>
+     <y>554</y>
     </hint>
    </hints>
   </connection>
@@ -2122,12 +2179,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>651</x>
-     <y>438</y>
+     <x>431</x>
+     <y>726</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>687</x>
-     <y>438</y>
+     <x>541</x>
+     <y>750</y>
     </hint>
    </hints>
   </connection>
@@ -2138,12 +2195,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>664</x>
-     <y>462</y>
+     <x>431</x>
+     <y>726</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>688</x>
-     <y>463</y>
+     <x>541</x>
+     <y>750</y>
     </hint>
    </hints>
   </connection>
@@ -2154,12 +2211,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>640</x>
-     <y>483</y>
+     <x>431</x>
+     <y>726</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>704</x>
-     <y>488</y>
+     <x>541</x>
+     <y>750</y>
     </hint>
    </hints>
   </connection>
@@ -2170,12 +2227,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>631</x>
-     <y>509</y>
+     <x>431</x>
+     <y>726</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>723</x>
-     <y>506</y>
+     <x>541</x>
+     <y>750</y>
     </hint>
    </hints>
   </connection>
@@ -2186,12 +2243,12 @@
    <slot>animateClick()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>643</x>
-     <y>451</y>
+     <x>335</x>
+     <y>547</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>690</x>
-     <y>449</y>
+     <x>787</x>
+     <y>536</y>
     </hint>
    </hints>
   </connection>
@@ -2202,12 +2259,12 @@
    <slot>animateClick()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>647</x>
-     <y>444</y>
+     <x>327</x>
+     <y>547</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>688</x>
-     <y>447</y>
+     <x>787</x>
+     <y>536</y>
     </hint>
    </hints>
   </connection>
@@ -2218,12 +2275,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>655</x>
-     <y>437</y>
+     <x>486</x>
+     <y>738</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>706</x>
-     <y>441</y>
+     <x>486</x>
+     <y>738</y>
     </hint>
    </hints>
   </connection>
@@ -2234,12 +2291,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>657</x>
-     <y>488</y>
+     <x>486</x>
+     <y>738</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>714</x>
-     <y>488</y>
+     <x>486</x>
+     <y>738</y>
     </hint>
    </hints>
   </connection>
@@ -2250,12 +2307,12 @@
    <slot>animateClick()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>644</x>
-     <y>451</y>
+     <x>486</x>
+     <y>738</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>702</x>
-     <y>451</y>
+     <x>486</x>
+     <y>738</y>
     </hint>
    </hints>
   </connection>
