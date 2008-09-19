@@ -59,11 +59,11 @@
 #define DSPOPERATIONSBYWORKCENTER_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspOperationsByWorkCenter.h"
 
-class dspOperationsByWorkCenter : public XMainWindow, public Ui::dspOperationsByWorkCenter
+class dspOperationsByWorkCenter : public XWidget, public Ui::dspOperationsByWorkCenter
 {
     Q_OBJECT
 

@@ -60,7 +60,7 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <QVariant>
 
 #include "dspItemCostDetail.h"
@@ -72,11 +72,11 @@
  *
  */
 maintainItemCosts::maintainItemCosts(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
     setupUi(this);
 
-    (void)statusBar();
+//    (void)statusBar();
 
     // signals and slots connections
     connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
@@ -88,7 +88,7 @@ maintainItemCosts::maintainItemCosts(QWidget* parent, const char* name, Qt::WFla
     connect(_itemcost, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
     connect(_itemcost, SIGNAL(itemSelectionChanged()), this, SLOT(sSelectionChanged()));
 
-    statusBar()->hide();
+//    statusBar()->hide();
     
     _itemcost->addColumn(tr("Element"),     -1,           Qt::AlignLeft   );
     _itemcost->addColumn(tr("Lower"),       _costColumn,  Qt::AlignCenter );

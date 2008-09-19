@@ -60,11 +60,11 @@
 
 #include "guiclient.h"
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_reconcileBankaccount.h"
 
-class reconcileBankaccount : public XMainWindow, public Ui::reconcileBankaccount
+class reconcileBankaccount : public XWidget, public Ui::reconcileBankaccount
 {
     Q_OBJECT
 

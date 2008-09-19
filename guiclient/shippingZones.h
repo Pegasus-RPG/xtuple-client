@@ -58,10 +58,10 @@
 #ifndef SHIPPINGZONES_H
 #define SHIPPINGZONES_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include "ui_shippingZones.h"
 
-class shippingZones : public XMainWindow, public Ui::shippingZones
+class shippingZones : public XWidget, public Ui::shippingZones
 {
     Q_OBJECT
 

@@ -59,11 +59,11 @@
 #define DSPSTANDARDJOURNALHISTORY_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspStandardJournalHistory.h"
 
-class dspStandardJournalHistory : public XMainWindow, public Ui::dspStandardJournalHistory
+class dspStandardJournalHistory : public XWidget, public Ui::dspStandardJournalHistory
 {
     Q_OBJECT
 

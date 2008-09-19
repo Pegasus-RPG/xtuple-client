@@ -59,12 +59,12 @@
 #define DSPSALESHISTORYBYBILLTONAME_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspSalesHistoryByBilltoName.h"
 
-class dspSalesHistoryByBilltoName : public XMainWindow, public Ui::dspSalesHistoryByBilltoName
+class dspSalesHistoryByBilltoName : public XWidget, public Ui::dspSalesHistoryByBilltoName
 {
     Q_OBJECT
 

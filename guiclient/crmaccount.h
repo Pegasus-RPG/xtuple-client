@@ -59,11 +59,11 @@
 #define CRMACCOUNT_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <QStandardItemModel>
 #include "ui_crmaccount.h"
 
-class crmaccount : public XMainWindow, public Ui::crmaccount
+class crmaccount : public XWidget, public Ui::crmaccount
 {
     Q_OBJECT
 

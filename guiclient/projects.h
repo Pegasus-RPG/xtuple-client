@@ -59,10 +59,10 @@
 #define PROJECTS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include "ui_projects.h"
 
-class projects : public XMainWindow, public Ui::projects
+class projects : public XWidget, public Ui::projects
 {
     Q_OBJECT
 

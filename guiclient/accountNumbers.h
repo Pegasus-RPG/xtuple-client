@@ -60,11 +60,11 @@
 
 #include "guiclient.h"
 #include <parameter.h>
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_accountNumbers.h"
 
-class accountNumbers : public XMainWindow, public Ui::accountNumbers
+class accountNumbers : public XWidget, public Ui::accountNumbers
 {
     Q_OBJECT
 

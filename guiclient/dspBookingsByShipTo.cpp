@@ -59,7 +59,7 @@
 
 #include <QVariant>
 #include <QMessageBox>
-#include <QStatusBar>
+//#include <QStatusBar>
 
 #include <metasql.h>
 #include "mqlutil.h"
@@ -72,11 +72,11 @@
  *
  */
 dspBookingsByShipTo::dspBookingsByShipTo(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
+//  (void)statusBar();
 
   // signals and slots connections
   connect(_cust, SIGNAL(newId(int)), _shipTo, SLOT(setCustid(int)));
@@ -85,7 +85,7 @@ dspBookingsByShipTo::dspBookingsByShipTo(QWidget* parent, const char* name, Qt::
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_shipTo, SIGNAL(newCustid(int)), _cust, SLOT(setSilentId(int)));
 
-  statusBar()->hide();
+//  statusBar()->hide();
 
   _productCategory->setType(ParameterGroup::ProductCategory);
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);

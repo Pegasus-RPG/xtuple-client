@@ -59,11 +59,11 @@
 #define DSPTIMEPHASEDUSAGESTATISTICSBYITEM_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspTimePhasedUsageStatisticsByItem.h"
 
-class dspTimePhasedUsageStatisticsByItem : public XMainWindow, public Ui::dspTimePhasedUsageStatisticsByItem
+class dspTimePhasedUsageStatisticsByItem : public XWidget, public Ui::dspTimePhasedUsageStatisticsByItem
 {
     Q_OBJECT
 

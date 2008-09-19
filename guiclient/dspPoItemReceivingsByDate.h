@@ -58,11 +58,11 @@
 #ifndef DSPPOITEMRECEIVINGSBYDATE_H
 #define DSPPOITEMRECEIVINGSBYDATE_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspPoItemReceivingsByDate.h"
 
-class dspPoItemReceivingsByDate : public XMainWindow, public Ui::dspPoItemReceivingsByDate
+class dspPoItemReceivingsByDate : public XWidget, public Ui::dspPoItemReceivingsByDate
 {
     Q_OBJECT
 

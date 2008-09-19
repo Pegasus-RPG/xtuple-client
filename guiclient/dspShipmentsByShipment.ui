@@ -1,6 +1,6 @@
 <ui version="4.0" >
  <class>dspShipmentsByShipment</class>
- <widget class="QMainWindow" name="dspShipmentsByShipment" >
+ <widget class="QWidget" name="dspShipmentsByShipment" >
   <property name="enabled" >
    <bool>true</bool>
   </property>
@@ -21,7 +21,6 @@
   <property name="windowTitle" >
    <string>Shipments by Shipment</string>
   </property>
-  <widget class="QWidget" name="widget" >
    <layout class="QVBoxLayout" >
     <item>
      <layout class="QHBoxLayout" >
@@ -322,7 +321,6 @@
      </widget>
     </item>
    </layout>
-  </widget>
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

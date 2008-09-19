@@ -59,7 +59,7 @@
 
 #include <QVariant>
 #include <QMessageBox>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <parameter.h>
 #include <QWorkspace>
 #include "project.h"
@@ -70,11 +70,11 @@
  *
  */
 projects::projects(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
     setupUi(this);
 
-    (void)statusBar();
+//    (void)statusBar();
 
     // signals and slots connections
     connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
@@ -109,7 +109,7 @@ void projects::languageChange()
 
 void projects::init()
 {
-  statusBar()->hide();
+//  statusBar()->hide();
   
   if (_privileges->check("MaintainProjects"))
   {

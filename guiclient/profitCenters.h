@@ -59,10 +59,10 @@
 #define PROFITCENTERS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include "ui_profitCenters.h"
 
-class profitCenters : public XMainWindow, public Ui::profitCenters
+class profitCenters : public XWidget, public Ui::profitCenters
 {
     Q_OBJECT
 

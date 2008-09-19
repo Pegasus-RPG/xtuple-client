@@ -59,11 +59,11 @@
 #define DSPVALIDLOCATIONSBYITEM_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspValidLocationsByItem.h"
 
-class dspValidLocationsByItem : public XMainWindow, public Ui::dspValidLocationsByItem
+class dspValidLocationsByItem : public XWidget, public Ui::dspValidLocationsByItem
 {
     Q_OBJECT
 

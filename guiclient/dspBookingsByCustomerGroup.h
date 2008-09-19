@@ -59,12 +59,12 @@
 #define DSPBOOKINGSBYCUSTOMERGROUP_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspBookingsByCustomerGroup.h"
 
-class dspBookingsByCustomerGroup : public XMainWindow, public Ui::dspBookingsByCustomerGroup
+class dspBookingsByCustomerGroup : public XWidget, public Ui::dspBookingsByCustomerGroup
 {
     Q_OBJECT
 

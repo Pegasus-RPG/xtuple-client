@@ -58,12 +58,12 @@
 #ifndef ERRORLOG_H
 #define ERRORLOG_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <xsqlquery.h>
 
 #include "ui_errorLog.h"
 
-class errorLog : public XMainWindow, public Ui::errorLog
+class errorLog : public XWidget, public Ui::errorLog
 {
     Q_OBJECT
 

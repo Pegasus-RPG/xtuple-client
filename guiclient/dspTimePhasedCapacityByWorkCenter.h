@@ -58,12 +58,12 @@
 #ifndef DSPTIMEPHASEDCAPACITYBYWORKCENTER_H
 #define DSPTIMEPHASEDCAPACITYBYWORKCENTER_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <QList>
 
 #include "ui_dspTimePhasedCapacityByWorkCenter.h"
 
-class dspTimePhasedCapacityByWorkCenter : public XMainWindow, public Ui::dspTimePhasedCapacityByWorkCenter
+class dspTimePhasedCapacityByWorkCenter : public XWidget, public Ui::dspTimePhasedCapacityByWorkCenter
 {
     Q_OBJECT
 

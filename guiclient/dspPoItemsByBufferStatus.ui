@@ -1,6 +1,6 @@
 <ui version="4.0" >
  <class>dspPoItemsByBufferStatus</class>
- <widget class="QMainWindow" name="dspPoItemsByBufferStatus" >
+ <widget class="QWidget" name="dspPoItemsByBufferStatus" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -12,14 +12,7 @@
   <property name="windowTitle" >
    <string>P/O Items by Buffer Status</string>
   </property>
-  <widget class="QWidget" name="widget" >
    <layout class="QGridLayout" >
-    <property name="margin" >
-     <number>5</number>
-    </property>
-    <property name="spacing" >
-     <number>5</number>
-    </property>
     <item row="2" column="0" colspan="3" >
      <layout class="QVBoxLayout" >
       <property name="margin" >
@@ -324,7 +317,6 @@
      </spacer>
     </item>
    </layout>
-  </widget>
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

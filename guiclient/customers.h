@@ -59,11 +59,11 @@
 #define CUSTOMERS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_customers.h"
 
-class customers : public XMainWindow, public Ui::customers
+class customers : public XWidget, public Ui::customers
 {
     Q_OBJECT
 

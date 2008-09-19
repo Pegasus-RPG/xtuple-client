@@ -1,6 +1,6 @@
 <ui version="4.0" >
  <class>materialReceiptTrans</class>
- <widget class="QMainWindow" name="materialReceiptTrans" >
+ <widget class="QWidget" name="materialReceiptTrans" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -12,15 +12,6 @@
   <property name="windowTitle" >
    <string>Material Receipt Transaction</string>
   </property>
-  <widget class="QWidget" name="widget" >
-   <property name="geometry" >
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>467</width>
-     <height>549</height>
-    </rect>
-   </property>
    <layout class="QVBoxLayout" name="verticalLayout_3" >
     <item>
      <layout class="QHBoxLayout" >
@@ -579,7 +570,6 @@
      </widget>
     </item>
    </layout>
-  </widget>
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

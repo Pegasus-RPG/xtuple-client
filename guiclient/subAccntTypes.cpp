@@ -61,7 +61,7 @@
 #include <qmessagebox.h>
 #include "subAccntType.h"
 #include <openreports.h>
-#include <qstatusbar.h>
+//#include <qstatusbar.h>
 
 /*
  *  Constructs a subAccntTypes as a child of 'parent', with the
@@ -69,11 +69,11 @@
  *
  */
 subAccntTypes::subAccntTypes(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
     setupUi(this);
 
-    (void)statusBar();
+//    (void)statusBar();
 
     // signals and slots connections
     connect(_subaccnttypes, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
@@ -107,7 +107,7 @@ void subAccntTypes::languageChange()
 
 void subAccntTypes::init()
 {
-  statusBar()->hide();
+//  statusBar()->hide();
 
   _subaccnttypes->addColumn(tr("Code"),        70, Qt::AlignLeft );
   _subaccnttypes->addColumn(tr("Type"),        50, Qt::AlignLeft );

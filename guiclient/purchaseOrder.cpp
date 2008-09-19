@@ -61,7 +61,7 @@
 #include <QList>
 #include <QMessageBox>
 #include <QSqlError>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <QValidator>
 #include <QVariant>
 
@@ -77,11 +77,11 @@
 #define cClose  0x02
 
 purchaseOrder::purchaseOrder(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
+//  (void)statusBar();
 
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
@@ -1105,7 +1105,7 @@ void purchaseOrder::closeEvent(QCloseEvent *pEvent)
       sQESave();
   }
 
-  XMainWindow::closeEvent(pEvent);
+  XWidget::closeEvent(pEvent);
 }
 
 bool purchaseOrder::sQESave()

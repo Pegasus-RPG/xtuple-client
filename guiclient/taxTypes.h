@@ -59,10 +59,10 @@
 #define TAXTYPES_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include "ui_taxTypes.h"
 
-class taxTypes : public XMainWindow, public Ui::taxTypes
+class taxTypes : public XWidget, public Ui::taxTypes
 {
     Q_OBJECT
 

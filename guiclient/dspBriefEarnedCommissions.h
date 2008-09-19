@@ -59,11 +59,11 @@
 #define DSPBRIEFEARNEDCOMMISSIONS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspBriefEarnedCommissions.h"
 
-class dspBriefEarnedCommissions : public XMainWindow, public Ui::dspBriefEarnedCommissions
+class dspBriefEarnedCommissions : public XWidget, public Ui::dspBriefEarnedCommissions
 {
     Q_OBJECT
 

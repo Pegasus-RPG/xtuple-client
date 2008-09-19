@@ -1,6 +1,6 @@
 <ui version="4.0" >
  <class>enterPoReturn</class>
- <widget class="QMainWindow" name="enterPoReturn" >
+ <widget class="QWidget" name="enterPoReturn" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -12,14 +12,7 @@
   <property name="windowTitle" >
    <string>Enter Purchase Order Returns</string>
   </property>
-  <widget class="QWidget" name="widget" >
    <layout class="QVBoxLayout" >
-    <property name="margin" >
-     <number>9</number>
-    </property>
-    <property name="spacing" >
-     <number>6</number>
-    </property>
     <item>
      <layout class="QHBoxLayout" >
       <property name="margin" >
@@ -295,7 +288,6 @@
      </layout>
     </item>
    </layout>
-  </widget>
  </widget>
  <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

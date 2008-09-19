@@ -58,11 +58,11 @@
 #ifndef BANKADJUSTMENTEDITLIST_H
 #define BANKADJUSTMENTEDITLIST_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_bankAdjustmentEditList.h"
 
-class bankAdjustmentEditList : public XMainWindow, public Ui::bankAdjustmentEditList
+class bankAdjustmentEditList : public XWidget, public Ui::bankAdjustmentEditList
 {
     Q_OBJECT
 

@@ -58,12 +58,12 @@
 #ifndef DSPTIMEPHASEDLOADBYWORKCENTER_H
 #define DSPTIMEPHASEDLOADBYWORKCENTER_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <QList>
 
 #include "ui_dspTimePhasedLoadByWorkCenter.h"
 
-class dspTimePhasedLoadByWorkCenter : public XMainWindow, public Ui::dspTimePhasedLoadByWorkCenter
+class dspTimePhasedLoadByWorkCenter : public XWidget, public Ui::dspTimePhasedLoadByWorkCenter
 {
     Q_OBJECT
 

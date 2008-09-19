@@ -60,12 +60,12 @@
 
 #include "guiclient.h"
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <QMenu>
 
 #include "ui_dspARApplications.h"
 
-class dspARApplications : public XMainWindow, public Ui::dspARApplications
+class dspARApplications : public XWidget, public Ui::dspARApplications
 {
     Q_OBJECT
 

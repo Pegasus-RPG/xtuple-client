@@ -59,12 +59,12 @@
 #define DSPBOOKINGSBYSHIPTO_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspBookingsByShipTo.h"
 
-class dspBookingsByShipTo : public XMainWindow, public Ui::dspBookingsByShipTo
+class dspBookingsByShipTo : public XWidget, public Ui::dspBookingsByShipTo
 {
     Q_OBJECT
 

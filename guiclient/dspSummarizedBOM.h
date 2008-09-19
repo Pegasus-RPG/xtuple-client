@@ -59,12 +59,12 @@
 #define DSPSUMMARIZEDBOM_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspSummarizedBOM.h"
 
-class dspSummarizedBOM : public XMainWindow, public Ui::dspSummarizedBOM
+class dspSummarizedBOM : public XWidget, public Ui::dspSummarizedBOM
 {
     Q_OBJECT
 

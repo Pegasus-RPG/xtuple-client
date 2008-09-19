@@ -1,6 +1,6 @@
 <ui version="4.0" >
  <class>fixACL</class>
- <widget class="QMainWindow" name="fixACL" >
+ <widget class="QWidget" name="fixACL" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -12,7 +12,6 @@
   <property name="windowTitle" >
    <string>Fix Access Control</string>
   </property>
-  <widget class="QWidget" name="widget" >
    <layout class="QGridLayout" >
     <item row="0" column="1" >
      <widget class="QPushButton" name="_close" >
@@ -60,7 +59,6 @@ Click the "Fix" button to try to correct database-level permissions problems. Th
      </widget>
     </item>
    </layout>
-  </widget>
  </widget>
  <resources/>
  <connections>

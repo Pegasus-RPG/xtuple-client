@@ -59,11 +59,11 @@
 #define SALESCATEGORIES_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 #include "ui_salesCategories.h"
 
-class salesCategories : public XMainWindow, public Ui::salesCategories
+class salesCategories : public XWidget, public Ui::salesCategories
 {
     Q_OBJECT
 

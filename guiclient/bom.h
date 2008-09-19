@@ -59,12 +59,12 @@
 #define BOM_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_bom.h"
 
-class BOM : public XMainWindow, public Ui::BOM
+class BOM : public XWidget, public Ui::BOM
 {
     Q_OBJECT
 

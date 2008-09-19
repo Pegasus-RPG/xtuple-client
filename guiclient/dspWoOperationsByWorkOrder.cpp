@@ -59,7 +59,7 @@
 
 #include <QVariant>
 #include <QMessageBox>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <QMenu>
 #include <openreports.h>
 #include "inputManager.h"
@@ -71,11 +71,11 @@
  *
  */
 dspWoOperationsByWorkOrder::dspWoOperationsByWorkOrder(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
+//  (void)statusBar();
 
   // signals and slots connections
   connect(_wo, SIGNAL(newId(int)), this, SLOT(sFillList()));

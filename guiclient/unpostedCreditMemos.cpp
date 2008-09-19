@@ -60,7 +60,7 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <QVariant>
 #include <QWorkspace>
 
@@ -75,11 +75,11 @@
 #include "storedProcErrorLookup.h"
 
 unpostedCreditMemos::unpostedCreditMemos(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
     setupUi(this);
 
-    (void)statusBar();
+//    (void)statusBar();
 
     connect(_cmhead, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
@@ -89,7 +89,7 @@ unpostedCreditMemos::unpostedCreditMemos(QWidget* parent, const char* name, Qt::
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
     connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
 
-    statusBar()->hide();
+//    statusBar()->hide();
     
     _cmhead->addColumn(tr("C/M #"),     _orderColumn, Qt::AlignLeft   );
     _cmhead->addColumn(tr("Prnt'd"),    _orderColumn, Qt::AlignCenter );

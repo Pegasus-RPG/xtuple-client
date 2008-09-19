@@ -63,7 +63,7 @@
 #include <QDropEvent>
 #include <QMessageBox>
 #include <QSqlError>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <QVariant>
 
 #include <metasql.h>
@@ -81,7 +81,7 @@
 #define	TYPE_COL 1	// must match _pack->addColumn for "Type"
 
 packingListBatch::packingListBatch(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 

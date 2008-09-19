@@ -58,10 +58,10 @@
 #ifndef GROUPS_H
 #define GROUPS_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include "ui_groups.h"
 
-class groups : public XMainWindow, public Ui::groups
+class groups : public XWidget, public Ui::groups
 {
     Q_OBJECT
 

@@ -59,11 +59,11 @@
 #define SCRAPTRANS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 #include "ui_scrapTrans.h"
 
-class scrapTrans : public XMainWindow, public Ui::scrapTrans
+class scrapTrans : public XWidget, public Ui::scrapTrans
 {
     Q_OBJECT
 

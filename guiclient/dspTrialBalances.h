@@ -59,12 +59,12 @@
 #define DSPTRIALBALANCES_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspTrialBalances.h"
 
-class dspTrialBalances : public XMainWindow, public Ui::dspTrialBalances
+class dspTrialBalances : public XWidget, public Ui::dspTrialBalances
 {
     Q_OBJECT
 

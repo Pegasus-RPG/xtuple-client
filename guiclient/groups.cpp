@@ -59,7 +59,7 @@
 
 #include <QVariant>
 #include <QMessageBox>
-#include <QStatusBar>
+//#include <QStatusBar>
 
 #include <parameter.h>
 #include <openreports.h>
@@ -72,11 +72,11 @@
  *
  */
 groups::groups(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
+//  (void)statusBar();
 
   // signals and slots connections
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
@@ -85,7 +85,7 @@ groups::groups(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
 
-  statusBar()->hide();
+//  statusBar()->hide();
   _print->hide();
   
   

@@ -59,11 +59,11 @@
 #define DSPSUMMARIZEDSALESBYCUSTOMERTYPE_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspSummarizedSalesByCustomerType.h"
 
-class dspSummarizedSalesByCustomerType : public XMainWindow, public Ui::dspSummarizedSalesByCustomerType
+class dspSummarizedSalesByCustomerType : public XWidget, public Ui::dspSummarizedSalesByCustomerType
 {
     Q_OBJECT
 

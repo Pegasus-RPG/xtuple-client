@@ -58,11 +58,11 @@
 #ifndef CUSTOMERGROUPS_H
 #define CUSTOMERGROUPS_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_customerGroups.h"
 
-class customerGroups : public XMainWindow, public Ui::customerGroups
+class customerGroups : public XWidget, public Ui::customerGroups
 {
     Q_OBJECT
 

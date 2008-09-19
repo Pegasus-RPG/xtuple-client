@@ -59,11 +59,11 @@
 #define CUSTOMERFORMASSIGNMENTS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_customerFormAssignments.h"
 
-class customerFormAssignments : public XMainWindow, public Ui::customerFormAssignments
+class customerFormAssignments : public XWidget, public Ui::customerFormAssignments
 {
     Q_OBJECT
 

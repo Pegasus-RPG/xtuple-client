@@ -1,6 +1,6 @@
 <ui version="4.0" >
  <class>dspSlowMovingInventoryByClassCode</class>
- <widget class="QMainWindow" name="dspSlowMovingInventoryByClassCode" >
+ <widget class="QWidget" name="dspSlowMovingInventoryByClassCode" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -12,15 +12,6 @@
   <property name="windowTitle" >
    <string>Slow Moving Inventory</string>
   </property>
-  <widget class="QWidget" name="widget" >
-   <property name="geometry" >
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>772</width>
-     <height>394</height>
-    </rect>
-   </property>
    <layout class="QVBoxLayout" name="verticalLayout_2" >
     <item>
      <layout class="QHBoxLayout" >
@@ -414,7 +405,6 @@
      </widget>
     </item>
    </layout>
-  </widget>
  </widget>
  <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

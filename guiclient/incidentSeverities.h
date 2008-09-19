@@ -59,11 +59,11 @@
 #define INCIDENTSEVERITIES_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 #include "ui_incidentSeverities.h"
 
-class incidentSeverities : public XMainWindow, public Ui::incidentSeverities
+class incidentSeverities : public XWidget, public Ui::incidentSeverities
 {
     Q_OBJECT
 

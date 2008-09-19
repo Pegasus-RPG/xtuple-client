@@ -58,7 +58,7 @@
 #include "classCodes.h"
 
 #include <QVariant>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <QMessageBox>
 #include <parameter.h>
 #include <openreports.h>
@@ -70,11 +70,11 @@
  *
  */
 classCodes::classCodes(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
+//  (void)statusBar();
 
   // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
@@ -86,7 +86,7 @@ classCodes::classCodes(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
   connect(_classcode, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
 
-  statusBar()->hide();
+//  statusBar()->hide();
   
   if (_privileges->check("MaintainClassCodes"))
   {

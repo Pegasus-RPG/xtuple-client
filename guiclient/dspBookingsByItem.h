@@ -59,12 +59,12 @@
 #define DSPBOOKINGSBYITEM_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspBookingsByItem.h"
 
-class dspBookingsByItem : public XMainWindow, public Ui::dspBookingsByItem
+class dspBookingsByItem : public XWidget, public Ui::dspBookingsByItem
 {
     Q_OBJECT
 

@@ -59,11 +59,11 @@
 #define WAREHOUSES_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 #include "ui_warehouses.h"
 
-class warehouses : public XMainWindow, public Ui::warehouses
+class warehouses : public XWidget, public Ui::warehouses
 {
     Q_OBJECT
 

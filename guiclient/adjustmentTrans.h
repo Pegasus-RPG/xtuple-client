@@ -59,12 +59,12 @@
 #define ADJUSTMENTTRANS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_adjustmentTrans.h"
 
-class adjustmentTrans : public XMainWindow, public Ui::adjustmentTrans
+class adjustmentTrans : public XWidget, public Ui::adjustmentTrans
 {
     Q_OBJECT
 

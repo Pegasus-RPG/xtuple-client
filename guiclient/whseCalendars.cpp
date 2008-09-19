@@ -58,7 +58,7 @@
 #include "whseCalendars.h"
 
 #include <QVariant>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <QMessageBox>
 #include <parameter.h>
 #include <openreports.h>
@@ -70,11 +70,11 @@
  *
  */
 whseCalendars::whseCalendars(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
+//  (void)statusBar();
 
   // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
@@ -83,7 +83,7 @@ whseCalendars::whseCalendars(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
 
-  statusBar()->hide();
+//  statusBar()->hide();
   
   if (_privileges->check("MaintainWarehouseCalendarExceptions"))
   {

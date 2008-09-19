@@ -3,7 +3,7 @@
  <comment></comment>
  <exportmacro></exportmacro>
  <class>dspWoMaterialsByWorkOrder</class>
- <widget class="QMainWindow" name="dspWoMaterialsByWorkOrder" >
+ <widget class="QWidget" name="dspWoMaterialsByWorkOrder" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -15,14 +15,7 @@
   <property name="windowTitle" >
    <string>W/O Material Requirements By Work Order</string>
   </property>
-  <widget class="QWidget" name="widget" >
    <layout class="QVBoxLayout" >
-    <property name="margin" >
-     <number>5</number>
-    </property>
-    <property name="spacing" >
-     <number>5</number>
-    </property>
     <item>
      <layout class="QHBoxLayout" >
       <property name="margin" >
@@ -128,7 +121,6 @@
      </layout>
     </item>
    </layout>
-  </widget>
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

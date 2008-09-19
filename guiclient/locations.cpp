@@ -62,7 +62,7 @@
 #include <qworkspace.h>
 #include <openreports.h>
 #include <parameter.h>
-#include <qstatusbar.h>
+//#include <qstatusbar.h>
 #include "location.h"
 
 /*
@@ -71,11 +71,11 @@
  *
  */
 locations::locations(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
     setupUi(this);
 
-    (void)statusBar();
+//    (void)statusBar();
 
     // signals and slots connections
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
@@ -109,7 +109,7 @@ void locations::languageChange()
 
 void locations::init()
 {
-  statusBar()->hide();
+//  statusBar()->hide();
   
   _location->addColumn(tr("Site"),        _whsColumn,  Qt::AlignCenter, true,  "warehous_code" );
   _location->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft,   true,  "name"   );

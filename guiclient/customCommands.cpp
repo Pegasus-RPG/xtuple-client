@@ -65,11 +65,11 @@
 #include "guiclient.h"
 
 customCommands::customCommands(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
+//  (void)statusBar();
 
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));

@@ -58,11 +58,11 @@
 #ifndef DSPITEMSITESBYITEM_H
 #define DSPITEMSITESBYITEM_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspItemSitesByItem.h"
 
-class dspItemSitesByItem : public XMainWindow, public Ui::dspItemSitesByItem
+class dspItemSitesByItem : public XWidget, public Ui::dspItemSitesByItem
 {
     Q_OBJECT
 

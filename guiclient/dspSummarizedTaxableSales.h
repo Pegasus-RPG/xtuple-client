@@ -59,11 +59,11 @@
 #define DSPSUMMARIZEDTAXABLESALES_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 #include "ui_dspSummarizedTaxableSales.h"
 
-class dspSummarizedTaxableSales : public XMainWindow, public Ui::dspSummarizedTaxableSales
+class dspSummarizedTaxableSales : public XWidget, public Ui::dspSummarizedTaxableSales
 {
     Q_OBJECT
 

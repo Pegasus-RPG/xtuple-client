@@ -59,12 +59,12 @@
 #define MASSEXPIRECOMPONENT_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_massExpireComponent.h"
 
-class massExpireComponent : public XMainWindow, public Ui::massExpireComponent
+class massExpireComponent : public XWidget, public Ui::massExpireComponent
 {
     Q_OBJECT
 

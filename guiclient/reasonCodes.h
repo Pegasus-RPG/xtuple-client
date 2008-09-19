@@ -59,11 +59,11 @@
 #define REASONCODES_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 #include "ui_reasonCodes.h"
 
-class reasonCodes : public XMainWindow, public Ui::reasonCodes
+class reasonCodes : public XWidget, public Ui::reasonCodes
 {
     Q_OBJECT
 

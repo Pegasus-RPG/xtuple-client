@@ -59,12 +59,12 @@
 #define DSPINCIDENTSBYCRMACCOUNT_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspIncidentsByCRMAccount.h"
 
-class dspIncidentsByCRMAccount : public XMainWindow, public Ui::dspIncidentsByCRMAccount
+class dspIncidentsByCRMAccount : public XWidget, public Ui::dspIncidentsByCRMAccount
 {
     Q_OBJECT
 

@@ -59,12 +59,12 @@
 #define DSPCOSTEDSINGLELEVELBOM_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspCostedSingleLevelBOM.h"
 
-class dspCostedSingleLevelBOM : public XMainWindow, public Ui::dspCostedSingleLevelBOM
+class dspCostedSingleLevelBOM : public XWidget, public Ui::dspCostedSingleLevelBOM
 {
     Q_OBJECT
 

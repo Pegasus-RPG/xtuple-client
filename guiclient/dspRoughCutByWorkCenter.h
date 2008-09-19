@@ -59,13 +59,13 @@
 #define DSPROUGHCUTBYWORKCENTER_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include <parameter.h>
 
 #include "ui_dspRoughCutByWorkCenter.h"
 
-class dspRoughCutByWorkCenter : public XMainWindow, public Ui::dspRoughCutByWorkCenter
+class dspRoughCutByWorkCenter : public XWidget, public Ui::dspRoughCutByWorkCenter
 {
     Q_OBJECT
 

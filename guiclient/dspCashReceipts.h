@@ -59,12 +59,12 @@
 #define DSPCASHRECEIPTS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspCashReceipts.h"
 
-class dspCashReceipts : public XMainWindow, public Ui::dspCashReceipts
+class dspCashReceipts : public XWidget, public Ui::dspCashReceipts
 {
     Q_OBJECT
 

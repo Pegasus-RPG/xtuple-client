@@ -69,7 +69,7 @@
 #include "mqlutil.h"
 
 opportunityList::opportunityList(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
@@ -115,7 +115,7 @@ opportunityList::opportunityList(QWidget* parent, const char* name, Qt::WFlags f
   else
     connect(_list, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
 
-  statusBar()->hide();
+//  statusBar()->hide();
 
   _list->addColumn(tr("Name"),        _itemColumn,     Qt::AlignLeft );
   _list->addColumn(tr("CRM Acct."),   _userColumn,     Qt::AlignLeft );

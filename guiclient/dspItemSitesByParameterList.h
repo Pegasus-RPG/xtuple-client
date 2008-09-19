@@ -59,12 +59,12 @@
 #define DSPITEMSITESBYPARAMETERLIST_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspItemSitesByParameterList.h"
 
-class dspItemSitesByParameterList : public XMainWindow, public Ui::dspItemSitesByParameterList
+class dspItemSitesByParameterList : public XWidget, public Ui::dspItemSitesByParameterList
 {
     Q_OBJECT
 

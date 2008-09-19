@@ -1,6 +1,6 @@
 <ui version="4.0" >
  <class>unpostedPoReceipts</class>
- <widget class="QMainWindow" name="unpostedPoReceipts" >
+ <widget class="QWidget" name="unpostedPoReceipts" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -12,14 +12,7 @@
   <property name="windowTitle" >
    <string>List Unposted Receipts</string>
   </property>
-  <widget class="QWidget" name="widget" >
    <layout class="QHBoxLayout" >
-    <property name="margin" >
-     <number>5</number>
-    </property>
-    <property name="spacing" >
-     <number>5</number>
-    </property>
     <item>
      <layout class="QVBoxLayout" >
       <property name="margin" >
@@ -201,7 +194,6 @@
      </layout>
     </item>
    </layout>
-  </widget>
  </widget>
  <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

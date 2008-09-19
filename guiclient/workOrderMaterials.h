@@ -59,11 +59,11 @@
 #define WORKORDERMATERIALS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 #include "ui_workOrderMaterials.h"
 
-class workOrderMaterials : public XMainWindow, public Ui::workOrderMaterials
+class workOrderMaterials : public XWidget, public Ui::workOrderMaterials
 {
     Q_OBJECT
 

@@ -3,7 +3,7 @@
   <comment></comment>
   <exportmacro></exportmacro>
   <class>dspVendorAPHistory</class>
-  <widget class="QMainWindow" name="dspVendorAPHistory" >
+  <widget class="QWidget" name="dspVendorAPHistory" >
     <property name="geometry" >
       <rect>
         <x>0</x>
@@ -15,7 +15,6 @@
     <property name="windowTitle" >
       <string>Vendor History</string>
     </property>
-    <widget class="QWidget" >
       <layout class="QVBoxLayout" >
         <item>
           <layout class="QHBoxLayout" >
@@ -245,7 +244,6 @@
           </layout>
         </item>
       </layout>
-    </widget>
   </widget>
   <layoutdefault spacing="5" margin="5" />
   <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

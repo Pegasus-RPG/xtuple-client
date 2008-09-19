@@ -59,7 +59,7 @@
 #define TRANSFERORDER_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "taxCache.h"
@@ -67,7 +67,7 @@
 
 #include "ui_transferOrder.h"
 
-class transferOrder : public XMainWindow, public Ui::transferOrder
+class transferOrder : public XWidget, public Ui::transferOrder
 {
     Q_OBJECT
 

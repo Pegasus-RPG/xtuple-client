@@ -59,7 +59,7 @@
 
 #include <QVariant>
 #include <QMessageBox>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <openreports.h>
 #include "reasonCode.h"
 
@@ -69,11 +69,11 @@
  *
  */
 reasonCodes::reasonCodes(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
     setupUi(this);
 
-    (void)statusBar();
+//    (void)statusBar();
 
     // signals and slots connections
     connect(_rsncode, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
@@ -109,7 +109,7 @@ void reasonCodes::languageChange()
 
 void reasonCodes::init()
 {
-  statusBar()->hide();
+//  statusBar()->hide();
   
   if (_privileges->check("MaintainReasonCodes"))
   {

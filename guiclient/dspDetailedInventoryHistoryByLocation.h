@@ -59,11 +59,11 @@
 #define DSPDETAILEDINVENTORYHISTORYBYLOCATION_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspDetailedInventoryHistoryByLocation.h"
 
-class dspDetailedInventoryHistoryByLocation : public XMainWindow, public Ui::dspDetailedInventoryHistoryByLocation
+class dspDetailedInventoryHistoryByLocation : public XWidget, public Ui::dspDetailedInventoryHistoryByLocation
 {
     Q_OBJECT
 

@@ -59,11 +59,11 @@
 #define DSPBACKLOGBYITEM_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspBacklogByItem.h"
 
-class dspBacklogByItem : public XMainWindow, public Ui::dspBacklogByItem
+class dspBacklogByItem : public XWidget, public Ui::dspBacklogByItem
 {
     Q_OBJECT
 

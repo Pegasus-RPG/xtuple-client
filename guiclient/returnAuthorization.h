@@ -59,14 +59,14 @@
 #define RETURNAUTHORIZATION_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_returnAuthorization.h"
 
 #include "taxCache.h"
 
-class returnAuthorization : public XMainWindow, public Ui::returnAuthorization
+class returnAuthorization : public XWidget, public Ui::returnAuthorization
 {
     Q_OBJECT
 

@@ -58,11 +58,11 @@
 #ifndef CLASSCODES_H
 #define CLASSCODES_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_classCodes.h"
 
-class classCodes : public XMainWindow, public Ui::classCodes
+class classCodes : public XWidget, public Ui::classCodes
 {
     Q_OBJECT
 

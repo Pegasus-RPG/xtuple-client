@@ -59,13 +59,13 @@
 #define CUSTOMER_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <QStandardItemModel>
 #include <parameter.h>
 
 #include "ui_customer.h"
 
-class customer : public XMainWindow, public Ui::customer
+class customer : public XWidget, public Ui::customer
 {
     Q_OBJECT
 

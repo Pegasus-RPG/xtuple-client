@@ -58,7 +58,7 @@
 #include "unappliedAPCreditMemos.h"
 
 #include <QVariant>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <parameter.h>
 #include <openreports.h>
 #include "applyAPCreditMemo.h"
@@ -69,11 +69,11 @@
  *
  */
 unappliedAPCreditMemos::unappliedAPCreditMemos(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
+//  (void)statusBar();
 
   // signals and slots connections
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
@@ -83,7 +83,7 @@ unappliedAPCreditMemos::unappliedAPCreditMemos(QWidget* parent, const char* name
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_apply, SIGNAL(clicked()), this, SLOT(sApply()));
 
-  statusBar()->hide();
+//  statusBar()->hide();
   
   _new->setEnabled(_privileges->check("MaintainAPMemos"));
 

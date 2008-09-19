@@ -59,11 +59,11 @@
 #define COMPANIES_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_companies.h"
 
-class companies : public XMainWindow, public Ui::companies
+class companies : public XWidget, public Ui::companies
 {
     Q_OBJECT
 

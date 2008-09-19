@@ -59,13 +59,13 @@
 #define DSPPOITEMSBYVENDOR_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include <parameter.h>
 
 #include "ui_dspPoItemsByVendor.h"
 
-class dspPoItemsByVendor : public XMainWindow, public Ui::dspPoItemsByVendor
+class dspPoItemsByVendor : public XWidget, public Ui::dspPoItemsByVendor
 {
     Q_OBJECT
 

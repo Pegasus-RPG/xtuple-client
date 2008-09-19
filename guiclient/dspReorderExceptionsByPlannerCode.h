@@ -59,11 +59,11 @@
 #define DSPREORDEREXCEPTIONSBYPLANNERCODE_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspReorderExceptionsByPlannerCode.h"
 
-class dspReorderExceptionsByPlannerCode : public XMainWindow, public Ui::dspReorderExceptionsByPlannerCode
+class dspReorderExceptionsByPlannerCode : public XWidget, public Ui::dspReorderExceptionsByPlannerCode
 {
     Q_OBJECT
 

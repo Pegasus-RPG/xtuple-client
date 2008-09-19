@@ -1,6 +1,6 @@
 <ui version="4.0" >
  <class>dspCostedIndentedBOM</class>
- <widget class="QMainWindow" name="dspCostedIndentedBOM" >
+ <widget class="QWidget" name="dspCostedIndentedBOM" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -12,7 +12,6 @@
   <property name="windowTitle" >
    <string>Costed Indented Bill of Materials</string>
   </property>
-  <widget class="QWidget" name="widget" >
    <layout class="QGridLayout" >
     <item row="0" column="0" >
      <layout class="QGridLayout" >
@@ -269,7 +268,6 @@
      </layout>
     </item>
    </layout>
-  </widget>
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

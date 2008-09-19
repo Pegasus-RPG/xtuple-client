@@ -59,12 +59,12 @@
 #define CREDITMEMOEDITLIST_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_creditMemoEditList.h"
 
-class creditMemoEditList : public XMainWindow, public Ui::creditMemoEditList
+class creditMemoEditList : public XWidget, public Ui::creditMemoEditList
 {
     Q_OBJECT
 

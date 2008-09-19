@@ -68,7 +68,7 @@
 #include "relocateInventory.h"
 
 dspQOHByLocation::dspQOHByLocation(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 

@@ -59,7 +59,7 @@
 
 #include <QMessageBox>
 #include <QSqlError>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <QVariant>
 
 #include <metasql.h>
@@ -71,11 +71,11 @@
 #include "taxBreakdown.h"
 
 selectOrderForBilling::selectOrderForBilling(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
+//  (void)statusBar();
 
   connect(_cancel, SIGNAL(clicked()), this, SLOT(sCancelSelection()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEditOrder()));
@@ -93,7 +93,7 @@ selectOrderForBilling::selectOrderForBilling(QWidget* parent, const char* name, 
   connect(_subtotal,	SIGNAL(valueChanged()),	this, SLOT(sUpdateTotal()));
   connect(_taxauth,	SIGNAL(newID(int)),	this, SLOT(sTaxAuthChanged()));
 
-  statusBar()->hide();
+//  statusBar()->hide();
 
 #ifndef Q_WS_MAC
   _soList->setMaximumWidth(25);
@@ -792,5 +792,5 @@ void selectOrderForBilling::closeEvent(QCloseEvent * pEvent)
   else if (q.lastError().type() != QSqlError::None)
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 
-  XMainWindow::closeEvent(pEvent);
+  XWidget::closeEvent(pEvent);
 }

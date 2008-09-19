@@ -59,12 +59,12 @@
 #define DSPINVOICEINFORMATION_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspInvoiceInformation.h"
 
-class dspInvoiceInformation : public XMainWindow, public Ui::dspInvoiceInformation
+class dspInvoiceInformation : public XWidget, public Ui::dspInvoiceInformation
 {
     Q_OBJECT
 

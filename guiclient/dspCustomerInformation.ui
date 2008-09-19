@@ -1,6 +1,6 @@
 <ui version="4.0" >
  <class>dspCustomerInformation</class>
- <widget class="QMainWindow" name="dspCustomerInformation" >
+ <widget class="QWidget" name="dspCustomerInformation" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -12,7 +12,6 @@
   <property name="windowTitle" >
    <string>Customer Information Workbench</string>
   </property>
-  <widget class="QWidget" name="layoutWidget" >
    <layout class="QGridLayout" >
     <item row="0" column="0" >
      <layout class="QGridLayout" >
@@ -1743,7 +1742,6 @@
      </layout>
     </item>
    </layout>
-  </widget>
  </widget>
  <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

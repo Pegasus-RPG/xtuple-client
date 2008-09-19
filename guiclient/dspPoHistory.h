@@ -59,11 +59,11 @@
 #define DSPPOHISTORY_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspPoHistory.h"
 
-class dspPoHistory : public XMainWindow, public Ui::dspPoHistory
+class dspPoHistory : public XWidget, public Ui::dspPoHistory
 {
     Q_OBJECT
 

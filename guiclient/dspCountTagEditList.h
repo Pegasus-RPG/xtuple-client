@@ -60,11 +60,11 @@
 #define DSPCOUNTTAGEDITLIST_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspCountTagEditList.h"
 
-class dspCountTagEditList : public XMainWindow, public Ui::dspCountTagEditList
+class dspCountTagEditList : public XWidget, public Ui::dspCountTagEditList
 {
     Q_OBJECT
 

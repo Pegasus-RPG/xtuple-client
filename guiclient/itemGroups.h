@@ -58,11 +58,11 @@
 #ifndef ITEMGROUPS_H
 #define ITEMGROUPS_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_itemGroups.h"
 
-class itemGroups : public XMainWindow, public Ui::itemGroups
+class itemGroups : public XWidget, public Ui::itemGroups
 {
     Q_OBJECT
 

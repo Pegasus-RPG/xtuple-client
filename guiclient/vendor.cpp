@@ -73,7 +73,7 @@
 #define DEBUG false
 
 vendor::vendor(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
@@ -941,6 +941,6 @@ void vendor::closeEvent(QCloseEvent *pEvent)
     query.exec();
     _NumberGen = -1;
   }
-  XMainWindow::closeEvent(pEvent);
+  XWidget::closeEvent(pEvent);
 }
 

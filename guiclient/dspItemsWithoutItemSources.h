@@ -59,12 +59,12 @@
 #define DSPITEMSWITHOUTITEMSOURCES_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspItemsWithoutItemSources.h"
 
-class dspItemsWithoutItemSources : public XMainWindow, public Ui::dspItemsWithoutItemSources
+class dspItemsWithoutItemSources : public XWidget, public Ui::dspItemsWithoutItemSources
 {
     Q_OBJECT
 

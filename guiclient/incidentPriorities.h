@@ -59,11 +59,11 @@
 #define INCIDENTPRIORITIES_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 #include "ui_incidentPriorities.h"
 
-class incidentPriorities : public XMainWindow, public Ui::incidentPriorities
+class incidentPriorities : public XWidget, public Ui::incidentPriorities
 {
     Q_OBJECT
 

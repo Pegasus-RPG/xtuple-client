@@ -59,11 +59,11 @@
 #define INCIDENTRESOLUTIONS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 #include "ui_incidentResolutions.h"
 
-class incidentResolutions : public XMainWindow, public Ui::incidentResolutions
+class incidentResolutions : public XWidget, public Ui::incidentResolutions
 {
     Q_OBJECT
 

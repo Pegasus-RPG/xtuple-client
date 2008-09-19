@@ -59,12 +59,12 @@
 #define BUYCARD_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_buyCard.h"
 
-class buyCard : public XMainWindow, public Ui::buyCard
+class buyCard : public XWidget, public Ui::buyCard
 {
     Q_OBJECT
 

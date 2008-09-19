@@ -59,12 +59,12 @@
 #define DSPINVENTORYBUFFERSTATUSBYPARAMETERLIST_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspInventoryBufferStatusByParameterList.h"
 
-class dspInventoryBufferStatusByParameterList : public XMainWindow, public Ui::dspInventoryBufferStatusByParameterList
+class dspInventoryBufferStatusByParameterList : public XWidget, public Ui::dspInventoryBufferStatusByParameterList
 {
     Q_OBJECT
 

@@ -59,12 +59,12 @@
 #define DSPSALESORDERSBYPARAMETERLIST_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspSalesOrdersByParameterList.h"
 
-class dspSalesOrdersByParameterList : public XMainWindow, public Ui::dspSalesOrdersByParameterList
+class dspSalesOrdersByParameterList : public XWidget, public Ui::dspSalesOrdersByParameterList
 {
     Q_OBJECT
 

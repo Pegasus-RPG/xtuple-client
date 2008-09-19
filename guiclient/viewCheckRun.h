@@ -59,11 +59,11 @@
 #define VIEWCHECKRUN_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 #include "ui_viewCheckRun.h"
 
-class viewCheckRun : public XMainWindow, public Ui::viewCheckRun
+class viewCheckRun : public XWidget, public Ui::viewCheckRun
 {
     Q_OBJECT
 

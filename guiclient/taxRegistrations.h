@@ -59,11 +59,11 @@
 #define TAXREGISTRATIONS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_taxRegistrations.h"
 
-class taxRegistrations : public XMainWindow, public Ui::taxRegistrations
+class taxRegistrations : public XWidget, public Ui::taxRegistrations
 {
     Q_OBJECT
 

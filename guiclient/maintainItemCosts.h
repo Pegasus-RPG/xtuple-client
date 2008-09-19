@@ -59,12 +59,12 @@
 #define MAINTAINITEMCOSTS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_maintainItemCosts.h"
 
-class maintainItemCosts : public XMainWindow, public Ui::maintainItemCosts
+class maintainItemCosts : public XWidget, public Ui::maintainItemCosts
 {
     Q_OBJECT
 

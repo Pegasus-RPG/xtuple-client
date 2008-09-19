@@ -59,12 +59,12 @@
 #define DSPSHIPMENTSBYDATE_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspShipmentsByDate.h"
 
-class dspShipmentsByDate : public XMainWindow, public Ui::dspShipmentsByDate
+class dspShipmentsByDate : public XWidget, public Ui::dspShipmentsByDate
 {
     Q_OBJECT
 

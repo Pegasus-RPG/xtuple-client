@@ -59,12 +59,12 @@
 #define RETURNAUTHORIZATIONWORKBENCH_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_returnAuthorizationWorkbench.h"
 
-class returnAuthorizationWorkbench : public XMainWindow, public Ui::returnAuthorizationWorkbench
+class returnAuthorizationWorkbench : public XWidget, public Ui::returnAuthorizationWorkbench
 {
     Q_OBJECT
 

@@ -59,10 +59,10 @@
 #define SHIPPINGFORMS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include "ui_shippingForms.h"
 
-class shippingForms : public XMainWindow, public Ui::shippingForms
+class shippingForms : public XWidget, public Ui::shippingForms
 {
     Q_OBJECT
 

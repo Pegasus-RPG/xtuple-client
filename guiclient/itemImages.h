@@ -59,12 +59,12 @@
 #define ITEMIMAGES_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_itemImages.h"
 
-class itemImages : public XMainWindow, public Ui::itemImages
+class itemImages : public XWidget, public Ui::itemImages
 {
     Q_OBJECT
 

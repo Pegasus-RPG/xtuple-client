@@ -59,12 +59,12 @@
 #define BANKACCOUNTS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_bankAccounts.h"
 
-class bankAccounts : public XMainWindow, public Ui::bankAccounts
+class bankAccounts : public XWidget, public Ui::bankAccounts
 {
     Q_OBJECT
 

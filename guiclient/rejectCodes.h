@@ -59,11 +59,11 @@
 #define REJECTCODES_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 #include "ui_rejectCodes.h"
 
-class rejectCodes : public XMainWindow, public Ui::rejectCodes
+class rejectCodes : public XWidget, public Ui::rejectCodes
 {
     Q_OBJECT
 

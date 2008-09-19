@@ -58,11 +58,11 @@
 #ifndef EMPGROUPS_H
 #define EMPGROUPS_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_empGroups.h"
 
-class empGroups : public XMainWindow, public Ui::empGroups
+class empGroups : public XWidget, public Ui::empGroups
 {
     Q_OBJECT
 

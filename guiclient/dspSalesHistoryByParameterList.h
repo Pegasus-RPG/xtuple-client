@@ -59,12 +59,12 @@
 #define DSPSALESHISTORYBYPARAMETERLIST_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspSalesHistoryByParameterList.h"
 
-class dspSalesHistoryByParameterList : public XMainWindow, public Ui::dspSalesHistoryByParameterList
+class dspSalesHistoryByParameterList : public XWidget, public Ui::dspSalesHistoryByParameterList
 {
     Q_OBJECT
 

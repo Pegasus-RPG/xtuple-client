@@ -59,12 +59,12 @@
 #define DSPFROZENITEMSITES_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspFrozenItemSites.h"
 
-class dspFrozenItemSites : public XMainWindow, public Ui::dspFrozenItemSites
+class dspFrozenItemSites : public XWidget, public Ui::dspFrozenItemSites
 {
     Q_OBJECT
 

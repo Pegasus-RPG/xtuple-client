@@ -59,12 +59,12 @@
 #define DSPITEMCOSTSBYCLASSCODE_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspItemCostsByClassCode.h"
 
-class dspItemCostsByClassCode : public XMainWindow, public Ui::dspItemCostsByClassCode
+class dspItemCostsByClassCode : public XWidget, public Ui::dspItemCostsByClassCode
 {
     Q_OBJECT
 

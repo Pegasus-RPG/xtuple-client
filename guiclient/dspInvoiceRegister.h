@@ -59,12 +59,12 @@
 #define DSPINVOICEREGISTER_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspInvoiceRegister.h"
 
-class dspInvoiceRegister : public XMainWindow, public Ui::dspInvoiceRegister
+class dspInvoiceRegister : public XWidget, public Ui::dspInvoiceRegister
 {
     Q_OBJECT
 

@@ -59,12 +59,12 @@
 #define DSPINVENTORYAVAILABILITYBYSALESORDER_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspInventoryAvailabilityBySalesOrder.h"
 
-class dspInventoryAvailabilityBySalesOrder : public XMainWindow, public Ui::dspInventoryAvailabilityBySalesOrder
+class dspInventoryAvailabilityBySalesOrder : public XWidget, public Ui::dspInventoryAvailabilityBySalesOrder
 {
     Q_OBJECT
 

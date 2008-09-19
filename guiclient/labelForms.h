@@ -59,11 +59,11 @@
 #define LABELFORMS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_labelForms.h"
 
-class labelForms : public XMainWindow, public Ui::labelForms
+class labelForms : public XWidget, public Ui::labelForms
 {
     Q_OBJECT
 

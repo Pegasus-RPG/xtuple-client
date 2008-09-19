@@ -58,7 +58,7 @@
 #include "booList.h"
 
 #include <QVariant>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <QMessageBox>
 #include <QWorkspace>
 #include <parameter.h>
@@ -72,11 +72,11 @@
  *
  */
 booList::booList(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
     setupUi(this);
 
-    (void)statusBar();
+//    (void)statusBar();
 
     // signals and slots connections
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
@@ -116,7 +116,7 @@ void booList::languageChange()
 
 void booList::init()
 {
-  statusBar()->hide();
+//  statusBar()->hide();
   
   _boo->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft );
   _boo->addColumn(tr("Description"), -1,          Qt::AlignLeft );

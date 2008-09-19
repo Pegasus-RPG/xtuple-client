@@ -59,10 +59,10 @@
 #define REPORTS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include "ui_reports.h"
 
-class reports : public XMainWindow, public Ui::reports
+class reports : public XWidget, public Ui::reports
 {
     Q_OBJECT
 

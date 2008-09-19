@@ -1,6 +1,6 @@
 <ui version="4.0" >
  <class>accountNumbers</class>
- <widget class="QMainWindow" name="accountNumbers" >
+ <widget class="QWidget" name="accountNumbers" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -12,7 +12,6 @@
   <property name="windowTitle" >
    <string>Chart of Accounts</string>
   </property>
-  <widget class="QWidget" name="widget" >
    <layout class="QHBoxLayout" >
     <item>
      <layout class="QVBoxLayout" >
@@ -134,7 +133,6 @@
      </layout>
     </item>
    </layout>
-  </widget>
  </widget>
  <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

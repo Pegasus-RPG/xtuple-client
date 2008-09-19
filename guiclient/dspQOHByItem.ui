@@ -1,6 +1,6 @@
 <ui version="4.0" >
  <class>dspQOHByItem</class>
- <widget class="QMainWindow" name="dspQOHByItem" >
+ <widget class="QWidget" name="dspQOHByItem" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -24,23 +24,7 @@
   <property name="windowTitle" >
    <string>Quantities on Hand by Item</string>
   </property>
-  <widget class="QWidget" name="widget" >
    <layout class="QVBoxLayout" >
-    <property name="spacing" >
-     <number>6</number>
-    </property>
-    <property name="leftMargin" >
-     <number>9</number>
-    </property>
-    <property name="topMargin" >
-     <number>9</number>
-    </property>
-    <property name="rightMargin" >
-     <number>9</number>
-    </property>
-    <property name="bottomMargin" >
-     <number>9</number>
-    </property>
     <item>
      <layout class="QHBoxLayout" >
       <property name="spacing" >
@@ -462,7 +446,6 @@
      </widget>
     </item>
    </layout>
-  </widget>
  </widget>
  <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

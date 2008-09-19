@@ -59,7 +59,7 @@
 
 #include <QMenu>
 #include <QSqlError>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <QVariant>
 #include <QMessageBox>
 
@@ -75,11 +75,11 @@
 #define POITEM_STATUS_COL 10
 
 dspPoItemsByVendor::dspPoItemsByVendor(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
+//  (void)statusBar();
 
   connect(_poitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_vendor, SIGNAL(newId(int)), this, SLOT(sPopulatePo()));

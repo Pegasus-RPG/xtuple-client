@@ -3,7 +3,7 @@
   <comment></comment>
   <exportmacro></exportmacro>
   <class>itemPricingSchedules</class>
-  <widget class="QMainWindow" name="itemPricingSchedules" >
+  <widget class="QWidget" name="itemPricingSchedules" >
     <property name="geometry" >
       <rect>
         <x>0</x>
@@ -15,14 +15,7 @@
     <property name="windowTitle" >
       <string>List Pricing Schedules</string>
     </property>
-    <widget class="QWidget" >
       <layout class="QVBoxLayout" >
-        <property name="margin" >
-          <number>5</number>
-        </property>
-        <property name="spacing" >
-          <number>5</number>
-        </property>
         <item>
           <layout class="QHBoxLayout" >
             <property name="margin" >
@@ -271,7 +264,6 @@
           </layout>
         </item>
       </layout>
-    </widget>
   </widget>
   <layoutdefault spacing="6" margin="11" />
   <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

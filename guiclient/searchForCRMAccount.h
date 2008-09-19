@@ -59,14 +59,14 @@
 #define SEARCHFORCRMACCOUNT_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include <parameter.h>
 
 #include "crmacctcluster.h"
 #include "ui_searchForCRMAccount.h"
 
-class searchForCRMAccount : public XMainWindow, public Ui::searchForCRMAccount
+class searchForCRMAccount : public XWidget, public Ui::searchForCRMAccount
 {
     Q_OBJECT
 

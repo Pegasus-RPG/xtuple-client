@@ -3,7 +3,7 @@
   <comment></comment>
   <exportmacro></exportmacro>
   <class>customerTypes</class>
-  <widget class="QMainWindow" name="customerTypes" >
+  <widget class="QWidget" name="customerTypes" >
     <property name="geometry" >
       <rect>
         <x>0</x>
@@ -15,14 +15,7 @@
     <property name="windowTitle" >
       <string>List Customer Types</string>
     </property>
-    <widget class="QWidget" >
       <layout class="QHBoxLayout" >
-        <property name="margin" >
-          <number>5</number>
-        </property>
-        <property name="spacing" >
-          <number>5</number>
-        </property>
         <item>
           <layout class="QVBoxLayout" >
             <property name="margin" >
@@ -130,7 +123,6 @@
           </layout>
         </item>
       </layout>
-    </widget>
   </widget>
   <layoutdefault spacing="6" margin="11" />
   <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

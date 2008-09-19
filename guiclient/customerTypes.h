@@ -58,11 +58,11 @@
 #ifndef CUSTOMERTYPES_H
 #define CUSTOMERTYPES_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_customerTypes.h"
 
-class customerTypes : public XMainWindow, public Ui::customerTypes
+class customerTypes : public XWidget, public Ui::customerTypes
 {
     Q_OBJECT
 

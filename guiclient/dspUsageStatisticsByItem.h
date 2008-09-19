@@ -59,11 +59,11 @@
 #define DSPUSAGESTATISTICSBYITEM_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspUsageStatisticsByItem.h"
 
-class dspUsageStatisticsByItem : public XMainWindow, public Ui::dspUsageStatisticsByItem
+class dspUsageStatisticsByItem : public XWidget, public Ui::dspUsageStatisticsByItem
 {
     Q_OBJECT
 

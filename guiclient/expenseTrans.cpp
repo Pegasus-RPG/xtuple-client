@@ -67,11 +67,11 @@
 #include "storedProcErrorLookup.h"
 
 expenseTrans::expenseTrans(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
+//  (void)statusBar();
 
   connect(_post,                 SIGNAL(clicked()), this, SLOT(sPost()));
   connect(_qty,SIGNAL(textChanged(const QString&)), this, SLOT(sPopulateQty()));

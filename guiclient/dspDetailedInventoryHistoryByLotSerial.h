@@ -59,12 +59,12 @@
 #define DSPDETAILEDINVENTORYHISTORYBYLOTSERIAL_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspDetailedInventoryHistoryByLotSerial.h"
 
-class dspDetailedInventoryHistoryByLotSerial : public XMainWindow, public Ui::dspDetailedInventoryHistoryByLotSerial
+class dspDetailedInventoryHistoryByLotSerial : public XWidget, public Ui::dspDetailedInventoryHistoryByLotSerial
 {
     Q_OBJECT
 

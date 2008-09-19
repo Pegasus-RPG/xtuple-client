@@ -59,12 +59,12 @@
 #define DSPWOSCHEDULEBYPARAMETERLIST_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspWoScheduleByParameterList.h"
 
-class dspWoScheduleByParameterList : public XMainWindow, public Ui::dspWoScheduleByParameterList
+class dspWoScheduleByParameterList : public XWidget, public Ui::dspWoScheduleByParameterList
 {
     Q_OBJECT
 

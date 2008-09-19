@@ -60,7 +60,7 @@
 #include <qvariant.h>
 #include <parameter.h>
 #include <qmessagebox.h>
-#include <qstatusbar.h>
+//#include <qstatusbar.h>
 #include "userCostingElement.h"
 
 /*
@@ -69,11 +69,11 @@
  *
  */
 costingElements::costingElements(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
     setupUi(this);
 
-    (void)statusBar();
+//    (void)statusBar();
 
     // signals and slots connections
     connect(_costelem, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
@@ -106,7 +106,7 @@ void costingElements::languageChange()
 
 void costingElements::init()
 {
-  statusBar()->hide();
+//  statusBar()->hide();
 
   _costelem->addColumn(tr("Costing Element"), -1, Qt::AlignLeft);
 

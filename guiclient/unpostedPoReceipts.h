@@ -59,13 +59,13 @@
 #define UNPOSTEDPORECEIPTS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include <parameter.h>
 
 #include "ui_unpostedPoReceipts.h"
 
-class unpostedPoReceipts : public XMainWindow, public Ui::unpostedPoReceipts
+class unpostedPoReceipts : public XWidget, public Ui::unpostedPoReceipts
 {
     Q_OBJECT
 

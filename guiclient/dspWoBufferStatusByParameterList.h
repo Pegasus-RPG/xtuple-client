@@ -59,12 +59,12 @@
 #define DSPWOBUFFERSTATUSBYPARAMETERLIST_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspWoBufferStatusByParameterList.h"
 
-class dspWoBufferStatusByParameterList : public XMainWindow, public Ui::dspWoBufferStatusByParameterList
+class dspWoBufferStatusByParameterList : public XWidget, public Ui::dspWoBufferStatusByParameterList
 {
     Q_OBJECT
 

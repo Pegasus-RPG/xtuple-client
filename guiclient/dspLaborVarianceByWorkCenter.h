@@ -59,11 +59,11 @@
 #define DSPLABORVARIANCEBYWORKCENTER_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspLaborVarianceByWorkCenter.h"
 
-class dspLaborVarianceByWorkCenter : public XMainWindow, public Ui::dspLaborVarianceByWorkCenter
+class dspLaborVarianceByWorkCenter : public XWidget, public Ui::dspLaborVarianceByWorkCenter
 {
     Q_OBJECT
 

@@ -58,12 +58,12 @@
 #ifndef DSPTIMEPHASEDDEMANDBYPLANNERCODE_H
 #define DSPTIMEPHASEDDEMANDBYPLANNERCODE_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <QList>
 
 #include "ui_dspTimePhasedDemandByPlannerCode.h"
 
-class dspTimePhasedDemandByPlannerCode : public XMainWindow, public Ui::dspTimePhasedDemandByPlannerCode
+class dspTimePhasedDemandByPlannerCode : public XWidget, public Ui::dspTimePhasedDemandByPlannerCode
 {
     Q_OBJECT
 

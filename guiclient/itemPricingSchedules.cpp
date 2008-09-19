@@ -59,7 +59,7 @@
 
 #include <QVariant>
 #include <QMessageBox>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <QSqlError>
 #include <parameter.h>
 #include "itemPricingSchedule.h"
@@ -70,11 +70,11 @@
  *
  */
 itemPricingSchedules::itemPricingSchedules(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
+//  (void)statusBar();
 
   // signals and slots connections
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
@@ -88,7 +88,7 @@ itemPricingSchedules::itemPricingSchedules(QWidget* parent, const char* name, Qt
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
   connect(_copy, SIGNAL(clicked()), this, SLOT(sCopy()));
 
-  statusBar()->hide();
+//  statusBar()->hide();
   
   _ipshead->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft,   true,  "ipshead_name"   );
   _ipshead->addColumn(tr("Description"), -1,          Qt::AlignLeft,   true,  "ipshead_descrip"   );

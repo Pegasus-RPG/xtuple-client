@@ -82,11 +82,11 @@
  *
  */
 customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
     setupUi(this);
 
-    (void)statusBar();
+//    (void)statusBar();
 
     connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
     connect(_number, SIGNAL(lostFocus()), this, SLOT(sCheck()));
@@ -1451,6 +1451,6 @@ void customer::closeEvent(QCloseEvent *pEvent)
     query.exec();
     _NumberGen = -1;
   }
-  XMainWindow::closeEvent(pEvent);
+  XWidget::closeEvent(pEvent);
 }
 

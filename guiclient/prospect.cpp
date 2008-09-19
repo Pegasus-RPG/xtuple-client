@@ -69,11 +69,11 @@
 #include "storedProcErrorLookup.h"
 
 prospect::prospect(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
+//  (void)statusBar();
 
   connect(_deleteQuote,SIGNAL(clicked()),	this,	SLOT(sDeleteQuote()));
   connect(_editQuote,	SIGNAL(clicked()),	this,	SLOT(sEditQuote()));
@@ -617,6 +617,6 @@ void prospect::closeEvent(QCloseEvent *pEvent)
     query.exec();
     _NumberGen = -1;
   }
-  XMainWindow::closeEvent(pEvent);
+  XWidget::closeEvent(pEvent);
 }
 

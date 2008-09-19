@@ -59,7 +59,7 @@
 
 #include <QVariant>
 #include <QMessageBox>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <parameter.h>
 #include <openreports.h>
 #include "taxType.h"
@@ -70,11 +70,11 @@
  *
  */
 taxTypes::taxTypes(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
+//  (void)statusBar();
 
   // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
@@ -85,7 +85,7 @@ taxTypes::taxTypes(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
   connect(_taxtype, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
 
-  statusBar()->hide();
+//  statusBar()->hide();
   
   _taxtype->addColumn(tr("Name"),    70, Qt::AlignLeft );
   _taxtype->addColumn(tr("Description"), -1, Qt::AlignLeft );

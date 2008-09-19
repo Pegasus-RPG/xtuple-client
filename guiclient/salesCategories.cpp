@@ -59,7 +59,7 @@
 
 #include <qvariant.h>
 #include <qmessagebox.h>
-#include <qstatusbar.h>
+//#include <qstatusbar.h>
 #include <openreports.h>
 #include "salesCategory.h"
 
@@ -69,11 +69,11 @@
  *
  */
 salesCategories::salesCategories(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
     setupUi(this);
 
-    (void)statusBar();
+//    (void)statusBar();
 
     // signals and slots connections
     connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
@@ -107,7 +107,7 @@ void salesCategories::languageChange()
 
 void salesCategories::init()
 {
-  statusBar()->hide();
+//  statusBar()->hide();
   
   _salescat->addColumn(tr("Category"),    _itemColumn, Qt::AlignLeft   );
   _salescat->addColumn(tr("Description"), -1,          Qt::AlignLeft   );

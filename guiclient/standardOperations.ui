@@ -3,7 +3,7 @@
   <comment></comment>
   <exportmacro></exportmacro>
   <class>standardOperations</class>
-  <widget class="QMainWindow" name="standardOperations" >
+  <widget class="QWidget" name="standardOperations" >
     <property name="geometry" >
       <rect>
         <x>0</x>
@@ -15,14 +15,7 @@
     <property name="windowTitle" >
       <string>List Standard Operations</string>
     </property>
-    <widget class="QWidget" >
       <layout class="QHBoxLayout" >
-        <property name="margin" >
-          <number>5</number>
-        </property>
-        <property name="spacing" >
-          <number>5</number>
-        </property>
         <item>
           <layout class="QVBoxLayout" >
             <property name="margin" >
@@ -140,7 +133,6 @@
           </layout>
         </item>
       </layout>
-    </widget>
   </widget>
   <layoutdefault spacing="6" margin="11" />
   <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

@@ -60,13 +60,13 @@
 
 #include "guiclient.h"
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include <parameter.h>
 
 #include "ui_issueToShipping.h"
 
-class issueToShipping : public XMainWindow, public Ui::issueToShipping
+class issueToShipping : public XWidget, public Ui::issueToShipping
 {
     Q_OBJECT
 

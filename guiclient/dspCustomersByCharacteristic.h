@@ -58,12 +58,12 @@
 #ifndef DSPCUSTOMERSBYCHARACTERISTIC_H
 #define DSPCUSTOMERSBYCHARACTERISTIC_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include <parameter.h>
 #include "ui_dspCustomersByCharacteristic.h"
 
-class dspCustomersByCharacteristic : public XMainWindow, public Ui::dspCustomersByCharacteristic
+class dspCustomersByCharacteristic : public XWidget, public Ui::dspCustomersByCharacteristic
 {
     Q_OBJECT
 

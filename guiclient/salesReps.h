@@ -58,10 +58,10 @@
 #ifndef SALESREPS_H
 #define SALESREPS_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include "ui_salesReps.h"
 
-class salesReps : public XMainWindow, public Ui::salesReps
+class salesReps : public XWidget, public Ui::salesReps
 {
     Q_OBJECT
 

@@ -60,7 +60,7 @@
 #include <QCloseEvent>
 #include <QMessageBox>
 #include <QSqlError>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <QValidator>
 #include <QVariant>
 
@@ -84,7 +84,7 @@
 #define TO_RECEIVE_COL 11
 
 returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
@@ -1290,7 +1290,7 @@ void returnAuthorization::closeEvent(QCloseEvent *pEvent)
     }
   }
 
-  XMainWindow::closeEvent(pEvent);
+  XWidget::closeEvent(pEvent);
 }
 
 void returnAuthorization::sTaxDetail()

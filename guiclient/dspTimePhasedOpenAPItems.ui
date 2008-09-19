@@ -1,6 +1,6 @@
 <ui version="4.0" >
  <class>dspTimePhasedOpenAPItems</class>
- <widget class="QMainWindow" name="dspTimePhasedOpenAPItems" >
+ <widget class="QWidget" name="dspTimePhasedOpenAPItems" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -12,7 +12,6 @@
   <property name="windowTitle" >
    <string>A/P Aging</string>
   </property>
-  <widget class="QWidget" name="widget" >
    <layout class="QVBoxLayout" >
     <item>
      <layout class="QHBoxLayout" >
@@ -566,7 +565,6 @@
      </widget>
     </item>
    </layout>
-  </widget>
  </widget>
  <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

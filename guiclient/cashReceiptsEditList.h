@@ -58,11 +58,11 @@
 #ifndef CASHRECEIPTSEDITLIST_H
 #define CASHRECEIPTSEDITLIST_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_cashReceiptsEditList.h"
 
-class cashReceiptsEditList : public XMainWindow, public Ui::cashReceiptsEditList
+class cashReceiptsEditList : public XWidget, public Ui::cashReceiptsEditList
 {
     Q_OBJECT
 

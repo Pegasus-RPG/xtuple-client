@@ -59,12 +59,12 @@
 #define DSPINVENTORYHISTORYBYITEM_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspInventoryHistoryByItem.h"
 
-class dspInventoryHistoryByItem : public XMainWindow, public Ui::dspInventoryHistoryByItem
+class dspInventoryHistoryByItem : public XWidget, public Ui::dspInventoryHistoryByItem
 {
     Q_OBJECT
 

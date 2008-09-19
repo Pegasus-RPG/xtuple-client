@@ -59,12 +59,12 @@
 #define DSPQOHBYPARAMETERLIST_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspQOHByParameterList.h"
 
-class dspQOHByParameterList : public XMainWindow, public Ui::dspQOHByParameterList
+class dspQOHByParameterList : public XWidget, public Ui::dspQOHByParameterList
 {
     Q_OBJECT
 

@@ -60,14 +60,14 @@
 
 #include "guiclient.h"
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <QMenu>
 
 #include <parameter.h>
 
 #include "ui_arWorkBench.h"
 
-class arWorkBench : public XMainWindow, public Ui::arWorkBench
+class arWorkBench : public XWidget, public Ui::arWorkBench
 {
     Q_OBJECT
 

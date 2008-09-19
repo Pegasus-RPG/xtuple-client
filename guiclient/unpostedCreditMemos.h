@@ -59,10 +59,10 @@
 #define UNPOSTEDCREDITMEMOS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include "ui_unpostedCreditMemos.h"
 
-class unpostedCreditMemos : public XMainWindow, public Ui::unpostedCreditMemos
+class unpostedCreditMemos : public XWidget, public Ui::unpostedCreditMemos
 {
     Q_OBJECT
 

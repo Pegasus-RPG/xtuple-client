@@ -59,11 +59,11 @@
 #define OPENVOUCHERS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_openVouchers.h"
 
-class openVouchers : public XMainWindow, public Ui::openVouchers
+class openVouchers : public XWidget, public Ui::openVouchers
 {
     Q_OBJECT
 

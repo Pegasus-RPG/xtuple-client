@@ -58,12 +58,12 @@
 #ifndef DSPTIMEPHASEDAVAILABILITY_H
 #define DSPTIMEPHASEDAVAILABILITY_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <QList>
 
 #include "ui_dspTimePhasedAvailability.h"
 
-class dspTimePhasedAvailability : public XMainWindow, public Ui::dspTimePhasedAvailability
+class dspTimePhasedAvailability : public XWidget, public Ui::dspTimePhasedAvailability
 {
     Q_OBJECT
 

@@ -58,12 +58,12 @@
 #ifndef DSPTIMEPHASEDROUGHCUTBYWORKCENTER_H
 #define DSPTIMEPHASEDROUGHCUTBYWORKCENTER_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <QList>
 
 #include "ui_dspTimePhasedRoughCutByWorkCenter.h"
 
-class dspTimePhasedRoughCutByWorkCenter : public XMainWindow, public Ui::dspTimePhasedRoughCutByWorkCenter
+class dspTimePhasedRoughCutByWorkCenter : public XWidget, public Ui::dspTimePhasedRoughCutByWorkCenter
 {
     Q_OBJECT
 

@@ -58,11 +58,11 @@
 #ifndef DSPEXPIREDINVENTORYBYCLASSCODE_H
 #define DSPEXPIREDINVENTORYBYCLASSCODE_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspExpiredInventoryByClassCode.h"
 
-class dspExpiredInventoryByClassCode : public XMainWindow, public Ui::dspExpiredInventoryByClassCode
+class dspExpiredInventoryByClassCode : public XWidget, public Ui::dspExpiredInventoryByClassCode
 {
     Q_OBJECT
 

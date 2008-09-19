@@ -1,6 +1,6 @@
 <ui version="4.0" >
  <class>dspPlannedOrdersByItem</class>
- <widget class="QMainWindow" name="dspPlannedOrdersByItem" >
+ <widget class="QWidget" name="dspPlannedOrdersByItem" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -12,7 +12,6 @@
   <property name="windowTitle" >
    <string>Planned Orders by Item</string>
   </property>
-  <widget class="QWidget" name="widget" >
    <layout class="QVBoxLayout" >
     <item>
      <layout class="QHBoxLayout" >
@@ -215,7 +214,6 @@
      </widget>
     </item>
    </layout>
-  </widget>
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

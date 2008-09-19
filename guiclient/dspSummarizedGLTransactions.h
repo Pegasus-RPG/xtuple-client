@@ -59,11 +59,11 @@
 #define DSPSUMMARIZEDGLTRANSACTIONS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspSummarizedGLTransactions.h"
 
-class dspSummarizedGLTransactions : public XMainWindow, public Ui::dspSummarizedGLTransactions
+class dspSummarizedGLTransactions : public XWidget, public Ui::dspSummarizedGLTransactions
 {
     Q_OBJECT
 

@@ -59,12 +59,12 @@
 #define DSPBOOKINGSBYPRODUCTCATEGORY_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspBookingsByProductCategory.h"
 
-class dspBookingsByProductCategory : public XMainWindow, public Ui::dspBookingsByProductCategory
+class dspBookingsByProductCategory : public XWidget, public Ui::dspBookingsByProductCategory
 {
     Q_OBJECT
 

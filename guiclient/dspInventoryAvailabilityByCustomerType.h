@@ -59,12 +59,12 @@
 #define DSPINVENTORYAVAILABILITYBYCUSTOMERTYPE_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspInventoryAvailabilityByCustomerType.h"
 
-class dspInventoryAvailabilityByCustomerType : public XMainWindow, public Ui::dspInventoryAvailabilityByCustomerType
+class dspInventoryAvailabilityByCustomerType : public XWidget, public Ui::dspInventoryAvailabilityByCustomerType
 {
     Q_OBJECT
 

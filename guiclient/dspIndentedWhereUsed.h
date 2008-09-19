@@ -59,12 +59,12 @@
 #define DSPINDENTEDWHEREUSED_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspIndentedWhereUsed.h"
 
-class dspIndentedWhereUsed : public XMainWindow, public Ui::dspIndentedWhereUsed
+class dspIndentedWhereUsed : public XWidget, public Ui::dspIndentedWhereUsed
 {
     Q_OBJECT
 

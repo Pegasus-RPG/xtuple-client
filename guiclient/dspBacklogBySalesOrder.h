@@ -59,11 +59,11 @@
 #define DSPBACKLOGBYSALESORDER_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspBacklogBySalesOrder.h"
 
-class dspBacklogBySalesOrder : public XMainWindow, public Ui::dspBacklogBySalesOrder
+class dspBacklogBySalesOrder : public XWidget, public Ui::dspBacklogBySalesOrder
 {
     Q_OBJECT
 

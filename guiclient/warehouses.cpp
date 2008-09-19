@@ -59,7 +59,7 @@
 
 #include <QMenu>
 #include <QMessageBox>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <QVariant>
 
 #include <metasql.h>
@@ -69,7 +69,7 @@
 #include "warehouse.h"
 
 warehouses::warehouses(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 

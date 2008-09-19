@@ -59,12 +59,12 @@
 #define EXPENSECATEGORIES_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_expenseCategories.h"
 
-class expenseCategories : public XMainWindow, public Ui::expenseCategories
+class expenseCategories : public XWidget, public Ui::expenseCategories
 {
     Q_OBJECT
 

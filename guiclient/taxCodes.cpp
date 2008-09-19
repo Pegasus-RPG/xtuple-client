@@ -59,7 +59,7 @@
 
 #include <QMessageBox>
 #include <QSqlError>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <QVariant>
 
 #include <parameter.h>
@@ -69,18 +69,18 @@
 #include "taxCode.h"
 
 taxCodes::taxCodes(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
     setupUi(this);
 
-    (void)statusBar();
+//    (void)statusBar();
 
     connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
     connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
     connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
     connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
 
-    statusBar()->hide();
+//    statusBar()->hide();
     
     _tax->addColumn(tr("Code"),        _itemColumn, Qt::AlignLeft );
     _tax->addColumn(tr("Description"), -1,          Qt::AlignLeft );

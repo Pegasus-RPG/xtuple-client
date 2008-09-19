@@ -59,11 +59,11 @@
 #define TRANSFERTRANS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 #include "ui_transferTrans.h"
 
-class transferTrans : public XMainWindow, public Ui::transferTrans
+class transferTrans : public XWidget, public Ui::transferTrans
 {
     Q_OBJECT
 

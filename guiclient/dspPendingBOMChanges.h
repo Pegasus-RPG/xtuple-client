@@ -59,11 +59,11 @@
 #define DSPPENDINGBOMCHANGES_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspPendingBOMChanges.h"
 
-class dspPendingBOMChanges : public XMainWindow, public Ui::dspPendingBOMChanges
+class dspPendingBOMChanges : public XWidget, public Ui::dspPendingBOMChanges
 {
     Q_OBJECT
 

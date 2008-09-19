@@ -58,10 +58,10 @@
 #ifndef SALESACCOUNTS_H
 #define SALESACCOUNTS_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include "ui_salesAccounts.h"
 
-class salesAccounts : public XMainWindow, public Ui::salesAccounts
+class salesAccounts : public XWidget, public Ui::salesAccounts
 {
     Q_OBJECT
 

@@ -68,11 +68,11 @@
 #include "warehouseCluster.h"
 
 transferTrans::transferTrans(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
+//  (void)statusBar();
 
   connect(_fromWarehouse, SIGNAL(newID(int)), this, SLOT(sPopulateFromQty(int)));
   connect(_post, SIGNAL(clicked()),                   this, SLOT(sPost()));

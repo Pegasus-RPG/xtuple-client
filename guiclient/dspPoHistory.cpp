@@ -65,11 +65,11 @@
 #include "copyPurchaseOrder.h"
 
 dspPoHistory::dspPoHistory(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
+//  (void)statusBar();
 
   connect(_copy,	SIGNAL(clicked()), this, SLOT(sCopy()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));

@@ -59,12 +59,12 @@
 #define MISCVOUCHER_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_miscVoucher.h"
 
-class miscVoucher : public XMainWindow, public Ui::miscVoucher
+class miscVoucher : public XWidget, public Ui::miscVoucher
 {
     Q_OBJECT
 

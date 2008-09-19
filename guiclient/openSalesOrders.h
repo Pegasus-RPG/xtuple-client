@@ -59,12 +59,12 @@
 #define OPENSALESORDERS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_openSalesOrders.h"
 
-class openSalesOrders : public XMainWindow, public Ui::openSalesOrders
+class openSalesOrders : public XWidget, public Ui::openSalesOrders
 {
     Q_OBJECT
 

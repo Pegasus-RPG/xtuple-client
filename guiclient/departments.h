@@ -59,12 +59,12 @@
 #define DEPARTMENTS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <QtGui/QWidget>
 
 #include "ui_departments.h"
 
-class departments : public XMainWindow, public Ui::departments
+class departments : public XWidget, public Ui::departments
 {
     Q_OBJECT
 

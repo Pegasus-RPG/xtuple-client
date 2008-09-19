@@ -58,11 +58,11 @@
 #ifndef DSPSALESHISTORYBYSHIPTO_H
 #define DSPSALESHISTORYBYSHIPTO_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspSalesHistoryByShipTo.h"
 
-class dspSalesHistoryByShipTo : public XMainWindow, public Ui::dspSalesHistoryByShipTo
+class dspSalesHistoryByShipTo : public XWidget, public Ui::dspSalesHistoryByShipTo
 {
     Q_OBJECT
 

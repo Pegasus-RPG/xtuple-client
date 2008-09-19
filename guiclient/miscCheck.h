@@ -59,12 +59,12 @@
 #define MISCCHECK_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_miscCheck.h"
 
-class miscCheck : public XMainWindow, public Ui::miscCheck
+class miscCheck : public XWidget, public Ui::miscCheck
 {
     Q_OBJECT
 

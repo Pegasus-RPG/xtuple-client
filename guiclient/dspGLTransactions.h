@@ -59,12 +59,12 @@
 #define DSPGLTRANSACTIONS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspGLTransactions.h"
 
-class dspGLTransactions : public XMainWindow, public Ui::dspGLTransactions
+class dspGLTransactions : public XWidget, public Ui::dspGLTransactions
 {
     Q_OBJECT
 

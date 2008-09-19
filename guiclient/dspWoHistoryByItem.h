@@ -59,11 +59,11 @@
 #define DSPWOHISTORYBYITEM_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspWoHistoryByItem.h"
 
-class dspWoHistoryByItem : public XMainWindow, public Ui::dspWoHistoryByItem
+class dspWoHistoryByItem : public XWidget, public Ui::dspWoHistoryByItem
 {
     Q_OBJECT
 

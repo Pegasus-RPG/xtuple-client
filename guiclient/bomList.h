@@ -59,11 +59,11 @@
 #define BOMLIST_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_bomList.h"
 
-class bomList : public XMainWindow, public Ui::bomList
+class bomList : public XWidget, public Ui::bomList
 {
     Q_OBJECT
 

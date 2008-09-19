@@ -59,11 +59,11 @@
 #define DSPPOPRICEVARIANCESBYVENDOR_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspPoPriceVariancesByVendor.h"
 
-class dspPoPriceVariancesByVendor : public XMainWindow, public Ui::dspPoPriceVariancesByVendor
+class dspPoPriceVariancesByVendor : public XWidget, public Ui::dspPoPriceVariancesByVendor
 {
     Q_OBJECT
 

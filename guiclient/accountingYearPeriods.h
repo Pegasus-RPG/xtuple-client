@@ -59,12 +59,12 @@
 #define ACCOUNTINGYEARPERIODS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_accountingYearPeriods.h"
 
-class accountingYearPeriods : public XMainWindow, public Ui::accountingYearPeriods
+class accountingYearPeriods : public XWidget, public Ui::accountingYearPeriods
 {
     Q_OBJECT
 

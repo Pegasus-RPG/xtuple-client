@@ -59,7 +59,7 @@
 
 #include <QVariant>
 #include <QMessageBox>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <QMenu>
 #include <metasql.h>
 #include <parameter.h>
@@ -72,11 +72,11 @@
  *
  */
 itemSources::itemSources(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
     setupUi(this);
 
-    (void)statusBar();
+//    (void)statusBar();
 
     // signals and slots connections
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
@@ -111,7 +111,7 @@ void itemSources::languageChange()
 
 void itemSources::init()
 {
-  statusBar()->hide();
+//  statusBar()->hide();
   
   _itemsrc->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft );
   _itemsrc->addColumn(tr("Description"), -1,          Qt::AlignLeft );

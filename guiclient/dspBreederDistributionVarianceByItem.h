@@ -59,12 +59,12 @@
 #define DSPBREEDERDISTRIBUTIONVARIANCEBYITEM_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspBreederDistributionVarianceByItem.h"
 
-class dspBreederDistributionVarianceByItem : public XMainWindow, public Ui::dspBreederDistributionVarianceByItem
+class dspBreederDistributionVarianceByItem : public XWidget, public Ui::dspBreederDistributionVarianceByItem
 {
     Q_OBJECT
 

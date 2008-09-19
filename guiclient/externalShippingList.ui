@@ -1,6 +1,6 @@
 <ui version="4.0" >
  <class>externalShippingList</class>
- <widget class="QMainWindow" name="externalShippingList" >
+ <widget class="QWidget" name="externalShippingList" >
   <property name="geometry" >
    <rect>
     <x>0</x>

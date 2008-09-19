@@ -61,7 +61,7 @@
 #include <QVariant>
 #include <QMessageBox>
 #include <QSqlError>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <openreports.h>
 #include "incidentResolution.h"
 
@@ -71,11 +71,11 @@
  *
  */
 incidentResolutions::incidentResolutions(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
+//  (void)statusBar();
 
   // signals and slots connections
   connect(_close,  SIGNAL(clicked()), this, SLOT(close()));
@@ -87,7 +87,7 @@ incidentResolutions::incidentResolutions(QWidget* parent, const char* name, Qt::
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_view,  SIGNAL(clicked()), this, SLOT(sView()));
 
-  statusBar()->hide();
+//  statusBar()->hide();
   
   _incidentResolutions->addColumn(tr("Order"),  _seqColumn, Qt::AlignRight);
   _incidentResolutions->addColumn(tr("Resolution"),      100, Qt::AlignLeft );

@@ -60,7 +60,7 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <QVariant>
 #include <QWorkspace>
 
@@ -75,11 +75,11 @@
  *
  */
 dspBillingSelections::dspBillingSelections(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
+//  (void)statusBar();
 
   // signals and slots connections
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
@@ -94,7 +94,7 @@ dspBillingSelections::dspBillingSelections(QWidget* parent, const char* name, Qt
   connect(_cobill, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
 
-  statusBar()->hide();
+//  statusBar()->hide();
   
   _cobill->addColumn(tr("Order #"),       _orderColumn,  Qt::AlignLeft,   true,  "cohead_number"   );
   _cobill->addColumn(tr("Cust. #"),       _itemColumn,   Qt::AlignLeft,   true,  "cust_number"   );

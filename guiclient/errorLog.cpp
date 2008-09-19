@@ -74,11 +74,11 @@ void errorLogListener::initialize()
 }
 
 errorLog::errorLog(QWidget* parent, Qt::WFlags flags)
-    : XMainWindow(parent, flags)
+    : XWidget(parent, flags)
 {
   setupUi(this);
 
-  statusBar()->hide();
+//  statusBar()->hide();
 
   for(int i = 0; i < _errorList.size(); i++)
     _errorLog->append(_errorList.at(i));

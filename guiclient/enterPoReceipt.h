@@ -60,13 +60,13 @@
 
 #include "guiclient.h"
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include <parameter.h>
 
 #include "ui_enterPoReceipt.h"
 
-class enterPoReceipt : public XMainWindow, public Ui::enterPoReceipt
+class enterPoReceipt : public XWidget, public Ui::enterPoReceipt
 {
     Q_OBJECT
 

@@ -59,12 +59,12 @@
 #define DSPQUOTESBYCUSTOMER_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspQuotesByCustomer.h"
 
-class dspQuotesByCustomer : public XMainWindow, public Ui::dspQuotesByCustomer
+class dspQuotesByCustomer : public XWidget, public Ui::dspQuotesByCustomer
 {
     Q_OBJECT
 

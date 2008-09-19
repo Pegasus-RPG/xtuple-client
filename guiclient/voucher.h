@@ -59,11 +59,11 @@
 #define VOUCHER_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 #include "ui_voucher.h"
 
-class voucher : public XMainWindow, public Ui::voucher
+class voucher : public XWidget, public Ui::voucher
 {
     Q_OBJECT
 

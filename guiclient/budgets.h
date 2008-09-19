@@ -58,10 +58,10 @@
 #ifndef BUDGETS_H
 #define BUDGETS_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include "ui_budgets.h"
 
-class budgets : public XMainWindow, public Ui::budgets
+class budgets : public XWidget, public Ui::budgets
 {
     Q_OBJECT
 

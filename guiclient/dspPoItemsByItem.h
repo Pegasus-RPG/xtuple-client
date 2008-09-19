@@ -59,12 +59,12 @@
 #define DSPPOITEMSBYITEM_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include "parameter.h"
 
 #include "ui_dspPoItemsByItem.h"
 
-class dspPoItemsByItem : public XMainWindow, public Ui::dspPoItemsByItem
+class dspPoItemsByItem : public XWidget, public Ui::dspPoItemsByItem
 {
     Q_OBJECT
 

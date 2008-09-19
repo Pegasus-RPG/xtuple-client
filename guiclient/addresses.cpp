@@ -61,7 +61,7 @@
 #include <QSqlError>
 #include <QMessageBox>
 #include <QVariant>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <openreports.h>
 #include <metasql.h>
 #include "addresses.h"
@@ -75,11 +75,11 @@
  *
  */
 addresses::addresses(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
     setupUi(this);
 
-    (void)statusBar();
+//    (void)statusBar();
 
     // signals and slots connections
     connect(_address, SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*, int)), this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem*, int)));
@@ -91,7 +91,7 @@ addresses::addresses(QWidget* parent, const char* name, Qt::WFlags fl)
     connect(_new,		SIGNAL(clicked()),	this, SLOT(sNew()));
     connect(_activeOnly,	SIGNAL(toggled(bool)),	this, SLOT(sFillList()));
 
-    //statusBar()->hide();
+//    //statusBar()->hide();
     _activeOnly->setChecked(true);
     
     _address->addColumn(tr("Line 1"),	 -1, Qt::AlignLeft );

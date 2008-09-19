@@ -59,11 +59,11 @@
 #define DSPINVALIDBILLSOFMATERIALS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspInvalidBillsOfMaterials.h"
 
-class dspInvalidBillsOfMaterials : public XMainWindow, public Ui::dspInvalidBillsOfMaterials
+class dspInvalidBillsOfMaterials : public XWidget, public Ui::dspInvalidBillsOfMaterials
 {
     Q_OBJECT
 

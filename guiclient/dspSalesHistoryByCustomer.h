@@ -59,12 +59,12 @@
 #define DSPSALESHISTORYBYCUSTOMER_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspSalesHistoryByCustomer.h"
 
-class dspSalesHistoryByCustomer : public XMainWindow, public Ui::dspSalesHistoryByCustomer
+class dspSalesHistoryByCustomer : public XWidget, public Ui::dspSalesHistoryByCustomer
 {
     Q_OBJECT
 

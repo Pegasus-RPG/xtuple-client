@@ -59,12 +59,12 @@
 #define CURRENCYCONVERSIONS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include "parameter.h"
 
 #include "ui_currencyConversions.h"
 
-class currencyConversions : public XMainWindow, public Ui::currencyConversions
+class currencyConversions : public XWidget, public Ui::currencyConversions
 {
     Q_OBJECT
 

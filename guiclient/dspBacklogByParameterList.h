@@ -59,12 +59,12 @@
 #define DSPBACKLOGBYPARAMETERLIST_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspBacklogByParameterList.h"
 
-class dspBacklogByParameterList : public XMainWindow, public Ui::dspBacklogByParameterList
+class dspBacklogByParameterList : public XWidget, public Ui::dspBacklogByParameterList
 {
     Q_OBJECT
 

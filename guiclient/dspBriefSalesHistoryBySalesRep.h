@@ -59,12 +59,12 @@
 #define DSPBRIEFSALESHISTORYBYSALESREP_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspBriefSalesHistoryBySalesRep.h"
 
-class dspBriefSalesHistoryBySalesRep : public XMainWindow, public Ui::dspBriefSalesHistoryBySalesRep
+class dspBriefSalesHistoryBySalesRep : public XWidget, public Ui::dspBriefSalesHistoryBySalesRep
 {
     Q_OBJECT
 

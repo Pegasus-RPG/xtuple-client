@@ -59,12 +59,12 @@
 #define DSPWOEFFORTBYWORKORDER_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspWoEffortByWorkOrder.h"
 
-class dspWoEffortByWorkOrder : public XMainWindow, public Ui::dspWoEffortByWorkOrder
+class dspWoEffortByWorkOrder : public XWidget, public Ui::dspWoEffortByWorkOrder
 {
     Q_OBJECT
 

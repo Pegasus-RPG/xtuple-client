@@ -59,12 +59,12 @@
 #define FIXSERIAL_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_fixSerial.h"
 
-class fixSerial : public XMainWindow, public Ui::fixSerial
+class fixSerial : public XWidget, public Ui::fixSerial
 {
     Q_OBJECT
 

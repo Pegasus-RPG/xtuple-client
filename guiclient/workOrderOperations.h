@@ -59,11 +59,11 @@
 #define WORKORDEROPERATIONS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 #include "ui_workOrderOperations.h"
 
-class workOrderOperations : public XMainWindow, public Ui::workOrderOperations
+class workOrderOperations : public XWidget, public Ui::workOrderOperations
 {
     Q_OBJECT
 

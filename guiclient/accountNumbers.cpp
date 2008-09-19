@@ -68,11 +68,11 @@
 #include "storedProcErrorLookup.h"
 
 accountNumbers::accountNumbers(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
+//  (void)statusBar();
 
   connect(_account,        SIGNAL(valid(bool)), this, SLOT(sHandleButtons()));
   connect(_delete,           SIGNAL(clicked()), this, SLOT(sDelete()));

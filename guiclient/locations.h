@@ -59,11 +59,11 @@
 #define LOCATIONS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_locations.h"
 
-class locations : public XMainWindow, public Ui::locations
+class locations : public XWidget, public Ui::locations
 {
     Q_OBJECT
 

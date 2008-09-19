@@ -1,6 +1,6 @@
 <ui version="4.0" >
  <class>workOrder</class>
- <widget class="QMainWindow" name="workOrder" >
+ <widget class="QWidget" name="workOrder" >
   <property name="enabled" >
    <bool>true</bool>
   </property>
@@ -21,7 +21,6 @@
   <property name="windowTitle" >
    <string>Work Order</string>
   </property>
-  <widget class="QWidget" name="widget" >
    <layout class="QGridLayout" >
     <item row="0" column="0" >
      <layout class="QGridLayout" >
@@ -847,7 +846,6 @@
      </layout>
     </item>
    </layout>
-  </widget>
  </widget>
  <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

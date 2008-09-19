@@ -59,12 +59,12 @@
 #define CONTACTS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_contacts.h"
 
-class contacts : public XMainWindow, public Ui::contacts
+class contacts : public XWidget, public Ui::contacts
 {
     Q_OBJECT
 

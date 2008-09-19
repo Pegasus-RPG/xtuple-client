@@ -1,6 +1,6 @@
 <ui version="4.0" >
  <class>opportunityList</class>
- <widget class="QMainWindow" name="opportunityList" >
+ <widget class="QWidget" name="opportunityList" >
   <property name="geometry" >
    <rect>
     <x>0</x>

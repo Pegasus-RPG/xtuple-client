@@ -59,12 +59,12 @@
 #define DSPPOITEMSBYBUFFERSTATUSBU_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspPoItemsByBufferStatus.h"
 
-class dspPoItemsByBufferStatus : public XMainWindow, public Ui::dspPoItemsByBufferStatus
+class dspPoItemsByBufferStatus : public XWidget, public Ui::dspPoItemsByBufferStatus
 {
     Q_OBJECT
 

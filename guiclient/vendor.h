@@ -59,12 +59,12 @@
 #define VENDOR_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 #include "contactcluster.h"
 #include "ui_vendor.h"
 
-class vendor : public XMainWindow, public Ui::vendor
+class vendor : public XWidget, public Ui::vendor
 {
     Q_OBJECT
 

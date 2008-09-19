@@ -1,6 +1,6 @@
 <ui version="4.0" >
  <class>prospect</class>
- <widget class="QMainWindow" name="prospect" >
+ <widget class="QWidget" name="prospect" >
   <property name="geometry" >
    <rect>
     <x>0</x>

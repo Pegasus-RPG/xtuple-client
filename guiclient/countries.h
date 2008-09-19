@@ -59,11 +59,11 @@
 #define COUNTRIES_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_countries.h"
 
-class countries : public XMainWindow, public Ui::countries
+class countries : public XWidget, public Ui::countries
 {
     Q_OBJECT
 

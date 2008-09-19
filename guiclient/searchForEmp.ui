@@ -1,6 +1,6 @@
 <ui version="4.0" >
  <class>searchForEmp</class>
- <widget class="QMainWindow" name="searchForEmp" >
+ <widget class="QWidget" name="searchForEmp" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -12,7 +12,6 @@
   <property name="windowTitle" >
    <string>Search for Employees</string>
   </property>
-  <widget class="QWidget" name="widget" >
    <layout class="QGridLayout" >
     <item row="0" column="0" colspan="4" >
      <layout class="QHBoxLayout" >
@@ -242,7 +241,6 @@
      </layout>
     </item>
    </layout>
-  </widget>
  </widget>
  <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

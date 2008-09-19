@@ -71,7 +71,7 @@
 #include "postPoReturnCreditMemo.h"
 
 enterPoReturn::enterPoReturn(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
@@ -361,7 +361,7 @@ void enterPoReturn::closeEvent(QCloseEvent *pEvent)
     }
   }
 
-  XMainWindow::closeEvent(pEvent);
+  XWidget::closeEvent(pEvent);
 }
 
 void enterPoReturn::sShowClosed()

@@ -58,11 +58,11 @@
 #ifndef CUSTOMCOMMANDS_H
 #define CUSTOMCOMMANDS_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_customCommands.h"
 
-class customCommands : public XMainWindow, public Ui::customCommands
+class customCommands : public XWidget, public Ui::customCommands
 {
     Q_OBJECT
 

@@ -73,11 +73,11 @@
 #define AMOUNT_COL	9
 
 dspBacklogByItem::dspBacklogByItem(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
+//  (void)statusBar();
 
   connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));

@@ -74,11 +74,11 @@
 #define METHOD_COL 8
 
 dspExpiredInventoryByClassCode::dspExpiredInventoryByClassCode(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
+//  (void)statusBar();
 
   _costsGroupInt = new QButtonGroup(this);
   _costsGroupInt->addButton(_useStandardCosts);

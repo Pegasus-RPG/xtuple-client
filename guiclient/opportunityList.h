@@ -59,12 +59,12 @@
 #define OPOORTUNITYLIST_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_opportunityList.h"
 
-class opportunityList : public XMainWindow, public Ui::opportunityList
+class opportunityList : public XWidget, public Ui::opportunityList
 {
   Q_OBJECT
 

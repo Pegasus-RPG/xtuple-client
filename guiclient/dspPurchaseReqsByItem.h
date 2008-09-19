@@ -59,11 +59,11 @@
 #define DSPPURCHASEREQSBYITEM_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspPurchaseReqsByItem.h"
 
-class dspPurchaseReqsByItem : public XMainWindow, public Ui::dspPurchaseReqsByItem
+class dspPurchaseReqsByItem : public XWidget, public Ui::dspPurchaseReqsByItem
 {
     Q_OBJECT
 

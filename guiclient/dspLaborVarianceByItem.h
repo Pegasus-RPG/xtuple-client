@@ -58,11 +58,11 @@
 #ifndef DSPLABORVARIANCEBYITEM_H
 #define DSPLABORVARIANCEBYITEM_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspLaborVarianceByItem.h"
 
-class dspLaborVarianceByItem : public XMainWindow, public Ui::dspLaborVarianceByItem
+class dspLaborVarianceByItem : public XWidget, public Ui::dspLaborVarianceByItem
 {
     Q_OBJECT
 

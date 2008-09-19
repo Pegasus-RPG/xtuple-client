@@ -59,7 +59,7 @@
 
 #include <qvariant.h>
 #include <qmessagebox.h>
-#include <qstatusbar.h>
+//#include <qstatusbar.h>
 #include <parameter.h>
 #include "sale.h"
 #include "guiclient.h"
@@ -70,11 +70,11 @@
  *
  */
 sales::sales(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
     setupUi(this);
 
-    (void)statusBar();
+//    (void)statusBar();
 
     // signals and slots connections
     connect(_sale, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
@@ -107,7 +107,7 @@ void sales::languageChange()
 
 void sales::init()
 {
-  statusBar()->hide();
+//  statusBar()->hide();
   
   _sale->addColumn(tr("Name"),     _itemColumn, Qt::AlignLeft  );
   _sale->addColumn(tr("Schedule"), _itemColumn, Qt::AlignLeft  );

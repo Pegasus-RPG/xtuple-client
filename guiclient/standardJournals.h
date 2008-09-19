@@ -59,10 +59,10 @@
 #define STANDARDJOURNALS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include "ui_standardJournals.h"
 
-class standardJournals : public XMainWindow, public Ui::standardJournals
+class standardJournals : public XWidget, public Ui::standardJournals
 {
     Q_OBJECT
 

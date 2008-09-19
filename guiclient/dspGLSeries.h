@@ -59,11 +59,11 @@
 #define DSPGLSERIES_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspGLSeries.h"
 
-class dspGLSeries : public XMainWindow, public Ui::dspGLSeries
+class dspGLSeries : public XWidget, public Ui::dspGLSeries
 {
     Q_OBJECT
 

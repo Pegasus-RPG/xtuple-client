@@ -59,12 +59,12 @@
 #define DSPDEPOSITSREGISTER_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspDepositsRegister.h"
 
-class dspDepositsRegister : public XMainWindow, public Ui::dspDepositsRegister
+class dspDepositsRegister : public XWidget, public Ui::dspDepositsRegister
 {
     Q_OBJECT
 

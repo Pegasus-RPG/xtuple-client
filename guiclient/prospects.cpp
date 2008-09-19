@@ -60,18 +60,18 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <QVariant>
 
 #include "prospect.h"
 #include "storedProcErrorLookup.h"
 
 prospects::prospects(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
     setupUi(this);
 
-    (void)statusBar();
+//    (void)statusBar();
 
     connect(_delete,	SIGNAL(clicked()),	this, SLOT(sDelete()));
     connect(_edit,	SIGNAL(clicked()),	this, SLOT(sEdit()));
@@ -80,7 +80,7 @@ prospects::prospects(QWidget* parent, const char* name, Qt::WFlags fl)
 						this, SLOT(sPopulateMenu(QMenu*)));
     connect(_view,	SIGNAL(clicked()),	this, SLOT(sView()));
 
-    statusBar()->hide();
+//    statusBar()->hide();
     
     if (_privileges->check("MaintainProspectMasters"))
     {

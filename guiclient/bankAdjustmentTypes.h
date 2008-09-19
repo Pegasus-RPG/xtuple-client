@@ -59,11 +59,11 @@
 #define BANKADJUSTMENTTYPES_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_bankAdjustmentTypes.h"
 
-class bankAdjustmentTypes : public XMainWindow, public Ui::bankAdjustmentTypes
+class bankAdjustmentTypes : public XWidget, public Ui::bankAdjustmentTypes
 {
     Q_OBJECT
 

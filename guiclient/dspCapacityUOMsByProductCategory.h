@@ -58,11 +58,11 @@
 #ifndef DSPCAPACITYUOMSBYPRODUCTCATEGORY_H
 #define DSPCAPACITYUOMSBYPRODUCTCATEGORY_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspCapacityUOMsByProductCategory.h"
 
-class dspCapacityUOMsByProductCategory : public XMainWindow, public Ui::dspCapacityUOMsByProductCategory
+class dspCapacityUOMsByProductCategory : public XWidget, public Ui::dspCapacityUOMsByProductCategory
 {
     Q_OBJECT
 

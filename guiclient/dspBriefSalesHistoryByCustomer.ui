@@ -1,6 +1,6 @@
 <ui version="4.0" >
  <class>dspBriefSalesHistoryByCustomer</class>
- <widget class="QMainWindow" name="dspBriefSalesHistoryByCustomer" >
+ <widget class="QWidget" name="dspBriefSalesHistoryByCustomer" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -12,23 +12,7 @@
   <property name="windowTitle" >
    <string>Brief Sales History by Customer</string>
   </property>
-  <widget class="QWidget" name="widget" >
    <layout class="QVBoxLayout" >
-    <property name="spacing" >
-     <number>5</number>
-    </property>
-    <property name="leftMargin" >
-     <number>5</number>
-    </property>
-    <property name="topMargin" >
-     <number>5</number>
-    </property>
-    <property name="rightMargin" >
-     <number>5</number>
-    </property>
-    <property name="bottomMargin" >
-     <number>5</number>
-    </property>
     <item>
      <layout class="QHBoxLayout" >
       <property name="spacing" >
@@ -268,7 +252,6 @@
      </layout>
     </item>
    </layout>
-  </widget>
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

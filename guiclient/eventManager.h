@@ -59,12 +59,12 @@
 #define EVENTMANAGER_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_eventManager.h"
 
-class eventManager : public XMainWindow, public Ui::eventManager
+class eventManager : public XWidget, public Ui::eventManager
 {
     Q_OBJECT
 

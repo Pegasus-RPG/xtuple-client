@@ -59,11 +59,11 @@
 #define TERMSES_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 #include "ui_termses.h"
 
-class termses : public XMainWindow, public Ui::termses
+class termses : public XWidget, public Ui::termses
 {
     Q_OBJECT
 

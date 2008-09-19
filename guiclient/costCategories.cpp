@@ -59,7 +59,7 @@
 
 #include <QVariant>
 #include <QMessageBox>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <QWorkspace>
 #include <openreports.h>
 #include "costCategory.h"
@@ -71,11 +71,11 @@
  *
  */
 costCategories::costCategories(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
     setupUi(this);
 
-    (void)statusBar();
+//    (void)statusBar();
 
     // signals and slots connections
     connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
@@ -112,7 +112,7 @@ void costCategories::languageChange()
 
 void costCategories::init()
 {
-  statusBar()->hide();
+//  statusBar()->hide();
   
   _costcat->addColumn(tr("Category"),    _itemColumn, Qt::AlignLeft   );
   _costcat->addColumn(tr("Description"), -1,          Qt::AlignLeft   );

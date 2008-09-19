@@ -59,12 +59,12 @@
 #define DSPSEQUENCEDBOM_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspSequencedBOM.h"
 
-class dspSequencedBOM : public XMainWindow, public Ui::dspSequencedBOM
+class dspSequencedBOM : public XWidget, public Ui::dspSequencedBOM
 {
     Q_OBJECT
 

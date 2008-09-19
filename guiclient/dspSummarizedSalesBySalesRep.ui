@@ -3,7 +3,7 @@
   <comment></comment>
   <exportmacro></exportmacro>
   <class>dspSummarizedSalesBySalesRep</class>
-  <widget class="QMainWindow" name="dspSummarizedSalesBySalesRep" >
+  <widget class="QWidget" name="dspSummarizedSalesBySalesRep" >
     <property name="geometry" >
       <rect>
         <x>0</x>
@@ -15,14 +15,7 @@
     <property name="windowTitle" >
       <string>Summarized Sales History by Sales Rep.</string>
     </property>
-    <widget class="QWidget" >
       <layout class="QVBoxLayout" >
-        <property name="margin" >
-          <number>5</number>
-        </property>
-        <property name="spacing" >
-          <number>5</number>
-        </property>
         <item>
           <layout class="QHBoxLayout" >
             <property name="margin" >
@@ -224,7 +217,6 @@
           </layout>
         </item>
       </layout>
-    </widget>
   </widget>
   <layoutdefault spacing="6" margin="11" />
   <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

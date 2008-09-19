@@ -59,12 +59,12 @@
 #define WORKORDER_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <QStandardItemModel>
 #include <parameter.h>
 #include "ui_workOrder.h"
 
-class workOrder : public XMainWindow, public Ui::workOrder
+class workOrder : public XWidget, public Ui::workOrder
 {
     Q_OBJECT
 

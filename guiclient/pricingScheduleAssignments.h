@@ -58,10 +58,10 @@
 #ifndef PRICINGSCHEDULEASSIGNMENTS_H
 #define PRICINGSCHEDULEASSIGNMENTS_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include "ui_pricingScheduleAssignments.h"
 
-class pricingScheduleAssignments : public XMainWindow, public Ui::pricingScheduleAssignments
+class pricingScheduleAssignments : public XWidget, public Ui::pricingScheduleAssignments
 {
     Q_OBJECT
 

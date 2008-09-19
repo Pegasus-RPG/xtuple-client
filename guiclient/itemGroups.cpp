@@ -58,7 +58,7 @@
 #include "itemGroups.h"
 
 #include <qvariant.h>
-#include <qstatusbar.h>
+//#include <qstatusbar.h>
 #include <parameter.h>
 #include "itemGroup.h"
 #include "guiclient.h"
@@ -69,11 +69,11 @@
  *
  */
 itemGroups::itemGroups(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
     setupUi(this);
 
-    (void)statusBar();
+//    (void)statusBar();
 
     // signals and slots connections
     connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
@@ -105,7 +105,7 @@ void itemGroups::languageChange()
 
 void itemGroups::init()
 {
-  statusBar()->hide();
+//  statusBar()->hide();
   
   _itemgrp->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft );
   _itemgrp->addColumn(tr("Description"), -1,          Qt::AlignLeft );

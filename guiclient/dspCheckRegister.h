@@ -58,11 +58,11 @@
 #ifndef DSPCHECKREGISTER_H
 #define DSPCHECKREGISTER_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspCheckRegister.h"
 
-class dspCheckRegister : public XMainWindow, public Ui::dspCheckRegister
+class dspCheckRegister : public XWidget, public Ui::dspCheckRegister
 {
     Q_OBJECT
 

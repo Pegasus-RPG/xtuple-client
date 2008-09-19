@@ -72,7 +72,7 @@
 #include "storedProcErrorLookup.h"
 
 enterPoReceipt::enterPoReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
@@ -341,7 +341,7 @@ void enterPoReceipt::sSave()
 {
   // most of the work is done in enterPoitemReceipt
   // don't call this->close() 'cause that deletes the recv records
-  XMainWindow::close();
+  XWidget::close();
 }
 
 void enterPoReceipt::sEnter()
@@ -421,7 +421,7 @@ void enterPoReceipt::close()
   if(!isVisible())
     deleteLater();
   else
-    XMainWindow::close();
+    XWidget::close();
 }
 
 void enterPoReceipt::sReceiveAll()

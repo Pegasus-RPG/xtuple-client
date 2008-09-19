@@ -59,12 +59,12 @@
 #define SELECTORDERFORBILLING_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 #include "ui_selectOrderForBilling.h"
 #include "taxCache.h"
 
-class selectOrderForBilling : public XMainWindow, public Ui::selectOrderForBilling
+class selectOrderForBilling : public XWidget, public Ui::selectOrderForBilling
 {
     Q_OBJECT
 

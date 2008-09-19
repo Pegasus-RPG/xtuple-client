@@ -58,10 +58,10 @@
 #ifndef OPPORTUNITYSTAGES_H
 #define OPPORTUNITYSTAGES_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include "ui_opportunityStages.h"
 
-class opportunityStages : public XMainWindow, public Ui::opportunityStages
+class opportunityStages : public XWidget, public Ui::opportunityStages
 {
     Q_OBJECT
 

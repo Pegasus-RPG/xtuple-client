@@ -59,12 +59,12 @@
 #define DSPWOHISTORYBYCLASSCODE_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspWoHistoryByClassCode.h"
 
-class dspWoHistoryByClassCode : public XMainWindow, public Ui::dspWoHistoryByClassCode
+class dspWoHistoryByClassCode : public XWidget, public Ui::dspWoHistoryByClassCode
 {
     Q_OBJECT
 

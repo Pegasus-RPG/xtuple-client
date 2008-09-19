@@ -58,11 +58,11 @@
 #ifndef WHSECALENDARS_H
 #define WHSECALENDARS_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_whseCalendars.h"
 
-class whseCalendars : public XMainWindow, public Ui::whseCalendars
+class whseCalendars : public XWidget, public Ui::whseCalendars
 {
     Q_OBJECT
 

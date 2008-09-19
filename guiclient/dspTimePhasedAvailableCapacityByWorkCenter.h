@@ -59,11 +59,11 @@
 #define DSPTIMEPHASEDAVAILABLECAPACITYBYWORKCENTER_H
 
 #include <QList>
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspTimePhasedAvailableCapacityByWorkCenter.h"
 
-class dspTimePhasedAvailableCapacityByWorkCenter : public XMainWindow, public Ui::dspTimePhasedAvailableCapacityByWorkCenter
+class dspTimePhasedAvailableCapacityByWorkCenter : public XWidget, public Ui::dspTimePhasedAvailableCapacityByWorkCenter
 {
     Q_OBJECT
 

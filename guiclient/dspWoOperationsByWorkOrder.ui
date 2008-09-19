@@ -3,7 +3,7 @@
   <comment></comment>
   <exportmacro></exportmacro>
   <class>dspWoOperationsByWorkOrder</class>
-  <widget class="QMainWindow" name="dspWoOperationsByWorkOrder" >
+  <widget class="QWidget" name="dspWoOperationsByWorkOrder" >
     <property name="geometry" >
       <rect>
         <x>0</x>
@@ -15,14 +15,7 @@
     <property name="windowTitle" >
       <string>Work Order Operations By Work Order</string>
     </property>
-    <widget class="QWidget" >
       <layout class="QVBoxLayout" >
-        <property name="margin" >
-          <number>5</number>
-        </property>
-        <property name="spacing" >
-          <number>5</number>
-        </property>
         <item>
           <layout class="QHBoxLayout" >
             <property name="margin" >
@@ -141,7 +134,6 @@
           </layout>
         </item>
       </layout>
-    </widget>
   </widget>
   <layoutdefault spacing="6" margin="11" />
   <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

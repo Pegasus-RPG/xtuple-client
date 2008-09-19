@@ -59,12 +59,12 @@
 #define DSPWOOPERATIONSBYWORKORDER_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspWoOperationsByWorkOrder.h"
 
-class dspWoOperationsByWorkOrder : public XMainWindow, public Ui::dspWoOperationsByWorkOrder
+class dspWoOperationsByWorkOrder : public XWidget, public Ui::dspWoOperationsByWorkOrder
 {
     Q_OBJECT
 

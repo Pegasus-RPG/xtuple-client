@@ -59,11 +59,11 @@
 #define BBOMS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_bboms.h"
 
-class bboms : public XMainWindow, public Ui::bboms
+class bboms : public XWidget, public Ui::bboms
 {
     Q_OBJECT
 

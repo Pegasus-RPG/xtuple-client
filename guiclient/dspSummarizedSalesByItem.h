@@ -59,11 +59,11 @@
 #define DSPSUMMARIZEDSALESBYITEM_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspSummarizedSalesByItem.h"
 
-class dspSummarizedSalesByItem : public XMainWindow, public Ui::dspSummarizedSalesByItem
+class dspSummarizedSalesByItem : public XWidget, public Ui::dspSummarizedSalesByItem
 {
     Q_OBJECT
 

@@ -1,6 +1,6 @@
 <ui version="4.0" >
  <class>workCenter</class>
- <widget class="QMainWindow" name="workCenter" >
+ <widget class="QWidget" name="workCenter" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -12,7 +12,6 @@
   <property name="windowTitle" >
    <string>Work Center</string>
   </property>
-  <widget class="QWidget" name="widget" >
    <layout class="QGridLayout" >
     <item row="0" column="0" >
      <layout class="QGridLayout" >
@@ -938,7 +937,6 @@
      </layout>
     </item>
    </layout>
-  </widget>
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

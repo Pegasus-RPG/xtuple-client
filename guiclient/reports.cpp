@@ -59,7 +59,7 @@
 
 #include <QVariant>
 #include <QMessageBox>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <QWorkspace>
 #include <openreports.h>
 #include <reporthandler.h>
@@ -70,11 +70,11 @@
  *
  */
 reports::reports(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
+//  (void)statusBar();
 
   // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
@@ -86,7 +86,7 @@ reports::reports(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_report, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
   connect(_report, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
 
-  statusBar()->hide();
+//  statusBar()->hide();
 
   _report->addColumn( tr("Name"),       200, Qt::AlignLeft );
   _report->addColumn( tr("Grade"),       50, Qt::AlignRight);

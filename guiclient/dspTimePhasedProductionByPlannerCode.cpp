@@ -58,7 +58,7 @@
 #include "dspTimePhasedProductionByPlannerCode.h"
 
 #include <QVariant>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <QWorkspace>
 #include <QMessageBox>
 #include <QMenu>
@@ -74,11 +74,11 @@
  *
  */
 dspTimePhasedProductionByPlannerCode::dspTimePhasedProductionByPlannerCode(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
+//  (void)statusBar();
 
   QButtonGroup* _unitsGroupInt = new QButtonGroup(this);
   _unitsGroupInt->addButton(_inventoryUnits);
@@ -94,7 +94,7 @@ dspTimePhasedProductionByPlannerCode::dspTimePhasedProductionByPlannerCode(QWidg
   connect(_calendar, SIGNAL(newCalendarId(int)), _periods, SLOT(populate(int)));
   connect(_calendar, SIGNAL(select(ParameterList&)), _periods, SLOT(load(ParameterList&)));
 
-  statusBar()->hide();
+//  statusBar()->hide();
 
   _plannerCode->setType(ParameterGroup::PlannerCode);
 

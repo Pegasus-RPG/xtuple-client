@@ -60,7 +60,7 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <QVariant>
 
 #include <parameter.h>
@@ -72,7 +72,7 @@
 #include "storedProcErrorLookup.h"
 
 unpostedGlSeries::unpostedGlSeries(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 

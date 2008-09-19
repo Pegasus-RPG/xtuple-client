@@ -59,12 +59,12 @@
 #define DSPWOEFFORTBYUSER_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspWoEffortByUser.h"
 
-class dspWoEffortByUser : public XMainWindow, public Ui::dspWoEffortByUser
+class dspWoEffortByUser : public XWidget, public Ui::dspWoEffortByUser
 {
     Q_OBJECT
 

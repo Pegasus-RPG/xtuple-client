@@ -61,7 +61,7 @@
 #include <QCursor>
 #include <QMessageBox>
 #include <QSqlError>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <QVariant>
 
 #include <parameter.h>
@@ -70,11 +70,11 @@
 #include "storedProcErrorLookup.h"
 
 reconcileBankaccount::reconcileBankaccount(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
     setupUi(this);
 
-    (void)statusBar();
+//    (void)statusBar();
 
     connect(_addAdjustment, SIGNAL(clicked()),  this, SLOT(sAddAdjustment()));
     connect(_bankaccnt, SIGNAL(newID(int)),     this, SLOT(sBankaccntChanged()));

@@ -59,11 +59,11 @@
 #define DSPSUMMARIZEDSALESHISTORYBYSHIPPINGZONE_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspSummarizedSalesHistoryByShippingZone.h"
 
-class dspSummarizedSalesHistoryByShippingZone : public XMainWindow, public Ui::dspSummarizedSalesHistoryByShippingZone
+class dspSummarizedSalesHistoryByShippingZone : public XWidget, public Ui::dspSummarizedSalesHistoryByShippingZone
 {
     Q_OBJECT
 

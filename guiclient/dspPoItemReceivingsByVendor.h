@@ -58,11 +58,11 @@
 #ifndef DSPPOITEMRECEIVINGSBYVENDOR_H
 #define DSPPOITEMRECEIVINGSBYVENDOR_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspPoItemReceivingsByVendor.h"
 
-class dspPoItemReceivingsByVendor : public XMainWindow, public Ui::dspPoItemReceivingsByVendor
+class dspPoItemReceivingsByVendor : public XWidget, public Ui::dspPoItemReceivingsByVendor
 {
     Q_OBJECT
 

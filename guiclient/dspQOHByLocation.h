@@ -59,12 +59,12 @@
 #define DSPQOHBYLOCATION_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspQOHByLocation.h"
 
-class dspQOHByLocation : public XMainWindow, public Ui::dspQOHByLocation
+class dspQOHByLocation : public XWidget, public Ui::dspQOHByLocation
 {
     Q_OBJECT
 

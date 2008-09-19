@@ -59,12 +59,12 @@
 #define DSPSINGLELEVELWHEREUSED_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspSingleLevelWhereUsed.h"
 
-class dspSingleLevelWhereUsed : public XMainWindow, public Ui::dspSingleLevelWhereUsed
+class dspSingleLevelWhereUsed : public XWidget, public Ui::dspSingleLevelWhereUsed
 {
     Q_OBJECT
 

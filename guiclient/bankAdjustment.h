@@ -59,12 +59,12 @@
 #define BANKADJUSTMENT_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_bankAdjustment.h"
 
-class bankAdjustment : public XMainWindow, public Ui::bankAdjustment
+class bankAdjustment : public XWidget, public Ui::bankAdjustment
 {
     Q_OBJECT
 

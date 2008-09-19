@@ -59,12 +59,12 @@
 #define IMPORTXML_H
 
 #include <QDomDocument>
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <QMenu>
 
 #include "ui_importXML.h"
 
-class importXML : public XMainWindow, public Ui::importXML
+class importXML : public XWidget, public Ui::importXML
 {
   Q_OBJECT
   

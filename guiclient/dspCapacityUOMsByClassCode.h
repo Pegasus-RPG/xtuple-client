@@ -58,11 +58,11 @@
 #ifndef DSPCAPACITYUOMSBYCLASSCODE_H
 #define DSPCAPACITYUOMSBYCLASSCODE_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspCapacityUOMsByClassCode.h"
 
-class dspCapacityUOMsByClassCode : public XMainWindow, public Ui::dspCapacityUOMsByClassCode
+class dspCapacityUOMsByClassCode : public XWidget, public Ui::dspCapacityUOMsByClassCode
 {
     Q_OBJECT
 

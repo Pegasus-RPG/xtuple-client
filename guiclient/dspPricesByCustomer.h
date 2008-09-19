@@ -59,11 +59,11 @@
 #define DSPPRICESBYCUSTOMER_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspPricesByCustomer.h"
 
-class dspPricesByCustomer : public XMainWindow, public Ui::dspPricesByCustomer
+class dspPricesByCustomer : public XWidget, public Ui::dspPricesByCustomer
 {
     Q_OBJECT
 

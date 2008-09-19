@@ -58,12 +58,12 @@
 #ifndef DSPTIMEPHASEDPRODUCTIONBYPLANNERCODE_H
 #define DSPTIMEPHASEDPRODUCTIONBYPLANNERCODE_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <QList>
 
 #include "ui_dspTimePhasedProductionByPlannerCode.h"
 
-class dspTimePhasedProductionByPlannerCode : public XMainWindow, public Ui::dspTimePhasedProductionByPlannerCode
+class dspTimePhasedProductionByPlannerCode : public XWidget, public Ui::dspTimePhasedProductionByPlannerCode
 {
     Q_OBJECT
 

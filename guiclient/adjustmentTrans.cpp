@@ -67,11 +67,11 @@
 #include "storedProcErrorLookup.h"
 
 adjustmentTrans::adjustmentTrans(QWidget* parent, Qt::WindowFlags fl)
-    : XMainWindow(parent, fl)
+    : XWidget(parent, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
+//  (void)statusBar();
 
   _adjustmentTypeGroupInt = new QButtonGroup(this);
 

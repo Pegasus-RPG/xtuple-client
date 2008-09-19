@@ -59,12 +59,12 @@
 #define DSPITEMCOSTSUMMARY_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspItemCostSummary.h"
 
-class dspItemCostSummary : public XMainWindow, public Ui::dspItemCostSummary
+class dspItemCostSummary : public XWidget, public Ui::dspItemCostSummary
 {
     Q_OBJECT
 

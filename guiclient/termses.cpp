@@ -59,7 +59,7 @@
 
 #include <QVariant>
 #include <QMessageBox>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <openreports.h>
 #include "terms.h"
 
@@ -69,11 +69,11 @@
  *
  */
 termses::termses(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
     setupUi(this);
 
-    (void)statusBar();
+//    (void)statusBar();
 
     // signals and slots connections
     connect(_terms, SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *, int)), this, SLOT(sPopulateMenu(QMenu*)));
@@ -109,7 +109,7 @@ void termses::languageChange()
 
 void termses::init()
 {
-  statusBar()->hide();
+//  statusBar()->hide();
   
   _terms->addColumn(tr("Code"),        _itemColumn, Qt::AlignLeft   );
   _terms->addColumn(tr("Description"), -1,          Qt::AlignLeft   );

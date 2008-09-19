@@ -59,11 +59,11 @@
 #define SEARCHFORCONCACT_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_searchForContact.h"
 
-class searchForContact : public XMainWindow, public Ui::searchForContact
+class searchForContact : public XWidget, public Ui::searchForContact
 {
     Q_OBJECT
 

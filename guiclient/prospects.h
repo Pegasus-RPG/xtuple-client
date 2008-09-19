@@ -59,12 +59,12 @@
 #define PROSPECTS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_prospects.h"
 
-class prospects : public XMainWindow, public Ui::prospects
+class prospects : public XWidget, public Ui::prospects
 {
     Q_OBJECT
 

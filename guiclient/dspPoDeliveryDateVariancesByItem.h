@@ -58,11 +58,11 @@
 #ifndef DSPPODELIVERYDATEVARIANCESBYITEM_H
 #define DSPPODELIVERYDATEVARIANCESBYITEM_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspPoDeliveryDateVariancesByItem.h"
 
-class dspPoDeliveryDateVariancesByItem : public XMainWindow, public Ui::dspPoDeliveryDateVariancesByItem
+class dspPoDeliveryDateVariancesByItem : public XWidget, public Ui::dspPoDeliveryDateVariancesByItem
 {
     Q_OBJECT
 

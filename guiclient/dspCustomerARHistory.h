@@ -59,12 +59,12 @@
 #define DSPCUSTOMERARHISTORY_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspCustomerARHistory.h"
 
-class dspCustomerARHistory : public XMainWindow, public Ui::dspCustomerARHistory
+class dspCustomerARHistory : public XWidget, public Ui::dspCustomerARHistory
 {
     Q_OBJECT
 

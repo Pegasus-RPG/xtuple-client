@@ -58,11 +58,11 @@
 #ifndef DSPMATERIALUSAGEVARIANCEBYWAREHOUSE_H
 #define DSPMATERIALUSAGEVARIANCEBYWAREHOUSE_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspMaterialUsageVarianceByWarehouse.h"
 
-class dspMaterialUsageVarianceByWarehouse : public XMainWindow, public Ui::dspMaterialUsageVarianceByWarehouse
+class dspMaterialUsageVarianceByWarehouse : public XWidget, public Ui::dspMaterialUsageVarianceByWarehouse
 {
     Q_OBJECT
 

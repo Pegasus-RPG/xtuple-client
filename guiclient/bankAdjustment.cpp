@@ -60,7 +60,7 @@
 #include <qvariant.h>
 #include <qmessagebox.h>
 #include <qsqlerror.h>
-#include <qstatusbar.h>
+//#include <qstatusbar.h>
 #include <qvalidator.h>
 
 /*
@@ -69,11 +69,11 @@
  *
  */
 bankAdjustment::bankAdjustment(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
     setupUi(this);
 
-    (void)statusBar();
+//    (void)statusBar();
 
     // signals and slots connections
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
@@ -102,7 +102,7 @@ void bankAdjustment::languageChange()
 
 void bankAdjustment::init()
 {
-  statusBar()->hide();
+//  statusBar()->hide();
   
   _bankaccnt->populate("SELECT bankaccnt_id,"
                        "       (bankaccnt_name || '-' || bankaccnt_descrip),"

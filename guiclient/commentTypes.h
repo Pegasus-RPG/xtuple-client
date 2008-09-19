@@ -59,12 +59,12 @@
 #define COMMENTTYPES_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_commentTypes.h"
 
-class commentTypes : public XMainWindow, public Ui::commentTypes
+class commentTypes : public XWidget, public Ui::commentTypes
 {
     Q_OBJECT
 

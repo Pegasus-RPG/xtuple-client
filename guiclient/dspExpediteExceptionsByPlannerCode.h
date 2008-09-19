@@ -59,11 +59,11 @@
 #define DSPEXPEDITEEXCEPTIONSBYPLANNERCODE_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspExpediteExceptionsByPlannerCode.h"
 
-class dspExpediteExceptionsByPlannerCode : public XMainWindow, public Ui::dspExpediteExceptionsByPlannerCode
+class dspExpediteExceptionsByPlannerCode : public XWidget, public Ui::dspExpediteExceptionsByPlannerCode
 {
     Q_OBJECT
 

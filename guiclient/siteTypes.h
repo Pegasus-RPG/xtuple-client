@@ -59,12 +59,12 @@
 #define SITETYPES_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_siteTypes.h"
 
-class siteTypes : public XMainWindow, public Ui::siteTypes
+class siteTypes : public XWidget, public Ui::siteTypes
 {
     Q_OBJECT
 

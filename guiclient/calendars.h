@@ -59,11 +59,11 @@
 #define CALENDARS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_calendars.h"
 
-class calendars : public XMainWindow, public Ui::calendars
+class calendars : public XWidget, public Ui::calendars
 {
     Q_OBJECT
 

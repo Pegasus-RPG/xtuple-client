@@ -59,10 +59,10 @@
 #define USERS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include "ui_users.h"
 
-class users : public XMainWindow, public Ui::users
+class users : public XWidget, public Ui::users
 {
     Q_OBJECT
 

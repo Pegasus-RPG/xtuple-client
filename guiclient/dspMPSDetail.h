@@ -59,12 +59,12 @@
 #define DSPMPSDETAIL_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspMPSDetail.h"
 
-class dspMPSDetail : public XMainWindow, public Ui::dspMPSDetail
+class dspMPSDetail : public XWidget, public Ui::dspMPSDetail
 {
     Q_OBJECT
 

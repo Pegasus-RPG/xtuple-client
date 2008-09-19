@@ -59,11 +59,11 @@
 #define DSPCOUNTTAGSBYWAREHOUSE_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspCountTagsByWarehouse.h"
 
-class dspCountTagsByWarehouse : public XMainWindow, public Ui::dspCountTagsByWarehouse
+class dspCountTagsByWarehouse : public XWidget, public Ui::dspCountTagsByWarehouse
 {
     Q_OBJECT
 

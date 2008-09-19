@@ -59,12 +59,12 @@
 #define DSPINVENTORYHISTORYBYORDERNUMBER_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspInventoryHistoryByOrderNumber.h"
 
-class dspInventoryHistoryByOrderNumber : public XMainWindow, public Ui::dspInventoryHistoryByOrderNumber
+class dspInventoryHistoryByOrderNumber : public XWidget, public Ui::dspInventoryHistoryByOrderNumber
 {
     Q_OBJECT
 

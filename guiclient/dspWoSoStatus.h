@@ -59,11 +59,11 @@
 #define DSPWOSOSTATUS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspWoSoStatus.h"
 
-class dspWoSoStatus : public XMainWindow, public Ui::dspWoSoStatus
+class dspWoSoStatus : public XWidget, public Ui::dspWoSoStatus
 {
     Q_OBJECT
 

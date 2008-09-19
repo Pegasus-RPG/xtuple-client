@@ -73,11 +73,11 @@
 #define	AMOUNT_COL	8
 
 dspBacklogByParameterList::dspBacklogByParameterList(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
+//  (void)statusBar();
 
   connect(_showPrices, SIGNAL(toggled(bool)), this, SLOT(sHandlePrices(bool)));
   connect(_soitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));

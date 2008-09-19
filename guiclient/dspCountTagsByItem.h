@@ -59,11 +59,11 @@
 #define DSPCOUNTTAGSBYITEM_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspCountTagsByItem.h"
 
-class dspCountTagsByItem : public XMainWindow, public Ui::dspCountTagsByItem
+class dspCountTagsByItem : public XWidget, public Ui::dspCountTagsByItem
 {
     Q_OBJECT
 

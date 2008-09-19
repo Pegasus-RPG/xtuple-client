@@ -59,11 +59,11 @@
 #define DSPPURCHASEREQSBYPLANNERCODE_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspPurchaseReqsByPlannerCode.h"
 
-class dspPurchaseReqsByPlannerCode : public XMainWindow, public Ui::dspPurchaseReqsByPlannerCode
+class dspPurchaseReqsByPlannerCode : public XWidget, public Ui::dspPurchaseReqsByPlannerCode
 {
     Q_OBJECT
 

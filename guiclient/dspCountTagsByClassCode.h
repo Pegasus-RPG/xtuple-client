@@ -59,11 +59,11 @@
 #define DSPCOUNTTAGSBYCLASSCODE_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspCountTagsByClassCode.h"
 
-class dspCountTagsByClassCode : public XMainWindow, public Ui::dspCountTagsByClassCode
+class dspCountTagsByClassCode : public XWidget, public Ui::dspCountTagsByClassCode
 {
     Q_OBJECT
 

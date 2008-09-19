@@ -59,12 +59,12 @@
 #define DSPTIMEPHASEDOPENARITEMS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspTimePhasedOpenARItems.h"
 
-class dspTimePhasedOpenARItems : public XMainWindow, public Ui::dspTimePhasedOpenARItems
+class dspTimePhasedOpenARItems : public XWidget, public Ui::dspTimePhasedOpenARItems
 {
     Q_OBJECT
 

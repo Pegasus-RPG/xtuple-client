@@ -59,12 +59,12 @@
 #define EDIPROFILES_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_ediProfiles.h"
 
-class ediProfiles : public XMainWindow, public Ui::ediProfiles
+class ediProfiles : public XWidget, public Ui::ediProfiles
 {
     Q_OBJECT
 

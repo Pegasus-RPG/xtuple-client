@@ -58,12 +58,12 @@
 #ifndef INCIDENTWORKBENCH_H
 #define INCIDENTWORKBENCH_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include <parameter.h>
 #include "ui_incidentWorkbench.h"
 
-class incidentWorkbench : public XMainWindow, public Ui::incidentWorkbench
+class incidentWorkbench : public XWidget, public Ui::incidentWorkbench
 {
     Q_OBJECT
 

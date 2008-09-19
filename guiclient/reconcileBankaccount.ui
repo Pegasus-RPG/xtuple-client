@@ -1,6 +1,6 @@
 <ui version="4.0" >
  <class>reconcileBankaccount</class>
- <widget class="QMainWindow" name="reconcileBankaccount" >
+ <widget class="QWidget" name="reconcileBankaccount" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -12,7 +12,6 @@
   <property name="windowTitle" >
    <string>Reconcile Bank Account</string>
   </property>
-  <widget class="QWidget" name="widget" >
    <layout class="QGridLayout" >
     <item row="0" column="0" >
      <layout class="QHBoxLayout" >
@@ -534,7 +533,6 @@
      </layout>
     </item>
    </layout>
-  </widget>
  </widget>
  <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

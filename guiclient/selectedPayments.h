@@ -58,11 +58,11 @@
 #ifndef SELECTEDPAYMENTS_H
 #define SELECTEDPAYMENTS_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 #include "ui_selectedPayments.h"
 
-class selectedPayments : public XMainWindow, public Ui::selectedPayments
+class selectedPayments : public XWidget, public Ui::selectedPayments
 {
     Q_OBJECT
 

@@ -58,11 +58,11 @@
 #ifndef DSPSLOWMOVINGINVENTORYBYCLASSCODE_H
 #define DSPSLOWMOVINGINVENTORYBYCLASSCODE_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspSlowMovingInventoryByClassCode.h"
 
-class dspSlowMovingInventoryByClassCode : public XMainWindow, public Ui::dspSlowMovingInventoryByClassCode
+class dspSlowMovingInventoryByClassCode : public XWidget, public Ui::dspSlowMovingInventoryByClassCode
 {
     Q_OBJECT
 

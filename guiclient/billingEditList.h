@@ -59,12 +59,12 @@
 #define BILLINGEDITLIST_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_billingEditList.h"
 
-class billingEditList : public XMainWindow, public Ui::billingEditList
+class billingEditList : public XWidget, public Ui::billingEditList
 {
     Q_OBJECT
 

@@ -70,11 +70,11 @@
 #include "submitReport.h"
 
 dspTimePhasedUsageStatisticsByItem::dspTimePhasedUsageStatisticsByItem(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
+//  (void)statusBar();
 
   // signals and slots connections
   connect(_query, SIGNAL(clicked()), this, SLOT(sCalculate()));

@@ -3,7 +3,7 @@
  <comment></comment>
  <exportmacro></exportmacro>
  <class>dspExpediteExceptionsByPlannerCode</class>
- <widget class="QMainWindow" name="dspExpediteExceptionsByPlannerCode" >
+ <widget class="QWidget" name="dspExpediteExceptionsByPlannerCode" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -15,22 +15,7 @@
   <property name="windowTitle" >
    <string>Expedite Exceptions by Planner Code</string>
   </property>
-  <widget class="QWidget" name="widget" >
-   <property name="geometry" >
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>657</width>
-     <height>358</height>
-    </rect>
-   </property>
    <layout class="QVBoxLayout" >
-    <property name="margin" >
-     <number>5</number>
-    </property>
-    <property name="spacing" >
-     <number>5</number>
-    </property>
     <item>
      <layout class="QHBoxLayout" >
       <property name="margin" >
@@ -247,7 +232,6 @@
      </layout>
     </item>
    </layout>
-  </widget>
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
@@ -267,7 +251,7 @@
    <pixmap></pixmap>
   </customwidget>
   <customwidget>
-   <class>QMainWindow</class>
+   <class>QWidget</class>
    <extends>QWidget</extends>
    <header>qmainwindow.h</header>
    <container>1</container>

@@ -59,12 +59,12 @@
 #define TODOLIST_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_todoList.h"
 
-class todoList : public XMainWindow, public Ui::todoList
+class todoList : public XWidget, public Ui::todoList
 {
   Q_OBJECT
 

@@ -58,7 +58,7 @@
 #include "dspItemCostDetail.h"
 
 #include <QVariant>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <QWorkspace>
 
 #include <openreports.h>
@@ -71,11 +71,11 @@
  *
  */
 dspItemCostDetail::dspItemCostDetail(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
     setupUi(this);
 
-    (void)statusBar();
+//    (void)statusBar();
 
     QButtonGroup* _costTypeGroupInt = new QButtonGroup(this);
     _costTypeGroupInt->addButton(_standardCosts);
@@ -109,7 +109,7 @@ void dspItemCostDetail::languageChange()
 
 void dspItemCostDetail::init()
 {
-  statusBar()->hide();
+//  statusBar()->hide();
 
   _bom->addColumn(tr("#"),               _seqColumn,   Qt::AlignCenter );
   _bom->addColumn(tr("Item Number"),     _itemColumn,  Qt::AlignLeft   );

@@ -59,10 +59,10 @@
 #define RECALLORDERS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include "ui_recallOrders.h"
 
-class recallOrders : public XMainWindow, public Ui::recallOrders
+class recallOrders : public XWidget, public Ui::recallOrders
 {
     Q_OBJECT
 

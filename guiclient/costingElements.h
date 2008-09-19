@@ -59,10 +59,10 @@
 #define COSTINGELEMENTS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include "ui_costingElements.h"
 
-class costingElements : public XMainWindow, public Ui::costingElements
+class costingElements : public XWidget, public Ui::costingElements
 {
     Q_OBJECT
 

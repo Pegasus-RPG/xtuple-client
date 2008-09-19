@@ -58,10 +58,10 @@
 #ifndef TAXCODES_H
 #define TAXCODES_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include "ui_taxCodes.h"
 
-class taxCodes : public XMainWindow, public Ui::taxCodes
+class taxCodes : public XWidget, public Ui::taxCodes
 {
     Q_OBJECT
 

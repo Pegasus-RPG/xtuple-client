@@ -58,7 +58,7 @@
 #include "plannedSchedules.h"
 
 #include <QVariant>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <QMessageBox>
 #include <QMenu>
 
@@ -68,11 +68,11 @@
 #include "copyPlannedSchedule.h"
 
 plannedSchedules::plannedSchedules(QWidget * parent, const char * name, Qt::WFlags fl)
-  : XMainWindow(parent, name, fl)
+  : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  statusBar()->hide();
+//  statusBar()->hide();
 
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));

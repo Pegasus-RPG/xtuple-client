@@ -74,11 +74,11 @@
 #include "storedProcErrorLookup.h"
 
 arWorkBench::arWorkBench(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
+//  (void)statusBar();
 
   connect(_viewAropen, SIGNAL(clicked()), this, SLOT(sViewAropen()));
   connect(_editAropen, SIGNAL(clicked()), this, SLOT(sEditAropen()));

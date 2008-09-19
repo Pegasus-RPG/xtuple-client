@@ -59,12 +59,12 @@
 #define OPENRETURNAUTHORIZATIONS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_openReturnAuthorizations.h"
 
-class openReturnAuthorizations : public XMainWindow, public Ui::openReturnAuthorizations
+class openReturnAuthorizations : public XWidget, public Ui::openReturnAuthorizations
 {
     Q_OBJECT
 

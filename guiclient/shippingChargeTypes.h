@@ -58,10 +58,10 @@
 #ifndef SHIPPINGCHARGETYPES_H
 #define SHIPPINGCHARGETYPES_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include "ui_shippingChargeTypes.h"
 
-class shippingChargeTypes : public XMainWindow, public Ui::shippingChargeTypes
+class shippingChargeTypes : public XWidget, public Ui::shippingChargeTypes
 {
     Q_OBJECT
 

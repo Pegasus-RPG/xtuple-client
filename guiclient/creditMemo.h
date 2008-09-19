@@ -59,14 +59,14 @@
 #define CREDITMEMO_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_creditMemo.h"
 
 #include "taxCache.h"
 
-class creditMemo : public XMainWindow, public Ui::creditMemo
+class creditMemo : public XWidget, public Ui::creditMemo
 {
     Q_OBJECT
 

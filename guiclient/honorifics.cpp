@@ -61,7 +61,7 @@
 #include <QVariant>
 #include <QMessageBox>
 #include <QSqlError>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <openreports.h>
 #include "honorific.h"
 
@@ -79,11 +79,11 @@
  *
  */
 honorifics::honorifics(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
     setupUi(this);
 
-    (void)statusBar();
+//    (void)statusBar();
 
     // signals and slots connections
     connect(_honorifics, SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *, int)), this, SLOT(sPopulateMenu(QMenu*)));
@@ -95,7 +95,7 @@ honorifics::honorifics(QWidget* parent, const char* name, Qt::WFlags fl)
     connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
     connect(_honorifics, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
 
-    statusBar()->hide();
+//    statusBar()->hide();
     
     _honorifics->addColumn(tr("Title"),        _itemColumn, Qt::AlignLeft   );
 

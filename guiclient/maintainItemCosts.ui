@@ -3,7 +3,7 @@
   <comment></comment>
   <exportmacro></exportmacro>
   <class>maintainItemCosts</class>
-  <widget class="QMainWindow" name="maintainItemCosts" >
+  <widget class="QWidget" name="maintainItemCosts" >
     <property name="geometry" >
       <rect>
         <x>0</x>
@@ -15,14 +15,7 @@
     <property name="windowTitle" >
       <string>Maintain Item Costs</string>
     </property>
-    <widget class="QWidget" >
       <layout class="QVBoxLayout" >
-        <property name="margin" >
-          <number>5</number>
-        </property>
-        <property name="spacing" >
-          <number>5</number>
-        </property>
         <item>
           <layout class="QHBoxLayout" >
             <property name="margin" >
@@ -208,7 +201,6 @@
           </layout>
         </item>
       </layout>
-    </widget>
   </widget>
   <layoutdefault spacing="5" margin="5" />
   <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

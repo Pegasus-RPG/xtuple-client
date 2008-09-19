@@ -58,10 +58,10 @@
 #ifndef SHIPVIAS_H
 #define SHIPVIAS_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include "ui_shipVias.h"
 
-class shipVias : public XMainWindow, public Ui::shipVias
+class shipVias : public XWidget, public Ui::shipVias
 {
     Q_OBJECT
 

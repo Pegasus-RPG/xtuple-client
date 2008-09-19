@@ -58,10 +58,10 @@
 #ifndef OPPORTUNITYSOURCES_H
 #define OPPORTUNITYSOURCES_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include "ui_opportunitySources.h"
 
-class opportunitySources : public XMainWindow, public Ui::opportunitySources
+class opportunitySources : public XWidget, public Ui::opportunitySources
 {
     Q_OBJECT
 

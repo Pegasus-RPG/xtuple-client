@@ -59,7 +59,7 @@
 
 #include <qvariant.h>
 #include <qmessagebox.h>
-#include <qstatusbar.h>
+//#include <qstatusbar.h>
 #include <parameter.h>
 #include <openreports.h>
 #include "laborRate.h"
@@ -70,11 +70,11 @@
  *
  */
 laborRates::laborRates(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
     setupUi(this);
 
-    (void)statusBar();
+//    (void)statusBar();
 
     // signals and slots connections
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
@@ -107,7 +107,7 @@ void laborRates::languageChange()
 
 void laborRates::init()
 {
-  statusBar()->hide();
+//  statusBar()->hide();
   
   _lbrrate->addColumn(tr("Labor Rate"),  _itemColumn, Qt::AlignLeft,   true,  "lbrrate_code"  );
   _lbrrate->addColumn(tr("Description"), -1,          Qt::AlignLeft,   true,  "lbrrate_descrip"  );

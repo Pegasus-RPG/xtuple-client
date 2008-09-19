@@ -59,12 +59,12 @@
 #define DSPCOSTEDSUMMARIZEDBOM_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspCostedSummarizedBOM.h"
 
-class dspCostedSummarizedBOM : public XMainWindow, public Ui::dspCostedSummarizedBOM
+class dspCostedSummarizedBOM : public XWidget, public Ui::dspCostedSummarizedBOM
 {
     Q_OBJECT
 

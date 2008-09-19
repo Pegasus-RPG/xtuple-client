@@ -59,7 +59,7 @@
 
 #include <QMessageBox>
 #include <QSqlError>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <QVariant>
 
 #include <parameter.h>
@@ -72,11 +72,11 @@
  *
  */
 customerFormAssignments::customerFormAssignments(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
     setupUi(this);
 
-    (void)statusBar();
+//    (void)statusBar();
 
     // signals and slots connections
     connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
@@ -108,7 +108,7 @@ void customerFormAssignments::languageChange()
 
 void customerFormAssignments::init()
 {
-  statusBar()->hide();
+//  statusBar()->hide();
   
   _custform->addColumn(tr("Customer Type"), -1,  Qt::AlignCenter );
   _custform->addColumn(tr("Invoice"),       100, Qt::AlignCenter );

@@ -58,11 +58,11 @@
 #ifndef DSPPARTIALLYSHIPPEDORDERS_H
 #define DSPPARTIALLYSHIPPEDORDERS_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspPartiallyShippedOrders.h"
 
-class dspPartiallyShippedOrders : public XMainWindow, public Ui::dspPartiallyShippedOrders
+class dspPartiallyShippedOrders : public XWidget, public Ui::dspPartiallyShippedOrders
 {
     Q_OBJECT
 

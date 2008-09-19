@@ -59,7 +59,7 @@
 
 #include <QMessageBox>
 #include <QSqlError>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <QVariant>
 
 #include <metasql.h>
@@ -71,7 +71,7 @@
 #include "todoItem.h"
 
 dspIncidentsByCRMAccount::dspIncidentsByCRMAccount(QWidget* parent, const char* name, Qt::WFlags fl)
-  : XMainWindow(parent, name, fl)
+  : XWidget(parent, name, fl)
 {
   setupUi(this);
 
@@ -79,7 +79,7 @@ dspIncidentsByCRMAccount::dspIncidentsByCRMAccount(QWidget* parent, const char* 
   _crmacctGroupInt->addButton(_allAccts);
   _crmacctGroupInt->addButton(_selectedAcct);
 
-  statusBar()->hide();
+//  statusBar()->hide();
 
   _createdDate->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _createdDate->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);

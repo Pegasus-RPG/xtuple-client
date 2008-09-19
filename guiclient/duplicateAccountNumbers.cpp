@@ -59,7 +59,7 @@
 
 #include <QVariant>
 #include <QMessageBox>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <parameter.h>
 #include <openreports.h>
 
@@ -69,7 +69,7 @@
  *
  */
 duplicateAccountNumbers::duplicateAccountNumbers(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 

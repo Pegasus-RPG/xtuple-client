@@ -75,11 +75,11 @@
 #include "storedProcErrorLookup.h"
 
 maintainShipping::maintainShipping(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
+//  (void)statusBar();
 
   connect(_ship, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));

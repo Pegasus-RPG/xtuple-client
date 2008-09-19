@@ -58,12 +58,12 @@
 #ifndef DSPTIMEPHASEDPLANNEDREBYPLANNERCODE_H
 #define DSPTIMEPHASEDPLANNEDREBYPLANNERCODE_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <QList>
 
 #include "ui_dspTimePhasedPlannedREByPlannerCode.h"
 
-class dspTimePhasedPlannedREByPlannerCode : public XMainWindow, public Ui::dspTimePhasedPlannedREByPlannerCode
+class dspTimePhasedPlannedREByPlannerCode : public XWidget, public Ui::dspTimePhasedPlannedREByPlannerCode
 {
     Q_OBJECT
 

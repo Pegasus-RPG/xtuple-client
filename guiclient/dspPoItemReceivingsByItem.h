@@ -58,11 +58,11 @@
 #ifndef DSPPOITEMRECEIVINGSBYITEM_H
 #define DSPPOITEMRECEIVINGSBYITEM_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspPoItemReceivingsByItem.h"
 
-class dspPoItemReceivingsByItem : public XMainWindow, public Ui::dspPoItemReceivingsByItem
+class dspPoItemReceivingsByItem : public XWidget, public Ui::dspPoItemReceivingsByItem
 {
     Q_OBJECT
 

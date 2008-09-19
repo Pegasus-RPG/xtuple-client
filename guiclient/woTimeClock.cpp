@@ -74,11 +74,11 @@
 #define WOID ((_wooperList->currentItem() == 0) ? _wo->id() : _wooperList->altId())
 
 woTimeClock::woTimeClock(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
+//  (void)statusBar();
 
   connect(_clockIn, SIGNAL(clicked()), this, SLOT(sClockIn()));
   connect(_clockOut, SIGNAL(clicked()), this, SLOT(sClockOut()));
@@ -151,7 +151,7 @@ bool woTimeClock::close(bool alsoDelete)
       return false;
   }
   
-  return XMainWindow::close(alsoDelete);
+  return XWidget::close(alsoDelete);
 }
 
 void woTimeClock::sClockIn()

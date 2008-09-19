@@ -59,11 +59,11 @@
 #define DSPTODOBYUSERANDINCIDENT_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspTodoByUserAndIncident.h"
 
-class dspTodoByUserAndIncident : public XMainWindow, public Ui::dspTodoByUserAndIncident
+class dspTodoByUserAndIncident : public XWidget, public Ui::dspTodoByUserAndIncident
 {
     Q_OBJECT
 

@@ -59,7 +59,7 @@
 
 #include <QVariant>
 #include <QMessageBox>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include "currencyConversion.h"
 #include "openreports.h"
 #include "currency.h"
@@ -72,11 +72,11 @@
  *
  */
 currencyConversions::currencyConversions(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
     setupUi(this);
 
-    (void)statusBar();
+//    (void)statusBar();
 
     // signals and slots connections
     connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
@@ -114,7 +114,7 @@ void currencyConversions::languageChange()
 
 void currencyConversions::init()
 {
-    statusBar()->hide();
+//    statusBar()->hide();
 
     setBaseCurrency();
     _conversionRates->addColumn(tr("Currency"),     _currencyColumn, Qt::AlignLeft);

@@ -59,7 +59,7 @@
 
 #include <qvariant.h>
 #include <qmessagebox.h>
-#include <qstatusbar.h>
+//#include <qstatusbar.h>
 #include <parameter.h>
 #include <openreports.h>
 #include "apAccountAssignment.h"
@@ -70,11 +70,11 @@
  *
  */
 apAccountAssignments::apAccountAssignments(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
     setupUi(this);
 
-    (void)statusBar();
+//    (void)statusBar();
 
     // signals and slots connections
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
@@ -107,7 +107,7 @@ void apAccountAssignments::languageChange()
 
 void apAccountAssignments::init()
 {
-  //statusBar()->hide();
+//  //statusBar()->hide();
   
   _apaccnt->addColumn(tr("Vendor Type"),      -1, Qt::AlignCenter );
   _apaccnt->addColumn(tr("A/P Account"),     120, Qt::AlignLeft   );

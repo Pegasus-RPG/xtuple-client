@@ -61,7 +61,7 @@
 #include <QVariant>
 #include <QMessageBox>
 #include <QSqlError>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <openreports.h>
 #include "incidentPriority.h"
 
@@ -71,11 +71,11 @@
  *
  */
 incidentPriorities::incidentPriorities(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
+//  (void)statusBar();
 
   // signals and slots connections
   connect(_close,  SIGNAL(clicked()), this, SLOT(close()));
@@ -87,7 +87,7 @@ incidentPriorities::incidentPriorities(QWidget* parent, const char* name, Qt::WF
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_view,  SIGNAL(clicked()), this, SLOT(sView()));
 
-  statusBar()->hide();
+//  statusBar()->hide();
   
   _incidentPriorities->addColumn(tr("Order"),  _seqColumn, Qt::AlignRight);
   _incidentPriorities->addColumn(tr("Priority"),      100, Qt::AlignLeft );

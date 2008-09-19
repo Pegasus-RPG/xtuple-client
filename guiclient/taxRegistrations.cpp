@@ -59,7 +59,7 @@
 
 #include <QVariant>
 #include <QMessageBox>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <QSqlError>
 #include <parameter.h>
 #include <qworkspace.h>
@@ -71,11 +71,11 @@
  *
  */
 taxRegistrations::taxRegistrations(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
+//  (void)statusBar();
 
   // signals and slots connections
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
@@ -83,7 +83,7 @@ taxRegistrations::taxRegistrations(QWidget* parent, const char* name, Qt::WFlags
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
 
-  statusBar()->hide();
+//  statusBar()->hide();
   
   if (_privileges->check("MaintainChartOfAccounts"))
   {

@@ -58,11 +58,11 @@
 #ifndef SCRIPTS_H
 #define SCRIPTS_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_scripts.h"
 
-class scripts : public XMainWindow, public Ui::scripts
+class scripts : public XWidget, public Ui::scripts
 {
     Q_OBJECT
 

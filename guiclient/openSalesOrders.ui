@@ -1,6 +1,6 @@
 <ui version="4.0" >
  <class>openSalesOrders</class>
- <widget class="QMainWindow" name="openSalesOrders" >
+ <widget class="QWidget" name="openSalesOrders" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -12,7 +12,6 @@
   <property name="windowTitle" >
    <string>List Open Sales Orders</string>
   </property>
-  <widget class="QWidget" name="widget" >
    <layout class="QVBoxLayout" >
     <item>
      <layout class="QHBoxLayout" >
@@ -351,7 +350,6 @@
      </layout>
     </item>
    </layout>
-  </widget>
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

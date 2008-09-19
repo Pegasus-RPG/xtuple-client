@@ -59,14 +59,14 @@
 #define INVOICE_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_invoice.h"
 
 #include "taxCache.h"
 
-class invoice : public XMainWindow, public Ui::invoice
+class invoice : public XWidget, public Ui::invoice
 {
     Q_OBJECT
 

@@ -59,12 +59,12 @@
 #define DSPINVENTORYLOCATOR_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspInventoryLocator.h"
 
-class dspInventoryLocator : public XMainWindow, public Ui::dspInventoryLocator
+class dspInventoryLocator : public XWidget, public Ui::dspInventoryLocator
 {
     Q_OBJECT
 

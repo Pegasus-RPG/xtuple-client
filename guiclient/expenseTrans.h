@@ -59,12 +59,12 @@
 #define EXPENSETRANS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_expenseTrans.h"
 
-class expenseTrans : public XMainWindow, public Ui::expenseTrans
+class expenseTrans : public XWidget, public Ui::expenseTrans
 {
     Q_OBJECT
 

@@ -60,7 +60,7 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <QVariant>
 #include <QWorkspace>
 
@@ -74,11 +74,11 @@
  *
  */
 countries::countries(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
     setupUi(this);
 
-    (void)statusBar();
+//    (void)statusBar();
 
     connect(_new,	SIGNAL(clicked()),	this,	SLOT(sNew()));
     connect(_edit,	SIGNAL(clicked()),	this,	SLOT(sEdit()));
@@ -88,7 +88,7 @@ countries::countries(QWidget* parent, const char* name, Qt::WFlags fl)
     connect(_countries,	SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)),
 					  this,	SLOT(sPopulateMenu(QMenu*)));
 
-    statusBar()->hide();
+//    statusBar()->hide();
 
     if (_privileges->check("MaintainCountries"))
     {

@@ -59,12 +59,12 @@
 #define DSPALLOCATIONS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspAllocations.h"
 
-class dspAllocations : public XMainWindow, public Ui::dspAllocations
+class dspAllocations : public XWidget, public Ui::dspAllocations
 {
     Q_OBJECT
 

@@ -3,7 +3,7 @@
   <comment></comment>
   <exportmacro></exportmacro>
   <class>locations</class>
-  <widget class="QMainWindow" name="locations" >
+  <widget class="QWidget" name="locations" >
     <property name="geometry" >
       <rect>
         <x>0</x>
@@ -15,14 +15,7 @@
     <property name="windowTitle" >
       <string>List Site Locations</string>
     </property>
-    <widget class="QWidget" >
       <layout class="QHBoxLayout" >
-        <property name="margin" >
-          <number>5</number>
-        </property>
-        <property name="spacing" >
-          <number>7</number>
-        </property>
         <item>
           <layout class="QVBoxLayout" >
             <property name="spacing" >
@@ -193,7 +186,6 @@
           </layout>
         </item>
       </layout>
-    </widget>
   </widget>
   <layoutdefault spacing="6" margin="11" />
   <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

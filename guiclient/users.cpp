@@ -59,7 +59,7 @@
 
 #include <QVariant>
 #include <QMessageBox>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <parameter.h>
 #include <openreports.h>
 #include "user.h"
@@ -70,11 +70,11 @@
  *
  */
 users::users(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
+//  (void)statusBar();
 
   // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
@@ -85,7 +85,7 @@ users::users(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_showInactive, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
 
-  statusBar()->hide();
+//  statusBar()->hide();
   
   _usr->addColumn(tr("Username"),    80, Qt::AlignLeft   );
   _usr->addColumn(tr("Proper Name"), -1, Qt::AlignLeft   );

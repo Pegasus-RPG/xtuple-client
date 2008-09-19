@@ -1,6 +1,6 @@
 <ui version="4.0" >
  <class>BOM</class>
- <widget class="QMainWindow" name="BOM" >
+ <widget class="QWidget" name="BOM" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -18,26 +18,7 @@
   <property name="windowTitle" >
    <string>Bill of Materials</string>
   </property>
-  <widget class="QWidget" name="widget" >
    <layout class="QGridLayout" >
-    <property name="leftMargin" >
-     <number>9</number>
-    </property>
-    <property name="topMargin" >
-     <number>9</number>
-    </property>
-    <property name="rightMargin" >
-     <number>9</number>
-    </property>
-    <property name="bottomMargin" >
-     <number>9</number>
-    </property>
-    <property name="horizontalSpacing" >
-     <number>6</number>
-    </property>
-    <property name="verticalSpacing" >
-     <number>6</number>
-    </property>
     <item row="1" column="0" colspan="3" >
      <widget class="QFrame" name="frame_2" >
       <property name="sizePolicy" >
@@ -856,7 +837,6 @@
      </widget>
     </item>
    </layout>
-  </widget>
  </widget>
  <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

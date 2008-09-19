@@ -1,6 +1,6 @@
 <ui version="4.0" >
  <class>dspOrderActivityByProject</class>
- <widget class="QMainWindow" name="dspOrderActivityByProject" >
+ <widget class="QWidget" name="dspOrderActivityByProject" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -12,14 +12,7 @@
   <property name="windowTitle" >
    <string>Order Activity by Project</string>
   </property>
-  <widget class="QWidget" name="widget" >
    <layout class="QVBoxLayout" >
-    <property name="margin" >
-     <number>5</number>
-    </property>
-    <property name="spacing" >
-     <number>0</number>
-    </property>
     <item>
      <layout class="QVBoxLayout" >
       <property name="margin" >
@@ -236,7 +229,6 @@
      </widget>
     </item>
    </layout>
-  </widget>
  </widget>
  <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

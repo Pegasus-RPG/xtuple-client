@@ -3,7 +3,7 @@
   <comment></comment>
   <exportmacro></exportmacro>
   <class>ediProfiles</class>
-  <widget class="QMainWindow" name="ediProfiles" >
+  <widget class="QWidget" name="ediProfiles" >
     <property name="geometry" >
       <rect>
         <x>0</x>
@@ -15,7 +15,6 @@
     <property name="windowTitle" >
       <string>List EDI Profiles</string>
     </property>
-    <widget class="QWidget" >
       <layout class="QHBoxLayout" >
         <item>
           <layout class="QVBoxLayout" >
@@ -115,7 +114,6 @@
           </layout>
         </item>
       </layout>
-    </widget>
   </widget>
   <layoutdefault spacing="5" margin="5" />
   <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

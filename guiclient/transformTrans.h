@@ -59,11 +59,11 @@
 #define TRANSFORMTRANS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 #include "ui_transformTrans.h"
 
-class transformTrans : public XMainWindow, public Ui::transformTrans
+class transformTrans : public XWidget, public Ui::transformTrans
 {
     Q_OBJECT
 

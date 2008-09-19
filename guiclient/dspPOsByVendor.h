@@ -59,11 +59,11 @@
 #define DSPPOSBYVENDOR_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspPOsByVendor.h"
 
-class dspPOsByVendor : public XMainWindow, public Ui::dspPOsByVendor
+class dspPOsByVendor : public XWidget, public Ui::dspPOsByVendor
 {
     Q_OBJECT
 

@@ -3,7 +3,7 @@
   <comment></comment>
   <exportmacro></exportmacro>
   <class>dspBacklogBySalesOrder</class>
-  <widget class="QMainWindow" name="dspBacklogBySalesOrder" >
+  <widget class="QWidget" name="dspBacklogBySalesOrder" >
     <property name="enabled" >
       <bool>true</bool>
     </property>
@@ -18,14 +18,7 @@
     <property name="windowTitle" >
       <string>Backlog by Sales Order</string>
     </property>
-    <widget class="QWidget" >
       <layout class="QVBoxLayout" >
-        <property name="margin" >
-          <number>5</number>
-        </property>
-        <property name="spacing" >
-          <number>5</number>
-        </property>
         <item>
           <layout class="QHBoxLayout" >
             <property name="margin" >
@@ -332,7 +325,6 @@
           </layout>
         </item>
       </layout>
-    </widget>
   </widget>
   <layoutdefault spacing="6" margin="11" />
   <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

@@ -58,12 +58,12 @@
 #ifndef DSPTIMEPHASEDBOOKINGSBYPRODUCTCATEGORY_H
 #define DSPTIMEPHASEDBOOKINGSBYPRODUCTCATEGORY_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <QList>
 #include <parameter.h>
 #include "ui_dspTimePhasedBookingsByProductCategory.h"
 
-class dspTimePhasedBookingsByProductCategory : public XMainWindow, public Ui::dspTimePhasedBookingsByProductCategory
+class dspTimePhasedBookingsByProductCategory : public XWidget, public Ui::dspTimePhasedBookingsByProductCategory
 {
     Q_OBJECT
 

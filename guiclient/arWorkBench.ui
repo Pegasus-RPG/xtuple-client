@@ -1,6 +1,6 @@
 <ui version="4.0" >
  <class>arWorkBench</class>
- <widget class="QMainWindow" name="arWorkBench" >
+ <widget class="QWidget" name="arWorkBench" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -12,7 +12,6 @@
   <property name="windowTitle" >
    <string>Receivables Workbench</string>
   </property>
-  <widget class="QWidget" name="widget" >
    <layout class="QGridLayout" >
     <item row="0" column="0" >
      <layout class="QGridLayout" >
@@ -502,7 +501,6 @@
      </layout>
     </item>
    </layout>
-  </widget>
  </widget>
  <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

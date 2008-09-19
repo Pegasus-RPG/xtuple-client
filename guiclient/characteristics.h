@@ -59,11 +59,11 @@
 #define CHARACTERISTICS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_characteristics.h"
 
-class characteristics : public XMainWindow, public Ui::characteristics
+class characteristics : public XWidget, public Ui::characteristics
 {
     Q_OBJECT
 

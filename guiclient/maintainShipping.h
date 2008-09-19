@@ -59,12 +59,12 @@
 #define MAINTAINSHIPPING_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_maintainShipping.h"
 
-class maintainShipping : public XMainWindow, public Ui::maintainShipping
+class maintainShipping : public XWidget, public Ui::maintainShipping
 {
     Q_OBJECT
 

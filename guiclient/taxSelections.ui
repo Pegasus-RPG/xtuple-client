@@ -1,6 +1,6 @@
 <ui version="4.0" >
  <class>taxSelections</class>
- <widget class="QMainWindow" name="taxSelections" >
+ <widget class="QWidget" name="taxSelections" >
   <property name="geometry" >
    <rect>
     <x>0</x>

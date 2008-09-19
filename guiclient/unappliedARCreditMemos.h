@@ -59,10 +59,10 @@
 #define UNAPPLIEDARCREDITMEMOS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include "ui_unappliedARCreditMemos.h"
 
-class unappliedARCreditMemos : public XMainWindow, public Ui::unappliedARCreditMemos
+class unappliedARCreditMemos : public XWidget, public Ui::unappliedARCreditMemos
 {
     Q_OBJECT
 

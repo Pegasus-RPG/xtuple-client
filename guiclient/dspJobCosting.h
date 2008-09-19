@@ -59,12 +59,12 @@
 #define DSPJOBCOSTING_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspJobCosting.h"
 
-class dspJobCosting : public XMainWindow, public Ui::dspJobCosting
+class dspJobCosting : public XWidget, public Ui::dspJobCosting
 {
     Q_OBJECT
 

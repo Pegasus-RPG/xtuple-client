@@ -59,11 +59,11 @@
 #define SHIFTS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 #include "ui_shifts.h"
 
-class shifts : public XMainWindow, public Ui::shifts
+class shifts : public XWidget, public Ui::shifts
 {
     Q_OBJECT
 

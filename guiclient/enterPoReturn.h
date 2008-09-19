@@ -59,12 +59,12 @@
 #define ENTERPORETURN_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_enterPoReturn.h"
 
-class enterPoReturn : public XMainWindow, public Ui::enterPoReturn
+class enterPoReturn : public XWidget, public Ui::enterPoReturn
 {
     Q_OBJECT
 

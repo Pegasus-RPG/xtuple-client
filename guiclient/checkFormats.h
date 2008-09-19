@@ -58,11 +58,11 @@
 #ifndef CHECKFORMATS_H
 #define CHECKFORMATS_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_checkFormats.h"
 
-class checkFormats : public XMainWindow, public Ui::checkFormats
+class checkFormats : public XWidget, public Ui::checkFormats
 {
     Q_OBJECT
 

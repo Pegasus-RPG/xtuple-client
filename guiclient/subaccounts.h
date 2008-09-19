@@ -59,10 +59,10 @@
 #define SUBACCOUNTS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include "ui_subaccounts.h"
 
-class subaccounts : public XMainWindow, public Ui::subaccounts
+class subaccounts : public XWidget, public Ui::subaccounts
 {
     Q_OBJECT
 

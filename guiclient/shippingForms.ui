@@ -3,7 +3,7 @@
   <comment></comment>
   <exportmacro></exportmacro>
   <class>shippingForms</class>
-  <widget class="QMainWindow" name="shippingForms" >
+  <widget class="QWidget" name="shippingForms" >
     <property name="geometry" >
       <rect>
         <x>0</x>
@@ -15,14 +15,7 @@
     <property name="windowTitle" >
       <string>List Shipping Forms</string>
     </property>
-    <widget class="QWidget" >
       <layout class="QHBoxLayout" >
-        <property name="margin" >
-          <number>5</number>
-        </property>
-        <property name="spacing" >
-          <number>7</number>
-        </property>
         <item>
           <layout class="QVBoxLayout" >
             <property name="margin" >
@@ -136,7 +129,6 @@
           </layout>
         </item>
       </layout>
-    </widget>
   </widget>
   <layoutdefault spacing="5" margin="5" />
   <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

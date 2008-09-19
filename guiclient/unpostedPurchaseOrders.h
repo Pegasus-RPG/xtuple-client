@@ -58,11 +58,11 @@
 #ifndef UNPOSTEDPURCHASEORDERS_H
 #define UNPOSTEDPURCHASEORDERS_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_unpostedPurchaseOrders.h"
 
-class unpostedPurchaseOrders : public XMainWindow, public Ui::unpostedPurchaseOrders
+class unpostedPurchaseOrders : public XWidget, public Ui::unpostedPurchaseOrders
 {
     Q_OBJECT
 

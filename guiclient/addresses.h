@@ -59,12 +59,12 @@
 #define ADDRESSES_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_addresses.h"
 
-class addresses : public XMainWindow, public Ui::addresses
+class addresses : public XWidget, public Ui::addresses
 {
     Q_OBJECT
 

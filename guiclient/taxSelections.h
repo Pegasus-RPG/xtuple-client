@@ -59,11 +59,11 @@
 #define TAXSELECTIONS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_taxSelections.h"
 
-class taxSelections : public XMainWindow, public Ui::taxSelections
+class taxSelections : public XWidget, public Ui::taxSelections
 {
   Q_OBJECT
 

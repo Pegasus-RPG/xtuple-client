@@ -1,6 +1,6 @@
 <ui version="4.0" >
  <class>dspTimePhasedBookingsByItem</class>
- <widget class="QMainWindow" name="dspTimePhasedBookingsByItem" >
+ <widget class="QWidget" name="dspTimePhasedBookingsByItem" >
   <property name="enabled" >
    <bool>true</bool>
   </property>
@@ -15,14 +15,7 @@
   <property name="windowTitle" >
    <string>Time-Phased Bookings by Item</string>
   </property>
-  <widget class="QWidget" name="widget" >
    <layout class="QVBoxLayout" >
-    <property name="margin" >
-     <number>5</number>
-    </property>
-    <property name="spacing" >
-     <number>5</number>
-    </property>
     <item>
      <layout class="QHBoxLayout" >
       <property name="margin" >
@@ -378,7 +371,6 @@
      </layout>
     </item>
    </layout>
-  </widget>
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

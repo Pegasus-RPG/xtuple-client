@@ -3,7 +3,7 @@
  <comment></comment>
  <exportmacro></exportmacro>
  <class>dspInventoryBufferStatusByParameterList</class>
- <widget class="QMainWindow" name="dspInventoryBufferStatusByParameterList" >
+ <widget class="QWidget" name="dspInventoryBufferStatusByParameterList" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -15,14 +15,7 @@
   <property name="windowTitle" >
    <string>Inventory Buffer Status by Parameter List</string>
   </property>
-  <widget class="QWidget" name="widget" >
    <layout class="QVBoxLayout" >
-    <property name="margin" >
-     <number>9</number>
-    </property>
-    <property name="spacing" >
-     <number>6</number>
-    </property>
     <item>
      <layout class="QHBoxLayout" >
       <property name="margin" >
@@ -277,7 +270,6 @@
      </widget>
     </item>
    </layout>
-  </widget>
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

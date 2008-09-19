@@ -59,11 +59,11 @@
 #define DSPPENDINGAVAILABILITY_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspPendingAvailability.h"
 
-class dspPendingAvailability : public XMainWindow, public Ui::dspPendingAvailability
+class dspPendingAvailability : public XWidget, public Ui::dspPendingAvailability
 {
     Q_OBJECT
 

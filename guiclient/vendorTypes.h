@@ -58,10 +58,10 @@
 #ifndef VENDORTYPES_H
 #define VENDORTYPES_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include "ui_vendorTypes.h"
 
-class vendorTypes : public XMainWindow, public Ui::vendorTypes
+class vendorTypes : public XWidget, public Ui::vendorTypes
 {
     Q_OBJECT
 

@@ -59,12 +59,12 @@
 #define DSPAPOPENITEMSBYVENDOR_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspAPOpenItemsByVendor.h"
 
-class dspAPOpenItemsByVendor : public XMainWindow, public Ui::dspAPOpenItemsByVendor
+class dspAPOpenItemsByVendor : public XWidget, public Ui::dspAPOpenItemsByVendor
 {
     Q_OBJECT
 

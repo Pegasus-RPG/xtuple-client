@@ -59,12 +59,12 @@
 #define DSPRESERVATIONS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspReservations.h"
 
-class dspReservations : public XMainWindow, public Ui::dspReservations
+class dspReservations : public XWidget, public Ui::dspReservations
 {
     Q_OBJECT
 

@@ -59,11 +59,11 @@
 #define UNPOSTEDGLSERIES_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_unpostedGlSeries.h"
 
-class unpostedGlSeries : public XMainWindow, public Ui::unpostedGlSeries
+class unpostedGlSeries : public XWidget, public Ui::unpostedGlSeries
 {
     Q_OBJECT
 

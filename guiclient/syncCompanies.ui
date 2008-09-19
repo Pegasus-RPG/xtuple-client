@@ -1,6 +1,6 @@
 <ui version="4.0" >
  <class>syncCompanies</class>
- <widget class="QMainWindow" name="syncCompanies" >
+ <widget class="QWidget" name="syncCompanies" >
   <property name="geometry" >
    <rect>
     <x>0</x>

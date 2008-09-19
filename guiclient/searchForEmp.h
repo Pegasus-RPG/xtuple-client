@@ -61,10 +61,10 @@
 #include <parameter.h>
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include "ui_searchForEmp.h"
 
-class searchForEmp : public XMainWindow, public Ui::searchForEmp
+class searchForEmp : public XWidget, public Ui::searchForEmp
 {
     Q_OBJECT
 

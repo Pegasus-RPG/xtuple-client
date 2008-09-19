@@ -1,6 +1,6 @@
 <ui version="4.0" >
  <class>dspInventoryAvailabilityByCustomerType</class>
- <widget class="QMainWindow" name="dspInventoryAvailabilityByCustomerType" >
+ <widget class="QWidget" name="dspInventoryAvailabilityByCustomerType" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -12,7 +12,6 @@
   <property name="windowTitle" >
    <string>Inventory Availability by Customer Type</string>
   </property>
-  <widget class="QWidget" name="widget" >
    <layout class="QVBoxLayout" >
     <item>
      <layout class="QHBoxLayout" >
@@ -259,7 +258,6 @@
      </layout>
     </item>
    </layout>
-  </widget>
  </widget>
  <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

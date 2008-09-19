@@ -59,11 +59,11 @@
 #define DSPUNUSEDPURCHASEDITEMS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspUnusedPurchasedItems.h"
 
-class dspUnusedPurchasedItems : public XMainWindow, public Ui::dspUnusedPurchasedItems
+class dspUnusedPurchasedItems : public XWidget, public Ui::dspUnusedPurchasedItems
 {
     Q_OBJECT
 

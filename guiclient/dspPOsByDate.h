@@ -59,11 +59,11 @@
 #define DSPPOSBYDATE_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspPOsByDate.h"
 
-class dspPOsByDate : public XMainWindow, public Ui::dspPOsByDate
+class dspPOsByDate : public XWidget, public Ui::dspPOsByDate
 {
     Q_OBJECT
 

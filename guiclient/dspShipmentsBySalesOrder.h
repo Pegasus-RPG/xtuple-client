@@ -59,12 +59,12 @@
 #define DSPSHIPMENTSBYSALESORDER_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspShipmentsBySalesOrder.h"
 
-class dspShipmentsBySalesOrder : public XMainWindow, public Ui::dspShipmentsBySalesOrder
+class dspShipmentsBySalesOrder : public XWidget, public Ui::dspShipmentsBySalesOrder
 {
     Q_OBJECT
 

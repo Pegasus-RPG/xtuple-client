@@ -59,12 +59,12 @@
 #define DSPRWTRANSACTIONS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspRWTransactions.h"
 
-class dspRWTransactions : public XMainWindow, public Ui::dspRWTransactions
+class dspRWTransactions : public XWidget, public Ui::dspRWTransactions
 {
     Q_OBJECT
 

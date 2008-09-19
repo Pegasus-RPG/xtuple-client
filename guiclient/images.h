@@ -58,11 +58,11 @@
 #ifndef IMAGES_H
 #define IMAGES_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_images.h"
 
-class images : public XMainWindow, public Ui::images
+class images : public XWidget, public Ui::images
 {
     Q_OBJECT
 

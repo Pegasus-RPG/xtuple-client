@@ -60,7 +60,7 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
-#include <QStatusBar>
+//#include <QStatusBar>
 
 #include <datecluster.h>
 #include <metasql.h>
@@ -73,7 +73,7 @@
 #include "dspInvoiceInformation.h"
 
 dspARApplications::dspARApplications(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 

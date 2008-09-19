@@ -59,10 +59,10 @@
 #define SEARCHFORITEM_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include "ui_searchForItem.h"
 
-class searchForItem : public XMainWindow, public Ui::searchForItem
+class searchForItem : public XWidget, public Ui::searchForItem
 {
     Q_OBJECT
 

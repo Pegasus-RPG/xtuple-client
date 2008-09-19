@@ -59,12 +59,12 @@
 #define DSPWOSCHEDULEBYWORKORDER_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspWoScheduleByWorkOrder.h"
 
-class dspWoScheduleByWorkOrder : public XMainWindow, public Ui::dspWoScheduleByWorkOrder
+class dspWoScheduleByWorkOrder : public XWidget, public Ui::dspWoScheduleByWorkOrder
 {
     Q_OBJECT
 

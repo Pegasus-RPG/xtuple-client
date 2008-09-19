@@ -59,11 +59,11 @@
 #define LABORRATES_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_laborRates.h"
 
-class laborRates : public XMainWindow, public Ui::laborRates
+class laborRates : public XWidget, public Ui::laborRates
 {
     Q_OBJECT
 

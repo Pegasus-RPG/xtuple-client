@@ -59,11 +59,11 @@
 #define CURRENCIES_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_currencies.h"
 
-class currencies : public XMainWindow, public Ui::currencies
+class currencies : public XWidget, public Ui::currencies
 {
     Q_OBJECT
 

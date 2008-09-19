@@ -59,11 +59,11 @@
 #define DSPCUSTOMERINFORMATIONEXPORT_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspCustomerInformationExport.h"
 
-class dspCustomerInformationExport : public XMainWindow, public Ui::dspCustomerInformationExport
+class dspCustomerInformationExport : public XWidget, public Ui::dspCustomerInformationExport
 {
     Q_OBJECT
 

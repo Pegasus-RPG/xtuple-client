@@ -59,11 +59,11 @@
 #define SALESORDER_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 #include "ui_salesOrder.h"
 
-class salesOrder : public XMainWindow, public Ui::salesOrder
+class salesOrder : public XWidget, public Ui::salesOrder
 {
     Q_OBJECT
 

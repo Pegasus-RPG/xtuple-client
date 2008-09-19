@@ -65,7 +65,7 @@
 #include <metasql.h>
 
 fixSerial::fixSerial(QWidget* parent, Qt::WindowFlags fl)
-    : XMainWindow(parent, fl)
+    : XWidget(parent, fl)
 {
   setupUi(this);
 

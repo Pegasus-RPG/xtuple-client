@@ -60,7 +60,7 @@
 #include <QVariant>
 #include <QMessageBox>
 #include <parameter.h>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <openreports.h>
 #include "productCategory.h"
 
@@ -70,11 +70,11 @@
  *
  */
 productCategories::productCategories(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
     setupUi(this);
 
-    (void)statusBar();
+//    (void)statusBar();
 
     // signals and slots connections
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
@@ -112,7 +112,7 @@ void productCategories::languageChange()
 
 void productCategories::init()
 {
-  statusBar()->hide();
+//  statusBar()->hide();
   
   _prodcat->addColumn(tr("Category"),    70, Qt::AlignLeft );
   _prodcat->addColumn(tr("Description"), -1, Qt::AlignLeft );

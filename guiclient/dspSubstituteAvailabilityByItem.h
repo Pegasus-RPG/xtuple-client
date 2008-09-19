@@ -59,13 +59,13 @@
 #define DSPSUBSTITUTEAVAILABILITYBYITEM_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "parameter.h"
 
 #include "ui_dspSubstituteAvailabilityByItem.h"
 
-class dspSubstituteAvailabilityByItem : public XMainWindow, public Ui::dspSubstituteAvailabilityByItem
+class dspSubstituteAvailabilityByItem : public XWidget, public Ui::dspSubstituteAvailabilityByItem
 {
     Q_OBJECT
 

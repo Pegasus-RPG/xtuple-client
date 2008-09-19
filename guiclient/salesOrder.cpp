@@ -107,7 +107,7 @@
 #define cCanceled     0x08
 
 salesOrder::salesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
   
@@ -2751,7 +2751,7 @@ void salesOrder::closeEvent(QCloseEvent *pEvent)
   else if(cNewQuote == _mode && _saved)
     omfgThis->sQuotesUpdated(-1);
 
-  XMainWindow::closeEvent(pEvent);
+  XWidget::closeEvent(pEvent);
 }
 
 void salesOrder::dragEnterEvent(QDragEnterEvent *pEvent)

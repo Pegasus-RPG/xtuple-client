@@ -58,11 +58,11 @@
 #ifndef DSPBILLINGSELECTIONS_H
 #define DSPBILLINGSELECTIONS_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspBillingSelections.h"
 
-class dspBillingSelections : public XMainWindow, public Ui::dspBillingSelections
+class dspBillingSelections : public XWidget, public Ui::dspBillingSelections
 {
     Q_OBJECT
 

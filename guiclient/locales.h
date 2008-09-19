@@ -59,11 +59,11 @@
 #define LOCALES_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_locales.h"
 
-class locales : public XMainWindow, public Ui::locales
+class locales : public XWidget, public Ui::locales
 {
     Q_OBJECT
 

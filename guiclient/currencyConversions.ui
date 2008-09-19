@@ -3,7 +3,7 @@
   <comment></comment>
   <exportmacro></exportmacro>
   <class>currencyConversions</class>
-  <widget class="QMainWindow" name="currencyConversions" >
+  <widget class="QWidget" name="currencyConversions" >
     <property name="geometry" >
       <rect>
         <x>0</x>
@@ -21,7 +21,6 @@
     <property name="windowTitle" >
       <string>List Currency Exchange Rates</string>
     </property>
-    <widget class="QWidget" >
       <layout class="QVBoxLayout" >
         <item>
           <layout class="QHBoxLayout" >
@@ -252,7 +251,6 @@
           </layout>
         </item>
       </layout>
-    </widget>
   </widget>
   <layoutdefault spacing="5" margin="5" />
   <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

@@ -3,7 +3,7 @@
  <comment></comment>
  <exportmacro></exportmacro>
  <class>dspShipmentsBySalesOrder</class>
- <widget class="QMainWindow" name="dspShipmentsBySalesOrder" >
+ <widget class="QWidget" name="dspShipmentsBySalesOrder" >
   <property name="enabled" >
    <bool>true</bool>
   </property>
@@ -26,14 +26,7 @@
   <property name="windowTitle" >
    <string>Shipments by Sales Order</string>
   </property>
-  <widget class="QWidget" name="widget" >
    <layout class="QVBoxLayout" >
-    <property name="margin" >
-     <number>9</number>
-    </property>
-    <property name="spacing" >
-     <number>6</number>
-    </property>
     <item>
      <layout class="QHBoxLayout" >
       <property name="margin" >
@@ -426,7 +419,6 @@
      </widget>
     </item>
    </layout>
-  </widget>
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

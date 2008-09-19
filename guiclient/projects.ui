@@ -3,7 +3,7 @@
   <comment></comment>
   <exportmacro></exportmacro>
   <class>projects</class>
-  <widget class="QMainWindow" name="projects" >
+  <widget class="QWidget" name="projects" >
     <property name="geometry" >
       <rect>
         <x>0</x>
@@ -15,14 +15,7 @@
     <property name="windowTitle" >
       <string>List Projects</string>
     </property>
-    <widget class="QWidget" >
       <layout class="QHBoxLayout" >
-        <property name="margin" >
-          <number>5</number>
-        </property>
-        <property name="spacing" >
-          <number>7</number>
-        </property>
         <item>
           <layout class="QVBoxLayout" >
             <property name="margin" >
@@ -124,7 +117,6 @@
           </layout>
         </item>
       </layout>
-    </widget>
   </widget>
   <layoutdefault spacing="5" margin="5" />
   <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

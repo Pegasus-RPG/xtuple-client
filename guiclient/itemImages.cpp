@@ -59,7 +59,7 @@
 
 #include <qvariant.h>
 #include <quuencode.h>
-#include <qstatusbar.h>
+//#include <qstatusbar.h>
 #include <qimage.h>
 
 /*
@@ -68,11 +68,11 @@
  *
  */
 itemImages::itemImages(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
     setupUi(this);
 
-    (void)statusBar();
+//    (void)statusBar();
 
     // signals and slots connections
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
@@ -102,7 +102,7 @@ void itemImages::languageChange()
 
 void itemImages::init()
 {
-  statusBar()->hide();
+//  statusBar()->hide();
 
 #ifndef Q_WS_MAC
   _prev->setMaximumWidth(25);

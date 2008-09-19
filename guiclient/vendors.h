@@ -59,11 +59,11 @@
 #define VENDORS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 #include "ui_vendors.h"
 
-class vendors : public XMainWindow, public Ui::vendors
+class vendors : public XWidget, public Ui::vendors
 {
     Q_OBJECT
 

@@ -60,11 +60,11 @@
 
 #include "guiclient.h"
 #include <parameter.h>
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_syncCompanies.h"
 
-class syncCompanies : public XMainWindow, public Ui::syncCompanies
+class syncCompanies : public XWidget, public Ui::syncCompanies
 {
     Q_OBJECT
 

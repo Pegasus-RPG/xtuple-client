@@ -68,13 +68,13 @@ void externalShippingList::showEvent(QShowEvent *event)
 {
   if (event)
     _screen->select();
-  XMainWindow::showEvent(event);
+  XWidget::showEvent(event);
 }
 
 void externalShippingList::setVisible(bool visible)
 {
   if (! visible)
-    XMainWindow::setVisible(false);
+    XWidget::setVisible(false);
   else if (!userHasPriv())
   {
     systemError(this,
@@ -83,11 +83,11 @@ void externalShippingList::setVisible(bool visible)
     close();
   }
   else
-    XMainWindow::setVisible(true);
+    XWidget::setVisible(true);
 }
 
 externalShippingList::externalShippingList(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
   

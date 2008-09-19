@@ -59,12 +59,12 @@
 #define TRANSFERORDERS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_transferOrders.h"
 
-class transferOrders : public XMainWindow, public Ui::transferOrders
+class transferOrders : public XWidget, public Ui::transferOrders
 {
     Q_OBJECT
 

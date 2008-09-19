@@ -58,11 +58,11 @@
 #ifndef ITEMPRICINGSCHEDULES_H
 #define ITEMPRICINGSCHEDULES_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_itemPricingSchedules.h"
 
-class itemPricingSchedules : public XMainWindow, public Ui::itemPricingSchedules
+class itemPricingSchedules : public XWidget, public Ui::itemPricingSchedules
 {
     Q_OBJECT
 

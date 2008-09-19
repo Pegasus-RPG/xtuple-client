@@ -60,18 +60,18 @@
 #include <qvariant.h>
 #include <qmessagebox.h>
 #include <qvalidator.h>
-#include <qstatusbar.h>
+//#include <qstatusbar.h>
 /*
  *  Constructs a workCenter as a child of 'parent', with the
  *  name 'name' and widget flags set to 'f'.
  *
  */
 workCenter::workCenter(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
     setupUi(this);
 
-    (void)statusBar();
+//    (void)statusBar();
 
     QButtonGroup* _runRateGroupInt = new QButtonGroup(this);
     _runRateGroupInt->addButton(_runSpecifyRate);
@@ -144,7 +144,7 @@ void workCenter::languageChange()
 
 void workCenter::init()
 {
-  statusBar()->hide();
+//  statusBar()->hide();
   
   _lbrrate.exec( "SELECT lbrrate_id, lbrrate_code, lbrrate_rate "
                  "FROM lbrrate "

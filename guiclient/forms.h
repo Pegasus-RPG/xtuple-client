@@ -58,11 +58,11 @@
 #ifndef FORMS_H
 #define FORMS_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_forms.h"
 
-class forms : public XMainWindow, public Ui::forms
+class forms : public XWidget, public Ui::forms
 {
     Q_OBJECT
 

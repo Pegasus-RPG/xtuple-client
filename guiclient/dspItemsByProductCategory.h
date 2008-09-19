@@ -58,11 +58,11 @@
 #ifndef DSPITEMSBYPRODUCTCATEGORY_H
 #define DSPITEMSBYPRODUCTCATEGORY_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspItemsByProductCategory.h"
 
-class dspItemsByProductCategory : public XMainWindow, public Ui::dspItemsByProductCategory
+class dspItemsByProductCategory : public XWidget, public Ui::dspItemsByProductCategory
 {
     Q_OBJECT
 

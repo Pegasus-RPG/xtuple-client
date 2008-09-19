@@ -59,12 +59,12 @@
 #define DSPAROPENITEMS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspAROpenItems.h"
 
-class dspAROpenItems : public XMainWindow, public Ui::dspAROpenItems
+class dspAROpenItems : public XWidget, public Ui::dspAROpenItems
 {
     Q_OBJECT
 

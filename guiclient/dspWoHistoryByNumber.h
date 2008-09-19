@@ -59,11 +59,11 @@
 #define DSPWOHISTORYBYNUMBER_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspWoHistoryByNumber.h"
 
-class dspWoHistoryByNumber : public XMainWindow, public Ui::dspWoHistoryByNumber
+class dspWoHistoryByNumber : public XWidget, public Ui::dspWoHistoryByNumber
 {
     Q_OBJECT
 

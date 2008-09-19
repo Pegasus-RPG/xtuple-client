@@ -59,11 +59,11 @@
 #define INCIDENTCATEGORIES_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 #include "ui_incidentCategories.h"
 
-class incidentCategories : public XMainWindow, public Ui::incidentCategories
+class incidentCategories : public XWidget, public Ui::incidentCategories
 {
     Q_OBJECT
 

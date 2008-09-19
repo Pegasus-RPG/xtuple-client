@@ -59,12 +59,12 @@
 #define DSPSUMMARIZEDBACKLOGBYWAREHOUSE_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspSummarizedBacklogByWarehouse.h"
 
-class dspSummarizedBacklogByWarehouse : public XMainWindow, public Ui::dspSummarizedBacklogByWarehouse
+class dspSummarizedBacklogByWarehouse : public XWidget, public Ui::dspSummarizedBacklogByWarehouse
 {
     Q_OBJECT
 

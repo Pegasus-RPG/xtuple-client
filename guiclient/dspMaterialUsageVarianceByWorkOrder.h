@@ -59,11 +59,11 @@
 #define DSPMATERIALUSAGEVARIANCEBYWORKORDER_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspMaterialUsageVarianceByWorkOrder.h"
 
-class dspMaterialUsageVarianceByWorkOrder : public XMainWindow, public Ui::dspMaterialUsageVarianceByWorkOrder
+class dspMaterialUsageVarianceByWorkOrder : public XWidget, public Ui::dspMaterialUsageVarianceByWorkOrder
 {
     Q_OBJECT
 

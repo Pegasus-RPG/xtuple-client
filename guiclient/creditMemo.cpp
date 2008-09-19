@@ -60,7 +60,7 @@
 #include <QCloseEvent>
 #include <QMessageBox>
 #include <QSqlError>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <QValidator>
 #include <QVariant>
 
@@ -71,7 +71,7 @@
 #include "taxBreakdown.h"
 
 creditMemo::creditMemo(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
@@ -1092,7 +1092,7 @@ void creditMemo::closeEvent(QCloseEvent *pEvent)
     }
   }
 
-  XMainWindow::closeEvent(pEvent);
+  XWidget::closeEvent(pEvent);
 }
 
 void creditMemo::sTaxDetail()

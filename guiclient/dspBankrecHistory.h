@@ -58,11 +58,11 @@
 #ifndef DSPBANKRECHISTORY_H
 #define DSPBANKRECHISTORY_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspBankrecHistory.h"
 
-class dspBankrecHistory : public XMainWindow, public Ui::dspBankrecHistory
+class dspBankrecHistory : public XWidget, public Ui::dspBankrecHistory
 {
     Q_OBJECT
 

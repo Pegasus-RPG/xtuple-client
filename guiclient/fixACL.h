@@ -59,12 +59,12 @@
 #define FIXACL_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_fixACL.h"
 
-class fixACL : public XMainWindow, public Ui::fixACL
+class fixACL : public XWidget, public Ui::fixACL
 {
     Q_OBJECT
 

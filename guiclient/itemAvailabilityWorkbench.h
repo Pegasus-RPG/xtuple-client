@@ -59,12 +59,12 @@
 #define ITEMAVAILABILITYWORKBENCH_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_itemAvailabilityWorkbench.h"
 
-class itemAvailabilityWorkbench : public XMainWindow, public Ui::itemAvailabilityWorkbench
+class itemAvailabilityWorkbench : public XWidget, public Ui::itemAvailabilityWorkbench
 {
     Q_OBJECT
 

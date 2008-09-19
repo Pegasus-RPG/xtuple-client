@@ -59,12 +59,12 @@
 #define MASSREPLACECOMPONENT_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_massReplaceComponent.h"
 
-class massReplaceComponent : public XMainWindow, public Ui::massReplaceComponent
+class massReplaceComponent : public XWidget, public Ui::massReplaceComponent
 {
     Q_OBJECT
 

@@ -88,7 +88,7 @@ void searchForEmp::setVisible(bool visible)
     qDebug("searchForEmp::setVisible(%d) called",
            visible);
   if (! visible)
-    XMainWindow::setVisible(false);
+    XWidget::setVisible(false);
 
   else if (! userHasPriv())
   {
@@ -98,11 +98,11 @@ void searchForEmp::setVisible(bool visible)
     close();
   }
   else
-    XMainWindow::setVisible(true);
+    XWidget::setVisible(true);
 }
 
 searchForEmp::searchForEmp(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 

@@ -59,7 +59,7 @@
 
 #include <qvariant.h>
 #include <qmessagebox.h>
-#include <qstatusbar.h>
+//#include <qstatusbar.h>
 #include <parameter.h>
 #include "labelForm.h"
 
@@ -69,11 +69,11 @@
  *
  */
 labelForms::labelForms(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
     setupUi(this);
 
-    (void)statusBar();
+//    (void)statusBar();
 
     // signals and slots connections
     connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
@@ -105,7 +105,7 @@ void labelForms::languageChange()
 
 void labelForms::init()
 {
-  statusBar()->hide();
+//  statusBar()->hide();
   
   _labelforms->addColumn(tr("Form Name"), -1,           Qt::AlignLeft   );
   _labelforms->addColumn(tr("#/Page"),    _orderColumn, Qt::AlignCenter );

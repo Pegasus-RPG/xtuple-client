@@ -59,10 +59,10 @@
 #define STANDARDOPERATIONS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include "ui_standardOperations.h"
 
-class standardOperations : public XMainWindow, public Ui::standardOperations
+class standardOperations : public XWidget, public Ui::standardOperations
 {
     Q_OBJECT
 

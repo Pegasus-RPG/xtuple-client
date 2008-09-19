@@ -59,12 +59,12 @@
 #define DSPORDERS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspOrders.h"
 
-class dspOrders : public XMainWindow, public Ui::dspOrders
+class dspOrders : public XWidget, public Ui::dspOrders
 {
     Q_OBJECT
 

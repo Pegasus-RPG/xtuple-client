@@ -3,7 +3,7 @@
  <comment></comment>
  <exportmacro></exportmacro>
  <class>buyCard</class>
- <widget class="QMainWindow" name="buyCard" >
+ <widget class="QWidget" name="buyCard" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -15,14 +15,7 @@
   <property name="windowTitle" >
    <string>Buy Card</string>
   </property>
-  <widget class="QWidget" name="widget" >
    <layout class="QVBoxLayout" >
-    <property name="margin" >
-     <number>9</number>
-    </property>
-    <property name="spacing" >
-     <number>6</number>
-    </property>
     <item>
      <layout class="QHBoxLayout" >
       <property name="margin" >
@@ -316,7 +309,6 @@
      </layout>
     </item>
    </layout>
-  </widget>
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

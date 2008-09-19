@@ -60,7 +60,7 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <QVariant>
 #include <QWorkspace>
 #include <openreports.h>
@@ -69,11 +69,11 @@
 #include "storedProcErrorLookup.h"
 
 crmaccounts::crmaccounts(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
     setupUi(this);
 
-    (void)statusBar();
+//    (void)statusBar();
 
     connect(_print,	 SIGNAL(clicked()),	this,	SLOT(sPrint()));
     connect(_new,	 SIGNAL(clicked()),	this,	SLOT(sNew()));
@@ -89,7 +89,7 @@ crmaccounts::crmaccounts(QWidget* parent, const char* name, Qt::WFlags fl)
     connect(omfgThis, SIGNAL(taxAuthsUpdated(int)), this, SLOT(sFillList()));
     connect(omfgThis, SIGNAL(vendorsUpdated()), this, SLOT(sFillList()));
 
-    statusBar()->hide();
+//    statusBar()->hide();
 
     _crmaccount->addColumn(tr("Number"),	80, Qt::AlignLeft   );
     _crmaccount->addColumn(tr("Name"),		-1, Qt::AlignLeft   );

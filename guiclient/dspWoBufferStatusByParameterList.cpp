@@ -59,7 +59,7 @@
 
 #include <QMenu>
 #include <QVariant>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <QWorkspace>
 #include <QMessageBox>
 #include <openreports.h>
@@ -86,11 +86,11 @@
  *
  */
 dspWoBufferStatusByParameterList::dspWoBufferStatusByParameterList(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
+//  (void)statusBar();
 
   // signals and slots connections
   connect(_wo, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));

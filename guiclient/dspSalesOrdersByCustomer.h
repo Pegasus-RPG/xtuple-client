@@ -59,12 +59,12 @@
 #define DSPSALESORDERSBYCUSTOMER_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspSalesOrdersByCustomer.h"
 
-class dspSalesOrdersByCustomer : public XMainWindow, public Ui::dspSalesOrdersByCustomer
+class dspSalesOrdersByCustomer : public XWidget, public Ui::dspSalesOrdersByCustomer
 {
     Q_OBJECT
 

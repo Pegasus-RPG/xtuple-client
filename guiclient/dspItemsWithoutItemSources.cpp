@@ -58,7 +58,7 @@
 #include "dspItemsWithoutItemSources.h"
 
 #include <QVariant>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <QWorkspace>
 #include "item.h"
 #include "itemSource.h"
@@ -69,11 +69,11 @@
  *
  */
 dspItemsWithoutItemSources::dspItemsWithoutItemSources(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
     setupUi(this);
 
-    (void)statusBar();
+//    (void)statusBar();
 
     // signals and slots connections
     connect(_item, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
@@ -105,7 +105,7 @@ void dspItemsWithoutItemSources::languageChange()
 
 void dspItemsWithoutItemSources::init()
 {
-  statusBar()->hide();
+//  statusBar()->hide();
   
   _item->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft   );
   _item->addColumn(tr("Description"), -1,           Qt::AlignLeft   );

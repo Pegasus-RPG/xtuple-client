@@ -1,6 +1,6 @@
 <ui version="4.0" >
  <class>dspPendingBOMChanges</class>
- <widget class="QMainWindow" name="dspPendingBOMChanges" >
+ <widget class="QWidget" name="dspPendingBOMChanges" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -12,7 +12,6 @@
   <property name="windowTitle" >
    <string>Pending Bill of Materials Changes</string>
   </property>
-  <widget class="QWidget" name="widget" >
    <layout class="QGridLayout" >
     <item row="0" column="0" >
      <layout class="QHBoxLayout" >
@@ -251,7 +250,6 @@
      </layout>
     </item>
    </layout>
-  </widget>
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

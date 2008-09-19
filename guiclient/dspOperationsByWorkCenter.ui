@@ -1,6 +1,6 @@
 <ui version="4.0" >
  <class>dspOperationsByWorkCenter</class>
- <widget class="QMainWindow" name="dspOperationsByWorkCenter" >
+ <widget class="QWidget" name="dspOperationsByWorkCenter" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -12,15 +12,6 @@
   <property name="windowTitle" >
    <string>Operations by Work Center</string>
   </property>
-  <widget class="QWidget" name="widget" >
-   <property name="geometry" >
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>633</width>
-     <height>292</height>
-    </rect>
-   </property>
    <layout class="QVBoxLayout" name="verticalLayout" >
     <item>
      <layout class="QHBoxLayout" >
@@ -253,7 +244,6 @@
      </widget>
     </item>
    </layout>
-  </widget>
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

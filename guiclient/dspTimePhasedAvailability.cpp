@@ -59,7 +59,7 @@
 
 #include <QVariant>
 #include <QWorkspace>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <QMenu>
 #include <QMessageBox>
 #include <datecluster.h>
@@ -79,11 +79,11 @@
  *
  */
 dspTimePhasedAvailability::dspTimePhasedAvailability(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
+//  (void)statusBar();
 
   // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));

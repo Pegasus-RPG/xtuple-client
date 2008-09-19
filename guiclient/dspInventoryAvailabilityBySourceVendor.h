@@ -59,12 +59,12 @@
 #define DSPINVENTORYAVAILABILITYBYSOURCEVENDOR_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspInventoryAvailabilityBySourceVendor.h"
 
-class dspInventoryAvailabilityBySourceVendor : public XMainWindow, public Ui::dspInventoryAvailabilityBySourceVendor
+class dspInventoryAvailabilityBySourceVendor : public XWidget, public Ui::dspInventoryAvailabilityBySourceVendor
 {
     Q_OBJECT
 

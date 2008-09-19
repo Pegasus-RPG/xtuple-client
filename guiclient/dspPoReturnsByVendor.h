@@ -59,11 +59,11 @@
 #define DSPPORETURNSBYVENDOR_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspPoReturnsByVendor.h"
 
-class dspPoReturnsByVendor : public XMainWindow, public Ui::dspPoReturnsByVendor
+class dspPoReturnsByVendor : public XWidget, public Ui::dspPoReturnsByVendor
 {
     Q_OBJECT
 

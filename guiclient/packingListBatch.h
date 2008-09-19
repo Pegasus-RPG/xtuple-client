@@ -59,12 +59,12 @@
 #define PACKINGLISTBATCH_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_packingListBatch.h"
 
-class packingListBatch : public XMainWindow, public Ui::packingListBatch
+class packingListBatch : public XWidget, public Ui::packingListBatch
 {
     Q_OBJECT
 

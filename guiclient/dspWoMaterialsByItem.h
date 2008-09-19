@@ -59,11 +59,11 @@
 #define DSPWOMATERIALSBYITEM_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspWoMaterialsByItem.h"
 
-class dspWoMaterialsByItem : public XMainWindow, public Ui::dspWoMaterialsByItem
+class dspWoMaterialsByItem : public XWidget, public Ui::dspWoMaterialsByItem
 {
     Q_OBJECT
 

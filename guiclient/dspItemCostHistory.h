@@ -59,11 +59,11 @@
 #define DSPITEMCOSTHISTORY_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspItemCostHistory.h"
 
-class dspItemCostHistory : public XMainWindow, public Ui::dspItemCostHistory
+class dspItemCostHistory : public XWidget, public Ui::dspItemCostHistory
 {
     Q_OBJECT
 

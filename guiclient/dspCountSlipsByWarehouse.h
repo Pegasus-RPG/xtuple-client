@@ -59,11 +59,11 @@
 #define DSPCOUNTSLIPSBYWAREHOUSE_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspCountSlipsByWarehouse.h"
 
-class dspCountSlipsByWarehouse : public XMainWindow, public Ui::dspCountSlipsByWarehouse
+class dspCountSlipsByWarehouse : public XWidget, public Ui::dspCountSlipsByWarehouse
 {
     Q_OBJECT
 

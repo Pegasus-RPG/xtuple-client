@@ -59,11 +59,11 @@
 #define DSPLABORVARIANCEBYWORKORDER_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspLaborVarianceByWorkOrder.h"
 
-class dspLaborVarianceByWorkOrder : public XMainWindow, public Ui::dspLaborVarianceByWorkOrder
+class dspLaborVarianceByWorkOrder : public XWidget, public Ui::dspLaborVarianceByWorkOrder
 {
     Q_OBJECT
 

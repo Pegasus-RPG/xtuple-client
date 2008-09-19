@@ -59,7 +59,7 @@
 
 #include <QVariant>
 #include <QMessageBox>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <openreports.h>
 #include "department.h"
 
@@ -69,11 +69,11 @@
  *
  */
 departments::departments(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
     setupUi(this);
 
-    (void)statusBar();
+//    (void)statusBar();
 
     // signals and slots connections
     connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
@@ -108,7 +108,7 @@ void departments::languageChange()
 #include <QSqlError>
 void departments::init()
 {
-    statusBar()->hide();
+//    statusBar()->hide();
 
     _deptList->addColumn(tr("Dept. Number"),	_userColumn,	Qt::AlignLeft );
     _deptList->addColumn(tr("Dept. Name"),	-1,		Qt::AlignLeft );

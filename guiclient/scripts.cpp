@@ -66,7 +66,7 @@
 #include "guiclient.h"
 
 scripts::scripts(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 

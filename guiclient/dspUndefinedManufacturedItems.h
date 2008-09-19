@@ -59,11 +59,11 @@
 #define DSPUNDEFINEDMANUFACTUREDITEMS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspUndefinedManufacturedItems.h"
 
-class dspUndefinedManufacturedItems : public XMainWindow, public Ui::dspUndefinedManufacturedItems
+class dspUndefinedManufacturedItems : public XWidget, public Ui::dspUndefinedManufacturedItems
 {
     Q_OBJECT
 

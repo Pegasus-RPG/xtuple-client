@@ -3,7 +3,7 @@
  <comment></comment>
  <exportmacro></exportmacro>
  <class>bankAdjustment</class>
- <widget class="QMainWindow" name="bankAdjustment" >
+ <widget class="QWidget" name="bankAdjustment" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -15,14 +15,7 @@
   <property name="windowTitle" >
    <string>Bank Adjustment</string>
   </property>
-  <widget class="QWidget" name="widget" >
    <layout class="QVBoxLayout" >
-    <property name="margin" >
-     <number>5</number>
-    </property>
-    <property name="spacing" >
-     <number>5</number>
-    </property>
     <item>
      <layout class="QHBoxLayout" >
       <property name="margin" >
@@ -372,7 +365,6 @@
      </layout>
     </item>
    </layout>
-  </widget>
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

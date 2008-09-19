@@ -59,10 +59,10 @@
 #define QUOTES_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include "ui_quotes.h"
 
-class quotes : public XMainWindow, public Ui::quotes
+class quotes : public XWidget, public Ui::quotes
 {
     Q_OBJECT
 

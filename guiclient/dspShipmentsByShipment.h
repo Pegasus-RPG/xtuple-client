@@ -59,12 +59,12 @@
 #define DSPSHIPMENTSBYSHIPMENT_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspShipmentsByShipment.h"
 
-class dspShipmentsByShipment : public XMainWindow, public Ui::dspShipmentsByShipment
+class dspShipmentsByShipment : public XWidget, public Ui::dspShipmentsByShipment
 {
     Q_OBJECT
 

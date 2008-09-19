@@ -59,12 +59,12 @@
 #define DSPCOUNTSLIPEDITLIST_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspCountSlipEditList.h"
 
-class dspCountSlipEditList : public XMainWindow, public Ui::dspCountSlipEditList
+class dspCountSlipEditList : public XWidget, public Ui::dspCountSlipEditList
 {
     Q_OBJECT
 

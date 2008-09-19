@@ -59,10 +59,10 @@
 #define PRODUCTCATEGORIES_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include "ui_productCategories.h"
 
-class productCategories : public XMainWindow, public Ui::productCategories
+class productCategories : public XWidget, public Ui::productCategories
 {
     Q_OBJECT
 

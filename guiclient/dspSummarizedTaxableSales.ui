@@ -3,7 +3,7 @@
  <comment></comment>
  <exportmacro></exportmacro>
  <class>dspSummarizedTaxableSales</class>
- <widget class="QMainWindow" name="dspSummarizedTaxableSales" >
+ <widget class="QWidget" name="dspSummarizedTaxableSales" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -15,14 +15,7 @@
   <property name="windowTitle" >
    <string>Summarized Taxable Sales</string>
   </property>
-  <widget class="QWidget" name="widget" >
    <layout class="QVBoxLayout" >
-    <property name="margin" >
-     <number>5</number>
-    </property>
-    <property name="spacing" >
-     <number>5</number>
-    </property>
     <item>
      <layout class="QHBoxLayout" >
       <property name="margin" >
@@ -241,7 +234,6 @@
      </layout>
     </item>
    </layout>
-  </widget>
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

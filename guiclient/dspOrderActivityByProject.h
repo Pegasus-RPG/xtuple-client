@@ -58,11 +58,11 @@
 #ifndef DSPORDERACTIVITYBYPROJECT_H
 #define DSPORDERACTIVITYBYPROJECT_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspOrderActivityByProject.h"
 
-class dspOrderActivityByProject : public XMainWindow, public Ui::dspOrderActivityByProject
+class dspOrderActivityByProject : public XWidget, public Ui::dspOrderActivityByProject
 {
     Q_OBJECT
 

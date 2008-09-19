@@ -59,11 +59,11 @@
 #define UNPOSTEDINVOICES_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 #include "ui_unpostedInvoices.h"
 
-class unpostedInvoices : public XMainWindow, public Ui::unpostedInvoices
+class unpostedInvoices : public XWidget, public Ui::unpostedInvoices
 {
     Q_OBJECT
 

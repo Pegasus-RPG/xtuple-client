@@ -59,12 +59,12 @@
 #define DSPMATERIALUSAGEVARIANCEBYITEM_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspMaterialUsageVarianceByItem.h"
 
-class dspMaterialUsageVarianceByItem : public XMainWindow, public Ui::dspMaterialUsageVarianceByItem
+class dspMaterialUsageVarianceByItem : public XWidget, public Ui::dspMaterialUsageVarianceByItem
 {
     Q_OBJECT
 

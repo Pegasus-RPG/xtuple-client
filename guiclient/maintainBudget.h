@@ -59,12 +59,12 @@
 #define MAINTAINBUDGET_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_maintainBudget.h"
 
-class maintainBudget : public XMainWindow, public Ui::maintainBudget
+class maintainBudget : public XWidget, public Ui::maintainBudget
 {
     Q_OBJECT
 

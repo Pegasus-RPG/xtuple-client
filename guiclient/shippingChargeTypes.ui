@@ -3,7 +3,7 @@
   <comment></comment>
   <exportmacro></exportmacro>
   <class>shippingChargeTypes</class>
-  <widget class="QMainWindow" name="shippingChargeTypes" >
+  <widget class="QWidget" name="shippingChargeTypes" >
     <property name="geometry" >
       <rect>
         <x>0</x>
@@ -15,14 +15,7 @@
     <property name="windowTitle" >
       <string>List Shipping Charge Types</string>
     </property>
-    <widget class="QWidget" >
       <layout class="QHBoxLayout" >
-        <property name="margin" >
-          <number>5</number>
-        </property>
-        <property name="spacing" >
-          <number>7</number>
-        </property>
         <item>
           <layout class="QVBoxLayout" >
             <property name="margin" >
@@ -114,7 +107,6 @@
           </layout>
         </item>
       </layout>
-    </widget>
   </widget>
   <layoutdefault spacing="6" margin="11" />
   <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

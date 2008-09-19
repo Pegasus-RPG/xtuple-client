@@ -60,7 +60,7 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <QVariant>
 #include <QWorkspace>
 
@@ -74,11 +74,11 @@
 #include "storedProcErrorLookup.h"
 
 unpostedPurchaseOrders::unpostedPurchaseOrders(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
     setupUi(this);
 
-    (void)statusBar();
+//    (void)statusBar();
 
     connect(_allOpenOrders,SIGNAL(clicked()),	this,	SLOT(sFillList()));
     connect(_delete,	SIGNAL(clicked()),	this,	SLOT(sDelete()));
@@ -94,7 +94,7 @@ unpostedPurchaseOrders::unpostedPurchaseOrders(QWidget* parent, const char* name
     connect(omfgThis,	SIGNAL(purchaseOrdersUpdated(int, bool)),
 						this,	SLOT(sFillList()));
 
-    statusBar()->hide();
+//    statusBar()->hide();
     
     _pohead->addColumn(tr("P/O #"),     _orderColumn, Qt::AlignLeft,   true, "pohead_number" );
     _pohead->addColumn(tr("Vendor"),    -1,           Qt::AlignLeft,   true, "vend_name"   );

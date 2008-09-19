@@ -59,11 +59,11 @@
 #define DSPPODELIVERYDATEVARIANCESBYVENDOR_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspPoDeliveryDateVariancesByVendor.h"
 
-class dspPoDeliveryDateVariancesByVendor : public XMainWindow, public Ui::dspPoDeliveryDateVariancesByVendor
+class dspPoDeliveryDateVariancesByVendor : public XWidget, public Ui::dspPoDeliveryDateVariancesByVendor
 {
     Q_OBJECT
 

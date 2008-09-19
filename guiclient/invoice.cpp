@@ -71,7 +71,7 @@
 #define cViewQuote (0x20 | cView)
 
 invoice::invoice(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, fl)
+    : XWidget(parent, fl)
 {
   if(name)
     setObjectName(name);
@@ -957,7 +957,7 @@ void invoice::closeEvent(QCloseEvent *pEvent)
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
   }
 
-  XMainWindow::closeEvent(pEvent);
+  XWidget::closeEvent(pEvent);
 }
 
 void invoice::sTaxDetail()

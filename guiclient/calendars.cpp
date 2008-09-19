@@ -59,7 +59,7 @@
 
 #include <qvariant.h>
 #include <qmessagebox.h>
-#include <qstatusbar.h>
+//#include <qstatusbar.h>
 #include <parameter.h>
 #include "calendar.h"
 
@@ -69,11 +69,11 @@
  *
  */
 calendars::calendars(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
     setupUi(this);
 
-    (void)statusBar();
+//    (void)statusBar();
 
     // signals and slots connections
     connect(_calhead, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
@@ -106,7 +106,7 @@ void calendars::languageChange()
 
 void calendars::init()
 {
-  statusBar()->hide();
+//  statusBar()->hide();
   
   _calhead->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft );
   _calhead->addColumn(tr("Description"), -1,          Qt::AlignLeft );

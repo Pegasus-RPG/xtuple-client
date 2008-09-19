@@ -60,13 +60,13 @@
 
 #include "guiclient.h"
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include <parameter.h>
 
 #include "ui_dspPlannedRevenueExpensesByPlannerCode.h"
 
-class dspPlannedRevenueExpensesByPlannerCode : public XMainWindow, public Ui::dspPlannedRevenueExpensesByPlannerCode
+class dspPlannedRevenueExpensesByPlannerCode : public XWidget, public Ui::dspPlannedRevenueExpensesByPlannerCode
 {
     Q_OBJECT
 

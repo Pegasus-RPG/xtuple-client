@@ -3,7 +3,7 @@
   <comment></comment>
   <exportmacro></exportmacro>
   <class>dspSummarizedBankrecHistory</class>
-  <widget class="QMainWindow" name="dspSummarizedBankrecHistory" >
+  <widget class="QWidget" name="dspSummarizedBankrecHistory" >
     <property name="geometry" >
       <rect>
         <x>0</x>
@@ -15,7 +15,6 @@
     <property name="windowTitle" >
       <string>Summarized Bank Reconciliation History</string>
     </property>
-    <widget class="QWidget" >
       <layout class="QVBoxLayout" >
         <item>
           <layout class="QHBoxLayout" >
@@ -170,7 +169,6 @@
           </layout>
         </item>
       </layout>
-    </widget>
   </widget>
   <layoutdefault spacing="6" margin="11" />
   <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

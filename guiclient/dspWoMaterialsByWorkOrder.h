@@ -59,12 +59,12 @@
 #define DSPWOMATERIALSBYWORKORDER_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspWoMaterialsByWorkOrder.h"
 
-class dspWoMaterialsByWorkOrder : public XMainWindow, public Ui::dspWoMaterialsByWorkOrder
+class dspWoMaterialsByWorkOrder : public XWidget, public Ui::dspWoMaterialsByWorkOrder
 {
     Q_OBJECT
 

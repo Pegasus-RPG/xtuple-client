@@ -1,6 +1,6 @@
 <ui version="4.0" >
  <class>returnAuthorizationWorkbench</class>
- <widget class="QMainWindow" name="returnAuthorizationWorkbench" >
+ <widget class="QWidget" name="returnAuthorizationWorkbench" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -18,7 +18,6 @@
   <property name="windowTitle" >
    <string>Return Authorization Workbench</string>
   </property>
-  <widget class="QWidget" name="widget" >
    <layout class="QGridLayout" >
     <item row="0" column="0" >
      <layout class="QGridLayout" >
@@ -599,7 +598,6 @@
      </layout>
     </item>
    </layout>
-  </widget>
  </widget>
  <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

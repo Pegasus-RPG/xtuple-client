@@ -59,11 +59,11 @@
 #define WOTIMECLOCK_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 #include "ui_woTimeClock.h"
 
-class woTimeClock : public XMainWindow, public Ui::woTimeClock
+class woTimeClock : public XWidget, public Ui::woTimeClock
 {
     Q_OBJECT
 

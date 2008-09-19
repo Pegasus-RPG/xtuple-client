@@ -58,7 +58,7 @@
 #ifndef __PLANNEDSCHEDULES_H__
 #define __PLANNEDSCHEDULES_H__
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "guiclient.h"
 #include <parameter.h>
@@ -67,7 +67,7 @@ class QMenu;
 
 #include "ui_plannedSchedules.h"
 
-class plannedSchedules : public XMainWindow, public Ui::plannedSchedules
+class plannedSchedules : public XWidget, public Ui::plannedSchedules
 {
   Q_OBJECT
 

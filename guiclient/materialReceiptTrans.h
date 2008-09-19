@@ -59,12 +59,12 @@
 #define MATERIALRECEIPTTRANS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_materialReceiptTrans.h"
 
-class materialReceiptTrans : public XMainWindow, public Ui::materialReceiptTrans
+class materialReceiptTrans : public XWidget, public Ui::materialReceiptTrans
 {
     Q_OBJECT
 

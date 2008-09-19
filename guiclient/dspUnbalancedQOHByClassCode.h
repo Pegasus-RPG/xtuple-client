@@ -59,12 +59,12 @@
 #define DSPUNBALANCEDQOHBYCLASSCODE_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspUnbalancedQOHByClassCode.h"
 
-class dspUnbalancedQOHByClassCode : public XMainWindow, public Ui::dspUnbalancedQOHByClassCode
+class dspUnbalancedQOHByClassCode : public XWidget, public Ui::dspUnbalancedQOHByClassCode
 {
     Q_OBJECT
 

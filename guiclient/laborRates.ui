@@ -3,7 +3,7 @@
   <comment></comment>
   <exportmacro></exportmacro>
   <class>laborRates</class>
-  <widget class="QMainWindow" name="laborRates" >
+  <widget class="QWidget" name="laborRates" >
     <property name="geometry" >
       <rect>
         <x>0</x>
@@ -18,14 +18,7 @@
     <property name="windowTitle" >
       <string>List Standard Labor Rates</string>
     </property>
-    <widget class="QWidget" >
       <layout class="QHBoxLayout" >
-        <property name="margin" >
-          <number>5</number>
-        </property>
-        <property name="spacing" >
-          <number>7</number>
-        </property>
         <item>
           <layout class="QVBoxLayout" >
             <property name="margin" >
@@ -157,7 +150,6 @@
           </layout>
         </item>
       </layout>
-    </widget>
   </widget>
   <layoutdefault spacing="6" margin="11" />
   <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

@@ -59,11 +59,11 @@
 #define DSPPLANNEDORDERSBYITEM_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspPlannedOrdersByItem.h"
 
-class dspPlannedOrdersByItem : public XMainWindow, public Ui::dspPlannedOrdersByItem
+class dspPlannedOrdersByItem : public XWidget, public Ui::dspPlannedOrdersByItem
 {
     Q_OBJECT
 

@@ -59,11 +59,11 @@
 #define DSPPOITEMSBYDATE_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspPoItemsByDate.h"
 
-class dspPoItemsByDate : public XMainWindow, public Ui::dspPoItemsByDate
+class dspPoItemsByDate : public XWidget, public Ui::dspPoItemsByDate
 {
     Q_OBJECT
 

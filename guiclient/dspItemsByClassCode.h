@@ -58,11 +58,11 @@
 #ifndef DSPITEMSBYCLASSCODE_H
 #define DSPITEMSBYCLASSCODE_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspItemsByClassCode.h"
 
-class dspItemsByClassCode : public XMainWindow, public Ui::dspItemsByClassCode
+class dspItemsByClassCode : public XWidget, public Ui::dspItemsByClassCode
 {
     Q_OBJECT
 

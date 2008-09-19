@@ -1,6 +1,6 @@
 <ui version="4.0" >
  <class>miscCheck</class>
- <widget class="QMainWindow" name="miscCheck" >
+ <widget class="QWidget" name="miscCheck" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -12,7 +12,6 @@
   <property name="windowTitle" >
    <string>Miscellaneous Check</string>
   </property>
-  <widget class="QWidget" name="widget" >
    <layout class="QGridLayout" >
     <item row="0" column="0" >
      <widget class="QGroupBox" name="_recipGroup" >
@@ -449,7 +448,6 @@
      </widget>
     </item>
    </layout>
-  </widget>
  </widget>
  <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

@@ -84,7 +84,7 @@
 #define cCanceled     0x08
 
 transferOrder::transferOrder(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
@@ -1450,7 +1450,7 @@ void transferOrder::closeEvent(QCloseEvent *pEvent)
   if (cNew == _mode && _saved)
     omfgThis->sTransferOrdersUpdated(-1);
 
-  XMainWindow::closeEvent(pEvent);
+  XWidget::closeEvent(pEvent);
 }
 
 void transferOrder::dragEnterEvent(QDragEnterEvent *pEvent)

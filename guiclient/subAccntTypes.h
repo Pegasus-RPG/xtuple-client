@@ -59,11 +59,11 @@
 #define SUBACCNTTYPES_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 #include "ui_subAccntTypes.h"
 
-class subAccntTypes : public XMainWindow, public Ui::subAccntTypes
+class subAccntTypes : public XWidget, public Ui::subAccntTypes
 {
     Q_OBJECT
 

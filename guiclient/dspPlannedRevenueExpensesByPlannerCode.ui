@@ -1,6 +1,6 @@
 <ui version="4.0" >
  <class>dspPlannedRevenueExpensesByPlannerCode</class>
- <widget class="QMainWindow" name="dspPlannedRevenueExpensesByPlannerCode" >
+ <widget class="QWidget" name="dspPlannedRevenueExpensesByPlannerCode" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -12,7 +12,6 @@
   <property name="windowTitle" >
    <string>Planned Revenue/Expenses by Planner Code</string>
   </property>
-  <widget class="QWidget" name="widget" >
    <layout class="QGridLayout" >
     <item row="0" column="0" >
      <widget class="ParameterGroup" name="_plannerCode" >
@@ -246,7 +245,6 @@
      </layout>
     </item>
    </layout>
-  </widget>
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

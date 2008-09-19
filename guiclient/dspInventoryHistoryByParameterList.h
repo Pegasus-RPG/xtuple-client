@@ -59,12 +59,12 @@
 #define DSPINVENTORYHISTORYBYPARAMETERLIST_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspInventoryHistoryByParameterList.h"
 
-class dspInventoryHistoryByParameterList : public XMainWindow, public Ui::dspInventoryHistoryByParameterList
+class dspInventoryHistoryByParameterList : public XWidget, public Ui::dspInventoryHistoryByParameterList
 {
     Q_OBJECT
 

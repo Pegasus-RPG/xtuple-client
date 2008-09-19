@@ -59,12 +59,12 @@
 #define DSPCUSTOMERSBYCUSTOMERTYPE_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspCustomersByCustomerType.h"
 
-class dspCustomersByCustomerType : public XMainWindow, public Ui::dspCustomersByCustomerType
+class dspCustomersByCustomerType : public XWidget, public Ui::dspCustomersByCustomerType
 {
     Q_OBJECT
 

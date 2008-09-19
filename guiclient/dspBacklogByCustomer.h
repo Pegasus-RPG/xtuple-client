@@ -59,12 +59,12 @@
 #define DSPBACKLOGBYCUSTOMER_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspBacklogByCustomer.h"
 
-class dspBacklogByCustomer : public XMainWindow, public Ui::dspBacklogByCustomer
+class dspBacklogByCustomer : public XWidget, public Ui::dspBacklogByCustomer
 {
     Q_OBJECT
 

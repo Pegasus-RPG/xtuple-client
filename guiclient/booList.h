@@ -59,11 +59,11 @@
 #define BOOLIST_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_booList.h"
 
-class booList : public XMainWindow, public Ui::booList
+class booList : public XWidget, public Ui::booList
 {
     Q_OBJECT
 

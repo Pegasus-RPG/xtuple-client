@@ -61,7 +61,7 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <QVariant>
 
 #include <metasql.h>
@@ -73,7 +73,7 @@
 #include "printShippingForm.h"
 
 dspShipmentsByDate::dspShipmentsByDate(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 

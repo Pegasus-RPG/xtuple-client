@@ -59,11 +59,11 @@
 #define EXPORTCUSTOMERS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_exportCustomers.h"
 
-class exportCustomers : public XMainWindow, public Ui::exportCustomers
+class exportCustomers : public XWidget, public Ui::exportCustomers
 {
     Q_OBJECT
 

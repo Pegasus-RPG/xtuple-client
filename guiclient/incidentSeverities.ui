@@ -3,7 +3,7 @@
  <comment></comment>
  <exportmacro></exportmacro>
  <class>incidentSeverities</class>
- <widget class="QMainWindow" name="incidentSeverities" >
+ <widget class="QWidget" name="incidentSeverities" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -15,14 +15,7 @@
   <property name="windowTitle" >
    <string>List Incident Severities</string>
   </property>
-  <widget class="QWidget" name="widget" >
    <layout class="QHBoxLayout" >
-    <property name="margin" >
-     <number>5</number>
-    </property>
-    <property name="spacing" >
-     <number>5</number>
-    </property>
     <item>
      <layout class="QVBoxLayout" >
       <property name="margin" >
@@ -140,7 +133,6 @@
      </layout>
     </item>
    </layout>
-  </widget>
  </widget>
  <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

@@ -58,7 +58,7 @@
 #include "commentTypes.h"
 
 #include <QVariant>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <QMessageBox>
 #include <openreports.h>
 #include "commentType.h"
@@ -69,11 +69,11 @@
  *
  */
 commentTypes::commentTypes(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
+//  (void)statusBar();
 
   // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
@@ -83,7 +83,7 @@ commentTypes::commentTypes(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_cmnttype, SIGNAL(currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)), this, SLOT(sHandleButtons()));
 
-  statusBar()->hide();
+//  statusBar()->hide();
   
   _cmnttype->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft   );
   _cmnttype->addColumn(tr("Sys."),        _ynColumn,   Qt::AlignCenter );

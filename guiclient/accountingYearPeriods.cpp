@@ -66,11 +66,11 @@
 #include "storedProcErrorLookup.h"
 
 accountingYearPeriods::accountingYearPeriods(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
     setupUi(this);
 
-    (void)statusBar();
+//    (void)statusBar();
 
     connect(_period, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
     connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));

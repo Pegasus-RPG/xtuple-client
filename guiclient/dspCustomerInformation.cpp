@@ -88,7 +88,7 @@
 #include "crmaccount.h"
 
 dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
-    : XMainWindow (parent, fl)
+    : XWidget (parent, fl)
 {
   setupUi(this);
 

@@ -58,10 +58,10 @@
 #ifndef VOUCHERINGEDITLIST_H
 #define VOUCHERINGEDITLIST_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include "ui_voucheringEditList.h"
 
-class voucheringEditList : public XMainWindow, public Ui::voucheringEditList
+class voucheringEditList : public XWidget, public Ui::voucheringEditList
 {
     Q_OBJECT
 

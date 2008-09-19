@@ -58,12 +58,12 @@
 #ifndef DSPTIMEPHASEDSALESBYCUSTOMERGROUP_H
 #define DSPTIMEPHASEDSALESBYCUSTOMERGROUP_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <QList>
 #include <parameter.h>
 #include "ui_dspTimePhasedSalesByCustomerGroup.h"
 
-class dspTimePhasedSalesByCustomerGroup : public XMainWindow, public Ui::dspTimePhasedSalesByCustomerGroup
+class dspTimePhasedSalesByCustomerGroup : public XWidget, public Ui::dspTimePhasedSalesByCustomerGroup
 {
     Q_OBJECT
 

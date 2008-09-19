@@ -59,12 +59,12 @@
 #define DSPINDENTEDBOM_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspIndentedBOM.h"
 
-class dspIndentedBOM : public XMainWindow, public Ui::dspIndentedBOM
+class dspIndentedBOM : public XWidget, public Ui::dspIndentedBOM
 {
     Q_OBJECT
 

@@ -59,11 +59,11 @@
 #define DSPWOSOSTATUSMISMATCH_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspWoSoStatusMismatch.h"
 
-class dspWoSoStatusMismatch : public XMainWindow, public Ui::dspWoSoStatusMismatch
+class dspWoSoStatusMismatch : public XWidget, public Ui::dspWoSoStatusMismatch
 {
     Q_OBJECT
 

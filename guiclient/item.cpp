@@ -93,7 +93,7 @@ const char *_planningTypes[] = { "M", "S", "N" };
  *
  */
 item::item(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
@@ -2096,7 +2096,7 @@ void item::closeEvent(QCloseEvent *pEvent)
     _inTransaction = false;
   }
 
-  XMainWindow::closeEvent(pEvent);
+  XWidget::closeEvent(pEvent);
 }
 
 void item::sConfiguredToggled(bool p)

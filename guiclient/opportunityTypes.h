@@ -58,10 +58,10 @@
 #ifndef OPPORTUNITYTYPES_H
 #define OPPORTUNITYTYPES_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include "ui_opportunityTypes.h"
 
-class opportunityTypes : public XMainWindow, public Ui::opportunityTypes
+class opportunityTypes : public XWidget, public Ui::opportunityTypes
 {
     Q_OBJECT
 

@@ -59,12 +59,12 @@
 #define DSPVOUCHERREGISTER_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspVoucherRegister.h"
 
-class dspVoucherRegister : public XMainWindow, public Ui::dspVoucherRegister
+class dspVoucherRegister : public XWidget, public Ui::dspVoucherRegister
 {
     Q_OBJECT
 

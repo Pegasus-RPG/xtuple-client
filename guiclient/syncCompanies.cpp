@@ -81,13 +81,13 @@ bool syncCompanies::userHasPriv(const int pMode)
   return retval;
 }
 
-// TODO: this code really belongs in XMainWindow
+// TODO: this code really belongs in XWidget
 void syncCompanies::setVisible(bool visible)
 {
   if (DEBUG)
     qDebug("syncCompanies::setVisible(%d) called", visible);
   if (! visible)
-    XMainWindow::setVisible(false);
+    XWidget::setVisible(false);
 
   else if (! userHasPriv())
   {
@@ -97,11 +97,11 @@ void syncCompanies::setVisible(bool visible)
     deleteLater();
   }
   else
-    XMainWindow::setVisible(true);
+    XWidget::setVisible(true);
 }
 
 syncCompanies::syncCompanies(QWidget* parent, const char* name, Qt::WFlags fl)
-: XMainWindow(parent, name, fl)
+: XWidget(parent, name, fl)
 {
   setupUi(this);
 
@@ -199,7 +199,7 @@ void syncCompanies::sSync()
     buildDatabaseURL(dbURL, protocol, host, db, port);
     if (DEBUG)
       qDebug("syncCompanies::sSync() dbURL before login2 = %s", qPrintable(dbURL));
-    statusBar()->showMessage(tr("Synchronizing Company %1 (%2)")
+    omfgThis->statusBar()->showMessage(tr("Synchronizing Company %1 (%2)")
                              .arg(c->rawValue("company_number").toString())
                              .arg(dbURL));
 
@@ -446,7 +446,7 @@ void syncCompanies::sSync()
       for (int j = 0; j < period.size(); j++)
       {
         XTreeWidgetItem *p = (XTreeWidgetItem*)(period[j]);
-        statusBar()->showMessage(tr("Synchronizing Company %1 (%2): Period %3")
+        omfgThis->statusBar()->showMessage(tr("Synchronizing Company %1 (%2): Period %3")
                                  .arg(c->rawValue("company_number").toString())
                                  .arg(dbURL)
                                  .arg(p->rawValue("period_name").toString()));
@@ -702,7 +702,7 @@ void syncCompanies::sSync()
     }
   } // for each selected company
 
-  statusBar()->showMessage(tr("Synchronizing Complete: "
+  omfgThis->statusBar()->showMessage(tr("Synchronizing Complete: "
                               "%1 Companies attempted, %2 errors encountered")
                            .arg(company.size()).arg(errorCount));
   sFillList();

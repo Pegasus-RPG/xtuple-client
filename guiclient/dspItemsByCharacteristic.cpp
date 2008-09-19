@@ -58,7 +58,7 @@
 #include "dspItemsByCharacteristic.h"
 
 #include <QVariant>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <QWorkspace>
 #include <QMessageBox>
 #include <QMenu>
@@ -75,11 +75,11 @@
  *
  */
 dspItemsByCharacteristic::dspItemsByCharacteristic(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
+//  (void)statusBar();
 
   // signals and slots connections
   connect(_item, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));

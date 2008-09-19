@@ -59,10 +59,10 @@
 #define TAXAUTHORITIES_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include "ui_taxAuthorities.h"
 
-class taxAuthorities : public XMainWindow, public Ui::taxAuthorities
+class taxAuthorities : public XWidget, public Ui::taxAuthorities
 {
     Q_OBJECT
 

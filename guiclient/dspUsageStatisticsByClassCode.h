@@ -59,11 +59,11 @@
 #define DSPUSAGESTATISTICSBYCLASSCODE_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspUsageStatisticsByClassCode.h"
 
-class dspUsageStatisticsByClassCode : public XMainWindow, public Ui::dspUsageStatisticsByClassCode
+class dspUsageStatisticsByClassCode : public XWidget, public Ui::dspUsageStatisticsByClassCode
 {
     Q_OBJECT
 

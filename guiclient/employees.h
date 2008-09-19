@@ -58,10 +58,10 @@
 #ifndef EMPLOYEES_H
 #define EMPLOYEES_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include "ui_employees.h"
 
-class employees : public XMainWindow, public Ui::employees
+class employees : public XWidget, public Ui::employees
 {
     Q_OBJECT
 

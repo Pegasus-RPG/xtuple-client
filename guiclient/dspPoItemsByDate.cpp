@@ -59,7 +59,7 @@
 
 #include <QMenu>
 #include <QSqlError>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <QVariant>
 #include <QMessageBox>
 
@@ -75,11 +75,11 @@
 #define POITEM_STATUS_COL 11
 
 dspPoItemsByDate::dspPoItemsByDate(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
+//  (void)statusBar();
 
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_selectedPurchasingAgent, SIGNAL(toggled(bool)), _agent, SLOT(setEnabled(bool)));

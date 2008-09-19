@@ -58,12 +58,12 @@
 #ifndef DSPTIMEPHASEDSALESBYPRODUCTCATEGORY_H
 #define DSPTIMEPHASEDSALESBYPRODUCTCATEGORY_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <QList>
 #include <parameter.h>
 #include "ui_dspTimePhasedSalesByProductCategory.h"
 
-class dspTimePhasedSalesByProductCategory : public XMainWindow, public Ui::dspTimePhasedSalesByProductCategory
+class dspTimePhasedSalesByProductCategory : public XWidget, public Ui::dspTimePhasedSalesByProductCategory
 {
     Q_OBJECT
 

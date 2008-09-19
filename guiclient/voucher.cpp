@@ -63,7 +63,7 @@
 #include <QVariant>
 #include <QMessageBox>
 #include <QValidator>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <QSqlError>
 #include "purchaseOrderList.h"
 #include "purchaseOrderItem.h"
@@ -75,11 +75,11 @@
  *
  */
 voucher::voucher(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
+//  (void)statusBar();
 
   // signals and slots connections
   connect(_poList, SIGNAL(clicked()), this, SLOT(sPoList()));
@@ -114,7 +114,7 @@ voucher::voucher(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_amountToDistribute, SIGNAL(effectiveChanged(const QDate&)), _balance, SLOT(setEffective(const QDate&)));
   connect(_amountDistributed, SIGNAL(valueChanged()), this, SLOT(sPopulateBalanceDue()));
 
-  statusBar()->hide();
+//  statusBar()->hide();
 
 #ifndef Q_WS_MAC
   _poList->setMaximumWidth(25);

@@ -58,7 +58,7 @@
 #include "dspTimePhasedDemandByPlannerCode.h"
 
 #include <QVariant>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <QWorkspace>
 #include <QMenu>
 #include <QMessageBox>
@@ -74,11 +74,11 @@
  *
  */
 dspTimePhasedDemandByPlannerCode::dspTimePhasedDemandByPlannerCode(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
+//  (void)statusBar();
 
   QButtonGroup* btngrpDisplayUnits = new QButtonGroup(this);
   btngrpDisplayUnits->addButton(_inventoryUnits);

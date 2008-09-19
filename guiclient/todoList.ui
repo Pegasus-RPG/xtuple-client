@@ -1,6 +1,6 @@
 <ui version="4.0" >
  <class>todoList</class>
- <widget class="QMainWindow" name="todoList" >
+ <widget class="QWidget" name="todoList" >
   <property name="geometry" >
    <rect>
     <x>0</x>

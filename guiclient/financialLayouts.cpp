@@ -60,7 +60,7 @@
 #include <QVariant>
 #include <QMessageBox>
 #include <QInputDialog>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <parameter.h>
 #include "financialLayout.h"
 
@@ -70,11 +70,11 @@
  *
  */
 financialLayouts::financialLayouts(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
+//  (void)statusBar();
 
   // signals and slots connections
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
@@ -88,7 +88,7 @@ financialLayouts::financialLayouts(QWidget* parent, const char* name, Qt::WFlags
   connect(_flhead, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
   connect(_showInactive, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
 
-  statusBar()->hide();
+//  statusBar()->hide();
   
   _flhead->addColumn(tr("Name"),        (_itemColumn*2), Qt::AlignLeft );
   _flhead->addColumn(tr("Description"), -1,          Qt::AlignLeft );

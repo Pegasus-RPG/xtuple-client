@@ -59,12 +59,12 @@
 #define ITEM_2_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_item.h"
 
-class item : public XMainWindow, public Ui::item
+class item : public XWidget, public Ui::item
 {
     Q_OBJECT
 

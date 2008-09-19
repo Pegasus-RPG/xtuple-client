@@ -67,11 +67,11 @@
 #include "storedProcErrorLookup.h"
 
 materialReceiptTrans::materialReceiptTrans(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
+//  (void)statusBar();
 
   connect(_item,      SIGNAL(newId(int)), this, SLOT(sPopulateQty()));
   connect(_post,       SIGNAL(clicked()), this, SLOT(sPost()));

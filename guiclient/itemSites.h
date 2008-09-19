@@ -59,12 +59,12 @@
 #define ITEMSITES_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_itemSites.h"
 
-class itemSites : public XMainWindow, public Ui::itemSites
+class itemSites : public XWidget, public Ui::itemSites
 {
     Q_OBJECT
 

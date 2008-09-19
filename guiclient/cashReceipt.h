@@ -59,12 +59,12 @@
 #define CASHRECEIPT_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_cashReceipt.h"
 
-class cashReceipt : public XMainWindow, public Ui::cashReceipt
+class cashReceipt : public XWidget, public Ui::cashReceipt
 {
     Q_OBJECT
 

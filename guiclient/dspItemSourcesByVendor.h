@@ -58,11 +58,11 @@
 #ifndef DSPITEMSOURCESBYVENDOR_H
 #define DSPITEMSOURCESBYVENDOR_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspItemSourcesByVendor.h"
 
-class dspItemSourcesByVendor : public XMainWindow, public Ui::dspItemSourcesByVendor
+class dspItemSourcesByVendor : public XWidget, public Ui::dspItemSourcesByVendor
 {
     Q_OBJECT
 

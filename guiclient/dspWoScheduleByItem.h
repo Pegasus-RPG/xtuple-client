@@ -59,12 +59,12 @@
 #define DSPWOSCHEDULEBYITEM_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspWoScheduleByItem.h"
 
-class dspWoScheduleByItem : public XMainWindow, public Ui::dspWoScheduleByItem
+class dspWoScheduleByItem : public XWidget, public Ui::dspWoScheduleByItem
 {
     Q_OBJECT
 

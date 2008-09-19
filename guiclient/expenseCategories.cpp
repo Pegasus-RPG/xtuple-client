@@ -59,7 +59,7 @@
 
 #include <QVariant>
 #include <QMessageBox>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <openreports.h>
 #include "expenseCategory.h"
 
@@ -69,11 +69,11 @@
  *
  */
 expenseCategories::expenseCategories(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
+//  (void)statusBar();
 
   // signals and slots connections
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
@@ -85,7 +85,7 @@ expenseCategories::expenseCategories(QWidget* parent, const char* name, Qt::WFla
   connect(_copy, SIGNAL(clicked()), this, SLOT(sCopy()));
   connect(_expcat, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
 
-  statusBar()->hide();
+//  statusBar()->hide();
   
   _expcat->addColumn(tr("Category"),    _itemColumn, Qt::AlignLeft   );
   _expcat->addColumn(tr("Description"), -1,          Qt::AlignLeft   );

@@ -59,12 +59,12 @@
 #define DSPVENDORAPHISTORY_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspVendorAPHistory.h"
 
-class dspVendorAPHistory : public XMainWindow, public Ui::dspVendorAPHistory
+class dspVendorAPHistory : public XWidget, public Ui::dspVendorAPHistory
 {
     Q_OBJECT
 

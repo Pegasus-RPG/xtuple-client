@@ -59,7 +59,7 @@
 #define PURCHASEORDER_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include <parameter.h>
 
@@ -67,7 +67,7 @@
 
 class PoitemTableModel;
 
-class purchaseOrder : public XMainWindow, public Ui::purchaseOrder
+class purchaseOrder : public XWidget, public Ui::purchaseOrder
 {
     Q_OBJECT
 

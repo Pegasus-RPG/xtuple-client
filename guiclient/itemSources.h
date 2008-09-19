@@ -59,11 +59,11 @@
 #define ITEMSOURCES_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_itemSources.h"
 
-class itemSources : public XMainWindow, public Ui::itemSources
+class itemSources : public XWidget, public Ui::itemSources
 {
     Q_OBJECT
 

@@ -59,11 +59,11 @@
 #define DSPPRICESBYITEM_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspPricesByItem.h"
 
-class dspPricesByItem : public XMainWindow, public Ui::dspPricesByItem
+class dspPricesByItem : public XWidget, public Ui::dspPricesByItem
 {
     Q_OBJECT
 

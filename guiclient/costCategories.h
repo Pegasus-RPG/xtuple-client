@@ -59,12 +59,12 @@
 #define COSTCATEGORIES_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_costCategories.h"
 
-class costCategories : public XMainWindow, public Ui::costCategories
+class costCategories : public XWidget, public Ui::costCategories
 {
     Q_OBJECT
 

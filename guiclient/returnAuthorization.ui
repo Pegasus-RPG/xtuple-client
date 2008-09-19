@@ -1,6 +1,6 @@
 <ui version="4.0" >
  <class>returnAuthorization</class>
- <widget class="QMainWindow" name="returnAuthorization" >
+ <widget class="QWidget" name="returnAuthorization" >
   <property name="geometry" >
    <rect>
     <x>0</x>

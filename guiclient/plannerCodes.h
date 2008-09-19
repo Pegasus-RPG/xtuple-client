@@ -58,10 +58,10 @@
 #ifndef PLANNERCODES_H
 #define PLANNERCODES_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include "ui_plannerCodes.h"
 
-class plannerCodes : public XMainWindow, public Ui::plannerCodes
+class plannerCodes : public XWidget, public Ui::plannerCodes
 {
     Q_OBJECT
 

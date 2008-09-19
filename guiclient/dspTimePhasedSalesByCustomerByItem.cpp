@@ -59,7 +59,7 @@
 
 #include <QVariant>
 #include <QMessageBox>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <QWorkspace>
 #include <QMenu>
 #include <q3valuevector.h>
@@ -77,11 +77,11 @@
  *
  */
 dspTimePhasedSalesByCustomerByItem::dspTimePhasedSalesByCustomerByItem(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
+//  (void)statusBar();
 
   // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));

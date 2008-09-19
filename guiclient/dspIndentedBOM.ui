@@ -1,6 +1,6 @@
 <ui version="4.0" >
  <class>dspIndentedBOM</class>
- <widget class="QMainWindow" name="dspIndentedBOM" >
+ <widget class="QWidget" name="dspIndentedBOM" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -12,23 +12,7 @@
   <property name="windowTitle" >
    <string>Indented Bill of Materials</string>
   </property>
-  <widget class="QWidget" name="widget" >
    <layout class="QVBoxLayout" >
-    <property name="spacing" >
-     <number>5</number>
-    </property>
-    <property name="leftMargin" >
-     <number>5</number>
-    </property>
-    <property name="topMargin" >
-     <number>5</number>
-    </property>
-    <property name="rightMargin" >
-     <number>5</number>
-    </property>
-    <property name="bottomMargin" >
-     <number>5</number>
-    </property>
     <item>
      <layout class="QHBoxLayout" >
       <property name="spacing" >
@@ -601,7 +585,6 @@
      </layout>
     </item>
    </layout>
-  </widget>
  </widget>
  <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

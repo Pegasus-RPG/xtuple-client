@@ -59,11 +59,11 @@
 #define FINANCIALLAYOUTS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_financialLayouts.h"
 
-class financialLayouts : public XMainWindow, public Ui::financialLayouts
+class financialLayouts : public XWidget, public Ui::financialLayouts
 {
     Q_OBJECT
 

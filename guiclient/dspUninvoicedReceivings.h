@@ -59,11 +59,11 @@
 #define DSPUNINVOICEDRECEIVINGS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspUninvoicedReceivings.h"
 
-class dspUninvoicedReceivings : public XMainWindow, public Ui::dspUninvoicedReceivings
+class dspUninvoicedReceivings : public XWidget, public Ui::dspUninvoicedReceivings
 {
     Q_OBJECT
 

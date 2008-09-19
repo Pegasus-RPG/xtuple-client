@@ -59,11 +59,11 @@
 #define PACKAGES_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 #include "ui_packages.h"
 
-class packages : public XMainWindow, public Ui::packages
+class packages : public XWidget, public Ui::packages
 {
     Q_OBJECT
 

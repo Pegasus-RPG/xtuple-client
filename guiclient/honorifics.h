@@ -59,11 +59,11 @@
 #define HONORIFICS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 #include "ui_honorifics.h"
 
-class honorifics : public XMainWindow, public Ui::honorifics
+class honorifics : public XWidget, public Ui::honorifics
 {
     Q_OBJECT
 

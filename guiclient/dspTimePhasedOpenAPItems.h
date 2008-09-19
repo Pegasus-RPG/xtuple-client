@@ -58,12 +58,12 @@
 #ifndef DSPTIMEPHASEDOPENAPITEMS_H
 #define DSPTIMEPHASEDOPENAPITEMS_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <QList>
 
 #include "ui_dspTimePhasedOpenAPItems.h"
 
-class dspTimePhasedOpenAPItems : public XMainWindow, public Ui::dspTimePhasedOpenAPItems
+class dspTimePhasedOpenAPItems : public XWidget, public Ui::dspTimePhasedOpenAPItems
 {
     Q_OBJECT
 

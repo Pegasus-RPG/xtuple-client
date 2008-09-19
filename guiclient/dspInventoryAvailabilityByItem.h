@@ -59,12 +59,12 @@
 #define DSPINVENTORYAVAILABILITYBYITEM_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspInventoryAvailabilityByItem.h"
 
-class dspInventoryAvailabilityByItem : public XMainWindow, public Ui::dspInventoryAvailabilityByItem
+class dspInventoryAvailabilityByItem : public XWidget, public Ui::dspInventoryAvailabilityByItem
 {
     Q_OBJECT
 

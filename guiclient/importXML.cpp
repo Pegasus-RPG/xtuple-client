@@ -76,7 +76,7 @@ bool importXML::userHasPriv()
 void importXML::setVisible(bool visible)
 {
   if (! visible)
-    XMainWindow::setVisible(false);
+    XWidget::setVisible(false);
 
   else if (! userHasPriv())
   {
@@ -104,20 +104,20 @@ void importXML::setVisible(bool visible)
 			      QMessageBox::Yes | QMessageBox::Default,
 			      QMessageBox::No) == QMessageBox::Yes &&
 	     configureIE(this, "", true).exec() == XDialog::Accepted)
-      XMainWindow::setVisible(true);
+      XWidget::setVisible(true);
     else
       deleteLater();
   }
   else
-    XMainWindow::setVisible(true);
+    XWidget::setVisible(true);
 }
 
 importXML::importXML(QWidget* parent, Qt::WindowFlags fl)
-    : XMainWindow(parent, fl)
+    : XWidget(parent, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
+//  (void)statusBar();
 
   connect(_add,            SIGNAL(clicked()), this, SLOT(sAdd()));
   connect(_autoUpdate,	SIGNAL(toggled(bool)), this, SLOT(sHandleAutoUpdate(bool)));

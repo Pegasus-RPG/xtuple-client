@@ -59,7 +59,7 @@
 
 #include <QVariant>
 #include <QMessageBox>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <parameter.h>
 #include <openreports.h>
 #include "customerType.h"
@@ -71,11 +71,11 @@
  *
  */
 customerTypes::customerTypes(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
     setupUi(this);
 
-    (void)statusBar();
+//    (void)statusBar();
 
     // signals and slots connections
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
@@ -109,7 +109,7 @@ void customerTypes::languageChange()
 
 void customerTypes::init()
 {
-  statusBar()->hide();
+//  statusBar()->hide();
   
   if (_privileges->check("MaintainCustomerTypes"))
   {

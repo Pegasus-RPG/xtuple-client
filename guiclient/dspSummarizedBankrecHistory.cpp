@@ -58,7 +58,7 @@
 #include "dspSummarizedBankrecHistory.h"
 
 #include <QVariant>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <openreports.h>
 #include <parameter.h>
 #include "guiclient.h"
@@ -69,11 +69,11 @@
  *
  */
 dspSummarizedBankrecHistory::dspSummarizedBankrecHistory(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
+//  (void)statusBar();
 
   // signals and slots connections
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));

@@ -91,7 +91,7 @@ const struct {
 };
 
 cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
@@ -493,7 +493,7 @@ void cashReceipt::close()
     }
   }
 
-  XMainWindow::close();
+  XWidget::close();
 }
 
 void cashReceipt::sSave()

@@ -59,11 +59,11 @@
 #define WORKCENTER_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 #include "ui_workCenter.h"
 
-class workCenter : public XMainWindow, public Ui::workCenter
+class workCenter : public XWidget, public Ui::workCenter
 {
     Q_OBJECT
 

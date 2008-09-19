@@ -59,11 +59,11 @@
 #define UNINVOICEDSHIPMENTS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_uninvoicedShipments.h"
 
-class uninvoicedShipments : public XMainWindow, public Ui::uninvoicedShipments
+class uninvoicedShipments : public XWidget, public Ui::uninvoicedShipments
 {
     Q_OBJECT
 

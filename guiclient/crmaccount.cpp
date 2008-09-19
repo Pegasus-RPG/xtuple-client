@@ -81,7 +81,7 @@
 #define DEBUG false
 
 crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
@@ -238,7 +238,7 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
 
   _modal = pParams.inList("modal");
 
-  // if _modal then disable any widgets that lead to opening XMainWindows
+  // if _modal then disable any widgets that lead to opening XWidgets
   if (_modal)
   {
     _customerButton->setEnabled(false);

@@ -59,12 +59,12 @@
 #define DSPRUNNINGAVAILABILITY_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspRunningAvailability.h"
 
-class dspRunningAvailability : public XMainWindow, public Ui::dspRunningAvailability
+class dspRunningAvailability : public XWidget, public Ui::dspRunningAvailability
 {
     Q_OBJECT
 

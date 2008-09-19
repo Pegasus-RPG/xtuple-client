@@ -58,11 +58,11 @@
 #ifndef DSPITEMSBYCHARACTERISTIC_H
 #define DSPITEMSBYCHARACTERISTIC_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspItemsByCharacteristic.h"
 
-class dspItemsByCharacteristic : public XMainWindow, public Ui::dspItemsByCharacteristic
+class dspItemsByCharacteristic : public XWidget, public Ui::dspItemsByCharacteristic
 {
     Q_OBJECT
 

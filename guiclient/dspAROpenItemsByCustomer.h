@@ -59,12 +59,12 @@
 #define DSPAROPENITEMSBYCUSTOMER_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspAROpenItemsByCustomer.h"
 
-class dspAROpenItemsByCustomer : public XMainWindow, public Ui::dspAROpenItemsByCustomer
+class dspAROpenItemsByCustomer : public XWidget, public Ui::dspAROpenItemsByCustomer
 {
     Q_OBJECT
 

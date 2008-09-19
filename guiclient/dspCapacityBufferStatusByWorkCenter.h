@@ -59,11 +59,11 @@
 #define DSPCAPACITYBUFFERSTATUSBYWORKCENTER_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspCapacityBufferStatusByWorkCenter.h"
 
-class dspCapacityBufferStatusByWorkCenter : public XMainWindow, public Ui::dspCapacityBufferStatusByWorkCenter
+class dspCapacityBufferStatusByWorkCenter : public XWidget, public Ui::dspCapacityBufferStatusByWorkCenter
 {
     Q_OBJECT
 

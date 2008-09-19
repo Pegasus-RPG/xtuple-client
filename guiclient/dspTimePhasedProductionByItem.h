@@ -59,11 +59,11 @@
 #define DSPTIMEPHASEDPRODUCTIONBYITEM_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspTimePhasedProductionByItem.h"
 
-class dspTimePhasedProductionByItem : public XMainWindow, public Ui::dspTimePhasedProductionByItem
+class dspTimePhasedProductionByItem : public XWidget, public Ui::dspTimePhasedProductionByItem
 {
     Q_OBJECT
 

@@ -1,6 +1,6 @@
 <ui version="4.0" >
  <class>dspDetailedInventoryHistoryByLotSerial</class>
- <widget class="QMainWindow" name="dspDetailedInventoryHistoryByLotSerial" >
+ <widget class="QWidget" name="dspDetailedInventoryHistoryByLotSerial" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -24,7 +24,6 @@
   <property name="windowTitle" >
    <string>Detailed Inventory History by Lot/Serial #</string>
   </property>
-  <widget class="QWidget" name="widget" >
    <layout class="QGridLayout" >
     <item row="0" column="0" >
      <widget class="QGroupBox" name="_itemGroup" >
@@ -302,7 +301,6 @@
      </layout>
     </item>
    </layout>
-  </widget>
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

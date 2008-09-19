@@ -1,6 +1,6 @@
 <ui version="4.0" >
  <class>importXML</class>
- <widget class="QMainWindow" name="importXML" >
+ <widget class="QWidget" name="importXML" >
   <property name="geometry" >
    <rect>
     <x>0</x>

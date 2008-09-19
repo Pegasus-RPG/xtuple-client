@@ -59,12 +59,12 @@
 #define DSPQUOTESBYITEM_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_dspQuotesByItem.h"
 
-class dspQuotesByItem : public XMainWindow, public Ui::dspQuotesByItem
+class dspQuotesByItem : public XWidget, public Ui::dspQuotesByItem
 {
     Q_OBJECT
 

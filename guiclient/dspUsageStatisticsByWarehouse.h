@@ -59,11 +59,11 @@
 #define DSPUSAGESTATISTICSBYWAREHOUSE_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspUsageStatisticsByWarehouse.h"
 
-class dspUsageStatisticsByWarehouse : public XMainWindow, public Ui::dspUsageStatisticsByWarehouse
+class dspUsageStatisticsByWarehouse : public XWidget, public Ui::dspUsageStatisticsByWarehouse
 {
     Q_OBJECT
 

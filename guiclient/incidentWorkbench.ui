@@ -1,6 +1,6 @@
 <ui version="4.0" >
  <class>incidentWorkbench</class>
- <widget class="QMainWindow" name="incidentWorkbench" >
+ <widget class="QWidget" name="incidentWorkbench" >
   <property name="geometry" >
    <rect>
     <x>0</x>

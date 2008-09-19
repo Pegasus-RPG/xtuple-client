@@ -59,11 +59,11 @@
 #define DUPLICATEACCOUNTNUMBERS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_duplicateAccountNumbers.h"
 
-class duplicateAccountNumbers : public XMainWindow, public Ui::duplicateAccountNumbers
+class duplicateAccountNumbers : public XWidget, public Ui::duplicateAccountNumbers
 {
     Q_OBJECT
 

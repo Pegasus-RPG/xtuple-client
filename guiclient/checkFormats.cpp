@@ -59,7 +59,7 @@
 
 #include <qvariant.h>
 #include <qmessagebox.h>
-#include <qstatusbar.h>
+//#include <qstatusbar.h>
 #include <parameter.h>
 #include "checkFormat.h"
 #include "guiclient.h"
@@ -70,11 +70,11 @@
  *
  */
 checkFormats::checkFormats(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
     setupUi(this);
 
-    (void)statusBar();
+//    (void)statusBar();
 
     // signals and slots connections
     connect(_form, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
@@ -107,7 +107,7 @@ void checkFormats::languageChange()
 
 void checkFormats::init()
 {
-  statusBar()->hide();
+//  statusBar()->hide();
   
   _form->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft );
   _form->addColumn(tr("Description"), -1,          Qt::AlignLeft );

@@ -59,12 +59,12 @@
 #define BOO_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_boo.h"
 
-class boo : public XMainWindow, public Ui::boo
+class boo : public XWidget, public Ui::boo
 {
     Q_OBJECT
 

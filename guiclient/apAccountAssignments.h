@@ -59,11 +59,11 @@
 #define APACCOUNTASSIGNMENTS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_apAccountAssignments.h"
 
-class apAccountAssignments : public XMainWindow, public Ui::apAccountAssignments
+class apAccountAssignments : public XWidget, public Ui::apAccountAssignments
 {
     Q_OBJECT
 

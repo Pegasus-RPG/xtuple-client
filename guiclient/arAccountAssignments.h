@@ -58,11 +58,11 @@
 #ifndef ARACCOUNTASSIGNMENTS_H
 #define ARACCOUNTASSIGNMENTS_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_arAccountAssignments.h"
 
-class arAccountAssignments : public XMainWindow, public Ui::arAccountAssignments
+class arAccountAssignments : public XWidget, public Ui::arAccountAssignments
 {
     Q_OBJECT
 

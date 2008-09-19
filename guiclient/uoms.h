@@ -59,10 +59,10 @@
 #define UOMS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include "ui_uoms.h"
 
-class uoms : public XMainWindow, public Ui::uoms
+class uoms : public XWidget, public Ui::uoms
 {
     Q_OBJECT
 

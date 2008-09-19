@@ -1,6 +1,6 @@
 <ui version="4.0" >
  <class>dspSubstituteAvailabilityByItem</class>
- <widget class="QMainWindow" name="dspSubstituteAvailabilityByItem" >
+ <widget class="QWidget" name="dspSubstituteAvailabilityByItem" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -12,15 +12,6 @@
   <property name="windowTitle" >
    <string>Substitute Availability by Root Item</string>
   </property>
-  <widget class="QWidget" name="widget" >
-   <property name="geometry" >
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>726</width>
-     <height>445</height>
-    </rect>
-   </property>
    <layout class="QVBoxLayout" name="verticalLayout_2" >
     <item>
      <layout class="QHBoxLayout" >
@@ -406,7 +397,6 @@
      </widget>
     </item>
    </layout>
-  </widget>
  </widget>
  <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

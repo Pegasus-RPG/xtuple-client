@@ -59,12 +59,12 @@
 #define ITEMGROUP_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_itemGroup.h"
 
-class itemGroup : public XMainWindow, public Ui::itemGroup
+class itemGroup : public XWidget, public Ui::itemGroup
 {
     Q_OBJECT
 

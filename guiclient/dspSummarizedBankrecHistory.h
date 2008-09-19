@@ -58,11 +58,11 @@
 #ifndef DSPSUMMARIZEDBANKRECHISTORY_H
 #define DSPSUMMARIZEDBANKRECHISTORY_H
 
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspSummarizedBankrecHistory.h"
 
-class dspSummarizedBankrecHistory : public XMainWindow, public Ui::dspSummarizedBankrecHistory
+class dspSummarizedBankrecHistory : public XWidget, public Ui::dspSummarizedBankrecHistory
 {
     Q_OBJECT
 

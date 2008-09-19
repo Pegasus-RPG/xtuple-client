@@ -59,11 +59,11 @@
 #define DSPQOHBYITEM_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 
 #include "ui_dspQOHByItem.h"
 
-class dspQOHByItem : public XMainWindow, public Ui::dspQOHByItem
+class dspQOHByItem : public XWidget, public Ui::dspQOHByItem
 {
     Q_OBJECT
 

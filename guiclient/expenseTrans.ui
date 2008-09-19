@@ -1,6 +1,6 @@
 <ui version="4.0" >
  <class>expenseTrans</class>
- <widget class="QMainWindow" name="expenseTrans" >
+ <widget class="QWidget" name="expenseTrans" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -12,7 +12,6 @@
   <property name="windowTitle" >
    <string>Expense Transaction</string>
   </property>
-  <widget class="QWidget" name="widget" >
    <layout class="QVBoxLayout" >
     <item>
      <layout class="QHBoxLayout" >
@@ -436,7 +435,6 @@
      </layout>
     </item>
    </layout>
-  </widget>
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

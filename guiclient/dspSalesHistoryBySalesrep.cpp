@@ -58,7 +58,7 @@
 #include "dspSalesHistoryBySalesrep.h"
 
 #include <QVariant>
-#include <QStatusBar>
+//#include <QStatusBar>
 #include <QMessageBox>
 #include <QWorkspace>
 #include <QMenu>
@@ -83,11 +83,11 @@
  *
  */
 dspSalesHistoryBySalesrep::dspSalesHistoryBySalesrep(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
+//  (void)statusBar();
 
   // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));

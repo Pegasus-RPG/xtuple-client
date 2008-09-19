@@ -59,10 +59,10 @@
 #define EXTERNALSHIPPINGLIST_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include "ui_externalShippingList.h"
 
-class externalShippingList : public XMainWindow, public Ui::externalShippingList
+class externalShippingList : public XWidget, public Ui::externalShippingList
 {
     Q_OBJECT
 
