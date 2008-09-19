@@ -90,17 +90,17 @@ dspDetailedInventoryHistoryByLotSerial::dspDetailedInventoryHistoryByLotSerial(Q
   _transType->append(cTransScraps,    tr("Scraps")                 );
   _transType->setCurrentItem(0);
 
-  _invhist->addColumn(tr("Site"),         _whsColumn,          Qt::AlignCenter    );
-  _invhist->addColumn(tr("Date"),         (_dateColumn + 30),  Qt::AlignRight  );
-  _invhist->addColumn(tr("Type"),         _transColumn,        Qt::AlignCenter );
-  _invhist->addColumn(tr("Order #"),      _orderColumn,        Qt::AlignLeft   );
-  _invhist->addColumn(tr("Item Number"),  _itemColumn,         Qt::AlignLeft   );
-  _invhist->addColumn(tr("Location"),     _dateColumn,         Qt::AlignLeft   );
-  _invhist->addColumn(tr("Lot/Serial #"), -1,                  Qt::AlignLeft   );
-  _invhist->addColumn(tr("UOM"),          _uomColumn,          Qt::AlignCenter );
-  _invhist->addColumn(tr("Trans-Qty"),    _qtyColumn,          Qt::AlignRight  );
-  _invhist->addColumn(tr("Qty. Before"),  _qtyColumn,          Qt::AlignRight  );
-  _invhist->addColumn(tr("Qty. After"),   _qtyColumn,          Qt::AlignRight  );
+  _invhist->addColumn(tr("Site"),         _whsColumn,          Qt::AlignCenter, true,  "lshist_warehous_code" );
+  _invhist->addColumn(tr("Date"),         (_dateColumn + 30),  Qt::AlignRight,  true,  "lshist_transdate"  );
+  _invhist->addColumn(tr("Type"),         _transColumn,        Qt::AlignCenter, true,  "lshist_transtype" );
+  _invhist->addColumn(tr("Order #"),      _orderColumn,        Qt::AlignLeft,   true,  "lshist_ordernumber"   );
+  _invhist->addColumn(tr("Item Number"),  _itemColumn,         Qt::AlignLeft,   true,  "lshist_item_number"   );
+  _invhist->addColumn(tr("Location"),     _dateColumn,         Qt::AlignLeft,   true,  "lshist_locationname"   );
+  _invhist->addColumn(tr("Lot/Serial #"), -1,                  Qt::AlignLeft,   true,  "lshist_lotserial"   );
+  _invhist->addColumn(tr("UOM"),          _uomColumn,          Qt::AlignCenter, true,  "lshist_invuom" );
+  _invhist->addColumn(tr("Trans-Qty"),    _qtyColumn,          Qt::AlignRight,  true,  "lshist_transqty"  );
+  _invhist->addColumn(tr("Qty. Before"),  _qtyColumn,          Qt::AlignRight,  true,  "lshist_qty_before"  );
+  _invhist->addColumn(tr("Qty. After"),   _qtyColumn,          Qt::AlignRight,  true,  "lshist_qty_after"  );
 }
 
 dspDetailedInventoryHistoryByLotSerial::~dspDetailedInventoryHistoryByLotSerial()
@@ -310,48 +310,7 @@ void dspDetailedInventoryHistoryByLotSerial::sFillList()
   q.bindValue(":transType", _transType->id());
   q.bindValue(":trace", trace);
   q.exec();
-
-  QStack<XTreeWidgetItem*> parent;
-  XTreeWidgetItem *last = 0;
-  int level = 1;
-  while (q.next())
-  {
-    while(q.value("lshist_level").toInt() < level)
-    {
-      level--;
-      last = parent.pop();
-    }
-    
-    while(q.value("lshist_level").toInt() > level)
-    {
-      level++;
-      parent.push(last);
-      last = 0;
-    }
-    
-    if(!parent.isEmpty() && parent.top())
-      last = new XTreeWidgetItem(parent.top(), last, q.value("lshist_id").toInt(),
-                             q.value("lshist_warehous_code"),
-			     q.value("lshist_transdate"), q.value("lshist_transtype"),
-			     q.value("lshist_ordernumber"), q.value("lshist_item_number"),
-			     q.value("lshist_locationname"), q.value("lshist_lotserial"),
-			     q.value("lshist_invuom"), q.value("lshist_transqty") );
-    else
-      last = new XTreeWidgetItem(_invhist, last, q.value("lshist_id").toInt(),
-                             q.value("lshist_warehous_code"),
-			     q.value("lshist_transdate"), q.value("lshist_transtype"),
-			     q.value("lshist_ordernumber"), q.value("lshist_item_number"),
-			     q.value("lshist_locationname"), q.value("lshist_lotserial"),
-			     q.value("lshist_invuom"), q.value("lshist_transqty") );
-                             
-    if (q.value("lshist_posted").toBool())
-    {
-      last->setText(9, q.value("lshist_qty_before").toString());
-      last->setText(10, q.value("lshist_qty_after").toString());
-    }
-    else
-      last->setTextColor("orange");
-  }
+  _invhist->populate(q);
   _invhist->expandAll();
 }
 
