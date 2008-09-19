@@ -1,6 +1,6 @@
 <ui version="4.0" >
  <class>items</class>
- <widget class="QMainWindow" name="items" >
+ <widget class="QWidget" name="items" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -12,303 +12,286 @@
   <property name="windowTitle" >
    <string>List Items</string>
   </property>
-  <widget class="QWidget" name="widget" >
-   <layout class="QVBoxLayout" >
-    <property name="spacing" >
-     <number>5</number>
-    </property>
-    <property name="leftMargin" >
-     <number>5</number>
-    </property>
-    <property name="topMargin" >
-     <number>5</number>
-    </property>
-    <property name="rightMargin" >
-     <number>5</number>
-    </property>
-    <property name="bottomMargin" >
-     <number>5</number>
-    </property>
-    <item>
-     <layout class="QHBoxLayout" >
-      <property name="spacing" >
-       <number>7</number>
-      </property>
-      <item>
-       <layout class="QVBoxLayout" >
-        <property name="spacing" >
-         <number>5</number>
-        </property>
-        <item>
-         <layout class="QHBoxLayout" >
-          <property name="spacing" >
-           <number>5</number>
-          </property>
-          <item>
-           <widget class="QLabel" name="_searchForLit" >
-            <property name="text" >
-             <string>S&amp;earch for:</string>
-            </property>
-            <property name="alignment" >
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-            <property name="buddy" >
-             <cstring>_searchFor</cstring>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="XLineEdit" name="_searchFor" />
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" >
-          <property name="spacing" >
-           <number>5</number>
-          </property>
-          <item>
-           <widget class="QGroupBox" name="_statusGroup" >
-            <property name="title" >
-             <string/>
-            </property>
-            <layout class="QVBoxLayout" >
-             <property name="spacing" >
-              <number>0</number>
-             </property>
-             <property name="leftMargin" >
-              <number>5</number>
-             </property>
-             <property name="topMargin" >
-              <number>5</number>
-             </property>
-             <property name="rightMargin" >
-              <number>5</number>
-             </property>
-             <property name="bottomMargin" >
-              <number>5</number>
-             </property>
-             <item>
-              <widget class="QRadioButton" name="_showAll" >
-               <property name="text" >
-                <string>Show All Item Types</string>
-               </property>
-               <property name="checked" >
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="_showPurchased" >
-               <property name="text" >
-                <string>Show Buy Items</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="_showManufactured" >
-               <property name="text" >
-                <string>Show Make Items</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="_showSold" >
-               <property name="text" >
-                <string>Show Sold Items</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item>
+  <layout class="QVBoxLayout" >
+   <item>
+    <layout class="QHBoxLayout" >
+     <property name="spacing" >
+      <number>7</number>
+     </property>
+     <item>
+      <layout class="QVBoxLayout" >
+       <property name="spacing" >
+        <number>5</number>
+       </property>
+       <item>
+        <layout class="QHBoxLayout" >
+         <property name="spacing" >
+          <number>5</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="_searchForLit" >
+           <property name="text" >
+            <string>S&amp;earch for:</string>
+           </property>
+           <property name="alignment" >
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+           <property name="buddy" >
+            <cstring>_searchFor</cstring>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="XLineEdit" name="_searchFor" />
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" >
+         <property name="spacing" >
+          <number>5</number>
+         </property>
+         <item>
+          <widget class="QGroupBox" name="_statusGroup" >
+           <property name="title" >
+            <string/>
+           </property>
            <layout class="QVBoxLayout" >
             <property name="spacing" >
              <number>0</number>
             </property>
+            <property name="leftMargin" >
+             <number>5</number>
+            </property>
+            <property name="topMargin" >
+             <number>5</number>
+            </property>
+            <property name="rightMargin" >
+             <number>5</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>5</number>
+            </property>
             <item>
-             <widget class="XCheckBox" name="_showInactive" >
+             <widget class="QRadioButton" name="_showAll" >
               <property name="text" >
-               <string>Show &amp;Inactive Items</string>
+               <string>Show All Item Types</string>
+              </property>
+              <property name="checked" >
+               <bool>true</bool>
               </property>
              </widget>
             </item>
             <item>
-             <spacer>
-              <property name="orientation" >
-               <enum>Qt::Vertical</enum>
+             <widget class="QRadioButton" name="_showPurchased" >
+              <property name="text" >
+               <string>Show Buy Items</string>
               </property>
-              <property name="sizeType" >
-               <enum>QSizePolicy::Preferred</enum>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="_showManufactured" >
+              <property name="text" >
+               <string>Show Make Items</string>
               </property>
-              <property name="sizeHint" >
-               <size>
-                <width>20</width>
-                <height>60</height>
-               </size>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="_showSold" >
+              <property name="text" >
+               <string>Show Sold Items</string>
               </property>
-             </spacer>
+             </widget>
             </item>
            </layout>
-          </item>
-          <item>
-           <spacer>
-            <property name="orientation" >
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeType" >
-             <enum>QSizePolicy::Expanding</enum>
-            </property>
-            <property name="sizeHint" >
-             <size>
-              <width>20</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QVBoxLayout" >
-        <property name="spacing" >
-         <number>0</number>
-        </property>
-        <item>
-         <widget class="QPushButton" name="_close" >
-          <property name="text" >
-           <string>&amp;Close</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeType" >
-           <enum>QSizePolicy::Preferred</enum>
-          </property>
-          <property name="sizeHint" >
-           <size>
-            <width>20</width>
-            <height>111</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QVBoxLayout" >
-      <property name="spacing" >
-       <number>0</number>
-      </property>
-      <item>
-       <widget class="QLabel" name="_itemsLit" >
-        <property name="text" >
-         <string>Items:</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" >
-        <property name="spacing" >
-         <number>7</number>
-        </property>
-        <item>
-         <widget class="XTreeWidget" name="_item" />
-        </item>
-        <item>
-         <layout class="QVBoxLayout" >
-          <property name="spacing" >
-           <number>0</number>
-          </property>
-          <item>
-           <widget class="QPushButton" name="_new" >
-            <property name="text" >
-             <string>&amp;New</string>
-            </property>
-            <property name="shortcut" >
-             <string>Alt+N</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="_edit" >
-            <property name="enabled" >
-             <bool>false</bool>
-            </property>
-            <property name="text" >
-             <string>&amp;Edit</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="_view" >
-            <property name="enabled" >
-             <bool>false</bool>
-            </property>
-            <property name="text" >
-             <string>&amp;View</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="_copy" >
-            <property name="enabled" >
-             <bool>false</bool>
-            </property>
-            <property name="text" >
-             <string>Cop&amp;y</string>
-            </property>
-            <property name="shortcut" >
-             <string>Alt+Y</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="_delete" >
-            <property name="enabled" >
-             <bool>false</bool>
-            </property>
-            <property name="text" >
-             <string>Delete</string>
-            </property>
-            <property name="shortcut" >
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer>
-            <property name="orientation" >
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeType" >
-             <enum>QSizePolicy::Expanding</enum>
-            </property>
-            <property name="sizeHint" >
-             <size>
-              <width>20</width>
-              <height>105</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </item>
-     </layout>
-    </item>
-   </layout>
-  </widget>
+          </widget>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" >
+           <property name="spacing" >
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="XCheckBox" name="_showInactive" >
+             <property name="text" >
+              <string>Show &amp;Inactive Items</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType" >
+              <enum>QSizePolicy::Preferred</enum>
+             </property>
+             <property name="sizeHint" >
+              <size>
+               <width>20</width>
+               <height>60</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeType" >
+            <enum>QSizePolicy::Expanding</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>20</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" >
+       <property name="spacing" >
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QPushButton" name="_close" >
+         <property name="text" >
+          <string>&amp;Close</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Preferred</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>111</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" >
+     <property name="spacing" >
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QLabel" name="_itemsLit" >
+       <property name="text" >
+        <string>Items:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" >
+       <property name="spacing" >
+        <number>7</number>
+       </property>
+       <item>
+        <widget class="XTreeWidget" name="_item" />
+       </item>
+       <item>
+        <layout class="QVBoxLayout" >
+         <property name="spacing" >
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="_new" >
+           <property name="text" >
+            <string>&amp;New</string>
+           </property>
+           <property name="shortcut" >
+            <string>Alt+N</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="_edit" >
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
+           <property name="text" >
+            <string>&amp;Edit</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="_view" >
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
+           <property name="text" >
+            <string>&amp;View</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="_copy" >
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
+           <property name="text" >
+            <string>Cop&amp;y</string>
+           </property>
+           <property name="shortcut" >
+            <string>Alt+Y</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="_delete" >
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
+           <property name="text" >
+            <string>Delete</string>
+           </property>
+           <property name="shortcut" >
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeType" >
+            <enum>QSizePolicy::Expanding</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>20</width>
+             <height>105</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+  </layout>
  </widget>
  <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>

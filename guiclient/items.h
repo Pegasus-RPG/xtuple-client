@@ -59,20 +59,18 @@
 #define ITEMS_H
 
 #include "guiclient.h"
-#include "xmainwindow.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_items.h"
 
-class items : public XMainWindow, public Ui::items
+class items : public XWidget, public Ui::items
 {
     Q_OBJECT
 
 public:
     items(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~items();
-
-    virtual void init();
 
 public slots:
     virtual void sPopulateMenu( QMenu * );

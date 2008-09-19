@@ -662,7 +662,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h rwInterface
                zeroUncountedCountTagsByWarehouse.h                                                    \
 	       creditcardprocessor.h authorizedotnetprocessor.h verisignprocessor.h                   \
 	       yourpayprocessor.h externalccprocessor.h externalCCTransaction.h                       \
-               xmainwindow.h xdialog.h xuiloader.h                                                    \
+               xmainwindow.h xdialog.h xuiloader.h xwidget.h                                          \
                idleShutdown.h xdateinputdialog.h xsltMap.h
 
 
@@ -986,7 +986,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp rwInte
                zeroUncountedCountTagsByWarehouse.cpp                                                  \
 	       creditcardprocessor.cpp authorizedotnetprocessor.cpp verisignprocessor.cpp             \
 	       yourpayprocessor.cpp externalccprocessor.cpp externalCCTransaction.cpp                 \
-               xmainwindow.cpp xdialog.cpp xuiloader.cpp                                              \
+               xmainwindow.cpp xdialog.cpp xuiloader.cpp xwidget.cpp                                  \
                idleShutdown.cpp xdateinputdialog.cpp xsltMap.cpp
 
 QT += xml assistant sql script network

@@ -1312,7 +1312,7 @@ void GUIClient::handleNewWindow(QWidget * w, Qt::WindowModality m)
 
   connect(w, SIGNAL(destroyed(QObject*)), this, SLOT(windowDestroyed(QObject*)));
 
-  if(w->inherits("XMainWindow"))
+  if(w->inherits("XMainWindow") || w->inherits("XWidget"))
   {
     w->show();
     return;

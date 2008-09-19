@@ -101,6 +101,7 @@ class ReportHandler;
 
 class XMainWindow;
 class QMainWindow;
+class XWidget;
 
 #define q omfgThis->_q
 
@@ -203,6 +204,7 @@ class ActionSet : public Q3ValueList<Action *>
 
 class GUIClient : public QMainWindow
 {
+  friend class XWidget;
   friend class XMainWindow;
   friend class XDialog;
 

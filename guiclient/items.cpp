@@ -59,10 +59,10 @@
 
 #include <QVariant>
 #include <metasql.h>
-#include <QStatusBar>
 #include <QMessageBox>
 #include <QWorkspace>
 #include <QSqlError>
+#include <QMenu>
 #include "copyItem.h"
 #include "item.h"
 #include "storedProcErrorLookup.h"
@@ -73,57 +73,29 @@
  *
  */
 items::items(QWidget* parent, const char* name, Qt::WFlags fl)
-    : XMainWindow(parent, name, fl)
+    : XWidget(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  QButtonGroup* _statusGroupInt = new QButtonGroup(this);
+  _statusGroupInt->addButton(_showAll);
+  _statusGroupInt->addButton(_showPurchased);
+  _statusGroupInt->addButton(_showManufactured);
+  _statusGroupInt->addButton(_showSold);
 
-    QButtonGroup* _statusGroupInt = new QButtonGroup(this);
-    _statusGroupInt->addButton(_showAll);
-    _statusGroupInt->addButton(_showPurchased);
-    _statusGroupInt->addButton(_showManufactured);
-    _statusGroupInt->addButton(_showSold);
+  // signals and slots connections
+  connect(_item, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_copy, SIGNAL(clicked()), this, SLOT(sCopy()));
+  connect(_showInactive, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+  connect(_statusGroupInt, SIGNAL(buttonClicked(int)), this, SLOT(sFillList()));
+  connect(_searchFor, SIGNAL(textChanged(const QString&)), this, SLOT(sSearch(const QString&)));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
+  connect(_item, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
 
-    // signals and slots connections
-    connect(_item, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-    connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-    connect(_copy, SIGNAL(clicked()), this, SLOT(sCopy()));
-    connect(_showInactive, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
-    connect(_statusGroupInt, SIGNAL(buttonClicked(int)), this, SLOT(sFillList()));
-    connect(_searchFor, SIGNAL(textChanged(const QString&)), this, SLOT(sSearch(const QString&)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
-    connect(_item, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-items::~items()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void items::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void items::init()
-{
-  statusBar()->hide();
-  
   _item->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft   );
   _item->addColumn(tr("Active"),      _ynColumn,   Qt::AlignCenter );
   _item->addColumn(tr("Description"), -1,          Qt::AlignLeft   );
@@ -152,6 +124,16 @@ void items::init()
   sFillList();
 
   _searchFor->setFocus();
+}
+
+items::~items()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void items::languageChange()
+{
+  retranslateUi(this);
 }
 
 void items::sPopulateMenu(QMenu *pMenu)
