@@ -96,6 +96,11 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     close();
   }
+  
+  QMenu * _customerMenu = new QMenu;
+  _customerMenu->addAction(tr("Maintenance"), this, SLOT(sCustomer()));
+  _customerMenu->addAction(tr("Workbench"),   this, SLOT(sCustomerInfo()));
+  _customerButton->setMenu(_customerMenu);
 
   connect(_activeTodoIncdt, SIGNAL(toggled(bool)), this, SLOT(sPopulateTodo()));
   connect(_attach,		SIGNAL(clicked()), this, SLOT(sAttach()));
@@ -105,7 +110,7 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
 //  connect(_competitorButton,	SIGNAL(clicked()), this, SLOT(sCompetitor()));
   connect(_completedTodoIncdt, SIGNAL(toggled(bool)), this, SLOT(sPopulateTodo()));
   connect(_contacts, SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*)));
-  connect(_customerButton,	SIGNAL(clicked()), this, SLOT(sCustomer()));
+ // connect(_customerButton,	SIGNAL(clicked()), this, SLOT(sCustomer()));
   connect(_deleteCharacteristic,SIGNAL(clicked()), this, SLOT(sDeleteCharacteristic()));
   connect(_deleteReg,		SIGNAL(clicked()), this, SLOT(sDeleteReg()));
   connect(_deleteTodoIncdt,	SIGNAL(clicked()), this, SLOT(sDeleteTodoIncdt()));
@@ -134,7 +139,7 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(omfgThis, SIGNAL(prospectsUpdated()),  this, SLOT(sUpdateRelationships()));
   connect(omfgThis, SIGNAL(taxAuthsUpdated(int)),this, SLOT(sUpdateRelationships()));
   connect(omfgThis, SIGNAL(vendorsUpdated()),    this, SLOT(sUpdateRelationships()));
-  connect(_custInfoButton, SIGNAL(clicked()), this, SLOT(sCustomerInfo()));
+  //connect(_custInfoButton, SIGNAL(clicked()), this, SLOT(sCustomerInfo()));
   connect(_primaryButton, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
   connect(_secondaryButton, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
   connect(_allButton, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
@@ -243,7 +248,7 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
   if (_modal)
   {
     _customerButton->setEnabled(false);
-    _custInfoButton->setEnabled(false);
+ //   _custInfoButton->setEnabled(false);
     _taxauthButton->setEnabled(false);
     _vendorButton->setEnabled(false);
     _prospectButton->setEnabled(false);
@@ -1632,7 +1637,7 @@ void crmaccount::sUpdateRelationships()
     _vendor->setChecked(_vendId > 0);
     _partner->setChecked(_partnerId > 0);
     _competitor->setChecked(_competitorId > 0);
-    _custInfoButton->setEnabled(_custId > 0 && _customer->isChecked());
+  //  _custInfoButton->setEnabled(_custId > 0 && _customer->isChecked());
   }
   else if (q.lastError().type() != QSqlError::None)
   {
@@ -1736,7 +1741,7 @@ void crmaccount::sCustomerToggled()
   if (_customer->isChecked())
     _prospect->setChecked(FALSE);
 
-  _custInfoButton->setEnabled(_custId > 0 && _customer->isChecked());
+//  _custInfoButton->setEnabled(_custId > 0 && _customer->isChecked());
 }
 
 void crmaccount::sProspectToggled()
