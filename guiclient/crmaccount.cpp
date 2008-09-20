@@ -97,20 +97,29 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
     close();
   }
   
-  QMenu * _customerMenu = new QMenu;
-  _customerMenu->addAction(tr("Maintenance"), this, SLOT(sCustomer()));
-  _customerMenu->addAction(tr("Workbench"),   this, SLOT(sCustomerInfo()));
-  _customerButton->setMenu(_customerMenu);
+  QMenu * customerMenu = new QMenu;
+  customerMenu->addAction(tr("Maintenance"), this, SLOT(sCustomer()));
+  customerMenu->addAction(tr("Workbench"),   this, SLOT(sCustomerInfo()));
+  _customerButton->setMenu(customerMenu);
+  
+  int menuItem;
+  QMenu * todoMenu = new QMenu;
+  menuItem = todoMenu->insertItem(tr("Incident"), this, SLOT(sNewIncdt()));
+  if (!_privileges->check("MaintainIncidents"))
+    todoMenu->setItemEnabled(menuItem, FALSE);
+  menuItem = todoMenu->insertItem(tr("To-Do Item"),   this, SLOT(sNewTodo()));
+  if (!_privileges->check("MaintainPersonalTodoList") &&
+      !_privileges->check("MaintainOtherTodoLists"))
+    todoMenu->setItemEnabled(menuItem, FALSE);
+  _newTodo->setMenu(todoMenu);
 
   connect(_activeTodoIncdt, SIGNAL(toggled(bool)), this, SLOT(sPopulateTodo()));
   connect(_attach,		SIGNAL(clicked()), this, SLOT(sAttach()));
   connect(_autoUpdateTodo,  SIGNAL(toggled(bool)), this, SLOT(sHandleAutoUpdate()));
   connect(_close,		SIGNAL(clicked()), this, SLOT(sClose()));
   connect(_competitor,		SIGNAL(clicked()), this, SLOT(sCompetitor()));
-//  connect(_competitorButton,	SIGNAL(clicked()), this, SLOT(sCompetitor()));
   connect(_completedTodoIncdt, SIGNAL(toggled(bool)), this, SLOT(sPopulateTodo()));
   connect(_contacts, SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*)));
- // connect(_customerButton,	SIGNAL(clicked()), this, SLOT(sCustomer()));
   connect(_deleteCharacteristic,SIGNAL(clicked()), this, SLOT(sDeleteCharacteristic()));
   connect(_deleteReg,		SIGNAL(clicked()), this, SLOT(sDeleteReg()));
   connect(_deleteTodoIncdt,	SIGNAL(clicked()), this, SLOT(sDeleteTodoIncdt()));
@@ -121,11 +130,8 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_editTodoIncdt,	SIGNAL(clicked()), this, SLOT(sEditTodoIncdt()));
   connect(_new,			SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_newCharacteristic,	SIGNAL(clicked()), this, SLOT(sNewCharacteristic()));
-  connect(_newIncdt,		SIGNAL(clicked()), this, SLOT(sNewIncdt()));
   connect(_newReg,		SIGNAL(clicked()), this, SLOT(sNewReg()));
-  connect(_newTodo,		SIGNAL(clicked()), this, SLOT(sNewTodo()));
   connect(_partner,		SIGNAL(clicked()), this, SLOT(sPartner()));
-//  connect(_partnerButton,	SIGNAL(clicked()), this, SLOT(sPartner()));
   connect(_prospectButton,	SIGNAL(clicked()), this, SLOT(sProspect()));
   connect(_save,		SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_showTodo,	    SIGNAL(toggled(bool)), this, SLOT(sPopulateTodo()));
@@ -139,7 +145,6 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(omfgThis, SIGNAL(prospectsUpdated()),  this, SLOT(sUpdateRelationships()));
   connect(omfgThis, SIGNAL(taxAuthsUpdated(int)),this, SLOT(sUpdateRelationships()));
   connect(omfgThis, SIGNAL(vendorsUpdated()),    this, SLOT(sUpdateRelationships()));
-  //connect(_custInfoButton, SIGNAL(clicked()), this, SLOT(sCustomerInfo()));
   connect(_primaryButton, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
   connect(_secondaryButton, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
   connect(_allButton, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
@@ -358,7 +363,7 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
       _newCharacteristic->setEnabled(FALSE);
       _editCharacteristic->setEnabled(FALSE);
       _new->setEnabled(FALSE);
-      _newIncdt->setEnabled(FALSE);
+      //_newIncdt->setEnabled(FALSE);
       _newTodo->setEnabled(FALSE);
       _deleteTodoIncdt->setEnabled(FALSE);
       _editTodoIncdt->setEnabled(FALSE);
@@ -1035,9 +1040,8 @@ void crmaccount::sHandleTodoPrivs()
     (_myUsrId == _todo->altId() && _privileges->check("ViewPersonalTodoList")) ||
     (_privileges->check("ViewOtherTodoLists"));
 
-  _newTodo->setEnabled(newTodoPriv);
-  _newIncdt->setEnabled((cEdit == _mode || cNew == _mode) &&
-			_privileges->check("MaintainIncidents"));
+  _newTodo->setEnabled((cEdit == _mode || cNew == _mode) &&
+			(_privileges->check("MaintainIncidents") || newTodoPriv));
 
   if (_todo->currentItem())
   {

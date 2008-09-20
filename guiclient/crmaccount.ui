@@ -597,23 +597,8 @@
         <attribute name="title" >
          <string>Notes</string>
         </attribute>
-        <layout class="QHBoxLayout" >
-         <property name="spacing" >
-          <number>0</number>
-         </property>
-         <property name="leftMargin" >
-          <number>5</number>
-         </property>
-         <property name="topMargin" >
-          <number>5</number>
-         </property>
-         <property name="rightMargin" >
-          <number>5</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>5</number>
-         </property>
-         <item>
+        <layout class="QGridLayout" >
+         <item row="0" column="0" >
           <widget class="QTextEdit" name="_notes" />
          </item>
         </layout>
@@ -622,23 +607,8 @@
         <attribute name="title" >
          <string>Comments</string>
         </attribute>
-        <layout class="QHBoxLayout" >
-         <property name="spacing" >
-          <number>0</number>
-         </property>
-         <property name="leftMargin" >
-          <number>5</number>
-         </property>
-         <property name="topMargin" >
-          <number>5</number>
-         </property>
-         <property name="rightMargin" >
-          <number>5</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>5</number>
-         </property>
-         <item>
+        <layout class="QGridLayout" >
+         <item row="0" column="0" >
           <widget class="Comments" name="_comments" >
            <property name="focusPolicy" >
             <enum>Qt::StrongFocus</enum>
@@ -654,26 +624,11 @@
         <attribute name="title" >
          <string>Characteristics</string>
         </attribute>
-        <layout class="QHBoxLayout" >
-         <property name="spacing" >
-          <number>0</number>
-         </property>
-         <property name="leftMargin" >
-          <number>5</number>
-         </property>
-         <property name="topMargin" >
-          <number>5</number>
-         </property>
-         <property name="rightMargin" >
-          <number>5</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>5</number>
-         </property>
-         <item>
+        <layout class="QGridLayout" >
+         <item row="0" column="0" >
           <widget class="XTreeWidget" name="_charass" />
          </item>
-         <item>
+         <item row="0" column="1" >
           <layout class="QVBoxLayout" >
            <property name="spacing" >
             <number>0</number>
@@ -726,65 +681,54 @@
         <attribute name="title" >
          <string>To-Do List</string>
         </attribute>
-        <layout class="QVBoxLayout" >
-         <property name="spacing" >
-          <number>2</number>
-         </property>
-         <property name="leftMargin" >
-          <number>0</number>
-         </property>
-         <property name="topMargin" >
-          <number>0</number>
-         </property>
-         <property name="rightMargin" >
-          <number>0</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>0</number>
-         </property>
-         <item>
-          <layout class="QGridLayout" >
-           <property name="horizontalSpacing" >
-            <number>0</number>
-           </property>
-           <property name="verticalSpacing" >
-            <number>0</number>
-           </property>
-           <item row="1" column="1" >
-            <widget class="XCheckBox" name="_completedTodoIncdt" >
-             <property name="text" >
-              <string>Completed</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0" >
-            <widget class="XCheckBox" name="_showIncdt" >
-             <property name="text" >
-              <string>Show Incidents</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0" >
+        <layout class="QGridLayout" >
+         <item row="0" column="0" >
+          <layout class="QHBoxLayout" >
+           <item>
             <widget class="XCheckBox" name="_showTodo" >
              <property name="text" >
-              <string>Show To-Do List</string>
+              <string>To-Do List</string>
              </property>
             </widget>
            </item>
-           <item row="0" column="1" >
+           <item>
+            <widget class="XCheckBox" name="_showIncdt" >
+             <property name="text" >
+              <string>Incidents</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="XCheckBox" name="_activeTodoIncdt" >
              <property name="text" >
               <string>Active Only</string>
              </property>
             </widget>
            </item>
+           <item>
+            <widget class="XCheckBox" name="_completedTodoIncdt" >
+             <property name="text" >
+              <string>Completed</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" >
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
           </layout>
          </item>
-         <item>
+         <item row="1" column="0" >
           <layout class="QHBoxLayout" >
-           <property name="spacing" >
-            <number>0</number>
-           </property>
            <item>
             <widget class="XTreeWidget" name="_todo" />
            </item>
@@ -799,17 +743,7 @@
                 <bool>false</bool>
                </property>
                <property name="text" >
-                <string>New To-Do Item</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="_newIncdt" >
-               <property name="enabled" >
-                <bool>false</bool>
-               </property>
-               <property name="text" >
-                <string>New Incident</string>
+                <string>New</string>
                </property>
               </widget>
              </item>
@@ -860,11 +794,18 @@
            </item>
           </layout>
          </item>
-         <item>
+         <item row="2" column="0" >
           <layout class="QHBoxLayout" >
            <property name="spacing" >
             <number>0</number>
            </property>
+           <item>
+            <widget class="XCheckBox" name="_autoUpdateTodo" >
+             <property name="text" >
+              <string>Automatically Update</string>
+             </property>
+            </widget>
+           </item>
            <item>
             <spacer>
              <property name="orientation" >
@@ -878,13 +819,6 @@
              </property>
             </spacer>
            </item>
-           <item>
-            <widget class="XCheckBox" name="_autoUpdateTodo" >
-             <property name="text" >
-              <string>Automatically Update</string>
-             </property>
-            </widget>
-           </item>
           </layout>
          </item>
         </layout>
@@ -893,8 +827,8 @@
         <attribute name="title" >
          <string>Opportunities</string>
         </attribute>
-        <layout class="QVBoxLayout" >
-         <item>
+        <layout class="QGridLayout" >
+         <item row="0" column="0" >
           <widget class="XTreeWidget" name="_oplist" />
          </item>
         </layout>
@@ -1051,7 +985,6 @@
   <tabstop>_completedTodoIncdt</tabstop>
   <tabstop>_todo</tabstop>
   <tabstop>_newTodo</tabstop>
-  <tabstop>_newIncdt</tabstop>
   <tabstop>_editTodoIncdt</tabstop>
   <tabstop>_viewTodoIncdt</tabstop>
   <tabstop>_deleteTodoIncdt</tabstop>
