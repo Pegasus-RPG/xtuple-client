@@ -125,8 +125,8 @@ booItem::booItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _invPerMinute->setPrecision(omfgThis->runTimeVal());
   _setupTime->setValidator(omfgThis->runTimeVal());
   _runTime->setValidator(omfgThis->runTimeVal());
-
-  _fixedFont->setChecked(_preferences->boolean("UsedFixedWidthFonts"));
+  
+  sHandleFont(_fixedFont->isChecked());
 
   // hide the Allow Pull Through option as it doesn't perform
   // any function at this time.
