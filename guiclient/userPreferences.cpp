@@ -211,7 +211,7 @@ void userPreferences::sPopulate()
   else
     _interfaceWorkspace->setChecked(true);
 
-  _rememberCheckBoxes->setChecked(! _pref->boolean("XCheckBox/forgetful"));
+  //_rememberCheckBoxes->setChecked(! _pref->boolean("XCheckBox/forgetful"));
   
   _inventoryMenu->setChecked(_pref->boolean("ShowIMMenu"));
   _productsMenu->setChecked(_pref->boolean("ShowPDMenu"));
@@ -231,9 +231,7 @@ void userPreferences::sPopulate()
   _salesToolbar->setChecked(_pref->boolean("ShowSOToolbar"));
   _accountingToolbar->setChecked(_pref->boolean("ShowGLToolbar"));
   
-  _fixedWidthFonts->setChecked(_pref->boolean("UsedFixedWidthFonts"));
   _listNumericItemsFirst->setChecked(_pref->boolean("ListNumericItemNumbersFirst"));
-  _showSoitemAvailability->setChecked(_pref->boolean("ShowSOItemAvailability"));
   _ignoreTranslation->setChecked(_pref->boolean("IngoreMissingTranslationFiles"));
 
   _idleTimeout->setValue(_pref->value("IdleTimeout").toInt());
@@ -283,11 +281,15 @@ void userPreferences::sSave()
   _pref->set("ShowGLToolbar", _accountingToolbar->isChecked());
   
   _pref->set("PreferredWarehouse", ((_noWarehouse->isChecked()) ? -1 : _warehouse->id())  );
-  _pref->set("XCheckBox/forgetful", !_rememberCheckBoxes->isChecked());
-
-  _pref->set("UsedFixedWidthFonts", _fixedWidthFonts->isChecked());
+  //_pref->set("XCheckBox/forgetful", !_rememberCheckBoxes->isChecked());
+  /*
+     TO DO:  Remove infrastructure for pref for checkbox above.  This was put in place as a back stop
+     when XCheckBox was implemented in case of un-intended consequences.  There seem to be none, so
+     take out the option for now, but leave the infrastructure in case of other unintended consequences for 
+     removing.  Next time around, take this out alll together including at XCheckBox class.
+    */
+ 
   _pref->set("ListNumericItemNumbersFirst", _listNumericItemsFirst->isChecked());
-  _pref->set("ShowSOItemAvailability", _showSoitemAvailability->isChecked());
   _pref->set("IngoreMissingTranslationFiles", _ignoreTranslation->isChecked());
 
   _pref->set("IdleTimeout", _idleTimeout->value());

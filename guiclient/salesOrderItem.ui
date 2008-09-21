@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>740</width>
-    <height>639</height>
+    <width>647</width>
+    <height>657</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -14,12 +14,6 @@
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
-  </property>
-  <property name="minimumSize" >
-   <size>
-    <width>740</width>
-    <height>600</height>
-   </size>
   </property>
   <property name="windowTitle" >
    <string>Sales Order Item</string>
@@ -339,6 +333,19 @@
               </property>
              </spacer>
             </item>
+            <item row="1" column="2" >
+             <spacer>
+              <property name="orientation" >
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" >
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
            </layout>
           </item>
           <item row="1" column="0" >
@@ -426,19 +433,6 @@
          </layout>
         </widget>
        </item>
-       <item>
-        <spacer>
-         <property name="orientation" >
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" >
-          <size>
-           <width>81</width>
-           <height>111</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
       </layout>
      </item>
      <item row="2" column="0" >
@@ -448,132 +442,123 @@
        </property>
        <layout class="QGridLayout" >
         <item row="0" column="0" >
-         <widget class="QLabel" name="_qtyOrderedLit" >
-          <property name="minimumSize" >
-           <size>
-            <width>0</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="text" >
-           <string>&amp;Qty. Ordered:</string>
-          </property>
-          <property name="alignment" >
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-          <property name="buddy" >
-           <cstring>_qtyOrdered</cstring>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1" >
-         <layout class="QHBoxLayout" >
+         <layout class="QVBoxLayout" >
           <item>
-           <widget class="XLineEdit" name="_qtyOrdered" >
-            <property name="focusPolicy" >
-             <enum>Qt::StrongFocus</enum>
-            </property>
-            <property name="alignment" >
-             <set>Qt::AlignRight</set>
-            </property>
-           </widget>
+           <layout class="QGridLayout" >
+            <item row="0" column="0" >
+             <widget class="QLabel" name="_qtyOrderedLit" >
+              <property name="minimumSize" >
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="text" >
+               <string>&amp;Qty. Ordered:</string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+              <property name="buddy" >
+               <cstring>_qtyOrdered</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1" >
+             <widget class="XLineEdit" name="_qtyOrdered" >
+              <property name="focusPolicy" >
+               <enum>Qt::StrongFocus</enum>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignRight</set>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0" >
+             <widget class="QLabel" name="_priceUOMLit_2" >
+              <property name="text" >
+               <string>&amp;Qty. UOM:</string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+              <property name="margin" >
+               <number>5</number>
+              </property>
+              <property name="buddy" >
+               <cstring>_qtyUOM</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1" >
+             <layout class="QHBoxLayout" >
+              <item>
+               <widget class="XComboBox" name="_qtyUOM" >
+                <property name="focusPolicy" >
+                 <enum>Qt::NoFocus</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer>
+                <property name="orientation" >
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" >
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item row="2" column="0" >
+             <widget class="QLabel" name="_shippedToDateLit" >
+              <property name="enabled" >
+               <bool>true</bool>
+              </property>
+              <property name="text" >
+               <string>Qty. Shipped:</string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1" >
+             <widget class="XLabel" name="_shippedToDate" >
+              <property name="enabled" >
+               <bool>true</bool>
+              </property>
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item>
            <spacer>
             <property name="orientation" >
-             <enum>Qt::Horizontal</enum>
+             <enum>Qt::Vertical</enum>
             </property>
             <property name="sizeHint" >
              <size>
-              <width>10</width>
-              <height>20</height>
+              <width>20</width>
+              <height>0</height>
              </size>
             </property>
            </spacer>
           </item>
          </layout>
-        </item>
-        <item row="1" column="0" >
-         <widget class="QLabel" name="_priceUOMLit_2" >
-          <property name="text" >
-           <string>&amp;Qty. UOM:</string>
-          </property>
-          <property name="alignment" >
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-          <property name="margin" >
-           <number>5</number>
-          </property>
-          <property name="buddy" >
-           <cstring>_qtyUOM</cstring>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1" >
-         <layout class="QHBoxLayout" >
-          <item>
-           <widget class="XComboBox" name="_qtyUOM" >
-            <property name="focusPolicy" >
-             <enum>Qt::NoFocus</enum>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer>
-            <property name="orientation" >
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" >
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </item>
-        <item row="2" column="0" >
-         <widget class="QLabel" name="_shippedToDateLit" >
-          <property name="enabled" >
-           <bool>true</bool>
-          </property>
-          <property name="text" >
-           <string>Qty. Shipped:</string>
-          </property>
-          <property name="alignment" >
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1" >
-         <widget class="XLabel" name="_shippedToDate" >
-          <property name="enabled" >
-           <bool>true</bool>
-          </property>
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="alignment" >
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="0" >
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" >
-           <size>
-            <width>20</width>
-            <height>0</height>
-           </size>
-          </property>
-         </spacer>
         </item>
        </layout>
       </widget>
@@ -601,20 +586,37 @@
          </widget>
         </item>
         <item row="0" column="1" >
-         <widget class="XLineEdit" name="_discountFromCust" >
-          <property name="maximumSize" >
-           <size>
-            <width>80</width>
-            <height>32767</height>
-           </size>
-          </property>
-          <property name="focusPolicy" >
-           <enum>Qt::StrongFocus</enum>
-          </property>
-          <property name="alignment" >
-           <set>Qt::AlignRight</set>
-          </property>
-         </widget>
+         <layout class="QHBoxLayout" >
+          <item>
+           <widget class="XLineEdit" name="_discountFromCust" >
+            <property name="maximumSize" >
+             <size>
+              <width>80</width>
+              <height>32767</height>
+             </size>
+            </property>
+            <property name="focusPolicy" >
+             <enum>Qt::StrongFocus</enum>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>0</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
         </item>
         <item row="1" column="0" >
          <widget class="QLabel" name="_netUnitPriceLit" >
@@ -633,12 +635,6 @@
          <layout class="QHBoxLayout" >
           <item>
            <widget class="CurrCluster" name="_netUnitPrice" >
-            <property name="minimumSize" >
-             <size>
-              <width>140</width>
-              <height>0</height>
-             </size>
-            </property>
             <property name="format" >
              <enum>CurrDisplay::SalesPrice</enum>
             </property>
@@ -649,18 +645,6 @@
           </item>
           <item>
            <widget class="QPushButton" name="_listPrices" >
-            <property name="minimumSize" >
-             <size>
-              <width>60</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="maximumSize" >
-             <size>
-              <width>50</width>
-              <height>16777215</height>
-             </size>
-            </property>
             <property name="focusPolicy" >
              <enum>Qt::NoFocus</enum>
             </property>
@@ -668,6 +652,19 @@
              <string> ... </string>
             </property>
            </widget>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>0</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
           </item>
           <item>
            <spacer>
@@ -716,7 +713,7 @@
             </property>
             <property name="sizeHint" >
              <size>
-              <width>40</width>
+              <width>0</width>
               <height>20</height>
              </size>
             </property>
@@ -738,26 +735,43 @@
          </widget>
         </item>
         <item row="3" column="1" >
-         <widget class="CurrCluster" name="_extendedPrice" >
-          <property name="focusPolicy" >
-           <enum>Qt::NoFocus</enum>
-          </property>
-          <property name="format" >
-           <enum>CurrDisplay::ExtPrice</enum>
-          </property>
-          <property name="localControl" >
-           <bool>false</bool>
-          </property>
-          <property name="currencyEditable" stdset="0" >
-           <bool>false</bool>
-          </property>
-          <property name="currencyVisible" >
-           <bool>false</bool>
-          </property>
-          <property name="enabled" >
-           <bool>false</bool>
-          </property>
-         </widget>
+         <layout class="QHBoxLayout" >
+          <item>
+           <widget class="CurrCluster" name="_extendedPrice" >
+            <property name="focusPolicy" >
+             <enum>Qt::NoFocus</enum>
+            </property>
+            <property name="format" >
+             <enum>CurrDisplay::ExtPrice</enum>
+            </property>
+            <property name="localControl" >
+             <bool>false</bool>
+            </property>
+            <property name="currencyEditable" stdset="0" >
+             <bool>false</bool>
+            </property>
+            <property name="currencyVisible" >
+             <bool>false</bool>
+            </property>
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>0</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
         </item>
        </layout>
       </widget>
@@ -851,397 +865,528 @@
          <string>Supply</string>
         </attribute>
         <layout class="QGridLayout" >
-         <property name="leftMargin" >
-          <number>9</number>
-         </property>
-         <property name="topMargin" >
-          <number>9</number>
-         </property>
-         <property name="rightMargin" >
-          <number>9</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>9</number>
-         </property>
-         <property name="horizontalSpacing" >
-          <number>6</number>
-         </property>
-         <property name="verticalSpacing" >
-          <number>6</number>
-         </property>
          <item row="0" column="0" >
-          <widget class="QGroupBox" name="_showAvailability" >
-           <property name="enabled" >
-            <bool>true</bool>
-           </property>
-           <property name="maximumSize" >
-            <size>
-             <width>16777215</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="title" >
-            <string>Availability</string>
-           </property>
-           <property name="checkable" >
-            <bool>true</bool>
-           </property>
-           <layout class="QGridLayout" >
-            <property name="horizontalSpacing" >
-             <number>5</number>
-            </property>
-            <property name="verticalSpacing" >
-             <number>5</number>
-            </property>
-            <item row="0" column="0" >
-             <widget class="QLabel" name="_onHandLit" >
-              <property name="text" >
-               <string>On Hand:</string>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
+          <layout class="QVBoxLayout" >
+           <item>
+            <layout class="QHBoxLayout" >
+             <property name="spacing" >
+              <number>12</number>
+             </property>
+             <item>
+              <widget class="XCheckBox" name="_showAvailability" >
+               <property name="text" >
+                <string>Show Availability</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="_inventoryButton" >
+               <property name="enabled" >
+                <bool>false</bool>
+               </property>
+               <property name="text" >
+                <string>Inventory</string>
+               </property>
+               <property name="checked" >
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="_dependenciesButton" >
+               <property name="enabled" >
+                <bool>false</bool>
+               </property>
+               <property name="text" >
+                <string>Dependencies</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer>
+               <property name="orientation" >
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" >
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QStackedWidget" name="_availabilityStack" >
+             <property name="currentIndex" >
+              <number>0</number>
+             </property>
+             <widget class="QWidget" name="_inventoryPage" >
+              <layout class="QGridLayout" >
+               <item row="0" column="0" >
+                <widget class="QGroupBox" name="_availabilityGroup" >
+                 <property name="enabled" >
+                  <bool>true</bool>
+                 </property>
+                 <property name="maximumSize" >
+                  <size>
+                   <width>16777215</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="title" >
+                  <string>Availability</string>
+                 </property>
+                 <property name="checkable" >
+                  <bool>false</bool>
+                 </property>
+                 <layout class="QGridLayout" >
+                  <item row="0" column="0" >
+                   <layout class="QVBoxLayout" >
+                    <item>
+                     <layout class="QGridLayout" >
+                      <item row="0" column="0" >
+                       <widget class="QLabel" name="_onHandLit" >
+                        <property name="text" >
+                         <string>On Hand:</string>
+                        </property>
+                        <property name="alignment" >
+                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="0" column="1" >
+                       <widget class="XLabel" name="_onHand" >
+                        <property name="minimumSize" >
+                         <size>
+                          <width>80</width>
+                          <height>0</height>
+                         </size>
+                        </property>
+                        <property name="alignment" >
+                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="1" column="0" >
+                       <widget class="QLabel" name="_allocatedLit" >
+                        <property name="text" >
+                         <string>Allocated:</string>
+                        </property>
+                        <property name="alignment" >
+                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="1" column="1" >
+                       <widget class="XLabel" name="_allocated" >
+                        <property name="minimumSize" >
+                         <size>
+                          <width>80</width>
+                          <height>0</height>
+                         </size>
+                        </property>
+                        <property name="alignment" >
+                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="2" column="0" >
+                       <widget class="QLabel" name="_unallocatedLit" >
+                        <property name="text" >
+                         <string>Unallocated:</string>
+                        </property>
+                        <property name="alignment" >
+                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="2" column="1" >
+                       <widget class="XLabel" name="_unallocated" >
+                        <property name="minimumSize" >
+                         <size>
+                          <width>80</width>
+                          <height>0</height>
+                         </size>
+                        </property>
+                        <property name="alignment" >
+                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="3" column="0" >
+                       <widget class="QLabel" name="_onOrderLit" >
+                        <property name="text" >
+                         <string>On Order:</string>
+                        </property>
+                        <property name="alignment" >
+                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="3" column="1" >
+                       <widget class="XLabel" name="_onOrder" >
+                        <property name="minimumSize" >
+                         <size>
+                          <width>80</width>
+                          <height>0</height>
+                         </size>
+                        </property>
+                        <property name="alignment" >
+                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="4" column="0" >
+                       <widget class="QLabel" name="_availableLit" >
+                        <property name="text" >
+                         <string>Available:</string>
+                        </property>
+                        <property name="alignment" >
+                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="4" column="1" >
+                       <widget class="XLabel" name="_available" >
+                        <property name="minimumSize" >
+                         <size>
+                          <width>80</width>
+                          <height>0</height>
+                         </size>
+                        </property>
+                        <property name="alignment" >
+                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="5" column="0" >
+                       <widget class="QLabel" name="_leadtimeLit" >
+                        <property name="text" >
+                         <string>Lead Time:</string>
+                        </property>
+                        <property name="alignment" >
+                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="5" column="1" >
+                       <widget class="QLabel" name="_leadtime" >
+                        <property name="minimumSize" >
+                         <size>
+                          <width>80</width>
+                          <height>0</height>
+                         </size>
+                        </property>
+                        <property name="alignment" >
+                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </item>
+                    <item>
+                     <spacer>
+                      <property name="orientation" >
+                       <enum>Qt::Vertical</enum>
+                      </property>
+                      <property name="sizeHint" >
+                       <size>
+                        <width>20</width>
+                        <height>0</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                   </layout>
+                  </item>
+                  <item row="0" column="1" >
+                   <spacer>
+                    <property name="orientation" >
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" >
+                     <size>
+                      <width>0</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+               <item row="0" column="1" >
+                <widget class="QGroupBox" name="_createOrder" >
+                 <property name="title" >
+                  <string>Create Work Order</string>
+                 </property>
+                 <property name="checkable" >
+                  <bool>true</bool>
+                 </property>
+                 <layout class="QGridLayout" >
+                  <item row="0" column="0" >
+                   <layout class="QHBoxLayout" >
+                    <item>
+                     <layout class="QVBoxLayout" >
+                      <item>
+                       <layout class="QGridLayout" >
+                        <item row="0" column="0" >
+                         <widget class="QLabel" name="_orderQtyLit" >
+                          <property name="text" >
+                           <string>W/O Qty.:</string>
+                          </property>
+                          <property name="alignment" >
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                          <property name="buddy" >
+                           <cstring>_orderQty</cstring>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="0" column="1" >
+                         <layout class="QHBoxLayout" >
+                          <item>
+                           <widget class="XLabel" name="_orderQty" >
+                            <property name="maximumSize" >
+                             <size>
+                              <width>80</width>
+                              <height>32767</height>
+                             </size>
+                            </property>
+                            <property name="alignment" >
+                             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <spacer>
+                            <property name="orientation" >
+                             <enum>Qt::Horizontal</enum>
+                            </property>
+                            <property name="sizeHint" >
+                             <size>
+                              <width>0</width>
+                              <height>20</height>
+                             </size>
+                            </property>
+                           </spacer>
+                          </item>
+                         </layout>
+                        </item>
+                        <item row="1" column="0" >
+                         <widget class="QLabel" name="_orderDueDateLit" >
+                          <property name="text" >
+                           <string>W/O Due Date:</string>
+                          </property>
+                          <property name="alignment" >
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                          <property name="buddy" >
+                           <cstring>_orderDueDate</cstring>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="1" column="1" >
+                         <layout class="QHBoxLayout" >
+                          <item>
+                           <widget class="DLineEdit" name="_orderDueDate" >
+                            <property name="enabled" >
+                             <bool>false</bool>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <spacer>
+                            <property name="orientation" >
+                             <enum>Qt::Horizontal</enum>
+                            </property>
+                            <property name="sizeHint" >
+                             <size>
+                              <width>0</width>
+                              <height>20</height>
+                             </size>
+                            </property>
+                           </spacer>
+                          </item>
+                         </layout>
+                        </item>
+                        <item row="2" column="0" >
+                         <widget class="QLabel" name="_orderStatusLit" >
+                          <property name="text" >
+                           <string>W/O Status:</string>
+                          </property>
+                          <property name="alignment" >
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="2" column="1" >
+                         <widget class="QLabel" name="_orderStatus" >
+                          <property name="sizePolicy" >
+                           <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="alignment" >
+                           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="3" column="0" >
+                         <widget class="QLabel" name="_supplyWarehouseLit" >
+                          <property name="enabled" >
+                           <bool>false</bool>
+                          </property>
+                          <property name="text" >
+                           <string>Supplying Site:</string>
+                          </property>
+                          <property name="alignment" >
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                          <property name="buddy" >
+                           <cstring>_supplyWarehouse</cstring>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="3" column="1" >
+                         <layout class="QHBoxLayout" >
+                          <item>
+                           <widget class="WComboBox" name="_supplyWarehouse" >
+                            <property name="enabled" >
+                             <bool>false</bool>
+                            </property>
+                            <property name="type" >
+                             <enum>WComboBox::Supply</enum>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <spacer>
+                            <property name="orientation" >
+                             <enum>Qt::Horizontal</enum>
+                            </property>
+                            <property name="sizeHint" >
+                             <size>
+                              <width>0</width>
+                              <height>20</height>
+                             </size>
+                            </property>
+                           </spacer>
+                          </item>
+                         </layout>
+                        </item>
+                        <item row="4" column="0" >
+                         <widget class="QLabel" name="_overridePoPriceLit" >
+                          <property name="text" >
+                           <string>Override P/O Price:</string>
+                          </property>
+                          <property name="buddy" >
+                           <cstring>_overridePoPrice</cstring>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="4" column="1" >
+                         <widget class="CurrCluster" name="_overridePoPrice" >
+                          <property name="format" >
+                           <enum>CurrDisplay::Cost</enum>
+                          </property>
+                          <property name="currencyEditable" stdset="0" >
+                           <bool>false</bool>
+                          </property>
+                          <property name="currencyVisible" >
+                           <bool>false</bool>
+                          </property>
+                          <property name="enabled" >
+                           <bool>false</bool>
+                          </property>
+                         </widget>
+                        </item>
+                       </layout>
+                      </item>
+                      <item>
+                       <spacer>
+                        <property name="orientation" >
+                         <enum>Qt::Vertical</enum>
+                        </property>
+                        <property name="sizeHint" >
+                         <size>
+                          <width>259</width>
+                          <height>16</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                     </layout>
+                    </item>
+                    <item>
+                     <spacer>
+                      <property name="orientation" >
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" >
+                       <size>
+                        <width>0</width>
+                        <height>121</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                   </layout>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+              </layout>
              </widget>
-            </item>
-            <item row="0" column="1" >
-             <widget class="XLabel" name="_onHand" >
-              <property name="minimumSize" >
-               <size>
-                <width>80</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
+             <widget class="QWidget" name="page_2" >
+              <layout class="QGridLayout" >
+               <item row="0" column="0" >
+                <layout class="QVBoxLayout" >
+                 <property name="spacing" >
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="XCheckBox" name="_showIndented" >
+                   <property name="enabled" >
+                    <bool>false</bool>
+                   </property>
+                   <property name="focusPolicy" >
+                    <enum>Qt::NoFocus</enum>
+                   </property>
+                   <property name="text" >
+                    <string>Show dependencies as Indented BOM</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="XTreeWidget" name="_availability" >
+                   <property name="enabled" >
+                    <bool>false</bool>
+                   </property>
+                   <property name="focusPolicy" >
+                    <enum>Qt::NoFocus</enum>
+                   </property>
+                   <property name="rootIsDecorated" >
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
              </widget>
-            </item>
-            <item row="1" column="0" >
-             <widget class="QLabel" name="_allocatedLit" >
-              <property name="text" >
-               <string>Allocated:</string>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1" >
-             <widget class="XLabel" name="_allocated" >
-              <property name="minimumSize" >
-               <size>
-                <width>80</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="2" >
-             <spacer>
-              <property name="orientation" >
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" >
-               <size>
-                <width>0</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item row="2" column="0" >
-             <widget class="QLabel" name="_unallocatedLit" >
-              <property name="text" >
-               <string>Unallocated:</string>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1" >
-             <widget class="XLabel" name="_unallocated" >
-              <property name="minimumSize" >
-               <size>
-                <width>80</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="0" >
-             <widget class="QLabel" name="_onOrderLit" >
-              <property name="text" >
-               <string>On Order:</string>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="1" >
-             <widget class="XLabel" name="_onOrder" >
-              <property name="minimumSize" >
-               <size>
-                <width>80</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="0" >
-             <widget class="QLabel" name="_availableLit" >
-              <property name="text" >
-               <string>Available:</string>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="1" >
-             <widget class="XLabel" name="_available" >
-              <property name="minimumSize" >
-               <size>
-                <width>80</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="0" >
-             <widget class="QLabel" name="_leadtimeLit" >
-              <property name="text" >
-               <string>Lead Time:</string>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="1" >
-             <widget class="QLabel" name="_leadtime" >
-              <property name="minimumSize" >
-               <size>
-                <width>80</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="6" column="1" >
-             <spacer>
-              <property name="orientation" >
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" >
-               <size>
-                <width>20</width>
-                <height>0</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="0" column="1" >
-          <widget class="QGroupBox" name="_createOrder" >
-           <property name="title" >
-            <string>Create Work Order</string>
-           </property>
-           <property name="checkable" >
-            <bool>true</bool>
-           </property>
-           <layout class="QGridLayout" >
-            <property name="leftMargin" >
-             <number>5</number>
-            </property>
-            <property name="topMargin" >
-             <number>5</number>
-            </property>
-            <property name="rightMargin" >
-             <number>5</number>
-            </property>
-            <property name="bottomMargin" >
-             <number>5</number>
-            </property>
-            <property name="horizontalSpacing" >
-             <number>5</number>
-            </property>
-            <property name="verticalSpacing" >
-             <number>5</number>
-            </property>
-            <item row="0" column="0" >
-             <widget class="QLabel" name="_orderQtyLit" >
-              <property name="text" >
-               <string>W/O Qty.:</string>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-              <property name="buddy" >
-               <cstring>_orderQty</cstring>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1" >
-             <widget class="XLabel" name="_orderQty" >
-              <property name="maximumSize" >
-               <size>
-                <width>80</width>
-                <height>32767</height>
-               </size>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight</set>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0" >
-             <widget class="QLabel" name="_orderDueDateLit" >
-              <property name="text" >
-               <string>W/O Due Date:</string>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-              <property name="buddy" >
-               <cstring>_orderDueDate</cstring>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1" >
-             <widget class="DLineEdit" name="_orderDueDate" >
-              <property name="enabled" >
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0" >
-             <widget class="QLabel" name="_orderStatusLit" >
-              <property name="text" >
-               <string>W/O Status:</string>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1" >
-             <widget class="QLabel" name="_orderStatus" >
-              <property name="sizePolicy" >
-               <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="2" >
-             <spacer>
-              <property name="orientation" >
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" >
-               <size>
-                <width>0</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item row="3" column="0" >
-             <widget class="QLabel" name="_supplyWarehouseLit" >
-              <property name="enabled" >
-               <bool>false</bool>
-              </property>
-              <property name="text" >
-               <string>Supplying Site:</string>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-              <property name="buddy" >
-               <cstring>_supplyWarehouse</cstring>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="1" >
-             <widget class="WComboBox" name="_supplyWarehouse" >
-              <property name="enabled" >
-               <bool>false</bool>
-              </property>
-              <property name="type" >
-               <enum>WComboBox::Supply</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="0" >
-             <widget class="QLabel" name="_overridePoPriceLit" >
-              <property name="text" >
-               <string>Override P/O Price:</string>
-              </property>
-              <property name="buddy" >
-               <cstring>_overridePoPrice</cstring>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="1" >
-             <widget class="CurrCluster" name="_overridePoPrice" >
-              <property name="format" >
-               <enum>CurrDisplay::Cost</enum>
-              </property>
-              <property name="currencyEditable" stdset="0" >
-               <bool>false</bool>
-              </property>
-              <property name="currencyVisible" >
-               <bool>false</bool>
-              </property>
-              <property name="enabled" >
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="1" >
-             <spacer>
-              <property name="orientation" >
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" >
-               <size>
-                <width>20</width>
-                <height>0</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </widget>
+            </widget>
+           </item>
+          </layout>
          </item>
         </layout>
        </widget>
        <widget class="QWidget" name="_itemCharacteristicsTab" >
         <attribute name="title" >
-         <string>Item Characteristics</string>
+         <string>Characteristics</string>
         </attribute>
         <layout class="QGridLayout" >
          <item row="0" column="0" >
@@ -1302,33 +1447,6 @@
            </property>
            <property name="itemsExpandable" >
             <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="_availabilityTab" >
-        <attribute name="title" >
-         <string>Pending Availability</string>
-        </attribute>
-        <layout class="QVBoxLayout" >
-         <item>
-          <widget class="XCheckBox" name="_showIndented" >
-           <property name="focusPolicy" >
-            <enum>Qt::NoFocus</enum>
-           </property>
-           <property name="text" >
-            <string>Show Pending Availability as Indented BOM</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="XTreeWidget" name="_availability" >
-           <property name="focusPolicy" >
-            <enum>Qt::NoFocus</enum>
-           </property>
-           <property name="rootIsDecorated" >
-            <bool>true</bool>
            </property>
           </widget>
          </item>
@@ -1815,6 +1933,7 @@
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
@@ -1836,7 +1955,7 @@
   <tabstop>_promisedDate</tabstop>
   <tabstop>_warranty</tabstop>
   <tabstop>_tabs</tabstop>
-  <tabstop>_showAvailability</tabstop>
+  <tabstop>_availabilityGroup</tabstop>
   <tabstop>_createOrder</tabstop>
   <tabstop>_orderQty</tabstop>
   <tabstop>_orderDueDate</tabstop>
@@ -1863,8 +1982,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>525</x>
-     <y>30</y>
+     <x>620</x>
+     <y>46</y>
     </hint>
     <hint type="destinationlabel" >
      <x>20</x>
@@ -1883,8 +2002,8 @@
      <y>67</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>525</x>
-     <y>61</y>
+     <x>620</x>
+     <y>71</y>
     </hint>
    </hints>
   </connection>
@@ -1915,8 +2034,8 @@
      <y>67</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>115</x>
-     <y>123</y>
+     <x>218</x>
+     <y>137</y>
     </hint>
    </hints>
   </connection>
@@ -1931,8 +2050,8 @@
      <y>229</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>312</x>
-     <y>290</y>
+     <x>448</x>
+     <y>314</y>
     </hint>
    </hints>
   </connection>
@@ -1947,8 +2066,8 @@
      <y>229</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>312</x>
-     <y>290</y>
+     <x>448</x>
+     <y>314</y>
     </hint>
    </hints>
   </connection>
@@ -2007,12 +2126,12 @@
    <slot>setEffective(QDate)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>431</x>
-     <y>233</y>
+     <x>428</x>
+     <y>252</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>521</x>
-     <y>487</y>
+     <x>171</x>
+     <y>555</y>
     </hint>
    </hints>
   </connection>
@@ -2027,8 +2146,8 @@
      <y>229</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>141</x>
-     <y>468</y>
+     <x>171</x>
+     <y>555</y>
     </hint>
    </hints>
   </connection>
@@ -2043,8 +2162,8 @@
      <y>229</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>141</x>
-     <y>412</y>
+     <x>171</x>
+     <y>555</y>
     </hint>
    </hints>
   </connection>
@@ -2059,8 +2178,8 @@
      <y>229</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>141</x>
-     <y>412</y>
+     <x>171</x>
+     <y>555</y>
     </hint>
    </hints>
   </connection>
@@ -2075,8 +2194,8 @@
      <y>229</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>141</x>
-     <y>440</y>
+     <x>171</x>
+     <y>555</y>
     </hint>
    </hints>
   </connection>
@@ -2091,8 +2210,8 @@
      <y>229</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>141</x>
-     <y>440</y>
+     <x>171</x>
+     <y>555</y>
     </hint>
    </hints>
   </connection>
@@ -2107,8 +2226,8 @@
      <y>229</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>141</x>
-     <y>468</y>
+     <x>171</x>
+     <y>555</y>
     </hint>
    </hints>
   </connection>
@@ -2119,12 +2238,12 @@
    <slot>setEffective(QDate)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>431</x>
-     <y>233</y>
+     <x>428</x>
+     <y>252</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>385</x>
-     <y>531</y>
+     <x>517</x>
+     <y>594</y>
     </hint>
    </hints>
   </connection>
@@ -2135,12 +2254,12 @@
    <slot>setId(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>431</x>
-     <y>233</y>
+     <x>428</x>
+     <y>252</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>385</x>
-     <y>531</y>
+     <x>517</x>
+     <y>594</y>
     </hint>
    </hints>
   </connection>
@@ -2151,12 +2270,92 @@
    <slot>setId(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>486</x>
-     <y>67</y>
+     <x>465</x>
+     <y>82</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>385</x>
-     <y>503</y>
+     <x>498</x>
+     <y>568</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_showAvailability</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_availabilityGroup</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>129</x>
+     <y>426</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>79</x>
+     <y>467</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_showAvailability</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_inventoryButton</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>110</x>
+     <y>422</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>169</x>
+     <y>426</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_showAvailability</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_dependenciesButton</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>64</x>
+     <y>425</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>291</x>
+     <y>429</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_showAvailability</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_showIndented</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>63</x>
+     <y>431</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>74</x>
+     <y>469</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_showAvailability</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_availability</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>50</x>
+     <y>432</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>56</x>
+     <y>493</y>
     </hint>
    </hints>
   </connection>

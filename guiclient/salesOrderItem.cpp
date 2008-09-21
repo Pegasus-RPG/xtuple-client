@@ -123,6 +123,7 @@ salesOrderItem::salesOrderItem(QWidget* parent, const char* name, bool modal, Qt
   connect(_taxtype, SIGNAL(newID(int)), this, SLOT(sLookupTaxCode()));
   connect(_qtyUOM, SIGNAL(newID(int)), this, SLOT(sQtyUOMChanged()));
   connect(_priceUOM, SIGNAL(newID(int)), this, SLOT(sPriceUOMChanged()));
+  connect(_inventoryButton, SIGNAL(toggled(bool)), this, SLOT(sHandleButton()));
 
 #ifndef Q_WS_MAC
   _listPrices->setMaximumWidth(25);
@@ -195,8 +196,6 @@ salesOrderItem::salesOrderItem(QWidget* parent, const char* name, bool modal, Qt
     _promisedDate->hide();
   }
 
-  _showAvailability->setChecked(_preferences->boolean("ShowSOItemAvailability"));
-
   _qtyOrdered->setValidator(omfgThis->qtyVal());
   _orderQty->setPrecision(omfgThis->qtyVal());
 
@@ -232,6 +231,11 @@ salesOrderItem::salesOrderItem(QWidget* parent, const char* name, bool modal, Qt
     _warranty->hide();
 
   resize(minimumSize());
+  
+  _inventoryButton->setEnabled(_showAvailability->isChecked());
+  _dependenciesButton->setEnabled(_showAvailability->isChecked());
+  _availability->setEnabled(_showAvailability->isChecked());
+  _showIndented->setEnabled(_showAvailability->isChecked());
   
   //TO DO **** Fix tab order issues and offer alternate means for "Express Tab Order"  ****
 }
@@ -2931,4 +2935,12 @@ void salesOrderItem::sCalcWoUnitCost()
     if (q.first())
       _unitCost->setBaseValue(q.value("wo_value").toDouble() / _qtyOrdered->toDouble() * _qtyinvuomratio);
   }
+}
+
+void salesOrderItem::sHandleButton()
+{
+  if (_inventoryButton->isChecked())
+    _availabilityStack->setCurrentIndex(0);
+  else
+    _availabilityStack->setCurrentIndex(1);
 }

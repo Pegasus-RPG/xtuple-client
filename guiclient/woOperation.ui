@@ -1697,7 +1697,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QCheckBox" name="_fixedFont" >
+        <widget class="XCheckBox" name="_fixedFont" >
          <property name="text" >
           <string>Use Fixed-Width Font</string>
          </property>
@@ -1721,6 +1721,11 @@
    <header>wocluster.h</header>
   </customwidget>
   <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
+  </customwidget>
+  <customwidget>
    <class>XComboBox</class>
    <extends>QComboBox</extends>
    <header>xcombobox.h</header>
@@ -1734,6 +1739,7 @@
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>

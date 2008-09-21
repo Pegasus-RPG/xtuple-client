@@ -89,6 +89,7 @@ public slots:
     virtual void sCancel();
     virtual void sLookupTax();
     virtual void sTaxDetail();
+    virtual void sHandleButton();
 
 protected slots:
     virtual void languageChange();

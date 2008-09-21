@@ -88,8 +88,9 @@ woOperation::woOperation(QWidget* parent, const char* name, bool modal, Qt::WFla
 
   omfgThis->inputManager()->notify(cBCWorkOrder, this, _wo, SLOT(setId(int)));
 
+  sHandleFont(_fixedFont->isChecked());
+  
   _wo->setType(cWoExploded | cWoReleased | cWoIssued);
-  _fixedFont->setChecked(_preferences->boolean("UsedFixedWidthFonts"));
 
   _prodUOM->setType(XComboBox::UOMs);
   _wrkcnt->setType(XComboBox::WorkCenters);

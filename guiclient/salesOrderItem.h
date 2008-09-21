@@ -105,6 +105,7 @@ public slots:
     virtual void sQtyUOMChanged();
     virtual void sPriceUOMChanged();
     virtual void sCalcWoUnitCost();
+    virtual void sHandleButton();
 
 protected slots:
     virtual void languageChange();

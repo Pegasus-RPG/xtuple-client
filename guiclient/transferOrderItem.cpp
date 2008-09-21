@@ -91,6 +91,7 @@ transferOrderItem::transferOrderItem(QWidget* parent, const char* name, bool mod
   connect(_taxLit, SIGNAL(leftClickedURL(QString)), this, SLOT(sTaxDetail()));
   connect(_warehouse,	SIGNAL(newID(int)), this, SLOT(sChanged()));
   connect(_warehouse,	SIGNAL(newID(int)), this, SLOT(sDetermineAvailability()));
+  connect(_inventoryButton, SIGNAL(toggled(bool)), this, SLOT(sHandleButton()));
 
   _modified	= false;
   _canceling	= false;
@@ -139,8 +140,6 @@ transferOrderItem::transferOrderItem(QWidget* parent, const char* name, bool mod
     _promisedDate->hide();
   }
 
-  _showAvailability->setChecked(_preferences->boolean("ShowSOItemAvailability"));
-
   _comments->setType(Comments::TransferOrderItem);
 
   _dstwhsid	= -1;
@@ -150,6 +149,11 @@ transferOrderItem::transferOrderItem(QWidget* parent, const char* name, bool mod
   _taxauthid	= -1;
   _taxCache.clear();
   resize(minimumSize());
+  
+  _inventoryButton->setEnabled(_showAvailability->isChecked());
+  _dependencyButton->setEnabled(_showAvailability->isChecked());
+  _availability->setEnabled(_showAvailability->isChecked());
+  _showIndented->setEnabled(_showAvailability->isChecked());
 }
 
 transferOrderItem::~transferOrderItem()
@@ -1164,4 +1168,12 @@ void transferOrderItem::sTaxDetail()
 
     _tax->setLocalValue(_taxCache.total());
   }
+}
+
+void transferOrderItem::sHandleButton()
+{
+  if (_inventoryButton->isChecked())
+    _availabilityStack->setCurrentIndex(0);
+  else
+    _availabilityStack->setCurrentIndex(1);
 }

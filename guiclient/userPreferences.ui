@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>643</width>
-    <height>481</height>
+    <width>600</width>
+    <height>414</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -179,145 +179,153 @@
             <string>Background Image</string>
            </property>
            <layout class="QGridLayout" >
-            <item row="0" column="0" colspan="2" >
-             <widget class="QRadioButton" name="_noBackgroundImage" >
-              <property name="text" >
-               <string>None</string>
-              </property>
-              <property name="checked" >
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0" >
-             <widget class="QRadioButton" name="_backgroundImage" >
-              <property name="text" >
-               <string>Image:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1" >
-             <layout class="QHBoxLayout" >
+            <item row="0" column="0" >
+             <layout class="QVBoxLayout" >
               <item>
-               <widget class="XLineEdit" name="_background" >
-                <property name="enabled" >
-                 <bool>false</bool>
-                </property>
-               </widget>
+               <layout class="QGridLayout" >
+                <item row="0" column="0" colspan="2" >
+                 <widget class="QRadioButton" name="_noBackgroundImage" >
+                  <property name="text" >
+                   <string>None</string>
+                  </property>
+                  <property name="checked" >
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0" >
+                 <widget class="QRadioButton" name="_backgroundImage" >
+                  <property name="text" >
+                   <string>Image:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1" >
+                 <layout class="QHBoxLayout" >
+                  <item>
+                   <widget class="XLineEdit" name="_background" >
+                    <property name="enabled" >
+                     <bool>false</bool>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="_backgroundList" >
+                    <property name="enabled" >
+                     <bool>false</bool>
+                    </property>
+                    <property name="text" >
+                     <string>...</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer>
+                    <property name="orientation" >
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" >
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
               </item>
               <item>
-               <widget class="QPushButton" name="_backgroundList" >
-                <property name="enabled" >
-                 <bool>false</bool>
+               <spacer>
+                <property name="orientation" >
+                 <enum>Qt::Vertical</enum>
                 </property>
-                <property name="text" >
-                 <string>...</string>
+                <property name="sizeHint" >
+                 <size>
+                  <width>20</width>
+                  <height>0</height>
+                 </size>
                 </property>
-               </widget>
+               </spacer>
               </item>
              </layout>
             </item>
            </layout>
           </widget>
          </item>
-         <item rowspan="2" row="0" column="1" >
-          <widget class="QGroupBox" name="_defaultsGroup" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
+         <item row="0" column="1" >
+          <widget class="QGroupBox" name="_warehouseGroup" >
            <property name="title" >
-            <string>Defaults</string>
+            <string>Preferred Site:</string>
            </property>
            <layout class="QGridLayout" >
             <item row="0" column="0" >
-             <widget class="QCheckBox" name="_fixedWidthFonts" >
-              <property name="text" >
-               <string>Use Fixed Width Fonts where Applicable</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0" >
-             <widget class="QCheckBox" name="_listNumericItemsFirst" >
-              <property name="text" >
-               <string>List Numeric Item Numbers First</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0" >
-             <widget class="QCheckBox" name="_showSoitemAvailability" >
-              <property name="text" >
-               <string>Show S/O Item Availability when Entering</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="0" >
-             <layout class="QHBoxLayout" >
-              <property name="spacing" >
-               <number>5</number>
-              </property>
-              <property name="leftMargin" >
-               <number>0</number>
-              </property>
-              <property name="topMargin" >
-               <number>0</number>
-              </property>
-              <property name="rightMargin" >
-               <number>0</number>
-              </property>
-              <property name="bottomMargin" >
-               <number>0</number>
-              </property>
+             <layout class="QVBoxLayout" >
               <item>
-               <widget class="QLabel" name="_ellipsesActionLit" >
-                <property name="sizePolicy" >
-                 <sizepolicy vsizetype="Preferred" hsizetype="Minimum" >
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text" >
-                 <string>Default Ellipses Action:</string>
-                </property>
-                <property name="alignment" >
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-                <property name="buddy" >
-                 <cstring>_ellipsesAction</cstring>
-                </property>
-               </widget>
+               <layout class="QGridLayout" >
+                <item row="0" column="0" >
+                 <widget class="QRadioButton" name="_noWarehouse" >
+                  <property name="text" >
+                   <string>None</string>
+                  </property>
+                  <property name="checked" >
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0" >
+                 <widget class="QRadioButton" name="_selectedWarehouse" >
+                  <property name="text" >
+                   <string>Site:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1" >
+                 <layout class="QHBoxLayout" >
+                  <item>
+                   <widget class="WComboBox" name="_warehouse" >
+                    <property name="enabled" >
+                     <bool>false</bool>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer>
+                    <property name="orientation" >
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" >
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
               </item>
               <item>
-               <widget class="XComboBox" name="_ellipsesAction" >
-                <property name="sizePolicy" >
-                 <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
+               <spacer>
+                <property name="orientation" >
+                 <enum>Qt::Vertical</enum>
                 </property>
-               </widget>
+                <property name="sizeHint" >
+                 <size>
+                  <width>20</width>
+                  <height>0</height>
+                 </size>
+                </property>
+               </spacer>
               </item>
              </layout>
-            </item>
-            <item row="4" column="0" >
-             <spacer>
-              <property name="orientation" >
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" >
-               <size>
-                <width>20</width>
-                <height>40</height>
-               </size>
-              </property>
-             </spacer>
             </item>
            </layout>
           </widget>
          </item>
-         <item rowspan="2" row="1" column="0" >
+         <item row="1" column="0" >
           <widget class="QGroupBox" name="_interfaceGroup" >
            <property name="title" >
             <string>Interface Options</string>
@@ -348,23 +356,20 @@
              </widget>
             </item>
             <item row="3" column="0" colspan="3" >
-             <widget class="QCheckBox" name="_rememberCheckBoxes" >
+             <widget class="QCheckBox" name="_ignoreTranslation" >
               <property name="text" >
-               <string>Remember Check Box Settings</string>
-              </property>
-              <property name="checked" >
-               <bool>true</bool>
+               <string>Ignore Missing Translations</string>
               </property>
              </widget>
             </item>
-            <item row="5" column="0" colspan="3" >
+            <item row="4" column="0" colspan="3" >
              <widget class="Line" name="line_2" >
               <property name="orientation" >
                <enum>Qt::Horizontal</enum>
               </property>
              </widget>
             </item>
-            <item row="6" column="0" >
+            <item row="5" column="0" >
              <widget class="QLabel" name="_idleTimeoutLit" >
               <property name="text" >
                <string>Idle Timeout:</string>
@@ -374,10 +379,10 @@
               </property>
              </widget>
             </item>
-            <item row="6" column="1" >
+            <item row="5" column="1" >
              <widget class="QSpinBox" name="_idleTimeout" />
             </item>
-            <item row="6" column="2" >
+            <item row="5" column="2" >
              <spacer>
               <property name="orientation" >
                <enum>Qt::Horizontal</enum>
@@ -390,63 +395,85 @@
               </property>
              </spacer>
             </item>
-            <item row="4" column="0" colspan="3" >
-             <widget class="QCheckBox" name="_ignoreTranslation" >
-              <property name="text" >
-               <string>Ignore Missing Translations</string>
-              </property>
-             </widget>
-            </item>
            </layout>
           </widget>
          </item>
-         <item row="2" column="1" >
-          <widget class="QGroupBox" name="_warehouseGroup" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
+         <item row="1" column="1" >
+          <widget class="QGroupBox" name="_defaultsGroup" >
            <property name="title" >
-            <string>Preferred Site:</string>
+            <string>Defaults</string>
            </property>
            <layout class="QGridLayout" >
             <item row="0" column="0" >
-             <widget class="QRadioButton" name="_noWarehouse" >
-              <property name="text" >
-               <string>None</string>
-              </property>
-              <property name="checked" >
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0" >
-             <widget class="QRadioButton" name="_selectedWarehouse" >
-              <property name="text" >
-               <string>Site:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1" >
-             <layout class="QHBoxLayout" >
+             <layout class="QVBoxLayout" >
               <item>
-               <widget class="WComboBox" name="_warehouse" >
-                <property name="enabled" >
-                 <bool>false</bool>
-                </property>
-               </widget>
+               <layout class="QVBoxLayout" >
+                <item>
+                 <widget class="QCheckBox" name="_listNumericItemsFirst" >
+                  <property name="text" >
+                   <string>List Numeric Item Numbers First</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <layout class="QHBoxLayout" >
+                  <property name="spacing" >
+                   <number>5</number>
+                  </property>
+                  <property name="leftMargin" >
+                   <number>0</number>
+                  </property>
+                  <property name="topMargin" >
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin" >
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin" >
+                   <number>0</number>
+                  </property>
+                  <item>
+                   <widget class="QLabel" name="_ellipsesActionLit" >
+                    <property name="sizePolicy" >
+                     <sizepolicy vsizetype="Preferred" hsizetype="Minimum" >
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="text" >
+                     <string>Default Ellipses Action:</string>
+                    </property>
+                    <property name="alignment" >
+                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                    </property>
+                    <property name="buddy" >
+                     <cstring>_ellipsesAction</cstring>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="XComboBox" name="_ellipsesAction" >
+                    <property name="sizePolicy" >
+                     <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
               </item>
               <item>
                <spacer>
                 <property name="orientation" >
-                 <enum>Qt::Horizontal</enum>
+                 <enum>Qt::Vertical</enum>
                 </property>
                 <property name="sizeHint" >
                  <size>
-                  <width>40</width>
-                  <height>20</height>
+                  <width>20</width>
+                  <height>40</height>
                  </size>
                 </property>
                </spacer>
@@ -616,7 +643,7 @@
            <property name="sizeHint" >
             <size>
              <width>50</width>
-             <height>271</height>
+             <height>20</height>
             </size>
            </property>
           </spacer>
@@ -1055,7 +1082,7 @@
            <property name="sizeHint" >
             <size>
              <width>381</width>
-             <height>40</height>
+             <height>0</height>
             </size>
            </property>
           </spacer>
@@ -1211,6 +1238,7 @@
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
@@ -1228,12 +1256,9 @@
   <tabstop>_backgroundList</tabstop>
   <tabstop>_interfaceWorkspace</tabstop>
   <tabstop>_interfaceTopLevel</tabstop>
-  <tabstop>_rememberCheckBoxes</tabstop>
   <tabstop>_ignoreTranslation</tabstop>
   <tabstop>_idleTimeout</tabstop>
-  <tabstop>_fixedWidthFonts</tabstop>
   <tabstop>_listNumericItemsFirst</tabstop>
-  <tabstop>_showSoitemAvailability</tabstop>
   <tabstop>_ellipsesAction</tabstop>
   <tabstop>_noWarehouse</tabstop>
   <tabstop>_selectedWarehouse</tabstop>

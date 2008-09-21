@@ -139,7 +139,7 @@ returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* na
   _discountFromSale->setValidator(new QDoubleValidator(-9999, 100, 2, this));
   _taxType->setEnabled(_privileges->check("OverrideTax"));
   _taxCode->setEnabled(_privileges->check("OverrideTax"));
-  _showAvailability->setChecked(_preferences->boolean("ShowSOItemAvailability"));
+  _availabilityGroup->setEnabled(_showAvailability->isChecked());
 
   _qtySold->setPrecision(omfgThis->qtyVal());
   _qtyReceived->setPrecision(omfgThis->qtyVal());
