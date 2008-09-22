@@ -98,14 +98,14 @@ dspPendingAvailability::dspPendingAvailability(QWidget* parent, const char* name
   _qtyToBuild->setValidator(omfgThis->qtyVal());
   _qtyToBuild->setText("1.0");
 
-  _items->addColumn(tr("#"),            _seqColumn,  Qt::AlignCenter );
-  _items->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft   );
-  _items->addColumn(tr("Description"),  -1,          Qt::AlignLeft   );
-  _items->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignCenter );
-  _items->addColumn(tr("Pend. Alloc."), _qtyColumn,  Qt::AlignRight  );
-  _items->addColumn(tr("Total Alloc."), _qtyColumn,  Qt::AlignRight  );
-  _items->addColumn(tr("QOH"),          _qtyColumn,  Qt::AlignRight  );
-  _items->addColumn(tr("Availability"), _qtyColumn,  Qt::AlignRight  );
+  _items->addColumn(tr("#"),            _seqColumn,  Qt::AlignCenter, true,  "bomitem_seqnumber" );
+  _items->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft,   true,  "item_number"   );
+  _items->addColumn(tr("Description"),  -1,          Qt::AlignLeft,   true,  "item_descrip"   );
+  _items->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignCenter, true,  "uom_name" );
+  _items->addColumn(tr("Pend. Alloc."), _qtyColumn,  Qt::AlignRight,  true,  "pendalloc"  );
+  _items->addColumn(tr("Total Alloc."), _qtyColumn,  Qt::AlignRight,  true,  "totalalloc"  );
+  _items->addColumn(tr("QOH"),          _qtyColumn,  Qt::AlignRight,  true,  "qoh"  );
+  _items->addColumn(tr("Availability"), _qtyColumn,  Qt::AlignRight,  true,  "totalavail"  );
 
   //If not multi-warehouse hide whs control
   if (!_metrics->boolean("MultiWhs"))
@@ -159,12 +159,17 @@ void dspPendingAvailability::sFillList()
   _items->clear();
 
   QString sql( "SELECT itemsite_id, bomitem_seqnumber, item_number, item_descrip, uom_name,"
-               "       pendalloc, formatQty(pendalloc) AS f_pendalloc,"
-               "       formatQty(totalalloc + pendalloc) AS f_totalalloc,"
-               "       qoh, formatQty(qoh) AS f_qoh,"
-               "       (qoh + ordered - (totalalloc + pendalloc)) AS totalavail,"
-               "       formatQty(qoh + ordered - (totalalloc + pendalloc)) AS f_totalavail,"
-               "       reorderlevel "
+               "       pendalloc, (totalalloc + pendalloc) AS totalalloc,"
+               "       qoh, (qoh + ordered - (totalalloc + pendalloc)) AS totalavail,"
+               "       reorderlevel,"
+               "       'qty' AS pendalloc_xtnumericrole,"
+               "       'qty' AS totalalloc_xtnumericrole,"
+               "       'qty' AS qoh_xtnumericrole,"
+               "       'qty' AS totalavail_xtnumericrole,"
+               "       CASE WHEN (qoh < pendalloc) THEN 'error' END AS qoh_qtforegroundrole,"
+               "       CASE WHEN ((qoh + ordered - (totalalloc + pendalloc)) < reorderlevel) THEN 'error'"
+               "            WHEN ((qoh + ordered - (totalalloc + pendalloc)) = reorderlevel) THEN 'warning'"
+               "       END AS totalavail_qtforegroundrole "
                "FROM ( SELECT itemsite_id, bomitem_seqnumber, item_number,"
                "              (item_descrip1 || ' ' || item_descrip2) AS item_descrip, uom_name,"
                "              ((itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper * (1 + bomitem_scrap))) * :buildQty) AS pendalloc,"
@@ -183,6 +188,9 @@ void dspPendingAvailability::sFillList()
   else
     sql += " AND (:effective BETWEEN bomitem_effective AND (bomitem_expires-1))) ) AS data ";
 
+  if (_showShortages->isChecked())
+    sql += "WHERE ((qoh + ordered - (totalalloc + pendalloc)) < 0) ";
+    
   sql += "ORDER BY bomitem_seqnumber";
 
   q.prepare(sql);
@@ -192,27 +200,7 @@ void dspPendingAvailability::sFillList()
   q.bindValue(":item_id", _item->id());
   q.bindValue(":effective", _effective->date());
   q.exec();
-  XTreeWidgetItem *last = 0;
-  while (q.next())
-  {
-    if ( (!_showShortages->isChecked()) ||
-         (q.value("totalavail").toDouble() < 0.0) )
-    {
-      last = new XTreeWidgetItem( _items, last, q.value("itemsite_id").toInt(),
-				 q.value("bomitem_seqnumber"), q.value("item_number"),
-				 q.value("item_descrip"), q.value("uom_name"),
-				 q.value("f_pendalloc"), q.value("f_totalalloc"),
-				 q.value("f_qoh"), q.value("f_totalavail")  );
-
-      if (q.value("qoh").toDouble() < q.value("pendalloc").toDouble())
-        last->setTextColor(6, "red");
-
-      if (q.value("totalavail").toDouble() < 0.0)
-        last->setTextColor(7, "red");
-      else if (q.value("totalavail").toDouble() <= q.value("reorderlevel").toDouble())
-        last->setTextColor(7, "orange");
-    }
-  }
+  _items->populate(q);
 }
 
 bool dspPendingAvailability::checkParameters()

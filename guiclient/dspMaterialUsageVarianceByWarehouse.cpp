@@ -85,17 +85,17 @@ dspMaterialUsageVarianceByWarehouse::dspMaterialUsageVarianceByWarehouse(QWidget
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), 0);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), 0);
 
-  _womatlvar->addColumn(tr("Post Date"),       _dateColumn,  Qt::AlignCenter );
-  _womatlvar->addColumn(tr("Parent Item"),     _itemColumn,  Qt::AlignLeft   );
-  _womatlvar->addColumn(tr("Component Item"),  _itemColumn,  Qt::AlignLeft   ); 
-  _womatlvar->addColumn(tr("Ordered"),         _qtyColumn,   Qt::AlignRight  );
-  _womatlvar->addColumn(tr("Produced"),        _qtyColumn,   Qt::AlignRight  );
-  _womatlvar->addColumn(tr("Proj. Req."),      _qtyColumn,   Qt::AlignRight  );
-  _womatlvar->addColumn(tr("Proj. Qty. per."), _qtyColumn,   Qt::AlignRight  );
-  _womatlvar->addColumn(tr("Act. Iss."),       _qtyColumn,   Qt::AlignRight  );
-  _womatlvar->addColumn(tr("Act. Qty. per."),  _qtyColumn,   Qt::AlignRight  );
-  _womatlvar->addColumn(tr("Qty. per Var."),   _qtyColumn,   Qt::AlignRight  );
-  _womatlvar->addColumn(tr("%"),               _prcntColumn, Qt::AlignRight  );
+  _womatlvar->addColumn(tr("Post Date"),       _dateColumn,  Qt::AlignCenter, true,  "posted" );
+  _womatlvar->addColumn(tr("Parent Item"),     _itemColumn,  Qt::AlignLeft,   true,  "parentitemnumber"   );
+  _womatlvar->addColumn(tr("Component Item"),  _itemColumn,  Qt::AlignLeft,   true,  "componentitemnumber"   ); 
+  _womatlvar->addColumn(tr("Ordered"),         _qtyColumn,   Qt::AlignRight,  true,  "ordered"  );
+  _womatlvar->addColumn(tr("Produced"),        _qtyColumn,   Qt::AlignRight,  true,  "received"  );
+  _womatlvar->addColumn(tr("Proj. Req."),      _qtyColumn,   Qt::AlignRight,  true,  "projreq"  );
+  _womatlvar->addColumn(tr("Proj. Qty. per."), _qtyColumn,   Qt::AlignRight,  true,  "projqtyper"  );
+  _womatlvar->addColumn(tr("Act. Iss."),       _qtyColumn,   Qt::AlignRight,  true,  "actiss"  );
+  _womatlvar->addColumn(tr("Act. Qty. per."),  _qtyColumn,   Qt::AlignRight,  true,  "actqtyper"  );
+  _womatlvar->addColumn(tr("Qty. per Var."),   _qtyColumn,   Qt::AlignRight,  true,  "qtypervar"  );
+  _womatlvar->addColumn(tr("%"),               _prcntColumn, Qt::AlignRight,  true,  "qtypervarpercent"  );
 }
 
 /*
@@ -136,12 +136,20 @@ void dspMaterialUsageVarianceByWarehouse::sFillList()
 {
   if (_dates->allValid())
   {
-    QString sql( "SELECT womatlvar_id, formatDate(posted), parentitemnumber, componentitemnumber,"
-                 "       formatQty(ordered), formatQty(received),"
-                 "       formatQty(projreq), formatQtyPer(projqtyper),"
-                 "       formatQty(actiss), formatQtyPer(actqtyper),"
-                 "       formatQtyPer(actqtyper - projqtyper),"
-                 "       formatPrcnt((1 - (actqtyper / projqtyper)) * -1) "
+    QString sql( "SELECT womatlvar_id, posted, parentitemnumber, componentitemnumber,"
+                 "       ordered, received,"
+                 "       projreq, projqtyper,"
+                 "       actiss, actqtyper,"
+                 "       (actqtyper - projqtyper) AS qtypervar,"
+                 "       ((1 - (actqtyper / projqtyper)) * -1) AS qtypervarpercent,"
+                 "       'qty' AS ordered_xtnumericrole,"
+                 "       'qty' AS received_xtnumericrole,"
+                 "       'qty' AS projreq_xtnumericrole,"
+                 "       'qtyper' AS projqtyper_xtnumericrole,"
+                 "       'qty' AS actiss_xtnumericrole,"
+                 "       'qtyper' AS actqtyper_xtnumericrole,"
+                 "       'qtyper' AS qtypervar_xtnumericrole,"
+                 "       'percent' AS qtypervarpercent_xtnumericrole "
                  "FROM ( SELECT womatlvar_id, womatlvar_posted AS posted,"
                  "              parentitem.item_number AS parentitemnumber, componentitem.item_number AS componentitemnumber,"
                  "              womatlvar_qtyord AS ordered, womatlvar_qtyrcv AS received,"

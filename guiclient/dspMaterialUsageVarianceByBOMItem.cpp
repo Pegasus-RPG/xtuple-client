@@ -87,15 +87,15 @@ dspMaterialUsageVarianceByBOMItem::dspMaterialUsageVarianceByBOMItem(QWidget* pa
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 
-  _womatlvar->addColumn(tr("Post Date"),      _dateColumn,  Qt::AlignCenter );
-  _womatlvar->addColumn(tr("Ordered"),        _qtyColumn,   Qt::AlignRight  );
-  _womatlvar->addColumn(tr("Produced"),       _qtyColumn,   Qt::AlignRight  );
-  _womatlvar->addColumn(tr("Proj. Req."),     _qtyColumn,   Qt::AlignRight  );
-  _womatlvar->addColumn(tr("Proj. Qty. per"), _qtyColumn,   Qt::AlignRight  );
-  _womatlvar->addColumn(tr("Act. Iss."),      _qtyColumn,   Qt::AlignRight  );
-  _womatlvar->addColumn(tr("Act. Qty. per"),  _qtyColumn,   Qt::AlignRight  );
-  _womatlvar->addColumn(tr("Qty. per Var."),  _qtyColumn,   Qt::AlignRight  );
-  _womatlvar->addColumn(tr("%"),              _prcntColumn, Qt::AlignRight  );
+  _womatlvar->addColumn(tr("Post Date"),      _dateColumn,  Qt::AlignCenter, true,  "posted" );
+  _womatlvar->addColumn(tr("Ordered"),        _qtyColumn,   Qt::AlignRight,  true,  "ordered"  );
+  _womatlvar->addColumn(tr("Produced"),       _qtyColumn,   Qt::AlignRight,  true,  "received"  );
+  _womatlvar->addColumn(tr("Proj. Req."),     _qtyColumn,   Qt::AlignRight,  true,  "projreq"  );
+  _womatlvar->addColumn(tr("Proj. Qty. per"), _qtyColumn,   Qt::AlignRight,  true,  "projqtyper"  );
+  _womatlvar->addColumn(tr("Act. Iss."),      _qtyColumn,   Qt::AlignRight,  true,  "actiss"  );
+  _womatlvar->addColumn(tr("Act. Qty. per"),  _qtyColumn,   Qt::AlignRight,  true,  "actqtyper"  );
+  _womatlvar->addColumn(tr("Qty. per Var."),  _qtyColumn,   Qt::AlignRight,  true,  "qtypervar"  );
+  _womatlvar->addColumn(tr("%"),              _prcntColumn, Qt::AlignRight,  true,  "qtypervarpercent"  );
 }
 
 /*
@@ -163,12 +163,20 @@ void dspMaterialUsageVarianceByBOMItem::sFillList()
 {
   if ((_componentItem->id() != -1) && (_dates->allValid()))
   {
-    QString sql( "SELECT womatlvar_id, formatDate(posted),"
-                 "       formatQty(ordered), formatQty(received),"
-                 "       formatQty(projreq), formatQtyPer(projqtyper),"
-                 "       formatQty(actiss), formatQtyPer(actqtyper),"
-                 "       formatQtyPer(actqtyper - projqtyper),"
-                 "       formatPrcnt((1 - (actqtyper / projqtyper)) * -1) "
+    QString sql( "SELECT womatlvar_id, posted,"
+                 "       ordered, received,"
+                 "       projreq, projqtyper,"
+                 "       actiss, actqtyper,"
+                 "       (actqtyper - projqtyper) AS qtypervar,"
+                 "       ((1 - (actqtyper / projqtyper)) * -1) AS qtypervarpercent,"
+                 "       'qty' AS ordered_xtnumericrole,"
+                 "       'qty' AS received_xtnumericrole,"
+                 "       'qty' AS projreq_xtnumericrole,"
+                 "       'qtyper' AS projqtyper_xtnumericrole,"
+                 "       'qty' AS actiss_xtnumericrole,"
+                 "       'qtyper' AS actqtyper_xtnumericrole,"
+                 "       'qtyper' AS qtypervar_xtnumericrole,"
+                 "       'percent' AS qtypervarpercent_xtnumericrole "
                  "FROM ( SELECT womatlvar_id, womatlvar_posted AS posted,"
                  "              womatlvar_qtyord AS ordered, womatlvar_qtyrcv AS received,"
                  "              (womatlvar_qtyrcv * (womatlvar_qtyper * (1 + womatlvar_scrap))) AS projreq,"

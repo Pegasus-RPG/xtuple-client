@@ -76,11 +76,11 @@ dspPOsByVendor::dspPOsByVendor(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_poitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
 
-  _poitem->addColumn(tr("P/O #"),       _orderColumn, Qt::AlignRight  );
-  _poitem->addColumn(tr("Site"),        _whsColumn,   Qt::AlignCenter );
-  _poitem->addColumn(tr("Status"),      _dateColumn,  Qt::AlignCenter );
-  _poitem->addColumn(tr("Vendor"),      -1,           Qt::AlignLeft   );
-  _poitem->addColumn(tr("Date"),        _dateColumn,  Qt::AlignCenter );
+  _poitem->addColumn(tr("P/O #"),       _orderColumn, Qt::AlignRight,  true,  "pohead_number"  );
+  _poitem->addColumn(tr("Site"),        _whsColumn,   Qt::AlignCenter, true,  "warehousecode" );
+  _poitem->addColumn(tr("Status"),      _dateColumn,  Qt::AlignCenter, true,  "poitemstatus" );
+  _poitem->addColumn(tr("Vendor"),      -1,           Qt::AlignLeft,   true,  "vend_number"   );
+  _poitem->addColumn(tr("Date"),        _dateColumn,  Qt::AlignCenter, true,  "sortDate" );
 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"),     omfgThis->endOfTime(),   TRUE);
@@ -198,18 +198,5 @@ void dspPOsByVendor::sFillList()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-
-  _poitem->clear();
-  XTreeWidgetItem *last = 0;
-  while (q.next())
-  {
-    last = new XTreeWidgetItem(_poitem, last,
-			       q.value("pohead_id").toInt(), -1,
-			       q.value("pohead_number"),
-			       q.value("warehousecode"),
-			       q.value("poitemstatus"), q.value("vend_number"),
-			       q.value("f_date"));
-    if (q.value("late").toBool())
-      last->setTextColor(4, "red");
-  }
+  _poitem->populate(q, true);
 }

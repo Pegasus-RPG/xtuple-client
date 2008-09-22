@@ -87,10 +87,10 @@ dspOperationsByWorkCenter::dspOperationsByWorkCenter(QWidget* parent, const char
                      "FROM wrkcnt "
                      "ORDER BY wrkcnt_code;" );
 	
-  _booitem->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft   );
-  _booitem->addColumn(tr("Seq #"),       _seqColumn,  Qt::AlignCenter );
-  _booitem->addColumn(tr("Std. Oper."),  _itemColumn, Qt::AlignLeft   );
-  _booitem->addColumn(tr("Description"), -1,          Qt::AlignLeft   );
+  _booitem->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft,   true,  "item_number"   );
+  _booitem->addColumn(tr("Seq #"),       _seqColumn,  Qt::AlignCenter, true,  "booitem_seqnumber" );
+  _booitem->addColumn(tr("Std. Oper."),  _itemColumn, Qt::AlignLeft,   true,  "stdopn_number"   );
+  _booitem->addColumn(tr("Description"), -1,          Qt::AlignLeft,   true,  "boodescrip"   );
 
   connect(omfgThis, SIGNAL(boosUpdated(int, bool)), this, SLOT(sFillList()));
 	
@@ -209,7 +209,7 @@ void dspOperationsByWorkCenter::sFillList()
 
   q.prepare( "SELECT booitem_id, item_id,"
              "       item_number, booitem_seqnumber,"
-             "       stdopn_number, (booitem_descrip1 || ' ' || booitem_descrip2) "
+             "       stdopn_number, (booitem_descrip1 || ' ' || booitem_descrip2) AS boodescrip "
              "FROM booitem JOIN item ON (booitem_item_id=item_id) "
              " LEFT OUTER JOIN stdopn ON (booitem_stdopn_id=stdopn_id) "
              "WHERE (booitem_wrkcnt_id=:wrkcnt_id) "

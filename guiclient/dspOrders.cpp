@@ -81,13 +81,13 @@ dspOrders::dspOrders(QWidget* parent, const char* name, Qt::WFlags fl)
   _item->setReadOnly(TRUE);
   _warehouse->setEnabled(FALSE);
 
-  _orders->addColumn(tr("Type"),         _docTypeColumn, Qt::AlignCenter );
-  _orders->addColumn(tr("Order #"),      -1,             Qt::AlignLeft   );
-  _orders->addColumn(tr("Total"),        _qtyColumn,     Qt::AlignRight  );
-  _orders->addColumn(tr("Received"),     _qtyColumn,     Qt::AlignRight  );
-  _orders->addColumn(tr("Balance"),      _qtyColumn,     Qt::AlignRight  );
-  _orders->addColumn(tr("Running Bal."), _qtyColumn,     Qt::AlignRight  );
-  _orders->addColumn(tr("Required"),     _dateColumn,    Qt::AlignCenter );
+  _orders->addColumn(tr("Type"),         _docTypeColumn, Qt::AlignCenter, true,  "order_type" );
+  _orders->addColumn(tr("Order #"),      -1,             Qt::AlignLeft,   true,  "order_number"   );
+  _orders->addColumn(tr("Total"),        _qtyColumn,     Qt::AlignRight,  true,  "totalqty"  );
+  _orders->addColumn(tr("Received"),     _qtyColumn,     Qt::AlignRight,  true,  "relievedqty"  );
+  _orders->addColumn(tr("Balance"),      _qtyColumn,     Qt::AlignRight,  true,  "balanceqty"  );
+  _orders->addColumn(tr("Running Bal."), _qtyColumn,     Qt::AlignRight,  true,  "runningbalanceqty"  );
+  _orders->addColumn(tr("Required"),     _dateColumn,    Qt::AlignCenter, true,  "duedate" );
 
   if (!_metrics->boolean("MultiWhs"))
   {
@@ -276,21 +276,6 @@ void dspOrders::sFillList()
     }
 
     q = mql.toQuery(params);
-    double          runningBal = 0;
-    XTreeWidgetItem *last = 0;
-    while (q.next())
-    {
-      runningBal += q.value("balanceqty").toDouble();
-
-      last = new XTreeWidgetItem(_orders, last,
-				 q.value("source_id").toInt(),
-				 q.value("type").toInt(),
-				 q.value("order_type"), q.value("order_number"),
-				 q.value("totalqty"), q.value("relievedqty"),
-				 q.value("balanceqty"), formatQty(runningBal),
-				 q.value("duedate") );
-      if (q.value("late").toBool())
-	last->setTextColor(6, "red");
-    }
+    _orders->populate(q, true);
   }
 }
