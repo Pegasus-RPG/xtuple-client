@@ -100,7 +100,6 @@ XTreeWidget::XTreeWidget(QWidget *pParent) :
   emit valid(FALSE);
   setColumnCount(0);
 
-  setRootIsDecorated(false);
   header()->setContextMenuPolicy(Qt::CustomContextMenu);
 
 #ifdef Q_WS_MAC
@@ -189,7 +188,7 @@ void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId)
       if (_roles.size() > 0) // xtreewidget columns are tied to query columns
       {
         // apply indent and hidden roles to col 0 if the caller requested them
-        if (pQuery.record().indexOf("xtindentrole") >= 0)
+        if (pQuery.record().indexOf("xtindentrole") >= 0 && rootIsDecorated())
           _roles.value(0)->insert("xtindentrole", "xtindentrole");
         if (pQuery.record().indexOf("xthiddenrole") >= 0)
           _roles.value(0)->insert("xthiddenrole", "xthiddenrole");
@@ -243,8 +242,8 @@ void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId)
               lastindent = last->data(0, Qt::UserRole).toMap().value("xtindentrole").toInt();
           }
           if (DEBUG)
-            qDebug("%s::populate() row with id %d and altId %d",
-                     qPrintable(objectName()), id, altId);
+            qDebug("%s::populate() with id %d altId %d indent %d lastindent %d",
+                     qPrintable(objectName()), id, altId, indent, lastindent);
 
           if (indent == 0)
 	    last = new XTreeWidgetItem(this,
@@ -280,6 +279,7 @@ void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId)
             last->setHidden(pQuery.value("xthiddenrole").toBool());
           }
 
+          bool allNull = (indent > 0);
 	  for (int col = 0; col < _roles.size(); col++)
 	  {
 	    QVariantMap *role = _roles.value(col);
@@ -289,7 +289,6 @@ void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId)
             if (role->contains("xtnullrole"))
               nullValue = pQuery.value(role->value("xtnullrole").toString()).toString();
             userrole.insert("raw", rawValue);
-
 
             // TODO: this isn't necessary for all columns so do less often?
             int scale = decimalPlaces(role->contains("xtnumericrole") ?
@@ -303,8 +302,10 @@ void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId)
 	    */
 	    if (role->contains("qtdisplayrole") &&
 		! pQuery.value(role->value("qtdisplayrole").toString()).isNull())
+            {
 	      last->setData(col, Qt::DisplayRole,
 			pQuery.value(role->value("qtdisplayrole").toString()));
+            }
             else if (role->contains("xtnumericrole") &&
                      ((pQuery.value(role->value("xtnumericrole").toString()).toString() == "percent") ||
                       (pQuery.value(role->value("xtnumericrole").toString()).toString() == "scrap")))
@@ -330,6 +331,22 @@ void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId)
             {
               last->setData(col, Qt::EditRole,
                             rawValue.isNull() ? nullValue : rawValue);
+            }
+
+            if (indent)
+            {
+              if (! role->contains("qtdisplayrole") ||
+                   (role->contains("qtdisplayrole") &&
+                    pQuery.value(role->value("qtdisplayrole").toString()).isNull()))
+                allNull &= (rawValue.isNull() || rawValue.toString().isEmpty());
+              else
+                allNull &= pQuery.value(role->value("qtdisplayrole").toString()).isNull() ||
+                           pQuery.value(role->value("qtdisplayrole").toString()).toString().isEmpty();
+
+              if (DEBUG)
+                qDebug("%s::populate() allNull = %d at %d for rawValue %s",
+                       qPrintable(objectName()), allNull, col,
+                       qPrintable(rawValue.toString()));
             }
 
 	    if (role->contains("qtforegroundrole") &&
@@ -388,6 +405,13 @@ void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId)
 
             last->setData(col, Qt::UserRole, userrole);
 	  }
+
+          if (allNull && indent > 0)
+          {
+            qWarning("%s::populate() hiding indented row because it's empty",
+                     qPrintable(objectName()));
+            last->setHidden(true);
+          }
 	} while (pQuery.next());
         populateCalculatedColumns();
         if (sortColumn() >= 0 && header()->isSortIndicatorShown())

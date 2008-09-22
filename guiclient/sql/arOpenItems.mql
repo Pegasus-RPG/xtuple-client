@@ -18,7 +18,15 @@ SELECT aropen_id AS id,
             WHEN (aropen_doctype='R') THEN 3
             ELSE -1
        END AS altId,
-       aropen.*,
+       aropen_docdate,          aropen_duedate,         aropen_terms_id,
+       aropen_cust_id,          aropen_doctype,         aropen_docnumber,
+       aropen_applyto,          aropen_ponumber,        aropen_amount,
+       aropen_notes,            aropen_posted,          aropen_salesrep_id,
+       aropen_commission_due,   aropen_commission_paid, aropen_ordernumber,
+       aropen_cobmisc_id,       aropen_journalnumber,   aropen_paid,
+       aropen_open,             aropen_username,        aropen_rsncode_id,
+       aropen_salescat_id,      aropen_accnt_id,        aropen_curr_id,
+       aropen_closedate,
        CASE WHEN (aropen_doctype='I') THEN <? value("invoice") ?>
             WHEN (aropen_doctype='C') THEN <? value("creditMemo") ?>
             WHEN (aropen_doctype='D') THEN <? value("debitMemo") ?>
@@ -40,7 +48,10 @@ SELECT aropen_id AS id,
        'curr' AS aropen_paid_xtnumericrole,
        'curr' AS balance_xtnumericrole,
        'curr' AS base_balance_xtnumericrole,
-       0 AS base_balance_xttotalrole
+       0 AS base_balance_xttotalrole,
+       NULL AS aropen_docnumber_qtdisplayrole,
+       NULL AS aropen_docdate_qtdisplayrole,
+       0 AS xtindentrole
 FROM aropen LEFT OUTER JOIN custinfo ON (aropen_cust_id=cust_id)
 WHERE ( (aropen_open)
 <? if exists("debitsOnly") ?>
@@ -59,10 +70,54 @@ WHERE ( (aropen_open)
   AND ((SELECT count(*) from incdt WHERE (incdt_aropen_id=aropen_id)) > 0)
 <? endif ?>
       )
-<? if exists("orderByDocDate") ?>
-  ORDER BY aropen_docdate
-<? else ?>
-  ORDER BY aropen_docnumber
+UNION
+SELECT -1,
+       incdt_id,
+       aropen_docdate,   NULL,    NULL,
+       NULL,   NULL,    aropen_docnumber,
+       NULL,   NULL,    NULL,
+       NULL,   NULL,    NULL,
+       NULL,   NULL,    NULL,
+       NULL,   NULL,    NULL,
+       NULL,   NULL,    NULL,
+       NULL,   NULL,    NULL,
+       NULL,
+       NULL AS doctype,
+       NULL AS balance,
+       NULL AS currAbbr,
+       NULL AS base_balance,
+       NULL, CAST(incdt_number AS TEXT), incdt_summary,
+       'curr' AS aropen_amount_xtnumericrole,
+       'curr' AS aropen_paid_xtnumericrole,
+       'curr' AS balance_xtnumericrole,
+       'curr' AS base_balance_xtnumericrole,
+       0 AS base_balance_xttotalrole,
+       '' AS aropen_docnumber_qtdisplayrole,
+       '' AS aropen_docdate_qtdisplayrole,
+       1 AS xtindentrole
+FROM incdt JOIN aropen ON (aropen_id=incdt_aropen_id)
+WHERE ( (aropen_open)
+<? if exists("debitsOnly") ?>
+  AND   (NOT aropen_doctype IN ('C', 'R'))
 <? endif ?>
+<? if exists("creditsOnly") ?>
+  AND   (aropen_doctype IN ('C', 'R'))
+<? endif ?>
+<? if exists("cust_id") ?>
+  AND   (aropen_cust_id=<? value("cust_id") ?>)
+<? endif ?>
+<? if exists("startDate") ?>
+  AND   (aropen_docdate BETWEEN <? value("startDate") ?> AND <? value("endDate") ?>)
+<? endif ?>
+<? if exists("incidentsOnly") ?>
+  AND ((SELECT count(*) from incdt WHERE (incdt_aropen_id=aropen_id)) > 0)
+<? endif ?>
+      )
+
+ORDER BY
+<? if exists("orderByDocDate") ?>
+  aropen_docdate,
+<? endif ?>
+  aropen_docnumber, xtindentrole
 ;
 <? endif ?>
