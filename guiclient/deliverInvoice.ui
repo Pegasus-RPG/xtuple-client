@@ -313,7 +313,7 @@
    <item>
     <widget class="QCheckBox" name="_emailHTML" >
      <property name="text" >
-      <string>Send Email as Multi-part HTML body</string>
+      <string>Send Email as HTML</string>
      </property>
     </widget>
    </item>

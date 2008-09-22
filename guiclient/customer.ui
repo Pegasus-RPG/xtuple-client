@@ -1787,7 +1787,7 @@
              <item>
               <widget class="QCheckBox" name="_soEdiEmailHTML" >
                <property name="text" >
-                <string>Send Email as Multi-part HTML body</string>
+                <string>Send Email as HTML</string>
                </property>
               </widget>
              </item>
@@ -2073,7 +2073,7 @@
              <item>
               <widget class="QCheckBox" name="_ediEmailHTML" >
                <property name="text" >
-                <string>Send Email as Multi-part HTML body</string>
+                <string>Send Email as HTML</string>
                </property>
               </widget>
              </item>
