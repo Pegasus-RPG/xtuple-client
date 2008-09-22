@@ -107,12 +107,12 @@ incident::incident(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _incdthist->addColumn(tr("Date/Time"),_timeDateColumn, Qt::AlignLeft, true, "incdthist_timestamp");
   _incdthist->addColumn(tr("Description"),           -1, Qt::AlignLeft, true, "incdthist_descrip");
 
-  _todoList->addColumn(tr("Seq"),		 25,	Qt::AlignRight, true, "todoitem_seq");
-  _todoList->addColumn(tr("User"),	_userColumn,	Qt::AlignLeft,  true, "usr_username");
-  _todoList->addColumn(tr("Name"),		100,	Qt::AlignLeft,  true, "todoitem_name");
-  _todoList->addColumn(tr("Description"),	 -1,	Qt::AlignLeft,  true, "todoitem_notes");
-  _todoList->addColumn(tr("Status"),  _statusColumn,	Qt::AlignLeft,  true, "todoitem_status");
-  _todoList->addColumn(tr("Due Date"),	_dateColumn,	Qt::AlignLeft,  true, "todoitem_due_date");
+  _todoList->addColumn(tr("Priority"),      _userColumn, Qt::AlignRight, true, "incdtpriority_name");
+  _todoList->addColumn(tr("User"),          _userColumn, Qt::AlignLeft,  true, "usr_username");
+  _todoList->addColumn(tr("Name"),                  100, Qt::AlignLeft,  true, "todoitem_name");
+  _todoList->addColumn(tr("Description"),            -1, Qt::AlignLeft,  true, "todoitem_notes");
+  _todoList->addColumn(tr("Status"),      _statusColumn, Qt::AlignLeft,  true, "todoitem_status");
+  _todoList->addColumn(tr("Due Date"),      _dateColumn, Qt::AlignLeft,  true, "todoitem_due_date");
 
   q.prepare("SELECT usr_id "
 	    "FROM usr "
@@ -580,6 +580,7 @@ void incident::sNewTodoItem()
   ParameterList params;
   params.append("mode", "new");
   params.append("incdt_id", _incdtid);
+  params.append("priority_id", _priority->id());
 
   todoItem newdlg(this, 0, true);
   newdlg.set(params);
@@ -643,10 +644,11 @@ void incident::sFillTodoList()
             "                  todoitem_due_date > CURRENT_DATE) THEN 'future'"
             "       END AS todoitem_due_date_qtforegroundrole "
 	    "FROM usr, todoitem "
+      "LEFT OUTER JOIN incdtpriority ON (incdtpriority_id=todoitem_priority_id) "
 	    "WHERE ( (todoitem_incdt_id=:incdt_id) "
 	    "  AND   (todoitem_usr_id=usr_id)"
 	    "  AND   (todoitem_active) ) "
-	    "ORDER BY todoitem_due_date, todoitem_seq, usr_username;");
+	    "ORDER BY todoitem_due_date, usr_username;");
 
   q.bindValue(":incdt_id", _incdtid);
   q.exec();

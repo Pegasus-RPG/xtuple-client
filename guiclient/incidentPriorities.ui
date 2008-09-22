@@ -13,7 +13,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>List Incident Priorities</string>
+   <string>List Priorities</string>
   </property>
    <layout class="QHBoxLayout" >
     <item>
@@ -27,7 +27,7 @@
       <item>
        <widget class="QLabel" name="_incidentPrioritiesLit" >
         <property name="text" >
-         <string>Incident Priorities:</string>
+         <string>Priorities:</string>
         </property>
        </widget>
       </item>

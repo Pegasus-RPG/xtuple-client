@@ -86,7 +86,7 @@ dspTodoByUserAndIncident::dspTodoByUserAndIncident(QWidget* parent, const char* 
   _startDate->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 
   _todoitem->addColumn(tr("Assigned To"),  _userColumn, Qt::AlignCenter,true, "usr_username");
-  _todoitem->addColumn(tr("Sequence"),    _prcntColumn, Qt::AlignCenter,true, "todoitem_seq");
+  _todoitem->addColumn(tr("Priority"),    _prcntColumn, Qt::AlignCenter,true, "incdtpriority_name");
   _todoitem->addColumn(tr("Incident"),    _orderColumn, Qt::AlignLeft,  true, "incdt_id", "incdt_number");
   _todoitem->addColumn(tr("Task Name"),            100, Qt::AlignLeft,  true, "todoitem_name");
   _todoitem->addColumn(tr("Status"),	 _statusColumn, Qt::AlignCenter,true, "todoitem_status");
@@ -171,6 +171,7 @@ void dspTodoByUserAndIncident::sFillList()
                 "  END AS todoitem_due_date_qtforegroundrole "
 	        "FROM usr, todoitem LEFT OUTER JOIN"
 	        "     incdt ON (todoitem_incdt_id = incdt_id) "
+          "     LEFT OUTER JOIN incdtpriority ON (incdtpriority_id=todoitem_priority_id) "
 	        "WHERE ((usr_id=todoitem_usr_id)"
 		"<? if not exists(\"showInactive\") ?>"
 		"  AND todoitem_active "
@@ -199,7 +200,7 @@ void dspTodoByUserAndIncident::sFillList()
 		"  AND (todoitem_due_date<=<? value(\"due_date_end\") ?>)"
 		"<? endif ?>"
 		") "
-	        "ORDER BY usr_username, todoitem_seq;" ;
+	        "ORDER BY usr_username, incdtpriority_order;" ;
   ParameterList params;
   setParams(params);
 

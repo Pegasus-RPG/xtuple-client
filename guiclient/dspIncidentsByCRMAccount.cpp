@@ -94,7 +94,6 @@ dspIncidentsByCRMAccount::dspIncidentsByCRMAccount(QWidget* parent, const char* 
   _list->addColumn(tr("Account Number"),	    80, Qt::AlignLeft  );
   _list->addColumn(tr("Account Name"),		   100, Qt::AlignLeft  );
   _list->addColumn(tr("Incident"),	  _orderColumn, Qt::AlignRight );
-  _list->addColumn(tr("Seq."),			    20, Qt::AlignCenter);
   _list->addColumn(tr("Summary"),	            -1, Qt::AlignLeft  );
   _list->addColumn(tr("Entered/Assigned"), _dateColumn, Qt::AlignLeft  );
   _list->addColumn(tr("Status"),         _statusColumn, Qt::AlignCenter);
@@ -306,7 +305,7 @@ void dspIncidentsByCRMAccount::sFillList()
 		"              ELSE incdt_status"
 		"         END AS incdt_status,"
 		"         incdt_assigned_username, incdt_summary, "
-		"	  COALESCE(TEXT(todoitem_seq), '') AS todoitem_seq, todoitem_due_date, todoitem_name, "
+		"	  todoitem_due_date, todoitem_name, "
 		"	  COALESCE(usr_username, '') AS todoitem_usrname, "
 		"	  todoitem_assigned_date, todoitem_status, "
 		"	  incdtseverity_name, "
@@ -364,14 +363,13 @@ void dspIncidentsByCRMAccount::sFillList()
 			       q.value("crmacct_id").toInt(), 1,
 			       q.value("crmacct_number"),
 			       q.value("crmacct_name"),
-			       "", "", "", "", "", "", "" );
+			       "", "", "", "", "", "" );
     if (!q.value("incdt_id").isNull() &&
          q.value("incdt_id").toInt() != lastIncdtId)
       lastIncdt = new XTreeWidgetItem(lastCrmacct, lastIncdt,
 			       q.value("incdt_id").toInt(), 2,
 			       "", "",
 			       q.value("incdt_number"),
-			       "", 
 			       q.value("incdt_summary"),
 			       q.value("incdt_timestamp"),
 			       q.value("incdt_status"),
@@ -383,7 +381,6 @@ void dspIncidentsByCRMAccount::sFillList()
 			       q.value("todoitem_id").toInt(), 3,
 			       "", "",
 			       "",
-			       q.value("todoitem_seq"),
 			       q.value("todoitem_name"),
 			       q.value("todoitem_assigned_date"),
 			       q.value("todoitem_status"),

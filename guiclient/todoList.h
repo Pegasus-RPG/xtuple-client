@@ -84,8 +84,6 @@ class todoList : public XWidget, public Ui::todoList
     virtual void	sCustomerInfo();
     virtual void	sFillList();
     virtual void	sHandleAutoUpdate(bool);
-    virtual void	sMoveDown();
-    virtual void	sMoveUp();
     virtual void	sNew();
     virtual void	sPopulateMenu(QMenu*);
     virtual void	sPrint();

@@ -69,8 +69,6 @@ todoItem::todoItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 {
   setupUi(this);
 
-  _seq->setValidator(new QIntValidator(0, 99999, this));
-
   connect(_close,	SIGNAL(clicked()),	this,	SLOT(sClose()));
   connect(_incident,	SIGNAL(newId(int)),	this,	SLOT(sHandleIncident()));
   connect(_save,	SIGNAL(clicked()),	this,	SLOT(sSave()));
@@ -123,7 +121,6 @@ enum SetResponse todoItem::set(const ParameterList &pParams)
       _mode = cEdit;
 
       _name->setEnabled(FALSE);
-      _seq->setEnabled(FALSE);
       _incident->setEnabled(FALSE);
       _ophead->setEnabled(FALSE);
       _assigned->setEnabled(FALSE);
@@ -139,7 +136,7 @@ enum SetResponse todoItem::set(const ParameterList &pParams)
       _mode = cView;
 
       _name->setEnabled(FALSE);
-      _seq->setEnabled(FALSE);
+      _priority->setEnabled(FALSE);
       _incident->setEnabled(FALSE);
       _ophead->setEnabled(FALSE);
       _started->setEnabled(FALSE);
@@ -163,6 +160,10 @@ enum SetResponse todoItem::set(const ParameterList &pParams)
   param = pParams.value("incdt_id", &valid);
   if (valid)
     _incident->setId(param.toInt());
+
+  param = pParams.value("priority_id", &valid);
+  if (valid)
+    _priority->setId(param.toInt());
 
   param = pParams.value("ophead_id", &valid);
   if (valid)
@@ -196,7 +197,7 @@ void todoItem::sSave()
   {
     q.prepare( "SELECT createTodoItem(:usr_id, :name, :description, "
 	       "  :incdt_id, :crmacct_id, :ophead_id, :started, :due, :status, "
-	       "  :assigned, :completed, :seq, :notes) AS result;");
+	       "  :assigned, :completed, :priority, :notes) AS result;");
     storedProc = "createTodoItem";
   }
   else if (_mode == cEdit)
@@ -204,7 +205,7 @@ void todoItem::sSave()
     q.prepare( "SELECT updateTodoItem(:todoitem_id, "
 	       "  :usr_id, :name, :description, "
 	       "  :incdt_id, :crmacct_id, :ophead_id, :started, :due, :status, "
-	       "  :assigned, :completed, :seq, :notes, :active) AS result;");
+	       "  :assigned, :completed, :priority, :notes, :active) AS result;");
     storedProc = "updateTodoItem";
     q.bindValue(":todoitem_id", _todoitemid);
   }
@@ -230,7 +231,8 @@ void todoItem::sSave()
   q.bindValue(":due",		_due->date());
   q.bindValue(":assigned",	_assigned->date());
   q.bindValue(":completed",	_completed->date());
-  q.bindValue(":seq",		_seq->text().toInt());
+  if(_priority->isValid())
+    q.bindValue(":priority", _priority->id());
   q.bindValue(":notes",		_notes->text());
   q.bindValue(":active",	QVariant(_active->isChecked(), 0));
   if(_ophead->id() > 0)
@@ -279,7 +281,9 @@ void todoItem::sPopulate()
   {
     _usr->setId(q.value("todoitem_usr_id").toInt());
     _name->setText(q.value("todoitem_name").toString());
-    _seq->setText(q.value("todoitem_seq").toString());
+    _priority->setNull();
+    if(!q.value("todoitem_priority_id").toString().isEmpty())
+      _priority->setId(q.value("todoitem_priority_id").toInt());
     _incident->setId(q.value("todoitem_incdt_id").toInt());
     _ophead->setId(q.value("todoitem_ophead_id").toInt());
     _started->setDate(q.value("todoitem_start_date").toDate());

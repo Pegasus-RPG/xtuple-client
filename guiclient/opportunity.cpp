@@ -92,7 +92,7 @@ opportunity::opportunity(QWidget* parent, const char* name, bool modal, Qt::WFla
 
   _opheadid = -1;
 
-  _todoList->addColumn(tr("Seq"),   25, Qt::AlignRight);
+  _todoList->addColumn(tr("Priority"),   _userColumn, Qt::AlignRight);
   _todoList->addColumn(tr("User"), _userColumn, Qt::AlignLeft );
   _todoList->addColumn(tr("Name"),  100, Qt::AlignLeft );
   _todoList->addColumn(tr("Description"),  -1, Qt::AlignLeft );
@@ -483,15 +483,16 @@ void opportunity::sDeleteTodoItem()
 void opportunity::sFillTodoList()
 {
   XTreeWidgetItem* last = 0;
-  q.prepare("SELECT todoitem_id, todoitem_usr_id, todoitem_seq, "
+  q.prepare("SELECT todoitem_id, todoitem_usr_id, incdtpriority_name, incdtpriority_order, "
 	    "       usr_username, todoitem_name, "
 	    "       firstLine(todoitem_description) AS todoitem_description, "
 	    "       todoitem_status, todoitem_due_date "
 	    "FROM usr, todoitem "
+      "     LEFT OUTER JOIN incdtpriority ON (incdtpriority_id=todoitem_priority_id) "
 	    "WHERE ( (todoitem_ophead_id=:ophead_id) "
 	    "  AND   (todoitem_usr_id=usr_id)"
 	    "  AND   (todoitem_active) ) "
-	    "ORDER BY todoitem_seq, usr_username;");
+	    "ORDER BY incdtpriority_order, usr_username;");
 
   q.bindValue(":ophead_id", _opheadid);
   q.exec();
@@ -506,7 +507,7 @@ void opportunity::sFillTodoList()
     last = new XTreeWidgetItem(_todoList, last,
 			     q.value("todoitem_id").toInt(),
 			     q.value("todoitem_usr_id").toInt(),
-			     q.value("todoitem_seq").toString(),
+			     q.value("incdtpriority_name").toString(),
 			     q.value("usr_username").toString(),
 			     q.value("todoitem_name").toString(),
 			     q.value("todoitem_description").toString(),

@@ -198,7 +198,6 @@ menuCRM::menuCRM(GUIClient *Pparent) :
    
     { "menu",			tr("&Incident"),		(char*)masterIncdMenu,		masterMenu,	true, NULL, NULL, true	, NULL },
     { "crm.incidentCategories",	tr("&Categories..."),		SLOT(sIncidentCategories()),	masterIncdMenu,	_privileges->check("MaintainIncidentCategories"), NULL, NULL, true , NULL },
-    { "crm.incidentPriorities",	tr("&Priorities..."),		SLOT(sIncidentPriorities()),	masterIncdMenu,	_privileges->check("MaintainIncidentPriorities"), NULL, NULL, true , NULL },
     { "crm.incidentSeverities",	tr("&Severities..."),		SLOT(sIncidentSeverities()),	masterIncdMenu,	_privileges->check("MaintainIncidentSeverities"), NULL, NULL, true , NULL },
     { "crm.incidentResolutions", tr("&Resolutions..."),		SLOT(sIncidentResolutions()),	masterIncdMenu,	_privileges->check("MaintainIncidentResolutions"), NULL, NULL, true , NULL },
 
@@ -207,6 +206,7 @@ menuCRM::menuCRM(GUIClient *Pparent) :
     { "crm.opportunityStages",	tr("St&ages..."),		SLOT(sOpportunityStages()),	masterOppMenu,	_privileges->check("MaintainOpportunityStages"), NULL, NULL, true , NULL },
     { "crm.opportunityTypes",	tr("&Types..."),		SLOT(sOpportunityTypes()),	masterOppMenu,	_privileges->check("MaintainOpportunityTypes"), NULL, NULL, true , NULL },
 
+    { "crm.incidentPriorities",	tr("&Priorities..."),		SLOT(sIncidentPriorities()),	masterMenu,	_privileges->check("MaintainIncidentPriorities"), NULL, NULL, true , NULL },
     { "crm.characteristics",	tr("C&haracteristics..."),		SLOT(sCharacteristics()),	masterMenu,	_privileges->check("MaintainCharacteristics") ||
 															_privileges->check("ViewCharacteristics"), NULL, NULL, true , NULL },
   };

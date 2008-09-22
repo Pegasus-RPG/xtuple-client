@@ -165,7 +165,7 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
   _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft, true, "charass_value");
 
   _todo->addColumn(tr("Type"),    _statusColumn, Qt::AlignCenter, true, "type");	
-  _todo->addColumn(tr("Seq"),	     _seqColumn, Qt::AlignRight,  true, "seq");
+  _todo->addColumn(tr("Priority"),  _userColumn, Qt::AlignRight,  true, "priority");
   _todo->addColumn(tr("User"),      _userColumn, Qt::AlignLeft,   true, "usr");
   _todo->addColumn(tr("Name"),		    100, Qt::AlignLeft,   true, "name");
   _todo->addColumn(tr("Description"),        -1, Qt::AlignLeft,   true, "descrip");
@@ -959,13 +959,14 @@ void crmaccount::sPopulateTodo()
                 "FROM ("
                 "<? if exists(\"showTodo\") ?>"
 		"SELECT todoitem_id AS id, todoitem_usr_id AS altId, "
-		"       'T' AS type, todoitem_seq AS seq, "
+		"       'T' AS type, incdtpriority_name AS priority, incdtpriority_order, "
 		"       todoitem_name AS name, "
 		"       firstLine(todoitem_description) AS descrip, "
 		"       todoitem_status AS status, todoitem_due_date AS due, "
 		"       usr_username AS usr, incdt_number AS incdt "
 		"FROM usr, todoitem LEFT OUTER JOIN "
 		"     incdt ON (incdt_id=todoitem_incdt_id) "
+    "     LEFT OUTER JOIN incdtpriority ON (incdtpriority_id=todoitem_priority_id) "
 		"WHERE ( (todoitem_usr_id=usr_id)"
 		"  AND   (todoitem_crmacct_id=<? value(\"crmacct_id\") ?>)"
 		"  <? if not exists(\"completed\") ?>"
@@ -982,13 +983,14 @@ void crmaccount::sPopulateTodo()
 		"<? endif ?>"
 		"<? if exists(\"showIncidents\")?>"
 		"SELECT incdt_id AS id, usr_id AS altId, "
-		"       'I' AS type, CAST(NULL AS INTEGER) AS seq, "
+		"       'I' AS type, incdtpriority_name AS priority, incdtpriority_order, "
 		"       incdt_summary AS name, "
 		"       firstLine(incdt_descrip) AS descrip, "
 		"       incdt_status AS status, CAST(NULL AS DATE) AS due, "
 		"       incdt_assigned_username AS usr, incdt_number AS incdt "
 		"FROM incdt LEFT OUTER JOIN"
                 "     usr ON (usr_username=incdt_assigned_username)"
+                "LEFT OUTER JOIN incdtpriority ON (incdtpriority_id=incdt_incdtpriority_id) "
 		"WHERE ((incdt_crmacct_id=<? value(\"crmacct_id\") ?>)"
 		"  <? if not exists(\"completed\") ?> "
 		"   AND (incdt_status != 'L')"
@@ -996,7 +998,7 @@ void crmaccount::sPopulateTodo()
 		"       ) "
 		"<? endif ?>"
                 ") AS sub "
-		"ORDER BY incdt, seq ASC, usr;" ;
+		"ORDER BY incdt, incdtpriority_order, usr;" ;
 
   ParameterList params;
   params.append("crmacct_id", _crmacctId);

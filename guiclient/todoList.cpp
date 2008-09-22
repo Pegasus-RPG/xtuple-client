@@ -69,15 +69,6 @@
 #include "dspCustomerInformation.h"
 #include "storedProcErrorLookup.h"
 
-#define ENABLEUP(Priv, I) (Priv && I->id() > 0 && \
-			   I->currentItem() > 0 && \
-			   I->indexOfTopLevelItem(I->currentItem()) != 0)
-#define ENABLEDOWN(Priv, I) (Priv && I->id() > 0 && \
-			     I->currentItem() > 0 && \
-			     I->indexOfTopLevelItem(I->currentItem()) < \
-				  (I->topLevelItemCount() - 1) && \
-			     I->topLevelItem(I->indexOfTopLevelItem(I->currentItem()) + 1)->text(0) == "T")
-
 todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
@@ -119,8 +110,6 @@ todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_edit,	SIGNAL(clicked()),	this,	SLOT(sEdit()));
   connect(_incdtDates,	SIGNAL(updated()),	this,   SLOT(sFillList()));
   connect(_incidents,	SIGNAL(toggled(bool)),	this,	SLOT(sFillList()));
-  connect(_moveDown,	SIGNAL(clicked()),	this,	SLOT(sMoveDown()));
-  connect(_moveUp,	SIGNAL(clicked()),	this,	SLOT(sMoveUp()));
   connect(_new,		SIGNAL(clicked()),	this,	SLOT(sNew()));
   connect(_print,	SIGNAL(clicked()),	this,	SLOT(sPrint()));
   connect(_todoList,	SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
@@ -131,15 +120,16 @@ todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_usr,		SIGNAL(updated()),	this,	SLOT(handlePrivs()));
   connect(_view,	SIGNAL(clicked()),	this,	SLOT(sView()));
 
-  _todoList->addColumn(tr("Type"),    _statusColumn,	Qt::AlignCenter, true, "type");
-  _todoList->addColumn(tr("Seq"),	 _seqColumn,	Qt::AlignRight,  true, "seq");
-  _todoList->addColumn(tr("User"),	_userColumn,	Qt::AlignLeft,   true, "usr");
-  _todoList->addColumn(tr("Name"),		100,	Qt::AlignLeft,   true, "name");
-  _todoList->addColumn(tr("Description"),	 -1,	Qt::AlignLeft,   true, "descrip");
-  _todoList->addColumn(tr("Status"),  _statusColumn,	Qt::AlignLeft,   true, "status");
-  _todoList->addColumn(tr("Due Date"),	_dateColumn,	Qt::AlignLeft,   true, "due");
-  _todoList->addColumn(tr("Incident"), _orderColumn,	Qt::AlignLeft,   true, "incdt");
-  _todoList->addColumn(tr("Customer"), _orderColumn,	Qt::AlignLeft,   true, "cust");
+  _todoList->addColumn(tr("Type"),    _statusColumn,  Qt::AlignCenter, true, "type");
+  _todoList->addColumn(tr("Seq"),        _seqColumn,  Qt::AlignRight,  true, "seq");
+  _todoList->addColumn(tr("Priority"),  _userColumn,  Qt::AlignLeft,   true, "priority");
+  _todoList->addColumn(tr("User"),      _userColumn,  Qt::AlignLeft,   true, "usr");
+  _todoList->addColumn(tr("Name"),              100,  Qt::AlignLeft,   true, "name");
+  _todoList->addColumn(tr("Description"),        -1,  Qt::AlignLeft,   true, "descrip");
+  _todoList->addColumn(tr("Status"),  _statusColumn,  Qt::AlignLeft,   true, "status");
+  _todoList->addColumn(tr("Due Date"),  _dateColumn,  Qt::AlignLeft,   true, "due");
+  _todoList->addColumn(tr("Incident"), _orderColumn,  Qt::AlignLeft,   true, "incdt");
+  _todoList->addColumn(tr("Customer"), _orderColumn,  Qt::AlignLeft,   true, "cust");
 
   if (_preferences->boolean("XCheckBox/forgetful"))
   {
@@ -171,12 +161,6 @@ void todoList::sPopulateMenu(QMenu *pMenu)
 	(_myUsrId == _todoList->altId() && _privileges->check("ViewPersonalTodoList")) ||
 	(_myUsrId != _todoList->altId() && _privileges->check("ViewOtherTodoLists"));
 
-    menuItem = pMenu->insertItem(tr("Move Up"), this, SLOT(sMoveUp()), 0);
-    pMenu->setItemEnabled(menuItem, ENABLEUP(editPriv, _todoList));
-
-    menuItem = pMenu->insertItem(tr("Move Down"), this, SLOT(sMoveDown()), 0);
-    pMenu->setItemEnabled(menuItem, ENABLEDOWN(editPriv, _todoList));
-
     menuItem = pMenu->insertItem(tr("New..."), this, SLOT(sNew()), 0);
     pMenu->setItemEnabled(menuItem, editPriv);
 
@@ -190,7 +174,7 @@ void todoList::sPopulateMenu(QMenu *pMenu)
     pMenu->setItemEnabled(menuItem, editPriv);
   }
 
-  if (! _todoList->currentItem()->text(7).isEmpty())
+  if (! _todoList->currentItem()->text(8).isEmpty())
   {
     menuItem = pMenu->insertItem(tr("Edit Incident"), this, SLOT(sEditIncident()), 0);
     pMenu->setItemEnabled(menuItem, _privileges->check("MaintainIncidents"));
@@ -199,7 +183,7 @@ void todoList::sPopulateMenu(QMenu *pMenu)
 				    _privileges->check("MaintainIncidents"));
   }
 
-  if (! _todoList->currentItem()->text(8).isEmpty())
+  if (! _todoList->currentItem()->text(9).isEmpty())
   {
     menuItem = pMenu->insertItem(tr("Customer Workbench"), this, SLOT(sCustomerInfo()), 0);
     pMenu->setItemEnabled(menuItem, _privileges->check("MaintainCustomerMasters"));
@@ -230,8 +214,6 @@ void todoList::handlePrivs()
 
   if (! _todoList->currentItem())
   {
-    _moveUp->setEnabled(false);
-    _moveDown->setEnabled(false);
   }
   else if (_todoList->currentItem()->text(0) == "T")
   {
@@ -242,15 +224,11 @@ void todoList::handlePrivs()
     viewTodoPriv =
       (_myUsrId == _todoList->altId() && _privileges->check("ViewPersonalTodoList")) ||
       (_privileges->check("ViewOtherTodoLists"));
-    _moveUp->setEnabled(ENABLEUP(editTodoPriv, _todoList));
-    _moveDown->setEnabled(ENABLEDOWN(editTodoPriv, _todoList));
   }
   else if (_todoList->currentItem()->text(0) == "I")
   {
     editTodoPriv = false;
     viewTodoPriv = false;
-    _moveUp->setEnabled(false);
-    _moveDown->setEnabled(false);
   }
 
   _usr->setEnabled(_privileges->check("MaintainOtherTodoLists") ||
@@ -276,52 +254,6 @@ void todoList::handlePrivs()
 void todoList::sClose()
 {
   close();
-}
-
-void todoList::sMoveUp()
-{
-  q.prepare("SELECT todoItemMoveUp(:todoitem_id) AS returnVal;");
-  q.bindValue(":todoitem_id", _todoList->id());
-  q.exec();
-  if (q.first())
-  {
-    int returnVal = q.value("returnVal").toInt();
-    if (returnVal < 0)
-    {
-      systemError(this, storedProcErrorLookup("todoItemMoveUp", returnVal),
-		  __FILE__, __LINE__);
-      return;
-    }
-    sFillList();
-  }
-  else if (q.lastError().type() != QSqlError::None)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-}
-
-void todoList::sMoveDown()
-{
-  q.prepare("SELECT todoItemMoveDown(:todoitem_id) AS returnVal;");
-  q.bindValue(":todoitem_id", _todoList->id());
-  q.exec();
-  if (q.first())
-  {
-    int returnVal = q.value("returnVal").toInt();
-    if (returnVal < 0)
-    {
-      systemError(this, storedProcErrorLookup("todoItemMoveUp", returnVal),
-		  __FILE__, __LINE__);
-      return;
-    }
-    sFillList();
-  }
-  else if (q.lastError().type() != QSqlError::None)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
 }
 
 void todoList::sNew()
@@ -418,7 +350,7 @@ void todoList::sPrint()
 void todoList::sFillList()
 {
   QString sql = "SELECT todoitem_id AS id, todoitem_usr_id AS altId, "
-		"       'T' AS type, todoitem_seq AS seq, "
+		"       'T' AS type, incdtpriority_order AS seq, incdtpriority_name AS priority, "
 		"       todoitem_name AS name, "
 		"       firstLine(todoitem_description) AS descrip, "
 		"       todoitem_status AS status, todoitem_due_date AS due, "
@@ -431,6 +363,7 @@ void todoList::sFillList()
 		"FROM usr, todoitem LEFT OUTER JOIN incdt ON (incdt_id=todoitem_incdt_id) "
 		"                   LEFT OUTER JOIN crmacct ON (crmacct_id=todoitem_crmacct_id) "
 		"                   LEFT OUTER JOIN cust ON (cust_id=crmacct_cust_id) "
+    "                   LEFT OUTER JOIN incdtpriority ON (incdtpriority_id=todoitem_priority_id) "
 		"WHERE ( (todoitem_usr_id=usr_id)"
 		"  AND   (todoitem_due_date BETWEEN <? value(\"startDate\") ?> "
 		"                               AND <? value(\"endDate\") ?>) "
@@ -449,7 +382,7 @@ void todoList::sFillList()
 		"<? if exists(\"incidents\")?>"
 		"UNION "
 		"SELECT incdt_id AS id, usr_id AS altId, "
-		"       'I' AS type, NULL AS seq, "
+		"       'I' AS type, incdtpriority_order AS seq, incdtpriority_name AS priority, "
 		"       incdt_summary AS name, "
 		"       firstLine(incdt_descrip) AS descrip, "
 		"       incdt_status AS status,  NULL AS due, "
@@ -458,6 +391,7 @@ void todoList::sFillList()
 		"FROM incdt LEFT OUTER JOIN usr ON (usr_username=incdt_assigned_username)"
 		"           LEFT OUTER JOIN crmacct ON (crmacct_id=incdt_crmacct_id) "
 		"           LEFT OUTER JOIN cust ON (cust_id=crmacct_cust_id) "
+    "           LEFT OUTER JOIN incdtpriority ON (incdtpriority_id=incdt_incdtpriority_id) "
 		"WHERE ((incdt_timestamp BETWEEN <? value(\"incdtStartDate\") ?>"
 		"                            AND <? value(\"incdtEndDate\") ?>)"
 		"  <? if not exists(\"completed\") ?> "
@@ -504,11 +438,11 @@ int todoList::getIncidentId()
 
   if (_todoList->currentItem()->text(0) == "I")
     returnVal = _todoList->id();
-  else if (! _todoList->currentItem()->text(7).isEmpty())
+  else if (! _todoList->currentItem()->text(8).isEmpty())
   {
     XSqlQuery incdt;
     incdt.prepare("SELECT incdt_id FROM incdt WHERE (incdt_number=:number);");
-    incdt.bindValue(":number", _todoList->currentItem()->text(7).toInt());
+    incdt.bindValue(":number", _todoList->currentItem()->text(8).toInt());
     if (incdt.exec() && incdt.first())
      returnVal = incdt.value("incdt_id").toInt();
     else if (incdt.lastError().type() != QSqlError::None)
@@ -548,7 +482,7 @@ void todoList::sCustomerInfo()
 {
   XSqlQuery cust;
   cust.prepare("SELECT cust_id FROM cust WHERE (cust_number=:number);");
-  cust.bindValue(":number", _todoList->currentItem()->text(8));
+  cust.bindValue(":number", _todoList->currentItem()->text(9));
   if (cust.exec() && cust.first())
   {
     ParameterList params;

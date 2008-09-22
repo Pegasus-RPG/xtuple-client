@@ -13,7 +13,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Incident Priority</string>
+   <string>Priority</string>
   </property>
   <layout class="QHBoxLayout" >
    <property name="margin" >
@@ -49,7 +49,7 @@
          <item>
           <widget class="QLabel" name="_nameLit" >
            <property name="text" >
-            <string>Incident Priority:</string>
+            <string>Priority:</string>
            </property>
            <property name="alignment" >
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
