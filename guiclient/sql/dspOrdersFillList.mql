@@ -1,9 +1,18 @@
+SELECT source_id, type, order_type, order_number, duedate,
+       totalqty, relievedqty, balanceqty, balanceqty AS runningbalanceqty,
+       'qty' AS totalqty_xtnumericrole,
+       'qty' AS relievedqty_xtnumericrole,
+       'qty' AS balanceqty_xtnumericrole,
+       0 AS runningbalanceqty_xtrunningrole,
+       CASE WHEN (late) THEN 'error' END AS duedate_qtforegroundrole
+FROM
+(
 SELECT poitem_id AS source_id, 1 AS type, TEXT('P/O') AS order_type,
        TEXT(pohead_number) AS order_number,
-       formatQty(poitem_qty_ordered) AS totalqty,
-       formatQty(poitem_qty_received) AS relievedqty,
-       formatQty(noNeg(poitem_qty_ordered - poitem_qty_received)) AS balanceqty,
-       formatDate(poitem_duedate) AS duedate, poitem_duedate AS r_duedate,
+       poitem_qty_ordered AS totalqty,
+       poitem_qty_received AS relievedqty,
+       noNeg(poitem_qty_ordered - poitem_qty_received) AS balanceqty,
+       poitem_duedate AS duedate,
        (poitem_duedate < CURRENT_DATE) AS late
 FROM pohead, poitem, itemsite
 WHERE ((poitem_pohead_id=pohead_id)
@@ -20,15 +29,15 @@ WHERE ((poitem_pohead_id=pohead_id)
 <? elseif exists("startDate") ?>
   AND  (poitem_duedate BETWEEN <? value("startDate") ?> AND <? value("endDate") ?>)
 <? endif ?>
-)
+      )
 
 UNION
 SELECT wo_id AS source_id, 2 AS type, TEXT('W/O') AS order_type,
        formatWONumber(wo_id) AS order_number,
-       formatQty(wo_qtyord) AS totalqty,
-       formatQty(wo_qtyrcv) AS relievedqty,
-       formatQty(noNeg(wo_qtyord - wo_qtyrcv)) AS balanceqty,
-       formatDate(wo_duedate) AS duedate, wo_duedate AS r_duedate,
+       wo_qtyord AS totalqty,
+       wo_qtyrcv AS relievedqty,
+       noNeg(wo_qtyord - wo_qtyrcv) AS balanceqty,
+       wo_duedate AS duedate,
        (wo_duedate < CURRENT_DATE) AS late 
 FROM wo, itemsite
 WHERE ((wo_status<>'C')
@@ -45,15 +54,15 @@ WHERE ((wo_status<>'C')
 <? elseif exists("startDate") ?>
   AND  (wo_duedate BETWEEN <? value("startDate") ?> AND <? value("endDate") ?>)
 <? endif ?>
-)
+      )
 
 UNION
 SELECT wo_id AS source_id, 2 AS type, TEXT('W/O') AS order_type,
        formatWONumber(wo_id) AS order_number,
-       formatQty(wo_qtyord) AS totalqty,
-       formatQty(wo_qtyrcv) AS relievedqty,
-       formatQty(noNeg(wo_qtyord - wo_qtyrcv)) AS balanceqty,
-       formatDate(wo_duedate) AS duedate, wo_duedate AS r_duedate,
+       wo_qtyord AS totalqty,
+       wo_qtyrcv AS relievedqty,
+       noNeg(wo_qtyord - wo_qtyrcv) AS balanceqty,
+       wo_duedate AS duedate,
        (wo_duedate < CURRENT_DATE) AS late
 FROM wo, brddist, itemsite
 WHERE ((brddist_wo_id=wo_id)
@@ -71,15 +80,15 @@ WHERE ((brddist_wo_id=wo_id)
 <? elseif exists("startDate") ?>
   AND (wo_duedate BETWEEN <? value("startDate") ?> AND <? value("endDate") ?>)
 <? endif ?>
-)
+     )
 
 UNION
 SELECT toitem_id AS source_id, 3 AS type, TEXT('T/O') AS order_type,
        TEXT(tohead_number) AS order_number,
-       formatQty(toitem_qty_ordered) AS totalqty,
-       formatQty(toitem_qty_received) AS relievedqty,
-       formatQty(toitem_qty_ordered - toitem_qty_received) AS balanceqty,
-       formatDate(toitem_duedate) AS duedate, toitem_duedate AS r_duedate,
+       toitem_qty_ordered AS totalqty,
+       toitem_qty_received AS relievedqty,
+       noNeg(toitem_qty_ordered - toitem_qty_received) AS balanceqty,
+       toitem_duedate AS duedate,
        (toitem_duedate < CURRENT_DATE) AS late
 FROM tohead, toitem, itemsite
 WHERE ((toitem_tohead_id=tohead_id)
@@ -97,6 +106,7 @@ WHERE ((toitem_tohead_id=tohead_id)
 <? elseif exists("startDate") ?>
   AND  (toitem_duedate BETWEEN <? value("startDate") ?> AND <? value("endDate") ?>)
 <? endif ?>
-)
+      )
+) AS data
 
-ORDER BY r_duedate;
+ORDER BY duedate;

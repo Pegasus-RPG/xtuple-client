@@ -9,16 +9,13 @@ SELECT pohead_id, pohead_number,
        END AS poitemstatus,
        vend_number,
 <? if exists("byReceiptDate") ?>
-       formatDate(MIN(date(porecv_date))) AS f_date,
        MIN(date(porecv_date)) AS sortDate,
 <? elseif exists("byDueDate") ?>
-       formatDate(MIN(poitem_duedate)) AS f_date,
        MIN(poitem_duedate) AS sortDate,
 <? else ?>
-       formatDate(pohead_orderdate) AS f_date,
        pohead_orderdate AS sortDate,
 <? endif ?>
-       (MIN(poitem_duedate) < CURRENT_DATE) AS late 
+       CASE WHEN (MIN(poitem_duedate) < CURRENT_DATE) THEN 'error' END AS sortDate_qtforegroundrole 
   FROM vend, poitem,
 <? if exists("byReceiptDate") ?>
        porecv,
