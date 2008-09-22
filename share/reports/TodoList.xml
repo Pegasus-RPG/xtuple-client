@@ -12,13 +12,14 @@
  <querysource>
   <name>detail</name>
   <sql>SELECT todoitem_id AS id, todoitem_usr_id AS altId, 
-       'T' AS type, todoitem_seq AS seq, 
+       'T' AS type, incdtpriority_name AS priority, incdtpriority_order, 
        todoitem_name AS name, 
        firstLine(todoitem_description) AS descrip, 
        todoitem_status AS status, todoitem_due_date AS due, 
        usr_username AS usr, incdt_number AS incdt 
 FROM usr, todoitem LEFT OUTER JOIN 
-     incdt ON (incdt_id=todoitem_incdt_id) 
+     incdt ON (incdt_id=todoitem_incdt_id)
+     LEFT OUTER JOIN incdtpriority ON (incdtpriority_id=todoitem_priority_id)
 WHERE ( (todoitem_usr_id=usr_id)
   AND   (todoitem_due_date BETWEEN &lt;? value("startDate") ?>
                                AND &lt;? value("endDate") ?>)
@@ -37,12 +38,13 @@ WHERE ( (todoitem_usr_id=usr_id)
 &lt;? if exists("incidents")?>
 UNION 
 SELECT incdt_id AS id, usr_id AS altId, 
-       'I' AS type, NULL AS seq, 
+       'I' AS type, incdtpriority_name AS priority, incdtpriority_order,
        incdt_summary AS name, 
        firstLine(incdt_descrip) AS descrip, 
        incdt_status AS status,  NULL AS due, 
        incdt_assigned_username AS usr, incdt_number AS incdt 
 FROM incdt LEFT OUTER JOIN usr ON (usr_username=incdt_assigned_username)
+           LEFT OUTER JOIN incdtpriority ON (incdtpriority_id=incdt_incdtpriority_id)
 WHERE ((incdt_timestamp BETWEEN &lt;? value("incdtStartDate") ?>
                             AND &lt;? value("incdtEndDate") ?>)
   &lt;? if not exists("completed") ?>   
@@ -57,7 +59,7 @@ WHERE ((incdt_timestamp BETWEEN &lt;? value("incdtStartDate") ?>
   &lt;? endif ?>
        ) 
 &lt;? endif ?>
-ORDER BY seq, usr;</sql>
+ORDER BY due, incdtpriority_order, usr;</sql>
  </querysource>
  <querysource>
   <name>queryParams</name>
@@ -78,22 +80,6 @@ ORDER BY seq, usr;</sql>
   <height>141</height>
   <label>
    <rect>
-    <x>100</x>
-    <y>120</y>
-    <width>20</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Type</string>
-  </label>
-  <label>
-   <rect>
     <x>450</x>
     <y>55</y>
     <width>25</width>
@@ -107,303 +93,6 @@ ORDER BY seq, usr;</sql>
    <hcenter/>
    <vcenter/>
    <string>to</string>
-  </label>
-  <field>
-   <rect>
-    <x>380</x>
-    <y>85</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>Parameter Query</query>
-    <column>incdtStartDate</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>120</x>
-    <y>55</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>queryParams</query>
-    <column>usr_username</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>120</x>
-    <y>70</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>queryParams</query>
-    <column>activeOnly</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>125</x>
-    <y>120</y>
-    <width>50</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Sequence</string>
-  </label>
-  <label>
-   <rect>
-    <x>10</x>
-    <y>120</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>User</string>
-  </label>
-  <label>
-   <rect>
-    <x>20</x>
-    <y>70</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Active Only:</string>
-  </label>
-  <label>
-   <rect>
-    <x>400</x>
-    <y>120</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Status</string>
-  </label>
-  <field>
-   <rect>
-    <x>475</x>
-    <y>55</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>Parameter Query</query>
-    <column>endDate</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>475</x>
-    <y>85</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>Parameter Query</query>
-    <column>incdtEndDate</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>600</x>
-    <y>120</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Incident</string>
-  </label>
-  <label>
-   <rect>
-    <x>20</x>
-    <y>100</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Show Incidents:</string>
-  </label>
-  <label>
-   <rect>
-    <x>450</x>
-    <y>85</y>
-    <width>25</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>to</string>
-  </label>
-  <line>
-   <xstart>10</xstart>
-   <ystart>135</ystart>
-   <xend>750</xend>
-   <yend>135</yend>
-   <weight>2</weight>
-  </line>
-  <label>
-   <rect>
-    <x>20</x>
-    <y>55</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>User:</string>
-  </label>
-  <label>
-   <rect>
-    <x>295</x>
-    <y>10</y>
-    <width>450</width>
-    <height>37</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>18</size>
-    <weight>bold</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>To-Do List</string>
-  </label>
-  <field>
-   <rect>
-    <x>120</x>
-    <y>100</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>queryParams</query>
-    <column>showIncdts</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>250</x>
-    <y>55</y>
-    <width>125</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>To-Do List Item Due Date:</string>
-  </label>
-  <label>
-   <rect>
-    <x>250</x>
-    <y>85</y>
-    <width>125</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Incident Create Date:</string>
   </label>
   <field>
    <rect>
@@ -442,8 +131,62 @@ ORDER BY seq, usr;</sql>
   </label>
   <label>
    <rect>
+    <x>10</x>
+    <y>120</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>User</string>
+  </label>
+  <field>
+   <rect>
+    <x>120</x>
+    <y>70</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>queryParams</query>
+    <column>activeOnly</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>475</x>
+    <y>55</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>Parameter Query</query>
+    <column>endDate</column>
+   </data>
+  </field>
+  <label>
+   <rect>
     <x>20</x>
-    <y>85</y>
+    <y>100</y>
     <width>80</width>
     <height>15</height>
    </rect>
@@ -454,7 +197,7 @@ ORDER BY seq, usr;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>Completed:</string>
+   <string>Show Incidents:</string>
   </label>
   <field>
    <rect>
@@ -477,6 +220,195 @@ ORDER BY seq, usr;</sql>
   </field>
   <label>
    <rect>
+    <x>20</x>
+    <y>55</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>User:</string>
+  </label>
+  <label>
+   <rect>
+    <x>125</x>
+    <y>120</y>
+    <width>50</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Priority</string>
+  </label>
+  <label>
+   <rect>
+    <x>20</x>
+    <y>70</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Active Only:</string>
+  </label>
+  <field>
+   <rect>
+    <x>120</x>
+    <y>100</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>queryParams</query>
+    <column>showIncdts</column>
+   </data>
+  </field>
+  <line>
+   <xstart>10</xstart>
+   <ystart>135</ystart>
+   <xend>750</xend>
+   <yend>135</yend>
+   <weight>2</weight>
+  </line>
+  <label>
+   <rect>
+    <x>100</x>
+    <y>120</y>
+    <width>20</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Type</string>
+  </label>
+  <label>
+   <rect>
+    <x>20</x>
+    <y>85</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Completed:</string>
+  </label>
+  <field>
+   <rect>
+    <x>380</x>
+    <y>85</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>Parameter Query</query>
+    <column>incdtStartDate</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>250</x>
+    <y>85</y>
+    <width>125</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Incident Create Date:</string>
+  </label>
+  <label>
+   <rect>
+    <x>450</x>
+    <y>85</y>
+    <width>25</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>to</string>
+  </label>
+  <label>
+   <rect>
+    <x>295</x>
+    <y>10</y>
+    <width>450</width>
+    <height>37</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>18</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>To-Do List</string>
+  </label>
+  <label>
+   <rect>
+    <x>400</x>
+    <y>120</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Status</string>
+  </label>
+  <label>
+   <rect>
     <x>175</x>
     <y>120</y>
     <width>200</width>
@@ -491,18 +423,27 @@ ORDER BY seq, usr;</sql>
    <vcenter/>
    <string>Name</string>
   </label>
- </rpthead>
- <pghead>
-  <firstpage/>
-  <height>6</height>
- </pghead>
- <pghead>
-  <height>21</height>
   <label>
    <rect>
-    <x>175</x>
-    <y>0</y>
-    <width>200</width>
+    <x>250</x>
+    <y>55</y>
+    <width>125</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>To-Do List Item Due Date:</string>
+  </label>
+  <label>
+   <rect>
+    <x>600</x>
+    <y>120</y>
+    <width>100</width>
     <height>15</height>
    </rect>
    <font>
@@ -512,7 +453,68 @@ ORDER BY seq, usr;</sql>
    </font>
    <left/>
    <vcenter/>
-   <string>Name</string>
+   <string>Incident</string>
+  </label>
+  <field>
+   <rect>
+    <x>475</x>
+    <y>85</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>Parameter Query</query>
+    <column>incdtEndDate</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>120</x>
+    <y>55</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>queryParams</query>
+    <column>usr_username</column>
+   </data>
+  </field>
+ </rpthead>
+ <pghead>
+  <firstpage/>
+  <height>6</height>
+ </pghead>
+ <pghead>
+  <height>21</height>
+  <label>
+   <rect>
+    <x>400</x>
+    <y>0</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Status</string>
   </label>
   <label>
    <rect>
@@ -532,6 +534,29 @@ ORDER BY seq, usr;</sql>
   </label>
   <label>
    <rect>
+    <x>125</x>
+    <y>0</y>
+    <width>50</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Priority</string>
+  </label>
+  <line>
+   <xstart>5</xstart>
+   <ystart>15</ystart>
+   <xend>745</xend>
+   <yend>15</yend>
+   <weight>2</weight>
+  </line>
+  <label>
+   <rect>
     <x>500</x>
     <y>0</y>
     <width>100</width>
@@ -548,9 +573,9 @@ ORDER BY seq, usr;</sql>
   </label>
   <label>
    <rect>
-    <x>600</x>
+    <x>175</x>
     <y>0</y>
-    <width>100</width>
+    <width>200</width>
     <height>15</height>
    </rect>
    <font>
@@ -560,46 +585,7 @@ ORDER BY seq, usr;</sql>
    </font>
    <left/>
    <vcenter/>
-   <string>Incident</string>
-  </label>
-  <line>
-   <xstart>5</xstart>
-   <ystart>15</ystart>
-   <xend>745</xend>
-   <yend>15</yend>
-   <weight>2</weight>
-  </line>
-  <label>
-   <rect>
-    <x>125</x>
-    <y>0</y>
-    <width>50</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Sequence</string>
-  </label>
-  <label>
-   <rect>
-    <x>400</x>
-    <y>0</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Status</string>
+   <string>Name</string>
   </label>
   <label>
    <rect>
@@ -617,6 +603,22 @@ ORDER BY seq, usr;</sql>
    <vcenter/>
    <string>User</string>
   </label>
+  <label>
+   <rect>
+    <x>600</x>
+    <y>0</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Incident</string>
+  </label>
  </pghead>
  <section>
   <name>detail</name>
@@ -631,9 +633,9 @@ ORDER BY seq, usr;</sql>
    <height>31</height>
    <field>
     <rect>
-     <x>125</x>
+     <x>600</x>
      <y>0</y>
-     <width>50</width>
+     <width>100</width>
      <height>15</height>
     </rect>
     <font>
@@ -645,7 +647,26 @@ ORDER BY seq, usr;</sql>
     <top/>
     <data>
      <query>detail</query>
-     <column>seq</column>
+     <column>incdt</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>10</x>
+     <y>0</y>
+     <width>75</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <top/>
+    <data>
+     <query>detail</query>
+     <column>usr</column>
     </data>
    </field>
    <text>
@@ -670,63 +691,6 @@ ORDER BY seq, usr;</sql>
    </text>
    <field>
     <rect>
-     <x>100</x>
-     <y>0</y>
-     <width>20</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <top/>
-    <data>
-     <query>detail</query>
-     <column>type</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>600</x>
-     <y>0</y>
-     <width>100</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <top/>
-    <data>
-     <query>detail</query>
-     <column>incdt</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>500</x>
-     <y>0</y>
-     <width>100</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>due</column>
-    </data>
-   </field>
-   <field>
-    <rect>
      <x>400</x>
      <y>0</y>
      <width>100</width>
@@ -746,9 +710,9 @@ ORDER BY seq, usr;</sql>
    </field>
    <field>
     <rect>
-     <x>10</x>
+     <x>100</x>
      <y>0</y>
-     <width>75</width>
+     <width>20</width>
      <height>15</height>
     </rect>
     <font>
@@ -760,7 +724,45 @@ ORDER BY seq, usr;</sql>
     <top/>
     <data>
      <query>detail</query>
-     <column>usr</column>
+     <column>type</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>125</x>
+     <y>0</y>
+     <width>50</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <top/>
+    <data>
+     <query>detail</query>
+     <column>priority</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>500</x>
+     <y>0</y>
+     <width>100</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>due</column>
     </data>
    </field>
    <field>
@@ -788,6 +790,22 @@ ORDER BY seq, usr;</sql>
   <height>16</height>
   <label>
    <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>85</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Report Date:</string>
+  </label>
+  <label>
+   <rect>
     <x>615</x>
     <y>0</y>
     <width>85</width>
@@ -802,25 +820,6 @@ ORDER BY seq, usr;</sql>
    <vcenter/>
    <string>Page:</string>
   </label>
-  <field>
-   <rect>
-    <x>705</x>
-    <y>0</y>
-    <width>40</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>Context Query</query>
-    <column>page_number</column>
-   </data>
-  </field>
   <field>
    <rect>
     <x>90</x>
@@ -840,21 +839,24 @@ ORDER BY seq, usr;</sql>
     <column>report_date</column>
    </data>
   </field>
-  <label>
+  <field>
    <rect>
-    <x>0</x>
+    <x>705</x>
     <y>0</y>
-    <width>85</width>
+    <width>40</width>
     <height>15</height>
    </rect>
    <font>
     <face>Arial</face>
     <size>8</size>
-    <weight>normal</weight>
+    <weight>bold</weight>
    </font>
-   <right/>
+   <left/>
    <vcenter/>
-   <string>Report Date:</string>
-  </label>
+   <data>
+    <query>Context Query</query>
+    <column>page_number</column>
+   </data>
+  </field>
  </pgfoot>
 </report>
