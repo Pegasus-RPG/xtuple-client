@@ -11,8 +11,8 @@
   </property>
   <property name="minimumSize" >
    <size>
-    <width>500</width>
-    <height>500</height>
+    <width>0</width>
+    <height>600</height>
    </size>
   </property>
   <property name="windowTitle" >
@@ -39,16 +39,226 @@
      <property name="verticalSpacing" >
       <number>12</number>
      </property>
-     <item row="0" column="0" colspan="3" >
+     <item rowspan="2" row="0" column="0" >
+      <layout class="QVBoxLayout" >
+       <item>
+        <layout class="QGridLayout" >
+         <item row="0" column="0" >
+          <widget class="QLabel" name="_numberLit" >
+           <property name="text" >
+            <string>Account Number:</string>
+           </property>
+           <property name="alignment" >
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+           <property name="buddy" >
+            <cstring>_number</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1" >
+          <layout class="QHBoxLayout" >
+           <item>
+            <widget class="XLineEdit" name="_number" />
+           </item>
+           <item>
+            <widget class="QCheckBox" name="_active" >
+             <property name="text" >
+              <string>Active</string>
+             </property>
+             <property name="checked" >
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" >
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item row="1" column="0" >
+          <widget class="QLabel" name="_nameLit" >
+           <property name="text" >
+            <string>Account Name:</string>
+           </property>
+           <property name="alignment" >
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+           <property name="buddy" >
+            <cstring>_name</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1" >
+          <layout class="QHBoxLayout" >
+           <item>
+            <widget class="XLineEdit" name="_name" />
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>0</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <layout class="QGridLayout" >
+         <item row="0" column="0" >
+          <widget class="QGroupBox" name="_typeBox" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="title" >
+            <string>Type</string>
+           </property>
+           <layout class="QGridLayout" >
+            <item row="0" column="0" >
+             <layout class="QHBoxLayout" >
+              <property name="spacing" >
+               <number>12</number>
+              </property>
+              <item>
+               <widget class="QRadioButton" name="_organization" >
+                <property name="text" >
+                 <string>Organization</string>
+                </property>
+                <property name="checked" >
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="_individual" >
+                <property name="text" >
+                 <string>Individual</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer>
+                <property name="orientation" >
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" >
+                 <size>
+                  <width>40</width>
+                  <height>16</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item rowspan="2" row="0" column="1" >
+          <widget class="QGroupBox" name="_parentGroup" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="title" >
+            <string>Parent Account</string>
+           </property>
+           <layout class="QGridLayout" >
+            <item row="0" column="0" >
+             <layout class="QVBoxLayout" >
+              <item>
+               <widget class="CRMAcctCluster" name="_parentCrmacct" >
+                <property name="focusPolicy" >
+                 <enum>Qt::StrongFocus</enum>
+                </property>
+                <property name="label" >
+                 <string/>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer>
+                <property name="orientation" >
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" >
+                 <size>
+                  <width>20</width>
+                  <height>0</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="1" column="0" >
+          <widget class="QGroupBox" name="_ownerGroup" >
+           <property name="title" >
+            <string>Owner</string>
+           </property>
+           <layout class="QGridLayout" >
+            <item row="0" column="0" >
+             <widget class="UsernameCluster" name="_owner" />
+            </item>
+            <item row="0" column="1" >
+             <spacer>
+              <property name="orientation" >
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" >
+               <size>
+                <width>16</width>
+                <height>16</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+     <item row="0" column="1" >
       <layout class="QHBoxLayout" >
        <item>
         <spacer>
          <property name="orientation" >
           <enum>Qt::Horizontal</enum>
          </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Preferred</enum>
+         </property>
          <property name="sizeHint" >
           <size>
-           <width>40</width>
+           <width>0</width>
            <height>20</height>
           </size>
          </property>
@@ -70,74 +280,7 @@
        </item>
       </layout>
      </item>
-     <item row="1" column="0" colspan="2" >
-      <layout class="QGridLayout" >
-       <item row="0" column="0" >
-        <widget class="QLabel" name="_numberLit" >
-         <property name="text" >
-          <string>Account Number:</string>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-         <property name="buddy" >
-          <cstring>_number</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1" >
-        <layout class="QHBoxLayout" >
-         <item>
-          <widget class="XLineEdit" name="_number" />
-         </item>
-         <item>
-          <widget class="QCheckBox" name="_active" >
-           <property name="text" >
-            <string>Active</string>
-           </property>
-           <property name="checked" >
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" >
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
-       <item row="1" column="0" >
-        <widget class="QLabel" name="_nameLit" >
-         <property name="text" >
-          <string>Account Name:</string>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-         <property name="buddy" >
-          <cstring>_name</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1" >
-        <layout class="QHBoxLayout" >
-         <item>
-          <widget class="XLineEdit" name="_name" />
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </item>
-     <item rowspan="3" row="1" column="2" >
+     <item row="1" column="1" >
       <widget class="QGroupBox" name="_relationshipsGroup" >
        <property name="title" >
         <string>Relationships</string>
@@ -147,9 +290,6 @@
          <layout class="QVBoxLayout" >
           <item>
            <layout class="QGridLayout" >
-            <property name="horizontalSpacing" >
-             <number>0</number>
-            </property>
             <property name="verticalSpacing" >
              <number>0</number>
             </property>
@@ -282,7 +422,7 @@
             </property>
             <property name="sizeHint" >
              <size>
-              <width>71</width>
+              <width>20</width>
               <height>0</height>
              </size>
             </property>
@@ -293,114 +433,7 @@
        </layout>
       </widget>
      </item>
-     <item row="2" column="0" >
-      <widget class="QGroupBox" name="_typeBox" >
-       <property name="title" >
-        <string>Type</string>
-       </property>
-       <layout class="QGridLayout" >
-        <item row="0" column="0" >
-         <layout class="QHBoxLayout" >
-          <property name="spacing" >
-           <number>12</number>
-          </property>
-          <item>
-           <widget class="QRadioButton" name="_organization" >
-            <property name="text" >
-             <string>Organization</string>
-            </property>
-            <property name="checked" >
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QRadioButton" name="_individual" >
-            <property name="text" >
-             <string>Individual</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer>
-            <property name="orientation" >
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" >
-             <size>
-              <width>40</width>
-              <height>16</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item rowspan="2" row="2" column="1" >
-      <widget class="QGroupBox" name="_parentGroup" >
-       <property name="title" >
-        <string>Parent Account</string>
-       </property>
-       <layout class="QGridLayout" >
-        <item row="0" column="0" >
-         <layout class="QVBoxLayout" >
-          <item>
-           <widget class="CRMAcctCluster" name="_parentCrmacct" >
-            <property name="focusPolicy" >
-             <enum>Qt::StrongFocus</enum>
-            </property>
-            <property name="label" >
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer>
-            <property name="orientation" >
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" >
-             <size>
-              <width>327</width>
-              <height>0</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item row="3" column="0" >
-      <widget class="QGroupBox" name="_ownerGroup" >
-       <property name="title" >
-        <string>Owner</string>
-       </property>
-       <layout class="QHBoxLayout" >
-        <item>
-         <widget class="UsernameCluster" name="_owner" />
-        </item>
-        <item>
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" >
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item row="4" column="0" colspan="3" >
+     <item row="2" column="0" colspan="2" >
       <widget class="QTabWidget" name="_tab" >
        <property name="sizePolicy" >
         <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
@@ -497,7 +530,7 @@
                <property name="sizeHint" >
                 <size>
                  <width>489</width>
-                 <height>16</height>
+                 <height>0</height>
                 </size>
                </property>
               </spacer>
@@ -684,6 +717,9 @@
         <layout class="QGridLayout" >
          <item row="0" column="0" >
           <layout class="QHBoxLayout" >
+           <property name="spacing" >
+            <number>12</number>
+           </property>
            <item>
             <widget class="XCheckBox" name="_showTodo" >
              <property name="text" >
