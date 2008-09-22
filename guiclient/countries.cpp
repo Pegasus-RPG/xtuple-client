@@ -60,55 +60,44 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
-//#include <QStatusBar>
 #include <QVariant>
-#include <QWorkspace>
 
 #include <parameter.h>
 
 #include "country.h"
 
-/*
- *  Constructs a countries as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 countries::countries(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-//    (void)statusBar();
+  connect(_new,         SIGNAL(clicked()),	this,	SLOT(sNew()));
+  connect(_edit,	SIGNAL(clicked()),	this,	SLOT(sEdit()));
+  connect(_close,	SIGNAL(clicked()),	this,	SLOT(close()));
+  connect(_delete,	SIGNAL(clicked()),	this,	SLOT(sDelete()));
+  connect(_view,	SIGNAL(clicked()),	this,	SLOT(sView()));
+  connect(_countries,	SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)),
+                                        this,	SLOT(sPopulateMenu(QMenu*)));
 
-    connect(_new,	SIGNAL(clicked()),	this,	SLOT(sNew()));
-    connect(_edit,	SIGNAL(clicked()),	this,	SLOT(sEdit()));
-    connect(_close,	SIGNAL(clicked()),	this,	SLOT(close()));
-    connect(_delete,	SIGNAL(clicked()),	this,	SLOT(sDelete()));
-    connect(_view,	SIGNAL(clicked()),	this,	SLOT(sView()));
-    connect(_countries,	SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)),
-					  this,	SLOT(sPopulateMenu(QMenu*)));
-
-//    statusBar()->hide();
-
-    if (_privileges->check("MaintainCountries"))
-    {
-      connect(_countries, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
-      connect(_countries, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
-      connect(_countries, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
-    }
-    else
-    {
-      _new->setEnabled(FALSE);
-      connect(_countries, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
-    }
-      
-    _countries->addColumn( tr("Abbreviation"),	      50, Qt::AlignCenter );
-    _countries->addColumn( tr("Name"),	              -1, Qt::AlignLeft   );
-    _countries->addColumn( tr("Currency Abbr"),      100, Qt::AlignCenter );
-    _countries->addColumn( tr("Currency Name"),      100, Qt::AlignLeft   );
-    _countries->addColumn( tr("Symbol"),              50, Qt::AlignLeft   );
-      
-    sFillList();
+  if (_privileges->check("MaintainCountries"))
+  {
+    connect(_countries, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
+    connect(_countries, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
+    connect(_countries, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
+  }
+  else
+  {
+    _new->setEnabled(FALSE);
+    connect(_countries, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
+  }
+    
+  _countries->addColumn( tr("Abbreviation"),  50, Qt::AlignCenter,true, "country_abbr");
+  _countries->addColumn( tr("Name"),          -1, Qt::AlignLeft,  true, "country_name");
+  _countries->addColumn( tr("Currency Abbr"),100, Qt::AlignCenter,true, "country_curr_abbr");
+  _countries->addColumn( tr("Currency Name"),100, Qt::AlignLeft,  true, "country_curr_name");
+  _countries->addColumn( tr("Symbol"),        50, Qt::AlignLeft,  true, "country_curr_symbol");
+    
+  sFillList();
 }
 
 countries::~countries()
@@ -181,26 +170,18 @@ void countries::sDelete()
 
 void countries::sFillList()
 {
-    _countries->clear();
-    q.prepare( "SELECT country_id, country_abbr, country_name,"
-	       "       country_curr_abbr, country_curr_name, "
-	       "       country_curr_symbol "
-	       "FROM country "
-	       "ORDER BY country_name;" );
-    q.exec();
-    _countries->populate(q);
-    /*
-    while (q.next())
-    {
-	new XTreeWidgetItem(_countries, _countries->lastItem(),
-			  q.value("country_id").toInt(),
-			  q.value("country_abbr"),
-			  q.value("country_name"),
-			  q.value("country_curr_abbr"),
-			  q.value("country_curr_name"),
-			  q.value("country_curr_symbol"));
-    }
-    */
+  q.prepare( "SELECT country_id, country_abbr, country_name,"
+             "       country_curr_abbr, country_curr_name, "
+             "       country_curr_symbol "
+             "FROM country "
+             "ORDER BY country_name;" );
+  q.exec();
+  _countries->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void countries::sPopulateMenu(QMenu* pMenu)

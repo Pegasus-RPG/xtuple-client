@@ -94,11 +94,11 @@ configureIE::configureIE(QWidget* parent, const char* name, bool modal, Qt::WFla
   connect(_newMap,	SIGNAL(clicked()), this, SLOT(sNewMap()));
   connect(_save,	SIGNAL(clicked()), this, SLOT(sSave()));
 
-  _map->addColumn(tr("Name"),			-1, Qt::AlignLeft );
-  _map->addColumn(tr("Document Type"),		-1, Qt::AlignLeft );
-  _map->addColumn(tr("System Identifier"),	-1, Qt::AlignLeft );
-  _map->addColumn(tr("Import XSLT File"),	-1, Qt::AlignLeft );
-  _map->addColumn(tr("Export XSLT File"),	-1, Qt::AlignLeft );
+  _map->addColumn(tr("Name"),		  -1, Qt::AlignLeft, true, "xsltmap_name");
+  _map->addColumn(tr("Document Type"),	  -1, Qt::AlignLeft, true, "xsltmap_doctype");
+  _map->addColumn(tr("System Identifier"),-1, Qt::AlignLeft, true, "xsltmap_system");
+  _map->addColumn(tr("Import XSLT File"), -1, Qt::AlignLeft, true, "xsltmap_import");
+  _map->addColumn(tr("Export XSLT File"), -1, Qt::AlignLeft, true, "xsltmap_export");
 
   // TODO: fix these when support for an internal XSLT processor is enabled
   _internal->setEnabled(false);

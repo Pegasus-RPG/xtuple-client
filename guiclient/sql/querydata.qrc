@@ -11,6 +11,7 @@
     <file alias="arHistory.mql">arHistory.mql</file>
     <file alias="aropenApplications.mql">aropenApplications.mql</file>
     <file alias="arOpenItems.mql">arOpenItems.mql</file>
+    <file alias="arOpenItemsByCustomer.mql">arOpenItemsByCustomer.mql</file>
     <file alias="fillcreditcardlist.mql">fillcreditcardlist.mql</file>
     <file alias="invoices.mql">invoices.mql</file>
   </qresource>

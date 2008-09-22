@@ -57,60 +57,36 @@
 
 #include "costingElements.h"
 
-#include <qvariant.h>
+#include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
+
 #include <parameter.h>
-#include <qmessagebox.h>
-//#include <qstatusbar.h>
+
 #include "userCostingElement.h"
 
-/*
- *  Constructs a costingElements as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 costingElements::costingElements(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-//    (void)statusBar();
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
 
-    // signals and slots connections
-    connect(_costelem, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
-    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-    connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_costelem, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
-    connect(_costelem, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-costingElements::~costingElements()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void costingElements::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void costingElements::init()
-{
-//  statusBar()->hide();
-
-  _costelem->addColumn(tr("Costing Element"), -1, Qt::AlignLeft);
+  _costelem->addColumn(tr("Costing Element"), -1, Qt::AlignLeft, true, "costelem_type");
 
   sFillList();
+}
+
+costingElements::~costingElements()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void costingElements::languageChange()
+{
+  retranslateUi(this);
 }
 
 void costingElements::sNew()
@@ -149,8 +125,11 @@ void costingElements::sDelete()
   if (q.first())
   {
     QMessageBox::critical( this, tr("Cannot Delete Selected User Costing Element"),
-                           tr( "The selected User Costing Element cannot be deleted as it is being used by an existing Item Cost.\n"
-                               "You must first delete all Item Costs assigned to the selected User Costing Element before you may delete it." ) );
+                           tr( "<p>The selected User Costing Element cannot be "
+                              "deleted as it is being used by an existing Item "
+                              "Cost. You must first delete all Item Costs "
+                              "assigned to the selected User Costing Element "
+                              "before you may delete it." ) );
     return;
   }
 
@@ -163,8 +142,10 @@ void costingElements::sDelete()
   if (q.first())
   {
     QMessageBox::critical( this, tr("Cannot Delete Selected User Costing Element"),
-                           tr( "The selected User Costing Element cannot be deleted as it is there is Costing History assigned to it.\n"
-                               "You may only deactivate the selected User Costing Element." ) );
+                           tr( "<p>The selected User Costing Element cannot be "
+                              "deleted as it is there is Costing History "
+                              "assigned to it. You may only deactivate the "
+                              "selected User Costing Element." ) );
     return;
   }
 
@@ -183,4 +164,3 @@ void costingElements::sFillList()
                        "WHERE (NOT costelem_sys) "
                        "ORDER BY costelem_type" );
 }
-

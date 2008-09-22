@@ -61,7 +61,6 @@
 #include <QSqlError>
 #include <QVariant>
 #include <QMessageBox>
-//#include <QStatusBar>
 
 #include <openreports.h>
 #include <metasql.h>
@@ -85,15 +84,15 @@ contacts::contacts(QWidget* parent, const char* name, Qt::WFlags fl)
 
     _activeOnly->setChecked(true);
     
-    _contacts->addColumn(tr("First Name"),	 50, Qt::AlignLeft );
-    _contacts->addColumn(tr("Last Name"),	100, Qt::AlignLeft );
-    _contacts->addColumn(tr("Account #"),	 80, Qt::AlignLeft );
-    _contacts->addColumn(tr("Account Name"),	160, Qt::AlignLeft );
-    _contacts->addColumn(tr("Phone"),		100, Qt::AlignLeft );
-    _contacts->addColumn(tr("Alternate"),		100, Qt::AlignLeft );
-    _contacts->addColumn(tr("Fax"),		100, Qt::AlignLeft );
-    _contacts->addColumn(tr("E-Mail"),		100, Qt::AlignLeft );
-    _contacts->addColumn(tr("Web Address"),	100, Qt::AlignLeft );
+    _contacts->addColumn(tr("First Name"),    50, Qt::AlignLeft, true, "cntct_first_name");
+    _contacts->addColumn(tr("Last Name"),    100, Qt::AlignLeft, true, "cntct_last_name");
+    _contacts->addColumn(tr("Account #"),     80, Qt::AlignLeft, true, "crmacct_number");
+    _contacts->addColumn(tr("Account Name"), 160, Qt::AlignLeft, true, "crmacct_name");
+    _contacts->addColumn(tr("Phone"),	     100, Qt::AlignLeft, true, "cntct_phone");
+    _contacts->addColumn(tr("Alternate"),    100, Qt::AlignLeft, true, "cntct_phone2");
+    _contacts->addColumn(tr("Fax"),	     100, Qt::AlignLeft, true, "cntct_fax");
+    _contacts->addColumn(tr("E-Mail"),	     100, Qt::AlignLeft, true, "cntct_email");
+    _contacts->addColumn(tr("Web Address"),  100, Qt::AlignLeft, true, "cntct_webaddr");
 
     if (_privileges->check("MaintainContacts"))
     {
@@ -224,7 +223,6 @@ void contacts::sFillList()
   setParams(params);
   MetaSQLQuery mql(sql);
   q = mql.toQuery(params);
-  _contacts->clear();
   _contacts->populate(q);
   if (q.lastError().type() != QSqlError::None)
   {

@@ -57,37 +57,28 @@
 
 #include "classCodes.h"
 
-#include <QVariant>
-//#include <QStatusBar>
 #include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
+
 #include <parameter.h>
 #include <openreports.h>
-#include "classCode.h"
 
-/*
- *  Constructs a classCodes as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
+#include "classCode.h"
+#include "storedProcErrorLookup.h"
+
 classCodes::classCodes(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_deleteUnused, SIGNAL(clicked()), this, SLOT(sDeleteUnused()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
-  connect(_classcode, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
 
-//  statusBar()->hide();
-  
   if (_privileges->check("MaintainClassCodes"))
   {
     connect(_classcode, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
@@ -102,27 +93,20 @@ classCodes::classCodes(QWidget* parent, const char* name, Qt::WFlags fl)
     _deleteUnused->setEnabled(FALSE);
   }
 
-  _classcode->addColumn(tr("Class Code"),  70, Qt::AlignLeft );
-  _classcode->addColumn(tr("Description"), -1, Qt::AlignLeft );
+  _classcode->addColumn(tr("Class Code"),  70, Qt::AlignLeft, true, "classcode_code");
+  _classcode->addColumn(tr("Description"), -1, Qt::AlignLeft, true, "classcode_descrip");
 
   sFillList(-1);
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 classCodes::~classCodes()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void classCodes::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 void classCodes::sNew()
@@ -170,19 +154,19 @@ void classCodes::sDelete()
   q.exec();
   if (q.first())
   {
-    switch (q.value("result").toInt())
+    int result = q.value("result").toInt();
+    if (result < 0)
     {
-      case -1:
-        QMessageBox::critical( this, tr("Items Assigned to Class Code"),
-                               tr( "The selected Class Code cannot be deleted because there are Items that are assigned to it.\n"
-                                   "You must reassign these Items before you may delete the selected Class Code." ) );
-        return;
+      systemError(this, storedProcErrorLookup("deleteClassCode", result),
+                  __FILE__, __LINE__);
+      return;
     }
-
-    sFillList(-1);
   }
-//  ToDo
-
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void classCodes::sPrint()
@@ -197,10 +181,28 @@ void classCodes::sPrint()
 void classCodes::sDeleteUnused()
 {
   if ( QMessageBox::warning( this, tr("Delete Unused Class Codes"),
-                             tr("Are you sure that you wish to delete all unused Class Codes?"),
-                             tr("&Yes"), tr("&No"), QString::null, 0, 1 ) == 0 )
+                             tr("<p>Are you sure that you wish to delete all "
+                                "unused Class Codes?"),
+                            QMessageBox::Yes,
+                            QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
   {
     q.exec("SELECT deleteUnusedClassCodes() AS result;");
+    if (q.first())
+    {
+      int result = q.value("result").toInt();
+      if (result < 0)
+      {
+        systemError(this,
+                    storedProcErrorLookup("deleteUnusedClassCodes", result),
+                    __FILE__, __LINE__);
+        return;
+      }
+    }
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
     sFillList(-1);
   }
 }
@@ -211,4 +213,3 @@ void classCodes::sFillList(int pId)
                         "FROM classcode "
                         "ORDER BY classcode_code;", pId  );
 }
-

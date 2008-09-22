@@ -1,0 +1,91 @@
+SELECT *,
+       CASE WHEN (aropen_doctype='I') THEN <? value("invoice") ?>
+            WHEN (aropen_doctype='C') THEN <? value("creditMemo") ?>
+            WHEN (aropen_doctype='D') THEN <? value("debitMemo") ?>
+            WHEN (aropen_doctype='R') THEN <? value("cashdeposit") ?>
+            WHEN (aropen_doctype IS NULL) THEN NULL
+            ELSE <? value("other") ?>
+       END AS doctype,
+       CASE WHEN (aropen_doctype IN ('C', 'R')) THEN ((aropen_amount - paid) * -1)
+            ELSE (aropen_amount - paid)
+       END AS balance,
+       currToBase(aropen_curr_id,
+                  CASE WHEN (aropen_doctype IN ('C', 'R')) THEN ((aropen_amount - paid) * -1)
+                       ELSE (aropen_amount - paid)
+                  END, aropen_docdate) AS base_balance,
+       currConcat(aropen_curr_id) AS currAbbr,
+       'curr' AS aropen_amount_xtnumericrole,
+       'curr' AS paid_xtnumericrole,
+       'curr' AS balance_xtnumericrole,
+       'curr' AS base_balance_xtnumericrole,
+       0 AS base_balance_xttotalrole
+FROM (
+  SELECT aropen_id AS id,
+         CASE WHEN (aropen_doctype='I') THEN 0
+              WHEN (aropen_doctype='C') THEN 1
+              WHEN (aropen_doctype='D') THEN 2
+              WHEN (aropen_doctype='R') THEN 3
+              ELSE -1
+         END AS altId,
+         aropen_docdate,          aropen_duedate,         aropen_terms_id,
+         aropen_cust_id,          aropen_doctype,         aropen_docnumber,
+         aropen_applyto,          aropen_ponumber,        aropen_amount,
+         aropen_notes,            aropen_posted,          aropen_salesrep_id,
+         aropen_commission_due,   aropen_commission_paid, aropen_ordernumber,
+         aropen_cobmisc_id,       aropen_journalnumber,
+         SUM(currtocurr(arapply_curr_id, aropen_curr_id,
+                        arapply_applied, aropen_docdate)) AS paid,
+         aropen_open,             aropen_username,        aropen_rsncode_id,
+         aropen_salescat_id,      aropen_accnt_id,        aropen_curr_id,
+         aropen_closedate,
+         NULL AS aropen_docnumber_qtdisplayrole,
+         NULL AS aropen_docdate_qtdisplayrole,
+         0 AS xtindentrole
+  FROM aropen LEFT OUTER JOIN
+       arapply ON (((aropen_id=arapply_source_aropen_id)
+                             OR (aropen_id=arapply_target_aropen_id))
+                     AND (arapply_distdate<=<? value("asofDate") ?>))
+  WHERE ( (COALESCE(aropen_closedate,
+                    date <? value ("asofDate") ?> + integer '1') > <? value("asofDate") ?>) 
+    AND   (aropen_docdate <= <? value ("asofDate") ?>)
+    AND   (aropen_cust_id=<? value("cust_id") ?>)
+    AND   (aropen_docdate BETWEEN <? value("startDate") ?> AND <? value("endDate") ?>)
+        )
+  GROUP BY id,                      altId,
+           aropen_docdate,          aropen_duedate,         aropen_terms_id,
+           aropen_cust_id,          aropen_doctype,         aropen_docnumber,
+           aropen_applyto,          aropen_ponumber,        aropen_amount,
+           aropen_notes,            aropen_posted,          aropen_salesrep_id,
+           aropen_commission_due,   aropen_commission_paid, aropen_ordernumber,
+           aropen_cobmisc_id,       aropen_journalnumber,
+           aropen_open,             aropen_username,        aropen_rsncode_id,
+           aropen_salescat_id,      aropen_accnt_id,        aropen_curr_id,
+           aropen_closedate,
+           aropen_docnumber_qtdisplayrole,
+           aropen_docdate_qtdisplayrole,
+           xtindentrole
+  UNION
+  SELECT -1,
+         incdt_id,
+         aropen_docdate,   NULL,    NULL,
+         NULL,   NULL,    aropen_docnumber,
+         NULL,   NULL,    NULL,
+         NULL,   NULL,    NULL,
+         NULL,   NULL,    CAST(incdt_number AS TEXT),
+         NULL,   NULL,
+         NULL,
+         NULL,   NULL,    NULL,
+         NULL,   NULL,    NULL,
+         NULL,
+         '' AS aropen_docnumber_qtdisplayrole,
+         '' AS aropen_docdate_qtdisplayrole,
+         1 AS xtindentrole
+  FROM incdt JOIN aropen ON (aropen_id=incdt_aropen_id)
+  WHERE ( (COALESCE(aropen_closedate,date <? value ("asofDate") ?> + integer '1')><? value("asofDate") ?>) 
+    AND   (aropen_docdate <= <? value ("asofDate") ?>)
+    AND   (aropen_cust_id=<? value("cust_id") ?>)
+    AND   (aropen_docdate BETWEEN <? value("startDate") ?> AND <? value("endDate") ?>)
+        )
+) AS dummy
+
+ORDER BY aropen_docdate, aropen_docnumber, xtindentrole;

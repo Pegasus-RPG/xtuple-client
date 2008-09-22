@@ -411,6 +411,11 @@ void initErrorLookupHash()
 			       "you may delete the selected Characteristic."),
 			       					 0, "" },
 
+  { "deleteClassCode", -1, TR( "The selected Class Code cannot be deleted "
+                              "because there are Items that are assigned to "
+                              "it. You must reassign these Items before you "
+                              "may delete the selected Class Code." ),  0, ""},
+
   { "deleteCompany", -1, TR("The selected Company cannot be deleted as it "
                             "is in use by existing Account. You must reclass "
                             "these Accounts before you may delete the selected "
@@ -471,6 +476,11 @@ void initErrorLookupHash()
                                "are still Quotes assigned to it. You must "
                                "delete all of the selected Customer's Quotes "
                                "before you may delete it"),      0, "" },
+
+  { "deleteForm", -1, TR("The selected Check Format cannot be deleted as it is "
+                         "used by one or more Bank Accounts. You must reassign "
+                         "these Bank Accounts before you may delete the "
+                         "selected Check Form." ),                      0, "" },
 
   { "deleteIncident",	-1, TR("This Incident cannot be deleted as there are "
 			       "To-Do List Items associated with it."),

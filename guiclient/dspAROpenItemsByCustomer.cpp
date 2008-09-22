@@ -57,57 +57,34 @@
 
 #include "dspAROpenItemsByCustomer.h"
 
-#include <QVariant>
-//#include <QStatusBar>
-#include <QWorkspace>
-#include <QMessageBox>
 #include <QMenu>
+#include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
+
+#include <metasql.h>
 #include <openreports.h>
+
 #include "arOpenItem.h"
 #include "dspInvoiceInformation.h"
 #include "invoice.h"
 #include "incident.h"
+#include "mqlutil.h"
 
-/*
- *  Constructs a dspAROpenItemsByCustomer as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspAROpenItemsByCustomer::dspAROpenItemsByCustomer(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_aropen, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-  connect(_cust, SIGNAL(valid(bool)), _query, SLOT(setEnabled(bool)));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 
-  _aropen->setRootIsDecorated(TRUE);
-  _aropen->addColumn(tr("Doc. Type"),      _itemColumn,     Qt::AlignLeft );
-  _aropen->addColumn(tr("Doc. #"),         _orderColumn,    Qt::AlignLeft  );
-  _aropen->addColumn(tr("Order/Incdt."),   _itemColumn,     Qt::AlignLeft  );
-  _aropen->addColumn(tr("Doc. Date"),      _dateColumn,     Qt::AlignCenter );
-  _aropen->addColumn(tr("Due Date"),       _dateColumn,     Qt::AlignCenter );
-  _aropen->addColumn(tr("Amount"),         _bigMoneyColumn, Qt::AlignRight  );
-  _aropen->addColumn(tr("Paid"),           _bigMoneyColumn, Qt::AlignRight  );
-  _aropen->addColumn(tr("Balance"),        _bigMoneyColumn, Qt::AlignRight  );
-  _aropen->addColumn(tr("Currency"),       _currencyColumn, Qt::AlignLeft   );
-  _aropen->addColumn(tr("Balance"),        _bigMoneyColumn, Qt::AlignRight  );
-
-  if (omfgThis->singleCurrency())
-  {
-    _aropen->hideColumn(7);
-    _aropen->hideColumn(8);
-  }
-  else
+  QString baseBalanceTitle(tr("Balance"));
+  if (! omfgThis->singleCurrency())
   {
     q.prepare("SELECT currConcat(baseCurrId()) AS currConcat;");
     q.exec();
@@ -116,25 +93,35 @@ dspAROpenItemsByCustomer::dspAROpenItemsByCustomer(QWidget* parent, const char* 
       currConcat = q.value("currConcat").toString();
     else
       currConcat = tr("?????");
-    _aropen->headerItem()->setText(9, tr("Balance\n(in %1)").arg(currConcat));
+    baseBalanceTitle = tr("Balance\n(in %1)").arg(currConcat);
+  }
+
+  _aropen->addColumn(tr("Doc. Type"),     _itemColumn, Qt::AlignLeft,  true, "doctype");
+  _aropen->addColumn(tr("Doc. #"),       _orderColumn, Qt::AlignLeft,  true, "aropen_docnumber");
+  _aropen->addColumn(tr("Order/Incdt."),  _itemColumn, Qt::AlignLeft,  true, "aropen_ordernumber");
+  _aropen->addColumn(tr("Doc. Date"),     _dateColumn, Qt::AlignCenter,true, "aropen_docdate");
+  _aropen->addColumn(tr("Due Date"),      _dateColumn, Qt::AlignCenter,true, "aropen_duedate");
+  _aropen->addColumn(tr("Amount"),    _bigMoneyColumn, Qt::AlignRight, true, "aropen_amount");
+  _aropen->addColumn(tr("Paid"),      _bigMoneyColumn, Qt::AlignRight, true, "paid");
+  _aropen->addColumn(tr("Balance"),   _bigMoneyColumn, Qt::AlignRight, true, "balance");
+  _aropen->addColumn(tr("Currency"),  _currencyColumn, Qt::AlignLeft,  true, "currAbbr");
+  _aropen->addColumn(baseBalanceTitle,_bigMoneyColumn, Qt::AlignRight, true, "base_balance");
+
+  if (omfgThis->singleCurrency())
+  {
+    _aropen->hideColumn("currAbbr");
+    _aropen->hideColumn("base_balance");
   }
 
   _asOf->setDate(omfgThis->dbDate(), true);
   _cust->setFocus();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspAROpenItemsByCustomer::~dspAROpenItemsByCustomer()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspAROpenItemsByCustomer::languageChange()
 {
   retranslateUi(this);
@@ -307,12 +294,24 @@ void dspAROpenItemsByCustomer::sViewIncident()
     sFillList();
 }
 
+bool dspAROpenItemsByCustomer::setParams(ParameterList &params)
+{
+  _dates->appendValue(params);
+  params.append("asofDate",     _asOf->date());
+  params.append("cust_id",      _cust->id());
+  params.append("invoice",      tr("Invoice"));
+  params.append("creditMemo",   tr("C/M"));
+  params.append("debitMemo",    tr("D/M"));
+  params.append("cashdeposit",  tr("C/D"));
+
+  return true;
+}
+
 void dspAROpenItemsByCustomer::sPrint()
 {
   ParameterList params;
-  _dates->appendValue(params);
-  params.append("asofDate", _asOf->date());
-  params.append("cust_id", _cust->id());
+  if (! setParams(params))
+    return;
 
   orReport report("AROpenItemsByCustomer", params);
   if (report.isValid())
@@ -323,87 +322,15 @@ void dspAROpenItemsByCustomer::sPrint()
 
 void dspAROpenItemsByCustomer::sFillList()
 {
-  _aropen->clear();
-  
-  XSqlQuery incident;
-  incident.prepare( "SELECT incdt_id, incdt_number::TEXT AS incdtnumber "
-                    "FROM incdt "
-					"WHERE (incdt_aropen_id=:aropen_id);" );
-
-  q.prepare( "SELECT aropen_id, aropen_docnumber, aropen_ordernumber,"
-             "       CASE WHEN (aropen_doctype='C') THEN :creditMemo"
-             "            WHEN (aropen_doctype='D') THEN :debitMemo"
-             "            WHEN (aropen_doctype='I') THEN :invoice"
-             "            WHEN (aropen_doctype='R') THEN :cashdeposit"
-             "            ELSE :other"
-             "       END AS f_doctype,"
-             "       aropen_docdate, aropen_duedate, aropen_amount,"
-             "       SUM(currtocurr(arapply_curr_id,aropen_curr_id,arapply_applied,aropen_docdate)) AS paid,"
-             "       CASE WHEN (aropen_doctype IN ('C', 'R')) THEN ((aropen_amount - SUM(currtocurr(arapply_curr_id,aropen_curr_id,arapply_applied,aropen_docdate))) * -1)"
-             "            ELSE (aropen_amount - SUM(currtocurr(arapply_curr_id,aropen_curr_id,arapply_applied,aropen_docdate)))"
-             "       END AS balance,"
-             "       currConcat(aropen_curr_id) AS currAbbr,"
-             "       currToBase(aropen_curr_id,"
-             "       CASE WHEN (aropen_doctype IN ('C', 'R')) THEN ((aropen_amount - SUM(currtocurr(arapply_curr_id,aropen_curr_id,arapply_applied,aropen_docdate))) * -1)"
-             "            ELSE (aropen_amount - SUM(currtocurr(arapply_curr_id,aropen_curr_id,arapply_applied,aropen_docdate)))"
-             "       END, aropen_docdate) AS base_balance "
-             "  FROM aropen "
-             "  LEFT OUTER JOIN arapply ON (((aropen_id=arapply_source_aropen_id) "
-             "                             OR (aropen_id=arapply_target_aropen_id)) "
-             "                             AND (arapply_distdate<=:asofdate)) "
-             " WHERE ( (COALESCE(aropen_closedate,date :asofdate + integer '1')>:asofdate) "
-             "   AND   (aropen_docdate<=:asofdate)"
-             "   AND   (aropen_cust_id=:cust_id) "
-             "   AND   (aropen_duedate BETWEEN :startDate AND :endDate)) "
-             " GROUP BY aropen_id,aropen_docnumber,aropen_ordernumber,aropen_doctype,aropen_docdate,aropen_duedate,aropen_amount,aropen_curr_id,aropen_paid "
-             " ORDER BY aropen_docdate;" );
-  _dates->bindValue(q);
-  q.bindValue(":cust_id", _cust->id());
-  q.bindValue(":creditMemo", tr("Credit Memo"));
-  q.bindValue(":debitMemo", tr("Debit Memo"));
-  q.bindValue(":invoice", tr("Invoice"));
-  q.bindValue(":cashdeposit", tr("Cash Deposit"));
-  q.bindValue(":asofdate", _asOf->date());
-  q.exec();
-  if (q.first())
+  MetaSQLQuery mql = mqlLoad(":ar/arOpenItemsByCustomer.mql");
+  ParameterList params;
+  if (! setParams(params))
+    return;
+  q = mql.toQuery(params);
+  _aropen->populate(q, true);
+  if (q.lastError().type() != QSqlError::None)
   {
-    double total= 0.0;
-    XTreeWidgetItem * last = 0;
-    XTreeWidgetItem *document = 0;
-    do
-    {
-      last = document = new XTreeWidgetItem( _aropen, last, q.value("aropen_id").toInt(), -1,
-                                             q.value("f_doctype"), q.value("aropen_docnumber"),
-                                             q.value("aropen_ordernumber"), formatDate(q.value("aropen_docdate").toDate()),
-                                             formatDate(q.value("aropen_duedate").toDate()), formatMoney(q.value("aropen_amount").toDouble()),
-                                             formatMoney(q.value("paid").toDouble()), formatMoney(q.value("balance").toDouble()),
-                                             q.value("currAbbr"),
-			                                       formatMoney(q.value("base_balance").toDouble()));
- 
-      total += q.value("base_balance").toDouble();
-
-      incident.bindValue(":aropen_id", q.value("aropen_id").toInt());
-	  incident.exec();
-	  if (incident.first())
-	  {
-	    do
-		{
-          new XTreeWidgetItem( document, -1, incident.value("incdt_id").toInt(),
-                               "", "",
-                               incident.value("incdtnumber"), "",
-                               "", "",
-                               "", "",
-		                       "",
-			                   "");
-        }
-		while (incident.next());
-      }
-    }
-    while (q.next());
-
-    new XTreeWidgetItem( _aropen, last, -1,
-                         QVariant(tr("Total")), "", "", "", "", "", "", "", "",
-                         formatMoney(total) );
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
 }
-

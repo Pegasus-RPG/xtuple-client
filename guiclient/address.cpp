@@ -84,32 +84,28 @@ address::address(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     connect(_editCharacteristic, SIGNAL(clicked()), this, SLOT(sEditCharacteristic()));
     connect(_deleteCharacteristic, SIGNAL(clicked()), this, SLOT(sDeleteCharacteristic()));
 
-    _uses->addColumn(tr("Used by"),	 50, Qt::AlignLeft );
-    _uses->addColumn(tr("First Name\nor Number"),	 50, Qt::AlignLeft );
-    _uses->addColumn(tr("Last Name\nor Name"),	 -1, Qt::AlignLeft );
-    _uses->addColumn(tr("CRM Account"),	 80, Qt::AlignLeft );
-    _uses->addColumn(tr("Phone"),	100, Qt::AlignLeft );
-    _uses->addColumn(tr("Alternate"),	100, Qt::AlignLeft );
-    _uses->addColumn(tr("Fax"),		100, Qt::AlignLeft );
-    _uses->addColumn(tr("E-Mail"),	100, Qt::AlignLeft );
-    _uses->addColumn(tr("Web Address"),	100, Qt::AlignLeft );
+    _uses->addColumn(tr("Used by"),	 50, Qt::AlignLeft, true, "type");
+    _uses->addColumn(tr("First Name\nor Number"),50, Qt::AlignLeft, true, "cntct_first_name");
+    _uses->addColumn(tr("Last Name\nor Name"),	 -1, Qt::AlignLeft, true, "cntct_last_name");
+    _uses->addColumn(tr("CRM Account"),	 80, Qt::AlignLeft, true, "crmacct_number");
+    _uses->addColumn(tr("Phone"),	100, Qt::AlignLeft, true, "cntct_phone");
+    _uses->addColumn(tr("Alternate"),	100, Qt::AlignLeft, true, "cntct_phone2");
+    _uses->addColumn(tr("Fax"),		100, Qt::AlignLeft, true, "cntct_fax");
+    _uses->addColumn(tr("E-Mail"),	100, Qt::AlignLeft, true, "cntct_email");
+    _uses->addColumn(tr("Web Address"),	100, Qt::AlignLeft, true, "cntct_webaddr");
 
-    _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft );
-    _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft );
+    _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft, true, "char_name");
+    _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft, true, "charass_value");
 }
 
 address::~address()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- ets the strings of the subwidgets using the current
- *  language.
- */
 void address::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 enum SetResponse address::set(const ParameterList &pParams)
@@ -262,7 +258,6 @@ void address::sGetCharacteristics()
              "ORDER BY char_name;" );
   q.bindValue(":addr_id", _addr->id());
   q.exec();
-  _charass->clear();
   _charass->populate(q);
 }
 
@@ -273,7 +268,7 @@ void address::sPopulate()
   sGetCharacteristics();
 
   XSqlQuery usesQ;
-  usesQ.prepare("SELECT cntct_id, 1, :contact, cntct_first_name, "
+  usesQ.prepare("SELECT cntct_id, 1, :contact AS type, cntct_first_name, "
 		"       cntct_last_name, crmacct_number, cntct_phone, "
 		"       cntct_phone2, cntct_fax, cntct_email, cntct_webaddr "
 		"FROM cntct LEFT OUTER JOIN crmacct ON (cntct_crmacct_id=crmacct_id) "
@@ -310,7 +305,6 @@ void address::sPopulate()
   usesQ.bindValue(":vendaddr",	tr("Vendor Address"));
   usesQ.bindValue(":whs",	tr("Site"));
   usesQ.exec();
-  _uses->clear();
   _uses->populate(usesQ, true);	// true => use alt id (to distinguish types)
 }
 

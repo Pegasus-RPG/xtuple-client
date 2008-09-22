@@ -57,47 +57,31 @@
 
 #include "booItemList.h"
 
+#include <QSqlError>
 #include <QVariant>
 
-/*
- *  Constructs a booItemList as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 booItemList::booItemList(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
-
-  // signals and slots connections
   connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
   connect(_select, SIGNAL(clicked()), this, SLOT(sSelect()));
-  connect(_booitem, SIGNAL(itemSelected(int)), _select, SLOT(animateClick()));
   connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
   connect(_clear, SIGNAL(clicked()), this, SLOT(sClear()));
 
-  _booitem->addColumn(tr("#"),           _seqColumn, Qt::AlignCenter );
-  _booitem->addColumn(tr("Description"), -1,         Qt::AlignLeft   );
+  _booitem->addColumn(tr("#"),           _seqColumn, Qt::AlignCenter,true, "booitem_seqnumber");
+  _booitem->addColumn(tr("Description"), -1,         Qt::AlignLeft,  true, "descrip");
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 booItemList::~booItemList()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void booItemList::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 enum SetResponse booItemList::set(const ParameterList &pParams)
@@ -137,12 +121,16 @@ void booItemList::sSelect()
 void booItemList::sFillList()
 {
   q.prepare( "SELECT booitem_seq_id, booitem_seqnumber,"
-             "       (booitem_descrip1 || ' ' || booitem_descrip2) "
-			 "FROM booitem(:item_id) "
+             "       (booitem_descrip1 || ' ' || booitem_descrip2) AS descrip "
+             "FROM booitem(:item_id) "
              "WHERE ( (CURRENT_DATE BETWEEN booitem_effective AND booitem_expires) ) "
              "ORDER BY booitem_seqnumber;" );
   q.bindValue(":item_id", _item->id());
   q.exec();
   _booitem->populate(q, _booitemseqid );
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
-

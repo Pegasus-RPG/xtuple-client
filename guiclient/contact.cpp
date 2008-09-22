@@ -95,8 +95,8 @@ contact::contact(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(omfgThis, SIGNAL(crmAccountsUpdated(int)), this, SLOT(sFillList()));
   connect(omfgThis, SIGNAL(customersUpdated(int,bool)), this, SLOT(sFillList()));
 
-  _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft );
-  _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft );
+  _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft, true, "char_name");
+  _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft, true, "charass_value");
 
   _uses->addColumn(tr("Used by"),         100, Qt::AlignLeft, true, "type");
   _uses->addColumn(tr("Number"), _orderColumn, Qt::AlignLeft, true, "number");
@@ -452,7 +452,6 @@ void contact::sFillList()
              "ORDER BY char_name;" );
   q.bindValue(":cntct_id", _contact->id());
   q.exec();
-  _charass->clear();
   _charass->populate(q);
   if (q.lastError().type() != QSqlError::None)
   {

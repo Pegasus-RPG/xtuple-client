@@ -79,8 +79,6 @@ addresses::addresses(QWidget* parent, const char* name, Qt::WFlags fl)
 {
     setupUi(this);
 
-//    (void)statusBar();
-
     // signals and slots connections
     connect(_address, SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*, int)), this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem*, int)));
     connect(_edit,		SIGNAL(clicked()),	this, SLOT(sEdit()));
@@ -91,16 +89,15 @@ addresses::addresses(QWidget* parent, const char* name, Qt::WFlags fl)
     connect(_new,		SIGNAL(clicked()),	this, SLOT(sNew()));
     connect(_activeOnly,	SIGNAL(toggled(bool)),	this, SLOT(sFillList()));
 
-//    //statusBar()->hide();
     _activeOnly->setChecked(true);
     
-    _address->addColumn(tr("Line 1"),	 -1, Qt::AlignLeft );
-    _address->addColumn(tr("Line 2"),	 75, Qt::AlignLeft );
-    _address->addColumn(tr("Line 3"),	 75, Qt::AlignLeft );
-    _address->addColumn(tr("City"),	 75, Qt::AlignLeft );
-    _address->addColumn(tr("State"),	 50, Qt::AlignLeft );
-    _address->addColumn(tr("Country"),	 50, Qt::AlignLeft );
-    _address->addColumn(tr("Postal Code"),50,Qt::AlignLeft );
+    _address->addColumn(tr("Line 1"),	 -1, Qt::AlignLeft, true, "addr_line1");
+    _address->addColumn(tr("Line 2"),	 75, Qt::AlignLeft, true, "addr_line2");
+    _address->addColumn(tr("Line 3"),	 75, Qt::AlignLeft, true, "addr_line3");
+    _address->addColumn(tr("City"),	 75, Qt::AlignLeft, true, "addr_city");
+    _address->addColumn(tr("State"),	 50, Qt::AlignLeft, true, "addr_state");
+    _address->addColumn(tr("Country"),	 50, Qt::AlignLeft, true, "addr_country");
+    _address->addColumn(tr("Postal Code"),50,Qt::AlignLeft, true, "addr_postalcode");
 
     if (_privileges->check("MaintainAddresses"))
     {

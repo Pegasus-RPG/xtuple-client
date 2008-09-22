@@ -57,53 +57,36 @@
 
 #include "commentTypes.h"
 
-#include <QVariant>
-//#include <QStatusBar>
 #include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
+
 #include <openreports.h>
 #include "commentType.h"
 
-/*
- *  Constructs a commentTypes as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 commentTypes::commentTypes(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_cmnttype, SIGNAL(currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)), this, SLOT(sHandleButtons()));
 
-//  statusBar()->hide();
-  
-  _cmnttype->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft   );
-  _cmnttype->addColumn(tr("Sys."),        _ynColumn,   Qt::AlignCenter );
-  _cmnttype->addColumn(tr("Description"), -1,          Qt::AlignLeft   );
+  _cmnttype->addColumn(tr("Name"), _itemColumn, Qt::AlignLeft,  true, "cmnttype_name");
+  _cmnttype->addColumn(tr("Sys."),   _ynColumn, Qt::AlignCenter,true, "cmnttype_sys");
+  _cmnttype->addColumn(tr("Description"),   -1, Qt::AlignLeft,  true, "cmnttype_descrip");
 
   sFillList();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 commentTypes::~commentTypes()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void commentTypes::languageChange()
 {
   retranslateUi(this);
@@ -112,16 +95,16 @@ void commentTypes::languageChange()
 void commentTypes::sFillList()
 {
   q.prepare( "SELECT cmnttype_id, cmnttype_name,"
-             "       CASE WHEN (cmnttype_sys) THEN :yes"
-             "            ELSE :no"
-             "       END,"
-             "       cmnttype_descrip "
+             "       cmnttype_sys, cmnttype_descrip "
              "FROM cmnttype "
              "ORDER BY cmnttype_name;" );
-  q.bindValue(":yes", tr("Yes"));
-  q.bindValue(":no", tr("No"));
   q.exec();
   _cmnttype->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void commentTypes::sHandleButtons()
@@ -130,7 +113,7 @@ void commentTypes::sHandleButtons()
 
   XTreeWidgetItem *selected = (XTreeWidgetItem*)_cmnttype->currentItem();
   if (selected)
-    enableButtons = (selected->text(1) == tr("No"));
+    enableButtons = ! selected->rawValue("cmnttype_sys").toBool();
   else
     enableButtons = FALSE;
 
@@ -207,4 +190,3 @@ void commentTypes::sPrint()
   else
     report.reportError(this);
 }
-

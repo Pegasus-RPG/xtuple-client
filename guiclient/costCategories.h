@@ -86,9 +86,6 @@ public slots:
 protected slots:
     virtual void languageChange();
 
-    virtual void init();
-
-
 };
 
 #endif // COSTCATEGORIES_H

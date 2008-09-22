@@ -57,69 +57,34 @@
 
 #include "booList.h"
 
-#include <QVariant>
-//#include <QStatusBar>
+#include <QMenu>
 #include <QMessageBox>
-#include <QWorkspace>
+#include <QSqlError>
+#include <QVariant>
+
 #include <parameter.h>
 #include <openreports.h>
+
 #include "boo.h"
 #include "copyBOO.h"
 
-/*
- *  Constructs a booList as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 booList::booList(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-//    (void)statusBar();
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_copy, SIGNAL(clicked()), this, SLOT(sCopy()));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_searchFor, SIGNAL(textChanged(const QString&)), this, SLOT(sSearch(const QString&)));
+  connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
+  connect(_boo, SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *, int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
+  connect(_showInactive, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-    connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-    connect(_copy, SIGNAL(clicked()), this, SLOT(sCopy()));
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_searchFor, SIGNAL(textChanged(const QString&)), this, SLOT(sSearch(const QString&)));
-    connect(_boo, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
-    connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
-    connect(_boo, SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *, int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_boo, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
-    connect(_showInactive, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-booList::~booList()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void booList::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void booList::init()
-{
-//  statusBar()->hide();
-  
-  _boo->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft );
-  _boo->addColumn(tr("Description"), -1,          Qt::AlignLeft );
+  _boo->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft, true, "item_number");
+  _boo->addColumn(tr("Description"), -1,          Qt::AlignLeft, true, "descrip");
   
   connect(omfgThis, SIGNAL(boosUpdated(int, bool)), SLOT(sFillList(int, bool)));
 
@@ -142,6 +107,16 @@ void booList::init()
   _searchFor->setFocus();
 }
 
+booList::~booList()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void booList::languageChange()
+{
+  retranslateUi(this);
+}
+
 void booList::sCopy()
 {
   ParameterList params;
@@ -156,21 +131,30 @@ void booList::sDelete()
 {
 
   q.prepare("SELECT booitem_id "
-	        "FROM booitem "
-			"WHERE ((booitem_item_id=:item_id) "
-			"AND (booitem_rev_id > -1));");
+            "FROM booitem "
+            "WHERE ((booitem_item_id=:item_id) "
+            "   AND (booitem_rev_id > -1));");
   q.bindValue(":item_id",_boo->id());
   q.exec();
   if (q.first())
   {
     QMessageBox::critical(  this, tr("Delete Bill of Operations"),
-                                tr("The selected Bill of Operations has revision control records and may not be deleted."));
+                                tr("<p>The selected Bill of Operations has "
+                                   "revision control records and may not be "
+                                   "deleted."));
 	return;
   }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
-  if (  QMessageBox::critical(  this, tr("Delete Bill of Operations"),
-                                tr("Are you sure that you want to delete the selected BOO?"),
-                                tr("&Yes"), tr("&No"), QString::null, 0, 1 ) == 0  )
+  if (  QMessageBox::question(  this, tr("Delete Bill of Operations"),
+                                tr("<p>Are you sure that you want to delete "
+                                   "the selected BOO?"),
+				  QMessageBox::Yes,
+				  QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
 
   {
     q.prepare( "DELETE FROM boohead "
@@ -179,6 +163,11 @@ void booList::sDelete()
                "WHERE (booitem_item_id=:item_id);" );
     q.bindValue(":item_id", _boo->id());
     q.exec();
+    if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
 
     omfgThis->sBOOsUpdated(_boo->id(), TRUE);
   }
@@ -224,7 +213,8 @@ void booList::sFillList( int pItemid, bool pLocal )
                 "   0 "
                 " ELSE 1 "
                 " END AS revcontrol, "
-                " item_number, (item_descrip1 || ' ' || item_descrip2) "
+                " item_number,"
+                "(item_descrip1 || ' ' || item_descrip2) AS descrip "
                 "FROM item "
                 "  LEFT OUTER JOIN booitem ON (item_id=booitem_item_id) "
                 "  LEFT OUTER JOIN boohead ON (item_id=boohead_item_id) "
@@ -241,6 +231,12 @@ void booList::sFillList( int pItemid, bool pLocal )
     _boo->populate(sql, TRUE, pItemid);
   else
     _boo->populate(sql, TRUE);
+
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void booList::sFillList()

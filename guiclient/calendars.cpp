@@ -57,61 +57,36 @@
 
 #include "calendars.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-//#include <qstatusbar.h>
+#include <QMessageBox>
+#include <QVariant>
+
 #include <parameter.h>
+
 #include "calendar.h"
 
-/*
- *  Constructs a calendars as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 calendars::calendars(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-//    (void)statusBar();
-
-    // signals and slots connections
-    connect(_calhead, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
-    connect(_calhead, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
-    connect(_calhead, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
-    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-    connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-calendars::~calendars()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void calendars::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void calendars::init()
-{
-//  statusBar()->hide();
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   
-  _calhead->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft );
-  _calhead->addColumn(tr("Description"), -1,          Qt::AlignLeft );
+  _calhead->addColumn(tr("Name"), _itemColumn, Qt::AlignLeft, true, "calhead_name");
+  _calhead->addColumn(tr("Description"),   -1, Qt::AlignLeft, true, "calhead_descrip");
 
   sFillList();
+}
+
+calendars::~calendars()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void calendars::languageChange()
+{
+  retranslateUi(this);
 }
 
 void calendars::sNew()
@@ -179,4 +154,3 @@ void calendars::sFillList()
                       "FROM calhead "
                       "ORDER BY calhead_name;", TRUE );
 }
-

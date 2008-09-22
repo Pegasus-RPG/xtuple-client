@@ -57,62 +57,29 @@
 
 #include "apAccountAssignments.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-//#include <qstatusbar.h>
+#include <QVariant>
+#include <QMessageBox>
+
 #include <parameter.h>
 #include <openreports.h>
+
 #include "apAccountAssignment.h"
 
-/*
- *  Constructs a apAccountAssignments as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 apAccountAssignments::apAccountAssignments(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-//    (void)statusBar();
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-    connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
-    connect(_apaccnt, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-apAccountAssignments::~apAccountAssignments()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void apAccountAssignments::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void apAccountAssignments::init()
-{
-//  //statusBar()->hide();
-  
-  _apaccnt->addColumn(tr("Vendor Type"),      -1, Qt::AlignCenter );
-  _apaccnt->addColumn(tr("A/P Account"),     120, Qt::AlignLeft   );
-  _apaccnt->addColumn(tr("Prepaid Account"), 120, Qt::AlignLeft   );
-  _apaccnt->addColumn(tr("Discount Account"),120, Qt::AlignLeft   );
+  _apaccnt->addColumn(tr("Vendor Type"),      -1, Qt::AlignCenter,true, "vendtypecode");
+  _apaccnt->addColumn(tr("A/P Account"),     120, Qt::AlignLeft,  true, "apaccnt");
+  _apaccnt->addColumn(tr("Prepaid Account"), 120, Qt::AlignLeft,  true, "prepaidaccnt");
+  _apaccnt->addColumn(tr("Discount Account"),120, Qt::AlignLeft,  true, "discountaccnt");
 
   if (_privileges->check("MaintainVendorAccounts"))
   {
@@ -127,6 +94,16 @@ void apAccountAssignments::init()
   }
 
   sFillList();
+}
+
+apAccountAssignments::~apAccountAssignments()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void apAccountAssignments::languageChange()
+{
+    retranslateUi(this);
 }
 
 void apAccountAssignments::sPrint()
@@ -190,9 +167,9 @@ void apAccountAssignments::sFillList()
              "            WHEN (apaccnt_vendtype<> '') THEN apaccnt_vendtype"
              "            ELSE (SELECT vendtype_code FROM vendtype WHERE (vendtype_id=apaccnt_vendtype_id))"
              "       END AS vendtypecode,"
-             "       formatGLAccount(apaccnt_ap_accnt_id),"
-             "       formatGLAccount(apaccnt_prepaid_accnt_id),"
-             "       formatGLAccount(apaccnt_discount_accnt_id) "
+             "       formatGLAccount(apaccnt_ap_accnt_id) AS apaccnt,"
+             "       formatGLAccount(apaccnt_prepaid_accnt_id) AS prepaidaccnt,"
+             "       formatGLAccount(apaccnt_discount_accnt_id) AS discountaccnt "
              "FROM apaccnt "
              "ORDER BY vendtypecode;" );
   q.bindValue(":all", tr("All"));

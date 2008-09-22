@@ -57,57 +57,36 @@
 
 #include "booitemImage.h"
 
-#include <qvariant.h>
+#include <QSqlError>
+#include <QVariant>
+
 #include "image.h"
 
-/*
- *  Constructs a booitemImage as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 booitemImage::booitemImage(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
 
-    // signals and slots connections
-    connect(_image, SIGNAL(valid(bool)), _save, SLOT(setEnabled(bool)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-booitemImage::~booitemImage()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void booitemImage::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void booitemImage::init()
-{
-  _image->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft );
-  _image->addColumn(tr("Description"), -1,          Qt::AlignLeft );
+  _image->addColumn(tr("Name"), _itemColumn, Qt::AlignLeft, true, "image_name");
+  _image->addColumn(tr("Description"),   -1, Qt::AlignLeft, true, "descrip");
 
   sFillList();
 }
 
-enum SetResponse booitemImage::set(ParameterList &pParams)
+booitemImage::~booitemImage()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void booitemImage::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse booitemImage::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -175,6 +154,11 @@ void booitemImage::sSave()
         _booimageid = booimageid.value("booimage_id").toInt();
         _mode = cEdit;
       }
+      else if (booimageid.lastError().type() != QSqlError::None)
+      {
+	systemError(this, booimageid.lastError().databaseText(), __FILE__, __LINE__);
+	return;
+      }
     }
       
     if (_booimageid == -1)
@@ -184,7 +168,11 @@ void booitemImage::sSave()
       booimageid.exec();
       if (booimageid.first())
         _booimageid = booimageid.value("_booimage_id").toInt();
-//  ToDo
+      else if (booimageid.lastError().type() != QSqlError::None)
+      {
+	systemError(this, booimageid.lastError().databaseText(), __FILE__, __LINE__);
+	return;
+      }
     }
 
     newImage.prepare( "INSERT INTO booimage "
@@ -204,6 +192,11 @@ void booitemImage::sSave()
   newImage.bindValue(":booimage_purpose", purpose);
 
   newImage.exec();
+  if (newImage.lastError().type() != QSqlError::None)
+  {
+    systemError(this, newImage.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   done(_booimageid);
 }
@@ -222,9 +215,18 @@ void booitemImage::sNew()
 
 void booitemImage::sFillList()
 {
-  _image->populate( "SELECT image_id, image_name, firstLine(image_descrip) "
-                    "FROM image "
-                    "ORDER BY image_name;" );
+  XSqlQuery iq;
+  iq.prepare("SELECT image_id, image_name, "
+             "       firstLine(image_descrip) AS descrip "
+             "FROM image "
+             "ORDER BY image_name;" );
+  iq.exec();
+  _image->populate(iq);
+  if (iq.lastError().type() != QSqlError::None)
+  {
+    systemError(this, iq.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void booitemImage::populate()
@@ -251,4 +253,3 @@ void booitemImage::populate()
     _image->setId(booimage.value("booimage_image_id").toInt());
   }
 }
-

@@ -79,8 +79,8 @@ bomList::bomList(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_showInactive, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
 
-  _bom->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft );
-  _bom->addColumn(tr("Description"), -1,          Qt::AlignLeft );
+  _bom->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft, true, "item_number");
+  _bom->addColumn(tr("Description"), -1,          Qt::AlignLeft, true, "descrip");
   
   connect(omfgThis, SIGNAL(bomsUpdated(int, bool)), SLOT(sFillList(int, bool)));
   
@@ -158,7 +158,7 @@ void bomList::sFillList( int pItemid, bool pLocal )
         "   0 "
         " ELSE 1 "
         " END AS revcontrol, "
-        " item_number, (item_descrip1 || ' ' || item_descrip2) "
+        " item_number, (item_descrip1 || ' ' || item_descrip2) AS descrip "
         "FROM item "
         "  LEFT OUTER JOIN bomitem ON (item_id=bomitem_parent_item_id) "
         "  LEFT OUTER JOIN bomhead ON (item_id=bomhead_item_id) "
@@ -239,4 +239,3 @@ void bomList::sHandleButtons()
   else
     _delete->setEnabled(FALSE);
 }
-

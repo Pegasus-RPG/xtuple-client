@@ -57,41 +57,31 @@
 
 #include "arAccountAssignments.h"
 
-#include <QVariant>
 #include <QMessageBox>
-//#include <QStatusBar>
+#include <QVariant>
+
 #include <parameter.h>
 #include <openreports.h>
 #include "arAccountAssignment.h"
 #include "guiclient.h"
 
-/*
- *  Constructs a arAccountAssignments as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 arAccountAssignments::arAccountAssignments(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
-  connect(_araccnt, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
   
-  _araccnt->addColumn(tr("Customer Type"),   -1,  Qt::AlignCenter );
-  _araccnt->addColumn(tr("A/R Account"),     120, Qt::AlignLeft   );
-  _araccnt->addColumn(tr("Prepaid Account"), 120, Qt::AlignLeft   );
-  _araccnt->addColumn(tr("Freight Account"), 120, Qt::AlignLeft   );
+  _araccnt->addColumn(tr("Customer Type"),   -1,  Qt::AlignCenter, true, "custtypecode");
+  _araccnt->addColumn(tr("A/R Account"),     120, Qt::AlignLeft,  true, "araccnt");
+  _araccnt->addColumn(tr("Prepaid Account"), 120, Qt::AlignLeft,  true, "prepaidaccnt");
+  _araccnt->addColumn(tr("Freight Account"), 120, Qt::AlignLeft,  true, "freightaccnt");
   if(_metrics->boolean("EnableCustomerDeposits"))
-    _araccnt->addColumn(tr("Deferred Rev. Account"), 120, Qt::AlignLeft );
+    _araccnt->addColumn(tr("Deferred Rev. Account"), 120, Qt::AlignLeft, true, "deferredaccnt");
 
   if (_privileges->check("MaintainSalesAccount"))
   {
@@ -108,18 +98,11 @@ arAccountAssignments::arAccountAssignments(QWidget* parent, const char* name, Qt
   sFillList();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 arAccountAssignments::~arAccountAssignments()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void arAccountAssignments::languageChange()
 {
   retranslateUi(this);
@@ -185,10 +168,10 @@ void arAccountAssignments::sFillList()
                       "       CASE WHEN araccnt_custtype_id=-1 THEN araccnt_custtype"
                       "            ELSE (SELECT custtype_code FROM custtype WHERE (custtype_id=araccnt_custtype_id))"
                       "       END AS custtypecode,"
-                      "       formatGLAccount(araccnt_ar_accnt_id),"
-                      "       formatGLAccount(araccnt_prepaid_accnt_id),"
-                      "       formatGLAccount(araccnt_freight_accnt_id),"
-                      "       formatGLAccount(araccnt_deferred_accnt_id) "
+                      "       formatGLAccount(araccnt_ar_accnt_id) AS araccnt,"
+                      "       formatGLAccount(araccnt_prepaid_accnt_id) AS prepaidaccnt,"
+                      "       formatGLAccount(araccnt_freight_accnt_id) AS freightaccnt,"
+                      "       formatGLAccount(araccnt_deferred_accnt_id) AS deferredaccnt "
                       "  FROM araccnt "
                       " ORDER BY custtypecode;" );
 }

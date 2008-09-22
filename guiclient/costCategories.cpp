@@ -57,65 +57,30 @@
 
 #include "costCategories.h"
 
-#include <QVariant>
+#include <QMenu>
 #include <QMessageBox>
-//#include <QStatusBar>
-#include <QWorkspace>
+#include <QSqlError>
+#include <QVariant>
+
 #include <openreports.h>
 #include "costCategory.h"
 #include "dspItemSitesByParameterList.h"
 
-/*
- *  Constructs a costCategories as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 costCategories::costCategories(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-//    (void)statusBar();
-
-    // signals and slots connections
-    connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-    connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-    connect(_copy, SIGNAL(clicked()), this, SLOT(sCopy()));
-    connect(_costcat, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
-    connect(_costcat, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-costCategories::~costCategories()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void costCategories::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void costCategories::init()
-{
-//  statusBar()->hide();
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_copy, SIGNAL(clicked()), this, SLOT(sCopy()));
+  connect(_costcat, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
   
-  _costcat->addColumn(tr("Category"),    _itemColumn, Qt::AlignLeft   );
-  _costcat->addColumn(tr("Description"), -1,          Qt::AlignLeft   );
+  _costcat->addColumn(tr("Category"), _itemColumn, Qt::AlignLeft, true, "costcat_code");
+  _costcat->addColumn(tr("Description"),       -1, Qt::AlignLeft, true, "costcat_descrip");
 
   if (_privileges->check("MaintainCostCategories"))
   {
@@ -131,6 +96,16 @@ void costCategories::init()
   }
 
   sFillList();
+}
+
+costCategories::~costCategories()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void costCategories::languageChange()
+{
+  retranslateUi(this);
 }
 
 void costCategories::sPrint()
@@ -193,9 +168,10 @@ void costCategories::sCopy()
 
 void costCategories::sDelete()
 {
-  if ( QMessageBox::information( this, tr("Delete Cost Category"),
-                                 tr("Are you sure that you want to delete the selected Cost Category?"),
-                                 tr("&Delete"), tr("&Cancel"), 0, 0, 1 ) == 0 )
+  if ( QMessageBox::question(this, tr("Delete Cost Category"),
+                             tr("<p>Are you sure that you want to delete the selected Cost Category?"),
+                             QMessageBox::Yes,
+                             QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
   {
     q.prepare( "SELECT itemsite_id "
                "FROM itemsite "
@@ -205,9 +181,15 @@ void costCategories::sDelete()
     q.exec();
     if (q.first())
       QMessageBox::information( this, tr("Cost Category in Use"),
-                                tr( "The selected Cost Category cannot be deleted as it still contains Items.\n"
-                                    "You must reassign these Items before deleting this Cost Category.") );
-
+                                tr("<p>The selected Cost Category cannot be "
+                                   "deleted as it still contains Items. You "
+                                   "must reassign these Items before deleting "
+                                   "this Cost Category.") );
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
     else
     {
       q.prepare( "DELETE FROM costcat "

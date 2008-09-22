@@ -57,62 +57,39 @@
 
 #include "checkFormats.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-//#include <qstatusbar.h>
+#include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
+
 #include <parameter.h>
+
 #include "checkFormat.h"
 #include "guiclient.h"
+#include "storedProcErrorLookup.h"
 
-/*
- *  Constructs a checkFormats as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 checkFormats::checkFormats(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-//    (void)statusBar();
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
 
-    // signals and slots connections
-    connect(_form, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
-    connect(_form, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
-    connect(_form, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
-    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-    connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-checkFormats::~checkFormats()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void checkFormats::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void checkFormats::init()
-{
-//  statusBar()->hide();
-  
-  _form->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft );
-  _form->addColumn(tr("Description"), -1,          Qt::AlignLeft );
+  _form->addColumn(tr("Name"), _itemColumn, Qt::AlignLeft, true, "form_name");
+  _form->addColumn(tr("Description"),   -1, Qt::AlignLeft, true, "form_descrip");
 
   sFillList();
+}
+
+checkFormats::~checkFormats()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void checkFormats::languageChange()
+{
+  retranslateUi(this);
 }
 
 void checkFormats::sNew()
@@ -147,17 +124,21 @@ void checkFormats::sDelete()
   q.exec();
   if (q.first())
   {
-    switch (q.value("result").toInt())
+    int result = q.value("result").toInt();
+    if (result < 0)
     {
-      case -1:
-        QMessageBox::critical( this, tr("Cannot Delete Check Form"),
-                               tr( "The selected Check Format cannot be deleted as it is used by one or more Bank Accounts.\n"
-                                   "You must reassign these Bank Accounts before you may delete the selected Check Form." ) );
-        return;
+      systemError(this, storedProcErrorLookup("deleteForm", result),
+                  __FILE__, __LINE__);
+      return;
     }
-
-    sFillList();
   }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
+  sFillList();
 }
 
 void checkFormats::sFillList()

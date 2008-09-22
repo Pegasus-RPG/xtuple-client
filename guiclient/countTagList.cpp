@@ -57,54 +57,33 @@
 
 #include "countTagList.h"
 
+#include <QSqlError>
 #include <QVariant>
 
-/*
- *  Constructs a countTagList as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 countTagList::countTagList(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
+  connect(_select, SIGNAL(clicked()), this, SLOT(sSelect()));
+  connect(_searchFor, SIGNAL(textChanged(const QString&)), this, SLOT(sSearch(const QString&)));
+  connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
 
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
-    connect(_select, SIGNAL(clicked()), this, SLOT(sSelect()));
-    connect(_cnttag, SIGNAL(valid(bool)), _select, SLOT(setEnabled(bool)));
-    connect(_cnttag, SIGNAL(itemSelected(int)), _select, SLOT(animateClick()));
-    connect(_searchFor, SIGNAL(textChanged(const QString&)), this, SLOT(sSearch(const QString&)));
-    connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
-    init();
+  _cnttag->addColumn(tr("Tag #"),       _orderColumn, Qt::AlignLeft,  true, "invcnt_tagnumber");
+  _cnttag->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft,  true, "item_number");
+  _cnttag->addColumn(tr("Description"), -1,           Qt::AlignLeft,  true, "item_descrip1");
+  _cnttag->addColumn(tr("Site"),        _whsColumn,   Qt::AlignCenter,true, "warehous_code");
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 countTagList::~countTagList()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void countTagList::languageChange()
 {
-    retranslateUi(this);
-}
-
-void countTagList::init()
-{
-  _cnttag->addColumn(tr("Tag #"),       _orderColumn, Qt::AlignLeft   );
-  _cnttag->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft   );
-  _cnttag->addColumn(tr("Description"), -1,           Qt::AlignLeft   );
-  _cnttag->addColumn(tr("Site"),        _whsColumn,   Qt::AlignCenter );
+  retranslateUi(this);
 }
 
 enum SetResponse countTagList::set(ParameterList &pParams)
@@ -149,6 +128,11 @@ void countTagList::sFillList()
   q.exec();
 
   _cnttag->populate(q, _cnttagid);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void countTagList::sClose()
@@ -177,4 +161,3 @@ void countTagList::sSearch(const QString &pTarget)
     _cnttag->scrollToItem(_cnttag->topLevelItem(i));
   }
 }
-

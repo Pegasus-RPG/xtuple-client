@@ -60,7 +60,6 @@
 #include <QMessageBox>
 #include <QSqlError>
 #include <QVariant>
-#include <QDebug>
 
 #include "booitemImage.h"
 
@@ -115,9 +114,9 @@ booItem::booItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _runReport->insertItem(tr("None"));
   _runReport->setCurrentItem(-1);
 
-  _booimage->addColumn(tr("Image Name"),  _itemColumn, Qt::AlignLeft );
-  _booimage->addColumn(tr("Description"), -1,          Qt::AlignLeft );
-  _booimage->addColumn(tr("Purpose"),     _itemColumn, Qt::AlignLeft );
+  _booimage->addColumn(tr("Image Name"),  _itemColumn, Qt::AlignLeft, true, "image_name");
+  _booimage->addColumn(tr("Description"), -1,          Qt::AlignLeft, true, "descrip");
+  _booimage->addColumn(tr("Purpose"),     _itemColumn, Qt::AlignLeft, true, "purpose");
 
   _runTimePer->setValidator(omfgThis->qtyVal());
   _invProdUOMRatio->setValidator(omfgThis->ratioVal());
@@ -619,13 +618,13 @@ void booItem::sDeleteImage()
 
 void booItem::sFillImageList()
 {
-  q.prepare( "SELECT booimage_id, image_name, firstLine(image_descrip),"
+  q.prepare( "SELECT booimage_id, image_name, firstLine(image_descrip) AS descrip,"
              "       CASE WHEN (booimage_purpose='I') THEN :inventory"
              "            WHEN (booimage_purpose='P') THEN :product"
              "            WHEN (booimage_purpose='E') THEN :engineering"
              "            WHEN (booimage_purpose='M') THEN :misc"
              "            ELSE :other"
-             "       END "
+             "       END AS purpose "
              "FROM booimage, image "
              "WHERE ( (booimage_image_id=image_id)"
              " AND (booimage_booitem_id=:booitem_id) ) "
