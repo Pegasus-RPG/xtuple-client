@@ -82,16 +82,16 @@ enterPoReturn::enterPoReturn(QWidget* parent, const char* name, Qt::WFlags fl)
 
   sShowClosed();
   
-  _poitem->addColumn(tr("#"),            _whsColumn,  Qt::AlignCenter );
-  _poitem->addColumn(tr("Site"),         _whsColumn,  Qt::AlignLeft   );
-  _poitem->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft   );
-  _poitem->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignCenter );
-  _poitem->addColumn(tr("Vend. Item #"), -1,          Qt::AlignLeft   );
-  _poitem->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignCenter );
-  _poitem->addColumn(tr("Ordered"),      _qtyColumn,  Qt::AlignRight  );
-  _poitem->addColumn(tr("Received"),     _qtyColumn,  Qt::AlignRight  );
-  _poitem->addColumn(tr("Returned"),     _qtyColumn,  Qt::AlignRight  );
-  _poitem->addColumn(tr("To Return"),    _qtyColumn,  Qt::AlignRight  );
+  _poitem->addColumn(tr("#"),            _whsColumn,  Qt::AlignCenter , true, "poitem_linenumber");
+  _poitem->addColumn(tr("Site"),         _whsColumn,  Qt::AlignLeft   , true, "warehous_code");
+  _poitem->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft   , true, "item_number");
+  _poitem->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignCenter , true, "inv_uom");
+  _poitem->addColumn(tr("Vend. Item #"), -1,          Qt::AlignLeft   , true, "poitem_vend_item_number");
+  _poitem->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignCenter , true, "poitem_vend_uom");
+  _poitem->addColumn(tr("Ordered"),      _qtyColumn,  Qt::AlignRight  , true, "poitem_qty_ordered");
+  _poitem->addColumn(tr("Received"),     _qtyColumn,  Qt::AlignRight  , true, "poitem_qty_received");
+  _poitem->addColumn(tr("Returned"),     _qtyColumn,  Qt::AlignRight  , true, "poitem_qty_returned");
+  _poitem->addColumn(tr("To Return"),    _qtyColumn,  Qt::AlignRight  , true, "poitem_qty_toreturn");
 
   _returnAddr->setEnabled(_printReport->isChecked());
 }
@@ -308,16 +308,20 @@ void enterPoReturn::sFillList()
 
     QString sql( "SELECT poitem_id, poitem_linenumber,"
                "       warehous_code, "
-               "       COALESCE(item_number, <? value(\"nonInventory\") ?>),"
-               "       COALESCE(uom_name, <? value(\"na\") ?>),"
+               "       COALESCE(item_number, <? value(\"nonInventory\") ?>) AS item_number,"
+               "       COALESCE(uom_name, <? value(\"na\") ?>) AS inv_uom,"
                "       poitem_vend_item_number, poitem_vend_uom,"
-               "       formatQty(poitem_qty_ordered),"
-               "       formatQty(poitem_qty_received),"
-               "       formatQty(poitem_qty_returned),"
-               "       formatQty( COALESCE( ( SELECT SUM(poreject_qty)"
+               "       poitem_qty_ordered,"
+               "       poitem_qty_received,"
+               "       poitem_qty_returned,"
+               "       COALESCE( ( SELECT SUM(poreject_qty)"
                "                              FROM poreject"
                "                              WHERE ( (poreject_poitem_id=poitem_id)"
-               "                               AND (NOT poreject_posted) ) ), 0 ) ) "
+               "                               AND (NOT poreject_posted) ) ), 0 ) AS poitem_qty_toreturn, "
+               "      'qty' AS poitem_qty_ordered_xtnumericrole, "
+               "      'qty' AS poitem_qty_received_xtnumericrole, "
+               "      'qty' AS poitem_qty_returned_xtnumericrole, "
+               "      'qty' AS poitem_qty_toreturn_xtnumericrole "
                "FROM poitem LEFT OUTER JOIN "
                "     ( itemsite "
                "        JOIN item ON (itemsite_item_id=item_id) "

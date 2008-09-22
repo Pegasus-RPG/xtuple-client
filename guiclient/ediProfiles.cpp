@@ -110,7 +110,7 @@ void ediProfiles::init()
 {
 //  statusBar()->hide();
   
-  _ediprofile->addColumn(tr("Profile Name"), -1,          Qt::AlignLeft   );
+  _ediprofile->addColumn(tr("Profile Name"), -1, Qt::AlignLeft, true, "ediprofile_name" );
 
   sFillList();
 }

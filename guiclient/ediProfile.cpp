@@ -110,8 +110,8 @@ void ediProfile::init()
   _mode = cNew;
   _ediprofileid = -1;
 
-  _forms->addColumn(tr("Type"),           -1, Qt::AlignLeft );
-  _forms->addColumn(tr("Output"), _itemColumn, Qt::AlignLeft );
+  _forms->addColumn(tr("Type"),           -1, Qt::AlignLeft, true, "ediform_type" );
+  _forms->addColumn(tr("Output"), _itemColumn, Qt::AlignLeft, true, "ediform_output" );
 }
 
 enum SetResponse ediProfile::set( const ParameterList & pParams )

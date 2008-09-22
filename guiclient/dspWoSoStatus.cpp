@@ -84,16 +84,16 @@ dspWoSoStatus::dspWoSoStatus(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_wo, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_autoUpdate, SIGNAL(toggled(bool)), this, SLOT(sHandleAutoUpdate(bool)));
 
-  _wo->addColumn(tr("W/O #"),       _orderColumn,  Qt::AlignLeft   );
-  _wo->addColumn(tr("Status"),      _statusColumn, Qt::AlignCenter );
-  _wo->addColumn(tr("Item Number"), -1,            Qt::AlignLeft   );
-  _wo->addColumn(tr("UOM"),         _uomColumn,    Qt::AlignLeft   );
-  _wo->addColumn(tr("Site"),        _whsColumn,    Qt::AlignCenter );
-  _wo->addColumn(tr("S/O #"),       _orderColumn,  Qt::AlignLeft   );
-  _wo->addColumn(tr("Ordered"),     _qtyColumn,    Qt::AlignRight  );
-  _wo->addColumn(tr("Received"),    _qtyColumn,    Qt::AlignRight  );
-  _wo->addColumn(tr("Start Date"),  _dateColumn,   Qt::AlignCenter );
-  _wo->addColumn(tr("Due Date"),    _dateColumn,   Qt::AlignCenter );
+  _wo->addColumn(tr("W/O #"),       _orderColumn,  Qt::AlignLeft   , true, "wonumber" );
+  _wo->addColumn(tr("Status"),      _statusColumn, Qt::AlignCenter , true, "wo_status");
+  _wo->addColumn(tr("Item Number"), -1,            Qt::AlignLeft   , true, "item_number");
+  _wo->addColumn(tr("UOM"),         _uomColumn,    Qt::AlignLeft   , true, "uom_name");
+  _wo->addColumn(tr("Site"),        _whsColumn,    Qt::AlignCenter , true, "warehous_code");
+  _wo->addColumn(tr("S/O #"),       _orderColumn,  Qt::AlignLeft   , true, "cohead_number");
+  _wo->addColumn(tr("Ordered"),     _qtyColumn,    Qt::AlignRight  , true, "wo_qtyord");
+  _wo->addColumn(tr("Received"),    _qtyColumn,    Qt::AlignRight  , true, "wo_qtyrcv");
+  _wo->addColumn(tr("Start Date"),  _dateColumn,   Qt::AlignCenter , true, "wo_startdate");
+  _wo->addColumn(tr("Due Date"),    _dateColumn,   Qt::AlignCenter , true, "wo_duedate");
 
   sFillList();
   sHandleAutoUpdate(_autoUpdate->isChecked());
@@ -166,10 +166,12 @@ void dspWoSoStatus::sFillList()
                "       wo_status, item_number, uom_name,"
                "       warehous_code,"
                "       cohead_number,"
-               "       formatQty(wo_qtyord) AS qtyord,"
-               "       formatQty(wo_qtyrcv) AS qtyrcv,"
-               "       formatDate(wo_startdate) AS startdate,"
-               "       formatDate(wo_duedate) AS duedate "
+               "       wo_qtyord,"
+               "       wo_qtyrcv,"
+               "       wo_startdate,"
+               "       wo_duedate, "
+               "       'qty' AS wo_qtyord_xtnumericrole, "
+               "       'qty' AS wo_qtyrcv_xtnumericrole "
                "FROM coitem, cohead, wo, itemsite, warehous, item, uom "
                "WHERE ( (coitem_cohead_id=cohead_id)"
                " AND (coitem_order_id=wo_id)"

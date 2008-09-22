@@ -182,24 +182,24 @@ void duplicateAccountNumbers::sBuildList()
   _account->setColumnCount(0);
 
   if(bComp)
-    _account->addColumn(tr("Company"), 50, Qt::AlignCenter);
+    _account->addColumn(tr("Company"), 50, Qt::AlignCenter, true, "accnt_company");
   _changeCompany->setVisible(bComp);
   _company->setVisible(bComp);
 
   if(bProf)
-    _account->addColumn(tr("Profit"), 50, Qt::AlignCenter);
+    _account->addColumn(tr("Profit"), 50, Qt::AlignCenter, true, "accnt_profit");
   _changeProfit->setVisible(bProf);
   _profit->setVisible(bProf);
 
-  _account->addColumn(tr("Account Number"), 100, Qt::AlignCenter);
+  _account->addColumn(tr("Account Number"), 100, Qt::AlignCenter, true, "accnt_number");
 
   if(bSub)
-    _account->addColumn(tr("Sub."), 50, Qt::AlignCenter);
+    _account->addColumn(tr("Sub."), 50, Qt::AlignCenter, true, "accnt_sub");
   _changeSub->setVisible(bSub);
   _sub->setVisible(bSub);
 
-  _account->addColumn(tr("Description"), -1, Qt::AlignLeft);
-  _account->addColumn(tr("Type"), _ynColumn, Qt::AlignCenter);
+  _account->addColumn(tr("Description"), -1, Qt::AlignLeft, true, "accnt_descrip");
+  _account->addColumn(tr("Type"), _ynColumn, Qt::AlignCenter, true, "accnt_type");
 
   sFillList();
 }

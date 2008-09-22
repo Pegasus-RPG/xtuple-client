@@ -75,8 +75,8 @@ empGroups::empGroups(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
   
-  _empgrp->addColumn(tr("Name"), _itemColumn, Qt::AlignLeft, "empgrp_name");
-  _empgrp->addColumn(tr("Description"),   -1, Qt::AlignLeft, "empgrp_descrip");
+  _empgrp->addColumn(tr("Name"), _itemColumn, Qt::AlignLeft, true, "empgrp_name");
+  _empgrp->addColumn(tr("Description"),   -1, Qt::AlignLeft, true, "empgrp_descrip");
   
   if (_privileges->check("MaintainEmployeeGroups"))
   {

@@ -78,8 +78,8 @@ ediForm::ediForm(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     _ediprofileid = -1;
     _ediformid = -1;
 
-    _csvDetails->addColumn(tr("Order"), _seqColumn, Qt::AlignLeft );
-    _csvDetails->addColumn(tr("Name"),          -1, Qt::AlignLeft );
+    _csvDetails->addColumn(tr("Order"), _seqColumn, Qt::AlignLeft, true, "ediformdetail_order" );
+    _csvDetails->addColumn(tr("Name"),          -1, Qt::AlignLeft, true, "ediformdetail_name" );
 
     sTypeSelected(0);
 }
