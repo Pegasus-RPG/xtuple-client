@@ -60,7 +60,6 @@
 #include <QVariant>
 #include <QMessageBox>
 #include <openreports.h>
-#include "rwInterface.h"
 
 /*
  *  Constructs a postBillingSelections as a child of 'parent', with the

@@ -166,10 +166,6 @@ class menuSystem : public QObject
     void sCommunityDownloads();
     void sRegister();
 
-// START_RW
-    void sConfigureAccountingSystemInterface();
-// END_RW
-
   private:
     GUIClient *parent;
 

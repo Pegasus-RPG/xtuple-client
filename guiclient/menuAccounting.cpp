@@ -198,11 +198,6 @@
 #include "createRecurringInvoices.h"
 #include "syncCompanies.h"
 
-// START_RW
-#include "postGLTransactionsToExternal.h"
-#include "dspRWTransactions.h"
-// END_RW
-
 #include "menuAccounting.h"
 
 menuAccounting::menuAccounting(GUIClient *Pparent) :
@@ -1161,19 +1156,6 @@ void menuAccounting::sForwardUpdateAccounts()
 {
   forwardUpdateAccounts(parent, "", TRUE).exec();
 }
-
-// START_RW
-//  Utilities
-void menuAccounting::sPostTransactionsToExternal()
-{
-  postGLTransactionsToExternal(parent, "", TRUE).exec();
-}
-
-void menuAccounting::sDspRWTransactions()
-{
-  omfgThis->handleNewWindow(new dspRWTransactions());
-}
-// END_RW
 
 void menuAccounting::sTerms()
 {

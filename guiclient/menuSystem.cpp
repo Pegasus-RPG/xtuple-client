@@ -759,13 +759,6 @@ void menuSystem::sTOC()
   parent->_assClient->openAssistant();
 }
 
-// START_RW
-void menuSystem::sConfigureAccountingSystemInterface()
-{
-  configureAccountingSystem(parent, "", TRUE).exec();
-}
-// END_RW
-
 void menuSystem::sFixACL()
 {
   omfgThis->handleNewWindow(new fixACL());

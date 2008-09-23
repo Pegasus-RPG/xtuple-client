@@ -60,7 +60,6 @@
 #include <QVariant>
 #include <QMessageBox>
 #include <openreports.h>
-#include "rwInterface.h"
 #include "distributeInventory.h"
 
 postCreditMemos::postCreditMemos(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
@@ -196,56 +195,6 @@ void postCreditMemos::sPost()
   }
 
   omfgThis->sCreditMemosUpdated();
-
-// START_RW
-  if(_metrics->boolean("EnableExternalAccountingInterface"))
-  {
-//  Check to see if any aropen items are available to post
-    q.exec( "SELECT aropen_id "
-            "FROM aropen "
-            "WHERE (NOT aropen_posted) "
-            "LIMIT 1;" );
-    if (!q.first())
-    {
-      QMessageBox::information( this, tr("No A/R Open Items"),
-                                tr( "There are no A/R Open Items to post.\n"
-                                    "This means that there are no Credit Memos that have not been posted to A/R.\n"
-                                    "Make sure that you have printed all Credit Memos and select Post Credit Memos again.") );
-    }
-    else
-    {
-      if ( (_metrics->value("AccountingSystem") == "RW2000") ||
-           (_metrics->value("AccountingSystem") == "RealWorld91") )
-      {
-        if (QMessageBox::critical( this, tr("Create New AROPEN and ARDIST Files?"),
-                                   tr( "Creating new Export Files will delete the previous Export Files.\n"
-                                       "You should make sure that the previous Export Files have been\n"
-                                       "imported into RealWorld before Proceeding.\n\n"
-                                       "Are you sure that you want to Create New Export Files?" ),
-                                       "&Yes", "&No", QString::null, 0, 1  ) == 0)
-        {
-          if (rwInterface::exportAropen(this))
-          {
-            rwInterface::exportArdist(this);
-  
-            if ( (_metrics->value("AccountingSystem") == "RW2000") ||
-                 (_metrics->value("AccountingSystem") == "RealWorld91") )
-              if ( QMessageBox::information( this, tr("Mark Distributions as Posted"),
-                                             tr( "New ARDIST and AROPEN files have been generated in the RealWorld directory.\n"
-                                                 "You should now use the RealWorld arfu/arutil tool to import these files.\n"
-                                                 "After you have successfully imported the ARDIST and AROPEN files click the 'Post'\n"
-                                                 "button to mark these items as distributed.\n"
-                                                 "If, for any reason, you were unable to post the ARDIST and AROPEN files click\n"
-                                                 "on the 'Do Not Post' button and Re-Post Invoices to re-create the ARDIST and AROPEN files.\n" ),
-                                             tr("&Post"), tr("Do &Not Post"), QString::null, 0, 1) == 0)
-                q.exec( "SELECT postSoGLTransactions();"
-                        "SELECT postAropenItems();" );
-          }
-        }
-      }
-    }
-  }
-// END_RW
 
   accept();
 }

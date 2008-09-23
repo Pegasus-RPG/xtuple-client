@@ -61,7 +61,6 @@
 #include <QSqlError>
 
 #include <openreports.h>
-#include "rwInterface.h"
 
 postVouchers::postVouchers(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -144,50 +143,6 @@ void postVouchers::sPost()
                        .arg(q.lastError().databaseText()) );
     return;
   }
-
-// START_RW
-  if(_metrics->boolean("EnableExternalAccountingInterface"))
-  {
-    if ( (_metrics->value("AccountingSystem") == "RW2000") ||
-         (_metrics->value("AccountingSystem") == "RealWorld91") )
-    {
-  //  Check to see if any apopen items are available to export
-      q.exec( "SELECT apopen_id "
-              "FROM apopen "
-              "WHERE (NOT apopen_posted) "
-              "LIMIT 1;" );
-      if (!q.first())
-        QMessageBox::information( this, tr("No A/P Open Items"),
-                                  tr("There are no A/P Open Items to post.  This means that there are no Vouchers posted to A/R.") );
-      else
-      {
-        if (QMessageBox::critical( this, tr("Create New APOPEN and APDIST Files?"),
-                                   tr( "Creating new Export Files will delete the previous Export Files.\n"
-                                       "You should make sure that the previous Export Files have been\n"
-                                       "imported into RealWorld before Proceeding.\n\n"
-                                       "Are you sure that you want to Create New Export Files?" ),
-                                       "&Yes", "&No", QString::null, 0, 1  ) == 0)
-        {
-          if (rwInterface::exportApopen(this))
-          {
-            rwInterface::exportApdist(this);
-  
-            if ( QMessageBox::information( this, tr("Mark Distributions as Posted"),
-                                           tr( "New APDIST and APOPEN files have been generated in the RealWorld directory.\n"
-                                               "You should now use the RealWorld apfu/aputil tool to import these files.\n"
-                                               "After you have successfully imported the APDIST and APOPEN files click the 'Post' button\n"
-                                               "to mark these items as distributed.\n"
-                                               "If, for any reason, you were unable to post the APDIST and APOPEN files click\n"
-                                               "on the 'Do Not Post' button and Re-Post Vouchers to re-create the APDIST and APOPEN files.\n" ),
-                                           tr("&Post"), tr("Do &Not Post"), QString::null, 0, 1) == 0)
-              q.exec( "SELECT postPoGLTransactions();"
-                      "SELECT postApopenItems();" );
-          }
-        }
-      }
-    }
-  }
-// END_RW
 
   accept();
 }

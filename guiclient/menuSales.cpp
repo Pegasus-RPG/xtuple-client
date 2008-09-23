@@ -542,10 +542,6 @@ menuSales::menuSales(GUIClient *pParent) :
     { "separator",	NULL,	NULL,	utilitiesMenu,	true,		NULL, NULL, true, NULL },
     { "sa.archieveSalesHistory", tr("&Archive Sales History..."), SLOT(sArchiveSalesHistory()), utilitiesMenu, _privileges->check("ArchiveSalesHistory"), NULL, NULL, true , NULL },
     { "sa.restoreSalesHistory", tr("Restore &Sales History..."), SLOT(sRestoreSalesHistory()), utilitiesMenu, _privileges->check("RestoreSalesHistory"), NULL, NULL, true , NULL },
-
-// START_RW
-    { "so.exportCustomers", tr("Export Customers..."), SLOT(sExportCustomers()), utilitiesMenu, _privileges->check("ViewCustomerMasters"), NULL, NULL, _metrics->boolean("EnableExternalAccountingInterface"), NULL }
-// END_RW
   };
 
   addActionsToMenu(acts, sizeof(acts) / sizeof(acts[0]));

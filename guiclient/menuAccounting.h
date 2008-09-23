@@ -225,11 +225,6 @@ class menuAccounting : public QObject
     void sCreateRecurringInvoices();
     void sSyncCompanies();
 
-// START_RW
-    void sPostTransactionsToExternal();
-    void sDspRWTransactions();
-// END_RW
-
   private:
     GUIClient *parent;
 
