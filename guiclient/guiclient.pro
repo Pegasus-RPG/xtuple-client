@@ -201,7 +201,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                enterPoitemReceipt.ui enterPoReceipt.ui enterPoitemReturn.ui enterPoReturn.ui          \
                errorLog.ui eventManager.ui                                                            \
                expenseCategories.ui expenseCategory.ui expenseTrans.ui                                \
-               explodeWo.ui exportCustomers.ui                                                        \
+               explodeWo.ui                                                                           \
 	       externalShipping.ui externalShippingList.ui failedPostList.ui                          \
                financialLayout.ui financialLayoutItem.ui financialLayoutGroup.ui financialLayouts.ui  \
                financialLayoutSpecial.ui                          financialLayoutColumns.ui           \
@@ -343,7 +343,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                externalCCTransaction.ui                                                               \
                idleShutdown.ui xdateinputdialog.ui xsltMap.ui
 
-HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h rwInterface.h                    \
+HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h                                  \
                ../common/format.h SaveSizePositionEventFilter.h                                       \
                menuProducts.h menuInventory.h menuSchedule.h menuPurchase.h                           \
                menuManufacture.h menuCRM.h menuSales.h menuAccounting.h menuSystem.h                  \
@@ -517,7 +517,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h rwInterface
                enterPoitemReceipt.h enterPoReceipt.h enterPoitemReturn.h enterPoReturn.h              \
                errorLog.h eventManager.h                                                              \
                expenseCategories.h expenseCategory.h expenseTrans.h                                   \
-               explodeWo.h exportCustomers.h                                                          \
+               explodeWo.h                                                                            \
 	       externalShipping.h externalShippingList.h failedPostList.h                             \
                financialLayout.h financialLayoutItem.h financialLayoutGroup.h financialLayouts.h      \
                financialLayoutSpecial.h                         financialLayoutColumns.h              \
@@ -666,7 +666,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h rwInterface
                idleShutdown.h xdateinputdialog.h xsltMap.h
 
 
-SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp rwInterface.cpp             \
+SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp                             \
                menuProducts.cpp menuInventory.cpp menuSchedule.cpp menuPurchase.cpp                   \
                menuManufacture.cpp menuCRM.cpp menuSales.cpp menuAccounting.cpp menuSystem.cpp        \
                taxCache.cpp xmessagebox.cpp                                                           \
@@ -840,7 +840,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp rwInte
                enterPoitemReceipt.cpp enterPoReceipt.cpp enterPoitemReturn.cpp enterPoReturn.cpp      \
                errorLog.cpp eventManager.cpp                                                          \
                expenseCategories.cpp expenseCategory.cpp expenseTrans.cpp                             \
-               explodeWo.cpp exportCustomers.cpp                                                      \
+               explodeWo.cpp                                                                          \
 	       externalShipping.cpp externalShippingList.cpp failedPostList.cpp                       \
                financialLayout.cpp financialLayoutItem.cpp financialLayoutGroup.cpp financialLayouts.cpp \
                financialLayoutSpecial.cpp                           financialLayoutColumns.cpp        \

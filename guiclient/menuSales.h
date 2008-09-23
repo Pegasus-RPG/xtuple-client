@@ -229,11 +229,6 @@ class menuSales : public QObject
 
     void sAllocateReservations();
 
-// START_RW
-    void sPostAROpenAndDist();
-    void sExportCustomers();
-// END_RW
-
   private:
     GUIClient *parent;
 		

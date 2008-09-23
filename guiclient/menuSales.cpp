@@ -204,11 +204,6 @@
 #include "archRestoreSalesHistory.h"
 #include "allocateReservations.h"
 
-// START_RW
-#include "rwInterface.h"
-#include "exportCustomers.h"
-// END_RW
-
 #include "menuSales.h"
 
 menuSales::menuSales(GUIClient *pParent) :
@@ -334,11 +329,6 @@ menuSales::menuSales(GUIClient *pParent) :
     { "separator",	NULL,	NULL,	billingFormsMenu,	true,		NULL, NULL, true , NULL },
     { "so.printCreditMemos",		     tr("Print &Credit Memos..."),	SLOT(sPrintCreditMemos()), billingFormsMenu, _privileges->check("PrintCreditMemos"),	NULL, NULL, true, NULL },
     { "so.reprintCreditMemos",		     tr("Re-Print Credit &Memos..."),	SLOT(sReprintCreditMemos()), billingFormsMenu, _privileges->check("PrintCreditMemos"),	NULL, NULL, true, NULL },
-
-// START_RW
-    { "separator",	NULL,	NULL,	billingMenu,	true,	NULL,	NULL,	_metrics->boolean("EnableExternalAccountingInterface"), NULL },
-    { "so.exportAROpenItemsAndDistributions", tr("Export Unposted A/R Open Items and Distributions..."), SLOT(sPostAROpenAndDist()), billingMenu, _privileges->check("PostARDocuments"), NULL, NULL, _metrics->boolean("EnableExternalAccountingInterface"), NULL },
-// END_RW
 
     // Sales | Returns
     { "menu",	tr("&Return"),	(char*)returnsMenu,	mainMenu, true,	NULL, NULL,  _metrics->boolean("EnableReturnAuth"), NULL },
@@ -1314,48 +1304,6 @@ void menuSales::sReassignCustomerTypeByCustomerType()
 {
   reassignCustomerTypeByCustomerType(parent, "", TRUE).exec();
 }
-
-// START_RW
-void menuSales::sPostAROpenAndDist()
-{
-  if ( (_metrics->value("AccountingSystem") == "RW2000") ||
-       (_metrics->value("AccountingSystem") == "RealWorld91") )
-  {
-    if (QMessageBox::critical( omfgThis, tr("Create New AROPEN and ARDIST Files?"),
-                               tr( "Creating new Export Files will delete the previous Export Files.\n"
-                                   "You should make sure that the previous Export Files have been\n"
-                                   "imported into RealWorld before Proceeding.\n\n"
-                                   "Are you sure that you want to Create New Export Files?" ),
-                                   tr("&Yes"), tr("&No"), QString::null, 0, 1  ) != 0)
-      return;
-
-    rwInterface::exportArdist(omfgThis);
-    rwInterface::exportAropen(omfgThis);
-  }
-
-  if ( (_metrics->value("AccountingSystem") == "RW2000") ||
-       (_metrics->value("AccountingSystem") == "RealWorld91") )
-  {
-    if ( QMessageBox::information( omfgThis, tr("Mark Distributions as Posted"),
-                                   tr( "New ARDIST and AROPEN files have been generated in\n"
-                                       "the RealWorld directory.  You should now use the RealWorld\n"
-                                       "arfu/arutil tool to import these files.  After you have\n"
-                                       "successfully imported the ARDIST and AROPEN files click\n"
-                                       "the 'Post' button to mark these items as distributed.\n"
-                                       "If, for any reason, you were unable to post the ARDIST\n"
-                                       "and AROPEN files click on the 'Do Not Post' button and\n"
-                                       "Re-Post Invoices to re-create the ARDIST and AROPEN files.\n" ),
-                                   tr("&Post"), tr("Do &Not Post"), QString::null, 0, 1) == 0)
-      XSqlQuery().exec( "SELECT postSoGLTransactions();"
-                        "SELECT postAropenItems();" );
-  }
-}
-
-void menuSales::sExportCustomers()
-{
-  omfgThis->handleNewWindow(new exportCustomers());
-}
-// END_RW
 
 void menuSales::sCharacteristics()
 {
