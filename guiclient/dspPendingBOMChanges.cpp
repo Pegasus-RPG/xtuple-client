@@ -82,14 +82,14 @@ dspPendingBOMChanges::dspPendingBOMChanges(QWidget* parent, const char* name, Qt
   _cutoff->setAllowNullDate(TRUE);
   _cutoff->setNull();
 
-  _bomitem->addColumn(tr("Date"),        _dateColumn,  Qt::AlignCenter );
-  _bomitem->addColumn(tr("Action"),      _itemColumn,  Qt::AlignCenter );
-  _bomitem->addColumn(tr("Seq #"),       40,           Qt::AlignCenter );
-  _bomitem->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft   );
-  _bomitem->addColumn(tr("Description"), -1,           Qt::AlignCenter );
-  _bomitem->addColumn(tr("UOM"),         _uomColumn,   Qt::AlignCenter );
-  _bomitem->addColumn(tr("Qty. Per"),    _qtyColumn,   Qt::AlignRight  );
-  _bomitem->addColumn(tr("Scrap %"),     _prcntColumn, Qt::AlignRight  );
+  _bomitem->addColumn(tr("Date"),        _dateColumn,  Qt::AlignCenter, true,  "actiondate" );
+  _bomitem->addColumn(tr("Action"),      _itemColumn,  Qt::AlignCenter, true,  "action" );
+  _bomitem->addColumn(tr("Seq #"),       40,           Qt::AlignCenter, true,  "bomitem_seqnumber"  );
+  _bomitem->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft,   true,  "item_number"   );
+  _bomitem->addColumn(tr("Description"), -1,           Qt::AlignCenter, true,  "description" );
+  _bomitem->addColumn(tr("UOM"),         _uomColumn,   Qt::AlignCenter, true,  "uom_name" );
+  _bomitem->addColumn(tr("Qty. Per"),    _qtyColumn,   Qt::AlignRight,  true,  "qtyper"  );
+  _bomitem->addColumn(tr("Scrap %"),     _prcntColumn, Qt::AlignRight,  true,  "bomitem_scrap"  );
   
   connect(omfgThis, SIGNAL(bomsUpdated(int, bool)), SLOT(sFillList(int, bool)));
   _revision->setMode(RevisionLineEdit::View);
@@ -168,27 +168,36 @@ void dspPendingBOMChanges::sFillList(int, bool)
 {
   if ((_item->isValid()) && (_cutoff->isValid()))
   {
-    q.prepare( "SELECT bomitem_id, formatDate(bomitem_effective), :effective AS action,"
-               "       bomitem_seqnumber, item_number, (item_descrip1 || ' ' || item_descrip2),"
-               "       uom_name, formatQtyper(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper)),"
-               "       formatScrap(bomitem_scrap), bomitem_effective AS actiondate "
-			   "FROM bomitem(:item_id,:revision_id), item, uom "
+    q.prepare( "SELECT bomitem_id, actiondate, action,"
+               "       bomitem_seqnumber, item_number, description,"
+               "       uom_name, qtyper,"
+               "       bomitem_scrap, actiondate,"
+               "       'qtyper' AS qtyper_xtnumericrole,"
+               "       'percent' AS bomitem_scrap_xtnumericrole "
+               "FROM ( "
+               "SELECT bomitem_id, :effective AS action,"
+               "       bomitem_seqnumber, item_number, (item_descrip1 || ' ' || item_descrip2) AS description,"
+               "       uom_name, itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper) AS qtyper,"
+               "       bomitem_scrap, bomitem_effective AS actiondate "
+               "FROM bomitem(:item_id,:revision_id), item, uom "
                "WHERE ( (bomitem_item_id=item_id)"
                " AND (item_inv_uom_id=uom_id)"
                " AND (bomitem_effective BETWEEN CURRENT_DATE AND :cutOffDate) ) "
-               "UNION SELECT bomitem_id, formatDate(bomitem_expires), :expires AS action, "
-               "             bomitem_seqnumber, item_number, (item_descrip1 || ' ' || item_descrip2),"
-               "             uom_name, formatQtyper(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper)),"
-               "             formatScrap(bomitem_scrap), bomitem_expires AS actiondate "
-			   "FROM bomitem(:item_id,:revision_id), item, uom "
+               "UNION "
+               "SELECT bomitem_id, :expires AS action, "
+               "       bomitem_seqnumber, item_number, (item_descrip1 || ' ' || item_descrip2) AS description,"
+               "       uom_name, itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper) AS qtyper,"
+               "       bomitem_scrap, bomitem_expires AS actiondate "
+               "FROM bomitem(:item_id,:revision_id), item, uom "
                "WHERE ( (bomitem_item_id=item_id)"
                " AND (item_inv_uom_id=uom_id)"
                " AND (bomitem_expires BETWEEN CURRENT_DATE AND :cutOffDate) ) "
+               "    ) AS data "
                "ORDER BY action, actiondate, bomitem_seqnumber;" );
     q.bindValue(":effective", tr("Effective"));
     q.bindValue(":expires", tr("Expires"));
     q.bindValue(":item_id", _item->id());
-	q.bindValue(":revision_id", _revision->id());
+    q.bindValue(":revision_id", _revision->id());
     q.bindValue(":cutOffDate", _cutoff->date());
     q.exec();
     _bomitem->populate(q);

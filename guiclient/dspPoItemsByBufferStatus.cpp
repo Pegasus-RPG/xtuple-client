@@ -82,20 +82,20 @@ dspPoItemsByBufferStatus::dspPoItemsByBufferStatus(QWidget* parent, const char* 
 
   _agent->setText(omfgThis->username());
 
-  _poitem->addColumn(tr("P/O #"),         _orderColumn, Qt::AlignRight  );
-  _poitem->addColumn(tr("Site"),          _whsColumn,   Qt::AlignCenter );
-  _poitem->addColumn(tr("Status"),        _dateColumn,  Qt::AlignCenter );
-  _poitem->addColumn(tr("Vendor"),        _itemColumn,  Qt::AlignLeft   );
-  _poitem->addColumn(tr("Buffer Status"), _uomColumn,   Qt::AlignRight  );
-  _poitem->addColumn(tr("Buffer Type"),   _uomColumn,   Qt::AlignCenter );
-  _poitem->addColumn(tr("Item Number"),   _itemColumn,  Qt::AlignLeft   );
-  _poitem->addColumn(tr("Description"),   _itemColumn,  Qt::AlignLeft   );
-  _poitem->addColumn(tr("UOM"),           _uomColumn,   Qt::AlignCenter );
-  _poitem->addColumn(tr("Ordered"),       _qtyColumn,   Qt::AlignRight  );
-  _poitem->addColumn(tr("Received"),      _qtyColumn,   Qt::AlignRight  );
-  _poitem->addColumn(tr("Returned"),      _qtyColumn,   Qt::AlignRight  );
-  _poitem->addColumn(tr("Due Date"),      _dateColumn,  Qt::AlignCenter );
-  _poitem->addColumn(tr("Item Status"),   10,           Qt::AlignCenter );
+  _poitem->addColumn(tr("P/O #"),         _orderColumn, Qt::AlignRight,  true,  "pohead_number"  );
+  _poitem->addColumn(tr("Site"),          _whsColumn,   Qt::AlignCenter, true,  "warehousecode" );
+  _poitem->addColumn(tr("Status"),        _dateColumn,  Qt::AlignCenter, true,  "poitemstatus" );
+  _poitem->addColumn(tr("Vendor"),        _itemColumn,  Qt::AlignLeft,   true,  "vend_name"   );
+  _poitem->addColumn(tr("Buffer Status"), _uomColumn,   Qt::AlignRight,  true,  "bufrsts_status"  );
+  _poitem->addColumn(tr("Buffer Type"),   _uomColumn,   Qt::AlignCenter, true,  "bufrststype" );
+  _poitem->addColumn(tr("Item Number"),   _itemColumn,  Qt::AlignLeft,   true,  "item_number"   );
+  _poitem->addColumn(tr("Description"),   _itemColumn,  Qt::AlignLeft,   true,  "item_descrip1"   );
+  _poitem->addColumn(tr("UOM"),           _uomColumn,   Qt::AlignCenter, true,  "uom_name" );
+  _poitem->addColumn(tr("Ordered"),       _qtyColumn,   Qt::AlignRight,  true,  "poitem_qty_ordered"  );
+  _poitem->addColumn(tr("Received"),      _qtyColumn,   Qt::AlignRight,  true,  "poitem_qty_received"  );
+  _poitem->addColumn(tr("Returned"),      _qtyColumn,   Qt::AlignRight,  true,  "poitem_qty_returned"  );
+  _poitem->addColumn(tr("Due Date"),      _dateColumn,  Qt::AlignCenter, true,  "poitem_duedate" );
+  _poitem->addColumn(tr("Item Status"),   10,           Qt::AlignCenter, true,  "poitem_status" );
 
   _poitem->hideColumn(POITEM_STATUS_COL);	// used for building menus
 }
@@ -302,7 +302,7 @@ void dspPoItemsByBufferStatus::sFillList()
                "                     FROM warehous"
                "                    WHERE (itemsite_warehous_id=warehous_id) )"
                "       END AS warehousecode,"
-	       "       poitem_status,"
+               "       poitem_status,"
                "       CASE WHEN(poitem_status='C') THEN <? value(\"closed\") ?>"
                "            WHEN(poitem_status='U') THEN <? value(\"unposted\") ?>"
                "            WHEN(poitem_status='O' AND ((poitem_qty_received-poitem_qty_returned) > 0) AND (poitem_qty_ordered>(poitem_qty_received-poitem_qty_returned))) THEN <? value(\"partial\") ?>"
@@ -312,21 +312,19 @@ void dspPoItemsByBufferStatus::sFillList()
                "       END AS poitemstatus,"
                "       vend_name,"
                "       CASE WHEN (bufrsts_type='T') THEN <? value(\"time\") ?>"
-	       "       ELSE <? value(\"stock\") ?>"
-	       "       END AS bufrststype,"
-	       "       bufrsts_status,"
-               "       item_number,"
-               "       item_descrip1,"
-               "       uom_name,"
-               "       formatQty(poitem_qty_ordered) AS f_qtyordered,"
-               "       formatQty(poitem_qty_received) AS f_qtyreceived,"
-               "       formatQty(poitem_qty_returned) AS f_qtyreturned,"
-	       "       formatDate(poitem_duedate) AS f_duedate,"
-               "       (bufrsts_status >66) AS emergency "
+               "            ELSE <? value(\"stock\") ?>"
+               "       END AS bufrststype,"
+               "       bufrsts_status,"
+               "       item_number, item_descrip1, uom_name,"
+               "       poitem_qty_ordered, poitem_qty_received, poitem_qty_returned, poitem_duedate,"
+               "       CASE WHEN (bufrsts_status >66) THEN 'error' END AS bufrsts_status_qtforegroundrole,"
+               "       'qty' AS poitem_qty_ordered_xtnumericrole,"
+               "       'qty' AS poitem_qty_received_xtnumericrole,"
+               "       'qty' AS poitem_qty_returned_xtnumericrole "
                "  FROM pohead, poitem, vend,itemsite, item, uom, bufrsts "
                " WHERE ((poitem_pohead_id=pohead_id)"
                "   AND  (pohead_vend_id=vend_id)"
-	       "   AND  (itemsite_item_id=item_id)"
+               "   AND  (itemsite_item_id=item_id)"
                "   AND  (item_inv_uom_id=uom_id)"
                "   AND  (poitem_itemsite_id=itemsite_id)"
                "   AND  (pohead_vend_id=vend_id)"
@@ -334,18 +332,17 @@ void dspPoItemsByBufferStatus::sFillList()
                "   AND  (bufrsts_target_type='P')"
                "   AND  (bufrsts_target_id=poitem_id)"
                "   AND  (bufrsts_date=current_date)"
-	       "<? if exists(\"warehous_id\") ?>"
-	       "   AND (((itemsite_id IS NULL) AND "
-	       "        (pohead_warehous_id=<? value(\"warehous_id\") ?>)) OR"
-	       "       ((itemsite_id IS NOT NULL) AND"
-	       "        (itemsite_warehous_id=<? value(\"warehous_id\") ?>)))"
-	       "<? endif ?>"
-	       "<? if exists(\"username\") ?>"
-	       " AND (pohead_agent_username=<? value(\"username\") ?>)"
-	       "<? endif ?>"
-	       ") "
-	       "ORDER BY bufrsts_status desc, poitem_duedate;"
-	       );
+               "<? if exists(\"warehous_id\") ?>"
+               "   AND (((itemsite_id IS NULL) AND "
+               "        (pohead_warehous_id=<? value(\"warehous_id\") ?>)) OR"
+               "       ((itemsite_id IS NOT NULL) AND"
+               "        (itemsite_warehous_id=<? value(\"warehous_id\") ?>)))"
+               "<? endif ?>"
+               "<? if exists(\"username\") ?>"
+               " AND (pohead_agent_username=<? value(\"username\") ?>)"
+               "<? endif ?>"
+               ") "
+               "ORDER BY bufrsts_status desc, poitem_duedate;" );
 
   ParameterList params;
   params.append("stock",	tr("Stock"));
@@ -366,23 +363,7 @@ void dspPoItemsByBufferStatus::sFillList()
   q = mql.toQuery(params);
   if (q.first())
   {
-    XTreeWidgetItem * last = 0;
-    do
-    {
-      last = new XTreeWidgetItem( _poitem, last,
-                                  q.value("pohead_id").toInt(), q.value("poitem_id").toInt(),
-                                  q.value("pohead_number").toString(), q.value("warehousecode"),
-                                  q.value("poitemstatus"), q.value("vend_name"),
-                                  q.value("bufrsts_status"), q.value("bufrststype"), q.value("item_number"), 
-                                  q.value("item_descrip1"), q.value("uom_name"),
-                                  q.value("f_qtyordered"), q.value("f_qtyreceived") );
-      last->setText(11, q.value("f_qtyreturned").toString());
-      last->setText(12, q.value("f_duedate").toString());
-      last->setText(POITEM_STATUS_COL, q.value("poitem_status").toString());
-      if (q.value("emergency").toBool())
-        last->setTextColor(4, "red");
-    }
-    while (q.next());
+    _poitem->populate(q, true);
   }
   else if (q.lastError().type() != QSqlError::None)
   {

@@ -137,7 +137,7 @@
            </widget>
           </item>
           <item row="0" column="1" >
-           <widget class="QLabel" name="_qoh" >
+           <widget class="XLabel" name="_qoh" >
             <property name="text" >
              <string/>
             </property>
@@ -147,7 +147,7 @@
            </widget>
           </item>
           <item row="1" column="1" >
-           <widget class="QLabel" name="_available" >
+           <widget class="XLabel" name="_available" >
             <property name="text" >
              <string/>
             </property>

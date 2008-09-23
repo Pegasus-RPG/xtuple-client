@@ -82,14 +82,14 @@ dspSalesOrdersByCustomerPO::dspSalesOrdersByCustomerPO(QWidget* parent, const ch
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
   _dates->setEndCaption(tr("Ending Order Date:"));
 
-  _so->addColumn(tr("Cust #"),      _itemColumn,  Qt::AlignLeft   );
-  _so->addColumn(tr("Customer"),    _itemColumn,  Qt::AlignLeft   );
-  _so->addColumn(tr("Order #"),     _orderColumn, Qt::AlignLeft   );
-  _so->addColumn(tr("Ordered"),     _dateColumn,  Qt::AlignRight  );
-  _so->addColumn(tr("Scheduled"),   _dateColumn,  Qt::AlignRight  );
-  _so->addColumn(tr("Status"),      _itemColumn,  Qt::AlignCenter );
-  _so->addColumn(tr("Ship-to"),     -1,           Qt::AlignLeft   );
-  _so->addColumn(tr("Cust. P/O #"), 200,          Qt::AlignLeft   );
+  _so->addColumn(tr("Cust #"),      _itemColumn,  Qt::AlignLeft,   true,  "cust_number"   );
+  _so->addColumn(tr("Customer"),    _itemColumn,  Qt::AlignLeft,   true,  "cust_name"   );
+  _so->addColumn(tr("Order #"),     _orderColumn, Qt::AlignLeft,   true,  "cohead_number"   );
+  _so->addColumn(tr("Ordered"),     _dateColumn,  Qt::AlignRight,  true,  "cohead_orderdate"  );
+  _so->addColumn(tr("Scheduled"),   _dateColumn,  Qt::AlignRight,  true,  "min_scheddate"  );
+  _so->addColumn(tr("Status"),      _itemColumn,  Qt::AlignCenter, true,  "order_status" );
+  _so->addColumn(tr("Ship-to"),     -1,           Qt::AlignLeft,   true,  "cohead_shiptoname"   );
+  _so->addColumn(tr("Cust. P/O #"), 200,          Qt::AlignLeft,   true,  "cohead_custponumber"   );
 
   _poNumber->setFocus();
   connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sFillList())  );
@@ -199,20 +199,7 @@ void dspSalesOrdersByCustomerPO::sFillList()
     params.append("poNumber", _poNumber->text());
 
     q = mql.toQuery(params);
-    XTreeWidgetItem *last = 0;
-    while (q.next())
-    {
-      last = new XTreeWidgetItem(_so, last,
-				 q.value("cohead_id").toInt(),
-				 q.value("cust_number"),
-				 q.value("cust_name"),
-				 q.value("cohead_number"),
-				 formatDate(q.value("cohead_orderdate").toDate()),
-				 formatDate(q.value("min_scheddate").toDate()),
-				 q.value("order_status"),
-				 q.value("cohead_shiptoname"),
-         q.value("cohead_custponumber") );
-    }
+    _so->populate(q);
   }
 }
 

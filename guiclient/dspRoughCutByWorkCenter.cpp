@@ -76,12 +76,12 @@ dspRoughCutByWorkCenter::dspRoughCutByWorkCenter(QWidget* parent, const char* na
   connect(_query, SIGNAL(clicked()), this, SLOT(sQuery()));
   connect(_roughCut, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
 
-  _roughCut->addColumn(tr("Site"),         _whsColumn,  Qt::AlignCenter );
-  _roughCut->addColumn(tr("Work Center"),  -1,          Qt::AlignLeft   );
-  _roughCut->addColumn(tr("Total Setup"),  _timeColumn, Qt::AlignRight  );
-  _roughCut->addColumn(tr("Setup $"),      _costColumn, Qt::AlignRight  );
-  _roughCut->addColumn(tr("Total Run"),    _timeColumn, Qt::AlignRight  );
-  _roughCut->addColumn(tr("Run $"),        _costColumn, Qt::AlignRight  );
+  _roughCut->addColumn(tr("Site"),         _whsColumn,  Qt::AlignCenter, true,  "warehous_code" );
+  _roughCut->addColumn(tr("Work Center"),  -1,          Qt::AlignLeft,   true,  "wrkcnt_code"   );
+  _roughCut->addColumn(tr("Total Setup"),  _timeColumn, Qt::AlignRight,  true,  "setuptime"  );
+  _roughCut->addColumn(tr("Setup $"),      _costColumn, Qt::AlignRight,  true,  "setupcost"  );
+  _roughCut->addColumn(tr("Total Run"),    _timeColumn, Qt::AlignRight,  true,  "runtime"  );
+  _roughCut->addColumn(tr("Run $"),        _costColumn, Qt::AlignRight,  true,  "runcost"  );
 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"),     omfgThis->endOfTime(),   TRUE);
@@ -130,10 +130,14 @@ void dspRoughCutByWorkCenter::sQuery()
   setParams(params);
 
   QString sql( "SELECT wrkcnt_id, warehous_code, wrkcnt_code,"
-               "       formatTime(SUM(planoper_sutime)),"
-               "       formatCost(SUM(planoper_sutime) * wrkcnt_setuprate / 60.0),"
-               "       formatTime(SUM(planoper_rntime)),"
-               "       formatCost(SUM(planoper_rntime) * wrkcnt_runrate / 60.0) "
+               "       SUM(planoper_sutime) AS setuptime,"
+               "       (SUM(planoper_sutime) * wrkcnt_setuprate / 60.0) AS setupcost,"
+               "       SUM(planoper_rntime) AS runtime,"
+               "       (SUM(planoper_rntime) * wrkcnt_runrate / 60.0) AS runcost,"
+               "       '1' AS setuptime_xtnumericrole,"
+               "       '1' AS runtime_xtnumericrole,"
+               "       'cost' AS setupcost_xtnumericrole,"
+               "       'cost' AS runcost_xtnumericrole "
                "FROM planoper, planord, wrkcnt, warehous "
                "WHERE ( (planoper_planord_id=planord_id)"
                " AND (planoper_wrkcnt_id=wrkcnt_id)"

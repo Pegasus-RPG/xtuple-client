@@ -92,19 +92,19 @@ dspQOHByParameterList::dspQOHByParameterList(QWidget* parent, const char* name, 
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_showValue, SIGNAL(toggled(bool)), this, SLOT(sHandleValue(bool)));
 
-  _qoh->addColumn(tr("Site"),             _whsColumn,  Qt::AlignCenter );
-  _qoh->addColumn(tr("Class Code"),       _itemColumn, Qt::AlignLeft   );
-  _qoh->addColumn(tr("Item Number"),      _itemColumn, Qt::AlignLeft   );
-  _qoh->addColumn(tr("Description"),      -1,          Qt::AlignLeft   );
-  _qoh->addColumn(tr("UOM"),              _uomColumn,  Qt::AlignCenter );
-  _qoh->addColumn(tr("Default Location"), _itemColumn, Qt::AlignLeft   );
-  _qoh->addColumn(tr("Reorder Lvl."),     _qtyColumn,  Qt::AlignRight  );
-  _qoh->addColumn(tr("QOH"),              _qtyColumn,  Qt::AlignRight  );
-  _qoh->addColumn(tr("Non-Netable"),      _qtyColumn,  Qt::AlignRight  );
-  _qoh->addColumn(tr("Unit Cost"),        _costColumn, Qt::AlignRight  );
-  _qoh->addColumn(tr("Value"),            _costColumn, Qt::AlignRight  );
-  _qoh->addColumn(tr("NN Value"),         _costColumn, Qt::AlignRight  );
-  _qoh->addColumn(tr("Cost Method"),      _costColumn, Qt::AlignCenter );
+  _qoh->addColumn(tr("Site"),             _whsColumn,  Qt::AlignCenter, true,  "warehous_code" );
+  _qoh->addColumn(tr("Class Code"),       _itemColumn, Qt::AlignLeft,   true,  "classcode_code"   );
+  _qoh->addColumn(tr("Item Number"),      _itemColumn, Qt::AlignLeft,   true,  "item_number"   );
+  _qoh->addColumn(tr("Description"),      -1,          Qt::AlignLeft,   true,  "itemdescrip"   );
+  _qoh->addColumn(tr("UOM"),              _uomColumn,  Qt::AlignCenter, true,  "uom_name" );
+  _qoh->addColumn(tr("Default Location"), _itemColumn, Qt::AlignLeft,   true,  "defaultlocation"   );
+  _qoh->addColumn(tr("Reorder Lvl."),     _qtyColumn,  Qt::AlignRight,  true,  "reorderlevel"  );
+  _qoh->addColumn(tr("QOH"),              _qtyColumn,  Qt::AlignRight,  true,  "qoh"  );
+  _qoh->addColumn(tr("Non-Netable"),      _qtyColumn,  Qt::AlignRight,  true,  "f_nnqoh"  );
+  _qoh->addColumn(tr("Unit Cost"),        _costColumn, Qt::AlignRight,  true,  "cost"  );
+  _qoh->addColumn(tr("Value"),            _costColumn, Qt::AlignRight,  true,  "value"  );
+  _qoh->addColumn(tr("NN Value"),         _costColumn, Qt::AlignRight,  true,  "f_nnvalue"  );
+  _qoh->addColumn(tr("Cost Method"),      _costColumn, Qt::AlignCenter, true,  "f_costmethod" );
 
   sHandleValue(_showValue->isChecked());
 
@@ -351,20 +351,31 @@ void dspQOHByParameterList::sFillList()
                "       warehous_code, classcode_code, item_number, uom_name,"
                "       (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
                "       defaultlocation,"
-               "       formatQty(reorderlevel) AS f_reorderlevel,"
-               "       formatQty(qoh) AS f_qoh,"
-               "       formatQty(nnqoh) AS f_nnqoh,"
-               "       formatCost(cost) AS f_cost,"
-               "       formatMoney(noNeg(cost * qoh)) AS f_value,"
-               "       formatMoney(noNeg(cost * nnqoh)) AS f_nnvalue,"
-               "       cost, reorderlevel, qoh, nnqoh,"
+               "       reorderlevel, qoh, nnqoh,"
+               "       CASE WHEN (itemsite_loccntrl) THEN nnqoh END AS f_nnqoh,"
+               "       cost, (cost * qoh) AS value,"
+               "       CASE WHEN (itemsite_loccntrl) THEN (cost * nnqoh) END AS f_nnvalue,"
                "       CASE WHEN(itemsite_costmethod='A') THEN 'Average'"
                "            WHEN(itemsite_costmethod='S') THEN 'Standard'"
                "            WHEN(itemsite_costmethod='J') THEN 'Job'"
                "            WHEN(itemsite_costmethod='N') THEN 'None'"
                "            ELSE 'UNKNOWN'"
-               "       END AS f_costmethod "
-               "FROM ( SELECT itemsite_id, itemsite_costmethod,"
+               "       END AS f_costmethod,"
+               "       'qty' AS reorderlevel_xtnumericrole,"
+               "       'qty' AS qoh_xtnumericrole,"
+               "       'qty' AS f_nnqoh_xtnumericrole,"
+               "       0 AS qoh_xttotalrole,"
+               "       0 AS f_nnqoh_xttotalrole,"
+               "       'cost' AS cost_xtnumericrole,"
+               "       'curr' AS value_xtnumericrole,"
+               "       'curr' AS f_nnvalue_xtnumericrole,"
+               "       0 AS value_xttotalrole,"
+               "       0 AS f_nnvalue_xttotalrole,"
+               "       :na AS f_nnqoh_xtnullrole,"
+               "       :na AS f_nnvalue_xtnullrole,"
+               "       CASE WHEN (qoh < 0) THEN 'error' END AS qoh_qtforegroundrole,"
+               "       CASE WHEN (reorderlevel > qoh) THEN 'warning' END AS qoh_qtforegroundrole "
+               "FROM ( SELECT itemsite_id, itemsite_loccntrl, itemsite_costmethod,"
                "              ( (itemsite_loccntrl) OR (itemsite_controlmethod IN ('L', 'S')) ) AS detail,"
                "              warehous_code, classcode_code, item_number, uom_name, item_descrip1, item_descrip2,"
                "              CASE WHEN (NOT useDefaultLocation(itemsite_id)) THEN :none"
@@ -429,59 +440,6 @@ void dspQOHByParameterList::sFillList()
   q.exec();
   if (q.first())
   {
-    XTreeWidgetItem *selected     = 0;
-    XTreeWidgetItem *last         = 0;
-    double        netable         = 0.0;
-    double        netableValue    = 0.0;
-    double        nonNetable      = 0.0;
-    double        nonNetableValue = 0.0;
-
-    do
-    {
-      last = new XTreeWidgetItem( _qoh, last, q.value("itemsite_id").toInt(), q.value("detail").toInt(),
-                                  q.value("warehous_code"), q.value("classcode_code"), q.value("item_number"),
-                                  q.value("itemdescrip"), q.value("uom_name"),
-                                  q.value("defaultlocation"), q.value("f_reorderlevel"),
-                                  q.value("f_qoh"), q.value("f_nnqoh") );
-
-      last->setText(9, q.value("f_cost").toString());
-      last->setText(10, q.value("f_value").toString());
-      last->setText(11, q.value("f_nnvalue").toString());
-      last->setText(12, q.value("f_costmethod").toString());
-
-      if (q.value("qoh").toDouble() < 0) 
-        last->setTextColor(7, "red");
-      else if (q.value("reorderlevel").toDouble() > q.value("qoh").toDouble())
-        last->setTextColor(7, "orange");
-
-      if (q.value("itemsite_id") == itemsiteid)
-        selected = last;
-
-      if (q.value("qoh").toDouble() > 0.0)
-      {
-        netable += q.value("qoh").toDouble();
-        netableValue += (q.value("cost").toDouble() * q.value("qoh").toDouble());
-      }
-
-      if (q.value("nnqoh").toDouble() > 0.0)
-      {
-        nonNetable += q.value("nnqoh").toDouble();
-        nonNetableValue += (q.value("cost").toDouble() * q.value("nnqoh").toDouble());
-      }
-    }
-    while (q.next());
-
-    XTreeWidgetItem *totals = new XTreeWidgetItem(_qoh, last, -1, 0, tr("Totals"));
-    totals->setText(7, formatQty(netable));
-    totals->setText(8, formatQty(nonNetable));
-
-    totals->setText(10, formatMoney(netableValue));
-    totals->setText(11, formatMoney(nonNetableValue));
-
-    if (selected != NULL)
-    {
-      _qoh->setCurrentItem(selected);
-      _qoh->scrollTo(_qoh->currentIndex());
-    }
+    _qoh->populate(q, true);
   }
 }

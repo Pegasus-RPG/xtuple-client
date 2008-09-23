@@ -117,10 +117,10 @@ void dspQuotesByItem::init()
 
   _item->setType(ItemLineEdit::cSold);
 
-  _so->addColumn(tr("Quote #"),    _orderColumn, Qt::AlignLeft   );
-  _so->addColumn(tr("Quote Date"), _dateColumn,  Qt::AlignCenter );
-  _so->addColumn(tr("Customer"),   -1,           Qt::AlignLeft   );
-  _so->addColumn(tr("Quoted"),    _qtyColumn,   Qt::AlignRight  );
+  _so->addColumn(tr("Quote #"),    _orderColumn, Qt::AlignLeft,   true,  "quhead_number"   );
+  _so->addColumn(tr("Quote Date"), _dateColumn,  Qt::AlignCenter, true,  "quhead_quotedate" );
+  _so->addColumn(tr("Customer"),   -1,           Qt::AlignLeft,   true,  "cust_name"   );
+  _so->addColumn(tr("Quoted"),     _qtyColumn,   Qt::AlignRight,  true,  "quitem_qtyord"  );
 
   connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sFillList())); 
 }
@@ -191,16 +191,7 @@ void dspQuotesByItem::sFillList()
     params.append("item_id", _item->id());
 
     q = mql.toQuery(params);
-    XTreeWidgetItem *last = 0;
-    while (q.next())
-    {
-      last = new XTreeWidgetItem(_so, last,
-				 q.value("quhead_id").toInt(),
-				 q.value("quhead_number"),
-				 formatDate(q.value("quhead_quotedate").toDate()),
-				 q.value("cust_name"),
-				 formatQty(q.value("quitem_qtyord").toDouble()) );
-    }
+    _so->populate(q);
   }
 }
 

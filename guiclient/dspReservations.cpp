@@ -76,16 +76,16 @@ dspReservations::dspReservations(QWidget* parent, const char* name, Qt::WFlags f
   connect(_allocations, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
-//  _item->setReadOnly(TRUE);
-//  _warehouse->setEnabled(FALSE);
+  _qoh->setPrecision(omfgThis->qtyVal());
+  _available->setPrecision(omfgThis->qtyVal());
 
   _allocations->setRootIsDecorated(TRUE);
-  _allocations->addColumn(tr("Order/Location LotSerial"), -1,             Qt::AlignLeft   );
-  _allocations->addColumn(tr("Total Qty."),               _qtyColumn,     Qt::AlignRight  );
-  _allocations->addColumn(tr("Relieved"),                 _qtyColumn,     Qt::AlignRight  );
-  _allocations->addColumn(tr("Reserved"),                 _qtyColumn,     Qt::AlignRight  );
-  _allocations->addColumn(tr("Running Bal."),             _qtyColumn,     Qt::AlignRight  );
-  _allocations->addColumn(tr("Required"),                 _dateColumn,    Qt::AlignCenter );
+  _allocations->addColumn(tr("Order/Location LotSerial"), -1,             Qt::AlignLeft,   true,  "order_number"   );
+  _allocations->addColumn(tr("Total Qty."),               _qtyColumn,     Qt::AlignRight,  true,  "totalqty"  );
+  _allocations->addColumn(tr("Relieved"),                 _qtyColumn,     Qt::AlignRight,  true,  "relievedqty"  );
+  _allocations->addColumn(tr("Reserved"),                 _qtyColumn,     Qt::AlignRight,  true,  "reservedqty"  );
+  _allocations->addColumn(tr("Running Bal."),             _qtyColumn,     Qt::AlignRight,  true,  "balanceqty"  );
+  _allocations->addColumn(tr("Required"),                 _dateColumn,    Qt::AlignCenter, true,  "scheddate" );
 
   if (!_metrics->boolean("MultiWhs"))
   {
@@ -230,16 +230,6 @@ void dspReservations::sFillList()
 
   if (_item->isValid())
   {
-    XSqlQuery itemlocrsrv;
-    itemlocrsrv.prepare( "SELECT (formatLocationName(itemloc_location_id) || ' ' || "
-                         "       formatLotSerialNumber(itemloc_ls_id)) AS f_locationlot,"
-						 "       formatQty(itemlocrsrv_qty) AS f_reserved "
-                         "FROM itemlocrsrv JOIN itemloc ON (itemloc_id=itemlocrsrv_itemloc_id) "
-                         "WHERE ( (itemlocrsrv_source='SO')"
-					     "  AND   (itemlocrsrv_source_id=:source_id) ) "
-						 "ORDER BY formatLocationName(itemloc_location_id),"
-						 "         formatLotSerialNumber(itemloc_ls_id);" );
-
     MetaSQLQuery mql = mqlLoad(":so/displays/Reservations/FillListDetail.mql");
 
     ParameterList params;
@@ -247,59 +237,19 @@ void dspReservations::sFillList()
     params.append("item_id",	   _item->id());
 
     q = mql.toQuery(params);
+    _allocations->populate(q);
 
-    double runningBal = 0;
-    XTreeWidgetItem *last = 0;
-    XTreeWidgetItem *document = 0;
-
-    while (q.next())
-    {
-      runningBal += q.value("coitem_qtyreserved").toDouble();
-
-      last = document = new XTreeWidgetItem(_allocations, last,
-				            q.value("source_id").toInt(),
-				            q.value("order_number"),
-				            q.value("totalqty"),
-				            q.value("relievedqty"), q.value("balanceqty"),
-				            formatQty(runningBal), q.value("duedate") );
-      last->setTextColor(5, "red");
-
-      if(_metrics->boolean("EnableSOReservationsByLocation"))
-	  {
-        itemlocrsrv.bindValue(":source_id", q.value("source_id").toInt());
-	    itemlocrsrv.exec();
-	    if (itemlocrsrv.first())
-	    {
-	      do
-		  {
-            new XTreeWidgetItem( document,
-                                 -1,
-                                 itemlocrsrv.value("f_locationlot"),
-                                 "",
-                                 "", itemlocrsrv.value("f_reserved"),
-                                 "", "" );
-          }
-		  while (itemlocrsrv.next());
-        }
-	  }
-    }
-    if (q.lastError().type() != QSqlError::None)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
-
-    QString avails("SELECT formatQty(itemsite_qtyonhand) AS f_qoh,"
-		   "       formatQty(qtyunreserved(itemsite_id)) AS f_unreserved "
-		   "FROM itemsite "
-		   "WHERE ((itemsite_item_id=<? value(\"item_id\") ?>)"
-		   "  AND  (itemsite_warehous_id=<? value(\"warehous_id\") ?>));");
+    QString avails("SELECT itemsite_qtyonhand,"
+                   "       qtyunreserved(itemsite_id) AS unreserved "
+                   "FROM itemsite "
+                   "WHERE ((itemsite_item_id=<? value(\"item_id\") ?>)"
+                   "  AND  (itemsite_warehous_id=<? value(\"warehous_id\") ?>));");
     MetaSQLQuery availm(avails);
     q = availm.toQuery(params);
     if (q.first())
     {
-      _qoh->setText(q.value("f_qoh").toString());
-      _available->setText(q.value("f_unreserved").toString());
+      _qoh->setDouble(q.value("itemsite_qtyonhand").toDouble());
+      _available->setDouble(q.value("unreserved").toDouble());
     }
     else if (q.lastError().type() != QSqlError::None)
     {

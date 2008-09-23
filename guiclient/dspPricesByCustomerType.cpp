@@ -77,16 +77,16 @@ dspPricesByCustomerType::dspPricesByCustomerType(QWidget* parent, const char* na
 
   _custtype->setType(XComboBox::CustomerTypes);
 
-  _price->addColumn(tr("Schedule"),    _itemColumn,  Qt::AlignLeft  );
-  _price->addColumn(tr("Source"),      _itemColumn,  Qt::AlignLeft  );
-  _price->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft  );
-  _price->addColumn(tr("Description"), -1,           Qt::AlignLeft  );
-  _price->addColumn(tr("Price UOM"),   _uomColumn,   Qt::AlignCenter);
-  _price->addColumn(tr("Qty. Break"),  _qtyColumn,   Qt::AlignRight );
-  _price->addColumn(tr("Price"),       _priceColumn, Qt::AlignRight );
-  _price->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft );
-  _price->addColumn(tr("Ext. Cost"),   _costColumn,  Qt::AlignRight );
-  _price->addColumn(tr("Mar. %"),      _prcntColumn, Qt::AlignRight );
+  _price->addColumn(tr("Schedule"),    _itemColumn,     Qt::AlignLeft,   true,  "schedulename"  );
+  _price->addColumn(tr("Source"),      _itemColumn,     Qt::AlignLeft,   true,  "type"  );
+  _price->addColumn(tr("Item Number"), _itemColumn,     Qt::AlignLeft,   true,  "itemnumber"  );
+  _price->addColumn(tr("Description"), -1,              Qt::AlignLeft,   true,  "itemdescrip"  );
+  _price->addColumn(tr("Price UOM"),   _uomColumn,      Qt::AlignCenter, true,  "priceuom" );
+  _price->addColumn(tr("Qty. Break"),  _qtyColumn,      Qt::AlignRight,  true,  "f_qtybreak" );
+  _price->addColumn(tr("Price"),       _priceColumn,    Qt::AlignRight,  true,  "price" );
+  _price->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft,   true,  "currConcat" );
+  _price->addColumn(tr("Ext. Cost"),   _costColumn,     Qt::AlignRight,  true,  "f_cost" );
+  _price->addColumn(tr("Mar. %"),      _prcntColumn,    Qt::AlignRight,  true,  "f_margin" );
 
   if (omfgThis->singleCurrency())
     _price->hideColumn(CURR_COL);
@@ -151,17 +151,23 @@ void dspPricesByCustomerType::sFillList()
   if (_custtype->isValid())
   {
     QString sql = "SELECT itemid, sourcetype, schedulename, type, itemnumber, itemdescrip, priceuom,"
-                  "       CASE WHEN (qtybreak = -1) THEN :na"
-                  "            ELSE formatQty(qtybreak)"
-                  "       END AS f_qtybreak,"
-                  "       price, formatSalesPrice(price) AS f_price, "
-		  "       currConcat(curr_id) ";
+                  "       CASE WHEN (qtybreak <> -1) THEN qtybreak END AS f_qtybreak,"
+                  "       price,"
+                  "       currConcat(curr_id) AS currConcat,"
+                  "       'qty' AS f_qtybreak_xtnumericrole,"
+                  "       :na AS f_qtybreak_xtnullrole,"
+                  "       'salesprice' AS price_xtnumericrole ";
 
     if (_showCosts->isChecked())
-      sql += ", cost, COALESCE(formatCost(cost), :costna) AS f_cost,"
-             " CASE WHEN ((price = 0) OR (cost = 0)) THEN :na"
-             "      ELSE formatScrap((price - cost) / price)"
-             " END AS f_margin ";
+    {
+      sql +=      "     , CASE WHEN (cost IS NOT NULL) THEN cost END AS f_cost,"
+                  "       CASE WHEN ((price <> 0) AND (cost <>0)) THEN ((price - cost) / price) END AS f_margin,"
+                  "       'cost' AS f_cost_xtnumericrole,"
+                  "       :costna AS f_cost_xtnullrole,"
+                  "       'percent' AS f_margin_xtnumericrole,"
+                  "       :na AS f_margin_xtnullrole,"
+                  "       CASE WHEN (cost > price) THEN 'error' END AS f_margin_qtforegroundrole ";
+    }
 
     sql += "FROM ( SELECT ipsprice_id AS itemid, 1 AS sourcetype,"
            "              ipshead_name AS schedulename, :custType AS type,"
@@ -284,19 +290,6 @@ void dspPricesByCustomerType::sFillList()
     q.bindValue(":listPrice", tr("List Price"));
     q.bindValue(":custtype_id", _custtype->id());
     q.exec();
-    XTreeWidgetItem *last = 0;
-    while (q.next())
-    {
-      last = new XTreeWidgetItem( _price, last, q.value("itemid").toInt(),
-				 q.value("sourcetype").toInt(),
-				 q.value("schedulename"), q.value("type"),
-				 q.value("itemnumber"), q.value("itemdescrip"),
-				 q.value("priceuom"), q.value("f_qtybreak"),
-				 q.value("f_price"), q.value("currConcat"),
-				 q.value("f_cost"),
-				 q.value("f_margin"));
-      if (q.value("cost").toDouble() > q.value("price").toDouble())
-	last->setTextColor(MARGIN_COL, "red");
-    }
+    _price->populate(q, true);
   }
 }

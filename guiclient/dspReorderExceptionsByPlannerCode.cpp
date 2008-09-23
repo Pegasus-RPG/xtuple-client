@@ -79,12 +79,12 @@ dspReorderExceptionsByPlannerCode::dspReorderExceptionsByPlannerCode(QWidget* pa
 
   _plannerCode->setType(ParameterGroup::PlannerCode);
 
-  _exception->addColumn(tr("Site"),           _whsColumn,  Qt::AlignCenter );
-  _exception->addColumn(tr("Item Number"),    _itemColumn, Qt::AlignLeft   );
-  _exception->addColumn(tr("Description"),    -1,          Qt::AlignLeft   );
-  _exception->addColumn(tr("Exception Date"), _dateColumn, Qt::AlignCenter );
-  _exception->addColumn(tr("Reorder Level"),  _qtyColumn,  Qt::AlignRight  );
-  _exception->addColumn(tr("Proj. Avail."),   _qtyColumn,  Qt::AlignRight  );
+  _exception->addColumn(tr("Site"),           _whsColumn,  Qt::AlignCenter, true,  "warehous_code" );
+  _exception->addColumn(tr("Item Number"),    _itemColumn, Qt::AlignLeft,   true,  "item_number"   );
+  _exception->addColumn(tr("Description"),    -1,          Qt::AlignLeft,   true,  "itemdescrip"   );
+  _exception->addColumn(tr("Exception Date"), _dateColumn, Qt::AlignCenter, true,  "reorderdate" );
+  _exception->addColumn(tr("Reorder Level"),  _qtyColumn,  Qt::AlignRight,  true,  "reorderlevel"  );
+  _exception->addColumn(tr("Proj. Avail."),   _qtyColumn,  Qt::AlignRight,  true,  "projavail"  );
 }
 
 dspReorderExceptionsByPlannerCode::~dspReorderExceptionsByPlannerCode()
@@ -117,48 +117,49 @@ void dspReorderExceptionsByPlannerCode::sFillList()
 
   // TODO: why is this select 3 layers deep?
   QString sql("SELECT itemsite_id, itemtype, warehous_code, item_number,"
-              "       (item_descrip1 || ' ' || item_descrip2),"
-              "       formatDate(reorderdate), formatQty(reorderlevel),"
-              "       formatQty((itemsite_qtyonhand -"
-	      "                  qtyAllocated(itemsite_id, reorderdate) +"
-	      "                  qtyOrdered(itemsite_id, reorderdate))),"
-              "       reorderdate "
+              "       (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
+              "       reorderdate, reorderlevel,"
+              "       (itemsite_qtyonhand -"
+              "          qtyAllocated(itemsite_id, reorderdate) +"
+              "          qtyOrdered(itemsite_id, reorderdate)) AS projavail,"
+              "       'qty' AS reorderlevel_xtnumericrole,"
+              "       'qty' AS projavail_xtnumericrole "
               "FROM ( SELECT itemsite_id,"
               "              CASE WHEN (item_type IN ('M', 'B', 'T')) THEN 1"
               "                   WHEN (item_type IN ('P', 'O')) THEN 2"
               "                   ELSE 3"
               "              END AS itemtype,"
               "              warehous_code, item_number, item_descrip1,"
-	      "              item_descrip2,"
+              "              item_descrip2,"
               "              reorderDate(itemsite_id,"
-	      "                          <? value(\"lookAheadDays\") ?>,"
-	      "                          <? value(\"includePlannedOrders\") ?>)"
-	      "                          AS reorderdate,"
-	      "              itemsite_qtyonhand, reorderlevel "
+              "                          <? value(\"lookAheadDays\") ?>,"
+              "                          <? value(\"includePlannedOrders\") ?>)"
+              "                          AS reorderdate,"
+              "              itemsite_qtyonhand, reorderlevel "
               "       FROM ( SELECT itemsite_id, itemsite_item_id,"
-	      "                     itemsite_warehous_id, itemsite_qtyonhand,"
+              "                     itemsite_warehous_id, itemsite_qtyonhand,"
               "                     CASE WHEN(itemsite_useparams) THEN"
-	      "                          itemsite_reorderlevel"
-	      "                     ELSE 0.0"
-	      "                     END AS reorderlevel"
+              "                          itemsite_reorderlevel"
+              "                     ELSE 0.0"
+              "                     END AS reorderlevel"
               "              FROM itemsite "
-	      "              WHERE (true"
-	      "<? if exists(\"warehous_id\") ?>"
-	      "                AND (itemsite_warehous_id=<? value(\"warehous_id\") ?>)"
-	      "<? endif ?>"
-	      "<? if exists(\"plancode_id\") ?>"
-	      "                AND (itemsite_plancode_id=<? value(\"plancode_id\") ?>)"
-	      "<? elseif exists(\"plancode_pattern\") ?>"
-	      "                AND (itemsite_plancode_id IN (SELECT plancode_id"
-	      "                      FROM plancode"
-	      "                      WHERE (plancode_code ~ <? value(\"plancode_pattern\") ?>)))"
-	      "<? endif ?>"
-	      "                    ) "
-	      "            ) AS itemsitedata, item, warehous "
-	      " WHERE ( (itemsite_item_id=item_id)"
-	      "  AND (itemsite_warehous_id=warehous_id) ) ) AS data "
-	      "WHERE (reorderdate IS NOT NULL) "
-	      "ORDER BY reorderdate, item_number;" );
+              "              WHERE (true"
+              "<? if exists(\"warehous_id\") ?>"
+              "                AND (itemsite_warehous_id=<? value(\"warehous_id\") ?>)"
+              "<? endif ?>"
+              "<? if exists(\"plancode_id\") ?>"
+              "                AND (itemsite_plancode_id=<? value(\"plancode_id\") ?>)"
+              "<? elseif exists(\"plancode_pattern\") ?>"
+              "                AND (itemsite_plancode_id IN (SELECT plancode_id"
+              "                      FROM plancode"
+              "                      WHERE (plancode_code ~ <? value(\"plancode_pattern\") ?>)))"
+              "<? endif ?>"
+              "                    ) "
+              "            ) AS itemsitedata, item, warehous "
+              " WHERE ( (itemsite_item_id=item_id)"
+              "  AND (itemsite_warehous_id=warehous_id) ) ) AS data "
+              "WHERE (reorderdate IS NOT NULL) "
+              "ORDER BY reorderdate, item_number;" );
 
   MetaSQLQuery mql(sql);
   q = mql.toQuery(params);

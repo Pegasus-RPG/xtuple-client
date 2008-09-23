@@ -85,13 +85,13 @@ dspSalesOrdersByItem::dspSalesOrdersByItem(QWidget* parent, const char* name, Qt
 
   _item->setType(ItemLineEdit::cSold);
 
-  _so->addColumn(tr("Order #"),    _orderColumn, Qt::AlignLeft   );
-  _so->addColumn(tr("Order Date"), _dateColumn,  Qt::AlignCenter );
-  _so->addColumn(tr("Customer"),   -1,           Qt::AlignLeft   );
-  _so->addColumn(tr("Ordered"),    _qtyColumn,   Qt::AlignRight  );
-  _so->addColumn(tr("Shipped"),    _qtyColumn,   Qt::AlignRight  );
-  _so->addColumn(tr("Returned"),   _qtyColumn,   Qt::AlignRight  );
-  _so->addColumn(tr("Balance"),    _qtyColumn,   Qt::AlignRight  );
+  _so->addColumn(tr("Order #"),    _orderColumn, Qt::AlignLeft,   true,  "cohead_number"   );
+  _so->addColumn(tr("Order Date"), _dateColumn,  Qt::AlignCenter, true,  "cohead_orderdate" );
+  _so->addColumn(tr("Customer"),   -1,           Qt::AlignLeft,   true,  "cust_name"   );
+  _so->addColumn(tr("Ordered"),    _qtyColumn,   Qt::AlignRight,  true,  "coitem_qtyord"  );
+  _so->addColumn(tr("Shipped"),    _qtyColumn,   Qt::AlignRight,  true,  "coitem_qtyshipped"  );
+  _so->addColumn(tr("Returned"),   _qtyColumn,   Qt::AlignRight,  true,  "coitem_qtyreturned"  );
+  _so->addColumn(tr("Balance"),    _qtyColumn,   Qt::AlignRight,  true,  "qtybalance"  );
 
   connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sFillList()));
 }
@@ -215,19 +215,7 @@ void dspSalesOrdersByItem::sFillList()
     params.append("item_id", _item->id());
 
     q = mql.toQuery(params);
-    XTreeWidgetItem *last = 0;
-    while (q.next())
-    {
-      last = new XTreeWidgetItem(_so, last,
-				 q.value("cohead_id").toInt(),
-				 q.value("cohead_number"),
-				 formatDate(q.value("cohead_orderdate").toDate()),
-				 q.value("cust_name"),
-				 formatQty(q.value("coitem_qtyord").toDouble()),
-				 formatQty(q.value("coitem_qtyshipped").toDouble()),
-				 formatQty(q.value("coitem_qtyreturned").toDouble()),
-         formatQty(q.value("qtybalance").toDouble()) );
-    }
+    _so->populate(q);
   }
 }
 

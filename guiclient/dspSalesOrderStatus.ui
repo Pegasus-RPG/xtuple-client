@@ -282,14 +282,9 @@
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="_lastUpdated" >
-              <property name="sizePolicy" >
-               <sizepolicy>
-                <hsizetype>7</hsizetype>
-                <vsizetype>5</vsizetype>
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
+             <widget class="DLineEdit" name="_lastUpdated" >
+              <property name="enabled" >
+               <bool>false</bool>
               </property>
              </widget>
             </item>

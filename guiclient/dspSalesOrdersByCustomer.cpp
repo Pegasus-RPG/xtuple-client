@@ -85,12 +85,12 @@ dspSalesOrdersByCustomer::dspSalesOrdersByCustomer(QWidget* parent, const char* 
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
   _dates->setEndCaption(tr("Ending Order Date:"));
 
-  _so->addColumn(tr("Order #"),     _orderColumn, Qt::AlignLeft   );
-  _so->addColumn(tr("Ordered"),     _dateColumn,  Qt::AlignRight  );
-  _so->addColumn(tr("Scheduled"),   _dateColumn,  Qt::AlignRight  );
-  _so->addColumn(tr("Status"),      _itemColumn,  Qt::AlignCenter );
-  _so->addColumn(tr("Ship-to"),     -1,           Qt::AlignLeft   );
-  _so->addColumn(tr("Cust. P/O #"), 200,          Qt::AlignLeft   );
+  _so->addColumn(tr("Order #"),     _orderColumn, Qt::AlignLeft,   true,  "cohead_number"   );
+  _so->addColumn(tr("Ordered"),     _dateColumn,  Qt::AlignRight,  true,  "cohead_orderdate"  );
+  _so->addColumn(tr("Scheduled"),   _dateColumn,  Qt::AlignRight,  true,  "min_scheddate"  );
+  _so->addColumn(tr("Status"),      _itemColumn,  Qt::AlignCenter, true,  "order_status" );
+  _so->addColumn(tr("Ship-to"),     -1,           Qt::AlignLeft,   true,  "cohead_shiptoname"   );
+  _so->addColumn(tr("Cust. P/O #"), 200,          Qt::AlignLeft,   true,  "cohead_custponumber"   );
 
   _cust->setFocus();
   connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sFillList())  );
@@ -222,18 +222,7 @@ void dspSalesOrdersByCustomer::sFillList()
       params.append("poNumber", _poNumber->currentText());
 
     q = mql.toQuery(params);
-    XTreeWidgetItem *last = 0;
-    while (q.next())
-    {
-      last = new XTreeWidgetItem(_so, last,
-				 q.value("cohead_id").toInt(),
-				 q.value("cohead_number"),
-				 formatDate(q.value("cohead_orderdate").toDate()),
-				 formatDate(q.value("min_scheddate").toDate()),
-				 q.value("order_status"),
-				 q.value("cohead_shiptoname"),
-         q.value("cohead_custponumber") );
-    }
+    _so->populate(q);
   }
 }
 

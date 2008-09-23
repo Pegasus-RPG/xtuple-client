@@ -82,15 +82,17 @@ dspQOHByLocation::dspQOHByLocation(QWidget* parent, const char* name, Qt::WFlags
   _location->setAllowNull(TRUE);
 
   _itemloc->setRootIsDecorated(TRUE);
-  _itemloc->addColumn(tr("Site"),         _itemColumn, Qt::AlignLeft   );
-  _itemloc->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft   );
-  _itemloc->addColumn(tr("Description"),  -1,          Qt::AlignLeft   );
-  _itemloc->addColumn(tr("Lot/Serial #"), 150,         Qt::AlignLeft   );
-  _itemloc->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignCenter );
-  _itemloc->addColumn(tr("QOH"),          _qtyColumn,  Qt::AlignRight  );
-  if(_metrics->boolean("EnableSOReservationsByLocation"))
-    _itemloc->addColumn(tr("Reserved"),   _qtyColumn,  Qt::AlignRight  );
+  _itemloc->addColumn(tr("Site"),         _itemColumn, Qt::AlignLeft,   true,  "warehous_code"   );
+  _itemloc->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft,   true,  "item_number"   );
+  _itemloc->addColumn(tr("Description"),  -1,          Qt::AlignLeft,   true,  "f_descrip"   );
+  _itemloc->addColumn(tr("Lot/Serial #"), 150,         Qt::AlignLeft,   true,  "f_lotserial"   );
+  _itemloc->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignCenter, true,  "uom_name" );
+  _itemloc->addColumn(tr("QOH"),          _qtyColumn,  Qt::AlignRight,  true,  "qty"  );
+  _itemloc->addColumn(tr("Reserved"),     _qtyColumn,  Qt::AlignRight,  false, "reservedqty"  );
   
+  if(_metrics->boolean("EnableSOReservationsByLocation"))
+    _itemloc->showColumn(6);
+
   sPopulateLocations();
 }
 
@@ -225,30 +227,48 @@ void dspQOHByLocation::sFillList()
 						 "ORDER BY formatSOItemNumber(itemlocrsrv_source_id);" );
 
     q.prepare( "SELECT itemloc_id, warehous_code, item_number,"
-				"      (item_descrip1 || ' ' || item_descrip2) AS f_descrip,"
+               "       f_descrip, f_lotserial, uom_name,"
+               "       qty, reservedqty,"
+               "       'qty' AS qty_xtnumericrole,"
+               "       'qty' AS reservedqty_xtnumericrole,"
+               "       level AS xtindentrole "
+               "FROM ( "
+               "SELECT itemloc_id, 0 AS level, item_number AS sortkey, warehous_code, item_number,"
+               "       (item_descrip1 || ' ' || item_descrip2) AS f_descrip,"
                "       formatlotserialnumber(itemloc_ls_id) AS f_lotserial, uom_name,"
-			   "       formatQty(itemloc_qty) AS f_qty,"
-			   "       formatQty(qtyReservedLocation(itemloc_id)) AS f_reservedqty "
+               "       itemloc_qty AS qty,"
+               "       qtyReservedLocation(itemloc_id) AS reservedqty "
                "FROM itemloc, itemsite, warehous, item, uom "
                "WHERE ( (itemloc_itemsite_id=itemsite_id)"
                " AND (itemsite_item_id=item_id)"
                " AND (item_inv_uom_id=uom_id)"
                " AND (itemsite_warehous_id=warehous_id)"
                " AND (itemloc_location_id=:location_id) ) "
-
-               "UNION SELECT -1 AS itemloc_id, warehous_code, item_number,"
-			   "             (item_descrip1 || ' ' || item_descrip2) AS f_descrip,"
-               "             :na AS f_lotserial, uom_name,"
-			   "             formatQty(itemsite_qtyonhand) AS f_qty,"
-			   "             formatQty(0) AS f_qtyreserved "
+               "UNION "
+               "SELECT -1 AS itemloc_id, 0 AS level, item_number AS sortkey, warehous_code, item_number,"
+               "       (item_descrip1 || ' ' || item_descrip2) AS f_descrip,"
+               "       :na AS f_lotserial, uom_name,"
+               "       itemsite_qtyonhand AS qty,"
+               "       0 AS qtyreserved "
                "FROM itemsite, warehous, item, uom "
                "WHERE ((itemsite_item_id=item_id)"
                " AND (item_inv_uom_id=uom_id)"
                " AND (itemsite_warehous_id=warehous_id)"
                " AND (NOT itemsite_loccntrl)"
                " AND (itemsite_location_id=:location_id)) "
-
-               "ORDER BY item_number;" );
+               "UNION "
+               "SELECT itemloc_id, 1 AS level, item_number AS sortkey, '' AS warehous_code, '' AS item_number,"
+               "       (itemlocrsrv_source || '-' || formatSOItemNumber(itemlocrsrv_source_id)) AS f_descrip,"
+               "       '' AS f_lotserial, '' AS uom_name,"
+               "       NULL AS qty,"
+               "       itemlocrsrv_qty AS qtyreserved "
+               "FROM itemlocrsrv, itemloc, itemsite, item "
+               "WHERE ( (itemlocrsrv_itemloc_id=itemloc_id) "
+               "  AND   (itemsite_id=itemloc_itemsite_id) "
+               "  ANd   (item_id=itemsite_item_id) "
+               "  AND   (itemloc_location_id=:location_id) ) "
+               "    ) AS data "
+               "ORDER BY sortkey, itemloc_id, level;" );
     q.bindValue(":location_id", _location->id());
     q.bindValue(":na", tr("N/A"));
     q.exec();
@@ -260,38 +280,7 @@ void dspQOHByLocation::sFillList()
 
     if (q.first())
     {
-      XTreeWidgetItem *document = 0;
-      XTreeWidgetItem *last = 0;
-      do
-      {
-        last = document = new XTreeWidgetItem( _itemloc, last, q.value("itemloc_id").toInt(),
-                                               q.value("warehous_code"), q.value("item_number"),
-                                               q.value("f_descrip"), q.value("f_lotserial"),
-                                               q.value("uom_name"), q.value("f_qty"),
-                                               q.value("f_reservedqty") );
-
-        itemlocrsrv.bindValue(":itemloc_id", q.value("itemloc_id").toInt());
-	    itemlocrsrv.exec();
-	    if (itemlocrsrv.first())
-	    {
-	      do
-		  {
-            new XTreeWidgetItem( document, -1,
-                                 "", "",
-                                 itemlocrsrv.value("f_source"), "",
-                                 "", "",
-                                 itemlocrsrv.value("f_reserved") );
-          }
-		  while (itemlocrsrv.next());
-        }
-      }
-      while (q.next());
-    }
-  
-    if (q.lastError().type() != QSqlError::None)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
+      _itemloc->populate(q);
     }
   }
   else

@@ -83,13 +83,13 @@ dspSalesOrdersByParameterList::dspSalesOrdersByParameterList(QWidget* parent, co
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
   _dates->setEndCaption(tr("Ending Order Date:"));
 
-  _so->addColumn(tr("Customer"),    _itemColumn,  Qt::AlignLeft   );
-  _so->addColumn(tr("Order #"),     _orderColumn, Qt::AlignLeft   );
-  _so->addColumn(tr("Ordered"),     _dateColumn,  Qt::AlignRight  );
-  _so->addColumn(tr("Scheduled"),   _dateColumn,  Qt::AlignRight  );
-  _so->addColumn(tr("Status"),      _itemColumn,  Qt::AlignCenter );
-  _so->addColumn(tr("Ship-to"),     -1,           Qt::AlignLeft   );
-  _so->addColumn(tr("Cust. P/O #"), 200,          Qt::AlignLeft   );
+  _so->addColumn(tr("Customer"),    _itemColumn,  Qt::AlignLeft,   true,  "cust_number"   );
+  _so->addColumn(tr("Order #"),     _orderColumn, Qt::AlignLeft,   true,  "cohead_number"   );
+  _so->addColumn(tr("Ordered"),     _dateColumn,  Qt::AlignRight,  true,  "cohead_orderdate"  );
+  _so->addColumn(tr("Scheduled"),   _dateColumn,  Qt::AlignRight,  true,  "min_scheddate"  );
+  _so->addColumn(tr("Status"),      _itemColumn,  Qt::AlignCenter, true,  "order_status" );
+  _so->addColumn(tr("Ship-to"),     -1,           Qt::AlignLeft,   true,  "cohead_shiptoname"   );
+  _so->addColumn(tr("Cust. P/O #"), 200,          Qt::AlignLeft,   true,  "cohead_custponumber"   );
 
   connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sFillList())  );
 }
@@ -143,7 +143,7 @@ enum SetResponse dspSalesOrdersByParameterList::set(const ParameterList &pParams
 
 void dspSalesOrdersByParameterList::sPopulateMenu(QMenu *menuThis)
 {
-  if(_so->altId() == -1)
+  if(_so->id() == -1)
     return;
 
   menuThis->insertItem(tr("Edit..."), this, SLOT(sEditOrder()), 0);
@@ -161,28 +161,28 @@ void dspSalesOrdersByParameterList::sPopulateMenu(QMenu *menuThis)
 
 void dspSalesOrdersByParameterList::sEditOrder()
 {
-  if (!checkSitePrivs(_so->altId()))
+  if (!checkSitePrivs(_so->id()))
     return;
     
-  salesOrder::editSalesOrder(_so->altId(), false);
+  salesOrder::editSalesOrder(_so->id(), false);
 }
 
 void dspSalesOrdersByParameterList::sViewOrder()
 {
-  if (!checkSitePrivs(_so->altId()))
+  if (!checkSitePrivs(_so->id()))
     return;
     
-  salesOrder::viewSalesOrder(_so->altId());
+  salesOrder::viewSalesOrder(_so->id());
 }
 
 void dspSalesOrdersByParameterList::sCreateRA()
 {
-  if (!checkSitePrivs(_so->altId()))
+  if (!checkSitePrivs(_so->id()))
     return;
     
   ParameterList params;
   params.append("mode", "new");
-  params.append("sohead_id", _so->altId());
+  params.append("sohead_id", _so->id());
 
   returnAuthorization *newdlg = new returnAuthorization();
   if (newdlg->set(params) == NoError)
@@ -194,11 +194,11 @@ void dspSalesOrdersByParameterList::sCreateRA()
 
 void dspSalesOrdersByParameterList::sDspShipmentStatus()
 {
-  if (!checkSitePrivs(_so->altId()))
+  if (!checkSitePrivs(_so->id()))
     return;
     
   ParameterList params;
-  params.append("sohead_id", _so->altId());
+  params.append("sohead_id", _so->id());
   params.append("run");
 
   dspSalesOrderStatus *newdlg = new dspSalesOrderStatus();
@@ -208,11 +208,11 @@ void dspSalesOrdersByParameterList::sDspShipmentStatus()
 
 void dspSalesOrdersByParameterList::sDspShipments()
 {
-  if (!checkSitePrivs(_so->altId()))
+  if (!checkSitePrivs(_so->id()))
     return;
     
   ParameterList params;
-  params.append("sohead_id", _so->altId());
+  params.append("sohead_id", _so->id());
   params.append("run");
 
   dspShipmentsBySalesOrder *newdlg = new dspShipmentsBySalesOrder();
@@ -236,27 +236,7 @@ void dspSalesOrdersByParameterList::sFillList()
     params.append("orderByCust");
 
     q = mql.toQuery(params);
-    int custid = -1;
-    XTreeWidgetItem *lastcust = 0;
-    XTreeWidgetItem *lastorder = 0;
-    while (q.next())
-    {
-      if(q.value("cust_id").toInt() != custid)
-      {
-        custid = q.value("cust_id").toInt();
-        lastcust = new XTreeWidgetItem(_so, lastcust, custid, -1, q.value("cust_number"));
-        lastorder = 0;
-      }
-
-      lastorder = new XTreeWidgetItem(lastcust, lastorder, custid, q.value("cohead_id").toInt(),
-                                "",
-                                q.value("cohead_number"),
-                                formatDate(q.value("cohead_orderdate").toDate()),
-                                formatDate(q.value("min_scheddate").toDate()),
-                                q.value("order_status"),
-                                q.value("cohead_shiptoname"),
-                                q.value("cohead_custponumber") );
-    }
+    _so->populate(q, true);
   }
 }
 

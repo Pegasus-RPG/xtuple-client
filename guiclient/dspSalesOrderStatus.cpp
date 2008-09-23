@@ -84,16 +84,18 @@ dspSalesOrderStatus::dspSalesOrderStatus(QWidget* parent, const char* name, Qt::
 
   omfgThis->inputManager()->notify(cBCSalesOrder, this, _so, SLOT(setId(int)));
 
-  _soitem->addColumn(tr("#"),                         _seqColumn,  Qt::AlignCenter );
-  _soitem->addColumn(tr("Item"),                      _itemColumn, Qt::AlignLeft   );
-  _soitem->addColumn(tr("Description"),               -1,          Qt::AlignLeft   );
-  _soitem->addColumn(tr("Site"),                      _whsColumn,  Qt::AlignCenter );
-  _soitem->addColumn(tr("Ordered"),                   _qtyColumn,  Qt::AlignRight  );
-  _soitem->addColumn(tr("Shipped"),                   _qtyColumn,  Qt::AlignRight  );
-  _soitem->addColumn(tr("Returned"),                  _qtyColumn,  Qt::AlignRight  );
-  _soitem->addColumn(tr("Invoiced"),		      _qtyColumn,  Qt::AlignRight  );
-  _soitem->addColumn(tr("Balance/Close Date (User)"), 175,         Qt::AlignRight  );
-  _soitem->addColumn(tr("Child Ord. #/Status"),       _itemColumn, Qt::AlignCenter );
+  _soitem->addColumn(tr("#"),                   _seqColumn,  Qt::AlignCenter, true,  "coitem_linenumber" );
+  _soitem->addColumn(tr("Item"),                _itemColumn, Qt::AlignLeft,   true,  "item_number"   );
+  _soitem->addColumn(tr("Description"),         -1,          Qt::AlignLeft,   true,  "itemdescrip"   );
+  _soitem->addColumn(tr("Site"),                _whsColumn,  Qt::AlignCenter, true,  "warehous_code" );
+  _soitem->addColumn(tr("Ordered"),             _qtyColumn,  Qt::AlignRight,  true,  "coitem_qtyord"  );
+  _soitem->addColumn(tr("Shipped"),             _qtyColumn,  Qt::AlignRight,  true,  "coitem_qtyshipped"  );
+  _soitem->addColumn(tr("Returned"),            _qtyColumn,  Qt::AlignRight,  true,  "coitem_qtyreturned"  );
+  _soitem->addColumn(tr("Invoiced"),            _qtyColumn,  Qt::AlignRight,  true,  "invoiced"  );
+  _soitem->addColumn(tr("Balance"),             _qtyColumn,  Qt::AlignRight,  true,  "balance"  );
+  _soitem->addColumn(tr("Close Date"),          _dateColumn, Qt::AlignLeft,   true,  "closedate"  );
+  _soitem->addColumn(tr("Close User"),          _itemColumn, Qt::AlignLeft,   true,  "closeuser"  );
+  _soitem->addColumn(tr("Child Ord. #/Status"), _itemColumn, Qt::AlignCenter, true,  "childinfo" );
 
   _so->setFocus();
 }
@@ -181,7 +183,7 @@ void dspSalesOrderStatus::sFillList(int pSoheadid)
     q.bindValue(":sohead_id", pSoheadid);
     q.exec();
     if (q.first())
-      _lastUpdated->setText(formatDate(q.value("lastupdated").toDate()));
+      _lastUpdated->setDate(q.value("lastupdated").toDate());
     else if (q.lastError().type() != QSqlError::None)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -189,35 +191,38 @@ void dspSalesOrderStatus::sFillList(int pSoheadid)
     }
 
     q.prepare( "SELECT coitem_id, coitem_linenumber, item_number,"
-               "       (item_descrip1 || ' ' || item_descrip2),"
+               "       (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
                "       warehous_code,"
-               "       formatQty(coitem_qtyord),"
-               "       formatQty(coitem_qtyshipped),"
-               "       formatQty(coitem_qtyreturned),"
-	       "       formatQty(SUM(COALESCE(cobill_qty, 0))),"
-               "       CASE WHEN (coitem_status='C') THEN ( formatDate(coitem_closedate) || ' (' || coitem_close_username || ')' )"
-               "            ELSE formatQty(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned))"
-               "       END,"
+               "       coitem_qtyord, coitem_qtyshipped, coitem_qtyreturned,"
+               "       SUM(COALESCE(cobill_qty, 0)) AS invoiced,"
+               "       noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) AS balance,"
+               "       CASE WHEN (coitem_status='C') THEN coitem_closedate END AS closedate,"
+               "       CASE WHEN (coitem_status='C') THEN coitem_close_username END AS closeuser,"
                "       CASE WHEN (coitem_order_id=-1) THEN ''"
                "            WHEN (coitem_order_type='W') THEN ( SELECT (formatWoNumber(wo_id) || '/' || wo_status)"
                "                                                FROM wo"
                "                                                WHERE (wo_id=coitem_order_id) )"
                "            ELSE ''"
-               "       END "
+               "       END AS childinfo,"
+               "       'qty' AS coitem_qtyord_xtnumericrole,"
+               "       'qty' AS coitem_qtyshipped_xtnumericrole,"
+               "       'qty' AS coitem_qtyreturned_xtnumericrole,"
+               "       'qty' AS invoiced_xtnumericrole,"
+               "       'qty' AS balance_xtnumericrole "
                "FROM itemsite, item, warehous, coitem LEFT OUTER JOIN "
-	       "     cobill ON (coitem_id=cobill_coitem_id AND "
-	       "                cobill_invcitem_id IS NOT NULL) "
+               "     cobill ON (coitem_id=cobill_coitem_id AND "
+               "                cobill_invcitem_id IS NOT NULL) "
                "WHERE ( (coitem_itemsite_id=itemsite_id)"
                " AND (coitem_status <> 'X')"
                " AND (itemsite_item_id=item_id)"
                " AND (itemsite_warehous_id=warehous_id)"
                " AND (coitem_cohead_id=:sohead_id) ) "
-	       "GROUP BY coitem_id, coitem_linenumber, item_number, "
-	       "         item_descrip1, item_descrip2, warehous_code, "
-	       "         coitem_qtyord, coitem_qtyshipped, coitem_status, "
-	       "         coitem_closedate, coitem_close_username, "
-	       "         coitem_qtyreturned, coitem_order_id, "
-	       "         coitem_order_type "
+               "GROUP BY coitem_id, coitem_linenumber, item_number, "
+               "         item_descrip1, item_descrip2, warehous_code, "
+               "         coitem_qtyord, coitem_qtyshipped, coitem_status, "
+               "         coitem_closedate, coitem_close_username, "
+               "         coitem_qtyreturned, coitem_order_id, "
+               "         coitem_order_type "
                "ORDER BY coitem_linenumber;" );
     q.bindValue(":sohead_id", pSoheadid);
     q.exec();

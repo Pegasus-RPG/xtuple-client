@@ -88,17 +88,17 @@ dspPoItemsByVendor::dspPoItemsByVendor(QWidget* parent, const char* name, Qt::WF
 
   _agent->setText(omfgThis->username());
 
-  _poitem->addColumn(tr("P/O #"),       _orderColumn, Qt::AlignRight  );
-  _poitem->addColumn(tr("Whs."),        _whsColumn,   Qt::AlignCenter );
-  _poitem->addColumn(tr("Status"),      _dateColumn,  Qt::AlignCenter );
-  _poitem->addColumn(tr("Due Date"),    _dateColumn,  Qt::AlignCenter );
-  _poitem->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft   );
-  _poitem->addColumn(tr("Description"), -1,           Qt::AlignLeft   );
-  _poitem->addColumn(tr("UOM"),         _uomColumn,   Qt::AlignCenter );
-  _poitem->addColumn(tr("Ordered"),     _qtyColumn,   Qt::AlignRight  );
-  _poitem->addColumn(tr("Received"),    _qtyColumn,   Qt::AlignRight  );
-  _poitem->addColumn(tr("Returned"),    _qtyColumn,   Qt::AlignRight  );
-  _poitem->addColumn(tr("Item Status"), 10,           Qt::AlignCenter );
+  _poitem->addColumn(tr("P/O #"),       _orderColumn, Qt::AlignRight,  true,  "pohead_number"  );
+  _poitem->addColumn(tr("Whs."),        _whsColumn,   Qt::AlignCenter, true,  "warehousecode"  );
+  _poitem->addColumn(tr("Status"),      _dateColumn,  Qt::AlignCenter, true,  "poitemstatus" );
+  _poitem->addColumn(tr("Due Date"),    _dateColumn,  Qt::AlignCenter, true,  "poitem_duedate" );
+  _poitem->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft,   true,  "itemnumber"   );
+  _poitem->addColumn(tr("Description"), -1,           Qt::AlignLeft,   true,  "itemdescrip"   );
+  _poitem->addColumn(tr("UOM"),         _uomColumn,   Qt::AlignCenter, true,  "itemuom" );
+  _poitem->addColumn(tr("Ordered"),     _qtyColumn,   Qt::AlignRight,  true,  "poitem_qty_ordered"  );
+  _poitem->addColumn(tr("Received"),    _qtyColumn,   Qt::AlignRight,  true,  "poitem_qty_received"  );
+  _poitem->addColumn(tr("Returned"),    _qtyColumn,   Qt::AlignRight,  true,  "poitem_qty_returned"  );
+  _poitem->addColumn(tr("Item Status"), 10,           Qt::AlignCenter, false, "poitem_status" );
 
   _vendor->setFocus();
 }
@@ -344,7 +344,7 @@ void dspPoItemsByVendor::sFillList()
   _poitem->clear();
 
   QString sql( "SELECT pohead_id, poitem_id, pohead_number,"
-	       "       poitem_status,"
+               "       poitem_status,"
                "       CASE WHEN(poitem_status='C') THEN <? value(\"closed\") ?>"
                "            WHEN(poitem_status='U') THEN <? value(\"unposted\") ?>"
                "            WHEN(poitem_status='O' AND ((poitem_qty_received-poitem_qty_returned) > 0) AND (poitem_qty_ordered>(poitem_qty_received-poitem_qty_returned))) THEN <? value(\"partial\") ?>"
@@ -362,64 +362,44 @@ void dspPoItemsByVendor::sFillList()
                "       COALESCE(item_number, (<? value(\"nonInv\") ?> || poitem_vend_item_number)) AS itemnumber,"
                "       COALESCE(item_descrip1, firstLine(poitem_vend_item_descrip)) AS itemdescrip,"
                "       COALESCE(uom_name, poitem_vend_uom) AS itemuom,"
-               "       formatDate(poitem_duedate) AS f_duedate,"
-               "       formatQty(poitem_qty_ordered) AS f_qtyordered,"
-               "       formatQty(poitem_qty_received) AS f_qtyreceived,"
-               "       formatQty(poitem_qty_returned) AS f_qtyreturned,"
-               "       (poitem_duedate < CURRENT_DATE) AS late "
+               "       poitem_duedate, poitem_qty_ordered, poitem_qty_received, poitem_qty_returned,"
+               "       CASE WHEN (poitem_duedate < CURRENT_DATE) THEN 'error' END AS poitem_duedate_qtforegroundrole,"
+               "       'qty' AS poitem_qty_ordered_xtnumericrole,"
+               "       'qty' AS poitem_qty_received_xtnumericrole,"
+               "       'qty' AS poitem_qty_returned_xtnumericrole "
                "FROM pohead,"
                "     poitem LEFT OUTER JOIN"
                "     ( itemsite JOIN item"
                "       ON (itemsite_item_id=item_id) JOIN uom ON (item_inv_uom_id=uom_id))"
                "     ON (poitem_itemsite_id=itemsite_id) "
                "WHERE ((poitem_pohead_id=pohead_id)"
-	       "<? if exists(\"warehous_id\") ?>"
-	       " AND (((itemsite_id IS NULL) AND"
-	       "       (pohead_warehous_id=<? value(\"warehous_id\") ?>) ) OR"
-	       "      ((itemsite_id IS NOT NULL) AND"
-	       "       (itemsite_warehous_id=<? value(\"warehous_id\") ?>) ) )"
-	       "<? endif ?>"
-	       "<? if exists(\"agentUsername\") ?>"
-	       " AND (pohead_agent_username=<? value(\"agentUsername\") ?>)"
-	       "<? endif ?>"
-	       "<? if exists(\"poNumber\") ?>"
-	       " AND (pohead_number=<? value(\"poNumber\") ?>)"
-	       "<? endif ?>"
-	       "<? if exists(\"openItems\") ?>"
-	       " AND (poitem_status='O')"
-	       "<? endif ?>"
-	       "<? if exists(\"closedItems\") ?>"
-	       " AND (poitem_status='C')"
-	       "<? endif ?>"
-	       " AND (pohead_vend_id=<? value(\"vend_id\") ?>) ) "
-	       "ORDER BY poitem_duedate, pohead_number, poitem_linenumber;" );
+               "<? if exists(\"warehous_id\") ?>"
+               " AND (((itemsite_id IS NULL) AND"
+               "       (pohead_warehous_id=<? value(\"warehous_id\") ?>) ) OR"
+               "      ((itemsite_id IS NOT NULL) AND"
+               "       (itemsite_warehous_id=<? value(\"warehous_id\") ?>) ) )"
+               "<? endif ?>"
+               "<? if exists(\"agentUsername\") ?>"
+               " AND (pohead_agent_username=<? value(\"agentUsername\") ?>)"
+               "<? endif ?>"
+               "<? if exists(\"poNumber\") ?>"
+               " AND (pohead_number=<? value(\"poNumber\") ?>)"
+               "<? endif ?>"
+               "<? if exists(\"openItems\") ?>"
+               " AND (poitem_status='O')"
+               "<? endif ?>"
+               "<? if exists(\"closedItems\") ?>"
+               " AND (poitem_status='C')"
+               "<? endif ?>"
+               " AND (pohead_vend_id=<? value(\"vend_id\") ?>) ) "
+               "ORDER BY poitem_duedate, pohead_number, poitem_linenumber;" );
   ParameterList params;
   setParams(params);
   MetaSQLQuery mql(sql);
   q = mql.toQuery(params);
   if (q.first())
   {
-    XTreeWidgetItem *last = 0;
-    do
-    {
-      last = new XTreeWidgetItem(_poitem, last,
-				 q.value("pohead_id").toInt(),
-				 q.value("poitem_id").toInt(),
-				 q.value("pohead_number"),
-				 q.value("warehousecode"),
-				 q.value("poitemstatus"),
-				 q.value("f_duedate"),
-				 q.value("itemnumber"),
-				 q.value("itemdescrip"),
-				 q.value("itemuom"),
-				 q.value("f_qtyordered"),
-				 q.value("f_qtyreceived"),
-				 q.value("f_qtyreturned") );
-      last->setText(POITEM_STATUS_COL, q.value("poitem_status"));
-      if (q.value("late").toBool())
-        last->setTextColor(3, "red");
-    }
-    while (q.next());
+    _poitem->populate(q, true);
   }
   else if (q.lastError().type() != QSqlError::None)
   {

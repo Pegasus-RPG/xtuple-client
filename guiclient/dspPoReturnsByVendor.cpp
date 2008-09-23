@@ -85,13 +85,13 @@ dspPoReturnsByVendor::dspPoReturnsByVendor(QWidget* parent, const char* name, Qt
   _agent->setType(XComboBox::Agent);
   _agent->setText(omfgThis->username());
 
-  _poreject->addColumn(tr("P/O #"),              _orderColumn, Qt::AlignRight  );
-  _poreject->addColumn(tr("Vendor"),             _orderColumn, Qt::AlignLeft   );
-  _poreject->addColumn(tr("Date"),               _dateColumn,  Qt::AlignCenter );
-  _poreject->addColumn(tr("Vend. Item #"),       _itemColumn,  Qt::AlignLeft   );
-  _poreject->addColumn(tr("Vendor Description"), -1,           Qt::AlignLeft   );
-  _poreject->addColumn(tr("Qty."),               _qtyColumn,   Qt::AlignRight  );
-  _poreject->addColumn(tr("Reject Code"),        _itemColumn,  Qt::AlignRight  );
+  _poreject->addColumn(tr("P/O #"),              _orderColumn, Qt::AlignRight,  true,  "poreject_ponumber"  );
+  _poreject->addColumn(tr("Vendor"),             _orderColumn, Qt::AlignLeft,   true,  "vend_name"   );
+  _poreject->addColumn(tr("Date"),               _dateColumn,  Qt::AlignCenter, true,  "poreject_date" );
+  _poreject->addColumn(tr("Vend. Item #"),       _itemColumn,  Qt::AlignLeft,   true,  "poreject_vend_item_number"   );
+  _poreject->addColumn(tr("Vendor Description"), -1,           Qt::AlignLeft,   true,  "poreject_vend_item_descrip"   );
+  _poreject->addColumn(tr("Qty."),               _qtyColumn,   Qt::AlignRight,  true,  "poreject_qty"  );
+  _poreject->addColumn(tr("Reject Code"),        _itemColumn,  Qt::AlignRight,  true,  "rjctcode_code"  );
 }
 
 /*
@@ -139,10 +139,10 @@ void dspPoReturnsByVendor::sPrint()
 void dspPoReturnsByVendor::sFillList()
 {
   QString sql( "SELECT poreject_id, poreject_ponumber, vend_name,"
-               "       formatDate(poreject_date),"
+               "       poreject_date, poreject_qty,"
                "       poreject_vend_item_number, poreject_vend_item_descrip,"
-               "       formatQty(poreject_qty),"
-               "       rjctcode_code "
+               "       rjctcode_code,"
+               "       'qty' AS poreject_qty_xtnumericrole "
                "FROM poreject, vend, itemsite, rjctcode "
                "WHERE ( (poreject_posted)"
                " AND (poreject_vend_id=vend_id)"

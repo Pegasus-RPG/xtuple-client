@@ -87,15 +87,15 @@ dspQOHByItem::dspQOHByItem(QWidget* parent, const char* name, Qt::WFlags fl)
   omfgThis->inputManager()->notify(cBCItem, this, _item, SLOT(setItemid(int)));
   omfgThis->inputManager()->notify(cBCItemSite, this, _item, SLOT(setItemsiteid(int)));
 
-  _qoh->addColumn(tr("Site"),             -1,           Qt::AlignCenter );
-  _qoh->addColumn(tr("Default Location"), _itemColumn,  Qt::AlignLeft   );
-  _qoh->addColumn(tr("Reorder Lvl."),     _qtyColumn,   Qt::AlignRight  );
-  _qoh->addColumn(tr("QOH"),              _qtyColumn,   Qt::AlignRight  );
-  _qoh->addColumn(tr("Non-Netable"),      _qtyColumn,   Qt::AlignRight  );
-  _qoh->addColumn(tr("Unit Cost"),        _costColumn,  Qt::AlignRight  );
-  _qoh->addColumn(tr("Value"),            _costColumn,  Qt::AlignRight  );
-  _qoh->addColumn(tr("NN Value"),         _costColumn,  Qt::AlignRight  );
-  _qoh->addColumn(tr("Cost Method"),      _costColumn,  Qt::AlignCenter );
+  _qoh->addColumn(tr("Site"),             -1,           Qt::AlignCenter, true,  "warehous_code" );
+  _qoh->addColumn(tr("Default Location"), _itemColumn,  Qt::AlignLeft,   true,  "defaultlocation"   );
+  _qoh->addColumn(tr("Reorder Lvl."),     _qtyColumn,   Qt::AlignRight,  true,  "reorderlevel"  );
+  _qoh->addColumn(tr("QOH"),              _qtyColumn,   Qt::AlignRight,  true,  "qoh"  );
+  _qoh->addColumn(tr("Non-Netable"),      _qtyColumn,   Qt::AlignRight,  true,  "f_nnqoh"  );
+  _qoh->addColumn(tr("Unit Cost"),        _costColumn,  Qt::AlignRight,  true,  "cost"  );
+  _qoh->addColumn(tr("Value"),            _costColumn,  Qt::AlignRight,  true,  "value"  );
+  _qoh->addColumn(tr("NN Value"),         _costColumn,  Qt::AlignRight,  true,  "f_nnvalue"  );
+  _qoh->addColumn(tr("Cost Method"),      _costColumn,  Qt::AlignCenter, true,  "f_costmethod" );
   sHandleValue(_showValue->isChecked());
 
   _showValue->setEnabled(_privileges->check("ViewInventoryValue"));
@@ -268,23 +268,30 @@ void dspQOHByItem::sFillList()
                "       CASE WHEN (NOT useDefaultLocation(itemsite_id)) THEN :none"
                "            ELSE defaultLocationName(itemsite_id)"
                "       END AS defaultlocation,"
-               "       formatQty(reorderlevel) AS f_reorderlevel,"
-               "       formatQty(qoh) AS f_qoh,"
-               "       CASE WHEN (itemsite_loccntrl) THEN formatQty(nnqoh)"
-               "            ELSE :na"
-               "       END AS f_nnqoh,"
-               "       formatCost(cost) AS f_unitcost,"
-               "       formatMoney(cost * qoh) AS f_value,"
-               "       CASE WHEN (itemsite_loccntrl) THEN formatMoney(cost * nnqoh)"
-               "            ELSE :na"
-               "       END AS f_nnvalue,"
-               "       cost, reorderlevel, qoh, nnqoh,"
+               "       reorderlevel, qoh, nnqoh,"
+               "       CASE WHEN (itemsite_loccntrl) THEN nnqoh END AS f_nnqoh,"
+               "       cost, (cost * qoh) AS value,"
+               "       CASE WHEN (itemsite_loccntrl) THEN (cost * nnqoh) END AS f_nnvalue,"
                "       CASE WHEN(itemsite_costmethod='A') THEN 'Average'"
                "            WHEN(itemsite_costmethod='S') THEN 'Standard'"
                "            WHEN(itemsite_costmethod='J') THEN 'Job'"
                "            WHEN(itemsite_costmethod='N') THEN 'None'"
                "            ELSE 'UNKNOWN'"
-               "       END AS f_costmethod "
+               "       END AS f_costmethod,"
+               "       'qty' AS reorderlevel_xtnumericrole,"
+               "       'qty' AS qoh_xtnumericrole,"
+               "       'qty' AS f_nnqoh_xtnumericrole,"
+               "       0 AS qoh_xttotalrole,"
+               "       0 AS f_nnqoh_xttotalrole,"
+               "       'cost' AS cost_xtnumericrole,"
+               "       'curr' AS value_xtnumericrole,"
+               "       'curr' AS f_nnvalue_xtnumericrole,"
+               "       0 AS value_xttotalrole,"
+               "       0 AS f_nnvalue_xttotalrole,"
+               "       :na AS f_nnqoh_xtnullrole,"
+               "       :na AS f_nnvalue_xtnullrole,"
+               "       CASE WHEN (qoh < 0) THEN 'error' END AS qoh_qtforegroundrole,"
+               "       CASE WHEN (reorderlevel > qoh) THEN 'warning' END AS qoh_qtforegroundrole "
                "FROM ( SELECT itemsite_id, itemsite_loccntrl, itemsite_costmethod,"
                "              CASE WHEN ((itemsite_loccntrl) OR (itemsite_controlmethod IN ('L', 'S'))) THEN 1"
                "                   ELSE 0"
@@ -321,56 +328,6 @@ void dspQOHByItem::sFillList()
   q.exec();
   if (q.first())
   {
-    XTreeWidgetItem *selected     = 0;
-    XTreeWidgetItem *last         = 0;
-    double        netable         = 0.0;
-    double        netableValue    = 0.0;
-    double        nonNetable      = 0.0;
-    double        nonNetableValue = 0.0;
-
-    do
-    {
-      last = new XTreeWidgetItem( _qoh, last, q.value("itemsite_id").toInt(), q.value("detail").toInt(),
-                                  q.value("warehous_code"), q.value("defaultlocation"),
-                                  q.value("f_reorderlevel"), q.value("f_qoh"),
-                                  q.value("f_nnqoh") );
-
-      last->setText(5, q.value("f_unitcost").toString());
-      last->setText(6, q.value("f_value").toString());
-      last->setText(7, q.value("f_nnvalue").toString());
-      last->setText(8, q.value("f_costmethod").toString());
-
-      if (q.value("qoh").toDouble() < 0)
-        last->setTextColor(3, "red");
-      else if (q.value("reorderlevel").toDouble() > q.value("qoh").toDouble())
-        last->setTextColor(3, "orange");
-
-      if (q.value("itemsite_id") == itemsiteid)
-        selected = last;
-
-      if (q.value("qoh").toDouble() > 0.0)
-      {
-        netable += q.value("qoh").toDouble();
-        netableValue += (q.value("cost").toDouble() * q.value("qoh").toDouble());
-      }
-
-      if (q.value("nnqoh").toDouble() > 0.0)
-      {
-        nonNetable += q.value("nnqoh").toDouble();
-        nonNetableValue += (q.value("cost").toDouble() * q.value("nnqoh").toDouble());
-      }
-    }
-    while (q.next());
-
-    last = new XTreeWidgetItem( _qoh, last, -1, 0, "", tr("Totals"), "",
-                                formatQty(netable), formatQty(nonNetable) );
-    last->setText(6, formatMoney(netableValue));
-    last->setText(7, formatMoney(nonNetableValue));
-
-    if (selected != NULL)
-    {
-      _qoh->setCurrentItem(selected);
-      _qoh->scrollTo(_qoh->currentIndex());
-    }
+    _qoh->populate(q, true);
   }
 }

@@ -118,10 +118,10 @@ void dspQuotesByCustomer::init()
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
   _dates->setEndCaption(tr("Ending Order Date"));
 
-  _so->addColumn(tr("Quote #"),     _orderColumn, Qt::AlignLeft   );
-  _so->addColumn(tr("Quote Date"),     _dateColumn,  Qt::AlignRight  );
-  _so->addColumn(tr("Ship-to"),     -1,           Qt::AlignLeft   );
-  _so->addColumn(tr("Cust. P/O #"), 200,          Qt::AlignLeft   );
+  _so->addColumn(tr("Quote #"),     _orderColumn, Qt::AlignLeft,   true,  "quhead_number"   );
+  _so->addColumn(tr("Quote Date"),  _dateColumn,  Qt::AlignRight,  true,  "quhead_quotedate"  );
+  _so->addColumn(tr("Ship-to"),     -1,           Qt::AlignLeft,   true,  "quhead_shiptoname"   );
+  _so->addColumn(tr("Cust. P/O #"), 200,          Qt::AlignLeft,   true,  "quhead_custponumber"   );
   
   _cust->setFocus();
   connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sFillList())  );
@@ -204,16 +204,7 @@ void dspQuotesByCustomer::sFillList()
       params.append("poNumber", _poNumber->currentText());
 
     q = mql.toQuery(params);
-    XTreeWidgetItem *last = 0;
-    while (q.next())
-    {
-      last = new XTreeWidgetItem(_so, last,
-				 q.value("quhead_id").toInt(),
-				 q.value("quhead_number"),
-				 formatDate(q.value("quhead_quotedate").toDate()),
-				 q.value("quhead_shiptoname"),
-         q.value("quhead_custponumber") );
-    }
+    _so->populate(q);
   }
 }
 

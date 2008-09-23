@@ -106,15 +106,15 @@ void dspRWTransactions::init()
 {
 //  statusBar()->hide();
   
-  _gltrans->addColumn(tr("Date"),      _dateColumn,     Qt::AlignCenter );
-  _gltrans->addColumn(tr("Source"),    _orderColumn,    Qt::AlignCenter );
-  _gltrans->addColumn(tr("Doc. Type"), _docTypeColumn,  Qt::AlignCenter );
-  _gltrans->addColumn(tr("Doc. #"),    _orderColumn,    Qt::AlignLeft   );
-  _gltrans->addColumn(tr("Reference"), -1,              Qt::AlignLeft   );
-  _gltrans->addColumn(tr("Account"),   _itemColumn,     Qt::AlignLeft   );
-  _gltrans->addColumn(tr("Debit"),     _moneyColumn,    Qt::AlignRight  );
-  _gltrans->addColumn(tr("Credit"),    _moneyColumn,    Qt::AlignRight  );
-  _gltrans->addColumn(tr("Exported"),  _ynColumn+15,    Qt::AlignCenter );
+  _gltrans->addColumn(tr("Date"),      _dateColumn,     Qt::AlignCenter, true,  "gltrans_date" );
+  _gltrans->addColumn(tr("Source"),    _orderColumn,    Qt::AlignCenter, true,  "gltrans_source" );
+  _gltrans->addColumn(tr("Doc. Type"), _docTypeColumn,  Qt::AlignCenter, true,  "gltrans_doctype" );
+  _gltrans->addColumn(tr("Doc. #"),    _orderColumn,    Qt::AlignLeft,   true,  "gltrans_docnumber"   );
+  _gltrans->addColumn(tr("Reference"), -1,              Qt::AlignLeft,   true,  "f_notes"   );
+  _gltrans->addColumn(tr("Account"),   _itemColumn,     Qt::AlignLeft,   true,  "f_accnt"   );
+  _gltrans->addColumn(tr("Debit"),     _moneyColumn,    Qt::AlignRight,  true,  "debit"  );
+  _gltrans->addColumn(tr("Credit"),    _moneyColumn,    Qt::AlignRight,  true,  "credit"  );
+  _gltrans->addColumn(tr("Exported"),  _ynColumn+15,    Qt::AlignCenter, true,  "f_exported" );
 }
 
 enum SetResponse dspRWTransactions::set(ParameterList &pParams)
@@ -195,23 +195,17 @@ void dspRWTransactions::sPrint()
 void dspRWTransactions::sFillList()
 {
   _gltrans->clear();
-  QString sql( "SELECT gltrans_id, formatDate(gltrans_date) AS f_date,"
+  QString sql( "SELECT gltrans_id, gltrans_date,"
                "       gltrans_source, gltrans_doctype, gltrans_docnumber,"
                "       firstLine(gltrans_notes) AS f_notes,"
                "       (formatGLAccount(accnt_id)||' - '|| accnt_descrip) AS f_accnt,"
-               "       CASE WHEN (gltrans_amount < 0) THEN formatMoney(abs(gltrans_amount))"
-               "            ELSE ''"
-               "       END AS f_debit,"
-               "       CASE WHEN (gltrans_amount > 0) THEN formatMoney(gltrans_amount)"
-               "            ELSE ''"
-               "       END AS f_credit,"
                "       formatBoolYN(gltrans_exported) AS f_exported,"
-               "       CASE WHEN (gltrans_amount < 0) THEN abs(gltrans_amount)"
-               "            ELSE 0"
-               "       END AS debit,"
-               "       CASE WHEN (gltrans_amount > 0) THEN gltrans_amount"
-               "            ELSE 0"
-               "       END AS credit "
+               "       CASE WHEN (gltrans_amount < 0) THEN abs(gltrans_amount) END AS debit,"
+               "       CASE WHEN (gltrans_amount > 0) THEN gltrans_amount END AS credit,"
+               "       'curr' AS debit_xtnumericrole,"
+               "       'curr' AS credit_xtnumericrole,"
+               "       0 AS debit_xttotalrole,"
+               "       0 AS credit_xttotalrole "
                "FROM gltrans, accnt "
                "WHERE ((gltrans_accnt_id=accnt_id)"
                " AND (gltrans_date BETWEEN :startDate AND :endDate)" );
@@ -239,18 +233,5 @@ void dspRWTransactions::sFillList()
   _dates->bindValue(q);
   q.bindValue(":accnt_id", _account->id());
   q.exec();
-
-  double debit = 0.0;
-  double credit = 0.0;
-  XTreeWidgetItem *last =  0;
-  while(q.next())
-  {
-    debit += q.value("debit").toDouble();
-    credit += q.value("credit").toDouble();
-    last = new XTreeWidgetItem( _gltrans, last, q.value("gltrans_id").toInt(),
-                       q.value("f_date"), q.value("gltrans_source"), q.value("gltrans_doctype"),
-                       q.value("gltrans_docnumber"), q.value("f_notes"),
-                       q.value("f_accnt"), q.value("f_debit"), q.value("f_credit"), q.value("f_exported") );
-  }
-  last = new XTreeWidgetItem( _gltrans, last, -1, "", "", "", "", tr("Total:"), "", formatMoney(debit), formatMoney(credit));
+  _gltrans->populate(q);
 }
