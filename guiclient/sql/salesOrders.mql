@@ -1,5 +1,6 @@
-SELECT cohead.*,
-       cust_id, cust_number, cust_name,
+SELECT cohead_id, cust_id,
+       cohead.*,
+       cust_number, cust_name,
        ( SELECT MIN(coitem_scheddate)
            FROM coitem
           WHERE (coitem_cohead_id=cohead_id) ) AS min_scheddate,

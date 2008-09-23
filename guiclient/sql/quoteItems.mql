@@ -1,5 +1,6 @@
 SELECT quitem.*, quhead.*,
-       cust_number, cust_name
+       cust_number, cust_name,
+       'qty' AS quitem_qtyord_xtnumericrole
 FROM quitem JOIN quhead ON (quhead_id=quitem_quhead_id)
             JOIN cust ON (cust_id=quhead_cust_id)
             JOIN itemsite ON (itemsite_id=quitem_itemsite_id)

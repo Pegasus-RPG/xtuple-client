@@ -1,11 +1,20 @@
-SELECT coitem_id AS source_id,
+SELECT source_id, order_number, scheddate,
+       totalqty, relievedqty, reservedqty, balanceqty,
+       CASE WHEN (scheddate < CURRENT_DATE) THEN 'error' END AS scheddate_qtforegroundrold,
+       'qty' AS totalqty_xtnumericrole,
+       'qty' AS relievedqty_xtnumericrole,
+       'qty' AS reservedqty_xtnumericrole,
+       'qty' AS balanceqty_xtnumericrole,
+       0 AS balanceqty_xtrunningrole,
+       level AS xtindentrole
+FROM (
+SELECT coitem_scheddate AS sortkey, 0 AS level, coitem_id AS source_id,
        formatSoNumber(coitem_id) AS order_number,
-       formatQty(coitem_qtyord) AS totalqty,
-       formatQty((coitem_qtyshipped + qtyAtShipping(coitem_id)) - coitem_qtyreturned) as relievedqty,
-       formatQty(coitem_qtyreserved) AS balanceqty,
-       coitem_qtyreserved,
-       formatDate(coitem_scheddate) as duedate, coitem_scheddate AS r_duedate,
-       (coitem_scheddate < CURRENT_DATE) AS late  
+       coitem_qtyord AS totalqty,
+       (coitem_qtyshipped + qtyAtShipping(coitem_id) - coitem_qtyreturned) as relievedqty,
+       coitem_qtyreserved AS reservedqty,
+       coitem_qtyreserved AS balanceqty,
+       coitem_scheddate AS scheddate
 FROM cohead, coitem, itemsite, item 
 WHERE((coitem_cohead_id=cohead_id)
   AND (coitem_itemsite_id=itemsite_id)
@@ -13,4 +22,17 @@ WHERE((coitem_cohead_id=cohead_id)
   AND (itemsite_item_id=item_id)
   AND (itemsite_warehous_id=<? value("warehous_id") ?>)
   AND (itemsite_item_id=<? value("item_id") ?>))
-ORDER BY r_duedate;
+UNION
+SELECT coitem_scheddate AS sortkey, 1 AS level, coitem_id AS source_id,
+      (formatLocationName(itemloc_location_id) || ' ' || formatLotSerialNumber(itemloc_ls_id)) AS order_number,
+       NULL AS totalqty, NULL AS relievedqty,
+       itemlocrsrv_qty AS reservedqty,
+       NULL AS balanceqty, NULL AS scheddate
+FROM itemlocrsrv, itemloc, coitem, itemsite
+WHERE ( (itemloc_id=itemlocrsrv_itemloc_id)
+  AND (coitem_id=itemlocrsrv_source_id)
+  AND (itemsite_id=coitem_itemsite_id)
+  AND (itemsite_warehous_id=<? value("warehous_id") ?>)
+  AND (itemsite_item_id=<? value("item_id") ?>) )
+    ) AS data
+ORDER BY sortkey, source_id, level;
