@@ -167,12 +167,12 @@
          <string>Assigned to:</string>
         </property>
         <property name="buddy" >
-         <cstring>_usr</cstring>
+         <cstring>_assignedTo</cstring>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="UsernameLineEdit" name="_usr" >
+       <widget class="UsernameLineEdit" name="_assignedTo" >
         <property name="enabled" >
          <bool>false</bool>
         </property>
@@ -185,18 +185,9 @@
        </widget>
       </item>
       <item>
-       <widget class="UsernameCluster" name="_reassignUsr" >
-        <property name="sizePolicy" >
-         <sizepolicy vsizetype="Preferred" hsizetype="Minimum" >
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="focusPolicy" >
-         <enum>Qt::StrongFocus</enum>
-        </property>
+       <widget class="UsernameCluster" name="_owner" >
         <property name="label" >
-         <string>Reassign to User:</string>
+         <string>Owner:</string>
         </property>
        </widget>
       </item>
@@ -584,8 +575,7 @@
   <tabstop>_active</tabstop>
   <tabstop>_description</tabstop>
   <tabstop>_priority</tabstop>
-  <tabstop>_usr</tabstop>
-  <tabstop>_reassignUsr</tabstop>
+  <tabstop>_assignedTo</tabstop>
   <tabstop>_due</tabstop>
   <tabstop>_assigned</tabstop>
   <tabstop>_started</tabstop>

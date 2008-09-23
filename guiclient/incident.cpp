@@ -121,6 +121,7 @@ incident::incident(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   if (q.first())
   {
     _myUsrId = q.value("usr_id").toInt();
+    _owner->setId(_myUsrId);
   }
   else if (q.lastError().type() != QSqlError::None)
   {
@@ -218,7 +219,8 @@ enum SetResponse incident::set(const ParameterList &pParams)
       _deleteTodoItem->setEnabled(false);
       _editTodoItem->setEnabled(false);
       _newTodoItem->setEnabled(false);
-
+      _owner->setEnabled(false);
+  
       _save->hide();
       _cancel->setText(tr("&Close"));
       _cancel->setFocus();
@@ -390,13 +392,13 @@ bool incident::save(bool partial)
               "       incdt_status, incdt_assigned_username,"
               "       incdt_incdtcat_id, incdt_incdtseverity_id,"
               "       incdt_incdtpriority_id, incdt_incdtresolution_id,"
-              "       incdt_ls_id, incdt_aropen_id) "
+              "       incdt_ls_id, incdt_aropen_id, incdt_owner_username) "
               "VALUES(:incdt_number, :incdt_crmacct_id, :incdt_cntct_id,"
               "       :incdt_description, :incdt_notes, :incdt_item_id,"
               "       :incdt_status, :incdt_assigned_username,"
               "       :incdt_incdtcat_id, :incdt_incdtseverity_id,"
               "       :incdt_incdtpriority_id, :incdt_incdtresolution_id,"
-              "       :incdt_ls_id, :incdt_aropen_id);" );
+              "       :incdt_ls_id, :incdt_aropen_id, :incdt_owner_username);" );
   else if (cEdit == _mode || _saved)
     q.prepare("UPDATE incdt"
               "   SET incdt_cntct_id=:incdt_cntct_id,"
@@ -410,11 +412,14 @@ bool incident::save(bool partial)
               "       incdt_incdtpriority_id=:incdt_incdtpriority_id,"
               "       incdt_incdtseverity_id=:incdt_incdtseverity_id,"
               "       incdt_incdtresolution_id=:incdt_incdtresolution_id,"
-              "       incdt_ls_id=:incdt_ls_id"
+              "       incdt_ls_id=:incdt_ls_id,"
+              "       incdt_owner_username=:incdt_owner_username "
               " WHERE (incdt_id=:incdt_id); ");
 
   q.bindValue(":incdt_id", _incdtid);
   q.bindValue(":incdt_number", _number->text());
+  if(_owner->isValid())
+    q.bindValue(":incdt_owner_username", _owner->username());
   if (_crmacct->id() > 0)
     q.bindValue(":incdt_crmacct_id", _crmacct->id());
   if (_cntct->id() > 0)
@@ -505,7 +510,7 @@ void incident::populate()
             "       incdt_item_id, incdt_ls_id,"
             "       incdt_status, incdt_assigned_username,"
             "       incdt_incdtcat_id, incdt_incdtseverity_id,"
-            "       incdt_incdtpriority_id, incdt_incdtresolution_id,"
+            "       incdt_incdtpriority_id, incdt_incdtresolution_id, incdt_owner_username, "
 			"       COALESCE(incdt_aropen_id, -1) AS docId,"
 			"       COALESCE(aropen_docnumber, '') AS docNumber,"
             "       CASE WHEN (aropen_doctype='C') THEN :creditMemo"
@@ -527,7 +532,7 @@ void incident::populate()
   {
     _crmacct->setId(q.value("incdt_crmacct_id").toInt());
     _cntct->setId(q.value("incdt_cntct_id").toInt());
-
+    _owner->setUsername(q.value("incdt_owner_username").toString());
     _number->setText(q.value("incdt_number").toString());
     _assignedTo->setUsername(q.value("incdt_assigned_username").toString());
     _category->setNull();

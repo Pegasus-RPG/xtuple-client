@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>600</height>
+    <width>800</width>
+    <height>617</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -171,96 +171,128 @@
        </property>
        <layout class="QGridLayout" >
         <item row="0" column="0" >
-         <layout class="QVBoxLayout" >
-          <property name="topMargin" >
-           <number>6</number>
-          </property>
-          <item>
-           <widget class="QLabel" name="_crmacctLit" >
-            <property name="text" >
-             <string>CRM Account:</string>
+         <layout class="QGridLayout" >
+          <item row="0" column="0" >
+           <layout class="QVBoxLayout" >
+            <property name="topMargin" >
+             <number>6</number>
             </property>
-            <property name="alignment" >
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            <item>
+             <widget class="QLabel" name="_crmacctLit" >
+              <property name="text" >
+               <string>CRM Account:</string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+              <property name="buddy" >
+               <cstring>_category</cstring>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer>
+              <property name="orientation" >
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" >
+               <size>
+                <width>20</width>
+                <height>0</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+          <item row="0" column="1" >
+           <widget class="CRMAcctCluster" name="_crmacct" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
             </property>
-            <property name="buddy" >
-             <cstring>_category</cstring>
+            <property name="focusPolicy" >
+             <enum>Qt::StrongFocus</enum>
+            </property>
+            <property name="label" >
+             <string/>
             </property>
            </widget>
           </item>
-          <item>
-           <spacer>
-            <property name="orientation" >
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" >
-             <size>
-              <width>20</width>
-              <height>0</height>
-             </size>
-            </property>
-           </spacer>
+          <item row="1" column="0" colspan="2" >
+           <layout class="QGridLayout" >
+            <item row="0" column="0" >
+             <layout class="QHBoxLayout" >
+              <item>
+               <layout class="QVBoxLayout" >
+                <property name="topMargin" >
+                 <number>6</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="_assignedToLit" >
+                  <property name="text" >
+                   <string>Assigned To:</string>
+                  </property>
+                  <property name="alignment" >
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                  <property name="buddy" >
+                   <cstring>_category</cstring>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer>
+                  <property name="orientation" >
+                   <enum>Qt::Vertical</enum>
+                  </property>
+                  <property name="sizeHint" >
+                   <size>
+                    <width>20</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <widget class="UsernameCluster" name="_assignedTo" >
+                <property name="focusPolicy" >
+                 <enum>Qt::TabFocus</enum>
+                </property>
+                <property name="label" >
+                 <string/>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="UsernameCluster" name="_owner" >
+                <property name="label" >
+                 <string>Owner:</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item row="0" column="1" >
+             <spacer>
+              <property name="orientation" >
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" >
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
           </item>
          </layout>
-        </item>
-        <item row="0" column="1" >
-         <widget class="CRMAcctCluster" name="_crmacct" >
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="focusPolicy" >
-           <enum>Qt::StrongFocus</enum>
-          </property>
-          <property name="label" >
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0" >
-         <layout class="QVBoxLayout" >
-          <property name="topMargin" >
-           <number>6</number>
-          </property>
-          <item>
-           <widget class="QLabel" name="_assignedToLit" >
-            <property name="text" >
-             <string>Assigned To:</string>
-            </property>
-            <property name="alignment" >
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-            <property name="buddy" >
-             <cstring>_category</cstring>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer>
-            <property name="orientation" >
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" >
-             <size>
-              <width>20</width>
-              <height>0</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </item>
-        <item row="1" column="1" >
-         <widget class="UsernameCluster" name="_assignedTo" >
-          <property name="focusPolicy" >
-           <enum>Qt::TabFocus</enum>
-          </property>
-          <property name="label" >
-           <string/>
-          </property>
-         </widget>
         </item>
        </layout>
       </widget>

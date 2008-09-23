@@ -83,7 +83,10 @@ todoItem::todoItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 	    "WHERE (usr_username=CURRENT_USER);");
   q.exec();
   if (q.first())
-    _usr->setId(q.value("usr_id").toInt());
+  {
+    _assignedTo->setId(q.value("usr_id").toInt());
+    _owner->setId(q.value("usr_id").toInt());
+  }  
   else if (q.lastError().type() != QSqlError::None)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -103,7 +106,7 @@ enum SetResponse todoItem::set(const ParameterList &pParams)
 
   param = pParams.value("usr_id", &valid);
   if (valid)
-    _usr->setId(param.toInt());
+    _assignedTo->setId(param.toInt());
 
   param = pParams.value("mode", &valid);
   if (valid)
@@ -113,7 +116,7 @@ enum SetResponse todoItem::set(const ParameterList &pParams)
       _mode = cNew;
 
       _name->setFocus();
-      _reassignUsr->setEnabled(_privileges->check("MaintainOtherTodoLists") ||
+      _assignedTo->setEnabled(_privileges->check("MaintainOtherTodoLists") ||
 			  _privileges->check("ReassignTodoListItem"));
     }
     else if (param.toString() == "edit")
@@ -125,7 +128,7 @@ enum SetResponse todoItem::set(const ParameterList &pParams)
       _ophead->setEnabled(FALSE);
       _assigned->setEnabled(FALSE);
       _due->setEnabled(FALSE);
-      _reassignUsr->setEnabled(_privileges->check("MaintainOtherTodoLists") ||
+      _assignedTo->setEnabled(_privileges->check("MaintainOtherTodoLists") ||
 			    _privileges->check("ReassignTodoListItem"));
       _description->setEnabled(FALSE);
 
@@ -135,6 +138,7 @@ enum SetResponse todoItem::set(const ParameterList &pParams)
     {
       _mode = cView;
 
+      _owner->setEnabled(FALSE);
       _name->setEnabled(FALSE);
       _priority->setEnabled(FALSE);
       _incident->setEnabled(FALSE);
@@ -146,7 +150,7 @@ enum SetResponse todoItem::set(const ParameterList &pParams)
       _pending->setEnabled(FALSE);
       _deferred->setEnabled(FALSE);
       _neither->setEnabled(FALSE);
-      _reassignUsr->setEnabled(FALSE);
+      _assignedTo->setEnabled(FALSE);
       _description->setEnabled(FALSE);
       _notes->setEnabled(FALSE);
 
@@ -197,7 +201,7 @@ void todoItem::sSave()
   {
     q.prepare( "SELECT createTodoItem(:usr_id, :name, :description, "
 	       "  :incdt_id, :crmacct_id, :ophead_id, :started, :due, :status, "
-	       "  :assigned, :completed, :priority, :notes) AS result;");
+	       "  :assigned, :completed, :priority, :notes, :owner) AS result;");
     storedProc = "createTodoItem";
   }
   else if (_mode == cEdit)
@@ -205,22 +209,15 @@ void todoItem::sSave()
     q.prepare( "SELECT updateTodoItem(:todoitem_id, "
 	       "  :usr_id, :name, :description, "
 	       "  :incdt_id, :crmacct_id, :ophead_id, :started, :due, :status, "
-	       "  :assigned, :completed, :priority, :notes, :active) AS result;");
+	       "  :assigned, :completed, :priority, :notes, :active, :owner) AS result;");
     storedProc = "updateTodoItem";
     q.bindValue(":todoitem_id", _todoitemid);
   }
-  if (_reassignUsr->id() > 0)
-  {
-    q.bindValue(":usr_id",   _reassignUsr->id());
-    q.bindValue(":assigned", _assigned->date().isValid() ? _assigned->date() :
-							  QDate::currentDate());
-  }
-  else
-  {
-    q.bindValue(":usr_id",	_usr->id());
-    q.bindValue(":assigned",	_assigned->date());
-  }
-
+  if(_owner->isValid())
+    q.bindValue(":owner", _owner->username());
+  q.bindValue(":usr_id",   _assignedTo->id());
+  if(_assigned->date().isValid())
+    q.bindValue(":assigned", _assigned->date());
   q.bindValue(":name",		_name->text());
   q.bindValue(":description",	_description->text());
   if (_incident->id() > 0)
@@ -279,7 +276,8 @@ void todoItem::sPopulate()
   q.exec();
   if (q.first())
   {
-    _usr->setId(q.value("todoitem_usr_id").toInt());
+    _owner->setUsername(q.value("todoitem_owner_username").toString());
+    _assignedTo->setId(q.value("todoitem_usr_id").toInt());
     _name->setText(q.value("todoitem_name").toString());
     _priority->setNull();
     if(!q.value("todoitem_priority_id").toString().isEmpty())

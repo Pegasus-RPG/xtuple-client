@@ -59,6 +59,7 @@
 
 #include <QVariant>
 #include <QMessageBox>
+#include <QSqlError>
 #include <openreports.h>
 #include <comment.h>
 #include "task.h"
@@ -80,6 +81,22 @@ project::project(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _prjtask->addColumn( tr("Number"),      _itemColumn, Qt::AlignRight );
   _prjtask->addColumn( tr("Name"),        _itemColumn, Qt::AlignLeft  );
   _prjtask->addColumn( tr("Description"), -1,          Qt::AlignLeft  ); 
+
+  q.prepare("SELECT usr_id "
+	    "FROM usr "
+	    "WHERE (usr_username=CURRENT_USER);");
+  q.exec();
+  if (q.first())
+  {
+    _owner->setId(q.value("usr_id").toInt());
+  }  
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    reject();
+  }
+
+  populate();
 }
 
 /*
@@ -149,6 +166,7 @@ enum SetResponse project::set(const ParameterList &pParams)
     {
       _mode = cView;
       
+      _owner->setEnabled(FALSE);
       _number->setEnabled(FALSE);
       _status->setEnabled(FALSE);
       _name->setEnabled(FALSE);
@@ -169,13 +187,15 @@ enum SetResponse project::set(const ParameterList &pParams)
 void project::populate()
 {
   q.prepare( "SELECT prj_number, prj_name, prj_descrip,"
-             "       prj_so, prj_wo, prj_po, prj_status "
+             "       prj_so, prj_wo, prj_po, prj_status, "
+             "       prj_owner_username "
              "FROM prj "
              "WHERE (prj_id=:prj_id);" );
   q.bindValue(":prj_id", _prjid);
   q.exec();
   if (q.first())
   {
+    _owner->setUsername(q.value("prj_owner_username").toString());
     _number->setText(q.value("prj_number").toString());
     _name->setText(q.value("prj_name").toString());
     _descrip->setText(q.value("prj_descrip").toString());
@@ -220,14 +240,15 @@ void project::sSave()
   if (_mode == cNew)
     q.prepare( "INSERT INTO prj "
                "( prj_id, prj_number, prj_name, prj_descrip,"
-               "  prj_so, prj_wo, prj_po, prj_status ) "
+               "  prj_so, prj_wo, prj_po, prj_status, prj_owner_username ) "
                "VALUES "
                "( :prj_id, :prj_number, :prj_name, :prj_descrip,"
-               "  :prj_so, :prj_wo, :prj_po, :prj_status );" );
+               "  :prj_so, :prj_wo, :prj_po, :prj_status, :prj_owner_username );" );
   else if (_mode == cEdit)
     q.prepare( "UPDATE prj "
                "SET prj_number=:prj_number, prj_name=:prj_name, prj_descrip=:prj_descrip,"
-               "    prj_so=:prj_so, prj_wo=:prj_wo, prj_po=:prj_po, prj_status=:prj_status "
+               "    prj_so=:prj_so, prj_wo=:prj_wo, prj_po=:prj_po, prj_status=:prj_status, "
+               "    prj_owner_username=:prj_owner_username "
                "WHERE (prj_id=:prj_id);" );
 
   q.bindValue(":prj_id", _prjid);
@@ -237,6 +258,7 @@ void project::sSave()
   q.bindValue(":prj_so", QVariant(_so->isChecked(), 0));
   q.bindValue(":prj_wo", QVariant(_wo->isChecked(), 0));
   q.bindValue(":prj_po", QVariant(_po->isChecked(), 0));
+  q.bindValue(":prj_owner_username", _owner->username());
   switch(_status->currentItem())
   {
     case 0:
