@@ -41,6 +41,7 @@
     <file alias="displays/POsByVendor/FillListDetail.mql">dspPOsByVendorFillList.mql</file>
   </qresource>
   <qresource prefix="sr">
+    <file alias="displays/Shipments.mql">shipments.mql</file>
     <file alias="displays/ShipmentsByDate/FillListDetail.mql">dspShipmentsByDateFillList.mql</file>
     <file alias="enterItemReceipt/PopulateNew.mql">enterItemReceiptPopulateNew.mql</file>
     <file alias="enterItemReceipt/PopulateEdit.mql">enterItemReceiptPopulateEdit.mql</file>
