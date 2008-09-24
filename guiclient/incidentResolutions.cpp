@@ -89,9 +89,9 @@ incidentResolutions::incidentResolutions(QWidget* parent, const char* name, Qt::
 
 //  statusBar()->hide();
   
-  _incidentResolutions->addColumn(tr("Order"),  _seqColumn, Qt::AlignRight);
-  _incidentResolutions->addColumn(tr("Resolution"),      100, Qt::AlignLeft );
-  _incidentResolutions->addColumn(tr("Description"),    -1, Qt::AlignLeft );
+  _incidentResolutions->addColumn(tr("Order"),  _seqColumn, Qt::AlignRight, true,  "incdtresolution_order");
+  _incidentResolutions->addColumn(tr("Resolution"),      100, Qt::AlignLeft, true, "incdtresolution_name" );
+  _incidentResolutions->addColumn(tr("Description"),    -1, Qt::AlignLeft, true,  "incdtresolution_descrip" );
 
   if (_privileges->check("MaintainIncidentResolutions"))
   {
@@ -121,7 +121,7 @@ void incidentResolutions::languageChange()
 void incidentResolutions::sFillList()
 {
   q.prepare( "SELECT incdtresolution_id, incdtresolution_order, "
-	     "       incdtresolution_name, firstLine(incdtresolution_descrip) "
+	     "       incdtresolution_name, firstLine(incdtresolution_descrip) AS incdtresolution_descrip "
              "FROM incdtresolution "
              "ORDER BY incdtresolution_order, incdtresolution_name;" );
   q.exec();

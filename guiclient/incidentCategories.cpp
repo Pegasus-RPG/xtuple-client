@@ -89,9 +89,9 @@ incidentCategories::incidentCategories(QWidget* parent, const char* name, Qt::WF
 
 //  statusBar()->hide();
   
-  _incidentCategories->addColumn(tr("Order"),  _seqColumn, Qt::AlignRight);
-  _incidentCategories->addColumn(tr("Category"),      100, Qt::AlignLeft );
-  _incidentCategories->addColumn(tr("Description"),    -1, Qt::AlignLeft );
+  _incidentCategories->addColumn(tr("Order"),  _seqColumn, Qt::AlignRight, true, "incdtcat_order");
+  _incidentCategories->addColumn(tr("Category"),      100, Qt::AlignLeft, true, "incdtcat_name");
+  _incidentCategories->addColumn(tr("Description"),    -1, Qt::AlignLeft, true, "incdtcat_descrip");
 
   if (_privileges->check("MaintainIncidentCategories"))
   {
@@ -121,7 +121,7 @@ void incidentCategories::languageChange()
 void incidentCategories::sFillList()
 {
   q.prepare( "SELECT incdtcat_id, incdtcat_order, "
-	     "       incdtcat_name, firstLine(incdtcat_descrip) "
+	     "       incdtcat_name, firstLine(incdtcat_descrip) AS incdtcat_descrip "
              "FROM incdtcat "
              "ORDER BY incdtcat_order, incdtcat_name;" );
   q.exec();

@@ -78,11 +78,11 @@ incidentWorkbench::incidentWorkbench(QWidget* parent, const char* name, Qt::WFla
   connect(_reset,	SIGNAL(clicked()),	this,	SLOT(sReset()));
   connect(_view,	SIGNAL(clicked()),	this,	SLOT(sView()));
 
-  _incdt->addColumn(tr("Number"),      _itemColumn, Qt::AlignLeft );
-  _incdt->addColumn(tr("Account"),     _itemColumn, Qt::AlignLeft );
-  _incdt->addColumn(tr("Status"),      _itemColumn, Qt::AlignLeft );
-  _incdt->addColumn(tr("Assigned To"), _userColumn, Qt::AlignLeft ); 
-  _incdt->addColumn(tr("Summary"),     -1,          Qt::AlignLeft );
+  _incdt->addColumn(tr("Number"),      _itemColumn, Qt::AlignLeft, true, "incdt_number" );
+  _incdt->addColumn(tr("Account"),     _itemColumn, Qt::AlignLeft, true, "crmacct_name" );
+  _incdt->addColumn(tr("Status"),      _itemColumn, Qt::AlignLeft, true, "incdt_status" );
+  _incdt->addColumn(tr("Assigned To"), _userColumn, Qt::AlignLeft, true, "incdt_assigned_username" ); 
+  _incdt->addColumn(tr("Summary"),     -1,          Qt::AlignLeft, true, "incdt_summary" );
 
   _createdDates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _createdDates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);

@@ -105,11 +105,11 @@ void invoiceList::init()
   _dates->setEndDate(today);
   _dates->setStartDate(today.addMonths(-1));
 
-  _invoice->addColumn(tr("Invoice #"),    _orderColumn, Qt::AlignRight  );
-  _invoice->addColumn(tr("Invoice Date"), _dateColumn,  Qt::AlignCenter );
-  _invoice->addColumn(tr("S/O #"),        _orderColumn, Qt::AlignRight  );
-  _invoice->addColumn(tr("Ship Date"),    _dateColumn,  Qt::AlignCenter );
-  _invoice->addColumn(tr("Cust. P/O #"),  -1,           Qt::AlignLeft   );
+  _invoice->addColumn(tr("Invoice #"),    _orderColumn, Qt::AlignRight, true, "invchead_invcnumber" );
+  _invoice->addColumn(tr("Invoice Date"), _dateColumn,  Qt::AlignCenter, true, "invchead_invcdate" );
+  _invoice->addColumn(tr("S/O #"),        _orderColumn, Qt::AlignRight, true, "invchead_ordernumber"  );
+  _invoice->addColumn(tr("Ship Date"),    _dateColumn,  Qt::AlignCenter, true, "invchead_shipdate" );
+  _invoice->addColumn(tr("Cust. P/O #"),  -1,           Qt::AlignLeft, true, "invchead_ponumber"   );
 }
 
 enum SetResponse invoiceList::set(ParameterList &pParams)
@@ -155,9 +155,9 @@ void invoiceList::sSelect()
 
 void invoiceList::sFillList()
 {
-  q.prepare( "SELECT DISTINCT invchead_id, invchead_invcnumber, formatDate(invchead_invcdate),"
-             "                invchead_ordernumber, formatDate(invchead_shipdate),"
-             "                COALESCE(invchead_ponumber, '') "
+  q.prepare( "SELECT DISTINCT invchead_id, invchead_invcnumber, invchead_invcdate,"
+             "                invchead_ordernumber, invchead_shipdate,"
+             "                COALESCE(invchead_ponumber, '') AS invchead_ponumber "
              "FROM invchead "
              "WHERE ( (invchead_posted)"
              "  AND   (invchead_invcdate BETWEEN :startDate AND :endDate)"

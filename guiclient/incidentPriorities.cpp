@@ -89,9 +89,9 @@ incidentPriorities::incidentPriorities(QWidget* parent, const char* name, Qt::WF
 
 //  statusBar()->hide();
   
-  _incidentPriorities->addColumn(tr("Order"),  _seqColumn, Qt::AlignRight);
-  _incidentPriorities->addColumn(tr("Priority"),      100, Qt::AlignLeft );
-  _incidentPriorities->addColumn(tr("Description"),    -1, Qt::AlignLeft );
+  _incidentPriorities->addColumn(tr("Order"),  _seqColumn, Qt::AlignRight, true, "incdtpriority_order");
+  _incidentPriorities->addColumn(tr("Priority"),      100, Qt::AlignLeft, true, "incdtpriority_name" );
+  _incidentPriorities->addColumn(tr("Description"),    -1, Qt::AlignLeft, true, "incdtpriority_descrip" );
 
   if (_privileges->check("MaintainIncidentPriorities"))
   {
@@ -121,7 +121,7 @@ void incidentPriorities::languageChange()
 void incidentPriorities::sFillList()
 {
   q.prepare( "SELECT incdtpriority_id, incdtpriority_order, "
-	     "       incdtpriority_name, firstLine(incdtpriority_descrip) "
+	     "       incdtpriority_name, firstLine(incdtpriority_descrip) AS incdtpriority_descrip "
              "FROM incdtpriority "
              "ORDER BY incdtpriority_order, incdtpriority_name;" );
   q.exec();

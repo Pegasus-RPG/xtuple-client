@@ -89,8 +89,8 @@ groups::groups(QWidget* parent, const char* name, Qt::WFlags fl)
   _print->hide();
   
   
-  _list->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft );
-  _list->addColumn(tr("Description"), -1,          Qt::AlignLeft );
+  _list->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft, true, "grp_name" );
+  _list->addColumn(tr("Description"), -1,          Qt::AlignLeft, true, "grp_descrip" );
 
   if (_privileges->check("MaintainGroups"))
   {

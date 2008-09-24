@@ -90,10 +90,10 @@ financialLayouts::financialLayouts(QWidget* parent, const char* name, Qt::WFlags
 
 //  statusBar()->hide();
   
-  _flhead->addColumn(tr("Name"),        (_itemColumn*2), Qt::AlignLeft );
-  _flhead->addColumn(tr("Description"), -1,          Qt::AlignLeft );
-  _flhead->addColumn(tr("Active"), _ynColumn,          Qt::AlignLeft );
-  _flhead->addColumn(tr("System"), _ynColumn,          Qt::AlignLeft );
+  _flhead->addColumn(tr("Name"),        (_itemColumn*2), Qt::AlignLeft, true, "flhead_name"  );
+  _flhead->addColumn(tr("Description"), -1,          Qt::AlignLeft, true, "flhead_descrip" );
+  _flhead->addColumn(tr("Active"), _ynColumn,          Qt::AlignLeft, true, "active" );
+  _flhead->addColumn(tr("System"), _ynColumn,          Qt::AlignLeft, true, "system" );
 
   sFillList();
 }
@@ -195,7 +195,7 @@ void financialLayouts::sFillList()
   _flhead->clear();
     
   query = ("SELECT flhead_id, flhead_name, flhead_descrip,"
-           " formatboolyn(flhead_active),formatboolyn(flhead_sys) "
+           " formatboolyn(flhead_active) AS active,formatboolyn(flhead_sys) AS system "
            "FROM flhead ");
   if (!_showInactive->isChecked())
     query += " WHERE flhead_active=true ";

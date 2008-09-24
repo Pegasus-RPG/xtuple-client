@@ -77,11 +77,12 @@ fixSerial::fixSerial(QWidget* parent, Qt::WindowFlags fl)
 			    this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem*)));
   connect(_showProblems, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
 
-  _serial->addColumn(tr("Table Name"),		-1,	Qt::AlignLeft);
-  _serial->addColumn(tr("Column Name"),		-1,	Qt::AlignLeft);
-  _serial->addColumn(tr("Sequence Name"),	-1,	Qt::AlignLeft);
-  _serial->addColumn(tr("Largest Key Used"),	-1,	Qt::AlignRight);
-  _serial->addColumn(tr("Next Key"),		-1,	Qt::AlignRight);
+  _serial->addColumn(tr("Schema Name"),		-1,	Qt::AlignLeft, true, "nspname");
+  _serial->addColumn(tr("Table Name"),		-1,	Qt::AlignLeft, true, "relname");
+  _serial->addColumn(tr("Column Name"),		-1,	Qt::AlignLeft, true, "attname");
+  _serial->addColumn(tr("Sequence Name"),	-1,	Qt::AlignLeft, true, "seq");
+  _serial->addColumn(tr("Largest Key Used"),	-1,	Qt::AlignRight, true, "maxval");
+  _serial->addColumn(tr("Next Key"),		-1,	Qt::AlignRight, true, "lastvalue");
 }
 
 fixSerial::~fixSerial()
@@ -100,14 +101,15 @@ void fixSerial::sFillList()
 
   QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
 
-  QString sql = "SELECT relname, attname,"
+  QString sql = "SELECT nspname ||'.' ||relname AS tablename, nspname, relname, attname, "
 		"	TRIM(quote_literal('\"''') FROM"
 		"	  SUBSTRING(pg_catalog.pg_get_expr(d.adbin, d.adrelid)"
 		"	  FROM '[' || quote_literal('\"''') || "
 		"               '].*[' || quote_literal('\"''') || ' ]')) AS seq"
 		"  FROM pg_catalog.pg_attribute a, pg_catalog.pg_class,"
-		"       pg_catalog.pg_attrdef d"
+		"       pg_catalog.pg_attrdef d, pg_catalog.pg_namespace   "
 		"  WHERE a.attnum > 0"
+                "    AND pg_namespace.oid = pg_class.relnamespace"
 		"    AND NOT a.attisdropped"
 		"    AND a.attnotnull"
 		"    AND a.attrelid = pg_class.oid"
@@ -121,7 +123,7 @@ void fixSerial::sFillList()
   relq.prepare(sql);
 
   QString maxStr = "SELECT MAX(<? literal(\"attname\" ?>) AS maxval "
-		   "FROM <? literal(\"relname\") ?>;" ;
+		   "FROM <? literal(\"tablename\") ?>;" ;
   XSqlQuery maxq;
 
   QString seqStr = "SELECT last_value AS currval FROM <? literal(\"seq\") ?>;" ;
@@ -138,7 +140,7 @@ void fixSerial::sFillList()
   {
     ParameterList params;
     params.append("attname",	relq.value("attname").toString());
-    params.append("relname",	relq.value("relname").toString());
+    params.append("tablename",	relq.value("tablename").toString());
     params.append("seq",	relq.value("seq").toString());
 
     MetaSQLQuery maxMql = MetaSQLQuery(maxStr);
@@ -170,7 +172,8 @@ void fixSerial::sFillList()
 	! _showProblems->isChecked())
     {
       last = new XTreeWidgetItem(_serial, last, rows, maxval > currval ? 1 : 0,
-				 relq.value("relname"),
+				 relq.value("nspname"),
+                                 relq.value("relname"),
 				 relq.value("attname"),
 				 relq.value("seq"),
 				 maxval,

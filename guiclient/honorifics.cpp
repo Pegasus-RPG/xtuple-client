@@ -97,7 +97,7 @@ honorifics::honorifics(QWidget* parent, const char* name, Qt::WFlags fl)
 
 //    statusBar()->hide();
     
-    _honorifics->addColumn(tr("Title"),        _itemColumn, Qt::AlignLeft   );
+    _honorifics->addColumn(tr("Title"),        -1, Qt::AlignLeft, this, "hnfc_code"   );
 
     if (_privileges->check("MaintainTitles"))
     {

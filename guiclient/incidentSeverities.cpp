@@ -89,9 +89,9 @@ incidentSeverities::incidentSeverities(QWidget* parent, const char* name, Qt::WF
 
 //  statusBar()->hide();
   
-  _incidentSeverities->addColumn(tr("Order"),  _seqColumn, Qt::AlignRight);
-  _incidentSeverities->addColumn(tr("Severity"),      100, Qt::AlignLeft );
-  _incidentSeverities->addColumn(tr("Description"),    -1, Qt::AlignLeft );
+  _incidentSeverities->addColumn(tr("Order"),  _seqColumn, Qt::AlignRight, true, "incdtseverity_order");
+  _incidentSeverities->addColumn(tr("Severity"),      100, Qt::AlignLeft, true, "incdtseverity_name" );
+  _incidentSeverities->addColumn(tr("Description"),    -1, Qt::AlignLeft, true, "incdtseverity_descrip" );
 
   if (_privileges->check("MaintainIncidentSeverities"))
   {
@@ -121,7 +121,7 @@ void incidentSeverities::languageChange()
 void incidentSeverities::sFillList()
 {
   q.prepare( "SELECT incdtseverity_id, incdtseverity_order, "
-	     "       incdtseverity_name, firstLine(incdtseverity_descrip) "
+	     "       incdtseverity_name, firstLine(incdtseverity_descrip) AS incdtseverity_descrip "
              "FROM incdtseverity "
              "ORDER BY incdtseverity_order, incdtseverity_name;" );
   q.exec();

@@ -97,14 +97,14 @@ eventManager::eventManager(QWidget* parent, const char* name, Qt::WFlags fl)
   if (!_privileges->check("ViewOtherEvents"))
     _selectedUser->setEnabled(FALSE);
 
-  _event->addColumn("orderId",         0,               Qt::AlignCenter );
-  _event->addColumn("newDate",         0,               Qt::AlignCenter );
-  _event->addColumn("newQty",          0,               Qt::AlignCenter );
-  _event->addColumn(tr("Site"),        _whsColumn,      Qt::AlignCenter );
-  _event->addColumn(tr("Time"),        _timeDateColumn, Qt::AlignLeft   );
-  _event->addColumn(tr("Acknowleged"), _timeDateColumn, Qt::AlignLeft   );
-  _event->addColumn(tr("Event Type"),  _itemColumn,     Qt::AlignLeft   );
-  _event->addColumn(tr("Order #"),     -1,              Qt::AlignLeft   );
+  _event->addColumn("orderId",         0,               Qt::AlignCenter, true, "evntlog_ord_id");
+  _event->addColumn("newDate",         0,               Qt::AlignCenter, true, "evntlog_newdate" );
+  _event->addColumn("newQty",          0,               Qt::AlignCenter, true, "evntlog_newvalue" );
+  _event->addColumn(tr("Site"),        _whsColumn,      Qt::AlignCenter, true, "warehous_code" );
+  _event->addColumn(tr("Time"),        _timeDateColumn, Qt::AlignLeft  , true, "evntlog_evnttime" );
+  _event->addColumn(tr("Acknowleged"), _timeDateColumn, Qt::AlignLeft  , true, "evntlog_dispatched" );
+  _event->addColumn(tr("Event Type"),  _itemColumn,     Qt::AlignLeft  , true, "evnttype_name" );
+  _event->addColumn(tr("Order #"),     -1,              Qt::AlignLeft  , true, "evntlog_number" );
 
   sFillList();
 }

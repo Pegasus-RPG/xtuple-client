@@ -109,8 +109,8 @@ void forms::init()
 {
 //  statusBar()->hide();
   
-  _form->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft );
-  _form->addColumn(tr("Description"), -1,          Qt::AlignLeft );
+  _form->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft, true, "form_name" );
+  _form->addColumn(tr("Description"), -1,          Qt::AlignLeft, true, "form_descrip" );
 
   sFillList();
 }

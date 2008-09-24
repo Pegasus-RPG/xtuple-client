@@ -87,8 +87,8 @@ expenseCategories::expenseCategories(QWidget* parent, const char* name, Qt::WFla
 
 //  statusBar()->hide();
   
-  _expcat->addColumn(tr("Category"),    _itemColumn, Qt::AlignLeft   );
-  _expcat->addColumn(tr("Description"), -1,          Qt::AlignLeft   );
+  _expcat->addColumn(tr("Category"),    _itemColumn, Qt::AlignLeft, true, "expcat_code"   );
+  _expcat->addColumn(tr("Description"), -1,          Qt::AlignLeft, true, "expcat_descrip"   );
 
   if (_privileges->check("MaintainExpenseCategories"))
   {

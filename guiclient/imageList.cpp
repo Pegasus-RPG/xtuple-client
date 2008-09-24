@@ -100,8 +100,8 @@ void imageList::languageChange()
 
 void imageList::init()
 {
-  _image->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft );
-  _image->addColumn(tr("Description"), -1,          Qt::AlignLeft );
+  _image->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft, true, "image_name" );
+  _image->addColumn(tr("Description"), -1,          Qt::AlignLeft, true, "image_descrip" );
 }
 
 enum SetResponse imageList::set(ParameterList &pParams)
@@ -115,7 +115,7 @@ enum SetResponse imageList::set(ParameterList &pParams)
   else
     _imageid = -1;
 
-  _image->populate( "SELECT image_id, image_name, firstLine(image_descrip) "
+  _image->populate( "SELECT image_id, image_name, firstLine(image_descrip) AS image_descrip "
                     "FROM image "
                     "ORDER BY image_name;", _imageid );
 

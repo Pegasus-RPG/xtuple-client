@@ -171,40 +171,41 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _inventoryUOM->setType(XComboBox::UOMs);
 
-  _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft );
-  _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft );
-  _charass->addColumn(tr("Default"),        _ynColumn*2,   Qt::AlignCenter );
-  _charass->addColumn(tr("List Price"),     _priceColumn,Qt::AlignRight );
+  _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft, true, "char_name" );
+  _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft, true, "charass_value" );
+  _charass->addColumn(tr("Default"),        _ynColumn*2,   Qt::AlignCenter, true, "charass_default" );
+  _charass->addColumn(tr("List Price"),     _priceColumn,Qt::AlignRight, true, "charass_price" );
   _charass->hideColumn(3);
 
-  _uomconv->addColumn(tr("Conversions/Where Used"), _itemColumn*2, Qt::AlignLeft);
-  _uomconv->addColumn(tr("Ratio"),      -1, Qt::AlignRight  );
-  _uomconv->addColumn(tr("Global"),     _ynColumn*2,    Qt::AlignCenter );
-  _uomconv->addColumn(tr("Fractional"), _ynColumn*2,   Qt::AlignCenter );
+  _uomconv->addColumn(tr("Conversions/Where Used"), _itemColumn*2, Qt::AlignLeft, true, "uomname");
+  _uomconv->addColumn(tr("Ratio"),      -1, Qt::AlignRight, true, "uomvalue"  );
+  _uomconv->addColumn(tr("Global"),     _ynColumn*2,    Qt::AlignCenter, true, "global" );
+  _uomconv->addColumn(tr("Fractional"), _ynColumn*2,   Qt::AlignCenter, true, "fractional" );
   
-  _itemsrc->addColumn(tr("Vendor"),      _itemColumn, Qt::AlignLeft );
-  _itemsrc->addColumn(tr("Name"), 	 -1,          Qt::AlignLeft );
-  _itemsrc->addColumn(tr("Vendor Item"), _itemColumn*2, Qt::AlignLeft );
+  _itemsrc->addColumn(tr("Active"),      _dateColumn,   Qt::AlignCenter, true, "itemsrc_active");
+  _itemsrc->addColumn(tr("Vendor"),      _itemColumn, Qt::AlignLeft, true, "vend_number" );
+  _itemsrc->addColumn(tr("Name"), 	 -1,          Qt::AlignLeft, true, "vend_name" );
+  _itemsrc->addColumn(tr("Vendor Item"), _itemColumn*2, Qt::AlignLeft, true, "itemsrc_vend_item_number" );
 
-  _itemimage->addColumn(tr("Image Name"),  _itemColumn, Qt::AlignLeft );
-  _itemimage->addColumn(tr("Description"), -1,          Qt::AlignLeft );
-  _itemimage->addColumn(tr("Purpose"),     _itemColumn, Qt::AlignLeft );
+  _itemimage->addColumn(tr("Image Name"),  _itemColumn, Qt::AlignLeft, true, "image_name" );
+  _itemimage->addColumn(tr("Description"), -1,          Qt::AlignLeft, true, "image_descrip" );
+  _itemimage->addColumn(tr("Purpose"),     _itemColumn*2, Qt::AlignLeft, true, "image_purpose" );
 
-  _itemalias->addColumn(tr("Alias Number"), _itemColumn, Qt::AlignLeft );
-  _itemalias->addColumn(tr("Comments"),     -1,          Qt::AlignLeft );
+  _itemalias->addColumn(tr("Alias Number"), _itemColumn, Qt::AlignLeft, true, "itemalias_number"  );
+  _itemalias->addColumn(tr("Comments"),     -1,          Qt::AlignLeft, true, "itemalias_comments" );
 
-  _itemsub->addColumn(tr("Rank"),        _whsColumn,  Qt::AlignCenter );
-  _itemsub->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft   );
-  _itemsub->addColumn(tr("Description"), -1,          Qt::AlignLeft   );
-  _itemsub->addColumn(tr("Ratio"),       _qtyColumn,  Qt::AlignRight  );
+  _itemsub->addColumn(tr("Rank"),        _whsColumn,  Qt::AlignCenter, true, "itemsub_rank" );
+  _itemsub->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft, true, "item_number"   );
+  _itemsub->addColumn(tr("Description"), -1,          Qt::AlignLeft, true, "item_descrip1" );
+  _itemsub->addColumn(tr("Ratio"),       _qtyColumn,  Qt::AlignRight, true, "itemsub_uomratio" );
 
-  _itemtrans->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft   );
-  _itemtrans->addColumn(tr("Description"), -1,          Qt::AlignLeft   );
+  _itemtrans->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft, true, "item_number"   );
+  _itemtrans->addColumn(tr("Description"), -1,          Qt::AlignLeft, true, "item_descrip"   );
 
-  _itemSite->addColumn(tr("Active"),        _dateColumn, Qt::AlignCenter );
-  _itemSite->addColumn(tr("Site"),          _whsColumn,  Qt::AlignCenter );
-  _itemSite->addColumn(tr("Description"),   -1,          Qt::AlignLeft   );
-  _itemSite->addColumn(tr("Cntrl. Method"), _itemColumn, Qt::AlignCenter );
+  _itemSite->addColumn(tr("Active"),        _dateColumn, Qt::AlignCenter, true, "itemsite_active" );
+  _itemSite->addColumn(tr("Site"),          _whsColumn,  Qt::AlignCenter, true, "warehous_code" );
+  _itemSite->addColumn(tr("Description"),   -1,          Qt::AlignLeft, true, "warehous_descrip"   );
+  _itemSite->addColumn(tr("Cntrl. Method"), _itemColumn, Qt::AlignCenter, true, "itemsite_controlmethod" );
   _itemSite->setDragString("itemsiteid=");
 
   connect(omfgThis, SIGNAL(itemsitesUpdated()), SLOT(sFillListItemSites()));
@@ -979,7 +980,8 @@ void item::sDelete()
 
 void item::sFillList()
 {
-  q.prepare( "SELECT charass_id, char_name, charass_value, formatBoolYN(charass_default), charass_price "
+  q.prepare( "SELECT charass_id, char_name, charass_value, charass_default, "
+             " charass_price, 'salesprice' AS charass_price_xtnumericrole "
              "FROM charass, char "
              "WHERE ( (charass_target_type='I')"
              " AND (charass_char_id=char_id)"
@@ -1052,13 +1054,13 @@ void item::sDeleteImage()
 
 void item::sFillImageList()
 {
-  q.prepare( "SELECT itemimage_id, itemimage_image_id, image_name, firstLine(image_descrip),"
+  q.prepare( "SELECT itemimage_id, itemimage_image_id, image_name, firstLine(image_descrip) AS image_descrip,"
              "       CASE WHEN (itemimage_purpose='I') THEN :inventory"
              "            WHEN (itemimage_purpose='P') THEN :product"
              "            WHEN (itemimage_purpose='E') THEN :engineering"
              "            WHEN (itemimage_purpose='M') THEN :misc"
              "            ELSE :other"
-             "       END "
+             "       END AS image_purpose "
              "FROM itemimage, image "
              "WHERE ( (itemimage_image_id=image_id)"
              " AND (itemimage_item_id=:item_id) ) "
@@ -1436,7 +1438,7 @@ void item::sDeleteAlias()
 
 void item::sFillAliasList()
 {
-  q.prepare( "SELECT itemalias_id, itemalias_number, itemalias_comments "
+  q.prepare( "SELECT itemalias_id, itemalias_number, firstLine(itemalias_comments) AS itemalias_comments "
              "FROM itemalias "
              "WHERE (itemalias_item_id=:item_id) "
              "ORDER BY itemalias_number;" );
@@ -1484,7 +1486,7 @@ void item::sDeleteSubstitute()
 void item::sFillSubstituteList()
 {
   q.prepare( "SELECT itemsub_id, itemsub_rank, item_number, item_descrip1,"
-             "       formatRatio(itemsub_uomratio) "
+             "       itemsub_uomratio, 'uomratio' AS itemsub_uomratio_xtnumericrole "
              "FROM itemsub, item "
              "WHERE ( (itemsub_sub_item_id=item_id)"
              " AND (itemsub_parent_item_id=:item_id) ) "
@@ -1542,7 +1544,7 @@ void item::sDeleteTransformation()
 void item::sFillTransformationList()
 {
   q.prepare( "SELECT itemtrans_id,"
-             "       item_number, (item_descrip1 || ' ' || item_descrip2) "
+             "       item_number, (item_descrip1 || ' ' || item_descrip2) as item_descrip "
              "FROM itemtrans, item "
              "WHERE ( (itemtrans_target_item_id=item_id)"
              " AND (itemtrans_source_item_id=:item_id) ) "
@@ -1815,13 +1817,13 @@ void item::sDeleteItemSite()
 
 void item::sFillListItemSites()
 {
-  QString sql( "SELECT itemsite_id, formatBoolYN(itemsite_active),"
+  QString sql( "SELECT itemsite_id, itemsite_active,"
                "       warehous_code, warehous_descrip, "
                "       CASE WHEN itemsite_controlmethod='R' THEN :regular"
                "            WHEN itemsite_controlmethod='N' THEN :none"
                "            WHEN itemsite_controlmethod='L' THEN :lotNumber"
                "            WHEN itemsite_controlmethod='S' THEN :serialNumber"
-               "       END "
+               "       END AS itemsite_controlmethod "
                "FROM itemsite, item, warehous "
                "WHERE ( (itemsite_item_id=item_id)"
                " AND (itemsite_warehous_id=warehous_id) "
@@ -2004,44 +2006,38 @@ void item::sDeleteUOM()
 
 void item::sFillUOMList()
 {
-  _uomconv->clear();
-  q.prepare("SELECT itemuomconv_id, itemuom_id,"
-            "       (nuom.uom_name||'/'||duom.uom_name) AS uomname, uomtype_name,"
+  q.prepare("SELECT * FROM ( "
+            "SELECT itemuomconv_id, -1 AS itemuom_id, 0 AS xtindentrole, "
+            "       (nuom.uom_name||'/'||duom.uom_name) AS uomname,"
             "       (formatUOMRatio(itemuomconv_from_value)||'/'||formatUOMRatio(itemuomconv_to_value)) AS uomvalue,"
-            "       formatBoolYN(uomconv_id IS NOT NULL) AS global,"
-            "       formatBoolYN(itemuomconv_fractional) AS fractional"
+            "       (uomconv_id IS NOT NULL) AS global,"
+            "       itemuomconv_fractional AS fractional"
+            "  FROM item"
+            "  JOIN itemuomconv ON (itemuomconv_item_id=item_id)"
+            "  JOIN uom AS nuom ON (itemuomconv_from_uom_id=nuom.uom_id)"
+            "  JOIN uom AS duom ON (itemuomconv_to_uom_id=duom.uom_id)"
+            "  JOIN itemuom ON (itemuom_itemuomconv_id=itemuomconv_id)"
+            "  LEFT OUTER JOIN uomconv ON ((uomconv_from_uom_id=duom.uom_id AND uomconv_to_uom_id=nuom.uom_id)"
+            "                           OR (uomconv_to_uom_id=duom.uom_id AND uomconv_from_uom_id=nuom.uom_id))"
+            " WHERE(item_id=:item_id)"
+            " UNION "
+            " SELECT itemuomconv_id, itemuom_id, 1 AS xtindentrole,"
+            "        uomtype_name AS uomname,"
+            "       '' AS uomvalue,"
+            "       NULL AS global,"
+            "       NULL AS fractional"
             "  FROM item"
             "  JOIN itemuomconv ON (itemuomconv_item_id=item_id)"
             "  JOIN uom AS nuom ON (itemuomconv_from_uom_id=nuom.uom_id)"
             "  JOIN uom AS duom ON (itemuomconv_to_uom_id=duom.uom_id)"
             "  JOIN itemuom ON (itemuom_itemuomconv_id=itemuomconv_id)"
             "  JOIN uomtype ON (itemuom_uomtype_id=uomtype_id)"
-            "  LEFT OUTER JOIN uomconv ON ((uomconv_from_uom_id=duom.uom_id AND uomconv_to_uom_id=nuom.uom_id)"
-            "                           OR (uomconv_to_uom_id=duom.uom_id AND uomconv_from_uom_id=nuom.uom_id))"
-            " WHERE((item_id=:item_id))"
-            " ORDER BY itemuomconv_id, uomtype_name;");
+            " WHERE (item_id=:item_id)"
+            " ) AS data "
+            " ORDER BY itemuomconv_id, xtindentrole, uomname;");
   q.bindValue(":item_id", _itemid);
   q.exec();
-  XTreeWidgetItem * last = 0;
-  XTreeWidgetItem * parent = 0;
-  QString uomname;
-  while(q.next())
-  {
-    if(q.value("uomname").toString() != uomname)
-    {
-      uomname = q.value("uomname").toString();
-      parent = new XTreeWidgetItem(_uomconv, parent,
-                                   q.value("itemuomconv_id").toInt(), -1,
-                                   q.value("uomname"),
-                                   q.value("uomvalue"),
-                                   q.value("global"), q.value("fractional"));
-      last = 0;
-    }
-    last = new XTreeWidgetItem(parent, last,
-                               q.value("itemuomconv_id").toInt(),
-                               q.value("itemuom_id").toInt(),
-                               q.value("uomtype_name"));
-  }
+  _uomconv->populate(q,TRUE);
   _uomconv->expandAll();
 
   q.prepare("SELECT itemInventoryUOMInUse(:item_id) AS result;");
@@ -2145,9 +2141,9 @@ void item::sHandleButtons()
     
   if (_aliasesButton->isChecked())
     _relationshipsStack->setCurrentIndex(0);
-  else if (_substitutesButton->isChecked())
-    _relationshipsStack->setCurrentIndex(1);
   else if (_transformationsButton->isChecked())
+    _relationshipsStack->setCurrentIndex(1);
+  else if (_substitutesButton->isChecked())
     _relationshipsStack->setCurrentIndex(2);
  
   if (_imagesButton->isChecked())
@@ -2160,7 +2156,7 @@ void item::sFillSourceList()
 {
   QString sql( "SELECT itemsrc_id, vend_number,"
                "       vend_name, itemsrc_vend_item_number, "
-	       "       formatboolyn(itemsrc_active) "
+	       "       itemsrc_active "
                "FROM item, vend, itemsrc "
                "WHERE ( (itemsrc_item_id=item_id)"
                " AND (itemsrc_vend_id=vend_id)"
