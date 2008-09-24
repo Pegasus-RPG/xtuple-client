@@ -82,18 +82,18 @@ dspShipmentsByDate::dspShipmentsByDate(QWidget* parent, const char* name, Qt::WF
   connect(_ship, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
 
   _ship->setRootIsDecorated(TRUE);
-  _ship->addColumn(tr("Shipment #"),         _orderColumn, Qt::AlignLeft  );
-  _ship->addColumn(tr("Order Type"),	                 80, Qt::AlignLeft  );
-  _ship->addColumn(tr("Ship Date"),           _itemColumn, Qt::AlignCenter);
-  _ship->addColumn(tr("#"),                    _seqColumn, Qt::AlignCenter);
-  _ship->addColumn(tr("S/O #/Item"),          _itemColumn, Qt::AlignLeft  );
-  _ship->addColumn(tr("Customer/Description"),         -1, Qt::AlignLeft  );
-  _ship->addColumn(tr("Site"),                 _whsColumn, Qt::AlignCenter);
-  _ship->addColumn(tr("Ordered"),              _qtyColumn, Qt::AlignRight );
-  _ship->addColumn(tr("Shipped"),              _qtyColumn, Qt::AlignRight );
-  _ship->addColumn(tr("Tracking #"),           _qtyColumn, Qt::AlignRight );
-  _ship->addColumn(tr("Freight at Shipping"),  _qtyColumn, Qt::AlignRight );
-  _ship->addColumn(tr("Currency"),        _currencyColumn, Qt::AlignRight );
+  _ship->addColumn(tr("Shipment #"),         _orderColumn, Qt::AlignLeft,   true,  "shiphead_number"  );
+  _ship->addColumn(tr("Order Type"),	                 80, Qt::AlignLeft,   true,  "shiphead_order_type"  );
+  _ship->addColumn(tr("Ship Date"),           _itemColumn, Qt::AlignCenter, true,  "shiphead_shipdate");
+  _ship->addColumn(tr("#"),                    _seqColumn, Qt::AlignCenter, true,  "linenumber");
+  _ship->addColumn(tr("S/O #/Item"),          _itemColumn, Qt::AlignLeft,   true,  "order_item"  );
+  _ship->addColumn(tr("Customer/Description"),         -1, Qt::AlignLeft,   true,  "cust_desc"  );
+  _ship->addColumn(tr("Site"),                 _whsColumn, Qt::AlignCenter, true,  "warehous_code");
+  _ship->addColumn(tr("Ordered"),              _qtyColumn, Qt::AlignRight,  true,  "qtyord" );
+  _ship->addColumn(tr("Shipped"),              _qtyColumn, Qt::AlignRight,  true,  "qtyshipped" );
+  _ship->addColumn(tr("Tracking #"),           _qtyColumn, Qt::AlignRight,  true,  "shiphead_tracknum" );
+  _ship->addColumn(tr("Freight at Shipping"),  _qtyColumn, Qt::AlignRight,  true,  "shiphead_freight" );
+  _ship->addColumn(tr("Currency"),        _currencyColumn, Qt::AlignRight,  true,  "freight_curr_abbr" );
 }
 
 dspShipmentsByDate::~dspShipmentsByDate()
@@ -197,40 +197,11 @@ void dspShipmentsByDate::sFillList()
 
   ParameterList params;
   setParams(params);
-  MetaSQLQuery fillm = mqlLoad(":/sr/displays/ShipmentsByDate/FillListDetail.mql");
+  MetaSQLQuery fillm = mqlLoad(":/sr/displays/Shipments.mql");
   q = fillm.toQuery(params);
   if (q.first())
   {
-    XTreeWidgetItem *soshead = 0;
-    int shipheadid = -1;
-    do
-    {
-      if (q.value("shiphead_id").toInt() != shipheadid)
-      {
-        shipheadid = q.value("shiphead_id").toInt();
-
-        soshead = new XTreeWidgetItem( _ship, soshead,
-				     q.value("shiphead_id").toInt(),
-				     q.value("lineitem_id").toInt(),
-                                     q.value("shiphead_number"),
-				     q.value("shiphead_order_type"),
-				     q.value("f_shipdate"), "",
-                                     q.value("order_number"),
-				     q.value("customer"),
-                                     "", "", "",
-                                     q.value("shiphead_tracknum"),
-				     q.value("f_freight"));
-	soshead->setText(11, q.value("freight_curr_abbr"));
-      }
-
-      new XTreeWidgetItem( soshead, q.value("shiphead_id").toInt(),
-			 q.value("lineitem_id").toInt(),
-                         "", "", "", q.value("linenumber"),
-                         q.value("item_number"), q.value("itemdescription"),
-                         q.value("warehous_code"), q.value("f_qtyord"),
-                         q.value("f_qtyshipped") );
-    }
-    while (q.next());
+    _ship->populate(q, true);
   }
   else if (q.lastError().type() != QSqlError::None)
   {

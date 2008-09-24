@@ -92,14 +92,14 @@ dspSlowMovingInventoryByClassCode::dspSlowMovingInventoryByClassCode(QWidget* pa
 
   _classCode->setType(ParameterGroup::ClassCode);
 
-  _itemsite->addColumn(tr("Site"),          _whsColumn,  Qt::AlignCenter );
-  _itemsite->addColumn(tr("Item Number"),   _itemColumn, Qt::AlignLeft   );
-  _itemsite->addColumn(tr("Description"),   -1,                  Qt::AlignLeft   );
-  _itemsite->addColumn(tr("UOM"),           _uomColumn,  Qt::AlignCenter );
-  _itemsite->addColumn(tr("Last Movement"), _itemColumn, Qt::AlignCenter );
-  _itemsite->addColumn(tr("QOH"),           _qtyColumn,  Qt::AlignRight  );
-  _itemsite->addColumn(tr("Unit Cost"),     _costColumn, Qt::AlignRight  );
-  _itemsite->addColumn(tr("Value"),         _costColumn, Qt::AlignRight  );
+  _itemsite->addColumn(tr("Site"),          _whsColumn,  Qt::AlignCenter, true,  "warehous_code" );
+  _itemsite->addColumn(tr("Item Number"),   _itemColumn, Qt::AlignLeft,   true,  "item_number"   );
+  _itemsite->addColumn(tr("Description"),   -1,          Qt::AlignLeft,   true,  "itemdescrip"   );
+  _itemsite->addColumn(tr("UOM"),           _uomColumn,  Qt::AlignCenter, true,  "uom_name" );
+  _itemsite->addColumn(tr("Last Movement"), _itemColumn, Qt::AlignCenter, true,  "itemsite_datelastused" );
+  _itemsite->addColumn(tr("QOH"),           _qtyColumn,  Qt::AlignRight,  true,  "itemsite_qtyonhand"  );
+  _itemsite->addColumn(tr("Unit Cost"),     _costColumn, Qt::AlignRight,  true,  "cost"  );
+  _itemsite->addColumn(tr("Value"),         _costColumn, Qt::AlignRight,  true,  "value"  );
 
   sHandleValue(_showValue->isChecked());
 
@@ -278,12 +278,15 @@ void dspSlowMovingInventoryByClassCode::sFillList()
 
   QString sql( "SELECT itemsite_id, warehous_code, item_number,"
                "       (item_descrip1 || ' ' || item_descrip2) AS itemdescrip, uom_name,"
-               "       itemsite_qtyonhand, formatQty(itemsite_qtyonhand) AS f_qoh,"
-               "       formatDate(itemsite_datelastused) AS f_datelastused,"
-               "       formatCost(cost) AS f_unitcost,"
+               "       itemsite_qtyonhand, itemsite_datelastused, cost,"
                "       noNeg(cost * itemsite_qtyonhand) AS value,"
-               "       formatMoney(noNeg(cost * itemsite_qtyonhand)) AS f_value,"
-               "       cost "
+               "       CASE WHEN (COALESCE(itemsite_datelastused, startOfTime()) <= startOfTime()) THEN 'N/A'"
+               "       END AS itemsite_datelastused_qtdisplayrole,"
+               "       'qty' AS itemsite_qtyonhand_xtnumericrole,"
+               "       'cost' AS cost_xtnumericrole,"
+               "       'curr' AS value_xtnumericrole,"
+               "       0 AS itemsite_qtyonhand_xttotalrole,"
+               "       0 AS value_xttotalrole "
                "FROM ( SELECT itemsite_id, warehous_code, item_number,"
                "              item_descrip1, item_descrip2, uom_name,"
                "              itemsite_qtyonhand, itemsite_datelastused,"
@@ -319,25 +322,7 @@ void dspSlowMovingInventoryByClassCode::sFillList()
 
   MetaSQLQuery mql(sql);
   q = mql.toQuery(params);
-  double qty   = 0.0;
-  double value = 0.0;
-  XTreeWidgetItem *last = 0;
-  while (q.next())
-  {
-    last = new XTreeWidgetItem( _itemsite, last, q.value("itemsite_id").toInt(),
-				q.value("warehous_code"), q.value("item_number"),
-				q.value("itemdescrip"), q.value("uom_name"),
-				q.value("f_datelastused"), q.value("f_qoh") );
-
-    last->setText(6, q.value("f_unitcost").toString());
-    last->setText(7, q.value("f_value").toString());
-
-    if (q.value("itemsite_qtyonhand").toDouble() > 0.0)
-    {
-      qty += q.value("itemsite_qtyonhand").toDouble();
-      value += q.value("value").toDouble();
-    }
-  }
+  _itemsite->populate(q);
   if (q.lastError().type() != QSqlError::None)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);

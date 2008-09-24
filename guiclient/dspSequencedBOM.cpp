@@ -75,15 +75,15 @@ dspSequencedBOM::dspSequencedBOM(QWidget* parent, const char* name, Qt::WFlags f
 
   _item->setType(ItemLineEdit::cGeneralManufactured  | ItemLineEdit::cGeneralPurchased | ItemLineEdit::cKit);
 
-  _bomitem->addColumn(tr("BOO Seq. #"),  _qtyColumn,   Qt::AlignCenter );
-  _bomitem->addColumn(tr("BOM Seq. #"),  _qtyColumn,   Qt::AlignCenter );
-  _bomitem->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft   );
-  _bomitem->addColumn(tr("Description"), -1,           Qt::AlignLeft   );
-  _bomitem->addColumn(tr("UOM"),         _uomColumn,   Qt::AlignCenter );
-  _bomitem->addColumn(tr("Qty."),        _qtyColumn,   Qt::AlignRight  );
-  _bomitem->addColumn(tr("Scrap %"),     _prcntColumn, Qt::AlignRight  );
-  _bomitem->addColumn(tr("Effective"),   _dateColumn,  Qt::AlignCenter );
-  _bomitem->addColumn(tr("Expires"),     _dateColumn,  Qt::AlignCenter );
+  _bomitem->addColumn(tr("BOO Seq. #"),  _qtyColumn,   Qt::AlignCenter, true,  "seqnumber" );
+  _bomitem->addColumn(tr("BOM Seq. #"),  _qtyColumn,   Qt::AlignCenter, true,  "bomitem_seqnumber" );
+  _bomitem->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft,   true,  "item_number"   );
+  _bomitem->addColumn(tr("Description"), -1,           Qt::AlignLeft,   true,  "itemdescrip"   );
+  _bomitem->addColumn(tr("UOM"),         _uomColumn,   Qt::AlignCenter, true,  "uom_name" );
+  _bomitem->addColumn(tr("Qty."),        _qtyColumn,   Qt::AlignRight,  true,  "qtyper"  );
+  _bomitem->addColumn(tr("Scrap %"),     _prcntColumn, Qt::AlignRight,  true,  "bomitem_scrap"  );
+  _bomitem->addColumn(tr("Effective"),   _dateColumn,  Qt::AlignCenter, true,  "bomitem_effective" );
+  _bomitem->addColumn(tr("Expires"),     _dateColumn,  Qt::AlignCenter, true,  "bomitem_expires" );
 
   connect(omfgThis, SIGNAL(bomsUpdated(int, bool)), SLOT(sFillList(int, bool)));
   connect(omfgThis, SIGNAL(boosUpdated(int, bool)), SLOT(sFillList(int, bool)));
@@ -157,18 +157,19 @@ void dspSequencedBOM::sFillList(int pItemid, bool)
     _bomitem->clear();
 
     QString sql( "SELECT bomitem_id, TEXT(booitem_seqnumber) AS seqnumber, bomitem_seqnumber, item_number,"
-                 "       (item_descrip1 || ' ' || item_descrip2) AS f_descrip, uom_name,"
-                 "       formatQtyper(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper)) AS f_qtyper,"
-                 "       formatScrap(bomitem_scrap) AS f_scrap,"
-                 "       formatDate(bomitem_effective, :always) AS f_effective,"
-                 "       formatDate(bomitem_expires, :never) AS f_expires,"
-                 "       bomitem_effective,"
-                 "       CASE WHEN(bomitem_expires <= CURRENT_DATE) THEN TRUE"
-                 "            ELSE FALSE"
-                 "       END AS expired,"
-                 "       CASE WHEN(bomitem_effective > CURRENT_DATE) THEN TRUE"
-                 "            ELSE FALSE"
-                 "       END AS future "
+                 "       (item_descrip1 || ' ' || item_descrip2) AS itemdescrip, uom_name,"
+                 "       itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper) AS qtyper,"
+                 "       bomitem_scrap, bomitem_effective, bomitem_expires,"
+                 "       'qtyper' AS qtyper_xtnumericrole,"
+                 "       'percent' AS bomitem_scrap_xtnumericrole,"
+                 "       CASE WHEN COALESCE(bomitem_effective, startOfTime()) <= startOfTime() THEN :always"
+                 "       END AS bomitem_effective_qtdisplayrole,"
+                 "       CASE WHEN COALESCE(bomitem_expires, endOfTime()) >= endOfTime() THEN :never"
+                 "       END AS bomitem_expires_qtdisplayrole,"
+                 "       CASE WHEN(bomitem_effective > CURRENT_DATE) THEN 'future'"
+                 "       END AS bomitem_effective_qtforegroundrole,"
+                 "       CASE WHEN(bomitem_expires <= CURRENT_DATE) THEN 'expired'"
+                 "       END AS bomitem_expires_qtforegroundrole "
 				 "FROM bomitem(:item_id,:revision_id), booitem(:item_id), item, uom "
                  "WHERE ( (bomitem_item_id=item_id)"
                  " AND (item_inv_uom_id=uom_id)"
@@ -182,19 +183,20 @@ void dspSequencedBOM::sFillList(int pItemid, bool)
 
     sql += " ) "
            "UNION SELECT bomitem_id, '' AS seqnumber, bomitem_seqnumber, item_number,"
-           "             (item_descrip1 || ' ' || item_descrip2), uom_name,"
-           "             formatQtyper(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper)),"
-           "             formatScrap(bomitem_scrap),"
-           "             formatDate(bomitem_effective, :always),"
-           "             formatDate(bomitem_expires, :never),"
-           "             bomitem_effective,"
-           "             CASE WHEN(bomitem_expires <= CURRENT_DATE) THEN TRUE"
-           "                  ELSE FALSE"
-           "             END AS expired,"
-           "             CASE WHEN(bomitem_effective > CURRENT_DATE) THEN TRUE"
-           "                  ELSE FALSE"
-           "             END AS future "
-		   "FROM bomitem(:item_id,:revision_id), item, uom "
+           "             (item_descrip1 || ' ' || item_descrip2) AS itemdescrip, uom_name,"
+           "             itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper) AS qtyper,"
+           "             bomitem_scrap, bomitem_effective, bomitem_expires,"
+           "            'qtyper' AS qtyper_xtnumericrole,"
+           "            'percent' AS bomitem_scrap_xtnumericrole,"
+           "            CASE WHEN COALESCE(bomitem_effective, startOfTime()) <= startOfTime() THEN :always"
+           "            END AS bomitem_effective_qtdisplayrole,"
+           "            CASE WHEN COALESCE(bomitem_expires, endOfTime()) >= endOfTime() THEN :never"
+           "            END AS bomitem_expires_qtdisplayrole,"
+           "            CASE WHEN(bomitem_effective > CURRENT_DATE) THEN 'future'"
+           "            END AS bomitem_effective_qtforegroundrole,"
+           "            CASE WHEN(bomitem_expires <= CURRENT_DATE) THEN 'expired'"
+           "            END AS bomitem_expires_qtforegroundrole "
+           "FROM bomitem(:item_id,:revision_id), item, uom "
            "WHERE ( (bomitem_item_id=item_id)"
            " AND (item_inv_uom_id=uom_id)"
            " AND (bomitem_parent_item_id=:item_id)"
@@ -215,19 +217,6 @@ void dspSequencedBOM::sFillList(int pItemid, bool)
     q.bindValue(":item_id", _item->id());
     q.bindValue(":revision_id", _revision->id());
     q.exec();
-    XTreeWidgetItem *last = 0;
-    while (q.next())
-    {
-      last = new XTreeWidgetItem( _bomitem, last, q.value("bomitem_id").toInt(), q.value("seqnumber"),
-                                q.value("bomitem_seqnumber"), q.value("item_number"),
-                                q.value("f_descrip"), q.value("uom_name"),
-                                q.value("f_qtyper"), q.value("f_scrap"),
-                                q.value("f_effective"), q.value("f_expires") );
-
-      if (q.value("expired").toBool())
-        last->setTextColor("red");
-      else if (q.value("future").toBool())
-        last->setTextColor("blue");
-    }
+    _bomitem->populate(q);
   }
 }

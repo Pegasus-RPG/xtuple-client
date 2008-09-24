@@ -79,15 +79,15 @@ dspSubstituteAvailabilityByItem::dspSubstituteAvailabilityByItem(QWidget* parent
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
 
-  _availability->addColumn(tr("Site"),          _whsColumn,  Qt::AlignCenter );
-  _availability->addColumn(tr("Item Number"),   _itemColumn, Qt::AlignLeft   );
-  _availability->addColumn(tr("Description"),   -1,          Qt::AlignLeft   );
-  _availability->addColumn(tr("LT"),            _whsColumn,  Qt::AlignCenter );
-  _availability->addColumn(tr("QOH"),           _qtyColumn,  Qt::AlignRight  );
-  _availability->addColumn(tr("Allocated"),     _qtyColumn,  Qt::AlignRight  );
-  _availability->addColumn(tr("On Order"),      _qtyColumn,  Qt::AlignRight  );
-  _availability->addColumn(tr("Reorder Lvl."),  _qtyColumn,  Qt::AlignRight  );
-  _availability->addColumn(tr("Available"),     _qtyColumn,  Qt::AlignRight  );
+  _availability->addColumn(tr("Site"),          _whsColumn,  Qt::AlignCenter, true,  "warehous_code" );
+  _availability->addColumn(tr("Item Number"),   _itemColumn, Qt::AlignLeft,   true,  "item_number"   );
+  _availability->addColumn(tr("Description"),   -1,          Qt::AlignLeft,   true,  "itemdescrip"   );
+  _availability->addColumn(tr("LT"),            _whsColumn,  Qt::AlignCenter, true,  "leadtime" );
+  _availability->addColumn(tr("QOH"),           _qtyColumn,  Qt::AlignRight,  true,  "qtyonhand"  );
+  _availability->addColumn(tr("Allocated"),     _qtyColumn,  Qt::AlignRight,  true,  "allocated"  );
+  _availability->addColumn(tr("On Order"),      _qtyColumn,  Qt::AlignRight,  true,  "ordered"  );
+  _availability->addColumn(tr("Reorder Lvl."),  _qtyColumn,  Qt::AlignRight,  true,  "reorderlevel"  );
+  _availability->addColumn(tr("Available"),     _qtyColumn,  Qt::AlignRight,  true,  "available"  );
 }
 
 dspSubstituteAvailabilityByItem::~dspSubstituteAvailabilityByItem()
@@ -221,51 +221,61 @@ void dspSubstituteAvailabilityByItem::sFillList()
   {
     _availability->clear();
 
-    QString sql = "SELECT sub.itemsite_id AS s_itemsite_id,"
+    QString sql = "SELECT s_itemsite_id, warehous_code, item_number, itemdescrip,"
+                  "       qtyonhand, reorderlevel, leadtime, itemsub_rank,"
+                  "       allocated, ordered, available,"
+                  "      'qty' AS qtyonhand_xtnumericrole,"
+                  "      'qty' AS allocated_xtnumericrole,"
+                  "      'qty' AS ordered_xtnumericrole,"
+                  "      'qty' AS reorderlevel_xtnumericrole,"
+                  "      'qty' AS available_xtnumericrole,"
+                  "      CASE WHEN (reorderlevel >= available) THEN 'error' END AS available_qtforegroundrole "
+                  "FROM ( "
+                  "SELECT sub.itemsite_id AS s_itemsite_id,"
                   " warehous_code, item_number,"
                   " (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,";
 
     if (_normalize->isChecked())
-      sql += " formatQty(sub.itemsite_qtyonhand * itemsub_uomratio) AS qtyonhand,"
-             " formatQty(CASE WHEN(sub.itemsite_useparams) THEN sub.itemsite_reorderlevel ELSE 0.0 END * itemsub_uomratio) AS reorderlevel,"
+      sql += " (sub.itemsite_qtyonhand * itemsub_uomratio) AS qtyonhand,"
+             " (CASE WHEN(sub.itemsite_useparams) THEN sub.itemsite_reorderlevel ELSE 0.0 END * itemsub_uomratio) AS reorderlevel,"
              " sub.itemsite_leadtime AS leadtime, itemsub_rank,";
     else
-      sql += " formatQty(sub.itemsite_qtyonhand) AS qtyonhand,"
-             " formatQty(CASE WHEN(sub.itemsite_useparams) THEN sub.itemsite_reorderlevel ELSE 0.0 END) AS reorderlevel,"
+      sql += " (sub.itemsite_qtyonhand) AS qtyonhand,"
+             " (CASE WHEN(sub.itemsite_useparams) THEN sub.itemsite_reorderlevel ELSE 0.0 END) AS reorderlevel,"
              " sub.itemsite_leadtime AS leadtime, itemsub_rank,";
 
     if (_leadTime->isChecked())
     {
       if (_normalize->isChecked())
-        sql += " formatQty(qtyAllocated(sub.itemsite_id, sub.itemsite_leadtime) * itemsub_uomratio) AS allocated,"
-               " formatQty(qtyOrdered(sub.itemsite_id, sub.itemsite_leadtime) * itemsub_uomratio) AS ordered, "
-               " formatQty((sub.itemsite_qtyonhand * itemsub_uomratio) + (qtyOrdered(sub.itemsite_id, sub.itemsite_leadtime) * itemsub_uomratio) - (qtyAllocated(sub.itemsite_id, sub.itemsite_leadtime) * itemsub_uomratio)) AS available ";
+        sql += " (qtyAllocated(sub.itemsite_id, sub.itemsite_leadtime) * itemsub_uomratio) AS allocated,"
+               " (qtyOrdered(sub.itemsite_id, sub.itemsite_leadtime) * itemsub_uomratio) AS ordered, "
+               " ((sub.itemsite_qtyonhand * itemsub_uomratio) + (qtyOrdered(sub.itemsite_id, sub.itemsite_leadtime) * itemsub_uomratio) - (qtyAllocated(sub.itemsite_id, sub.itemsite_leadtime) * itemsub_uomratio)) AS available ";
       else
-        sql += " formatQty(qtyAllocated(sub.itemsite_id, sub.itemsite_leadtime)) AS allocated,"
-               " formatQty(qtyOrdered(sub.itemsite_id, sub.itemsite_leadtime)) AS ordered, "
-               " formatQty(sub.itemsite_qtyonhand + qtyOrdered(sub.itemsite_id, sub.itemsite_leadtime) - qtyAllocated(sub.itemsite_id, sub.itemsite_leadtime)) AS available ";
+        sql += " (qtyAllocated(sub.itemsite_id, sub.itemsite_leadtime)) AS allocated,"
+               " (qtyOrdered(sub.itemsite_id, sub.itemsite_leadtime)) AS ordered, "
+               " (sub.itemsite_qtyonhand + qtyOrdered(sub.itemsite_id, sub.itemsite_leadtime) - qtyAllocated(sub.itemsite_id, sub.itemsite_leadtime)) AS available ";
     }
     else if (_byDays->isChecked())
     {
       if (_normalize->isChecked())
-        sql += " formatQty(qtyAllocated(sub.itemsite_id, :days) * itemsub_uomratio) AS allocated,"
-               " formatQty(qtyOrdered(sub.itemsite_id, :days) * itemsub_uomratio) AS ordered, "
-               " formatQty((sub.itemsite_qtyonhand * itemsub_uomratio) + (qtyOrdered(sub.itemsite_id, :days) * itemsub_uomratio) - (qtyAllocated(sub.itemsite_id, :days) * itemsub_uomratio)) AS available ";
+        sql += " (qtyAllocated(sub.itemsite_id, :days) * itemsub_uomratio) AS allocated,"
+               " (qtyOrdered(sub.itemsite_id, :days) * itemsub_uomratio) AS ordered, "
+               " ((sub.itemsite_qtyonhand * itemsub_uomratio) + (qtyOrdered(sub.itemsite_id, :days) * itemsub_uomratio) - (qtyAllocated(sub.itemsite_id, :days) * itemsub_uomratio)) AS available ";
       else
-        sql += " formatQty(qtyAllocated(sub.itemsite_id, :days)) AS allocated,"
-               " formatQty(qtyOrdered(sub.itemsite_id, :days)) AS ordered, "
-               " formatQty(sub.itemsite_qtyonhand + qtyOrdered(sub.itemsite_id, :days) - qtyAllocated(sub.itemsite_id, :days)) AS available ";
+        sql += " (qtyAllocated(sub.itemsite_id, :days)) AS allocated,"
+               " (qtyOrdered(sub.itemsite_id, :days)) AS ordered, "
+               " (sub.itemsite_qtyonhand + qtyOrdered(sub.itemsite_id, :days) - qtyAllocated(sub.itemsite_id, :days)) AS available ";
     }
     else if (_byDate->isChecked())
     {
       if (_normalize->isChecked())
-        sql += " formatQty(qtyAllocated(sub.itemsite_id, (:date - CURRENT_DATE)) * itemsub_uomratio) AS allocated,"
-               " formatQty(qtyOrdered(sub.itemsite_id, (:date - CURRENT_DATE)) * itemsub_uomratio) AS ordered, "
-               " formatQty((sub.itemsite_qtyonhand * itemsub_uomratio) + (qtyOrdered(sub.itemsite_id, (:date - CURRENT_DATE)) * itemsub_uomratio) - (qtyAllocated(sub.itemsite_id, (:date - CURRENT_DATE)) * itemsub_uomratio)) AS available ";
+        sql += " (qtyAllocated(sub.itemsite_id, (:date - CURRENT_DATE)) * itemsub_uomratio) AS allocated,"
+               " (qtyOrdered(sub.itemsite_id, (:date - CURRENT_DATE)) * itemsub_uomratio) AS ordered, "
+               " ((sub.itemsite_qtyonhand * itemsub_uomratio) + (qtyOrdered(sub.itemsite_id, (:date - CURRENT_DATE)) * itemsub_uomratio) - (qtyAllocated(sub.itemsite_id, (:date - CURRENT_DATE)) * itemsub_uomratio)) AS available ";
       else
-        sql += " formatQty(qtyAllocated(sub.itemsite_id, (:date - CURRENT_DATE))) AS allocated,"
-               " formatQty(qtyOrdered(sub.itemsite_id, (:date - CURRENT_DATE))) AS ordered, "
-               " formatQty(sub.itemsite_qtyonhand + qtyOrdered(sub.itemsite_id, (:date - CURRENT_DATE)) - qtyAllocated(sub.itemsite_id, (:date - CURRENT_DATE))) AS available ";
+        sql += " (qtyAllocated(sub.itemsite_id, (:date - CURRENT_DATE))) AS allocated,"
+               " (qtyOrdered(sub.itemsite_id, (:date - CURRENT_DATE))) AS ordered, "
+               " (sub.itemsite_qtyonhand + qtyOrdered(sub.itemsite_id, (:date - CURRENT_DATE)) - qtyAllocated(sub.itemsite_id, (:date - CURRENT_DATE))) AS available ";
     }
 
     sql += "FROM item, itemsite AS sub, itemsite AS root, warehous, itemsub "
@@ -279,7 +289,7 @@ void dspSubstituteAvailabilityByItem::sFillList()
     if (_warehouse->isSelected())
       sql += " AND (root.itemsite_warehous_id=:warehous_id)";
 
-    sql += ") "
+    sql += ") ) AS data"
            "ORDER BY itemsub_rank";
 
     q.prepare(sql);
@@ -288,23 +298,6 @@ void dspSubstituteAvailabilityByItem::sFillList()
     q.bindValue(":item_id", _item->id());
     _warehouse->bindValue(q);
     q.exec();
-    XTreeWidgetItem *last = 0;
-    while (q.next())
-    {
-      last = new XTreeWidgetItem(_availability, last,
-				 q.value("s_itemsite_id").toInt(),
-				 q.value("warehous_code"),
-				 q.value("item_number"),
-				 q.value("itemdescrip"),
-				 q.value("leadtime"),
-				 q.value("qtyonhand"),
-				 q.value("allocated"),
-				 q.value("ordered"),
-				 q.value("reorderlevel"),
-				 q.value("available") );
-
-      if (last->text(7).toDouble() >= last->text(8).toDouble())
-        last->setTextColor(8, "red");
-    }
+    _availability->populate(q);
   }
 }

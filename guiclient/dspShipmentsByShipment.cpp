@@ -65,6 +65,8 @@
 //#include <QStatusBar>
 #include <QVariant>
 
+#include <metasql.h>
+#include "mqlutil.h"
 #include <openreports.h>
 
 #include "inputManager.h"
@@ -84,16 +86,16 @@ dspShipmentsByShipment::dspShipmentsByShipment(QWidget* parent, const char* name
   _shipment->setType("SO");
 
   _soship->setRootIsDecorated(TRUE);
-  _soship->addColumn(tr("Shipment #"),         _orderColumn, Qt::AlignLeft   );
-  _soship->addColumn(tr("Ship Date"),           _itemColumn, Qt::AlignCenter );
-  _soship->addColumn(tr("#"),                   _seqColumn,  Qt::AlignCenter );
-  _soship->addColumn(tr("Item"),                _itemColumn, Qt::AlignLeft   );
-  _soship->addColumn(tr("Description"),         -1,          Qt::AlignLeft   );
-  _soship->addColumn(tr("Site"),                _whsColumn,  Qt::AlignCenter );
-  _soship->addColumn(tr("Ordered"),             _qtyColumn,  Qt::AlignRight  );
-  _soship->addColumn(tr("Shipped"),             _qtyColumn,  Qt::AlignRight  );
-  _soship->addColumn(tr("Tracking Number"),     _qtyColumn,  Qt::AlignRight  );
-  _soship->addColumn(tr("Freight at Shipping"), _qtyColumn,  Qt::AlignRight  );
+  _soship->addColumn(tr("Shipment #"),          _orderColumn, Qt::AlignLeft,   true,  "shiphead_number"   );
+  _soship->addColumn(tr("Ship Date"),           _itemColumn,  Qt::AlignCenter, true,  "shiphead_shipdate" );
+  _soship->addColumn(tr("#"),                   _seqColumn,   Qt::AlignCenter, true,  "linenumber" );
+  _soship->addColumn(tr("Item"),                _itemColumn,  Qt::AlignLeft,   true,  "item_number"   );
+  _soship->addColumn(tr("Description"),         -1,           Qt::AlignLeft,   true,  "itemdescription"   );
+  _soship->addColumn(tr("Site"),                _whsColumn,   Qt::AlignCenter, true,  "warehous_code" );
+  _soship->addColumn(tr("Ordered"),             _qtyColumn,   Qt::AlignRight,  true,  "qtyord"  );
+  _soship->addColumn(tr("Shipped"),             _qtyColumn,   Qt::AlignRight,  true,  "qtyshipped"  );
+  _soship->addColumn(tr("Tracking Number"),     _qtyColumn,   Qt::AlignRight,  true,  "shiphead_tracknum"  );
+  _soship->addColumn(tr("Freight at Shipping"), _qtyColumn,   Qt::AlignRight,  true,  "shiphead_freight"  );
 }
 
 dspShipmentsByShipment::~dspShipmentsByShipment()
@@ -187,56 +189,13 @@ void dspShipmentsByShipment::sFillList(int pShipheadid)
       _custPhone->setText(q.value("cust_phone").toString());
     }
 
-    q.prepare( "SELECT cosmisc_id, coitem_id,"
-	       "       formatShipmentNumber(cosmisc_id) AS cosmisc_number,"
-               "       formatDate(cosmisc_shipdate) AS f_shipdate,"
-               "       coitem_linenumber, item_number,"
-               "       (item_descrip1 || ' ' || item_descrip2) AS itemdescription,"
-               "       warehous_code,"
-               "       cosmisc_tracknum,"
-               "       formatQty(coitem_qtyord) AS f_qtyord,"
-               "       formatQty(SUM(coship_qty)) AS f_qtyshipped,"
-               "       formatMoney(cosmisc_freight) AS f_freight "
-               "FROM coship, cosmisc, coitem, itemsite, item, warehous "
-               "WHERE ( (coship_cosmisc_id=cosmisc_id)"
-               " AND (coship_coitem_id=coitem_id)"
-               " AND (cosmisc_shipped)"
-               " AND (coitem_itemsite_id=itemsite_id)"
-               " AND (coitem_status <> 'X')"
-               " AND (itemsite_item_id=item_id)"
-               " AND (itemsite_warehous_id=warehous_id)"
-               " AND (cosmisc_id=:shiphead_id) ) "
-               "GROUP BY cosmisc_id, coitem_id,"
-               "         cosmisc_shipdate, coitem_linenumber,"
-               "         item_number, item_descrip1, item_descrip2, "
-	       "         warehous_code, cosmisc_tracknum, cosmisc_freight,"
-               "         coitem_qtyord "
-               "ORDER BY cosmisc_id DESC, coitem_linenumber DESC;" );
-    q.bindValue(":shiphead_id", pShipheadid);
-    q.exec();
+    ParameterList params;
+    params.append("shiphead_id", _shipment->id());
+    MetaSQLQuery fillm = mqlLoad(":/sr/displays/Shipments.mql");
+    q = fillm.toQuery(params);
     if (q.first())
     {
-      XTreeWidgetItem *soshead = 0;
-      int cosmiscid = -1;
-      do
-      {
-        if (q.value("cosmisc_id").toInt() != cosmiscid)
-        {
-          cosmiscid = q.value("cosmisc_id").toInt();
-
-          soshead = new XTreeWidgetItem( _soship, q.value("cosmisc_id").toInt(),
-				       q.value("coitem_id").toInt(), q.value("cosmisc_number"),
-                                       q.value("f_shipdate").toString(), "", "", "", "", "", "",
-                                       q.value("cosmisc_tracknum"), q.value("f_freight") );
-        }
-
-        new XTreeWidgetItem( soshead, q.value("cosmisc_id").toInt(), q.value("coitem_id").toInt(),
-                           "", "", q.value("coitem_linenumber"),
-                           q.value("item_number"), q.value("itemdescription"),
-                           q.value("warehous_code"), q.value("f_qtyord"),
-                           q.value("f_qtyshipped") );
-      }
-      while (q.next());
+      _soship->populate(q, true);
       _soship->expandAll();
     }
     else if (q.lastError().type() != QSqlError::None)

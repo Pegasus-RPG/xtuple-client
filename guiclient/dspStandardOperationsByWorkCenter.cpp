@@ -73,8 +73,8 @@ dspStandardOperationsByWorkCenter::dspStandardOperationsByWorkCenter(QWidget* pa
   connect(_wrkcnt, SIGNAL(newID(int)), this, SLOT(sFillList()));
   connect(_stdopn, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
 
-  _stdopn->addColumn(tr("Std. Oper. #"), _itemColumn, Qt::AlignLeft  );
-  _stdopn->addColumn(tr("Description"),  -1,          Qt::AlignLeft  );
+  _stdopn->addColumn(tr("Std. Oper. #"), _itemColumn, Qt::AlignLeft,   true,  "stdopn_number"  );
+  _stdopn->addColumn(tr("Description"),  -1,          Qt::AlignLeft,   true,  "stdopndescrip"  );
 
   sFillList();
 }
@@ -153,7 +153,7 @@ void dspStandardOperationsByWorkCenter::sFillList()
 //  ToDo
 
   q.prepare( "SELECT stdopn_id, stdopn_number,"
-             "       (stdopn_descrip1 || ' ' || stdopn_descrip2) "
+             "       (stdopn_descrip1 || ' ' || stdopn_descrip2) AS stdopndescrip "
              "FROM stdopn "
              "WHERE (stdopn_wrkcnt_id=:wrkcnt_id) "
              "ORDER BY stdopn_number;" );
