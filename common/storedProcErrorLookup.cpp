@@ -477,6 +477,12 @@ void initErrorLookupHash()
                                "delete all of the selected Customer's Quotes "
                                "before you may delete it"),      0, "" },
 
+  { "deleteCustomerType", -1, TR("The selected Customer Type cannot be deleted "
+                                 "as there are one or more Customers assigned "
+                                 "to it. You must reassign these Customers "
+                                 "before you may delete the selected Customer "
+                                 "Type."),                              0, "" },
+
   { "deleteForm", -1, TR("The selected Check Format cannot be deleted as it is "
                          "used by one or more Bank Accounts. You must reassign "
                          "these Bank Accounts before you may delete the "

@@ -554,6 +554,14 @@ void XTreeWidget::hideColumn(const QString &pColumn)
     QTreeWidget::hideColumn(colnum);
 }
 
+void XTreeWidget::showColumn(const QString &pColumn)
+{
+  int colnum = column(pColumn);
+
+  if (colnum >= 0)
+    QTreeWidget::showColumn(colnum);
+}
+
 bool XTreeWidget::itemAsc(const QVariant &v1, const QVariant &v2)
 {
   bool returnVal = false;

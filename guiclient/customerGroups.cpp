@@ -57,58 +57,25 @@
 
 #include "customerGroups.h"
 
-#include <qvariant.h>
-//#include <qstatusbar.h>
+#include <QSqlError>
+#include <QVariant>
+
 #include <parameter.h>
 #include "customerGroup.h"
 #include "guiclient.h"
 
-/*
- *  Constructs a customerGroups as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 customerGroups::customerGroups(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-//    (void)statusBar();
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
 
-    // signals and slots connections
-    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-    connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
-    connect(_custgrp, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-customerGroups::~customerGroups()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void customerGroups::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void customerGroups::init()
-{
-//  statusBar()->hide();
-  
-  _custgrp->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft );
-  _custgrp->addColumn(tr("Description"), -1,          Qt::AlignLeft );
+  _custgrp->addColumn(tr("Name"), _itemColumn, Qt::AlignLeft, true, "custgrp_name");
+  _custgrp->addColumn(tr("Description"),   -1, Qt::AlignLeft, true, "custgrp_descrip");
   
   if (_privileges->check("MaintainCustomerGroups"))
   {
@@ -125,6 +92,16 @@ void customerGroups::init()
   sFillList();
 }
 
+customerGroups::~customerGroups()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void customerGroups::languageChange()
+{
+  retranslateUi(this);
+}
+
 void customerGroups::sDelete()
 {
   q.prepare( "DELETE FROM custgrpitem "
@@ -136,7 +113,6 @@ void customerGroups::sDelete()
 
   sFillList();
 }
-
 
 void customerGroups::sNew()
 {
@@ -178,4 +154,3 @@ void customerGroups::sFillList()
                       "FROM custgrp "
                       "ORDER BY custgrp_name;" );
 }
-

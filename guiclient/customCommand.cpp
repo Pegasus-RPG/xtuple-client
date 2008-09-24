@@ -77,8 +77,8 @@ customCommand::customCommand(QWidget* parent, const char* name, bool modal, Qt::
   _mode = cNew;
   _cmdid = -1;
   
-  _arguments->addColumn(tr("Order"), _whsColumn, Qt::AlignCenter );
-  _arguments->addColumn(tr("Argument"), -1, Qt::AlignLeft );
+  _arguments->addColumn(tr("Order"), _whsColumn, Qt::AlignCenter,true, "cmdarg_order");
+  _arguments->addColumn(tr("Argument"),      -1, Qt::AlignLeft,  true, "cmdarg_arg");
   
   _module->clear();
   _module->addItem("Products");

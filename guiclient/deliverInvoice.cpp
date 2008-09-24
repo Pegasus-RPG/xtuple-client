@@ -57,72 +57,54 @@
 
 #include "deliverInvoice.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
 
-/*
- *  Constructs a deliverInvoice as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 deliverInvoice::deliverInvoice(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
+  connect(_invoice, SIGNAL(itemSelectionChanged()), this, SLOT(sHandlePoheadid()));
 
-    // signals and slots connections
-    connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_invoice, SIGNAL(itemSelectionChanged()), this, SLOT(sHandlePoheadid()));
-    connect(_invoice, SIGNAL(valid(bool)), _submit, SLOT(setEnabled(bool)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-deliverInvoice::~deliverInvoice()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void deliverInvoice::languageChange()
-{
-    retranslateUi(this);
-}
-
-	
-void deliverInvoice::init()
-{
   _captive = FALSE;
 
-  _invoice->addColumn( tr("Invoice #"), _orderColumn, Qt::AlignRight  );
-  _invoice->addColumn( tr("Doc. Date"), _dateColumn,  Qt::AlignCenter );
-  _invoice->addColumn( tr("Customer"),  -1,           Qt::AlignLeft   );
-  _invoice->populate( "SELECT invchead_id, cust_id,"
-                      "       invchead_invcnumber, formatDate(invchead_invcdate),"
-                      "       (TEXT(cust_number) || ' - ' || cust_name) "
-                      "FROM invchead, cust "
-                      "WHERE ( (invchead_cust_id=cust_id) "
-                      "  AND   (checkInvoiceSitePrivs(invchead_id)) ) "
-                      "ORDER BY invchead_invcdate DESC;", TRUE );
+  _invoice->addColumn(tr("Invoice #"), _orderColumn, Qt::AlignRight, true, "invchead_invcnumber");
+  _invoice->addColumn(tr("Doc. Date"), _dateColumn,  Qt::AlignCenter,true, "invchead_invcdate");
+  _invoice->addColumn(tr("Customer"),  -1,           Qt::AlignLeft,  true, "cust");
+  _invoice->populate("SELECT invchead_id, cust_id,"
+                     "       invchead_invcnumber, invchead_invcdate,"
+                     "       (TEXT(cust_number) || ' - ' || cust_name) AS cust "
+                     "FROM invchead, cust "
+                     "WHERE ( (invchead_cust_id=cust_id) "
+                     "  AND   (checkInvoiceSitePrivs(invchead_id)) ) "
+                     "ORDER BY invchead_invcdate DESC;", TRUE );
 
   q.exec( "SELECT usr_email "
           "FROM usr "
           "WHERE (usr_username=CURRENT_USER);" );
   if (q.first())
     _fromEmail->setText(q.value("usr_email"));
-//  ToDo
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
-enum SetResponse deliverInvoice::set(ParameterList &pParams)
+deliverInvoice::~deliverInvoice()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void deliverInvoice::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse deliverInvoice::set(const ParameterList &pParams)
 {
   _captive = TRUE;
 
@@ -144,7 +126,8 @@ void deliverInvoice::sSubmit()
   if (_email->text().isEmpty())
   {
     QMessageBox::critical( this, tr("Cannot Queue Invoice for Delivery"),
-                           tr("You must enter a email address to which this Invoice is to be delivered.") );
+                           tr("<pYou must enter a email address to which this "
+                              "Invoice is to be delivered.") );
     _email->setFocus();
     return;
   }
@@ -186,12 +169,22 @@ void deliverInvoice::sSubmit()
       q.bindValue(":batchparam_name", "invchead_id");
       q.bindValue(":batchparam_value", _invoice->id());
       q.exec();
+      if (q.lastError().type() != QSqlError::None)
+      {
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        return;
+      }
 
       q.bindValue(":batchparam_batch_id", batch_id);
       q.bindValue(":batchparam_order", 2);
       q.bindValue(":batchparam_name", "title");
       q.bindValue(":batchparam_value", "Emailed Customer Copy");
       q.exec();
+      if (q.lastError().type() != QSqlError::None)
+      {
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        return;
+      }
     }
 
     if (_markPrinted->isChecked())
@@ -201,10 +194,19 @@ void deliverInvoice::sSubmit()
                  "WHERE (invchead_id=:invchead_id);" );
       q.bindValue(":invchead_id", _invoice->id());
       q.exec();
+      if (q.lastError().type() != QSqlError::None)
+      {
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        return;
+      }
       omfgThis->sInvoicesUpdated(_invoice->id(), TRUE);
     }
   }
-//  ToDo
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   if (_captive)
     accept();
@@ -264,5 +266,9 @@ void deliverInvoice::sHandlePoheadid()
       _emailHTML->setChecked(false);
     }
   }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
-

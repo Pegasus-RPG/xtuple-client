@@ -109,7 +109,7 @@ enum SetResponse changeQtyToDistributeFromBreeder::set(ParameterList &pParams)
     if (brddist.first())
     {
       _cachedOpenWoQty = brddist.value("brddist_qty").toDouble();
-      _openWoQty->setDouble(brddist.value("brddist_wo_woqty").toDouble());
+      _openWoQty->setDouble(brddist.value("brddist_wo_qty").toDouble());
       _standardQtyPer->setDouble(brddist.value("brddist_stdqtyper").toDouble());
       _standardQtyToDistribute->setDouble(brddist.value("stdqty").toDouble());
       _actualQtyPer->setDouble(brddist.value("actqtyper").toDouble());

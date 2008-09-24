@@ -57,60 +57,29 @@
 
 #include "customerTypes.h"
 
-#include <QVariant>
+#include <QMenu>
 #include <QMessageBox>
-//#include <QStatusBar>
+#include <QSqlError>
+#include <QVariant>
+
 #include <parameter.h>
 #include <openreports.h>
+
 #include "customerType.h"
 #include "guiclient.h"
+#include "storedProcErrorLookup.h"
 
-/*
- *  Constructs a customerTypes as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 customerTypes::customerTypes(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-//    (void)statusBar();
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_custtype, SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *, int)), this, SLOT(sPopulateMenu(QMenu*)));
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-    connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_custtype, SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *, int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-customerTypes::~customerTypes()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void customerTypes::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void customerTypes::init()
-{
-//  statusBar()->hide();
-  
   if (_privileges->check("MaintainCustomerTypes"))
   {
     connect(_custtype, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
@@ -122,10 +91,20 @@ void customerTypes::init()
     _new->setEnabled(FALSE);
   }
 
-  _custtype->addColumn(tr("Code"),        70, Qt::AlignLeft );
-  _custtype->addColumn(tr("Description"), -1, Qt::AlignLeft );
+  _custtype->addColumn(tr("Code"),        70, Qt::AlignLeft, true, "custtype_code");
+  _custtype->addColumn(tr("Description"), -1, Qt::AlignLeft, true, "custtype_descrip");
   
   sFillList();
+}
+
+customerTypes::~customerTypes()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void customerTypes::languageChange()
+{
+  retranslateUi(this);
 }
 
 void customerTypes::sNew()
@@ -178,17 +157,20 @@ void customerTypes::sDelete()
   q.exec();
   if (q.first())
   {
-    switch (q.value("result").toInt())
+    int result = q.value("result").toInt();
+    if (result < 0)
     {
-      case -1:
-        QMessageBox::critical( this, tr("Cannot Delete Customer Type"),
-                               tr( "The selected Customer Type cannot be deleted as there are one or more Customers assigned to it.\n"
-                                   "You must reassign these Customers before you may delete the selected Customer Type." ) );
-        return;
+      systemError(this, storedProcErrorLookup("deleteCustomerType", result),
+                  __FILE__, __LINE__);
+      return;
     }
-
-    sFillList();
   }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+  sFillList();
 }
 
 void customerTypes::sPopulateMenu(QMenu *)
@@ -203,4 +185,3 @@ void customerTypes::sPrint()
   else
     report.reportError(this);
 }
-

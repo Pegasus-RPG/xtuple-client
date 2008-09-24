@@ -57,85 +57,62 @@
 
 #include "departments.h"
 
-#include <QVariant>
+#include <QMenu>
 #include <QMessageBox>
-//#include <QStatusBar>
+#include <QSqlError>
+#include <QVariant>
+
 #include <openreports.h>
 #include "department.h"
 
-/*
- *  Constructs a departments as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 departments::departments(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-//    (void)statusBar();
+  connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_deptList, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
 
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-    connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-    connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_deptList, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-    init();
+  _deptList->addColumn(tr("Dept. Number"),_userColumn, Qt::AlignLeft, true, "dept_number");
+  _deptList->addColumn(tr("Dept. Name"),           -1, Qt::AlignLeft, true, "dept_name");
+
+  if (_privileges->check("MaintainDepartments"))
+  {
+    connect(_deptList, SIGNAL(valid(bool)),	_edit,	SLOT(setEnabled(bool)));
+    connect(_deptList, SIGNAL(valid(bool)),	_delete,SLOT(setEnabled(bool)));
+    connect(_deptList, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
+  }
+  else
+  {
+    _new->setEnabled(false);
+    _edit->setEnabled(false);
+    _delete->setEnabled(false);
+    connect(_deptList, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
+  }
+  connect(_deptList, SIGNAL(valid(bool)),	_view,	SLOT(setEnabled(bool)));
+
+  sFillList();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 departments::~departments()
 {
     // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void departments::languageChange()
 {
     retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-#include <QSqlError>
-void departments::init()
-{
-//    statusBar()->hide();
-
-    _deptList->addColumn(tr("Dept. Number"),	_userColumn,	Qt::AlignLeft );
-    _deptList->addColumn(tr("Dept. Name"),	-1,		Qt::AlignLeft );
-
-    if (_privileges->check("MaintainDepartments"))
-    {
-	connect(_deptList, SIGNAL(valid(bool)),	_edit,	SLOT(setEnabled(bool)));
-	connect(_deptList, SIGNAL(valid(bool)),	_delete,SLOT(setEnabled(bool)));
-	connect(_deptList, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
-    }
-    else
-    {
-	_new->setEnabled(false);
-	_edit->setEnabled(false);
-	_delete->setEnabled(false);
-	connect(_deptList, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
-    }
-    connect(_deptList, SIGNAL(valid(bool)),	_view,	SLOT(setEnabled(bool)));
-
-    sFillList();
 }
 
 void departments::sClose()
 {
     close();
 }
-
 
 void departments::sPrint()
 {

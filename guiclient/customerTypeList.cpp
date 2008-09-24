@@ -57,52 +57,29 @@
 
 #include "customerTypeList.h"
 
-#include <qvariant.h>
+#include <QVariant>
 
-/*
- *  Constructs a customerTypeList as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 customerTypeList::customerTypeList(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  connect(_select, SIGNAL(clicked()), this, SLOT(sSelect()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
+  connect(_clear, SIGNAL(clicked()), this, SLOT(sClear()));
 
-    // signals and slots connections
-    connect(_select, SIGNAL(clicked()), this, SLOT(sSelect()));
-    connect(_custtype, SIGNAL(itemSelected(int)), _select, SLOT(animateClick()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
-    connect(_clear, SIGNAL(clicked()), this, SLOT(sClear()));
-    connect(_custtype, SIGNAL(valid(bool)), _select, SLOT(setEnabled(bool)));
-    init();
+  _custtype->addColumn(tr("Code"), _itemColumn, Qt::AlignCenter,true, "custtype_code");
+  _custtype->addColumn(tr("Description"),   -1, Qt::AlignLeft,  true, "custtype_descrip");
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 customerTypeList::~customerTypeList()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void customerTypeList::languageChange()
 {
-    retranslateUi(this);
-}
-
-
-void customerTypeList::init()
-{
-  _custtype->addColumn(tr("Code"),        _itemColumn, Qt::AlignCenter );
-  _custtype->addColumn(tr("Description"), -1,          Qt::AlignLeft   );
+  retranslateUi(this);
 }
 
 enum SetResponse customerTypeList::set(ParameterList &pParams)
@@ -142,4 +119,3 @@ void customerTypeList::sFillList()
                        "FROM custtype "
                        "ORDER BY custtype_code;", _custtypeid );
 }
-

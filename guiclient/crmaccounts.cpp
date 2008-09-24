@@ -60,11 +60,11 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
-//#include <QStatusBar>
 #include <QVariant>
-#include <QWorkspace>
+
 #include <openreports.h>
 #include <metasql.h>
+
 #include "crmaccount.h"
 #include "storedProcErrorLookup.h"
 
@@ -72,8 +72,6 @@ crmaccounts::crmaccounts(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
     setupUi(this);
-
-//    (void)statusBar();
 
     connect(_print,	 SIGNAL(clicked()),	this,	SLOT(sPrint()));
     connect(_new,	 SIGNAL(clicked()),	this,	SLOT(sNew()));
@@ -89,16 +87,14 @@ crmaccounts::crmaccounts(QWidget* parent, const char* name, Qt::WFlags fl)
     connect(omfgThis, SIGNAL(taxAuthsUpdated(int)), this, SLOT(sFillList()));
     connect(omfgThis, SIGNAL(vendorsUpdated()), this, SLOT(sFillList()));
 
-//    statusBar()->hide();
-
-    _crmaccount->addColumn(tr("Number"),	80, Qt::AlignLeft   );
-    _crmaccount->addColumn(tr("Name"),		-1, Qt::AlignLeft   );
-    _crmaccount->addColumn(tr("Customer"),	70, Qt::AlignCenter );
-    _crmaccount->addColumn(tr("Prospect"),	70, Qt::AlignCenter );
-    _crmaccount->addColumn(tr("Vendor"),	70, Qt::AlignCenter );
-    _crmaccount->addColumn(tr("Competitor"),	70, Qt::AlignCenter );
-    _crmaccount->addColumn(tr("Partner"),	70, Qt::AlignCenter );
-    _crmaccount->addColumn(tr("Tax Auth."),	70, Qt::AlignCenter );
+    _crmaccount->addColumn(tr("Number"),    80, Qt::AlignLeft,  true, "crmacct_number");
+    _crmaccount->addColumn(tr("Name"),	    -1, Qt::AlignLeft,  true, "crmacct_name");
+    _crmaccount->addColumn(tr("Customer"),  70, Qt::AlignCenter,true, "cust");
+    _crmaccount->addColumn(tr("Prospect"),  70, Qt::AlignCenter,true, "prospect");
+    _crmaccount->addColumn(tr("Vendor"),    70, Qt::AlignCenter,true, "vend");
+    _crmaccount->addColumn(tr("Competitor"),70, Qt::AlignCenter,true, "competitor");
+    _crmaccount->addColumn(tr("Partner"),   70, Qt::AlignCenter,true, "partner");
+    _crmaccount->addColumn(tr("Tax Auth."), 70, Qt::AlignCenter,true, "taxauth");
 
     if (_privileges->check("MaintainCRMAccounts"))
     {
@@ -185,21 +181,20 @@ void crmaccounts::sEdit()
 void crmaccounts::sFillList()
 {
   QString sql("SELECT crmacct_id, crmacct_number, crmacct_name,"
-	      "     CASE WHEN crmacct_cust_id IS NULL THEN '' ELSE 'Y' END,"
-	      "     CASE WHEN crmacct_prospect_id IS NULL THEN '' ELSE 'Y' END,"
-	      "     CASE WHEN crmacct_vend_id IS NULL THEN '' ELSE 'Y' END,"
-	      "     CASE WHEN crmacct_competitor_id IS NULL THEN '' ELSE 'Y' END,"
-	      "     CASE WHEN crmacct_partner_id IS NULL THEN '' ELSE 'Y' END,"
-	      "     CASE WHEN crmacct_taxauth_id IS NULL THEN '' ELSE 'Y' END "
+	      "     CASE WHEN crmacct_cust_id IS NULL THEN '' ELSE 'Y' END AS cust,"
+	      "     CASE WHEN crmacct_prospect_id IS NULL THEN '' ELSE 'Y' END AS prospect,"
+	      "     CASE WHEN crmacct_vend_id IS NULL THEN '' ELSE 'Y' END AS vend,"
+	      "     CASE WHEN crmacct_competitor_id IS NULL THEN '' ELSE 'Y' END AS competitor,"
+	      "     CASE WHEN crmacct_partner_id IS NULL THEN '' ELSE 'Y' END AS partner,"
+	      "     CASE WHEN crmacct_taxauth_id IS NULL THEN '' ELSE 'Y' END AS taxauth "
               "FROM crmacct "
 	      "<? if exists(\"activeOnly\") ?> WHERE crmacct_active <? endif ?>"
               "ORDER BY crmacct_number;");
   ParameterList params;
-  if (_activeOnly->isChecked())
-    params.append("activeOnly");
+  if (! setParams(params))
+    return;
   MetaSQLQuery mql(sql);
   q = mql.toQuery(params);
-  _crmaccount->clear();
   _crmaccount->populate(q);
   if (q.lastError().type() != QSqlError::None)
   {
@@ -223,11 +218,19 @@ void crmaccounts::sPopulateMenu( QMenu * pMenu )
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 
+bool crmaccounts::setParams(ParameterList &params)
+{
+  if (_activeOnly->isChecked())
+    params.append("activeOnly");
+
+  return true;
+}
+
 void crmaccounts::sPrint()
 {
   ParameterList params;
-  if (_activeOnly->isChecked())
-    params.append("activeOnly");
+  if (! setParams(params))
+    return;
 
   orReport report("CRMAccountMasterList", params);
   if (report.isValid())

@@ -59,64 +59,29 @@
 
 #include <QMessageBox>
 #include <QSqlError>
-//#include <QStatusBar>
 #include <QVariant>
 
 #include <parameter.h>
 #include <openreports.h>
 #include "customerFormAssignment.h"
 
-/*
- *  Constructs a customerFormAssignments as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 customerFormAssignments::customerFormAssignments(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-//    (void)statusBar();
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
 
-    // signals and slots connections
-    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-    connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
-    connect(_custform, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-customerFormAssignments::~customerFormAssignments()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void customerFormAssignments::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void customerFormAssignments::init()
-{
-//  statusBar()->hide();
-  
-  _custform->addColumn(tr("Customer Type"), -1,  Qt::AlignCenter );
-  _custform->addColumn(tr("Invoice"),       100, Qt::AlignCenter );
-  _custform->addColumn(tr("Credit Memo"),   100, Qt::AlignCenter );
-  _custform->addColumn(tr("Statement"),     100, Qt::AlignCenter );
-  _custform->addColumn(tr("Quote"),         100, Qt::AlignCenter );
-  _custform->addColumn(tr("Packing List"),  100, Qt::AlignCenter );
-  _custform->addColumn(tr("S/O Pick List"), 100, Qt::AlignCenter );
+  _custform->addColumn(tr("Customer Type"), -1, Qt::AlignCenter, true, "custtypecode");
+  _custform->addColumn(tr("Invoice"),      100, Qt::AlignCenter, true, "invoice");
+  _custform->addColumn(tr("Credit Memo"),  100, Qt::AlignCenter, true, "creditmemo");
+  _custform->addColumn(tr("Statement"),    100, Qt::AlignCenter, true, "statement");
+  _custform->addColumn(tr("Quote"),        100, Qt::AlignCenter, true, "quote");
+  _custform->addColumn(tr("Packing List"), 100, Qt::AlignCenter, true, "packinglist");
+  _custform->addColumn(tr("S/O Pick List"),100, Qt::AlignCenter, true, "sopicklist");
 
   if (_privileges->check("MaintainSalesAccount"))
   {
@@ -131,6 +96,16 @@ void customerFormAssignments::init()
   }
 
   sFillList();
+}
+
+customerFormAssignments::~customerFormAssignments()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void customerFormAssignments::languageChange()
+{
+  retranslateUi(this);
 }
 
 void customerFormAssignments::sNew()
@@ -191,22 +166,22 @@ void customerFormAssignments::sFillList()
              "       END AS custtypecode,"
              "       CASE WHEN (custform_invoice_report_id=-1) THEN :default"
              "            ELSE (SELECT report_name FROM report WHERE (report_id=custform_invoice_report_id))"
-             "       END,"
+             "       END AS invoice,"
              "       CASE WHEN (custform_creditmemo_report_id=-1) THEN :default"
              "            ELSE (SELECT report_name FROM report WHERE (report_id=custform_creditmemo_report_id))"
-             "       END,"
+             "       END AS creditmemo,"
              "       CASE WHEN (custform_statement_report_id=-1) THEN :default"
              "            ELSE (SELECT report_name FROM report WHERE (report_id=custform_statement_report_id))"
-             "       END,"
+             "       END AS statement,"
              "       CASE WHEN (custform_quote_report_id=-1) THEN :default"
              "            ELSE (SELECT report_name FROM report WHERE (report_id=custform_quote_report_id))"
-             "       END,"
+             "       END AS quote,"
              "       CASE WHEN (custform_packinglist_report_id=-1) THEN :default"
              "            ELSE (SELECT report_name FROM report WHERE (report_id=custform_packinglist_report_id))"
-             "       END,"
+             "       END AS packinglist,"
              "       CASE WHEN (custform_sopicklist_report_id=-1) THEN :default"
              "            ELSE (SELECT report_name FROM report WHERE (report_id=custform_sopicklist_report_id))"
-             "       END "
+             "       END AS sopicklist "
              "FROM custform "
              "ORDER BY custtypecode;" );
   q.bindValue(":default", tr("Default"));

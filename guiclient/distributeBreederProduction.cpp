@@ -57,59 +57,38 @@
 
 #include "distributeBreederProduction.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
+
 #include "distributeInventory.h"
 #include "changeQtyToDistributeFromBreeder.h"
 
-/*
- *  Constructs a distributeBreederProduction as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 distributeBreederProduction::distributeBreederProduction(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  connect(_changeQty, SIGNAL(clicked()), this, SLOT(sChangeQty()));
+  connect(_distribute, SIGNAL(clicked()), this, SLOT(sDistribute()));
 
-    // signals and slots connections
-    connect(_distrib, SIGNAL(itemSelected(int)), _changeQty, SLOT(animateClick()));
-    connect(_distrib, SIGNAL(valid(bool)), _changeQty, SLOT(setEnabled(bool)));
-    connect(_changeQty, SIGNAL(clicked()), this, SLOT(sChangeQty()));
-    connect(_distribute, SIGNAL(clicked()), this, SLOT(sDistribute()));
-    init();
+  _distrib->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft, true, "item_number");
+  _distrib->addColumn(tr("Description"), -1,          Qt::AlignLeft, true, "descrip");
+  _distrib->addColumn(tr("Qty. Per."),   _qtyColumn,  Qt::AlignRight,true, "qtyper");
+  _distrib->addColumn(tr("Qty."),        _qtyColumn,  Qt::AlignRight,true, "brddist_qty");
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 distributeBreederProduction::~distributeBreederProduction()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void distributeBreederProduction::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
-
-void distributeBreederProduction::init()
-{
-  _distrib->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft  );
-  _distrib->addColumn(tr("Description"), -1,          Qt::AlignLeft  );
-  _distrib->addColumn(tr("Qty. Per."),   _qtyColumn,  Qt::AlignRight );
-  _distrib->addColumn(tr("Qty."),        _qtyColumn,  Qt::AlignRight );
-}
-
-enum SetResponse distributeBreederProduction::set(ParameterList &pParams)
+enum SetResponse distributeBreederProduction::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -130,7 +109,11 @@ enum SetResponse distributeBreederProduction::set(ParameterList &pParams)
   
       sFillList();
     }
-//  ToDo
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return UndefinedError;
+    }
   }
 
   param = pParams.value("mode", &valid);
@@ -188,15 +171,22 @@ void distributeBreederProduction::sChangeQty()
 
 void distributeBreederProduction::sFillList()
 {
-  q.prepare( "SELECT brddist_id, item_number, (item_descrip1 || ' ' || item_descrip2),"
-             "       formatQtyPer(brddist_qty / brddist_wo_qty), formatQty(brddist_qty) "
-             "FROM brddist, itemsite, item "
-             "WHERE ( (NOT brddist_posted)"
-             " AND (brddist_itemsite_id=itemsite_id)"
-             " AND (itemsite_item_id=item_id)"
-             " AND (brddist_wo_id=:wo_id) );" );
+  q.prepare("SELECT brddist_id, item_number,"
+            "       (item_descrip1 || ' ' || item_descrip2) AS descrip,"
+            "       (brddist_qty / brddist_wo_qty) AS qtyper, brddist_qty,"
+            "       'qtyper' AS qtyper_xtnumericrole,"
+            "       'qty' AS brddist_qty_xtnumericrole "
+            "FROM brddist, itemsite, item "
+            "WHERE ( (NOT brddist_posted)"
+            " AND (brddist_itemsite_id=itemsite_id)"
+            " AND (itemsite_item_id=item_id)"
+            " AND (brddist_wo_id=:wo_id) );" );
   q.bindValue(":wo_id", _woid);
   q.exec();
   _distrib->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
-

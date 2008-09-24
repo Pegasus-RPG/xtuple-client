@@ -76,17 +76,10 @@
 #include "taxRegistration.h"
 #include "xcombobox.h"
 
-/*
- *  Constructs a customer as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
     setupUi(this);
-
-//    (void)statusBar();
 
     connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
     connect(_number, SIGNAL(lostFocus()), this, SLOT(sCheck()));
@@ -125,8 +118,8 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
     _balanceMethod->insertItem(tr("Balance Forward"));
     _balanceMethod->insertItem(tr("Open Items"));
 
-    _taxreg->addColumn(tr("Tax Authority"), 100, Qt::AlignLeft );
-    _taxreg->addColumn(tr("Registration #"), -1, Qt::AlignLeft );
+    _taxreg->addColumn(tr("Tax Authority"), 100, Qt::AlignLeft, true, "taxauth_code");
+    _taxreg->addColumn(tr("Registration #"), -1, Qt::AlignLeft, true, "taxreg_number");
 
     _shipto->addColumn(tr("Default"), _itemColumn, Qt::AlignLeft, true, "shipto_default");
     _shipto->addColumn(tr("Number"),  _itemColumn, Qt::AlignLeft, true, "shipto_num");
@@ -139,8 +132,8 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
     _cc->addColumn(tr("Number"),          150, Qt::AlignRight,true, "f_number");
     _cc->addColumn(tr("Active"),           -1, Qt::AlignLeft, true, "ccard_active");
     
-    _charass->addColumn(tr("Characteristic"), _itemColumn*2, Qt::AlignLeft );
-    _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft );
+    _charass->addColumn(tr("Characteristic"), _itemColumn*2, Qt::AlignLeft, true, "char_name");
+    _charass->addColumn(tr("Value"),          -1,            Qt::AlignLeft, true, "charass_value");
 
     _defaultCommissionPrcnt->setValidator(omfgThis->percentVal());
     _defaultDiscountPrcnt->setValidator(omfgThis->percentVal());
@@ -425,7 +418,7 @@ int customer::saveContact(ContactCluster* pContact)
   return saveResult;
 }
 
-bool customer::sSave(bool partial)
+bool customer::sSave(bool /*partial*/)
 {
   if (true)
   {
@@ -1059,7 +1052,6 @@ void customer::sFillCharacteristicList()
   else
   {
     _widgetStack->setCurrentIndex(0);
-    _charass->clear();
     q.prepare( "SELECT charass_id, char_name, charass_value "
                "FROM charass, char "
                "WHERE ( (charass_target_type='C')"
@@ -1160,7 +1152,6 @@ void customer::sFillTaxregList()
                  "  AND  (taxreg_taxauth_id=taxauth_id));");
   taxreg.bindValue(":cust_id", _custid);
   taxreg.exec();
-  _taxreg->clear();
   _taxreg->populate(taxreg, true);
   if (taxreg.lastError().type() != QSqlError::None)
   {
@@ -1191,9 +1182,9 @@ void customer::populate()
                 "       cust_commprcnt, cust_discntprcnt,"
                 "       (cust_gracedays IS NOT NULL) AS hasGraceDays,"
                 "       crmacct_id "
-                "FROM custinfo, crmacct "
-                "WHERE ((cust_id=:cust_id) "
-                "  AND  (cust_id=crmacct_cust_id));" );
+                "FROM custinfo LEFT OUTER JOIN "
+                "     crmacct ON (cust_id=crmacct_cust_id) "
+                "WHERE (cust_id=:cust_id);" );
   cust.bindValue(":cust_id", _custid);
   cust.exec();
   if (cust.first())

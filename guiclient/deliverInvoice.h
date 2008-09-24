@@ -73,7 +73,7 @@ public:
     ~deliverInvoice();
 
 public slots:
-    virtual enum SetResponse set( ParameterList & pParams );
+    virtual enum SetResponse set(const ParameterList & pParams );
     virtual void sSubmit();
     virtual void sHandlePoheadid();
 
@@ -82,8 +82,6 @@ protected slots:
 
 private:
     bool _captive;
-
-    void init();
 
 };
 

@@ -57,52 +57,30 @@
 
 #include "customCommandArgument.h"
 
-#include <qvariant.h>
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
 
-/*
- *  Constructs a customCommandArgument as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 customCommandArgument::customCommandArgument(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  connect(_accept, SIGNAL(clicked()), this, SLOT(sSave()));
 
-    // signals and slots connections
-    connect(_accept, SIGNAL(clicked()), this, SLOT(sSave()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-customCommandArgument::~customCommandArgument()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void customCommandArgument::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void customCommandArgument::init()
-{
   _mode = cNew;
   _cmdargid = -1;
   _cmdid = -1;
+}
+
+customCommandArgument::~customCommandArgument()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void customCommandArgument::languageChange()
+{
+  retranslateUi(this);
 }
 
 enum SetResponse customCommandArgument::set( const ParameterList & pParams )
@@ -160,9 +138,11 @@ void customCommandArgument::sSave()
 
   if(q.exec())
     accept();
-  else
-    systemError( this, tr("A System Error occurred at customCommandArgument::%1")
-                             .arg(__LINE__) );
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void customCommandArgument::populate()
@@ -178,7 +158,9 @@ void customCommandArgument::populate()
     _order->setValue(q.value("cmdarg_order").toInt());
     _argument->setText(q.value("cmdarg_arg").toString());
   }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
-
-
-

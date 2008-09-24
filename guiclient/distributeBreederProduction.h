@@ -73,7 +73,7 @@ public:
     ~distributeBreederProduction();
 
 public slots:
-    virtual enum SetResponse set( ParameterList & pParams );
+    virtual enum SetResponse set(const ParameterList & pParams );
     virtual void sDistribute();
     virtual void sChangeQty();
     virtual void sFillList();
@@ -83,8 +83,6 @@ protected slots:
 
 private:
     int _woid;
-
-    void init();
 
 };
 

@@ -67,26 +67,26 @@
 customerGroup::customerGroup(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
-    connect(_name, SIGNAL(lostFocus()), this, SLOT(sCheck()));
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
+  connect(_name, SIGNAL(lostFocus()), this, SLOT(sCheck()));
 
-    _custgrpitem->addColumn(tr("Number"), _itemColumn, Qt::AlignLeft );
-    _custgrpitem->addColumn(tr("Name"),   -1,          Qt::AlignLeft );
+  _custgrpitem->addColumn(tr("Number"), _itemColumn, Qt::AlignLeft, true, "cust_number");
+  _custgrpitem->addColumn(tr("Name"),   -1,          Qt::AlignLeft, true, "cust_name");
 }
 
 customerGroup::~customerGroup()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 void customerGroup::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 enum SetResponse customerGroup::set(const ParameterList &pParams)
@@ -286,7 +286,6 @@ void customerGroup::sFillList()
              "ORDER BY cust_number;" );
   q.bindValue(":custgrp_id", _custgrpid);
   q.exec();
-  _custgrpitem->clear();
   _custgrpitem->populate(q);
   if (q.lastError().type() != QSqlError::None)
   {

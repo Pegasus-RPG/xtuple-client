@@ -85,16 +85,7 @@ dspAROpenItemsByCustomer::dspAROpenItemsByCustomer(QWidget* parent, const char* 
 
   QString baseBalanceTitle(tr("Balance"));
   if (! omfgThis->singleCurrency())
-  {
-    q.prepare("SELECT currConcat(baseCurrId()) AS currConcat;");
-    q.exec();
-    QString currConcat;
-    if (q.first())
-      currConcat = q.value("currConcat").toString();
-    else
-      currConcat = tr("?????");
-    baseBalanceTitle = tr("Balance\n(in %1)").arg(currConcat);
-  }
+    baseBalanceTitle = tr("Balance\n(in %1)").arg(CurrDisplay::baseCurrAbbr());
 
   _aropen->addColumn(tr("Doc. Type"),     _itemColumn, Qt::AlignLeft,  true, "doctype");
   _aropen->addColumn(tr("Doc. #"),       _orderColumn, Qt::AlignLeft,  true, "aropen_docnumber");

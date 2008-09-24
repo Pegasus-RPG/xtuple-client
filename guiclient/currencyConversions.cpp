@@ -57,126 +57,102 @@
 
 #include "currencyConversions.h"
 
-#include <QVariant>
+#include <QMenu>
 #include <QMessageBox>
-//#include <QStatusBar>
+#include <QSqlError>
+#include <QVariant>
+
 #include "currencyConversion.h"
 #include "openreports.h"
 #include "currency.h"
 #include "datecluster.h"
 #include "xcombobox.h"
 
-/*
- *  Constructs a currencyConversions as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 currencyConversions::currencyConversions(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-//    (void)statusBar();
+  connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
+  connect(_conversionRates, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_newCurrency, SIGNAL(clicked()), this, SLOT(sNewCurrency()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
-    connect(_conversionRates, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-    connect(_newCurrency, SIGNAL(clicked()), this, SLOT(sNewCurrency()));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    init();
+  setBaseCurrency();
+  _conversionRates->addColumn(tr("Currency"),_currencyColumn, Qt::AlignLeft, true, "f_curr");
+  _conversionRates->addColumn(tr("Exchange Rate"),        -1, Qt::AlignRight,true, "rate");
+  _conversionRates->addColumn(tr("Effective"),   _dateColumn, Qt::AlignCenter,true, "curr_effective");
+  _conversionRates->addColumn(tr("Expires"),     _dateColumn, Qt::AlignCenter,true, "curr_expires");
+  
+  _newCurrency->setEnabled(_privileges->check("CreateNewCurrency"));
+  
+  bool maintainPriv = _privileges->check("MaintainCurrencyRates");
+  _new->setEnabled(maintainPriv);
+  if (maintainPriv)
+  {
+    connect(_conversionRates, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
+    connect(_conversionRates, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
+    connect(_conversionRates, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
+  }
+  else
+  {
+    connect(_conversionRates, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
+  }
+  
+  connect(_conversionRates, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
+
+  _dateCluster->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
+  _dateCluster->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
+  
+  _queryParameters->setType(ParameterGroup::CurrencyNotBase);
+
+  switch (_metrics->value("CurrencyExchangeSense").toInt())
+  {
+    case 0:
+        _exchSenseLit->setText(tr("Base x Exchange Rate = Foreign"));
+        break;
+    case 1:
+        _exchSenseLit->setText(tr("Foreign x Exchange Rate = Base"));
+        break;
+    case -1:
+    default:
+        QMessageBox::warning(this, tr("No Exchange Rate Direction Defined"),
+                               tr("<p>No selection has yet been made for "
+                                  "whether exchange rates convert from "
+                                  "the base currency to foreign currencies "
+                                  "or from foreign to base. Go to "
+                                  "System | Configure Modules | Configure "
+                                  "G/L and make your selection."));
+        close();
+  }
+
+  sFillList();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 currencyConversions::~currencyConversions()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void currencyConversions::languageChange()
 {
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-#include <QSqlError>
-
-void currencyConversions::init()
-{
-//    statusBar()->hide();
-
-    setBaseCurrency();
-    _conversionRates->addColumn(tr("Currency"),     _currencyColumn, Qt::AlignLeft);
-    _conversionRates->addColumn(tr("Exchange Rate"), -1,           Qt::AlignRight);
-    _conversionRates->addColumn(tr("Effective"),    _dateColumn,   Qt::AlignCenter);
-    _conversionRates->addColumn(tr("Expires"),      _dateColumn,   Qt::AlignCenter);
-    
-    _newCurrency->setEnabled(_privileges->check("CreateNewCurrency"));
-    
-    bool maintainPriv = _privileges->check("MaintainCurrencyRates");
-    _new->setEnabled(maintainPriv);
-    if (maintainPriv)
-    {
-	connect(_conversionRates, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
-	connect(_conversionRates, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
-	connect(_conversionRates, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
-    }
-    else
-    {
-	connect(_conversionRates, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
-    }
-    
-    connect(_conversionRates, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
-
-    _dateCluster->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
-    _dateCluster->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
-    
-    _queryParameters->setType(ParameterGroup::CurrencyNotBase);
-
-    switch (_metrics->value("CurrencyExchangeSense").toInt())
-    {
-	case 0:
-	    _exchSenseLit->setText(tr("Base x Exchange Rate = Foreign"));
-	    break;
-	case 1:
-	    _exchSenseLit->setText(tr("Foreign x Exchange Rate = Base"));
-	    break;
-	case -1:
-	default:
-	    QMessageBox::warning(this, tr("No Exchange Rate Direction Defined"),
-				   tr("No selection has yet been made for "
-				      "whether exchange rates convert from\n"
-				      "the base currency to foreign currencies "
-				      "or from foreign to base. Go to\n"
-				      "System | Configure Modules | Configure "
-				      "G/L\nand make your selection."));
-	    close();
-    }
-
-
-    sFillList();
+  retranslateUi(this);
 }
 
 void currencyConversions::sNew()
 {
     if (omfgThis->singleCurrency())
-	QMessageBox::warning(this, tr("No Foreign Currencies Defined"),
-				   tr("There is only a base currency defined.  "
-				      "You must add more currencies before you "
-				      "can create an exchange rate.  Click the "
-				      "NEW CURRENCY button to add another "
-				      "currency."));
+      QMessageBox::warning(this, tr("No Foreign Currencies Defined"),
+                                 tr("<p>There is only a base currency defined. "
+                                    "You must add more currencies before you "
+                                    "can create an exchange rate. Click the "
+                                    "NEW CURRENCY button to add another "
+                                    "currency."));
     else
     {
 	ParameterList params;
@@ -236,6 +212,11 @@ void currencyConversions::sDelete()
 	      "WHERE curr_rate_id = :curr_rate_id");
     q.bindValue(":curr_rate_id", _conversionRates->id());
     q.exec();
+    if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
     sFillList();
 }
 
@@ -253,47 +234,45 @@ void currencyConversions::sNewCurrency()
 
 void currencyConversions::sFillList()
 {
-    QString inverter("");
+  QString inverter("");
 
-    if (_metrics->value("CurrencyExchangeSense").toInt() == 1)
-	inverter = "1 / ";
+  if (_metrics->value("CurrencyExchangeSense").toInt() == 1)
+      inverter = "1 / ";
 
-    // the N in round(%1 curr_rate, N) has to be SCALE - 1 of curr_rate's
-    // NUMERIC(p, SCALE) type definition
-    QString sql = QString("SELECT curr_rate_id, currConcat(curr_id) AS f_curr, "
-			  "    round(%1 curr_rate, 5), curr_effective, "
-			  "    curr_expires "
-			  "FROM curr_symbol NATURAL JOIN curr_rate "
-			  "WHERE curr_base = FALSE "
-			  "  AND curr_expires >= :startDate "
-			  "  AND curr_effective <= :endDate ").arg(inverter);
+  // the N in round(%1 curr_rate, N) has to be SCALE - 1 of curr_rate's
+  // NUMERIC(p, SCALE) type definition
+  QString sql = QString("SELECT curr_rate_id, currConcat(curr_id) AS f_curr, "
+                        "    ROUND(%1 curr_rate, 5) AS rate, curr_effective, "
+                        "    curr_expires "
+                        "FROM curr_symbol NATURAL JOIN curr_rate "
+                        "WHERE curr_base = FALSE "
+                        "  AND curr_expires >= :startDate "
+                        "  AND curr_effective <= :endDate ").arg(inverter);
 
-    if (_queryParameters->isSelected())
-    {
-	QString intString;
-	sql+= " AND curr_id = :curr_id ";
-    }
-    else if (_queryParameters->isPattern())
-    {
-	sql += " AND currConcat(curr_id) ~ :currConcat_pattern ";
-    }
+  if (_queryParameters->isSelected())
+  {
+      QString intString;
+      sql+= " AND curr_id = :curr_id ";
+  }
+  else if (_queryParameters->isPattern())
+  {
+      sql += " AND currConcat(curr_id) ~ :currConcat_pattern ";
+  }
 
-    sql += " ORDER BY f_curr, curr_effective, curr_expires ";
-    
-    q.prepare(sql);
+  sql += " ORDER BY f_curr, curr_effective, curr_expires ";
+  
+  q.prepare(sql);
 
-    _queryParameters->bindValue(q);
-    _dateCluster->bindValue(q);
+  _queryParameters->bindValue(q);
+  _dateCluster->bindValue(q);
 
-    q.exec();
-    _conversionRates->populate(q);
-    if (q.lastError().type() != QSqlError::NoError)
-    {
-	QMessageBox::critical(this, tr("A System Error occurred at %1::%2.")
-			      .arg(__FILE__)
-			      .arg(__LINE__),
-			      q.lastError().databaseText());
-    }
+  q.exec();
+  _conversionRates->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void currencyConversions::sPopulateMenu( QMenu* pMenu)

@@ -70,6 +70,7 @@ class crmaccounts : public XWidget, public Ui::crmaccounts
 public:
     crmaccounts(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~crmaccounts();
+    virtual bool setParams(ParameterList &);
 
 public slots:
     virtual void sDelete();

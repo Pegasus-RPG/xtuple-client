@@ -81,9 +81,6 @@ public slots:
 protected slots:
     virtual void languageChange();
 
-    virtual void init();
-
-
 };
 
 #endif // CUSTOMERFORMASSIGNMENTS_H
