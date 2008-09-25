@@ -79,18 +79,18 @@ dspTrialBalances::dspTrialBalances(QWidget* parent, const char* name, Qt::WFlags
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_trialbal, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
 
-  _trialbal->addColumn(tr("Start"),       _dateColumn,     Qt::AlignCenter );
-  _trialbal->addColumn(tr("End"),         _dateColumn,     Qt::AlignCenter );
-  _trialbal->addColumn(tr("Account #"),   _itemColumn,     Qt::AlignCenter );
-  _trialbal->addColumn(tr("Description"), -1,              Qt::AlignLeft   );
-  _trialbal->addColumn(tr("Beg. Bal."),   _bigMoneyColumn, Qt::AlignRight  );
-  _trialbal->addColumn("",                25,              Qt::AlignLeft   );
-  _trialbal->addColumn(tr("Debits"),      _bigMoneyColumn, Qt::AlignRight  );
-  _trialbal->addColumn(tr("Credits"),     _bigMoneyColumn, Qt::AlignRight  );
-  _trialbal->addColumn(tr("Difference"),  _bigMoneyColumn, Qt::AlignRight  );
-  _trialbal->addColumn("",                25,              Qt::AlignLeft   );
-  _trialbal->addColumn(tr("End Bal."),    _bigMoneyColumn, Qt::AlignRight  );
-  _trialbal->addColumn("",                25,              Qt::AlignLeft   );
+  _trialbal->addColumn(tr("Start"),       _dateColumn,     Qt::AlignCenter, true,  "period_start" );
+  _trialbal->addColumn(tr("End"),         _dateColumn,     Qt::AlignCenter, true,  "period_end" );
+  _trialbal->addColumn(tr("Account #"),   _itemColumn,     Qt::AlignCenter, true,  "account" );
+  _trialbal->addColumn(tr("Description"), -1,              Qt::AlignLeft,   true,  "accnt_descrip"   );
+  _trialbal->addColumn(tr("Beg. Bal."),   _bigMoneyColumn, Qt::AlignRight,  true,  "beginning"  );
+  _trialbal->addColumn("",                25,              Qt::AlignLeft,   true,  "beginningsense"   );
+  _trialbal->addColumn(tr("Debits"),      _bigMoneyColumn, Qt::AlignRight,  true,  "debits"  );
+  _trialbal->addColumn(tr("Credits"),     _bigMoneyColumn, Qt::AlignRight,  true,  "credits"  );
+  _trialbal->addColumn(tr("Difference"),  _bigMoneyColumn, Qt::AlignRight,  true,  "diff"  );
+  _trialbal->addColumn("",                25,              Qt::AlignLeft,   true,  "diffsense"   );
+  _trialbal->addColumn(tr("End Bal."),    _bigMoneyColumn, Qt::AlignRight,  true,  "ending"  );
+  _trialbal->addColumn("",                25,              Qt::AlignLeft,   true,  "endingsense"   );
 }
 
 dspTrialBalances::~dspTrialBalances()
@@ -179,19 +179,30 @@ void dspTrialBalances::sFillList()
   _trialbal->clear();
 
   QString sql( "SELECT accnt_id, period_id, accnt_descrip, trialbal_dirty,"
-               "       formatDate(period_start) AS f_start,"
-               "       formatDate(period_end) AS f_end,"
+               "       period_start, period_end,"
                "       formatGLAccount(accnt_id) AS account,"
-               "       formatMoney(abs(trialbal_beginning)) AS f_beginning,"
+               "       (trialbal_debits) AS debits,"
+               "       (trialbal_credits) AS credits,"
                "       (trialbal_beginning*-1) AS beginning,"
-               "       formatMoney(trialbal_debits) AS f_debits,"
-               "       trialbal_debits AS debits,"
-               "       formatMoney(trialbal_credits) AS f_credits,"
-               "       trialbal_credits AS credits,"
-               "       formatMoney(abs(trialbal_ending)) AS f_ending,"
                "       (trialbal_ending*-1) AS ending,"
-               "       formatMoney(abs(trialbal_debits - trialbal_credits)) AS f_diff,"
-               "       (trialbal_debits - trialbal_credits) AS diff "
+               "       (trialbal_debits - trialbal_credits) AS diff,"
+               "       ABS(trialbal_beginning*-1) AS beginning_qtdisplayrole,"
+               "       ABS(trialbal_ending*-1) AS ending_qtdisplayrole,"
+               "       ABS(trialbal_debits - trialbal_credits) AS diff_qtdisplayrole,"
+               "       CASE WHEN ((trialbal_beginning*-1)<0) THEN 'CR' END AS beginningsense,"
+               "       CASE WHEN ((trialbal_ending*-1)<0) THEN 'CR' END AS endingsense,"
+               "       CASE WHEN ((trialbal_debits - trialbal_credits)<0) THEN 'CR' END AS diffsense,"
+               "       'curr' AS beginning_xtnumericrole,"
+               "       'curr' AS debits_xtnumericrole,"
+               "       'curr' AS credits_xtnumericrole,"
+               "       'curr' AS ending_xtnumericrole,"
+               "       'curr' AS diff_xtnumericrole,"
+               "       0 AS beginning_xttotalrole,"
+               "       0 AS debits_xttotalrole,"
+               "       0 AS credits_xttotalrole,"
+               "       0 AS ending_xttotalrole,"
+               "       0 AS diff_xttotalrole,"
+               "       CASE WHEN (trialbal_dirty) THEN 'warning' END AS ending_qtforegroundrole "
                "FROM trialbal, accnt, period "
                "WHERE ( (trialbal_accnt_id=accnt_id)"
                " AND (trialbal_period_id=period_id)"
@@ -210,75 +221,7 @@ void dspTrialBalances::sFillList()
   q = mql.toQuery(params);
   if (q.first())
   {
-    double beginning = 0.0;
-    double ending = 0.0;
-    double debits = 0.0;
-    double credits = 0.0;
-    double diff = 0.0;
-
-    XTreeWidgetItem *last = 0;
-
-    do
-    {
-      beginning = q.value("beginning").toDouble();
-      ending = q.value("ending").toDouble();
-      debits = q.value("debits").toDouble();
-      credits = q.value("credits").toDouble();
-      diff = q.value("diff").toDouble();
-
-      last = new XTreeWidgetItem(_trialbal, last,
-				 q.value("accnt_id").toInt(),
-				 q.value("period_id").toInt(),
-				 q.value("f_start"), q.value("f_end"),
-				 q.value("account"), q.value("accnt_descrip"),
-				 q.value("f_beginning"),
-				 (beginning<0?tr("CR"):""),
-				 q.value("f_debits"), q.value("f_credits"),
-				 q.value("f_diff"), (diff<0?tr("CR"):""),
-				 q.value("f_ending") );
-      last->setText(11, (ending<0?tr("CR"):""));
-      if (q.value("trialbal_dirty").toBool())
-        last->setTextColor(10, "orange");
-    }
-    while (q.next());
-
-    QString sql( "SELECT formatMoney(abs(SUM(trialbal_beginning))) AS f_beginning,"
-                 "       SUM(trialbal_beginning*-1) AS beginning,"
-                 "       formatMoney(SUM(trialbal_debits)) AS f_debits,"
-                 "       formatMoney(SUM(trialbal_credits)) AS f_credits,"
-                 "       formatMoney(abs(SUM(trialbal_ending))) AS f_ending,"
-                 "       SUM(trialbal_ending*-1) AS ending,"
-                 "       formatMoney(abs(SUM(trialbal_debits - trialbal_credits))) AS f_diff,"
-                 "       SUM(trialbal_debits - trialbal_credits) AS diff "
-                 "FROM trialbal, period "
-                 "WHERE ( (trialbal_period_id=period_id)"
-		 "<? if exists(\"accnt_id\") ?>"
-		 " AND (trialbal_accnt_id=<? value(\"accnt_id\") ?>)"
-		 "<? endif ?>"
-		 "<? if exists(\"period_id\") ?>"
-		 " AND (period_id=<? value(\"period_id\") ?>)"
-		 "<? endif ?>"
-		 ");" );
-    MetaSQLQuery totalmql(sql);
-    q = totalmql.toQuery(params);
-    if (q.first())
-    {
-      last = new XTreeWidgetItem(_trialbal, last, -1, -1,
-				 "", "", tr("Total"), "",
-				 q.value("f_beginning"),
-				 (q.value("beginning").toDouble()<0?tr("CR"):""),
-				 q.value("f_debits"),
-				 q.value("f_credits"),
-				 q.value("f_diff"),
-				 (q.value("diff").toDouble()<0?tr("CR"):""),
-				 q.value("f_ending") );
-      last->setText(11, (q.value("ending").toDouble()<0?tr("CR"):""));
-    }
-    else if (q.lastError().type() != QSqlError::None)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
+    _trialbal->populate(q, true);
   }
   else if (q.lastError().type() != QSqlError::None)
   {
