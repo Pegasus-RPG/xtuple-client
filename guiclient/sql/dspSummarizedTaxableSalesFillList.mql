@@ -1,5 +1,5 @@
 SELECT tax_id, tax_code, tax_descrip,
-       formatMoney((
+       (
 	  SELECT COALESCE(SUM(ROUND(cohist_qtyshipped *
 				    currToCurr(cohist_curr_id, baseCurrId(),
 					       cohist_unitprice,
@@ -9,8 +9,8 @@ SELECT tax_id, tax_code, tax_descrip,
             AND  (COALESCE(cohist_misc_type,'M') = 'M')
 	    AND  (cohist_invcdate BETWEEN <? value("startDate") ?>
 				      AND <? value("endDate") ?>))
-       )),
-       formatMoney((
+       ) AS salesbase,
+       (
 	  SELECT COALESCE(SUM(ROUND(currToCurr(cohist_curr_id, baseCurrId(),
 					       cohist_unitprice,
 					       cohist_invcdate), 2)), 0)
@@ -19,12 +19,12 @@ SELECT tax_id, tax_code, tax_descrip,
 	    AND  (cohist_misc_type='F')
 	    AND  (cohist_invcdate BETWEEN <? value("startDate") ?>
 				      AND <? value("endDate") ?>))
-       )),
-       formatBoolYN(EXISTS(SELECT *
-			   FROM taxsel
-			   WHERE ((taxsel_tax_id=tax_id) AND (taxsel_taxtype_id=getFreightTaxTypeId()))
-       )),
-       formatMoney((
+       ) AS freightbase,
+       EXISTS(SELECT *
+              FROM taxsel
+              WHERE ((taxsel_tax_id=tax_id) AND (taxsel_taxtype_id=getFreightTaxTypeId()))
+       ) AS freighttax,
+       (
 	 SELECT COALESCE(SUM(ROUND(currToCurr(cohist_curr_id, baseCurrId(),
 					      COALESCE(cohist_tax_ratea,0) +
 					      COALESCE(cohist_tax_rateb,0) +
@@ -35,8 +35,8 @@ SELECT tax_id, tax_code, tax_descrip,
 --          AND (cohist_misc_type='T')
 	    AND (cohist_invcdate BETWEEN <? value("startDate") ?>
 				      AND <? value("endDate") ?>))
-       )),
-       formatMoney((
+       ) AS taxbase,
+       (
 	 SELECT COALESCE(SUM(ROUND(currToCurr(cohist_curr_id,
 					      COALESCE(taxauth_curr_id,
 						       baseCurrId()),
@@ -49,8 +49,12 @@ SELECT tax_id, tax_code, tax_descrip,
 --          AND (cohist_misc_type='T')
 	    AND (cohist_invcdate BETWEEN <? value("startDate") ?>
 				      AND <? value("endDate") ?>))
-       )),
-       currConcat(COALESCE(taxauth_curr_id, baseCurrId()))
+       ) AS tax,
+       currConcat(COALESCE(taxauth_curr_id, baseCurrId())) AS currAbbr,
+       'curr' AS salesbase_xtnumericrole,
+       'curr' AS freightbase_xtnumericrole,
+       'curr' AS taxbase_xtnumericrole,
+       'curr' AS tax_xtnumericrole
 FROM tax LEFT OUTER JOIN
      (taxsel JOIN taxauth ON (taxsel_taxauth_id=taxauth_id))
 	ON (taxsel_tax_id=tax_id)
