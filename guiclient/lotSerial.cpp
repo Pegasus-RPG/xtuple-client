@@ -81,15 +81,15 @@ lotSerial::lotSerial(QWidget* parent, const char* name, bool modal, Qt::WFlags f
     connect(_newReg,     SIGNAL(clicked()), this, SLOT(sNewReg()));
 
     
-    _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft );
-    _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft );
+    _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft, true, "char_name" );
+    _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft, true, "charass_value" );
     
-    _reg->addColumn(tr("Number")      ,        40,  Qt::AlignLeft );
-    _reg->addColumn(tr("CRM Account#"),        80,  Qt::AlignLeft );
-    _reg->addColumn(tr("Name"        ),	      -1,   Qt::AlignLeft );
-    _reg->addColumn(tr("First Name"  ),        80,  Qt::AlignLeft );
-    _reg->addColumn(tr("Last Name"   ),        80,  Qt::AlignLeft );
-    _reg->addColumn(tr("Phone"       ),        80,  Qt::AlignLeft );
+    _reg->addColumn(tr("Number")      ,        _orderColumn,  Qt::AlignLeft, true, "lsreg_number" );
+    _reg->addColumn(tr("CRM Account#"),        _itemColumn,  Qt::AlignLeft, true, "crmacct_number" );
+    _reg->addColumn(tr("Name"        ),	      -1,   Qt::AlignLeft, true, "crmacct_name" );
+    _reg->addColumn(tr("First Name"  ),        80,  Qt::AlignLeft, true, "cntct_first_name" );
+    _reg->addColumn(tr("Last Name"   ),        80,  Qt::AlignLeft, true, "cntct_last_name" );
+    _reg->addColumn(tr("Phone"       ),        80,  Qt::AlignLeft, true, "cntct_phone" );
   
     _changed=false;
 }

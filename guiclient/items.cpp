@@ -96,12 +96,12 @@ items::items(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_item, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
 
-  _item->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft   );
-  _item->addColumn(tr("Active"),      _ynColumn,   Qt::AlignCenter );
-  _item->addColumn(tr("Description"), -1,          Qt::AlignLeft   );
-  _item->addColumn(tr("Class Code"),  _dateColumn, Qt::AlignCenter );
-  _item->addColumn(tr("Type"),        _itemColumn, Qt::AlignCenter );
-  _item->addColumn(tr("UOM"),         _uomColumn,  Qt::AlignCenter );
+  _item->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft   , true, "item_number" );
+  _item->addColumn(tr("Active"),      _ynColumn,   Qt::AlignCenter , true, "item_active" );
+  _item->addColumn(tr("Description"), -1,          Qt::AlignLeft   , true, "item_descrip" );
+  _item->addColumn(tr("Class Code"),  _dateColumn, Qt::AlignCenter , true, "classcode_code");
+  _item->addColumn(tr("Type"),        _itemColumn, Qt::AlignCenter , true, "item_type");
+  _item->addColumn(tr("UOM"),         _uomColumn,  Qt::AlignCenter , true, "uom_name");
   _item->setDragString("itemid=");
   
   connect(omfgThis, SIGNAL(itemsUpdated(int, bool)), this, SLOT(sFillList(int, bool)));
@@ -194,8 +194,8 @@ void items::sDelete()
 
 void items::sFillList( int pItemid, bool pLocal )
 {
-  QString sql( "SELECT item_id, item_number, formatBoolYN(item_active),"
-               "       (item_descrip1 || ' ' || item_descrip2), classcode_code,"
+  QString sql( "SELECT item_id, item_number, item_active,"
+               "       (item_descrip1 || ' ' || item_descrip2) as item_descrip, classcode_code,"
                "       CASE WHEN (item_type='P') THEN text(<? value(\"purchased\") ?>)"
                "            WHEN (item_type='M') THEN text(<? value(\"manufactured\") ?>)"
 			   "            WHEN (item_type='J') THEN text(<? value(\"job\") ?>)"
@@ -211,7 +211,7 @@ void items::sFillList( int pItemid, bool pLocal )
                "            WHEN (item_type='L') THEN text(<? value(\"planning\") ?>)"
                "            WHEN (item_type='K') THEN text(<? value(\"kit\") ?>)"
                "            ELSE text(<? value(\"error\") ?>)"
-               "       END,"
+               "       END AS item_type,"
                "       uom_name "
                "FROM item, classcode, uom "
                "WHERE ( (item_classcode_id=classcode_id)"

@@ -60,7 +60,6 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
-//#include <QStatusBar>
 #include <QVariant>
 
 #include "dspItemCostDetail.h"
@@ -76,7 +75,6 @@ maintainItemCosts::maintainItemCosts(QWidget* parent, const char* name, Qt::WFla
 {
     setupUi(this);
 
-//    (void)statusBar();
 
     // signals and slots connections
     connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
@@ -87,17 +85,15 @@ maintainItemCosts::maintainItemCosts(QWidget* parent, const char* name, Qt::WFla
     connect(_itemcost, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
     connect(_itemcost, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
     connect(_itemcost, SIGNAL(itemSelectionChanged()), this, SLOT(sSelectionChanged()));
-
-//    statusBar()->hide();
     
-    _itemcost->addColumn(tr("Element"),     -1,           Qt::AlignLeft   );
-    _itemcost->addColumn(tr("Lower"),       _costColumn,  Qt::AlignCenter );
-    _itemcost->addColumn(tr("Std. Cost"),   _costColumn,  Qt::AlignRight  );
-    _itemcost->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft );
-    _itemcost->addColumn(tr("Posted"),      _dateColumn,  Qt::AlignCenter );
-    _itemcost->addColumn(tr("Act. Cost"),   _costColumn,  Qt::AlignRight  );
-    _itemcost->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft );
-    _itemcost->addColumn(tr("Updated"),     _dateColumn,  Qt::AlignCenter );
+    _itemcost->addColumn(tr("Element"),     -1,           Qt::AlignLeft,   true, "costelem_type");
+    _itemcost->addColumn(tr("Lower"),       _costColumn,  Qt::AlignCenter, true, "itemcost_lowlevel" );
+    _itemcost->addColumn(tr("Std. Cost"),   _costColumn,  Qt::AlignRight,  true, "itemcost_stdcost"  );
+    _itemcost->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft,true, "baseCurr" );
+    _itemcost->addColumn(tr("Posted"),      _dateColumn,  Qt::AlignCenter, true, "itemcost_posted" );
+    _itemcost->addColumn(tr("Act. Cost"),   _costColumn,  Qt::AlignRight,  true, "itemcost_actcost"  );
+    _itemcost->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft,true, "costCurr" );
+    _itemcost->addColumn(tr("Updated"),     _dateColumn,  Qt::AlignCenter, true, "itemcost_updated" );
 
     if (omfgThis->singleCurrency())
     {
@@ -354,15 +350,15 @@ void maintainItemCosts::sFillList()
                "       END,"
                "       CASE WHEN itemcost_costelem_id = -1 THEN :error "
 	       "	    ELSE costelem_type "
-	       "	END AS costelem_type, formatBoolYN(itemcost_lowlevel),"
-               "       formatCost(itemcost_stdcost), currConcat(baseCurrID()), "
-	       "       formatDate(itemcost_posted, 'Never'),"
-               "       formatCost(itemcost_actcost), currConcat(itemcost_curr_id) AS currConcat, "
-	       "       formatDate(itemcost_updated, 'Never'),"
-               "       itemcost_stdcost AS stdcost, "
-	       "       itemcost_actcost AS actcostLocal, "
+	       "	END AS costelem_type, itemcost_lowlevel,"
+               "       itemcost_stdcost, currConcat(baseCurrID()) AS baseCurr, "
+	       "       itemcost_posted,"
+               "       itemcost_actcost, currConcat(itemcost_curr_id) AS costCurr, "
+	       "       itemcost_updated,"
 	       "       currToBase(itemcost_curr_id, itemcost_actcost, CURRENT_DATE) AS actcostBase, "
-	       "       itemcost_curr_id "
+	       "       itemcost_curr_id, "
+               "       'cost' AS itemcost_stdcost_xtnumericrole, "
+               "       'cost' AS itemcost_actcost_xtnumericrole "
                "FROM itemcost LEFT OUTER JOIN costelem ON "
                "	(itemcost_costelem_id=costelem_id)"
                "WHERE (itemcost_item_id=:item_id) "
@@ -380,12 +376,12 @@ void maintainItemCosts::sFillList()
       firstCurrency = q.value("itemcost_curr_id").toInt();
       do
       {
-        standardCost += q.value("stdcost").toDouble();
-	if (q.value("actcostBase").isNull())
+        standardCost += q.value("itemcost_stdcost").toDouble();
+	if (q.value("itemcost_actcost").isNull())
 	    baseKnown = false;
 	else
 	    actualCostBase += q.value("actcostBase").toDouble();
-        actualCostLocal += q.value("actcostLocal").toDouble();
+        actualCostLocal += q.value("itemcost_actcost").toDouble();
 	if (! multipleCurrencies &&
 	    q.value("itemcost_curr_id").toInt() != firstCurrency)
 	    multipleCurrencies = true;

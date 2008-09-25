@@ -110,8 +110,8 @@ void locales::init()
 {
 //  statusBar()->hide();
   
-  _locale->addColumn(tr("Code"),        _itemColumn, Qt::AlignLeft );
-  _locale->addColumn(tr("Description"), -1,          Qt::AlignLeft );
+  _locale->addColumn(tr("Code"),        _itemColumn, Qt::AlignLeft, true, "locale_code" );
+  _locale->addColumn(tr("Description"), -1,          Qt::AlignLeft, true, "locale_descrip" );
   
   sFillList();
 }

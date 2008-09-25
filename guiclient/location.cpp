@@ -74,8 +74,8 @@ location::location(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_warehouse, SIGNAL(newID(int)), this, SLOT(sHandleWarehouse(int)));
 
-  _locitem->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft );
-  _locitem->addColumn(tr("Description"), -1,          Qt::AlignLeft );
+  _locitem->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft, true, "item_number" );
+  _locitem->addColumn(tr("Description"), -1,          Qt::AlignLeft, true, "item_descrip" );
 
   _warehouse->setAllowNull(_metrics->boolean("MultiWhs"));
   if (!_metrics->boolean("MultiWhs"))
@@ -466,7 +466,7 @@ void location::sDelete()
 void location::sFillList()
 {
   q.prepare( "SELECT locitem_id, item_number,"
-             "       (item_descrip1 || ' ' || item_descrip2)  "
+             "       (item_descrip1 || ' ' || item_descrip2) AS item_descrip  "
              "FROM locitem, item "
              "WHERE ( (locitem_item_id=item_id)"
              " AND (locitem_location_id=:location_id) );" );

@@ -107,8 +107,8 @@ void labelForms::init()
 {
 //  statusBar()->hide();
   
-  _labelforms->addColumn(tr("Form Name"), -1,           Qt::AlignLeft   );
-  _labelforms->addColumn(tr("#/Page"),    _orderColumn, Qt::AlignCenter );
+  _labelforms->addColumn(tr("Form Name"), -1,           Qt::AlignLeft   , "labelform_name"  );
+  _labelforms->addColumn(tr("#/Page"),    _orderColumn, Qt::AlignCenter , "labelform_perpage"  );
 
   if (_privileges->check("MaintainShippingForms"))
   {

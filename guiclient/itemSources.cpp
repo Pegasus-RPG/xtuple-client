@@ -113,10 +113,10 @@ void itemSources::init()
 {
 //  statusBar()->hide();
   
-  _itemsrc->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft );
-  _itemsrc->addColumn(tr("Description"), -1,          Qt::AlignLeft );
-  _itemsrc->addColumn(tr("Vendor"),      _itemColumn, Qt::AlignLeft );
-  _itemsrc->addColumn(tr("Vendor Item"), _itemColumn, Qt::AlignLeft );
+  _itemsrc->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft, true, "item_number" );
+  _itemsrc->addColumn(tr("Description"), -1,          Qt::AlignLeft, true, "item_descrip" );
+  _itemsrc->addColumn(tr("Vendor"),      _itemColumn, Qt::AlignLeft, true, "vend_name" );
+  _itemsrc->addColumn(tr("Vendor Item"), _itemColumn, Qt::AlignLeft, true, "itemsrc_vend_item_number" );
 
   if (_privileges->check("MaintainItemSources"))
   {
@@ -225,7 +225,7 @@ void itemSources::sPopulateMenu(QMenu *menuThis)
 
 void itemSources::sFillList()
 {
-  QString sql( "SELECT itemsrc_id, item_number, (item_descrip1 || ' ' || item_descrip2),"
+  QString sql( "SELECT itemsrc_id, item_number, (item_descrip1 || ' ' || item_descrip2) AS item_descrip,"
                "       vend_name, itemsrc_vend_item_number "
                "FROM item, vend, itemsrc "
                "WHERE ( (itemsrc_item_id=item_id)"

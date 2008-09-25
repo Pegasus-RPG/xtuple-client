@@ -87,8 +87,8 @@ lotSerialRegistration::lotSerialRegistration(QWidget* parent, const char* name, 
   connect(_editChar,    SIGNAL(clicked()),              this, SLOT(sEditCharass()));
   connect(_newChar,     SIGNAL(clicked()),              this, SLOT(sNewCharass()));
   
-  _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft );
-  _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft );
+  _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft, true, "char_name" );
+  _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft, true, "charass_value" );
  
   _lotSerial->setStrict(true);
   _cntct->setAccountVisible(FALSE);
