@@ -101,7 +101,11 @@ void AddressCluster::init()
     _mapper        = new XDataWidgetMapper(this);
 
     _addrChange->hide();
+#if defined Q_OS_MAC   
     _city->setMinimumWidth(110);
+#else
+    _city->setMinimumWidth(85);
+#endif
     _number->hide();
     _addrLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     _cityLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
