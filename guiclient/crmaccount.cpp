@@ -90,7 +90,10 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
 	    "WHERE (usr_username=CURRENT_USER);");
   q.exec();
   if (q.first())
+  {
     _myUsrId = q.value("usr_id").toInt();
+    _owner->setId(_myUsrId);
+  }
   else if (q.lastError().type() != QSqlError::None)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -351,6 +354,7 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
     {
       _mode = cView;
 
+      _owner->setEnabled(FALSE);
       _number->setEnabled(FALSE);
       _name->setEnabled(FALSE);
       _active->setEnabled(FALSE);
@@ -795,6 +799,7 @@ int crmaccount::saveNoErrorCheck()
 	    "    crmacct_vend_id=:crmacct_vend_id,"
 	    "    crmacct_cntct_id_1=:crmacct_cntct_id_1,"
 	    "    crmacct_cntct_id_2 =:crmacct_cntct_id_2,"
+            "    crmacct_owner_username =:crmacct_owner_username,"
 	    "    crmacct_notes=:crmacct_notes "
 	    "WHERE (crmacct_id=:crmacct_id);" );
   
@@ -813,7 +818,9 @@ int crmaccount::saveNoErrorCheck()
   if (_primary->id() > 0)   q.bindValue(":crmacct_cntct_id_1",	_primary->id());
   if (_secondary->id() > 0) q.bindValue(":crmacct_cntct_id_2",	_secondary->id());
   if (_parentCrmacct->id() > 0)
-			q.bindValue(":crmacct_parent_id", _parentCrmacct->id());
+			q.bindValue(":crmacct_parent_id", _parentCrmacct->id());    
+  if(_owner->isValid())
+    q.bindValue(":crmacct_owner_username", _owner->username());
 
   if (! q.exec())
   {
@@ -904,6 +911,7 @@ void crmaccount::sPopulate()
     _notes->setText(q.value("crmacct_notes").toString());
     _parentCrmacct->setId(q.value("crmacct_parent_id").toInt());
     _comments->setId(_crmacctId);
+    _owner->setUsername(q.value("crmacct_owner_username").toString());
 
     _customer->setChecked(_custId > 0);
     _customer->setDisabled(_customer->isChecked());
@@ -1643,6 +1651,7 @@ void crmaccount::sUpdateRelationships()
     _vendor->setChecked(_vendId > 0);
     _partner->setChecked(_partnerId > 0);
     _competitor->setChecked(_competitorId > 0);
+    _owner->setUsername(q.value("crmacct_owner_username").toString());
   //  _custInfoButton->setEnabled(_custId > 0 && _customer->isChecked());
   }
   else if (q.lastError().type() != QSqlError::None)
