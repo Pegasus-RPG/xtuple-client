@@ -1,7 +1,7 @@
-SELECT evntlog_id, evntlog_ord_id, formatDate(evntlog_newdate),
+SELECT evntlog_id, evntlog_ord_id, evntlog_newdate,
        evntlog_newvalue, warehous_code,
-       formatDateTime(evntlog_evnttime),
-       formatDateTime(evntlog_dispatched),
+       evntlog_evnttime,
+       evntlog_dispatched,
        evnttype_name, evntlog_number 
 FROM evntlog, evnttype, warehous 
 WHERE ( (evntlog_evnttype_id=evnttype_id)

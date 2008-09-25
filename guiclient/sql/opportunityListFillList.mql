@@ -5,11 +5,13 @@ SELECT ophead_id,
        opstage_name,
        opsource_name,
        optype_name,
-       ophead_probability_prcnt,
-       formatMoney(ophead_amount) AS f_amount,
+       (ophead_probability_prcnt * .01) AS ophead_probability_prcnt,
+       ophead_amount,
        currConcat(ophead_curr_id) As f_currency,
-       formatDate(ophead_target_date) AS f_targetdate,
-       formatDate(ophead_actual_date) AS f_actualdate
+       ophead_target_date,
+       ophead_actual_date,
+       'extprice' AS ophead_amount_xtnumericrole,
+       'percent' AS ophead_probability_prcnt_xtnumericrole
   FROM ophead
        LEFT OUTER JOIN crmacct ON (ophead_crmacct_id=crmacct_id)
        LEFT OUTER JOIN opstage ON (ophead_opstage_id=opstage_id)
