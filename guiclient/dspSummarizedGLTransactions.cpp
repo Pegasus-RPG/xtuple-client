@@ -91,14 +91,15 @@ dspSummarizedGLTransactions::dspSummarizedGLTransactions(QWidget* parent, const 
   connect(_gltrans, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
 
   _gltrans->setRootIsDecorated(TRUE);
-  _gltrans->addColumn(tr("Account #/Date"),    150,               Qt::AlignCenter );
-  _gltrans->addColumn(tr("Description/Notes"), -1,                Qt::AlignLeft   );
-  _gltrans->addColumn(tr("Src."),              _whsColumn,        Qt::AlignCenter );
-  _gltrans->addColumn(tr("Doc. Type"),         _docTypeColumn,    Qt::AlignCenter );
-  _gltrans->addColumn(tr("Doc. #"),            _orderColumn,      Qt::AlignCenter );
-  _gltrans->addColumn(tr("Debit"),             _bigMoneyColumn,   Qt::AlignRight  );
-  _gltrans->addColumn(tr("Credit"),            _bigMoneyColumn,   Qt::AlignRight  );
-  _gltrans->addColumn( tr("Username"), _userColumn, Qt::AlignLeft );
+  _gltrans->addColumn(tr("Account #"),         150,               Qt::AlignCenter, true,  "account" );
+  _gltrans->addColumn(tr("Date"),              _dateColumn,       Qt::AlignCenter, true,  "gltrans_date" );
+  _gltrans->addColumn(tr("Description/Notes"), -1,                Qt::AlignLeft,   true,  "descrip_notes"   );
+  _gltrans->addColumn(tr("Src."),              _whsColumn,        Qt::AlignCenter, true,  "gltrans_source" );
+  _gltrans->addColumn(tr("Doc. Type"),         _docTypeColumn,    Qt::AlignCenter, true,  "gltrans_doctype" );
+  _gltrans->addColumn(tr("Doc. #"),            _orderColumn,      Qt::AlignCenter, true,  "gltrans_docnumber" );
+  _gltrans->addColumn(tr("Debit"),             _bigMoneyColumn,   Qt::AlignRight,  true,  "debit"  );
+  _gltrans->addColumn(tr("Credit"),            _bigMoneyColumn,   Qt::AlignRight,  true,  "credit"  );
+  _gltrans->addColumn( tr("Username"),         _userColumn,       Qt::AlignLeft,   true,  "gltrans_username" );
 
   sShowUsername(_showUsername->isChecked());
 }
@@ -131,11 +132,11 @@ void dspSummarizedGLTransactions::sPopulateMenu(QMenu * menuThis)
   if(0 == item)
     return;
 
-  if(item->text(3) == "VO")
+  if(item->text(4) == "VO")
     menuThis->insertItem(tr("View Voucher..."), this, SLOT(sViewDocument()));
-  else if(item->text(3) == "IN")
+  else if(item->text(4) == "IN")
     menuThis->insertItem(tr("View Invoice..."), this, SLOT(sViewDocument()));
-  else if(item->text(3) == "PO")
+  else if(item->text(4) == "PO")
     menuThis->insertItem(tr("View Purchase Order..."), this, SLOT(sViewDocument()));
 }
 
@@ -167,19 +168,30 @@ void dspSummarizedGLTransactions::sFillList()
 {
   _gltrans->clear();
 
-  QString sql( "SELECT gltrans_id, accnt_id,"
-               "       formatGLAccount(accnt_id) AS account,"
-               "       accnt_descrip,"
-               "       formatDate(gltrans_date) AS transdate,"
-               "       gltrans_source, gltrans_doctype, gltrans_docnumber,"
-               "       firstLine(gltrans_notes) AS f_notes,"
-               "       CASE WHEN (gltrans_amount < 0) THEN (gltrans_amount * -1)"
-               "            ELSE 0"
-               "       END AS debit,"
-               "       CASE WHEN (gltrans_amount > 0) THEN gltrans_amount"
-               "            ELSE 0"
-               "       END AS credit,"
-               "       gltrans_username "
+  QString sql( "SELECT accnt_id, gltrans_id,"
+               "       account, accnt_descrip,"
+               "       gltrans_date, gltrans_source, gltrans_doctype, gltrans_docnumber,"
+               "       f_notes,"
+               "       debit, credit,"
+               "       gltrans_username, gltrans_created,"
+               "       CASE WHEN (level=0) THEN accnt_descrip"
+               "            ELSE f_notes"
+               "       END AS descrip_notes,"
+               "       'curr' AS debit_xtnumericrole,"
+               "       'curr' AS credit_xtnumericrole,"
+               "       0 AS debit_xtnumericrole,"
+               "       0 AS credit_xtnumericrole,"
+               "       CASE WHEN (debit=0) THEN '' END AS debit_qtdisplayrole,"
+               "       CASE WHEN (credit=0) THEN '' END AS credit_qtdisplayrole,"
+               "       level AS xtindentrole "
+               "FROM ( "
+               "SELECT DISTINCT accnt_id, -1 AS gltrans_id, 0 AS level,"
+               "       formatGLAccount(accnt_id) AS account, accnt_descrip,"
+               "       CAST(NULL AS DATE) AS gltrans_date, '' AS gltrans_source, '' AS gltrans_doctype, '' AS gltrans_docnumber,"
+               "       '' AS f_notes,"
+               "       0 AS debit,"
+               "       0 AS credit,"
+               "       '' AS gltrans_username, CAST(NULL AS TIMESTAMP) AS gltrans_created "
                "FROM gltrans, accnt "
                "WHERE ( (gltrans_accnt_id=accnt_id)"
                " AND (gltrans_date BETWEEN :startDate AND :endDate) ");
@@ -192,8 +204,32 @@ void dspSummarizedGLTransactions::sFillList()
   else if (_postedTransactions->isChecked())
     sql += " AND (gltrans_posted)";
 
-  sql += ") "
-         "ORDER BY accnt_id, gltrans_date, gltrans_created;";
+  sql += ") UNION "
+               "SELECT accnt_id, gltrans_id, 1 AS level,"
+               "       '' AS account, '' AS accnt_descrip,"
+               "       gltrans_date, gltrans_source, gltrans_doctype, gltrans_docnumber,"
+               "       firstLine(gltrans_notes) AS f_notes,"
+               "       CASE WHEN (gltrans_amount < 0) THEN (gltrans_amount * -1)"
+               "            ELSE 0"
+               "       END AS debit,"
+               "       CASE WHEN (gltrans_amount > 0) THEN gltrans_amount"
+               "            ELSE 0"
+               "       END AS credit,"
+               "       gltrans_username, gltrans_created "
+               "FROM gltrans, accnt "
+               "WHERE ( (gltrans_accnt_id=accnt_id)"
+               " AND (gltrans_date BETWEEN :startDate AND :endDate) ";
+
+  if (_selectedSource->isChecked())
+    sql += " AND (gltrans_source=:source)";
+
+  if (_unpostedTransactions->isChecked())
+    sql += " AND (NOT gltrans_posted)";
+  else if (_postedTransactions->isChecked())
+    sql += " AND (gltrans_posted)";
+
+  sql += ") ) AS data "
+         "ORDER BY accnt_id, gltrans_id, level, gltrans_date, gltrans_created;";
 
   q.prepare(sql);
   _dates->bindValue(q);
@@ -201,72 +237,16 @@ void dspSummarizedGLTransactions::sFillList()
   q.exec();
   if (q.first())
   {
-    XTreeWidgetItem *header = NULL;
-    int           accntid = -1;
-    double        debits  = 0.0;
-    double        credits = 0.0;
-    do
-    {
-      if (accntid != q.value("accnt_id").toInt())
-      {
-        if (header)
-        {
-          if (debits > 0)
-          {
-            header->setText(5, formatMoney(debits));
-            debits = 0;
-          }
-
-          if (credits > 0)
-          {
-            header->setText(6, formatMoney(credits));
-            credits = 0;
-          }
-        }
-
-        accntid = q.value("accnt_id").toInt();
-        header = new XTreeWidgetItem( _gltrans, header, accntid, 
-                                    q.value("account"), q.value("accnt_descrip") );
-      }
-
-      XTreeWidgetItem *item = new XTreeWidgetItem( header,
-                                               accntid, q.value("gltrans_id").toInt(),
-                                               q.value("transdate"), q.value("f_notes"),
-                                               q.value("gltrans_source"), q.value("gltrans_doctype"),
-                                               q.value("gltrans_docnumber"), "", "",
-                                               q.value("gltrans_username") );
-       if (q.value("debit") != 0.0)
-       {
-         debits += q.value("debit").toDouble();
-         item->setText(5, formatMoney(q.value("debit").toDouble()));
-       }
-
-       if (q.value("credit") != 0.0)
-       {
-         credits += q.value("credit").toDouble();
-         item->setText(6, formatMoney(q.value("credit").toDouble()));
-       }
-    }
-    while (q.next());
-
-    if (header)
-    {
-      if (debits > 0)
-        header->setText(5, formatMoney(debits));
-
-      if (credits > 0)
-        header->setText(6, formatMoney(credits));
-    }
-
+    _gltrans->populate(q, true);
   }
 }
 
 void dspSummarizedGLTransactions::sShowUsername( bool yes )
 {
   if(yes)
-    _gltrans->showColumn(7);
+    _gltrans->showColumn(8);
   else
-    _gltrans->hideColumn(7);
+    _gltrans->hideColumn(8);
 }
 
 void dspSummarizedGLTransactions::sViewTrans()
@@ -287,12 +267,12 @@ void dspSummarizedGLTransactions::sViewDocument()
     return;
 
   ParameterList params;
-  if(item->text(3) == "VO")
+  if(item->text(4) == "VO")
   {
     q.prepare("SELECT vohead_id, vohead_misc "
               "  FROM vohead"
               " WHERE (vohead_number=:vohead_number)");
-    q.bindValue(":vohead_number", item->text(4));
+    q.bindValue(":vohead_number", item->text(5));
     q.exec();
     if(!q.first())
       return;
@@ -313,24 +293,24 @@ void dspSummarizedGLTransactions::sViewDocument()
       omfgThis->handleNewWindow(newdlg);
     }
   }
-  else if(item->text(3) == "IN")
+  else if(item->text(4) == "IN")
   {
     q.prepare("SELECT invchead_id"
               "  FROM invchead"
               " WHERE (invchead_invcnumber=:invchead_invcnumber)");
-    q.bindValue(":invchead_invcnumber", item->text(4));
+    q.bindValue(":invchead_invcnumber", item->text(5));
     q.exec();
     if(!q.first())
       return;
 
     invoice::viewInvoice(q.value("invchead_id").toInt());
   }
-  else if(item->text(3) == "PO")
+  else if(item->text(4) == "PO")
   {
     q.prepare("SELECT pohead_id"
               "  FROM pohead"
               " WHERE (pohead_number=:pohead_number)");
-    q.bindValue(":pohead_number", item->text(4));
+    q.bindValue(":pohead_number", item->text(5));
     q.exec();
     if(!q.first())
       return;

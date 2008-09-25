@@ -94,17 +94,17 @@ dspWoOperationsByWorkCenter::dspWoOperationsByWorkCenter(QWidget* parent, const 
                      "FROM wrkcnt "
                      "ORDER BY wrkcnt_code;" );
 
-  _wooper->addColumn(tr("Source"),        _orderColumn, Qt::AlignLeft   );
-  _wooper->addColumn(tr("W/O #"),         _orderColumn, Qt::AlignLeft   );
-  _wooper->addColumn(tr("Status"),        _seqColumn,   Qt::AlignCenter );
-  _wooper->addColumn(tr("Due Date"),      _dateColumn,  Qt::AlignCenter );
-  _wooper->addColumn(tr("Item Number"),   _itemColumn,  Qt::AlignLeft   );
-  _wooper->addColumn(tr("Seq #"),         _seqColumn,   Qt::AlignCenter );
-  _wooper->addColumn(tr("Std. Oper."),    _itemColumn,  Qt::AlignLeft   );
-  _wooper->addColumn(tr("Description"),   -1,           Qt::AlignLeft   );
-  _wooper->addColumn(tr("Setup Remain."), _itemColumn,  Qt::AlignRight  );
-  _wooper->addColumn(tr("Run Remain."),   _itemColumn,  Qt::AlignRight  );
-  _wooper->addColumn(tr("Qty. Remain."),  _qtyColumn,   Qt::AlignRight  );
+  _wooper->addColumn(tr("Source"),        _orderColumn, Qt::AlignLeft,   true,  "source"   );
+  _wooper->addColumn(tr("W/O #"),         _orderColumn, Qt::AlignLeft,   true,  "wonumber"   );
+  _wooper->addColumn(tr("Status"),        _seqColumn,   Qt::AlignCenter, true,  "wo_status" );
+  _wooper->addColumn(tr("Due Date"),      _dateColumn,  Qt::AlignCenter, true,  "scheduled" );
+  _wooper->addColumn(tr("Item Number"),   _itemColumn,  Qt::AlignLeft,   true,  "item_number"   );
+  _wooper->addColumn(tr("Seq #"),         _seqColumn,   Qt::AlignCenter, true,  "wooper_seqnumber" );
+  _wooper->addColumn(tr("Std. Oper."),    _itemColumn,  Qt::AlignLeft,   true,  "stdoper"   );
+  _wooper->addColumn(tr("Description"),   -1,           Qt::AlignLeft,   true,  "descrip"   );
+  _wooper->addColumn(tr("Setup Remain."), _itemColumn,  Qt::AlignRight,  true,  "setup"  );
+  _wooper->addColumn(tr("Run Remain."),   _itemColumn,  Qt::AlignRight,  true,  "run"  );
+  _wooper->addColumn(tr("Qty. Remain."),  _qtyColumn,   Qt::AlignRight,  true,  "qtyremain"  );
   
   if (_preferences->boolean("XCheckBox/forgetful"))
     _loadOnly->setChecked(true);
@@ -339,18 +339,19 @@ void dspWoOperationsByWorkCenter::sFillList()
     return;
   }
 
-  QString sql( "SELECT wooper_id, wooper_wo_id, formatWoNumber(wo_id) AS wonumber, formatDate(wooper_scheduled) AS f_scheduled, item_number, wooper_seqnumber,"
+  QString sql( "SELECT wooper.*, formatWoNumber(wo_id) AS wonumber, item_number,"
+               "       CAST(wooper_scheduled AS DATE) AS scheduled,"
                "       CASE WHEN (wooper_stdopn_id <> -1) THEN ( SELECT stdopn_number FROM stdopn WHERE (stdopn_id=wooper_stdopn_id) )"
                "            ELSE ''"
                "       END AS stdoper,"
                "       (wooper_descrip1 || ' ' || wooper_descrip2) AS descrip, wo_status,"
-               "       CASE WHEN (wooper_sucomplete) THEN :complete"
-               "            ELSE formatTime(noNeg(wooper_sutime - wooper_suconsumed))"
-               "       END AS setupremain,"
-               "       CASE WHEN (wooper_rncomplete) THEN :complete"
-               "            ELSE formatTime(noNeg(wooper_rntime - wooper_rnconsumed))"
-               "       END AS runremain,"
-               "       formatQty(noNeg(wo_qtyord - wooper_qtyrcv)) AS qtyremain, uom_name,"
+               "       CASE WHEN (wooper_sucomplete) THEN 0"
+               "            ELSE noNeg(wooper_sutime - wooper_suconsumed)"
+               "       END AS setup,"
+               "       CASE WHEN (wooper_rncomplete) THEN 0"
+               "            ELSE noNeg(wooper_rntime - wooper_rnconsumed)"
+               "       END AS run,"
+               "       noNeg(wo_qtyord - wooper_qtyrcv) AS qtyremain, uom_name,"
                "       CASE WHEN(wo_ordtype='M') THEN :mrp"
                "            WHEN(wo_ordtype='P') THEN :mps"
                "            WHEN(wo_ordtype='S') THEN (:so||'-'||formatSoNumber(wo_ordid))"
@@ -358,7 +359,12 @@ void dspWoOperationsByWorkCenter::sFillList()
                "            WHEN(wo_ordtype IS NULL OR wo_ordtype='') THEN :manual"
                "            ELSE wo_ordtype"
                "       END AS source,"
-               "       (date(wooper_scheduled) < CURRENT_DATE) AS overdue "
+               "       CASE WHEN (date(wooper_scheduled) < CURRENT_DATE) THEN 'error' END AS wooper_scheduled_qtforegroundrole,"
+               "       '1' AS setup_xtnumericrole,"
+               "       '1' AS run_xtnumericrole,"
+               "       CASE WHEN (wooper_sucomplete) THEN :complete END AS setup_qtdisplayrole,"
+               "       CASE WHEN (wooper_rncomplete) THEN :complete END AS run_qtdisplayrole,"
+               "       'qty' AS qtyremain_xtnumericrole "
                "FROM wooper, wo, itemsite, item, uom "
                "WHERE ( (wooper_wo_id=wo_id)"
                " AND (wo_itemsite_id=itemsite_id)"
@@ -383,21 +389,7 @@ void dspWoOperationsByWorkCenter::sFillList()
   q.bindValue(":wo", tr("WO"));
   q.bindValue(":manual", tr("Manual"));
   q.exec();
-
-  XTreeWidgetItem * last = 0;
-  while(q.next())
-  {
-    last = new XTreeWidgetItem(_wooper, last, q.value("wooper_id").toInt(),
-                             q.value("wooper_wo_id").toInt(),
-                             q.value("source"),
-                             q.value("wonumber"), q.value("wo_status"), q.value("f_scheduled"),
-                             q.value("item_number"), q.value("wooper_seqnumber"),
-                             q.value("stdoper"), q.value("descrip"),
-                             q.value("setupremain"), q.value("runremain"),
-                             q.value("qtyremain") );
-    if(q.value("overdue").toBool())
-      last->setTextColor("red");
-  }
+  _wooper->populate(q, true);
   if (q.lastError().type() != QSqlError::None)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);

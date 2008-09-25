@@ -73,11 +73,11 @@ dspValidLocationsByItem::dspValidLocationsByItem(QWidget* parent, const char* na
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_location, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
 
-  _location->addColumn(tr("Site"),        _whsColumn,   Qt::AlignCenter );
-  _location->addColumn(tr("Location"),    _itemColumn,  Qt::AlignLeft   );
-  _location->addColumn(tr("Description"), -1,           Qt::AlignLeft   );
-  _location->addColumn(tr("Restricted"),  _orderColumn, Qt::AlignCenter  );
-  _location->addColumn(tr("Netable"),     _orderColumn, Qt::AlignCenter );
+  _location->addColumn(tr("Site"),        _whsColumn,   Qt::AlignCenter, true,  "warehous_code" );
+  _location->addColumn(tr("Location"),    _itemColumn,  Qt::AlignLeft,   true,  "locationname"   );
+  _location->addColumn(tr("Description"), -1,           Qt::AlignLeft,   true,  "locationdescrip"   );
+  _location->addColumn(tr("Restricted"),  _orderColumn, Qt::AlignCenter, true,  "location_restrict"  );
+  _location->addColumn(tr("Netable"),     _orderColumn, Qt::AlignCenter, true,  "location_netable" );
 
   _item->setFocus();
 }
@@ -114,13 +114,8 @@ void dspValidLocationsByItem::sFillList()
 {
   QString sql = "SELECT location_id, warehous_code,"
                 "       formatLocationName(location_id) AS locationname,"
-                "       firstLine(location_descrip),"
-                "       CASE WHEN (location_restrict) THEN :yes"
-                "            ELSE :no"
-                "       END,"
-                "       CASE WHEN (location_netable) THEN :yes"
-                "            ELSE :no"
-                "       END "
+                "       firstLine(location_descrip) AS locationdescrip,"
+                "       location_restrict, location_netable "
                 "FROM itemsite, location, warehous "
                 "WHERE ( (validLocation(location_id, itemsite_id))"
                 " AND ( (itemsite_loccntrl) OR (itemsite_location_id=location_id) )"
@@ -134,8 +129,6 @@ void dspValidLocationsByItem::sFillList()
          "ORDER BY warehous_code, locationname;";
 
   q.prepare(sql);
-  q.bindValue(":yes", tr("Yes"));
-  q.bindValue(":no", tr("No"));
   q.bindValue(":item_id", _item->id());
   _warehouse->bindValue(q);
   q.exec();

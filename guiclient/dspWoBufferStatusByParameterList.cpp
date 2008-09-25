@@ -99,18 +99,18 @@ dspWoBufferStatusByParameterList::dspWoBufferStatusByParameterList(QWidget* pare
   connect(_autoUpdate, SIGNAL(toggled(bool)), this, SLOT(sHandleAutoUpdate(bool)));
   connect(omfgThis, SIGNAL(workOrdersUpdated(int, bool)), this, SLOT(sFillList()));
 
-  _wo->addColumn(tr("parentType"),    0,             Qt::AlignCenter );
-  _wo->addColumn(tr("W/O #"),         _orderColumn,  Qt::AlignLeft   );
-  _wo->addColumn(tr("Status"),        _statusColumn, Qt::AlignCenter );
-  _wo->addColumn(tr("Pri."),          _statusColumn, Qt::AlignCenter );
-  _wo->addColumn(tr("Site"),          _whsColumn,    Qt::AlignCenter );
-  _wo->addColumn(tr("Item Number"),   _itemColumn,   Qt::AlignLeft   );
-  _wo->addColumn(tr("Description"),   -1,            Qt::AlignLeft   );
-  _wo->addColumn(tr("UOM"),           _uomColumn,    Qt::AlignCenter );
-  _wo->addColumn(tr("Ordered"),       _qtyColumn,    Qt::AlignRight  );
-  _wo->addColumn(tr("Received"),      _qtyColumn,    Qt::AlignRight  );
-  _wo->addColumn(tr("Buffer Type"),   _uomColumn,    Qt::AlignCenter  );
-  _wo->addColumn(tr("Buffer Status"), _uomColumn,    Qt::AlignRight  );
+  _wo->addColumn(tr("parentType"),    0,             Qt::AlignCenter, true,  "wo_ordtype" );
+  _wo->addColumn(tr("W/O #"),         _orderColumn,  Qt::AlignLeft,   true,  "wonumber"   );
+  _wo->addColumn(tr("Status"),        _statusColumn, Qt::AlignCenter, true,  "wo_status" );
+  _wo->addColumn(tr("Pri."),          _statusColumn, Qt::AlignCenter, true,  "wo_priority" );
+  _wo->addColumn(tr("Site"),          _whsColumn,    Qt::AlignCenter, true,  "warehous_code" );
+  _wo->addColumn(tr("Item Number"),   _itemColumn,   Qt::AlignLeft,   true,  "item_number"   );
+  _wo->addColumn(tr("Description"),   -1,            Qt::AlignLeft,   true,  "description"   );
+  _wo->addColumn(tr("UOM"),           _uomColumn,    Qt::AlignCenter, true,  "uom_name" );
+  _wo->addColumn(tr("Ordered"),       _qtyColumn,    Qt::AlignRight,  true,  "wo_qtyord"  );
+  _wo->addColumn(tr("Received"),      _qtyColumn,    Qt::AlignRight,  true,  "wo_qtyrcv"  );
+  _wo->addColumn(tr("Buffer Type"),   _uomColumn,    Qt::AlignCenter, true,  "bufrststype"  );
+  _wo->addColumn(tr("Buffer Status"), _uomColumn,    Qt::AlignRight,  true,  "bufrsts_status"  );
   
   sHandleAutoUpdate(_autoUpdate->isChecked());
 }
@@ -587,21 +587,19 @@ void dspWoBufferStatusByParameterList::sFillList()
 {
   _wo->clear();
 
-  QString sql( "SELECT wo_id, wo_ordtype,"
-               "       CASE WHEN (wo_ordid IS NULL) THEN -1"
-               "            ELSE wo_ordid"
-               "       END AS orderid,"
+  QString sql( "SELECT wo_id, COALESCE(wo_ordid, -1) AS orderid, wo_ordtype,"
                "       formatWONumber(wo_id) as wonumber,"
                "       wo_status, wo_priority, warehous_code,"
                "       item_number, (item_descrip1 || ' ' || item_descrip2) AS description,"
                "       uom_name,"
-               "       formatQty(wo_qtyord) as ordered,"
-               "       formatQty(wo_qtyrcv) as received,"
+               "       wo_qtyord, wo_qtyrcv,"
                "       CASE WHEN (bufrsts_type='T') THEN :time"
-	       "            ELSE :stock"
-	       "       END AS bufrststype,"
+               "            ELSE :stock"
+               "       END AS bufrststype,"
                "       bufrsts_status,"
-               "       (bufrsts_status>=66) AS emergency"
+               "       CASE WHEN (bufrsts_status>=66) THEN 'error' END AS bufrsts_status_qtforegroundrole,"
+               "       'qty' AS wo_qtyord_xtnumericrole,"
+               "       'qty' AS wo_qtyrcv_xtnumericrole "
                "  FROM wo, itemsite, warehous, item, uom, bufrsts "
                " WHERE ( (wo_itemsite_id=itemsite_id)"
                "   AND   (itemsite_item_id=item_id)"
@@ -652,21 +650,7 @@ void dspWoBufferStatusByParameterList::sFillList()
   q.bindValue(":stock", tr("Stock"));
   q.bindValue(":time", tr("Time"));
   q.exec();
-  XTreeWidgetItem * last = 0;
-  while (q.next())
-  {
-    last = new XTreeWidgetItem( _wo, last, q.value("wo_id").toInt(), q.value("orderid").toInt(),
-                                q.value("wo_ordtype"), q.value("wonumber"),
-                                q.value("wo_status"), q.value("wo_priority"),
-                                q.value("warehous_code"), q.value("item_number"),
-                                q.value("description"), q.value("uom_name"),
-                                q.value("ordered"), q.value("received"),
-                                q.value("bufrststype") );
-    last->setText(11, q.value("bufrsts_status").toString());
-
-    if (q.value("emergency").toBool())
-      last->setTextColor(11, "red");
-  }
+  _wo->populate(q, true);
 }
 
 void dspWoBufferStatusByParameterList::sHandleAutoUpdate(bool pAutoUpdate)

@@ -289,7 +289,7 @@ void dspSubstituteAvailabilityByItem::sFillList()
     if (_warehouse->isSelected())
       sql += " AND (root.itemsite_warehous_id=:warehous_id)";
 
-    sql += ") ) AS data"
+    sql += ") ) AS data "
            "ORDER BY itemsub_rank";
 
     q.prepare(sql);

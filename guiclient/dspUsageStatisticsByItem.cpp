@@ -79,12 +79,12 @@ dspUsageStatisticsByItem::dspUsageStatisticsByItem(QWidget* parent, const char* 
   omfgThis->inputManager()->notify(cBCItem, this, _item, SLOT(setItemid(int)));
   omfgThis->inputManager()->notify(cBCItemSite, this, _item, SLOT(setItemsiteid(int)));
 
-  _usage->addColumn(tr("Site"),        -1,         Qt::AlignCenter );
-  _usage->addColumn(tr("Received"),    _qtyColumn, Qt::AlignRight  );
-  _usage->addColumn(tr("Issued"),      _qtyColumn, Qt::AlignRight  );
-  _usage->addColumn(tr("Sold"),        _qtyColumn, Qt::AlignRight  );
-  _usage->addColumn(tr("Scrap"),       _qtyColumn, Qt::AlignRight  );
-  _usage->addColumn(tr("Adjustments"), _qtyColumn, Qt::AlignRight  );
+  _usage->addColumn(tr("Site"),        -1,         Qt::AlignCenter, true,  "warehous_code" );
+  _usage->addColumn(tr("Received"),    _qtyColumn, Qt::AlignRight,  true,  "received"  );
+  _usage->addColumn(tr("Issued"),      _qtyColumn, Qt::AlignRight,  true,  "issued"  );
+  _usage->addColumn(tr("Sold"),        _qtyColumn, Qt::AlignRight,  true,  "sold"  );
+  _usage->addColumn(tr("Scrap"),       _qtyColumn, Qt::AlignRight,  true,  "scrap"  );
+  _usage->addColumn(tr("Adjustments"), _qtyColumn, Qt::AlignRight,  true,  "adjust"  );
 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
   _dates->setEndNull(tr("Latest"),     omfgThis->endOfTime(),   true);
@@ -253,11 +253,16 @@ void dspUsageStatisticsByItem::sFillList()
   }
 
   QString sql( "SELECT itemsite_id, warehous_code,"
-               "       formatQty(summTransR(itemsite_id, :startDate, :endDate)),"
-               "       formatQty(summTransI(itemsite_id, :startDate, :endDate)),"
-               "       formatQty(summTransS(itemsite_id, :startDate, :endDate)),"
-               "       formatQty(summTransC(itemsite_id, :startDate, :endDate)),"
-               "       formatQty(summTransA(itemsite_id, :startDate, :endDate)) "
+               "       summTransR(itemsite_id, :startDate, :endDate) AS received,"
+               "       summTransI(itemsite_id, :startDate, :endDate) AS issued,"
+               "       summTransS(itemsite_id, :startDate, :endDate) AS sold,"
+               "       summTransC(itemsite_id, :startDate, :endDate) AS scrap,"
+               "       summTransA(itemsite_id, :startDate, :endDate) AS adjust,"
+               "       'qty' AS received_xtnumericrole,"
+               "       'qty' AS issued_xtnumericrole,"
+               "       'qty' AS sold_xtnumericrole,"
+               "       'qty' AS scrap_xtnumericrole,"
+               "       'qty' AS adjust_xtnumericrole "
                "FROM itemsite, warehous "
                "WHERE ((itemsite_warehous_id=warehous_id)"
                " AND (itemsite_item_id=:item_id) " );

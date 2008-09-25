@@ -85,16 +85,16 @@ dspWoHistoryByClassCode::dspWoHistoryByClassCode(QWidget* parent, const char* na
 
   _classCode->setType(ParameterGroup::ClassCode);
 
-  _wo->addColumn(tr("W/O #"),       _orderColumn,  Qt::AlignLeft   );
-  _wo->addColumn(tr("Item #"),      _itemColumn,   Qt::AlignLeft   );
-  _wo->addColumn(tr("Description"), -1,            Qt::AlignLeft   );
-  _wo->addColumn(tr("Status"),      _statusColumn, Qt::AlignCenter );
-  _wo->addColumn(tr("Site"),        _whsColumn,    Qt::AlignCenter );
-  _wo->addColumn(tr("Ordered"),     _qtyColumn,    Qt::AlignRight  );
-  _wo->addColumn(tr("Received"),    _qtyColumn,    Qt::AlignRight  );
-  _wo->addColumn(tr("Start Date"),  _dateColumn,   Qt::AlignRight  );
-  _wo->addColumn(tr("Due Date"),    _dateColumn,   Qt::AlignRight  );
-  _wo->addColumn(tr("Cost"),	    _costColumn,   Qt::AlignRight );
+  _wo->addColumn(tr("W/O #"),       _orderColumn,  Qt::AlignLeft,   true,  "wonumber"   );
+  _wo->addColumn(tr("Item #"),      _itemColumn,   Qt::AlignLeft,   true,  "item_number"   );
+  _wo->addColumn(tr("Description"), -1,            Qt::AlignLeft,   true,  "itemdescrip"   );
+  _wo->addColumn(tr("Status"),      _statusColumn, Qt::AlignCenter, true,  "wo_status" );
+  _wo->addColumn(tr("Site"),        _whsColumn,    Qt::AlignCenter, true,  "warehous_code" );
+  _wo->addColumn(tr("Ordered"),     _qtyColumn,    Qt::AlignRight,  true,  "wo_qtyord"  );
+  _wo->addColumn(tr("Received"),    _qtyColumn,    Qt::AlignRight,  true,  "wo_qtyrcv"  );
+  _wo->addColumn(tr("Start Date"),  _dateColumn,   Qt::AlignRight,  true,  "wo_startdate"  );
+  _wo->addColumn(tr("Due Date"),    _dateColumn,   Qt::AlignRight,  true,  "wo_duedate"  );
+  _wo->addColumn(tr("Cost"),        _costColumn,   Qt::AlignRight,  true,  "wo_postedvalue" );
 
   sHandleCosts(_showCost->isChecked());
 }
@@ -180,14 +180,14 @@ void dspWoHistoryByClassCode::sFillList()
   if (!checkParameters())
     return;
 
-  QString sql( "SELECT wo_id, formatWoNumber(wo_id), item_number,"
-               "       (item_descrip1 || ' ' || item_descrip2),"
+  QString sql( "SELECT wo_id, formatWoNumber(wo_id) AS wonumber, item_number,"
+               "       (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
                "       wo_status, warehous_code,"
-               "       formatQty(wo_qtyord) AS ordered,"
-               "       formatQty(wo_qtyrcv) AS received,"
-               "       formatDate(wo_startdate) AS startdate,"
-               "       formatDate(wo_duedate) AS duedate,"
-               "       formatCost(wo_postedvalue) "
+               "       wo_qtyord, wo_qtyrcv, wo_postedvalue,"
+               "       wo_startdate,wo_duedate,"
+               "       'qty' AS wo_qtyord_xtnumericrole,"
+               "       'qty' AS wo_qtyrcv_xtnumericrole,"
+               "       'cost' AS wo_postedvalue_xtnumericrole "
                "FROM wo, itemsite, warehous, item "
                "WHERE ((wo_itemsite_id=itemsite_id)"
                " AND (itemsite_item_id=item_id)"

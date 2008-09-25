@@ -92,14 +92,14 @@ dspWoHistoryByItem::dspWoHistoryByItem(QWidget* parent, const char* name, Qt::WF
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 
-  _wo->addColumn(tr("W/O #"),      -1,            Qt::AlignLeft   );
-  _wo->addColumn(tr("Status"),     _statusColumn, Qt::AlignCenter );
-  _wo->addColumn(tr("Site"),       _whsColumn,    Qt::AlignCenter );
-  _wo->addColumn(tr("Ordered"),    _qtyColumn,    Qt::AlignRight  );
-  _wo->addColumn(tr("Received"),   _qtyColumn,    Qt::AlignRight  );
-  _wo->addColumn(tr("Start Date"), _dateColumn,   Qt::AlignCenter );
-  _wo->addColumn(tr("Due Date"),   _dateColumn,   Qt::AlignCenter );
-  _wo->addColumn(tr("Cost"),	   _costColumn,   Qt::AlignRight );
+  _wo->addColumn(tr("W/O #"),      -1,            Qt::AlignLeft,   true,  "wonumber"   );
+  _wo->addColumn(tr("Status"),     _statusColumn, Qt::AlignCenter, true,  "wo_status" );
+  _wo->addColumn(tr("Site"),       _whsColumn,    Qt::AlignCenter, true,  "warehous_code" );
+  _wo->addColumn(tr("Ordered"),    _qtyColumn,    Qt::AlignRight,  true,  "wo_qtyord"  );
+  _wo->addColumn(tr("Received"),   _qtyColumn,    Qt::AlignRight,  true,  "wo_qtyrcv"  );
+  _wo->addColumn(tr("Start Date"), _dateColumn,   Qt::AlignCenter, true,  "wo_startdate" );
+  _wo->addColumn(tr("Due Date"),   _dateColumn,   Qt::AlignCenter, true,  "wo_duedate" );
+  _wo->addColumn(tr("Cost"),       _costColumn,   Qt::AlignRight,  true,  "wo_postedvalue" );
 
   sHandleCosts(_showCost->isChecked());
   
@@ -195,13 +195,13 @@ void dspWoHistoryByItem::sFillList()
   QString sql( "SELECT wo_id,"
                "       formatWONumber(wo_id) AS wonumber,"
                "       wo_status, warehous_code,"
-               "       formatQty(wo_qtyord) AS qtyord,"
-               "       formatQty(wo_qtyrcv) AS qtyrcv,"
-               "       formatDate(wo_startdate) AS startdate,"
-               "       formatDate(wo_duedate) AS duedate,"
-               "       ( (wo_startdate <= CURRENT_DATE) AND (wo_status IN ('O','E','S','R')) ) AS latestart,"
-               "       (wo_duedate <= CURRENT_DATE) AS latedue,"
-               "       formatCost(wo_postedvalue) AS value "
+               "       wo_qtyord, wo_qtyrcv, wo_postedvalue,"
+               "       wo_startdate, wo_duedate,"
+               "       CASE WHEN ( (wo_startdate <= CURRENT_DATE) AND (wo_status IN ('O','E','S','R')) ) THEN 'error' END AS wo_startdate_qtforegroundrole,"
+               "       CASE WHEN (wo_duedate <= CURRENT_DATE) THEN 'error' END AS wo_duedate_qtforegroundrole,"
+               "       'qty' AS wo_qtyord_xtnumericrole,"
+               "       'qty' AS wo_qtyrcv_xtnumericrole,"
+               "       'cost' AS wo_postedvalue_xtnumericrole "
                "FROM wo, itemsite, warehous "
                "WHERE ((wo_itemsite_id=itemsite_id)"
                " AND (itemsite_warehous_id=warehous_id)"
@@ -222,24 +222,7 @@ void dspWoHistoryByItem::sFillList()
   _warehouse->bindValue(q);
   q.bindValue(":item_id", _item->id());
   q.exec();
-  XTreeWidgetItem *last = 0;
-  while (q.next())
-  {
-    last = new XTreeWidgetItem( _wo, last, q.value("wo_id").toInt(),
-			       q.value("wonumber"), q.value("wo_status"),
-			       q.value("warehous_code"),  q.value("qtyord"),
-			       q.value("qtyrcv"), q.value("startdate"),
-			       q.value("duedate") );
-
-    if (q.value("latestart").toBool())
-      last->setTextColor(5, "red");
-
-    if (q.value("latedue").toBool())
-      last->setTextColor(6, "red");
-
-    if (_showCost->isChecked())
-      last->setText(7, q.value("value").toString());
-  }
+  _wo->populate(q);
 }
 
 bool dspWoHistoryByItem::checkParameters()

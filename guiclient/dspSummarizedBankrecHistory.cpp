@@ -80,13 +80,13 @@ dspSummarizedBankrecHistory::dspSummarizedBankrecHistory(QWidget* parent, const 
   connect(_bankaccnt, SIGNAL(newID(int)), this, SLOT(sFillList()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
 
-  _bankrec->addColumn(tr("Posted"),             _ynColumn, Qt::AlignLeft   );
-  _bankrec->addColumn(tr("Post Date"),        _dateColumn, Qt::AlignCenter );
-  _bankrec->addColumn(tr("User"),                      -1, Qt::AlignLeft   );
-  _bankrec->addColumn(tr("Start Date"),     _dateColumn, Qt::AlignCenter );
-  _bankrec->addColumn(tr("End Date"),      _dateColumn, Qt::AlignCenter );
-  _bankrec->addColumn(tr("Opening Bal."), _bigMoneyColumn, Qt::AlignRight  );
-  _bankrec->addColumn(tr("Ending Bal."),  _bigMoneyColumn, Qt::AlignRight  );
+  _bankrec->addColumn(tr("Posted"),             _ynColumn, Qt::AlignLeft,   true,  "bankrec_posted"   );
+  _bankrec->addColumn(tr("Post Date"),        _dateColumn, Qt::AlignCenter, true,  "bankrec_created" );
+  _bankrec->addColumn(tr("User"),                      -1, Qt::AlignLeft,   true,  "bankrec_username"   );
+  _bankrec->addColumn(tr("Start Date"),       _dateColumn, Qt::AlignCenter, true,  "bankrec_opendate" );
+  _bankrec->addColumn(tr("End Date"),         _dateColumn, Qt::AlignCenter, true,  "bankrec_enddate" );
+  _bankrec->addColumn(tr("Opening Bal."), _bigMoneyColumn, Qt::AlignRight,  true,  "bankrec_openbal"  );
+  _bankrec->addColumn(tr("Ending Bal."),  _bigMoneyColumn, Qt::AlignRight,  true,  "bankrec_endbal"  );
   
   _bankaccnt->populate("SELECT bankaccnt_id,"
                        "       (bankaccnt_name || '-' || bankaccnt_descrip) "
@@ -127,12 +127,9 @@ void dspSummarizedBankrecHistory::sPrint()
 
 void dspSummarizedBankrecHistory::sFillList()
 {
-  q.prepare( "SELECT bankrec_id, formatBoolYN(bankrec_posted),"
-                 "              formatDate(bankrec_created), bankrec_username,"
-                 "              formatDate(bankrec_opendate),"
-                 "              formatDate(bankrec_enddate),"
-                 "              formatMoney(bankrec_openbal),"
-                 "              formatMoney(bankrec_endbal) "
+  q.prepare( "SELECT bankrec.*,"
+                 "   'curr' AS bankrec_openbal_xtnumericrole,"
+                 "   'curr' AS bankrec_endbal_xtnumericrole "
                  "FROM bankrec "
                  "WHERE (bankrec_bankaccnt_id=:bankaccntid) "
                  "ORDER BY bankrec_created; ");

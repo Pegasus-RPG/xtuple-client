@@ -82,14 +82,14 @@ dspSummarizedTaxableSales::dspSummarizedTaxableSales(QWidget* parent, const char
   _taxCode->setType(XComboBox::TaxTypes);
 
   QString base = CurrDisplay::baseCurrAbbr();
-  _invchead->addColumn(tr("Tax Code"),      _itemColumn,  Qt::AlignLeft   );
-  _invchead->addColumn(tr("Description"),   -1,           Qt::AlignLeft   );
-  _invchead->addColumn(tr("Sales %1").arg(base),  _itemColumn,  Qt::AlignRight);
-  _invchead->addColumn(tr("Freight %1").arg(base),_moneyColumn, Qt::AlignRight);
-  _invchead->addColumn(tr("Freight Taxed"),       _itemColumn,  Qt::AlignCenter);
-  _invchead->addColumn(tr("Tax %1").arg(base),    _moneyColumn, Qt::AlignRight);
-  _invchead->addColumn(tr("Tax"),                 _moneyColumn, Qt::AlignRight);
-  _invchead->addColumn(tr("Currency"),         _currencyColumn, Qt::AlignRight);
+  _invchead->addColumn(tr("Tax Code"),            _itemColumn,     Qt::AlignLeft,   true,  "tax_code"   );
+  _invchead->addColumn(tr("Description"),         -1,              Qt::AlignLeft,   true,  "tax_descrip"   );
+  _invchead->addColumn(tr("Sales %1").arg(base),  _itemColumn,     Qt::AlignRight,  true,  "salesbase"  );
+  _invchead->addColumn(tr("Freight %1").arg(base),_moneyColumn,    Qt::AlignRight,  true,  "freightbase"  );
+  _invchead->addColumn(tr("Freight Taxed"),       _itemColumn,     Qt::AlignCenter, true,  "freighttax"  );
+  _invchead->addColumn(tr("Tax %1").arg(base),    _moneyColumn,    Qt::AlignRight,  true,  "taxbase"  );
+  _invchead->addColumn(tr("Tax"),                 _moneyColumn,    Qt::AlignRight,  true,  "tax"  );
+  _invchead->addColumn(tr("Currency"),            _currencyColumn, Qt::AlignRight,  true,  "currAbbr"  );
 }
 
 dspSummarizedTaxableSales::~dspSummarizedTaxableSales()

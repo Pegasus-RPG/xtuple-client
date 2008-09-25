@@ -108,19 +108,19 @@ dspWoScheduleByParameterList::dspWoScheduleByParameterList(QWidget* parent, cons
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
   _dates->setEndCaption(tr("End W/O Start Date:"));
 
-  _wo->addColumn(tr("parentType"),  0,             Qt::AlignCenter );
-  _wo->addColumn(tr("W/O #"),       _orderColumn,  Qt::AlignLeft   );
-  _wo->addColumn(tr("Status"),      _statusColumn, Qt::AlignCenter );
-  _wo->addColumn(tr("Pri."),        _statusColumn, Qt::AlignCenter );
-  _wo->addColumn(tr("Site"),        _whsColumn,    Qt::AlignCenter );
-  _wo->addColumn(tr("Item Number"), _itemColumn,   Qt::AlignLeft   );
-  _wo->addColumn(tr("Description"), -1,            Qt::AlignLeft   );
-  _wo->addColumn(tr("UOM"),         _uomColumn,    Qt::AlignCenter );
-  _wo->addColumn(tr("Ordered"),     _qtyColumn,    Qt::AlignRight  );
-  _wo->addColumn(tr("Received"),    _qtyColumn,    Qt::AlignRight  );
-  _wo->addColumn(tr("Start Date"),  _dateColumn,   Qt::AlignRight  );
-  _wo->addColumn(tr("Due Date"),    _dateColumn,   Qt::AlignRight  );
-  _wo->addColumn(tr("Condition"),      _dateColumn,   Qt::AlignLeft   );
+  _wo->addColumn(tr("parentType"),  0,             Qt::AlignCenter, true,  "wo_ordtype" );
+  _wo->addColumn(tr("W/O #"),       _orderColumn,  Qt::AlignLeft,   true,  "wonumber"   );
+  _wo->addColumn(tr("Status"),      _statusColumn, Qt::AlignCenter, true,  "wo_status" );
+  _wo->addColumn(tr("Pri."),        _statusColumn, Qt::AlignCenter, true,  "wo_priority" );
+  _wo->addColumn(tr("Site"),        _whsColumn,    Qt::AlignCenter, true,  "warehous_code" );
+  _wo->addColumn(tr("Item Number"), _itemColumn,   Qt::AlignLeft,   true,  "item_number"   );
+  _wo->addColumn(tr("Description"), -1,            Qt::AlignLeft,   true,  "itemdescrip"   );
+  _wo->addColumn(tr("UOM"),         _uomColumn,    Qt::AlignCenter, true,  "uom_name" );
+  _wo->addColumn(tr("Ordered"),     _qtyColumn,    Qt::AlignRight,  true,  "wo_qtyord"  );
+  _wo->addColumn(tr("Received"),    _qtyColumn,    Qt::AlignRight,  true,  "wo_qtyrcv"  );
+  _wo->addColumn(tr("Start Date"),  _dateColumn,   Qt::AlignRight,  true,  "wo_startdate"  );
+  _wo->addColumn(tr("Due Date"),    _dateColumn,   Qt::AlignRight,  true,  "wo_duedate"  );
+  _wo->addColumn(tr("Condition"),   _dateColumn,   Qt::AlignLeft,   true,  "condition"   );
 
   connect(omfgThis, SIGNAL(workOrdersUpdated(int, bool)), this, SLOT(sFillList()));
  
@@ -658,21 +658,21 @@ void dspWoScheduleByParameterList::sFillList()
   int woid = _wo->id();
   _wo->clear();
 
-  QString sql( "SELECT wo_id, wo_ordtype,"
+  QString sql( "SELECT wo_id,"
                "       CASE WHEN (wo_ordid IS NULL) THEN -1"
                "            ELSE wo_ordid"
                "       END AS orderid,"
-               "       formatWONumber(wo_id) as wonumber,"
-               "       wo_status, wo_priority, warehous_code,"
-               "       item_number, (item_descrip1 || ' ' || item_descrip2) AS description,"
-               "       uom_name,"
-               "       formatQty(wo_qtyord) as ordered,"
-               "       formatQty(wo_qtyrcv) as received,"
-               "       formatDate(wo_startdate) as startdate,"
-               "       formatDate(wo_duedate) as duedate,"
-	       "       ((wo_startdate<=CURRENT_DATE)"
-	       "         AND (wo_status IN ('O','E','S','R'))) AS latestart,"
-               "       (wo_duedate<=CURRENT_DATE) AS latedue "
+               "       wo.*, warehous_code, uom_name,"
+               "       item_number, (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
+               "       formatWONumber(wo_id) AS wonumber,"
+               "       'qty' AS wo_qtyord_xtnumericrole,"
+               "       'qty' AS wo_qtyrcv_xtnumericrole,"
+               "       CASE WHEN ((wo_startdate<=CURRENT_DATE) AND (wo_status IN ('O','E','S','R'))) THEN 'error' END AS wo_startdate_qtforegroundrole,"
+               "       CASE WHEN (wo_duedate<=CURRENT_DATE) THEN 'error' END AS wo_duedate_qtforegroundrole,"
+               "       CASE WHEN (wo_duedate<=CURRENT_DATE) THEN 'Overdue'"
+               "            ELSE 'On Time'"
+               "       END AS condition,"
+               "       CASE WHEN (wo_duedate<=CURRENT_DATE) THEN 'error' END AS condition_qtforegroundrole "
                "FROM wo, itemsite, warehous, item, uom "
                "WHERE ( (wo_itemsite_id=itemsite_id)"
                " AND (itemsite_item_id=item_id)"
@@ -724,32 +724,7 @@ void dspWoScheduleByParameterList::sFillList()
   if (! setParams(params))
     return;
   q = mql.toQuery(params);
-  while (q.next())
-  {
-    XTreeWidgetItem *last = new XTreeWidgetItem( _wo, q.value("wo_id").toInt(), q.value("orderid").toInt(),
-                                             q.value("wo_ordtype"), q.value("wonumber"),
-                                             q.value("wo_status"), q.value("wo_priority"),
-                                             q.value("warehous_code"), q.value("item_number"),
-                                             q.value("description"), q.value("uom_name"),
-                                             q.value("ordered"), q.value("received"),
-                                             q.value("startdate") );
-    last->setText(11, q.value("duedate").toString());
-
-    if (q.value("latestart").toBool())
-      last->setTextColor(10, "red");
-
-    if (q.value("latedue").toBool())
-    {
-      last->setTextColor(11, "red");
-      last->setText(12, tr("Overdue"));
-      last->setTextColor(12, "red");
-    }
-    else
-      last->setText(12, tr("On Time"));
-
-    if(last->id() == woid)
-      _wo->setCurrentItem(last);
-  }
+  _wo->populate(q, true);
 
   sHandleButtons();
 }

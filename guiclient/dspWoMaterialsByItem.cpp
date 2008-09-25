@@ -85,18 +85,18 @@ dspWoMaterialsByItem::dspWoMaterialsByItem(QWidget* parent, const char* name, Qt
   omfgThis->inputManager()->notify(cBCItem, this, _item, SLOT(setItemid(int)));
   omfgThis->inputManager()->notify(cBCItemSite, this, _item, SLOT(setItemsiteid(int)));
 
-  _womatl->addColumn(tr("W/O #"),         _orderColumn, Qt::AlignLeft   );
-  _womatl->addColumn(tr("Parent Item #"), _itemColumn,  Qt::AlignLeft   );
-  _womatl->addColumn(tr("Oper. #"),       _dateColumn,  Qt::AlignCenter );
-  _womatl->addColumn(tr("Iss. Meth."),    _dateColumn,  Qt::AlignCenter );
-  _womatl->addColumn(tr("Iss. UOM"),      _uomColumn,   Qt::AlignLeft   );
-  _womatl->addColumn(tr("Qty. Per"),      _qtyColumn,   Qt::AlignRight  );
-  _womatl->addColumn(tr("Scrap %"),       _prcntColumn, Qt::AlignRight  );
-  _womatl->addColumn(tr("Required"),      _qtyColumn,   Qt::AlignRight  );
-  _womatl->addColumn(tr("Issued"),        _qtyColumn,   Qt::AlignRight  );
-  _womatl->addColumn(tr("Scrapped"),      _qtyColumn,   Qt::AlignRight  );
-  _womatl->addColumn(tr("Balance"),       _qtyColumn,   Qt::AlignRight  );
-  _womatl->addColumn(tr("Due Date"),      _dateColumn,  Qt::AlignCenter );
+  _womatl->addColumn(tr("W/O #"),         _orderColumn, Qt::AlignLeft,   true,  "wonumber"   );
+  _womatl->addColumn(tr("Parent Item #"), _itemColumn,  Qt::AlignLeft,   true,  "item_number"   );
+  _womatl->addColumn(tr("Oper. #"),       _dateColumn,  Qt::AlignCenter, true,  "wooperseq" );
+  _womatl->addColumn(tr("Iss. Meth."),    _dateColumn,  Qt::AlignCenter, true,  "issuemethod" );
+  _womatl->addColumn(tr("Iss. UOM"),      _uomColumn,   Qt::AlignLeft,   true,  "uom_name"   );
+  _womatl->addColumn(tr("Qty. Per"),      _qtyColumn,   Qt::AlignRight,  true,  "womatl_qtyper"  );
+  _womatl->addColumn(tr("Scrap %"),       _prcntColumn, Qt::AlignRight,  true,  "womatl_scrap"  );
+  _womatl->addColumn(tr("Required"),      _qtyColumn,   Qt::AlignRight,  true,  "womatl_qtyreq"  );
+  _womatl->addColumn(tr("Issued"),        _qtyColumn,   Qt::AlignRight,  true,  "womatl_qtyiss"  );
+  _womatl->addColumn(tr("Scrapped"),      _qtyColumn,   Qt::AlignRight,  true,  "womatl_qtywipscrap"  );
+  _womatl->addColumn(tr("Balance"),       _qtyColumn,   Qt::AlignRight,  true,  "balance"  );
+  _womatl->addColumn(tr("Due Date"),      _dateColumn,  Qt::AlignCenter, true,  "womatl_duedate" );
 }
 
 /*
@@ -137,7 +137,7 @@ void dspWoMaterialsByItem::sFillList()
 
   _womatl->clear();
 
-  QString sql( "SELECT womatl_id,"
+  QString sql( "SELECT womatl.*,"
                "       formatWONumber(wo_id) AS wonumber,"
                "       item_number,"
                "       formatwooperseq(womatl_wooper_id) AS wooperseq, "
@@ -147,15 +147,15 @@ void dspWoMaterialsByItem::sFillList()
                "            ELSE :error"
                "       END AS issuemethod,"
                "       uom_name,"
-               "       formatQty(womatl_qtyper) as qtyper,"
-               "       formatScrap(womatl_scrap) AS scrap,"
-               "       formatQty(womatl_qtyreq) AS qtyreq,"
-               "       formatQty(womatl_qtyiss) AS qtyiss,"
-               "       formatQty(womatl_qtywipscrap) AS scrapped,"
-               "       formatQty(noNeg(womatl_qtyreq - womatl_qtyiss)) AS f_balance,"
                "       noNeg(womatl_qtyreq - womatl_qtyiss) AS balance,"
-               "       formatDate(womatl_duedate) AS duedate,"
-               "       (womatl_duedate <= CURRENT_DATE) as latedue "
+               "       CASE WHEN (womatl_duedate <= CURRENT_DATE) THEN 'error' END AS womatl_duedate_qtforegroundrole,"
+               "       'qtyper' AS womatl_qtyper_xtnumericrole,"
+               "       'percent' AS womatl_scrap_xtnumericrole,"
+               "       'qty' AS womatl_qtyreq_xtnumericrole,"
+               "       'qty' AS womatl_qtyiss_xtnumericrole,"
+               "       'qty' AS womatl_qtywipscrap_xtnumericrole,"
+               "       'qty' AS balance_xtnumericrole,"
+               "       0 AS balance_xttotalrole "
                "FROM wo, womatl, itemsite AS parentsite, itemsite AS componentsite, item, uom "
                "WHERE ((womatl_wo_id=wo_id)"
                " AND (womatl_uom_id=uom_id)"
@@ -179,31 +179,7 @@ void dspWoMaterialsByItem::sFillList()
   q.bindValue(":error", tr("Error"));
   q.bindValue(":item_id", _item->id());
   q.exec();
-  if (q.first())
-  {
-    double totalRequired  = 0;
-
-    XTreeWidgetItem *last = 0;
-    do
-    {
-      totalRequired += q.value("balance").toDouble();
-
-      last = new XTreeWidgetItem( _womatl, last, q.value("womatl_id").toInt(),
-				 q.value("wonumber"), q.value("item_number"),
-				 q.value("wooperseq"), q.value("issuemethod"),
-				 q.value("uom_name"), q.value("qtyper"), q.value("scrap"),
-				 q.value("qtyreq"), q.value("qtyiss"),
-				 q.value("scrapped"), q.value("f_balance"));
-      last->setText(11, q.value("duedate").toString());
-      if (q.value("latedue").toBool())
-        last->setTextColor(11, "red");
-    }
-    while (q.next());
-
-    new XTreeWidgetItem( _womatl, last, -1,
-                       "", tr("Total Required:"), "", "", "", "", "", "", "", "",
-                       formatQty(totalRequired) );
-  }
+  _womatl->populate(q);
 }
 
 bool dspWoMaterialsByItem::checkParameters()

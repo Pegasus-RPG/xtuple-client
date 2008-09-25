@@ -75,14 +75,14 @@ dspUnbalancedQOHByClassCode::dspUnbalancedQOHByClassCode(QWidget* parent, const 
 
   _classCode->setType(ParameterGroup::ClassCode);
 
-  _itemsite->addColumn(tr("Site"),        _whsColumn,   Qt::AlignCenter );
-  _itemsite->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft   );
-  _itemsite->addColumn(tr("Description"), -1,           Qt::AlignLeft   );
-  _itemsite->addColumn(tr("UOM"),         _uomColumn,   Qt::AlignCenter );
-  _itemsite->addColumn(tr("QOH"),         _qtyColumn,   Qt::AlignRight  );
-  _itemsite->addColumn(tr("QOH Detail."), _qtyColumn,   Qt::AlignRight  );
-  _itemsite->addColumn(tr("NN QOH"),      _qtyColumn,   Qt::AlignRight  );
-  _itemsite->addColumn(tr("NN Detail."),  _qtyColumn,   Qt::AlignRight  );
+  _itemsite->addColumn(tr("Site"),        _whsColumn,   Qt::AlignCenter, true,  "warehous_code" );
+  _itemsite->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft,   true,  "item_number"   );
+  _itemsite->addColumn(tr("Description"), -1,           Qt::AlignLeft,   true,  "itemdescrip"   );
+  _itemsite->addColumn(tr("UOM"),         _uomColumn,   Qt::AlignCenter, true,  "uom_name" );
+  _itemsite->addColumn(tr("QOH"),         _qtyColumn,   Qt::AlignRight,  true,  "itemsite_qtyonhand"  );
+  _itemsite->addColumn(tr("QOH Detail."), _qtyColumn,   Qt::AlignRight,  true,  "detailedqoh"  );
+  _itemsite->addColumn(tr("NN QOH"),      _qtyColumn,   Qt::AlignRight,  true,  "itemsite_nnqoh"  );
+  _itemsite->addColumn(tr("NN Detail."),  _qtyColumn,   Qt::AlignRight,  true,  "detailednnqoh"  );
 }
 
 dspUnbalancedQOHByClassCode::~dspUnbalancedQOHByClassCode()
@@ -194,11 +194,15 @@ void dspUnbalancedQOHByClassCode::sPopulateMenu(QMenu *pMenu)
 void dspUnbalancedQOHByClassCode::sFillList()
 {
   QString sql( "SELECT itemsite_id, warehous_code, item_number,"
-               "       (item_descrip1 || ' ' || item_descrip2), uom_name,"
-               "       formatQty(itemsite_qtyonhand),"
-               "       formatQty(detailedQOH(itemsite_id, FALSE)),"
-               "       formatQty(itemsite_nnqoh),"
-               "       formatQty(detailedNNQOH(itemsite_id, FALSE)) "
+               "       (item_descrip1 || ' ' || item_descrip2) AS itemdescrip, uom_name,"
+               "       itemsite_qtyonhand,"
+               "       detailedQOH(itemsite_id, FALSE) AS detailedqoh,"
+               "       itemsite_nnqoh,"
+               "       detailedNNQOH(itemsite_id, FALSE) AS detailednnqoh,"
+               "       'qty' AS itemsite_qtyonhand_xtnumericrole,"
+               "       'qty' AS detailedqoh_xtnumericrole,"
+               "       'qty' AS itemsite_nnqoh_xtnumericrole,"
+               "       'qty' AS detailednnqoh_xtnumericrole "
                "FROM warehous, item, itemsite, uom "
                "WHERE ( (itemsite_item_id=item_id)"
                " AND (item_inv_uom_id=uom_id)"

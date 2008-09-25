@@ -105,12 +105,12 @@ void dspUnusedPurchasedItems::init()
   
   _classCode->setType(ParameterGroup::ClassCode);
 
-  _item->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft  );
-  _item->addColumn(tr("Description"), -1,          Qt::AlignLeft  );
-  _item->addColumn(tr("UOM"),         _uomColumn,  Qt::AlignLeft  );
-  _item->addColumn(tr("Total QOH"),   _qtyColumn,  Qt::AlignRight );
-  _item->addColumn(tr("Last Cnt'd"),  _dateColumn, Qt::AlignRight );
-  _item->addColumn(tr("Last Used"),   _dateColumn, Qt::AlignRight );
+  _item->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft,   true,  "item_number"  );
+  _item->addColumn(tr("Description"), -1,          Qt::AlignLeft,   true,  "itemdescrip"  );
+  _item->addColumn(tr("UOM"),         _uomColumn,  Qt::AlignLeft,   true,  "uom_name"  );
+  _item->addColumn(tr("Total QOH"),   _qtyColumn,  Qt::AlignRight,  true,  "qoh" );
+  _item->addColumn(tr("Last Cnt'd"),  _dateColumn, Qt::AlignRight,  true,  "lastcount" );
+  _item->addColumn(tr("Last Used"),   _dateColumn, Qt::AlignRight,  true,  "lastused" );
 }
 
 void dspUnusedPurchasedItems::sPrint()
@@ -132,10 +132,13 @@ void dspUnusedPurchasedItems::sPrint()
 void dspUnusedPurchasedItems::sFillList()
 {
   QString sql( "SELECT DISTINCT item_id, item_number,"
-               "                (item_descrip1 || ' ' || item_descrip2), uom_name,"
-               "                formatQty(SUM(itemsite_qtyonhand)),"
-               "                formatDate(MAX(itemsite_datelastcount), 'Never'),"
-               "                formatDate(MAX(itemsite_datelastused), 'Never') "
+               "                (item_descrip1 || ' ' || item_descrip2) AS itemdescrip, uom_name,"
+               "                SUM(itemsite_qtyonhand) AS qoh,"
+               "                MAX(itemsite_datelastcount) AS lastcount,"
+               "                MAX(itemsite_datelastused) AS lastused,"
+               "                'qty' AS qoh_xtnumericrole,"
+               "                CASE WHEN (COALESCE(MAX(itemsite_datelastcount), startOfTime()) = startOfTime()) THEN 'Never' END AS lastcount_qtdisplayrole,"
+               "                CASE WHEN (COALESCE(MAX(itemsite_datelastused), startOfTime()) = startOfTime()) THEN 'Never' END AS lastused_qtdisplayrole "
                "FROM item, itemsite, uom "
                "WHERE ((itemsite_item_id=item_id)"
                " AND (item_inv_uom_id=uom_id)"

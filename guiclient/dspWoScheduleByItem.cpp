@@ -106,14 +106,14 @@ dspWoScheduleByItem::dspWoScheduleByItem(QWidget* parent, const char* name, Qt::
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
   _dates->setEndCaption(tr("End W/O Start Date:"));
 
-  _wo->addColumn(tr("W/O #"),      -1,            Qt::AlignLeft   );
-  _wo->addColumn(tr("Status"),     _statusColumn, Qt::AlignCenter );
-  _wo->addColumn(tr("Pri."),       _statusColumn, Qt::AlignCenter );
-  _wo->addColumn(tr("Site"),       _whsColumn,    Qt::AlignCenter );
-  _wo->addColumn(tr("Ordered"),    _qtyColumn,    Qt::AlignRight  );
-  _wo->addColumn(tr("Received"),   _qtyColumn,    Qt::AlignRight  );
-  _wo->addColumn(tr("Start Date"), _dateColumn,   Qt::AlignCenter );
-  _wo->addColumn(tr("Due Date"),   _dateColumn,   Qt::AlignCenter );
+  _wo->addColumn(tr("W/O #"),      -1,            Qt::AlignLeft,   true,  "wonumber"   );
+  _wo->addColumn(tr("Status"),     _statusColumn, Qt::AlignCenter, true,  "wo_status" );
+  _wo->addColumn(tr("Pri."),       _statusColumn, Qt::AlignCenter, true,  "wo_priority" );
+  _wo->addColumn(tr("Site"),       _whsColumn,    Qt::AlignCenter, true,  "warehous_code" );
+  _wo->addColumn(tr("Ordered"),    _qtyColumn,    Qt::AlignRight,  true,  "wo_qtyord"  );
+  _wo->addColumn(tr("Received"),   _qtyColumn,    Qt::AlignRight,  true,  "wo_qtyrcv"  );
+  _wo->addColumn(tr("Start Date"), _dateColumn,   Qt::AlignCenter, true,  "wo_startdate" );
+  _wo->addColumn(tr("Due Date"),   _dateColumn,   Qt::AlignCenter, true,  "wo_duedate" );
   
   connect(omfgThis, SIGNAL(workOrdersUpdated(int, bool)), this, SLOT(sFillList()));
 
@@ -574,15 +574,12 @@ void dspWoScheduleByItem::sFillList()
   _wo->clear();
 
   QString sql( "SELECT wo_id, itemsite_id,"
-	       " formatWONumber(wo_id) AS wonumber,"
-	       " wo_status, wo_priority, warehous_code,"
-	       " formatQty(wo_qtyord) AS qtyord,"
-	       " formatQty(wo_qtyrcv) AS qtyrcv,"
-	       " formatDate(wo_startdate) AS startdate,"
-	       " formatDate(wo_duedate) AS duedate,"
-	       " ((wo_startdate<=CURRENT_DATE) "
-	       "           AND (wo_status IN ('O','E','S','R'))) AS latestart,"
-	       " (wo_duedate<=CURRENT_DATE) AS latedue "
+               "       wo.*, warehous_code,"
+               "       formatWONumber(wo_id) AS wonumber,"
+               "       'qty' AS wo_qtyord_xtnumericrole,"
+               "       'qty' AS wo_qtyrcv_xtnumericrole,"
+               "       CASE WHEN ((wo_startdate<=CURRENT_DATE) AND (wo_status IN ('O','E','S','R'))) THEN 'error' END AS wo_startdate_qtforegroundrole,"
+               "       CASE WHEN (wo_duedate<=CURRENT_DATE) THEN 'error' END AS wo_duedate_qtforegroundrole "
 	       "FROM wo, itemsite, warehous "
 	       "WHERE ((wo_itemsite_id=itemsite_id)"
 	       " AND (itemsite_warehous_id=warehous_id)"
@@ -614,26 +611,7 @@ void dspWoScheduleByItem::sFillList()
   if (! setParams(params))
     return;
   q = mql.toQuery(params);
-  XTreeWidgetItem *last = 0;
-  while (q.next())
-  {
-    last = new XTreeWidgetItem(_wo, last, q.value("wo_id").toInt(),
-			       q.value("itemsite_id").toInt(),
-			       q.value("wonumber"),
-			       q.value("wo_status"),
-			       q.value("wo_priority"),
-			       q.value("warehous_code"),
-			       q.value("qtyord"),
-			       q.value("qtyrcv"),
-			       q.value("startdate"),
-			       q.value("duedate") );
-
-    if (q.value("latestart").toBool())
-      last->setTextColor(6, "red");
-
-    if (q.value("latedue").toBool())
-      last->setTextColor(7, "red");
-  }
+  _wo->populate(q, true);
 }
 
 void dspWoScheduleByItem::sHandleAutoUpdate(bool pAutoUpdate)

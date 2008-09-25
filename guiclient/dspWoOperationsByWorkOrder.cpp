@@ -88,14 +88,14 @@ dspWoOperationsByWorkOrder::dspWoOperationsByWorkOrder(QWidget* parent, const ch
 
   omfgThis->inputManager()->notify(cBCWorkOrder, this, _wo, SLOT(setId(int)));
 
-  _wooper->addColumn( tr("Seq #"),         _seqColumn,  Qt::AlignCenter );
-  _wooper->addColumn( tr("Scheduled"),     _dateColumn, Qt::AlignCenter );
-  _wooper->addColumn( tr("Work Center"),   _itemColumn, Qt::AlignLeft   );
-  _wooper->addColumn( tr("Std. Oper."),    _itemColumn, Qt::AlignLeft   );
-  _wooper->addColumn( tr("Description"),   -1,          Qt::AlignLeft   );
-  _wooper->addColumn( tr("Setup Remain."), _itemColumn, Qt::AlignRight  );
-  _wooper->addColumn( tr("Run Remain."),   _itemColumn, Qt::AlignRight  );
-  _wooper->addColumn( tr("Qty. Complete"), _qtyColumn,  Qt::AlignRight  );
+  _wooper->addColumn( tr("Seq #"),         _seqColumn,  Qt::AlignCenter, true,  "wooper_seqnumber" );
+  _wooper->addColumn( tr("Scheduled"),     _dateColumn, Qt::AlignCenter, true,  "scheduled" );
+  _wooper->addColumn( tr("Work Center"),   _itemColumn, Qt::AlignLeft,   true,  "workcenter"   );
+  _wooper->addColumn( tr("Std. Oper."),    _itemColumn, Qt::AlignLeft,   true,  "stdoper"   );
+  _wooper->addColumn( tr("Description"),   -1,          Qt::AlignLeft,   true,  "descrip"   );
+  _wooper->addColumn( tr("Setup Remain."), _itemColumn, Qt::AlignRight,  true,  "setup"  );
+  _wooper->addColumn( tr("Run Remain."),   _itemColumn, Qt::AlignRight,  true,  "run"  );
+  _wooper->addColumn( tr("Qty. Complete"), _qtyColumn,  Qt::AlignRight,  true,  "wooper_qtyrcv"  );
 }
 
 /*
@@ -206,21 +206,26 @@ void dspWoOperationsByWorkOrder::sDeleteOperation()
 
 void dspWoOperationsByWorkOrder::sFillList()
 {
-  q.prepare( "SELECT wooper_id, wooper_seqnumber, formatDate(wooper_scheduled),"
+  q.prepare( "SELECT wooper.*,"
+             "       CAST(wooper_scheduled AS DATE) AS scheduled,"
              "       CASE WHEN (wooper_wrkcnt_id <> -1) THEN (SELECT wrkcnt_code FROM wrkcnt WHERE (wrkcnt_id=wooper_wrkcnt_id))"
              "            ELSE 'Any'"
-             "       END,"
+             "       END AS workcenter,"
              "       CASE WHEN (wooper_stdopn_id <> -1) THEN (SELECT stdopn_number FROM stdopn WHERE (stdopn_id=wooper_stdopn_id))"
              "            ELSE ''"
-             "       END,"
-             "       (wooper_descrip1 || ' ' || wooper_descrip2),"
-             "       CASE WHEN (wooper_sucomplete) THEN :complete"
-             "            ELSE formatTime(noNeg(wooper_sutime - wooper_suconsumed))"
-             "       END,"
-             "       CASE WHEN (wooper_rncomplete) THEN :complete"
-             "            ELSE formatTime(noNeg(wooper_rntime - wooper_rnconsumed))"
-             "       END,"
-             "       formatQty(wooper_qtyrcv) "
+             "       END AS stdoper,"
+             "       (wooper_descrip1 || ' ' || wooper_descrip2) AS descrip,"
+             "       CASE WHEN (wooper_sucomplete) THEN 0"
+             "            ELSE noNeg(wooper_sutime - wooper_suconsumed)"
+             "       END AS setup,"
+             "       CASE WHEN (wooper_rncomplete) THEN 0"
+             "            ELSE noNeg(wooper_rntime - wooper_rnconsumed)"
+             "       END AS run,"
+             "       '1' AS setup_xtnumericrole,"
+             "       '1' AS run_xtnumericrole,"
+             "       CASE WHEN (wooper_sucomplete) THEN :complete END AS setup_qtdisplayrole,"
+             "       CASE WHEN (wooper_rncomplete) THEN :complete END AS run_qtdisplayrole,"
+             "       'qty' AS wooper_qtyrcv_xtnumericrole "
              "FROM wooper "
              "WHERE (wooper_wo_id=:wo_id) "
              "ORDER BY wooper_seqnumber;" );

@@ -126,11 +126,11 @@ void dspUndefinedManufacturedItems::init()
     _boo->setEnabled(FALSE);
   }
 
-  _item->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft   );
-  _item->addColumn(tr("Description"), -1,           Qt::AlignLeft   );
-  _item->addColumn(tr("Type"),        _uomColumn,   Qt::AlignCenter );
-  _item->addColumn(tr("Active"),      _orderColumn, Qt::AlignCenter );
-  _item->addColumn(tr("Exception"),   _itemColumn,  Qt::AlignCenter );
+  _item->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft,   true,  "item_number"   );
+  _item->addColumn(tr("Description"), -1,           Qt::AlignLeft,   true,  "itemdescrip"   );
+  _item->addColumn(tr("Type"),        _uomColumn,   Qt::AlignCenter, true,  "item_type" );
+  _item->addColumn(tr("Active"),      _orderColumn, Qt::AlignCenter, true,  "item_active" );
+  _item->addColumn(tr("Exception"),   _itemColumn,  Qt::AlignCenter, true,  "exception" );
 
   connect(omfgThis, SIGNAL(itemsUpdated(int, bool)), this, SLOT(sFillList(int, bool)));
   connect(omfgThis, SIGNAL(bomsUpdated(int, bool)), this, SLOT(sFillList(int, bool)));
@@ -199,8 +199,8 @@ void dspUndefinedManufacturedItems::sFillList(int pItemid, bool pLocal)
 
     if (_boo->isChecked())
     {
-      sql = "SELECT item_id, 1, item_number, (item_descrip1 || ' ' || item_descrip2), item_type,"
-            "       formatBoolYN(item_active), :noBoo AS exception "
+      sql = "SELECT item_id, 1, item_number, (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
+            "       item_type, item_active, :noBoo AS exception "
             "FROM item "
             "WHERE ( (item_type='M')"
             " AND (item_id NOT IN (SELECT DISTINCT booitem_item_id FROM booitem) )";
@@ -216,8 +216,8 @@ void dspUndefinedManufacturedItems::sFillList(int pItemid, bool pLocal)
       if (_boo->isChecked())
         sql += "UNION ";
 
-      sql += "SELECT item_id, 2, item_number, (item_descrip1 || ' ' || item_descrip2), item_type,"
-             "       formatBoolYN(item_active), :noBom AS exception "
+      sql += "SELECT item_id, 2, item_number, (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
+             "       item_type, item_active, :noBom AS exception "
              "FROM item "
              "WHERE ( (item_type IN ('M', 'F'))"
              " AND (item_id NOT IN (SELECT DISTINCT bomitem_parent_item_id FROM bomitem) )";
