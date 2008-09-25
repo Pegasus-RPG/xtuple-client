@@ -74,7 +74,7 @@ opportunityList::opportunityList(QWidget* parent, const char* name, Qt::WFlags f
   setupUi(this);
 
   _targetDates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
-  _targetDates->setEndNull(tr("Latest"),	  omfgThis->endOfTime(),   TRUE);
+  _targetDates->setEndNull(tr("Latest"),     omfgThis->endOfTime(),   TRUE);
   _targetDates->setStartCaption(tr("First Target Date:"));
   _targetDates->setEndCaption(tr("Last Target Date:"));
 
@@ -117,17 +117,17 @@ opportunityList::opportunityList(QWidget* parent, const char* name, Qt::WFlags f
 
 //  statusBar()->hide();
 
-  _list->addColumn(tr("Name"),        _itemColumn,     Qt::AlignLeft );
-  _list->addColumn(tr("CRM Acct."),   _userColumn,     Qt::AlignLeft );
-  _list->addColumn(tr("Owner"),       _userColumn,     Qt::AlignLeft );
-  _list->addColumn(tr("Stage"),       _orderColumn,    Qt::AlignLeft );
-  _list->addColumn(tr("Source"),      _orderColumn,    Qt::AlignLeft,   false );
-  _list->addColumn(tr("Type"),        _orderColumn,    Qt::AlignLeft,   false );
-  _list->addColumn(tr("Prob.%"),      _prcntColumn,    Qt::AlignCenter, false );
-  _list->addColumn(tr("Amount"),      _moneyColumn,    Qt::AlignRight,  false );
-  _list->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft,   false );
-  _list->addColumn(tr("Target Date"), _dateColumn,     Qt::AlignLeft );
-  _list->addColumn(tr("Actual Date"), _dateColumn,     Qt::AlignLeft,   false );
+  _list->addColumn(tr("Name"),        -1,              Qt::AlignLeft,   true, "ophead_name"  );
+  _list->addColumn(tr("CRM Acct."),   _userColumn,     Qt::AlignLeft,   true, "crmacct_number" );
+  _list->addColumn(tr("Owner"),       _userColumn,     Qt::AlignLeft,   true, "ophead_owner_username" );
+  _list->addColumn(tr("Stage"),       _orderColumn,    Qt::AlignLeft,   true, "opstage_name" );
+  _list->addColumn(tr("Source"),      _orderColumn,    Qt::AlignLeft,   false, "opsource_name" );
+  _list->addColumn(tr("Type"),        _orderColumn,    Qt::AlignLeft,   false, "optype_name" );
+  _list->addColumn(tr("Prob.%"),      _prcntColumn,    Qt::AlignCenter, false, "ophead_probability_prcnt" );
+  _list->addColumn(tr("Amount"),      _moneyColumn,    Qt::AlignRight,  false, "ophead_amount" );
+  _list->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft,   false, "f_currency" );
+  _list->addColumn(tr("Target Date"), _dateColumn,     Qt::AlignLeft,   false, "ophead_target_date" );
+  _list->addColumn(tr("Actual Date"), _dateColumn,     Qt::AlignLeft,   false, "ophead_actual_date" );
 
   sFillList();
 }

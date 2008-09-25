@@ -90,18 +90,20 @@ opportunity::opportunity(QWidget* parent, const char* name, bool modal, Qt::WFla
   connect(_editCharacteristic, SIGNAL(clicked()), this, SLOT(sEditCharacteristic()));
   connect(_deleteCharacteristic, SIGNAL(clicked()), this, SLOT(sDeleteCharacteristic()));
 
+  _probability->setValidator(omfgThis->percentVal());
+  
   _opheadid = -1;
 
-  _todoList->addColumn(tr("Priority"),   _userColumn, Qt::AlignRight);
-  _todoList->addColumn(tr("User"), _userColumn, Qt::AlignLeft );
-  _todoList->addColumn(tr("Name"),  100, Qt::AlignLeft );
-  _todoList->addColumn(tr("Description"),  -1, Qt::AlignLeft );
-  _todoList->addColumn(tr("Status"),  _statusColumn, Qt::AlignLeft );
-  _todoList->addColumn(tr("Due Date"), _dateColumn, Qt::AlignLeft );
+  _todoList->addColumn(tr("Priority"),   _userColumn, Qt::AlignRight, true, "incdtpriority_name");
+  _todoList->addColumn(tr("User"),       _userColumn, Qt::AlignLeft,  true, "usr_username" );
+  _todoList->addColumn(tr("Name"),               100, Qt::AlignLeft,  true, "todoitem_name" );
+  _todoList->addColumn(tr("Description"),         -1, Qt::AlignLeft,  true, "todoitem_description" );
+  _todoList->addColumn(tr("Status"),   _statusColumn, Qt::AlignLeft,  true, "todoitem_status" );
+  _todoList->addColumn(tr("Due Date"),   _dateColumn, Qt::AlignLeft,  true, "todoitem_due_date" );
 
-  _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft );
-  _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft );
-  _charass->addColumn(tr("Default"),        _ynColumn,   Qt::AlignCenter );
+  _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft,  true, "char_name" );
+  _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft,  true, "charass_value" );
+  _charass->addColumn(tr("Default"),        _ynColumn,   Qt::AlignCenter,true, "charass_default" );
 
   q.prepare("SELECT usr_id "
      "FROM usr "
@@ -395,7 +397,7 @@ void opportunity::populate()
 
     _probability->clear();
     if(!q.value("ophead_probability_prcnt").toString().isEmpty())
-      _probability->setText(q.value("ophead_probability_prcnt").toInt());
+      _probability->setText(q.value("ophead_probability_prcnt").toDouble());
 
     _amount->clear();
     _amount->setId(q.value("curr_id").toInt());
@@ -482,13 +484,18 @@ void opportunity::sDeleteTodoItem()
 
 void opportunity::sFillTodoList()
 {
-  XTreeWidgetItem* last = 0;
   q.prepare("SELECT todoitem_id, todoitem_usr_id, incdtpriority_name, incdtpriority_order, "
 	    "       usr_username, todoitem_name, "
 	    "       firstLine(todoitem_description) AS todoitem_description, "
-	    "       todoitem_status, todoitem_due_date "
+	    "       todoitem_status, todoitem_due_date, "
+            "       CASE "
+            "         WHEN (todoitem_status != 'C' AND todoitem_due_date < current_date) THEN "
+            "           'error' "
+            "         WHEN (todoitem_status != 'C' AND todoitem_due_date > current_date) THEN "
+            "           'altemphasis' "
+            "       END AS qtforegroundrole "
 	    "FROM usr, todoitem "
-      "     LEFT OUTER JOIN incdtpriority ON (incdtpriority_id=todoitem_priority_id) "
+            "     LEFT OUTER JOIN incdtpriority ON (incdtpriority_id=todoitem_priority_id) "
 	    "WHERE ( (todoitem_ophead_id=:ophead_id) "
 	    "  AND   (todoitem_usr_id=usr_id)"
 	    "  AND   (todoitem_active) ) "
@@ -501,27 +508,7 @@ void opportunity::sFillTodoList()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-  _todoList->clear();
-  while (q.next())
-  {
-    last = new XTreeWidgetItem(_todoList, last,
-			     q.value("todoitem_id").toInt(),
-			     q.value("todoitem_usr_id").toInt(),
-			     q.value("incdtpriority_name").toString(),
-			     q.value("usr_username").toString(),
-			     q.value("todoitem_name").toString(),
-			     q.value("todoitem_description").toString(),
-			     q.value("todoitem_status").toString(),
-			     q.value("todoitem_due_date").isNull() ? "" :
-				    q.value("todoitem_due_date").toString());
-    if (q.value("todoitem_status") != "C")
-    {
-      if (q.value("todoitem_due_date").toDate() < QDate::currentDate())
-	last->setTextColor("red");
-      else if (q.value("todoitem_due_date").toDate() > QDate::currentDate())
-	last->setTextColor("green");
-    }
-  }
+  _todoList->populate(q,TRUE);
 }
 
 void opportunity::sPopulateTodoMenu(QMenu *pMenu)
@@ -625,7 +612,7 @@ void opportunity::sDeleteCharacteristic()
 
 void opportunity::sFillCharList()
 {
-  q.prepare( "SELECT charass_id, char_name, charass_value, formatBoolYN(charass_default) "
+  q.prepare( "SELECT charass_id, char_name, charass_value, charass_default "
              "FROM charass, char "
              "WHERE ( (charass_target_type='OPP')"
              " AND (charass_char_id=char_id)"
