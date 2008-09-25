@@ -59,28 +59,19 @@
 
 #include <QVariant>
 #include <QMessageBox>
-//#include <QStatusBar>
+#include <QSqlError>
 
 #include <metasql.h>
 #include "mqlutil.h"
 
 #include <openreports.h>
 
-/*
- *  Constructs a dspBookingsBySalesRep as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspBookingsBySalesRep::dspBookingsBySalesRep(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _salesrep->setType(XComboBox::SalesRepsActive);
@@ -101,46 +92,48 @@ dspBookingsBySalesRep::dspBookingsBySalesRep(QWidget* parent, const char* name, 
   _soitem->addColumn(tr("Base Ext. Price"),  _bigMoneyColumn, Qt::AlignRight,  true,  "baseextprice" );
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspBookingsBySalesRep::~dspBookingsBySalesRep()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspBookingsBySalesRep::languageChange()
 {
   retranslateUi(this);
 }
 
-void dspBookingsBySalesRep::sPrint()
+bool dspBookingsBySalesRep::setParams(ParameterList &params)
 {
-  if (!_dates->startDate().isValid())
+  if (!_dates->startDate().isValid() &&isVisible())
   {
     QMessageBox::warning( this, tr("Enter Start Date"),
                           tr("Please enter a valid Start Date.") );
     _dates->setFocus();
-    return;
+    return false;
   }
 
-  if (!_dates->endDate().isValid())
+  if (!_dates->endDate().isValid() && isVisible())
   {
     QMessageBox::warning( this, tr("Enter End Date"),
                           tr("Please enter a valid End Date.") );
     _dates->setFocus();
-    return;
+    return false;
   }
 
-  ParameterList params;
   _warehouse->appendValue(params);
   _productCategory->appendValue(params);
   _dates->appendValue(params);
   params.append("salesrep_id", _salesrep->id());
+  params.append("orderByOrderdate");
+
+  return true;
+}
+
+void dspBookingsBySalesRep::sPrint()
+{
+  ParameterList params;
+  if (! setParams(params))
+    return;
 
   orReport report("BookingsBySalesRep", params);
   if (report.isValid())
@@ -151,44 +144,10 @@ void dspBookingsBySalesRep::sPrint()
 
 void dspBookingsBySalesRep::sFillList()
 {
-  if (!checkParameters())
-      return;
-
-  _soitem->clear();
-  
   MetaSQLQuery mql = mqlLoad(":/so/displays/SalesOrderItems.mql");
   ParameterList params;
-  params.append("salesrep_id", _salesrep->id());
-  _dates->appendValue(params);
-  _warehouse->appendValue(params);
-  _productCategory->appendValue(params);
-  params.append("orderByOrderdate");
+  if (! setParams(params))
+    return;
   q = mql.toQuery(params);
   _soitem->populate(q);
 }
-
-bool dspBookingsBySalesRep::checkParameters()
-{
-    if (!_dates->startDate().isValid())
-    {
-        if(isVisible()) {
-            QMessageBox::warning( this, tr("Enter Start Date"),
-                                  tr("Please enter a valid Start Date.") );
-            _dates->setFocus();
-        }
-        return FALSE;
-    }
-
-    if (!_dates->endDate().isValid())
-    {
-        if(isVisible()) {
-            QMessageBox::warning( this, tr("Enter End Date"),
-                                  tr("Please enter a valid End Date.") );
-            _dates->setFocus();
-        }
-        return FALSE;
-    }
-
-    return TRUE;
-}
-

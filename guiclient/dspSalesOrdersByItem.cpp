@@ -59,6 +59,7 @@
 
 #include <QMenu>
 #include <QMessageBox>
+#include <QSqlError>
 #include <QVariant>
 
 #include <metasql.h>
@@ -216,6 +217,11 @@ void dspSalesOrdersByItem::sFillList()
 
     q = mql.toQuery(params);
     _so->populate(q);
+    if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
 }
 
@@ -232,12 +238,12 @@ bool dspSalesOrdersByItem::checkSitePrivs(int orderid)
     if (!check.value("result").toBool())
       {
         QMessageBox::critical(this, tr("Access Denied"),
-                                       tr("You may not view or edit this Sales Order as it references "
-                                       "a Site for which you have not been granted privileges.")) ;
+                              tr("<p>You may not view or edit this Sales Order "
+                                 "as it references a Site for which you have "
+                                 "not been granted privileges.")) ;
         return false;
       }
     }
   }
   return true;
 }
-

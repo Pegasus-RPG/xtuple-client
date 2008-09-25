@@ -57,38 +57,28 @@
 
 #include "dspBookingsByCustomer.h"
 
-#include <QVariant>
 #include <QMessageBox>
-//#include <QStatusBar>
+#include <QSqlError>
+#include <QVariant>
 
 #include <metasql.h>
 #include "mqlutil.h"
 
 #include <openreports.h>
 
-/*
- *  Constructs a dspBookingsByCustomer as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspBookingsByCustomer::dspBookingsByCustomer(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-  connect(_cust, SIGNAL(valid(bool)), _query, SLOT(setEnabled(bool)));
 
   _productCategory->setType(ParameterGroup::ProductCategory);
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 
-  _soitem->addColumn(tr("S/O #"),            _orderColumn,    Qt::AlignLeft,   true,  "cohead_number"  );
+  _soitem->addColumn(tr("S/O #"),            _orderColumn,    Qt::AlignLeft,   true,  "coitem_linenumber"  );
   _soitem->addColumn(tr("Ord. Date"),        _dateColumn,     Qt::AlignCenter, true,  "cohead_orderdate");
   _soitem->addColumn(tr("Item Number"),      _itemColumn,     Qt::AlignLeft,   true,  "item_number"  );
   _soitem->addColumn(tr("Description"),      -1,              Qt::AlignLeft,   true,  "itemdescription"  );
@@ -102,18 +92,11 @@ dspBookingsByCustomer::dspBookingsByCustomer(QWidget* parent, const char* name, 
   _cust->setFocus();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspBookingsByCustomer::~dspBookingsByCustomer()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspBookingsByCustomer::languageChange()
 {
   retranslateUi(this);
@@ -157,29 +140,46 @@ enum SetResponse dspBookingsByCustomer::set(const ParameterList &pParams)
   return NoError;
 }
 
-void dspBookingsByCustomer::sPrint()
+bool dspBookingsByCustomer::setParams(ParameterList &params)
 {
-  if (!_dates->startDate().isValid())
+  if (!_cust->isValid() && isVisible())
+  {
+    QMessageBox::warning( this, tr("Enter Customer Number"),
+                          tr("Please enter a valid Customer Number.") );
+    _cust->setFocus();
+    return false;
+  }
+
+  if (!_dates->startDate().isValid() && isVisible())
   {
     QMessageBox::warning( this, tr("Enter Start Date"),
                           tr("Please enter a valid Start Date.") );
     _dates->setFocus();
-    return;
+    return false;
   }
 
-  if (!_dates->endDate().isValid())
+  if (!_dates->endDate().isValid() && isVisible())
   {
     QMessageBox::warning( this, tr("Enter End Date"),
                           tr("Please enter a valid End Date.") );
     _dates->setFocus();
-    return;
+    return false;
   }
 
-  ParameterList params;
   _warehouse->appendValue(params);
   _productCategory->appendValue(params);
   _dates->appendValue(params);
   params.append("cust_id", _cust->id());
+  params.append("orderByOrderdate");
+
+  return true;
+}
+
+void dspBookingsByCustomer::sPrint()
+{
+  ParameterList params;
+  if (! setParams(params))
+    return;
 
   orReport report("BookingsByCustomer", params);
   if (report.isValid())
@@ -190,57 +190,15 @@ void dspBookingsByCustomer::sPrint()
 
 void dspBookingsByCustomer::sFillList()
 {
-  if (!checkParameters())
-    return;
-
-  _soitem->clear();
-  
   MetaSQLQuery mql = mqlLoad(":/so/displays/SalesOrderItems.mql");
   ParameterList params;
-  _dates->appendValue(params);
-  _warehouse->appendValue(params);
-  _productCategory->appendValue(params);
-  params.append("cust_id", _cust->id());
-  params.append("orderByOrderdate");
+  if (! setParams(params))
+    return;
   q = mql.toQuery(params);
   _soitem->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
-
-bool dspBookingsByCustomer::checkParameters()
-{
-  if (!_cust->isValid())
-  {
-    if (isVisible())
-    {
-      QMessageBox::warning( this, tr("Enter Customer Number"),
-                            tr("Please enter a valid Customer Number.") );
-      _cust->setFocus();
-    }
-    return FALSE;
-  }
-
-  if (!_dates->startDate().isValid())
-  {
-    if (isVisible())
-    {
-      QMessageBox::warning( this, tr("Enter Start Date"),
-                            tr("Please enter a valid Start Date.") );
-      _dates->setFocus();
-    }
-    return FALSE;
-  }
-
-  if (!_dates->endDate().isValid())
-  {
-    if (isVisible())
-    {
-      QMessageBox::warning( this, tr("Enter End Date"),
-                            tr("Please enter a valid End Date.") );
-      _dates->setFocus();
-    }
-    return FALSE;
-  }
-
-  return TRUE;
-}
-

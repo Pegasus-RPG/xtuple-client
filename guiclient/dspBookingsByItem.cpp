@@ -58,7 +58,7 @@
 #include "dspBookingsByItem.h"
 
 #include <QVariant>
-//#include <QStatusBar>
+#include <QSqlError>
 #include <QMessageBox>
 
 #include <metasql.h>
@@ -66,21 +66,12 @@
 
 #include <openreports.h>
 
-/*
- *  Constructs a dspBookingsByItem as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspBookingsByItem::dspBookingsByItem(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _item->setType(ItemLineEdit::cSold);
@@ -99,18 +90,11 @@ dspBookingsByItem::dspBookingsByItem(QWidget* parent, const char* name, Qt::WFla
   _soitem->addColumn(tr("Base Ext. Price"),  _bigMoneyColumn, Qt::AlignRight,  true,  "baseextprice" );
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspBookingsByItem::~dspBookingsByItem()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspBookingsByItem::languageChange()
 {
   retranslateUi(this);
@@ -142,28 +126,46 @@ enum SetResponse dspBookingsByItem::set(const ParameterList &pParams)
   return NoError;
 }
 
-void dspBookingsByItem::sPrint()
+bool dspBookingsByItem::setParams(ParameterList &params)
 {
-  if (!_dates->startDate().isValid())
+  if (!_item->isValid() && isVisible())
+  {
+    QMessageBox::warning( this, tr("Enter Item Number"),
+                          tr("Please enter a valid Item Number.") );
+    _item->setFocus();
+    return false;
+  }
+
+  if (!_dates->startDate().isValid() && isVisible())
   {
     QMessageBox::warning( this, tr("Enter Start Date"),
                           tr("Please enter a valid Start Date.") );
     _dates->setFocus();
-    return;
+    return false;
   }
 
-  if (!_dates->endDate().isValid())
+  if (!_dates->endDate().isValid() && isVisible())
   {
     QMessageBox::warning( this, tr("Enter End Date"),
                           tr("Please enter a valid End Date.") );
     _dates->setFocus();
-    return;
+    return false;
   }
 
-  ParameterList params;
   params.append("item_id", _item->id());
   _warehouse->appendValue(params);
   _dates->appendValue(params);
+  params.append("orderByOrderdate");
+
+  return true;
+}
+
+
+void dspBookingsByItem::sPrint()
+{
+  ParameterList params;
+  if (! setParams(params))
+    return;
 
   orReport report("BookingsByItem", params);
   if (report.isValid())
@@ -174,56 +176,11 @@ void dspBookingsByItem::sPrint()
 
 void dspBookingsByItem::sFillList()
 {
-  if (!checkParameters())
-    return;
-
-  _soitem->clear();
-  
   MetaSQLQuery mql = mqlLoad(":/so/displays/SalesOrderItems.mql");
   ParameterList params;
-  _dates->appendValue(params);
-  _warehouse->appendValue(params);
-  params.append("item_id", _item->id());
-  params.append("orderByOrderdate");
+  if (! setParams(params))
+    return;
+
   q = mql.toQuery(params);
   _soitem->populate(q);
 }
-
-bool dspBookingsByItem::checkParameters()
-{
-  if (!_item->isValid())
-  {
-    if (isVisible())
-    {
-      QMessageBox::warning( this, tr("Enter Item Number"),
-                            tr("Please enter a valid Item Number.") );
-      _item->setFocus();
-    }
-    return FALSE;
-  }
-
-  if (!_dates->startDate().isValid())
-  {
-    if (isVisible())
-    {
-      QMessageBox::warning( this, tr("Enter Start Date"),
-                            tr("Please enter a valid Start Date.") );
-      _dates->setFocus();
-    }
-    return FALSE;
-  }
-
-  if (!_dates->endDate().isValid())
-  {
-    if (isVisible())
-    {
-      QMessageBox::warning( this, tr("Enter End Date"),
-                            tr("Please enter a valid End Date.") );
-      _dates->setFocus();
-    }
-    return FALSE;
-  }
-
-  return TRUE;
-}
-

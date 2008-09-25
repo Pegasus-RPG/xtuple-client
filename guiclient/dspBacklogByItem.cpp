@@ -59,6 +59,7 @@
 
 #include <QMenu>
 #include <QMessageBox>
+#include <QSqlError>
 
 #include <metasql.h>
 #include "mqlutil.h"
@@ -70,14 +71,10 @@
 #include "salesOrderItem.h"
 #include "printPackingList.h"
 
-#define AMOUNT_COL	9
-
 dspBacklogByItem::dspBacklogByItem(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
-
-//  (void)statusBar();
 
   connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
@@ -89,22 +86,22 @@ dspBacklogByItem::dspBacklogByItem(QWidget* parent, const char* name, Qt::WFlags
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 
-  _soitem->addColumn(tr("S/O #"),            _orderColumn,      Qt::AlignLeft,   true,  "cohead_number"   );
-  _soitem->addColumn(tr("#"),                _seqColumn,        Qt::AlignCenter, true,  "coitem_linenumber" );
-  _soitem->addColumn(tr("Customer"),         -1,                Qt::AlignLeft,   true,  "cust_name"   );
-  _soitem->addColumn(tr("Ordered"),          _dateColumn,       Qt::AlignCenter, true,  "cohead_orderdate" );
-  _soitem->addColumn(tr("Scheduled"),        _dateColumn,       Qt::AlignCenter, true,  "coitem_scheddate" );
-  _soitem->addColumn(tr("Qty. UOM"),         _qtyColumn,        Qt::AlignRight,  true,  "uom_name"  );
-  _soitem->addColumn(tr("Ordered"),          _qtyColumn,        Qt::AlignRight,  true,  "coitem_qtyord"  );
-  _soitem->addColumn(tr("Shipped"),          _qtyColumn,        Qt::AlignRight,  true,  "coitem_qtyshipped"  );
-  _soitem->addColumn(tr("Balance"),          _qtyColumn,        Qt::AlignRight,  true,  "qtybalance"  );
+  _soitem->addColumn(tr("S/O #"),   _orderColumn, Qt::AlignLeft,  true, "cohead_number");
+  _soitem->addColumn(tr("#"),         _seqColumn, Qt::AlignCenter,true, "coitem_linenumber");
+  _soitem->addColumn(tr("Customer"),          -1, Qt::AlignLeft,  true, "item_number");
+  _soitem->addColumn(tr("Ordered"),  _dateColumn, Qt::AlignCenter,true, "cohead_orderdate");
+  _soitem->addColumn(tr("Scheduled"),_dateColumn, Qt::AlignCenter,true, "coitem_scheddate");
+  _soitem->addColumn(tr("Qty. UOM"),  _qtyColumn, Qt::AlignRight, true, "uom_name");
+  _soitem->addColumn(tr("Ordered"),   _qtyColumn, Qt::AlignRight, true, "coitem_qtyord");
+  _soitem->addColumn(tr("Shipped"),   _qtyColumn, Qt::AlignRight, true, "coitem_qtyshipped");
+  _soitem->addColumn(tr("Balance"),   _qtyColumn, Qt::AlignRight, true, "qtybalance");
   if (_privileges->check("ViewCustomerPrices") || _privileges->check("MaintainCustomerPrices"))
-    _soitem->addColumn(tr("Ext. Price"),     _bigMoneyColumn,   Qt::AlignRight,  true,  "baseextpricebalance"  );
+    _soitem->addColumn(tr("Ext. Price"), _bigMoneyColumn, Qt::AlignRight, true, "baseextpricebalance");
 
   _showPrices->setEnabled(_privileges->check("ViewCustomerPrices") || _privileges->check("MaintainCustomerPrices"));
 
   if (! _showPrices->isChecked())
-    _soitem->hideColumn(AMOUNT_COL);
+    _soitem->hideColumn("baseextpricebalance");
 
   _item->setFocus();
 }
@@ -122,30 +119,40 @@ void dspBacklogByItem::languageChange()
 void dspBacklogByItem::sHandlePrices(bool pShowPrices)
 {
   if (pShowPrices)
-    _soitem->showColumn(AMOUNT_COL);
+    _soitem->showColumn("baseextpricebalance");
   else
-    _soitem->hideColumn(AMOUNT_COL);
+    _soitem->hideColumn("baseextpricebalance");
 
   sFillList();
 }
 
-void dspBacklogByItem::sPrint()
+bool dspBacklogByItem::setParams(ParameterList &params)
 {
   if (!_item->isValid())
   {
-    QMessageBox::warning( this, tr("Enter a Valid Item Number"),
-                          tr("You must enter a valid Item Number for this report.") );
+    QMessageBox::warning(this, tr("Enter a Valid Item Number"),
+                         tr("<p>You must enter a valid Item Number.") );
     _item->setFocus();
-    return;
+    return false;
   }
 
-  ParameterList params;
   _dates->appendValue(params);
   _warehouse->appendValue(params);
   params.append("item_id", _item->id());
+  params.append("openOnly");
+  params.append("orderByScheddate");
 
   if (_showPrices->isChecked())
     params.append("showPrices");
+
+  return true;
+}
+
+void dspBacklogByItem::sPrint()
+{
+  ParameterList params;
+  if (! setParams(params))
+    return;
 
   orReport report("BacklogByItemNumber", params);
   if (report.isValid())
@@ -228,17 +235,16 @@ void dspBacklogByItem::sPopulateMenu(QMenu *pMenu)
 
 void dspBacklogByItem::sFillList()
 {
-  _soitem->clear();
-  if (_item->isValid())
+  ParameterList params;
+  if (! setParams(params))
+    return;
+
+  MetaSQLQuery mql = mqlLoad(":/so/displays/SalesOrderItems.mql");
+  q = mql.toQuery(params);
+  _soitem->populate(q, true);
+  if (q.lastError().type() != QSqlError::None)
   {
-    MetaSQLQuery mql = mqlLoad(":/so/displays/SalesOrderItems.mql");
-    ParameterList params;
-    _dates->appendValue(params);
-    _warehouse->appendValue(params);
-    params.append("item_id", _item->id());
-    params.append("openOnly");
-    params.append("orderByScheddate");
-    q = mql.toQuery(params);
-    _soitem->populate(q, true);
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
 }

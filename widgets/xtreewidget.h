@@ -166,6 +166,9 @@ class OPENMFGWIDGETS_EXPORT XTreeWidgetItem : public QTreeWidgetItem
       return ((XTreeWidgetItem*)item);
     }    
 
+  protected:
+    virtual double totalForItem(const int, const int) const;
+
   private:
     void constructor( int, int, QVariant, QVariant, QVariant,
                       QVariant, QVariant, QVariant, QVariant,

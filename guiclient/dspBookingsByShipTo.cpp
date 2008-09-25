@@ -59,39 +59,26 @@
 
 #include <QVariant>
 #include <QMessageBox>
-//#include <QStatusBar>
+#include <QSqlError>
 
 #include <metasql.h>
 #include "mqlutil.h"
 
 #include <openreports.h>
 
-/*
- *  Constructs a dspBookingsByShipTo as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspBookingsByShipTo::dspBookingsByShipTo(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
-  connect(_cust, SIGNAL(newId(int)), _shipTo, SLOT(setCustid(int)));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-  connect(_shipTo, SIGNAL(newCustid(int)), _cust, SLOT(setSilentId(int)));
-
-//  statusBar()->hide();
 
   _productCategory->setType(ParameterGroup::ProductCategory);
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 
-  _soitem->addColumn(tr("S/O #"),            _orderColumn,    Qt::AlignLeft,   true,  "cohead_number"  );
+  _soitem->addColumn(tr("S/O #"),            _orderColumn,    Qt::AlignLeft,   true,  "coitem_linenumber"  );
   _soitem->addColumn(tr("Ord. Date"),        _dateColumn,     Qt::AlignCenter, true,  "cohead_orderdate");
   _soitem->addColumn(tr("Item Number"),      _itemColumn,     Qt::AlignLeft,   true,  "item_number"  );
   _soitem->addColumn(tr("Description"),      -1,              Qt::AlignLeft,   true,  "itemdescription"  );
@@ -103,18 +90,11 @@ dspBookingsByShipTo::dspBookingsByShipTo(QWidget* parent, const char* name, Qt::
   _soitem->addColumn(tr("Base Ext. Price"),  _bigMoneyColumn, Qt::AlignRight,  true,  "baseextprice" );
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspBookingsByShipTo::~dspBookingsByShipTo()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspBookingsByShipTo::languageChange()
 {
   retranslateUi(this);
@@ -154,30 +134,55 @@ enum SetResponse dspBookingsByShipTo::set(const ParameterList &pParams)
   return NoError;
 }
 
-void dspBookingsByShipTo::sPrint()
+bool dspBookingsByShipTo::setParams(ParameterList &params)
 {
-  if (!_dates->startDate().isValid())
+  if (!_cust->isValid() && isVisible())
+  {
+    QMessageBox::warning( this, tr("Enter Customer Number"),
+                          tr("Please enter a valid Customer Number.") );
+    _cust->setFocus();
+    return false;
+  }
+
+  if (!_shipTo->isValid() && isVisible())
+  {
+    QMessageBox::warning( this, tr("Enter Ship-To Number"),
+                          tr("Please enter a valid Ship-To Number.") );
+    _shipTo->setFocus();
+    return false;
+  }
+
+  if (!_dates->startDate().isValid() && isVisible())
   {
     QMessageBox::warning( this, tr("Enter Start Date"),
                           tr("Please enter a valid Start Date.") );
     _dates->setFocus();
-    return;
+    return false;
   }
 
-  if (!_dates->endDate().isValid())
+  if (!_dates->endDate().isValid() && isVisible())
   {
     QMessageBox::warning( this, tr("Enter End Date"),
                           tr("Please enter a valid End Date.") );
     _dates->setFocus();
-    return;
+    return false;
   }
 
-  ParameterList params;
   _warehouse->appendValue(params);
   _productCategory->appendValue(params);
   _dates->appendValue(params);
   params.append("cust_id", _cust->id());
   params.append("shipto_id", _shipTo->id());
+  params.append("orderByOrderdate");
+
+  return true;
+}
+
+void dspBookingsByShipTo::sPrint()
+{
+  ParameterList params;
+  if (! setParams(params))
+    return;
 
   orReport report("BookingsByShipTo", params);
   if (report.isValid())
@@ -188,68 +193,16 @@ void dspBookingsByShipTo::sPrint()
 
 void dspBookingsByShipTo::sFillList()
 {
-  if(!checkParameters())
-      return;
-
-  _soitem->clear();
-  
   MetaSQLQuery mql = mqlLoad(":/so/displays/SalesOrderItems.mql");
   ParameterList params;
-  params.append("shipto_id", _shipTo->id());
-  _dates->appendValue(params);
-  _warehouse->appendValue(params);
-  _productCategory->appendValue(params);
-  params.append("orderByOrderdate");
+  if (! setParams(params))
+    return;
+
   q = mql.toQuery(params);
   _soitem->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
-
-bool dspBookingsByShipTo::checkParameters()
-{
-  if (!_cust->isValid())
-  {
-    if (isVisible())
-    {
-      QMessageBox::warning( this, tr("Enter Customer Number"),
-                            tr("Please enter a valid Customer Number.") );
-      _cust->setFocus();
-    }
-    return FALSE;
-  }
-
-  if (!_shipTo->isValid())
-  {
-    if (isVisible())
-    {
-      QMessageBox::warning( this, tr("Enter Ship-To Number"),
-                            tr("Please enter a valid Ship-To Number.") );
-      _shipTo->setFocus();
-    }
-    return FALSE;
-  }
-
-  if (!_dates->startDate().isValid())
-  {
-    if (isVisible())
-    {
-      QMessageBox::warning( this, tr("Enter Start Date"),
-                            tr("Please enter a valid Start Date.") );
-      _dates->setFocus();
-    }
-    return FALSE;
-  }
-
-  if (!_dates->endDate().isValid())
-  {
-    if (isVisible())
-    {
-      QMessageBox::warning( this, tr("Enter End Date"),
-                            tr("Please enter a valid End Date.") );
-      _dates->setFocus();
-    }
-    return FALSE;
-  }
-
-  return TRUE;
-}
-

@@ -686,7 +686,7 @@ void XTreeWidget::populateCalculatedColumns()
           int set = role.value("totalset").toInt();
           if (! totalset.contains(set))
             totalset[set] = role.value("totalinit").toDouble();
-          totalset[set] += role.value("raw").toDouble();
+          totalset[set] += topLevelItem(row)->totalForItem(col, set);
         }
         if (role.value("scale").toInt() > colscale)
           colscale = role.value("scale").toInt();
@@ -1279,4 +1279,21 @@ QVariant XTreeWidgetItem::rawValue(const QString pName)
     return QVariant();
   else
     return data(colIdx, Qt::UserRole).toMap().value("raw");
+}
+
+/* Calculate the total for a particular XTreeWidgetItem, including any children.
+   pcol is the column for which we want the total.
+   prole is the value of xttotalrole for which we want the total.
+   See elsewhere for the meaning of xttotalrole values.
+*/
+double XTreeWidgetItem::totalForItem(const int pcol, const int pset) const
+{
+  double total = 0.0;
+  QVariantMap role = data(pcol, Qt::UserRole).toMap();
+
+  if (pset == role.value("totalset").toInt())
+    total += role.value("raw").toDouble();
+  for (int i = 0; i < childCount(); i++)
+    total += child(i)->totalForItem(pcol, pset);
+  return total;
 }

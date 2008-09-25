@@ -70,14 +70,10 @@
 #include "salesOrderItem.h"
 #include "printPackingList.h"
 
-#define	AMOUNT_COL	8
-
 dspBacklogByParameterList::dspBacklogByParameterList(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
-
-//  (void)statusBar();
 
   connect(_showPrices, SIGNAL(toggled(bool)), this, SLOT(sHandlePrices(bool)));
   connect(_soitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
@@ -88,22 +84,22 @@ dspBacklogByParameterList::dspBacklogByParameterList(QWidget* parent, const char
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 
   _soitem->setSelectionMode(QAbstractItemView::ExtendedSelection);
-  _soitem->setRootIsDecorated(TRUE);
-  _soitem->addColumn(tr("S/O #/Line #"),         _itemColumn,     Qt::AlignLeft   );
-  _soitem->addColumn(tr("Customer/Item Number"), -1,              Qt::AlignLeft   );
-  _soitem->addColumn(tr("Order"),                _dateColumn,     Qt::AlignCenter );
-  _soitem->addColumn(tr("Ship/Sched."),          _dateColumn,     Qt::AlignCenter );
-  _soitem->addColumn(tr("UOM"),                  _uomColumn,      Qt::AlignCenter );
-  _soitem->addColumn(tr("Ordered"),              _qtyColumn,      Qt::AlignRight  );
-  _soitem->addColumn(tr("Shipped"),              _qtyColumn,      Qt::AlignRight  );
-  _soitem->addColumn(tr("Balance"),              _qtyColumn,      Qt::AlignRight  );
+
+  _soitem->addColumn(tr("S/O #/Line #"),_itemColumn, Qt::AlignLeft,  true, "coitem_linenumber");
+  _soitem->addColumn(tr("Customer/Item Number"), -1, Qt::AlignLeft,  true, "item_number");
+  _soitem->addColumn(tr("Order"),       _dateColumn, Qt::AlignCenter,true, "cohead_orderdate");
+  _soitem->addColumn(tr("Ship/Sched."), _dateColumn, Qt::AlignCenter,true, "coitem_scheddate");
+  _soitem->addColumn(tr("UOM"),          _uomColumn, Qt::AlignCenter,true, "uom_name");
+  _soitem->addColumn(tr("Ordered"),      _qtyColumn, Qt::AlignRight, true, "coitem_qtyord");
+  _soitem->addColumn(tr("Shipped"),      _qtyColumn, Qt::AlignRight, true, "coitem_qtyshipped");
+  _soitem->addColumn(tr("Balance"),      _qtyColumn, Qt::AlignRight, true, "qtybalance");
   if (_privileges->check("ViewCustomerPrices") || _privileges->check("MaintainCustomerPrices"))
-    _soitem->addColumn(tr("Ext. Price"),         _bigMoneyColumn, Qt::AlignRight  );
+    _soitem->addColumn(tr("Ext. Price"), _bigMoneyColumn, Qt::AlignRight, true, "baseextpricebalance");
 
   _showPrices->setEnabled(_privileges->check("ViewCustomerPrices") || _privileges->check("MaintainCustomerPrices"));
 
   if (! _showPrices->isChecked())
-    _soitem->hideColumn(AMOUNT_COL);
+    _soitem->hideColumn("baseextpricebalance");
 }
 
 dspBacklogByParameterList::~dspBacklogByParameterList()
@@ -205,14 +201,22 @@ enum SetResponse dspBacklogByParameterList::set(const ParameterList &pParams)
 void dspBacklogByParameterList::sHandlePrices(bool pShowPrices)
 {
   if (pShowPrices)
-    _soitem->showColumn(AMOUNT_COL);
+    _soitem->showColumn("baseextpricebalance");
   else
-    _soitem->hideColumn(AMOUNT_COL);
+    _soitem->hideColumn("baseextpricebalance");
 }
 
-void dspBacklogByParameterList::sPrint()
+bool dspBacklogByParameterList::setParams(ParameterList &params)
 {
-  ParameterList params;
+  if (! _dates->allValid())
+  {
+    _dates->setFocus();
+    return false;
+  }
+
+  params.append("openOnly");
+  params.append("orderByScheddate");
+
   _warehouse->appendValue(params);
   _parameter->appendValue(params);
   _dates->appendValue(params);
@@ -240,6 +244,15 @@ void dspBacklogByParameterList::sPrint()
         break;
     }
   }
+
+  return true;
+}
+
+void dspBacklogByParameterList::sPrint()
+{
+  ParameterList params;
+  if (! setParams(params))
+    return;
 
   orReport report("BacklogByParameterList", params);
   if (report.isValid())
@@ -356,86 +369,16 @@ void dspBacklogByParameterList::sPopulateMenu(QMenu *pMenu)
 
 void dspBacklogByParameterList::sFillList()
 {
-  _soitem->clear();
+  ParameterList params;
+  if (! setParams(params))
+    return;
 
-  if (_dates->allValid())
+  MetaSQLQuery mql = mqlLoad(":/so/displays/SalesOrderItems.mql");
+  q = mql.toQuery(params);
+  _soitem->populate(q, true);
+  if (q.lastError().type() != QSqlError::None)
   {
-    ParameterList params;
-    if (_warehouse->isSelected())
-      params.append("warehous_id", _warehouse->id());
-
-    params.append("startDate", _dates->startDate());
-    params.append("endDate",   _dates->endDate());
-
-    if (_parameter->type() == ParameterGroup::CustomerType)
-    {
-      if (_parameter->isSelected())
-        params.append("custtype_id", _parameter->id());
-      else if (_parameter->isPattern())
-        params.append("custtype_pattern", _parameter->pattern());
-    }
-    else if (_parameter->type() == ParameterGroup::CustomerGroup)
-    {
-      if (_parameter->isAll())
-        params.append("by_custgrp");
-      else if (_parameter->isSelected())
-        params.append("custgrp_id", _parameter->id());
-      else if (_parameter->isPattern())
-        params.append("custgrp_pattern", _parameter->pattern());
-    }
-    else if (_parameter->type() == ParameterGroup::ProductCategory)
-    {
-      if (_parameter->isSelected())
-        params.append("prodcat_id", _parameter->id());
-      else if (_parameter->isPattern())
-        params.append("prodcat_pattern", _parameter->pattern());
-    }
-
-    params.append("openOnly");
-    params.append("orderByScheddate");
-
-    MetaSQLQuery mql = mqlLoad(":/so/displays/SalesOrderItems.mql");
-    q = mql.toQuery(params);
-
-    if (q.first())
-    {
-      XTreeWidgetItem *head = NULL;
-      int soheadid        = -1;
-      double totalBacklog = 0.0;
-
-      do
-      {
-        if (soheadid != q.value("cohead_id").toInt())
-        {
-          soheadid = q.value("cohead_id").toInt();
-          head = new XTreeWidgetItem( _soitem, head, soheadid, -1,
-                                    q.value("cohead_number"), q.value("cust_name"),
-                                    formatDate(q.value("cohead_orderdate").toDate()),
-                                    formatDate(q.value("min_scheddate").toDate()) );
-        }
-
-        new XTreeWidgetItem( head, soheadid, q.value("coitem_id").toInt(),
-                           q.value("coitem_linenumber"), q.value("item_number"),
-                           "", formatDate(q.value("coitem_scheddate").toDate()),
-                           q.value("uom_name"), formatQty(q.value("coitem_qtyord").toDouble()),
-                           formatQty(q.value("coitem_qtyshipped").toDouble()),
-                           formatQty(q.value("qtybalance").toDouble()),
-                           formatMoney(q.value("baseextpricebalance").toDouble()) );
-
-        totalBacklog += q.value("baseextpricebalance").toDouble();
-      }
-      while (q.next());
-
-      if (_showPrices->isChecked())
-      {
-        XTreeWidgetItem *totals = new XTreeWidgetItem(_soitem, head, -1, -1, "", tr("Total Backlog") );
-        totals->setText(AMOUNT_COL, formatMoney(totalBacklog));
-      }
-    }
-    else if (q.lastError().type() != QSqlError::None)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
 }

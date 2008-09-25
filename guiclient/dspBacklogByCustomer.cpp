@@ -70,8 +70,6 @@
 #include "salesOrderItem.h"
 #include "printPackingList.h"
 
-#define	AMOUNT_COL	8
-
 dspBacklogByCustomer::dspBacklogByCustomer(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
@@ -88,22 +86,22 @@ dspBacklogByCustomer::dspBacklogByCustomer(QWidget* parent, const char* name, Qt
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 
   _soitem->setSelectionMode(QAbstractItemView::ExtendedSelection);
-  _soitem->setRootIsDecorated(TRUE);
-  _soitem->addColumn(tr("S/O #/Line #"),              _itemColumn,     Qt::AlignLeft   );
-  _soitem->addColumn(tr("Cust. P/O #/Item Number"),   -1,              Qt::AlignLeft   );
-  _soitem->addColumn(tr("Order"),                     _dateColumn,     Qt::AlignCenter );
-  _soitem->addColumn(tr("Ship/Sched."),               _dateColumn,     Qt::AlignCenter );
-  _soitem->addColumn(tr("Qty. UOM"),                  _qtyColumn,      Qt::AlignRight  );
-  _soitem->addColumn(tr("Ordered"),                   _qtyColumn,      Qt::AlignRight  );
-  _soitem->addColumn(tr("Shipped"),                   _qtyColumn,      Qt::AlignRight  );
-  _soitem->addColumn(tr("Balance"),                   _qtyColumn,      Qt::AlignRight  );
+
+  _soitem->addColumn(tr("S/O #/Line #"), _itemColumn, Qt::AlignLeft,  true, "coitem_linenumber");
+  _soitem->addColumn(tr("Customer/Item Number"),  -1, Qt::AlignLeft,  true, "item_number");
+  _soitem->addColumn(tr("Order"),        _dateColumn, Qt::AlignCenter,true, "cohead_orderdate");
+  _soitem->addColumn(tr("Ship/Sched."),  _dateColumn, Qt::AlignCenter,true, "coitem_scheddate");
+  _soitem->addColumn(tr("UOM"),           _uomColumn, Qt::AlignCenter,true, "uom_name");
+  _soitem->addColumn(tr("Ordered"),       _qtyColumn, Qt::AlignRight, true, "coitem_qtyord");
+  _soitem->addColumn(tr("Shipped"),       _qtyColumn, Qt::AlignRight, true, "coitem_qtyshipped");
+  _soitem->addColumn(tr("Balance"),       _qtyColumn, Qt::AlignRight, true, "qtybalance");
   if (_privileges->check("ViewCustomerPrices") || _privileges->check("MaintainCustomerPrices"))
-    _soitem->addColumn(tr("Ext. Price"),              _bigMoneyColumn, Qt::AlignRight  );
+    _soitem->addColumn(tr("Ext. Price"), _bigMoneyColumn, Qt::AlignRight, true, "baseextpricebalance");
 
   _showPrices->setEnabled(_privileges->check("ViewCustomerPrices") || _privileges->check("MaintainCustomerPrices"));
 
   if (! _showPrices->isChecked())
-    _soitem->hideColumn(AMOUNT_COL);
+    _soitem->hideColumn("baseextpricebalance");
 
   _cust->setFocus();
 }
@@ -121,32 +119,41 @@ void dspBacklogByCustomer::languageChange()
 void dspBacklogByCustomer::sHandlePrices(bool pShowPrices)
 {
   if (pShowPrices)
-    _soitem->showColumn(AMOUNT_COL);
+    _soitem->showColumn("baseextpricebalance");
   else
-    _soitem->hideColumn(AMOUNT_COL);
+    _soitem->hideColumn("baseextpricebalance");
 
   sFillList();
 }
 
-void dspBacklogByCustomer::sPrint()
+bool dspBacklogByCustomer::setParams(ParameterList &params)
 {
   if (!_cust->isValid())
   {
-    QMessageBox::warning( this, tr("Enter a Valid Customer Number"),
-                          tr("You must enter a valid Customer Number for this report.") );
+    QMessageBox::warning(this, tr("Enter a Valid Customer Number"),
+                         tr("<p>You must enter a valid Customer Number for "
+                            "this report.") );
     _cust->setFocus();
-    return;
+    return false;
   }
 
-  ParameterList params;
-  _warehouse->appendValue(params);
   _dates->appendValue(params);
+  _warehouse->appendValue(params);
   params.append("cust_id", _cust->id());
   params.append("openOnly");
   params.append("orderByScheddate");
 
   if (_showPrices->isChecked())
     params.append("showPrices");
+
+  return true;
+}
+
+void dspBacklogByCustomer::sPrint()
+{
+  ParameterList params;
+  if (! setParams(params))
+    return;
 
   orReport report("BacklogByCustomer", params);
   if (report.isValid())
@@ -282,55 +289,14 @@ void dspBacklogByCustomer::sPopulateMenu(QMenu *pMenu)
 
 void dspBacklogByCustomer::sFillList()
 {
-  _soitem->clear();
-
   MetaSQLQuery mql = mqlLoad(":/so/displays/SalesOrderItems.mql");
   ParameterList params;
-  _dates->appendValue(params);
-  _warehouse->appendValue(params);
-  params.append("cust_id", _cust->id());
-  params.append("openOnly");
-  params.append("orderByScheddate");
+  if (! setParams(params))
+    return;
+
   q = mql.toQuery(params);
-
-  if (q.first())
-  {
-    XTreeWidgetItem *head = NULL;
-    int soheadid        = -1;
-    double totalBacklog = 0.0;
-
-    do
-    {
-      if (soheadid != q.value("cohead_id").toInt())
-      {
-        soheadid = q.value("cohead_id").toInt();
-
-        head = new XTreeWidgetItem( _soitem, head, soheadid, -1,
-                                  q.value("cohead_number"), q.value("cohead_custponumber"),
-                                  formatDate(q.value("cohead_orderdate").toDate()),
-                                  formatDate(q.value("min_scheddate").toDate()) );
-      }
-
-      new XTreeWidgetItem( head, soheadid, q.value("coitem_id").toInt(),
-                         q.value("coitem_linenumber"), q.value("item_number"),
-                         formatDate(q.value("cohead_orderdate").toDate()),
-                         formatDate(q.value("coitem_scheddate").toDate()),
-                         q.value("uom_name"), formatQty(q.value("coitem_qtyord").toDouble()),
-                         formatQty(q.value("coitem_qtyshipped").toDouble()),
-                         formatQty(q.value("qtybalance").toDouble()),
-                         formatMoney(q.value("baseextpricebalance").toDouble()) );
-      totalBacklog += q.value("baseextpricebalance").toDouble();
-    }
-    while (q.next());
-
-
-    if (_showPrices->isChecked())
-    {
-      XTreeWidgetItem *totals = new XTreeWidgetItem(_soitem, head, -1, -1, tr("Total Backlog"));
-      totals->setText(AMOUNT_COL, formatMoney(totalBacklog));
-    }
-  }
-  else if (q.lastError().type() != QSqlError::None)
+  _soitem->populate(q, true);
+  if (q.lastError().type() != QSqlError::None)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

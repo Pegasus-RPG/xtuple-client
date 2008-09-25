@@ -72,6 +72,8 @@ public:
     dspBacklogByParameterList(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspBacklogByParameterList();
 
+    virtual bool setParams(ParameterList &);
+
 public slots:
     virtual SetResponse set(const ParameterList & pParams );
     virtual void sHandlePrices( bool pShowPrices );

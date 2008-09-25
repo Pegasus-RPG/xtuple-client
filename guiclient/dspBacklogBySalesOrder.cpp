@@ -58,7 +58,6 @@
 #include "dspBacklogBySalesOrder.h"
 
 #include <QMenu>
-//#include <QStatusBar>
 #include <QSqlError>
 #include <QVariant>
 
@@ -71,23 +70,14 @@
 #include "salesOrderList.h"
 #include "dspRunningAvailability.h"
 
-/*
- *  Constructs a dspBacklogBySalesOrder as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspBacklogBySalesOrder::dspBacklogBySalesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_salesOrder, SIGNAL(newId(int)), this, SLOT(sFillList()));
   connect(_salesOrderList, SIGNAL(clicked()), this, SLOT(sSalesOrderList()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_soitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_salesOrder, SIGNAL(requestList()), this, SLOT(sSalesOrderList()));
 
@@ -108,18 +98,11 @@ dspBacklogBySalesOrder::dspBacklogBySalesOrder(QWidget* parent, const char* name
   _soitem->addColumn(tr("Available"),   _qtyColumn,  Qt::AlignRight, true, "qtyavailable");
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspBacklogBySalesOrder::~dspBacklogBySalesOrder()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspBacklogBySalesOrder::languageChange()
 {
   retranslateUi(this);

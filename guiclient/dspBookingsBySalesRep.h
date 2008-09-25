@@ -72,7 +72,7 @@ public:
     dspBookingsBySalesRep(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspBookingsBySalesRep();
 
-    virtual bool checkParameters();
+    virtual bool setParams(ParameterList &params);
 
 public slots:
     virtual void sPrint();

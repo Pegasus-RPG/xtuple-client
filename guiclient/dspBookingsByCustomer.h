@@ -72,7 +72,7 @@ public:
     dspBookingsByCustomer(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspBookingsByCustomer();
 
-    virtual bool checkParameters();
+    virtual bool setParams(ParameterList &);
 
 public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
@@ -82,7 +82,6 @@ protected slots:
 
     virtual void sPrint();
     virtual void sFillList();
-
 
 };
 
