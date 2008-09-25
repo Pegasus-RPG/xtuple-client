@@ -82,11 +82,11 @@ itemSourceSearch::itemSourceSearch(QWidget* parent, const char* name, bool modal
   connect(_searchVendDescrip, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_search, SIGNAL(textChanged(QString)), this, SLOT(sFillList()));
 
-  _itemsrc->addColumn(tr("Item Number"),    _itemColumn, Qt::AlignLeft );
-  _itemsrc->addColumn(tr("Description"),    -1,          Qt::AlignLeft );
-  _itemsrc->addColumn(tr("Vendor"),         _itemColumn, Qt::AlignLeft );
-  _itemsrc->addColumn(tr("Vendor Item"),    _itemColumn, Qt::AlignLeft );
-  _itemsrc->addColumn(tr("Vendor Descrip"), _itemColumn, Qt::AlignLeft );
+  _itemsrc->addColumn(tr("Item Number"),    _itemColumn, Qt::AlignLeft, true, "item_number" );
+  _itemsrc->addColumn(tr("Description"),    -1,          Qt::AlignLeft, true, "item_descrip" );
+  _itemsrc->addColumn(tr("Vendor"),         _itemColumn, Qt::AlignLeft, true, "vend_name" );
+  _itemsrc->addColumn(tr("Vendor Item"),    _itemColumn, Qt::AlignLeft, true, "itemsrc_vend_item_number" );
+  _itemsrc->addColumn(tr("Vendor Descrip"), _itemColumn, Qt::AlignLeft, true, "itemsrc_vend_item_descrip" );
 }
 
 /*

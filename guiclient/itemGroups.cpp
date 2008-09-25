@@ -107,8 +107,8 @@ void itemGroups::init()
 {
 //  statusBar()->hide();
   
-  _itemgrp->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft );
-  _itemgrp->addColumn(tr("Description"), -1,          Qt::AlignLeft );
+  _itemgrp->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft, true, "itemgrp_name" );
+  _itemgrp->addColumn(tr("Description"), -1,          Qt::AlignLeft, true, "itemgrp_descrip" );
   
   if (_privileges->check("MaintainItemGroups"))
   {

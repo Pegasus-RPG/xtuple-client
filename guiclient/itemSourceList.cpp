@@ -100,8 +100,8 @@ void itemSourceList::languageChange()
 
 void itemSourceList::init()
 {
-  _itemsrc->addColumn(tr("Ranking"), _orderColumn, Qt::AlignRight );
-  _itemsrc->addColumn(tr("Vendor"),  -1,           Qt::AlignLeft  );
+  _itemsrc->addColumn(tr("Ranking"), _orderColumn, Qt::AlignRight, true, "itemsrc_ranking" );
+  _itemsrc->addColumn(tr("Vendor"),  -1,           Qt::AlignLeft,  true, "vend_name");
 }
 
 enum SetResponse itemSourceList::set(ParameterList &pParams)

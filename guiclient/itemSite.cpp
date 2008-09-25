@@ -95,9 +95,9 @@ itemSite::itemSite(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _orderMultiple->setValidator(omfgThis->qtyVal());
   _safetyStock->setValidator(omfgThis->qtyVal());
     
-  _restricted->addColumn(tr("Location"), _itemColumn, Qt::AlignLeft );
-  _restricted->addColumn(tr("Description"), -1, Qt::AlignLeft );
-  _restricted->addColumn(tr("Allowed"), _ynColumn, Qt::AlignCenter );
+  _restricted->addColumn(tr("Location"), _itemColumn, Qt::AlignLeft, true, "location_name" );
+  _restricted->addColumn(tr("Description"), -1, Qt::AlignLeft, true, "location_descrip" );
+  _restricted->addColumn(tr("Allowed"), _dateColumn, Qt::AlignCenter, true, "allowed" );
 
   //If not multi-warehouse hide whs control
   if (!_metrics->boolean("MultiWhs"))
@@ -141,7 +141,7 @@ itemSite::itemSite(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _costAvg->setVisible(_metrics->boolean("AllowAvgCostMethod"));
   _costStd->setVisible(_metrics->boolean("AllowStdCostMethod"));
 
-  //These things will be implemented at the site level later
+  //TO DO: These things will be implemented at the site level later
   _planningType->hide();
   _planningTypeLit->hide();
 }
@@ -1164,8 +1164,8 @@ void itemSite::sFillRestricted()
 {
   int locationid = _restricted->id();
   q.prepare("SELECT location_id, COALESCE(locitem_id, -1),"
-            "       location_name, firstLine(location_descrip),"
-            "       formatBoolYN(locitem_id IS NOT NULL)"
+            "       location_name, firstLine(location_descrip) AS location_descrip,"
+            "       (locitem_id IS NOT NULL) AS allowed"
             "  FROM location LEFT OUTER JOIN locitem"
             "         ON (locitem_location_id=location_id AND locitem_item_id=:item_id)"
             " WHERE ((location_restrict)"

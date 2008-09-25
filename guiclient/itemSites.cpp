@@ -81,11 +81,11 @@ itemSites::itemSites(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_copy, SIGNAL(clicked()), this, SLOT(sCopy()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
 
-  _itemSite->addColumn(tr("Item Number"),   _itemColumn, Qt::AlignLeft   );
-  _itemSite->addColumn(tr("Active"),        _dateColumn, Qt::AlignCenter );
-  _itemSite->addColumn(tr("Description"),   -1,          Qt::AlignLeft   );
-  _itemSite->addColumn(tr("Site"),          _whsColumn,  Qt::AlignCenter );
-  _itemSite->addColumn(tr("Cntrl. Method"), _itemColumn, Qt::AlignCenter );
+  _itemSite->addColumn(tr("Item Number"),   _itemColumn, Qt::AlignLeft,  true, "item_number"   );
+  _itemSite->addColumn(tr("Active"),        _dateColumn, Qt::AlignCenter,true, "itemsite_active" );
+  _itemSite->addColumn(tr("Description"),   -1,          Qt::AlignLeft,  true, "item_descrip"   );
+  _itemSite->addColumn(tr("Site"),          _whsColumn,  Qt::AlignCenter,true, "warehous_code" );
+  _itemSite->addColumn(tr("Cntrl. Method"), _itemColumn, Qt::AlignCenter,true, "itemsite_controlmethod" );
   _itemSite->setDragString("itemsiteid=");
 
   _searchFor->setAcceptDrops(FALSE);
@@ -238,13 +238,13 @@ void itemSites::sPopulateMenu(QMenu *pMenu)
 
 void itemSites::sFillList()
 {
-  QString sql( "SELECT itemsite_id, item_number, formatBoolYN(itemsite_active),"
-               "       (item_descrip1 || ' ' || item_descrip2), warehous_code,"
+  QString sql( "SELECT itemsite_id, item_number, itemsite_active,"
+               "       (item_descrip1 || ' ' || item_descrip2) AS item_descrip, warehous_code,"
                "       CASE WHEN itemsite_controlmethod='R' THEN :regular"
                "            WHEN itemsite_controlmethod='N' THEN :none"
                "            WHEN itemsite_controlmethod='L' THEN :lotNumber"
                "            WHEN itemsite_controlmethod='S' THEN :serialNumber"
-               "       END "
+               "       END AS itemsite_controlmethod "
                "FROM itemsite, item, warehous "
                "WHERE ( (itemsite_item_id=item_id)"
                " AND (itemsite_warehous_id=warehous_id)" );

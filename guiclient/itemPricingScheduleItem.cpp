@@ -100,9 +100,9 @@ itemPricingScheduleItem::itemPricingScheduleItem(QWidget* parent, const char* na
   _ipsprodcatid = -1;
   _invuomid = -1;
   
-  _charprice->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft );
-  _charprice->addColumn(tr("Value"),          -1,          Qt::AlignLeft );
-  _charprice->addColumn(tr("Price"),          _priceColumn,Qt::AlignRight );
+  _charprice->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft, true,  "char_name" );
+  _charprice->addColumn(tr("Value"),          -1,          Qt::AlignLeft, true,  "ipsitemchar_value" );
+  _charprice->addColumn(tr("Price"),          _priceColumn,Qt::AlignRight, true, "ipsitemchar_price" );
 
   _qtyBreak->setValidator(omfgThis->qtyVal());
   _qtyBreakCat->setValidator(omfgThis->qtyVal());
@@ -637,7 +637,8 @@ void itemPricingScheduleItem::sDelete()
 
 void itemPricingScheduleItem::sFillList()
 {
-  q.prepare("SELECT ipsitemchar_id, char_name, ipsitemchar_value, ipsitemchar_price "
+  q.prepare("SELECT ipsitemchar_id, char_name, ipsitemchar_value, ipsitemchar_price, "
+            "  'salesprice' AS ipsitemchar_price_xtnumericrole "
             "FROM ipsitemchar, char "
             "WHERE ((ipsitemchar_char_id=char_id) "
             "AND (ipsitemchar_ipsitem_id=:ipsitem_id)); ");

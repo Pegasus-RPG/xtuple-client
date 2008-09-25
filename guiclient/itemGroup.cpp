@@ -110,8 +110,8 @@ void itemGroup::init()
 //  statusBar()->hide();
   setAcceptDrops(TRUE);
 
-  _itemgrpitem->addColumn(tr("Name"),        _itemColumn,  Qt::AlignLeft );
-  _itemgrpitem->addColumn(tr("Description"), -1,           Qt::AlignLeft );
+  _itemgrpitem->addColumn(tr("Name"),        _itemColumn,  Qt::AlignLeft, true, "item_number" );
+  _itemgrpitem->addColumn(tr("Description"), -1,           Qt::AlignLeft, true, "item_descrip" );
 }
 
 enum SetResponse itemGroup::set(ParameterList &pParams)
@@ -279,7 +279,7 @@ void itemGroup::sNew()
 
 void itemGroup::sFillList()
 {
-  q.prepare( "SELECT itemgrpitem_id, item_number, (item_descrip1 || ' ' || item_descrip2) "
+  q.prepare( "SELECT itemgrpitem_id, item_number, (item_descrip1 || ' ' || item_descrip2) AS item_descrip "
              "FROM itemgrpitem, item "
              "WHERE ( (itemgrpitem_item_id=item_id) "
              " AND (itemgrpitem_itemgrp_id=:itemgrp_id) ) "

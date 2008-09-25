@@ -80,8 +80,8 @@ itemImage::itemImage(QWidget* parent, const char* name, bool modal, Qt::WFlags f
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
 
-  _image->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft );
-  _image->addColumn(tr("Description"), -1,          Qt::AlignLeft );
+  _image->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft, true, "image_name" );
+  _image->addColumn(tr("Description"), -1,          Qt::AlignLeft, true, "image_descrip" );
 
   sFillList();
 }
@@ -229,7 +229,7 @@ void itemImage::sView()
 
 void itemImage::sFillList()
 {
-  _image->populate( "SELECT image_id, image_name, firstLine(image_descrip) "
+  _image->populate( "SELECT image_id, image_name, firstLine(image_descrip) AS image_descrip "
                     "FROM image "
                     "ORDER BY image_name;" );
 }
