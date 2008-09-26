@@ -88,8 +88,8 @@ plannerCodes::plannerCodes(QWidget* parent, const char* name, Qt::WFlags fl)
 //  statusBar()->hide();
   
   
-  _plancode->addColumn(tr("Code"),        _itemColumn, Qt::AlignLeft );
-  _plancode->addColumn(tr("Description"), -1,          Qt::AlignLeft );
+  _plancode->addColumn(tr("Code"),        _itemColumn, Qt::AlignLeft, true, "plancode_code" );
+  _plancode->addColumn(tr("Description"), -1,          Qt::AlignLeft, true, "plancode_name" );
 
   if (_privileges->check("MaintainPlannerCodes"))
   {

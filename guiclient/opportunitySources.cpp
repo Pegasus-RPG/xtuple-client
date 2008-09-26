@@ -89,8 +89,8 @@ opportunitySources::opportunitySources(QWidget* parent, const char* name, Qt::WF
   _print->hide();
   
   
-  _oplist->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft );
-  _oplist->addColumn(tr("Description"), -1,          Qt::AlignLeft );
+  _oplist->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft, true, "opsource_name" );
+  _oplist->addColumn(tr("Description"), -1,          Qt::AlignLeft, true, "opsource_descrip" );
 
   if (_privileges->check("MaintainOpportunitySources"))
   {

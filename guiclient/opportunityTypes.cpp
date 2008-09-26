@@ -89,8 +89,8 @@ opportunityTypes::opportunityTypes(QWidget* parent, const char* name, Qt::WFlags
   _print->hide();
   
   
-  _oplist->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft );
-  _oplist->addColumn(tr("Description"), -1,          Qt::AlignLeft );
+  _oplist->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft, true, "optype_name" );
+  _oplist->addColumn(tr("Description"), -1,          Qt::AlignLeft, true, "optype_descrip" );
 
   if (_privileges->check("MaintainOpportunityTypes"))
   {

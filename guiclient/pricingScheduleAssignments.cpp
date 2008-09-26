@@ -87,11 +87,11 @@ pricingScheduleAssignments::pricingScheduleAssignments(QWidget* parent, const ch
 
 //  statusBar()->hide();
   
-  _ipsass->addColumn(tr("Ship-To"),          _itemColumn, Qt::AlignCenter );
-  _ipsass->addColumn(tr("Customer #"),       _itemColumn, Qt::AlignCenter );
-  _ipsass->addColumn(tr("Cust. Name"),       150,         Qt::AlignCenter );
-  _ipsass->addColumn(tr("Cust. Type"),       _itemColumn, Qt::AlignCenter );
-  _ipsass->addColumn(tr("Pricing Schedule"), -1, Qt::AlignCenter );
+  _ipsass->addColumn(tr("Ship-To"),          _itemColumn, Qt::AlignCenter, true, "shiptonum" );
+  _ipsass->addColumn(tr("Customer #"),       _itemColumn, Qt::AlignCenter, true, "custnumber" );
+  _ipsass->addColumn(tr("Cust. Name"),       150,         Qt::AlignCenter, true, "custname" );
+  _ipsass->addColumn(tr("Cust. Type"),       _itemColumn, Qt::AlignCenter, true, "custtype" );
+  _ipsass->addColumn(tr("Pricing Schedule"), -1,          Qt::AlignCenter, true, "ipshead_name" );
 
   if (_privileges->check("AssignPricingSchedules"))
   {

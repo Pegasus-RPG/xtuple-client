@@ -80,12 +80,12 @@ priceList::priceList(QWidget* parent, const char* name, bool modal, Qt::WFlags f
   connect(_price, SIGNAL(itemSelected(int)), _select, SLOT(animateClick()));
   connect(_price, SIGNAL(valid(bool)), _select, SLOT(setEnabled(bool)));
 
-  _price->addColumn(tr("Schedule"),    _itemColumn,  Qt::AlignLeft  );
-  _price->addColumn(tr("Source"),      _itemColumn,  Qt::AlignLeft  );
-  _price->addColumn(tr("Qty. Break"),  _qtyColumn,   Qt::AlignRight );
-  _price->addColumn(tr("Price"),       _priceColumn, Qt::AlignRight );
-  _price->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft );
-  _price->addColumn(tr("Price (in curr)"), _priceColumn, Qt::AlignRight );
+  _price->addColumn(tr("Schedule"),        _itemColumn,  Qt::AlignLeft,     true, "schedulename"  );
+  _price->addColumn(tr("Source"),          _itemColumn,  Qt::AlignLeft,     true, "type"  );
+  _price->addColumn(tr("Qty. Break"),      _qtyColumn,   Qt::AlignRight,    true, "qty_break" );
+  _price->addColumn(tr("Price"),           _priceColumn, Qt::AlignRight ,   true, "base_price");
+  _price->addColumn(tr("Currency"),        _currencyColumn, Qt::AlignLeft , true, "currency");
+  _price->addColumn(tr("Price (in curr)"), _priceColumn, Qt::AlignRight ,   true, "price");
   // column title reset in priceList::set
 
   if (omfgThis->singleCurrency())
@@ -239,9 +239,11 @@ void priceList::sFillList()
   q.prepare( "SELECT source, sourceid, schedulename, type,"
              "       CASE WHEN (qtybreak = -1) THEN :na"
              "            ELSE formatQty(qtybreak)"
-             "       END,"
-             "       formatSalesPrice(price), currConcat(curr_id),"
-	     "	     formatSalesPrice(currToCurr(curr_id, :curr_id, price, :effective)) "
+             "       END AS qty_break,"
+             "       price, currConcat(curr_id) AS currency,"
+	     "	     currToCurr(curr_id, :curr_id, price, :effective) AS base_price, "
+             "       'salesprice' AS price_xtnumericrole, "
+             "       'salesprice' AS base_price_xtnumericrole "
              "FROM ( SELECT 1 + CASE WHEN(ipsprice_source='P') THEN 10 ELSE 0 END AS source, ipsprice_id AS sourceid,"
              "              ipshead_name AS schedulename, :customer AS type,"
              "              ipsprice_qtybreak AS qtybreak, ipsprice_price AS price,"

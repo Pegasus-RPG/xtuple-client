@@ -89,8 +89,8 @@ opportunityStages::opportunityStages(QWidget* parent, const char* name, Qt::WFla
   _print->hide();
   
   
-  _oplist->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft );
-  _oplist->addColumn(tr("Description"), -1,          Qt::AlignLeft );
+  _oplist->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft, true, "opstage_name" );
+  _oplist->addColumn(tr("Description"), -1,          Qt::AlignLeft, true, "opstage_descrip" );
 
   if (_privileges->check("MaintainOpportunityStages"))
   {

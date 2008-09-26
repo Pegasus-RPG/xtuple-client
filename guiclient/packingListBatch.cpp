@@ -97,13 +97,13 @@ packingListBatch::packingListBatch(QWidget* parent, const char* name, Qt::WFlags
 
   setAcceptDrops(TRUE);
 
-  _pack->addColumn(tr("Order #"),       80,           Qt::AlignCenter );
-  _pack->addColumn(tr("Type"),		40,           Qt::AlignCenter );
-  _pack->addColumn(tr("Shipment #"),    80,           Qt::AlignCenter );
-  _pack->addColumn(tr("Customer #"),    _itemColumn,  Qt::AlignLeft   );
-  _pack->addColumn(tr("Customer Name"), -1,           Qt::AlignLeft   );
-  _pack->addColumn(tr("Hold Type"),     _dateColumn,  Qt::AlignCenter );
-  _pack->addColumn(tr("Prt'd"),         _ynColumn,    Qt::AlignCenter );
+  _pack->addColumn(tr("Order #"),       80,           Qt::AlignCenter, true, "order_number" );
+  _pack->addColumn(tr("Type"),		40,           Qt::AlignCenter, true, "pack_head_type" );
+  _pack->addColumn(tr("Shipment #"),    80,           Qt::AlignCenter, true, "shipment_number" );
+  _pack->addColumn(tr("Customer #"),    _itemColumn,  Qt::AlignLeft,   true, "number"   );
+  _pack->addColumn(tr("Customer Name"), -1,           Qt::AlignLeft,   true, "name"   );
+  _pack->addColumn(tr("Hold Type"),     _dateColumn,  Qt::AlignCenter, true, "f_holdtype" );
+  _pack->addColumn(tr("Printed"),       _dateColumn,    Qt::AlignCenter, true, "pack_printed" );
 
   if (_privileges->check("MaintainPackingListBatch"))
   {
