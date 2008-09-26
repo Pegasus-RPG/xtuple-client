@@ -87,11 +87,11 @@ transferOrders::transferOrders(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_view,	  SIGNAL(clicked()), this, SLOT(sView()));
   connect(omfgThis, SIGNAL(transferOrdersUpdated(int)), this, SLOT(sFillList()));
 
-  _to->addColumn(tr("Order #"),           -1,          Qt::AlignLeft   );
-  _to->addColumn(tr("Source Site"),	 _whsColumn*2, Qt::AlignLeft   );
-  _to->addColumn(tr("Dest. Site"),	 _whsColumn*2, Qt::AlignLeft   );
-  _to->addColumn(tr("Ordered"),          _dateColumn,  Qt::AlignCenter );
-  _to->addColumn(tr("Scheduled"),        _dateColumn,  Qt::AlignCenter );
+  _to->addColumn(tr("Order #"),                -1,  Qt::AlignLeft,   true,  "tohead_number"   );
+  _to->addColumn(tr("Source Site"),  _whsColumn*2,  Qt::AlignLeft,   true,  "srcWhs"   );
+  _to->addColumn(tr("Dest. Site"),	 _whsColumn*2,  Qt::AlignLeft,   true,  "destWhs"   );
+  _to->addColumn(tr("Ordered"),       _dateColumn,  Qt::AlignCenter, true,  "tohead_orderdate" );
+  _to->addColumn(tr("Scheduled"),     _dateColumn,  Qt::AlignCenter, true,  "scheduled" );
   
   if (_privileges->check("MaintainTransferOrders"))
   {
@@ -310,13 +310,13 @@ void transferOrders::sPopulateMenu(QMenu *pMenu)
 void transferOrders::sFillList()
 {
   QString sql( "SELECT DISTINCT tohead_id, tohead_number,"
-               "       (SELECT warehous_code FROM whsinfo"
-	       "        WHERE (warehous_id=tohead_src_warehous_id)) AS srcWhs,"
-	       "       (SELECT warehous_code FROM whsinfo"
-	       "        WHERE (warehous_id=tohead_dest_warehous_id)) AS destWhs,"
-               "       formatDate(tohead_orderdate) AS f_ordered,"
-               "       formatDate(MIN(toitem_schedshipdate)) AS f_scheduled "
+               "       src.warehous_code AS srcWhs,"
+               "       dest.warehous_code AS destWhs,"
+               "       tohead_orderdate,"
+               "       MIN(toitem_schedshipdate) AS scheduled "
                "FROM tohead LEFT OUTER JOIN toitem ON (tohead_id=toitem_tohead_id)"
+               "            LEFT OUTER JOIN whsinfo src ON (src.warehous_id=tohead_src_warehous_id) "
+               "            LEFT OUTER JOIN whsinfo dest ON (dest.warehous_id=tohead_dest_warehous_id) "
                "WHERE ("
 	       "<? if exists(\"tohead_status\") ?>"
 	       " (tohead_status = <? value(\"tohead_status\") ?>)"
@@ -331,7 +331,7 @@ void transferOrders::sFillList()
 	       "<? endif ?>"
 	       " ) "
 	       "GROUP BY tohead_id, tohead_number,"
-	       "         tohead_src_warehous_id, tohead_dest_warehous_id,"
+	       "         src.warehous_code, dest.warehous_code,"
 	       "         tohead_orderdate "
 	       "ORDER BY tohead_number;" );
 

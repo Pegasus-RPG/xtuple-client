@@ -83,8 +83,8 @@ taxAuthorities::taxAuthorities(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_taxauth, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
   connect(omfgThis, SIGNAL(taxAuthsUpdated(int)), this, SLOT(sFillList(int)));
 
-  _taxauth->addColumn(tr("Code"), 70, Qt::AlignLeft );
-  _taxauth->addColumn(tr("Name"), -1, Qt::AlignLeft );
+  _taxauth->addColumn(tr("Code"), 70, Qt::AlignLeft,   true,  "taxauth_code" );
+  _taxauth->addColumn(tr("Name"), -1, Qt::AlignLeft,   true,  "taxauth_name" );
 
   if (_privileges->check("MaintainTaxAuthorities"))
   {

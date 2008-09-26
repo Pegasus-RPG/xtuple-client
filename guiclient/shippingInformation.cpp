@@ -88,12 +88,12 @@ shippingInformation::shippingInformation(QWidget* parent, const char* name, bool
 
   _shippingForm->setCurrentItem(-1);
 
-  _item->addColumn(tr("#"),           _seqColumn, Qt::AlignCenter );
-  _item->addColumn(tr("Item"),        -1,         Qt::AlignLeft   );
-  _item->addColumn(tr("At Shipping"), _qtyColumn, Qt::AlignRight  );
-  _item->addColumn(tr("Net Wght."),   _qtyColumn, Qt::AlignRight  );
-  _item->addColumn(tr("Tare Wght."),  _qtyColumn, Qt::AlignRight  );
-  _item->addColumn(tr("Gross Wght."), _qtyColumn, Qt::AlignRight  );
+  _item->addColumn(tr("#"),           _seqColumn, Qt::AlignCenter, true,  "linenumber" );
+  _item->addColumn(tr("Item"),        -1,         Qt::AlignLeft,   true,  "item_number"   );
+  _item->addColumn(tr("At Shipping"), _qtyColumn, Qt::AlignRight,  true,  "qtyatshipping"  );
+  _item->addColumn(tr("Net Wght."),   _qtyColumn, Qt::AlignRight,  true,  "netweight"  );
+  _item->addColumn(tr("Tare Wght."),  _qtyColumn, Qt::AlignRight,  true,  "tareweight"  );
+  _item->addColumn(tr("Gross Wght."), _qtyColumn, Qt::AlignRight,  true,  "grossweight"  );
 
   _totalNetWeight->setPrecision(omfgThis->weightVal());
   _totalTareWeight->setPrecision(omfgThis->weightVal());
@@ -439,55 +439,55 @@ void shippingInformation::sFillList()
     return;
   }
 
+  QString sql( "SELECT itemid, headid,"
+               "       linenumber, item_number,"
+               "       netweight, tareweight, (netweight + tareweight) AS grossweight,"
+               "       qtyatshipping,"
+               "       'weight' AS netweight_xtnumericrole,"
+               "       'weight' AS tareweight_xtnumericrole,"
+               "       'weight' AS grossweight_xtnumericrole,"
+               "       'qty' AS qtyatshipping_xtnumericrole "
+               "FROM ( " );
   if (_salesOrder->isValid())
   {
-    q.prepare( "SELECT coitem_id AS itemid, coitem_cohead_id AS headid,"
-	       "       coitem_linenumber AS linenumber, item_number,"
+    sql +=     "SELECT coitem_id AS itemid, coitem_cohead_id AS headid,"
+               "       coitem_linenumber AS linenumber, item_number,"
                "      (item_prodweight * itemuomtouom(item_id, coitem_price_uom_id, NULL, qtyAtShipping('SO', coitem_id))) AS netweight,"
                "      (item_packweight * itemuomtouom(item_id, coitem_price_uom_id, NULL, qtyAtShipping('SO', coitem_id))) AS tareweight,"
-               "      qtyAtShipping('SO', coitem_id) AS qtyatshipping,"
-               "      formatQty(qtyAtShipping('SO', coitem_id)) AS f_qtyatshipping "
+               "      qtyAtShipping('SO', coitem_id) AS qtyatshipping "
                "FROM coitem, itemsite, item "
                "WHERE ((coitem_itemsite_id=itemsite_id)"
                "  AND  (itemsite_item_id=item_id)"
-               "  AND  (coitem_cohead_id=:cohead_id) ) "
-               "ORDER BY coitem_linenumber;" );
-    q.bindValue(":cohead_id", _salesOrder->id());
+               "  AND  (coitem_cohead_id=:cohead_id) ) ";
   }
   else if (_to->isValid())
   {
-    q.prepare( "SELECT toitem_id AS itemid, toitem_tohead_id AS headid,"
-	       "       toitem_linenumber AS linenumber, item_number,"
+    sql +=     "SELECT toitem_id AS itemid, toitem_tohead_id AS headid,"
+               "       toitem_linenumber AS linenumber, item_number,"
                "      (item_prodweight * qtyAtShipping('TO', toitem_id))) AS netweight,"
                "      (item_packweight * qtyAtShipping('TO', toitem_id))) AS tareweight,"
                "      qtyAtShipping('TO', toitem_id) AS qtyatshipping,"
-               "      formatQty(qtyAtShipping('TO', toitem_id)) AS f_qtyatshipping "
                "FROM toitem, item "
                "WHERE ((toitem_item_id=item_id)"
-               "  AND  (toitem_tohead_id=:tohead_id) ) "
-               "ORDER BY toitem_linenumber;" ) ;
-    q.bindValue(":tohead_id", _to->id());
-  } 
+               "  AND  (toitem_tohead_id=:tohead_id) ) ";
+  }
+  
+  sql += "  ) AS data "
+         "ORDER BY linenumber;";
+         
+  q.prepare(sql);
+  q.bindValue(":cohead_id", _salesOrder->id());
+  q.bindValue(":tohead_id", _to->id());
   q.exec();
+  _item->populate(q, true);
 
   double        totalNetWeight   = 0;
   double        totalTareWeight  = 0;
-
-  XTreeWidgetItem* last = 0;
 
   while (q.next())
   {
     totalNetWeight   += q.value("netweight").toDouble();
     totalTareWeight  += q.value("tareweight").toDouble();
-
-    last = new XTreeWidgetItem( _item, last, q.value("itemid").toInt(),
-		       q.value("headid").toInt(),
-		       q.value("linenumber"), q.value("item_number"),
-		       q.value("f_qtyatshipping"),
-		       formatWeight(q.value("netweight").toDouble()),
-		       formatWeight(q.value("tareweight").toDouble()),
-		       formatWeight((q.value("netweight").toDouble() +
-				     q.value("tareweight").toDouble())) );
   }
   if (q.lastError().type() != QSqlError::None)
   {

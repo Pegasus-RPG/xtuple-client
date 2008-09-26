@@ -113,8 +113,8 @@ void shippingZones::init()
 {
 //  statusBar()->hide();
   
-  _shipzone->addColumn(tr("Name"),        70, Qt::AlignLeft );
-  _shipzone->addColumn(tr("Description"), -1, Qt::AlignLeft );
+  _shipzone->addColumn(tr("Name"),        70, Qt::AlignLeft,   true,  "shipzone_name" );
+  _shipzone->addColumn(tr("Description"), -1, Qt::AlignLeft,   true,  "shipzone_descrip" );
 
   if (_privileges->check("MaintainShippingZones"))
   {

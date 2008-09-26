@@ -111,12 +111,12 @@ void standardJournalGroup::init()
 {
   setAcceptDrops(TRUE);
 
-  _stdjrnlgrpitem->addColumn(tr("Name"),        _itemColumn,  Qt::AlignLeft   );
-  _stdjrnlgrpitem->addColumn(tr("Description"), -1,           Qt::AlignLeft   );
-  _stdjrnlgrpitem->addColumn(tr("To Apply"),    _dateColumn,  Qt::AlignRight  );
-  _stdjrnlgrpitem->addColumn(tr("Applied"),     _dateColumn,  Qt::AlignRight  );
-  _stdjrnlgrpitem->addColumn(tr("Effective"),   _dateColumn,  Qt::AlignCenter );
-  _stdjrnlgrpitem->addColumn(tr("Expires"),     _dateColumn,  Qt::AlignCenter );
+  _stdjrnlgrpitem->addColumn(tr("Name"),        _itemColumn,  Qt::AlignLeft,   true,  "stdjrnl_name"   );
+  _stdjrnlgrpitem->addColumn(tr("Description"), -1,           Qt::AlignLeft,   true,  "stdjrnl_descrip"   );
+  _stdjrnlgrpitem->addColumn(tr("To Apply"),    _dateColumn,  Qt::AlignRight,  true,  "toapply"  );
+  _stdjrnlgrpitem->addColumn(tr("Applied"),     _dateColumn,  Qt::AlignRight,  true,  "stdjrnlgrpitem_applied"  );
+  _stdjrnlgrpitem->addColumn(tr("Effective"),   _dateColumn,  Qt::AlignCenter, true,  "stdjrnlgrpitem_effective" );
+  _stdjrnlgrpitem->addColumn(tr("Expires"),     _dateColumn,  Qt::AlignCenter, true,  "stdjrnlgrpitem_expires" );
 }
 
 enum SetResponse standardJournalGroup::set(ParameterList &pParams)
@@ -294,10 +294,11 @@ void standardJournalGroup::sFillList()
   QString sql( "SELECT stdjrnlgrpitem_id, stdjrnl_name, stdjrnl_descrip,"
                "       CASE WHEN (stdjrnlgrpitem_toapply=-1) THEN :always"
                "            ELSE TEXT(stdjrnlgrpitem_toapply)"
-               "       END,"
+               "       END AS toapply,"
                "       stdjrnlgrpitem_applied,"
-               "       formatDate(stdjrnlgrpitem_effective),"
-               "       formatDate(stdjrnlgrpitem_expires) "
+               "       stdjrnlgrpitem_effective, stdjrnlgrpitem_expires,"
+               "       CASE WHEN (COALESCE(stdjrnlgrpitem_effective, startOfTime())=startOfTime()) THEN 'Always' END AS stdjrnlgrpitem_effective_qtdisplayrole,"
+               "       CASE WHEN (COALESCE(stdjrnlgrpitem_expires, endOfTime())=endOfTime()) THEN 'Never' END AS stdjrnlgrpitem_expires_qtdisplayrole "
                "FROM stdjrnlgrpitem, stdjrnl "
                "WHERE ((stdjrnlgrpitem_stdjrnl_id=stdjrnl_id)" );
 

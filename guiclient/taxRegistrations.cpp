@@ -97,8 +97,8 @@ taxRegistrations::taxRegistrations(QWidget* parent, const char* name, Qt::WFlags
     connect(_taxreg, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
   }
 
-  _taxreg->addColumn(tr("Tax Authority"),  100,  Qt::AlignCenter );
-  _taxreg->addColumn(tr("Registration #"),  -1,  Qt::AlignLeft   );
+  _taxreg->addColumn(tr("Tax Authority"),  100,  Qt::AlignCenter, true,  "taxauth_code" );
+  _taxreg->addColumn(tr("Registration #"),  -1,  Qt::AlignLeft,   true,  "taxreg_number"   );
 
   sFillList();
 }
@@ -176,7 +176,6 @@ void taxRegistrations::sFillList()
             " WHERE ((taxreg_rel_type IS NULL) "
             "   AND  (taxreg_taxauth_id=taxauth_id));");
   q.exec();
-  _taxreg->clear();
   _taxreg->populate(q, true);
   if (q.lastError().type() != QSqlError::None)
   {

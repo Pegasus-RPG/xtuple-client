@@ -112,8 +112,8 @@ void siteTypes::init()
 {
 //  statusBar()->hide();
   
-  _sitetype->addColumn(tr("Code"),        _itemColumn, Qt::AlignCenter );
-  _sitetype->addColumn(tr("Description"), -1,          Qt::AlignLeft   );
+  _sitetype->addColumn(tr("Code"),        _itemColumn, Qt::AlignCenter, true,  "sitetype_name" );
+  _sitetype->addColumn(tr("Description"), -1,          Qt::AlignLeft,   true,  "sitetype_descrip"   );
 
   if (_privileges->check("MaintainSiteTypes"))
   {

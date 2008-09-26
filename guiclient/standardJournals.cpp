@@ -126,8 +126,8 @@ void standardJournals::init()
   if (_privileges->check("PostStandardJournals"))
     connect(_stdjrnl, SIGNAL(valid(bool)), _post, SLOT(setEnabled(bool)));
 
-  _stdjrnl->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft );
-  _stdjrnl->addColumn(tr("Description"), -1,          Qt::AlignLeft );
+  _stdjrnl->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft,  true,  "stdjrnl_name" );
+  _stdjrnl->addColumn(tr("Description"), -1,          Qt::AlignLeft,  true,  "stdjrnl_descrip" );
 
   sFillList();
 }

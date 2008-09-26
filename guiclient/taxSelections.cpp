@@ -90,9 +90,9 @@ taxSelections::taxSelections(QWidget* parent, const char* name, Qt::WFlags fl)
     connect(_taxsel, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
   }
 
-  _taxsel->addColumn(tr("Tax Authority"),	 -1,	Qt::AlignLeft  );
-  _taxsel->addColumn(tr("Tax Type"),		100,	Qt::AlignLeft  );
-  _taxsel->addColumn(tr("Tax Code"),		100,	Qt::AlignLeft  );
+  _taxsel->addColumn(tr("Tax Authority"),	 -1,  Qt::AlignLeft,   true,  "taxauth"  );
+  _taxsel->addColumn(tr("Tax Type"),      100,  Qt::AlignLeft,   true,  "taxtype"  );
+  _taxsel->addColumn(tr("Tax Code"),      100,  Qt::AlignLeft,   true,  "tax"  );
 
   sFillList();
 }
@@ -182,7 +182,6 @@ void taxSelections::sFillList()
 	      ";");
   MetaSQLQuery mql(sql);
   q = mql.toQuery(params);
-  _taxsel->clear();
   _taxsel->populate(q);
   if (q.lastError().type() != QSqlError::None)
   {

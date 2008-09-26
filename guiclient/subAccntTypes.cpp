@@ -109,9 +109,9 @@ void subAccntTypes::init()
 {
 //  statusBar()->hide();
 
-  _subaccnttypes->addColumn(tr("Code"),        70, Qt::AlignLeft );
-  _subaccnttypes->addColumn(tr("Type"),        50, Qt::AlignLeft );
-  _subaccnttypes->addColumn(tr("Description"), -1, Qt::AlignLeft );
+  _subaccnttypes->addColumn(tr("Code"),        70, Qt::AlignLeft,   true,  "subaccnttype_code" );
+  _subaccnttypes->addColumn(tr("Type"),        50, Qt::AlignLeft,   true,  "type" );
+  _subaccnttypes->addColumn(tr("Description"), -1, Qt::AlignLeft,   true,  "subaccnttype_descrip" );
   
   sFillList();
 }
@@ -180,7 +180,7 @@ void subAccntTypes::sFillList()
       "            WHEN(subaccnttype_accnt_type='R') THEN :revenue"
       "            WHEN(subaccnttype_accnt_type='Q') THEN :equity"
       "            ELSE :error"
-      "       END, subaccnttype_descrip "
+      "       END AS type, subaccnttype_descrip "
       "FROM subaccnttype "
       "ORDER BY subaccnttype_code; " );
   q.bindValue(":asset", tr("Asset"));

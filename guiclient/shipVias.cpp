@@ -115,8 +115,8 @@ void shipVias::init()
   else
     _new->setEnabled(FALSE);
 
-  _shipvia->addColumn(tr("Code"),        _itemColumn, Qt::AlignLeft );
-  _shipvia->addColumn(tr("Description"), -1,          Qt::AlignLeft ); 
+  _shipvia->addColumn(tr("Code"),        _itemColumn, Qt::AlignLeft,   true,  "shipvia_code" );
+  _shipvia->addColumn(tr("Description"), -1,          Qt::AlignLeft,   true,  "shipvia_descrip" ); 
   
   sFillList();
 }

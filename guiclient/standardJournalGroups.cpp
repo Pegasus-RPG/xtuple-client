@@ -126,8 +126,8 @@ void standardJournalGroups::init()
   if (_privileges->check("PostStandardJournalGroups"))
     connect(_stdjrnlgrp, SIGNAL(valid(bool)), _post, SLOT(setEnabled(bool)));
 
-  _stdjrnlgrp->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft );
-  _stdjrnlgrp->addColumn(tr("Description"), -1,          Qt::AlignLeft );
+  _stdjrnlgrp->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft,   true,  "stdjrnlgrp_name" );
+  _stdjrnlgrp->addColumn(tr("Description"), -1,          Qt::AlignLeft,   true,  "stdjrnlgrp_descrip" );
 
   sFillList();
 }

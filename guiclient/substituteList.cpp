@@ -116,12 +116,12 @@ void substituteList::languageChange()
 
 void substituteList::init()
 {
-  _subs->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft  );
-  _subs->addColumn(tr("Description"),  -1,          Qt::AlignLeft  );
-  _subs->addColumn(tr("QOH"),          _qtyColumn,  Qt::AlignRight );
-  _subs->addColumn(tr("Norm. QOH"),    _qtyColumn,  Qt::AlignRight );
-  _subs->addColumn(tr("Availability"), _qtyColumn,  Qt::AlignRight );
-  _subs->addColumn(tr("Norm. Avail."), _qtyColumn,  Qt::AlignRight );
+  _subs->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft,   true,  "item_number"  );
+  _subs->addColumn(tr("Description"),  -1,          Qt::AlignLeft,   true,  "itemdescrip"  );
+  _subs->addColumn(tr("QOH"),          _qtyColumn,  Qt::AlignRight,  true,  "qoh" );
+  _subs->addColumn(tr("Norm. QOH"),    _qtyColumn,  Qt::AlignRight,  true,  "normqoh" );
+  _subs->addColumn(tr("Availability"), _qtyColumn,  Qt::AlignRight,  true,  "available" );
+  _subs->addColumn(tr("Norm. Avail."), _qtyColumn,  Qt::AlignRight,  true,  "normavailable" );
 }
 
 enum SetResponse substituteList::set( ParameterList &pParams )
@@ -133,10 +133,9 @@ enum SetResponse substituteList::set( ParameterList &pParams )
   if (valid)
   {
     q.prepare( "SELECT womatl_itemsite_id,"
-               "       bomitem_id, bomitem_subtype "
-               "FROM womatl, bomitem "
-               "WHERE ( (womatl_bomitem_id=bomitem_id)"
-               " AND (womatl_id=:womatl_id) );" );
+               "       bomitem_id, COALESCE(bomitem_subtype, 'I') AS subtype "
+               "FROM womatl LEFT OUTER JOIN bomitem ON (bomitem_id=womatl_bomitem_id) "
+               "WHERE (womatl_id=:womatl_id);" );
     q.bindValue(":womatl_id", param.toInt());
     q.exec();
     if (q.first())
@@ -147,7 +146,7 @@ enum SetResponse substituteList::set( ParameterList &pParams )
       
       _bomitemid = q.value("bomitem_id").toInt();
       _itemsiteid = q.value("womatl_itemsite_id").toInt();
-      _source = q.value("bomitem_subtype").toString();
+      _source = q.value("subtype").toString();
 
       sFillList();
     }
@@ -199,11 +198,15 @@ void substituteList::sFillList()
   if (_source == "I")
   {
     sql = "SELECT item_id, item_number, (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
-          "       formatQty(itemsite_qtyonhand) AS f_qoh,"
-          "       formatQty(itemsite_qtyonhand * uomratio) AS f_normqoh,"
-          "       formatQty(available) AS f_available,"
-          "       formatqty(available * uomratio) AS f_normavailable,"
-          "       uomratio "
+          "       (itemsite_qtyonhand) AS qoh,"
+          "       (itemsite_qtyonhand * uomratio) AS normqoh,"
+          "       (available) AS available,"
+          "       (available * uomratio) AS normavailable,"
+          "       uomratio,"
+          "       'qty' AS qoh_xtnumericrole,"
+          "       'qty' AS normqoh_xtnumericrole,"
+          "       'qty' AS available_xtnumericrole,"
+          "       'qty' AS normavailable_xtnumericrole "
           "FROM ( SELECT item_id, item_number, item_descrip1, item_descrip2,"
           "       itemsite_qtyonhand, itemsub_uomratio AS uomratio, itemsub_rank AS rank,";
 
@@ -224,11 +227,15 @@ void substituteList::sFillList()
   else if (_source == "B")
   {
     sql = "SELECT item_id, item_number, (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
-          "       formatQty(itemsite_qtyonhand) AS f_qoh,"
-          "       formatQty(itemsite_qtyonhand * uomratio) AS f_normqoh,"
-          "       formatQty(available) AS f_available,"
-          "       formatqty(available * uomratio) AS f_normavailable,"
-          "       uomratio "
+          "       (itemsite_qtyonhand) AS qoh,"
+          "       (itemsite_qtyonhand * uomratio) AS normqoh,"
+          "       (available) AS available,"
+          "       (available * uomratio) AS normavailable,"
+          "       uomratio,"
+          "       'qty' AS qoh_xtnumericrole,"
+          "       'qty' AS normqoh_xtnumericrole,"
+          "       'qty' AS available_xtnumericrole,"
+          "       'qty' AS normavailable_xtnumericrole "
           "FROM ( SELECT item_id, item_number, item_descrip1, item_descrip2,"
           "       itemsite_qtyonhand, bomitemsub_uomratio AS uomratio, bomitemsub_rank AS rank,";
 
@@ -281,13 +288,5 @@ void substituteList::sFillList()
     _sub.bindValue(":date", _date->date());
 
   _sub.exec();
-  XTreeWidgetItem *last = 0;
-  while (_sub.next())
-    last = new XTreeWidgetItem(_subs, last, _sub.value("item_id").toInt(),
-			       _sub.value("item_number"),
-			       _sub.value("itemdescrip"),
-			       _sub.value("f_qoh"),
-			       _sub.value("f_normqoh"),
-			       _sub.value("f_available"),
-			       _sub.value("f_normavailable") );
+  _subs->populate(_sub);
 }

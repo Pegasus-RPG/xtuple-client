@@ -82,8 +82,8 @@ taxCodes::taxCodes(QWidget* parent, const char* name, Qt::WFlags fl)
 
 //    statusBar()->hide();
     
-    _tax->addColumn(tr("Code"),        _itemColumn, Qt::AlignLeft );
-    _tax->addColumn(tr("Description"), -1,          Qt::AlignLeft );
+    _tax->addColumn(tr("Code"),        _itemColumn, Qt::AlignLeft,   true,  "tax_code" );
+    _tax->addColumn(tr("Description"), -1,          Qt::AlignLeft,   true,  "tax_descrip" );
 
     if (_privileges->check("MaintainTaxCodes"))
     {

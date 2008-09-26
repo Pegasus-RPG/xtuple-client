@@ -89,12 +89,12 @@ unappliedARCreditMemos::unappliedARCreditMemos(QWidget* parent, const char* name
 
   connect(_aropen, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
 
-  _aropen->addColumn( tr("Doc. #"),   _itemColumn,  Qt::AlignCenter );
-  _aropen->addColumn( tr("Customer"), -1,           Qt::AlignLeft   );
-  _aropen->addColumn( tr("Amount"),   _moneyColumn, Qt::AlignRight  );
-  _aropen->addColumn( tr("Applied"),  _moneyColumn, Qt::AlignRight  );
-  _aropen->addColumn( tr("Balance"),  _moneyColumn, Qt::AlignRight  );
-  _aropen->addColumn( tr("Currency"), _currencyColumn, Qt::AlignLeft );
+  _aropen->addColumn( tr("Doc. #"),   _itemColumn,     Qt::AlignCenter, true,  "aropen_docnumber" );
+  _aropen->addColumn( tr("Customer"), -1,              Qt::AlignLeft,   true,  "customer"   );
+  _aropen->addColumn( tr("Amount"),   _moneyColumn,    Qt::AlignRight,  true,  "aropen_amount"  );
+  _aropen->addColumn( tr("Applied"),  _moneyColumn,    Qt::AlignRight,  true,  "applied"  );
+  _aropen->addColumn( tr("Balance"),  _moneyColumn,    Qt::AlignRight,  true,  "balance"  );
+  _aropen->addColumn( tr("Currency"), _currencyColumn, Qt::AlignLeft,   true,  "currAbbr" );
 
   if (omfgThis->singleCurrency())
     _aropen->hideColumn(5);
@@ -165,13 +165,16 @@ void unappliedARCreditMemos::sPopulateMenu( QMenu * )
 void unappliedARCreditMemos::sFillList()
 {
   q.prepare( "SELECT aropen_id, aropen_docnumber,"
-             "       (cust_number || '-' || cust_name),"
-             "       formatMoney(aropen_amount),"
-             "       formatMoney(aropen_paid + COALESCE(prepared,0.0)),"
-             "       formatMoney(aropen_amount - aropen_paid - COALESCE(prepared,0.0)), "
-	         "       currConcat(aropen_curr_id) "
+             "       (cust_number || '-' || cust_name) AS customer,"
+             "       aropen_amount,"
+             "       (aropen_paid + COALESCE(prepared,0.0)) AS applied,"
+             "       (aropen_amount - aropen_paid - COALESCE(prepared,0.0)) AS balance, "
+             "       currConcat(aropen_curr_id) AS currAbbr,"
+             "       'curr' AS aropen_amount_xtnumericrole,"
+             "       'curr' AS applied_xtnumericrole,"
+             "       'curr' AS balance_xtnumericrole "
              "FROM aropen "
-	         "       LEFT OUTER JOIN (SELECT aropen_id AS prepared_aropen_id,"
+             "       LEFT OUTER JOIN (SELECT aropen_id AS prepared_aropen_id,"
              "                               SUM(currToCurr(checkitem_curr_id, aropen_curr_id, checkitem_amount + checkitem_discount, checkitem_docdate)) AS prepared"
              "                          FROM checkhead JOIN checkitem ON (checkitem_checkhead_id=checkhead_id)"
              "                                     JOIN aropen ON (checkitem_aropen_id=aropen_id)"
@@ -179,7 +182,7 @@ void unappliedARCreditMemos::sFillList()
              "                           AND  (NOT checkhead_void))"
              "                         GROUP BY aropen_id) AS sub1"
              "         ON (prepared_aropen_id=aropen_id)"
-			 ", cust "
+             ", cust "
              "WHERE ( (aropen_doctype IN ('C', 'R'))"
              " AND (aropen_open)"
              " AND ((aropen_amount - aropen_paid - COALESCE(prepared,0.0)) > 0.0)"

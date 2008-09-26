@@ -79,10 +79,10 @@ standardJournal::standardJournal(QWidget* parent, const char* name, bool modal, 
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
   connect(this, SIGNAL(rejected()), this, SLOT(sReject()));
 
-  _stdjrnlitem->addColumn(tr("Account"), 200,          Qt::AlignLeft  );
-  _stdjrnlitem->addColumn(tr("Notes"),   -1,           Qt::AlignLeft  );
-  _stdjrnlitem->addColumn(tr("Debit"),   _priceColumn, Qt::AlignRight );
-  _stdjrnlitem->addColumn(tr("Credit"),  _priceColumn, Qt::AlignRight );
+  _stdjrnlitem->addColumn(tr("Account"), 200,          Qt::AlignLeft,   true,  "account"  );
+  _stdjrnlitem->addColumn(tr("Notes"),   -1,           Qt::AlignLeft,   true,  "note"  );
+  _stdjrnlitem->addColumn(tr("Debit"),   _priceColumn, Qt::AlignRight,  true,  "debit" );
+  _stdjrnlitem->addColumn(tr("Credit"),  _priceColumn, Qt::AlignRight,  true,  "credit" );
 
   _debits->setValidator(omfgThis->moneyVal());
   _credits->setValidator(omfgThis->moneyVal());
@@ -273,14 +273,18 @@ void standardJournal::sFillList()
   q.prepare( "SELECT stdjrnlitem_id,"
              "       CASE WHEN(accnt_id IS NOT NULL) THEN (formatGLAccount(accnt_id) || '-' || accnt_descrip)"
              "            ELSE 'ERROR - NO ACCOUNT SPECIFIED'"
-             "       END,"
-             "       firstLine(stdjrnlitem_notes),"
-             "       CASE WHEN (stdjrnlitem_amount < 0) THEN formatMoney(stdjrnlitem_amount * -1)"
-             "            ELSE ''"
+             "       END AS account,"
+             "       firstLine(stdjrnlitem_notes) AS note,"
+             "       CASE WHEN (stdjrnlitem_amount < 0) THEN (stdjrnlitem_amount * -1)"
+             "            ELSE NULL"
              "       END AS debit,"
-             "       CASE WHEN (stdjrnlitem_amount > 0) THEN formatMoney(stdjrnlitem_amount)"
-             "            ELSE ''"
-             "       END AS credit "
+             "       CASE WHEN (stdjrnlitem_amount > 0) THEN (stdjrnlitem_amount)"
+             "            ELSE NULL"
+             "       END AS credit,"
+             "       'curr' AS debit_xtnumericrole,"
+             "       'curr' AS credit_xtnumericrole,"
+             "       '' AS debit_xtnullrole,"
+             "       '' AS credit_xtnullrole "
              "  FROM stdjrnlitem LEFT OUTER JOIN accnt ON (stdjrnlitem_accnt_id=accnt_id)"
              " WHERE (stdjrnlitem_stdjrnl_id=:stdjrnl_id) "
              " ORDER BY accnt_number, accnt_profit, accnt_sub;" );

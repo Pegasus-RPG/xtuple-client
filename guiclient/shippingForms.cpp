@@ -107,7 +107,7 @@ void shippingForms::init()
 {
 //  statusBar()->hide();
   
-  _bolformat->addColumn(tr("Form Name"), -1, Qt::AlignLeft);
+  _bolformat->addColumn(tr("Form Name"), -1, Qt::AlignLeft, true, "shipform_name");
 
   if (_privileges->check("MaintainShippingForms"))
   {

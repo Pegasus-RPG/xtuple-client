@@ -115,8 +115,8 @@ void shippingChargeTypes::init()
   else
     _new->setEnabled(FALSE);
 
-  _shipchrg->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft );
-  _shipchrg->addColumn(tr("Description"), -1,          Qt::AlignLeft ); 
+  _shipchrg->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft,   true,  "shipchrg_name" );
+  _shipchrg->addColumn(tr("Description"), -1,          Qt::AlignLeft,   true,  "shipchrg_descrip" ); 
   
   sFillList();
 }

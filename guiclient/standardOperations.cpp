@@ -121,8 +121,8 @@ void standardOperations::init()
     connect(_stdopn, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
   }
 
-  _stdopn->addColumn(tr("Number"),      _itemColumn, Qt::AlignLeft );
-  _stdopn->addColumn(tr("Description"), -1,          Qt::AlignLeft );
+  _stdopn->addColumn(tr("Number"),      _itemColumn, Qt::AlignLeft,   true,  "stdopn_number" );
+  _stdopn->addColumn(tr("Description"), -1,          Qt::AlignLeft,   true,  "descrip" );
 
   sFillList();
 
@@ -214,7 +214,7 @@ void standardOperations::sFillList()
 
 void standardOperations::sFillList(int pStdopnid)
 {
-  _stdopn->populate( "SELECT stdopn_id, stdopn_number, (stdopn_descrip1 || ' ' || stdopn_descrip2) "
+  _stdopn->populate( "SELECT stdopn_id, stdopn_number, (stdopn_descrip1 || ' ' || stdopn_descrip2) AS descrip "
                      "FROM stdopn "
                      "ORDER BY stdopn_number;", pStdopnid );
 }

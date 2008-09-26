@@ -87,8 +87,8 @@ taxTypes::taxTypes(QWidget* parent, const char* name, Qt::WFlags fl)
 
 //  statusBar()->hide();
   
-  _taxtype->addColumn(tr("Name"),    70, Qt::AlignLeft );
-  _taxtype->addColumn(tr("Description"), -1, Qt::AlignLeft );
+  _taxtype->addColumn(tr("Name"),        70, Qt::AlignLeft,  true,  "taxtype_name" );
+  _taxtype->addColumn(tr("Description"), -1, Qt::AlignLeft,  true,  "taxtype_descrip" );
 
   if (_privileges->check("MaintainTaxTypes"))
   {

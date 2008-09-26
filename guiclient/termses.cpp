@@ -111,11 +111,11 @@ void termses::init()
 {
 //  statusBar()->hide();
   
-  _terms->addColumn(tr("Code"),        _itemColumn, Qt::AlignLeft   );
-  _terms->addColumn(tr("Description"), -1,          Qt::AlignLeft   );
-  _terms->addColumn(tr("Type"),        _dateColumn, Qt::AlignCenter );
-  _terms->addColumn(tr("A/P"),         _ynColumn,   Qt::AlignCenter );
-  _terms->addColumn(tr("A/R"),         _ynColumn,   Qt::AlignCenter );
+  _terms->addColumn(tr("Code"),        _itemColumn, Qt::AlignLeft,   true,  "terms_code"   );
+  _terms->addColumn(tr("Description"), -1,          Qt::AlignLeft,   true,  "terms_descrip"   );
+  _terms->addColumn(tr("Type"),        _dateColumn, Qt::AlignCenter, true,  "type" );
+  _terms->addColumn(tr("A/P"),         _ynColumn,   Qt::AlignCenter, true,  "terms_ap" );
+  _terms->addColumn(tr("A/R"),         _ynColumn,   Qt::AlignCenter, true,  "terms_ar" );
 
   if (_privileges->check("MaintainTerms"))
   {
@@ -138,8 +138,8 @@ void termses::sFillList()
              "       CASE WHEN (terms_type = 'D') THEN :days"
              "            WHEN (terms_type = 'P') THEN :proximo"
              "            ELSE '?'"
-             "       END,"
-             "       formatBoolYN(terms_ap), formatBoolYN(terms_ar) "
+             "       END AS type,"
+             "       terms_ap, terms_ar "
              "FROM terms "
              "ORDER BY terms_code;" );
   q.bindValue(":days", tr("Days"));
