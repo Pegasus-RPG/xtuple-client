@@ -76,7 +76,7 @@ dspTimePhasedLoadByWorkCenter::dspTimePhasedLoadByWorkCenter(QWidget* parent, co
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
-  _load->addColumn(tr("Work Center"), _itemColumn, Qt::AlignLeft);
+  _load->addColumn(tr("Work Center"), _itemColumn, Qt::AlignLeft,   true,  "wrkcnt_code");
 }
 
 dspTimePhasedLoadByWorkCenter::~dspTimePhasedLoadByWorkCenter()
@@ -157,11 +157,14 @@ void dspTimePhasedLoadByWorkCenter::sFillList()
   for (int i = 0; i < selected.size(); i++)
   {
     PeriodListViewItem *cursor = (PeriodListViewItem*)selected[i];
-    sql += QString(", formatTime(loadByWorkCenter(wrkcnt_id, %1)) AS bucket%2")
+    QString bucketname = QString("bucket%1").arg(columns++);
+    sql += QString(", loadByWorkCenter(wrkcnt_id, %1) AS %2,"
+                   "  '1' AS %3_xtnumericrole ")
 	   .arg(cursor->id())
-	   .arg(columns);
+	   .arg(bucketname)
+	   .arg(bucketname);
 
-    _load->addColumn(formatDate(cursor->startDate()), _timeColumn, Qt::AlignRight);
+    _load->addColumn(formatDate(cursor->startDate()), _timeColumn, Qt::AlignRight, true, bucketname);
     _columnDates.append(DatePair(cursor->startDate(), cursor->endDate()));
   }
 

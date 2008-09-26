@@ -77,7 +77,7 @@ dspTimePhasedAvailableCapacityByWorkCenter::dspTimePhasedAvailableCapacityByWork
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
 
-  _load->addColumn(tr("Work Center"), _itemColumn, Qt::AlignLeft);
+  _load->addColumn(tr("Work Center"), _itemColumn, Qt::AlignLeft, true, "wrkcnt_code");
 }
 
 dspTimePhasedAvailableCapacityByWorkCenter::~dspTimePhasedAvailableCapacityByWorkCenter()
@@ -159,12 +159,15 @@ void dspTimePhasedAvailableCapacityByWorkCenter::sFillList()
   for (int i = 0; i < selected.size(); i++)
   {
     PeriodListViewItem *cursor = (PeriodListViewItem*)selected[i];
-    sql += QString(", formatTime(workCenterCapacity(wrkcnt_id, %1) - loadByWorkCenter(wrkcnt_id, %2)) AS bucket%3")
+    QString bucketname = QString("bucket%1").arg(columns++);
+    sql += QString(", (workCenterCapacity(wrkcnt_id, %1) - loadByWorkCenter(wrkcnt_id, %2)) AS %3,"
+                   "  '1' AS %4_xtnumericrole ")
 	   .arg(cursor->id())
 	   .arg(cursor->id())
-	   .arg(columns);
+	   .arg(bucketname)
+	   .arg(bucketname);
 
-    _load->addColumn(formatDate(cursor->startDate()), _timeColumn, Qt::AlignRight);
+    _load->addColumn(formatDate(cursor->startDate()), _timeColumn, Qt::AlignRight, true, bucketname);
 
     _columnDates.append(DatePair(cursor->startDate(), cursor->endDate()));
   }

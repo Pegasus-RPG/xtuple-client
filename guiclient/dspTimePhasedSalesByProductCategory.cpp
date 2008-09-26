@@ -96,9 +96,9 @@ dspTimePhasedSalesByProductCategory::dspTimePhasedSalesByProductCategory(QWidget
   
   _productCategory->setType(ParameterGroup::ProductCategory);
   
-  _sohist->addColumn(tr("Prod. Cat."), _itemColumn, Qt::AlignLeft   );
-  _sohist->addColumn(tr("UOM"),        _uomColumn,  Qt::AlignCenter );
-  _sohist->addColumn(tr("Site"),       _whsColumn,  Qt::AlignCenter );
+  _sohist->addColumn(tr("Prod. Cat."), _itemColumn, Qt::AlignLeft,   true,  "prodcat_code"   );
+  _sohist->addColumn(tr("UOM"),        _uomColumn,  Qt::AlignCenter, true,  "uom" );
+  _sohist->addColumn(tr("Site"),       _whsColumn,  Qt::AlignCenter, true,  "warehous_code" );
 
   _salesDollars->setEnabled(_privileges->check("ViewCustomerPrices"));
 }
@@ -201,27 +201,40 @@ void dspTimePhasedSalesByProductCategory::sCalculate()
   for (int i = 0; i < selected.size(); i++)
   {
     PeriodListViewItem *cursor = (PeriodListViewItem*)selected[i];
+    QString bucketname = QString("bucket%1").arg(columns++);
     if (_salesDollars->isChecked())
-      sql += QString(", SUM(shipmentsByItemValue(itemsite_id, %2)) AS bucket%1")
-	     .arg(columns++)
-	     .arg(cursor->id());
+      sql += QString(", SUM(shipmentsByItemValue(itemsite_id, %1)) AS %2,"
+                     "  'curr' AS %3_xtnumericrole, 0 AS %4_xttotalrole ")
+	     .arg(cursor->id())
+	     .arg(bucketname)
+	     .arg(bucketname)
+	     .arg(bucketname);
 
     else if (_inventoryUnits->isChecked())
-      sql += QString(", SUM(shipmentsByItemQty(itemsite_id, %2)) AS bucket%1")
-	     .arg(columns++)
-	     .arg(cursor->id());
+      sql += QString(", SUM(shipmentsByItemQty(itemsite_id, %1)) AS %2,"
+                     "  'qty' AS %3_xtnumericrole, 0 AS %4_xttotalrole ")
+	     .arg(cursor->id())
+	     .arg(bucketname)
+	     .arg(bucketname)
+	     .arg(bucketname);
 
     else if (_capacityUnits->isChecked())
-      sql += QString(", SUM(shipmentsByItemQty(itemsite_id, %2) * itemcapinvrat(item_id)) AS bucket%1")
-	     .arg(columns++)
-	     .arg(cursor->id());
+      sql += QString(", SUM(shipmentsByItemQty(itemsite_id, %1) * itemcapinvrat(item_id)) AS %2,"
+                     "  'qty' AS %3_xtnumericrole, 0 AS %4_xttotalrole ")
+	     .arg(cursor->id())
+	     .arg(bucketname)
+	     .arg(bucketname)
+	     .arg(bucketname);
 
     else if (_altCapacityUnits->isChecked())
-      sql += QString(", SUM(shipmentsByItemQty(itemsite_id, %2) * itemaltcapinvrat(item_id)) AS bucket%1")
-	     .arg(columns++)
-	     .arg(cursor->id());
+      sql += QString(", SUM(shipmentsByItemQty(itemsite_id, %1) * itemaltcapinvrat(item_id)) AS %2,"
+                     "  'qty' AS %3_xtnumericrole, 0 AS %4_xttotalrole ")
+	     .arg(cursor->id())
+	     .arg(bucketname)
+	     .arg(bucketname)
+	     .arg(bucketname);
 
-    _sohist->addColumn(formatDate(cursor->startDate()), _qtyColumn, Qt::AlignRight);
+    _sohist->addColumn(formatDate(cursor->startDate()), _qtyColumn, Qt::AlignRight, true, bucketname);
     _columnDates.append(DatePair(cursor->startDate(), cursor->endDate()));
   }
 
@@ -246,43 +259,7 @@ void dspTimePhasedSalesByProductCategory::sCalculate()
   _warehouse->bindValue(q);
   _productCategory->bindValue(q);
   q.exec();
-  if (q.first())
-  {
-    Q3ValueVector<Numeric> totals(columns);;
-    XTreeWidgetItem *last = 0;
-
-    do
-    {
-      last = new XTreeWidgetItem( _sohist, last,
-				 q.value("prodcat_id").toInt(),
-				 q.value("warehous_id").toInt(),
-				 q.value("prodcat_code"),
-				 q.value("uom"),
-				 q.value("warehous_code") );
-
-      for (int column = 1; column < columns; column++)
-      {
-        QString bucketName = QString("bucket%1").arg(column);
-        totals[column] += q.value(bucketName).toDouble();
-
-        if ( (_inventoryUnits->isChecked()) || (_capacityUnits->isChecked()) || (_altCapacityUnits->isChecked()) )
-          last->setText((column + 2), formatQty(q.value(bucketName).toDouble()));
-        else if (_salesDollars->isChecked())
-          last->setText((column + 2), formatMoney(q.value(bucketName).toDouble()));
-      }
-    }
-    while (q.next());
-
-//  Add the totals row
-    XTreeWidgetItem *total = new XTreeWidgetItem(_sohist, last, -1, QVariant(tr("Totals:")));
-    for (int column = 1; column < columns; column++)
-    {
-      if ( (_inventoryUnits->isChecked()) || (_capacityUnits->isChecked()) || (_altCapacityUnits->isChecked()) )
-        total->setText((column + 2), formatQty(totals[column].toDouble()));
-      else if (_salesDollars->isChecked())
-        total->setText((column + 2), formatMoney(totals[column].toDouble()));
-    }
-  }
+  _sohist->populate(q, true);
 }
 
 

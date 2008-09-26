@@ -98,9 +98,9 @@ dspTimePhasedProductionByPlannerCode::dspTimePhasedProductionByPlannerCode(QWidg
 
   _plannerCode->setType(ParameterGroup::PlannerCode);
 
-  _production->addColumn(tr("Planner Code"), _itemColumn, Qt::AlignLeft   );
-  _production->addColumn(tr("Site"),         _whsColumn,  Qt::AlignCenter );
-  _production->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignLeft   );
+  _production->addColumn(tr("Planner Code"), _itemColumn, Qt::AlignLeft,   true,  "plancode_code"   );
+  _production->addColumn(tr("Site"),         _whsColumn,  Qt::AlignCenter, true,  "warehous_code" );
+  _production->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignLeft,   true,  "uom"   );
 
   if (!_metrics->boolean("EnableBatchManager"))
     _submit->hide();
@@ -240,22 +240,29 @@ void dspTimePhasedProductionByPlannerCode::sCalculate()
   for (int i = 0; i < selected.size(); i++)
   {
     PeriodListViewItem *cursor = (PeriodListViewItem*)selected[i];
+    QString bucketname = QString("bucket%1").arg(columns++);
     if (_inventoryUnits->isChecked())
-      sql += QString(", formatQty(SUM(summProd(itemsite_id, %1))) AS bucket%2")
+      sql += QString(", SUM(summProd(itemsite_id, %1)) AS %2,"
+                     "  'qty' AS %3_xtnumericrole ")
 	     .arg(cursor->id())
-	     .arg(columns++);
+	     .arg(bucketname)
+	     .arg(bucketname);
 
     else if (_capacityUnits->isChecked())
-      sql += QString(", formatQty(SUM(summProd(itemsite_id, %1) * itemcapinvrat(item_id))) AS bucket%2")
+      sql += QString(", SUM(summProd(itemsite_id, %1) * itemcapinvrat(item_id)) AS %2,"
+                     "  'qty' AS %3_xtnumericrole ")
 	     .arg(cursor->id())
-	     .arg(columns++);
+	     .arg(bucketname)
+	     .arg(bucketname);
 
     else if (_altCapacityUnits->isChecked())
-      sql += QString(", formatQty(SUM(summProd(itemsite_id, %1) * itemaltcapinvrat(item_id))) AS bucket%2")
+      sql += QString(", SUM(summProd(itemsite_id, %1) * itemaltcapinvrat(item_id)) AS %2,"
+                     "  'qty' AS %3_xtnumericrole ")
 	     .arg(cursor->id())
-	     .arg(columns++);
+	     .arg(bucketname)
+	     .arg(bucketname);
 
-    _production->addColumn(formatDate(cursor->startDate()), _qtyColumn, Qt::AlignRight);
+    _production->addColumn(formatDate(cursor->startDate()), _qtyColumn, Qt::AlignRight, true, bucketname);
     _columnDates.append(DatePair(cursor->startDate(), cursor->endDate()));
   }
 

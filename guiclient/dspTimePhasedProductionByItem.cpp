@@ -91,9 +91,9 @@ dspTimePhasedProductionByItem::dspTimePhasedProductionByItem(QWidget* parent, co
 
   _plannerCode->setType(ParameterGroup::PlannerCode);
 
-  _production->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft   );
-  _production->addColumn(tr("Site"),        _whsColumn,  Qt::AlignCenter );
-  _production->addColumn(tr("UOM"),         _uomColumn,  Qt::AlignLeft   );
+  _production->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft,   true,  "item_number"   );
+  _production->addColumn(tr("Site"),        _whsColumn,  Qt::AlignCenter, true,  "warehous_code" );
+  _production->addColumn(tr("UOM"),         _uomColumn,  Qt::AlignLeft,   true,  "uom_name"   );
 
   if (!_metrics->boolean("EnableBatchManager"))
     _submit->hide();
@@ -214,11 +214,14 @@ void dspTimePhasedProductionByItem::sCalculate()
   for (int i = 0; i < selected.size(); i++)
   {
     PeriodListViewItem *cursor = (PeriodListViewItem*)selected[i];
-    sql += QString(", formatQty(summProd(itemsite_id, %2)) AS bucket%1")
-	   .arg(columns++)
-	   .arg(cursor->id());
+    QString bucketname = QString("bucket%1").arg(columns++);
+    sql += QString(", summProd(itemsite_id, %1) AS %2,"
+                   "  'qty' AS %3_xtnumericrole ")
+	   .arg(cursor->id())
+	   .arg(bucketname)
+	   .arg(bucketname);
 
-    _production->addColumn(formatDate(cursor->startDate()), _qtyColumn, Qt::AlignRight);
+    _production->addColumn(formatDate(cursor->startDate()), _qtyColumn, Qt::AlignRight, true, bucketname);
     _columnDates.append(DatePair(cursor->startDate(), cursor->endDate()));
   }
 

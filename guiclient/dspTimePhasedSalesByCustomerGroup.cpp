@@ -98,8 +98,8 @@ dspTimePhasedSalesByCustomerGroup::dspTimePhasedSalesByCustomerGroup(QWidget* pa
   _customerGroup->setType(ParameterGroup::CustomerGroup);
   _productCategory->setType(ParameterGroup::ProductCategory);
   
-  _sohist->addColumn(tr("Cust. #"),  _orderColumn, Qt::AlignLeft );
-  _sohist->addColumn(tr("Customer"), 180,          Qt::AlignLeft );
+  _sohist->addColumn(tr("Cust. #"),  _orderColumn, Qt::AlignLeft,   true,  "cust_number" );
+  _sohist->addColumn(tr("Customer"), 180,          Qt::AlignLeft,   true,  "cust_name" );
 }
 
 /*
@@ -193,20 +193,30 @@ void dspTimePhasedSalesByCustomerGroup::sFillList()
   for (int i = 0; i < selected.size(); i++)
   {
     PeriodListViewItem *cursor = (PeriodListViewItem*)selected[i];
+    QString bucketname = QString("bucket%1").arg(columns++);
     if (_productCategory->isSelected())
-      sql += QString(", shipmentsByCustomerValue(cust_id, %1, :prodcat_id) AS bucket%3")
+      sql += QString(", shipmentsByCustomerValue(cust_id, %1, :prodcat_id) AS %2,"
+                     "  'curr' AS %3_xtnumericrole, 0 AS %4_xttotalrole ")
 	     .arg(cursor->id())
-	     .arg(columns++);
+	     .arg(bucketname)
+	     .arg(bucketname)
+	     .arg(bucketname);
     else if (_productCategory->isPattern())
-      sql += QString(", shipmentsByCustomerValue(cust_id, %1, :prodcat_pattern) AS bucket%3")
+      sql += QString(", shipmentsByCustomerValue(cust_id, %1, :prodcat_pattern) AS %2,"
+                     "  'curr' AS %3_xtnumericrole, 0 AS %4_xttotalrole ")
 	     .arg(cursor->id())
-	     .arg(columns++);
+	     .arg(bucketname)
+	     .arg(bucketname)
+	     .arg(bucketname);
     else
-      sql += QString(", shipmentsByCustomerValue(cust_id, %1) AS bucket%2")
+      sql += QString(", shipmentsByCustomerValue(cust_id, %1) AS %2,"
+                     "  'curr' AS %3_xtnumericrole, 0 AS %4_xttotalrole ")
 	     .arg(cursor->id())
-	     .arg(columns++);
+	     .arg(bucketname)
+	     .arg(bucketname)
+	     .arg(bucketname);
 
-    _sohist->addColumn(formatDate(cursor->startDate()), _qtyColumn, Qt::AlignRight);
+    _sohist->addColumn(formatDate(cursor->startDate()), _qtyColumn, Qt::AlignRight, true, bucketname);
     _columnDates.append(DatePair(cursor->startDate(), cursor->endDate()));
   }
 
@@ -230,30 +240,7 @@ void dspTimePhasedSalesByCustomerGroup::sFillList()
   _customerGroup->bindValue(q);
   _productCategory->bindValue(q);
   q.exec();
-  if (q.first())
-  {
-    Q3ValueVector<Numeric> totals(columns);;
-    XTreeWidgetItem *last = 0;
-
-    do
-    {
-      last = new XTreeWidgetItem( _sohist, last, q.value("cust_id").toInt(),
-				 q.value("cust_number"), q.value("cust_name") );
-
-      for (int column = 1; column < columns; column++)
-      {
-        QString bucketName = QString("bucket%1").arg(column);
-        last->setText((column + 1), formatMoney(q.value(bucketName).toDouble()));
-        totals[column] += q.value(bucketName).toDouble();
-      }
-    }
-    while (q.next());
-
-//  Add the totals row
-    XTreeWidgetItem *total = new XTreeWidgetItem(_sohist, last, -1, QVariant(tr("Totals:")));
-    for (int column = 1; column < columns; column++)
-      total->setText((column + 1), formatMoney(totals[column].toDouble()));
-  }
+  _sohist->populate(q);
 }
 
 void dspTimePhasedSalesByCustomerGroup::sSubmit()

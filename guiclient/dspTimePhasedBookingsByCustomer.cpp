@@ -96,8 +96,8 @@ dspTimePhasedBookingsByCustomer::dspTimePhasedBookingsByCustomer(QWidget* parent
     
   _customerType->setType(ParameterGroup::CustomerType);
 
-  _soitem->addColumn(tr("Cust. #"),  _orderColumn, Qt::AlignLeft );
-  _soitem->addColumn(tr("Customer"), 180,          Qt::AlignLeft );
+  _soitem->addColumn(tr("Cust. #"),  _orderColumn, Qt::AlignLeft,  true,  "cust_number" );
+  _soitem->addColumn(tr("Customer"), 180,          Qt::AlignLeft,  true,  "cust_name" );
 }
 
 /*
@@ -185,11 +185,15 @@ void dspTimePhasedBookingsByCustomer::sFillList()
   for (int i = 0; i < selected.size(); i++)
   {
     PeriodListViewItem *cursor = (PeriodListViewItem*)selected[i];
-    sql += QString(", bookingsByCustomerValue(cust_id, %2) AS bucket%1")
-	     .arg(columns++)
-	     .arg(cursor->id());
+    QString bucketname = QString("bucket%1").arg(columns++);
+    sql += QString(", bookingsByCustomerValue(cust_id, %1) AS %2,"
+                   "  'curr' AS %3_xtnumericrole, 0 AS %4_xttotalrole ")
+	     .arg(cursor->id())
+	     .arg(bucketname)
+	     .arg(bucketname)
+	     .arg(bucketname);
 
-    _soitem->addColumn(formatDate(cursor->startDate()), _qtyColumn, Qt::AlignRight);
+    _soitem->addColumn(formatDate(cursor->startDate()), _qtyColumn, Qt::AlignRight, true, bucketname);
     _columnDates.append(DatePair(cursor->startDate(), cursor->endDate()));
   }
 
@@ -205,29 +209,7 @@ void dspTimePhasedBookingsByCustomer::sFillList()
   q.prepare(sql);
   _customerType->bindValue(q);
   q.exec();
-  if (q.first())
-  {
-    Q3ValueVector<Numeric> totals(columns);;
-    XTreeWidgetItem *last = 0;
-
-    do
-    {
-      last = new XTreeWidgetItem( _soitem, last, q.value("cust_id").toInt(),
-				 q.value("cust_number"), q.value("cust_name") );
-
-      for (int column = 1; column < columns; column++)
-      {
-        QString bucketName = QString("bucket%1").arg(column);
-        last->setText((column + 1), formatMoney(q.value(bucketName).toDouble()));
-        totals[column] += q.value(bucketName).toDouble();
-      }
-    }
-    while (q.next());
-
-    XTreeWidgetItem *total = new XTreeWidgetItem(_soitem, last, -1, QVariant(tr("Totals:")));
-    for (int column = 1; column < columns; column++)
-      total->setText((column + 1), formatMoney(totals[column].toDouble()));
-  }
+  _soitem->populate(q);
 }
 
 void dspTimePhasedBookingsByCustomer::sSubmit()

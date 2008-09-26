@@ -96,9 +96,9 @@ dspTimePhasedAvailability::dspTimePhasedAvailability(QWidget* parent, const char
 
   _plannerCode->setType(ParameterGroup::PlannerCode);
 
-  _availability->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft   );
-  _availability->addColumn(tr("UOM"),         _uomColumn,  Qt::AlignLeft   );
-  _availability->addColumn(tr("Site"),        _whsColumn,  Qt::AlignCenter );
+  _availability->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft,   true,  "item_number"   );
+  _availability->addColumn(tr("UOM"),         _uomColumn,  Qt::AlignLeft,   true,  "uom_name"   );
+  _availability->addColumn(tr("Site"),        _whsColumn,  Qt::AlignCenter, true,  "warehous_code" );
 
   if (!_metrics->boolean("EnableBatchManager"))
     _submit->hide();
@@ -284,24 +284,44 @@ void dspTimePhasedAvailability::sCalculate()
   _availability->clear();
   _availability->setColumnCount(3);
 
-  QString sql( "SELECT itemsite_id, item_number, uom_name, warehous_code,"
-               "       CASE WHEN(itemsite_useparams) THEN itemsite_reorderlevel ELSE 0.0 END AS reorderlevel,"
-               "       CASE WHEN (item_type IN ('F', 'B', 'C', 'Y', 'R')) THEN 0"
-               "            WHEN (item_type IN ('M')) THEN 1"
-               "            WHEN (item_type IN ('P', 'O')) THEN 2"
-               "            ELSE 0"
-               "       END AS itemtype" );
+  QString sql( "SELECT itemsite_id, itemtype,"
+               "       item_number, uom_name, warehous_code,"
+               "       reorderlevel " );
 
   int columns = 1;
   QList<QTreeWidgetItem*> selected = _periods->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
-    PeriodListViewItem *cursor = (PeriodListViewItem*)selected[i];
-    sql += QString(", formatQty(qtyAvailable(itemsite_id, findPeriodStart(%1))) AS bucket%2")
-	   .arg(cursor->id())
-	   .arg(columns++);
+    QString bucketname = QString("bucket%1").arg(columns++);
+    sql += QString(", %1,"
+                   "  'qty' AS %2_xtnumericrole,"
+                   "  CASE WHEN (%3 < reorderlevel) THEN 'error' END AS %4_qtforegroundrole "    )
+	   .arg(bucketname)
+	   .arg(bucketname)
+	   .arg(bucketname)
+	   .arg(bucketname);
+  }
 
-    _availability->addColumn(formatDate(cursor->startDate()), _qtyColumn, Qt::AlignRight);
+  sql +=       "FROM ( "
+               "SELECT itemsite_id,"
+               "       CASE WHEN (item_type IN ('F', 'B', 'C', 'Y', 'R')) THEN 0"
+               "            WHEN (item_type IN ('M')) THEN 1"
+               "            WHEN (item_type IN ('P', 'O')) THEN 2"
+               "            ELSE 0"
+               "       END AS itemtype,"
+               "       item_number, uom_name, warehous_code,"
+               "       CASE WHEN(itemsite_useparams) THEN itemsite_reorderlevel ELSE 0.0 END AS reorderlevel ";
+
+  columns = 1;
+  for (int i = 0; i < selected.size(); i++)
+  {
+    PeriodListViewItem *cursor = (PeriodListViewItem*)selected[i];
+    QString bucketname = QString("bucket%1").arg(columns++);
+    sql += QString(", qtyAvailable(itemsite_id, findPeriodStart(%1)) AS %2 " )
+	   .arg(cursor->id())
+	   .arg(bucketname);
+
+    _availability->addColumn(formatDate(cursor->startDate()), _qtyColumn, Qt::AlignRight, true, bucketname);
 
     _columnDates.append(DatePair(cursor->startDate(), cursor->endDate()));
   }
@@ -319,7 +339,7 @@ void dspTimePhasedAvailability::sCalculate()
   else if (_plannerCode->isPattern())
     sql += " AND (itemsite_plancode_id IN (SELECT plancode_id FROM plancode WHERE (plancode_code ~ :plancode_pattern)))";
 
-  sql += ") "
+  sql += ") ) AS data "
          "ORDER BY item_number;";
 
   q.prepare(sql);
@@ -328,27 +348,7 @@ void dspTimePhasedAvailability::sCalculate()
   q.exec();
   if (q.first())
   {
-    double        reorderLevel;
-    XTreeWidgetItem *last = NULL;
-
-    do
-    {
-      reorderLevel = q.value("reorderlevel").toDouble();
-
-      last = new XTreeWidgetItem( _availability, last, q.value("itemsite_id").toInt(), q.value("itemtype").toInt(),
-                                q.value("item_number"), q.value("uom_name"),
-                                q.value("warehous_code") );
-
-      for (int column = 1; column < columns; column++)
-      {
-        last->setText((column + 2), q.value(QString("bucket%1").arg(column)).toString());
-
-        if (q.value(QString("bucket%1").arg(column)).toDouble() < reorderLevel)
-          last->setTextColor((column + 2), "red");
-
-      }
-    }
-    while (q.next());
+    _availability->populate(q, true);
   }
 }
 
