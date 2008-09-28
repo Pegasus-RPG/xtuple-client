@@ -8,281 +8,35 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>679</width>
-    <height>684</height>
+    <width>600</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Work Order Operation</string>
   </property>
-  <layout class="QVBoxLayout" >
-   <property name="spacing" >
-    <number>5</number>
-   </property>
-   <property name="leftMargin" >
-    <number>5</number>
-   </property>
-   <property name="topMargin" >
-    <number>5</number>
-   </property>
-   <property name="rightMargin" >
-    <number>5</number>
-   </property>
-   <property name="bottomMargin" >
-    <number>5</number>
-   </property>
-   <item>
-    <layout class="QHBoxLayout" >
-     <property name="spacing" >
-      <number>7</number>
-     </property>
+  <layout class="QGridLayout" >
+   <item row="0" column="0" >
+    <layout class="QGridLayout" >
      <property name="leftMargin" >
-      <number>0</number>
+      <number>12</number>
      </property>
      <property name="topMargin" >
-      <number>0</number>
+      <number>12</number>
      </property>
      <property name="rightMargin" >
-      <number>0</number>
+      <number>12</number>
      </property>
      <property name="bottomMargin" >
-      <number>0</number>
+      <number>12</number>
      </property>
-     <item>
-      <widget class="WoCluster" name="_wo" />
-     </item>
-     <item>
-      <layout class="QVBoxLayout" >
-       <property name="spacing" >
-        <number>0</number>
-       </property>
-       <property name="leftMargin" >
-        <number>0</number>
-       </property>
-       <property name="topMargin" >
-        <number>0</number>
-       </property>
-       <property name="rightMargin" >
-        <number>0</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>0</number>
-       </property>
-       <item>
-        <layout class="QHBoxLayout" >
-         <property name="spacing" >
-          <number>5</number>
-         </property>
-         <property name="leftMargin" >
-          <number>0</number>
-         </property>
-         <property name="topMargin" >
-          <number>0</number>
-         </property>
-         <property name="rightMargin" >
-          <number>0</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>0</number>
-         </property>
-         <item>
-          <layout class="QVBoxLayout" >
-           <property name="spacing" >
-            <number>5</number>
-           </property>
-           <property name="leftMargin" >
-            <number>0</number>
-           </property>
-           <property name="topMargin" >
-            <number>0</number>
-           </property>
-           <property name="rightMargin" >
-            <number>0</number>
-           </property>
-           <property name="bottomMargin" >
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="XLabel" name="_operSeqNumLit" >
-             <property name="text" >
-              <string>Oper. Seq. #:</string>
-             </property>
-             <property name="alignment" >
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="XLabel" name="_executionDayLit" >
-             <property name="text" >
-              <string>Execution Day:</string>
-             </property>
-             <property name="textFormat" >
-              <enum>Qt::AutoText</enum>
-             </property>
-             <property name="alignment" >
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="XLabel" name="_qtyOrderedLit" >
-             <property name="text" >
-              <string>Qty. Ordered:</string>
-             </property>
-             <property name="alignment" >
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QVBoxLayout" >
-           <property name="spacing" >
-            <number>5</number>
-           </property>
-           <property name="leftMargin" >
-            <number>0</number>
-           </property>
-           <property name="topMargin" >
-            <number>0</number>
-           </property>
-           <property name="rightMargin" >
-            <number>0</number>
-           </property>
-           <property name="bottomMargin" >
-            <number>0</number>
-           </property>
-           <item>
-            <layout class="QHBoxLayout" >
-             <property name="spacing" >
-              <number>0</number>
-             </property>
-             <property name="leftMargin" >
-              <number>0</number>
-             </property>
-             <property name="topMargin" >
-              <number>0</number>
-             </property>
-             <property name="rightMargin" >
-              <number>0</number>
-             </property>
-             <property name="bottomMargin" >
-              <number>0</number>
-             </property>
-             <item>
-              <widget class="XLabel" name="_operSeqNum" >
-               <property name="minimumSize" >
-                <size>
-                 <width>40</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="alignment" >
-                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer>
-               <property name="orientation" >
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeType" >
-                <enum>QSizePolicy::Expanding</enum>
-               </property>
-               <property name="sizeHint" >
-                <size>
-                 <width>20</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" >
-             <property name="spacing" >
-              <number>0</number>
-             </property>
-             <property name="leftMargin" >
-              <number>0</number>
-             </property>
-             <property name="topMargin" >
-              <number>0</number>
-             </property>
-             <property name="rightMargin" >
-              <number>0</number>
-             </property>
-             <property name="bottomMargin" >
-              <number>0</number>
-             </property>
-             <item>
-              <widget class="QSpinBox" name="_executionDay" >
-               <property name="minimum" >
-                <number>1</number>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer>
-               <property name="orientation" >
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeType" >
-                <enum>QSizePolicy::Expanding</enum>
-               </property>
-               <property name="sizeHint" >
-                <size>
-                 <width>20</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <widget class="XLabel" name="_qtyOrdered" >
-             <property name="minimumSize" >
-              <size>
-               <width>80</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="text" >
-              <string/>
-             </property>
-             <property name="alignment" >
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <spacer>
-         <property name="orientation" >
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeType" >
-          <enum>QSizePolicy::Preferred</enum>
-         </property>
-         <property name="sizeHint" >
-          <size>
-           <width>20</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </item>
-     <item>
+     <property name="horizontalSpacing" >
+      <number>12</number>
+     </property>
+     <property name="verticalSpacing" >
+      <number>12</number>
+     </property>
+     <item row="0" column="0" colspan="2" >
       <layout class="QHBoxLayout" >
        <property name="spacing" >
         <number>0</number>
@@ -299,6 +53,9 @@
        <property name="bottomMargin" >
         <number>0</number>
        </property>
+       <item>
+        <widget class="WoCluster" name="_wo" />
+       </item>
        <item>
         <spacer>
          <property name="orientation" >
@@ -318,18 +75,6 @@
        <item>
         <layout class="QVBoxLayout" >
          <property name="spacing" >
-          <number>5</number>
-         </property>
-         <property name="leftMargin" >
-          <number>0</number>
-         </property>
-         <property name="topMargin" >
-          <number>0</number>
-         </property>
-         <property name="rightMargin" >
-          <number>0</number>
-         </property>
-         <property name="bottomMargin" >
           <number>0</number>
          </property>
          <item>
@@ -375,1338 +120,1128 @@
        </item>
       </layout>
      </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QVBoxLayout" >
-     <property name="spacing" >
-      <number>5</number>
-     </property>
-     <property name="leftMargin" >
-      <number>0</number>
-     </property>
-     <property name="topMargin" >
-      <number>0</number>
-     </property>
-     <property name="rightMargin" >
-      <number>0</number>
-     </property>
-     <property name="bottomMargin" >
-      <number>0</number>
-     </property>
-     <item>
-      <layout class="QHBoxLayout" >
-       <property name="spacing" >
-        <number>5</number>
+     <item rowspan="2" row="1" column="0" >
+      <widget class="QGroupBox" name="_operGroup" >
+       <property name="title" >
+        <string/>
        </property>
-       <property name="leftMargin" >
-        <number>0</number>
-       </property>
-       <property name="topMargin" >
-        <number>0</number>
-       </property>
-       <property name="rightMargin" >
-        <number>0</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="XLabel" name="_standardOperLit" >
-         <property name="text" >
-          <string>Standard &amp;Oper.:</string>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-         <property name="buddy" >
-          <cstring>_stdopn</cstring>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="XComboBox" name="_stdopn" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" >
-       <property name="spacing" >
-        <number>5</number>
-       </property>
-       <property name="leftMargin" >
-        <number>0</number>
-       </property>
-       <property name="topMargin" >
-        <number>0</number>
-       </property>
-       <property name="rightMargin" >
-        <number>0</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>0</number>
-       </property>
-       <item>
-        <layout class="QVBoxLayout" >
-         <property name="spacing" >
-          <number>0</number>
-         </property>
-         <property name="leftMargin" >
-          <number>0</number>
-         </property>
-         <property name="topMargin" >
-          <number>0</number>
-         </property>
-         <property name="rightMargin" >
-          <number>0</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="XLabel" name="_descriptionLit" >
-           <property name="text" >
-            <string>&amp;Description:</string>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-           <property name="buddy" >
-            <cstring>_description1</cstring>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeType" >
-            <enum>QSizePolicy::Preferred</enum>
-           </property>
-           <property name="sizeHint" >
-            <size>
-             <width>20</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QVBoxLayout" >
-         <property name="spacing" >
-          <number>0</number>
-         </property>
-         <property name="leftMargin" >
-          <number>0</number>
-         </property>
-         <property name="topMargin" >
-          <number>0</number>
-         </property>
-         <property name="rightMargin" >
-          <number>0</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="XLineEdit" name="_description1" />
-         </item>
-         <item>
-          <widget class="XLineEdit" name="_description2" />
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" >
-       <property name="spacing" >
-        <number>5</number>
-       </property>
-       <property name="leftMargin" >
-        <number>0</number>
-       </property>
-       <property name="topMargin" >
-        <number>0</number>
-       </property>
-       <property name="rightMargin" >
-        <number>0</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="XLabel" name="_workCenterLit" >
-         <property name="text" >
-          <string>&amp;Work Center:</string>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-         <property name="buddy" >
-          <cstring>_wrkcnt</cstring>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="XComboBox" name="_wrkcnt" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" >
-       <property name="spacing" >
-        <number>5</number>
-       </property>
-       <property name="leftMargin" >
-        <number>0</number>
-       </property>
-       <property name="topMargin" >
-        <number>0</number>
-       </property>
-       <property name="rightMargin" >
-        <number>0</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="XLabel" name="_prodUOMLit" >
-         <property name="text" >
-          <string>Production &amp;UOM:</string>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-         <property name="buddy" >
-          <cstring>_prodUOM</cstring>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" >
-         <property name="spacing" >
-          <number>7</number>
-         </property>
-         <property name="leftMargin" >
-          <number>0</number>
-         </property>
-         <property name="topMargin" >
-          <number>0</number>
-         </property>
-         <property name="rightMargin" >
-          <number>0</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="XComboBox" name="_prodUOM" />
-         </item>
-         <item>
-          <layout class="QHBoxLayout" >
-           <property name="spacing" >
-            <number>5</number>
-           </property>
-           <property name="leftMargin" >
-            <number>0</number>
-           </property>
-           <property name="topMargin" >
-            <number>0</number>
-           </property>
-           <property name="rightMargin" >
-            <number>0</number>
-           </property>
-           <property name="bottomMargin" >
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="XLabel" name="_toolingReferenceLit" >
-             <property name="text" >
-              <string>&amp;Tooling Reference:</string>
-             </property>
-             <property name="alignment" >
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-             <property name="buddy" >
-              <cstring>_toolingReference</cstring>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="XLineEdit" name="_toolingReference" />
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" >
-     <property name="spacing" >
-      <number>5</number>
-     </property>
-     <property name="leftMargin" >
-      <number>0</number>
-     </property>
-     <property name="topMargin" >
-      <number>0</number>
-     </property>
-     <property name="rightMargin" >
-      <number>0</number>
-     </property>
-     <property name="bottomMargin" >
-      <number>0</number>
-     </property>
-     <item>
-      <widget class="XLabel" name="_invProdUOMRatioLit" >
-       <property name="text" >
-        <string>Inventory/Production UOM &amp;Ratio:</string>
-       </property>
-       <property name="alignment" >
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-       <property name="buddy" >
-        <cstring>_invProdUOMRatio</cstring>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="XLineEdit" name="_invProdUOMRatio" >
-       <property name="maximumSize" >
-        <size>
-         <width>80</width>
-         <height>32767</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer>
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeType" >
-        <enum>QSizePolicy::Expanding</enum>
-       </property>
-       <property name="sizeHint" >
-        <size>
-         <width>20</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" >
-     <property name="spacing" >
-      <number>7</number>
-     </property>
-     <property name="leftMargin" >
-      <number>0</number>
-     </property>
-     <property name="topMargin" >
-      <number>0</number>
-     </property>
-     <property name="rightMargin" >
-      <number>0</number>
-     </property>
-     <property name="bottomMargin" >
-      <number>0</number>
-     </property>
-     <item>
-      <layout class="QVBoxLayout" >
-       <property name="spacing" >
-        <number>5</number>
-       </property>
-       <property name="leftMargin" >
-        <number>0</number>
-       </property>
-       <property name="topMargin" >
-        <number>0</number>
-       </property>
-       <property name="rightMargin" >
-        <number>0</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>0</number>
-       </property>
-       <item>
-        <layout class="QHBoxLayout" >
-         <property name="spacing" >
-          <number>5</number>
-         </property>
-         <property name="leftMargin" >
-          <number>0</number>
-         </property>
-         <property name="topMargin" >
-          <number>0</number>
-         </property>
-         <property name="rightMargin" >
-          <number>0</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>0</number>
-         </property>
-         <item>
-          <layout class="QVBoxLayout" >
-           <property name="spacing" >
-            <number>0</number>
-           </property>
-           <property name="leftMargin" >
-            <number>0</number>
-           </property>
-           <property name="topMargin" >
-            <number>0</number>
-           </property>
-           <property name="rightMargin" >
-            <number>0</number>
-           </property>
-           <property name="bottomMargin" >
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="XLabel" name="_totalSetupTimeLit" >
-             <property name="text" >
-              <string>Total Setup Time:</string>
-             </property>
-             <property name="alignment" >
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="XLabel" name="_totalRunTimeLit" >
-             <property name="text" >
-              <string>Total Run Time:</string>
-             </property>
-             <property name="alignment" >
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" >
-           <property name="spacing" >
-            <number>7</number>
-           </property>
-           <property name="leftMargin" >
-            <number>0</number>
-           </property>
-           <property name="topMargin" >
-            <number>0</number>
-           </property>
-           <property name="rightMargin" >
-            <number>0</number>
-           </property>
-           <property name="bottomMargin" >
-            <number>0</number>
-           </property>
-           <item>
-            <layout class="QVBoxLayout" >
-             <property name="spacing" >
-              <number>0</number>
-             </property>
-             <property name="leftMargin" >
-              <number>0</number>
-             </property>
-             <property name="topMargin" >
-              <number>0</number>
-             </property>
-             <property name="rightMargin" >
-              <number>0</number>
-             </property>
-             <property name="bottomMargin" >
-              <number>0</number>
-             </property>
-             <item>
-              <widget class="XLineEdit" name="_setupTime" >
-               <property name="sizePolicy" >
-                <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="maximumSize" >
-                <size>
-                 <width>80</width>
-                 <height>32767</height>
-                </size>
-               </property>
-               <property name="alignment" >
-                <set>Qt::AlignRight</set>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="XLineEdit" name="_runTime" >
-               <property name="sizePolicy" >
-                <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="maximumSize" >
-                <size>
-                 <width>80</width>
-                 <height>32767</height>
-                </size>
-               </property>
-               <property name="alignment" >
-                <set>Qt::AlignRight</set>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QVBoxLayout" >
-             <property name="spacing" >
-              <number>0</number>
-             </property>
-             <property name="leftMargin" >
-              <number>0</number>
-             </property>
-             <property name="topMargin" >
-              <number>0</number>
-             </property>
-             <property name="rightMargin" >
-              <number>0</number>
-             </property>
-             <property name="bottomMargin" >
-              <number>0</number>
-             </property>
-             <item>
-              <layout class="QHBoxLayout" >
-               <property name="spacing" >
-                <number>0</number>
-               </property>
-               <property name="leftMargin" >
-                <number>0</number>
-               </property>
-               <property name="topMargin" >
-                <number>0</number>
-               </property>
-               <property name="rightMargin" >
-                <number>0</number>
-               </property>
-               <property name="bottomMargin" >
-                <number>0</number>
-               </property>
-               <item>
-                <widget class="QCheckBox" name="_reportSetup" >
-                 <property name="text" >
-                  <string>Report Setup T&amp;ime</string>
-                 </property>
-                 <property name="shortcut" >
-                  <string>Alt+I</string>
-                 </property>
-                 <property name="checked" >
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <spacer>
-                 <property name="orientation" >
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeType" >
-                  <enum>QSizePolicy::Expanding</enum>
-                 </property>
-                 <property name="sizeHint" >
-                  <size>
-                   <width>71</width>
-                   <height>10</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-              </layout>
-             </item>
-             <item>
-              <layout class="QHBoxLayout" >
-               <property name="spacing" >
-                <number>0</number>
-               </property>
-               <property name="leftMargin" >
-                <number>0</number>
-               </property>
-               <property name="topMargin" >
-                <number>0</number>
-               </property>
-               <property name="rightMargin" >
-                <number>0</number>
-               </property>
-               <property name="bottomMargin" >
-                <number>0</number>
-               </property>
-               <item>
-                <widget class="QCheckBox" name="_reportRun" >
-                 <property name="text" >
-                  <string>Report Run Ti&amp;me</string>
-                 </property>
-                 <property name="shortcut" >
-                  <string>Alt+M</string>
-                 </property>
-                 <property name="checked" >
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <spacer>
-                 <property name="orientation" >
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeType" >
-                  <enum>QSizePolicy::Expanding</enum>
-                 </property>
-                 <property name="sizeHint" >
-                  <size>
-                   <width>66</width>
-                   <height>10</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-              </layout>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" >
-         <property name="spacing" >
-          <number>5</number>
-         </property>
-         <property name="leftMargin" >
-          <number>0</number>
-         </property>
-         <property name="topMargin" >
-          <number>0</number>
-         </property>
-         <property name="rightMargin" >
-          <number>0</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>0</number>
-         </property>
-         <item>
-          <layout class="QVBoxLayout" >
-           <property name="spacing" >
-            <number>0</number>
-           </property>
-           <property name="leftMargin" >
-            <number>0</number>
-           </property>
-           <property name="topMargin" >
-            <number>0</number>
-           </property>
-           <property name="rightMargin" >
-            <number>0</number>
-           </property>
-           <property name="bottomMargin" >
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="XLabel" name="_setupTimeConsumedLit" >
-             <property name="text" >
-              <string>Setup Time Consumed:</string>
-             </property>
-             <property name="alignment" >
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="XLabel" name="_runTimeConsumedLit" >
-             <property name="text" >
-              <string>Run Time Consumed:</string>
-             </property>
-             <property name="alignment" >
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" >
-           <property name="spacing" >
-            <number>7</number>
-           </property>
-           <property name="leftMargin" >
-            <number>0</number>
-           </property>
-           <property name="topMargin" >
-            <number>0</number>
-           </property>
-           <property name="rightMargin" >
-            <number>0</number>
-           </property>
-           <property name="bottomMargin" >
-            <number>0</number>
-           </property>
-           <item>
-            <layout class="QVBoxLayout" >
-             <property name="spacing" >
-              <number>0</number>
-             </property>
-             <property name="leftMargin" >
-              <number>0</number>
-             </property>
-             <property name="topMargin" >
-              <number>0</number>
-             </property>
-             <property name="rightMargin" >
-              <number>0</number>
-             </property>
-             <property name="bottomMargin" >
-              <number>0</number>
-             </property>
-             <item>
-              <widget class="XLabel" name="_setupTimeConsumed" >
-               <property name="minimumSize" >
-                <size>
-                 <width>80</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="text" >
-                <string/>
-               </property>
-               <property name="alignment" >
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="XLabel" name="_runTimeConsumed" >
-               <property name="minimumSize" >
-                <size>
-                 <width>80</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="text" >
-                <string/>
-               </property>
-               <property name="alignment" >
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QVBoxLayout" >
-             <property name="spacing" >
-              <number>0</number>
-             </property>
-             <property name="leftMargin" >
-              <number>0</number>
-             </property>
-             <property name="topMargin" >
-              <number>0</number>
-             </property>
-             <property name="rightMargin" >
-              <number>0</number>
-             </property>
-             <property name="bottomMargin" >
-              <number>0</number>
-             </property>
-             <item>
-              <layout class="QHBoxLayout" >
-               <property name="spacing" >
-                <number>0</number>
-               </property>
-               <property name="leftMargin" >
-                <number>0</number>
-               </property>
-               <property name="topMargin" >
-                <number>0</number>
-               </property>
-               <property name="rightMargin" >
-                <number>0</number>
-               </property>
-               <property name="bottomMargin" >
-                <number>0</number>
-               </property>
-               <item>
-                <widget class="QCheckBox" name="_receiveStock" >
-                 <property name="text" >
-                  <string>Recei&amp;ve to Stock at this Operation</string>
-                 </property>
-                 <property name="shortcut" >
-                  <string>Alt+V</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <spacer>
-                 <property name="orientation" >
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeType" >
-                  <enum>QSizePolicy::Expanding</enum>
-                 </property>
-                 <property name="sizeHint" >
-                  <size>
-                   <width>20</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-              </layout>
-             </item>
-             <item>
-              <layout class="QHBoxLayout" >
-               <property name="spacing" >
-                <number>0</number>
-               </property>
-               <property name="leftMargin" >
-                <number>0</number>
-               </property>
-               <property name="topMargin" >
-                <number>0</number>
-               </property>
-               <property name="rightMargin" >
-                <number>0</number>
-               </property>
-               <property name="bottomMargin" >
-                <number>0</number>
-               </property>
-               <item>
-                <widget class="QCheckBox" name="_issueComp" >
-                 <property name="text" >
-                  <string>&amp;Auto. Issue Components at this Operation</string>
-                 </property>
-                 <property name="shortcut" >
-                  <string>Alt+A</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <spacer>
-                 <property name="orientation" >
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeType" >
-                  <enum>QSizePolicy::Expanding</enum>
-                 </property>
-                 <property name="sizeHint" >
-                  <size>
-                   <width>20</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-              </layout>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" >
-         <property name="spacing" >
-          <number>5</number>
-         </property>
-         <property name="leftMargin" >
-          <number>0</number>
-         </property>
-         <property name="topMargin" >
-          <number>0</number>
-         </property>
-         <property name="rightMargin" >
-          <number>0</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>0</number>
-         </property>
-         <item>
-          <layout class="QVBoxLayout" >
-           <property name="spacing" >
-            <number>0</number>
-           </property>
-           <property name="leftMargin" >
-            <number>0</number>
-           </property>
-           <property name="topMargin" >
-            <number>0</number>
-           </property>
-           <property name="rightMargin" >
-            <number>0</number>
-           </property>
-           <property name="bottomMargin" >
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="XLabel" name="_setupTimeRemainingLit" >
-             <property name="text" >
-              <string>Setup Time Remaining:</string>
-             </property>
-             <property name="alignment" >
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="XLabel" name="_runTimeRemainingLit" >
-             <property name="text" >
-              <string>Run Time Remaining:</string>
-             </property>
-             <property name="alignment" >
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" >
-           <property name="spacing" >
-            <number>7</number>
-           </property>
-           <property name="leftMargin" >
-            <number>0</number>
-           </property>
-           <property name="topMargin" >
-            <number>0</number>
-           </property>
-           <property name="rightMargin" >
-            <number>0</number>
-           </property>
-           <property name="bottomMargin" >
-            <number>0</number>
-           </property>
-           <item>
-            <layout class="QVBoxLayout" >
-             <property name="spacing" >
-              <number>0</number>
-             </property>
-             <property name="leftMargin" >
-              <number>0</number>
-             </property>
-             <property name="topMargin" >
-              <number>0</number>
-             </property>
-             <property name="rightMargin" >
-              <number>0</number>
-             </property>
-             <property name="bottomMargin" >
-              <number>0</number>
-             </property>
-             <item>
-              <widget class="XLabel" name="_setupTimeRemaining" >
-               <property name="minimumSize" >
-                <size>
-                 <width>80</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="text" >
-                <string/>
-               </property>
-               <property name="alignment" >
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="XLabel" name="_runTimeRemaining" >
-               <property name="minimumSize" >
-                <size>
-                 <width>80</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="text" >
-                <string/>
-               </property>
-               <property name="alignment" >
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QVBoxLayout" >
-             <property name="spacing" >
-              <number>0</number>
-             </property>
-             <property name="leftMargin" >
-              <number>0</number>
-             </property>
-             <property name="topMargin" >
-              <number>0</number>
-             </property>
-             <property name="rightMargin" >
-              <number>0</number>
-             </property>
-             <property name="bottomMargin" >
-              <number>0</number>
-             </property>
-             <item>
-              <layout class="QHBoxLayout" >
-               <property name="spacing" >
-                <number>0</number>
-               </property>
-               <property name="leftMargin" >
-                <number>0</number>
-               </property>
-               <property name="topMargin" >
-                <number>0</number>
-               </property>
-               <property name="rightMargin" >
-                <number>0</number>
-               </property>
-               <property name="bottomMargin" >
-                <number>0</number>
-               </property>
-               <item>
-                <widget class="QCheckBox" name="_setupComplete" >
-                 <property name="text" >
-                  <string>Setup Complete</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <spacer>
-                 <property name="orientation" >
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeType" >
-                  <enum>QSizePolicy::Expanding</enum>
-                 </property>
-                 <property name="sizeHint" >
-                  <size>
-                   <width>20</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-              </layout>
-             </item>
-             <item>
-              <layout class="QHBoxLayout" >
-               <property name="spacing" >
-                <number>0</number>
-               </property>
-               <property name="leftMargin" >
-                <number>0</number>
-               </property>
-               <property name="topMargin" >
-                <number>0</number>
-               </property>
-               <property name="rightMargin" >
-                <number>0</number>
-               </property>
-               <property name="bottomMargin" >
-                <number>0</number>
-               </property>
-               <item>
-                <widget class="QCheckBox" name="_runComplete" >
-                 <property name="text" >
-                  <string>Run Complete</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <spacer>
-                 <property name="orientation" >
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeType" >
-                  <enum>QSizePolicy::Expanding</enum>
-                 </property>
-                 <property name="sizeHint" >
-                  <size>
-                   <width>20</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-              </layout>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QVBoxLayout" >
-       <property name="spacing" >
-        <number>0</number>
-       </property>
-       <property name="leftMargin" >
-        <number>0</number>
-       </property>
-       <property name="topMargin" >
-        <number>0</number>
-       </property>
-       <property name="rightMargin" >
-        <number>0</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="QGroupBox" name="_throughputGroup" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="title" >
-          <string>Throughput</string>
-         </property>
+       <layout class="QGridLayout" >
+        <item row="0" column="0" >
+         <widget class="XLabel" name="_standardOperLit" >
+          <property name="text" >
+           <string>Standard &amp;Oper.:</string>
+          </property>
+          <property name="alignment" >
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+          <property name="buddy" >
+           <cstring>_stdopn</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1" >
+         <layout class="QHBoxLayout" >
+          <item>
+           <widget class="XComboBox" name="_stdopn" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item row="1" column="0" >
          <layout class="QVBoxLayout" >
           <property name="spacing" >
            <number>0</number>
           </property>
           <property name="leftMargin" >
-           <number>5</number>
+           <number>0</number>
           </property>
           <property name="topMargin" >
-           <number>5</number>
+           <number>0</number>
           </property>
           <property name="rightMargin" >
-           <number>5</number>
+           <number>0</number>
           </property>
           <property name="bottomMargin" >
-           <number>5</number>
+           <number>0</number>
           </property>
           <item>
-           <layout class="QHBoxLayout" >
-            <property name="spacing" >
-             <number>5</number>
+           <widget class="XLabel" name="_descriptionLit" >
+            <property name="text" >
+             <string>&amp;Description:</string>
             </property>
-            <property name="leftMargin" >
-             <number>0</number>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
-            <property name="topMargin" >
-             <number>0</number>
+            <property name="buddy" >
+             <cstring>_description1</cstring>
             </property>
-            <property name="rightMargin" >
-             <number>0</number>
-            </property>
-            <property name="bottomMargin" >
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="XLabel" name="_invPerMinute" >
-              <property name="minimumSize" >
-               <size>
-                <width>80</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="XLabel" name="_invUOM2" >
-              <property name="minimumSize" >
-               <size>
-                <width>60</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="XLabel" name="_invPerMinuteLit" >
-              <property name="text" >
-               <string>per Minute</string>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-           </layout>
+           </widget>
           </item>
           <item>
-           <layout class="QHBoxLayout" >
-            <property name="spacing" >
-             <number>5</number>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Vertical</enum>
             </property>
-            <property name="leftMargin" >
-             <number>0</number>
+            <property name="sizeType" >
+             <enum>QSizePolicy::Preferred</enum>
             </property>
-            <property name="topMargin" >
-             <number>0</number>
+            <property name="sizeHint" >
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
             </property>
-            <property name="rightMargin" >
-             <number>0</number>
-            </property>
-            <property name="bottomMargin" >
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="XLabel" name="_invRunTime" >
-              <property name="minimumSize" >
-               <size>
-                <width>80</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="XLabel" name="_invRunTimePerLit" >
-              <property name="text" >
-               <string>(min.) per</string>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="XLabel" name="_invUOM1" >
-              <property name="minimumSize" >
-               <size>
-                <width>60</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignCenter</set>
-              </property>
-             </widget>
-            </item>
-           </layout>
+           </spacer>
           </item>
          </layout>
-        </widget>
-       </item>
-       <item>
-        <spacer>
-         <property name="orientation" >
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeType" >
-          <enum>QSizePolicy::Preferred</enum>
-         </property>
-         <property name="sizeHint" >
-          <size>
-           <width>20</width>
-           <height>16</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
+        </item>
+        <item row="1" column="1" >
+         <layout class="QVBoxLayout" >
+          <property name="spacing" >
+           <number>0</number>
+          </property>
+          <property name="leftMargin" >
+           <number>0</number>
+          </property>
+          <property name="topMargin" >
+           <number>0</number>
+          </property>
+          <property name="rightMargin" >
+           <number>0</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="XLineEdit" name="_description1" />
+          </item>
+          <item>
+           <widget class="XLineEdit" name="_description2" />
+          </item>
+         </layout>
+        </item>
+        <item row="2" column="0" >
+         <widget class="XLabel" name="_workCenterLit" >
+          <property name="text" >
+           <string>&amp;Work Center:</string>
+          </property>
+          <property name="alignment" >
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+          <property name="buddy" >
+           <cstring>_wrkcnt</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1" >
+         <layout class="QHBoxLayout" >
+          <item>
+           <widget class="XComboBox" name="_wrkcnt" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item row="3" column="0" >
+         <widget class="XLabel" name="_toolingReferenceLit" >
+          <property name="text" >
+           <string>&amp;Tooling Reference:</string>
+          </property>
+          <property name="alignment" >
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+          <property name="buddy" >
+           <cstring>_toolingReference</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1" >
+         <layout class="QHBoxLayout" >
+          <item>
+           <widget class="XLineEdit" name="_toolingReference" />
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
      </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QVBoxLayout" >
-     <property name="spacing" >
-      <number>0</number>
-     </property>
-     <property name="leftMargin" >
-      <number>0</number>
-     </property>
-     <property name="topMargin" >
-      <number>0</number>
-     </property>
-     <property name="rightMargin" >
-      <number>0</number>
-     </property>
-     <property name="bottomMargin" >
-      <number>0</number>
-     </property>
-     <item>
-      <layout class="QHBoxLayout" >
-       <property name="spacing" >
-        <number>6</number>
+     <item row="1" column="1" >
+      <widget class="QGroupBox" name="_seqGroup" >
+       <property name="title" >
+        <string/>
        </property>
-       <property name="leftMargin" >
-        <number>0</number>
-       </property>
-       <property name="topMargin" >
-        <number>0</number>
-       </property>
-       <property name="rightMargin" >
-        <number>0</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="XLabel" name="_instructionsLit" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text" >
-          <string>Instructions:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="XCheckBox" name="_fixedFont" >
-         <property name="text" >
-          <string>Use Fixed-Width Font</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
+       <layout class="QGridLayout" >
+        <item row="0" column="0" >
+         <widget class="XLabel" name="_operSeqNumLit" >
+          <property name="text" >
+           <string>Oper. Seq. #:</string>
+          </property>
+          <property name="alignment" >
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1" >
+         <widget class="XLabel" name="_operSeqNum" >
+          <property name="minimumSize" >
+           <size>
+            <width>40</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="alignment" >
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" >
+         <widget class="XLabel" name="_executionDayLit" >
+          <property name="text" >
+           <string>Execution Day:</string>
+          </property>
+          <property name="textFormat" >
+           <enum>Qt::AutoText</enum>
+          </property>
+          <property name="alignment" >
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1" >
+         <layout class="QHBoxLayout" >
+          <property name="spacing" >
+           <number>0</number>
+          </property>
+          <property name="leftMargin" >
+           <number>0</number>
+          </property>
+          <property name="topMargin" >
+           <number>0</number>
+          </property>
+          <property name="rightMargin" >
+           <number>0</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QSpinBox" name="_executionDay" >
+            <property name="minimum" >
+             <number>1</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType" >
+             <enum>QSizePolicy::Expanding</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item row="2" column="0" >
+         <widget class="XLabel" name="_qtyOrderedLit" >
+          <property name="text" >
+           <string>Qty. Ordered:</string>
+          </property>
+          <property name="alignment" >
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1" >
+         <layout class="QHBoxLayout" >
+          <item>
+           <widget class="XLabel" name="_qtyOrdered" >
+            <property name="text" >
+             <string/>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
      </item>
-     <item>
-      <widget class="QTextEdit" name="_instructions" />
+     <item row="2" column="1" >
+      <widget class="QGroupBox" name="_throughputGroup" >
+       <property name="title" >
+        <string>Throughput</string>
+       </property>
+       <layout class="QVBoxLayout" >
+        <item>
+         <layout class="QHBoxLayout" >
+          <property name="spacing" >
+           <number>5</number>
+          </property>
+          <property name="leftMargin" >
+           <number>0</number>
+          </property>
+          <property name="topMargin" >
+           <number>0</number>
+          </property>
+          <property name="rightMargin" >
+           <number>0</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="XLabel" name="_invPerMinute" >
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="XLabel" name="_invUOM2" >
+            <property name="alignment" >
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="XLabel" name="_invPerMinuteLit" >
+            <property name="text" >
+             <string>per Minute</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" >
+          <property name="spacing" >
+           <number>5</number>
+          </property>
+          <property name="leftMargin" >
+           <number>0</number>
+          </property>
+          <property name="topMargin" >
+           <number>0</number>
+          </property>
+          <property name="rightMargin" >
+           <number>0</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="XLabel" name="_invRunTime" >
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="XLabel" name="_invRunTimePerLit" >
+            <property name="text" >
+             <string>(min.) per</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="XLabel" name="_invUOM1" >
+            <property name="alignment" >
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item row="3" column="0" colspan="2" >
+      <widget class="QTabWidget" name="_tab" >
+       <property name="currentIndex" >
+        <number>0</number>
+       </property>
+       <widget class="QWidget" name="_generalTab" >
+        <attribute name="title" >
+         <string>General</string>
+        </attribute>
+        <layout class="QGridLayout" >
+         <item row="0" column="0" >
+          <layout class="QVBoxLayout" >
+           <item>
+            <layout class="QGridLayout" >
+             <item row="0" column="0" >
+              <widget class="QGroupBox" name="_timeGroup" >
+               <property name="title" >
+                <string/>
+               </property>
+               <layout class="QGridLayout" >
+                <item row="0" column="0" >
+                 <widget class="XLabel" name="_totalSetupTimeLit" >
+                  <property name="text" >
+                   <string>Total Setup Time:</string>
+                  </property>
+                  <property name="alignment" >
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1" >
+                 <widget class="XLineEdit" name="_setupTime" >
+                  <property name="sizePolicy" >
+                   <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="maximumSize" >
+                   <size>
+                    <width>80</width>
+                    <height>32767</height>
+                   </size>
+                  </property>
+                  <property name="alignment" >
+                   <set>Qt::AlignRight</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="2" >
+                 <widget class="QCheckBox" name="_reportSetup" >
+                  <property name="text" >
+                   <string>Report Setup T&amp;ime</string>
+                  </property>
+                  <property name="shortcut" >
+                   <string>Alt+I</string>
+                  </property>
+                  <property name="checked" >
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0" >
+                 <widget class="XLabel" name="_totalRunTimeLit" >
+                  <property name="text" >
+                   <string>Total Run Time:</string>
+                  </property>
+                  <property name="alignment" >
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1" >
+                 <widget class="XLineEdit" name="_runTime" >
+                  <property name="sizePolicy" >
+                   <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="maximumSize" >
+                   <size>
+                    <width>80</width>
+                    <height>32767</height>
+                   </size>
+                  </property>
+                  <property name="alignment" >
+                   <set>Qt::AlignRight</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="2" >
+                 <widget class="QCheckBox" name="_reportRun" >
+                  <property name="text" >
+                   <string>Report Run Ti&amp;me</string>
+                  </property>
+                  <property name="shortcut" >
+                   <string>Alt+M</string>
+                  </property>
+                  <property name="checked" >
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="0" column="1" >
+              <widget class="QGroupBox" name="_uomGroup" >
+               <property name="title" >
+                <string/>
+               </property>
+               <layout class="QGridLayout" >
+                <item row="0" column="0" >
+                 <widget class="XLabel" name="_prodUOMLit" >
+                  <property name="text" >
+                   <string>Production &amp;UOM:</string>
+                  </property>
+                  <property name="alignment" >
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                  <property name="buddy" >
+                   <cstring>_prodUOM</cstring>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1" >
+                 <widget class="XComboBox" name="_prodUOM" />
+                </item>
+                <item row="1" column="0" >
+                 <widget class="XLabel" name="_invProdUOMRatioLit" >
+                  <property name="text" >
+                   <string>Production/Inventory &amp;Ratio:</string>
+                  </property>
+                  <property name="alignment" >
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                  <property name="buddy" >
+                   <cstring>_invProdUOMRatio</cstring>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1" >
+                 <layout class="QHBoxLayout" >
+                  <item>
+                   <widget class="XLineEdit" name="_invProdUOMRatio" />
+                  </item>
+                  <item>
+                   <spacer>
+                    <property name="orientation" >
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeType" >
+                     <enum>QSizePolicy::Expanding</enum>
+                    </property>
+                    <property name="sizeHint" >
+                     <size>
+                      <width>20</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="1" column="0" colspan="2" >
+              <widget class="QGroupBox" name="_actualGroup" >
+               <property name="title" >
+                <string/>
+               </property>
+               <layout class="QGridLayout" >
+                <item row="0" column="0" >
+                 <layout class="QHBoxLayout" >
+                  <property name="spacing" >
+                   <number>5</number>
+                  </property>
+                  <property name="leftMargin" >
+                   <number>0</number>
+                  </property>
+                  <property name="topMargin" >
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin" >
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin" >
+                   <number>0</number>
+                  </property>
+                  <item>
+                   <layout class="QVBoxLayout" >
+                    <property name="spacing" >
+                     <number>0</number>
+                    </property>
+                    <property name="leftMargin" >
+                     <number>0</number>
+                    </property>
+                    <property name="topMargin" >
+                     <number>0</number>
+                    </property>
+                    <property name="rightMargin" >
+                     <number>0</number>
+                    </property>
+                    <property name="bottomMargin" >
+                     <number>0</number>
+                    </property>
+                    <item>
+                     <widget class="XLabel" name="_setupTimeRemainingLit" >
+                      <property name="text" >
+                       <string>Setup Time Remaining:</string>
+                      </property>
+                      <property name="alignment" >
+                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="XLabel" name="_runTimeRemainingLit" >
+                      <property name="text" >
+                       <string>Run Time Remaining:</string>
+                      </property>
+                      <property name="alignment" >
+                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </item>
+                  <item>
+                   <layout class="QHBoxLayout" >
+                    <property name="spacing" >
+                     <number>7</number>
+                    </property>
+                    <property name="leftMargin" >
+                     <number>0</number>
+                    </property>
+                    <property name="topMargin" >
+                     <number>0</number>
+                    </property>
+                    <property name="rightMargin" >
+                     <number>0</number>
+                    </property>
+                    <property name="bottomMargin" >
+                     <number>0</number>
+                    </property>
+                    <item>
+                     <layout class="QVBoxLayout" >
+                      <property name="spacing" >
+                       <number>0</number>
+                      </property>
+                      <property name="leftMargin" >
+                       <number>0</number>
+                      </property>
+                      <property name="topMargin" >
+                       <number>0</number>
+                      </property>
+                      <property name="rightMargin" >
+                       <number>0</number>
+                      </property>
+                      <property name="bottomMargin" >
+                       <number>0</number>
+                      </property>
+                      <item>
+                       <widget class="XLabel" name="_setupTimeRemaining" >
+                        <property name="minimumSize" >
+                         <size>
+                          <width>80</width>
+                          <height>0</height>
+                         </size>
+                        </property>
+                        <property name="text" >
+                         <string/>
+                        </property>
+                        <property name="alignment" >
+                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="XLabel" name="_runTimeRemaining" >
+                        <property name="minimumSize" >
+                         <size>
+                          <width>80</width>
+                          <height>0</height>
+                         </size>
+                        </property>
+                        <property name="text" >
+                         <string/>
+                        </property>
+                        <property name="alignment" >
+                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </item>
+                    <item>
+                     <layout class="QVBoxLayout" >
+                      <property name="spacing" >
+                       <number>0</number>
+                      </property>
+                      <property name="leftMargin" >
+                       <number>0</number>
+                      </property>
+                      <property name="topMargin" >
+                       <number>0</number>
+                      </property>
+                      <property name="rightMargin" >
+                       <number>0</number>
+                      </property>
+                      <property name="bottomMargin" >
+                       <number>0</number>
+                      </property>
+                      <item>
+                       <layout class="QHBoxLayout" >
+                        <property name="spacing" >
+                         <number>0</number>
+                        </property>
+                        <property name="leftMargin" >
+                         <number>0</number>
+                        </property>
+                        <property name="topMargin" >
+                         <number>0</number>
+                        </property>
+                        <property name="rightMargin" >
+                         <number>0</number>
+                        </property>
+                        <property name="bottomMargin" >
+                         <number>0</number>
+                        </property>
+                        <item>
+                         <widget class="QCheckBox" name="_setupComplete" >
+                          <property name="text" >
+                           <string>Setup Complete</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <spacer>
+                          <property name="orientation" >
+                           <enum>Qt::Horizontal</enum>
+                          </property>
+                          <property name="sizeType" >
+                           <enum>QSizePolicy::Expanding</enum>
+                          </property>
+                          <property name="sizeHint" >
+                           <size>
+                            <width>20</width>
+                            <height>20</height>
+                           </size>
+                          </property>
+                         </spacer>
+                        </item>
+                       </layout>
+                      </item>
+                      <item>
+                       <layout class="QHBoxLayout" >
+                        <property name="spacing" >
+                         <number>0</number>
+                        </property>
+                        <property name="leftMargin" >
+                         <number>0</number>
+                        </property>
+                        <property name="topMargin" >
+                         <number>0</number>
+                        </property>
+                        <property name="rightMargin" >
+                         <number>0</number>
+                        </property>
+                        <property name="bottomMargin" >
+                         <number>0</number>
+                        </property>
+                        <item>
+                         <widget class="QCheckBox" name="_runComplete" >
+                          <property name="text" >
+                           <string>Run Complete</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <spacer>
+                          <property name="orientation" >
+                           <enum>Qt::Horizontal</enum>
+                          </property>
+                          <property name="sizeType" >
+                           <enum>QSizePolicy::Expanding</enum>
+                          </property>
+                          <property name="sizeHint" >
+                           <size>
+                            <width>20</width>
+                            <height>20</height>
+                           </size>
+                          </property>
+                         </spacer>
+                        </item>
+                       </layout>
+                      </item>
+                     </layout>
+                    </item>
+                   </layout>
+                  </item>
+                 </layout>
+                </item>
+                <item row="1" column="0" >
+                 <layout class="QHBoxLayout" >
+                  <property name="spacing" >
+                   <number>5</number>
+                  </property>
+                  <property name="leftMargin" >
+                   <number>0</number>
+                  </property>
+                  <property name="topMargin" >
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin" >
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin" >
+                   <number>0</number>
+                  </property>
+                  <item>
+                   <layout class="QVBoxLayout" >
+                    <property name="spacing" >
+                     <number>0</number>
+                    </property>
+                    <property name="leftMargin" >
+                     <number>0</number>
+                    </property>
+                    <property name="topMargin" >
+                     <number>0</number>
+                    </property>
+                    <property name="rightMargin" >
+                     <number>0</number>
+                    </property>
+                    <property name="bottomMargin" >
+                     <number>0</number>
+                    </property>
+                    <item>
+                     <widget class="XLabel" name="_setupTimeConsumedLit" >
+                      <property name="text" >
+                       <string>Setup Time Consumed:</string>
+                      </property>
+                      <property name="alignment" >
+                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="XLabel" name="_runTimeConsumedLit" >
+                      <property name="text" >
+                       <string>Run Time Consumed:</string>
+                      </property>
+                      <property name="alignment" >
+                       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </item>
+                  <item>
+                   <layout class="QHBoxLayout" >
+                    <property name="spacing" >
+                     <number>7</number>
+                    </property>
+                    <property name="leftMargin" >
+                     <number>0</number>
+                    </property>
+                    <property name="topMargin" >
+                     <number>0</number>
+                    </property>
+                    <property name="rightMargin" >
+                     <number>0</number>
+                    </property>
+                    <property name="bottomMargin" >
+                     <number>0</number>
+                    </property>
+                    <item>
+                     <layout class="QVBoxLayout" >
+                      <property name="spacing" >
+                       <number>0</number>
+                      </property>
+                      <property name="leftMargin" >
+                       <number>0</number>
+                      </property>
+                      <property name="topMargin" >
+                       <number>0</number>
+                      </property>
+                      <property name="rightMargin" >
+                       <number>0</number>
+                      </property>
+                      <property name="bottomMargin" >
+                       <number>0</number>
+                      </property>
+                      <item>
+                       <widget class="XLabel" name="_setupTimeConsumed" >
+                        <property name="minimumSize" >
+                         <size>
+                          <width>80</width>
+                          <height>0</height>
+                         </size>
+                        </property>
+                        <property name="text" >
+                         <string/>
+                        </property>
+                        <property name="alignment" >
+                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="XLabel" name="_runTimeConsumed" >
+                        <property name="minimumSize" >
+                         <size>
+                          <width>80</width>
+                          <height>0</height>
+                         </size>
+                        </property>
+                        <property name="text" >
+                         <string/>
+                        </property>
+                        <property name="alignment" >
+                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </item>
+                    <item>
+                     <layout class="QVBoxLayout" >
+                      <property name="spacing" >
+                       <number>0</number>
+                      </property>
+                      <property name="leftMargin" >
+                       <number>0</number>
+                      </property>
+                      <property name="topMargin" >
+                       <number>0</number>
+                      </property>
+                      <property name="rightMargin" >
+                       <number>0</number>
+                      </property>
+                      <property name="bottomMargin" >
+                       <number>0</number>
+                      </property>
+                      <item>
+                       <layout class="QHBoxLayout" >
+                        <property name="spacing" >
+                         <number>0</number>
+                        </property>
+                        <property name="leftMargin" >
+                         <number>0</number>
+                        </property>
+                        <property name="topMargin" >
+                         <number>0</number>
+                        </property>
+                        <property name="rightMargin" >
+                         <number>0</number>
+                        </property>
+                        <property name="bottomMargin" >
+                         <number>0</number>
+                        </property>
+                        <item>
+                         <widget class="QCheckBox" name="_receiveStock" >
+                          <property name="text" >
+                           <string>Recei&amp;ve to Stock at this Operation</string>
+                          </property>
+                          <property name="shortcut" >
+                           <string>Alt+V</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <spacer>
+                          <property name="orientation" >
+                           <enum>Qt::Horizontal</enum>
+                          </property>
+                          <property name="sizeType" >
+                           <enum>QSizePolicy::Expanding</enum>
+                          </property>
+                          <property name="sizeHint" >
+                           <size>
+                            <width>20</width>
+                            <height>20</height>
+                           </size>
+                          </property>
+                         </spacer>
+                        </item>
+                       </layout>
+                      </item>
+                      <item>
+                       <layout class="QHBoxLayout" >
+                        <property name="spacing" >
+                         <number>0</number>
+                        </property>
+                        <property name="leftMargin" >
+                         <number>0</number>
+                        </property>
+                        <property name="topMargin" >
+                         <number>0</number>
+                        </property>
+                        <property name="rightMargin" >
+                         <number>0</number>
+                        </property>
+                        <property name="bottomMargin" >
+                         <number>0</number>
+                        </property>
+                        <item>
+                         <widget class="QCheckBox" name="_issueComp" >
+                          <property name="text" >
+                           <string>&amp;Auto. Issue Components at this Operation</string>
+                          </property>
+                          <property name="shortcut" >
+                           <string>Alt+A</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <spacer>
+                          <property name="orientation" >
+                           <enum>Qt::Horizontal</enum>
+                          </property>
+                          <property name="sizeType" >
+                           <enum>QSizePolicy::Expanding</enum>
+                          </property>
+                          <property name="sizeHint" >
+                           <size>
+                            <width>20</width>
+                            <height>20</height>
+                           </size>
+                          </property>
+                         </spacer>
+                        </item>
+                       </layout>
+                      </item>
+                     </layout>
+                    </item>
+                   </layout>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" >
+              <size>
+               <width>20</width>
+               <height>0</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="_instructionsTab" >
+        <attribute name="title" >
+         <string>Instructions</string>
+        </attribute>
+        <layout class="QGridLayout" >
+         <item row="0" column="0" >
+          <widget class="XCheckBox" name="_fixedFont" >
+           <property name="text" >
+            <string>Use Fixed-Width Font</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" >
+          <widget class="QTextEdit" name="_instructions" />
+         </item>
+        </layout>
+       </widget>
+      </widget>
      </item>
     </layout>
    </item>
