@@ -8,8 +8,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>578</width>
-    <height>596</height>
+    <width>600</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -300,7 +300,7 @@
       </widget>
      </item>
      <item row="1" column="1" >
-      <widget class="QGroupBox" name="groupBox" >
+      <widget class="QGroupBox" name="_seqGroup" >
        <property name="title" >
         <string/>
        </property>
