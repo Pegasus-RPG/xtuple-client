@@ -114,8 +114,8 @@ void productCategories::init()
 {
 //  statusBar()->hide();
   
-  _prodcat->addColumn(tr("Category"),    70, Qt::AlignLeft );
-  _prodcat->addColumn(tr("Description"), -1, Qt::AlignLeft );
+  _prodcat->addColumn(tr("Category"),    70, Qt::AlignLeft, true, "prodcat_code" );
+  _prodcat->addColumn(tr("Description"), -1, Qt::AlignLeft, true, "prodcat_descrip" );
 
   if (_privileges->check("MaintainProductCategories"))
   {

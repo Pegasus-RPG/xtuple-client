@@ -78,9 +78,9 @@ project::project(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_deleteTask, SIGNAL(clicked()), this, SLOT(sDeleteTask()));
   connect(_number, SIGNAL(lostFocus()), this, SLOT(sNumberChanged()));
 
-  _prjtask->addColumn( tr("Number"),      _itemColumn, Qt::AlignRight );
-  _prjtask->addColumn( tr("Name"),        _itemColumn, Qt::AlignLeft  );
-  _prjtask->addColumn( tr("Description"), -1,          Qt::AlignLeft  ); 
+  _prjtask->addColumn( tr("Number"),      _itemColumn, Qt::AlignRight, true, "prjtask_number" );
+  _prjtask->addColumn( tr("Name"),        _itemColumn, Qt::AlignLeft,  true, "prjtask_name"  );
+  _prjtask->addColumn( tr("Description"), -1,          Qt::AlignLeft,  true, "prjtask_descrip" ); 
 
   q.prepare("SELECT usr_id "
 	    "FROM usr "
@@ -336,7 +336,8 @@ void project::sDeleteTask()
 
 void project::sFillTaskList()
 {
-  q.prepare( "SELECT prjtask_id, prjtask_number, prjtask_name, firstLine(prjtask_descrip) "
+  q.prepare( "SELECT prjtask_id, prjtask_number, prjtask_name, "
+             "firstLine(prjtask_descrip) AS prjtask_descrip "
              "FROM prjtask "
              "WHERE (prjtask_prj_id=:prj_id) "
              "ORDER BY prjtask_number;" );

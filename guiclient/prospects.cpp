@@ -94,10 +94,10 @@ prospects::prospects(QWidget* parent, const char* name, Qt::WFlags fl)
       connect(_prospect, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
     }
 
-    _prospect->addColumn(tr("Number"),  _orderColumn, Qt::AlignCenter );
-    _prospect->addColumn(tr("Name"),    -1,           Qt::AlignLeft   );
-    _prospect->addColumn(tr("Address"), 175,          Qt::AlignLeft   );
-    _prospect->addColumn(tr("Phone #"), 100,          Qt::AlignLeft   );
+    _prospect->addColumn(tr("Number"),  _orderColumn, Qt::AlignCenter, true, "prospect_number" );
+    _prospect->addColumn(tr("Name"),    -1,           Qt::AlignLeft,   true, "prospect_name"   );
+    _prospect->addColumn(tr("Address"), 175,          Qt::AlignLeft,   true, "addr_line1"   );
+    _prospect->addColumn(tr("Phone #"), 100,          Qt::AlignLeft,   true, "cntct_phone"   );
 
     connect(omfgThis, SIGNAL(prospectsUpdated()), SLOT(sFillList()));
 

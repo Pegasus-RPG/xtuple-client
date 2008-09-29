@@ -123,9 +123,9 @@ void projects::init()
     connect(_prj, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
   }
 
-  _prj->addColumn(tr("Number"), -1,           Qt::AlignCenter );
-  _prj->addColumn(tr("Name"),   _orderColumn, Qt::AlignLeft   );
-  _prj->addColumn(tr("Status"), _itemColumn,  Qt::AlignCenter );
+  _prj->addColumn(tr("Number"), -1,           Qt::AlignCenter, true, "prj_number" );
+  _prj->addColumn(tr("Name"),   _orderColumn, Qt::AlignLeft,   true, "prj_name"   );
+  _prj->addColumn(tr("Status"), _itemColumn,  Qt::AlignCenter, true, "prj_status" );
 
   connect(omfgThis, SIGNAL(projectsUpdated(int)), this, SLOT(sFillList()));
 
@@ -231,7 +231,7 @@ void projects::sFillList()
              "            WHEN(prj_status='O') THEN :open"
              "            WHEN(prj_status='C') THEN :complete"
              "            ELSE :undefined"
-             "       END "
+             "       END AS prj_status "
              "FROM prj "
              "ORDER BY prj_number;" );
   q.bindValue(":planning", tr("Concept"));

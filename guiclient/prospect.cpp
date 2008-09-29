@@ -96,8 +96,8 @@ prospect::prospect(QWidget* parent, const char* name, Qt::WFlags fl)
   _taxauth->setAllowNull(true);
   _taxauth->setType(XComboBox::TaxAuths);
 
-  _quotes->addColumn(tr("Quote #"),          _orderColumn, Qt::AlignLeft );
-  _quotes->addColumn(tr("Quote Date"),       _dateColumn,  Qt::AlignLeft );
+  _quotes->addColumn(tr("Quote #"),          _orderColumn, Qt::AlignLeft, true, "quhead_number" );
+  _quotes->addColumn(tr("Quote Date"),       _dateColumn,  Qt::AlignLeft, true, "quhead_quotedate" );
 
   _NumberGen = -1;
 }
@@ -553,7 +553,7 @@ void prospect::sDeleteQuote()
 void prospect::sFillQuotesList()
 {
   q.prepare("SELECT DISTINCT quhead_id, quhead_number, "
-	    "                formatDate(quhead_quotedate) "
+	    "                quhead_quotedate "
 	    "FROM quhead "
 	    "WHERE (quhead_cust_id=:prospect_id) "
 	    "ORDER BY quhead_number;");

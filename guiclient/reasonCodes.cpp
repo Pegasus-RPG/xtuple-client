@@ -123,8 +123,8 @@ void reasonCodes::init()
     connect(_rsncode, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
   }
 
-  _rsncode->addColumn(tr("Code"),        _itemColumn, Qt::AlignLeft );
-  _rsncode->addColumn(tr("Description"), -1,          Qt::AlignLeft );
+  _rsncode->addColumn(tr("Code"),        _itemColumn, Qt::AlignLeft, true, "rsncode_code" );
+  _rsncode->addColumn(tr("Description"), -1,          Qt::AlignLeft, true, "rsncode_descrip" );
     
   sFillList();
 }
