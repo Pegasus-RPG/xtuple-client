@@ -101,7 +101,7 @@ dspCostedIndentedBOM::dspCostedIndentedBOM(QWidget* parent, const char* name, Qt
   _bomitem->addColumn(tr("Effective"),   _dateColumn, Qt::AlignCenter,true, "bomdata_effective");
   _bomitem->addColumn(tr("Expires"),     _dateColumn, Qt::AlignCenter,true, "bomdata_expires");
   _bomitem->addColumn(tr("Unit Cost"),   _costColumn, Qt::AlignRight, true, "unitcost");
-  _bomitem->addColumn(tr("Ext. Cost"), _priceColumn, Qt::AlignRight, true, "extendedcost");
+  _bomitem->addColumn(tr("Ext. Cost"), _priceColumn, Qt::AlignRight, true,  "extendedcost");
 
   _bomitem->setIndentation(10);
 
@@ -239,10 +239,9 @@ void dspCostedIndentedBOM::sFillList()
                     "       CASE WHEN bomdata_expired THEN 'expired'"
                     "            WHEN bomdata_future  THEN 'future'"
                     "       END AS qtforegroundrole,"
-                    "       bomdata_bomwork_level - 1 AS xtindentrole,"
-                    "       0 as extendedcost_xttotalrole "
+                    "       bomdata_bomwork_level - 1 AS xtindentrole "
                     "FROM indentedbom(<? value(\"item_id\") ?>,"
-                    "                 <? value(\"revision_id\") ?>,0,0);" );
+                    "                 <? value(\"revision_id\") ?>,0,0)");
   ParameterList params;
   if (! setParams(params))
     return;
@@ -254,13 +253,27 @@ void dspCostedIndentedBOM::sFillList()
     return;
   }
 
-  q.prepare( "SELECT formatCost(actcost(:item_id)) AS actual,"
-             "       formatCost(stdcost(:item_id)) AS standard;" );
+  q.prepare( "SELECT formatCost(SUM(bomdata_actextendedcost)) AS actextendedcost,"
+             "       formatCost(SUM(bomdata_stdextendedcost)) AS stdextendedcost,"
+             "       formatCost(actcost(:item_id)) AS actual,"
+             "       formatCost(stdcost(:item_id)) AS standard "
+             "FROM indentedbom(:item_id,"
+             "                 :revision_id,0,0)"
+             "WHERE (bomdata_bomwork_level=1) "
+             "GROUP BY actual, standard;" );
   q.bindValue(":item_id", _item->id());
+  q.bindValue(":revision_id",_revision->id());
   q.exec();
   if (q.first())
   {
     XTreeWidgetItem *last = new XTreeWidgetItem(_bomitem, -1, -1);
+    last->setText(0, tr("Total Cost"));
+    if(_useStandardCosts->isChecked())
+      last->setText(9, q.value("stdextendedcost").toString());
+    else
+      last->setText(9, q.value("actextendedcost").toString());
+
+    last = new XTreeWidgetItem( _bomitem, -1, -1);
     last->setText(0, tr("Actual Cost"));
     last->setText(9, q.value("actual").toString());
 
