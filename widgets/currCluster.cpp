@@ -107,7 +107,7 @@ static QMutex    errorListLock;
    has been defined (sNoConversionRate is overloaded to avoid duplicating its
    logic in sNoBase(QWidget*) below).
  */
-static void sNoConversionRate(QWidget* parent, const int curr_id, const QDate& effective)
+static void sNoConversionRate(QWidget* parent, const int curr_id, const QDate& effective, const char *caller)
 {
     bool displayMsg = false;
     QPair<int, QDate> currDatePair =
@@ -129,19 +129,22 @@ static void sNoConversionRate(QWidget* parent, const int curr_id, const QDate& e
 
     if (displayMsg)
     {
-	if (curr_id >= 0)
-	    QMessageBox::critical(parent,
-			  QObject::tr("No Currency Exchange Rate"),
-			  QObject::tr("This document uses a currency which has "
-			     "no valid Exchange Rate.\nPlease review your "
-			     "Exchange Rates to correct the problem.\n(%1 on %2)")
-			  .arg(curr_id)
-			  .arg(effective.toString()));
-	else
-	    QMessageBox::critical(parent,
-			      QObject::tr("No Base Currency"),
-			      QObject::tr("No base currency has been defined.\n"
-					  "Call your system administrator."));
+      qWarning("%s::sNoConversionRate(%p, %d, %s, %s)",
+               qPrintable(parent->objectName()),
+               parent, curr_id, qPrintable(effective.toString()), caller);
+      if (curr_id >= 0)
+        QMessageBox::critical(parent,
+                      QObject::tr("No Currency Exchange Rate"),
+                      QObject::tr("<p>This document uses a currency which "
+                         "has no valid Exchange Rate. Please review your "
+                         "Exchange Rates to correct the problem. (%1 on %2)")
+                      .arg(curr_id)
+                      .arg(effective.toString()));
+      else
+        QMessageBox::critical(parent,
+                          QObject::tr("No Base Currency"),
+                          QObject::tr("<p>No base currency has been defined. "
+                                      "Call your system administrator."));
     }
 }
 
@@ -158,9 +161,9 @@ static void sZeroErrorCount(const int curr_id, const QDate& effective)
     errorListLock.unlock();
 }
 
-static void sNoBase(QWidget* parent)
+static void sNoBase(QWidget* parent, const char* caller)
 {
-    sNoConversionRate(parent, -1, nullDate);
+  sNoConversionRate(parent, -1, nullDate, caller);
 }
 
 /* create the following widget for currency entry:
@@ -505,7 +508,7 @@ int     CurrDisplay::_baseScale	= 2;
 
 int CurrDisplay::baseId()
 {
-  if (_baseId <= 0 && _x_metrics)
+  if (_baseId <= 0)
   {
     XSqlQuery baseQuery;
     baseQuery.prepare("SELECT curr_id, curr_symbol " //currConcat(curr_id) AS curr_symbol "
@@ -519,7 +522,7 @@ int CurrDisplay::baseId()
     }
     else if (baseQuery.lastError().number() == 2000 /* NOT FOUND */)
     {
-	sNoBase(0);
+      sNoBase(0, "baseId");
     }
     else if (baseQuery.lastError().type() != QSqlError::None)
     {
@@ -566,11 +569,11 @@ CurrDisplay::CurrDisplay(QWidget * parent, const char* name)
     _localId = baseId();
     _localScale = _baseScale;
 
-    clear();
     _effective = QDate().currentDate();
     _decimals = 0;
     _format = Money;
     _default = 0;
+    clear();
 
     setEnabled(FALSE);
     setLocalControl(TRUE);
@@ -802,8 +805,8 @@ void CurrDisplay::sValueBaseChanged(double newValue)
 	{
 	    if (convertVal.lastError().databaseText().contains("No exchange rate"))
 	    {
-		emit noConversionRate();
-		sNoConversionRate(this, id(), effective());
+              emit noConversionRate();
+              sNoConversionRate(this, id(), effective(), "sValueBaseChanged");
 	    }
 	    else
 	      QMessageBox::critical(this, tr("A System Error occurred at %1::%2.")
@@ -862,8 +865,8 @@ void CurrDisplay::sValueLocalChanged(double newValue)
 	{
 	    if (convertVal.lastError().databaseText().contains("No exchange rate"))
 	    {
-		emit noConversionRate();
-		sNoConversionRate(this, id(), effective());
+              emit noConversionRate();
+              sNoConversionRate(this, id(), effective(), "sValueLocalChanged");
 	    }
 	    else
 	      QMessageBox::critical(this, tr("A System Error occurred at %1::%2.")
@@ -1002,7 +1005,7 @@ double CurrDisplay::convert(const int from, const int to, const double amount, c
   else if (convq.lastError().type() != QSqlError::None)
   {
     if (convq.lastError().databaseText().contains("No exchange rate"))
-      sNoConversionRate(0, from, date);
+      sNoConversionRate(0, from, date, "convert");
     else
       QMessageBox::critical(0, tr("A System Error occurred at %1::%2.")
 			    .arg(__FILE__)
