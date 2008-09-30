@@ -99,8 +99,8 @@ uoms::uoms(QWidget* parent, const char* name, Qt::WFlags fl)
     connect(_uoms, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
   }
 
-  _uoms->addColumn(tr("UOM"),         _itemColumn, Qt::AlignCenter );
-  _uoms->addColumn(tr("Description"), -1,          Qt::AlignLeft   );
+  _uoms->addColumn(tr("UOM"),         _itemColumn, Qt::AlignCenter, true,  "uom_name" );
+  _uoms->addColumn(tr("Description"), -1,          Qt::AlignLeft,   true,  "uom_descrip"   );
 
   sFillList();
 }

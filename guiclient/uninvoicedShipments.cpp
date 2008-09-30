@@ -83,12 +83,12 @@ uninvoicedShipments::uninvoicedShipments(QWidget* parent, const char* name, Qt::
   connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
 
   _coship->setRootIsDecorated(TRUE);
-  _coship->addColumn(tr("Order/Line #"),           _itemColumn, Qt::AlignRight );
-  _coship->addColumn(tr("Cust./Item Number"),      _itemColumn, Qt::AlignLeft  );
-  _coship->addColumn(tr("Cust. Name/Description"), -1,          Qt::AlignLeft  );
-  _coship->addColumn(tr("UOM"),                    _uomColumn,  Qt::AlignLeft  );
-  _coship->addColumn(tr("Shipped"),                _qtyColumn,  Qt::AlignRight );
-  _coship->addColumn(tr("Selected"),               _qtyColumn,  Qt::AlignRight );
+  _coship->addColumn(tr("Order/Line #"),           _itemColumn, Qt::AlignRight,  true,  "orderline" );
+  _coship->addColumn(tr("Cust./Item Number"),      _itemColumn, Qt::AlignLeft,   true,  "custitem"  );
+  _coship->addColumn(tr("Cust. Name/Description"), -1,          Qt::AlignLeft,   true,  "custdescrip"  );
+  _coship->addColumn(tr("UOM"),                    _uomColumn,  Qt::AlignLeft,   true,  "uom_name"  );
+  _coship->addColumn(tr("Shipped"),                _qtyColumn,  Qt::AlignRight,  true,  "shipped" );
+  _coship->addColumn(tr("Selected"),               _qtyColumn,  Qt::AlignRight,  true,  "selected" );
   
   connect(omfgThis, SIGNAL(billingSelectionUpdated(int, int)), this, SLOT(sFillList()));
 
@@ -150,11 +150,27 @@ void uninvoicedShipments::sFillList()
 
   QString sql( "SELECT cohead_id, coship_id, cohead_number, coitem_linenumber,"
                "       cust_number, cust_name,"
-               "       item_number, (item_descrip1 || ' ' || item_descrip2) AS description,"
-               "       uom_name,"
-               "       formatQty(SUM(coship_qty)) AS f_shipped,"
-               "       COALESCE(SUM(cobill_qty), 0) AS selected,"
-               "       formatQty(COALESCE(SUM(cobill_qty), 0)) AS f_selected "
+               "       item_number, description,"
+               "       uom_name, shipped, selected,"
+               "       CASE WHEN (level=0) THEN cohead_number"
+               "            ELSE CAST(coitem_linenumber AS TEXT)"
+               "       END AS orderline,"
+               "       CASE WHEN (level=0) THEN cust_number"
+               "            ELSE item_number"
+               "       END AS custitem,"
+               "       CASE WHEN (level=0) THEN cust_name"
+               "            ELSE description"
+               "       END AS custdescrip,"
+               "       'qty' AS shipped_xtnumericrole,"
+               "       'qty' AS selected_xtnumericrole,"
+               "       level AS xtindentrole "
+               "FROM ( " );
+  sql +=       "SELECT cohead_id, -1 AS coship_id, cohead_number, -1 AS coitem_linenumber, 0 AS level,"
+               "       cust_number, cust_name,"
+               "       '' AS item_number, '' AS description,"
+               "       '' AS uom_name,"
+               "       COALESCE(SUM(coship_qty), 0) AS shipped,"
+               "       COALESCE(SUM(cobill_qty), 0) AS selected "
                "FROM cohead, cust, itemsite, item, warehous, coship, cosmisc, uom,"
                "     coitem LEFT OUTER JOIN"
                "      ( cobill JOIN cobmisc"
@@ -169,7 +185,36 @@ void uninvoicedShipments::sFillList()
                " AND (itemsite_item_id=item_id)"
                " AND (itemsite_warehous_id=warehous_id)"
                " AND (cosmisc_shipped)"
-               " AND (NOT coship_invoiced)" );
+               " AND (NOT coship_invoiced)";
+
+  if (_warehouse->isSelected())
+    sql += " AND (itemsite_warehous_id=:warehous_id)";
+
+  sql += ") "
+         "GROUP BY cohead_id, cohead_number, cust_number, cust_name ";
+
+  sql +=       "UNION "
+               "SELECT cohead_id, coship_id, cohead_number, coitem_linenumber, 1 AS level,"
+               "       cust_number, cust_name,"
+               "       item_number, (item_descrip1 || ' ' || item_descrip2) AS description,"
+               "       uom_name,"
+               "       COALESCE(SUM(coship_qty), 0) AS shipped,"
+               "       COALESCE(SUM(cobill_qty), 0) AS selected "
+               "FROM cohead, cust, itemsite, item, warehous, coship, cosmisc, uom,"
+               "     coitem LEFT OUTER JOIN"
+               "      ( cobill JOIN cobmisc"
+               "        ON ( (cobill_cobmisc_id=cobmisc_id) AND (NOT cobmisc_posted) ) )"
+               "     ON (cobill_coitem_id=coitem_id) "
+               "WHERE ( (cohead_cust_id=cust_id)"
+               " AND (coship_coitem_id=coitem_id)"
+               " AND (coship_cosmisc_id=cosmisc_id)"
+               " AND (coitem_cohead_id=cohead_id)"
+               " AND (coitem_itemsite_id=itemsite_id)"
+               " AND (coitem_qty_uom_id=uom_id)"
+               " AND (itemsite_item_id=item_id)"
+               " AND (itemsite_warehous_id=warehous_id)"
+               " AND (cosmisc_shipped)"
+               " AND (NOT coship_invoiced)";
 
   if (_warehouse->isSelected())
     sql += " AND (itemsite_warehous_id=:warehous_id)";
@@ -178,34 +223,16 @@ void uninvoicedShipments::sFillList()
          "GROUP BY cohead_number, cust_number, cust_name,"
          "         coitem_id, coitem_linenumber, item_number,"
          "         item_descrip1, item_descrip2, cohead_id, coship_id, uom_name "
-         "ORDER BY cohead_number DESC, coitem_linenumber DESC;";
+         
+         "   ) AS data ";
+
+  if (_showUnselected->isChecked())
+    sql += " WHERE (selected = 0) ";
+
+  sql += "ORDER BY cohead_number DESC, level, coitem_linenumber DESC;";
 
   q.prepare(sql);
   _warehouse->bindValue(q);
   q.exec();
-  if (q.first())
-  {
-    XTreeWidgetItem *head = NULL;
-    int coheadid        = -1;
-
-    do
-    {
-      if ( (!_showUnselected->isChecked()) || (q.value("selected").toDouble() == 0.0) )
-      {
-        if (coheadid != q.value("cohead_id").toInt())
-        {
-          coheadid = q.value("cohead_id").toInt();
-          head = new XTreeWidgetItem( _coship, head, coheadid, -1,
-                                    q.value("cohead_number"), q.value("cust_number"),
-                                    q.value("cust_name") );
-        }
-
-        new XTreeWidgetItem( head, q.value("cohead_id").toInt(), q.value("coship_id").toInt(),
-                           q.value("coitem_linenumber"), q.value("item_number"),
-                           q.value("description"), q.value("uom_name"), q.value("f_shipped"),
-                           q.value("f_selected") );
-      }
-    }
-    while (q.next());
-  }
+  _coship->populate(q, true);
 }

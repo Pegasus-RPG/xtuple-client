@@ -91,12 +91,12 @@ unpostedCreditMemos::unpostedCreditMemos(QWidget* parent, const char* name, Qt::
 
 //    statusBar()->hide();
     
-    _cmhead->addColumn(tr("C/M #"),     _orderColumn, Qt::AlignLeft   );
-    _cmhead->addColumn(tr("Prnt'd"),    _orderColumn, Qt::AlignCenter );
-    _cmhead->addColumn(tr("Customer"),  -1,           Qt::AlignLeft   );
-    _cmhead->addColumn(tr("Memo Date"), _dateColumn,  Qt::AlignCenter );
-    _cmhead->addColumn(tr("Hold"),      _whsColumn,   Qt::AlignCenter );
-    _cmhead->addColumn(tr("G/L Dist Date"), _dateColumn, Qt::AlignCenter );
+    _cmhead->addColumn(tr("C/M #"),         _orderColumn, Qt::AlignLeft,   true,  "cmhead_number"   );
+    _cmhead->addColumn(tr("Prnt'd"),        _orderColumn, Qt::AlignCenter, true,  "printed" );
+    _cmhead->addColumn(tr("Customer"),      -1,           Qt::AlignLeft,   true,  "cmhead_billtoname"   );
+    _cmhead->addColumn(tr("Memo Date"),     _dateColumn,  Qt::AlignCenter, true,  "cmhead_docdate" );
+    _cmhead->addColumn(tr("Hold"),          _whsColumn,   Qt::AlignCenter, true,  "cmhead_hold" );
+    _cmhead->addColumn(tr("G/L Dist Date"), _dateColumn,  Qt::AlignCenter, true,  "distdate" );
 
     if (! _privileges->check("ChangeSOMemoPostDate"))
       _cmhead->hideColumn(5);
@@ -376,11 +376,9 @@ void unpostedCreditMemos::sFillList()
 {
   _cmhead->clear();
   _cmhead->populate( "SELECT cmhead_id, cmhead_number,"
-                     "       formatBoolYN(cmhead_printed),"
-                     "       cmhead_billtoname,"
-                     "       formatDate(cmhead_docdate),"
-                     "       formatBoolYN(cmhead_hold),"
-		     "       formatDate(COALESCE(cmhead_gldistdate, cmhead_docdate)) "
+                     "       COALESCE(cmhead_printed, FALSE) AS printed,"
+                     "       cmhead_billtoname, cmhead_docdate, cmhead_hold,"
+                     "       COALESCE(cmhead_gldistdate, cmhead_docdate) AS distdate "
                      "FROM cmhead "
                      "WHERE ( (NOT cmhead_posted) "
                      "  AND   ((SELECT COUNT(*)"

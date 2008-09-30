@@ -85,14 +85,14 @@ unpostedGlSeries::unpostedGlSeries(QWidget* parent, const char* name, Qt::WFlags
   connect(_view,     SIGNAL(clicked()),		this, SLOT(sView()));
   connect(omfgThis,  SIGNAL(glSeriesUpdated()),	this, SLOT(sFillList()));
 
-  _glseries->addColumn(tr("Date"),          _dateColumn,   Qt::AlignCenter );
-  _glseries->addColumn(tr("Source"),        _orderColumn,  Qt::AlignCenter );
-  _glseries->addColumn(tr("Doc. Type"),     _docTypeColumn,Qt::AlignCenter );
-  _glseries->addColumn(tr("Doc. #"),        _orderColumn,  Qt::AlignCenter );
-  _glseries->addColumn(tr("Reference"),     -1,            Qt::AlignLeft   );
-  _glseries->addColumn(tr("Account"),       -1,            Qt::AlignLeft   );
-  _glseries->addColumn(tr("Debit"),         _moneyColumn,  Qt::AlignRight  );
-  _glseries->addColumn(tr("Credit"),        _moneyColumn,  Qt::AlignRight  );
+  _glseries->addColumn(tr("Date"),          _dateColumn,     Qt::AlignCenter, true,  "glseries_distdate" );
+  _glseries->addColumn(tr("Source"),        _orderColumn,    Qt::AlignCenter, true,  "glseries_source" );
+  _glseries->addColumn(tr("Doc. Type"),     _docTypeColumn,  Qt::AlignCenter, true,  "glseries_doctype" );
+  _glseries->addColumn(tr("Doc. #"),        _orderColumn,    Qt::AlignCenter, true,  "glseries_docnumber" );
+  _glseries->addColumn(tr("Reference"),     -1,              Qt::AlignLeft,   true,  "glseries_notes"   );
+  _glseries->addColumn(tr("Account"),       -1,              Qt::AlignLeft,   true,  "account"   );
+  _glseries->addColumn(tr("Debit"),         _moneyColumn,    Qt::AlignRight,  true,  "debit"  );
+  _glseries->addColumn(tr("Credit"),        _moneyColumn,    Qt::AlignRight,  true,  "credit"  );
 
   sFillList();
 }
@@ -256,34 +256,20 @@ void unpostedGlSeries::sFillList()
 {
   XSqlQuery fillq;
   fillq.prepare("SELECT *, "
-		"       (formatGLAccount(glseries_accnt_id) || ' - ' ||"
-		"                        accnt_descrip) AS account,"
-		"       CASE WHEN (glseries_amount < 0) THEN"
-		"           formatMoney(glseries_amount * -1)"
-		"       ELSE '' END AS debit,"
-		"       CASE WHEN (glseries_amount >= 0) THEN"
-		"           formatMoney(glseries_amount)"
-		"       ELSE '' END AS credit "
-	        "FROM glseries, accnt "
-		"WHERE (glseries_accnt_id=accnt_id) "
-		"ORDER BY glseries_distdate, glseries_sequence, glseries_amount;");
-  _glseries->clear();
-  XTreeWidgetItem *line = 0;
+                "       (formatGLAccount(glseries_accnt_id) || ' - ' || accnt_descrip) AS account,"
+                "       CASE WHEN (glseries_amount < 0) THEN (glseries_amount * -1)"
+                "            ELSE 0 END AS debit,"
+                "       CASE WHEN (glseries_amount >= 0) THEN (glseries_amount)"
+                "            ELSE 0 END AS credit,"
+                "       'curr' AS debit_xtnumericrole,"
+                "       'curr' AS credit_xtnumericrole,"
+                "       CASE WHEN (glseries_amount < 0) THEN '' END AS credit_qtdisplayrole,"
+                "       CASE WHEN (glseries_amount >= 0) THEN '' END AS debit_qtdisplayrole "
+                "FROM glseries, accnt "
+                "WHERE (glseries_accnt_id=accnt_id) "
+                "ORDER BY glseries_distdate, glseries_sequence, glseries_amount;");
   fillq.exec();
-  while (fillq.next())
-  {
-    line = new XTreeWidgetItem(_glseries, line,
-			       fillq.value("glseries_id").toInt(),
-			       fillq.value("glseries_sequence").toInt(),
-			       fillq.value("glseries_distdate"),
-			       fillq.value("glseries_source"),
-			       fillq.value("glseries_doctype"),
-			       fillq.value("glseries_docnumber"),
-			       fillq.value("glseries_notes"),
-			       fillq.value("account"),
-			       fillq.value("debit"),
-			       fillq.value("credit"));
-  }
+  _glseries->populate(fillq, true);
   if (fillq.lastError().type() != QSqlError::None)
   {
     systemError(this, fillq.lastError().databaseText(), __FILE__, __LINE__);

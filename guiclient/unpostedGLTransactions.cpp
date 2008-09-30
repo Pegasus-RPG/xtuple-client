@@ -77,15 +77,15 @@ unpostedGLTransactions::unpostedGLTransactions(QWidget* parent, const char* name
   connect(_gltrans, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem*)));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
 
-  _gltrans->addColumn(tr("Date"),      _dateColumn,    Qt::AlignCenter );
-  _gltrans->addColumn(tr("Source"),    _orderColumn,   Qt::AlignCenter );
-  _gltrans->addColumn(tr("Doc. Type"), _docTypeColumn, Qt::AlignCenter );
-  _gltrans->addColumn(tr("Doc. #"),    _orderColumn,   Qt::AlignCenter );
-  _gltrans->addColumn(tr("Reference"), -1,             Qt::AlignLeft   );
-  _gltrans->addColumn(tr("Account"),   _itemColumn,    Qt::AlignLeft   );
-  _gltrans->addColumn(tr("Debit"),     _moneyColumn,   Qt::AlignRight  );
-  _gltrans->addColumn(tr("Credit"),    _moneyColumn,   Qt::AlignRight  );
-  _gltrans->addColumn(tr("Posted"),    _ynColumn,      Qt::AlignCenter );
+  _gltrans->addColumn(tr("Date"),      _dateColumn,    Qt::AlignCenter, true,  "gltrans_date" );
+  _gltrans->addColumn(tr("Source"),    _orderColumn,   Qt::AlignCenter, true,  "gltrans_source" );
+  _gltrans->addColumn(tr("Doc. Type"), _docTypeColumn, Qt::AlignCenter, true,  "gltrans_doctype" );
+  _gltrans->addColumn(tr("Doc. #"),    _orderColumn,   Qt::AlignCenter, true,  "docnumber" );
+  _gltrans->addColumn(tr("Reference"), -1,             Qt::AlignLeft,   true,  "reference"   );
+  _gltrans->addColumn(tr("Account"),   _itemColumn,    Qt::AlignLeft,   true,  "account"   );
+  _gltrans->addColumn(tr("Debit"),     _moneyColumn,   Qt::AlignRight,  true,  "debit"  );
+  _gltrans->addColumn(tr("Credit"),    _moneyColumn,   Qt::AlignRight,  true,  "credit"  );
+  _gltrans->addColumn(tr("Posted"),    _ynColumn,      Qt::AlignCenter, true,  "gltrans_posted" );
 
   _periodid = -1;
 }
@@ -157,25 +157,24 @@ void unpostedGLTransactions::sPrint()
 
 void unpostedGLTransactions::sFillList()
 {
-  QString sql( "SELECT gltrans_id, formatDate(gltrans_date), gltrans_source,"
-               "       gltrans_doctype,"
-               "       CASE WHEN(gltrans_docnumber='Misc.'"
-	       "            AND invhist_docnumber IS NOT NULL) THEN"
-	       "              (gltrans_docnumber || ' - ' || invhist_docnumber)"
+  QString sql( "SELECT gltrans_id, formatDate(gltrans_date), gltrans_source, gltrans_doctype,"
+               "       CASE WHEN(gltrans_docnumber='Misc.' AND invhist_docnumber IS NOT NULL) THEN"
+               "              (gltrans_docnumber || ' - ' || invhist_docnumber)"
                "            ELSE gltrans_docnumber"
-               "       END AS gltrans_docnumber,"
-               "       firstLine(gltrans_notes),"
-               "       (formatGLAccount(accnt_id) || ' - ' || accnt_descrip),"
-               "       CASE WHEN (gltrans_amount < 0) THEN"
-	       "                 formatMoney(ABS(gltrans_amount))"
-               "            ELSE ''"
-               "       END,"
-               "       CASE WHEN (gltrans_amount > 0) THEN"
-	       "                 formatMoney(gltrans_amount)"
-               "            ELSE ''"
-               "       END,"
-               "       formatBoolYN(gltrans_posted),"
-               "       gltrans_username "
+               "       END AS docnumber,"
+               "       firstLine(gltrans_notes) AS reference,"
+               "       (formatGLAccount(accnt_id) || ' - ' || accnt_descrip) AS account,"
+               "       CASE WHEN (gltrans_amount < 0) THEN ABS(gltrans_amount)"
+               "            ELSE 0"
+               "       END AS debit,"
+               "       CASE WHEN (gltrans_amount > 0) THEN (gltrans_amount)"
+               "            ELSE 0"
+               "       END AS credit,"
+               "       gltrans_posted, gltrans_username,"
+               "       'curr' AS debit_xtnumericrole,"
+               "       'curr' AS credit_xtnumericrole,"
+               "       CASE WHEN (gltrans_amount < 0) THEN '' END AS credit_qtdisplayrole,"
+               "       CASE WHEN (gltrans_amount >= 0) THEN '' END AS debit_qtdisplayrole "
                "FROM period, gltrans JOIN accnt ON (gltrans_accnt_id=accnt_id) "
                "     LEFT OUTER JOIN invhist ON (gltrans_misc_id=invhist_id AND"
 	       "                                 gltrans_docnumber='Misc.') "

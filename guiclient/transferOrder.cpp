@@ -121,16 +121,16 @@ transferOrder::transferOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_trnsWhs,  SIGNAL(newID(int)), this, SLOT(sHandleTrnsWhs(int)));
   connect(omfgThis, SIGNAL(transferOrdersUpdated(int)), this, SLOT(sHandleTransferOrderEvent(int)));
 
-  _toitem->addColumn(tr("#"),           _seqColumn,     Qt::AlignCenter );
-  _toitem->addColumn(tr("Item"),        _itemColumn,    Qt::AlignLeft   );
-  _toitem->addColumn(tr("Description"), -1,             Qt::AlignLeft   );
-  _toitem->addColumn(tr("Status"),      _statusColumn,  Qt::AlignCenter );
-  _toitem->addColumn(tr("Sched. Date"), _dateColumn,    Qt::AlignCenter );
-  _toitem->addColumn(tr("Ordered"),     _qtyColumn,     Qt::AlignRight  );
-  _toitem->addColumn(tr("At Shipping"), _qtyColumn,     Qt::AlignRight  );
-  _toitem->addColumn(tr("Shipped"),     _qtyColumn,     Qt::AlignRight  );
-  _toitem->addColumn(tr("Balance"),     _qtyColumn,     Qt::AlignRight  );
-  _toitem->addColumn(tr("Received"),	_qtyColumn,	Qt::AlignRight  );
+  _toitem->addColumn(tr("#"),           _seqColumn,     Qt::AlignCenter, true,  "toitem_linenumber" );
+  _toitem->addColumn(tr("Item"),        _itemColumn,    Qt::AlignLeft,   true,  "item_number"   );
+  _toitem->addColumn(tr("Description"), -1,             Qt::AlignLeft,   true,  "description"   );
+  _toitem->addColumn(tr("Status"),      _statusColumn,  Qt::AlignCenter, true,  "toitem_status" );
+  _toitem->addColumn(tr("Sched. Date"), _dateColumn,    Qt::AlignCenter, true,  "toitem_schedshipdate" );
+  _toitem->addColumn(tr("Ordered"),     _qtyColumn,     Qt::AlignRight,  true,  "toitem_qty_ordered"  );
+  _toitem->addColumn(tr("At Shipping"), _qtyColumn,     Qt::AlignRight,  true,  "atshipping"  );
+  _toitem->addColumn(tr("Shipped"),     _qtyColumn,     Qt::AlignRight,  true,  "toitem_qty_shipped"  );
+  _toitem->addColumn(tr("Balance"),     _qtyColumn,     Qt::AlignRight,  true,  "balance"  );
+  _toitem->addColumn(tr("Received"),    _qtyColumn,     Qt::AlignRight,  true,  "toitem_qty_received" );
 
   _orderNumber->setValidator(omfgThis->orderVal());
 
@@ -1152,6 +1152,22 @@ void transferOrder::sFillItemList()
   _dstWhs->setEnabled(true);
 
   QString sql("SELECT toitem_id,"
+	      "       toitem_status, closestatus,"
+	      "       toitem_linenumber, item_number, description,"
+	      "       toitem_schedshipdate,"
+	      "       toitem_qty_ordered, toitem_qty_shipped, toitem_qty_received,"
+        "       balance, atshipping, tagged, in_future, enabletoshipping, backorder,"
+        "       CASE WHEN (backorder AND toitem_status NOT IN ('C', 'X')) THEN 'red' "
+        "            WHEN (enabletoshipping AND tagged AND in_future) THEN 'darkgreen' "
+        "            WHEN (enabletoshipping AND tagged) THEN 'red' "
+        "       END AS qtforegroundrole,"
+        "       'qty' AS toitem_qty_ordered_xtnumericrole,"
+        "       'qty' AS toitem_qty_shipped_xtnumericrole,"
+        "       'qty' AS toitem_qty_received_xtnumericrole,"
+        "       'qty' AS atshipping_xtnumericrole,"
+        "       'qty' AS balance_xtnumericrole "
+        "      FROM ( "
+        "SELECT toitem_id,"
 	      "       toitem_status,"
 	      "       CASE WHEN (toitem_status='C') THEN 1"
 	      "            WHEN (toitem_status='X') THEN 4"
@@ -1162,25 +1178,24 @@ void transferOrder::sFillItemList()
 	      "       END AS closestatus,"
 	      "       toitem_linenumber, item_number,"
 	      "       (item_descrip1 || ' ' || item_descrip2) AS description,"
-	      "       formatDate(toitem_schedshipdate) AS f_scheddate,"
-	      "       formatQty(toitem_qty_ordered) AS f_ordered,"
-	      "       formatQty(toitem_qty_shipped) AS f_shipped,"
-	      "       formatQty(noNeg(toitem_qty_ordered - toitem_qty_shipped)) AS f_balance,"
+	      "       toitem_schedshipdate,"
+	      "       toitem_qty_ordered, toitem_qty_shipped, toitem_qty_received, "
+	      "       noNeg(toitem_qty_ordered - toitem_qty_shipped) AS balance,"
 	      "       qtyAtShipping('TO', toitem_id) AS atshipping,"
-	      "       formatQty(qtyAtShipping('TO', toitem_id)) AS f_atshipping,"
-	      "       formatQty(toitem_qty_received) AS f_received,"
 	      "       (noNeg(toitem_qty_ordered - toitem_qty_shipped) <> qtyAtShipping('TO', toitem_id)) AS tagged,"
-	      "       toitem_qty_shipped, toitem_qty_received, "
-	      "       CASE WHEN toitem_schedshipdate > CURRENT_DATE THEN 1"
-	      "            ELSE 0"
-	      "       END AS in_future "
-	      "FROM item, toitem "
+	      "       CASE WHEN toitem_schedshipdate > CURRENT_DATE THEN true"
+	      "            ELSE false"
+	      "       END AS in_future,"
+        "       fetchMetricBool('EnableTOShipping') AS enabletoshipping,"
+        "       ((SELECT COALESCE(toitem_id, -1) FROM toitem WHERE ((toitem_status='C') AND (toitem_tohead_id=tohead_id)) LIMIT 1) <> -1) AS backorder " 
+	      "FROM item, toitem, tohead "
 	      "WHERE ((toitem_item_id=item_id)"
+        "  AND  (tohead_id=toitem_tohead_id)"
 	      "<? if exists(\"showCanceled\") ?>"
 	      "<? else ?>"
 	      "  AND  (toitem_status != 'X')"
 	      "<? endif ?>"
-	      "  AND  (toitem_tohead_id=<? value(\"tohead_id\") ?>) ) "
+	      "  AND  (toitem_tohead_id=<? value(\"tohead_id\") ?>) ) ) AS data "
 	      "ORDER BY toitem_linenumber;" );
 
   ParameterList params;
@@ -1190,36 +1205,11 @@ void transferOrder::sFillItemList()
 	     
   MetaSQLQuery mql(sql);
   q = mql.toQuery(params);
+  _toitem->populate(q);
   if (q.first())
   {
-    XSqlQuery partial;
-    partial.prepare( "SELECT toitem_id "
-		     "FROM toitem "
-		     "WHERE ( (toitem_status='C')"
-		     " AND (toitem_tohead_id=:tohead_id) ) "
-		     "LIMIT 1;" );
-    partial.bindValue(":tohead_id", _toheadid);
-    partial.exec();
-    bool backOrderFlag = partial.first();
-
-    XTreeWidgetItem *last = 0;
     do
     {
-     last = new XTreeWidgetItem(_toitem, last,
-			 q.value("toitem_id").toInt(),
-			 q.value("closestatus").toInt(),
-			 q.value("toitem_linenumber"), q.value("item_number"),
-			 q.value("description"),
-			 q.value("toitem_status"), q.value("f_scheddate"),
-			 q.value("f_ordered"), q.value("f_atshipping"),
-			 q.value("f_shipped"),
-			 q.value("f_balance"),
-			 q.value("f_received")
-			 );
-
-      if ( (backOrderFlag) && (q.value("toitem_status").toString() != "C") && (q.value("toitem_status").toString() != "X") )
-	last->setTextColor("red");
-
       if (q.value("toitem_qty_received").toDouble() > 0)
       {
 	_dstWhs->setEnabled(false);
@@ -1234,14 +1224,6 @@ void transferOrder::sFillItemList()
       else if (q.value("atshipping").toDouble() > 0)
       {
 	_srcWhs->setEnabled(false);
-      }
-
-      if(_metrics->boolean("EnableTOShipping"))
-      {
-	if (q.value("tagged").toBool())
-	  last->setTextColor("red");
-	if ((q.value("in_future").toBool()) && (q.value("tagged").toBool()))
-	  last->setTextColor("darkgreen");
       }
     }
     while (q.next());

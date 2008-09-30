@@ -85,9 +85,10 @@ uom::uom(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
 
-  _uomconv->addColumn(tr("UOM/UOM"),    -1,        Qt::AlignLeft);
-  _uomconv->addColumn(tr("Value"),      -1,        Qt::AlignRight);
-  _uomconv->addColumn(tr("Fractional"), _ynColumn, Qt::AlignCenter);
+  _uomconv->addColumn(tr("UOM/UOM"),    -1,        Qt::AlignLeft,   true,  "uomuom");
+  _uomconv->addColumn(tr("From Value"), -1,        Qt::AlignRight,  true,  "uomconv_from_value");
+  _uomconv->addColumn(tr("To Value"),   -1,        Qt::AlignRight,  true,  "uomconv_to_value");
+  _uomconv->addColumn(tr("Fractional"), _ynColumn, Qt::AlignCenter, true,  "uomconv_fractional");
 }
 
 /*
@@ -229,9 +230,11 @@ void uom::populate()
 void uom::sFillList()
 {
   q.prepare("SELECT uomconv_id,"
-            "       (nuom.uom_name||'/'||duom.uom_name),"
-		    "       (formatUOMRatio(uomconv_from_value)||'/'||formatUOMRatio(uomconv_to_value)),"
-            "       formatBoolYN(uomconv_fractional) AS f_fractional "
+            "       (nuom.uom_name||'/'||duom.uom_name) AS uomuom,"
+            "       uomconv_from_value, uomconv_to_value,"
+            "       uomconv_fractional,"
+            "       'uomratio' AS uomconv_from_value_xtnumericrole,"
+            "       'uomratio' AS uomconv_to_value_xtnumericrole "
             "  FROM uomconv"
             "  JOIN uom AS nuom ON (uomconv_from_uom_id=nuom.uom_id)"
             "  JOIN uom AS duom ON (uomconv_to_uom_id=duom.uom_id)"
