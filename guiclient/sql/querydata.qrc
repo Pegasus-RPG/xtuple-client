@@ -27,7 +27,7 @@
   </qresource>
   <qresource prefix="pd">
     <file alias="displays/Allocations/FillListDetail.mql">dspAllocationsFillList.mql</file>
-    <file alias="capacityUOMs.mql">capacityUOMS.mql</file>
+    <file alias="capacityUOMs.mql">capacityUOMs.mql</file>
   </qresource>
   <qresource prefix="so">
     <file alias="displays/Reservations/FillListDetail.mql">dspReservationsFillList.mql</file>
