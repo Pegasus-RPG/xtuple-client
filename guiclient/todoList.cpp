@@ -130,6 +130,7 @@ todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
   _todoList->addColumn(tr("Due Date"),  _dateColumn,  Qt::AlignLeft,   true, "due");
   _todoList->addColumn(tr("Incident"), _orderColumn,  Qt::AlignLeft,   true, "incdt");
   _todoList->addColumn(tr("Customer"), _orderColumn,  Qt::AlignLeft,   true, "cust");
+  _todoList->addColumn(tr("Owner"),     _userColumn,  Qt::AlignLeft,   false,"owner");
 
   if (_preferences->boolean("XCheckBox/forgetful"))
   {
@@ -349,7 +350,7 @@ void todoList::sPrint()
 
 void todoList::sFillList()
 {
-  QString sql = "SELECT todoitem_id AS id, todoitem_usr_id AS altId, "
+  QString sql = "SELECT todoitem_id AS id, todoitem_usr_id AS altId, todoitem_owner_username AS owner, "
 		"       'T' AS type, incdtpriority_order AS seq, incdtpriority_name AS priority, "
 		"       todoitem_name AS name, "
 		"       firstLine(todoitem_description) AS descrip, "
