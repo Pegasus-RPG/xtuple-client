@@ -64,6 +64,8 @@
 #include <qmd5.h>
 #include <metasql.h>
 
+#include "storedProcErrorLookup.h"
+
 user::user(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
@@ -441,6 +443,12 @@ void user::sAdd()
   q.bindValue(":username", _cUsername);
   q.bindValue(":priv_id", _available->id());
   q.exec();
+  // no storedProcErrorLookup because the function returns bool, not int
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   sModuleSelected(_module->currentText());
 }
@@ -451,6 +459,21 @@ void user::sAddAll()
   q.bindValue(":username", _cUsername);
   q.bindValue(":module", _module->currentText());
   q.exec();
+  if (q.first())
+  {
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("grantAllModulePriv", result),
+                  __FILE__, __LINE__);
+      return;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   sModuleSelected(_module->currentText());
 }
@@ -461,6 +484,12 @@ void user::sRevoke()
   q.bindValue(":username", _cUsername);
   q.bindValue(":priv_id", _granted->id());
   q.exec();
+  // no storedProcErrorLookup because the function returns bool, not int
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   sModuleSelected(_module->currentText());
 }
@@ -471,6 +500,21 @@ void user::sRevokeAll()
   q.bindValue(":username", _cUsername);
   q.bindValue(":module", _module->currentText());
   q.exec();
+  if (q.first())
+  {
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("revokeAllModulePriv", result),
+                  __FILE__, __LINE__);
+      return;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   sModuleSelected(_module->currentText());
 }
@@ -481,6 +525,12 @@ void user::sAddGroup()
   q.bindValue(":username", _cUsername);
   q.bindValue(":grp_id", _availableGroup->id());
   q.exec();
+  // no storedProcErrorLookup because the function returns bool, not int
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   sModuleSelected(_module->currentText());
 }
@@ -491,6 +541,12 @@ void user::sRevokeGroup()
   q.bindValue(":username", _cUsername);
   q.bindValue(":grp_id", _grantedGroup->id());
   q.exec();
+  // no storedProcErrorLookup because the function returns bool, not int
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   sModuleSelected(_module->currentText());
 }
@@ -644,6 +700,12 @@ void user::sAddSite()
   q.bindValue(":username", _cUsername);
   q.bindValue(":warehous_id", _availableSite->id());
   q.exec();
+  // no storedProcErrorLookup because the function returns bool, not int
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   populateSite();
 }
@@ -654,6 +716,12 @@ void user::sRevokeSite()
   q.bindValue(":username", _cUsername);
   q.bindValue(":warehous_id", _grantedSite->id());
   q.exec();
+  // no storedProcErrorLookup because the function returns bool, not int
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   populateSite();
 }
