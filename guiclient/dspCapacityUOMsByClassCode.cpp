@@ -57,69 +57,62 @@
 
 #include "dspCapacityUOMsByClassCode.h"
 
-#include <QVariant>
-//#include <QStatusBar>
-#include <QWorkspace>
-#include <QMessageBox>
 #include <QMenu>
+#include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
+
+#include <metasql.h>
 #include <openreports.h>
 #include <parameter.h>
-#include "item.h"
-#include "guiclient.h"
 
-/*
- *  Constructs a dspCapacityUOMsByClassCode as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
+#include "guiclient.h"
+#include "item.h"
+#include "mqlutil.h"
+
 dspCapacityUOMsByClassCode::dspCapacityUOMsByClassCode(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
   connect(_item, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _classCode->setType(ParameterGroup::ClassCode);
 
-  _item->addColumn(tr("Class Code"),     _itemColumn, Qt::AlignCenter );
-  _item->addColumn(tr("Item Number"),    _itemColumn, Qt::AlignLeft   );
-  _item->addColumn(tr("Description"),    -1,          Qt::AlignLeft   );
-  _item->addColumn(tr("Inv. UOM"),       _uomColumn,  Qt::AlignCenter );
-  _item->addColumn(tr("Cap. UOM"),       _uomColumn,  Qt::AlignCenter );
-  _item->addColumn(tr("Cap./Inv. Rat."), _qtyColumn,  Qt::AlignRight  );
-  _item->addColumn(tr("Alt. UOM"),       _uomColumn,  Qt::AlignCenter );
-  _item->addColumn(tr("Alt/Inv Ratio"),  _qtyColumn,  Qt::AlignRight  );
+  _item->addColumn(tr("Class Code"),   _itemColumn, Qt::AlignCenter,true, "classcode_code");
+  _item->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft,  true, "item_number");
+  _item->addColumn(tr("Description"),           -1, Qt::AlignLeft,  true, "descrip");
+  _item->addColumn(tr("Inv. UOM"),      _uomColumn, Qt::AlignCenter,true, "uom_name");
+  _item->addColumn(tr("Cap. UOM"),      _uomColumn, Qt::AlignCenter,true, "capuom");
+  _item->addColumn(tr("Cap./Inv. Rat."),_qtyColumn, Qt::AlignRight, true, "capinvrat");
+  _item->addColumn(tr("Alt. UOM"),      _uomColumn, Qt::AlignCenter,true, "altcapuom");
+  _item->addColumn(tr("Alt/Inv Ratio"), _qtyColumn, Qt::AlignRight, true, "altcapinvrat");
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspCapacityUOMsByClassCode::~dspCapacityUOMsByClassCode()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspCapacityUOMsByClassCode::languageChange()
 {
   retranslateUi(this);
 }
 
+bool dspCapacityUOMsByClassCode::setParams(ParameterList &params)
+{
+  _classCode->appendValue(params);
+  params.append("getclasscode");
+  return true;
+}
+
 void dspCapacityUOMsByClassCode::sPrint()
 {
   ParameterList params;
-
-  _classCode->appendValue(params);
-
+  if (! setParams(params))
+    return;
   orReport report("CapacityUOMsByClassCode", params);
 
   if (report.isValid())
@@ -149,28 +142,19 @@ void dspCapacityUOMsByClassCode::sFillList()
 
 void dspCapacityUOMsByClassCode::sFillList(int pItemid, bool pLocalUpdate)
 {
-  QString sql( "SELECT item_id, classcode_code, item_number,"
-               "       (item_descrip1 || ' ' || item_descrip2), uom_name,"
-               "       itemcapuom(item_id), formatQty(itemcapinvrat(item_id)), itemaltcapuom(item_id), formatQty(itemaltcapinvrat(item_id)) "
-               "FROM item, classcode, uom "
-               "WHERE ( (item_classcode_id=classcode_id)"
-               "  AND   (item_inv_uom_id=uom_id)" );
-
-  if (_classCode->isSelected())
-    sql += " AND (classcode_id=:classcode_id)";
-  else if (_classCode->isPattern())
-    sql += " AND (classcode_code ~ :classcode_pattern)";
-
-  sql += " ) "
-         "ORDER BY classcode_code, item_number";
-
-  q.prepare(sql);
-  _classCode->bindValue(q);
-  q.exec();
+  MetaSQLQuery mql = mqlLoad(":/pd/capacityUOMs.mql");;
+  ParameterList params;
+  if (! setParams(params))
+    return;
+  q = mql.toQuery(params);
 
   if ((pItemid != -1) && (pLocalUpdate))
     _item->populate(q, pItemid);
   else
     _item->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
-

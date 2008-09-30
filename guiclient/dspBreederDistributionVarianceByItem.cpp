@@ -57,69 +57,62 @@
 
 #include "dspBreederDistributionVarianceByItem.h"
 
-#include <QVariant>
-//#include <QStatusBar>
 #include <QMenu>
 #include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
+
+#include <metasql.h>
 #include <openreports.h>
 
-/*
- *  Constructs a dspBreederDistributionVarianceByItem as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
+#include "mqlutil.h"
+
 dspBreederDistributionVarianceByItem::dspBreederDistributionVarianceByItem(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_brdvar, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-  connect(_item, SIGNAL(newId(int)), _warehouse, SLOT(findItemSites(int)));
-  connect(_item, SIGNAL(warehouseIdChanged(int)), _warehouse, SLOT(setId(int)));
 
   _item->setType(ItemLineEdit::cBreeder);
   _dates->setStartNull(tr("Earliest"),omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"),omfgThis->endOfTime(), TRUE);
 
-  _brdvar->addColumn(tr("Post Date"),      _dateColumn,  Qt::AlignCenter );
-  _brdvar->addColumn(tr("Component Item"), -1,           Qt::AlignLeft   );
-  _brdvar->addColumn(tr("Std. Qty. per"),  _qtyColumn,   Qt::AlignRight  );
-  _brdvar->addColumn(tr("Std. Qty."),      _qtyColumn,   Qt::AlignRight  );
-  _brdvar->addColumn(tr("Act. Qty. per"),  _qtyColumn,   Qt::AlignRight  );
-  _brdvar->addColumn(tr("Act. Qty."),      _qtyColumn,   Qt::AlignRight  );
-  _brdvar->addColumn(tr("Qty per Var."),   _qtyColumn,   Qt::AlignRight  );
-  _brdvar->addColumn(tr("% Var."),         _prcntColumn, Qt::AlignRight  );
+  _brdvar->addColumn(tr("Post Date"),   _dateColumn, Qt::AlignCenter,true, "brdvar_postdate");
+  _brdvar->addColumn(tr("Component Item"),       -1, Qt::AlignLeft,  true, "citem_number");
+  _brdvar->addColumn(tr("Std. Qty. per"),_qtyColumn, Qt::AlignRight, true, "brdvar_stdqtyper");
+  _brdvar->addColumn(tr("Std. Qty."),    _qtyColumn, Qt::AlignRight, true, "stdqty");
+  _brdvar->addColumn(tr("Act. Qty. per"),_qtyColumn, Qt::AlignRight, true, "brdvar_actqtyper");
+  _brdvar->addColumn(tr("Act. Qty."),    _qtyColumn, Qt::AlignRight, true, "actqty");
+  _brdvar->addColumn(tr("Qty per Var."), _qtyColumn, Qt::AlignRight, true, "qtypervariance");
+  _brdvar->addColumn(tr("% Var."),     _prcntColumn, Qt::AlignRight, true, "percentvariance");
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspBreederDistributionVarianceByItem::~dspBreederDistributionVarianceByItem()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspBreederDistributionVarianceByItem::languageChange()
 {
   retranslateUi(this);
 }
 
-void dspBreederDistributionVarianceByItem::sPrint()
+bool dspBreederDistributionVarianceByItem::setParams(ParameterList &params)
 {
-  ParameterList params;
   _warehouse->appendValue(params);
   _dates->appendValue(params);
   params.append("item_id", _item->id());
+  return true;
+}
+
+void dspBreederDistributionVarianceByItem::sPrint()
+{
+  ParameterList params;
+  if (! setParams(params))
+    return;
 
   orReport report("BreederDistributionVarianceByItem", params);
   if (report.isValid())
@@ -134,29 +127,16 @@ void dspBreederDistributionVarianceByItem::sPopulateMenu(QMenu *)
 
 void dspBreederDistributionVarianceByItem::sFillList()
 {
-  QString sql( "SELECT brdvar_id, formatDate(brdvar_postdate), item_number,"
-               "       formatQtyPer(brdvar_stdqtyper), formatQty(brdvar_stdqtyper * brdvar_wo_qty),"
-               "       formatQtyPer(brdvar_actqtyper), formatQty(brdvar_actqtyper * brdvar_wo_qty),"
-               "       formatQtyPer(brdvar_actqtyper - brdvar_stdqtyper),"
-               "       formatPrcnt((brdvar_actqtyper - brdvar_stdqtyper) / brdvar_stdqtyper) "
-               "FROM brdvar, itemsite AS ps, itemsite AS cs, item "
-               "WHERE ( (brdvar_parent_itemsite_id=ps.itemsite_id)"
-               " AND (brdvar_itemsite_id=cs.itemsite_id)"
-               " AND (cs.itemsite_item_id=item_id)"
-               " AND (ps.itemsite_item_id=:item_id)"
-               " AND (brdvar_postdate BETWEEN :startDate AND :endDate)" );
+  ParameterList params;
+  if (! setParams(params))
+    return;
 
-  if (_warehouse->isSelected())
-    sql += " AND (ps.itemsite_warehous_id=:warehous_id)";
-
-  sql += ") "
-         "ORDER BY brdvar_postdate, item_number;";
-
-  q.prepare(sql);
-  _warehouse->bindValue(q);
-  _dates->bindValue(q);
-  q.bindValue(":item_id", _item->id());
-  q.exec();
+  MetaSQLQuery mql = mqlLoad(":wo/displays/breederDistributionVariance.mql");
+  q = mql.toQuery(params);
   _brdvar->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
-

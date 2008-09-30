@@ -59,18 +59,20 @@
 
 #include <QMenu>
 #include <QMessageBox>
+#include <QSqlError>
 #include <QVariant>
 
+#include <metasql.h>
 #include <openreports.h>
 #include <parameter.h>
+
 #include "countTag.h"
+#include "mqlutil.h"
 
 dspCountTagsByWarehouse::dspCountTagsByWarehouse(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
-
-//  (void)statusBar();
 
   connect(_cnttag, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
@@ -79,16 +81,19 @@ dspCountTagsByWarehouse::dspCountTagsByWarehouse(QWidget* parent, const char* na
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 
-  _cnttag->addColumn(tr("Tag #"),        -1,           Qt::AlignLeft   );
-  _cnttag->addColumn(tr("Site"),         _whsColumn,   Qt::AlignCenter );
-  _cnttag->addColumn(tr("Item"),         _itemColumn,  Qt::AlignLeft   );
-  _cnttag->addColumn(tr("Created (By)"), _dateColumn,  Qt::AlignCenter );
-  _cnttag->addColumn(tr("Entered (By)"), _dateColumn,  Qt::AlignCenter );
-  _cnttag->addColumn(tr("Posted (By)"),  _dateColumn,  Qt::AlignCenter );
-  _cnttag->addColumn(tr("QOH Before"),   _qtyColumn,   Qt::AlignRight  );
-  _cnttag->addColumn(tr("Qty. Counted"), _qtyColumn,   Qt::AlignRight  );
-  _cnttag->addColumn(tr("Variance"),     _qtyColumn,   Qt::AlignRight  );
-  _cnttag->addColumn(tr("%"),            _prcntColumn, Qt::AlignRight  );
+  _cnttag->addColumn(tr("Tag #"),               -1, Qt::AlignLeft,  true, "invcnt_tagnumber");
+  _cnttag->addColumn(tr("Site"),        _whsColumn, Qt::AlignCenter,true, "warehous_code");
+  _cnttag->addColumn(tr("Item"),       _itemColumn, Qt::AlignLeft,  true, "item_number");
+  _cnttag->addColumn(tr("Created"),    _dateColumn, Qt::AlignCenter,true, "invcnt_tagdate");
+  _cnttag->addColumn(tr("Created By"), _dateColumn, Qt::AlignCenter,true, "creator");
+  _cnttag->addColumn(tr("Entered"),    _dateColumn, Qt::AlignCenter,true, "invcnt_cntdate");
+  _cnttag->addColumn(tr("Entered By"), _dateColumn, Qt::AlignCenter,true, "counter");
+  _cnttag->addColumn(tr("Posted"),     _dateColumn, Qt::AlignCenter,true, "invcnt_postdate");
+  _cnttag->addColumn(tr("Posted By"),  _dateColumn, Qt::AlignCenter,true, "poster");
+  _cnttag->addColumn(tr("QOH Before"),  _qtyColumn, Qt::AlignRight, true, "qohbefore");
+  _cnttag->addColumn(tr("Qty. Counted"),_qtyColumn, Qt::AlignRight, true, "invcnt_qoh_after");
+  _cnttag->addColumn(tr("Variance"),    _qtyColumn, Qt::AlignRight, true, "variance");
+  _cnttag->addColumn(tr("%"),         _prcntColumn, Qt::AlignRight, true, "percent");
 
   if (_preferences->boolean("XCheckBox/forgetful"))
     _showUnposted->setChecked(true);
@@ -106,15 +111,28 @@ void dspCountTagsByWarehouse::languageChange()
   retranslateUi(this);
 }
 
-void dspCountTagsByWarehouse::sPrint()
+bool dspCountTagsByWarehouse::setParams(ParameterList &params)
 {
-  ParameterList params;
+  if (! _dates->allValid())
+  {
+    _dates->setFocus();
+    return false;
+  }
+
   _warehouse->appendValue(params);
   _dates->appendValue(params);
 
-
   if (_showUnposted->isChecked())
     params.append("showUnposted");
+
+  return true;
+}
+
+void dspCountTagsByWarehouse::sPrint()
+{
+  ParameterList params;
+  if (! setParams(params))
+    return;
 
   orReport report("CountTagsByWarehouse", params);
   if (report.isValid())
@@ -141,52 +159,15 @@ void dspCountTagsByWarehouse::sView()
 
 void dspCountTagsByWarehouse::sFillList()
 {
-  _cnttag->clear();
-
-  if (_dates->allValid())
+  MetaSQLQuery mql = mqlLoad(":im/countTags.mql");
+  ParameterList params;
+  if (! setParams(params))
+    return;
+  q = mql.toQuery(params);
+  _cnttag->populate(q);
+  if (q.lastError().type() != QSqlError::None)
   {
-    QString sql( "SELECT invcnt_id, invcnt_tagnumber, warehous_code,"
-                 " item_number,"
-                 " (formatDate(invcnt_tagdate) || ' (' || getUsername(invcnt_tag_usr_id) || ')'),"
-                 " CASE WHEN (invcnt_cntdate IS NULL) THEN ''"
-                 "      ELSE (formatDate(invcnt_cntdate) || ' (' || getUsername(invcnt_cnt_usr_id) || ')')"
-                 " END,"
-                 " CASE WHEN (NOT invcnt_posted) THEN ''"
-                 "      ELSE (formatDate(invcnt_postdate) || ' (' || getUsername(invcnt_post_usr_id) || ')')"
-                 " END,"
-                 " CASE WHEN (NOT invcnt_posted) THEN ''"
-                 "      ELSE (formatQty(invcnt_qoh_before))"
-                 " END,"
-                 " CASE WHEN (invcnt_qoh_after IS NULL) THEN ''"
-                 "      ELSE (formatQty(invcnt_qoh_after))"
-                 " END,"
-                 " CASE WHEN (NOT invcnt_posted) THEN ''"
-                 "      ELSE (formatQty(invcnt_qoh_after - invcnt_qoh_before))"
-                 " END,"
-                 " CASE WHEN (NOT invcnt_posted) THEN ''"
-                 "      WHEN ( (invcnt_qoh_before = 0) AND (invcnt_qoh_after = 0) ) THEN (formatScrap(0))"
-                 "      WHEN (invcnt_qoh_before = 0) THEN (formatScrap(1))"
-                 "      ELSE (formatScrap((1 - (invcnt_qoh_after / invcnt_qoh_before)) * -1))"
-                 " END "
-                 "FROM invcnt, itemsite, item, warehous "
-                 "WHERE ( (invcnt_itemsite_id=itemsite_id)"
-                 " AND (itemsite_item_id=item_id)"
-                 " AND (itemsite_warehous_id=warehous_id)"
-                 " AND (DATE(invcnt_tagdate) BETWEEN :startDate AND :endDate)" );
-
-    if (!_showUnposted->isChecked())
-      sql += " AND (invcnt_posted)";
-
-    if (_warehouse->isSelected())
-      sql += " AND (itemsite_warehous_id=:warehous_id)";
-
-    sql += " ) "
-           "ORDER BY invcnt_tagdate";
-
-    q.prepare(sql);
-    _warehouse->bindValue(q);
-    _dates->bindValue(q);
-    q.exec();
-    _cnttag->populate(q);
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
 }

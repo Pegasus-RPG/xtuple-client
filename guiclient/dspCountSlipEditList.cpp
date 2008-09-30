@@ -57,34 +57,25 @@
 
 #include "dspCountSlipEditList.h"
 
-#include <QVariant>
-#include <QMessageBox>
-//#include <QStatusBar>
 #include <QMenu>
+#include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
+
 #include <openreports.h>
 #include "countTagList.h"
 #include "countSlip.h"
 
-/*
- *  Constructs a dspCountSlipEditList as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspCountSlipEditList::dspCountSlipEditList(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
   connect(_cntslip, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_countTagList, SIGNAL(clicked()), this, SLOT(sCountTagList()));
-  connect(_item, SIGNAL(warehouseIdChanged(int)), _warehouse, SLOT(setId(int)));
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_postAll, SIGNAL(clicked()), this, SLOT(sPostAll()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
@@ -95,13 +86,13 @@ dspCountSlipEditList::dspCountSlipEditList(QWidget* parent, const char* name, Qt
 
   _item->setReadOnly(TRUE);
 
-  _cntslip->addColumn(tr("User"),         _dateColumn, Qt::AlignCenter );
-  _cntslip->addColumn(tr("#"),            _itemColumn, Qt::AlignLeft   );
-  _cntslip->addColumn(tr("Location"),     _itemColumn, Qt::AlignLeft   );
-  _cntslip->addColumn(tr("Lot/Serial #"), -1,          Qt::AlignLeft   );
-  _cntslip->addColumn(tr("Posted"),       _ynColumn,   Qt::AlignCenter );
-  _cntslip->addColumn(tr("Entered"),      _itemColumn, Qt::AlignCenter );
-  _cntslip->addColumn(tr("Slip Qty."),    _qtyColumn,  Qt::AlignRight  );
+  _cntslip->addColumn(tr("User"),    _dateColumn, Qt::AlignCenter,true, "user");
+  _cntslip->addColumn(tr("#"),       _itemColumn, Qt::AlignLeft,  true, "cntslip_number");
+  _cntslip->addColumn(tr("Location"),_itemColumn, Qt::AlignLeft,  true, "locname");
+  _cntslip->addColumn(tr("Lot/Serial #"),     -1, Qt::AlignLeft,  true, "cntslip_lotserial");
+  _cntslip->addColumn(tr("Posted"),    _ynColumn, Qt::AlignCenter,true, "cntslip_posted");
+  _cntslip->addColumn(tr("Entered"), _itemColumn, Qt::AlignCenter,true, "cntslip_entered");
+  _cntslip->addColumn(tr("Slip Qty."),_qtyColumn, Qt::AlignRight, true, "cntslip_qty");
 
   if (_privileges->check("EnterCountSlips"))
   {
@@ -119,7 +110,6 @@ dspCountSlipEditList::dspCountSlipEditList(QWidget* parent, const char* name, Qt
     _postAll->setEnabled(TRUE);
   }
     
-  //If not multi-warehouse hide whs control
   if (!_metrics->boolean("MultiWhs"))
   {
     _warehouseLit->hide();
@@ -127,18 +117,11 @@ dspCountSlipEditList::dspCountSlipEditList(QWidget* parent, const char* name, Qt
   }
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspCountSlipEditList::~dspCountSlipEditList()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspCountSlipEditList::languageChange()
 {
   retranslateUi(this);
@@ -215,9 +198,10 @@ void dspCountSlipEditList::sEdit()
 
 void dspCountSlipEditList::sDelete()
 {
-  if (QMessageBox::warning( this, tr("Delete Count Slip?"),
+  if (QMessageBox::question( this, tr("Delete Count Slip?"),
                             tr("Are you sure that you want to delete the selected Count Slip?"),
-                            tr("&Yes"), tr("&No"), QString::null, 0, 1 ) == 0)
+                            QMessageBox::Yes,
+                            QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
   {
     q.prepare( "DELETE FROM cntslip "
                " WHERE(cntslip_id=:cntslip_id);" );
@@ -284,19 +268,25 @@ void dspCountSlipEditList::sFillList()
              "       CASE WHEN (cntslip_posted) THEN 1"
              "            ELSE 0"
              "       END,"
-             "       getUsername(cntslip_user_id), cntslip_number,"
+             "       getUsername(cntslip_user_id) AS user, cntslip_number,"
              "       CASE WHEN (cntslip_location_id=-1) THEN ''"
              "            ELSE formatLocationName(cntslip_location_id)"
-             "       END,"
-             "       cntslip_lotserial, formatBoolYN(cntslip_posted),"
-             "       formatDateTime(cntslip_entered), formatQty(cntslip_qty) "
+             "       END AS locname,"
+             "       cntslip_lotserial, cntslip_posted,"
+             "       cntslip_entered, cntslip_qty,"
+             "       'qty' AS cntslip_qty_xtnumericrole "
              "FROM cntslip, invcnt "
              "WHERE ( (cntslip_cnttag_id=invcnt_id)"
-             " AND (NOT invcnt_posted)"
-             " AND (invcnt_id=:cnttag_id) ) "
+             "    AND (NOT invcnt_posted)"
+             "    AND (invcnt_id=:cnttag_id) ) "
              "ORDER BY cntslip_number;" );
   q.bindValue(":cnttag_id", _cnttagid);
   q.exec();
   _cntslip->populate(q, TRUE);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 

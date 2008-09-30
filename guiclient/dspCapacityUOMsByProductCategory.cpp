@@ -57,70 +57,61 @@
 
 #include "dspCapacityUOMsByProductCategory.h"
 
-#include <QVariant>
-//#include <QStatusBar>
-#include <QWorkspace>
-#include <QMessageBox>
 #include <QMenu>
+#include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
+
+#include <metasql.h>
 #include <openreports.h>
 #include <parameter.h>
-#include "item.h"
-#include "guiclient.h"
 
-/*
- *  Constructs a dspCapacityUOMsByProductCategory as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
+#include "guiclient.h"
+#include "item.h"
+#include "mqlutil.h"
+
 dspCapacityUOMsByProductCategory::dspCapacityUOMsByProductCategory(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
   connect(_item, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _productCategory->setType(ParameterGroup::ProductCategory);
 
-  _item->addColumn(tr("Item Number"),    _itemColumn, Qt::AlignLeft   );
-  _item->addColumn(tr("Description"),    -1,          Qt::AlignLeft   );
-  _item->addColumn(tr("Inv. UOM"),       _uomColumn,  Qt::AlignCenter );
-  _item->addColumn(tr("Cap. UOM"),       _uomColumn,  Qt::AlignCenter );
-  _item->addColumn(tr("Cap./Inv. Rat."), _qtyColumn,  Qt::AlignRight  );
-  _item->addColumn(tr("Alt. UOM"),       _uomColumn,  Qt::AlignCenter );
-  _item->addColumn(tr("Alt/Inv Ratio"),  _qtyColumn,  Qt::AlignRight  );
+  _item->addColumn(tr("Item Number"),    _itemColumn, Qt::AlignLeft,  true, "item_number");
+  _item->addColumn(tr("Description"),    -1,          Qt::AlignLeft,  true, "descrip");
+  _item->addColumn(tr("Inv. UOM"),       _uomColumn,  Qt::AlignCenter,true, "uom_name");
+  _item->addColumn(tr("Cap. UOM"),       _uomColumn,  Qt::AlignCenter,true, "capuom");
+  _item->addColumn(tr("Cap./Inv. Rat."), _qtyColumn,  Qt::AlignRight, true, "capinvrat");
+  _item->addColumn(tr("Alt. UOM"),       _uomColumn,  Qt::AlignCenter,true, "altcapuom");
+  _item->addColumn(tr("Alt/Inv Ratio"),  _qtyColumn,  Qt::AlignRight, true, "altcapinvrat");
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspCapacityUOMsByProductCategory::~dspCapacityUOMsByProductCategory()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspCapacityUOMsByProductCategory::languageChange()
 {
   retranslateUi(this);
 }
 
+bool dspCapacityUOMsByProductCategory::setParams(ParameterList &params)
+{
+  _productCategory->appendValue(params);
+  return true;
+}
+
 void dspCapacityUOMsByProductCategory::sPrint()
 {
   ParameterList params;
-
-  _productCategory->appendValue(params);
-
+  if (! setParams(params))
+    return;
   orReport report("CapacityUOMsByProductCategory", params);
-
   if (report.isValid())
     report.print();
   else
@@ -148,27 +139,18 @@ void dspCapacityUOMsByProductCategory::sFillList()
 
 void dspCapacityUOMsByProductCategory::sFillList(int pItemid, bool pLocalUpdate)
 {
-  QString sql( "SELECT item_id, item_number,"
-               " (item_descrip1 || ' ' || item_descrip2), uom_name,"
-               " itemcapuom(item_id), formatQty(itemcapinvrat(item_id)), itemaltcapuom(item_id), formatQty(itemaltcapinvrat(item_id)) "
-               "FROM item JOIN uom ON (item_inv_uom_id=uom_id) "
-               "WHERE ( (item_sold)");
-
-  if (_productCategory->isSelected())
-    sql += " AND (item_prodcat_id=:prodcat_id)";
-  else if (_productCategory->isPattern())
-    sql += " AND (item_prodcat_id IN (SELECT prodcat_id FROM prodcat WHERE (prodcat_code ~ :prodcat_pattern)))";
-
-  sql += " ) "
-         "ORDER BY item_number";
-
-  q.prepare(sql);
-  _productCategory->bindValue(q);
-  q.exec();
-
+  MetaSQLQuery mql = mqlLoad(":/pd/capacityUOMs.mql");
+  ParameterList params;
+  if (! setParams(params))
+    return;
+  q = mql.toQuery(params);
   if ((pItemid != -1) && (pLocalUpdate))
     _item->populate(q, pItemid);
   else
     _item->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
-

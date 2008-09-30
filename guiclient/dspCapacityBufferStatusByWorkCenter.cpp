@@ -57,58 +57,39 @@
 
 #include "dspCapacityBufferStatusByWorkCenter.h"
 
-#include <QVariant>
-//#include <QStatusBar>
 #include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
+
 #include <openreports.h>
 #include <parameter.h>
 
-
-/*
- *  Constructs a dspCapacityBufferStatusByWorkCenter as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspCapacityBufferStatusByWorkCenter::dspCapacityBufferStatusByWorkCenter(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-  connect(_selectedWorkCenter, SIGNAL(toggled(bool)), _wrkcnt, SLOT(setEnabled(bool)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sQuery()));
-
-//  statusBar()->hide();
 
   _wrkcnt->populate( "SELECT wrkcnt_id, (wrkcnt_code || '-' || wrkcnt_descrip) "
                      "FROM wrkcnt "
                      "ORDER BY wrkcnt_code;" );
 
-  _roughCut->addColumn(tr("Site"),          _whsColumn,  Qt::AlignCenter );
-  _roughCut->addColumn(tr("Work Center"),   -1,          Qt::AlignLeft   );
-  _roughCut->addColumn(tr("Total Setup"),   _timeColumn, Qt::AlignRight  );
-  _roughCut->addColumn(tr("Total Run"),     _timeColumn, Qt::AlignRight  );
-  _roughCut->addColumn(tr("Daily Capacity"),_uomColumn,  Qt::AlignRight  );
-  _roughCut->addColumn(tr("Days Load"),     _uomColumn,  Qt::AlignRight  );
-  _roughCut->addColumn(tr("Buffer Status"), _uomColumn,  Qt::AlignRight  );
+  _roughCut->addColumn(tr("Site"),          _whsColumn,  Qt::AlignCenter,true, "warehous_code");
+  _roughCut->addColumn(tr("Work Center"),   -1,          Qt::AlignLeft,  true, "wrkcnt_code");
+  _roughCut->addColumn(tr("Total Setup"),   _timeColumn, Qt::AlignRight, true, "sutime");
+  _roughCut->addColumn(tr("Total Run"),     _timeColumn, Qt::AlignRight, true, "rntime");
+  _roughCut->addColumn(tr("Daily Capacity"),_uomColumn,  Qt::AlignRight, true, "dailycap");
+  _roughCut->addColumn(tr("Days Load"),     _uomColumn,  Qt::AlignRight, true, "daysload");
+  _roughCut->addColumn(tr("Buffer Status"), _uomColumn,  Qt::AlignRight, true, "bufrsts");
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspCapacityBufferStatusByWorkCenter::~dspCapacityBufferStatusByWorkCenter()
 {
     // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspCapacityBufferStatusByWorkCenter::languageChange()
 {
     retranslateUi(this);
@@ -133,43 +114,47 @@ void dspCapacityBufferStatusByWorkCenter::sPrint()
 
 void dspCapacityBufferStatusByWorkCenter::sQuery()
 {
-  _roughCut->clear();
+  QString sql( "SELECT *, "
+               "       CASE WHEN bufrsts > 66 THEN 'error'"
+               "       END AS bufrsts_qtforegroundrole,"
+               "       '1' AS dailycap_xtnumericrole,"
+               "       '1' AS daysload_xtnumericrole,"
+               "      'N/A' AS bfrsts_xtnullrole "
+               "FROM ("
+               "SELECT wrkcnt_id, warehous_code, wrkcnt_code,"
+               "       SUM(CASE WHEN wooper_sucomplete THEN 0"
+               "                ELSE NoNeg((wooper_sutime-wooper_suconsumed))"
+               "           END) AS sutime,"
+               "       SUM(NoNeg(wooper_rntime-wooper_rnconsumed)) AS rntime,"
+               "       (wrkcnt_dailycap *"
+               "                 CASE WHEN(COALESCE(wrkcnt_efficfactor,0.0)=0.0) THEN 1.0"
+               "                      ELSE wrkcnt_efficfactor END) AS dailycap,"
+               "       SUM((CASE WHEN wooper_sucomplete THEN 0"
+               "                 ELSE NoNeg(wooper_sutime-wooper_suconsumed)"
+               "            END)+NoNeg(wooper_rntime-wooper_rnconsumed)) / "
+               "          (CASE WHEN(COALESCE(wrkcnt_dailycap,0.0)=0.0) THEN 1.0"
+               "                ELSE wrkcnt_dailycap"
+               "           END *"
+               "           CASE WHEN(COALESCE(wrkcnt_efficfactor,0.0)=0.0) THEN 1.0"
+               "                ELSE wrkcnt_efficfactor END) AS daysload,"
 
-  QString sql( "SELECT wrkcnt_id, warehous_code, wrkcnt_code,"
-               "       formatTime(SUM("
-               "         CASE WHEN wooper_sucomplete = False THEN NoNeg((wooper_sutime-wooper_suconsumed))"
-               "         ELSE 0"
-               "         END)) AS f_sutime,"
-               "         formatTime(SUM(NoNeg(wooper_rntime-wooper_rnconsumed))) AS f_rntime,"
-               "         formatTime(wrkcnt_dailycap*CASE WHEN(COALESCE(wrkcnt_efficfactor,0.0)=0.0) THEN 1.0 ELSE wrkcnt_efficfactor END) as f_dailycap,"
-               "         formatTime((SUM(("
-               "             (CASE WHEN wooper_sucomplete = False THEN NoNeg((wooper_sutime-wooper_suconsumed))"
-               "                   ELSE 0"
-               "              END)+NoNeg(wooper_rntime-wooper_rnconsumed)))/(CASE WHEN(COALESCE(wrkcnt_dailycap,0.0)=0.0) THEN 1.0 ELSE wrkcnt_dailycap END*CASE WHEN(COALESCE(wrkcnt_efficfactor,0.0)=0.0) THEN 1.0 ELSE wrkcnt_efficfactor END))) AS daysload,"
-               "         CASE WHEN (:maxdaysload <= 0) THEN 'N/A'"
-               "              ELSE CAST(calcbufferstatus(:maxdaysload,:maxdaysload-(SUM("
-               "                           (CASE WHEN (wooper_sucomplete=false) THEN NoNeg(wooper_sutime-wooper_suconsumed)"
-               "                                 ELSE 0"
+               "         CASE WHEN (:maxdaysload <= 0) THEN NULL "
+               "              ELSE calcbufferstatus(:maxdaysload,"
+               "                                    :maxdaysload-(SUM("
+               "                           (CASE WHEN wooper_sucomplete THEN 0"
+               "                                 ELSE NoNeg(wooper_sutime-wooper_suconsumed)"
                "                            END)"
                "                          +NoNeg(wooper_rntime-wooper_rnconsumed)"
-               "                         ) / (CASE WHEN(COALESCE(wrkcnt_dailycap,0.0)=0.0) THEN 1.0 ELSE wrkcnt_dailycap END*CASE WHEN(COALESCE(wrkcnt_efficfactor,0.0)=0.0) THEN 1.0 ELSE wrkcnt_efficfactor END))) AS text)"
-               "         END AS bufrsts,"
-               "         CASE WHEN (:maxdaysload <= 0) THEN 0"
-               "              ELSE calcbufferstatus(:maxdaysload,:maxdaysload-(SUM("
-               "                       (CASE WHEN (wooper_sucomplete=false) THEN NoNeg(wooper_sutime-wooper_suconsumed)"
-               "                             ELSE 0"
-               "                        END)"
-               "                      +NoNeg(wooper_rntime-wooper_rnconsumed)"
-               "                     ) / (CASE WHEN(COALESCE(wrkcnt_dailycap,0.0)=0.0) THEN 1.0 ELSE wrkcnt_dailycap END*CASE WHEN(COALESCE(wrkcnt_efficfactor,0.0)=0.0) THEN 1.0 ELSE wrkcnt_efficfactor END)))"
-               "         END AS bufrsts_sort"
+               "                         ) / (CASE WHEN(COALESCE(wrkcnt_dailycap,0.0)=0.0) THEN 1.0 ELSE wrkcnt_dailycap END*CASE WHEN(COALESCE(wrkcnt_efficfactor,0.0)=0.0) THEN 1.0 ELSE wrkcnt_efficfactor END)))"
+               "         END AS bufrsts "
                "  FROM wooper, wo, wrkcnt, warehous "
                " WHERE ( (wooper_wo_id=wo_id)"
                "   AND   (wooper_wrkcnt_id=wrkcnt_id)"
                "   AND   (wrkcnt_warehous_id=warehous_id)"
                "   AND   (wo_status<>'C')"
-               "   AND   (wooper_rncomplete=False)"
-               "   AND   (((CASE WHEN wooper_sucomplete = False THEN NoNeg((wooper_sutime-wooper_suconsumed))"
-               "                 ELSE 0"
+               "   AND   NOT wooper_rncomplete"
+               "   AND   (((CASE WHEN wooper_sucomplete THEN 0"
+               "                 ELSE NoNeg((wooper_sutime-wooper_suconsumed))"
                "            END) + NoNeg(wooper_rntime-wooper_rnconsumed)) > 0)");
 
   if (_selectedWorkCenter->isChecked())
@@ -178,25 +163,20 @@ void dspCapacityBufferStatusByWorkCenter::sQuery()
   if (_warehouse->isSelected())
     sql += " AND (warehous_id=:warehous_id)";
 
-  sql += ") "
+  sql += ")"
          " GROUP BY wrkcnt_id, warehous_code, wrkcnt_code, wrkcnt_dailycap, wrkcnt_efficfactor"
-         " ORDER BY bufrsts_sort DESC, warehous_code, wrkcnt_code";
+         " ) AS dummy "
+         "ORDER BY bufrsts DESC, warehous_code, wrkcnt_code";
 
   q.prepare(sql);
   q.bindValue(":maxdaysload", _maxdaysload->value());
   _warehouse->bindValue(q);
   q.bindValue(":wrkcnt_id", _wrkcnt->id());
   q.exec();
-  XTreeWidgetItem * last = 0;
-  while(q.next())
+  _roughCut->populate(q);
+  if (q.lastError().type() != QSqlError::None)
   {
-    last = new XTreeWidgetItem(_roughCut, last,
-                                q.value("wrkcnt_id").toInt(), -1,
-                                q.value("warehous_code"), q.value("wrkcnt_code"),
-                                q.value("f_sutime"), q.value("f_rntime"), q.value("f_dailycap"),
-                                q.value("daysload"), q.value("bufrsts"));
-    if(q.value("bufrsts_sort").toInt() > 66)
-      last->setTextColor(6, "red");
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
 }
-

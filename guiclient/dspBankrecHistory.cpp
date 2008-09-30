@@ -57,55 +57,40 @@
 
 #include "dspBankrecHistory.h"
 
-#include <QVariant>
-#include <parameter.h>
 #include <QMessageBox>
-//#include <QStatusBar>
+#include <QSqlError>
+#include <QVariant>
+
+#include <parameter.h>
 #include <openreports.h>
 #include "guiclient.h"
 
-/*
- *  Constructs a dspBankrecHistory as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspBankrecHistory::dspBankrecHistory(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_bankaccnt, SIGNAL(newID(int)), this, SLOT(sBankaccntChanged()));
-  connect(_bankrec, SIGNAL(newID(int)), this, SLOT(sFillList()));
-
-  _details->addColumn(tr("Date"), _dateColumn, Qt::AlignCenter );
-  _details->addColumn(tr("Doc Number/Notes"), -1, Qt::AlignLeft );
-  _details->addColumn(tr("Amount"), _bigMoneyColumn, Qt::AlignRight );
-  
   _bankaccnt->populate("SELECT bankaccnt_id,"
                        "       (bankaccnt_name || '-' || bankaccnt_descrip) "
                        "FROM bankaccnt "
                        "ORDER BY bankaccnt_name;");
-  
+
+  connect(_bankaccnt, SIGNAL(newID(int)), this, SLOT(sBankaccntChanged()));
+  connect(_bankrec,   SIGNAL(newID(int)), this, SLOT(sFillList()));
+  connect(_print,      SIGNAL(clicked()), this, SLOT(sPrint()));
+
+  _details->addColumn(tr("Date"),       _dateColumn, Qt::AlignCenter,true, "gltrans_date");
+  _details->addColumn(tr("Doc Number/Notes"),    -1, Qt::AlignLeft,  true, "gltrans_docnumber");
+  _details->addColumn(tr("Amount"), _bigMoneyColumn, Qt::AlignRight, true, "amount");
+
   sBankaccntChanged();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspBankrecHistory::~dspBankrecHistory()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspBankrecHistory::languageChange()
 {
   retranslateUi(this);
@@ -126,26 +111,25 @@ void dspBankrecHistory::sPrint()
 
 void dspBankrecHistory::sBankaccntChanged()
 {
-  q.prepare( "SELECT bankrec_id, (formatDate(bankrec_opendate) || '-' || formatDate(bankrec_enddate)) "
+  XSqlQuery bq;
+  bq.prepare( "SELECT bankrec_id, (formatDate(bankrec_opendate) || '-' || formatDate(bankrec_enddate)) "
              "FROM bankrec "
              "WHERE (bankrec_bankaccnt_id=:bankaccnt_id) "
              "ORDER BY bankrec_opendate, bankrec_enddate; ");
-  q.bindValue(":bankaccnt_id", _bankaccnt->id());
-  q.exec();
-  _bankrec->populate(q);
+  bq.bindValue(":bankaccnt_id", _bankaccnt->id());
+  bq.exec();
+  _bankrec->populate(bq);
 
   sFillList();
 }
 
 void dspBankrecHistory::sFillList()
 {
-  _details->clear();
-
-  q.prepare( "SELECT bankrec_username, formatDate(bankrec_created) AS f_created,"
-             "       formatDate(bankrec_opendate) AS f_opendate,"
-             "       formatDate(bankrec_enddate) AS f_enddate,"
-             "       formatMoney(bankrec_openbal) AS f_openbal,"
-             "       formatMoney(bankrec_endbal) AS f_endbal "
+  q.prepare( "SELECT bankrec_username, bankrec_created,"
+             "       bankrec_opendate,"
+             "       bankrec_enddate,"
+             "       bankrec_openbal,"
+             "       bankrec_endbal "
              "FROM bankrec "
              "WHERE (bankrec_id=:bankrecid);" );
   q.bindValue(":bankrecid", _bankrec->id());
@@ -153,31 +137,46 @@ void dspBankrecHistory::sFillList()
   if(q.first())
   {
     _poster->setText(q.value("bankrec_username").toString());
-    _postdate->setText(q.value("f_created").toString());
+    _postdate->setDate(q.value("bankrec_created").toDate());
 
-    QString opendate = q.value("f_opendate").toString();
-    QString openbal  = q.value("f_openbal").toString();
-    QString enddate  = q.value("f_enddate").toString();
-    QString endbal   = q.value("f_endbal").toString();
-
-    q.prepare( "SELECT gltrans_id, formatDate(gltrans_date) AS f_date,"
-               "       gltrans_docnumber,"
-               "       formatMoney(gltrans_amount * -1) AS f_amount "
-               "FROM gltrans, bankrecitem "
-               "WHERE ((bankrecitem_bankrec_id=:bankrecid)"
-               "  AND (bankrecitem_source='GL')"
-               "  AND (bankrecitem_source_id=gltrans_id) ) "
-               "ORDER BY gltrans_date, gltrans_id;" );
-    q.bindValue(":bankrecid", _bankrec->id());
-    q.exec();
-
-    XTreeWidgetItem *last = 0;
-    last = new XTreeWidgetItem( _details, last, -1, QVariant(opendate), tr("Opening Balance"), openbal);
-
-    while (q.next())
-      last = new XTreeWidgetItem( _details, last, q.value("gltrans_id").toInt(),
-				 q.value("f_date"), q.value("gltrans_docnumber"), q.value("f_amount") );
-
-    last = new XTreeWidgetItem( _details, last, -1, QVariant(enddate), tr("Ending Balance"), endbal);
+    XSqlQuery brq;
+    brq.prepare("SELECT -1 AS gltrans_id, 0 AS seq,"
+                "       CAST(:opendate AS DATE) AS gltrans_date,"
+                "       :opening AS gltrans_docnumber, :openbal AS amount,"
+                "       'curr' AS amount_xtnumericrole "
+                "UNION "
+                "SELECT -1 AS gltrans_id, 2 AS seq,"
+                "       CAST(:enddate AS DATE) AS gltrans_date,"
+                "       :ending AS gltrans_docnumber, :endbal AS amount,"
+                "       'curr' AS amount_xtnumericrole "
+                "UNION "
+                "SELECT gltrans_id, 1 AS seq, gltrans_date,"
+                "       gltrans_docnumber,"
+                "       (gltrans_amount * -1) AS amount,"
+                "       'curr' AS amount_xtnumericrole "
+                "FROM gltrans, bankrecitem "
+                "WHERE ((bankrecitem_bankrec_id=:bankrecid)"
+                "  AND (bankrecitem_source='GL')"
+                "  AND (bankrecitem_source_id=gltrans_id) ) "
+                "ORDER BY seq, gltrans_date, gltrans_id;" );
+    brq.bindValue(":bankrecid", _bankrec->id());
+    brq.bindValue(":opendate", q.value("bankrec_opendate").toDate());
+    brq.bindValue(":openbal",  q.value("bankrec_openbal").toDouble());
+    brq.bindValue(":opening",  tr("Opening Balance"));
+    brq.bindValue(":enddate",  q.value("bankrec_enddate").toDate());
+    brq.bindValue(":endbal",   q.value("bankrec_endbal").toDouble());
+    brq.bindValue(":ending",   tr("Ending Balance"));
+    brq.exec();
+    _details->populate(brq);
+    if (brq.lastError().type() != QSqlError::None)
+    {
+      systemError(this, brq.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
 }

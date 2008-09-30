@@ -121,9 +121,9 @@
                       </widget>
                     </item>
                     <item row="1" column="1" >
-                      <widget class="QLabel" name="_postdate" >
-                        <property name="text" >
-                          <string>N/A</string>
+                      <widget class="DLineEdit" name="_postdate" >
+                        <property name="enabled" >
+                          <bool>false</bool>
                         </property>
                       </widget>
                     </item>

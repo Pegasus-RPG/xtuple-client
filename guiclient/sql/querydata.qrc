@@ -20,12 +20,14 @@
     <file alias="displays/InventoryHistoryByOrderNumber/FillListDetail.mql">dspInventoryHistoryByOrderNumberFillList.mql</file>
     <file alias="displays/InventoryHistoryByParameterList/FillListDetail.mql">dspInventoryHistoryByParameterListFillList.mql</file>
     <file alias="displays/Orders/FillListDetail.mql">dspOrdersFillList.mql</file>
+    <file alias="countTags.mql">countTags.mql</file>
   </qresource>
   <qresource prefix="ms">
     <file alias="displays/RunningAvailability/FillListDetail.mql">dspRunningAvailabilityFillList.mql</file>
   </qresource>
   <qresource prefix="pd">
     <file alias="displays/Allocations/FillListDetail.mql">dspAllocationsFillList.mql</file>
+    <file alias="capacityUOMs.mql">capacityUOMS.mql</file>
   </qresource>
   <qresource prefix="so">
     <file alias="displays/Reservations/FillListDetail.mql">dspReservationsFillList.mql</file>
@@ -63,6 +65,7 @@
     <file alias="account/FillOpListDetail.mql">crmaccountOpFillList.mql</file>
   </qresource>
   <qresource prefix="wo">
+    <file alias="displays/breederDistributionVariance.mql">breederDistributionVariance.mql</file>
     <file alias="displays/WorkOrderHistory.mql">WorkOrderHistory.mql</file>
   </qresource>
   <qresource prefix="sys">
