@@ -128,11 +128,11 @@ returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* na
   connect(_edit,	SIGNAL(clicked()),	this,	SLOT(sEdit()));
   connect(_delete,	SIGNAL(clicked()),	this,	SLOT(sDelete()));
     
-  _raitemls->addColumn(tr("Lot/Serial"),  -1,  Qt::AlignLeft   );
-  _raitemls->addColumn(tr("Warranty"),	  _dateColumn,  Qt::AlignRight  );
-  _raitemls->addColumn(tr("Registered"),  _qtyColumn,   Qt::AlignRight  );
-  _raitemls->addColumn(tr("Authorized"),  _qtyColumn,   Qt::AlignRight  );
-  _raitemls->addColumn(tr("Received"),    _qtyColumn,   Qt::AlignRight  );
+  _raitemls->addColumn(tr("Lot/Serial"),  -1,           Qt::AlignLeft , true, "ls_number"  );
+  _raitemls->addColumn(tr("Warranty"),	  _dateColumn,  Qt::AlignRight, true, "lsreg_expiredate"  );
+  _raitemls->addColumn(tr("Registered"),  _qtyColumn,   Qt::AlignRight, true, "raitemls_qtyregistered"  );
+  _raitemls->addColumn(tr("Authorized"),  _qtyColumn,   Qt::AlignRight, true, "raitemls_qtyauthorized"  );
+  _raitemls->addColumn(tr("Received"),    _qtyColumn,   Qt::AlignRight, true, "raitemls_qtyreceived"  );
 
   _orderQty->setValidator(omfgThis->qtyVal());
   _qtyAuth->setValidator(omfgThis->qtyVal());
@@ -1539,8 +1539,12 @@ void returnAuthorizationItem::sDelete()
 void returnAuthorizationItem::sFillList()
 { 
   q.prepare("SELECT raitemls_id,ls_id,ls_number, "
-		" MAX(lsreg_expiredate), formatqty(COALESCE(SUM(lsreg_qty / raitem_qty_invuomratio),0)), formatqty(raitemls_qtyauthorized), "
-		" formatqty(raitemls_qtyreceived) "
+		" MAX(lsreg_expiredate) AS lsreg_expiredate, "
+                " COALESCE(SUM(lsreg_qty / raitem_qty_invuomratio),0) AS raitemls_qtyregistered, "
+                " raitemls_qtyauthorized, raitemls_qtyreceived, "
+                "  'qty' AS raitemls_qtyregistered_xtnumericrole, "
+                "  'qty' AS raitemls_qtyauthorized_xtnumericrole, "
+                "  'qty' AS raitemls_qtyreceived_xtnumericrole "
 		"FROM raitemls "
 		"  LEFT OUTER JOIN lsreg ON (lsreg_ls_id=raitemls_ls_id) "
                 "                       AND (lsreg_crmacct_id=:crmacct_id), "

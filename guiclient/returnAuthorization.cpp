@@ -145,25 +145,25 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
 
   _currency->setLabel(_currencyLit);
 
-  _raitem->addColumn(tr("#"),           _seqColumn,   Qt::AlignCenter );
-  _raitem->addColumn(tr("Item"),        _itemColumn,  Qt::AlignLeft   );
-  _raitem->addColumn(tr("UOM"),         _statusColumn,Qt::AlignLeft   );
-  _raitem->addColumn(tr("Description"), -1,           Qt::AlignLeft   );
-  _raitem->addColumn(tr("Site"),        _whsColumn,   Qt::AlignCenter );
-  _raitem->addColumn(tr("Status"),      _statusColumn,Qt::AlignCenter );
-  _raitem->addColumn(tr("Disposition"), _itemColumn,  Qt::AlignLeft   );
-  _raitem->addColumn(tr("Warranty"),    _qtyColumn,Qt::AlignCenter );
-  _raitem->addColumn(tr("Sold"),        _qtyColumn,   Qt::AlignRight  );
-  _raitem->addColumn(tr("Authorized"),  _qtyColumn,   Qt::AlignRight  );
-  _raitem->addColumn(tr("Received"),    _qtyColumn,   Qt::AlignRight  );
-  _raitem->addColumn(tr("To Receive"),  _qtyColumn,   Qt::AlignRight  );
-  _raitem->addColumn(tr("Shipped"),     _qtyColumn,   Qt::AlignRight  );
-  _raitem->addColumn(tr("Price"),       _priceColumn, Qt::AlignRight  );
-  _raitem->addColumn(tr("Extended"),    _moneyColumn, Qt::AlignRight  );
-  _raitem->addColumn(tr("Credited"),    _moneyColumn, Qt::AlignRight  );
-  _raitem->addColumn(tr("Orig. Order"), _itemColumn,  Qt::AlignLeft   );
-  _raitem->addColumn(tr("New Order"),   _itemColumn,  Qt::AlignLeft   );
-  _raitem->addColumn(tr("Sched. Date"), _dateColumn,  Qt::AlignLeft   );
+  _raitem->addColumn(tr("#"),           _seqColumn,   Qt::AlignCenter, true, "raitem_linenumber" );
+  _raitem->addColumn(tr("Item"),        _itemColumn,  Qt::AlignLeft,   true, "item_number"   );
+  _raitem->addColumn(tr("UOM"),         _statusColumn,Qt::AlignLeft,   true, "uom_name"   );
+  _raitem->addColumn(tr("Description"), -1,           Qt::AlignLeft,   true, "item_descrip"   );
+  _raitem->addColumn(tr("Site"),        _whsColumn,   Qt::AlignCenter, true, "warehous_code" );
+  _raitem->addColumn(tr("Status"),      _statusColumn,Qt::AlignCenter, true, "raitem_status" );
+  _raitem->addColumn(tr("Disposition"), _itemColumn,  Qt::AlignLeft,   true, "disposition"   );
+  _raitem->addColumn(tr("Warranty"),    _qtyColumn,Qt::AlignCenter,    true, "raitem_warranty");
+  _raitem->addColumn(tr("Sold"),        _qtyColumn,   Qt::AlignRight,  true, "oldcoitem_qtyshipped"  );
+  _raitem->addColumn(tr("Authorized"),  _qtyColumn,   Qt::AlignRight,  true, "raitem_qtyauthorized"  );
+  _raitem->addColumn(tr("Received"),    _qtyColumn,   Qt::AlignRight,  true, "raitem_qtyreceived"  );
+  _raitem->addColumn(tr("To Receive"),  _qtyColumn,   Qt::AlignRight,  true, "raitem_qtytoreceive"  );
+  _raitem->addColumn(tr("Shipped"),     _qtyColumn,   Qt::AlignRight,  true, "newcoitem_qtyshipped"  );
+  _raitem->addColumn(tr("Price"),       _priceColumn, Qt::AlignRight,  true, "raitem_unitprice"  );
+  _raitem->addColumn(tr("Extended"),    _moneyColumn, Qt::AlignRight,  true, "raitem_extprice"  );
+  _raitem->addColumn(tr("Credited"),    _moneyColumn, Qt::AlignRight,  true, "raitem_amtcredited"  );
+  _raitem->addColumn(tr("Orig. Order"), _itemColumn,  Qt::AlignLeft,   true, "oldcohead_number"   );
+  _raitem->addColumn(tr("New Order"),   _itemColumn,  Qt::AlignLeft,   true, "newcohead_number"   );
+  _raitem->addColumn(tr("Sched. Date"), _dateColumn,  Qt::AlignLeft,   true, "raitem_scheddate"   );
 
   _authorizeLine->hide();
   _clearAuthorization->hide();
@@ -1004,7 +1004,7 @@ void returnAuthorization::sFillList()
              "            WHEN (raitem_disposition='S') THEN 4"
              "            ELSE -1 END AS disposition_code,"
              "       raitem_linenumber, item_number,uom_name,"
-             "       (item_descrip1 || ' ' || item_descrip2), warehous_code,"
+             "       (item_descrip1 || ' ' || item_descrip2) AS item_descrip, warehous_code,"
              "       raitem_status, "
              "       CASE WHEN (raitem_disposition='C') THEN :credit "
              "            WHEN (raitem_disposition='R') THEN :return "
@@ -1012,22 +1012,26 @@ void returnAuthorization::sFillList()
              "            WHEN (raitem_disposition='V') THEN :service "
              "            WHEN (raitem_disposition='S') THEN :ship "
              "            ELSE 'Error' END AS disposition, "
-             "       formatboolyn(raitem_warranty),"
-             "       formatQty(COALESCE(oc.coitem_qtyshipped,0)),"
-             "       formatQty(raitem_qtyauthorized),"
-             "       formatQty(raitem_qtyreceived),"
-             "       formatQty(qtyToReceive('RA', raitem_id)),"
-             "       formatQty(COALESCE(nc.coitem_qtyshipped,0)),"
-             "       formatSalesPrice(raitem_unitprice),"
-             "       formatMoney(round((raitem_qtyauthorized * raitem_qty_invuomratio) * (raitem_unitprice / raitem_price_invuomratio),2)),"
-             "       formatMoney(raitem_amtcredited),"
-             "       och.cohead_number::text || '-' || oc.coitem_linenumber::text, "
-             "       nch.cohead_number::text || '-' || nc.coitem_linenumber::text, "
-             "       CASE WHEN raitem_disposition IN ('P','V','S') THEN "
-             "         formatdate(raitem_scheddate) "
-             "       ELSE "
-             "         'N/A' "
-             "       END "
+             "       raitem_warranty,"
+             "       COALESCE(oc.coitem_qtyshipped,0) AS oldcoitem_qtyshipped,"
+             "       raitem_qtyauthorized,"
+             "       raitem_qtyreceived,"
+             "       qtyToReceive('RA', raitem_id) AS raitem_qtytoreceive,"
+             "       COALESCE(nc.coitem_qtyshipped,0) AS newcoitem_qtyshipped,"
+             "       raitem_unitprice,"
+             "       round((raitem_qtyauthorized * raitem_qty_invuomratio) * (raitem_unitprice / raitem_price_invuomratio),2) AS raitem_extprice,"
+             "       raitem_amtcredited,"
+             "       och.cohead_number::text || '-' || oc.coitem_linenumber::text AS oldcohead_number, "
+             "       nch.cohead_number::text || '-' || nc.coitem_linenumber::text AS newcohead_number, "
+             "       raitem_scheddate, "
+             "       'qty' AS oldcoitem_qtyshipped_xtnumericrole, "
+             "       'qty' AS raitem_qtyauthorized_xtnumericrole, "
+             "       'qty' AS raitem_qtyreceived_xtnumericrole, "
+             "       'qty' AS raitem_qtytoreceive_xtnumericrole, "
+             "       'qty' AS newcoitem_qtyshipped_xtnumericrole, "
+             "       'salesprice' AS raitem_unitprice_xtnumericrole, "
+             "       'extprice' AS raitem_extprice_xtnumericrole, "
+             "       'curr' AS raitem_amtcredited_xtnumericrole "
              "FROM raitem "
              " LEFT OUTER JOIN coitem oc ON (raitem_orig_coitem_id=oc.coitem_id) "
              " LEFT OUTER JOIN cohead och ON (och.cohead_id=oc.coitem_cohead_id) "

@@ -88,9 +88,9 @@ reports::reports(QWidget* parent, const char* name, Qt::WFlags fl)
 
 //  statusBar()->hide();
 
-  _report->addColumn( tr("Name"),       200, Qt::AlignLeft );
-  _report->addColumn( tr("Grade"),       50, Qt::AlignRight);
-  _report->addColumn( tr("Description"), -1, Qt::AlignLeft | Qt::AlignTop);
+  _report->addColumn( tr("Name"),       200, Qt::AlignLeft,  true, "report_name" );
+  _report->addColumn( tr("Grade"),       50, Qt::AlignRight, true, "report_grade");
+  _report->addColumn( tr("Description"), -1, Qt::AlignLeft | Qt::AlignTop, true, "report_descrip");
 
   connect(omfgThis, SIGNAL(reportsChanged(int, bool)), this, SLOT(sFillList()));
 

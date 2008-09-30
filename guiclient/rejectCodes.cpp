@@ -123,8 +123,8 @@ void rejectCodes::init()
     connect(_rjctcode, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
   }
 
-  _rjctcode->addColumn(tr("Code"),        _itemColumn, Qt::AlignLeft );
-  _rjctcode->addColumn(tr("Description"), -1,          Qt::AlignLeft );
+  _rjctcode->addColumn(tr("Code"),        _itemColumn, Qt::AlignLeft, true, "rjctcode_code" );
+  _rjctcode->addColumn(tr("Description"), -1,          Qt::AlignLeft, true, "rjctcode_descrip" );
     
   sFillList();
 }
