@@ -136,10 +136,10 @@ void dspTimePhasedRoughCutByWorkCenter::sFillList()
     else
       show = TRUE;
 
-    sql += QString( " formatTime(SUM(plannedSetupTime(wrkcnt_id, %1))) AS setup%2,"
-		    " formatCost(SUM(plannedSetupTime(wrkcnt_id, %3) * wrkcnt_setuprate / 60.0)) AS setupcost%4,"
-		    " formatTime(SUM(plannedRunTime(wrkcnt_id, %5))) AS run%6,"
-		    " formatCost(SUM(plannedRunTime(wrkcnt_id, %7) * wrkcnt_runrate / 60.0)) AS runcost%8" )
+    sql += QString( " SUM(plannedSetupTime(wrkcnt_id, %1)) AS setup%2,"
+		    " SUM(plannedSetupTime(wrkcnt_id, %3) * wrkcnt_setuprate / 60.0) AS setupcost%4,"
+		    " SUM(plannedRunTime(wrkcnt_id, %5)) AS run%6,"
+		    " SUM(plannedRunTime(wrkcnt_id, %7) * wrkcnt_runrate / 60.0) AS runcost%8" )
 	   .arg(cursor->id())
 	   .arg(columns)
 	   .arg(cursor->id())
@@ -174,17 +174,17 @@ void dspTimePhasedRoughCutByWorkCenter::sFillList()
     q.exec();
     if (q.first())
     {
-      XTreeWidgetItem *setup     = new XTreeWidgetItem(_roughCut, 0, QVariant(tr("Setup Time")), q.value("setup1"));
-      XTreeWidgetItem *setupCost = new XTreeWidgetItem(_roughCut, setup, 0, QVariant(tr("Setup Cost")), q.value("setupcost1"));
-      XTreeWidgetItem *run       = new XTreeWidgetItem(_roughCut, setupCost,  0, QVariant(tr("Run Time")), q.value("run1"));
-      XTreeWidgetItem *runCost   = new XTreeWidgetItem(_roughCut, run, 0, QVariant(tr("Run Cost")), q.value("runcost1"));
+      XTreeWidgetItem *setup     = new XTreeWidgetItem(_roughCut, 0, QVariant(tr("Setup Time")), formatCost(q.value("setup1").toDouble()));
+      XTreeWidgetItem *setupCost = new XTreeWidgetItem(_roughCut, setup, 0, QVariant(tr("Setup Cost")), formatCost(q.value("setupcost1").toDouble()));
+      XTreeWidgetItem *run       = new XTreeWidgetItem(_roughCut, setupCost,  0, QVariant(tr("Run Time")), formatCost(q.value("run1").toDouble()));
+      XTreeWidgetItem *runCost   = new XTreeWidgetItem(_roughCut, run, 0, QVariant(tr("Run Cost")), formatCost(q.value("runcost1").toDouble()));
                        
       for (int column = 2; column < columns; column++)
       {
-        setup->setText(column, q.value(QString("setup%1").arg(column)).toString());
-        setupCost->setText(column, q.value(QString("setupcost%1").arg(column)).toString());
-        run->setText(column, q.value(QString("run%1").arg(column)).toString());
-        runCost->setText(column, q.value(QString("runcost%1").arg(column)).toString());
+        setup->setText(column, formatCost(q.value(QString("setup%1").arg(column)).toDouble()));
+        setupCost->setText(column, formatCost(q.value(QString("setupcost%1").arg(column)).toDouble()));
+        run->setText(column, formatCost(q.value(QString("run%1").arg(column)).toDouble()));
+        runCost->setText(column, formatCost(q.value(QString("runcost%1").arg(column)).toDouble()));
       }
     }
   }

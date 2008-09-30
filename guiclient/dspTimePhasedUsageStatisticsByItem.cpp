@@ -213,10 +213,10 @@ void dspTimePhasedUsageStatisticsByItem::sCalculate()
     for (int i = 0; i < selected.size(); i++)
     {
       PeriodListViewItem *cursor = (PeriodListViewItem*)selected[i];
-      sql += QString( ", formatQty(summTransR(itemsite_id, %1)) AS r_bucket%2,"
-		      "formatQty(summTransI(itemsite_id, %3)) AS i_bucket%4,"
-		      "formatQty(summTransS(itemsite_id, %5)) AS s_bucket%6,"
-		      "formatQty(summTransC(itemsite_id, %7)) AS c_bucket%8," )
+      sql += QString( ", summTransR(itemsite_id, %1) AS r_bucket%2,"
+		      "summTransI(itemsite_id, %3) AS i_bucket%4,"
+		      "summTransS(itemsite_id, %5) AS s_bucket%6,"
+		      "summTransC(itemsite_id, %7) AS c_bucket%8," )
 	     .arg(cursor->id())
 	     .arg(columns)
 	     .arg(cursor->id())
@@ -226,7 +226,7 @@ void dspTimePhasedUsageStatisticsByItem::sCalculate()
 	     .arg(cursor->id())
 	     .arg(columns);
 
-      sql += QString("formatQty(summTransA(itemsite_id, %1)) AS a_bucket%2")
+      sql += QString("summTransA(itemsite_id, %1) AS a_bucket%2")
 	     .arg(cursor->id())
 	     .arg(columns++);
 
@@ -267,11 +267,11 @@ void dspTimePhasedUsageStatisticsByItem::sCalculate()
 
         for (int bucketCounter = 1; bucketCounter < columns; bucketCounter++)
         {
-          received->setText((bucketCounter + 1), q.value(QString("r_bucket%1").arg(bucketCounter)).toString());
-          issued->setText((bucketCounter + 1), q.value(QString("i_bucket%1").arg(bucketCounter)).toString());
-          sold->setText((bucketCounter + 1), q.value(QString("s_bucket%1").arg(bucketCounter)).toString());
-          scrap->setText((bucketCounter + 1), q.value(QString("c_bucket%1").arg(bucketCounter)).toString());
-          adjustments->setText((bucketCounter + 1), q.value(QString("a_bucket%1").arg(bucketCounter)).toString());
+          received->setText((bucketCounter + 1), formatQty(q.value(QString("r_bucket%1").arg(bucketCounter)).toDouble()));
+          issued->setText((bucketCounter + 1), formatQty(q.value(QString("i_bucket%1").arg(bucketCounter)).toDouble()));
+          sold->setText((bucketCounter + 1), formatQty(q.value(QString("s_bucket%1").arg(bucketCounter)).toDouble()));
+          scrap->setText((bucketCounter + 1), formatQty(q.value(QString("c_bucket%1").arg(bucketCounter)).toDouble()));
+          adjustments->setText((bucketCounter + 1), formatQty(q.value(QString("a_bucket%1").arg(bucketCounter)).toDouble()));
         }
       }
       while (q.next());
