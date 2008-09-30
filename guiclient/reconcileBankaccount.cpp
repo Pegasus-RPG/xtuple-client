@@ -95,11 +95,11 @@ reconcileBankaccount::reconcileBankaccount(QWidget* parent, const char* name, Qt
     _receipts->addColumn(tr("Notes"),                -1, Qt::AlignLeft   );
     _receipts->addColumn(tr("Amount"),  _bigMoneyColumn, Qt::AlignRight  );
     
-    _checks->addColumn(tr("Cleared"),   _ynColumn * 2, Qt::AlignCenter );
-    _checks->addColumn(tr("Date"),        _dateColumn, Qt::AlignCenter );
-    _checks->addColumn(tr("Doc. Number"), _itemColumn, Qt::AlignLeft   );
-    _checks->addColumn(tr("Notes"),                -1, Qt::AlignLeft   );
-    _checks->addColumn(tr("Amount"),  _bigMoneyColumn, Qt::AlignRight  );
+    _checks->addColumn(tr("Cleared"),   _ynColumn * 2, Qt::AlignCenter , true, "cleared");
+    _checks->addColumn(tr("Date"),        _dateColumn, Qt::AlignCenter , true, "transdate");
+    _checks->addColumn(tr("Doc. Number"), _itemColumn, Qt::AlignLeft   , true, "docnumber");
+    _checks->addColumn(tr("Notes"),                -1, Qt::AlignLeft   , true, "notes");
+    _checks->addColumn(tr("Amount"),  _bigMoneyColumn, Qt::AlignRight  , true, "amount");
 
     _clearedReceipts->setPrecision(omfgThis->moneyVal());
     _clearedChecks->setPrecision(omfgThis->moneyVal());
@@ -356,12 +356,11 @@ void reconcileBankaccount::populate()
   _receipts->clear();
   q.prepare("SELECT gltrans_id AS id, 1 AS altid,"
             "       jrnluse_use AS use, gltrans_journalnumber AS jrnlnum,"
-            "       formatDate(COALESCE(date(jrnluse_date), gltrans_date)) AS f_jrnldate,"
+            "       COALESCE(date(jrnluse_date), gltrans_date) AS f_jrnldate,"
             "       COALESCE(bankrecitem_cleared, FALSE) AS cleared,"
-            "       formatDate(gltrans_date) AS f_date,"
+            "       gltrans_date AS f_date,"
             "       gltrans_docnumber AS docnumber,"
             "       gltrans_notes AS notes,"
-            "       formatMoney(currToLocal(bankaccnt_curr_id, gltrans_amount, gltrans_date) * -1) AS f_amount,"
             "       currToLocal(bankaccnt_curr_id, gltrans_amount, gltrans_date) * -1 AS amount,"
             "       COALESCE(date(jrnluse_date), gltrans_date) AS jrnldate,"
             "       gltrans_date AS sortdate "
@@ -375,12 +374,11 @@ void reconcileBankaccount::populate()
             "   AND (bankaccnt_id=:bankaccntid) ) "
             " UNION ALL "
             "SELECT bankadj_id AS id, 2 AS altid,"
-            "       '' AS use, NULL AS jrnlnum, formatDate(bankadj_date) AS f_jrnldate,"
+            "       '' AS use, NULL AS jrnlnum, bankadj_date AS f_jrnldate,"
             "       COALESCE(bankrecitem_cleared, FALSE) AS cleared,"
-            "       formatDate(bankadj_date) AS f_date,"
+            "       bankadj_date AS f_date,"
             "       bankadj_docnumber AS docnumber,"
             "       bankadjtype_name AS notes,"
-            "       formatMoney(CASE WHEN(bankadjtype_iscredit=true) THEN (bankadj_amount * -1) ELSE bankadj_amount END) AS f_amount,"
             "       (CASE WHEN(bankadjtype_iscredit=true) THEN (bankadj_amount * -1) ELSE bankadj_amount END) AS amount,"
             "       bankadj_date AS jrnldate,"
             "       bankadj_date AS sortdate "
@@ -422,7 +420,7 @@ void reconcileBankaccount::populate()
         }
         jrnlnum = q.value("jrnlnum").toInt();
         last = new XTreeWidgetItem( _receipts, last,
-          jrnlnum, 3, "", q.value("f_jrnldate"), q.value("jrnlnum"));
+          jrnlnum, 3, "", formatDate(q.value("f_jrnldate").toDate()), q.value("jrnlnum"));
         parent = last;
         cleared = true;
         amount = 0.0;
@@ -436,9 +434,9 @@ void reconcileBankaccount::populate()
       lastChild = new XTreeWidgetItem( parent, lastChild,
         q.value("id").toInt(), q.value("altid").toInt(),
         (q.value("cleared").toBool() ? tr("Yes") : tr("No")),
-        q.value("f_date"), q.value("docnumber"),
+        formatDate(q.value("f_date").toDate()), q.value("docnumber"),
         q.value("notes"),
-	q.value("f_amount").isNull() ? tr("?????") : q.value("f_amount") );
+	q.value("amount").isNull() ? tr("?????") : formatMoney(q.value("amount").toDouble()) );
     }
     else
     {
@@ -455,9 +453,9 @@ void reconcileBankaccount::populate()
       last = new XTreeWidgetItem( _receipts, last,
         q.value("id").toInt(), q.value("altid").toInt(),
         (q.value("cleared").toBool() ? tr("Yes") : tr("No")),
-        q.value("f_date"), q.value("docnumber"),
+        formatDate(q.value("f_date").toDate()), q.value("docnumber"),
         q.value("notes"),
-	q.value("f_amount").isNull() ? tr("?????") : q.value("f_amount") );
+	q.value("amount").isNull() ? tr("?????") : formatMoney(q.value("amount").toDouble()) );
     }
   }
   if(parent != 0)
@@ -509,12 +507,13 @@ void reconcileBankaccount::populate()
   currid = _checks->id();
   _checks->clear();
   q.prepare("SELECT gltrans_id AS id, 1 AS altid,"
-            "       formatBoolYN(COALESCE(bankrecitem_cleared, FALSE)) AS f_cleared,"
-            "       formatDate(gltrans_date) AS f_date,"
+            "       COALESCE(bankrecitem_cleared, FALSE) AS cleared,"
+            "       gltrans_date AS transdate,"
             "       gltrans_docnumber AS docnumber,"
             "       gltrans_notes AS notes,"
-            "       formatMoney(currToLocal(bankaccnt_curr_id, gltrans_amount, gltrans_date)) AS f_amount,"
-            "       gltrans_date AS sortdate "
+            "       currToLocal(bankaccnt_curr_id, gltrans_amount, gltrans_date) AS amount,"
+            "       gltrans_date AS sortdate, "
+            "       'cost' AS amount_xtnumericrole "
             "  FROM (bankaccnt CROSS JOIN gltrans) LEFT OUTER JOIN bankrecitem "
             "    ON ((bankrecitem_source='GL') AND (bankrecitem_source_id=gltrans_id)"
             "        AND (bankrecitem_bankrec_id=:bankrecid)) "
@@ -524,12 +523,13 @@ void reconcileBankaccount::populate()
             "   AND (bankaccnt_id=:bankaccntid) ) "
             " UNION ALL "
             "SELECT bankadj_id AS id, 2 AS altid,"
-            "       formatBoolYN(COALESCE(bankrecitem_cleared, FALSE)) AS f_cleared,"
-            "       formatDate(bankadj_date) AS f_date,"
+            "       COALESCE(bankrecitem_cleared, FALSE) AS cleared,"
+            "       bankadj_date AS transdate,"
             "       bankadj_docnumber AS docnumber,"
             "       bankadjtype_name AS notes,"
-            "       formatMoney(CASE WHEN(bankadjtype_iscredit=false) THEN (bankadj_amount * -1) ELSE bankadj_amount END) AS f_amount,"
-            "       bankadj_date AS sortdate "
+            "       CASE WHEN(bankadjtype_iscredit=false) THEN (bankadj_amount * -1) ELSE bankadj_amount END AS amount,"
+            "       bankadj_date AS sortdate, "
+            "       'cost' AS amount_xtnumericrole "
             "  FROM (bankadjtype CROSS JOIN bankadj) "
             "               LEFT OUTER JOIN bankrecitem ON ((bankrecitem_source='AD') "
             "                 AND (bankrecitem_source_id=bankadj_id) "
@@ -547,6 +547,8 @@ void reconcileBankaccount::populate()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+  _checks->populate(q, TRUE);
+  /*
   XTreeWidgetItem* lastCheckItem = 0;
   while (q.next())
   {
@@ -556,6 +558,7 @@ void reconcileBankaccount::populate()
       q.value("notes"),
       q.value("f_amount").isNull() ? tr("?????") : q.value("f_amount") );
   }
+  */
   if(currid != -1)
     _checks->setCurrentItem(_checks->topLevelItem(currid));
   if(_checks->currentItem())

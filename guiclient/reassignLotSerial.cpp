@@ -79,11 +79,11 @@ reassignLotSerial::reassignLotSerial(QWidget* parent, const char* name, bool mod
     _item->setType(ItemLineEdit::cLotSerialControlled);
     _qty->setValidator(omfgThis->qtyPerVal());
 
-    _source->addColumn(tr("Location"),     _itemColumn, Qt::AlignLeft   );
-    _source->addColumn(tr("Lot/Serial #"), -1,          Qt::AlignLeft   );
-    _source->addColumn(tr("Expires"),      _dateColumn, Qt::AlignCenter );
-    _source->addColumn(tr("Warranty"), _dateColumn, Qt::AlignCenter);
-    _source->addColumn(tr("Qty."),         _qtyColumn,  Qt::AlignRight  );
+    _source->addColumn(tr("Location"),     _itemColumn, Qt::AlignLeft  , true, "locationname"   );
+    _source->addColumn(tr("Lot/Serial #"), -1,          Qt::AlignLeft  , true, "ls_number" );
+    _source->addColumn(tr("Expires"),      _dateColumn, Qt::AlignCenter, true, "itemloc_expiration" );
+    _source->addColumn(tr("Warranty"),     _dateColumn, Qt::AlignCenter, true, "itemloc_warrpurc");
+    _source->addColumn(tr("Qty."),         _qtyColumn,  Qt::AlignRight , true, "itemloc_qty" );
     
     //If not multi-warehouse hide whs control
     if (!_metrics->boolean("MultiWhs"))
@@ -260,7 +260,8 @@ void reassignLotSerial::sFillList()
       _warrantyDate->setEnabled(q.value("itemsite_warrpurc").toBool());
 
       q.prepare( "SELECT itemloc_id, formatLocationName(itemloc_location_id) AS locationname, ls_number,"
-                 "       formatDate(itemloc_expiration, :never), formatDate(itemloc_warrpurc, :never), formatQtyPer(itemloc_qty) "
+                 "       itemloc_expiration, itemloc_warrpurc, itemloc_qty, "
+                 "       'qty' AS itemloc_qty_xtnumericrole "
                  "FROM itemloc "
                  "  LEFT OUTER JOIN ls ON (itemloc_ls_id=ls_id), itemsite "
                  "WHERE ( (itemloc_itemsite_id=itemsite_id)"

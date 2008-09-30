@@ -76,11 +76,11 @@ recallOrders::recallOrders(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _showInvoiced->setEnabled(_privileges->check("RecallInvoicedShipment"));
   
-  _ship->addColumn(tr("Ship Date"),	_dateColumn,  Qt::AlignCenter );
-  _ship->addColumn(tr("Order #"),	_orderColumn, Qt::AlignLeft   );
-  _ship->addColumn(tr("Shipment #"),_orderColumn, Qt::AlignLeft   );
-  _ship->addColumn(tr("Customer"),  -1,           Qt::AlignLeft   );
-  _ship->addColumn(tr("Invoiced"),	_ynColumn,    Qt::AlignCenter );
+  _ship->addColumn(tr("Ship Date"),	_dateColumn,  Qt::AlignCenter, true, "shiphead_shipdate" );
+  _ship->addColumn(tr("Order #"),	_orderColumn, Qt::AlignLeft  , true, "number");
+  _ship->addColumn(tr("Shipment #"),    _orderColumn, Qt::AlignLeft  , true, "shiphead_number");
+  _ship->addColumn(tr("Customer"),      -1,           Qt::AlignLeft  , true, "cohead_billtoname" );
+  _ship->addColumn(tr("Invoiced"),	_ynColumn,    Qt::AlignCenter, true, "shipitem_invoiced" );
 
   sFillList();
 }
@@ -130,15 +130,14 @@ void recallOrders::sFillList()
   if (_metrics->boolean("MultiWhs"))
     params.append("MultiWhs");
 
-  QString sql = "SELECT DISTINCT shiphead_id, "
-		"       formatDate(shiphead_shipdate) AS shiphead_shipdate, "
-		"       cohead_number, shiphead_number, cohead_billtoname, "
-		"       formatBoolYN(shipitem_invoiced) "
+  QString sql = "SELECT DISTINCT shiphead_id, shiphead_shipdate, "
+		"       cohead_number AS number, shiphead_number, cohead_billtoname, "
+		"       shipitem_invoiced "
 	        "FROM shiphead, shipitem, coitem, cohead, cust, itemsite, site() "
 	        "WHERE ((shipitem_shiphead_id=shiphead_id)"
 	        " AND (shipitem_orderitem_id=coitem_id)"
-			" AND (itemsite_id=coitem_itemsite_id)"
-			" AND (warehous_id=itemsite_warehous_id)"
+                " AND (itemsite_id=coitem_itemsite_id)"
+                " AND (warehous_id=itemsite_warehous_id)"
 	        " AND (coitem_cohead_id=cohead_id)"
 	        " AND (cohead_cust_id=cust_id)"
 	        " AND (shiphead_shipped)"
@@ -149,17 +148,16 @@ void recallOrders::sFillList()
 		" ) "
 		"<? if exists(\"MultiWhs\") ?>"
 		"UNION "
-		"SELECT DISTINCT shiphead_id, "
-		"       formatDate(shiphead_shipdate) AS shiphead_shipdate, "
-		"       tohead_number, shiphead_number, '' AS cohead_billtoname, "
-		"       '' "
+		"SELECT DISTINCT shiphead_id, shiphead_shipdate, "
+		"       tohead_number AS number, shiphead_number, '' AS cohead_billtoname, "
+		"       false AS shipitem_invoiced "
 	        "FROM shiphead, tohead, toitem "
 	        "WHERE ((toitem_tohead_id=tohead_id)"
 	        "  AND  (shiphead_order_id=tohead_id)"
 	        "  AND  (shiphead_shipped)"
 		"  AND  (shiphead_order_type='TO')) "
 		"<? endif ?>"
-	        "ORDER BY shiphead_shipdate DESC, cohead_number;" ;
+	        "ORDER BY shiphead_shipdate DESC, number;" ;
   MetaSQLQuery mql(sql);
   q = mql.toQuery(params);
   _ship->clear();
