@@ -142,12 +142,15 @@ void ContactCluster::init()
     //_titleBox->addWidget(_titleLit,	0);
     _titleBox->addWidget(_title,	2);
 
-    _buttonBox 		= new QHBoxLayout;
+    _buttonBox 		= new QGridLayout;
     _crmAcct		= new CRMAcctCluster(this, "_crmAcct");
     _active		= new QCheckBox(tr("Active"), this, "_active");
-    _buttonBox->addWidget(_crmAcct,	1, Qt::AlignLeft);
-    _buttonBox->addStretch();
-    _buttonBox->addWidget(_active,	0);
+    _owner              = new UsernameCluster(this, "_owner");
+
+    _buttonBox->addWidget(_active,	0, 0, Qt::AlignTop);
+    _buttonBox->addWidget(_crmAcct,	0, 1, Qt::AlignTop);
+    _buttonBox->addWidget(_owner, 	0, 2, Qt::AlignTop);
+
 
     _phoneLit		= new QLabel(tr("Voice:"), this, "_phoneLit");
     _phone		= new XLineEdit(this, "_phone");
@@ -190,6 +193,7 @@ void ContactCluster::init()
     _honorific->setType(XComboBox::Honorifics);
 
     _crmAcct->setLabel(tr("CRM Account:"));
+    _owner->setLabel(tr("Owner:"));
 
     layout();
 
@@ -237,6 +241,7 @@ void ContactCluster::init()
     _limits = 0;
     setInfoVisible(false);	// TODO - remove this and implement Info button
     silentSetId(-1);
+    setOwnerVisible(false);
 }
 
 ContactCluster::ContactCluster(QWidget* pParent, const char* pName) :
@@ -302,6 +307,7 @@ void ContactCluster::silentSetId(const int pId)
               _address->setId(idQ.value("cntct_addr_id").toInt());
               _active->setChecked(idQ.value("cntct_active").toBool());
               _notes = idQ.value("cntct_notes").toString();
+	      _owner->setUsername(idQ.value("cntct_owner_username").toString());
     
               _ignoreSignals = false;
           }
@@ -439,7 +445,7 @@ int ContactCluster::save(AddressCluster::SaveFlags flag)
   datamodQ.prepare("SELECT COALESCE(saveCntct(:cntct_id,:cntct_number,:crmacct_id,:addr_id,"
 		   ":honorific,:first,:middle,:last,:suffix,:initials,"
 		   ":active,:phone,:phone2,:fax,:email,:webaddr,"
-		   ":notes,:title,:flag),0) AS result;");
+		   ":notes,:title,:flag,:owner),0) AS result;");
   datamodQ.bindValue(":cntct_number", _number->text());
   datamodQ.bindValue(":cntct_id",  id());
   datamodQ.bindValue(":honorific", _honorific->currentText());
@@ -457,6 +463,7 @@ int ContactCluster::save(AddressCluster::SaveFlags flag)
   datamodQ.bindValue(":email",	   _email->text());
   datamodQ.bindValue(":webaddr",   _webaddr->text());
   datamodQ.bindValue(":notes",	   _notes);
+  datamodQ.bindValue(":owner",     _owner->username());
   if (flag == AddressCluster::CHECK)
     datamodQ.bindValue(":flag", QString("CHECK"));
   else if (flag == AddressCluster::CHANGEALL)
@@ -486,6 +493,12 @@ int ContactCluster::save(AddressCluster::SaveFlags flag)
 void ContactCluster::setAccount(const int p)
 {
   _crmAcct->setId(p);
+}
+
+void ContactCluster::setOwnerVisible(const bool vis)
+{
+  _owner->setVisible(vis);
+  layout();
 }
 
 void ContactCluster::setNumberVisible(const bool vis)

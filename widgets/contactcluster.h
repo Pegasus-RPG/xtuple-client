@@ -63,6 +63,7 @@
 #include "xcombobox.h"
 #include "addresscluster.h"
 #include "crmacctcluster.h"
+#include "usernamecluster.h"
 #include "xcheckbox.h"
 
 #include <QCheckBox>
@@ -125,6 +126,7 @@ class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
     Q_OBJECT
     
     Q_PROPERTY(bool     accountVisible        READ accountVisible       	WRITE setAccountVisible)
+    Q_PROPERTY(bool     ownerVisible          READ ownerVisible                 WRITE setOwnerVisible)
     Q_PROPERTY(bool     activeVisible         READ activeVisible        	WRITE setActiveVisible)
     Q_PROPERTY(bool     addressVisible        READ addressVisible       	WRITE setAddressVisible)
     Q_PROPERTY(bool     emailVisible          READ emailVisible         	WRITE setEmailVisible)
@@ -172,6 +174,7 @@ class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
 	ContactCluster(QWidget*, const char* = 0);
 	virtual QString name() const;
 	virtual QString number()		const { return _number->text(); };
+        inline virtual bool    ownerVisible()   const { return _owner->isVisible(); };
 	inline virtual bool    numberVisible()  const { return _number->isVisible(); };
 	inline virtual bool    active()		const { return _active->isChecked(); };
 	inline virtual bool    activeVisible()  const { return _active->isVisible(); };
@@ -181,6 +184,8 @@ class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
 	inline virtual int     addressId()	const { return _address->id(); };
         inline virtual QString change()         const { return _change->text(); };
 	inline virtual int     crmAcctId()	const { return _crmAcct->id(); };
+	inline virtual int     ownerId()        const { return _owner->id(); };
+	inline virtual QString ownerUsername()  const { return _owner->username(); };
 	inline virtual QString description()    const { return ""; };
 	inline virtual QString emailAddress()	const { return _email->text(); };
 	inline virtual bool    emailVisible()   const { return _email->isVisible(); };
@@ -251,6 +256,8 @@ class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
 	inline virtual void setSuffix(const QString& p)	{ _suffix->setText(p); };
 	inline virtual void setTitle(const QString& p)	{ _title->setText(p); };
         inline virtual void setWebAddress(const QString& p) { _webaddr->setText(p); };
+	inline virtual void setOwnerUsername(const QString& p) { _owner->setUsername(p); };
+	inline virtual void setOwnerId(const int p) { _owner->setId(p); };
   
 	virtual void	clear();
 	virtual void	check();
@@ -263,6 +270,7 @@ class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
 	virtual void	sSearch();
 	virtual int	save(AddressCluster::SaveFlags = AddressCluster::CHECK);
 	virtual void	setAccount(const int);
+        virtual void    setOwnerVisible(const bool);
 	virtual void    setNumberVisible(const bool);
 	virtual void	setAccountVisible(const bool);
 	virtual void	setActiveVisible(const bool);
@@ -316,7 +324,8 @@ class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
 	QHBoxLayout*	_nameBox;
 	QHBoxLayout*	_initialsBox;
 	QHBoxLayout*	_titleBox;
-	QHBoxLayout*	_buttonBox;
+	QGridLayout*	_buttonBox;
+	QVBoxLayout* 	_ownerBox;
         XLineEdit*      _change;
 	XLineEdit*	_number;
 	XComboBox*	_honorific;
@@ -345,6 +354,7 @@ class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
 	QCheckBox*	_active;
 	QString         _addressChange;
 	AddressCluster*	_address;
+        UsernameCluster* _owner;
 
 	QString	_extraClause;
 	QString	_query;	

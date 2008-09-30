@@ -122,6 +122,25 @@ enum SetResponse contact::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
 
+  _contact->setOwnerVisible(true);
+
+  q.prepare("SELECT usr_id "
+	    "FROM usr "
+	    "WHERE (usr_username=CURRENT_USER);");
+  q.exec();
+  if (q.first())
+  {
+      _contact->setOwnerId(q.value("usr_id").toInt());
+  }  
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    reject();
+  }
+
+
+
+
   param = pParams.value("cntct_id", &valid);
   if (valid)
   {
