@@ -84,12 +84,14 @@ workOrderOperations::workOrderOperations(QWidget* parent, const char* name, Qt::
 
   omfgThis->inputManager()->notify(cBCWorkOrder, this, _wo, SLOT(setId(int)));
 
-  _wooper->addColumn(tr("Seq #"),         _seqColumn,  Qt::AlignCenter );
-  _wooper->addColumn(tr("Work Center"),   _itemColumn, Qt::AlignLeft   );
-  _wooper->addColumn(tr("Std. Oper."),    _itemColumn, Qt::AlignLeft   );
-  _wooper->addColumn(tr("Description"),   -1,          Qt::AlignLeft   );
-  _wooper->addColumn(tr("Setup Remain."), _itemColumn, Qt::AlignRight  );
-  _wooper->addColumn(tr("Run Remain."),   _itemColumn, Qt::AlignRight  );
+  _wooper->addColumn(tr("Seq #"),         _seqColumn,  Qt::AlignCenter, true,  "wooper_seqnumber" );
+  _wooper->addColumn(tr("Work Center"),   _itemColumn, Qt::AlignLeft,   true,  "wrkcnt_code"   );
+  _wooper->addColumn(tr("Std. Oper."),    _itemColumn, Qt::AlignLeft,   true,  "stdoperation"   );
+  _wooper->addColumn(tr("Description"),   -1,          Qt::AlignLeft,   true,  "wooperdescrip"   );
+  _wooper->addColumn(tr("Setup Remain."), _itemColumn, Qt::AlignRight,  true,  "setupremain"  );
+  _wooper->addColumn(tr("Status"),        _ynColumn,   Qt::AlignRight,  true,  "setupcomplete"  );
+  _wooper->addColumn(tr("Run Remain."),   _itemColumn, Qt::AlignRight,  true,  "runremain"  );
+  _wooper->addColumn(tr("Status"),        _ynColumn,   Qt::AlignRight,  true,  "runcomplete"  );
   
   if (_privileges->check("MaintainWoOperations"))
   {
@@ -266,14 +268,16 @@ void workOrderOperations::sCatchOperationsUpdated(int pWoid, int, bool)
 void workOrderOperations::sFillList()
 {
   q.prepare( "SELECT wooper_id, wooper_seqnumber, wrkcnt_code,"
-             "       COALESCE(stdopn_number, :none),"
-             "       (wooper_descrip1 || ' ' || wooper_descrip2),"
-             "       CASE WHEN (wooper_sucomplete) THEN (formatTime(noNeg(wooper_sutime - wooper_suconsumed)) || '/' || :complete)"
-             "            ELSE formatTime(noNeg(wooper_sutime - wooper_suconsumed))"
-             "       END,"
-             "       CASE WHEN (wooper_rncomplete) THEN (formatTime(noNeg(wooper_rntime - wooper_rnconsumed)) || '/' || :complete)"
-             "            ELSE formatTime(noNeg(wooper_rntime - wooper_rnconsumed))"
-             "       END "
+             "       COALESCE(stdopn_number, :none) AS stdoperation,"
+             "       (wooper_descrip1 || ' ' || wooper_descrip2) AS wooperdescrip,"
+             "       noNeg(wooper_sutime - wooper_suconsumed) AS setupremain,"
+             "       CASE WHEN (wooper_sucomplete) THEN :complete"
+             "       END AS setupcomplete,"
+             "       noNeg(wooper_rntime - wooper_rnconsumed) AS runremain,"
+             "       CASE WHEN (wooper_rncomplete) THEN :complete"
+             "       END AS runcomplete,"
+             "       '1' AS setupremain_xtnumericrole,"
+             "       '1' AS runremain_xtnumericrole "
              "FROM wrkcnt,"
              "     wooper LEFT OUTER JOIN stdopn ON (wooper_stdopn_id=stdopn_id) "
              "WHERE ( (wooper_wrkcnt_id=wrkcnt_id)"

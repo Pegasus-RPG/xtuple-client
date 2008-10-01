@@ -85,14 +85,14 @@ viewCheckRun::viewCheckRun(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_void, SIGNAL(clicked()), this, SLOT(sVoid()));
 
   _check->setRootIsDecorated(TRUE);
-  _check->addColumn(tr("Void"),             _ynColumn, Qt::AlignCenter );
-  _check->addColumn(tr("Misc."),            _ynColumn, Qt::AlignCenter );
-  _check->addColumn(tr("Prt'd"),            _ynColumn, Qt::AlignCenter );
-  _check->addColumn(tr("Chk./Voucher/RA #"), _itemColumn, Qt::AlignCenter );
-  _check->addColumn(tr("Recipient/Invc./CM #"),       -1, Qt::AlignLeft   );
-  _check->addColumn(tr("Check Date") ,    _dateColumn, Qt::AlignCenter );
-  _check->addColumn(tr("Amount"),        _moneyColumn, Qt::AlignRight  );
-  _check->addColumn(tr("Currency"),   _currencyColumn, Qt::AlignLeft );
+  _check->addColumn(tr("Void"),                 _ynColumn,       Qt::AlignCenter, true,  "void" );
+  _check->addColumn(tr("Misc."),                _ynColumn,       Qt::AlignCenter, true,  "misc" );
+  _check->addColumn(tr("Prt'd"),                _ynColumn,       Qt::AlignCenter, true,  "printed" );
+  _check->addColumn(tr("Chk./Voucher/RA #"),    _itemColumn,     Qt::AlignCenter, true,  "number" );
+  _check->addColumn(tr("Recipient/Invc./CM #"), -1,              Qt::AlignLeft,   true,  "description"   );
+  _check->addColumn(tr("Check Date") ,          _dateColumn,     Qt::AlignCenter, true,  "checkdate" );
+  _check->addColumn(tr("Amount"),               _moneyColumn,    Qt::AlignRight,  true,  "amount"  );
+  _check->addColumn(tr("Currency"),             _currencyColumn, Qt::AlignLeft,   true,  "curr_concat" );
 
   if (omfgThis->singleCurrency())
       _check->hideColumn(7);
@@ -287,44 +287,52 @@ void viewCheckRun::sFillList()
 {
   _check->clear();
 
-  QString sql( "SELECT checkhead_id AS checkid, -1 AS checkitem_id,"
-               "       formatBoolYN(checkhead_void) AS f_void,"
-               "       formatBoolYN(checkhead_misc) AS f_misc,"
-               "       formatBoolYN(checkhead_printed) AS f_printed,"
+  QString sql( "SELECT checkid, altid,"
+               "       void, misc, printed,"
+               "       number, description, checkdate,"
+               "       amount,"
+               "       checkhead_number, curr_concat,"
+               "       'curr' AS amount_xtnumericrole,"
+               "       level AS xtindentrole "
+               "FROM ( "
+               "SELECT checkhead_id AS checkid, -1 AS checkitem_id,"
+               "       checkhead_void AS void,"
+               "       checkhead_misc AS misc,"
+               "       checkhead_printed AS printed,"
                "       CASE WHEN(checkhead_number=-1) THEN TEXT('Unspecified')"
                "            ELSE TEXT(checkhead_number)"
                "       END AS number,"
                "       (checkrecip_number || '-' || checkrecip_name) AS description,"
-               "       formatDate(checkhead_checkdate) AS f_checkdate,"
-               "       formatMoney(checkhead_amount) AS f_amount,"
+               "       checkhead_checkdate AS checkdate,"
+               "       checkhead_amount AS amount,"
                "       CASE WHEN (checkhead_misc) THEN 1"
                "            ELSE 0"
-               "       END AS misc,"
+               "       END AS altid,"
                "       checkhead_number, currConcat(checkhead_curr_id) AS curr_concat, "
-	       "       1 AS orderby "
+               "       0 AS level "
                "FROM checkhead LEFT OUTER JOIN"
-	       "     checkrecip ON ((checkrecip_id=checkhead_recip_id)"
-	       "               AND  (checkrecip_type=checkhead_recip_type))"
+               "     checkrecip ON ((checkrecip_id=checkhead_recip_id)"
+               "               AND  (checkrecip_type=checkhead_recip_type))"
                "WHERE ((checkhead_bankaccnt_id=:bankaccnt_id) "
                "  AND  (NOT checkhead_posted)"
                "  AND  (NOT checkhead_replaced)"
                "  AND  (NOT checkhead_deleted) ) "
 
                "UNION SELECT checkitem_checkhead_id AS checkid, checkitem_id,"
-               "             '' AS f_void, '' AS f_misc, '' AS f_printed,"
+               "             CAST(NULL AS BOOLEAN) AS void, CAST(NULL AS BOOLEAN) AS misc, CAST(NULL AS BOOLEAN) AS printed,"
                "             CASE WHEN (checkitem_ranumber IS NOT NULL) THEN"
-	       "                        checkitem_ranumber::TEXT"
-	       "                  ELSE checkitem_vouchernumber"
-	       "             END AS number,"
-	       "             CASE WHEN (checkitem_cmnumber IS NOT NULL) THEN"
-	       "                        checkitem_cmnumber::TEXT"
-	       "                  ELSE checkitem_invcnumber"
+               "                        checkitem_ranumber::TEXT"
+               "                  ELSE checkitem_vouchernumber"
+               "             END AS number,"
+               "             CASE WHEN (checkitem_cmnumber IS NOT NULL) THEN"
+               "                        checkitem_cmnumber::TEXT"
+               "                  ELSE checkitem_invcnumber"
                "             END AS description,"
-               "             '' AS f_checkdate,"
-               "             formatMoney(checkitem_amount) AS f_amount,"
-               "             0 AS misc, checkhead_number, "
-	       "             currConcat(checkitem_curr_id) AS curr_concat, "
-	       "             2 AS orderby "
+               "             CAST(NULL AS DATE) AS checkdate,"
+               "             checkitem_amount AS amount,"
+               "             0 AS altid, checkhead_number, "
+               "             currConcat(checkitem_curr_id) AS curr_concat, "
+               "             1 AS level "
                "FROM checkitem, checkhead "
                "WHERE ( (checkitem_checkhead_id=checkhead_id)"
                " AND (checkhead_bankaccnt_id=:bankaccnt_id) "
@@ -332,37 +340,15 @@ void viewCheckRun::sFillList()
                " AND (NOT checkhead_replaced)"
                " AND (NOT checkhead_deleted) ) "
 
-               "ORDER BY checkhead_number, checkid, orderby;" );
+               "   ) AS data "
+               "ORDER BY checkhead_number, checkid, level;" );
 
   q.prepare(sql);
   q.bindValue(":bankaccnt_id", _bankaccnt->id());
   q.exec();
   if (q.first())
   {
-    XTreeWidgetItem *header = NULL;
-    int           checkid = -1;
-
-    do
-    {
-      if (q.value("checkid").toInt() != checkid)
-      {
-        checkid = q.value("checkid").toInt();
-        header = new XTreeWidgetItem( _check, header, checkid, q.value("misc").toInt(),
-                                    q.value("f_void"), q.value("f_misc"),
-                                    q.value("f_printed"), q.value("number"),
-                                    q.value("description"), q.value("f_checkdate"),
-                                    q.value("f_amount"), q.value("curr_concat"));
-      }
-      else if (header)
-      {
-        XTreeWidgetItem *item = new XTreeWidgetItem( header, checkid, 0);
-        item->setText(3, q.value("number"));
-        item->setText(4, q.value("description"));
-        item->setText(6, q.value("f_amount"));
-	item->setText(7, q.value("curr_concat"));
-      }
-    }
-    while (q.next());
+    _check->populate(q, true);
   }
   else if (q.lastError().type() != QSqlError::None)
   {

@@ -80,11 +80,11 @@ warehouses::warehouses(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
   connect(_showInactive, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   
-  _warehouse->addColumn(tr("Site"),        _whsColumn, Qt::AlignCenter );
-  _warehouse->addColumn(tr("Active"),      _ynColumn,  Qt::AlignCenter );
-  _warehouse->addColumn(tr("Type"),        _whsColumn, Qt::AlignCenter );
-  _warehouse->addColumn(tr("Description"), 130,        Qt::AlignLeft   );
-  _warehouse->addColumn(tr("Address"),     -1,         Qt::AlignLeft   );
+  _warehouse->addColumn(tr("Site"),        _whsColumn, Qt::AlignCenter, true,  "warehous_code" );
+  _warehouse->addColumn(tr("Active"),      _ynColumn,  Qt::AlignCenter, true,  "warehous_active" );
+  _warehouse->addColumn(tr("Type"),        _whsColumn, Qt::AlignCenter, true,  "sitetype_name" );
+  _warehouse->addColumn(tr("Description"), 130,        Qt::AlignLeft,   true,  "warehous_descrip"   );
+  _warehouse->addColumn(tr("Address"),     -1,         Qt::AlignLeft,   true,  "addr_line1"   );
 
   if (_privileges->check("MaintainWarehouses"))
   {
@@ -153,15 +153,15 @@ void warehouses::setParams(ParameterList & params)
 void warehouses::sFillList()
 {
   QString whss = "SELECT warehous_id, warehous_code,"
-                 "       formatBoolYN(warehous_active), sitetype_name,"
+                 "       warehous_active, sitetype_name,"
                  "       warehous_descrip, addr_line1 "
                  "FROM site() LEFT OUTER JOIN addr ON (addr_id=warehous_addr_id) "
-		 "  LEFT OUTER JOIN sitetype ON (sitetype_id=warehous_sitetype_id) "
+                 "  LEFT OUTER JOIN sitetype ON (sitetype_id=warehous_sitetype_id) "
                  "WHERE ((TRUE) "
-		 "<? if not exists(\"showInactive\") ?>"
+                 "<? if not exists(\"showInactive\") ?>"
                  "  AND (warehous_active) "
-		 "<? endif ?>"
-		 ") ORDER BY warehous_code;" ;
+                 "<? endif ?>"
+                 ") ORDER BY warehous_code;" ;
   ParameterList whsp;
   setParams(whsp);
   MetaSQLQuery whsm(whss);

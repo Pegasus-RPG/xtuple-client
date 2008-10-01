@@ -78,8 +78,8 @@ userList::userList(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
   connect(_select, SIGNAL(clicked()), this, SLOT(sSelect()));
 
-  _usr->addColumn( tr("Username"),    _itemColumn, Qt::AlignLeft );
-  _usr->addColumn( tr("Proper Name"), -1,          Qt::AlignLeft );
+  _usr->addColumn( tr("Username"),    _itemColumn, Qt::AlignLeft,  true,  "usr_username" );
+  _usr->addColumn( tr("Proper Name"), -1,          Qt::AlignLeft,  true,  "usr_propername" );
   
   _usr->populate( "SELECT usr_id, usr_username, usr_propername "
                   "FROM usr "

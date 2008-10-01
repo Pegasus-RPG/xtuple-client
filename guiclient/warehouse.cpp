@@ -75,8 +75,8 @@ warehouse::warehouse(QWidget* parent, const char* name, bool modal, Qt::WFlags f
   connect(_standard, SIGNAL(toggled(bool)), this, SLOT(sHandleWhsType()));
   connect(_transit,  SIGNAL(toggled(bool)), this, SLOT(sHandleWhsType()));
 
-  _whsezone->addColumn(tr("Name"),        _itemColumn, Qt::AlignCenter );
-  _whsezone->addColumn(tr("Description"), -1,          Qt::AlignLeft   );
+  _whsezone->addColumn(tr("Name"),        _itemColumn, Qt::AlignCenter, true,  "whsezone_name" );
+  _whsezone->addColumn(tr("Description"), -1,          Qt::AlignLeft,   true,  "whsezone_descrip"   );
   
   //Handle single warehouse scenario
   if (!_metrics->boolean("MultiWhs"))

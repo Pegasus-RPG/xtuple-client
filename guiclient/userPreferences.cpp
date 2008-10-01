@@ -100,17 +100,17 @@ userPreferences::userPreferences(QWidget* parent, const char* name, bool modal, 
   connect(_event, SIGNAL(itemSelected(int)), this, SLOT(sAllWarehousesToggled(int)));
   connect(_event, SIGNAL(itemSelectionChanged()), this, SLOT(sFillWarehouseList()));
 
-  _event->addColumn(tr("Module"),      50,   Qt::AlignCenter );
-  _event->addColumn(tr("Name"),        150,  Qt::AlignLeft   );
-  _event->addColumn(tr("Description"), -1,   Qt::AlignLeft   );
+  _event->addColumn(tr("Module"),      50,   Qt::AlignCenter, true,  "evnttype_module" );
+  _event->addColumn(tr("Name"),        150,  Qt::AlignLeft,   true,  "evnttype_name"   );
+  _event->addColumn(tr("Description"), -1,   Qt::AlignLeft,   true,  "evnttype_descrip"   );
   _event->populate( "SELECT evnttype_id, evnttype_module, evnttype_name, evnttype_descrip "
                     "FROM evnttype "
                     "ORDER BY evnttype_module, evnttype_name" );
 
-  _warehouses->addColumn(tr("Notify"),      50,         Qt::AlignCenter );
-  _warehouses->addColumn(tr("Site"),        _whsColumn, Qt::AlignCenter );
-  _warehouses->addColumn(tr("Description"), -1,         Qt::AlignLeft   );
-  _warehouses->populate( "SELECT warehous_id, TEXT('-'), warehous_code, warehous_descrip "
+  _warehouses->addColumn(tr("Notify"),      50,         Qt::AlignCenter, true,  "notify" );
+  _warehouses->addColumn(tr("Site"),        _whsColumn, Qt::AlignCenter, true,  "warehous_code" );
+  _warehouses->addColumn(tr("Description"), -1,         Qt::AlignLeft,   true,  "warehous_descrip"   );
+  _warehouses->populate( "SELECT warehous_id, TEXT('-') AS notify, warehous_code, warehous_descrip "
                         "FROM warehous "
                         "ORDER BY warehous_code" );
 

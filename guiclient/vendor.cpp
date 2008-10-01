@@ -92,12 +92,12 @@ vendor::vendor(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _defaultCurr->setLabel(_defaultCurrLit);
 
-  _vendaddr->addColumn(tr("Number"),           70,  Qt::AlignLeft );
-  _vendaddr->addColumn(tr("Name"),             150, Qt::AlignLeft );
-  _vendaddr->addColumn(tr("City, State, Zip"), -1,  Qt::AlignLeft );
+  _vendaddr->addColumn(tr("Number"),           70,  Qt::AlignLeft,   true,  "vendaddr_code" );
+  _vendaddr->addColumn(tr("Name"),             150, Qt::AlignLeft,   true,  "vendaddr_name" );
+  _vendaddr->addColumn(tr("City, State, Zip"), -1,  Qt::AlignLeft,   true,  "address" );
 
-  _taxreg->addColumn(tr("Tax Authority"), 100, Qt::AlignLeft );
-  _taxreg->addColumn(tr("Registration #"), -1, Qt::AlignLeft );
+  _taxreg->addColumn(tr("Tax Authority"),      100, Qt::AlignLeft,   true,  "taxauth_code" );
+  _taxreg->addColumn(tr("Registration #"),     -1,  Qt::AlignLeft,   true,  "taxreg_number" );
 
   _crmacctid = -1;
   _ignoreClose = false;
@@ -731,7 +731,7 @@ void vendor::sDeleteAddress()
 void vendor::sFillAddressList()
 {
   q.prepare( "SELECT vendaddr_id, vendaddr_code, vendaddr_name,"
-             "       ( vendaddr_city || ', ' || vendaddr_state || '  ' || vendaddr_zipcode) "
+             "       ( vendaddr_city || ', ' || vendaddr_state || '  ' || vendaddr_zipcode) AS address "
              "FROM vendaddr "
              "WHERE (vendaddr_vend_id=:vend_id) "
              "ORDER BY vendaddr_code;" );

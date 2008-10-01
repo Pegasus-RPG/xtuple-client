@@ -77,9 +77,9 @@ vendorAddressList::vendorAddressList(QWidget* parent, const char* name, bool mod
   connect(_vendaddr, SIGNAL(itemSelected(int)), _select, SLOT(animateClick()));
   connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
 
-  _vendaddr->addColumn(tr("Code"),    _orderColumn, Qt::AlignLeft );
-  _vendaddr->addColumn(tr("Name"),    -1,           Qt::AlignLeft );
-  _vendaddr->addColumn(tr("Address"), 100,          Qt::AlignLeft );
+  _vendaddr->addColumn(tr("Code"),    _orderColumn, Qt::AlignLeft,   true,  "code" );
+  _vendaddr->addColumn(tr("Name"),    -1,           Qt::AlignLeft,   true,  "name" );
+  _vendaddr->addColumn(tr("Address"), 100,          Qt::AlignLeft,   true,  "address" );
 }
 
 /*

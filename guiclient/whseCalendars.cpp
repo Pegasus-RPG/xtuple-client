@@ -98,8 +98,8 @@ whseCalendars::whseCalendars(QWidget* parent, const char* name, Qt::WFlags fl)
     _new->setEnabled(FALSE);
   }
 
-  _whsecal->addColumn(tr("Site"),        70, Qt::AlignLeft );
-  _whsecal->addColumn(tr("Description"), -1, Qt::AlignLeft );
+  _whsecal->addColumn(tr("Site"),        70, Qt::AlignLeft,   true,  "code" );
+  _whsecal->addColumn(tr("Description"), -1, Qt::AlignLeft,   true,  "whsecal_descrip" );
 
   sFillList(-1);
 }
@@ -179,7 +179,7 @@ void whseCalendars::sPrint()
 void whseCalendars::sFillList(int pId)
 {
   _whsecal->populate("SELECT whsecal_id,"
-                     "       COALESCE(warehous_code, 'Any'),"
+                     "       COALESCE(warehous_code, 'Any') AS code,"
                      "       whsecal_descrip "
                      "  FROM whsecal JOIN site() ON (whsecal_warehous_id=warehous_id)"
                      " ORDER BY warehous_code,"

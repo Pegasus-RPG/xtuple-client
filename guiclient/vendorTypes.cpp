@@ -98,8 +98,8 @@ vendorTypes::vendorTypes(QWidget* parent, const char* name, Qt::WFlags fl)
     _new->setEnabled(FALSE);
   }
 
-  _vendtype->addColumn(tr("Code"),        70, Qt::AlignLeft );
-  _vendtype->addColumn(tr("Description"), -1, Qt::AlignLeft );
+  _vendtype->addColumn(tr("Code"),        70, Qt::AlignLeft,   true,  "vendtype_code" );
+  _vendtype->addColumn(tr("Description"), -1, Qt::AlignLeft,   true,  "vendtype_descrip" );
 
   sFillList();
 }

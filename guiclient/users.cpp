@@ -87,9 +87,9 @@ users::users(QWidget* parent, const char* name, Qt::WFlags fl)
 
 //  statusBar()->hide();
   
-  _usr->addColumn(tr("Username"),    80, Qt::AlignLeft   );
-  _usr->addColumn(tr("Proper Name"), -1, Qt::AlignLeft   );
-  _usr->addColumn(tr("Status"),      50, Qt::AlignCenter );
+  _usr->addColumn(tr("Username"),    80, Qt::AlignLeft,   true,  "usr_username"   );
+  _usr->addColumn(tr("Proper Name"), -1, Qt::AlignLeft,   true,  "usr_propername"   );
+  _usr->addColumn(tr("Status"),      50, Qt::AlignCenter, true,  "status" );
 
   q.exec("SELECT userCanCreateUsers(CURRENT_USER) AS cancreate;");
   if (q.first())
@@ -124,7 +124,7 @@ void users::sFillList()
   QString sql( "SELECT usr_id, usr_username, usr_propername,"
                "       CASE WHEN (usr_active) THEN :active"
                "            ELSE :inactive"
-               "       END "
+               "       END AS status "
                "FROM usr ");
 
   if (!_showInactive->isChecked())

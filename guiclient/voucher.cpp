@@ -123,23 +123,23 @@ voucher::voucher(QWidget* parent, const char* name, Qt::WFlags fl)
   _terms->setType(XComboBox::APTerms);
   _poNumber->setType(cPOOpen);
 
-  _poitem->addColumn(tr("#"),            _whsColumn,   Qt::AlignCenter );
-  _poitem->addColumn(tr("Status"),       _uomColumn,   Qt::AlignCenter );
-  _poitem->addColumn(tr("Item Number"),  _itemColumn,  Qt::AlignLeft   );
-  _poitem->addColumn(tr("UOM"),          _uomColumn,   Qt::AlignCenter );
-  _poitem->addColumn(tr("Vend. Item #"), -1,           Qt::AlignLeft   );
-  _poitem->addColumn(tr("UOM"),          _uomColumn,   Qt::AlignCenter );
-  _poitem->addColumn(tr("Ordered"),      _qtyColumn,   Qt::AlignRight  );
-  _poitem->addColumn(tr("Invoiced"),     _qtyColumn,   Qt::AlignRight, false );
-  _poitem->addColumn(tr("Uninvoiced"),   _qtyColumn,   Qt::AlignRight  );
-  _poitem->addColumn(tr("Rejected"),     _qtyColumn,   Qt::AlignRight  );
-  _poitem->addColumn(tr("Amount"),       _moneyColumn, Qt::AlignRight  );
-  _poitem->addColumn(tr("PO Unit Price"), _moneyColumn, Qt::AlignRight );
-  _poitem->addColumn(tr("PO Ext Price"), _moneyColumn, Qt::AlignRight  );
-  _poitem->addColumn(tr("PO Line Freight"), _moneyColumn, Qt::AlignRight );
+  _poitem->addColumn(tr("#"),               _whsColumn,   Qt::AlignCenter, true,  "poitem_linenumber" );
+  _poitem->addColumn(tr("Status"),          _uomColumn,   Qt::AlignCenter, true,  "poitemstatus" );
+  _poitem->addColumn(tr("Item Number"),     _itemColumn,  Qt::AlignLeft,   true,  "itemnumber"   );
+  _poitem->addColumn(tr("UOM"),             _uomColumn,   Qt::AlignCenter, true,  "uom" );
+  _poitem->addColumn(tr("Vend. Item #"),    -1,           Qt::AlignLeft,   true,  "poitem_vend_item_number"   );
+  _poitem->addColumn(tr("UOM"),             _uomColumn,   Qt::AlignCenter, true,  "poitem_vend_uom" );
+  _poitem->addColumn(tr("Ordered"),         _qtyColumn,   Qt::AlignRight,  true,  "poitem_qty_ordered"  );
+  _poitem->addColumn(tr("Invoiced"),        _qtyColumn,   Qt::AlignRight,  false, "invoiced" );
+  _poitem->addColumn(tr("Uninvoiced"),      _qtyColumn,   Qt::AlignRight,  true,  "qtyreceived"  );
+  _poitem->addColumn(tr("Rejected"),        _qtyColumn,   Qt::AlignRight,  true,  "qtyrejected"  );
+  _poitem->addColumn(tr("Amount"),          _moneyColumn, Qt::AlignRight,  true,  "invoiceamount"  );
+  _poitem->addColumn(tr("PO Unit Price"),   _moneyColumn, Qt::AlignRight,  true,  "poitem_unitprice" );
+  _poitem->addColumn(tr("PO Ext Price"),    _moneyColumn, Qt::AlignRight,  true,  "extprice"  );
+  _poitem->addColumn(tr("PO Line Freight"), _moneyColumn, Qt::AlignRight,  true,  "poitem_freight" );
 
-  _miscDistrib->addColumn(tr("Account"), -1,           Qt::AlignLeft  );
-  _miscDistrib->addColumn(tr("Amount"),  _moneyColumn, Qt::AlignRight ); 
+  _miscDistrib->addColumn(tr("Account"),    -1,           Qt::AlignLeft,   true,  "account"  );
+  _miscDistrib->addColumn(tr("Amount"),     _moneyColumn, Qt::AlignRight,  true,  "vodist_amount" ); 
 }
 
 /*
@@ -623,45 +623,52 @@ void voucher::sFillList()
                "            WHEN(poitem_status='O') THEN :open"
                "            ELSE poitem_status"
                "       END AS poitemstatus,"
-               "       COALESCE(item_number, poitem_vend_item_number),"
-               "       COALESCE(uom_name, poitem_vend_uom),"
+               "       COALESCE(item_number, poitem_vend_item_number) AS itemnumber,"
+               "       COALESCE(uom_name, poitem_vend_uom) AS uom,"
                "       poitem_vend_item_number, poitem_vend_uom,"
-               "       formatQty(poitem_qty_ordered) AS qtyordered,"
-               "       formatQty(( SELECT COALESCE(SUM(porecv_qty), 0)"
-               "                   FROM porecv"
-               "                   WHERE ( (porecv_posted)"
-               "                    AND (porecv_invoiced)"
-               "                    AND (porecv_poitem_id=poitem_id) ) )) AS f_invoiced,"
-               "       formatQty(( SELECT COALESCE(SUM(porecv_qty), 0)"
-               "                   FROM porecv"
-               "                   WHERE ( (porecv_posted)"
-               "                    AND (NOT porecv_invoiced)"
-               "                    AND (porecv_vohead_id IS NULL)"
-               "                    AND (porecv_poitem_id=poitem_id) ) )) AS f_qtyreceived,"
-               "       formatQty(( SELECT COALESCE(SUM(poreject_qty), 0)"
-               "                   FROM poreject"
-               "                   WHERE ( (poreject_posted)"
-               "                    AND (NOT poreject_invoiced)"
-               "                    AND (poreject_vohead_id IS NULL)"
-               "                    AND (poreject_poitem_id=poitem_id) ) )) AS f_qtyrejected,"
-               "       formatMoney( (SELECT COALESCE(SUM(vodist_amount), 0)"
-               "                     FROM vodist"
-               "                     WHERE vodist_poitem_id=poitem_id"
-               "                      AND vodist_vohead_id=:vohead_id) "
-               "                  + (SELECT COALESCE(SUM(COALESCE(voitem_freight,0)), 0)"
-               "                       FROM voitem"
-               "                      WHERE voitem_poitem_id=poitem_id"
-               "                        AND   voitem_vohead_id=:vohead_id) "
-	       "                  ) AS f_invoiceamount,"
-               "       formatMoney(poitem_unitprice) AS f_unitprice,"
-               "       formatMoney(poitem_unitprice * poitem_qty_ordered) AS f_extprice,"
-               "       formatMoney(poitem_freight) AS f_itemfreight "
+               "       poitem_qty_ordered,"
+               "       ( SELECT COALESCE(SUM(porecv_qty), 0)"
+               "         FROM porecv"
+               "         WHERE ( (porecv_posted)"
+               "           AND (porecv_invoiced)"
+               "           AND (porecv_poitem_id=poitem_id) ) ) AS invoiced,"
+               "       ( SELECT COALESCE(SUM(porecv_qty), 0)"
+               "         FROM porecv"
+               "         WHERE ( (porecv_posted)"
+               "           AND (NOT porecv_invoiced)"
+               "           AND (porecv_vohead_id IS NULL)"
+               "           AND (porecv_poitem_id=poitem_id) ) ) AS qtyreceived,"
+               "       ( SELECT COALESCE(SUM(poreject_qty), 0)"
+               "         FROM poreject"
+               "         WHERE ( (poreject_posted)"
+               "           AND (NOT poreject_invoiced)"
+               "           AND (poreject_vohead_id IS NULL)"
+               "           AND (poreject_poitem_id=poitem_id) ) ) AS qtyrejected,"
+               "       ( SELECT COALESCE(SUM(vodist_amount), 0)"
+               "         FROM vodist"
+               "         WHERE vodist_poitem_id=poitem_id"
+               "           AND vodist_vohead_id=:vohead_id ) "
+               "     + ( SELECT COALESCE(SUM(COALESCE(voitem_freight,0)), 0)"
+               "         FROM voitem"
+               "         WHERE voitem_poitem_id=poitem_id"
+               "           AND   voitem_vohead_id=:vohead_id ) AS invoiceamount,"
+               "       poitem_unitprice,"
+               "       (poitem_unitprice * poitem_qty_ordered) AS extprice,"
+               "       poitem_freight,"
+               "       'qty' AS poitem_qty_ordered_xtnumericrole,"
+               "       'qty' AS invoiced_xtnumericrole,"
+               "       'qty' AS qtyreceived_xtnumericrole,"
+               "       'qty' AS qtyrejected_xtnumericrole,"
+               "       'curr' AS invoiceamount_xtnumericrole,"
+               "       'curr' AS poitem_unitprice_xtnumericrole,"
+               "       'curr' AS extprice_xtnumericrole,"
+               "       'curr' AS poitem_freight_xtnumericrole "
                "FROM poitem LEFT OUTER JOIN"
                "     ( itemsite JOIN item"
                "       ON (itemsite_item_id=item_id) JOIN uom ON (item_inv_uom_id=uom_id) )"
                "     ON (poitem_itemsite_id=itemsite_id), pohead "
                "WHERE (poitem_pohead_id=:pohead_id) "
-	       "  AND pohead_id = poitem_pohead_id "
+               "  AND pohead_id = poitem_pohead_id "
                "GROUP BY poitem_id, poitem_linenumber, poitem_status,"
                "         item_number, uom_name,"
                "         poitem_vend_item_number, poitem_vend_uom,"
@@ -687,14 +694,14 @@ void voucher::sFillMiscList()
   if (_poNumber->isValid())
   {
     q.prepare( "SELECT vodist_id, (formatGLAccount(accnt_id) || ' - ' || accnt_descrip) AS account,"
-               " formatMoney(vodist_amount) "
+               "       vodist_amount, 'curr' AS vodist_amount_xtnumericrole "
                "FROM vodist, accnt "
                "WHERE ( (vodist_poitem_id=-1)"
                " AND (vodist_accnt_id=accnt_id)"
                " AND (vodist_vohead_id=:vohead_id) ) "
                "UNION ALL "
                "SELECT vodist_id, (expcat_code || ' - ' || expcat_descrip) AS account,"
-	       " formatMoney(vodist_amount) "
+               "       vodist_amount, 'curr' AS vodist_amount_xtnumericrole "
                "  FROM vodist, expcat "
                " WHERE ( (vodist_poitem_id=-1)"
                "   AND   (vodist_expcat_id=expcat_id)"
