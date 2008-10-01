@@ -185,7 +185,7 @@ Metrics::Metrics()
 Preferences::Preferences(const QString &pUsername)
 {
   _readSql  = "SELECT usrpref_name AS key, usrpref_value AS value "
-              "FROM usrpref, usr "
+              "FROM usrpref "
               "WHERE (usrpref_username=:username);";
   _setSql   = "SELECT setUserPreference(:username, :name, :value);";
   _username = pUsername;
@@ -207,7 +207,7 @@ void Preferences::remove(const QString &pPrefName)
 Privileges::Privileges()
 {
   _readSql = "SELECT priv_name AS key, TEXT('t') AS value "
-             "  FROM usrpriv, priv, usr "
+             "  FROM usrpriv, priv "
              " WHERE((usrpriv_priv_id=priv_id)"
              "   AND (usrpriv_username=CURRENT_USER)) "
              " UNION "
