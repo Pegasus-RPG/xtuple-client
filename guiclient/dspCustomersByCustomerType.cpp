@@ -57,56 +57,41 @@
 
 #include "dspCustomersByCustomerType.h"
 
-#include <QVariant>
-//#include <QStatusBar>
-#include <QWorkspace>
 #include <QMenu>
+#include <QSqlError>
+#include <QVariant>
+
 #include <openreports.h>
 #include "customer.h"
 #include "customerTypeList.h"
 
-/*
- *  Constructs a dspCustomersByCustomerType as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspCustomersByCustomerType::dspCustomersByCustomerType(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
   connect(_cust, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_autoRefresh, SIGNAL(toggled(bool)), this, SLOT(sHandleRefreshButton(bool)));
 
   _customerType->setType(ParameterGroup::CustomerType);
 
-  _cust->addColumn(tr("Type"),    _itemColumn, Qt::AlignLeft );
-  _cust->addColumn(tr("Number"),  _itemColumn, Qt::AlignLeft );
-  _cust->addColumn(tr("Name"),    200,         Qt::AlignLeft );
-  _cust->addColumn(tr("Address"), -1,          Qt::AlignLeft );
+  _cust->addColumn(tr("Type"),    _itemColumn, Qt::AlignLeft, true, "custtype_code");
+  _cust->addColumn(tr("Number"),  _itemColumn, Qt::AlignLeft, true, "cust_number");
+  _cust->addColumn(tr("Name"),    200,         Qt::AlignLeft, true, "cust_name");
+  _cust->addColumn(tr("Address"), -1,          Qt::AlignLeft, true, "cust_address1");
   _cust->setDragString("custid=");
 
   connect(omfgThis, SIGNAL(customersUpdated(int, bool)), SLOT(sFillList()));
+  sHandleRefreshButton(_autoRefresh->isChecked());
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspCustomersByCustomerType::~dspCustomersByCustomerType()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspCustomersByCustomerType::languageChange()
 {
   retranslateUi(this);
@@ -206,10 +191,17 @@ void dspCustomersByCustomerType::sFillList()
   _customerType->bindValue(q);
   q.exec();
   _cust->populate(q, TRUE);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
-
-
-void dspCustomersByCustomerType::sHandleRefreshButton(bool)
+void dspCustomersByCustomerType::sHandleRefreshButton(bool pAutoUpdate)
 {
+  if (pAutoUpdate)
+    connect(omfgThis, SIGNAL(tick()), this, SLOT(sFillList()));
+  else
+    disconnect(omfgThis, SIGNAL(tick()), this, SLOT(sFillList()));
 }

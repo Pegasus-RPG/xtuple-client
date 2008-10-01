@@ -57,8 +57,9 @@
 
 #include "dspDetailedInventoryHistoryByLocation.h"
 
-#include <QMessageBox>
 #include <QMenu>
+#include <QMessageBox>
+#include <QSqlError>
 
 #include <openreports.h>
 #include <parameter.h>
@@ -70,17 +71,10 @@
 #include "materialReceiptTrans.h"
 #include "countTag.h"
 
-/*
- *  Constructs a dspDetailedInventoryHistoryByLocation as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspDetailedInventoryHistoryByLocation::dspDetailedInventoryHistoryByLocation(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
-
-//  (void)statusBar();
 
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_invhist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
@@ -97,15 +91,15 @@ dspDetailedInventoryHistoryByLocation::dspDetailedInventoryHistoryByLocation(QWi
   _transType->append(cTransScraps,    tr("Scraps")                 );
   _transType->setCurrentItem(0);
 
-  _invhist->addColumn(tr("Date"),         (_dateColumn + 30),  Qt::AlignRight  );
-  _invhist->addColumn(tr("Type"),         _transColumn,        Qt::AlignCenter );
-  _invhist->addColumn(tr("Order #"),      _orderColumn,        Qt::AlignLeft   );
-  _invhist->addColumn(tr("Item Number"),  _itemColumn,         Qt::AlignLeft   );
-  _invhist->addColumn(tr("Lot/Serial #"), -1,                  Qt::AlignLeft   );
-  _invhist->addColumn(tr("UOM"),          _uomColumn,          Qt::AlignCenter );
-  _invhist->addColumn(tr("Trans-Qty"),    _qtyColumn,          Qt::AlignRight  );
-  _invhist->addColumn(tr("Qty. Before"),  _qtyColumn,          Qt::AlignRight  );
-  _invhist->addColumn(tr("Qty. After"),   _qtyColumn,          Qt::AlignRight  );
+  _invhist->addColumn(tr("Date"), (_dateColumn + 30), Qt::AlignRight, true, "invhist_transdate");
+  _invhist->addColumn(tr("Type"),       _transColumn, Qt::AlignCenter,true, "invhist_transtype");
+  _invhist->addColumn(tr("Order #"),    _orderColumn, Qt::AlignLeft,  true, "ordernumber");
+  _invhist->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft,  true, "item_number");
+  _invhist->addColumn(tr("Lot/Serial #"), -1,         Qt::AlignLeft,  true, "lotserial");
+  _invhist->addColumn(tr("UOM"),          _uomColumn, Qt::AlignCenter,true, "invhist_invuom");
+  _invhist->addColumn(tr("Trans-Qty"),    _qtyColumn, Qt::AlignRight, true, "transqty");
+  _invhist->addColumn(tr("Qty. Before"),  _qtyColumn, Qt::AlignRight, true, "qohbefore");
+  _invhist->addColumn(tr("Qty. After"),   _qtyColumn, Qt::AlignRight, true, "qohafter");
 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"),     omfgThis->endOfTime(),   TRUE);
@@ -248,8 +242,6 @@ void dspDetailedInventoryHistoryByLocation::sPopulateMenu(QMenu *menuThis)
 
 void dspDetailedInventoryHistoryByLocation::sFillList()
 {
-  _invhist->clear();
-
   if (!_dates->startDate().isValid())
   {
     QMessageBox::critical( this, tr("Enter Start Date"),
@@ -266,15 +258,22 @@ void dspDetailedInventoryHistoryByLocation::sFillList()
     return;
   }
 
-  q.prepare( "SELECT invhist_id,"
-             "       formatDateTime(invhist_transdate) AS transdate,"
-             "       invhist_transtype, (invhist_ordtype || '-' || invhist_ordnumber) AS ordernumber,"
+  q.prepare( "SELECT invhist_id, invhist_transdate, invhist_transtype,"
+            "        (invhist_ordtype || '-' || invhist_ordnumber) AS ordernumber,"
              "       invhist_invuom,"
              "       item_number, formatlotserialnumber(invdetail_ls_id) AS lotserial,"
-             "       formatQty(invdetail_qty) AS transqty,"
-             "       formatQty(invdetail_qty_before) AS qohbefore,"
-             "       formatQty(invdetail_qty_after) AS qohafter,"
-             "       invhist_posted "
+             "       CASE WHEN invhist_posted THEN invdetail_qty"
+             "       END AS transqty,"
+             "       CASE WHEN invhist_posted THEN invdetail_qty_before"
+             "       END AS qohbefore,"
+             "       CASE WHEN invhist_posted THEN invdetail_qty_after"
+             "       END AS qohafter,"
+             "       invhist_posted,"
+             "      'qty' AS transqty_xtnumericrole,"
+             "      'qty' AS qohbefore_xtnumericrole,"
+             "      'qty' AS qohafter_xtnumericrole,"
+             "       CASE WHEN NOT invhist_posted THEN 'warning'"
+             "       END AS qtforegroundrole "
              "FROM invdetail, invhist, itemsite, item "
              "WHERE ( (invdetail_invhist_id=invhist_id)"
              " AND (invhist_itemsite_id=itemsite_id)"
@@ -287,26 +286,10 @@ void dspDetailedInventoryHistoryByLocation::sFillList()
   q.bindValue(":location_id", _location->id());
   q.bindValue(":transType", _transType->id());
   q.exec();
-
-  XTreeWidgetItem *last = 0;
-  while (q.next())
+  _invhist->populate(q);
+  if (q.lastError().type() != QSqlError::None)
   {
-    last = new XTreeWidgetItem( _invhist, last, q.value("invhist_id").toInt(),
-			       q.value("transdate"),
-			       q.value("invhist_transtype"),
-			       q.value("ordernumber"),
-			       q.value("item_number"),
-			       q.value("lotserial"),
-			       q.value("invhist_invuom"),
-			       q.value("transqty") );
-
-    if (q.value("invhist_posted").toBool())
-    {
-      last->setText(7, q.value("qohbefore").toString());
-      last->setText(8, q.value("qohafter").toString());
-    }
-    else
-      last->setTextColor("orange");
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
 }
-

@@ -57,39 +57,24 @@
 
 #include "dspCustomerInformationExport.h"
 
+#include <QSqlError>
 #include <QVariant>
 
-/*
- *  Constructs a dspCustomerInformationExport as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspCustomerInformationExport::dspCustomerInformationExport(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sQuery()));
 
   _customerType->setType(ParameterGroup::CustomerType);
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspCustomerInformationExport::~dspCustomerInformationExport()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspCustomerInformationExport::languageChange()
 {
   retranslateUi(this);
@@ -97,156 +82,51 @@ void dspCustomerInformationExport::languageChange()
 
 void dspCustomerInformationExport::sQuery()
 {
-  _cust->clear();
   _cust->setColumnCount(0);
+
+  struct {
+    QCheckBox *checkbox;
+    QString title;
+    QString dbcol;
+  } list[] = {
+    { _number,       tr("Customer Number"),   "cust_number" },
+    { _name,         tr("Customer Name"),     "cust_name" },
+    { _billAddress1, tr("Billing Address 1"), "cust_address1" },
+    { _billAddress2, tr("Billing Address 2"), "cust_address2" },
+    { _billAddress3, tr("Billing Address 3"), "cust_address3" },
+    { _billCity,     tr("Billing City"),      "cust_city" },
+    { _billState,    tr("Billing State"),     "cust_state" },
+    { _billZipCode,  tr("Billing Zip Code"),  "cust_zipcode" },
+    { _billCountry,  tr("Billing Country"),   "cust_country" },
+    { _billContact,  tr("Billing Contact"),   "cust_contact" },
+    { _billPhone,    tr("Billing Phone"),     "cust_phone" },
+    { _billFAX,      tr("Billing FAX"),       "cust_fax" },
+    { _billEmail,    tr("Billing Email"),     "cust_email" },
+    { _corrAddress1, tr("Corr. Address 1"),   "cust_corraddress1" },
+    { _corrAddress2, tr("Corr. Address 2"),   "cust_corraddress2" },
+    { _corrAddress3, tr("Corr. Address 3"),   "cust_corraddress3" },
+    { _corrCity,     tr("Corr. City"),        "cust_corrcity" },
+    { _corrState,    tr("Corr. State"),       "cust_corrstate" },
+    { _corrZipCode,  tr("Corr. Zip Code"),    "cust_corrzipcode" },
+    { _corrCountry,  tr("Corr. Country"),     "cust_corrcountry" },
+    { _corrContact,  tr("Corr. Contact"),     "cust_corrcontact" },
+    { _corrPhone,    tr("Corr. Phone"),       "cust_corrphone" },
+    { _corrFAX,      tr("Corr. FAX"),         "cust_corrfax" },
+    { _corrEmail,    tr("Corr. Email"),       "cust_corremail" }
+  };
 
   QString sql("SELECT cust_id ");
 
-  if (_number->isChecked())
+  for (unsigned int i = 0; i < sizeof(list) / sizeof(list[0]); i++)
   {
-    _cust->addColumn(tr("Customer Number"), 100, Qt::AlignLeft);
-    sql += ", cust_number ";
+    if (list[i].checkbox->isChecked())
+    {
+      _cust->addColumn(list[i].title, 100, Qt::AlignLeft, true, list[i].dbcol);
+      sql += ", " + list[i].dbcol;
+    }
   }
 
-  if (_name->isChecked())
-  {
-    _cust->addColumn(tr("Customer Name"), 100, Qt::AlignLeft);
-    sql += ", cust_name ";
-  }
-
-  if (_billAddress1->isChecked())
-  {
-    _cust->addColumn(tr("Billing Address 1"), 100, Qt::AlignLeft);
-    sql += ", cust_address1 ";
-  }
-
-  if (_billAddress2->isChecked())
-  {
-    _cust->addColumn(tr("Billing Address 2"), 100, Qt::AlignLeft);
-    sql += ", cust_address2 ";
-  }
-
-  if (_billAddress3->isChecked())
-  {
-    _cust->addColumn(tr("Billing Address 3"), 100, Qt::AlignLeft);
-    sql += ", cust_address3 ";
-  }
-
-  if (_billCity->isChecked())
-  {
-    _cust->addColumn(tr("Billing City"), 100, Qt::AlignLeft);
-    sql += ", cust_city ";
-  }
-
-  if (_billState->isChecked())
-  {
-    _cust->addColumn(tr("Billing State"), 100, Qt::AlignLeft);
-    sql += ", cust_state ";
-  }
-
-  if (_billZipCode->isChecked())
-  {
-    _cust->addColumn(tr("Billing Zip Code"), 100, Qt::AlignLeft);
-    sql += ", cust_zipcode ";
-  }
-
-  if (_billCountry->isChecked())
-  {
-    _cust->addColumn(tr("Billing Country"), 100, Qt::AlignLeft);
-    sql += ", cust_country ";
-  }
-
-  if (_billContact->isChecked())
-  {
-    _cust->addColumn(tr("Billing Contact"), 100, Qt::AlignLeft);
-    sql += ", cust_contact ";
-  }
-
-  if (_billPhone->isChecked())
-  {
-    _cust->addColumn(tr("Billing Phone"), 100, Qt::AlignLeft);
-    sql += ", cust_phone ";
-  }
-
-  if (_billFAX->isChecked())
-  {
-    _cust->addColumn(tr("Billing FAX"), 100, Qt::AlignLeft);
-    sql += ", cust_fax ";
-  }
-
-  if (_billEmail->isChecked())
-  {
-    _cust->addColumn(tr("Billing Email"), 100, Qt::AlignLeft);
-    sql += ", cust_email ";
-  }
-
-  if (_corrAddress1->isChecked())
-  {
-    _cust->addColumn(tr("Corr. Address 1"), 100, Qt::AlignLeft);
-    sql += ", cust_corraddress1 ";
-  }
-
-  if (_corrAddress2->isChecked())
-  {
-    _cust->addColumn(tr("Corr. Address 2"), 100, Qt::AlignLeft);
-    sql += ", cust_corraddress2 ";
-  }
-
-  if (_corrAddress3->isChecked())
-  {
-    _cust->addColumn(tr("Corr. Address 3"), 100, Qt::AlignLeft);
-    sql += ", cust_corraddress3 ";
-  }
-
-  if (_corrCity->isChecked())
-  {
-    _cust->addColumn(tr("Corr. City"), 100, Qt::AlignLeft);
-    sql += ", cust_corrcity ";
-  }
-
-  if (_corrState->isChecked())
-  {
-    _cust->addColumn(tr("Corr. State"), 100, Qt::AlignLeft);
-    sql += ", cust_corrstate ";
-  }
-
-  if (_corrZipCode->isChecked())
-  {
-    _cust->addColumn(tr("Corr. Zip Code"), 100, Qt::AlignLeft);
-    sql += ", cust_corrzipcode ";
-  }
-
-  if (_corrCountry->isChecked())
-  {
-    _cust->addColumn(tr("Corr. Country"), 100, Qt::AlignLeft);
-    sql += ", cust_corrcountry ";
-  }
-
-  if (_corrContact->isChecked())
-  {
-    _cust->addColumn(tr("Corr. Contact"), 100, Qt::AlignLeft);
-    sql += ", cust_corrcontact ";
-  }
-
-  if (_corrPhone->isChecked())
-  {
-    _cust->addColumn(tr("Corr. Phone"), 100, Qt::AlignLeft);
-    sql += ", cust_corrphone ";
-  }
-
-  if (_corrFAX->isChecked())
-  {
-    _cust->addColumn(tr("Corr. FAX"), 100, Qt::AlignLeft);
-    sql += ", cust_corrfax ";
-  }
-
-  if (_corrEmail->isChecked())
-  {
-    _cust->addColumn(tr("Corr. Email"), 100, Qt::AlignLeft);
-    sql += ", cust_corremail ";
-  }
-
-  sql += "FROM cust, custtype "
+  sql += " FROM cust, custtype "
          "WHERE ( (cust_custtype_id=custtype_id)";
 
   if (!_showInactive->isChecked())
@@ -264,5 +144,9 @@ void dspCustomerInformationExport::sQuery()
   _customerType->bindValue(q);
   q.exec();
   _cust->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
-

@@ -57,52 +57,37 @@
 
 #include "dspExpediteExceptionsByPlannerCode.h"
 
-#include <QVariant>
-//#include <QStatusBar>
 #include <QMenu>
+#include <QSqlError>
+#include <QVariant>
+
 #include <parameter.h>
 #include <openreports.h>
 
-/*
- *  Constructs a dspExpediteExceptionsByPlannerCode as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspExpediteExceptionsByPlannerCode::dspExpediteExceptionsByPlannerCode(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_exception, SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *, int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _plannerCode->setType(ParameterGroup::PlannerCode);
 
-  _exception->addColumn(tr("Order Type/#"),   _itemColumn, Qt::AlignCenter );
-  _exception->addColumn(tr("Site"),           _whsColumn,  Qt::AlignCenter );
-  _exception->addColumn(tr("Item Number"),    _itemColumn, Qt::AlignLeft   );
-  _exception->addColumn(tr("Descriptions"),   -1,          Qt::AlignLeft   );
-  _exception->addColumn(tr("Start/Due Date"), _itemColumn, Qt::AlignLeft   );
-  _exception->addColumn(tr("Exception"),      120,         Qt::AlignLeft   );
+  _exception->addColumn(tr("Order Type/#"),   _itemColumn, Qt::AlignCenter,true, "order_number");
+  _exception->addColumn(tr("Site"),           _whsColumn,  Qt::AlignCenter,true, "warehous_code");
+  _exception->addColumn(tr("Item Number"),    _itemColumn, Qt::AlignLeft,  true, "item_number");
+  _exception->addColumn(tr("Descriptions"),   -1,          Qt::AlignLeft,  true, "item_descrip");
+  _exception->addColumn(tr("Start/Due Date"), _itemColumn, Qt::AlignLeft,  true, "keydate");
+  _exception->addColumn(tr("Exception"),      120,         Qt::AlignLeft,  true, "exception");
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspExpediteExceptionsByPlannerCode::~dspExpediteExceptionsByPlannerCode()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspExpediteExceptionsByPlannerCode::languageChange()
 {
   retranslateUi(this);
@@ -110,8 +95,6 @@ void dspExpediteExceptionsByPlannerCode::languageChange()
 
 void dspExpediteExceptionsByPlannerCode::sFillList()
 {
-  _exception->clear();
-
   QString sql( "SELECT planord_id AS order_id, 1 AS order_code,"
                "       CASE WHEN (planord_type='W') THEN ('PW/O-' || formatPloNumber(planord_id))"
                "            WHEN (planord_type='P') THEN ('PP/O-' || formatPloNumber(planord_id))"
@@ -190,16 +173,11 @@ void dspExpediteExceptionsByPlannerCode::sFillList()
   _warehouse->bindValue(q);
   _plannerCode->bindValue(q);
   q.exec();
-  if (q.first())
+  _exception->populate(q, true);
+  if (q.lastError().type() != QSqlError::None)
   {
-    XTreeWidgetItem *last = NULL;
-
-    do
-      last = new XTreeWidgetItem( _exception, last, q.value("order_id").toInt(), q.value("order_code").toInt(),
-                                q.value("order_number"), q.value("warehous_code"),
-                                q.value("item_number"), q.value("item_descrip"),
-                                q.value("f_keydate"), q.value("exception") );
-    while (q.next());
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
 }
 

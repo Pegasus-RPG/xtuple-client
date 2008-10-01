@@ -81,10 +81,10 @@ dspCustomersByCharacteristic::dspCustomersByCharacteristic(QWidget* parent, cons
                    "WHERE (char_customers) "
                    "ORDER BY char_name;" );
 
-  _cust->addColumn(tr("Number"),         _itemColumn, Qt::AlignLeft   );
-  _cust->addColumn(tr("Name"),           -1,          Qt::AlignLeft   );
-  _cust->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignCenter );
-  _cust->addColumn(tr("Value"),          _itemColumn, Qt::AlignLeft   );
+  _cust->addColumn(tr("Number"),         _itemColumn, Qt::AlignLeft,  true, "cust_number");
+  _cust->addColumn(tr("Name"),           -1,          Qt::AlignLeft,  true, "cust_name");
+  _cust->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignCenter,true, "char_name");
+  _cust->addColumn(tr("Value"),          _itemColumn, Qt::AlignLeft,  true, "charass_value");
 
   connect(omfgThis, SIGNAL(itemsUpdated(int, bool)), this, SLOT(sFillList(int, bool)));
 }
