@@ -1031,7 +1031,8 @@ void returnAuthorization::sFillList()
              "       'qty' AS newcoitem_qtyshipped_xtnumericrole, "
              "       'salesprice' AS raitem_unitprice_xtnumericrole, "
              "       'extprice' AS raitem_extprice_xtnumericrole, "
-             "       'curr' AS raitem_amtcredited_xtnumericrole "
+             "       'curr' AS raitem_amtcredited_xtnumericrole, "
+             "        :na AS raitem_scheddate_xtnullrole "
              "FROM raitem "
              " LEFT OUTER JOIN coitem oc ON (raitem_orig_coitem_id=oc.coitem_id) "
              " LEFT OUTER JOIN cohead och ON (och.cohead_id=oc.coitem_cohead_id) "
@@ -1050,6 +1051,7 @@ void returnAuthorization::sFillList()
   q.bindValue(":replace", tr("Replace"));
   q.bindValue(":service", tr("Service"));
   q.bindValue(":ship", tr("Ship"));
+  q.bindValue(":na", tr("N/A"));
   q.exec();
   if ((q.first()) && (_mode == cEdit))
   {

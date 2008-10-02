@@ -99,22 +99,22 @@ returnAuthorizationWorkbench::returnAuthorizationWorkbench(QWidget* parent, cons
   connect(omfgThis, SIGNAL(returnAuthorizationsUpdated()), this, SLOT(sFillListReview()));
   connect(omfgThis, SIGNAL(returnAuthorizationsUpdated()), this, SLOT(sFillListDue()));
 
-  _ra->addColumn(tr("Auth. #"),       _orderColumn,   Qt::AlignLeft   );
-  _ra->addColumn(tr("Customer"),     -1,              Qt::AlignLeft   );
-  _ra->addColumn(tr("Authorized"),   _dateColumn,     Qt::AlignRight  );
-  _ra->addColumn(tr("Expires"),      _dateColumn,     Qt::AlignRight  );
-  _ra->addColumn(tr("Disposition"),  _itemColumn,     Qt::AlignRight  );
-  _ra->addColumn(tr("Credit By"),    _itemColumn,     Qt::AlignRight  );
-  _ra->addColumn(tr("Awaiting"),     _itemColumn,     Qt::AlignCenter );
+  _ra->addColumn(tr("Auth. #"),       _orderColumn,   Qt::AlignLeft,   true, "rahead_number"   );
+  _ra->addColumn(tr("Customer"),     -1,              Qt::AlignLeft,   true, "cust_name"  );
+  _ra->addColumn(tr("Authorized"),   _dateColumn,     Qt::AlignRight,  true, "rahead_authdate"  );
+  _ra->addColumn(tr("Expires"),      _dateColumn,     Qt::AlignRight,  true, "rahead_expiredate"  );
+  _ra->addColumn(tr("Disposition"),  _itemColumn,     Qt::AlignRight,  true, "disposition"  );
+  _ra->addColumn(tr("Credit By"),    _itemColumn,     Qt::AlignRight,  true, "creditmethod"  );
+  _ra->addColumn(tr("Awaiting"),     _itemColumn,     Qt::AlignCenter, true, "awaiting" );
 
-  _radue->addColumn(tr("Auth. #"),       _orderColumn,   Qt::AlignLeft   );
-  _radue->addColumn(tr("Customer"),     -1,              Qt::AlignLeft   );
-  _radue->addColumn(tr("Authorized"),   _dateColumn,     Qt::AlignRight  );
-  _radue->addColumn(tr("Amount"),       _moneyColumn,    Qt::AlignRight  );
-  _radue->addColumn(tr("Currency"),     _currencyColumn, Qt::AlignRight  );
+  _radue->addColumn(tr("Auth. #"),       _orderColumn,   Qt::AlignLeft, true, "rahead_number"   );
+  _radue->addColumn(tr("Customer"),     -1,              Qt::AlignLeft, true, "cust_name"   );
+  _radue->addColumn(tr("Authorized"),   _dateColumn,     Qt::AlignRight,true, "rahead_authdate");
+  _radue->addColumn(tr("Amount"),       _moneyColumn,    Qt::AlignRight,true, "amount"  );
+  _radue->addColumn(tr("Currency"),     _currencyColumn, Qt::AlignRight,true, "currency"  );
   _radue->addColumn(tr("Amount (%1)").arg(CurrDisplay::baseCurrAbbr()),
-					_moneyColumn,    Qt::AlignRight  );
-  _radue->addColumn(tr("Credit By"),    _itemColumn,     Qt::AlignRight  );
+					_moneyColumn,    Qt::AlignRight,true, "baseamount"  );
+  _radue->addColumn(tr("Credit By"),    _itemColumn,     Qt::AlignRight,true, "creditmethod"  );
 
   if (!_privileges->check("MaintainReturns"))
   {
@@ -446,9 +446,9 @@ void returnAuthorizationWorkbench::sFillListReview()
   {
 	bool bw;
 	bw = false;
-	QString sql (" SELECT * FROM ( "
-			  "SELECT rahead_id, rahead_number, COALESCE(cust_name,:undefined), "
-			  "formatDate(rahead_authdate), COALESCE(formatDate(rahead_expiredate),:never), "
+	QString sql (" SELECT *, :never  AS rahead_expiredate_xtnullrole FROM ( "
+			  "SELECT rahead_id, rahead_number, COALESCE(cust_name,:undefined) AS cust_name, "
+			  "rahead_authdate, rahead_expiredate, "
 	  		  "CASE "
 			  "  WHEN raitem_disposition = 'C' THEN "
 			  "    :credit "
@@ -489,17 +489,17 @@ void returnAuthorizationWorkbench::sFillListReview()
 			  "  WHEN raitem_disposition = 'P' "
 			  "    AND SUM(raitem_qtyauthorized-COALESCE(coitem_qtyshipped,0)) > 0 "
 			  "    AND SUM(raitem_qtyauthorized-raitem_qtyreceived) > 0 "
-        "    AND SUM(raitem_qtyauthorized * raitem_unitprice - raitem_amtcredited) > 0 "
+                          "    AND SUM(raitem_qtyauthorized * raitem_unitprice - raitem_amtcredited) > 0 "
 			  "    AND SUM(raitem_qtyreceived-raitem_qtycredited) > 0 THEN "
 			  "    :receipt || ','  || :payment || ',' || :ship "
 			  "  WHEN raitem_disposition = 'P' "
 			  "    AND SUM(raitem_qtyauthorized-raitem_qtyreceived) > 0 "
-        "    AND SUM(raitem_qtyauthorized * raitem_unitprice) > 0 "
+                          "    AND SUM(raitem_qtyauthorized * raitem_unitprice) > 0 "
 			  "    AND SUM(raitem_qtyreceived-raitem_qtycredited) > 0 THEN "
 			  "    :receipt || ','  || :payment "
 			  "  WHEN raitem_disposition = 'P' "
 			  "    AND SUM(raitem_qtyauthorized-COALESCE(coitem_qtyshipped,0)) > 0 "
-        "    AND SUM(raitem_qtyauthorized * raitem_unitprice - raitem_amtcredited) > 0 "
+                          "    AND SUM(raitem_qtyauthorized * raitem_unitprice - raitem_amtcredited) > 0 "
 			  "    AND SUM(raitem_qtyreceived-raitem_qtycredited) > 0 THEN "
 			  "    :payment || ',' || :ship "
 			  "  WHEN raitem_disposition IN ('P','V') "
@@ -522,10 +522,10 @@ void returnAuthorizationWorkbench::sFillListReview()
 			  " raitem "
 			  "  LEFT OUTER JOIN coitem ON (raitem_new_coitem_id=coitem_id) "
 			  "WHERE ( (rahead_id=raitem_rahead_id)"
-        "  AND   ((SELECT COUNT(*)"
-        "          FROM raitem JOIN itemsite ON (itemsite_id=raitem_itemsite_id)"
-        "                      JOIN site() ON (warehous_id=itemsite_warehous_id)"
-        "          WHERE (raitem_rahead_id=rahead_id)) > 0)" );
+                          "  AND   ((SELECT COUNT(*)"
+                          "          FROM raitem JOIN itemsite ON (itemsite_id=raitem_itemsite_id)"
+                          "                      JOIN site() ON (warehous_id=itemsite_warehous_id)"
+                          "          WHERE (raitem_rahead_id=rahead_id)) > 0)" );
     
     if ((_cust->isChecked()))
 	  sql += " AND (cust_id=:cust_id) ";
@@ -584,7 +584,7 @@ void returnAuthorizationWorkbench::sFillListReview()
     
 	XSqlQuery ra;
 	ra.prepare(sql);
-    _parameter->bindValue(ra);
+        _parameter->bindValue(ra);
 	ra.bindValue(":cust_id", _custInfo->id());
 	ra.bindValue(":undefined",tr("Undefined"));
 	ra.bindValue(":credit",tr("Credit"));
@@ -600,7 +600,7 @@ void returnAuthorizationWorkbench::sFillListReview()
 	ra.bindValue(":ship",tr("Shipment"));
 	ra.bindValue(":never",tr("Never"));
 	ra.bindValue(":closed",tr("Closed"));
-    _dates->bindValue(ra);
+        _dates->bindValue(ra);
 	ra.exec();
 	if (ra.first())
 		_ra->populate(ra);
@@ -639,11 +639,11 @@ void returnAuthorizationWorkbench::sFillListDue()
 		  "    3 "
 		  "END, "
 		  "rahead_number, cust_name, "
-		  "formatDate(rahead_authdate), "
-		  "formatMoney(calcradueamt(rahead_id)), "
-		  "currConcat(rahead_curr_id), "
-		  "formatMoney(currtobase(rahead_curr_id,"
-		  "                       calcradueamt(rahead_id), current_date)), "
+		  "rahead_authdate, "
+		  "calcradueamt(rahead_id) AS amount, "
+		  "currConcat(rahead_curr_id) AS currency, "
+		  "currtobase(rahead_curr_id,"
+		  "           calcradueamt(rahead_id), current_date) AS baseamount, "
 		  "CASE "
 		  "  WHEN rahead_creditmethod = 'M' THEN "
 		  "    <? value(\"creditmemo\") ?> "
@@ -651,13 +651,15 @@ void returnAuthorizationWorkbench::sFillListDue()
 		  "    <? value(\"check\") ?> "
 		  "  WHEN rahead_creditmethod = 'C' THEN "
 		  "    <? value(\"creditcard\") ?> "
-		  "END AS creditmethod, rahead_authdate "
+		  "END AS creditmethod, "
+                  "'curr' AS amount_xtnumericrole, "
+                  "'curr' AS baseamount_xtnumericrole "
 		  "FROM rahead,custinfo,raitem,custtype "
 		  "WHERE ( (rahead_id=raitem_rahead_id) "
 		  " AND (rahead_cust_id=cust_id) "
 		  " AND (cust_custtype_id=custtype_id) "
 		  " AND ((raitem_disposition IN ('R','P') AND rahead_timing = 'R' AND raitem_qtyreceived > raitem_qtycredited) "
-      " OR (raitem_disposition IN ('R','P') AND rahead_timing = 'I' AND raitem_qtyauthorized > raitem_qtycredited) "
+                  " OR (raitem_disposition IN ('R','P') AND rahead_timing = 'I' AND raitem_qtyauthorized > raitem_qtycredited) "
 		  " OR (raitem_disposition = 'C' AND raitem_qtyauthorized > raitem_qtycredited)) "
 		  " AND (raitem_status = 'O') "
 		  " AND (rahead_creditmethod != 'N') "
@@ -675,11 +677,11 @@ void returnAuthorizationWorkbench::sFillListDue()
 		  " <? if exists(\"doK\") ?>, 'K'<? endif ?>"
 		  " <? if exists(\"doC\") ?>, 'C'<? endif ?>"
 		  " ))"
-      " AND   ((SELECT COUNT(*)"
-      "         FROM raitem JOIN itemsite ON (itemsite_id=raitem_itemsite_id)"
-      "                     JOIN site() ON (warehous_id=itemsite_warehous_id)"
-      "         WHERE (raitem_rahead_id=rahead_id)) > 0)"
-      " ) "
+                  " AND   ((SELECT COUNT(*)"
+                  "         FROM raitem JOIN itemsite ON (itemsite_id=raitem_itemsite_id)"
+                  "                     JOIN site() ON (warehous_id=itemsite_warehous_id)"
+                  "         WHERE (raitem_rahead_id=rahead_id)) > 0)"
+                  " ) "
 		  "ORDER BY rahead_authdate,rahead_number;"
 		  );
 

@@ -368,7 +368,6 @@ void enterPoReceipt::sFillList()
     ParameterList params;
     setParams(params);
     MetaSQLQuery fillm = mqlLoad("enterPoReceipt","poItemReceivingsFillList");
-    //MetaSQLQuery fillm = mqlLoad(":/sr/enterReceipt/FillListDetail.mql");
     q = fillm.toQuery(params);
     _orderitem->populate(q);
     if (q.lastError().type() != QSqlError::None)

@@ -86,16 +86,16 @@ searchForContact::searchForContact(QWidget* parent, const char* name, Qt::WFlags
   connect(_cntct,	 SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *)), this, SLOT(sPopulateMenu(QMenu *)));
   connect(_view,	 SIGNAL(clicked()),	this, SLOT(sView()));
 
-  _cntct->addColumn(tr("First"),       50, Qt::AlignLeft   );
-  _cntct->addColumn(tr("Last"),        -1, Qt::AlignLeft   );
-  _cntct->addColumn(tr("Account Number"),      80, Qt::AlignCenter );
-  _cntct->addColumn(tr("Account Name"),        -1, Qt::AlignLeft   );
-  _cntct->addColumn(tr("Phone"),      100, Qt::AlignLeft   );
-  _cntct->addColumn(tr("Address"),     -1, Qt::AlignLeft   );
-  _cntct->addColumn(tr("City"),        75, Qt::AlignLeft   );
-  _cntct->addColumn(tr("State"),       50, Qt::AlignLeft   );
-  _cntct->addColumn(tr("Country"),    100, Qt::AlignLeft   );
-  _cntct->addColumn(tr("Postal Code"), 75, Qt::AlignLeft   );
+  _cntct->addColumn(tr("First"),       50, Qt::AlignLeft           , true, "cntct_first_name");
+  _cntct->addColumn(tr("Last"),        -1, Qt::AlignLeft           , true, "cntct_last_name" );
+  _cntct->addColumn(tr("Account Number"),      80, Qt::AlignCenter , true, "number");
+  _cntct->addColumn(tr("Account Name"),        -1, Qt::AlignLeft   , true, "name");
+  _cntct->addColumn(tr("Phone"),      100, Qt::AlignLeft           , true, "cntct_phone");
+  _cntct->addColumn(tr("Address"),     -1, Qt::AlignLeft           , true, "addr_line1");
+  _cntct->addColumn(tr("City"),        75, Qt::AlignLeft           , true, "addr_city");
+  _cntct->addColumn(tr("State"),       50, Qt::AlignLeft           , true, "addr_state");
+  _cntct->addColumn(tr("Country"),    100, Qt::AlignLeft           , true, "addr_country");
+  _cntct->addColumn(tr("Postal Code"), 75, Qt::AlignLeft           , true, "addr_postalcode");
   
   _editpriv = _privileges->check("MaintainContacts");
   _viewpriv = _privileges->check("ViewContacts");
@@ -242,29 +242,10 @@ void searchForContact::sFillList()
     params.append("searchCountry");
 
   XSqlQuery fillq = mql.toQuery(params);
-  XTreeWidgetItem* last = 0;
-  _cntct->clear();
-
-  while (fillq.next())
-  {
-    last = new XTreeWidgetItem(_cntct, last,
-			     fillq.value("cntct_id").toInt(),
-			     fillq.value("cntct_id").toInt(),
-			     fillq.value("cntct_first_name"),
-			     fillq.value("cntct_last_name"),
-			     fillq.value("number"),
-			     fillq.value("name"),
-			     fillq.value("cntct_phone"),
-			     fillq.value("street"),
-			     fillq.value("addr_city"),
-			     fillq.value("addr_state"),
-			     fillq.value("addr_country"),
-			     fillq.value("addr_postalcode"));
-  }
   if (fillq.lastError().type() != QSqlError::None)
   {
     systemError(this, fillq.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-  _cntct->setCurrentItem(_cntct->topLevelItem(0));
+  _cntct->populate(fillq);
 }

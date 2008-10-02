@@ -109,8 +109,8 @@ void salesCategories::init()
 {
 //  statusBar()->hide();
   
-  _salescat->addColumn(tr("Category"),    _itemColumn, Qt::AlignLeft   );
-  _salescat->addColumn(tr("Description"), -1,          Qt::AlignLeft   );
+  _salescat->addColumn(tr("Category"),    _itemColumn, Qt::AlignLeft, true, "salescat_name"   );
+  _salescat->addColumn(tr("Description"), -1,          Qt::AlignLeft, true, "salescat_descrip"  );
 
   if (_privileges->check("MaintainSalesCategories"))
   {

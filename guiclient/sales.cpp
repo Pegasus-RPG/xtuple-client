@@ -109,10 +109,10 @@ void sales::init()
 {
 //  statusBar()->hide();
   
-  _sale->addColumn(tr("Name"),     _itemColumn, Qt::AlignLeft  );
-  _sale->addColumn(tr("Schedule"), _itemColumn, Qt::AlignLeft  );
-  _sale->addColumn(tr("Start"),    _dateColumn, Qt::AlignCenter );
-  _sale->addColumn(tr("End"),      _dateColumn, Qt::AlignCenter );
+  _sale->addColumn(tr("Name"),     _itemColumn, Qt::AlignLeft,   true, "sale_name"  );
+  _sale->addColumn(tr("Schedule"), -1         , Qt::AlignLeft,   true, "ipshead_name"  );
+  _sale->addColumn(tr("Start"),    _dateColumn, Qt::AlignCenter, true, "sale_startdate" );
+  _sale->addColumn(tr("End"),      _dateColumn, Qt::AlignCenter, true, "sale_enddate" );
 
   sFillList();
 }
@@ -155,7 +155,7 @@ void sales::sDelete()
 void sales::sFillList()
 {
   QString sql( "SELECT sale_id, sale_name, ipshead_name,"
-               "       formatDate(sale_startdate), formatDate(sale_enddate) "
+               "       sale_startdate, sale_enddate "
                "FROM sale, ipshead "
                "WHERE (sale_ipshead_id=ipshead_id) "
                "ORDER BY sale_name;" );

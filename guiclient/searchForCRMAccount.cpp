@@ -94,16 +94,16 @@ searchForCRMAccount::searchForCRMAccount(QWidget* parent, const char* name, Qt::
   connect(_crmacct,	 SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *)), this, SLOT(sPopulateMenu(QMenu *)));
   connect(_view,	 SIGNAL(clicked()),	this, SLOT(sView()));
 
-  _crmacct->addColumn(tr("Number"),      80, Qt::AlignCenter );
-  _crmacct->addColumn(tr("Name"),        -1, Qt::AlignLeft   );
-  _crmacct->addColumn(tr("First"),       50, Qt::AlignLeft   );
-  _crmacct->addColumn(tr("Last"),        -1, Qt::AlignLeft   );
-  _crmacct->addColumn(tr("Phone"),      100, Qt::AlignLeft   );
-  _crmacct->addColumn(tr("Address"),     -1, Qt::AlignLeft   );
-  _crmacct->addColumn(tr("City"),        75, Qt::AlignLeft   );
-  _crmacct->addColumn(tr("State"),       50, Qt::AlignLeft   );
-  _crmacct->addColumn(tr("Country"),    100, Qt::AlignLeft   );
-  _crmacct->addColumn(tr("Postal Code"), 75, Qt::AlignLeft   );
+  _crmacct->addColumn(tr("Number"),      80, Qt::AlignCenter, true, "number" );
+  _crmacct->addColumn(tr("Name"),        -1, Qt::AlignLeft  , true, "name"   );
+  _crmacct->addColumn(tr("First"),       50, Qt::AlignLeft  , true, "cntct_first_name" );
+  _crmacct->addColumn(tr("Last"),        -1, Qt::AlignLeft  , true, "cntct_last_name" );
+  _crmacct->addColumn(tr("Phone"),      100, Qt::AlignLeft  , true, "cntct_phone" );
+  _crmacct->addColumn(tr("Address"),     -1, Qt::AlignLeft  , true, "addr_line1" );
+  _crmacct->addColumn(tr("City"),        75, Qt::AlignLeft  , true, "addr_city" );
+  _crmacct->addColumn(tr("State"),       50, Qt::AlignLeft  , true, "addr_state" );
+  _crmacct->addColumn(tr("Country"),    100, Qt::AlignLeft  , true, "addr_country" );
+  _crmacct->addColumn(tr("Postal Code"), 75, Qt::AlignLeft  , true, "addr_postalcode" );
 
   connect(omfgThis, SIGNAL(crmAccountsUpdated(int)), this, SLOT(sFillList()));
   _editpriv = _privileges->check("MaintainCRMAccounts");
@@ -215,7 +215,7 @@ SetResponse searchForCRMAccount::set(const ParameterList& pParams)
 	_addressLit->setText(tr("Main Address:"));
 	_showInactive->setText(tr("Show Inactive Vendors"));
 	updateSignal = SIGNAL(vendorsUpdated());
-        _crmacct->addColumn(tr("Vend. Type"), _itemColumn, Qt::AlignLeft);
+        _crmacct->addColumn(tr("Vend. Type"), _itemColumn, Qt::AlignLeft, true, "type");
         _searchCombo->setVisible(TRUE);
         _comboCombo->setVisible(TRUE);
       }
@@ -506,31 +506,11 @@ void searchForCRMAccount::sFillList()
     params.append("combo_id", _comboCombo->id());
 
   XSqlQuery fillq = mql.toQuery(params);
-  XTreeWidgetItem* last = 0;
-  _crmacct->clear();
-
-  while (fillq.next())
-  {
-    last = new XTreeWidgetItem(_crmacct, last,
-			     fillq.value("id").toInt(),
-			     fillq.value("id").toInt(),
-			     fillq.value("number"),
-			     fillq.value("name"),
-			     fillq.value("cntct_first_name"),
-			     fillq.value("cntct_last_name"),
-			     fillq.value("cntct_phone"),
-			     fillq.value("street"),
-			     fillq.value("addr_city"),
-			     fillq.value("addr_state"),
-			     fillq.value("addr_country"),
-			     fillq.value("addr_postalcode"));
-    if(_subtype == CRMAcctLineEdit::Vend)
-      last->setText(10, fillq.value("type"));
-  }
   if (fillq.lastError().type() != QSqlError::None)
   {
     systemError(this, fillq.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-  _crmacct->setCurrentItem(_crmacct->topLevelItem(0));
+  else
+    _crmacct->populate(fillq);
 }

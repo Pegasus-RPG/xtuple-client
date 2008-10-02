@@ -77,15 +77,15 @@ salesAccounts::salesAccounts(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
 
-  _salesaccnt->addColumn(tr("Site"),            -1,          Qt::AlignCenter );
-  _salesaccnt->addColumn(tr("Cust. Type"),      _itemColumn, Qt::AlignCenter );
-  _salesaccnt->addColumn(tr("Prod. Cat."),      _itemColumn, Qt::AlignCenter );
-  _salesaccnt->addColumn(tr("Sales Accnt. #"),  _itemColumn, Qt::AlignCenter );
-  _salesaccnt->addColumn(tr("Credit Accnt. #"), _itemColumn, Qt::AlignCenter );
-  _salesaccnt->addColumn(tr("COS Accnt. #"),    _itemColumn, Qt::AlignCenter );
-  _salesaccnt->addColumn(tr("Returns Accnt. #"), _itemColumn, Qt::AlignCenter );
-  _salesaccnt->addColumn(tr("Cost of Returns Accnt. #"),  _itemColumn, Qt::AlignCenter );
-  _salesaccnt->addColumn(tr("Cost of Warranty Accnt. #"), _itemColumn, Qt::AlignCenter );
+  _salesaccnt->addColumn(tr("Site"),            -1,          Qt::AlignCenter            , true, "warehouscode");
+  _salesaccnt->addColumn(tr("Cust. Type"),      _itemColumn, Qt::AlignCenter            , true, "custtypecode");
+  _salesaccnt->addColumn(tr("Prod. Cat."),      _itemColumn, Qt::AlignCenter            , true, "prodcatcode");
+  _salesaccnt->addColumn(tr("Sales Accnt. #"),  _itemColumn, Qt::AlignCenter            , true, "salesaccount");
+  _salesaccnt->addColumn(tr("Credit Accnt. #"), _itemColumn, Qt::AlignCenter            , true, "creditaccount");
+  _salesaccnt->addColumn(tr("COS Accnt. #"),    _itemColumn, Qt::AlignCenter            , true, "cosaccount");
+  _salesaccnt->addColumn(tr("Returns Accnt. #"), _itemColumn, Qt::AlignCenter           , true, "returnsaccount");
+  _salesaccnt->addColumn(tr("Cost of Returns Accnt. #"),  _itemColumn, Qt::AlignCenter  , true, "coraccount" );
+  _salesaccnt->addColumn(tr("Cost of Warranty Accnt. #"), _itemColumn, Qt::AlignCenter  , true, "cowaccount" );
 
   if (! _metrics->boolean("EnableReturnAuth"))
   {
@@ -193,12 +193,12 @@ void salesAccounts::sFillList()
 	 "            WHEN (salesaccnt_prodcat_id=-1) THEN salesaccnt_prodcat"
 	 "            ELSE (SELECT prodcat_code FROM prodcat WHERE (prodcat_id=salesaccnt_prodcat_id))"
 	 "       END AS prodcatcode,"
-	 "       formatGLAccount(salesaccnt_sales_accnt_id),"
-	 "       formatGLAccount(salesaccnt_credit_accnt_id),"
-	 "       formatGLAccount(salesaccnt_cos_accnt_id),"
-	 "       formatGLAccount(salesaccnt_returns_accnt_id),"
-	 "       formatGLAccount(salesaccnt_cor_accnt_id),"
-	 "       formatGLAccount(salesaccnt_cow_accnt_id) "
+	 "       formatGLAccount(salesaccnt_sales_accnt_id) AS salesaccount,"
+	 "       formatGLAccount(salesaccnt_credit_accnt_id) AS creditaccount,"
+	 "       formatGLAccount(salesaccnt_cos_accnt_id) AS cosaccount,"
+	 "       formatGLAccount(salesaccnt_returns_accnt_id) AS returnsaccount,"
+	 "       formatGLAccount(salesaccnt_cor_accnt_id) AS coraccount,"
+	 "       formatGLAccount(salesaccnt_cow_accnt_id) AS cowaccount "
 	 "FROM salesaccnt "
 	 "ORDER BY warehouscode, custtypecode, prodcatcode;" );
   _salesaccnt->populate(q);

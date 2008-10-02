@@ -85,9 +85,9 @@ searchForItem::searchForItem(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
 
-  _item->addColumn(tr("Number"),      _itemColumn, Qt::AlignCenter );
-  _item->addColumn(tr("Description"), -1,          Qt::AlignLeft   );
-  _item->addColumn(tr("Type"),        _itemColumn, Qt::AlignLeft   );
+  _item->addColumn(tr("Number"),      _itemColumn, Qt::AlignCenter, true, "item_number" );
+  _item->addColumn(tr("Description"), -1,          Qt::AlignLeft  , true, "description" );
+  _item->addColumn(tr("Type"),        _itemColumn, Qt::AlignLeft  , true, "type" );
 
   if (_privileges->check("MaintainItemMasters"))
   {
@@ -154,7 +154,11 @@ void searchForItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
   if (!_privileges->check("MaintainItemMasters"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
-  if (((XTreeWidgetItem *)pSelected)->altId() & 1)
+  if ((((XTreeWidgetItem *)pSelected)->text(2) == tr("Purchased")) ||
+      (((XTreeWidgetItem *)pSelected)->text(2) == tr("Manufactured")) ||
+      (((XTreeWidgetItem *)pSelected)->text(2) == tr("Job")) ||
+      (((XTreeWidgetItem *)pSelected)->text(2) == tr("Breeder")) ||
+      (((XTreeWidgetItem *)pSelected)->text(2) == tr("Kit")))
   {
     pMenu->insertSeparator();
 
@@ -167,7 +171,10 @@ void searchForItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 
-  if ((((XTreeWidgetItem *)pSelected)->altId() & 2) && _metrics->boolean("Routings"))
+  if ((((XTreeWidgetItem *)pSelected)->text(2) == tr("Purchased") ||
+      (((XTreeWidgetItem *)pSelected)->text(2) == tr("Job")) ||
+      (((XTreeWidgetItem *)pSelected)->text(2) == tr("Manufactured"))
+      && _metrics->boolean("Routings")))
   {
     pMenu->insertSeparator();
 
@@ -180,7 +187,7 @@ void searchForItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 
-  if (((XTreeWidgetItem *)pSelected)->altId() & 4)
+  if (((XTreeWidgetItem *)pSelected)->text(2) == tr("Breeder"))
   {
     pMenu->insertSeparator();
 
@@ -277,9 +284,6 @@ void searchForItem::sFillList()
     return;
 
   QString sql( "SELECT item_id,"
-               "       (item_type IN ('P', 'M', 'B')) AS hasbom,"
-               "       (item_type IN ('P', 'M')) AS hasboo,"
-               "       (item_type = 'B') AS hasbbom,"
                "       item_number, (item_descrip1 || ' ' || item_descrip2) AS description,"
                "       CASE WHEN (item_type='P') THEN :purchased"
                "            WHEN (item_type='M') THEN :manufactured" 
@@ -294,6 +298,7 @@ void searchForItem::sFillList()
                "            WHEN (item_type='O') THEN :outside"
                "            WHEN (item_type='J') THEN :job"
                "            WHEN (item_type='L') THEN :planning"
+               "            WHEN (item_type='K') THEN :kit"
                "            ELSE :error"
                "       END AS type "
                "FROM item "
@@ -321,26 +326,13 @@ void searchForItem::sFillList()
   q.bindValue(":assortment", tr("Assortment"));
   q.bindValue(":job", tr("Job"));
   q.bindValue(":planning", tr("Planning"));
+  q.bindValue(":kit", tr("Kit"));
   q.bindValue(":error", tr("Error"));
   q.bindValue(":useNumber", QVariant(_searchNumber->isChecked(), 0));
   q.bindValue(":useDescrip1", QVariant(_searchDescrip1->isChecked(), 0));
   q.bindValue(":useDescrip2", QVariant(_searchDescrip2->isChecked(), 0));
   q.bindValue(":searchString", _search->text().upper());
   q.exec();
-  XTreeWidgetItem * last = 0;
-  while (q.next())
-  {
-    int flag = 0;
-    if (q.value("hasbom").toBool())
-      flag |= 1;
-    if (q.value("hasboo").toBool())
-      flag |= 2;
-    if (q.value("hasbbom").toBool())
-      flag |= 4;
-
-    last = new XTreeWidgetItem( _item, last, q.value("item_id").toInt(), flag,
-                                q.value("item_number"), q.value("description"),
-                                q.value("type") );
-  }
+  _item->populate(q);
 }
 
