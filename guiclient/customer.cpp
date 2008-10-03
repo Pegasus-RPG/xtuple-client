@@ -1376,7 +1376,7 @@ void customer::sFillCcardList()
   q.bindValue(":key", key);
   q.exec(); 
   
-  MetaSQLQuery mql = mqlLoad(":/ar/fillcreditcardlist.mql");
+  MetaSQLQuery mql = mqlLoad("creditCards", "detail");
   ParameterList params;
   params.append("cust_id",         _custid);
   params.append("masterCard",      tr("MasterCard"));

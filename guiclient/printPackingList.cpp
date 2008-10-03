@@ -387,7 +387,7 @@ void printPackingList::sHandleShipment()
   if (_metrics->boolean("MultiWhs"))
     params.append("MultiWhs");
 
-  MetaSQLQuery mql = mqlLoad(":/sr/forms/printPackingList/HandleShipment.mql");
+  MetaSQLQuery mql = mqlLoad("packingList", "shipment");
   q = mql.toQuery(params);
   if (q.first())
   {

@@ -191,7 +191,7 @@ void dspShipmentsByShipment::sFillList(int pShipheadid)
 
     ParameterList params;
     params.append("shiphead_id", _shipment->id());
-    MetaSQLQuery fillm = mqlLoad(":/sr/displays/Shipments.mql");
+    MetaSQLQuery fillm = mqlLoad("shipments", "detail");
     q = fillm.toQuery(params);
     if (q.first())
     {

@@ -278,7 +278,7 @@ void dspSalesHistoryByBilltoName::sFillList()
 
   _sohist->clear();
   
-  MetaSQLQuery mql = mqlLoad(":/so/displays/SalesHistory.mql");
+  MetaSQLQuery mql = mqlLoad("salesHistory", "detail");
   ParameterList params;
   _dates->appendValue(params);
   _warehouse->appendValue(params);

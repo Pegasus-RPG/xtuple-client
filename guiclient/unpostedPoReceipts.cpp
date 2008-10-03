@@ -105,8 +105,8 @@ unpostedPoReceipts::unpostedPoReceipts(QWidget* parent, const char* name, Qt::WF
   _recv->addColumn(tr("UOM"),           _uomColumn,   Qt::AlignCenter, true, "uom_name");
   _recv->addColumn(tr("Vend. Item #"),  _itemColumn,  Qt::AlignLeft,   true, "recv_vend_item_number");
   _recv->addColumn(tr("UOM"),           _uomColumn,   Qt::AlignCenter, true, "recv_vend_uom");
-  _recv->addColumn(tr("Ordered"),       _qtyColumn,   Qt::AlignRight,  true, "qty_ordered");
-  _recv->addColumn(tr("Received"),      _qtyColumn,   Qt::AlignRight,  true, "qty_received");
+  _recv->addColumn(tr("Ordered"),       _qtyColumn,   Qt::AlignRight,  true, "orderitem_qty_ordered");
+  _recv->addColumn(tr("Received"),      _qtyColumn,   Qt::AlignRight,  true, "orderitem_qty_received");
   _recv->addColumn(tr("To Receive"),    _qtyColumn,   Qt::AlignRight,  true, "recv_qty");
   _recv->addColumn(tr("Receipt Date"),  _dateColumn,  Qt::AlignCenter, true, "recv_date");
   _recv->addColumn(tr("G/L Post Date"), _dateColumn,  Qt::AlignCenter, true, "recv_gldistdate");
@@ -344,7 +344,7 @@ void unpostedPoReceipts::sFillList()
 {
   ParameterList fillp;
   setParams(fillp);
-  MetaSQLQuery fillm = mqlLoad(":/sr/unpostedReceipts/FillListDetail.mql");
+  MetaSQLQuery fillm = mqlLoad("unpostedReceipts", "detail");
   XSqlQuery fillq = fillm.toQuery(fillp);
 
   _recv->clear();

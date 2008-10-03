@@ -210,7 +210,7 @@ void arWorkBench::sFillList()
 
 void arWorkBench::sFillAropenList()
 {
-  MetaSQLQuery mql = mqlLoad(":/ar/arOpenItems.mql");
+  MetaSQLQuery mql = mqlLoad("arOpenItems", "detail");
   ParameterList params;
   params.append("debitsOnly");
   params.append("orderByDocDate");
@@ -783,7 +783,7 @@ void arWorkBench::sCCRefundCM()
   {
     ParameterList ccp;
     ccp.append("cmhead_id", q.value("cmhead_id"));
-    MetaSQLQuery ccm = mqlLoad(":/so/creditMemoCreditCard.mql");
+    MetaSQLQuery ccm = mqlLoad("creditMemoCreditCards", "detail");
     XSqlQuery ccq = ccm.toQuery(ccp);
     if (ccq.first())
     {

@@ -129,7 +129,7 @@ void dspBreederDistributionVarianceByWarehouse::sFillList()
   ParameterList params;
   if (! setParams(params))
     return;
-  MetaSQLQuery mql = mqlLoad(":wo/displays/breederDistributionVariance.mql");
+  MetaSQLQuery mql = mqlLoad("breederDistributionVariance", "detail");
   q = mql.toQuery(params);
   _brdvar->populate(q);
   if (q.lastError().type() != QSqlError::None)

@@ -148,7 +148,7 @@ void packingListBatch::sPrintBatch()
   ParameterList params;
   if (_metrics->boolean("MultiWhs"))
     params.append("MultiWhs");
-  MetaSQLQuery mql = mqlLoad(":/sr/forms/packingListBatch/PrintBatch.mql");
+  MetaSQLQuery mql = mqlLoad("packingListBatch", "print");
   q = mql.toQuery(params);
   if (q.lastError().type() != QSqlError::None)
   {
@@ -433,7 +433,7 @@ void packingListBatch::sFillList()
 {
   ParameterList params;
   setParams(params);
-  MetaSQLQuery mql = mqlLoad(":/sr/forms/packingListBatch/FillListDetail.mql");
+  MetaSQLQuery mql = mqlLoad("packingListBatch", "detail");
   q = mql.toQuery(params);
   if (q.lastError().type() != QSqlError::None)
   {

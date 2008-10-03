@@ -230,7 +230,7 @@ void dspReservations::sFillList()
 
   if (_item->isValid())
   {
-    MetaSQLQuery mql = mqlLoad(":so/displays/Reservations/FillListDetail.mql");
+    MetaSQLQuery mql = mqlLoad("reservations", "detail");
 
     ParameterList params;
     params.append("warehous_id", _warehouse->id());

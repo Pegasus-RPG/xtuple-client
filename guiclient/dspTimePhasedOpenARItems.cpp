@@ -329,7 +329,7 @@ void dspTimePhasedOpenARItems::sFillCustom()
 
 void dspTimePhasedOpenARItems::sFillStd()
 {
-  MetaSQLQuery mql = mqlLoad(":/ar/displays/arAging.mql");
+  MetaSQLQuery mql = mqlLoad("arAging", "detail");
   ParameterList params;
   if (! setParams(params))
     return;

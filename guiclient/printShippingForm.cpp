@@ -362,7 +362,7 @@ void printShippingForm::sHandleShipment()
   if (_shipment->isValid())
   {
     ParameterList params;
-    MetaSQLQuery mql = mqlLoad(":/sr/forms/printShippingForm/HandleShipment.mql");
+    MetaSQLQuery mql = mqlLoad("shippingForm", "shipment");
     params.append("shiphead_id", _shipment->id());
     if (_metrics->boolean("MultiWhs"))
       params.append("MultiWhs");

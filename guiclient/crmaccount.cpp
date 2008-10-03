@@ -1792,7 +1792,7 @@ void crmaccount::sOplistEdit()
 
 void crmaccount::sPopulateOplist()
 {
-  MetaSQLQuery mql = mqlLoad(":/crm/account/FillOpListDetail.mql");
+  MetaSQLQuery mql = mqlLoad("opportunitiesByCRM", "detail");
 
   ParameterList params;
   params.append("crmacct_id", _crmacctId);

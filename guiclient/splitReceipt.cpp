@@ -110,7 +110,7 @@ void splitReceipt::populate()
 {
   ParameterList params;
 
-  MetaSQLQuery popm = mqlLoad(":/sr/enterItemReceipt/PopulateEdit.mql");
+  MetaSQLQuery popm = mqlLoad("itemReceipt", "populateEdit");
   params.append("recv_id", _recvid);
   q = popm.toQuery(params);
 

@@ -323,7 +323,7 @@ void dspTimePhasedOpenAPItems::sFillCustom()
 
 void dspTimePhasedOpenAPItems::sFillStd()
 {
-  MetaSQLQuery mql = mqlLoad(":/ap/displays/apAging.mql");
+  MetaSQLQuery mql = mqlLoad("apAging", "detail");
   ParameterList params;
   if (! setParams(params))
     return;

@@ -327,7 +327,7 @@ void returnAuthorizationWorkbench::sProcess()
       {
 	ParameterList ccp;
 	ccp.append("cmhead_id", cmheadid);
-	MetaSQLQuery ccm = mqlLoad(":/so/creditMemoCreditCard.mql");
+  MetaSQLQuery ccm = mqlLoad("creditMemoCreditCards", "detail");
 	XSqlQuery ccq = ccm.toQuery(ccp);
 	if (ccq.first())
 	{

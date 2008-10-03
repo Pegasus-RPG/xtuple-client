@@ -192,7 +192,7 @@ void dspCashReceipts::sFillList()
     return;
   }
 
-  MetaSQLQuery mql = mqlLoad(":/ar/displays/CashReceipts/FillListDetail.mql");
+  MetaSQLQuery mql = mqlLoad("cashReceipts", "detail");
   ParameterList params;
   _dates->appendValue(params);
   params.append("creditMemo", tr("C/M"));

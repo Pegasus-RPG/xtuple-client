@@ -171,7 +171,7 @@ void dspBacklogBySalesOrder::sFillList()
       _custPhone->setText(q.value("cust_phone").toString());
     }
 
-    MetaSQLQuery mql = mqlLoad(":/so/displays/SalesOrderItems.mql");
+    MetaSQLQuery mql = mqlLoad("salesOrderItems", "detail");
     ParameterList params;
     params.append("cohead_id", _salesOrder->id());
     q = mql.toQuery(params);

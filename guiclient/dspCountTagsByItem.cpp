@@ -163,7 +163,7 @@ void dspCountTagsByItem::sView()
 
 void dspCountTagsByItem::sFillList()
 {
-  MetaSQLQuery mql = mqlLoad(":/im/countTags.mql");
+  MetaSQLQuery mql = mqlLoad("countTags", "detail");
   ParameterList params;
   if (! setParams(params))
     return;

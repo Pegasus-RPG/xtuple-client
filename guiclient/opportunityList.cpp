@@ -261,7 +261,7 @@ void opportunityList::sPrint()
 void opportunityList::sFillList()
 {
 
-  MetaSQLQuery mql = mqlLoad(":/crm/opportunityList/FillListDetail.mql");
+  MetaSQLQuery mql = mqlLoad("opportunities", "detail");
 
   ParameterList params;
   setParams(params);

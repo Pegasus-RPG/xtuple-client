@@ -225,7 +225,7 @@ void dspSalesOrdersByParameterList::sFillList()
   _so->clear();
   if (_dates->allValid()) 
   {
-    MetaSQLQuery mql = mqlLoad(":/so/displays/SalesOrders.mql");
+    MetaSQLQuery mql = mqlLoad("salesOrders", "detail");
     ParameterList params;
     _dates->appendValue(params);
     _parameter->appendValue(params);

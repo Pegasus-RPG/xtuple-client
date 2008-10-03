@@ -76,6 +76,10 @@ enterPoitemReceipt::enterPoitemReceipt(QWidget* parent, const char* name, bool m
 
   connect(_receive, SIGNAL(clicked()), this, SLOT(sReceive()));
 
+  _invVendorUOMRatio->setPrecision(omfgThis->ratioVal());
+  _ordered->setPrecision(omfgThis->qtyVal());
+  _received->setPrecision(omfgThis->qtyVal());
+
   _toReceive->setValidator(omfgThis->qtyVal());
   _toReceive->setFocus();
   _receiptDate->setDate(QDate::currentDate());
@@ -191,7 +195,7 @@ void enterPoitemReceipt::populate()
   // NOTE: this crashes if popm is defined and toQuery() is called outside the blocks
   if (_mode == cNew)
   {
-    MetaSQLQuery popm = mqlLoad(":/sr/enterItemReceipt/PopulateNew.mql");
+    MetaSQLQuery popm = mqlLoad("itemReceipt", "populateNew");
 
     params.append("ordertype",    _ordertype);
     params.append("orderitem_id", _orderitemid);
@@ -200,7 +204,7 @@ void enterPoitemReceipt::populate()
   }
   else if (_mode == cEdit)
   {
-    MetaSQLQuery popm = mqlLoad(":/sr/enterItemReceipt/PopulateEdit.mql");
+    MetaSQLQuery popm = mqlLoad("itemReceipt", "populateEdit");
     params.append("recv_id", _recvid);
     q = popm.toQuery(params);
   }
@@ -221,10 +225,10 @@ void enterPoitemReceipt::populate()
     _vendorItemNumber->setText(q.value("vend_item_number").toString());
     _vendorDescrip->setText(q.value("vend_item_descrip").toString());
     _vendorUOM->setText(q.value("vend_uom").toString());
-    _invVendorUOMRatio->setText(q.value("f_venduomratio").toString());
+    _invVendorUOMRatio->setDouble(q.value("orderitem_qty_invuomratio").toDouble());
     _dueDate->setDate(q.value("duedate").toDate());
-    _ordered->setText(q.value("f_qtyordered").toString());
-    _received->setText(q.value("f_qtyreceived").toString());
+    _ordered->setDouble(q.value("orderitem_qty_ordered").toDouble());
+    _received->setDouble(q.value("qtyreceived").toDouble());
     _receivable = q.value("receivable").toDouble();
     _notes->setText(q.value("notes").toString());
     _receiptDate->setDate(q.value("effective").toDate());
@@ -250,7 +254,7 @@ void enterPoitemReceipt::populate()
 
     if (q.value("inventoryitem").toBool() && itemsiteid <= 0)
     {
-      MetaSQLQuery ism = mqlLoad(":/sr/enterItemReceipt/GetSrcItemSite.mql");
+      MetaSQLQuery ism = mqlLoad("itemReceipt", "sourceItemSite");
       XSqlQuery isq = ism.toQuery(params);
       if (isq.first())
       {

@@ -1723,7 +1723,7 @@ void returnAuthorization::sRefund()
     }
     ParameterList ccp;
     ccp.append("cmhead_id", result);
-    MetaSQLQuery ccm = mqlLoad(":/so/creditMemoCreditCard.mql");
+    MetaSQLQuery ccm = mqlLoad("creditMemoCreditCards", "detail");
     XSqlQuery ccq = ccm.toQuery(ccp);
     if (ccq.first())
     {

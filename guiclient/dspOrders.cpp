@@ -258,7 +258,7 @@ void dspOrders::sFillList()
          ((_byDate->isChecked()) && (_date->isValid())) ||
          (_byRange->isChecked() && _startDate->isValid() && _endDate->isValid()) ) )
   {
-    MetaSQLQuery mql = mqlLoad(":/im/displays/Orders/FillListDetail.mql");
+    MetaSQLQuery mql = mqlLoad("orders", "detail");
     ParameterList params;
     params.append("warehous_id", _warehouse->id());
     params.append("item_id",     _item->id());

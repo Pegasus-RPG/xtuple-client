@@ -92,7 +92,7 @@ dspInventoryHistoryByParameterList::dspInventoryHistoryByParameterList(QWidget* 
   _invhist->addColumn(tr("User"),               _orderColumn, Qt::AlignCenter,true, "invhist_user");
   _invhist->addColumn(tr("Type"),               _transColumn, Qt::AlignCenter,true, "invhist_transtype");
   _invhist->addColumn(tr("Site"),                 _whsColumn, Qt::AlignCenter,true, "warehous_code");
-  _invhist->addColumn(tr("Order #"),            _orderColumn, Qt::AlignCenter,true, "ordernumber");
+  _invhist->addColumn(tr("Order #"),            _orderColumn, Qt::AlignCenter,true, "orderlocation");
   _invhist->addColumn(tr("Item Number"),                  -1, Qt::AlignLeft,  true, "item_number");
   _invhist->addColumn(tr("UOM"),                  _uomColumn, Qt::AlignCenter,true, "invhist_invuom");
   _invhist->addColumn(tr("Trans-Qty"),            _qtyColumn, Qt::AlignRight, true, "transqty");
@@ -101,8 +101,8 @@ dspInventoryHistoryByParameterList::dspInventoryHistoryByParameterList(QWidget* 
   _invhist->addColumn(tr("To Area"),            _orderColumn, Qt::AlignLeft,  true, "locto");
   _invhist->addColumn(tr("QOH After"),            _qtyColumn, Qt::AlignRight, true, "qohafter");
   _invhist->addColumn(tr("Cost Method"),          _qtyColumn, Qt::AlignLeft,  true, "costmethod");
-  _invhist->addColumn(tr("Value Before"),         _qtyColumn, Qt::AlignRight, true, "valbefore");
-  _invhist->addColumn(tr("Value After"),          _qtyColumn, Qt::AlignRight, true, "valafter");
+  _invhist->addColumn(tr("Value Before"),         _qtyColumn, Qt::AlignRight, true, "invhist_value_before");
+  _invhist->addColumn(tr("Value After"),          _qtyColumn, Qt::AlignRight, true, "invhist_value_after");
 
   _transType->append(cTransAll,       tr("All Transactions")       );
   _transType->append(cTransReceipts,  tr("Receipts")               );
@@ -441,66 +441,12 @@ void dspInventoryHistoryByParameterList::sFillList()
 
   ParameterList params;
   setParams(params);
-  MetaSQLQuery mql = mqlLoad(":/im/displays/InventoryHistoryByParameterList/FillListDetail.mql");
+  MetaSQLQuery mql = mqlLoad("inventoryHistory", "detail");
   q = mql.toQuery(params);
 
   if (q.first())
   {
-    XTreeWidgetItem *parentItem = NULL;
-    XTreeWidgetItem *child      = NULL;
-    int             invhistid   = 0;
-
-    do
-    {
-      if (q.value("invhist_id").toInt() != invhistid)
-      {
-        invhistid = q.value("invhist_id").toInt();
-
-        parentItem = new XTreeWidgetItem( _invhist, parentItem,
-					  q.value("invhist_id").toInt(),
-					  q.value("invdetail_id").toInt(),
-					  q.value("invhist_transdate"),
-					  q.value("invhist_created"),
-					  q.value("invhist_user"),
-					  q.value("invhist_transtype"),
-					  q.value("warehous_code"),
-					  q.value("ordernumber"),
-					  q.value("item_number"),
-					  q.value("invhist_invuom"),
-					  q.value("transqty") );
-
-        if (q.value("invhist_posted").toBool())
-        {
-          parentItem->setText( 9, q.value("locfrom").toString());
-          parentItem->setText(10, q.value("qohbefore").toString());
-          parentItem->setText(11, q.value("locto").toString());
-          parentItem->setText(12, q.value("qohafter").toString());
-          parentItem->setText(13, q.value("costmethod").toString());
-          parentItem->setText(14, q.value("valbefore").toString());
-          parentItem->setText(15, q.value("valafter").toString());
-        }
-        else
-          parentItem->setTextColor("orange");
-      }
-
-      if (q.value("invdetail_id").toInt())
-      {
-        child = new XTreeWidgetItem(parentItem, q.value("invhist_id").toInt(),
-				    q.value("invdetail_id").toInt(),
-				    "", "", "", "", "",
-				    q.value("locationname"),
-				    "", "", q.value("detailqty") );
-
-        if (q.value("invhist_posted").toBool())
-        {
-          child->setText(10, q.value("locationqtybefore").toString());
-          child->setText(12, q.value("locationqtyafter").toString());
-        }
-        else
-          child->setTextColor("orange");
-      }
-    }
-    while (q.next());
+    _invhist->populate(q, true);
   }
   else if (q.lastError().type() != QSqlError::None)
   {

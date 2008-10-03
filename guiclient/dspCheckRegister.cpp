@@ -96,10 +96,10 @@ dspCheckRegister::dspCheckRegister(QWidget* parent, const char* name, Qt::WFlags
 
   _bankaccnt->setType(XComboBox::APBankAccounts);
 
-  _check->addColumn(tr("Void"),        _ynColumn,       Qt::AlignCenter, true,  "f_void" );
-  _check->addColumn(tr("Misc."),       _ynColumn,       Qt::AlignCenter, true,  "f_misc" );
-  _check->addColumn(tr("Prt'd"),       _ynColumn,       Qt::AlignCenter, true,  "f_printed" );
-  _check->addColumn(tr("Posted"),      _ynColumn,       Qt::AlignCenter, true,  "f_posted" );
+  _check->addColumn(tr("Void"),        _ynColumn,       Qt::AlignCenter, true,  "checkhead_void" );
+  _check->addColumn(tr("Misc."),       _ynColumn,       Qt::AlignCenter, true,  "checkhead_misc" );
+  _check->addColumn(tr("Prt'd"),       _ynColumn,       Qt::AlignCenter, true,  "checkhead_printed" );
+  _check->addColumn(tr("Posted"),      _ynColumn,       Qt::AlignCenter, true,  "checkhead_posted" );
   _check->addColumn(tr("Chk./Vchr."),  _itemColumn,     Qt::AlignCenter, true,  "number" );
   _check->addColumn(tr("Recipient"),   -1,              Qt::AlignLeft,   true,  "description"   );
   _check->addColumn(tr("Check Date") , _dateColumn,     Qt::AlignCenter, true,  "checkdate" );
@@ -194,7 +194,7 @@ void dspCheckRegister::sPrint()
 
 void dspCheckRegister::sFillList()
 {
-  MetaSQLQuery mql = mqlLoad(":/ap/displays/CheckRegister/FillListDetail.mql");
+  MetaSQLQuery mql = mqlLoad("checkRegister", "detail");
 
   ParameterList params;
   if (!setParams(params))

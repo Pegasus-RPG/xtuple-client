@@ -189,7 +189,7 @@ void dspSalesOrdersByCustomerPO::sFillList()
 
   if (_dates->allValid()) 
   {
-    MetaSQLQuery mql = mqlLoad(":/so/displays/SalesOrders.mql");
+    MetaSQLQuery mql = mqlLoad("salesOrders", "detail");
     ParameterList params;
     _dates->appendValue(params);
     params.append("noLines", tr("No Lines"));

@@ -350,7 +350,7 @@ void dspRunningAvailability::sFillList()
       _orderMultiple->setDouble(q.value("multorderqty").toDouble());
       _orderToQty->setDouble(q.value("ordertoqty").toDouble());
 
-      MetaSQLQuery mql = mqlLoad(":/ms/displays/RunningAvailability/FillListDetail.mql");
+      MetaSQLQuery mql = mqlLoad("runningAvailability", "detail");
       ParameterList params;
       setParams(params);
       params.append("qoh",          q.value("itemsite_qtyonhand").toDouble());

@@ -444,7 +444,7 @@ void eventManager::sDelete()
 
 void eventManager::sFillList()
 {
-  MetaSQLQuery mql = mqlLoad(":/sys/eventManager/FillListDetail.mql");
+  MetaSQLQuery mql = mqlLoad("events", "detail");
   ParameterList params;
   params.append("username", _currentUser->isChecked() ? omfgThis->username() :
 							_usr->currentText());

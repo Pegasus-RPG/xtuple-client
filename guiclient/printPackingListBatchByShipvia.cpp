@@ -76,7 +76,7 @@ printPackingListBatchByShipvia::printPackingListBatchByShipvia(QWidget* parent, 
   ParameterList params;
   if (_metrics->boolean("MultiWhs"))
     params.append("MultiWhs");
-  MetaSQLQuery mql = mqlLoad(":/sr/forms/printPackingListBatchByShipvia/ShipVia.mql");
+  MetaSQLQuery mql = mqlLoad("packingListBatchByShipVia", "shipVia");
   q = mql.toQuery(params);
 
   _shipvia->populate(q);
@@ -116,7 +116,7 @@ void printPackingListBatchByShipvia::sPrint()
   if (_metrics->boolean("MultiWhs"))
     params.append("MultiWhs");
   params.append("shipvia", _shipvia->currentText());
-  MetaSQLQuery packm = mqlLoad(":/sr/forms/printPackingListBatchByShipvia/ToPrint.mql");
+  MetaSQLQuery packm = mqlLoad("packingListBatchByShipVia", "print");
   packq = packm.toQuery(params);
   if (packq.lastError().type() != QSqlError::None)
   {

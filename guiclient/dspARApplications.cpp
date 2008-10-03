@@ -252,7 +252,7 @@ void dspARApplications::sFillList()
   ParameterList params;
   setParams(params);
 
-  MetaSQLQuery mql = mqlLoad(":/ar/displays/arApplications.mql");
+  MetaSQLQuery mql = mqlLoad("arApplications", "detail");
   q = mql.toQuery(params);
   if (q.first())
     _arapply->populate(q);

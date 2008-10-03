@@ -102,7 +102,7 @@ dspEarnedCommissions::dspEarnedCommissions(QWidget* parent, const char* name, Qt
   _commission->addColumn(tr("Currency"),        _currencyColumn, Qt::AlignCenter, true,  "currAbbr" );
   _commission->addColumn(tr("Base Ext. Price"), _bigMoneyColumn, Qt::AlignRight,  true,  "baseextprice"  );
   _commission->addColumn(tr("Base Commission"), _bigMoneyColumn, Qt::AlignRight,  true,  "basecommission"  );
-  _commission->addColumn(tr("Paid"),            _ynColumn,       Qt::AlignCenter, true,  "f_commissionpaid" );
+  _commission->addColumn(tr("Paid"),            _ynColumn,       Qt::AlignCenter, true,  "cohist_commissionpaid" );
 }
 
 /*
@@ -157,7 +157,7 @@ void dspEarnedCommissions::sFillList()
 
   _commission->clear();
 
-  MetaSQLQuery mql = mqlLoad(":/so/displays/SalesHistory.mql");
+  MetaSQLQuery mql = mqlLoad("salesHistory", "detail");
   ParameterList params;
   _dates->appendValue(params);
   if (_selectedSalesrep->isChecked())

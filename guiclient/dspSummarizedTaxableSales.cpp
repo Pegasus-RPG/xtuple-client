@@ -149,7 +149,7 @@ void dspSummarizedTaxableSales::sFillList()
 
   _invchead->clear();
 
-  MetaSQLQuery mql = mqlLoad(":/so/displays/SummarizedTaxableSales/FillListDetail.mql");
+  MetaSQLQuery mql = mqlLoad("summarizedTaxableSales", "detail");
   q = mql.toQuery(params);
   q.exec();
   _invchead->populate(q);

@@ -374,7 +374,7 @@ void maintainShipping::sFillList()
   params.append("dirty",	tr("Dirty"));
   params.append("printed",	tr("Yes"));
 
-  MetaSQLQuery mql = mqlLoad(":/sr/maintainShipping/FillListDetail.mql");
+  MetaSQLQuery mql = mqlLoad("maintainShipping", "detail");
   q = mql.toQuery(params);
   q.exec();
   _ship->populate(q, true);

@@ -183,7 +183,7 @@ void dspPoItemReceivingsByItem::sFillList()
     _porecv->clear();
     return;
   }
-  MetaSQLQuery mql = mqlLoad(":/sr/itemReceivings/FillList.mql");
+  MetaSQLQuery mql = mqlLoad("receivings", "detail");
   q = mql.toQuery(params);
 
   _porecv->populate(q);

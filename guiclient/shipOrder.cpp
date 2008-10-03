@@ -368,7 +368,7 @@ void shipOrder::sShip()
     params.append("ordertype",   "TO");
     params.append("shiphead_id", _shipment->id());
 
-    MetaSQLQuery recvm = mqlLoad(":/sr/enterReceipt/ReceiveAll.mql");
+    MetaSQLQuery recvm = mqlLoad("receipt", "receiveAll");
     shipq = recvm.toQuery(params);
 
     while (shipq.next())

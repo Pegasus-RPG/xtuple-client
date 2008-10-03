@@ -185,7 +185,7 @@ void dspQuotesByItem::sFillList()
 
   if ((_item->isValid()) && (_dates->allValid()))
   {
-    MetaSQLQuery mql = mqlLoad(":/so/displays/QuoteItems.mql");
+    MetaSQLQuery mql = mqlLoad("quoteItems", "detail");
     ParameterList params;
     _dates->appendValue(params);
     params.append("item_id", _item->id());

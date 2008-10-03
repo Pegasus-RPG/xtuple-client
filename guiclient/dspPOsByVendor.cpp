@@ -187,7 +187,7 @@ void dspPOsByVendor::sViewOrder()
 
 void dspPOsByVendor::sFillList()
 {
-  MetaSQLQuery mql = mqlLoad(":/po/displays/POsByVendor/FillListDetail.mql");
+  MetaSQLQuery mql = mqlLoad("purchaseOrders", "detail");
 
   ParameterList params;
   setParams(params);

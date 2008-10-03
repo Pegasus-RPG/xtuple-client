@@ -3157,7 +3157,7 @@ void salesOrder::sFillCcardList()
   q.bindValue(":key", omfgThis->_key);
   q.exec(); 
 
-  MetaSQLQuery mql = mqlLoad(":/ar/fillcreditcardlist.mql");
+  MetaSQLQuery mql = mqlLoad("creditCards", "detail");
   ParameterList params;
   params.append("cust_id",         _cust->id());
   params.append("masterCard",      tr("MasterCard"));

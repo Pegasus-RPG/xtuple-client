@@ -566,7 +566,7 @@ void dspCustomerInformation::sFillARHistory()
   if(_cust->id() == -1)
     return;
 
-  MetaSQLQuery mql = mqlLoad(":/ar/arHistory.mql");
+  MetaSQLQuery mql = mqlLoad("arHistory", "detail");
   ParameterList params;
   params.append("invoice", tr("Invoice"));
   params.append("zeroinvoice", tr("Zero Invoice"));

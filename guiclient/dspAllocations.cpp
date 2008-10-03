@@ -249,7 +249,7 @@ void dspAllocations::sFillList()
          ((_byDate->isChecked()) && (_date->isValid())) ||
          ((_byRange->isChecked()) && (_startDate->isValid()) && (_endDate->isValid())) ) )
   {
-    MetaSQLQuery mql = mqlLoad(":pd/displays/Allocations/FillListDetail.mql");
+    MetaSQLQuery mql = mqlLoad("allocations", "detail");
 
     ParameterList params;
     params.append("warehous_id", _warehouse->id());

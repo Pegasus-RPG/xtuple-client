@@ -88,13 +88,13 @@ unpostedInvoices::unpostedInvoices(QWidget* parent, const char* name, Qt::WFlags
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
 
   _invchead->addColumn(tr("Invoice #"),  _orderColumn, Qt::AlignLeft,   true,  "invchead_invcnumber" );
-  _invchead->addColumn(tr("Prnt'd"),     _orderColumn, Qt::AlignCenter, true,  "printed" );
+  _invchead->addColumn(tr("Prnt'd"),     _orderColumn, Qt::AlignCenter, true,  "invchead_printed" );
   _invchead->addColumn(tr("S/O #"),      _orderColumn, Qt::AlignLeft,   true,  "invchead_ordernumber" );
   _invchead->addColumn(tr("Customer"),   -1,           Qt::AlignLeft,   true,  "cust_name" );
   _invchead->addColumn(tr("Invc. Date"), _dateColumn,  Qt::AlignCenter, true,  "invchead_invcdate" );
   _invchead->addColumn(tr("Ship Date"),  _dateColumn,  Qt::AlignCenter, true,  "invchead_shipdate" );
   _invchead->addColumn(tr("G/L Dist Date"),_dateColumn,Qt::AlignCenter, true,  "gldistdate" );
-  _invchead->addColumn(tr("Recurring"),  _ynColumn,    Qt::AlignCenter, false, "recurring" );
+  _invchead->addColumn(tr("Recurring"),  _ynColumn,    Qt::AlignCenter, false, "invchead_recurring" );
   _invchead->addColumn(tr("Ship Date"),  _dateColumn,  Qt::AlignCenter, false, "invchead_shipdate" );
   _invchead->addColumn(tr("P/O #"),      _orderColumn, Qt::AlignCenter, false, "invchead_ponumber" );
   _invchead->setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -442,7 +442,7 @@ void unpostedInvoices::sFillList()
 {
   _invchead->clear();
 
-  MetaSQLQuery mql = mqlLoad(":/ar/invoices.mql");
+  MetaSQLQuery mql = mqlLoad("invoices", "detail");
   ParameterList params;
   params.append("unpostedOnly");
   q = mql.toQuery(params);

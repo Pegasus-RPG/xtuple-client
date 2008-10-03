@@ -139,7 +139,7 @@ void dspCapacityUOMsByProductCategory::sFillList()
 
 void dspCapacityUOMsByProductCategory::sFillList(int pItemid, bool pLocalUpdate)
 {
-  MetaSQLQuery mql = mqlLoad(":/pd/capacityUOMs.mql");
+  MetaSQLQuery mql = mqlLoad("capacityUOMs", "detail");
   ParameterList params;
   if (! setParams(params))
     return;

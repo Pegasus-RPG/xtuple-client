@@ -197,7 +197,7 @@ void dspShipmentsByDate::sFillList()
 
   ParameterList params;
   setParams(params);
-  MetaSQLQuery fillm = mqlLoad(":/sr/displays/Shipments.mql");
+  MetaSQLQuery fillm = mqlLoad("shipments", "detail");
   q = fillm.toQuery(params);
   if (q.first())
   {

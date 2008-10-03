@@ -670,7 +670,7 @@ void cashReceipt::sFillApplyList()
     _cust->setReadOnly(TRUE);
 
     _aropen->clear();
-    MetaSQLQuery mql = mqlLoad(":/ar/aropenApplications.mql");
+    MetaSQLQuery mql = mqlLoad("arOpenApplications", "detail");
     ParameterList params;
     params.append("cashrcpt_id", _cashrcptid);
     params.append("cust_id",     _cust->id());
@@ -863,7 +863,7 @@ void cashReceipt::setCreditCard()
     return;
   }
 
-  MetaSQLQuery mql = mqlLoad(":/ar/fillcreditcardlist.mql");
+  MetaSQLQuery mql = mqlLoad("creditCards", "detail");
   ParameterList params;
   params.append("cust_id",    _cust->id());
   params.append("ccard_type", _fundsType->itemData(_fundsType->currentIndex()));

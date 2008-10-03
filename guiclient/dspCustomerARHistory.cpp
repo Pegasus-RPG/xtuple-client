@@ -205,7 +205,7 @@ void dspCustomerARHistory::sFillList()
   if (!checkParameters())
     return;
 
-  MetaSQLQuery mql = mqlLoad(":/ar/arHistory.mql");
+  MetaSQLQuery mql = mqlLoad("arHistory", "detail");
   ParameterList params;
   _dates->appendValue(params);
   params.append("invoice", tr("Invoice"));

@@ -196,7 +196,7 @@ void dspQuotesByCustomer::sFillList()
          ( (_selectedPO->isChecked()) && (_poNumber->currentItem() != -1) ) ) &&
        (_dates->allValid())  )
   {
-    MetaSQLQuery mql = mqlLoad(":/so/displays/Quotes.mql");
+    MetaSQLQuery mql = mqlLoad("quotes", "detail");
     ParameterList params;
     _dates->appendValue(params);
     params.append("cust_id", _cust->id());

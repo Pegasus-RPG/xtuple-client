@@ -300,7 +300,7 @@ void dspAROpenItems::sPrint()
 
 void dspAROpenItems::sFillList()
 {
-  MetaSQLQuery mql = mqlLoad(":/ar/arOpenItems.mql");
+  MetaSQLQuery mql = mqlLoad("arOpenItems", "detail");
   ParameterList params;
   if (! setParams(params))
     return;

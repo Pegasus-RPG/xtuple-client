@@ -209,7 +209,7 @@ void dspSalesOrdersByItem::sFillList()
   _so->clear();
   if ((_item->isValid()) && (_dates->allValid()))
   {
-    MetaSQLQuery mql = mqlLoad(":/so/displays/SalesOrderItems.mql");
+    MetaSQLQuery mql = mqlLoad("salesOrderItems", "detail");
     ParameterList params;
     _dates->appendValue(params);
     params.append("closed", tr("Closed"));

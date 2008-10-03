@@ -677,7 +677,7 @@ void itemAvailabilityWorkbench::sFillListRunning()
       QString itemType            = q.value("item_type").toString();
       QString sql;
 
-      MetaSQLQuery mql = mqlLoad(":/ms/displays/RunningAvailability/FillListDetail.mql");
+      MetaSQLQuery mql = mqlLoad("runningAvailability", "detail");
       ParameterList params;
       setParams(params);
       params.append("qoh",          q.value("itemsite_qtyonhand").toDouble());

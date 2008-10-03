@@ -367,7 +367,7 @@ void enterPoReceipt::sFillList()
   {
     ParameterList params;
     setParams(params);
-    MetaSQLQuery fillm = mqlLoad("enterPoReceipt","poItemReceivingsFillList");
+    MetaSQLQuery fillm = mqlLoad("receipt", "detail");
     q = fillm.toQuery(params);
     _orderitem->populate(q);
     if (q.lastError().type() != QSqlError::None)
@@ -429,7 +429,7 @@ void enterPoReceipt::sReceiveAll()
   setParams(params);
   if (_metrics->boolean("EnableReturnAuth"))
     params.append("EnableReturnAuth", TRUE);
-  MetaSQLQuery recvm = mqlLoad(":/sr/enterReceipt/ReceiveAll.mql");
+  MetaSQLQuery recvm = mqlLoad("receipt", "receiveAll");
   q = recvm.toQuery(params);
 
   while (q.next())

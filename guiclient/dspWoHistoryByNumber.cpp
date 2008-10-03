@@ -203,7 +203,7 @@ void dspWoHistoryByNumber::sFillList()
     
   _wo->clear();
 
-  MetaSQLQuery mql = mqlLoad(":/wo/displays/WorkOrderHistory.mql");
+  MetaSQLQuery mql = mqlLoad("workOrderHistory", "detail");
   ParameterList params;
   params.append("wo_number", _woNumber->text());
   if (_showOnlyTopLevel->isChecked())

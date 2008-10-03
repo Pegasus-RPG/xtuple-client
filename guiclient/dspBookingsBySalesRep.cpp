@@ -144,7 +144,7 @@ void dspBookingsBySalesRep::sPrint()
 
 void dspBookingsBySalesRep::sFillList()
 {
-  MetaSQLQuery mql = mqlLoad(":/so/displays/SalesOrderItems.mql");
+  MetaSQLQuery mql = mqlLoad("salesOrderItems", "detail");
   ParameterList params;
   if (! setParams(params))
     return;

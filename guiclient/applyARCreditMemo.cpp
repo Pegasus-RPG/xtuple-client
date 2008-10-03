@@ -270,7 +270,7 @@ void applyARCreditMemo::populate()
   else
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 
-  MetaSQLQuery mql = mqlLoad(":/ar/aropenApplications.mql");
+  MetaSQLQuery mql = mqlLoad("arOpenApplications", "detail");
   ParameterList params;
   params.append("cust_id",          _cust->id());
   params.append("debitMemo",        tr("D/M"));
