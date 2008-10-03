@@ -110,8 +110,8 @@ void shifts::init()
 {
 //    statusBar()->hide();
 
-    _shiftList->addColumn(tr("Shift Number"),	_userColumn,	Qt::AlignLeft );
-    _shiftList->addColumn(tr("Shift Name"),	-1,		Qt::AlignLeft );
+    _shiftList->addColumn(tr("Shift Number"),	_userColumn,	Qt::AlignLeft, true, "shift_number" );
+    _shiftList->addColumn(tr("Shift Name"),	-1,		Qt::AlignLeft, true, "shift_name" );
 
     if (_privileges->check("MaintainShifts"))
     {

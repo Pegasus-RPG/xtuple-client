@@ -82,15 +82,15 @@ selectedPayments::selectedPayments(QWidget* parent, const char* name, Qt::WFlags
   if (q.first())
     base = q.value("base").toString();
 
-  _apselect->addColumn(tr("Bank Accnt."), _itemColumn, Qt::AlignLeft  );
-  _apselect->addColumn(tr("Vendor"),      -1,          Qt::AlignLeft  );
-  _apselect->addColumn(tr("Doc. Type"),  _orderColumn, Qt::AlignRight );
-  _apselect->addColumn(tr("Doc. #"),     _orderColumn, Qt::AlignRight );
-  _apselect->addColumn(tr("Inv. #"),     _orderColumn, Qt::AlignRight );
-  _apselect->addColumn(tr("P/O #"),      _orderColumn, Qt::AlignRight );
-  _apselect->addColumn(tr("Selected"),   _moneyColumn, Qt::AlignRight );
-  _apselect->addColumn(tr("Currency"),   _currencyColumn, Qt::AlignLeft );
-  _apselect->addColumn(tr("Running\n(%1)").arg(base), _moneyColumn, Qt::AlignRight );
+  _apselect->addColumn(tr("Bank Accnt."), _itemColumn, Qt::AlignLeft  , true, "f_bank"  );
+  _apselect->addColumn(tr("Vendor"),      -1,          Qt::AlignLeft  , true, "f_vendor");
+  _apselect->addColumn(tr("Doc. Type"),  _orderColumn, Qt::AlignLeft  , true, "doctype");
+  _apselect->addColumn(tr("Doc. #"),     _orderColumn, Qt::AlignRight , true, "apopen_docnumber");
+  _apselect->addColumn(tr("Inv. #"),     _orderColumn, Qt::AlignRight , true, "apopen_invcnumber");
+  _apselect->addColumn(tr("P/O #"),      _orderColumn, Qt::AlignRight , true, "apopen_ponumber");
+  _apselect->addColumn(tr("Selected"),   _moneyColumn, Qt::AlignRight , true, "apselect_amount");
+  _apselect->addColumn(tr("Currency"),   _currencyColumn, Qt::AlignLeft,true, "currAbbr" );
+  _apselect->addColumn(tr("Running\n(%1)").arg(base), _moneyColumn, Qt::AlignRight,true,"apselect_running_base" );
   if (omfgThis->singleCurrency())
   {
     _apselect->hideColumn(7);
@@ -116,6 +116,9 @@ void selectedPayments::setParams(ParameterList & params)
 {
   if (_selectedBankAccount->isChecked())
     params.append("bankaccntid", _bankaccnt->id());
+    
+  params.append("voucher",tr("Voucher"));
+  params.append("debitmemo",tr("Debit Memo"));
 }
 
 void selectedPayments::sPrint()
@@ -174,14 +177,20 @@ void selectedPayments::sFillList()
   QString sql( "SELECT apopen_id, apselect_id,"
                "       (bankaccnt_name || '-' || bankaccnt_descrip) AS f_bank,"
                "       (vend_number || '-' || vend_name) AS f_vendor,"
-               "       CASE WHEN (apopen_doctype='V') THEN :voucher"
-               "            When (apopen_doctype='D') THEN :debitMemo"
+               "       CASE WHEN (apopen_doctype='V') THEN <? value(\"voucher\") ?>"
+               "            When (apopen_doctype='D') THEN <? value(\"debitmemo\") ?>"
                "       END AS doctype,"
                "       apopen_docnumber, apopen_ponumber, apselect_amount,"
 	       "       apopen_invcnumber,"
 	       "       currToBase(apselect_curr_id, apselect_amount, "
 	       "		  CURRENT_DATE) AS apselect_amount_base, "
-	       "       currConcat(apselect_curr_id) AS currAbbr "
+	       "       currToBase(apselect_curr_id, apselect_amount, "
+	       "		  CURRENT_DATE) AS apselect_running_base, "
+	       "       currConcat(apselect_curr_id) AS currAbbr, "
+               "       'curr' AS apselect_amount_xtnumericrole, "
+               "       'curr' AS apselect_amount_base_xtnumericrole, "
+               "       'curr' AS apselect_running_base_xtnumericrole, "
+               "       0 AS apselect_running_base_xtrunningrole "
                "FROM apopen, apselect, vend, bankaccnt "
                "WHERE ( (apopen_vend_id=vend_id)"
                "  AND   (apselect_apopen_id=apopen_id)"
@@ -195,28 +204,10 @@ void selectedPayments::sFillList()
   setParams(params);
   MetaSQLQuery mql(sql);
   q = mql.toQuery(params);
-  XTreeWidgetItem *last = 0;
-  double running = 0;
-  while (q.next())
-  {
-    running += q.value("apselect_amount_base").toDouble();
-
-    last = new XTreeWidgetItem(_apselect, last,
-			       q.value("apopen_id").toInt(),
-			       q.value("apselect_id").toInt(),
-			       q.value("f_bank"),
-			       q.value("f_vendor"),
-			       q.value("doctype"),
-			       q.value("apopen_docnumber"),
-			       q.value("apopen_invcnumber"),
-			       q.value("apopen_ponumber"),
-			       formatMoney(q.value("apselect_amount").toDouble()),
-			       q.value("currAbbr"),
-			       formatMoney(running) );
-  }
   if (q.lastError().type() != QSqlError::None)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+  _apselect->populate(q,true);
 }

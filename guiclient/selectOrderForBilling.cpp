@@ -111,17 +111,17 @@ selectOrderForBilling::selectOrderForBilling(QWidget* parent, const char* name, 
   _freight->clear();
   _payment->clear();
 
-  _soitem->addColumn(tr("#"),          _seqColumn,   Qt::AlignCenter );
-  _soitem->addColumn(tr("Item"),       -1,           Qt::AlignLeft   );
-  _soitem->addColumn(tr("Site"),       _whsColumn,   Qt::AlignCenter );
-  _soitem->addColumn(tr("UOM"),        _uomColumn,   Qt::AlignLeft   );
-  _soitem->addColumn(tr("Ordered"),    _qtyColumn,   Qt::AlignRight  );
-  _soitem->addColumn(tr("Shipped"),    _qtyColumn,   Qt::AlignRight  );
-  _soitem->addColumn(tr("Returned"),   _qtyColumn,   Qt::AlignRight  );
-  _soitem->addColumn(tr("Uninvoiced"), _qtyColumn,   Qt::AlignRight  );
-  _soitem->addColumn(tr("Selected"),   _qtyColumn,   Qt::AlignRight  );
-  _soitem->addColumn(tr("Extended"),   _moneyColumn, Qt::AlignRight  );
-  _soitem->addColumn(tr("Close"),      _ynColumn,    Qt::AlignCenter );
+  _soitem->addColumn(tr("#"),          _seqColumn,   Qt::AlignCenter, true, "linenumber" );
+  _soitem->addColumn(tr("Item"),       -1,           Qt::AlignLeft  , true, "item_number" );
+  _soitem->addColumn(tr("Site"),       _whsColumn,   Qt::AlignCenter, true, "warehous_code" );
+  _soitem->addColumn(tr("UOM"),        _uomColumn,   Qt::AlignLeft  , true, "uom_name" );
+  _soitem->addColumn(tr("Ordered"),    _qtyColumn,   Qt::AlignRight , true, "coitem_qtyord" );
+  _soitem->addColumn(tr("Shipped"),    _qtyColumn,   Qt::AlignRight , true, "coitem_qtyshipped" );
+  _soitem->addColumn(tr("Returned"),   _qtyColumn,   Qt::AlignRight , true, "coitem_qtyreturned" );
+  _soitem->addColumn(tr("Uninvoiced"), _qtyColumn,   Qt::AlignRight , true, "qtyatship" );
+  _soitem->addColumn(tr("Selected"),   _qtyColumn,   Qt::AlignRight , true, "qtytobill" );
+  _soitem->addColumn(tr("Extended"),   _moneyColumn, Qt::AlignRight , true, "extended" );
+  _soitem->addColumn(tr("Close"),      _ynColumn,    Qt::AlignCenter, true, "toclose");
 
   if (_privileges->check("MaintainSalesOrders"))
     connect(_so, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
@@ -579,15 +579,13 @@ void selectOrderForBilling::sFillList()
     QString sql( "SELECT coitem_id, formatSoLineNumber(coitem_id) AS linenumber,"
                  "       item_number, iteminvpricerat(item_id) AS invpricerat,"
                  "       warehous_code, coitem_price,"
-                 "       uom_name,"
-                 "       formatQty(coitem_qtyord) AS f_qtyord,"
-                 "       formatQty(coitem_qtyshipped) AS f_qtyshipped,"
-                 "       formatQty(coitem_qtyreturned) AS f_qtyreturned,"
+                 "       uom_name, coitem_qtyord, coitem_qtyshipped,"
+                 "       coitem_qtyreturned,"
                  "       formatQty( ( SELECT COALESCE(SUM(coship_qty), 0)"
                  "                    FROM coship "
                  "                    WHERE ( (coship_coitem_id=coitem_id)"
                  "                     AND (NOT coship_invoiced) ) )"
-                 "                 ) AS f_qtyatship,"
+                 "                 ) AS qtyatship,"
                  "       ( SELECT COALESCE(SUM(cobill_qty), 0)"
                  "         FROM cobill, cobmisc "
                  "         WHERE ( (cobill_cobmisc_id=cobmisc_id)"
@@ -600,20 +598,19 @@ void selectOrderForBilling::sFillList()
                  "            AND (cobill_coitem_id=coitem_id)"
                  "            AND (NOT cobmisc_posted) ) ) * coitem_qty_invuomratio "
                  "           * ( coitem_price / coitem_price_invuomratio)), 2) AS extended, "
-                 "       formatMoney(round(( "
-                 "         ( SELECT COALESCE(SUM(cobill_qty), 0)"
-                 "           FROM cobill, cobmisc "
-                 "           WHERE ( (cobill_cobmisc_id=cobmisc_id)"
-                 "            AND (cobill_coitem_id=coitem_id)"
-                 "            AND (NOT cobmisc_posted) ) ) * coitem_qty_invuomratio "
-                 "          * (coitem_price / coitem_price_invuomratio)), 2)) AS f_extended, "
-                 "       formatBoolYN( ( SELECT COALESCE(cobill_toclose, FALSE)"
+                 "       COALESCE((SELECT cobill_toclose"
                  "                       FROM cobill, cobmisc "
                  "                       WHERE ((cobill_cobmisc_id=cobmisc_id)"
                  "                        AND (cobill_coitem_id=coitem_id)"
                  "                        AND (NOT cobmisc_posted))"
                  "                       ORDER BY cobill_toclose DESC"
-                 "                       LIMIT 1) ) AS toclose "
+                 "                       LIMIT 1),FALSE) AS toclose, "
+                 "       'qty' AS coitem_qtyord_xtnumericrole, "
+                 "       'qty' AS coitem_qtyshipped_xtnumericrole, "
+                 "       'qty' AS coitem_qtyreturned_xtnumericrole, "
+                 "       'qty' AS qtyatship_xtnumericrole, "
+                 "       'qty' AS qtytobill_xtnumericrole, "
+                 "       'extprice' AS extended_xtnumericrole "
                  "FROM coitem, itemsite, item, site(), uom "
                  "WHERE ( (coitem_itemsite_id=itemsite_id)"
                  " AND (coitem_status <> 'X')"
@@ -635,22 +632,12 @@ void selectOrderForBilling::sFillList()
     if (q.first())
     {
       double subtotal = 0.0;
-
-      XTreeWidgetItem* last = 0;
       do
-      {
         subtotal += q.value("extended").toDouble();
-
-        last = new XTreeWidgetItem(_soitem, last, q.value("coitem_id").toInt(),
-                            q.value("linenumber"), q.value("item_number"),
-                            q.value("warehous_code"), q.value("uom_name"), q.value("f_qtyord"),
-                            q.value("f_qtyshipped"), q.value("f_qtyreturned"),
-                            q.value("f_qtyatship"), formatQty(q.value("qtytobill").toDouble()),
-                            q.value("f_extended"), q.value("toclose") );
-      }
       while (q.next());
-
       _subtotal->setLocalValue(subtotal);
+      
+      _soitem->populate(q);
     }
     else
     {

@@ -110,18 +110,18 @@ selectPayments::selectPayments(QWidget* parent, const char* name, Qt::WFlags fl)
   if (q.first())
     base = q.value("base").toString();
 
-  _apopen->addColumn(tr("Vendor"),    -1,           Qt::AlignLeft   );
-  _apopen->addColumn(tr("Doc. Type"), _orderColumn, Qt::AlignCenter );
-  _apopen->addColumn(tr("Doc. #"),    _orderColumn, Qt::AlignRight  );
-  _apopen->addColumn(tr("Inv. #"),    _orderColumn, Qt::AlignRight  );
-  _apopen->addColumn(tr("P/O #"),     _orderColumn, Qt::AlignRight  );
-  _apopen->addColumn(tr("Due Date"),  _dateColumn,  Qt::AlignCenter );
-  _apopen->addColumn(tr("Doc. Date"), _dateColumn,  Qt::AlignCenter );
-  _apopen->addColumn(tr("Amount"),    _moneyColumn, Qt::AlignRight  );
-  _apopen->addColumn(tr("Selected"),  _moneyColumn, Qt::AlignRight  );
-  _apopen->addColumn(tr("Discount"),  _moneyColumn, Qt::AlignRight  );
-  _apopen->addColumn(tr("Currency"),  _currencyColumn, Qt::AlignLeft );
-  _apopen->addColumn(tr("Running (%1)").arg(base), _moneyColumn, Qt::AlignRight  );
+  _apopen->addColumn(tr("Vendor"),    -1,           Qt::AlignLeft  , true, "vendor" );
+  _apopen->addColumn(tr("Doc. Type"), _orderColumn, Qt::AlignCenter, true, "doctype" );
+  _apopen->addColumn(tr("Doc. #"),    _orderColumn, Qt::AlignRight , true, "apopen_docnumber" );
+  _apopen->addColumn(tr("Inv. #"),    _orderColumn, Qt::AlignRight , true, "apopen_invcnumber" );
+  _apopen->addColumn(tr("P/O #"),     _orderColumn, Qt::AlignRight , true, "apopen_ponumber" );
+  _apopen->addColumn(tr("Due Date"),  _dateColumn,  Qt::AlignCenter, true, "apopen_duedate" );
+  _apopen->addColumn(tr("Doc. Date"), _dateColumn,  Qt::AlignCenter, true, "apopen_docdate" );
+  _apopen->addColumn(tr("Amount"),    _moneyColumn, Qt::AlignRight , true, "amount" );
+  _apopen->addColumn(tr("Selected"),  _moneyColumn, Qt::AlignRight , true, "selected" );
+  _apopen->addColumn(tr("Discount"),  _moneyColumn, Qt::AlignRight , true, "discount" );
+  _apopen->addColumn(tr("Currency"),  _currencyColumn, Qt::AlignLeft, true, "curr_concat" );
+  _apopen->addColumn(tr("Running (%1)").arg(base), _moneyColumn, Qt::AlignRight, true, "running_selected"  );
 
   if (omfgThis->singleCurrency())
   {
@@ -423,16 +423,8 @@ void selectPayments::sFillList()
                "            When (apopen_doctype='D') THEN :debitMemo"
                "       END AS doctype,"
                "       apopen_docnumber, apopen_ponumber,"
-               "       formatDate(apopen_duedate) AS f_duedate,"
-               "       formatDate(apopen_docdate) AS f_docdate,"
-               "       formatMoney(apopen_amount - apopen_paid - "
-               "                   COALESCE((SELECT SUM(currToCurr(checkitem_curr_id, apopen_curr_id, checkitem_amount + checkitem_discount, CURRENT_DATE)) "
-               "                             FROM checkitem, checkhead "
-               "                             WHERE ((checkitem_checkhead_id=checkhead_id) "
-               "                              AND (checkitem_apopen_id=apopen_id) "
-               "                              AND (NOT checkhead_void) "
-               "                              AND (NOT checkhead_posted)) "
-               "                           ), 0)) AS f_amount,"
+               "       apopen_duedate,"
+               "       apopen_docdate,"
                "       (apopen_amount - apopen_paid - "
                "                   COALESCE((SELECT SUM(currToCurr(checkitem_curr_id, apopen_curr_id, checkitem_amount + checkitem_discount, CURRENT_DATE)) "
                "                             FROM checkitem, checkhead "
@@ -443,9 +435,16 @@ void selectPayments::sFillList()
                "                           ), 0)) AS amount,"
                "       COALESCE(currToBase(apselect_curr_id, SUM(apselect_amount), CURRENT_DATE), 0) AS selected_base,"
                "       COALESCE(SUM(apselect_amount), 0) AS selected,"
-               "       formatMoney(COALESCE(SUM(apselect_discount),0)) AS f_discount,"
-               "       (apopen_duedate <= CURRENT_DATE) AS late, apopen_invcnumber,"
-               "       currConcat(apopen_curr_id) AS curr_concat "
+               "       COALESCE(SUM(apselect_amount), 0) AS running_selected,"
+               "       COALESCE(SUM(apselect_discount),0) AS discount,"
+               "       CASE WHEN (apopen_duedate <= CURRENT_DATE) THEN 'error' END AS qtforegroundrole, "
+               "       apopen_invcnumber,"
+               "       currConcat(apopen_curr_id) AS curr_concat, "
+               "       'curr' AS amount_xtnumericrole, "
+               "       'curr' AS selected_xtnumericrole, "
+               "       'curr' AS running_selected_xtnumericrole, "
+               "       'curr' AS running_selected_xtrunningrole, "
+               "       'curr' AS discount_xtnumericrole "
                "FROM vend, apopen LEFT OUTER JOIN apselect ON (apselect_apopen_id=apopen_id) "
                "WHERE ( (apopen_open)"
                " AND (apopen_doctype IN ('V', 'D'))"
@@ -485,33 +484,10 @@ void selectPayments::sFillList()
     _dueBetweenDates->bindValue(q);
   q.bindValue(":curr_id", _currid);
   q.exec();
-  double running = 0;
-  XTreeWidgetItem * last = 0;
-
-  while (q.next())
-  {
-    // skip records that have a zero amount
-    if(q.value("amount").toDouble() == 0.0)
-      continue;
-
-    running += q.value("selected_base").toDouble();
-
-    last = new XTreeWidgetItem( _apopen, last,
-				q.value("apopen_id").toInt(), q.value("apselectid").toInt(),
-				q.value("vendor"), q.value("doctype"),
-				q.value("apopen_docnumber"), q.value("apopen_invcnumber"), q.value("apopen_ponumber"),
-				q.value("f_duedate"), q.value("f_docdate"),
-				q.value("f_amount"),
-				formatMoney(q.value("selected").toDouble()),
-				q.value("f_discount"),
-				q.value("curr_concat"));
-    last->setText(11, formatMoney(running));
-    if (q.value("late").toBool())
-      last->setTextColor("red");
-  }
   if (q.lastError().type() != QSqlError::None)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+  _apopen->populate(q,true);
 }

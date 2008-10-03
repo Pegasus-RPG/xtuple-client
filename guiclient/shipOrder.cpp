@@ -88,11 +88,11 @@ shipOrder::shipOrder(QWidget* parent, const char* name, bool modal, Qt::WFlags f
 
   _captive = FALSE;
   
-  _coitem->addColumn( tr("#"),           _whsColumn,  Qt::AlignCenter );
-  _coitem->addColumn( tr("Item Number"), _itemColumn, Qt::AlignLeft   );
-  _coitem->addColumn( tr("Description"), -1,          Qt::AlignLeft   );
-  _coitem->addColumn( tr("UOM"),         _uomColumn,  Qt::AlignCenter );
-  _coitem->addColumn( tr("Qty."),        _qtyColumn,  Qt::AlignRight  );
+  _coitem->addColumn( tr("#"),           _whsColumn,  Qt::AlignCenter , true, "linenumber");
+  _coitem->addColumn( tr("Item Number"), _itemColumn, Qt::AlignLeft   , true, "item_number");
+  _coitem->addColumn( tr("Description"), -1,          Qt::AlignLeft   , true, "itemdescrip");
+  _coitem->addColumn( tr("UOM"),         _uomColumn,  Qt::AlignCenter , true, "uom_name");
+  _coitem->addColumn( tr("Qty."),        _qtyColumn,  Qt::AlignRight  , true, "shipitem_qty");
 
   _select->setChecked(_privileges->check("SelectBilling") && _metrics->boolean("AutoSelectForBilling"));
   _select->setEnabled(_privileges->check("SelectBilling"));
@@ -778,10 +778,11 @@ void shipOrder::sFillList()
 
     QString items = "<? if exists(\"sohead_id\") ?>"
 		 "SELECT coitem_id,"
-		 "       coitem_linenumber, item_number,"
+		 "       formatSOlinenumber(coitem_id) AS linenumber, item_number,"
 		 "       (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
 		 "       uom_name,"
-		 "       formatQty(SUM(shipitem_qty)) "
+		 "       SUM(shipitem_qty) AS shipitem_qty, "
+                 "       'qty' AS shipitem_qty_xtnumericrole "
 		 "FROM coitem, shiphead, shipitem, itemsite, item, uom "
 		 "WHERE ( (shipitem_orderitem_id=coitem_id)"
 		 " AND (shipitem_shiphead_id=shiphead_id)"
@@ -795,10 +796,11 @@ void shipOrder::sFillList()
 		 "         uom_name, itemdescrip;"
 		 "<? elseif exists(\"tohead_id\") ?>"
 		 "SELECT toitem_id,"
-		 "       toitem_linenumber, item_number,"
+		 "       toitem_linenumber AS linenumber, item_number,"
 		 "       (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
 		 "       uom_name,"
-		 "       formatQty(SUM(shipitem_qty)) "
+		 "       SUM(shipitem_qty) AS shipitem_qty "
+                 "       'qty' AS shipitem_qty_xtnumericrole "
 		 "FROM toitem, shiphead, shipitem, item, uom "
 		 "WHERE ( (shipitem_orderitem_id=toitem_id)"
 		 " AND (shipitem_shiphead_id=shiphead_id)"
