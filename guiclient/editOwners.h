@@ -55,92 +55,34 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  menuCRM.cpp
-//  Created 09/05/2006 GJM
-//  Copyright (c) 2006-2008, OpenMFG, LLC
+#ifndef EDITOWNERS_H
+#define EDITOWNERS_H
 
-#ifndef menuCRM_h
-#define menuCRM_h
+#include "guiclient.h"
+#include "xdialog.h"
+#include <parameter.h>
 
-#include <QObject>
-#include <QPixmap>
+#include "ui_editOwners.h"
 
-class QToolBar;
-class QMenu;
-class GUIClient;
-
-class menuCRM : public QObject
+class editOwners : public XDialog, public Ui::editOwners
 {
-  Q_OBJECT
+    Q_OBJECT
 
-  struct actionProperties {
-    const char*		actionName;
-    const QString	actionTitle;
-    const char*		slot;
-    QMenu*		menu;
-    bool		priv;
-    QPixmap*		pixmap;
-    QToolBar*		toolBar;
-    bool		visible;
-    const QString   toolTip;
-  };
+public:
+    editOwners(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
 
-  public:
-    menuCRM(GUIClient *);
+protected slots:
+    virtual void sClose();
+    virtual void sFillList();
+    virtual void sModify();
+    virtual void sModifyAll();
+    virtual void sItemClicked();
+    virtual bool modifyOne(XTreeWidgetItem*);
 
-  public slots:
+private:
+    QString _queryString;
+    bool _first;
 
-    void sNewProject();
-    void sProjects();
-    void sDspOrderActivityByProject();
-
-    void sAddress();
-    void sAddresses();
-    void sCharacteristics();
-    void sCRMAccount();
-    void sCRMAccounts();
-    void sSearchForCRMAccount();
-    void sContact();
-    void sContacts();
-    void sSearchForContact();
-    void sDspIncidentsByCRMAccount();
-    void sDspTodoByUserAndIncident();
-    void sHonorifics();
-    void sIncident();
-    void sIncidentCategories();
-    void sIncidentPriorities();
-    void sIncidentResolutions();
-    void sIncidentSeverities();
-    void sIncidentWorkbench();
-    void sTodoItem();
-    void sTodoList();
-    void sNewOpportunity();
-    void sOpportunities();
-    void sOpportunitySources();
-    void sOpportunityStages();
-    void sOpportunityTypes();
-    void sEditOwners();
-
-  private:
-    GUIClient *parent;
-
-    QToolBar   *toolBar;
-    QMenu *crmMenu;
-    QMenu *projectsMenu;
-    QMenu *incidentMenu;
-    QMenu *todoMenu;
-    QMenu *reportsMenu;
-    QMenu *accountsMenu;
-    QMenu *contactsMenu;
-    QMenu *addressMenu;
-    QMenu *utilitiesMenu;
-    QMenu *masterMenu;
-    QMenu *masterIncdMenu;
-    QMenu *opportunityMenu;
-    QMenu *masterOppMenu;
-    
-    void	addActionsToMenu(actionProperties [], unsigned int);
 };
 
-#endif
-
+#endif // EDITOWNERS_H

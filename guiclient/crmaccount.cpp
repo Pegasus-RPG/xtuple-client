@@ -85,6 +85,8 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
 {
   setupUi(this);
 
+  if(!_privileges->check("EditOwner")) _owner->setEnabled(false);
+
   q.prepare("SELECT usr_id "
 	    "FROM usr "
 	    "WHERE (usr_username=CURRENT_USER);");

@@ -78,6 +78,8 @@ incident::incident(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _statusCodes << "N" << "F" << "C" << "A" << "R" << "L";
   setupUi(this);
 
+  if(!_privileges->check("EditOwner")) _owner->setEnabled(false);
+
   // signals and slots connections
   connect(_cancel,	SIGNAL(clicked()),	this,	SLOT(sCancel()));
   connect(_crmacct,	SIGNAL(newId(int)),	this,	SLOT(sCRMAcctChanged(int)));

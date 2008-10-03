@@ -76,6 +76,8 @@ opportunity::opportunity(QWidget* parent, const char* name, bool modal, Qt::WFla
 {
   setupUi(this);
 
+  if(!_privileges->check("EditOwner")) _owner->setEnabled(false);
+
   // signals and slots connections
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_deleteTodoItem, SIGNAL(clicked()), this, SLOT(sDeleteTodoItem()));

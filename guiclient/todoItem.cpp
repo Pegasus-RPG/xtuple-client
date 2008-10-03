@@ -69,6 +69,8 @@ todoItem::todoItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 {
   setupUi(this);
 
+  if(!_privileges->check("EditOwner")) _owner->setEnabled(false);
+
   connect(_close,	SIGNAL(clicked()),	this,	SLOT(sClose()));
   connect(_incident,	SIGNAL(newId(int)),	this,	SLOT(sHandleIncident()));
   connect(_save,	SIGNAL(clicked()),	this,	SLOT(sSave()));

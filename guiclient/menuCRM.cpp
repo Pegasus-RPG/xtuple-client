@@ -98,6 +98,8 @@
 #include "opportunityStages.h"
 #include "opportunityTypes.h"
 
+#include "editOwners.h"
+
 #include "menuCRM.h"
 
 menuCRM::menuCRM(GUIClient *Pparent) :
@@ -207,8 +209,12 @@ menuCRM::menuCRM(GUIClient *Pparent) :
     { "crm.opportunityTypes",	tr("&Types..."),		SLOT(sOpportunityTypes()),	masterOppMenu,	_privileges->check("MaintainOpportunityTypes"), NULL, NULL, true , NULL },
 
     { "crm.incidentPriorities",	tr("&Priorities..."),		SLOT(sIncidentPriorities()),	masterMenu,	_privileges->check("MaintainIncidentPriorities"), NULL, NULL, true , NULL },
-    { "crm.characteristics",	tr("C&haracteristics..."),		SLOT(sCharacteristics()),	masterMenu,	_privileges->check("MaintainCharacteristics") ||
-															_privileges->check("ViewCharacteristics"), NULL, NULL, true , NULL },
+    { "crm.characteristics",	tr("C&haracteristics..."),		SLOT(sCharacteristics()),	masterMenu,	_privileges->check("MaintainCharacteristics") || _privileges->check("ViewCharacteristics"), NULL, NULL, true , NULL },
+
+    //Utilities
+    { "menu",			tr("&Utilities"),		(char*)utilitiesMenu,		crmMenu,	true, NULL, NULL, true	, NULL },
+    { "crm.replaceOwner",	tr("Edit O&wners"),		SLOT(sEditOwners()),	utilitiesMenu,	_privileges->check("EditOwner"), NULL, NULL, true, NULL }
+
   };
 
   addActionsToMenu(acts, sizeof(acts) / sizeof(acts[0]));
@@ -309,6 +315,11 @@ void menuCRM::sCRMAccounts()
 void menuCRM::sSearchForCRMAccount()
 {
   omfgThis->handleNewWindow(new searchForCRMAccount());
+}
+
+void menuCRM::sEditOwners()
+{
+  omfgThis->handleNewWindow(new editOwners());
 }
 
 void menuCRM::sContact()

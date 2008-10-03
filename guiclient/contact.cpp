@@ -123,6 +123,7 @@ enum SetResponse contact::set(const ParameterList &pParams)
   bool     valid;
 
   _contact->setOwnerVisible(true);
+  if(!_privileges->check("EditOwner")) _contact->setOwnerEnabled(false);
 
   q.prepare("SELECT usr_id "
 	    "FROM usr "
@@ -137,9 +138,6 @@ enum SetResponse contact::set(const ParameterList &pParams)
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     reject();
   }
-
-
-
 
   param = pParams.value("cntct_id", &valid);
   if (valid)

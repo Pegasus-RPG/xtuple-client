@@ -127,6 +127,7 @@ class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
     
     Q_PROPERTY(bool     accountVisible        READ accountVisible       	WRITE setAccountVisible)
     Q_PROPERTY(bool     ownerVisible          READ ownerVisible                 WRITE setOwnerVisible)
+    Q_PROPERTY(bool     ownerEnabled          READ ownerEnabled                 WRITE setOwnerEnabled)
     Q_PROPERTY(bool     activeVisible         READ activeVisible        	WRITE setActiveVisible)
     Q_PROPERTY(bool     addressVisible        READ addressVisible       	WRITE setAddressVisible)
     Q_PROPERTY(bool     emailVisible          READ emailVisible         	WRITE setEmailVisible)
@@ -175,6 +176,7 @@ class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
 	virtual QString name() const;
 	virtual QString number()		const { return _number->text(); };
         inline virtual bool    ownerVisible()   const { return _owner->isVisible(); };
+        inline virtual bool    ownerEnabled()   const { return _owner->isEnabled(); };
 	inline virtual bool    numberVisible()  const { return _number->isVisible(); };
 	inline virtual bool    active()		const { return _active->isChecked(); };
 	inline virtual bool    activeVisible()  const { return _active->isVisible(); };
@@ -271,6 +273,7 @@ class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
 	virtual int	save(AddressCluster::SaveFlags = AddressCluster::CHECK);
 	virtual void	setAccount(const int);
         virtual void    setOwnerVisible(const bool);
+        virtual void    setOwnerEnabled(const bool);
 	virtual void    setNumberVisible(const bool);
 	virtual void	setAccountVisible(const bool);
 	virtual void	setActiveVisible(const bool);

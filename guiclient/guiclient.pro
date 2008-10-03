@@ -275,7 +275,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                reassignProductCategoryByProductCategory.ui reconcileBankaccount.ui                    \
                registration.ui                                                                        \
                releasePlannedOrdersByPlannerCode.ui releaseWorkOrdersByPlannerCode.ui                 \
-               relativeCalendarItem.ui relocateInventory.ui                                           \
+               relativeCalendarItem.ui relocateInventory.ui editOwners.ui                             \
                reports.ui reprioritizeWo.ui                                                           \
                reschedulePoitem.ui  rescheduleSoLineItems.ui rescheduleWo.ui                          \
                reserveSalesOrderItem.ui                                                               \
@@ -594,7 +594,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                reassignProductCategoryByProductCategory.h reconcileBankaccount.h                      \
                registration.h                                                                         \
                releasePlannedOrdersByPlannerCode.h releaseWorkOrdersByPlannerCode.h                   \
-               relativeCalendarItem.h relocateInventory.h                                             \
+               relativeCalendarItem.h relocateInventory.h editOwners.h                                \
                reports.h reprioritizeWo.h                                                             \
                reschedulePoitem.h  rescheduleSoLineItems.h rescheduleWo.h                             \
                reserveSalesOrderItem.h                                                                \
@@ -918,7 +918,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp       
                reassignProductCategoryByProductCategory.cpp reconcileBankaccount.cpp                  \
                registration.cpp                                                                       \
                releasePlannedOrdersByPlannerCode.cpp releaseWorkOrdersByPlannerCode.cpp               \
-               relativeCalendarItem.cpp relocateInventory.cpp                                         \
+               relativeCalendarItem.cpp relocateInventory.cpp editOwners.cpp                          \
                reports.cpp reprioritizeWo.cpp                                                         \
                reschedulePoitem.cpp  rescheduleSoLineItems.cpp rescheduleWo.cpp                       \
                reserveSalesOrderItem.cpp                                                              \

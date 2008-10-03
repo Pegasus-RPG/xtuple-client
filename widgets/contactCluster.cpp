@@ -501,6 +501,11 @@ void ContactCluster::setOwnerVisible(const bool vis)
   layout();
 }
 
+void ContactCluster::setOwnerEnabled(const bool vis)
+{
+  _owner->setEnabled(vis);
+}
+
 void ContactCluster::setNumberVisible(const bool vis)
 {
   _number->setVisible(vis);
