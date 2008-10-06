@@ -488,6 +488,11 @@ void initErrorLookupHash()
                          "these Bank Accounts before you may delete the "
                          "selected Check Form." ),                      0, "" },
 
+  { "deleteFreightClass", -1, TR( "The selected Freight Class cannot be deleted "
+                                  "because there are Items that are assigned to "
+                                  "it. You must reassign these Items before you "
+                                  "may delete the selected Freight Class." ),  0, ""},
+
   { "deleteIncident",	-1, TR("This Incident cannot be deleted as there are "
 			       "To-Do List Items associated with it."),
 								 	0, "" },
