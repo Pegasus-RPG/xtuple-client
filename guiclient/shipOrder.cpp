@@ -799,7 +799,7 @@ void shipOrder::sFillList()
 		 "       toitem_linenumber AS linenumber, item_number,"
 		 "       (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
 		 "       uom_name,"
-		 "       SUM(shipitem_qty) AS shipitem_qty "
+		 "       SUM(shipitem_qty) AS shipitem_qty, "
                  "       'qty' AS shipitem_qty_xtnumericrole "
 		 "FROM toitem, shiphead, shipitem, item, uom "
 		 "WHERE ( (shipitem_orderitem_id=toitem_id)"
