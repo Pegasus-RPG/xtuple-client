@@ -166,6 +166,9 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
   _classcode->setAllowNull(TRUE);
   _classcode->setType(XComboBox::ClassCodes);
 
+  _freightClass->setAllowNull(TRUE);
+  _freightClass->setType(XComboBox::FreightClasses);
+
   _prodcat->setAllowNull(TRUE);
   _prodcat->setType(XComboBox::ProductCategories);
 
@@ -408,6 +411,7 @@ enum SetResponse item::set(const ParameterList &pParams)
       _pickListItem->setEnabled(FALSE);
       _fractional->setEnabled(FALSE);
       _classcode->setEnabled(FALSE);
+      _freightClass->setEnabled(FALSE);
       _inventoryUOM->setEnabled(FALSE);
       _prodWeight->setEnabled(FALSE);
       _packWeight->setEnabled(FALSE);
@@ -827,7 +831,7 @@ void item::sSave()
                "  item_prodcat_id, item_price_uom_id,"
                "  item_exclusive,"
                "  item_listprice, item_upccode, item_config,"
-               "  item_comments, item_extdescrip, item_warrdays ) "
+               "  item_comments, item_extdescrip, item_warrdays, item_freightclass_id ) "
                "VALUES "
                "( :item_id, :item_number, :item_active,"
                "  :item_descrip1, :item_descrip2,"
@@ -838,7 +842,7 @@ void item::sSave()
                "  :item_prodcat_id, :item_price_uom_id,"
                "  :item_exclusive,"
                "  :item_listprice, :item_upccode, :item_config,"
-               "  :item_comments, :item_extdescrip, :item_wardays );" ;
+               "  :item_comments, :item_extdescrip, :item_wardays, :item_freightclass_id );" ;
   else if ((_mode == cEdit) || (cNew == _mode && _inTransaction))
          sql = "UPDATE item "
                "SET item_number=:item_number, item_descrip1=:item_descrip1, item_descrip2=:item_descrip2,"
@@ -851,7 +855,8 @@ void item::sSave()
                "    item_price_uom_id=:item_price_uom_id,"
                "    item_exclusive=:item_exclusive,"
                "    item_listprice=:item_listprice, item_upccode=:item_upccode, item_config=:item_config,"
-               "    item_comments=:item_comments, item_extdescrip=:item_extdescrip, item_warrdays=:item_warrdays "
+               "    item_comments=:item_comments, item_extdescrip=:item_extdescrip, item_warrdays=:item_warrdays,"
+               "    item_freightclass_id=:item_freightclass_id "
                "WHERE (item_id=:item_id);";
   q.prepare(sql);
   q.bindValue(":item_id", _itemid);
@@ -878,6 +883,8 @@ void item::sSave()
   q.bindValue(":item_comments", _notes->text());
   q.bindValue(":item_extdescrip", _extDescription->text());
   q.bindValue(":item_warrdays", _warranty->value());
+  if (_freightClass->isValid())
+    q.bindValue(":item_freightclass_id", _freightClass->id());
   q.exec();
   if (q.lastError().type() != QSqlError::None)
   {
@@ -1165,6 +1172,7 @@ void item::populate()
     _description1->setText(item.value("item_descrip1"));
     _description2->setText(item.value("item_descrip2"));
     _classcode->setId(item.value("item_classcode_id").toInt());
+    _freightClass->setId(item.value("item_freightclass_id").toInt());
     _inventoryUOM->setId(item.value("item_inv_uom_id").toInt());
     _pickListItem->setChecked(item.value("item_picklist").toBool());
     _fractional->setChecked(item.value("item_fractional").toBool());
@@ -1225,6 +1233,7 @@ void item::clear()
 
   _itemtype->setCurrentItem(0);
   _classcode->setNull();
+  _freightClass->setNull();
   _prodcat->setNull();
   _configured->setChecked(false);
 

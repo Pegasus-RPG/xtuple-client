@@ -145,6 +145,7 @@ class menuProducts : public QObject
     void sUnitsOfMeasure();
     void sClassCodes();
     void sProductCategories();
+    void sFreightClasses();
     void sCharacteristics();
     void sStandardLaborRates();
     void sWorkCenters();

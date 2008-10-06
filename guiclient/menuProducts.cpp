@@ -126,6 +126,7 @@
 #include "uoms.h"
 #include "classCodes.h"
 #include "productCategories.h"
+#include "freightClasses.h"
 #include "characteristics.h"
 #include "laborRates.h"
 #include "workCenters.h"
@@ -310,6 +311,7 @@ menuProducts::menuProducts(GUIClient *Pparent) :
   { "pd.unitsOfMeasure", tr("&Units of Measure..."), SLOT(sUnitsOfMeasure()), masterInfoMenu, _privileges->check("MaintainUOMs") || _privileges->check("ViewUOMs"), NULL, NULL, true , NULL },
   { "pd.classCodes", tr("&Class Codes..."), SLOT(sClassCodes()), masterInfoMenu, _privileges->check("MaintainClassCodes") || _privileges->check("ViewClassCodes"), NULL, NULL, true , NULL },
   { "pd.productCategories", tr("&Product Categories..."), SLOT(sProductCategories()), masterInfoMenu, _privileges->check("MaintainProductCategories") || _privileges->check("ViewProductCategories"), NULL, NULL, true , NULL },
+  { "pd.freightClasses", tr("&Freight Classes..."), SLOT(sFreightClasses()), masterInfoMenu, _privileges->check("MaintainFreightClasses") || _privileges->check("ViewFreightClasses"), NULL, NULL, true , NULL },
   { "pd.characteristics", tr("C&haracteristics..."), SLOT(sCharacteristics()), masterInfoMenu, _privileges->check("MaintainCharacteristics") || _privileges->check("ViewCharacteristics"), NULL, NULL, true , NULL },
   { "separator", NULL, NULL, masterInfoMenu,	true, NULL, NULL, _metrics->boolean("Routings")  , NULL },
   { "pd.standardLaborRates", tr("Standard &Labor Rates..."), SLOT(sStandardLaborRates()), masterInfoMenu, _privileges->check("MaintainLaborRates") || _privileges->check("ViewLaborRates"), NULL, NULL, _metrics->boolean("Routings") , NULL },
@@ -669,6 +671,11 @@ void menuProducts::sClassCodes()
 void menuProducts::sProductCategories()
 {
   omfgThis->handleNewWindow(new productCategories());
+}
+
+void menuProducts::sFreightClasses()
+{
+  omfgThis->handleNewWindow(new freightClasses());
 }
 
 void menuProducts::sCharacteristics()
