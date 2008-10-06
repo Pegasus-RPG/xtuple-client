@@ -607,6 +607,12 @@ void XComboBox::setType(XComboBoxTypes pType)
                  " ORDER BY sitetype_name;");
       break;
 
+    case FreightClasses:
+      query.exec( "SELECT freightclass_id, (freightclass_code || '-' || freightclass_descrip), freightclass_code  "
+                  "FROM freightclass "
+                  "ORDER BY freightclass_code;" );
+      break;
+
   }
 
   populate(query);

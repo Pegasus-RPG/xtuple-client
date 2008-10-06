@@ -109,7 +109,7 @@ class OPENMFGWIDGETS_EXPORT XComboBox : public QComboBox
       Countries,
       Currencies,	CurrenciesNotBase,	CustomerCommentTypes,
       CustomerGroups,	CustomerTypes,		ExpenseCategories,
-      FinancialLayouts,	FiscalYears,		Honorifics,
+      FinancialLayouts,	FiscalYears, FreightClasses,		Honorifics,
       IncidentCategory,
       IncidentPriority,	IncidentResolution,	IncidentSeverity,
       ItemCommentTypes,	ItemGroups,             Locales,
