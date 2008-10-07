@@ -206,7 +206,6 @@ void editOwners::sClose()
 
 void editOwners::sModify()
 {
-  XTreeWidgetItem * currentItem;
   QString table;
 
   if(!_newOwner->isValid())
