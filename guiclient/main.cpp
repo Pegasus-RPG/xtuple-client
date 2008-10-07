@@ -71,6 +71,7 @@
 #include <QSqlError>
 #include <QTranslator>
 #include <QWindowsStyle>
+#include <QCleanlooksStyle>
 
 #ifdef Q_WS_WIN
 #include <windows.h>
@@ -134,7 +135,7 @@ int main(int argc, char *argv[])
 #elif defined Q_WS_MACX
   app.setStyle(new QMacStyle);
 #elif defined Q_WS_X11
-  app.setStyle(new QWindowsStyle);
+  app.setStyle(new QCleanlooksStyle);
 #endif
 
   // Try and load a default translation file and install it
