@@ -266,8 +266,6 @@ bool editOwners::modifyOne(XTreeWidgetItem * currentItem)
 {
   QString table;
 
-    _newOwnerLit->setText(currentItem->rawValue("type_name").toString());
-
   if(currentItem->rawValue("type_name").toString() == "To Do") table = "todoitem";
   if(currentItem->rawValue("type_name").toString() == "Project") table = "prj";
   if(currentItem->rawValue("type_name").toString() == "Contact") table = "cntct";
