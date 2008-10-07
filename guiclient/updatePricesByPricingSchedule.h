@@ -71,6 +71,7 @@ public:
 
 public slots:
     virtual void sUpdate();
+    virtual void sIPSChanged();
 
 protected slots:
     virtual void languageChange();

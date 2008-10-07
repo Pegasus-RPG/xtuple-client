@@ -78,6 +78,7 @@ updatePricesByPricingSchedule::updatePricesByPricingSchedule(QWidget* parent, co
   // signals and slots connections
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
   connect(_update, SIGNAL(clicked()), this, SLOT(sUpdate()));
+  connect(_ipshead, SIGNAL(currentIndexChanged(int)), this, SLOT(sIPSChanged()));
 
   _ipshead->populate( "SELECT ipshead_id, (ipshead_name || '-' || ipshead_descrip) "
                       "FROM ipshead "
@@ -116,17 +117,29 @@ void updatePricesByPricingSchedule::sUpdate()
 
   if (_updateBy->toDouble() == 0.0)
   {
-    QMessageBox::critical( this, tr("Enter a Update Percentage"),
-                           tr("You must indicate the percentage to update the selected Pricing Schedule.") );
+    QMessageBox::critical( this, tr("Enter a Update Value"),
+                           tr("You must indicate the value to update the selected Pricing Schedule.") );
     _updateBy->setFocus();
     return;
   }
 
-  q.prepare( "SELECT updatePrice(ipsitem_id, :rate) "
-             "FROM ipsitem "
-             "WHERE (ipsitem_ipshead_id=:ipshead_id);" );
-  q.bindValue(":rate", (1.0 + (_updateBy->toDouble() / 100.0)));
-  q.bindValue(":ipshead_id", _ipshead->id());
+  if (_value->isChecked())
+  {
+    q.prepare( "SELECT updatePrice(ipsitem_id, 'V' ,:value) "
+               "FROM ipsitem "
+               "WHERE (ipsitem_ipshead_id=:ipshead_id);" );
+    q.bindValue(":value", _updateBy->toDouble());
+    q.bindValue(":ipshead_id", _ipshead->id());
+  }
+  else
+  {
+    q.prepare( "SELECT updatePrice(ipsitem_id, 'P' ,:rate) "
+               "FROM ipsitem "
+               "WHERE (ipsitem_ipshead_id=:ipshead_id);" );
+    q.bindValue(":rate", (1.0 + (_updateBy->toDouble() / 100.0)));
+    q.bindValue(":ipshead_id", _ipshead->id());
+  }
+
   q.exec();
 
 /*
@@ -139,5 +152,17 @@ void updatePricesByPricingSchedule::sUpdate()
 */
 
   accept();
+}
+
+void updatePricesByPricingSchedule::sIPSChanged()
+{
+  q.prepare( "SELECT curr_symbol, curr_name "
+             "FROM curr_symbol "
+             "LEFT OUTER JOIN ipshead ON (ipshead_id=:ipshead_id) "
+             "WHERE curr_id = ipshead_curr_id ");
+  q.bindValue(":ipshead_id", _ipshead->id());
+  q.exec();
+  if(q.first())
+  _value->setText(q.value("curr_symbol").toString()+" - "+q.value("curr_name").toString());
 }
 

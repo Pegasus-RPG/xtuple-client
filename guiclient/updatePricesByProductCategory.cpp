@@ -111,9 +111,20 @@ void updatePricesByProductCategory::sUpdate()
     return;
   }
 
-  QString sql( "SELECT updatePrice(ipsitem_id, :updatePercent) "
-               "FROM ipsitem, item "
-               "WHERE ( (ipsitem_item_id=item_id)" );
+  QString sql;
+
+  if (_percent->isChecked())
+  {
+  sql = "SELECT updatePrice(ipsitem_id, 'P', :updatePercent) "
+        "FROM ipsitem, item "
+        "WHERE ( (ipsitem_item_id=item_id)";
+  }
+  else
+  {
+  sql = "SELECT updatePrice(ipsitem_id, 'V', :updateValue) "
+        "FROM ipsitem, item "
+        "WHERE ( (ipsitem_item_id=item_id)";
+  }
 
   if (_productCategory->isSelected())
     sql += " AND (item_prodcat_id=:prodcat_id)";
@@ -123,7 +134,12 @@ void updatePricesByProductCategory::sUpdate()
   sql += ");";
 
   q.prepare(sql);
-  q.bindValue(":updatePercent", (1.0 + (_updateBy->toDouble() / 100.0)));
+
+  if (_percent->isChecked())
+    q.bindValue(":updatePercent", (1.0 + (_updateBy->toDouble() / 100.0)));
+  else
+    q.bindValue(":updateValue", _updateBy->toDouble());
+
   _productCategory->bindValue(q);
   q.exec();
 
