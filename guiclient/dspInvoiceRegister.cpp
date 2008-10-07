@@ -62,6 +62,7 @@
 #include <QSqlError>
 #include <QVariant>
 
+#include <metasql.h>
 #include <openreports.h>
 
 #include "arOpenItem.h"
@@ -77,14 +78,14 @@ dspInvoiceRegister::dspInvoiceRegister(QWidget* parent, const char* name, Qt::WF
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
-  _gltrans->addColumn(tr("Date"),      _dateColumn,    Qt::AlignCenter );
-  _gltrans->addColumn(tr("Source"),    _orderColumn,   Qt::AlignCenter );
-  _gltrans->addColumn(tr("Doc Type"),  _orderColumn,   Qt::AlignLeft   );
-  _gltrans->addColumn(tr("Doc. #"),    _orderColumn,   Qt::AlignCenter );
-  _gltrans->addColumn(tr("Reference"), -1,             Qt::AlignLeft   );
-  _gltrans->addColumn(tr("Account"),   _itemColumn,    Qt::AlignLeft   );
-  _gltrans->addColumn(tr("Debit"),     _moneyColumn,   Qt::AlignRight  );
-  _gltrans->addColumn(tr("Credit"),    _moneyColumn,   Qt::AlignRight  );
+  _gltrans->addColumn(tr("Date"),     _dateColumn, Qt::AlignCenter,true, "transdate");
+  _gltrans->addColumn(tr("Source"),  _orderColumn, Qt::AlignCenter,true, "gltrans_source");
+  _gltrans->addColumn(tr("Doc Type"),_orderColumn, Qt::AlignLeft,  true, "doctype");
+  _gltrans->addColumn(tr("Doc. #"),  _orderColumn, Qt::AlignCenter,true, "gltrans_docnumber");
+  _gltrans->addColumn(tr("Reference"),         -1, Qt::AlignLeft,  true, "notes");
+  _gltrans->addColumn(tr("Account"),  _itemColumn, Qt::AlignLeft,  true, "account");
+  _gltrans->addColumn(tr("Debit"),   _moneyColumn, Qt::AlignRight, true, "debit");
+  _gltrans->addColumn(tr("Credit"),  _moneyColumn, Qt::AlignRight, true, "credit");
 }
 
 dspInvoiceRegister::~dspInvoiceRegister()
@@ -255,23 +256,34 @@ void dspInvoiceRegister::sViewInvoice()
   omfgThis->handleNewWindow(newdlg);
 }
 
-void dspInvoiceRegister::sPrint()
+bool dspInvoiceRegister::setParams(ParameterList &params)
 {
   if(!_dates->allValid())
   {
     QMessageBox::warning(this, tr("Invalid Date Range"),
       tr("You must specify a valid date range.") );
-    return;
+    return false;
   }
 
-  ParameterList params;
   _dates->appendValue(params);
 
   if (_selectedAccount->isChecked())
     params.append("accnt_id", _account->id());
 
-  orReport report("InvoiceRegister", params);
+  params.append("invoice",      tr("Invoice"));
+  params.append("creditmemo",   tr("Credit Memo"));
+  params.append("debitmemo",    tr("Debit Memo"));
+  params.append("cashdeposit",  tr("Customer Deposit"));
 
+  return true;
+}
+
+void dspInvoiceRegister::sPrint()
+{
+  ParameterList params;
+  if (! setParams(params))
+    return;
+  orReport report("InvoiceRegister", params);
   if (report.isValid())
     report.print();
   else
@@ -280,106 +292,108 @@ void dspInvoiceRegister::sPrint()
 
 void dspInvoiceRegister::sFillList()
 {
-  _gltrans->clear();
-
-  QString sql( "SELECT gltrans_id, gltrans_date, gltrans_source,"
-               "       CASE WHEN(gltrans_doctype='IN') THEN 1"
-               "            WHEN(gltrans_doctype='CM') THEN 2"
-               "            WHEN(gltrans_doctype='DM') THEN 3"
-               "            WHEN(gltrans_doctype='CD') THEN 4"
-               "            ELSE -1"
-               "       END AS altId,"
-               "       CASE WHEN(gltrans_doctype='IN') THEN :invoice"
-               "            WHEN(gltrans_doctype='CM') THEN :creditmemo"
-               "            WHEN(gltrans_doctype='DM') THEN :debitmemo"
-               "            WHEN(gltrans_doctype='CD') THEN :cashdeposit"
-               "            ELSE gltrans_doctype"
-               "       END AS doctype,"
-               "       gltrans_docnumber,"
-               "       CASE WHEN(gltrans_doctype='IN') THEN"
-               "                (SELECT invchead_shipto_name"
-               "                   FROM aropen LEFT OUTER JOIN"
-               "                        invchead"
-               "                          ON (invchead_id=aropen_cobmisc_id"
-               "                          AND invchead_cust_id=aropen_cust_id)"
-               "                  WHERE ((aropen_docnumber=gltrans_docnumber)"
-               "                    AND  (aropen_doctype='I')))"
-               "            ELSE firstLine(gltrans_notes)"
-               "       END AS f_notes,"
-               "       (formatGLAccount(accnt_id) || ' - ' || accnt_descrip) AS f_accnt,"
-               "       CASE WHEN (gltrans_amount < 0) THEN ABS(gltrans_amount)"
-               "            ELSE 0"
-               "       END AS debit,"
-               "       CASE WHEN (gltrans_amount > 0) THEN gltrans_amount"
-               "            ELSE 0"
-               "       END AS credit "
-               "FROM gltrans, accnt "
-               "WHERE ((gltrans_accnt_id=accnt_id)"
-               " AND (gltrans_doctype IN ('IN', 'CM', 'DM', 'CD'))"
-               " AND (gltrans_source = 'A/R')"
-               " AND (gltrans_date BETWEEN :startDate AND :endDate)" );
-
-  if (_selectedAccount->isChecked())
-    sql += " AND (gltrans_accnt_id=:accnt_id)";
-
-  sql += ") "
-         "ORDER BY gltrans_date, gltrans_docnumber;";
-
-  q.prepare(sql);
-  _dates->bindValue(q);
-  q.bindValue(":accnt_id", _account->id());
-  q.bindValue(":invoice", tr("Invoice"));
-  q.bindValue(":creditmemo", tr("Credit Memo"));
-  q.bindValue(":debitmemo", tr("Debit Memo"));
-  q.bindValue(":cashdeposit", tr("Customer Deposit"));
-  q.exec();
-
-  XTreeWidgetItem * parent = 0;
-  XTreeWidgetItem * last = 0;
-  QString date;
-  double debit = 0.0, credit = 0.0;
-  double totdebit = 0.0, totcredit = 0.0;
-  while(q.next())
-  {
-    if(0 == parent || date != formatDate(q.value("gltrans_date").toDate()))
-    {
-      if(parent)
-      {
-        last = new XTreeWidgetItem(parent, last, -2, -2, QVariant(""), "", "", tr("Subtotal"), "", "", formatMoney(debit), formatMoney(credit));
-        parent->setExpanded(TRUE);
-      }
-
-      date = formatDate(q.value("gltrans_date").toDate());
-      parent = new XTreeWidgetItem(_gltrans, parent, -1, -2, formatDate(q.value("gltrans_date").toDate()));
-      last = 0;
-      debit = 0.0;
-      credit = 0.0;
-    }
-
-    last = new XTreeWidgetItem(parent, last, q.value("gltrans_id").toInt(),
-                               q.value("altId").toInt(),
-                               QVariant(""), q.value("gltrans_source"), q.value("doctype"),
-                               q.value("gltrans_docnumber"), q.value("f_notes"), q.value("f_accnt"),
-                               formatMoney(q.value("debit").toDouble()),
-                               formatMoney(q.value("credit").toDouble()));
-
-    debit += q.value("debit").toDouble();
-    totdebit += q.value("debit").toDouble();
-    credit += q.value("credit").toDouble();
-    totcredit += q.value("credit").toDouble();
-  }
-
-  if (q.lastError().type() != QSqlError::None)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  ParameterList params;
+  if (! setParams(params))
     return;
-  }
 
-  if(parent)
+  MetaSQLQuery mql(
+     "SELECT DISTINCT"
+     "       -1 AS gltrans_id, -1 AS altId,"
+     "       gltrans_date,  '' AS gltrans_source,"
+     "       '' AS doctype, '' AS gltrans_docnumber,"
+     "       '' AS notes,   '' AS account,"
+     "       CAST(NULL AS NUMERIC) AS debit,"
+     "       CAST(NULL AS NUMERIC) AS credit,"
+     "       'curr' AS debit_xtnumericrole,"
+     "       'curr' AS credit_xtnumericrole,"
+     "       0 AS xtindentrole,"
+     "       gltrans_date AS transdate,"  // qtdisplay role isn't working right?
+     "       1 AS debit_xttotalrole,"
+     "       1 AS credit_xttotalrole "
+     "FROM gltrans "
+     "WHERE ((gltrans_doctype IN ('IN', 'CM', 'DM', 'CD'))"
+     " AND (gltrans_source = 'A/R')"
+     " AND (gltrans_date BETWEEN <? value(\"startDate\") ?> AND <? value(\"endDate\") ?>) "
+     "<? if exists(\"accnt_id\") ?>"
+     " AND (gltrans_accnt_id=<? value(\"accnt_id\") ?>)"
+     "<? endif ?>"
+     ") "
+     "UNION "
+     "SELECT gltrans_id,"
+     "       CASE WHEN(gltrans_doctype='IN') THEN 1"
+     "            WHEN(gltrans_doctype='CM') THEN 2"
+     "            WHEN(gltrans_doctype='DM') THEN 3"
+     "            WHEN(gltrans_doctype='CD') THEN 4"
+     "            ELSE -1"
+     "       END AS altId,"
+     "       gltrans_date, gltrans_source,"
+     "       CASE WHEN(gltrans_doctype='IN') THEN <? value(\"invoice\") ?>"
+     "            WHEN(gltrans_doctype='CM') THEN <? value(\"creditmemo\") ?>"
+     "            WHEN(gltrans_doctype='DM') THEN <? value(\"debitmemo\") ?>"
+     "            WHEN(gltrans_doctype='CD') THEN <? value(\"cashdeposit\") ?>"
+     "            ELSE gltrans_doctype"
+     "       END AS doctype,"
+     "       gltrans_docnumber,"
+     "       CASE WHEN(gltrans_doctype='IN') THEN"
+     "                (SELECT invchead_shipto_name"
+     "                   FROM aropen LEFT OUTER JOIN"
+     "                        invchead"
+     "                          ON (invchead_id=aropen_cobmisc_id"
+     "                          AND invchead_cust_id=aropen_cust_id)"
+     "                  WHERE ((aropen_docnumber=gltrans_docnumber)"
+     "                    AND  (aropen_doctype='I')))"
+     "            ELSE firstLine(gltrans_notes)"
+     "       END AS f_notes,"
+     "       (formatGLAccount(accnt_id) || ' - ' || accnt_descrip) AS f_accnt,"
+     "       CASE WHEN (gltrans_amount < 0) THEN ABS(gltrans_amount)"
+     "            ELSE 0"
+     "       END AS debit,"
+     "       CASE WHEN (gltrans_amount > 0) THEN gltrans_amount"
+     "            ELSE 0"
+     "       END AS credit,"
+     "       'curr' AS debit_xtnumericrole,"
+     "       'curr' AS credit_xtnumericrole,"
+     "       1 AS xtindentrole,"
+     "       NULL AS transdate,"          // qtdisplay role isn't working right?
+     "       0 AS debit_xttotalrole,"
+     "       0 AS credit_xttotalrole "
+     "FROM gltrans, accnt "
+     "WHERE ((gltrans_accnt_id=accnt_id)"
+     " AND (gltrans_doctype IN ('IN', 'CM', 'DM', 'CD'))"
+     " AND (gltrans_source = 'A/R')"
+     " AND (gltrans_date BETWEEN <? value(\"startDate\") ?> AND <? value(\"endDate\") ?>)"
+     "<? if exists(\"accnt_id\") ?>"
+     " AND (gltrans_accnt_id=<? value(\"accnt_id\") ?>)"
+     "<? endif ?>"
+     ") "
+     "ORDER BY gltrans_date, gltrans_docnumber, xtindentrole;");
+
+  q = mql.toQuery(params);
+  _gltrans->populate(q, true);
+  _gltrans->expandAll();
+
+  // calculate subtotals for debit and credit columns and add rows for them
+  for (int i = 0; i < _gltrans->topLevelItemCount(); i++)
   {
-    last = new XTreeWidgetItem(parent, last, -2, -2, QVariant(""), "", "", tr("Subtotal"), "", "", formatMoney(debit), formatMoney(credit));
-    parent->setExpanded(TRUE);
+    double debitsum = 0.0;
+    double creditsum = 0.0;
+    XTreeWidgetItem *item = 0;
+    for (int j = 0; j < _gltrans->topLevelItem(i)->childCount(); j++)
+    {
+      item = _gltrans->topLevelItem(i)->child(j);
+      qDebug("in loop @ %d %p", j, item);
+      if (item)
+      {
+        debitsum += item->rawValue("debit").toDouble();
+        creditsum += item->rawValue("credit").toDouble();
+      }
+    }
+    if (item)
+    {
+      qDebug("adding subtotal %p", item);
+      item = new XTreeWidgetItem(_gltrans->topLevelItem(i), -1, -1, tr("Subtotal"));
+      item->setData(_gltrans->column("debit"),  Qt::EditRole, formatMoney(debitsum));
+      item->setData(_gltrans->column("credit"), Qt::EditRole, formatMoney(creditsum));
+    }
   }
-
-  last = new XTreeWidgetItem(_gltrans, parent, -3, -2, QVariant(""), "", "", tr("Total"), "", "", formatMoney(totdebit), formatMoney(totcredit));
 }

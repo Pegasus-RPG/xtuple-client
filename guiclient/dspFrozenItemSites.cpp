@@ -58,6 +58,7 @@
 #include "dspFrozenItemSites.h"
 
 #include <QMenu>
+#include <QSqlError>
 
 #include <openreports.h>
 
@@ -66,16 +67,14 @@ dspFrozenItemSites::dspFrozenItemSites(QWidget* parent, const char* name, Qt::WF
 {
   setupUi(this);
 
-//  (void)statusBar();
-
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_itemsite, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
 
-  _itemsite->addColumn(tr("Site"),        _whsColumn,  Qt::AlignCenter );
-  _itemsite->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft   );
-  _itemsite->addColumn(tr("Description"), -1,          Qt::AlignLeft   );
-  _itemsite->addColumn(tr("Count Tag #"), _qtyColumn,  Qt::AlignRight  );
+  _itemsite->addColumn(tr("Site"),        _whsColumn,  Qt::AlignCenter,true, "warehous_code");
+  _itemsite->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft,  true, "item_number");
+  _itemsite->addColumn(tr("Description"), -1,          Qt::AlignLeft,  true, "descrip");
+  _itemsite->addColumn(tr("Count Tag #"), _qtyColumn,  Qt::AlignRight, true, "cnttag");
 
   sFillList();
 }
@@ -124,8 +123,11 @@ void dspFrozenItemSites::sThaw()
 void dspFrozenItemSites::sFillList()
 {
   QString sql( "SELECT itemsite_id, warehous_code, item_number,"
-               " (item_descrip1 || ' ' || item_descrip2),"
-               " COALESCE((SELECT invcnt_tagnumber FROM invcnt WHERE ((NOT invcnt_posted) AND (invcnt_itemsite_id=itemsite_id)) LIMIT 1), '') "
+               " (item_descrip1 || ' ' || item_descrip2) AS descrip,"
+               " COALESCE((SELECT invcnt_tagnumber"
+               "           FROM invcnt"
+               "           WHERE ((NOT invcnt_posted)"
+               "           AND (invcnt_itemsite_id=itemsite_id)) LIMIT 1), '') AS cnttag "
                "FROM itemsite, item, warehous "
                "WHERE ( (itemsite_item_id=item_id)"
                " AND (itemsite_warehous_id=warehous_id)"
@@ -141,4 +143,9 @@ void dspFrozenItemSites::sFillList()
   _warehouse->bindValue(q);
   q.exec();
   _itemsite->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }

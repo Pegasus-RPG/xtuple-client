@@ -58,10 +58,12 @@
 #include "dspInventoryBufferStatusByParameterList.h"
 
 #include <QMenu>
-#include <QVariant>
 #include <QMessageBox>
-#include <QStringList>
+#include <QSqlError>
+#include <QVariant>
+
 #include <openreports.h>
+
 #include "dspInventoryHistoryByItem.h"
 #include "dspAllocations.h"
 #include "dspOrders.h"
@@ -74,52 +76,37 @@
 #include "createCountTagsByItem.h"
 #include "enterMiscCount.h"
 
-/*
- *  Constructs a dspInventoryBufferStatusByParameterList as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspInventoryBufferStatusByParameterList::dspInventoryBufferStatusByParameterList(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_availability, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(omfgThis, SIGNAL(workOrdersUpdated(int, bool)), this, SLOT(sFillList()));
 
-  _availability->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft   );
-  _availability->addColumn(tr("Description"),  -1,          Qt::AlignLeft   );
-  _availability->addColumn(tr("Site"),         _whsColumn,  Qt::AlignCenter );
-  _availability->addColumn(tr("LT"),           _whsColumn,  Qt::AlignCenter );
-  _availability->addColumn(tr("Type"),         _qtyColumn,  Qt::AlignCenter );
-  _availability->addColumn(tr("Status"),       _qtyColumn,  Qt::AlignRight  );
-  _availability->addColumn(tr("QOH"),          _qtyColumn,  Qt::AlignRight  );
-  _availability->addColumn(tr("Allocated"),    _qtyColumn,  Qt::AlignRight  );
-  _availability->addColumn(tr("Unallocated"),  _qtyColumn,  Qt::AlignRight  );
-  _availability->addColumn(tr("On Order"),     _qtyColumn,  Qt::AlignRight  );
-  _availability->addColumn(tr("Reorder Lvl."), _qtyColumn,  Qt::AlignRight  );
-  _availability->addColumn(tr("OUT Level."),   _qtyColumn,  Qt::AlignRight  );
-  _availability->addColumn(tr("Available"),    _qtyColumn,  Qt::AlignRight  );
+  _availability->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft,  true, "item_number");
+  _availability->addColumn(tr("Description"),  -1,          Qt::AlignLeft,  true, "itemdescrip");
+  _availability->addColumn(tr("Site"),         _whsColumn,  Qt::AlignCenter,true, "warehous_code");
+  _availability->addColumn(tr("LT"),           _whsColumn,  Qt::AlignCenter,true, "itemsite_leadtime");
+  _availability->addColumn(tr("Type"),         _qtyColumn,  Qt::AlignCenter,true, "bufrststype");
+  _availability->addColumn(tr("Status"),       _qtyColumn,  Qt::AlignRight, true, "bufrsts_status");
+  _availability->addColumn(tr("QOH"),          _qtyColumn,  Qt::AlignRight, true, "qoh");
+  _availability->addColumn(tr("Allocated"),    _qtyColumn,  Qt::AlignRight, true, "allocated");
+  _availability->addColumn(tr("Unallocated"),  _qtyColumn,  Qt::AlignRight, true, "unallocated");
+  _availability->addColumn(tr("On Order"),     _qtyColumn,  Qt::AlignRight, true, "ordered");
+  _availability->addColumn(tr("Reorder Lvl."), _qtyColumn,  Qt::AlignRight, true, "reorderlevel");
+  _availability->addColumn(tr("OUT Level."),   _qtyColumn,  Qt::AlignRight, true, "outlevel");
+  _availability->addColumn(tr("Available"),    _qtyColumn,  Qt::AlignRight, true, "available");
 
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspInventoryBufferStatusByParameterList::~dspInventoryBufferStatusByParameterList()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspInventoryBufferStatusByParameterList::languageChange()
 {
   retranslateUi(this);
@@ -427,21 +414,26 @@ void dspInventoryBufferStatusByParameterList::sFillList()
 {
   _availability->clear();
 
-  QString sql( "SELECT itemsite_id, itemtype,"
-               "       item_number, (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
+  QString sql( "SELECT itemsite_id, itemtype, item_number,"
+              "        (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
                "       warehous_id, warehous_code, itemsite_leadtime,"
                "       CASE WHEN (bufrsts_type='T') THEN :time"
                "            ELSE :stock"
                "       END AS bufrststype,"
                "       bufrsts_status,"
-               "       formatQty(qoh) AS f_qoh,"
-               "       formatQty(allocated) AS f_allocated,"
-               "       formatQty(noNeg(qoh - allocated)) AS f_unallocated,"
-               "       formatQty(ordered) AS f_ordered,"
-               "       formatQty(reorderlevel) AS f_reorderlevel,"
-               "       formatQty(outlevel) AS f_outlevel,"
-               "       formatQty(qoh - allocated + ordered) AS f_available,"
-               "       emergency "
+               "       qoh, allocated,"
+               "       noNeg(qoh - allocated) AS unallocated,"
+               "       ordered, reorderlevel, outlevel,"
+               "       (qoh - allocated + ordered) AS available,"
+               "       'qty' AS qoh_xtnumericrole,"
+               "       'qty' AS allocated_xtnumericrole,"
+               "       'qty' AS unallocated_xtnumericrole,"
+               "       'qty' AS ordered_xtnumericrole,"
+               "       'qty' AS reorderlevel_xtnumericrole,"
+               "       'qty' AS outlevel_xtnumericrole,"
+               "       'qty' AS available_xtnumericrole,"
+               "       CASE WHEN (bufrsts_status > 65) THEN 'error'"
+               "       END AS bufrsts_status_qtforegroundrole "
                "  FROM ( SELECT itemsite_id,"
                "                CASE WHEN (item_type IN ('P', 'O')) THEN 1"
                "                     WHEN (item_type IN ('M')) THEN 2"
@@ -454,8 +446,7 @@ void dspInventoryBufferStatusByParameterList::sFillList()
                "                itemsite_reorderlevel AS reorderlevel,"
                "                itemsite_ordertoqty AS outlevel," 
                "                qtyAllocated(itemsite_id, endoftime()) AS allocated,"
-               "                qtyOrdered(itemsite_id, endoftime()) AS ordered,"
-               "                (bufrsts_status > 65) AS emergency "
+               "                qtyOrdered(itemsite_id, endoftime()) AS ordered "
                "           FROM item, itemsite, warehous, bufrsts "
                "          WHERE ( (itemsite_active)"
                "            AND   (itemsite_item_id=item_id)"
@@ -504,21 +495,5 @@ void dspInventoryBufferStatusByParameterList::sFillList()
   q.bindValue(":stock", tr("Stock"));
   q.bindValue(":time", tr("Time"));
   q.exec();
-  XTreeWidgetItem * last = 0;
-  while (q.next())
-  {
-    last = new XTreeWidgetItem( _availability, last,
-                                q.value("itemsite_id").toInt(), q.value("itemtype").toInt(),
-                                q.value("item_number").toString(), q.value("itemdescrip"),
-                                q.value("warehous_code"), q.value("itemsite_leadtime"),
-                                q.value("bufrststype"), q.value("bufrsts_status"),
-                                q.value("f_qoh"), q.value("f_allocated"),
-                                q.value("f_unallocated"), q.value("f_ordered"));
-    last->setText(10, q.value("f_reorderlevel").toString());
-    last->setText(11, q.value("f_outlevel").toString());
-    last->setText(12, q.value("f_available").toString());
-
-    if (q.value("emergency").toBool())
-      last->setTextColor(5, QColor("red"));
-  }
+  _availability->populate(q, true);
 }

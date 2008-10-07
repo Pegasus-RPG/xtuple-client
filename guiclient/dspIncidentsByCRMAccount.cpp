@@ -59,7 +59,6 @@
 
 #include <QMessageBox>
 #include <QSqlError>
-//#include <QStatusBar>
 #include <QVariant>
 
 #include <metasql.h>
@@ -79,8 +78,6 @@ dspIncidentsByCRMAccount::dspIncidentsByCRMAccount(QWidget* parent, const char* 
   _crmacctGroupInt->addButton(_allAccts);
   _crmacctGroupInt->addButton(_selectedAcct);
 
-//  statusBar()->hide();
-
   _createdDate->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _createdDate->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 
@@ -89,16 +86,14 @@ dspIncidentsByCRMAccount::dspIncidentsByCRMAccount(QWidget* parent, const char* 
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
-  _list->setRootIsDecorated(true);
-
-  _list->addColumn(tr("Account Number"),	    80, Qt::AlignLeft  );
-  _list->addColumn(tr("Account Name"),		   100, Qt::AlignLeft  );
-  _list->addColumn(tr("Incident"),	  _orderColumn, Qt::AlignRight );
-  _list->addColumn(tr("Summary"),	            -1, Qt::AlignLeft  );
-  _list->addColumn(tr("Entered/Assigned"), _dateColumn, Qt::AlignLeft  );
-  _list->addColumn(tr("Status"),         _statusColumn, Qt::AlignCenter);
-  _list->addColumn(tr("Assigned To"),	   _userColumn, Qt::AlignLeft  );
-  _list->addColumn(tr("To-Do Due"),	   _dateColumn, Qt::AlignLeft  );
+  _list->addColumn(tr("Account Number"),	    80, Qt::AlignLeft,  true, "crmacct_number");
+  _list->addColumn(tr("Account Name"),		   100, Qt::AlignLeft,  true, "crmacct_name");
+  _list->addColumn(tr("Incident"),	  _orderColumn, Qt::AlignRight, true, "incdt_number");
+  _list->addColumn(tr("Summary"),	            -1, Qt::AlignLeft,  true, "summary");
+  _list->addColumn(tr("Entered/Assigned"), _dateColumn, Qt::AlignLeft,  true, "startdate");
+  _list->addColumn(tr("Status"),         _statusColumn, Qt::AlignCenter,true, "status");
+  _list->addColumn(tr("Assigned To"),	   _userColumn, Qt::AlignLeft,  true, "assigned");
+  _list->addColumn(tr("To-Do Due"),	   _dateColumn, Qt::AlignLeft,  true, "duedate");
 
   _list->setIndentation(10);
 }
@@ -293,23 +288,17 @@ bool dspIncidentsByCRMAccount::setParams(ParameterList &params)
 
 void dspIncidentsByCRMAccount::sFillList()
 {
-  QString sql = "SELECT  crmacct_id, incdt_id, todoitem_id, "
-		"	  crmacct_number, crmacct_name, "
-		"	  incdt_number, DATE(incdt_timestamp) AS incdt_timestamp, "
-		"         CASE WHEN(incdt_status='N') THEN <? value(\"new\") ?>"
-		"              WHEN(incdt_status='F') THEN <? value(\"feedback\") ?>"
-		"              WHEN(incdt_status='C') THEN <? value(\"confirmed\") ?>"
-		"              WHEN(incdt_status='A') THEN <? value(\"assigned\") ?>"
-		"              WHEN(incdt_status='R') THEN <? value(\"resolved\") ?>"
-		"              WHEN(incdt_status='L') THEN <? value(\"closed\") ?>"
-		"              ELSE incdt_status"
-		"         END AS incdt_status,"
-		"         incdt_assigned_username, incdt_summary, "
-		"	  todoitem_due_date, todoitem_name, "
-		"	  COALESCE(usr_username, '') AS todoitem_usrname, "
-		"	  todoitem_assigned_date, todoitem_status, "
-		"	  incdtseverity_name, "
-		"	  incdtpriority_name "
+  QString sql = "SELECT crmacct_id, 1 AS alt_id,"
+		"	crmacct_number, crmacct_name, "
+		"	CAST(NULL AS INTEGER) AS incdt_number, '' AS summary, "
+                "       CAST(NULL AS DATE) AS startdate,"
+		"       '' AS status,"
+		"       '' AS assigned, CAST(NULL AS DATE) AS duedate,"
+                "       MIN(incdt_timestamp) AS incdt_timestamp,"
+                "       0 AS xtindentrole,"
+                "       NULL AS crmacct_number_qtdisplayrole,"
+                "       NULL AS crmacct_name_qtdisplayrole,"
+                "       NULL AS incdt_number_qtdisplayrole "
 		"  FROM crmacct "
 		"      <? if exists(\"showAcctsWOIncdts\") ?> "
 		"	LEFT OUTER "
@@ -320,22 +309,68 @@ void dspIncidentsByCRMAccount::sFillList()
 		"                     <? if not exists(\"showClosed\") ?> "
 		"                       AND incdt_status != 'L' "
 		"                     <? endif ?>) "
-		"      LEFT OUTER JOIN todoitem ON (todoitem_incdt_id=incdt_id) "
+		"<? if exists(\"crmacct_id\") ?> "
+                " WHERE (crmacct_id=<? value(\"crmacct_id\") ?>) "
+		"<? endif ?> "
+                "GROUP BY crmacct_id, crmacct_number, crmacct_name "
+                "UNION "
+		"SELECT incdt_id, 2, "
+		"	crmacct_number, crmacct_name, "
+		"	incdt_number, incdt_summary,"
+                "       DATE(incdt_timestamp) AS startdate, "
+		"       CASE WHEN(incdt_status='N') THEN <? value(\"new\") ?>"
+		"            WHEN(incdt_status='F') THEN <? value(\"feedback\") ?>"
+		"            WHEN(incdt_status='C') THEN <? value(\"confirmed\") ?>"
+		"            WHEN(incdt_status='A') THEN <? value(\"assigned\") ?>"
+		"            WHEN(incdt_status='R') THEN <? value(\"resolved\") ?>"
+		"            WHEN(incdt_status='L') THEN <? value(\"closed\") ?>"
+		"            ELSE incdt_status"
+		"       END AS status,"
+		"       incdt_assigned_username AS assigned, NULL,"
+                "       incdt_timestamp,"
+                "       1 AS xtindentrole,"
+                "       '' AS crmacct_number_qtdisplayrole,"
+                "       '' AS crmacct_name_qtdisplayrole,"
+                "       NULL AS incdt_number_qtdisplayrole "
+		"  FROM crmacct, incdt "
+		"WHERE ((incdt_crmacct_id=crmacct_id)"
+		"   AND (incdt_timestamp BETWEEN <? value(\"startDate\") ?> "
+		"                            AND <? value(\"endDate\") ?>) "
+		"<? if not exists(\"showClosed\") ?> "
+		"   AND (incdt_status != 'L')"
+		"<? endif ?> "
+		" <? if exists(\"crmacct_id\") ?> "
+                "   AND (crmacct_id=<? value(\"crmacct_id\") ?>) "
+                "<? endif ?>"
+                ") "
+                "UNION "
+		"SELECT todoitem_id, 3,"
+		"	crmacct_number, crmacct_name, "
+		"	incdt_number, todoitem_name,"
+		"	todoitem_assigned_date,"
+                "       todoitem_status, "
+		"	COALESCE(usr_username, '') AS todoitem_usrname, "
+                "	todoitem_due_date,"
+                "       incdt_timestamp,"
+                "       2 AS xtindentrole,"
+                "       '' AS crmacct_number_qtdisplayrole,"
+                "       '' AS crmacct_name_qtdisplayrole,"
+                "       '' AS incdt_number_qtdisplayrole "
+		"  FROM crmacct "
+	        "      JOIN incdt ON (incdt_crmacct_id=crmacct_id "
+		"                AND (incdt_timestamp BETWEEN <? value(\"startDate\") ?> "
+		"                                         AND <? value(\"endDate\") ?>) "
+		"                     <? if not exists(\"showClosed\") ?> "
+		"                       AND incdt_status != 'L' "
+		"                     <? endif ?>) "
+		"      JOIN todoitem ON (todoitem_incdt_id=incdt_id) "
 		"      LEFT OUTER JOIN usr ON (usr_id = todoitem_usr_id) "
-		"      LEFT OUTER JOIN incdtseverity ON (incdt_incdtseverity_id = incdtseverity_id) "
-		"      LEFT OUTER JOIN incdtpriority ON (incdt_incdtpriority_id = incdtpriority_id) "
 		"  WHERE ((todoitem_status IS NULL OR todoitem_status != 'C') "
 		"    <? if exists(\"crmacct_id\") ?> "
 		"      AND (crmacct_id=<? value(\"crmacct_id\") ?>) "
 		"    <? endif ?> "
-		"    <? if exists(\"showAcctsWOIncdts\") ?> "
-		"      AND (incdt_id IS NULL OR (true "
-		"    <? endif ?> "
-		"    <? if exists(\"showAcctsWOIncdts\") ?> "
-		"      )) "
-		"    <? endif ?> "
 		"    )  "
-		"  ORDER BY crmacct_name, incdt_timestamp, todoitem_due_date; "
+		"ORDER BY crmacct_name, incdt_timestamp, xtindentrole, duedate; "
 		;
   ParameterList params;
   if (! setParams(params))
@@ -343,51 +378,10 @@ void dspIncidentsByCRMAccount::sFillList()
 
   MetaSQLQuery mql(sql);
   q = mql.toQuery(params);
+  _list->populate(q, true);
   if (q.lastError().type() != QSqlError::None)
   {
     systemError(this, q.lastError().databaseText(), __FILE__,__LINE__);
     return;
-  }
-
-  _list->clear();
-  XTreeWidgetItem *lastCrmacct	= NULL;
-  XTreeWidgetItem *lastIncdt	= NULL;
-  XTreeWidgetItem *lastTodo	= NULL;
-  int lastCrmacctId	= -1;
-  int lastIncdtId	= -1;
-  int lastTodoId	= -1;
-  while (q.next())
-  {
-    if (q.value("crmacct_id").toInt() != lastCrmacctId)
-      lastCrmacct = new XTreeWidgetItem(_list, lastCrmacct,
-			       q.value("crmacct_id").toInt(), 1,
-			       q.value("crmacct_number"),
-			       q.value("crmacct_name"),
-			       "", "", "", "", "", "" );
-    if (!q.value("incdt_id").isNull() &&
-         q.value("incdt_id").toInt() != lastIncdtId)
-      lastIncdt = new XTreeWidgetItem(lastCrmacct, lastIncdt,
-			       q.value("incdt_id").toInt(), 2,
-			       "", "",
-			       q.value("incdt_number"),
-			       q.value("incdt_summary"),
-			       q.value("incdt_timestamp"),
-			       q.value("incdt_status"),
-			       q.value("incdt_assigned_username"),
-			       "" );
-    if (!q.value("todoitem_id").isNull() &&
-         q.value("todoitem_id").toInt() != lastTodoId)
-      lastTodo = new XTreeWidgetItem(lastIncdt, lastTodo,
-			       q.value("todoitem_id").toInt(), 3,
-			       "", "",
-			       "",
-			       q.value("todoitem_name"),
-			       q.value("todoitem_assigned_date"),
-			       q.value("todoitem_status"),
-			       q.value("todoitem_usrname"),
-			       q.value("todoitem_due_date") );
-  lastCrmacctId = q.value("crmacct_id").toInt();
-  lastIncdtId = q.value("incdt_id").toInt();
-  lastTodoId = q.value("todoitem_id").toInt();
   }
 }

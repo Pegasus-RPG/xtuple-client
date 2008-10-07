@@ -57,58 +57,42 @@
 
 #include "dspInventoryLocator.h"
 
-#include <QVariant>
-//#include <QStatusBar>
-#include <QMessageBox>
 #include <QMenu>
+#include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
+
+#include <metasql.h>
 #include <openreports.h>
+
 #include "relocateInventory.h"
 #include "reassignLotSerial.h"
 
-/*
- *  Constructs a dspInventoryLocator as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspInventoryLocator::dspInventoryLocator(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_itemloc, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-  connect(_item, SIGNAL(warehouseIdChanged(int)), _warehouse, SLOT(setId(int)));
-  connect(_item, SIGNAL(newId(int)), _warehouse, SLOT(findItemSites(int)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-  connect(_item, SIGNAL(valid(bool)), _query, SLOT(setEnabled(bool)));
 
-  _itemloc->addColumn(tr("Site"),         _whsColumn,   Qt::AlignCenter );
-  _itemloc->addColumn(tr("Location"),     200,          Qt::AlignLeft   );
-  _itemloc->addColumn(tr("Netable"),      _orderColumn, Qt::AlignCenter );
-  _itemloc->addColumn(tr("Lot/Serial #"), -1,           Qt::AlignLeft   );
-  _itemloc->addColumn(tr("Expiration"),   _dateColumn,  Qt::AlignCenter );
-  _itemloc->addColumn(tr("Warranty"),   _dateColumn,  Qt::AlignCenter );
-  _itemloc->addColumn(tr("Qty."),         _qtyColumn,   Qt::AlignRight  );
+  _itemloc->addColumn(tr("Site"),       _whsColumn, Qt::AlignCenter,true, "warehous_code");
+  _itemloc->addColumn(tr("Location"),          200, Qt::AlignLeft,  true, "locationname");
+  _itemloc->addColumn(tr("Netable"),  _orderColumn, Qt::AlignCenter,true, "netable");
+  _itemloc->addColumn(tr("Lot/Serial #"),       -1, Qt::AlignLeft,  true, "lotserial");
+  _itemloc->addColumn(tr("Expiration"),_dateColumn, Qt::AlignCenter,true, "expiration");
+  _itemloc->addColumn(tr("Warranty"),  _dateColumn, Qt::AlignCenter,true, "warranty");
+  _itemloc->addColumn(tr("Qty."),       _qtyColumn, Qt::AlignRight, true, "qoh");
 
   _item->setFocus();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspInventoryLocator::~dspInventoryLocator()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspInventoryLocator::languageChange()
 {
   retranslateUi(this);
@@ -134,22 +118,33 @@ enum SetResponse dspInventoryLocator::set(const ParameterList &pParams)
   return NoError;
 }
 
-void dspInventoryLocator::sPrint()
+bool dspInventoryLocator::setParams(ParameterList &params)
 {
   if(!_item->isValid())
   {
     QMessageBox::warning( this, tr("Enter a Valid Item Number"),
                       tr("You must enter a valid Item Number for this report.") );
-    return;
+    return false;
   }
 
-  ParameterList params;
+  _warehouse->appendValue(params);
 
   params.append("item_id", _item->id());
-  _warehouse->appendValue(params);
+  params.append("yes",     tr("Yes"));
+  params.append("no",      tr("No"));
+  params.append("na",      tr("N/A"));
 
   //if (_showZeroLevel->isChecked())
   //  params.append("showZeroLevel");
+
+  return true;
+}
+
+void dspInventoryLocator::sPrint()
+{
+  ParameterList params;
+  if (! setParams(params))
+    return;
 
   orReport report("LocationLotSerialNumberDetail", params);
 
@@ -201,87 +196,75 @@ void dspInventoryLocator::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected
 
 void dspInventoryLocator::sFillList()
 {
-  if (_item->isValid())
+  ParameterList params;
+  if (! setParams(params))
+    return;
+
+  MetaSQLQuery mql("SELECT *, "
+                   "       <? value(\"na\") ?> AS locationname_xtnullrole,"
+                   "       <? value(\"na\") ?> AS netable_xtnullrole,"
+                   "       <? value(\"na\") ?> AS lotserial_xtnullrole,"
+                   "       <? value(\"na\") ?> AS expiration_xtnullrole,"
+                   "       <? value(\"na\") ?> AS warranty_xtnullrole,"
+                   "       CASE WHEN (itemsite_perishable"
+                   "              AND itemloc_expiration <= CURRENT_DATE) THEN 'error'"
+                   "            WHEN (itemsite_warrpurc"
+                   "              AND itemloc_warrpurc <= CURRENT_DATE) THEN 'error'"
+                   "       END AS qtforegroundrole,"
+                   "       'qty' AS qoh_xtnumericrole "
+                   "FROM ("
+                   "  SELECT itemloc_id, 1 AS type, warehous_code,"
+                   "         itemsite_perishable, itemloc_expiration,"
+                   "         itemsite_warrpurc, itemloc_warrpurc,"
+                   "         CASE WHEN (location_id IS NOT NULL) THEN "
+                   "              (formatLocationName(location_id) || '-' || firstLine(location_descrip))"
+                   "         END AS locationname,"
+                   "         CASE WHEN (location_id IS NOT NULL) THEN location_netable"
+                   "         END AS netable,"
+                   "         CASE WHEN (itemsite_controlmethod IN ('L', 'S')) THEN"
+                   "                   formatlotserialnumber(itemloc_ls_id)"
+                   "         END AS lotserial,"
+                   "         CASE WHEN (itemsite_perishable) THEN itemloc_expiration"
+                   "         END AS expiration,"
+                   "         CASE WHEN (itemsite_warrpurc) THEN itemloc_warrpurc"
+                   "         END AS warranty,"
+                   "         itemloc_qty AS qoh "
+                   "  FROM itemsite, warehous,"
+                   "       itemloc LEFT OUTER JOIN location ON (itemloc_location_id=location_id) "
+                   "  WHERE ((itemsite_loccntrl OR (itemsite_controlmethod IN ('L', 'S')))"
+                   "     AND (itemloc_itemsite_id=itemsite_id)"
+                   "     AND (itemsite_warehous_id=warehous_id)"
+                   "     AND (itemsite_item_id=<? value(\"item_id\") ?>)"
+                   "<? if exists(\"warehous_id\") ?>"
+                   "     AND (itemsite_warehous_id=<? value(\"warehous_id\") ?>)"
+                   "<? endif ?>"
+                   "  ) "
+                   "  UNION "
+                   "  SELECT itemsite_id, 2 AS type, warehous_code,"
+                   "         itemsite_perishable, NULL AS itemloc_expiration,"
+                   "         itemsite_warrpurc, NULL AS itemloc_warrpurc,"
+                   "         NULL AS locationname,"
+                   "         NULL AS netable,"
+                   "         NULL AS lotserial,"
+                   "         NULL AS expiration,"
+                   "         NULL AS warranty,"
+                   "         itemsite_qtyonhand AS qoh "
+                   "  FROM itemsite, warehous "
+                   "  WHERE ( (NOT itemsite_loccntrl)"
+                   "     AND (itemsite_controlmethod NOT IN ('L', 'S'))"
+                   "     AND (itemsite_warehous_id=warehous_id)"
+                   "     AND (itemsite_item_id=<? value(\"item_id\") ?>)"
+                   "<? if exists(\"warehous_id\") ?>"
+                   "     AND (itemsite_warehous_id=<? value(\"warehous_id\") ?>)"
+                   "<? endif ?>"
+                   ")) AS dummy "
+                   "ORDER BY warehous_code, locationname, lotserial;");
+  q = mql.toQuery(params);
+  q.exec();
+  _itemloc->populate(q, true);
+  if (q.lastError().type() != QSqlError::None)
   {
-    QString sql( "SELECT itemloc_id, 1 AS type, warehous_code,"
-                 "       CASE WHEN (location_id IS NULL) THEN :na"
-                 "            ELSE (formatLocationName(location_id) || '-' || firstLine(location_descrip))"
-                 "       END AS locationname,"
-                 "       CASE WHEN (location_id IS NULL) THEN :na"
-                 "            WHEN (location_netable) THEN :yes"
-                 "            ELSE :no"
-                 "       END AS netable,"
-                 "       CASE WHEN (itemsite_controlmethod NOT IN ('L', 'S')) THEN :na"
-                 "            ELSE formatlotserialnumber(itemloc_ls_id)"
-                 "       END AS lotserial,"
-                 "       CASE WHEN (itemsite_perishable) THEN formatDate(itemloc_expiration)"
-                 "            ELSE :na"
-                 "       END AS f_expiration,"
-                 "       CASE WHEN (itemsite_warrpurc) THEN formatDate(itemloc_warrpurc)"
-                 "            ELSE :na"
-                 "       END AS f_warranty,"
-                 "       CASE WHEN (itemsite_perishable) THEN (itemloc_expiration <= CURRENT_DATE)"
-                 "            ELSE FALSE"
-                 "       END AS expired,"
-                 "       CASE WHEN (itemsite_warrpurc) THEN (itemloc_warrpurc <= CURRENT_DATE)"
-                 "            ELSE FALSE"
-                 "       END AS warrantyexp,"
-                 "       formatQty(itemloc_qty) AS f_qoh "
-                 "FROM itemsite, warehous,"
-                 "     itemloc LEFT OUTER JOIN location ON (itemloc_location_id=location_id) "
-                 "WHERE ( ( (itemsite_loccntrl) OR (itemsite_controlmethod IN ('L', 'S')) )"
-                 " AND (itemloc_itemsite_id=itemsite_id)"
-                 " AND (itemsite_warehous_id=warehous_id)"
-                 " AND (itemsite_item_id=:item_id)" );
-
-    if (_warehouse->isSelected())
-      sql += " AND (itemsite_warehous_id=:warehous_id)";
-
-    sql += ") "
-           "UNION SELECT itemsite_id, 2 AS type, warehous_code,"
-           "             :na AS locationname,"
-           "             :na AS netable,"
-           "             :na AS lotserial,"
-           "             :na AS f_expiration,"
-           "             :na AS f_warranty,"
-           "             FALSE  AS expired,"
-           "             FALSE  AS warrantyexp,"
-           "             formatQty(itemsite_qtyonhand) AS f_qoh "
-           "FROM itemsite, warehous "
-           "WHERE ( (NOT itemsite_loccntrl)"
-           " AND (itemsite_controlmethod NOT IN ('L', 'S'))"
-           " AND (itemsite_warehous_id=warehous_id)"
-           " AND (itemsite_item_id=:item_id)";
-
-    if (_warehouse->isSelected())
-      sql += " AND (itemsite_warehous_id=:warehous_id)";
-
-    sql += ") "
-           "ORDER BY warehous_code, locationname, lotserial;";
-
-    q.prepare(sql);
-    q.bindValue(":yes", tr("Yes"));
-    q.bindValue(":no", tr("No"));
-    q.bindValue(":na", tr("N/A"));
-    q.bindValue(":undefined", tr("Undefined"));
-    q.bindValue(":item_id", _item->id());
-    _warehouse->bindValue(q);
-    q.exec();
-
-    _itemloc->clear();
-    XTreeWidgetItem *last = 0;
-    while (q.next())
-    {
-      last = new XTreeWidgetItem( _itemloc, last,
-				 q.value("itemloc_id").toInt(), q.value("type").toInt(),
-				 q.value("warehous_code"), q.value("locationname"),
-				 q.value("netable"), q.value("lotserial"),
-                                 q.value("f_expiration"), q.value("f_warranty"),q.value("f_qoh") );
-      if (q.value("expired").toBool() || q.value("warrantyexp").toBool())
-        last->setTextColor("red");
-    }
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
-  else
-    _itemloc->clear();
 }
-

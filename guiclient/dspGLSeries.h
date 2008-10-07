@@ -71,6 +71,8 @@ public:
     dspGLSeries(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspGLSeries();
 
+    virtual bool setParams(ParameterList &);
+
 public slots:
     virtual enum SetResponse set(const ParameterList &);
     virtual void sPopulateMenu( QMenu * );

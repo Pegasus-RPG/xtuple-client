@@ -57,30 +57,22 @@
 
 #include "dspIndentedWhereUsed.h"
 
-#include <QVariant>
-//#include <QStatusBar>
-#include <QWorkspace>
-#include <QMessageBox>
 #include <QMenu>
+#include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
+
+#include <metasql.h>
 #include <openreports.h>
-#include <QStack>
+
 #include "dspInventoryHistoryByItem.h"
 
-/*
- *  Constructs a dspIndentedWhereUsed as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspIndentedWhereUsed::dspIndentedWhereUsed(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_bomitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
@@ -90,31 +82,23 @@ dspIndentedWhereUsed::dspIndentedWhereUsed(QWidget* parent, const char* name, Qt
     _item->setType(ItemLineEdit::cGeneralComponents | ItemLineEdit::cActive);
 
   _bomitem->setRootIsDecorated(TRUE);
-  _bomitem->addColumn(tr("Seq. #"),        80,           Qt::AlignCenter );
-  _bomitem->addColumn(tr("Item Number"),   _itemColumn,  Qt::AlignLeft   );
-  _bomitem->addColumn(tr("Description"),   -1,           Qt::AlignLeft   );
-  _bomitem->addColumn(tr("UOM"),           _uomColumn,   Qt::AlignCenter );
-  _bomitem->addColumn(tr("Ext. Qty. Per"), _qtyColumn,   Qt::AlignRight  );
-  _bomitem->addColumn(tr("Scrap %"),       _prcntColumn, Qt::AlignRight  );
-  _bomitem->addColumn(tr("Effective"),     _dateColumn,  Qt::AlignCenter );
-  _bomitem->addColumn(tr("Expires"),       _dateColumn,  Qt::AlignCenter );
-  _bomitem->setIndentation(10);
+  _bomitem->addColumn(tr("Seq. #"),               80, Qt::AlignRight, true, "bomwork_seqnumber");
+  _bomitem->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft,  true, "item_number");
+  _bomitem->addColumn(tr("Description"),          -1, Qt::AlignLeft,  true, "descrip");
+  _bomitem->addColumn(tr("UOM"),          _uomColumn, Qt::AlignCenter,true, "uom_name");
+  _bomitem->addColumn(tr("Ext. Qty. Per"),_qtyColumn, Qt::AlignRight, true, "bomwork_qtyper");
+  _bomitem->addColumn(tr("Scrap %"),    _prcntColumn, Qt::AlignRight, true, "bomwork_scrap");
+  _bomitem->addColumn(tr("Effective"),   _dateColumn, Qt::AlignCenter,true, "bomwork_effective");
+  _bomitem->addColumn(tr("Expires"),     _dateColumn, Qt::AlignCenter,true, "bomwork_expires");
 
   _item->setFocus();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspIndentedWhereUsed::~dspIndentedWhereUsed()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspIndentedWhereUsed::languageChange()
 {
   retranslateUi(this);
@@ -138,32 +122,40 @@ enum SetResponse dspIndentedWhereUsed::set(const ParameterList &pParams)
   return NoError;
 }
 
-void dspIndentedWhereUsed::sPrint()
+bool dspIndentedWhereUsed::setParams(ParameterList &params)
 {
   if (!_item->isValid())
   {
     QMessageBox::warning( this, tr("Enter a Valid Item Number"),
-                          tr("You must enter a valid Item Number for this report.") );
+                          tr("You must enter a valid Item Number.") );
     _item->setFocus();
-    return;
+    return false;
   }
 
+  params.append("item_id", _item->id());
+
+  if(_showExpired->isChecked())
+    params.append("showExpired");
+
+  if(_showFuture->isChecked())
+    params.append("showFuture");
+
+  return true;
+}
+
+void dspIndentedWhereUsed::sPrint()
+{
   q.prepare("SELECT indentedWhereUsed(:item_id) AS result;");
   q.bindValue(":item_id", _item->id());
   q.exec();
   if (q.first())
   {
-    int worksetid = q.value("result").toInt();
-
     ParameterList params;
-    params.append("item_id", _item->id());
+    if (! setParams(params))
+      return;
+
+    int worksetid = q.value("result").toInt();
     params.append("bomworkset_id", worksetid);
-
-    if(_showExpired->isChecked())
-      params.append("showExpired");
-
-    if(_showFuture->isChecked())
-      params.append("showFuture");
 
     orReport report("IndentedWhereUsed", params);
     if (report.isValid())
@@ -202,86 +194,54 @@ void dspIndentedWhereUsed::sPopulateMenu(QMenu *menu)
 
 void dspIndentedWhereUsed::sFillList()
 {
-  _bomitem->clear();
-
-  if (_item->isValid())
+  q.prepare("SELECT indentedWhereUsed(:item_id) AS workset_id;");
+  q.bindValue(":item_id", _item->id());
+  q.exec();
+  if (q.first())
   {
-    q.prepare("SELECT indentedWhereUsed(:item_id) AS workset_id;");
-    q.bindValue(":item_id", _item->id());
-    q.exec();
-    if (q.first())
+    ParameterList params;
+    if (! setParams(params))
+      return;
+
+    int worksetid = q.value("workset_id").toInt();
+    params.append("bomwork_set_id", worksetid);
+
+    MetaSQLQuery mql("SELECT bomwork_id, item_id, bomwork_parent_id,"
+                     "       bomworkitemsequence(bomwork_id) AS seqord, "
+                     "       bomwork_seqnumber, item_number, uom_name,"
+                     "       (item_descrip1 || ' ' || item_descrip2) AS descrip,"
+                     "       bomwork_qtyper,"
+                     "       bomwork_scrap,"
+                     "       bomwork_effective,"
+                     "       bomwork_expires,"
+                     "       'qtyper' AS bomwork_qtyper_xtnumericrole,"
+                     "       'scrap' AS bomwork_scrap_xtnumericrole,"
+                     "       CASE WHEN COALESCE(bomwork_effective,startOfTime())=startOfTime() THEN 'Always' END AS bomwork_effective_qtdisplayrole,"
+                     "       CASE WHEN COALESCE(bomwork_expires,endOfTime())=endOfTime() THEN 'Never' END AS bomwork_expires_qtdisplayrole,"
+                     "       bomwork_level - 1 AS xtindentrole "
+                     "FROM bomwork, item, uom "
+                     "WHERE ( (bomwork_item_id=item_id)"
+                     " AND (item_inv_uom_id=uom_id)"
+                     " AND (bomwork_set_id=<? value(\"bomwork_set_id\") ?>)"
+                     "<? if exists(\"showExpired\") ?>"
+                     " AND (bomwork_expires > CURRENT_DATE)"
+                     "<? endif ?>"
+                     "<? if exists(\"showFuture\") ?>"
+                     " AND (bomwork_effective <= CURRENT_DATE)"
+                     "<? endif ?>"
+                     ") "
+                     "ORDER BY seqord;");
+    q = mql.toQuery(params);
+    _bomitem->populate(q, true);
+    if (q.lastError().type() != QSqlError::None)
     {
-      int worksetid = q.value("workset_id").toInt();
-
-      QString sql( "SELECT bomwork_level, bomwork_id, item_id, bomwork_parent_id,"
-		           "       bomworkitemsequence(bomwork_id) as seqord, "
-                   "       bomwork_seqnumber, item_number, uom_name,"
-                   "       (item_descrip1 || ' ' || item_descrip2) AS itemdescription,"
-                   "       formatQtyPer(bomwork_qtyper) AS qtyper,"
-                   "       formatScrap(bomwork_scrap) AS scrap,"
-                   "       formatDate(bomwork_effective, 'Always') AS effective,"
-                   "       formatDate(bomwork_expires, 'Never') AS expires "
-                   "FROM bomwork, item, uom "
-                   "WHERE ( (bomwork_item_id=item_id)"
-                   " AND (item_inv_uom_id=uom_id)"
-                   " AND (bomwork_set_id=:bomwork_set_id)" );
-
-      if (!_showExpired->isChecked())
-        sql += " AND (bomwork_expires > CURRENT_DATE)";
-
-      if (!_showFuture->isChecked())
-        sql += " AND (bomwork_effective <= CURRENT_DATE)";
-
-      sql += ") "
-             "ORDER BY seqord;";
-
-      q.prepare(sql);
-      q.bindValue(":bomwork_set_id", worksetid);
-      q.exec();
-
-      QStack<XTreeWidgetItem*> parent;
-      XTreeWidgetItem *last = 0;
-      int level = 0;
-      while(q.next())
-      {
-        // If the level this item is on is lower than the last level we just did then we need
-        // to pop the stack a number of times till we are equal.
-        while(q.value("bomwork_level").toInt() < level)
-        {
-          level--;
-          last = parent.pop();
-        }
-
-        // If the level this item is on is higher than the last level we need to push the last
-        // item onto the stack a number of times till we are equal. (Should only ever be 1.)
-        while(q.value("bomwork_level").toInt() > level)
-        {
-          level++;
-          parent.push(last);
-          last = 0;
-        }
-
-        // If there is an item in the stack use that as the parameter to the new xlistviewitem
-        // otherwise we'll just use the xlistview _layout
-        if(!parent.isEmpty() && parent.top())
-          last = new XTreeWidgetItem(parent.top(), last, q.value("bomwork_id").toInt(), q.value("item_id").toInt(),
-                             q.value("bomwork_seqnumber"), q.value("item_number"),
-                             q.value("itemdescription"), q.value("uom_name"),
-                             q.value("qtyper"), q.value("scrap"),
-                             q.value("effective"), q.value("expires") );
-        else
-          last = new XTreeWidgetItem(_bomitem, last, q.value("bomwork_id").toInt(), q.value("item_id").toInt(),
-                             q.value("bomwork_seqnumber"), q.value("item_number"),
-                             q.value("itemdescription"), q.value("uom_name"),
-                             q.value("qtyper"), q.value("scrap"),
-                             q.value("effective"), q.value("expires") );
-
-      }
-      _bomitem->expandAll();
-
-      q.prepare("SELECT deleteBOMWorkset(:workset_id) AS result;");
-      q.bindValue(":bomwork_set_id", worksetid);
-      q.exec();
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
     }
+    _bomitem->expandAll();
+
+    q.prepare("SELECT deleteBOMWorkset(:workset_id) AS result;");
+    q.bindValue(":bomwork_set_id", worksetid);
+    q.exec();
   }
 }

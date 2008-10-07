@@ -59,8 +59,10 @@
 
 #include <QMenu>
 #include <QMessageBox>
+#include <QSqlError>
 #include <QVariant>
 
+#include <metasql.h>
 #include <openreports.h>
 
 #include "createCountTagsByItem.h"
@@ -71,6 +73,7 @@
 #include "dspSubstituteAvailabilityByItem.h"
 #include "enterMiscCount.h"
 #include "inputManager.h"
+#include "mqlutil.h"
 #include "purchaseOrder.h"
 #include "purchaseRequest.h"
 #include "workOrder.h"
@@ -79,8 +82,6 @@ dspInventoryAvailabilityByItem::dspInventoryAvailabilityByItem(QWidget* parent, 
     : XWidget(parent, name, fl)
 {
   setupUi(this);
-
-//  (void)statusBar();
 
   _showByGroupInt = new QButtonGroup(this);
   _showByGroupInt->addButton(_leadTime);
@@ -96,15 +97,15 @@ dspInventoryAvailabilityByItem::dspInventoryAvailabilityByItem(QWidget* parent, 
   omfgThis->inputManager()->notify(cBCItem, this, _item, SLOT(setItemid(int)));
   omfgThis->inputManager()->notify(cBCItemSite, this, _item, SLOT(setItemsiteid(int)));
 
-  _availability->addColumn(tr("Site"),         -1,         Qt::AlignCenter );
-  _availability->addColumn(tr("LT"),           _whsColumn, Qt::AlignCenter );
-  _availability->addColumn(tr("QOH"),          _qtyColumn, Qt::AlignRight  );
-  _availability->addColumn(tr("Allocated"),    _qtyColumn, Qt::AlignRight  );
-  _availability->addColumn(tr("Unallocated"),  _qtyColumn, Qt::AlignRight  );
-  _availability->addColumn(tr("On Order"),     _qtyColumn, Qt::AlignRight  );
-  _availability->addColumn(tr("Reorder Lvl."), _qtyColumn, Qt::AlignRight  );
-  _availability->addColumn(tr("OUT Level"),    _qtyColumn, Qt::AlignRight  );
-  _availability->addColumn(tr("Available"),    _qtyColumn, Qt::AlignRight  );
+  _availability->addColumn(tr("Site"),         -1,         Qt::AlignCenter,true, "warehous_code");
+  _availability->addColumn(tr("LT"),           _whsColumn, Qt::AlignCenter,true, "itemsite_leadtime");
+  _availability->addColumn(tr("QOH"),          _qtyColumn, Qt::AlignRight, true, "qoh");
+  _availability->addColumn(tr("Allocated"),    _qtyColumn, Qt::AlignRight, true, "allocated");
+  _availability->addColumn(tr("Unallocated"),  _qtyColumn, Qt::AlignRight, true, "unallocated");
+  _availability->addColumn(tr("On Order"),     _qtyColumn, Qt::AlignRight, true, "ordered");
+  _availability->addColumn(tr("Reorder Lvl."), _qtyColumn, Qt::AlignRight, true, "reorderlevel");
+  _availability->addColumn(tr("OUT Level"),    _qtyColumn, Qt::AlignRight, true, "outlevel");
+  _availability->addColumn(tr("Available"),    _qtyColumn, Qt::AlignRight, true, "available");
 
   connect(omfgThis, SIGNAL(workOrdersUpdated(int, bool)), this, SLOT(sFillList()));
 
@@ -174,17 +175,26 @@ enum SetResponse dspInventoryAvailabilityByItem::set(const ParameterList &pParam
   return NoError;
 }
 
-void dspInventoryAvailabilityByItem::sPrint()
+bool dspInventoryAvailabilityByItem::setParams(ParameterList &params)
 {
   if (!_item->isValid())
   {
-    QMessageBox::warning( this, tr("Invalid Data"),
-                      tr("You must enter a valid Item Number for this report.") );
+    QMessageBox::warning(this, tr("Invalid Data"),
+                         tr("<p>You must enter a valid Item Number."));
     _item->setFocus();
-    return;
+    return false;
   }
 
-  ParameterList params;
+  if ((_byDate->isChecked()) && (!_date->isValid()))
+  {
+    QMessageBox::warning(this, tr("Invalid Data"),
+                         tr("<p>You have chosen to view Inventory "
+                            "Availability as of a given date but have not "
+                            "indicated the date. Please enter a valid date."));
+    _date->setFocus();
+    return false;
+  }
+
   params.append("item_id", _item->id());
   _warehouse->appendValue(params);
 
@@ -201,7 +211,6 @@ void dspInventoryAvailabilityByItem::sPrint()
     params.append("endDate", _endDate->date());
   }
 
-
   if(_showReorder->isChecked())
     params.append("showReorder");
 
@@ -210,6 +219,15 @@ void dspInventoryAvailabilityByItem::sPrint()
 
   if(_showShortages->isChecked())
     params.append("showShortages");
+
+  return true;
+}
+
+void dspInventoryAvailabilityByItem::sPrint()
+{
+  ParameterList params;
+  if (! setParams(params))
+    return;
 
   orReport report("InventoryAvailabilityByItem", params);
   if (report.isValid())
@@ -423,105 +441,15 @@ void dspInventoryAvailabilityByItem::sHandleShowReorder(bool pValue)
 
 void dspInventoryAvailabilityByItem::sFillList()
 {
-  _availability->clear();
-
-  if ((_byDate->isChecked()) && (!_date->isValid()))
-  {
-    QMessageBox::critical( this, tr("Enter Valid Date"),
-                           tr( "You have choosen to view Inventory Availabilty as of a given date but have not.\n"
-                               "indicated the date.  Please enter a valid date." ) );
-    _date->setFocus();
+  ParameterList params;
+  if (! setParams(params))
     return;
-  }
-
-  QString sql( "SELECT itemsite_id, itemtype, warehous_id, warehous_code, itemsite_leadtime,"
-               "       formatQty(qoh) AS f_qoh,"
-               "       formatQty(noNeg(qoh - allocated)) AS f_unallocated,"
-               "       formatQty(allocated) AS f_allocated,"
-               "       formatQty(ordered) AS f_ordered,"
-               "       formatQty(reorderlevel) AS f_reorderlevel,"
-               "       formatQty(outlevel) AS f_outlevel,"
-               "       (qoh - allocated + ordered) AS available,"
-               "       formatQty(qoh - allocated + ordered) AS f_available,"
-               "       ((qoh - allocated + ordered) < 0) AS stockout,"
-               "       ((qoh - allocated + ordered) <= reorderlevel) AS reorder "
-               "FROM ( SELECT itemsite_id,"
-               "              CASE WHEN (item_type IN ('P', 'O')) THEN 1"
-               "                   WHEN (item_type IN ('M')) THEN 2"
-               "                   ELSE 0"
-               "              END AS itemtype,"
-               "              warehous_id, warehous_code, itemsite_leadtime,"
-               "              CASE WHEN(itemsite_useparams) THEN itemsite_reorderlevel ELSE 0.0 END AS reorderlevel,"
-               "              CASE WHEN(itemsite_useparams) THEN itemsite_ordertoqty ELSE 0.0 END AS outlevel,"
-               "              itemsite_qtyonhand AS qoh," );
-
-  if (_leadTime->isChecked())
-    sql += " qtyAllocated(itemsite_id, itemsite_leadtime) AS allocated,"
-           " qtyOrdered(itemsite_id, itemsite_leadtime) AS ordered ";
-
-  else if (_byDays->isChecked())
-    sql += " qtyAllocated(itemsite_id, :days) AS allocated,"
-           " qtyOrdered(itemsite_id, :days) AS ordered ";
-
-  else if (_byDate->isChecked())
-    sql += " qtyAllocated(itemsite_id, (:date - CURRENT_DATE)) AS allocated,"
-           " qtyOrdered(itemsite_id, (:date - CURRENT_DATE)) AS ordered ";
-
-  else if (_byDates->isChecked())
-    sql += " qtyAllocated(itemsite_id, :startDate, :endDate) AS allocated,"
-           " qtyOrdered(itemsite_id, :startDate, :endDate) AS ordered ";
-
-
-   sql += "FROM itemsite, warehous, item "
-          "WHERE ( (itemsite_active)"
-          " AND (itemsite_warehous_id=warehous_id)"
-          " AND (itemsite_item_id=item_id)"
-          " AND (item_id=:item_id)";
-
-  if (_warehouse->isSelected())
-    sql += " AND (warehous_id=:warehous_id)";
-
-  sql += ") ) AS data ";
-
-  if (_showReorder->isChecked())
+  MetaSQLQuery mql = mqlLoad("inventoryAvailability", "general");
+  q = mql.toQuery(params);
+  _availability->populate(q, true);
+  if (q.lastError().type() != QSqlError::None)
   {
-    sql += "WHERE ( ((qoh - allocated + ordered) <= reorderlevel) ";
-
-    if (_ignoreReorderAtZero->isChecked())
-      sql += " AND (NOT ( ((qoh - allocated + ordered) = 0) AND (reorderlevel = 0)) ) ) ";
-    else
-      sql += ") ";
-  }
-  else if (_showShortages->isChecked())
-    sql += "WHERE ((qoh - allocated + ordered) < 0) ";
-
-  sql += "ORDER BY warehous_code DESC;";
-
-  q.prepare(sql);
-  q.bindValue(":days", _days->value());
-  q.bindValue(":date", _date->date());
-  q.bindValue(":startDate", _startDate->date());
-  q.bindValue(":endDate", _endDate->date());
-  q.bindValue(":item_id", _item->id());
-  _warehouse->bindValue(q);
-  q.exec();
-  XTreeWidgetItem * last = 0;
-  while (q.next())
-  {
-    last = new XTreeWidgetItem( _availability, last,
-                                q.value("itemsite_id").toInt(), q.value("itemtype").toInt(),
-                                q.value("warehous_code"), q.value("itemsite_leadtime"),
-                                q.value("f_qoh"), q.value("f_allocated"),
-                                q.value("f_unallocated"), q.value("f_ordered"),
-                                q.value("f_reorderlevel"), q.value("f_outlevel"),
-                                q.value("f_available") );
-
-    if (_byDates->isChecked())
-      last->setTextColor(2, "grey");
-
-    if (q.value("stockout").toBool())
-      last->setTextColor(8, "red");
-    else if (q.value("reorder").toBool())
-      last->setTextColor(8, "orange");
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
 }

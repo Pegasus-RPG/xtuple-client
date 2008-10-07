@@ -58,6 +58,7 @@
 #include "dspInvalidBillsOfMaterials.h"
 
 #include <QMenu>
+#include <QSqlError>
 #include <QVariant>
 
 #include <parameter.h>
@@ -74,12 +75,12 @@ dspInvalidBillsOfMaterials::dspInvalidBillsOfMaterials(QWidget* parent, const ch
   connect(_query,  SIGNAL(clicked()),     this, SLOT(sFillList()));
   connect(_update, SIGNAL(toggled(bool)), this, SLOT(sHandleUpdate()));
 
-  _exceptions->addColumn("componentItemid",                 0, Qt::AlignCenter);
-  _exceptions->addColumn("componentSiteId",                 0, Qt::AlignCenter);
-  _exceptions->addColumn(tr("Site"),               _whsColumn, Qt::AlignCenter);
-  _exceptions->addColumn(tr("Parent Item #"),     _itemColumn, Qt::AlignLeft  );
-  _exceptions->addColumn(tr("Component Item #"),  _itemColumn, Qt::AlignLeft  );
-  _exceptions->addColumn(tr("Component Item Description"), -1, Qt::AlignLeft  );
+  _exceptions->addColumn("componentItemid",                 0, Qt::AlignCenter,true, "pitem_id");
+  _exceptions->addColumn("componentSiteId",                 0, Qt::AlignCenter,true, "citem_id");
+  _exceptions->addColumn(tr("Site"),               _whsColumn, Qt::AlignCenter,true, "warehous_code");
+  _exceptions->addColumn(tr("Parent Item #"),     _itemColumn, Qt::AlignLeft,  true, "parentitem");
+  _exceptions->addColumn(tr("Component Item #"),  _itemColumn, Qt::AlignLeft,  true, "componentitem");
+  _exceptions->addColumn(tr("Component Item Description"), -1, Qt::AlignLeft,  true, "descrip");
 
   if (_preferences->boolean("XCheckBox/forgetful"))
     _update->setChecked(true);
@@ -139,9 +140,12 @@ void dspInvalidBillsOfMaterials::sHandleUpdate()
 
 void dspInvalidBillsOfMaterials::sFillList()
 {
-  QString sql( "SELECT itemsite_id, parent.item_id, component.item_id, warehous_id, warehous_code,"
-               "       parent.item_number AS parentitem,"
-               "       component.item_number AS componentitem, (component.item_descrip1 || ' ' || component.item_descrip2) "
+  QString sql("SELECT itemsite_id, parent.item_id AS pitem_id,"
+              "        component.item_id AS citem_id,"
+              "        warehous_id, warehous_code,"
+              "       parent.item_number AS parentitem,"
+              "       component.item_number AS componentitem,"
+              "        (component.item_descrip1 || ' ' || component.item_descrip2) AS descrip "
                "FROM bomitem, itemsite, item AS parent, item AS component, warehous "
                "WHERE ( (bomitem_parent_item_id=parent.item_id)"
                " AND (bomitem_item_id=component.item_id)"
@@ -167,6 +171,11 @@ void dspInvalidBillsOfMaterials::sFillList()
   q.exec();
 
   _exceptions->populate(q, TRUE);                               
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void dspInvalidBillsOfMaterials::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)

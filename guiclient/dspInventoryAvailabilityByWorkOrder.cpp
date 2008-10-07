@@ -57,68 +57,56 @@
 
 #include "dspInventoryAvailabilityByWorkOrder.h"
 
-#include <QVariant>
 #include <QMenu>
 #include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
+
+#include <metasql.h>
 #include <openreports.h>
-#include "inputManager.h"
+
+#include "createCountTagsByItem.h"
 #include "dspAllocations.h"
 #include "dspOrders.h"
 #include "dspRunningAvailability.h"
-#include "workOrder.h"
-#include "purchaseOrder.h"
-#include "createCountTagsByItem.h"
 #include "dspSubstituteAvailabilityByItem.h"
+#include "inputManager.h"
+#include "purchaseOrder.h"
+#include "workOrder.h"
 
-/*
- *  Constructs a dspInventoryAvailabilityByWorkOrder as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspInventoryAvailabilityByWorkOrder::dspInventoryAvailabilityByWorkOrder(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
   connect(_wo, SIGNAL(newId(int)), this, SLOT(sFillList()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_womatl, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_onlyShowShortages, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _wo->setType(cWoExploded | cWoIssued | cWoReleased);
 
   omfgThis->inputManager()->notify(cBCWorkOrder, this, _wo, SLOT(setId(int)));
 
-  _womatl->addColumn("itemType",          0,           Qt::AlignCenter );
-  _womatl->addColumn(tr("Item Number"),   _itemColumn, Qt::AlignLeft   );
-  _womatl->addColumn(tr("Description"),   -1,          Qt::AlignLeft   );
-  _womatl->addColumn(tr("UOM"),           _uomColumn,  Qt::AlignCenter );
-  _womatl->addColumn(tr("QOH"),           _qtyColumn,  Qt::AlignRight  );
-  _womatl->addColumn(tr("This Alloc."),   _qtyColumn,  Qt::AlignRight  );
-  _womatl->addColumn(tr("Total Alloc."),  _qtyColumn,  Qt::AlignRight  );
-  _womatl->addColumn(tr("Orders"),        _qtyColumn,  Qt::AlignRight  );
-  _womatl->addColumn(tr("This Avail."),   _qtyColumn,  Qt::AlignRight  );
-  _womatl->addColumn(tr("Total Avail."),  _qtyColumn,  Qt::AlignRight  );
+  _womatl->addColumn("itemType",                 0, Qt::AlignCenter,false,"type");
+  _womatl->addColumn(tr("Item Number"),_itemColumn, Qt::AlignLeft,  true, "item_number");
+  _womatl->addColumn(tr("Description"),         -1, Qt::AlignLeft,  true, "descrip");
+  _womatl->addColumn(tr("UOM"),         _uomColumn, Qt::AlignCenter,true, "uom_name");
+  _womatl->addColumn(tr("QOH"),         _qtyColumn, Qt::AlignRight, true, "qoh");
+  _womatl->addColumn(tr("This Alloc."), _qtyColumn, Qt::AlignRight, true, "wobalance");
+  _womatl->addColumn(tr("Total Alloc."),_qtyColumn, Qt::AlignRight, true, "allocated");
+  _womatl->addColumn(tr("Orders"),      _qtyColumn, Qt::AlignRight, true, "ordered");
+  _womatl->addColumn(tr("This Avail."), _qtyColumn, Qt::AlignRight, true, "woavail");
+  _womatl->addColumn(tr("Total Avail."),_qtyColumn, Qt::AlignRight, true, "totalavail");
 
   connect(omfgThis, SIGNAL(workOrdersUpdated(int, bool)), this, SLOT(sFillList()));
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspInventoryAvailabilityByWorkOrder::~dspInventoryAvailabilityByWorkOrder()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspInventoryAvailabilityByWorkOrder::languageChange()
 {
   retranslateUi(this);
@@ -144,21 +132,29 @@ enum SetResponse dspInventoryAvailabilityByWorkOrder::set(const ParameterList &p
   return NoError;
 }
 
-void dspInventoryAvailabilityByWorkOrder::sPrint()
+bool dspInventoryAvailabilityByWorkOrder::setParams(ParameterList &params)
 {
   if(!_wo->isValid())
   {
     QMessageBox::warning(this, tr("Invalid W/O Selected"),
-      tr("You must specify a valid Work Order Number.") );
-    return;
+                         tr("<p>You must specify a valid Work Order Number.") );
+    _wo->setFocus();
+    return false;
   }
-
-  ParameterList params;
 
   params.append("wo_id", _wo->id());
 
   if(_onlyShowShortages->isChecked())
     params.append("onlyShowShortages");
+
+  return true;
+}
+
+void dspInventoryAvailabilityByWorkOrder::sPrint()
+{
+  ParameterList params;
+  if (! setParams(params))
+    return;
 
   orReport report("WOMaterialAvailabilityByWorkOrder", params);
   if (report.isValid())
@@ -309,74 +305,61 @@ void dspInventoryAvailabilityByWorkOrder::sIssueCountTag()
 
 void dspInventoryAvailabilityByWorkOrder::sFillList()
 {
-  _womatl->clear();
+  ParameterList params;
+  if (! setParams(params))
+    return;
 
-  if (_wo->isValid())
+  MetaSQLQuery mql("SELECT itemsite_id, womatl_id, type,"
+               "       item_number, item_description, uom_name, item_picklist,"
+               "       qoh," 
+               "       wobalance,"
+               "       allocated,"
+               "       ordered,"
+               "       (qoh + ordered - wobalance) AS woavail,"
+               "       (qoh + ordered - allocated) AS totalavail,"
+               "       reorderlevel,"
+               "       'qty' AS qoh_xtnumericrole,"
+               "       'qty' AS wobalance_xtnumericrole,"
+               "       'qty' AS allocated_xtnumericrole,"
+               "       'qty' AS ordered_xtnumericrole,"
+               "       'qty' AS woavail_xtnumericrole,"
+               "       'qty' AS totalavail_xtnumericrole,"
+               "       CASE WHEN (qoh < 0) THEN 'error'"
+               "            WHEN (qoh < reorderlevel) THEN 'warning'"
+               "       END AS qoh_qtforegroundrole,"
+               "       CASE WHEN ((qoh + ordered - wobalance) < 0) THEN 'error'"
+               "            WHEN ((qoh + ordered - wobalance) < reorderlevel) THEN 'warning'"
+               "       END AS woavail_qtforegroundrole,"
+               "       CASE WHEN ((qoh + ordered - allocated) < 0) THEN 'error'"
+               "            WHEN ((qoh + ordered - allocated) < reorderlevel) THEN 'warning'"
+               "       END AS totalavail_qtforegroundrole "
+               "FROM ( SELECT itemsite_id, womatl_id,"
+               "              CASE WHEN itemsite_supply THEN item_type"
+               "                   ELSE ''"
+               "              END AS type,"
+               "              item_number, (item_descrip1 || ' ' || item_descrip2) AS item_description,"
+               "              uom_name, item_picklist,"
+               "              noNeg(itemsite_qtyonhand) AS qoh,"
+               "              noNeg(itemuomtouom(itemsite_item_id, womatl_uom_id, NULL, womatl_qtyreq - womatl_qtyiss)) AS wobalance,"
+               "              qtyAllocated(itemsite_id, womatl_duedate) AS allocated,"
+               "              qtyOrdered(itemsite_id, womatl_duedate) AS ordered,"
+               "              CASE WHEN(itemsite_useparams) THEN itemsite_reorderlevel ELSE 0.0 END AS reorderlevel"
+               "       FROM wo, womatl, itemsite, item, uom "
+               "       WHERE ( (womatl_wo_id=wo_id)"
+               "        AND (womatl_itemsite_id=itemsite_id)"
+               "        AND (itemsite_item_id=item_id)"
+               "        AND (item_inv_uom_id=uom_id)"
+               "        AND (womatl_wo_id=<? value(\"wo_id\") ?>)) ) AS data "
+               "<? if exists(\"onlyShowShortages\") ?>"
+               "WHERE ( ((qoh + ordered - allocated) < 0)"
+               " OR ((qoh + ordered - wobalance) < 0) ) "
+               "<? endif ?>"
+               "ORDER BY item_number;");
+  q = mql.toQuery(params);
+  _womatl->populate(q, true);
+  if (q.lastError().type() != QSqlError::None)
   {
-    QString sql( "SELECT itemsite_id, womatl_id, type,"
-                 "       item_number, item_description, uom_name, item_picklist,"
-                 "       qoh, formatQty(qoh) AS f_qoh,"
-                 "       formatQty(wobalance) AS f_wobalance,"
-                 "       formatQty(allocated) AS f_allocated,"
-                 "       ordered, formatQty(ordered) AS f_ordered,"
-                 "       (qoh + ordered - wobalance) AS woavail,"
-                 "       formatQty(qoh + ordered - wobalance) AS f_woavail,"
-                 "       (qoh + ordered - allocated) AS totalavail,"
-                 "       formatQty(qoh + ordered - allocated) AS f_totalavail,"
-                 "       reorderlevel "
-                 "FROM ( SELECT itemsite_id, womatl_id,"
-                 "              CASE WHEN itemsite_supply THEN item_type"
-                 "                   ELSE ''"
-                 "              END AS type,"
-                 "              item_number, (item_descrip1 || ' ' || item_descrip2) AS item_description,"
-                 "              uom_name, item_picklist,"
-                 "              noNeg(itemsite_qtyonhand) AS qoh,"
-                 "              noNeg(itemuomtouom(itemsite_item_id, womatl_uom_id, NULL, womatl_qtyreq - womatl_qtyiss)) AS wobalance,"
-                 "              qtyAllocated(itemsite_id, womatl_duedate) AS allocated,"
-                 "              qtyOrdered(itemsite_id, womatl_duedate) AS ordered,"
-                 "              CASE WHEN(itemsite_useparams) THEN itemsite_reorderlevel ELSE 0.0 END AS reorderlevel"
-                 "       FROM wo, womatl, itemsite, item, uom "
-                 "       WHERE ( (womatl_wo_id=wo_id)"
-                 "        AND (womatl_itemsite_id=itemsite_id)"
-                 "        AND (itemsite_item_id=item_id)"
-                 "        AND (item_inv_uom_id=uom_id)"
-                 "        AND (womatl_wo_id=:wo_id)) ) AS data " );
-
-    if (_onlyShowShortages->isChecked())
-      sql += "WHERE ( ((qoh + ordered - allocated) < 0)"
-             " OR ((qoh + ordered - wobalance) < 0) ) ";
-
-    sql += "ORDER BY item_number;";
-
-    q.prepare(sql);
-    q.bindValue(":wo_id", _wo->id());
-    q.exec();
-    XTreeWidgetItem * last = 0;
-    while (q.next())
-    {
-      last = new XTreeWidgetItem( _womatl, last,
-                                  q.value("itemsite_id").toInt(), q.value("womatl_id").toInt(),
-                                  q.value("type"), q.value("item_number"),
-                                  q.value("item_description"), q.value("uom_name"),
-                                  q.value("f_qoh"), q.value("f_wobalance"),
-                                  q.value("f_allocated"), q.value("f_ordered"),
-                                  q.value("f_woavail"), q.value("f_totalavail") );
-
-      if (q.value("qoh").toDouble() < 0)
-        last->setTextColor(4, "red");
-      else if (q.value("qoh").toDouble() < q.value("reorderlevel").toDouble())
-        last->setTextColor(4, "orange");
-
-      if (q.value("woavail").toDouble() < 0.0)
-        last->setTextColor(8, "red");
-      else if (q.value("woavail").toDouble() <= q.value("reorderlevel").toDouble())
-        last->setTextColor(8, "orange");
-
-      if (q.value("totalavail").toDouble() < 0.0)
-        last->setTextColor(9, "red");
-      else if (q.value("totalavail").toDouble() <= q.value("reorderlevel").toDouble())
-        last->setTextColor(9, "orange");
-    }
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
 }
-

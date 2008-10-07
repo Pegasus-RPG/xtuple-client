@@ -72,6 +72,8 @@ public:
     dspInvoiceRegister(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspInvoiceRegister();
 
+    virtual bool setParams(ParameterList &params);
+
 public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
     virtual void sPopulateMenu( QMenu * );

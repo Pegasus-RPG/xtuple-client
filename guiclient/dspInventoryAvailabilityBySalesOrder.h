@@ -71,6 +71,8 @@ class dspInventoryAvailabilityBySalesOrder : public XWidget, public Ui::dspInven
 public:
     dspInventoryAvailabilityBySalesOrder(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspInventoryAvailabilityBySalesOrder();
+    
+    virtual bool setParams(ParameterList &);
 
 public slots:
     virtual SetResponse set( const ParameterList & pParams );

@@ -57,59 +57,42 @@
 
 #include "dspGLSeries.h"
 
-#include <QVariant>
-//#include <QStatusBar>
-#include <QMessageBox>
 #include <QMenu>
+#include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
 
+#include <metasql.h>
 #include <openreports.h>
 #include <parameter.h>
 
 #include "reverseGLSeries.h"
 
-/*
- *  Constructs a dspGLSeries as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspGLSeries::dspGLSeries(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_gltrans, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-  connect(_selectedSource, SIGNAL(toggled(bool)), _source, SLOT(setEnabled(bool)));
 
-  _gltrans->setRootIsDecorated(TRUE);
-  _gltrans->addColumn(tr("Date"),      _dateColumn,     Qt::AlignCenter );
-  _gltrans->addColumn(tr("Journal #"), _orderColumn,    Qt::AlignRight  );
-  _gltrans->addColumn(tr("Source"),    _orderColumn,    Qt::AlignCenter );
-  _gltrans->addColumn(tr("Doc. Type"), _itemColumn,     Qt::AlignCenter );
-  _gltrans->addColumn(tr("Doc. Num."), _orderColumn,    Qt::AlignCenter );
-  _gltrans->addColumn(tr("Notes/Account"),   -1,              Qt::AlignLeft   );
-  _gltrans->addColumn(tr("Debit"),     _bigMoneyColumn, Qt::AlignRight  );
-  _gltrans->addColumn(tr("Credit"),    _bigMoneyColumn, Qt::AlignRight  );
-  _gltrans->addColumn(tr("Posted"),    _ynColumn,       Qt::AlignCenter );
+  _gltrans->addColumn(tr("Date"),      _dateColumn, Qt::AlignCenter,true, "transdate");
+  _gltrans->addColumn(tr("Journal #"),_orderColumn, Qt::AlignRight, true, "gltrans_journalnumber");
+  _gltrans->addColumn(tr("Source"),   _orderColumn, Qt::AlignCenter,true, "gltrans_source");
+  _gltrans->addColumn(tr("Doc. Type"), _itemColumn, Qt::AlignCenter,true, "gltrans_doctype");
+  _gltrans->addColumn(tr("Doc. Num."),_orderColumn, Qt::AlignCenter,true, "gltrans_docnumber");
+  _gltrans->addColumn(tr("Notes/Account"),      -1, Qt::AlignLeft,  true, "account");
+  _gltrans->addColumn(tr("Debit"), _bigMoneyColumn, Qt::AlignRight, true, "debit");
+  _gltrans->addColumn(tr("Credit"),_bigMoneyColumn, Qt::AlignRight, true, "credit");
+  _gltrans->addColumn(tr("Posted"),      _ynColumn, Qt::AlignCenter,true, "gltrans_posted");
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspGLSeries::~dspGLSeries()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspGLSeries::languageChange()
 {
   retranslateUi(this);
@@ -163,16 +146,16 @@ void dspGLSeries::sPopulateMenu(QMenu * pMenu)
     pMenu->setItemEnabled(menuItem, false);
 }
 
-void dspGLSeries::sPrint()
+bool dspGLSeries::setParams(ParameterList &params)
 {
   if(!_dates->allValid())
   {
     QMessageBox::warning(this, tr("Invalid Date Range"),
-      tr("You must first specify a valid date range.") );
-    return;
+                         tr("You must first specify a valid date range.") );
+    _dates->setFocus();
+    return false;
   }
 
-  ParameterList params;
   _dates->appendValue(params);
 
   if(_selectedSource->isChecked())
@@ -184,6 +167,15 @@ void dspGLSeries::sPrint()
     params.append("endJrnlnum", _endJrnlnum->text().toInt());
   }
 
+  return true;
+}
+
+void dspGLSeries::sPrint()
+{
+  ParameterList params;
+  if (! setParams(params))
+    return;
+
   orReport report("GLSeries", params);
 
   if (report.isValid())
@@ -194,62 +186,68 @@ void dspGLSeries::sPrint()
 
 void dspGLSeries::sFillList()
 {
-  _gltrans->clear();
+  ParameterList params;
+  if (! setParams(params))
+    return;
 
-  QString sql( "SELECT gltrans_id, gltrans_sequence, formatDate(gltrans_date) AS transdate, gltrans_source, gltrans_journalnumber,"
-               "       gltrans_doctype, gltrans_docnumber, (formatGLAccount(accnt_id) || ' - ' || accnt_descrip) AS account,"
-               "       CASE WHEN (gltrans_amount < 0) THEN formatMoney(gltrans_amount * -1)"
-               "            ELSE ''"
-               "       END AS f_debit,"
-               "       CASE WHEN (gltrans_amount > 0) THEN formatMoney(gltrans_amount)"
-               "            ELSE ''"
-               "       END AS f_credit,"
-               "       formatBoolYN(gltrans_posted) AS f_posted,"
-               "       firstLine(gltrans_notes) AS f_notes "
-               "FROM gltrans, accnt "
-               "WHERE ( (gltrans_accnt_id=accnt_id)"
-               " AND (gltrans_date BETWEEN :startDate AND :endDate)" );
-
-  if (_selectedSource->isChecked())
-    sql += " AND (gltrans_source=:source)";
-
-  if (_jrnlGroup->isChecked())
-    sql += " AND (gltrans_journalnumber BETWEEN :startJrnlnum AND :endJrnlnum)";
-
-  sql += " ) "
-         "ORDER BY gltrans_date, gltrans_sequence, gltrans_amount;";
-
-  q.prepare(sql);
-  _dates->bindValue(q);
-  q.bindValue(":source", _source->currentText());
-  if(_jrnlGroup->isChecked())
+  MetaSQLQuery mql("SELECT *, "
+                   "       CASE WHEN gltrans_id = -1 THEN 0"
+                   "       ELSE 1 END AS xtindentrole,"
+                   "       CASE WHEN gltrans_id = -1 THEN gltrans_date"
+                   "       END AS transdate,"    // qtdisplayrole isn't working?
+                   "       'curr' AS debit_xtnumericrole,"
+                   "       'curr' AS credit_xtnumericrole "
+                   "FROM (SELECT DISTINCT "
+                   "       -1 AS gltrans_id, gltrans_sequence, gltrans_date, "
+                   "       gltrans_source, gltrans_journalnumber,"
+                   "       gltrans_doctype, '' AS gltrans_docnumber,"
+                   "       firstLine(gltrans_notes) AS account,"
+                   "       0.0 AS gltrans_amount,"
+                   "       CAST(NULL AS NUMERIC) AS debit,"
+                   "       CAST(NULL AS NUMERIC) AS credit,"
+                   "       gltrans_posted "
+                   "FROM gltrans "
+                   "WHERE ((gltrans_date BETWEEN <? value(\"startDate\") ?>"
+                   "                         AND <? value(\"endDate\") ?>)"
+                   "<? if exists(\"source\") ?>"
+                   "   AND (gltrans_source=<? value(\"source\") ?>)"
+                   "<? endif ?>"
+                   "<? if exists(\"startJrnlnum\") ?>"
+                   "   AND (gltrans_journalnumber BETWEEN <? value(\"startJrnlnum\") ?>"
+                   "                                  AND <? value(\"endJrnlnum\") ?>)"
+                   "<? endif ?>"
+                   ")"
+                   "UNION "
+                   "SELECT gltrans_id, gltrans_sequence, gltrans_date, "
+                   "       NULL, NULL,"
+                   "       NULL, gltrans_docnumber,"
+                   "       (formatGLAccount(accnt_id) || ' - ' || accnt_descrip) AS account,"
+                   "       gltrans_amount,"
+                   "       CASE WHEN (gltrans_amount < 0) THEN (gltrans_amount * -1)"
+                   "       END AS debit,"
+                   "       CASE WHEN (gltrans_amount > 0) THEN gltrans_amount"
+                   "       END AS credit,"
+                   "       NULL AS gltrans_posted "
+                   "FROM gltrans JOIN accnt ON (gltrans_accnt_id=accnt_id)"
+                   "WHERE ((gltrans_date BETWEEN <? value(\"startDate\") ?>"
+                   "                         AND <? value(\"endDate\") ?>)"
+                   "<? if exists(\"source\") ?>"
+                   "   AND (gltrans_source=<? value(\"source\") ?>)"
+                   "<? endif ?>"
+                   "<? if exists(\"startJrnlnum\") ?>"
+                   "   AND (gltrans_journalnumber BETWEEN <? value(\"startJrnlnum\") ?>"
+                   "                                  AND <? value(\"endJrnlnum\") ?>)"
+                   "<? endif ?>"
+                   " ) "
+                   ") AS dummy "
+                   "ORDER BY gltrans_date, gltrans_sequence,"
+                   "         xtindentrole, gltrans_amount;");
+  q = mql.toQuery(params);
+  _gltrans->populate(q);
+  if (q.lastError().type() != QSqlError::None)
   {
-    q.bindValue(":startJrnlnum", _startJrnlnum->text().toInt());
-    q.bindValue(":endJrnlnum", _endJrnlnum->text().toInt());
-  }
-  q.exec();
-  if (q.first())
-  {
-    XTreeWidgetItem *parent  = NULL;
-    int           glSeries = -1;
-
-    do
-    {
-      if (glSeries != q.value("gltrans_sequence").toInt())
-      {
-        glSeries = q.value("gltrans_sequence").toInt();
-	parent = new XTreeWidgetItem( _gltrans, parent, q.value("gltrans_sequence").toInt(), -1,
-                                    q.value("transdate"), q.value("gltrans_journalnumber"), q.value("gltrans_source"),
-                                    q.value("gltrans_doctype"), q.value("gltrans_docnumber"),
-                                    q.value("f_notes"), "", "", q.value("f_posted") );
-      }
-
-      new XTreeWidgetItem( parent, q.value("gltrans_sequence").toInt(), q.value("gltrans_id").toInt(),
-                         "", "", "", "", "",
-                         q.value("account"), q.value("f_debit"),
-                         q.value("f_credit") );
-    }
-    while (q.next());
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
 }
 
@@ -264,4 +262,3 @@ void dspGLSeries::sReverse()
   if(newdlg.exec() == XDialog::Accepted)
     sFillList();
 }
-
