@@ -101,6 +101,7 @@ uoms::uoms(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _uoms->addColumn(tr("UOM"),         _itemColumn, Qt::AlignCenter, true,  "uom_name" );
   _uoms->addColumn(tr("Description"), -1,          Qt::AlignLeft,   true,  "uom_descrip"   );
+  _uoms->addColumn(tr("Item Weight"), _itemColumn, Qt::AlignLeft,   true,  "uom_item_weight"   );
 
   sFillList();
 }
@@ -124,7 +125,8 @@ void uoms::languageChange()
 
 void uoms::sFillList()
 {
-  _uoms->populate( "SELECT uom_id, uom_name, uom_descrip "
+  _uoms->populate( "SELECT uom.*,"
+                   "       CASE WHEN (NOT uom_item_weight) THEN '' END AS uom_item_weight_qtdisplayrole "
                    "  FROM uom "
                    " ORDER BY uom_name;"  );
 }

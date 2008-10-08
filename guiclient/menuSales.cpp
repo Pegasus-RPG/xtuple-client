@@ -491,8 +491,8 @@ menuSales::menuSales(GUIClient *pParent) :
     { "so.customerTypes", tr("&Types..."),	SLOT(sCustomerTypes()), customerMenu, (_privileges->check("MaintainCustomerTypes") || _privileges->check("ViewCustomerTypes")),	NULL, NULL, true, NULL },
     { "so.customerGroups", tr("&Groups..."),	SLOT(sCustomerGroups()), customerMenu, (_privileges->check("MaintainCustomerGroups") || _privileges->check("ViewCustomerGroups")),	NULL, NULL, true, NULL },
    
-    // Sales | Item Pricing
-    { "menu",	tr("&Item Pricing"),       (char*)pricingMenu,	mainMenu,	true,	NULL, NULL, true, NULL },
+    // Sales | Pricing
+    { "menu",	tr("Pricing"),       (char*)pricingMenu,	mainMenu,	true,	NULL, NULL, true, NULL },
     { "so.itemListPrice", tr("Item &List Price..."),	SLOT(sItemListPrice()), pricingMenu, (_privileges->check("MaintainListPrices") || _privileges->check("ViewListPrices")),	NULL, NULL, true, NULL },
     { "so.updateListPricesByProductCategory", tr("&Update List Prices..."),	SLOT(sUpdateListPricesByProductCategory()), pricingMenu, _privileges->check("MaintainListPrices"),	NULL, NULL, true, NULL },
     { "separator",	NULL,	NULL,	pricingMenu,	true,		NULL, NULL, true, NULL },
@@ -501,13 +501,13 @@ menuSales::menuSales(GUIClient *pParent) :
     { "so.sales", tr("S&ales..."),	SLOT(sSales()), pricingMenu, _privileges->check("CreateSales"),	NULL, NULL, true, NULL },
     { "separator",	NULL,	NULL,	pricingMenu,	true,		NULL, NULL, true, NULL },
 
-    // Sales | Item Pricing | Update Prices
+    // Sales | Pricing | Update Prices
     { "menu",	tr("Update &Prices"),       (char*)pricingUpdateMenu,	pricingMenu,	true,	NULL, NULL, true, NULL },
     { "so.updatePricesByProductCategory", tr("by Product &Category..."),	SLOT(sUpdatePricesByProductCategory()), pricingUpdateMenu, _privileges->check("UpdatePricingSchedules"),	NULL, NULL, true, NULL },
     { "so.updatePricesByPricingSchedule", tr("by Pricing &Schedule..."),	SLOT(sUpdatePricesByPricingSchedule()), pricingUpdateMenu, _privileges->check("UpdatePricingSchedules"),	NULL, NULL, true, NULL },
     { "separator",	NULL,	NULL,	pricingMenu,	true,		NULL, NULL, true, NULL },
 
-    // Sales | Item Pricing | Reports
+    // Sales | Pricing | Reports
     { "menu",	tr("&Reports"),	(char*)pricingReportsMenu,	pricingMenu,	true,	NULL, NULL, true, NULL },
     { "so.dspPricesByCustomerType", tr("Prices by Customer &Type..."),	SLOT(sDspPricesByCustomerType()), pricingReportsMenu, _privileges->check("ViewCustomerPrices"), NULL, NULL,	 true, NULL },
     { "so.dspPricesByCustomer", tr("Prices by &Customer..."),	SLOT(sDspPricesByCustomer()), pricingReportsMenu, _privileges->check("ViewCustomerPrices"), NULL, NULL,	 true, NULL },

@@ -98,6 +98,7 @@ itemPricingScheduleItem::itemPricingScheduleItem(QWidget* parent, const char* na
   _ipsheadid = -1;
   _ipsitemid = -1;
   _ipsprodcatid = -1;
+  _ipsfreightid = -1;
   _invuomid = -1;
   
   _charprice->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft, true,  "char_name" );
@@ -106,15 +107,32 @@ itemPricingScheduleItem::itemPricingScheduleItem(QWidget* parent, const char* na
 
   _qtyBreak->setValidator(omfgThis->qtyVal());
   _qtyBreakCat->setValidator(omfgThis->qtyVal());
+  _qtyBreakFreight->setValidator(omfgThis->qtyVal());
   _discount->setValidator(omfgThis->percentVal());
   _pricingRatio->setPrecision(omfgThis->percentVal());
   _stdMargin->setPrecision(omfgThis->percentVal());
   _actMargin->setPrecision(omfgThis->percentVal());
   _item->setType(ItemLineEdit::cSold);
   _prodcat->setType(XComboBox::ProductCategories);
+  _zoneFreight->populate( "SELECT shipzone_id, shipzone_name "
+                          "FROM shipzone "
+                          "ORDER BY shipzone_name;" );
+
+  _shipViaFreight->setType(XComboBox::ShipVias);
+  _freightClass->setType(XComboBox::FreightClasses);
   
   _tab->setTabEnabled(_tab->indexOf(_configuredPrices),FALSE);
  
+  q.exec("SELECT uom_name FROM uom WHERE (uom_item_weight);");
+  if (q.first())
+  {
+    QString uom = q.value("uom_name").toString();
+    QString title (tr("Price per "));
+    title += uom;
+    _perUOMFreight->setText(title);
+    _qtyBreakFreightUOM->setText(uom);
+  }
+
   _rejectedMsg = tr("The application has encountered an error and must "
                     "stop editing this Pricing Schedule.\n%1");
 }
@@ -147,11 +165,17 @@ enum SetResponse itemPricingScheduleItem::set(const ParameterList &pParams)
 
   param = pParams.value("curr_id", &valid);
   if (valid)
+  {
     _price->setId(param.toInt());
+    _priceFreight->setId(param.toInt());
+  }
 
   param = pParams.value("updated", &valid);
   if (valid)
+  {
     _price->setEffective(param.toDate());
+    _priceFreight->setEffective(param.toDate());
+  }
 
   param = pParams.value("ipsitem_id", &valid);
   if (valid)
@@ -166,6 +190,14 @@ enum SetResponse itemPricingScheduleItem::set(const ParameterList &pParams)
   {
     _ipsprodcatid = param.toInt();
     _prodcatSelected->setChecked(true);
+    populate();
+  }
+
+  param = pParams.value("ipsfreight_id", &valid);
+  if (valid)
+  {
+    _ipsfreightid = param.toInt();
+    _freightSelected->setChecked(true);
     populate();
   }
 
@@ -199,9 +231,16 @@ enum SetResponse itemPricingScheduleItem::set(const ParameterList &pParams)
       _prodcat->setEnabled(FALSE);
       _qtyBreak->setEnabled(FALSE);
       _qtyBreakCat->setEnabled(FALSE);
+      _qtyBreakFreight->setEnabled(FALSE);
       _price->setEnabled(FALSE);
       _discount->setEnabled(FALSE);
+      _priceFreight->setEnabled(FALSE);
       _typeGroup->setEnabled(FALSE);
+      _typeFreightGroup->setEnabled(FALSE);
+      _siteFreight->setEnabled(FALSE);
+      _zoneFreightGroup->setEnabled(FALSE);
+      _shipViaFreightGroup->setEnabled(FALSE);
+      _freightClassGroup->setEnabled(FALSE);
       _close->setText(tr("&Close"));
       _save->hide();
 
@@ -258,7 +297,7 @@ void itemPricingScheduleItem::sSave( bool pClose)
                  "VALUES "
                  "( :ipsitem_id, :ipshead_id, :ipsitem_item_id, :qty_uom_id, :ipsitem_qtybreak, :price_uom_id, :ipsitem_price );" );
     }
-    else
+    else if(_prodcatSelected->isChecked())
     {
       q.prepare( "SELECT ipsprodcat_id "
                  "FROM ipsprodcat "
@@ -299,6 +338,57 @@ void itemPricingScheduleItem::sSave( bool pClose)
                  "VALUES "
                  "( :ipsprodcat_id, :ipshead_id, :ipsprodcat_prodcat_id, :ipsprodcat_qtybreak, :ipsprodcat_discntprcnt );" );
     }
+    else if(_freightSelected->isChecked())
+    {
+      q.prepare( "SELECT ipsfreight_id "
+                 "FROM ipsfreight "
+                 "WHERE ( (ipsfreight_ipshead_id=:ipshead_id)"
+                 " AND (ipsfreight_warehous_id=:warehous_id)"
+                 " AND (ipsfreight_shipzone_id=:shipzone_id)"
+                 " AND (ipsfreight_freightclass_id=:freightclass_id)"
+                 " AND (ipsfreight_shipvia=:shipvia)"
+                 " AND (ipsfreight_qtybreak=:qtybreak) );" );
+      q.bindValue(":ipshead_id", _ipsheadid);
+      q.bindValue(":warehous_id", _siteFreight->id());
+      q.bindValue(":shipzone_id", _zoneFreight->id());
+      q.bindValue(":freightclass_id", _freightClass->id());
+      q.bindValue(":shipvia", _shipViaFreight->currentText());
+      q.bindValue(":qtybreak", _qtyBreakFreight->toDouble());
+      q.exec();
+      if (q.first())
+      {
+        QMessageBox::critical( this, tr("Cannot Create Pricing Schedule Item"),
+                               tr( "There is an existing Pricing Schedule Item for the selected Pricing Schedule, Freight Criteria and Quantity Break defined.\n"
+                                   "You may not create duplicate Pricing Schedule Items." ) );
+        return;
+      }
+      else if (q.lastError().type() != QSqlError::None)
+      {
+        systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+                  __FILE__, __LINE__);
+        done(-1);
+      }
+
+      q.exec("SELECT NEXTVAL('ipsfreight_ipsfreight_id_seq') AS ipsfreight_id;");
+      if (q.first())
+        _ipsfreightid = q.value("ipsfreight_id").toInt();
+      else if (q.lastError().type() != QSqlError::None)
+      {
+        systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+                  __FILE__, __LINE__);
+        done(-1);
+      }
+      //  ToDo
+
+      q.prepare( "INSERT INTO ipsfreight "
+                 "( ipsfreight_id, ipsfreight_ipshead_id, ipsfreight_qtybreak, ipsfreight_price,"
+                 "  ipsfreight_type, ipsfreight_warehous_id, ipsfreight_shipzone_id,"
+                 "  ipsfreight_freightclass_id, ipsfreight_shipvia ) "
+                 "VALUES "
+                 "( :ipsfreight_id, :ipshead_id, :ipsfreight_qtybreak, :ipsfreight_price,"
+                 "  :ipsfreight_type, :ipsfreight_warehous_id, :ipsfreight_shipzone_id,"
+                 "  :ipsfreight_freightclass_id, :ipsfreight_shipvia ) " );
+    }
   }
   else if (_mode == cEdit)
   {
@@ -309,23 +399,48 @@ void itemPricingScheduleItem::sSave( bool pClose)
                  "       ipsitem_price_uom_id=:price_uom_id,"
                  "       ipsitem_price=:ipsitem_price "
                  "WHERE (ipsitem_id=:ipsitem_id);" );
-    else
+    else if(_prodcatSelected->isChecked())
       q.prepare( "UPDATE ipsprodcat "
                  "SET ipsprodcat_qtybreak=:ipsprodcat_qtybreak, ipsprodcat_discntprcnt=:ipsprodcat_discntprcnt "
                  "WHERE (ipsprodcat_id=:ipsprodcat_id);" );
+    else if(_freightSelected->isChecked())
+      q.prepare( "UPDATE ipsfreight "
+                 "   SET ipsfreight_qtybreak=:ipsfreight_qtybreak,"
+                 "       ipsfreight_type=:ipsfreight_type,"
+                 "       ipsfreight_price=:ipsfreight_price,"
+                 "       ipsfreight_warehous_id=:ipsfreight_warehous_id,"
+                 "       ipsfreight_shipzone_id=:ipsfreight_shipzone_id,"
+                 "       ipsfreight_freightclass_id=:ipsfreight_freightclass_id,"
+                 "       ipsfreight_shipvia=:ipsfreight_shipvia "
+                 "WHERE (ipsfreight_id=:ipsfreight_id);" );
   }
 
   q.bindValue(":ipsitem_id", _ipsitemid);
   q.bindValue(":ipsprodcat_id", _ipsprodcatid);
+  q.bindValue(":ipsfreight_id", _ipsfreightid);
   q.bindValue(":ipshead_id", _ipsheadid);
   q.bindValue(":ipsitem_item_id", _item->id());
   q.bindValue(":ipsprodcat_prodcat_id", _prodcat->id());
   q.bindValue(":ipsitem_qtybreak", _qtyBreak->toDouble());
   q.bindValue(":ipsprodcat_qtybreak", _qtyBreakCat->toDouble());
+  q.bindValue(":ipsfreight_qtybreak", _qtyBreakFreight->toDouble());
   q.bindValue(":ipsitem_price", _price->localValue());
   q.bindValue(":ipsprodcat_discntprcnt", (_discount->toDouble() / 100.0));
+  q.bindValue(":ipsfreight_price", _priceFreight->localValue());
   q.bindValue(":qty_uom_id", _qtyUOM->id());
   q.bindValue(":price_uom_id", _priceUOM->id());
+  if (_flatRateFreight->isChecked())
+    q.bindValue(":ipsfreight_type", "F");
+  else
+    q.bindValue(":ipsfreight_type", "P");
+  if (_siteFreight->isSelected())
+    q.bindValue(":ipsfreight_warehous_id", _siteFreight->id());
+  if (_selectedZoneFreight->isChecked())
+    q.bindValue(":ipsfreight_shipzone_id", _zoneFreight->id());
+  if (_selectedFreightClass->isChecked())
+    q.bindValue(":ipsfreight_freightclass_id", _freightClass->id());
+  if (_selectedShipViaFreight->isChecked())
+    q.bindValue(":ipsfreight_shipvia", _shipViaFreight->currentText());
   q.exec();
   if (q.lastError().type() != QSqlError::None)
   {
@@ -338,8 +453,10 @@ void itemPricingScheduleItem::sSave( bool pClose)
   {
     if(_itemSelected->isChecked())
       done(_ipsitemid);
-    else
+    if(_prodcatSelected->isChecked())
       done(_ipsprodcatid);
+    if(_freightSelected->isChecked())
+      done(_ipsfreightid);
   }
   else
   {
@@ -382,7 +499,7 @@ void itemPricingScheduleItem::populate()
         done(-1);
     }
   }
-  else
+  else if(_prodcatSelected->isChecked())
   {
     q.prepare( "SELECT ipsprodcat_prodcat_id,"
                "       ipsprodcat_qtybreak, (ipsprodcat_discntprcnt * 100) AS discntprcnt "
@@ -399,6 +516,68 @@ void itemPricingScheduleItem::populate()
     else if (q.lastError().type() != QSqlError::None)
     {
 	systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+                  __FILE__, __LINE__);
+        done(-1);
+    }
+  }
+  else if(_freightSelected->isChecked())
+  {
+    q.prepare( "SELECT ipsfreight.* "
+               "FROM ipsfreight "
+               "WHERE (ipsfreight_id=:ipsfreight_id);" );
+    q.bindValue(":ipsfreight_id", _ipsfreightid);
+    q.exec();
+    if (q.first())
+    {
+      _qtyBreakFreight->setDouble(q.value("ipsfreight_qtybreak").toDouble());
+      _priceFreight->setLocalValue(q.value("ipsfreight_qtybreak").toDouble());
+      if (q.value("ipsfreight_type").toString() == "F")
+      {
+        _flatRateFreight->setChecked(true);
+        _qtyBreakFreight->setEnabled(false);
+      }
+      else
+        _perUOMFreight->setChecked(true);
+      if (q.value("ipsfreight_warehous_id").toInt() > 0)
+        _siteFreight->setId(q.value("ipsfreight_warehous_id").toInt());
+      else
+        _siteFreight->setAll();
+      if (q.value("ipsfreight_shipzone_id").toInt() > 0)
+      {
+        _selectedZoneFreight->setChecked(true);
+        _zoneFreight->setId(q.value("ipsfreight_shipzone_id").toInt());
+      }
+      else
+        _allZonesFreight->setChecked(true);
+      if (q.value("ipsfreight_freightclass_id").toInt() > 0)
+      {
+        _selectedFreightClass->setChecked(true);
+        _freightClass->setId(q.value("ipsfreight_freightclass_id").toInt());
+      }
+      else
+        _allFreightClasses->setChecked(true);
+      //  Handle the free-form Ship Via
+      _shipViaFreight->setCurrentItem(-1);
+      QString shipvia = q.value("ipsfreight_shipvia").toString();
+      if (shipvia.stripWhiteSpace().length() != 0)
+      {
+        _selectedShipViaFreight->setChecked(true);
+        for (int counter = 0; counter < _shipViaFreight->count(); counter++)
+          if (_shipViaFreight->text(counter) == shipvia)
+            _shipViaFreight->setCurrentItem(counter);
+
+        if (_shipViaFreight->id() == -1)
+        {
+          _shipViaFreight->insertItem(shipvia);
+          _shipViaFreight->setCurrentItem(_shipViaFreight->count() - 1);
+        }
+      }
+      else
+        _allShipViasFreight->setChecked(true);
+    }
+    else if (q.lastError().type() != QSqlError::None)
+    {
+       systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
                   __FILE__, __LINE__);
         done(-1);
     }
@@ -523,6 +702,11 @@ void itemPricingScheduleItem::sTypeChanged()
   else if(_prodcatSelected->isChecked())
   {
     _widgetStack->setCurrentIndex(1);
+    _save->setEnabled(true);
+  }
+  else if(_freightSelected->isChecked())
+  {
+    _widgetStack->setCurrentIndex(2);
     _save->setEnabled(true);
   }
 }

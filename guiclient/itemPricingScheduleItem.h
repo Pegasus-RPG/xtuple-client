@@ -95,6 +95,7 @@ private:
     int _ipsheadid;
     int _ipsitemid;
     int _ipsprodcatid;
+    int _ipsfreightid;
     int _invuomid;
     QString _rejectedMsg;
 

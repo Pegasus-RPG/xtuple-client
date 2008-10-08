@@ -138,6 +138,7 @@ enum SetResponse uom::set(const ParameterList &pParams)
 
       _name->setEnabled(FALSE);
       _description->setEnabled(FALSE);
+      _weightUom->setEnabled(FALSE);
       _close->setText(tr("&Close"));
       _edit->setText(tr("&View"));
       _save->hide();
@@ -158,6 +159,32 @@ void uom::sSave()
     _name->setFocus();
     return;
   }
+  
+  if (_weightUom->isChecked())
+  {
+    if (_mode == cNew)
+      q.exec("SELECT uom_id FROM uom WHERE (uom_item_weight);");
+    else
+    {
+      q.prepare("SELECT uom_id FROM uom WHERE ((uom_item_weight) AND (uom_id<>:uom_id));");
+      q.bindValue(":uom_id", _uomid);
+      q.exec();
+    }
+    if (q.first())
+    {
+      int response = QMessageBox::warning (this, tr("Set Item Weight?"),
+                                                 tr("The Item Weight UOM has already been set. "
+                                                    "Are you sure you want to clear the existing entry and set "
+                                                    "%1 to be the Item Weight UOM?")
+                                          .arg(_name->text()),
+                                          QMessageBox::Yes | QMessageBox::Escape,
+                                          QMessageBox::No | QMessageBox::Default);
+      if (response == QMessageBox::Yes)
+        q.exec("UPDATE uom SET uom_item_weight=FALSE;");
+      else
+        return;
+    }
+  }
 
   if (_mode == cNew)
   {
@@ -173,18 +200,20 @@ void uom::sSave()
     }
  
     q.prepare( "INSERT INTO uom "
-               "( uom_id, uom_name, uom_descrip ) "
+               "( uom_id, uom_name, uom_descrip, uom_item_weight ) "
                "VALUES "
-               "( :uom_id, :uom_name, :uom_descrip );" );
+               "( :uom_id, :uom_name, :uom_descrip, :uom_item_weight );" );
   }
   else if (_mode == cEdit)
     q.prepare( "UPDATE uom "
-               "SET uom_name=:uom_name, uom_descrip=:uom_descrip "
+               "SET uom_name=:uom_name, uom_descrip=:uom_descrip,"
+               "    uom_item_weight=:uom_item_weight "
                "WHERE (uom_id=:uom_id);" );
 
   q.bindValue(":uom_id", _uomid);
   q.bindValue(":uom_name", _name->text());
   q.bindValue(":uom_descrip", _description->text());
+  q.bindValue(":uom_item_weight", QVariant(_weightUom->isChecked(), 0));
   q.exec();
 
   done(_uomid);
@@ -213,7 +242,7 @@ void uom::sCheck()
 
 void uom::populate()
 {
-  q.prepare( "SELECT uom_name, uom_descrip "
+  q.prepare( "SELECT uom_name, uom_descrip, uom_item_weight "
              "  FROM uom "
              " WHERE(uom_id=:uom_id);" );
   q.bindValue(":uom_id", _uomid);
@@ -222,6 +251,7 @@ void uom::populate()
   {
     _name->setText(q.value("uom_name").toString());
     _description->setText(q.value("uom_descrip").toString());
+    _weightUom->setChecked(q.value("uom_item_weight").toBool());
 
     sFillList();
   }

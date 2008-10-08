@@ -303,6 +303,8 @@ void itemPricingSchedule::sEdit()
     params.append("ipsitem_id", _ipsitem->id());
   else if(_ipsitem->altId() == 2)
     params.append("ipsprodcat_id", _ipsitem->id());
+  else if(_ipsitem->altId() == 3)
+    params.append("ipsfreight_id", _ipsitem->id());
   else
     return;
     // ToDo - tell the user why we're not showing the pricing sched?
@@ -370,10 +372,28 @@ void itemPricingSchedule::sFillList(int pIpsitemid)
              "  FROM ipsprodcat, prodcat"
              " WHERE ( (ipsprodcat_prodcat_id=prodcat_id)"
              "   AND   (ipsprodcat_ipshead_id=:ipshead_id) )"
+             " UNION "
+             "SELECT ipsfreight_id AS id, 3 AS altid, :freight AS type,"
+             "       CASE WHEN (ipsfreight_type='F') THEN :flatrate"
+             "            ELSE :peruom"
+             "       END AS number,"
+             "       ('From ' || COALESCE(warehous_code, 'All Sites') || ' To ' || COALESCE(shipzone_name, 'All Shipping Zones')) AS descrip,"
+             "       CASE WHEN (ipsfreight_type='P') THEN uom_name END AS qtyuom,"
+             "       CASE WHEN (ipsfreight_type='P') THEN ipsfreight_qtybreak END AS qtybreak,"
+             "       uom_name AS priceuom, ipsfreight_price AS price,"
+             "       'qty' AS qtybreak_xtnumericrole,"
+             "       'curr' AS price_xtnumericrole "
+             "  FROM ipsfreight LEFT OUTER JOIN uom ON (uom_item_weight)"
+             "                  LEFT OUTER JOIN whsinfo ON (warehous_id=ipsfreight_warehous_id)"
+             "                  LEFT OUTER JOIN shipzone ON (shipzone_id=ipsfreight_shipzone_id)"
+             " WHERE ( (ipsfreight_ipshead_id=:ipshead_id) )"
              " ORDER BY altid, number, qtybreak;" );
   q.bindValue(":ipshead_id", _ipsheadid);
   q.bindValue(":item", tr("Item"));
   q.bindValue(":prodcat", tr("Prod. Cat."));
+  q.bindValue(":freight", tr("Freight"));
+  q.bindValue(":flatrate", tr("Flat Rate"));
+  q.bindValue(":peruom", tr("Price Per UOM"));
   q.exec();
   if (q.lastError().type() != QSqlError::None)
   {

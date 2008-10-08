@@ -280,6 +280,14 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
     _planningType->hide();
     _planningTypeLit->hide();
   }
+  
+  q.exec("SELECT uom_name FROM uom WHERE (uom_item_weight);");
+  if (q.first())
+  {
+    QString title (tr("Weight in "));
+    title += q.value("uom_name").toString();
+    _weightGroup->setTitle(title);
+  }
 
 #ifdef Q_WS_MAC
   _tab->setUsesScrollButtons(true);
@@ -1270,6 +1278,7 @@ void item::sHandleItemtype()
   bool capUOM    = FALSE;
   bool planType  = FALSE;
   bool purchased = FALSE;
+  bool freight   = FALSE;
   
   _configured->setEnabled(FALSE);
 
@@ -1282,6 +1291,7 @@ void item::sHandleItemtype()
     shipUOM  = TRUE;
     planType = TRUE;
     purchased = TRUE;
+    freight  = TRUE;
   }
 
   if (itemType == "M")
@@ -1294,6 +1304,7 @@ void item::sHandleItemtype()
     shipUOM  = TRUE;
     planType = TRUE;
     purchased = TRUE;
+    freight  = TRUE;
   }
 
   if (itemType == "J")
@@ -1302,6 +1313,7 @@ void item::sHandleItemtype()
     weight   = TRUE;
     capUOM   = TRUE;
     shipUOM  = TRUE;
+    freight  = TRUE;
     _configured->setEnabled(TRUE);
   }
 
@@ -1313,6 +1325,7 @@ void item::sHandleItemtype()
     capUOM   = TRUE;
     planType = TRUE;
     purchased = TRUE;
+    freight  = TRUE;
   }
 
   if (itemType == "C")
@@ -1324,6 +1337,7 @@ void item::sHandleItemtype()
     shipUOM  = TRUE;
     planType = TRUE;
     purchased = TRUE;
+    freight  = TRUE;
   }
 
   if (itemType == "Y")
@@ -1335,6 +1349,7 @@ void item::sHandleItemtype()
     shipUOM  = TRUE;
     planType = TRUE;
     purchased = TRUE;
+    freight  = TRUE;
   }
 
   if (itemType == "R")
@@ -1343,6 +1358,7 @@ void item::sHandleItemtype()
     weight   = TRUE;
     capUOM   = TRUE;
     shipUOM  = TRUE;
+    freight  = TRUE;
     _configured->setEnabled(TRUE);
   }
 
@@ -1352,6 +1368,7 @@ void item::sHandleItemtype()
     weight   = TRUE;
     capUOM   = TRUE;
     shipUOM  = TRUE;
+    freight  = TRUE;
   }
 
   if (itemType == "O")
@@ -1359,12 +1376,14 @@ void item::sHandleItemtype()
     capUOM   = TRUE;
     planType = TRUE;
     purchased = TRUE;
+    freight  = TRUE;
   }
 
   if (itemType == "A")
   {
     sold     = TRUE;
     planType = TRUE;
+    freight  = TRUE;
   }
 
   if (itemType == "K")
@@ -1398,6 +1417,8 @@ void item::sHandleItemtype()
   _packWeight->setEnabled(weight);
 
   _planningType->setEnabled(planType);
+
+  _freightClass->setEnabled(freight);
 
   _tab->setTabEnabled(_tab->indexOf(_sourcesTab), 
         (_privileges->check("ViewItemSources") || 
