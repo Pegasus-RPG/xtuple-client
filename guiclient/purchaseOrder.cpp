@@ -503,7 +503,8 @@ void purchaseOrder::createHeader()
   q.bindValue(":pohead_id", _poheadid);
   q.bindValue(":pohead_agent_username", _agent->currentText());
   q.bindValue(":pohead_number", _orderNumber->text());
-  q.bindValue(":pohead_vend_id", _vendor->id());
+  if (_vendor->isValid())
+    q.bindValue(":pohead_vend_id", _vendor->id());
   q.bindValue(":pohead_orderdate", _orderDate->date());
   q.bindValue(":pohead_curr_id", _poCurrency->id());
   q.exec();
@@ -514,12 +515,12 @@ void purchaseOrder::createHeader()
 void purchaseOrder::populate()
 {
   XSqlQuery po;
-  po.prepare( "SELECT pohead_number, pohead_warehous_id, pohead_orderdate, "
-	      "       pohead_status, pohead_printed, "
+  po.prepare( "SELECT pohead_number, COALESCE(pohead_warehous_id,-1) AS pohead_warehous_id, "
+              "       pohead_orderdate, pohead_status, pohead_printed, "
               "       pohead_shipvia, pohead_comments,"
-              "       pohead_fob, pohead_terms_id, pohead_vend_id, pohead_prj_id,"
-              "       pohead_tax,"
-              "       pohead_freight,"
+              "       pohead_fob, COALESCE(pohead_terms_id,-1) AS pohead_terms_id, "
+              "       COALESCE(pohead_vend_id,-1) AS pohead_vend_id,"
+              "       pohead_tax, pohead_freight,"
               "       pohead_agent_username,"
               "       vend_name, vend_address1, vend_address2, vend_address3,"
               "       vend_city, vend_state, vend_zip, vend_country,"
@@ -630,20 +631,22 @@ void purchaseOrder::sSave()
              "    pohead_tax=:pohead_tax, pohead_freight=:pohead_freight,"
              "    pohead_fob=:pohead_fob, pohead_agent_username=:pohead_agent_username,"
              "    pohead_terms_id=:pohead_terms_id,"
-             "    pohead_prj_id=:pohead_prj_id, pohead_vendaddr_id=:pohead_vendaddr_id,"
+             "    pohead_vendaddr_id=:pohead_vendaddr_id,"
              "    pohead_comments=:pohead_comments, "
              "    pohead_curr_id=:pohead_curr_id,"
              "    pohead_saved=true "
              "WHERE (pohead_id=:pohead_id);" );
   q.bindValue(":pohead_id", _poheadid);
-  q.bindValue(":pohead_warehous_id", _warehouse->id());
+  if (_warehouse->isValid())
+    q.bindValue(":pohead_warehous_id", _warehouse->id());
   q.bindValue(":pohead_orderdate", _orderDate->date());
   q.bindValue(":pohead_shipvia", _shipVia->text());
   q.bindValue(":pohead_fob", _fob->text());
   q.bindValue(":pohead_agent_username", _agent->currentText());
-  q.bindValue(":pohead_terms_id", _terms->id());
-  q.bindValue(":pohead_prj_id", -1);
-  q.bindValue(":pohead_vendaddr_id", _vendaddrid);
+  if (_terms->isValid())
+    q.bindValue(":pohead_terms_id", _terms->id());
+  if (_vendaddrid != -1)
+    q.bindValue(":pohead_vendaddr_id", _vendaddrid);
   q.bindValue(":pohead_comments", _notes->text());
   q.bindValue(":pohead_tax", _tax->localValue());
   q.bindValue(":pohead_freight", _freight->localValue());
@@ -733,7 +736,8 @@ void purchaseOrder::sNew()
 	       "    pohead_curr_id=:pohead_curr_id, "
 	       "    pohead_orderdate=:pohead_orderdate "
                "WHERE (pohead_id=:pohead_id);" );
-    q.bindValue(":pohead_warehous_id", _warehouse->id());
+    if (_warehouse->isValid());
+      q.bindValue(":pohead_warehous_id", _warehouse->id());
     q.bindValue(":pohead_vend_id", _vendor->id());
     q.bindValue(":pohead_number", _orderNumber->text());
     q.bindValue(":pohead_id", _poheadid);
@@ -871,7 +875,8 @@ void purchaseOrder::sHandleVendor(int pVendid)
                "SET pohead_warehous_id=:pohead_warehous_id, "
                " pohead_vend_id=:pohead_vend_id, pohead_curr_id=:pohead_curr_id "
                "WHERE (pohead_id=:pohead_id);" );
-    q.bindValue(":pohead_warehous_id", _warehouse->id());
+    if (_warehouse->isValid())
+      q.bindValue(":pohead_warehous_id", _warehouse->id());
     q.bindValue(":pohead_vend_id", pVendid);
     q.bindValue(":pohead_id", _poheadid);
     q.bindValue(":pohead_curr_id", _poCurrency->id());

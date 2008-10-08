@@ -181,6 +181,36 @@ void itemSources::sView()
 
 void itemSources::sDelete()
 {
+  q.prepare("SELECT poitem_id, itemsrc_active "
+            "FROM poitem, itemsrc "
+            "WHERE ((poitem_itemsrc_id=:itemsrc_id) "
+            "AND (itemsrc_id=:itemsrc_id)); ");
+  q.bindValue(":itemsrc_id", _itemsrc->id());
+  q.exec();
+  if (q.first())
+  {
+    if (q.value("itemsrc_active").toBool())
+    {
+      if (QMessageBox::question( this, tr("Delete Item Source"),
+                                    tr( "This item source is used by existing purchase order records"
+                                    " and may not be deleted.  Would you like to deactivate it instead?"),
+                                    tr("&Ok"), tr("&Cancel"), 0, 0, 1 ) == 0  )
+      {
+        q.prepare( "UPDATE itemsrc SET "
+                   "  itemsrc_active=false "
+                   "WHERE (itemsrc_id=:itemsrc_id);" );
+        q.bindValue(":itemsrc_id", _itemsrc->id());
+        q.exec();
+
+        sFillList();
+      }
+    }
+    else
+      QMessageBox::critical( this, tr("Delete Item Source"), tr("This item source is used by existing "
+                          "purchase order records and may not be deleted."));
+    return;
+  }
+            
   q.prepare( "SELECT item_number "
              "FROM itemsrc, item "
              "WHERE ( (itemsrc_item_id=item_id)"

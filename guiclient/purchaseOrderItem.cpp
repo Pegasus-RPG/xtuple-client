@@ -402,11 +402,14 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
 
 void purchaseOrderItem::populate()
 {
-  q.prepare( "SELECT pohead_number, poitem_linenumber, poitem_itemsite_id,"
-             "       poitem_itemsrc_id, poitem_vend_item_number, poitem_vend_item_descrip,"
+  q.prepare( "SELECT pohead_number, poitem_linenumber, "
+             "       COALESCE(poitem_itemsite_id,-1) AS poitem_itemsite_id,"
+             "       COALESCE(poitem_itemsrc_id,-1) AS poitem_itemsrc_id, "
+             "       poitem_vend_item_number, poitem_vend_item_descrip,"
              "       poitem_vend_uom,"
              "       poitem_invvenduomratio,"
-             "       poitem_expcat_id, poitem_duedate,"
+             "       COALESCE(poitem_expcat_id,-1) AS poitem_expcat_id, "
+             "       poitem_duedate,"
              "       poitem_qty_ordered,"
              "       poitem_qty_received,"
 	     "       pohead_curr_id, pohead_orderdate, "
@@ -414,7 +417,7 @@ void purchaseOrderItem::populate()
              "       poitem_freight,"
              "       poitem_unitprice * poitem_qty_ordered AS f_extended,"
              "       poitem_comments, poitem_prj_id,"
-			 "       poitem_bom_rev_id,poitem_boo_rev_id, "
+             "       poitem_bom_rev_id,poitem_boo_rev_id, "
              "       COALESCE(coitem_prcost, 0.0) AS overrideCost "
              "FROM pohead, poitem LEFT OUTER JOIN coitem ON (poitem_soitem_id=coitem_id) "
              "WHERE ( (poitem_pohead_id=pohead_id) "
@@ -662,12 +665,9 @@ void purchaseOrderItem::sSave()
                                   "this Item and Site combination.") );
         return;
       }
-
-      q.bindValue(":poitem_expcat_id", -1);
     }
     else
     {
-      q.bindValue(":poitem_itemsite_id", -1);
       q.bindValue(":poitem_expcat_id", _expcat->id());
     }
   }
@@ -681,14 +681,15 @@ void purchaseOrderItem::sSave()
                "    poitem_freight=:poitem_freight,"
                "    poitem_duedate=:poitem_duedate, poitem_comments=:poitem_comments,"
                "    poitem_prj_id=:poitem_prj_id, "
-			   "    poitem_bom_rev_id=:poitem_bom_rev_id, "
-			   "    poitem_boo_rev_id=:poitem_boo_rev_id "
+               "    poitem_bom_rev_id=:poitem_bom_rev_id, "
+               "    poitem_boo_rev_id=:poitem_boo_rev_id "
                "WHERE (poitem_id=:poitem_id);" );
 
   q.bindValue(":poitem_id", _poitemid);
   q.bindValue(":poitem_pohead_id", _poheadid);
   q.bindValue(":poitem_linenumber", _lineNumber->text().toInt());
-  q.bindValue(":poitem_itemsrc_id", _itemsrcid);
+  if (_itemsrcid != -1)
+    q.bindValue(":poitem_itemsrc_id", _itemsrcid);
   q.bindValue(":poitem_vend_item_number", _vendorItemNumber->text());
   q.bindValue(":poitem_vend_item_descrip", _vendorDescrip->text());
   q.bindValue(":poitem_vend_uom", _vendorUOM->text());
@@ -698,11 +699,12 @@ void purchaseOrderItem::sSave()
   q.bindValue(":poitem_freight", _freight->localValue());
   q.bindValue(":poitem_duedate", _dueDate->date());
   q.bindValue(":poitem_comments", _notes->text());
-  q.bindValue(":poitem_prj_id", _project->id());
+  if (_project->isValid())
+    q.bindValue(":poitem_prj_id", _project->id());
   if (_metrics->boolean("RevControl"))
   {
     q.bindValue(":poitem_bom_rev_id", _bomRevision->id());
-	q.bindValue(":poitem_boo_rev_id", _booRevision->id());
+    q.bindValue(":poitem_boo_rev_id", _booRevision->id());
   }
   q.exec();
 
