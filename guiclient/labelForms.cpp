@@ -57,58 +57,26 @@
 
 #include "labelForms.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-//#include <qstatusbar.h>
+#include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
+
 #include <parameter.h>
+
 #include "labelForm.h"
 
-/*
- *  Constructs a labelForms as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 labelForms::labelForms(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-//    (void)statusBar();
-
-    // signals and slots connections
-    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-    connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-    connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_labelforms, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-labelForms::~labelForms()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void labelForms::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void labelForms::init()
-{
-//  statusBar()->hide();
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   
-  _labelforms->addColumn(tr("Form Name"), -1,           Qt::AlignLeft   , "labelform_name"  );
-  _labelforms->addColumn(tr("#/Page"),    _orderColumn, Qt::AlignCenter , "labelform_perpage"  );
+  _labelforms->addColumn(tr("Form Name"),       -1, Qt::AlignLeft,  true, "labelform_name"  );
+  _labelforms->addColumn(tr("#/Page"),_orderColumn, Qt::AlignCenter,true, "labelform_perpage"  );
 
   if (_privileges->check("MaintainShippingForms"))
   {
@@ -123,6 +91,16 @@ void labelForms::init()
   }
 
   sFillList();
+}
+
+labelForms::~labelForms()
+{
+    // no need to delete child widgets, Qt does it all for us
+}
+
+void labelForms::languageChange()
+{
+    retranslateUi(this);
 }
 
 void labelForms::sNew()
@@ -173,7 +151,14 @@ void labelForms::sDelete()
 
 void labelForms::sFillList()
 {
-  _labelforms->populate( "SELECT labelform_id, labelform_name, labelform_perpage "
-                         "FROM labelform "
-                         "ORDER BY labelform_name;" );
+  q.prepare("SELECT labelform_id, labelform_name, labelform_perpage "
+            "FROM labelform "
+            "ORDER BY labelform_name;");
+  q.exec();
+  _labelforms->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }

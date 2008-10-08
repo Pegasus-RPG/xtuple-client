@@ -58,8 +58,10 @@
 
 #include "financialLayout.h"
 
-#include <QVariant>
 #include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
+
 #include "financialLayoutColumns.h"
 #include "financialLayoutItem.h"
 #include "financialLayoutGroup.h"
@@ -75,21 +77,12 @@
 #define cCash    2
 #define cAdHoc    3
 
-/*
- *  Constructs a financialLayout as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 financialLayout::financialLayout(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
-  // signals and slots connections
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
   connect(_name, SIGNAL(lostFocus()), this, SLOT(sCheck()));
   connect(_layout, SIGNAL(itemSelectionChanged()), this, SLOT(sHandleButtons()));
   connect(_addTopLevelGroup, SIGNAL(clicked()), this, SLOT(sAddTopLevelGroup()));
@@ -118,25 +111,18 @@ financialLayout::financialLayout(QWidget* parent, const char* name, bool modal, 
   _layout->setRootIsDecorated(TRUE);
   _layout->addColumn( tr("Group/Account Name"), -1, Qt::AlignLeft   );
 
-  _layouts->addColumn( tr("Name"), _itemColumn, Qt::AlignLeft   );
-  _layouts->addColumn( tr("Description"),  -1, Qt::AlignLeft );
+  _layouts->addColumn( tr("Name"), _itemColumn, Qt::AlignLeft, true, "flcol_name");
+  _layouts->addColumn( tr("Description"),   -1, Qt::AlignLeft, true, "flcol_descrip");
   
   _cachedType=cIncome;
 
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 financialLayout::~financialLayout()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void financialLayout::languageChange()
 {
   retranslateUi(this);
@@ -407,7 +393,11 @@ void financialLayout::populate()
     _altDiff->setChecked(q.value("flhead_usealtdiff").toBool());
     _altDiffText->setText(q.value("flhead_altdiff").toString());
   }
-//  ToDo
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
   
   sSetType();
 }
@@ -440,16 +430,18 @@ void financialLayout::sFillList()
   if(0 != item)
     _layout->scrollToItem(item);
 
-// fill Column layouts
-  _layouts->clear();
   q.prepare ("SELECT flcol_id, flcol_name, flcol_descrip "
              " FROM flcol "
              " WHERE flcol_flhead_id=:flhead_id "
              " ORDER BY flcol_name, flcol_descrip; ");
   q.bindValue(":flhead_id", _flheadid);
   q.exec();
-  if (q.first())
-    _layouts->populate(q);
+  _layouts->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void financialLayout::insertFlGroup(int pFlgrpid, QString pFlgrpname, XTreeWidgetItem *pParent, int pId, int pType)

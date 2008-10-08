@@ -62,32 +62,24 @@
 #include <QVariant>
 
 #include <openreports.h>
+
 #include "editICMWatermark.h"
 #include "deliverInvoice.h"
 #include "submitAction.h"
 
-/*
- *  Constructs a reprintInvoices as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 reprintInvoices::reprintInvoices(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
-
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sQuery()));
   connect(_numOfCopies, SIGNAL(valueChanged(int)), this, SLOT(sHandleInvoiceCopies(int)));
   connect(_watermarks, SIGNAL(itemSelected(int)), this, SLOT(sEditWatermark()));
 
-  _invoice->addColumn( tr("Invoice #"), _orderColumn, Qt::AlignRight  );
-  _invoice->addColumn( tr("Doc. Date"), _dateColumn,  Qt::AlignCenter );
-  _invoice->addColumn( tr("Customer"),  -1,           Qt::AlignLeft   );
+  _invoice->addColumn( tr("Invoice #"), _orderColumn, Qt::AlignRight, true, "invchead_invcnumber");
+  _invoice->addColumn( tr("Doc. Date"), _dateColumn,  Qt::AlignCenter,true, "invchead_invcdate");
+  _invoice->addColumn( tr("Customer"),  -1,           Qt::AlignLeft,  true, "customer");
   _invoice->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
   _watermarks->addColumn( tr("Copy #"),      _dateColumn, Qt::AlignCenter );
@@ -105,18 +97,11 @@ reprintInvoices::reprintInvoices(QWidget* parent, const char* name, bool modal, 
   }
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 reprintInvoices::~reprintInvoices()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void reprintInvoices::languageChange()
 {
   retranslateUi(this);
@@ -125,8 +110,8 @@ void reprintInvoices::languageChange()
 void reprintInvoices::sQuery()
 {
   QString sql( "SELECT invchead_id, cust_id,"
-               "       invchead_invcnumber, formatDate(invchead_invcdate),"
-               "       (TEXT(cust_number) || ' - ' || cust_name) "
+               "       invchead_invcnumber, invchead_invcdate,"
+               "       (TEXT(cust_number) || ' - ' || cust_name) AS customer "
                "  FROM invchead, cust "
                " WHERE ( (invchead_cust_id=cust_id)"
                "   AND   (checkInvoiceSitePrivs(invchead_id))" );
@@ -144,6 +129,11 @@ void reprintInvoices::sQuery()
   _dates->bindValue(q);
   q.exec();
   _invoice->populate(q, true);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void reprintInvoices::sPrint()
@@ -188,11 +178,14 @@ void reprintInvoices::sPrint()
 	      }
 	}
 	else
-	  QMessageBox::critical( this, tr("Cannot Find Invoice Form"),
-				 tr( "The Invoice Form '%1' cannot be found.\n"
-				     "One or more of the selected Invoices cannot be printed until a Customer Form Assignment\n"
-				     "is updated to remove any references to this Invoice Form or this Invoice Form is created." )
-				 .arg(q.value("_reportname").toString()) );
+	  QMessageBox::critical(this, tr("Cannot Find Invoice Form"),
+				tr("<p>The Invoice Form '%1' cannot be found. "
+                                   "One or more of the selected Invoices "
+                                   "cannot be printed until a Customer Form "
+                                   "Assignment is updated to remove any "
+                                   "references to this Invoice Form or this "
+                                   "Invoice Form is created.")
+                                  .arg(q.value("_reportname").toString()) );
       }
       else if (q.lastError().type() != QSqlError::None)
       {

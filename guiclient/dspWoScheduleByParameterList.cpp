@@ -92,8 +92,6 @@ dspWoScheduleByParameterList::dspWoScheduleByParameterList(QWidget* parent, cons
 {
   setupUi(this);
 
-//  (void)statusBar();
-
   connect(_wo, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem*)));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
@@ -343,21 +341,28 @@ void dspWoScheduleByParameterList::sDeleteWO()
   {
     QString question;
     if (q.value("wo_ordtype") == "W")
-      question = tr("The Work Order that you selected to delete is a child of "
-		    "another Work Order.  If you delete the selected Work "
+      question = tr("<p>The Work Order that you selected to delete is a child "
+		    "of another Work Order.  If you delete the selected Work "
 		    "Order then the Work Order Materials Requirements for the "
 		    "Component Item will remain but the Work Order to relieve "
 		    "that demand will not. Are you sure that you want to "
 		    "delete the selected Work Order?" );
     else if (q.value("wo_ordtype") == "S")
-      question = tr("The Work Order that you selected to delete was created to "
-		    "satisfy a Sales Order demand.  If you delete the selected "
+      question = tr("<p>The Work Order that you selected to delete was created "
+		    "to satisfy Sales Order demand. If you delete the selected "
 		    "Work Order then the Sales Order demand will remain but "
 		    "the Work Order to relieve that demand will not. Are you "
 		    "sure that you want to delete the selected Work Order?" );
     else
-      question = tr("Are you sure that you want to delete the selected "
+      question = tr("<p>Are you sure that you want to delete the selected "
 		    "Work Order?");
+    if (QMessageBox::question(this, tr("Delete Work Order?"),
+                              question,
+                              QMessageBox::Yes,
+                              QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+    {
+      return;
+    }
 
     q.prepare("SELECT deleteWo(:wo_id, TRUE) AS returnVal;");
     q.bindValue(":wo_id", _wo->id());
@@ -655,9 +660,6 @@ void dspWoScheduleByParameterList::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem 
 
 void dspWoScheduleByParameterList::sFillList()
 {
-  int woid = _wo->id();
-  _wo->clear();
-
   QString sql( "SELECT wo_id,"
                "       CASE WHEN (wo_ordid IS NULL) THEN -1"
                "            ELSE wo_ordid"
@@ -725,6 +727,11 @@ void dspWoScheduleByParameterList::sFillList()
     return;
   q = mql.toQuery(params);
   _wo->populate(q, true);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   sHandleButtons();
 }

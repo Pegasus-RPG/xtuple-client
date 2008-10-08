@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>622</width>
+    <width>655</width>
     <height>400</height>
    </rect>
   </property>
@@ -127,7 +127,7 @@
           <item row="1" column="2" >
            <widget class="QCheckBox" name="_oppourtunity" >
             <property name="text" >
-             <string>Oppourtunity</string>
+             <string>Opportunity</string>
             </property>
            </widget>
           </item>

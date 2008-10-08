@@ -57,68 +57,47 @@
 
 #include "task.h"
 
-#include <qvariant.h>
+#include <QSqlError>
+#include <QVariant>
+
 #include "userList.h"
 
-/*
- *  Constructs a task as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 task::task(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    connect(_actualExp, SIGNAL(lostFocus()), this, SLOT(sExpensesAdjusted()));
-    connect(_budgetExp, SIGNAL(lostFocus()), this, SLOT(sExpensesAdjusted()));
-    connect(_actualHours, SIGNAL(lostFocus()), this, SLOT(sHoursAdjusted()));
-    connect(_budgetHours, SIGNAL(lostFocus()), this, SLOT(sHoursAdjusted()));
-    
-    _budgetHours->setValidator(omfgThis->qtyVal());
-    _actualHours->setValidator(omfgThis->qtyVal());
-    _budgetExp->setValidator(omfgThis->qtyVal());
-    _actualExp->setValidator(omfgThis->qtyVal());
-    _balanceHours->setPrecision(omfgThis->qtyVal());
-    _balanceExp->setPrecision(omfgThis->qtyVal());
-     
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-task::~task()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void task::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void task::init()
-{
-  //_usr->addColumn( tr("Username"),    _itemColumn, AlignLeft );
-  //_usr->addColumn( tr("Proper Name"), -1,          AlignLeft );
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_actualExp, SIGNAL(lostFocus()), this, SLOT(sExpensesAdjusted()));
+  connect(_budgetExp, SIGNAL(lostFocus()), this, SLOT(sExpensesAdjusted()));
+  connect(_actualHours, SIGNAL(lostFocus()), this, SLOT(sHoursAdjusted()));
+  connect(_budgetHours, SIGNAL(lostFocus()), this, SLOT(sHoursAdjusted()));
+  
+  _budgetHours->setValidator(omfgThis->qtyVal());
+  _actualHours->setValidator(omfgThis->qtyVal());
+  _budgetExp->setValidator(omfgThis->qtyVal());
+  _actualExp->setValidator(omfgThis->qtyVal());
+  _balanceHours->setPrecision(omfgThis->qtyVal());
+  _balanceExp->setPrecision(omfgThis->qtyVal());
+   
+//_usr->addColumn( tr("Username"),_itemColumn, AlignLeft, true, "usr_username");
+//_usr->addColumn( tr("Proper Name"),      -1, AlignLeft, true, "usr_propername");
 
   _prjid = -1;
   _prjtaskid = -1;
 }
 
-enum SetResponse task::set(ParameterList &pParams)
+task::~task()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void task::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse task::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -202,6 +181,11 @@ void task::populate()
     //else
     //  _userList->setChecked(TRUE);
   }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   //sFillUserList();
 }
@@ -268,6 +252,11 @@ void task::sSave()
   }
 
   q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   done(_prjtaskid);
 }
@@ -307,6 +296,11 @@ void task::sNewUser()
       q.exec();
       sFillUserList();
     }
+    if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
 */
 }
@@ -320,6 +314,11 @@ void task::sDeleteUser()
   q.bindValue(":usr_id", _usr->id());
   q.bindValue(":prjtask_id", _prjtaskid);
   q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
   sFillUserList();
 */
 }
@@ -335,6 +334,11 @@ void task::sFillUserList()
   q.bindValue(":prjtask_id", _prjtaskid);
   q.exec();
   _usr->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 */
 }
 

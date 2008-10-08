@@ -57,56 +57,26 @@
 
 #include "reprintCreditMemos.h"
 
-#include <QVariant>
-#include <openreports.h>
 #include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
+
+#include <openreports.h>
 #include "editICMWatermark.h"
 
-/*
- *  Constructs a reprintCreditMemos as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 reprintCreditMemos::reprintCreditMemos(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_numOfCopies, SIGNAL(valueChanged(int)), this, SLOT(sHandleCopies(int)));
+  connect(_watermarks, SIGNAL(itemSelected(int)), this, SLOT(sEditWatermark()));
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_numOfCopies, SIGNAL(valueChanged(int)), this, SLOT(sHandleCopies(int)));
-    connect(_watermarks, SIGNAL(itemSelected(int)), this, SLOT(sEditWatermark()));
-    connect(_cmhead, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
-    init();
-}
+  _cmhead->addColumn( tr("C/M #"),   _orderColumn, Qt::AlignRight, true, "cmhead_number");
+  _cmhead->addColumn( tr("Doc. Date"),_dateColumn, Qt::AlignCenter,true, "cmhead_docdate");
+  _cmhead->addColumn( tr("Customer"),          -1, Qt::AlignLeft,  true, "customer");
 
-/*
- *  Destroys the object and frees any allocated resources
- */
-reprintCreditMemos::~reprintCreditMemos()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void reprintCreditMemos::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void reprintCreditMemos::init()
-{
-  _cmhead->addColumn( tr("C/M #"),     _orderColumn, Qt::AlignRight  );
-  _cmhead->addColumn( tr("Doc. Date"), _dateColumn,  Qt::AlignCenter );
-  _cmhead->addColumn( tr("Customer"),  -1,           Qt::AlignLeft   );
   _cmhead->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
   _watermarks->addColumn( tr("Copy #"),      _dateColumn, Qt::AlignCenter );
@@ -124,12 +94,22 @@ void reprintCreditMemos::init()
   }
 
   _cmhead->populate( "SELECT cmhead_id, cust_id,"
-                     "       cmhead_number, formatDate(cmhead_docdate),"
-                     "       (TEXT(cust_number) || ' - ' || cust_name) "
+                     "       cmhead_number, cmhead_docdate,"
+                     "       (TEXT(cust_number) || ' - ' || cust_name) AS customer "
                      "FROM cmhead, cust "
                      "WHERE ( (cmhead_cust_id=cust_id) "
                     "   AND   (checkCreditMemoSitePrivs(cmhead_id)) ) "
                      "ORDER BY cmhead_docdate DESC;", TRUE );
+}
+
+reprintCreditMemos::~reprintCreditMemos()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void reprintCreditMemos::languageChange()
+{
+  retranslateUi(this);
 }
 
 void reprintCreditMemos::sPrint()
@@ -173,10 +153,13 @@ void reprintCreditMemos::sPrint()
 	  }
 	}
 	else
-	  QMessageBox::critical( this, tr("Cannot Find Credit Memo Form"),
-				 tr( "The Invoice Form '%1' cannot be found.\n"
-				     "One or more of the selected Credit Memos cannot be printed until a Customer Form Assignment\n"
-				     "is updated to remove any references to this Credit Memo Form or this Credit Memo Form is created." )
+	  QMessageBox::critical(this, tr("Cannot Find Credit Memo Form"),
+				tr("<p>The Invoice Form '%1' cannot be found. "
+                                   "One or more of the selected Credit Memos "
+                                   "cannot be printed until a Customer Form "
+                                   "Assignment is updated to remove any "
+                                   "references to this Credit Memo Form or "
+                                   "this Credit Memo Form is created." )
 				 .arg(q.value("_reportname").toString()) );
       }
     }

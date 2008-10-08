@@ -61,8 +61,9 @@
 #include <QVariant>
 #include <QMessageBox>
 #include <QSqlError>
-//#include <QStatusBar>
+
 #include <openreports.h>
+
 #include "honorific.h"
 
 /*
@@ -73,59 +74,40 @@
    Shop Foreman in case this ever comes up.
  */
 
-/*
- *  Constructs a honorifics as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 honorifics::honorifics(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-//    (void)statusBar();
+  connect(_honorifics, SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *, int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
 
-    // signals and slots connections
-    connect(_honorifics, SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *, int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-    connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
-    connect(_honorifics, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
+  _honorifics->addColumn(tr("Title"), -1, Qt::AlignLeft, true, "hnfc_code");
 
-//    statusBar()->hide();
-    
-    _honorifics->addColumn(tr("Title"),        -1, Qt::AlignLeft, this, "hnfc_code"   );
+  if (_privileges->check("MaintainTitles"))
+  {
+    connect(_honorifics, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
+    connect(_honorifics, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
+    connect(_honorifics, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
+  }
+  else
+  {
+    _new->setEnabled(FALSE);
+    connect(_honorifics, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
+  }
 
-    if (_privileges->check("MaintainTitles"))
-    {
-      connect(_honorifics, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
-      connect(_honorifics, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
-      connect(_honorifics, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
-    }
-    else
-    {
-      _new->setEnabled(FALSE);
-      connect(_honorifics, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
-    }
-
-    sFillList();
+  sFillList();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 honorifics::~honorifics()
 {
     // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void honorifics::languageChange()
 {
     retranslateUi(this);
@@ -137,12 +119,12 @@ void honorifics::sFillList()
              "FROM hnfc "
              "ORDER BY hnfc_code;" );
   q.exec();
+  _honorifics->populate(q);
   if (q.lastError().type() != QSqlError::None)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-  _honorifics->populate(q);
 }
 
 void honorifics::sDelete()

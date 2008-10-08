@@ -57,24 +57,16 @@
 
 #include "group.h"
 
-#include <QVariant>
+#include <QCloseEvent>
 #include <QMessageBox>
 #include <QSqlError>
-#include <QCloseEvent>
+#include <QVariant>
 
-/*
- *  Constructs a group as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 group::group(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
-  // signals and slots connections
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_name, SIGNAL(lostFocus()), this, SLOT(sCheck()));
   connect(_add, SIGNAL(clicked()), this, SLOT(sAdd()));
@@ -88,8 +80,8 @@ group::group(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_available, SIGNAL(itemSelected(int)), this, SLOT(sAdd()));
 
 
-  _available->addColumn("Available Privileges", -1, Qt::AlignLeft);
-  _granted->addColumn("Granted Privileges", -1, Qt::AlignLeft);
+  _available->addColumn("Available Privileges", -1, Qt::AlignLeft, true, "priv_name");
+  _granted->addColumn("Granted Privileges", -1, Qt::AlignLeft, true, "priv_name");
 
   q.exec( "SELECT DISTINCT priv_module "
           "FROM priv "
@@ -99,18 +91,11 @@ group::group(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 group::~group()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void group::languageChange()
 {
   retranslateUi(this);
@@ -179,7 +164,7 @@ enum SetResponse group::set(const ParameterList &pParams)
   return NoError;
 }
 
-void group::closeEvent(QCloseEvent *pEvent)
+void group::closeEvent(QCloseEvent * /*pEvent*/)
 {
   if(cNew == _mode)
   {
@@ -238,39 +223,40 @@ void group::sSave()
 
 void group::sModuleSelected(const QString &pModule)
 {
-  _available->clear();
-  _granted->clear();
-
-  XSqlQuery privs;
-  privs.prepare( "SELECT priv_id, priv_name "
+  XSqlQuery avail;
+  avail.prepare( "SELECT priv_id, priv_name "
                  "FROM priv "
-                 "WHERE (priv_module=:priv_module) "
+                 "WHERE ((priv_module=:priv_module) "
+                 "   AND (priv_id NOT IN (SELECT grppriv_priv_id"
+                 "                        FROM grppriv"
+                 "                        WHERE (grppriv_grp_id=:grpid)"
+                 "                       ))) "
                  "ORDER BY priv_name;" );
-  privs.bindValue(":priv_module", pModule);
-  privs.exec();
-  if (privs.first())
+  avail.bindValue(":priv_module", pModule);
+  avail.bindValue(":grpid", _grpid);
+  avail.exec();
+  _available->populate(avail);
+  if (avail.lastError().type() != QSqlError::None)
   {
-    XTreeWidgetItem *granted = NULL;
-    XTreeWidgetItem *available = NULL;
+    systemError(this, avail.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
-//  Insert each priv into either the available or granted list
-    XSqlQuery grppriv;
-    grppriv.prepare( "SELECT priv_id "
-                     "FROM priv, grppriv "
-                     "WHERE ( (grppriv_priv_id=priv_id)"
-                     " AND (grppriv_grp_id=:grp_id)"
-                     " AND (priv_module=:priv_module) );" );
-    grppriv.bindValue(":grp_id", _grpid);
-    grppriv.bindValue(":priv_module", _module->currentText());
-    grppriv.exec();
-    do
-    {
-      if (grppriv.findFirst("priv_id", privs.value("priv_id").toInt()) == -1)
-        available = new XTreeWidgetItem(_available, available, privs.value("priv_id").toInt(), privs.value("priv_name"));
-      else
-        granted = new XTreeWidgetItem(_granted, granted, privs.value("priv_id").toInt(), privs.value("priv_name"));
-    }
-    while (privs.next());
+  XSqlQuery grppriv;
+  grppriv.prepare( "SELECT priv_id, priv_name "
+                   "FROM priv, grppriv "
+                   "WHERE ((grppriv_priv_id=priv_id)"
+                   "   AND (grppriv_grp_id=:grp_id)"
+                   "   AND (priv_module=:priv_module))"
+                   "ORDER BY priv_name;" );
+  grppriv.bindValue(":grp_id", _grpid);
+  grppriv.bindValue(":priv_module", _module->currentText());
+  grppriv.exec();
+  _granted->populate(grppriv);
+  if (grppriv.lastError().type() != QSqlError::None)
+  {
+    systemError(this, grppriv.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
 }
 

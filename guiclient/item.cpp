@@ -213,11 +213,11 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
 
   connect(omfgThis, SIGNAL(itemsitesUpdated()), SLOT(sFillListItemSites()));
 
-  _file->addColumn(tr("Title"), _itemColumn, Qt::AlignLeft );
-  _file->addColumn(tr("URL"), -1, Qt::AlignLeft );
+  _file->addColumn(tr("Title"),_itemColumn, Qt::AlignLeft,true, "itemfile_title");
+  _file->addColumn(tr("URL"),           -1, Qt::AlignLeft,true, "itemfile_url");
 
-  _itemtax->addColumn(tr("Tax Type"),      _itemColumn, Qt::AlignLeft );
-  _itemtax->addColumn(tr("Tax Authority"),          -1, Qt::AlignLeft );
+  _itemtax->addColumn(tr("Tax Type"),_itemColumn, Qt::AlignLeft,true,"taxtype_name");
+  _itemtax->addColumn(tr("Tax Authority"),    -1, Qt::AlignLeft,true,"taxauth");
 
   if(!_privileges->check("MaintainBOOs") || !_metrics->boolean("Routings"))
     _boo->hide();
@@ -1925,6 +1925,11 @@ void item::sFillListFiles()
   q.bindValue(":item_id", _itemid);
   q.exec();
   _file->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void item::sOpenFile()
@@ -1973,7 +1978,8 @@ void item::sDeleteItemtax()
 
 void item::sFillListItemtax()
 {
-  q.prepare("SELECT itemtax_id, taxtype_name, COALESCE(taxauth_code,:any)"
+  q.prepare("SELECT itemtax_id, taxtype_name,"
+            "       COALESCE(taxauth_code,:any) AS taxauth"
             "  FROM itemtax JOIN taxtype ON (itemtax_taxtype_id=taxtype_id)"
             "       LEFT OUTER JOIN taxauth ON (itemtax_taxauth_id=taxauth_id)"
             " WHERE (itemtax_item_id=:item_id)"
@@ -1982,6 +1988,11 @@ void item::sFillListItemtax()
   q.bindValue(":any", tr("Any"));
   q.exec();
   _itemtax->populate(q, _itemtax->id());
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void item::sNewUOM()
