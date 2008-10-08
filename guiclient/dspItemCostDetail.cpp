@@ -57,73 +57,51 @@
 
 #include "dspItemCostDetail.h"
 
+#include <QSqlError>
 #include <QVariant>
-//#include <QStatusBar>
-#include <QWorkspace>
 
+#include <metasql.h>
 #include <openreports.h>
 
 #include "bomItem.h"
 
-/*
- *  Constructs a dspItemCostDetail as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspItemCostDetail::dspItemCostDetail(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-//    (void)statusBar();
+  QButtonGroup* _costTypeGroupInt = new QButtonGroup(this);
+  _costTypeGroupInt->addButton(_standardCosts);
+  _costTypeGroupInt->addButton(_actualCosts);
 
-    QButtonGroup* _costTypeGroupInt = new QButtonGroup(this);
-    _costTypeGroupInt->addButton(_standardCosts);
-    _costTypeGroupInt->addButton(_actualCosts);
+  connect(_costTypeGroupInt, SIGNAL(buttonClicked(int)), this, SLOT(sFillList()));
+  connect(_item, SIGNAL(newId(int)), this, SLOT(sPopulate()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_costType, SIGNAL(newID(int)), this, SLOT(sFillList()));
 
-    // signals and slots connections
-    connect(_costTypeGroupInt, SIGNAL(buttonClicked(int)), this, SLOT(sFillList()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_item, SIGNAL(newId(int)), this, SLOT(sPopulate()));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_costType, SIGNAL(newID(int)), this, SLOT(sFillList()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspItemCostDetail::~dspItemCostDetail()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspItemCostDetail::languageChange()
-{
-    retranslateUi(this);
-}
-
-void dspItemCostDetail::init()
-{
-//  statusBar()->hide();
-
-  _bom->addColumn(tr("#"),               _seqColumn,   Qt::AlignCenter );
-  _bom->addColumn(tr("Item Number"),     _itemColumn,  Qt::AlignLeft   );
-  _bom->addColumn(tr("Description"),     -1,           Qt::AlignLeft   );
-  _bom->addColumn(tr("UOM"),             _uomColumn,   Qt::AlignCenter );
-  _bom->addColumn(tr("Qty. Per"),        _qtyColumn,   Qt::AlignRight  );
-  _bom->addColumn(tr("Scrap/Absorb. %"), _itemColumn,  Qt::AlignRight  );
-  _bom->addColumn(tr("Unit Cost"),       _costColumn,  Qt::AlignRight  );
-  _bom->addColumn(tr("Ext'd Cost"),      _moneyColumn, Qt::AlignRight  );
+  _bom->addColumn(tr("#"),               _seqColumn,   Qt::AlignCenter,true, "seqnumber");
+  _bom->addColumn(tr("Item Number"),     _itemColumn,  Qt::AlignLeft,  true, "item_number");
+  _bom->addColumn(tr("Description"),     -1,           Qt::AlignLeft,  true, "itemdescrip");
+  _bom->addColumn(tr("UOM"),             _uomColumn,   Qt::AlignCenter,true, "uom_name");
+  _bom->addColumn(tr("Qty. Per"),        _qtyColumn,   Qt::AlignRight, true, "qtyper");
+  _bom->addColumn(tr("Scrap/Absorb. %"), _itemColumn,  Qt::AlignRight, true, "scrap" );
+  _bom->addColumn(tr("Unit Cost"),       _costColumn,  Qt::AlignRight, true, "cost");
+  _bom->addColumn(tr("Ext'd Cost"),      _moneyColumn, Qt::AlignRight, true, "extendedcost");
 
   connect(omfgThis, SIGNAL(bomsUpdated(int, bool)), SLOT(sFillList(int, bool)));
 }
 
-enum SetResponse dspItemCostDetail::set(ParameterList &pParams)
+dspItemCostDetail::~dspItemCostDetail()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void dspItemCostDetail::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse dspItemCostDetail::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -163,7 +141,11 @@ enum SetResponse dspItemCostDetail::set(ParameterList &pParams)
       _costType->setId(q.value("itemcost_costelem_id").toInt());
       _costType->setEnabled(FALSE);
     }
-//  ToDo
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return UndefinedError;
+    }
   }
 
   if (pParams.inList("run"))
@@ -185,11 +167,15 @@ void dspItemCostDetail::sPopulate()
   q.bindValue(":item_id", _item->id());
   q.exec();
   _costType->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
-void dspItemCostDetail::sPrint()
+bool dspItemCostDetail::setParams(ParameterList &params)
 {
-  ParameterList params;
   params.append("item_id", _item->id());
   params.append("costelem_id", _costType->id());
 
@@ -197,6 +183,27 @@ void dspItemCostDetail::sPrint()
     params.append("standardCost");
   else
     params.append("actualCost");
+
+  if ( (_item->itemType() == "M") ||
+       (_item->itemType() == "F") ||
+       (_item->itemType() == "B") ||
+       (_item->itemType() == "T") ||
+       (_item->itemType() == "Y") ||
+       (_item->itemType() == "R") ||
+       (_item->itemType() == "O") ||
+       (_item->itemType() == "P") )
+    params.append("useBOM");
+  else if (_item->itemType() == "C")
+    params.append("useBBOM");
+
+  return true;
+}
+
+void dspItemCostDetail::sPrint()
+{
+  ParameterList params;
+  if (! setParams(params))
+    return;
 
   orReport report("ItemCostDetail", params);
   if (report.isValid())
@@ -240,130 +247,98 @@ void dspItemCostDetail::sFillList()
 
 void dspItemCostDetail::sFillList(int pItemid, bool pLocale)
 {
-  if ( (pLocale) || (pItemid == _item->id()) )
+  if (! pLocale && (pItemid != _item->id()))
+    return;
+
+  ParameterList params;
+  if (! setParams(params))
+    return;
+
+  MetaSQLQuery mql(
+      "SELECT id, item.item_id, seqnumber, item_number,"
+      "       (item_descrip1 || ' ' || item_descrip2) AS itemdescrip, uom_name,"
+      "       qtyper,       'qtyper' AS qtyper_xtnumericrole,"
+      "       scrap,        'scrap' AS scrap_xtnumericrole,"
+      "       cost,         'cost' AS cost_xtnumericrole,"
+      "       extendedcost, 'curr' AS extendedcost_xtnumericrole,"
+      "       0 AS extendedcost_xttotalrole "
+      "FROM uom, item, ("
+      "<? if exists(\"useBOM\") ?>"
+      "     SELECT bomitem_id AS id, bomitem_seqnumber AS seqnumber,"
+      "            itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper) AS qtyper,"
+      "            bomitem_scrap AS scrap,"
+      "            bomitem_item_id AS item_id,"
+      "  <? if exists(\"standardCost\") ?>"
+      "            itemcost_stdcost AS cost,"
+      "            (itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL,"
+      "                          bomitem_qtyper * (1 + bomitem_scrap)) *"
+      "             itemcost_stdcost) AS extendedcost "
+      "  <? elseif exists(\"actualCost\") ?>"
+      "            itemcost_actcost AS cost,"
+      "            (itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL,"
+      "                          bomitem_qtyper * (1 + bomitem_scrap)) *"
+      "             itemcost_actcost) AS extendedcost "
+      "  <? endif ?>"
+      "    FROM bomitem LEFT OUTER JOIN rev ON (bomitem_rev_id=rev_id),"
+      "         itemcost, costelem "
+      "    WHERE ((CURRENT_DATE BETWEEN bomitem_effective AND (bomitem_expires-1))"
+      "     AND (COALESCE(rev_status, 'A')='A')"
+      "     AND (itemcost_item_id=bomitem_item_id)"
+      "     AND (itemcost_costelem_id=costelem_id)"
+      "     AND (bomitem_parent_item_id=<? value(\"item_id\") ?>)"
+      "     AND (costelem_id=<? value(\"costelem_id\") ?>) ) "
+      "<? elseif exists(\"useBBOM\") ?>"
+      "     SELECT bbomitem_id AS id, bbomitem_seqnumber AS seqnumber,"
+      "            bbomitem_qtyper AS qtyper,"
+      "            bbomitem_costabsorb AS scrap,"
+      "            bbomparent_parent_item_id AS item_id,"
+      "  <? if exists(\"standardCost\") ?>"
+      "            itemcost_stdcost AS cost,"
+      "            (itemcost_stdcost / bbomitem_qtyper *"
+      "             bbomitem_costabsorb) AS extendedcost "
+      "  <? elseif exists(\"actualCost\") ?>"
+      "            itemcost_actcost AS cost,"
+      "            (itemcost_actcost / bbomitem_qtyper *"
+      "             bbomitem_costabsorb) AS extendedcost "
+      "  <? endif ?>"
+      "    FROM bbomitem, itemcost "
+      "    WHERE ((CURRENT_DATE BETWEEN bbomitem_effective AND (bbomitem_expires-1))"
+      "     AND (itemcost_item_id=bbomitem_parent_item_id)"
+      "     AND (itemcost_costelem_id=<? value(\"costelem_id\") ?>)"
+      "     AND (bbomitem_item_id=<? value(\"item_id\") ?>) )"
+      "    UNION"
+      "    SELECT source.bbomitem_id, source.bbomitem_seqnumber AS seqnumber,"
+      "           source.bbomitem_qtyper, target.bbomitem_costabsorb,"
+      "           item_id,"
+      "  <? if exists(\"standardCost\") ?>"
+      "           itemcost_stdcost AS cost,"
+      "           (itemcost_stdcost * source.bbomitem_qtyper /"
+      "            target.bbomitem_qtyper * target.bbomitem_costabsorb) AS extendedcost "
+      "  <? elseif exists(\"actualCost\") ?>"
+      "           itemcost_actcost AS cost,"
+      "           (itemcost_actcost * source.bbomitem_qtyper /"
+      "            target.bbomitem_qtyper * target.bbomitem_costabsorb) AS extendedcost "
+      "  <? endif ?>"
+      "    FROM item, itemcost, bbomitem AS target, bbomitem AS source "
+      "    WHERE ( (source.bbomitem_parent_item_id=target.bbomitem_parent_item_id)"
+      "     AND (CURRENT_DATE BETWEEN source.bbomitem_effective AND (source.bbomitem_expires-1))"
+      "     AND (CURRENT_DATE BETWEEN target.bbomitem_effective AND (target.bbomitem_expires-1))"
+      "     AND (source.bbomitem_item_id=itemcost_item_id)"
+      "     AND (source.bbomitem_item_id=item_id)"
+      "     AND (item_type='Y')"
+      "     AND (target.bbomitem_item_id=<? value(\"item_id\") ?>)"
+      "     AND (itemcost_costelem_id=<? value(\"costelem_id\") ?>) )"
+      "<? endif ?>"
+      ") AS data "
+      "WHERE ((data.item_id=item.item_id)"
+      "   AND (item_inv_uom_id=uom_id)) "
+      "ORDER BY seqnumber;");
+
+  q = mql.toQuery(params);
+  _bom->populate(q, true);
+  if (q.lastError().type() != QSqlError::None)
   {
-    _bom->clear();
-
-    if (_item->isValid())
-    {
-      QString sql;
-
-      if ( (_item->itemType() == "M") ||
-           (_item->itemType() == "F") ||
-           (_item->itemType() == "B") ||
-           (_item->itemType() == "T") ||
-           (_item->itemType() == "Y") ||
-           (_item->itemType() == "R") ||
-           (_item->itemType() == "O") ||
-           (_item->itemType() == "P") )
-      {
-        sql = "SELECT bomitem_id, item_id, seqnumber, item_number,"
-              "       (item_descrip1 || ' ' || item_descrip2) AS itemdescrip, uom_name,"
-              "       formatQtyper(qtyper) AS f_qtyper,"
-              "       formatScrap(bomitem_scrap) AS f_scrap,"
-              "       formatCost(cost) AS f_cost,"
-              "       formatCost(extendedcost) AS f_extendedcost,"
-              "       extendedcost "
-              "FROM ( SELECT bomitem_id, bomitem_seqnumber AS seqnumber, itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper) AS qtyper, bomitem_scrap,"
-              "              item_id, item_number, item_descrip1, item_descrip2, uom_name, ";
-
-        if (_standardCosts->isChecked())
-          sql += " itemcost_stdcost AS cost,"
-                 " (itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper * (1 + bomitem_scrap)) * itemcost_stdcost) AS extendedcost ";
-        else
-          sql += " itemcost_actcost AS cost,"
-                 " (itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper * (1 + bomitem_scrap)) * itemcost_actcost) AS extendedcost ";
-
-  
-        sql += "FROM bomitem, item, itemcost, costelem, uom "
-               "WHERE ( (bomitem_item_id=item_id)"
-               " AND (item_inv_uom_id=uom_id)"
-               " AND (CURRENT_DATE BETWEEN bomitem_effective AND (bomitem_expires-1))"
-               " AND (itemcost_item_id=item_id)"
-               " AND (itemcost_costelem_id=costelem_id)"
-               " AND (bomitem_parent_item_id=:item_id)"
-               " AND (costelem_id=:costelem_id) ) ) AS data "
-               "ORDER BY seqnumber;";
-      }
-      else if (_item->itemType() == "C")
-      {
-        sql = "SELECT bbomitem_id, item_id, seqnumber, item_number,"
-              "       (item_descrip1 || ' ' || item_descrip2) AS itemdescrip, uom_name,"
-              "       formatQtyPer(bbomitem_qtyper) AS f_qtyper,"
-              "       formatScrap(bbomitem_costabsorb) AS f_scrap,"
-              "       formatCost(cost) AS f_cost,"
-              "       formatCost(extendedcost) AS f_extendedcost,"
-              "       extendedcost "
-              "FROM ( SELECT bbomitem_id, bbomitem_seqnumber AS seqnumber, bbomitem_qtyper, bbomitem_costabsorb,"
-              "              item_id, item_number, item_descrip1, item_descrip2, uom_name, ";
-
-        if (_standardCosts->isChecked())
-          sql += " itemcost_stdcost AS cost,"
-                 " (itemcost_stdcost / bbomitem_qtyper * bbomitem_costabsorb) AS extendedcost ";
-        else
-          sql += " itemcost_actcost AS cost,"
-                 " (itemcost_actcost / bbomitem_qtyper * bbomitem_costabsorb) AS extendedcost ";
-
-
-        sql += "FROM bbomitem, item, itemcost, uom "
-               "WHERE ( (bbomitem_parent_item_id=item_id)"
-               " AND (item_inv_uom_id=uom_id)"
-               " AND (CURRENT_DATE BETWEEN bbomitem_effective AND (bbomitem_expires-1))"
-               " AND (itemcost_item_id=bbomitem_parent_item_id)"
-               " AND (itemcost_costelem_id=:costelem_id)"
-               " AND (bbomitem_item_id=:item_id) )"
-
-               "UNION SELECT source.bbomitem_id, source.bbomitem_seqnumber AS seqnumber,"
-               "             source.bbomitem_qtyper, target.bbomitem_costabsorb,"
-               "             item_id, item_number, item_descrip1, item_descrip2, uom_name,";
-
-
-        if (_standardCosts->isChecked())
-          sql += " itemcost_stdcost AS cost,"
-                 " (itemcost_stdcost * source.bbomitem_qtyper / target.bbomitem_qtyper * target.bbomitem_costabsorb) AS extendedcost ";
-        else
-          sql += " itemcost_actcost AS cost,"
-                 " (itemcost_actcost * source.bbomitem_qtyper / target.bbomitem_qtyper * target.bbomitem_costabsorb) AS extendedcost ";
-
-        sql += "FROM item, itemcost, bbomitem AS target, bbomitem AS source, uom "
-               "WHERE ( (source.bbomitem_parent_item_id=target.bbomitem_parent_item_id)"
-               " AND (CURRENT_DATE BETWEEN source.bbomitem_effective AND (source.bbomitem_expires-1))"
-               " AND (CURRENT_DATE BETWEEN target.bbomitem_effective AND (target.bbomitem_expires-1))"
-               " AND (source.bbomitem_item_id=itemcost_item_id)"
-               " AND (source.bbomitem_item_id=item_id)"
-               " AND (item_inv_uom_id=uom_id)"
-               " AND (item_type='Y')"
-               " AND (target.bbomitem_item_id=:item_id)"
-               " AND (itemcost_costelem_id=:costelem_id) ) ) AS data "
-               "ORDER BY seqnumber;";
-      }
-
-      q.prepare(sql);
-      q.bindValue(":costelem_id", _costType->id());
-      q.bindValue(":item_id", _item->id());
-      q.exec();
-      double extendedCost = 0.0;
-
-      XTreeWidgetItem *last = 0;
-      while (q.next())
-      {
-	last = new XTreeWidgetItem(_bom, last, q.value("bomitem_id").toInt(),
-				   q.value("item_id").toInt(),
-				   q.value("seqnumber"),
-				   q.value("item_number"),
-				   q.value("itemdescrip"),
-				   q.value("uom_name"),
-				   q.value("f_qtyper"),
-				   q.value("f_scrap"),
-				   q.value("f_cost"),
-				   q.value("f_extendedcost") );
-
-        extendedCost += q.value("extendedcost").toDouble();
-      }
-
-      last = new XTreeWidgetItem(_bom, last, -1, -1,
-				 "", tr("Totals:"),
-				 "", "", "", "", "", formatCost(extendedCost) );
-    }
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
 }
