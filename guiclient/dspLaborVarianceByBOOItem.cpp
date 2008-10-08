@@ -58,74 +58,79 @@
 #include "dspLaborVarianceByBOOItem.h"
 
 #include <QVariant>
-//#include <QStatusBar>
+#include <QSqlError>
 #include <QMenu>
-#include <parameter.h>
-#include <openreports.h>
-#include "guiclient.h"
 
-/*
- *  Constructs a dspLaborVarianceByBOOItem as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
+#include <metasql.h>
+#include <openreports.h>
+#include <parameter.h>
+
+#include "guiclient.h"
+#include "mqlutil.h"
+
 dspLaborVarianceByBOOItem::dspLaborVarianceByBOOItem(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_woopervar, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_booitem, SIGNAL(newID(int)), this, SLOT(sFillList()));
   connect(_item, SIGNAL(newId(int)), this, SLOT(sPopulateComponentItems(int)));
-  connect(_item, SIGNAL(warehouseIdChanged(int)), _warehouse, SLOT(setId(int)));
-  connect(_item, SIGNAL(newId(int)), _warehouse, SLOT(findItemSites(int)));
   connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
 
   _item->setType(ItemLineEdit::cGeneralManufactured);
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 
-  _woopervar->addColumn(tr("Post Date"),  _dateColumn, Qt::AlignCenter );
-  _woopervar->addColumn(tr("Ordered"),    _qtyColumn,  Qt::AlignRight  );
-  _woopervar->addColumn(tr("Produced"),   _qtyColumn,  Qt::AlignRight  );
-  _woopervar->addColumn(tr("Proj Setup"), _timeColumn, Qt::AlignRight  );
-  _woopervar->addColumn(tr("Proj. Run"),  _timeColumn, Qt::AlignRight  );
-  _woopervar->addColumn(tr("Act. Setup"), _timeColumn, Qt::AlignRight  );
-  _woopervar->addColumn(tr("Act. Run"),   _timeColumn, Qt::AlignRight  );
-  _woopervar->addColumn(tr("Setup Var."), _timeColumn, Qt::AlignRight  );
-  _woopervar->addColumn(tr("Run Var."),   _timeColumn, Qt::AlignRight  );
+  _woopervar->addColumn(tr("Post Date"),_dateColumn, Qt::AlignCenter,true, "woopervar_posted");
+  _woopervar->addColumn(tr("Ordered"),   _qtyColumn, Qt::AlignRight, true, "woopervar_qtyord");
+  _woopervar->addColumn(tr("Produced"),  _qtyColumn, Qt::AlignRight, true, "woopervar_qtyrcv");
+  _woopervar->addColumn(tr("Proj Setup"),_qtyColumn, Qt::AlignRight, true, "woopervar_stdsutime");
+  _woopervar->addColumn(tr("Proj. Run"), _qtyColumn, Qt::AlignRight, true, "woopervar_stdrntime");
+  _woopervar->addColumn(tr("Act. Setup"),_qtyColumn, Qt::AlignRight, true, "woopervar_sutime");
+  _woopervar->addColumn(tr("Act. Run"),  _qtyColumn, Qt::AlignRight, true, "woopervar_rntime");
+  _woopervar->addColumn(tr("Setup Var."),_qtyColumn, Qt::AlignRight, true, "suvar");
+  _woopervar->addColumn(tr("Run Var."),  _qtyColumn, Qt::AlignRight, true, "rnvar");
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspLaborVarianceByBOOItem::~dspLaborVarianceByBOOItem()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspLaborVarianceByBOOItem::languageChange()
 {
   retranslateUi(this);
 }
 
-void dspLaborVarianceByBOOItem::sPrint()
+bool dspLaborVarianceByBOOItem::setParams(ParameterList &params)
 {
-  ParameterList params;
+  if (_booitem->id() == -1)
+  {
+    _booitem->setFocus();
+    return false;
+  }
+
+  if (! _dates->allValid())
+  {
+    _dates->setFocus();
+    return false;
+  }
+
   _warehouse->appendValue(params);
   _dates->appendValue(params);
   params.append("item_id", _item->id());
   params.append("booitem_id", _booitem->id());
 
+  return true;
+}
+
+void dspLaborVarianceByBOOItem::sPrint()
+{
+  ParameterList params;
+  if (! setParams(params))
+    return;
   orReport report("LaborVarianceByBOOItem", params);
   if (report.isValid())
     report.print();
@@ -156,55 +161,16 @@ void dspLaborVarianceByBOOItem::sPopulateComponentItems(int pItemid)
 
 void dspLaborVarianceByBOOItem::sFillList()
 {
-  if (!checkParameters())
+  ParameterList params;
+  if (! setParams(params))
     return;
 
-  QString sql( "SELECT woopervar_id, formatDate(woopervar_posted),"
-               "       formatQty(woopervar_qtyord),"
-               "       formatQty(woopervar_qtyrcv),"
-               "       formatTime(woopervar_stdsutime),"
-               "       formatTime(woopervar_stdrntime),"
-               "       formatTime(woopervar_sutime),"
-               "       formatTime(woopervar_rntime),"
-               "       formattime(woopervar_sutime - woopervar_stdsutime),"
-               "       formattime(woopervar_rntime - woopervar_stdrntime) "
-               "FROM woopervar, itemsite "
-               "WHERE ( (woopervar_parent_itemsite_id=itemsite_id)"
-               " AND (woopervar_booitem_id=:booitem_id)"
-               " AND (woopervar_posted BETWEEN :startDate AND :endDate)" );
-
-  if (_warehouse->isSelected())
-    sql += " AND (itemsite_warehous_id=:warehous_id)";
-
-  sql += ") "
-         "ORDER BY woopervar_posted DESC;";
-
-  q.prepare(sql);
-  _warehouse->bindValue(q);
-  _dates->bindValue(q);
-  q.bindValue(":booitem_id", _booitem->id());
-  q.exec();
+  MetaSQLQuery mql = mqlLoad("manufacture", "laborvariance");
+  q = mql.toQuery(params);
   _woopervar->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
-
-bool dspLaborVarianceByBOOItem::checkParameters()
-{
-  if (_booitem->id() == -1)
-  {
-    return FALSE;
-  }
-
-  if (!_dates->startDate().isValid())
-  {
-    return FALSE;
-  }
-
-  if (!_dates->endDate().isValid())
-  {
-    return FALSE;
-  }
-
-  return TRUE;
-}
-
-

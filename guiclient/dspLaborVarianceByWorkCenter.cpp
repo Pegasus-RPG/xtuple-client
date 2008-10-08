@@ -57,28 +57,23 @@
 
 #include "dspLaborVarianceByWorkCenter.h"
 
-#include <QVariant>
-//#include <QStatusBar>
 #include <QMenu>
-#include <parameter.h>
-#include <openreports.h>
+#include <QSqlError>
+#include <QVariant>
 
-/*
- *  Constructs a dspLaborVarianceByWorkCenter as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
+#include <metasql.h>
+#include <openreports.h>
+#include <parameter.h>
+
+#include "mqlutil.h"
+
 dspLaborVarianceByWorkCenter::dspLaborVarianceByWorkCenter(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_woopervar, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
@@ -88,40 +83,45 @@ dspLaborVarianceByWorkCenter::dspLaborVarianceByWorkCenter(QWidget* parent, cons
                      "FROM wrkcnt "
                      "ORDER BY wrkcnt_code;" );
 
-  _woopervar->addColumn(tr("Post Date"),      _dateColumn, Qt::AlignCenter );
-  _woopervar->addColumn(tr("Parent Item"),    -1,          Qt::AlignLeft   );
-  _woopervar->addColumn(tr("Seq #"),          _seqColumn,  Qt::AlignRight  );
-  _woopervar->addColumn(tr("Proj Setup"),     _timeColumn, Qt::AlignRight  );
-  _woopervar->addColumn(tr("Proj. Run"),      _timeColumn, Qt::AlignRight  );
-  _woopervar->addColumn(tr("Act. Setup"),     _timeColumn, Qt::AlignRight  );
-  _woopervar->addColumn(tr("Act. Run"),       _timeColumn, Qt::AlignRight  );
-  _woopervar->addColumn(tr("Setup Var."),     _timeColumn, Qt::AlignRight  );
-  _woopervar->addColumn(tr("Run Var."),       _timeColumn, Qt::AlignRight  );
+  _woopervar->addColumn(tr("Post Date"),_dateColumn, Qt::AlignCenter,true, "woopervar_posted");
+  _woopervar->addColumn(tr("Parent Item"),       -1, Qt::AlignLeft,  true, "item_number");
+  _woopervar->addColumn(tr("Seq #"),     _seqColumn, Qt::AlignCenter,true, "woopervar_seqnumber");
+  _woopervar->addColumn(tr("Proj Setup"),_qtyColumn, Qt::AlignRight, true, "woopervar_stdsutime");
+  _woopervar->addColumn(tr("Proj. Run"), _qtyColumn, Qt::AlignRight, true, "woopervar_stdrntime");
+  _woopervar->addColumn(tr("Act. Setup"),_qtyColumn, Qt::AlignRight, true, "woopervar_sutime");
+  _woopervar->addColumn(tr("Act. Run"),  _qtyColumn, Qt::AlignRight, true, "woopervar_rntime");
+  _woopervar->addColumn(tr("Setup Var."),_qtyColumn, Qt::AlignRight, true, "suvar");
+  _woopervar->addColumn(tr("Run Var."),  _qtyColumn, Qt::AlignRight, true, "rnvar");
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspLaborVarianceByWorkCenter::~dspLaborVarianceByWorkCenter()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspLaborVarianceByWorkCenter::languageChange()
 {
   retranslateUi(this);
 }
 
+bool dspLaborVarianceByWorkCenter::setParams(ParameterList &params)
+{
+  if (! _dates->allValid())
+  {
+    _dates->setFocus();
+    return false;
+  }
+
+  _dates->appendValue(params);
+  params.append("wrkcnt_id", _wrkcnt->id());
+  return true;
+}
+
 void dspLaborVarianceByWorkCenter::sPrint()
 {
   ParameterList params;
-  _dates->appendValue(params);
-  params.append("wrkcnt_id", _wrkcnt->id());
-
+  if (! setParams(params))
+    return;
   orReport report("LaborVarianceByWorkCenter", params);
   if (report.isValid())
     report.print();
@@ -135,28 +135,15 @@ void dspLaborVarianceByWorkCenter::sPopulateMenu(QMenu *)
 
 void dspLaborVarianceByWorkCenter::sFillList()
 {
-  if (_dates->allValid())
+  ParameterList params;
+  if (! setParams(params))
+    return;
+  MetaSQLQuery mql = mqlLoad("manufacture", "laborvariance");
+  q = mql.toQuery(params);
+  _woopervar->populate(q);
+  if (q.lastError().type() != QSqlError::None)
   {
-    q.prepare( "SELECT woopervar_id, formatDate(woopervar_posted),"
-               "       item_number, woopervar_seqnumber,"
-               "       formatTime(woopervar_stdsutime),"
-               "       formatTime(woopervar_stdrntime),"
-               "       formatTime(woopervar_sutime),"
-               "       formatTime(woopervar_rntime),"
-               "       formattime(woopervar_sutime - woopervar_stdsutime),"
-               "       formattime(woopervar_rntime - woopervar_stdrntime) "
-               "FROM woopervar, itemsite, item "
-               "WHERE ( (woopervar_parent_itemsite_id=itemsite_id)"
-               " AND (itemsite_item_id=item_id)"
-               " AND (woopervar_posted BETWEEN :startDate AND :endDate)"
-               " AND (woopervar_wrkcnt_id=:wrkcnt_id) ) "
-               "ORDER BY woopervar_posted DESC, woopervar_seqnumber;" );
-    _dates->bindValue(q);
-    q.bindValue(":wrkcnt_id", _wrkcnt->id());
-    q.exec();
-    _woopervar->populate(q);
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
-  else
-    _woopervar->clear();
 }
-

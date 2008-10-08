@@ -1,7 +1,4 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>dspMPSDetail</class>
  <widget class="QWidget" name="dspMPSDetail" >
   <property name="geometry" >
@@ -9,348 +6,306 @@
     <x>0</x>
     <y>0</y>
     <width>716</width>
-    <height>502</height>
+    <height>553</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>MPS Detail</string>
   </property>
-   <layout class="QVBoxLayout" >
-    <item>
-     <layout class="QHBoxLayout" >
-      <property name="margin" >
-       <number>0</number>
-      </property>
-      <property name="spacing" >
-       <number>5</number>
-      </property>
-      <item>
-       <layout class="QVBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
-        <property name="spacing" >
-         <number>5</number>
-        </property>
-        <item>
-         <layout class="QHBoxLayout" >
-          <property name="margin" >
-           <number>0</number>
-          </property>
-          <property name="spacing" >
-           <number>7</number>
-          </property>
-          <item>
-           <layout class="QVBoxLayout" >
-            <property name="margin" >
-             <number>0</number>
-            </property>
-            <property name="spacing" >
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="WarehouseGroup" name="_warehouse" >
-              <property name="title" >
-               <string/>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer>
-              <property name="orientation" >
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeType" >
-               <enum>QSizePolicy::Preferred</enum>
-              </property>
-              <property name="sizeHint" >
-               <size>
-                <width>20</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <widget class="ParameterGroup" name="_plannerCode" >
-            <property name="title" >
-             <string/>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" >
-          <property name="margin" >
-           <number>0</number>
-          </property>
-          <property name="spacing" >
-           <number>7</number>
-          </property>
-          <item>
-           <layout class="QVBoxLayout" >
-            <property name="margin" >
-             <number>0</number>
-            </property>
-            <property name="spacing" >
-             <number>0</number>
-            </property>
-            <item>
-             <layout class="QHBoxLayout" >
-              <property name="margin" >
-               <number>0</number>
-              </property>
-              <property name="spacing" >
-               <number>5</number>
-              </property>
-              <item>
-               <widget class="QLabel" name="_calendarLit" >
+  <layout class="QVBoxLayout" >
+   <item>
+    <layout class="QHBoxLayout" >
+     <property name="spacing" >
+      <number>5</number>
+     </property>
+     <item>
+      <layout class="QVBoxLayout" >
+       <property name="spacing" >
+        <number>5</number>
+       </property>
+       <item>
+        <layout class="QHBoxLayout" >
+         <property name="spacing" >
+          <number>7</number>
+         </property>
+         <item>
+          <layout class="QVBoxLayout" >
+           <property name="spacing" >
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="WarehouseGroup" name="_warehouse" >
+             <property name="title" >
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType" >
+              <enum>QSizePolicy::Preferred</enum>
+             </property>
+             <property name="sizeHint" >
+              <size>
+               <width>20</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="ParameterGroup" name="_plannerCode" >
+           <property name="title" >
+            <string/>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" >
+         <property name="spacing" >
+          <number>7</number>
+         </property>
+         <item>
+          <layout class="QVBoxLayout" >
+           <property name="spacing" >
+            <number>0</number>
+           </property>
+           <item>
+            <layout class="QHBoxLayout" >
+             <property name="spacing" >
+              <number>5</number>
+             </property>
+             <item>
+              <widget class="QLabel" name="_calendarLit" >
+               <property name="text" >
+                <string>Calendar:</string>
+               </property>
+               <property name="alignment" >
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="CalendarComboBox" name="_calendar" >
+               <item>
                 <property name="text" >
-                 <string>Calendar:</string>
+                 <string/>
                 </property>
-                <property name="alignment" >
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </item>
+               <item>
+                <property name="text" >
+                 <string/>
                 </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="CalendarComboBox" name="_calendar" >
-                <item>
-                 <property name="text" >
-                  <string/>
-                 </property>
-                </item>
-                <item>
-                 <property name="text" >
-                  <string/>
-                 </property>
-                </item>
-                <item>
-                 <property name="text" >
-                  <string/>
-                 </property>
-                </item>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <spacer>
-              <property name="orientation" >
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeType" >
-               <enum>QSizePolicy::MinimumExpanding</enum>
-              </property>
-              <property name="sizeHint" >
-               <size>
-                <width>20</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <widget class="PeriodsListView" name="_periods" >
-            <column>
-             <property name="text" >
-              <string>Name</string>
+               </item>
+               <item>
+                <property name="text" >
+                 <string/>
+                </property>
+               </item>
+               <item>
+                <property name="text" >
+                 <string/>
+                </property>
+               </item>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Vertical</enum>
              </property>
-            </column>
-            <column>
-             <property name="text" >
-              <string>Selected Periods</string>
+             <property name="sizeType" >
+              <enum>QSizePolicy::MinimumExpanding</enum>
              </property>
-            </column>
-            <column>
-             <property name="text" >
-              <string>Name</string>
+             <property name="sizeHint" >
+              <size>
+               <width>20</width>
+               <height>20</height>
+              </size>
              </property>
-            </column>
-            <column>
-             <property name="text" >
-              <string>Selected Periods</string>
-             </property>
-            </column>
-            <column>
-             <property name="text" >
-              <string>Name</string>
-             </property>
-            </column>
-            <column>
-             <property name="text" >
-              <string>Selected Periods</string>
-             </property>
-            </column>
-           </widget>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QVBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
-        <property name="spacing" >
-         <number>0</number>
-        </property>
-        <item>
-         <layout class="QVBoxLayout" >
-          <property name="margin" >
-           <number>0</number>
-          </property>
-          <property name="spacing" >
-           <number>5</number>
-          </property>
-          <item>
-           <widget class="QPushButton" name="_close" >
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="PeriodsListView" name="_periods" >
+           <column>
             <property name="text" >
-             <string>&amp;Close</string>
+             <string>Name</string>
             </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="_print" >
+           </column>
+           <column>
             <property name="text" >
-             <string>&amp;Print</string>
+             <string>Selected Periods</string>
             </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" >
-           <size>
-            <width>20</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QVBoxLayout" >
-      <property name="margin" >
-       <number>0</number>
-      </property>
-      <property name="spacing" >
-       <number>0</number>
-      </property>
-      <item>
-       <widget class="QLabel" name="_itemsitesLit" >
-        <property name="text" >
-         <string>Item Sites:</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="XTreeWidget" name="_itemsite" >
-        <property name="sizePolicy" >
-         <sizepolicy>
-          <hsizetype>7</hsizetype>
-          <vsizetype>7</vsizetype>
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize" >
-         <size>
-          <width>0</width>
-          <height>100</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QVBoxLayout" >
-      <property name="margin" >
-       <number>0</number>
-      </property>
-      <property name="spacing" >
-       <number>0</number>
-      </property>
-      <item>
-       <widget class="QLabel" name="_mpsLit" >
-        <property name="text" >
-         <string>MPS Detail:</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="XTreeWidget" name="_mps" >
-        <property name="sizePolicy" >
-         <sizepolicy>
-          <hsizetype>7</hsizetype>
-          <vsizetype>0</vsizetype>
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize" >
-         <size>
-          <width>0</width>
-          <height>190</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-   </layout>
+           </column>
+           <column>
+            <property name="text" >
+             <string>Name</string>
+            </property>
+           </column>
+           <column>
+            <property name="text" >
+             <string>Selected Periods</string>
+            </property>
+           </column>
+           <column>
+            <property name="text" >
+             <string>Name</string>
+            </property>
+           </column>
+           <column>
+            <property name="text" >
+             <string>Selected Periods</string>
+            </property>
+           </column>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" >
+       <property name="spacing" >
+        <number>0</number>
+       </property>
+       <item>
+        <layout class="QVBoxLayout" >
+         <property name="spacing" >
+          <number>5</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="_close" >
+           <property name="text" >
+            <string>&amp;Close</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="_print" >
+           <property name="text" >
+            <string>&amp;Print</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" >
+     <property name="spacing" >
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QLabel" name="_itemsitesLit" >
+       <property name="text" >
+        <string>Item Sites:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="XTreeWidget" name="_itemsite" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize" >
+        <size>
+         <width>0</width>
+         <height>100</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" >
+     <property name="spacing" >
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QLabel" name="_mpsLit" >
+       <property name="text" >
+        <string>MPS Detail:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="XTreeWidget" name="_mps" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize" >
+        <size>
+         <width>0</width>
+         <height>190</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>PeriodsListView</class>
-   <extends>XTreeWidget</extends>
-   <header>calendarTools.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>WarehouseGroup</class>
-   <extends>QGroupBox</extends>
-   <header>warehousegroup.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>QTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>xtreewidget.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
    <class>CalendarComboBox</class>
    <extends>XComboBox</extends>
    <header>calendarTools.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
   <customwidget>
    <class>ParameterGroup</class>
    <extends>QGroupBox</extends>
    <header>parametergroup.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>PeriodsListView</class>
+   <extends>XTreeWidget</extends>
+   <header>calendarTools.h</header>
+  </customwidget>
+  <customwidget>
+   <class>WarehouseGroup</class>
+   <extends>QGroupBox</extends>
+   <header>warehousegroup.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -363,7 +318,6 @@
   <tabstop>_print</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
- <includes/>
  <resources/>
  <connections>
   <connection>

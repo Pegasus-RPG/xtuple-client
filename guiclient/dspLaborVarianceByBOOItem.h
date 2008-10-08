@@ -70,7 +70,7 @@ public:
     dspLaborVarianceByBOOItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspLaborVarianceByBOOItem();
 
-    virtual bool checkParameters();
+    virtual bool setParams(ParameterList &);
 
 public slots:
     virtual void sPrint();

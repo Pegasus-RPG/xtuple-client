@@ -58,6 +58,8 @@
 #ifndef DSPLABORVARIANCEBYWORKORDER_H
 #define DSPLABORVARIANCEBYWORKORDER_H
 
+#include <parameter.h>
+
 #include "guiclient.h"
 #include "xwidget.h"
 
@@ -70,6 +72,8 @@ class dspLaborVarianceByWorkOrder : public XWidget, public Ui::dspLaborVarianceB
 public:
     dspLaborVarianceByWorkOrder(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspLaborVarianceByWorkOrder();
+
+    virtual bool setParams(ParameterList &);
 
 public slots:
     virtual void sPrint();

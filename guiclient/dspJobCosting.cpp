@@ -57,9 +57,14 @@
 
 #include "dspJobCosting.h"
 
+#include <QMessageBox>
+#include <QSqlError>
 #include <QVariant>
 
+#include <metasql.h>
 #include <openreports.h>
+
+#include "mqlutil.h"
 
 dspJobCosting::dspJobCosting(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
@@ -90,25 +95,24 @@ dspJobCosting::dspJobCosting(QWidget* parent, const char* name, Qt::WFlags fl)
   if (!_metrics->boolean("Routings"))
   {
     _codecol = tr("Item Number");
-	_showsu->hide();
-	_showsu->setChecked(FALSE);
-	_showrt->hide();
-	_showrt->setChecked(FALSE);
-	_showmatl->hide();
-	_showmatl->setChecked(TRUE);
+    _showsu->hide();
+    _showsu->setChecked(FALSE);
+    _showrt->hide();
+    _showrt->setChecked(FALSE);
+    _showmatl->hide();
+    _showmatl->setChecked(TRUE);
   }
   else
     _codecol = tr("Work Center/Item");
 
-  _cost->addColumn(tr("Type"),        _itemColumn,   Qt::AlignLeft   );
-  _cost->addColumn(_codecol,          _itemColumn,  Qt::AlignLeft   );
-  _cost->addColumn(tr("Description"), -1,           Qt::AlignLeft   );
-  _cost->addColumn(tr("Qty."),        _qtyColumn,   Qt::AlignRight  );
-  _cost->addColumn(tr("UOM"),         _uomColumn,   Qt::AlignCenter );
-  _cost->addColumn(tr("Cost"),        _moneyColumn, Qt::AlignRight  );
+  _cost->addColumn(tr("Type"), _itemColumn, Qt::AlignLeft,  true, "type");
+  _cost->addColumn(_codecol,   _itemColumn, Qt::AlignLeft,  true, "code");
+  _cost->addColumn(tr("Description"),   -1, Qt::AlignLeft,  true, "descrip");
+  _cost->addColumn(tr("Qty."),  _qtyColumn, Qt::AlignRight, true, "qty");
+  _cost->addColumn(tr("UOM"),   _uomColumn, Qt::AlignCenter,true, "uom");
+  _cost->addColumn(tr("Cost"),_moneyColumn, Qt::AlignRight, true, "cost");
 
   _wo->setFocus();
-
 }
 
 dspJobCosting::~dspJobCosting()
@@ -139,9 +143,24 @@ enum SetResponse dspJobCosting::set(const ParameterList &pParams)
   return NoError;
 }
 
-void dspJobCosting::sPrint()
+bool dspJobCosting::setParams(ParameterList &params)
 {
-  ParameterList params;
+  if (! _wo->isValid())
+  {
+   QMessageBox::warning(this, tr("Select Options"),
+                        tr("<p>You must select a Work Order."));
+    _wo->setFocus();
+    return false;
+  }
+ if (!_showsu->isChecked() && !_showrt->isChecked() && !_showmatl->isChecked())
+ {
+   QMessageBox::warning(this, tr("Select Options"),
+                        tr("<p>You must select one or more of the options to "
+                           "show Set Up, Run Time, and/or Materials."));
+   _showsu->setFocus();
+   return false;
+ }
+
   params.append("wo_id", _wo->id());
   params.append("setup", tr("Setup"));
   params.append("runtime", tr("Run Time"));
@@ -156,6 +175,15 @@ void dspJobCosting::sPrint()
 
   if (_showmatl->isChecked())
     params.append("showmatl");
+
+  return true;
+}
+
+void dspJobCosting::sPrint()
+{
+  ParameterList params;
+  if (! setParams(params))
+    return;
 
   orReport report("JobCosting", params);
   if (report.isValid())
@@ -172,99 +200,15 @@ void dspJobCosting::sFillList()
 
 void dspJobCosting::sFillList(int, bool)
 {
-  _cost->clear();
-
-  if (_wo->isValid() && 
-	 (_showsu->isChecked() || 
-	  _showrt->isChecked() || 
-	  _showmatl->isChecked()))
+  ParameterList params;
+  if (! setParams(params))
+    return;
+  MetaSQLQuery mql = mqlLoad("manufacture", "jobcosting");
+  q = mql.toQuery(params);
+  _cost->populate(q, TRUE);
+  if (q.lastError().type() != QSqlError::None)
   {
-    QString sql("SELECT  * FROM (");
-	
-	if (_showsu->isChecked())
-	{
-	  sql += "SELECT wooper_id AS id,1 AS sort,:setup AS type, wrkcnt_code AS code, wooper_descrip1 AS descrip, "
-		     "  formatqty(SUM(COALESCE(wooperpost_sutime,0))/60) AS f_qty,:uom AS uom, "
-			 "  formatCost(SUM(COALESCE(wooperpost_sucost,0))) as f_cost, wooper_seqnumber, "
-			 "  SUM(COALESCE(wooperpost_sucost,0)) AS cost "
-		     "FROM wooper "
-		     "  LEFT OUTER JOIN wooperpost ON (wooper_id=wooperpost_wooper_id), "
-			 "  wrkcnt "
-			 "WHERE ((wooper_wo_id=:wo_id) "
-			 " AND (wooper_wrkcnt_id=wrkcnt_id)) "
-			 "GROUP BY wooper_id, wrkcnt_code, wooper_descrip1, wooper_seqnumber ";
-	}
-
-    if (_showsu->isChecked() && _showrt->isChecked())
-	  sql += "UNION ";
-
-    if (_showrt->isChecked())
-	{
-	sql +=	"SELECT wooper_id AS id,2 AS sort,:runtime AS type, wrkcnt_code AS code, wooper_descrip1 AS descrip, "
-		    "  formatqty(SUM(COALESCE(wooperpost_rntime,0))/60) AS f_qty,:uom AS uom, "
-			"  formatCost(SUM(COALESCE(wooperpost_rncost,0))) AS f_cost, wooper_seqnumber, "
-			"  SUM(COALESCE(wooperpost_rncost,0)) AS cost "
-		    "FROM wooper "
-		    "  LEFT OUTER JOIN wooperpost ON (wooper_id=wooperpost_wooper_id), "
-			"  wrkcnt "
-			"WHERE ((wooper_wo_id=:wo_id) "
-			"  AND (wooper_wrkcnt_id=wrkcnt_id)) "
-			"GROUP BY wooper_id, wrkcnt_code, wooper_descrip1, wooper_seqnumber ";
-	}
-
-    if ((_showsu->isChecked() || _showrt->isChecked()) && _showmatl->isChecked())
-	  sql += "UNION ";
-
-    if (_showmatl->isChecked())
-	{
-	  sql +=  "SELECT womatl_id AS id,3 AS sort,:material AS type, item_number AS code, item_descrip1 AS descrip, "
-		      "  formatqty(SUM(COALESCE(invhist_invqty,0))) AS f_qty,uom_name AS uom, "
-			  "  formatCost(SUM(COALESCE(invhist_invqty * invhist_unitcost,0))) AS f_cost, "
-			  "  NULL as wooper_seqnumber, SUM(COALESCE(invhist_invqty * invhist_unitcost,0)) AS cost "
-		      "FROM womatl "
-		      "  LEFT OUTER JOIN womatlpost ON (womatl_id=womatlpost_womatl_id) "
-			  "  LEFT OUTER JOIN invhist ON (womatlpost_invhist_id=invhist_id), "
-			  "  itemsite, item, uom "
-			  "WHERE ((womatl_wo_id=:wo_id) "
-			  " AND (womatl_itemsite_id=itemsite_id) "
-			  " AND (itemsite_item_id=item_id) "
-			  " AND (item_inv_uom_id=uom_id)) "
-			  "GROUP BY womatl_id, item_number, item_descrip1, uom_name ";
-	}
-
-	sql += ") as data ORDER BY ";
-	
-	if (_showsu->isChecked() || _showrt->isChecked())
-	  sql += " wooper_seqnumber,";
-
-	sql += "sort,code;";
-
-    q.prepare(sql);
-	q.bindValue(":wo_id", _wo->id());
-	q.bindValue(":setup", tr("Setup"));
-	q.bindValue(":runtime", tr("Run Time"));
-	q.bindValue(":material", tr("Material"));
-    q.bindValue(":uom", tr("Hours"));
-    q.exec();
-   // _cost->populate(q,TRUE);
-	
-	double totalCosts = 0;
-    XTreeWidgetItem *last = 0;
-    while (q.next())
-    {
-      last = new XTreeWidgetItem( _cost, last, q.value("id").toInt(),
-				 q.value("type"),
-				 q.value("code"),
-				 q.value("descrip"),
-				 q.value("f_qty"),
-				 q.value("uom"),
-				 q.value("f_cost"));
-
-	  totalCosts = totalCosts + q.value("cost").toDouble();
-    } 
-
-    last = new XTreeWidgetItem(_cost, -1, -1);
-    last->setText(0, tr("Total Cost"));
-    last->setText(5, formatCost(totalCosts));
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
 }

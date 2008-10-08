@@ -88,11 +88,11 @@ dspMPSDetail::dspMPSDetail(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _plannerCode->setType(ParameterGroup::PlannerCode);
 
-  _itemsite->addColumn("Itemtype",         0,           Qt::AlignCenter );
-  _itemsite->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft   );
-  _itemsite->addColumn(tr("Description"),  -1,          Qt::AlignLeft   );
-  _itemsite->addColumn(tr("Site"),         _whsColumn,  Qt::AlignCenter );
-  _itemsite->addColumn(tr("Safety Stock"), _qtyColumn,  Qt::AlignRight  );
+  _itemsite->addColumn("Itemtype",         0,           Qt::AlignCenter, false, "item_type");
+  _itemsite->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft,  true, "item_number");
+  _itemsite->addColumn(tr("Description"),  -1,          Qt::AlignLeft,  true, "descrip");
+  _itemsite->addColumn(tr("Site"),         _whsColumn,  Qt::AlignCenter,true, "warehous_code");
+  _itemsite->addColumn(tr("Safety Stock"), _qtyColumn,  Qt::AlignRight, true, "itemsite_safetystock");
 
   _mps->addColumn("", 120, Qt::AlignRight);
 
@@ -282,8 +282,10 @@ void dspMPSDetail::sIssueWO()
 
 void dspMPSDetail::sFillItemsites()
 {
-  QString sql( "SELECT itemsite_id, item_type, item_number, (item_descrip1 || ' ' || item_descrip2),"
-               "       warehous_code, formatQty(itemsite_safetystock) "
+  QString sql( "SELECT itemsite_id, item_type, item_number,"
+              "        (item_descrip1 || ' ' || item_descrip2) AS descrip,"
+               "       warehous_code, itemsite_safetystock,"
+               "       'qty' AS itemsite_safetystock_xtnumericrole "
                "FROM itemsite, item, warehous "
                "WHERE ((itemsite_active)"
                " AND (itemsite_item_id=item_id)"
@@ -306,6 +308,11 @@ void dspMPSDetail::sFillItemsites()
   _plannerCode->bindValue(q);
   q.exec();
   _itemsite->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void dspMPSDetail::sFillMPSDetail()

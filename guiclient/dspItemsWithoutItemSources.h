@@ -72,8 +72,6 @@ public:
     dspItemsWithoutItemSources(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspItemsWithoutItemSources();
 
-    virtual void init();
-
 public slots:
     virtual void sPopulateMenu( QMenu * pMenu );
     virtual void sCreateItemSource();

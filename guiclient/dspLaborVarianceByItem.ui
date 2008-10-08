@@ -5,183 +5,183 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>838</width>
+    <width>910</width>
     <height>333</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Labor Variance by Item</string>
   </property>
-   <layout class="QVBoxLayout" >
-    <item>
-     <layout class="QHBoxLayout" >
-      <property name="spacing" >
-       <number>7</number>
-      </property>
-      <item>
-       <layout class="QHBoxLayout" >
-        <property name="spacing" >
-         <number>0</number>
-        </property>
-        <item>
-         <widget class="ItemCluster" name="_item" />
-        </item>
-        <item>
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeType" >
-           <enum>QSizePolicy::Expanding</enum>
-          </property>
-          <property name="sizeHint" >
-           <size>
-            <width>20</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QVBoxLayout" >
-        <property name="spacing" >
-         <number>0</number>
-        </property>
-        <item>
-         <widget class="WarehouseGroup" name="_warehouse" >
-          <property name="title" >
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeType" >
-           <enum>QSizePolicy::Preferred</enum>
-          </property>
-          <property name="sizeHint" >
-           <size>
-            <width>20</width>
-            <height>4</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QVBoxLayout" >
-        <property name="spacing" >
-         <number>0</number>
-        </property>
-        <item>
-         <widget class="DateCluster" name="_dates" />
-        </item>
-        <item>
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeType" >
-           <enum>QSizePolicy::Minimum</enum>
-          </property>
-          <property name="sizeHint" >
-           <size>
-            <width>20</width>
-            <height>17</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QVBoxLayout" >
-        <property name="spacing" >
-         <number>0</number>
-        </property>
-        <item>
-         <layout class="QVBoxLayout" >
-          <property name="spacing" >
-           <number>5</number>
-          </property>
-          <item>
-           <widget class="QPushButton" name="_close" >
-            <property name="text" >
-             <string>&amp;Close</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="_print" >
-            <property name="enabled" >
-             <bool>false</bool>
-            </property>
-            <property name="text" >
-             <string>&amp;Print</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeType" >
-           <enum>QSizePolicy::Preferred</enum>
-          </property>
-          <property name="sizeHint" >
-           <size>
-            <width>20</width>
-            <height>2</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QVBoxLayout" >
-      <property name="spacing" >
-       <number>0</number>
-      </property>
-      <item>
-       <widget class="QLabel" name="_laborVarianceLit" >
-        <property name="sizePolicy" >
-         <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize" >
-         <size>
-          <width>0</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="text" >
-         <string>Labor Variance:</string>
-        </property>
-        <property name="alignment" >
-         <set>Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="XTreeWidget" name="_woopervar" />
-      </item>
-     </layout>
-    </item>
-   </layout>
+  <layout class="QVBoxLayout" >
+   <item>
+    <layout class="QHBoxLayout" >
+     <property name="spacing" >
+      <number>7</number>
+     </property>
+     <item>
+      <layout class="QHBoxLayout" >
+       <property name="spacing" >
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="ItemCluster" name="_item" />
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" >
+       <property name="spacing" >
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="WarehouseGroup" name="_warehouse" >
+         <property name="title" >
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Preferred</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>4</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" >
+       <property name="spacing" >
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="DateCluster" name="_dates" />
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Minimum</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>17</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" >
+       <property name="spacing" >
+        <number>0</number>
+       </property>
+       <item>
+        <layout class="QVBoxLayout" >
+         <property name="spacing" >
+          <number>5</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="_close" >
+           <property name="text" >
+            <string>&amp;Close</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="_print" >
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
+           <property name="text" >
+            <string>&amp;Print</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Preferred</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>2</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" >
+     <property name="spacing" >
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QLabel" name="_laborVarianceLit" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize" >
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="text" >
+        <string>Labor Variance:</string>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="XTreeWidget" name="_woopervar" />
+     </item>
+    </layout>
+   </item>
+  </layout>
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
@@ -195,6 +195,7 @@
    <class>ItemCluster</class>
    <extends>QWidget</extends>
    <header>itemcluster.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>WarehouseGroup</class>

@@ -57,69 +57,67 @@
 
 #include "dspLaborVarianceByWorkOrder.h"
 
-#include <QVariant>
-//#include <QStatusBar>
 #include <QMenu>
+#include <QSqlError>
+#include <QVariant>
+
+#include <metasql.h>
 #include <openreports.h>
 #include <parameter.h>
-#include "inputManager.h"
 
-/*
- *  Constructs a dspLaborVarianceByWorkOrder as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
+#include "inputManager.h"
+#include "mqlutil.h"
+
 dspLaborVarianceByWorkOrder::dspLaborVarianceByWorkOrder(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_woopervar, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_wo, SIGNAL(newId(int)), this, SLOT(sFillList()));
 
   _wo->setType(cWoClosed);
 
   omfgThis->inputManager()->notify(cBCWorkOrder, this, _wo, SLOT(setId(int)));
 
-  _woopervar->addColumn(tr("Post Date"),      _dateColumn, Qt::AlignCenter );
-  _woopervar->addColumn(tr("Seq #"),          _seqColumn,  Qt::AlignCenter );
-  _woopervar->addColumn(tr("Work Center"),    -1,          Qt::AlignLeft   );
-  _woopervar->addColumn(tr("Proj Setup"),     _timeColumn, Qt::AlignRight  );
-  _woopervar->addColumn(tr("Proj. Run"),      _timeColumn, Qt::AlignRight  );
-  _woopervar->addColumn(tr("Act. Setup"),     _timeColumn, Qt::AlignRight  );
-  _woopervar->addColumn(tr("Act. Run"),       _timeColumn, Qt::AlignRight  );
-  _woopervar->addColumn(tr("Setup Var."),     _timeColumn, Qt::AlignRight  );
-  _woopervar->addColumn(tr("Run Var."),       _timeColumn, Qt::AlignRight  );
+  _woopervar->addColumn(tr("Post Date"),_dateColumn, Qt::AlignCenter,true, "woopervar_posted");
+  _woopervar->addColumn(tr("Seq #"),     _seqColumn, Qt::AlignCenter,true, "woopervar_seqnumber");
+  _woopervar->addColumn(tr("Work Center"),       -1, Qt::AlignLeft,  true, "wrkcnt_code");
+  _woopervar->addColumn(tr("Proj Setup"),_qtyColumn, Qt::AlignRight, true, "woopervar_stdsutime");
+  _woopervar->addColumn(tr("Proj. Run"), _qtyColumn, Qt::AlignRight, true, "woopervar_stdrntime");
+  _woopervar->addColumn(tr("Act. Setup"),_qtyColumn, Qt::AlignRight, true, "woopervar_sutime");
+  _woopervar->addColumn(tr("Act. Run"),  _qtyColumn, Qt::AlignRight, true, "woopervar_rntime");
+  _woopervar->addColumn(tr("Setup Var."),_qtyColumn, Qt::AlignRight, true, "suvar");
+  _woopervar->addColumn(tr("Run Var."),  _qtyColumn, Qt::AlignRight, true, "rnvar");
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspLaborVarianceByWorkOrder::~dspLaborVarianceByWorkOrder()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspLaborVarianceByWorkOrder::languageChange()
 {
   retranslateUi(this);
 }
 
+bool dspLaborVarianceByWorkOrder::setParams(ParameterList &params)
+{
+  if (! _wo->isValid())
+  {
+    _wo->setFocus();
+    return false;
+  }
+  params.append("wo_id", _wo->id());
+  return true;
+}
+
 void dspLaborVarianceByWorkOrder::sPrint()
 {
   ParameterList params;
-
-  params.append("wo_id", _wo->id());
-
+  if (! setParams(params))
+    return;
   orReport report("LaborVarianceByWorkOrder", params);
   if (report.isValid())
     report.print();
@@ -133,27 +131,15 @@ void dspLaborVarianceByWorkOrder::sPopulateMenu(QMenu *)
 
 void dspLaborVarianceByWorkOrder::sFillList()
 {
-  if (_wo->isValid())
+  ParameterList params;
+  if (! setParams(params))
+    return;
+  MetaSQLQuery mql = mqlLoad("manufacture", "laborvariance");
+  q = mql.toQuery(params);
+  _woopervar->populate(q);
+  if (q.lastError().type() != QSqlError::None)
   {
-    q.prepare( "SELECT woopervar_id, formatDate(woopervar_posted),"
-               "       woopervar_seqnumber, wrkcnt_code,"
-               "       formatTime(woopervar_stdsutime),"
-               "       formatTime(woopervar_stdrntime),"
-               "       formatTime(woopervar_sutime),"
-               "       formatTime(woopervar_rntime),"
-               "       formatTime(woopervar_sutime - woopervar_stdsutime),"
-               "       formatTime(woopervar_rntime - woopervar_stdrntime) "
-               "FROM woopervar, wo, wrkcnt "
-               "WHERE ( (wo_number=woopervar_number)"
-               " AND (wo_subnumber=woopervar_subnumber)"
-               " AND (woopervar_wrkcnt_id=wrkcnt_id)"
-               " AND (wo_id=:wo_id) ) "
-               "ORDER BY woopervar_posted DESC, woopervar_seqnumber;" );
-    q.bindValue(":wo_id", _wo->id());
-    q.exec();
-    _woopervar->populate(q);
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
-  else
-    _woopervar->clear();
 }
-

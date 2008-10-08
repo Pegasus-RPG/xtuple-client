@@ -85,10 +85,10 @@ dspMRPDetail::dspMRPDetail(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _plannerCode->setType(ParameterGroup::PlannerCode);
 
-  _itemsite->addColumn("Itemtype",        0,           Qt::AlignCenter );
-  _itemsite->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft   );
-  _itemsite->addColumn(tr("Description"), -1,          Qt::AlignLeft   );
-  _itemsite->addColumn(tr("Site"),        _whsColumn,  Qt::AlignCenter );
+  _itemsite->addColumn("Itemtype",        0,           Qt::AlignCenter,false,"item_type");
+  _itemsite->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft,  true, "item_number");
+  _itemsite->addColumn(tr("Description"), -1,          Qt::AlignLeft,  true, "descrip");
+  _itemsite->addColumn(tr("Site"),        _whsColumn,  Qt::AlignCenter,true, "warehous_code");
 
   _mrp->addColumn("", 120, Qt::AlignRight);
 
@@ -260,7 +260,8 @@ void dspMRPDetail::sIssueWO()
 
 void dspMRPDetail::sFillItemsites()
 {
-  QString sql( "SELECT itemsite_id, item_type, item_number, (item_descrip1 || ' ' || item_descrip2),"
+  QString sql( "SELECT itemsite_id, item_type, item_number,"
+               "       (item_descrip1 || ' ' || item_descrip2) AS descrip,"
                "       warehous_code "
                "FROM itemsite, item, warehous "
                "WHERE ( (itemsite_active)"

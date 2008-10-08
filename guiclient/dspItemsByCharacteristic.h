@@ -60,6 +60,8 @@
 
 #include "xwidget.h"
 
+#include <parameter.h>
+
 #include "ui_dspItemsByCharacteristic.h"
 
 class dspItemsByCharacteristic : public XWidget, public Ui::dspItemsByCharacteristic
@@ -69,6 +71,8 @@ class dspItemsByCharacteristic : public XWidget, public Ui::dspItemsByCharacteri
 public:
     dspItemsByCharacteristic(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspItemsByCharacteristic();
+
+    virtual bool setParams(ParameterList &);
 
 public slots:
     virtual void sPrint();

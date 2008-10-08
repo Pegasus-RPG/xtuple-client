@@ -57,71 +57,79 @@
 
 #include "dspItemsByProductCategory.h"
 
-#include <QVariant>
-//#include <QStatusBar>
-#include <QWorkspace>
-#include <QMessageBox>
 #include <QMenu>
+#include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
+
+#include <metasql.h>
 #include <openreports.h>
 #include <parameter.h>
-#include "item.h"
-#include "guiclient.h"
 
-/*
- *  Constructs a dspItemsByProductCategory as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
+#include "guiclient.h"
+#include "item.h"
+#include "mqlutil.h"
+
 dspItemsByProductCategory::dspItemsByProductCategory(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
   connect(_item, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _productCategory->setType(ParameterGroup::ProductCategory);
 
-  _item->addColumn( tr("Item Number"),  _itemColumn, Qt::AlignLeft   );
-  _item->addColumn( tr("Description"),  -1,          Qt::AlignLeft   );
-  _item->addColumn( tr("Type"),         _itemColumn, Qt::AlignCenter );
-  _item->addColumn( tr("UOM"),          _uomColumn,  Qt::AlignCenter );
+  _item->addColumn(tr("Item Number"),_itemColumn, Qt::AlignLeft,  true, "item_number");
+  _item->addColumn(tr("Description"),         -1, Qt::AlignLeft,  true, "descrip");
+  _item->addColumn(tr("Type"),       _itemColumn, Qt::AlignCenter,true, "type");
+  _item->addColumn(tr("UOM"),         _uomColumn, Qt::AlignCenter,true, "uom_name");
   _item->setDragString("itemid=");
 
   connect(omfgThis, SIGNAL(itemsUpdated(int, bool)), this, SLOT(sFillList(int, bool)));
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspItemsByProductCategory::~dspItemsByProductCategory()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspItemsByProductCategory::languageChange()
 {
   retranslateUi(this);
 }
 
-void dspItemsByProductCategory::sPrint()
+bool dspItemsByProductCategory::setParams(ParameterList &params)
 {
-  ParameterList params;
-
-  _productCategory->appendValue(params);
-
   if(_showInactive->isChecked())
     params.append("showInactive");
 
+  _productCategory->appendValue(params);
+
+  params.append("sold");
+  params.append("purchased",    tr("Purchased"));
+  params.append("manufactured", tr("Manufactured"));
+  params.append("job",          tr("Job"));
+  params.append("phantom",      tr("Phantom"));
+  params.append("breeder",      tr("Breeder"));
+  params.append("coProduct",    tr("Co-Product"));
+  params.append("byProduct",    tr("By-Product"));
+  params.append("reference",    tr("Reference"));
+  params.append("costing",      tr("Costing"));
+  params.append("tooling",      tr("Tooling"));
+  params.append("outside",      tr("Outside Process"));
+  params.append("kit",          tr("Kit"));
+  params.append("error",        tr("Error"));
+
+  return true;
+}
+
+void dspItemsByProductCategory::sPrint()
+{
+  ParameterList params;
+  if (! setParams(params))
+    return;
   orReport report("ItemsByProductCategory", params);
   if (report.isValid())
     report.print();
@@ -150,56 +158,19 @@ void dspItemsByProductCategory::sFillList()
 
 void dspItemsByProductCategory::sFillList(int pItemid, bool pLocal)
 {
-  QString sql( "SELECT item_id, item_number, (item_descrip1 || ' ' || item_descrip2),"
-               "       CASE WHEN (item_type='P') THEN :purchased"
-               "            WHEN (item_type='M') THEN :manufactured"
-               "            WHEN (item_type='J') THEN :job"
-               "            WHEN (item_type='F') THEN :phantom"
-               "            WHEN (item_type='B') THEN :breeder"
-               "            WHEN (item_type='C') THEN :coProduct"
-               "            WHEN (item_type='Y') THEN :byProduct"
-               "            WHEN (item_type='R') THEN :reference"
-               "            WHEN (item_type='S') THEN :costing"
-               "            WHEN (item_type='T') THEN :tooling"
-               "            WHEN (item_type='O') THEN :outside"
-               "            WHEN (item_type='K') THEN :kit"
-               "            ELSE :error"
-               "       END,"
-               "       uom_name "
-               "FROM item JOIN uom ON (item_inv_uom_id=uom_id) "
-               "WHERE ( (item_sold)" );
-    
-  if (_productCategory->isSelected())
-    sql += " AND (item_prodcat_id=:prodcat_id)";
-  else if (_productCategory->isPattern())
-    sql += " AND (item_prodcat_id IN (SELECT prodcat_id FROM prodcat WHERE (prodcat_code ~ :prodcat_pattern)))";
-
-  if (!_showInactive->isChecked())
-    sql += " AND (item_active)";
-
-  sql += ") "
-         "ORDER BY item_number;";
-
-  q.prepare(sql);
-  q.bindValue(":purchased", tr("Purchased"));
-  q.bindValue(":manufactured", tr("Manufactured"));
-  q.bindValue(":job", tr("Job"));
-  q.bindValue(":phantom", tr("Phantom"));
-  q.bindValue(":breeder", tr("Breeder"));
-  q.bindValue(":coProduct", tr("Co-Product"));
-  q.bindValue(":byProduct", tr("By-Product"));
-  q.bindValue(":reference", tr("Reference"));
-  q.bindValue(":costing", tr("Costing"));
-  q.bindValue(":tooling", tr("Tooling"));
-  q.bindValue(":outside", tr("Outside Process"));
-  q.bindValue(":kit",tr("Kit"));
-  q.bindValue(":error", tr("Error"));
-  _productCategory->bindValue(q);
-  q.exec();
+  ParameterList params;
+  if (! setParams(params))
+    return;
+  MetaSQLQuery mql = mqlLoad("products", "items");
+  q = mql.toQuery(params);
 
   if ((pItemid != -1) && (pLocal))
     _item->populate(q, pItemid);
   else
     _item->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
-

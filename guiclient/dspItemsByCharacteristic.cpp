@@ -57,34 +57,28 @@
 
 #include "dspItemsByCharacteristic.h"
 
-#include <QVariant>
-//#include <QStatusBar>
-#include <QWorkspace>
-#include <QMessageBox>
 #include <QMenu>
+#include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
+
+#include <metasql.h>
 #include <openreports.h>
 #include <parameter.h>
+
 #include "boo.h"
 #include "bom.h"
 #include "item.h"
+#include "mqlutil.h"
 #include "guiclient.h"
 
-/*
- *  Constructs a dspItemsByCharacteristic as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspItemsByCharacteristic::dspItemsByCharacteristic(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
   connect(_item, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
 
   _char->populate( "SELECT char_id, char_name "
@@ -92,42 +86,56 @@ dspItemsByCharacteristic::dspItemsByCharacteristic(QWidget* parent, const char* 
                    "WHERE (char_items) "
                    "ORDER BY char_name;" );
 
-  _item->addColumn(tr("Item Number"),    _itemColumn, Qt::AlignLeft   );
-  _item->addColumn(tr("Description"),    -1,          Qt::AlignLeft   );
-  _item->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignCenter );
-  _item->addColumn(tr("Value"),          _itemColumn, Qt::AlignLeft   );
-  _item->addColumn(tr("Type"),           _itemColumn, Qt::AlignCenter );
-  _item->addColumn(tr("UOM"),            _uomColumn,  Qt::AlignCenter );
+  _item->addColumn(tr("Item Number"),    _itemColumn, Qt::AlignLeft,  true, "item_number");
+  _item->addColumn(tr("Description"),    -1,          Qt::AlignLeft,  true, "descrip");
+  _item->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignCenter,true, "char_name");
+  _item->addColumn(tr("Value"),          _itemColumn, Qt::AlignLeft,  true, "charass_value");
+  _item->addColumn(tr("Type"),           _itemColumn, Qt::AlignCenter,true, "type");
+  _item->addColumn(tr("UOM"),            _uomColumn,  Qt::AlignCenter,true, "uom_name");
 
   connect(omfgThis, SIGNAL(itemsUpdated(int, bool)), this, SLOT(sFillList(int, bool)));
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspItemsByCharacteristic::~dspItemsByCharacteristic()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspItemsByCharacteristic::languageChange()
 {
   retranslateUi(this);
 }
 
-void dspItemsByCharacteristic::sPrint()
+bool dspItemsByCharacteristic::setParams(ParameterList &params)
 {
-  ParameterList params;
-
-  params.append("char_id", _char->id());
-  params.append("value", _value->text());
+  params.append("char_id",      _char->id());
+  params.append("value",        _value->text().stripWhiteSpace());
+  params.append("purchased",    tr("Purchased"));
+  params.append("manufactured", tr("Manufactured"));
+  params.append("job",          tr("Job"));
+  params.append("phantom",      tr("Phantom"));
+  params.append("breeder",      tr("Breeder"));
+  params.append("coProduct",    tr("Co-Product"));
+  params.append("byProduct",    tr("By-Product"));
+  params.append("reference",    tr("Reference"));
+  params.append("costing",      tr("Costing"));
+  params.append("tooling",      tr("Tooling"));
+  params.append("outside",      tr("Outside Process"));
+  params.append("kit",          tr("Kit"));
+  params.append("error",        tr("Error"));
+  params.append("byCharacteristic");
 
   if(_showInactive->isChecked())
     params.append("showInactive");
+
+  return true;
+}
+
+void dspItemsByCharacteristic::sPrint()
+{
+  ParameterList params;
+  if (! setParams(params))
+    return;
 
   orReport report("ItemsByCharacteristic", params);
   if (report.isValid())
@@ -227,62 +235,20 @@ void dspItemsByCharacteristic::sFillList()
 
 void dspItemsByCharacteristic::sFillList(int pItemid, bool pLocal)
 {
-  QString sql( "SELECT item_id, item_number, (item_descrip1 || ' ' || item_descrip2),"
-               "       char_name, charass_value,"
-               "       CASE WHEN (item_type='P') THEN :purchased"
-               "            WHEN (item_type='M') THEN :manufactured"
-               "            WHEN (item_type='J') THEN :job"
-               "            WHEN (item_type='F') THEN :phantom"
-               "            WHEN (item_type='B') THEN :breeder"
-               "            WHEN (item_type='C') THEN :coProduct"
-               "            WHEN (item_type='Y') THEN :byProduct"
-               "            WHEN (item_type='R') THEN :reference"
-               "            WHEN (item_type='S') THEN :costing"
-               "            WHEN (item_type='T') THEN :tooling"
-               "            WHEN (item_type='O') THEN :outsideProcess"
-               "            WHEN (item_type='L') THEN :planning"
-               "            WHEN (item_type='K') THEN :kit"
-               "            ELSE :error"
-               "       END,"
-               "       uom_name "
-               "FROM item, charass, char, uom "
-               "WHERE ( (charass_target_type='I')"
-               " AND (charass_target_id=item_id)"
-               " AND (item_inv_uom_id=uom_id)"
-               " AND (charass_char_id=char_id)"
-               " AND (char_id=:char_id)"
-               " AND (charass_value ~* :charass_value) " );
-    
-  if (!_showInactive->isChecked())
-    sql += " AND (item_active)";
-
-  sql += ") "
-         "ORDER BY item_number;";
-
-  q.prepare(sql);
-  q.bindValue(":purchased", tr("Purchased"));
-  q.bindValue(":manufactured", tr("Manufactured"));
-  q.bindValue(":job", tr("Job"));
-  q.bindValue(":phantom", tr("Phantom"));
-  q.bindValue(":breeder", tr("Breeder"));
-  q.bindValue(":coProduct", tr("Co-Product"));
-  q.bindValue(":byProduct", tr("By-Product"));
-  q.bindValue(":reference", tr("Reference"));
-  q.bindValue(":costing", tr("Costing"));
-  q.bindValue(":tooling", tr("Tooling"));
-  q.bindValue(":outsideProcess", tr("Outside Process"));
-  q.bindValue(":planning", tr("Planning"));
-  q.bindValue(":kit",tr("Kit"));
-  q.bindValue(":error", tr("Error"));
-  q.bindValue(":char_id", _char->id());
-  q.bindValue(":charass_value", _value->text().stripWhiteSpace());
-  q.exec();
-
+  ParameterList params;
+  if (! setParams(params))
+    return;
+  MetaSQLQuery mql = mqlLoad("products", "items");
+  q = mql.toQuery(params);
   if ((pItemid != -1) && (pLocal))
     _item->populate(q, pItemid);
   else
     _item->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   _item->setDragString("itemid=");
 }
-

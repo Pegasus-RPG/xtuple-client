@@ -57,60 +57,35 @@
 
 #include "dspItemsWithoutItemSources.h"
 
+#include <QMenu>
+#include <QSqlError>
 #include <QVariant>
-//#include <QStatusBar>
-#include <QWorkspace>
+
 #include "item.h"
 #include "itemSource.h"
 
-/*
- *  Constructs a dspItemsWithoutItemSources as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspItemsWithoutItemSources::dspItemsWithoutItemSources(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-//    (void)statusBar();
+  connect(_item, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(omfgThis, SIGNAL(itemsUpdated(int, bool)), this, SLOT(sFillList()));
 
-    // signals and slots connections
-    connect(_item, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(omfgThis, SIGNAL(itemsUpdated(int, bool)), this, SLOT(sFillList()));
-    init();
+  _item->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft, true, "item_number");
+  _item->addColumn(tr("Description"), -1,           Qt::AlignLeft, true, "descrip");
+  _item->addColumn(tr("Type"),        _itemColumn,  Qt::AlignCenter,true, "type");
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspItemsWithoutItemSources::~dspItemsWithoutItemSources()
 {
     // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspItemsWithoutItemSources::languageChange()
 {
     retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspItemsWithoutItemSources::init()
-{
-//  statusBar()->hide();
-  
-  _item->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft   );
-  _item->addColumn(tr("Description"), -1,           Qt::AlignLeft   );
-  _item->addColumn(tr("Type"),        _itemColumn,  Qt::AlignCenter );
-
 }
 
 void dspItemsWithoutItemSources::sPopulateMenu(QMenu *pMenu)
@@ -146,18 +121,23 @@ void dspItemsWithoutItemSources::sEditItem()
 void dspItemsWithoutItemSources::sFillList()
 {
   q.prepare( "SELECT item_id, item_number,"
-             "       (item_descrip1 || ' ' || item_descrip2) AS f_description,"
+             "       (item_descrip1 || ' ' || item_descrip2) AS descrip,"
              "       CASE WHEN (item_type = 'P') THEN :purchased"
              "            WHEN (item_type = 'O') THEN :outside"
-             "       END AS f_type "
+             "       END AS type "
              "FROM item "
              "WHERE ( (item_type IN ('P', 'O'))"
              " AND (item_active)"
-             " AND (item_id NOT IN (SELECT DISTINCT itemsrc_item_id FROM itemsrc WHERE (itemsrc_active))) ) "
+             " AND (item_id NOT IN (SELECT DISTINCT itemsrc_item_id"
+             "                      FROM itemsrc WHERE (itemsrc_active))) ) "
              "ORDER BY item_number;" );
   q.bindValue(":purchased", tr("Purchased"));
   q.bindValue(":outside", tr("Outside"));
   q.exec();
   _item->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
-

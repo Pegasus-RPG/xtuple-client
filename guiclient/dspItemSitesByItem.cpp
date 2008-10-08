@@ -57,13 +57,14 @@
 
 #include "dspItemSitesByItem.h"
 
-#include <QVariant>
-//#include <QStatusBar>
-#include <QWorkspace>
-#include <QMessageBox>
 #include <QMenu>
+#include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
+
 #include <openreports.h>
 #include <parameter.h>
+
 #include "inputManager.h"
 #include "itemSite.h"
 #include "dspInventoryAvailabilityByItem.h"
@@ -71,34 +72,24 @@
 #include "dspInventoryLocator.h"
 #include "guiclient.h"
 
-/*
- *  Constructs a dspItemSitesByItem as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspItemSitesByItem::dspItemSitesByItem(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_itemsite, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-  connect(_item, SIGNAL(valid(bool)), _query, SLOT(setEnabled(bool)));
 
   omfgThis->inputManager()->notify(cBCItem, this, _item, SLOT(setId(int)));
 
-  _itemsite->addColumn(tr("Site"),          _whsColumn,   Qt::AlignCenter );
-  _itemsite->addColumn(tr("QOH"),           -1,           Qt::AlignRight  );
-  _itemsite->addColumn(tr("Loc. Cntrl."),   _orderColumn, Qt::AlignCenter );
-  _itemsite->addColumn(tr("Cntrl. Meth."),  _itemColumn,  Qt::AlignCenter );
-  _itemsite->addColumn(tr("Sold Ranking"),  _itemColumn,  Qt::AlignCenter );
-  _itemsite->addColumn(tr("Last Cnt'd"),    _dateColumn,  Qt::AlignCenter );
-  _itemsite->addColumn(tr("Last Used"),     _dateColumn,  Qt::AlignCenter );
+  _itemsite->addColumn(tr("Site"),          _whsColumn, Qt::AlignCenter, true, "warehous_code");
+  _itemsite->addColumn(tr("QOH"),                   -1, Qt::AlignRight, true, "itemsite_qtyonhand");
+  _itemsite->addColumn(tr("Loc. Cntrl."), _orderColumn, Qt::AlignCenter,true, "itemsite_loccntrl");
+  _itemsite->addColumn(tr("Cntrl. Meth."), _itemColumn, Qt::AlignCenter,true, "controlmethod");
+  _itemsite->addColumn(tr("Sold Ranking"), _itemColumn, Qt::AlignCenter,true, "soldranking");
+  _itemsite->addColumn(tr("Last Cnt'd"),   _dateColumn, Qt::AlignCenter,true, "itemsite_datelastcount");
+  _itemsite->addColumn(tr("Last Used"),    _dateColumn, Qt::AlignCenter,true, "itemsite_datelastused");
   _itemsite->setDragString("itemsiteid=");
   
   connect(omfgThis, SIGNAL(itemsitesUpdated()), SLOT(sFillList()));
@@ -106,18 +97,11 @@ dspItemSitesByItem::dspItemSitesByItem(QWidget* parent, const char* name, Qt::WF
   _item->setFocus();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspItemSitesByItem::~dspItemSitesByItem()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspItemSitesByItem::languageChange()
 {
   retranslateUi(this);
@@ -236,18 +220,21 @@ void dspItemSitesByItem::sFillList()
                "            ELSE 0"
                "       END,"
                "       warehous_code,"
-               "       formatQty(itemsite_qtyonhand),"
-               "       formatBoolYN(itemsite_loccntrl),"
+               "       itemsite_qtyonhand,"
+               "       itemsite_loccntrl,"
                "       CASE WHEN itemsite_controlmethod='R' THEN :regular"
                "            WHEN itemsite_controlmethod='N' THEN :none"
                "            WHEN itemsite_controlmethod='L' THEN :lot"
                "            WHEN itemsite_controlmethod='S' THEN :serial"
-               "       END,"
-               "       CASE WHEN (itemsite_sold) THEN TEXT(itemsite_soldranking)"
-               "            ELSE :na"
-               "       END,"
-               "       formatDate(itemsite_datelastcount, 'Never'),"
-               "       formatDate(itemsite_datelastused, 'Never') "
+               "       END AS controlmethod,"
+               "       CASE WHEN (itemsite_sold) THEN itemsite_soldranking"
+               "       END AS soldranking,"
+               "       itemsite_datelastcount,"
+               "       itemsite_datelastused,"
+               "       'qty' AS itemsite_qtyonhand_xtnumericrole,"
+               "       :na AS soldranking_xtnullrole,"
+               "       :never AS itemsite_datelastused_xtnullrole,"
+               "       :never AS itemsite_datelastused_xtnullrole "
                "FROM itemsite, warehous "
                "WHERE ( (itemsite_warehous_id=warehous_id)"
                " AND (itemsite_item_id=:item_id)" );
@@ -264,8 +251,13 @@ void dspItemSitesByItem::sFillList()
   q.bindValue(":lot", tr("Lot #"));
   q.bindValue(":serial", tr("Serial #"));
   q.bindValue(":na", tr("N/A"));
+  q.bindValue(":never", tr("Never"));
   q.bindValue(":item_id", _item->id());
   q.exec();
   _itemsite->populate(q, TRUE);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
-
