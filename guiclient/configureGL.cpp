@@ -161,6 +161,8 @@ configureGL::configureGL(QWidget* parent, const char* name, bool modal, Qt::WFla
   _taxauth->setId(_metrics->value("DefaultTaxAuthority").toInt());
 
   _recurringBuffer->setValue(_metrics->value("RecurringInvoiceBuffer").toInt());
+  
+  resize(minimumSize());
 }
 
 configureGL::~configureGL()

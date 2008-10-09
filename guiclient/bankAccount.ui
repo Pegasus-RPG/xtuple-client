@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>600</width>
-    <height>704</height>
+    <height>664</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -492,19 +492,6 @@
                    <widget class="XLineEdit" name="_immediateDest" />
                   </item>
                   <item row="1" column="0" >
-                   <widget class="QLabel" name="_immediateDestNameLit" >
-                    <property name="text" >
-                     <string>Immediate Destination Name</string>
-                    </property>
-                    <property name="alignment" >
-                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="1" column="1" >
-                   <widget class="XLineEdit" name="_immediateDestName" />
-                  </item>
-                  <item row="2" column="0" >
                    <widget class="QLabel" name="_immediateOrigLit" >
                     <property name="text" >
                      <string>Immediate Origin:</string>
@@ -514,10 +501,10 @@
                     </property>
                    </widget>
                   </item>
-                  <item row="2" column="1" >
+                  <item row="1" column="1" >
                    <widget class="XLineEdit" name="_immediateOrig" />
                   </item>
-                  <item row="3" column="0" >
+                  <item row="2" column="0" >
                    <widget class="QLabel" name="_immediateOriginNameLit" >
                     <property name="text" >
                      <string>Immediate Origin Name:</string>
@@ -527,10 +514,10 @@
                     </property>
                    </widget>
                   </item>
-                  <item row="3" column="1" >
+                  <item row="2" column="1" >
                    <widget class="XLineEdit" name="_immediateOriginName" />
                   </item>
-                  <item row="4" column="0" >
+                  <item row="3" column="0" >
                    <widget class="QLabel" name="_referenceLit" >
                     <property name="text" >
                      <string>Reference:</string>
@@ -540,7 +527,7 @@
                     </property>
                    </widget>
                   </item>
-                  <item row="4" column="1" >
+                  <item row="3" column="1" >
                    <widget class="XLineEdit" name="_reference" />
                   </item>
                  </layout>
@@ -550,9 +537,12 @@
                   <property name="orientation" >
                    <enum>Qt::Horizontal</enum>
                   </property>
+                  <property name="sizeType" >
+                   <enum>QSizePolicy::Preferred</enum>
+                  </property>
                   <property name="sizeHint" >
                    <size>
-                    <width>137</width>
+                    <width>100</width>
                     <height>20</height>
                    </size>
                   </property>

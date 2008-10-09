@@ -186,7 +186,7 @@
         <enum>QTabWidget::Rounded</enum>
        </property>
        <property name="currentIndex" >
-        <number>0</number>
+        <number>8</number>
        </property>
        <widget class="QWidget" name="general" >
         <attribute name="title" >
@@ -617,6 +617,11 @@
                       <property name="allowNull" >
                        <bool>true</bool>
                       </property>
+                      <item>
+                       <property name="text" >
+                        <string/>
+                       </property>
+                      </item>
                       <item>
                        <property name="text" >
                         <string/>
@@ -2382,10 +2387,11 @@
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>_number</tabstop>
+  <tabstop>_close</tabstop>
   <tabstop>_custtype</tabstop>
   <tabstop>_name</tabstop>
   <tabstop>_active</tabstop>
+  <tabstop>_tab</tabstop>
   <tabstop>_salesrep</tabstop>
   <tabstop>_defaultCommissionPrcnt</tabstop>
   <tabstop>_shipvia</tabstop>
@@ -2396,42 +2402,47 @@
   <tabstop>_allowFFShipto</tabstop>
   <tabstop>_allowFFBillto</tabstop>
   <tabstop>_sellingWarehouse</tabstop>
-  <tabstop>_tab</tabstop>
+  <tabstop>_terms</tabstop>
+  <tabstop>_defaultDiscountPrcnt</tabstop>
+  <tabstop>_currency</tabstop>
+  <tabstop>_inGoodStanding</tabstop>
+  <tabstop>_onCreditWarning</tabstop>
+  <tabstop>_onCreditHold</tabstop>
+  <tabstop>_usesPOs</tabstop>
+  <tabstop>_blanketPos</tabstop>
+  <tabstop>_balanceMethod</tabstop>
+  <tabstop>_creditLimit</tabstop>
+  <tabstop>_warnLate</tabstop>
+  <tabstop>_graceDays</tabstop>
+  <tabstop>_creditRating</tabstop>
+  <tabstop>_autoUpdateStatus</tabstop>
+  <tabstop>_autoHoldOrders</tabstop>
+  <tabstop>_billingButton</tabstop>
+  <tabstop>_billCntct</tabstop>
+  <tabstop>_correspButton</tabstop>
+  <tabstop>_corrCntct</tabstop>
+  <tabstop>_shiptoButton</tabstop>
+  <tabstop>_shipto</tabstop>
+  <tabstop>_printShipto</tabstop>
+  <tabstop>_newShipto</tabstop>
+  <tabstop>_number</tabstop>
+  <tabstop>_editShipto</tabstop>
+  <tabstop>_viewShipto</tabstop>
+  <tabstop>_deleteShipto</tabstop>
+  <tabstop>_charass</tabstop>
+  <tabstop>_newCharacteristic</tabstop>
+  <tabstop>_chartempl</tabstop>
+  <tabstop>_editCharacteristic</tabstop>
+  <tabstop>_deleteCharacteristic</tabstop>
   <tabstop>_taxauth</tabstop>
   <tabstop>_taxreg</tabstop>
   <tabstop>_newTaxreg</tabstop>
   <tabstop>_editTaxreg</tabstop>
   <tabstop>_viewTaxreg</tabstop>
   <tabstop>_deleteTaxreg</tabstop>
-  <tabstop>_terms</tabstop>
-  <tabstop>_balanceMethod</tabstop>
-  <tabstop>_defaultDiscountPrcnt</tabstop>
-  <tabstop>_currency</tabstop>
-  <tabstop>_creditLimit</tabstop>
-  <tabstop>_creditRating</tabstop>
-  <tabstop>_inGoodStanding</tabstop>
-  <tabstop>_onCreditWarning</tabstop>
-  <tabstop>_onCreditHold</tabstop>
-  <tabstop>_usesPOs</tabstop>
-  <tabstop>_blanketPos</tabstop>
-  <tabstop>_autoUpdateStatus</tabstop>
-  <tabstop>_autoHoldOrders</tabstop>
-  <tabstop>_warnLate</tabstop>
-  <tabstop>_graceDays</tabstop>
-  <tabstop>_billCntct</tabstop>
-  <tabstop>_corrCntct</tabstop>
-  <tabstop>_shipto</tabstop>
-  <tabstop>_printShipto</tabstop>
-  <tabstop>_newShipto</tabstop>
-  <tabstop>_editShipto</tabstop>
-  <tabstop>_viewShipto</tabstop>
-  <tabstop>_deleteShipto</tabstop>
   <tabstop>_notes</tabstop>
-  <tabstop>_charass</tabstop>
-  <tabstop>_newCharacteristic</tabstop>
-  <tabstop>_editCharacteristic</tabstop>
-  <tabstop>_deleteCharacteristic</tabstop>
   <tabstop>_comments</tabstop>
+  <tabstop>_soButton</tabstop>
   <tabstop>_soEdiProfile</tabstop>
   <tabstop>_soEdiEmail</tabstop>
   <tabstop>_soEdiCC</tabstop>
@@ -2439,6 +2450,7 @@
   <tabstop>_soEdiFilename</tabstop>
   <tabstop>_soEdiEmailBody</tabstop>
   <tabstop>_soEdiEmailHTML</tabstop>
+  <tabstop>_invoiceButton</tabstop>
   <tabstop>_ediProfile</tabstop>
   <tabstop>_ediEmail</tabstop>
   <tabstop>_ediCC</tabstop>
@@ -2453,8 +2465,6 @@
   <tabstop>_upCC</tabstop>
   <tabstop>_downCC</tabstop>
   <tabstop>_save</tabstop>
-  <tabstop>_close</tabstop>
-  <tabstop>_chartempl</tabstop>
  </tabstops>
  <resources/>
  <connections>

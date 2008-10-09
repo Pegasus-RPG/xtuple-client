@@ -1270,7 +1270,7 @@
                       <item row="0" column="1" >
                        <widget class="XLineEdit" name="_routingNumber" />
                       </item>
-                      <item row="1" column="0" >
+                      <item row="3" column="0" >
                        <widget class="QLabel" name="_individualIdLit" >
                         <property name="text" >
                          <string>Individual Identification Number:</string>
@@ -1283,10 +1283,10 @@
                         </property>
                        </widget>
                       </item>
-                      <item row="1" column="1" >
+                      <item row="3" column="1" >
                        <widget class="XLineEdit" name="_individualId" />
                       </item>
-                      <item row="2" column="0" >
+                      <item row="4" column="0" >
                        <widget class="QLabel" name="_individualNameLit" >
                         <property name="text" >
                          <string>Individual Name:</string>
@@ -1299,13 +1299,13 @@
                         </property>
                        </widget>
                       </item>
-                      <item row="2" column="1" >
+                      <item row="4" column="1" >
                        <widget class="XLineEdit" name="_individualName" />
                       </item>
-                      <item row="3" column="1" >
+                      <item row="5" column="1" >
                        <widget class="XLineEdit" name="_discretionary" />
                       </item>
-                      <item row="3" column="0" >
+                      <item row="5" column="0" >
                        <widget class="QLabel" name="_discretionaryLit" >
                         <property name="text" >
                          <string>Discretionary Data:</string>
@@ -1315,6 +1315,43 @@
                         </property>
                         <property name="buddy" >
                          <cstring>_accountNumber</cstring>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="1" column="1" >
+                       <widget class="XLineEdit" name="_accountNumber_2" />
+                      </item>
+                      <item row="1" column="0" >
+                       <widget class="QLabel" name="_accountNumberLit_2" >
+                        <property name="text" >
+                         <string>Account Number:</string>
+                        </property>
+                        <property name="alignment" >
+                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="2" column="1" >
+                       <widget class="XComboBox" name="_accountType" >
+                        <item>
+                         <property name="text" >
+                          <string>Checking</string>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text" >
+                          <string>Savings</string>
+                         </property>
+                        </item>
+                       </widget>
+                      </item>
+                      <item row="2" column="0" >
+                       <widget class="QLabel" name="_accounTypeLit" >
+                        <property name="text" >
+                         <string>Account Type:</string>
+                        </property>
+                        <property name="alignment" >
+                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                         </property>
                        </widget>
                       </item>
@@ -1435,13 +1472,26 @@
   <tabstop>_notes</tabstop>
   <tabstop>_comments</tabstop>
   <tabstop>_poComments</tabstop>
+  <tabstop>_poButton</tabstop>
+  <tabstop>_emailPODelivery</tabstop>
   <tabstop>_ediEmail</tabstop>
   <tabstop>_ediCC</tabstop>
   <tabstop>_ediSubject</tabstop>
   <tabstop>_ediFilename</tabstop>
   <tabstop>_ediEmailBody</tabstop>
-  <tabstop>_save</tabstop>
+  <tabstop>_checkButton</tabstop>
+  <tabstop>_achGroup</tabstop>
+  <tabstop>_routingNumber</tabstop>
+  <tabstop>_accountNumber_2</tabstop>
+  <tabstop>_individualId</tabstop>
+  <tabstop>_individualName</tabstop>
+  <tabstop>_discretionary</tabstop>
+  <tabstop>_previous</tabstop>
+  <tabstop>_mainButton</tabstop>
   <tabstop>_close</tabstop>
+  <tabstop>_next</tabstop>
+  <tabstop>_save</tabstop>
+  <tabstop>_altButton</tabstop>
  </tabstops>
  <resources/>
  <connections>
