@@ -60,7 +60,6 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
-//#include <QStatusBar>
 #include <QVariant>
 #include <QWorkspace>
 
@@ -78,8 +77,6 @@ unpostedPurchaseOrders::unpostedPurchaseOrders(QWidget* parent, const char* name
 {
     setupUi(this);
 
-//    (void)statusBar();
-
     connect(_allOpenOrders,SIGNAL(clicked()),	this,	SLOT(sFillList()));
     connect(_delete,	SIGNAL(clicked()),	this,	SLOT(sDelete()));
     connect(_edit,	SIGNAL(clicked()),	this,	SLOT(sEdit()));
@@ -94,12 +91,11 @@ unpostedPurchaseOrders::unpostedPurchaseOrders(QWidget* parent, const char* name
     connect(omfgThis,	SIGNAL(purchaseOrdersUpdated(int, bool)),
 						this,	SLOT(sFillList()));
 
-//    statusBar()->hide();
-    
     _pohead->addColumn(tr("P/O #"),     _orderColumn, Qt::AlignLeft,   true, "pohead_number" );
     _pohead->addColumn(tr("Vendor"),    -1,           Qt::AlignLeft,   true, "vend_name"   );
     _pohead->addColumn(tr("Due Date"),  _dateColumn,  Qt::AlignCenter, true, "min_duedate" );
     _pohead->addColumn(tr("Status"),    _ynColumn,    Qt::AlignCenter, true, "pohead_status" );
+    _pohead->addColumn(tr("Printed"),   _ynColumn,    Qt::AlignCenter, true, "pohead_printed");
 
     _pohead->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
@@ -181,10 +177,11 @@ void unpostedPurchaseOrders::sView()
 
 void unpostedPurchaseOrders::sDelete()
 {
-  if ( QMessageBox::warning( this, tr("Delete Selected Purchase Orders"),
+  if ( QMessageBox::question(this, tr("Delete Selected Purchase Orders"),
                              tr("<p>Are you sure that you want to delete the "
 			        "selected Purchase Orders?" ),
-                             tr("&Yes"), tr("&No"), QString::null, 0, 1 ) == 0)
+                             QMessageBox::Yes,
+                             QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
   {
     q.prepare("SELECT deletePo(:pohead_id) AS result;");
 
@@ -237,6 +234,7 @@ void unpostedPurchaseOrders::sPrint()
       break;
     }
   }
+  sFillList();
 }
 
 void unpostedPurchaseOrders::sDeliver()
@@ -377,18 +375,21 @@ void unpostedPurchaseOrders::sFillList()
 
   QString sql( "SELECT pohead_id, pohead_number, vend_name,"
                "       MIN(poitem_duedate) AS min_duedate, "
-               "       pohead_status "
+               "       pohead_status, pohead_printed "
                "FROM vend, pohead LEFT OUTER JOIN "
                "     poitem ON (poitem_pohead_id=pohead_id) "
                "WHERE ( (pohead_vend_id=vend_id)"
                "<? if exists(\"showPosted\") ?> "
                "  AND (pohead_status IN ('U', 'O') ) "
-               "  AND (pohead_id NOT IN (SELECT vohead_pohead_id FROM vohead WHERE vohead_pohead_id IS NOT NULL))"
+               "  AND (pohead_id NOT IN (SELECT vohead_pohead_id"
+               "                         FROM vohead"
+               "                         WHERE vohead_pohead_id IS NOT NULL))"
                "<? else ?> "
                "  AND (pohead_status='U') "
                "<? endif ?> "
                ") "
-               "GROUP BY pohead_number, pohead_id, vend_name, pohead_status "
+               "GROUP BY pohead_number, pohead_id, vend_name, pohead_status, "
+               "         pohead_printed "
                "ORDER BY pohead_number;" );
   MetaSQLQuery mql(sql);
   q = mql.toQuery(params);
@@ -413,12 +414,12 @@ bool unpostedPurchaseOrders::checkSitePrivs(int orderid)
     if (!check.value("result").toBool())
       {
         QMessageBox::critical(this, tr("Access Denied"),
-                                       tr("You may not view or edit this Purchase Order as it references "
-                                       "a Site for which you have not been granted privileges.")) ;
+                              tr("<p>You may not view or edit this Purchase "
+                                 "Order as it references a Site for which you "
+                                 "have not been granted privileges.")) ;
         return false;
       }
     }
   }
   return true;
 }
-
