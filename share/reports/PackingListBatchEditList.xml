@@ -13,7 +13,7 @@
   <name>detail</name>
   <sql>SELECT cohead_number,
        formatShipmentNumber(sopack_cosmisc_id) AS cosmisc_number,
-       cust_number,
+       cust_number, cohead_shipvia,
        cohead_billtoname,
        CASE WHEN (cohead_holdtype='N') THEN 'None'
             WHEN (cohead_holdtype='S') THEN 'Ship'
@@ -31,22 +31,6 @@ ORDER BY cohead_number;</sql>
   <height>75</height>
   <label>
    <rect>
-    <x>220</x>
-    <y>55</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Customer #</string>
-  </label>
-  <label>
-   <rect>
     <x>600</x>
     <y>55</y>
     <width>50</width>
@@ -60,61 +44,6 @@ ORDER BY cohead_number;</sql>
    <hcenter/>
    <vcenter/>
    <string>Hold Type</string>
-  </label>
-  <label>
-   <rect>
-    <x>295</x>
-    <y>10</y>
-    <width>450</width>
-    <height>38</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>18</size>
-    <weight>bold</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Packing List Batch Edit List</string>
-  </label>
-  <label>
-   <rect>
-    <x>10</x>
-    <y>55</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>S/O#</string>
-  </label>
-  <line>
-   <xstart>5</xstart>
-   <ystart>70</ystart>
-   <xend>745</xend>
-   <yend>70</yend>
-   <weight>2</weight>
-  </line>
-  <label>
-   <rect>
-    <x>320</x>
-    <y>55</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Customer Name</string>
   </label>
   <label>
    <rect>
@@ -134,6 +63,70 @@ ORDER BY cohead_number;</sql>
   </label>
   <label>
    <rect>
+    <x>320</x>
+    <y>55</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Customer Name</string>
+  </label>
+  <label>
+   <rect>
+    <x>295</x>
+    <y>10</y>
+    <width>450</width>
+    <height>38</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>18</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Packing List Batch Edit List</string>
+  </label>
+  <label>
+   <rect>
+    <x>220</x>
+    <y>55</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Customer #</string>
+  </label>
+  <label>
+   <rect>
+    <x>10</x>
+    <y>55</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>S/O#</string>
+  </label>
+  <label>
+   <rect>
     <x>675</x>
     <y>55</y>
     <width>50</width>
@@ -148,17 +141,10 @@ ORDER BY cohead_number;</sql>
    <vcenter/>
    <string>Printed</string>
   </label>
- </rpthead>
- <pghead>
-  <firstpage/>
-  <height>5</height>
- </pghead>
- <pghead>
-  <height>25</height>
   <label>
    <rect>
-    <x>540</x>
-    <y>5</y>
+    <x>490</x>
+    <y>55</y>
     <width>100</width>
     <height>15</height>
    </rect>
@@ -167,15 +153,29 @@ ORDER BY cohead_number;</sql>
     <size>8</size>
     <weight>normal</weight>
    </font>
-   <hcenter/>
+   <left/>
    <vcenter/>
-   <string>Hold Type</string>
+   <string>Ship Via</string>
   </label>
+  <line>
+   <xstart>5</xstart>
+   <ystart>70</ystart>
+   <xend>745</xend>
+   <yend>70</yend>
+   <weight>2</weight>
+  </line>
+ </rpthead>
+ <pghead>
+  <firstpage/>
+  <height>5</height>
+ </pghead>
+ <pghead>
+  <height>31</height>
   <label>
    <rect>
-    <x>645</x>
+    <x>675</x>
     <y>5</y>
-    <width>100</width>
+    <width>50</width>
     <height>15</height>
    </rect>
    <font>
@@ -186,6 +186,61 @@ ORDER BY cohead_number;</sql>
    <hcenter/>
    <vcenter/>
    <string>Printed</string>
+  </label>
+  <label>
+   <rect>
+    <x>220</x>
+    <y>5</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Customer #</string>
+  </label>
+  <label>
+   <rect>
+    <x>115</x>
+    <y>5</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Shipment #</string>
+  </label>
+  <line>
+   <xstart>5</xstart>
+   <ystart>20</ystart>
+   <xend>745</xend>
+   <yend>20</yend>
+   <weight>2</weight>
+  </line>
+  <label>
+   <rect>
+    <x>320</x>
+    <y>5</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Customer Name</string>
   </label>
   <label>
    <rect>
@@ -205,9 +260,9 @@ ORDER BY cohead_number;</sql>
   </label>
   <label>
    <rect>
-    <x>220</x>
+    <x>600</x>
     <y>5</y>
-    <width>80</width>
+    <width>50</width>
     <height>15</height>
    </rect>
    <font>
@@ -215,22 +270,15 @@ ORDER BY cohead_number;</sql>
     <size>8</size>
     <weight>normal</weight>
    </font>
-   <left/>
+   <hcenter/>
    <vcenter/>
-   <string>Customer Name</string>
+   <string>Hold Type</string>
   </label>
-  <line>
-   <xstart>5</xstart>
-   <ystart>20</ystart>
-   <xend>745</xend>
-   <yend>20</yend>
-   <weight>2</weight>
-  </line>
   <label>
    <rect>
-    <x>115</x>
+    <x>490</x>
     <y>5</y>
-    <width>80</width>
+    <width>100</width>
     <height>15</height>
    </rect>
    <font>
@@ -240,7 +288,7 @@ ORDER BY cohead_number;</sql>
    </font>
    <left/>
    <vcenter/>
-   <string>Customer #</string>
+   <string>Ship Via</string>
   </label>
  </pghead>
  <section>
@@ -250,6 +298,25 @@ ORDER BY cohead_number;</sql>
     <query>detail</query>
    </key>
    <height>15</height>
+   <field>
+    <rect>
+     <x>115</x>
+     <y>0</y>
+     <width>100</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>cosmisc_number</column>
+    </data>
+   </field>
    <field>
     <rect>
      <x>675</x>
@@ -267,25 +334,6 @@ ORDER BY cohead_number;</sql>
     <data>
      <query>detail</query>
      <column>f_printed</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>10</x>
-     <y>0</y>
-     <width>100</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>cohead_number</column>
     </data>
    </field>
    <field>
@@ -309,28 +357,9 @@ ORDER BY cohead_number;</sql>
    </field>
    <field>
     <rect>
-     <x>115</x>
+     <x>10</x>
      <y>0</y>
      <width>100</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <hcenter/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>cosmisc_number</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>320</x>
-     <y>0</y>
-     <width>275</width>
      <height>15</height>
     </rect>
     <font>
@@ -342,7 +371,7 @@ ORDER BY cohead_number;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>cohead_billtoname</column>
+     <column>cohead_number</column>
     </data>
    </field>
    <field>
@@ -364,10 +393,67 @@ ORDER BY cohead_number;</sql>
      <column>f_holdtype</column>
     </data>
    </field>
+   <field>
+    <rect>
+     <x>320</x>
+     <y>0</y>
+     <width>160</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>cohead_billtoname</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>490</x>
+     <y>0</y>
+     <width>100</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>cohead_shipvia</column>
+    </data>
+   </field>
   </detail>
  </section>
  <pgfoot>
   <height>15</height>
+  <field>
+   <rect>
+    <x>90</x>
+    <y>0</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>Context Query</query>
+    <column>report_date</column>
+   </data>
+  </field>
   <label>
    <rect>
     <x>615</x>
@@ -417,25 +503,6 @@ ORDER BY cohead_number;</sql>
    <data>
     <query>Context Query</query>
     <column>page_number</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>90</x>
-    <y>0</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>Context Query</query>
-    <column>report_date</column>
    </data>
   </field>
  </pgfoot>

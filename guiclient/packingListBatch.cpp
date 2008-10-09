@@ -63,7 +63,6 @@
 #include <QDropEvent>
 #include <QMessageBox>
 #include <QSqlError>
-//#include <QStatusBar>
 #include <QVariant>
 
 #include <metasql.h>
@@ -77,8 +76,6 @@
 #include "storedProcErrorLookup.h"
 #include "transferOrder.h"
 #include "transferOrderList.h"
-
-#define	TYPE_COL 1	// must match _pack->addColumn for "Type"
 
 packingListBatch::packingListBatch(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
@@ -102,8 +99,9 @@ packingListBatch::packingListBatch(QWidget* parent, const char* name, Qt::WFlags
   _pack->addColumn(tr("Shipment #"),    80,           Qt::AlignCenter, true, "shipment_number" );
   _pack->addColumn(tr("Customer #"),    _itemColumn,  Qt::AlignLeft,   true, "number"   );
   _pack->addColumn(tr("Customer Name"), -1,           Qt::AlignLeft,   true, "name"   );
+  _pack->addColumn(tr("Ship Via"),      80,           Qt::AlignLeft,   true, "shipvia");
   _pack->addColumn(tr("Hold Type"),     _dateColumn,  Qt::AlignCenter, true, "f_holdtype" );
-  _pack->addColumn(tr("Printed"),       _dateColumn,    Qt::AlignCenter, true, "pack_printed" );
+  _pack->addColumn(tr("Printed"),       _dateColumn,  Qt::AlignCenter, true, "pack_printed" );
 
   if (_privileges->check("MaintainPackingListBatch"))
   {
@@ -269,14 +267,14 @@ void packingListBatch::sPopulateMenu(QMenu *pMenu)
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("View Sales Order..."), this, SLOT(sViewSalesOrder()), 0);
-  if (_pack->currentItem()->text(TYPE_COL) != "SO" ||
+  if (_pack->currentItem()->rawValue("pack_head_type") != "SO" ||
       (! _privileges->check("MaintainSalesOrders") &&
        ! _privileges->check("ViewSalesOrders")))
     pMenu->setItemEnabled(menuItem, FALSE);
     
 
   menuItem = pMenu->insertItem(tr("View Transfer Order..."), this, SLOT(sViewTransferOrder()), 0);
-  if (_pack->currentItem()->text(TYPE_COL) != "TO" ||
+  if (_pack->currentItem()->rawValue("pack_head_type") != "TO" ||
       (! _privileges->check("MaintainTransferOrders") &&
        ! _privileges->check("ViewTransferOrders")))
     pMenu->setItemEnabled(menuItem, FALSE);
@@ -354,7 +352,7 @@ void packingListBatch::sDelete()
 
   ParameterList params;
   params.append("head_id",   _pack->id());
-  params.append("head_type", _pack->currentItem()->text(TYPE_COL));
+  params.append("head_type", _pack->currentItem()->rawValue("pack_head_type"));
   if (_pack->altId() > 0)
     params.append("shiphead_id", _pack->altId());
 
@@ -382,11 +380,11 @@ void packingListBatch::sPrintPackingList()
   }
 
   ParameterList params;
-  if (_pack->currentItem()->text(TYPE_COL) == "TO")
+  if (_pack->currentItem()->rawValue("pack_head_type") == "TO")
   {
     params.append("head_id",     _pack->id());
     params.append("shiphead_id", _pack->altId());
-    params.append("head_type",   _pack->currentItem()->text(TYPE_COL));
+    params.append("head_type",   _pack->currentItem()->rawValue("pack_head_type"));
     params.append("print");
   }
   else
@@ -413,7 +411,7 @@ void packingListBatch::sPrintPackingList()
 
     ParameterList params;
     params.append("head_id",   _pack->id());
-    params.append("head_type", _pack->currentItem()->text(TYPE_COL));
+    params.append("head_type", _pack->currentItem()->rawValue("pack_head_type"));
     if (_pack->altId() > 0)
       params.append("shiphead_id", _pack->altId());
 
