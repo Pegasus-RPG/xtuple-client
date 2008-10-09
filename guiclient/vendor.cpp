@@ -89,6 +89,10 @@ vendor::vendor(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_viewTaxreg,   SIGNAL(clicked()), this, SLOT(sViewTaxreg()));
   connect(_next, SIGNAL(clicked()), this, SLOT(sNext()));
   connect(_previous, SIGNAL(clicked()), this, SLOT(sPrevious()));
+  connect(_mainButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_altButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_poButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_checkButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
 
   _defaultCurr->setLabel(_defaultCurrLit);
 
@@ -234,7 +238,6 @@ void vendor::set(const ParameterList &pParams)
       _receives1099->setEnabled(FALSE);
       _qualified->setEnabled(FALSE);
       _emailPODelivery->setEnabled(FALSE);
-      _emailPOGroup->setEnabled(FALSE);
       _newAddress->setEnabled(FALSE);
       _defaultFOBGroup->setEnabled(false);
       _taxauth->setEnabled(false);
@@ -942,5 +945,18 @@ void vendor::closeEvent(QCloseEvent *pEvent)
     _NumberGen = -1;
   }
   XWidget::closeEvent(pEvent);
+}
+
+void vendor::sHandleButtons()
+{
+  if (_mainButton->isChecked())
+    _addressStack->setCurrentIndex(0);
+  else
+    _addressStack->setCurrentIndex(1);
+    
+  if (_poButton->isChecked())
+    _transmitStack->setCurrentIndex(0);
+  else
+    _transmitStack->setCurrentIndex(1);
 }
 

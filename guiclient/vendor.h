@@ -89,6 +89,7 @@ public slots:
     virtual void sEditTaxreg();
     virtual void sViewTaxreg();
     virtual void sDeleteTaxreg();
+    virtual void sHandleButtons();
 
     virtual void sNext();
     virtual void sPrevious();
