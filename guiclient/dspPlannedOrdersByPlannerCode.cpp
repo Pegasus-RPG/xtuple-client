@@ -68,6 +68,7 @@
 #include "dspRunningAvailability.h"
 #include "dspUsageStatisticsByItem.h"
 #include "firmPlannedOrder.h"
+#include "mqlutil.h"
 #include "purchaseRequest.h"
 #include "workOrder.h"
 
@@ -117,7 +118,8 @@ bool dspPlannedOrdersByPlannerCode::setParams(ParameterList &pParams)
 void dspPlannedOrdersByPlannerCode::sPrint()
 {
   ParameterList params;
-  setParams(params);
+  if (! setParams(params))
+    return;
 
   orReport report("PlannedOrdersByPlannerCode", params);
   if (report.isValid())
@@ -282,40 +284,10 @@ void dspPlannedOrdersByPlannerCode::sDeleteOrder()
 
 void dspPlannedOrdersByPlannerCode::sFillList()
 {
-  QString sql( "SELECT planord_id, planord_itemsite_id,"
-               "       formatPloNumber(planord_id) AS ordernum,"
-               "       CASE WHEN (planord_type='P') THEN 'P/O'"
-               "            WHEN (planord_type='W') THEN 'W/O'"
-               "            ELSE '?'"
-               "       END AS ordtype,"
-               "       warehous_code, item_number,"
-               "       (item_descrip1 || ' ' || item_descrip2) AS item_descrip,"
-               "       planord_startdate,"
-               "       planord_duedate,"
-               "       planord_qty, planord_firm,"
-               "       uom_name,"
-               "       'qty' AS planord_qty_xtnumericrole "
-               "FROM planord, itemsite, warehous, item, uom "
-               "WHERE ( (planord_itemsite_id=itemsite_id)"
-               " AND (itemsite_warehous_id=warehous_id)"
-               " AND (itemsite_item_id=item_id)"
-               " AND (item_inv_uom_id=uom_id)"
-               "<? if exists(\"plancode_id\") ?>"
-               " AND (itemsite_plancode_id=<? value(\"plancode_id\") ?>)"
-               "<? elseif exists(\"plancode_pattern\") ?>"
-               " AND (itemsite_plancode_id IN (SELECT plancode_id"
-               "    FROM plancode"
-               "    WHERE (plancode_code ~ <? value(\"plancode_pattern\") ?>)))"
-               "<? endif ?>"
-               "<? if exists(\"warehous_id\") ?>"
-               " AND (itemsite_warehous_id=<? value(\"warehous_id\") ?>)"
-               "<? endif ?>"
-               " ) "
-               "ORDER BY planord_duedate, item_number;");
- 
-  MetaSQLQuery mql(sql);
   ParameterList params;
-  setParams(params);
+  if (! setParams(params))
+    return;
+  MetaSQLQuery mql = mqlLoad("schedule", "plannedorders");
   q = mql.toQuery(params);
   _planord->populate(q, TRUE);
   if (q.lastError().type() != QSqlError::None)

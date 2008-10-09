@@ -58,16 +58,18 @@
 #include "dspPlannedOrdersByItem.h"
 
 #include <QMenu>
+#include <QSqlError>
 
 #include <openreports.h>
 #include <metasql.h>
 #include <parameter.h>
 
+#include "deletePlannedOrder.h"
 #include "dspRunningAvailability.h"
 #include "firmPlannedOrder.h"
-#include "workOrder.h"
+#include "mqlutil.h"
 #include "purchaseRequest.h"
-#include "deletePlannedOrder.h"
+#include "workOrder.h"
 
 dspPlannedOrdersByItem::dspPlannedOrdersByItem(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
@@ -79,12 +81,12 @@ dspPlannedOrdersByItem::dspPlannedOrdersByItem(QWidget* parent, const char* name
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _planord->addColumn(tr("Order #"),    _orderColumn, Qt::AlignCenter,true, "ordernum");
-  _planord->addColumn(tr("Type"),       _uomColumn,   Qt::AlignCenter,true, "ordertype");
+  _planord->addColumn(tr("Type"),       _uomColumn,   Qt::AlignCenter,true, "ordtype");
   _planord->addColumn(tr("Site"),       _whsColumn,   Qt::AlignCenter,true, "warehous_code");
   _planord->addColumn(tr("Start Date"), _dateColumn,  Qt::AlignCenter,true, "planord_startdate");
   _planord->addColumn(tr("Due Date"),   _dateColumn,  Qt::AlignCenter,true, "planord_duedate");
   _planord->addColumn(tr("Qty"),        _qtyColumn,   Qt::AlignRight, true, "planord_qty");
-  _planord->addColumn(tr("Firm"),       _uomColumn,   Qt::AlignCenter,true, "firmed");
+  _planord->addColumn(tr("Firm"),       _uomColumn,   Qt::AlignCenter,true, "planord_firm");
   _planord->addColumn(tr("Comments"),   -1,           Qt::AlignLeft,  true, "comments");
 
   connect(omfgThis, SIGNAL(workOrdersUpdated(int, bool)), this, SLOT(sFillList()));
@@ -275,30 +277,15 @@ void dspPlannedOrdersByItem::sDeleteOrder()
 
 void dspPlannedOrdersByItem::sFillList()
 {
-  QString sql( "SELECT planord_id, planord_itemsite_id,"
-               "       formatPloNumber(planord_id) AS ordernum,"
-               "       CASE WHEN (planord_type='P') THEN 'P/O'"
-               "            WHEN (planord_type='W') THEN 'W/O'"
-               "            ELSE '?'"
-               "       END AS ordertype,"
-               "       warehous_code, planord_startdate,"
-               "       planord_duedate,"
-               "       planord_qty, formatBoolYN(planord_firm) AS firmed,"
-               "       firstLine(planord_comments) AS comments,"
-               "       'qty' AS planord_qty_xtnumericrole "
-               "FROM planord, itemsite, warehous "
-               "WHERE ( (planord_itemsite_id=itemsite_id)"
-               " AND (itemsite_warehous_id=warehous_id)"
-               " AND (itemsite_item_id=<? value(\"item_id\") ?>)"
-               "<? if exists(\"warehous_id\") ?>"
-               " AND (itemsite_warehous_id=<? value(\"warehous_id\") ?>)"
-               "<? endif ?>"
-               ") "
-               "ORDER BY planord_duedate, planord_number, planord_subnumber;");
-  MetaSQLQuery mql(sql);
   ParameterList params;
   if (! setParams(params))
     return;
+  MetaSQLQuery mql = mqlLoad("schedule", "plannedorders");
   q = mql.toQuery(params);
   _planord->populate(q, TRUE);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
