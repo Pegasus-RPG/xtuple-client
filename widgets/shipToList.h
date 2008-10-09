@@ -70,7 +70,6 @@ class QLabel;
 class QLineEdit;
 class QPushButton;
 class XTreeWidget;
-class Q3ListViewItem;
 class ParameterList;
 
 class OPENMFGWIDGETS_EXPORT shipToList : public QDialog
@@ -97,7 +96,6 @@ class OPENMFGWIDGETS_EXPORT shipToList : public QDialog
 
   private:
     int _shiptoid;
-    Q3ListViewItem *_selected;
 };
 
 #endif
