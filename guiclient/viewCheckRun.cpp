@@ -95,7 +95,7 @@ viewCheckRun::viewCheckRun(QWidget* parent, const char* name, Qt::WFlags fl)
   _check->addColumn(tr("Currency"),             _currencyColumn, Qt::AlignLeft,   true,  "curr_concat" );
 
   if (omfgThis->singleCurrency())
-      _check->hideColumn(7);
+      _check->hideColumn("curr_concat");
 
   connect(omfgThis, SIGNAL(checksUpdated(int, int, bool)), this, SLOT(sFillList(int)));
 
@@ -285,14 +285,15 @@ void viewCheckRun::sFillList(int pBankaccntid)
 
 void viewCheckRun::sFillList()
 {
-  _check->clear();
-
   QString sql( "SELECT checkid, altid,"
                "       void, misc, printed,"
                "       number, description, checkdate,"
                "       amount,"
                "       checkhead_number, curr_concat,"
                "       'curr' AS amount_xtnumericrole,"
+               "       CASE WHEN (level = 0 AND NOT void) THEN 0"
+               "            ELSE 1 "
+               "       END AS amount_xttotalrole,"
                "       level AS xtindentrole "
                "FROM ( "
                "SELECT checkhead_id AS checkid, -1 AS checkitem_id,"
@@ -339,18 +340,14 @@ void viewCheckRun::sFillList()
                " AND (NOT checkhead_posted)"
                " AND (NOT checkhead_replaced)"
                " AND (NOT checkhead_deleted) ) "
-
                "   ) AS data "
                "ORDER BY checkhead_number, checkid, level;" );
 
   q.prepare(sql);
   q.bindValue(":bankaccnt_id", _bankaccnt->id());
   q.exec();
-  if (q.first())
-  {
-    _check->populate(q, true);
-  }
-  else if (q.lastError().type() != QSqlError::None)
+  _check->populate(q, true);
+  if (q.lastError().type() != QSqlError::None)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

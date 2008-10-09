@@ -11,8 +11,12 @@
  <leftmargin>50</leftmargin>
  <querysource>
   <name>detail</name>
-  <sql>SELECT checkhead_amount AS amt_check,
-       currtobase(checkhead_curr_id,checkhead_amount,checkhead_checkdate) AS base_amt_check,
+  <sql>SELECT CASE WHEN checkhead_void THEN 0
+                   ELSE checkhead_amount END AS amt_check,
+              CASE WHEN checkhead_void THEN 0
+                   ELSE currToBase(checkhead_curr_id,checkhead_amount,
+                                   checkhead_checkdate)
+              END AS base_amt_check,
        checkhead_id AS primaryid,
        -1 AS secondaryid,
        formatBoolYN(checkhead_void) AS f_void,
