@@ -102,15 +102,16 @@ public slots:
     virtual void sViewCreditCard();
     virtual void sViewShipto();
     virtual void sViewTaxreg();
-	virtual void sLoadProspect(int);
-	virtual void sLoadCrmAcct(int);
+    virtual void sLoadProspect(int);
+    virtual void sLoadCrmAcct(int);
+    virtual void sHandleButtons();
 
 protected slots:
     virtual void languageChange();
     virtual int  saveContact(ContactCluster*);
     virtual void sProfileSelected();
     virtual void sSoProfileSelected();
-	virtual void sNumberEdited();
+    virtual void sNumberEdited();
 
 protected:
     virtual void closeEvent(QCloseEvent*);
@@ -122,7 +123,7 @@ private:
     int _NumberGen;
     QString _cachedNumber;
     QString key;
-	bool _notice;
+    bool _notice;
     QStandardItemModel * _custchar;
 
 };
