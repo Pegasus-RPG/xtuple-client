@@ -125,11 +125,11 @@ purchaseOrderList::purchaseOrderList(QWidget* parent, const char* name, bool mod
 
   _type = 0;
 
-  _pohead->addColumn(tr("Number"), _orderColumn, Qt::AlignRight  );
-  _pohead->addColumn(tr("Vendor"), -1,           Qt::AlignLeft   );
-  _pohead->addColumn(tr("Agent"),  _itemColumn,  Qt::AlignCenter );
-  _pohead->addColumn(tr("Order Date"),	_dateColumn,	Qt::AlignLeft  );
-  _pohead->addColumn(tr("First Item"),	_itemColumn,	Qt::AlignLeft  );
+  _pohead->addColumn(tr("Number"),   _orderColumn, Qt::AlignRight, true, "pohead_number");
+  _pohead->addColumn(tr("Vendor"),             -1, Qt::AlignLeft,  true, "vend_name");
+  _pohead->addColumn(tr("Agent"),     _itemColumn, Qt::AlignCenter,true, "pohead_agent_username");
+  _pohead->addColumn(tr("Order Date"),_dateColumn, Qt::AlignLeft,  true, "pohead_orderdate");
+  _pohead->addColumn(tr("First Item"),_itemColumn, Qt::AlignLeft,  true, "item_number");
 
   _pohead->setFocus();
 }

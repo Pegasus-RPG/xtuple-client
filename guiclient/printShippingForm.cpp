@@ -66,7 +66,6 @@
 
 #include "editICMWatermark.h"
 #include "mqlutil.h"
-#include "salesOrderList.h"
 
 printShippingForm::printShippingForm(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)

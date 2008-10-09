@@ -58,19 +58,17 @@
 
 #include "itemList.h"
 
-#include <qvariant.h>
-//Added by qt3to4:
-#include <Q3HBoxLayout>
-#include <Q3VBoxLayout>
+#include <QCheckBox>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QLayout>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QVBoxLayout>
+#include <QVariant>
+
 #include <parameter.h>
-#include <qpushbutton.h>
-#include <qlabel.h>
-#include <qlineedit.h>
-#include <qcheckbox.h>
-#include <q3header.h>
-#include <qlayout.h>
-#include <qtooltip.h>
-#include <q3whatsthis.h>
+
 #include "itemcluster.h"
 #include "xtreewidget.h"
 
@@ -79,23 +77,23 @@ QString buildItemLineEditTitle(const unsigned int, const QString);
 
 itemList::itemList( QWidget* parent, const char* name, bool modal, Qt::WFlags fl ) : QDialog( parent, name, modal, fl )
 {
-    if ( !name )
-      setName( "itemList" );
+  if ( !name )
+    setName( "itemList" );
 
   _itemid = -1;
   _itemType = ItemLineEdit::cUndefined;
   _useQuery = FALSE;
 
-    setCaption(tr("Item List"));
+  setCaption(tr("Item List"));
 
-    Q3VBoxLayout *itemListLayout = new Q3VBoxLayout( this, 5, 5, "itemListLayout"); 
-    Q3HBoxLayout *Layout69 = new Q3HBoxLayout( 0, 0, 0, "Layout69"); 
-    Q3HBoxLayout *Layout72 = new Q3HBoxLayout( 0, 0, 7, "Layout72"); 
-    Q3VBoxLayout *Layout71 = new Q3VBoxLayout( 0, 0, 0, "Layout71"); 
-    Q3VBoxLayout *Layout70 = new Q3VBoxLayout( 0, 0, 5, "Layout70"); 
-    Q3HBoxLayout *Layout5 = new Q3HBoxLayout( 0, 0, 5, "Layout5"); 
-    Q3VBoxLayout *Layout18 = new Q3VBoxLayout( 0, 0, 5, "Layout18"); 
-    Q3VBoxLayout *Layout20 = new Q3VBoxLayout( 0, 0, 0, "Layout20"); 
+  QVBoxLayout *itemListLayout = new QVBoxLayout( this, 5, 5, "itemListLayout"); 
+  QHBoxLayout *Layout69 = new QHBoxLayout( 0, 0, 0, "Layout69"); 
+  QHBoxLayout *Layout72 = new QHBoxLayout( 0, 0, 7, "Layout72"); 
+  QVBoxLayout *Layout71 = new QVBoxLayout( 0, 0, 0, "Layout71"); 
+  QVBoxLayout *Layout70 = new QVBoxLayout( 0, 0, 5, "Layout70"); 
+  QHBoxLayout *Layout5 = new QHBoxLayout( 0, 0, 5, "Layout5"); 
+  QVBoxLayout *Layout18 = new QVBoxLayout( 0, 0, 5, "Layout18"); 
+  QVBoxLayout *Layout20 = new QVBoxLayout( 0, 0, 0, "Layout20"); 
 
     QLabel *_searchForLit = new QLabel(tr("S&earch for:"), this, "_searchForLit");
     _searchForLit->setAlignment( int( Qt::AlignVCenter | Qt::AlignRight ) );
@@ -155,8 +153,8 @@ itemList::itemList( QWidget* parent, const char* name, bool modal, Qt::WFlags fl
     connect( _item, SIGNAL( valid(bool) ), _select, SLOT( setEnabled(bool) ) );
 
 
-  _item->addColumn(tr("Item Number"), 100,  Qt::AlignLeft );
-  _item->addColumn(tr("Description"), -1,   Qt::AlignLeft );
+  _item->addColumn(tr("Item Number"), 100, Qt::AlignLeft, true, "item_number");
+  _item->addColumn(tr("Description"),  -1, Qt::AlignLeft, true, "itemdescrip");
 }
 
 void itemList::set(ParameterList &pParams)
@@ -248,12 +246,14 @@ void itemList::sFillList()
       QString post;
       if(_x_preferences && _x_preferences->boolean("ListNumericItemNumbersFirst"))
       {
-        pre =  "SELECT DISTINCT ON (toNumeric(item_number, 999999999999999), item_number) item_id, item_number, (item_descrip1 || ' ' || item_descrip2)";
+        pre =  "SELECT DISTINCT ON (toNumeric(item_number, 999999999999999), item_number) item_id, item_number,"
+               "(item_descrip1 || ' ' || item_descrip2) AS itemdescrip ";
         post = "ORDER BY toNumeric(item_number, 999999999999999), item_number";
       }
       else
       {
-        pre =  "SELECT DISTINCT item_id, item_number, (item_descrip1 || ' ' || item_descrip2)";
+        pre =  "SELECT DISTINCT item_id, item_number,"
+               "(item_descrip1 || ' ' || item_descrip2) AS itemdescrip ";
         post = "ORDER BY item_number";
       }
 

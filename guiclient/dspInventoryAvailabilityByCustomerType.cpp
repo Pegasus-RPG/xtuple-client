@@ -75,7 +75,6 @@
 #include "mqlutil.h"
 #include "purchaseOrder.h"
 #include "reserveSalesOrderItem.h"
-#include "salesOrderList.h"
 #include "storedProcErrorLookup.h"
 #include "workOrder.h"
 

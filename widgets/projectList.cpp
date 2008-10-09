@@ -58,18 +58,16 @@
 
 #include "projectList.h"
 
-#include <qvariant.h>
-//Added by qt3to4:
-#include <Q3HBoxLayout>
-#include <Q3VBoxLayout>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QLayout>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QVBoxLayout>
+#include <QVariant>
+
 #include <parameter.h>
-#include <qpushbutton.h>
-#include <qlabel.h>
-#include <qlineedit.h>
-#include <q3header.h>
-#include <qlayout.h>
-#include <qtooltip.h>
-#include <q3whatsthis.h>
+
 #include "projectcluster.h"
 #include "xtreewidget.h"
 
@@ -82,14 +80,14 @@ projectList::projectList( QWidget* parent, const char* name, bool modal, Qt::WFl
 
   setCaption(tr("Project List"));
 
-  Q3VBoxLayout *projectListLayout = new Q3VBoxLayout( this, 5, 5, "projectListLayout"); 
-  Q3HBoxLayout *Layout69 = new Q3HBoxLayout( 0, 0, 0, "Layout69"); 
-  Q3HBoxLayout *Layout72 = new Q3HBoxLayout( 0, 0, 7, "Layout72"); 
-  Q3VBoxLayout *Layout71 = new Q3VBoxLayout( 0, 0, 0, "Layout71"); 
-  Q3VBoxLayout *Layout70 = new Q3VBoxLayout( 0, 0, 5, "Layout70"); 
-  Q3HBoxLayout *Layout5 = new Q3HBoxLayout( 0, 0, 5, "Layout5"); 
-  Q3VBoxLayout *Layout18 = new Q3VBoxLayout( 0, 0, 5, "Layout18"); 
-  Q3VBoxLayout *Layout20 = new Q3VBoxLayout( 0, 0, 0, "Layout20"); 
+  QVBoxLayout *projectListLayout = new QVBoxLayout( this, 5, 5, "projectListLayout"); 
+  QHBoxLayout *Layout69 = new QHBoxLayout( 0, 0, 0, "Layout69"); 
+  QHBoxLayout *Layout72 = new QHBoxLayout( 0, 0, 7, "Layout72"); 
+  QVBoxLayout *Layout71 = new QVBoxLayout( 0, 0, 0, "Layout71"); 
+  QVBoxLayout *Layout70 = new QVBoxLayout( 0, 0, 5, "Layout70"); 
+  QHBoxLayout *Layout5 = new QHBoxLayout( 0, 0, 5, "Layout5"); 
+  QVBoxLayout *Layout18 = new QVBoxLayout( 0, 0, 5, "Layout18"); 
+  QVBoxLayout *Layout20 = new QVBoxLayout( 0, 0, 0, "Layout20"); 
 
   QLabel *_searchForLit = new QLabel(tr("S&earch for:"), this, "_searchForLit");
   _searchForLit->setAlignment( int( Qt::AlignVCenter | Qt::AlignRight ) );
@@ -138,8 +136,8 @@ projectList::projectList( QWidget* parent, const char* name, bool modal, Qt::WFl
   connect( _searchFor, SIGNAL( textChanged(const QString&) ), this, SLOT( sSearch(const QString&) ) );
   connect( _project, SIGNAL( valid(bool) ), _select, SLOT( setEnabled(bool) ) );
 
-  _project->addColumn(tr("Number"), 100,  Qt::AlignLeft );
-  _project->addColumn(tr("Name"), -1,   Qt::AlignLeft );
+  _project->addColumn(tr("Number"), 100, Qt::AlignLeft, true, "prj_number");
+  _project->addColumn(tr("Name"),    -1, Qt::AlignLeft, true, "prj_name");
 }
 
 void projectList::set(ParameterList &pParams)
@@ -195,35 +193,19 @@ void projectList::sFillList()
 {
   QString sql("SELECT prj_id, prj_number, prj_name"
               "  FROM prj");
-  bool checkStatus = false;
+
+  QStringList boollist;
   if(_type & ProjectLineEdit::SalesOrder)
-  {
-    sql += " WHERE ((prj_so)";
-    checkStatus = true;
-  }
+    boollist << " (prj_so)";
 
   if(_type & ProjectLineEdit::WorkOrder)
-  {
-    if(checkStatus)
-      sql += "    OR  ";
-    else
-      sql += " WHERE (";
-    sql += "(prj_wo)";
-    checkStatus = true;
-  }
+    boollist << "(prj_wo)";
 
   if(_type & ProjectLineEdit::PurchaseOrder)
-  {
-    if(checkStatus)
-      sql += "    OR  ";
-    else
-      sql += " WHERE (";
-    sql += "(prj_po)";
-    checkStatus = true;
-  }
+    boollist << "(prj_po)";
 
-  if(checkStatus)
-    sql += ")";
+  if (! boollist.isEmpty())
+    sql += " WHERE (" + boollist.join(" OR ") + ")";
 
   sql += " ORDER BY prj_number;";
 
@@ -234,4 +216,3 @@ void projectList::reject()
 {
   done(_id);
 }
-

@@ -61,7 +61,6 @@
 #include <QVariant>
 
 #include <openreports.h>
-#include "salesOrderList.h"
 #include "editICMWatermark.h"
 
 printShippingForms::printShippingForms(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)

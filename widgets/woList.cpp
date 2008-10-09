@@ -55,23 +55,19 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-
 #include "woList.h"
 
-#include <qvariant.h>
-//Added by qt3to4:
-#include <Q3HBoxLayout>
-#include <Q3VBoxLayout>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QLayout>
+#include <QPushButton>
+#include <QRadioButton>
+#include <QVBoxLayout>
+#include <QVariant>
+#include <QWidget>
+
 #include <parameter.h>
-#include <qpushbutton.h>
-#include <q3buttongroup.h>
-#include <qradiobutton.h>
-#include <qwidget.h>
-#include <qlabel.h>
-#include <q3header.h>
-#include <qlayout.h>
-#include <qtooltip.h>
-#include <q3whatsthis.h>
+
 #include "xtreewidget.h"
 #include "warehousegroup.h"
 #include "wocluster.h"
@@ -87,11 +83,11 @@ woList::woList(QWidget * parent, const char * name, bool modal, Qt::WFlags fl) :
   if ( !name )
     setName( "woList" );
 
-  Q3VBoxLayout *mainLayout = new Q3VBoxLayout( this, 5, 5, "woListLayout"); 
-  Q3HBoxLayout *topLayout = new Q3HBoxLayout( 0, 0, 7, "topLayout"); 
-  Q3VBoxLayout *warehouseLayout = new Q3VBoxLayout( 0, 0, 0, "warehouseLayout"); 
-  Q3VBoxLayout *buttonsLayout = new Q3VBoxLayout( 0, 0, 5, "buttonsLayout"); 
-  Q3VBoxLayout *listLayout = new Q3VBoxLayout( 0, 0, 0, "listLayout"); 
+  QVBoxLayout *mainLayout = new QVBoxLayout( this, 5, 5, "woListLayout"); 
+  QHBoxLayout *topLayout = new QHBoxLayout( 0, 0, 7, "topLayout"); 
+  QVBoxLayout *warehouseLayout = new QVBoxLayout( 0, 0, 0, "warehouseLayout"); 
+  QVBoxLayout *buttonsLayout = new QVBoxLayout( 0, 0, 5, "buttonsLayout"); 
+  QVBoxLayout *listLayout = new QVBoxLayout( 0, 0, 0, "listLayout"); 
 
   _warehouse = new WarehouseGroup(this, "_warehouse");
   warehouseLayout->addWidget(_warehouse);
@@ -135,11 +131,11 @@ woList::woList(QWidget * parent, const char * name, bool modal, Qt::WFlags fl) :
   setTabOrder(_close, _warehouse);
   _wo->setFocus();
 
-  _wo->addColumn(tr("W/O #"),       _orderColumn, Qt::AlignLeft   );
-  _wo->addColumn(tr("Status"),      40,           Qt::AlignCenter );
-  _wo->addColumn(tr("Whs."),        _whsColumn,   Qt::AlignCenter );
-  _wo->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft   );
-  _wo->addColumn(tr("Description"), -1,           Qt::AlignLeft   );
+  _wo->addColumn(tr("W/O #"),     _orderColumn, Qt::AlignLeft,  true, "wonumber");
+  _wo->addColumn(tr("Status"),              40, Qt::AlignCenter,true, "wo_status");
+  _wo->addColumn(tr("Whs."),        _whsColumn, Qt::AlignCenter,true, "warehous_code");
+  _wo->addColumn(tr("Item Number"),_itemColumn, Qt::AlignLeft,  true, "item_number");
+  _wo->addColumn(tr("Description"),         -1, Qt::AlignLeft,  true, "descrip");
 }
 
 void woList::set(ParameterList &pParams)
@@ -179,69 +175,46 @@ void woList::sSelect()
 void woList::sFillList()
 {
   QString sql;
-  bool    statusCheck = FALSE;
 
   if (_sql.length())
-      sql = _sql;
+    sql = _sql;
   else
   {
-          sql = "SELECT wo_id,"
-                "       formatWONumber(wo_id) AS wonumber,"
-                "       wo_status, warehous_code, item_number,"
-                "       (item_descrip1 || ' ' || item_descrip2) "
-                "FROM wo, itemsite, warehous, item "
-                "WHERE ( (wo_itemsite_id=itemsite_id)"
-                " AND (itemsite_warehous_id=warehous_id)"
-                " AND (itemsite_item_id=item_id)";
+    sql = "SELECT wo_id,"
+          "       formatWONumber(wo_id) AS wonumber,"
+          "       wo_status, warehous_code, item_number,"
+          "       (item_descrip1 || ' ' || item_descrip2) AS descrip "
+          "FROM wo, itemsite, warehous, item "
+          "WHERE ( (wo_itemsite_id=itemsite_id)"
+          " AND (itemsite_warehous_id=warehous_id)"
+          " AND (itemsite_item_id=item_id)";
 
-          if (_type != 0)
-          {
-                sql += "AND (";
+    if (_type != 0)
+    {
+      QStringList statuslist;
 
-                if (_type & cWoOpen)
-                {
-                  sql += "(wo_status='O')";
-                  statusCheck = TRUE;
-                }
+      if (_type & cWoOpen)
+        statuslist << "'O'";
 
-                if (_type & cWoExploded)
-                {
-                  if (statusCheck)
-                        sql += " OR ";
-                  sql += "(wo_status='E')";
-                  statusCheck = TRUE;
-                }
+      if (_type & cWoExploded)
+        statuslist << "'E'";
 
-                if (_type & cWoReleased)
-                {
-                  if (statusCheck)
-                        sql += " OR ";
-                  sql += "(wo_status='R')";
-                  statusCheck = TRUE;
-                }
+      if (_type & cWoReleased)
+        statuslist << "'R'";
 
-                if (_type & cWoIssued)
-                {
-                  if (statusCheck)
-                        sql += " OR ";
-                  sql += "(wo_status='I')";
-                  statusCheck = TRUE;
-                }
+      if (_type & cWoIssued)
+        statuslist << "'I'";
 
-                if (_type & cWoClosed)
-                {
-                  if (statusCheck)
-                        sql += " OR ";
-                  sql += "(wo_status='C')";
-                }
+      if (_type & cWoClosed)
+        statuslist << "'C'";
 
-                sql += ")";
-          }
+      sql += "AND (wo_status IN (" + statuslist.join(",") + "))";
+    }
 
-          if (_warehouse->isSelected())
-                sql += " AND (itemsite_warehous_id=:warehous_id)";
+    if (_warehouse->isSelected())
+      sql += " AND (itemsite_warehous_id=:warehous_id)";
 
-          sql += ") ORDER BY wo_number, wo_subnumber, warehous_code, item_number";
+    sql += ") ORDER BY wo_number, wo_subnumber, warehous_code, item_number";
   }
 
   XSqlQuery wo;
@@ -250,4 +223,3 @@ void woList::sFillList()
   wo.exec();
   _wo->populate(wo, _woid);
 }
-

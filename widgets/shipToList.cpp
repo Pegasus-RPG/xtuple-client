@@ -58,18 +58,15 @@
 
 #include "shipToList.h"
 
-#include <qvariant.h>
-//Added by qt3to4:
-#include <Q3HBoxLayout>
-#include <Q3VBoxLayout>
+#include <QVariant>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QPushButton>
+#include <QLabel>
+#include <QLineEdit>
+#include <QLayout>
+
 #include <parameter.h>
-#include <qpushbutton.h>
-#include <qlabel.h>
-#include <qlineedit.h>
-#include <q3header.h>
-#include <qlayout.h>
-#include <qtooltip.h>
-#include <q3whatsthis.h>
 #include <xsqlquery.h>
 
 #include "xtreewidget.h"
@@ -77,23 +74,23 @@
 shipToList::shipToList(QWidget * parent, const char *name, bool modal, Qt::WFlags fl) :
   QDialog( parent, name, modal, fl )
 {
-    setCaption(tr("Ship To's"));
+  setCaption(tr("Ship To's"));
 
   _shiptoid = -1;
 
   if (!name)
     setName("shipToList");
 
-    Q3VBoxLayout *shipToListLayout = new Q3VBoxLayout( this, 5, 5, "shipToListLayout"); 
-    Q3HBoxLayout *Layout54 = new Q3HBoxLayout( 0, 0, 7, "Layout54"); 
-    Q3HBoxLayout *Layout53 = new Q3HBoxLayout( 0, 0, 5, "Layout53"); 
-    Q3VBoxLayout *Layout51 = new Q3VBoxLayout( 0, 0, 5, "Layout51"); 
-    Q3VBoxLayout *Layout49 = new Q3VBoxLayout( 0, 0, 0, "Layout49"); 
-    Q3VBoxLayout *Layout52 = new Q3VBoxLayout( 0, 0, 5, "Layout52"); 
-    Q3VBoxLayout *Layout50 = new Q3VBoxLayout( 0, 0, 0, "Layout50"); 
-    Q3HBoxLayout *Layout6 = new Q3HBoxLayout( 0, 0, 0, "Layout6"); 
-    Q3VBoxLayout *Layout2 = new Q3VBoxLayout( 0, 0, 5, "Layout2"); 
-    Q3VBoxLayout *Layout55 = new Q3VBoxLayout( 0, 0, 0, "Layout55"); 
+  QVBoxLayout *shipToListLayout = new QVBoxLayout( this, 5, 5, "shipToListLayout"); 
+  QHBoxLayout *Layout54 = new QHBoxLayout( 0, 0, 7, "Layout54"); 
+  QHBoxLayout *Layout53 = new QHBoxLayout( 0, 0, 5, "Layout53"); 
+  QVBoxLayout *Layout51 = new QVBoxLayout( 0, 0, 5, "Layout51"); 
+  QVBoxLayout *Layout49 = new QVBoxLayout( 0, 0, 0, "Layout49"); 
+  QVBoxLayout *Layout52 = new QVBoxLayout( 0, 0, 5, "Layout52"); 
+  QVBoxLayout *Layout50 = new QVBoxLayout( 0, 0, 0, "Layout50"); 
+  QHBoxLayout *Layout6 = new QHBoxLayout( 0, 0, 0, "Layout6"); 
+  QVBoxLayout *Layout2 = new QVBoxLayout( 0, 0, 5, "Layout2"); 
+  QVBoxLayout *Layout55 = new QVBoxLayout( 0, 0, 0, "Layout55"); 
 
     QLabel *_custNumberLit = new QLabel(tr("Customer #:"), this, "_custNumberLit");
     _custNumberLit->setAlignment( int( Qt::AlignVCenter | Qt::AlignRight ) );
@@ -160,12 +157,10 @@ shipToList::shipToList(QWidget * parent, const char *name, bool modal, Qt::WFlag
     connect( _searchFor, SIGNAL( textChanged(const QString&) ), this, SLOT( sSearch(const QString&) ) );
     connect( _shipto, SIGNAL( itemSelected(int) ), this, SLOT( sSelect() ) );
 
-  _selected = NULL;
-
-  _shipto->addColumn(tr("Number"),  70,           Qt::AlignLeft );
-  _shipto->addColumn(tr("Name"),    150,          Qt::AlignLeft );
-  _shipto->addColumn(tr("Address"), 150,          Qt::AlignLeft );
-  _shipto->addColumn(tr("City, State, Zip"), -1,  Qt::AlignLeft );
+  _shipto->addColumn(tr("Number"),           70, Qt::AlignLeft, true, "shipto_num");
+  _shipto->addColumn(tr("Name"),            150, Qt::AlignLeft, true, "shipto_name");
+  _shipto->addColumn(tr("Address"),         150, Qt::AlignLeft, true, "shipto_address1");
+  _shipto->addColumn(tr("City, State, Zip"), -1, Qt::AlignLeft, true, "csz");
   _shipto->sortByColumn(1, Qt::AscendingOrder);
 }
 
@@ -198,7 +193,7 @@ void shipToList::set(ParameterList &pParams)
 
     XSqlQuery shipto;
     shipto.prepare( "SELECT shipto_id, shipto_num, shipto_name, shipto_address1,"
-                    " (shipto_city || ', ' || shipto_state || '  ' || shipto_zipcode) "
+                    " (shipto_city || ', ' || shipto_state || '  ' || shipto_zipcode)  AS csz "
                     "FROM shipto "
                     "WHERE (shipto_cust_id=:cust_id) "
                     "ORDER BY shipto_num;" );

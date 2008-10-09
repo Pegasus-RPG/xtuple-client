@@ -58,13 +58,14 @@
 
 #include "salesOrderList.h"
 
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QLayout>
+#include <QPushButton>
+#include <QVBoxLayout>
+
 #include <parameter.h>
-#include <qpushbutton.h>
-#include <qlabel.h>
-#include <qlayout.h>
-//Added by qt3to4:
-#include <Q3HBoxLayout>
-#include <Q3VBoxLayout>
+
 #include "xtreewidget.h"
 #include "warehousegroup.h"
 #include "socluster.h"
@@ -80,11 +81,11 @@ salesOrderList::salesOrderList( QWidget* parent, const char* name, bool modal, Q
 
   setCaption(tr("Sales Orders"));
 
-  Q3VBoxLayout *mainLayout = new Q3VBoxLayout(this, 5, 5, "mainLayout"); 
-  Q3VBoxLayout *warehouseLayout = new Q3VBoxLayout(0, 0, 0, "warehouseLayout"); 
-  Q3HBoxLayout *topLayout = new Q3HBoxLayout( 0, 0, 7, "topLayout"); 
-  Q3VBoxLayout *buttonsLayout = new Q3VBoxLayout(0, 0, 5, "buttonsLayout");
-  Q3VBoxLayout *listLayout = new Q3VBoxLayout( 0, 0, 0, "listLayout"); 
+  QVBoxLayout *mainLayout = new QVBoxLayout(this, 5, 5, "mainLayout"); 
+  QVBoxLayout *warehouseLayout = new QVBoxLayout(0, 0, 0, "warehouseLayout"); 
+  QHBoxLayout *topLayout = new QHBoxLayout( 0, 0, 7, "topLayout"); 
+  QVBoxLayout *buttonsLayout = new QVBoxLayout(0, 0, 5, "buttonsLayout");
+  QVBoxLayout *listLayout = new QVBoxLayout( 0, 0, 0, "listLayout"); 
 
   _warehouse = new WarehouseGroup(this, "_warehouse");
   warehouseLayout->addWidget(_warehouse);
@@ -122,11 +123,11 @@ salesOrderList::salesOrderList( QWidget* parent, const char* name, bool modal, Q
   connect( _so, SIGNAL( valid(bool) ), _select, SLOT( setEnabled(bool) ) );
   connect( _warehouse, SIGNAL(updated()), this, SLOT( sFillList() ) );
 
-  _so->addColumn(tr("Order #"),   _orderColumn, Qt::AlignLeft   );
-  _so->addColumn(tr("Customer"),  -1,           Qt::AlignLeft   );
-  _so->addColumn(tr("P/O #"),     _orderColumn, Qt::AlignLeft   );
-  _so->addColumn(tr("Ordered"),   _dateColumn,  Qt::AlignCenter );
-  _so->addColumn(tr("Scheduled"), _dateColumn,  Qt::AlignCenter );
+  _so->addColumn(tr("Order #"), _orderColumn, Qt::AlignLeft,  true, "cohead_number");
+  _so->addColumn(tr("Customer"),          -1, Qt::AlignLeft,  true, "cust_name");
+  _so->addColumn(tr("P/O #"),   _orderColumn, Qt::AlignLeft,  true, "cohead_custponumber");
+  _so->addColumn(tr("Ordered"),  _dateColumn, Qt::AlignCenter,true, "cohead_orderdate");
+  _so->addColumn(tr("Scheduled"),_dateColumn, Qt::AlignCenter,true, "duedate");
 
   setTabOrder(_warehouse, _so);
   setTabOrder(_so, _select);
@@ -173,8 +174,8 @@ void salesOrderList::sFillList()
   if (_type == cSoAtShipping)
   {
     sql = "SELECT DISTINCT cohead_id, cohead_number, cust_name, cohead_custponumber,"
-          "                formatDate(cohead_orderdate),"
-          "                formatDate(MIN(coitem_scheddate)) "
+          "                cohead_orderdate,"
+          "                MIN(coitem_scheddate) AS duedate "
           "FROM cosmisc, coship, cohead, coitem, itemsite, cust "
           "WHERE ((cohead_cust_id=cust_id)"
           " AND (coitem_cohead_id=cohead_id)"
@@ -196,8 +197,8 @@ void salesOrderList::sFillList()
     bool statusCheck = FALSE;
 
     sql = "SELECT DISTINCT cohead_id, cohead_number, cust_name, cohead_custponumber,"
-          "                formatDate(cohead_orderdate) AS orderdate,"
-          "                formatDate(MIN(coitem_scheddate)) "
+          "                cohead_orderdate,"
+          "                MIN(coitem_scheddate) AS duedate "
           "FROM cohead, coitem, itemsite, cust "
           "WHERE ((cohead_cust_id=cust_id)"
           " AND (coitem_status <> 'X')"
@@ -251,4 +252,3 @@ void salesOrderList::sFillList()
   q.exec();
   _so->populate(q, _soheadid);
 }
-

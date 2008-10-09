@@ -128,11 +128,11 @@ transferOrderList::transferOrderList( QWidget* parent, const char* name, bool mo
   connect(_to,	      SIGNAL(valid(bool)), _select, SLOT( setEnabled(bool) ) );
   connect(_to,	SIGNAL(itemSelected(int)), _select, SLOT( animateClick() ) );
 
-  _to->addColumn(tr("Order #"),   _orderColumn, Qt::AlignLeft   );
-  _to->addColumn(tr("From Whs."),           -1, Qt::AlignLeft   );
-  _to->addColumn(tr("To Whs."),   _orderColumn, Qt::AlignLeft   );
-  _to->addColumn(tr("Ordered"),    _dateColumn, Qt::AlignCenter );
-  _to->addColumn(tr("Scheduled"),  _dateColumn, Qt::AlignCenter );
+  _to->addColumn(tr("Order #"), _orderColumn, Qt::AlignLeft,  true, "tohead_number");
+  _to->addColumn(tr("From Whs."),         -1, Qt::AlignLeft,  true, "tohead_srcname");
+  _to->addColumn(tr("To Whs."), _orderColumn, Qt::AlignLeft,  true, "tohead_destname");
+  _to->addColumn(tr("Ordered"),  _dateColumn, Qt::AlignCenter, true, "tohead_orderdate");
+  _to->addColumn(tr("Scheduled"),_dateColumn, Qt::AlignCenter,true, "scheddate");
 
   setTabOrder(_srcwhs,	_dstwhs);
   setTabOrder(_dstwhs,	_to);
@@ -174,8 +174,8 @@ void transferOrderList::sFillList()
 
   sql = "SELECT DISTINCT tohead_id, tohead_number, tohead_srcname, "
 	"                tohead_destname,"
-	"                formatDate(tohead_orderdate),"
-	"                formatDate(MIN(toitem_schedshipdate)) "
+	"                tohead_orderdate,"
+	"                MIN(toitem_schedshipdate) AS scheddate "
 	"<? if exists(\"atshipping\") ?>"
 	"FROM tohead, toitem, tosmisc, toship "
 	"WHERE ((tohead_id=toitem_tohead_id)"

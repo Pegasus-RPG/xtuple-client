@@ -58,22 +58,19 @@
 
 #include "itemSearch.h"
 
-#include <qvariant.h>
-//Added by qt3to4:
-#include <Q3HBoxLayout>
-#include <Q3VBoxLayout>
-#include <parameter.h>
-#include <qpushbutton.h>
-#include <qlabel.h>
-#include <qlineedit.h>
-#include <qcheckbox.h>
-#include <q3header.h>
-#include <qlayout.h>
-#include <qtooltip.h>
-#include <q3whatsthis.h>
-#include "itemcluster.h"
+#include <QCheckBox>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QLayout>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QVBoxLayout>
+#include <QVariant>
 
+#include <parameter.h>
 #include <xsqlquery.h>
+
+#include "itemcluster.h"
 #include "xtreewidget.h"
 
 QString buildItemLineEditQuery(const QString, const QStringList, const QString, const unsigned int);
@@ -90,16 +87,16 @@ itemSearch::itemSearch( QWidget* parent, const char* name, bool modal, Qt::WFlag
 
     setCaption( tr( "Search for Item" ) );
 
-    Q3VBoxLayout *itemSearchLayout = new Q3VBoxLayout( this, 5, 5, "itemSearchLayout"); 
-    Q3HBoxLayout *Layout72 = new Q3HBoxLayout( 0, 0, 7, "Layout72"); 
-    Q3VBoxLayout *Layout71 = new Q3VBoxLayout( 0, 0, 5, "Layout71"); 
-    Q3HBoxLayout *Layout70 = new Q3HBoxLayout( 0, 0, 5, "Layout70"); 
-    Q3HBoxLayout *Layout66 = new Q3HBoxLayout( 0, 0, 7, "Layout66"); 
-    Q3VBoxLayout *Layout64 = new Q3VBoxLayout( 0, 0, 1, "Layout64"); 
-    Q3VBoxLayout *Layout67 = new Q3VBoxLayout( 0, 0, 0, "Layout67"); 
-    Q3VBoxLayout *Layout18 = new Q3VBoxLayout( 0, 0, 5, "Layout18"); 
-    Q3VBoxLayout *Layout65 = new Q3VBoxLayout( 0, 0, 0, "Layout65"); 
-    Q3VBoxLayout *Layout20 = new Q3VBoxLayout( 0, 0, 0, "Layout20"); 
+    QVBoxLayout *itemSearchLayout = new QVBoxLayout( this, 5, 5, "itemSearchLayout"); 
+    QHBoxLayout *Layout72 = new QHBoxLayout( 0, 0, 7, "Layout72"); 
+    QVBoxLayout *Layout71 = new QVBoxLayout( 0, 0, 5, "Layout71"); 
+    QHBoxLayout *Layout70 = new QHBoxLayout( 0, 0, 5, "Layout70"); 
+    QHBoxLayout *Layout66 = new QHBoxLayout( 0, 0, 7, "Layout66"); 
+    QVBoxLayout *Layout64 = new QVBoxLayout( 0, 0, 1, "Layout64"); 
+    QVBoxLayout *Layout67 = new QVBoxLayout( 0, 0, 0, "Layout67"); 
+    QVBoxLayout *Layout18 = new QVBoxLayout( 0, 0, 5, "Layout18"); 
+    QVBoxLayout *Layout65 = new QVBoxLayout( 0, 0, 0, "Layout65"); 
+    QVBoxLayout *Layout20 = new QVBoxLayout( 0, 0, 0, "Layout20"); 
 
     QLabel *_searchLit = new QLabel(tr("S&earch for:"), this, "_searchLit");
     _searchLit->setAlignment( int( Qt::AlignVCenter | Qt::AlignRight ) );
@@ -233,44 +230,34 @@ void itemSearch::sSelect()
 
 void itemSearch::sFillList()
 {
-  _item->clear();
-
   _search->setText(_search->text().stripWhiteSpace().upper());
   if (_search->text().length() == 0)
     return;
 
+  QString sql;
+
   if (_useQuery)
   {
-    XSqlQuery item(_sql);
-    if (item.first())
-    {
-      XTreeWidgetItem *last = NULL;
-      bool          addToList;
-      do
-      {
-        addToList = FALSE;
+    QStringList clauses;
+    if (!_showInactive->isChecked())
+      clauses << "(item_active)";
 
-        if ( (_searchNumber->isChecked()) &&
-             (item.value("item_number").toString().contains(_search->text(), FALSE)) )
-          addToList = TRUE;
-      
-        if ( (_searchDescrip1->isChecked()) &&
-             (item.value("item_descrip1").toString().contains(_search->text(), FALSE)) )
-          addToList = TRUE;
+    QStringList subClauses;
+    if (_searchNumber->isChecked())
+      subClauses << "(item_number ~* :searchString)";
 
-        if ( (_searchDescrip2->isChecked()) &&
-             (item.value("item_descrip2").toString().contains(_search->text(), FALSE)) )
-          addToList = TRUE;
+    if (_searchDescrip1->isChecked())
+      subClauses << "(item_descrip1 ~* :searchString)";
 
-        if (addToList)
-          last = new XTreeWidgetItem( _item, last, item.value("item_id").toInt(),
-                                    item.value("item_number"),
-                                    (item.value("item_descrip1").toString() + " " + item.value("item_descrip2").toString()) );
-      }
-      while (item.next());
-    }
+    if (_searchDescrip2->isChecked())
+      subClauses << "(item_descrip2 ~* :searchString)";
+
+    if(!subClauses.isEmpty())
+      clauses << QString("( " + subClauses.join(" OR ") + " )");
+
+    sql = "SELECT * FROM (" + _sql + ") AS dummy WHERE (" +
+          clauses.join(" AND ") + ");" ;
   }
-
   else
   { 
     if ( (!_searchNumber->isChecked()) &&
@@ -294,7 +281,6 @@ void itemSearch::sFillList()
       post = "ORDER BY item_number";
     }
 
-
     QStringList clauses;
     clauses = _extraClauses;
     if(!(_itemType & ItemLineEdit::cActive) && !_showInactive->isChecked())
@@ -313,10 +299,12 @@ void itemSearch::sFillList()
     if(!subClauses.isEmpty())
       clauses << QString("( " + subClauses.join(" OR ") + " )");
 
-    XSqlQuery search;
-    search.prepare(buildItemLineEditQuery(pre, clauses, post, _itemType));
-    search.bindValue(":searchString", _search->text());
-    search.exec();
-    _item->populate(search, _itemid);
+    sql = buildItemLineEditQuery(pre, clauses, post, _itemType);
   }
+
+  XSqlQuery search;
+  search.prepare(sql);
+  search.bindValue(":searchString", _search->text());
+  search.exec();
+  _item->populate(search, _itemid);
 }

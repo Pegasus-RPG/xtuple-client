@@ -58,23 +58,20 @@
 
 #include "plannedOrderList.h"
 
-#include <qvariant.h>
-//Added by qt3to4:
-#include <Q3HBoxLayout>
-#include <Q3VBoxLayout>
+#include <QGroupBox>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QLayout>
+#include <QPushButton>
+#include <QRadioButton>
+#include <QVBoxLayout>
+#include <QVariant>
+
 #include <parameter.h>
-#include <qpushbutton.h>
-#include <q3buttongroup.h>
-#include <qradiobutton.h>
-#include <qlabel.h>
-#include <q3header.h>
-#include <qlayout.h>
-#include <qtooltip.h>
-#include <q3whatsthis.h>
+#include <xsqlquery.h>
+
 #include "xtreewidget.h"
 #include "warehouseCluster.h"
-
-#include <xsqlquery.h>
 
 plannedOrderList::plannedOrderList(QWidget *parent, const char *name, bool modal, Qt::WFlags fl) :
   QDialog( parent, name, modal, fl )
@@ -86,13 +83,13 @@ plannedOrderList::plannedOrderList(QWidget *parent, const char *name, bool modal
   if ( !name )
     setName( "plannedOrderList" );
 
-    Q3VBoxLayout *plannedOrderListLayout = new Q3VBoxLayout( this, 5, 5, "plannedOrderListLayout"); 
-    Q3HBoxLayout *layout6387 = new Q3HBoxLayout( 0, 0, 7, "layout6387"); 
-    Q3VBoxLayout *layout6385 = new Q3VBoxLayout( 0, 0, 0, "layout6385"); 
-    Q3HBoxLayout *layout6384 = new Q3HBoxLayout( 0, 0, 5, "layout6384"); 
-    Q3VBoxLayout *Layout183 = new Q3VBoxLayout( 0, 0, 5, "Layout183"); 
-    Q3VBoxLayout *Layout185 = new Q3VBoxLayout( 0, 0, 0, "Layout185"); 
-    Q3HBoxLayout *layout6386 = new Q3HBoxLayout( 0, 0, 0, "layout6386"); 
+  QVBoxLayout *plannedOrderListLayout = new QVBoxLayout( this, 5, 5, "plannedOrderListLayout"); 
+  QHBoxLayout *layout6387 = new QHBoxLayout( 0, 0, 7, "layout6387"); 
+  QVBoxLayout *layout6385 = new QVBoxLayout( 0, 0, 0, "layout6385"); 
+  QHBoxLayout *layout6384 = new QHBoxLayout( 0, 0, 5, "layout6384"); 
+  QVBoxLayout *Layout183 = new QVBoxLayout( 0, 0, 5, "Layout183"); 
+  QVBoxLayout *Layout185 = new QVBoxLayout( 0, 0, 0, "Layout185"); 
+  QHBoxLayout *layout6386 = new QHBoxLayout( 0, 0, 0, "layout6386"); 
 
     _warehouseGroup = new QGroupBox( this );
     QVBoxLayout *_warehouseGroupLayout = new QVBoxLayout( _warehouseGroup );
@@ -160,11 +157,11 @@ plannedOrderList::plannedOrderList(QWidget *parent, const char *name, bool modal
   setTabOrder(_close, _allWarehouses);
   _planord->setFocus();
 
-  _planord->addColumn(tr("PL/O #"),      _orderColumn, Qt::AlignLeft   );
-  _planord->addColumn(tr("Firmed"),      40,           Qt::AlignCenter );
-  _planord->addColumn(tr("Whs."),        _whsColumn,   Qt::AlignCenter );
-  _planord->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft   );
-  _planord->addColumn(tr("Description"), -1,           Qt::AlignLeft   );
+  _planord->addColumn(tr("PL/O #"),    _orderColumn, Qt::AlignLeft,  true, "number");
+  _planord->addColumn(tr("Firmed"),              40, Qt::AlignCenter,true, "planord_firm");
+  _planord->addColumn(tr("Whs."),        _whsColumn, Qt::AlignCenter,true, "warehous_code");
+  _planord->addColumn(tr("Item Number"),_itemColumn, Qt::AlignLeft,  true, "item_number");
+  _planord->addColumn(tr("Description"),         -1, Qt::AlignLeft,  true, "descrip");
 
   sFillList();
 }
@@ -194,10 +191,10 @@ void plannedOrderList::sSelect()
 void plannedOrderList::sFillList()
 {
   QString sql( "SELECT planord_id,"
-               "       formatPloNumber(planord_id),"
-               "       formatBoolYN(planord_firm),"
+               "       formatPloNumber(planord_id) AS number,"
+               "       planord_firm,"
                "       warehous_code, item_number,"
-               "       (item_descrip1 || ' ' || item_descrip2) "
+               "       (item_descrip1 || ' ' || item_descrip2) AS descrip "
                "FROM planord, itemsite, warehous, item "
                "WHERE ((planord_itemsite_id=itemsite_id)"
                " AND (itemsite_warehous_id=warehous_id)"
@@ -212,7 +209,7 @@ void plannedOrderList::sFillList()
 
   XSqlQuery planord;
   planord.prepare(sql);
-  planord.bindValue(":warheous_id", _warehouse->id());
+  planord.bindValue(":warehous_id", _warehouse->id());
   planord.exec();
 
   _planord->populate(planord, _planordid);

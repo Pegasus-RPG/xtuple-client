@@ -58,18 +58,16 @@
 
 #include "usernameList.h"
 
-#include <qvariant.h>
-//Added by qt3to4:
-#include <Q3HBoxLayout>
-#include <Q3VBoxLayout>
+#include <QVariant>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QPushButton>
+#include <QLabel>
+#include <QLineEdit>
+#include <QLayout>
+
 #include <parameter.h>
-#include <qpushbutton.h>
-#include <qlabel.h>
-#include <qlineedit.h>
-#include <q3header.h>
-#include <qlayout.h>
-#include <qtooltip.h>
-#include <q3whatsthis.h>
+
 #include "usernamecluster.h"
 #include "xtreewidget.h"
 
@@ -83,14 +81,14 @@ usernameList::usernameList( QWidget* parent, const char* name, bool modal, Qt::W
 
   setCaption(tr("Username List"));
 
-  Q3VBoxLayout *usernameListLayout = new Q3VBoxLayout( this, 5, 5, "usernameListLayout"); 
-  Q3HBoxLayout *Layout69 = new Q3HBoxLayout( 0, 0, 0, "Layout69"); 
-  Q3HBoxLayout *Layout72 = new Q3HBoxLayout( 0, 0, 7, "Layout72"); 
-  Q3VBoxLayout *Layout71 = new Q3VBoxLayout( 0, 0, 0, "Layout71"); 
-  Q3VBoxLayout *Layout70 = new Q3VBoxLayout( 0, 0, 5, "Layout70"); 
-  Q3HBoxLayout *Layout5 = new Q3HBoxLayout( 0, 0, 5, "Layout5"); 
-  Q3VBoxLayout *Layout18 = new Q3VBoxLayout( 0, 0, 5, "Layout18"); 
-  Q3VBoxLayout *Layout20 = new Q3VBoxLayout( 0, 0, 0, "Layout20"); 
+  QVBoxLayout *usernameListLayout = new QVBoxLayout( this, 5, 5, "usernameListLayout"); 
+  QHBoxLayout *Layout69 = new QHBoxLayout( 0, 0, 0, "Layout69"); 
+  QHBoxLayout *Layout72 = new QHBoxLayout( 0, 0, 7, "Layout72"); 
+  QVBoxLayout *Layout71 = new QVBoxLayout( 0, 0, 0, "Layout71"); 
+  QVBoxLayout *Layout70 = new QVBoxLayout( 0, 0, 5, "Layout70"); 
+  QHBoxLayout *Layout5 = new QHBoxLayout( 0, 0, 5, "Layout5"); 
+  QVBoxLayout *Layout18 = new QVBoxLayout( 0, 0, 5, "Layout18"); 
+  QVBoxLayout *Layout20 = new QVBoxLayout( 0, 0, 0, "Layout20"); 
 
   QLabel *_searchForLit = new QLabel(tr("S&earch for:"), this, "_searchForLit");
   _searchForLit->setAlignment( int( Qt::AlignVCenter | Qt::AlignRight ) );
@@ -139,8 +137,8 @@ usernameList::usernameList( QWidget* parent, const char* name, bool modal, Qt::W
   connect( _searchFor, SIGNAL( textChanged(const QString&) ), this, SLOT( sSearch(const QString&) ) );
   connect( _user, SIGNAL( valid(bool) ), _select, SLOT( setEnabled(bool) ) );
 
-  _user->addColumn(tr("Username"), 100,  Qt::AlignLeft );
-  _user->addColumn(tr("Real Name"), -1,   Qt::AlignLeft );
+  _user->addColumn(tr("Username"), 100, Qt::AlignLeft, true, "usr_username");
+  _user->addColumn(tr("Real Name"), -1, Qt::AlignLeft, true, "usr_propername");
 }
 
 void usernameList::set(ParameterList &pParams)
@@ -219,4 +217,3 @@ void usernameList::reject()
 {
   done(_id);
 }
-

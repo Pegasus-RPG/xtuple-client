@@ -174,7 +174,7 @@ void editOwners::sFillList()
                     "       ophead_owner_username AS owner_username, "
                     "       ophead_name AS name, "
                     "       ophead_notes AS description, "
-                    "       'Oppourtunity' AS type_name, "
+                    "       'Opportunity' AS type_name, "
                     "       'ophead' AS table "
                     "FROM ophead "
                     "WHERE ophead_owner_username = :owner ";
@@ -270,7 +270,7 @@ bool editOwners::modifyOne(XTreeWidgetItem * currentItem)
   if(currentItem->rawValue("type_name").toString() == "Contact") table = "cntct";
   if(currentItem->rawValue("type_name").toString() == "Incident") table = "incdt";
   if(currentItem->rawValue("type_name").toString() == "Account") table = "crmacct";
-  if(currentItem->rawValue("type_name").toString() == "Oppourtunity") table = "ophead";
+  if(currentItem->rawValue("type_name").toString() == "Opportunity") table = "ophead";
 
   q.prepare("UPDATE "+table+" "
             "SET "+table+"_owner_username = :new_owner_username "

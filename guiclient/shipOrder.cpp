@@ -68,7 +68,6 @@
 #include "mqlutil.h"
 #include "printInvoice.h"
 #include "printPackingList.h"
-#include "salesOrderList.h"
 #include "storedProcErrorLookup.h"
 
 shipOrder::shipOrder(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)

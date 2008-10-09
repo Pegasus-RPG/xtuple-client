@@ -58,21 +58,17 @@
 
 #include "itemAliasList.h"
 
-#include <qvariant.h>
-//Added by qt3to4:
-#include <Q3HBoxLayout>
-#include <Q3VBoxLayout>
-#include <parameter.h>
-#include <qpushbutton.h>
-#include <qlabel.h>
-#include <qlineedit.h>
-#include <qcheckbox.h>
-#include <q3header.h>
-#include <qlayout.h>
-#include <qtooltip.h>
-#include <q3whatsthis.h>
+#include <QCheckBox>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QVBoxLayout>
+#include <QVariant>
 
+#include <parameter.h>
 #include <xsqlquery.h>
+
 #include "itemcluster.h"
 #include "xtreewidget.h"
 
@@ -89,13 +85,13 @@ itemAliasList::itemAliasList(QWidget* parent, const char* name, bool modal, Qt::
   if ( !name )
    setName( "itemAliasList" );
 
-  Q3VBoxLayout *_mainLayout = new Q3VBoxLayout(this, 5, 5); 
-  Q3HBoxLayout *_itemLayout = new Q3HBoxLayout(0, 0, 5); 
-  Q3HBoxLayout *_line1Layout = new Q3HBoxLayout(0, 0, 7); 
-  Q3VBoxLayout *_enterLayout = new Q3VBoxLayout(0, 0, 5); 
-  Q3HBoxLayout *_topLayout = new Q3HBoxLayout( 0, 0, 7); 
-  Q3VBoxLayout *_buttonsLayout= new Q3VBoxLayout(0, 0, 5); 
-  Q3VBoxLayout *_listLayout = new Q3VBoxLayout(0, 0, 0); 
+  QVBoxLayout *_mainLayout = new QVBoxLayout(this, 5, 5); 
+  QHBoxLayout *_itemLayout = new QHBoxLayout(0, 0, 5); 
+  QHBoxLayout *_line1Layout = new QHBoxLayout(0, 0, 7); 
+  QVBoxLayout *_enterLayout = new QVBoxLayout(0, 0, 5); 
+  QHBoxLayout *_topLayout = new QHBoxLayout( 0, 0, 7); 
+  QVBoxLayout *_buttonsLayout= new QVBoxLayout(0, 0, 5); 
+  QVBoxLayout *_listLayout = new QVBoxLayout(0, 0, 0); 
 
   QLabel *_aliasLit = new QLabel(tr("&Alias:"), this);
   _aliasLit->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -137,7 +133,6 @@ itemAliasList::itemAliasList(QWidget* parent, const char* name, bool modal, Qt::
   _listLayout->addWidget(_item);
   _mainLayout->addLayout(_listLayout);
 
-// signals and slots connections
   connect( _item, SIGNAL( itemSelected(int) ), this, SLOT( sSelect() ) );
   connect( _select, SIGNAL( clicked() ), this, SLOT( sSelect() ) );
   connect( _alias, SIGNAL( lostFocus() ), this, SLOT( sFillList() ) );
@@ -146,9 +141,9 @@ itemAliasList::itemAliasList(QWidget* parent, const char* name, bool modal, Qt::
 
   _useQuery = FALSE;
 
-  _item->addColumn(tr("Alias Number"), 100,  Qt::AlignLeft );
-  _item->addColumn(tr("Item Number"),  100,  Qt::AlignLeft );
-  _item->addColumn(tr("Description"),  -1,   Qt::AlignLeft );
+  _item->addColumn(tr("Alias Number"),100, Qt::AlignLeft, true, "itemalias_number");
+  _item->addColumn(tr("Item Number"), 100, Qt::AlignLeft, true, "item_number");
+  _item->addColumn(tr("Description"),  -1, Qt::AlignLeft, true, "item_descrip");
 }
 
 void itemAliasList::set(ParameterList &pParams)

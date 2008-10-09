@@ -62,7 +62,6 @@
 #include <QMessageBox>
 #include <QVariant>
 
-#include "purchaseOrderList.h"
 #include "voucherMiscDistrib.h"
 
 miscVoucher::miscVoucher(QWidget* parent, const char* name, Qt::WFlags fl)

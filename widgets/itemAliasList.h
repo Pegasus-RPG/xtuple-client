@@ -59,15 +59,12 @@
 #ifndef itemAliasList_h
 #define itemAliasList_h
 
-#include <qvariant.h>
-#include <qdialog.h>
-//Added by qt3to4:
-#include <Q3GridLayout>
+#include <QVariant>
+#include <QDialog>
 
 #include "OpenMFGWidgets.h"
 #include "itemcluster.h"
 
-class Q3GridLayout;
 class QLineEdit;
 class QCheckBox;
 class QPushButton;

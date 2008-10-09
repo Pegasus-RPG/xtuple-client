@@ -61,7 +61,6 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
-//#include <QStatusBar>
 #include <QVariant>
 
 #include <metasql.h>
@@ -69,7 +68,6 @@
 
 #include "inputManager.h"
 #include "mqlutil.h"
-#include "salesOrderList.h"
 #include "printShippingForm.h"
 
 dspShipmentsByDate::dspShipmentsByDate(QWidget* parent, const char* name, Qt::WFlags fl)
