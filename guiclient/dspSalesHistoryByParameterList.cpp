@@ -58,39 +58,22 @@
 #include "dspSalesHistoryByParameterList.h"
 
 #include <QVariant>
-//#include <QStatusBar>
+#include <QSqlError>
 #include <QMessageBox>
 #include <QMenu>
 
 #include <metasql.h>
-#include "mqlutil.h"
-
 #include <openreports.h>
+
+#include "mqlutil.h"
 #include "salesHistoryInformation.h"
 
-#define UNITPRICE_COL	7
-#define EXTPRICE_COL	8
-#define CURRENCY_COL	9
-#define BUNITPRICE_COL	10
-#define BEXTPRICE_COL	11
-#define UNITCOST_COL	( 12 - (_privileges->check("ViewCustomerPrices") ? 0 : 5))
-#define EXTCOST_COL	(13 - (_privileges->check("ViewCustomerPrices") ? 0 : 5))
-
-/*
- *  Constructs a dspSalesHistoryByParameterList as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspSalesHistoryByParameterList::dspSalesHistoryByParameterList(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_sohist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_showPrices, SIGNAL(toggled(bool)), this, SLOT(sHandleParams()));
@@ -98,6 +81,7 @@ dspSalesHistoryByParameterList::dspSalesHistoryByParameterList(QWidget* parent, 
 
   _parameter->setType(ParameterGroup::ProductCategory);
 
+  _sohist->addColumn(tr("Customer"),            -1,              Qt::AlignLeft,   true,  "cust_name"   );
   _sohist->addColumn(tr("S/O #"),               _orderColumn,    Qt::AlignLeft,   true,  "cohist_ordernumber"   );
   _sohist->addColumn(tr("Invoice #"),           _orderColumn,    Qt::AlignLeft,   true,  "invoicenumber"   );
   _sohist->addColumn(tr("Ord. Date"),           _dateColumn,     Qt::AlignCenter, true,  "cohist_orderdate" );
@@ -233,30 +217,30 @@ void dspSalesHistoryByParameterList::sHandleParams()
 {
   if (_showPrices->isChecked())
   {
-    _sohist->showColumn(UNITPRICE_COL);
-    _sohist->showColumn(EXTPRICE_COL);
-    _sohist->showColumn(CURRENCY_COL);
-    _sohist->showColumn(BUNITPRICE_COL);
-    _sohist->showColumn(BEXTPRICE_COL);
+    _sohist->showColumn("cohist_unitprice");
+    _sohist->showColumn("extprice");
+    _sohist->showColumn("currAbbr");
+    _sohist->showColumn("baseunitprice");
+    _sohist->showColumn("baseextprice");
   }
   else
   {
-    _sohist->hideColumn(UNITPRICE_COL);
-    _sohist->hideColumn(EXTPRICE_COL);
-    _sohist->hideColumn(CURRENCY_COL);
-    _sohist->hideColumn(BUNITPRICE_COL);
-    _sohist->hideColumn(BEXTPRICE_COL);
+    _sohist->hideColumn("cohist_unitprice");
+    _sohist->hideColumn("extprice");
+    _sohist->hideColumn("currAbbr");
+    _sohist->hideColumn("baseunitprice");
+    _sohist->hideColumn("baseextprice");
   }
 
   if (_showCosts->isChecked())
   {
-    _sohist->showColumn(UNITCOST_COL);
-    _sohist->showColumn(EXTCOST_COL);
+    _sohist->showColumn("cohist_unitcost");
+    _sohist->showColumn("extcost");
   }
   else
   {
-    _sohist->hideColumn(UNITCOST_COL);
-    _sohist->hideColumn(EXTCOST_COL);
+    _sohist->hideColumn("cohist_unitcost");
+    _sohist->hideColumn("extcost");
   }
 }
 

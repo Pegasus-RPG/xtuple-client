@@ -39,6 +39,7 @@
  <querysource>
   <name>detail</name>
   <sql>SELECT cohist_billtoname as billto,
+       cust_number,
        cohist_ordernumber AS sonumber,
        cohist_invcnumber AS invnumber,
        formatDate(cohist_orderdate) AS orddate,
@@ -53,7 +54,7 @@
        '' AS f_total,
        &lt;? endif ?>
        round(cohist_qtyshipped * currtobase(cohist_curr_id,cohist_unitprice,cohist_invcdate),2) AS total
-  FROM cohist, itemsite, item
+  FROM cohist JOIN custinfo ON (cust_id=cohist_cust_id), itemsite, item
  WHERE ((cohist_itemsite_id=itemsite_id)
    AND (itemsite_item_id=item_id)
    AND (cohist_invcdate BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
@@ -82,27 +83,11 @@ ORDER BY cohist_invcdate, cohist_billtoname, item_number;
  );</sql>
  </querysource>
  <rpthead>
-  <height>233</height>
+  <height>232</height>
   <label>
    <rect>
-    <x>505</x>
-    <y>200</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Shipped</string>
-  </label>
-  <label>
-   <rect>
-    <x>443</x>
-    <y>85</y>
+    <x>442</x>
+    <y>65</y>
     <width>100</width>
     <height>20</height>
    </rect>
@@ -113,43 +98,8 @@ ORDER BY cohist_invcdate, cohist_billtoname, item_number;
    </font>
    <right/>
    <vcenter/>
-   <string>End Date:</string>
+   <string>Start Date:</string>
   </label>
-  <label>
-   <rect>
-    <x>30</x>
-    <y>115</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Site:</string>
-  </label>
-  <field>
-   <rect>
-    <x>135</x>
-    <y>90</y>
-    <width>300</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>prodcat</column>
-   </data>
-  </field>
   <field>
    <rect>
     <x>135</x>
@@ -171,71 +121,7 @@ ORDER BY cohist_invcdate, cohist_billtoname, item_number;
   </field>
   <label>
    <rect>
-    <x>355</x>
-    <y>215</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Description</string>
-  </label>
-  <label>
-   <rect>
-    <x>443</x>
-    <y>65</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Start Date:</string>
-  </label>
-  <label>
-   <rect>
-    <x>10</x>
-    <y>90</y>
-    <width>120</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Product Category:</string>
-  </label>
-  <label>
-   <rect>
-    <x>5</x>
-    <y>215</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>S/O #</string>
-  </label>
-  <label>
-   <rect>
-    <x>270</x>
+    <x>505</x>
     <y>200</y>
     <width>80</width>
     <height>15</height>
@@ -247,186 +133,7 @@ ORDER BY cohist_invcdate, cohist_billtoname, item_number;
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Ord. Date</string>
-  </label>
-  <field>
-   <rect>
-    <x>550</x>
-    <y>65</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>startDate</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>585</x>
-    <y>200</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>lbl_unitprice</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>345</x>
-    <y>5</y>
-    <width>400</width>
-    <height>40</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>18</size>
-    <weight>bold</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Sales History By Bill-to Name</string>
-  </label>
-  <label>
-   <rect>
-    <x>5</x>
-    <y>200</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Bill-to Name</string>
-  </label>
-  <label>
-   <rect>
-    <x>355</x>
-    <y>200</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Item Number</string>
-  </label>
-  <label>
-   <rect>
-    <x>110</x>
-    <y>215</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Invoice #</string>
-  </label>
-  <field>
-   <rect>
-    <x>135</x>
-    <y>115</y>
-    <width>300</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>warehouse</column>
-   </data>
-  </field>
-  <line>
-   <xstart>5</xstart>
-   <ystart>228</ystart>
-   <xend>745</xend>
-   <yend>228</yend>
-   <weight>2</weight>
-  </line>
-  <field>
-   <rect>
-    <x>665</x>
-    <y>200</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>lbl_total</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>30</x>
-    <y>65</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Bill-to Name:</string>
-  </label>
-  <label>
-   <rect>
-    <x>270</x>
-    <y>215</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Invc. Date</string>
+   <string>Shipped</string>
   </label>
   <field>
    <rect>
@@ -447,17 +154,65 @@ ORDER BY cohist_invcdate, cohist_billtoname, item_number;
     <column>endDate</column>
    </data>
   </field>
- </rpthead>
- <pghead>
-  <firstpage/>
-  <height>6</height>
- </pghead>
- <pghead>
-  <height>36</height>
+  <label>
+   <rect>
+    <x>10</x>
+    <y>90</y>
+    <width>120</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Product Category:</string>
+  </label>
+  <line>
+   <xstart>5</xstart>
+   <ystart>228</ystart>
+   <xend>745</xend>
+   <yend>228</yend>
+   <weight>2</weight>
+  </line>
+  <label>
+   <rect>
+    <x>110</x>
+    <y>215</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Invoice #</string>
+  </label>
+  <label>
+   <rect>
+    <x>270</x>
+    <y>200</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Ord. Date</string>
+  </label>
   <field>
    <rect>
     <x>665</x>
-    <y>0</y>
+    <y>200</y>
     <width>80</width>
     <height>15</height>
    </rect>
@@ -473,97 +228,10 @@ ORDER BY cohist_invcdate, cohist_billtoname, item_number;
     <column>lbl_total</column>
    </data>
   </field>
-  <line>
-   <xstart>5</xstart>
-   <ystart>30</ystart>
-   <xend>745</xend>
-   <yend>30</yend>
-   <weight>2</weight>
-  </line>
-  <label>
-   <rect>
-    <x>270</x>
-    <y>15</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Invc. Date</string>
-  </label>
-  <label>
-   <rect>
-    <x>355</x>
-    <y>15</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Description</string>
-  </label>
-  <label>
-   <rect>
-    <x>355</x>
-    <y>0</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Item Number</string>
-  </label>
-  <label>
-   <rect>
-    <x>270</x>
-    <y>0</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Ord. Date</string>
-  </label>
   <label>
    <rect>
     <x>110</x>
-    <y>15</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Invoice #</string>
-  </label>
-  <label>
-   <rect>
-    <x>5</x>
-    <y>0</y>
+    <y>200</y>
     <width>100</width>
     <height>15</height>
    </rect>
@@ -578,8 +246,129 @@ ORDER BY cohist_invcdate, cohist_billtoname, item_number;
   </label>
   <label>
    <rect>
+    <x>30</x>
+    <y>115</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Site:</string>
+  </label>
+  <label>
+   <rect>
+    <x>345</x>
+    <y>5</y>
+    <width>400</width>
+    <height>40</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>18</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Sales History By Bill-to Name</string>
+  </label>
+  <label>
+   <rect>
+    <x>442</x>
+    <y>85</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>End Date:</string>
+  </label>
+  <field>
+   <rect>
+    <x>585</x>
+    <y>200</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>lbl_unitprice</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>135</x>
+    <y>115</y>
+    <width>300</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>warehouse</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>270</x>
+    <y>215</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Invc. Date</string>
+  </label>
+  <field>
+   <rect>
+    <x>550</x>
+    <y>65</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>startDate</column>
+   </data>
+  </field>
+  <label>
+   <rect>
     <x>5</x>
-    <y>15</y>
+    <y>215</y>
     <width>100</width>
     <height>15</height>
    </rect>
@@ -594,9 +383,25 @@ ORDER BY cohist_invcdate, cohist_billtoname, item_number;
   </label>
   <label>
    <rect>
-    <x>505</x>
-    <y>0</y>
-    <width>80</width>
+    <x>30</x>
+    <y>65</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Bill-to Name:</string>
+  </label>
+  <label>
+   <rect>
+    <x>5</x>
+    <y>200</y>
+    <width>100</width>
     <height>15</height>
    </rect>
    <font>
@@ -604,10 +409,68 @@ ORDER BY cohist_invcdate, cohist_billtoname, item_number;
     <size>8</size>
     <weight>normal</weight>
    </font>
-   <hcenter/>
+   <left/>
    <vcenter/>
-   <string>Shipped</string>
+   <string>Customer</string>
   </label>
+  <label>
+   <rect>
+    <x>355</x>
+    <y>200</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Item Number</string>
+  </label>
+  <label>
+   <rect>
+    <x>355</x>
+    <y>215</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Description</string>
+  </label>
+  <field>
+   <rect>
+    <x>135</x>
+    <y>90</y>
+    <width>300</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>prodcat</column>
+   </data>
+  </field>
+ </rpthead>
+ <pghead>
+  <firstpage/>
+  <height>5</height>
+ </pghead>
+ <pghead>
+  <height>35</height>
   <field>
    <rect>
     <x>585</x>
@@ -627,6 +490,176 @@ ORDER BY cohist_invcdate, cohist_billtoname, item_number;
     <column>lbl_unitprice</column>
    </data>
   </field>
+  <label>
+   <rect>
+    <x>110</x>
+    <y>15</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Invoice #</string>
+  </label>
+  <label>
+   <rect>
+    <x>355</x>
+    <y>15</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Description</string>
+  </label>
+  <field>
+   <rect>
+    <x>665</x>
+    <y>0</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>lbl_total</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>270</x>
+    <y>0</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Ord. Date</string>
+  </label>
+  <line>
+   <xstart>5</xstart>
+   <ystart>30</ystart>
+   <xend>745</xend>
+   <yend>30</yend>
+   <weight>2</weight>
+  </line>
+  <label>
+   <rect>
+    <x>5</x>
+    <y>0</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Customer</string>
+  </label>
+  <label>
+   <rect>
+    <x>505</x>
+    <y>0</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Shipped</string>
+  </label>
+  <label>
+   <rect>
+    <x>110</x>
+    <y>0</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Bill-to Name</string>
+  </label>
+  <label>
+   <rect>
+    <x>355</x>
+    <y>0</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Item Number</string>
+  </label>
+  <label>
+   <rect>
+    <x>5</x>
+    <y>15</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>S/O #</string>
+  </label>
+  <label>
+   <rect>
+    <x>270</x>
+    <y>15</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Invc. Date</string>
+  </label>
  </pghead>
  <section>
   <name>detail</name>
@@ -635,25 +668,6 @@ ORDER BY cohist_invcdate, cohist_billtoname, item_number;
     <query>detail</query>
    </key>
    <height>51</height>
-   <field>
-    <rect>
-     <x>585</x>
-     <y>0</y>
-     <width>80</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>unitprice</column>
-    </data>
-   </field>
    <field>
     <rect>
      <x>110</x>
@@ -671,44 +685,6 @@ ORDER BY cohist_invcdate, cohist_billtoname, item_number;
     <data>
      <query>detail</query>
      <column>invnumber</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>355</x>
-     <y>0</y>
-     <width>150</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>item_number</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>270</x>
-     <y>15</y>
-     <width>80</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <hcenter/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>invcdate</column>
     </data>
    </field>
    <field>
@@ -733,7 +709,7 @@ ORDER BY cohist_invcdate, cohist_billtoname, item_number;
    <field>
     <rect>
      <x>270</x>
-     <y>0</y>
+     <y>15</y>
      <width>80</width>
      <height>15</height>
     </rect>
@@ -746,45 +722,7 @@ ORDER BY cohist_invcdate, cohist_billtoname, item_number;
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>orddate</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>5</x>
-     <y>0</y>
-     <width>260</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>billto</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>355</x>
-     <y>30</y>
-     <width>300</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>item_descrip2</column>
+     <column>invcdate</column>
     </data>
    </field>
    <field>
@@ -804,6 +742,63 @@ ORDER BY cohist_invcdate, cohist_billtoname, item_number;
     <data>
      <query>detail</query>
      <column>shipped</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>355</x>
+     <y>0</y>
+     <width>150</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>item_number</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>5</x>
+     <y>15</y>
+     <width>100</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>sonumber</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>585</x>
+     <y>0</y>
+     <width>80</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>unitprice</column>
     </data>
    </field>
    <line>
@@ -834,8 +829,27 @@ ORDER BY cohist_invcdate, cohist_billtoname, item_number;
    </field>
    <field>
     <rect>
+     <x>270</x>
+     <y>0</y>
+     <width>80</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>orddate</column>
+    </data>
+   </field>
+   <field>
+    <rect>
      <x>5</x>
-     <y>15</y>
+     <y>0</y>
      <width>100</width>
      <height>15</height>
     </rect>
@@ -848,7 +862,45 @@ ORDER BY cohist_invcdate, cohist_billtoname, item_number;
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>sonumber</column>
+     <column>cust_number</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>355</x>
+     <y>30</y>
+     <width>300</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>item_descrip2</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>110</x>
+     <y>0</y>
+     <width>160</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>billto</column>
     </data>
    </field>
   </detail>
@@ -859,23 +911,7 @@ ORDER BY cohist_invcdate, cohist_billtoname, item_number;
    <key>
     <query>showPrices</query>
    </key>
-   <height>16</height>
-   <label>
-    <rect>
-     <x>575</x>
-     <y>0</y>
-     <width>80</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>normal</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <string>Total:</string>
-   </label>
+   <height>15</height>
    <field>
     <rect>
      <x>665</x>
@@ -896,10 +932,61 @@ ORDER BY cohist_invcdate, cohist_billtoname, item_number;
     </data>
     <tracktotal builtin="true" >money</tracktotal>
    </field>
+   <label>
+    <rect>
+     <x>575</x>
+     <y>0</y>
+     <width>80</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <string>Total:</string>
+   </label>
   </detail>
  </section>
  <pgfoot>
-  <height>16</height>
+  <height>15</height>
+  <label>
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Report Date:</string>
+  </label>
+  <field>
+   <rect>
+    <x>102</x>
+    <y>0</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>Context Query</query>
+    <column>report_date</column>
+   </data>
+  </field>
   <field>
    <rect>
     <x>705</x>
@@ -921,22 +1008,6 @@ ORDER BY cohist_invcdate, cohist_billtoname, item_number;
   </field>
   <label>
    <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Report Date:</string>
-  </label>
-  <label>
-   <rect>
     <x>600</x>
     <y>0</y>
     <width>100</width>
@@ -951,24 +1022,5 @@ ORDER BY cohist_invcdate, cohist_billtoname, item_number;
    <vcenter/>
    <string>Page:</string>
   </label>
-  <field>
-   <rect>
-    <x>103</x>
-    <y>0</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>Context Query</query>
-    <column>report_date</column>
-   </data>
-  </field>
  </pgfoot>
 </report>
