@@ -87,10 +87,11 @@ dspPlannedOrdersByPlannerCode::dspPlannedOrdersByPlannerCode(QWidget* parent, co
   _planord->addColumn(tr("Site"),        _whsColumn,   Qt::AlignCenter,true, "warehous_code");
   _planord->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft,  true, "item_number");
   _planord->addColumn(tr("Description"), -1,           Qt::AlignLeft,  true, "item_descrip");
+  _planord->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignCenter,true, "uom_name");
   _planord->addColumn(tr("Start Date"),  _dateColumn,  Qt::AlignCenter,true, "planord_startdate");
   _planord->addColumn(tr("Due Date"),    _dateColumn,  Qt::AlignCenter,true, "planord_duedate");
   _planord->addColumn(tr("Qty"),         _qtyColumn,   Qt::AlignRight, true, "planord_qty");
-  _planord->addColumn(tr("Firm"),        _ynColumn,    Qt::AlignCenter,true, "firmed");
+  _planord->addColumn(tr("Firm"),        _ynColumn,    Qt::AlignCenter,true, "planord_firm");
 
   connect(omfgThis, SIGNAL(workOrdersUpdated(int, bool)), this, SLOT(sFillList()));
 }
@@ -291,12 +292,14 @@ void dspPlannedOrdersByPlannerCode::sFillList()
                "       (item_descrip1 || ' ' || item_descrip2) AS item_descrip,"
                "       planord_startdate,"
                "       planord_duedate,"
-               "       planord_qty, formatBoolYN(planord_firm) AS firmed,"
-               "       'qty' AS planord_qty "
-               "FROM planord, itemsite, warehous, item "
+               "       planord_qty, planord_firm,"
+               "       uom_name,"
+               "       'qty' AS planord_qty_xtnumericrole "
+               "FROM planord, itemsite, warehous, item, uom "
                "WHERE ( (planord_itemsite_id=itemsite_id)"
                " AND (itemsite_warehous_id=warehous_id)"
                " AND (itemsite_item_id=item_id)"
+               " AND (item_inv_uom_id=uom_id)"
                "<? if exists(\"plancode_id\") ?>"
                " AND (itemsite_plancode_id=<? value(\"plancode_id\") ?>)"
                "<? elseif exists(\"plancode_pattern\") ?>"

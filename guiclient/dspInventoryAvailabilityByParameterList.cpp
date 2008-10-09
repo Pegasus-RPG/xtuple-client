@@ -95,8 +95,9 @@ dspInventoryAvailabilityByParameterList::dspInventoryAvailabilityByParameterList
   connect(_showReorder, SIGNAL(toggled(bool)), this, SLOT(sHandleShowReorder(bool)));
   connect(omfgThis, SIGNAL(workOrdersUpdated(int, bool)), this, SLOT(sFillList()));
 
-  _availability->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft,  true, "item_number");
+  _availability->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft,  true, "item_number");
   _availability->addColumn(tr("Description"),  -1,          Qt::AlignLeft,  true, "itemdescrip");
+  _availability->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignCenter,true, "uom_name");
   _availability->addColumn(tr("Site"),         _whsColumn,  Qt::AlignCenter,true, "warehous_code");
   _availability->addColumn(tr("LT"),           _whsColumn,  Qt::AlignCenter,true, "itemsite_leadtime");
   _availability->addColumn(tr("QOH"),          _qtyColumn,  Qt::AlignRight, true, "qoh");
