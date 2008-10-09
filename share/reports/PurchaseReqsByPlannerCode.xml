@@ -34,7 +34,8 @@
  </querysource>
  <querysource>
   <name>detail</name>
-  <sql>SELECT item_number,
+  <sql>SELECT pr_number || '-' || pr_subnumber AS pr_number,
+       item_number,
        (item_descrip1 || ' ' || item_descrip2) as item_descrip,
        pr_status,
        CASE WHEN (pr_order_type='W') THEN ('W/O ' || ( SELECT formatWoNumber(womatl_wo_id)
@@ -66,11 +67,27 @@ ORDER BY pr_duedate;</sql>
  </querysource>
  <rpthead>
   <height>171</height>
+  <label>
+   <rect>
+    <x>270</x>
+    <y>5</y>
+    <width>475</width>
+    <height>40</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>18</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Purchase Requests By Planner Code</string>
+  </label>
   <field>
    <rect>
-    <x>135</x>
-    <y>85</y>
-    <width>300</width>
+    <x>555</x>
+    <y>65</y>
+    <width>100</width>
     <height>20</height>
    </rect>
    <font>
@@ -82,36 +99,13 @@ ORDER BY pr_duedate;</sql>
    <vcenter/>
    <data>
     <query>head</query>
-    <column>warehouse</column>
+    <column>startdate</column>
    </data>
   </field>
-  <line>
-   <xstart>5</xstart>
-   <ystart>165</ystart>
-   <xend>745</xend>
-   <yend>165</yend>
-   <weight>2</weight>
-  </line>
   <label>
    <rect>
-    <x>425</x>
-    <y>150</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Parent Order</string>
-  </label>
-  <label>
-   <rect>
-    <x>30</x>
-    <y>85</y>
+    <x>450</x>
+    <y>65</y>
     <width>100</width>
     <height>20</height>
    </rect>
@@ -122,8 +116,15 @@ ORDER BY pr_duedate;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>Site:</string>
+   <string>Start Date:</string>
   </label>
+  <line>
+   <xstart>5</xstart>
+   <ystart>165</ystart>
+   <xend>745</xend>
+   <yend>165</yend>
+   <weight>2</weight>
+  </line>
   <field>
    <rect>
     <x>555</x>
@@ -145,8 +146,91 @@ ORDER BY pr_duedate;</sql>
   </field>
   <label>
    <rect>
+    <x>220</x>
+    <y>150</y>
+    <width>200</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Description</string>
+  </label>
+  <label>
+   <rect>
+    <x>580</x>
+    <y>150</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Due Date</string>
+  </label>
+  <field>
+   <rect>
+    <x>135</x>
+    <y>85</y>
+    <width>300</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>warehouse</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>120</x>
+    <y>150</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Item Number</string>
+  </label>
+  <label>
+   <rect>
+    <x>419</x>
+    <y>150</y>
+    <width>50</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Status</string>
+  </label>
+  <label>
+   <rect>
     <x>450</x>
-    <y>65</y>
+    <y>85</y>
     <width>100</width>
     <height>20</height>
    </rect>
@@ -157,7 +241,55 @@ ORDER BY pr_duedate;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>Start Date:</string>
+   <string>End Date:</string>
+  </label>
+  <label>
+   <rect>
+    <x>20</x>
+    <y>150</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Purchase Request</string>
+  </label>
+  <label>
+   <rect>
+    <x>480</x>
+    <y>150</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Parent Order</string>
+  </label>
+  <label>
+   <rect>
+    <x>10</x>
+    <y>65</y>
+    <width>120</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Planner Code:</string>
   </label>
   <label>
    <rect>
@@ -177,9 +309,9 @@ ORDER BY pr_duedate;</sql>
   </label>
   <label>
    <rect>
-    <x>10</x>
-    <y>65</y>
-    <width>120</width>
+    <x>30</x>
+    <y>85</y>
+    <width>100</width>
     <height>20</height>
    </rect>
    <font>
@@ -189,7 +321,7 @@ ORDER BY pr_duedate;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>Planner Code:</string>
+   <string>Site:</string>
   </label>
   <field>
    <rect>
@@ -210,10 +342,65 @@ ORDER BY pr_duedate;</sql>
     <column>plancode</column>
    </data>
   </field>
+ </rpthead>
+ <pghead>
+  <firstpage/>
+  <height>5</height>
+ </pghead>
+ <pghead>
+  <height>28</height>
   <label>
    <rect>
-    <x>135</x>
-    <y>150</y>
+    <x>480</x>
+    <y>5</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Parent Order</string>
+  </label>
+  <label>
+   <rect>
+    <x>20</x>
+    <y>5</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Purchase Request</string>
+  </label>
+  <label>
+   <rect>
+    <x>419</x>
+    <y>5</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Status</string>
+  </label>
+  <label>
+   <rect>
+    <x>220</x>
+    <y>5</y>
     <width>100</width>
     <height>15</height>
    </rect>
@@ -228,56 +415,8 @@ ORDER BY pr_duedate;</sql>
   </label>
   <label>
    <rect>
-    <x>450</x>
-    <y>85</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>End Date:</string>
-  </label>
-  <label>
-   <rect>
-    <x>10</x>
-    <y>150</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Item Number</string>
-  </label>
-  <label>
-   <rect>
-    <x>270</x>
-    <y>5</y>
-    <width>475</width>
-    <height>40</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>18</size>
-    <weight>bold</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Purchase Requests By Planner Code</string>
-  </label>
-  <label>
-   <rect>
     <x>580</x>
-    <y>150</y>
+    <y>5</y>
     <width>80</width>
     <height>15</height>
    </rect>
@@ -289,64 +428,6 @@ ORDER BY pr_duedate;</sql>
    <hcenter/>
    <vcenter/>
    <string>Due Date</string>
-  </label>
-  <label>
-   <rect>
-    <x>340</x>
-    <y>150</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Status</string>
-  </label>
-  <field>
-   <rect>
-    <x>555</x>
-    <y>65</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>startdate</column>
-   </data>
-  </field>
- </rpthead>
- <pghead>
-  <firstpage/>
-  <height>6</height>
- </pghead>
- <pghead>
-  <height>29</height>
-  <label>
-   <rect>
-    <x>340</x>
-    <y>5</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Status</string>
   </label>
   <label>
    <rect>
@@ -366,62 +447,7 @@ ORDER BY pr_duedate;</sql>
   </label>
   <label>
    <rect>
-    <x>425</x>
-    <y>5</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Parent Order</string>
-  </label>
-  <label>
-   <rect>
-    <x>135</x>
-    <y>5</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Description</string>
-  </label>
-  <label>
-   <rect>
-    <x>580</x>
-    <y>5</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Due Date</string>
-  </label>
-  <line>
-   <xstart>5</xstart>
-   <ystart>20</ystart>
-   <xend>745</xend>
-   <yend>20</yend>
-   <weight>2</weight>
-  </line>
-  <label>
-   <rect>
-    <x>10</x>
+    <x>120</x>
     <y>5</y>
     <width>100</width>
     <height>15</height>
@@ -435,6 +461,13 @@ ORDER BY pr_duedate;</sql>
    <vcenter/>
    <string>Item Number</string>
   </label>
+  <line>
+   <xstart>5</xstart>
+   <ystart>20</ystart>
+   <xend>745</xend>
+   <yend>20</yend>
+   <weight>2</weight>
+  </line>
  </pghead>
  <section>
   <name>detail</name>
@@ -445,9 +478,28 @@ ORDER BY pr_duedate;</sql>
    <height>18</height>
    <field>
     <rect>
-     <x>425</x>
+     <x>665</x>
      <y>0</y>
-     <width>150</width>
+     <width>80</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_qtyreq</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>220</x>
+     <y>0</y>
+     <width>200</width>
      <height>15</height>
     </rect>
     <font>
@@ -459,14 +511,33 @@ ORDER BY pr_duedate;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_type</column>
+     <column>item_descrip</column>
     </data>
    </field>
    <field>
     <rect>
-     <x>340</x>
+     <x>120</x>
      <y>0</y>
-     <width>80</width>
+     <width>100</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>item_number</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>419</x>
+     <y>0</y>
+     <width>50</width>
      <height>15</height>
     </rect>
     <font>
@@ -479,6 +550,25 @@ ORDER BY pr_duedate;</sql>
     <data>
      <query>detail</query>
      <column>pr_status</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>20</x>
+     <y>0</y>
+     <width>100</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>pr_number</column>
     </data>
    </field>
    <field>
@@ -502,9 +592,9 @@ ORDER BY pr_duedate;</sql>
    </field>
    <field>
     <rect>
-     <x>135</x>
+     <x>480</x>
      <y>0</y>
-     <width>200</width>
+     <width>100</width>
      <height>15</height>
     </rect>
     <font>
@@ -516,67 +606,13 @@ ORDER BY pr_duedate;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_descrip</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>665</x>
-     <y>0</y>
-     <width>80</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>f_qtyreq</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>10</x>
-     <y>0</y>
-     <width>120</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <hcenter/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>item_number</column>
+     <column>f_type</column>
     </data>
    </field>
   </detail>
  </section>
  <pgfoot>
   <height>18</height>
-  <label>
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Report Date:</string>
-  </label>
   <label>
    <rect>
     <x>600</x>
@@ -595,25 +631,6 @@ ORDER BY pr_duedate;</sql>
   </label>
   <field>
    <rect>
-    <x>705</x>
-    <y>0</y>
-    <width>40</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>Context Query</query>
-    <column>page_number</column>
-   </data>
-  </field>
-  <field>
-   <rect>
     <x>104</x>
     <y>0</y>
     <width>100</width>
@@ -629,6 +646,41 @@ ORDER BY pr_duedate;</sql>
    <data>
     <query>Context Query</query>
     <column>report_date</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Report Date:</string>
+  </label>
+  <field>
+   <rect>
+    <x>705</x>
+    <y>0</y>
+    <width>40</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>Context Query</query>
+    <column>page_number</column>
    </data>
   </field>
  </pgfoot>

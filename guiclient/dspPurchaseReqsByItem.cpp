@@ -57,37 +57,31 @@
 
 #include "dspPurchaseReqsByItem.h"
 
-#include <QVariant>
-//#include <QStatusBar>
-#include <QWorkspace>
 #include <QMenu>
+#include <QSqlError>
+#include <QVariant>
+#include <QMessageBox>
+
+#include <metasql.h>
 #include <openreports.h>
 #include <parameter.h>
+
 #include "dspRunningAvailability.h"
+#include "mqlutil.h"
 #include "purchaseOrder.h"
 
-/*
- *  Constructs a dspPurchaseReqsByItem as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspPurchaseReqsByItem::dspPurchaseReqsByItem(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-  connect(_item, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
   connect(_pr, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
-  connect(_item, SIGNAL(warehouseIdChanged(int)), _warehouse, SLOT(setId(int)));
-  connect(_item, SIGNAL(newId(int)), _warehouse, SLOT(findItemSites(int)));
 
+  _pr->addColumn(tr("P/R #"),        _orderColumn,  Qt::AlignLeft,   true,  "pr_number");
+  _pr->addColumn(tr("Sub #"),        _orderColumn,  Qt::AlignLeft,   true,  "pr_subnumber");
   _pr->addColumn(tr("Status"),       _statusColumn, Qt::AlignCenter, true,  "pr_status" );
   _pr->addColumn(tr("Parent Order"), -1,            Qt::AlignLeft,   true,  "parent"   );
   _pr->addColumn(tr("Due Date"),     _dateColumn,   Qt::AlignCenter, true,  "pr_duedate" );
@@ -96,30 +90,38 @@ dspPurchaseReqsByItem::dspPurchaseReqsByItem(QWidget* parent, const char* name, 
   connect(omfgThis, SIGNAL(purchaseRequestsUpdated()), this, SLOT(sFillList()));
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspPurchaseReqsByItem::~dspPurchaseReqsByItem()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspPurchaseReqsByItem::languageChange()
 {
   retranslateUi(this);
 }
 
+bool dspPurchaseReqsByItem::setParams(ParameterList &params)
+{
+  if (! _item->isValid())
+  {
+    QMessageBox::information(this, tr("Item Required"),
+                             tr("<p>Item is required."));
+    _item->setFocus();
+    return false;
+  }
+
+  _warehouse->appendValue(params);
+  params.append("item_id", _item->id());
+  params.append("manual", tr("Manual"));
+  params.append("other",  tr("Other"));
+  return true;
+}
+
 void dspPurchaseReqsByItem::sPrint()
 {
   ParameterList params;
-  params.append("item_id", _item->id());
-
-  _warehouse->appendValue(params);
-
+  if (! setParams(params))
+    return;
   orReport report("PurchaseRequestsByItem", params);
   if (report.isValid())
     report.print();
@@ -181,36 +183,15 @@ void dspPurchaseReqsByItem::sDelete()
 
 void dspPurchaseReqsByItem::sFillList()
 {
-  if (_item->isValid())
+  ParameterList params;
+  if (! setParams(params))
+    return;
+  MetaSQLQuery mql = mqlLoad("purchase", "purchaserequests");
+  q = mql.toQuery(params);
+  _pr->populate(q, TRUE);
+  if (q.lastError().type() != QSqlError::None)
   {
-    QString sql( "SELECT pr_id, itemsite_id, pr_status,"
-                 "       CASE WHEN (pr_order_type='W') THEN ('W/O ' || ( SELECT formatWoNumber(womatl_wo_id)"
-                 "                                                       FROM womatl"
-                 "                                                       WHERE (womatl_id=pr_order_id) ) )"
-                 "            WHEN (pr_order_type='S') THEN ('S/O ' || (SELECT formatSoNumber(pr_order_id)))"
-                 "            WHEN (pr_order_type='F') THEN ('Planned Order')"
-                 "            WHEN (pr_order_type='M') THEN :manual"
-                 "            ELSE :other"
-                 "       END AS parent,"
-                 "       pr_duedate, pr_qtyreq,"
-                 "       'qty' AS pr_qtyreq_xtnumericrole "
-                 "FROM pr, itemsite "
-                 "WHERE ( (pr_itemsite_id=itemsite_id)"
-                 " AND (itemsite_item_id=:item_id)" );
-
-    if (_warehouse->isSelected())
-      sql += " AND (itemsite_warehous_id=:warehous_id)";
-
-    sql += ") "
-           "ORDER BY pr_duedate;";
-
-    q.prepare(sql);
-    _warehouse->bindValue(q);
-    q.bindValue(":manual", tr("Manual"));
-    q.bindValue(":other", tr("Other"));
-    q.bindValue(":item_id", _item->id());
-    q.exec();
-    _pr->populate(q, TRUE);
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
 }
-

@@ -71,6 +71,8 @@ public:
     dspPurchaseReqsByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspPurchaseReqsByItem();
 
+    virtual bool setParams(ParameterList &);
+
 public slots:
     virtual void sPrint();
     virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * );

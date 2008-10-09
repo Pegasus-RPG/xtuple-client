@@ -57,31 +57,25 @@
 
 #include "dspPurchaseReqsByPlannerCode.h"
 
-#include <QVariant>
-//#include <QStatusBar>
-#include <QMessageBox>
-#include <QWorkspace>
 #include <QMenu>
+#include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
+
+#include <metasql.h>
 #include <openreports.h>
 #include <parameter.h>
+
 #include "dspRunningAvailability.h"
+#include "mqlutil.h"
 #include "purchaseOrder.h"
 
-/*
- *  Constructs a dspPurchaseReqsByPlannerCode as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspPurchaseReqsByPlannerCode::dspPurchaseReqsByPlannerCode(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_pr, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
 
@@ -90,6 +84,8 @@ dspPurchaseReqsByPlannerCode::dspPurchaseReqsByPlannerCode(QWidget* parent, cons
 
   _plannerCode->setType(ParameterGroup::PlannerCode);
 
+  _pr->addColumn(tr("P/R #"),        _orderColumn,  Qt::AlignLeft,   true,  "pr_number");
+  _pr->addColumn(tr("Sub #"),        _orderColumn,  Qt::AlignLeft,   true,  "pr_subnumber");
   _pr->addColumn(tr("Item Number"),  _itemColumn,   Qt::AlignLeft,   true,  "item_number"   );
   _pr->addColumn(tr("Description"),  -1,            Qt::AlignLeft,   true,  "description"   );
   _pr->addColumn(tr("Status"),       _statusColumn, Qt::AlignCenter, true,  "pr_status" );
@@ -98,37 +94,41 @@ dspPurchaseReqsByPlannerCode::dspPurchaseReqsByPlannerCode(QWidget* parent, cons
   _pr->addColumn(tr("Qty."),         _qtyColumn,    Qt::AlignRight,  true,  "pr_qtyreq"  );
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspPurchaseReqsByPlannerCode::~dspPurchaseReqsByPlannerCode()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspPurchaseReqsByPlannerCode::languageChange()
 {
   retranslateUi(this);
 }
 
-void dspPurchaseReqsByPlannerCode::sPrint()
+bool dspPurchaseReqsByPlannerCode::setParams(ParameterList &params)
 {
   if (!_dates->allValid())
   {
     QMessageBox::warning( this, tr("Enter a Valid Start Date and End Date"),
                           tr("You must enter a valid Start Date and End Date for this report.") );
     _dates->setFocus();
-    return;
+    return false;
   }
 
-  ParameterList params;
   _plannerCode->appendValue(params);
   _warehouse->appendValue(params);
   _dates->appendValue(params);
+
+  params.append("manual", tr("Manual"));
+  params.append("other",  tr("Other"));
+
+  return true;
+}
+
+void dspPurchaseReqsByPlannerCode::sPrint()
+{
+  ParameterList params;
+  if (! setParams(params))
+    return;
 
   orReport report("PurchaseReqsByPlannerCode", params);
   if(report.isValid())
@@ -191,59 +191,15 @@ void dspPurchaseReqsByPlannerCode::sDelete()
 
 void dspPurchaseReqsByPlannerCode::sFillList()
 {
-  _pr->clear();
-
-  if (!_dates->startDate().isValid())
-  {
-    QMessageBox::critical( this, tr("Enter Start Date"),
-                           tr("Please enter a valid Start Date.") );
-    _dates->setFocus();
+  ParameterList params;
+  if (! setParams(params))
     return;
-  }
-
-  if (!_dates->endDate().isValid())
-  {
-    QMessageBox::critical( this, tr("Enter End Date"),
-                           tr("Please enter a valid End Date.") );
-    _dates->setFocus();
-    return;
-  }
-
-  QString sql( "SELECT pr_id, itemsite_id,"
-               "       item_number, (item_descrip1 || ' ' || item_descrip2) AS description, pr_status,"
-               "       CASE WHEN (pr_order_type='W') THEN ('W/O ' || ( SELECT formatWoNumber(womatl_wo_id)"
-               "                                                       FROM womatl"
-               "                                                       WHERE (womatl_id=pr_order_id) ) )"
-               "            WHEN (pr_order_type='S') THEN ('S/O ' || (SELECT formatSoNumber(pr_order_id)))"
-               "            WHEN (pr_order_type='F') THEN ('Planned Order')"
-               "            WHEN (pr_order_type='M') THEN :manual"
-               "            ELSE :other"
-               "       END AS parent,"
-               "       pr_duedate, pr_qtyreq,"
-               "       'qty' AS pr_qtyreq_xtnumericrole "
-               "FROM pr, itemsite, item "
-               "WHERE ( (pr_itemsite_id=itemsite_id)"
-               " AND (itemsite_item_id=item_id)"
-               " AND (pr_duedate BETWEEN :startDate AND :endDate)" );
-
-  if (_warehouse->isSelected())
-    sql += " AND (itemsite_warehous_id=:warehous_id)";
-
-  if (_plannerCode->isSelected())
-    sql += " AND (itemsite_plancode_id=:plancode_id)";
-  else if (_plannerCode->isPattern())
-    sql += " AND (itemsite_plancode_id IN (SELECT plancode_id FROM plancode WHERE (plancode_code ~ :plancode_pattern) ) )";
-
-  sql += ") "
-         "ORDER BY pr_duedate;";
-
-  q.prepare(sql);
-  _warehouse->bindValue(q);
-  _plannerCode->bindValue(q);
-  _dates->bindValue(q);
-  q.bindValue(":manual", tr("Manual"));
-  q.bindValue(":other", tr("Other"));
-  q.exec();
+  MetaSQLQuery mql = mqlLoad("purchase", "purchaserequests");
+  q = mql.toQuery(params);
   _pr->populate(q, TRUE);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
-
