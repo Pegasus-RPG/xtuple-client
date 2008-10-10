@@ -1,7 +1,7 @@
 <!DOCTYPE openRPTDef>
 <report>
  <title>Standard Bill of Lading</title>
- <name></name>
+ <name>StandardBOL</name>
  <description></description>
  <size>Letter</size>
  <portrait/>
