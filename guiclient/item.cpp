@@ -106,13 +106,8 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_inventoryUOM, SIGNAL(newID(int)), this, SLOT(sPopulateUOMs()));
   connect(_classcode, SIGNAL(newID(int)), this, SLOT(sPopulateUOMs()));
   connect(_newCharacteristic, SIGNAL(clicked()), this, SLOT(sNew()));
-  connect(_newImage, SIGNAL(clicked()), this, SLOT(sNewImage()));
   connect(_editCharacteristic, SIGNAL(clicked()), this, SLOT(sEdit()));
-  connect(_editImage, SIGNAL(clicked()), this, SLOT(sEditImage()));
-  connect(_viewImage, SIGNAL(clicked()), this, SLOT(sViewImage()));
-  connect(_printImage, SIGNAL(clicked()), this, SLOT(sPrintImage()));
   connect(_deleteCharacteristic, SIGNAL(clicked()), this, SLOT(sDelete()));
-  connect(_deleteImage, SIGNAL(clicked()), this, SLOT(sDeleteImage()));
   connect(_itemtype, SIGNAL(activated(int)), this, SLOT(sHandleItemtype()));
   connect(_newAlias, SIGNAL(clicked()), this, SLOT(sNewAlias()));
   connect(_editAlias, SIGNAL(clicked()), this, SLOT(sEditAlias()));
@@ -130,11 +125,6 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_viewItemSite, SIGNAL(clicked()), this, SLOT(sViewItemSite()));
   connect(_editItemSite, SIGNAL(clicked()), this, SLOT(sEditItemSite()));
   connect(_newItemSite, SIGNAL(clicked()), this, SLOT(sNewItemSite()));
-  connect(_deleteFile, SIGNAL(clicked()), this, SLOT(sDeleteFile()));
-  connect(_editFile, SIGNAL(clicked()), this, SLOT(sEditFile()));
-  connect(_newFile, SIGNAL(clicked()), this, SLOT(sNewFile()));
-  connect(_viewFile, SIGNAL(clicked()), this, SLOT(sViewFile()));
-  connect(_openFile, SIGNAL(clicked()), this, SLOT(sOpenFile()));
   connect(_itemtaxNew, SIGNAL(clicked()), this, SLOT(sNewItemtax()));
   connect(_itemtaxEdit, SIGNAL(clicked()), this, SLOT(sEditItemtax()));
   connect(_itemtaxDelete, SIGNAL(clicked()), this, SLOT(sDeleteItemtax()));
@@ -149,8 +139,6 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_aliasesButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_substitutesButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_transformationsButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
-  connect(_imagesButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
-  connect(_filesButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_editSrc, SIGNAL(clicked()), this, SLOT(sEditSource()));
   connect(_newSrc, SIGNAL(clicked()), this, SLOT(sNewSource()));
   connect(_viewSrc, SIGNAL(clicked()), this, SLOT(sViewSource()));
@@ -190,10 +178,6 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
   _itemsrc->addColumn(tr("Name"), 	 -1,          Qt::AlignLeft, true, "vend_name" );
   _itemsrc->addColumn(tr("Vendor Item"), _itemColumn*2, Qt::AlignLeft, true, "itemsrc_vend_item_number" );
 
-  _itemimage->addColumn(tr("Image Name"),  _itemColumn, Qt::AlignLeft, true, "image_name" );
-  _itemimage->addColumn(tr("Description"), -1,          Qt::AlignLeft, true, "image_descrip" );
-  _itemimage->addColumn(tr("Purpose"),     _itemColumn*2, Qt::AlignLeft, true, "image_purpose" );
-
   _itemalias->addColumn(tr("Alias Number"), _itemColumn, Qt::AlignLeft, true, "itemalias_number"  );
   _itemalias->addColumn(tr("Comments"),     -1,          Qt::AlignLeft, true, "itemalias_comments" );
 
@@ -212,9 +196,6 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
   _itemSite->setDragString("itemsiteid=");
 
   connect(omfgThis, SIGNAL(itemsitesUpdated()), SLOT(sFillListItemSites()));
-
-  _file->addColumn(tr("Title"),_itemColumn, Qt::AlignLeft,true, "itemfile_title");
-  _file->addColumn(tr("URL"),           -1, Qt::AlignLeft,true, "itemfile_url");
 
   _itemtax->addColumn(tr("Tax Type"),_itemColumn, Qt::AlignLeft,true,"taxtype_name");
   _itemtax->addColumn(tr("Tax Authority"),    -1, Qt::AlignLeft,true,"taxauth");
@@ -347,6 +328,7 @@ enum SetResponse item::set(const ParameterList &pParams)
 //  ToDo
 
       _comments->setId(_itemid);
+      _documents->setId(_itemid);
       _exclusive->setChecked(_metrics->boolean("DefaultSoldItemsExclusive"));
 
       connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
@@ -379,9 +361,6 @@ enum SetResponse item::set(const ParameterList &pParams)
       connect(_itemsub, SIGNAL(valid(bool)), _editSubstitute, SLOT(setEnabled(bool)));
       connect(_itemsub, SIGNAL(valid(bool)), _deleteSubstitute, SLOT(setEnabled(bool)));
       connect(_itemtrans, SIGNAL(valid(bool)), _deleteTransform, SLOT(setEnabled(bool)));
-      connect(_file, SIGNAL(valid(bool)), _editFile, SLOT(setEnabled(bool)));
-      connect(_file, SIGNAL(itemSelected(int)), _editFile, SLOT(animateClick()));
-      connect(_file, SIGNAL(valid(bool)), _deleteFile, SLOT(setEnabled(bool)));
       connect(_itemtax, SIGNAL(valid(bool)), _itemtaxEdit, SLOT(setEnabled(bool)));
       connect(_itemtax, SIGNAL(valid(bool)), _itemtaxDelete, SLOT(setEnabled(bool)));
 
@@ -399,7 +378,6 @@ enum SetResponse item::set(const ParameterList &pParams)
         connect(_itemSite, SIGNAL(valid(bool)), _deleteItemSite, SLOT(setEnabled(bool)));
 
       _itemNumber->setEnabled(FALSE);
-      _newFile->setEnabled(TRUE);
       _save->setFocus();
     }
     else if (param.toString() == "view")
@@ -425,9 +403,9 @@ enum SetResponse item::set(const ParameterList &pParams)
       _packWeight->setEnabled(FALSE);
       _notes->setEnabled(FALSE);
       _comments->setReadOnly(TRUE);
+      _documents->setReadOnly(TRUE);
       _extDescription->setReadOnly(TRUE);
       _newCharacteristic->setEnabled(FALSE);
-      _newImage->setEnabled(FALSE);
       _newAlias->setEnabled(FALSE);
       _newSubstitute->setEnabled(FALSE);
       _newTransform->setEnabled(FALSE);
@@ -436,21 +414,11 @@ enum SetResponse item::set(const ParameterList &pParams)
       _close->setText(tr("&Close"));
 
       connect(_itemSite, SIGNAL(itemSelected(int)), _viewItemSite, SLOT(animateClick()));
-      connect(_file, SIGNAL(itemSelected(int)), _viewFile, SLOT(animateClick()));
 
       _save->hide();
 
       _close->setFocus();
     }
-  }
-
-  if(cView == _mode)
-    connect(_itemimage, SIGNAL(itemSelected(int)), _viewImage, SLOT(animateClick()));
-  else
-  {
-    connect(_itemimage, SIGNAL(itemSelected(int)), _editImage, SLOT(animateClick()));
-    connect(_itemimage, SIGNAL(valid(bool)), _editImage, SLOT(setEnabled(bool)));
-    connect(_itemimage, SIGNAL(valid(bool)), _deleteImage, SLOT(setEnabled(bool)));
   }
 
   return NoError;
@@ -1007,89 +975,6 @@ void item::sFillList()
   _charass->populate(q);
 }
 
-void item::sNewImage()
-{
-  ParameterList params;
-  params.append("mode", "new");
-  params.append("item_id", _itemid);
-
-  itemImage newdlg(this, "", TRUE);
-  newdlg.set(params);
-
-  if (newdlg.exec() != XDialog::Rejected)
-    sFillImageList();
-}
-
-void item::sEditImage()
-{
-  ParameterList params;
-  params.append("mode", "edit");
-  params.append("itemimage_id", _itemimage->id());
-
-  itemImage newdlg(this, "", TRUE);
-  newdlg.set(params);
-
-  if (newdlg.exec() != XDialog::Rejected)
-    sFillImageList();
-}
-
-void item::sViewImage()
-{
-  ParameterList params;
-  params.append("mode", "view");
-  params.append("image_id", _itemimage->altId());
-
-  image newdlg(this, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-}
-
-void item::sPrintImage()
-{
-  ParameterList params;
-  params.append("itemimage_id", _itemimage->id());
-
-  orReport report("ItemImage", params);
-  if (report.isValid())
-    report.print();
-  else
-    report.reportError(this);
-}
-
-
-void item::sDeleteImage()
-{
-  q.prepare( "DELETE FROM itemimage "
-             "WHERE (itemimage_id=:itemimage_id);" );
-  q.bindValue(":itemimage_id", _itemimage->id());
-  q.exec();
-
-  sFillImageList();
-}
-
-void item::sFillImageList()
-{
-  q.prepare( "SELECT itemimage_id, itemimage_image_id, image_name, firstLine(image_descrip) AS image_descrip,"
-             "       CASE WHEN (itemimage_purpose='I') THEN :inventory"
-             "            WHEN (itemimage_purpose='P') THEN :product"
-             "            WHEN (itemimage_purpose='E') THEN :engineering"
-             "            WHEN (itemimage_purpose='M') THEN :misc"
-             "            ELSE :other"
-             "       END AS image_purpose "
-             "FROM itemimage, image "
-             "WHERE ( (itemimage_image_id=image_id)"
-             " AND (itemimage_item_id=:item_id) ) "
-             "ORDER BY image_name;" );
-  q.bindValue(":inventory", tr("Inventory Description"));
-  q.bindValue(":product", tr("Product Description"));
-  q.bindValue(":engineering", tr("Engineering Reference"));
-  q.bindValue(":misc", tr("Miscellaneous"));
-  q.bindValue(":other", tr("Other"));
-  q.bindValue(":item_id", _itemid);
-  q.exec();
-  _itemimage->populate(q, true);
-}
-
 void item::sPrint()
 {
   if (_itemid != -1)
@@ -1203,17 +1088,15 @@ void item::populate()
         _planningType->setCurrentItem(pcounter);
 
     sFillList();
-    sFillImageList();
     sFillUOMList();
     sFillSourceList();
     sFillAliasList();
     sFillSubstituteList();
     sFillTransformationList();
-    _comments->setId(_itemid);
-
     sFillListItemSites();
-    sFillListFiles();
     sFillListItemtax();
+    _comments->setId(_itemid);
+    _documents->setId(_itemid);
   }
 //  ToDo
 }
@@ -1249,8 +1132,8 @@ void item::clear()
   _extDescription->clear();
   _charass->clear();
   _uomconv->clear();
-  _itemimage->clear();
   _comments->setId(_itemid);
+  _documents->setId(_itemid);
   _itemalias->clear();
   _itemsub->clear();
   _itemtax->clear();
@@ -1870,79 +1753,6 @@ void item::sFillListItemSites()
   _itemSite->populate(q);
 }
 
-void item::sNewFile()
-{
-  ParameterList params;
-  params.append("mode", "new");
-  params.append("item_id", _itemid);
-
-  itemFile newdlg(this, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-  sFillListFiles();
-}
-
-void item::sEditFile()
-{
-  ParameterList params;
-  params.append("mode", "edit");
-  params.append("itemfile_id", _file->id());
-
-  itemFile newdlg(this, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-  sFillListFiles();
-}
-
-void item::sViewFile()
-{
-  ParameterList params;
-  params.append("mode", "view");
-  params.append("itemfile_id", _file->id());
-
-  itemFile newdlg(this, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-}
-
-void item::sDeleteFile()
-{
-  q.prepare("DELETE FROM itemfile"
-            " WHERE (itemfile_id=:itemfile_id);" );
-  q.bindValue(":itemfile_id", _file->id());
-  q.exec();
-  sFillListFiles();
-}
-
-void item::sFillListFiles()
-{
-  QString sql( "SELECT itemfile_id,"
-               "       itemfile_title,"
-               "       itemfile_url "
-               "  FROM itemfile "
-               " WHERE (itemfile_item_id=:item_id);" );
-  q.prepare(sql);
-  q.bindValue(":item_id", _itemid);
-  q.exec();
-  _file->populate(q);
-  if (q.lastError().type() != QSqlError::None)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-}
-
-void item::sOpenFile()
-{
-  q.prepare("SELECT itemfile_url"
-            "  FROM itemfile"
-            " WHERE (itemfile_id=:itemfile_id); ");
-  q.bindValue(":itemfile_id", _file->id());
-  q.exec();
-  if(q.first())
-    omfgThis->launchBrowser(this, q.value("itemfile_url").toString());
-}
-
 void item::sNewItemtax()
 {
   ParameterList params;
@@ -1966,7 +1776,6 @@ void item::sEditItemtax()
   newdlg.exec();
   sFillListItemtax();
 }
-
 void item::sDeleteItemtax()
 {
   q.prepare("DELETE FROM itemtax"
@@ -2186,11 +1995,6 @@ void item::sHandleButtons()
     _relationshipsStack->setCurrentIndex(1);
   else if (_substitutesButton->isChecked())
     _relationshipsStack->setCurrentIndex(2);
- 
-  if (_imagesButton->isChecked())
-    _documentsStack->setCurrentIndex(0);
-  else if (_filesButton->isChecked())
-    _documentsStack->setCurrentIndex(1);
 }
 
 void item::sFillSourceList()

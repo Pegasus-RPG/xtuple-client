@@ -942,6 +942,11 @@
          </item>
         </layout>
        </widget>
+       <widget class="QWidget" name="_documentsTab" >
+        <attribute name="title" >
+         <string>Documents</string>
+        </attribute>
+       </widget>
       </widget>
      </item>
     </layout>

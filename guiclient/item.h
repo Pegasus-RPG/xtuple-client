@@ -86,12 +86,6 @@ public slots:
     virtual void sEdit();
     virtual void sDelete();
     virtual void sFillList();
-    virtual void sNewImage();
-    virtual void sEditImage();
-    virtual void sViewImage();
-    virtual void sPrintImage();
-    virtual void sDeleteImage();
-    virtual void sFillImageList();
     virtual void sPrint();
     virtual void sFormatItemNumber();
     virtual void sPopulateUOMs();
@@ -115,12 +109,6 @@ public slots:
     virtual void sViewItemSite();
     virtual void sDeleteItemSite();
     virtual void sFillListItemSites();
-    virtual void sNewFile();
-    virtual void sEditFile();
-    virtual void sViewFile();
-    virtual void sDeleteFile();
-    virtual void sFillListFiles();
-    virtual void sOpenFile();
     virtual void sNewItemtax();
     virtual void sEditItemtax();
     virtual void sDeleteItemtax();
