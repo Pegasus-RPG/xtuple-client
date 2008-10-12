@@ -55,55 +55,87 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#ifndef openmfgplugin_h
-#define openmfgplugin_h
+#ifndef documents_h
+#define documents_h
 
-#define cNew                  1
-#define cEdit                 2
-#define cView                 3
+#include <QWidget>
 
-#include <metrics.h>
+#include <xsqlquery.h>
 
-#include <QtDesigner/QtDesigner>
-#include <QString>
-#include <QIcon>
+#include "ui_documents.h"
 
-#ifdef Q_WS_WIN
-  #ifdef MAKEDLL
-    #define OPENMFGWIDGETS_EXPORT __declspec(dllexport)
-  #else
-    #define OPENMFGWIDGETS_EXPORT
-  #endif
-#else
-  #define OPENMFGWIDGETS_EXPORT
-#endif
-
-class Preferences;
-class Metrics;
-class QWorkspace;
-class Privileges;
-class QWidget;
-
-extern Preferences *_x_preferences;
-extern Metrics     *_x_metrics;
-extern QWorkspace  *_x_workspace;
-extern Privileges  *_x_privileges;
-
-class OpenMFGPlugin : public QObject, public QDesignerCustomWidgetCollectionInterface
+class OPENMFGWIDGETS_EXPORT Documents : public QWidget, public Ui::documents
 {
   Q_OBJECT
-  Q_INTERFACES(QDesignerCustomWidgetCollectionInterface)
+
+  Q_ENUMS(DocumentSources)
+
+  Q_PROPERTY(DocumentSources type READ type WRITE setType)
+
+  friend class image;
+  friend class file;
 
   public:
-    OpenMFGPlugin(QObject *parent = 0);
+    Documents(QWidget *);
 
-    virtual QList<QDesignerCustomWidgetInterface*> customWidgets() const;
+    // if you add to this then add to the _documentMap[] below
+    enum DocumentSources
+    {
+      Uninitialized,
+      Address,          BBOMHead,           BBOMItem,
+      BOMHead,          BOMItem,            BOOHead,
+      BOOItem,          CRMAccount,         Contact, 
+      Customer,         Employee,           Incident,   
+      Item,             ItemSite,           ItemSource,
+      Location,		LotSerial,          Opportunity,
+      Project,		PurchaseOrder,      PurchaseOrderItem,
+      ReturnAuth,       ReturnAuthItem,     Quote, 
+      QuoteItem,        SalesOrder,         SalesOrderItem,
+      TransferOrder,	TransferOrderItem,  Vendor,
+      Warehouse,	WorkOrder
+    };
+
+    inline int  sourceid()             { return _sourceid; }
+    inline enum DocumentSources type() { return _source;   }
+
+    struct DocumentMap
+    {
+      enum DocumentSources source;
+      QString             ident;
+
+      DocumentMap(enum DocumentSources s, const QString & i)
+      {
+        source = s;
+        ident = i;
+      }
+    };
+    static const struct DocumentMap _documentMap[]; // see Documents.cpp for init
+
+  public slots:
+    void setType(enum DocumentSources);
+    void setId(int);
+    void setReadOnly(bool);
+    
+    void sHandleButtons();
+
+    void sNewFile();
+    void sEditFile();
+    void sViewFile();
+    void sDeleteFile();
+    void sOpenFile();
+    
+    void sPrintImage();
+    void sNewImage();
+    void sEditImage();
+    void sViewImage();
+    void sDeleteImage();
+    
+    void refresh();
 
   private:
-    QList<QDesignerCustomWidgetInterface*> m_plugins;
+    enum DocumentSources _source;
+    int                  _sourceid;
+
 };
 
-void OPENMFGWIDGETS_EXPORT initializePlugin(Preferences *, Metrics *, Privileges *, QWorkspace *);
-
 #endif
-

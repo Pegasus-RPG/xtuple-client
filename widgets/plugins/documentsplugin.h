@@ -55,55 +55,40 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#ifndef openmfgplugin_h
-#define openmfgplugin_h
+#ifndef __DOCUMENTSPLUGIN_H__
+#define __DOCUMENTSPLUGIN_H__
 
-#define cNew                  1
-#define cEdit                 2
-#define cView                 3
+#include "documents.h"
 
-#include <metrics.h>
+#include <QDesignerCustomWidgetInterface>
+#include <QtPlugin>
 
-#include <QtDesigner/QtDesigner>
-#include <QString>
-#include <QIcon>
-
-#ifdef Q_WS_WIN
-  #ifdef MAKEDLL
-    #define OPENMFGWIDGETS_EXPORT __declspec(dllexport)
-  #else
-    #define OPENMFGWIDGETS_EXPORT
-  #endif
-#else
-  #define OPENMFGWIDGETS_EXPORT
-#endif
-
-class Preferences;
-class Metrics;
-class QWorkspace;
-class Privileges;
-class QWidget;
-
-extern Preferences *_x_preferences;
-extern Metrics     *_x_metrics;
-extern QWorkspace  *_x_workspace;
-extern Privileges  *_x_privileges;
-
-class OpenMFGPlugin : public QObject, public QDesignerCustomWidgetCollectionInterface
+class DocumentsPlugin : public QObject, public QDesignerCustomWidgetInterface
 {
-  Q_OBJECT
-  Q_INTERFACES(QDesignerCustomWidgetCollectionInterface)
+    Q_OBJECT
+    Q_INTERFACES(QDesignerCustomWidgetInterface)
 
   public:
-    OpenMFGPlugin(QObject *parent = 0);
+    DocumentsPlugin(QObject *parent = 0) : QObject(parent), initialized(false) {}
 
-    virtual QList<QDesignerCustomWidgetInterface*> customWidgets() const;
+    bool isContainer() const { return false; }
+    bool isInitialized() const { return initialized; }
+    QIcon icon() const { return QIcon(); }
+    QString domXml() const
+    {
+      return "<widget class=\"Documents\" name=\"documents\">\n"
+             "</widget>\n";
+    }
+    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString includeFile() const { return "documents.h"; }
+    QString name() const { return "Documents"; }
+    QString toolTip() const { return ""; }
+    QString whatsThis() const { return ""; }
+    QWidget *createWidget(QWidget *parent) { return new Documents(parent); }
+    void initialize(QDesignerFormEditorInterface *) { initialized = true; }
 
   private:
-    QList<QDesignerCustomWidgetInterface*> m_plugins;
+    bool initialized;
 };
 
-void OPENMFGWIDGETS_EXPORT initializePlugin(Preferences *, Metrics *, Privileges *, QWorkspace *);
-
 #endif
-

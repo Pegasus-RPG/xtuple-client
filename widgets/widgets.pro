@@ -44,6 +44,7 @@ HEADERS += \
            plugins/dateclusterplugin.h \
            plugins/deptclusterplugin.h \
            plugins/dlineeditplugin.h \
+           plugins/documentsplugin.h \
            plugins/empclusterplugin.h \
            plugins/empgroupclusterplugin.h \
            plugins/expenseclusterplugin.h \
@@ -95,7 +96,7 @@ HEADERS += \
            plugins/xurllabelplugin.h \
            plugins/xtexteditplugin.h \
 	   plugins/screenplugin.h\
-           plugins/xtreeviewplugin.h
+           plugins/xtreeviewplugin.h \
 
 SOURCES    += OpenMFGWidgets.cpp \
               addressCluster.cpp contactCluster.cpp crmacctCluster.cpp \
@@ -139,6 +140,10 @@ SOURCES    += OpenMFGWidgets.cpp \
 	      xsqltablemodel.cpp \
               xtreeview.cpp \
 	      screen.cpp \
+              documents.cpp \
+              image.cpp \
+              imageAssignment.cpp \
+              file.cpp \
 
 HEADERS    += OpenMFGWidgets.h \
               addresscluster.h contactcluster.h crmacctcluster.h \
@@ -183,8 +188,16 @@ HEADERS    += OpenMFGWidgets.h \
               xsqltablemodel.h \
               xtreeview.h \
               screen.h \
+              documents.h \
+              image.h \
+              imageAssignment.h \
+              file.h \
 
 FORMS += accountSearch.ui \
+         documents.ui \
+         image.ui \
+         imageAssignment.ui \
+         file.ui \
 
 RESOURCES += widgets.qrc
 

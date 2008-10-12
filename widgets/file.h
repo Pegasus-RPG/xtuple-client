@@ -55,55 +55,37 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#ifndef openmfgplugin_h
-#define openmfgplugin_h
+#ifndef FILE_H
+#define FILE_H
 
-#define cNew                  1
-#define cEdit                 2
-#define cView                 3
+#include <parameter.h>
+#include <xsqlquery.h>
 
-#include <metrics.h>
+#include "documents.h"
+#include "OpenMFGWidgets.h"
+#include "ui_file.h"
 
-#include <QtDesigner/QtDesigner>
-#include <QString>
-#include <QIcon>
-
-#ifdef Q_WS_WIN
-  #ifdef MAKEDLL
-    #define OPENMFGWIDGETS_EXPORT __declspec(dllexport)
-  #else
-    #define OPENMFGWIDGETS_EXPORT
-  #endif
-#else
-  #define OPENMFGWIDGETS_EXPORT
-#endif
-
-class Preferences;
-class Metrics;
-class QWorkspace;
-class Privileges;
-class QWidget;
-
-extern Preferences *_x_preferences;
-extern Metrics     *_x_metrics;
-extern QWorkspace  *_x_workspace;
-extern Privileges  *_x_privileges;
-
-class OpenMFGPlugin : public QObject, public QDesignerCustomWidgetCollectionInterface
+class file : public QDialog, public Ui::file
 {
-  Q_OBJECT
-  Q_INTERFACES(QDesignerCustomWidgetCollectionInterface)
+    Q_OBJECT
 
-  public:
-    OpenMFGPlugin(QObject *parent = 0);
+public:
+    file(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
+    ~file();
 
-    virtual QList<QDesignerCustomWidgetInterface*> customWidgets() const;
+public slots:
+    virtual void set( const ParameterList & pParams );
+    virtual void sSave();
 
-  private:
-    QList<QDesignerCustomWidgetInterface*> m_plugins;
+protected slots:
+    virtual void languageChange();
+
+private:
+    enum Documents::DocumentSources _source;
+    int _mode;
+    int _fileid;
+    int _sourceid;
+
 };
 
-void OPENMFGWIDGETS_EXPORT initializePlugin(Preferences *, Metrics *, Privileges *, QWorkspace *);
-
-#endif
-
+#endif // FILE_H

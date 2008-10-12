@@ -865,7 +865,6 @@ void ContactCluster::sLaunchEmail()
 
 void ContactCluster::sLaunchWebaddr()
 {
-  qDebug("web");
   QDesktopServices::openUrl(QUrl("http://" + _webaddr->text()));
 }
 

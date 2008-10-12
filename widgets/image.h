@@ -55,55 +55,37 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#ifndef openmfgplugin_h
-#define openmfgplugin_h
+#ifndef IMAGE_H
+#define IMAGE_H
 
-#define cNew                  1
-#define cEdit                 2
-#define cView                 3
+#include <parameter.h>
 
-#include <metrics.h>
+#include "OpenMFGWidgets.h"
+#include "ui_image.h"
 
-#include <QtDesigner/QtDesigner>
-#include <QString>
-#include <QIcon>
-
-#ifdef Q_WS_WIN
-  #ifdef MAKEDLL
-    #define OPENMFGWIDGETS_EXPORT __declspec(dllexport)
-  #else
-    #define OPENMFGWIDGETS_EXPORT
-  #endif
-#else
-  #define OPENMFGWIDGETS_EXPORT
-#endif
-
-class Preferences;
-class Metrics;
-class QWorkspace;
-class Privileges;
-class QWidget;
-
-extern Preferences *_x_preferences;
-extern Metrics     *_x_metrics;
-extern QWorkspace  *_x_workspace;
-extern Privileges  *_x_privileges;
-
-class OpenMFGPlugin : public QObject, public QDesignerCustomWidgetCollectionInterface
+class image : public QDialog, public Ui::image
 {
-  Q_OBJECT
-  Q_INTERFACES(QDesignerCustomWidgetCollectionInterface)
+    Q_OBJECT
 
-  public:
-    OpenMFGPlugin(QObject *parent = 0);
+public:
+    image(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
+    ~image();
 
-    virtual QList<QDesignerCustomWidgetInterface*> customWidgets() const;
+public slots:
+    virtual void set( const ParameterList & pParams );
+    virtual void populate();
+    virtual void sSave();
+    virtual void sFileList();
 
-  private:
-    QList<QDesignerCustomWidgetInterface*> m_plugins;
+protected slots:
+    virtual void languageChange();
+
+private:
+    int _mode;
+    int _imageid;
+    QImage __image;
+    QLabel *_image;
+
 };
 
-void OPENMFGWIDGETS_EXPORT initializePlugin(Preferences *, Metrics *, Privileges *, QWorkspace *);
-
-#endif
-
+#endif // IMAGE_H

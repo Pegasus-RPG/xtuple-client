@@ -71,6 +71,7 @@
 #include "plugins/dateclusterplugin.h"
 #include "plugins/deptclusterplugin.h"
 #include "plugins/dlineeditplugin.h"
+#include "plugins/documentsplugin.h"
 #include "plugins/empclusterplugin.h"
 #include "plugins/expenseclusterplugin.h"
 #include "plugins/expenselineeditplugin.h"
@@ -139,6 +140,7 @@ OpenMFGPlugin::OpenMFGPlugin(QObject * parent) : QObject(parent)
   m_plugins.append(new DateClusterPlugin(this));
   m_plugins.append(new DeptClusterPlugin(this));
   m_plugins.append(new DLineEditPlugin(this));
+  m_plugins.append(new DocumentsPlugin(this));
   m_plugins.append(new EmpClusterPlugin(this));
   m_plugins.append(new ExpenseClusterPlugin(this));
   m_plugins.append(new ExpenseLineEditPlugin(this));
