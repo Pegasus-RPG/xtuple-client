@@ -76,6 +76,8 @@ public:
 public slots:
     virtual void set( const ParameterList & pParams );
     virtual void sSave();
+    virtual void sFileList();
+    virtual void sHandleButtons();
 
 protected slots:
     virtual void languageChange();
@@ -83,7 +85,7 @@ protected slots:
 private:
     enum Documents::DocumentSources _source;
     int _mode;
-    int _fileid;
+    int _urlid;
     int _sourceid;
 
 };

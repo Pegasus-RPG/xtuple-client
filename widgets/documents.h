@@ -116,7 +116,8 @@ class OPENMFGWIDGETS_EXPORT Documents : public QWidget, public Ui::documents
     void setId(int);
     void setReadOnly(bool);
     
-    void sHandleButtons();
+    void sImagesToggled(bool p);
+    void sFilesToggled(bool p);
 
     void sNewFile();
     void sEditFile();

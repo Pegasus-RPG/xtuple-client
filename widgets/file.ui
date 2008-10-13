@@ -5,21 +5,76 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>501</width>
-    <height>94</height>
+    <width>527</width>
+    <height>165</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>file</string>
   </property>
-  <layout class="QHBoxLayout" >
-   <item>
-    <layout class="QVBoxLayout" >
-     <item>
-      <layout class="QHBoxLayout" >
+  <layout class="QGridLayout" >
+   <item row="0" column="0" >
+    <layout class="QGridLayout" >
+     <property name="leftMargin" >
+      <number>12</number>
+     </property>
+     <property name="topMargin" >
+      <number>12</number>
+     </property>
+     <property name="rightMargin" >
+      <number>12</number>
+     </property>
+     <property name="bottomMargin" >
+      <number>12</number>
+     </property>
+     <property name="horizontalSpacing" >
+      <number>12</number>
+     </property>
+     <property name="verticalSpacing" >
+      <number>12</number>
+     </property>
+     <item row="0" column="0" >
+      <layout class="QVBoxLayout" >
        <item>
-        <layout class="QVBoxLayout" >
-         <item>
+        <layout class="QGridLayout" >
+         <item row="0" column="0" colspan="2" >
+          <layout class="QHBoxLayout" >
+           <property name="spacing" >
+            <number>12</number>
+           </property>
+           <item>
+            <widget class="QRadioButton" name="_fileButton" >
+             <property name="text" >
+              <string>File</string>
+             </property>
+             <property name="checked" >
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="_internetButton" >
+             <property name="text" >
+              <string>Internet</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" >
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item row="1" column="0" >
           <widget class="QLabel" name="_titleLit" >
            <property name="text" >
             <string>Title:</string>
@@ -29,95 +84,102 @@
            </property>
           </widget>
          </item>
-         <item>
+         <item row="1" column="1" >
+          <widget class="QLineEdit" name="_title" />
+         </item>
+         <item row="2" column="0" >
           <widget class="QLabel" name="_urlLit" >
            <property name="text" >
-            <string>URL:</string>
+            <string>Path:</string>
            </property>
            <property name="alignment" >
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
           </widget>
          </item>
+         <item row="2" column="1" >
+          <layout class="QHBoxLayout" >
+           <item>
+            <widget class="QLineEdit" name="_url" />
+           </item>
+           <item>
+            <widget class="QPushButton" name="_fileList" >
+             <property name="text" >
+              <string>...</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
         </layout>
        </item>
        <item>
-        <layout class="QVBoxLayout" >
-         <item>
-          <widget class="QLineEdit" name="_title" />
-         </item>
-         <item>
-          <widget class="QLineEdit" name="_url" />
-         </item>
-        </layout>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>16</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </item>
-     <item>
-      <spacer>
-       <property name="orientation" >
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeType" >
-        <enum>QSizePolicy::Expanding</enum>
-       </property>
-       <property name="sizeHint" >
-        <size>
-         <width>20</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QVBoxLayout" >
-     <property name="spacing" >
-      <number>0</number>
-     </property>
-     <item>
+     <item row="0" column="1" >
       <layout class="QVBoxLayout" >
        <property name="spacing" >
         <number>0</number>
        </property>
        <item>
-        <widget class="QPushButton" name="_cancel" >
-         <property name="text" >
-          <string>&amp;Cancel</string>
+        <layout class="QVBoxLayout" >
+         <property name="spacing" >
+          <number>0</number>
          </property>
-         <property name="shortcut" >
-          <string>Alt+C</string>
-         </property>
-        </widget>
+         <item>
+          <widget class="QPushButton" name="_cancel" >
+           <property name="text" >
+            <string>&amp;Cancel</string>
+           </property>
+           <property name="shortcut" >
+            <string>Alt+C</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="_save" >
+           <property name="text" >
+            <string>&amp;Save</string>
+           </property>
+           <property name="shortcut" >
+            <string>Alt+S</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
-        <widget class="QPushButton" name="_save" >
-         <property name="text" >
-          <string>&amp;Save</string>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
          </property>
-         <property name="shortcut" >
-          <string>Alt+S</string>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Expanding</enum>
          </property>
-        </widget>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>0</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
-     </item>
-     <item>
-      <spacer>
-       <property name="orientation" >
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeType" >
-        <enum>QSizePolicy::Expanding</enum>
-       </property>
-       <property name="sizeHint" >
-        <size>
-         <width>20</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
      </item>
     </layout>
    </item>

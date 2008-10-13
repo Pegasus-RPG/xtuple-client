@@ -128,13 +128,14 @@ Documents::Documents(QWidget *pParent) :
   connect(_viewFile, SIGNAL(clicked()), this, SLOT(sViewFile()));
   connect(_openFile, SIGNAL(clicked()), this, SLOT(sOpenFile()));
   
+  connect(_newImage, SIGNAL(clicked()), this, SLOT(sNewImage()));
   connect(_editImage, SIGNAL(clicked()), this, SLOT(sEditImage()));
   connect(_viewImage, SIGNAL(clicked()), this, SLOT(sViewImage()));
   connect(_printImage, SIGNAL(clicked()), this, SLOT(sPrintImage()));
   connect(_deleteImage, SIGNAL(clicked()), this, SLOT(sDeleteImage()));
   
-  connect(_imagesButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
-  connect(_filesButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_imagesButton, SIGNAL(toggled(bool)), this, SLOT(sImagesToggled(bool)));
+  connect(_filesButton, SIGNAL(toggled(bool)), this, SLOT(sFilesToggled(bool)));
 }
 
 void Documents::setType(enum DocumentSources pSource)
@@ -180,7 +181,7 @@ void Documents::sEditFile()
 {
   ParameterList params;
   params.append("mode", "edit");
-  params.append("file_id", _files->id());
+  params.append("url_id", _files->id());
 
   file newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -192,7 +193,7 @@ void Documents::sViewFile()
 {
   ParameterList params;
   params.append("mode", "view");
-  params.append("file_id", _files->id());
+  params.append("url_id", _files->id());
 
   file newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -202,9 +203,9 @@ void Documents::sViewFile()
 void Documents::sDeleteFile()
 {
   XSqlQuery q;
-  q.prepare("DELETE FROM file"
-            " WHERE (file_id=:file_id);" );
-  q.bindValue(":file_id", _files->id());
+  q.prepare("DELETE FROM url"
+            " WHERE (url_id=:url_id);" );
+  q.bindValue(":url_id", _files->id());
   q.exec();
   refresh();
 }
@@ -218,7 +219,13 @@ void Documents::sOpenFile()
   q.bindValue(":url_id", _files->id());
   q.exec();
   if(q.first())
-    QDesktopServices::openUrl(QUrl(q.value("url_url").toString()));
+  {
+    //If url scheme is missing, we'll assume it is "file" for now.
+    QUrl url(q.value("url_url").toString());
+    if (url.scheme().isEmpty())
+      url.setScheme("file");
+    QDesktopServices::openUrl(url);
+  }
 }
 
 void Documents::sNewImage()
@@ -295,16 +302,16 @@ void Documents::refresh()
   
   //Populate images
   QString sql( "SELECT imageass_id, imageass_image_id, image_name, firstLine(image_descrip) AS image_descrip,"
-               "       CASE WHEN (itemimage_purpose='I') THEN :inventory"
-               "            WHEN (itemimage_purpose='P') THEN :product"
-               "            WHEN (itemimage_purpose='E') THEN :engineering"
-               "            WHEN (itemimage_purpose='M') THEN :misc"
+               "       CASE WHEN (imageass_purpose='I') THEN :inventory"
+               "            WHEN (imageass_purpose='P') THEN :product"
+               "            WHEN (imageass_purpose='E') THEN :engineering"
+               "            WHEN (imageass_purpose='M') THEN :misc"
                "            ELSE :other"
                "       END AS image_purpose "
                "FROM imageass, image "
                "WHERE ( (imageass_image_id=image_id)"
                " AND (imageass_source=:source) "
-               " AND (imageass_source_id=:source_id) ) ) ");
+               " AND (imageass_source_id=:sourceid) ) ");
   if(_source == CRMAccount)  
   {
     // If it's CRMAccount we want to do some extra joining in our SQL
@@ -349,33 +356,33 @@ void Documents::refresh()
   _images->populate(query,TRUE);
   
   //Populate file urls
-  sql = "SELECT itemfile_id, itemfile_title, itemfile_url "
+  sql = "SELECT url_id, url_title, url_url "
         "FROM url "
-        "WHERE ((url_source_id=:source_id) "
-        "AND (url_source_type=:source_type)) ";
+        "WHERE ((url_source_id=:sourceid) "
+        "AND (url_source=:source)) ";
   if(_source == CRMAccount)  
   {
     // If it's CRMAccount we want to do some extra joining in our SQL
     sql += "UNION "
-           "SELECT itemfile_id, itemfile_title, itemfile_url "
+           "SELECT url_id, url_title, url_url "
            "FROM crmacct, url "
            "   AND (url_source=:sourceCust)"
            "   AND (crmacct_id=:sourceid)"
            "   AND (url_source_id=crmacct_cust_id) ) "
            " UNION "
-           "SELECT itemfile_id, itemfile_title, itemfile_url "
+           "SELECT url_id, url_title, url_url "
            "FROM crmacct, url "
            "WHERE ((url_source=:sourceVend)"
            "   AND (crmacct_id=:sourceid)"
            "   AND (url_source_id=crmacct_vend_id) ) "
            " UNION "
-           "SELECT itemfile_id, itemfile_title, itemfile_url "
+           "SELECT url_id, url_title, url_url "
            "FROM crmacct, url "           
            "WHERE ((url_source=:sourceContact)"
            "   AND (cntct_crmacct_id=:sourceid)"
            "   AND (url_source_id=cntct_id) )" ;
   }
-  sql += "ORDER BY image_name; ";
+  sql += "ORDER BY url_title; ";
   query.prepare(sql);
   query.bindValue(":sourceCust", _documentMap[Customer].ident);
   query.bindValue(":sourceContact", _documentMap[Contact].ident);
@@ -387,10 +394,25 @@ void Documents::refresh()
   
 }
 
-void Documents::sHandleButtons()
+void Documents::sImagesToggled(bool p)
 {
-  if (_imagesButton->isChecked())
+  if (p)
+  {
+    disconnect(_filesButton, SIGNAL(toggled(bool)), this, SLOT(sFilesToggled(bool)));
+    _filesButton->setChecked(!p);
     _documentsStack->setCurrentIndex(0);
-  else
-    _documentsStack->setCurrentIndex(1);
+    connect(_filesButton, SIGNAL(toggled(bool)), this, SLOT(sFilesToggled(bool)));
+  }
 }
+
+void Documents::sFilesToggled(bool p)
+{
+  if (p)
+  {
+    disconnect(_imagesButton, SIGNAL(toggled(bool)), this, SLOT(sImagesToggled(bool)));
+    _imagesButton->setChecked(!p);
+    _documentsStack->setCurrentIndex(1);
+    connect(_imagesButton, SIGNAL(toggled(bool)), this, SLOT(sImagesToggled(bool)));
+  }
+}
+

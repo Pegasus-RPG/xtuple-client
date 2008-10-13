@@ -55,6 +55,9 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
+#include <QFileDialog>
+#include <QUrl>
+
 #include "file.h"
 
 #include <qvariant.h>
@@ -76,11 +79,16 @@ file::file(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     // signals and slots connections
     connect(_cancel, SIGNAL(clicked()), this, SLOT(reject()));
     connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+    connect(_fileList, SIGNAL(clicked()), this, SLOT(sFileList()));
+    connect(_fileButton, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
+    connect(_internetButton, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
 
-    _fileid = -1;
+    _urlid = -1;
     _mode = cNew;
     _source = Documents::Uninitialized;
     _sourceid = -1;
+    
+    sHandleButtons();
 }
 
 /*
@@ -113,22 +121,32 @@ void file::set( const ParameterList & pParams )
   if(valid)
     _sourceid = param.toInt();
 
-  param = pParams.value("file_id", &valid);
+  param = pParams.value("url_id", &valid);
   if(valid)
   {
     XSqlQuery q;
-    _fileid = param.toInt();
-    q.prepare("SELECT file_source, file_source_id, file_title, file_url"
-              "  FROM file"
-              " WHERE (file_id=:file_id);" );
-    q.bindValue(":file_id", _fileid);
+    _urlid = param.toInt();
+    q.prepare("SELECT url_source, url_source_id, url_title, url_url"
+              "  FROM url"
+              " WHERE (url_id=:url_id);" );
+    q.bindValue(":url_id", _urlid);
     q.exec();
     if(q.first())
-    {
-    //  _source = Documents::_documentMap[q.value("file_source").toString()].ident;
-      _sourceid = q.value("file_item_id").toInt();
-      _title->setText(q.value("file_title").toString());
-      _url->setText(q.value("file_url").toString());
+    { 
+      _title->setText(q.value("url_title").toString());
+      
+      QUrl url(q.value("url_url").toString());
+      if (url.scheme().isEmpty())
+      {
+        url.setScheme("file");
+        _url->setText(url.toString());
+      }
+      else 
+      {
+        _url->setText(url.toString());
+        if (url.scheme() != "file")
+          _internetButton->setChecked(true);
+      }
     }
   }
 
@@ -157,24 +175,58 @@ void file::sSave()
       tr("You must specify a file before you may save.") );
     return;
   }
+  
+  QUrl url(_url->text());
+  if (url.scheme().isEmpty())
+  {
+    if (_fileButton->isChecked())
+      url.setScheme("file");
+    else
+      url.setScheme("http");
+  }
+  
   XSqlQuery q;
 
   if(cNew == _mode)
-    q.prepare("INSERT INTO file"
-              "       (file_source, file_source_id, file_title, file_url) "
+    q.prepare("INSERT INTO url"
+              "       (url_source, url_source_id, url_title, url_url) "
               "VALUES (:source, :source_id, :title, :url); ");
   else //if(cEdit == _mode)
-    q.prepare("UPDATE file"
-              "   SET file_title=:title,"
-              "       file_url=:url"
-              " WHERE (file_id=:file_id); ");
+    q.prepare("UPDATE url"
+              "   SET url_title=:title,"
+              "       url_url=:url"
+              " WHERE (url_id=:url_id); ");
 
   q.bindValue(":source", Documents::_documentMap[_source].ident);
   q.bindValue(":source_id", _sourceid);
-  q.bindValue(":file_id", _fileid);
+  q.bindValue(":url_id", _urlid);
   q.bindValue(":title", _title->text().stripWhiteSpace());
-  q.bindValue(":url", _url->text().stripWhiteSpace());
+  q.bindValue(":url", url.toString());
   q.exec();
 
   accept();
+}
+
+void file::sHandleButtons()
+{
+  QUrl url(_url->text());
+  
+  if (_fileButton->isChecked())
+  {
+    _urlLit->setText("Path:");
+    _fileList->show();
+    url.setScheme("file");
+  }
+  else
+  {
+    _urlLit->setText("Address:");
+    _fileList->hide();
+    url.setScheme("http");
+  }
+  _url->setText(url.toString());
+}
+
+void file::sFileList()
+{
+  _url->setText(QString("file:%1").arg(QFileDialog::getOpenFileName( this, tr("Select File"), QString::null)));
 }
