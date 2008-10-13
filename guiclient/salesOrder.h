@@ -110,6 +110,7 @@ public slots:
     virtual void sHandleSalesOrderEvent( int pSoheadid, bool );
     virtual void sTaxAuthChanged();
     virtual void sTaxDetail();
+    virtual void sFreightDetail();
     virtual void setFreeFormShipto( bool pFreeForm );
     virtual void populateCMInfo();
     virtual void populateCCInfo();
@@ -142,7 +143,9 @@ private:
     bool 	deleteForCancel();
 
     bool _saved;
+    bool _calcfreight;
     int _orderNumberGen;
+    double _freightCache;
     double _amountOutstanding;
     double _amountAllocated;
     double _taxableSubtotal;

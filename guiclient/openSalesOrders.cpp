@@ -459,7 +459,7 @@ void openSalesOrders::sFillList()
                "         cohead_lastupdated, cohead_shipcomplete,"
                "         cohead_created, cohead_creator, cohead_quote_number,"
                "         cohead_billtocountry, cohead_shiptocountry,"
-               "         cohead_curr_id, cohead_taxauth_id "
+               "         cohead_curr_id, cohead_taxauth_id, cohead_calcfreight "
 	       "ORDER BY cohead_number " );
   MetaSQLQuery mql(sql);
   q = mql.toQuery(params);

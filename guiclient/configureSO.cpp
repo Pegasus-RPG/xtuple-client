@@ -171,6 +171,7 @@ configureSO::configureSO(QWidget* parent, const char* name, bool modal, Qt::WFla
   _enableSOShipping->setChecked(_metrics->boolean("EnableSOShipping"));
   _printSO->setChecked(_metrics->boolean("DefaultPrintSOOnSave"));
   _enablePromiseDate->setChecked(_metrics->boolean("UsePromiseDate"));
+  _calcFreight->setChecked(_metrics->boolean("CalculateFreight"));
 
   _invoiceNumOfCopies->setValue(_metrics->value("InvoiceCopies").toInt());
   if (_invoiceNumOfCopies->value())
@@ -362,6 +363,7 @@ void configureSO::sSave()
   _metrics->set("DefaultFreeFormShiptos", _freeFormShiptos->isChecked());
   _metrics->set("DefaultPrintSOOnSave", _printSO->isChecked());
   _metrics->set("UsePromiseDate", _enablePromiseDate->isChecked());
+  _metrics->set("CalculateFreight", _calcFreight->isChecked());
   _metrics->set("EnableReturnAuth", _enableReturns->isChecked());
   _metrics->set("EnableSOReservations", _enableReservations->isChecked());
 

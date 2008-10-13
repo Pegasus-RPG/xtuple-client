@@ -1767,7 +1767,7 @@
             </widget>
            </item>
            <item row="3" column="3" >
-            <widget class="QLabel" name="_freightLit" >
+            <widget class="XURLLabel" name="_freightLit" >
              <property name="text" >
               <string>Freight:</string>
              </property>

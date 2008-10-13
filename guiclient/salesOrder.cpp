@@ -83,6 +83,7 @@
 #include "shipToList.h"
 #include "storedProcErrorLookup.h"
 #include "taxBreakdown.h"
+#include "freightBreakdown.h"
 #include "printPackingList.h"
 #include "printSoForm.h"
 #include "deliverSalesOrder.h"
@@ -138,6 +139,7 @@ salesOrder::salesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_soitem, SIGNAL(itemSelectionChanged()), this, SLOT(sHandleButtons()));
   connect(_taxAuth,        SIGNAL(newID(int)),        this, SLOT(sTaxAuthChanged()));
   connect(_taxLit, SIGNAL(leftClickedURL(const QString&)), this, SLOT(sTaxDetail()));
+  connect(_freightLit, SIGNAL(leftClickedURL(const QString&)), this, SLOT(sFreightDetail()));
   connect(_upCC, SIGNAL(clicked()), this, SLOT(sMoveUp()));
   connect(_viewCC, SIGNAL(clicked()), this, SLOT(sViewCreditCard()));
   connect(_warehouse, SIGNAL(newID(int)), this, SLOT(sPopulateFOB(int)));
@@ -167,6 +169,8 @@ salesOrder::salesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _numSelected = 0;
 
+  _calcfreight = false;
+  _freightCache = 0;
   _freighttaxid = -1;
   _taxauthidCache = -1;
   _custtaxauthid = -1;
@@ -279,6 +283,7 @@ enum SetResponse salesOrder::set(const ParameterList &pParams)
 
       _cust->setType(CLineEdit::ActiveCustomers);
       _comments->setType(Comments::SalesOrder);
+      _calcfreight = _metrics->boolean("CalculateFreight");
 
       connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sHandleSalesOrderEvent(int, bool)));
     }
@@ -287,6 +292,7 @@ enum SetResponse salesOrder::set(const ParameterList &pParams)
       _mode = cNewQuote;
 
       _cust->setType(CLineEdit::ActiveCustomersAndProspects);
+      _calcfreight = _metrics->boolean("CalculateFreight");
       _action->hide();
 
       _CCAmount->hide();
@@ -774,7 +780,7 @@ bool salesOrder::save(bool partial)
                "    cohead_salesrep_id=:salesrep_id, cohead_commission=:commission,"
                "    cohead_taxauth_id=:taxauth_id, cohead_terms_id=:terms_id, cohead_origin=:origin,"
                "    cohead_fob=:fob, cohead_shipvia=:shipvia, cohead_warehous_id=:warehous_id,"
-               "    cohead_freight=:freight,"
+               "    cohead_freight=:freight, cohead_calcfreight=:calcfreight,"
                "    cohead_misc=:misc, cohead_misc_accnt_id=:misc_accnt_id, cohead_misc_descrip=:misc_descrip,"
                "    cohead_holdtype=:holdtype,"
                "    cohead_ordercomments=:ordercomments, cohead_shipcomments=:shipcomments,"
@@ -799,7 +805,7 @@ bool salesOrder::save(bool partial)
                "    cohead_salesrep_id, cohead_commission,"
                "    cohead_taxauth_id, cohead_terms_id, cohead_origin,"
                "    cohead_fob, cohead_shipvia, cohead_warehous_id,"
-               "    cohead_freight,"
+               "    cohead_freight, cohead_calcfreight,"
                "    cohead_misc, cohead_misc_accnt_id, cohead_misc_descrip,"
                "    cohead_holdtype,"
                "    cohead_ordercomments, cohead_shipcomments,"
@@ -821,7 +827,7 @@ bool salesOrder::save(bool partial)
                "    :salesrep_id, :commission,"
                "    :taxauth_id, :terms_id, :origin,"
                "    :fob, :shipvia, :warehous_id,"
-               "    :freight,"
+               "    :freight, :calcfreight,"
                "    :misc, :misc_accnt_id, :misc_descrip,"
                "    :holdtype,"
                "    :ordercomments, :shipcomments,"
@@ -844,7 +850,7 @@ bool salesOrder::save(bool partial)
                "    quhead_salesrep_id=:salesrep_id, quhead_commission=:commission,"
                "    quhead_taxauth_id=:taxauth_id, quhead_terms_id=:terms_id,"
                "    quhead_origin=:origin, quhead_shipvia=:shipvia, quhead_fob=:fob,"
-               "    quhead_freight=:freight,"
+               "    quhead_freight=:freight, quhead_calcfreight=:calcfreight,"
                "    quhead_misc=:misc, quhead_misc_accnt_id=:misc_accnt_id, quhead_misc_descrip=:misc_descrip,"
                "    quhead_ordercomments=:ordercomments, quhead_shipcomments=:shipcomments,"
                "    quhead_prj_id=:prj_id, quhead_warehous_id=:warehous_id,"
@@ -866,7 +872,7 @@ bool salesOrder::save(bool partial)
                "    quhead_salesrep_id, quhead_commission,"
                "    quhead_taxauth_id, quhead_terms_id,"
                "    quhead_origin, quhead_shipvia, quhead_fob,"
-               "    quhead_freight,"
+               "    quhead_freight, quhead_calcfreight,"
                "    quhead_misc, quhead_misc_accnt_id, quhead_misc_descrip,"
                "    quhead_ordercomments, quhead_shipcomments,"
                "    quhead_prj_id, quhead_warehous_id,"
@@ -886,7 +892,7 @@ bool salesOrder::save(bool partial)
                "    :salesrep_id, :commission,"
                "    :taxauth_id, :terms_id,"
                "    :origin, :shipvia, :fob,"
-               "    :freight,"
+               "    :freight, :calcfreight,"
                "    :misc, :misc_accnt_id, :misc_descrip,"
                "    :ordercomments, :shipcomments,"
                "    :prj_id, :warehous_id,"
@@ -937,6 +943,7 @@ bool salesOrder::save(bool partial)
   q.bindValue(":shipchrg_id", _shippingCharges->id());
   q.bindValue(":shipform_id", _shippingForm->id());
   q.bindValue(":freight", _freight->localValue());
+  q.bindValue(":calcfreight", _calcfreight);
   q.bindValue(":commission", (_commission->toDouble() / 100.0));
   q.bindValue(":misc", _miscCharge->localValue());
   if (_miscChargeAccount->id() != -1)
@@ -1896,29 +1903,17 @@ void salesOrder::populate()
         setViewMode();
       }
     }
-    so.prepare( "SELECT cohead_custponumber, cohead_cust_id,"
-                "       cohead_orderdate, cohead_packdate, cohead_number,"
-                "       cohead_billtoname, cohead_billtoaddress1, cohead_billtoaddress2,"
-                "       cohead_billtoaddress3, cohead_billtocity, cohead_billtostate, cohead_billtozipcode,"
-                "       cohead_billtocountry,"
-                "       COALESCE(cohead_shipto_id,-1) AS cohead_shipto_id, cohead_shiptoname, cohead_shiptoaddress1,"
-                "       cohead_shiptoaddress2, cohead_shiptoaddress3, cohead_shiptocity,"
-                "       cohead_shiptostate, cohead_shiptozipcode, cohead_shiptophone,"
-                "       cohead_shiptocountry,"
-                "       cohead_freight, cohead_holdtype,"
-                "       cohead_salesrep_id, cohead_commission AS commission,"
-                "       COALESCE(cohead_taxauth_id,-1) AS cohead_taxauth_id, cohead_terms_id,"
-                "       cohead_origin, cohead_fob, cohead_shipvia, COALESCE(cohead_warehous_id,-1) as cohead_warehous_id,"
+    so.prepare( "SELECT cohead.*,"
+                "       COALESCE(cohead_shipto_id,-1) AS cohead_shipto_id,"
+                "       cohead_commission AS commission,"
+                "       COALESCE(cohead_taxauth_id,-1) AS cohead_taxauth_id,"
+                "       COALESCE(cohead_warehous_id,-1) as cohead_warehous_id,"
                 "       cust_name, cust_ffshipto, cust_blanketpos,"
-                "       cohead_ordercomments, cohead_shipcomments,"
-                "       cohead_shipchrg_id, cohead_shipform_id,"
-                "       cohead_misc,"
-                "       COALESCE(cohead_misc_accnt_id,-1) AS cohead_misc_accnt_id, cohead_misc_descrip,"
+                "       COALESCE(cohead_misc_accnt_id,-1) AS cohead_misc_accnt_id,"
                 "       CASE WHEN(cohead_wasquote) THEN COALESCE(cohead_quote_number, cohead_number)"
                 "            ELSE formatBoolYN(cohead_wasquote)"
                 "       END AS fromQuote,"
-                "       cohead_shipcomplete, COALESCE(cohead_prj_id,-1) AS cohead_prj_id,"
-                "       cohead_curr_id "
+                "       COALESCE(cohead_prj_id,-1) AS cohead_prj_id "
                 "FROM custinfo, cohead "
                 "WHERE ( (cohead_cust_id=cust_id)"
                 " AND (cohead_id=:cohead_id) );" );
@@ -2019,7 +2014,6 @@ void salesOrder::populate()
       _shipVia->setText(so.value("cohead_shipvia"));
 
       _fob->setText(so.value("cohead_fob"));
-      _freight->setLocalValue(so.value("cohead_freight").toDouble());
 
       if (so.value("cohead_holdtype").toString() == "N")
         _holdType->setCurrentItem(0);
@@ -2040,6 +2034,15 @@ void salesOrder::populate()
       _shippingComments->setText(so.value("cohead_shipcomments").toString());
       _shippingCharges->setId(so.value("cohead_shipchrg_id").toInt());
       _shippingForm->setId(so.value("cohead_shipform_id").toInt());
+      
+      _calcfreight = so.value("cohead_calcfreight").toBool();
+// Auto calculated _freight is populated in sFillItemList
+      if (!_calcfreight)
+      {
+        disconnect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
+        _freight->setLocalValue(so.value("cohead_freight").toDouble());
+        connect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
+      }
 
       _shipComplete->setChecked(so.value("cohead_shipcomplete").toBool());
 
@@ -2071,46 +2074,22 @@ void salesOrder::populate()
   else if (  (_mode == cNewQuote) ||(_mode == cEditQuote) || (_mode == cViewQuote) )
   {
     XSqlQuery qu;
-    qu.prepare( "SELECT quhead_custponumber, quhead_cust_id,"
-                "       quhead_quotedate, quhead_packdate, quhead_number,"
-                "       quhead_billtoname, quhead_billtoaddress1, quhead_billtoaddress2,"
-                "       quhead_billtoaddress3, quhead_billtocity, quhead_billtostate, quhead_billtozip,"
-                "       quhead_billtocountry,"
-                "       COALESCE(quhead_shipto_id,-1) AS quhead_shipto_id, quhead_shiptoname, quhead_shiptoaddress1,"
-                "       quhead_shiptoaddress2, quhead_shiptoaddress3, quhead_shiptocity,"
-                "       quhead_shiptostate, quhead_shiptozipcode, quhead_shiptophone,"
-                "       quhead_shiptocountry,"
-                "       quhead_freight,"
-                "       quhead_salesrep_id, quhead_commission AS commission,"
-                "       quhead_taxauth_id, quhead_terms_id,"
-                "       quhead_origin, quhead_shipvia, quhead_fob,"
+    qu.prepare( "SELECT quhead.*,"
+                "       COALESCE(quhead_shipto_id,-1) AS quhead_shipto_id,"
+                "       quhead_commission AS commission,"
+                "       COALESCE(quhead_taxauth_id, -1) AS quhead_taxauth_id,"
                 "       cust_ffshipto, cust_blanketpos,"
-                "       quhead_ordercomments, quhead_shipcomments,"
-                "       quhead_misc,"
-                "       COALESCE(quhead_misc_accnt_id,-1) AS quhead_misc_accnt_id, quhead_misc_descrip,"
-                "       quhead_prj_id, quhead_warehous_id, quhead_curr_id, quhead_expire "
+                "       COALESCE(quhead_misc_accnt_id,-1) AS quhead_misc_accnt_id "
                 "FROM quhead, custinfo "
                 "WHERE ( (quhead_cust_id=cust_id)"
                 " AND (quhead_id=:quhead_id) )"
                 "UNION "
-                "SELECT quhead_custponumber, quhead_cust_id,"
-                "       quhead_quotedate, quhead_packdate, quhead_number,"
-                "       quhead_billtoname, quhead_billtoaddress1, quhead_billtoaddress2,"
-                "       quhead_billtoaddress3, quhead_billtocity, quhead_billtostate, quhead_billtozip,"
-                "       quhead_billtocountry,"
-                "       COALESCE(quhead_shipto_id,-1) AS quhead_shipto_id, quhead_shiptoname, quhead_shiptoaddress1,"
-                "       quhead_shiptoaddress2, quhead_shiptoaddress3, quhead_shiptocity,"
-                "       quhead_shiptostate, quhead_shiptozipcode, quhead_shiptophone,"
-                "       quhead_shiptocountry,"
-                "       quhead_freight,"
-                "       quhead_salesrep_id, quhead_commission AS commission,"
-                "       COALESCE(quhead_taxauth_id, -1) AS quhead_taxauth_id, quhead_terms_id,"
-                "       quhead_origin, quhead_shipvia, quhead_fob,"
+                "SELECT quhead.*,"
+                "       COALESCE(quhead_shipto_id,-1) AS quhead_shipto_id,"
+                "       quhead_commission AS commission,"
+                "       COALESCE(quhead_taxauth_id, -1) AS quhead_taxauth_id,"
                 "       TRUE AS cust_ffshipto, NULL AS cust_blanketpos,"
-                "       quhead_ordercomments, quhead_shipcomments,"
-                "       quhead_misc,"
-                "       quhead_misc_accnt_id, quhead_misc_descrip,"
-                "       quhead_prj_id, quhead_warehous_id, quhead_curr_id, quhead_expire "
+                "       COALESCE(quhead_misc_accnt_id, -1) AS quhead_misc_accnt_id "
                 "FROM quhead, prospect "
                 "WHERE ( (quhead_cust_id=prospect_id)"
                 " AND (quhead_id=:quhead_id) )"
@@ -2191,7 +2170,15 @@ void salesOrder::populate()
       _shipVia->setText(qu.value("quhead_shipvia"));
 
       _fob->setText(qu.value("quhead_fob"));
-      _freight->setLocalValue(qu.value("quhead_freight").toDouble());
+
+      _calcfreight = qu.value("quhead_calcfreight").toBool();
+// Auto calculated _freight is populated in sFillItemList
+      if (!_calcfreight)
+      {
+        disconnect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
+        _freight->setLocalValue(qu.value("quhead_freight").toDouble());
+        connect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
+      }
 
       _miscCharge->setLocalValue(qu.value("quhead_misc").toDouble());
       _miscChargeDescription->setText(qu.value("quhead_misc_descrip"));
@@ -2442,20 +2429,24 @@ void salesOrder::sFillItemList()
               "       SUM(COALESCE(coitem_qtyord * coitem_qty_invuomratio, 0.00) *"
               "           (COALESCE(item_prodweight, 0.00) +"
               "            COALESCE(item_packweight, 0.00))) AS grossweight "
-              "FROM coitem, itemsite, item "
+              "FROM coitem, itemsite, item, cohead "
               "WHERE ((coitem_itemsite_id=itemsite_id)"
               " AND (itemsite_item_id=item_id)"
+              " AND (coitem_cohead_id=cohead_id)"
               " AND (coitem_status<>'X')"
-         " AND (coitem_cohead_id=:head_id));");
+              " AND (coitem_cohead_id=:head_id)) "
+              "GROUP BY cohead_freight;");
   else if (ISQUOTE(_mode))
     q.prepare("SELECT SUM(COALESCE(quitem_qtyord, 0.00) *"
               "           COALESCE(item_prodweight, 0.00)) AS netweight,"
               "       SUM(COALESCE(quitem_qtyord, 0.00) *"
               "           (COALESCE(item_prodweight, 0.00) +"
               "            COALESCE(item_packweight, 0.00))) AS grossweight "
-              "  FROM quitem, item "
+              "  FROM quitem, item, quhead "
               " WHERE ( (quitem_item_id=item_id)"
-              "   AND   (quitem_quhead_id=:head_id));");
+              "   AND   (quitem_quhead_id=quhead_id)"
+              "   AND   (quitem_quhead_id=:head_id)) "
+              " GROUP BY quhead_freight;");
   q.bindValue(":head_id", _soheadid);
   q.exec();
   if (q.first())
@@ -2464,6 +2455,30 @@ void salesOrder::sFillItemList()
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
+  }
+
+  if (_calcfreight)
+  {
+    if (ISORDER(_mode))
+      q.prepare("SELECT SUM(freightdata_total) AS freight "
+                "FROM freightDetail('SO', :head_id);");
+    else if (ISQUOTE(_mode))
+      q.prepare("SELECT SUM(freightdata_total) AS freight "
+                "FROM freightDetail('QU', :head_id);");
+    q.bindValue(":head_id", _soheadid);
+    q.exec();
+    if (q.first())
+    {
+      _freightCache = q.value("freight").toDouble();
+      disconnect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
+      _freight->setLocalValue(_freightCache);
+      connect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
+    }
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
 
   recalculateTax(); // triggers sCalculateTotal();
@@ -2609,7 +2624,11 @@ void salesOrder::clear()
   _shippingCharges->setCurrentItem(-1);
   _shippingForm->setCurrentItem(-1);
   _holdType->setCurrentItem(0);
+  _calcfreight = _metrics->boolean("CalculateFreight");
+  _freightCache = 0;
+  disconnect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
   _freight->clear();
+  connect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
   _orderComments->clear();
   _shippingComments->clear();
   _custPONumber->clear();
@@ -2618,7 +2637,6 @@ void salesOrder::clear()
   _miscChargeAccount->setId(-1);
   _subtotal->clear();
   _tax->clear();
-  _freight->clear();
   _miscCharge->clear();
   _total->clear();
   _orderCurrency->setCurrentItem(0);
@@ -2767,9 +2785,14 @@ void salesOrder::sHandleShipchrg(int pShipchrgid)
     if (query.first())
     {
       if (query.value("shipchrg_custfreight").toBool())
+      {
+        _calcfreight = _metrics->boolean("CalculateFreight");
         _freight->setEnabled(TRUE);
+      }
       else
       {
+        _calcfreight = FALSE;
+        _freightCache = 0;
         _freight->setEnabled(FALSE);
         _freight->clear();
       }
@@ -2825,6 +2848,53 @@ void salesOrder::sTaxDetail()
   {
     populate();
   }
+}
+
+void salesOrder::sFreightDetail()
+{
+  XSqlQuery freightq;
+  if (! ISVIEW(_mode))
+  {
+    if (ISORDER(_mode))
+      freightq.prepare("UPDATE cohead SET cohead_orderdate=:orderdate,"
+                       "                  cohead_warehous_id=:warehous_id,"
+                       "                  cohead_shipto_id=:shipto_id,"
+                       "                  cohead_shipvia=:shipvia "
+                       "WHERE (cohead_id=:head_id);");
+    else
+      freightq.prepare("UPDATE quhead SET quhead_quotedate=:orderdate,"
+                       "                  quhead_warehous_id=:warehous_id,"
+                       "                  quhead_shipto_id=:shipto_id,"
+                       "                  quhead_shipvia=:shipvia "
+                       "WHERE (quhead_id=:head_id);");
+    freightq.bindValue(":orderdate",      _orderDate->date());
+    freightq.bindValue(":warehous_id",    _warehouse->id());
+    freightq.bindValue(":shipto_id",      _shiptoid);
+    freightq.bindValue(":shipvia",        _shipVia->currentText());
+    freightq.bindValue(":head_id",        _soheadid);
+    freightq.exec();
+    if (freightq.lastError().type() != QSqlError::None)
+    {
+      systemError(this, freightq.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+  }
+
+  ParameterList params;
+  params.append("order_id", _soheadid);
+  params.append("document_number", _orderNumber->text());
+  params.append("calcfreight", _calcfreight);
+  if (ISORDER(_mode))
+    params.append("order_type", "SO");
+  else
+    params.append("order_type", "QU");
+
+  // mode => view since there are no fields to hold modified freight data
+  params.append("mode", "view");
+
+  freightBreakdown newdlg(this, "", TRUE);
+  newdlg.set(params);
+  newdlg.exec();
 }
 
 void salesOrder::setFreeFormShipto(bool pFreeForm)
@@ -3520,6 +3590,45 @@ void salesOrder::sIssueLineBalance()
 
 void salesOrder::sFreightChanged()
 {
+  if (_freight->isEnabled())
+  {
+    if (_calcfreight)
+    {
+      int answer;
+      answer = QMessageBox::question(this, tr("Manual Freight?"),
+                                           tr("<p>Manually editing the freight will disable "
+                                              "automatic Freight recalculations.  Are you "
+                                              "sure you want to do this?"),
+                                           QMessageBox::Yes,
+                                           QMessageBox::No | QMessageBox::Default);
+      if (answer == QMessageBox::Yes)
+        _calcfreight = false;
+      else
+      {
+        disconnect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
+        _freight->setLocalValue(_freightCache);
+        connect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
+      }
+    }
+    else if ( (!_calcfreight) && (_freight->localValue() == 0) )
+    {
+      int answer;
+      answer = QMessageBox::question(this, tr("Automatic Freight?"),
+                                           tr("<p>Manually clearing the freight will enable "
+                                              "automatic Freight recalculations.  Are you "
+                                              "sure you want to do this?"),
+                                           QMessageBox::Yes,
+                                           QMessageBox::No | QMessageBox::Default);
+      if (answer == QMessageBox::Yes)
+      {
+        _calcfreight = true;
+        disconnect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
+        _freight->setLocalValue(_freightCache);
+        connect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
+      }
+    }
+  }
+  
   XSqlQuery freightq;
   freightq.prepare("SELECT calculateTax(:tax_id, :freight, 0, 'A') AS freighta,"
                    "     calculateTax(:tax_id, :freight, 0, 'B') AS freightb,"

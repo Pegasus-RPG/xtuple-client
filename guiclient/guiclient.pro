@@ -206,7 +206,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                financialLayout.ui financialLayoutItem.ui financialLayoutGroup.ui financialLayouts.ui  \
                financialLayoutSpecial.ui                          financialLayoutColumns.ui           \
                firmPlannedOrder.ui firmPlannedOrdersByPlannerCode.ui fixACL.ui fixSerial.ui           \
-               freightClass.ui freightClasses.ui getGLDistDate.ui                                     \
+               freightBreakdown.ui freightClass.ui freightClasses.ui getGLDistDate.ui                 \
                getLotInfo.ui glSeries.ui glSeriesItem.ui glTransaction.ui glTransactionDetail.ui      \
                group.ui groups.ui                                                                     \
                honorific.ui honorifics.ui                                                             \
@@ -522,7 +522,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                financialLayout.h financialLayoutItem.h financialLayoutGroup.h financialLayouts.h      \
                financialLayoutSpecial.h                         financialLayoutColumns.h              \
                firmPlannedOrder.h firmPlannedOrdersByPlannerCode.h fixACL.h fixSerial.h               \
-               freightClass.h freightClasses.h getGLDistDate.h                                        \
+               freightBreakdown.h freightClass.h freightClasses.h getGLDistDate.h                     \
                getLotInfo.h glSeries.h glSeriesItem.h glTransaction.h glTransactionDetail.h           \
                group.h groups.h                                                                       \
                honorific.h honorifics.h                                                               \
@@ -845,7 +845,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp       
                financialLayout.cpp financialLayoutItem.cpp financialLayoutGroup.cpp financialLayouts.cpp \
                financialLayoutSpecial.cpp                           financialLayoutColumns.cpp        \
                firmPlannedOrder.cpp firmPlannedOrdersByPlannerCode.cpp fixACL.cpp fixSerial.cpp       \
-               freightClass.cpp freightClasses.cpp getGLDistDate.cpp                                  \
+               freightBreakdown.cpp freightClass.cpp freightClasses.cpp getGLDistDate.cpp             \
                getLotInfo.cpp glSeries.cpp glSeriesItem.cpp glTransaction.cpp glTransactionDetail.cpp \
                group.cpp groups.cpp                                                                   \
                honorific.cpp honorifics.cpp                                                           \
