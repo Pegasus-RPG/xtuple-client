@@ -213,13 +213,11 @@ void file::sHandleButtons()
   
   if (_fileButton->isChecked())
   {
-    _urlLit->setText("Path:");
     _fileList->show();
     url.setScheme("file");
   }
   else
   {
-    _urlLit->setText("Address:");
     _fileList->hide();
     url.setScheme("http");
   }
