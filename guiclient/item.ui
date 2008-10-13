@@ -876,9 +876,9 @@
        <property name="currentIndex" >
         <number>0</number>
        </property>
-       <widget class="QWidget" name="_textTab" >
+       <widget class="QWidget" name="_generalTab" >
         <attribute name="title" >
-         <string>Long Text</string>
+         <string>General</string>
         </attribute>
         <layout class="QGridLayout" >
          <item row="0" column="0" >
