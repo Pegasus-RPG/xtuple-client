@@ -1222,6 +1222,14 @@ void initErrorLookupHash()
 			       "to which the funds should be credited is not "
 			       "valid."),				0, "" },
 
+  { "replaceVoidedCheck", -1, TR("Cannot replace a check that is not voided "
+                                 "or has already been posted or replaced."),
+                                                                        0, "" },
+  { "replaceVoidedCheck", -2, TR("Cannot replace this voided check because "
+                                 "one of its line items has been reselected "
+                                 "for billing and is represented on another "
+                                 "check."),                             0, "" },
+
   { "reserveSoLineBalance", -1, "", -1, "reserveSoLineQty" },
   { "reserveSoLineBalance", -2, "", -2, "reserveSoLineQty" },
   { "reserveSoLineBalance", -3, "", -3, "reserveSoLineQty" },
