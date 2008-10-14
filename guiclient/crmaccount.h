@@ -129,6 +129,9 @@ protected slots:
     virtual void sOplistView();
     virtual void sOplistEdit();
     virtual void sCheckNumber();
+    virtual void sPrimaryToggled(bool p);
+    virtual void sSecondaryToggled(bool p);
+    virtual void sAllToggled(bool p);
 
 protected:
     virtual void closeEvent(QCloseEvent*);

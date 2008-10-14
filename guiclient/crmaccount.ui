@@ -454,13 +454,40 @@
         <layout class="QGridLayout" >
          <item row="0" column="0" >
           <layout class="QHBoxLayout" >
-           <property name="spacing" >
-            <number>12</number>
-           </property>
            <item>
-            <widget class="QRadioButton" name="_primaryButton" >
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeType" >
+              <enum>QSizePolicy::Preferred</enum>
+             </property>
+             <property name="sizeHint" >
+              <size>
+               <width>40</width>
+               <height>15</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="_primaryButton" >
+             <property name="maximumSize" >
+              <size>
+               <width>16777215</width>
+               <height>18</height>
+              </size>
+             </property>
+             <property name="font" >
+              <font>
+               <pointsize>10</pointsize>
+              </font>
+             </property>
              <property name="text" >
               <string>Primary</string>
+             </property>
+             <property name="checkable" >
+              <bool>true</bool>
              </property>
              <property name="checked" >
               <bool>true</bool>
@@ -468,16 +495,44 @@
             </widget>
            </item>
            <item>
-            <widget class="QRadioButton" name="_secondaryButton" >
+            <widget class="QPushButton" name="_secondaryButton" >
+             <property name="maximumSize" >
+              <size>
+               <width>16777215</width>
+               <height>18</height>
+              </size>
+             </property>
+             <property name="font" >
+              <font>
+               <pointsize>10</pointsize>
+              </font>
+             </property>
              <property name="text" >
               <string>Secondary</string>
+             </property>
+             <property name="checkable" >
+              <bool>true</bool>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QRadioButton" name="_allButton" >
+            <widget class="QPushButton" name="_allButton" >
+             <property name="maximumSize" >
+              <size>
+               <width>16777215</width>
+               <height>18</height>
+              </size>
+             </property>
+             <property name="font" >
+              <font>
+               <pointsize>10</pointsize>
+              </font>
+             </property>
              <property name="text" >
               <string>All</string>
+             </property>
+             <property name="checkable" >
+              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -488,8 +543,8 @@
              </property>
              <property name="sizeHint" >
               <size>
-               <width>391</width>
-               <height>20</height>
+               <width>40</width>
+               <height>15</height>
               </size>
              </property>
             </spacer>
@@ -946,6 +1001,15 @@
         <attribute name="title" >
          <string>Documents</string>
         </attribute>
+        <layout class="QGridLayout" >
+         <item row="0" column="0" >
+          <widget class="Documents" name="_documents" >
+           <property name="type" >
+            <enum>Documents::CRMAccount</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </widget>
      </item>
@@ -969,6 +1033,11 @@
    <class>CRMAcctCluster</class>
    <extends>QWidget</extends>
    <header>crmacctcluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Documents</class>
+   <extends>QWidget</extends>
+   <header>documents.h</header>
   </customwidget>
   <customwidget>
    <class>UsernameCluster</class>
@@ -1009,9 +1078,6 @@
   <tabstop>_taxauthButton</tabstop>
   <tabstop>_competitor</tabstop>
   <tabstop>_partner</tabstop>
-  <tabstop>_primaryButton</tabstop>
-  <tabstop>_secondaryButton</tabstop>
-  <tabstop>_allButton</tabstop>
   <tabstop>_primary</tabstop>
   <tabstop>_tab</tabstop>
   <tabstop>_contacts</tabstop>

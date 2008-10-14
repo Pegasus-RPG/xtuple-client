@@ -157,6 +157,9 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_prospect, SIGNAL(toggled(bool)), this, SLOT(sProspectToggled()));
   connect(_oplist, SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*, int)), this, SLOT(sPopulateOplistMenu(QMenu*)));
   connect(_number, SIGNAL(lostFocus()), this, SLOT(sCheckNumber()));
+  connect(_primaryButton, SIGNAL(toggled(bool)), this, SLOT(sPrimaryToggled(bool)));
+  connect(_secondaryButton, SIGNAL(toggled(bool)), this, SLOT(sSecondaryToggled(bool)));
+  connect(_allButton, SIGNAL(toggled(bool)), this, SLOT(sAllToggled(bool)));
 
   _contacts->addColumn(tr("First Name"),   50, Qt::AlignLeft, true, "cntct_first_name");
   _contacts->addColumn(tr("Last Name"),	   -1, Qt::AlignLeft, true, "cntct_last_name");
@@ -216,6 +219,7 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
   _taxauthId    = -1;
   _vendId       = -1;
   _comments->setId(-1);
+  _documents->setId(-1);
   _modal        = false;
   
   if (!_metrics->boolean("LotSerialControl"))
@@ -250,20 +254,6 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
-
-/*
-  _modal = pParams.inList("modal");
-
-  // if _modal then disable any widgets that lead to opening XWidgets
-  if (_modal)
-  {
-    _customerButton->setEnabled(false);
- //   _custInfoButton->setEnabled(false);
-    _taxauthButton->setEnabled(false);
-    _vendorButton->setEnabled(false);
-    _prospectButton->setEnabled(false);
-  }
-*/
 
   if (_mode == cView)
   {
@@ -322,6 +312,7 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
           return UndefinedError;
         }
         _comments->setId(_crmacctId);
+        _documents->setId(_crmacctId);
       }
       else if (q.lastError().type() != QSqlError::None)
       {
@@ -365,6 +356,7 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
       _secondary->setEnabled(FALSE);
       _notes->setEnabled(FALSE);
       _comments->setEnabled(FALSE);
+      _documents->setReadOnly(TRUE);
       _parentCrmacct->setEnabled(FALSE);
       _newCharacteristic->setEnabled(FALSE);
       _editCharacteristic->setEnabled(FALSE);
@@ -913,6 +905,7 @@ void crmaccount::sPopulate()
     _notes->setText(q.value("crmacct_notes").toString());
     _parentCrmacct->setId(q.value("crmacct_parent_id").toInt());
     _comments->setId(_crmacctId);
+    _documents->setId(_crmacctId);
     _owner->setUsername(q.value("crmacct_owner_username").toString());
 
     _customer->setChecked(_custId > 0);
@@ -1943,4 +1936,46 @@ void crmaccount::closeEvent(QCloseEvent *pEvent)
     _NumberGen = -1;
   }
   QWidget::closeEvent(pEvent);
+}
+
+void crmaccount::sPrimaryToggled(bool p)
+{
+  if (p)
+  {
+    disconnect(_secondaryButton, SIGNAL(toggled(bool)), this, SLOT(sSecondaryToggled(bool)));
+    disconnect(_allButton, SIGNAL(toggled(bool)), this, SLOT(sAllToggled(bool)));
+    _secondaryButton->setChecked(false);
+    _allButton->setChecked(false);
+    connect(_secondaryButton, SIGNAL(toggled(bool)), this, SLOT(sSecondaryToggled(bool)));
+    connect(_allButton, SIGNAL(toggled(bool)), this, SLOT(sAllToggled(bool)));
+  }
+  sHandleButtons();
+}
+
+void crmaccount::sSecondaryToggled(bool p)
+{
+  if (p)
+  {
+    disconnect(_primaryButton, SIGNAL(toggled(bool)), this, SLOT(sPrimaryyToggled(bool)));
+    disconnect(_allButton, SIGNAL(toggled(bool)), this, SLOT(sAllToggled(bool)));
+    _primaryButton->setChecked(false);
+    _allButton->setChecked(false);
+    connect(_primaryButton, SIGNAL(toggled(bool)), this, SLOT(sPrimaryToggled(bool)));
+    connect(_allButton, SIGNAL(toggled(bool)), this, SLOT(sAllToggled(bool)));
+  }
+  sHandleButtons();
+}
+
+void crmaccount::sAllToggled(bool p)
+{
+  if (p)
+  {
+    disconnect(_secondaryButton, SIGNAL(toggled(bool)), this, SLOT(sSecondaryToggled(bool)));
+    disconnect(_primaryButton, SIGNAL(toggled(bool)), this, SLOT(sPrimaryToggled(bool)));
+    _secondaryButton->setChecked(false);
+    _primaryButton->setChecked(false);
+    connect(_secondaryButton, SIGNAL(toggled(bool)), this, SLOT(sSecondaryToggled(bool)));
+    connect(_primaryButton, SIGNAL(toggled(bool)), this, SLOT(sPrimaryToggled(bool)));
+  }
+  sHandleButtons();
 }
