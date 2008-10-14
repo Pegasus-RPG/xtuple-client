@@ -64,7 +64,7 @@
 #include <xsqlquery.h>
 
 #include "file.h"
-#include "image.h"
+#include "imageview.h"
 #include "imageAssignment.h"
 #include "documents.h"
 
@@ -256,9 +256,9 @@ void Documents::sViewImage()
 {
   ParameterList params;
   params.append("mode", "view");
-  params.append("imageass_id", _images->altId());
+  params.append("image_id", _images->altId());
 
-  image newdlg(this, "", TRUE);
+  imageview newdlg(this, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -267,7 +267,7 @@ void Documents::sDeleteImage()
 {
   XSqlQuery q;
   q.prepare( "DELETE FROM imageass "
-             "WHERE (imageiss_id=:imageass_id);" );
+             "WHERE (imageass_id=:imageass_id);" );
   q.bindValue(":imageass_id", _images->id());
   q.exec();
 

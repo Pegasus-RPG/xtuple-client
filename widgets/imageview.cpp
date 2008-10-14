@@ -55,7 +55,7 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#include "image.h"
+#include "imageview.h"
 #include "OpenMFGWidgets.h"
 
 #include <xsqlquery.h>
@@ -76,7 +76,7 @@
  *  The dialog will by default be modeless, unless you set 'modal' to
  *  true to construct a modal dialog.
  */
-image::image(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+imageview::imageview(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
 {
   setupUi(this);
@@ -91,12 +91,12 @@ image::image(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _fileList->setMaximumWidth(25);
 #endif
 
-  _image = new QLabel();
-  _image->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+  _imageview = new QLabel();
+  _imageview->setAlignment(Qt::AlignLeft | Qt::AlignTop);
   QScrollArea * scrollArea = new QScrollArea();
   scrollArea->setWidgetResizable(true);
   scrollArea->setAlignment(Qt::AlignLeft | Qt::AlignTop);
-  scrollArea->setWidget(_image);
+  scrollArea->setWidget(_imageview);
   QHBoxLayout *layout = new QHBoxLayout;
   layout->setMargin(0);
   layout->addWidget(scrollArea);
@@ -106,7 +106,7 @@ image::image(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 /*
  *  Destroys the object and frees any allocated resources
  */
-image::~image()
+imageview::~imageview()
 {
   // no need to delete child widgets, Qt does it all for us
 }
@@ -115,12 +115,12 @@ image::~image()
  *  Sets the strings of the subwidgets using the current
  *  language.
  */
-void image::languageChange()
+void imageview::languageChange()
 {
   retranslateUi(this);
 }
 
-void image::set(const ParameterList &pParams)
+void imageview::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -128,7 +128,7 @@ void image::set(const ParameterList &pParams)
   param = pParams.value("image_id", &valid);
   if (valid)
   {
-    _imageid = param.toInt();
+    _imageviewid = param.toInt();
     populate();
   }
 
@@ -167,35 +167,35 @@ void image::set(const ParameterList &pParams)
   }
 }
 
-void image::populate()
+void imageview::populate()
 {
   XSqlQuery image;
   image.prepare( "SELECT image_name, image_descrip, image_data "
                  "FROM image "
                  "WHERE (image_id=:image_id);" );
-  image.bindValue(":image_id", _imageid);
+  image.bindValue(":image_id", _imageviewid);
   image.exec();
   if (image.first())
   {
     _name->setText(image.value("image_name").toString());
     _descrip->setText(image.value("image_descrip").toString());
 
-    __image.loadFromData(QUUDecode(image.value("image_data").toString()));
-    _image->setPixmap(QPixmap::fromImage(__image));
+    __imageview.loadFromData(QUUDecode(image.value("image_data").toString()));
+    _imageview->setPixmap(QPixmap::fromImage(__imageview));
   }
 }
 
-void image::sSave()
+void imageview::sSave()
 {
   XSqlQuery newImage;
 
   if (_mode == cNew)
   {
-    if (!__image.isNull())
+    if (!__imageview.isNull())
     {
       XSqlQuery imageid("SELECT NEXTVAL('image_image_id_seq') AS _image_id");
       if (imageid.first())
-        _imageid = imageid.value("_image_id").toInt();
+        _imageviewid = imageid.value("_image_id").toInt();
 //  ToDo
  
       QImageWriter imageIo;
@@ -206,7 +206,7 @@ void image::sSave()
       imageIo.setDevice(&imageBuffer);
       imageIo.setFormat("PNG");
 
-      if (!imageIo.write(__image))
+      if (!imageIo.write(__imageview))
       {
 //  ToDo - should issue an error here
         reject();
@@ -220,7 +220,7 @@ void image::sSave()
                         "(image_id, image_name, image_descrip, image_data) "
                         "VALUES "
                         "(:image_id, :image_name, :image_descrip, :image_data);" );
-      newImage.bindValue(":image_id", _imageid);
+      newImage.bindValue(":image_id", _imageviewid);
       newImage.bindValue(":image_name", _name->text());
       newImage.bindValue(":image_descrip", _descrip->text());
       newImage.bindValue(":image_data", imageString);
@@ -231,17 +231,17 @@ void image::sSave()
     newImage.prepare( "UPDATE image "
                       "SET image_name=:image_name, image_descrip=:image_descrip "
                       "WHERE (image_id=:image_id);" );
-    newImage.bindValue(":image_id", _imageid);
+    newImage.bindValue(":image_id", _imageviewid);
     newImage.bindValue(":image_name", _name->text());
     newImage.bindValue(":image_descrip", _descrip->text());
   }
 
   newImage.exec();
 
-  done(_imageid);
+  done(_imageviewid);
 }
 
-void image::sFileList()
+void imageview::sFileList()
 {
   bool first = TRUE;
   bool havejpg = FALSE;
@@ -274,10 +274,10 @@ void image::sFileList()
 
   if (_fileName->text().length())
   {
-    if(!__image.load(_fileName->text()))
+    if(!__imageview.load(_fileName->text()))
       QMessageBox::warning(this, tr("Could not load file"),
                             tr( "Could not load the selected file.\n"
                                 "The file is not an image, an unknown image format or is corrupt" ) );
-    _image->setPixmap(QPixmap::fromImage(__image));
+    _imageview->setPixmap(QPixmap::fromImage(__imageview));
   }
 }

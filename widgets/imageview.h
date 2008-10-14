@@ -55,21 +55,21 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#ifndef IMAGE_H
-#define IMAGE_H
+#ifndef IMAGEVIEW_H
+#define IMAGEVIEW_H
 
 #include <parameter.h>
 
 #include "OpenMFGWidgets.h"
-#include "ui_image.h"
+#include "ui_imageview.h"
 
-class image : public QDialog, public Ui::image
+class imageview : public QDialog, public Ui::imageview
 {
     Q_OBJECT
 
 public:
-    image(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
-    ~image();
+    imageview(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
+    ~imageview();
 
 public slots:
     virtual void set( const ParameterList & pParams );
@@ -82,10 +82,10 @@ protected slots:
 
 private:
     int _mode;
-    int _imageid;
-    QImage __image;
-    QLabel *_image;
+    int _imageviewid;
+    QImage __imageview;
+    QLabel *_imageview;
 
 };
 
-#endif // IMAGE_H
+#endif // IMAGEVIEW_H

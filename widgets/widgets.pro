@@ -141,7 +141,7 @@ SOURCES    += OpenMFGWidgets.cpp \
               xtreeview.cpp \
 	      screen.cpp \
               documents.cpp \
-              image.cpp \
+              imageview.cpp \
               imageAssignment.cpp \
               file.cpp \
 
@@ -189,13 +189,13 @@ HEADERS    += OpenMFGWidgets.h \
               xtreeview.h \
               screen.h \
               documents.h \
-              image.h \
+              imageview.h \
               imageAssignment.h \
               file.h \
 
 FORMS += accountSearch.ui \
          documents.ui \
-         image.ui \
+         imageview.ui \
          imageAssignment.ui \
          file.ui \
 

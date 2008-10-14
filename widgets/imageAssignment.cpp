@@ -58,7 +58,7 @@
 #include <QVariant>
 
 #include "imageAssignment.h"
-#include "image.h"
+#include "imageview.h"
 
 /*
  *  Constructs a imageAssignment as a child of 'parent', with the
@@ -225,7 +225,7 @@ void imageAssignment::sNew()
   ParameterList params;
   params.append("mode", "new");
 
-  image newdlg(this, "", TRUE);
+  imageview newdlg(this, "", TRUE);
   newdlg.set(params);
 
   if (newdlg.exec() != QDialog::Rejected)
@@ -238,7 +238,7 @@ void imageAssignment::sView()
   params.append("mode", "view");
   params.append("image_id", _image->id());
 
-  image newdlg(this, "", TRUE);
+  imageview newdlg(this, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
 }
