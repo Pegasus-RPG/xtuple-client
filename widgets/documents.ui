@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>376</width>
-    <height>200</height>
+    <width>404</width>
+    <height>249</height>
    </rect>
   </property>
   <property name="minimumSize" >
@@ -38,54 +38,14 @@
     <number>0</number>
    </property>
    <item row="0" column="0" >
-    <layout class="QHBoxLayout" >
-     <property name="spacing" >
-      <number>12</number>
-     </property>
-     <item>
-      <widget class="QPushButton" name="_imagesButton" >
-       <property name="text" >
-        <string>Images</string>
-       </property>
-       <property name="checkable" >
-        <bool>true</bool>
-       </property>
-       <property name="checked" >
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="_filesButton" >
-       <property name="text" >
-        <string>Files</string>
-       </property>
-       <property name="checkable" >
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer>
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" >
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
-   </item>
-   <item row="1" column="0" >
-    <widget class="QStackedWidget" name="_documentsStack" >
+    <widget class="QTabWidget" name="_tab" >
      <property name="currentIndex" >
       <number>0</number>
      </property>
-     <widget class="QWidget" name="_imagesPage" >
+     <widget class="QWidget" name="_imagesTab" >
+      <attribute name="title" >
+       <string>Images</string>
+      </attribute>
       <layout class="QGridLayout" >
        <item row="0" column="0" >
         <widget class="XTreeWidget" name="_images" >
@@ -184,7 +144,10 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="_filesPage" >
+     <widget class="QWidget" name="_filesTab" >
+      <attribute name="title" >
+       <string>Files</string>
+      </attribute>
       <layout class="QGridLayout" >
        <item row="0" column="0" >
         <widget class="XTreeWidget" name="_files" >
@@ -377,6 +340,22 @@
    </hints>
   </connection>
   <connection>
+   <sender>_images</sender>
+   <signal>doubleClicked(QModelIndex)</signal>
+   <receiver>_editImage</receiver>
+   <slot>animateClick()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>216</x>
+     <y>80</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>332</x>
+     <y>78</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
    <sender>_files</sender>
    <signal>valid(bool)</signal>
    <receiver>_editFile</receiver>
@@ -437,22 +416,6 @@
     <hint type="destinationlabel" >
      <x>343</x>
      <y>241</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_images</sender>
-   <signal>doubleClicked(QModelIndex)</signal>
-   <receiver>_editImage</receiver>
-   <slot>animateClick()</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>216</x>
-     <y>80</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>332</x>
-     <y>78</y>
     </hint>
    </hints>
   </connection>

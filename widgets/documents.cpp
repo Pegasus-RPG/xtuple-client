@@ -133,9 +133,6 @@ Documents::Documents(QWidget *pParent) :
   connect(_viewImage, SIGNAL(clicked()), this, SLOT(sViewImage()));
   connect(_printImage, SIGNAL(clicked()), this, SLOT(sPrintImage()));
   connect(_deleteImage, SIGNAL(clicked()), this, SLOT(sDeleteImage()));
-  
-  connect(_imagesButton, SIGNAL(toggled(bool)), this, SLOT(sImagesToggled(bool)));
-  connect(_filesButton, SIGNAL(toggled(bool)), this, SLOT(sFilesToggled(bool)));
 }
 
 void Documents::setType(enum DocumentSources pSource)
@@ -344,25 +341,4 @@ void Documents::refresh()
   
 }
 
-void Documents::sImagesToggled(bool p)
-{
-  if (p)
-  {
-    disconnect(_filesButton, SIGNAL(toggled(bool)), this, SLOT(sFilesToggled(bool)));
-    _filesButton->setChecked(!p);
-    _documentsStack->setCurrentIndex(0);
-    connect(_filesButton, SIGNAL(toggled(bool)), this, SLOT(sFilesToggled(bool)));
-  }
-}
-
-void Documents::sFilesToggled(bool p)
-{
-  if (p)
-  {
-    disconnect(_imagesButton, SIGNAL(toggled(bool)), this, SLOT(sImagesToggled(bool)));
-    _imagesButton->setChecked(!p);
-    _documentsStack->setCurrentIndex(1);
-    connect(_imagesButton, SIGNAL(toggled(bool)), this, SLOT(sImagesToggled(bool)));
-  }
-}
 
