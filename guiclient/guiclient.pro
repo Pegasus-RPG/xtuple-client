@@ -147,6 +147,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                dspQuotesByCustomer.ui dspQuotesByItem.ui dspOrderActivityByProject.ui                 \
                dspOperationsByWorkCenter.ui dspPartiallyShippedOrders.ui                              \
                dspPricesByItem.ui dspPricesByCustomer.ui dspPricesByCustomerType.ui                   \
+               dspFreightPricesByCustomer.ui dspFreightPricesByCustomerType.ui                        \
                dspReorderExceptionsByPlannerCode.ui dspRoughCutByWorkCenter.ui                        \
                dspReservations.ui                                                                     \
                dspRunningAvailability.ui                                                              \
@@ -462,6 +463,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                dspQuotesByCustomer.h dspQuotesByItem.h dspOrderActivityByProject.h                    \
                dspOperationsByWorkCenter.h dspPartiallyShippedOrders.h                                \
                dspPricesByItem.h dspPricesByCustomer.h dspPricesByCustomerType.h                      \
+               dspFreightPricesByCustomer.h dspFreightPricesByCustomerType.h                          \
                dspReorderExceptionsByPlannerCode.h dspRoughCutByWorkCenter.h                          \
                dspReservations.h                                                                      \
                dspRunningAvailability.h                                                               \
@@ -784,6 +786,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp       
                dspQuotesByCustomer.cpp dspQuotesByItem.cpp dspOrderActivityByProject.cpp              \
                dspOperationsByWorkCenter.cpp dspPartiallyShippedOrders.cpp                            \
                dspPricesByItem.cpp dspPricesByCustomer.cpp dspPricesByCustomerType.cpp                \
+               dspFreightPricesByCustomer.cpp dspFreightPricesByCustomerType.cpp                      \
                dspReorderExceptionsByPlannerCode.cpp dspRoughCutByWorkCenter.cpp                      \
                dspReservations.cpp                                                                    \
                dspRunningAvailability.cpp                                                             \

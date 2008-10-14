@@ -116,6 +116,8 @@
 #include "dspPricesByItem.h"
 #include "dspPricesByCustomer.h"
 #include "dspPricesByCustomerType.h"
+#include "dspFreightPricesByCustomer.h"
+#include "dspFreightPricesByCustomerType.h"
 
 #include "dspSalesOrdersByCustomer.h"
 #include "dspSalesOrdersByItem.h"
@@ -509,9 +511,12 @@ menuSales::menuSales(GUIClient *pParent) :
 
     // Sales | Pricing | Reports
     { "menu",	tr("&Reports"),	(char*)pricingReportsMenu,	pricingMenu,	true,	NULL, NULL, true, NULL },
-    { "so.dspPricesByCustomerType", tr("Prices by Customer &Type..."),	SLOT(sDspPricesByCustomerType()), pricingReportsMenu, _privileges->check("ViewCustomerPrices"), NULL, NULL,	 true, NULL },
-    { "so.dspPricesByCustomer", tr("Prices by &Customer..."),	SLOT(sDspPricesByCustomer()), pricingReportsMenu, _privileges->check("ViewCustomerPrices"), NULL, NULL,	 true, NULL },
-    { "so.dspPricesByItem", tr("Prices by &Item..."),	SLOT(sDspPricesByItem()), pricingReportsMenu, _privileges->check("ViewCustomerPrices"), NULL, NULL,	 true, NULL },
+    { "so.dspPricesByCustomerType", tr("Item Prices by Customer &Type..."),	SLOT(sDspPricesByCustomerType()), pricingReportsMenu, _privileges->check("ViewCustomerPrices"), NULL, NULL,	 true, NULL },
+    { "so.dspPricesByCustomer", tr("Item Prices by &Customer..."),	SLOT(sDspPricesByCustomer()), pricingReportsMenu, _privileges->check("ViewCustomerPrices"), NULL, NULL,	 true, NULL },
+    { "so.dspPricesByItem", tr("Item Prices by &Item..."),	SLOT(sDspPricesByItem()), pricingReportsMenu, _privileges->check("ViewCustomerPrices"), NULL, NULL,	 true, NULL },
+    { "separator",	NULL,	NULL,	pricingReportsMenu,	true,		NULL, NULL, true, NULL },
+    { "so.dspFreightPricesByCustomerType", tr("Freight Prices by Customer &Type..."),	SLOT(sDspFreightPricesByCustomerType()), pricingReportsMenu, _privileges->check("ViewCustomerPrices"), NULL, NULL,	 true, NULL },
+    { "so.dspFreightPricesByCustomer", tr("Freight Prices by &Customer..."),	SLOT(sDspFreightPricesByCustomer()), pricingReportsMenu, _privileges->check("ViewCustomerPrices"), NULL, NULL,	 true, NULL },
     
     { "separator",	NULL,	NULL,	mainMenu,	true,		NULL, NULL, true, NULL },
 
@@ -835,6 +840,16 @@ void menuSales::sDspPricesByCustomer()
 void menuSales::sDspPricesByCustomerType()
 {
   omfgThis->handleNewWindow(new dspPricesByCustomerType());
+}
+
+void menuSales::sDspFreightPricesByCustomer()
+{
+  omfgThis->handleNewWindow(new dspFreightPricesByCustomer());
+}
+
+void menuSales::sDspFreightPricesByCustomerType()
+{
+  omfgThis->handleNewWindow(new dspFreightPricesByCustomerType());
 }
 
 void menuSales::sDspCustomersByCusttype()
