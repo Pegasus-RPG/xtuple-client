@@ -472,17 +472,6 @@
            </item>
            <item>
             <widget class="QPushButton" name="_primaryButton" >
-             <property name="maximumSize" >
-              <size>
-               <width>16777215</width>
-               <height>18</height>
-              </size>
-             </property>
-             <property name="font" >
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
              <property name="text" >
               <string>Primary</string>
              </property>
@@ -496,17 +485,6 @@
            </item>
            <item>
             <widget class="QPushButton" name="_secondaryButton" >
-             <property name="maximumSize" >
-              <size>
-               <width>16777215</width>
-               <height>18</height>
-              </size>
-             </property>
-             <property name="font" >
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
              <property name="text" >
               <string>Secondary</string>
              </property>
@@ -517,17 +495,6 @@
            </item>
            <item>
             <widget class="QPushButton" name="_allButton" >
-             <property name="maximumSize" >
-              <size>
-               <width>16777215</width>
-               <height>18</height>
-              </size>
-             </property>
-             <property name="font" >
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
              <property name="text" >
               <string>All</string>
              </property>
