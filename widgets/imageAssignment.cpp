@@ -114,7 +114,15 @@ void imageAssignment::set(const ParameterList &pParams)
 
   param = pParams.value("sourceType", &valid);
   if (valid)
+  {
     _source = (enum Documents::DocumentSources)param.toInt();
+    if (_source != Documents::Item)
+    {
+      _purpose->setCurrentIndex(3);
+      _purpose->hide();
+      _purposeLit->hide();
+    }
+  }
 
   param = pParams.value("source_id", &valid);
   if (valid)
@@ -245,23 +253,32 @@ void imageAssignment::sFillList()
 void imageAssignment::populate()
 {
   XSqlQuery imageass;
-  imageass.prepare( "SELECT imageass_purpose, imageass_image_id "
+  imageass.prepare( "SELECT imageass_purpose, imageass_image_id, imageass_source "
                      "FROM imageass "
                      "WHERE (imageass_id=:imageass_id);" );
   imageass.bindValue(":imageass_id", _imageassid);
   imageass.exec();
   if (imageass.first())
   {
-    QString purpose = imageass.value("imageass_purpose").toString();
+    if (imageass.value("imageass_source").toString() == "I")
+    {
+      QString purpose = imageass.value("imageass_purpose").toString();
 
-    if (purpose == "I")
-      _purpose->setCurrentItem(0);
-    else if (purpose == "P")
-      _purpose->setCurrentItem(1);
-    else if (purpose == "E")
-      _purpose->setCurrentItem(2);
-    else if (purpose == "M")
-      _purpose->setCurrentItem(3);
+      if (purpose == "I")
+        _purpose->setCurrentItem(0);
+      else if (purpose == "P")
+        _purpose->setCurrentItem(1);
+      else if (purpose == "E")
+        _purpose->setCurrentItem(2);
+      else if (purpose == "M")
+        _purpose->setCurrentItem(3);
+    }
+    else
+    {
+      _purpose->setCurrentIndex(3);
+      _purpose->hide();
+      _purposeLit->hide();
+    }
 
     _image->setId(imageass.value("imageass_image_id").toInt());
   }

@@ -311,36 +311,8 @@ void Documents::refresh()
                "FROM imageass, image "
                "WHERE ( (imageass_image_id=image_id)"
                " AND (imageass_source=:source) "
-               " AND (imageass_source_id=:sourceid) ) ");
-  if(_source == CRMAccount)  
-  {
-    // If it's CRMAccount we want to do some extra joining in our SQL
-    sql += "UNION "
-           "SELECT imageass_id, imageass_image_id, image_name, firstLine(image_descrip) AS image_descrip,"
-           "       :misc AS image_purpose "
-           "FROM crmacct, itemimage, image "
-           "WHERE ( (imageass_image_id=image_id)"
-           "   AND (imageass_source=:sourceCust)"
-           "   AND (crmacct_id=:sourceid)"
-           "   AND (comment_source_id=crmacct_cust_id) ) "
-           " UNION "
-           "SELECT imageass_id, imageass_image_id, image_name, firstLine(image_descrip) AS image_descrip,"
-           "       :misc AS image_purpose "
-           "FROM crmacct, itemimage, image "
-           "WHERE ( (imageass_image_id=image_id)"
-           "   AND((imageass_source=:sourceVend)"
-           "   AND (crmacct_id=:sourceid)"
-           "   AND (imageass_source_id=crmacct_vend_id) ) "
-           " UNION "
-           "SELECT imageass_id, imageass_image_id, image_name, firstLine(image_descrip) AS image_descrip,"
-           "       :misc AS image_purpose "
-           "FROM crmacct, itemimage, image "
-           "WHERE ( (imageass_image_id=image_id)"
-           " WHERE((imageass_source=:sourceContact)"
-           "   AND (cntct_crmacct_id=:sourceid)"
-           "   AND (imageass_source_id=cntct_id) )";
-  }
-  sql += "ORDER BY image_name; ";
+               " AND (imageass_source_id=:sourceid) ) "
+               "ORDER BY image_name; ");
   query.prepare(sql);
   query.bindValue(":inventory", tr("Inventory Description"));
   query.bindValue(":product", tr("Product Description"));
@@ -359,30 +331,8 @@ void Documents::refresh()
   sql = "SELECT url_id, url_title, url_url "
         "FROM url "
         "WHERE ((url_source_id=:sourceid) "
-        "AND (url_source=:source)) ";
-  if(_source == CRMAccount)  
-  {
-    // If it's CRMAccount we want to do some extra joining in our SQL
-    sql += "UNION "
-           "SELECT url_id, url_title, url_url "
-           "FROM crmacct, url "
-           "   AND (url_source=:sourceCust)"
-           "   AND (crmacct_id=:sourceid)"
-           "   AND (url_source_id=crmacct_cust_id) ) "
-           " UNION "
-           "SELECT url_id, url_title, url_url "
-           "FROM crmacct, url "
-           "WHERE ((url_source=:sourceVend)"
-           "   AND (crmacct_id=:sourceid)"
-           "   AND (url_source_id=crmacct_vend_id) ) "
-           " UNION "
-           "SELECT url_id, url_title, url_url "
-           "FROM crmacct, url "           
-           "WHERE ((url_source=:sourceContact)"
-           "   AND (cntct_crmacct_id=:sourceid)"
-           "   AND (url_source_id=cntct_id) )" ;
-  }
-  sql += "ORDER BY url_title; ";
+        "AND (url_source=:source)) "
+        "ORDER BY url_title; ";
   query.prepare(sql);
   query.bindValue(":sourceCust", _documentMap[Customer].ident);
   query.bindValue(":sourceContact", _documentMap[Contact].ident);
