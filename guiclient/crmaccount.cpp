@@ -150,16 +150,10 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(omfgThis, SIGNAL(prospectsUpdated()),  this, SLOT(sUpdateRelationships()));
   connect(omfgThis, SIGNAL(taxAuthsUpdated(int)),this, SLOT(sUpdateRelationships()));
   connect(omfgThis, SIGNAL(vendorsUpdated()),    this, SLOT(sUpdateRelationships()));
-  connect(_primaryButton, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
-  connect(_secondaryButton, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
-  connect(_allButton, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
   connect(_customer, SIGNAL(toggled(bool)), this, SLOT(sCustomerToggled()));
   connect(_prospect, SIGNAL(toggled(bool)), this, SLOT(sProspectToggled()));
   connect(_oplist, SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*, int)), this, SLOT(sPopulateOplistMenu(QMenu*)));
   connect(_number, SIGNAL(lostFocus()), this, SLOT(sCheckNumber()));
-  connect(_primaryButton, SIGNAL(toggled(bool)), this, SLOT(sPrimaryToggled(bool)));
-  connect(_secondaryButton, SIGNAL(toggled(bool)), this, SLOT(sSecondaryToggled(bool)));
-  connect(_allButton, SIGNAL(toggled(bool)), this, SLOT(sAllToggled(bool)));
 
   _contacts->addColumn(tr("First Name"),   50, Qt::AlignLeft, true, "cntct_first_name");
   _contacts->addColumn(tr("Last Name"),	   -1, Qt::AlignLeft, true, "cntct_last_name");
@@ -1736,16 +1730,6 @@ void crmaccount::sCustomerInfo()
   omfgThis->handleNewWindow(newdlg);
 }
 
-void crmaccount::sHandleButtons()
-{
-  if (_primaryButton->isChecked())
-    _widgetStack->setCurrentIndex(0);
-  else if (_secondaryButton->isChecked())
-    _widgetStack->setCurrentIndex(1);
-  else
-    _widgetStack->setCurrentIndex(2);
-}
-
 void crmaccount::sCustomerToggled()
 {
   if (_customer->isChecked())
@@ -1936,46 +1920,4 @@ void crmaccount::closeEvent(QCloseEvent *pEvent)
     _NumberGen = -1;
   }
   QWidget::closeEvent(pEvent);
-}
-
-void crmaccount::sPrimaryToggled(bool p)
-{
-  if (p)
-  {
-    disconnect(_secondaryButton, SIGNAL(toggled(bool)), this, SLOT(sSecondaryToggled(bool)));
-    disconnect(_allButton, SIGNAL(toggled(bool)), this, SLOT(sAllToggled(bool)));
-    _secondaryButton->setChecked(false);
-    _allButton->setChecked(false);
-    connect(_secondaryButton, SIGNAL(toggled(bool)), this, SLOT(sSecondaryToggled(bool)));
-    connect(_allButton, SIGNAL(toggled(bool)), this, SLOT(sAllToggled(bool)));
-  }
-  sHandleButtons();
-}
-
-void crmaccount::sSecondaryToggled(bool p)
-{
-  if (p)
-  {
-    disconnect(_primaryButton, SIGNAL(toggled(bool)), this, SLOT(sPrimaryyToggled(bool)));
-    disconnect(_allButton, SIGNAL(toggled(bool)), this, SLOT(sAllToggled(bool)));
-    _primaryButton->setChecked(false);
-    _allButton->setChecked(false);
-    connect(_primaryButton, SIGNAL(toggled(bool)), this, SLOT(sPrimaryToggled(bool)));
-    connect(_allButton, SIGNAL(toggled(bool)), this, SLOT(sAllToggled(bool)));
-  }
-  sHandleButtons();
-}
-
-void crmaccount::sAllToggled(bool p)
-{
-  if (p)
-  {
-    disconnect(_secondaryButton, SIGNAL(toggled(bool)), this, SLOT(sSecondaryToggled(bool)));
-    disconnect(_primaryButton, SIGNAL(toggled(bool)), this, SLOT(sPrimaryToggled(bool)));
-    _secondaryButton->setChecked(false);
-    _primaryButton->setChecked(false);
-    connect(_secondaryButton, SIGNAL(toggled(bool)), this, SLOT(sSecondaryToggled(bool)));
-    connect(_primaryButton, SIGNAL(toggled(bool)), this, SLOT(sPrimaryToggled(bool)));
-  }
-  sHandleButtons();
 }

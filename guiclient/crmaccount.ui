@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>600</height>
+    <height>606</height>
    </rect>
   </property>
   <property name="minimumSize" >
@@ -453,77 +453,14 @@
         </attribute>
         <layout class="QGridLayout" >
          <item row="0" column="0" >
-          <layout class="QHBoxLayout" >
-           <item>
-            <spacer>
-             <property name="orientation" >
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeType" >
-              <enum>QSizePolicy::Preferred</enum>
-             </property>
-             <property name="sizeHint" >
-              <size>
-               <width>40</width>
-               <height>15</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <widget class="QPushButton" name="_primaryButton" >
-             <property name="text" >
-              <string>Primary</string>
-             </property>
-             <property name="checkable" >
-              <bool>true</bool>
-             </property>
-             <property name="checked" >
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="_secondaryButton" >
-             <property name="text" >
-              <string>Secondary</string>
-             </property>
-             <property name="checkable" >
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="_allButton" >
-             <property name="text" >
-              <string>All</string>
-             </property>
-             <property name="checkable" >
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer>
-             <property name="orientation" >
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" >
-              <size>
-               <width>40</width>
-               <height>15</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </item>
-         <item row="1" column="0" >
-          <widget class="QStackedWidget" name="_widgetStack" >
+          <widget class="QTabWidget" name="_contactsTab_2" >
            <property name="currentIndex" >
             <number>0</number>
            </property>
-           <widget class="QWidget" name="_primaryPage" >
+           <widget class="QWidget" name="_prmaryTab" >
+            <attribute name="title" >
+             <string>Primary</string>
+            </attribute>
             <layout class="QGridLayout" >
              <item row="0" column="0" >
               <widget class="ContactCluster" name="_primary" >
@@ -544,22 +481,12 @@
                </property>
               </widget>
              </item>
-             <item row="1" column="0" >
-              <spacer>
-               <property name="orientation" >
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeHint" >
-                <size>
-                 <width>489</width>
-                 <height>0</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
             </layout>
            </widget>
-           <widget class="QWidget" name="_secondaryPage" >
+           <widget class="QWidget" name="_secondaryTab" >
+            <attribute name="title" >
+             <string>Secondary</string>
+            </attribute>
             <layout class="QGridLayout" >
              <item row="0" column="0" >
               <widget class="ContactCluster" name="_secondary" >
@@ -574,22 +501,12 @@
                </property>
               </widget>
              </item>
-             <item row="1" column="0" >
-              <spacer>
-               <property name="orientation" >
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeHint" >
-                <size>
-                 <width>20</width>
-                 <height>40</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
             </layout>
            </widget>
-           <widget class="QWidget" name="_allPage" >
+           <widget class="QWidget" name="_allTab" >
+            <attribute name="title" >
+             <string>All</string>
+            </attribute>
             <layout class="QGridLayout" >
              <item row="0" column="0" >
               <widget class="XTreeWidget" name="_contacts" />
