@@ -448,7 +448,7 @@ void openSalesOrders::sFillList()
                "         cohead_shiptostate, cohead_shiptozipcode,"
                "         cohead_freight, cohead_misc, cohead_imported,"
                "         cohead_ordercomments, cohead_shipcomments,"
-               "         cohead_shiptophone, cohead_shipchrg_id,"
+               "         cohead_shipchrg_id, cohead_shiptophone,"
                "         cohead_shipform_id, cohead_billtoname,"
                "         cohead_billtoaddress1, cohead_billtoaddress2,"
                "         cohead_billtoaddress3, cohead_billtocity,"
@@ -459,7 +459,17 @@ void openSalesOrders::sFillList()
                "         cohead_lastupdated, cohead_shipcomplete,"
                "         cohead_created, cohead_creator, cohead_quote_number,"
                "         cohead_billtocountry, cohead_shiptocountry,"
-               "         cohead_curr_id, cohead_taxauth_id, cohead_calcfreight "
+               "         cohead_curr_id, cohead_taxauth_id, cohead_calcfreight,"
+               "         cohead_shipto_cntct_id, cohead_shipto_cntct_honorific,"
+               "         cohead_shipto_cntct_first_name, cohead_shipto_cntct_middle,"
+               "         cohead_shipto_cntct_last_name, cohead_shipto_cntct_suffix,"
+               "         cohead_shipto_cntct_phone, cohead_shipto_cntct_title,"
+               "         cohead_shipto_cntct_fax, cohead_shipto_cntct_email,"
+               "         cohead_billto_cntct_id, cohead_billto_cntct_honorific,"
+               "         cohead_billto_cntct_first_name, cohead_billto_cntct_middle,"
+               "         cohead_billto_cntct_last_name, cohead_billto_cntct_suffix,"
+               "         cohead_billto_cntct_phone, cohead_billto_cntct_title,"
+               "         cohead_billto_cntct_fax, cohead_billto_cntct_email "
 	       "ORDER BY cohead_number " );
   MetaSQLQuery mql(sql);
   q = mql.toQuery(params);

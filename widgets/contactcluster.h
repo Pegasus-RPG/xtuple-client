@@ -210,6 +210,8 @@ class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
 	inline virtual int     searchAcct()	const { return _searchAcctId; };
 	inline virtual QString webAddress()	const { return _webaddr->text(); };
 	inline virtual bool    webaddrVisible() const { return _webaddr->isVisible(); };
+        inline virtual QString suffix()		const { return _suffix->text(); };
+        inline virtual QString middle()		const { return _middle->text(); };
 
 	//Return Data Mapping values
   	virtual QString  fieldNameChange()        const { return _fieldNameChange; };

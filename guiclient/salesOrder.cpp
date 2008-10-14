@@ -110,6 +110,8 @@ salesOrder::salesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
+
+  sCheckValidContacts();
   
   connect(_action,    SIGNAL(clicked()), this, SLOT(sAction()));
   connect(_authorize, SIGNAL(clicked()), this, SLOT(sAuthorizeCC()));
@@ -154,7 +156,6 @@ salesOrder::salesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_outstandingCM, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
   connect(_authCC, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
   
-  _custType->setText("");
   _saved = false;
 
   setFreeFormShipto(false);
@@ -256,6 +257,7 @@ salesOrder::salesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
     _requireInventory->setChecked(true);
     _requireInventory->setEnabled(false);
   }
+
 }
 
 salesOrder::~salesOrder()
@@ -775,7 +777,7 @@ bool salesOrder::save(bool partial)
                "    cohead_shiptoname=:shiptoname, cohead_shiptoaddress1=:shiptoaddress1,"
                "    cohead_shiptoaddress2=:shiptoaddress2, cohead_shiptoaddress3=:shiptoaddress3,"
                "    cohead_shiptocity=:shiptocity, cohead_shiptostate=:shiptostate, cohead_shiptozipcode=:shiptozipcode,"
-               "    cohead_shiptophone=:shiptophone, cohead_shiptocountry=:shiptocountry,"
+               "    cohead_shiptocountry=:shiptocountry,"
                "    cohead_orderdate=:orderdate, cohead_packdate=:packdate,"
                "    cohead_salesrep_id=:salesrep_id, cohead_commission=:commission,"
                "    cohead_taxauth_id=:taxauth_id, cohead_terms_id=:terms_id, cohead_origin=:origin,"
@@ -787,7 +789,27 @@ bool salesOrder::save(bool partial)
                "    cohead_shipchrg_id=:shipchrg_id, cohead_shipform_id=:shipform_id,"
                "    cohead_prj_id=:prj_id,"
                "    cohead_curr_id = :curr_id,"
-               "    cohead_shipcomplete=:cohead_shipcomplete "
+               "    cohead_shipcomplete=:cohead_shipcomplete,"
+               "    cohead_shipto_cntct_id=:shipto_cntct_id,"
+               "    cohead_shipto_cntct_honorific=:shipto_cntct_honorific,"
+               "    cohead_shipto_cntct_first_name=:shipto_cntct_first_name,"
+               "    cohead_shipto_cntct_middle=:shipto_cntct_middle,"
+               "    cohead_shipto_cntct_last_name=:shipto_cntct_last_name,"
+               "    cohead_shipto_cntct_suffix=:shipto_cntct_suffix,"
+               "    cohead_shipto_cntct_phone=:shipto_cntct_phone,"
+               "    cohead_shipto_cntct_title=:shipto_cntct_title,"
+               "    cohead_shipto_cntct_fax=:shipto_cntct_fax,"
+               "    cohead_shipto_cntct_email=:shipto_cntct_email,"
+               "    cohead_billto_cntct_id=:billto_cntct_id,"
+               "    cohead_billto_cntct_honorific=:billto_cntct_honorific,"
+               "    cohead_billto_cntct_first_name=:billto_cntct_first_name,"
+               "    cohead_billto_cntct_middle=:billto_cntct_middle,"
+               "    cohead_billto_cntct_last_name=:billto_cntct_last_name,"
+               "    cohead_billto_cntct_suffix=:billto_cntct_suffix,"
+               "    cohead_billto_cntct_phone=:billto_cntct_phone,"
+               "    cohead_billto_cntct_title=:billto_cntct_title,"
+               "    cohead_billto_cntct_fax=:billto_cntct_fax,"
+               "    cohead_billto_cntct_email=:billto_cntct_email "
                "WHERE (cohead_id=:id);" );
   else if (_mode == cNew)
     q.prepare("INSERT INTO cohead "
@@ -800,7 +822,7 @@ bool salesOrder::save(bool partial)
                "    cohead_shiptoname, cohead_shiptoaddress1,"
                "    cohead_shiptoaddress2, cohead_shiptoaddress3,"
                "    cohead_shiptocity, cohead_shiptostate, cohead_shiptozipcode,"
-               "    cohead_shiptophone, cohead_shiptocountry,"
+               "    cohead_shiptocountry,"
                "    cohead_orderdate, cohead_packdate,"
                "    cohead_salesrep_id, cohead_commission,"
                "    cohead_taxauth_id, cohead_terms_id, cohead_origin,"
@@ -812,7 +834,27 @@ bool salesOrder::save(bool partial)
                "    cohead_shipchrg_id, cohead_shipform_id,"
                "    cohead_prj_id,"
                "    cohead_curr_id,"
-               "    cohead_shipcomplete) "
+               "    cohead_shipcomplete,"
+               "    cohead_shipto_cntct_id,"
+               "    cohead_shipto_cntct_honorific,"
+               "    cohead_shipto_cntct_first_name,"
+               "    cohead_shipto_cntct_middle,"
+               "    cohead_shipto_cntct_last_name,"
+               "    cohead_shipto_cntct_suffix,"
+               "    cohead_shipto_cntct_phone,"
+               "    cohead_shipto_cntct_title,"
+               "    cohead_shipto_cntct_fax,"
+               "    cohead_shipto_cntct_email,"
+               "    cohead_billto_cntct_id,"
+               "    cohead_billto_cntct_honorific,"
+               "    cohead_billto_cntct_first_name,"
+               "    cohead_billto_cntct_middle,"
+               "    cohead_billto_cntct_last_name,"
+               "    cohead_billto_cntct_suffix,"
+               "    cohead_billto_cntct_phone,"
+               "    cohead_billto_cntct_title,"
+               "    cohead_billto_cntct_fax,"
+               "    cohead_billto_cntct_email)"
                "    VALUES (:id,:number, :cust_id,"
                "    :custponumber,:shipto_id,"
                "    :billtoname, :billtoaddress1,"
@@ -822,7 +864,7 @@ bool salesOrder::save(bool partial)
                "    :shiptoname, :shiptoaddress1,"
                "    :shiptoaddress2, :shiptoaddress3,"
                "    :shiptocity, :shiptostate, :shiptozipcode,"
-               "    :shiptophone, :shiptocountry,"
+               "    :shiptocountry,"
                "    :orderdate, :packdate,"
                "    :salesrep_id, :commission,"
                "    :taxauth_id, :terms_id, :origin,"
@@ -834,7 +876,27 @@ bool salesOrder::save(bool partial)
                "    :shipchrg_id, :shipform_id,"
                "    :prj_id,"
                "    :curr_id,"
-               "    :cohead_shipcomplete) ");
+               "    :shipcomplete,"
+               "    :shipto_cntct_id,"
+               "    :shipto_cntct_honorific,"
+               "    :shipto_cntct_first_name,"
+               "    :shipto_cntct_middle,"
+               "    :shipto_cntct_last_name,"
+               "    :shipto_cntct_suffix,"
+               "    :shipto_cntct_phone,"
+               "    :shipto_cntct_title,"
+               "    :shipto_cntct_fax,"
+               "    :shipto_cntct_email,"
+               "    :billto_cntct_id,"
+               "    :billto_cntct_honorific,"
+               "    :billto_cntct_first_name,"
+               "    :billto_cntct_middle,"
+               "    :billto_cntct_last_name,"
+               "    :billto_cntct_suffix,"
+               "    :billto_cntct_phone,"
+               "    :billto_cntct_title,"
+               "    :billto_cntct_fax,"
+               "    :billto_cntct_email) ");
   else if ((_mode == cEditQuote) || ((_mode == cNewQuote) && _saved))
     q.prepare( "UPDATE quhead "
                "SET quhead_custponumber=:custponumber, quhead_shipto_id=:shipto_id,"
@@ -845,7 +907,7 @@ bool salesOrder::save(bool partial)
                "    quhead_shiptoname=:shiptoname, quhead_shiptoaddress1=:shiptoaddress1,"
                "    quhead_shiptoaddress2=:shiptoaddress2, quhead_shiptoaddress3=:shiptoaddress3,"
                "    quhead_shiptocity=:shiptocity, quhead_shiptostate=:shiptostate, quhead_shiptozipcode=:shiptozipcode,"
-               "    quhead_shiptophone=:shiptophone, quhead_shiptocountry=:shiptocountry,"
+               "    quhead_shiptocountry=:shiptocountry,"
                "    quhead_quotedate=:orderdate, quhead_packdate=:packdate,"
                "    quhead_salesrep_id=:salesrep_id, quhead_commission=:commission,"
                "    quhead_taxauth_id=:taxauth_id, quhead_terms_id=:terms_id,"
@@ -854,7 +916,27 @@ bool salesOrder::save(bool partial)
                "    quhead_misc=:misc, quhead_misc_accnt_id=:misc_accnt_id, quhead_misc_descrip=:misc_descrip,"
                "    quhead_ordercomments=:ordercomments, quhead_shipcomments=:shipcomments,"
                "    quhead_prj_id=:prj_id, quhead_warehous_id=:warehous_id,"
-               "    quhead_curr_id = :curr_id, quhead_expire=:expire "
+               "    quhead_curr_id = :curr_id, quhead_expire=:expire,"
+               "    quhead_shipto_cntct_id=:shipto_cntct_id,"
+               "    quhead_shipto_cntct_honorific=:shipto_cntct_honorific,"
+               "    quhead_shipto_cntct_first_name=:shipto_cntct_first_name,"
+               "    quhead_shipto_cntct_middle=:shipto_cntct_middle,"
+               "    quhead_shipto_cntct_last_name=:shipto_cntct_last_name,"
+               "    quhead_shipto_cntct_suffix=:shipto_cntct_suffix,"
+               "    quhead_shipto_cntct_phone=:shipto_cntct_phone,"
+               "    quhead_shipto_cntct_title=:shipto_cntct_title,"
+               "    quhead_shipto_cntct_fax=:shipto_cntct_fax,"
+               "    quhead_shipto_cntct_email=:shipto_cntct_email,"
+               "    quhead_billto_cntct_id=:billto_cntct_id,"
+               "    quhead_billto_cntct_honorific=:billto_cntct_honorific,"
+               "    quhead_billto_cntct_first_name=:billto_cntct_first_name,"
+               "    quhead_billto_cntct_middle=:billto_cntct_middle,"
+               "    quhead_billto_cntct_last_name=:billto_cntct_last_name,"
+               "    quhead_billto_cntct_suffix=:billto_cntct_suffix,"
+               "    quhead_billto_cntct_phone=:billto_cntct_phone,"
+               "    quhead_billto_cntct_title=:billto_cntct_title,"
+               "    quhead_billto_cntct_fax=:billto_cntct_fax,"
+               "    quhead_billto_cntct_email=:billto_cntct_email "
               "WHERE (quhead_id=:id);" );
   else if (_mode == cNewQuote)
       q.prepare( "INSERT INTO quhead ("
@@ -867,7 +949,7 @@ bool salesOrder::save(bool partial)
                "    quhead_shiptoname, quhead_shiptoaddress1,"
                "    quhead_shiptoaddress2, quhead_shiptoaddress3,"
                "    quhead_shiptocity, quhead_shiptostate, quhead_shiptozipcode,"
-               "    quhead_shiptophone, quhead_shiptocountry,"
+               "    quhead_shiptocountry,"
                "    quhead_quotedate, quhead_packdate,"
                "    quhead_salesrep_id, quhead_commission,"
                "    quhead_taxauth_id, quhead_terms_id,"
@@ -876,7 +958,27 @@ bool salesOrder::save(bool partial)
                "    quhead_misc, quhead_misc_accnt_id, quhead_misc_descrip,"
                "    quhead_ordercomments, quhead_shipcomments,"
                "    quhead_prj_id, quhead_warehous_id,"
-               "    quhead_curr_id, quhead_expire)"
+               "    quhead_curr_id, quhead_expire,"
+               "    quhead_shipto_cntct_id,"
+               "    quhead_shipto_cntct_honorific,"
+               "    quhead_shipto_cntct_first_name,"
+               "    quhead_shipto_cntct_middle,"
+               "    quhead_shipto_cntct_last_name,"
+               "    quhead_shipto_cntct_suffix,"
+               "    quhead_shipto_cntct_phone,"
+               "    quhead_shipto_cntct_title,"
+               "    quhead_shipto_cntct_fax,"
+               "    quhead_shipto_cntct_email,"
+               "    quhead_billto_cntct_id,"
+               "    quhead_billto_cntct_honorific,"
+               "    quhead_billto_cntct_first_name,"
+               "    quhead_billto_cntct_middle,"
+               "    quhead_billto_cntct_last_name,"
+               "    quhead_billto_cntct_suffix,"
+               "    quhead_billto_cntct_phone,"
+               "    quhead_billto_cntct_title,"
+               "    quhead_billto_cntct_fax,"
+               "    quhead_billto_cntct_email)"
                "    VALUES ("
                "    :id, :number, :cust_id,"
                "    :custponumber, :shipto_id,"
@@ -887,7 +989,7 @@ bool salesOrder::save(bool partial)
                "    :shiptoname, :shiptoaddress1,"
                "    :shiptoaddress2, :shiptoaddress3,"
                "    :shiptocity, :shiptostate, :shiptozipcode,"
-               "    :shiptophone, :shiptocountry,"
+               "    :shiptocountry,"
                "    :orderdate, :packdate,"
                "    :salesrep_id, :commission,"
                "    :taxauth_id, :terms_id,"
@@ -896,8 +998,27 @@ bool salesOrder::save(bool partial)
                "    :misc, :misc_accnt_id, :misc_descrip,"
                "    :ordercomments, :shipcomments,"
                "    :prj_id, :warehous_id,"
-               "    :curr_id, :expire);");
-
+               "    :curr_id, :expire,"
+               "    :shipto_cntct_id,"
+               "    :shipto_cntct_honorific,"
+               "    :shipto_cntct_first_name,"
+               "    :shipto_cntct_middle,"
+               "    :shipto_cntct_last_name,"
+               "    :shipto_cntct_suffix,"
+               "    :shipto_cntct_phone,"
+               "    :shipto_cntct_title,"
+               "    :shipto_cntct_fax,"
+               "    :shipto_cntct_email,"
+               "    :billto_cntct_id,"
+               "    :billto_cntct_honorific,"
+               "    :billto_cntct_first_name,"
+               "    :billto_cntct_middle,"
+               "    :billto_cntct_last_name,"
+               "    :billto_cntct_suffix,"
+               "    :billto_cntct_phone,"
+               "    :billto_cntct_title,"
+               "    :billto_cntct_fax,"
+               "    :billto_cntct_email) ");
   q.bindValue(":id", _soheadid );
   q.bindValue(":number", _orderNumber->text().toInt());
   q.bindValue(":orderdate", _orderDate->date());
@@ -929,11 +1050,33 @@ bool salesOrder::save(bool partial)
   q.bindValue(":shiptostate",                _shipToAddr->state());
   q.bindValue(":shiptozipcode",                _shipToAddr->postalCode());
   q.bindValue(":shiptocountry",                _shipToAddr->country());
-  q.bindValue(":shiptophone",                _shipToPhone->text());
   q.bindValue(":ordercomments", _orderComments->text());
   q.bindValue(":shipcomments", _shippingComments->text());
   q.bindValue(":fob", _fob->text());
   q.bindValue(":shipvia", _shipVia->currentText());
+
+  q.bindValue(":shipto_cntct_id", _shipToCntct->id());
+  q.bindValue(":shipto_cntct_honorific", _shipToCntct->honorific());
+  q.bindValue(":shipto_cntct_first_name", _shipToCntct->first());
+  q.bindValue(":shipto_cntct_middle", _shipToCntct->middle());
+  q.bindValue(":shipto_cntct_last_name", _shipToCntct->last());
+  q.bindValue(":shipto_cntct_suffix", _shipToCntct->suffix());
+  q.bindValue(":shipto_cntct_phone", _shipToCntct->phone());
+  q.bindValue(":shipto_cntct_title", _shipToCntct->title());
+  q.bindValue(":shipto_cntct_fax", _shipToCntct->fax());
+  q.bindValue(":shipto_cntct_email ", _shipToCntct->emailAddress());
+
+  q.bindValue(":billto_cntct_id", _billToCntct->id());
+  q.bindValue(":billto_cntct_honorific", _billToCntct->honorific());
+  q.bindValue(":billto_cntct_first_name", _billToCntct->first());
+  q.bindValue(":billto_cntct_middle", _billToCntct->middle());
+  q.bindValue(":billto_cntct_last_name", _billToCntct->last());
+  q.bindValue(":billto_cntct_suffix", _billToCntct->suffix());
+  q.bindValue(":billto_cntct_phone", _billToCntct->phone());
+  q.bindValue(":billto_cntct_title", _billToCntct->title());
+  q.bindValue(":billto_cntct_fax", _billToCntct->fax());
+  q.bindValue(":billto_cntct_email ", _billToCntct->emailAddress());
+
   if (_salesRep->id() != -1)
     q.bindValue(":salesrep_id", _salesRep->id());
   if (_taxAuth->isValid())
@@ -1310,16 +1453,15 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
     QString sql("SELECT cust_salesrep_id, cust_shipchrg_id, cust_shipform_id,"
                 "       cust_commprcnt AS commission,"
                 "       cust_creditstatus, cust_terms_id,"
-                "       cust_taxauth_id,"
+                "       cust_taxauth_id, cust_cntct_id,"
                 "       cust_ffshipto, cust_ffbillto, cust_usespos,"
                 "       cust_blanketpos, cust_shipvia,"
                 "       COALESCE(shipto_id, -1) AS shiptoid,"
-                "       custtype_code, cust_preferred_warehous_id, "
+                "       cust_preferred_warehous_id, "
                 "       cust_curr_id, cust_soemaildelivery "
                 "FROM custinfo LEFT OUTER JOIN"
                 "     shipto ON ((shipto_cust_id=cust_id)"
-                "                 AND (shipto_default)) LEFT OUTER JOIN"
-                "      custtype ON (cust_custtype_id=custtype_id) "
+                "                 AND (shipto_default)) "
                 "WHERE (cust_id=<? value(\"cust_id\") ?>) "
                 "<? if exists(\"isQuote\") ?>"
                 "UNION "
@@ -1395,11 +1537,13 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
       _terms->setId(cust.value("cust_terms_id").toInt());
       _custtaxauthid = cust.value("cust_taxauth_id").toInt();
       _custEmail = cust.value("cust_soemaildelivery").toBool();
+
+      _billToCntct->setId(cust.value("cust_cntct_id").toInt());
+
       if (ISNEW(_mode))
         _taxAuth->setId(cust.value("cust_taxauth_id").toInt());
       _shipVia->setText(cust.value("cust_shipvia"));
 
-      _custType->setText(cust.value("custtype_code").toString());
       _orderCurrency->setId(cust.value("cust_curr_id").toInt());
 
       if (cust.value("cust_preferred_warehous_id").toInt() > 0)
@@ -1414,7 +1558,7 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
         _shipToNumber->clear();
         _shipToName->clear();
         _shipToAddr->clear();
-        _shipToPhone->clear();
+        _shipToCntct->clear();
       }
 
       if ( (_mode == cNew) || (_mode == cNewQuote ) || (_mode == cEdit) || (_mode == cEditQuote ) )
@@ -1422,7 +1566,7 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
         bool ffBillTo = cust.value("cust_ffbillto").toBool();
         _billToName->setEnabled(ffBillTo);
         _billToAddr->setEnabled(ffBillTo);
-        _billToPhone->setEnabled(ffBillTo);
+        _billToCntct->setEnabled(ffBillTo);
       }
     }
     else if (cust.lastError().type() != QSqlError::None)
@@ -1443,9 +1587,9 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
     _shipToNumber->clear();
     _shipToName->clear();
     _shipToAddr->clear();
-    _shipToPhone->clear();
+    _shipToCntct->clear();
+    _billToCntct->clear();
 
-    _custType->setText(tr(""));
   }
 }
 
@@ -1489,7 +1633,7 @@ void salesOrder::populateShipto(int pShiptoid)
   {
     XSqlQuery shipto;
     shipto.prepare( "SELECT shipto_num, shipto_name, shipto_addr_id, "
-                    "       cntct_phone, "
+                    "       cntct_phone, shipto_cntct_id,"
                     "       shipto_shipvia, shipto_shipcomments,"
                     "       shipto_shipchrg_id, shipto_shipform_id,"
                     "       COALESCE(shipto_taxauth_id, -1) AS shipto_taxauth_id,"
@@ -1506,7 +1650,7 @@ void salesOrder::populateShipto(int pShiptoid)
       _shipToNumber->setText(shipto.value("shipto_num"));
       _shipToName->setText(shipto.value("shipto_name").toString());
       _shipToAddr->setId(shipto.value("shipto_addr_id").toInt());
-      _shipToPhone->setText(shipto.value("cntct_phone").toString());
+      _shipToCntct->setId(shipto.value("shipto_cntct_id").toInt());
       _shippingCharges->setId(shipto.value("shipto_shipchrg_id").toInt());
       _shippingForm->setId(shipto.value("shipto_shipform_id").toInt());
       _salesRep->setId(shipto.value("shipto_salesrep_id").toInt());
@@ -1528,7 +1672,7 @@ void salesOrder::populateShipto(int pShiptoid)
     _shipToNumber->clear();
     _shipToName->clear();
     _shipToAddr->clear();
-    _shipToPhone->clear();
+    _shipToCntct->clear();
     _shippingComments->clear();
   }
 
@@ -1587,16 +1731,16 @@ void salesOrder::sCopyToShipto()
   _shipToAddr->setId(_billToAddr->id());
   if (_billToAddr->id() <= 0)
   {
-  _shipToAddr->setLine1(_billToAddr->line1());
-  _shipToAddr->setLine2(_billToAddr->line2());
-  _shipToAddr->setLine3(_billToAddr->line3());
-  _shipToAddr->setCity(_billToAddr->city());
-  _shipToAddr->setState(_billToAddr->state());
-  _shipToAddr->setPostalCode(_billToAddr->postalCode());
-  _shipToAddr->setCountry(_billToAddr->country());
+    _shipToAddr->setLine1(_billToAddr->line1());
+    _shipToAddr->setLine2(_billToAddr->line2());
+    _shipToAddr->setLine3(_billToAddr->line3());
+    _shipToAddr->setCity(_billToAddr->city());
+    _shipToAddr->setState(_billToAddr->state());
+    _shipToAddr->setPostalCode(_billToAddr->postalCode());
+    _shipToAddr->setCountry(_billToAddr->country());
   }
 
-  _shipToPhone->setText(_billToPhone->text());
+  _shipToCntct->setId(_billToCntct->id());
   _taxAuth->setId(_custtaxauthid);
 }
 
@@ -1943,6 +2087,28 @@ void salesOrder::populate()
       _orderCurrency->setId(so.value("cohead_curr_id").toInt());
       _project->setId(so.value("cohead_prj_id").toInt());
 
+      _shipToCntct->setId(so.value("cohead_shipto_cntct_id").toInt());
+      _shipToCntct->setHonorific(so.value("cohead_shipto_cntct_honorific").toString());
+      _shipToCntct->setFirst(so.value("cohead_shipto_cntct_first_name").toString());
+      _shipToCntct->setMiddle(so.value("cohead_shipto_cntct_middle").toString());
+      _shipToCntct->setLast(so.value("cohead_shipto_cntct_last_name").toString());
+      _shipToCntct->setSuffix(so.value("cohead_shipto_cntct_suffix").toString());
+      _shipToCntct->setPhone(so.value("cohead_shipto_cntct_phone").toString());
+      _shipToCntct->setTitle(so.value("cohead_shipto_cntct_title").toString());
+      _shipToCntct->setFax(so.value("cohead_shipto_cntct_fax").toString());
+      _shipToCntct->setEmailAddress(so.value("cohead_shipto_cntct_email").toString());
+
+      _billToCntct->setId(so.value("cohead_billto_cntct_id").toInt());
+      _billToCntct->setHonorific(so.value("cohead_billto_cntct_honorific").toString());
+      _billToCntct->setFirst(so.value("cohead_billto_cntct_first_name").toString());
+      _billToCntct->setMiddle(so.value("cohead_billto_cntct_middle").toString());
+      _billToCntct->setLast(so.value("cohead_billto_cntct_last_name").toString());
+      _billToCntct->setSuffix(so.value("cohead_billto_cntct_suffix").toString());
+      _billToCntct->setPhone(so.value("cohead_billto_cntct_phone").toString());
+      _billToCntct->setTitle(so.value("cohead_billto_cntct_title").toString());
+      _billToCntct->setFax(so.value("cohead_billto_cntct_fax").toString());
+      _billToCntct->setEmailAddress(so.value("cohead_billto_cntct_email").toString());
+
       _billToName->setText(so.value("cohead_billtoname").toString());
       if (_billToAddr->line1() !=so.value("cohead_billtoaddress1").toString() ||
           _billToAddr->line2() !=so.value("cohead_billtoaddress2").toString() ||
@@ -1982,7 +2148,6 @@ void salesOrder::populate()
         _shipToAddr->setPostalCode(so.value("cohead_shiptozipcode").toString());
         _shipToAddr->setCountry(so.value("cohead_shiptocountry").toString());
       }
-      _shipToPhone->setText(so.value("cohead_shiptophone").toString());
 
       _shiptoid = so.value("cohead_shipto_id").toInt();
       if (_shiptoid == -1)
@@ -2129,6 +2294,28 @@ void salesOrder::populate()
       _billToAddr->setPostalCode(qu.value("quhead_billtozip").toString());
       _billToAddr->setCountry(qu.value("quhead_billtocountry").toString());
 
+      _shipToCntct->setId(qu.value("quhead_shipto_cntct_id").toInt());
+      _shipToCntct->setHonorific(qu.value("quhead_shipto_cntct_honorific").toString());
+      _shipToCntct->setFirst(qu.value("quhead_shipto_cntct_first_name").toString());
+      _shipToCntct->setMiddle(qu.value("quhead_shipto_cntct_middle").toString());
+      _shipToCntct->setLast(qu.value("quhead_shipto_cntct_last_name").toString());
+      _shipToCntct->setSuffix(qu.value("quhead_shipto_cntct_suffix").toString());
+      _shipToCntct->setPhone(qu.value("quhead_shipto_cntct_phone").toString());
+      _shipToCntct->setTitle(qu.value("quhead_shipto_cntct_title").toString());
+      _shipToCntct->setFax(qu.value("quhead_shipto_cntct_fax").toString());
+      _shipToCntct->setEmailAddress(qu.value("quhead_shipto_cntct_email").toString());
+
+      _billToCntct->setId(qu.value("quhead_billto_cntct_id").toInt());
+      _billToCntct->setHonorific(qu.value("quhead_billto_cntct_honorific").toString());
+      _billToCntct->setFirst(qu.value("quhead_billto_cntct_first_name").toString());
+      _billToCntct->setMiddle(qu.value("quhead_billto_cntct_middle").toString());
+      _billToCntct->setLast(qu.value("quhead_billto_cntct_last_name").toString());
+      _billToCntct->setSuffix(qu.value("quhead_billto_cntct_suffix").toString());
+      _billToCntct->setPhone(qu.value("quhead_billto_cntct_phone").toString());
+      _billToCntct->setTitle(qu.value("quhead_billto_cntct_title").toString());
+      _billToCntct->setFax(qu.value("quhead_billto_cntct_fax").toString());
+      _billToCntct->setEmailAddress(qu.value("quhead_billto_cntct_email").toString());
+
       _ignoreSignals = TRUE;
       _shiptoid = qu.value("quhead_shipto_id").toInt();
       if (_shiptoid == -1)
@@ -2153,7 +2340,6 @@ void salesOrder::populate()
       _shipToAddr->setState(qu.value("quhead_shiptostate").toString());
       _shipToAddr->setPostalCode(qu.value("quhead_shiptozipcode").toString());
       _shipToAddr->setCountry(qu.value("quhead_shiptocountry").toString());
-      _shipToPhone->setText(qu.value("quhead_shiptophone").toString());
       _ignoreSignals = FALSE;
 
       if (_mode == cViewQuote)
@@ -2613,8 +2799,6 @@ void salesOrder::clear()
   _shipToAddr->setId(-1);
   _billToName->clear();
   _shipToName->clear();
-  _billToPhone->clear();
-  _shipToPhone->clear();
   _taxAuth->setCurrentItem(-1);
   _taxauthidCache = -1;
   _custtaxauthid        = -1;
@@ -2908,7 +3092,7 @@ void salesOrder::setFreeFormShipto(bool pFreeForm)
 
   _shipToName->setEnabled(_ffShipto);
   _shipToAddr->setEnabled(_ffShipto);
-  _shipToPhone->setEnabled(_ffShipto);
+  _shipToCntct->setEnabled(_ffShipto);
 
   _copyToShipto->setEnabled(_ffShipto);
 }
@@ -3896,3 +4080,12 @@ void salesOrder::sAllocateCreditMemos()
      _allocatedCM->setLocalValue(initBalance-balance);
    }
  }
+
+void salesOrder::sCheckValidContacts()
+{
+  if(_shipToCntct->isValid()) _shipToCntct->setEnabled(true);
+  else _shipToCntct->setEnabled(false);
+
+  if(_billToCntct->isValid()) _billToCntct->setEnabled(true);
+  else _billToCntct->setEnabled(false);
+}
