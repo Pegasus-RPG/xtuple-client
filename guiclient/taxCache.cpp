@@ -189,12 +189,12 @@ void	taxCache::setAdjPct(const double a, const double b, const double c)
   cache[Pct][C][Adj] = c;
 }
 
-void	taxCache::setAdjId(int p)
+void	taxCache::setAdjId(const int p)
 {
   ids[Tax][Adj] = p;
 }
 
-void	taxCache::setAdjType(int p)
+void	taxCache::setAdjType(const int p)
 {
   ids[Type][Adj] = p;
 }
@@ -213,12 +213,12 @@ void	taxCache::setFreightPct(const double a, const double b, const double c)
   cache[Pct][C][Freight] = c;
 }
 
-void	taxCache::setFreightId(int p)
+void	taxCache::setFreightId(const int p)
 {
   ids[Tax][Freight] = p;
 }
 
-void	taxCache::setFreightType(int p)
+void	taxCache::setFreightType(const int p)
 {
   ids[Type][Freight] = p;
 }

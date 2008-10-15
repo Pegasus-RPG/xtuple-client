@@ -72,7 +72,7 @@ public:
     ~printChecks();
 
 public slots:
-    virtual SetResponse set( ParameterList pParams );
+    virtual SetResponse set( const ParameterList & pParams );
     virtual void sPrint();
     virtual void sHandleBankAccount( int pBankaccntid );
     virtual void sPopulate();

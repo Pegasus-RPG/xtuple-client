@@ -117,7 +117,7 @@ YourPayProcessor::YourPayProcessor() : CreditCardProcessor()
 			   "subscribed to this service)."));
 }
 
-int YourPayProcessor::buildCommon(int pccardid, int pcvv, const double pamount, QDomDocument &prequest, QString pordertype)
+int YourPayProcessor::buildCommon(const int pccardid, const int pcvv, const double pamount, QDomDocument &prequest, QString pordertype)
 {
   QDomElement order = prequest.createElement("order");
   prequest.appendChild(order);

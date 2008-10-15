@@ -114,7 +114,7 @@ QDate getLotInfo::warranty()
   if(_warranty->isEnabled())
     return _warranty->date();
   else
-    return QDate::QDate();
+    return QDate();
 }
 
 void getLotInfo::enableExpiration( bool yes )

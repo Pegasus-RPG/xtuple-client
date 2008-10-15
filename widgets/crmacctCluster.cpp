@@ -76,7 +76,7 @@ CRMAcctCluster::CRMAcctCluster(QWidget* pParent, const char* pName) :
     setSubtype(CRMAcctLineEdit::Crmacct);
 }
 
-void CRMAcctCluster::setSubtype(CRMAcctLineEdit::CRMAcctSubtype subtype)
+void CRMAcctCluster::setSubtype(const CRMAcctLineEdit::CRMAcctSubtype subtype)
 {
   // TODO: make this do something useful
   if (_number->inherits("CRMAcctLineEdit"))
@@ -119,7 +119,7 @@ void CRMAcctLineEdit::sInfo()
     _crmacctInfoAction->crmacctInformation(this, id());
 }
 
-void CRMAcctLineEdit::setSubtype(CRMAcctSubtype subtype)
+void CRMAcctLineEdit::setSubtype(const CRMAcctSubtype subtype)
 {
   _subtype = subtype;
   //TODO: refigure everything about this line edit, including find the id for the current text

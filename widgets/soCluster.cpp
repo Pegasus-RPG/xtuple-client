@@ -316,7 +316,7 @@ void SoCluster::setDataWidgetMap(XDataWidgetMapper* m)
   _soNumber->_mapper=m;
 }
 
-void SoCluster::setLabel(QString p)
+void SoCluster::setLabel(const QString p)
 {
   _label=p;
   _soNumberLit->setText(p);

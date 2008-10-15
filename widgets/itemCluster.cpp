@@ -805,7 +805,7 @@ QString buildItemLineEditQuery(const QString pPre, const QStringList pClauses, c
   return sql;
 }
 
-QString buildItemLineEditTitle(unsigned int pType, const QString pPost)
+QString buildItemLineEditTitle(const unsigned int pType, const QString pPost)
 {
   QString caption;
   unsigned int items = (0xFFFF & pType); // mask so this value only has the individual items

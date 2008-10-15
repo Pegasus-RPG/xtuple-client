@@ -95,7 +95,7 @@ void printChecks::languageChange()
   retranslateUi(this);
 }
 
-enum SetResponse printChecks::set(const ParameterList pParams )
+enum SetResponse printChecks::set(const ParameterList & pParams )
 {
   _captive = TRUE;
 

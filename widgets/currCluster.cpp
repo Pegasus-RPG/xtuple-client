@@ -970,7 +970,7 @@ void CurrDisplay::setPaletteForegroundColor(const QColor & newColor)
     _valueLocalWidget->setPaletteForegroundColor(newColor);
 }
 
-void CurrDisplay::setNA(bool isNA)
+void CurrDisplay::setNA(const bool isNA)
 {
     switch (_state)
     {

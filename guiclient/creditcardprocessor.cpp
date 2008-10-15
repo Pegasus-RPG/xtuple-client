@@ -403,7 +403,7 @@ int CreditCardProcessor::authorize(const int pccardid, const int pcvv, const dou
   return returnVal;
 }
 
-int CreditCardProcessor::charge(const int pccardid, const int pcvv, const double pamount, double ptax, bool ptaxexempt, double pfreight, double pduty, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, QString preftype, int &prefid)
+int CreditCardProcessor::charge(const int pccardid, const int pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, QString preftype, int &prefid)
 {
   if (DEBUG)
     qDebug("CCP:charge(%d, %d, %f, %f, %d, %f, %f, %d, %s, %s, %d, %s, %d)",
@@ -1064,7 +1064,7 @@ QString CreditCardProcessor::errorMsg(const int pcode)
   return _msgHash.value(pcode);
 }
 
-int CreditCardProcessor::checkCreditCard(int pccid, int pcvv, QString &pccard_x)
+int CreditCardProcessor::checkCreditCard(const int pccid, const int pcvv, QString &pccard_x)
 {
   if (DEBUG)
     qDebug("CCP:checkCreditCard(%d, %d)", pccid, pcvv);

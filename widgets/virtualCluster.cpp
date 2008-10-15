@@ -199,7 +199,7 @@ void VirtualCluster::sRefresh()
   _info->setEnabled(_number && _number->_id > 0);
 }
 
-void VirtualCluster::setReadOnly(bool b)
+void VirtualCluster::setReadOnly(const bool b)
 {
   _readOnly = b;
   if (b)
@@ -481,7 +481,7 @@ void VirtualClusterLineEdit::sInfo()
 			      tr("%1::sInfo() not yet defined").arg(className()));
 }
 
-void VirtualClusterLineEdit::setStrict(bool b)
+void VirtualClusterLineEdit::setStrict(const bool b)
 {
   _strict = b;
 }
