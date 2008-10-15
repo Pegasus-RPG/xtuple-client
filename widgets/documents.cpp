@@ -152,13 +152,13 @@ void Documents::setId(int pSourceid)
 
 void Documents::setReadOnly(bool pReadOnly)
 {
-  _newImage->setEnabled(pReadOnly);
-  _editImage->setEnabled(pReadOnly);
-  _deleteImage->setEnabled(pReadOnly);
+  _newImage->setEnabled(!pReadOnly);
+  _editImage->setEnabled(!pReadOnly);
+  _deleteImage->setEnabled(!pReadOnly);
   
-  _newFile->setEnabled(pReadOnly);
-  _editFile->setEnabled(pReadOnly);
-  _deleteFile->setEnabled(pReadOnly);
+  _newFile->setEnabled(!pReadOnly);
+  _editFile->setEnabled(!pReadOnly);
+  _deleteFile->setEnabled(!pReadOnly);
 }
 
 void Documents::sNewFile()
