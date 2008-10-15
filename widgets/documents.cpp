@@ -277,7 +277,7 @@ void Documents::sDeleteImage()
 void Documents::sPrintImage()
 {
   ParameterList params;
-  params.append("imageass_id", _images->id());
+  params.append("image_id", _images->altId());
 
   orReport report("Image", params);
   if (report.isValid())
