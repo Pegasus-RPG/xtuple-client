@@ -81,15 +81,16 @@ ORDER BY char_name;</sql>
   <name>imglist</name>
   <sql>SELECT 1 as one,
        image_name, firstLine(image_descrip) as f_descrip,
-       CASE WHEN (itemimage_purpose='I') THEN 'Inventory Description'
-            WHEN (itemimage_purpose='P') THEN 'Product Description'
-            WHEN (itemimage_purpose='E') THEN 'Engineering Reference'
-            WHEN (itemimage_purpose='M') THEN 'Miscellaneous'
+       CASE WHEN (imageass_purpose='I') THEN 'Inventory Description'
+            WHEN (imageass_purpose='P') THEN 'Product Description'
+            WHEN (imageass_purpose='E') THEN 'Engineering Reference'
+            WHEN (imageass_purpose='M') THEN 'Miscellaneous'
             ELSE 'Other'
        END as f_purpose
-FROM itemimage, image
-WHERE ( (itemimage_image_id=image_id)
- AND (itemimage_item_id=&lt;? value("item_id") ?>) )
+FROM imageass, image
+WHERE ( (imageass_image_id=image_id)
+ AND (imageass_source='I')
+ AND (imageass_source_id=&lt;? value("item_id") ?>) )
 ORDER BY image_name;</sql>
  </querysource>
  <querysource>
@@ -105,124 +106,6 @@ ORDER BY comment_date;</sql>
  </querysource>
  <rpthead>
   <height>333</height>
-  <label>
-   <rect>
-    <x>400</x>
-    <y>135</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Configured:</string>
-  </label>
-  <label>
-   <rect>
-    <x>260</x>
-    <y>208</y>
-    <width>200</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Capacity/Inventory UOM Ratio:</string>
-  </label>
-  <label>
-   <rect>
-    <x>458</x>
-    <y>65</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Active:</string>
-  </label>
-  <label>
-   <rect>
-    <x>335</x>
-    <y>5</y>
-    <width>400</width>
-    <height>40</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>18</size>
-    <weight>bold</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Item Master</string>
-  </label>
-  <label>
-   <rect>
-    <x>240</x>
-    <y>228</y>
-    <width>220</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Alt. Capacity/Inventory UOM Ratio:</string>
-  </label>
-  <field>
-   <rect>
-    <x>465</x>
-    <y>228</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>f_altcapinvrat</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>135</x>
-    <y>103</y>
-    <width>400</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>item_descrip2</column>
-   </data>
-  </field>
   <field>
    <rect>
     <x>135</x>
@@ -242,175 +125,10 @@ ORDER BY comment_date;</sql>
     <column>f_item_sold</column>
    </data>
   </field>
-  <field>
-   <rect>
-    <x>565</x>
-    <y>65</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>f_item_active</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>590</x>
-    <y>185</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>f_item_fractional</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>505</x>
-    <y>155</y>
-    <width>225</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>f_freightclass</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>135</x>
-    <y>185</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>invuom</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>5</x>
-    <y>228</y>
-    <width>125</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Alt. Capacity UOM:</string>
-  </label>
-  <field>
-   <rect>
-    <x>135</x>
-    <y>155</y>
-    <width>200</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>f_classcode</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>135</x>
-    <y>253</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>shipuom</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>483</x>
-    <y>185</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Fractional:</string>
-  </label>
-  <field>
-   <rect>
-    <x>135</x>
-    <y>208</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>capuom</column>
-   </data>
-  </field>
   <label>
    <rect>
     <x>260</x>
-    <y>253</y>
+    <y>252</y>
     <width>200</width>
     <height>20</height>
    </rect>
@@ -423,198 +141,10 @@ ORDER BY comment_date;</sql>
    <vcenter/>
    <string>Shipping/Inventory UOM Ratio:</string>
   </label>
-  <label>
-   <rect>
-    <x>30</x>
-    <y>208</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Capacity UOM:</string>
-  </label>
-  <label>
-   <rect>
-    <x>30</x>
-    <y>185</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Inventory UOM:</string>
-  </label>
-  <label>
-   <rect>
-    <x>30</x>
-    <y>285</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Product Weight:</string>
-  </label>
-  <label>
-   <rect>
-    <x>265</x>
-    <y>185</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Pick List Item:</string>
-  </label>
-  <label>
-   <rect>
-    <x>30</x>
-    <y>65</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Item #:</string>
-  </label>
-  <field>
-   <rect>
-    <x>390</x>
-    <y>285</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>f_item_packweight</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>30</x>
-    <y>310</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Item is Sold:</string>
-  </label>
-  <label>
-   <rect>
-    <x>400</x>
-    <y>155</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Freight Class:</string>
-  </label>
-  <field>
-   <rect>
-    <x>135</x>
-    <y>228</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>altcapuom</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>135</x>
-    <y>85</y>
-    <width>400</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>item_descrip1</column>
-   </data>
-  </field>
   <field>
    <rect>
     <x>465</x>
-    <y>208</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>f_capinvrat</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>465</x>
-    <y>253</y>
+    <y>252</y>
     <width>100</width>
     <height>20</height>
    </rect>
@@ -633,7 +163,7 @@ ORDER BY comment_date;</sql>
   <label>
    <rect>
     <x>30</x>
-    <y>155</y>
+    <y>285</y>
     <width>100</width>
     <height>20</height>
    </rect>
@@ -644,7 +174,39 @@ ORDER BY comment_date;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>Class Code:</string>
+   <string>Product Weight:</string>
+  </label>
+  <label>
+   <rect>
+    <x>260</x>
+    <y>285</y>
+    <width>125</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Packaging Weight:</string>
+  </label>
+  <label>
+   <rect>
+    <x>400</x>
+    <y>135</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Configured:</string>
   </label>
   <field>
    <rect>
@@ -667,9 +229,9 @@ ORDER BY comment_date;</sql>
   </field>
   <field>
    <rect>
-    <x>135</x>
-    <y>65</y>
-    <width>300</width>
+    <x>505</x>
+    <y>155</y>
+    <width>225</width>
     <height>20</height>
    </rect>
    <font>
@@ -681,13 +243,13 @@ ORDER BY comment_date;</sql>
    <vcenter/>
    <data>
     <query>head</query>
-    <column>item_number</column>
+    <column>f_freightclass</column>
    </data>
   </field>
   <label>
    <rect>
-    <x>260</x>
-    <y>285</y>
+    <x>5</x>
+    <y>227</y>
     <width>125</width>
     <height>20</height>
    </rect>
@@ -698,28 +260,12 @@ ORDER BY comment_date;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>Packaging Weight:</string>
-  </label>
-  <label>
-   <rect>
-    <x>30</x>
-    <y>135</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Item Type:</string>
+   <string>Alt. Capacity UOM:</string>
   </label>
   <field>
    <rect>
-    <x>370</x>
-    <y>185</y>
+    <x>135</x>
+    <y>227</y>
     <width>100</width>
     <height>20</height>
    </rect>
@@ -732,7 +278,131 @@ ORDER BY comment_date;</sql>
    <vcenter/>
    <data>
     <query>head</query>
-    <column>f_item_picklist</column>
+    <column>altcapuom</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>390</x>
+    <y>285</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>f_item_packweight</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>465</x>
+    <y>207</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>f_capinvrat</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>135</x>
+    <y>102</y>
+    <width>400</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>item_descrip2</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>335</x>
+    <y>5</y>
+    <width>400</width>
+    <height>40</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>18</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Item Master</string>
+  </label>
+  <label>
+   <rect>
+    <x>482</x>
+    <y>185</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Fractional:</string>
+  </label>
+  <label>
+   <rect>
+    <x>30</x>
+    <y>252</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Shipping UOM:</string>
+  </label>
+  <field>
+   <rect>
+    <x>135</x>
+    <y>155</y>
+    <width>200</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>f_classcode</column>
    </data>
   </field>
   <field>
@@ -757,6 +427,178 @@ ORDER BY comment_date;</sql>
   <field>
    <rect>
     <x>135</x>
+    <y>65</y>
+    <width>300</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>item_number</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>135</x>
+    <y>185</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>invuom</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>30</x>
+    <y>310</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Item is Sold:</string>
+  </label>
+  <label>
+   <rect>
+    <x>265</x>
+    <y>185</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Pick List Item:</string>
+  </label>
+  <label>
+   <rect>
+    <x>260</x>
+    <y>207</y>
+    <width>200</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Capacity/Inventory UOM Ratio:</string>
+  </label>
+  <field>
+   <rect>
+    <x>465</x>
+    <y>227</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>f_altcapinvrat</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>457</x>
+    <y>65</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Active:</string>
+  </label>
+  <label>
+   <rect>
+    <x>30</x>
+    <y>185</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Inventory UOM:</string>
+  </label>
+  <label>
+   <rect>
+    <x>30</x>
+    <y>155</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Class Code:</string>
+  </label>
+  <field>
+   <rect>
+    <x>135</x>
+    <y>252</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>shipuom</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>135</x>
     <y>285</y>
     <width>100</width>
     <height>20</height>
@@ -773,10 +615,83 @@ ORDER BY comment_date;</sql>
     <column>f_item_prodweight</column>
    </data>
   </field>
+  <field>
+   <rect>
+    <x>135</x>
+    <y>207</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>capuom</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>135</x>
+    <y>85</y>
+    <width>400</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>item_descrip1</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>565</x>
+    <y>65</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>f_item_active</column>
+   </data>
+  </field>
   <label>
    <rect>
-    <x>30</x>
-    <y>253</y>
+    <x>240</x>
+    <y>227</y>
+    <width>220</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Alt. Capacity/Inventory UOM Ratio:</string>
+  </label>
+  <label>
+   <rect>
+    <x>400</x>
+    <y>155</y>
     <width>100</width>
     <height>20</height>
    </rect>
@@ -787,8 +702,94 @@ ORDER BY comment_date;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>Shipping UOM:</string>
+   <string>Freight Class:</string>
   </label>
+  <label>
+   <rect>
+    <x>30</x>
+    <y>65</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Item #:</string>
+  </label>
+  <label>
+   <rect>
+    <x>30</x>
+    <y>135</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Item Type:</string>
+  </label>
+  <label>
+   <rect>
+    <x>30</x>
+    <y>207</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Capacity UOM:</string>
+  </label>
+  <field>
+   <rect>
+    <x>590</x>
+    <y>185</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>f_item_fractional</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>370</x>
+    <y>185</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>f_item_picklist</column>
+   </data>
+  </field>
  </rpthead>
  <section>
   <name>sold</name>
@@ -800,92 +801,22 @@ ORDER BY comment_date;</sql>
    <label>
     <rect>
      <x>65</x>
-     <y>25</y>
-     <width>140</width>
-     <height>20</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>10</size>
-     <weight>normal</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <string>Product Category:</string>
-   </label>
-   <field>
-    <rect>
-     <x>208</x>
-     <y>5</y>
-     <width>100</width>
-     <height>20</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>10</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>sold</query>
-     <column>uom_name</column>
-    </data>
-   </field>
-   <label>
-    <rect>
-     <x>103</x>
-     <y>5</y>
-     <width>100</width>
-     <height>20</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>10</size>
-     <weight>normal</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <string>Price UOM:</string>
-   </label>
-   <label>
-    <rect>
-     <x>65</x>
-     <y>45</y>
-     <width>140</width>
-     <height>20</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>10</size>
-     <weight>normal</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <string>List Price:</string>
-   </label>
-   <field>
-    <rect>
-     <x>208</x>
      <y>65</y>
-     <width>200</width>
+     <width>140</width>
      <height>20</height>
     </rect>
     <font>
      <face>Arial</face>
      <size>10</size>
-     <weight>bold</weight>
+     <weight>normal</weight>
     </font>
-    <left/>
+    <right/>
     <vcenter/>
-    <data>
-     <query>sold</query>
-     <column>f_extprice</column>
-    </data>
-   </field>
+    <string>Ext. Price:</string>
+   </label>
    <field>
     <rect>
-     <x>208</x>
+     <x>207</x>
      <y>45</y>
      <width>200</width>
      <height>20</height>
@@ -900,25 +831,6 @@ ORDER BY comment_date;</sql>
     <data>
      <query>sold</query>
      <column>f_item_listprice</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>208</x>
-     <y>25</y>
-     <width>300</width>
-     <height>20</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>10</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>sold</query>
-     <column>f_prodcat</column>
     </data>
    </field>
    <field>
@@ -942,24 +854,8 @@ ORDER BY comment_date;</sql>
    </field>
    <label>
     <rect>
-     <x>535</x>
-     <y>25</y>
-     <width>100</width>
-     <height>20</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>10</size>
-     <weight>normal</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <string>Taxable:</string>
-   </label>
-   <label>
-    <rect>
      <x>65</x>
-     <y>65</y>
+     <y>25</y>
      <width>140</width>
      <height>20</height>
     </rect>
@@ -970,7 +866,23 @@ ORDER BY comment_date;</sql>
     </font>
     <right/>
     <vcenter/>
-    <string>Ext. Price:</string>
+    <string>Product Category:</string>
+   </label>
+   <label>
+    <rect>
+     <x>65</x>
+     <y>45</y>
+     <width>140</width>
+     <height>20</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>10</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <string>List Price:</string>
    </label>
    <label>
     <rect>
@@ -988,22 +900,25 @@ ORDER BY comment_date;</sql>
     <vcenter/>
     <string>Exclusive</string>
    </label>
-   <label>
+   <field>
     <rect>
-     <x>340</x>
-     <y>5</y>
-     <width>200</width>
+     <x>207</x>
+     <y>25</y>
+     <width>300</width>
      <height>20</height>
     </rect>
     <font>
      <face>Arial</face>
      <size>10</size>
-     <weight>normal</weight>
+     <weight>bold</weight>
     </font>
-    <right/>
+    <left/>
     <vcenter/>
-    <string>Price/Inventory UOM Ratio:</string>
-   </label>
+    <data>
+     <query>sold</query>
+     <column>f_prodcat</column>
+    </data>
+   </field>
    <field>
     <rect>
      <x>545</x>
@@ -1023,6 +938,92 @@ ORDER BY comment_date;</sql>
      <column>f_iteminvpricerat</column>
     </data>
    </field>
+   <label>
+    <rect>
+     <x>340</x>
+     <y>5</y>
+     <width>200</width>
+     <height>20</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>10</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <string>Price/Inventory UOM Ratio:</string>
+   </label>
+   <field>
+    <rect>
+     <x>207</x>
+     <y>65</y>
+     <width>200</width>
+     <height>20</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>10</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>sold</query>
+     <column>f_extprice</column>
+    </data>
+   </field>
+   <label>
+    <rect>
+     <x>535</x>
+     <y>25</y>
+     <width>100</width>
+     <height>20</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>10</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <string>Taxable:</string>
+   </label>
+   <field>
+    <rect>
+     <x>207</x>
+     <y>5</y>
+     <width>100</width>
+     <height>20</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>10</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>sold</query>
+     <column>uom_name</column>
+    </data>
+   </field>
+   <label>
+    <rect>
+     <x>102</x>
+     <y>5</y>
+     <width>100</width>
+     <height>20</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>10</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <string>Price UOM:</string>
+   </label>
   </detail>
  </section>
  <section>
@@ -1077,6 +1078,22 @@ ORDER BY comment_date;</sql>
     <query>notes</query>
    </key>
    <height>36</height>
+   <label>
+    <rect>
+     <x>5</x>
+     <y>5</y>
+     <width>110</width>
+     <height>20</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>10</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <string>Ext. Description:</string>
+   </label>
    <text>
     <rect>
      <x>120</x>
@@ -1097,22 +1114,6 @@ ORDER BY comment_date;</sql>
      <column>item_extdescrip</column>
     </data>
    </text>
-   <label>
-    <rect>
-     <x>5</x>
-     <y>5</y>
-     <width>110</width>
-     <height>20</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>10</size>
-     <weight>normal</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <string>Ext. Description:</string>
-   </label>
   </detail>
  </section>
  <section>
@@ -1122,9 +1123,16 @@ ORDER BY comment_date;</sql>
    <column>one</column>
    <head>
     <height>57</height>
+    <line>
+     <xstart>120</xstart>
+     <ystart>50</ystart>
+     <xend>690</xend>
+     <yend>50</yend>
+     <weight>0</weight>
+    </line>
     <label>
      <rect>
-      <x>125</x>
+      <x>300</x>
       <y>35</y>
       <width>100</width>
       <height>15</height>
@@ -1136,15 +1144,8 @@ ORDER BY comment_date;</sql>
      </font>
      <left/>
      <vcenter/>
-     <string>Characteristic</string>
+     <string>Value</string>
     </label>
-    <line>
-     <xstart>120</xstart>
-     <ystart>50</ystart>
-     <xend>690</xend>
-     <yend>50</yend>
-     <weight>0</weight>
-    </line>
     <label>
      <rect>
       <x>50</x>
@@ -1163,7 +1164,7 @@ ORDER BY comment_date;</sql>
     </label>
     <label>
      <rect>
-      <x>300</x>
+      <x>125</x>
       <y>35</y>
       <width>100</width>
       <height>15</height>
@@ -1175,7 +1176,7 @@ ORDER BY comment_date;</sql>
      </font>
      <left/>
      <vcenter/>
-     <string>Value</string>
+     <string>Characteristic</string>
     </label>
    </head>
   </group>
@@ -1184,25 +1185,6 @@ ORDER BY comment_date;</sql>
     <query>itemchar</query>
    </key>
    <height>21</height>
-   <field>
-    <rect>
-     <x>125</x>
-     <y>0</y>
-     <width>160</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>itemchar</query>
-     <column>charass_name</column>
-    </data>
-   </field>
    <field>
     <rect>
      <x>300</x>
@@ -1222,6 +1204,25 @@ ORDER BY comment_date;</sql>
      <column>charass_value</column>
     </data>
    </field>
+   <field>
+    <rect>
+     <x>125</x>
+     <y>0</y>
+     <width>160</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>itemchar</query>
+     <column>charass_name</column>
+    </data>
+   </field>
   </detail>
  </section>
  <section>
@@ -1231,6 +1232,54 @@ ORDER BY comment_date;</sql>
    <column>one</column>
    <head>
     <height>57</height>
+    <label>
+     <rect>
+      <x>575</x>
+      <y>35</y>
+      <width>110</width>
+      <height>15</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>8</size>
+      <weight>normal</weight>
+     </font>
+     <hcenter/>
+     <vcenter/>
+     <string>Purpose</string>
+    </label>
+    <label>
+     <rect>
+      <x>125</x>
+      <y>35</y>
+      <width>100</width>
+      <height>15</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>8</size>
+      <weight>normal</weight>
+     </font>
+     <left/>
+     <vcenter/>
+     <string>Name</string>
+    </label>
+    <label>
+     <rect>
+      <x>50</x>
+      <y>10</y>
+      <width>145</width>
+      <height>20</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>10</size>
+      <weight>normal</weight>
+     </font>
+     <left/>
+     <vcenter/>
+     <string>Image List:</string>
+    </label>
     <label>
      <rect>
       <x>250</x>
@@ -1254,54 +1303,6 @@ ORDER BY comment_date;</sql>
      <yend>50</yend>
      <weight>0</weight>
     </line>
-    <label>
-     <rect>
-      <x>50</x>
-      <y>10</y>
-      <width>145</width>
-      <height>20</height>
-     </rect>
-     <font>
-      <face>Arial</face>
-      <size>10</size>
-      <weight>normal</weight>
-     </font>
-     <left/>
-     <vcenter/>
-     <string>Image List:</string>
-    </label>
-    <label>
-     <rect>
-      <x>125</x>
-      <y>35</y>
-      <width>100</width>
-      <height>15</height>
-     </rect>
-     <font>
-      <face>Arial</face>
-      <size>8</size>
-      <weight>normal</weight>
-     </font>
-     <left/>
-     <vcenter/>
-     <string>Name</string>
-    </label>
-    <label>
-     <rect>
-      <x>575</x>
-      <y>35</y>
-      <width>110</width>
-      <height>15</height>
-     </rect>
-     <font>
-      <face>Arial</face>
-      <size>8</size>
-      <weight>normal</weight>
-     </font>
-     <hcenter/>
-     <vcenter/>
-     <string>Purpose</string>
-    </label>
    </head>
   </group>
   <detail>
@@ -1330,25 +1331,6 @@ ORDER BY comment_date;</sql>
    </field>
    <field>
     <rect>
-     <x>250</x>
-     <y>0</y>
-     <width>315</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>imglist</query>
-     <column>f_descrip</column>
-    </data>
-   </field>
-   <field>
-    <rect>
      <x>125</x>
      <y>0</y>
      <width>120</width>
@@ -1366,6 +1348,25 @@ ORDER BY comment_date;</sql>
      <column>image_name</column>
     </data>
    </field>
+   <field>
+    <rect>
+     <x>250</x>
+     <y>0</y>
+     <width>315</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>imglist</query>
+     <column>f_descrip</column>
+    </data>
+   </field>
   </detail>
  </section>
  <section>
@@ -1377,19 +1378,19 @@ ORDER BY comment_date;</sql>
     <height>57</height>
     <label>
      <rect>
-      <x>50</x>
-      <y>10</y>
-      <width>145</width>
-      <height>20</height>
+      <x>207</x>
+      <y>35</y>
+      <width>100</width>
+      <height>15</height>
      </rect>
      <font>
       <face>Arial</face>
-      <size>10</size>
+      <size>8</size>
       <weight>normal</weight>
      </font>
      <left/>
      <vcenter/>
-     <string>Comments:</string>
+     <string>User</string>
     </label>
     <label>
      <rect>
@@ -1409,6 +1410,29 @@ ORDER BY comment_date;</sql>
     </label>
     <label>
      <rect>
+      <x>50</x>
+      <y>10</y>
+      <width>145</width>
+      <height>20</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>10</size>
+      <weight>normal</weight>
+     </font>
+     <left/>
+     <vcenter/>
+     <string>Comments:</string>
+    </label>
+    <line>
+     <xstart>120</xstart>
+     <ystart>50</ystart>
+     <xend>690</xend>
+     <yend>50</yend>
+     <weight>0</weight>
+    </line>
+    <label>
+     <rect>
       <x>125</x>
       <y>35</y>
       <width>80</width>
@@ -1423,29 +1447,6 @@ ORDER BY comment_date;</sql>
      <vcenter/>
      <string>Date</string>
     </label>
-    <label>
-     <rect>
-      <x>208</x>
-      <y>35</y>
-      <width>100</width>
-      <height>15</height>
-     </rect>
-     <font>
-      <face>Arial</face>
-      <size>8</size>
-      <weight>normal</weight>
-     </font>
-     <left/>
-     <vcenter/>
-     <string>User</string>
-    </label>
-    <line>
-     <xstart>120</xstart>
-     <ystart>50</ystart>
-     <xend>690</xend>
-     <yend>50</yend>
-     <weight>0</weight>
-    </line>
    </head>
   </group>
   <detail>
@@ -1475,6 +1476,25 @@ ORDER BY comment_date;</sql>
    </text>
    <field>
     <rect>
+     <x>207</x>
+     <y>0</y>
+     <width>100</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>comments</query>
+     <column>comment_user</column>
+    </data>
+   </field>
+   <field>
+    <rect>
      <x>125</x>
      <y>0</y>
      <width>80</width>
@@ -1492,48 +1512,10 @@ ORDER BY comment_date;</sql>
      <column>f_date</column>
     </data>
    </field>
-   <field>
-    <rect>
-     <x>208</x>
-     <y>0</y>
-     <width>100</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>comments</query>
-     <column>comment_user</column>
-    </data>
-   </field>
   </detail>
  </section>
  <pgfoot>
   <height>21</height>
-  <field>
-   <rect>
-    <x>103</x>
-    <y>0</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>Context Query</query>
-    <column>report_date</column>
-   </data>
-  </field>
   <label>
    <rect>
     <x>0</x>
@@ -1550,6 +1532,41 @@ ORDER BY comment_date;</sql>
    <vcenter/>
    <string>Report Date:</string>
   </label>
+  <label>
+   <rect>
+    <x>600</x>
+    <y>0</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Page:</string>
+  </label>
+  <field>
+   <rect>
+    <x>102</x>
+    <y>0</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>Context Query</query>
+    <column>report_date</column>
+   </data>
+  </field>
   <field>
    <rect>
     <x>705</x>
@@ -1569,21 +1586,5 @@ ORDER BY comment_date;</sql>
     <column>page_number</column>
    </data>
   </field>
-  <label>
-   <rect>
-    <x>600</x>
-    <y>0</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Page:</string>
-  </label>
  </pgfoot>
 </report>
