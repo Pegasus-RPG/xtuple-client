@@ -183,9 +183,15 @@ enum SetResponse incident::set(const ParameterList &pParams)
 
     if (param.toString() == "new")
     {
-      q.exec("SELECT fetchIncidentNumber() AS result;");
+      q.exec("SELECT nextval('incdt_incdt_id_seq') AS incdt_id, "
+             "fetchIncidentNumber() AS number;");
       if(q.first())
-        _number->setText(q.value("result").toString());
+      {
+        _incdtid=q.value("incdt_id").toInt();
+        _number->setText(q.value("number").toString());
+        _comments->setId(_incdtid);
+        _documents->setId(_incdtid);
+      }
       else
       {
         QMessageBox::critical( omfgThis, tr("Database Error"),
@@ -193,7 +199,6 @@ enum SetResponse incident::set(const ParameterList &pParams)
                                    "Contact your Systems Administrator." ));
         reject();
       }
-      _comments->setReadOnly(true);
     }
     else if (param.toString() == "edit")
     {
@@ -227,6 +232,7 @@ enum SetResponse incident::set(const ParameterList &pParams)
       _cancel->setText(tr("&Close"));
       _cancel->setFocus();
       _comments->setReadOnly(true);
+      _documents->setReadOnly(true);
     }
   }
 
@@ -293,34 +299,26 @@ int incident::saveContact(ContactCluster* pContact)
 
 void incident::sCancel()
 {
-  if (_saved && cNew == _mode)
+  if (cNew == _mode)
   {
-    q.prepare("SELECT deleteIncident(:incdt_id) AS result;");
+    q.prepare("DELETE FROM comment "
+              "WHERE ((comment_source_id=:incdt_id) "
+              "AND (comment_source='INCDT')); "
+              "DELETE FROM imageass "
+              "WHERE ((imageass_source_id=:incdt_id) "
+              "AND (imageass_source='INCDT')); "
+              "DELETE FROM url "
+              "WHERE ((url_source_id=:incdt_id) "
+              "AND (url_source='INCDT')); "
+              "SELECT releaseIncidentNumber(:incidentNumber);");
     q.bindValue(":incdt_id", _incdtid);
+    q.bindValue(":incidentNumber", _number->text().toInt());
     q.exec();
-    if (q.first())
-    {
-      int result = q.value("result").toInt();
-      if (result < 0)
-      {
-	systemError(this, storedProcErrorLookup("deleteIncident", result));
-	return;
-      }
-    }
-    else if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::None)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
-  }
-  
-  if (cNew == _mode)
-  {
-    q.prepare("SELECT releaseIncidentNumber(:incidentNumber);" );
-    q.bindValue(":incidentNumber", _number->text().toInt());
-    q.exec();
-    if (q.lastError().type() != QSqlError::None)
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
   }
 
   reject();
@@ -389,13 +387,13 @@ bool incident::save(bool partial)
 
   if (cNew == _mode && !_saved)
     q.prepare("INSERT INTO incdt"
-              "      (incdt_number, incdt_crmacct_id, incdt_cntct_id,"
+              "      (incdt_id, incdt_number, incdt_crmacct_id, incdt_cntct_id,"
               "       incdt_summary, incdt_descrip, incdt_item_id,"
               "       incdt_status, incdt_assigned_username,"
               "       incdt_incdtcat_id, incdt_incdtseverity_id,"
               "       incdt_incdtpriority_id, incdt_incdtresolution_id,"
               "       incdt_ls_id, incdt_aropen_id, incdt_owner_username) "
-              "VALUES(:incdt_number, :incdt_crmacct_id, :incdt_cntct_id,"
+              "VALUES(:incdt_id, :incdt_number, :incdt_crmacct_id, :incdt_cntct_id,"
               "       :incdt_description, :incdt_notes, :incdt_item_id,"
               "       :incdt_status, :incdt_assigned_username,"
               "       :incdt_incdtcat_id, :incdt_incdtseverity_id,"
@@ -459,18 +457,6 @@ bool incident::save(bool partial)
     rollback.exec();
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return false;
-  }
-
-  if (cNew == _mode && ! _saved)
-  {
-    q.exec("SELECT CURRVAL('incdt_incdt_id_seq') AS result;");
-    if (q.first())
-      _incdtid = q.value("result").toInt();
-    else if(q.lastError().type() != QSqlError::None)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return false;
-    }
   }
 
   _saved = true;
@@ -562,11 +548,12 @@ void incident::populate()
     _notes->setText(q.value("incdt_descrip").toString());
 
     _comments->setId(_incdtid);
+    _documents->setId(_incdtid);
 	
-	_docType->setText(q.value("docType").toString());
-	_docNumber->setText(q.value("docNumber").toString());
-	_aropenid = q.value("docId").toInt();
-	if (_aropenid > 0)
+    _docType->setText(q.value("docType").toString());
+    _docNumber->setText(q.value("docNumber").toString());
+    _aropenid = q.value("docId").toInt();
+    if (_aropenid > 0)
       _viewAR->setEnabled(true);
 
     sFillHistoryList();
