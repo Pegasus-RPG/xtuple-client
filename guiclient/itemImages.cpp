@@ -136,16 +136,17 @@ void itemImages::sNext()
 
 void itemImages::sFillList()
 {
-  _images.prepare( "SELECT itemimage_id, image_data, image_descrip,"
-                   "       CASE WHEN (itemimage_purpose='I') THEN :inventoryDescription"
-                   "            WHEN (itemimage_purpose='P') THEN :productDescription"
-                   "            WHEN (itemimage_purpose='E') THEN :engineeringReference"
-                   "            WHEN (itemimage_purpose='M') THEN :miscellaneous"
+  _images.prepare( "SELECT imageass_id, image_data, image_descrip,"
+                   "       CASE WHEN (imageass_purpose='I') THEN :inventoryDescription"
+                   "            WHEN (imageass_purpose='P') THEN :productDescription"
+                   "            WHEN (imageass_purpose='E') THEN :engineeringReference"
+                   "            WHEN (imageass_purpose='M') THEN :miscellaneous"
                    "            ELSE :other"
                    "       END AS purpose "
-                   "FROM itemimage, image "
-                   "WHERE ( (itemimage_image_id=image_id)"
-                   " AND (itemimage_item_id=:item_id) ) "
+                   "FROM imageass, image "
+                   "WHERE ( (imageass_image_id=image_id)"
+                   " AND (imageass_source_id=:item_id) "
+                   " AND (imageass_source='I') ) "
                    "ORDER BY image_name;" );
   _images.bindValue(":item_id", _item->id());
   _images.bindValue(":inventoryDescription", tr("Inventory Description"));

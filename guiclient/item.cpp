@@ -74,8 +74,6 @@
 #include "image.h"
 #include "itemAlias.h"
 #include "itemAvailabilityWorkbench.h"
-#include "itemFile.h"
-#include "itemImage.h"
 #include "itemList.h"
 #include "itemSite.h"
 #include "itemSubstitute.h"
