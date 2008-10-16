@@ -222,6 +222,20 @@
       </spacer>
      </item>
      <item>
+      <widget class="QLabel" name="_totalLit" >
+       <property name="text" >
+        <string>Total:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="_total" >
+       <property name="text" >
+        <string>0</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="XCheckBox" name="_autoUpdate" >
        <property name="text" >
         <string>Automatically Update</string>

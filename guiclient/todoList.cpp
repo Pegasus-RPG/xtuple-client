@@ -423,6 +423,8 @@ void todoList::sFillList()
     return;
   }
   handlePrivs();
+
+  _total->setText(QString::number(_todoList->topLevelItemCount()));
 }
 
 void todoList::sHandleAutoUpdate(bool pAutoUpdate)
