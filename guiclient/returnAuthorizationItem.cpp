@@ -220,6 +220,14 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
     }
   }
 
+  param = pParams.value("warehous_id", &valid);
+  if (valid)
+    _warehouse->setId(param.toInt());
+
+  param = pParams.value("shipwarehous_id", &valid);
+  if (valid)
+    _shipWhs->setId(param.toInt());
+
   param = pParams.value("raitem_id", &valid);
   if (valid)
   {

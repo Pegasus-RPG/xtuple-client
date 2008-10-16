@@ -100,6 +100,8 @@ public slots:
     virtual void closeEvent( QCloseEvent * pEvent );
     virtual void sFreightChanged();
     virtual void sTaxAuthChanged();
+    virtual void sRecvWhsChanged();
+    virtual void sShipWhsChanged();
     virtual void sTaxDetail();
     virtual void sOrigSoChanged();
     virtual void sDispositionChanged();
@@ -137,6 +139,7 @@ private:
     bool _ffShipto;
     bool _ignoreShiptoSignals;
 	  bool _ignoreSoSignals;
+	  bool _ignoreWhsSignals;
     double _subtotalCache;
     int _taxauthidCache;
     int _taxcurrid;

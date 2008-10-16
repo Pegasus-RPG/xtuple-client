@@ -1711,6 +1711,8 @@ void salesOrder::sNew()
   params.append("curr_id", _orderCurrency->id());
   params.append("orderDate", _orderDate->date());
   params.append("taxauth_id", _taxAuth->id());
+  if (_warehouse->id() != -1)
+    params.append("warehous_id", _warehouse->id());  
 
   if ((_mode == cNew) || (_mode == cEdit))
     params.append("mode", "new");

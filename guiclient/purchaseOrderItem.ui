@@ -1025,22 +1025,6 @@
  <resources/>
  <connections>
   <connection>
-   <sender>_item</sender>
-   <signal>privateIdChanged(int)</signal>
-   <receiver>_warehouse</receiver>
-   <slot>findItemsites(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>51</x>
-     <y>95</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>466</x>
-     <y>97</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>_inventoryItem</sender>
    <signal>toggled(bool)</signal>
    <receiver>_warehouse</receiver>

@@ -269,11 +269,19 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
   if (valid)
     _taxauthid = param.toInt();
 
+  param = pParams.value("warehous_id", &valid);
+  if (valid)
+  {
+    int _warehouseid = param.toInt();
+    _warehouse->setId(_warehouseid);
+    _preferredWarehouseid = _warehouseid;
+  }
+
   param = pParams.value("cust_id", &valid);
   if (valid)
   {
     _custid = param.toInt();
-    q.prepare("SELECT cust_preferred_warehous_id, "
+    q.prepare("SELECT COALESCE(cust_preferred_warehous_id, -1) AS preferredwarehousid, "
               "(cust_number || '-' || cust_name) as f_name "
               "  FROM custinfo"
               " WHERE (cust_id=:cust_id); ");
@@ -281,7 +289,8 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
     q.exec();
     if(q.first())
     {
-      _preferredWarehouseid = q.value("cust_preferred_warehous_id").toInt();
+      if (q.value("preferredwarehousid").toInt() != -1)
+        _preferredWarehouseid = q.value("preferredwarehousid").toInt();
       _custName = q.value("f_name").toString();
     }
     else if (q.lastError().type() != QSqlError::None)

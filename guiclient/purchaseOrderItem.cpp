@@ -75,6 +75,7 @@ purchaseOrderItem::purchaseOrderItem(QWidget* parent, const char* name, bool mod
 
   connect(_ordered, SIGNAL(lostFocus()), this, SLOT(sDeterminePrice()));
   connect(_inventoryItem, SIGNAL(toggled(bool)), this, SLOT(sInventoryItemToggled(bool)));
+  connect(_item, SIGNAL(privateIdChanged(int)), this, SLOT(sFindWarehouseItemsites(int)));
   connect(_item, SIGNAL(newId(int)), this, SLOT(sPopulateItemSourceInfo(int)));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_ordered, SIGNAL(lostFocus()), this, SLOT(sUpdateVendorQty()));
@@ -140,6 +141,10 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
   bool     valid;
   bool     haveQty  = FALSE;
   bool     haveDate = FALSE;
+
+  param = pParams.value("warehous_id", &valid);
+  if (valid)
+    _preferredWarehouseid = param.toInt();
 
   param = pParams.value("parentWo", &valid);
   if (valid)
@@ -746,6 +751,13 @@ void purchaseOrderItem::sSave()
 void purchaseOrderItem::sPopulateExtPrice()
 {
   _extendedPrice->setLocalValue(_ordered->toDouble() * _unitPrice->localValue());
+}
+
+void purchaseOrderItem::sFindWarehouseItemsites( int id )
+{
+  _warehouse->findItemsites(id);
+  if(_preferredWarehouseid > 0)
+    _warehouse->setId(_preferredWarehouseid);
 }
 
 void purchaseOrderItem::sPopulateItemSourceInfo(int pItemid)

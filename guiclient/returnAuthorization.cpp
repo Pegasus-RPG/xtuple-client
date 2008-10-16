@@ -103,6 +103,8 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   connect(_freight, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
   connect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
   connect(_taxauth, SIGNAL(newID(int)), this, SLOT(sTaxAuthChanged()));
+  connect(_warehouse, SIGNAL(newID(int)), this, SLOT(sRecvWhsChanged()));
+  connect(_shipWhs, SIGNAL(newID(int)), this, SLOT(sShipWhsChanged()));
   connect(_origso, SIGNAL(newId(int)), this, SLOT(sOrigSoChanged()));
   connect(_shipToAddr, SIGNAL(changed()), this, SLOT(sClearShiptoNumber()));
   connect(_disposition, SIGNAL(currentIndexChanged(int)), this, SLOT(sDispositionChanged()));
@@ -135,6 +137,7 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   _shiptoid            = -1;
   _ignoreShiptoSignals = false;
   _ignoreSoSignals = false;
+  _ignoreWhsSignals = false;
   _ffBillto = TRUE;
   _ffShipto = TRUE;
   _custEmail = FALSE;
@@ -183,6 +186,15 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
 
   _receiveAll->setEnabled(_privileges->check("EnterReceipts"));
   _postReceipts->setEnabled(_privileges->check("EnterReceipts"));
+
+  //If not multi-warehouse hide whs controls
+  if (!_metrics->boolean("MultiWhs"))
+  {
+    _warehouseLit->hide();
+    _warehouse->hide();
+    _shipWhs->hide();
+    _shipWhsLit->hide();
+  } 
 }
 
 returnAuthorization::~returnAuthorization()
@@ -314,6 +326,8 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
       _shipToName->setEnabled(FALSE);
       _shipToAddr->setEnabled(FALSE);
       _currency->setEnabled(FALSE);
+      _warehouse->setEnabled(FALSE);
+      _shipWhs->setEnabled(FALSE);
       _shipToList->hide();
       _save->hide();
       _new->hide();
@@ -446,10 +460,9 @@ bool returnAuthorization::sSave(bool partial)
              "       rahead_shipto_zipcode=:rahead_shipto_zipcode,rahead_shipto_country=:rahead_shipto_country,"
              "       rahead_custponumber=:rahead_custponumber,rahead_notes=:rahead_notes, "
              "       rahead_misc_accnt_id=:rahead_misc_accnt_id,rahead_misc=:rahead_misc, "
-             "       rahead_misc_descrip=:rahead_misc_descrip,"
-             "       rahead_curr_id=:rahead_curr_id, "
-             "       rahead_freight=:rahead_freight,"
-             "       rahead_printed=:rahead_printed "
+             "       rahead_misc_descrip=:rahead_misc_descrip, rahead_curr_id=:rahead_curr_id,"
+             "       rahead_freight=:rahead_freight, rahead_printed=:rahead_printed,"
+             "       rahead_warehous_id=:rahead_warehous_id, rahead_cohead_warehous_id=:rahead_cohead_warehous_id "
              " WHERE(rahead_id=:rahead_id);" );
 
   q.bindValue(":rahead_id", _raheadid);
@@ -505,6 +518,8 @@ bool returnAuthorization::sSave(bool partial)
   q.bindValue(":rahead_misc_descrip", _miscChargeDescription->text());
   q.bindValue(":rahead_curr_id", _currency->id());
   q.bindValue(":rahead_freight", _freight->localValue());
+  q.bindValue(":rahead_warehous_id", _warehouse->id());
+  q.bindValue(":rahead_cohead_warehous_id", _shipWhs->id());
 
   q.exec();
   if (q.lastError().type() != QSqlError::None)
@@ -913,6 +928,10 @@ void returnAuthorization::sNew()
     ParameterList params;
     params.append("mode", "new");
     params.append("rahead_id", _raheadid);
+    if (_warehouse->isValid())
+      params.append("warehous_id", _warehouse->id());
+    if (_shipWhs->isValid())
+      params.append("shipwarehous_id", _shipWhs->id());
 
     returnAuthorizationItem newdlg(this, "", TRUE);
     newdlg.set(params);
@@ -1224,6 +1243,11 @@ void returnAuthorization::populate()
     _currency->setId(rahead.value("rahead_curr_id").toInt());
     _freight->setLocalValue(rahead.value("rahead_freight").toDouble());
 
+    _ignoreWhsSignals = TRUE;
+    _warehouse->setId(rahead.value("rahead_warehous_id").toInt());
+    _shipWhs->setId(rahead.value("rahead_cohead_warehous_id").toInt());
+    _ignoreWhsSignals = FALSE;
+
     _miscCharge->setLocalValue(rahead.value("rahead_misc").toDouble());
     _miscChargeDescription->setText(rahead.value("rahead_misc_descrip"));
     _miscChargeAccount->setId(rahead.value("rahead_misc_accnt_id").toInt());
@@ -1452,6 +1476,52 @@ void returnAuthorization::sTaxAuthChanged()
   }
 
   sFreightChanged();
+}
+
+void returnAuthorization::sRecvWhsChanged()
+{
+  if (!_ignoreWhsSignals)
+  { 
+    if ( (_raheadid == -1) || (!_warehouse->isValid()) )
+      return;
+
+    XSqlQuery whsq;
+    whsq.prepare("SELECT raitem_id "
+                 "FROM raitem JOIN itemsite ON (itemsite_id=raitem_itemsite_id) "
+                 "WHERE ( (raitem_rahead_id=:rahead_id)"
+                 "  AND   (itemsite_warehous_id <> :warehous_id) )"
+                 "LIMIT 1;");
+    whsq.bindValue(":rahead_id", _raheadid);
+    whsq.bindValue(":warehous_id", _warehouse->id());
+    whsq.exec();
+    if (whsq.first())
+      QMessageBox::information(this, tr("Receiving Site Warning"),
+                                     tr("This Return Authorization has line items with a different Receiving Site. "
+                                        "You may need to review the line items."));
+  }
+}
+
+void returnAuthorization::sShipWhsChanged()
+{
+  if (!_ignoreWhsSignals)
+  { 
+    if ( (_raheadid == -1) || (!_shipWhs->isValid()) )
+      return;
+
+    XSqlQuery whsq;
+    whsq.prepare("SELECT raitem_id "
+                 "FROM raitem JOIN itemsite ON (itemsite_id=raitem_coitem_itemsite_id) "
+                 "WHERE ( (raitem_rahead_id=:rahead_id)"
+                 "  AND   (itemsite_warehous_id <> :warehous_id) )"
+                 "LIMIT 1;");
+    whsq.bindValue(":rahead_id", _raheadid);
+    whsq.bindValue(":warehous_id", _shipWhs->id());
+    whsq.exec();
+    if (whsq.first())
+      QMessageBox::information(this, tr("Shipping Site Warning"),
+                                     tr("This Return Authorization has line items with a different Shipping Site. "
+                                        "You may need to review the line items."));
+  }
 }
 
 void returnAuthorization::sDispositionChanged()

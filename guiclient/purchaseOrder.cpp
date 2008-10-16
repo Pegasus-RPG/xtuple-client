@@ -749,6 +749,7 @@ void purchaseOrder::sNew()
   ParameterList params;
   params.append("mode", "new");
   params.append("pohead_id", _poheadid);
+  params.append("warehous_id", _warehouse->id());
 
   purchaseOrderItem newdlg(this, "", TRUE);
   newdlg.set(params);

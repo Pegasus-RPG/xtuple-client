@@ -83,6 +83,7 @@ protected slots:
 
     virtual void sSave();
     virtual void sPopulateExtPrice();
+    virtual void sFindWarehouseItemsites( int pId );
     virtual void sPopulateItemSourceInfo( int pItemid );
     virtual void sInventoryItemToggled( bool yes );
     virtual void sVendorItemNumberList();
@@ -99,6 +100,7 @@ private:
     double _orderMultiple;
     int _parentwo;
     int _parentso;
+    int _preferredWarehouseid;
     bool _overriddenUnitPrice;
     QStandardItemModel * _itemchar;
 
