@@ -288,6 +288,10 @@ enum SetResponse cashReceipt::set(const ParameterList &pParams)
   param = pParams.value("cust_id", &valid);
   if(cNew == _mode && valid)
     _cust->setId(param.toInt());
+    
+  param = pParams.value("docnumber", & valid);
+  if (valid)
+    _searchDocNum->setText(param.toString());
 
   return NoError;
 }
@@ -674,7 +678,7 @@ void cashReceipt::sFillApplyList()
     ParameterList params;
     params.append("cashrcpt_id", _cashrcptid);
     params.append("cust_id",     _cust->id());
-    params.append("debitMemo",   tr("D/M"));
+    params.append("debitMemo",   tr("Debit Memo"));
     params.append("invoice",     tr("Invoice"));
     XSqlQuery apply;
     apply = mql.toQuery(params);

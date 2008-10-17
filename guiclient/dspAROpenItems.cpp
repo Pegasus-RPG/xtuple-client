@@ -155,18 +155,22 @@ void dspAROpenItems::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pItem)
         pMenu->insertItem(tr("View Invoice Details..."), this, SLOT(sViewInvoiceDetails()), 0);
       }
     }
+    
+   pMenu->insertSeparator();
 
-    menuItem = pMenu->insertItem(tr("Create Incident..."), this, SLOT(sIncident()), 0);
+    menuItem = pMenu->insertItem(tr("New Incident..."), this, SLOT(sIncident()), 0);
     if (!_privileges->check("AddIncidents"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
   else
   {
-    menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEditIncident()), 0);
+    pMenu->insertSeparator();
+    
+    menuItem = pMenu->insertItem(tr("Edit Incident..."), this, SLOT(sEditIncident()), 0);
     if (!_privileges->check("MaintainIncidents"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
-    pMenu->insertItem(tr("View..."), this, SLOT(sViewIncident()), 0);
+    pMenu->insertItem(tr("View Incident..."), this, SLOT(sViewIncident()), 0);
     if (!_privileges->check("ViewIncidents"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
@@ -229,8 +233,11 @@ void dspAROpenItems::sViewInvoiceDetails()
 
 void dspAROpenItems::sIncident()
 {
-  q.prepare("SELECT crmacct_id, crmacct_cntct_id_1 FROM crmacct WHERE (crmacct_cust_id=:cust_id);");
-  q.bindValue(":cust_id", _aropen->altId());
+  q.prepare("SELECT crmacct_id, crmacct_cntct_id_1 "
+            "FROM crmacct, aropen "
+            "WHERE ((aropen_id=:aropen_id) "
+            "AND (crmacct_cust_id=aropen_cust_id));");
+  q.bindValue(":aropen_id", _aropen->id());
   q.exec();
   if (q.first())
   {
@@ -239,10 +246,10 @@ void dspAROpenItems::sIncident()
     params.append("aropen_id", _aropen->id());
     params.append("crmacct_id", q.value("crmacct_id"));
     params.append("cntct_id", q.value("crmacct_cntct_id_1"));
-    incident newdlg(this, "", TRUE);
+    incident newdlg(this, 0, TRUE);
     newdlg.set(params);
 
-    if (newdlg.exec() != XDialog::Rejected)
+    if (newdlg.exec() == XDialog::Accepted)
       sFillList();
   }
 }
@@ -276,9 +283,9 @@ bool dspAROpenItems::setParams(ParameterList &params)
   _dates->appendValue(params);
 
   params.append("invoice", tr("Invoice"));
-  params.append("creditMemo", tr("C/M"));
-  params.append("debitMemo", tr("D/M"));
-  params.append("cashdeposit", tr("C/D"));
+  params.append("creditMemo", tr("Credit Memo"));
+  params.append("debitMemo", tr("Debit Memo"));
+  params.append("cashdeposit", tr("Customer Deposit"));
   if (_incidentsOnly->isChecked())
     params.append("incidentsOnly");
 

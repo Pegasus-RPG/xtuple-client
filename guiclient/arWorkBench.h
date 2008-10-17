@@ -78,6 +78,7 @@ public:
     virtual SetResponse set( const ParameterList & pParams );
 
 public slots:
+    virtual bool setParams(ParameterList &params);
     virtual void sApplyAropenCM();
     virtual void sCCRefundCM();
     virtual void sDeleteCashrcpt();
@@ -98,11 +99,18 @@ public slots:
     virtual void sPostPreauth();
     virtual void sViewAropen();
     virtual void sViewInvoice();
+    virtual void sViewInvoiceDetails();
     virtual void sViewAropenCM();
     virtual void sViewCashrcpt();
     virtual void sVoidPreauth();
     virtual void sgetCCAmount();
-
+    virtual void sClear();
+    virtual void sSearchDocNumChanged();
+    virtual void sPopulateAropenButtonMenu();
+    virtual void sIncident();
+    virtual void sViewIncident();
+    virtual void sEditIncident();
+    
 protected slots:
     virtual void languageChange();
 
