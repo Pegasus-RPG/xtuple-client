@@ -103,7 +103,7 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
   }
   
   QMenu * customerMenu = new QMenu;
-  customerMenu->addAction(tr("Maintenance"), this, SLOT(sCustomer()));
+  customerMenu->addAction(tr("Edit"), this, SLOT(sCustomer()));
   customerMenu->addAction(tr("Workbench"),   this, SLOT(sCustomerInfo()));
   _customerButton->setMenu(customerMenu);
   
