@@ -313,7 +313,6 @@ class OPENMFGWIDGETS_EXPORT VirtualCluster : public QWidget
         inline virtual void setId(const int p)                { _number->setId(p); };
         inline virtual void setInfoVisible(const bool p)      { _info->setHidden(!p); };
         inline virtual void setListVisible(const bool p)      { _list->setHidden(!p); };
-        inline virtual void setLabel(const QString& p)        { _label->setText(p); };
         inline virtual void setName(const QString& p)         { _name->setText(p); };
         inline virtual void setNameVisible(const bool p)      { _name->setHidden(!p); };
         inline virtual void setNumber(const int p)            { _number->setNumber(QString::number(p)); };
@@ -322,6 +321,7 @@ class OPENMFGWIDGETS_EXPORT VirtualCluster : public QWidget
         virtual void clear();
         virtual void setDataWidgetMap(XDataWidgetMapper* m);
         virtual void setEnabled(const bool p);
+        virtual void setLabel(const QString& p);
         virtual void setStrict(const bool b);
         virtual void setReadOnly(const bool b);
         virtual void sRefresh();

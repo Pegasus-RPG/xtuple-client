@@ -149,6 +149,15 @@ void VirtualCluster::clear()
   _description->clear();
 }
 
+void VirtualCluster::setLabel(const QString& p)
+{
+  _label->setText(p);
+  if (p.isEmpty())
+    _label->hide();
+  else
+    _label->show();
+}
+
 void VirtualCluster::setDataWidgetMap(XDataWidgetMapper* m)
 {
   m->addMapping(this, _fieldName, "number", "defaultNumber");

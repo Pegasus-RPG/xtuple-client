@@ -55,98 +55,57 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  projectcluster.h
-//  Copyright (c) 2002-2008, OpenMFG, LLC
+#ifndef _projectCluster_h
 
-#ifndef projectCluster_h
-#define projectCluster_h
+#define _projectCluster_h
 
-#include "OpenMFGWidgets.h"
+#include "virtualCluster.h"
 
-#include "xlineedit.h"
-
-#include <xsqlquery.h>
-
-class QLabel;
-class QPushButton;
-class ProjectCluster;
-class XComboBox;
-
-
-class OPENMFGWIDGETS_EXPORT ProjectLineEdit : public XLineEdit
+class OPENMFGWIDGETS_EXPORT ProjectLineEdit : public VirtualClusterLineEdit
 {
-  Q_OBJECT;
+    Q_OBJECT
 
-friend class ProjectCluster;
+    Q_ENUMS(ProjectType)
 
-  public:
-    enum Type {
-      Undefined     = 0x0000,
-      SalesOrder    = 0x0001,
-      WorkOrder     = 0x0002,
-      PurchaseOrder = 0x0004
-    };
-
-    ProjectLineEdit(QWidget *, const char * = 0);
-    ProjectLineEdit(enum Type, QWidget *, const char * = 0);
-
-    inline void setType(enum Type pPrjType) { _prjType = pPrjType; }
-    inline enum Type type() const           { return _prjType;     }
-
-  public slots:
-    void setId(int);
-    void sParse();
-
-  private:
-    enum Type _prjType;
-
-  signals:
-    void newId(int);
-    void valid(bool);
+    Q_PROPERTY(ProjectType projectType READ type WRITE setType )
     
-  protected:
-    XDataWidgetMapper *_mapper;
+    public:
+      enum ProjectType {
+        Undefined,
+        SalesOrder,
+        WorkOrder,
+        PurchaseOrder,
+      };
+      
+      ProjectLineEdit(QWidget*, const char* = 0);
+      ProjectLineEdit(enum ProjectType pPrjType, QWidget *pParent, const char *pName);
+       
+      virtual enum ProjectType type() const { return _type;     }
+      
+    public slots:
+      virtual void setType(enum ProjectType ptype);
+      
+    private:
+      enum ProjectType _type;
+
 };
 
-class OPENMFGWIDGETS_EXPORT ProjectCluster : public QWidget
+class OPENMFGWIDGETS_EXPORT ProjectCluster : public VirtualCluster
 {
-  Q_OBJECT
-  Q_PROPERTY(QString fieldName      READ fieldName      WRITE setFieldName);
-  Q_PROPERTY(QString number         READ projectNumber  WRITE setProjectNumber  DESIGNABLE false);
-  Q_PROPERTY(QString defaultNumber  READ defaultNumber                          DESIGNABLE false);
+    Q_OBJECT
 
-  public:
-    ProjectCluster(QWidget *, const char * = 0);
-    ProjectCluster(enum ProjectLineEdit::Type t, QWidget *, const char * = 0);
+    Q_ENUMS(ProjectLineEdit::ProjectType)
 
-    QString projectNumber() const;
-    QString  defaultNumber()    { return QString();          }
-    QString  fieldName()        { return _fieldName;         }
+    Q_PROPERTY(ProjectLineEdit::ProjectType projectType READ type WRITE setType )
+    
+    public:
+      ProjectCluster(QWidget*, const char* = 0);
+      
+      enum ProjectLineEdit::ProjectType type();
+      
+    public slots:
+      virtual void setType(enum ProjectLineEdit::ProjectType ptype);
 
-    inline void setType(enum ProjectLineEdit::Type pPrjType) { _prjNumber->_prjType = pPrjType; }
-    enum ProjectLineEdit::Type type() const { return _prjNumber->_prjType; }
-    inline int id() const { return _prjNumber->_id; }
-    inline bool isValid() const { return _prjNumber->_valid; }
-
-  public slots:
-    void setId(int);
-    void setReadOnly(bool);
-    void sProjectList();
-    void setDataWidgetMap(XDataWidgetMapper* m);
-    void setFieldName(const QString& name)        { _fieldName = name; }
-    void setProjectNumber(const QString& number);
-
-  private:
-    void constructor();
-
-    ProjectLineEdit   *_prjNumber;
-    QPushButton       *_prjList;
-    QString            _fieldName;
-
-  signals:
-    void newId(int);
-    void valid(bool);
 };
 
 #endif
-

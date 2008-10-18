@@ -125,7 +125,7 @@ SOURCES    += OpenMFGWidgets.cpp \
               xurllabel.cpp \
               currCluster.cpp usernameCluster.cpp usernameList.cpp \
               workcenterCluster.cpp \
-              projectCluster.cpp projectList.cpp \
+              projectCluster.cpp \
               expensecluster.cpp \
               datecluster.cpp \
               virtualCluster.cpp deptCluster.cpp shiftCluster.cpp \
@@ -172,7 +172,7 @@ HEADERS    += OpenMFGWidgets.h \
               xurllabel.h \
               currcluster.h usernamecluster.h usernameList.h \
               workcentercluster.h \
-              projectcluster.h projectList.h \
+              projectcluster.h \
               expensecluster.h \
               datecluster.h \
               virtualCluster.h deptcluster.h shiftcluster.h \

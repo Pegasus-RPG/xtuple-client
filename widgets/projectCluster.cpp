@@ -55,242 +55,49 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  projectCluster.cpp
-//  Copyright (c) 2002-2008, OpenMFG, LLC
-
-#include <QLabel>
-#include <QPushButton>
-#include <QHBoxLayout>
-
-#include <parameter.h>
-#include <xsqlquery.h>
-
-#include "xcombobox.h"
-#include "xlineedit.h"
-
-#include "projectList.h"
 #include "projectcluster.h"
 
-#include "../common/format.h"
-
-ProjectLineEdit::ProjectLineEdit(QWidget *pParent, const char *name) :
-  XLineEdit(pParent, name)
+ProjectCluster::ProjectCluster(QWidget* pParent, const char* pName) :
+    VirtualCluster(pParent, pName)
 {
-  _prjType = Undefined;
-  _parsed = TRUE;
-  _mapper = new XDataWidgetMapper(this);
-
-  connect(this, SIGNAL(lostFocus()), this, SLOT(sParse()));
+    addNumberWidget(new ProjectLineEdit(this, pName));
+    setLabel(tr("Project #:"));
 }
 
-ProjectLineEdit::ProjectLineEdit(enum Type pPrjType, QWidget *pParent, const char *name) :
-  XLineEdit(pParent, name)
+ProjectLineEdit::ProjectType ProjectCluster::type()
 {
-  _prjType = pPrjType;
-  _parsed = TRUE;
-
-  connect(this, SIGNAL(lostFocus()), this, SLOT(sParse()));
+  return (static_cast<ProjectLineEdit*>(_number))->type();
 }
 
-void ProjectLineEdit::setId(int pId)
+void ProjectCluster::setType(ProjectLineEdit::ProjectType ptype)
 {
-  if (pId != -1)
-  {
-    XSqlQuery prj;
-    prj.prepare( "SELECT prj_number AS prjnumber"
-                "  FROM prj"
-                " WHERE (prj_id=:prj_id); ");
-    prj.bindValue(":prj_id", pId);
-    prj.exec();
-    if (prj.first())
-    {
-      _id    = pId;
-      _valid = TRUE;
-
-      setText(prj.value("prjnumber").toString());
-
-      emit newId(_id);
-      emit valid(TRUE);
-    }
-  }
-  else
-  {
-    _id    = -1;
-    _valid = FALSE;
-
-    setText("");
-
-    emit newId(-1);
-    emit valid(FALSE);
-  }
-
-  if (_mapper->model() &&
-      _mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this))).toString() != text())
-    _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this)), text());
-    
-  _parsed = TRUE;
+  return (static_cast<ProjectLineEdit*>(_number))->setType(ptype);
 }
 
-void ProjectLineEdit::sParse()
+ProjectLineEdit::ProjectLineEdit(QWidget* pParent, const char* pName) :
+    VirtualClusterLineEdit(pParent, "prj", "prj_id", "prj_number", "prj_name", 0, 0, pName)
 {
-  if (!_parsed)
-  {
-    if (text().stripWhiteSpace().length() == 0)
-      setId(-1);
-    else
-    {
-      bool statusCheck = FALSE;
-      QString sql = QString( "SELECT prj_id, prj_number "
-                             "FROM prj "
-                             "WHERE ((prj_number=:prj_number)"
-                             " AND (" );
+  setTitles(tr("Project"), tr("Projects"));
 
-//  Add in the Status checks
-      if (_prjType & SalesOrder)
-      {
-        sql += "(prj_so)";
-        statusCheck = TRUE;
-      }
-
-      if (_prjType & WorkOrder)
-      {
-        if (statusCheck)
-          sql += " OR ";
-        sql += "(prj_wo)";
-        statusCheck = TRUE;
-      }
-
-      if (_prjType & PurchaseOrder)
-      {
-        if (statusCheck)
-          sql += " OR ";
-        sql += "(prj_po)";
-        statusCheck = TRUE;
-      }
-
-      if (!statusCheck)
-        sql += "TRUE";
-      sql += "))";
-
-      XSqlQuery prj;
-      prj.prepare(sql);
-      prj.bindValue(":prj_number", text().stripWhiteSpace().upper());
-      prj.exec();
-      if (prj.first())
-        setId(prj.value("prj_id").toInt());
-      else
-        setId(-1);
-    }
-  }
+  _type = Undefined;
 }
 
-
-ProjectCluster::ProjectCluster(QWidget *pParent, const char *name) :
-  QWidget(pParent, name)
+ProjectLineEdit::ProjectLineEdit(enum ProjectType pPrjType, QWidget *pParent, const char *pName) :
+    VirtualClusterLineEdit(pParent, "prj", "prj_id", "prj_number", "prj_name", 0, 0, pName)
 {
-  constructor();
+  setTitles(tr("Project"), tr("Projects"));
+
+  _type = pPrjType;
 }
 
-ProjectCluster::ProjectCluster(enum ProjectLineEdit::Type pPrjType, QWidget *pParent, const char *name) :
-  QWidget(pParent, name)
+void ProjectLineEdit::setType(ProjectType ptype)
 {
-  constructor();
+  QStringList clauses;
+  if (ptype & SalesOrder)    clauses << "(prj_so)";
+  if (ptype & WorkOrder)     clauses << "(prj_wo)";
+  if (ptype & PurchaseOrder) clauses << "(prj_po)";
 
-  _prjNumber->setType(pPrjType);
+  VirtualClusterLineEdit::setExtraClause( "(" + clauses.join(" OR ") + ")");
+
+  _type = ptype;
 }
-
-void ProjectCluster::constructor()
-{
-//  Create the component Widgets
-  QHBoxLayout *_prjLayout = new QHBoxLayout(this);
-  _prjLayout->setMargin(0);
-  _prjLayout->setSpacing(5);
-
-  QLabel *prjNumberLit = new QLabel(tr("Project #:"), this, "prjNumberLit");
-  prjNumberLit->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-  prjNumberLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-  _prjLayout->addWidget(prjNumberLit);
-
-  _prjNumber = new ProjectLineEdit(this);
-  _prjNumber->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-  _prjLayout->addWidget(_prjNumber);
-
-  _prjList = new QPushButton(tr("..."), this, "_prjList");
-  _prjList->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-#ifndef Q_WS_MAC
-  _prjList->setMaximumWidth(25);
-#endif
-  _prjList->setFocusPolicy(Qt::NoFocus);
-  _prjLayout->addWidget(_prjList);
-
-  setLayout(_prjLayout);
-
-//  Make some internal connections
-  connect(_prjNumber, SIGNAL(newId(int)), this, SIGNAL(newId(int)));
-  connect(_prjNumber, SIGNAL(valid(bool)), this, SIGNAL(valid(bool)));
-
-  connect(_prjList, SIGNAL(clicked()), SLOT(sProjectList()));
-  connect(_prjNumber, SIGNAL(requestList()), SLOT(sProjectList()));
-
-  setFocusProxy(_prjNumber);
-}
-
-void ProjectCluster::setReadOnly(bool pReadOnly)
-{
-  if (pReadOnly)
-  {
-    _prjNumber->setEnabled(FALSE);
-    _prjList->hide();
-  }
-  else
-  {
-    _prjNumber->setEnabled(TRUE);
-    _prjList->show();
-  }
-}
-
-void ProjectCluster::setId(int pId)
-{
-  _prjNumber->setId(pId);
-}
-
-void ProjectCluster::sProjectList()
-{
-  ParameterList params;
-  params.append("id", _prjNumber->_id);
-  params.append("type", _prjNumber->_prjType);
-
-  projectList newdlg(parentWidget(), "", TRUE);
-  newdlg.set(params);
-  
-  int id = newdlg.exec();
-  setId(id);
-
-  if (id != -1)
-  {
-    _prjNumber->setFocus();
-    focusNextPrevChild(TRUE);
-  }
-}
-
-QString ProjectCluster::projectNumber() const
-{
-  return _prjNumber->text();
-}
-
-void ProjectCluster::setDataWidgetMap(XDataWidgetMapper* m)
-{
-  m->addMapping(this, _fieldName, "number", "defaultNumber");
-  _prjNumber->_mapper=m;
-}
-
-void ProjectCluster::setProjectNumber(const QString& number)
-{
-  if (_prjNumber->text() == number)
-    return;
-    
-  _prjNumber->setText(number);
-  _prjNumber->sParse();
-}
-
-
