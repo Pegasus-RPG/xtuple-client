@@ -131,6 +131,7 @@ public slots:
     virtual void sShowReservations();
     virtual void sAllocateCreditMemos();
     virtual void sCheckValidContacts();
+    virtual void sHandleButton();
 
 protected:
     virtual void keyPressEvent( QKeyEvent * e );
