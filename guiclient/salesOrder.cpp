@@ -207,6 +207,7 @@ salesOrder::salesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   _soitem->addColumn(tr("Description"),         -1, Qt::AlignLeft,  true, "description");
   _soitem->addColumn(tr("Site"),        _whsColumn, Qt::AlignCenter,true, "warehous_code");
   _soitem->addColumn(tr("Status"),   _statusColumn, Qt::AlignCenter,true, "enhanced_status");
+  _soitem->addColumn(tr("Firm"),                 0, Qt::AlignCenter,false, "coitem_firm");
   _soitem->addColumn(tr("Sched. Date"),_dateColumn, Qt::AlignCenter,true, "coitem_scheddate");
   _soitem->addColumn(tr("Ordered"),     _qtyColumn, Qt::AlignRight, true, "coitem_qtyord");
   _soitem->addColumn(tr("Qty UOM"),     _uomColumn*1.5, Qt::AlignLeft,  true, "qty_uom");
@@ -1186,16 +1187,23 @@ void salesOrder::sPopulateMenu(QMenu *pMenu)
       else if (_lineMode == cActiveOpen)
       {
         pMenu->insertItem(tr("Edit Line..."), this, SLOT(sEdit()), 0);
+        menuid = pMenu->insertItem(tr("Firm Line..."), this, SLOT(sFirm()), 0);
+        pMenu->setItemEnabled(menuid, _privileges->check("FirmSalesOrder"));
         pMenu->insertItem(tr("Close Line..."), this, SLOT(sAction()), 0);
       }
       else if (_lineMode == cInactiveOpen)
       {
         pMenu->insertItem(tr("Edit Line..."), this, SLOT(sEdit()), 0);
+        menuid = pMenu->insertItem(tr("Firm Line..."), this, SLOT(sFirm()), 0);
+        pMenu->setItemEnabled(menuid, _privileges->check("FirmSalesOrder"));
         pMenu->insertItem(tr("Close Line..."), this, SLOT(sAction()), 0);
         pMenu->insertItem(tr("Delete Line..."), this, SLOT(sDelete()), 0);
       }
       else
-        didsomething = false;
+      {
+        menuid = pMenu->insertItem(tr("Soften Line..."), this, SLOT(sSoften()), 0);
+        pMenu->setItemEnabled(menuid, _privileges->check("FirmSalesOrder"));
+      }
     }
 
     if(_metrics->boolean("EnableSOReservations"))
@@ -1799,10 +1807,10 @@ void salesOrder::sHandleButtons()
     _reserveStock->setEnabled(_privileges->check("MaintainReservations"));
     _reserveLineBalance->setEnabled(_privileges->check("MaintainReservations"));
 
-    if(_numSelected == 1)
+    if ( (_numSelected == 1) && (!selected->rawValue("coitem_firm").toBool()) )
     {
       _edit->setEnabled(TRUE);
-      _delete->setEnabled(true);
+      _delete->setEnabled(TRUE);
       int lineMode = selected->altId();
 
       if (ISQUOTE(_mode))
@@ -1884,6 +1892,7 @@ void salesOrder::sHandleButtons()
     }
     else
     {
+      _lineMode = 0;
       _edit->setEnabled(FALSE);
       _action->setEnabled(FALSE);
       _delete->setEnabled(FALSE);
@@ -1898,6 +1907,36 @@ void salesOrder::sHandleButtons()
     _issueLineBalance->setEnabled(FALSE);
     _reserveStock->setEnabled(FALSE);
     _reserveLineBalance->setEnabled(FALSE);
+  }
+}
+
+void salesOrder::sFirm()
+{
+  if (_lineMode == cCanceled)
+    return;
+  if ( (_mode == cNew) || (_mode == cEdit) )
+  {
+    q.prepare( "UPDATE coitem "
+               "SET coitem_firm=true "
+               "WHERE (coitem_id=:coitem_id);" );
+    q.bindValue(":coitem_id", _soitem->id());
+    q.exec();
+    sFillItemList();
+  }
+}
+
+void salesOrder::sSoften()
+{
+  if (_lineMode == cCanceled)
+    return;
+  if ( (_mode == cNew) || (_mode == cEdit) )
+  {
+    q.prepare( "UPDATE coitem "
+               "SET coitem_firm=false "
+               "WHERE (coitem_id=:coitem_id);" );
+    q.bindValue(":coitem_id", _soitem->id());
+    q.exec();
+    sFillItemList();
   }
 }
 
@@ -2439,7 +2478,7 @@ void salesOrder::sFillItemList()
                 "       item_number, item_type,"
                 "       (item_descrip1 || ' ' || item_descrip2) AS description,"
                 "       warehous_code,"
-                "       CASE WHEN (coitem_status='O' AND (SELECT cust_creditstatus FROM custinfo WHERE cust_id=:cust_id)='H') THEN 'H'"
+                "      (CASE WHEN (coitem_status='O' AND (SELECT cust_creditstatus FROM custinfo WHERE cust_id=:cust_id)='H') THEN 'H'"
                 "            WHEN (coitem_status='O' AND ((SELECT SUM(invcitem_billed)"
                 "                                            FROM cohead, invchead, invcitem"
                 "                                           WHERE ((CAST(invchead_ordernumber AS text)=cohead_number)"
@@ -2459,8 +2498,9 @@ void salesOrder::sFillItemList()
                 "            WHEN (coitem_status='O' AND (itemsite_qtyonhand - qtyAllocated(itemsite_id, CURRENT_DATE)"
                 "                                         + qtyOrdered(itemsite_id, CURRENT_DATE))"
                 "                                          >= (coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned)) THEN 'R'"
-                "            ELSE coitem_status"
-                "       END AS enhanced_status,"
+                "            ELSE coitem_status END "
+                "       || CASE WHEN (coitem_firm) THEN 'F' ELSE '' END "
+                "       ) AS enhanced_status, coitem_firm,"
                 "       quom.uom_name AS qty_uom,"
                 "       noNeg(coitem_qtyshipped - coitem_qtyreturned) AS qtyshipped,"
                 "       noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) AS balance,"
@@ -2506,7 +2546,7 @@ void salesOrder::sFillItemList()
            "         itemsite_qtyonhand, coitem_qtyshipped,"
            "         coitem_linenumber, coitem_subnumber, f_linenumber,"
            "         item_id, item_number, item_descrip1, item_descrip2,"
-           "         warehous_id, warehous_code, coitem_status,"
+           "         warehous_id, warehous_code, coitem_status, coitem_firm,"
            "         coitem_qtyord, coitem_qtyreturned,"
            "         quom.uom_name, puom.uom_name,"
            "         coitem_price, coitem_scheddate,"

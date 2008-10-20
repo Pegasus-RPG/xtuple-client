@@ -95,6 +95,8 @@ public slots:
     virtual void sCopyToShipto();
     virtual void sEdit();
     virtual void sHandleButtons();
+    virtual void sFirm();
+    virtual void sSoften();
     virtual void sAction();
     virtual void sDelete();
     virtual void populate();

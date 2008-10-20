@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>981</width>
-    <height>653</height>
+    <height>667</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -647,22 +647,29 @@
            <property name="title" >
             <string>Ship Control</string>
            </property>
-           <layout class="QGridLayout" >
-            <item row="0" column="0" >
+           <layout class="QVBoxLayout" >
+            <item>
              <widget class="QCheckBox" name="_saveAndAdd" >
               <property name="text" >
                <string>Always show 'Save and Add to Packing List' button on Sales Order screen</string>
               </property>
              </widget>
             </item>
-            <item row="1" column="0" >
+            <item>
+             <widget class="QCheckBox" name="_firmAndAdd" >
+              <property name="text" >
+               <string>Firm Sales Orders when added to Packing List Batch</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QCheckBox" name="_enableSOShipping" >
               <property name="text" >
                <string>Enable Shipping interface from Sales Order screen</string>
               </property>
              </widget>
             </item>
-            <item row="2" column="0" >
+            <item>
              <widget class="QCheckBox" name="_autoSelectForBilling" >
               <property name="text" >
                <string>Automatically check 'Select for Billing' option on Ship Order screen</string>

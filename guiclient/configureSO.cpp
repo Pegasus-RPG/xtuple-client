@@ -165,6 +165,7 @@ configureSO::configureSO(QWidget* parent, const char* name, bool modal, Qt::WFla
   _restrictCreditMemos->setChecked(_metrics->boolean("RestrictCreditMemos"));
   _autoSelectForBilling->setChecked(_metrics->boolean("AutoSelectForBilling"));
   _saveAndAdd->setChecked(_metrics->boolean("AlwaysShowSaveAndAdd"));
+  _firmAndAdd->setChecked(_metrics->boolean("FirmSalesOrderPackingList"));
   _priceOverride->setChecked(_metrics->boolean("DisableSalesOrderPriceOverride"));
   _autoAllocateCM->setChecked(_metrics->boolean("AutoAllocateCreditMemos"));
   _hideSOMiscChrg->setChecked(_metrics->boolean("HideSOMiscCharge"));
@@ -345,6 +346,7 @@ void configureSO::sSave()
   _metrics->set("RestrictCreditMemos", _restrictCreditMemos->isChecked());
   _metrics->set("AutoSelectForBilling", _autoSelectForBilling->isChecked());
   _metrics->set("AlwaysShowSaveAndAdd", _saveAndAdd->isChecked());
+  _metrics->set("FirmSalesOrderPackingList", _firmAndAdd->isChecked());
   _metrics->set("DisableSalesOrderPriceOverride", _priceOverride->isChecked());
   _metrics->set("AutoAllocateCreditMemos", _autoAllocateCM->isChecked());
   _metrics->set("HideSOMiscCharge", _hideSOMiscChrg->isChecked());
