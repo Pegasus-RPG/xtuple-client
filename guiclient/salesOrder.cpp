@@ -1039,7 +1039,7 @@ bool salesOrder::save(bool partial)
   if (_warehouse->id() != -1)
     q.bindValue(":warehous_id", _warehouse->id());
   q.bindValue(":custponumber", _custPONumber->text().stripWhiteSpace());
-  if (_shiptoid != -1)
+  if (_shiptoid > 0)
     q.bindValue(":shipto_id", _shiptoid);
   q.bindValue(":billtoname",                _billToName->text());
   q.bindValue(":billtoaddress1",        _billToAddr->line1());
@@ -1473,10 +1473,11 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
                 "       COALESCE(shipto_id, -1) AS shiptoid,"
                 "       custtype.custtype_code,"
                 "       cust_preferred_warehous_id, "
-                "       cust_curr_id, cust_soemaildelivery "
+                "       cust_curr_id, cust_soemaildelivery, crmacct_id "
                 "FROM custtype, custinfo LEFT OUTER JOIN"
                 "     shipto ON ((shipto_cust_id=cust_id)"
                 "                 AND (shipto_default)) "
+                "LEFT OUTER JOIN crmacct ON (crmacct_cust_id = cust_id) "
                 "WHERE (cust_id=<? value(\"cust_id\") ?>) "
                 "<? if exists(\"isQuote\") ?>"
                 "UNION "
@@ -1490,7 +1491,7 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
                 "       NULL AS cust_shipvia,"
                 "       -1 AS shiptoid,"
                 "       NULL AS custtype_code, NULL AS cust_preferred_warehous_id, "
-                "       NULL AS cust_curr_id, NULL AS cust_soemaildelivery "
+                "       NULL AS cust_curr_id, NULL AS cust_soemaildelivery, 0 AS crmacct_id "
                 "FROM prospect "
                 "WHERE (prospect_id=<? value(\"cust_id\") ?>) "
                 "<? endif ?>"
@@ -1554,6 +1555,9 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
       _custEmail = cust.value("cust_soemaildelivery").toBool();
 
       _billToCntct->setId(cust.value("cust_cntct_id").toInt());
+      if(cust.value("crmacct_id").toInt() > 0)
+        _billToCntct->setSearchAcct(cust.value("crmacct_id").toInt());
+        //_shipToCntct->setSearchAcct(cust.value("crmacct_id").toInt());
 
       if (ISNEW(_mode))
         _taxAuth->setId(cust.value("cust_taxauth_id").toInt());
@@ -1576,7 +1580,7 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
         _shipToCntct->clear();
       }
 
-      if ( (_mode == cNew) || (_mode == cNewQuote ) || (_mode == cEdit) || (_mode == cEditQuote ) )
+      if ((_mode == cNew) || (_mode == cNewQuote ) || (_mode == cEdit) || (_mode == cEditQuote ))
       {
         bool ffBillTo = cust.value("cust_ffbillto").toBool();
         _billToName->setEnabled(ffBillTo);
