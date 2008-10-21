@@ -134,6 +134,7 @@ itemSite::itemSite(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     _orderGroupLit->hide();
     _orderGroup->hide();
     _orderGroupDaysLit->hide();
+    _orderGroupFirst->hide();
     _mpsTimeFenceLit->hide();
     _mpsTimeFence->hide();
     _mpsTimeFenceDaysLit->hide();
@@ -299,6 +300,7 @@ enum SetResponse itemSite::set(const ParameterList &pParams)
 	_eventFence->setEnabled(FALSE);
 	_notes->setReadOnly(TRUE);
 	_orderGroup->setEnabled(FALSE);
+	_orderGroupFirst->setEnabled(FALSE);
 	_mpsTimeFence->setEnabled(FALSE);
 	_close->setText(tr("&Close"));
 	_save->hide();
@@ -490,7 +492,7 @@ void itemSite::sSave()
                          "  itemsite_loccntrl, itemsite_location_id, itemsite_location,"
                          "  itemsite_location_comments, itemsite_notes,"
                          "  itemsite_abcclass, itemsite_autoabcclass,"
-                         "  itemsite_freeze, itemsite_datelastused, itemsite_ordergroup,"
+                         "  itemsite_freeze, itemsite_datelastused, itemsite_ordergroup, itemsite_ordergroup_first,"
                          "  itemsite_mps_timefence,"
                          "  itemsite_disallowblankwip, "
                          "  itemsite_costmethod, itemsite_value,"
@@ -508,7 +510,7 @@ void itemSite::sSave()
                          "  :itemsite_loccntrl, :itemsite_location_id, :itemsite_location,"
                          "  :itemsite_location_comments, :itemsite_notes,"
                          "  :itemsite_abcclass, :itemsite_autoabcclass,"
-                         "  FALSE, startOfTime(), :itemsite_ordergroup,"
+                         "  FALSE, startOfTime(), :itemsite_ordergroup, :itemsite_ordergroup_first,"
                          "  :itemsite_mps_timefence,"
                          "  :itemsite_disallowblankwip, "
                          "  :itemsite_costmethod, 0,"
@@ -585,6 +587,7 @@ void itemSite::sSave()
                          "    itemsite_abcclass=:itemsite_abcclass, itemsite_autoabcclass=:itemsite_autoabcclass,"
                          "    itemsite_notes=:itemsite_notes,"
                          "    itemsite_ordergroup=:itemsite_ordergroup,"
+                         "    itemsite_ordergroup_first=:itemsite_ordergroup_first,"
                          "    itemsite_mps_timefence=:itemsite_mps_timefence,"
                          "    itemsite_disallowblankwip=:itemsite_disallowblankwip, "
                          "    itemsite_warrpurc=:itemsite_warrpurc, itemsite_autoreg=:itemsite_autoreg, "
@@ -630,6 +633,7 @@ void itemSite::sSave()
   newItemSite.bindValue(":itemsite_autoabcclass", QVariant(_autoUpdateABCClass->isChecked(), 0));
     
   newItemSite.bindValue(":itemsite_ordergroup", _orderGroup->value());
+  newItemSite.bindValue(":itemsite_ordergroup_first", QVariant(_orderGroupFirst->isChecked(), 0));
   newItemSite.bindValue(":itemsite_mps_timefence", _mpsTimeFence->value());
 
   if (_useDefaultLocation->isChecked())
@@ -849,11 +853,13 @@ void itemSite::sCacheItemType(char pItemType)
     if(_itemType=='L')
     {
       _orderGroup->setEnabled(TRUE);
+      _orderGroupFirst->setEnabled(TRUE);
       _mpsTimeFence->setEnabled(TRUE);
     }
     else
     {
       _orderGroup->setEnabled(FALSE);
+      _orderGroupFirst->setEnabled(FALSE);
       _mpsTimeFence->setEnabled(FALSE);
     }
 
@@ -895,6 +901,7 @@ void itemSite::sCacheItemType(char pItemType)
     _cycleCountFreq->setEnabled(TRUE);
     _leadTime->setEnabled(TRUE);
     _orderGroup->setEnabled(TRUE);
+    _orderGroupFirst->setEnabled(TRUE);
     _mpsTimeFence->setEnabled(TRUE);
 	
     _supply->setEnabled(TRUE);
@@ -972,7 +979,7 @@ void itemSite::populate()
                     "       itemsite_location_comments,"
                     "       itemsite_cyclecountfreq,"
                     "       itemsite_costcat_id, itemsite_notes,"
-                    "       itemsite_ordergroup, itemsite_mps_timefence,"
+                    "       itemsite_ordergroup, itemsite_ordergroup_first, itemsite_mps_timefence,"
                     "       itemsite_disallowblankwip, "
                     "       itemsite_costmethod,"
                     "       itemsite_warrpurc, itemsite_autoreg "
@@ -1010,6 +1017,7 @@ void itemSite::populate()
     _eventFence->setValue(itemsite.value("itemsite_eventfence").toInt());
 
     _orderGroup->setValue(itemsite.value("itemsite_ordergroup").toInt());
+    _orderGroupFirst->setChecked(itemsite.value("itemsite_ordergroup_first").toBool());
     _mpsTimeFence->setValue(itemsite.value("itemsite_mps_timefence").toInt());
 
     if (itemsite.value("itemsite_controlmethod").toString() == "N")
@@ -1142,6 +1150,7 @@ void itemSite::clear()
   _eventFence->setValue(_metrics->value("DefaultEventFence").toInt());
 
   _orderGroup->setValue(1);
+  _orderGroupFirst->setChecked(FALSE);
   _mpsTimeFence->setValue(0);
     
   sCacheItemType(_itemType);

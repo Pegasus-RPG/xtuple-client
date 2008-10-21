@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>702</width>
-    <height>623</height>
+    <height>625</height>
    </rect>
   </property>
   <property name="minimumSize" >
@@ -21,25 +21,16 @@
   <layout class="QGridLayout" >
    <item row="0" column="0" >
     <layout class="QGridLayout" >
-     <property name="spacing" >
+     <property name="horizontalSpacing" >
+      <number>12</number>
+     </property>
+     <property name="verticalSpacing" >
       <number>12</number>
      </property>
      <item row="0" column="0" colspan="2" >
       <layout class="QHBoxLayout" >
-       <property name="spacing" >
-        <number>6</number>
-       </property>
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <item>
         <layout class="QGridLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
-         <property name="spacing" >
-          <number>6</number>
-         </property>
          <item row="0" column="0" >
           <widget class="ItemCluster" name="_item" >
            <property name="focusPolicy" >
@@ -49,12 +40,6 @@
          </item>
          <item row="0" column="1" >
           <layout class="QGridLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
-           <property name="spacing" >
-            <number>6</number>
-           </property>
            <item row="0" column="0" >
             <widget class="QLabel" name="_warehouseLit" >
              <property name="text" >
@@ -76,7 +61,7 @@
              <property name="orientation" >
               <enum>Qt::Vertical</enum>
              </property>
-             <property name="sizeHint" stdset="0" >
+             <property name="sizeHint" >
               <size>
                <width>20</width>
                <height>20</height>
@@ -106,7 +91,7 @@
          <property name="orientation" >
           <enum>Qt::Horizontal</enum>
          </property>
-         <property name="sizeHint" stdset="0" >
+         <property name="sizeHint" >
           <size>
            <width>40</width>
            <height>20</height>
@@ -118,9 +103,6 @@
         <layout class="QVBoxLayout" >
          <property name="spacing" >
           <number>5</number>
-         </property>
-         <property name="margin" >
-          <number>0</number>
          </property>
          <item>
           <widget class="QPushButton" name="_close" >
@@ -158,12 +140,6 @@
         <bool>true</bool>
        </property>
        <layout class="QGridLayout" >
-        <property name="margin" >
-         <number>9</number>
-        </property>
-        <property name="spacing" >
-         <number>6</number>
-        </property>
         <item row="0" column="0" >
          <widget class="QCheckBox" name="_createPr" >
           <property name="text" >
@@ -193,18 +169,12 @@
         <bool>true</bool>
        </property>
        <layout class="QGridLayout" >
-        <property name="margin" >
-         <number>9</number>
-        </property>
-        <property name="spacing" >
-         <number>6</number>
-        </property>
         <item row="1" column="0" >
          <spacer>
           <property name="orientation" >
            <enum>Qt::Vertical</enum>
           </property>
-          <property name="sizeHint" stdset="0" >
+          <property name="sizeHint" >
            <size>
             <width>20</width>
             <height>0</height>
@@ -237,7 +207,7 @@
           <property name="orientation" >
            <enum>Qt::Horizontal</enum>
           </property>
-          <property name="sizeHint" stdset="0" >
+          <property name="sizeHint" >
            <size>
             <width>40</width>
             <height>20</height>
@@ -325,7 +295,7 @@
           <property name="orientation" >
            <enum>Qt::Horizontal</enum>
           </property>
-          <property name="sizeHint" stdset="0" >
+          <property name="sizeHint" >
            <size>
             <width>40</width>
             <height>20</height>
@@ -420,42 +390,22 @@
         <number>0</number>
        </property>
        <widget class="QWidget" name="_inventoryTab" >
-        <property name="geometry" >
-         <rect>
-          <x>0</x>
-          <y>0</y>
-          <width>678</width>
-          <height>242</height>
-         </rect>
-        </property>
         <attribute name="title" >
          <string>Inventory</string>
         </attribute>
         <layout class="QGridLayout" >
-         <property name="margin" >
-          <number>9</number>
-         </property>
-         <property name="spacing" >
-          <number>6</number>
-         </property>
          <item row="0" column="1" >
           <widget class="QGroupBox" name="_inventory" >
            <property name="title" >
             <string/>
            </property>
            <layout class="QGridLayout" >
-            <property name="margin" >
-             <number>9</number>
-            </property>
-            <property name="spacing" >
-             <number>6</number>
-            </property>
             <item row="4" column="1" >
              <spacer>
               <property name="orientation" >
                <enum>Qt::Vertical</enum>
               </property>
-              <property name="sizeHint" stdset="0" >
+              <property name="sizeHint" >
                <size>
                 <width>20</width>
                 <height>0</height>
@@ -572,12 +522,6 @@
             <string/>
            </property>
            <layout class="QGridLayout" >
-            <property name="margin" >
-             <number>9</number>
-            </property>
-            <property name="spacing" >
-             <number>6</number>
-            </property>
             <item row="0" column="0" >
              <widget class="QCheckBox" name="_locationControl" >
               <property name="enabled" >
@@ -619,12 +563,6 @@
                <bool>true</bool>
               </property>
               <layout class="QGridLayout" >
-               <property name="margin" >
-                <number>9</number>
-               </property>
-               <property name="spacing" >
-                <number>6</number>
-               </property>
                <item row="1" column="0" colspan="2" >
                 <widget class="QRadioButton" name="_miscLocation" >
                  <property name="text" >
@@ -664,12 +602,6 @@
             </item>
             <item row="2" column="0" >
              <layout class="QHBoxLayout" >
-              <property name="spacing" >
-               <number>6</number>
-              </property>
-              <property name="margin" >
-               <number>0</number>
-              </property>
               <item>
                <widget class="QLabel" name="_locationCommentLit" >
                 <property name="text" >
@@ -690,7 +622,7 @@
               <property name="orientation" >
                <enum>Qt::Vertical</enum>
               </property>
-              <property name="sizeHint" stdset="0" >
+              <property name="sizeHint" >
                <size>
                 <width>20</width>
                 <height>0</height>
@@ -704,14 +636,6 @@
         </layout>
        </widget>
        <widget class="QWidget" name="_planningTab" >
-        <property name="geometry" >
-         <rect>
-          <x>0</x>
-          <y>0</y>
-          <width>678</width>
-          <height>242</height>
-         </rect>
-        </property>
         <attribute name="title" >
          <string>Planning</string>
         </attribute>
@@ -734,18 +658,12 @@
             <bool>false</bool>
            </property>
            <layout class="QGridLayout" >
-            <property name="margin" >
-             <number>9</number>
-            </property>
-            <property name="spacing" >
-             <number>6</number>
-            </property>
             <item row="2" column="0" >
              <spacer>
               <property name="orientation" >
                <enum>Qt::Vertical</enum>
               </property>
-              <property name="sizeHint" stdset="0" >
+              <property name="sizeHint" >
                <size>
                 <width>20</width>
                 <height>0</height>
@@ -765,12 +683,6 @@
             </item>
             <item row="0" column="0" >
              <layout class="QGridLayout" >
-              <property name="margin" >
-               <number>0</number>
-              </property>
-              <property name="spacing" >
-               <number>6</number>
-              </property>
               <item row="0" column="0" >
                <widget class="QLabel" name="_reorderLevelLit" >
                 <property name="text" >
@@ -906,7 +818,7 @@
                 <property name="orientation" >
                  <enum>Qt::Horizontal</enum>
                 </property>
-                <property name="sizeHint" stdset="0" >
+                <property name="sizeHint" >
                  <size>
                   <width>40</width>
                   <height>20</height>
@@ -925,7 +837,7 @@
             <string/>
            </property>
            <layout class="QGridLayout" >
-            <item row="0" column="0" >
+            <item row="0" column="0" colspan="2" >
              <widget class="QLabel" name="_planningTypeLit" >
               <property name="text" >
                <string>Planning System:</string>
@@ -935,7 +847,7 @@
               </property>
              </widget>
             </item>
-            <item row="0" column="1" colspan="2" >
+            <item row="0" column="2" colspan="3" >
              <widget class="QComboBox" name="_planningType" >
               <item>
                <property name="text" >
@@ -954,7 +866,7 @@
               </item>
              </widget>
             </item>
-            <item row="1" column="0" >
+            <item row="1" column="0" colspan="2" >
              <widget class="QLabel" name="_orderGroupLit" >
               <property name="text" >
                <string>Group Planned Orders Every:</string>
@@ -964,7 +876,7 @@
               </property>
              </widget>
             </item>
-            <item row="1" column="1" >
+            <item row="1" column="2" colspan="2" >
              <widget class="QSpinBox" name="_orderGroup" >
               <property name="minimum" >
                <number>0</number>
@@ -977,14 +889,14 @@
               </property>
              </widget>
             </item>
-            <item row="1" column="2" >
+            <item row="1" column="4" >
              <widget class="QLabel" name="_orderGroupDaysLit" >
               <property name="text" >
                <string>Days</string>
               </property>
              </widget>
             </item>
-            <item row="2" column="0" >
+            <item row="2" column="0" colspan="2" >
              <widget class="QLabel" name="_mpsTimeFenceLit" >
               <property name="text" >
                <string>MPS Time Fence:</string>
@@ -994,7 +906,7 @@
               </property>
              </widget>
             </item>
-            <item row="2" column="1" >
+            <item row="2" column="2" colspan="2" >
              <widget class="QSpinBox" name="_mpsTimeFence" >
               <property name="minimum" >
                <number>0</number>
@@ -1007,7 +919,7 @@
               </property>
              </widget>
             </item>
-            <item row="2" column="2" >
+            <item row="2" column="4" >
              <widget class="QLabel" name="_mpsTimeFenceDaysLit" >
               <property name="text" >
                <string>Days</string>
@@ -1044,12 +956,19 @@
               </property>
              </widget>
             </item>
-            <item row="3" column="3" >
+            <item row="3" column="3" colspan="2" >
+             <widget class="QCheckBox" name="_orderGroupFirst" >
+              <property name="text" >
+               <string>First Group</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="5" >
              <spacer>
               <property name="orientation" >
                <enum>Qt::Horizontal</enum>
               </property>
-              <property name="sizeHint" stdset="0" >
+              <property name="sizeHint" >
                <size>
                 <width>40</width>
                 <height>20</height>
@@ -1057,7 +976,7 @@
               </property>
              </spacer>
             </item>
-            <item row="4" column="0" >
+            <item row="4" column="0" colspan="2" >
              <widget class="QLabel" name="_safetyStockLit" >
               <property name="text" >
                <string>Safety Stock:</string>
@@ -1067,7 +986,7 @@
               </property>
              </widget>
             </item>
-            <item row="4" column="1" >
+            <item row="4" column="2" colspan="2" >
              <widget class="XLineEdit" name="_safetyStock" >
               <property name="sizePolicy" >
                <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
@@ -1086,12 +1005,12 @@
               </property>
              </widget>
             </item>
-            <item row="5" column="0" >
+            <item row="5" column="0" colspan="2" >
              <spacer>
               <property name="orientation" >
                <enum>Qt::Vertical</enum>
               </property>
-              <property name="sizeHint" stdset="0" >
+              <property name="sizeHint" >
                <size>
                 <width>186</width>
                 <height>20</height>
@@ -1105,14 +1024,6 @@
         </layout>
        </widget>
        <widget class="QWidget" name="notesTab" >
-        <property name="geometry" >
-         <rect>
-          <x>0</x>
-          <y>0</y>
-          <width>678</width>
-          <height>242</height>
-         </rect>
-        </property>
         <attribute name="title" >
          <string>Notes</string>
         </attribute>
@@ -1120,7 +1031,16 @@
          <property name="spacing" >
           <number>5</number>
          </property>
-         <property name="margin" >
+         <property name="leftMargin" >
+          <number>5</number>
+         </property>
+         <property name="topMargin" >
+          <number>5</number>
+         </property>
+         <property name="rightMargin" >
+          <number>5</number>
+         </property>
+         <property name="bottomMargin" >
           <number>5</number>
          </property>
          <item>
@@ -1133,14 +1053,6 @@
         </layout>
        </widget>
        <widget class="QWidget" name="commentsTab" >
-        <property name="geometry" >
-         <rect>
-          <x>0</x>
-          <y>0</y>
-          <width>678</width>
-          <height>242</height>
-         </rect>
-        </property>
         <attribute name="title" >
          <string>Comments</string>
         </attribute>
@@ -1148,7 +1060,16 @@
          <property name="spacing" >
           <number>5</number>
          </property>
-         <property name="margin" >
+         <property name="leftMargin" >
+          <number>5</number>
+         </property>
+         <property name="topMargin" >
+          <number>5</number>
+         </property>
+         <property name="rightMargin" >
+          <number>5</number>
+         </property>
+         <property name="bottomMargin" >
           <number>5</number>
          </property>
          <item>
@@ -1164,14 +1085,6 @@
         </layout>
        </widget>
        <widget class="QWidget" name="_restrictedLocations" >
-        <property name="geometry" >
-         <rect>
-          <x>0</x>
-          <y>0</y>
-          <width>678</width>
-          <height>242</height>
-         </rect>
-        </property>
         <attribute name="title" >
          <string>Restricted Locations</string>
         </attribute>
@@ -1179,7 +1092,16 @@
          <property name="spacing" >
           <number>5</number>
          </property>
-         <property name="margin" >
+         <property name="leftMargin" >
+          <number>0</number>
+         </property>
+         <property name="topMargin" >
+          <number>0</number>
+         </property>
+         <property name="rightMargin" >
+          <number>0</number>
+         </property>
+         <property name="bottomMargin" >
           <number>0</number>
          </property>
          <item>
@@ -1193,9 +1115,6 @@
           <layout class="QVBoxLayout" >
            <property name="spacing" >
             <number>5</number>
-           </property>
-           <property name="margin" >
-            <number>0</number>
            </property>
            <item>
             <widget class="QPushButton" name="_toggleRestricted" >
@@ -1215,7 +1134,7 @@
              <property name="sizeType" >
               <enum>QSizePolicy::Expanding</enum>
              </property>
-             <property name="sizeHint" stdset="0" >
+             <property name="sizeHint" >
               <size>
                <width>20</width>
                <height>20</height>
@@ -1228,14 +1147,6 @@
         </layout>
        </widget>
        <widget class="QWidget" name="_expirationTab" >
-        <property name="geometry" >
-         <rect>
-          <x>0</x>
-          <y>0</y>
-          <width>678</width>
-          <height>242</height>
-         </rect>
-        </property>
         <attribute name="title" >
          <string>Expiration</string>
         </attribute>
@@ -1269,7 +1180,7 @@
            <property name="orientation" >
             <enum>Qt::Horizontal</enum>
            </property>
-           <property name="sizeHint" stdset="0" >
+           <property name="sizeHint" >
             <size>
              <width>241</width>
              <height>164</height>
@@ -1282,7 +1193,7 @@
            <property name="orientation" >
             <enum>Qt::Vertical</enum>
            </property>
-           <property name="sizeHint" stdset="0" >
+           <property name="sizeHint" >
             <size>
              <width>246</width>
              <height>91</height>
