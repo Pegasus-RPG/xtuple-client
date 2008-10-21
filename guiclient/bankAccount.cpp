@@ -230,6 +230,22 @@ void bankAccount::sSave()
 	       "  :bankaccnt_curr_id );" );
   }
   else if (_mode == cEdit)
+  {
+    q.prepare( "SELECT bankaccnt_id FROM bankaccnt "
+               "WHERE ((bankaccnt_name = :bankaccnt_name) "
+               "AND (bankaccnt_id != :bankaccnt_id));");
+    q.bindValue(":bankaccnt_name", _name->text());
+    q.bindValue(":bankaccnt_id", _bankaccntid);
+    q.exec();
+    if (q.first())
+    {
+      QMessageBox::critical( this, tr("Cannot Save Bank Account"),
+                           tr("Bank Account name is already in use. Please enter a unique name.") );
+
+      _name->setFocus();
+      return;
+    }
+    
     q.prepare( "UPDATE bankaccnt "
                "SET bankaccnt_name=:bankaccnt_name, bankaccnt_descrip=:bankaccnt_descrip,"
                "    bankaccnt_bankname=:bankaccnt_bankname, bankaccnt_accntnumber=:bankaccnt_accntnumber,"
@@ -238,7 +254,8 @@ void bankAccount::sSave()
 	       "    bankaccnt_check_form_id=:bankaccnt_check_form_id, "
 	       "    bankaccnt_curr_id=:bankaccnt_curr_id "
                "WHERE (bankaccnt_id=:bankaccnt_id);" );
-
+  }
+  
   q.bindValue(":bankaccnt_id", _bankaccntid);
   q.bindValue(":bankaccnt_name", _name->text());
   q.bindValue(":bankaccnt_descrip", _description->text().stripWhiteSpace());
