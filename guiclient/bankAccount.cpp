@@ -200,6 +200,18 @@ void bankAccount::sSave()
 
   if (_mode == cNew)
   {
+    q.prepare( "SELECT bankaccnt_id FROM bankaccnt WHERE (bankaccnt_name=:bankaccnt_name);");
+    q.bindValue(":bankaccnt_name", _name->text());
+    q.exec();
+    if (q.first())
+    {
+      QMessageBox::critical( this, tr("Cannot Save Bank Account"),
+                           tr("Bank Account name is already in use. Please enter a unique name.") );
+
+      _name->setFocus();
+      return;
+    }
+    
     q.exec("SELECT NEXTVAL('bankaccnt_bankaccnt_id_seq') AS _bankaccnt_id");
     if (q.first())
       _bankaccntid = q.value("_bankaccnt_id").toInt();
