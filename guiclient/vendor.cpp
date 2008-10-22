@@ -665,7 +665,7 @@ void vendor::populate()
   q.exec();
   if (q.first())
     _crmacctid = q.value("crmacct_id").toInt();
-  else if (q.lastError().type() == QSqlError::None)
+  else if (q.lastError().type() != QSqlError::None)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
