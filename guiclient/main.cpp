@@ -120,23 +120,24 @@ int main(int argc, char *argv[])
   }
 #endif
 
-  QApplication app(argc, argv);
-  app.addLibraryPath(".");
+  QApplication::addLibraryPath(".");
 
 #ifdef Q_WS_WIN
-  if (app.winVersion() == QSysInfo::WV_XP)
-    app.setStyle(QStyleFactory::create("windowsxpstyle"));
+  if (QSysInfo::WindowsVersion == QSysInfo::WV_XP)
+    QApplication::setStyle(QStyleFactory::create("windowsxpstyle"));
 #if QT_VERSION >= 0x040300 
-  else if (app.winVersion() == QSysInfo::WV_VISTA)
-    app.setStyle(QStyleFactory::create("windowsvistastyle"));
+  else if (QSysInfo::WindowsVersion == QSysInfo::WV_VISTA)
+    QApplication::setStyle(QStyleFactory::create("windowsvistastyle"));
 #endif
   else
-    app.setStyle(new QWindowsStyle);
+    QApplication::setStyle(new QWindowsStyle);
 #elif defined Q_WS_MACX
-  app.setStyle(new QMacStyle);
+  QApplication::setStyle(new QMacStyle);
 #elif defined Q_WS_X11
-  app.setStyle(new QCleanlooksStyle);
+  QApplication::setStyle(new QCleanlooksStyle);
 #endif
+
+  QApplication app(argc, argv);
 
   // Try and load a default translation file and install it
   QTranslator defaultTranslator(0);
