@@ -91,6 +91,7 @@ project::project(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   if (q.first())
   {
     _owner->setId(q.value("usr_id").toInt());
+    _assignedTo->setId(q.value("usr_id").toInt());
   }  
   else if (q.lastError().type() != QSqlError::None)
   {
@@ -123,6 +124,10 @@ enum SetResponse project::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
 
+  param = pParams.value("usr_id", &valid);
+  if (valid)
+    _assignedTo->setId(param.toInt());
+
   param = pParams.value("prj_id", &valid);
   if (valid)
   {
@@ -153,6 +158,9 @@ enum SetResponse project::set(const ParameterList &pParams)
       }
 
       _comments->setId(_prjid);
+
+      _assignedTo->setEnabled(_privileges->check("MaintainOtherTodoLists") ||
+			      _privileges->check("ReassignTodoListItem"));
     }
     else if (param.toString() == "edit")
     {
@@ -163,6 +171,9 @@ enum SetResponse project::set(const ParameterList &pParams)
       connect(_prjtask, SIGNAL(valid(bool)), _editTask, SLOT(setEnabled(bool)));
       connect(_prjtask, SIGNAL(valid(bool)), _deleteTask, SLOT(setEnabled(bool)));
       connect(_prjtask, SIGNAL(itemSelected(int)), _editTask, SLOT(animateClick()));
+
+      _assignedTo->setEnabled(_privileges->check("MaintainOtherTodoLists") ||
+	                      _privileges->check("ReassignTodoListItem"));
     }
     else if (param.toString() == "view")
     {
@@ -176,10 +187,14 @@ enum SetResponse project::set(const ParameterList &pParams)
       _so->setEnabled(FALSE);
       _wo->setEnabled(FALSE);
       _po->setEnabled(FALSE);
-
+      _assignedTo->setEnabled(FALSE);
       _newTask->setEnabled(FALSE);
       connect(_prjtask, SIGNAL(itemSelected(int)), _viewTask, SLOT(animateClick()));
       _comments->setReadOnly(TRUE);
+      _started->setEnabled(FALSE);
+      _assigned->setEnabled(FALSE);
+      _due->setEnabled(FALSE);
+      _completed->setEnabled(FALSE);
     }
   }
     
@@ -190,7 +205,8 @@ void project::populate()
 {
   q.prepare( "SELECT prj_number, prj_name, prj_descrip,"
              "       prj_so, prj_wo, prj_po, prj_status, "
-             "       prj_owner_username "
+             "       prj_owner_username, prj_usr_id, prj_start_date, "
+             "       prj_assigned_date, prj_due_date, prj_completed_date "
              "FROM prj "
              "WHERE (prj_id=:prj_id);" );
   q.bindValue(":prj_id", _prjid);
@@ -204,6 +220,11 @@ void project::populate()
     _so->setChecked(q.value("prj_so").toBool());
     _wo->setChecked(q.value("prj_wo").toBool());
     _po->setChecked(q.value("prj_po").toBool());
+    _assignedTo->setId(q.value("prj_usr_id").toInt());
+    _started->setDate(q.value("prj_start_date").toDate());
+    _assigned->setDate(q.value("prj_assigned_date").toDate());
+    _due->setDate(q.value("prj_due_date").toDate());
+    _completed->setDate(q.value("prj_completed_date").toDate());
     QString status = q.value("prj_status").toString();
     if("P" == status)
       _status->setCurrentItem(0);
@@ -242,15 +263,21 @@ void project::sSave()
   if (_mode == cNew)
     q.prepare( "INSERT INTO prj "
                "( prj_id, prj_number, prj_name, prj_descrip,"
-               "  prj_so, prj_wo, prj_po, prj_status, prj_owner_username ) "
+               "  prj_so, prj_wo, prj_po, prj_status, prj_owner_username, "
+               "  prj_start_date, prj_due_date, prj_assigned_date,"
+               "  prj_completed_date, prj_usr_id ) "
                "VALUES "
                "( :prj_id, :prj_number, :prj_name, :prj_descrip,"
-               "  :prj_so, :prj_wo, :prj_po, :prj_status, :prj_owner_username );" );
+               "  :prj_so, :prj_wo, :prj_po, :prj_status, :prj_owner_username,"
+               "  :prj_start_date, :prj_due_date, :prj_assigned_date,"
+               "  :prj_completed_date, :prj_usr_id  );" );
   else if (_mode == cEdit)
     q.prepare( "UPDATE prj "
                "SET prj_number=:prj_number, prj_name=:prj_name, prj_descrip=:prj_descrip,"
                "    prj_so=:prj_so, prj_wo=:prj_wo, prj_po=:prj_po, prj_status=:prj_status, "
-               "    prj_owner_username=:prj_owner_username "
+               "    prj_owner_username=:prj_owner_username, prj_start_date=:prj_start_date, "
+               "    prj_due_date=:prj_due_date, prj_assigned_date=:prj_assigned_date,"
+               "    prj_completed_date=:prj_completed_date, prj_usr_id=:prj_usr_id  "
                "WHERE (prj_id=:prj_id);" );
 
   q.bindValue(":prj_id", _prjid);
@@ -261,6 +288,11 @@ void project::sSave()
   q.bindValue(":prj_wo", QVariant(_wo->isChecked(), 0));
   q.bindValue(":prj_po", QVariant(_po->isChecked(), 0));
   q.bindValue(":prj_owner_username", _owner->username());
+  q.bindValue(":prj_usr_id",   _assignedTo->id());
+  q.bindValue(":prj_start_date",	_started->date());
+  q.bindValue(":prj_due_date",	_due->date());
+  q.bindValue(":prj_assigned_date",	_assigned->date());
+  q.bindValue(":prj_completed_date",	_completed->date());
   switch(_status->currentItem())
   {
     case 0:

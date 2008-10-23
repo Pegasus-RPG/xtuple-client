@@ -5,34 +5,28 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>487</height>
+    <width>626</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Project</string>
   </property>
   <layout class="QGridLayout" >
+   <property name="leftMargin" >
+    <number>12</number>
+   </property>
+   <property name="topMargin" >
+    <number>12</number>
+   </property>
+   <property name="rightMargin" >
+    <number>12</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>12</number>
+   </property>
    <item row="0" column="0" >
     <layout class="QGridLayout" >
-     <property name="leftMargin" >
-      <number>12</number>
-     </property>
-     <property name="topMargin" >
-      <number>12</number>
-     </property>
-     <property name="rightMargin" >
-      <number>12</number>
-     </property>
-     <property name="bottomMargin" >
-      <number>12</number>
-     </property>
-     <property name="horizontalSpacing" >
-      <number>12</number>
-     </property>
-     <property name="verticalSpacing" >
-      <number>12</number>
-     </property>
      <item row="0" column="0" >
       <layout class="QGridLayout" >
        <item row="0" column="0" >
@@ -48,7 +42,7 @@
        <item row="0" column="1" >
         <layout class="QHBoxLayout" >
          <property name="spacing" >
-          <number>7</number>
+          <number>0</number>
          </property>
          <property name="leftMargin" >
           <number>0</number>
@@ -63,90 +57,23 @@
           <number>0</number>
          </property>
          <item>
-          <layout class="QHBoxLayout" >
-           <property name="spacing" >
-            <number>0</number>
-           </property>
-           <property name="leftMargin" >
-            <number>0</number>
-           </property>
-           <property name="topMargin" >
-            <number>0</number>
-           </property>
-           <property name="rightMargin" >
-            <number>0</number>
-           </property>
-           <property name="bottomMargin" >
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="XLineEdit" name="_number" />
-           </item>
-           <item>
-            <spacer>
-             <property name="orientation" >
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeType" >
-              <enum>QSizePolicy::Expanding</enum>
-             </property>
-             <property name="sizeHint" >
-              <size>
-               <width>46</width>
-               <height>16</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
+          <widget class="XLineEdit" name="_number" />
          </item>
          <item>
-          <layout class="QHBoxLayout" >
-           <property name="spacing" >
-            <number>5</number>
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
            </property>
-           <property name="leftMargin" >
-            <number>0</number>
+           <property name="sizeType" >
+            <enum>QSizePolicy::Expanding</enum>
            </property>
-           <property name="topMargin" >
-            <number>0</number>
+           <property name="sizeHint" >
+            <size>
+             <width>46</width>
+             <height>16</height>
+            </size>
            </property>
-           <property name="rightMargin" >
-            <number>0</number>
-           </property>
-           <property name="bottomMargin" >
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="QLabel" name="_statusLit" >
-             <property name="text" >
-              <string>Status:</string>
-             </property>
-             <property name="alignment" >
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="XComboBox" name="_status" >
-             <item>
-              <property name="text" >
-               <string>Concept</string>
-              </property>
-             </item>
-             <item>
-              <property name="text" >
-               <string>In-Process</string>
-              </property>
-             </item>
-             <item>
-              <property name="text" >
-               <string>Complete</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-          </layout>
+          </spacer>
          </item>
         </layout>
        </item>
@@ -200,7 +127,7 @@
             <enum>Qt::Vertical</enum>
            </property>
            <property name="sizeType" >
-            <enum>QSizePolicy::MinimumExpanding</enum>
+            <enum>QSizePolicy::Expanding</enum>
            </property>
            <property name="sizeHint" >
             <size>
@@ -249,7 +176,7 @@
             <enum>Qt::Vertical</enum>
            </property>
            <property name="sizeType" >
-            <enum>QSizePolicy::MinimumExpanding</enum>
+            <enum>QSizePolicy::Expanding</enum>
            </property>
            <property name="sizeHint" >
             <size>
@@ -269,14 +196,13 @@
      <item row="1" column="0" >
       <layout class="QGridLayout" >
        <item row="0" column="0" >
-        <widget class="UsernameCluster" name="_owner" >
-         <property name="label" >
-          <string>Owner:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1" >
         <widget class="QGroupBox" name="_ordersGroup" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="title" >
           <string>Assignable Orders</string>
          </property>
@@ -335,15 +261,71 @@
          </layout>
         </widget>
        </item>
-       <item row="0" column="2" >
+       <item rowspan="2" row="0" column="1" >
+        <widget class="QGroupBox" name="groupBox" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="title" >
+          <string>Users</string>
+         </property>
+         <layout class="QGridLayout" >
+          <item row="0" column="0" >
+           <layout class="QGridLayout" >
+            <item row="0" column="1" >
+             <widget class="UsernameCluster" name="_owner" >
+              <property name="label" >
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1" >
+             <widget class="UsernameCluster" name="_assignedTo" >
+              <property name="label" >
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0" >
+             <widget class="QLabel" name="_ownerLit" >
+              <property name="text" >
+               <string>Owner:</string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0" >
+             <widget class="QLabel" name="_assignedToLit" >
+              <property name="text" >
+               <string>Assigned To:</string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="1" column="0" >
         <spacer>
          <property name="orientation" >
-          <enum>Qt::Horizontal</enum>
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Minimum</enum>
          </property>
          <property name="sizeHint" >
           <size>
-           <width>40</width>
-           <height>20</height>
+           <width>20</width>
+           <height>10</height>
           </size>
          </property>
         </spacer>
@@ -352,9 +334,145 @@
      </item>
      <item row="2" column="0" >
       <widget class="QTabWidget" name="_tab" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="currentIndex" >
         <number>0</number>
        </property>
+       <widget class="QWidget" name="_statusTab" >
+        <attribute name="title" >
+         <string>Status</string>
+        </attribute>
+        <layout class="QGridLayout" >
+         <item row="0" column="0" >
+          <widget class="QGroupBox" name="_dateGroup" >
+           <property name="title" >
+            <string/>
+           </property>
+           <layout class="QGridLayout" >
+            <item row="1" column="0" >
+             <widget class="QLabel" name="_dueLit" >
+              <property name="text" >
+               <string>Due:</string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1" >
+             <widget class="DLineEdit" name="_due" >
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0" >
+             <widget class="QLabel" name="_assignedLit" >
+              <property name="text" >
+               <string>Assigned:</string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1" >
+             <widget class="DLineEdit" name="_assigned" />
+            </item>
+            <item row="3" column="0" >
+             <widget class="QLabel" name="_startedLit" >
+              <property name="text" >
+               <string>Started:</string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1" >
+             <widget class="DLineEdit" name="_started" />
+            </item>
+            <item row="4" column="0" >
+             <widget class="QLabel" name="_completedLit" >
+              <property name="text" >
+               <string>Completed:</string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1" >
+             <widget class="DLineEdit" name="_completed" />
+            </item>
+            <item row="2" column="2" >
+             <spacer>
+              <property name="orientation" >
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" >
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="5" column="1" >
+             <spacer>
+              <property name="orientation" >
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" >
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="0" column="1" >
+             <widget class="XComboBox" name="_status" >
+              <item>
+               <property name="text" >
+                <string>Concept</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>In-Process</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>Complete</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="0" column="0" >
+             <widget class="QLabel" name="_statusLit" >
+              <property name="text" >
+               <string>Status:</string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </widget>
        <widget class="QWidget" name="_tasksTab" >
         <attribute name="title" >
          <string>Tasks</string>
@@ -539,6 +657,12 @@
    <class>Comments</class>
    <extends>QWidget</extends>
    <header>comments.h</header>
+  </customwidget>
+  <customwidget>
+   <class>DLineEdit</class>
+   <extends>QWidget</extends>
+   <header>datecluster.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>UsernameCluster</class>
