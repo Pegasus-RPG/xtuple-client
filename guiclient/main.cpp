@@ -120,7 +120,12 @@ int main(int argc, char *argv[])
   }
 #endif
 
-  QApplication::addLibraryPath(".");
+#if QT_VERSION >= 0x040400
+  // This is the correct place for this call but on versions less
+  // than 4.4 it causes a crash for an unknown reason so it is
+  // called later on earlier versions.
+  QCoreApplication::addLibraryPath(QString("."));
+#endif
 
 #ifdef Q_WS_WIN
   if (QSysInfo::WindowsVersion == QSysInfo::WV_XP)
@@ -138,6 +143,12 @@ int main(int argc, char *argv[])
 #endif
 
   QApplication app(argc, argv);
+#if QT_VERSION < 0x040400
+  // This is here because of some crash problem using it before the
+  // QApplication object is instantiated even though it shouldn't be
+  // needed. This only appears to affect versions lower than 4.4.
+  QCoreApplication::addLibraryPath(QString("."));
+#endif
 
   // Try and load a default translation file and install it
   QTranslator defaultTranslator(0);
