@@ -137,7 +137,11 @@ int main(int argc, char *argv[])
   else
     QApplication::setStyle(new QWindowsStyle);
 #elif defined Q_WS_MACX
+#if QT_VERSION >= 0x040400
+  // Again for some reason on earlier version this causes a crash
+  // despite this being the correct place for it.
   QApplication::setStyle(new QMacStyle);
+#endif
 #elif defined Q_WS_X11
   QApplication::setStyle(new QCleanlooksStyle);
 #endif
@@ -148,6 +152,11 @@ int main(int argc, char *argv[])
   // QApplication object is instantiated even though it shouldn't be
   // needed. This only appears to affect versions lower than 4.4.
   QCoreApplication::addLibraryPath(QString("."));
+#if defined Q_WS_MACX
+  // Just as above this has to be done after the QApplication is
+  // instantiated to prevent a crash on earlier Qt Versions.
+  QApplication::setStyle(new QMacStyle);
+#endif
 #endif
 
   // Try and load a default translation file and install it
