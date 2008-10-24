@@ -736,7 +736,7 @@ void purchaseOrder::sNew()
 	       "    pohead_curr_id=:pohead_curr_id, "
 	       "    pohead_orderdate=:pohead_orderdate "
                "WHERE (pohead_id=:pohead_id);" );
-    if (_warehouse->isValid());
+    if (_warehouse->isValid())
       q.bindValue(":pohead_warehous_id", _warehouse->id());
     q.bindValue(":pohead_vend_id", _vendor->id());
     q.bindValue(":pohead_number", _orderNumber->text());
