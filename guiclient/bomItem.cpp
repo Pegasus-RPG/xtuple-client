@@ -269,6 +269,7 @@ enum SetResponse bomItem::set(const ParameterList &pParams)
       _substituteGroup->setEnabled(FALSE);
       _close->setText(tr("&Close"));
       _save->hide();
+      _notes->setEnabled(FALSE);
 
       _close->setFocus();
     }
@@ -320,7 +321,7 @@ void bomItem::sSave()
                "                      :effective, :expires,"
                "                      :createWo, :booitem_seq_id, :scheduledWithBooItem,"
                "                      :ecn, :subtype, :revision_id,"
-               "                      :char_id, :value ) AS result;" );
+               "                      :char_id, :value, :notes ) AS result;" );
   else if ( (_mode == cCopy) || (_mode == cReplace) )
     q.prepare( "SELECT createBOMItem( :bomitem_id, :parent_item_id, :component_item_id,"
                "                      bomitem_seqnumber, :issueMethod,"
@@ -328,7 +329,7 @@ void bomItem::sSave()
                "                      :effective, :expires,"
                "                      :createWo, :booitem_seq_id, :scheduledWithBooItem,"
                "                      :ecn, :subtype, :revision_id,"
-               "                      :char_id, :value ) AS result "
+               "                      :char_id, :value, :notes ) AS result "
                "FROM bomitem "
                "WHERE (bomitem_id=:sourceBomitem_id);" );
   else if (_mode == cEdit  || _saved)
@@ -339,7 +340,7 @@ void bomItem::sSave()
                "    bomitem_createwo=:createWo, bomitem_issuemethod=:issueMethod,"
                "    bomitem_uom_id=:bomitem_uom_id,"
                "    bomitem_ecn=:ecn, bomitem_moddate=CURRENT_DATE, bomitem_subtype=:subtype, "
-               "    bomitem_char_id=:char_id, bomitem_value=:value "
+               "    bomitem_char_id=:char_id, bomitem_value=:value, bomitem_notes=:notes "
                "WHERE (bomitem_id=:bomitem_id);" );
   else
 //  ToDo
@@ -357,6 +358,7 @@ void bomItem::sSave()
   q.bindValue(":effective", _dates->startDate());
   q.bindValue(":expires", _dates->endDate());
   q.bindValue(":ecn", _ecn->text());
+  q.bindValue(":notes",	_notes->text());
 
   q.bindValue(":createWo", QVariant(_createWo->isChecked(), 0));
   q.bindValue(":scheduledWithBooItem", QVariant(_scheduleAtWooper->isChecked(), 0));
@@ -506,7 +508,8 @@ void bomItem::populate()
              "       bomitem_effective, bomitem_expires, bomitem_subtype,"
              "       bomitem_uom_id, "
              "       bomitem_char_id, "
-             "       bomitem_value "
+             "       bomitem_value, "
+             "       bomitem_notes "
              "FROM bomitem, item "
              "WHERE ( (bomitem_parent_item_id=item_id)"
              " AND (bomitem_id=:bomitem_id) );" );
@@ -517,6 +520,7 @@ void bomItem::populate()
     _itemid = q.value("bomitem_parent_item_id").toInt();
     _item->setId(q.value("bomitem_item_id").toInt());
     _uom->setId(q.value("bomitem_uom_id").toInt());
+    _notes->setText(q.value("bomitem_notes").toString());
 
     if (q.value("bomitem_issuemethod").toString() == "S")
       _issueMethod->setCurrentItem(0);

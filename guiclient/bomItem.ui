@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>588</width>
-    <height>606</height>
+    <height>609</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -466,6 +466,23 @@
        <property name="currentIndex" >
         <number>0</number>
        </property>
+       <widget class="QWidget" name="tab" >
+        <attribute name="title" >
+         <string>Notes</string>
+        </attribute>
+        <layout class="QGridLayout" >
+         <item row="0" column="0" >
+          <widget class="QTextEdit" name="_notes" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+             <horstretch>0</horstretch>
+             <verstretch>3</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
        <widget class="QWidget" name="_substitutionsTab" >
         <attribute name="title" >
          <string>Substitutions</string>
