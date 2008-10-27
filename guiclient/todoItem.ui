@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>600</width>
-    <height>430</height>
+    <height>476</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -544,6 +544,20 @@
          </item>
         </layout>
        </widget>
+       <widget class="QWidget" name="_alarmTab" >
+        <attribute name="title" >
+         <string>Alarms</string>
+        </attribute>
+        <layout class="QHBoxLayout" >
+         <item>
+          <widget class="Alarms" name="_alarms" >
+           <property name="type" >
+            <enum>Alarms::TodoItem</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
       </widget>
      </item>
     </layout>
@@ -551,6 +565,11 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>Alarms</class>
+   <extends>QWidget</extends>
+   <header>alarms.h</header>
+  </customwidget>
   <customwidget>
    <class>CRMAcctCluster</class>
    <extends>QWidget</extends>

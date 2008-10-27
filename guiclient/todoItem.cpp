@@ -155,6 +155,7 @@ enum SetResponse todoItem::set(const ParameterList &pParams)
       _assignedTo->setEnabled(FALSE);
       _description->setEnabled(FALSE);
       _notes->setEnabled(FALSE);
+      _alarms->setReadOnly(TRUE);
 
       _close->setText(tr("&Close"));
       _save->hide();
@@ -190,6 +191,8 @@ enum SetResponse todoItem::set(const ParameterList &pParams)
   if (valid)
   {
     _todoitemid = param.toInt();
+    _alarms->setId(_todoitemid);
+    qDebug(QString("todoitem setid of alarms with %1").arg(_todoitemid));
     sPopulate();
   }
 
