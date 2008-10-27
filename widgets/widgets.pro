@@ -31,6 +31,7 @@ dynamic {
 
 HEADERS += \
            plugins/addressclusterplugin.h \
+           plugins/alarmsplugin.h \
            plugins/calendarcomboboxplugin.h \
            plugins/clineeditplugin.h \
            plugins/cmclusterplugin.h \
@@ -144,6 +145,7 @@ SOURCES    += OpenMFGWidgets.cpp \
               imageview.cpp \
               imageAssignment.cpp \
               file.cpp \
+              alarms.cpp alarmMaint.cpp \
 
 HEADERS    += OpenMFGWidgets.h \
               addresscluster.h contactcluster.h crmacctcluster.h \
@@ -192,12 +194,14 @@ HEADERS    += OpenMFGWidgets.h \
               imageview.h \
               imageAssignment.h \
               file.h \
+              alarms.h alarmMaint.h \
 
 FORMS += accountSearch.ui \
          documents.ui \
          imageview.ui \
          imageAssignment.ui \
          file.ui \
+         alarms.ui alarmMaint.ui \
 
 RESOURCES += widgets.qrc
 

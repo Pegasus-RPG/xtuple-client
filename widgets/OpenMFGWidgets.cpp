@@ -58,6 +58,7 @@
 #include "OpenMFGWidgets.h"
 
 #include "plugins/addressclusterplugin.h"
+#include "plugins/alarmsplugin.h"
 #include "plugins/calendarcomboboxplugin.h"
 #include "plugins/clineeditplugin.h"
 #include "plugins/cmclusterplugin.h"
@@ -127,6 +128,7 @@
 OpenMFGPlugin::OpenMFGPlugin(QObject * parent) : QObject(parent)
 {
   m_plugins.append(new AddressClusterPlugin(this));
+  m_plugins.append(new AlarmsPlugin(this));
   m_plugins.append(new CalendarComboBoxPlugin(this));
   m_plugins.append(new CLineEditPlugin(this));
   m_plugins.append(new CmClusterPlugin(this));
