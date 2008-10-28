@@ -153,7 +153,7 @@ void XComboBox::setDataWidgetMap(XDataWidgetMapper* m)
   else if (_codes.count())
     m->addMapping(this, _fieldName, "code", "currentDefault");
   else
-    m->addMapping(this, _fieldName, "text", "text");
+    m->addMapping(this, _fieldName, "currentText", "currentText");
 }
 
 void XComboBox::setListSchemaName(QString p)
