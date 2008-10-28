@@ -58,35 +58,23 @@
 #include "dspCheckRegister.h"
 
 #include <QMenu>
-#include <QInputDialog>
 #include <QMessageBox>
 #include <QSqlError>
-//#include <QStatusBar>
 #include <QVariant>
 
 #include <openreports.h>
 #include <parameter.h>
 #include <xdateinputdialog.h>
-#include <qstring.h>
-#include "mqlutil.h"
 
 #include "guiclient.h"
+#include "mqlutil.h"
 #include "storedProcErrorLookup.h"
 
-/*
- *  Constructs a dspCheckRegister as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspCheckRegister::dspCheckRegister(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_check, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
@@ -106,6 +94,9 @@ dspCheckRegister::dspCheckRegister(QWidget* parent, const char* name, Qt::WFlags
   _check->addColumn(tr("Amount"),      _moneyColumn,    Qt::AlignRight,  true,  "amount"  );
   _check->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignRight,  true,  "currAbbr"  );
   _check->addColumn(tr("Base Amount"), _bigMoneyColumn, Qt::AlignRight,  true,  "base_amount"  );
+  if (_metrics->boolean("ACHEnabled"))
+    _check->addColumn(tr("ACH Batch"), _orderColumn,    Qt::AlignRight,  true,  "checkhead_ach_batch");
+
   _check->sortByColumn(4);
 
   sHandleButtons();
@@ -113,7 +104,7 @@ dspCheckRegister::dspCheckRegister(QWidget* parent, const char* name, Qt::WFlags
 
   if (omfgThis->singleCurrency())
   {
-    _check->hideColumn(8);
+    _check->hideColumn("currAbbr");
     _totalCurr->hide();
   }
 }
@@ -142,27 +133,27 @@ bool dspCheckRegister::setParams(ParameterList &pParams)
   if(_recipGroup->isChecked())
   {
     pParams.append("recip", 100);
-	if(_vendRB->isChecked())
-	{
-	  pParams.append("recip_type_v", 100);
-	  if(_vend->isValid())
-	  {
+    if(_vendRB->isChecked())
+    {
+      pParams.append("recip_type_v", 100);
+      if(_vend->isValid())
+      {
         pParams.append("recip_id", _vend->id());
-	  }
-	}
-	if(_custRB->isChecked())
-	{
-	  pParams.append("recip_type_c", 100);
-	  if(_cust->isValid())
-	  {
+      }
+    }
+    if(_custRB->isChecked())
+    {
+      pParams.append("recip_type_c", 100);
+      if(_cust->isValid())
+      {
         pParams.append("recip_id", _cust->id());
-	  }
-	}
-	if(_taxauthRB->isChecked())
-	{
-	  pParams.append("recip_type_t", 100);
-	  pParams.append("recip_id", _taxauth_2->id());
-	}
+      }
+    }
+    if(_taxauthRB->isChecked())
+    {
+      pParams.append("recip_type_t", 100);
+      pParams.append("recip_id", _taxauth_2->id());
+    }
   }
 
   if(_checkNumber->text() != "")
@@ -201,51 +192,49 @@ void dspCheckRegister::sFillList()
     return;
   
   q = mql.toQuery(params);
+  _check->populate(q, true);
   if (q.lastError().type() != QSqlError::None)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-  
-  _check->clear();
-  _check->populate(q, true);
 
   if(_showDetail->isChecked())
     _check->expandAll();
 	
-  QString tots("SELECT formatMoney(SUM(currToCurr(checkhead_curr_id, "
-		       "bankaccnt_curr_id, checkhead_amount, checkhead_checkdate))) AS f_amount, "
-		       "currConcat(bankaccnt_curr_id) AS currAbbr "
-		       "FROM bankaccnt, checkhead LEFT OUTER JOIN "
-		       "checkrecip ON ((checkhead_recip_id=checkrecip_id) "
-		       "AND  (checkhead_recip_type=checkrecip_type)) "
-		       "WHERE ((NOT checkhead_void) "
+  QString tots("SELECT SUM(currToCurr(checkhead_curr_id, bankaccnt_curr_id,"
+               "           checkhead_amount, checkhead_checkdate)) AS amount, "
+               "currConcat(bankaccnt_curr_id) AS currAbbr "
+               "FROM bankaccnt, checkhead LEFT OUTER JOIN "
+               "checkrecip ON ((checkhead_recip_id=checkrecip_id) "
+               "AND  (checkhead_recip_type=checkrecip_type)) "
+               "WHERE ((NOT checkhead_void) "
                "AND   (checkhead_checkdate BETWEEN <? value(\"startDate\") ?> AND <? value(\"endDate\") ?> ) "
-		       "AND   (bankaccnt_id=checkhead_bankaccnt_id) "
-		       "AND   (checkhead_bankaccnt_id=<? value(\"bankaccnt_id\") ?>)  "
-		       " <? if exists(\"check_number\") ?>"
-	           " AND   (CAST(checkhead_number AS text) ~ <? value(\"check_number\") ?>)"
-	           " <? endif ?>"
-	           " <? if exists(\"recip\") ?>"
-	           " <? if exists(\"recip_type_v\") ?>"
-	           " AND   (checkhead_recip_type = 'V' )"
-	           " <? endif ?>"
-	           " <? if exists(\"recip_type_c\") ?>"
-	           " AND   (checkhead_recip_type = 'C' )"
-	  		   " <? endif ?>"
-	           " <? if exists(\"recip_type_t\") ?>"
-	  		   " AND   (checkhead_recip_type = 'T' )"
-	           " <? endif ?>"
-	           " <? if exists(\"recip_id\") ?>"
-	           " AND   (checkhead_recip_id = <? value(\"recip_id\") ?> )"
-	           " <? endif ?>"
-	           " <? endif ?>)"
-		       "GROUP BY bankaccnt_curr_id;" );
+               "AND   (bankaccnt_id=checkhead_bankaccnt_id) "
+               "AND   (checkhead_bankaccnt_id=<? value(\"bankaccnt_id\") ?>)  "
+               " <? if exists(\"check_number\") ?>"
+               " AND   (CAST(checkhead_number AS text) ~ <? value(\"check_number\") ?>)"
+               " <? endif ?>"
+               " <? if exists(\"recip\") ?>"
+               " <? if exists(\"recip_type_v\") ?>"
+               " AND   (checkhead_recip_type = 'V' )"
+               " <? endif ?>"
+               " <? if exists(\"recip_type_c\") ?>"
+               " AND   (checkhead_recip_type = 'C' )"
+               " <? endif ?>"
+               " <? if exists(\"recip_type_t\") ?>"
+               " AND   (checkhead_recip_type = 'T' )"
+               " <? endif ?>"
+               " <? if exists(\"recip_id\") ?>"
+               " AND   (checkhead_recip_id = <? value(\"recip_id\") ?> )"
+               " <? endif ?>"
+               " <? endif ?>)"
+               "GROUP BY bankaccnt_curr_id;" );
   MetaSQLQuery totm(tots);
   q = totm.toQuery(params);	// reused from above
   if(q.first())
   {
-    _total->setText(q.value("f_amount").toString());
+    _total->setDouble(q.value("amount").toDouble());
     _totalCurr->setText(q.value("currAbbr").toString());
   }
   else if (q.lastError().type() != QSqlError::None)
@@ -310,11 +299,10 @@ void dspCheckRegister::sHandleButtons()
   }
   else if (_custRB->isChecked())
   {
-	_widgetStack->setCurrentIndex(1);
+    _widgetStack->setCurrentIndex(1);
   }
   else
   {
-	_widgetStack->setCurrentIndex(2);
+    _widgetStack->setCurrentIndex(2);
   }
 }
-

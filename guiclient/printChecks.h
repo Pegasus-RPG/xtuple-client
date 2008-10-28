@@ -72,17 +72,20 @@ public:
     ~printChecks();
 
 public slots:
-    virtual SetResponse set( const ParameterList & pParams );
-    virtual void sPrint();
+    virtual SetResponse set(const ParameterList &pParams);
+    virtual void sCreateACH();
     virtual void sHandleBankAccount( int pBankaccntid );
-    virtual void sPopulate();
+    virtual void sPrint();
 
 protected slots:
     virtual void languageChange();
+    virtual void markChecksAsPrinted(const QString);
 
 private:
     bool _captive;
     int  _setCheckNumber;
+    bool _allrecips_ach_enabled;
+    bool _somerecips_ach_enabled;
 };
 
 #endif // PRINTCHECKS_H

@@ -63,6 +63,8 @@
 #include <parameter.h>
 #include "ui_printCheck.h"
 
+class QCloseEvent;
+
 class printCheck : public XDialog, public Ui::printCheck
 {
     Q_OBJECT
@@ -71,18 +73,28 @@ public:
     printCheck(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~printCheck();
 
+    static QString achFileDir;
+
 public slots:
     virtual enum SetResponse set(const ParameterList & pParams );
-    virtual void sPrint();
+    virtual void done(int r);
+    virtual void sCreateACH();
+    virtual void sEnableCreateACH();
     virtual void sHandleBankAccount( int pBankaccntid );
+    virtual void sPrint();
     virtual void populate( int pcheckid );
 
 protected slots:
     virtual void languageChange();
 
+protected:
+    virtual void storeAchFileDir();
+
 private:
     bool _captive;
     int  _setCheckNumber;
+
+    virtual void markCheckAsPrinted(const int);
 
 };
 

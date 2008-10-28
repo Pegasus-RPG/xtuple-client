@@ -55,76 +55,50 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#ifndef CUSTOMER_H
-#define CUSTOMER_H
+#include "configureEncryption.h"
 
-#include "guiclient.h"
-#include "xwidget.h"
-#include <QStandardItemModel>
-#include <parameter.h>
+#include <QMessageBox>
 
-#include "ui_customer.h"
-
-class customer : public XWidget, public Ui::customer
+configureEncryption::configureEncryption(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+    : XDialog(parent, name, modal, fl)
 {
-    Q_OBJECT
+  setupUi(this);
 
-public:
-    customer(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
-    ~customer();
+  connect(_save,  SIGNAL(clicked()), this, SLOT(sSave()));
 
-public slots:
-    virtual SetResponse set(const ParameterList & pParams );
-    virtual void populate();
-    virtual void sCheck();
-    virtual void sDeleteCharacteristic();
-    virtual void sDeleteShipto();
-    virtual void sDeleteTaxreg();
-    virtual void sEditCharacteristic();
-    virtual void sEditCreditCard();
-    virtual void sEditShipto();
-    virtual void sEditTaxreg();
-    virtual void sFillCcardList();
-    virtual void sFillCharacteristicList();
-    virtual void sFillShiptoList();
-    virtual void sFillTaxregList();
-    virtual void sMoveDown();
-    virtual void sMoveUp();
-    virtual void sNewCharacteristic();
-    virtual void sNewCreditCard();
-    virtual void sNewShipto();
-    virtual void sNewTaxreg();
-    virtual void sPopulateCommission();
-    virtual void sPopulateShiptoMenu( QMenu * menuThis );
-    virtual void sPrintShipto();
-    virtual bool sSave( bool partial );
-    virtual void sSave();
-    virtual void sViewCreditCard();
-    virtual void sViewShipto();
-    virtual void sViewTaxreg();
-    virtual void sLoadProspect(int);
-    virtual void sLoadCrmAcct(int);
+  if (_metricsenc == 0)
+  {
+    QMessageBox::critical( this, tr("Cannot Read Configuration"),
+		    tr("<p>Cannot read encrypted information from database."));
+  }
 
-protected slots:
-    virtual void languageChange();
-    virtual int  saveContact(ContactCluster*);
-    virtual void sProfileSelected();
-    virtual void sSoProfileSelected();
-    virtual void sNumberEdited();
+  _ccEncKeyName->setText(_metrics->value("CCEncKeyName"));
+  _ccWinEncKey->setText(_metrics->value("CCWinEncKey"));
+  _ccLinEncKey->setText(_metrics->value("CCLinEncKey"));
+  _ccMacEncKey->setText(_metrics->value("CCMacEncKey"));
+}
 
-protected:
-    virtual void closeEvent(QCloseEvent*);
+configureEncryption::~configureEncryption()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
 
-private:
-    int _mode;
-    int _custid;
-    int	_crmacctid;
-    int _NumberGen;
-    QString _cachedNumber;
-    QString key;
-    bool _notice;
-    QStandardItemModel * _custchar;
+void configureEncryption::languageChange()
+{
+  retranslateUi(this);
+}
 
-};
+void configureEncryption::sSave()
+{
+  _metrics->set("CCEncKeyName",      _ccEncKeyName->text());
+  _metrics->set("CCWinEncKey",       _ccWinEncKey->text());
+  _metrics->set("CCLinEncKey",       _ccLinEncKey->text());
+  _metrics->set("CCMacEncKey",       _ccMacEncKey->text());
 
-#endif // CUSTOMER_H
+  _metrics->load();
+
+  if (0 != _metricsenc)
+    _metricsenc->load();
+
+  accept();
+}

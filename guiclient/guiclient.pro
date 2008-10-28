@@ -60,7 +60,8 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                configureCC.ui configureSO.ui configureIM.ui                                           \
                configureGL.ui configureMS.ui configurePD.ui configurePO.ui                            \
                configureWO.ui configureBackup.ui configureCRM.ui                                      \
-               configureIE.ui                                                                         \
+               configureIE.ui configureEncryption.ui                                                  \
+               confirmAchOK.ui                                                                        \
                contact.ui contacts.ui copyPurchaseOrder.ui copyBudget.ui                              \
                copyBOM.ui copyBOO.ui copyItem.ui copyPlannedSchedule.ui copySalesOrder.ui             \
                copyTransferOrder.ui                                                                   \
@@ -378,7 +379,8 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                configureCC.h configureSO.h configureIM.h                                              \
                configureGL.h configureMS.h configurePD.h configurePO.h                                \
                configureWO.h configureBackup.h configureCRM.h                                         \
-               configureIE.h                                                                          \
+               configureIE.h configureEncryption.h                                                    \
+               confirmAchOK.h                                                                         \
                contact.h contacts.h copyPurchaseOrder.h copyBudget.h                                  \
                copyBOM.h copyBOO.h copyItem.h copyPlannedSchedule.h copySalesOrder.h                  \
                copyTransferOrder.h                                                                    \
@@ -701,7 +703,8 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp       
                configureCC.cpp configureSO.cpp configureIM.cpp                                        \
                configureGL.cpp configureMS.cpp configurePD.cpp configurePO.cpp                        \
                configureWO.cpp configureBackup.cpp configureCRM.cpp                                   \
-               configureIE.cpp                                                                        \
+               configureIE.cpp configureEncryption.cpp                                                \
+               confirmAchOK.cpp                                                                       \
                contact.cpp contacts.cpp copyPurchaseOrder.cpp copyBudget.cpp                          \
                copyBOM.cpp copyBOO.cpp copyItem.cpp copyPlannedSchedule.cpp copySalesOrder.cpp        \
                copyTransferOrder.cpp                                                                  \

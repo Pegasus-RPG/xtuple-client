@@ -745,6 +745,18 @@ void initErrorLookupHash()
   { "disablePackage", -2, TR("Could not find a package with the internal id % "
                              "to enable or disable."),                  0, "" },
 
+  { "distributeVoucherLine", -2, TR("Distribution would result in zero "
+                                    "quantity and amount."
+                                    "Please distribute manually."),     0, "" },
+  { "distributeVoucherLine", -3, TR("The purchase order and voucher have "
+                                    "different currencies. "
+                                    "Please distribute manually."),     0, "" },
+  { "distributeVoucherLine", -4, TR("Distribution would result in a negative "
+                                    "amount. "
+                                    "Please distribute manually."),     0, "" },
+  { "distributeVoucherLine", -4, TR("Item has multiple cost elements. "
+                                    "Please distribute manually."),     0, "" },
+
 
   { "editccnumber",	-1, TR("You must select Master Card, Visa, American "
 			       "Express or Discover as the credit card type."),

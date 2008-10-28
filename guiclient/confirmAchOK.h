@@ -55,76 +55,26 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#ifndef CUSTOMER_H
-#define CUSTOMER_H
+#ifndef CONFIRMACHOK_H
+#define CONFIRMACHOK_H
 
-#include "guiclient.h"
-#include "xwidget.h"
-#include <QStandardItemModel>
-#include <parameter.h>
+#include "xdialog.h"
+#include <QFile>
+#include "ui_confirmAchOK.h"
 
-#include "ui_customer.h"
-
-class customer : public XWidget, public Ui::customer
+class confirmAchOK : public XDialog, public Ui::confirmAchOK
 {
     Q_OBJECT
 
 public:
-    customer(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
-    ~customer();
+    confirmAchOK(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = 0);
+    ~confirmAchOK();
 
-public slots:
-    virtual SetResponse set(const ParameterList & pParams );
-    virtual void populate();
-    virtual void sCheck();
-    virtual void sDeleteCharacteristic();
-    virtual void sDeleteShipto();
-    virtual void sDeleteTaxreg();
-    virtual void sEditCharacteristic();
-    virtual void sEditCreditCard();
-    virtual void sEditShipto();
-    virtual void sEditTaxreg();
-    virtual void sFillCcardList();
-    virtual void sFillCharacteristicList();
-    virtual void sFillShiptoList();
-    virtual void sFillTaxregList();
-    virtual void sMoveDown();
-    virtual void sMoveUp();
-    virtual void sNewCharacteristic();
-    virtual void sNewCreditCard();
-    virtual void sNewShipto();
-    virtual void sNewTaxreg();
-    virtual void sPopulateCommission();
-    virtual void sPopulateShiptoMenu( QMenu * menuThis );
-    virtual void sPrintShipto();
-    virtual bool sSave( bool partial );
-    virtual void sSave();
-    virtual void sViewCreditCard();
-    virtual void sViewShipto();
-    virtual void sViewTaxreg();
-    virtual void sLoadProspect(int);
-    virtual void sLoadCrmAcct(int);
+    static bool askOK(QWidget *parent, QFile &);
 
 protected slots:
     virtual void languageChange();
-    virtual int  saveContact(ContactCluster*);
-    virtual void sProfileSelected();
-    virtual void sSoProfileSelected();
-    virtual void sNumberEdited();
-
-protected:
-    virtual void closeEvent(QCloseEvent*);
-
-private:
-    int _mode;
-    int _custid;
-    int	_crmacctid;
-    int _NumberGen;
-    QString _cachedNumber;
-    QString key;
-    bool _notice;
-    QStandardItemModel * _custchar;
 
 };
 
-#endif // CUSTOMER_H
+#endif // CONFIRMACHOK_H

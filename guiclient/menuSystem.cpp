@@ -127,6 +127,7 @@
 #include "configureSO.h"
 #include "configurePO.h"
 #include "configureGL.h"
+#include "configureEncryption.h"
 #include "configureCC.h"
 #include "configureCRM.h"
 
@@ -240,6 +241,8 @@ menuSystem::menuSystem(GUIClient *Pparent) :
     { "sys.currencies",		tr("Curre&ncies..."),	SLOT(sCurrencies()),	masterInfoMenu,	_privileges->check("CreateNewCurrency"),	NULL,	NULL,	true	},
     { "sys.exchangeRates",	tr("&Exchange Rates..."),SLOT(sExchangeRates()),masterInfoMenu,	_privileges->check("MaintainCurrencyRates") || _privileges->check("ViewCurrencyRates"),
 																	NULL,	NULL,	true	},
+    { "sys.encryption",         tr("Encr&yption..."),   SLOT(sConfigureEncryption()), masterInfoMenu, _privileges->check("ConfigureCC") || _privileges->check("ConfigureEncryption"),
+                                                                                                                                        NULL,	NULL,	true	},
     { "sys.configureCC",	tr("&Credit Cards..."),	SLOT(sConfigureCC()),	masterInfoMenu,	_privileges->check("ConfigureCC"),	NULL,	NULL,	true	},
     { "sys.countries",		tr("Co&untries..."),	SLOT(sCountries()),	masterInfoMenu,	_privileges->check("MaintainCountries"),	NULL,	NULL,	true	},
     { "sys.locales",		tr("L&ocales..."),	SLOT(sLocales()),	masterInfoMenu,	_privileges->check("MaintainLocales"),	NULL,	NULL,	true	},
@@ -660,6 +663,11 @@ void menuSystem::sConfigureSO()
 void menuSystem::sConfigureGL()
 {
   configureGL(parent, "", TRUE).exec();
+}
+
+void menuSystem::sConfigureEncryption()
+{
+  configureEncryption(parent, "", TRUE).exec();
 }
 
 void menuSystem::sConfigureCC()

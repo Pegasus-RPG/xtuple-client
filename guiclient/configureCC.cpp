@@ -59,6 +59,7 @@
 
 #include <QMessageBox>
 
+#include "configureEncryption.h"
 #include "creditcardprocessor.h"
 
 // Change these definitions to match the indices in the _ccCompany combo box
@@ -103,11 +104,6 @@ configureCC::configureCC(QWidget* parent, const char* name, bool modal, Qt::WFla
   _ccProxyPort->setText(_metrics->value("CCProxyPort"));
 
   _ccDefaultBank->setId(_metrics->value("CCDefaultBank").toInt());
-
-  _ccEncKeyName->setText(_metrics->value("CCEncKeyName"));
-  _ccWinEncKey->setText(_metrics->value("CCWinEncKey"));
-  _ccLinEncKey->setText(_metrics->value("CCLinEncKey"));
-  _ccMacEncKey->setText(_metrics->value("CCMacEncKey"));
 
   if (_metrics->value("CCANVer").isEmpty())
     _anVersion->setCurrentText("3.1");
@@ -209,6 +205,17 @@ configureCC::configureCC(QWidget* parent, const char* name, bool modal, Qt::WFla
   }
 
   sDuplicateWindow(_anDuplicateWindow->value());
+
+  QWidget *encryption = new configureEncryption(this);
+  encryption->setName("_encryption");
+  _keyPage->layout()->addWidget(encryption);
+  QPushButton *encbutton = encryption->findChild<QPushButton*>("_save");
+  if (encbutton)
+    encbutton->hide();
+  encbutton = encryption->findChild<QPushButton*>("_close");
+  if (encbutton)
+    encbutton->hide();
+  encryption->show();
 }
 
 configureCC::~configureCC()
@@ -233,10 +240,6 @@ void configureCC::sSave()
   _metrics->set("CCProxyServer",     _ccProxyServer->text());
   _metrics->set("CCProxyPort",       _ccProxyPort->text());
   _metrics->set("CCDefaultBank",     _ccDefaultBank->id());
-  _metrics->set("CCEncKeyName",      _ccEncKeyName->text());
-  _metrics->set("CCWinEncKey",       _ccWinEncKey->text());
-  _metrics->set("CCLinEncKey",       _ccLinEncKey->text());
-  _metrics->set("CCMacEncKey",       _ccMacEncKey->text());
 
   _metrics->set("CCANVer",               _anVersion->currentText());
   _metrics->set("CCANDelim",             _anDelim->text());
@@ -355,6 +358,10 @@ void configureCC::sSave()
 			      QMessageBox::No) == QMessageBox::Yes)
       return;
   }
+
+  configureEncryption *encryption = _keyPage->findChild<configureEncryption*>("_encryption");
+  if (encryption)
+    encryption->sSave();
 
   accept();
 }

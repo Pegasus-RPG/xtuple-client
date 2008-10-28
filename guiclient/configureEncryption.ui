@@ -1,0 +1,192 @@
+<ui version="4.0" >
+ <class>configureEncryption</class>
+ <widget class="QDialog" name="configureEncryption" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>592</width>
+    <height>240</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Encryption Configuration</string>
+  </property>
+  <layout class="QHBoxLayout" >
+   <item>
+    <layout class="QGridLayout" >
+     <item row="1" column="0" >
+      <widget class="QLabel" name="_ccEncKeyNameLit" >
+       <property name="text" >
+        <string>Key File Name:</string>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="buddy" >
+        <cstring>_ccEncKeyName</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1" >
+      <widget class="QLineEdit" name="_ccEncKeyName" >
+       <property name="text" >
+        <string>keyfile.txt</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0" >
+      <widget class="QLabel" name="_ccWinEncKeyLit" >
+       <property name="whatsThis" >
+        <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Lucida Grande'; font-size:13pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">whatsthis for a label with a buddy that's an empty text field&lt;/p>&lt;/body>&lt;/html></string>
+       </property>
+       <property name="text" >
+        <string>Windows Location:</string>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1" >
+      <widget class="FileCluster" name="_ccWinEncKey" >
+       <property name="fileMode" >
+        <enum>QFileDialog::DirectoryOnly</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0" >
+      <widget class="QLabel" name="_ccLinEncKeyLit" >
+       <property name="text" >
+        <string>Linux Location:</string>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1" >
+      <widget class="FileCluster" name="_ccLinEncKey" >
+       <property name="fileMode" >
+        <enum>QFileDialog::Directory</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0" >
+      <widget class="QLabel" name="_ccMacEncKeyLit" >
+       <property name="text" >
+        <string>Mac Location:</string>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1" >
+      <widget class="FileCluster" name="_ccMacEncKey" >
+       <property name="fileMode" >
+        <enum>QFileDialog::Directory</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="1" >
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>20</width>
+         <height>0</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="0" column="0" colspan="2" >
+      <widget class="QLabel" name="_ccEncryptionLabel" >
+       <property name="text" >
+        <string>Encryption Key location for Credit Card and ACH processing:</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" >
+     <item>
+      <widget class="QPushButton" name="_close" >
+       <property name="text" >
+        <string>&amp;Cancel</string>
+       </property>
+       <property name="shortcut" >
+        <string>Alt+C</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="_save" >
+       <property name="text" >
+        <string>&amp;Save</string>
+       </property>
+       <property name="shortcut" >
+        <string>Alt+S</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeType" >
+        <enum>QSizePolicy::Expanding</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>20</width>
+         <height>16</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="5" margin="5" />
+ <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <customwidgets>
+  <customwidget>
+   <class>FileCluster</class>
+   <extends>QWidget</extends>
+   <header>filecluster.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>_ccEncKeyName</tabstop>
+  <tabstop>_save</tabstop>
+  <tabstop>_close</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>_close</sender>
+   <signal>clicked()</signal>
+   <receiver>configureEncryption</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

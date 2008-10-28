@@ -105,6 +105,7 @@ class menuSystem : public QObject
     void sConfigureSO();
     void sConfigurePO();
     void sConfigureGL();
+    void sConfigureEncryption();
     void sConfigureCC();
     void sConfigureCRM();
 

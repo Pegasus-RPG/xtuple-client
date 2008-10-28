@@ -61,6 +61,7 @@
 #include <QSqlError>
 #include <QValidator>
 
+#include "configureEncryption.h"
 #include "guiclient.h"
 
 configureGL::configureGL(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
@@ -71,11 +72,39 @@ configureGL::configureGL(QWidget* parent, const char* name, bool modal, Qt::WFla
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
 
   // AP
-    _nextAPMemoNumber->setValidator(omfgThis->orderVal());
-
+  _nextAPMemoNumber->setValidator(omfgThis->orderVal());
   q.exec("SELECT currentAPMemoNumber() AS result;");
   if (q.first())
     _nextAPMemoNumber->setText(q.value("result"));
+
+  _achGroup->setVisible(_metrics->boolean("ACHSupported"));
+  if (_metrics->boolean("ACHSupported"))
+  {
+    _achGroup->setChecked(_metrics->boolean("ACHEnabled"));
+    _nextACHBatchNumber->setValidator(omfgThis->orderVal());
+    if (! _metrics->value("ACHDefaultOrigin").trimmed().isEmpty())
+      _defaultImmediateOrigin->setText(_metrics->value("ACHDefaultOrigin"));
+    if (! _metrics->value("ACHCompanyId").trimmed().isEmpty())
+      _companyId->setText(_metrics->value("ACHCompanyId"));
+    if (! _metrics->value("ACHCompanyName").trimmed().isEmpty())
+      _companyName->setText(_metrics->value("ACHCompanyName"));
+    if (_metrics->value("ACHDefaultSuffix").trimmed().isEmpty())
+      _achSuffix->setCurrentIndex(_achSuffix->findText(".dat"));
+    else
+    {
+      int suffixidx = _achSuffix->findText(_metrics->value("ACHDefaultSuffix"));
+      if (suffixidx < 0)
+      {
+        _achSuffix->insertItem(0, _metrics->value("ACHDefaultSuffix"));
+        _achSuffix->setCurrentIndex(0);
+      }
+      else
+        _achSuffix->setCurrentIndex(suffixidx);
+    }
+    q.exec("SELECT currentNumber('ACHBatch') AS result;");
+    if (q.first())
+      _nextACHBatchNumber->setText(q.value("result"));
+  }
     
   // AR
   _nextARMemoNumber->setValidator(omfgThis->orderVal());
@@ -181,6 +210,21 @@ void configureGL::sSave()
   q.prepare("SELECT setNextAPMemoNumber(:armemo_number) AS result;");
   q.bindValue(":armemo_number", _nextAPMemoNumber->text().toInt());
   q.exec();
+
+  if (_metrics->boolean("ACHSupported"))
+  {
+    _metrics->set("ACHEnabled",           _achGroup->isChecked());
+    if (_achGroup->isChecked())
+    {
+      _metrics->set("ACHDefaultOrigin", _defaultImmediateOrigin->text().trimmed());
+      _metrics->set("ACHCompanyId",     _companyId->text().trimmed());
+      _metrics->set("ACHCompanyName",   _companyName->text().trimmed());
+      _metrics->set("ACHDefaultSuffix", _achSuffix->currentText().trimmed());
+      q.prepare("SELECT setNextNumber('ACHBatch', :number) AS result;");
+      q.bindValue(":number", _nextACHBatchNumber->text().toInt());
+      q.exec();
+    }
+  }
   
   // AR
   q.prepare("SELECT setNextARMemoNumber(:armemo_number) AS result;");
@@ -290,6 +334,29 @@ void configureGL::sSave()
   _metrics->load();
 
   omfgThis->sConfigureGLUpdated();
+
+  if (_metrics->boolean("ACHSupported") && _metrics->boolean("ACHEnabled") &&
+      omfgThis->_key.isEmpty())
+  {
+    if (_privileges->check("ConfigureEncryption"))
+    {
+      if (QMessageBox::question(this, tr("Set Encryption?"),
+                                tr("Your encryption key is not set. You will "
+                                   "not be able to configure electronic "
+                                   "checking information for Vendors until you "
+                                   "configure encryption. Would you like to do "
+                                   "this now?"),
+                                    QMessageBox::Yes | QMessageBox::Default,
+                                    QMessageBox::No ) == QMessageBox::Yes)
+        configureEncryption(this, "", TRUE).exec();
+    }
+    else
+      QMessageBox::question(this, tr("Set Encryption?"),
+                            tr("Your encryption key is not set. You will "
+                               "not be able to configure electronic "
+                               "checking information for Vendors until the "
+                               "system is configured to perform encryption."));
+  }
 
   accept();
 }

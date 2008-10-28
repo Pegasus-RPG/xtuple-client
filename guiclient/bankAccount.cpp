@@ -57,67 +57,52 @@
 
 #include "bankAccount.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qvalidator.h>
+#include <QMessageBox>
+#include <QSqlError>
+#include <QValidator>
+#include <QVariant>
 
-/*
- *  Constructs a bankAccount as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 bankAccount::bankAccount(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
 
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    connect(_ap, SIGNAL(toggled(bool)), _nextCheckNumLit, SLOT(setEnabled(bool)));
-    connect(_ap, SIGNAL(toggled(bool)), _nextCheckNum, SLOT(setEnabled(bool)));
-    connect(_ap, SIGNAL(toggled(bool)), _checkFormatLit, SLOT(setEnabled(bool)));
-    connect(_ap, SIGNAL(toggled(bool)), _form, SLOT(setEnabled(bool)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-bankAccount::~bankAccount()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void bankAccount::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void bankAccount::init()
-{
   _nextCheckNum->setValidator(omfgThis->orderVal());
+  _routing->setValidator(new QIntValidator(100000000, 999999999, this));
 
   _assetAccount->setType(GLCluster::cAsset);
   _currency->setType(XComboBox::Currencies);
   _currency->setLabel(_currencyLit);
 
   _form->setAllowNull(TRUE);
-  _form->populate( "SELECT form_id, form_name "
+  _form->populate( "SELECT form_id, form_name, form_name "
                    "FROM form "
                    "WHERE form_key='Chck' "
                    "ORDER BY form_name;" );
+
+  _transmitTab->setVisible(_metrics->boolean("ACHEnabled"));
+  if (_metrics->boolean("ACHEnabled"))
+  {
+    _defaultOrigin->setText(_metrics->value("ACHDefaultOrigin"));
+    _immediateOrigin->setEnabled(_overrideDefaultOrigin->isChecked());
+  }
+
+  _bankaccntid = -1;
 }
 
-enum SetResponse bankAccount::set(ParameterList &pParams)
+bankAccount::~bankAccount()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void bankAccount::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse bankAccount::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -135,6 +120,7 @@ enum SetResponse bankAccount::set(ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
+      _useDefaultOrigin->setChecked(true);
       _name->setFocus();
     }
     else if (param.toString() == "edit")
@@ -185,33 +171,60 @@ void bankAccount::sCheck()
 
       _name->setEnabled(FALSE);
     }
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
 }
 
 void bankAccount::sSave()
 {
-  if (!_assetAccount->isValid())
-  {
-    QMessageBox::critical( this, tr("Cannot Save Bank Account"),
-                           tr("You must select an G/L Account to assign to this Bank Account before you may save it.") );
-    _assetAccount->setFocus();
-    return;
-  }
+  struct {
+    bool        condition;
+    QString     msg;
+    QWidget    *widget;
+  } error[] = {
+    { !_assetAccount->isValid(), 
+      tr("<p>Select an G/L Account for this Bank Account before saving it."),
+      _assetAccount },
+    { _transmitGroup->isChecked() && _routing->text().trimmed().isEmpty(),
+      tr("<p>The bank's Routing Number is required for ACH Check handling."),
+      _routing },
+    { _transmitGroup->isChecked() && _overrideDefaultOrigin->isChecked() &&
+      _immediateOrigin->text().trimmed().isEmpty(),
+      tr("<p>Immediate Origin is required for ACH Check handling."),
+      _immediateOrigin }
+  };
 
-  if (_mode == cNew)
-  {
-    q.prepare( "SELECT bankaccnt_id FROM bankaccnt WHERE (bankaccnt_name=:bankaccnt_name);");
-    q.bindValue(":bankaccnt_name", _name->text());
-    q.exec();
-    if (q.first())
+  for (unsigned int i = 0; i < sizeof(error) / sizeof(error[0]); i++)
+    if (error[i].condition)
     {
-      QMessageBox::critical( this, tr("Cannot Save Bank Account"),
-                           tr("Bank Account name is already in use. Please enter a unique name.") );
-
-      _name->setFocus();
+      QMessageBox::critical(this, tr("Cannot Save Bank Account"),
+                            error[i].msg);
+      error[i].widget->setFocus();
       return;
     }
-    
+
+  q.prepare( "SELECT bankaccnt_id FROM bankaccnt "
+             "WHERE ((bankaccnt_name = :bankaccnt_name) "
+             "AND (bankaccnt_id != :bankaccnt_id));");
+  q.bindValue(":bankaccnt_name", _name->text());
+  q.bindValue(":bankaccnt_id",   _bankaccntid);
+  q.exec();
+  if (q.first())
+  {
+    QMessageBox::critical( this, tr("Cannot Save Bank Account"),
+                           tr("<p>Bank Account name is already in use. Please "
+                              "enter a unique name.") );
+
+    _name->setFocus();
+    return;
+  }
+  
+  if (_mode == cNew)
+  {
     q.exec("SELECT NEXTVAL('bankaccnt_bankaccnt_id_seq') AS _bankaccnt_id");
     if (q.first())
       _bankaccntid = q.value("_bankaccnt_id").toInt();
@@ -219,42 +232,42 @@ void bankAccount::sSave()
     q.prepare( "INSERT INTO bankaccnt "
                "( bankaccnt_id, bankaccnt_name, bankaccnt_descrip,"
                "  bankaccnt_bankname, bankaccnt_accntnumber,"
-               "  bankaccnt_type, bankaccnt_ap, bankaccnt_ar, bankaccnt_accnt_id,"
+               "  bankaccnt_type, bankaccnt_ap, bankaccnt_ar,"
+               "  bankaccnt_accnt_id, bankaccnt_notes,"
                "  bankaccnt_nextchknum, bankaccnt_check_form_id, "
-	       "  bankaccnt_curr_id )"
+	       "  bankaccnt_curr_id, bankaccnt_ach_enabled,"
+               "  bankaccnt_routing, bankaccnt_ach_defaultorigin,"
+               "  bankaccnt_ach_origin,"
+               "  bankaccnt_ach_genchecknum, bankaccnt_ach_leadtime)"
                "VALUES "
                "( :bankaccnt_id, :bankaccnt_name, :bankaccnt_descrip,"
                "  :bankaccnt_bankname, :bankaccnt_accntnumber,"
-               "  :bankaccnt_type, :bankaccnt_ap, :bankaccnt_ar, :bankaccnt_accnt_id,"
+               "  :bankaccnt_type, :bankaccnt_ap, :bankaccnt_ar,"
+               "  :bankaccnt_accnt_id, :bankaccnt_notes,"
                "  :bankaccnt_nextchknum, :bankaccnt_check_form_id, "
-	       "  :bankaccnt_curr_id );" );
+	       "  :bankaccnt_curr_id, :bankaccnt_ach_enabled,"
+               "  :bankaccnt_routing, :bankaccnt_ach_defaultorigin,"
+               "  :bankaccnt_ach_origin,"
+               "  :bankaccnt_ach_genchecknum, :bankaccnt_ach_leadtime);" );
   }
   else if (_mode == cEdit)
-  {
-    q.prepare( "SELECT bankaccnt_id FROM bankaccnt "
-               "WHERE ((bankaccnt_name = :bankaccnt_name) "
-               "AND (bankaccnt_id != :bankaccnt_id));");
-    q.bindValue(":bankaccnt_name", _name->text());
-    q.bindValue(":bankaccnt_id", _bankaccntid);
-    q.exec();
-    if (q.first())
-    {
-      QMessageBox::critical( this, tr("Cannot Save Bank Account"),
-                           tr("Bank Account name is already in use. Please enter a unique name.") );
-
-      _name->setFocus();
-      return;
-    }
-    
     q.prepare( "UPDATE bankaccnt "
                "SET bankaccnt_name=:bankaccnt_name, bankaccnt_descrip=:bankaccnt_descrip,"
                "    bankaccnt_bankname=:bankaccnt_bankname, bankaccnt_accntnumber=:bankaccnt_accntnumber,"
-               "    bankaccnt_type=:bankaccnt_type, bankaccnt_ap=:bankaccnt_ap, bankaccnt_ar=:bankaccnt_ar, bankaccnt_accnt_id=:bankaccnt_accnt_id,"
+               "    bankaccnt_type=:bankaccnt_type, bankaccnt_ap=:bankaccnt_ap,"
+               "    bankaccnt_ar=:bankaccnt_ar,"
+               "    bankaccnt_accnt_id=:bankaccnt_accnt_id,"
                "    bankaccnt_nextchknum=:bankaccnt_nextchknum, "
 	       "    bankaccnt_check_form_id=:bankaccnt_check_form_id, "
-	       "    bankaccnt_curr_id=:bankaccnt_curr_id "
+	       "    bankaccnt_curr_id=:bankaccnt_curr_id,"
+	       "    bankaccnt_notes=:bankaccnt_notes,"
+	       "    bankaccnt_ach_enabled=:bankaccnt_ach_enabled,"
+	       "    bankaccnt_routing=:bankaccnt_routing,"
+               "    bankaccnt_ach_defaultorigin=:bankaccnt_ach_defaultorigin,"
+	       "    bankaccnt_ach_origin=:bankaccnt_ach_origin,"
+               "    bankaccnt_ach_genchecknum=:bankaccnt_ach_genchecknum,"
+               "    bankaccnt_ach_leadtime=:bankaccnt_ach_leadtime "
                "WHERE (bankaccnt_id=:bankaccnt_id);" );
-  }
   
   q.bindValue(":bankaccnt_id", _bankaccntid);
   q.bindValue(":bankaccnt_name", _name->text());
@@ -265,6 +278,14 @@ void bankAccount::sSave()
   q.bindValue(":bankaccnt_ar", QVariant(_ar->isChecked(), 0));
   q.bindValue(":bankaccnt_accnt_id", _assetAccount->id());
   q.bindValue(":bankaccnt_curr_id", _currency->id());
+  q.bindValue(":bankaccnt_notes",             _notes->text().stripWhiteSpace());
+  q.bindValue(":bankaccnt_ach_enabled",       _transmitGroup->isChecked());
+  q.bindValue(":bankaccnt_routing",           _routing->text());
+
+  q.bindValue(":bankaccnt_ach_defaultorigin", _useDefaultOrigin->isChecked());
+  q.bindValue(":bankaccnt_ach_origin",        _immediateOrigin->text());
+  q.bindValue(":bankaccnt_ach_genchecknum",   _genCheckNumber->isChecked());
+  q.bindValue(":bankaccnt_ach_leadtime",      _settlementLeadtime->value());
 
   q.bindValue(":bankaccnt_nextchknum", _nextCheckNum->text().toInt());
   q.bindValue(":bankaccnt_check_form_id", _form->id());
@@ -275,16 +296,18 @@ void bankAccount::sSave()
     q.bindValue(":bankaccnt_type", "C");
 
   q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   done(_bankaccntid);
 }
 
 void bankAccount::populate()
 {
-  q.prepare( "SELECT bankaccnt_name, bankaccnt_descrip, bankaccnt_bankname, bankaccnt_accntnumber,"
-             "       bankaccnt_type, bankaccnt_ap, bankaccnt_ar, bankaccnt_accnt_id,"
-             "       bankaccnt_nextchknum, bankaccnt_check_form_id, "
-	     "       bankaccnt_curr_id "
+  q.prepare( "SELECT * "
              "FROM bankaccnt "
              "WHERE (bankaccnt_id=:bankaccnt_id);" );
   q.bindValue(":bankaccnt_id", _bankaccntid);
@@ -302,11 +325,22 @@ void bankAccount::populate()
 
     _assetAccount->setId(q.value("bankaccnt_accnt_id").toInt());
     _currency->setId(q.value("bankaccnt_curr_id").toInt());
+    _notes->setText(q.value("bankaccnt_notes").toString());
 
+    _transmitGroup->setChecked(q.value("bankaccnt_ach_enabled").toBool());   
+    _routing->setText(q.value("bankaccnt_routing").toString());      
+    _useDefaultOrigin->setChecked(q.value("bankaccnt_ach_defaultorigin").toBool());   
+    _immediateOrigin->setText(q.value("bankaccnt_ach_origin").toString());    
+    _genCheckNumber->setChecked(q.value("bankaccnt_ach_genchecknum").toBool());
+    _settlementLeadtime->setValue(q.value("bankaccnt_ach_leadtime").toInt());
     if (q.value("bankaccnt_type").toString() == "K")
       _type->setCurrentItem(0);
     else if (q.value("bankaccnt_type").toString() == "C")
       _type->setCurrentItem(1);
   }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
-

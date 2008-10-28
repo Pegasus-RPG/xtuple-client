@@ -722,6 +722,11 @@
                         <string/>
                        </property>
                       </item>
+                      <item>
+                       <property name="text" >
+                        <string/>
+                       </property>
+                      </item>
                      </widget>
                     </item>
                     <item>
@@ -1243,57 +1248,16 @@
         </attribute>
         <layout class="QGridLayout" >
          <item row="0" column="0" >
-          <layout class="QHBoxLayout" >
-           <property name="spacing" >
-            <number>12</number>
-           </property>
-           <item>
-            <widget class="QRadioButton" name="_billingButton" >
-             <property name="text" >
-              <string>Billing Contact</string>
-             </property>
-             <property name="checked" >
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="_correspButton" >
-             <property name="text" >
-              <string>Correspondance Contact</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="_shiptoButton" >
-             <property name="text" >
-              <string>Ship-To</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer>
-             <property name="orientation" >
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" >
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </item>
-         <item row="1" column="0" >
-          <widget class="QStackedWidget" name="_addressStack" >
+          <widget class="QTabWidget" name="_addresses" >
            <property name="currentIndex" >
             <number>0</number>
            </property>
-           <widget class="QWidget" name="page_3" >
-            <layout class="QGridLayout" >
-             <item row="0" column="0" >
+           <widget class="QWidget" name="_billingTab" >
+            <attribute name="title" >
+             <string>Billing Contact</string>
+            </attribute>
+            <layout class="QVBoxLayout" >
+             <item>
               <widget class="ContactCluster" name="_billCntct" >
                <property name="label" >
                 <string/>
@@ -1309,7 +1273,7 @@
                </property>
               </widget>
              </item>
-             <item row="1" column="0" >
+             <item>
               <spacer>
                <property name="orientation" >
                 <enum>Qt::Vertical</enum>
@@ -1324,9 +1288,12 @@
              </item>
             </layout>
            </widget>
-           <widget class="QWidget" name="page_4" >
-            <layout class="QGridLayout" >
-             <item row="0" column="0" >
+           <widget class="QWidget" name="_correspondenceTab" >
+            <attribute name="title" >
+             <string>Correspondence Contact</string>
+            </attribute>
+            <layout class="QVBoxLayout" >
+             <item>
               <widget class="ContactCluster" name="_corrCntct" >
                <property name="label" >
                 <string/>
@@ -1342,7 +1309,7 @@
                </property>
               </widget>
              </item>
-             <item row="1" column="0" >
+             <item>
               <spacer>
                <property name="orientation" >
                 <enum>Qt::Vertical</enum>
@@ -1357,103 +1324,99 @@
              </item>
             </layout>
            </widget>
-           <widget class="QWidget" name="page_5" >
-            <layout class="QGridLayout" >
-             <item row="0" column="0" >
-              <layout class="QHBoxLayout" >
+           <widget class="QWidget" name="_shiptoTab" >
+            <attribute name="title" >
+             <string>Ship-To</string>
+            </attribute>
+            <layout class="QHBoxLayout" >
+             <item>
+              <widget class="XTreeWidget" name="_shipto" >
+               <property name="sizePolicy" >
+                <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <layout class="QVBoxLayout" >
                <property name="spacing" >
                 <number>5</number>
                </property>
                <item>
-                <widget class="XTreeWidget" name="_shipto" >
-                 <property name="sizePolicy" >
-                  <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
+                <widget class="QPushButton" name="_printShipto" >
+                 <property name="text" >
+                  <string>Print</string>
                  </property>
                 </widget>
                </item>
                <item>
                 <layout class="QVBoxLayout" >
                  <property name="spacing" >
-                  <number>5</number>
+                  <number>0</number>
                  </property>
                  <item>
-                  <widget class="QPushButton" name="_printShipto" >
+                  <widget class="QPushButton" name="_newShipto" >
                    <property name="text" >
-                    <string>Print</string>
+                    <string>&amp;New</string>
+                   </property>
+                   <property name="shortcut" >
+                    <string>Alt+N</string>
                    </property>
                   </widget>
                  </item>
                  <item>
-                  <layout class="QVBoxLayout" >
-                   <property name="spacing" >
-                    <number>0</number>
+                  <widget class="QPushButton" name="_editShipto" >
+                   <property name="enabled" >
+                    <bool>false</bool>
                    </property>
-                   <item>
-                    <widget class="QPushButton" name="_newShipto" >
-                     <property name="text" >
-                      <string>&amp;New</string>
-                     </property>
-                     <property name="shortcut" >
-                      <string>Alt+N</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QPushButton" name="_editShipto" >
-                     <property name="enabled" >
-                      <bool>false</bool>
-                     </property>
-                     <property name="text" >
-                      <string>&amp;Edit</string>
-                     </property>
-                     <property name="shortcut" >
-                      <string>Alt+E</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QPushButton" name="_viewShipto" >
-                     <property name="enabled" >
-                      <bool>false</bool>
-                     </property>
-                     <property name="text" >
-                      <string>&amp;View</string>
-                     </property>
-                     <property name="shortcut" >
-                      <string>Alt+V</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QPushButton" name="_deleteShipto" >
-                     <property name="enabled" >
-                      <bool>false</bool>
-                     </property>
-                     <property name="text" >
-                      <string>&amp;Delete</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <spacer>
-                     <property name="orientation" >
-                      <enum>Qt::Vertical</enum>
-                     </property>
-                     <property name="sizeType" >
-                      <enum>QSizePolicy::Expanding</enum>
-                     </property>
-                     <property name="sizeHint" >
-                      <size>
-                       <width>20</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                    </spacer>
-                   </item>
-                  </layout>
+                   <property name="text" >
+                    <string>&amp;Edit</string>
+                   </property>
+                   <property name="shortcut" >
+                    <string>Alt+E</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="_viewShipto" >
+                   <property name="enabled" >
+                    <bool>false</bool>
+                   </property>
+                   <property name="text" >
+                    <string>&amp;View</string>
+                   </property>
+                   <property name="shortcut" >
+                    <string>Alt+V</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="_deleteShipto" >
+                   <property name="enabled" >
+                    <bool>false</bool>
+                   </property>
+                   <property name="text" >
+                    <string>&amp;Delete</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer>
+                   <property name="orientation" >
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                   <property name="sizeType" >
+                    <enum>QSizePolicy::Expanding</enum>
+                   </property>
+                   <property name="sizeHint" >
+                    <size>
+                     <width>20</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
                  </item>
                 </layout>
                </item>
@@ -1736,52 +1699,18 @@
         <attribute name="title" >
          <string>Transmit</string>
         </attribute>
-        <layout class="QGridLayout" >
-         <item row="0" column="0" >
-          <layout class="QHBoxLayout" >
-           <property name="spacing" >
-            <number>12</number>
-           </property>
-           <item>
-            <widget class="QRadioButton" name="_soButton" >
-             <property name="text" >
-              <string>Sales Order</string>
-             </property>
-             <property name="checked" >
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="_invoiceButton" >
-             <property name="text" >
-              <string>Invoice</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer>
-             <property name="orientation" >
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" >
-              <size>
-               <width>20</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </item>
-         <item row="1" column="0" >
-          <widget class="QStackedWidget" name="_transmitStack" >
+        <layout class="QVBoxLayout" >
+         <item>
+          <widget class="QTabWidget" name="_transmitTypes" >
            <property name="currentIndex" >
             <number>0</number>
            </property>
-           <widget class="QWidget" name="page" >
-            <layout class="QGridLayout" >
-             <item row="0" column="0" >
+           <widget class="QWidget" name="_so" >
+            <attribute name="title" >
+             <string>Sales Order</string>
+            </attribute>
+            <layout class="QVBoxLayout" >
+             <item>
               <layout class="QHBoxLayout" >
                <property name="spacing" >
                 <number>5</number>
@@ -1824,7 +1753,7 @@
                </item>
               </layout>
              </item>
-             <item row="1" column="0" >
+             <item>
               <widget class="QGroupBox" name="_soEdiGroup" >
                <property name="enabled" >
                 <bool>false</bool>
@@ -2019,9 +1948,12 @@
              </item>
             </layout>
            </widget>
-           <widget class="QWidget" name="page_2" >
-            <layout class="QGridLayout" >
-             <item row="0" column="0" >
+           <widget class="QWidget" name="_invoiceTab" >
+            <attribute name="title" >
+             <string>Invoice</string>
+            </attribute>
+            <layout class="QVBoxLayout" >
+             <item>
               <layout class="QHBoxLayout" >
                <property name="spacing" >
                 <number>5</number>
@@ -2064,7 +1996,7 @@
                </item>
               </layout>
              </item>
-             <item row="1" column="0" >
+             <item>
               <widget class="QGroupBox" name="_ediGroup" >
                <property name="enabled" >
                 <bool>false</bool>
@@ -2422,11 +2354,8 @@
   <tabstop>_creditRating</tabstop>
   <tabstop>_autoUpdateStatus</tabstop>
   <tabstop>_autoHoldOrders</tabstop>
-  <tabstop>_billingButton</tabstop>
   <tabstop>_billCntct</tabstop>
-  <tabstop>_correspButton</tabstop>
   <tabstop>_corrCntct</tabstop>
-  <tabstop>_shiptoButton</tabstop>
   <tabstop>_shipto</tabstop>
   <tabstop>_printShipto</tabstop>
   <tabstop>_newShipto</tabstop>
@@ -2447,7 +2376,6 @@
   <tabstop>_deleteTaxreg</tabstop>
   <tabstop>_notes</tabstop>
   <tabstop>_comments</tabstop>
-  <tabstop>_soButton</tabstop>
   <tabstop>_soEdiProfile</tabstop>
   <tabstop>_soEdiEmail</tabstop>
   <tabstop>_soEdiCC</tabstop>
@@ -2455,7 +2383,6 @@
   <tabstop>_soEdiFilename</tabstop>
   <tabstop>_soEdiEmailBody</tabstop>
   <tabstop>_soEdiEmailHTML</tabstop>
-  <tabstop>_invoiceButton</tabstop>
   <tabstop>_ediProfile</tabstop>
   <tabstop>_ediEmail</tabstop>
   <tabstop>_ediCC</tabstop>

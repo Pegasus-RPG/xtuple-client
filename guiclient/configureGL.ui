@@ -518,6 +518,9 @@
              <property name="alignment" >
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
+             <property name="buddy" >
+              <cstring>_nextAPMemoNumber</cstring>
+             </property>
             </widget>
            </item>
            <item row="0" column="1" >
@@ -575,10 +578,13 @@
                   <property name="alignment" >
                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                   </property>
+                  <property name="buddy" >
+                   <cstring>_nextACHBatchNumber</cstring>
+                  </property>
                  </widget>
                 </item>
                 <item row="0" column="1" >
-                 <widget class="XLineEdit" name="_nextBatchNumber" >
+                 <widget class="XLineEdit" name="_nextACHBatchNumber" >
                   <property name="sizePolicy" >
                    <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
                     <horstretch>0</horstretch>
@@ -588,6 +594,107 @@
                   <property name="text" >
                    <string>1</string>
                   </property>
+                 </widget>
+                </item>
+                <item row="2" column="0" >
+                 <widget class="QLabel" name="_companyIdLit" >
+                  <property name="text" >
+                   <string>Company ID:</string>
+                  </property>
+                  <property name="alignment" >
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                  <property name="buddy" >
+                   <cstring>_companyId</cstring>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="0" >
+                 <widget class="QLabel" name="_companyNameLit" >
+                  <property name="text" >
+                   <string>Company Name:</string>
+                  </property>
+                  <property name="alignment" >
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                  <property name="buddy" >
+                   <cstring>_companyName</cstring>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="1" >
+                 <widget class="XLineEdit" name="_companyId" >
+                  <property name="text" >
+                   <string>EIN/DUNS#</string>
+                  </property>
+                  <property name="maxLength" >
+                   <number>10</number>
+                  </property>
+                  <property name="defaultText" >
+                   <string/>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="1" >
+                 <widget class="XLineEdit" name="_companyName" >
+                  <property name="text" >
+                   <string/>
+                  </property>
+                  <property name="maxLength" >
+                   <number>23</number>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0" >
+                 <widget class="QLabel" name="_defaultImmediateOriginLit" >
+                  <property name="text" >
+                   <string>Default Immediate Origin:</string>
+                  </property>
+                  <property name="alignment" >
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1" >
+                 <widget class="QLineEdit" name="_defaultImmediateOrigin" >
+                  <property name="text" >
+                   <string>Routing #?</string>
+                  </property>
+                  <property name="maxLength" >
+                   <number>10</number>
+                  </property>
+                 </widget>
+                </item>
+                <item row="4" column="0" >
+                 <widget class="QLabel" name="_achSuffixLit" >
+                  <property name="text" >
+                   <string>Default File Suffix:</string>
+                  </property>
+                  <property name="alignment" >
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="4" column="1" >
+                 <widget class="QComboBox" name="_achSuffix" >
+                  <property name="editable" >
+                   <bool>true</bool>
+                  </property>
+                  <item>
+                   <property name="text" >
+                    <string>.ach</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text" >
+                    <string>.dat</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text" >
+                    <string>.txt</string>
+                   </property>
+                  </item>
                  </widget>
                 </item>
                </layout>
@@ -647,7 +754,7 @@
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
              <property name="buddy" >
-              <cstring>_address</cstring>
+              <cstring>_nextARMemoNumber</cstring>
              </property>
             </widget>
            </item>
@@ -826,6 +933,9 @@
               <property name="text" >
                <string>Default Grace Period Days:</string>
               </property>
+              <property name="buddy" >
+               <cstring>_graceDays</cstring>
+              </property>
              </widget>
             </item>
             <item>
@@ -860,6 +970,9 @@
             <widget class="QLabel" name="_recurringBufferLit" >
              <property name="text" >
               <string>Recurring Invoice Buffer:</string>
+             </property>
+             <property name="buddy" >
+              <cstring>_recurringBuffer</cstring>
              </property>
             </widget>
            </item>
@@ -981,10 +1094,13 @@
  </customwidgets>
  <tabstops>
   <tabstop>_mainSize</tabstop>
+  <tabstop>_useCompanySegment</tabstop>
   <tabstop>_companySegmentSize</tabstop>
   <tabstop>_externalConsolidation</tabstop>
+  <tabstop>_useProfitCenters</tabstop>
   <tabstop>_profitCenterSize</tabstop>
   <tabstop>_ffProfitCenters</tabstop>
+  <tabstop>_useSubaccounts</tabstop>
   <tabstop>_subaccountSize</tabstop>
   <tabstop>_ffSubaccounts</tabstop>
   <tabstop>_mandatoryNotes</tabstop>
@@ -996,6 +1112,12 @@
   <tabstop>_baseToLocal</tabstop>
   <tabstop>_localToBase</tabstop>
   <tabstop>_nextAPMemoNumber</tabstop>
+  <tabstop>_achGroup</tabstop>
+  <tabstop>_nextACHBatchNumber</tabstop>
+  <tabstop>_defaultImmediateOrigin</tabstop>
+  <tabstop>_achSuffix</tabstop>
+  <tabstop>_companyId</tabstop>
+  <tabstop>_companyName</tabstop>
   <tabstop>_nextARMemoNumber</tabstop>
   <tabstop>_hideApplyto</tabstop>
   <tabstop>_customerDeposits</tabstop>
@@ -1005,9 +1127,9 @@
   <tabstop>_warnLate</tabstop>
   <tabstop>_graceDays</tabstop>
   <tabstop>_recurringBuffer</tabstop>
+  <tabstop>_tab</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
-  <tabstop>_tab</tabstop>
  </tabstops>
  <resources/>
  <connections>
@@ -1018,8 +1140,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>531</x>
-     <y>30</y>
+     <x>775</x>
+     <y>54</y>
     </hint>
     <hint type="destinationlabel" >
      <x>20</x>

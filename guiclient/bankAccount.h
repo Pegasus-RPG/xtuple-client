@@ -60,6 +60,7 @@
 
 #include "guiclient.h"
 #include "xdialog.h"
+
 #include <parameter.h>
 
 #include "ui_bankAccount.h"
@@ -73,7 +74,7 @@ public:
     ~bankAccount();
 
 public slots:
-    virtual enum SetResponse set( ParameterList & pParams );
+    virtual enum SetResponse set(const ParameterList & pParams );
     virtual void sCheck();
     virtual void sSave();
     virtual void populate();
@@ -84,8 +85,6 @@ protected slots:
 private:
     int _mode;
     int _bankaccntid;
-
-    void init();
 
 };
 

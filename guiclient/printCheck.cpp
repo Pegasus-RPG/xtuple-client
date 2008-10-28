@@ -57,15 +57,23 @@
 
 #include "printCheck.h"
 
+#include <QCloseEvent>
+#include <QDir>
+#include <QFile>
+#include <QFileDialog>
 #include <QMessageBox>
-#include <QSqlError>
 #include <QPrintDialog>
+#include <QSettings>
+#include <QSqlError>
 
 #include <orprerender.h>
 #include <orprintrender.h>
 #include <renderobjects.h>
 
+#include "confirmAchOK.h"
 #include "storedProcErrorLookup.h"
+
+QString printCheck::achFileDir = QString();
 
 printCheck::printCheck(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -73,6 +81,8 @@ printCheck::printCheck(QWidget* parent, const char* name, bool modal, Qt::WFlags
   setupUi(this);
 
   connect(_bankaccnt, SIGNAL(newID(int)), this, SLOT(sHandleBankAccount(int)));
+  connect(_check,     SIGNAL(newID(int)), this, SLOT(sEnableCreateACH()));
+  connect(_createACH, SIGNAL(clicked()),  this, SLOT(sCreateACH()));
   connect(_print,     SIGNAL(clicked()),  this, SLOT(sPrint()));
 
   _captive = FALSE;
@@ -81,6 +91,8 @@ printCheck::printCheck(QWidget* parent, const char* name, bool modal, Qt::WFlags
   _check->setAllowNull(TRUE);
 
   _bankaccnt->setType(XComboBox::APBankAccounts);
+
+  _createACH->setVisible(_metrics->boolean("ACHEnabled"));
 }
 
 printCheck::~printCheck()
@@ -113,7 +125,6 @@ enum SetResponse printCheck::set(const ParameterList &pParams)
 
 void printCheck::sPrint()
 {
-
   q.prepare( "SELECT checkhead_printed, report_name, bankaccnt_id "
              "FROM checkhead, bankaccnt, form, report "
              "WHERE ((checkhead_bankaccnt_id=bankaccnt_id)"
@@ -272,34 +283,7 @@ void printCheck::sPrint()
                              tr("Was the selected Check printed successfully?"),
 			     QMessageBox::Yes,
 			     QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
-  {
-    q.prepare( "SELECT checkhead_bankaccnt_id,"
-	       "       markCheckAsPrinted(checkhead_id) AS result "
-               "FROM checkhead "
-               "WHERE (checkhead_id=:checkhead_id);" );
-    q.bindValue(":checkhead_id", _check->id());
-    q.exec();
-    if (q.first())
-    {
-      int result = q.value("result").toInt();
-      if (result < 0)
-      {
-	systemError(this, storedProcErrorLookup("markCheckAsPrinted", result),
-		    __FILE__, __LINE__);
-	return;
-      }
-      omfgThis->sChecksUpdated(q.value("checkhead_bankaccnt_id").toInt(),
-			      _check->id(), TRUE);
-
-      if (_captive)
-        accept();
-      else
-      {
-        sHandleBankAccount(_bankaccnt->id());
-        _close->setText(tr("&Close"));
-      }
-    }
-  }
+    markCheckAsPrinted(_check->id());
   else if ( QMessageBox::question(this, tr("Mark Check as Voided"),
                                   tr("<p>Would you like to mark the selected "
 				     "Check as Void and create a replacement "
@@ -360,7 +344,7 @@ void printCheck::sHandleBankAccount(int pBankaccntid)
   if (_bankaccnt->id() != -1)
   {
     XSqlQuery checkNumber;
-    checkNumber.prepare( "SELECT bankaccnt_nextchknum "
+    checkNumber.prepare( "SELECT bankaccnt_nextchknum, bankaccnt_ach_enabled "
                          "FROM bankaccnt "
                          "WHERE (bankaccnt_id=:bankaccnt_id);" );
     checkNumber.bindValue(":bankaccnt_id", _bankaccnt->id());
@@ -368,6 +352,7 @@ void printCheck::sHandleBankAccount(int pBankaccntid)
     if (checkNumber.first())
     {
       _setCheckNumber = checkNumber.value("bankaccnt_nextchknum").toInt();
+      _createACH->setEnabled(checkNumber.value("bankaccnt_ach_enabled").toBool());
       _nextCheckNum->setText(checkNumber.value("bankaccnt_nextchknum").toString());
     }
     else if (q.lastError().type() != QSqlError::NoError)
@@ -424,3 +409,163 @@ void printCheck::populate(int pcheckid)
   }
 }
 
+void printCheck::sCreateACH()
+{
+  XSqlQuery releasenum;
+  releasenum.prepare("SELECT releaseNumber('ACHBatch', :batch);");
+
+  QString batch;
+
+  q.prepare("SELECT * FROM formatACHChecks(:bankaccnt_id, :checkhead_id, :key);");
+  q.bindValue(":bankaccnt_id", _bankaccnt->id());
+  q.bindValue(":checkhead_id", _check->id());
+  q.bindValue(":key",          omfgThis->_key);
+  q.exec();
+  if (q.first())
+  {
+    batch = q.value("achline_batch").toString();
+    releasenum.bindValue(":batch", batch);
+    if (achFileDir.isEmpty())
+    {
+      QSettings settings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
+      achFileDir = settings.value("ACHOutputDirectory").toString();
+    }
+    QString suffixes = "*.ach *.dat *.txt";
+    if (! suffixes.contains(_metrics->value("ACHDefaultSuffix")))
+      suffixes = "*" + _metrics->value("ACHDefaultSuffix") + " " + suffixes;
+    QString filename = QFileDialog::getSaveFileName(this, tr("ACH Output File"),
+                            printCheck::achFileDir + QDir::separator() +
+                            "ach" + batch + _metrics->value("ACHDefaultSuffix"),
+                            "(" + suffixes + ")");
+    if (filename.isEmpty())
+    {
+      releasenum.exec();
+      return;
+    }
+    QFileInfo fileinfo(filename);
+    achFileDir = fileinfo.absolutePath();
+    QFile achfile(filename);
+    if (! achfile.open(QIODevice::WriteOnly))
+    {
+      releasenum.exec();
+      QMessageBox::critical(this, tr("Could Not Open File"),
+                            tr("Could not open %1 for writing ACH data.")
+                            .arg(filename));
+      return;
+    }
+    do
+    {
+      achfile.write(q.value("achline_value").toString().toAscii());
+      achfile.write("\n");
+    } while (q.next());
+    achfile.close();
+    if (q.lastError().type() != QSqlError::None)
+    {
+      releasenum.exec();
+      achfile.remove();
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+
+    if (confirmAchOK::askOK(this, achfile))
+      markCheckAsPrinted(_check->id());
+    else
+    {
+      releasenum.exec();
+      XSqlQuery clearq;
+      clearq.prepare("UPDATE checkhead "
+                     "SET checkhead_printed=false,"
+                     "    checkhead_ach_batch=NULL "
+                     "WHERE (checkhead_id=:checkhead_id);");
+      clearq.bindValue(":checkhead_id", _check->id());
+      clearq.exec();
+      if (clearq.lastError().type() != QSqlError::None)
+      {
+        systemError(this, clearq.lastError().databaseText(), __FILE__, __LINE__);
+        return;
+      }
+    }
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
+}
+
+void printCheck::sEnableCreateACH()
+{
+  if (_bankaccnt->isValid() && _check->isValid() &&
+      _metrics->boolean("ACHEnabled"))
+  {
+    q.prepare("SELECT bankaccnt_ach_enabled AND vend_ach_enabled AS achenabled "
+              "FROM bankaccnt"
+              "      JOIN checkhead ON (checkhead_bankaccnt_id=bankaccnt_id)"
+              "      JOIN vendinfo ON (checkhead_recip_id=vend_id"
+              "                    AND checkhead_recip_type='V') "
+              "WHERE ((bankaccnt_id=:bankaccnt_id)"
+              "  AND  (checkhead_id=:checkhead_id));");
+    q.bindValue(":bankaccnt_id", _bankaccnt->id());
+    q.bindValue(":checkhead_id", _check->id());
+    q.exec();
+    if (q.first())
+      _createACH->setEnabled(q.value("achenabled").toBool());
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+    else // not found
+      _createACH->setEnabled(false);
+  }
+  else
+    _createACH->setEnabled(false);
+}
+
+
+void printCheck::storeAchFileDir()
+{
+  if (_metrics->boolean("ACHEnabled") && !achFileDir.isEmpty())
+  {
+    QSettings settings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
+    settings.setValue("ACHOutputDirectory", achFileDir);
+  }
+}
+
+void printCheck::done(int p)
+{
+  storeAchFileDir();
+  XDialog::done(p);
+}
+
+void printCheck::markCheckAsPrinted(const int pcheckid)
+{
+  XSqlQuery markq;
+  markq.prepare("SELECT checkhead_bankaccnt_id,"
+                "       markCheckAsPrinted(checkhead_id) AS result "
+                "FROM checkhead "
+                "WHERE (checkhead_id=:checkhead_id);" );
+  markq.bindValue(":checkhead_id", pcheckid);
+  markq.exec();
+  if (markq.first())
+  {
+    int result = markq.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("markCheckAsPrinted", result),
+                  __FILE__, __LINE__);
+      return;
+    }
+    omfgThis->sChecksUpdated(markq.value("checkhead_bankaccnt_id").toInt(),
+                             pcheckid, TRUE);
+
+    if (_captive)
+      accept();
+    else
+    {
+      sHandleBankAccount(_bankaccnt->id());
+      _close->setText(tr("&Close"));
+    }
+  }
+}

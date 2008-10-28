@@ -57,16 +57,20 @@
 
 #include "printChecks.h"
 
+#include <QFileDialog>
 #include <QList>
 #include <QMessageBox>
+#include <QPrintDialog>
+#include <QSettings>
 #include <QSqlError>
 #include <QVariant>
-#include <QPrintDialog>
 
 #include <orprerender.h>
 #include <orprintrender.h>
 #include <renderobjects.h>
 
+#include "confirmAchOK.h"
+#include "printCheck.h"
 #include "printChecksReview.h"
 #include "storedProcErrorLookup.h"
 
@@ -76,13 +80,15 @@ printChecks::printChecks(QWidget* parent, const char* name, bool modal, Qt::WFla
   setupUi(this);
 
   connect(_bankaccnt, SIGNAL(newID(int)), this, SLOT(sHandleBankAccount(int)));
-  connect(_bankaccnt, SIGNAL(newID(int)), this, SLOT(sPopulate()));
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_createACH, SIGNAL(clicked()),  this, SLOT(sCreateACH()));
+  connect(_print,     SIGNAL(clicked()),  this, SLOT(sPrint()));
 
   _setCheckNumber = -1;
 
   _bankaccnt->setAllowNull(TRUE);
   _bankaccnt->setType(XComboBox::APBankAccounts);
+
+  _createACH->setVisible(_metrics->boolean("ACHEnabled"));
 }
 
 printChecks::~printChecks()
@@ -111,6 +117,19 @@ enum SetResponse printChecks::set(const ParameterList & pParams )
 
 void printChecks::sPrint()
 {
+  if (_somerecips_ach_enabled &&
+      QMessageBox::question(this, tr("Print Anyway?"),
+                            tr("<p>Some of the recipients of checks in this "
+                               "check run have been configured for ACH "
+                               "transactions. Do you want to print checks "
+                               "for them anyway?<p>If you answer 'Yes' then "
+                               "a check will be printed. If you say 'No' then "
+                               "you should click Create ACH File first and "
+                               "<i>then</i> click Print."),
+                            QMessageBox::Yes | QMessageBox::Default,
+                            QMessageBox::No) == QMessageBox::No)
+    return;
+
   QList<int> printedChecks;
   bool firstRun = TRUE;
 
@@ -345,8 +364,13 @@ void printChecks::sPrint()
 void printChecks::sHandleBankAccount(int pBankaccntid)
 {
   q.prepare( "SELECT bankaccnt_nextchknum,"
-             "       COUNT(*) AS numofchecks "
-             "  FROM checkhead, bankaccnt "
+             "       BOOL_OR(bankaccnt_ach_enabled) AS bank_ach_enabled,"
+             "       COUNT(*) AS numofchecks,"
+             "       BOOL_OR(COALESCE(vend_ach_enabled, false)) AS somerecip_ach_enabled,"
+             "       BOOL_AND(COALESCE(vend_ach_enabled, false)) AS allrecip_ach_enabled "
+             "  FROM bankaccnt, checkhead"
+             "       LEFT OUTER JOIN vendinfo ON (checkhead_recip_type='V'"
+             "                                AND checkhead_recip_id=vend_id) "
              " WHERE((NOT checkhead_void)"
              "   AND (NOT checkhead_printed)"
              "   AND (checkhead_bankaccnt_id=bankaccnt_id)"
@@ -360,6 +384,122 @@ void printChecks::sHandleBankAccount(int pBankaccntid)
     _nextCheckNum->setText(q.value("bankaccnt_nextchknum").toString());
     _numberOfChecks->setMaxValue(q.value("numofchecks").toInt());
     _numberOfChecks->setValue(q.value("numofchecks").toInt());
+    _allrecips_ach_enabled = q.value("allrecip_ach_enabled").toBool();
+    _somerecips_ach_enabled = q.value("somerecip_ach_enabled").toBool();
+    _print->setEnabled(q.value("numofchecks").toInt() > 0);
+    _createACH->setEnabled(q.value("bank_ach_enabled").toBool() &&
+                           q.value("somerecip_ach_enabled").toBool() &&
+                           q.value("numofchecks").toInt() > 0);
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+  else // not found
+  {
+    _setCheckNumber = -1;
+    _nextCheckNum->clear();
+    _numberOfChecks->clear();
+    _allrecips_ach_enabled = false;
+    _somerecips_ach_enabled = false;
+    _print->setEnabled(false);
+    _createACH->setEnabled(false);
+  }
+}
+
+void printChecks::sCreateACH()
+{
+  if (_somerecips_ach_enabled && !_allrecips_ach_enabled &&
+      QMessageBox::question(this, tr("Print Anyway?"),
+                            tr("<p>Some but not all of the checks in this run "
+                               "are for Vendors configured to receive ACH "
+                               "transactions. Do you want to create the ACH "
+                               "file anyway?<p>If you answer 'Yes' then an "
+                               "ACH file will be created but you will have to "
+                               "click Print to get the remainder of the "
+                               "checks in this run. If you say 'No' then you "
+                               "will get a warning when you click Print "
+                               "asking whether you want to print checks for "
+                               "ACH recipients."),
+                            QMessageBox::Yes | QMessageBox::Default,
+                            QMessageBox::No) == QMessageBox::No)
+    return;
+
+  XSqlQuery releasenum;
+  releasenum.prepare("SELECT releaseNumber('ACHBatch', :batch);");
+
+  QString batch;
+
+  q.prepare("SELECT * FROM formatACHChecks(:bankaccnt_id, NULL, :key);");
+  q.bindValue(":bankaccnt_id", _bankaccnt->id());
+  q.bindValue(":key",          omfgThis->_key);
+  q.exec();
+  if (q.first())
+  {
+    batch = q.value("achline_batch").toString();
+    releasenum.bindValue(":batch", batch);
+    if (printCheck::achFileDir.isEmpty())
+    {
+      QSettings settings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
+      printCheck::achFileDir = settings.value("ACHOutputDirectory").toString();
+    }
+    QString suffixes = "*.ach *.dat *.txt";
+    if (! suffixes.contains(_metrics->value("ACHDefaultSuffix")))
+      suffixes = "*" + _metrics->value("ACHDefaultSuffix") + " " + suffixes;
+    QString filename = QFileDialog::getSaveFileName(this, tr("ACH Output File"),
+                            printCheck::achFileDir + QDir::separator() +
+                            "ach" + batch + _metrics->value("ACHDefaultSuffix"),
+                            "(" + suffixes + ")");
+    if (filename.isEmpty())
+    {
+      releasenum.exec();
+      return;
+    }
+    QFileInfo fileinfo(filename);
+    printCheck::achFileDir = fileinfo.absolutePath();
+    QFile achfile(filename);
+    if (! achfile.open(QIODevice::WriteOnly))
+    {
+      releasenum.exec();
+      QMessageBox::critical(this, tr("Could Not Open File"),
+                            tr("Could not open %1 for writing ACH data.")
+                            .arg(filename));
+      return;
+    }
+    do
+    {
+      achfile.write(q.value("achline_value").toString().toAscii());
+      achfile.write("\n");
+    } while (q.next());
+    achfile.close();
+    if (q.lastError().type() != QSqlError::None)
+    {
+      releasenum.exec();
+      achfile.remove();
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+
+    if (confirmAchOK::askOK(this, achfile))
+      markChecksAsPrinted(batch);
+    else
+    {
+      releasenum.exec();
+      XSqlQuery clearq;
+      clearq.prepare("UPDATE checkhead "
+                     "SET checkhead_printed=false,"
+                     "    checkhead_ach_batch=NULL "
+                     "WHERE (checkhead_ach_batch=:checkhead_ach_batch);");
+      clearq.bindValue(":checkhead_ach_batch", batch);
+      clearq.exec();
+      if (clearq.lastError().type() != QSqlError::None)
+      {
+        systemError(this, clearq.lastError().databaseText(), __FILE__, __LINE__);
+        return;
+      }
+    }
+    sHandleBankAccount(_bankaccnt->id());
   }
   else if (q.lastError().type() != QSqlError::None)
   {
@@ -368,6 +508,24 @@ void printChecks::sHandleBankAccount(int pBankaccntid)
   }
 }
 
-void printChecks::sPopulate()
+void printChecks::markChecksAsPrinted(const QString pbatch)
 {
+  XSqlQuery markq;
+  markq.prepare("SELECT MIN(checkhead_bankaccnt_id) AS bankaccnt_id,"
+                "       MIN(markCheckAsPrinted(checkhead_id)) AS result "
+                "FROM checkhead "
+                "WHERE (checkhead_ach_batch=:checkhead_ach_batch);" );
+  markq.bindValue(":checkhead_ach_batch", pbatch);
+  markq.exec();
+  if (markq.first())
+  {
+    int result = markq.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("markCheckAsPrinted", result),
+                  __FILE__, __LINE__);
+      return;
+    }
+    omfgThis->sChecksUpdated(markq.value("bankaccnt_id").toInt(), -1, TRUE);
+  }
 }

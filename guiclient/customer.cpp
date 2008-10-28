@@ -106,11 +106,6 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
     connect(_viewTaxreg,   SIGNAL(clicked()), this, SLOT(sViewTaxreg()));
     connect(_soEdiProfile, SIGNAL(activated(int)), this, SLOT(sSoProfileSelected()));
     connect(_custtype, SIGNAL(currentIndexChanged(int)), this, SLOT(sFillCharacteristicList()));
-    connect(_soButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
-    connect(_invoiceButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
-    connect(_billingButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
-    connect(_correspButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
-    connect(_shiptoButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
     
     _custid = -1;
     _crmacctid = -1;
@@ -1451,20 +1446,3 @@ void customer::closeEvent(QCloseEvent *pEvent)
   }
   XWidget::closeEvent(pEvent);
 }
-
-void customer::sHandleButtons()
-{
-  if (_billingButton->isChecked())
-    _addressStack->setCurrentIndex(0);
-  else if (_correspButton->isChecked())
-    _addressStack->setCurrentIndex(1);
-  else
-    _addressStack->setCurrentIndex(2);
-    
-  if (_soButton->isChecked())
-    _transmitStack->setCurrentIndex(0);
-  else
-    _transmitStack->setCurrentIndex(1);
-}
-
-

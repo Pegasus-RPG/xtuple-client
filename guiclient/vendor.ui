@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>600</height>
+    <height>676</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -1010,56 +1010,19 @@
         <attribute name="title" >
          <string>Transmit</string>
         </attribute>
-        <layout class="QGridLayout" >
-         <item row="0" column="0" >
-          <layout class="QHBoxLayout" >
-           <property name="spacing" >
-            <number>12</number>
-           </property>
-           <item>
-            <widget class="QRadioButton" name="_poButton" >
-             <property name="text" >
-              <string>Purchase Order</string>
-             </property>
-             <property name="checked" >
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="_checkButton" >
-             <property name="text" >
-              <string>Checks</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer>
-             <property name="orientation" >
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" >
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </item>
-         <item row="1" column="0" >
-          <widget class="QStackedWidget" name="_transmitStack" >
+        <layout class="QHBoxLayout" >
+         <item>
+          <widget class="QTabWidget" name="_transmitTabGroup" >
            <property name="currentIndex" >
             <number>0</number>
            </property>
-           <widget class="QWidget" name="page_3" >
-            <layout class="QGridLayout" >
-             <item row="0" column="0" >
+           <widget class="QWidget" name="_purchaseOrderTab" >
+            <attribute name="title" >
+             <string>Purchase Orders</string>
+            </attribute>
+            <layout class="QHBoxLayout" >
+             <item>
               <widget class="QGroupBox" name="_emailPODelivery" >
-               <property name="enabled" >
-                <bool>true</bool>
-               </property>
                <property name="title" >
                 <string>Email Purchase Order Delivery</string>
                </property>
@@ -1234,9 +1197,12 @@
              </item>
             </layout>
            </widget>
-           <widget class="QWidget" name="page_4" >
-            <layout class="QGridLayout" >
-             <item row="0" column="0" >
+           <widget class="QWidget" name="_checksTab" >
+            <attribute name="title" >
+             <string>Check Handling</string>
+            </attribute>
+            <layout class="QVBoxLayout" >
+             <item>
               <widget class="QGroupBox" name="_achGroup" >
                <property name="title" >
                 <string>Enable ACH Check Printing</string>
@@ -1249,143 +1215,151 @@
                </property>
                <layout class="QGridLayout" >
                 <item row="0" column="0" >
-                 <layout class="QVBoxLayout" >
+                 <widget class="QLabel" name="_routingNumberLit" >
+                  <property name="text" >
+                   <string>Routing Number:</string>
+                  </property>
+                  <property name="alignment" >
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                  <property name="buddy" >
+                   <cstring>_accountNumber</cstring>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1" >
+                 <widget class="XLineEdit" name="_routingNumber" />
+                </item>
+                <item row="0" column="2" >
+                 <spacer>
+                  <property name="orientation" >
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" >
+                   <size>
+                    <width>261</width>
+                    <height>16</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item row="1" column="0" >
+                 <widget class="QLabel" name="_achAccountNumberLit" >
+                  <property name="text" >
+                   <string>Account Number:</string>
+                  </property>
+                  <property name="alignment" >
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1" >
+                 <widget class="XLineEdit" name="_achAccountNumber" />
+                </item>
+                <item row="2" column="0" >
+                 <widget class="QLabel" name="_accounTypeLit" >
+                  <property name="text" >
+                   <string>Account Type:</string>
+                  </property>
+                  <property name="alignment" >
+                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="1" >
+                 <widget class="XComboBox" name="_accountType" >
                   <item>
-                   <layout class="QHBoxLayout" >
-                    <item>
-                     <layout class="QGridLayout" >
-                      <item row="0" column="0" >
-                       <widget class="QLabel" name="_routingNumberLit" >
-                        <property name="text" >
-                         <string>Routing Number:</string>
-                        </property>
-                        <property name="alignment" >
-                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                        </property>
-                        <property name="buddy" >
-                         <cstring>_accountNumber</cstring>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="0" column="1" >
-                       <widget class="XLineEdit" name="_routingNumber" />
-                      </item>
-                      <item row="3" column="0" >
-                       <widget class="QLabel" name="_individualIdLit" >
-                        <property name="text" >
-                         <string>Individual Identification Number:</string>
-                        </property>
-                        <property name="alignment" >
-                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                        </property>
-                        <property name="buddy" >
-                         <cstring>_accountNumber</cstring>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="3" column="1" >
-                       <widget class="XLineEdit" name="_individualId" />
-                      </item>
-                      <item row="4" column="0" >
-                       <widget class="QLabel" name="_individualNameLit" >
-                        <property name="text" >
-                         <string>Individual Name:</string>
-                        </property>
-                        <property name="alignment" >
-                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                        </property>
-                        <property name="buddy" >
-                         <cstring>_accountNumber</cstring>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="4" column="1" >
-                       <widget class="XLineEdit" name="_individualName" />
-                      </item>
-                      <item row="5" column="1" >
-                       <widget class="XLineEdit" name="_discretionary" />
-                      </item>
-                      <item row="5" column="0" >
-                       <widget class="QLabel" name="_discretionaryLit" >
-                        <property name="text" >
-                         <string>Discretionary Data:</string>
-                        </property>
-                        <property name="alignment" >
-                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                        </property>
-                        <property name="buddy" >
-                         <cstring>_accountNumber</cstring>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="1" column="1" >
-                       <widget class="XLineEdit" name="_accountNumber_2" />
-                      </item>
-                      <item row="1" column="0" >
-                       <widget class="QLabel" name="_accountNumberLit_2" >
-                        <property name="text" >
-                         <string>Account Number:</string>
-                        </property>
-                        <property name="alignment" >
-                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="2" column="1" >
-                       <widget class="XComboBox" name="_accountType" >
-                        <item>
-                         <property name="text" >
-                          <string>Checking</string>
-                         </property>
-                        </item>
-                        <item>
-                         <property name="text" >
-                          <string>Savings</string>
-                         </property>
-                        </item>
-                       </widget>
-                      </item>
-                      <item row="2" column="0" >
-                       <widget class="QLabel" name="_accounTypeLit" >
-                        <property name="text" >
-                         <string>Account Type:</string>
-                        </property>
-                        <property name="alignment" >
-                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                        </property>
-                       </widget>
-                      </item>
-                     </layout>
-                    </item>
-                    <item>
-                     <spacer>
-                      <property name="orientation" >
-                       <enum>Qt::Horizontal</enum>
-                      </property>
-                      <property name="sizeHint" >
-                       <size>
-                        <width>40</width>
-                        <height>20</height>
-                       </size>
-                      </property>
-                     </spacer>
-                    </item>
-                   </layout>
+                   <property name="text" >
+                    <string>Checking</string>
+                   </property>
                   </item>
                   <item>
-                   <spacer>
-                    <property name="orientation" >
-                     <enum>Qt::Vertical</enum>
-                    </property>
-                    <property name="sizeHint" >
-                     <size>
-                      <width>20</width>
-                      <height>40</height>
-                     </size>
-                    </property>
-                   </spacer>
+                   <property name="text" >
+                    <string>Savings</string>
+                   </property>
                   </item>
-                 </layout>
+                 </widget>
+                </item>
+                <item row="4" column="0" colspan="2" >
+                 <widget class="QGroupBox" name="_useACHSpecial" >
+                  <property name="title" >
+                   <string>Use Instead of Vendor Number and Name:</string>
+                  </property>
+                  <property name="checkable" >
+                   <bool>true</bool>
+                  </property>
+                  <layout class="QGridLayout" >
+                   <item row="0" column="0" >
+                    <widget class="QLabel" name="_individualIdLit" >
+                     <property name="text" >
+                      <string>Identification Number:</string>
+                     </property>
+                     <property name="alignment" >
+                      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                     </property>
+                     <property name="buddy" >
+                      <cstring>_accountNumber</cstring>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="1" >
+                    <widget class="XLineEdit" name="_individualId" >
+                     <property name="maxLength" >
+                      <number>15</number>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="0" >
+                    <widget class="QLabel" name="_individualNameLit" >
+                     <property name="text" >
+                      <string>Name:</string>
+                     </property>
+                     <property name="alignment" >
+                      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                     </property>
+                     <property name="buddy" >
+                      <cstring>_accountNumber</cstring>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="1" >
+                    <widget class="XLineEdit" name="_individualName" >
+                     <property name="maxLength" >
+                      <number>22</number>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item row="5" column="0" colspan="3" >
+                 <spacer>
+                  <property name="orientation" >
+                   <enum>Qt::Vertical</enum>
+                  </property>
+                  <property name="sizeHint" >
+                   <size>
+                    <width>20</width>
+                    <height>40</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item row="3" column="0" >
+                 <spacer>
+                  <property name="orientation" >
+                   <enum>Qt::Vertical</enum>
+                  </property>
+                  <property name="sizeType" >
+                   <enum>QSizePolicy::Fixed</enum>
+                  </property>
+                  <property name="sizeHint" >
+                   <size>
+                    <width>20</width>
+                    <height>10</height>
+                   </size>
+                  </property>
+                 </spacer>
                 </item>
                </layout>
               </widget>
@@ -1472,20 +1446,16 @@
   <tabstop>_notes</tabstop>
   <tabstop>_comments</tabstop>
   <tabstop>_poComments</tabstop>
-  <tabstop>_poButton</tabstop>
-  <tabstop>_emailPODelivery</tabstop>
   <tabstop>_ediEmail</tabstop>
   <tabstop>_ediCC</tabstop>
   <tabstop>_ediSubject</tabstop>
   <tabstop>_ediFilename</tabstop>
   <tabstop>_ediEmailBody</tabstop>
-  <tabstop>_checkButton</tabstop>
   <tabstop>_achGroup</tabstop>
   <tabstop>_routingNumber</tabstop>
-  <tabstop>_accountNumber_2</tabstop>
+  <tabstop>_achAccountNumber</tabstop>
   <tabstop>_individualId</tabstop>
   <tabstop>_individualName</tabstop>
-  <tabstop>_discretionary</tabstop>
   <tabstop>_previous</tabstop>
   <tabstop>_mainButton</tabstop>
   <tabstop>_close</tabstop>
