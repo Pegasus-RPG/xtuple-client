@@ -115,6 +115,7 @@ class OPENMFGWIDGETS_EXPORT XLineEdit : public QLineEdit
   private:
     QString _default;
     QString _fieldName;
+    XDataWidgetMapper *_mapper;
 };
 
 #endif

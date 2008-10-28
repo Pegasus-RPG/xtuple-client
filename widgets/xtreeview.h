@@ -91,6 +91,7 @@ class OPENMFGWIDGETS_EXPORT XTreeView : public QTreeView
       virtual void setTableName(QString p)                    { _tableName = p;             };
 
     signals:
+      void  newModel(XSqlTableModel *model);
       void  rowSelected(int);
       void  valid(bool);
       

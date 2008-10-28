@@ -525,9 +525,10 @@ void CustInfo::setAutoFocus(bool yes)
   _customerNumber->setAutoFocus(yes);
 }
 
-void CustInfo::setMapper(XDataWidgetMapper *mapper)
+void CustInfo::setDataWidgetMap(XDataWidgetMapper* m)
 {
-  _customerNumber->setMapper(mapper);
+  m->addMapping(this, _fieldName, "number", "defaultNumber");
+  _customerNumber->setMapper(m);
 }
 
 void CustInfo::setReadOnly(bool pReadOnly)
@@ -583,12 +584,13 @@ void CustInfo::sHandleCreditStatus(const QString &pStatus)
   }
 }
 
+/*
 void CustCluster::setDataWidgetMap(XDataWidgetMapper* m)
 {
   m->addMapping(this, _fieldName, "number", "defaultNumber");
   _custInfo->setMapper(m);
 }
-
+*/
 
 CustCluster::CustCluster(QWidget *parent, const char *name) :
   QWidget(parent, name)

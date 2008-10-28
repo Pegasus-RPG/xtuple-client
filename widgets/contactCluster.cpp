@@ -268,62 +268,57 @@ void ContactCluster::setId(const int pId)
 
 void ContactCluster::silentSetId(const int pId)
 {
-    if (!_mapper->model())
-    {
-      if (pId == -1 || pId == 0)
+  if (pId == -1 || pId == 0)
+  {
+    _id = -1;
+    _valid = false;
+    clear();
+  }
+  else if (pId == _id)
+    return;
+  else
+  {
+      XSqlQuery idQ;
+      idQ.prepare(_query + " WHERE cntct_id = :id;");
+      idQ.bindValue(":id", pId);
+      idQ.exec();
+      if (idQ.first())
       {
-        _id = -1;
-        _valid = false;
-        clear();
-      }
-      else if (pId == _id)
-        return;
-      else
-      {
-          XSqlQuery idQ;
-          idQ.prepare(_query + " WHERE cntct_id = :id;");
-          idQ.bindValue(":id", pId);
-          idQ.exec();
-          if (idQ.first())
-          {
-              _ignoreSignals = true;
+          _ignoreSignals = true;
 
-              _id = pId;
-              _valid = true;
-              _number->setText(idQ.value("cntct_number").toString());
-              _honorific->setEditText(idQ.value("cntct_honorific").toString());
-              _first->setText(idQ.value("cntct_first_name").toString());
-              _middle->setText(idQ.value("cntct_middle").toString());
-              _last->setText(idQ.value("cntct_last_name").toString());
-              _suffix->setText(idQ.value("cntct_suffix").toString());
-              _initials->setText(idQ.value("cntct_initials").toString());
-              _crmAcct->setId(idQ.value("cntct_crmacct_id").toInt());
-              _title->setText(idQ.value("cntct_title").toString());
-              _phone->setText(idQ.value("cntct_phone").toString());
-              _phone2->setText(idQ.value("cntct_phone2").toString());
-              _fax->setText(idQ.value("cntct_fax").toString());
-              _email->setText(idQ.value("cntct_email").toString());
-              _webaddr->setText(idQ.value("cntct_webaddr").toString());
-              _address->setId(idQ.value("cntct_addr_id").toInt());
-              _active->setChecked(idQ.value("cntct_active").toBool());
-              _notes = idQ.value("cntct_notes").toString();
-	      _owner->setUsername(idQ.value("cntct_owner_username").toString());
-    
-              _ignoreSignals = false;
-          }
-          else if (idQ.lastError().type() != QSqlError::None)
-              QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
-                                            .arg(__FILE__)
-                                            .arg(__LINE__),
-                                    idQ.lastError().databaseText());
-        _valid = true;
-      }
-    }
-    else
-      _id = pId;
+          _id = pId;
+          _valid = true;
+          _number->setText(idQ.value("cntct_number").toString());
+          _honorific->setEditText(idQ.value("cntct_honorific").toString());
+          _first->setText(idQ.value("cntct_first_name").toString());
+          _middle->setText(idQ.value("cntct_middle").toString());
+          _last->setText(idQ.value("cntct_last_name").toString());
+          _suffix->setText(idQ.value("cntct_suffix").toString());
+          _initials->setText(idQ.value("cntct_initials").toString());
+          _crmAcct->setId(idQ.value("cntct_crmacct_id").toInt());
+          _title->setText(idQ.value("cntct_title").toString());
+          _phone->setText(idQ.value("cntct_phone").toString());
+          _phone2->setText(idQ.value("cntct_phone2").toString());
+          _fax->setText(idQ.value("cntct_fax").toString());
+          _email->setText(idQ.value("cntct_email").toString());
+          _webaddr->setText(idQ.value("cntct_webaddr").toString());
+          _address->setId(idQ.value("cntct_addr_id").toInt());
+          _active->setChecked(idQ.value("cntct_active").toBool());
+          _notes = idQ.value("cntct_notes").toString();
+          _owner->setUsername(idQ.value("cntct_owner_username").toString());
 
-    _changed=false;
-    // _parsed = TRUE;
+          _ignoreSignals = false;
+      }
+      else if (idQ.lastError().type() != QSqlError::None)
+          QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
+                                        .arg(__FILE__)
+                                        .arg(__LINE__),
+                                idQ.lastError().databaseText());
+    _valid = true;
+  }
+
+  _changed=false;
+  // _parsed = TRUE;
 }
 
 void ContactCluster::setNumber(QString p)
@@ -481,7 +476,13 @@ int ContactCluster::save(AddressCluster::SaveFlags flag)
     if (datamodQ.value("result").toInt() == 0)
       return 0;
     else if (datamodQ.value("result").toInt() > 0)
-      silentSetId(datamodQ.value("result").toInt());
+      if (_mapper->model())
+      {
+        _id=datamodQ.value("result").toInt();
+        _changed=false;
+      }
+      else
+        silentSetId(datamodQ.value("result").toInt());
     else if (datamodQ.value("result").toInt() == -10)
       return -10;
   }

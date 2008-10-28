@@ -85,6 +85,8 @@ XLineEdit::XLineEdit(QWidget *parent, const char *name) :
 
   _id = -1;
   connect(this, SIGNAL(editingFinished()), this, SLOT(sParse()));
+  
+  _mapper = new XDataWidgetMapper(this);
 }
 
 bool XLineEdit::isValid()
@@ -118,6 +120,7 @@ double XLineEdit::toDouble(bool *pIsValid)
 
 void XLineEdit::setDataWidgetMap(XDataWidgetMapper* m)
 {
+  _mapper=m;
   m->addMapping(this, _fieldName, QByteArray("text"), QByteArray("defaultText"));
 }
 
@@ -137,6 +140,10 @@ void XLineEdit::setText(const QVariant &pVariant)
   }
   else
     QLineEdit::setText(pVariant.toString());
+    
+  if (_mapper->model() &&
+      _mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this))).toString() != text())
+    _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this)), text());
 }
 
 void XLineEdit::setDouble(const double pDouble, const int pPrec)

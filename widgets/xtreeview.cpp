@@ -155,6 +155,7 @@ void XTreeView::setModel(XSqlTableModel * model)
       }
       QTreeView::model()->setHeaderData(i,Qt::Horizontal,h);
   }
+  emit newModel(model);
 }
 
 
