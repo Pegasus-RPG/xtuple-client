@@ -210,7 +210,7 @@ itemAvailabilityWorkbench::itemAvailabilityWorkbench(QWidget* parent, const char
   
   // Where Used
   _effective->setNullString(tr("Now"));
-  _effective->setNullDate(omfgThis->startOfTime());
+  _effective->setNullDate(omfgThis->dbDate());
   _effective->setAllowNullDate(TRUE);
   _effective->setNull();
   
