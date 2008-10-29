@@ -139,7 +139,7 @@ void dspPlannedOrdersByPlannerCode::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem 
 
   pMenu->insertSeparator();
 
-  if (pSelected->text(8) == "No")
+  if (pSelected->text(9) == "No")
   {
     menuItem = pMenu->insertItem(tr("Firm Order..."), this, SLOT(sFirmOrder()), 0);
     if (!_privileges->check("FirmPlannedOrders"))
