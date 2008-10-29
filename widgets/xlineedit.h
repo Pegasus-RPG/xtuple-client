@@ -90,6 +90,7 @@ class OPENMFGWIDGETS_EXPORT XLineEdit : public QLineEdit
 
   public slots:
     virtual void sParse();
+    virtual void setData(const QString &);
     virtual void setDataWidgetMap(XDataWidgetMapper* m);
     virtual void setDefaultText(QString p)  { _default = p; };
     virtual void setFieldName(QString p)    { _fieldName = p; };
@@ -112,7 +113,7 @@ class OPENMFGWIDGETS_EXPORT XLineEdit : public QLineEdit
     void keyPressEvent(QKeyEvent *);
     void focusInEvent(QFocusEvent *);
     
-  private:
+  private:    
     QString _default;
     QString _fieldName;
     XDataWidgetMapper *_mapper;

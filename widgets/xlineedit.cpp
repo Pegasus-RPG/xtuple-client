@@ -122,6 +122,7 @@ void XLineEdit::setDataWidgetMap(XDataWidgetMapper* m)
 {
   _mapper=m;
   m->addMapping(this, _fieldName, QByteArray("text"), QByteArray("defaultText"));
+  connect(this, SIGNAL(textChanged(QString)), this, SLOT(setData(QString)));
 }
 
 void XLineEdit::setText(const QVariant &pVariant)
@@ -140,11 +141,8 @@ void XLineEdit::setText(const QVariant &pVariant)
   }
   else
     QLineEdit::setText(pVariant.toString());
-    
-  if (_mapper->model() &&
-      _mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this))).toString() != text())
-    _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this)), text());
 }
+
 
 void XLineEdit::setDouble(const double pDouble, const int pPrec)
 {
@@ -208,5 +206,12 @@ void XLineEdit::focusInEvent(QFocusEvent *pEvent)
     setSelection(0, text().length());
 
   QLineEdit::focusInEvent(pEvent);
+}
+
+void XLineEdit::setData(const QString &pString)
+{
+  if (_mapper->model() &&
+      _mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this))).toString() != text())
+    _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this)), text());
 }
 
