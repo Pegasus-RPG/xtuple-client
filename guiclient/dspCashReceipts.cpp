@@ -211,6 +211,12 @@ void dspCashReceipts::sFillList()
   params.append("wireTransfer", tr("Wire Trans."));
   params.append("other", tr("Other"));
   params.append("unapplied", tr("Cash Deposit"));
+  if (_selectedCustomer->isChecked())
+    params.append("cust_id", _cust->id());
+  else if (_selectedCustomerType->isChecked())
+    params.append("custtype_id", _customerTypes->id());
+  else if (_customerTypePattern->isChecked())
+    params.append("custtype_pattern", _customerType->text());
   q = mql.toQuery(params);
   if (q.first())
     _arapply->populate(q);
