@@ -381,11 +381,14 @@ void unpostedCreditMemos::sFillList()
                      "       COALESCE(cmhead_gldistdate, cmhead_docdate) AS distdate "
                      "FROM cmhead "
                      "WHERE ( (NOT cmhead_posted) "
-                     "  AND   ((SELECT COUNT(*)"
-                     "          FROM cmitem, itemsite, site()"
-                     "          WHERE ( (cmitem_cmhead_id=cmhead_id)"
-                     "            AND   (itemsite_id=cmitem_itemsite_id)"
-                     "            AND   (warehous_id=itemsite_warehous_id) )) > 0) ) "
+                     "  AND   ( ((SELECT COUNT(*)"
+                     "            FROM cmitem, itemsite, site()"
+                     "            WHERE ( (cmitem_cmhead_id=cmhead_id)"
+                     "              AND   (itemsite_id=cmitem_itemsite_id)"
+                     "              AND   (warehous_id=itemsite_warehous_id) )) > 0) OR"
+                     "          ((SELECT COUNT(*)"
+                     "            FROM cmitem"
+                     "            WHERE (cmitem_cmhead_id=cmhead_id)) = 0) ) ) "
                      "ORDER BY cmhead_number;" );
 }
 
