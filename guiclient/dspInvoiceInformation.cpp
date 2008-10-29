@@ -197,7 +197,7 @@ void dspInvoiceInformation::sParseInvoiceNumber()
                "            WHEN (arapply_fundstype='K') THEN :cash"
                "            WHEN (arapply_fundstype='W') THEN :wireTransfer"
                "            WHEN (arapply_fundstype='O') THEN :other"
-               "       END AS documenttype,"
+               "       END AS doctype,"
                "       CASE WHEN (arapply_source_doctype IN ('C','R')) THEN arapply_source_docnumber"
                "            WHEN (arapply_source_doctype = 'K') THEN arapply_refnumber"
                "            ELSE :error"
