@@ -112,7 +112,7 @@ vendor::vendor(QWidget* parent, const char* name, Qt::WFlags fl)
   
   if (_metrics->boolean("EnableBatchManager") &&
       ! _metrics->boolean("ACHEnabled"))
-    _checksTab->setVisible(false);
+    _transmitTabGroup->removeTab(_transmitTabGroup->indexOf(_checksTab));
   else if (! _metrics->boolean("EnableBatchManager") &&
            _metrics->boolean("ACHEnabled"))
     _purchaseOrderTab->setVisible(false);
@@ -121,7 +121,7 @@ vendor::vendor(QWidget* parent, const char* name, Qt::WFlags fl)
     ediTab->setVisible(false);
   // else defaults are OK
 
-  if (omfgThis->_key.isEmpty() && _checksTab->isVisible())
+  if (_metrics->boolean("ACHEnabled") && omfgThis->_key.isEmpty())
     _checksTab->setEnabled(false);
 }
 
@@ -344,6 +344,10 @@ void vendor::sSave()
       tr("Please enter a Routing Number if ACH Check Printing is enabled."),
       _routingNumber },
     { _achGroup->isChecked() &&
+      _routingNumber->text().stripWhiteSpace().length() < 9,
+      tr("Routing Numbers for ACH Check Printing must be 9 digits long."),
+      _routingNumber },
+    { _achGroup->isChecked() &&
       _achAccountNumber->text().stripWhiteSpace().length() == 0,
       tr("Please enter an Account Number if ACH Check Printing is enabled."),
       _achAccountNumber },
@@ -489,7 +493,7 @@ void vendor::sSave()
           "  vend_terms_id, vend_shipvia, vend_curr_id,"
           "  vend_emailpodelivery, vend_ediemail, vend_ediemailbody,"
           "  vend_edisubject, vend_edifilename, vend_edicc,"
-          "  vend_taxauth_id, vend_match,"
+          "  vend_taxauth_id, vend_match, vend_ach_enabled,"
           "<? if exists(\"key\") ?>"
           "  vend_ach_routingnumber, vend_ach_accntnumber,"
           "<? endif ?>"
