@@ -59,9 +59,11 @@
 
 #include <QSqlError>
 
+#include <metasql.h>
 #include <openreports.h>
 
 #include "miscCheck.h"
+#include "mqlutil.h"
 #include "postCheck.h"
 #include "printCheck.h"
 #include "printChecks.h"
@@ -85,14 +87,16 @@ viewCheckRun::viewCheckRun(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_void, SIGNAL(clicked()), this, SLOT(sVoid()));
 
   _check->setRootIsDecorated(TRUE);
-  _check->addColumn(tr("Void"),                 _ynColumn,       Qt::AlignCenter, true,  "void" );
-  _check->addColumn(tr("Misc."),                _ynColumn,       Qt::AlignCenter, true,  "misc" );
-  _check->addColumn(tr("Prt'd"),                _ynColumn,       Qt::AlignCenter, true,  "printed" );
-  _check->addColumn(tr("Chk./Voucher/RA #"),    _itemColumn,     Qt::AlignCenter, true,  "number" );
-  _check->addColumn(tr("Recipient/Invc./CM #"), -1,              Qt::AlignLeft,   true,  "description"   );
-  _check->addColumn(tr("Check Date") ,          _dateColumn,     Qt::AlignCenter, true,  "checkdate" );
-  _check->addColumn(tr("Amount"),               _moneyColumn,    Qt::AlignRight,  true,  "amount"  );
-  _check->addColumn(tr("Currency"),             _currencyColumn, Qt::AlignLeft,   true,  "curr_concat" );
+  _check->addColumn(tr("Void"),               _ynColumn, Qt::AlignCenter,true, "checkhead_void");
+  _check->addColumn(tr("Misc."),              _ynColumn, Qt::AlignCenter,true, "checkhead_misc" );
+  _check->addColumn(tr("Prt'd"),              _ynColumn, Qt::AlignCenter,true, "checkhead_printed" );
+  _check->addColumn(tr("Chk./Voucher/RA #"),_itemColumn, Qt::AlignCenter,true, "number" );
+  _check->addColumn(tr("Recipient/Invc./CM #"),      -1, Qt::AlignLeft,  true, "description"   );
+  _check->addColumn(tr("Check Date") ,      _dateColumn, Qt::AlignCenter,true, "checkdate" );
+  _check->addColumn(tr("Amount"),          _moneyColumn, Qt::AlignRight, true, "amount"  );
+  _check->addColumn(tr("Currency"),     _currencyColumn, Qt::AlignLeft,  true, "currAbbr" );
+  if (_metrics->boolean("ACHEnabled"))
+    _check->addColumn(tr("ACH Batch"),     _orderColumn, Qt::AlignLeft,  true, "checkhead_ach_batch" );
 
   if (omfgThis->singleCurrency())
       _check->hideColumn("curr_concat");
@@ -240,7 +244,7 @@ void viewCheckRun::sPost()
 
 void viewCheckRun::sHandleItemSelection()
 {
-  QTreeWidgetItem *selected = _check->currentItem();
+  XTreeWidgetItem *selected = _check->currentItem();
 
   if (! selected)
   {
@@ -255,7 +259,7 @@ void viewCheckRun::sHandleItemSelection()
     return;
   }
 
-  if (selected->text(0) == tr("Yes"))
+  if (selected->rawValue("checkhead_void").toBool())
   {
     _void->setEnabled(FALSE);
     _delete->setEnabled(TRUE);
@@ -265,15 +269,18 @@ void viewCheckRun::sHandleItemSelection()
     _edit->setEnabled(FALSE);
     _postCheck->setEnabled(FALSE);
   }
-  else if (selected->text(0) == tr("No"))
+  else if (! selected->rawValue("checkhead_void").isNull() &&
+           ! selected->rawValue("checkhead_void").toBool())
   {
-    _void->setEnabled(TRUE);
+    _void->setEnabled(selected->rawValue("checkhead_ach_batch").isNull());
     _delete->setEnabled(FALSE);
     _replace->setEnabled(FALSE);
-    _printCheck->setEnabled(TRUE);
+    _printCheck->setEnabled(selected->rawValue("checkhead_ach_batch").isNull());
 
-    _edit->setEnabled((selected->text(1) == tr("Yes")) && (selected->text(2) == tr("No")));
-    _postCheck->setEnabled((selected->text(2) == tr("Yes")) && (_privileges->check("PostPayments")));
+    _edit->setEnabled(selected->rawValue("checkhead_misc").toBool() &&
+                      ! selected->rawValue("checkhead_printed").toBool());
+    _postCheck->setEnabled(selected->rawValue("checkhead_printed").toBool() &&
+                           _privileges->check("PostPayments"));
   }
 }
 
@@ -285,68 +292,14 @@ void viewCheckRun::sFillList(int pBankaccntid)
 
 void viewCheckRun::sFillList()
 {
-  QString sql( "SELECT checkid, altid,"
-               "       void, misc, printed,"
-               "       number, description, checkdate,"
-               "       amount,"
-               "       checkhead_number, curr_concat,"
-               "       'curr' AS amount_xtnumericrole,"
-               "       CASE WHEN (level = 0 AND NOT void) THEN 0"
-               "            ELSE 1 "
-               "       END AS amount_xttotalrole,"
-               "       level AS xtindentrole "
-               "FROM ( "
-               "SELECT checkhead_id AS checkid, -1 AS checkitem_id,"
-               "       checkhead_void AS void,"
-               "       checkhead_misc AS misc,"
-               "       checkhead_printed AS printed,"
-               "       CASE WHEN(checkhead_number=-1) THEN TEXT('Unspecified')"
-               "            ELSE TEXT(checkhead_number)"
-               "       END AS number,"
-               "       (checkrecip_number || '-' || checkrecip_name) AS description,"
-               "       checkhead_checkdate AS checkdate,"
-               "       checkhead_amount AS amount,"
-               "       CASE WHEN (checkhead_misc) THEN 1"
-               "            ELSE 0"
-               "       END AS altid,"
-               "       checkhead_number, currConcat(checkhead_curr_id) AS curr_concat, "
-               "       0 AS level "
-               "FROM checkhead LEFT OUTER JOIN"
-               "     checkrecip ON ((checkrecip_id=checkhead_recip_id)"
-               "               AND  (checkrecip_type=checkhead_recip_type))"
-               "WHERE ((checkhead_bankaccnt_id=:bankaccnt_id) "
-               "  AND  (NOT checkhead_posted)"
-               "  AND  (NOT checkhead_replaced)"
-               "  AND  (NOT checkhead_deleted) ) "
-
-               "UNION SELECT checkitem_checkhead_id AS checkid, checkitem_id,"
-               "             CAST(NULL AS BOOLEAN) AS void, CAST(NULL AS BOOLEAN) AS misc, CAST(NULL AS BOOLEAN) AS printed,"
-               "             CASE WHEN (checkitem_ranumber IS NOT NULL) THEN"
-               "                        checkitem_ranumber::TEXT"
-               "                  ELSE checkitem_vouchernumber"
-               "             END AS number,"
-               "             CASE WHEN (checkitem_cmnumber IS NOT NULL) THEN"
-               "                        checkitem_cmnumber::TEXT"
-               "                  ELSE checkitem_invcnumber"
-               "             END AS description,"
-               "             CAST(NULL AS DATE) AS checkdate,"
-               "             checkitem_amount AS amount,"
-               "             0 AS altid, checkhead_number, "
-               "             currConcat(checkitem_curr_id) AS curr_concat, "
-               "             1 AS level "
-               "FROM checkitem, checkhead "
-               "WHERE ( (checkitem_checkhead_id=checkhead_id)"
-               " AND (checkhead_bankaccnt_id=:bankaccnt_id) "
-               " AND (NOT checkhead_posted)"
-               " AND (NOT checkhead_replaced)"
-               " AND (NOT checkhead_deleted) ) "
-               "   ) AS data "
-               "ORDER BY checkhead_number, checkid, level;" );
-
-  q.prepare(sql);
-  q.bindValue(":bankaccnt_id", _bankaccnt->id());
-  q.exec();
-  _check->populate(q, true);
+  MetaSQLQuery mql = mqlLoad("checkRegister", "detail");
+  ParameterList params;
+  params.append("bankaccnt_id", _bankaccnt->id());
+  params.append("showTotal");
+  params.append("newOnly");
+  params.append("showDetail");
+  q = mql.toQuery(params);
+  _check->populate(q);
   if (q.lastError().type() != QSqlError::None)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);

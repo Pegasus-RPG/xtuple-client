@@ -596,7 +596,7 @@
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="0" >
+                <item row="1" column="0" >
                  <widget class="QLabel" name="_companyIdLit" >
                   <property name="text" >
                    <string>Company ID:</string>
@@ -609,7 +609,7 @@
                   </property>
                  </widget>
                 </item>
-                <item row="3" column="0" >
+                <item row="2" column="0" >
                  <widget class="QLabel" name="_companyNameLit" >
                   <property name="text" >
                    <string>Company Name:</string>
@@ -622,7 +622,7 @@
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="1" >
+                <item row="1" column="1" >
                  <widget class="XLineEdit" name="_companyId" >
                   <property name="text" >
                    <string>EIN/DUNS#</string>
@@ -635,7 +635,7 @@
                   </property>
                  </widget>
                 </item>
-                <item row="3" column="1" >
+                <item row="2" column="1" >
                  <widget class="XLineEdit" name="_companyName" >
                   <property name="text" >
                    <string/>
@@ -645,27 +645,7 @@
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="0" >
-                 <widget class="QLabel" name="_defaultImmediateOriginLit" >
-                  <property name="text" >
-                   <string>Default Immediate Origin:</string>
-                  </property>
-                  <property name="alignment" >
-                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="1" >
-                 <widget class="QLineEdit" name="_defaultImmediateOrigin" >
-                  <property name="text" >
-                   <string>Routing #?</string>
-                  </property>
-                  <property name="maxLength" >
-                   <number>10</number>
-                  </property>
-                 </widget>
-                </item>
-                <item row="4" column="0" >
+                <item row="3" column="0" >
                  <widget class="QLabel" name="_achSuffixLit" >
                   <property name="text" >
                    <string>Default File Suffix:</string>
@@ -675,7 +655,7 @@
                   </property>
                  </widget>
                 </item>
-                <item row="4" column="1" >
+                <item row="3" column="1" >
                  <widget class="QComboBox" name="_achSuffix" >
                   <property name="editable" >
                    <bool>true</bool>
@@ -1114,10 +1094,9 @@
   <tabstop>_nextAPMemoNumber</tabstop>
   <tabstop>_achGroup</tabstop>
   <tabstop>_nextACHBatchNumber</tabstop>
-  <tabstop>_defaultImmediateOrigin</tabstop>
-  <tabstop>_achSuffix</tabstop>
   <tabstop>_companyId</tabstop>
   <tabstop>_companyName</tabstop>
+  <tabstop>_achSuffix</tabstop>
   <tabstop>_nextARMemoNumber</tabstop>
   <tabstop>_hideApplyto</tabstop>
   <tabstop>_customerDeposits</tabstop>

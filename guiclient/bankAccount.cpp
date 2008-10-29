@@ -82,12 +82,15 @@ bankAccount::bankAccount(QWidget* parent, const char* name, bool modal, Qt::WFla
                    "WHERE form_key='Chck' "
                    "ORDER BY form_name;" );
 
-  _transmitTab->setVisible(_metrics->boolean("ACHEnabled"));
   if (_metrics->boolean("ACHEnabled"))
   {
-    _defaultOrigin->setText(_metrics->value("ACHDefaultOrigin"));
+    _defaultOrigin->setText(_metrics->value("ACHCompanyId"));
     _immediateOrigin->setEnabled(_overrideDefaultOrigin->isChecked());
+    if (omfgThis->_key.isEmpty())
+      _transmitTab->setEnabled(false);
   }
+  else
+    _tab->removeTab(_tab->indexOf(_transmitTab));
 
   _bankaccntid = -1;
 }
@@ -192,6 +195,9 @@ void bankAccount::sSave()
     { _transmitGroup->isChecked() && _routing->text().trimmed().isEmpty(),
       tr("<p>The bank's Routing Number is required for ACH Check handling."),
       _routing },
+    { _transmitGroup->isChecked() && _routing->text().trimmed().size() < 9,
+      tr("<p>The bank's Routing Number must be a 9 digit number."),
+      _routing },
     { _transmitGroup->isChecked() && _overrideDefaultOrigin->isChecked() &&
       _immediateOrigin->text().trimmed().isEmpty(),
       tr("<p>Immediate Origin is required for ACH Check handling."),
@@ -206,6 +212,21 @@ void bankAccount::sSave()
       error[i].widget->setFocus();
       return;
     }
+
+  if (_transmitGroup->isChecked() && _overrideDefaultOrigin->isChecked() &&
+      _immediateOrigin->text().size() < 10 &&
+      QMessageBox::question(this, tr("Immediate Origin Too Small?"),
+                            tr("<p>The Immediate Origin is usually either a "
+                               "10 digit Company Id number or a space followed "
+                               "by a 9 digit Bank Routing Number. Does %1 "
+                               "match what your bank told you to enter here?")
+                            .arg(_immediateOrigin->text()),
+                            QMessageBox::Yes,
+                            QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+  {
+    _immediateOrigin->setFocus();
+    return;
+  }
 
   q.prepare( "SELECT bankaccnt_id FROM bankaccnt "
              "WHERE ((bankaccnt_name = :bankaccnt_name) "
@@ -329,10 +350,15 @@ void bankAccount::populate()
 
     _transmitGroup->setChecked(q.value("bankaccnt_ach_enabled").toBool());   
     _routing->setText(q.value("bankaccnt_routing").toString());      
-    _useDefaultOrigin->setChecked(q.value("bankaccnt_ach_defaultorigin").toBool());   
     _immediateOrigin->setText(q.value("bankaccnt_ach_origin").toString());    
     _genCheckNumber->setChecked(q.value("bankaccnt_ach_genchecknum").toBool());
     _settlementLeadtime->setValue(q.value("bankaccnt_ach_leadtime").toInt());
+
+    if (q.value("bankaccnt_ach_defaultorigin").toBool())   
+      _useDefaultOrigin->setChecked(true);
+    else
+      _overrideDefaultOrigin->setChecked(true);
+
     if (q.value("bankaccnt_type").toString() == "K")
       _type->setCurrentItem(0);
     else if (q.value("bankaccnt_type").toString() == "C")

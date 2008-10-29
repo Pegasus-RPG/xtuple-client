@@ -227,6 +227,10 @@ void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId)
 	  }
 	}
 
+        if (_roles.value(0)->contains("xtindentrole"))
+          setIndentation(10);
+        else
+          setIndentation(0);
 
 	do
 	{

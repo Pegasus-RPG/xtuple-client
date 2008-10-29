@@ -125,6 +125,17 @@ enum SetResponse printCheck::set(const ParameterList &pParams)
 
 void printCheck::sPrint()
 {
+  if (_createACH->isEnabled() &&
+      QMessageBox::question(this, tr("Print Anyway?"),
+                            tr("<p>The recipient of this check has been "
+                               "configured for ACH transactions. Do you want "
+                               "to print this check for them anyway?<p>If you "
+                               "answer 'Yes' then a check will be printed. "
+                               "If you say 'No' then you should click Create "
+                               "ACH File."),
+                            QMessageBox::Yes | QMessageBox::Default,
+                            QMessageBox::No) == QMessageBox::No)
+    return;
   q.prepare( "SELECT checkhead_printed, report_name, bankaccnt_id "
              "FROM checkhead, bankaccnt, form, report "
              "WHERE ((checkhead_bankaccnt_id=bankaccnt_id)"

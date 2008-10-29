@@ -82,8 +82,6 @@ configureGL::configureGL(QWidget* parent, const char* name, bool modal, Qt::WFla
   {
     _achGroup->setChecked(_metrics->boolean("ACHEnabled"));
     _nextACHBatchNumber->setValidator(omfgThis->orderVal());
-    if (! _metrics->value("ACHDefaultOrigin").trimmed().isEmpty())
-      _defaultImmediateOrigin->setText(_metrics->value("ACHDefaultOrigin"));
     if (! _metrics->value("ACHCompanyId").trimmed().isEmpty())
       _companyId->setText(_metrics->value("ACHCompanyId"));
     if (! _metrics->value("ACHCompanyName").trimmed().isEmpty())
@@ -206,6 +204,19 @@ void configureGL::languageChange()
 
 void configureGL::sSave()
 {
+  if (_metrics->boolean("ACHSupported") && _companyId->text().size() < 10 &&
+      QMessageBox::question(this, tr("Company ID Correct?"),
+                            tr("The Company ID is usually a 10 digit number, "
+                               "either a Taxpayer ID number, an IRS EIN, or a "
+                               "DUNS number. Are you sure your Company ID "
+                               "is correct?"),
+                            QMessageBox::Yes,
+                            QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+  {
+    _companyId->setFocus();
+    return;
+  }
+
   // AP
   q.prepare("SELECT setNextAPMemoNumber(:armemo_number) AS result;");
   q.bindValue(":armemo_number", _nextAPMemoNumber->text().toInt());
@@ -216,7 +227,6 @@ void configureGL::sSave()
     _metrics->set("ACHEnabled",           _achGroup->isChecked());
     if (_achGroup->isChecked())
     {
-      _metrics->set("ACHDefaultOrigin", _defaultImmediateOrigin->text().trimmed());
       _metrics->set("ACHCompanyId",     _companyId->text().trimmed());
       _metrics->set("ACHCompanyName",   _companyName->text().trimmed());
       _metrics->set("ACHDefaultSuffix", _achSuffix->currentText().trimmed());

@@ -411,6 +411,11 @@ void initErrorLookupHash()
 			       "you may delete the selected Characteristic."),
 			       					 0, "" },
 
+  { "deleteCheck", -1, TR("Cannot delete this check because either it has not "
+                          "been voided, it has already been posted or replaced,"
+                          " or it has been transmitted electronically."),
+			           					0, "" },
+
   { "deleteClassCode", -1, TR( "The selected Class Code cannot be deleted "
                               "because there are Items that are assigned to "
                               "it. You must reassign these Items before you "
@@ -1219,9 +1224,9 @@ void initErrorLookupHash()
 								 0, "" },
 
   { "voidCheck", -1, TR("Cannot void this check because either it has already "
-			"been voided, it has already been posted, or it has "
-			"already been replaced. If this check has been posted, "
-			"try Void Posted Check with the Check Register "
+			"been voided, posted, or replaced, or it has been "
+			"transmitted electronically. If this check has been "
+			"posted, try Void Posted Check with the Check Register "
 			"window."),					0, "" },
 
   { "voidPostedCheck", -10, TR("Cannot void this check because it has already "
