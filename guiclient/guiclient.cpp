@@ -672,6 +672,7 @@ void GUIClient::sTick()
 //  Check the database
   XSqlQuery tickle;
   tickle.exec( "SELECT CURRENT_DATE AS dbdate,"
+               "       hasAlarms() AS alarms,"
                "       hasMessages() AS messages,"
                "       hasEvents() AS events;" );
   if (tickle.first())

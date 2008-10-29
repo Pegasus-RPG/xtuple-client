@@ -192,7 +192,6 @@ enum SetResponse todoItem::set(const ParameterList &pParams)
   {
     _todoitemid = param.toInt();
     _alarms->setId(_todoitemid);
-    qDebug(QString("todoitem setid of alarms with %1").arg(_todoitemid));
     sPopulate();
   }
 
