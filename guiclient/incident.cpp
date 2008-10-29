@@ -112,7 +112,7 @@ incident::incident(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _todoList->addColumn(tr("Priority"),      _userColumn, Qt::AlignRight, true, "incdtpriority_name");
   _todoList->addColumn(tr("User"),          _userColumn, Qt::AlignLeft,  true, "usr_username");
   _todoList->addColumn(tr("Name"),                  100, Qt::AlignLeft,  true, "todoitem_name");
-  _todoList->addColumn(tr("Description"),            -1, Qt::AlignLeft,  true, "todoitem_notes");
+  _todoList->addColumn(tr("Description"),            -1, Qt::AlignLeft,  true, "todoitem_description");
   _todoList->addColumn(tr("Status"),      _statusColumn, Qt::AlignLeft,  true, "todoitem_status");
   _todoList->addColumn(tr("Due Date"),      _dateColumn, Qt::AlignLeft,  true, "todoitem_due_date");
 
