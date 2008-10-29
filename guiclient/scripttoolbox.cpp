@@ -199,7 +199,7 @@ QString ScriptToolbox::tabtabText(QWidget * tab, int idx)
   QTabWidget *tw = qobject_cast<QTabWidget*>(tab);
   QString str;
   if(tw)
-    tw->tabText(idx);
+    str = tw->tabText(idx);
   return str;
 }
 
