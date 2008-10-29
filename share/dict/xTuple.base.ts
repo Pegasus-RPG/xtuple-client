@@ -1,7 +1,112 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS><TS version="1.1">
 <context>
-    <name></name>
+    <name>@default</name>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="282"/>
+        <source>The To-Do List Item cannot be created as there is no assigned User.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="284"/>
+        <source>The To-Do List Item cannot be created as the Task Name is blank.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="286"/>
+        <source>The To-Do List Item cannot be created as there is no Due Date.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="359"/>
+        <source>The selected Address cannot be deleted as it is used by an active Contact.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="362"/>
+        <source>The selected Address cannot be deleted as it is used by an active Vendor.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="365"/>
+        <source>The selected Address cannot be deleted as it is used by an active Ship-To Address.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="368"/>
+        <source>The selected Address cannot be deleted as it is used by an active Vendor Address.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="421"/>
+        <source>The selected Contact cannot be deleted as s/he is the primary or secondary Contact  for a CRM Account.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="424"/>
+        <source>The selected Contact cannot be deleted as s/he is the Correspondence or Billing Contact for a Customer.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="427"/>
+        <source>The selected Contact cannot be deleted as s/he is the primary or secondary Contact for a Vendor.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="429"/>
+        <source>The selected Contact cannot be deleted as s/he is the Contact for a Ship-To Address.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="432"/>
+        <source>The selected Contact cannot be deleted as s/he is the Contact for a Vendor Address.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="439"/>
+        <source>The selected CRM Account cannot be deleted as it is a Customer.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="441"/>
+        <source>The selected CRM Account cannot be deleted as it is a Vendor.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="481"/>
+        <source>This Incident cannot be deleted as there are To-Do List Items associated with it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="479"/>
+        <source>This Incident cannot be deleted as there are Comments associated with it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1179"/>
+        <source>The To-Do List Item cannot be updated as there is no assigned User.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1181"/>
+        <source>The To-Do List Item cannot be updated as the Task Name is blank.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1183"/>
+        <source>The To-Do List Item cannot be updated as there is no Due Date.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1185"/>
+        <source>The To-Do List Item cannot be updated as an invalid internal ID was supplied .</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1328"/>
+        <source>A Stored Procedure failed to run properly.</source>
+        <translation type="unfinished"></translation>
+    </message>
     <message>
         <location filename="../../common/storedProcErrorLookup.cpp" line="90"/>
         <source>This Credit Memo was not found.</source>
@@ -25,11 +130,6 @@
     <message>
         <location filename="../../common/storedProcErrorLookup.cpp" line="99"/>
         <source>This Sales Order was not found.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="101"/>
-        <source>This Transfer Order was not found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -60,26 +160,6 @@
     <message>
         <location filename="../../common/storedProcErrorLookup.cpp" line="132"/>
         <source>The selected Accounting Period cannot be closed because it is the last period in the Fiscal Year and the next Fiscal Year has not been defined yet. Create the next Fiscal Year before closing this Accounting Period.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="142"/>
-        <source>The selected Fiscal Year cannot be closed because you have not specified a Year End Equity Account in the accounting configuration.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="147"/>
-        <source>The selected Fiscal Year cannot be closed because there does not seem to be an Accounting Period defined for the beginning of the next Fiscal Year.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="152"/>
-        <source>The selected Fiscal Year cannot be closed because there is no Trial Balance record for the account in the required Period. Or you have not specified a Year End Equity Account in the accounting configuration.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="155"/>
-        <source>The item cannot be Closed at this time as there is inventory at shipping.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -118,26 +198,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="195"/>
-        <source>Quote #%1 has expired and can not be converted.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="199"/>
-        <source>Could not copy the Item Site because it does not appear to exist.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="202"/>
-        <source>Could not copy the Item Site because the warehouse for the new Item Site record does not appear to exist.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="204"/>
-        <source>You do not have sufficient privilege to create an Item Site.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../common/storedProcErrorLookup.cpp" line="206"/>
         <source>Could not find the P/O to copy.</source>
         <translation type="unfinished"></translation>
@@ -148,23 +208,8 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="213"/>
-        <source>The system does not allow purchases of Items for this Vendor without Item Sources and at least one line item item in the original P/O does not have an active Item Source.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../common/storedProcErrorLookup.cpp" line="215"/>
         <source>At least one line item in the original P/O does not have an active Item Source Price for this Vendor.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="217"/>
-        <source>You may not correct a quantity greater than the amount originally posted.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="219"/>
-        <source>The receipt has been split and may not be corrected. Correct Receipt.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -200,16 +245,6 @@
     <message>
         <location filename="../../common/storedProcErrorLookup.cpp" line="242"/>
         <source>Either the Prepaid Account or the A/R Account for this Customer could not be found.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="248"/>
-        <source>You may not create a BOM Item that defines a Parent that is composed of itself.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="253"/>
-        <source>The Component that you have selected for thisBOM Item is a manufactured or phantom Item that uses the Parent Item as a Component Item in its own BOM. You may not create a recursive BOM.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -253,91 +288,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="280"/>
-        <source>Revision control not enabled.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="282"/>
-        <source>The To-Do List Item cannot be created as there is no assigned User.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="284"/>
-        <source>The To-Do List Item cannot be created as the Task Name is blank.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="286"/>
-        <source>The To-Do List Item cannot be created as there is no Due Date.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="288"/>
-        <source>Work Order can not be exploded because items on the BOM exist without itemsites.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="294"/>
-        <source>The selected G/L Account cannot be deleted as it is currently used in one or more Cost Categories.  You must reassign these Cost Category assignments before you may delete the selected G/L Account.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="299"/>
-        <source>The selected G/L Account cannot be deleted as it is currently used in one or more Sales Account Assignment. You must reassign these Sales Account Assignments before you may delete the selected G/L Account.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="304"/>
-        <source>The selected G/L Account cannot be deleted as it is currently used in one or more Customer A/R Account assignments. You must reassign these Customer A/R Account assignments before you may delete the selected G/L Account.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="309"/>
-        <source>The selected G/L Account cannot be deleted as it is currently used as the default Account one or more Sites. You must reassign the default Account for these Sites before you may delete the selected G/L Account.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="313"/>
-        <source>The selected G/L Account cannot be deleted as it is currently used in one or more Bank Accounts. You must reassign these Bank Accounts before you may delete the selected G/L Account.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="318"/>
-        <source>The selected G/L Account cannot be deleted as it is currently used in one or more Expense Categories. You must reassign these Expense Categories before you may delete the selected G/L Account.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="322"/>
-        <source>The selected G/L Account cannot be deleted as it is currently used in one or more Tax Codes. You must reassign these Tax Codes before you may delete the selected G/L Account.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="327"/>
-        <source>The selected G/L Account cannot be deleted as it is currently used in one or more Standard Journals. You must reassign these Standard Journal Items before you may delete the selected G/L Account.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="332"/>
-        <source>The selected G/L Account cannot be deleted as it is currently used in one or more Customer A/P Account assignments. You must reassign these Customer A/P Account assignments before you may delete the selected G/L Account.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="337"/>
-        <source>The selected G/L Account cannot be deleted as it is currently used in one or more Currency definition. You must reassign these Currency definitions before you may delete the selected G/L Account.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="341"/>
-        <source>The selected G/L Account cannot be deleted as it is currently used in one or more A/R Open Items. You must reassign these Currency definitions before you may delete the selected G/L Account.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="345"/>
-        <source>The selected G/L Account cannot be deleted as there have been G/L Transactions posted against it.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../common/storedProcErrorLookup.cpp" line="349"/>
         <source>The selected Accounting Period has G/L Transactions posted against it and, thus, cannot be deleted.</source>
         <translation type="unfinished"></translation>
@@ -350,41 +300,6 @@
     <message>
         <location filename="../../common/storedProcErrorLookup.cpp" line="356"/>
         <source>The selected Fiscal Year cannot be deleted because there are Accounting Periods defined for it.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="359"/>
-        <source>The selected Address cannot be deleted as it is used by an active Contact.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="362"/>
-        <source>The selected Address cannot be deleted as it is used by an active Vendor.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="365"/>
-        <source>The selected Address cannot be deleted as it is used by an active Ship-To Address.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="368"/>
-        <source>The selected Address cannot be deleted as it is used by an active Vendor Address.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="371"/>
-        <source>The selected Address cannot be deleted as it is used by an active Site.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="376"/>
-        <source>The selected Bank Adjustment Type cannot be deleted because it is currently used by a Bank Adjustment.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="382"/>
-        <source>The selected Cash Receipt cannot be deleted because it is a Customer Deposit made with a Credit Card and the card has already been charged.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -413,51 +328,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="417"/>
-        <source>The selected Company cannot be deleted as it is in use by existing Account. You must reclass these Accounts before you may delete the selected Company.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="421"/>
-        <source>The selected Contact cannot be deleted as s/he is the primary or secondary Contact  for a CRM Account.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="424"/>
-        <source>The selected Contact cannot be deleted as s/he is the Correspondence or Billing Contact for a Customer.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="427"/>
-        <source>The selected Contact cannot be deleted as s/he is the primary or secondary Contact for a Vendor.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="429"/>
-        <source>The selected Contact cannot be deleted as s/he is the Contact for a Ship-To Address.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="432"/>
-        <source>The selected Contact cannot be deleted as s/he is the Contact for a Vendor Address.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="435"/>
-        <source>The selected Contact cannot be deleted as s/he is the Contact for a Site.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="439"/>
-        <source>The selected CRM Account cannot be deleted as it is a Customer.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="441"/>
-        <source>The selected CRM Account cannot be deleted as it is a Vendor.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../common/storedProcErrorLookup.cpp" line="443"/>
         <source>The selected CRM Account cannot be deleted as it is a Prospect.</source>
         <translation type="unfinished"></translation>
@@ -483,188 +353,13 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="465"/>
-        <source>The selected Customer cannot be deleted as Checks have been written to it.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="469"/>
-        <source>The selected Customer cannot be deleted as there are still Invoices assigned to it. You must delete all of the selected Customer&apos;s Invoices before you may delete it</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="473"/>
-        <source>The selected Customer cannot be deleted as there are still Quotes assigned to it. You must delete all of the selected Customer&apos;s Quotes before you may delete it</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="481"/>
-        <source>This Incident cannot be deleted as there are To-Do List Items associated with it.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="479"/>
-        <source>This Incident cannot be deleted as there are Comments associated with it.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="483"/>
-        <source>This Item cannot be deleted as it is used in one or more bills of materials.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="485"/>
-        <source>This Item cannot be deleted as there are Item Site records associated with it.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="487"/>
-        <source>This Item cannot be deleted as there are Substitute records associated with it.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="489"/>
-        <source>This Item cannot be deleted as there are Breeder BOM records associated with it.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="491"/>
-        <source>This Item cannot be deleted as there are assignement records associated with it.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="493"/>
-        <source>This Item cannot be deleted as there are Revision Control records associated with it.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="496"/>
-        <source>The selected Item Site cannot be deleted as there is Inventory History posted against it. You may edit the Item Site and deactivate it.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="499"/>
-        <source>The selected Item Site cannot be deleted as there is Work Order History posted against it. You may edit the Item Site and deactivate it.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="502"/>
-        <source>The selected Item Site cannot be deleted as there is Sales History posted against it. You may edit the Item Site and deactivate it.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="505"/>
-        <source>The selected Item Site cannot be deleted as there is Purchasing History posted against it. You may edit the Item Site and deactivate it.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="508"/>
-        <source>The selected Item Site cannot be deleted as there is Planning History posted against it. You may edit the Item Site and deactivate it.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="511"/>
-        <source>The selected Item Site cannot be deleted as there is a non-zero Inventory Quantity posted against it.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="515"/>
-        <source>This UOM Conversion cannot be deleted as there are records for this Item which use this UOM.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="519"/>
-        <source>The selected Package cannot be deleted because there are other packages that depend on it to function properly.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="525"/>
-        <source>The selected Profit Center cannot be deleted as it is in use by existing Account. You must reclass these Accounts before you may delete the selected Profit Center.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../common/storedProcErrorLookup.cpp" line="530"/>
         <source>The selected Prospect cannot be deleted as there are still Quotes for it. You must delete all of this Prospect&apos;s Quotes before you may delete the Prospect.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="536"/>
-        <source>The selected Sales Rep. cannot be deleted as he/she is still assigned to one or more Customers.  You must reassign different Sales Reps. to all Customers to which the selected Sales Rep. is assigned before you may delete the selected Sales Rep.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="542"/>
-        <source>The selected Sales Rep. cannot be deleted as he/she is still assigned to one or more Ship-tos.  You must reassign different Sales Reps. to all Ship-tos to which the selected Sales Rep. is assigned before you may delete the selected Sales Rep.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="546"/>
-        <source>The selected Sales Rep. cannot be deleted as there has been sales history recorded against him/her.  You may edit and set the selected Sales Rep&apos;s active status to inactive.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="552"/>
-        <source>The selected Shipto cannot be deleted as there is still Archived Sales History assigned to it. You must delete all of the selected Customer&apos;s Ship-Tos before you may delete it.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="557"/>
-        <source>The selected Shipto cannot be deleted as there has been Sales History recorded for this Shipto. You may Edit the selected Shipto and set its status to inactive.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../common/storedProcErrorLookup.cpp" line="579"/>
         <source>This Sales Order cannot be deleted as some of its line items have already been shipped.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="583"/>
-        <source>This Sales Order cannot be deleted as some of its line items have already been issued to shipping.  You must return this stock before you may delete this Sales Order.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="592"/>
-        <source>This Sales Order cannot be deleted because a Credit Card has been charged for it.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="594"/>
-        <source>This Sales Order cannot be deleted because there is Credit Card transaction history for it.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="598"/>
-        <source>This Sales Order cannot be deleted as some of its line items are linked to a Return Authorization.  You must resolve this conflict before you may delete this Sales Order.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="600"/>
-        <source>This Sales Order Item cannot be deleted as it has already been shipped.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="603"/>
-        <source>This Sales Order Item cannot be deleted as it has already been issued to shipping.  You must return this stock before you may delete this Sales Order Item.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="606"/>
-        <source>This Sales Order Item cannot be deleted as it is linked to a Return Authorization.  You must resolve this conflict before you may delete this Sales Order Item.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="612"/>
-        <source>The selected Subaccount cannot be deleted as it is in use by existing Account. You must reclass these Accounts before you may delete the selected Subaccount.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="615"/>
-        <source>This Transfer Order cannot be deleted as some of its line items have already been shipped.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="620"/>
-        <source>This Transfer Order cannot be deleted as some of its line items have already been issued to shipping. You must return this stock before you may delete this Transfer Order.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -723,31 +418,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="651"/>
-        <source>This Tax Authority cannot be deleted as there are Tax Selections for it. Change or delete those Tax Selections before deleting this Tax Authority.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="653"/>
-        <source>This Tax Authority cannot be deleted as Checks have been written to it.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="656"/>
-        <source>This Transfer Order cannot be deleted as line items for it have already been shipped.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="658"/>
-        <source>This Transfer Order cannot be deleted as line items for it have been issued to shipping.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="660"/>
-        <source>This Transfer Order cannot be deleted as the order number cannot be released.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../common/storedProcErrorLookup.cpp" line="664"/>
         <source>The selected Vendor cannot be deleted as therehave been P/Os created against it. You may deactivate this Vendor instead.</source>
         <translation type="unfinished"></translation>
@@ -778,43 +448,8 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="690"/>
-        <source>The selected Vendor cannot be deleted as there have been Checks posted against it. You may deactivate this Vendor instead.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../common/storedProcErrorLookup.cpp" line="695"/>
         <source>The Work Order cannot be deleted because time clock entries exist for it. Please Close it instead of trying to Delete it.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="700"/>
-        <source>The selected Work Center cannot be deleted because there has been history posted against it.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="706"/>
-        <source>The selected Work Center cannot be deleted because Standard Operations exist that use it. You must reassign all Standard Operations that use the selected Work Center to a different Work Center before you may delete it.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="713"/>
-        <source>The selected Work Center cannot be deleted because Bill of Operations items exist that use it. You must reassign all Bill of Operations items that use the selected Work Center to a different Work Center before you may delete it.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="719"/>
-        <source>The selected Work Center cannot be deleted because Work Orders exist that use it. You must complete or close all Work Orders that use the selected Work Center before you may delete it.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="723"/>
-        <source>This version of the PostgreSQL database server does not support package enabling or disabling. Upgrade to PostgreSQL 8.2 or later.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="725"/>
-        <source>Could not find a package with the internal id % to enable or disable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -868,36 +503,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="760"/>
-        <source>Information for this order line item could not be found. If it is a Purchase Order Item then it does not appear to exist. If it is a Transfer Order Item then either the Transfer Order does not exist or there is no Item Site for this line item.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="766"/>
-        <source>Work Order %1 cannot be Exploded as there is no valid Bill of Materials on file for the Work Order Item. You must create a valid Bill of Materials for the Work Order Item before you may explode the Work Order.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="772"/>
-        <source>Work Order %1 cannot be Exploded as there are one or more Component Items on the Bill of Materials for the Work Order Item that do not exist in the Work Order Site. You must create a valid Item Site for all of the Component Items before you may explode this Work Order.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="779"/>
-        <source>Work Order %1 cannot be Exploded as there are one or more Co-Product/By-Product Items on the Breeder Bill of Materials for the Work Order Item that do not exist in the Work Order Site. You must create a valid Item Site for all of the Co-Product/By-Product Items before you may explode this Work Order.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="781"/>
-        <source>Work Order %1 cannot be Exploded because it is not Open.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="783"/>
-        <source>Work Order %1 cannot be Exploded because the quantityordered is not valid.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../common/storedProcErrorLookup.cpp" line="786"/>
         <source>Cannot freeze this Accounting Period because it is still open.</source>
         <translation type="unfinished"></translation>
@@ -933,41 +538,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="822"/>
-        <source>The selected Sales Order is on Credit Hold and must be taken off of Credit Hold before any inventory may be issued to it.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="825"/>
-        <source>The selected Sales Order is on Packing Hold and must be taken off of Packing Hold before any inventory may be issued to it.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="829"/>
-        <source>The selected Sales Order is on Return Hold. The Customer must return all materials for a related Return Authorization before any inventory may be issued to this Order.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="833"/>
-        <source>The selected Sales Order is configured for Auto Registration. The Customer Account does not have a Primary Contact. A Primary Contact must be assigned to this Customer Account before any inventory may be issued to this Order.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="837"/>
-        <source>The specified Username does not exist in the specified Database. Contact your Systems Administrator to report this issue</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="840"/>
-        <source>The specified Username exists in the specified Database but is not Active. Contact your Systems Administrator to report this issue.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="843"/>
-        <source>Cannot make this BOM Item replacement because it would create a recursive BOM.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../common/storedProcErrorLookup.cpp" line="847"/>
         <source>Cannot open this Accounting Period because it is already open.</source>
         <translation type="unfinished"></translation>
@@ -975,31 +545,6 @@
     <message>
         <location filename="../../common/storedProcErrorLookup.cpp" line="849"/>
         <source>Cannot open this Accounting Period because it is frozen.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="856"/>
-        <source>There are no A/P Credit Memo applications to post.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="859"/>
-        <source>The total value of the applications that are you attempting to post is greater than the value of the A/P Credit Memo itself.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="862"/>
-        <source>At least one A/P Credit Memo application cannot be posted because there is no current exchange rate for its currency.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="864"/>
-        <source>The A/P Credit Memo to apply was not found.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="866"/>
-        <source>The amount to apply for this A/P Credit Memo is NULL.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1013,11 +558,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="877"/>
-        <source>The total value of the applications that you are attempting to post is greater than the value of the A/R Credit Memo itself. Please reduce the applications to total less than the value of the Credit Memo.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../common/storedProcErrorLookup.cpp" line="880"/>
         <source>At least one A/R Credit Memo application cannot be posted because there is no current exchange rate for its currency.</source>
         <translation type="unfinished"></translation>
@@ -1025,16 +565,6 @@
     <message>
         <location filename="../../common/storedProcErrorLookup.cpp" line="883"/>
         <source>The A/R Credit Memo to apply was not found.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="887"/>
-        <source>This Bank Adjustment could not be posted because the one or more required records do not exist.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="890"/>
-        <source>This Bank Adjustment could not be posted because the total adjustment is 0 so there is nothing to post.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1068,46 +598,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="919"/>
-        <source>Cannot post this Credit Card refund because the default Bank Account for Credit Card transactions could not be found.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="921"/>
-        <source>Cannot post this Credit Card refund because an invalid id/reference-type pair was passed.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="925"/>
-        <source>Cannot post this Credit Card refund because the credit card and refund records could not be found.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="927"/>
-        <source>Cannot post this Credit Card refund because the credit card payment records is not for a refund.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="931"/>
-        <source>Cannot post this Check because it has already been posted.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="933"/>
-        <source>Cannot post this Check because the recipient type is not valid.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="935"/>
-        <source>Cannot post this Check because the Expense Category could not be found.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="937"/>
-        <source>Cannot post this Check because the G/L Account against which it is to be posted is not valid.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../common/storedProcErrorLookup.cpp" line="941"/>
         <source>This Credit Memo cannot be posted because it has already been posted.</source>
         <translation type="unfinished"></translation>
@@ -1130,11 +620,6 @@
     <message>
         <location filename="../../common/storedProcErrorLookup.cpp" line="955"/>
         <source>Could not post this G/L Series because the G/L Series Discrepancy Account was not found.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="958"/>
-        <source>Could not post this G/L Series because the Debits and Credits are unbalanced.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1183,16 +668,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1000"/>
-        <source>This Receipt Line has already been posted.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1003"/>
-        <source>This Receipt Line cannot be posted because it has a quantity of 0.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../common/storedProcErrorLookup.cpp" line="1005"/>
         <source>This Purchase Order Receipt Line has no Standard Cost assigned to it.</source>
         <translation type="unfinished"></translation>
@@ -1213,16 +688,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1035"/>
-        <source>This shipment cannot be recalled because it has already been received at its destination.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1042"/>
-        <source>This shipment cannot be recalled because it contains one or more Line Items with Site/Product Category/Customer combinations that have not been properly described in Sales Account Assignments. These assignments must be made before G/L Transactions can be posted andthis Sales Order is allowed to be recalled.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../common/storedProcErrorLookup.cpp" line="1046"/>
         <source>Cannot release this Billing Header because it has already been posted.</source>
         <translation type="unfinished"></translation>
@@ -1233,38 +698,446 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1052"/>
-        <source>You cannot Relocate more inventory than is available.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1059"/>
-        <source>Cannot replace this voided check because either it has not been voided, it has already been posted, or it has already beenreplaced.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1094"/>
-        <source>Either a Cost Category for the Items you are trying to Return is not configured with a Shipping Asset Account Number or a Customer Type/Product Category/Site Sales Account assignment does not exist . Because of this, G/L Transactions cannot be posted for this Return. You must contact your Systems Administrator to have this corrected before you may Return this Shipment.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../common/storedProcErrorLookup.cpp" line="1098"/>
         <source>The quantity you have selected for Billing is less than the quantity shipped. You may not bill for less than the quantity shipped.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1110"/>
-        <source>This Sales Order may not be shipped as it contains one or more Line Items that have Site/Product Category/Customer combinations that have not been properly described in Sales Account Assignments.  These assignments must be made before G/L Transactions can be posted and this Sales Order is allowed to ship.</source>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1171"/>
+        <source>Cannot thaw this Accounting Period because it is not frozen.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1113"/>
-        <source>This Transfer Order may not be shipped because there is no Item Site for the Transit Site.</source>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1175"/>
+        <source>Cannot change the Sequence of a non-existent To-Do List Item. Possible cause: no To-Do List Item was selected.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1231"/>
+        <source>ErrorLookupHash initialization error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1232"/>
+        <source>ErrorLookupHash has already been initialized.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1297"/>
+        <source>Could not find (%1, %2) in ErrorLookupHash when trying to insert proxy entry for (%3, %4).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="101"/>
+        <source>This Transfer Order was not found.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="155"/>
+        <source>The item cannot be Closed at this time as there is inventory at shipping.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="199"/>
+        <source>Could not copy the Item Site because it does not appear to exist.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="202"/>
+        <source>Could not copy the Item Site because the warehouse for the new Item Site record does not appear to exist.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="204"/>
+        <source>You do not have sufficient privilege to create an Item Site.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="213"/>
+        <source>The system does not allow purchases of Items for this Vendor without Item Sources and at least one line item item in the original P/O does not have an active Item Source.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="248"/>
+        <source>You may not create a BOM Item that defines a Parent that is composed of itself.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="253"/>
+        <source>The Component that you have selected for thisBOM Item is a manufactured or phantom Item that uses the Parent Item as a Component Item in its own BOM. You may not create a recursive BOM.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="469"/>
+        <source>The selected Customer cannot be deleted as there are still Invoices assigned to it. You must delete all of the selected Customer&apos;s Invoices before you may delete it</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="473"/>
+        <source>The selected Customer cannot be deleted as there are still Quotes assigned to it. You must delete all of the selected Customer&apos;s Quotes before you may delete it</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="496"/>
+        <source>The selected Item Site cannot be deleted as there is Inventory History posted against it. You may edit the Item Site and deactivate it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="499"/>
+        <source>The selected Item Site cannot be deleted as there is Work Order History posted against it. You may edit the Item Site and deactivate it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="502"/>
+        <source>The selected Item Site cannot be deleted as there is Sales History posted against it. You may edit the Item Site and deactivate it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="505"/>
+        <source>The selected Item Site cannot be deleted as there is Purchasing History posted against it. You may edit the Item Site and deactivate it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="508"/>
+        <source>The selected Item Site cannot be deleted as there is Planning History posted against it. You may edit the Item Site and deactivate it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="511"/>
+        <source>The selected Item Site cannot be deleted as there is a non-zero Inventory Quantity posted against it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="615"/>
+        <source>This Transfer Order cannot be deleted as some of its line items have already been shipped.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="620"/>
+        <source>This Transfer Order cannot be deleted as some of its line items have already been issued to shipping. You must return this stock before you may delete this Transfer Order.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="656"/>
+        <source>This Transfer Order cannot be deleted as line items for it have already been shipped.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="658"/>
+        <source>This Transfer Order cannot be deleted as line items for it have been issued to shipping.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="660"/>
+        <source>This Transfer Order cannot be deleted as the order number cannot be released.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="706"/>
+        <source>The selected Work Center cannot be deleted because Standard Operations exist that use it. You must reassign all Standard Operations that use the selected Work Center to a different Work Center before you may delete it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="713"/>
+        <source>The selected Work Center cannot be deleted because Bill of Operations items exist that use it. You must reassign all Bill of Operations items that use the selected Work Center to a different Work Center before you may delete it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="719"/>
+        <source>The selected Work Center cannot be deleted because Work Orders exist that use it. You must complete or close all Work Orders that use the selected Work Center before you may delete it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="760"/>
+        <source>Information for this order line item could not be found. If it is a Purchase Order Item then it does not appear to exist. If it is a Transfer Order Item then either the Transfer Order does not exist or there is no Item Site for this line item.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="766"/>
+        <source>Work Order %1 cannot be Exploded as there is no valid Bill of Materials on file for the Work Order Item. You must create a valid Bill of Materials for the Work Order Item before you may explode the Work Order.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="843"/>
+        <source>Cannot make this BOM Item replacement because it would create a recursive BOM.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1000"/>
+        <source>This Receipt Line has already been posted.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1003"/>
+        <source>This Receipt Line cannot be posted because it has a quantity of 0.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1035"/>
+        <source>This shipment cannot be recalled because it has already been received at its destination.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../common/storedProcErrorLookup.cpp" line="1115"/>
         <source>This Shipment cannot be shipped because it appears to have already shipped.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1130"/>
+        <source>This Shipment cannot be shipped because it does not appear to exist.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1134"/>
+        <source>This Order may not be shipped because it has been marked as Ship Complete and quantities for one or more Line Items are still not completely issued. Please correct this before shipping the Order.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1145"/>
+        <source>Cannot figure out which line item to issue.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1217"/>
+        <source>Work Order %1 cannot be Exploded as it seems to have an invalid Order Quantity.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1221"/>
+        <source>Work Order %1 has at least one Item in its Bill of Materials with the Push issue method that has not yet been issued. You must issue all Push Items to this Work Order.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1225"/>
+        <source>Work Order %1 has at least one Item in its Bill of Materials with the Push issue method that does not have the required quantity issued. You must issue all Push Items to this Work Order.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1226"/>
+        <source>Work Order %1 is closed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="107"/>
+        <source>This transaction was approved.
+%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="166"/>
+        <source>Database Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="111"/>
+        <source>The application is not set up to process credit cards.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="112"/>
+        <source>The Bank Account is not set for Credit Card transactions.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="113"/>
+        <source>The encryption key is not defined.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="114"/>
+        <source>The login for the proxy server is not defined.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="115"/>
+        <source>The password for the proxy server is not defined.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="116"/>
+        <source>The proxy server is not defined.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="117"/>
+        <source>The port to use for the proxy server is not defined.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="129"/>
+        <source>Error with message transfer program:
+%1 %2
+
+%3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="130"/>
+        <source>%1 is not implemented.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="141"/>
+        <source>The preauthorization (for %1) is not sufficient to cover the desired transaction amount (%2).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="142"/>
+        <source>No Preauthorization found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="151"/>
+        <source>Could not find original Credit Card payment to credit.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="167"/>
+        <source>Could not generate a unique key for the ccpay table.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="178"/>
+        <source>This Credit Card transaction was denied.
+%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="179"/>
+        <source>This Credit Card transaction is a duplicate.
+%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="180"/>
+        <source>This Credit Card transaction was declined.
+%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="182"/>
+        <source>This Credit Card transaction was denied because of possible fraud.
+%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="184"/>
+        <source>User chose not to post-authorize process the charge.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="186"/>
+        <source>User chose not to process the credit.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="280"/>
+        <source>Revision control not enabled.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="465"/>
+        <source>The selected Customer cannot be deleted as Checks have been written to it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="483"/>
+        <source>This Item cannot be deleted as it is used in one or more bills of materials.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="485"/>
+        <source>This Item cannot be deleted as there are Item Site records associated with it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="487"/>
+        <source>This Item cannot be deleted as there are Substitute records associated with it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="489"/>
+        <source>This Item cannot be deleted as there are Breeder BOM records associated with it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="491"/>
+        <source>This Item cannot be deleted as there are assignement records associated with it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="493"/>
+        <source>This Item cannot be deleted as there are Revision Control records associated with it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="552"/>
+        <source>The selected Shipto cannot be deleted as there is still Archived Sales History assigned to it. You must delete all of the selected Customer&apos;s Ship-Tos before you may delete it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="557"/>
+        <source>The selected Shipto cannot be deleted as there has been Sales History recorded for this Shipto. You may Edit the selected Shipto and set its status to inactive.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="651"/>
+        <source>This Tax Authority cannot be deleted as there are Tax Selections for it. Change or delete those Tax Selections before deleting this Tax Authority.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="653"/>
+        <source>This Tax Authority cannot be deleted as Checks have been written to it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="690"/>
+        <source>The selected Vendor cannot be deleted as there have been Checks posted against it. You may deactivate this Vendor instead.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="700"/>
+        <source>The selected Work Center cannot be deleted because there has been history posted against it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="822"/>
+        <source>The selected Sales Order is on Credit Hold and must be taken off of Credit Hold before any inventory may be issued to it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="825"/>
+        <source>The selected Sales Order is on Packing Hold and must be taken off of Packing Hold before any inventory may be issued to it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="829"/>
+        <source>The selected Sales Order is on Return Hold. The Customer must return all materials for a related Return Authorization before any inventory may be issued to this Order.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="931"/>
+        <source>Cannot post this Check because it has already been posted.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="933"/>
+        <source>Cannot post this Check because the recipient type is not valid.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="935"/>
+        <source>Cannot post this Check because the Expense Category could not be found.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="937"/>
+        <source>Cannot post this Check because the G/L Account against which it is to be posted is not valid.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1059"/>
+        <source>Cannot replace this voided check because either it has not been voided, it has already been posted, or it has already beenreplaced.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1285,116 +1158,6 @@
     <message>
         <location filename="../../common/storedProcErrorLookup.cpp" line="1128"/>
         <source>The selected Order is on Shipping Hold and must be taken off of Shipping Hold before it may be shipped.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1130"/>
-        <source>This Shipment cannot be shipped because it does not appear to exist.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1134"/>
-        <source>This Order may not be shipped because it has been marked as Ship Complete and quantities for one or more Line Items are still not completely issued. Please correct this before shipping the Order.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1136"/>
-        <source>Only Purchase Order Receipts may be split.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1137"/>
-        <source>Only posted receipts may be split.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1138"/>
-        <source>Vouchered receitps may not be split.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1139"/>
-        <source>Split quantity must me less than original receipt quantity.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1140"/>
-        <source>Split freight may not be greater than original freight.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1141"/>
-        <source>Receipt not found.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1142"/>
-        <source>The split quantity must be a positive number.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1145"/>
-        <source>Cannot figure out which line item to issue.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1148"/>
-        <source>There is not enough Inventory to issue the amount required of Item %1 in Site %2.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1153"/>
-        <source>Item Number %1 in Site %2 is a Multiple Location or Lot/Serial controlled Item which is short on Inventory. This transaction cannot be completed as is. Please make sure there is sufficient Quantity on Hand before proceeding.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1157"/>
-        <source>Invalid Order Type.  Only Sales Orders and Transfer Orders may be shipped from this window.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1160"/>
-        <source>Cannot check inventory levels foran invalid item.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1163"/>
-        <source>There is not enough Inventory to issue the amount required of one of the items requested.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1167"/>
-        <source>One of the requested items is a Multiple Location or Lot/Serial controlled Item which is sort on Inventory.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1171"/>
-        <source>Cannot thaw this Accounting Period because it is not frozen.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1175"/>
-        <source>Cannot change the Sequence of a non-existent To-Do List Item. Possible cause: no To-Do List Item was selected.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1179"/>
-        <source>The To-Do List Item cannot be updated as there is no assigned User.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1181"/>
-        <source>The To-Do List Item cannot be updated as the Task Name is blank.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1183"/>
-        <source>The To-Do List Item cannot be updated as there is no Due Date.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1185"/>
-        <source>The To-Do List Item cannot be updated as an invalid internal ID was supplied .</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1435,51 +1198,6 @@
     <message>
         <location filename="../../common/storedProcErrorLookup.cpp" line="1210"/>
         <source>Cannot reserve more quantity than currently on hand and already reserved.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1217"/>
-        <source>Work Order %1 cannot be Exploded as it seems to have an invalid Order Quantity.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1221"/>
-        <source>Work Order %1 has at least one Item in its Bill of Materials with the Push issue method that has not yet been issued. You must issue all Push Items to this Work Order.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1225"/>
-        <source>Work Order %1 has at least one Item in its Bill of Materials with the Push issue method that does not have the required quantity issued. You must issue all Push Items to this Work Order.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1226"/>
-        <source>Work Order %1 is closed.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1231"/>
-        <source>ErrorLookupHash initialization error</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1232"/>
-        <source>ErrorLookupHash has already been initialized.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1293"/>
-        <source>Lookup Error</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1297"/>
-        <source>Could not find (%1, %2) in ErrorLookupHash when trying to insert proxy entry for (%3, %4).</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../common/storedProcErrorLookup.cpp" line="1328"/>
-        <source>A Stored Procedure failed to run properly.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1533,54 +1251,8 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="107"/>
-        <source>This transaction was approved.
-%1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="166"/>
-        <source>Database Error</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../guiclient/creditcardprocessor.cpp" line="110"/>
         <source>You don&apos;t have permission to process Credit Card transactions.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="111"/>
-        <source>The application is not set up to process credit cards.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="112"/>
-        <source>The Bank Account is not set for Credit Card transactions.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="113"/>
-        <source>The encryption key is not defined.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="114"/>
-        <source>The login for the proxy server is not defined.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="115"/>
-        <source>The password for the proxy server is not defined.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="116"/>
-        <source>The proxy server is not defined.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="117"/>
-        <source>The port to use for the proxy server is not defined.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1625,19 +1297,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="129"/>
-        <source>Error with message transfer program:
-%1 %2
-
-%3</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="130"/>
-        <source>%1 is not implemented.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../guiclient/creditcardprocessor.cpp" line="132"/>
         <source>The application does not support either Credit Cards or Checks with %1. Please choose a different company.</source>
         <translation type="unfinished"></translation>
@@ -1663,16 +1322,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="141"/>
-        <source>The preauthorization (for %1) is not sufficient to cover the desired transaction amount (%2).</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="142"/>
-        <source>No Preauthorization found</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../guiclient/creditcardprocessor.cpp" line="144"/>
         <source>This preauthorization may not be charged. It was created for a Sales Order which has been canceled.</source>
         <translation type="unfinished"></translation>
@@ -1685,11 +1334,6 @@
     <message>
         <location filename="../../guiclient/creditcardprocessor.cpp" line="148"/>
         <source>Could not generate a sequence number while charging.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="151"/>
-        <source>Could not find original Credit Card payment to credit.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1731,11 +1375,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="167"/>
-        <source>Could not generate a unique key for the ccpay table.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../guiclient/creditcardprocessor.cpp" line="168"/>
         <source>Stored Procedure Error</source>
         <translation type="unfinished"></translation>
@@ -1762,57 +1401,13 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="178"/>
-        <source>This Credit Card transaction was denied.
-%1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="179"/>
-        <source>This Credit Card transaction is a duplicate.
-%1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="180"/>
-        <source>This Credit Card transaction was declined.
-%1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="182"/>
-        <source>This Credit Card transaction was denied because of possible fraud.
-%1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../guiclient/creditcardprocessor.cpp" line="183"/>
         <source>User chose not to process the preauthorization.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="184"/>
-        <source>User chose not to post-authorize process the charge.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../guiclient/creditcardprocessor.cpp" line="185"/>
         <source>User chose not to process the charge.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="186"/>
-        <source>User chose not to process the credit.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="187"/>
-        <source>User chose not to process the void.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../guiclient/creditcardprocessor.cpp" line="188"/>
-        <source>There was a problem printing the credit card receipt.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1830,9 +1425,411 @@
         <source>User chose not to proceed without CVV code.</source>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>@default</name>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="219"/>
+        <source>The receipt has been split and may not be corrected. Correct Receipt.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="288"/>
+        <source>Work Order can not be exploded because items on the BOM exist without itemsites.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="382"/>
+        <source>The selected Cash Receipt cannot be deleted because it is a Customer Deposit made with a Credit Card and the card has already been charged.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="583"/>
+        <source>This Sales Order cannot be deleted as some of its line items have already been issued to shipping.  You must return this stock before you may delete this Sales Order.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="592"/>
+        <source>This Sales Order cannot be deleted because a Credit Card has been charged for it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="594"/>
+        <source>This Sales Order cannot be deleted because there is Credit Card transaction history for it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="781"/>
+        <source>Work Order %1 cannot be Exploded because it is not Open.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="783"/>
+        <source>Work Order %1 cannot be Exploded because the quantityordered is not valid.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="919"/>
+        <source>Cannot post this Credit Card refund because the default Bank Account for Credit Card transactions could not be found.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="921"/>
+        <source>Cannot post this Credit Card refund because an invalid id/reference-type pair was passed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="925"/>
+        <source>Cannot post this Credit Card refund because the credit card and refund records could not be found.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="927"/>
+        <source>Cannot post this Credit Card refund because the credit card payment records is not for a refund.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1136"/>
+        <source>Only Purchase Order Receipts may be split.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1137"/>
+        <source>Only posted receipts may be split.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1138"/>
+        <source>Vouchered receitps may not be split.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1139"/>
+        <source>Split quantity must me less than original receipt quantity.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1140"/>
+        <source>Split freight may not be greater than original freight.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1141"/>
+        <source>Receipt not found.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1142"/>
+        <source>The split quantity must be a positive number.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1157"/>
+        <source>Invalid Order Type.  Only Sales Orders and Transfer Orders may be shipped from this window.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1160"/>
+        <source>Cannot check inventory levels foran invalid item.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1163"/>
+        <source>There is not enough Inventory to issue the amount required of one of the items requested.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1167"/>
+        <source>One of the requested items is a Multiple Location or Lot/Serial controlled Item which is sort on Inventory.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="142"/>
+        <source>The selected Fiscal Year cannot be closed because you have not specified a Year End Equity Account in the accounting configuration.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="147"/>
+        <source>The selected Fiscal Year cannot be closed because there does not seem to be an Accounting Period defined for the beginning of the next Fiscal Year.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="152"/>
+        <source>The selected Fiscal Year cannot be closed because there is no Trial Balance record for the account in the required Period. Or you have not specified a Year End Equity Account in the accounting configuration.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="195"/>
+        <source>Quote #%1 has expired and can not be converted.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="294"/>
+        <source>The selected G/L Account cannot be deleted as it is currently used in one or more Cost Categories.  You must reassign these Cost Category assignments before you may delete the selected G/L Account.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="299"/>
+        <source>The selected G/L Account cannot be deleted as it is currently used in one or more Sales Account Assignment. You must reassign these Sales Account Assignments before you may delete the selected G/L Account.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="304"/>
+        <source>The selected G/L Account cannot be deleted as it is currently used in one or more Customer A/R Account assignments. You must reassign these Customer A/R Account assignments before you may delete the selected G/L Account.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="313"/>
+        <source>The selected G/L Account cannot be deleted as it is currently used in one or more Bank Accounts. You must reassign these Bank Accounts before you may delete the selected G/L Account.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="318"/>
+        <source>The selected G/L Account cannot be deleted as it is currently used in one or more Expense Categories. You must reassign these Expense Categories before you may delete the selected G/L Account.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="322"/>
+        <source>The selected G/L Account cannot be deleted as it is currently used in one or more Tax Codes. You must reassign these Tax Codes before you may delete the selected G/L Account.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="327"/>
+        <source>The selected G/L Account cannot be deleted as it is currently used in one or more Standard Journals. You must reassign these Standard Journal Items before you may delete the selected G/L Account.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="332"/>
+        <source>The selected G/L Account cannot be deleted as it is currently used in one or more Customer A/P Account assignments. You must reassign these Customer A/P Account assignments before you may delete the selected G/L Account.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="337"/>
+        <source>The selected G/L Account cannot be deleted as it is currently used in one or more Currency definition. You must reassign these Currency definitions before you may delete the selected G/L Account.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="341"/>
+        <source>The selected G/L Account cannot be deleted as it is currently used in one or more A/R Open Items. You must reassign these Currency definitions before you may delete the selected G/L Account.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="345"/>
+        <source>The selected G/L Account cannot be deleted as there have been G/L Transactions posted against it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="376"/>
+        <source>The selected Bank Adjustment Type cannot be deleted because it is currently used by a Bank Adjustment.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="515"/>
+        <source>This UOM Conversion cannot be deleted as there are records for this Item which use this UOM.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="536"/>
+        <source>The selected Sales Rep. cannot be deleted as he/she is still assigned to one or more Customers.  You must reassign different Sales Reps. to all Customers to which the selected Sales Rep. is assigned before you may delete the selected Sales Rep.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="542"/>
+        <source>The selected Sales Rep. cannot be deleted as he/she is still assigned to one or more Ship-tos.  You must reassign different Sales Reps. to all Ship-tos to which the selected Sales Rep. is assigned before you may delete the selected Sales Rep.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="546"/>
+        <source>The selected Sales Rep. cannot be deleted as there has been sales history recorded against him/her.  You may edit and set the selected Sales Rep&apos;s active status to inactive.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="856"/>
+        <source>There are no A/P Credit Memo applications to post.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="859"/>
+        <source>The total value of the applications that are you attempting to post is greater than the value of the A/P Credit Memo itself.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="862"/>
+        <source>At least one A/P Credit Memo application cannot be posted because there is no current exchange rate for its currency.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="864"/>
+        <source>The A/P Credit Memo to apply was not found.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="866"/>
+        <source>The amount to apply for this A/P Credit Memo is NULL.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="877"/>
+        <source>The total value of the applications that you are attempting to post is greater than the value of the A/R Credit Memo itself. Please reduce the applications to total less than the value of the Credit Memo.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="887"/>
+        <source>This Bank Adjustment could not be posted because the one or more required records do not exist.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="890"/>
+        <source>This Bank Adjustment could not be posted because the total adjustment is 0 so there is nothing to post.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1052"/>
+        <source>You cannot Relocate more inventory than is available.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1293"/>
+        <source>Lookup Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="187"/>
+        <source>User chose not to process the void.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="217"/>
+        <source>You may not correct a quantity greater than the amount originally posted.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="309"/>
+        <source>The selected G/L Account cannot be deleted as it is currently used as the default Account one or more Sites. You must reassign the default Account for these Sites before you may delete the selected G/L Account.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="371"/>
+        <source>The selected Address cannot be deleted as it is used by an active Site.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="417"/>
+        <source>The selected Company cannot be deleted as it is in use by existing Account. You must reclass these Accounts before you may delete the selected Company.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="435"/>
+        <source>The selected Contact cannot be deleted as s/he is the Contact for a Site.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="519"/>
+        <source>The selected Package cannot be deleted because there are other packages that depend on it to function properly.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="525"/>
+        <source>The selected Profit Center cannot be deleted as it is in use by existing Account. You must reclass these Accounts before you may delete the selected Profit Center.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="598"/>
+        <source>This Sales Order cannot be deleted as some of its line items are linked to a Return Authorization.  You must resolve this conflict before you may delete this Sales Order.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="600"/>
+        <source>This Sales Order Item cannot be deleted as it has already been shipped.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="603"/>
+        <source>This Sales Order Item cannot be deleted as it has already been issued to shipping.  You must return this stock before you may delete this Sales Order Item.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="606"/>
+        <source>This Sales Order Item cannot be deleted as it is linked to a Return Authorization.  You must resolve this conflict before you may delete this Sales Order Item.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="612"/>
+        <source>The selected Subaccount cannot be deleted as it is in use by existing Account. You must reclass these Accounts before you may delete the selected Subaccount.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="723"/>
+        <source>This version of the PostgreSQL database server does not support package enabling or disabling. Upgrade to PostgreSQL 8.2 or later.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="725"/>
+        <source>Could not find a package with the internal id % to enable or disable.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="772"/>
+        <source>Work Order %1 cannot be Exploded as there are one or more Component Items on the Bill of Materials for the Work Order Item that do not exist in the Work Order Site. You must create a valid Item Site for all of the Component Items before you may explode this Work Order.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="779"/>
+        <source>Work Order %1 cannot be Exploded as there are one or more Co-Product/By-Product Items on the Breeder Bill of Materials for the Work Order Item that do not exist in the Work Order Site. You must create a valid Item Site for all of the Co-Product/By-Product Items before you may explode this Work Order.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="833"/>
+        <source>The selected Sales Order is configured for Auto Registration. The Customer Account does not have a Primary Contact. A Primary Contact must be assigned to this Customer Account before any inventory may be issued to this Order.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="837"/>
+        <source>The specified Username does not exist in the specified Database. Contact your Systems Administrator to report this issue</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="840"/>
+        <source>The specified Username exists in the specified Database but is not Active. Contact your Systems Administrator to report this issue.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="958"/>
+        <source>Could not post this G/L Series because the Debits and Credits are unbalanced.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1042"/>
+        <source>This shipment cannot be recalled because it contains one or more Line Items with Site/Product Category/Customer combinations that have not been properly described in Sales Account Assignments. These assignments must be made before G/L Transactions can be posted andthis Sales Order is allowed to be recalled.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1094"/>
+        <source>Either a Cost Category for the Items you are trying to Return is not configured with a Shipping Asset Account Number or a Customer Type/Product Category/Site Sales Account assignment does not exist . Because of this, G/L Transactions cannot be posted for this Return. You must contact your Systems Administrator to have this corrected before you may Return this Shipment.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1110"/>
+        <source>This Sales Order may not be shipped as it contains one or more Line Items that have Site/Product Category/Customer combinations that have not been properly described in Sales Account Assignments.  These assignments must be made before G/L Transactions can be posted and this Sales Order is allowed to ship.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1113"/>
+        <source>This Transfer Order may not be shipped because there is no Item Site for the Transit Site.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1148"/>
+        <source>There is not enough Inventory to issue the amount required of Item %1 in Site %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../common/storedProcErrorLookup.cpp" line="1153"/>
+        <source>Item Number %1 in Site %2 is a Multiple Location or Lot/Serial controlled Item which is short on Inventory. This transaction cannot be completed as is. Please make sure there is sufficient Quantity on Hand before proceeding.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../guiclient/creditcardprocessor.cpp" line="188"/>
+        <source>There was a problem printing the credit card receipt.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>AddressCluster</name>
