@@ -193,8 +193,6 @@ void Alarms::sDelete()
 
 void Alarms::refresh()
 {
-  qDebug(QString("refresh, _source=%1").arg(_alarmMap[_source].ident));
-  qDebug(QString("refresh, _sourceid=%1").arg(_sourceid));
   if(-1 == _sourceid)
   {
     _alarms->clear();

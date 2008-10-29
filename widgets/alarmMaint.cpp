@@ -85,6 +85,11 @@ alarmMaint::alarmMaint(QWidget* parent, const char* name, bool modal, Qt::WFlags
     _mode = cNew;
     _source = Alarms::Uninitialized;
     _sourceid = -1;
+    _alarmid = -1;
+    XSqlQuery tickle;
+    tickle.exec( "SELECT CURRENT_TIME AS dbdate;" );
+    if (tickle.first())
+      _alarmDateTime->setDateTime(tickle.value("dbdate").toDateTime());
     
     sHandleButtons();
 }
@@ -149,21 +154,24 @@ void alarmMaint::sSave()
 {
   XSqlQuery q;
 
-  if(cNew == _mode)
-    q.prepare("INSERT INTO alarm"
-              "       (alarm_type, alarm_time, alarm_time_offset, alarm_time_qualifier,"
-              "        alarm_creator, alarm_recipient, alarm_source, alarm_source_id) "
-              "VALUES "
-              "       (:alarm_type, :alarm_time, :alarm_time_offset, :alarm_time_qualifier,"
-              "        CURRENT_USER, :alarm_recipient, :alarm_source, :alarm_source_id); ");
-  else //if(cEdit == _mode)
-    q.prepare("UPDATE alarm"
-              "   SET alarm_type=:alarm_type,"
-              "       alarm_time=:alarm_time,"
-              "       alarm_time_offset=:alarm_time_offset,"
-              "       alarm_time_qualifier=:alarm_time_qualifier,"
-              "       alarm_recipient=:alarm_recipient "
-              " WHERE (alarm_id=:alarm_id); ");
+  q.prepare("SELECT saveAlarm(:alarm_id, :alarm_number,"
+            "                 :alarm_type, :alarm_time, :alarm_time_offset, :alarm_time_qualifier,"
+            "                 :alarm_recipient, :alarm_source, :alarm_source_id, 'CHANGEALL') AS result; ");
+//  if(cNew == _mode)
+//    q.prepare("INSERT INTO alarm"
+//              "       (alarm_type, alarm_time, alarm_time_offset, alarm_time_qualifier,"
+//              "        alarm_creator, alarm_recipient, alarm_source, alarm_source_id) "
+//              "VALUES "
+//              "       (:alarm_type, :alarm_time, :alarm_time_offset, :alarm_time_qualifier,"
+//              "        CURRENT_USER, :alarm_recipient, :alarm_source, :alarm_source_id); ");
+//  else //if(cEdit == _mode)
+//    q.prepare("UPDATE alarm"
+//              "   SET alarm_type=:alarm_type,"
+//              "       alarm_time=:alarm_time,"
+//              "       alarm_time_offset=:alarm_time_offset,"
+//              "       alarm_time_qualifier=:alarm_time_qualifier,"
+//              "       alarm_recipient=:alarm_recipient "
+//              " WHERE (alarm_id=:alarm_id); ");
 
   if (_eventAlarm->isChecked())
   {
@@ -175,12 +183,9 @@ void alarmMaint::sSave()
     q.bindValue(":alarm_type", "M");
     q.bindValue(":alarm_recipient", _emailRecipient->text());
   }
-  q.bindValue(":alarm_time", _alarmDateTime->date());
-  qDebug(QString("ssave, _alarmOffset=%1").arg(_alarmOffset->value()));
+  q.bindValue(":alarm_time", _alarmDateTime->dateTime());
   q.bindValue(":alarm_time_offset", _alarmOffset->value());
   q.bindValue(":alarm_time_qualifier", _alarmQualifiers[_alarmQualifier->currentItem()]);
-  qDebug(QString("ssave, _source=%1").arg(Alarms::_alarmMap[_source].ident));
-  qDebug(QString("ssave, _sourceid=%1").arg(_sourceid));
   q.bindValue(":alarm_source", Alarms::_alarmMap[_source].ident);
   q.bindValue(":alarm_source_id", _sourceid);
   q.bindValue(":alarm_id", _alarmid);
@@ -238,9 +243,11 @@ void alarmMaint::sPopulate()
   {
     _alarmOffset->setValue(q.value("alarm_time_offset").toInt());
     for (int pcounter = 0; pcounter < _alarmQualifier->count(); pcounter++)
-      if (QString(q.value("alarm_time_qualifier").toString()[0]) == _alarmQualifiers[pcounter])
+    {
+      if (QString(q.value("alarm_time_qualifier").toString()) == _alarmQualifiers[pcounter])
         _alarmQualifier->setCurrentItem(pcounter);
-    _alarmDateTime->setDate(q.value("alarm_time").toDate());
+    }
+    _alarmDateTime->setDateTime(q.value("alarm_time").toDateTime());
     if (q.value("alarm_type") == "V")
     {
       _eventAlarm->setChecked(TRUE);
