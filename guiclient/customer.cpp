@@ -1078,7 +1078,7 @@ void customer::sFillShiptoList()
 {
   q.prepare( "SELECT shipto_id, shipto_default,"
              "       shipto_num, shipto_name, shipto_address1,"
-             "       (shipto_city || ', ' || shipto_state || '  ' || shipto_zipcode) "
+             "       (shipto_city || ', ' || shipto_state || '  ' || shipto_zipcode) AS shipto_csz "
              "FROM shipto "
              "WHERE (shipto_cust_id=:cust_id) "
              "ORDER BY shipto_num;" );
