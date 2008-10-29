@@ -11,21 +11,36 @@
  <leftmargin>50</leftmargin>
  <querysource>
   <name>detail</name>
-  <sql>SELECT cohead_number,
-       formatShipmentNumber(sopack_cosmisc_id) AS cosmisc_number,
-       cust_number, cohead_shipvia,
-       cohead_billtoname,
-       CASE WHEN (cohead_holdtype='N') THEN 'None'
-            WHEN (cohead_holdtype='S') THEN 'Ship'
-            WHEN (cohead_holdtype='P') THEN 'Pack'
-            WHEN (cohead_holdtype='R') THEN 'Return'
-            ELSE 'Other'
+  <sql>SELECT cohead_number AS order_number, pack_head_type,
+       cohead_shipvia AS shipvia,
+       formatShipmentNumber(pack_shiphead_id) AS shipment_number, 
+       cust_number AS number, cohead_billtoname AS name,
+       CASE WHEN (cohead_holdtype='N') THEN &lt;? value("none") ?>
+            WHEN (cohead_holdtype='C') THEN &lt;? value("credit") ?>
+            WHEN (cohead_holdtype='S') THEN &lt;? value("ship") ?>
+            WHEN (cohead_holdtype='P') THEN &lt;? value("pack") ?>
+            WHEN (cohead_holdtype='R') THEN &lt;? value("return") ?>
+            ELSE &lt;? value("other") ?>
        END AS f_holdtype,
-       formatBoolYN(sopack_printed) as f_printed
-FROM sopack, cohead, cust
-WHERE ( (sopack_sohead_id=cohead_id)
- AND (cohead_cust_id=cust_id) )
-ORDER BY cohead_number;</sql>
+       formatBoolYN(pack_printed) AS f_printed
+FROM pack, cohead, cust 
+WHERE ((pack_head_id=cohead_id)
+  AND  (cohead_cust_id=cust_id)
+  AND  (pack_head_type='SO'))
+&lt;? if exists("MultiWhs") ?>
+  AND  checkSOSitePrivs(cohead_id)
+UNION 
+SELECT tohead_number AS order_number, pack_head_type,
+       tohead_shipvia AS shipvia,
+       formatShipmentNumber(pack_shiphead_id) AS shipment_number, 
+       tohead_destname AS number, tohead_destcntct_name AS name,
+       '' AS f_holdtype,
+       formatBoolYN(pack_printed) AS f_printed
+FROM pack, tohead 
+WHERE ((pack_head_id=tohead_id)
+  AND  (pack_head_type='TO')) 
+&lt;? endif ?>
+ORDER BY order_number;</sql>
  </querysource>
  <rpthead>
   <height>75</height>
@@ -123,7 +138,7 @@ ORDER BY cohead_number;</sql>
    </font>
    <left/>
    <vcenter/>
-   <string>S/O#</string>
+   <string>Order #</string>
   </label>
   <label>
    <rect>
@@ -256,7 +271,7 @@ ORDER BY cohead_number;</sql>
    </font>
    <left/>
    <vcenter/>
-   <string>S/O#</string>
+   <string>Order #</string>
   </label>
   <label>
    <rect>
@@ -314,7 +329,7 @@ ORDER BY cohead_number;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>cosmisc_number</column>
+     <column>shipment_number</column>
     </data>
    </field>
    <field>
@@ -352,7 +367,7 @@ ORDER BY cohead_number;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>cust_number</column>
+     <column>number</column>
     </data>
    </field>
    <field>
@@ -371,7 +386,7 @@ ORDER BY cohead_number;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>cohead_number</column>
+     <column>order_number</column>
     </data>
    </field>
    <field>
@@ -409,7 +424,7 @@ ORDER BY cohead_number;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>cohead_billtoname</column>
+     <column>name</column>
     </data>
    </field>
    <field>
@@ -428,7 +443,7 @@ ORDER BY cohead_number;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>cohead_shipvia</column>
+     <column>shipvia</column>
     </data>
    </field>
   </detail>

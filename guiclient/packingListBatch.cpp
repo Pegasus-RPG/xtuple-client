@@ -231,7 +231,7 @@ void packingListBatch::sPrintEditList()
 {
   ParameterList params;
   setParams(params);
-  orReport report("PackingListBatchEditList");
+  orReport report("PackingListBatchEditList", params);
   if (report.isValid())
     report.print();
   else
