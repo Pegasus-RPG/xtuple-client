@@ -58,30 +58,24 @@
 #include "voucher.h"
 
 #include <QCloseEvent>
-#include <Q3PopupMenu>
 #include <QKeyEvent>
-#include <QVariant>
+#include <QMenu>
 #include <QMessageBox>
-#include <QValidator>
-//#include <QStatusBar>
 #include <QSqlError>
+#include <QValidator>
+#include <QVariant>
+
 #include "purchaseOrderList.h"
 #include "purchaseOrderItem.h"
+#include "storedProcErrorLookup.h"
 #include "voucherItem.h"
 #include "voucherMiscDistrib.h"
-/*
- *  Constructs a voucher as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
+
 voucher::voucher(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
   connect(_poList, SIGNAL(clicked()), this, SLOT(sPoList()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_distributions, SIGNAL(clicked()), this, SLOT(sDistributions()));
@@ -89,32 +83,17 @@ voucher::voucher(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_clear, SIGNAL(clicked()), this, SLOT(sClear()));
   connect(_distributeall, SIGNAL(clicked()), this, SLOT(sDistributeAll()));
   connect(_voucherNumber, SIGNAL(lostFocus()), this, SLOT(sHandleVoucherNumber()));
-  connect(_poNumber, SIGNAL(vendAddress1Changed(const QString&)), _vendAddress1, SLOT(setText(const QString&)));
   connect(_poNumber, SIGNAL(newId(int)), this, SLOT(sFillList()));
-  connect(_poitem, SIGNAL(itemSelected(int)), _distributions, SLOT(animateClick()));
-  connect(_poitem, SIGNAL(valid(bool)), _distributions, SLOT(setEnabled(bool)));
   connect(_amountToDistribute, SIGNAL(valueChanged()), this, SLOT(sPopulateBalanceDue()));
-  connect(_miscDistrib, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
   connect(_new, SIGNAL(clicked()), this, SLOT(sNewMiscDistribution()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEditMiscDistribution()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDeleteMiscDistribution()));
-  connect(_miscDistrib, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
-  connect(_miscDistrib, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
   connect(_invoiceDate, SIGNAL(newDate(const QDate&)), this, SLOT(sPopulateDistDate()));
-  connect(_poNumber, SIGNAL(vendAddress2Changed(const QString&)), _vendAddress2, SLOT(setText(const QString&)));
   connect(_terms, SIGNAL(newID(int)), this, SLOT(sPopulateDueDate()));
   connect(_poNumber, SIGNAL(newId(int)), this, SLOT(sPopulatePoInfo()));
-  connect(_poNumber, SIGNAL(vendNameChanged(const QString&)), _vendName, SLOT(setText(const QString&)));
   connect(_poitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-  connect(_amountToDistribute, SIGNAL(idChanged(int)), _amountDistributed, SLOT(setId(int)));
-  connect(_amountToDistribute, SIGNAL(idChanged(int)), _balance, SLOT(setId(int)));
   connect(_amountToDistribute, SIGNAL(idChanged(int)), this, SLOT(sFillList()));
-  connect(_distributionDate, SIGNAL(newDate(const QDate&)), _amountToDistribute, SLOT(setEffective(const QDate&)));
-  connect(_amountToDistribute, SIGNAL(effectiveChanged(const QDate&)), _amountDistributed, SLOT(setEffective(const QDate&)));
-  connect(_amountToDistribute, SIGNAL(effectiveChanged(const QDate&)), _balance, SLOT(setEffective(const QDate&)));
   connect(_amountDistributed, SIGNAL(valueChanged()), this, SLOT(sPopulateBalanceDue()));
-
-//  statusBar()->hide();
 
 #ifndef Q_WS_MAC
   _poList->setMaximumWidth(25);
@@ -142,18 +121,11 @@ voucher::voucher(QWidget* parent, const char* name, Qt::WFlags fl)
   _miscDistrib->addColumn(tr("Amount"),     _moneyColumn, Qt::AlignRight,  true,  "vodist_amount" ); 
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 voucher::~voucher()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void voucher::languageChange()
 {
   retranslateUi(this);
@@ -257,7 +229,8 @@ void voucher::sSave()
   if (_poNumber->text().stripWhiteSpace().length() == 0)
   {
     QMessageBox::critical( this, tr("Cannot Save Voucher"),
-                           tr("You must enter an PO Number before you may save this Voucher.") );
+                           tr("<p>You must enter an PO Number before you may "
+                              "save this Voucher.") );
     _poNumber->setFocus();
     return;
   }
@@ -265,7 +238,8 @@ void voucher::sSave()
   if (!_invoiceDate->isValid())
   {
     QMessageBox::critical( this, tr("Cannot Save Voucher"),
-                           tr("You must enter an Invoice Date before you may save this Voucher.") );
+                           tr("<p>You must enter an Invoice Date before you "
+                              "may save this Voucher.") );
     _invoiceDate->setFocus();
     return;
   }
@@ -273,7 +247,8 @@ void voucher::sSave()
   if (!_dueDate->isValid())
   {
     QMessageBox::critical( this, tr("Cannot Save Voucher"),
-                           tr("You must enter a Due Date before you may save this Voucher.") );
+                           tr("<p>You must enter a Due Date before you may "
+                              "save this Voucher.") );
     _dueDate->setFocus();
     return;
   }
@@ -281,7 +256,8 @@ void voucher::sSave()
   if (!_distributionDate->isValid())
   {
     QMessageBox::critical( this, tr("Cannot Save Voucher"),
-                           tr("You must enter a Distribution Date before you may save this Voucher.") );
+                           tr("<p>You must enter a Distribution Date before "
+                              "you may save this Voucher.") );
     _distributionDate->setFocus();
     return;
   }
@@ -289,7 +265,8 @@ void voucher::sSave()
   if (_invoiceNum->text().stripWhiteSpace().length() == 0)
   {
     QMessageBox::critical( this, tr("Cannot Save Voucher"),
-                           tr("You must enter a Vendor Invoice Number before you may save this Voucher.") );
+                           tr("<p>You must enter a Vendor Invoice Number "
+                              "before you may save this Voucher.") );
     _invoiceNum->setFocus();
     return;
   }
@@ -308,8 +285,9 @@ void voucher::sSave()
     if (q.first())
     {
       if (QMessageBox::question( this, windowTitle(),
-                             tr( "A Voucher for this Vendor has already been entered with the same Vendor Invoice Number. "
-                                 "Are you sure you want to use this number again?" ),
+                             tr("<p>A Voucher for this Vendor has already been "
+                                "entered with the same Vendor Invoice Number. "
+                                "Are you sure you want to use this number again?" ),
                               QMessageBox::Yes,
                               QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
       {
@@ -384,7 +362,8 @@ void voucher::sHandleVoucherNumber()
     else
     {
       QMessageBox::critical( this, tr("Enter Voucher Number"),
-                             tr("You must enter a valid Voucher Number before continuing") );
+                             tr("<p>You must enter a valid Voucher Number "
+                                "before continuing") );
 
       _voucherNumber->setFocus();
       return;
@@ -459,33 +438,25 @@ void voucher::sDistributeLine()
   QList<QTreeWidgetItem*> selected = _poitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
-        QString sql ( "SELECT distributevoucherline(:vohead_id,:poitem_id,:curr_id) AS result" );
-        q.prepare(sql);
-        q.bindValue(":vohead_id", _voheadid);
-        q.bindValue(":poitem_id",  ((XTreeWidgetItem*)(selected[i]))->id());
-        q.bindValue(":curr_id", _amountToDistribute->id());
-        q.exec();
-
-
-        if (q.first())
-        {
-                if (q.value("result").toInt() == -2)
-                QMessageBox::warning( this, tr("Zero Amount"),
-                              tr( "<p>Distribution would result in zero quantity and amount.\n"
-                                  "Please distribute manually." ) );
-                else if (q.value("result").toInt() == -3)
-                QMessageBox::warning( this, tr("Different Currencies"),
-                              tr( "<p>The purchase order and voucher have different currencies.\n"
-                                  "Please distribute manually." ) );
-                else if (q.value("result").toInt() == -4)
-                QMessageBox::warning( this, tr("Negative Amount"),
-                              tr( "<p>Distribution would result in a negative amount.\n"
-                                  "Please distribute manually." ) );
-                else if (q.value("result").toInt() == -5)
-                QMessageBox::warning( this, tr("Multiple Cost Elements"),
-                              tr( "<p>Item has multiple cost elements.\n"
-                                  "Please distribute manually." ) );
-        }
+    q.prepare("SELECT distributeVoucherLine(:vohead_id,:poitem_id,:curr_id) "
+              "AS result;");
+    q.bindValue(":vohead_id", _voheadid);
+    q.bindValue(":poitem_id",  ((XTreeWidgetItem*)(selected[i]))->id());
+    q.bindValue(":curr_id", _amountToDistribute->id());
+    q.exec();
+    if (q.first())
+    {
+      int result = q.value("result").toInt();
+      if (result < 0)
+        systemError(this,
+                    storedProcErrorLookup("distributeVoucherLine", result),
+                    __FILE__, __LINE__);
+    }
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
   sFillList();
   sPopulateDistributed();
@@ -533,37 +504,28 @@ void voucher::sDistributeAll()
   QList<QTreeWidgetItem*> selected = _poitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
-    QString sql ( "SELECT distributevoucherline(:vohead_id,:poitem_id,:curr_id) AS result" );
-    q.prepare(sql);
+    q.prepare("SELECT distributeVoucherLine(:vohead_id,:poitem_id,:curr_id) "
+              "AS result;");
     q.bindValue(":vohead_id", _voheadid);
     q.bindValue(":poitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
     q.bindValue(":curr_id", _amountToDistribute->id());
     q.exec();
-
-
     if (q.first())
     {
-          if (q.value("result").toInt() == -2)
-                QMessageBox::warning( this, tr("Zero Amount"),
-                              tr( "<p>Distribution would result in zero quantity and amount.\n"
-                                  "Please distribute manually." ) );
-          else if (q.value("result").toInt() == -3)
-                QMessageBox::warning( this, tr("Different Currencies"),
-                              tr( "<p>The purchase order and voucher have different currencies.\n"
-                                  "Please distribute manually." ) );
-          else if (q.value("result").toInt() == -4)
-          QMessageBox::warning( this, tr("Negative Amount"),
-                              tr( "<p>Distribution would result in a negative amount.\n"
-                                  "Please distribute manually." ) );
-          else if (q.value("result").toInt() == -5)
-          QMessageBox::warning( this, tr("Multiple Cost Elements"),
-                              tr( "<p>Item has multiple cost elements.\n"
-                                  "Please distribute manually." ) );
+      int result = q.value("result").toInt();
+      if (result < 0)
+        systemError(this,
+                    storedProcErrorLookup("distributeVoucherLine", result),
+                    __FILE__, __LINE__);
+    }
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
     }
   }
   sFillList();
   sPopulateDistributed();
-
 }
 
 void voucher::sNewMiscDistribution()
@@ -684,6 +646,11 @@ void voucher::sFillList()
     q.bindValue(":open", tr("Open"));
     q.exec();
     _poitem->populate(q);
+    if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
   else
     _poitem->clear();
@@ -710,13 +677,18 @@ void voucher::sFillMiscList()
     q.bindValue(":vohead_id", _voheadid);
     q.exec();
     _miscDistrib->populate(q);
+    if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
 }
 
 void voucher::sPopulatePoInfo()
 {
   q.prepare( "SELECT pohead_terms_id, vend_1099, pohead_curr_id "
-             "FROM pohead, vend "
+             "FROM pohead, vendinfo "
              "WHERE ( (pohead_vend_id=vend_id)"
              " AND (pohead_id=:pohead_id) );" );
   q.bindValue(":pohead_id", _poNumber->id());
@@ -728,6 +700,11 @@ void voucher::sPopulatePoInfo()
     _flagFor1099->setChecked(gets1099);
     _terms->setId(q.value("pohead_terms_id").toInt());
     _amountToDistribute->setId(q.value("pohead_curr_id").toInt());
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
 }
 
@@ -749,6 +726,11 @@ void voucher::sPopulateDistributed()
       _amountDistributed->setLocalValue(q.value("distrib").toDouble());
       sPopulateBalanceDue();
     }
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
 }
 
@@ -758,7 +740,7 @@ void voucher::sPopulateBalanceDue()
   if (_balance->isZero())
     _balance->setPaletteForegroundColor(QColor("black"));
   else
-    _balance->setPaletteForegroundColor(QColor("red"));
+    _balance->setPaletteForegroundColor(namedColor("error"));
 }
 
 void voucher::populateNumber()
@@ -801,6 +783,11 @@ void voucher::populate()
     sFillList();
     sFillMiscList();
     sPopulateDistributed();
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
 }
 
@@ -887,4 +874,3 @@ void voucher::keyPressEvent( QKeyEvent * e )
   else
     e->ignore();
 }
-

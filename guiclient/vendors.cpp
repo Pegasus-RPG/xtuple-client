@@ -193,7 +193,7 @@ void vendors::sPopulateMenu(QMenu *menuThis)
 void vendors::sFillList()
 {
   _vendor->populate( "SELECT vend_id, * "
-                     "FROM vend, vendtype "
+                     "FROM vendinfo, vendtype "
                      "WHERE (vend_vendtype_id=vendtype_id) "
                      "ORDER BY vend_number;" );
 }

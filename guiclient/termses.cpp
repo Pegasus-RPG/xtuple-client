@@ -57,65 +57,32 @@
 
 #include "termses.h"
 
-#include <QVariant>
+#include <QMenu>
 #include <QMessageBox>
-//#include <QStatusBar>
+#include <QSqlError>
+#include <QVariant>
+
 #include <openreports.h>
+
 #include "terms.h"
 
-/*
- *  Constructs a termses as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 termses::termses(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-//    (void)statusBar();
-
-    // signals and slots connections
-    connect(_terms, SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *, int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-    connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
-    connect(_terms, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-termses::~termses()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void termses::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void termses::init()
-{
-//  statusBar()->hide();
+  connect(_terms, SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *, int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
   
-  _terms->addColumn(tr("Code"),        _itemColumn, Qt::AlignLeft,   true,  "terms_code"   );
-  _terms->addColumn(tr("Description"), -1,          Qt::AlignLeft,   true,  "terms_descrip"   );
-  _terms->addColumn(tr("Type"),        _dateColumn, Qt::AlignCenter, true,  "type" );
-  _terms->addColumn(tr("A/P"),         _ynColumn,   Qt::AlignCenter, true,  "terms_ap" );
-  _terms->addColumn(tr("A/R"),         _ynColumn,   Qt::AlignCenter, true,  "terms_ar" );
+  _terms->addColumn(tr("Code"),_itemColumn, Qt::AlignLeft,  true, "terms_code");
+  _terms->addColumn(tr("Description"),  -1, Qt::AlignLeft,  true, "terms_descrip");
+  _terms->addColumn(tr("Type"),_dateColumn, Qt::AlignCenter,true, "type");
+  _terms->addColumn(tr("A/P"),   _ynColumn, Qt::AlignCenter,true, "terms_ap");
+  _terms->addColumn(tr("A/R"),   _ynColumn, Qt::AlignCenter,true, "terms_ar");
 
   if (_privileges->check("MaintainTerms"))
   {
@@ -130,6 +97,16 @@ void termses::init()
   }
 
   sFillList();
+}
+
+termses::~termses()
+{
+    // no need to delete child widgets, Qt does it all for us
+}
+
+void termses::languageChange()
+{
+    retranslateUi(this);
 }
 
 void termses::sFillList()
@@ -151,28 +128,42 @@ void termses::sFillList()
 void termses::sDelete()
 {
   q.prepare( "SELECT cust_id "
-             "FROM cust "
+             "FROM custinfo "
              "WHERE (cust_terms_id=:terms_id);" );
   q.bindValue(":terms_id", _terms->id());
   q.exec();
   if (q.first())
   {
     QMessageBox::critical( this, tr("Cannot Delete Terms Code"),
-                           tr( "You may not delete the selected Terms Code are there are one or more Customers assigned to it.\n"
-                               "You must reassign these Customers before you may delete the selected Terms Code." ) );
+                           tr("<p>You may not delete the selected Terms Code "
+                              "are there are one or more Customers assigned to "
+                              "it. You must reassign these Customers before "
+                              "you may delete the selected Terms Code." ) );
+    return;
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
   q.prepare( "SELECT vend_id "
-             "FROM vend "
+             "FROM vendinfo "
              "WHERE (vend_terms_id=:terms_id);" );
   q.bindValue(":terms_id", _terms->id());
   q.exec();
   if (q.first())
   {
     QMessageBox::critical( this, tr("Cannot Delete Terms Code"),
-                           tr( "You may not delete the selected Terms Code are there are one or more Vendors assigned to it.\n"
-                               "You must reassign these Vendors before you may delete the selected Terms Code." ) );
+                           tr("<p>You may not delete the selected Terms Code "
+                              "as there are one or more Vendors assigned to "
+                              "it. You must reassign these Vendors before you "
+                              "may delete the selected Terms Code." ) );
+    return;
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -222,7 +213,6 @@ void termses::sView()
 
 void termses::sPopulateMenu( QMenu * )
 {
-
 }
 
 void termses::sPrint()
@@ -233,4 +223,3 @@ void termses::sPrint()
   else
     report.reportError(this);
 }
-
