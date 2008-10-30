@@ -670,7 +670,7 @@ void returnAuthorizationWorkbench::sFillListDue()
 		  " <? elseif exists(\"custtype_id\") ?>"
 		  " AND (custtype_id=<? value(\"custtype_id\") ?>) "
 		  " <? elseif exists(\"custtype_pattern\") ?>"
-		  " AND (custtype_pattern=<? value(\"custtype_pattern\") ?>) "
+		  " AND (custtype_code ~ <? value(\"custtype_pattern\") ?>) "
 		  " <? endif ?>"
 		  " AND (rahead_creditmethod IN ('$'"	// avoid stress over commas
 		  " <? if exists(\"doM\") ?>, 'M'<? endif ?>"
