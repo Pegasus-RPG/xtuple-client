@@ -60,38 +60,21 @@
 #include <QVariant>
 #include <QMessageBox>
 
-/*
- *  Constructs a postPurchaseOrdersByAgent as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 postPurchaseOrdersByAgent::postPurchaseOrdersByAgent(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
-
-  // signals and slots connections
   connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
 
   _agent->setText(omfgThis->username());
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 postPurchaseOrdersByAgent::~postPurchaseOrdersByAgent()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void postPurchaseOrdersByAgent::languageChange()
 {
   retranslateUi(this);
@@ -99,6 +82,13 @@ void postPurchaseOrdersByAgent::languageChange()
 
 void postPurchaseOrdersByAgent::sPost()
 {
+  static bool run = false;
+  if (run)
+    return;
+  run = true;
+
+  qDebug("%s called by %s (%p)", __PRETTY_FUNCTION__,
+         qPrintable(sender() ? sender()->objectName() : "null ptr"), sender());
   QString sql("SELECT COUNT(postPurchaseOrder(pohead_id)) AS result "
               "  FROM pohead, poitem "
               " WHERE ( (poitem_pohead_id=pohead_id)"
@@ -120,5 +110,5 @@ void postPurchaseOrdersByAgent::sPost()
   }
 
   accept();
+  run = false;
 }
-
