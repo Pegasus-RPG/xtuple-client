@@ -238,14 +238,6 @@ bool arWorkBench::setParams(ParameterList &params)
   else if (_select->currentIndex()==3)
     params.append("custtype_pattern", _customerType->text());
   
-  if (_selectDate->currentIndex()==1)
-    params.append("endDueDate", _onOrBeforeDate->date());
-  else if (_selectDate->currentIndex()==2)
-  {
-    params.append("startDueDate", _startDate->date());
-    params.append("endDueDate", _endDate->date());
-  }
-  
   params.append("invoice", tr("Invoice"));
   params.append("creditMemo", tr("Credit Memo"));
   params.append("debitMemo", tr("Debit Memo"));
@@ -281,6 +273,13 @@ void arWorkBench::sFillAropenList()
   MetaSQLQuery mql = mqlLoad("arOpenItems", "detail");
   ParameterList params;
   setParams(params);
+  if (_selectDate->currentIndex()==1)
+    params.append("endDueDate", _onOrBeforeDate->date());
+  else if (_selectDate->currentIndex()==2)
+  {
+    params.append("startDueDate", _startDate->date());
+    params.append("endDueDate", _endDate->date());
+  }
   params.append("debitsOnly");
   q = mql.toQuery(params);
   _aropen->populate(q, true);
