@@ -61,6 +61,7 @@
 #include <QSqlError>
 #include <QVariant>
 
+#include <metasql.h>
 #include <openreports.h>
 
 #include "glTransactionDetail.h"
@@ -75,12 +76,9 @@ dspGLTransactions::dspGLTransactions(QWidget* parent, const char* name, Qt::WFla
 {
   setupUi(this);
 
-//  (void)statusBar();
-
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_gltrans, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem*)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-  connect(_showUsername, SIGNAL(toggled(bool)), this, SLOT(sShowUsername(bool)));
 
   _gltrans->addColumn(tr("Date"),      _dateColumn,    Qt::AlignCenter, true, "gltrans_date");
   _gltrans->addColumn(tr("Source"),    _orderColumn,   Qt::AlignCenter, true, "gltrans_source");
@@ -90,9 +88,18 @@ dspGLTransactions::dspGLTransactions(QWidget* parent, const char* name, Qt::WFla
   _gltrans->addColumn(tr("Account"),   _itemColumn,    Qt::AlignLeft,   true, "account");
   _gltrans->addColumn(tr("Debit"),     _moneyColumn,   Qt::AlignRight,  true, "debit");
   _gltrans->addColumn(tr("Credit"),    _moneyColumn,   Qt::AlignRight,  true, "credit");
-  _gltrans->addColumn(tr("Posted"),    _ynColumn,      Qt::AlignCenter, true, "posted");
+  _gltrans->addColumn(tr("Posted"),    _ynColumn,      Qt::AlignCenter, true, "gltrans_posted");
   _gltrans->addColumn(tr("Username"),  _userColumn,    Qt::AlignLeft,   true, "gltrans_username");
-  sShowUsername(_showUsername->isChecked());
+  _gltrans->addColumn(tr("Running Total"), _moneyColumn, Qt::AlignRight,false,"running");
+
+  _beginningBalance->setPrecision(omfgThis->moneyVal());
+
+  _beginningBalanceLit->setVisible(_selectedAccount->isChecked() && _showRunningTotal->isChecked());
+  _beginningBalance->setVisible(_selectedAccount->isChecked() && _showRunningTotal->isChecked());
+  if (_selectedAccount->isChecked() && _showRunningTotal->isChecked())
+    _gltrans->showColumn("running");
+  else
+    _gltrans->hideColumn("running");
 }
 
 dspGLTransactions::~dspGLTransactions()
@@ -167,26 +174,83 @@ void dspGLTransactions::sPopulateMenu(QMenu * menuThis, QTreeWidgetItem* pItem)
     menuThis->insertItem(tr("View Shipment..."), this, SLOT(sViewDocument()));
 }
 
-void dspGLTransactions::sPrint()
+bool dspGLTransactions::setParams(ParameterList &params)
 {
   if(!_dates->allValid())
   {
     QMessageBox::warning(this, tr("Invalid Date Range"),
       tr("You must specify a valid date range."));
-    return;
+    _dates->setFocus();
+    return false;
   }
 
-  ParameterList params;
   _dates->appendValue(params);
 
   if (_selectedAccount->isChecked())
+  {
+    if (! _account->isValid())
+    {
+      QMessageBox::warning(this, tr("Invalid Account"),
+        tr("You must specify a valid Account or select All Accounts."));
+      _account->setFocus();
+      return false;
+    }
     params.append("accnt_id", _account->id());
+    if (_showRunningTotal->isChecked())
+    {
+      double beginning = 0;
+      QDate  periodStart = _dates->startDate();
+      XSqlQuery begq;
+      begq.prepare("SELECT trialbal_beginning, period_start "
+                   "FROM trialbal, period "
+                   "WHERE ((trialbal_period_id=period_id)"
+                   "  AND  (trialbal_accnt_id=:accnt_id)"
+                   "  AND  (:start BETWEEN period_start AND period_end));");
+      begq.bindValue(":accnt_id", _account->id());
+      begq.bindValue(":start",    _dates->startDate());
+      begq.exec();
+      if (begq.first())
+      {
+        beginning   = begq.value("trialbal_beginning").toDouble();
+        periodStart = begq.value("period_start").toDate();
+      }
+      else if (begq.lastError().type() != QSqlError::None)
+      {
+	systemError(this, begq.lastError().databaseText(), __FILE__, __LINE__);
+	return false;
+      }
+      XSqlQuery glq;
+      glq.prepare("SELECT SUM(gltrans_amount) AS glamount "
+                  "FROM gltrans "
+                  "WHERE ((gltrans_date BETWEEN :periodstart AND :querystart)"
+                  "  AND  (gltrans_accnt_id=:accnt_id));");
+      glq.bindValue(":periodstart", periodStart);
+      glq.bindValue(":querystart",  _dates->startDate());
+      glq.bindValue(":accnt_id",    _account->id());
+      glq.exec();
+      if (glq.first())
+        beginning   += glq.value("glamount").toDouble();
+      else if (glq.lastError().type() != QSqlError::None)
+      {
+	systemError(this, glq.lastError().databaseText(), __FILE__, __LINE__);
+	return false;
+      }
+
+      params.append("beginningBalance", beginning);
+    }
+  }
 
   if (_selectedSource->isChecked())
     params.append("source", _source->currentText());
 
-  if (_showUsername->isChecked())
-    params.append("showUsernames");
+  return true;
+}
+
+void dspGLTransactions::sPrint()
+{
+  ParameterList params;
+  if (! setParams(params))
+    return;
 
   orReport report("GLTransactions", params);
 
@@ -198,54 +262,62 @@ void dspGLTransactions::sPrint()
 
 void dspGLTransactions::sFillList()
 {
-  _gltrans->clear();
-  QString sql( "SELECT gltrans.*,"
-               "       CASE WHEN(gltrans_docnumber='Misc.' AND"
-               "              invhist_docnumber IS NOT NULL) THEN"
-               "              (gltrans_docnumber || ' - ' || invhist_docnumber)"
-               "            ELSE gltrans_docnumber"
-               "       END AS docnumber,"
-               "       firstLine(gltrans_notes) AS notes,"
-               "       (formatGLAccount(accnt_id) || ' - ' || accnt_descrip) AS account,"
-               "       CASE WHEN (gltrans_amount < 0) THEN ABS(gltrans_amount)"
-               "            ELSE NULL"
-               "       END AS debit,"
-               "       CASE WHEN (gltrans_amount > 0) THEN gltrans_amount"
-               "            ELSE NULL"
-               "       END AS credit,"
-               "       formatBoolYN(gltrans_posted) AS posted,"
-               "       gltrans_username,"
-               "       'curr' AS debit_xtnumericrole,"
-               "       'curr' AS credit_xtnumericrole "
-               "FROM gltrans JOIN accnt ON (gltrans_accnt_id=accnt_id) "
-               "     LEFT OUTER JOIN invhist ON (gltrans_misc_id=invhist_id AND gltrans_docnumber='Misc.') "
-               "WHERE ((gltrans_date BETWEEN :startDate AND :endDate)" );
+  MetaSQLQuery mql("SELECT gltrans.*,"
+                   "       CASE WHEN(gltrans_docnumber='Misc.' AND"
+                   "              invhist_docnumber IS NOT NULL) THEN"
+                   "              (gltrans_docnumber || ' - ' || invhist_docnumber)"
+                   "            ELSE gltrans_docnumber"
+                   "       END AS docnumber,"
+                   "       firstLine(gltrans_notes) AS notes,"
+                   "       (formatGLAccount(accnt_id) || ' - ' || accnt_descrip) AS account,"
+                   "       CASE WHEN (gltrans_amount < 0) THEN ABS(gltrans_amount)"
+                   "            ELSE NULL"
+                   "       END AS debit,"
+                   "       CASE WHEN (gltrans_amount > 0) THEN gltrans_amount"
+                   "            ELSE NULL"
+                   "       END AS credit,"
+                   "       gltrans_amount AS running,"
+                   "       'curr' AS debit_xtnumericrole,"
+                   "       'curr' AS credit_xtnumericrole,"
+                   "       'curr' AS running_xtnumericrole,"
+                   "       0 AS running_xtrunningrole,"
+                   "       <? value(\"beginningBalance\") ?> AS running_xtrunninginit "
+                   "FROM gltrans JOIN accnt ON (gltrans_accnt_id=accnt_id) "
+                   "     LEFT OUTER JOIN invhist ON (gltrans_misc_id=invhist_id"
+                   "                            AND gltrans_docnumber='Misc.') "
+                   "WHERE ((gltrans_date BETWEEN <? value(\"startDate\") ?>"
+                   "                         AND <? value(\"endDate\") ?>)"
+                   "<? if exists(\"accnt_id\") ?>"
+                   " AND (gltrans_accnt_id=<? value(\"accnt_id\") ?>)"
+                   "<? endif ?>"
+                   "<? if exists(\"source\") ?>"
+                   " AND (gltrans_source=<? value(\"source\") ?>)"
+                   "<? endif ?>"
+                   ") "
+                   "ORDER BY gltrans_created"
+                   "<? if not exists(\"beginningBalance\") ?> DESC <? endif ?>,"
+                   "   gltrans_sequence, gltrans_amount;");
+  ParameterList params;
+  if (! setParams(params))
+    return;
 
-  if (_selectedAccount->isChecked())
-    sql += " AND (gltrans_accnt_id=:accnt_id)";
+  _beginningBalanceLit->setVisible(_selectedAccount->isChecked() && _showRunningTotal->isChecked());
+  _beginningBalance->setVisible(_selectedAccount->isChecked() && _showRunningTotal->isChecked());
+  if (_selectedAccount->isChecked() && _showRunningTotal->isChecked())
+  {
+    _gltrans->showColumn("running");
+    _beginningBalance->setDouble(params.value("beginningBalance").toDouble());
+  }
+  else
+    _gltrans->hideColumn("running");
 
-  if (_selectedSource->isChecked())
-    sql += " AND (gltrans_source=:source)";
-
-  sql += ") "
-         "ORDER BY gltrans_created DESC, gltrans_sequence, gltrans_amount;";
-
-  q.prepare(sql);
-  _dates->bindValue(q);
-  q.bindValue(":accnt_id", _account->id());
-  q.bindValue(":source", _source->currentText());
-  q.exec();
+  q = mql.toQuery(params);
   _gltrans->populate(q);
   if (q.lastError().type() != QSqlError::None)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-}
-
-void dspGLTransactions::sShowUsername( bool yes )
-{
-  _gltrans->setColumnHidden(9, !yes);
 }
 
 void dspGLTransactions::sViewTrans()
@@ -339,4 +411,3 @@ void dspGLTransactions::sViewDocument()
     omfgThis->handleNewWindow(newdlg);
   }
 }
-

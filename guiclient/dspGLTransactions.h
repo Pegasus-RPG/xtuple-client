@@ -71,6 +71,7 @@ class dspGLTransactions : public XWidget, public Ui::dspGLTransactions
 public:
     dspGLTransactions(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspGLTransactions();
+    virtual bool setParams(ParameterList &params);
 
 public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
@@ -82,9 +83,6 @@ public slots:
 
 protected slots:
     virtual void languageChange();
-
-    virtual void sShowUsername(bool);
-
 
 };
 
