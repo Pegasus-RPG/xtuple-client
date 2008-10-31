@@ -117,6 +117,13 @@ enum SetResponse todoItem::set(const ParameterList &pParams)
     {
       _mode = cNew;
 
+      q.exec("SELECT NEXTVAL('todoitem_todoitem_id_seq') AS todoitem_id");
+      if (q.first())
+      {
+        _todoitemid = q.value("todoitem_id").toInt();
+        _alarms->setId(_todoitemid);
+      }
+
       _name->setFocus();
       _assignedTo->setEnabled(_privileges->check("MaintainOtherTodoLists") ||
 			  _privileges->check("ReassignTodoListItem"));
@@ -203,7 +210,7 @@ void todoItem::sSave()
   QString storedProc;
   if (_mode == cNew)
   {
-    q.prepare( "SELECT createTodoItem(:usr_id, :name, :description, "
+    q.prepare( "SELECT createTodoItem(:todoitem_id, :usr_id, :name, :description, "
 	       "  :incdt_id, :crmacct_id, :ophead_id, :started, :due, :status, "
 	       "  :assigned, :completed, :priority, :notes, :owner) AS result;");
     storedProc = "createTodoItem";
@@ -215,8 +222,8 @@ void todoItem::sSave()
 	       "  :incdt_id, :crmacct_id, :ophead_id, :started, :due, :status, "
 	       "  :assigned, :completed, :priority, :notes, :active, :owner) AS result;");
     storedProc = "updateTodoItem";
-    q.bindValue(":todoitem_id", _todoitemid);
   }
+  q.bindValue(":todoitem_id", _todoitemid);
   if(_owner->isValid())
     q.bindValue(":owner", _owner->username());
   q.bindValue(":usr_id",   _assignedTo->id());
@@ -290,7 +297,7 @@ void todoItem::sPopulate()
     _ophead->setId(q.value("todoitem_ophead_id").toInt());
     _started->setDate(q.value("todoitem_start_date").toDate());
     _assigned->setDate(q.value("todoitem_assigned_date").toDate());
-    _due->setDate(q.value("todoitem_due_date").toDate());
+    _due->setDate(q.value("todoitem_due_date").toDate(), true);
     _completed->setDate(q.value("todoitem_completed_date").toDate());
     _description->setText(q.value("todoitem_description").toString());
     _notes->setText(q.value("todoitem_notes").toString());

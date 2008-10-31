@@ -623,5 +623,54 @@
   <tabstop>_tab</tabstop>
  </tabstops>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>_owner</sender>
+   <signal>newId(int)</signal>
+   <receiver>_alarms</receiver>
+   <slot>setRecipient1(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>124</x>
+     <y>163</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>637</x>
+     <y>647</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_assignedTo</sender>
+   <signal>newId(int)</signal>
+   <receiver>_alarms</receiver>
+   <slot>setRecipient2(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>346</x>
+     <y>163</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>637</x>
+     <y>647</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_due</sender>
+   <signal>newDate(QDate)</signal>
+   <receiver>_alarms</receiver>
+   <slot>setDate(QDate)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>199</x>
+     <y>270</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>637</x>
+     <y>647</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
