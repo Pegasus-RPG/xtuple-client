@@ -15,129 +15,441 @@
   <layout class="QGridLayout" >
    <item row="0" column="0" >
     <layout class="QGridLayout" >
+     <property name="leftMargin" >
+      <number>12</number>
+     </property>
+     <property name="topMargin" >
+      <number>12</number>
+     </property>
+     <property name="rightMargin" >
+      <number>12</number>
+     </property>
+     <property name="bottomMargin" >
+      <number>12</number>
+     </property>
+     <property name="horizontalSpacing" >
+      <number>12</number>
+     </property>
+     <property name="verticalSpacing" >
+      <number>12</number>
+     </property>
      <item row="0" column="0" >
-      <layout class="QGridLayout" >
-       <property name="leftMargin" >
-        <number>12</number>
-       </property>
-       <property name="topMargin" >
-        <number>12</number>
-       </property>
-       <property name="rightMargin" >
-        <number>12</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>12</number>
-       </property>
-       <property name="horizontalSpacing" >
-        <number>12</number>
-       </property>
-       <property name="verticalSpacing" >
-        <number>12</number>
-       </property>
-       <item row="0" column="0" >
-        <layout class="QHBoxLayout" >
+      <layout class="QHBoxLayout" >
+       <item>
+        <widget class="QFrame" name="frame" >
+         <property name="frameShape" >
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow" >
+          <enum>QFrame::Raised</enum>
+         </property>
+         <layout class="QGridLayout" >
+          <item row="0" column="0" >
+           <layout class="QGridLayout" >
+            <item row="0" column="0" >
+             <layout class="QHBoxLayout" >
+              <property name="topMargin" >
+               <number>2</number>
+              </property>
+              <item>
+               <widget class="XComboBox" name="_select" >
+                <item>
+                 <property name="text" >
+                  <string>All Cutomers</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Select</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Customer Type</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Customer Type Pattern</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item>
+               <spacer>
+                <property name="orientation" >
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" >
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item row="1" column="0" >
+             <spacer>
+              <property name="orientation" >
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" >
+               <size>
+                <width>20</width>
+                <height>16</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" >
+         <property name="spacing" >
+          <number>0</number>
+         </property>
          <item>
-          <layout class="QVBoxLayout" >
+          <widget class="QStackedWidget" name="_selectStack" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Preferred" hsizetype="Minimum" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="currentIndex" >
+            <number>0</number>
+           </property>
+           <widget class="QWidget" name="_all" />
+           <widget class="QWidget" name="_selectedVendor" >
+            <layout class="QGridLayout" >
+             <item row="0" column="0" >
+              <layout class="QVBoxLayout" >
+               <property name="topMargin" >
+                <number>2</number>
+               </property>
+               <item>
+                <widget class="CustCluster" name="_cust" />
+               </item>
+               <item>
+                <spacer>
+                 <property name="orientation" >
+                  <enum>Qt::Vertical</enum>
+                 </property>
+                 <property name="sizeHint" >
+                  <size>
+                   <width>20</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="_selectedVendorType" >
+            <layout class="QGridLayout" >
+             <item row="0" column="0" >
+              <layout class="QHBoxLayout" >
+               <property name="topMargin" >
+                <number>3</number>
+               </property>
+               <item>
+                <widget class="XComboBox" name="_customerTypes" >
+                 <property name="enabled" >
+                  <bool>true</bool>
+                 </property>
+                 <property name="sizePolicy" >
+                  <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="type" >
+                  <enum>XComboBox::CustomerTypes</enum>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer>
+                 <property name="orientation" >
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" >
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </item>
+             <item row="1" column="0" >
+              <spacer>
+               <property name="orientation" >
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" >
+                <size>
+                 <width>20</width>
+                 <height>0</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="_vendorTypePattern" >
+            <layout class="QGridLayout" >
+             <item row="0" column="0" >
+              <layout class="QHBoxLayout" >
+               <property name="topMargin" >
+                <number>3</number>
+               </property>
+               <item>
+                <widget class="XLineEdit" name="_customerType" >
+                 <property name="enabled" >
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer>
+                 <property name="orientation" >
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" >
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </item>
+             <item row="1" column="0" >
+              <spacer>
+               <property name="orientation" >
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" >
+                <size>
+                 <width>20</width>
+                 <height>0</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </widget>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QFrame" name="frame_2" >
+         <property name="frameShape" >
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow" >
+          <enum>QFrame::Raised</enum>
+         </property>
+         <layout class="QGridLayout" >
+          <item row="0" column="0" >
+           <layout class="QGridLayout" >
+            <item row="0" column="0" >
+             <layout class="QHBoxLayout" >
+              <item>
+               <widget class="QLabel" name="_aropenTotalLit" >
+                <property name="text" >
+                 <string>Total Open:</string>
+                </property>
+                <property name="alignment" >
+                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="CurrCluster" name="_aropenTotal" >
+                <property name="sizePolicy" >
+                 <sizepolicy vsizetype="Preferred" hsizetype="MinimumExpanding" >
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="localControl" >
+                 <bool>false</bool>
+                </property>
+                <property name="allowNegative" >
+                 <bool>true</bool>
+                </property>
+                <property name="currencyDisabled" >
+                 <bool>true</bool>
+                </property>
+                <property name="currencyVisible" >
+                 <bool>false</bool>
+                </property>
+                <property name="enabled" >
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item row="1" column="0" >
+             <spacer>
+              <property name="orientation" >
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" >
+               <size>
+                <width>132</width>
+                <height>22</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" >
+         <property name="spacing" >
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="_close" >
+           <property name="text" >
+            <string>&amp;Close</string>
+           </property>
+           <property name="shortcut" >
+            <string>Alt+C</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="_query" >
+           <property name="text" >
+            <string>&amp;Query</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeType" >
+            <enum>QSizePolicy::MinimumExpanding</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>20</width>
+             <height>0</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+     <item row="1" column="0" >
+      <widget class="QTabWidget" name="_tab" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+         <horstretch>0</horstretch>
+         <verstretch>1</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="currentIndex" >
+        <number>0</number>
+       </property>
+       <widget class="QWidget" name="_receivablesTab" >
+        <attribute name="title" >
+         <string>Receivables</string>
+        </attribute>
+        <layout class="QGridLayout" >
+         <item row="0" column="0" >
+          <layout class="QHBoxLayout" >
+           <item>
+            <widget class="XLabel" name="_findLit" >
+             <property name="text" >
+              <string>Find Document #:</string>
+             </property>
+             <property name="alignment" >
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="XLineEdit" name="_searchDocNum" />
+           </item>
            <item>
             <spacer>
              <property name="orientation" >
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeType" >
-              <enum>QSizePolicy::Preferred</enum>
+              <enum>Qt::Horizontal</enum>
              </property>
              <property name="sizeHint" >
               <size>
-               <width>20</width>
-               <height>10</height>
+               <width>40</width>
+               <height>20</height>
               </size>
              </property>
             </spacer>
            </item>
            <item>
-            <widget class="XComboBox" name="_select" >
+            <widget class="XLabel" name="_selectDateLit" >
+             <property name="text" >
+              <string>Due Date:</string>
+             </property>
+             <property name="alignment" >
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="XComboBox" name="_selectDate" >
              <item>
               <property name="text" >
-               <string>All Cutomers</string>
+               <string>All</string>
               </property>
              </item>
              <item>
               <property name="text" >
-               <string>Select</string>
+               <string>On or Before</string>
               </property>
              </item>
              <item>
               <property name="text" >
-               <string>Customer Type</string>
-              </property>
-             </item>
-             <item>
-              <property name="text" >
-               <string>Customer Type Pattern</string>
+               <string>Between</string>
               </property>
              </item>
             </widget>
            </item>
            <item>
-            <spacer>
-             <property name="orientation" >
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" >
-              <size>
-               <width>20</width>
-               <height>0</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QVBoxLayout" >
-           <property name="spacing" >
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="QStackedWidget" name="_selectStack" >
-             <property name="sizePolicy" >
-              <sizepolicy vsizetype="Preferred" hsizetype="Minimum" >
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
+            <widget class="QStackedWidget" name="_duedateStack" >
              <property name="currentIndex" >
               <number>0</number>
              </property>
-             <widget class="QWidget" name="_all" />
-             <widget class="QWidget" name="_selectedVendor" >
-              <layout class="QGridLayout" >
-               <item row="0" column="0" >
-                <widget class="CustCluster" name="_cust" />
-               </item>
-              </layout>
-             </widget>
-             <widget class="QWidget" name="_selectedVendorType" >
+             <widget class="QWidget" name="_allPage" />
+             <widget class="QWidget" name="_olderThanPage" >
               <layout class="QGridLayout" >
                <item row="0" column="0" >
                 <layout class="QHBoxLayout" >
-                 <property name="topMargin" >
-                  <number>4</number>
-                 </property>
                  <item>
-                  <widget class="XComboBox" name="_customerTypes" >
+                  <widget class="DLineEdit" name="_onOrBeforeDate" >
                    <property name="enabled" >
                     <bool>true</bool>
-                   </property>
-                   <property name="sizePolicy" >
-                    <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="type" >
-                    <enum>XComboBox::CustomerTypes</enum>
                    </property>
                   </widget>
                  </item>
@@ -156,59 +468,22 @@
                  </item>
                 </layout>
                </item>
-               <item row="1" column="0" >
-                <spacer>
-                 <property name="orientation" >
-                  <enum>Qt::Vertical</enum>
-                 </property>
-                 <property name="sizeHint" >
-                  <size>
-                   <width>20</width>
-                   <height>0</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
               </layout>
              </widget>
-             <widget class="QWidget" name="_vendorTypePattern" >
+             <widget class="QWidget" name="_betweenPage" >
               <layout class="QGridLayout" >
                <item row="0" column="0" >
-                <layout class="QHBoxLayout" >
-                 <item>
-                  <widget class="XLineEdit" name="_customerType" >
-                   <property name="enabled" >
-                    <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <spacer>
-                   <property name="orientation" >
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                   <property name="sizeHint" >
-                    <size>
-                     <width>40</width>
-                     <height>32</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                </layout>
+                <widget class="DLineEdit" name="_startDate" />
                </item>
-               <item row="1" column="0" >
-                <spacer>
-                 <property name="orientation" >
-                  <enum>Qt::Vertical</enum>
+               <item row="0" column="1" >
+                <widget class="XLabel" name="_andLit" >
+                 <property name="text" >
+                  <string>and</string>
                  </property>
-                 <property name="sizeHint" >
-                  <size>
-                   <width>20</width>
-                   <height>0</height>
-                  </size>
-                 </property>
-                </spacer>
+                </widget>
+               </item>
+               <item row="0" column="2" >
+                <widget class="DLineEdit" name="_endDate" />
                </item>
               </layout>
              </widget>
@@ -217,505 +492,141 @@
            <item>
             <spacer>
              <property name="orientation" >
-              <enum>Qt::Vertical</enum>
+              <enum>Qt::Horizontal</enum>
              </property>
              <property name="sizeHint" >
               <size>
-               <width>20</width>
-               <height>0</height>
+               <width>40</width>
+               <height>20</height>
               </size>
              </property>
             </spacer>
            </item>
           </layout>
          </item>
-         <item>
-          <layout class="QVBoxLayout" >
-           <item>
-            <spacer>
-             <property name="orientation" >
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeType" >
-              <enum>QSizePolicy::Preferred</enum>
-             </property>
-             <property name="sizeHint" >
-              <size>
-               <width>20</width>
-               <height>8</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" >
-             <item>
-              <widget class="QLabel" name="_aropenTotalLit" >
-               <property name="text" >
-                <string>Total Open:</string>
-               </property>
-               <property name="alignment" >
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="CurrCluster" name="_aropenTotal" >
-               <property name="sizePolicy" >
-                <sizepolicy vsizetype="Preferred" hsizetype="MinimumExpanding" >
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="localControl" >
-                <bool>false</bool>
-               </property>
-               <property name="allowNegative" >
-                <bool>true</bool>
-               </property>
-               <property name="currencyDisabled" >
-                <bool>true</bool>
-               </property>
-               <property name="currencyVisible" >
-                <bool>false</bool>
-               </property>
-               <property name="enabled" >
-                <bool>false</bool>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <spacer>
-             <property name="orientation" >
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" >
-              <size>
-               <width>132</width>
-               <height>22</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QVBoxLayout" >
-           <property name="spacing" >
-            <number>0</number>
+         <item row="1" column="0" >
+          <widget class="QFrame" name="_aropenFrame" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+             <horstretch>0</horstretch>
+             <verstretch>1</verstretch>
+            </sizepolicy>
            </property>
-           <item>
-            <widget class="QPushButton" name="_close" >
-             <property name="text" >
-              <string>&amp;Close</string>
-             </property>
-             <property name="shortcut" >
-              <string>Alt+C</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="_query" >
-             <property name="text" >
-              <string>&amp;Query</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer>
-             <property name="orientation" >
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeType" >
-              <enum>QSizePolicy::MinimumExpanding</enum>
-             </property>
-             <property name="sizeHint" >
-              <size>
-               <width>20</width>
-               <height>0</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </item>
-       <item row="1" column="0" >
-        <widget class="QTabWidget" name="_tab" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
-           <horstretch>0</horstretch>
-           <verstretch>1</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="currentIndex" >
-          <number>0</number>
-         </property>
-         <widget class="QWidget" name="_receivablesTab" >
-          <attribute name="title" >
-           <string>Receivables</string>
-          </attribute>
-          <layout class="QGridLayout" >
-           <item row="0" column="0" >
-            <layout class="QHBoxLayout" >
-             <item>
-              <widget class="XLabel" name="_findLit" >
-               <property name="text" >
-                <string>Find Document #:</string>
-               </property>
-               <property name="alignment" >
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="XLineEdit" name="_searchDocNum" />
-             </item>
-             <item>
-              <spacer>
-               <property name="orientation" >
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" >
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <widget class="XLabel" name="_selectDateLit" >
-               <property name="text" >
-                <string>Due Date:</string>
-               </property>
-               <property name="alignment" >
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="XComboBox" name="_selectDate" >
-               <item>
-                <property name="text" >
-                 <string>All</string>
-                </property>
-               </item>
-               <item>
-                <property name="text" >
-                 <string>On or Before</string>
-                </property>
-               </item>
-               <item>
-                <property name="text" >
-                 <string>Between</string>
-                </property>
-               </item>
-              </widget>
-             </item>
-             <item>
-              <widget class="QStackedWidget" name="_duedateStack" >
-               <property name="currentIndex" >
-                <number>0</number>
-               </property>
-               <widget class="QWidget" name="_allPage" />
-               <widget class="QWidget" name="_olderThanPage" >
-                <layout class="QGridLayout" >
-                 <item row="0" column="0" >
-                  <layout class="QHBoxLayout" >
-                   <item>
-                    <widget class="DLineEdit" name="_onOrBeforeDate" >
-                     <property name="enabled" >
-                      <bool>true</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <spacer>
-                     <property name="orientation" >
-                      <enum>Qt::Horizontal</enum>
-                     </property>
-                     <property name="sizeHint" >
-                      <size>
-                       <width>40</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                    </spacer>
-                   </item>
-                  </layout>
-                 </item>
-                </layout>
-               </widget>
-               <widget class="QWidget" name="_betweenPage" >
-                <layout class="QGridLayout" >
-                 <item row="0" column="0" >
-                  <widget class="DLineEdit" name="_startDate" />
-                 </item>
-                 <item row="0" column="1" >
-                  <widget class="XLabel" name="_andLit" >
-                   <property name="text" >
-                    <string>and</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="2" >
-                  <widget class="DLineEdit" name="_endDate" />
-                 </item>
-                </layout>
-               </widget>
-              </widget>
-             </item>
-             <item>
-              <spacer>
-               <property name="orientation" >
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" >
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-           <item row="1" column="0" >
-            <widget class="QFrame" name="_aropenFrame" >
-             <property name="sizePolicy" >
-              <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
-               <horstretch>0</horstretch>
-               <verstretch>1</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="frameShape" >
-              <enum>QFrame::NoFrame</enum>
-             </property>
-             <property name="frameShadow" >
-              <enum>QFrame::Raised</enum>
-             </property>
-             <layout class="QGridLayout" >
-              <property name="leftMargin" >
-               <number>0</number>
+           <property name="frameShape" >
+            <enum>QFrame::NoFrame</enum>
+           </property>
+           <property name="frameShadow" >
+            <enum>QFrame::Raised</enum>
+           </property>
+           <layout class="QGridLayout" >
+            <property name="leftMargin" >
+             <number>0</number>
+            </property>
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
+            </property>
+            <property name="horizontalSpacing" >
+             <number>0</number>
+            </property>
+            <property name="verticalSpacing" >
+             <number>0</number>
+            </property>
+            <item row="0" column="0" >
+             <layout class="QHBoxLayout" >
+              <property name="spacing" >
+               <number>5</number>
               </property>
-              <property name="topMargin" >
-               <number>0</number>
-              </property>
-              <property name="rightMargin" >
-               <number>0</number>
-              </property>
-              <property name="bottomMargin" >
-               <number>0</number>
-              </property>
-              <property name="horizontalSpacing" >
-               <number>0</number>
-              </property>
-              <property name="verticalSpacing" >
-               <number>0</number>
-              </property>
-              <item row="0" column="0" >
-               <layout class="QHBoxLayout" >
+              <item>
+               <widget class="XTreeWidget" name="_aropen" />
+              </item>
+              <item>
+               <layout class="QVBoxLayout" >
                 <property name="spacing" >
-                 <number>5</number>
+                 <number>0</number>
                 </property>
-                <item>
-                 <widget class="XTreeWidget" name="_aropen" />
-                </item>
                 <item>
                  <layout class="QVBoxLayout" >
                   <property name="spacing" >
                    <number>0</number>
                   </property>
                   <item>
-                   <layout class="QVBoxLayout" >
-                    <property name="spacing" >
-                     <number>0</number>
+                   <widget class="QPushButton" name="_editAropen" >
+                    <property name="enabled" >
+                     <bool>false</bool>
                     </property>
-                    <item>
-                     <widget class="QPushButton" name="_editAropen" >
-                      <property name="enabled" >
-                       <bool>false</bool>
-                      </property>
-                      <property name="text" >
-                       <string>Edit</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QPushButton" name="_viewAropen" >
-                      <property name="enabled" >
-                       <bool>false</bool>
-                      </property>
-                      <property name="text" >
-                       <string>View</string>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
+                    <property name="text" >
+                     <string>Edit</string>
+                    </property>
+                   </widget>
                   </item>
                   <item>
-                   <spacer>
-                    <property name="orientation" >
-                     <enum>Qt::Vertical</enum>
+                   <widget class="QPushButton" name="_viewAropen" >
+                    <property name="enabled" >
+                     <bool>false</bool>
                     </property>
-                    <property name="sizeType" >
-                     <enum>QSizePolicy::Expanding</enum>
+                    <property name="text" >
+                     <string>View</string>
                     </property>
-                    <property name="sizeHint" >
-                     <size>
-                      <width>20</width>
-                      <height>21</height>
-                     </size>
-                    </property>
-                   </spacer>
+                   </widget>
                   </item>
                  </layout>
+                </item>
+                <item>
+                 <spacer>
+                  <property name="orientation" >
+                   <enum>Qt::Vertical</enum>
+                  </property>
+                  <property name="sizeType" >
+                   <enum>QSizePolicy::Expanding</enum>
+                  </property>
+                  <property name="sizeHint" >
+                   <size>
+                    <width>20</width>
+                    <height>21</height>
+                   </size>
+                  </property>
+                 </spacer>
                 </item>
                </layout>
               </item>
              </layout>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-         <widget class="QWidget" name="_creditsTab" >
-          <attribute name="title" >
-           <string>Credits</string>
-          </attribute>
-          <layout class="QGridLayout" >
-           <item row="0" column="0" >
-            <layout class="QHBoxLayout" >
-             <property name="spacing" >
-              <number>5</number>
-             </property>
-             <item>
-              <widget class="XTreeWidget" name="_aropenCM" />
-             </item>
-             <item>
-              <layout class="QVBoxLayout" >
-               <property name="spacing" >
-                <number>0</number>
-               </property>
-               <item>
-                <layout class="QVBoxLayout" >
-                 <property name="spacing" >
-                  <number>0</number>
-                 </property>
-                 <item>
-                  <widget class="QPushButton" name="_editAropenCM" >
-                   <property name="enabled" >
-                    <bool>false</bool>
-                   </property>
-                   <property name="text" >
-                    <string>Edit</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QPushButton" name="_viewAropenCM" >
-                   <property name="enabled" >
-                    <bool>false</bool>
-                   </property>
-                   <property name="text" >
-                    <string>View</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <spacer>
-                   <property name="orientation" >
-                    <enum>Qt::Vertical</enum>
-                   </property>
-                   <property name="sizeType" >
-                    <enum>QSizePolicy::Preferred</enum>
-                   </property>
-                   <property name="sizeHint" >
-                    <size>
-                     <width>20</width>
-                     <height>5</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                 <item>
-                  <widget class="QPushButton" name="_applyAropenCM" >
-                   <property name="enabled" >
-                    <bool>false</bool>
-                   </property>
-                   <property name="text" >
-                    <string>Apply</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QPushButton" name="_ccRefundCM" >
-                   <property name="enabled" >
-                    <bool>false</bool>
-                   </property>
-                   <property name="text" >
-                    <string>Refund</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item>
-                <spacer>
-                 <property name="orientation" >
-                  <enum>Qt::Vertical</enum>
-                 </property>
-                 <property name="sizeType" >
-                  <enum>QSizePolicy::Expanding</enum>
-                 </property>
-                 <property name="sizeHint" >
-                  <size>
-                   <width>20</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-              </layout>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </widget>
-         <widget class="QWidget" name="_cashRecptTab" >
-          <attribute name="title" >
-           <string>Cash Receipts</string>
-          </attribute>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="_creditsTab" >
+        <attribute name="title" >
+         <string>Credits</string>
+        </attribute>
+        <layout class="QGridLayout" >
+         <item row="0" column="0" >
           <layout class="QHBoxLayout" >
+           <property name="spacing" >
+            <number>5</number>
+           </property>
            <item>
-            <widget class="XTreeWidget" name="_cashrcpt" >
-             <property name="sizePolicy" >
-              <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
-               <horstretch>1</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-            </widget>
+            <widget class="XTreeWidget" name="_aropenCM" />
            </item>
            <item>
             <layout class="QVBoxLayout" >
+             <property name="spacing" >
+              <number>0</number>
+             </property>
              <item>
               <layout class="QVBoxLayout" >
                <property name="spacing" >
                 <number>0</number>
                </property>
                <item>
-                <widget class="QPushButton" name="_newCashrcpt" >
-                 <property name="text" >
-                  <string>New</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="_editCashrcpt" >
+                <widget class="QPushButton" name="_editAropenCM" >
                  <property name="enabled" >
                   <bool>false</bool>
                  </property>
@@ -725,7 +636,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="_viewCashrcpt" >
+                <widget class="QPushButton" name="_viewAropenCM" >
                  <property name="enabled" >
                   <bool>false</bool>
                  </property>
@@ -735,143 +646,130 @@
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="_deleteCashrcpt" >
-                 <property name="enabled" >
-                  <bool>false</bool>
-                 </property>
-                 <property name="text" >
-                  <string>Delete</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-             <item>
-              <layout class="QVBoxLayout" >
-               <item>
-                <widget class="QPushButton" name="_postCashrcpt" >
-                 <property name="enabled" >
-                  <bool>false</bool>
-                 </property>
-                 <property name="text" >
-                  <string>Post</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
                 <spacer>
                  <property name="orientation" >
                   <enum>Qt::Vertical</enum>
                  </property>
                  <property name="sizeType" >
-                  <enum>QSizePolicy::Expanding</enum>
+                  <enum>QSizePolicy::Preferred</enum>
                  </property>
                  <property name="sizeHint" >
                   <size>
-                   <width>82</width>
-                   <height>41</height>
+                   <width>20</width>
+                   <height>5</height>
                   </size>
                  </property>
                 </spacer>
                </item>
+               <item>
+                <widget class="QPushButton" name="_applyAropenCM" >
+                 <property name="enabled" >
+                  <bool>false</bool>
+                 </property>
+                 <property name="text" >
+                  <string>Apply</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="_ccRefundCM" >
+                 <property name="enabled" >
+                  <bool>false</bool>
+                 </property>
+                 <property name="text" >
+                  <string>Refund</string>
+                 </property>
+                </widget>
+               </item>
               </layout>
+             </item>
+             <item>
+              <spacer>
+               <property name="orientation" >
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeType" >
+                <enum>QSizePolicy::Expanding</enum>
+               </property>
+               <property name="sizeHint" >
+                <size>
+                 <width>20</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
              </item>
             </layout>
            </item>
           </layout>
-         </widget>
-         <widget class="QWidget" name="_creditCardTab" >
-          <attribute name="title" >
-           <string>Credit Card</string>
-          </attribute>
-          <layout class="QGridLayout" >
-           <item row="0" column="0" colspan="4" >
-            <layout class="QHBoxLayout" >
-             <item>
-              <widget class="XCheckBox" name="_showExpired" >
-               <property name="text" >
-                <string>Show Expired</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer>
-               <property name="orientation" >
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeType" >
-                <enum>QSizePolicy::Preferred</enum>
-               </property>
-               <property name="sizeHint" >
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <widget class="QLabel" name="_validDaysLit" >
-               <property name="text" >
-                <string>Valid Days:</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QSpinBox" name="_validDays" >
-               <property name="maximum" >
-                <number>30</number>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer>
-               <property name="orientation" >
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" >
-                <size>
-                 <width>281</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-           <item rowspan="3" row="1" column="0" >
-            <widget class="XTreeWidget" name="_preauth" >
-             <property name="sizePolicy" >
-              <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
-               <horstretch>1</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="2" >
-            <spacer>
-             <property name="orientation" >
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeType" >
-              <enum>QSizePolicy::Expanding</enum>
-             </property>
-             <property name="sizeHint" >
-              <size>
-               <width>40</width>
-               <height>10</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item row="1" column="3" >
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="_cashRecptTab" >
+        <attribute name="title" >
+         <string>Cash Receipts</string>
+        </attribute>
+        <layout class="QHBoxLayout" >
+         <item>
+          <widget class="XTreeWidget" name="_cashrcpt" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+             <horstretch>1</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" >
+           <item>
             <layout class="QVBoxLayout" >
              <property name="spacing" >
               <number>0</number>
              </property>
              <item>
-              <widget class="QPushButton" name="_postPreauth" >
+              <widget class="QPushButton" name="_newCashrcpt" >
+               <property name="text" >
+                <string>New</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="_editCashrcpt" >
+               <property name="enabled" >
+                <bool>false</bool>
+               </property>
+               <property name="text" >
+                <string>Edit</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="_viewCashrcpt" >
+               <property name="enabled" >
+                <bool>false</bool>
+               </property>
+               <property name="text" >
+                <string>View</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="_deleteCashrcpt" >
+               <property name="enabled" >
+                <bool>false</bool>
+               </property>
+               <property name="text" >
+                <string>Delete</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" >
+             <item>
+              <widget class="QPushButton" name="_postCashrcpt" >
                <property name="enabled" >
                 <bool>false</bool>
                </property>
@@ -881,64 +779,184 @@
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="_voidPreauth" >
-               <property name="enabled" >
-                <bool>false</bool>
+              <spacer>
+               <property name="orientation" >
+                <enum>Qt::Vertical</enum>
                </property>
-               <property name="text" >
-                <string>Void</string>
+               <property name="sizeType" >
+                <enum>QSizePolicy::Expanding</enum>
                </property>
-              </widget>
+               <property name="sizeHint" >
+                <size>
+                 <width>82</width>
+                 <height>41</height>
+                </size>
+               </property>
+              </spacer>
              </item>
             </layout>
            </item>
-           <item row="2" column="1" >
-            <widget class="QLabel" name="_CCAmountLit" >
+          </layout>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="_creditCardTab" >
+        <attribute name="title" >
+         <string>Credit Card</string>
+        </attribute>
+        <layout class="QGridLayout" >
+         <item row="0" column="0" colspan="4" >
+          <layout class="QHBoxLayout" >
+           <item>
+            <widget class="XCheckBox" name="_showExpired" >
              <property name="text" >
-              <string>Amount:</string>
-             </property>
-             <property name="alignment" >
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              <string>Show Expired</string>
              </property>
             </widget>
            </item>
-           <item row="2" column="2" colspan="2" >
-            <widget class="CurrCluster" name="_CCAmount" >
-             <property name="sizePolicy" >
-              <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="localControl" >
-              <bool>false</bool>
-             </property>
-             <property name="enabled" >
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="2" >
+           <item>
             <spacer>
              <property name="orientation" >
-              <enum>Qt::Vertical</enum>
+              <enum>Qt::Horizontal</enum>
              </property>
              <property name="sizeType" >
-              <enum>QSizePolicy::Expanding</enum>
+              <enum>QSizePolicy::Preferred</enum>
              </property>
              <property name="sizeHint" >
               <size>
-               <width>119</width>
-               <height>201</height>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QLabel" name="_validDaysLit" >
+             <property name="text" >
+              <string>Valid Days:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="_validDays" >
+             <property name="maximum" >
+              <number>30</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" >
+              <size>
+               <width>281</width>
+               <height>20</height>
               </size>
              </property>
             </spacer>
            </item>
           </layout>
-         </widget>
-        </widget>
-       </item>
-      </layout>
+         </item>
+         <item rowspan="3" row="1" column="0" >
+          <widget class="XTreeWidget" name="_preauth" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+             <horstretch>1</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2" >
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeType" >
+            <enum>QSizePolicy::Expanding</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>40</width>
+             <height>10</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="1" column="3" >
+          <layout class="QVBoxLayout" >
+           <property name="spacing" >
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QPushButton" name="_postPreauth" >
+             <property name="enabled" >
+              <bool>false</bool>
+             </property>
+             <property name="text" >
+              <string>Post</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="_voidPreauth" >
+             <property name="enabled" >
+              <bool>false</bool>
+             </property>
+             <property name="text" >
+              <string>Void</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="2" column="1" >
+          <widget class="QLabel" name="_CCAmountLit" >
+           <property name="text" >
+            <string>Amount:</string>
+           </property>
+           <property name="alignment" >
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="2" colspan="2" >
+          <widget class="CurrCluster" name="_CCAmount" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="localControl" >
+            <bool>false</bool>
+           </property>
+           <property name="enabled" >
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="2" >
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeType" >
+            <enum>QSizePolicy::Expanding</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>119</width>
+             <height>201</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
+      </widget>
      </item>
     </layout>
    </item>
