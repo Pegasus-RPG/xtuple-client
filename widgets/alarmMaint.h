@@ -76,7 +76,7 @@ public:
 public slots:
     virtual void set( const ParameterList & pParams );
     virtual void sSave();
-    virtual void sGetSource();
+    virtual void sGetUser(int pUsrId);
     virtual void sPopulate();
     virtual void sHandleButtons();
 

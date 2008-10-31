@@ -89,7 +89,10 @@ alarmMaint::alarmMaint(QWidget* parent, const char* name, bool modal, Qt::WFlags
     XSqlQuery tickle;
     tickle.exec( "SELECT CURRENT_TIME AS dbdate;" );
     if (tickle.first())
-      _alarmDateTime->setDateTime(tickle.value("dbdate").toDateTime());
+    {
+      _alarmDate->setDate(tickle.value("dbdate").toDate());
+      _alarmTime->setTime(tickle.value("dbdate").toTime());
+    }
     
     sHandleButtons();
 }
@@ -124,13 +127,27 @@ void alarmMaint::set( const ParameterList & pParams )
   if(valid)
     _sourceid = param.toInt();
 
+  param = pParams.value("due_date", &valid);
+  if(valid)
+  {
+    qDebug(QString("setting _alarmDate"));
+    _alarmDate->setDate(param.toDate());
+  }
+
+  param = pParams.value("recipient1", &valid);
+  if(valid)
+    sGetUser(param.toInt());
+
+  param = pParams.value("recipient2", &valid);
+  if(valid)
+    sGetUser(param.toInt());
+
   param = pParams.value("mode", &valid);
   if(valid)
   {
     if(param.toString() == "new")
     {
       _mode = cNew;
-      sGetSource();
     }
     else if(param.toString() == "edit")
       _mode = cEdit;
@@ -155,35 +172,20 @@ void alarmMaint::sSave()
   XSqlQuery q;
 
   q.prepare("SELECT saveAlarm(:alarm_id, :alarm_number,"
-            "                 :alarm_type, :alarm_time, :alarm_time_offset, :alarm_time_qualifier,"
-            "                 :alarm_recipient, :alarm_source, :alarm_source_id, 'CHANGEALL') AS result; ");
-//  if(cNew == _mode)
-//    q.prepare("INSERT INTO alarm"
-//              "       (alarm_type, alarm_time, alarm_time_offset, alarm_time_qualifier,"
-//              "        alarm_creator, alarm_recipient, alarm_source, alarm_source_id) "
-//              "VALUES "
-//              "       (:alarm_type, :alarm_time, :alarm_time_offset, :alarm_time_qualifier,"
-//              "        CURRENT_USER, :alarm_recipient, :alarm_source, :alarm_source_id); ");
-//  else //if(cEdit == _mode)
-//    q.prepare("UPDATE alarm"
-//              "   SET alarm_type=:alarm_type,"
-//              "       alarm_time=:alarm_time,"
-//              "       alarm_time_offset=:alarm_time_offset,"
-//              "       alarm_time_qualifier=:alarm_time_qualifier,"
-//              "       alarm_recipient=:alarm_recipient "
-//              " WHERE (alarm_id=:alarm_id); ");
+            "                 :alarm_date, :alarm_time, :alarm_time_offset, :alarm_time_qualifier,"
+            "                 :alarm_event, :alarm_event_recipient,"
+            "                 :alarm_email, :alarm_email_recipient,"
+            "                 :alarm_sysmsg, :alarm_sysmsg_recipient,"
+            "                 :alarm_source, :alarm_source_id, 'CHANGEALL') AS result; ");
 
-  if (_eventAlarm->isChecked())
-  {
-    q.bindValue(":alarm_type", "V");
-    q.bindValue(":alarm_recipient", _eventRecipient->text());
-  }
-  else
-  {
-    q.bindValue(":alarm_type", "M");
-    q.bindValue(":alarm_recipient", _emailRecipient->text());
-  }
-  q.bindValue(":alarm_time", _alarmDateTime->dateTime());
+  q.bindValue(":alarm_event", QVariant(_eventAlarm->isChecked(), 0));
+  q.bindValue(":alarm_email", QVariant(_emailAlarm->isChecked(), 0));
+  q.bindValue(":alarm_sysmsg", QVariant(_sysmsgAlarm->isChecked(), 0));
+  q.bindValue(":alarm_event_recipient", _eventRecipient->text());
+  q.bindValue(":alarm_email_recipient", _emailRecipient->text());
+  q.bindValue(":alarm_sysmsg_recipient", _sysmsgRecipient->text());
+  q.bindValue(":alarm_date", _alarmDate->date());
+  q.bindValue(":alarm_time", _alarmTime->time());
   q.bindValue(":alarm_time_offset", _alarmOffset->value());
   q.bindValue(":alarm_time_qualifier", _alarmQualifiers[_alarmQualifier->currentItem()]);
   q.bindValue(":alarm_source", Alarms::_alarmMap[_source].ident);
@@ -198,35 +200,37 @@ void alarmMaint::sHandleButtons()
 {
 }
 
-void alarmMaint::sGetSource()
+void alarmMaint::sGetUser(int pUsrId)
 {
   XSqlQuery q;
-  
-  if (Alarms::_alarmMap[_source].ident == "TODO")
+  q.prepare( "SELECT usr.* "
+             "FROM usr "
+             "WHERE (usr_id=:usr_id);" );
+  q.bindValue(":usr_id", pUsrId);
+  q.exec();
+  if (q.first())
   {
-    q.prepare( "SELECT todoitem.*,"
-               "       owner.usr_username AS owner_name, owner.usr_email AS owner_email,"
-               "       assigned.usr_username AS assigned_name, assigned.usr_email AS assigned_email "
-               "FROM todoitem LEFT OUTER JOIN usr owner ON (owner.usr_username=todoitem_owner_username) "
-               "              LEFT OUTER JOIN usr assigned ON (assigned.usr_username=todoitem_creator_username) "
-               "WHERE (todoitem_id=:source_id);" );
-    q.bindValue(":source_id", _sourceid);
-    q.exec();
-    if (q.first())
+    QString recipient;
+    recipient = _eventRecipient->text();
+    if (recipient.length() == 0)
+      recipient = q.value("usr_username").toString();
+    else if (recipient != q.value("usr_username").toString())
     {
-      _alarmDateTime->setDate(q.value("todoitem_due_date").toDate());
-
-      QString recipient;
-      recipient = q.value("owner_name").toString();
       recipient += ",";
-      recipient += q.value("assigned_name").toString();
-      _eventRecipient->setText(recipient);
-
-      recipient = q.value("owner_email").toString();
-      recipient += ",";
-      recipient += q.value("assigned_email").toString();
-      _emailRecipient->setText(recipient);
+      recipient += q.value("usr_username").toString();
     }
+    _eventRecipient->setText(recipient);
+    _sysmsgRecipient->setText(recipient);
+
+    recipient = _emailRecipient->text();
+    if (recipient.length() == 0)
+      recipient = q.value("usr_email").toString();
+    else if (recipient != q.value("usr_email").toString())
+    {
+      recipient += ",";
+      recipient += q.value("usr_email").toString();
+    }
+    _emailRecipient->setText(recipient);
   }
 }
 
@@ -247,17 +251,14 @@ void alarmMaint::sPopulate()
       if (QString(q.value("alarm_time_qualifier").toString()) == _alarmQualifiers[pcounter])
         _alarmQualifier->setCurrentItem(pcounter);
     }
-    _alarmDateTime->setDateTime(q.value("alarm_time").toDateTime());
-    if (q.value("alarm_type") == "V")
-    {
-      _eventAlarm->setChecked(TRUE);
-      _eventRecipient->setText(q.value("alarm_recipient").toString());
-    }
-    else
-    {
-      _emailAlarm->setChecked(TRUE);
-      _emailRecipient->setText(q.value("alarm_recipient").toString());
-    }
+    _alarmDate->setDate(q.value("alarm_time").toDate());
+    _alarmTime->setTime(q.value("alarm_time").toTime());
+    _eventAlarm->setChecked(q.value("alarm_event").toBool());
+    _emailAlarm->setChecked(q.value("alarm_email").toBool());
+    _sysmsgAlarm->setChecked(q.value("alarm_sysmsg").toBool());
+    _eventRecipient->setText(q.value("alarm_event_recipient").toString());
+    _emailRecipient->setText(q.value("alarm_email_recipient").toString());
+    _sysmsgRecipient->setText(q.value("alarm_sysmsg_recipient").toString());
     _source = (enum Alarms::AlarmSources)q.value("alarm_source").toInt();
     _sourceid = q.value("alarm_source_id").toInt();
   }

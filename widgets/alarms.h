@@ -59,6 +59,7 @@
 #define alarms_h
 
 #include <QWidget>
+#include <QDateTime>
 
 #include <xsqlquery.h>
 
@@ -114,6 +115,9 @@ class OPENMFGWIDGETS_EXPORT Alarms : public QWidget, public Ui::alarms
   public slots:
     void setType(enum AlarmSources);
     void setId(int);
+    void setRecipient1(int);
+    void setRecipient2(int);
+    void setDate(QDate);
     void setReadOnly(bool);
 
     void sNew();
@@ -126,6 +130,10 @@ class OPENMFGWIDGETS_EXPORT Alarms : public QWidget, public Ui::alarms
   private:
     enum AlarmSources _source;
     int               _sourceid;
+    int               _recipient1;
+    int               _recipient2;
+    QDate             _dueDate;
+    QTime             _dueTime;
 
 };
 

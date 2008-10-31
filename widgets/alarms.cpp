@@ -110,12 +110,22 @@ Alarms::Alarms(QWidget *pParent) :
   
   _source = Uninitialized;
   _sourceid = -1;
+  _recipient1 = -1;
+  _recipient2 = -1;
+  XSqlQuery tickle;
+  tickle.exec( "SELECT CURRENT_TIME AS dbdate;" );
+  if (tickle.first())
+  {
+    _dueDate = tickle.value("dbdate").toDate();
+    _dueTime = tickle.value("dbdate").toTime();
+  }
 
 
-  _alarms->addColumn(tr("Type"),          _itemColumn,   Qt::AlignLeft, true, "f_type" );
-  _alarms->addColumn(tr("Qualifier"),     _itemColumn,   Qt::AlignLeft, true, "f_offset" );
-  _alarms->addColumn(tr("Due"),           -1,            Qt::AlignLeft, true, "alarm_time" );
-  _alarms->addColumn(tr("Recipient"),     _itemColumn,   Qt::AlignLeft, true, "alarm_recipient" );
+  _alarms->addColumn(tr("Qualifier"),        _itemColumn,   Qt::AlignLeft, true, "f_offset" );
+  _alarms->addColumn(tr("Due"),              -1,            Qt::AlignLeft, true, "alarm_time" );
+  _alarms->addColumn(tr("Event Recipient"),  _itemColumn,   Qt::AlignLeft, true, "alarm_event_recipient" );
+  _alarms->addColumn(tr("Email Recipient"),  _itemColumn,   Qt::AlignLeft, true, "alarm_email_recipient" );
+  _alarms->addColumn(tr("SysMsg Recipient"), _itemColumn,   Qt::AlignLeft, true, "alarm_sysmsg_recipient" );
 
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
@@ -134,6 +144,21 @@ void Alarms::setId(int pSourceid)
   refresh();
 }
 
+void Alarms::setRecipient1(int pRecipient)
+{
+  _recipient1 = pRecipient;
+}
+
+void Alarms::setRecipient2(int pRecipient)
+{
+  _recipient2 = pRecipient;
+}
+
+void Alarms::setDate(QDate pDate)
+{
+  _dueDate = pDate;
+}
+
 void Alarms::setReadOnly(bool pReadOnly)
 {
   _new->setEnabled(!pReadOnly);
@@ -148,6 +173,9 @@ void Alarms::sNew()
   params.append("mode", "new");
   params.append("source", _source);
   params.append("source_id", _sourceid);
+  params.append("due_date", _dueDate);
+  params.append("recipient1", _recipient1);
+  params.append("recipient2", _recipient2);
 
   alarmMaint newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -203,11 +231,6 @@ void Alarms::refresh()
   
   //Populate alarms
   QString sql( "SELECT alarm_id,"
-               "       CASE WHEN (alarm_type='M') THEN :email"
-               "            WHEN (alarm_type='V') THEN :event"
-               "            WHEN (alarm_type='S') THEN :sysmsg"
-               "            ELSE :other"
-               "       END AS f_type,"
                "       CASE WHEN (alarm_time_offset > 0) THEN"
                "                 CAST(alarm_time_offset AS TEXT) || ' ' || "
                "                 CASE WHEN (alarm_time_qualifier = 'MB') THEN :minutesbefore"
@@ -218,8 +241,10 @@ void Alarms::refresh()
                "                      WHEN (alarm_time_qualifier = 'DA') THEN :daysafter"
                "                 END"
                "            ELSE '' "
-               "       END AS f_offset,"
-               "       alarm_time, alarm_recipient "
+               "       END AS f_offset, alarm_time,"
+               "       CASE WHEN (alarm_event) THEN alarm_event_recipient END AS alarm_event_recipient,"
+               "       CASE WHEN (alarm_email) THEN alarm_email_recipient END AS alarm_email_recipient,"
+               "       CASE WHEN (alarm_sysmsg) THEN alarm_sysmsg_recipient END AS alarm_sysmsg_recipient "
                "FROM alarm "
                "WHERE ( (alarm_source=:source) "
                "  AND   (alarm_source_id=:sourceid) ) "

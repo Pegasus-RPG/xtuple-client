@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>535</width>
-    <height>159</height>
+    <width>650</width>
+    <height>193</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -28,50 +28,61 @@
         </widget>
        </item>
        <item>
-        <widget class="QSpinBox" name="_alarmOffset" />
+        <layout class="QHBoxLayout" >
+         <item>
+          <widget class="QSpinBox" name="_alarmOffset" >
+           <property name="value" >
+            <number>15</number>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="XComboBox" name="_alarmQualifier" >
+           <property name="minimumSize" >
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+           <item>
+            <property name="text" >
+             <string>minutes before</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>hours before</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>days before</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>minutes after</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>hours after</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>days after</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
-        <widget class="XComboBox" name="_alarmQualifier" >
-         <property name="minimumSize" >
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
-         </property>
-         <item>
-          <property name="text" >
-           <string>minutes before</string>
-          </property>
-         </item>
-         <item>
-          <property name="text" >
-           <string>hours before</string>
-          </property>
-         </item>
-         <item>
-          <property name="text" >
-           <string>days before</string>
-          </property>
-         </item>
-         <item>
-          <property name="text" >
-           <string>minutes after</string>
-          </property>
-         </item>
-         <item>
-          <property name="text" >
-           <string>hours after</string>
-          </property>
-         </item>
-         <item>
-          <property name="text" >
-           <string>days after</string>
-          </property>
-         </item>
-        </widget>
+        <widget class="DLineEdit" name="_alarmDate" />
        </item>
        <item>
-        <widget class="QDateTimeEdit" name="_alarmDateTime" />
+        <widget class="QTimeEdit" name="_alarmTime" />
        </item>
       </layout>
      </item>
@@ -82,7 +93,7 @@
        </property>
        <layout class="QGridLayout" >
         <item row="0" column="0" >
-         <widget class="QRadioButton" name="_eventAlarm" >
+         <widget class="XCheckBox" name="_eventAlarm" >
           <property name="text" >
            <string>Event</string>
           </property>
@@ -95,7 +106,7 @@
          <widget class="QLineEdit" name="_eventRecipient" />
         </item>
         <item row="1" column="0" >
-         <widget class="QRadioButton" name="_emailAlarm" >
+         <widget class="XCheckBox" name="_emailAlarm" >
           <property name="text" >
            <string>Email</string>
           </property>
@@ -103,6 +114,16 @@
         </item>
         <item row="1" column="1" >
          <widget class="QLineEdit" name="_emailRecipient" />
+        </item>
+        <item row="2" column="0" >
+         <widget class="XCheckBox" name="_sysmsgAlarm" >
+          <property name="text" >
+           <string>System Message</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1" >
+         <widget class="QLineEdit" name="_sysmsgRecipient" />
         </item>
        </layout>
       </widget>
@@ -154,6 +175,17 @@
  <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
+  <customwidget>
+   <class>DLineEdit</class>
+   <extends>QWidget</extends>
+   <header>datecluster.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
+  </customwidget>
   <customwidget>
    <class>XComboBox</class>
    <extends>QComboBox</extends>
