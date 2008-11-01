@@ -55,10 +55,14 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#include "updateReorderLevels.h"
+#include <QSqlError>
 
+#include <metasql.h>
 #include <qvariant.h>
 #include <parameter.h>
+
+#include "updateReorderLevels.h"
+#include "mqlutil.h"
 #include "submitAction.h"
 
 /*
@@ -85,11 +89,19 @@ updateReorderLevels::updateReorderLevels(QWidget* parent, const char* name, bool
     connect(_fixedDays, SIGNAL(toggled(bool)), _days, SLOT(setEnabled(bool)));
     connect(_leadTime, SIGNAL(toggled(bool)), _leadTimePad, SLOT(setEnabled(bool)));
     connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
+    connect(_preview, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
+    
+    _results->addColumn(tr("Site")            ,  _whsColumn,  Qt::AlignLeft,   true, "reordlvl_warehous_code");
+    _results->addColumn(tr("Item Number")     , _itemColumn,  Qt::AlignLeft,   true, "reordlvl_item_number");
+    _results->addColumn(tr("Description")     ,          -1,  Qt::AlignLeft,   true, "reordlvl_item_descrip");
+    _results->addColumn(tr("Leadtime")        ,  _qtyColumn,  Qt::AlignRight,  true, "reordlvl_leadtime");
+    _results->addColumn(tr("Curr. Level")     ,  _qtyColumn,  Qt::AlignRight,  true, "reordlvl_curr_level");
+    _results->addColumn(tr("Days Stock")      ,  _qtyColumn,  Qt::AlignRight,  true, "reordlvl_daysofstock");
+    _results->addColumn(tr("Total Usage")     ,  _qtyColumn,  Qt::AlignRight,  true, "reordlvl_total_usage");
+    _results->addColumn(tr("New Level")       ,  _qtyColumn,  Qt::AlignRight,  true, "reordlvl_calc_level");
     
     if (!_metrics->boolean("EnableBatchManager"))
       _submit->hide();
-    
-    init();
 }
 
 /*
@@ -110,48 +122,123 @@ void updateReorderLevels::languageChange()
 }
 
 
-void updateReorderLevels::init()
+enum SetResponse updateReorderLevels::set(const ParameterList &pParams)
 {
-  _plannerCode->setType(ParameterGroup::PlannerCode);
+  QVariant param;
+  bool     valid;
+  
+  param = pParams.value("classcode", &valid);
+  if (valid)
+  {
+    _parameter->setType(ParameterGroup::ClassCode);
+    setWindowTitle("Update Reorder Levels by Class Code");
+  }
+
+  param = pParams.value("plancode", &valid);
+  if (valid)
+  {
+    setWindowTitle("Update Reorder Levels by Planner Code");
+    _parameter->setType(ParameterGroup::PlannerCode);
+  }
+
+  param = pParams.value("item", &valid);
+  if (valid)
+  {
+    setWindowTitle("Update Reorder Level by Item");
+    _stack->setCurrentIndex(1);
+  }
+
+  return NoError;
+}
+
+bool updateReorderLevels::setParams(ParameterList &params)
+{  
+  if (_item->id() != -1)
+    params.append("item_id", _item->id());
+  else
+    _parameter->appendValue(params);
+  _warehouse->appendValue(params);
+  
+    if (_leadTime->isChecked())
+    {
+      params.append("addLeadtime"),
+      params.append("daysOfStock", _leadTimePad->value());
+    }
+    else if (_fixedDays->isChecked())
+      params.append("daysOfStock", _days->value());
+  
+  params.append("period_id_list",_periods->periodList());
+  
+  return true;
 }
 
 void updateReorderLevels::sUpdate()
 {
+  QString method;
+  qDebug(_periods->periodString());
   if (_periods->topLevelItemCount() > 0)
   {
     QString sql;
 
-    if (_leadTime->isChecked())
-      sql = QString( "SELECT updateReorderLevel(itemsite_id, (itemsite_leadtime + :leadTimePad), '{%1}') AS result "
-                     "FROM itemsite, plancode "
-                     "WHERE ( (itemsite_plancode_id=plancode_id)" )
-            .arg(_periods->periodString());
+    if (_preview->isChecked())
+      method = "preview";
+    else
+      method = "update";
 
-    else if (_fixedDays->isChecked())
-      sql = QString( "SELECT updateReorderLevel(itemsite_id, :days, '{%1}') AS result "
-                     "FROM itemsite, plancode "
-                     "WHERE ( (itemsite_plancode_id=plancode_id)" )
-            .arg(_periods->periodString());
+    ParameterList params;
+    if (! setParams(params))
+      return;
 
-    if (_warehouse->isSelected())
-      sql += " AND (itemsite_warehous_id=:warehous_id)";
-
-    if (_plannerCode->isSelected())
-      sql += " AND (plancode_id=:plancode_id)";
-    else if (_plannerCode->isPattern())
-      sql += " AND (plancode_code ~ :plancode_pattern)";
-
-    sql += ");";
-
-    q.prepare(sql);
-    q.bindValue(":leadTimePad", _leadTimePad->value());
-    q.bindValue(":days", _days->value());
-    _warehouse->bindValue(q);
-    _plannerCode->bindValue(q);
-    q.exec();
-
-    accept();
+    MetaSQLQuery mql = mqlLoad("updateReorderLevels", method);
+    q = mql.toQuery(params);
+    if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+        
+    if (_preview->isChecked())
+    {
+      if (q.first())
+      {
+        _totalDays->setText(q.value("reordlvl_total_days").toString());
+        _results->populate(q, true);
+        _tab->setCurrentIndex(1);
+      }
+    }
+    else
+      accept();
   }
+    
+    /*
+      if (_leadTime->isChecked())
+        sql = QString( "SELECT updateReorderLevel(itemsite_id, (itemsite_leadtime + :leadTimePad), '{%1}') AS result "
+                       "FROM itemsite, plancode "
+                       "WHERE ( (itemsite_plancode_id=plancode_id)" )
+              .arg(_periods->periodString());
+
+      else if (_fixedDays->isChecked())
+        sql = QString( "SELECT updateReorderLevel(itemsite_id, :days, '{%1}') AS result "
+                       "FROM itemsite, plancode "
+                       "WHERE ( (itemsite_plancode_id=plancode_id)" )
+              .arg(_periods->periodString());
+
+      if (_warehouse->isSelected())
+        sql += " AND (itemsite_warehous_id=:warehous_id)";
+
+      if (_parameter->isSelected())
+        sql += " AND (plancode_id=:plancode_id)";
+      else if (_parameter->isPattern())
+        sql += " AND (plancode_code ~ :plancode_pattern)";
+
+      sql += ");";
+
+      q.prepare(sql);
+      q.bindValue(":leadTimePad", _leadTimePad->value());
+      q.bindValue(":days", _days->value());
+      _warehouse->bindValue(q);
+      _parameter->bindValue(q);
+      q.exec();*/
 }
 
 void updateReorderLevels::sSubmit()
@@ -162,7 +249,7 @@ void updateReorderLevels::sSubmit()
     params.append("action_name", "UpdateReorderLevel");
     params.append("period_id_list", _periods->periodString());
     _warehouse->appendValue(params);
-    _plannerCode->appendValue(params);
+    _parameter->appendValue(params);
 
     if (_leadTime->isChecked())
       params.append("leadtimepad", _leadTimePad->value());
@@ -176,4 +263,13 @@ void updateReorderLevels::sSubmit()
       accept();
   }
 }
+
+void updateReorderLevels::sHandleButtons()
+{
+  if (_preview->isChecked())
+    _update->setText("C&alculate");
+  else
+    _update->setText("Up&date");
+}
+
 

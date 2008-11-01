@@ -178,9 +178,7 @@
 #include "updateABCClass.h"
 #include "updateCycleCountFrequency.h"
 #include "updateItemSiteLeadTimes.h"
-#include "updateReorderLevelByItem.h"
 #include "updateReorderLevels.h"
-#include "updateReorderLevelsByClassCode.h"
 #include "updateOUTLevelByItem.h"
 #include "updateOUTLevels.h"
 #include "updateOUTLevelsByClassCode.h"
@@ -512,13 +510,13 @@ menuInventory::menuInventory(GUIClient *Pparent) :
     { "im.updateItemSiteLeadTimes",		tr("&Item Site Lead Times..."),			SLOT(sUpdateItemSiteLeadTimes()),		updateItemInfoMenu, _privileges->check("UpdateLeadTime"),	NULL, NULL, true, NULL },
 
     //  Inventory | Utilities | Update Item Controls | Update Reorder Levels
-    { "menu",				tr("&Reorder Levels"),			  (char*)updateItemInfoReorderMenu,			updateItemInfoMenu,	 _privileges->check("UpdateReorderLevels"),	NULL, NULL, true , NULL },
-    { "im.updateReorderLevelsByItem",		tr("by &Item..."),		SLOT(sUpdateReorderLevelByItem()),		updateItemInfoReorderMenu, _privileges->check("UpdateReorderLevels"),	NULL, NULL, true, NULL },
-    { "im.updateReorderLevelsByPlannerCode",	tr("by &Planner Code..."),	SLOT(sUpdateReorderLevelsByPlannerCode()),	updateItemInfoReorderMenu, _privileges->check("UpdateReorderLevels"),	NULL, NULL, true, NULL },
+    { "menu",                                   tr("&Reorder Levels"),			  (char*)updateItemInfoReorderMenu,	        updateItemInfoMenu,        _privileges->check("UpdateReorderLevels"),	NULL, NULL, true , NULL },
+    { "im.updateReorderLevelsByItem",		tr("by &Item..."),                      SLOT(sUpdateReorderLevelByItem()),		updateItemInfoReorderMenu, _privileges->check("UpdateReorderLevels"),	NULL, NULL, true, NULL },
+    { "im.updateReorderLevelsByPlannerCode",	tr("by &Planner Code..."),              SLOT(sUpdateReorderLevelsByPlannerCode()),	updateItemInfoReorderMenu, _privileges->check("UpdateReorderLevels"),	NULL, NULL, true, NULL },
     { "im.updateReorderLevelsByClassCode",	tr("by &Class Code..."), 		SLOT(sUpdateReorderLevelsByClassCode()),	updateItemInfoReorderMenu, _privileges->check("UpdateReorderLevels"),	NULL, NULL, true, NULL },
 
     //  Inventory | Utilities | Update Item Controls | Update Order Up To Levels
-    { "menu",				tr("&Order Up To Levels"),			  (char*)updateItemInfoOutMenu,			updateItemInfoMenu,	_privileges->check("UpdateOUTLevels"),	NULL, NULL, true , NULL },
+    { "menu",                                   tr("&Order Up To Levels"),			  (char*)updateItemInfoOutMenu,			updateItemInfoMenu,	_privileges->check("UpdateOUTLevels"),	NULL, NULL, true , NULL },
     { "im.updateOrderUpToLevelsByItem",		tr("by &Item..."),		SLOT(sUpdateOUTLevelByItem()), 			updateItemInfoOutMenu, _privileges->check("UpdateOUTLevels"),	NULL, NULL, true, NULL },
     { "im.updateOrderUpToLevelsByPlannerCode",	tr("by &Planner Code..."),	SLOT(sUpdateOUTLevelsByPlannerCode()),		updateItemInfoOutMenu, _privileges->check("UpdateOUTLevels"),	NULL, NULL, true, NULL },
     { "im.updateOrderUpToLevelsByClassCode",	tr("by &Class Code..."),	SLOT(sUpdateOUTLevelsByClassCode()),		updateItemInfoOutMenu, _privileges->check("UpdateOUTLevels"),	NULL, NULL, true, NULL },
@@ -1282,17 +1280,32 @@ void menuInventory::sUpdateItemSiteLeadTimes()
 
 void menuInventory::sUpdateReorderLevelByItem()
 {
-  updateReorderLevelByItem(parent, "", TRUE).exec();
+  ParameterList params;
+  params.append("item");
+
+  updateReorderLevels *newdlg = new updateReorderLevels();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void menuInventory::sUpdateReorderLevelsByPlannerCode()
 {
-  updateReorderLevels(parent, "", TRUE).exec();
+  ParameterList params;
+  params.append("plancode");
+
+  updateReorderLevels *newdlg = new updateReorderLevels();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void menuInventory::sUpdateReorderLevelsByClassCode()
 {
-  updateReorderLevelsByClassCode(parent, "", TRUE).exec();
+  ParameterList params;
+  params.append("classcode");
+
+  updateReorderLevels *newdlg = new updateReorderLevels();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void menuInventory::sUpdateOUTLevelByItem()
