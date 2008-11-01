@@ -199,6 +199,17 @@ QString PeriodsListView::periodString()
   return returnString;
 }
 
+QList<QVariant> PeriodsListView::periodList()
+{
+  QList<QVariant>     returnList;
+  QList<QTreeWidgetItem *>list = selectedItems();
+
+  for (int i = 0; i < list.size(); i++)
+    returnList.append(((XTreeWidgetItem*)(list[i]))->id());
+
+  return returnList;
+}
+
 PeriodListViewItem *PeriodsListView::getSelected(int pIndex)
 {
   QList<QTreeWidgetItem *>list = selectedItems();

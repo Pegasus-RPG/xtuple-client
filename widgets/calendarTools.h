@@ -128,6 +128,7 @@ class OPENMFGWIDGETS_EXPORT PeriodsListView : public XTreeWidget
   public:
     PeriodsListView(QWidget *, const char * = 0);
 
+    QList<QVariant>    periodList();
     QString            periodString();
     PeriodListViewItem *getSelected(int);
     void               getSelected(ParameterList &);
