@@ -76,6 +76,7 @@ public slots:
     virtual SetResponse set( const ParameterList & pParams );
     virtual void sUpdate();
     virtual void sSubmit();
+    virtual void sPost();
     virtual void sHandleButtons();
 
 protected slots:

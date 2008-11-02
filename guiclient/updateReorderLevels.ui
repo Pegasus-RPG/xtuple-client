@@ -87,7 +87,7 @@
              <item>
               <widget class="QPushButton" name="_update" >
                <property name="text" >
-                <string>C&amp;alculate</string>
+                <string>Q&amp;uery</string>
                </property>
                <property name="default" >
                 <bool>true</bool>

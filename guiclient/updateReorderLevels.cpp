@@ -89,6 +89,7 @@ updateReorderLevels::updateReorderLevels(QWidget* parent, const char* name, bool
     connect(_fixedDays, SIGNAL(toggled(bool)), _days, SLOT(setEnabled(bool)));
     connect(_leadTime, SIGNAL(toggled(bool)), _leadTimePad, SLOT(setEnabled(bool)));
     connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
+    connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
     connect(_preview, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
     
     _results->addColumn(tr("Site")            ,  _whsColumn,  Qt::AlignLeft,   true, "reordlvl_warehous_code");
@@ -181,7 +182,7 @@ void updateReorderLevels::sUpdate()
     QString sql;
 
     if (_preview->isChecked())
-      method = "preview";
+      method = "query";
     else
       method = "update";
 
@@ -209,36 +210,6 @@ void updateReorderLevels::sUpdate()
     else
       accept();
   }
-    
-    /*
-      if (_leadTime->isChecked())
-        sql = QString( "SELECT updateReorderLevel(itemsite_id, (itemsite_leadtime + :leadTimePad), '{%1}') AS result "
-                       "FROM itemsite, plancode "
-                       "WHERE ( (itemsite_plancode_id=plancode_id)" )
-              .arg(_periods->periodString());
-
-      else if (_fixedDays->isChecked())
-        sql = QString( "SELECT updateReorderLevel(itemsite_id, :days, '{%1}') AS result "
-                       "FROM itemsite, plancode "
-                       "WHERE ( (itemsite_plancode_id=plancode_id)" )
-              .arg(_periods->periodString());
-
-      if (_warehouse->isSelected())
-        sql += " AND (itemsite_warehous_id=:warehous_id)";
-
-      if (_parameter->isSelected())
-        sql += " AND (plancode_id=:plancode_id)";
-      else if (_parameter->isPattern())
-        sql += " AND (plancode_code ~ :plancode_pattern)";
-
-      sql += ");";
-
-      q.prepare(sql);
-      q.bindValue(":leadTimePad", _leadTimePad->value());
-      q.bindValue(":days", _days->value());
-      _warehouse->bindValue(q);
-      _parameter->bindValue(q);
-      q.exec();*/
 }
 
 void updateReorderLevels::sSubmit()
@@ -267,9 +238,31 @@ void updateReorderLevels::sSubmit()
 void updateReorderLevels::sHandleButtons()
 {
   if (_preview->isChecked())
-    _update->setText("C&alculate");
+    _update->setText("Q&uery");
   else
-    _update->setText("Up&date");
+    _update->setText("&Update");
 }
+
+void updateReorderLevels::sPost()
+{
+  MetaSQLQuery mql = mqlLoad("updateReorderLevels", "post");
+  ParameterList params;
+  QList<QTreeWidgetItem*> selected = _results->selectedItems();
+  
+  for (int i = 0; i < selected.size(); i++)
+  {
+    params.clear();
+    params.append("itemsite_id", ((XTreeWidgetItem*)(selected[i]))->id());
+    params.append("itemsite_reorderlevel",((XTreeWidgetItem*)(selected[i]))->text(7));
+    q = mql.toQuery(params);
+    if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+    delete selected[i];
+  }
+}
+
 
 

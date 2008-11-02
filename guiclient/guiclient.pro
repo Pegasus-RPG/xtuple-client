@@ -328,7 +328,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                updateLateCustCreditStatus.ui                                                          \
                updateOUTLevelByItem.ui updateOUTLevels.ui updateOUTLevelsByClassCode.ui               \
                updatePricesByProductCategory.ui  updatePricesByPricingSchedule.ui                     \
-               updateReorderLevelByItem.ui updateReorderLevels.ui updateReorderLevelsByClassCode.ui   \
+               updateReorderLevels.ui   							      \
                users.ui user.ui userList.ui userPreferences.ui                                        \
                userCostingElement.ui costingElements.ui                                               \
                vendor.ui vendors.ui                                                                   \
@@ -651,7 +651,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                updateLateCustCreditStatus.h                                                           \
                updateOUTLevelByItem.h updateOUTLevels.h updateOUTLevelsByClassCode.h                  \
                updatePricesByProductCategory.h  updatePricesByPricingSchedule.h                       \
-               updateReorderLevelByItem.h updateReorderLevels.h updateReorderLevelsByClassCode.h      \
+               updateReorderLevels.h								      \
                users.h user.h userList.h userPreferences.h                                            \
                userCostingElement.h costingElements.h                                                 \
                vendor.h vendors.h                                                                     \
@@ -977,7 +977,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp       
                updateLateCustCreditStatus.cpp                                                         \
                updateOUTLevelByItem.cpp updateOUTLevels.cpp updateOUTLevelsByClassCode.cpp            \
                updatePricesByProductCategory.cpp  updatePricesByPricingSchedule.cpp                   \
-               updateReorderLevelByItem.cpp updateReorderLevels.cpp updateReorderLevelsByClassCode.cpp\
+               updateReorderLevels.cpp								      \
                users.cpp user.cpp userList.cpp userPreferences.cpp                                    \
                userCostingElement.cpp costingElements.cpp                                             \
                version.cpp vendor.cpp vendors.cpp                                                     \
