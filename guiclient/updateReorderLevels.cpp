@@ -91,6 +91,10 @@ updateReorderLevels::updateReorderLevels(QWidget* parent, const char* name, bool
     connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
     connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
     connect(_preview, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
+    connect(_results, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(sOpenEdit(QTreeWidgetItem*, int)));
+    connect(_results, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)), this, 
+                                               SLOT(sCloseEdit(QTreeWidgetItem*,QTreeWidgetItem*)));
+    
     
     _results->addColumn(tr("Site")            ,  _whsColumn,  Qt::AlignLeft,   true, "reordlvl_warehous_code");
     _results->addColumn(tr("Item Number")     , _itemColumn,  Qt::AlignLeft,   true, "reordlvl_item_number");
@@ -176,7 +180,6 @@ bool updateReorderLevels::setParams(ParameterList &params)
 void updateReorderLevels::sUpdate()
 {
   QString method;
-  qDebug(_periods->periodString());
   if (_periods->topLevelItemCount() > 0)
   {
     QString sql;
@@ -203,7 +206,9 @@ void updateReorderLevels::sUpdate()
       if (q.first())
       {
         _totalDays->setText(q.value("reordlvl_total_days").toString());
+        disconnect(_results, SIGNAL(itemChanged(QTreeWidgetItem*, int)), this, SLOT(sItemChanged(QTreeWidgetItem*, int)));
         _results->populate(q, true);
+        connect(_results, SIGNAL(itemChanged(QTreeWidgetItem*, int)), this, SLOT(sItemChanged(QTreeWidgetItem*, int)));
         _tab->setCurrentIndex(1);
       }
     }
@@ -263,6 +268,32 @@ void updateReorderLevels::sPost()
     delete selected[i];
   }
 }
+
+void updateReorderLevels::sOpenEdit(QTreeWidgetItem *item, const int col)
+{
+  if (col==7)
+  {
+    _results->openPersistentEditor(item,col);
+    _results->editItem(item,col);
+  }
+}
+
+void updateReorderLevels::sCloseEdit(QTreeWidgetItem *current, QTreeWidgetItem *previous)
+{
+  _results->closePersistentEditor(previous,7);
+}
+
+void updateReorderLevels::sItemChanged(QTreeWidgetItem *item, const int col)
+{
+  // Only positive numbers allowed
+  if (col==7)
+    if (item->data(col,Qt::EditRole).toDouble() < 0)
+      item->setData(col,Qt::EditRole,0);
+    else
+      item->setData(col,Qt::EditRole,item->data(col,Qt::EditRole).toDouble());
+}
+
+
 
 
 

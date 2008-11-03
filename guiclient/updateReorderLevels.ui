@@ -222,6 +222,11 @@
                    <string/>
                   </property>
                  </item>
+                 <item>
+                  <property name="text" >
+                   <string/>
+                  </property>
+                 </item>
                 </widget>
                </item>
                <item>
@@ -436,7 +441,7 @@
        <item row="1" column="0" >
         <widget class="XTreeWidget" name="_results" >
          <property name="editTriggers" >
-          <set>QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed|QAbstractItemView::NoEditTriggers</set>
+          <set>QAbstractItemView::AllEditTriggers</set>
          </property>
          <property name="selectionMode" >
           <enum>QAbstractItemView::ExtendedSelection</enum>
