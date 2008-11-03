@@ -17,7 +17,10 @@ SOURCES = metrics.cpp \
           format.cpp \
           login2.cpp \
           login2Options.cpp \
-          storedProcErrorLookup.cpp
+          storedProcErrorLookup.cpp \
+          calendarcontrol.cpp \
+          calendargraphicsitem.cpp \
+          graphicstextbuttonitem.cpp
 HEADERS = metrics.h \
           qbase64encode.h \
           qmd5.h \
@@ -25,7 +28,10 @@ HEADERS = metrics.h \
           format.h \
           login2.h \
           login2Options.h \
-          storedProcErrorLookup.h
+          storedProcErrorLookup.h \
+          calendarcontrol.h \
+          calendargraphicsitem.h \
+          graphicstextbuttonitem.h
 FORMS = login2.ui login2Options.ui
 
 
