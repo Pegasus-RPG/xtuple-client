@@ -164,6 +164,7 @@ class menuSystem : public QObject
     void sCommunityForums();
     void sCommunityBlogs();
     void sCommunityIssues();
+    void sCommunityWiki();
     void sCommunityDownloads();
     void sRegister();
 

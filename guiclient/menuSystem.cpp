@@ -292,6 +292,7 @@ menuSystem::menuSystem(GUIClient *Pparent) :
     { "community.forums",      tr("Discussion &Forums"),  SLOT(sCommunityForums()),      communityMenu, true, NULL, NULL, true },
     { "community.blogs",       tr("Bl&ogs"),              SLOT(sCommunityBlogs()),       communityMenu, true, NULL, NULL, true },
     { "community.issues",      tr("&Bugs and Feature Requests"), SLOT(sCommunityIssues()),      communityMenu, true, NULL, NULL, true },
+    { "community.wiki",        tr("&Wiki"),               SLOT(sCommunityWiki()),      communityMenu, true, NULL, NULL, true },
     { "separator",	       NULL,				NULL,		communityMenu, true,	NULL, NULL, true	},
     { "community.downloads",   tr("&Downloads"),     SLOT(sCommunityDownloads()),   communityMenu, true, NULL, NULL, true },
   };
@@ -817,6 +818,12 @@ void menuSystem::sCommunityIssues()
 {
   omfgThis->launchBrowser(omfgThis, "http://www.xtuple.org/index.php?option=com_mantis&Itemid=26");
 }
+
+void menuSystem::sCommunityWiki()
+{
+  omfgThis->launchBrowser(omfgThis, "http://wiki.xtuple.org");
+}
+
 
 void menuSystem::sCommunityDownloads()
 {
