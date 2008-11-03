@@ -89,7 +89,8 @@ returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* na
   _priceinvuomratio = 1.0;
   _invuomid = -1;
   _orderId = -1;
-  _preferredWarehouseid = -1;
+  _preferredWarehousid = -1;
+  _preferredShipWarehousid = -1;
   _status = "O";
   _qtycredited = 0;
   _soldQty = 0;
@@ -209,7 +210,7 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
       _shiptoid = q.value("rahead_shipto_id").toInt();
       _netUnitPrice->setId(q.value("rahead_curr_id").toInt());
       _netUnitPrice->setEffective(q.value("rahead_authdate").toDate());
-      _preferredWarehouseid = q.value("prefwhs").toInt();
+      _preferredWarehousid = q.value("prefwhs").toInt();
       _creditmethod = q.value("rahead_creditmethod").toString();
       _crmacctid = q.value("crmacct_id").toInt();
     }
@@ -222,11 +223,17 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
 
   param = pParams.value("warehous_id", &valid);
   if (valid)
-    _warehouse->setId(param.toInt());
+  {
+    _preferredWarehousid = param.toInt();
+    _warehouse->setId(_preferredWarehousid);
+  }
 
   param = pParams.value("shipwarehous_id", &valid);
   if (valid)
-    _shipWhs->setId(param.toInt());
+  {
+    _preferredShipWarehousid = param.toInt();
+    _shipWhs->setId(_preferredShipWarehousid);
+  }
 
   param = pParams.value("raitem_id", &valid);
   if (valid)
@@ -680,6 +687,13 @@ void returnAuthorizationItem::sPopulateItemInfo()
 
   else
     _createOrder->setEnabled(FALSE);
+
+  _warehouse->findItemsites(_item->id());
+  _shipWhs->findItemsites(_item->id());
+  if(_preferredWarehousid > 0)
+    _warehouse->setId(_preferredWarehousid);
+  if(_preferredShipWarehousid > 0)
+    _shipWhs->setId(_preferredShipWarehousid);
 }
 
 void returnAuthorizationItem::sPopulateItemsiteInfo()

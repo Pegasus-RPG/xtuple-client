@@ -1812,22 +1812,6 @@
   </connection>
   <connection>
    <sender>_item</sender>
-   <signal>newId(int)</signal>
-   <receiver>_warehouse</receiver>
-   <slot>findItemsites(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>209</x>
-     <y>193</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>501</x>
-     <y>142</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_item</sender>
    <signal>valid(bool)</signal>
    <receiver>_save</receiver>
    <slot>setEnabled(bool)</slot>
@@ -1967,22 +1951,6 @@
     <hint type="destinationlabel" >
      <x>148</x>
      <y>544</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_item</sender>
-   <signal>newId(int)</signal>
-   <receiver>_shipWhs</receiver>
-   <slot>findItemsites(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>213</x>
-     <y>189</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>501</x>
-     <y>168</y>
     </hint>
    </hints>
   </connection>

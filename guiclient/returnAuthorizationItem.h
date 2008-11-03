@@ -142,7 +142,8 @@ private:
     int      _leadTime;
     QDate    _cScheduledDate;
     double   _cQtyOrdered;
-    int      _preferredWarehouseid;
+    int      _preferredWarehousid;
+    int      _preferredShipWarehousid;
     QString  _status;
     double   _soldQty;
 

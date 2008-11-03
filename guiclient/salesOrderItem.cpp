@@ -269,14 +269,6 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
   if (valid)
     _taxauthid = param.toInt();
 
-  param = pParams.value("warehous_id", &valid);
-  if (valid)
-  {
-    int _warehouseid = param.toInt();
-    _warehouse->setId(_warehouseid);
-    _preferredWarehouseid = _warehouseid;
-  }
-
   param = pParams.value("cust_id", &valid);
   if (valid)
   {
@@ -306,6 +298,14 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
   {
     _shiptoid = param.toInt();
     _charVars.replace(SHIPTO_ID, param.toInt());
+  }
+
+  param = pParams.value("warehous_id", &valid);
+  if (valid)
+  {
+    int _warehouseid = param.toInt();
+    _warehouse->setId(_warehouseid);
+    _preferredWarehouseid = _warehouseid;
   }
 
   param = pParams.value("orderNumber", &valid);
