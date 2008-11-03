@@ -56,6 +56,7 @@
  */
 
 #include <QSqlError>
+#include <QMessageBox>
 
 #include <metasql.h>
 #include <qvariant.h>
@@ -179,6 +180,9 @@ bool updateReorderLevels::setParams(ParameterList &params)
 
 void updateReorderLevels::sUpdate()
 {
+  _results->clear();
+  _totalDays->setText("");
+  
   QString method;
   if (_periods->topLevelItemCount() > 0)
   {
@@ -211,6 +215,8 @@ void updateReorderLevels::sUpdate()
         connect(_results, SIGNAL(itemChanged(QTreeWidgetItem*, int)), this, SLOT(sItemChanged(QTreeWidgetItem*, int)));
         _tab->setCurrentIndex(1);
       }
+      else
+        QMessageBox::information(this, windowTitle(), tr("No item sites records found."));
     }
     else
       accept();
