@@ -68,7 +68,7 @@ class batchManager : public QMainWindow, public Ui::batchManager
     Q_OBJECT
 
 public:
-    batchManager(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    batchManager(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~batchManager();
 
     virtual void setDatabase( QSqlDatabase db );

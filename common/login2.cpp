@@ -188,7 +188,7 @@ void login2::sLogin()
   QString databaseURL;
   databaseURL = _databaseURL;
   if (_demoOption->isChecked())
-    databaseURL = _evalDatabaseURL.arg(_username->text().stripWhiteSpace());
+    databaseURL = _evalDatabaseURL.arg(_username->text().trimmed());
 
   QString protocol;
   QString hostName;
@@ -241,8 +241,8 @@ void login2::sLogin()
   db.setHostName(hostName);
   db.setPort(port.toInt());
 
-  _cUsername = _username->text().stripWhiteSpace();
-  _cPassword = _password->text().stripWhiteSpace();
+  _cUsername = _username->text().trimmed();
+  _cPassword = _password->text().trimmed();
 
   db.setUserName(_cUsername);
   if(_demoOption->isChecked())
@@ -337,7 +337,7 @@ void login2::sLogin()
       _databaseURL = databaseURL;
       accept();
     }
-    else if (login.lastError().type() != QSqlError::None)
+    else if (login.lastError().type() != QSqlError::NoError)
     {
       if (_splash)
         _splash->hide();

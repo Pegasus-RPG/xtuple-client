@@ -139,7 +139,7 @@ static bool loadLocale()
       // TODO: add locale_percent_scale
       // TODO: add locale_weight_scale
     }
-    else if (localeq.lastError().type() != QSqlError::None)
+    else if (localeq.lastError().type() != QSqlError::NoError)
     {
       QMessageBox::critical(0,
                             QObject::tr("A System Error Occurred at %1::%2.")

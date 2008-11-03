@@ -148,7 +148,7 @@ void batchManager::sFillList()
   MetaSQLQuery mql(sql);
   batch = mql.toQuery(params);
   _batch->populate(batch);
-  if (batch.lastError().type() != QSqlError::None)
+  if (batch.lastError().type() != QSqlError::NoError)
   {
     QMessageBox::critical(this,
                           tr("System Error in %1::%2").arg(__FILE__, __LINE__),
@@ -187,12 +187,12 @@ void batchManager::setDatabase( QSqlDatabase db )
 
   _db = db;
   if(_db.isValid())
-    setCaption(tr("Batch Manager -- on %1/%2 AS %3")
+    setWindowTitle(tr("Batch Manager -- on %1/%2 AS %3")
                .arg(_db.hostName())
                .arg(_db.databaseName())
                .arg(_db.userName()));
   else
-    setCaption(tr("Batch Manager"));
+    setWindowTitle(tr("Batch Manager"));
   
   //if(_db.isValid())
   //  connect(&_db, SIGNAL(destroyed()), this, SLOT(close()));

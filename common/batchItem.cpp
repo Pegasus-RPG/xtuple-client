@@ -114,7 +114,7 @@ void batchItem::sSave()
 
   if (_reschedule->isChecked())
   {
-    switch (_interval->currentItem())
+    switch (_interval->currentIndex())
     {
       case 0:
         interval = "D";
@@ -158,7 +158,7 @@ void batchItem::sSave()
         return;
       }
     }
-    else if (schedq.lastError().type() != QSqlError::None)
+    else if (schedq.lastError().type() != QSqlError::NoError)
     {
       QMessageBox::critical(this,
                             tr("Error Rescheduling Batch Item at %1::%2")
@@ -200,11 +200,11 @@ void batchItem::populate()
       _reschedule->setChecked(TRUE);
 
       if (interval == "D")
-        _interval->setCurrentItem(0);
+        _interval->setCurrentIndex(0);
       else if (interval == "W")
-        _interval->setCurrentItem(1);
+        _interval->setCurrentIndex(1);
       else if (interval == "M")
-        _interval->setCurrentItem(2);
+        _interval->setCurrentIndex(2);
     }
 
     _submittedDate->setDate(batch.value("submitted_date").toDate());
