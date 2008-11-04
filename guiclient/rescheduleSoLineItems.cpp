@@ -150,7 +150,8 @@ void rescheduleSoLineItems::sReschedule()
   reschedule.prepare( "UPDATE coitem "
                       "SET coitem_scheddate=:newDate "
                       "WHERE ( (coitem_status NOT IN ('C','X'))"
-                      " AND (coitem_cohead_id=:sohead_id) );" );
+                      "  AND   (NOT coitem_firm)"
+                      "  AND   (coitem_cohead_id=:sohead_id) );" );
   reschedule.bindValue(":newDate", _date->date());
   reschedule.bindValue(":sohead_id", _so->id());
   reschedule.exec();
