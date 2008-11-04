@@ -139,8 +139,10 @@ enum SetResponse shipTo::set(const ParameterList &pParams)
 
       XSqlQuery cust;
       cust.prepare( "SELECT cust_number, cust_name, cust_taxauth_id, "
-                 "       cust_salesrep_id, cust_shipform_id, cust_shipvia "
+                 "       cust_salesrep_id, cust_shipform_id, cust_shipvia, "
+                 "       crmacct_id "
                  "FROM custinfo "
+                 "  JOIN crmacct ON (cust_id=crmacct_cust_id) "
                  "WHERE (cust_id=:cust_id);" );
       cust.bindValue(":cust_id", _custid);
       cust.exec();
@@ -151,6 +153,7 @@ enum SetResponse shipTo::set(const ParameterList &pParams)
         _salesRep->setId(cust.value("cust_salesrep_id").toInt());
         _shipform->setId(cust.value("cust_shipform_id").toInt());
         _taxauth->setId(cust.value("cust_taxauth_id").toInt());
+        _contact->setSearchAcct(cust.value("crmacct_id").toInt());
 
 	//  Handle the free-form Ship Via
         _shipVia->setId(-1);
@@ -380,8 +383,11 @@ void shipTo::populate()
              "       shipto_comments, shipto_shipcomments,"
              "       COALESCE(shipto_salesrep_id,-1) AS shipto_salesrep_id, shipto_taxauth_id, COALESCE(shipto_shipzone_id,-1) AS shipto_shipzone_id,"
              "       COALESCE(shipto_shipform_id,-1) AS shipto_shipform_id, shipto_shipchrg_id, "
-	     "       shipto_ediprofile_id, shipto_addr_id "
-             "FROM shiptoinfo LEFT OUTER JOIN cust ON (shipto_cust_id=cust_id) "
+	     "       shipto_ediprofile_id, shipto_addr_id, "
+             "       crmacct_id "
+             "FROM shiptoinfo "
+             "  LEFT OUTER JOIN cust ON (shipto_cust_id=cust_id) "
+             "  LEFT OUTER JOIN crmacct ON (cust_id=crmacct_cust_id) "
              "WHERE (shipto_id=:shipto_id);" );
   q.bindValue(":shipto_id", _shiptoid);
   q.exec();
@@ -396,6 +402,7 @@ void shipTo::populate()
     _shipToNumber->setText(q.value("shipto_num"));
     _name->setText(q.value("shipto_name"));
     _contact->setId(q.value("shipto_cntct_id").toInt());
+    _contact->setSearchAcct(q.value("crmacct_id").toInt());
     _comments->setText(q.value("shipto_comments").toString());
     _shippingComments->setText(q.value("shipto_shipcomments").toString());
     _taxauth->setId(q.value("shipto_taxauth_id").toInt());

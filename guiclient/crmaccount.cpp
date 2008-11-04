@@ -900,6 +900,8 @@ void crmaccount::sPopulate()
     _parentCrmacct->setId(q.value("crmacct_parent_id").toInt());
     _comments->setId(_crmacctId);
     _documents->setId(_crmacctId);
+    _primary->setSearchAcct(_crmacctId);
+    _secondary->setSearchAcct(_crmacctId);
     _owner->setUsername(q.value("crmacct_owner_username").toString());
 
     _customer->setChecked(_custId > 0);

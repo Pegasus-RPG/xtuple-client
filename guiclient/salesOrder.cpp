@@ -1557,7 +1557,7 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
       _billToCntct->setId(cust.value("cust_cntct_id").toInt());
       if(cust.value("crmacct_id").toInt() > 0)
         _billToCntct->setSearchAcct(cust.value("crmacct_id").toInt());
-        //_shipToCntct->setSearchAcct(cust.value("crmacct_id").toInt());
+        _shipToCntct->setSearchAcct(cust.value("crmacct_id").toInt());
 
       if (ISNEW(_mode))
         _taxAuth->setId(cust.value("cust_taxauth_id").toInt());

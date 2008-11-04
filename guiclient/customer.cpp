@@ -1197,7 +1197,9 @@ void customer::populate()
     _cachedNumber = cust.value("cust_number").toString();
     _name->setText(cust.value("cust_name"));
     _corrCntct->setId(cust.value("cust_corrcntct_id").toInt());
+    _corrCntct->setSearchAcct(cust.value("crmacct_id").toInt());
     _billCntct->setId(cust.value("cust_cntct_id").toInt());
+    _billCntct->setSearchAcct(cust.value("crmacct_id").toInt());
     _creditLimit->set(cust.value("cust_creditlmt").toDouble(),
                       cust.value("cust_creditlmt_curr_id").toInt(),
                       QDate::currentDate());

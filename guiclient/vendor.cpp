@@ -690,7 +690,7 @@ void vendor::sCheck()
 void vendor::populate()
 {
   MetaSQLQuery mql(
-            "SELECT *,"
+            "SELECT *, crmacct_id, "
             "<? if exists(\"key\") ?>"
             "       CASE WHEN LENGTH(vend_ach_routingnumber) > 0 THEN"
             "       formatbytea(decrypt(setbytea(vend_ach_routingnumber),"
@@ -705,6 +705,7 @@ void vendor::populate()
             "       <? value(\"na\") ?> AS accntnum "
             "<? endif ?>"
             "FROM vendinfo "
+            "  JOIN crmacct ON (vend_id=crmacct_vend_id) "
             "WHERE (vend_id=<? value(\"vend_id\") ?>);" );
   ParameterList params;
   params.append("vend_id", _vendid);
@@ -721,7 +722,9 @@ void vendor::populate()
     _active->setChecked(q.value("vend_active").toBool());
     _name->setText(q.value("vend_name"));
     _contact1->setId(q.value("vend_cntct1_id").toInt());
+    _contact1->setSearchAcct(q.value("crmacct_id").toInt());
     _contact2->setId(q.value("vend_cntct2_id").toInt());
+    _contact2->setSearchAcct(q.value("crmacct_id").toInt());
     _address->setId(q.value("vend_addr_id").toInt());
     _defaultTerms->setId(q.value("vend_terms_id").toInt());
     _defaultShipVia->setText(q.value("vend_shipvia").toString());
