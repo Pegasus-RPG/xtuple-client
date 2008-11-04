@@ -96,6 +96,7 @@ class OPENMFGWIDGETS_EXPORT VirtualList : public QDialog
         virtual void init();
 
         VirtualClusterLineEdit* _parent;
+        QVBoxLayout* _dialogLyt;
         QLabel*      _searchLit;
         QLineEdit*   _search;
         QLabel*      _titleLit;
@@ -121,6 +122,7 @@ class OPENMFGWIDGETS_EXPORT VirtualSearch : public QDialog
 
     protected:
         VirtualClusterLineEdit* _parent;
+        QVBoxLayout* _dialogLyt;
         int  _id;
         QLabel*      _searchLit;
         QLineEdit*   _search;

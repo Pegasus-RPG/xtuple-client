@@ -89,11 +89,12 @@ class OPENMFGWIDGETS_EXPORT ContactList : public VirtualList
       ContactList(QWidget*, const char* = 0, bool = false, Qt::WFlags = 0);
 
     public slots:
-      virtual void sFillList();
+      virtual void sFillList(const bool searchAcct);
       virtual void sSearch(const QString&);
 
     protected:
       ContactCluster* _parent;
+      QCheckBox*      _searchAcct;    
 };
 
 class OPENMFGWIDGETS_EXPORT ContactSearch : public VirtualSearch
@@ -118,6 +119,8 @@ class OPENMFGWIDGETS_EXPORT ContactSearch : public VirtualSearch
 	XCheckBox*	_searchEmail;
 	XCheckBox*	_searchWebAddr;
 	XCheckBox*	_searchInactive;
+        QCheckBox*      _searchAcct; 
+        
 
 };
 
@@ -368,6 +371,9 @@ class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
 	QString _titlePlural;
 
         bool    _ignoreSignals;
+        
+        int     _crmacctid;
+        QString _crmacctname;
 
     private:
 	virtual void	init();

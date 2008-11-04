@@ -532,14 +532,14 @@ void VirtualList::init()
     _listTab->setMinimumHeight(250);
     _titleLit->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
 
-    QVBoxLayout* dialogLyt    = new QVBoxLayout(this,      5, -1, "dialogLyt");
-    QHBoxLayout* topLyt	      = new QHBoxLayout(dialogLyt,    -1, "topLyt");
+    _dialogLyt                = new QVBoxLayout(this,      5, -1, "dialogLyt");
+    QHBoxLayout* topLyt	      = new QHBoxLayout(_dialogLyt,    -1, "topLyt");
     QVBoxLayout* searchLyt    = new QVBoxLayout(topLyt,       -1, "searchLyt");
     topLyt->addItem(new QSpacerItem(20, 20, QSizePolicy::Expanding,
 					    QSizePolicy::Minimum));
     QVBoxLayout* buttonsLyt   = new QVBoxLayout(topLyt,       -1, "buttonsLyt");
     QHBoxLayout* searchStrLyt = new QHBoxLayout(searchLyt,    -1, "searchStrLyt");
-    QVBoxLayout* tableLyt     = new QVBoxLayout(dialogLyt,    -1, "tableLyt");
+    QVBoxLayout* tableLyt     = new QVBoxLayout(_dialogLyt,    -1, "tableLyt");
 
     searchStrLyt->addWidget(_searchLit);
     searchStrLyt->addWidget(_search);
@@ -550,8 +550,8 @@ void VirtualList::init()
     tableLyt->addWidget(_listTab);
 
     ((QBoxLayout*)topLyt)->setStretchFactor(searchLyt, 0);
-    ((QBoxLayout*)dialogLyt)->setStretchFactor(topLyt, 0);
-    ((QBoxLayout*)dialogLyt)->setStretchFactor(tableLyt, 1);
+    ((QBoxLayout*)_dialogLyt)->setStretchFactor(topLyt, 0);
+    ((QBoxLayout*)_dialogLyt)->setStretchFactor(tableLyt, 1);
 
     connect(_close,   SIGNAL(clicked()),	 this,   SLOT(sClose()));
     connect(_listTab, SIGNAL(itemSelected(int)), this,	 SLOT(sSelect()));
@@ -668,15 +668,15 @@ VirtualSearch::VirtualSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
     _listTab->setMinimumHeight(250);
     _titleLit->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
 
-    dialogLyt    = new QVBoxLayout(this,      5, -1, "dialogLyt");
-    QHBoxLayout* topLyt = new QHBoxLayout(dialogLyt, -1, "topLyt");
+    _dialogLyt   = new QVBoxLayout(this,      5, -1, "dialogLyt");
+    QHBoxLayout* topLyt = new QHBoxLayout(_dialogLyt, -1, "topLyt");
     searchLyt    = new QVBoxLayout(topLyt,    -1, "searchLyt");
     topLyt->addItem(new QSpacerItem(20, 20, QSizePolicy::Expanding,
 					    QSizePolicy::Minimum));
     buttonsLyt   = new QVBoxLayout(topLyt,    -1, "buttonsLyt");
     searchStrLyt = new QHBoxLayout(searchLyt, -1, "searchStrLyt");
     selectorsLyt = new QGridLayout(searchLyt,  1, 1, -1, "selectorsLyt");
-    tableLyt     = new QVBoxLayout(dialogLyt, -1, "tableLyt");
+    tableLyt     = new QVBoxLayout(_dialogLyt, -1, "tableLyt");
 
     searchStrLyt->addWidget(_searchLit);
     searchStrLyt->addWidget(_search);
@@ -691,8 +691,8 @@ VirtualSearch::VirtualSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
     tableLyt->addWidget(_listTab);
 
     ((QBoxLayout*)topLyt)->setStretchFactor(searchLyt, 0);
-    ((QBoxLayout*)dialogLyt)->setStretchFactor(topLyt, 0);
-    ((QBoxLayout*)dialogLyt)->setStretchFactor(tableLyt, 1);
+    ((QBoxLayout*)_dialogLyt)->setStretchFactor(topLyt, 0);
+    ((QBoxLayout*)_dialogLyt)->setStretchFactor(tableLyt, 1);
 
     connect(_listTab,	    SIGNAL(itemSelected(int)),	this, SLOT(sSelect()));
     connect(_select,	    SIGNAL(clicked()),		this, SLOT(sSelect()));

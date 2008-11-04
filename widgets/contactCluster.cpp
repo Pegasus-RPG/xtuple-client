@@ -233,6 +233,15 @@ void ContactCluster::init()
     
     connect(_email,     SIGNAL(doubleClicked()), this, SLOT(sLaunchEmail()));
     connect(_webaddr,   SIGNAL(doubleClicked()), this, SLOT(sLaunchWebaddr()));
+    
+    connect(_first, SIGNAL(requestSearch()),	this, SLOT(sSearch()));
+    connect(_middle, SIGNAL(requestSearch()),	this, SLOT(sSearch()));
+    connect(_last, SIGNAL(requestSearch()),	this, SLOT(sSearch()));
+    connect(_suffix, SIGNAL(requestSearch()),	this, SLOT(sSearch()));
+    connect(_first, SIGNAL(requestList()),	this, SLOT(sList()));
+    connect(_middle, SIGNAL(requestList()),	this, SLOT(sList()));
+    connect(_last, SIGNAL(requestList()),	this, SLOT(sList()));
+    connect(_suffix, SIGNAL(requestList()),	this, SLOT(sList()));
 
     setFocusPolicy(Qt::StrongFocus);
     setFocusProxy(_honorific);
@@ -709,10 +718,6 @@ void ContactCluster::layout()
 void ContactCluster::setSearchAcct(const int p)
 {
   _searchAcctId = p;
-  if (p > 0)
-    _extraClause = " WHERE (cntct_crmacct_id=:searchAcctId) ";
-  else
-    _extraClause = "";
 }
 
 void ContactCluster::check()
@@ -874,6 +879,8 @@ void ContactCluster::sLaunchWebaddr()
 ContactList::ContactList(QWidget* pParent, const char* pName, bool, Qt::WFlags) 
   : VirtualList(pParent, 0)
 {
+    setAttribute(Qt::WA_DeleteOnClose);
+    
     _parent = (ContactCluster*)(pParent);
     _id = _parent->_id;
     if (!pName)
@@ -881,20 +888,47 @@ ContactList::ContactList(QWidget* pParent, const char* pName, bool, Qt::WFlags)
     else
         setName(pName);
     setCaption(_parent->_titlePlural);
+    
+    _searchAcct = new QCheckBox();
+    _searchAcct->setMaximumWidth(480);
 
     _listTab->setColumnCount(0);
 
     _listTab->addColumn(tr("First Name"),   80, Qt::AlignLeft, true, "cntct_first_name");
     _listTab->addColumn(tr("Last Name"),    -1, Qt::AlignLeft, true, "cntct_last_name");
     _listTab->addColumn(tr("CRM Account"), 100, Qt::AlignLeft, true, "crmacct_name");
+    
+    if (_parent->_searchAcctId > 0)
+    {
+      XSqlQuery crmacct;
+      crmacct.prepare("SELECT crmacct_number || ' - ' || crmacct_name AS account "
+                      "FROM crmacct "
+                      "WHERE (crmacct_id = :crmacct_id);");
+      crmacct.bindValue(":crmacct_id", _parent->_searchAcctId);
+      crmacct.exec();
+      if (crmacct.first())
+      {
+        _searchAcct->setChecked(true);
+        _dialogLyt->addWidget(_searchAcct);
+        _searchAcct->setText(tr("Only contacts for %1").arg(crmacct.value("account").toString()));
+        connect(_searchAcct, SIGNAL(toggled(bool)), this, SLOT(sFillList(bool)));
+      }
+    }
+    else
+      _searchAcct->hide();
 
     resize(500, size().height());
-
-    sFillList();
+    
+    sFillList(_searchAcct->isChecked());
 }
 
-void ContactList::sFillList()
+void ContactList::sFillList(const bool searchAcct)
 {
+  if (searchAcct)
+    _parent->_extraClause = " WHERE (cntct_crmacct_id=:searchAcctId) ";
+  else
+    _parent->_extraClause = "";
+
   _listTab->clear();
   XSqlQuery query;
 
@@ -963,6 +997,8 @@ void ContactList::sSearch(const QString& pTarget)
 ContactSearch::ContactSearch(QWidget* pParent, Qt::WindowFlags pFlags)
     : VirtualSearch(pParent, pFlags)
 {
+    setAttribute(Qt::WA_DeleteOnClose);
+    
     // remove the stuff we won't use
     disconnect(_searchNumber,	SIGNAL(toggled(bool)), this, SLOT(sFillList()));
     disconnect(_searchName,	SIGNAL(toggled(bool)), this, SLOT(sFillList()));
@@ -977,6 +1013,8 @@ ContactSearch::ContactSearch(QWidget* pParent, Qt::WindowFlags pFlags)
     delete _searchDescrip;
 
     _listTab->setColumnCount(0);
+    
+    _parent = (ContactCluster*)(pParent);
 
     _searchFirst	= new XCheckBox(tr("Search First Name"));
     _searchLast		= new XCheckBox(tr("Search Last Name"));
@@ -986,6 +1024,15 @@ ContactSearch::ContactSearch(QWidget* pParent, Qt::WindowFlags pFlags)
     _searchEmail	= new XCheckBox(tr("Search Email Address"));
     _searchWebAddr	= new XCheckBox(tr("Search Web Address"));
     _searchInactive	= new XCheckBox(tr("Show Inactive Contacts"));
+    
+    _searchFirst->setObjectName("_searchName");
+    _searchLast->setObjectName("_searchLast");
+    _searchCRMAcct->setObjectName("_searchCRMAcct");
+    _searchTitle->setObjectName("_searchTitle");
+    _searchPhones->setObjectName("_searchPhones");
+    _searchEmail->setObjectName("_searchEmail");
+    _searchWebAddr->setObjectName("_searchWebAddr");
+    _searchInactive->setObjectName("_searchInactive");
 
     selectorsLyt->addWidget(_searchFirst,    0, 0);
     selectorsLyt->addWidget(_searchLast,     1, 0);
@@ -995,6 +1042,28 @@ ContactSearch::ContactSearch(QWidget* pParent, Qt::WindowFlags pFlags)
     selectorsLyt->addWidget(_searchEmail,    1, 1);
     selectorsLyt->addWidget(_searchWebAddr,  2, 1);
     selectorsLyt->addWidget(_searchInactive, 3, 1);
+    
+    _searchAcct = new QCheckBox();
+    _searchAcct->setMaximumWidth(480);
+  
+    if (_parent->_searchAcctId > 0)
+    {
+      XSqlQuery crmacct;
+      crmacct.prepare("SELECT crmacct_number || ' - ' || crmacct_name AS account "
+                      "FROM crmacct "
+                      "WHERE (crmacct_id = :crmacct_id);");
+      crmacct.bindValue(":crmacct_id", _parent->_searchAcctId);
+      crmacct.exec();
+      if (crmacct.first())
+      {
+        _searchAcct->setChecked(true);
+        _dialogLyt->addWidget(_searchAcct);
+        _searchAcct->setText(tr("Only contacts for %1").arg(crmacct.value("account").toString()));
+        connect(_searchAcct, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+      }
+    }
+    else
+      _searchAcct->hide();
 
     connect(_searchFirst,    SIGNAL(toggled(bool)), this, SLOT(sFillList()));
     connect(_searchLast,     SIGNAL(toggled(bool)), this, SLOT(sFillList()));
@@ -1026,6 +1095,11 @@ ContactSearch::ContactSearch(QWidget* pParent, Qt::WindowFlags pFlags)
 
 void ContactSearch::sFillList()
 {
+    if (_searchAcct->isChecked())
+      _parent->_extraClause = " WHERE (cntct_crmacct_id=:searchAcctId) ";
+    else
+      _parent->_extraClause = "";
+    
     _listTab->clear();
     if (_search->text().isEmpty() ||
 	(!_searchFirst->isChecked()    && !_searchLast->isChecked() &&
