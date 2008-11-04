@@ -83,6 +83,7 @@
 #include "incidentWorkbench.h"
 #include "incident.h"
 #include "todoList.h"
+#include "todoListCalendar.h"
 #include "todoItem.h"
 
 #include "honorifics.h"
@@ -153,6 +154,7 @@ menuCRM::menuCRM(GUIClient *Pparent) :
     { "menu",			tr("&To-Do"),	(char*)todoMenu,	crmMenu,	true, NULL, NULL, true	, NULL },
     { "crm.todoItem",		tr("&New..."),	SLOT(sTodoItem()),	todoMenu,	_privileges->check("MaintainPersonalTodoList"), NULL, NULL, true	, NULL },
     { "crm.todoList",		tr("&List..."),		SLOT(sTodoList()),	todoMenu,	_privileges->check("MaintainPersonalTodoList") || _privileges->check("ViewPersonalTodoList"),new QPixmap(":/images/toDoList.png"), toolBar, true	, "To-Do List"},
+    { "crm.todoListCalendar",		tr("&Calendar List..."),		SLOT(sTodoListCalendar()),	todoMenu,	_privileges->check("MaintainPersonalTodoList") || _privileges->check("ViewPersonalTodoList"),new QPixmap(":/images/toDoList.png"), toolBar, true	, "To-Do List Calendar"},
 
     //  Project
     { "menu", tr("Pro&ject"), (char*)projectsMenu, crmMenu,true, NULL, NULL, true	, NULL },
@@ -372,6 +374,11 @@ void menuCRM::sIncident()
 void menuCRM::sTodoList()
 {
   omfgThis->handleNewWindow(new todoList());
+}
+
+void menuCRM::sTodoListCalendar()
+{
+  omfgThis->handleNewWindow(new todoListCalendar());
 }
 
 void menuCRM::sTodoItem()

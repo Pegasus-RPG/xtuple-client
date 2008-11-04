@@ -69,7 +69,7 @@ class CalendarControl : public QObject
     CalendarControl(QObject * parent = 0);
     ~CalendarControl();
 
-    virtual const QString & contents(const QDate &) = 0;
+    virtual QString contents(const QDate &) = 0;
     virtual void setSelectedDay(const QDate & day);
 
   signals:

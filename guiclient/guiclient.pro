@@ -311,7 +311,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                taxSelection.ui taxSelections.ui                                                       \
                taxType.ui taxTypes.ui                                                                 \
                task.ui thawItemSitesByClassCode.ui                                                    \
-               termses.ui terms.ui todoList.ui todoItem.ui                                            \
+               termses.ui terms.ui todoList.ui todoItem.ui todoListCalendar.ui                        \
                transactionInformation.ui transferOrder.ui transferOrders.ui                           \
                transferOrderItem.ui                                                                   \
                transferTrans.ui                                                                       \
@@ -633,7 +633,8 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                taxSelection.h taxSelections.h                                                         \
                taxType.h taxTypes.h                                                                   \
                task.h thawItemSitesByClassCode.h                                                      \
-               termses.h terms.h todoList.h todoItem.h                                                \
+               termses.h terms.h                                                                      \
+               todoList.h todoItem.h todoListCalendar.h todoCalendarControl.h                         \
                toitemTableModel.h toitemTableView.h                                                   \
                transactionInformation.h transferOrder.h transferOrders.h                              \
                transferOrderItem.h                                                                    \
@@ -959,7 +960,8 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp       
                taxSelection.cpp taxSelections.cpp                                                     \
                taxType.cpp taxTypes.cpp                                                               \
                task.cpp thawItemSitesByClassCode.cpp                                                  \
-               termses.cpp terms.cpp todoList.cpp todoItem.cpp                                        \
+               termses.cpp terms.cpp                                                                  \
+               todoList.cpp todoItem.cpp todoListCalendar.cpp todoCalendarControl.cpp                 \
                toitemTableModel.cpp toitemTableView.cpp                                               \
                transactionInformation.cpp transferOrder.cpp transferOrders.cpp                        \
                transferOrderItem.cpp                                                                  \

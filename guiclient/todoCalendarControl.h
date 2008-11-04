@@ -55,93 +55,19 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  menuCRM.cpp
-//  Created 09/05/2006 GJM
-//  Copyright (c) 2006-2008, OpenMFG, LLC
+#ifndef TODOCALENDARCONTROL_H
+#define TODOCALENDARCONTROL_H
 
-#ifndef menuCRM_h
-#define menuCRM_h
+#include <calendarcontrol.h>
 
-#include <QObject>
-#include <QPixmap>
-
-class QToolBar;
-class QMenu;
-class GUIClient;
-
-class menuCRM : public QObject
+class todoCalendarControl : public CalendarControl
 {
   Q_OBJECT
 
-  struct actionProperties {
-    const char*		actionName;
-    const QString	actionTitle;
-    const char*		slot;
-    QMenu*		menu;
-    bool		priv;
-    QPixmap*		pixmap;
-    QToolBar*		toolBar;
-    bool		visible;
-    const QString   toolTip;
-  };
-
   public:
-    menuCRM(GUIClient *);
+    todoCalendarControl(QObject * parent = 0);
 
-  public slots:
-
-    void sNewProject();
-    void sProjects();
-    void sDspOrderActivityByProject();
-
-    void sAddress();
-    void sAddresses();
-    void sCharacteristics();
-    void sCRMAccount();
-    void sCRMAccounts();
-    void sSearchForCRMAccount();
-    void sContact();
-    void sContacts();
-    void sSearchForContact();
-    void sDspIncidentsByCRMAccount();
-    void sDspTodoByUserAndIncident();
-    void sHonorifics();
-    void sIncident();
-    void sIncidentCategories();
-    void sIncidentPriorities();
-    void sIncidentResolutions();
-    void sIncidentSeverities();
-    void sIncidentWorkbench();
-    void sTodoItem();
-    void sTodoList();
-    void sTodoListCalendar();
-    void sNewOpportunity();
-    void sOpportunities();
-    void sOpportunitySources();
-    void sOpportunityStages();
-    void sOpportunityTypes();
-    void sEditOwners();
-
-  private:
-    GUIClient *parent;
-
-    QToolBar   *toolBar;
-    QMenu *crmMenu;
-    QMenu *projectsMenu;
-    QMenu *incidentMenu;
-    QMenu *todoMenu;
-    QMenu *reportsMenu;
-    QMenu *accountsMenu;
-    QMenu *contactsMenu;
-    QMenu *addressMenu;
-    QMenu *utilitiesMenu;
-    QMenu *masterMenu;
-    QMenu *masterIncdMenu;
-    QMenu *opportunityMenu;
-    QMenu *masterOppMenu;
-    
-    void	addActionsToMenu(actionProperties [], unsigned int);
+    QString contents(const QDate &);
 };
 
-#endif
-
+#endif // TODOCALENDARCONTROL_H
