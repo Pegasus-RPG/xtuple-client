@@ -256,7 +256,7 @@ enum SetResponse customer::set(const ParameterList &pParams)
 
       _salesrep->setId(_metrics->value("DefaultSalesRep").toInt());
       _terms->setId(_metrics->value("DefaultTerms").toInt());
-      _taxauth->setCurrentItem(-1);
+      _taxauth->setCurrentIndex(-1);
       _shipform->setId(_metrics->value("DefaultShipFormId").toInt());
       _shipvia->setId(_metrics->value("DefaultShipViaId").toInt());
       _custtype->setId(_metrics->value("DefaultCustType").toInt());
@@ -268,9 +268,9 @@ enum SetResponse customer::set(const ParameterList &pParams)
       _creditRating->setText(_metrics->value("SOCreditRate"));
 
       if (_metrics->value("DefaultBalanceMethod") == "B")
-        _balanceMethod->setCurrentItem(0);
+        _balanceMethod->setCurrentIndex(0);
       else if (_metrics->value("DefaultBalanceMethod") == "O")
-        _balanceMethod->setCurrentItem(1);
+        _balanceMethod->setCurrentIndex(1);
 
       if(!_privileges->check("MaintainCustomerMastersCustomerType")
          && !_privileges->check("MaintainCustomerMastersCustomerTypeOnCreate")
@@ -422,7 +422,7 @@ bool customer::sSave(bool /*partial*/)
 {
   if (true)
   {
-    if (_number->text().stripWhiteSpace().length() == 0)
+    if (_number->text().trimmed().length() == 0)
     {
       QMessageBox::critical( this, tr("Enter Customer Number"),
                              tr("You must enter a number for this Customer before continuing") );
@@ -430,7 +430,7 @@ bool customer::sSave(bool /*partial*/)
       return false;
     }
   
-    if (_name->text().stripWhiteSpace().length() == 0)
+    if (_name->text().trimmed().length() == 0)
     {
       QMessageBox::critical( this, tr("Enter Customer Name"),
                              tr("You must enter a name for this Customer before continuing") );
@@ -470,7 +470,7 @@ bool customer::sSave(bool /*partial*/)
       return false;
     }
 
-    if (_salesrep->currentItem() == -1)
+    if (_salesrep->currentIndex() == -1)
     {
       QMessageBox::warning( this, tr("Select Sales Representative"),
                             tr( "You must select a Sales Representative before adding this Customer." ));
@@ -478,13 +478,13 @@ bool customer::sSave(bool /*partial*/)
       return false;
     }
 
-    if (_number->text().stripWhiteSpace() != _cachedNumber)
+    if (_number->text().trimmed() != _cachedNumber)
     {
       q.prepare( "SELECT cust_name "
                  "FROM custinfo "
                  "WHERE (UPPER(cust_number)=UPPER(:cust_number)) "
                  "  AND (cust_id<>:cust_id);" );
-      q.bindValue(":cust_name", _number->text().stripWhiteSpace());
+      q.bindValue(":cust_name", _number->text().trimmed());
       q.bindValue(":cust_id", _custid);
       q.exec();
       if (q.first())
@@ -581,8 +581,8 @@ bool customer::sSave(bool /*partial*/)
                "  :cust_gracedays, :cust_curr_id ) " );
 
   q.bindValue(":cust_id", _custid);
-  q.bindValue(":cust_number", _number->text().stripWhiteSpace());
-  q.bindValue(":cust_name", _name->text().stripWhiteSpace());
+  q.bindValue(":cust_number", _number->text().trimmed());
+  q.bindValue(":cust_name", _name->text().trimmed());
   q.bindValue(":cust_salesrep_id", _salesrep->id());
   if (_corrCntct->id() > 0)
     q.bindValue(":cust_corrcntct_id", _corrCntct->id());        // else NULL
@@ -590,7 +590,7 @@ bool customer::sSave(bool /*partial*/)
     q.bindValue(":cust_cntct_id", _billCntct->id());            // else NULL
   q.bindValue(":cust_custtype_id", _custtype->id());
 
-  if (_balanceMethod->currentItem() == 0)
+  if (_balanceMethod->currentIndex() == 0)
     q.bindValue(":cust_balmethod", "B");
   else
     q.bindValue(":cust_balmethod", "O");
@@ -607,8 +607,8 @@ bool customer::sSave(bool /*partial*/)
   q.bindValue(":cust_creditlmt_curr_id", _creditLimit->id());
   q.bindValue(":cust_creditlmt", _creditLimit->localValue());
   q.bindValue(":cust_creditrating", _creditRating->text());
-  q.bindValue(":cust_autoupdatestatus", QVariant(_autoUpdateStatus->isChecked(), 0));
-  q.bindValue(":cust_autoholdorders", QVariant(_autoHoldOrders->isChecked(), 0));
+  q.bindValue(":cust_autoupdatestatus", QVariant(_autoUpdateStatus->isChecked()));
+  q.bindValue(":cust_autoholdorders", QVariant(_autoHoldOrders->isChecked()));
   q.bindValue(":cust_commprcnt", (_defaultCommissionPrcnt->toDouble() / 100.0));
   q.bindValue(":cust_terms_id", _terms->id());
   q.bindValue(":cust_discntprcnt", (_defaultDiscountPrcnt->toDouble() / 100.0));
@@ -620,31 +620,31 @@ bool customer::sSave(bool /*partial*/)
   q.bindValue(":cust_shipchrg_id", _shipchrg->id());
   q.bindValue(":cust_shipform_id", _shipform->id());
 
-  q.bindValue(":cust_active", QVariant(_active->isChecked(), 0));
-  q.bindValue(":cust_usespos", QVariant(_usesPOs->isChecked(), 0));
-  q.bindValue(":cust_blanketpos", QVariant(_blanketPos->isChecked(), 0));
-  q.bindValue(":cust_partialship", QVariant(_partialShipments->isChecked(), 0));
-  q.bindValue(":cust_backorder", QVariant(_backorders->isChecked(), 0));
-  q.bindValue(":cust_ffshipto", QVariant(_allowFFShipto->isChecked(), 0));
-  q.bindValue(":cust_ffbillto", QVariant(_allowFFBillto->isChecked(), 0));
+  q.bindValue(":cust_active",     QVariant(_active->isChecked()));
+  q.bindValue(":cust_usespos",    QVariant(_usesPOs->isChecked()));
+  q.bindValue(":cust_blanketpos", QVariant(_blanketPos->isChecked()));
+  q.bindValue(":cust_partialship",QVariant(_partialShipments->isChecked()));
+  q.bindValue(":cust_backorder",  QVariant(_backorders->isChecked()));
+  q.bindValue(":cust_ffshipto",   QVariant(_allowFFShipto->isChecked()));
+  q.bindValue(":cust_ffbillto",   QVariant(_allowFFBillto->isChecked()));
 
-  q.bindValue(":cust_comments", _notes->text());
+  q.bindValue(":cust_comments", _notes->toPlainText());
 
-  q.bindValue(":cust_emaildelivery", QVariant((_ediProfile->id()==0), 0));
-  q.bindValue(":cust_ediemail", _ediEmail->text().stripWhiteSpace());
-  q.bindValue(":cust_edisubject", _ediSubject->text().stripWhiteSpace());
-  q.bindValue(":cust_edifilename", _ediFilename->text().stripWhiteSpace());
-  q.bindValue(":cust_ediemailbody", _ediEmailBody->toPlainText().stripWhiteSpace());
-  q.bindValue(":cust_edicc", _ediCC->text().stripWhiteSpace());
-  q.bindValue(":cust_ediemailhtml", QVariant(_ediEmailHTML->isChecked(), 0));
-  
-  q.bindValue(":cust_soemaildelivery", QVariant((_soEdiProfile->id()==0), 0));
-  q.bindValue(":cust_soediemail", _soEdiEmail->text().stripWhiteSpace());
-  q.bindValue(":cust_soedisubject", _soEdiSubject->text().stripWhiteSpace());
-  q.bindValue(":cust_soedifilename", _soEdiFilename->text().stripWhiteSpace());
-  q.bindValue(":cust_soediemailbody", _soEdiEmailBody->toPlainText().stripWhiteSpace());
-  q.bindValue(":cust_soedicc", _soEdiCC->text().stripWhiteSpace());
-  q.bindValue(":cust_soediemailhtml", QVariant(_soEdiEmailHTML->isChecked(), 0));
+  q.bindValue(":cust_emaildelivery", QVariant((_ediProfile->id()==0)));
+  q.bindValue(":cust_ediemail", _ediEmail->text().trimmed());
+  q.bindValue(":cust_edisubject", _ediSubject->text().trimmed());
+  q.bindValue(":cust_edifilename", _ediFilename->text().trimmed());
+  q.bindValue(":cust_ediemailbody", _ediEmailBody->toPlainText().trimmed());
+  q.bindValue(":cust_edicc", _ediCC->text().trimmed());
+  q.bindValue(":cust_ediemailhtml", QVariant(_ediEmailHTML->isChecked()));
+
+  q.bindValue(":cust_soemaildelivery", QVariant((_soEdiProfile->id()==0)));
+  q.bindValue(":cust_soediemail", _soEdiEmail->text().trimmed());
+  q.bindValue(":cust_soedisubject", _soEdiSubject->text().trimmed());
+  q.bindValue(":cust_soedifilename", _soEdiFilename->text().trimmed());
+  q.bindValue(":cust_soediemailbody", _soEdiEmailBody->toPlainText().trimmed());
+  q.bindValue(":cust_soedicc", _soEdiCC->text().trimmed());
+  q.bindValue(":cust_soediemailhtml", QVariant(_soEdiEmailHTML->isChecked()));
 
   q.bindValue(":cust_preferred_warehous_id", _sellingWarehouse->id());
   q.bindValue(":cust_curr_id", _currency->id());
@@ -659,7 +659,7 @@ bool customer::sSave(bool /*partial*/)
     q.bindValue(":cust_soediprofile_id", _soEdiProfile->id());
 
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return false;
@@ -759,7 +759,7 @@ void customer::sSave()
       }
       omfgThis->sQuotesUpdated(-1);
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       // not fatal
@@ -774,7 +774,7 @@ void customer::sSave()
 
 void customer::sCheck()
 {
-  _number->setText(_number->text().stripWhiteSpace().upper());
+  _number->setText(_number->text().trimmed().toUpper());
   if(cNew == _mode && -1 != _NumberGen && _number->text().toInt() != _NumberGen)
   {
     XSqlQuery query;
@@ -1135,7 +1135,7 @@ void customer::sDeleteTaxreg()
             "WHERE (taxreg_id=:taxreg_id);");
   q.bindValue(":taxreg_id", _taxreg->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -1155,7 +1155,7 @@ void customer::sFillTaxregList()
   taxreg.bindValue(":cust_id", _custid);
   taxreg.exec();
   _taxreg->populate(taxreg, true);
-  if (taxreg.lastError().type() != QSqlError::None)
+  if (taxreg.lastError().type() != QSqlError::NoError)
   {
     systemError(this, taxreg.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -1228,9 +1228,9 @@ void customer::populate()
     _sellingWarehouse->setId(cust.value("cust_preferred_warehous_id").toInt());
 
     if (cust.value("cust_balmethod").toString() == "B")
-      _balanceMethod->setCurrentItem(0);
+      _balanceMethod->setCurrentIndex(0);
     else if (cust.value("cust_balmethod").toString() == "O")
-      _balanceMethod->setCurrentItem(1);
+      _balanceMethod->setCurrentIndex(1);
 
     _active->setChecked(cust.value("cust_active").toBool());
     _backorders->setChecked(cust.value("cust_backorder").toBool());
@@ -1287,7 +1287,7 @@ void customer::populate()
     sFillCharacteristicList();
     sFillCcardList();
   }
-  else if (cust.lastError().type() != QSqlError::None)
+  else if (cust.lastError().type() != QSqlError::NoError)
   {
     systemError(this, cust.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -1389,7 +1389,7 @@ void customer::sFillCcardList()
   params.append("key",             key);
   q = mql.toQuery(params);
   _cc->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

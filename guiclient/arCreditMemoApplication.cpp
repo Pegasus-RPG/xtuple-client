@@ -117,7 +117,7 @@ void arCreditMemoApplication::sSave()
   double targetBalance = 0.0;
   if(q.first())
     targetBalance = q.value("balance").toDouble();
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -155,7 +155,7 @@ void arCreditMemoApplication::sSave()
   double sourceBalance = 0.0;
   if(q.first())
     sourceBalance = q.value("available").toDouble();
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -184,7 +184,7 @@ void arCreditMemoApplication::sSave()
                "WHERE (arcreditapply_id=:arcreditapply_id);" );
     q.bindValue(":arcreditapply_id", arcreditapplyid);
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -204,7 +204,7 @@ void arCreditMemoApplication::sSave()
   q.bindValue(":arcreditapply_amount", amountToApply);
   q.bindValue(":arcreditapply_curr_id", _amountToApply->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -238,7 +238,7 @@ void arCreditMemoApplication::populate()
     _targetPaid->setLocalValue(q.value("aropen_paid").toDouble());
     _targetBalance->setLocalValue(q.value("f_balance").toDouble());
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

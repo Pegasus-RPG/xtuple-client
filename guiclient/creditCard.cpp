@@ -119,7 +119,7 @@ enum SetResponse creditCard::set(const ParameterList &pParams)
       _custName->setText(cust.value("cust_name").toString());
 
     }
-    else if (cust.lastError().type() != QSqlError::None)
+    else if (cust.lastError().type() != QSqlError::NoError)
       systemError(this, cust.lastError().databaseText(), __FILE__, __LINE__);
 
     if (param.toString() == "new")
@@ -181,14 +181,14 @@ void creditCard::sSave()
   bool everythingOK;
   everythingOK = true;
 
-  QString ccname	= _name->text().stripWhiteSpace();
-  QString ccAddress1	= _address->line1().stripWhiteSpace();
-  QString ccCity	= _address->city().stripWhiteSpace();
-  QString ccState	= _address->state().stripWhiteSpace();
-  QString ccZip		= _address->postalCode().stripWhiteSpace();
-  QString ccCountry	= _address->country().stripWhiteSpace();
-  QString ccExpireMonth	= _expireMonth->text().stripWhiteSpace();
-  QString ccExpireYear	= _expireYear->text().stripWhiteSpace();
+  QString ccname	= _name->text().trimmed();
+  QString ccAddress1	= _address->line1().trimmed();
+  QString ccCity	= _address->city().trimmed();
+  QString ccState	= _address->state().trimmed();
+  QString ccZip		= _address->postalCode().trimmed();
+  QString ccCountry	= _address->country().trimmed();
+  QString ccExpireMonth	= _expireMonth->text().trimmed();
+  QString ccExpireYear	= _expireYear->text().trimmed();
 
   if (ccExpireMonth.length() == 1)
       ccExpireMonth = "0" + ccExpireMonth;
@@ -256,7 +256,7 @@ void creditCard::sSave()
   QString key;
   key = omfgThis->_key;
 
-  QString ccnum = _creditCardNumber->text().stripWhiteSpace().remove(QRegExp("[-\\s]"));
+  QString ccnum = _creditCardNumber->text().trimmed().remove(QRegExp("[-\\s]"));
   bool allNumeric = QRegExp( "[0-9]{13,16}" ).exactMatch(ccnum);
   bool hasBeenFormatted = QRegExp( "\\**([0-9]){4}" ).exactMatch(ccnum); // tricky - repeated *s
 
@@ -281,7 +281,7 @@ void creditCard::sSave()
   {
     QString cctype;
     int cceditreturn = 0;
-    cctype = QString(*(_fundsTypes2 + _fundsType2->currentItem()));
+    cctype = QString(*(_fundsTypes2 + _fundsType2->currentIndex()));
 
     q.prepare("SELECT editccnumber(text(:ccnum), text(:cctype)) AS cc_back;");
     q.bindValue(":ccnum", ccnum);
@@ -289,7 +289,7 @@ void creditCard::sSave()
     q.exec();
     if (q.first())
       cceditreturn = q.value("cc_back").toInt();
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -316,7 +316,7 @@ void creditCard::sSave()
     q.exec("SELECT NEXTVAL('ccard_ccard_id_seq') AS ccard_id;");
     if (q.first())
       _ccardid = q.value("ccard_id").toInt();
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -327,7 +327,7 @@ void creditCard::sSave()
     q.exec();
     if (q.first())
       _seq = q.value("ccard_seq").toInt();
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -375,7 +375,7 @@ void creditCard::sSave()
   q.bindValue(":ccard_id", _ccardid);
   q.bindValue(":ccard_seq", _seq);
   q.bindValue(":ccard_cust_id", _custid);
-  q.bindValue(":ccard_active", QVariant(_active->isChecked(), 0));
+  q.bindValue(":ccard_active", QVariant(_active->isChecked()));
   q.bindValue(":ccard_number", ccnum);
   q.bindValue(":ccard_name", _name->text());
   q.bindValue(":ccard_address1", _address->line1());
@@ -387,9 +387,9 @@ void creditCard::sSave()
   q.bindValue(":ccard_month_expired",_expireMonth->text());
   q.bindValue(":ccard_year_expired",_expireYear->text());
   q.bindValue(":key", key);
-  q.bindValue(":ccard_type", QString(*(_fundsTypes2 + _fundsType2->currentItem())));
+  q.bindValue(":ccard_type", QString(*(_fundsTypes2 + _fundsType2->currentIndex())));
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -404,7 +404,7 @@ void creditCard::sSave()
     q.bindValue(":key",          key);
     q.bindValue(":ccard_id",     _ccardid);
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -455,10 +455,10 @@ void creditCard::populate()
 
     for (int counter = 0; counter < _fundsType2->count(); counter++)
       if (QString(q.value("ccard_type").toString()[0]) == _fundsTypes2[counter])
-        _fundsType2->setCurrentItem(counter);
+        _fundsType2->setCurrentIndex(counter);
 
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

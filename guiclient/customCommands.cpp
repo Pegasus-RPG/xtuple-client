@@ -125,7 +125,7 @@ void customCommands::sDelete()
   q.bindValue(":cmd_id", _commands->id());
   if(q.exec())
     sFillList();
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -145,7 +145,7 @@ void customCommands::sFillList()
          "        'Manufacture','CRM','Sales','Accounting','System'))) "
          " ORDER BY cmd_module, cmd_title;");
   _commands->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

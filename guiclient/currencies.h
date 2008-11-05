@@ -68,7 +68,7 @@ class currencies : public XWidget, public Ui::currencies
     Q_OBJECT
 
 public:
-    currencies(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    currencies(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~currencies();
 
     virtual void init();

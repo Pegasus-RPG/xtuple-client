@@ -144,7 +144,7 @@ void createPlannedOrdersByItem::sCreate()
              " AND (itemsite_active)"
              " AND (itemsite_warehous_id=:warehous_id) );" );
   q.bindValue(":cutOffDate", _cutOffDate->date());
-  q.bindValue(":deleteFirmed", QVariant(_deleteFirmed->isChecked(), 0));
+  q.bindValue(":deleteFirmed", QVariant(_deleteFirmed->isChecked()));
   q.bindValue(":item_id", _item->id());
   q.bindValue(":warehous_id", _warehouse->id());
   q.exec();
@@ -157,7 +157,7 @@ void createPlannedOrdersByItem::sCreate()
                " AND (itemsite_active)"
                " AND (itemsite_warehous_id=:warehous_id) );" );
     q.bindValue(":cutOffDate", _cutOffDate->date());
-    q.bindValue(":deleteFirmed", QVariant(_deleteFirmed->isChecked(), 0));
+    q.bindValue(":deleteFirmed", QVariant(_deleteFirmed->isChecked()));
     q.bindValue(":item_id", _item->id());
     q.bindValue(":warehous_id", _warehouse->id());
     q.exec();

@@ -214,7 +214,7 @@ void boo::sSave()
   q.bindValue(":boohead_revision", _revision->number());
   q.bindValue(":boohead_revisiondate", _revisionDate->date());
   q.bindValue(":boohead_final_location_id", _finalLocation->id());
-  q.bindValue(":boohead_closewo", QVariant(_closeWO->isChecked(), 0));
+  q.bindValue(":boohead_closewo", QVariant(_closeWO->isChecked()));
   q.exec();
 
   close();

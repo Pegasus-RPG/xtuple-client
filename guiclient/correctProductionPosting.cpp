@@ -173,8 +173,8 @@ void correctProductionPosting::sCorrect()
   q.prepare("SELECT correctProduction(:wo_id, :qty, :backflushMaterials, :backflushOperations) AS result;");
   q.bindValue(":wo_id", _wo->id());
   q.bindValue(":qty", _qty->toDouble());
-  q.bindValue(":backflushMaterials", QVariant(_backFlush->isChecked(), 0));
-  q.bindValue(":backflushOperations", QVariant(_backflushOperations->isChecked(), 0));
+  q.bindValue(":backflushMaterials",  QVariant(_backFlush->isChecked()));
+  q.bindValue(":backflushOperations", QVariant(_backflushOperations->isChecked()));
   q.exec();
   if (q.first())
   {

@@ -193,7 +193,7 @@ void apAccountAssignment::sSave()
     else if (_vendorTypePattern->isChecked())
     {
       q.bindValue(":apaccnt_vendtype_id", -1);
-      q.bindValue(":apaccnt_vendtype", _vendorType->text().stripWhiteSpace());
+      q.bindValue(":apaccnt_vendtype", _vendorType->text().trimmed());
     }
 
     q.exec();
@@ -245,7 +245,7 @@ void apAccountAssignment::sSave()
   else if (_vendorTypePattern->isChecked())
   {
     q.bindValue(":apaccnt_vendtype_id", -1);
-    q.bindValue(":apaccnt_vendtype", _vendorType->text().stripWhiteSpace());
+    q.bindValue(":apaccnt_vendtype", _vendorType->text().trimmed());
   }
 
   q.exec();

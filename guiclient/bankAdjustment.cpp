@@ -213,7 +213,7 @@ void bankAdjustment::sSave()
   q.bindValue(":date", _date->date());
   q.bindValue(":docnumber", _docNumber->text());
   q.bindValue(":amount", _amount->localValue());
-  q.bindValue(":notes", _notes->text());
+  q.bindValue(":notes",   _notes->toPlainText());
   q.bindValue(":curr_id", _amount->id());
   
   if(!q.exec())

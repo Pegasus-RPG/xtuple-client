@@ -263,8 +263,8 @@ bool BOM::setParams(ParameterList &pParams)
   pParams.append("pull",        tr("Pull"));
   pParams.append("mixed",       tr("Mixed"));
   pParams.append("error",       tr("Error"));
-  pParams.append("always",      tr("Always"));
-  pParams.append("never",       tr("Never"));
+  pParams.append("always",      tr("'Always'"));
+  pParams.append("never",       tr("'Never'"));
 
   if (_showExpired->isChecked())
   {
@@ -438,7 +438,7 @@ void BOM::sFillList(int pItemid, bool)
       _batchSize->clear();
     }
     
-    QString sql( "SELECT bomitem_id, item_id, *,"
+    MetaSQLQuery mql( "SELECT bomitem_id, item_id, *,"
                  "       (item_descrip1 || ' ' || item_descrip2) AS item_description,"
                  "       uom_name AS issueuom,"
                  "       CASE WHEN (bomitem_issuemethod = 'S') THEN <? value(\"push\") ?>"
@@ -452,8 +452,8 @@ void BOM::sFillList(int pItemid, bool)
                  "            ELSE bomitem_effective END AS effective,"
                  "       CASE WHEN (bomitem_expires = endOfTime()) THEN NULL "
                  "            ELSE bomitem_expires END AS expires,"
-                 "       <? value(\"always\") ?> AS effective_xtnullrole,"
-                 "       <? value(\"never\") ?>  AS expires_xtnullrole,"
+                 "       <? literal(\"always\") ?> AS effective_xtnullrole,"
+                 "       <? literal(\"never\") ?>  AS expires_xtnullrole,"
                  "       CASE WHEN (bomitem_expires < CURRENT_DATE) THEN 'expired'"
                  "            WHEN (bomitem_effective >= CURRENT_DATE) THEN 'future'"
                  "            WHEN (item_type='M') THEN 'altemphasis'"
@@ -473,17 +473,16 @@ void BOM::sFillList(int pItemid, bool)
                  );
     ParameterList params;
     setParams(params);
-    MetaSQLQuery mql(sql);
     q = mql.toQuery(params);
     
     _bomitem->populate(q);
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     
-    sql = "SELECT item_picklist,"
+    MetaSQLQuery picklistmql("SELECT item_picklist,"
           "       COUNT(*) AS total,"
           "       COALESCE(SUM(bomitem_qtyper * (1 + bomitem_scrap))) AS qtyper "
           "FROM bomitem(<? value(\"item_id\") ?>,"
@@ -496,8 +495,7 @@ void BOM::sFillList(int pItemid, bool)
           " AND (bomitem_effective <= CURRENT_DATE)"
           "<? endif ?>"
           " ) "
-          "GROUP BY item_picklist;";
-    MetaSQLQuery picklistmql(sql);
+          "GROUP BY item_picklist;");
     q = picklistmql.toQuery(params);
     
     bool   foundPick    = FALSE;
@@ -522,7 +520,7 @@ void BOM::sFillList(int pItemid, bool)
         _nonPickQtyPer->setDouble(q.value("qtyper").toDouble());
       }
     }
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -546,7 +544,7 @@ void BOM::sFillList(int pItemid, bool)
     
     if (_privileges->check("ViewCosts"))
     {
-      sql = "SELECT p.item_maxcost,"
+      MetaSQLQuery costsmql("SELECT p.item_maxcost,"
             "       COALESCE(SUM(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper * (1 + bomitem_scrap)) * stdCost(c.item_id))) AS stdcost,"
             "       COALESCE(SUM(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper * (1 + bomitem_scrap)) * ROUND(actCost(c.item_id),4))) AS actcost "
             "FROM bomitem(<? value(\"item_id\") ?>,"
@@ -560,8 +558,7 @@ void BOM::sFillList(int pItemid, bool)
             " AND (bomitem_effective <= CURRENT_DATE)"
             "<? endif ?>"
             " ) "
-            "GROUP BY p.item_maxcost;";
-      MetaSQLQuery costsmql(sql);
+            "GROUP BY p.item_maxcost;");
       q = costsmql.toQuery(params);
       if (q.first())
       {
@@ -569,7 +566,7 @@ void BOM::sFillList(int pItemid, bool)
         _currentActCost->setDouble(q.value("actcost").toDouble());
         _maxCost->setDouble(q.value("item_maxcost").toDouble());
       }
-      if (q.lastError().type() != QSqlError::None)
+      if (q.lastError().type() != QSqlError::NoError)
       {
         systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
         return;

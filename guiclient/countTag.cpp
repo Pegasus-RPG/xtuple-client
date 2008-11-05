@@ -159,7 +159,7 @@ enum SetResponse countTag::set(const ParameterList &pParams)
       _mode = cPost;
       _captive = TRUE;
 
-      setCaption("Post Count Tag");
+      setWindowTitle("Post Count Tag");
       _qty->setEnabled(FALSE);
       _enter->setText(tr("&Post Count"));
 
@@ -169,7 +169,7 @@ enum SetResponse countTag::set(const ParameterList &pParams)
     {
       _mode = cView;
 
-      setCaption("Count Tag");
+      setWindowTitle("Count Tag");
       _qty->setEnabled(FALSE);
       _thaw->hide();
       _newComments->setEnabled(FALSE);
@@ -197,9 +197,9 @@ void countTag::sEnter()
     q.prepare("SELECT enterCount(:cnttagid, :qty, :comments);");
     q.bindValue(":cnttagid", _cnttagid);
     q.bindValue(":qty", _qty->toDouble());
-    q.bindValue(":comments", _newComments->text());
+    q.bindValue(":comments", _newComments->toPlainText());
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -225,7 +225,7 @@ void countTag::sEnter()
 
       return;
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -233,17 +233,19 @@ void countTag::sEnter()
 
     q.prepare("SELECT postCountTag(:cnttag_id, :thaw) AS result;");
     q.bindValue(":cnttag_id", _cnttagid);
-    q.bindValue(":thaw", QVariant(_thaw->isChecked(), 0));
+    q.bindValue(":thaw", QVariant(_thaw->isChecked()));
     q.exec();
     if (q.first())
     {
       switch (q.value("result").toInt())
       {
         case -1:
-          QMessageBox::critical( this, tr("Cannot Post Count Tag"),
-                                  tr( "The total quantity indicated by posted Count Slips for this Count Tag\n"
-                                      "is greater than the quantity entered for this Count Tag.\n"
-                                      "Please verify the Count Tag quantity and attempt to post this Count Tag again." ) );
+          QMessageBox::critical(this, tr("Cannot Post Count Tag"),
+                                tr("The total quantity indicated by posted "
+                                   "Count Slips for this Count Tag is greater "
+                                   "than the quantity entered for this Count "
+                                   "Tag. Please verify the Count Tag quantity "
+                                   "and attempt to post this Count Tag again.") );
           return;
 
         case -2:
@@ -282,7 +284,7 @@ void countTag::sEnter()
           break;
       }
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -320,7 +322,7 @@ void countTag::sParseCountTagNumber()
              " AND (UPPER(invcnt_tagnumber)=UPPER(<? value(\"cnttag_tagnumber\") ?>)) );" );
              
   ParameterList ctp;
-  ctp.append("cnttag_tagnumber", _countTagNumber->text().stripWhiteSpace());
+  ctp.append("cnttag_tagnumber", _countTagNumber->text().trimmed());
       
   MetaSQLQuery ctq(sql);
   q = ctq.toQuery(ctp);
@@ -329,7 +331,7 @@ void countTag::sParseCountTagNumber()
     _cnttagid = q.value("invcnt_id").toInt();
     populate();
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -370,7 +372,7 @@ void countTag::populate()
     _currentComments->setText(q.value("invcnt_comments").toString());
     _location->setText(q.value("f_location").toString());
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

@@ -114,16 +114,16 @@ enum SetResponse apOpenItem::set(const ParameterList &pParams)
   {
     if (param.toString() == "creditMemo")
     {
-      setCaption(caption() + tr(" - Enter Misc. Credit Memo"));
-      _docType->setCurrentItem(0);
+      setWindowTitle(caption() + tr(" - Enter Misc. Credit Memo"));
+      _docType->setCurrentIndex(0);
     }
     else if (param.toString() == "debitMemo")
     {
-      setCaption(caption() + tr(" - Enter Misc. Debit Memo"));
-      _docType->setCurrentItem(1);
+      setWindowTitle(caption() + tr(" - Enter Misc. Debit Memo"));
+      _docType->setCurrentIndex(1);
     }
     else if (param.toString() == "voucher")
-      _docType->setCurrentItem(2);
+      _docType->setCurrentIndex(2);
     else
       return UndefinedError;
 //  ToDo - better error return types
@@ -235,15 +235,15 @@ void apOpenItem::sSave()
     QString tmpFunctionName;
     QString queryStr;
 
-    if (_docType->currentItem() == 0)
+    if (_docType->currentIndex() == 0)
       tmpFunctionName = "createAPCreditMemo";
-    else if (_docType->currentItem() == 1)
+    else if (_docType->currentIndex() == 1)
       tmpFunctionName = "createAPDebitMemo";
     else
     {
       systemError(this,
 		  tr("Internal Error: _docType has an invalid document type %1")
-		  .arg(_docType->currentItem()), __FILE__, __LINE__);
+		  .arg(_docType->currentIndex()), __FILE__, __LINE__);
       return;
     }
 
@@ -286,7 +286,7 @@ void apOpenItem::sSave()
   q.bindValue(":apopen_duedate", _dueDate->date());
   q.bindValue(":apopen_ponumber", _poNumber->text());
   q.bindValue(":apopen_amount", _amount->localValue());
-  q.bindValue(":apopen_notes", _notes->text());
+  q.bindValue(":apopen_notes",   _notes->toPlainText());
   q.bindValue(":curr_id", _amount->id());
   q.bindValue(":apopen_terms_id", _terms->id());
   if(_altPrepaid->isChecked())
@@ -294,7 +294,7 @@ void apOpenItem::sSave()
   else
     q.bindValue(":apopen_accnt_id", -1);
 
-  switch (_docType->currentItem())
+  switch (_docType->currentIndex())
   {
     case 0:
       q.bindValue(":apopen_doctype", "C");
@@ -388,11 +388,11 @@ void apOpenItem::populate()
 
     QString docType = q.value("apopen_doctype").toString();
     if (docType == "C")
-      _docType->setCurrentItem(0);
+      _docType->setCurrentIndex(0);
     else if (docType == "D")
-      _docType->setCurrentItem(1);
+      _docType->setCurrentIndex(1);
     else if (docType == "V")
-      _docType->setCurrentItem(2);
+      _docType->setCurrentIndex(2);
 
     _cAmount = _amount->localValue();
 
@@ -439,7 +439,7 @@ void apOpenItem::populate()
     if (q.lastError().type() != QSqlError::NoError)
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     _apapply->populate(q, TRUE);
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;

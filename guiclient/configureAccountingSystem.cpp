@@ -119,11 +119,11 @@ void configureAccountingSystem::init()
     _external->setChecked(TRUE);
 
     if (_metrics->value("AccountingSystem") == "RW2000")
-      _accountingSystem->setCurrentItem(0);
+      _accountingSystem->setCurrentIndex(0);
     else if (_metrics->value("AccountingSystem") == "RealWorld91")
-      _accountingSystem->setCurrentItem(1);
+      _accountingSystem->setCurrentIndex(1);
     else if (_metrics->value("AccountingSystem") == "Other")
-      _accountingSystem->setCurrentItem(2);
+      _accountingSystem->setCurrentIndex(2);
 
     _importPath->setText(_metrics->value("AccountingSystemImportPath"));
     _exportPath->setText(_metrics->value("AccountingSystemExportPath"));
@@ -136,7 +136,7 @@ void configureAccountingSystem::sSave()
     _metrics->set("AccountingSystem", QString("Native"));
   else
   {
-    switch (_accountingSystem->currentItem())
+    switch (_accountingSystem->currentIndex())
     {
       case 0:
         _metrics->set("AccountingSystem", QString("RW2000"));
@@ -151,8 +151,8 @@ void configureAccountingSystem::sSave()
         break;
     }
 
-    _metrics->set("AccountingSystemImportPath", _importPath->text().stripWhiteSpace());
-    _metrics->set("AccountingSystemExportPath", _exportPath->text().stripWhiteSpace());
+    _metrics->set("AccountingSystemImportPath", _importPath->text().trimmed());
+    _metrics->set("AccountingSystemExportPath", _exportPath->text().trimmed());
   }
 
   _metrics->load();

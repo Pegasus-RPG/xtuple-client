@@ -150,7 +150,7 @@ void customerFormAssignments::sDelete()
              "WHERE (custform_id=:custform_id);" );
   q.bindValue(":custform_id", _custform->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -187,7 +187,7 @@ void customerFormAssignments::sFillList()
   q.bindValue(":default", tr("Default"));
   q.exec();
   _custform->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

@@ -204,7 +204,7 @@ void cashReceiptMiscDistrib::sSave()
   q.bindValue(":cashrcptmisc_cashrcpt_id", _cashrcptid);
   q.bindValue(":cashrcptmisc_accnt_id", _account->id());
   q.bindValue(":cashrcptmisc_amount", _amount->localValue());
-  q.bindValue(":cashrcptmisc_notes", _notes->text().stripWhiteSpace());
+  q.bindValue(":cashrcptmisc_notes",       _notes->toPlainText().trimmed());
   q.exec();
 
   done(_cashrcptmiscid);

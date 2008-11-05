@@ -408,7 +408,7 @@ void arWorkBench::sEditAropenCM()
         sFillList();
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -456,7 +456,7 @@ void arWorkBench::sViewAropenCM()
         sFillList();
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -546,7 +546,7 @@ void arWorkBench::sDeleteCashrcpt()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -582,7 +582,7 @@ void arWorkBench::sPostCashrcpt()
     }
     sFillList();
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -887,7 +887,7 @@ void arWorkBench::sCCRefundCM()
       refnum  = ccq.value("cohead_number").toString();
       ccpayid = ccq.value("ccpay_id").toInt();
     }
-    else if (ccq.lastError().type() != QSqlError::None)
+    else if (ccq.lastError().type() != QSqlError::NoError)
     {
       systemError(this, ccq.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -900,7 +900,7 @@ void arWorkBench::sCCRefundCM()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -924,7 +924,7 @@ void arWorkBench::sCCRefundCM()
       currid  = q.value("aropen_curr_id").toInt();
       docnum  = q.value("aropen_docnumber").toString();
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -964,7 +964,7 @@ void arWorkBench::sCCRefundCM()
 
 void arWorkBench::sSearchDocNumChanged()
 {
-  QString sub = _searchDocNum->text().stripWhiteSpace();
+  QString sub = _searchDocNum->text().trimmed();
   if(sub.isEmpty())
     return;
 

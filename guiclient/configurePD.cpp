@@ -91,11 +91,11 @@ configurePD::configurePD(QWidget* parent, const char* name, bool modal, Qt::WFla
 
   QString issueMethod = _metrics->value("DefaultWomatlIssueMethod");
   if (issueMethod == "S")
-    _issueMethod->setCurrentItem(0);
+    _issueMethod->setCurrentIndex(0);
   else if (issueMethod == "L")
-    _issueMethod->setCurrentItem(1);
+    _issueMethod->setCurrentIndex(1);
   else if (issueMethod == "M")
-    _issueMethod->setCurrentItem(2);
+    _issueMethod->setCurrentIndex(2);
     
   
   if (_metrics->value("Application") != "OpenMFG")
@@ -158,7 +158,7 @@ configurePD::configurePD(QWidget* parent, const char* name, bool modal, Qt::WFla
       _revControl->setChecked(_metrics->boolean("RevControl"));
   }
   
-  this->setCaption("Products Configuration");
+  this->setWindowTitle("Products Configuration");
 
   resize(minimumSize());
 }
@@ -211,7 +211,7 @@ void configurePD::sSave()
         _metrics->set("RevControl", FALSE);
         return;
       }
-      if (q.lastError().type() != QSqlError::None)
+      if (q.lastError().type() != QSqlError::NoError)
       {
         QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
           .arg(__FILE__)
@@ -234,11 +234,11 @@ void configurePD::sSave()
   _metrics->set("DefaultSoldItemsExclusive", _exclusive->isChecked());
   _metrics->set("ItemChangeLog", _changeLog->isChecked());
   
-  if (_issueMethod->currentItem() == 0)
+  if (_issueMethod->currentIndex() == 0)
     _metrics->set("DefaultWomatlIssueMethod", QString("S"));
-  else if (_issueMethod->currentItem() == 1)
+  else if (_issueMethod->currentIndex() == 1)
     _metrics->set("DefaultWomatlIssueMethod", QString("L"));
-  else if (_issueMethod->currentItem() == 2)
+  else if (_issueMethod->currentIndex() == 2)
     _metrics->set("DefaultWomatlIssueMethod", QString("M"));
 
   _metrics->load();

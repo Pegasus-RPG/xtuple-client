@@ -158,7 +158,7 @@ enum SetResponse bankAccount::set(const ParameterList &pParams)
 
 void bankAccount::sCheck()
 {
-  _name->setText(_name->text().stripWhiteSpace());
+  _name->setText(_name->text().trimmed());
   if ((_mode == cNew) && (_name->text().length()))
   {
     q.exec( "SELECT bankaccnt_id "
@@ -292,11 +292,11 @@ void bankAccount::sSave()
   
   q.bindValue(":bankaccnt_id", _bankaccntid);
   q.bindValue(":bankaccnt_name", _name->text());
-  q.bindValue(":bankaccnt_descrip", _description->text().stripWhiteSpace());
+  q.bindValue(":bankaccnt_descrip", _description->text().trimmed());
   q.bindValue(":bankaccnt_bankname", _bankName->text());
   q.bindValue(":bankaccnt_accntnumber", _accountNumber->text());
-  q.bindValue(":bankaccnt_ap", QVariant(_ap->isChecked(), 0));
-  q.bindValue(":bankaccnt_ar", QVariant(_ar->isChecked(), 0));
+  q.bindValue(":bankaccnt_ap",          QVariant(_ap->isChecked()));
+  q.bindValue(":bankaccnt_ar",          QVariant(_ar->isChecked()));
   q.bindValue(":bankaccnt_accnt_id", _assetAccount->id());
   q.bindValue(":bankaccnt_curr_id", _currency->id());
   q.bindValue(":bankaccnt_notes",             _notes->text().stripWhiteSpace());
@@ -311,9 +311,9 @@ void bankAccount::sSave()
   q.bindValue(":bankaccnt_nextchknum", _nextCheckNum->text().toInt());
   q.bindValue(":bankaccnt_check_form_id", _form->id());
 
-  if (_type->currentItem() == 0)
+  if (_type->currentIndex() == 0)
     q.bindValue(":bankaccnt_type", "K");
-  else if (_type->currentItem() == 1)
+  else if (_type->currentIndex() == 1)
     q.bindValue(":bankaccnt_type", "C");
 
   q.exec();
@@ -360,9 +360,9 @@ void bankAccount::populate()
       _overrideDefaultOrigin->setChecked(true);
 
     if (q.value("bankaccnt_type").toString() == "K")
-      _type->setCurrentItem(0);
+      _type->setCurrentIndex(0);
     else if (q.value("bankaccnt_type").toString() == "C")
-      _type->setCurrentItem(1);
+      _type->setCurrentIndex(1);
   }
   else if (q.lastError().type() != QSqlError::None)
   {

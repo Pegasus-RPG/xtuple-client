@@ -68,7 +68,7 @@ class bomList : public XWidget, public Ui::bomList
     Q_OBJECT
 
 public:
-    bomList(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    bomList(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~bomList();
 
 public slots:

@@ -69,7 +69,7 @@ class billingEditList : public XWidget, public Ui::billingEditList
     Q_OBJECT
 
 public:
-    billingEditList(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    billingEditList(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~billingEditList();
   
     virtual bool checkSitePrivs(int orderid);

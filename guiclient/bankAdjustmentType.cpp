@@ -181,7 +181,7 @@ void bankAdjustmentType::sSave()
 
   q.bindValue(":bankadjtype_id", _bankadjtypeid);
   q.bindValue(":bankadjtype_name", _name->text());
-  q.bindValue(":bankadjtype_descrip", _description->text().stripWhiteSpace());
+  q.bindValue(":bankadjtype_descrip", _description->text().trimmed());
   q.bindValue(":bankadjtype_accnt_id", _accnt->id());
   q.bindValue(":bankadjtype_iscredit", QVariant(_credit->isChecked(),0));
   q.exec();
@@ -191,7 +191,7 @@ void bankAdjustmentType::sSave()
 
 void bankAdjustmentType::sCheck()
 {
-  _name->setText(_name->text().stripWhiteSpace());
+  _name->setText(_name->text().trimmed());
   if ((_mode == cNew) && (_name->text().length()))
   {
     q.prepare( "SELECT bankadjtype_id "

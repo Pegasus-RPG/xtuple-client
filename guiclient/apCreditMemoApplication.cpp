@@ -123,7 +123,7 @@ void apCreditMemoApplication::sSave()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -172,7 +172,7 @@ void apCreditMemoApplication::populate()
     _targetPaid->setLocalValue(q.value("apopen_paid").toDouble());
     _targetBalance->setLocalValue(q.value("f_balance").toDouble());
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 
   q.prepare( "SELECT COALESCE(apcreditapply_curr_id,apopen_curr_id) AS curr_id,"

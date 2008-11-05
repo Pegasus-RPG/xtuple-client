@@ -195,7 +195,7 @@ void characteristicPrice::sSave()
   q.bindValue(":ipsitemchar_value", _value->currentText());
   q.bindValue(":ipsitemchar_price", _price->localValue());;
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
                   __FILE__, __LINE__);
@@ -222,7 +222,7 @@ void characteristicPrice::sCheck()
     _mode = cEdit;
     populate();
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
                   __FILE__, __LINE__);
@@ -248,7 +248,7 @@ void characteristicPrice::populate()
     _value->setText(q.value("ipsitemchar_value").toString());
     _price->setLocalValue(q.value("ipsitemchar_price").toDouble());
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
                   __FILE__, __LINE__);
@@ -272,7 +272,7 @@ void characteristicPrice::populateItemcharInfo()
   q.exec();
   if (q.first())
     _listPrice->setLocalValue(q.value("charass_price").toDouble());
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
                   __FILE__, __LINE__);
@@ -294,7 +294,7 @@ void characteristicPrice::sCharIdChanged()
   charass.bindValue(":item_id", _itemid);
   charass.bindValue(":char_id", _char->id());
   charass.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
                   __FILE__, __LINE__);

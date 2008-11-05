@@ -79,28 +79,28 @@ configurePO::configurePO(QWidget* parent, const char* name, bool modal, Qt::WFla
   connect(_internalCopy, SIGNAL(toggled(bool)), _numOfCopies, SLOT(setEnabled(bool)));
 
   if (_metrics->value("PONumberGeneration") == "M")
-    _orderNumGeneration->setCurrentItem(0);
+    _orderNumGeneration->setCurrentIndex(0);
   else if (_metrics->value("PONumberGeneration") == "A")
-    _orderNumGeneration->setCurrentItem(1);
+    _orderNumGeneration->setCurrentIndex(1);
   else if (_metrics->value("PONumberGeneration") == "O")
-    _orderNumGeneration->setCurrentItem(2);
+    _orderNumGeneration->setCurrentIndex(2);
 
 #if 0
   if (_metrics->value("VoucherNumberGeneration") == "M")
-    _voucherNumGeneration->setCurrentItem(0);
+    _voucherNumGeneration->setCurrentIndex(0);
   else if (_metrics->value("VoucherNumberGeneration") == "A")
-    _voucherNumGeneration->setCurrentItem(1);
+    _voucherNumGeneration->setCurrentIndex(1);
   else if (_metrics->value("VoucherNumberGeneration") == "O")
-    _voucherNumGeneration->setCurrentItem(2);
+    _voucherNumGeneration->setCurrentIndex(2);
 #endif
 //  ToDo
  
   if (_metrics->value("PrNumberGeneration") == "M")
-    _prNumberGeneration->setCurrentItem(0);
+    _prNumberGeneration->setCurrentIndex(0);
   else if (_metrics->value("PrNumberGeneration") == "A")
-    _prNumberGeneration->setCurrentItem(1);
+    _prNumberGeneration->setCurrentIndex(1);
   else if (_metrics->value("PrNumberGeneration") == "O")
-    _prNumberGeneration->setCurrentItem(2);
+    _prNumberGeneration->setCurrentIndex(2);
 
   _nextPoNumber->setValidator(omfgThis->orderVal());
   _nextVcNumber->setValidator(omfgThis->orderVal());
@@ -143,7 +143,7 @@ configurePO::configurePO(QWidget* parent, const char* name, bool modal, Qt::WFla
 
   _defaultShipVia->setText(_metrics->value("DefaultPOShipVia"));
 
-  this->setCaption("Purchase Configuration");
+  this->setWindowTitle("Purchase Configuration");
 }
 
 /*
@@ -165,20 +165,20 @@ void configurePO::languageChange()
 
 void configurePO::sSave()
 {
-  if (_orderNumGeneration->currentItem() == 0)
+  if (_orderNumGeneration->currentIndex() == 0)
     _metrics->set("PONumberGeneration", QString("M"));
-  else if (_orderNumGeneration->currentItem() == 1)
+  else if (_orderNumGeneration->currentIndex() == 1)
     _metrics->set("PONumberGeneration", QString("A"));
-  else if (_orderNumGeneration->currentItem() == 2)
+  else if (_orderNumGeneration->currentIndex() == 2)
     _metrics->set("PONumberGeneration", QString("O"));
 
   _metrics->set("VoucherNumberGeneration", QString("A"));
 
-  if (_prNumberGeneration->currentItem() == 0)
+  if (_prNumberGeneration->currentIndex() == 0)
     _metrics->set("PrNumberGeneration", QString("M"));
-  if (_prNumberGeneration->currentItem() == 1)
+  if (_prNumberGeneration->currentIndex() == 1)
     _metrics->set("PrNumberGeneration", QString("A"));
-  if (_prNumberGeneration->currentItem() == 2)
+  if (_prNumberGeneration->currentIndex() == 2)
     _metrics->set("PrNumberGeneration", QString("O"));
 
   _metrics->set("POChangeLog", _poChangeLog->isChecked());
@@ -189,7 +189,7 @@ void configurePO::sSave()
   _metrics->set("POVendor", _vendorCopy->isChecked());
   _metrics->set("RequireStdCostForPOItem", _requirePoitemStdCost->isChecked());
   _metrics->set("POInternal", ((_internalCopy->isChecked()) ? _numOfCopies->value() : 0) );
-  _metrics->set("DefaultPOShipVia", _defaultShipVia->text().stripWhiteSpace());
+  _metrics->set("DefaultPOShipVia", _defaultShipVia->text().trimmed());
 
   q.prepare("SELECT setNextPoNumber(:poNumber), setNextVcNumber(:vcNumber), setNextPrNumber(:prNumber);");
   q.bindValue(":poNumber", _nextPoNumber->text().toInt());

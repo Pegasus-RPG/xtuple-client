@@ -140,7 +140,7 @@ void customCommand::setMode(const int pmode)
       q.exec();
       if(q.first())
         _cmdid = q.value("result").toInt();
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return;
@@ -181,14 +181,14 @@ void customCommand::setMode(const int pmode)
 
 void customCommand::sSave()
 {
-  if(_title->text().stripWhiteSpace().isEmpty())
+  if(_title->text().trimmed().isEmpty())
   {
     QMessageBox::warning( this, tr("Cannot Save"),
       tr("You must enter in a Menu Label for this command.") );
     return;
   }
 
-  if(_executable->text().stripWhiteSpace().isEmpty())
+  if(_executable->text().trimmed().isEmpty())
   {
     QMessageBox::warning( this, tr("Cannot Save"),
       tr("You must enter in a program to execute.") );
@@ -217,10 +217,10 @@ void customCommand::sSave()
   q.bindValue(":cmd_privname", _privname->text());
   if(!_name->text().isEmpty())
     q.bindValue(":cmd_name", _name->text());
-  q.bindValue(":cmd_descrip", _description->text());
+  q.bindValue(":cmd_descrip", _description->toPlainText());
   q.bindValue(":cmd_executable", _executable->text());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -228,7 +228,7 @@ void customCommand::sSave()
 
   // make sure the custom privs get updated
   q.exec("SELECT updateCustomPrivs();");
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -245,7 +245,7 @@ void customCommand::reject()
     query.prepare("DELETE FROM cmdarg WHERE (cmdarg_cmd_id=:cmd_id);");
     query.bindValue(":cmd_id", _cmdid);
     query.exec();
-    if (query.lastError().type() != QSqlError::None)
+    if (query.lastError().type() != QSqlError::NoError)
     {
       systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -285,7 +285,7 @@ void customCommand::sDelete()
   q.bindValue(":cmdarg_id", _arguments->id());
   if(q.exec())
     sFillList();
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -314,7 +314,7 @@ void customCommand::populate()
 
     sFillList();
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -330,7 +330,7 @@ void customCommand::sFillList()
   q.bindValue(":cmd_id", _cmdid);
   q.exec();
   _arguments->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

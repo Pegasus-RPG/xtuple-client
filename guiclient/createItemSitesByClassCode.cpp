@@ -95,7 +95,7 @@ createItemSitesByClassCode::createItemSitesByClassCode(QWidget* parent, const ch
   _controlMethod->insertItem("Regular");
   _controlMethod->insertItem("Lot #");
   _controlMethod->insertItem("Serial #");
-  _controlMethod->setCurrentItem(-1);
+  _controlMethod->setCurrentIndex(-1);
 
   _reorderLevel->setDouble(0.0);
   _orderUpToQty->setDouble(0.0);
@@ -164,7 +164,7 @@ void createItemSitesByClassCode::sSave()
     return;
   } 
 
-  if (_controlMethod->currentItem() == -1)
+  if (_controlMethod->currentIndex() == -1)
   {
     QMessageBox::critical( this, tr("Cannot Create Item Sites"),
                            tr("<p>You must select a Control Method for these "
@@ -267,17 +267,17 @@ void createItemSitesByClassCode::sSave()
   q.bindValue(":itemsite_eventfence", _eventFence->value());
   q.bindValue(":itemsite_plancode_id", _plannerCode->id());
   q.bindValue(":itemsite_costcat_id", _costcat->id());
-  q.bindValue(":itemsite_useparams", QVariant(_useParameters->isChecked(), 0));
-  q.bindValue(":itemsite_useparamsmanual", QVariant(_useParametersOnManual->isChecked(), 0));
-  q.bindValue(":itemsite_supply", QVariant(_supply->isChecked(), 0));
-  q.bindValue(":itemsite_createpr", QVariant(_createPr->isChecked(), 0));
-  q.bindValue(":itemsite_createwo", QVariant(_createWo->isChecked(), 0));
-  q.bindValue(":itemsite_sold", QVariant(_sold->isChecked(), 0));
-  q.bindValue(":itemsite_stocked", QVariant(_stocked->isChecked(), 0));
-  q.bindValue(":itemsite_loccntrl", QVariant(_locationControl->isChecked(), 0));
-  q.bindValue(":itemsite_perishable", QVariant(_perishable->isChecked(), 0));
+  q.bindValue(":itemsite_useparams",     QVariant(_useParameters->isChecked()));
+  q.bindValue(":itemsite_useparamsmanual", QVariant(_useParametersOnManual->isChecked()));
+  q.bindValue(":itemsite_supply",        QVariant(_supply->isChecked()));
+  q.bindValue(":itemsite_createpr",      QVariant(_createPr->isChecked()));
+  q.bindValue(":itemsite_createwo",      QVariant(_createWo->isChecked()));
+  q.bindValue(":itemsite_sold",          QVariant(_sold->isChecked()));
+  q.bindValue(":itemsite_stocked",       QVariant(_stocked->isChecked()));
+  q.bindValue(":itemsite_loccntrl",      QVariant(_locationControl->isChecked()));
+  q.bindValue(":itemsite_perishable",    QVariant(_perishable->isChecked()));
   q.bindValue(":itemsite_soldranking", _soldRanking->value());
-  q.bindValue(":itemsite_location_comments", _locationComments->text().stripWhiteSpace());
+  q.bindValue(":itemsite_location_comments", _locationComments->text().trimmed());
   q.bindValue(":itemsite_abcclass", _abcClass->currentText());
 
   q.bindValue(":itemsite_ordergroup", _orderGroup->value());
@@ -292,7 +292,7 @@ void createItemSitesByClassCode::sSave()
     }
     else if (_miscLocation->isChecked())
     {
-      q.bindValue(":itemsite_location", _miscLocationName->text().stripWhiteSpace());
+      q.bindValue(":itemsite_location", _miscLocationName->text().trimmed());
       q.bindValue(":itemsite_location_id", -1);
     }
   }
@@ -302,13 +302,13 @@ void createItemSitesByClassCode::sSave()
     q.bindValue(":itemsite_location_id", -1);
   }
 
-  if (_controlMethod->currentItem() == 0)
+  if (_controlMethod->currentIndex() == 0)
     q.bindValue(":itemsite_controlmethod", "N");
-  else if (_controlMethod->currentItem() == 1)
+  else if (_controlMethod->currentIndex() == 1)
     q.bindValue(":itemsite_controlmethod", "R");
-  else if (_controlMethod->currentItem() == 2)
+  else if (_controlMethod->currentIndex() == 2)
     q.bindValue(":itemsite_controlmethod", "L");
-  else if (_controlMethod->currentItem() == 3)
+  else if (_controlMethod->currentIndex() == 3)
     q.bindValue(":itemsite_controlmethod", "S");
 
   if(_costNone->isChecked())
@@ -362,7 +362,7 @@ void createItemSitesByClassCode::sHandleMLC(bool pMLC)
 
 void createItemSitesByClassCode::sHandleControlMethod()
 {
-  if (_controlMethod->currentItem() == 0)
+  if (_controlMethod->currentIndex() == 0)
   {
     _costNone->setChecked(true);
     _costNone->setEnabled(true);
@@ -382,8 +382,8 @@ void createItemSitesByClassCode::sHandleControlMethod()
     _costJob->setEnabled(false);
   }
 
-  if ( (_controlMethod->currentItem() == 2) ||
-       (_controlMethod->currentItem() == 3) )
+  if ( (_controlMethod->currentIndex() == 2) ||
+       (_controlMethod->currentIndex() == 3) )
     _perishable->setEnabled(TRUE);
   else
   {
@@ -432,7 +432,7 @@ void createItemSitesByClassCode::clear()
   _leadTime->setValue(0);
   _eventFence->setValue(_metrics->value("DefaultEventFence").toInt());
 
-  _controlMethod->setCurrentItem(1);
+  _controlMethod->setCurrentIndex(1);
   sHandleControlMethod();
   _supply->setChecked(TRUE);
   _sold->setChecked(TRUE);

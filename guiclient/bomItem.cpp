@@ -163,16 +163,16 @@ enum SetResponse bomItem::set(const ParameterList &pParams)
 
       QString issueMethod = _metrics->value("DefaultWomatlIssueMethod");
       if (issueMethod == "S")
-        _issueMethod->setCurrentItem(0);
+        _issueMethod->setCurrentIndex(0);
       else if (issueMethod == "L")
-        _issueMethod->setCurrentItem(1);
+        _issueMethod->setCurrentIndex(1);
       else if (issueMethod == "M")
-        _issueMethod->setCurrentItem(2);
+        _issueMethod->setCurrentIndex(2);
 
       q.exec("SELECT NEXTVAL('bomitem_bomitem_id_seq') AS bomitem_id");
       if (q.first())
         _bomitemid = q.value("bomitem_id").toInt();
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return UndefinedError;
@@ -221,7 +221,7 @@ enum SetResponse bomItem::set(const ParameterList &pParams)
       q.exec("SELECT NEXTVAL('bomitem_bomitem_id_seq') AS bomitem_id");
       if (q.first())
         _bomitemid = q.value("bomitem_id").toInt();
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return UndefinedError;
@@ -242,7 +242,7 @@ enum SetResponse bomItem::set(const ParameterList &pParams)
       q.exec("SELECT NEXTVAL('bomitem_bomitem_id_seq') AS bomitem_id");
       if (q.first())
         _bomitemid = q.value("bomitem_id").toInt();
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return UndefinedError;
@@ -289,7 +289,7 @@ enum SetResponse bomItem::set(const ParameterList &pParams)
     _scheduleAtWooper->setEnabled(false);
     _createWo->setChecked(false);
     _createWo->setEnabled(false);
-    _issueMethod->setCurrentItem(0);
+    _issueMethod->setCurrentIndex(0);
     _issueMethod->setEnabled(false);
     _tab->setTabEnabled(_tab->indexOf(_substitutionsTab), false);
   }
@@ -360,14 +360,14 @@ void bomItem::sSave()
   q.bindValue(":ecn", _ecn->text());
   q.bindValue(":notes",	_notes->text());
 
-  q.bindValue(":createWo", QVariant(_createWo->isChecked(), 0));
-  q.bindValue(":scheduledWithBooItem", QVariant(_scheduleAtWooper->isChecked(), 0));
+  q.bindValue(":createWo", QVariant(_createWo->isChecked()));
+  q.bindValue(":scheduledWithBooItem", QVariant(_scheduleAtWooper->isChecked()));
 
-  if (_issueMethod->currentItem() == 0)
+  if (_issueMethod->currentIndex() == 0)
     q.bindValue(":issueMethod", "S");
-  if (_issueMethod->currentItem() == 1)
+  if (_issueMethod->currentIndex() == 1)
     q.bindValue(":issueMethod", "L");
-  if (_issueMethod->currentItem() == 2)
+  if (_issueMethod->currentIndex() == 2)
     q.bindValue(":issueMethod", "M");
 
   if (_noSubstitutes->isChecked())
@@ -386,7 +386,7 @@ void bomItem::sSave()
 
   q.bindValue(":configType", "N");
   q.bindValue(":configId", -1);
-  q.bindValue(":configFlag", QVariant(FALSE, 0));
+  q.bindValue(":configFlag", QVariant(FALSE));
 
   q.exec();
 
@@ -413,7 +413,7 @@ void bomItem::sSave()
         q.exec();
       }
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -440,7 +440,7 @@ void bomItem::sClose()
                "WHERE (bomitemsub_bomitem_id=:bomitem_id);" );
     q.bindValue("bomitem_id", _bomitemid);
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -523,12 +523,12 @@ void bomItem::populate()
     _notes->setText(q.value("bomitem_notes").toString());
 
     if (q.value("bomitem_issuemethod").toString() == "S")
-      _issueMethod->setCurrentItem(0);
+      _issueMethod->setCurrentIndex(0);
     else if (q.value("bomitem_issuemethod").toString() == "L")
-      _issueMethod->setCurrentItem(1);
+      _issueMethod->setCurrentIndex(1);
     else if (q.value("bomitem_issuemethod").toString() == "M")
-      _issueMethod->setCurrentItem(2);
-    sHandleIssueMethod(_issueMethod->currentItem());
+      _issueMethod->setCurrentIndex(2);
+    sHandleIssueMethod(_issueMethod->currentIndex());
 
     if (q.value("item_type").toString() == "M" || q.value("item_type").toString() == "F")
       _createWo->setChecked(q.value("bomitem_createwo").toBool());
@@ -599,7 +599,7 @@ void bomItem::populate()
     else
       _scheduleAtWooper->setEnabled(FALSE);
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -657,7 +657,7 @@ void bomItem::sDeleteSubstitute()
              "WHERE (bomitemsub_id=:bomitemsub_id);" );
   q.bindValue(":bomitemsub_id", _bomitemsub->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -677,7 +677,7 @@ void bomItem::sFillSubstituteList()
   q.bindValue(":bomitem_id", _bomitemid);
   q.exec();
   _bomitemsub->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

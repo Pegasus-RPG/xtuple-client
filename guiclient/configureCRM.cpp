@@ -95,17 +95,17 @@ configureCRM::configureCRM(QWidget* parent, const char* name, bool modal, Qt::WF
 
   QString metric = _metrics->value("CRMAccountNumberGeneration");
   if (metric == "M")
-    _acctGeneration->setCurrentItem(0);
+    _acctGeneration->setCurrentIndex(0);
   else if (metric == "A")
-    _acctGeneration->setCurrentItem(1);
+    _acctGeneration->setCurrentIndex(1);
   else if (metric == "O")
-    _acctGeneration->setCurrentItem(2);
+    _acctGeneration->setCurrentIndex(2);
 
     
   _useProjects->setChecked(_metrics->boolean("UseProjects"));
   _autoCreate->setChecked(_metrics->boolean("AutoCreateProjectsForOrders"));  
     
-  this->setCaption("CRM Configuration");
+  this->setWindowTitle("CRM Configuration");
 }
 
 /*
@@ -137,7 +137,7 @@ void configureCRM::sSave()
   q.bindValue(":acnumber", _nextAcctNumber->text().toInt());
   q.exec();
 
-  _metrics->set("CRMAccountNumberGeneration", QString(numberGenerationTypes[_acctGeneration->currentItem()]));
+  _metrics->set("CRMAccountNumberGeneration", QString(numberGenerationTypes[_acctGeneration->currentIndex()]));
   
   _metrics->set("UseProjects", _useProjects->isChecked());
   _metrics->set("AutoCreateProjectsForOrders", (_autoCreate->isChecked() && _useProjects->isChecked()));

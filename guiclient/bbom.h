@@ -69,7 +69,7 @@ class bbom : public XWidget, public Ui::bbom
     Q_OBJECT
 
 public:
-    bbom(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    bbom(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~bbom();
 
 public slots:

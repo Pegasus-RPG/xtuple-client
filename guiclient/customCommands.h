@@ -67,7 +67,7 @@ class customCommands : public XWidget, public Ui::customCommands
     Q_OBJECT
 
 public:
-    customCommands(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    customCommands(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~customCommands();
 
 public slots:

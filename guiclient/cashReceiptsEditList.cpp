@@ -186,7 +186,7 @@ void cashReceiptsEditList::sDelete()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -201,7 +201,7 @@ void cashReceiptsEditList::sPost()
   q.exec("SELECT fetchJournalNumber('C/R') AS journalnumber;");
   if (q.first())
     journalNumber = q.value("journalnumber").toInt();
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -220,7 +220,7 @@ void cashReceiptsEditList::sPost()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

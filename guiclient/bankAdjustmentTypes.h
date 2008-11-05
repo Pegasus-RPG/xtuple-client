@@ -68,7 +68,7 @@ class bankAdjustmentTypes : public XWidget, public Ui::bankAdjustmentTypes
     Q_OBJECT
 
 public:
-    bankAdjustmentTypes(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    bankAdjustmentTypes(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~bankAdjustmentTypes();
 
 protected slots:

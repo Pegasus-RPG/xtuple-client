@@ -228,7 +228,7 @@ void changePoitemQty::sChangeQty()
     q.prepare("SELECT postComment(:cmnttype_id, 'PI', :poitem_id, :comment) AS result");
     q.bindValue(":cmnttype_id", _cmnttype->id());
     q.bindValue(":poitem_id", _poitem->id());
-    q.bindValue(":comment", _comment->text());
+    q.bindValue(":comment", _comment->toPlainText());
     q.exec();
     if (q.first())
     {

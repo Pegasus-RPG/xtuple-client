@@ -100,7 +100,7 @@ void commentTypes::sFillList()
              "ORDER BY cmnttype_name;" );
   q.exec();
   _cmnttype->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

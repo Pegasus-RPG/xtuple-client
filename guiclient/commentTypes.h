@@ -69,7 +69,7 @@ class commentTypes : public XWidget, public Ui::commentTypes
     Q_OBJECT
 
 public:
-    commentTypes(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    commentTypes(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~commentTypes();
 
 public slots:

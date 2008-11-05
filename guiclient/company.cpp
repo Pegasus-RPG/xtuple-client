@@ -194,7 +194,7 @@ void company::sSave()
     q.exec("SELECT NEXTVAL('company_company_id_seq') AS company_id;");
     if (q.first())
       _companyid = q.value("company_id").toInt();
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -259,7 +259,7 @@ void company::sSave()
   q.bindValue(":company_port",     _extPort->cleanText());
   q.bindValue(":company_database", _extDB->text());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -293,13 +293,13 @@ void company::populate()
     q.exec();
     if (q.first())
       _external->setEnabled(q.value("result").toInt() == 0);
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -371,7 +371,7 @@ void company::sTest()
         return;
       }
     }
-    else if (rmq.lastError().type() != QSqlError::None)
+    else if (rmq.lastError().type() != QSqlError::NoError)
     {
       systemError(this, rmq.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -399,12 +399,12 @@ void company::sTest()
         return;
       }
     }
-    else if (rmq.lastError().type() != QSqlError::None)
+    else if (rmq.lastError().type() != QSqlError::NoError)
     {
       systemError(this, rmq.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -434,7 +434,7 @@ void company::sTest()
       QMessageBox::warning(this, windowTitle(), tr("Test Successful."));
       return;
     }
-    else if (rmq.lastError().type() != QSqlError::None)
+    else if (rmq.lastError().type() != QSqlError::NoError)
     {
       systemError(this, rmq.lastError().databaseText(), __FILE__, __LINE__);
       return;

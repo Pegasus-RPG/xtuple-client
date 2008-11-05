@@ -162,7 +162,7 @@ void commentType::sSave()
 
 void commentType::sCheck()
 {
-  _name->setText(_name->text().stripWhiteSpace());
+  _name->setText(_name->text().trimmed());
   if ( (_mode == cNew) && (_name->text().length()) )
   {
     q.prepare( "SELECT cmnttype_id "

@@ -133,7 +133,7 @@ void customerFormAssignment::sSave()
   if (_selectedCustomerType->isChecked())
     custtypeid = _customerTypes->id();
   else if (_customerTypePattern->isChecked())
-    custtype = _customerType->text().stripWhiteSpace();
+    custtype = _customerType->text().trimmed();
 
   q.prepare("SELECT custform_id"
             "  FROM custform"
@@ -156,7 +156,7 @@ void customerFormAssignment::sSave()
     q.exec("SELECT NEXTVAL('custform_custform_id_seq') AS _custformid");
     if (q.first())
       _custformid = q.value("_custformid").toInt();
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -194,7 +194,7 @@ void customerFormAssignment::sSave()
   q.bindValue(":custform_packinglist_report_id", _packingListForm->id());
   q.bindValue(":custform_sopicklist_report_id",	_soPickListForm->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -233,7 +233,7 @@ void customerFormAssignment::populate()
     _packingListForm->setId(q.value("custform_packinglist_report_id").toInt());
     _soPickListForm->setId(q.value("custform_sopicklist_report_id").toInt());
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

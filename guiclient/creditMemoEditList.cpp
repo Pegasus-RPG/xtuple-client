@@ -265,7 +265,7 @@ void creditMemoEditList::sFillList()
          "ORDER BY docnumber, cmitem_linenumber, seq;"
         );
   _cmhead->populate(q, true);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

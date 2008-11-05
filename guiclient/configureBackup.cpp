@@ -105,7 +105,7 @@ void configureBackup::init()
 
 void configureBackup::sSave()
 {
-  _metrics->set("BackupAccountName", _account->text().stripWhiteSpace());
+  _metrics->set("BackupAccountName", _account->text().trimmed());
 
   accept();
 }

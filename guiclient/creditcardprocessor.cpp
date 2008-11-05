@@ -329,7 +329,7 @@ int CreditCardProcessor::authorize(const int pccardid, const int pcvv, const dou
 	cashq.exec("SELECT NEXTVAL('cashrcpt_cashrcpt_id_seq') AS cashrcpt_id;");
 	if (cashq.first())
 	  prefid = cashq.value("cashrcpt_id").toInt();
-	else if (q.lastError().type() != QSqlError::None)
+	else if (q.lastError().type() != QSqlError::NoError)
 	{
 	  _errorMsg = errorMsg(4).arg(cashq.lastError().databaseText());
 	  // TODO: log an event?
@@ -367,7 +367,7 @@ int CreditCardProcessor::authorize(const int pccardid, const int pcvv, const dou
       cashq.bindValue(":bankaccnt_id", _metrics->value("CCDefaultBank").toInt());
       cashq.bindValue(":notes",        "Credit Card Pre-Authorization");
       cashq.exec();
-      if (cashq.lastError().type() != QSqlError::None)
+      if (cashq.lastError().type() != QSqlError::NoError)
       {
 	_errorMsg = errorMsg(4).arg(cashq.lastError().databaseText());
 	// TODO: log an event?
@@ -567,7 +567,7 @@ int CreditCardProcessor::chargePreauthorized(const int pcvv, const double pamoun
     }
 
   }
-  else if (ccq.lastError().type() != QSqlError::None)
+  else if (ccq.lastError().type() != QSqlError::NoError)
   {
     _errorMsg = ccq.lastError().databaseText();
     return -1;
@@ -598,13 +598,13 @@ int CreditCardProcessor::chargePreauthorized(const int pcvv, const double pamoun
       _errorMsg = errorMsg(-35);
       return -35;
     }
-    else if (ccq.lastError().type() != QSqlError::None)
+    else if (ccq.lastError().type() != QSqlError::NoError)
     {
       _errorMsg = ccq.lastError().databaseText();
       return -1;
     }
   }
-  else if (ccq.lastError().type() != QSqlError::None)
+  else if (ccq.lastError().type() != QSqlError::NoError)
   {
     _errorMsg = ccq.lastError().databaseText();
     return -1;
@@ -666,7 +666,7 @@ int CreditCardProcessor::chargePreauthorized(const int pcvv, const double pamoun
     ccq.bindValue(":bankaccnt_id", _metrics->value("CCDefaultBank").toInt());
     ccq.bindValue(":notes",        "Converted Pre-auth");
     ccq.exec();
-    if (ccq.lastError().type() != QSqlError::None)
+    if (ccq.lastError().type() != QSqlError::NoError)
     {
       _errorMsg = errorMsg(4).arg(ccq.lastError().databaseText());
       // TODO: log an event?
@@ -838,7 +838,7 @@ int CreditCardProcessor::credit(const int pccardid, const int pcvv, const double
     ccq.exec("SELECT NEXTVAL('ccpay_ccpay_id_seq') AS ccpay_id;");
     if (ccq.first())
       pccpayid = ccq.value("ccpay_id").toInt();
-    else if (ccq.lastError().type() != QSqlError::None)
+    else if (ccq.lastError().type() != QSqlError::NoError)
     {
       _errorMsg = ccq.lastError().databaseText();
       return -1;
@@ -858,7 +858,7 @@ int CreditCardProcessor::credit(const int pccardid, const int pcvv, const double
     ccq.exec();
     if (ccq.first())
       next_seq = ccq.value("next_seq").toInt();
-    else if (ccq.lastError().type() != QSqlError::None)
+    else if (ccq.lastError().type() != QSqlError::NoError)
     {
       _errorMsg = ccq.lastError().databaseText();
       return -1;
@@ -894,7 +894,7 @@ int CreditCardProcessor::credit(const int pccardid, const int pcvv, const double
     ccq.exec();
     if (ccq.first())
       preforder = ccq.value("ccpay_r_ordernum").toString();
-    else if (ccq.lastError().type() != QSqlError::None)
+    else if (ccq.lastError().type() != QSqlError::NoError)
     {
       _errorMsg = ccq.lastError().databaseText();
       return -1;
@@ -981,7 +981,7 @@ int CreditCardProcessor::voidPrevious(int &pccpayid)
   int ccardid;
   if (ccq.first())
     ccardid = ccq.value("ccpay_ccard_id").toInt();
-  else if (ccq.lastError().type() != QSqlError::None)
+  else if (ccq.lastError().type() != QSqlError::NoError)
   {
     _errorMsg = ccq.lastError().databaseText();
     return -1;
@@ -1398,12 +1398,12 @@ int CreditCardProcessor::updateCCPay(int &pccpayid, ParameterList &pparams)
     ccq.exec("SELECT NEXTVAL('ccpay_ccpay_id_seq') AS ccpay_id;");
     if (ccq.first())
       pccpayid = ccq.value("ccpay_id").toInt();
-    else if (ccq.lastError().type() != QSqlError::None && r_error.isEmpty())
+    else if (ccq.lastError().type() != QSqlError::NoError && r_error.isEmpty())
     {
       _errorMsg = errorMsg(4).arg(ccq.lastError().databaseText());
       return 1;
     }
-    else if (ccq.lastError().type() == QSqlError::None && r_error.isEmpty())
+    else if (ccq.lastError().type() == QSqlError::NoError && r_error.isEmpty())
     {
       _errorMsg = errorMsg(4).arg(errorMsg(2));
       return 2;
@@ -1482,7 +1482,7 @@ int CreditCardProcessor::updateCCPay(int &pccpayid, ParameterList &pparams)
   MetaSQLQuery mql(sql);
   ccq = mql.toQuery(pparams);
 
-  if (ccq.lastError().type() != QSqlError::None)
+  if (ccq.lastError().type() != QSqlError::NoError)
   {
     pccpayid = -1;
     _errorMsg = errorMsg(4).arg(ccq.lastError().databaseText());

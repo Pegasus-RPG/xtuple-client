@@ -117,18 +117,18 @@ enum SetResponse arOpenItem::set( const ParameterList &pParams )
   {
     if (param.toString() == "creditMemo")
     {
-      setCaption(caption() + tr(" - Enter Misc. Credit Memo"));
-      _docType->setCurrentItem(0);
+      setWindowTitle(caption() + tr(" - Enter Misc. Credit Memo"));
+      _docType->setCurrentIndex(0);
     }
     else if (param.toString() == "debitMemo")
     {
-      setCaption(caption() + tr(" - Enter Misc. Debit Memo"));
-      _docType->setCurrentItem(1);
+      setWindowTitle(caption() + tr(" - Enter Misc. Debit Memo"));
+      _docType->setCurrentIndex(1);
     }
     else if (param.toString() == "invoice")
-      _docType->setCurrentItem(2);
+      _docType->setCurrentIndex(2);
     else if (param.toString() == "customerDeposit")
-      _docType->setCurrentItem(3);
+      _docType->setCurrentIndex(3);
     else
       return UndefinedError;
 //  ToDo - better error return types
@@ -146,7 +146,7 @@ enum SetResponse arOpenItem::set( const ParameterList &pParams )
       q.exec("SELECT fetchARMemoNumber() AS number;");
       if (q.first())
         _docNumber->setText(q.value("number").toString());
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return UndefinedError;
@@ -253,7 +253,7 @@ void arOpenItem::sSave()
       }
     }
 
-    if (_docType->currentItem() == 0)
+    if (_docType->currentIndex() == 0)
     {
       q.prepare( "SELECT createARCreditMemo( :cust_id, :aropen_docnumber, :aropen_ordernumber,"
                  "                           :aropen_docdate, :aropen_amount, :aropen_notes, :aropen_rsncode_id,"
@@ -262,7 +262,7 @@ void arOpenItem::sSave()
 		 "                           :curr_id ) AS result;" );
       storedProc = "createARCreditMemo";
     }
-    else if (_docType->currentItem() == 1)
+    else if (_docType->currentIndex() == 1)
     {
       q.prepare( "SELECT createARDebitMemo( :cust_id, :aropen_docnumber, :aropen_ordernumber,"
                  "                          :aropen_docdate, :aropen_amount, :aropen_notes, :aropen_rsncode_id,"
@@ -304,7 +304,7 @@ void arOpenItem::sSave()
   q.bindValue(":aropen_salesrep_id", _salesrep->id());
   q.bindValue(":aropen_amount", _amount->localValue());
   q.bindValue(":aropen_commission_due", _commissionDue->baseValue());
-  q.bindValue(":aropen_notes", _notes->text());
+  q.bindValue(":aropen_notes",          _notes->toPlainText());
   q.bindValue(":aropen_rsncode_id", _rsnCode->id());
   q.bindValue(":curr_id", _amount->id());
   if(_altPrepaid->isChecked() && _altSalescatidSelected->isChecked())
@@ -316,7 +316,7 @@ void arOpenItem::sSave()
   else
     q.bindValue(":aropen_accnt_id", -1);
 
-  switch (_docType->currentItem())
+  switch (_docType->currentIndex())
   {
     case 0:
       q.bindValue(":aropen_doctype", "C");
@@ -342,7 +342,7 @@ void arOpenItem::sSave()
     else
     {
       q.first();
-      if (q.lastError().type() != QSqlError::None)
+      if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return;
@@ -359,7 +359,7 @@ void arOpenItem::sSave()
       reset();
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -373,7 +373,7 @@ void arOpenItem::sClose()
     q.prepare("SELECT releaseARMemoNumber(:docNumber);");
     q.bindValue(":docNumber", _docNumber->text().toInt());
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -405,7 +405,7 @@ void arOpenItem::sPopulateCustInfo(int pCustid)
       _salesrep->setId(c.value("cust_salesrep_id").toInt());
       _amount->setId(c.value("cust_curr_id").toInt());
     }
-    else if (c.lastError().type() != QSqlError::None)
+    else if (c.lastError().type() != QSqlError::NoError)
     {
       systemError(this, c.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -466,13 +466,13 @@ void arOpenItem::populate()
 
     QString docType = q.value("aropen_doctype").toString();
     if (docType == "C")
-      _docType->setCurrentItem(0);
+      _docType->setCurrentIndex(0);
     else if (docType == "D")
-      _docType->setCurrentItem(1);
+      _docType->setCurrentIndex(1);
     else if (docType == "I")
-      _docType->setCurrentItem(2);
+      _docType->setCurrentIndex(2);
     else if (docType == "R")
-      _docType->setCurrentItem(3);
+      _docType->setCurrentIndex(3);
 
     _cAmount = q.value("aropen_amount").toDouble();
 
@@ -548,7 +548,7 @@ void arOpenItem::populate()
     if (q.lastError().type() != QSqlError::NoError)
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

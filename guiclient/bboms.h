@@ -68,7 +68,7 @@ class bboms : public XWidget, public Ui::bboms
     Q_OBJECT
 
 public:
-    bboms(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    bboms(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~bboms();
 
 public slots:

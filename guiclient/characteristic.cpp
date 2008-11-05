@@ -127,7 +127,7 @@ enum SetResponse characteristic::set(const ParameterList &pParams)
 
 void characteristic::sSave()
 {
-  if (_name->text().stripWhiteSpace().isEmpty())
+  if (_name->text().trimmed().isEmpty())
   {
     QMessageBox::critical(this, tr("Missing Name"),
 			  tr("<p>You must name this Characteristic before "
@@ -152,7 +152,7 @@ void characteristic::sSave()
     q.exec("SELECT NEXTVAL('char_char_id_seq') AS char_id;");
     if (q.first())
       _charid = q.value("char_id").toInt();
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -188,19 +188,19 @@ void characteristic::sSave()
 
   q.bindValue(":char_id", _charid);
   q.bindValue(":char_name", _name->text());
-  q.bindValue(":char_items",            QVariant(_items->isChecked(), 0));
-  q.bindValue(":char_customers",	QVariant(_customers->isChecked(), 0));
-  q.bindValue(":char_crmaccounts",	QVariant(_crmaccounts->isChecked(), 0));
-  q.bindValue(":char_contacts",		QVariant(_contacts->isChecked(), 0));
-  q.bindValue(":char_addresses",	QVariant(_addresses->isChecked(), 0));
-  q.bindValue(":char_options",          QVariant(FALSE, 0));
-  q.bindValue(":char_attributes",       QVariant(FALSE, 0));
-  q.bindValue(":char_lotserial",        QVariant(_lotSerial->isChecked(), 0));
-  q.bindValue(":char_opportunity",      QVariant(_opportunity->isChecked(), 0));
-  q.bindValue(":char_employees",        QVariant(_employees->isChecked(), 0));
-  q.bindValue(":char_notes", _description->text().stripWhiteSpace());
+  q.bindValue(":char_items",       QVariant(_items->isChecked()));
+  q.bindValue(":char_customers",   QVariant(_customers->isChecked()));
+  q.bindValue(":char_crmaccounts", QVariant(_crmaccounts->isChecked()));
+  q.bindValue(":char_contacts",	   QVariant(_contacts->isChecked()));
+  q.bindValue(":char_addresses",   QVariant(_addresses->isChecked()));
+  q.bindValue(":char_options",     QVariant(FALSE));
+  q.bindValue(":char_attributes",  QVariant(FALSE));
+  q.bindValue(":char_lotserial",   QVariant(_lotSerial->isChecked()));
+  q.bindValue(":char_opportunity", QVariant(_opportunity->isChecked()));
+  q.bindValue(":char_employees",   QVariant(_employees->isChecked()));
+  q.bindValue(":char_notes",       _description->toPlainText().trimmed());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -211,8 +211,8 @@ void characteristic::sSave()
 
 void characteristic::sCheck()
 {
-  _name->setText(_name->text().stripWhiteSpace());
-  if ((_mode == cNew) && (_name->text().stripWhiteSpace().length()))
+  _name->setText(_name->text().trimmed());
+  if ((_mode == cNew) && (_name->text().trimmed().length()))
   {
     q.prepare( "SELECT char_id "
                "FROM char "
@@ -250,7 +250,7 @@ void characteristic::populate()
     _employees->setChecked(q.value("char_employees").toBool());
     _description->setText(q.value("char_notes").toString());
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

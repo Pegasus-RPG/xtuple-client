@@ -151,13 +151,13 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
         _lotSerial->populate(preassign);
         _preassigned = true;
       }
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
         systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
         return UndefinedError;
       }
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
@@ -173,7 +173,7 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
 
 void createLotSerial::sHandleLotSerial()
 {
-  _lotSerial->setCurrentText(_lotSerial->currentText().upper());
+  _lotSerial->setCurrentText(_lotSerial->currentText().toUpper());
 }
 
 void createLotSerial::sAssign()
@@ -290,7 +290,7 @@ void createLotSerial::sAssign()
 	return;
       }
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -311,13 +311,13 @@ void createLotSerial::sAssign()
       if (!_serial)
         if (QMessageBox::question(this, tr("Use Existing?"),
                                     tr("<p>A record with for lot number %1 for this item already exists.  "
-                                    "Reference existing lot?").arg(q.value("ls_number").toString().upper()),
+                                    "Reference existing lot?").arg(q.value("ls_number").toString().toUpper()),
                                        QMessageBox::Yes | QMessageBox::Default,
                                        QMessageBox::No  | QMessageBox::Escape) == QMessageBox::No)
           return;
       lsid=q.value("ls_id").toInt();
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -338,7 +338,7 @@ void createLotSerial::sAssign()
 
   q.prepare(sql);
   q.bindValue(":itemsite_id", _itemsiteid);
-  q.bindValue(":lotserial", _lotSerial->currentText().upper());
+  q.bindValue(":lotserial", _lotSerial->currentText().toUpper());
   q.bindValue(":itemlocseries", _itemlocSeries);
   q.bindValue(":lsdetail_id", _lotSerial->id());
   q.bindValue(":qty", _qtyToAssign->toDouble());
@@ -350,7 +350,7 @@ void createLotSerial::sAssign()
     q.bindValue(":warranty", _warranty->date());
   q.bindValue(":itemlocdist_id", _itemlocdistid);
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

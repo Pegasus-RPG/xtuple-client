@@ -159,7 +159,7 @@ enum SetResponse adjustmentTrans::set(const ParameterList &pParams)
     {
       _mode = cNew;
 
-      setCaption(tr("Enter Miscellaneous Adjustment"));
+      setWindowTitle(tr("Enter Miscellaneous Adjustment"));
       _usernameLit->clear();
       _transDate->setEnabled(_privileges->check("AlterTransactionDates"));
       _transDate->setDate(omfgThis->dbDate());
@@ -175,7 +175,7 @@ enum SetResponse adjustmentTrans::set(const ParameterList &pParams)
     {
       _mode = cView;
 
-      setCaption(tr("Miscellaneous Adjustment"));
+      setWindowTitle(tr("Miscellaneous Adjustment"));
       _transDate->setEnabled(FALSE);
       _item->setReadOnly(TRUE);
       _warehouse->setEnabled(FALSE);
@@ -203,7 +203,7 @@ enum SetResponse adjustmentTrans::set(const ParameterList &pParams)
         _notes->setText(q.value("invhist_comments").toString());
         _item->setItemsiteid(q.value("invhist_itemsite_id").toInt());
       }
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return UndefinedError;
@@ -267,7 +267,7 @@ void adjustmentTrans::sPost()
              " AND (itemsite_warehous_id=:warehous_id) );" );
   q.bindValue(":qty", qty);
   q.bindValue(":docNumber", _documentNum->text());
-  q.bindValue(":comments", _notes->text());
+  q.bindValue(":comments",    _notes->toPlainText());
   q.bindValue(":item_id", _item->id());
   q.bindValue(":warehous_id", _warehouse->id());
   q.bindValue(":date",        _transDate->date());
@@ -285,7 +285,7 @@ void adjustmentTrans::sPost()
       systemError(this, storedProcErrorLookup("invAdjustment", result),
                   __FILE__, __LINE__);
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -316,7 +316,7 @@ void adjustmentTrans::sPost()
       _item->setFocus();
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -358,7 +358,7 @@ void adjustmentTrans::sPopulateQOH(int pWarehousid)
       else
         _absolute->setPaletteForegroundColor(QColor("black"));
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       _absolute->setPaletteForegroundColor(QColor("black"));
@@ -376,7 +376,7 @@ void adjustmentTrans::sPopulateQty()
   if (_mode == cNew)
   {
     
-    if (_qty->text().stripWhiteSpace().length())
+    if (_qty->text().trimmed().length())
     {
       if (_absolute->isChecked())
         _afterQty->setDouble(_qty->toDouble());

@@ -91,39 +91,39 @@ configureSO::configureSO(QWidget* parent, const char* name, bool modal, Qt::WFla
 
   QString metric = _metrics->value("CONumberGeneration");
   if (metric == "M")
-    _orderNumGeneration->setCurrentItem(0);
+    _orderNumGeneration->setCurrentIndex(0);
   else if (metric == "A")
-    _orderNumGeneration->setCurrentItem(1);
+    _orderNumGeneration->setCurrentIndex(1);
   else if (metric == "O")
-    _orderNumGeneration->setCurrentItem(2);
+    _orderNumGeneration->setCurrentIndex(2);
 
   metric = _metrics->value("QUNumberGeneration");
   if (metric == "M")
-    _quoteNumGeneration->setCurrentItem(0);
+    _quoteNumGeneration->setCurrentIndex(0);
   else if (metric == "A")
-    _quoteNumGeneration->setCurrentItem(1);
+    _quoteNumGeneration->setCurrentIndex(1);
   else if (metric == "O")
-    _quoteNumGeneration->setCurrentItem(2);
+    _quoteNumGeneration->setCurrentIndex(2);
   else if (metric == "S")
-    _quoteNumGeneration->setCurrentItem(3);
+    _quoteNumGeneration->setCurrentIndex(3);
 
   metric = _metrics->value("CMNumberGeneration");
   if (metric == "M")
-    _creditMemoNumGeneration->setCurrentItem(0);
+    _creditMemoNumGeneration->setCurrentIndex(0);
   else if (metric == "A")
-    _creditMemoNumGeneration->setCurrentItem(1);
+    _creditMemoNumGeneration->setCurrentIndex(1);
   else if (metric == "O")
-    _creditMemoNumGeneration->setCurrentItem(2);
+    _creditMemoNumGeneration->setCurrentIndex(2);
   else if (metric == "S")
-    _creditMemoNumGeneration->setCurrentItem(3);
+    _creditMemoNumGeneration->setCurrentIndex(3);
 
   metric = _metrics->value("InvcNumberGeneration");
   if (metric == "M")
-    _invoiceNumGeneration->setCurrentItem(0);
+    _invoiceNumGeneration->setCurrentIndex(0);
   else if (metric == "A")
-    _invoiceNumGeneration->setCurrentItem(1);
+    _invoiceNumGeneration->setCurrentIndex(1);
   else if (metric == "O")
-    _invoiceNumGeneration->setCurrentItem(2);
+    _invoiceNumGeneration->setCurrentIndex(2);
 
   metric = _metrics->value("InvoiceDateSource");
   if (metric == "scheddate")
@@ -152,7 +152,7 @@ configureSO::configureSO(QWidget* parent, const char* name, bool modal, Qt::WFla
     _nextCmNumber->setText(q.value("cmnumber"));
     _nextInNumber->setText(q.value("innumber"));
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -198,9 +198,9 @@ configureSO::configureSO(QWidget* parent, const char* name, bool modal, Qt::WFla
   _shipvia->setId(_metrics->value("DefaultShipViaId").toInt());
 
   if (_metrics->value("DefaultBalanceMethod") == "B")
-    _balanceMethod->setCurrentItem(0);
+    _balanceMethod->setCurrentIndex(0);
   else if (_metrics->value("DefaultBalanceMethod") == "O")
-    _balanceMethod->setCurrentItem(1);
+    _balanceMethod->setCurrentIndex(1);
 
   _custtype->setId(_metrics->value("DefaultCustType").toInt());
   _salesrep->setId(_metrics->value("DefaultSalesRep").toInt());
@@ -220,7 +220,7 @@ configureSO::configureSO(QWidget* parent, const char* name, bool modal, Qt::WFla
   else if(_metrics->value("UpdatePriceLineEdit").toInt() == 3)
     _updatePrice->setChecked(true);
     
-  this->setCaption("Sales Configuration");
+  this->setWindowTitle("Sales Configuration");
 
   //Set status of Returns Authorization based on context
   if ( (_metrics->value("Application") != "OpenMFG")
@@ -260,36 +260,36 @@ configureSO::configureSO(QWidget* parent, const char* name, bool modal, Qt::WFla
 
     metric = _metrics->value("RANumberGeneration");
     if (metric == "M")
-      _returnAuthorizationNumGeneration->setCurrentItem(0);
+      _returnAuthorizationNumGeneration->setCurrentIndex(0);
     else if (metric == "A")
-      _returnAuthorizationNumGeneration->setCurrentItem(1);
+      _returnAuthorizationNumGeneration->setCurrentIndex(1);
     else if (metric == "O")
-      _returnAuthorizationNumGeneration->setCurrentItem(2);
+      _returnAuthorizationNumGeneration->setCurrentIndex(2);
 
     metric = _metrics->value("DefaultRaDisposition");
     if (metric == "C")
-      _disposition->setCurrentItem(0);
+      _disposition->setCurrentIndex(0);
     else if (metric == "R")
-      _disposition->setCurrentItem(1);
+      _disposition->setCurrentIndex(1);
     else if (metric == "P")
-      _disposition->setCurrentItem(2);
+      _disposition->setCurrentIndex(2);
     else if (metric == "V")
-      _disposition->setCurrentItem(3);
+      _disposition->setCurrentIndex(3);
     else if (metric == "M")
-      _disposition->setCurrentItem(4);
+      _disposition->setCurrentIndex(4);
 
     if (_metrics->value("DefaultRaTiming") == "R")
-      _timing->setCurrentItem(1);
+      _timing->setCurrentIndex(1);
 
     metric = _metrics->value("DefaultRaCreditMethod");
     if (metric == "N")
-      _creditBy->setCurrentItem(0);
+      _creditBy->setCurrentIndex(0);
     else if (metric == "M")
-      _creditBy->setCurrentItem(1);
+      _creditBy->setCurrentIndex(1);
     else if (metric == "K")
-      _creditBy->setCurrentItem(2);
+      _creditBy->setCurrentIndex(2);
     else if (metric == "C")
-      _creditBy->setCurrentItem(3);
+      _creditBy->setCurrentIndex(3);
 
     _returnAuthChangeLog->setChecked(_metrics->boolean("ReturnAuthorizationChangeLog"));
     _printRA->setChecked(_metrics->boolean("DefaultPrintRAOnSave"));
@@ -351,10 +351,10 @@ void configureSO::sSave()
   _metrics->set("AutoAllocateCreditMemos", _autoAllocateCM->isChecked());
   _metrics->set("HideSOMiscCharge", _hideSOMiscChrg->isChecked());
   _metrics->set("EnableSOShipping", _enableSOShipping->isChecked());
-  _metrics->set("CONumberGeneration", QString(numberGenerationTypes[_orderNumGeneration->currentItem()]));
-  _metrics->set("QUNumberGeneration", QString(numberGenerationTypes[_quoteNumGeneration->currentItem()]));
-  _metrics->set("CMNumberGeneration", QString(numberGenerationTypes[_creditMemoNumGeneration->currentItem()]));
-  _metrics->set("InvcNumberGeneration", QString(numberGenerationTypes[_invoiceNumGeneration->currentItem()]));
+  _metrics->set("CONumberGeneration", QString(numberGenerationTypes[_orderNumGeneration->currentIndex()]));
+  _metrics->set("QUNumberGeneration", QString(numberGenerationTypes[_quoteNumGeneration->currentIndex()]));
+  _metrics->set("CMNumberGeneration", QString(numberGenerationTypes[_creditMemoNumGeneration->currentIndex()]));
+  _metrics->set("InvcNumberGeneration", QString(numberGenerationTypes[_invoiceNumGeneration->currentIndex()]));
   _metrics->set("DefaultShipFormId", _shipform->id());
   _metrics->set("DefaultShipViaId", _shipvia->id());
   _metrics->set("DefaultCustType", _custtype->id());
@@ -422,7 +422,7 @@ void configureSO::sSave()
     }
   }
 
-  switch (_balanceMethod->currentItem())
+  switch (_balanceMethod->currentIndex())
   {
     case 0:
       _metrics->set("DefaultBalanceMethod", QString("B"));
@@ -440,7 +440,7 @@ void configureSO::sSave()
   q.bindValue(":cmnumber", _nextCmNumber->text().toInt());
   q.bindValue(":innumber", _nextInNumber->text().toInt());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -448,20 +448,20 @@ void configureSO::sSave()
 
   if (_enableReturns->isChecked() || !_enableReturns->isCheckable())
   {
-    _metrics->set("DefaultRaDisposition", QString(dispositionTypes[_disposition->currentItem()]));
-    if (_timing->currentItem() == 0)
+    _metrics->set("DefaultRaDisposition", QString(dispositionTypes[_disposition->currentIndex()]));
+    if (_timing->currentIndex() == 0)
 	  _metrics->set("DefaultRaTiming", QString("I"));
 	else
 	  _metrics->set("DefaultRaTiming", QString("R"));
-    _metrics->set("DefaultRaCreditMethod", QString(creditMethodTypes[_creditBy->currentItem()]));
+    _metrics->set("DefaultRaCreditMethod", QString(creditMethodTypes[_creditBy->currentIndex()]));
     _metrics->set("ReturnAuthorizationChangeLog", _returnAuthChangeLog->isChecked());
     _metrics->set("DefaultPrintRAOnSave", _printRA->isChecked());
-    _metrics->set("RANumberGeneration", QString(numberGenerationTypes[_returnAuthorizationNumGeneration->currentItem()]));
+    _metrics->set("RANumberGeneration", QString(numberGenerationTypes[_returnAuthorizationNumGeneration->currentIndex()]));
 
     q.prepare( "SELECT setNextRaNumber(:ranumber);" );
 	q.bindValue(":ranumber", _nextRaNumber->text().toInt());
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;

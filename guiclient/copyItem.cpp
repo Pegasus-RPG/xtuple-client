@@ -146,7 +146,7 @@ void copyItem::sHandleItemType(const QString &pItemType)
 
 void copyItem::sCopy()
 {
-  _targetItemNumber->setText(_targetItemNumber->text().stripWhiteSpace().upper());
+  _targetItemNumber->setText(_targetItemNumber->text().trimmed().toUpper());
 
   if (_targetItemNumber->text().length() == 0)
   {
@@ -180,10 +180,10 @@ void copyItem::sCopy()
   q.prepare("SELECT copyItem(:source_item_id, :newItemNumber, :copyBOM, :copyBOO, :copyItemCosts, :copyUsedAt) AS itemid;");
   q.bindValue(":source_item_id", _source->id());
   q.bindValue(":newItemNumber", _targetItemNumber->text());
-  q.bindValue(":copyBOM", QVariant(_copyBOM->isChecked(), 0));
-  q.bindValue(":copyBOO", QVariant(_copyBOO->isChecked(), 0));
-  q.bindValue(":copyItemCosts", QVariant(_copyCosts->isChecked(), 0));
-  q.bindValue(":copyUsedAt", QVariant(_copyUsedAt->isChecked(), 0));
+  q.bindValue(":copyBOM",       QVariant(_copyBOM->isChecked()));
+  q.bindValue(":copyBOO",       QVariant(_copyBOO->isChecked()));
+  q.bindValue(":copyItemCosts", QVariant(_copyCosts->isChecked()));
+  q.bindValue(":copyUsedAt",    QVariant(_copyUsedAt->isChecked()));
   q.exec();
   if (q.first())
   {

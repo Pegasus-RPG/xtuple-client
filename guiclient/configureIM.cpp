@@ -92,11 +92,11 @@ configureIM::configureIM(QWidget* parent, const char* name, bool modal, Qt::WFla
       _multiWhs->setChecked(_metrics->boolean("MultiWhs"));
       
     if (_metrics->value("TONumberGeneration") == "M")
-      _toNumGeneration->setCurrentItem(0); 
+      _toNumGeneration->setCurrentIndex(0); 
     else if (_metrics->value("TONumberGeneration") == "A")
-      _toNumGeneration->setCurrentItem(1);
+      _toNumGeneration->setCurrentIndex(1);
     else if (_metrics->value("TONumberGeneration") == "O")
-      _toNumGeneration->setCurrentItem(2);
+      _toNumGeneration->setCurrentIndex(2);
 
     _toNextNum->setValidator(omfgThis->orderVal());
     q.exec( "SELECT orderseq_number AS tonumber "
@@ -104,7 +104,7 @@ configureIM::configureIM(QWidget* parent, const char* name, bool modal, Qt::WFla
 	    "WHERE (orderseq_name='ToNumber');" );
     if (q.first())
       _toNextNum->setText(q.value("tonumber").toString());
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 
     _enableToShipping->setChecked(_metrics->boolean("EnableTOShipping"));
@@ -155,14 +155,14 @@ configureIM::configureIM(QWidget* parent, const char* name, bool modal, Qt::WFla
 // Shipping and Receiving
   QString metric = _metrics->value("ShipmentNumberGeneration");
   if (metric == "A")
-    _shipmentNumGeneration->setCurrentItem(0);
+    _shipmentNumGeneration->setCurrentIndex(0);
 
   _nextShipmentNum->setValidator(omfgThis->orderVal());
   q.exec("SELECT setval('shipment_number_seq', nextval('shipment_number_seq') -1); "
          "SELECT currval('shipment_number_seq') AS shipment_number;");
   if (q.first())
     _nextShipmentNum->setText(q.value("shipment_number"));
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 
   _shipformWatermarks->addColumn( tr("Copy #"),      _dateColumn, Qt::AlignCenter );
@@ -216,7 +216,7 @@ configureIM::configureIM(QWidget* parent, const char* name, bool modal, Qt::WFla
   _costJob->setChecked(true);
   _costJob->setEnabled(false);
     
-  this->setCaption("Inventory Configuration");
+  this->setWindowTitle("Inventory Configuration");
 
   resize(minimumSize());
 
@@ -252,11 +252,11 @@ void configureIM::sSave()
   _metrics->set("AllowStdCostMethod", _costStd->isChecked());
   _metrics->set("AllowJobCostMethod", _costJob->isChecked());
   
-  if (_toNumGeneration->currentItem() == 0)
+  if (_toNumGeneration->currentIndex() == 0)
     _metrics->set("TONumberGeneration", QString("M"));
-  else if (_toNumGeneration->currentItem() == 1)
+  else if (_toNumGeneration->currentIndex() == 1)
     _metrics->set("TONumberGeneration", QString("A"));
-  else if (_toNumGeneration->currentItem() == 2)
+  else if (_toNumGeneration->currentIndex() == 2)
     _metrics->set("TONumberGeneration", QString("O"));
 
   if (_metrics->boolean("MultiWhs"))
@@ -273,7 +273,7 @@ void configureIM::sSave()
         return;
       }
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -298,7 +298,7 @@ void configureIM::sSave()
   //Shipping and Receiving
   const char *numberGenerationTypes[] = { "A" };
 
-  _metrics->set("ShipmentNumberGeneration", QString(numberGenerationTypes[_shipmentNumGeneration->currentItem()]));
+  _metrics->set("ShipmentNumberGeneration", QString(numberGenerationTypes[_shipmentNumGeneration->currentIndex()]));
 
   _metrics->set("ShippingFormCopies", _shipformNumOfCopies->value());
 
@@ -319,7 +319,7 @@ void configureIM::sSave()
   q.prepare("SELECT setval('shipment_number_seq', :shipmentnumber);");
   q.bindValue(":shipmentnumber", _nextShipmentNum->text().toInt());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

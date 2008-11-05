@@ -181,7 +181,7 @@ void closeWo::sCloseWo()
 		}
 		while (q.next());
 	  }
-	  else if (q.lastError().type() != QSqlError::None)
+	  else if (q.lastError().type() != QSqlError::NoError)
 	  {
 		systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 		return;
@@ -236,41 +236,41 @@ void closeWo::sCloseWo()
 	  if (QMessageBox::information( this, tr("Close Work Order"),
 									tr("<p>Are you sure you want to close this Work Order?"),
 									tr("Close &Work Order"), tr("&Cancel"), 0, 0, 1 ) == 0)
-	  {
-		q.prepare("SELECT closeWo(:wo_id, :postMatVar, :postLaborVar);");
-		q.bindValue(":wo_id", _wo->id());
-		q.bindValue(":postMatVar", QVariant(_postMaterialVariance->isChecked(), 0));
-		q.bindValue(":postLaborVar", QVariant(_postLaborVariance->isChecked(), 0));
-		q.exec();
-		if (q.lastError().type() != QSqlError::None)
-		{
-		  systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-		  return;
-		}
+          {
+            q.prepare("SELECT closeWo(:wo_id, :postMatVar, :postLaborVar);");
+            q.bindValue(":wo_id", _wo->id());
+            q.bindValue(":postMatVar",   QVariant(_postMaterialVariance->isChecked()));
+            q.bindValue(":postLaborVar", QVariant(_postLaborVariance->isChecked()));
+            q.exec();
+            if (q.lastError().type() != QSqlError::NoError)
+            {
+              systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+              return;
+            }
 
-		if (_postComment->isChecked())
-		{
-		  q.prepare("SELECT postComment(:cmnttype_id, 'W', :wo_id, :comment) AS _result");
-		  q.bindValue(":cmnttype_id", _cmnttype->id());
-		  q.bindValue(":wo_id", _wo->id());
-		  q.bindValue(":comment", _comment->text());
-		  q.exec();
-		  if (q.lastError().type() != QSqlError::None)
-		  {
-			systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-			return;
-		  }
-		}
+            if (_postComment->isChecked())
+            {
+              q.prepare("SELECT postComment(:cmnttype_id, 'W', :wo_id, :comment) AS _result");
+              q.bindValue(":cmnttype_id", _cmnttype->id());
+              q.bindValue(":wo_id", _wo->id());
+              q.bindValue(":comment", _comment->toPlainText());
+              q.exec();
+              if (q.lastError().type() != QSqlError::NoError)
+              {
+                systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+                return;
+              }
+            }
 
-		omfgThis->sWorkOrdersUpdated(_wo->id(), TRUE);
+            omfgThis->sWorkOrdersUpdated(_wo->id(), TRUE);
 
-		if (_captive)
-		  close();
-		else
-		{
-          clear();
-		}
-	  }
+            if (_captive)
+              close();
+            else
+            {
+              clear();
+            }
+          }
 	}
   }
   else

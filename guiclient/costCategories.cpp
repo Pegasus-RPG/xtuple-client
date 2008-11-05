@@ -185,7 +185,7 @@ void costCategories::sDelete()
                                    "deleted as it still contains Items. You "
                                    "must reassign these Items before deleting "
                                    "this Cost Category.") );
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;

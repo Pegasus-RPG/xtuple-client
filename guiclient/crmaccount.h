@@ -68,7 +68,7 @@ class crmaccount : public XWidget, public Ui::crmaccount
     Q_OBJECT
 
 public:
-    crmaccount(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    crmaccount(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~crmaccount();
     static void doDialog(QWidget *, const ParameterList &);
     int	getIncidentId();

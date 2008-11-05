@@ -153,7 +153,7 @@ enum SetResponse creditMemoItem::set(const ParameterList &pParams)
       _taxauthid = q.value("cmhead_taxauth_id").toInt();
       _tax->setId(q.value("taxcurr").toInt());
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
@@ -219,7 +219,7 @@ enum SetResponse creditMemoItem::set(const ParameterList &pParams)
       q.exec();
       if (q.first())
         _lineNumber->setText(q.value("n_linenumber").toString());
-      else if (q.lastError().type() == QSqlError::None)
+      else if (q.lastError().type() == QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return UndefinedError;
@@ -309,7 +309,7 @@ void creditMemoItem::sSave()
     q.exec("SELECT NEXTVAL('cmitem_cmitem_id_seq') AS _cmitem_id");
     if (q.first())
       _cmitemid  = q.value("_cmitem_id").toInt();
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -376,12 +376,12 @@ void creditMemoItem::sSave()
   q.bindValue(":cmitem_tax_ratea",	_taxCache.line(0));
   q.bindValue(":cmitem_tax_rateb",	_taxCache.line(1));
   q.bindValue(":cmitem_tax_ratec",	_taxCache.line(2));
-  q.bindValue(":cmitem_comments", _comments->text());
+  q.bindValue(":cmitem_comments", _comments->toPlainText());
   q.bindValue(":cmitem_rsncode_id", _rsnCode->id());
   q.bindValue(":item_id", _item->id());
   q.bindValue(":warehous_id", _warehouse->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -441,7 +441,7 @@ void creditMemoItem::sPopulateItemInfo()
     _unitCost->setBaseValue(item.value("f_cost").toDouble());
     _taxType->setId(item.value("taxtype_id").toInt());
   }
-  else if (item.lastError().type() != QSqlError::None)
+  else if (item.lastError().type() != QSqlError::NoError)
   {
     systemError(this, item.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -480,7 +480,7 @@ void creditMemoItem::sPopulateItemInfo()
       _qtyShippedCache = cmitem.value("f_billed").toDouble();
       _qtyShipped->setDouble(cmitem.value("f_billed").toDouble() / _qtyinvuomratio);
     }
-    else if (cmitem.lastError().type() != QSqlError::None)
+    else if (cmitem.lastError().type() != QSqlError::NoError)
     {
       systemError(this, cmitem.lastError().databaseText(), __FILE__, __LINE__);
       _salePrice->clear();
@@ -525,7 +525,7 @@ void creditMemoItem::populate()
 
     sCalculateDiscountPrcnt();
   }
-  else if (cmitem.lastError().type() != QSqlError::None)
+  else if (cmitem.lastError().type() != QSqlError::NoError)
   {
     systemError(this, cmitem.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -697,7 +697,7 @@ void creditMemoItem::sLookupTax()
 		      calcq.value("valC").toDouble());
     _tax->setLocalValue(_taxCache.total());
   }
-  else if (calcq.lastError().type() != QSqlError::None)
+  else if (calcq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, calcq.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -750,7 +750,7 @@ void creditMemoItem::sLookupTaxCode()
 		         taxq.value("tax_ratec").toDouble());
     _taxCode->setId(taxq.value("tax_id").toInt());
   }
-  else if (taxq.lastError().type() != QSqlError::None)
+  else if (taxq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
     return;

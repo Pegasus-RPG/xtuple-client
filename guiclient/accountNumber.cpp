@@ -180,7 +180,7 @@ void accountNumber::sSave()
 	      " );" );
 
   ParameterList params;
-  params.append("accnt_number", _number->text().stripWhiteSpace());
+  params.append("accnt_number", _number->text().trimmed());
 
   if (_metrics->value("GLCompanySize").toInt())
     params.append("accnt_company", _company->currentText());
@@ -203,7 +203,7 @@ void accountNumber::sSave()
 			     "with the same number already exists.") );
     return;
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -211,7 +211,7 @@ void accountNumber::sSave()
 
   if (_mode == cNew)
   {
-    if(_number->text().stripWhiteSpace().isEmpty())
+    if(_number->text().trimmed().isEmpty())
     {
       QMessageBox::warning(this, tr("No Account Number"),
 			   tr("<p>You must specify an account number before "
@@ -222,7 +222,7 @@ void accountNumber::sSave()
     q.exec("SELECT NEXTVAL('accnt_accnt_id_seq') AS _accnt_id;");
     if (q.first())
       _accntid = q.value("_accnt_id").toInt();
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -260,25 +260,25 @@ void accountNumber::sSave()
   q.bindValue(":accnt_sub", _sub->currentText());
   q.bindValue(":accnt_descrip", _description->text());
   q.bindValue(":accnt_extref", _extReference->text());
-  q.bindValue(":accnt_closedpost", QVariant(_postIntoClosed->isChecked(), 0));
-  q.bindValue(":accnt_forwardupdate", QVariant(_forwardUpdate->isChecked(), 0));
-  q.bindValue(":accnt_comments", _comments->text());
+  q.bindValue(":accnt_closedpost",    QVariant(_postIntoClosed->isChecked()));
+  q.bindValue(":accnt_forwardupdate", QVariant(_forwardUpdate->isChecked()));
+  q.bindValue(":accnt_comments", _comments->toPlainText());
   q.bindValue(":accnt_curr_id", _currency->id());
   q.bindValue(":accnt_subaccnttype_id", _subType->id());
 
-  if (_type->currentItem() == 0)
+  if (_type->currentIndex() == 0)
     q.bindValue(":accnt_type", "A");
-  else if (_type->currentItem() == 1)
+  else if (_type->currentIndex() == 1)
     q.bindValue(":accnt_type", "L");
-  else if (_type->currentItem() == 2)
+  else if (_type->currentIndex() == 2)
     q.bindValue(":accnt_type", "E");
-  else if (_type->currentItem() == 3)
+  else if (_type->currentIndex() == 3)
     q.bindValue(":accnt_type", "R");
-  else if (_type->currentItem() == 4)
+  else if (_type->currentIndex() == 4)
     q.bindValue(":accnt_type", "Q");
 
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -317,20 +317,20 @@ void accountNumber::populate()
     _currency->setId(q.value("accnt_curr_id").toInt());
 
     if (q.value("accnt_type").toString() == "A")
-      _type->setCurrentItem(0);
+      _type->setCurrentIndex(0);
     else if (q.value("accnt_type").toString() == "L")
-      _type->setCurrentItem(1);
+      _type->setCurrentIndex(1);
     else if (q.value("accnt_type").toString() == "E")
-      _type->setCurrentItem(2);
+      _type->setCurrentIndex(2);
     else if (q.value("accnt_type").toString() == "R")
-      _type->setCurrentItem(3);
+      _type->setCurrentIndex(3);
     else if (q.value("accnt_type").toString() == "Q")
-      _type->setCurrentItem(4);
+      _type->setCurrentIndex(4);
 
     populateSubTypes();
     _subType->setId(q.value("subaccnttype_id").toInt());
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -344,19 +344,19 @@ void accountNumber::populateSubTypes()
               "FROM subaccnttype "
               "WHERE (subaccnttype_accnt_type=:subaccnttype_accnt_type) "
               "ORDER BY subaccnttype_code; ");
-  if (_type->currentItem() == 0)
+  if (_type->currentIndex() == 0)
     sub.bindValue(":subaccnttype_accnt_type", "A");
-  else if (_type->currentItem() == 1)
+  else if (_type->currentIndex() == 1)
     sub.bindValue(":subaccnttype_accnt_type", "L");
-  else if (_type->currentItem() == 2)
+  else if (_type->currentIndex() == 2)
     sub.bindValue(":subaccnttype_accnt_type", "E");
-  else if (_type->currentItem() == 3)
+  else if (_type->currentIndex() == 3)
     sub.bindValue(":subaccnttype_accnt_type", "R");
-  else if (_type->currentItem() == 4)
+  else if (_type->currentIndex() == 4)
     sub.bindValue(":subaccnttype_accnt_type", "Q");
   sub.exec();
   _subType->populate(sub);
-  if (sub.lastError().type() != QSqlError::None)
+  if (sub.lastError().type() != QSqlError::NoError)
   {
     systemError(this, sub.lastError().databaseText(), __FILE__, __LINE__);
     return;

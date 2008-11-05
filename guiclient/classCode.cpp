@@ -188,7 +188,7 @@ void classCode::sSave()
 
 void classCode::sCheck()
 {
-  _classCode->setText(_classCode->text().stripWhiteSpace());
+  _classCode->setText(_classCode->text().trimmed());
   if ( (_mode == cNew) && (_classCode->text().length()) )
   {
     q.prepare( "SELECT classcode_id "

@@ -99,7 +99,7 @@ bool currency::isBaseSet()
     {
 	numSet = q.value("numSet").toInt();
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     }
@@ -212,7 +212,7 @@ void currency::sSave()
   q.bindValue(":curr_name", _currName->text());
   q.bindValue(":curr_symbol", _currSymbol->text());
   q.bindValue(":curr_abbr", _currAbbr->text());
-  q.bindValue(":curr_base", QVariant(_currBase->isChecked(), 0));
+  q.bindValue(":curr_base", QVariant(_currBase->isChecked()));
   q.exec();
 
   if (q.lastError().type() != QSqlError::NoError)

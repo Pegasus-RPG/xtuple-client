@@ -124,7 +124,7 @@ void bboms::sFillList(int pItemid, bool pLocal)
     _bbom->populate(q, pItemid);
   else
     _bbom->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -143,7 +143,7 @@ void bboms::sDelete()
                "WHERE (bbomitem_parent_item_id=:item_id);" );
     q.bindValue(":item_id", _bbom->id());
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;

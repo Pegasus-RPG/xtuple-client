@@ -299,7 +299,7 @@ void bbom::sFillList(int pItemid, bool)
     q.bindValue(":item_id",   _item->id());
     q.exec();
     _bbomitem->populate(q);
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -319,7 +319,7 @@ void bbom::sFillList(int pItemid, bool)
       else
         _costsAbsorbed->setPaletteForegroundColor(namedColor("error"));
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;

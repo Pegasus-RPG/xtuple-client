@@ -68,7 +68,7 @@ class crmaccounts : public XWidget, public Ui::crmaccounts
     Q_OBJECT
 
 public:
-    crmaccounts(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    crmaccounts(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~crmaccounts();
     virtual bool setParams(ParameterList &);
 

@@ -68,7 +68,7 @@ class characteristics : public XWidget, public Ui::characteristics
     Q_OBJECT
 
 public:
-    characteristics(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    characteristics(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~characteristics();
 
 public slots:

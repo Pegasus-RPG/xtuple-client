@@ -144,7 +144,7 @@ void createPlannedOrdersByPlannerCode::sCreate()
   _warehouse->bindValue(q);
   _plannerCode->bindValue(q);
   q.bindValue(":cutOffDate", _cutOffDate->date());
-  q.bindValue(":deleteFirmed", QVariant(_deleteFirmed->isChecked(), 0));
+  q.bindValue(":deleteFirmed", QVariant(_deleteFirmed->isChecked()));
   q.exec();
 
   accept();

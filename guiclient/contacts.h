@@ -69,7 +69,7 @@ class contacts : public XWidget, public Ui::contacts
     Q_OBJECT
 
 public:
-    contacts(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    contacts(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~contacts();
 
     virtual void setParams(ParameterList &);

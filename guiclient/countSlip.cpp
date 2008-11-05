@@ -217,7 +217,7 @@ void countSlip::sCatchCounttagid(int pCnttagid)
 
 void countSlip::sSave()
 {
-  QString slipNumber = _number->text().stripWhiteSpace().upper();
+  QString slipNumber = _number->text().trimmed().toUpper();
   if (slipNumber.length() == 0)
   {
     QMessageBox::critical( this, tr("Enter Count Slip #"),
@@ -226,7 +226,7 @@ void countSlip::sSave()
     return;
   }
 
-  if (_qty->text().stripWhiteSpace().length() == 0)
+  if (_qty->text().trimmed().length() == 0)
   {
     QMessageBox::critical( this, tr("Enter Count Slip Quantity"),
                            tr("You must enter a counted quantity for this Count Slip.") );
@@ -361,7 +361,7 @@ void countSlip::sSave()
   q.bindValue(":cntslip_qty", _qty->toDouble());
   q.bindValue(":cntslip_location_id", _location->id());
   q.bindValue(":cntslip_lotserial", _lotSerial->text());
-  q.bindValue(":cntslip_comments", _comments->text());
+  q.bindValue(":cntslip_comments", _comments->toPlainText());
   if(_expiration->isEnabled())
     q.bindValue(":cntslip_lotserial_expiration", _expiration->date());
   else

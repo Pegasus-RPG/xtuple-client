@@ -139,7 +139,7 @@ void billingEditList::sCancelBillingOrd()
         return;
       }
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -237,7 +237,7 @@ void billingEditList::sFillList()
          ") AS sub "
          "ORDER BY sortord, linenumber, seq;");
   _cobill->populate(q, true);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

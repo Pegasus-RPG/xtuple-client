@@ -147,9 +147,9 @@ void createCountTagsByItem::sCreate()
              "FROM itemsite "
              "WHERE ( (itemsite_item_id=:item_id)"
              " AND (itemsite_warehous_id=:warehous_id) );" );
-  q.bindValue(":comments", _comments->text());
-  q.bindValue(":priority", QVariant(_priority->isChecked(), 0));
-  q.bindValue(":freeze", QVariant(_freeze->isChecked(), 0));
+  q.bindValue(":comments", _comments->toPlainText());
+  q.bindValue(":priority", QVariant(_priority->isChecked()));
+  q.bindValue(":freeze",   QVariant(_freeze->isChecked()));
   q.bindValue(":item_id", _item->id());
   q.bindValue(":warehous_id", _warehouse->id());
   if(_byLocation->isChecked())

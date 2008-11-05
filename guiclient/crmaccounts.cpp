@@ -159,7 +159,7 @@ void crmaccounts::sDelete()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -196,7 +196,7 @@ void crmaccounts::sFillList()
   MetaSQLQuery mql(sql);
   q = mql.toQuery(params);
   _crmaccount->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

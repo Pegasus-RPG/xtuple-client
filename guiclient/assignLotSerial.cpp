@@ -120,7 +120,7 @@ enum SetResponse assignLotSerial::set(const ParameterList &pParams)
       q.exec();
       if (q.first())
         _item->setItemsiteid(q.value("itemlocdist_itemsite_id").toInt());
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return UndefinedError;
@@ -129,7 +129,7 @@ enum SetResponse assignLotSerial::set(const ParameterList &pParams)
       sFillList();
         sNew();
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
@@ -180,7 +180,7 @@ void assignLotSerial::sDelete()
              " AND (lsdetail_source_id=:itemlocdist_id) );" );
   q.bindValue(":itemlocdist_id", _itemlocdist->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -196,7 +196,7 @@ void assignLotSerial::sClose()
              " AND (itemlocdist_source_id=:source_id) );" );
   q.bindValue(":source_id", _itemlocdistid);
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -226,7 +226,7 @@ void assignLotSerial::sAssign()
   q.bindValue(":itemlocdist_series", _itemlocSeries);
   q.bindValue(":itemlocdist_id", _itemlocdistid);
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -250,7 +250,7 @@ void assignLotSerial::sFillList()
     openQty = q.value("qty").toDouble();
     _qtyToAssign->setDouble(openQty);
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -266,7 +266,7 @@ void assignLotSerial::sFillList()
     _qtyAssigned->setDouble(q.value("totalqty").toDouble());
     _qtyBalance->setDouble(openQty - q.value("totalqty").toDouble());
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -289,7 +289,7 @@ void assignLotSerial::sFillList()
   q.bindValue(":na", "N/A");
   q.exec();
   _itemlocdist->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

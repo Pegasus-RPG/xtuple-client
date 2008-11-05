@@ -166,7 +166,7 @@ void changeWoQty::sChangeQty()
       q.prepare("SELECT postComment(:cmnttype_id, 'W', :wo_id, :comment) AS result");
       q.bindValue(":cmnttype_id", _cmnttype->id());
       q.bindValue(":wo_id", _wo->id());
-      q.bindValue(":comment", _comment->text());
+      q.bindValue(":comment", _comment->toPlainText());
       q.exec();
       if (q.first())
       {

@@ -134,7 +134,7 @@ void correctOperationsPosting::sHandleWoid(int pWoid)
              "ORDER BY wooper_seqnumber;" );
   q.bindValue(":wo_id", pWoid);
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -152,7 +152,7 @@ void correctOperationsPosting::sHandleWoid(int pWoid)
   if (q.first())
     _inventoryUOM->setText( tr("Post in Inventory UOMs (%1)")
                             .arg(q.value("uom_name").toString()) );
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -215,7 +215,7 @@ void correctOperationsPosting::sHandleWooperid(int)
                    "ORDER BY item_number;" );
         q.bindValue(":wooper_id", _wooper->id());
         q.exec();
-	if (q.lastError().type() != QSqlError::None)
+	if (q.lastError().type() != QSqlError::NoError)
 	{
 	  systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	  return;
@@ -242,7 +242,7 @@ void correctOperationsPosting::sHandleWooperid(int)
 
       sHandleQty();
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -334,9 +334,9 @@ void correctOperationsPosting::sPost()
   q.prepare("SELECT correctOperationsPosting(:wooper_id, :qty, :returnComponents, :correctInventory, :correctSuTime, :setupTime, :clearSetupComplete, :correctRnTime, :runTime, :clearRunComplete) AS result;");
   q.bindValue(":wooper_id", _wooper->id());
   q.bindValue(":qty", qty);
-  q.bindValue(":returnComponents", QVariant(_returnComponents->isChecked(), 0));
-  q.bindValue(":correctInventory", QVariant(_correctInventory->isChecked(), 0));
-  q.bindValue(":correctSuTime", QVariant(_correctSutime->isChecked(), 0));
+  q.bindValue(":returnComponents", QVariant(_returnComponents->isChecked()));
+  q.bindValue(":correctInventory", QVariant(_correctInventory->isChecked()));
+  q.bindValue(":correctSuTime",    QVariant(_correctSutime->isChecked()));
   if (_correctSutime->isChecked())
   {
     double sutime;
@@ -347,9 +347,9 @@ void correctOperationsPosting::sPost()
       sutime = _specifiedSutime->toDouble();
 
     q.bindValue(":setupTime", (sutime * -1));
-    q.bindValue(":clearSetupComplete", QVariant(_clearSuComplete->isChecked(), 0));
+    q.bindValue(":clearSetupComplete", QVariant(_clearSuComplete->isChecked()));
   }
-  q.bindValue(":correctRnTime", QVariant(_correctRntime->isChecked(), 0));
+  q.bindValue(":correctRnTime", QVariant(_correctRntime->isChecked()));
   if (_correctRntime->isChecked())
   {
     double rntime;
@@ -360,7 +360,7 @@ void correctOperationsPosting::sPost()
       rntime = _specifiedRntime->toDouble();
 
     q.bindValue(":runTime", (rntime * -1));
-    q.bindValue(":clearRunComplete", QVariant(_clearRnComplete->isChecked(), 0));
+    q.bindValue(":clearRunComplete", QVariant(_clearRnComplete->isChecked()));
   }
 
   q.exec();
@@ -375,7 +375,7 @@ void correctOperationsPosting::sPost()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -395,7 +395,7 @@ void correctOperationsPosting::sPost()
                "WHERE (wooper_id=:wooper_id);" );
     q.bindValue(":wooper_id", _wooper->id());
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       rollback.exec();
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -410,7 +410,7 @@ void correctOperationsPosting::sPost()
                "WHERE (wooper_id=:wooper_id);" );
     q.bindValue(":wooper_id", _wooper->id());
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     { 
       rollback.exec();
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);

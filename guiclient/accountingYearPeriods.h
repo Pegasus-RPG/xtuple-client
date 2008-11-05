@@ -69,7 +69,7 @@ class accountingYearPeriods : public XWidget, public Ui::accountingYearPeriods
     Q_OBJECT
 
 public:
-    accountingYearPeriods(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    accountingYearPeriods(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~accountingYearPeriods();
 
 public slots:

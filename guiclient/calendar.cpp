@@ -179,7 +179,7 @@ void calendar::sSave()
   q.bindValue(":calhead_id", _calheadid);
   q.bindValue(":calhead_name", _name->text());
   q.bindValue(":calhead_descrip", _descrip->text());
-  q.bindValue(":calhead_origin", originTypes[_origin->currentItem()]);
+  q.bindValue(":calhead_origin", originTypes[_origin->currentIndex()]);
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
   {
@@ -353,7 +353,7 @@ void calendar::populate()
       for (int counter = 0; counter < _origin->count(); counter++)
         if (q.value("calhead_origin").toString() == originTypes[counter])
         {
-          _origin->setCurrentItem(counter);
+          _origin->setCurrentIndex(counter);
           break;
         }
     }

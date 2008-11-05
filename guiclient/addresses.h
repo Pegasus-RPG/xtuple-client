@@ -69,7 +69,7 @@ class addresses : public XWidget, public Ui::addresses
     Q_OBJECT
 
 public:
-    addresses(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    addresses(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~addresses();
 
 public slots:

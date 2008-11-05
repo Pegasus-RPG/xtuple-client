@@ -154,7 +154,7 @@ void costCategory::sCheck()
     q.prepare( "SELECT costcat_id "
                "FROM costcat "
                "WHERE (UPPER(costcat_code)=UPPER(:costcat_code));" );
-    q.bindValue(":costcat_code", _category->text().stripWhiteSpace());
+    q.bindValue(":costcat_code", _category->text().trimmed());
     q.exec();
     if (q.first())
     {
@@ -164,7 +164,7 @@ void costCategory::sCheck()
 
       _category->setEnabled(FALSE);
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -179,7 +179,7 @@ void costCategory::sSave()
     QString	msg;
     QWidget*	widget;
   } error[] = {
-    { _category->text().stripWhiteSpace().length() == 0,
+    { _category->text().trimmed().length() == 0,
       tr("<p>You must enter a name for this Cost Category before saving it."),
       _category
     },
@@ -298,8 +298,8 @@ void costCategory::sSave()
                "WHERE (costcat_id=:costcat_id);" );
 
   q.bindValue(":costcat_id", _costcatid);
-  q.bindValue(":costcat_code", _category->text().stripWhiteSpace());
-  q.bindValue(":costcat_descrip", _description->text().stripWhiteSpace());
+  q.bindValue(":costcat_code", _category->text().trimmed());
+  q.bindValue(":costcat_descrip", _description->text().trimmed());
   q.bindValue(":costcat_asset_accnt_id", _asset->id());
   q.bindValue(":costcat_invcost_accnt_id", _inventoryCost->id());
   q.bindValue(":costcat_liability_accnt_id", _liability->id());
@@ -315,7 +315,7 @@ void costCategory::sSave()
   if (_toLiabilityClearing->isValid())
     q.bindValue(":costcat_toliability_accnt_id", _toLiabilityClearing->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -353,7 +353,7 @@ void costCategory::populate()
     _shippingAsset->setId(q.value("costcat_shipasset_accnt_id").toInt());
     _toLiabilityClearing->setId(q.value("costcat_toliability_accnt_id").toInt());
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

@@ -216,11 +216,11 @@ void bbomItem::sSave()
   q.bindValue(":bbomitem_parent_item_id", _itemid);
   q.bindValue(":bbomitem_item_id", _item->id());
   q.bindValue(":bbomitem_qtyper", _qtyPer->toDouble());
-  q.bindValue(":bbomitem_uniquemfg", QVariant(_unique->isChecked(), 0));
+  q.bindValue(":bbomitem_uniquemfg", QVariant(_unique->isChecked()));
   q.bindValue(":bbomitem_effective", _dates->startDate());
   q.bindValue(":bbomitem_expires", _dates->endDate());
   q.bindValue(":bbomitem_costabsorb", (_costAbsorption->toDouble() / 100.0));
-  q.bindValue(":bbomitem_comments", _comments->text());
+  q.bindValue(":bbomitem_comments",   _comments->toPlainText());
   q.exec();
 
   omfgThis->sBBOMsUpdated(_itemid, TRUE);

@@ -68,7 +68,7 @@ class booList : public XWidget, public Ui::booList
     Q_OBJECT
 
 public:
-    booList(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    booList(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~booList();
 
 public slots:

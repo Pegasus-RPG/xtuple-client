@@ -154,7 +154,7 @@ enum SetResponse creditMemo::set(const ParameterList &pParams)
       q.exec();
       if (q.first())
         _cmheadid = q.value("cmhead_id").toInt();
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return UndefinedError;
@@ -172,7 +172,7 @@ enum SetResponse creditMemo::set(const ParameterList &pParams)
       q.bindValue(":cmhead_number",	_memoNumber->text());
       q.bindValue(":cmhead_docdate",	_memoDate->date());
       q.exec();
-      if (q.lastError().type() != QSqlError::None)
+      if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return UndefinedError;
@@ -253,7 +253,7 @@ void creditMemo::setNumber()
       if (_metrics->value("CMNumberGeneration") == "A")
         _memoNumber->setEnabled(FALSE);
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -268,7 +268,7 @@ void creditMemo::setNumber()
       _memoNumber->setText(q.value("cmnumber").toString());
       _memoNumber->setEnabled(FALSE);
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -391,8 +391,8 @@ void creditMemo::sSave()
   q.bindValue(":cmhead_cust_id", _cust->id());
   q.bindValue(":cmhead_number", _memoNumber->text());
   q.bindValue(":cmhead_invcnumber", _invoiceNumber->invoiceNumber());
-  q.bindValue(":cmhead_custponumber", _customerPO->text().stripWhiteSpace());
-  q.bindValue(":cmhead_billtoname", _billtoName->text().stripWhiteSpace());
+  q.bindValue(":cmhead_custponumber", _customerPO->text().trimmed());
+  q.bindValue(":cmhead_billtoname", _billtoName->text().trimmed());
   q.bindValue(":cmhead_billtoaddress1",	_billToAddr->line1());
   q.bindValue(":cmhead_billtoaddress2",	_billToAddr->line2());
   q.bindValue(":cmhead_billtoaddress3",	_billToAddr->line3());
@@ -402,7 +402,7 @@ void creditMemo::sSave()
   q.bindValue(":cmhead_billtocountry",	_billToAddr->country());
   if (_shiptoid > 0)
     q.bindValue(":cmhead_shipto_id",	_shiptoid);
-  q.bindValue(":cmhead_shipto_name", _shipToName->text().stripWhiteSpace());
+  q.bindValue(":cmhead_shipto_name", _shipToName->text().trimmed());
   q.bindValue(":cmhead_shipto_address1", _shipToAddr->line1());
   q.bindValue(":cmhead_shipto_address2", _shipToAddr->line2());
   q.bindValue(":cmhead_shipto_address3", _shipToAddr->line3());
@@ -411,10 +411,10 @@ void creditMemo::sSave()
   q.bindValue(":cmhead_shipto_zipcode",	 _shipToAddr->postalCode());
   q.bindValue(":cmhead_shipto_country",	 _shipToAddr->country());
   q.bindValue(":cmhead_docdate", _memoDate->date());
-  q.bindValue(":cmhead_comments", _comments->text());
+  q.bindValue(":cmhead_comments", _comments->toPlainText());
   q.bindValue(":cmhead_salesrep_id", _salesRep->id());
   q.bindValue(":cmhead_rsncode_id", _rsnCode->id());
-  q.bindValue(":cmhead_hold", QVariant(_hold->isChecked(), 0));
+  q.bindValue(":cmhead_hold",       QVariant(_hold->isChecked()));
   q.bindValue(":cmhead_commission", (_commission->toDouble() / 100));
   q.bindValue(":cmhead_misc", _miscCharge->localValue());
   q.bindValue(":cmhead_misc_accnt_id", _miscChargeAccount->id());
@@ -447,7 +447,7 @@ void creditMemo::sSave()
   q.bindValue(":cmhead_curr_id", _currency->id());
 
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -531,7 +531,7 @@ void creditMemo::sInvoiceList()
       _shipToAddr->setCountry(sohead.value("invchead_shipto_country").toString());
       _ignoreShiptoSignals = FALSE;
     }
-    else if (sohead.lastError().type() != QSqlError::None)
+    else if (sohead.lastError().type() != QSqlError::NoError)
     {
       systemError(this, sohead.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -552,7 +552,7 @@ void creditMemo::sParseShipToNumber()
     populateShipto(q.value("shipto_id").toInt());
   else
   {
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     populateShipto(-1);
   }
@@ -576,7 +576,7 @@ void creditMemo::populateShipto(int pShiptoid)
       _shipToAddr->setId(query.value("shipto_addr_id").toInt());
       _taxauth->setId(query.value("shipto_taxauth_id").toInt());
     }
-    else if (query.lastError().type() != QSqlError::None)
+    else if (query.lastError().type() != QSqlError::NoError)
     {
       systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -635,7 +635,7 @@ void creditMemo::sPopulateCustomerInfo()
         _billtoName->setEnabled(ffBillTo);
         _billToAddr->setEnabled(ffBillTo);
       }
-      else if (query.lastError().type() != QSqlError::None)
+      else if (query.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
 	return;
@@ -643,7 +643,7 @@ void creditMemo::sPopulateCustomerInfo()
     }
     else
     {
-      _salesRep->setCurrentItem(-1);
+      _salesRep->setCurrentIndex(-1);
       _taxauth->setId(-1);
       _custtaxauthid	= -1;
     }
@@ -691,14 +691,14 @@ void creditMemo::sPopulateByInvoiceNumber(int pInvoiceNumber)
           _shipToName->setText(query.value("shipto_name"));
           _shipToAddr->setId(query.value("shipto_addr_id").toInt());
         }
-	else if (query.lastError().type() != QSqlError::None)
+	else if (query.lastError().type() != QSqlError::NoError)
 	{
 	  systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
 	  return;
 	}
       }
     }
-    else if (query.lastError().type() != QSqlError::None)
+    else if (query.lastError().type() != QSqlError::NoError)
     {
       systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -757,7 +757,7 @@ void creditMemo::sCheckCreditMemoNumber()
       else
         _mode = cEdit;
     }
-    else if (query.lastError().type() != QSqlError::None)
+    else if (query.lastError().type() != QSqlError::NoError)
     {
       systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -858,7 +858,7 @@ void creditMemo::sDelete()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -874,7 +874,7 @@ void creditMemo::sDelete()
                "WHERE (cmitem_id=:cmitem_id);" );
     q.bindValue(":cmitem_id", _cmitem->id());
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -1051,7 +1051,7 @@ void creditMemo::populate()
 
     sFreightChanged();
   }
-  else if (cmhead.lastError().type() != QSqlError::None)
+  else if (cmhead.lastError().type() != QSqlError::NoError)
   {
     systemError(this, cmhead.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -1072,20 +1072,18 @@ void creditMemo::closeEvent(QCloseEvent *pEvent)
 
     q.bindValue(":number", _memoNumber->text());
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
 
-    q.prepare( "DELETE FROM cmitem "
-               "WHERE (cmitem_cmhead_id=:cmhead_id);"
-
-               "DELETE FROM cmhead "
-               "WHERE (cmhead_id=:cmhead_id);" );
+    q.prepare("SELECT deleteCreditMemo(:cmhead_id) AS result;");
     q.bindValue(":cmhead_id", _cmheadid);
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.first())
+      ; // TODO: add error checking when function returns int instead of boolean
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -1114,7 +1112,7 @@ void creditMemo::sTaxDetail()
   taxq.bindValue(":docdate",	_memoDate->date());
   taxq.bindValue(":cmhead_id",	_cmheadid);
   taxq.exec();
-  if (taxq.lastError().type() != QSqlError::None)
+  if (taxq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -1179,7 +1177,7 @@ void creditMemo::sTaxAuthChanged()
   taxauthq.exec();
   if (taxauthq.first())
     _taxcurrid = taxauthq.value("taxauth_curr_id").toInt();
-  else if (taxauthq.lastError().type() != QSqlError::None)
+  else if (taxauthq.lastError().type() != QSqlError::NoError)
   {
     _taxauth->setId(_taxauthidCache);
     systemError(this, taxauthq.lastError().databaseText(), __FILE__, __LINE__);
@@ -1201,7 +1199,7 @@ void creditMemo::sTaxAuthChanged()
       return;
     }
   }
-  else if (taxauthq.lastError().type() != QSqlError::None)
+  else if (taxauthq.lastError().type() != QSqlError::NoError)
   {
     _taxauth->setId(_taxauthidCache);
     systemError(this, taxauthq.lastError().databaseText(), __FILE__, __LINE__);
@@ -1225,7 +1223,7 @@ void creditMemo::sTaxAuthChanged()
 		     taxauthq.value("cmhead_adjtax_rateb").toDouble(),
 		     taxauthq.value("cmhead_adjtax_ratec").toDouble());
   }
-  else if (taxauthq.lastError().type() != QSqlError::None)
+  else if (taxauthq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, taxauthq.lastError().databaseText(), __FILE__, __LINE__);
     return;

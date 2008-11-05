@@ -133,7 +133,7 @@ enum SetResponse contact::set(const ParameterList &pParams)
   {
       _contact->setOwnerId(q.value("usr_id").toInt());
   }  
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     reject();
@@ -313,7 +313,7 @@ void contact::sClose()
 	return;
       }
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -356,7 +356,7 @@ void contact::sSave()
 			       "Vendor, or Prospect."));
       return;
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -396,7 +396,7 @@ void contact::sSave()
   }
 
   _contact->setAddress(saveResult);
-  _contact->setNotes(_notes->text());
+  _contact->setNotes(_notes->toPlainText());
 
   saveResult = _contact->save(AddressCluster::CHANGEALL);
   if (saveResult < 0)
@@ -450,7 +450,7 @@ void contact::sDeleteCharass()
              "WHERE (charass_id=:charass_id);" );
   q.bindValue(":charass_id", _charass->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -470,7 +470,7 @@ void contact::sFillList()
   q.bindValue(":cntct_id", _contact->id());
   q.exec();
   _charass->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -555,7 +555,7 @@ void contact::sFillList()
   q.bindValue(":emp",		tr("Employee"));
   q.exec();
   _uses->populate(q, true);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -655,7 +655,7 @@ void contact::sDetachUse()
 
   detachq.bindValue(":id", _uses->id());
   detachq.exec();
-  if (detachq.lastError().type() != QSqlError::None)
+  if (detachq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, detachq.lastError().databaseText(), __FILE__, __LINE__);
     return;

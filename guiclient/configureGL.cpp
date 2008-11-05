@@ -110,7 +110,7 @@ configureGL::configureGL(QWidget* parent, const char* name, bool modal, Qt::WFla
   q.exec("SELECT currentARMemoNumber() AS result;");
   if (q.first())
     _nextARMemoNumber->setText(q.value("result"));
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 
   _hideApplyto->setChecked(_metrics->boolean("HideApplyToBalance"));
@@ -240,7 +240,7 @@ void configureGL::sSave()
   q.prepare("SELECT setNextARMemoNumber(:armemo_number) AS result;");
   q.bindValue(":armemo_number", _nextARMemoNumber->text().toInt());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -249,15 +249,15 @@ void configureGL::sSave()
   _metrics->set("HideApplyToBalance", _hideApplyto->isChecked());
   _metrics->set("EnableCustomerDeposits", _customerDeposits->isChecked());
 
-  _metrics->set("remitto_name", 	_name->text().stripWhiteSpace());
-  _metrics->set("remitto_address1",	_address->line1().stripWhiteSpace());
-  _metrics->set("remitto_address2",	_address->line2().stripWhiteSpace());
-  _metrics->set("remitto_address3",	_address->line3().stripWhiteSpace());
-  _metrics->set("remitto_city",		_address->city().stripWhiteSpace());
-  _metrics->set("remitto_state",	_address->state().stripWhiteSpace());
-  _metrics->set("remitto_zipcode",	_address->postalCode().stripWhiteSpace());
-  _metrics->set("remitto_country",	_address->country().stripWhiteSpace());
-  _metrics->set("remitto_phone",	_phone->text().stripWhiteSpace());
+  _metrics->set("remitto_name", 	_name->text().trimmed());
+  _metrics->set("remitto_address1",	_address->line1().trimmed());
+  _metrics->set("remitto_address2",	_address->line2().trimmed());
+  _metrics->set("remitto_address3",	_address->line3().trimmed());
+  _metrics->set("remitto_city",		_address->city().trimmed());
+  _metrics->set("remitto_state",	_address->state().trimmed());
+  _metrics->set("remitto_zipcode",	_address->postalCode().trimmed());
+  _metrics->set("remitto_country",	_address->country().trimmed());
+  _metrics->set("remitto_phone",	_phone->text().trimmed());
   
   _metrics->set("AutoCreditWarnLateCustomers", _warnLate->isChecked());
   if(_warnLate->isChecked())

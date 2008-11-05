@@ -222,7 +222,7 @@ enum SetResponse cashReceipt::set(const ParameterList &pParams)
       q.exec("SELECT NEXTVAL('cashrcpt_cashrcpt_id_seq') AS cashrcpt_id;");
       if (q.first())
         _cashrcptid = q.value("cashrcpt_id").toInt();
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return UndefinedError;
@@ -392,7 +392,7 @@ void cashReceipt::sApplyLineBalance()
 	return;
       }
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -415,7 +415,7 @@ void cashReceipt::sClear()
     q.bindValue(":cashrcpt_id", _cashrcptid);
     q.bindValue(":aropen_id", cursor->id());
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -465,7 +465,7 @@ void cashReceipt::sDelete()
              "WHERE (cashrcptmisc_id=:cashrcptmisc_id);" );
   q.bindValue(":cashrcptmisc_id", _cashrcptmisc->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -490,7 +490,7 @@ void cashReceipt::close()
         return;
       }
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -535,7 +535,7 @@ bool cashReceipt::save(bool partial)
     _bankaccnt_curr_id = q.value("bankaccnt_curr_id").toInt();
     _bankaccnt_currAbbr = q.value("currAbbr").toString();
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return FALSE;
@@ -630,8 +630,8 @@ bool cashReceipt::save(bool partial)
   q.bindValue(":cashrcpt_docnumber", _docNumber->text());
   q.bindValue(":cashrcpt_bankaccnt_id", _bankaccnt->id());
   q.bindValue(":cashrcpt_distdate", _distDate->date());
-  q.bindValue(":cashrcpt_notes", _notes->text().stripWhiteSpace());
-  q.bindValue(":cashrcpt_usecustdeposit", QVariant(_balCustomerDeposit->isChecked(), 0));
+  q.bindValue(":cashrcpt_notes",          _notes->toPlainText().trimmed());
+  q.bindValue(":cashrcpt_usecustdeposit", QVariant(_balCustomerDeposit->isChecked()));
   q.bindValue(":curr_id", _received->id());
   if(_altAccnt->isChecked())
     q.bindValue(":cashrcpt_salescat_id", _salescat->id());
@@ -657,7 +657,7 @@ void cashReceipt::sPopulateCustomerInfo(int)
     cust.exec();
     if (cust.first())
       _received->setId(cust.value("cust_curr_id").toInt());
-    else if (cust.lastError().type() != QSqlError::None)
+    else if (cust.lastError().type() != QSqlError::NoError)
     {
       systemError(this, cust.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -683,7 +683,7 @@ void cashReceipt::sFillApplyList()
     XSqlQuery apply;
     apply = mql.toQuery(params);
     _aropen->populate(apply, true);
-    if (apply.lastError().type() != QSqlError::None)
+    if (apply.lastError().type() != QSqlError::NoError)
     {
       systemError(this, apply.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -709,7 +709,7 @@ void cashReceipt::sFillApplyList()
     apply.exec();
     if (apply.first())
       _applied->setLocalValue(apply.value("total").toDouble());
-    else if (apply.lastError().type() != QSqlError::None)
+    else if (apply.lastError().type() != QSqlError::NoError)
     {
       systemError(this, apply.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -731,7 +731,7 @@ void cashReceipt::sFillMiscList()
   misc.bindValue(":cashrcpt_id", _cashrcptid);
   misc.exec();
   _cashrcptmisc->populate(misc);
-  if (misc.lastError().type() != QSqlError::None)
+  if (misc.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -744,7 +744,7 @@ void cashReceipt::sFillMiscList()
   misc.exec();
   if (misc.first())
     _miscDistribs->setLocalValue(misc.value("total").toDouble());
-  else if (misc.lastError().type() != QSqlError::None)
+  else if (misc.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -802,7 +802,7 @@ void cashReceipt::populate()
     sFillMiscList();
     setCreditCard();
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -811,7 +811,7 @@ void cashReceipt::populate()
 
 void cashReceipt::sSearchDocNumChanged()
 {
-  QString sub = _searchDocNum->text().stripWhiteSpace();
+  QString sub = _searchDocNum->text().trimmed();
   if(sub.isEmpty())
     return;
 
@@ -861,7 +861,7 @@ void cashReceipt::setCreditCard()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -880,7 +880,7 @@ void cashReceipt::setCreditCard()
   params.append("activeonly", true);
   q = mql.toQuery(params);
   _cc->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

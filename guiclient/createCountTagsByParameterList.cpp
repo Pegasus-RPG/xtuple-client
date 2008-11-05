@@ -129,11 +129,11 @@ enum SetResponse createCountTagsByParameterList::set(const ParameterList & pPara
   switch (_parameter->type())
   {
     case ParameterGroup::ClassCode:
-      setCaption(tr("Create Count Tags by Class Code"));
+      setWindowTitle(tr("Create Count Tags by Class Code"));
       break;
 
     case ParameterGroup::PlannerCode:
-      setCaption(tr("Create Count Tags by Planner Code"));
+      setWindowTitle(tr("Create Count Tags by Planner Code"));
       break;
 
     default:
@@ -260,9 +260,9 @@ void createCountTagsByParameterList::sCreate()
     sql += "       ORDER BY item_number ) AS data;";
   }
   q.prepare(sql);
-  q.bindValue(":comments", _comments->text());
-  q.bindValue(":priority", QVariant(_priority->isChecked(), 0));
-  q.bindValue(":freeze", QVariant(_freeze->isChecked(), 0));
+  q.bindValue(":comments", _comments->toPlainText());
+  q.bindValue(":priority", QVariant(_priority->isChecked()));
+  q.bindValue(":freeze",   QVariant(_freeze->isChecked()));
   q.bindValue(":warehous_id", _warehouse->id());
   if(_byLocation->isChecked())
     q.bindValue(":location_id", _location->id());

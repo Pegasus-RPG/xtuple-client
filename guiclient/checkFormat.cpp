@@ -64,21 +64,21 @@
 checkFormat::checkFormat(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
 
-    _report->setCurrentItem(-1);
+  _report->setCurrentIndex(-1);
 }
 
 checkFormat::~checkFormat()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 void checkFormat::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 enum SetResponse checkFormat::set(const ParameterList &pParams)
@@ -124,7 +124,7 @@ enum SetResponse checkFormat::set(const ParameterList &pParams)
 
 void checkFormat::sSave()
 {
-  if (_name->text().stripWhiteSpace().length() == 0)
+  if (_name->text().trimmed().length() == 0)
   {
     QMessageBox::warning( this, tr("Check Format Name is Invalid"),
                           tr("You must enter a valid name for this Check Format.") );
@@ -132,7 +132,7 @@ void checkFormat::sSave()
     return;
   }
 
-  if (_report->currentItem() == -1)
+  if (_report->currentIndex() == -1)
   {
     QMessageBox::warning( this, tr("Report is Invalid"),
                           tr("You must enter a select report for this Check Format.") );
@@ -145,7 +145,7 @@ void checkFormat::sSave()
     q.exec("SELECT NEXTVAL('form_form_id_seq') AS _form_id");
     if (q.first())
       _formid = q.value("_form_id").toInt();
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -167,7 +167,7 @@ void checkFormat::sSave()
   q.bindValue(":form_descrip", _descrip->text());
   q.bindValue(":form_report_id", _report->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -189,7 +189,7 @@ void checkFormat::populate()
     _descrip->setText(q.value("form_descrip").toString());
     _report->setId(q.value("form_report_id").toInt());
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

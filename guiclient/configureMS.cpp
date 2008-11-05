@@ -92,7 +92,7 @@ configureMS::configureMS(QWidget* parent, const char* name, bool modal, Qt::WFla
   else
     _bufferMgt->hide();
     
-  this->setCaption("Schedule Configuration");
+  this->setWindowTitle("Schedule Configuration");
 }
 
 /*

@@ -181,7 +181,7 @@ void address::sSave()
 
 void address::internalSave(AddressCluster::SaveFlags flag)
 {
-  _addr->setNotes(_notes->text());
+  _addr->setNotes(_notes->toPlainText());
 
   int saveResult = _addr->save(flag);
   if (-2 == saveResult)

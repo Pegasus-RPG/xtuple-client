@@ -67,7 +67,7 @@ class customerGroups : public XWidget, public Ui::customerGroups
     Q_OBJECT
 
 public:
-    customerGroups(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    customerGroups(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~customerGroups();
 
 public slots:

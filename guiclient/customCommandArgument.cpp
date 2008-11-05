@@ -114,7 +114,7 @@ enum SetResponse customCommandArgument::set( const ParameterList & pParams )
 
 void customCommandArgument::sSave()
 {
-  if(_argument->text().stripWhiteSpace().isEmpty())
+  if(_argument->text().trimmed().isEmpty())
   {
     QMessageBox::warning(this, tr("No Argument Specified"),
                       tr("You must specify an argument in order to save.") );
@@ -138,7 +138,7 @@ void customCommandArgument::sSave()
 
   if(q.exec())
     accept();
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -158,7 +158,7 @@ void customCommandArgument::populate()
     _order->setValue(q.value("cmdarg_order").toInt());
     _argument->setText(q.value("cmdarg_arg").toString());
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

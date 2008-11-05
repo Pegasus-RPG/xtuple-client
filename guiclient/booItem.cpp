@@ -107,12 +107,12 @@ booItem::booItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _setupReport->insertItem(tr("Direct Labor"));
   _setupReport->insertItem(tr("Overhead"));
   _setupReport->insertItem(tr("None"));
-  _setupReport->setCurrentItem(-1);
+  _setupReport->setCurrentIndex(-1);
 
   _runReport->insertItem(tr("Direct Labor"));
   _runReport->insertItem(tr("Overhead"));
   _runReport->insertItem(tr("None"));
-  _runReport->setCurrentItem(-1);
+  _runReport->setCurrentIndex(-1);
 
   _booimage->addColumn(tr("Image Name"),  _itemColumn, Qt::AlignLeft, true, "image_name");
   _booimage->addColumn(tr("Description"), -1,          Qt::AlignLeft, true, "descrip");
@@ -236,7 +236,7 @@ void booItem::sSave()
     return;
   }
   
-  if (_setupReport->currentItem() == -1)
+  if (_setupReport->currentIndex() == -1)
   {
     QMessageBox::critical( this, tr("Cannot Save BOO Item"),
                            tr("You must select a Setup Cost reporting method for this BOO item before you may save it.") );
@@ -244,7 +244,7 @@ void booItem::sSave()
     return;
   }
 
-  if (_runReport->currentItem() == -1)
+  if (_runReport->currentIndex() == -1)
   {
     QMessageBox::critical( this, tr("Cannot Save BOO Item"),
                            tr("You must select a Run Cost reporting method for this BOO item before you may save it.") );
@@ -259,7 +259,7 @@ void booItem::sSave()
                "WHERE (booitem_item_id=:item_id);" );
     q.bindValue(":item_id", _item->id());
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -271,7 +271,7 @@ void booItem::sSave()
     q.exec("SELECT NEXTVAL('booitem_booitem_id_seq') AS _booitem_id;");
     if (q.first())
       _booitemid = q.value("_booitem_id").toInt();
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -332,28 +332,28 @@ void booItem::sSave()
   q.bindValue(":booitem_descrip2", _description2->text());
   q.bindValue(":booitem_produom", _prodUOM->currentText());
   q.bindValue(":booitem_toolref", _toolingReference->text());
-  q.bindValue(":booitem_instruc", _instructions->text());
+  q.bindValue(":booitem_instruc",         _instructions->toPlainText());
   q.bindValue(":booitem_invproduomratio", _invProdUOMRatio->toDouble());
   q.bindValue(":booitem_sutime", _setupTime->toDouble());
   q.bindValue(":booitem_rntime", _runTime->toDouble());
-  q.bindValue(":booitem_sucosttype", costReportTypes[_setupReport->currentItem()]);
-  q.bindValue(":booitem_rncosttype", costReportTypes[_runReport->currentItem()]);
+  q.bindValue(":booitem_sucosttype", costReportTypes[_setupReport->currentIndex()]);
+  q.bindValue(":booitem_rncosttype", costReportTypes[_runReport->currentIndex()]);
   q.bindValue(":booitem_rnqtyper", _runTimePer->toDouble());
-  q.bindValue(":booitem_rnrpt", QVariant(_reportRun->isChecked(), 0));
-  q.bindValue(":booitem_surpt", QVariant(_reportSetup->isChecked(), 0));
-  q.bindValue(":booitem_issuecomp", QVariant(_issueComp->isChecked(), 0));
-  q.bindValue(":booitem_rcvinv", QVariant(_receiveStock->isChecked(), 0));
-  q.bindValue(":booitem_pullthrough", QVariant(_pullThrough->isChecked(), 0));
-  q.bindValue(":booitem_overlap", QVariant(_overlap->isChecked(), 0));
+  q.bindValue(":booitem_rnrpt",       QVariant(_reportRun->isChecked()));
+  q.bindValue(":booitem_surpt",       QVariant(_reportSetup->isChecked()));
+  q.bindValue(":booitem_issuecomp",   QVariant(_issueComp->isChecked()));
+  q.bindValue(":booitem_rcvinv",      QVariant(_receiveStock->isChecked()));
+  q.bindValue(":booitem_pullthrough", QVariant(_pullThrough->isChecked()));
+  q.bindValue(":booitem_overlap",     QVariant(_overlap->isChecked()));
   q.bindValue(":booitem_wrkcnt_id", _wrkcnt->id());
   q.bindValue(":booitem_wip_location_id", _wipLocation->id());
   q.bindValue(":booitem_stdopn_id", _stdopn->id());
   q.bindValue(":booitem_configtype", "N");
   q.bindValue(":booitem_configid", -1);
-  q.bindValue(":booitem_configflag", QVariant(FALSE, 0));
+  q.bindValue(":booitem_configflag",  QVariant(FALSE));
   q.bindValue(":booitem_rev_id", _revisionid);
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -393,21 +393,21 @@ void booItem::sHandleStdopn(int pStdopnid)
         _invProdUOMRatio->setDouble(q.value("stdopn_invproduomratio").toDouble());
 
         if (q.value("stdopn_sucosttype").toString() == "D")
-          _setupReport->setCurrentItem(0);
+          _setupReport->setCurrentIndex(0);
         else if (q.value("stdopn_sucosttype").toString() == "O")
-          _setupReport->setCurrentItem(1);
+          _setupReport->setCurrentIndex(1);
         else if (q.value("stdopn_sucosttype").toString() == "N")
-          _setupReport->setCurrentItem(2);
+          _setupReport->setCurrentIndex(2);
 
         if (q.value("stdopn_rncosttype").toString() == "D")
-          _runReport->setCurrentItem(0);
+          _runReport->setCurrentIndex(0);
         else if (q.value("stdopn_rncosttype").toString() == "O")
-          _runReport->setCurrentItem(1);
+          _runReport->setCurrentIndex(1);
         else if (q.value("stdopn_rncosttype").toString() == "N")
-          _runReport->setCurrentItem(2);
+          _runReport->setCurrentIndex(2);
       }
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -507,18 +507,18 @@ void booItem::populate()
     _wipLocation->setId(booitem.value("booitem_wip_location_id").toInt());
 
     if (booitem.value("booitem_sucosttype").toString() == "D")
-      _setupReport->setCurrentItem(0);
+      _setupReport->setCurrentIndex(0);
     else if (booitem.value("booitem_sucosttype").toString() == "O")
-      _setupReport->setCurrentItem(1);
+      _setupReport->setCurrentIndex(1);
     else if (booitem.value("booitem_sucosttype").toString() == "N")
-      _setupReport->setCurrentItem(2);
+      _setupReport->setCurrentIndex(2);
 
     if (booitem.value("booitem_rncosttype").toString() == "D")
-      _runReport->setCurrentItem(0);
+      _runReport->setCurrentIndex(0);
     else if (booitem.value("booitem_rncosttype").toString() == "O")
-      _runReport->setCurrentItem(1);
+      _runReport->setCurrentIndex(1);
     else if (booitem.value("booitem_rncosttype").toString() == "N")
-      _runReport->setCurrentItem(2);
+      _runReport->setCurrentIndex(2);
 
     _item->setId(booitem.value("booitem_item_id").toInt());
 	if (_item->itemType() == "J")
@@ -530,7 +530,7 @@ void booItem::populate()
     sCalculateInvRunTime();
     sFillImageList();
   }
-  else if (booitem.lastError().type() != QSqlError::None)
+  else if (booitem.lastError().type() != QSqlError::NoError)
   {
     systemError(this, booitem.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -561,7 +561,7 @@ void booItem::sPopulateLocations()
   loc.exec();
 
   _wipLocation->populate(loc, locid);
-  if (loc.lastError().type() != QSqlError::None)
+  if (loc.lastError().type() != QSqlError::NoError)
   {
     systemError(this, loc.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -607,7 +607,7 @@ void booItem::sDeleteImage()
              "WHERE (booimage_id=:booimage_id);" );
   q.bindValue(":booimage_id", _booimage->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -637,7 +637,7 @@ void booItem::sFillImageList()
   q.bindValue(":booitem_id", _booitemid);
   q.exec();
   _booimage->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

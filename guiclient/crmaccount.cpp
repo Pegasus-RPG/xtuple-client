@@ -96,7 +96,7 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
     _myUsrId = q.value("usr_id").toInt();
     _owner->setId(_myUsrId);
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     close();
@@ -308,7 +308,7 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
         _comments->setId(_crmacctId);
         _documents->setId(_crmacctId);
       }
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
         systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
         return UndefinedError;
@@ -464,7 +464,7 @@ void crmaccount::sClose()
 	return;
       }
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       rollback.exec();
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -491,7 +491,7 @@ void crmaccount::sClose()
 	  return;
 	}
       }
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
 	rollback.exec();
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -520,11 +520,11 @@ void crmaccount::sSave()
     QString	msg;
     QWidget*	widget;
   } error[] = {
-    { _number->text().stripWhiteSpace().length() == 0,
+    { _number->text().trimmed().length() == 0,
       tr("<p>You must enter a number for this CRM Account before saving it."),
       _number
     },
-    { _name->text().stripWhiteSpace().length() == 0,
+    { _name->text().trimmed().length() == 0,
       tr("<p>You must enter a name for this CRM Account before saving it."),
       _name
     },
@@ -583,7 +583,7 @@ void crmaccount::sSave()
     _number->setFocus();
     return;
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -650,7 +650,7 @@ void crmaccount::sSave()
   }
   
   q.exec("BEGIN;");
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -691,7 +691,7 @@ void crmaccount::sSave()
         return;
       }
     } 
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       rollback.exec();
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -714,7 +714,7 @@ void crmaccount::sSave()
         return;
       }
     } 
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       rollback.exec();
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -738,7 +738,7 @@ void crmaccount::sSave()
         return;
       }
     } 
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       rollback.exec();
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -756,7 +756,7 @@ void crmaccount::sSave()
 
   q.exec("COMMIT;");
   _NumberGen = -1;
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -794,9 +794,9 @@ int crmaccount::saveNoErrorCheck()
   q.bindValue(":crmacct_id",		_crmacctId);
   q.bindValue(":crmacct_number",	_number->text());
   q.bindValue(":crmacct_name",		_name->text());
-  q.bindValue(":crmacct_active",	QVariant(_active->isChecked(), 0));
+  q.bindValue(":crmacct_active",	QVariant(_active->isChecked()));
   q.bindValue(":crmacct_type",		_organization->isChecked() ? "O" : "I");
-  q.bindValue(":crmacct_notes",		_notes->text());
+  q.bindValue(":crmacct_notes",		_notes->toPlainText());
   if (_custId > 0)	 q.bindValue(":crmacct_cust_id",	_custId);
   if (_competitorId > 0) q.bindValue(":crmacct_competitor_id",  _competitorId);
   if (_partnerId > 0)	 q.bindValue(":crmacct_partner_id",	_partnerId);
@@ -913,7 +913,7 @@ void crmaccount::sPopulate()
     _partner->setChecked(_partnerId > 0);
     _competitor->setChecked(_competitorId > 0);
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -935,7 +935,7 @@ void crmaccount::sPopulateContacts()
   q.bindValue(":crmacct_id", _crmacctId);
   q.exec();
   _contacts->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -1215,7 +1215,7 @@ void crmaccount::sProspect()
       _custId = -1;
       _prospectId = returnVal;
     } 
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -1394,7 +1394,7 @@ void crmaccount::sAttach()
 	  return;
 	}
       }
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return;
@@ -1426,7 +1426,7 @@ void crmaccount::sDetach()
 	return;
       }
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -1511,7 +1511,7 @@ int crmaccount::getIncidentId()
     incdt.bindValue(":number", _todo->currentItem()->text(7).toInt());
     if (incdt.exec() && incdt.first())
      returnVal = incdt.value("incdt_id").toInt();
-    else if (incdt.lastError().type() != QSqlError::None)
+    else if (incdt.lastError().type() != QSqlError::NoError)
       systemError(this, incdt.lastError().databaseText(), __FILE__, __LINE__);
   }
 
@@ -1559,7 +1559,7 @@ void crmaccount::sDeleteTodo()
     }
     sPopulateTodo();
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -1581,7 +1581,7 @@ void crmaccount::sDeleteIncdt()
     }
     sPopulateTodo();
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -1645,7 +1645,7 @@ void crmaccount::sUpdateRelationships()
     _owner->setUsername(q.value("crmacct_owner_username").toString());
   //  _custInfoButton->setEnabled(_custId > 0 && _customer->isChecked());
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -1807,7 +1807,7 @@ void crmaccount::sPopulateRegistrations()
     q.exec();
     _reg->clear();
     _reg->populate(q);
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -1850,7 +1850,7 @@ void crmaccount::sDeleteReg()
              "AND (charass_target_id=:lsreg_id))" );
   q.bindValue(":lsreg_id", _reg->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -1864,7 +1864,7 @@ void crmaccount::sCheckNumber()
   if (DEBUG) qDebug("crmaccount::sCheckNumber()");
   if (_number->text().length())
   {
-    _number->setText(_number->text().stripWhiteSpace().upper());
+    _number->setText(_number->text().trimmed().toUpper());
 
     XSqlQuery newq;
     newq.prepare("SELECT crmacct_id "
@@ -1888,7 +1888,7 @@ void crmaccount::sCheckNumber()
       query.prepare( "DELETE FROM crmacct WHERE (crmacct_id=:crmacct_id);" );
       query.bindValue(":crmacct_id", _crmacctId);
       query.exec();
-      if (query.lastError().type() != QSqlError::None)
+      if (query.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
 	return;
@@ -1903,7 +1903,7 @@ void crmaccount::sCheckNumber()
       _name->setFocus();
       _number->setEnabled(FALSE);
     }
-    else if (newq.lastError().type() != QSqlError::None)
+    else if (newq.lastError().type() != QSqlError::NoError)
     {
       systemError(this, newq.lastError().databaseText(), __FILE__, __LINE__);
       return;

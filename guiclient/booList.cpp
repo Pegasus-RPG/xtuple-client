@@ -144,7 +144,7 @@ void booList::sDelete()
                                    "deleted."));
 	return;
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -163,7 +163,7 @@ void booList::sDelete()
                "WHERE (booitem_item_id=:item_id);" );
     q.bindValue(":item_id", _boo->id());
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -232,7 +232,7 @@ void booList::sFillList( int pItemid, bool pLocal )
   else
     _boo->populate(sql, TRUE);
 
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

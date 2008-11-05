@@ -111,7 +111,7 @@ enum SetResponse customerGroup::set(const ParameterList &pParams)
       q.exec("SELECT NEXTVAL('custgrp_custgrp_id_seq') AS _custgrp_id;");
       if (q.first())
         _custgrpid = q.value("_custgrp_id").toInt();
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return UndefinedError;
@@ -152,7 +152,7 @@ enum SetResponse customerGroup::set(const ParameterList &pParams)
 
 void customerGroup::sCheck()
 {
-  _name->setText(_name->text().stripWhiteSpace());
+  _name->setText(_name->text().trimmed());
   if ((_mode == cNew) && (_name->text().length()))
   {
     q.prepare( "SELECT custgrp_id "
@@ -168,7 +168,7 @@ void customerGroup::sCheck()
 
       _name->setEnabled(FALSE);
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -186,7 +186,7 @@ void customerGroup::sClose()
                "WHERE (custgrp_id=:custgrp_id);" );
     q.bindValue(":custgrp_id", _custgrpid);
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     }
@@ -209,9 +209,9 @@ void customerGroup::sSave()
 
   q.bindValue(":custgrp_id", _custgrpid);
   q.bindValue(":custgrp_name", _name->text());
-  q.bindValue(":custgrp_descrip", _descrip->text().stripWhiteSpace());
+  q.bindValue(":custgrp_descrip", _descrip->text().trimmed());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -226,7 +226,7 @@ void customerGroup::sDelete()
              "WHERE (custgrpitem_id=:custgrpitem_id);" );
   q.bindValue(":custgrpitem_id", _custgrpitem->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -254,7 +254,7 @@ void customerGroup::sNew()
     q.exec();
     if (q.first())
       return;
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -267,7 +267,7 @@ void customerGroup::sNew()
     q.bindValue(":custgrpitem_custgrp_id", _custgrpid);
     q.bindValue(":custgrpitem_cust_id", custid);
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -287,7 +287,7 @@ void customerGroup::sFillList()
   q.bindValue(":custgrp_id", _custgrpid);
   q.exec();
   _custgrpitem->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -306,7 +306,7 @@ void customerGroup::populate()
     _name->setText(q.value("custgrp_name").toString());
     _descrip->setText(q.value("custgrp_descrip").toString());
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

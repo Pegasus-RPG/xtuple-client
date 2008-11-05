@@ -67,7 +67,7 @@ class cashReceiptsEditList : public XWidget, public Ui::cashReceiptsEditList
     Q_OBJECT
 
 public:
-    cashReceiptsEditList(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    cashReceiptsEditList(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~cashReceiptsEditList();
 
 public slots:

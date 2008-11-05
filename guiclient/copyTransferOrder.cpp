@@ -125,7 +125,7 @@ void copyTransferOrder::populate()
     {
       _orderDate->setDate(q.value("tohead_orderdate").toDate());
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -142,7 +142,7 @@ void copyTransferOrder::populate()
     q.bindValue(":tohead_id", _to->id());
     q.exec();
     _item->populate(q);
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -174,7 +174,7 @@ void copyTransferOrder::sCopy()
     }
     transferOrder::editTransferOrder(toheadid, true);
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

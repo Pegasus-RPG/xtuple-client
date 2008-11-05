@@ -155,7 +155,7 @@ void copyPurchaseOrder::sPopulatePoInfo(int)
       _vendPhone->setText(q.value("vend_phone1").toString());
       _currency->setId(q.value("pohead_curr_id").toInt());
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -204,7 +204,7 @@ void copyPurchaseOrder::sCopy()
   else
     q.bindValue(":scheddate", QDate::currentDate());
 
-  q.bindValue(":recheck", QVariant(_recheck->isChecked(), 0));
+  q.bindValue(":recheck", QVariant(_recheck->isChecked()));
 
   int poheadid = 0;
 
@@ -219,7 +219,7 @@ void copyPurchaseOrder::sCopy()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

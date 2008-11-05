@@ -68,7 +68,7 @@ class calendars : public XWidget, public Ui::calendars
     Q_OBJECT
 
 public:
-    calendars(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    calendars(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~calendars();
 
 public slots:

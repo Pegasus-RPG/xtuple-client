@@ -68,7 +68,7 @@ class customers : public XWidget, public Ui::customers
     Q_OBJECT
 
 public:
-    customers(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    customers(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~customers();
 
 public slots:

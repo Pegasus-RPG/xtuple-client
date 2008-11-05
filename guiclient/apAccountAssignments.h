@@ -68,7 +68,7 @@ class apAccountAssignments : public XWidget, public Ui::apAccountAssignments
     Q_OBJECT
 
 public:
-    apAccountAssignments(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    apAccountAssignments(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~apAccountAssignments();
 
 public slots:

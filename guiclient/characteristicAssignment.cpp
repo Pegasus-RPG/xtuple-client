@@ -251,7 +251,7 @@ void characteristicAssignment::sSave()
   q.bindValue(":charass_char_id", _char->id());
   q.bindValue(":charass_value", _value->text());
   q.bindValue(":charass_price", _listprice->toDouble());
-  q.bindValue(":charass_default", QVariant(_default->isChecked(), 0));
+  q.bindValue(":charass_default", QVariant(_default->isChecked()));
   q.exec();
 
   done(_charassid);
@@ -297,7 +297,7 @@ void characteristicAssignment::populate()
     _listprice->setDouble(q.value("charass_price").toDouble());
     _default->setChecked(q.value("charass_default").toBool());
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -315,47 +315,47 @@ void characteristicAssignment::handleTargetType()
   QString boolColumn;
   if ((_targetType == "C") || (_targetType == "CT"))
   {
-    setCaption(tr("Customer Characteristic"));
+    setWindowTitle(tr("Customer Characteristic"));
     boolColumn = "char_customers";
   }
   else if (_targetType == "I")
   {
-    setCaption(tr("Item Characteristic"));
+    setWindowTitle(tr("Item Characteristic"));
     boolColumn = "char_items";
   }
   else if (_targetType == "CNTCT")
   {
-    setCaption(tr("Contact Characteristic"));
+    setWindowTitle(tr("Contact Characteristic"));
     boolColumn = "char_contacts";
   }
   else if (_targetType == "ADDR")
   {
-    setCaption(tr("Address Characteristic"));
+    setWindowTitle(tr("Address Characteristic"));
     boolColumn = "char_addresses";
   }
   else if (_targetType == "CRMACCT")
   {
-    setCaption(tr("CRM Account Characteristic"));
+    setWindowTitle(tr("CRM Account Characteristic"));
     boolColumn = "char_crmaccounts";
   }
   else if (_targetType == "LS")
   {
-    setCaption(tr("Lot Serial Characteristic"));
+    setWindowTitle(tr("Lot Serial Characteristic"));
     boolColumn = "char_lotserial";
   }
   else if (_targetType == "LSR")
   {
-    setCaption(tr("Lot/Serial Registration Characteristic"));
+    setWindowTitle(tr("Lot/Serial Registration Characteristic"));
     boolColumn = "char_lotserial";
   }
   else if (_targetType == "OPP")
   {
-    setCaption(tr("Opportunity Characteristic"));
+    setWindowTitle(tr("Opportunity Characteristic"));
     boolColumn = "char_opportunity";
   }
   else if (_targetType == "EMP")
   {
-    setCaption(tr("Employee Characteristic"));
+    setWindowTitle(tr("Employee Characteristic"));
     boolColumn = "char_employees";
   }
   _char->populate(QString("SELECT char_id, char_name, char_name "

@@ -95,11 +95,11 @@ configureWO::configureWO(QWidget* parent, const char* name, bool modal, Qt::WFla
   _woNumGeneration->insertItem(tr("Automatic, Allow Override"));
 
   if (_metrics->value("WONumberGeneration") == "A")
-    _woNumGeneration->setCurrentItem(0);
+    _woNumGeneration->setCurrentIndex(0);
   else if (_metrics->value("WONumberGeneration") == "M")
-    _woNumGeneration->setCurrentItem(1);
+    _woNumGeneration->setCurrentIndex(1);
   else if (_metrics->value("WONumberGeneration") == "O")
-    _woNumGeneration->setCurrentItem(2);
+    _woNumGeneration->setCurrentIndex(2);
 
   if (_metrics->value("ExplodeWOEffective") == "E")
     _explodeDateEffective->setChecked(TRUE);
@@ -133,7 +133,7 @@ configureWO::configureWO(QWidget* parent, const char* name, bool modal, Qt::WFla
   else
     _todate->setChecked(TRUE);
     
-  this->setCaption("Manufacture Configuration");
+  this->setWindowTitle("Manufacture Configuration");
 }
 
 /*
@@ -163,11 +163,11 @@ void configureWO::sSave()
   _metrics->set("WorkOrderChangeLog", _workOrderChangeLog->isChecked());
   _metrics->set("AutoFillPostOperationQty", _postopFillQty->isChecked());
 
-  if (_woNumGeneration->currentItem() == 0)
+  if (_woNumGeneration->currentIndex() == 0)
     _metrics->set("WONumberGeneration", QString("A"));
-  else if (_woNumGeneration->currentItem() == 1)
+  else if (_woNumGeneration->currentIndex() == 1)
     _metrics->set("WONumberGeneration", QString("M"));
-  else if (_woNumGeneration->currentItem() == 2)
+  else if (_woNumGeneration->currentIndex() == 2)
     _metrics->set("WONumberGeneration", QString("O"));
 
   _metrics->set("ExplodeWOEffective", ((_explodeDateEffective->isChecked()) ? QString("E") : QString("S")));

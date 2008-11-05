@@ -115,7 +115,7 @@ enum SetResponse changeQtyToDistributeFromBreeder::set(ParameterList &pParams)
       _actualQtyPer->setDouble(brddist.value("actqtyper").toDouble());
       _actualQtyToDistribute->setDouble(brddist.value("brddist_qty").toDouble());
     }
-    else if (brddist.lastError().type() != QSqlError::None)
+    else if (brddist.lastError().type() != QSqlError::NoError)
     {
       systemError(this, brddist.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
@@ -139,7 +139,7 @@ void changeQtyToDistributeFromBreeder::sSave()
   changeQty.bindValue(":qty", _actualQtyToDistribute->toDouble());
   changeQty.bindValue(":brddist_id", _brddistid);
   changeQty.exec();
-  if (changeQty.lastError().type() != QSqlError::None)
+  if (changeQty.lastError().type() != QSqlError::NoError)
   {
     systemError(this, changeQty.lastError().databaseText(), __FILE__, __LINE__);
     return;

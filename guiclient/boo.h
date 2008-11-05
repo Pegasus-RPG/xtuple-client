@@ -69,7 +69,7 @@ class boo : public XWidget, public Ui::boo
     Q_OBJECT
 
 public:
-    boo(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    boo(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~boo();
     
     virtual bool checkSitePrivs( int booid );

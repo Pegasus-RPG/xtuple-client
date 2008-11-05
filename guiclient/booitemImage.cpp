@@ -124,13 +124,13 @@ enum SetResponse booitemImage::set(const ParameterList &pParams)
 void booitemImage::sSave()
 {
   QString purpose;
-  if (_purpose->currentItem() == 0)  
+  if (_purpose->currentIndex() == 0)  
     purpose = "I";
-  if (_purpose->currentItem() == 1)  
+  if (_purpose->currentIndex() == 1)  
     purpose = "P";
-  if (_purpose->currentItem() == 2)  
+  if (_purpose->currentIndex() == 2)  
     purpose = "E";
-  if (_purpose->currentItem() == 3)  
+  if (_purpose->currentIndex() == 3)  
     purpose = "M";
 
   XSqlQuery newImage;
@@ -154,7 +154,7 @@ void booitemImage::sSave()
         _booimageid = booimageid.value("booimage_id").toInt();
         _mode = cEdit;
       }
-      else if (booimageid.lastError().type() != QSqlError::None)
+      else if (booimageid.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, booimageid.lastError().databaseText(), __FILE__, __LINE__);
 	return;
@@ -168,7 +168,7 @@ void booitemImage::sSave()
       booimageid.exec();
       if (booimageid.first())
         _booimageid = booimageid.value("_booimage_id").toInt();
-      else if (booimageid.lastError().type() != QSqlError::None)
+      else if (booimageid.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, booimageid.lastError().databaseText(), __FILE__, __LINE__);
 	return;
@@ -192,7 +192,7 @@ void booitemImage::sSave()
   newImage.bindValue(":booimage_purpose", purpose);
 
   newImage.exec();
-  if (newImage.lastError().type() != QSqlError::None)
+  if (newImage.lastError().type() != QSqlError::NoError)
   {
     systemError(this, newImage.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -222,7 +222,7 @@ void booitemImage::sFillList()
              "ORDER BY image_name;" );
   iq.exec();
   _image->populate(iq);
-  if (iq.lastError().type() != QSqlError::None)
+  if (iq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, iq.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -242,13 +242,13 @@ void booitemImage::populate()
     QString purpose = booimage.value("booimage_purpose").toString();
 
     if (purpose == "I")
-      _purpose->setCurrentItem(0);
+      _purpose->setCurrentIndex(0);
     else if (purpose == "P")
-      _purpose->setCurrentItem(1);
+      _purpose->setCurrentIndex(1);
     else if (purpose == "E")
-      _purpose->setCurrentItem(2);
+      _purpose->setCurrentIndex(2);
     else if (purpose == "M")
-      _purpose->setCurrentItem(3);
+      _purpose->setCurrentIndex(3);
 
     _image->setId(booimage.value("booimage_image_id").toInt());
   }

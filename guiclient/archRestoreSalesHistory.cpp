@@ -115,7 +115,7 @@ enum SetResponse archRestoreSalesHistory::set(ParameterList &pParams)
   {
     _mode = cArchive;
 
-    setCaption(tr("Archive Sales History"));
+    setWindowTitle(tr("Archive Sales History"));
     _miscItems->setText(tr("Archive Freight, Sales Tax and Misc. Items"));
   }
 
@@ -124,7 +124,7 @@ enum SetResponse archRestoreSalesHistory::set(ParameterList &pParams)
   {
     _mode = cRestore;
 
-    setCaption(tr("Restore Sales History"));
+    setWindowTitle(tr("Restore Sales History"));
     _miscItems->setText(tr("Restore Freight, Sales Tax and Misc. Items"));
   }
 

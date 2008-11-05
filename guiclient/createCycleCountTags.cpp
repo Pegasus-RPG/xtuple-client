@@ -167,10 +167,10 @@ void createCycleCountTags::sCreate()
   _parameter->bindValue(q);
   q.bindValue(":warehous_id", _warehouse->id());
   q.bindValue(":maxTags", _maxTags->value());
-  q.bindValue(":comments", _comments->text());
-  q.bindValue(":priority", QVariant(_priority->isChecked(), 0));
-  q.bindValue(":freeze", QVariant(_freeze->isChecked(), 0));
-  q.bindValue(":ignore", QVariant(_ignoreZeroBalance->isChecked(), 0));
+  q.bindValue(":comments", _comments->toPlainText());
+  q.bindValue(":priority", QVariant(_priority->isChecked()));
+  q.bindValue(":freeze",   QVariant(_freeze->isChecked()));
+  q.bindValue(":ignore",   QVariant(_ignoreZeroBalance->isChecked()));
   if(_byLocation->isChecked())
     q.bindValue(":location_id", _location->id());
   q.exec();
@@ -183,7 +183,7 @@ void createCycleCountTags::sCreate()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -204,7 +204,7 @@ void createCycleCountTags::sPopulateLocations()
   q.bindValue(":warehous_id", _warehouse->id());
   q.exec();
   _location->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

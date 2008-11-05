@@ -140,7 +140,7 @@ enum SetResponse customerType::set(const ParameterList &pParams)
 
 void customerType::sCheck()
 {
-  _code->setText(_code->text().stripWhiteSpace());
+  _code->setText(_code->text().trimmed());
   if ((_mode == cNew) && (_code->text().length()))
   {
     q.prepare( "SELECT custtype_id "
@@ -220,7 +220,7 @@ void customerType::sFillList()
 
 void customerType::sSave()
 {
-  if (_code->text().stripWhiteSpace().length() == 0)
+  if (_code->text().trimmed().length() == 0)
   {
     QMessageBox::information( this, tr("Invalid Customer Type Code"),
                               tr("You must enter a valid Code for this Customer Type before creating it.")  );
@@ -242,9 +242,9 @@ void customerType::sSave()
                "WHERE (custtype_id=:custtype_id);" );
 
   q.bindValue(":custtype_id", _custtypeid);
-  q.bindValue(":custtype_code", _code->text().stripWhiteSpace());
-  q.bindValue(":custtype_descrip", _description->text().stripWhiteSpace());
-  q.bindValue(":custtype_char",  QVariant(_characteristicGroup->isChecked(), 0));
+  q.bindValue(":custtype_code", _code->text().trimmed());
+  q.bindValue(":custtype_descrip", _description->text().trimmed());
+  q.bindValue(":custtype_char",  QVariant(_characteristicGroup->isChecked()));
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
   {

@@ -166,7 +166,7 @@ void bankAccounts::sFillList()
   q.bindValue(":cash", tr("Cash"));
   q.exec();
   _bankaccnt->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -208,7 +208,7 @@ void bankAccounts::sDelete()
              "WHERE (bankaccnt_id=:bankaccnt_id);" );
   q.bindValue(":bankaccnt_id", _bankaccnt->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

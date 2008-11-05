@@ -69,7 +69,7 @@ class bankAccounts : public XWidget, public Ui::bankAccounts
     Q_OBJECT
 
 public:
-    bankAccounts(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    bankAccounts(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~bankAccounts();
 
 public slots:
