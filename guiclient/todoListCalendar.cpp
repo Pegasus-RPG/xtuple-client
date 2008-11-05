@@ -75,8 +75,7 @@ todoListCalendar::todoListCalendar(QWidget* parent, Qt::WindowFlags f)
 
   todoCalendarControl * cc = new todoCalendarControl(this);
   QGraphicsScene * scene = new QGraphicsScene(this);
-  CalendarGraphicsItem * calendar = new CalendarGraphicsItem();
-  calendar->setCalendarControl(cc);
+  CalendarGraphicsItem * calendar = new CalendarGraphicsItem(cc);
   calendar->setSelectedDay(QDate::currentDate());
   scene->addItem(calendar);
 

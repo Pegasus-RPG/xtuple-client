@@ -71,7 +71,7 @@ class CalendarGraphicsItem : public QGraphicsRectItem, protected GraphicsButtonR
   friend class GraphicsTextButtonItem;
 
   public:
-    CalendarGraphicsItem(QGraphicsItem * parent = 0);
+    CalendarGraphicsItem(CalendarControl * = 0, QGraphicsItem * parent = 0);
     ~CalendarGraphicsItem();
 
     void setCalendarControl(CalendarControl * controller);

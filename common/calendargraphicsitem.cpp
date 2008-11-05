@@ -91,10 +91,10 @@ static const QBrush selectedFill("lightgreen");
 static const QPen noPen(Qt::NoPen);
 static const QPen defaultPen;
 
-CalendarGraphicsItem::CalendarGraphicsItem(QGraphicsItem * parent)
+CalendarGraphicsItem::CalendarGraphicsItem(CalendarControl * cc, QGraphicsItem * parent)
   : QGraphicsRectItem(0.0, 0.0, __width, __height, parent)
 {
-  _controller = 0;
+  _controller = cc;
 
   QDate today = QDate::currentDate();
   QDate firstMonthDay = QDate(today.year(), today.month(), 1);

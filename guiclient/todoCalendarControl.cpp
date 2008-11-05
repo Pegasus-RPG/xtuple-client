@@ -58,6 +58,7 @@
 #include "todoCalendarControl.h"
 #include "guiclient.h"
 #include <parameter.h>
+#include <QDebug>
 
 todoCalendarControl::todoCalendarControl(QObject * parent)
   : CalendarControl(parent)
@@ -66,14 +67,15 @@ todoCalendarControl::todoCalendarControl(QObject * parent)
 
 QString todoCalendarControl::contents(const QDate & date)
 {
-  XSqlQuery qry;
-  qry.prepare("SELECT count(*) AS todoCount"
-              "  FROM todoitem"
-              " WHERE(todoitem_due_date=:date);");
-  qry.bindValue(":date", date);
-  qry.exec();
-  if(qry.first() && qry.value("todoCount").toInt() != 0);
-    return qry.value("todoCount").toString();
+  QSqlQuery qry;
+  qry.exec(QString("SELECT count(*) AS todoCount"
+                   "  FROM todoitem"
+                   " WHERE(todoitem_due_date='%1');").arg(date.toString(Qt::ISODate)));
+  if(qry.first())
+  {
+    if(qry.value(0).toInt() != 0)
+      return qry.value(0).toString();
+  }
   return QString::null;
 }
 
