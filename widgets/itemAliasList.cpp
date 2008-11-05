@@ -78,12 +78,12 @@ QString buildItemLineEditTitle(const unsigned int, const QString);
 itemAliasList::itemAliasList(QWidget* parent, const char* name, bool modal, Qt::WFlags fl) :
  QDialog( parent, name, modal, fl )
 {
-  setCaption(tr( "Item Aliases"));
+  setWindowTitle(tr( "Item Aliases"));
 
   _itemType = ItemLineEdit::cUndefined;
 
   if ( !name )
-   setName( "itemAliasList" );
+   setObjectName( "itemAliasList" );
 
   QVBoxLayout *_mainLayout = new QVBoxLayout(this, 5, 5); 
   QHBoxLayout *_itemLayout = new QHBoxLayout(0, 0, 5); 
@@ -155,12 +155,12 @@ void itemAliasList::set(ParameterList &pParams)
   if (valid)
   {
     _itemType = param.toUInt();
-    setCaption(buildItemLineEditTitle(_itemType, tr("Item Aliases")));
+    setWindowTitle(buildItemLineEditTitle(_itemType, tr("Item Aliases")));
   }
   else
   {
     _itemType = ItemLineEdit::cUndefined;
-    setCaption(tr("Item Aliases"));
+    setWindowTitle(tr("Item Aliases"));
   }
 
   param = pParams.value("extraClauses", &valid);
@@ -184,7 +184,7 @@ void itemAliasList::sFillList()
 {
   _item->clear();
 
-  if (_alias->text().stripWhiteSpace().length() == 0)
+  if (_alias->text().trimmed().length() == 0)
     return;
 
   QString pre( "SELECT item_id, itemalias_id, itemalias_number, item_number, (item_descrip1 || ' ' || item_descrip2) AS item_descrip "
@@ -205,7 +205,7 @@ void itemAliasList::sFillList()
 
   XSqlQuery alias;
   alias.prepare(buildItemLineEditQuery(pre, clauses, post, _itemType));
-  alias.bindValue(":searchString", _alias->text().stripWhiteSpace());
+  alias.bindValue(":searchString", _alias->text().trimmed());
   alias.exec();
   if (alias.first())
   {

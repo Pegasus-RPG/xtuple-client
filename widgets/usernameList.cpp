@@ -74,12 +74,12 @@
 usernameList::usernameList( QWidget* parent, const char* name, bool modal, Qt::WFlags fl ) : QDialog( parent, name, modal, fl )
 {
   if ( !name )
-    setName( "usernameList" );
+    setObjectName( "usernameList" );
 
   _id = -1;
   _type = UsernameLineEdit::UsersAll;
 
-  setCaption(tr("Username List"));
+  setWindowTitle(tr("Username List"));
 
   QVBoxLayout *usernameListLayout = new QVBoxLayout( this, 5, 5, "usernameListLayout"); 
   QHBoxLayout *Layout69 = new QHBoxLayout( 0, 0, 0, "Layout69"); 
@@ -123,7 +123,7 @@ usernameList::usernameList( QWidget* parent, const char* name, bool modal, Qt::W
   Layout20->addWidget( _usernamesLit );
 
   _user = new XTreeWidget(this);
-  _user->setName("_user");
+  _user->setObjectName("_user");
   _usernamesLit->setBuddy(_user);
   Layout20->addWidget(_user);
   usernameListLayout->addLayout( Layout20 );
@@ -157,16 +157,16 @@ void usernameList::set(ParameterList &pParams)
   {
     _type = param.toUInt();
     if(UsernameLineEdit::UsersActive)
-      setCaption(tr("Active Usernames"));
+      setWindowTitle(tr("Active Usernames"));
     else if(UsernameLineEdit::UsersInactive)
-      setCaption(tr("Inactive Usernames"));
+      setWindowTitle(tr("Inactive Usernames"));
   }
   else
     _type = UsernameLineEdit::UsersAll;
 
   param = pParams.value("caption", &valid);
   if (valid)
-    setCaption(param.toString());
+    setWindowTitle(param.toString());
 
   sFillList();
 }

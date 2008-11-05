@@ -174,7 +174,7 @@ void accountSearch::sFillList()
 
   if(_type->currentIndex() > 0)
   {
-    where << "(accnt_type = '" + _type->itemData(_type->currentItem()).toString() + "')";
+    where << "(accnt_type = '" + _type->itemData(_type->currentIndex()).toString() + "')";
   }
   else if(_typeval > 0)
   {

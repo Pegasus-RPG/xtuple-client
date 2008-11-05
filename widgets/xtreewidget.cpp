@@ -69,6 +69,8 @@
 #include <QMimeData>
 #include <QMouseEvent>
 #include <QSettings>
+#include <QSqlError>
+#include <QSqlRecord>
 
 #include "xsqlquery.h"
 #include "format.h"

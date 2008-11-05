@@ -507,7 +507,7 @@ void ItemLineEdit::sParse()
     {
       XSqlQuery item;
       item.prepare("SELECT item_id FROM item WHERE (item_number = :searchString);");
-      item.bindValue(":searchString", text().stripWhiteSpace().upper());
+      item.bindValue(":searchString", text().trimmed().toUpper());
       item.exec();
       if (item.first())
       {
@@ -528,7 +528,7 @@ void ItemLineEdit::sParse()
       XSqlQuery item;
       item.prepare(_sql);
       item.exec();
-      if (item.findFirst("item_number", text().stripWhiteSpace().upper()) != -1)
+      if (item.findFirst("item_number", text().trimmed().toUpper()) != -1)
       {
         setId(item.value("item_id").toInt());
         return;
@@ -545,7 +545,7 @@ void ItemLineEdit::sParse()
       clauses << "(item_number=:searchString)";
 
       item.prepare(buildItemLineEditQuery(pre, clauses, QString::null, _type));
-      item.bindValue(":searchString", text().stripWhiteSpace().upper());
+      item.bindValue(":searchString", text().trimmed().toUpper());
       item.exec();
       if (item.first())
       {

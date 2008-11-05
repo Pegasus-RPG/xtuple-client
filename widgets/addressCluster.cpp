@@ -199,7 +199,7 @@ void AddressCluster::setNumber(QString pNumber)
   address.exec();
   if (address.first())
     setId(address.value("addr_id").toInt());
-  else if (address.lastError().type() != QSqlError::None)
+  else if (address.lastError().type() != QSqlError::NoError)
     QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
                                           .arg(__FILE__)
                                           .arg(__LINE__),
@@ -276,7 +276,7 @@ void AddressCluster::silentSetId(const int pId)
 	    c_active     = _active->isChecked();
 	    c_notes      = _notes;;
         }
-        else if (idQ.lastError().type() != QSqlError::None)
+        else if (idQ.lastError().type() != QSqlError::NoError)
             QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
                                           .arg(__FILE__)
                                           .arg(__LINE__),
@@ -364,7 +364,7 @@ int AddressCluster::save(enum SaveFlags flag)
   datamodQ.bindValue(":state", _state->currentText());
   datamodQ.bindValue(":postalcode", _postalcode->text());
   datamodQ.bindValue(":country", _country->currentText());
-  datamodQ.bindValue(":active", QVariant(_active->isChecked(), 0));
+  datamodQ.bindValue(":active", QVariant(_active->isChecked()));
   datamodQ.bindValue(":notes", _notes);
   if (flag == CHECK)
     datamodQ.bindValue(":flag", QString("CHECK"));
@@ -525,11 +525,11 @@ AddressList::AddressList(QWidget* pParent, const char* pName, bool, Qt::WFlags)
 {
     _parent = (AddressCluster*)(pParent);
     if (!pName)
-      setName("AddressList");
+      setObjectName("AddressList");
     else
-      setName(pName);
+      setObjectName(pName);
     _id = _parent->_id;
-    setCaption(_parent->_titlePlural);
+    setWindowTitle(_parent->_titlePlural);
 
     _listTab->setColumnCount(0);
 
@@ -555,7 +555,7 @@ void AddressList::sFillList()
                   " ORDER BY addr_country, addr_state, addr_postalcode;");
     query.exec();
     query.first();
-    if (query.lastError().type() != QSqlError::None)
+    if (query.lastError().type() != QSqlError::NoError)
     {
       QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
                                     .arg(__FILE__)
@@ -569,7 +569,7 @@ void AddressList::sFillList()
                   " ORDER BY addr_country, addr_state, addr_postalcode;");
       query.exec();
       query.first();
-      if (query.lastError().type() != QSqlError::None)
+      if (query.lastError().type() != QSqlError::NoError)
       {
         QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
                                       .arg(__FILE__)
@@ -597,7 +597,7 @@ void AddressList::sSearch(const QString& pTarget)
         (target->text(0) + " " + target->text(1) + " " +
          target->text(2) + " " + target->text(3) + " " +
          target->text(4) + " " + target->text(5) + " " +
-         target->text(6) + " " + target->text(7)).contains(pTarget.upper(),
+         target->text(6) + " " + target->text(7)).contains(pTarget.toUpper(),
                                                            Qt::CaseInsensitive))
       break;
   }
@@ -662,7 +662,7 @@ AddressSearch::AddressSearch(QWidget* pParent, Qt::WindowFlags pFlags)
 
     _parent = (AddressCluster*)(pParent);
     setObjectName("virtualSearch");
-    setCaption(_parent->_titlePlural);
+    setWindowTitle(_parent->_titlePlural);
     _titleLit->setText(_parent->_titlePlural);
     _id = _parent->_id;
 }
@@ -731,7 +731,7 @@ void AddressSearch::sFillList()
     XSqlQuery query = mql.toQuery(params);
     query.exec();
     _listTab->populate(query);
-    if (query.lastError().type() != QSqlError::None)
+    if (query.lastError().type() != QSqlError::NoError)
     {
       QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
                                     .arg(__FILE__)

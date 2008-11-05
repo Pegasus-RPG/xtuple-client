@@ -107,7 +107,7 @@ void CalendarComboBox::load(ParameterList &pParams)
 PeriodsListView::PeriodsListView(QWidget *pParent, const char *pName) :
   XTreeWidget(pParent)
 {
-  setName(pName);
+  setObjectName(pName);
   _calheadid = -1;
 
   addColumn(tr("Name"),             _itemColumn, Qt::AlignLeft   );

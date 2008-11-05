@@ -62,8 +62,8 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QLineEdit>
-#include <Q3HBoxLayout>
-#include <Q3VBoxLayout>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
 
 #include <parameter.h>
 #include <xsqlquery.h>
@@ -180,11 +180,11 @@ ShiptoCluster::ShiptoCluster(QWidget *pParent, const char *name) :
   QWidget(pParent, name)
 {
 //  Create the component Widgets
-  Q3HBoxLayout *_layoutMain = new Q3HBoxLayout( this, 0, 5, "_layoutMain"); 
-  Q3VBoxLayout *_layoutLit = new Q3VBoxLayout( 0, 0, 0, "_layoutLit"); 
-  Q3VBoxLayout *_layoutData = new Q3VBoxLayout( 0, 0, 0, "_layoutData"); 
-  Q3HBoxLayout *_layoutShipto = new Q3HBoxLayout( 0, 0, 0, "_layoutShipto"); 
-  Q3HBoxLayout *_layoutShiptoNumber = new Q3HBoxLayout( 0, 0, 7, "_layoutShiptoNumber"); 
+  QHBoxLayout *_layoutMain         = new QHBoxLayout( this, 0, 5, "_layoutMain"); 
+  QVBoxLayout *_layoutLit          = new QVBoxLayout( 0, 0, 0, "_layoutLit"); 
+  QVBoxLayout *_layoutData         = new QVBoxLayout( 0, 0, 0, "_layoutData"); 
+  QHBoxLayout *_layoutShipto       = new QHBoxLayout( 0, 0, 0, "_layoutShipto"); 
+  QHBoxLayout *_layoutShiptoNumber = new QHBoxLayout( 0, 0, 7, "_layoutShiptoNumber"); 
 
   QLabel *_shiptoNumberLit = new QLabel(tr("Ship-To #:"), this, "_shiptoNumberLit");
   _shiptoNumberLit->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);

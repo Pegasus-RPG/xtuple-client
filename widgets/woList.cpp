@@ -75,13 +75,13 @@
 woList::woList(QWidget * parent, const char * name, bool modal, Qt::WFlags fl) :
   QDialog( parent, name, modal, fl )
 {
-  setCaption(tr("Work Orders"));
+  setWindowTitle(tr("Work Orders"));
 
   _woid = -1;
   _type = 0;
 
   if ( !name )
-    setName( "woList" );
+    setObjectName( "woList" );
 
   QVBoxLayout *mainLayout = new QVBoxLayout( this, 5, 5, "woListLayout"); 
   QHBoxLayout *topLayout = new QHBoxLayout( 0, 0, 7, "topLayout"); 
@@ -114,7 +114,7 @@ woList::woList(QWidget * parent, const char * name, bool modal, Qt::WFlags fl) :
   listLayout->addWidget(_workOrdersLit);
 
   _wo = new XTreeWidget(this);
-  _wo->setName("_wo");
+  _wo->setObjectName("_wo");
   listLayout->addWidget( _wo );
   mainLayout->addLayout(listLayout);
 

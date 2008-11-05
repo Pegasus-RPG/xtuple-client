@@ -222,7 +222,7 @@ void imageview::sSave()
                         "(:image_id, :image_name, :image_descrip, :image_data);" );
       newImage.bindValue(":image_id", _imageviewid);
       newImage.bindValue(":image_name", _name->text());
-      newImage.bindValue(":image_descrip", _descrip->text());
+      newImage.bindValue(":image_descrip", _descrip->toPlainText());
       newImage.bindValue(":image_data", imageString);
     }
   }
@@ -233,7 +233,7 @@ void imageview::sSave()
                       "WHERE (image_id=:image_id);" );
     newImage.bindValue(":image_id", _imageviewid);
     newImage.bindValue(":image_name", _name->text());
-    newImage.bindValue(":image_descrip", _descrip->text());
+    newImage.bindValue(":image_descrip", _descrip->toPlainText());
   }
 
   newImage.exec();

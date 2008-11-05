@@ -159,7 +159,7 @@ XDateEdit::~XDateEdit()
 
 void XDateEdit::parseDate()
 {
-  QString dateString = text().stripWhiteSpace();
+  QString dateString = text().trimmed();
   bool    isNumeric;
 
   if (DEBUG)
@@ -404,7 +404,7 @@ DLineEdit::DLineEdit(QWidget *parent, const char *name) :
   setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
   setFocusPolicy(Qt::StrongFocus);
   setMaximumWidth(200);
-  setName(name);
+  setObjectName(name);
 
   QHBoxLayout *hbox = new QHBoxLayout(this);
   hbox->addWidget(&_lineedit);

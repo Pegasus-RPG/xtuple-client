@@ -186,7 +186,7 @@ void LotserialLineEdit::sParse()
     {
       if (! _parsed)
       {
-          QString stripped = text().stripWhiteSpace().upper();
+          QString stripped = text().trimmed().toUpper();
           if (stripped.length() == 0)
               setId(-1);
           else
@@ -204,7 +204,7 @@ void LotserialLineEdit::sParse()
                   _name = (numQ.value("name").toString());
                   _itemid = (numQ.value("item_id").toInt());
               }
-              else if (numQ.lastError().type() != QSqlError::None)
+              else if (numQ.lastError().type() != QSqlError::NoError)
               {
                 QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
                                               .arg(__FILE__)
@@ -230,7 +230,7 @@ void LotserialLineEdit::sParse()
                 numQ.exec("SELECT nextval('ls_ls_id_seq') AS ls_id;");
                 if (numQ.first())
                   lsid= numQ.value("ls_id").toInt();
-                else if (numQ.lastError().type() != QSqlError::None)
+                else if (numQ.lastError().type() != QSqlError::NoError)
                 {
                   QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
                                                 .arg(__FILE__)
@@ -244,7 +244,7 @@ void LotserialLineEdit::sParse()
                 numQ.bindValue(":item_id", _itemid);
                 numQ.bindValue(":number", stripped);
                 numQ.exec();
-                if (numQ.lastError().type() != QSqlError::None)
+                if (numQ.lastError().type() != QSqlError::NoError)
                 {
                   QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
                                                 .arg(__FILE__)

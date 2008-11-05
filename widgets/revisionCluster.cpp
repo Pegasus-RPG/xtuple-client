@@ -114,7 +114,7 @@ void RevisionCluster::activate()
   activate.exec();
   if (activate.first())
     setDescription("Active");
-  else  if (activate.lastError().type() != QSqlError::None)
+  else  if (activate.lastError().type() != QSqlError::NoError)
   {
     QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
                                               .arg(__FILE__)
@@ -285,7 +285,7 @@ void RevisionLineEdit::sParse()
 {
   if ((_isRevControl) && (!_parsed))
   {
-    QString stripped = text().stripWhiteSpace().upper();
+    QString stripped = text().trimmed().toUpper();
     if (stripped.length() == 0)
     {
       setId(-1);
@@ -339,7 +339,7 @@ void RevisionLineEdit::sParse()
                         else
                         {
                   setText(_cachenum);
-                  if (newrev.lastError().type() != QSqlError::None)
+                  if (newrev.lastError().type() != QSqlError::NoError)
                   QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
                               .arg(__FILE__)
                               .arg(__LINE__),
@@ -354,7 +354,7 @@ void RevisionLineEdit::sParse()
                 else 
             {
                   setText(_cachenum);
-              if (numQ.lastError().type() != QSqlError::None)
+              if (numQ.lastError().type() != QSqlError::NoError)
               QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
                               .arg(__FILE__)
                               .arg(__LINE__),

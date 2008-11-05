@@ -74,12 +74,12 @@
 salesOrderList::salesOrderList( QWidget* parent, const char* name, bool modal, Qt::WFlags fl ) : QDialog( parent, name, modal, fl )
 {
   if ( !name )
-    setName( "salesOrderList" );
+    setObjectName( "salesOrderList" );
 
   _soheadid = -1;
   _type = (cSoOpen | cSoClosed | cSoReleased);
 
-  setCaption(tr("Sales Orders"));
+  setWindowTitle(tr("Sales Orders"));
 
   QVBoxLayout *mainLayout = new QVBoxLayout(this, 5, 5, "mainLayout"); 
   QVBoxLayout *warehouseLayout = new QVBoxLayout(0, 0, 0, "warehouseLayout"); 
@@ -111,7 +111,7 @@ salesOrderList::salesOrderList( QWidget* parent, const char* name, bool modal, Q
   listLayout->addWidget(_salesOrdersLit);
 
   _so = new XTreeWidget(this);
-  _so->setName("_so");
+  _so->setObjectName("_so");
   listLayout->addWidget(_so);
   mainLayout->addLayout(listLayout);
 

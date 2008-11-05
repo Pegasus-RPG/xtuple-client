@@ -75,12 +75,12 @@ accountList::accountList(QWidget* parent, const char* name, bool modal, Qt::WFla
   QDialog(parent, name, modal, fl)
 {
   if ( !name )
-    setName( "accountList" );
+    setObjectName( "accountList" );
 
   _accntid = -1;
   _type = GLCluster::cUndefined;
 
-  setCaption(tr("Account Numbers"));
+  setWindowTitle(tr("Account Numbers"));
 
   QHBoxLayout *accountListLayout = new QHBoxLayout( this, 5, 7, "accountListLayout"); 
   QVBoxLayout *Layout68 = new QVBoxLayout( 0, 0, 0, "Layout68"); 
@@ -90,7 +90,7 @@ accountList::accountList(QWidget* parent, const char* name, bool modal, Qt::WFla
   Layout68->addWidget(accountsLit);
 
   _accnt = new XTreeWidget(this);
-  _accnt->setName("_accnt");
+  _accnt->setObjectName("_accnt");
   Layout68->addWidget( _accnt );
   accountListLayout->addLayout( Layout68 );
 

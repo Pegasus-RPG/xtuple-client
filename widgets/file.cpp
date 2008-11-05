@@ -169,7 +169,7 @@ void file::set( const ParameterList & pParams )
 
 void file::sSave()
 {
-  if(_url->text().stripWhiteSpace().isEmpty())
+  if(_url->text().trimmed().isEmpty())
   {
     QMessageBox::warning( this, tr("Must Specify file"),
       tr("You must specify a file before you may save.") );
@@ -200,7 +200,7 @@ void file::sSave()
   q.bindValue(":source", Documents::_documentMap[_source].ident);
   q.bindValue(":source_id", _sourceid);
   q.bindValue(":url_id", _urlid);
-  q.bindValue(":title", _title->text().stripWhiteSpace());
+  q.bindValue(":title", _title->text().trimmed());
   q.bindValue(":url", url.toString());
   q.exec();
 

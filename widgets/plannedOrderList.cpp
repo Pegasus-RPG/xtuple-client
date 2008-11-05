@@ -76,12 +76,12 @@
 plannedOrderList::plannedOrderList(QWidget *parent, const char *name, bool modal, Qt::WFlags fl) :
   QDialog( parent, name, modal, fl )
 {
-  setCaption(tr("Planned Orders"));
+  setWindowTitle(tr("Planned Orders"));
 
   _planordid = -1;
 
   if ( !name )
-    setName( "plannedOrderList" );
+    setObjectName( "plannedOrderList" );
 
   QVBoxLayout *plannedOrderListLayout = new QVBoxLayout( this, 5, 5, "plannedOrderListLayout"); 
   QHBoxLayout *layout6387 = new QHBoxLayout( 0, 0, 7, "layout6387"); 
@@ -134,7 +134,7 @@ plannedOrderList::plannedOrderList(QWidget *parent, const char *name, bool modal
     Layout185->addWidget( _plannedOrdersLit );
 
     _planord = new XTreeWidget( this);
-    _planord->setName("_planord" );
+    _planord->setObjectName("_planord" );
     Layout185->addWidget( _planord );
     plannedOrderListLayout->addLayout( Layout185 );
 

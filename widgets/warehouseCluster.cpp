@@ -218,7 +218,7 @@ void WComboBox::findItemsites(int pItemID)
                     _x_preferences->value("PreferredWarehouse").toInt() : -1));
 
     if (currentItem() == -1)
-      setCurrentItem(0);
+      setCurrentIndex(0);
 
   }
   else

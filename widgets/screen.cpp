@@ -205,7 +205,7 @@ void Screen::save()
 void Screen::search(QString criteria)
 {
   QString filter;
-  if (criteria.stripWhiteSpace().length())
+  if (criteria.trimmed().length())
   {
     QStringList parts;
     for (int i = 0; i < _model->columnCount(); i++)

@@ -251,7 +251,7 @@ VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,
 
     setTableAndColumnNames(pTabName, pIdColumn, pNumberColumn, pNameColumn, pDescripColumn);
 
-    if (pExtra && QString(pExtra).stripWhiteSpace().length())
+    if (pExtra && QString(pExtra).trimmed().length())
 	_extraClause = pExtra;
 
     connect(this, SIGNAL(lostFocus()),		this, SLOT(sParse()));
@@ -284,12 +284,12 @@ void VirtualClusterLineEdit::setTableAndColumnNames(const char* pTabName,
   _query = QString("SELECT %1 AS id, %2 AS number ")
 		  .arg(pIdColumn).arg(pNumberColumn);
 
-  _hasName = (pNameColumn && QString(pNameColumn).stripWhiteSpace().length());
+  _hasName = (pNameColumn && QString(pNameColumn).trimmed().length());
   if (_hasName)
     _query += QString(", %1 AS name ").arg(pNameColumn);
 
   _hasDescription = (pDescripColumn &&
-		     QString(pDescripColumn).stripWhiteSpace().length());
+		     QString(pDescripColumn).trimmed().length());
   if (_hasDescription)
        _query += QString(", %1 AS description ").arg(pDescripColumn);
 
@@ -379,7 +379,7 @@ void VirtualClusterLineEdit::silentSetId(const int pId)
                 _mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this))).toString() != text())
               _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this)), text());
 	}
-	else if (idQ.lastError().type() != QSqlError::None)
+	else if (idQ.lastError().type() != QSqlError::NoError)
 	    QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
 					  .arg(__FILE__)
 					  .arg(__LINE__),
@@ -405,7 +405,7 @@ void VirtualClusterLineEdit::sParse()
 
     if (! _parsed)
     {
-      QString stripped = text().stripWhiteSpace().upper();
+      QString stripped = text().trimmed().toUpper();
       if (stripped.length() == 0)
       {
 	_parsed = TRUE;
@@ -431,7 +431,7 @@ void VirtualClusterLineEdit::sParse()
 	else
 	{
 	    clear();
-	    if (numQ.lastError().type() != QSqlError::None)
+	    if (numQ.lastError().type() != QSqlError::NoError)
 		QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
 					      .arg(__FILE__)
 					      .arg(__LINE__),
@@ -523,7 +523,7 @@ void VirtualList::init()
     _listTab	= new XTreeWidget(this);
     _titleLit	= new QLabel(_listTab, "", this, "_titleLit");
 
-    _listTab->setName("_listTab");
+    _listTab->setObjectName("_listTab");
 
     _searchLit->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
     _select->setEnabled(false);
@@ -580,7 +580,7 @@ VirtualList::VirtualList(QWidget* pParent, Qt::WindowFlags pFlags ) :
     if (pParent->inherits("VirtualClusterLineEdit"))
     {
       _parent = (VirtualClusterLineEdit*)(pParent);
-      setCaption(_parent->_titlePlural);
+      setWindowTitle(_parent->_titlePlural);
       if (_parent->_hasName)
       {
 	_listTab->addColumn(tr("Name"),	 -1, Qt::AlignLeft, true, "name");
@@ -659,7 +659,7 @@ VirtualSearch::VirtualSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
     _listTab = new XTreeWidget(this);
     _titleLit = new QLabel(_listTab, "", this, "_titleLit");
 
-    _listTab->setName("_listTab");
+    _listTab->setObjectName("_listTab");
 
     _searchLit->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
     _select->setEnabled(false);
@@ -707,7 +707,7 @@ VirtualSearch::VirtualSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
     if (pParent->inherits("VirtualClusterLineEdit"))
     {
       _parent = (VirtualClusterLineEdit*)(pParent);
-      setCaption(_parent->_titlePlural);
+      setWindowTitle(_parent->_titlePlural);
       if (_parent->_hasName)
       {
 	_listTab->addColumn(tr("Name"),	 -1, Qt::AlignLeft, true, "name");
@@ -748,7 +748,7 @@ void VirtualSearch::sFillList()
 
     _listTab->clear();
 
-    _search->setText(_search->text().stripWhiteSpace().upper());
+    _search->setText(_search->text().trimmed().toUpper());
     if (_search->text().length() == 0)
 	return;
 
@@ -789,7 +789,7 @@ VirtualInfo::VirtualInfo(QWidget* pParent, Qt::WindowFlags pFlags) :
     setWindowModality(Qt::WindowModal);
     _parent = (VirtualClusterLineEdit*)(pParent);
     setObjectName("virtualInfo");
-    setCaption(_parent->_titleSingular);
+    setWindowTitle(_parent->_titleSingular);
     _id = _parent->_id;
     
     _titleLit	= new QLabel(_parent->_titleSingular, this, "_titleLit");
@@ -857,7 +857,7 @@ void VirtualInfo::sPopulate()
 	if (_parent->_hasDescription)
 	    _descrip->setText(qry.value("description").toString());
     }
-    else if (qry.lastError().type() != QSqlError::None)
+    else if (qry.lastError().type() != QSqlError::NoError)
 	QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
 					  .arg(__FILE__)
 					  .arg(__LINE__),

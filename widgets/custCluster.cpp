@@ -258,7 +258,7 @@ void CLineEdit::setSilentId(int pId)
 
       return;
     }
-    else if (cust.lastError().type() != QSqlError::None)
+    else if (cust.lastError().type() != QSqlError::NoError)
       QMessageBox::critical(this, tr("A System Error occurred at %1::%2.")
                             .arg(__FILE__)
                             .arg(__LINE__),
@@ -343,7 +343,7 @@ void CLineEdit::sParse()
                 ";");
 
     ParameterList params;
-    params.append("number", text().stripWhiteSpace());
+    params.append("number", text().trimmed());
     switch (_type)
     {
       case ActiveCustomers:
@@ -379,7 +379,7 @@ void CLineEdit::sParse()
     }
     else
     {
-      if (cust.lastError().type() != QSqlError::None)
+      if (cust.lastError().type() != QSqlError::NoError)
         QMessageBox::critical(this, tr("A System Error occurred at %1::%2.")
                               .arg(__FILE__)
                               .arg(__LINE__),

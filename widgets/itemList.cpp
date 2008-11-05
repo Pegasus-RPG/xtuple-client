@@ -78,13 +78,13 @@ QString buildItemLineEditTitle(const unsigned int, const QString);
 itemList::itemList( QWidget* parent, const char* name, bool modal, Qt::WFlags fl ) : QDialog( parent, name, modal, fl )
 {
   if ( !name )
-    setName( "itemList" );
+    setObjectName( "itemList" );
 
   _itemid = -1;
   _itemType = ItemLineEdit::cUndefined;
   _useQuery = FALSE;
 
-  setCaption(tr("Item List"));
+  setWindowTitle(tr("Item List"));
 
   QVBoxLayout *itemListLayout = new QVBoxLayout( this, 5, 5, "itemListLayout"); 
   QHBoxLayout *Layout69 = new QHBoxLayout( 0, 0, 0, "Layout69"); 
@@ -135,7 +135,7 @@ itemList::itemList( QWidget* parent, const char* name, bool modal, Qt::WFlags fl
     Layout20->addWidget( _itemsLit );
 
     _item = new XTreeWidget(this);
-    _item->setName("_item");
+    _item->setObjectName("_item");
     _itemsLit->setBuddy(_item );
     Layout20->addWidget( _item );
     itemListLayout->addLayout( Layout20 );
@@ -181,7 +181,7 @@ void itemList::set(ParameterList &pParams)
   if (valid)
   {
     _itemType = param.toUInt();
-    setCaption(buildItemLineEditTitle(_itemType, tr("Items")));
+    setWindowTitle(buildItemLineEditTitle(_itemType, tr("Items")));
   }
   else
     _itemType = ItemLineEdit::cUndefined;
@@ -200,7 +200,7 @@ void itemList::set(ParameterList &pParams)
 
   param = pParams.value("caption", &valid);
   if (valid)
-    setCaption(param.toString());
+    setWindowTitle(param.toString());
 
   sFillList();
 }
@@ -272,7 +272,7 @@ void itemList::sFillList()
       else if (_itemType & ItemLineEdit::cGeneralPurchased)
 	    _itemType = (_itemType ^ ItemLineEdit::cGeneralPurchased);
 
-      setCaption(buildItemLineEditTitle(_itemType, tr("Items")));
+      setWindowTitle(buildItemLineEditTitle(_itemType, tr("Items")));
 
       _item->populate(buildItemLineEditQuery(pre, clauses, post, _itemType), _itemid);
   }

@@ -287,7 +287,7 @@ class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
 	virtual void	setId(const int);
 	virtual void	setInitialsVisible(const bool);
 	virtual void	setMinimalLayout(const bool);
-	virtual void	setName(const QString& p);
+	virtual void	setObjectName(const QString& p);
 	virtual void	setPhonesVisible(const bool);
 	virtual void	setSearchAcct(const int);
 	virtual void	setWebaddrVisible(const bool);

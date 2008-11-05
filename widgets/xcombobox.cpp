@@ -699,7 +699,7 @@ void XComboBox::setCode(QString pString)
           qDebug("%s::setCode(%s) found at %d with _ids.count %d & _lastId %d",
                  objectName().toAscii().data(), pString.toAscii().data(),
                  counter, _ids.count(), _lastId);
-        setCurrentItem(counter);
+        setCurrentIndex(counter);
         
         if (_ids.count() && _lastId!=_ids.at(counter))
           setId(_ids.at(counter));
@@ -750,7 +750,7 @@ void XComboBox::setId(int pTarget)
       {
         if (_ids.at(counter) == id)
         {
-          setCurrentItem(counter);
+          setCurrentIndex(counter);
 
           if(_lastId!=id)
           {
@@ -773,7 +773,7 @@ void XComboBox::setId(int pTarget)
     {
       if (_ids.at(counter) == pTarget)
       {
-        setCurrentItem(counter);
+        setCurrentIndex(counter);
 
         if(_lastId!=pTarget)
         {
@@ -806,7 +806,7 @@ void XComboBox::setText(const QString &pString)
   {
       if (text(counter) == pString)
       {
-        setCurrentItem(counter);
+        setCurrentIndex(counter);
         return;
       }
     }
@@ -830,7 +830,7 @@ void XComboBox::setNull()
   {
     _lastId = -1;
 
-    setCurrentItem(0);
+    setCurrentIndex(0);
     emit newID(-1);
     emit valid(FALSE);
     emit notNull(FALSE);
@@ -937,7 +937,7 @@ void XComboBox::populate(XSqlQuery &pQuery, int pSelected)
     while(pQuery.next());
   }
 
-  setCurrentItem(selected);
+  setCurrentIndex(selected);
   if (_ids.count())
   {
     _lastId = _ids.at(selected);

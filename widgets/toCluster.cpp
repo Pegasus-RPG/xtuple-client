@@ -216,28 +216,28 @@ void ToCluster::constructor()
   _layoutMain->addWidget(_dstwhsLit,   1, 2);
   _layoutMain->addWidget(_dstwhs,      1, 3);
   
-  _toNumberLit->setName("_toNumberLit");
+  _toNumberLit->setObjectName("_toNumberLit");
   _toNumberLit->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
   _toNumberLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
 
-  _toNumber->setName("_toNumber");
+  _toNumber->setObjectName("_toNumber");
   _toNumber->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
-  _list->setName("_list");
+  _list->setObjectName("_list");
   _list->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 #ifndef Q_WS_MAC
   _list->setMaximumWidth(25);
 #endif
   _list->setFocusPolicy(Qt::NoFocus);
 
-  _srcwhsLit->setName("_srcwhsLit");
+  _srcwhsLit->setObjectName("_srcwhsLit");
   _srcwhsLit->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
   _srcwhsLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   _srcwhsLit->setBuddy(_srcwhs);
   _srcwhs->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
   _srcwhs->setEnabled(false);
 
-  _dstwhsLit->setName("_dstwhsLit");
+  _dstwhsLit->setObjectName("_dstwhsLit");
   _dstwhsLit->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
   _dstwhsLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   _dstwhsLit->setBuddy(_dstwhs);

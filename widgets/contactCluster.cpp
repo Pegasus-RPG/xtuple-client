@@ -421,7 +421,7 @@ void ContactCluster::setDataWidgetMap(XDataWidgetMapper* m)
 }
 
 
-void ContactCluster::setName(const QString& p)
+void ContactCluster::setObjectName(const QString& p)
 {
   int firstSpace = p.indexOf(" ");
   if (firstSpace > 0)
@@ -478,7 +478,7 @@ int ContactCluster::save(AddressCluster::SaveFlags flag)
     return -1;
   if (_crmAcct->id() > 0)
     datamodQ.bindValue(":crmacct_id",_crmAcct->id());	// else NULL
-  datamodQ.bindValue(":active",    QVariant(_active->isChecked(), 0));
+  datamodQ.bindValue(":active",    QVariant(_active->isChecked()));
   datamodQ.exec();
   if (datamodQ.first())
   {
@@ -884,10 +884,10 @@ ContactList::ContactList(QWidget* pParent, const char* pName, bool, Qt::WFlags)
     _parent = (ContactCluster*)(pParent);
     _id = _parent->_id;
     if (!pName)
-	setName("ContactList");
+	setObjectName("ContactList");
     else
-        setName(pName);
-    setCaption(_parent->_titlePlural);
+        setObjectName(pName);
+    setWindowTitle(_parent->_titlePlural);
     
     _searchAcct = new QCheckBox();
     _searchAcct->setMaximumWidth(480);
@@ -939,7 +939,7 @@ void ContactList::sFillList(const bool searchAcct)
   query.bindValue(":searchAcctId", _parent->_searchAcctId);
   query.exec();
   query.first();
-  if (query.lastError().type() != QSqlError::None)
+  if (query.lastError().type() != QSqlError::NoError)
   {
     QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
 				  .arg(__FILE__)
@@ -953,7 +953,7 @@ void ContactList::sFillList(const bool searchAcct)
 		  " ORDER BY cntct_last_name, cntct_first_name;");
     query.exec();
     query.first();
-    if (query.lastError().type() != QSqlError::None)
+    if (query.lastError().type() != QSqlError::NoError)
     {
       QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
 				    .arg(__FILE__)
@@ -978,10 +978,10 @@ void ContactList::sSearch(const QString& pTarget)
   {
     target = _listTab->topLevelItem(i);
     if (target == NULL ||
-        target->text(0).startsWith(pTarget.upper(), Qt::CaseInsensitive) ||
-        target->text(1).startsWith(pTarget.upper(), Qt::CaseInsensitive) ||
-        target->text(2).startsWith(pTarget.upper(), Qt::CaseInsensitive) ||
-        target->text(3).startsWith(pTarget.upper(), Qt::CaseInsensitive))
+        target->text(0).startsWith(pTarget.toUpper(), Qt::CaseInsensitive) ||
+        target->text(1).startsWith(pTarget.toUpper(), Qt::CaseInsensitive) ||
+        target->text(2).startsWith(pTarget.toUpper(), Qt::CaseInsensitive) ||
+        target->text(3).startsWith(pTarget.toUpper(), Qt::CaseInsensitive))
       break;
   }
 
@@ -1088,7 +1088,7 @@ ContactSearch::ContactSearch(QWidget* pParent, Qt::WindowFlags pFlags)
 
     _parent = (ContactCluster*)(pParent);
     setObjectName("contactSearch");
-    setCaption(_parent->_titlePlural);
+    setWindowTitle(_parent->_titlePlural);
     _titleLit->setText(_parent->_titlePlural);
     _id = _parent->_id;
 }
@@ -1178,7 +1178,7 @@ void ContactSearch::sFillList()
 
     MetaSQLQuery mql(sql);
     XSqlQuery query = mql.toQuery(params);
-    if (query.lastError().type() != QSqlError::None)
+    if (query.lastError().type() != QSqlError::NoError)
     {
       QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
 				    .arg(__FILE__)
@@ -1191,7 +1191,7 @@ void ContactSearch::sFillList()
 //      sql = _parent->_query + limits;
 //      MetaSQLQuery mqlAllAccnts(sql);
 //      query = mqlAllAccnts.toQuery(params);
-//      if (query.lastError().type() != QSqlError::None)
+//      if (query.lastError().type() != QSqlError::NoError)
 //      {
 //        QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
 //				      .arg(__FILE__)

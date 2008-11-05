@@ -62,8 +62,8 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
-#include <Q3HBoxLayout>
-#include <Q3VBoxLayout>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
 
 #include <xsqlquery.h>
 #include <parameter.h>
@@ -194,14 +194,14 @@ PlanOrdCluster::PlanOrdCluster(QWidget *pParent, const char *name) :
 void PlanOrdCluster::constructor()
 {
 //  Create the component Widgets
-  Q3VBoxLayout *_mainLayout       = new Q3VBoxLayout(this, 0, 0);
-  Q3HBoxLayout *_firstLineLayout  = new Q3HBoxLayout(0, 0, 7);
-  Q3HBoxLayout *_orderLayout      = new Q3HBoxLayout(0, 0, 5);
-  Q3HBoxLayout *_warehouseLayout  = new Q3HBoxLayout(0, 0, 5);
-  Q3HBoxLayout *_itemLineLayout   = new Q3HBoxLayout(0, 0, 7);
-  Q3HBoxLayout *_itemNumberLayout = new Q3HBoxLayout(0, 0, 5);
-  Q3HBoxLayout *_uomLayout        = new Q3HBoxLayout(0, 0, 5);
-  Q3HBoxLayout *_statusLayout     = new Q3HBoxLayout(0, 0, 7);
+  QVBoxLayout *_mainLayout       = new QVBoxLayout(this, 0, 0);
+  QHBoxLayout *_firstLineLayout  = new QHBoxLayout(0, 0, 7);
+  QHBoxLayout *_orderLayout      = new QHBoxLayout(0, 0, 5);
+  QHBoxLayout *_warehouseLayout  = new QHBoxLayout(0, 0, 5);
+  QHBoxLayout *_itemLineLayout   = new QHBoxLayout(0, 0, 7);
+  QHBoxLayout *_itemNumberLayout = new QHBoxLayout(0, 0, 5);
+  QHBoxLayout *_uomLayout        = new QHBoxLayout(0, 0, 5);
+  QHBoxLayout *_statusLayout     = new QHBoxLayout(0, 0, 7);
 
   QLabel *_numberLit = new QLabel(tr("Planned Order #:"), this, "_numberLit");
 

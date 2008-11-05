@@ -79,14 +79,14 @@
 comment::comment( QWidget* parent, const char* name, bool modal, Qt::WFlags fl ) :
   QDialog( parent, name, modal, fl )
 {
-  setCaption(tr("Comment"));
+  setWindowTitle(tr("Comment"));
 
   _commentid = -1;
   _targetId = -1;
   _mode = cNew;
 
   if (!name)
-    setName("comment");
+    setObjectName("comment");
 
   QHBoxLayout *commentLayout = new QHBoxLayout( this, 5, 7, "commentLayout"); 
   QVBoxLayout *layout11  = new QVBoxLayout( 0, 0, 5, "layout11"); 
@@ -347,7 +347,7 @@ void comment::sSave()
   _query.bindValue(":cmnttype_id", _cmnttype->id());
   _query.bindValue(":source", Comments::_commentMap[_source].ident);
   _query.bindValue(":source_id", _targetId);
-  _query.bindValue(":text", _comment->text().stripWhiteSpace());
+  _query.bindValue(":text", _comment->toPlainText().trimmed());
   _query.exec();
   if (_query.first())
   {
@@ -362,7 +362,7 @@ void comment::sSave()
     }
     done (_query.value("result").toInt());
   }
-  else if (_query.lastError().type() != QSqlError::None)
+  else if (_query.lastError().type() != QSqlError::NoError)
   {
     QMessageBox::critical(this, tr("Cannot Post Comment"),
                           _query.lastError().databaseText());
@@ -382,7 +382,7 @@ void comment::populate()
     _cmnttype->setId(_query.value("comment_cmnttype_id").toInt());
     _comment->setText(_query.value("comment_text").toString());
   }
-  else if (_query.lastError().type() != QSqlError::None)
+  else if (_query.lastError().type() != QSqlError::NoError)
   {
     QMessageBox::critical(this, tr("Error Selecting Comment"),
                           _query.lastError().databaseText());

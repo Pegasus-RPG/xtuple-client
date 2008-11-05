@@ -73,12 +73,12 @@
 transferOrderList::transferOrderList( QWidget* parent, const char* name, bool modal, Qt::WFlags fl ) : QDialog( parent, name, modal, fl )
 {
   if ( !name )
-    setName( "transferOrderList" );
+    setObjectName( "transferOrderList" );
 
   _toheadid = -1;
   _type = (cToOpen | cToClosed);
 
-  setCaption(tr("Transfer Orders"));
+  setWindowTitle(tr("Transfer Orders"));
 
   QVBoxLayout *mainLayout	= new QVBoxLayout(this, 5, 5, "mainLayout"); 
   QHBoxLayout *warehouseLayout	= new QHBoxLayout(0, 0, 0, "warehouseLayout"); 
@@ -115,7 +115,7 @@ transferOrderList::transferOrderList( QWidget* parent, const char* name, bool mo
   listLayout->addWidget(_transferOrdersLit);
 
   _to = new XTreeWidget(this);
-  _to->setName("_to");
+  _to->setObjectName("_to");
   listLayout->addWidget(_to);
   mainLayout->addLayout(listLayout);
 

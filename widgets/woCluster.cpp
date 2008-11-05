@@ -62,9 +62,8 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QLayout>
-//Added by qt3to4:
-#include <Q3HBoxLayout>
-#include <Q3VBoxLayout>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
 
 #include <parameter.h>
 #include <xsqlquery.h>
@@ -206,7 +205,7 @@ void WoLineEdit::sParse()
 {
   if (!_parsed)
   {
-    if (text().stripWhiteSpace().length() == 0)
+    if (text().trimmed().length() == 0)
       setId(-1);
 
     else if (_useQuery)
@@ -214,7 +213,7 @@ void WoLineEdit::sParse()
       XSqlQuery wo;
       wo.prepare(_sql);
       wo.exec();
-      if (wo.findFirst("wonumber", text().stripWhiteSpace().upper()) != -1)
+      if (wo.findFirst("wonumber", text().trimmed().toUpper()) != -1)
       {
         setId(wo.value("wo_id").toInt());
         return;
@@ -360,14 +359,14 @@ WoCluster::WoCluster(int pWoType, QWidget *pParent, const char *name) :
 void WoCluster::constructor()
 {
 //  Create the component Widgets
-  Q3VBoxLayout *_mainLayout      = new Q3VBoxLayout(this, 0, 2, "_layoutMain"); 
-  Q3HBoxLayout *_woLayout        = new Q3HBoxLayout(0, 0, 5, "_layoutLit"); 
-  Q3HBoxLayout *_warehouseLayout = new Q3HBoxLayout(0, 0, 5, "_layoutLit"); 
-  Q3HBoxLayout *_line1Layout     = new Q3HBoxLayout(0, 0, 7, "_layoutLit"); 
-  Q3HBoxLayout *_itemLayout      = new Q3HBoxLayout(0, 0, 5, "_layoutLit"); 
-  Q3HBoxLayout *_uomLayout       = new Q3HBoxLayout(0, 0, 5, "_layoutLit"); 
-  Q3HBoxLayout *_line2Layout     = new Q3HBoxLayout(0, 0, 7, "_layoutLit"); 
-  Q3HBoxLayout *_statusLayout    = new Q3HBoxLayout(0, 0, 5, "_layoutLit"); 
+  QVBoxLayout *_mainLayout      = new QVBoxLayout(this, 0, 2, "_layoutMain"); 
+  QHBoxLayout *_woLayout        = new QHBoxLayout(0, 0, 5, "_layoutLit"); 
+  QHBoxLayout *_warehouseLayout = new QHBoxLayout(0, 0, 5, "_layoutLit"); 
+  QHBoxLayout *_line1Layout     = new QHBoxLayout(0, 0, 7, "_layoutLit"); 
+  QHBoxLayout *_itemLayout      = new QHBoxLayout(0, 0, 5, "_layoutLit"); 
+  QHBoxLayout *_uomLayout       = new QHBoxLayout(0, 0, 5, "_layoutLit"); 
+  QHBoxLayout *_line2Layout     = new QHBoxLayout(0, 0, 7, "_layoutLit"); 
+  QHBoxLayout *_statusLayout    = new QHBoxLayout(0, 0, 5, "_layoutLit"); 
 
   QLabel *woNumberLit = new QLabel(tr("Work Order #:"), this, "woNumberLit");
   woNumberLit->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -610,12 +609,12 @@ void WomatlCluster::constructor()
   _qtyIssued->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
 
   // lay out the component widgets
-  Q3VBoxLayout *clusterLyt    = new Q3VBoxLayout(this, 5, -1, "clusterLyt");
-  Q3HBoxLayout *itemMainLyt   = new Q3HBoxLayout(clusterLyt, -1, "itemMainLyt");
-  Q3HBoxLayout *itemDescLyt   = new Q3HBoxLayout(clusterLyt, -1, "itemDescLyt");
-  Q3HBoxLayout *qtyHBoxLyt    = new Q3HBoxLayout(clusterLyt, -1, "qtyHBoxLyt");
-  Q3VBoxLayout *qtyLitVBoxLyt = new Q3VBoxLayout(qtyHBoxLyt, -1, "qtyLitVBoxLyt");
-  Q3VBoxLayout *qtyVBoxLyt    = new Q3VBoxLayout(qtyHBoxLyt, -1, "qtyVBoxLyt");
+  QVBoxLayout *clusterLyt    = new QVBoxLayout(this, 5, -1, "clusterLyt");
+  QHBoxLayout *itemMainLyt   = new QHBoxLayout(clusterLyt, -1, "itemMainLyt");
+  QHBoxLayout *itemDescLyt   = new QHBoxLayout(clusterLyt, -1, "itemDescLyt");
+  QHBoxLayout *qtyHBoxLyt    = new QHBoxLayout(clusterLyt, -1, "qtyHBoxLyt");
+  QVBoxLayout *qtyLitVBoxLyt = new QVBoxLayout(qtyHBoxLyt, -1, "qtyLitVBoxLyt");
+  QVBoxLayout *qtyVBoxLyt    = new QVBoxLayout(qtyHBoxLyt, -1, "qtyVBoxLyt");
 
   itemMainLyt->addWidget(itemNumberLit);
   itemMainLyt->addWidget(_itemNumber);
@@ -900,7 +899,7 @@ void WomatlCluster::sPopulateInfo(int pWomatlid)
 {
   if (pWomatlid == -1)
   {
-    _itemNumber->setCurrentItem(0);
+    _itemNumber->setCurrentIndex(0);
     _uom->setText("");
     _descrip1->setText("");
     _descrip2->setText("");

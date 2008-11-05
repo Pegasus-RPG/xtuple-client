@@ -193,8 +193,8 @@ while _valueBaseWidget is a QLabel; they emit different signals.
 CurrCluster::CurrCluster(QWidget * parent, const char* name)
     : CurrDisplay(parent, name)
 {
-    setName("CurrCluster");
-    setCaption("CurrCluster");
+    setObjectName("CurrCluster");
+    setWindowTitle("CurrCluster");
     setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
     _grid->remove(_valueLocalWidget);
@@ -524,7 +524,7 @@ int CurrDisplay::baseId()
     {
       sNoBase(0, "baseId");
     }
-    else if (baseQuery.lastError().type() != QSqlError::None)
+    else if (baseQuery.lastError().type() != QSqlError::NoError)
     {
 	QMessageBox::critical(0, tr("A System Error occurred at %1::%2.")
 			      .arg(__FILE__)
@@ -547,8 +547,8 @@ QString CurrDisplay::baseCurrAbbr()
 CurrDisplay::CurrDisplay(QWidget * parent, const char* name)
     : QWidget(parent, name)
 {
-    setName("CurrDisplay");
-    setCaption("CurrDisplay");
+    setObjectName("CurrDisplay");
+    setWindowTitle("CurrDisplay");
 
     _grid = new QGridLayout(this);
     _grid->setMargin(2);
@@ -801,7 +801,7 @@ void CurrDisplay::sValueBaseChanged(double newValue)
 	    sZeroErrorCount(id(), effective());
 	    _localKnown = true;
 	}
-	else if (convertVal.lastError().type() != QSqlError::None)
+	else if (convertVal.lastError().type() != QSqlError::NoError)
 	{
 	    if (convertVal.lastError().databaseText().contains("No exchange rate"))
 	    {
@@ -822,7 +822,7 @@ void CurrDisplay::sValueBaseChanged(double newValue)
 
 void CurrDisplay::sValueLocalChanged()
 {
-    if (_valueLocalWidget->text().stripWhiteSpace().isEmpty())
+    if (_valueLocalWidget->text().trimmed().isEmpty())
       _state = New;
     else
       _state = (_state == NANew || _state == NAInit) ? NAInit : Initialized;
@@ -861,7 +861,7 @@ void CurrDisplay::sValueLocalChanged(double newValue)
 	      sZeroErrorCount(id(), effective());
 	      _baseKnown = true;
 	}
-	else if (convertVal.lastError().type() != QSqlError::None)
+	else if (convertVal.lastError().type() != QSqlError::NoError)
 	{
 	    if (convertVal.lastError().databaseText().contains("No exchange rate"))
 	    {
@@ -943,7 +943,7 @@ QString	CurrDisplay::currAbbr() const
     getAbbr.exec();
     if (getAbbr.first())
 	returnValue = getAbbr.value("currConcat").toString();
-    else if (getAbbr.lastError().type() != QSqlError::None)
+    else if (getAbbr.lastError().type() != QSqlError::NoError)
 	QMessageBox::critical(0, tr("A System Error occurred at %1::%2.")
 			      .arg(__FILE__)
 			      .arg(__LINE__),
@@ -958,7 +958,7 @@ QString CurrDisplay::currSymbol(const int pid)
   symq.bindValue(":id", pid);
   if (symq.first())
       return symq.value("curr_symbol").toString();
-  else if (symq.lastError().type() != QSqlError::None)
+  else if (symq.lastError().type() != QSqlError::NoError)
       QMessageBox::critical(0, tr("A System Error occurred at %1::%2.")
 						  .arg(__FILE__).arg(__LINE__),
 			    symq.lastError().databaseText());
@@ -1002,7 +1002,7 @@ double CurrDisplay::convert(const int from, const int to, const double amount, c
   convq.exec();
   if (convq.first())
     return convq.value("result").toDouble();
-  else if (convq.lastError().type() != QSqlError::None)
+  else if (convq.lastError().type() != QSqlError::NoError)
   {
     if (convq.lastError().databaseText().contains("No exchange rate"))
       sNoConversionRate(0, from, date, "convert");

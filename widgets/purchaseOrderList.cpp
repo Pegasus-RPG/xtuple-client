@@ -77,12 +77,12 @@ purchaseOrderList::purchaseOrderList(QWidget* parent, const char* name, bool mod
   QDialog(parent, name, modal, fl)
 {
   if (!name)
-    setName("purchaseOrderList");
+    setObjectName("purchaseOrderList");
 
   _poheadid = -1;
   _type = (cPOUnposted | cPOOpen | cPOClosed);
 
-  setCaption(tr("Purchase Orders"));
+  setWindowTitle(tr("Purchase Orders"));
 
   QHBoxLayout *purchaseOrderListLayout = new QHBoxLayout(this);
   QVBoxLayout *tableLayout = new QVBoxLayout(purchaseOrderListLayout);
@@ -98,7 +98,7 @@ purchaseOrderList::purchaseOrderList(QWidget* parent, const char* name, bool mod
   tableLayout->addWidget( _poheadLit );
 
   _pohead = new XTreeWidget(this);
-  _pohead->setName("_pohead");
+  _pohead->setObjectName("_pohead");
   _poheadLit->setBuddy(_pohead);
   tableLayout->addWidget(_pohead);
 

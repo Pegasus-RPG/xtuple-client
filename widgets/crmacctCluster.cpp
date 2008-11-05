@@ -138,7 +138,7 @@ CRMAcctList::CRMAcctList(QWidget* pParent, const char* pName, bool, Qt::WFlags p
   _parent = pParent;
 
   if (!pName)
-    setName("CRMAcctList");
+    setObjectName("CRMAcctList");
 
   _listTab->setColumnCount(0);
 
@@ -228,7 +228,7 @@ void CRMAcctList::setSubtype(const CRMAcctLineEdit::CRMAcctSubtype subtype)
   switch (subtype)
   {
   case CRMAcctLineEdit::Cust:
-    setCaption(tr("Search For Customer"));
+    setWindowTitle(tr("Search For Customer"));
     _query =
 	"SELECT cust_id AS id, cust_number AS number, cust_name AS name,"
         "       addr.*, "
@@ -244,7 +244,7 @@ void CRMAcctList::setSubtype(const CRMAcctLineEdit::CRMAcctSubtype subtype)
     break;
 
   case CRMAcctLineEdit::Prospect:
-    setCaption(tr("Search For Prospect"));
+    setWindowTitle(tr("Search For Prospect"));
     _query =
 	"SELECT prospect_id AS id, prospect_number AS number, prospect_name AS name,"
         "       addr.*,"
@@ -260,7 +260,7 @@ void CRMAcctList::setSubtype(const CRMAcctLineEdit::CRMAcctSubtype subtype)
     break;
 
   case CRMAcctLineEdit::Taxauth:
-    setCaption(tr("Search For Tax Authority"));
+    setWindowTitle(tr("Search For Tax Authority"));
     _listTab->hideColumn(2);
     _listTab->hideColumn(3);
     _listTab->hideColumn(4);
@@ -282,7 +282,7 @@ void CRMAcctList::setSubtype(const CRMAcctLineEdit::CRMAcctSubtype subtype)
 
   case CRMAcctLineEdit::Vend:
     _listTab->addColumn("Vend. Type", _itemColumn, Qt::AlignLeft, true, "type");
-    setCaption(tr("Search For Vendor"));
+    setWindowTitle(tr("Search For Vendor"));
     _query =
 	"SELECT vend_id AS id, vend_number AS number, vend_name AS name, vendtype_code AS type,"
         "       addr.*,"
@@ -299,7 +299,7 @@ void CRMAcctList::setSubtype(const CRMAcctLineEdit::CRMAcctSubtype subtype)
     break;
 
   case CRMAcctLineEdit::CustAndProspect:
-    setCaption(tr("Search For Customer or Prospect"));
+    setWindowTitle(tr("Search For Customer or Prospect"));
     _query =
 	"SELECT cust_id AS id, cust_number AS number, cust_name AS name,"
         "       addr.*, "
@@ -329,7 +329,7 @@ void CRMAcctList::setSubtype(const CRMAcctLineEdit::CRMAcctSubtype subtype)
   case CRMAcctLineEdit::Competitor:
   case CRMAcctLineEdit::Partner:
   default:
-    setCaption(tr("Search For CRM Account"));
+    setWindowTitle(tr("Search For CRM Account"));
     _query =
 	"SELECT crmacct_id AS id, crmacct_number AS number, crmacct_name AS name,"
         "       addr.*,"
@@ -358,7 +358,7 @@ void CRMAcctList::sFillList()
   XSqlQuery fillq = mql.toQuery(params);
 
   _listTab->populate(fillq);
-  if (fillq.lastError().type() != QSqlError::None)
+  if (fillq.lastError().type() != QSqlError::NoError)
   {
     QMessageBox::critical(this, tr("A System Error Occurred at %1::%2")
 				.arg(__FILE__).arg(__LINE__),
@@ -563,7 +563,7 @@ void CRMAcctSearch::setSubtype(const CRMAcctLineEdit::CRMAcctSubtype subtype)
   switch (subtype)
   {
   case CRMAcctLineEdit::Cust:
-    setCaption(tr("Search For Customer"));
+    setWindowTitle(tr("Search For Customer"));
     _searchNumber->setText(tr("Customer Number"));
     _searchName->setText(tr("Customer Name"));
     _searchContact->setText(tr("Billing Contact Name"));
@@ -572,13 +572,13 @@ void CRMAcctSearch::setSubtype(const CRMAcctLineEdit::CRMAcctSubtype subtype)
     break;
 
   case CRMAcctLineEdit::Prospect:
-    setCaption(tr("Search For Prospect"));
+    setWindowTitle(tr("Search For Prospect"));
     _searchNumber->setText(tr("Prospect Number"));
     _searchName->setText(tr("Prospect Name"));
     break;
 
   case CRMAcctLineEdit::Taxauth:
-    setCaption(tr("Search For Tax Authority"));
+    setWindowTitle(tr("Search For Tax Authority"));
     _searchNumber->setText(tr("Tax Authority Code"));
     _searchName->setText(tr("Tax Authority Name"));
     _searchContact->setVisible(false);
@@ -591,7 +591,7 @@ void CRMAcctSearch::setSubtype(const CRMAcctLineEdit::CRMAcctSubtype subtype)
     break;
 
   case CRMAcctLineEdit::Vend:
-    setCaption(tr("Search For Vendor"));
+    setWindowTitle(tr("Search For Vendor"));
     _searchCombo->setText(tr("Vendor Type:"));
     _comboCombo->setType(XComboBox::VendorTypes);
     _searchNumber->setText(tr("Vendor Number"));
@@ -601,7 +601,7 @@ void CRMAcctSearch::setSubtype(const CRMAcctLineEdit::CRMAcctSubtype subtype)
     break;
 
   case CRMAcctLineEdit::CustAndProspect:
-    setCaption(tr("Search For Customer or Prospect"));
+    setWindowTitle(tr("Search For Customer or Prospect"));
     _searchNumber->setText(tr("Number"));
     _searchName->setText(tr("Name"));
     _searchContact->setText(tr("Billing or Primary Contact Name"));
@@ -613,7 +613,7 @@ void CRMAcctSearch::setSubtype(const CRMAcctLineEdit::CRMAcctSubtype subtype)
   case CRMAcctLineEdit::Competitor:
   case CRMAcctLineEdit::Partner:
   default:
-    setCaption(tr("Search For CRM Account"));
+    setWindowTitle(tr("Search For CRM Account"));
     _searchNumber->setText(tr("CRM Account Number"));
     _searchName->setText(tr("CRM Account Name"));
     _searchContact->setText(tr("Primary Contact Name"));
@@ -627,7 +627,7 @@ void CRMAcctSearch::setSubtype(const CRMAcctLineEdit::CRMAcctSubtype subtype)
 
 void CRMAcctSearch::sFillList()
 {
-  if (_search->text().stripWhiteSpace().length() == 0)
+  if (_search->text().trimmed().length() == 0)
     return;
 
   QString sql;
@@ -833,7 +833,7 @@ void CRMAcctSearch::sFillList()
 
   MetaSQLQuery mql(sql);
   ParameterList params;
-  params.append("searchString", _search->text().stripWhiteSpace().upper());
+  params.append("searchString", _search->text().trimmed().toUpper());
 
   switch (_subtype)
   {
@@ -906,7 +906,7 @@ void CRMAcctSearch::sFillList()
   XSqlQuery fillq = mql.toQuery(params);
 
   _listTab->populate(fillq);
-  if (fillq.lastError().type() != QSqlError::None)
+  if (fillq.lastError().type() != QSqlError::NoError)
   {
     QMessageBox::critical(this, tr("A System Error Occurred at %1::%2")
 				.arg(__FILE__).arg(__LINE__),

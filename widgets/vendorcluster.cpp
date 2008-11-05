@@ -188,7 +188,7 @@ void VendorLineEdit::setType(int pType)
 void VendorLineEdit::sParse()
 {
   if (!_parsed)
-    setNumber(text().stripWhiteSpace().upper());
+    setNumber(text().trimmed().toUpper());
 }
 
 void VendorLineEdit::sEllipses()

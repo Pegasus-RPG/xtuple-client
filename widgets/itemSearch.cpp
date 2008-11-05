@@ -79,13 +79,13 @@ QString buildItemLineEditTitle(const unsigned int, const QString);
 itemSearch::itemSearch( QWidget* parent, const char* name, bool modal, Qt::WFlags fl ) : QDialog( parent, name, modal, fl )
 {
     if ( !name )
-      setName( "itemSearch" );
+      setObjectName( "itemSearch" );
 
   _itemid = -1;
   _itemType = ItemLineEdit::cUndefined;
   _useQuery = FALSE;
 
-    setCaption( tr( "Search for Item" ) );
+    setWindowTitle( tr( "Search for Item" ) );
 
     QVBoxLayout *itemSearchLayout = new QVBoxLayout( this, 5, 5, "itemSearchLayout"); 
     QHBoxLayout *Layout72 = new QHBoxLayout( 0, 0, 7, "Layout72"); 
@@ -152,7 +152,7 @@ itemSearch::itemSearch( QWidget* parent, const char* name, bool modal, Qt::WFlag
     Layout20->addWidget( _itemsLit );
 
     _item = new XTreeWidget(this);
-    _item->setName("_item");
+    _item->setObjectName("_item");
     _itemsLit->setBuddy( _item );
     Layout20->addWidget( _item );
 
@@ -199,7 +199,7 @@ void itemSearch::set(ParameterList &pParams)
   if (valid)
   {
     _itemType = param.toUInt();
-    setCaption(buildItemLineEditTitle(_itemType, tr("Items")));
+    setWindowTitle(buildItemLineEditTitle(_itemType, tr("Items")));
   }
   else
     _itemType = ItemLineEdit::cUndefined;
@@ -213,7 +213,7 @@ void itemSearch::set(ParameterList &pParams)
 
   param = pParams.value("caption", &valid);
   if (valid)
-    setCaption(param.toString());
+    setWindowTitle(param.toString());
 
   sFillList();
 }
@@ -230,7 +230,7 @@ void itemSearch::sSelect()
 
 void itemSearch::sFillList()
 {
-  _search->setText(_search->text().stripWhiteSpace().upper());
+  _search->setText(_search->text().trimmed().toUpper());
   if (_search->text().length() == 0)
     return;
 

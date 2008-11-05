@@ -206,4 +206,5 @@ FORMS += accountSearch.ui \
 RESOURCES += widgets.qrc
 
 #The following line was inserted by qt3to4
-QT +=  sql qt3support 
+QT +=  sql
+#QT += qt3support 

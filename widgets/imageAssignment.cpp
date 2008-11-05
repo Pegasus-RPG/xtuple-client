@@ -265,13 +265,13 @@ void imageAssignment::populate()
       QString purpose = imageass.value("imageass_purpose").toString();
 
       if (purpose == "I")
-        _purpose->setCurrentItem(0);
+        _purpose->setCurrentIndex(0);
       else if (purpose == "P")
-        _purpose->setCurrentItem(1);
+        _purpose->setCurrentIndex(1);
       else if (purpose == "E")
-        _purpose->setCurrentItem(2);
+        _purpose->setCurrentIndex(2);
       else if (purpose == "M")
-        _purpose->setCurrentItem(3);
+        _purpose->setCurrentIndex(3);
     }
     else
     {

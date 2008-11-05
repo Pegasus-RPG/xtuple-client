@@ -147,10 +147,10 @@ void XTreeView::setModel(XSqlTableModel * model)
   for (int i = 0; i < QTreeView::model()->columnCount(); ++i)
   {
       QString h=QTreeView::model()->headerData(i,Qt::Horizontal,Qt::DisplayRole).toString();
-      h=h.replace(0,1,h.left(1).upper());
+      h=h.replace(0,1,h.left(1).toUpper());
       while (h.lastIndexOf("_") != -1)
       {
-        h=h.replace(h.lastIndexOf("_")+1,1,h.mid(h.lastIndexOf("_")+1,1).upper());
+        h=h.replace(h.lastIndexOf("_")+1,1,h.mid(h.lastIndexOf("_")+1,1).toUpper());
         h=h.replace("_"," ");
       }
       QTreeView::model()->setHeaderData(i,Qt::Horizontal,h);

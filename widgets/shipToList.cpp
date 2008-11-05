@@ -74,12 +74,12 @@
 shipToList::shipToList(QWidget * parent, const char *name, bool modal, Qt::WFlags fl) :
   QDialog( parent, name, modal, fl )
 {
-  setCaption(tr("Ship To's"));
+  setWindowTitle(tr("Ship To's"));
 
   _shiptoid = -1;
 
   if (!name)
-    setName("shipToList");
+    setObjectName("shipToList");
 
   QVBoxLayout *shipToListLayout = new QVBoxLayout( this, 5, 5, "shipToListLayout"); 
   QHBoxLayout *Layout54 = new QHBoxLayout( 0, 0, 7, "Layout54"); 
@@ -144,7 +144,7 @@ shipToList::shipToList(QWidget * parent, const char *name, bool modal, Qt::WFlag
     Layout55->addWidget( _shipTosList );
 
     _shipto = new XTreeWidget(this);
-    _shipto->setName("_shipto");
+    _shipto->setObjectName("_shipto");
     Layout55->addWidget( _shipto );
     shipToListLayout->addLayout( Layout55 );
 

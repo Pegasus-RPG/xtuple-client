@@ -317,7 +317,7 @@ void OrderLineEdit::sParse()
   bool oldvalid = _valid;
   if (! _parsed)
   {
-    QString stripped = text().stripWhiteSpace().upper();
+    QString stripped = text().trimmed().toUpper();
     if (stripped.length() == 0)
     {
       _parsed = true;
@@ -358,7 +358,7 @@ void OrderLineEdit::sParse()
 	    _from		= numQ.value("orderhead_from").toString();
 	    _to		= numQ.value("orderhead_to").toString();
 	  }
-	  else if (numQ.lastError().type() != QSqlError::None)
+	  else if (numQ.lastError().type() != QSqlError::NoError)
 	    QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
 					  .arg(__FILE__)
 					  .arg(__LINE__),
@@ -371,7 +371,7 @@ void OrderLineEdit::sParse()
 	  _extraClause += "AND (orderhead_type='" + type() + "')";
 	}
       }
-      else if (countQ.lastError().type() != QSqlError::None)
+      else if (countQ.lastError().type() != QSqlError::NoError)
       {
 	QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
 				      .arg(__FILE__)
@@ -500,13 +500,9 @@ void OrderLineEdit::setToSitePrivsEnforced(const bool p)
   
   _toPrivs=p;
   if (p)
-    _toPrivsClause = " EXCEPT "
-                     "SELECT orderhead_id AS id, orderhead_number AS number,"
-                     "       orderhead_type AS name, orderhead_status AS description,"
-                     "       orderhead_from, orderhead_to "
-                     "FROM orderhead "
-                     "WHERE ((orderhead_type='TO') "
-                     "AND (NOT EXISTS (SELECT warehous_id FROM site() WHERE warehous_id=orderhead_to_id))) ";
+    _toPrivsClause = " AND ((orderhead_type='TO' "
+                     " AND orderhead_to_id IN (SELECT warehous_id FROM site()))"
+                     " OR (orderhead_type != 'TO'))";
   else
     _toPrivsClause.clear();
 }
@@ -518,13 +514,9 @@ void OrderLineEdit::setFromSitePrivsEnforced(const bool p)
   
   _fromPrivs=p;
   if (p)
-    _fromPrivsClause = " EXCEPT "
-                       "SELECT orderhead_id AS id, orderhead_number AS number,"
-                       "       orderhead_type AS name, orderhead_status AS description,"
-                       "       orderhead_from, orderhead_to "
-                       "FROM orderhead "
-                       "WHERE ((orderhead_type='TO') "
-                     "AND (NOT EXISTS (SELECT warehous_id FROM site() WHERE warehous_id=orderhead_from_id))) ";
+    _fromPrivsClause = " AND ((orderhead_type='TO' "
+                     " AND orderhead_from_id IN (SELECT warehous_id FROM site()))"
+                     " OR (orderhead_type != 'TO'))";
   else
     _fromPrivsClause.clear();
 }
@@ -701,7 +693,7 @@ void OrderLineEdit::silentSetId(const int pId)
 	_extraClause += "AND (orderhead_type='" + type() + "')";
       }
     }
-    else if (countQ.lastError().type() != QSqlError::None)
+    else if (countQ.lastError().type() != QSqlError::NoError)
     {
       QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
 				    .arg(__FILE__)
@@ -727,7 +719,7 @@ void OrderLineEdit::silentSetId(const int pId)
 	_from		= idQ.value("orderhead_from").toString();
 	_to		= idQ.value("orderhead_to").toString();
       }
-      else if (idQ.lastError().type() != QSqlError::None)
+      else if (idQ.lastError().type() != QSqlError::NoError)
 	QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
 				      .arg(__FILE__)
 				      .arg(__LINE__),
