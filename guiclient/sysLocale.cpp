@@ -438,7 +438,8 @@ void sysLocale::populate()
 // convert between Qt's date/time formatting strings and PostgreSQL's
 QString sysLocale::convert(const QString &input)
 {
-  char output[input.size()];
+  // TODO: make sure this is deallocated later
+  char *output = new char [input.size()];
   QString errMsg = tr("<p>.Could not translate Qt date/time formatting "
                       "string %1 to PostgreSQL date/time formatting "
                       "string. Error at or near character %2.");

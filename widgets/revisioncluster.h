@@ -69,7 +69,7 @@
 
 class OPENMFGWIDGETS_EXPORT RevisionLineEdit : public VirtualClusterLineEdit
 {
-  Q_OBJECT;
+  Q_OBJECT
 
   Q_ENUMS(Modes)
   Q_ENUMS(RevisionTypes)

@@ -75,9 +75,9 @@ class QFocusEvent;
 class OPENMFGWIDGETS_EXPORT GLCluster : public QWidget
 {
   Q_OBJECT
-  Q_PROPERTY(QString fieldName      READ fieldName      WRITE setFieldName);
-  Q_PROPERTY(QString defaultNumber  READ defaultNumber                        DESIGNABLE false);
-  Q_PROPERTY(QString number         READ number         WRITE setNumber       DESIGNABLE false);
+  Q_PROPERTY(QString fieldName      READ fieldName      WRITE setFieldName)
+  Q_PROPERTY(QString defaultNumber  READ defaultNumber                        DESIGNABLE false)
+  Q_PROPERTY(QString number         READ number         WRITE setNumber       DESIGNABLE false)
     
   public:
     GLCluster(QWidget *parent, const char *name = 0);

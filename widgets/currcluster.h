@@ -220,7 +220,7 @@ class OPENMFGWIDGETS_EXPORT CurrCluster : public CurrDisplay
     Q_PROPERTY(bool currencyVisible READ currencyVisible
 						      WRITE setCurrencyVisible)
     Q_PROPERTY(bool enabled        READ isEnabled     WRITE setEnabled)
-    Q_PROPERTY(QString fieldNameCurr  READ fieldNameCurr  WRITE setFieldNameCurr);
+    Q_PROPERTY(QString fieldNameCurr  READ fieldNameCurr  WRITE setFieldNameCurr)
 
     public:
 	CurrCluster(QWidget * parent, const char* name = 0);

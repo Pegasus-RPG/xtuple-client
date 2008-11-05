@@ -74,7 +74,7 @@ class QVariant;
 class OPENMFGWIDGETS_EXPORT XLabel : public QLabel
 {
   Q_OBJECT
-  Q_PROPERTY(QString fieldName    READ fieldName   WRITE setFieldName);
+  Q_PROPERTY(QString fieldName    READ fieldName   WRITE setFieldName)
   
   public:
     XLabel(QWidget *, const char * = 0);

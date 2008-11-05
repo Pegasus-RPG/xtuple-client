@@ -120,10 +120,10 @@ class OPENMFGWIDGETS_EXPORT VendorInfo : public QWidget
 {
   Q_OBJECT
 
-  Q_PROPERTY(bool    readOnly       READ isReadOnly     WRITE setReadOnly                       );
-  Q_PROPERTY(QString defaultNumber  READ defaultNumber  WRITE setDefaultNumber DESIGNABLE false );
-  Q_PROPERTY(QString fieldName      READ fieldName      WRITE setFieldName                      );
-  Q_PROPERTY(QString number         READ number         WRITE setNumber        DESIGNABLE false );
+  Q_PROPERTY(bool    readOnly       READ isReadOnly     WRITE setReadOnly                       )
+  Q_PROPERTY(QString defaultNumber  READ defaultNumber  WRITE setDefaultNumber DESIGNABLE false )
+  Q_PROPERTY(QString fieldName      READ fieldName      WRITE setFieldName                      )
+  Q_PROPERTY(QString number         READ number         WRITE setNumber        DESIGNABLE false )
 
   public:
     VendorInfo(QWidget *parent, const char *name = 0);
@@ -169,9 +169,9 @@ class OPENMFGWIDGETS_EXPORT VendorInfo : public QWidget
 class OPENMFGWIDGETS_EXPORT VendorCluster : public QWidget
 {
   Q_OBJECT
-  Q_PROPERTY(QString defaultNumber  READ defaultNumber  WRITE setDefaultNumber DESIGNABLE false);
-  Q_PROPERTY(QString fieldName      READ fieldName      WRITE setFieldName);
-  Q_PROPERTY(QString number         READ number         WRITE setNumber        DESIGNABLE false);
+  Q_PROPERTY(QString defaultNumber  READ defaultNumber  WRITE setDefaultNumber DESIGNABLE false)
+  Q_PROPERTY(QString fieldName      READ fieldName      WRITE setFieldName)
+  Q_PROPERTY(QString number         READ number         WRITE setNumber        DESIGNABLE false)
 
   public:
     VendorCluster(QWidget *, const char * = 0);

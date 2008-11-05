@@ -72,7 +72,7 @@ class XSqlQuery;
 class OPENMFGWIDGETS_EXPORT WarehouseGroup : public QGroupBox
 {
   Q_OBJECT
-  Q_PROPERTY(int id READ id WRITE setId);
+  Q_PROPERTY(int id READ id WRITE setId)
 
   public:
     WarehouseGroup(QWidget * = 0, const char * = 0);

@@ -73,8 +73,8 @@
 class OPENMFGWIDGETS_EXPORT XLineEdit : public QLineEdit
 {
   Q_OBJECT
-  Q_PROPERTY(QString fieldName    READ fieldName   WRITE setFieldName);
-  Q_PROPERTY(QString defaultText  READ defaultText WRITE setDefaultText);
+  Q_PROPERTY(QString fieldName    READ fieldName   WRITE setFieldName)
+  Q_PROPERTY(QString defaultText  READ defaultText WRITE setDefaultText)
   
   public:
     XLineEdit(QWidget *, const char * = 0);

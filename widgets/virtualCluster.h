@@ -274,15 +274,15 @@ class OPENMFGWIDGETS_EXPORT VirtualCluster : public QWidget
 {
     Q_OBJECT
 
-    Q_PROPERTY(QString label          READ label          WRITE setLabel);
-    Q_PROPERTY(bool    infoVisible    READ infoVisible    WRITE setInfoVisible);
-    Q_PROPERTY(bool    listVisible    READ listVisible    WRITE setListVisible);
-    Q_PROPERTY(bool    nameVisible    READ nameVisible    WRITE setNameVisible);
-    Q_PROPERTY(bool    readOnly       READ readOnly       WRITE setReadOnly);
-    Q_PROPERTY(QString fieldName      READ fieldName      WRITE setFieldName);
-    Q_PROPERTY(QString number         READ number         WRITE setNumber         DESIGNABLE false);
-    Q_PROPERTY(QString defaultNumber  READ defaultNumber  WRITE setDefaultNumber  DESIGNABLE false);
-    Q_PROPERTY(int     id             READ id             WRITE setId             DESIGNABLE false);
+    Q_PROPERTY(QString label          READ label          WRITE setLabel)
+    Q_PROPERTY(bool    infoVisible    READ infoVisible    WRITE setInfoVisible)
+    Q_PROPERTY(bool    listVisible    READ listVisible    WRITE setListVisible)
+    Q_PROPERTY(bool    nameVisible    READ nameVisible    WRITE setNameVisible)
+    Q_PROPERTY(bool    readOnly       READ readOnly       WRITE setReadOnly)
+    Q_PROPERTY(QString fieldName      READ fieldName      WRITE setFieldName)
+    Q_PROPERTY(QString number         READ number         WRITE setNumber         DESIGNABLE false)
+    Q_PROPERTY(QString defaultNumber  READ defaultNumber  WRITE setDefaultNumber  DESIGNABLE false)
+    Q_PROPERTY(int     id             READ id             WRITE setId             DESIGNABLE false)
 
     friend class VirtualClusterLineEdit;
 

@@ -82,9 +82,9 @@ class XComboBox;
 
 class OPENMFGWIDGETS_EXPORT WoLineEdit : public XLineEdit
 {
-  Q_OBJECT;
+  Q_OBJECT
 
-  Q_PROPERTY(int type READ type WRITE setType DESIGNABLE false);
+  Q_PROPERTY(int type READ type WRITE setType DESIGNABLE false)
 
 friend class WoCluster;
 
@@ -131,10 +131,10 @@ friend class WoCluster;
 class OPENMFGWIDGETS_EXPORT WoCluster : public QWidget
 {
   Q_OBJECT
-  Q_PROPERTY(QString fieldName      READ fieldName      WRITE setFieldName);
-  Q_PROPERTY(QString number         READ woNumber       WRITE setWoNumber       DESIGNABLE false);
-  Q_PROPERTY(QString defaultNumber  READ defaultNumber                          DESIGNABLE false);
-  Q_PROPERTY(int     type           READ type           WRITE setType           DESIGNABLE false);
+  Q_PROPERTY(QString fieldName      READ fieldName      WRITE setFieldName)
+  Q_PROPERTY(QString number         READ woNumber       WRITE setWoNumber       DESIGNABLE false)
+  Q_PROPERTY(QString defaultNumber  READ defaultNumber                          DESIGNABLE false)
+  Q_PROPERTY(int     type           READ type           WRITE setType           DESIGNABLE false)
   
   public:
     WoCluster(QWidget *, const char * = 0);
@@ -197,7 +197,7 @@ class OPENMFGWIDGETS_EXPORT WoCluster : public QWidget
 class OPENMFGWIDGETS_EXPORT WomatlCluster : public QWidget
 {
   Q_OBJECT
-  Q_PROPERTY(QString fieldName      READ fieldName      WRITE setFieldName);
+  Q_PROPERTY(QString fieldName      READ fieldName      WRITE setFieldName)
 
   public:
     enum SourceTypes

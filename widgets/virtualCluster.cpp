@@ -177,7 +177,7 @@ void VirtualCluster::setEnabled(const bool p)
     _info->setEnabled(true);
 }
 
-void VirtualCluster::setStrict(bool b)
+void VirtualCluster::setStrict(const bool b)
 {
   _number->setStrict(b);
 }

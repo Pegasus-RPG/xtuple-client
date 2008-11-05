@@ -62,6 +62,7 @@
 #ifndef GUICLIENT_H
 #define GUICLIENT_H
 
+#include <QDate>
 #include <QDateTime>
 #include <QMainWindow>
 #include <QTimer>

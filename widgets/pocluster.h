@@ -83,7 +83,7 @@ class OPENMFGWIDGETS_EXPORT PoLineEdit : public XLineEdit
 {
   Q_OBJECT
 
-  Q_PROPERTY(int type READ type WRITE setType DESIGNABLE false);
+  Q_PROPERTY(int type READ type WRITE setType DESIGNABLE false)
 
 friend class PoCluster;
 
@@ -129,11 +129,11 @@ friend class PoCluster;
 class OPENMFGWIDGETS_EXPORT PoCluster : public QWidget
 {
   Q_OBJECT
-  Q_PROPERTY(QString fieldName      READ fieldName      WRITE setFieldName);
-  Q_PROPERTY(QString number         READ number         WRITE setNumber       DESIGNABLE false);
-  Q_PROPERTY(QString defaultNumber  READ defaultNumber                        DESIGNABLE false);
-  Q_PROPERTY(int     id             READ id             WRITE setId           DESIGNABLE false);
-  Q_PROPERTY(int     type           READ type           WRITE setType         DESIGNABLE false);
+  Q_PROPERTY(QString fieldName      READ fieldName      WRITE setFieldName)
+  Q_PROPERTY(QString number         READ number         WRITE setNumber       DESIGNABLE false)
+  Q_PROPERTY(QString defaultNumber  READ defaultNumber                        DESIGNABLE false)
+  Q_PROPERTY(int     id             READ id             WRITE setId           DESIGNABLE false)
+  Q_PROPERTY(int     type           READ type           WRITE setType         DESIGNABLE false)
 
   public:
     PoCluster(QWidget *, const char * = 0);

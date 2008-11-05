@@ -67,9 +67,9 @@
 class OPENMFGWIDGETS_EXPORT XCheckBox : public QCheckBox
 {
   Q_OBJECT
-  Q_PROPERTY(bool    defaultChecked   READ defaultChecked   WRITE setDefaultChecked);
-  Q_PROPERTY(QString fieldName        READ fieldName        WRITE setFieldName);
-  Q_PROPERTY(bool    forgetful        READ forgetful        WRITE setForgetful);
+  Q_PROPERTY(bool    defaultChecked   READ defaultChecked   WRITE setDefaultChecked)
+  Q_PROPERTY(QString fieldName        READ fieldName        WRITE setFieldName)
+  Q_PROPERTY(bool    forgetful        READ forgetful        WRITE setForgetful)
 
   public:
     XCheckBox(QWidget * = 0);

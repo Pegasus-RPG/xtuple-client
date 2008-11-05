@@ -73,7 +73,7 @@ class PlanOrdCluster;
 
 class OPENMFGWIDGETS_EXPORT PlanOrdLineEdit : public XLineEdit
 {
-  Q_OBJECT;
+  Q_OBJECT
 
 friend class PlanOrdCluster;
 
@@ -105,9 +105,9 @@ friend class PlanOrdCluster;
 class OPENMFGWIDGETS_EXPORT PlanOrdCluster : public QWidget
 {
   Q_OBJECT
-  Q_PROPERTY(QString  fieldName      READ fieldName      WRITE setFieldName);
-  Q_PROPERTY(QString  number         READ number         WRITE setNumber         DESIGNABLE false);
-  Q_PROPERTY(QString  defaultNumber  READ defaultNumber                          DESIGNABLE false);
+  Q_PROPERTY(QString  fieldName      READ fieldName      WRITE setFieldName)
+  Q_PROPERTY(QString  number         READ number         WRITE setNumber         DESIGNABLE false)
+  Q_PROPERTY(QString  defaultNumber  READ defaultNumber                          DESIGNABLE false)
 
   public:
     PlanOrdCluster(QWidget *, const char * = 0);

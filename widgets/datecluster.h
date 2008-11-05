@@ -76,9 +76,9 @@ class XDateEdit : public XLineEdit
   Q_OBJECT
   Q_ENUMS   (Defaults)
   Q_PROPERTY(QDate    date            READ date        WRITE setDate)
-  Q_PROPERTY(Defaults defaultDate     READ defaultDate WRITE setDefaultDate);
-  Q_PROPERTY(QDate    currentDefault  READ currentDefault);
-  Q_PROPERTY(QString  fieldName       READ fieldName   WRITE setFieldName);
+  Q_PROPERTY(Defaults defaultDate     READ defaultDate WRITE setDefaultDate)
+  Q_PROPERTY(QDate    currentDefault  READ currentDefault)
+  Q_PROPERTY(QString  fieldName       READ fieldName   WRITE setFieldName)
 
   public:
     XDateEdit(QWidget *parent = 0, const char * = 0);
@@ -126,9 +126,9 @@ class OPENMFGWIDGETS_EXPORT DLineEdit : public QWidget
 {
   Q_OBJECT
   Q_ENUMS(XDateEdit::Defaults)
-  Q_PROPERTY(QDate                 date            READ date        WRITE setDate);
-  Q_PROPERTY(XDateEdit::Defaults   defaultDate     READ defaultDate WRITE setDefaultDate);
-  Q_PROPERTY(QString               fieldName       READ fieldName   WRITE setFieldName);
+  Q_PROPERTY(QDate                 date            READ date        WRITE setDate)
+  Q_PROPERTY(XDateEdit::Defaults   defaultDate     READ defaultDate WRITE setDefaultDate)
+  Q_PROPERTY(QString               fieldName       READ fieldName   WRITE setFieldName)
 
   public:
     DLineEdit(QWidget *parent = 0, const char * = 0);

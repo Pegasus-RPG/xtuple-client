@@ -69,7 +69,7 @@
 
 class OPENMFGWIDGETS_EXPORT ExpenseLineEdit : public VirtualClusterLineEdit
 {
-  Q_OBJECT;
+  Q_OBJECT
 
   public:
     ExpenseLineEdit(QWidget *, const char * = 0);

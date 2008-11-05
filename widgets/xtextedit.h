@@ -66,8 +66,8 @@
 class OPENMFGWIDGETS_EXPORT XTextEdit : public QTextEdit
 {
   Q_OBJECT
-  Q_PROPERTY(QString fieldName   READ fieldName   WRITE setFieldName);
-  Q_PROPERTY(QString defaultText  READ defaultText WRITE setDefaultText);
+  Q_PROPERTY(QString fieldName   READ fieldName   WRITE setFieldName)
+  Q_PROPERTY(QString defaultText  READ defaultText WRITE setDefaultText)
 
   public:
     XTextEdit(QWidget * = 0);

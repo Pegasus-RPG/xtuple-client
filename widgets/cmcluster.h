@@ -69,7 +69,7 @@
 
 class OPENMFGWIDGETS_EXPORT CmLineEdit : public VirtualClusterLineEdit
 {
-  Q_OBJECT;
+  Q_OBJECT
 
   public slots:
     void setCustId(int pItem);
