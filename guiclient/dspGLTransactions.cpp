@@ -65,11 +65,17 @@
 #include <openreports.h>
 
 #include "glTransactionDetail.h"
+#include "dspGLSeries.h"
 #include "invoice.h"
 #include "purchaseOrder.h"
 #include "voucher.h"
 #include "miscVoucher.h"
 #include "dspShipmentsByShipment.h"
+#include "apOpenItem.h"
+#include "arOpenItem.h"
+#include "salesOrder.h"
+#include "dspWoHistoryByNumber.h"
+#include "transactionInformation.h"
 
 dspGLTransactions::dspGLTransactions(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
@@ -159,19 +165,30 @@ enum SetResponse dspGLTransactions::set(const ParameterList &pParams)
 void dspGLTransactions::sPopulateMenu(QMenu * menuThis, QTreeWidgetItem* pItem)
 {
   menuThis->insertItem(tr("View..."), this, SLOT(sViewTrans()), 0);
+  menuThis->insertItem(tr("View GL Series..."), this, SLOT(sViewSeries()), 0);
 
   XTreeWidgetItem * item = (XTreeWidgetItem*)pItem;
   if(0 == item)
     return;
 
-  if(item->text(2) == "VO")
+  if(item->rawValue("gltrans_doctype").toString() == "VO")
     menuThis->insertItem(tr("View Voucher..."), this, SLOT(sViewDocument()));
-  else if(item->text(2) == "IN")
+  else if(item->rawValue("gltrans_doctype").toString() == "IN")
     menuThis->insertItem(tr("View Invoice..."), this, SLOT(sViewDocument()));
-  else if(item->text(2) == "PO")
+  else if(item->rawValue("gltrans_doctype").toString() == "PO")
     menuThis->insertItem(tr("View Purchase Order..."), this, SLOT(sViewDocument()));
-  else if(item->text(2) == "SH")
+  else if(item->rawValue("gltrans_doctype").toString() == "SH")
     menuThis->insertItem(tr("View Shipment..."), this, SLOT(sViewDocument()));
+  else if(item->rawValue("gltrans_doctype").toString() == "CM")
+    menuThis->insertItem(tr("View Credit Memo..."), this, SLOT(sViewDocument()));
+  else if(item->rawValue("gltrans_doctype").toString() == "DM")
+    menuThis->insertItem(tr("View Debit Memo..."), this, SLOT(sViewDocument()));
+  else if(item->rawValue("gltrans_doctype").toString() == "SO")
+    menuThis->insertItem(tr("View Sales Order..."), this, SLOT(sViewDocument()));
+  else if(item->rawValue("gltrans_doctype").toString() == "WO")
+    menuThis->insertItem(tr("View WO History..."), this, SLOT(sViewDocument()));
+  else if(item->rawValue("gltrans_source").toString() == "I/M")
+    menuThis->insertItem(tr("View Inventory History..."), this, SLOT(sViewDocument()));
 }
 
 bool dspGLTransactions::setParams(ParameterList &params)
@@ -331,19 +348,40 @@ void dspGLTransactions::sViewTrans()
   newdlg.exec();
 }
 
+void dspGLTransactions::sViewSeries()
+{
+  q.prepare("SELECT gltrans_date, gltrans_journalnumber"
+            "  FROM gltrans"
+            " WHERE (gltrans_id=:gltrans_id)");
+  q.bindValue(":gltrans_id", _gltrans->id());
+  q.exec();
+  if(!q.first())
+    return;
+
+  ParameterList params;
+
+  params.append("startDate", q.value("gltrans_date").toDate());
+  params.append("endDate", q.value("gltrans_date").toDate());
+  params.append("journalnumber", q.value("gltrans_journalnumber").toString());
+
+  dspGLSeries *newdlg = new dspGLSeries();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+}
+
 void dspGLTransactions::sViewDocument()
 {
-  QTreeWidgetItem * item = (XTreeWidgetItem*)_gltrans->currentItem();
+  XTreeWidgetItem * item = (XTreeWidgetItem*)_gltrans->currentItem();
   if(0 == item)
     return;
 
   ParameterList params;
-  if(item->text(2) == "VO")
+  if(item->rawValue("gltrans_doctype").toString() == "VO")
   {
     q.prepare("SELECT vohead_id, vohead_misc"
               "  FROM vohead"
               " WHERE (vohead_number=:vohead_number)");
-    q.bindValue(":vohead_number", item->text(3));
+    q.bindValue(":vohead_number", item->rawValue("docnumber").toString());
     q.exec();
     if(!q.first())
       return;
@@ -365,24 +403,24 @@ void dspGLTransactions::sViewDocument()
     }
 
   }
-  else if(item->text(2) == "IN")
+  else if(item->rawValue("gltrans_doctype").toString() == "IN")
   {
     q.prepare("SELECT invchead_id"
               "  FROM invchead"
               " WHERE (invchead_invcnumber=:invchead_invcnumber)");
-    q.bindValue(":invchead_invcnumber", item->text(3));
+    q.bindValue(":invchead_invcnumber", item->rawValue("docnumber").toString());
     q.exec();
     if(!q.first())
       return;
 
     invoice::viewInvoice(q.value("invchead_id").toInt());
   }
-  else if(item->text(2) == "PO")
+  else if(item->rawValue("gltrans_doctype").toString() == "PO")
   {
     q.prepare("SELECT pohead_id"
               "  FROM pohead"
               " WHERE (pohead_number=:pohead_number)");
-    q.bindValue(":pohead_number", item->text(3));
+    q.bindValue(":pohead_number", item->rawValue("docnumber").toString());
     q.exec();
     if(!q.first())
       return;
@@ -394,12 +432,12 @@ void dspGLTransactions::sViewDocument()
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
-  else if(item->text(2) == "SH")
+  else if(item->rawValue("gltrans_doctype").toString() == "SH")
   {
     q.prepare("SELECT shiphead_id"
               "  FROM shiphead"
               " WHERE (shiphead_number=:shiphead_number)");
-    q.bindValue(":shiphead_number", item->text(3));
+    q.bindValue(":shiphead_number", item->rawValue("docnumber").toString());
     q.exec();
     if(!q.first())
       return;
@@ -409,5 +447,77 @@ void dspGLTransactions::sViewDocument()
     dspShipmentsByShipment *newdlg = new dspShipmentsByShipment();
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
+  }
+  else if( (item->rawValue("gltrans_doctype").toString() == "CM") || (item->rawValue("gltrans_doctype").toString() == "DM") )
+  {
+    if(item->rawValue("gltrans_source").toString() == "A/P")
+    {
+      q.prepare("SELECT apopen_id"
+                "  FROM apopen"
+                " WHERE (apopen_docnumber=:docnumber)");
+      q.bindValue(":docnumber", item->rawValue("docnumber").toString());
+      q.exec();
+      if(!q.first())
+        return;
+
+      params.append("mode", "view");
+      params.append("apopen_id", q.value("apopen_id").toInt());
+      apOpenItem newdlg(this, "", TRUE);
+      newdlg.set(params);
+      newdlg.exec();
+    }
+    else if(item->rawValue("gltrans_source").toString() == "A/R")
+    {
+      q.prepare("SELECT aropen_id"
+                "  FROM aropen"
+                " WHERE (aropen_docnumber=:docnumber)");
+      q.bindValue(":docnumber", item->rawValue("docnumber").toString());
+      q.exec();
+      if(!q.first())
+        return;
+
+      params.append("mode", "view");
+      params.append("aropen_id", q.value("aropen_id").toInt());
+      arOpenItem newdlg(this, "", TRUE);
+      newdlg.set(params);
+      newdlg.exec();
+    }
+  }
+  else if(item->rawValue("gltrans_doctype").toString() == "SO")
+  {
+    QStringList docnumber = item->rawValue("docnumber").toString().split("-");
+    q.prepare("SELECT cohead_id"
+              "  FROM cohead"
+              " WHERE (cohead_number=:docnumber)");
+    q.bindValue(":docnumber", docnumber[0]);
+    q.exec();
+    if(q.first())
+      salesOrder::viewSalesOrder(q.value("cohead_id").toInt());
+  }
+  else if(item->rawValue("gltrans_doctype").toString() == "WO")
+  {
+    QStringList docnumber = item->rawValue("docnumber").toString().split("-");
+    params.append("wo_number", docnumber[0]);
+
+    dspWoHistoryByNumber *newdlg = new dspWoHistoryByNumber();
+    newdlg->set(params);
+    omfgThis->handleNewWindow(newdlg);
+  }
+  else if(item->rawValue("gltrans_source").toString() == "I/M")
+  {
+    q.prepare("SELECT gltrans_misc_id"
+              "  FROM gltrans"
+              " WHERE (gltrans_id=:gltrans_id)");
+    q.bindValue(":gltrans_id", item->id());
+    q.exec();
+    if(!q.first())
+      return;
+
+    params.append("mode", "view");
+    params.append("invhist_id", q.value("gltrans_misc_id").toInt());
+
+    transactionInformation newdlg(this, "", TRUE);
+    newdlg.set(params);
+    newdlg.exec();
   }
 }

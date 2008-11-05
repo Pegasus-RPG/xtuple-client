@@ -60,6 +60,7 @@
 
 #include "guiclient.h"
 #include "xwidget.h"
+#include <parameter.h>
 
 #include "ui_dspWoHistoryByNumber.h"
 
@@ -74,6 +75,7 @@ public:
     virtual bool checkParameters();
 
 public slots:
+    virtual SetResponse set( const ParameterList & pParams );
     virtual void sPrint();
     virtual void sView();
     virtual void sEdit();

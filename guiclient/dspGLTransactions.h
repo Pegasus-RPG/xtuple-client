@@ -79,6 +79,7 @@ public slots:
     virtual void sPrint();
     virtual void sFillList();
     virtual void sViewTrans();
+    virtual void sViewSeries();
     virtual void sViewDocument();
 
 protected slots:

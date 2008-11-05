@@ -131,6 +131,21 @@ void dspWoHistoryByNumber::languageChange()
   retranslateUi(this);
 }
 
+enum SetResponse dspWoHistoryByNumber::set(const ParameterList &pParams)
+{
+  QVariant param;
+  bool     valid;
+  
+  param = pParams.value("wo_number", &valid);
+  if (valid)
+  {
+    _woNumber->setText(param.toString());
+    sFillList();
+  }
+
+  return NoError;
+}
+
 void dspWoHistoryByNumber::sPrint()
 {
   if(_woNumber->text().length() > 0)
