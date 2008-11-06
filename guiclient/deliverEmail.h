@@ -55,68 +55,44 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#ifndef INCIDENT_H
-#define INCIDENT_H
+#ifndef DELIVEREMAIL_H
+#define DELIVEREMAIL_H
 
 #include "guiclient.h"
 #include "xdialog.h"
-#include <QStringList>
 #include <parameter.h>
 
-#include "ui_incident.h"
+#include "ui_deliverEmail.h"
 
-class incident : public XDialog, public Ui::incident
+class deliverEmail : public XDialog, public Ui::deliverEmail
 {
     Q_OBJECT
 
 public:
-    incident(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
-    ~incident();
-    
-    bool save(bool);
-    int  saveContact(ContactCluster*);
-    void populate();
+    deliverEmail(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
+    ~deliverEmail();
 
 public slots:
-    virtual SetResponse set( const ParameterList & pParams );
-    virtual void sCancel();
-    virtual void sCRMAcctChanged(const int);
-    virtual void sDeleteTodoItem();
-    virtual void sEditTodoItem();
-    virtual void sFillHistoryList();
-    virtual void sFillTodoList();
-    virtual void sHandleTodoPrivs();
-    virtual void sNewTodoItem();
-    virtual void sPopulateTodoMenu(QMenu*);
-    virtual void sSave();
-    virtual void sViewTodoItem();
-    virtual void sReturn();
-    virtual void sViewAR();
-    virtual void sContactChanged();
-    virtual void sPrepareMail();
-    virtual void sSendMail(ParameterList & params);
-    virtual void sChanged() {_updated=true;};
-    virtual void sAssigned();
-    virtual void sCommentAdded() {_commentAdded=true;};
-
-signals:
-    void prepareMail();
+    virtual enum SetResponse set( ParameterList & pParams );
+    virtual void sSubmit();
+    virtual void setProfileId( int profileid );
 
 protected slots:
     virtual void languageChange();
 
 private:
-    int		_cntctid;
-    int		_incdtid;
-    int		_mode;
-    int		_myUsrId;
-    int         _aropenid;
-    bool	_saved;
-    QStringList	_statusCodes;
+    bool _captive;
     
-    bool        _commentAdded;
-    bool        _updated;
-    int         _statusCache;
+    int     _docid;
+    QString _comments;
+    QString _descrip;
+    QString _docnumber;
+    QString _doctype;
+    QString _docbody;
+    QString _email1;
+    QString _email2; 
+    QString _email3; 
+
 };
 
-#endif // INCIDENT_H
+#endif // DELIVEREMAIL_H

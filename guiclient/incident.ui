@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>771</width>
-    <height>683</height>
+    <width>800</width>
+    <height>675</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -460,38 +460,85 @@
            </property>
            <layout class="QGridLayout" >
             <item row="0" column="0" >
-             <layout class="QGridLayout" >
-              <item row="0" column="0" >
-               <widget class="ItemCluster" name="_item" >
-                <property name="sizePolicy" >
-                 <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
+             <layout class="QVBoxLayout" >
+              <item>
+               <layout class="QHBoxLayout" >
+                <item>
+                 <widget class="ItemCluster" name="_item" >
+                  <property name="sizePolicy" >
+                   <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize" >
+                   <size>
+                    <width>0</width>
+                    <height>72</height>
+                   </size>
+                  </property>
+                  <property name="focusPolicy" >
+                   <enum>Qt::TabFocus</enum>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer>
+                  <property name="orientation" >
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" >
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" >
+                <item>
+                 <widget class="LotserialCluster" name="_lotserial" >
+                  <property name="enabled" >
+                   <bool>false</bool>
+                  </property>
+                  <property name="focusPolicy" >
+                   <enum>Qt::StrongFocus</enum>
+                  </property>
+                  <property name="label" >
+                   <string>  Lot/Serial #:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer>
+                  <property name="orientation" >
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" >
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <spacer>
+                <property name="orientation" >
+                 <enum>Qt::Vertical</enum>
                 </property>
-                <property name="minimumSize" >
+                <property name="sizeHint" >
                  <size>
-                  <width>0</width>
-                  <height>72</height>
+                  <width>20</width>
+                  <height>40</height>
                  </size>
                 </property>
-                <property name="focusPolicy" >
-                 <enum>Qt::TabFocus</enum>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="0" >
-               <widget class="LotserialCluster" name="_lotserial" >
-                <property name="enabled" >
-                 <bool>false</bool>
-                </property>
-                <property name="focusPolicy" >
-                 <enum>Qt::StrongFocus</enum>
-                </property>
-                <property name="label" >
-                 <string>  Lot/Serial #:</string>
-                </property>
-               </widget>
+               </spacer>
               </item>
              </layout>
             </item>

@@ -144,9 +144,9 @@ void deliverPurchaseOrder::sSubmit()
   q.bindValue(":fromEmail", _fromEmail->text());
   q.bindValue(":emailAddress", _email->text());
   q.bindValue(":ccAddress", _cc->text());
-  q.bindValue(":subject", _subject->text().replace("</docnumber>", _po->poNumber()).replace("</doctype>", "PO"));
-  q.bindValue(":fileName", _fileName->text().replace("</docnumber>", _po->poNumber()).replace("</doctype>", "PO"));
-  q.bindValue(":emailBody", _emailBody->toPlainText().replace("</docnumber>", _po->poNumber()).replace("</doctype>", "PO"));
+  q.bindValue(":subject", _subject->text());
+  q.bindValue(":fileName", _fileName->text());
+  q.bindValue(":emailBody", _emailBody->toPlainText());
   q.exec();
   if (q.first())
   {
@@ -213,9 +213,9 @@ void deliverPurchaseOrder::sHandlePoheadid(int pPoheadid)
       _submit->setEnabled(TRUE);
       _email->setText(q.value("vend_ediemail"));
       _cc->setText(q.value("vend_edicc").toString());
-      _emailBody->setPlainText(q.value("vend_ediemailbody").toString());
-      _subject->setText(q.value("vend_edisubject"));
-      _fileName->setText(q.value("vend_edifilename"));
+      _emailBody->setPlainText(q.value("vend_ediemailbody").toString().replace("</docnumber>", _po->poNumber()).replace("</doctype>", "PO"));
+      _subject->setText(q.value("vend_edisubject").toString().replace("</docnumber>", _po->poNumber()).replace("</doctype>", "PO"));
+      _fileName->setText(q.value("vend_edifilename").toString().replace("</docnumber>", _po->poNumber()).replace("</doctype>", "PO"));
     }
     else
     {

@@ -150,52 +150,44 @@ void deliverSalesOrder::sSubmit()
                           .arg(_report->currentText()) );
     return;
   }
+  
   QString reportName = q.value("report_name").toString();
 
-  q.prepare( "SELECT cohead_number"
-             "  FROM cohead"
-             " WHERE (cohead_id=:sohead_id);" );
-  q.bindValue(":sohead_id", _so->id());
+  q.prepare( "SELECT submitReportToBatch( :reportname, :fromEmail, :emailAddress, :ccAddress, :subject,"
+             "                            :emailBody, :fileName, CURRENT_TIMESTAMP, :emailHTML) AS batch_id;" );
+  q.bindValue(":reportname", reportName);
+  q.bindValue(":fromEmail", _fromEmail->text());
+  q.bindValue(":emailAddress", _email->text());
+  q.bindValue(":ccAddress", _cc->text());
+  q.bindValue(":subject", _subject->text());
+  q.bindValue(":fileName", _fileName->text());
+  q.bindValue(":emailBody", _emailBody->toPlainText());
+  q.bindValue(":emailHTML", QVariant(_emailHTML->isChecked(), 0));
   q.exec();
   if (q.first())
   {
-    QString soNumber = q.value("cohead_number").toString();
+    int batch_id = q.value("batch_id").toInt();
 
-    q.prepare( "SELECT submitReportToBatch( :reportname, :fromEmail, :emailAddress, :ccAddress, :subject,"
-               "                            :emailBody, :fileName, CURRENT_TIMESTAMP, :emailHTML) AS batch_id;" );
-    q.bindValue(":reportname", reportName);
-    q.bindValue(":fromEmail", _fromEmail->text());
-    q.bindValue(":emailAddress", _email->text());
-    q.bindValue(":ccAddress", _cc->text());
-    q.bindValue(":subject", _subject->text().replace("</docnumber>", soNumber).replace("</doctype>", "SO"));
-    q.bindValue(":fileName", _fileName->text().replace("</docnumber>", soNumber).replace("</doctype>", "SO"));
-    q.bindValue(":emailBody", _emailBody->toPlainText().replace("</docnumber>", soNumber).replace("</doctype>", "SO"));
-    q.bindValue(":emailHTML", QVariant(_emailHTML->isChecked()));
+    q.prepare( "INSERT INTO batchparam "
+               "( batchparam_batch_id, batchparam_order,"
+               "  batchparam_name, batchparam_value ) "
+               "VALUES "
+               "( :batchparam_batch_id, :batchparam_order,"
+               "  :batchparam_name, :batchparam_value );" );
+
+    q.bindValue(":batchparam_batch_id", batch_id);
+    q.bindValue(":batchparam_order", 1);
+    q.bindValue(":batchparam_name", "sohead_id");
+    q.bindValue(":batchparam_value", _so->id());
     q.exec();
-    if (q.first())
-    {
-      int batch_id = q.value("batch_id").toInt();
 
-      q.prepare( "INSERT INTO batchparam "
-                 "( batchparam_batch_id, batchparam_order,"
-                 "  batchparam_name, batchparam_value ) "
-                 "VALUES "
-                 "( :batchparam_batch_id, :batchparam_order,"
-                 "  :batchparam_name, :batchparam_value );" );
-
-      q.bindValue(":batchparam_batch_id", batch_id);
-      q.bindValue(":batchparam_order", 1);
-      q.bindValue(":batchparam_name", "sohead_id");
-      q.bindValue(":batchparam_value", _so->id());
-      q.exec();
-
-      q.bindValue(":batchparam_batch_id", batch_id);
-      q.bindValue(":batchparam_order", 2);
-      q.bindValue(":batchparam_name", "title");
-      q.bindValue(":batchparam_value", "Emailed Customer Copy");
-      q.exec();
-    }
+    q.bindValue(":batchparam_batch_id", batch_id);
+    q.bindValue(":batchparam_order", 2);
+    q.bindValue(":batchparam_name", "title");
+    q.bindValue(":batchparam_value", "Emailed Customer Copy");
+    q.exec();
   }
+  
 //  ToDo
 
   if (_captive)
@@ -217,7 +209,8 @@ void deliverSalesOrder::sSubmit()
 void deliverSalesOrder::sHandleSoheadid()
 {
   q.prepare( "SELECT cust_soemaildelivery, cust_soediemail, cust_soediemailbody, "
-             "       cust_soedisubject, cust_soedifilename, cust_soedicc, cust_soediemailhtml "
+             "       cust_soedisubject, cust_soedifilename, cust_soedicc, cust_soediemailhtml, "
+             "       cohead_number "
              "FROM cohead, custinfo "
              "WHERE ( (cohead_cust_id=cust_id)"
              " AND (cohead_id=:sohead_id) );" );
@@ -229,9 +222,9 @@ void deliverSalesOrder::sHandleSoheadid()
     {
       _email->setText(q.value("cust_soediemail").toString());
       _cc->setText(q.value("cust_soedicc").toString());
-      _emailBody->setPlainText(q.value("cust_soediemailbody").toString());
-      _subject->setText(q.value("cust_soedisubject").toString());
-      _fileName->setText(q.value("cust_soedifilename").toString());
+      _emailBody->setPlainText(q.value("cust_soediemailbody").toString().replace("</docnumber>", q.value("cohead_number").toString()).replace("</doctype>", "SO"));
+      _subject->setText(q.value("cust_soedisubject").toString().replace("</docnumber>", q.value("cohead_number").toString()).replace("</doctype>", "SO"));
+      _fileName->setText(q.value("cust_soedifilename").toString().replace("</docnumber>", q.value("cohead_number").toString()).replace("</doctype>", "SO"));
       _emailHTML->setChecked(q.value("cust_soediemailhtml").toBool());
     }
     else

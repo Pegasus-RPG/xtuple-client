@@ -66,6 +66,7 @@
 #include "todoItem.h"
 #include "returnAuthorization.h"
 #include "arOpenItem.h"
+#include "deliverEmail.h"
 
 /*
  *  Constructs a incident as a child of 'parent', with the
@@ -81,23 +82,44 @@ incident::incident(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   if(!_privileges->check("EditOwner")) _owner->setEnabled(false);
 
   // signals and slots connections
-  connect(_cancel,	SIGNAL(clicked()),	this,	SLOT(sCancel()));
-  connect(_crmacct,	SIGNAL(newId(int)),	this,	SLOT(sCRMAcctChanged(int)));
-  connect(_deleteTodoItem, SIGNAL(clicked()),	this,	SLOT(sDeleteTodoItem()));
-  connect(_editTodoItem, SIGNAL(clicked()),	this,	SLOT(sEditTodoItem()));
-  connect(_item,	SIGNAL(newId(int)),     _lotserial, SLOT(setItemId(int)));
-  connect(_newTodoItem,	SIGNAL(clicked()),	this,	SLOT(sNewTodoItem()));
-  connect(_save,	SIGNAL(clicked()),	this,	SLOT(sSave()));
-  connect(_todoList,	SIGNAL(itemSelected(int)), _editTodoItem, SLOT(animateClick()));
-  connect(_todoList,	SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*, int)),
-	    this,	SLOT(sPopulateTodoMenu(QMenu*)));
-  connect(_todoList,	SIGNAL(valid(bool)),	this, SLOT(sHandleTodoPrivs()));
-  connect(_viewTodoItem, SIGNAL(clicked()),	this,	SLOT(sViewTodoItem()));
-  //connect(_return,      SIGNAL(clicked()),      this, SLOT(sReturn()));
-  connect(_viewAR,      SIGNAL(clicked()),      this, SLOT(sViewAR()));
-  connect(_cntct, 		SIGNAL(changed()), 		this, SLOT(sContactChanged()));
-
+  connect(_cancel,        SIGNAL(clicked()),        this,	SLOT(sCancel()));
+  connect(_crmacct,       SIGNAL(newId(int)),       this,	SLOT(sCRMAcctChanged(int)));
+  connect(_deleteTodoItem, SIGNAL(clicked()),       this,	SLOT(sDeleteTodoItem()));
+  connect(_editTodoItem,  SIGNAL(clicked()),        this,	SLOT(sEditTodoItem()));
+  connect(_item,          SIGNAL(newId(int)),     _lotserial,   SLOT(setItemId(int)));
+  connect(_newTodoItem,   SIGNAL(clicked()),        this,	SLOT(sNewTodoItem()));
+  connect(_save,          SIGNAL(clicked()),        this,	SLOT(sSave()));
+  connect(_todoList,      SIGNAL(itemSelected(int)), _editTodoItem, SLOT(animateClick()));
+  connect(_todoList,      SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*, int)),
+	    this,         SLOT(sPopulateTodoMenu(QMenu*)));
+  connect(_todoList,      SIGNAL(valid(bool)),      this, SLOT(sHandleTodoPrivs()));
+  connect(_viewTodoItem,  SIGNAL(clicked()),        this,	SLOT(sViewTodoItem()));
+  //connect(_return,      SIGNAL(clicked()),        this, SLOT(sReturn()));
+  connect(_viewAR,        SIGNAL(clicked()),        this, SLOT(sViewAR()));
+  connect(_cntct,         SIGNAL(changed()),        this, SLOT(sContactChanged()));
+  connect(this,           SIGNAL(prepareMail()),    this, SLOT(sPrepareMail()));
+  connect(_assignedTo,    SIGNAL(newId(int)),       this, SLOT(sAssigned()));
+  connect(_comments,      SIGNAL(commentAdded()),   this, SLOT(sCommentAdded()));
+  
+  //Note changes for e-mail notification
+  connect(_category,      SIGNAL(textChanged(QString)), this, SLOT(sChanged()));
+  connect(_description,   SIGNAL(textChanged(QString)), this, SLOT(sChanged()));
+  connect(_crmacct,       SIGNAL(newId(int))          , this, SLOT(sChanged()));
+  connect(_owner,         SIGNAL(newId(int))          , this, SLOT(sChanged()));
+  connect(_assignedTo,    SIGNAL(newId(int))          , this, SLOT(sChanged()));
+  connect(_severity,      SIGNAL(currentIndexChanged(int)), this, SLOT(sChanged()));
+  connect(_status,        SIGNAL(currentIndexChanged(int)), this, SLOT(sChanged()));
+  connect(_resolution,    SIGNAL(currentIndexChanged(int)), this, SLOT(sChanged()));
+  connect(_priority,      SIGNAL(currentIndexChanged(int)), this, SLOT(sChanged()));
+  connect(_resolution,    SIGNAL(currentIndexChanged(int)), this, SLOT(sChanged()));
+  connect(_cntct,         SIGNAL(changed())           , this, SLOT(sChanged()));
+  connect(_notes,         SIGNAL(textChanged())       , this, SLOT(sChanged()));
+  connect(_item,          SIGNAL(newId(int))          , this, SLOT(sChanged()));
+  connect(_lotserial,     SIGNAL(newId(int))          , this, SLOT(sChanged()));
+  
   _incdtid = -1;
+  _commentAdded = false;
+  _updated = false;
 
   _severity->setType(XComboBox::IncidentSeverity);
   _priority->setType(XComboBox::IncidentPriority);
@@ -369,17 +391,18 @@ bool incident::save(bool partial)
       return false;
     }
 
-    if (_cntct->crmAcctId() != _crmacct->id() && _cntct->crmAcctId() > 0)
-    {
-      QMessageBox::critical( this, tr("Inaccurate Information"),
-	tr("This Contact is affiliated with a different CRM Account.") );
-      return false;
-    }
-
     if(_description->text().trimmed().isEmpty())
     {
       QMessageBox::critical( this, tr("Incomplete Information"),
 	tr("You must specify a description for this incident report.") );
+      _description->setFocus();
+      return false;
+    }
+    
+    if (_status->currentIndex() == 3 && _assignedTo->username().isEmpty())
+    {
+      QMessageBox::critical( this, tr("Incomplete Information"),
+	tr("You must specify an assignee when the status is assigned.") );
       _description->setFocus();
       return false;
     }
@@ -477,6 +500,9 @@ bool incident::save(bool partial)
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return false;
   }
+  
+  if (! partial)
+    emit prepareMail();
 
   _saved = true;
   return true;
@@ -546,6 +572,7 @@ void incident::populate()
     if(!q.value("incdt_incdtcat_id").toString().isEmpty())
       _category->setId(q.value("incdt_incdtcat_id").toInt());
     _status->setCurrentIndex(_statusCodes.indexOf(q.value("incdt_status").toString()));
+    _statusCache=_status->currentIndex();
     _severity->setNull();
     if(!q.value("incdt_incdtseverity_id").toString().isEmpty())
       _severity->setId(q.value("incdt_incdtseverity_id").toInt());
@@ -577,6 +604,7 @@ void incident::populate()
 
     sFillHistoryList();
     sFillTodoList();
+    _updated=false;
   }
 }
 
@@ -790,3 +818,149 @@ void incident::sContactChanged()
     return;
   }
 }
+
+void incident::sPrepareMail()
+{
+  //Users can use scripting to disconnect the signal that calls this and implement their
+  //own logic to build message tokens if they like
+  ParameterList params;
+  QString ownerEmail;
+  QString assignedEmail;
+  QString docbody;
+  QString reason;
+  
+  //See if we need to take action
+  if ( !_metrics->boolean("CRMIncidentEmailCreated") &&
+       !_metrics->boolean("CRMIncidentEmailAssigned") &&
+       !_metrics->boolean("CRMIncidentEmailStatus") &&
+       !_metrics->boolean("CRMIncidentEmailUpdated") &&
+       !_metrics->boolean("CRMIncidentEmailComments") ) 
+    return;
+    
+  //Determine reason, if none exit
+  if (_statusCache != 3 && 
+      _status->currentIndex() == 3 &&
+      _metrics->boolean("CRMIncidentEmailAssigned") );
+    reason = tr("The following incident has been ASSIGNED.");
+  if (cNew == _mode)
+    if (_metrics->boolean("CRMIncidentEmailCreated"))
+      reason = tr("The following incident has been CREATED.");
+    else
+      return;
+  else if (_statusCache != _status->currentIndex() && 
+      _metrics->boolean("CRMIncidentEmailStatus") )
+    reason = tr("The status of the following incident has been changed to %1.").arg(_status->currentText().upper());
+  else if (_updated && _metrics->boolean("CRMIncidentEmailUpdated"))
+    reason = tr("The following incident has been UPDATED.");
+  else if (_commentAdded && _metrics->boolean("CRMIncidentEmailUpdated"))
+    reason = tr("A new COMMENT has been added to the following incident.");
+  else
+    return;
+  
+  //Fetch email
+  q.prepare("SELECT usr_email FROM usr WHERE (usr_username=:user);");
+  q.bindValue(":user", _owner->username());
+  q.exec();
+  if (q.first())
+    ownerEmail=q.value("usr_email").toString();
+    
+  q.prepare("SELECT usr_email FROM usr WHERE (usr_username=:user);");
+  q.bindValue(":user", _assignedTo->username());
+  q.exec();
+  if (q.first())
+    assignedEmail=q.value("usr_email").toString();
+    
+  //Build body
+  docbody= QString("%1\n\n"
+                   "Incident Number: %2\n"
+                   "Description: %3\n"
+                   "=====================================================\n"
+                   "Owner: %4\n"
+                   "Assigned To: %5\n" 
+                   "Contact: %6\n"
+                   "=====================================================\n"
+                   "Category: %7\n"
+                   "Status: %8\n"
+                   "Severity: %9\n"
+                   "Priority: %10\n"
+                   "Resolution: %11\n")
+           .arg(reason)
+           .arg(_number->text())
+           .arg(_description->text())
+           .arg(_owner->username())
+           .arg(_assignedTo->username())
+           .arg(_cntct->name())
+           .arg(_category->currentText())
+           .arg(_status->currentText())
+           .arg(_severity->currentText())
+           .arg(_priority->currentText())
+           .arg(_resolution->currentText());
+           
+  if (_item->id() != -1)
+    docbody += tr("Item Number: %1\n").arg(_item->itemNumber());
+    
+  if (_lotserial->id() != -1)
+    docbody += tr("Lot/Serial Number: %1\n").arg(_lotserial->number());
+    
+  if (!_docType->text().isEmpty())
+  {
+    docbody += tr("Receivable Type: %1\n"
+                  "Document Number: %2\n")
+           .arg(_docType->text())
+           .arg(_docNumber->text());
+  }
+  
+  docbody += tr(  "=====================================================\n"
+                  "Notes:\n"
+                  "%1\n\n")
+           .arg(_notes->text());
+           
+  //Build history detail if applicable
+  docbody += tr("=====================================================\n\n"
+               "Incident History\n"
+               "Date            Username  Text\n"
+               "=====================================================\n");
+               
+  q.prepare("SELECT incdthist_timestamp, incdthist_username, incdthist_descrip "
+            "FROM incdthist "
+            "WHERE ( incdthist_incdt_id=:incdt_id);");
+  q.bindValue(":incdt_id", _incdtid);
+  q.exec();
+  while (q.next())
+  {
+    docbody += q.value("incdthist_timestamp").toString();
+    docbody += "  ";
+    docbody += q.value("incdthist_username").toString().left(10).leftJustified(10,' ');
+    docbody += q.value("incdthist_descrip").toString();
+    docbody += "\n";
+  }
+  
+  docbody += "=====================================================\n";
+  
+  params.append("description" , _description->text());
+  params.append("docid"       , _incdtid);
+  params.append("docbody"     , docbody);
+  params.append("docnumber"   , _number->text());
+  params.append("doctype"     , "INCDT");
+  params.append("email1"      , ownerEmail);
+  params.append("email2"      , assignedEmail);
+  params.append("email3"      , _cntct->emailAddress());
+  params.append("profileid"   , _metrics->value("CRMIncidentEmailProfile"));
+    
+  sSendMail(params);
+}
+
+void incident::sSendMail(ParameterList & params)
+{
+  deliverEmail newdlg (this,"",true);
+  newdlg.set(params);
+  newdlg.exec();
+}
+
+void incident::sAssigned()
+{
+  if (_status->currentIndex() < 3 && !_assignedTo->username().isEmpty())
+    _status->setCurrentIndex(3);
+}
+
+

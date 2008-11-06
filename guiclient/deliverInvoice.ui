@@ -311,7 +311,7 @@
     </layout>
    </item>
    <item>
-    <widget class="QCheckBox" name="_emailHTML" >
+    <widget class="XCheckBox" name="_emailHTML" >
      <property name="text" >
       <string>Send Email as HTML</string>
      </property>
@@ -355,6 +355,11 @@
  <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
+  </customwidget>
   <customwidget>
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>

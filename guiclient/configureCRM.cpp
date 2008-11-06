@@ -103,9 +103,27 @@ configureCRM::configureCRM(QWidget* parent, const char* name, bool modal, Qt::WF
 
     
   _useProjects->setChecked(_metrics->boolean("UseProjects"));
-  _autoCreate->setChecked(_metrics->boolean("AutoCreateProjectsForOrders"));  
+  _autoCreate->setChecked(_metrics->boolean("AutoCreateProjectsForOrders"));
+  if (_metrics->boolean("EnableBatchManager"))
+  {
+    _incdtEmailProfile->populate("SELECT ediprofile_id, ediprofile_name "
+                                 "FROM ediprofile "
+                                 "WHERE (ediprofile_type='email');");
+    _incdtEmailProfile->setId(_metrics->value("CRMIncidentEmailProfile").toInt());
+  }
+  else
+  {
+    _incdtEmailProfileLit->hide();
+    _incdtEmailProfile->hide();
+  }
     
-  this->setWindowTitle("CRM Configuration");
+  _incdtCreated->setChecked(_metrics->boolean("CRMIncidentEmailCreated"));
+  _incdtAssigned->setChecked(_metrics->boolean("CRMIncidentEmailAssigned"));
+  _incdtStatus->setChecked(_metrics->boolean("CRMIncidentEmailStatus"));
+  _incdtUpdated->setChecked(_metrics->boolean("CRMIncidentEmailUpdated"));
+  _incdtComments->setChecked(_metrics->boolean("CRMIncidentEmailComments"));
+      
+  resize(minimumSize());
 }
 
 /*
@@ -141,6 +159,15 @@ void configureCRM::sSave()
   
   _metrics->set("UseProjects", _useProjects->isChecked());
   _metrics->set("AutoCreateProjectsForOrders", (_autoCreate->isChecked() && _useProjects->isChecked()));
+  
+  if (_metrics->boolean("EnableBatchManager"))
+    _metrics->set("CRMIncidentEmailProfile", _incdtEmailProfile->id());
+
+  _metrics->set("CRMIncidentEmailCreated"   , _incdtCreated->isChecked());
+  _metrics->set("CRMIncidentEmailAssigned"  , _incdtAssigned->isChecked());
+  _metrics->set("CRMIncidentEmailStatus"    , _incdtStatus->isChecked());
+  _metrics->set("CRMIncidentEmailUpdated"   , _incdtUpdated->isChecked());
+  _metrics->set("CRMIncidentEmailComments"  , _incdtComments->isChecked());
   
   _metrics->load();
 
