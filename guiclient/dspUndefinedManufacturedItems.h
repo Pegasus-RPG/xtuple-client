@@ -68,7 +68,7 @@ class dspUndefinedManufacturedItems : public XWidget, public Ui::dspUndefinedMan
     Q_OBJECT
 
 public:
-    dspUndefinedManufacturedItems(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspUndefinedManufacturedItems(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspUndefinedManufacturedItems();
 
     virtual void init();

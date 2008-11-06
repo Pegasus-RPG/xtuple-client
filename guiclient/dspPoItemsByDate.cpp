@@ -245,7 +245,7 @@ void dspPoItemsByDate::sRunningAvailability()
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -325,7 +325,7 @@ void dspPoItemsByDate::sCloseItem()
              "WHERE (poitem_id=:poitem_id);" );
   q.bindValue(":poitem_id", _poitem->altId());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -340,7 +340,7 @@ void dspPoItemsByDate::sOpenItem()
              "WHERE (poitem_id=:poitem_id);" );
   q.bindValue(":poitem_id", _poitem->altId());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -413,7 +413,7 @@ void dspPoItemsByDate::sFillList()
   {
     _poitem->populate(q, true);
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

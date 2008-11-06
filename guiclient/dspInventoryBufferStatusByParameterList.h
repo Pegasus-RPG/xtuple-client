@@ -69,7 +69,7 @@ class dspInventoryBufferStatusByParameterList : public XWidget, public Ui::dspIn
     Q_OBJECT
 
 public:
-    dspInventoryBufferStatusByParameterList(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspInventoryBufferStatusByParameterList(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspInventoryBufferStatusByParameterList();
 
 public slots:

@@ -69,7 +69,7 @@ class dspReservations : public XWidget, public Ui::dspReservations
     Q_OBJECT
 
 public:
-    dspReservations(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspReservations(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspReservations();
 
 public slots:

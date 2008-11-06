@@ -68,7 +68,7 @@ class dspLaborVarianceByWorkCenter : public XWidget, public Ui::dspLaborVariance
     Q_OBJECT
 
 public:
-    dspLaborVarianceByWorkCenter(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspLaborVarianceByWorkCenter(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspLaborVarianceByWorkCenter();
 
     virtual bool setParams(ParameterList &);

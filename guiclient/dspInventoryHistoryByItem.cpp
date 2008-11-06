@@ -117,7 +117,7 @@ dspInventoryHistoryByItem::dspInventoryHistoryByItem(QWidget* parent, const char
   _transType->append(cTransAdjCounts, tr("Adjustments and Counts") );
   _transType->append(cTransTransfers, tr("Transfers")              );
   _transType->append(cTransScraps,    tr("Scraps")                 );
-  _transType->setCurrentItem(0);
+  _transType->setCurrentIndex(0);
 
   _item->setFocus();
 }
@@ -175,17 +175,17 @@ enum SetResponse dspInventoryHistoryByItem::set(const ParameterList &pParams)
     QString transtype = param.toString();
 
     if (transtype == "R")
-      _transType->setCurrentItem(1);
+      _transType->setCurrentIndex(1);
     else if (transtype == "I")
-      _transType->setCurrentItem(2);
+      _transType->setCurrentIndex(2);
     else if (transtype == "S")
-      _transType->setCurrentItem(3);
+      _transType->setCurrentIndex(3);
     else if (transtype == "A")
-      _transType->setCurrentItem(4);
+      _transType->setCurrentIndex(4);
     else if (transtype == "T")
-      _transType->setCurrentItem(5);
+      _transType->setCurrentIndex(5);
     else if (transtype == "SC")
-      _transType->setCurrentItem(6);
+      _transType->setCurrentIndex(6);
   }
 
   if (pParams.inList("run"))
@@ -316,7 +316,7 @@ void dspInventoryHistoryByItem::sViewWOInfo()
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -378,7 +378,7 @@ void dspInventoryHistoryByItem::sFillList()
     {
       _invhist->populate(q, true);
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;

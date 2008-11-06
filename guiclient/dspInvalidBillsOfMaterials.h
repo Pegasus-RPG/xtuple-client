@@ -68,7 +68,7 @@ class dspInvalidBillsOfMaterials : public XWidget, public Ui::dspInvalidBillsOfM
     Q_OBJECT
 
 public:
-    dspInvalidBillsOfMaterials(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspInvalidBillsOfMaterials(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspInvalidBillsOfMaterials();
 
 public slots:

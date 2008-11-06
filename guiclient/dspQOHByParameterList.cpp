@@ -209,11 +209,11 @@ SetResponse dspQOHByParameterList::set(const ParameterList &pParams)
   switch (_parameter->type())
   {
     case ParameterGroup::ClassCode:
-      setCaption(tr("Quantities on Hand by Class Code"));
+      setWindowTitle(tr("Quantities on Hand by Class Code"));
       break;
 
     case ParameterGroup::ItemGroup:
-      setCaption(tr("Quantities on Hand by Item Group"));
+      setWindowTitle(tr("Quantities on Hand by Item Group"));
       break;
 
     default:

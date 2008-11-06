@@ -68,7 +68,7 @@ class dspTimePhasedOpenAPItems : public XWidget, public Ui::dspTimePhasedOpenAPI
     Q_OBJECT
 
 public:
-    dspTimePhasedOpenAPItems(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspTimePhasedOpenAPItems(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspTimePhasedOpenAPItems();
 
 public slots:

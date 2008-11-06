@@ -394,7 +394,7 @@ void dspInventoryAvailabilityBySalesOrder::sFillList()
   MetaSQLQuery mql = mqlLoad("inventoryAvailability", "byCustOrSO");
   q = mql.toQuery(params);
   _avail->populate(q, true);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -445,7 +445,7 @@ void dspInventoryAvailabilityBySalesOrder::sReserveLineBalance()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, tr("Error\n") +
                       q.lastError().databaseText(), __FILE__, __LINE__);
@@ -460,7 +460,7 @@ void dspInventoryAvailabilityBySalesOrder::sUnreserveStock()
   q.prepare("UPDATE coitem SET coitem_qtyreserved=0 WHERE coitem_id=:soitem_id;");
   q.bindValue(":soitem_id", _avail->altId());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, tr("Error\n") +
                       q.lastError().databaseText(), __FILE__, __LINE__);

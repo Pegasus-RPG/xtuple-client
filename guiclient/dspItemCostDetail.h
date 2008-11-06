@@ -69,7 +69,7 @@ class dspItemCostDetail : public XWidget, public Ui::dspItemCostDetail
     Q_OBJECT
 
 public:
-    dspItemCostDetail(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspItemCostDetail(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspItemCostDetail();
 
     virtual bool setParams(ParameterList &);

@@ -120,7 +120,7 @@ enum SetResponse dspItemCostDetail::set(const ParameterList &pParams)
     {
       if (_costType->text(cursor) == param.toString())
       {
-        _costType->setCurrentItem(cursor);
+        _costType->setCurrentIndex(cursor);
         break;
       }
     }
@@ -141,7 +141,7 @@ enum SetResponse dspItemCostDetail::set(const ParameterList &pParams)
       _costType->setId(q.value("itemcost_costelem_id").toInt());
       _costType->setEnabled(FALSE);
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
@@ -167,7 +167,7 @@ void dspItemCostDetail::sPopulate()
   q.bindValue(":item_id", _item->id());
   q.exec();
   _costType->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -336,7 +336,7 @@ void dspItemCostDetail::sFillList(int pItemid, bool pLocale)
 
   q = mql.toQuery(params);
   _bom->populate(q, true);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

@@ -193,7 +193,7 @@ void dspQuotesByCustomer::sFillList()
   _so->clear();
 
   if ( ( (_allPOs->isChecked()) ||
-         ( (_selectedPO->isChecked()) && (_poNumber->currentItem() != -1) ) ) &&
+         ( (_selectedPO->isChecked()) && (_poNumber->currentIndex() != -1) ) ) &&
        (_dates->allValid())  )
   {
     MetaSQLQuery mql = mqlLoad("quotes", "detail");

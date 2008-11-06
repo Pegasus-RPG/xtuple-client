@@ -68,7 +68,7 @@ class dspPoReturnsByVendor : public XWidget, public Ui::dspPoReturnsByVendor
     Q_OBJECT
 
 public:
-    dspPoReturnsByVendor(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspPoReturnsByVendor(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspPoReturnsByVendor();
 
 public slots:

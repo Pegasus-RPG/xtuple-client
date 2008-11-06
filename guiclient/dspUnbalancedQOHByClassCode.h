@@ -69,7 +69,7 @@ class dspUnbalancedQOHByClassCode : public XWidget, public Ui::dspUnbalancedQOHB
     Q_OBJECT
 
 public:
-    dspUnbalancedQOHByClassCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspUnbalancedQOHByClassCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspUnbalancedQOHByClassCode();
 
 public slots:

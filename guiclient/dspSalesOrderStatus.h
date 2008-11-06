@@ -69,7 +69,7 @@ class dspSalesOrderStatus : public XWidget, public Ui::dspSalesOrderStatus
     Q_OBJECT
 
 public:
-    dspSalesOrderStatus(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspSalesOrderStatus(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspSalesOrderStatus();
 
 public slots:

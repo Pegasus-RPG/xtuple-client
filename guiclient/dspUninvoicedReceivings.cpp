@@ -144,7 +144,7 @@ void dspUninvoicedReceivings::sMarkAsInvoiced()
     if (newdlg.exec() == XDialog::Rejected)
       update = FALSE;
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -156,7 +156,7 @@ void dspUninvoicedReceivings::sMarkAsInvoiced()
 	      "WHERE (recv_id=:porecv_id); ");
     q.bindValue(":porecv_id",_porecv->id());
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -270,7 +270,7 @@ void dspUninvoicedReceivings::sFillList()
   MetaSQLQuery mql(sql);
   q = mql.toQuery(params);
   _porecv->populate(q, true);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

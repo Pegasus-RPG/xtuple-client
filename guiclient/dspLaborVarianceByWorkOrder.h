@@ -70,7 +70,7 @@ class dspLaborVarianceByWorkOrder : public XWidget, public Ui::dspLaborVarianceB
     Q_OBJECT
 
 public:
-    dspLaborVarianceByWorkOrder(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspLaborVarianceByWorkOrder(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspLaborVarianceByWorkOrder();
 
     virtual bool setParams(ParameterList &);

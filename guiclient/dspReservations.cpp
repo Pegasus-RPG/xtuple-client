@@ -251,7 +251,7 @@ void dspReservations::sFillList()
       _qoh->setDouble(q.value("itemsite_qtyonhand").toDouble());
       _available->setDouble(q.value("unreserved").toDouble());
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;

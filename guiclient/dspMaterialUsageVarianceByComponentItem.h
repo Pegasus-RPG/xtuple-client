@@ -68,7 +68,7 @@ class dspMaterialUsageVarianceByComponentItem : public XWidget, public Ui::dspMa
     Q_OBJECT
 
 public:
-    dspMaterialUsageVarianceByComponentItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspMaterialUsageVarianceByComponentItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspMaterialUsageVarianceByComponentItem();
 
 public slots:

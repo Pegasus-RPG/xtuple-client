@@ -68,7 +68,7 @@ class dspPlannedOrdersByPlannerCode : public XWidget, public Ui::dspPlannedOrder
     Q_OBJECT
 
 public:
-    dspPlannedOrdersByPlannerCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspPlannedOrdersByPlannerCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspPlannedOrdersByPlannerCode();
     virtual bool setParams(ParameterList&);
 

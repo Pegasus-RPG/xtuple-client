@@ -69,7 +69,7 @@ class dspVendorAPHistory : public XWidget, public Ui::dspVendorAPHistory
     Q_OBJECT
 
 public:
-    dspVendorAPHistory(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspVendorAPHistory(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspVendorAPHistory();
 
     virtual bool checkParameters();

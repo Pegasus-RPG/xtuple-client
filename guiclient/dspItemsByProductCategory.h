@@ -67,7 +67,7 @@ class dspItemsByProductCategory : public XWidget, public Ui::dspItemsByProductCa
     Q_OBJECT
 
 public:
-    dspItemsByProductCategory(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspItemsByProductCategory(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspItemsByProductCategory();
 
     virtual bool setParams(ParameterList &);

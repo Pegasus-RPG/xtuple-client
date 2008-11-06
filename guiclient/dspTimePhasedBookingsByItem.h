@@ -68,7 +68,7 @@ class dspTimePhasedBookingsByItem : public XWidget, public Ui::dspTimePhasedBook
     Q_OBJECT
 
 public:
-    dspTimePhasedBookingsByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspTimePhasedBookingsByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspTimePhasedBookingsByItem();
 
     virtual ParameterList buildParameters();

@@ -63,12 +63,14 @@
 
 #include "ui_dspTimePhasedUsageStatisticsByItem.h"
 
+#include <Q3ValueList>
+
 class dspTimePhasedUsageStatisticsByItem : public XWidget, public Ui::dspTimePhasedUsageStatisticsByItem
 {
     Q_OBJECT
 
 public:
-    dspTimePhasedUsageStatisticsByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspTimePhasedUsageStatisticsByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspTimePhasedUsageStatisticsByItem();
 
 public slots:

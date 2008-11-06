@@ -68,7 +68,7 @@ class dspPendingAvailability : public XWidget, public Ui::dspPendingAvailability
     Q_OBJECT
 
 public:
-    dspPendingAvailability(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspPendingAvailability(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspPendingAvailability();
 
     virtual bool checkParameters();

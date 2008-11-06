@@ -67,7 +67,7 @@ class dspPoDeliveryDateVariancesByItem : public XWidget, public Ui::dspPoDeliver
     Q_OBJECT
 
 public:
-    dspPoDeliveryDateVariancesByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspPoDeliveryDateVariancesByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspPoDeliveryDateVariancesByItem();
     virtual bool setParams(ParameterList &);
 

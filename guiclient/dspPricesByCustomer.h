@@ -68,7 +68,7 @@ class dspPricesByCustomer : public XWidget, public Ui::dspPricesByCustomer
     Q_OBJECT
 
 public:
-    dspPricesByCustomer(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspPricesByCustomer(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspPricesByCustomer();
 
 public slots:

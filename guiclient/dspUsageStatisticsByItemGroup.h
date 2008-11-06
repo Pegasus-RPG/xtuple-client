@@ -68,7 +68,7 @@ class dspUsageStatisticsByItemGroup : public XWidget, public Ui::dspUsageStatist
     Q_OBJECT
 
 public:
-    dspUsageStatisticsByItemGroup(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspUsageStatisticsByItemGroup(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspUsageStatisticsByItemGroup();
 
     virtual void viewTransactions(QString);

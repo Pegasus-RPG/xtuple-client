@@ -68,7 +68,7 @@ class dspStandardJournalHistory : public XWidget, public Ui::dspStandardJournalH
     Q_OBJECT
 
 public:
-    dspStandardJournalHistory(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspStandardJournalHistory(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspStandardJournalHistory();
 
 public slots:

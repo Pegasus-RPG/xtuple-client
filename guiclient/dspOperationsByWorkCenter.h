@@ -68,7 +68,7 @@ class dspOperationsByWorkCenter : public XWidget, public Ui::dspOperationsByWork
     Q_OBJECT
 
 public:
-    dspOperationsByWorkCenter(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspOperationsByWorkCenter(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspOperationsByWorkCenter();
 
 public slots:

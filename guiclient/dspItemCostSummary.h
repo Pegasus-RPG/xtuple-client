@@ -69,7 +69,7 @@ class dspItemCostSummary : public XWidget, public Ui::dspItemCostSummary
     Q_OBJECT
 
 public:
-    dspItemCostSummary(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspItemCostSummary(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspItemCostSummary();
 
 public slots:

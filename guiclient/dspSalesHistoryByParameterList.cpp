@@ -204,11 +204,11 @@ enum SetResponse dspSalesHistoryByParameterList::set(const ParameterList &pParam
   }
 
   if (_parameter->type() == ParameterGroup::ProductCategory)
-    setCaption(tr("Sales History by Product Category"));
+    setWindowTitle(tr("Sales History by Product Category"));
   if (_parameter->type() == ParameterGroup::CustomerType)
-    setCaption(tr("Sales History by Customer Type"));
+    setWindowTitle(tr("Sales History by Customer Type"));
   if (_parameter->type() == ParameterGroup::CustomerGroup)
-    setCaption(tr("Sales History by Customer Group"));
+    setWindowTitle(tr("Sales History by Customer Group"));
 
   return NoError;
 }

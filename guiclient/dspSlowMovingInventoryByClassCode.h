@@ -67,7 +67,7 @@ class dspSlowMovingInventoryByClassCode : public XWidget, public Ui::dspSlowMovi
     Q_OBJECT
 
 public:
-    dspSlowMovingInventoryByClassCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspSlowMovingInventoryByClassCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspSlowMovingInventoryByClassCode();
     bool	setParams(ParameterList &);
 

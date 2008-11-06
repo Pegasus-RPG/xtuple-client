@@ -157,7 +157,7 @@ void dspRoughCutByWorkCenter::sQuery()
   MetaSQLQuery mql(sql);
   q = mql.toQuery(params);
   _roughCut->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

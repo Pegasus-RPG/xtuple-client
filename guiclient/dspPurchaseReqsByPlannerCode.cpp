@@ -197,7 +197,7 @@ void dspPurchaseReqsByPlannerCode::sFillList()
   MetaSQLQuery mql = mqlLoad("purchase", "purchaserequests");
   q = mql.toQuery(params);
   _pr->populate(q, TRUE);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

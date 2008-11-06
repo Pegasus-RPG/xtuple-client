@@ -68,7 +68,7 @@ class dspPlannedOrdersByItem : public XWidget, public Ui::dspPlannedOrdersByItem
     Q_OBJECT
 
 public:
-    dspPlannedOrdersByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspPlannedOrdersByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspPlannedOrdersByItem();
 
 public slots:

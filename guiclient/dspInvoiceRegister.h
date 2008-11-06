@@ -69,7 +69,7 @@ class dspInvoiceRegister : public XWidget, public Ui::dspInvoiceRegister
     Q_OBJECT
 
 public:
-    dspInvoiceRegister(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspInvoiceRegister(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspInvoiceRegister();
 
     virtual bool setParams(ParameterList &params);

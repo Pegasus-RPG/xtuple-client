@@ -68,7 +68,7 @@ class dspSummarizedGLTransactions : public XWidget, public Ui::dspSummarizedGLTr
     Q_OBJECT
 
 public:
-    dspSummarizedGLTransactions(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspSummarizedGLTransactions(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspSummarizedGLTransactions();
 
 public slots:

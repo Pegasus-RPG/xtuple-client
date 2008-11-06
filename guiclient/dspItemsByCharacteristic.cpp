@@ -109,7 +109,7 @@ void dspItemsByCharacteristic::languageChange()
 bool dspItemsByCharacteristic::setParams(ParameterList &params)
 {
   params.append("char_id",      _char->id());
-  params.append("value",        _value->text().stripWhiteSpace());
+  params.append("value",        _value->text().trimmed());
   params.append("purchased",    tr("Purchased"));
   params.append("manufactured", tr("Manufactured"));
   params.append("job",          tr("Job"));
@@ -244,7 +244,7 @@ void dspItemsByCharacteristic::sFillList(int pItemid, bool pLocal)
     _item->populate(q, pItemid);
   else
     _item->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

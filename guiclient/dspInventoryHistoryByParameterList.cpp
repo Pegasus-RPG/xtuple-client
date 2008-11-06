@@ -111,7 +111,7 @@ dspInventoryHistoryByParameterList::dspInventoryHistoryByParameterList(QWidget* 
   _transType->append(cTransAdjCounts, tr("Adjustments and Counts") );
   _transType->append(cTransTransfers, tr("Transfers")              );
   _transType->append(cTransScraps,    tr("Scraps")                 );
-  _transType->setCurrentItem(0);
+  _transType->setCurrentIndex(0);
 }
 
 dspInventoryHistoryByParameterList::~dspInventoryHistoryByParameterList()
@@ -201,17 +201,17 @@ enum SetResponse dspInventoryHistoryByParameterList::set(const ParameterList &pP
     QString transtype = param.toString();
 
     if (transtype == "R")
-      _transType->setCurrentItem(1);
+      _transType->setCurrentIndex(1);
     else if (transtype == "I")
-      _transType->setCurrentItem(2);
+      _transType->setCurrentIndex(2);
     else if (transtype == "S")
-      _transType->setCurrentItem(3);
+      _transType->setCurrentIndex(3);
     else if (transtype == "A")
-      _transType->setCurrentItem(4);
+      _transType->setCurrentIndex(4);
     else if (transtype == "T")
-      _transType->setCurrentItem(5);
+      _transType->setCurrentIndex(5);
     else if (transtype == "SC")
-      _transType->setCurrentItem(6);
+      _transType->setCurrentIndex(6);
   }
 
   if (pParams.inList("run"))
@@ -220,15 +220,15 @@ enum SetResponse dspInventoryHistoryByParameterList::set(const ParameterList &pP
   switch (_parameter->type())
   {
     case ParameterGroup::ClassCode:
-      setCaption(tr("Inventory History by Class Code"));
+      setWindowTitle(tr("Inventory History by Class Code"));
       break;
 
     case ParameterGroup::PlannerCode:
-      setCaption(tr("Inventory History by Planner Code"));
+      setWindowTitle(tr("Inventory History by Planner Code"));
       break;
 
     case ParameterGroup::ItemGroup:
-      setCaption(tr("Inventory History by Item Group"));
+      setWindowTitle(tr("Inventory History by Item Group"));
       break;
 
     default:
@@ -448,7 +448,7 @@ void dspInventoryHistoryByParameterList::sFillList()
   {
     _invhist->populate(q, true);
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

@@ -69,7 +69,7 @@ class dspInventoryLocator : public XWidget, public Ui::dspInventoryLocator
     Q_OBJECT
 
 public:
-    dspInventoryLocator(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspInventoryLocator(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspInventoryLocator();
 
     virtual bool setParams(ParameterList &);

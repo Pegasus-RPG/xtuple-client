@@ -68,7 +68,7 @@ class dspItemCostHistory : public XWidget, public Ui::dspItemCostHistory
     Q_OBJECT
 
 public:
-    dspItemCostHistory(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspItemCostHistory(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspItemCostHistory();
 
 public slots:

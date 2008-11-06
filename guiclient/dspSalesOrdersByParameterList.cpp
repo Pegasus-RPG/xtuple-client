@@ -136,7 +136,7 @@ enum SetResponse dspSalesOrdersByParameterList::set(const ParameterList &pParams
     _dates->setEndDate(param.toDate());
 
   if (_parameter->type() == ParameterGroup::CustomerType)
-    setCaption(tr("Sales Order Lookup by Customer Type"));
+    setWindowTitle(tr("Sales Order Lookup by Customer Type"));
 
   return NoError;
 }

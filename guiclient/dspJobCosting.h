@@ -69,7 +69,7 @@ class dspJobCosting : public XWidget, public Ui::dspJobCosting
     Q_OBJECT
 
 public:
-    dspJobCosting(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspJobCosting(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspJobCosting();
 
     virtual bool setParams(ParameterList &);

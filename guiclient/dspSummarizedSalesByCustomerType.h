@@ -68,7 +68,7 @@ class dspSummarizedSalesByCustomerType : public XWidget, public Ui::dspSummarize
     Q_OBJECT
 
 public:
-    dspSummarizedSalesByCustomerType(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspSummarizedSalesByCustomerType(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspSummarizedSalesByCustomerType();
 
     virtual bool checkParameters();

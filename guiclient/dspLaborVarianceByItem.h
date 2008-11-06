@@ -67,7 +67,7 @@ class dspLaborVarianceByItem : public XWidget, public Ui::dspLaborVarianceByItem
     Q_OBJECT
 
 public:
-    dspLaborVarianceByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspLaborVarianceByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspLaborVarianceByItem();
 
     virtual bool setParams(ParameterList &);

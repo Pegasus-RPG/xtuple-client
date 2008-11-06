@@ -69,7 +69,7 @@ class dspShipmentsBySalesOrder : public XWidget, public Ui::dspShipmentsBySalesO
     Q_OBJECT
 
 public:
-    dspShipmentsBySalesOrder(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspShipmentsBySalesOrder(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspShipmentsBySalesOrder();
 
 public slots:

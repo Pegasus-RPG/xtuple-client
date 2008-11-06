@@ -69,7 +69,7 @@ class dspSalesHistoryByParameterList : public XWidget, public Ui::dspSalesHistor
     Q_OBJECT
 
 public:
-    dspSalesHistoryByParameterList(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspSalesHistoryByParameterList(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspSalesHistoryByParameterList();
 
     virtual bool checkParameters();

@@ -68,7 +68,7 @@ class dspTimePhasedCapacityByWorkCenter : public XWidget, public Ui::dspTimePhas
     Q_OBJECT
 
 public:
-    dspTimePhasedCapacityByWorkCenter(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspTimePhasedCapacityByWorkCenter(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspTimePhasedCapacityByWorkCenter();
 
 public slots:

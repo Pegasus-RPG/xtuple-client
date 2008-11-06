@@ -69,7 +69,7 @@ class dspInvoiceInformation : public XWidget, public Ui::dspInvoiceInformation
     Q_OBJECT
 
 public:
-    dspInvoiceInformation(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspInvoiceInformation(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspInvoiceInformation();
 
 public slots:

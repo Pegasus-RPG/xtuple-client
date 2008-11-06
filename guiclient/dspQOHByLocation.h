@@ -69,7 +69,7 @@ class dspQOHByLocation : public XWidget, public Ui::dspQOHByLocation
     Q_OBJECT
 
 public:
-    dspQOHByLocation(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspQOHByLocation(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspQOHByLocation();
 
 public slots:

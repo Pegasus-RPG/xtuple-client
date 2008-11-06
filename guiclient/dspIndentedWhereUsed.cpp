@@ -233,7 +233,7 @@ void dspIndentedWhereUsed::sFillList()
                      "ORDER BY seqord;");
     q = mql.toQuery(params);
     _bomitem->populate(q, true);
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;

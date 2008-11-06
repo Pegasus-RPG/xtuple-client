@@ -68,7 +68,7 @@ class dspTimePhasedProductionByPlannerCode : public XWidget, public Ui::dspTimeP
     Q_OBJECT
 
 public:
-    dspTimePhasedProductionByPlannerCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspTimePhasedProductionByPlannerCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspTimePhasedProductionByPlannerCode();
 
 public slots:

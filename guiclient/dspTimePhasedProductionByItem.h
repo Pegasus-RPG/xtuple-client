@@ -63,12 +63,14 @@
 
 #include "ui_dspTimePhasedProductionByItem.h"
 
+#include <Q3ValueList>
+
 class dspTimePhasedProductionByItem : public XWidget, public Ui::dspTimePhasedProductionByItem
 {
     Q_OBJECT
 
 public:
-    dspTimePhasedProductionByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspTimePhasedProductionByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspTimePhasedProductionByItem();
 
 public slots:

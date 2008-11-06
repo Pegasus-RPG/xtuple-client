@@ -68,7 +68,7 @@ class dspTodoByUserAndIncident : public XWidget, public Ui::dspTodoByUserAndInci
     Q_OBJECT
 
 public:
-    dspTodoByUserAndIncident(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspTodoByUserAndIncident(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspTodoByUserAndIncident();
 
 public slots:

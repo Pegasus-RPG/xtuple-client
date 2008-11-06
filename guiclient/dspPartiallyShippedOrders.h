@@ -67,7 +67,7 @@ class dspPartiallyShippedOrders : public XWidget, public Ui::dspPartiallyShipped
     Q_OBJECT
 
 public:
-    dspPartiallyShippedOrders(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspPartiallyShippedOrders(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspPartiallyShippedOrders();
 
 public slots:

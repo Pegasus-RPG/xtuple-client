@@ -67,7 +67,7 @@ class dspSummarizedBankrecHistory : public XWidget, public Ui::dspSummarizedBank
     Q_OBJECT
 
 public:
-    dspSummarizedBankrecHistory(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspSummarizedBankrecHistory(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspSummarizedBankrecHistory();
 
 public slots:

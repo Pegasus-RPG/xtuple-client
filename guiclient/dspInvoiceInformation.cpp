@@ -229,7 +229,7 @@ void dspInvoiceInformation::sParseInvoiceNumber()
     q.exec();
     _arapply->clear();
     _arapply->populate(q);
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -237,7 +237,7 @@ void dspInvoiceInformation::sParseInvoiceNumber()
   }
   else
   {
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     _print->setEnabled(FALSE);
     _view->setEnabled(FALSE);

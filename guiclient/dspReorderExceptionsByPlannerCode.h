@@ -68,7 +68,7 @@ class dspReorderExceptionsByPlannerCode : public XWidget, public Ui::dspReorderE
     Q_OBJECT
 
 public:
-    dspReorderExceptionsByPlannerCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspReorderExceptionsByPlannerCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspReorderExceptionsByPlannerCode();
 
     bool	setParams(ParameterList&);

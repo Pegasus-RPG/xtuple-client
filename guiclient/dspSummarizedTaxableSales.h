@@ -68,7 +68,7 @@ class dspSummarizedTaxableSales : public XWidget, public Ui::dspSummarizedTaxabl
     Q_OBJECT
 
 public:
-    dspSummarizedTaxableSales(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspSummarizedTaxableSales(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspSummarizedTaxableSales();
     virtual bool setParams(ParameterList &);
 

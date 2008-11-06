@@ -68,7 +68,7 @@ class dspPoHistory : public XWidget, public Ui::dspPoHistory
     Q_OBJECT
 
 public:
-    dspPoHistory(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspPoHistory(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspPoHistory();
 
 public slots:

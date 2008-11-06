@@ -69,7 +69,7 @@ class dspQuotesByCustomer : public XWidget, public Ui::dspQuotesByCustomer
     Q_OBJECT
 
 public:
-    dspQuotesByCustomer(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspQuotesByCustomer(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspQuotesByCustomer();
 
     virtual void init();

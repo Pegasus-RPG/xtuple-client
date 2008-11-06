@@ -68,7 +68,7 @@ class dspUsageStatisticsByClassCode : public XWidget, public Ui::dspUsageStatist
     Q_OBJECT
 
 public:
-    dspUsageStatisticsByClassCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspUsageStatisticsByClassCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspUsageStatisticsByClassCode();
 
     virtual void viewTransactions(QString);

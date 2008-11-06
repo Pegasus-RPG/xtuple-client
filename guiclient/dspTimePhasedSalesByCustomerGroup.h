@@ -68,7 +68,7 @@ class dspTimePhasedSalesByCustomerGroup : public XWidget, public Ui::dspTimePhas
     Q_OBJECT
 
 public:
-    dspTimePhasedSalesByCustomerGroup(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspTimePhasedSalesByCustomerGroup(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspTimePhasedSalesByCustomerGroup();
 
     virtual ParameterList buildParameters();

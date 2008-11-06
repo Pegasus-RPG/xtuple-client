@@ -69,7 +69,7 @@ class dspIncidentsByCRMAccount : public XWidget, public Ui::dspIncidentsByCRMAcc
     Q_OBJECT
 
 public:
-    dspIncidentsByCRMAccount(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspIncidentsByCRMAccount(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspIncidentsByCRMAccount();
 
 public slots:

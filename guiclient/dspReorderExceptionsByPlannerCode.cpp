@@ -164,7 +164,7 @@ void dspReorderExceptionsByPlannerCode::sFillList()
   MetaSQLQuery mql(sql);
   q = mql.toQuery(params);
   _exception->populate(q, TRUE);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

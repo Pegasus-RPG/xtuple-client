@@ -69,7 +69,7 @@ class dspMPSDetail : public XWidget, public Ui::dspMPSDetail
     Q_OBJECT
 
 public:
-    dspMPSDetail(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspMPSDetail(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspMPSDetail();
 
 public slots:

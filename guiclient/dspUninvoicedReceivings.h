@@ -68,7 +68,7 @@ class dspUninvoicedReceivings : public XWidget, public Ui::dspUninvoicedReceivin
     Q_OBJECT
 
 public:
-    dspUninvoicedReceivings(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspUninvoicedReceivings(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspUninvoicedReceivings();
 
 public slots:

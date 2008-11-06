@@ -69,7 +69,7 @@ class dspTimePhasedOpenARItems : public XWidget, public Ui::dspTimePhasedOpenARI
     Q_OBJECT
 
 public:
-    dspTimePhasedOpenARItems(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspTimePhasedOpenARItems(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspTimePhasedOpenARItems();
 
     virtual bool setParams(ParameterList &);

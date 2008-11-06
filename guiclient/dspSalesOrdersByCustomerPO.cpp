@@ -184,7 +184,7 @@ void dspSalesOrdersByCustomerPO::sDspShipments()
 void dspSalesOrdersByCustomerPO::sFillList()
 {
   _so->clear();
-  if (_poNumber->text().stripWhiteSpace().length() == 0)    
+  if (_poNumber->text().trimmed().length() == 0)    
     return;
 
   if (_dates->allValid()) 

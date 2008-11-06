@@ -69,7 +69,7 @@ class dspSingleLevelWhereUsed : public XWidget, public Ui::dspSingleLevelWhereUs
     Q_OBJECT
 
 public:
-    dspSingleLevelWhereUsed(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspSingleLevelWhereUsed(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspSingleLevelWhereUsed();
 
 public slots:

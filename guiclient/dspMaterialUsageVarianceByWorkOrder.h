@@ -68,7 +68,7 @@ class dspMaterialUsageVarianceByWorkOrder : public XWidget, public Ui::dspMateri
     Q_OBJECT
 
 public:
-    dspMaterialUsageVarianceByWorkOrder(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspMaterialUsageVarianceByWorkOrder(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspMaterialUsageVarianceByWorkOrder();
 
 public slots:

@@ -362,7 +362,7 @@ bool dspVendorAPHistory::checkParameters()
 
 void dspVendorAPHistory::sSearchInvoiceNum()
 {
-  QString sub = _searchInvoiceNum->text().stripWhiteSpace();
+  QString sub = _searchInvoiceNum->text().trimmed();
   if(sub.isEmpty())
     return;
 

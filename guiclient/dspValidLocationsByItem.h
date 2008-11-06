@@ -68,7 +68,7 @@ class dspValidLocationsByItem : public XWidget, public Ui::dspValidLocationsByIt
     Q_OBJECT
 
 public:
-    dspValidLocationsByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspValidLocationsByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspValidLocationsByItem();
 
 public slots:

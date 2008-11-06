@@ -186,15 +186,15 @@ enum SetResponse dspInventoryAvailabilityByParameterList::set(const ParameterLis
   switch (_parameter->type())
   {
     case ParameterGroup::ClassCode:
-      setCaption(tr("Inventory Availability by Class Code"));
+      setWindowTitle(tr("Inventory Availability by Class Code"));
       break;
 
     case ParameterGroup::PlannerCode:
-      setCaption(tr("Inventory Availability by Planner Code"));
+      setWindowTitle(tr("Inventory Availability by Planner Code"));
       break;
 
     case ParameterGroup::ItemGroup:
-      setCaption(tr("Inventory Availability by Item Group"));
+      setWindowTitle(tr("Inventory Availability by Item Group"));
       break;
 
     default:
@@ -499,7 +499,7 @@ void dspInventoryAvailabilityByParameterList::sFillList()
   MetaSQLQuery mql = mqlLoad("inventoryAvailability", "general");
   q = mql.toQuery(params);
   _availability->populate(q, true);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

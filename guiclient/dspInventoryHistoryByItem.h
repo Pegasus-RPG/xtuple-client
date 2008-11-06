@@ -69,7 +69,7 @@ class dspInventoryHistoryByItem : public XWidget, public Ui::dspInventoryHistory
     Q_OBJECT
 
 public:
-    dspInventoryHistoryByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspInventoryHistoryByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspInventoryHistoryByItem();
     virtual void setParams(ParameterList &);
 

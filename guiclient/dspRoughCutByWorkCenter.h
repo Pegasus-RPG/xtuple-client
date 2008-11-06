@@ -70,7 +70,7 @@ class dspRoughCutByWorkCenter : public XWidget, public Ui::dspRoughCutByWorkCent
     Q_OBJECT
 
 public:
-    dspRoughCutByWorkCenter(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspRoughCutByWorkCenter(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspRoughCutByWorkCenter();
 
     bool	setParams(ParameterList&);

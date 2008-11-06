@@ -69,7 +69,7 @@ class dspRunningAvailability : public XWidget, public Ui::dspRunningAvailability
     Q_OBJECT
 
 public:
-    dspRunningAvailability(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspRunningAvailability(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspRunningAvailability();
     virtual void setParams(ParameterList&);
 

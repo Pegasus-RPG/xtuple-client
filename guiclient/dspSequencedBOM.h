@@ -69,7 +69,7 @@ class dspSequencedBOM : public XWidget, public Ui::dspSequencedBOM
     Q_OBJECT
 
 public:
-    dspSequencedBOM(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspSequencedBOM(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspSequencedBOM();
 
 public slots:

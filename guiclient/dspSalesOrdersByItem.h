@@ -69,7 +69,7 @@ class dspSalesOrdersByItem : public XWidget, public Ui::dspSalesOrdersByItem
     Q_OBJECT
 
 public:
-    dspSalesOrdersByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspSalesOrdersByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspSalesOrdersByItem();
     virtual bool checkSitePrivs(int orderid);
 

@@ -67,7 +67,7 @@ class dspOrderActivityByProject : public XWidget, public Ui::dspOrderActivityByP
     Q_OBJECT
 
 public:
-    dspOrderActivityByProject(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspOrderActivityByProject(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspOrderActivityByProject();
 
 public slots:

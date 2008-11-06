@@ -69,7 +69,7 @@ class dspTrialBalances : public XWidget, public Ui::dspTrialBalances
     Q_OBJECT
 
 public:
-    dspTrialBalances(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspTrialBalances(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspTrialBalances();
 
 public slots:

@@ -272,7 +272,7 @@ void dspQOHByLocation::sFillList()
     q.bindValue(":location_id", _location->id());
     q.bindValue(":na", tr("N/A"));
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;

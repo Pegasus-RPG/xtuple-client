@@ -68,7 +68,7 @@ class dspQOHByItem : public XWidget, public Ui::dspQOHByItem
     Q_OBJECT
 
 public:
-    dspQOHByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspQOHByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspQOHByItem();
 
 public slots:

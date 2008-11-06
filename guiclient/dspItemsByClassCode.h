@@ -67,7 +67,7 @@ class dspItemsByClassCode : public XWidget, public Ui::dspItemsByClassCode
     Q_OBJECT
 
 public:
-    dspItemsByClassCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspItemsByClassCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspItemsByClassCode();
 
     virtual bool setParams(ParameterList &);

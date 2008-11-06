@@ -68,7 +68,7 @@ class dspUnusedPurchasedItems : public XWidget, public Ui::dspUnusedPurchasedIte
     Q_OBJECT
 
 public:
-    dspUnusedPurchasedItems(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspUnusedPurchasedItems(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspUnusedPurchasedItems();
 
     virtual void init();

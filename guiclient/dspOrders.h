@@ -69,7 +69,7 @@ class dspOrders : public XWidget, public Ui::dspOrders
     Q_OBJECT
 
 public:
-    dspOrders(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspOrders(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspOrders();
 
 public slots:

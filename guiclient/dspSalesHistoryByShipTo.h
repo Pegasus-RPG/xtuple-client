@@ -67,7 +67,7 @@ class dspSalesHistoryByShipTo : public XWidget, public Ui::dspSalesHistoryByShip
     Q_OBJECT
 
 public:
-    dspSalesHistoryByShipTo(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspSalesHistoryByShipTo(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspSalesHistoryByShipTo();
 
     virtual bool checkParameters();

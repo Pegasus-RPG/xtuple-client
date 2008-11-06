@@ -174,15 +174,15 @@ enum SetResponse dspInventoryBufferStatusByParameterList::set(const ParameterLis
   switch (_parameter->type())
   {
     case ParameterGroup::ClassCode:
-      setCaption(tr("Inventory Buffer Status by Class Code"));
+      setWindowTitle(tr("Inventory Buffer Status by Class Code"));
       break;
 
     case ParameterGroup::PlannerCode:
-      setCaption(tr("Inventory Buffer Status by Planner Code"));
+      setWindowTitle(tr("Inventory Buffer Status by Planner Code"));
       break;
 
     case ParameterGroup::ItemGroup:
-      setCaption(tr("Inventory Buffer Status by Item Group"));
+      setWindowTitle(tr("Inventory Buffer Status by Item Group"));
       break;
 
     default:

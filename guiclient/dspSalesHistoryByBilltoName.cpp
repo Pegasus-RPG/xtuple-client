@@ -229,7 +229,7 @@ void dspSalesHistoryByBilltoName::sPrint()
     return;
 
   ParameterList params;
-  params.append("billToName", _billtoName->text().upper().stripWhiteSpace());
+  params.append("billToName", _billtoName->text().toUpper().trimmed());
 
   _productCategory->appendValue(params);
   _warehouse->appendValue(params);

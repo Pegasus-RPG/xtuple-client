@@ -68,7 +68,7 @@ class dspPoPriceVariancesByVendor : public XWidget, public Ui::dspPoPriceVarianc
     Q_OBJECT
 
 public:
-    dspPoPriceVariancesByVendor(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspPoPriceVariancesByVendor(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspPoPriceVariancesByVendor();
 
 public slots:

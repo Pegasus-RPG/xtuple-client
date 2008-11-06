@@ -69,7 +69,7 @@ class dspIndentedWhereUsed : public XWidget, public Ui::dspIndentedWhereUsed
     Q_OBJECT
 
 public:
-    dspIndentedWhereUsed(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspIndentedWhereUsed(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspIndentedWhereUsed();
 
     virtual bool setParams(ParameterList &);

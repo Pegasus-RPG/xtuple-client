@@ -68,7 +68,7 @@ class dspPurchaseReqsByItem : public XWidget, public Ui::dspPurchaseReqsByItem
     Q_OBJECT
 
 public:
-    dspPurchaseReqsByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspPurchaseReqsByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspPurchaseReqsByItem();
 
     virtual bool setParams(ParameterList &);

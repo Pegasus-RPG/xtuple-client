@@ -248,7 +248,7 @@ void dspSummarizedBacklogByWarehouse::sDelete()
 		       "   AND (coitem_cohead_id=:sohead_id));" );
             q.bindValue(":sohead_id", _so->id());
             q.exec();
-	    if (q.lastError().type() != QSqlError::None)
+	    if (q.lastError().type() != QSqlError::NoError)
 	    {
 	      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	      return;
@@ -265,7 +265,7 @@ void dspSummarizedBacklogByWarehouse::sDelete()
 	  return;
       }
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -503,7 +503,7 @@ void dspSummarizedBacklogByWarehouse::sFillList()
       q = totm.toQuery(params);
       if (q.first())
         _totalSalesOrders->setText(q.value("totalorders").toString());
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return;
@@ -532,7 +532,7 @@ void dspSummarizedBacklogByWarehouse::sFillList()
       q = cntm.toQuery(params);
       if (q.first())
         _totalLineItems->setText(q.value("totalitems").toString());
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return;
@@ -562,7 +562,7 @@ void dspSummarizedBacklogByWarehouse::sFillList()
       q = qtym.toQuery(params);
       if (q.first())
         _totalQty->setText(q.value("f_totalqty").toString());
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return;

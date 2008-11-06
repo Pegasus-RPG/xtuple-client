@@ -69,7 +69,7 @@ class dspSummarizedBOM : public XWidget, public Ui::dspSummarizedBOM
     Q_OBJECT
 
 public:
-    dspSummarizedBOM(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspSummarizedBOM(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspSummarizedBOM();
 
     virtual bool setParams(ParameterList &);

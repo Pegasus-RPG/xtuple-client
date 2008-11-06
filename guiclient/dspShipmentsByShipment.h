@@ -69,7 +69,7 @@ class dspShipmentsByShipment : public XWidget, public Ui::dspShipmentsByShipment
     Q_OBJECT
 
 public:
-    dspShipmentsByShipment(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspShipmentsByShipment(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspShipmentsByShipment();
 
 public slots:

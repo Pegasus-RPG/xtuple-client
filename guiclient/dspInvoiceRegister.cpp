@@ -131,7 +131,7 @@ enum SetResponse dspInvoiceRegister::set(const ParameterList &pParams)
       _dates->setStartDate(q.value("period_start").toDate());
       _dates->setEndDate(q.value("period_end").toDate());
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
@@ -223,7 +223,7 @@ void dspInvoiceRegister::sViewCreditMemo()
       newdlg.exec();
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

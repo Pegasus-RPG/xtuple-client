@@ -69,7 +69,7 @@ class dspItemsByCharacteristic : public XWidget, public Ui::dspItemsByCharacteri
     Q_OBJECT
 
 public:
-    dspItemsByCharacteristic(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspItemsByCharacteristic(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspItemsByCharacteristic();
 
     virtual bool setParams(ParameterList &);

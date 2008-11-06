@@ -68,7 +68,7 @@ class dspTimePhasedPlannedREByPlannerCode : public XWidget, public Ui::dspTimePh
     Q_OBJECT
 
 public:
-    dspTimePhasedPlannedREByPlannerCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspTimePhasedPlannedREByPlannerCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspTimePhasedPlannedREByPlannerCode();
 
 public slots:

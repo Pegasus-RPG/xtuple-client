@@ -69,7 +69,7 @@ class dspPoItemsByBufferStatus : public XWidget, public Ui::dspPoItemsByBufferSt
     Q_OBJECT
 
 public:
-    dspPoItemsByBufferStatus(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspPoItemsByBufferStatus(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspPoItemsByBufferStatus();
 
 public slots:

@@ -68,7 +68,7 @@ class dspPOsByVendor : public XWidget, public Ui::dspPOsByVendor
     Q_OBJECT
 
 public:
-    dspPOsByVendor(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspPOsByVendor(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspPOsByVendor();
 
 public slots:

@@ -71,7 +71,7 @@ class dspPlannedRevenueExpensesByPlannerCode : public XWidget, public Ui::dspPla
     Q_OBJECT
 
 public:
-    dspPlannedRevenueExpensesByPlannerCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspPlannedRevenueExpensesByPlannerCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspPlannedRevenueExpensesByPlannerCode();
     bool	setParams(ParameterList&);
 

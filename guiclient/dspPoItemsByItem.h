@@ -69,7 +69,7 @@ class dspPoItemsByItem : public XWidget, public Ui::dspPoItemsByItem
     Q_OBJECT
 
 public:
-    dspPoItemsByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspPoItemsByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspPoItemsByItem();
 
 public slots:

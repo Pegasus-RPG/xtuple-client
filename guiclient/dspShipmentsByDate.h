@@ -69,7 +69,7 @@ class dspShipmentsByDate : public XWidget, public Ui::dspShipmentsByDate
     Q_OBJECT
 
 public:
-    dspShipmentsByDate(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspShipmentsByDate(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspShipmentsByDate();
 
 public slots:

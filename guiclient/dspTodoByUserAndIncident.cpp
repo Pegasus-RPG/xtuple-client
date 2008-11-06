@@ -207,7 +207,7 @@ void dspTodoByUserAndIncident::sFillList()
   MetaSQLQuery mql(sql);
   XSqlQuery todos = mql.toQuery(params);
   _todoitem->populate(todos);
-  if (todos.lastError().type() != QSqlError::None)
+  if (todos.lastError().type() != QSqlError::NoError)
   {
     systemError(this, todos.lastError().databaseText(), __FILE__, __LINE__);
     return;

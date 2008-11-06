@@ -68,7 +68,7 @@ class dspPoDeliveryDateVariancesByVendor : public XWidget, public Ui::dspPoDeliv
     Q_OBJECT
 
 public:
-    dspPoDeliveryDateVariancesByVendor(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspPoDeliveryDateVariancesByVendor(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspPoDeliveryDateVariancesByVendor();
 
 public slots:

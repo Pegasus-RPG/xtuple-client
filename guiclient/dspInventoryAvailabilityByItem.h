@@ -69,7 +69,7 @@ class dspInventoryAvailabilityByItem : public XWidget, public Ui::dspInventoryAv
     Q_OBJECT
 
 public:
-    dspInventoryAvailabilityByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspInventoryAvailabilityByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspInventoryAvailabilityByItem();
 
     virtual bool setParams(ParameterList &);

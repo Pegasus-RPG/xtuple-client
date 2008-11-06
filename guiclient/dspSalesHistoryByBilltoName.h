@@ -69,7 +69,7 @@ class dspSalesHistoryByBilltoName : public XWidget, public Ui::dspSalesHistoryBy
     Q_OBJECT
 
 public:
-    dspSalesHistoryByBilltoName(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspSalesHistoryByBilltoName(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspSalesHistoryByBilltoName();
 
     virtual bool checkParameters();

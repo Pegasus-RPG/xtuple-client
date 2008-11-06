@@ -70,7 +70,7 @@ class dspSubstituteAvailabilityByItem : public XWidget, public Ui::dspSubstitute
     Q_OBJECT
 
 public:
-    dspSubstituteAvailabilityByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspSubstituteAvailabilityByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspSubstituteAvailabilityByItem();
 
 public slots:

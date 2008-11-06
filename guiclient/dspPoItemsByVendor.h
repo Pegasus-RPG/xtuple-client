@@ -70,7 +70,7 @@ class dspPoItemsByVendor : public XWidget, public Ui::dspPoItemsByVendor
     Q_OBJECT
 
 public:
-    dspPoItemsByVendor(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspPoItemsByVendor(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspPoItemsByVendor();
 
 public slots:

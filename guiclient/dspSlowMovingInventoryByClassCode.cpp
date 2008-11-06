@@ -323,7 +323,7 @@ void dspSlowMovingInventoryByClassCode::sFillList()
   MetaSQLQuery mql(sql);
   q = mql.toQuery(params);
   _itemsite->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

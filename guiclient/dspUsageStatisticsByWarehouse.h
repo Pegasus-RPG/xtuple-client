@@ -68,7 +68,7 @@ class dspUsageStatisticsByWarehouse : public XWidget, public Ui::dspUsageStatist
     Q_OBJECT
 
 public:
-    dspUsageStatisticsByWarehouse(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspUsageStatisticsByWarehouse(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspUsageStatisticsByWarehouse();
 
 public slots:

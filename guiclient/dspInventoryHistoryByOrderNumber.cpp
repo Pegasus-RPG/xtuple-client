@@ -106,7 +106,7 @@ dspInventoryHistoryByOrderNumber::dspInventoryHistoryByOrderNumber(QWidget* pare
   _transType->append(cTransAdjCounts, tr("Adjustments and Counts") );
   _transType->append(cTransTransfers, tr("Transfers")              );
   _transType->append(cTransScraps,    tr("Scraps")                 );
-  _transType->setCurrentItem(0);
+  _transType->setCurrentIndex(0);
 }
 
 dspInventoryHistoryByOrderNumber::~dspInventoryHistoryByOrderNumber()
@@ -129,7 +129,7 @@ void dspInventoryHistoryByOrderNumber::setParams(ParameterList & params)
 
 void dspInventoryHistoryByOrderNumber::sPrint()
 {
-  if ( (!_dates->allValid()) || (_orderNumber->text().stripWhiteSpace().length() == 0) )
+  if ( (!_dates->allValid()) || (_orderNumber->text().trimmed().length() == 0) )
   {
     QMessageBox::warning( this, tr("Invalid Data"),
                           tr("You must enter an Order Number along with a valid Start Date and End Date for this report.") );
@@ -138,7 +138,7 @@ void dspInventoryHistoryByOrderNumber::sPrint()
   }
 
   ParameterList params;
-  params.append("orderNumber", _orderNumber->text().stripWhiteSpace());
+  params.append("orderNumber", _orderNumber->text().trimmed());
   _warehouse->appendValue(params);
   _dates->appendValue(params);
   params.append("transType", _transType->id());
@@ -211,7 +211,7 @@ void dspInventoryHistoryByOrderNumber::sFillList()
 {
   _invhist->clear();
 
-  if (_orderNumber->text().stripWhiteSpace().length() == 0)
+  if (_orderNumber->text().trimmed().length() == 0)
   {
     QMessageBox::critical( this, tr("Enter Order Search Pattern"),
                            tr("You must enter a Order # pattern to search for." ) );
@@ -235,7 +235,7 @@ void dspInventoryHistoryByOrderNumber::sFillList()
     return;
   }
 
-  if (_orderNumber->text().stripWhiteSpace().length())
+  if (_orderNumber->text().trimmed().length())
   {
     ParameterList params;
     setParams(params);
@@ -243,7 +243,7 @@ void dspInventoryHistoryByOrderNumber::sFillList()
 
     q = mql.toQuery(params);
     _invhist->populate(q);
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;

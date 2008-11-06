@@ -166,7 +166,7 @@ void dspSalesOrderStatus::sFillList(int pSoheadid)
       _custName->setText(q.value("cust_name").toString());
       _custPhone->setText(q.value("cust_phone").toString());
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -184,7 +184,7 @@ void dspSalesOrderStatus::sFillList(int pSoheadid)
     q.exec();
     if (q.first())
       _lastUpdated->setDate(q.value("lastupdated").toDate());
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -226,7 +226,7 @@ void dspSalesOrderStatus::sFillList(int pSoheadid)
                "ORDER BY coitem_linenumber;" );
     q.bindValue(":sohead_id", pSoheadid);
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;

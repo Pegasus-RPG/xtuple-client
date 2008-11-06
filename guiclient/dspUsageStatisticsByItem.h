@@ -68,7 +68,7 @@ class dspUsageStatisticsByItem : public XWidget, public Ui::dspUsageStatisticsBy
     Q_OBJECT
 
 public:
-    dspUsageStatisticsByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspUsageStatisticsByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspUsageStatisticsByItem();
 
     virtual enum SetResponse set(const ParameterList &);

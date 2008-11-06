@@ -206,7 +206,7 @@ void dspJobCosting::sFillList(int, bool)
   MetaSQLQuery mql = mqlLoad("manufacture", "jobcosting");
   q = mql.toQuery(params);
   _cost->populate(q, TRUE);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

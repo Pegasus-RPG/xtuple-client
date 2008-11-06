@@ -202,19 +202,19 @@ enum SetResponse dspItemSitesByParameterList::set(const ParameterList &pParams)
   switch (_parameter->type())
   {
     case ParameterGroup::ClassCode:
-      setCaption(tr("Item Sites by Class Code"));
+      setWindowTitle(tr("Item Sites by Class Code"));
       break;
 
     case ParameterGroup::PlannerCode:
-      setCaption(tr("Item Sites by Planner Code"));
+      setWindowTitle(tr("Item Sites by Planner Code"));
       break;
 
     case ParameterGroup::ItemGroup:
-      setCaption(tr("Item Sites by Item Group"));
+      setWindowTitle(tr("Item Sites by Item Group"));
       break;
 
     case ParameterGroup::CostCategory:
-      setCaption(tr("Item Sites by Cost Category"));
+      setWindowTitle(tr("Item Sites by Cost Category"));
       break;
 
     default:

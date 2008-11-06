@@ -69,7 +69,7 @@ class dspRWTransactions : public XWidget, public Ui::dspRWTransactions
     Q_OBJECT
 
 public:
-    dspRWTransactions(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspRWTransactions(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspRWTransactions();
 
     virtual void init();

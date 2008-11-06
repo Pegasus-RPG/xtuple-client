@@ -68,7 +68,7 @@ class dspPendingBOMChanges : public XWidget, public Ui::dspPendingBOMChanges
     Q_OBJECT
 
 public:
-    dspPendingBOMChanges(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspPendingBOMChanges(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspPendingBOMChanges();
 
 public slots:

@@ -69,7 +69,7 @@ class dspQOHByParameterList : public XWidget, public Ui::dspQOHByParameterList
     Q_OBJECT
 
 public:
-    dspQOHByParameterList(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspQOHByParameterList(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspQOHByParameterList();
 
     virtual SetResponse set( const ParameterList & pParams );

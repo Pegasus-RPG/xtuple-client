@@ -68,7 +68,7 @@ class dspSummarizedSalesHistoryByShippingZone : public XWidget, public Ui::dspSu
     Q_OBJECT
 
 public:
-    dspSummarizedSalesHistoryByShippingZone(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspSummarizedSalesHistoryByShippingZone(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspSummarizedSalesHistoryByShippingZone();
 
 public slots:

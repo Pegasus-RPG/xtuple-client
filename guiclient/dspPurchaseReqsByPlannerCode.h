@@ -68,7 +68,7 @@ class dspPurchaseReqsByPlannerCode : public XWidget, public Ui::dspPurchaseReqsB
     Q_OBJECT
 
 public:
-    dspPurchaseReqsByPlannerCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspPurchaseReqsByPlannerCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspPurchaseReqsByPlannerCode();
 
     virtual bool setParams(ParameterList &);

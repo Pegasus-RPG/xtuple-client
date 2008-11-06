@@ -68,7 +68,7 @@ class dspTimePhasedLoadByWorkCenter : public XWidget, public Ui::dspTimePhasedLo
     Q_OBJECT
 
 public:
-    dspTimePhasedLoadByWorkCenter(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspTimePhasedLoadByWorkCenter(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspTimePhasedLoadByWorkCenter();
 
 public slots:

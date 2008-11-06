@@ -68,7 +68,7 @@ class dspPOsByDate : public XWidget, public Ui::dspPOsByDate
     Q_OBJECT
 
 public:
-    dspPOsByDate(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspPOsByDate(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspPOsByDate();
 
 public slots:

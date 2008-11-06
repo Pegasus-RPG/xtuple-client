@@ -67,7 +67,7 @@ class dspItemSourcesByItem : public XWidget, public Ui::dspItemSourcesByItem
     Q_OBJECT
 
 public:
-    dspItemSourcesByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspItemSourcesByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspItemSourcesByItem();
 
 public slots:
