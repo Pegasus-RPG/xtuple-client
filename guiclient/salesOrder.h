@@ -68,7 +68,7 @@ class salesOrder : public XWidget, public Ui::salesOrder
     Q_OBJECT
 
 public:
-    salesOrder(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    salesOrder(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~salesOrder();
 
     virtual bool save( bool partial );

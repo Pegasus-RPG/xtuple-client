@@ -67,7 +67,7 @@ class selectedPayments : public XWidget, public Ui::selectedPayments
     Q_OBJECT
 
 public:
-    selectedPayments(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    selectedPayments(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~selectedPayments();
 
     void setParams(ParameterList&);

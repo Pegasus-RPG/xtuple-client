@@ -261,7 +261,7 @@ void dspWoOperationsByWorkCenter::sDeleteOperation()
                "WHERE (wooper_id=:wooper_id);" );
     q.bindValue(":wooper_id", _wooper->id());
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -287,7 +287,7 @@ void dspWoOperationsByWorkCenter::sRunningAvailability()
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -310,7 +310,7 @@ void dspWoOperationsByWorkCenter::sMPSDetail()
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -333,7 +333,7 @@ void dspWoOperationsByWorkCenter::sFillList()
     _description->setText(q.value("wrkcnt_descrip").toString());
     _warehouse->setText(q.value("warehous_code").toString());
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -390,7 +390,7 @@ void dspWoOperationsByWorkCenter::sFillList()
   q.bindValue(":manual", tr("Manual"));
   q.exec();
   _wooper->populate(q, true);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

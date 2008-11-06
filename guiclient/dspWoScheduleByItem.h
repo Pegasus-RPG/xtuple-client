@@ -69,7 +69,7 @@ class dspWoScheduleByItem : public XWidget, public Ui::dspWoScheduleByItem
     Q_OBJECT
 
 public:
-    dspWoScheduleByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspWoScheduleByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspWoScheduleByItem();
 
     virtual bool setParams(ParameterList &);

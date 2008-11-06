@@ -237,9 +237,9 @@ bool postMiscProduction::post()
              "                           :docNumber, :comments ) AS result;" );
   q.bindValue(":itemsite_id", _itemsiteid);
   q.bindValue(":qty", _qtyToPost->toDouble());
-  q.bindValue(":backflushMaterials", QVariant(_backflush->isChecked(), 0));
-  q.bindValue(":docNumber", _documentNum->text().stripWhiteSpace());
-  q.bindValue(":comments", _comments->text());
+  q.bindValue(":backflushMaterials", QVariant(_backflush->isChecked()));
+  q.bindValue(":docNumber", _documentNum->text().trimmed());
+  q.bindValue(":comments", _comments->toPlainText());
   q.exec();
   if (q.first())
   {
@@ -272,7 +272,7 @@ bool postMiscProduction::transfer()
   q.bindValue(":from_warehous_id", _warehouse->id());
   q.bindValue(":to_warehous_id", _transferWarehouse->id());
   q.bindValue(":qty", _qtyToPost->toDouble() * _sense);
-  q.bindValue(":documentNumber", _documentNum->text().stripWhiteSpace());
+  q.bindValue(":documentNumber", _documentNum->text().trimmed());
   q.exec();
   if (q.first())
   {

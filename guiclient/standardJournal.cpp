@@ -195,7 +195,7 @@ void standardJournal::sSave()
   q.bindValue(":stdjrnl_id", _stdjrnlid);
   q.bindValue(":stdjrnl_name", _name->text());
   q.bindValue(":stdjrnl_descrip", _descrip->text());
-  q.bindValue(":stdjrnl_notes", _notes->text());
+  q.bindValue(":stdjrnl_notes", _notes->toPlainText());
   q.exec();
 
   done(_stdjrnlid);
@@ -203,7 +203,7 @@ void standardJournal::sSave()
 
 void standardJournal::sCheck()
 {
-  _name->setText(_name->text().stripWhiteSpace());
+  _name->setText(_name->text().trimmed());
   if ((_mode == cNew) && (_name->text().length()))
   {
     q.prepare( "SELECT stdjrnl_id "

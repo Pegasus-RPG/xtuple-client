@@ -64,12 +64,14 @@
 
 #include "ui_maintainBudget.h"
 
+#include <Q3ValueList>
+
 class maintainBudget : public XWidget, public Ui::maintainBudget
 {
     Q_OBJECT
 
 public:
-    maintainBudget(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    maintainBudget(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~maintainBudget();
 
 public slots:

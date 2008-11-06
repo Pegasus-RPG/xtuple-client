@@ -187,7 +187,7 @@ void relativeCalendarItem::populate()
     {
       if (q.value("rcalitem_offsettype").toString() == offsetTypes[counter])
       {
-        _offsetType->setCurrentItem(counter);
+        _offsetType->setCurrentIndex(counter);
         break;
       }
     }
@@ -198,7 +198,7 @@ void relativeCalendarItem::populate()
     {
       if (q.value("rcalitem_periodtype").toString() == offsetTypes[counter])
       {
-        _periodType->setCurrentItem(counter);
+        _periodType->setCurrentIndex(counter);
         break;
       }
     }
@@ -210,7 +210,7 @@ void relativeCalendarItem::populate()
 
 void relativeCalendarItem::sHandleNewOffsetType(int pOffsetType)
 {
-  _periodType->setCurrentItem(pOffsetType);
+  _periodType->setCurrentIndex(pOffsetType);
 }
 
 void relativeCalendarItem::sSave()
@@ -235,9 +235,9 @@ void relativeCalendarItem::sSave()
 
   q.bindValue(":rcalitem_id", _calitemid);
   q.bindValue(":calhead_id", _calheadid);
-  q.bindValue(":offsetType", offsetTypes[_offsetType->currentItem()]);
+  q.bindValue(":offsetType", offsetTypes[_offsetType->currentIndex()]);
   q.bindValue(":offsetCount", _offsetCount->value());
-  q.bindValue(":periodType", offsetTypes[_periodType->currentItem()]);
+  q.bindValue(":periodType", offsetTypes[_periodType->currentIndex()]);
   q.bindValue(":periodCount", _periodCount->value());
   q.exec();
   if (q.first())
@@ -273,9 +273,9 @@ void relativeCalendarItem::sSave()
   q.bindValue(":rcalitem_id", _calitemid);
   q.bindValue(":rcalitem_calhead_id", _calheadid);
   q.bindValue(":rcalitem_name", _name->text());
-  q.bindValue(":rcalitem_offsettype", offsetTypes[_offsetType->currentItem()]);
+  q.bindValue(":rcalitem_offsettype", offsetTypes[_offsetType->currentIndex()]);
   q.bindValue(":rcalitem_offsetcount", _offsetCount->value());
-  q.bindValue(":rcalitem_periodtype", offsetTypes[_periodType->currentItem()]);
+  q.bindValue(":rcalitem_periodtype", offsetTypes[_periodType->currentIndex()]);
   q.bindValue(":rcalitem_periodcount", _periodCount->value());
   q.exec();
 

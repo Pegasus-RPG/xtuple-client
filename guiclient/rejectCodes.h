@@ -68,7 +68,7 @@ class rejectCodes : public XWidget, public Ui::rejectCodes
     Q_OBJECT
 
 public:
-    rejectCodes(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    rejectCodes(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~rejectCodes();
 
     virtual void init();

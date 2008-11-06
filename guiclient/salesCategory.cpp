@@ -155,13 +155,13 @@ enum SetResponse salesCategory::set(ParameterList &pParams)
 
 void salesCategory::sCheck()
 {
-  _category->setText(_category->text().stripWhiteSpace().upper());
+  _category->setText(_category->text().trimmed().toUpper());
   if ((_mode == cNew) && (_category->text().length() != 0))
   {
     q.prepare( "SELECT salescat_id "
                "FROM salescat "
                "WHERE (UPPER(salescat_name)=:salescat_name);" );
-    q.bindValue(":salescat_name", _category->text().stripWhiteSpace());
+    q.bindValue(":salescat_name", _category->text().trimmed());
     q.exec();
     if (q.first())
     {
@@ -223,9 +223,9 @@ void salesCategory::sSave()
                "WHERE (salescat_id=:salescat_id);" );
 
   q.bindValue(":salescat_id", _salescatid);
-  q.bindValue(":salescat_name", _category->text().stripWhiteSpace());
-  q.bindValue(":salescat_active", QVariant(_active->isChecked(), 0));
-  q.bindValue(":salescat_descrip", _description->text().stripWhiteSpace());
+  q.bindValue(":salescat_name", _category->text().trimmed());
+  q.bindValue(":salescat_active", QVariant(_active->isChecked()));
+  q.bindValue(":salescat_descrip", _description->text().trimmed());
   q.bindValue(":salescat_sales_accnt_id", _sales->id());
   q.bindValue(":salescat_prepaid_accnt_id", _prepaid->id());
   q.bindValue(":salescat_ar_accnt_id", _araccnt->id());

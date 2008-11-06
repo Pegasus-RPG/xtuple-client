@@ -118,7 +118,7 @@ void postChecks::sPost()
 
     accept();
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -137,7 +137,7 @@ void postChecks::sHandleBankAccount(int pBankaccntid)
   q.exec();
   if (q.first())
     _numberOfChecks->setDouble(q.value("numofchecks").toDouble());
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

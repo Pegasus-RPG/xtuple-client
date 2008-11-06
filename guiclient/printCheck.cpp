@@ -274,7 +274,7 @@ void printCheck::sPrint()
 
     omfgThis->sChecksUpdated(_bankaccnt->id(), _check->id(), TRUE);
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -315,7 +315,7 @@ void printCheck::sPrint()
 	return;
       }
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -342,7 +342,7 @@ void printCheck::sPrint()
       sHandleBankAccount(_bankaccnt->id());
       _print->setFocus();
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -394,7 +394,7 @@ void printCheck::sHandleBankAccount(int pBankaccntid)
   q.exec();
   _check->populate(q);
   _check->setNull();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -413,7 +413,7 @@ void printCheck::populate(int pcheckid)
     _bankaccnt->setId(q.value("checkhead_bankaccnt_id").toInt());
     _check->setId(pcheckid);
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

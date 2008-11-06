@@ -136,7 +136,7 @@ enum SetResponse sysLocale::set(ParameterList &pParams)
         _localeid = q.value("_locale_id").toInt();
 	populate();
       }
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
         return UndefinedError;
@@ -172,7 +172,7 @@ enum SetResponse sysLocale::set(ParameterList &pParams)
 
 void sysLocale::sSave()
 {
-  if (_code->text().stripWhiteSpace().length() == 0)
+  if (_code->text().trimmed().length() == 0)
   {
     QMessageBox::critical( this, tr("Cannot Save Locale"),
                            tr("<p>You must enter a Code for this Locale before "
@@ -259,7 +259,7 @@ void sysLocale::sSave()
   q.bindValue(":locale_qty_scale",         _qtyScale->text());
   q.bindValue(":locale_qtyper_scale",      _qtyPerScale->text());
   q.bindValue(":locale_uomratio_scale",    _uomRatioScale->text());
-  q.bindValue(":locale_comments",          _comments->text());
+  q.bindValue(":locale_comments",          _comments->toPlainText());
   q.bindValue(":locale_error_color",       _error->text());
   q.bindValue(":locale_warning_color",     _warning->text());
   q.bindValue(":locale_emphasis_color",    _emphasis->text());
@@ -275,7 +275,7 @@ void sysLocale::sSave()
                                         QString(sampleLocale.negativeSign()) +
                                         QString(sampleLocale.groupSeparator()));
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -293,7 +293,7 @@ void sysLocale::close()
                "WHERE (locale_id=:locale_id);" );
     q.bindValue(":locale_id", _localeid);
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -316,7 +316,7 @@ void sysLocale::sUpdateCountries()
     {
       localeLang = QLocale::Language(q.value("lang_qt_number").toInt());
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -374,7 +374,7 @@ void sysLocale::sUpdateSamples()
     _qtyPerSample->setText(sampleLocale.toString(q.value("doubleSample").toDouble(), 'f', _qtyPerScale->value()));
     _uomRatioSample->setText(sampleLocale.toString(q.value("doubleSample").toDouble(), 'f', _uomRatioScale->value()));
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -428,7 +428,7 @@ void sysLocale::populate()
     sUpdateSamples();
     sUpdateColors();
   }
-  if (popq.lastError().type() != QSqlError::None)
+  if (popq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, popq.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -646,7 +646,7 @@ QLocale sysLocale::generateLocale()
     {
       localeLang = QLocale::Language(q.value("lang_qt_number").toInt());
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return QLocale("C");
@@ -664,7 +664,7 @@ QLocale sysLocale::generateLocale()
     {
       localeCountry = QLocale::Country(q.value("country_qt_number").toInt());
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return QLocale("C");

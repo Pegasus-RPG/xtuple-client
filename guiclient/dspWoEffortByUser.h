@@ -69,7 +69,7 @@ class dspWoEffortByUser : public XWidget, public Ui::dspWoEffortByUser
     Q_OBJECT
 
 public:
-    dspWoEffortByUser(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspWoEffortByUser(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspWoEffortByUser();
 
 public slots:

@@ -170,7 +170,7 @@ void rejectCode::sSave()
 
   q.bindValue(":rjctcode_id", _rjctcodeid);
   q.bindValue(":rjctcode_code", _code->text());
-  q.bindValue(":rjctcode_descrip", _description->text().stripWhiteSpace());
+  q.bindValue(":rjctcode_descrip", _description->text().trimmed());
   q.exec();
 
   done(_rjctcodeid);
@@ -178,7 +178,7 @@ void rejectCode::sSave()
 
 void rejectCode::sCheck()
 {
-  _code->setText(_code->text().stripWhiteSpace());
+  _code->setText(_code->text().trimmed());
   if ((_mode == cNew) && (_code->text().length()))
   {
     q.prepare( "SELECT rjctcode_id "

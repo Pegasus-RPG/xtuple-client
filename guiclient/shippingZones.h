@@ -66,7 +66,7 @@ class shippingZones : public XWidget, public Ui::shippingZones
     Q_OBJECT
 
 public:
-    shippingZones(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    shippingZones(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~shippingZones();
 
     virtual void init();

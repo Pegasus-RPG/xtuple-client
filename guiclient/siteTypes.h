@@ -69,7 +69,7 @@ class siteTypes : public XWidget, public Ui::siteTypes
     Q_OBJECT
 
 public:
-    siteTypes(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    siteTypes(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~siteTypes();
 
 public slots:

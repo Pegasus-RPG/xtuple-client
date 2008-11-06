@@ -147,8 +147,8 @@ enum SetResponse siteType::set(ParameterList &pParams)
 
 void siteType::sCheck()
 {
-  _code->setText(_code->text().stripWhiteSpace());
-  if ((_mode == cNew) && (_code->text().stripWhiteSpace().length()))
+  _code->setText(_code->text().trimmed());
+  if ((_mode == cNew) && (_code->text().trimmed().length()))
   {
     q.prepare( "SELECT sitetype_id "
                "FROM sitetype "
@@ -203,8 +203,8 @@ void siteType::sSave()
   }
 
   q.bindValue(":sitetype_id", _sitetypeid);
-  q.bindValue(":sitetype_name", _code->text().stripWhiteSpace());
-  q.bindValue(":sitetype_descrip", _description->text().stripWhiteSpace());
+  q.bindValue(":sitetype_name", _code->text().trimmed());
+  q.bindValue(":sitetype_descrip", _description->text().trimmed());
   q.exec();
 
   done(_sitetypeid);

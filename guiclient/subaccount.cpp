@@ -147,7 +147,7 @@ void subaccount::sSave()
     q.exec("SELECT NEXTVAL('subaccnt_subaccnt_id_seq') AS subaccnt_id;");
     if (q.first())
       _subaccntid = q.value("subaccnt_id").toInt();
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -182,9 +182,9 @@ void subaccount::sSave()
   
   q.bindValue(":subaccnt_id", _subaccntid);
   q.bindValue(":subaccnt_number", _number->text());
-  q.bindValue(":subaccnt_descrip", _descrip->text());
+  q.bindValue(":subaccnt_descrip", _descrip->toPlainText());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

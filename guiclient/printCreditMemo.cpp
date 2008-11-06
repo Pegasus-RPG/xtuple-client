@@ -217,7 +217,7 @@ void printCreditMemo::sPrint()
                    "WHERE (cmhead_id=:cmhead_id);" );
         q.bindValue(":cmhead_id", _cmheadid);
         q.exec();
-	if (q.lastError().type() != QSqlError::None)
+	if (q.lastError().type() != QSqlError::NoError)
 	{
 	  systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	  return;
@@ -231,7 +231,7 @@ void printCreditMemo::sPrint()
           q.prepare("SELECT postCreditMemo(:cmhead_id, 0) AS result;");
           q.bindValue(":cmhead_id", _cmheadid);
           q.exec();
-	  if (q.lastError().type() != QSqlError::None)
+	  if (q.lastError().type() != QSqlError::NoError)
 	  {
 	    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	    return;
@@ -240,7 +240,7 @@ void printCreditMemo::sPrint()
       }
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -302,7 +302,7 @@ void printCreditMemo::populate()
       _post->show();
       
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

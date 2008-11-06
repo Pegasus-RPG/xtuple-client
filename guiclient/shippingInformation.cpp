@@ -86,7 +86,7 @@ shippingInformation::shippingInformation(QWidget* parent, const char* name, bool
   _salesOrderList->setMaximumWidth(25);
 #endif
 
-  _shippingForm->setCurrentItem(-1);
+  _shippingForm->setCurrentIndex(-1);
 
   _item->addColumn(tr("#"),           _seqColumn, Qt::AlignCenter, true,  "linenumber" );
   _item->addColumn(tr("Item"),        -1,         Qt::AlignLeft,   true,  "item_number"   );
@@ -143,7 +143,7 @@ enum SetResponse shippingInformation::set(const ParameterList &pParams)
 
       _shipDate->setFocus();
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
@@ -191,13 +191,13 @@ void shippingInformation::sSave()
   q.bindValue(":shiphead_order_id",		_salesOrder->id());
   q.bindValue(":shiphead_freight",		_freight->localValue());
   q.bindValue(":shiphead_freight_curr_id",	_freight->id());
-  q.bindValue(":shiphead_notes", _notes->text());
+  q.bindValue(":shiphead_notes", _notes->toPlainText());
   q.bindValue(":shiphead_shipdate", _shipDate->date());
   q.bindValue(":shiphead_shipvia", _shipVia->currentText());
   q.bindValue(":shiphead_shipchrg_id", _shippingCharges->id());
   q.bindValue(":shiphead_shipform_id", _shippingForm->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -269,7 +269,7 @@ void shippingInformation::sReturnAllLineStock()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -363,7 +363,7 @@ void shippingInformation::sFillList()
       _notes->setText(q.value("shiphead_notes").toString());
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -433,7 +433,7 @@ void shippingInformation::sFillList()
       _shipVia->setText(q.value("shipvia").toString());
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -489,7 +489,7 @@ void shippingInformation::sFillList()
     totalNetWeight   += q.value("netweight").toDouble();
     totalTareWeight  += q.value("tareweight").toDouble();
   }
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

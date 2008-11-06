@@ -271,14 +271,14 @@ void selectOrderForBilling::sSave()
     if (_taxauth->isValid())
       q.bindValue(":cobmisc_taxauth_id", _taxauth->id());
 
-    q.bindValue(":cobmisc_notes", _comments->text());
+    q.bindValue(":cobmisc_notes", _comments->toPlainText());
     q.bindValue(":cobmisc_shipdate", _shipDate->date());
     q.bindValue(":cobmisc_invcdate", _invoiceDate->date());
     q.bindValue(":cobmisc_shipvia", _shipvia->text());
-    q.bindValue(":cobmisc_closeorder", QVariant(_closeOpenItems->isChecked(), 0));
+    q.bindValue(":cobmisc_closeorder", QVariant(_closeOpenItems->isChecked()));
     q.bindValue(":cobmisc_misc", _miscCharge->localValue());
     q.bindValue(":cobmisc_misc_accnt_id", _miscChargeAccount->id());
-    q.bindValue(":cobmisc_misc_descrip", _miscChargeDescription->text().stripWhiteSpace());
+    q.bindValue(":cobmisc_misc_descrip", _miscChargeDescription->text().trimmed());
     q.bindValue(":cobmisc_curr_id",	_custCurrency->id());
 
     q.bindValue(":tax_curr_id",	_custCurrency->id());
@@ -357,7 +357,7 @@ void selectOrderForBilling::sPopulate(int pSoheadid)
 	return;
       }
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -440,7 +440,7 @@ void selectOrderForBilling::sPopulate(int pSoheadid)
         _freight->clear();
       }
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -502,7 +502,7 @@ void selectOrderForBilling::sSelectBalance()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -528,7 +528,7 @@ void selectOrderForBilling::sFreightChanged()
   }
   else
   {
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 
     _taxCache.setFreight(0, 0, 0);
@@ -553,7 +553,7 @@ void selectOrderForBilling::recalculateTax()
 		      tax.value("ratec").toDouble());
 
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -641,7 +641,7 @@ void selectOrderForBilling::sFillList()
     }
     else
     {
-      if (q.lastError().type() != QSqlError::None)
+      if (q.lastError().type() != QSqlError::NoError)
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       _subtotal->clear();
     }
@@ -668,7 +668,7 @@ void selectOrderForBilling::sHandleShipchrg(int pShipchrgid)
       _freight->clear();
     }
   }
-  else if (query.lastError().type() != QSqlError::None)
+  else if (query.lastError().type() != QSqlError::NoError)
   {
     systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -694,7 +694,7 @@ void selectOrderForBilling::sTaxDetail()
   taxq.bindValue(":cobmisc_id",	_cobmiscid);
   taxq.bindValue(":invcdate",   _invoiceDate->date());
   taxq.exec();
-  if (taxq.lastError().type() != QSqlError::None)
+  if (taxq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -731,7 +731,7 @@ void selectOrderForBilling::sTaxAuthChanged()
       return;
     }
   }
-  else if (taxauthq.lastError().type() != QSqlError::None)
+  else if (taxauthq.lastError().type() != QSqlError::NoError)
   {
     _taxauth->setId(_taxauthidCache);
     systemError(this, taxauthq.lastError().databaseText(), __FILE__, __LINE__);
@@ -755,7 +755,7 @@ void selectOrderForBilling::sTaxAuthChanged()
 		     taxauthq.value("cobmisc_adjtax_rateb").toDouble(),
 		     taxauthq.value("cobmisc_adjtax_ratec").toDouble());
   }
-  else if (taxauthq.lastError().type() != QSqlError::None)
+  else if (taxauthq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, taxauthq.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -776,7 +776,7 @@ void selectOrderForBilling::closeEvent(QCloseEvent * pEvent)
       systemError(this, storedProcErrorLookup("releaseUnusedBillingHeader", result),
 		  __FILE__, __LINE__);
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 
   XWidget::closeEvent(pEvent);

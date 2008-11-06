@@ -280,7 +280,7 @@ void searchForItem::sEditBBOM()
 void searchForItem::sFillList()
 {
   _item->clear();
-  if (_search->text().stripWhiteSpace().length() == 0)    
+  if (_search->text().trimmed().length() == 0)    
     return;
 
   QString sql( "SELECT item_id,"
@@ -328,10 +328,10 @@ void searchForItem::sFillList()
   q.bindValue(":planning", tr("Planning"));
   q.bindValue(":kit", tr("Kit"));
   q.bindValue(":error", tr("Error"));
-  q.bindValue(":useNumber", QVariant(_searchNumber->isChecked(), 0));
-  q.bindValue(":useDescrip1", QVariant(_searchDescrip1->isChecked(), 0));
-  q.bindValue(":useDescrip2", QVariant(_searchDescrip2->isChecked(), 0));
-  q.bindValue(":searchString", _search->text().upper());
+  q.bindValue(":useNumber", QVariant(_searchNumber->isChecked()));
+  q.bindValue(":useDescrip1", QVariant(_searchDescrip1->isChecked()));
+  q.bindValue(":useDescrip2", QVariant(_searchDescrip2->isChecked()));
+  q.bindValue(":searchString", _search->text().toUpper());
   q.exec();
   _item->populate(q);
 }

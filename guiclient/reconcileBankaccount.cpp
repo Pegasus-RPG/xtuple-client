@@ -168,7 +168,7 @@ void reconcileBankaccount::sCancel()
 	  return;
 	}
       }
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return;
@@ -202,7 +202,7 @@ bool reconcileBankaccount::sSave(bool closeWhenDone)
               "(:bankrecid, :bankaccntid,"
               " :startDate, :endDate,"
               " :openbal, :endbal); ");
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return false;
@@ -215,7 +215,7 @@ bool reconcileBankaccount::sSave(bool closeWhenDone)
   q.bindValue(":openbal", _openBal->localValue());
   q.bindValue(":endbal", _endBal->localValue());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, tr("<p>There was an error creating records to reconcile "
 			 "this account: <br><pre>%1</pre>")
@@ -331,7 +331,7 @@ void reconcileBankaccount::sReconcile()
     _bankrecid = -1;
     close();
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -394,7 +394,7 @@ void reconcileBankaccount::populate()
   q.bindValue(":bankaccntid", _bankaccnt->id());
   q.bindValue(":bankrecid", _bankrecid);
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -497,7 +497,7 @@ void reconcileBankaccount::populate()
   q.exec();
   if (q.first())
     _clearedReceipts->setDouble(q.value("cleared_amount").toDouble());
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -542,7 +542,7 @@ void reconcileBankaccount::populate()
   q.bindValue(":bankaccntid", _bankaccnt->id());
   q.bindValue(":bankrecid", _bankrecid);
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -592,7 +592,7 @@ void reconcileBankaccount::populate()
   q.exec();
   if (q.first())
     _clearedChecks->setDouble(q.value("cleared_amount").toDouble());
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -645,7 +645,7 @@ void reconcileBankaccount::populate()
     else
       _diffBal->setPaletteForegroundColor(QColor("red"));
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -695,7 +695,7 @@ void reconcileBankaccount::sReceiptsToggleCleared()
         q.exec();
         if(q.first())
           child->setText(0, (q.value("cleared").toBool() ? tr("Yes") : tr("No") ));
-	else if (q.lastError().type() != QSqlError::None)
+	else if (q.lastError().type() != QSqlError::NoError)
 	{
 	  systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	  return;
@@ -732,7 +732,7 @@ void reconcileBankaccount::sReceiptsToggleCleared()
     else
     {
       populate();
-      if (q.lastError().type() != QSqlError::None)
+      if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return;
@@ -763,7 +763,7 @@ void reconcileBankaccount::sChecksToggleCleared()
   else
   {
     populate();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -780,7 +780,7 @@ void reconcileBankaccount::sBankaccntChanged()
   accntq.exec();
   if (accntq.first())
     _currency->setId(accntq.value("bankaccnt_curr_id").toInt());
-  else if (accntq.lastError().type() != QSqlError::None)
+  else if (accntq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, accntq.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -799,7 +799,7 @@ void reconcileBankaccount::sBankaccntChanged()
     _openBal->setLocalValue(accntq.value("bankrec_openbal").toDouble());
     _endBal->setLocalValue(accntq.value("bankrec_endbal").toDouble());
   }
-  else if (accntq.lastError().type() != QSqlError::None)
+  else if (accntq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, accntq.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -810,7 +810,7 @@ void reconcileBankaccount::sBankaccntChanged()
     accntq.exec();
     if (accntq.first())
       _bankrecid = accntq.value("bankrec_id").toInt();
-    else if (accntq.lastError().type() != QSqlError::None)
+    else if (accntq.lastError().type() != QSqlError::NoError)
     {
       systemError(this, accntq.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -843,7 +843,7 @@ void reconcileBankaccount::sDateChanged()
     _datesAreOK = false;
     return;
   }
-  else if(q.lastError().type() != QSqlError::None)
+  else if(q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     _datesAreOK = false;

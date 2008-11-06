@@ -67,7 +67,7 @@ class reports : public XWidget, public Ui::reports
     Q_OBJECT
 
 public:
-    reports(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    reports(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~reports();
 
 public slots:

@@ -62,6 +62,7 @@
 #include <QMessageBox>
 #include <QSqlError>
 #include <QSqlField>
+#include <QSqlRecord>
 #include <QString>
 
 #include "guiclient.h"
@@ -171,7 +172,7 @@ void PoitemTableModel::findHeadData()
     _poheaddate   = poheadq.value("pohead_orderdate").toDate();
     _postatus	  = poheadq.value("pohead_status").toString();
   }
-  else if (poheadq.lastError().type() != QSqlError::None)
+  else if (poheadq.lastError().type() != QSqlError::NoError)
   {
     systemError(0, poheadq.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -183,7 +184,7 @@ void PoitemTableModel::findHeadData()
     _vendid		= vendq.value("vend_id").toInt();
     _vendrestrictpurch	= vendq.value("vend_restrictpurch").toBool();
   }
-  else if (vendq.lastError().type() != QSqlError::None)
+  else if (vendq.lastError().type() != QSqlError::NoError)
   {
     systemError(0, vendq.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -356,7 +357,7 @@ bool PoitemTableModel::validRow(QSqlRecord& record)
       if (itemsiteid != record.value("poitem_itemsite_id").toInt())
 	record.setValue("poitem_itemsite_id", itemsiteid);
     }
-    else if (isq.lastError().type() != QSqlError::None)
+    else if (isq.lastError().type() != QSqlError::NoError)
       errormsg = isq.lastError().databaseText();
     else
       errormsg = tr("<p>There is no Item Site for this Site (%1) and "
@@ -389,7 +390,7 @@ bool PoitemTableModel::validRow(QSqlRecord& record)
       field.setValue(ln.value("newln"));
       record.append(field);
     }
-    else if (ln.lastError().type() != QSqlError::None)
+    else if (ln.lastError().type() != QSqlError::NoError)
     {
       errormsg = ln.lastError().databaseText();
     }
@@ -399,7 +400,7 @@ bool PoitemTableModel::validRow(QSqlRecord& record)
     ln.exec();
     if (ln.first())
       record.setValue("poitem_linenumber", ln.value("newln"));
-    else if (ln.lastError().type() != QSqlError::None)
+    else if (ln.lastError().type() != QSqlError::NoError)
     {
       errormsg = ln.lastError().databaseText();
     }

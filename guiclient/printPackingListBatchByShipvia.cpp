@@ -80,7 +80,7 @@ printPackingListBatchByShipvia::printPackingListBatchByShipvia(QWidget* parent, 
   q = mql.toQuery(params);
 
   _shipvia->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 }
 
@@ -118,7 +118,7 @@ void printPackingListBatchByShipvia::sPrint()
   params.append("shipvia", _shipvia->currentText());
   MetaSQLQuery packm = mqlLoad("packingListBatchByShipVia", "print");
   packq = packm.toQuery(params);
-  if (packq.lastError().type() != QSqlError::None)
+  if (packq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, packq.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -170,7 +170,7 @@ void printPackingListBatchByShipvia::sPrint()
 
     MetaSQLQuery mql(prts);
     prtd = mql.toQuery(params);
-    if (prtd.lastError().type() != QSqlError::None)
+    if (prtd.lastError().type() != QSqlError::NoError)
     {
       systemError(this, prtd.lastError().databaseText(), __FILE__, __LINE__);
       orReport::endMultiPrint(&printer);

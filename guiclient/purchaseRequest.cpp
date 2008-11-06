@@ -275,7 +275,7 @@ void purchaseRequest::sCreate()
     q.bindValue(":itemsite_id", itemsiteid);
     q.bindValue(":qty", _qty->toDouble());
     q.bindValue(":dueDate", _dueDate->date());
-    q.bindValue(":notes", _notes->text());
+    q.bindValue(":notes", _notes->toPlainText());
     q.exec();
     if (!q.first())
     {

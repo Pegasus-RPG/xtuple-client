@@ -144,7 +144,7 @@ void printPurchaseOrder::sPrint()
          "Please wait until the Purchase Order has been completely saved.") );
     return;
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -204,7 +204,7 @@ void printPurchaseOrder::sPrint()
              "WHERE (pohead_id=:pohead_id);" );
   q.bindValue(":pohead_id", _po->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

@@ -202,7 +202,7 @@ void salesAccount::sSave()
     q.exec("SELECT NEXTVAL('salesaccnt_salesaccnt_id_seq') AS salesaccnt_id;");
     if (q.first())
       _salesaccntid = q.value("salesaccnt_id").toInt();
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -333,7 +333,7 @@ void salesAccount::populate()
     if (!q.value("salesaccnt_cow_accnt_id").isNull())
       _cow->setId(q.value("salesaccnt_cow_accnt_id").toInt());
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

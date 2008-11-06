@@ -67,7 +67,7 @@ class quotes : public XWidget, public Ui::quotes
     Q_OBJECT
 
 public:
-    quotes(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    quotes(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~quotes();
     
     virtual bool checkSitePrivs(int orderid);

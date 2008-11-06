@@ -124,12 +124,12 @@ void standardOperation::init()
   _setupReport->insertItem(tr("Direct Labor"));
   _setupReport->insertItem(tr("Overhead"));
   _setupReport->insertItem(tr("None"));
-  _setupReport->setCurrentItem(-1);
+  _setupReport->setCurrentIndex(-1);
 
   _runReport->insertItem(tr("Direct Labor"));
   _runReport->insertItem(tr("Overhead"));
   _runReport->insertItem(tr("None"));
-  _runReport->setCurrentItem(-1);
+  _runReport->setCurrentIndex(-1);
 }
 
 enum SetResponse standardOperation::set(ParameterList &pParams)
@@ -194,7 +194,7 @@ void standardOperation::sCheck()
     q.prepare( "SELECT stdopn_id "
                "FROM stdopn "
                "WHERE (UPPER(stdopn_number)=UPPER(:stdopn_number));" );
-    q.bindValue(":stdopn_number", _number->text().stripWhiteSpace());
+    q.bindValue(":stdopn_number", _number->text().trimmed());
     q.exec();
     if (q.first())
     {
@@ -214,7 +214,7 @@ void standardOperation::sSave()
     QString	msg;
     QWidget*	widget;
   } error[] = {
-    { _number->text().stripWhiteSpace().isEmpty(),
+    { _number->text().trimmed().isEmpty(),
       tr("You must supply a Std. Oper. #."), _number },
     { _stdTimes->isChecked() &&
       _setupTime->toDouble() <= 0 && _runTime->toDouble() <= 0,
@@ -282,28 +282,28 @@ void standardOperation::sSave()
   q.bindValue(":stdopn_descrip1", _description1->text());
   q.bindValue(":stdopn_descrip2", _description2->text());
   q.bindValue(":stdopn_toolref", _toolReference->text());
-  q.bindValue(":stdopn_instructions", _instructions->text());
-  q.bindValue(":stdopn_produom", _prodUOM->currentText().stripWhiteSpace().upper());
+  q.bindValue(":stdopn_instructions", _instructions->toPlainText());
+  q.bindValue(":stdopn_produom", _prodUOM->currentText().trimmed().toUpper());
   q.bindValue(":stdopn_invproduomratio", _invProdUOMRatio->toDouble());
-  q.bindValue(":stdopn_stdtimes", QVariant(_stdTimes->isChecked(), 0));
+  q.bindValue(":stdopn_stdtimes", QVariant(_stdTimes->isChecked()));
   q.bindValue(":stdopn_sutime", _setupTime->toDouble());
-  q.bindValue(":stdopn_reportsetup", QVariant(_reportSetup->isChecked(), 0));
+  q.bindValue(":stdopn_reportsetup", QVariant(_reportSetup->isChecked()));
 
-  if (_setupReport->currentItem() == 0)
+  if (_setupReport->currentIndex() == 0)
     q.bindValue(":stdopn_sucosttype", "D");
-  else if (_setupReport->currentItem() == 1)
+  else if (_setupReport->currentIndex() == 1)
     q.bindValue(":stdopn_sucosttype", "O");
-  else if (_setupReport->currentItem() == 2)
+  else if (_setupReport->currentIndex() == 2)
     q.bindValue(":stdopn_sucosttype", "N");
 
   q.bindValue(":stdopn_rntime", _runTime->toDouble());
-  q.bindValue(":stdopn_reportrun", QVariant(_reportRun->isChecked(), 0));
+  q.bindValue(":stdopn_reportrun", QVariant(_reportRun->isChecked()));
 
-  if (_runReport->currentItem() == 0)
+  if (_runReport->currentIndex() == 0)
     q.bindValue(":stdopn_rncosttype", "D");
-  else if (_runReport->currentItem() == 1)
+  else if (_runReport->currentIndex() == 1)
     q.bindValue(":stdopn_rncosttype", "O");
-  else if (_runReport->currentItem() == 2)
+  else if (_runReport->currentIndex() == 2)
     q.bindValue(":stdopn_rncosttype", "N");
 
   q.bindValue(":stdopn_rnqtyper", _runQtyPer->toDouble());
@@ -352,18 +352,18 @@ void standardOperation::populate()
     _runQtyPer->setEnabled(field);
 
     if (stdopn.value("stdopn_sucosttype").toString() == "D")
-      _setupReport->setCurrentItem(0);
+      _setupReport->setCurrentIndex(0);
     else if (stdopn.value("stdopn_sucosttype").toString() == "O")
-      _setupReport->setCurrentItem(1);
+      _setupReport->setCurrentIndex(1);
     else if (stdopn.value("stdopn_sucosttype").toString() == "N")
-      _setupReport->setCurrentItem(2);
+      _setupReport->setCurrentIndex(2);
 
     if (stdopn.value("stdopn_rncosttype").toString() == "D")
-      _runReport->setCurrentItem(0);
+      _runReport->setCurrentIndex(0);
     else if (stdopn.value("stdopn_rncosttype").toString() == "O")
-      _runReport->setCurrentItem(1);
+      _runReport->setCurrentIndex(1);
     else if (stdopn.value("stdopn_rncosttype").toString() == "N")
-      _runReport->setCurrentItem(2);
+      _runReport->setCurrentIndex(2);
   }
 }
 

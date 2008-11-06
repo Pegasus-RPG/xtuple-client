@@ -137,7 +137,7 @@ enum SetResponse printShippingForm::set(const ParameterList &pParams)
       _shippingForm->setId(q.value("shipform_id").toInt());
       _shipchrg->setId(q.value("cosmisc_shipchrg_id").toInt());
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
@@ -166,7 +166,7 @@ enum SetResponse printShippingForm::set(const ParameterList &pParams)
 	_shippingForm->setId(q.value("shiphead_shipform_id").toInt());
       _shipchrg->setId(q.value("shiphead_shipchrg_id").toInt());
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
@@ -214,7 +214,7 @@ enum SetResponse printShippingForm::set(const ParameterList &pParams)
       _so->setEnabled(false);
       _to->setEnabled(false);
     }
-    else if (headq.lastError().type() != QSqlError::None)
+    else if (headq.lastError().type() != QSqlError::NoError)
     {
       systemError(this, headq.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
@@ -328,7 +328,7 @@ void printShippingForm::sPrint()
                "WHERE (shiphead_id=:shiphead_id);" );
     q.bindValue(":shiphead_id", _shipment->id());
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -346,7 +346,7 @@ void printShippingForm::sPrint()
       _so->setFocus();
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -390,7 +390,7 @@ void printShippingForm::sHandleShipment()
       _shippingForm->setId(q.value("shipform_id").toInt());
       _shipchrg->setId(q.value("shiphead_shipchrg_id").toInt());
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -457,7 +457,7 @@ void printShippingForm::sHandleSo()
       _shippingForm->setId(q.value("shipform_id").toInt());
       _shipchrg->setId(q.value("shiphead_shipchrg_id").toInt());
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -518,7 +518,7 @@ void printShippingForm::sHandleTo()
       _shippingForm->setId(q.value("shipform_id").toInt());
       _shipchrg->setId(q.value("shiphead_shipchrg_id").toInt());
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;

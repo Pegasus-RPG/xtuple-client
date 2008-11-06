@@ -243,7 +243,7 @@ void relocateInventory::sMove()
   relocate.bindValue(":source", _source->id());
   relocate.bindValue(":target", _target->id());
   relocate.bindValue(":qty", _qty->toDouble());
-  relocate.bindValue(":comments", _notes->text().stripWhiteSpace());
+  relocate.bindValue(":comments", _notes->toPlainText().trimmed());
   relocate.bindValue(":item_id", _item->id());
   relocate.bindValue(":warehous_id", _warehouse->id());
   relocate.bindValue(":date",           _transDate->date());
@@ -259,7 +259,7 @@ void relocateInventory::sMove()
       return;
     }
   }
-  else if (relocate.lastError().type() != QSqlError::None)
+  else if (relocate.lastError().type() != QSqlError::NoError)
   {
     systemError(this, relocate.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -300,7 +300,7 @@ void relocateInventory::sFillList()
     query.bindValue(":warehous_id", _warehouse->id());
     query.exec();
     _source->populate(query, true);
-    if (query.lastError().type() != QSqlError::None)
+    if (query.lastError().type() != QSqlError::NoError)
     {
       systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -325,7 +325,7 @@ void relocateInventory::sFillList()
     query.bindValue(":item_id", _item->id());
     query.exec();
     _target->populate(query);
-    if (query.lastError().type() != QSqlError::None)
+    if (query.lastError().type() != QSqlError::NoError)
     {
       systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
       return;

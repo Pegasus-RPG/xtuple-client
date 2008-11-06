@@ -190,7 +190,7 @@ void systemMessage::sSave()
 
       q.bindValue(":scheduled", scheduled);
       q.bindValue(":expires", expires);
-      q.bindValue(":message", (_message->text()));
+      q.bindValue(":message", (_message->toPlainText()));
       q.exec();
       if (q.first())
         done(q.value("msgid").toInt());

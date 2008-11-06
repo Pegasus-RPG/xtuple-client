@@ -150,7 +150,7 @@ enum SetResponse lotSerialRegistration::set(const ParameterList &pParams)
       q.exec ("SELECT fetchlsregnumber() AS number;");
       if (q.first())
 	_regNumber->setText(q.value("number").toString());
-      else if(q.lastError().type() != QSqlError::None)
+      else if(q.lastError().type() != QSqlError::NoError)
       {
         systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
         reject();
@@ -158,7 +158,7 @@ enum SetResponse lotSerialRegistration::set(const ParameterList &pParams)
       q.exec("SELECT NEXTVAL('lsreg_lsreg_id_seq') AS _lsreg_id;");
       if (q.first())
         _lsregid = q.value("_lsreg_id").toInt();
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
         systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
         reject();
@@ -234,7 +234,7 @@ void lotSerialRegistration::sDeleteCharass()
              "WHERE (charass_id=:charass_id);" );
   q.bindValue(":charass_id", _charass->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -255,7 +255,7 @@ void lotSerialRegistration::sFillList()
   q.exec();
   _charass->clear();
   _charass->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -289,7 +289,7 @@ void lotSerialRegistration::populate()
       _shipment->setId(q.value("lsreg_shiphead_id").toInt());
     sFillList();
   }
-  else if(q.lastError().type() != QSqlError::None)
+  else if(q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -389,7 +389,7 @@ void lotSerialRegistration::sSave()
               " WHERE(lsreg_id=:lsreg_id);");
   
   q.bindValue(":lsreg_id", _lsregid);
-  q.bindValue(":lsreg_number", _regNumber->text().stripWhiteSpace());
+  q.bindValue(":lsreg_number", _regNumber->text().trimmed());
   q.bindValue(":lsreg_regtype_id", _type->id());
   q.bindValue(":lsreg_ls_id", _lotSerial->id());
   q.bindValue(":lsreg_qty", _qty->toDouble());
@@ -405,7 +405,7 @@ void lotSerialRegistration::sSave()
     q.bindValue(":lsreg_shiphead_id", _shipment->id());
 
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -452,7 +452,7 @@ void lotSerialRegistration::sSetSoCustId()
       _so->setCustId(cq.value("crmacct_cust_id").toInt());
       _shipment->setId(-1);
     }
-    else if(cq.lastError().type() != QSqlError::None)
+    else if(cq.lastError().type() != QSqlError::NoError)
     { 
       systemError(this, cq.lastError().databaseText(), __FILE__, __LINE__);
       return;

@@ -133,7 +133,7 @@ enum SetResponse submitAction::set(ParameterList &pParams)
 
 void submitAction::sSubmit()
 {
-  if (_email->text().stripWhiteSpace().length() == 0)
+  if (_email->text().trimmed().length() == 0)
   {
     QMessageBox::critical( this, tr("Cannot Submit Action"),
                            tr("You must indicate an Email address to which the completed Action response will be sent.") );

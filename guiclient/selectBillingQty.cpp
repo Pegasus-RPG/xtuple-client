@@ -117,7 +117,7 @@ enum SetResponse selectBillingQty::set(const ParameterList &pParams)
     taxauth.exec();
     if (taxauth.first())
       _taxauthid=taxauth.value("cobmisc_taxauth_id").toInt();
-    else if (taxauth.lastError().type() != QSqlError::None)
+    else if (taxauth.lastError().type() != QSqlError::NoError)
     {
       systemError(this, taxauth.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
@@ -201,7 +201,7 @@ enum SetResponse selectBillingQty::set(const ParameterList &pParams)
 	_taxType->setId(cobill.value("cobill_taxtype_id").toInt());
 	_taxCode->setId(cobill.value("cobill_tax_id").toInt());
       }
-      else if (cobill.lastError().type() != QSqlError::None)
+      else if (cobill.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, cobill.lastError().databaseText(), __FILE__, __LINE__);
 	return UndefinedError;
@@ -216,7 +216,7 @@ enum SetResponse selectBillingQty::set(const ParameterList &pParams)
 
       _toBill->setSelection(0, _toBill->text().length());
     }
-    else if (soitem.lastError().type() != QSqlError::None)
+    else if (soitem.lastError().type() != QSqlError::NoError)
     {
       systemError(this, soitem.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
@@ -239,7 +239,7 @@ void selectBillingQty::sSave()
 		 "                        :taxtypeid, :taxid) AS result;");
   select.bindValue(":soitem_id", _soitemid);
   select.bindValue(":qty",	 _toBill->toDouble());
-  select.bindValue(":close",	 QVariant(_closeLine->isChecked(), 0));
+  select.bindValue(":close",	 QVariant(_closeLine->isChecked()));
   if(_taxType->isValid())
     select.bindValue(":taxtypeid", _taxType->id());
   if(_taxCode->isValid())
@@ -255,7 +255,7 @@ void selectBillingQty::sSave()
       return;
     }
   }
-  else if (select.lastError().type() != QSqlError::None)
+  else if (select.lastError().type() != QSqlError::NoError)
   {
     systemError(this, select.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -284,7 +284,7 @@ void selectBillingQty::sLookupTaxCode()
     }
     _taxCode->setId(result);
   }
-  else if (taxq.lastError().type() != QSqlError::None)
+  else if (taxq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -311,7 +311,7 @@ void selectBillingQty::sHandleItem()
     }
     _taxType->setId(result);
   }
-  else if (itemq.lastError().type() != QSqlError::None)
+  else if (itemq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

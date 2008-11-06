@@ -160,7 +160,7 @@ void printWoTraveler::sHandleOptions(int pWoid)
                    "LIMIT 1;" );
     check.bindValue(":wo_id", pWoid);
     check.exec();
-    if (check.lastError().type() != QSqlError::None)
+    if (check.lastError().type() != QSqlError::NoError)
     {
       systemError(this, check.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -176,7 +176,7 @@ void printWoTraveler::sHandleOptions(int pWoid)
                      "LIMIT 1;" );
       check.bindValue(":wo_id", pWoid);
       check.exec();
-      if (check.lastError().type() != QSqlError::None)
+      if (check.lastError().type() != QSqlError::NoError)
       {
         systemError(this, check.lastError().databaseText(), __FILE__, __LINE__);
         return;
@@ -191,7 +191,7 @@ void printWoTraveler::sHandleOptions(int pWoid)
                    " AND (wo_id=:wo_id) );" );
     check.bindValue(":wo_id", pWoid);
     check.exec();
-    if (check.lastError().type() != QSqlError::None)
+    if (check.lastError().type() != QSqlError::NoError)
     {
       systemError(this, check.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -272,7 +272,7 @@ void printWoTraveler::sPrint()
 	return;
       }
     }
-    else if (query.lastError().type() != QSqlError::None)
+    else if (query.lastError().type() != QSqlError::NoError)
     {
       systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -309,7 +309,7 @@ void printWoTraveler::sPrint()
 	return;
       }
     }
-    else if (query.lastError().type() != QSqlError::None)
+    else if (query.lastError().type() != QSqlError::NoError)
     {
       systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -323,7 +323,7 @@ void printWoTraveler::sPrint()
     release.prepare("SELECT releaseWo(:wo_id, FALSE);");
     release.bindValue(":wo_id", _wo->id());
     release.exec();
-    if (release.lastError().type() != QSqlError::None)
+    if (release.lastError().type() != QSqlError::NoError)
     {
       systemError(this, release.lastError().databaseText(), __FILE__, __LINE__);
       return;

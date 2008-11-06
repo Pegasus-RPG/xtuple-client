@@ -97,7 +97,7 @@ enum SetResponse salesOrderInformation::set(ParameterList &pParams)
       _soheadid = q.value("coitem_cohead_id").toInt();
       populate();
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;

@@ -188,7 +188,7 @@ void standardJournalItem::sSave()
   q.bindValue(":stdjrnlitem_stdjrnl_id", _stdjrnlid);
   q.bindValue(":stdjrnlitem_accnt_id", _account->id());
   q.bindValue(":stdjrnlitem_amount", amount);
-  q.bindValue(":stdjrnlitem_notes", _notes->text().stripWhiteSpace());
+  q.bindValue(":stdjrnlitem_notes", _notes->toPlainText().trimmed());
   q.exec();
 
   done(_stdjrnlitemid);

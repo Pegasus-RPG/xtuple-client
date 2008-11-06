@@ -69,7 +69,7 @@ class dspWoEffortByWorkOrder : public XWidget, public Ui::dspWoEffortByWorkOrder
     Q_OBJECT
 
 public:
-    dspWoEffortByWorkOrder(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspWoEffortByWorkOrder(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspWoEffortByWorkOrder();
 
 public slots:

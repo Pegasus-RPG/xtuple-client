@@ -69,7 +69,7 @@ class miscCheck : public XWidget, public Ui::miscCheck
     Q_OBJECT
 
 public:
-    miscCheck(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    miscCheck(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~miscCheck();
 
     virtual void populate();

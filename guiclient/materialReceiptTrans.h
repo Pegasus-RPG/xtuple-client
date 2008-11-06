@@ -69,7 +69,7 @@ class materialReceiptTrans : public XWidget, public Ui::materialReceiptTrans
     Q_OBJECT
 
 public:
-    materialReceiptTrans(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    materialReceiptTrans(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~materialReceiptTrans();
 
 public slots:

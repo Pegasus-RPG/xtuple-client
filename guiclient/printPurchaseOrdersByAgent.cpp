@@ -185,7 +185,7 @@ void printPurchaseOrdersByAgent::sPrint()
       }
       markprinted.bindValue(":pohead_id", pohead.value("pohead_id").toInt());
       markprinted.exec();
-      if (markprinted.lastError().type() != QSqlError::None)
+      if (markprinted.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, markprinted.lastError().databaseText(), __FILE__, __LINE__);
 	orReport::endMultiPrint(printer);
@@ -195,7 +195,7 @@ void printPurchaseOrdersByAgent::sPrint()
     while (pohead.next());
     orReport::endMultiPrint(printer);
   }
-  else if (pohead.lastError().type() != QSqlError::None)
+  else if (pohead.lastError().type() != QSqlError::NoError)
   {
     systemError(this, pohead.lastError().databaseText(), __FILE__, __LINE__);
     return;

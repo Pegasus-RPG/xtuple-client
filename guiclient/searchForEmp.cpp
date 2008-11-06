@@ -253,7 +253,7 @@ void searchForEmp::sViewMgr()
 
 bool searchForEmp::setParams(ParameterList &pParams)
 {
-  pParams.append("searchString", _search->text().upper());
+  pParams.append("searchString", _search->text().toUpper());
 
   if (_searchCode->isChecked())    pParams.append("searchCode");
   if (_searchDept->isChecked())    pParams.append("searchDept");
@@ -316,7 +316,7 @@ void searchForEmp::sFillList()
     return;
   q = mql.toQuery(params);
   _emp->populate(q, true);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

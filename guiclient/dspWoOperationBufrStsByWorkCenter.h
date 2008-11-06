@@ -69,7 +69,7 @@ class dspWoOperationBufrStsByWorkCenter : public XWidget, public Ui::dspWoOperat
     Q_OBJECT
 
 public:
-    dspWoOperationBufrStsByWorkCenter(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspWoOperationBufrStsByWorkCenter(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspWoOperationBufrStsByWorkCenter();
 
     virtual ParameterList buildParameters();

@@ -199,7 +199,7 @@ void quotes::sPrint()
           break;
         }
       }
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
         systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
         break;
@@ -286,7 +286,7 @@ void quotes::sConvert()
                         }
                       }
                     }
-                    else if (prospectq.lastError().type() != QSqlError::None)
+                    else if (prospectq.lastError().type() != QSqlError::NoError)
                     {
                       systemError(this, prospectq.lastError().databaseText(),
                               __FILE__, __LINE__);
@@ -329,7 +329,7 @@ void quotes::sConvert()
 
             salesOrder::editSalesOrder(soheadid, true);
           }
-          else if (convert.lastError().type() != QSqlError::None)
+          else if (convert.lastError().type() != QSqlError::NoError)
           {
             notConverted.append(selected[i]);
             systemError(this, convert.lastError().databaseText(), __FILE__, __LINE__);
@@ -433,7 +433,7 @@ void quotes::sDelete()
           }
           counter++;
         }
-        else if (q.lastError().type() != QSqlError::None)
+        else if (q.lastError().type() != QSqlError::NoError)
         {
           systemError(this, tr("A System Error occurred deleting Quote #%1\n%2.")
                              .arg(selected[i]->text(0))
@@ -484,7 +484,7 @@ void quotes::sFillList()
   q = mql.toQuery(params);
   _quote->clear();
   _quote->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

@@ -138,7 +138,7 @@ void postStandardJournalGroup::sPost()
   q.prepare("SELECT postStandardJournalGroup(:stdjrnlgrp_id, :distDate, :reverse) AS result;");
   q.bindValue(":stdjrnlgrp_id", _stdjrnlgrp->id());
   q.bindValue(":distDate", _distDate->date());
-  q.bindValue(":reverse", QVariant(_reverse->isChecked(), 0));
+  q.bindValue(":reverse", QVariant(_reverse->isChecked()));
   q.exec();
   if (q.first())
   {

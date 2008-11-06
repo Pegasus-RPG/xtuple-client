@@ -214,7 +214,7 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
       _creditmethod = q.value("rahead_creditmethod").toString();
       _crmacctid = q.value("crmacct_id").toInt();
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
@@ -258,7 +258,7 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
       q.exec();
       if (q.first())
         _lineNumber->setText(q.value("n_linenumber").toString());
-      else if (q.lastError().type() == QSqlError::None)
+      else if (q.lastError().type() == QSqlError::NoError)
       {
         systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
         return UndefinedError;
@@ -275,15 +275,15 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
         if (q.value("rahead_disposition").toString() == "C")
           sDispositionChanged();
         else if (q.value("rahead_disposition").toString() == "R")
-          _disposition->setCurrentItem(1);
+          _disposition->setCurrentIndex(1);
         else if (q.value("rahead_disposition").toString() == "P")
-          _disposition->setCurrentItem(2);
+          _disposition->setCurrentIndex(2);
         else if (q.value("rahead_disposition").toString() == "V")
-          _disposition->setCurrentItem(3);
+          _disposition->setCurrentIndex(3);
         else if (q.value("rahead_disposition").toString() == "M")
-          _disposition->setCurrentItem(4);
+          _disposition->setCurrentIndex(4);
       }
-      else if (q.lastError().type() == QSqlError::None)
+      else if (q.lastError().type() == QSqlError::NoError)
       {
         systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
         return UndefinedError;
@@ -391,7 +391,7 @@ bool returnAuthorizationItem::sSave()
     q.exec("SELECT NEXTVAL('raitem_raitem_id_seq') AS _raitem_id");
     if (q.first())
       _raitemid  = q.value("_raitem_id").toInt();
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       reject();
@@ -442,7 +442,7 @@ bool returnAuthorizationItem::sSave()
   q.bindValue(":rahead_id", _raheadid);
   q.bindValue(":raitem_linenumber", _lineNumber->text().toInt());
   q.bindValue(":raitem_qtyauthorized", _qtyAuth->toDouble());
-  q.bindValue(":raitem_disposition", QString(dispositionTypes[_disposition->currentItem()]));
+  q.bindValue(":raitem_disposition", QString(dispositionTypes[_disposition->currentIndex()]));
   q.bindValue(":qty_uom_id", _qtyUOM->id());
   q.bindValue(":qty_invuomratio", _qtyinvuomratio);
   q.bindValue(":price_uom_id", _pricingUOM->id());
@@ -450,10 +450,10 @@ bool returnAuthorizationItem::sSave()
   q.bindValue(":raitem_unitprice", _netUnitPrice->localValue());
   if (_taxType->isValid())
     q.bindValue(":raitem_taxtype_id", _taxType->id());
-  q.bindValue(":raitem_notes", _notes->text());
+  q.bindValue(":raitem_notes", _notes->toPlainText());
   if (_taxCode->isValid())
     q.bindValue(":raitem_tax_id", _taxCode->id());
-  q.bindValue(":raitem_notes", _notes->text());
+  q.bindValue(":raitem_notes", _notes->toPlainText());
   if (_rsnCode->isValid())
     q.bindValue(":raitem_rsncode_id", _rsnCode->id());
   q.bindValue(":item_id", _item->id());
@@ -463,9 +463,9 @@ bool returnAuthorizationItem::sSave()
   if (_altcosAccntid->id() != -1)
     q.bindValue(":raitem_cos_accnt_id", _altcosAccntid->id()); 
   q.bindValue(":raitem_scheddate", _scheduledDate->date());
-  q.bindValue(":raitem_warranty",QVariant(_warranty->isChecked(), 0));
+  q.bindValue(":raitem_warranty",QVariant(_warranty->isChecked()));
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     reject();
@@ -498,7 +498,7 @@ bool returnAuthorizationItem::sSave()
             reject();
           }
         }
-        else if (q.lastError().type() != QSqlError::None)
+        else if (q.lastError().type() != QSqlError::NoError)
         {
           systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
           reject();
@@ -532,7 +532,7 @@ bool returnAuthorizationItem::sSave()
               reject();
             }
           }
-          else if (q.lastError().type() != QSqlError::None)
+          else if (q.lastError().type() != QSqlError::NoError)
           {
             systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
             reject();
@@ -542,7 +542,7 @@ bool returnAuthorizationItem::sSave()
     }
   }
   //If this save has resulted in a link to an shipping S/O, we need to signal that
-  if (_disposition->currentItem() > 1)
+  if (_disposition->currentIndex() > 1)
   {
     XSqlQuery so;
     so.prepare("SELECT raitem_new_coitem_id, cohead_number, "
@@ -573,7 +573,7 @@ bool returnAuthorizationItem::sSave()
           q.bindValue(":orderNumber", so.value("cohead_number").toInt());
           q.bindValue(":qty", _orderQty->toDouble());
           q.bindValue(":dueDate", _scheduledDate->date());
-          q.bindValue(":comments", so.value("cust_name").toString() + "\n" + _notes->text());
+          q.bindValue(":comments", so.value("cust_name").toString() + "\n" + _notes->toPlainText());
           q.bindValue(":item_id", _item->id());
           q.bindValue(":warehous_id", _shipWhs->id());
           q.bindValue(":parent_type", QString("S"));
@@ -606,7 +606,7 @@ bool returnAuthorizationItem::sSave()
             q.bindValue(":orderid", _orderId);
             q.bindValue(":soitem_id", so.value("raitem_new_coitem_id").toInt());
             q.exec();
-            if (q.lastError().type() != QSqlError::None)
+            if (q.lastError().type() != QSqlError::NoError)
             {
               systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
               reject();
@@ -670,7 +670,7 @@ void returnAuthorizationItem::sPopulateItemInfo()
 	_unitCost->setBaseValue(item.value("f_cost").toDouble());
     _taxType->setId(item.value("taxtype_id").toInt()); 
   }
-  else if (item.lastError().type() != QSqlError::None)
+  else if (item.lastError().type() != QSqlError::NoError)
   {
     systemError(this, item.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -736,7 +736,7 @@ void returnAuthorizationItem::sPopulateItemsiteInfo()
        (itemsite.value("itemsite_controlmethod").toString() == "L" ||
         itemsite.value("itemsite_controlmethod").toString() == "S"));
     }
-    else if (itemsite.lastError().type() != QSqlError::None)
+    else if (itemsite.lastError().type() != QSqlError::NoError)
     {
       systemError(this, itemsite.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -797,13 +797,13 @@ void returnAuthorizationItem::populate()
     if (raitem.value("raitem_disposition").toString() == "C")
       sDispositionChanged();
     else if (raitem.value("raitem_disposition").toString() == "R")
-      _disposition->setCurrentItem(1);
+      _disposition->setCurrentIndex(1);
     else if (raitem.value("raitem_disposition").toString() == "P")
-      _disposition->setCurrentItem(2);
+      _disposition->setCurrentIndex(2);
     else if (raitem.value("raitem_disposition").toString() == "V")
-      _disposition->setCurrentItem(3);
+      _disposition->setCurrentIndex(3);
     else if (raitem.value("raitem_disposition").toString() == "S")
-      _disposition->setCurrentItem(4);
+      _disposition->setCurrentIndex(4);
 	  _orderId = raitem.value("coitem_order_id").toInt();
     _netUnitPrice->setId(raitem.value("rahead_curr_id").toInt());
     _netUnitPrice->setEffective(raitem.value("rahead_authdate").toDate());
@@ -907,7 +907,7 @@ void returnAuthorizationItem::populate()
       }
     }
   }
-  else if (raitem.lastError().type() != QSqlError::None)
+  else if (raitem.lastError().type() != QSqlError::NoError)
   {
     systemError(this, raitem.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -1073,7 +1073,7 @@ void returnAuthorizationItem::sLookupTax()
                       calcq.value("valC").toDouble());
     _tax->setLocalValue(_taxCache.total());
   }
-  else if (calcq.lastError().type() != QSqlError::None)
+  else if (calcq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, calcq.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -1126,7 +1126,7 @@ void returnAuthorizationItem::sLookupTaxCode()
                          taxq.value("tax_ratec").toDouble());
     _taxCode->setId(taxq.value("tax_id").toInt());
   }
-  else if (taxq.lastError().type() != QSqlError::None)
+  else if (taxq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -1390,7 +1390,7 @@ void returnAuthorizationItem::sPopulateOrderInfo()
       if (qty.first())
         _orderQty->setDouble(qty.value("qty").toDouble());
 
-      else if (qty.lastError().type() != QSqlError::None)
+      else if (qty.lastError().type() != QSqlError::NoError)
       {
         systemError(this, qty.lastError().databaseText(), __FILE__, __LINE__);
         return;
@@ -1450,7 +1450,7 @@ void returnAuthorizationItem::sDetermineAvailability()
       else
         _available->setPaletteForegroundColor(QColor("black"));
     }
-    else if (availability.lastError().type() != QSqlError::None)
+    else if (availability.lastError().type() != QSqlError::NoError)
     {
       systemError(this, availability.lastError().databaseText(), __FILE__, __LINE__);
       return;

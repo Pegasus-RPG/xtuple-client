@@ -287,7 +287,7 @@ enum SetResponse salesOrder::set(const ParameterList &pParams)
   {
     if (param.toString() == "new")
     {
-      setName("salesOrder new");
+      setObjectName("salesOrder new");
       _mode = cNew;
 
       _cust->setType(CLineEdit::ActiveCustomers);
@@ -423,7 +423,7 @@ enum SetResponse salesOrder::set(const ParameterList &pParams)
       _comments->setId(_soheadid);
       _orderDate->setDate(omfgThis->dbDate(), true);
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
@@ -476,7 +476,7 @@ enum SetResponse salesOrder::set(const ParameterList &pParams)
 
   if (ISQUOTE(_mode))
   {
-    setCaption(tr("Quote"));
+    setWindowTitle(tr("Quote"));
 
     _comments->setType(Comments::Quote);
 
@@ -549,9 +549,9 @@ enum SetResponse salesOrder::set(const ParameterList &pParams)
   {
     _soheadid = param.toInt();
     if(cEdit == _mode)
-      setName(QString("salesOrder edit %1").arg(_soheadid));
+      setObjectName(QString("salesOrder edit %1").arg(_soheadid));
     else if(cView == _mode)
-      setName(QString("salesOrder view %1").arg(_soheadid));
+      setObjectName(QString("salesOrder view %1").arg(_soheadid));
     populate();
     populateCMInfo();
     populateCCInfo();
@@ -662,7 +662,7 @@ bool salesOrder::save(bool partial)
     return FALSE;
   }
 
-  if (_salesRep->currentItem() == -1)
+  if (_salesRep->currentIndex() == -1)
   {
     QMessageBox::warning( this, tr("Cannot Save Sales Order"),
                           tr("You must select a Sales Rep. for this Sales Order before you may save it.") );
@@ -670,7 +670,7 @@ bool salesOrder::save(bool partial)
     return FALSE;
   }
 
-  if (_terms->currentItem() == -1)
+  if (_terms->currentIndex() == -1)
   {
     QMessageBox::warning( this, tr("Cannot Save Sales Order"),
                           tr("You must select the Terms for this Sales Order before you may save it.") );
@@ -698,7 +698,7 @@ bool salesOrder::save(bool partial)
   {
     if (_usesPos && !partial)
     {
-      if (_custPONumber->text().stripWhiteSpace().length() == 0)
+      if (_custPONumber->text().trimmed().length() == 0)
       {
         QMessageBox::warning( this, tr("Cannot Save Sales Order"),
                               tr("You must enter a Customer P/O for this Sales Order before you may save it.") );
@@ -735,7 +735,7 @@ bool salesOrder::save(bool partial)
           _custPONumber->setFocus();
           return FALSE;
         }
-        else if (q.lastError().type() != QSqlError::None)
+        else if (q.lastError().type() != QSqlError::NoError)
         {
           systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
           return FALSE;
@@ -1038,7 +1038,7 @@ bool salesOrder::save(bool partial)
   q.bindValue(":cust_id", _cust->id());
   if (_warehouse->id() != -1)
     q.bindValue(":warehous_id", _warehouse->id());
-  q.bindValue(":custponumber", _custPONumber->text().stripWhiteSpace());
+  q.bindValue(":custponumber", _custPONumber->text().trimmed());
   if (_shiptoid > 0)
     q.bindValue(":shipto_id", _shiptoid);
   q.bindValue(":billtoname",                _billToName->text());
@@ -1057,8 +1057,8 @@ bool salesOrder::save(bool partial)
   q.bindValue(":shiptostate",                _shipToAddr->state());
   q.bindValue(":shiptozipcode",                _shipToAddr->postalCode());
   q.bindValue(":shiptocountry",                _shipToAddr->country());
-  q.bindValue(":ordercomments", _orderComments->text());
-  q.bindValue(":shipcomments", _shippingComments->text());
+  q.bindValue(":ordercomments", _orderComments->toPlainText());
+  q.bindValue(":shipcomments", _shippingComments->toPlainText());
   q.bindValue(":fob", _fob->text());
   q.bindValue(":shipvia", _shipVia->currentText());
 
@@ -1098,34 +1098,34 @@ bool salesOrder::save(bool partial)
   q.bindValue(":misc", _miscCharge->localValue());
   if (_miscChargeAccount->id() != -1)
     q.bindValue(":misc_accnt_id", _miscChargeAccount->id());
-  q.bindValue(":misc_descrip", _miscChargeDescription->text().stripWhiteSpace());
+  q.bindValue(":misc_descrip", _miscChargeDescription->text().trimmed());
   q.bindValue(":curr_id", _orderCurrency->id());
-  q.bindValue(":cohead_shipcomplete", QVariant(_shipComplete->isChecked(), 0));
+  q.bindValue(":cohead_shipcomplete", QVariant(_shipComplete->isChecked()));
   if (_project->isValid())
     q.bindValue(":prj_id", _project->id());
   if(_expire->isValid())
     q.bindValue(":expire", _expire->date());
 
-  if (_holdType->currentItem() == 0)
+  if (_holdType->currentIndex() == 0)
     q.bindValue(":holdtype", "N");
-  else if (_holdType->currentItem() == 1)
+  else if (_holdType->currentIndex() == 1)
     q.bindValue(":holdtype", "C");
-  else if (_holdType->currentItem() == 2)
+  else if (_holdType->currentIndex() == 2)
     q.bindValue(":holdtype", "S");
-  else if (_holdType->currentItem() == 3)
+  else if (_holdType->currentIndex() == 3)
     q.bindValue(":holdtype", "P");
-  else if (_holdType->currentItem() == 4)
+  else if (_holdType->currentIndex() == 4)
     q.bindValue(":holdtype", "R");
 
-  if (_origin->currentItem() == 0)
+  if (_origin->currentIndex() == 0)
     q.bindValue(":origin", "C");
-  else if (_origin->currentItem() == 1)
+  else if (_origin->currentIndex() == 1)
     q.bindValue(":origin", "I");
-  else if (_origin->currentItem() == 2)
+  else if (_origin->currentIndex() == 2)
     q.bindValue(":origin", "S");
 
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return false;
@@ -1139,7 +1139,7 @@ bool salesOrder::save(bool partial)
     q.prepare("SELECT lockSohead(:head_id) AS result;");
     q.bindValue(":head_id", _soheadid);
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return false;
@@ -1258,7 +1258,7 @@ void salesOrder::populateOrderNumber()
         if (_metrics->value("CONumberGeneration") == "A")
           _orderNumber->setEnabled(FALSE);
       }
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
         systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
         return;
@@ -1287,7 +1287,7 @@ void salesOrder::populateOrderNumber()
         if (_metrics->value("QUNumberGeneration") == "A")
           _orderNumber->setEnabled(FALSE);
       }
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
         systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
         return;
@@ -1461,7 +1461,7 @@ void salesOrder::sPopulateFOB(int pWarehousid)
 // Is the first SELECT here responsible for the bug where the Currency kept disappearing?
 void salesOrder::sPopulateCustomerInfo(int pCustid)
 {
-  _holdType->setCurrentItem(0);
+  _holdType->setCurrentIndex(0);
   if (pCustid != -1)
   {
     QString sql("SELECT cust_salesrep_id, cust_shipchrg_id, cust_shipform_id,"
@@ -1540,7 +1540,7 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
         }      
 
         if( (cust.value("cust_creditstatus").toString() == "H") || (cust.value("cust_creditstatus").toString() == "W") )
-          _holdType->setCurrentItem(1);
+          _holdType->setCurrentIndex(1);
       }
 
       sFillCcardList();    
@@ -1588,7 +1588,7 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
         _billToCntct->setEnabled(ffBillTo);
       }
     }
-    else if (cust.lastError().type() != QSqlError::None)
+    else if (cust.lastError().type() != QSqlError::NoError)
     {
       systemError(this, cust.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -1596,10 +1596,10 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
   }
   else
   {
-    _salesRep->setCurrentItem(-1);
+    _salesRep->setCurrentIndex(-1);
     _commission->clear();
-    _terms->setCurrentItem(-1);
-    _taxAuth->setCurrentItem(-1);
+    _terms->setCurrentIndex(-1);
+    _taxAuth->setCurrentIndex(-1);
     _taxauthidCache = -1;
     _custtaxauthid        = -1;
 
@@ -1680,7 +1680,7 @@ void salesOrder::populateShipto(int pShiptoid)
 
       _ignoreSignals = FALSE;
     }
-    else if (shipto.lastError().type() != QSqlError::None)
+    else if (shipto.lastError().type() != QSqlError::NoError)
     {
       systemError(this, shipto.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -2221,11 +2221,11 @@ void salesOrder::populate()
 
 
       if (so.value("cohead_origin").toString() == "C")
-        _origin->setCurrentItem(0);
+        _origin->setCurrentIndex(0);
       else if (so.value("cohead_origin").toString() == "I")
-        _origin->setCurrentItem(1);
+        _origin->setCurrentIndex(1);
       else if (so.value("cohead_origin").toString() == "S")
-        _origin->setCurrentItem(2);
+        _origin->setCurrentIndex(2);
 
       _custPONumber->setText(so.value("cohead_custponumber"));
       _shipVia->setText(so.value("cohead_shipvia"));
@@ -2233,15 +2233,15 @@ void salesOrder::populate()
       _fob->setText(so.value("cohead_fob"));
 
       if (so.value("cohead_holdtype").toString() == "N")
-        _holdType->setCurrentItem(0);
+        _holdType->setCurrentIndex(0);
       else if (so.value("cohead_holdtype").toString() == "C")
-        _holdType->setCurrentItem(1);
+        _holdType->setCurrentIndex(1);
       else if (so.value("cohead_holdtype").toString() == "S")
-        _holdType->setCurrentItem(2);
+        _holdType->setCurrentIndex(2);
       else if (so.value("cohead_holdtype").toString() == "P")
-        _holdType->setCurrentItem(3);
+        _holdType->setCurrentIndex(3);
       else if (so.value("cohead_holdtype").toString() == "R")
-        _holdType->setCurrentItem(4);
+        _holdType->setCurrentIndex(4);
 
       _miscCharge->setLocalValue(so.value("cohead_misc").toDouble());
       _miscChargeDescription->setText(so.value("cohead_misc_descrip"));
@@ -2282,7 +2282,7 @@ void salesOrder::populate()
 
       sFillItemList();
     }
-    else if (so.lastError().type() != QSqlError::None)
+    else if (so.lastError().type() != QSqlError::NoError)
     {
       systemError(this, so.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -2398,11 +2398,11 @@ void salesOrder::populate()
         _shipToNumber->setEnabled(FALSE);
 
       if (qu.value("quhead_origin").toString() == "C")
-        _origin->setCurrentItem(0);
+        _origin->setCurrentIndex(0);
       else if (qu.value("quhead_origin").toString() == "I")
-        _origin->setCurrentItem(1);
+        _origin->setCurrentIndex(1);
       else if (qu.value("quhead_origin").toString() == "S")
-        _origin->setCurrentItem(2);
+        _origin->setCurrentIndex(2);
 
       _custPONumber->setText(qu.value("quhead_custponumber"));
       _shipVia->setText(qu.value("quhead_shipvia"));
@@ -2428,7 +2428,7 @@ void salesOrder::populate()
       _comments->setId(_soheadid);
       sFillItemList();
     }
-    else if (qu.lastError().type() != QSqlError::None)
+    else if (qu.lastError().type() != QSqlError::NoError)
     {
       systemError(this, qu.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -2460,7 +2460,7 @@ void salesOrder::sFillItemList()
   else
   {
     _shipDate->clear();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -2564,7 +2564,7 @@ void salesOrder::sFillItemList()
     q.exec();
     _amountAtShipping->setLocalValue(0.0);
     _soitem->populate(q, true);
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -2588,7 +2588,7 @@ void salesOrder::sFillItemList()
     while (q.next())
       _amountAtShipping->setLocalValue(_amountAtShipping->localValue() +
                                        q.value("shippingAmount").toDouble());
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -2625,7 +2625,7 @@ void salesOrder::sFillItemList()
     q.bindValue(":quhead_id", _soheadid);
     q.exec();
     _soitem->populate(q);
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -2656,7 +2656,7 @@ void salesOrder::sFillItemList()
     _subtotal->setLocalValue(q.value("subtotal").toDouble());
     _margin->setLocalValue(q.value("subtotal").toDouble() - q.value("totalcost").toDouble());
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -2690,7 +2690,7 @@ void salesOrder::sFillItemList()
   q.exec();
   if (q.first())
     _weight->setDouble(q.value("grossweight").toDouble());
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -2713,7 +2713,7 @@ void salesOrder::sFillItemList()
       _freight->setLocalValue(_freightCache);
       connect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -2846,21 +2846,21 @@ void salesOrder::clear()
   _cust->setId(-1);
   _shiptoid = -1;
   _warehouse->setId(_preferences->value("PreferredWarehouse").toInt());
-  _salesRep->setCurrentItem(-1);
+  _salesRep->setCurrentIndex(-1);
   _commission->clear();
   _billToAddr->setId(-1);
   _shipToAddr->setId(-1);
   _billToName->clear();
   _shipToName->clear();
-  _taxAuth->setCurrentItem(-1);
+  _taxAuth->setCurrentIndex(-1);
   _taxauthidCache = -1;
   _custtaxauthid        = -1;
-  _terms->setCurrentItem(-1);
-  _origin->setCurrentItem(0);
-  _shipVia->setCurrentItem(-1);
-  _shippingCharges->setCurrentItem(-1);
-  _shippingForm->setCurrentItem(-1);
-  _holdType->setCurrentItem(0);
+  _terms->setCurrentIndex(-1);
+  _origin->setCurrentIndex(0);
+  _shipVia->setCurrentIndex(-1);
+  _shippingCharges->setCurrentIndex(-1);
+  _shippingForm->setCurrentIndex(-1);
+  _holdType->setCurrentIndex(0);
   _calcfreight = _metrics->boolean("CalculateFreight");
   _freightCache = 0;
   disconnect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
@@ -2876,7 +2876,7 @@ void salesOrder::clear()
   _tax->clear();
   _miscCharge->clear();
   _total->clear();
-  _orderCurrency->setCurrentItem(0);
+  _orderCurrency->setCurrentIndex(0);
   _orderCurrency->setEnabled(true);
   _weight->clear();
   _allocatedCM->clear();
@@ -2895,7 +2895,7 @@ void salesOrder::clear()
   if ( (_mode == cEdit) || (_mode == cNew) )
   {
     _mode = cNew;
-    setName("salesOrder new");
+    setObjectName("salesOrder new");
     _orderDate->setDate(omfgThis->dbDate(), true);
   }
   else if ( (_mode == cEditQuote) || (_mode == cNewQuote) )
@@ -2924,7 +2924,7 @@ void salesOrder::clear()
       sFillCcardList();
     }
   }
-  else if (headid.lastError().type() != QSqlError::None)
+  else if (headid.lastError().type() != QSqlError::NoError)
     systemError(this, headid.lastError().databaseText(), __FILE__, __LINE__);
 
   _soitem->clear();
@@ -3065,7 +3065,7 @@ void salesOrder::sTaxDetail()
     taxq.bindValue(":date",        _orderDate->date());
     taxq.bindValue(":head_id", _soheadid);
     taxq.exec();
-    if (taxq.lastError().type() != QSqlError::None)
+    if (taxq.lastError().type() != QSqlError::NoError)
     {
       systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -3112,7 +3112,7 @@ void salesOrder::sFreightDetail()
     freightq.bindValue(":shipvia",        _shipVia->currentText());
     freightq.bindValue(":head_id",        _soheadid);
     freightq.exec();
-    if (freightq.lastError().type() != QSqlError::None)
+    if (freightq.lastError().type() != QSqlError::NoError)
     {
       systemError(this, freightq.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -3168,7 +3168,7 @@ void salesOrder::setViewMode()
   }
 
   _mode = cView;
-  setName(QString("salesOrder view %1").arg(_soheadid));
+  setObjectName(QString("salesOrder view %1").arg(_soheadid));
 
   _orderNumber->setEnabled(FALSE);
   _packDate->setEnabled(FALSE);
@@ -3478,7 +3478,7 @@ void salesOrder::sFillCcardList()
   params.append("activeonly",      true);
   q = mql.toQuery(params);
   _cc->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -3597,7 +3597,7 @@ bool salesOrder::okToProcessCC()
 {
   if (_usesPos)
   {
-    if (_custPONumber->text().stripWhiteSpace().length() == 0)
+    if (_custPONumber->text().trimmed().length() == 0)
     {
       QMessageBox::warning( this, tr("Cannot Process Credit Card Transaction"),
                             tr("<p>You must enter a Customer P/O for this "
@@ -3674,7 +3674,7 @@ void salesOrder::sReturnStock()
 
       q.exec("COMMIT;");
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       rollback.exec();
       systemError(this, tr("Line Item %1\n").arg(selected[i]->text(0)) +
@@ -3957,7 +3957,7 @@ void salesOrder::sTaxAuthChanged()
         return;
       }
     }
-    else if (taxauthq.lastError().type() != QSqlError::None)
+    else if (taxauthq.lastError().type() != QSqlError::NoError)
     {
       _taxAuth->setId(_taxauthidCache);
       systemError(this, taxauthq.lastError().databaseText(), __FILE__, __LINE__);
@@ -3971,7 +3971,7 @@ void salesOrder::sTaxAuthChanged()
   taxauthq.exec();
   if (taxauthq.first())
     _freighttaxid = taxauthq.value("result").toInt();
-  else if (taxauthq.lastError().type() != QSqlError::None)
+  else if (taxauthq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, taxauthq.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -4015,7 +4015,7 @@ void salesOrder::sReserveLineBalance()
         return;
       }
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, tr("Line Item %1\n").arg(selected[i]->text(0)) +
                         q.lastError().databaseText(), __FILE__, __LINE__);
@@ -4045,7 +4045,7 @@ void salesOrder::sUnreserveStock()
         return;
       }
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, tr("Line Item %1\n").arg(selected[i]->text(0)) +
                         q.lastError().databaseText(), __FILE__, __LINE__);

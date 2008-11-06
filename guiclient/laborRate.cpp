@@ -150,7 +150,7 @@ enum SetResponse laborRate::set(ParameterList &pParams)
 
 void laborRate::sCheck()
 {
-  _code->setText(_code->text().stripWhiteSpace());
+  _code->setText(_code->text().trimmed());
   if ((_mode == cNew) && (_code->text().length()))
   {
     q.prepare( "SELECT lbrrate_id "
@@ -206,7 +206,7 @@ void laborRate::sSave()
 
   q.bindValue(":lbrrate_id", _lbrrateid);
   q.bindValue(":lbrrate_code", _code->text());
-  q.bindValue(":lbrrate_descrip", _description->text().stripWhiteSpace());
+  q.bindValue(":lbrrate_descrip", _description->text().trimmed());
   q.bindValue(":lbrrate_rate", _rate->toDouble());
   q.exec();
 

@@ -131,7 +131,7 @@ void labelForm::sSave()
     return;
   }
 
-  else if (_report->currentItem() == -1)
+  else if (_report->currentIndex() == -1)
   {
     QMessageBox::warning( this, tr("Report Name is Invalid"),
                           tr("<p>You must enter a select Report for this Label Format.") );
@@ -144,7 +144,7 @@ void labelForm::sSave()
     q.exec("SELECT NEXTVAL('labelform_labelform_id_seq') AS _labelform_id");
     if (q.first())
       _labelformid = q.value("_labelform_id").toInt();
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -167,7 +167,7 @@ void labelForm::sSave()
   q.bindValue(":labelform_report_id", _report->id());
   q.bindValue(":labelform_perpage", _labelsPerPage->value());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -189,7 +189,7 @@ void labelForm::populate()
     _report->setId(q.value("labelform_report_id").toInt());
     _labelsPerPage->setValue(q.value("labelform_perpage").toInt());
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

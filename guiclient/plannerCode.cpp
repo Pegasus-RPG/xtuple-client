@@ -153,7 +153,7 @@ enum SetResponse plannerCode::set(ParameterList &pParams)
 
 void plannerCode::sCheck()
 {
-  _code->setText(_code->text().stripWhiteSpace());
+  _code->setText(_code->text().trimmed());
   if ((_mode == cNew) && (_code->text().length() != 0))
   {
     q.prepare( "SELECT plancode_id "
@@ -174,7 +174,7 @@ void plannerCode::sCheck()
 
 void plannerCode::sSave()
 {
-  _code->setText(_code->text().stripWhiteSpace().upper());
+  _code->setText(_code->text().trimmed().toUpper());
   if (_code->text().length() == 0)
   {
     QMessageBox::information( this, tr("Invalid Planner Code"),
@@ -212,7 +212,7 @@ void plannerCode::sSave()
 
   q.bindValue(":plancode_id", _plancodeid);
   q.bindValue(":plancode_code", _code->text());
-  q.bindValue(":plancode_name", _description->text().stripWhiteSpace());
+  q.bindValue(":plancode_name", _description->text().trimmed());
   q.bindValue(":plancode_consumefcst", QVariant(FALSE, 0));
 
   if (_autoExplode->isChecked())

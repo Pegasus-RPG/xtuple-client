@@ -67,7 +67,7 @@ class subaccounts : public XWidget, public Ui::subaccounts
     Q_OBJECT
 
 public:
-    subaccounts(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    subaccounts(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~subaccounts();
 
 public slots:

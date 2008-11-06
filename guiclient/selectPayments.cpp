@@ -277,7 +277,7 @@ void selectPayments::sClearAll()
   q.bindValue(":vendtype_id", _vendorTypes->id());
   q.bindValue(":vendtype_code", _vendorType->text());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -347,7 +347,7 @@ void selectPayments::sSelectLine()
 	  return;
 	}
       }
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return;
@@ -382,7 +382,7 @@ void selectPayments::sClear()
 	return;
       }
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -484,7 +484,7 @@ void selectPayments::sFillList()
     _dueBetweenDates->bindValue(q);
   q.bindValue(":curr_id", _currid);
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

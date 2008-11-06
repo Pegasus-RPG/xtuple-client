@@ -68,7 +68,7 @@ class salesCategories : public XWidget, public Ui::salesCategories
     Q_OBJECT
 
 public:
-    salesCategories(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    salesCategories(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~salesCategories();
 
     virtual void init();

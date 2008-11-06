@@ -122,7 +122,7 @@ enum SetResponse shippingForm::set(const ParameterList &pParams)
 
 void shippingForm::sCheck()
 {
-  _name->setText(_name->text().stripWhiteSpace());
+  _name->setText(_name->text().trimmed());
   if ((_mode == cNew) || (_name->text().length()))
   {
     q.prepare( "SELECT shipform_id "
@@ -138,7 +138,7 @@ void shippingForm::sCheck()
 
       _name->setEnabled(FALSE);
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -156,7 +156,7 @@ void shippingForm::sSave()
     return;
   }
 
-  else if (_report->currentItem() == -1)
+  else if (_report->currentIndex() == -1)
   {
     QMessageBox::warning( this, tr("Report Name is Invalid"),
                           tr("You must enter a select report for this Bill of Lading Format.") );
@@ -169,7 +169,7 @@ void shippingForm::sSave()
     q.exec("SELECT NEXTVAL('shipform_shipform_id_seq') AS shipform_id;");
     if (q.first())
       _shipformid = q.value("shipform_id").toInt();
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -190,7 +190,7 @@ void shippingForm::sSave()
   q.bindValue(":shipform_name", _name->text());
   q.bindValue(":shipform_report_id", _report->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -211,7 +211,7 @@ void shippingForm::populate()
     _name->setText(q.value("shipform_name").toString());
     _report->setId(q.value("shipform_report_id").toInt());
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

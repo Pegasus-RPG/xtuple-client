@@ -146,14 +146,14 @@ enum SetResponse dspWoScheduleByParameterList::set(const ParameterList &pParams)
   if (valid)
   {
     _parameter->setType(ParameterGroup::ClassCode);
-    setCaption(tr("W/O Schedule by Class Code"));
+    setWindowTitle(tr("W/O Schedule by Class Code"));
   }
 
   param = pParams.value("plancode", &valid);
   if (valid)
   {
     _parameter->setType(ParameterGroup::PlannerCode);
-    setCaption(tr("W/O Schedule by Planner Code"));
+    setWindowTitle(tr("W/O Schedule by Planner Code"));
   }
 
   param = pParams.value("plancode_id", &valid);
@@ -164,14 +164,14 @@ enum SetResponse dspWoScheduleByParameterList::set(const ParameterList &pParams)
   if (valid)
   {
     _parameter->setType(ParameterGroup::ItemGroup);
-    setCaption(tr("W/O Schedule by Item Group"));
+    setWindowTitle(tr("W/O Schedule by Item Group"));
   }
 
   param = pParams.value("wrkcnt", &valid);
   if (valid)
   {
     _parameter->setType(ParameterGroup::WorkCenter);
-    setCaption(tr("W/O Schedule by Work Center"));
+    setWindowTitle(tr("W/O Schedule by Work Center"));
   }
 
   param = pParams.value("warehous_id", &valid);
@@ -382,7 +382,7 @@ void dspWoScheduleByParameterList::sDeleteWO()
 
     omfgThis->sWorkOrdersUpdated(-1, TRUE);
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -727,7 +727,7 @@ void dspWoScheduleByParameterList::sFillList()
     return;
   q = mql.toQuery(params);
   _wo->populate(q, true);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

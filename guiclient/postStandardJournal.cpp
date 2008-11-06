@@ -138,7 +138,7 @@ void postStandardJournal::sPost()
   q.prepare("SELECT postStandardJournal(:stdjrnl_id, :distDate, :reverse) AS result;");
   q.bindValue(":stdjrnl_id", _stdjrnl->id());
   q.bindValue(":distDate", _distDate->date());
-  q.bindValue(":reverse", QVariant(_reverse->isChecked(), 0));
+  q.bindValue(":reverse", QVariant(_reverse->isChecked()));
   q.exec();
   if (q.first())
   {

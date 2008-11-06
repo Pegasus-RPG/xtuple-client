@@ -67,7 +67,7 @@ class projects : public XWidget, public Ui::projects
     Q_OBJECT
 
 public:
-    projects(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    projects(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~projects();
 
     virtual void init();

@@ -71,7 +71,7 @@ class returnAuthorization : public XWidget, public Ui::returnAuthorization
     Q_OBJECT
 
 public:
-    returnAuthorization(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    returnAuthorization(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~returnAuthorization();
 
     virtual void setNumber();

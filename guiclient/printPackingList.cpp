@@ -160,7 +160,7 @@ enum SetResponse printPackingList::set(const ParameterList &pParams)
       else
 	return UndefinedError;
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
@@ -257,7 +257,7 @@ void printPackingList::sPrint()
       _order->setFocus();
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -326,7 +326,7 @@ void printPackingList::sPopulate()
       _custName->setText(q.value("name").toString());
       _custPhone->setText(q.value("phone").toString());
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -357,7 +357,7 @@ void printPackingList::sPopulate()
       if (q.value("shiphead_id").toInt() != _shipment->id())
 	_shipment->setId(q.value("shiphead_id").toInt());
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -424,7 +424,7 @@ void printPackingList::sHandleShipment()
       }
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

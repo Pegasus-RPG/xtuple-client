@@ -144,7 +144,7 @@ enum SetResponse shift::set(ParameterList& pParams)
 
 void shift::sSave()
 {
-    QString number = _number->text().stripWhiteSpace().upper();
+    QString number = _number->text().trimmed().toUpper();
 
     if (number.isEmpty())
     {
@@ -153,7 +153,7 @@ void shift::sSave()
 	_number->setFocus();
 	return;
     }
-    if (_name->text().stripWhiteSpace().isEmpty())
+    if (_name->text().trimmed().isEmpty())
     {
 	QMessageBox::critical(this, tr("Cannot Save Shift"),
 			      tr("You must enter a Shift Name"));
@@ -188,7 +188,7 @@ void shift::sSave()
 		      "WHERE (shift_id=:shift_id);");
     q.bindValue(":shift_id",		_shiftid);
     q.bindValue(":shift_number",	number);
-    q.bindValue(":shift_name",		_name->text().stripWhiteSpace());
+    q.bindValue(":shift_name",		_name->text().trimmed());
 
     q.exec();
     if (q.lastError().type() != QSqlError::NoError)

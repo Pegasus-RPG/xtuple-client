@@ -69,7 +69,7 @@ class dspGLTransactions : public XWidget, public Ui::dspGLTransactions
     Q_OBJECT
 
 public:
-    dspGLTransactions(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspGLTransactions(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspGLTransactions();
     virtual bool setParams(ParameterList &params);
 

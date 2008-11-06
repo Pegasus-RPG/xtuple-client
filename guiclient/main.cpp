@@ -120,6 +120,8 @@ int main(int argc, char *argv[])
   }
 #endif
 
+  QApplication app(argc, argv);
+
 #if QT_VERSION >= 0x040400
   // This is the correct place for this call but on versions less
   // than 4.4 it causes a crash for an unknown reason so it is
@@ -146,7 +148,6 @@ int main(int argc, char *argv[])
   QApplication::setStyle(new QCleanlooksStyle);
 #endif
 
-  QApplication app(argc, argv);
 #if QT_VERSION < 0x040400
   // This is here because of some crash problem using it before the
   // QApplication object is instantiated even though it shouldn't be
@@ -317,20 +318,22 @@ int main(int argc, char *argv[])
     int result;
     if(disallowMismatch)
       result = QMessageBox::warning( 0, QObject::tr("Version Mismatch"),
-        QObject::tr("The version of the database you are connecting to is not the version\n"
-                    "this client was designed to work against.\n\n"
-                    "This client was designed to work against the database version %1.\n"
-                    "The system has been configured to disallow access in this case.\n"
-                    "Please contact your systems administrator.").arg(_dbVersion),
+        QObject::tr("<p>The version of the database you are connecting to is "
+                    "not the version this client was designed to work against. "
+                    "This client was designed to work against the database "
+                    "version %1. The system has been configured to disallow "
+                    "access in this case.<p>Please contact your systems "
+                    "administrator.").arg(_dbVersion),
                  QMessageBox::Ok | QMessageBox::Escape | QMessageBox::Default );
     else
       result = QMessageBox::warning( 0, QObject::tr("Version Mismatch"),
-        QObject::tr("The version of the database you are connecting to is not the version\n"
-                    "this client was designed to work against.\n\n"
-                    "This client was designed to work against the database version %1.\n"
-                    "If you continue some or all functionality may not work properly\n"
-                    "or at all. You may also cause other problems on the database.\n\n"
-                    "Do you want to continue anyway?").arg(_dbVersion),
+        QObject::tr("<p>The version of the database you are connecting to is "
+                    "not the version this client was designed to work against. "
+                    "This client was designed to work against the database "
+                    "version %1. If you continue some or all functionality may "
+                    "not work properly or at all. You may also cause other "
+                    "problems on the database.<p>Do you want to continue "
+                    "anyway?").arg(_dbVersion),
                  QMessageBox::Yes,
                  QMessageBox::No | QMessageBox::Escape | QMessageBox::Default );
     if(result != QMessageBox::Yes)
@@ -441,7 +444,7 @@ int main(int argc, char *argv[])
            QLocale().countryToString(QLocale().country()).toAscii().data());
 
   }
-  else if (langq.lastError().type() != QSqlError::None)
+  else if (langq.lastError().type() != QSqlError::NoError)
   {
     systemError(0, langq.lastError().databaseText(), __FILE__, __LINE__);
   }
@@ -485,7 +488,7 @@ int main(int argc, char *argv[])
     {
       key = keyFile.readLine(1024);
       // strip off any newline characters
-      key = key.stripWhiteSpace();
+      key = key.trimmed();
     }
   }
 
@@ -552,11 +555,12 @@ int main(int argc, char *argv[])
     q.exec();
     if(q.first() && q.value("result").toBool() != true)
       QMessageBox::warning( omfgThis, QObject::tr("Additional Configuration Required"),
-        QObject::tr("Your system is configured to use multiple Currencies, but the\n"
-                    "Currency Gain/Loss Account and/or the G/L Series Discrepancy Account\n"
-                    "does not appear to be configured correctly. You should define these\n"
-                    "Accounts in 'System | Configure Modules | Configure G/L...' before\n"
-                    "posting any transactions in the system.") );
+        QObject::tr("<p>Your system is configured to use multiple Currencies, "
+                    "but the Currency Gain/Loss Account and/or the G/L Series "
+                    "Discrepancy Account does not appear to be configured "
+                    "correctly. You should define these Accounts in 'System | "
+                    "Configure Modules | Configure G/L...' before posting any "
+                    "transactions in the system.") );
   }
 
   app.exec();
@@ -574,4 +578,3 @@ int main(int argc, char *argv[])
 
   return 0;
 }
-

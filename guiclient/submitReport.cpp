@@ -179,7 +179,7 @@ int submitReport::check()
 
 void submitReport::sSubmit()
 {
-  if (_email->text().stripWhiteSpace().length() == 0)
+  if (_email->text().trimmed().length() == 0)
   {
     QMessageBox::critical( this, tr("Cannot Submit Report"),
                            tr("You must indicate an Email address to which the completed Report will be sent.") );

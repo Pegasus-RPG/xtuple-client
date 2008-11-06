@@ -145,7 +145,7 @@ void reserveSalesOrderItem::sIssue()
       return;
     }
   }
-  else if (issue.lastError().type() != QSqlError::None)
+  else if (issue.lastError().type() != QSqlError::NoError)
   {
     systemError(this, issue.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -200,7 +200,7 @@ void reserveSalesOrderItem::populate()
     _allocated->setDouble(itemq.value("totreserved").toDouble());
     _unreserved->setDouble(itemq.value("totunreserved").toDouble());
   }
-  else if (itemq.lastError().type() != QSqlError::None)
+  else if (itemq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, itemq.lastError().databaseText(), __FILE__, __LINE__);
     return;

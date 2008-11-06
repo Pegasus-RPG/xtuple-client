@@ -68,7 +68,7 @@ class locations : public XWidget, public Ui::locations
     Q_OBJECT
 
 public:
-    locations(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    locations(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~locations();
 
     virtual void init();

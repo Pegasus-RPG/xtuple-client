@@ -218,8 +218,8 @@ void miscCheck::sSave()
   check.bindValue(":checkDate",	_date->date());
   check.bindValue(":amount",	_amt);
   check.bindValue(":curr_id",	_amount->id());
-  check.bindValue(":for",		_for->text().stripWhiteSpace());
-  check.bindValue(":notes",		_notes->text().stripWhiteSpace());
+  check.bindValue(":for",		_for->text().trimmed());
+  check.bindValue(":notes",		_notes->toPlainText().trimmed());
 
   if (_expense->isChecked())
     check.bindValue(":expcat_id", _expcat->id());
@@ -252,13 +252,13 @@ void miscCheck::sSave()
                                 .arg(check.value("checkhead_number").toString()) );
 */
     }
-    else if (check.lastError().type() != QSqlError::None)
+    else if (check.lastError().type() != QSqlError::NoError)
     {
       systemError(this, check.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
-  else if (check.lastError().type() != QSqlError::None)
+  else if (check.lastError().type() != QSqlError::NoError)
   {
     systemError(this, check.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -284,7 +284,7 @@ void miscCheck::sPopulateBankInfo(int pBankaccntid)
     {
       _amount->setId(checkNumber.value("bankaccnt_curr_id").toInt());
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, checkNumber.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -418,7 +418,7 @@ void miscCheck::sCreditMemoSelected()
       _aropenamt=q.value("amount").toDouble();
       _amount->setLocalValue(q.value("amount").toDouble());
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;

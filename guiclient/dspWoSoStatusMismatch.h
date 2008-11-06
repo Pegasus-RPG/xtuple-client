@@ -68,7 +68,7 @@ class dspWoSoStatusMismatch : public XWidget, public Ui::dspWoSoStatusMismatch
     Q_OBJECT
 
 public:
-    dspWoSoStatusMismatch(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspWoSoStatusMismatch(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspWoSoStatusMismatch();
 
 public slots:

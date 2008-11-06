@@ -69,7 +69,7 @@ class massExpireComponent : public XWidget, public Ui::massExpireComponent
     Q_OBJECT
 
 public:
-    massExpireComponent(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    massExpireComponent(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~massExpireComponent();
 
     virtual void init();

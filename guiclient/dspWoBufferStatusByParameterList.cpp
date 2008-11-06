@@ -141,14 +141,14 @@ enum SetResponse dspWoBufferStatusByParameterList::set(const ParameterList &pPar
   if (valid)
   {
     _parameter->setType(ParameterGroup::ClassCode);
-    setCaption(tr("W/O Buffer Status by ClassCode"));
+    setWindowTitle(tr("W/O Buffer Status by ClassCode"));
   }
 
   param = pParams.value("plancode", &valid);
   if (valid)
   {
     _parameter->setType(ParameterGroup::PlannerCode);
-    setCaption(tr("W/O Buffer Status by Planner Code"));
+    setWindowTitle(tr("W/O Buffer Status by Planner Code"));
   }
 
   param = pParams.value("plancode_id", &valid);
@@ -159,7 +159,7 @@ enum SetResponse dspWoBufferStatusByParameterList::set(const ParameterList &pPar
   if (valid)
   {
     _parameter->setType(ParameterGroup::ItemGroup);
-    setCaption(tr("W/O Buffer Status by Item Group"));
+    setWindowTitle(tr("W/O Buffer Status by Item Group"));
   }
 
   param = pParams.value("warehous_id", &valid);

@@ -272,8 +272,8 @@ void postProduction::sPost()
         q.prepare("SELECT postProduction(:wo_id, :qty, :backflushMaterials, :backflushOperations, 0, :suUser, :rnUser) AS result;");
         q.bindValue(":wo_id", _wo->id());
         q.bindValue(":qty", _qty->toDouble());
-        q.bindValue(":backflushMaterials", QVariant(_backflush->isChecked(), 0));
-        q.bindValue(":backflushOperations", QVariant(_backflushOperations->isChecked(), 0));
+        q.bindValue(":backflushMaterials", QVariant(_backflush->isChecked()));
+        q.bindValue(":backflushOperations", QVariant(_backflushOperations->isChecked()));
         q.bindValue(":suUser", _setupUser->username());
         q.bindValue(":rnUser", _runUser->username());
         q.exec();
@@ -292,12 +292,12 @@ void postProduction::sPost()
           }
           else
           {
-            if (_productionNotes->text().stripWhiteSpace().length())
+            if (_productionNotes->toPlainText().trimmed().length())
             {
               q.prepare( "UPDATE wo "
                  "SET wo_prodnotes=(wo_prodnotes || :productionNotes || '\n') "
                  "WHERE (wo_id=:wo_id);" );
-              q.bindValue(":productionNotes", _productionNotes->text().stripWhiteSpace());
+              q.bindValue(":productionNotes", _productionNotes->toPlainText().trimmed());
               q.bindValue(":wo_id", _wo->id());
               q.exec();
             }

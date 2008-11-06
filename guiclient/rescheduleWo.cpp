@@ -121,7 +121,7 @@ void rescheduleWo::sReschedule()
     q.bindValue(":wo_id", _wo->id());
     q.bindValue(":startDate", _newStartDate->date());
     q.bindValue(":dueDate", _newDueDate->date());
-    q.bindValue(":rescheduleChildren", QVariant(_changeChildren->isChecked(), 0));
+    q.bindValue(":rescheduleChildren", QVariant(_changeChildren->isChecked()));
     q.exec();
 
     if (_postComment->isChecked())
@@ -129,7 +129,7 @@ void rescheduleWo::sReschedule()
       q.prepare("SELECT postComment(:cmnttype_id, 'W', :wo_id, :comment) AS _result");
       q.bindValue(":cmnttype_id", _cmnttype->id());
       q.bindValue(":wo_id", _wo->id());
-      q.bindValue(":comment", _comment->text());
+      q.bindValue(":comment", _comment->toPlainText());
       q.exec();
     }
 

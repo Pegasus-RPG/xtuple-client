@@ -220,7 +220,7 @@ void postOperations::sHandleWoid(int pWoid)
   w.bindValue(":wo_id", pWoid);
   w.exec();
   _wooper->populate(w);
-  if (w.lastError().type() != QSqlError::None)
+  if (w.lastError().type() != QSqlError::NoError)
   {
     systemError(this, w.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -237,7 +237,7 @@ void postOperations::sHandleWoid(int pWoid)
   if (w.first())
     _inventoryUOM->setText( tr("Post in Inventory UOMs (%1)")
                             .arg(w.value("uom_name").toString()) );
-  else if (w.lastError().type() != QSqlError::None)
+  else if (w.lastError().type() != QSqlError::NoError)
   {
     systemError(this, w.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -327,7 +327,7 @@ void postOperations::sHandleWooperid(int)
         w.bindValue(":wooper_id", _wooper->id());
         w.exec();
         _womatl->populate(w);
-        if (w.lastError().type() != QSqlError::None)
+        if (w.lastError().type() != QSqlError::NoError)
         {
           systemError(this, w.lastError().databaseText(), __FILE__, __LINE__);
           return;
@@ -355,7 +355,7 @@ void postOperations::sHandleWooperid(int)
 
       sHandleQty();
     }
-    else if (w.lastError().type() != QSqlError::None)
+    else if (w.lastError().type() != QSqlError::NoError)
     {
       systemError(this, w.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -582,7 +582,7 @@ void postOperations::sPost()
     loccntrl = q.value("loccntrl").toBool();
     disallowBlankWIP = q.value("itemsite_disallowblankwip").toBool();
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -616,7 +616,7 @@ void postOperations::sPost()
 
     thisLocid = q.value("wooper_wip_location_id").toInt();
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -774,7 +774,7 @@ void postOperations::sPost()
     q.bindValue(":wooper_id", _wooper->id());
     q.bindValue(":wrkcnt_id", _wrkcnt->id());
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -808,10 +808,10 @@ void postOperations::sPost()
 	     "                      :runUser, :runTime, :runComplete, :wotc_id ) AS result;");
   q.bindValue(":wooper_id", _wooper->id());
   q.bindValue(":qty", qty);
-  q.bindValue(":issueComponents", QVariant(_issueComponents->isChecked(), 0));
-  q.bindValue(":receiveInventory", QVariant(_receiveInventory->isChecked(), 0));
-  q.bindValue(":setupComplete", QVariant(_markSuComplete->isChecked(), 0));
-  q.bindValue(":runComplete", QVariant(_markRnComplete->isChecked(), 0));
+  q.bindValue(":issueComponents", QVariant(_issueComponents->isChecked()));
+  q.bindValue(":receiveInventory", QVariant(_receiveInventory->isChecked()));
+  q.bindValue(":setupComplete", QVariant(_markSuComplete->isChecked()));
+  q.bindValue(":runComplete", QVariant(_markRnComplete->isChecked()));
   q.bindValue(":setupTime", suTime);
   q.bindValue(":runTime", rnTime);
   q.bindValue(":setupUser", _setupUser->username());
@@ -866,7 +866,7 @@ void postOperations::sPost()
             newdlg.set(params);
             newdlg.exec();
           }
-          else if (q.lastError().type() != QSqlError::None)
+          else if (q.lastError().type() != QSqlError::NoError)
           {
             systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
             return;

@@ -274,7 +274,7 @@ void openSalesOrders::sDelete()
 		closeInstead = true;
 	      }
 	    } while (ccq.next());
-	    else if (ccq.lastError().type() != QSqlError::None)
+	    else if (ccq.lastError().type() != QSqlError::NoError)
 	    {
 	      systemError(this, ccq.lastError().databaseText(),
 			  __FILE__, __LINE__);
@@ -315,7 +315,7 @@ void openSalesOrders::sDelete()
 		   "  AND  (coitem_cohead_id=:sohead_id));" );
 	q.bindValue(":sohead_id", _so->id());
 	q.exec();
-	if (q.lastError().type() != QSqlError::None)
+	if (q.lastError().type() != QSqlError::NoError)
 	{
 	  systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	  return;
@@ -325,7 +325,7 @@ void openSalesOrders::sDelete()
       omfgThis->sSalesOrdersUpdated(-1);
       omfgThis->sProjectsUpdated(-1);
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -371,7 +371,7 @@ void openSalesOrders::sAddToPackingListBatch()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -475,7 +475,7 @@ void openSalesOrders::sFillList()
   q = mql.toQuery(params);
 
   _so->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

@@ -170,7 +170,7 @@ void reasonCode::sSave()
 
   q.bindValue(":rsncode_id", _rsncodeid);
   q.bindValue(":rsncode_code", _code->text());
-  q.bindValue(":rsncode_descrip", _description->text().stripWhiteSpace());
+  q.bindValue(":rsncode_descrip", _description->text().trimmed());
   q.exec();
 
   done(_rsncodeid);
@@ -178,7 +178,7 @@ void reasonCode::sSave()
 
 void reasonCode::sCheck()
 {
-  _code->setText(_code->text().stripWhiteSpace());
+  _code->setText(_code->text().trimmed());
   if ((_mode == cNew) && (_code->text().length()))
   {
     q.prepare( "SELECT rsncode_id "

@@ -180,7 +180,7 @@ enum SetResponse standardJournalGroup::set(ParameterList &pParams)
 
 void standardJournalGroup::sCheck()
 {
-  _name->setText(_name->text().stripWhiteSpace());
+  _name->setText(_name->text().trimmed());
   if ((_mode == cNew) && (_name->text().length() != 0))
   {
     q.prepare( "SELECT stdjrnlgrp_id "
@@ -216,7 +216,7 @@ void standardJournalGroup::sClose()
 
 void standardJournalGroup::sSave()
 {
-  if (_name->text().stripWhiteSpace().length() == 0)
+  if (_name->text().trimmed().length() == 0)
   {
     QMessageBox::warning( this, tr("Cannot Save Standard Journal Group"),
                           tr("You must enter a Name for this Standard Journal Group before you may save it.") );
@@ -236,7 +236,7 @@ void standardJournalGroup::sSave()
 
   q.bindValue(":stdjrnlgrp_id", _stdjrnlgrpid);
   q.bindValue(":stdjrnlgrp_name", _name->text());
-  q.bindValue(":stdjrnlgrp_descrip", _descrip->text().stripWhiteSpace());
+  q.bindValue(":stdjrnlgrp_descrip", _descrip->text().trimmed());
   q.exec();
 
   done(_stdjrnlgrpid);

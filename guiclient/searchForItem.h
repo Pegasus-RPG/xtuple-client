@@ -67,7 +67,7 @@ class searchForItem : public XWidget, public Ui::searchForItem
     Q_OBJECT
 
 public:
-    searchForItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    searchForItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~searchForItem();
 
 public slots:

@@ -140,7 +140,7 @@ void syncCompanies::sFillList()
          "ORDER BY period_start, period_end;");
   q.exec();
   _period->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -153,7 +153,7 @@ void syncCompanies::sFillList()
 
   q.exec();
   _company->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -169,7 +169,7 @@ void syncCompanies::sSync()
   lbaseq.exec("SELECT * FROM curr_symbol WHERE curr_base;");
   if (lbaseq.first())
     ; // keep the query results for later comparisons
-  else if (lbaseq.lastError().type() != QSqlError::None)
+  else if (lbaseq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, lbaseq.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -257,7 +257,7 @@ void syncCompanies::sSync()
       rmq.exec();
       if (rmq.first())
        ; // good - keep going
-      else if (rmq.lastError().type() != QSqlError::None)
+      else if (rmq.lastError().type() != QSqlError::NoError)
       {
         systemError(this, rmq.lastError().databaseText(), __FILE__, __LINE__);
         errorCount++;
@@ -289,7 +289,7 @@ void syncCompanies::sSync()
           continue;
         }
       }
-      else if (rmq.lastError().type() != QSqlError::None)
+      else if (rmq.lastError().type() != QSqlError::NoError)
       {
         systemError(this, rmq.lastError().databaseText(), __FILE__, __LINE__);
         continue;
@@ -317,7 +317,7 @@ void syncCompanies::sSync()
           continue;
         }
       }
-      else if (rmq.lastError().type() != QSqlError::None)
+      else if (rmq.lastError().type() != QSqlError::NoError)
       {
         systemError(this, rmq.lastError().databaseText(), __FILE__, __LINE__);
         errorCount++;
@@ -338,7 +338,7 @@ void syncCompanies::sSync()
       rmq.exec();
       if (rmq.first())
         ; // nothing to do
-      else if (rmq.lastError().type() != QSqlError::None)
+      else if (rmq.lastError().type() != QSqlError::NoError)
       {
         systemError(this, rmq.lastError().databaseText(), __FILE__, __LINE__);
         errorCount++;
@@ -368,7 +368,7 @@ void syncCompanies::sSync()
         q.exec();
         if (q.first())
           ; // nothing to do
-        else if (q.lastError().type() != QSqlError::None)
+        else if (q.lastError().type() != QSqlError::NoError)
         {
           systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
           errorCount++;
@@ -381,7 +381,7 @@ void syncCompanies::sSync()
           q.bindValue(":prftcntr_number",  rmq.value("accnt_profit"));
           q.bindValue(":prftcntr_descrip", rmq.value("prftcntr_descrip"));
           q.exec();
-          if (q.lastError().type() != QSqlError::None)
+          if (q.lastError().type() != QSqlError::NoError)
           {
             systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
             errorCount++;
@@ -389,7 +389,7 @@ void syncCompanies::sSync()
           }
         }
       } // next profit center
-      if (rmq.lastError().type() != QSqlError::None)
+      if (rmq.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, rmq.lastError().databaseText(), __FILE__, __LINE__);
         errorCount++;
@@ -408,7 +408,7 @@ void syncCompanies::sSync()
         q.exec();
         if (q.first())
           ; // nothing to do
-        else if (q.lastError().type() != QSqlError::None)
+        else if (q.lastError().type() != QSqlError::NoError)
         {
           systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
           errorCount++;
@@ -421,7 +421,7 @@ void syncCompanies::sSync()
           q.bindValue(":subaccnt_number",  rmq.value("accnt_sub"));
           q.bindValue(":subaccnt_descrip", rmq.value("subaccnt_descrip"));
           q.exec();
-          if (q.lastError().type() != QSqlError::None)
+          if (q.lastError().type() != QSqlError::NoError)
           {
             systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
             errorCount++;
@@ -429,7 +429,7 @@ void syncCompanies::sSync()
           }
         }
       } // next profit center
-      if (rmq.lastError().type() != QSqlError::None)
+      if (rmq.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, rmq.lastError().databaseText(), __FILE__, __LINE__);
         errorCount++;
@@ -462,7 +462,7 @@ void syncCompanies::sSync()
         rperiod.exec();
         if (rperiod.first())
           ; // keep going
-        else if (rperiod.lastError().type() != QSqlError::None)
+        else if (rperiod.lastError().type() != QSqlError::NoError)
         {
           rollback.exec();
           systemError(this, rperiod.lastError().databaseText(),
@@ -522,7 +522,7 @@ void syncCompanies::sSync()
                               "WHERE (accnt_id=:accnt_id);");
             laccntups.bindValue(":accnt_id",	laccnt.value("accnt_id"));
           }
-          else if (laccnt.lastError().type() != QSqlError::None)
+          else if (laccnt.lastError().type() != QSqlError::NoError)
           {
             rollback.exec();
             systemError(this, laccnt.lastError().databaseText(),
@@ -548,7 +548,7 @@ void syncCompanies::sSync()
             q.exec();
             if (q.first())
               laccntups.bindValue(":accnt_id",	q.value("accnt_id"));
-            else if (q.lastError().type() != QSqlError::None)
+            else if (q.lastError().type() != QSqlError::NoError)
             {
               systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
               errorCount++;
@@ -570,7 +570,7 @@ void syncCompanies::sSync()
           laccntups.bindValue(":accnt_curr_id",	  raccnt.value("accnt_curr_id"));
 
           laccntups.exec();
-          if (laccntups.lastError().type() != QSqlError::None)
+          if (laccntups.lastError().type() != QSqlError::NoError)
           {
             rollback.exec();
             systemError(this, laccntups.lastError().databaseText(),
@@ -590,7 +590,7 @@ void syncCompanies::sSync()
           rtb.exec();
           if (rtb.first())
             ; // keep going
-          else if (rtb.lastError().type() != QSqlError::None)
+          else if (rtb.lastError().type() != QSqlError::NoError)
           {
             rollback.exec();
             systemError(this, rtb.lastError().databaseText(),
@@ -629,7 +629,7 @@ void syncCompanies::sSync()
                            "WHERE (trialbal_id=:trialbal_id);");
             ltbups.bindValue(":trialbal_id",	 ltb.value("trialbal_id"));
           }
-          else if (ltb.lastError().type() != QSqlError::None)
+          else if (ltb.lastError().type() != QSqlError::NoError)
           {
             rollback.exec();
             systemError(this, ltb.lastError().databaseText(),
@@ -653,7 +653,7 @@ void syncCompanies::sSync()
             q.exec();
             if (q.first())
               ltbups.bindValue(":trialbal_id",	q.value("trialbal_id"));
-            else if (q.lastError().type() != QSqlError::None)
+            else if (q.lastError().type() != QSqlError::NoError)
             {
               systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
               errorCount++;
@@ -672,7 +672,7 @@ void syncCompanies::sSync()
           ltbups.bindValue(":trialbal_yearend",	 rtb.value("trialbal_yearend"));
 
           ltbups.exec();
-          if (ltbups.lastError().type() != QSqlError::None)
+          if (ltbups.lastError().type() != QSqlError::NoError)
           {
             rollback.exec();
             systemError(this, ltbups.lastError().databaseText(),
@@ -681,7 +681,7 @@ void syncCompanies::sSync()
             break;
           }
         } // for each remote g/l account
-        if (raccnt.lastError().type() != QSqlError::None)
+        if (raccnt.lastError().type() != QSqlError::NoError)
         {
           rollback.exec();
           systemError(this, raccnt.lastError().databaseText(),

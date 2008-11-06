@@ -272,7 +272,7 @@ void printChecks::sPrint()
     }
     singleCheckPrerendered.append(doc);
   }
-  if (checks.lastError().type() != QSqlError::None)
+  if (checks.lastError().type() != QSqlError::NoError)
   {
     systemError(this, checks.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -323,7 +323,7 @@ void printChecks::sPrint()
 	    return;
 	  }
 	}
-	else if (postCheck.lastError().type() != QSqlError::None)
+	else if (postCheck.lastError().type() != QSqlError::NoError)
 	{
 	  systemError(this, postCheck.lastError().databaseText(), __FILE__, __LINE__);
 	  return;
@@ -391,7 +391,7 @@ void printChecks::sHandleBankAccount(int pBankaccntid)
                            q.value("somerecip_ach_enabled").toBool() &&
                            q.value("numofchecks").toInt() > 0);
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

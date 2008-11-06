@@ -156,7 +156,7 @@ void searchForContact::sView()
 
 void searchForContact::sFillList()
 {
-  if (_search->text().stripWhiteSpace().length() == 0)
+  if (_search->text().trimmed().length() == 0)
   {
     _cntct->clear();
     return;
@@ -209,7 +209,7 @@ void searchForContact::sFillList()
 
   MetaSQLQuery mql(sql);
   ParameterList params;
-  params.append("searchString", _search->text().stripWhiteSpace().upper());
+  params.append("searchString", _search->text().trimmed().toUpper());
 
   if (! _showInactive->isChecked())
     params.append("activeOnly");
@@ -242,7 +242,7 @@ void searchForContact::sFillList()
     params.append("searchCountry");
 
   XSqlQuery fillq = mql.toQuery(params);
-  if (fillq.lastError().type() != QSqlError::None)
+  if (fillq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, fillq.lastError().databaseText(), __FILE__, __LINE__);
     return;

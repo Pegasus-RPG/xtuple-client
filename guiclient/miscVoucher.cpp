@@ -194,7 +194,7 @@ void miscVoucher::sSave()
     return;
   }
 
-  if (_invoiceNum->text().stripWhiteSpace().length() == 0)
+  if (_invoiceNum->text().trimmed().length() == 0)
   {
     QMessageBox::critical( this, tr("Cannot Save Voucher"),
                            tr("You must enter a Vendor Invoice Number before you may save this Voucher.") );
@@ -207,7 +207,7 @@ void miscVoucher::sSave()
              "WHERE ( (vohead_invcnumber=:vohead_invcnumber)"
              " AND (vohead_vend_id=:vend_id)"
              " AND (vohead_id<>:vohead_id) );" );
-  q.bindValue(":vohead_invcnumber", _invoiceNum->text().stripWhiteSpace());
+  q.bindValue(":vohead_invcnumber", _invoiceNum->text().trimmed());
   q.bindValue(":vend_id", _vendor->id());
   q.bindValue(":vohead_id", _voheadid);
   q.exec();
@@ -253,10 +253,10 @@ void miscVoucher::sSave()
   q.bindValue(":vohead_distdate", _distributionDate->date());
   q.bindValue(":vohead_docdate", _invoiceDate->date());
   q.bindValue(":vohead_duedate", _dueDate->date());
-  q.bindValue(":vohead_invcnumber", _invoiceNum->text().stripWhiteSpace());
-  q.bindValue(":vohead_reference", _reference->text().stripWhiteSpace());
+  q.bindValue(":vohead_invcnumber", _invoiceNum->text().trimmed());
+  q.bindValue(":vohead_reference", _reference->text().trimmed());
   q.bindValue(":vohead_amount", _amountToDistribute->localValue());
-  q.bindValue(":vohead_1099", QVariant(_flagFor1099->isChecked(), 0));
+  q.bindValue(":vohead_1099", QVariant(_flagFor1099->isChecked()));
   q.bindValue(":vohead_curr_id", _amountToDistribute->id());
   q.exec();
 

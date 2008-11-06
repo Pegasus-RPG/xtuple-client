@@ -219,7 +219,7 @@ void returnAuthItemLotSerial::sSave()
   q.bindValue(":ls_id", _lotSerial->id());
   q.bindValue(":qty", _qtyAuth->toDouble());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     done(-1);
@@ -282,7 +282,7 @@ void returnAuthItemLotSerial::populate()
     _warehouseid = q.value("itemsite_warehous_id").toInt();
     populateItemsite();
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     done(-1);
@@ -305,7 +305,7 @@ void returnAuthItemLotSerial::populateItemsite()
       _qtyAuth->setDouble(1);
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     done(-1);
@@ -328,7 +328,7 @@ void returnAuthItemLotSerial::populateLotSerial()
     _qtyRegistered->setDouble(q.value("qtyregistered").toDouble());
     _qtyReceived->setDouble(0);
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     done(-1);

@@ -150,7 +150,7 @@ enum SetResponse sale::set(ParameterList &pParams)
 
 void sale::sSave()
 {
-  _name->setText(_name->text().stripWhiteSpace());
+  _name->setText(_name->text().trimmed());
 
   if (_name->text().length() == 0)
   {

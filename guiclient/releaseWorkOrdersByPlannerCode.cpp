@@ -153,7 +153,7 @@ void releaseWorkOrdersByPlannerCode::sRelease()
     MetaSQLQuery wom(sql);
     q = wom.toQuery(wop);
 
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -249,7 +249,7 @@ void releaseWorkOrdersByPlannerCode::sRelease()
 	    return;
 	  }
 	}
-	else if (query.lastError().type() != QSqlError::None)
+	else if (query.lastError().type() != QSqlError::NoError)
 	{
 	  systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
 	  orReport::endMultiPrint(&printer);
@@ -274,7 +274,7 @@ void releaseWorkOrdersByPlannerCode::sRelease()
 
   MetaSQLQuery mql(sql);
   q = mql.toQuery(params);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

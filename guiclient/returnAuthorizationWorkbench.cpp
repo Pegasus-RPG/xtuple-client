@@ -367,7 +367,7 @@ void returnAuthorizationWorkbench::sProcess()
 	  // requery regardless 'cause the new credit memo means nothing's "due"
 	  sFillListDue();
 	}
-	else if (ccq.lastError().type() != QSqlError::None)
+	else if (ccq.lastError().type() != QSqlError::NoError)
 	{
 	  systemError(this, ccq.lastError().databaseText(), __FILE__, __LINE__);
 	  return;
@@ -384,13 +384,13 @@ void returnAuthorizationWorkbench::sProcess()
       else
 	sFillListDue();
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -604,7 +604,7 @@ void returnAuthorizationWorkbench::sFillListReview()
 	ra.exec();
 	if (ra.first())
 		_ra->populate(ra);
-	else if (ra.lastError().type() != QSqlError::None)
+	else if (ra.lastError().type() != QSqlError::NoError)
     {
       systemError(this, ra.lastError().databaseText(), __FILE__, __LINE__);
 	  _ra->clear();
@@ -692,7 +692,7 @@ void returnAuthorizationWorkbench::sFillListDue()
     XSqlQuery radue = mql.toQuery(params);
     if (radue.first())
       _radue->populate(radue,TRUE);
-    else if (radue.lastError().type() != QSqlError::None)
+    else if (radue.lastError().type() != QSqlError::NoError)
     {
       systemError(this, radue.lastError().databaseText(), __FILE__, __LINE__);
       return;

@@ -170,7 +170,7 @@ void salesAccounts::sDelete()
              "WHERE (salesaccnt_id=:salesaccnt_id);" );
   q.bindValue(":salesaccnt_id", _salesaccnt->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -202,7 +202,7 @@ void salesAccounts::sFillList()
 	 "FROM salesaccnt "
 	 "ORDER BY warehouscode, custtypecode, prodcatcode;" );
   _salesaccnt->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

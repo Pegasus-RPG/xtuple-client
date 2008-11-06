@@ -132,7 +132,7 @@ enum SetResponse materialReceiptTrans::set(const ParameterList &pParams)
     {
       _mode = cNew;
 
-      setCaption(tr("Enter Material Receipt"));
+      setWindowTitle(tr("Enter Material Receipt"));
       _usernameLit->clear();
       _transDate->setEnabled(_privileges->check("AlterTransactionDates"));
       _transDate->setDate(omfgThis->dbDate());
@@ -146,7 +146,7 @@ enum SetResponse materialReceiptTrans::set(const ParameterList &pParams)
     {
       _mode = cView;
 
-      setCaption(tr("Material Receipt"));
+      setWindowTitle(tr("Material Receipt"));
       _transDate->setEnabled(FALSE);
       _item->setReadOnly(TRUE);
       _warehouse->setEnabled(FALSE);
@@ -177,7 +177,7 @@ enum SetResponse materialReceiptTrans::set(const ParameterList &pParams)
         _documentNum->setText(popq.value("invhist_ordnumber"));
         _notes->setText(popq.value("invhist_comments").toString());
       }
-      else if (popq.lastError().type() != QSqlError::None)
+      else if (popq.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, popq.lastError().databaseText(), __FILE__, __LINE__);
 	return UndefinedError;
@@ -246,7 +246,7 @@ void materialReceiptTrans::sPost()
         q.bindValue(":qty", _qty->toDouble());
         q.bindValue(":docNumber", _documentNum->text());
         q.bindValue(":womatl_id", womatlid);
-        q.bindValue(":comments", _notes->text());
+        q.bindValue(":comments", _notes->toPlainText());
         q.bindValue(":item_id", _item->id());
         q.bindValue(":warehous_id", _warehouse->id());
         q.exec();
@@ -261,7 +261,7 @@ void materialReceiptTrans::sPost()
             return;
           }
         }
-        else if (q.lastError().type() != QSqlError::None)
+        else if (q.lastError().type() != QSqlError::NoError)
         {
           systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
           return;
@@ -313,7 +313,7 @@ void materialReceiptTrans::sPost()
                " AND (itemsite_warehous_id=:warehous_id) );" );
     q.bindValue(":qty", _qty->toDouble());
     q.bindValue(":docNumber", _documentNum->text());
-    q.bindValue(":comments", _notes->text());
+    q.bindValue(":comments", _notes->toPlainText());
     q.bindValue(":item_id", _item->id());
     q.bindValue(":warehous_id", _warehouse->id());
     q.bindValue(":date",        _transDate->date());
@@ -332,7 +332,7 @@ void materialReceiptTrans::sPost()
                     __FILE__, __LINE__);
         return;
       }
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
         systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
         return;
@@ -365,7 +365,7 @@ void materialReceiptTrans::sPost()
         _item->setFocus();
       }
     } 
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       rollback.exec();
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -405,7 +405,7 @@ void materialReceiptTrans::sPopulateQty()
     else if (_qty->toDouble() != 0)
       _afterQty->setDouble(_cachedQOH + _qty->toDouble());
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

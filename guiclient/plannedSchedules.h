@@ -72,7 +72,7 @@ class plannedSchedules : public XWidget, public Ui::plannedSchedules
   Q_OBJECT
 
   public:
-    plannedSchedules(QWidget * = 0, const char * = 0, Qt::WFlags = Qt::WType_TopLevel);
+    plannedSchedules(QWidget * = 0, const char * = 0, Qt::WFlags = Qt::Window);
     ~plannedSchedules();
 
   public slots:

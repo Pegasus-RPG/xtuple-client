@@ -142,7 +142,7 @@ void reverseGLSeries::sPost()
     return;
   }
 
-  if(_metrics->boolean("MandatoryGLEntryNotes") && _notes->text().stripWhiteSpace().isEmpty())
+  if(_metrics->boolean("MandatoryGLEntryNotes") && _notes->toPlainText().trimmed().isEmpty())
   {
     QMessageBox::information( this, tr("Cannot Post G/L Series"),
                                     tr("You must enter some Notes to describe this transaction.") );
@@ -154,7 +154,7 @@ void reverseGLSeries::sPost()
   q.prepare("SELECT reverseGLSeries(:glseries, :distdate, :notes) AS result;");
   q.bindValue(":glseries", _glseries);
   q.bindValue(":distdate", _distDate->date());
-  q.bindValue(":notes", _notes->text());
+  q.bindValue(":notes", _notes->toPlainText());
   q.exec();
   if(q.first())
   {

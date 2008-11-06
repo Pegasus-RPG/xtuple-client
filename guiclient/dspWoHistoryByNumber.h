@@ -69,7 +69,7 @@ class dspWoHistoryByNumber : public XWidget, public Ui::dspWoHistoryByNumber
     Q_OBJECT
 
 public:
-    dspWoHistoryByNumber(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspWoHistoryByNumber(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspWoHistoryByNumber();
 
     virtual bool checkParameters();

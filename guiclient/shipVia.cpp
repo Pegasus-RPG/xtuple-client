@@ -147,8 +147,8 @@ enum SetResponse shipVia::set(ParameterList &pParams)
 
 void shipVia::sCheck()
 {
-  _code->setText(_code->text().stripWhiteSpace());
-  if ((_mode == cNew) && (_code->text().stripWhiteSpace().length()))
+  _code->setText(_code->text().trimmed());
+  if ((_mode == cNew) && (_code->text().trimmed().length()))
   {
     q.prepare( "SELECT shipvia_id "
                "FROM shipvia "
@@ -210,8 +210,8 @@ void shipVia::sSave()
   }
 
   q.bindValue(":shipvia_id", _shipviaid);
-  q.bindValue(":shipvia_code", _code->text().stripWhiteSpace());
-  q.bindValue(":shipvia_descrip", _description->text().stripWhiteSpace());
+  q.bindValue(":shipvia_code", _code->text().trimmed());
+  q.bindValue(":shipvia_descrip", _description->text().trimmed());
   q.exec();
 
   done(_shipviaid);

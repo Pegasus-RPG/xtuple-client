@@ -68,7 +68,7 @@ class shifts : public XWidget, public Ui::shifts
     Q_OBJECT
 
 public:
-    shifts(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    shifts(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~shifts();
 
     virtual void init();

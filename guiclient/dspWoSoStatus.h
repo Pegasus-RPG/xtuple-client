@@ -68,7 +68,7 @@ class dspWoSoStatus : public XWidget, public Ui::dspWoSoStatus
     Q_OBJECT
 
 public:
-    dspWoSoStatus(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspWoSoStatus(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspWoSoStatus();
 
 public slots:

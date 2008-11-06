@@ -123,7 +123,7 @@ void splitReceipt::populate()
     _freight->setId(q.value("curr_id").toInt());
     _freight->setLocalValue(q.value("recv_freight").toDouble());
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

@@ -69,7 +69,7 @@ class syncCompanies : public XWidget, public Ui::syncCompanies
     Q_OBJECT
 
   public:
-    syncCompanies(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    syncCompanies(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~syncCompanies();
 
     static bool userHasPriv(const int = cView);

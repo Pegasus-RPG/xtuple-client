@@ -116,7 +116,7 @@ opportunity::opportunity(QWidget* parent, const char* name, bool modal, Qt::WFla
     _myUsrId = q.value("usr_id").toInt();
     _owner->setId(_myUsrId);
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     close();
@@ -230,7 +230,7 @@ void opportunity::sCancel()
 	return;
       }
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -331,9 +331,9 @@ bool opportunity::save(bool partial)
     q.bindValue(":ophead_target_date", _targetDate->date());
   if(_actualDate->isValid())
     q.bindValue(":ophead_actual_date", _actualDate->date());
-  q.bindValue(":ophead_notes", _notes->text());
+  q.bindValue(":ophead_notes", _notes->toPlainText());
 
-  if(!q.exec() && q.lastError().type() != QSqlError::None)
+  if(!q.exec() && q.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -341,7 +341,7 @@ bool opportunity::save(bool partial)
   }
 
   q.exec("COMMIT;");
-  if(q.lastError().type() != QSqlError::None)
+  if(q.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -353,7 +353,7 @@ bool opportunity::save(bool partial)
     q.exec("SELECT CURRVAL('ophead_ophead_id_seq') AS result;");
     if (q.first())
       _opheadid = q.value("result").toInt();
-    else if(q.lastError().type() != QSqlError::None)
+    else if(q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return false;
@@ -477,7 +477,7 @@ void opportunity::sDeleteTodoItem()
     else
       sFillTodoList();
     }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -505,7 +505,7 @@ void opportunity::sFillTodoList()
 
   q.bindValue(":ophead_id", _opheadid);
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

@@ -69,7 +69,7 @@ class massReplaceComponent : public XWidget, public Ui::massReplaceComponent
     Q_OBJECT
 
 public:
-    massReplaceComponent(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    massReplaceComponent(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~massReplaceComponent();
 
 public slots:

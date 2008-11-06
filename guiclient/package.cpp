@@ -75,7 +75,7 @@ bool package::userHasPriv(const int pMode)
     su.exec("SELECT rolsuper FROM pg_roles WHERE (rolname=CURRENT_USER);");
     if (su.first())
       canmaintain = su.value("rolsuper").toBool();
-    else if (su.lastError().type() != QSqlError::None)
+    else if (su.lastError().type() != QSqlError::NoError)
     {
       systemError(0, su.lastError().databaseText(), __FILE__, __LINE__);
       return false;
@@ -191,7 +191,7 @@ enum SetResponse package::set(const ParameterList &pParams)
 
 void package::sCheck()
 {
-  _name->setText(_name->text().stripWhiteSpace());
+  _name->setText(_name->text().trimmed());
   if ( (_mode == cNew) && (_name->text().length()) )
   {
     q.prepare( "SELECT pkghead_id "
@@ -216,7 +216,7 @@ void package::sSave()
     q.exec("SELECT NEXTVAL('pkghead_pkghead_id_seq') AS _pkghead_id");
     if (q.first())
       _pkgheadid = q.value("_pkghead_id").toInt();
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -261,7 +261,7 @@ void package::sSave()
   q.bindValue(":pkghead_developer",_developer->text());
   q.bindValue(":pkghead_notes",    _notes->text());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -290,7 +290,7 @@ void package::populate()
     _enabled->setChecked(q.value("enabled").toBool());
     if (DEBUG)    qDebug("package::populate() select pkghead complete");
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -331,7 +331,7 @@ void package::populate()
   if (DEBUG)    qDebug("package::populate() select pkgitem exec'ed");
   _rec->populate(q);
   if (DEBUG)    qDebug("package::populate() populate pkgitem done");
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -347,7 +347,7 @@ void package::populate()
   if (DEBUG)    qDebug("package::populate() select pkgdep exec'ed");
   _dep->populate(q);
   if (DEBUG)    qDebug("package::populate() populate pkgdep done");
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -363,7 +363,7 @@ void package::populate()
   if (DEBUG)    qDebug("package::populate() select pkgdep exec'ed");
   _req->populate(q);
   if (DEBUG)    qDebug("package::populate() populate pkgdep done");
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

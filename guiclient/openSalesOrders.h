@@ -69,7 +69,7 @@ class openSalesOrders : public XWidget, public Ui::openSalesOrders
     Q_OBJECT
 
 public:
-    openSalesOrders(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    openSalesOrders(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~openSalesOrders();
     virtual void setParams(ParameterList &);
     

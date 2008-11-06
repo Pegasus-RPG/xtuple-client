@@ -67,7 +67,7 @@ class standardOperations : public XWidget, public Ui::standardOperations
     Q_OBJECT
 
 public:
-    standardOperations(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    standardOperations(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~standardOperations();
 
     virtual void init();

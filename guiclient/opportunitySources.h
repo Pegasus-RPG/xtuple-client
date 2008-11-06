@@ -66,7 +66,7 @@ class opportunitySources : public XWidget, public Ui::opportunitySources
     Q_OBJECT
 
 public:
-    opportunitySources(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    opportunitySources(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~opportunitySources();
 
 public slots:

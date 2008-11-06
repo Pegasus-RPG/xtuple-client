@@ -201,7 +201,7 @@ void openReturnAuthorizations::sDelete()
 	q.prepare("DELETE FROM rahead WHERE (rahead_id=:rahead_id);");
     q.bindValue(":rahead_id", _ra->id());
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     }

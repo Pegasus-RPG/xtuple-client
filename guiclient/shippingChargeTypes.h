@@ -66,7 +66,7 @@ class shippingChargeTypes : public XWidget, public Ui::shippingChargeTypes
     Q_OBJECT
 
 public:
-    shippingChargeTypes(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    shippingChargeTypes(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~shippingChargeTypes();
 
     virtual void init();

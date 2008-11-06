@@ -347,7 +347,7 @@ void dspWoScheduleByWorkOrder::sDeleteWO()
 
     omfgThis->sWorkOrdersUpdated(_wo->id(), TRUE);
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -631,7 +631,7 @@ void dspWoScheduleByWorkOrder::sFillList()
   q = mql.toQuery(params);
   q.exec();
   _wo->populate(q, true);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

@@ -227,7 +227,7 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
         _raheadid = q.value("rahead_id").toInt();
         _comments->setId(_raheadid);
       }
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
         systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
         return UndefinedError;
@@ -245,7 +245,7 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
       if (!_authNumber->text().isEmpty())
         q.bindValue(":rahead_number", _authNumber->text());
       q.exec();
-      if (q.lastError().type() != QSqlError::None)
+      if (q.lastError().type() != QSqlError::NoError)
       {
         systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
         return UndefinedError;
@@ -253,28 +253,28 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
 
       metric = _metrics->value("DefaultRaDisposition");
       if (metric == "C")
-        _disposition->setCurrentItem(0);
+        _disposition->setCurrentIndex(0);
       else if (metric == "R")
-        _disposition->setCurrentItem(1);
+        _disposition->setCurrentIndex(1);
       else if (metric == "P")
-        _disposition->setCurrentItem(2);
+        _disposition->setCurrentIndex(2);
       else if (metric == "V")
-        _disposition->setCurrentItem(3);
+        _disposition->setCurrentIndex(3);
       else if (metric == "M")
-        _disposition->setCurrentItem(4);
+        _disposition->setCurrentIndex(4);
 
       if (_metrics->value("DefaultRaTiming") == "R")
-        _timing->setCurrentItem(1);
+        _timing->setCurrentIndex(1);
 
       metric = _metrics->value("DefaultRaCreditMethod");
       if (metric == "N")
-        _creditBy->setCurrentItem(0);
+        _creditBy->setCurrentIndex(0);
       else if (metric == "M")
-        _creditBy->setCurrentItem(1);
+        _creditBy->setCurrentIndex(1);
       else if (metric == "K")
-        _creditBy->setCurrentItem(2);
+        _creditBy->setCurrentIndex(2);
       else if (metric == "C")
-        _creditBy->setCurrentItem(3);
+        _creditBy->setCurrentIndex(3);
 
       connect(_cust, SIGNAL(newId(int)), this, SLOT(sPopulateCustomerInfo()));
       connect(_cust, SIGNAL(valid(bool)), _new, SLOT(setEnabled(bool)));
@@ -383,7 +383,7 @@ void returnAuthorization::setNumber()
       if (_metrics->value("RANumberGeneration") == "A")
         _authNumber->setEnabled(FALSE);
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -476,12 +476,12 @@ bool returnAuthorization::sSave(bool partial)
     q.bindValue(":rahead_taxauth_id", _taxauth->id());
   if (_rsnCode->id() > 0)
     q.bindValue(":rahead_rsncode_id", _rsnCode->id());
-  q.bindValue(":rahead_disposition", QString(dispositionTypes[_disposition->currentItem()]));
-  if (_timing->currentItem() == 0)
+  q.bindValue(":rahead_disposition", QString(dispositionTypes[_disposition->currentIndex()]));
+  if (_timing->currentIndex() == 0)
     q.bindValue(":rahead_timing", "I");
   else
     q.bindValue(":rahead_timing", "R");
-  q.bindValue(":rahead_creditmethod", QString(creditMethods[_creditBy->currentItem()]));
+  q.bindValue(":rahead_creditmethod", QString(creditMethods[_creditBy->currentIndex()]));
   if (_origso->isValid())
     q.bindValue(":rahead_orig_cohead_id", _origso->id());
   if (_newso->isValid())
@@ -492,7 +492,7 @@ bool returnAuthorization::sSave(bool partial)
     q.bindValue(":rahead_prj_id", _project->id());
   if (_cust->isValid())
     q.bindValue(":rahead_cust_id", _cust->id());
-  q.bindValue(":rahead_billtoname", _billToName->text().stripWhiteSpace());
+  q.bindValue(":rahead_billtoname", _billToName->text().trimmed());
   q.bindValue(":rahead_billtoaddress1", _billToAddr->line1());
   q.bindValue(":rahead_billtoaddress2", _billToAddr->line2());
   q.bindValue(":rahead_billtoaddress3", _billToAddr->line3());
@@ -502,7 +502,7 @@ bool returnAuthorization::sSave(bool partial)
   q.bindValue(":rahead_billtocountry",  _billToAddr->country());
   if (_shiptoid > 0)
     q.bindValue(":rahead_shipto_id",    _shiptoid);
-  q.bindValue(":rahead_shipto_name", _shipToName->text().stripWhiteSpace());
+  q.bindValue(":rahead_shipto_name", _shipToName->text().trimmed());
   q.bindValue(":rahead_shipto_address1", _shipToAddr->line1());
   q.bindValue(":rahead_shipto_address2", _shipToAddr->line2());
   q.bindValue(":rahead_shipto_address3", _shipToAddr->line3());
@@ -510,8 +510,8 @@ bool returnAuthorization::sSave(bool partial)
   q.bindValue(":rahead_shipto_state",    _shipToAddr->state());
   q.bindValue(":rahead_shipto_zipcode",  _shipToAddr->postalCode());
   q.bindValue(":rahead_shipto_country",  _shipToAddr->country());
-  q.bindValue(":rahead_custponumber", _customerPO->text().stripWhiteSpace());
-  q.bindValue(":rahead_notes", _notes->text());
+  q.bindValue(":rahead_custponumber", _customerPO->text().trimmed());
+  q.bindValue(":rahead_notes", _notes->toPlainText());
   q.bindValue(":rahead_misc", _miscCharge->localValue());
   if (_miscChargeAccount->id() != -1)
     q.bindValue(":rahead_misc_accnt_id", _miscChargeAccount->id());
@@ -522,7 +522,7 @@ bool returnAuthorization::sSave(bool partial)
   q.bindValue(":rahead_cohead_warehous_id", _shipWhs->id());
 
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return false;
@@ -706,7 +706,7 @@ void returnAuthorization::sOrigSoChanged()
         _ignoreShiptoSignals = FALSE;
         sSave(true);
       }
-      else if (sohead.lastError().type() != QSqlError::None)
+      else if (sohead.lastError().type() != QSqlError::NoError)
       {
         systemError(this, sohead.lastError().databaseText(), __FILE__, __LINE__);
         _origso->setId(-1);
@@ -729,7 +729,7 @@ void returnAuthorization::sParseShipToNumber()
     populateShipto(q.value("shipto_id").toInt());
   else
   {
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     populateShipto(-1);
   }
@@ -759,7 +759,7 @@ void returnAuthorization::populateShipto(int pShiptoid)
       _commission->setDouble(query.value("shipto_commission").toDouble() * 100);
       _ignoreShiptoSignals = FALSE;
     }
-    else if (query.lastError().type() != QSqlError::None)
+    else if (query.lastError().type() != QSqlError::NoError)
     {
       systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -830,7 +830,7 @@ void returnAuthorization::sPopulateCustomerInfo()
         _custEmail = query.value("cust_soemaildelivery").toBool();
         populateShipto(query.value("shiptoid").toInt());
       }
-      else if (query.lastError().type() != QSqlError::None)
+      else if (query.lastError().type() != QSqlError::NoError)
       {
         systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
         return;
@@ -840,7 +840,7 @@ void returnAuthorization::sPopulateCustomerInfo()
     {
       _origso->setCustId(-1);
       _origso->setType((cSoReleased));
-      _salesRep->setCurrentItem(-1);
+      _salesRep->setCurrentIndex(-1);
       _taxauth->setId(-1);
       _custtaxauthid = -1;
       _billToName->setEnabled(TRUE);
@@ -881,7 +881,7 @@ void returnAuthorization::sCheckAuthorizationNumber()
 
       _mode = cEdit;
     }
-    else if (query.lastError().type() != QSqlError::None)
+    else if (query.lastError().type() != QSqlError::NoError)
     {
       systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -1002,7 +1002,7 @@ void returnAuthorization::sDelete()
                  "WHERE (raitem_id=:raitem_id);" );
       q.bindValue(":raitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
       q.exec();
-      if (q.lastError().type() != QSqlError::None)
+      if (q.lastError().type() != QSqlError::NoError)
       {
         systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
         return;
@@ -1186,18 +1186,18 @@ void returnAuthorization::populate()
       _rsnCode->setId(rahead.value("rahead_rsncode_id").toInt());
 
     if (rahead.value("rahead_timing").toString() == "I")
-      _timing->setCurrentItem(0);
+      _timing->setCurrentIndex(0);
     else
-      _timing->setCurrentItem(1);
+      _timing->setCurrentIndex(1);
 
     if (rahead.value("rahead_creditmethod").toString() == "N")
-      _creditBy->setCurrentItem(0);
+      _creditBy->setCurrentIndex(0);
     else if (rahead.value("rahead_creditmethod").toString() == "M")
-      _creditBy->setCurrentItem(1);
+      _creditBy->setCurrentIndex(1);
     else if (rahead.value("rahead_creditmethod").toString() == "K")
-      _creditBy->setCurrentItem(2);
+      _creditBy->setCurrentIndex(2);
     else if (rahead.value("rahead_creditmethod").toString() == "C")
-      _creditBy->setCurrentItem(3);
+      _creditBy->setCurrentIndex(3);
 
     _cust->setId(rahead.value("rahead_cust_id").toInt());
     _custType->setText(rahead.value("custtype_code").toString());
@@ -1265,19 +1265,19 @@ void returnAuthorization::populate()
     if (rahead.value("rahead_disposition").toString() == "C")
       sDispositionChanged();
     else if (rahead.value("rahead_disposition").toString() == "R")
-      _disposition->setCurrentItem(1);
+      _disposition->setCurrentIndex(1);
     else if (rahead.value("rahead_disposition").toString() == "P")
-      _disposition->setCurrentItem(2);
+      _disposition->setCurrentIndex(2);
     else if (rahead.value("rahead_disposition").toString() == "V")
-      _disposition->setCurrentItem(3);
+      _disposition->setCurrentIndex(3);
     else if (rahead.value("rahead_disposition").toString() == "M")
-      _disposition->setCurrentItem(4);
+      _disposition->setCurrentIndex(4);
 
     recalculateTax();
 
     sFillList();
   }
-  else if (rahead.lastError().type() != QSqlError::None)
+  else if (rahead.lastError().type() != QSqlError::NoError)
   {
     systemError(this, rahead.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -1295,7 +1295,7 @@ void returnAuthorization::closeEvent(QCloseEvent *pEvent)
                "WHERE (rahead_id=:rahead_id);" );
     q.bindValue(":rahead_id", _raheadid);
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -1312,7 +1312,7 @@ void returnAuthorization::closeEvent(QCloseEvent *pEvent)
       q.prepare("SELECT releaseRaNumber(:number) AS result;");
       q.bindValue(":number", _authNumber->text());
       q.exec();
-      if (q.lastError().type() != QSqlError::None)
+      if (q.lastError().type() != QSqlError::NoError)
       {
         systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
         return;
@@ -1342,7 +1342,7 @@ void returnAuthorization::sTaxDetail()
   taxq.bindValue(":docdate",   _authDate->date());
   taxq.bindValue(":rahead_id", _raheadid);
   taxq.exec();
-  if (taxq.lastError().type() != QSqlError::None)
+  if (taxq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -1432,7 +1432,7 @@ void returnAuthorization::sTaxAuthChanged()
   taxauthq.exec();
   if (taxauthq.first())
     _taxcurrid = taxauthq.value("taxauth_curr_id").toInt();
-  else if (taxauthq.lastError().type() != QSqlError::None)
+  else if (taxauthq.lastError().type() != QSqlError::NoError)
   {
     _taxauth->setId(_taxauthidCache);
     systemError(this, taxauthq.lastError().databaseText(), __FILE__, __LINE__);
@@ -1454,7 +1454,7 @@ void returnAuthorization::sTaxAuthChanged()
       return;
     }
   }
-  else if (taxauthq.lastError().type() != QSqlError::None)
+  else if (taxauthq.lastError().type() != QSqlError::NoError)
   {
     _taxauth->setId(_taxauthidCache);
     systemError(this, taxauthq.lastError().databaseText(), __FILE__, __LINE__);
@@ -1469,7 +1469,7 @@ void returnAuthorization::sTaxAuthChanged()
   {
     _taxCache.setFreightId(taxauthq.value("result").toInt());
   }
-  else if (taxauthq.lastError().type() != QSqlError::None)
+  else if (taxauthq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, taxauthq.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -1530,49 +1530,50 @@ void returnAuthorization::sDispositionChanged()
               (_disposition->currentIndex() == 1 && _creditBy->currentIndex() == 0));
   
   bool enableReceipt = _privileges->check("EnterReceipts") &&
-                      (_disposition->currentItem() != 0);
+                      (_disposition->currentIndex() != 0);
 
   _receiveAll->setEnabled(enableReceipt);
   _postReceipts->setEnabled(enableReceipt);
 
-  if (_disposition->currentItem() == 0)
+  if (_disposition->currentIndex() == 0)
   {
-    _timing->setCurrentItem(0);
+    _timing->setCurrentIndex(0);
     _timing->setEnabled(FALSE);
-    if (_creditBy->currentItem() == 0)
-      _creditBy->setCurrentItem(1);
+    if (_creditBy->currentIndex() == 0)
+      _creditBy->setCurrentIndex(1);
   }
   else
     _timing->setEnabled(TRUE);
 
-  _refund->setEnabled(_creditBy->currentItem() == 3);
+  _refund->setEnabled(_creditBy->currentIndex() == 3);
 }
 
 void returnAuthorization::sCreditByChanged()
 {
-    if (_creditBy->currentItem() == 0 && _total->localValue() > 0)
-    {
-      QMessageBox::information(this, tr("Credit By 'None' not allowed"),
-                            tr("This Return Authorization has authorized credit amounts. "
-                "You may not set the Credit By to 'None' unless all credit amounts are zero."));
-      _creditBy->setCurrentItem(1);
-    }
-    else if (_creditBy->currentItem() == 0  || _total->localValue() == 0)
-    {
-      _currency->setEnabled(false);
-      _miscChargeDescription->setEnabled(false);
-      _miscChargeAccount->setEnabled(false);
-      _miscCharge->setEnabled(false);
-      _freight->setEnabled(false);
-    }
-    else
-    {
-      _currency->setEnabled(true);
-      _miscChargeDescription->setEnabled(true);
-      _miscChargeAccount->setEnabled(true);
-      _miscCharge->setEnabled(true);
-      _freight->setEnabled(true);
-    }
+  if (_creditBy->currentIndex() == 0 && _total->localValue() > 0)
+  {
+    QMessageBox::information(this, tr("Credit By 'None' not allowed"),
+                          tr("<p>This Return Authorization has authorized "
+                             "credit amounts. You may not set the Credit By "
+                             "to 'None' unless all credit amounts are zero."));
+    _creditBy->setCurrentIndex(1);
+  }
+  else if (_creditBy->currentIndex() == 0  || _total->localValue() == 0)
+  {
+    _currency->setEnabled(false);
+    _miscChargeDescription->setEnabled(false);
+    _miscChargeAccount->setEnabled(false);
+    _miscCharge->setEnabled(false);
+    _freight->setEnabled(false);
+  }
+  else
+  {
+    _currency->setEnabled(true);
+    _miscChargeDescription->setEnabled(true);
+    _miscChargeAccount->setEnabled(true);
+    _miscCharge->setEnabled(true);
+    _freight->setEnabled(true);
+  }
 }
 
 void returnAuthorization::sAuthorizeLine()
@@ -1663,7 +1664,7 @@ void returnAuthorization::sEnterReceipt()
     params.append("recv_id", q.value("recv_id"));
     params.append("mode", "edit");
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -1706,7 +1707,7 @@ void returnAuthorization::sReceiveAll()
     }
     omfgThis->sPurchaseOrderReceiptsUpdated();
   }
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -1756,7 +1757,7 @@ void returnAuthorization::sAction()
   else
     q.bindValue(":status",QString("C"));
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -1776,8 +1777,8 @@ void returnAuthorization::sRefund()
   if (! sSave(true))
     return;
 
-  bool _post = _disposition->currentItem() == 0 && _timing->currentItem() == 0 &&
-                _creditBy->currentItem() == 3;
+  bool _post = _disposition->currentIndex() == 0 && _timing->currentItem() == 0 &&
+                _creditBy->currentIndex() == 3;
 
   q.prepare("SELECT createRaCreditMemo(:rahead_id,:post) AS result;");
   q.bindValue(":rahead_id", _raheadid);
@@ -1832,7 +1833,7 @@ void returnAuthorization::sRefund()
                                cardproc->errorMsg());
       }
     }
-    else if (ccq.lastError().type() != QSqlError::None)
+    else if (ccq.lastError().type() != QSqlError::NoError)
     {
       systemError(this, ccq.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -1845,7 +1846,7 @@ void returnAuthorization::sRefund()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -2001,7 +2002,7 @@ void returnAuthorization::sCheckNumber()
     _authNumber->setEnabled(FALSE);
     _cust->setReadOnly(TRUE);
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

@@ -68,7 +68,7 @@ class reasonCodes : public XWidget, public Ui::reasonCodes
     Q_OBJECT
 
 public:
-    reasonCodes(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    reasonCodes(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~reasonCodes();
 
     virtual void init();

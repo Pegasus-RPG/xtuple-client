@@ -136,7 +136,7 @@ enum SetResponse opportunityStage::set(const ParameterList &pParams)
 
 void opportunityStage::sCheck()
 {
-  _name->setText(_name->text().stripWhiteSpace());
+  _name->setText(_name->text().trimmed());
   if ((_mode == cNew) && (_name->text().length() != 0))
   {
     q.prepare( "SELECT opstage_id "
@@ -157,7 +157,7 @@ void opportunityStage::sCheck()
 
 void opportunityStage::sSave()
 {
-  _name->setText(_name->text().stripWhiteSpace().upper());
+  _name->setText(_name->text().trimmed().toUpper());
   if (_name->text().length() == 0)
   {
     QMessageBox::information( this, tr("Invalid Name"),
@@ -192,7 +192,7 @@ void opportunityStage::sSave()
 
   q.bindValue(":opstage_id", _opstageid);
   q.bindValue(":opstage_name", _name->text());
-  q.bindValue(":opstage_descrip", _description->text().stripWhiteSpace());
+  q.bindValue(":opstage_descrip", _description->text().trimmed());
   q.exec();
 
   done(_opstageid);

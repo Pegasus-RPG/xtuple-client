@@ -178,7 +178,7 @@ void printInvoicesByShipvia::sPrint()
           local.exec();
         }
 	// not else because local is re-prepared inside the block
-	if (local.lastError().type() != QSqlError::None)
+	if (local.lastError().type() != QSqlError::NoError)
 	{
 	  systemError(this, local.lastError().databaseText(), __FILE__, __LINE__);
 	  return;
@@ -291,7 +291,7 @@ void printInvoicesByShipvia::sPrint()
             local.prepare("SELECT postInvoice(:invchead_id) AS result;");
             local.bindValue(":invchead_id", invcheadId);
             local.exec();
-	    if (local.lastError().type() != QSqlError::None)
+	    if (local.lastError().type() != QSqlError::NoError)
 	    {
 	      systemError(this, local.lastError().databaseText(), __FILE__, __LINE__);
 	    }
@@ -339,7 +339,7 @@ void printInvoicesByShipvia::sPrint()
             newdlg.exec();
           }
         }
-        else if (query.lastError().type() != QSqlError::None)
+        else if (query.lastError().type() != QSqlError::NoError)
         {
 	      systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
 	      return;
@@ -363,7 +363,7 @@ void printInvoicesByShipvia::sPrint()
                    "   AND   (invchead_shipvia=:shipvia) ); ");
         q.bindValue(":shipvia", _shipvia->currentText());
         q.exec();
-	if (q.lastError().type() != QSqlError::None)
+	if (q.lastError().type() != QSqlError::NoError)
 	{
 	  systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	  return;
@@ -373,7 +373,7 @@ void printInvoicesByShipvia::sPrint()
       }
     }
   }
-  else if (invoices.lastError().type() != QSqlError::None)
+  else if (invoices.lastError().type() != QSqlError::NoError)
   {
     systemError(this, invoices.lastError().databaseText(), __FILE__, __LINE__);
     return;

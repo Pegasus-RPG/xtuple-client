@@ -131,7 +131,7 @@ void printChecksReview::sComplete()
 	  if (result < 0)
 	    systemError(this, storedProcErrorLookup("markCheckPrinted", result), __FILE__, __LINE__);
 	}
-	else if (checkPrint.lastError().type() != QSqlError::None)
+	else if (checkPrint.lastError().type() != QSqlError::NoError)
 	  systemError(this, checkPrint.lastError().databaseText(), __FILE__, __LINE__);
         break;
       case ActionVoided:
@@ -143,7 +143,7 @@ void printChecksReview::sComplete()
 	  if (result < 0)
 	    systemError(this, storedProcErrorLookup("voidCheck", result), __FILE__, __LINE__);
 	}
-	else if (checkVoid.lastError().type() != QSqlError::None)
+	else if (checkVoid.lastError().type() != QSqlError::NoError)
 	  systemError(this, checkVoid.lastError().databaseText(), __FILE__, __LINE__);
         break;
       case ActionReplaced:
@@ -155,7 +155,7 @@ void printChecksReview::sComplete()
 	  if (result < 0)
 	    systemError(this, storedProcErrorLookup("voidCheck", result), __FILE__, __LINE__);
 	}
-	else if (checkVoid.lastError().type() != QSqlError::None)
+	else if (checkVoid.lastError().type() != QSqlError::NoError)
 	  systemError(this, checkVoid.lastError().databaseText(), __FILE__, __LINE__);
         checkReplace.bindValue(":check_id", cursor->id());
         checkReplace.exec();
@@ -165,7 +165,7 @@ void printChecksReview::sComplete()
 	  if (result < 0)
 	    systemError(this, storedProcErrorLookup("replaceVoidedCheck", result), __FILE__, __LINE__);
 	}
-	else if (checkReplace.lastError().type() != QSqlError::None)
+	else if (checkReplace.lastError().type() != QSqlError::NoError)
 	  systemError(this, checkReplace.lastError().databaseText(), __FILE__, __LINE__);
         break;
     }

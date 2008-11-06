@@ -224,7 +224,7 @@ void maintainShipping::sReturnAllOrderStock()
     q.exec("COMMIT;"); 
     sFillList();
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -246,7 +246,7 @@ void maintainShipping::sViewOrder()
     else if (q.value("shiphead_order_type").toString() == "TO")
       transferOrder::viewTransferOrder(q.value("shiphead_order_id").toInt());
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -304,7 +304,7 @@ void maintainShipping::sReturnAllLineStock()
     q.exec("COMMIT;"); 
     sFillList();
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -352,7 +352,7 @@ void maintainShipping::sReturnAllStock()
     q.exec("COMMIT;"); 
     sFillList();
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -378,7 +378,7 @@ void maintainShipping::sFillList()
   q = mql.toQuery(params);
   q.exec();
   _ship->populate(q, true);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

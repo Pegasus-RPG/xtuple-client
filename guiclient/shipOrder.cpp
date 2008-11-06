@@ -152,7 +152,7 @@ enum SetResponse shipOrder::set(const ParameterList &pParams)
 	_select->setEnabled(false);
       }
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
@@ -182,7 +182,7 @@ void shipOrder::sShip()
   shipq.bindValue(":shiphead_tracknum",	_tracknum->currentText());
   shipq.bindValue(":shiphead_id",		_shipment->id());
   shipq.exec();
-  if (shipq.lastError().type() != QSqlError::None)
+  if (shipq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, shipq.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -230,7 +230,7 @@ void shipOrder::sShip()
 	if (transis <= 0 || destis < 0)
 	  return;
       }
-      if (shipq.lastError().type() != QSqlError::None)
+      if (shipq.lastError().type() != QSqlError::NoError)
       {
         systemError(this, shipq.lastError().databaseText(), __FILE__, __LINE__);
 	return;
@@ -246,7 +246,7 @@ void shipOrder::sShip()
       return;
     }
   }
-  else if (shipq.lastError().type() != QSqlError::None)
+  else if (shipq.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
     QString errorStr = shipq.lastError().databaseText();
@@ -259,7 +259,7 @@ void shipOrder::sShip()
   }
 
   shipq.exec("COMMIT;");
-  if (shipq.lastError().type() != QSqlError::None)
+  if (shipq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, shipq.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -324,7 +324,7 @@ void shipOrder::sShip()
 	  omfgThis->sInvoicesUpdated(result, TRUE);
 	  omfgThis->sSalesOrdersUpdated(_order->id());
 	}
-	else if (shipq.lastError().type() != QSqlError::None)
+	else if (shipq.lastError().type() != QSqlError::NoError)
 	{
 	  systemError(this, shipq.lastError().databaseText() +
 		      tr("<p>Although Sales Order %1 was successfully shipped "
@@ -339,7 +339,7 @@ void shipOrder::sShip()
 	omfgThis->sBillingSelectionUpdated(_order->id(), TRUE);
       }
     }
-    else if (shipq.lastError().type() != QSqlError::None)
+    else if (shipq.lastError().type() != QSqlError::NoError)
     {
       systemError(this, shipq.lastError().databaseText() +
 		  tr("<p>Although Sales Order %1 was successfully shipped, "
@@ -382,7 +382,7 @@ void shipOrder::sShip()
       }
       omfgThis->sPurchaseOrderReceiptsUpdated();
     }
-    if (shipq.lastError().type() != QSqlError::None)
+    if (shipq.lastError().type() != QSqlError::NoError)
     {
       rollback.exec();
       systemError(this, recverr + "<br>" + shipq.lastError().databaseText(),
@@ -390,7 +390,7 @@ void shipOrder::sShip()
     }
 
     shipq.exec("COMMIT;");
-    if (shipq.lastError().type() != QSqlError::None)
+    if (shipq.lastError().type() != QSqlError::NoError)
     {
       systemError(this,
 		  recverr + "<br>" + shipq.lastError().databaseText(),
@@ -441,7 +441,7 @@ void shipOrder::sShip()
   if (! _shipment->number().isEmpty())
     shipq.bindValue(":shiphead_number", _shipment->number());
   shipq.exec();
-  if (shipq.lastError().type() != QSqlError::None)
+  if (shipq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, shipq.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -542,7 +542,7 @@ void shipOrder::sHandleSo()
         _shipment->setEnabled(true);
       }
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -563,7 +563,7 @@ void shipOrder::sHandleSo()
           _shipment->setEnabled(true);
         }
       }
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
         systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
         return;
@@ -580,7 +580,7 @@ void shipOrder::sHandleSo()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -614,7 +614,7 @@ void shipOrder::sHandleTo()
     _shipToName->setText(q.value("tohead_destname").toString());
     _shipToAddr1->setText(q.value("tohead_destaddress1").toString());
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -646,7 +646,7 @@ void shipOrder::sHandleTo()
       _shipment->setEnabled(true);
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -667,7 +667,7 @@ void shipOrder::sHandleTo()
         _shipment->setEnabled(true);
       }
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -750,7 +750,7 @@ void shipOrder::sFillList()
 		      shipq.value("effective").toDate());
       }
     }
-    else if (shipq.lastError().type() != QSqlError::None)
+    else if (shipq.lastError().type() != QSqlError::NoError)
     {
       systemError(this, shipq.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -814,7 +814,7 @@ void shipOrder::sFillList()
     MetaSQLQuery itemm(items);
     shipq = itemm.toQuery(itemp);
     _coitem->populate(shipq);
-    if (shipq.lastError().type() != QSqlError::None)
+    if (shipq.lastError().type() != QSqlError::NoError)
     {
       systemError(this, shipq.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -843,7 +843,7 @@ void shipOrder::sFillList()
     shipq = valm.toQuery(itemp);	// shared parameters
     if(shipq.first())
       _shipValue->setDouble(shipq.value("value").toDouble());
-    else if (shipq.lastError().type() != QSqlError::None)
+    else if (shipq.lastError().type() != QSqlError::NoError)
     {
       systemError(this, shipq.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -902,7 +902,7 @@ void shipOrder::sFillFreight()
       _freight->setLocalValue(shipdataQ.value("shipdatasum_base_freight").toDouble());
       _shipVia->setText(shipdataQ.value("shipper_data").toString());
     }
-    else if (shipdataQ.lastError().type() != QSqlError::None)
+    else if (shipdataQ.lastError().type() != QSqlError::NoError)
     {
       systemError(this, shipdataQ.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -937,7 +937,7 @@ void shipOrder::sFillTracknum()
       shipdataQ.bindValue(":shiphead_number", _shipment->number());
     shipdataQ.exec();
     _tracknum->populate(shipdataQ);
-    if (shipdataQ.lastError().type() != QSqlError::None)
+    if (shipdataQ.lastError().type() != QSqlError::NoError)
     {
       systemError(this, shipdataQ.lastError().databaseText(), __FILE__, __LINE__);
       return;

@@ -66,7 +66,7 @@ class opportunityStages : public XWidget, public Ui::opportunityStages
     Q_OBJECT
 
 public:
-    opportunityStages(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    opportunityStages(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~opportunityStages();
 
 public slots:

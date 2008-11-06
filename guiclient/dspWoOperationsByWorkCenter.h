@@ -69,7 +69,7 @@ class dspWoOperationsByWorkCenter : public XWidget, public Ui::dspWoOperationsBy
     Q_OBJECT
 
 public:
-    dspWoOperationsByWorkCenter(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspWoOperationsByWorkCenter(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspWoOperationsByWorkCenter();
 
 public slots:

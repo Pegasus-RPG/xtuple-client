@@ -147,7 +147,7 @@ enum SetResponse productCategory::set(ParameterList &pParams)
 
 void productCategory::sCheck()
 {
-  _category->setText(_category->text().stripWhiteSpace());
+  _category->setText(_category->text().trimmed());
   if ( (_mode == cNew) && (_category->text().length()) )
   {
     q.prepare( "SELECT prodcat_id "
@@ -168,7 +168,7 @@ void productCategory::sCheck()
 
 void productCategory::sSave()
 {
-  if (_category->text().stripWhiteSpace().isEmpty())
+  if (_category->text().trimmed().isEmpty())
   {
     QMessageBox::critical(this, tr("Missing Category"),
 			  tr("You must name this Category before saving it."));
@@ -198,7 +198,7 @@ void productCategory::sSave()
                "SET prodcat_code=:prodcat_code, prodcat_descrip=:prodcat_descrip "
                "WHERE (prodcat_id=:prodcat_id);" );
     q.bindValue(":prodcat_id", _prodcatid);
-    q.bindValue(":prodcat_code", _category->text().upper());
+    q.bindValue(":prodcat_code", _category->text().toUpper());
     q.bindValue(":prodcat_descrip", _description->text());
     q.exec();
   }
@@ -207,7 +207,7 @@ void productCategory::sSave()
     q.prepare( "SELECT prodcat_id "
                "FROM prodcat "
                "WHERE (prodcat_code=:prodcat_code);");
-    q.bindValue(":prodcat_code", _category->text().stripWhiteSpace());
+    q.bindValue(":prodcat_code", _category->text().trimmed());
     q.exec();
     if (q.first())
     {
@@ -234,7 +234,7 @@ void productCategory::sSave()
                "VALUES "
                "( :prodcat_id, :prodcat_code, :prodcat_descrip );" );
     q.bindValue(":prodcat_id", _prodcatid);
-    q.bindValue(":prodcat_code", _category->text().upper());
+    q.bindValue(":prodcat_code", _category->text().toUpper());
     q.bindValue(":prodcat_descrip", _description->text());
     q.exec();
   }

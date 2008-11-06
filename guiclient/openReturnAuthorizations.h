@@ -69,7 +69,7 @@ class openReturnAuthorizations : public XWidget, public Ui::openReturnAuthorizat
     Q_OBJECT
 
 public:
-    openReturnAuthorizations(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    openReturnAuthorizations(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~openReturnAuthorizations();
     
     virtual bool checkSitePrivs(int ordid);

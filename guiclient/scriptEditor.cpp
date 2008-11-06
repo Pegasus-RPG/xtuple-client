@@ -162,7 +162,7 @@ void scriptEditor::sSave()
   }
 
   QScriptEngine engine;
-  if (!engine.canEvaluate(_source->text()) || _source->text().length() == 0)
+  if (!engine.canEvaluate(_source->toPlainText()) || _source->text().length() == 0)
   {
     if (QMessageBox::question(this, windowTitle(),
                           tr("<p>The script appears incomplete are you sure you want to save?"),
@@ -176,7 +176,7 @@ void scriptEditor::sSave()
     q.exec("SELECT NEXTVAL('script_script_id_seq') AS _script_id");
     if (q.first())
       _scriptid = q.value("_script_id").toInt();
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -198,12 +198,12 @@ void scriptEditor::sSave()
   q.bindValue(":script_id", _scriptid);
   q.bindValue(":script_name", _name->text());
   q.bindValue(":script_order", _order->value());
-  q.bindValue(":script_enabled", QVariant(_enabled->isChecked(), 0));
-  q.bindValue(":script_source", _source->text());
+  q.bindValue(":script_enabled", QVariant(_enabled->isChecked()));
+  q.bindValue(":script_source", _source->toPlainText());
   q.bindValue(":script_notes", _notes->text());
 
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -233,7 +233,7 @@ void scriptEditor::populate()
     if (q.value("inPackage").toBool())
       setMode(cView);
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -276,7 +276,7 @@ void scriptEditor::sExport()
 
   QTextStream ts(&file);
   ts.setCodec("UTF-8");
-  ts << _source->text();
+  ts << _source->toPlainText();
   file.close();
 }
 

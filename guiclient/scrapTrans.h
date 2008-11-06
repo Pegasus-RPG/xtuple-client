@@ -68,7 +68,7 @@ class scrapTrans : public XWidget, public Ui::scrapTrans
     Q_OBJECT
 
 public:
-    scrapTrans(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    scrapTrans(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~scrapTrans();
 
 public slots:

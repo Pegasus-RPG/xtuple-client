@@ -182,7 +182,7 @@ void plannedSchedule::sSave()
     return;
   }
 
-  if (_schedtype->currentItem() == -1)
+  if (_schedtype->currentIndex() == -1)
   {
     QMessageBox::critical( this, tr("Cannot Save Schedule"),
                            tr( "You must select a schedule type for this Schedule before creating it.\n" ) );
@@ -213,11 +213,11 @@ void plannedSchedule::sSave()
   q.bindValue(":warehous_id", _warehouse->id());
   q.bindValue(":startDate", _dates->startDate());
   q.bindValue(":endDate", _dates->endDate());
-  if (_schedtype->currentItem() == 0)
+  if (_schedtype->currentIndex() == 0)
     q.bindValue(":schedtype", "F");
-  else if (_schedtype->currentItem() == 1)
+  else if (_schedtype->currentIndex() == 1)
     q.bindValue(":schedtype", "N");
-  else if (_schedtype->currentItem() == 2)
+  else if (_schedtype->currentIndex() == 2)
     q.bindValue(":schedtype", "P");
 
   q.exec();
@@ -365,13 +365,13 @@ void plannedSchedule::populate()
     else
       _status->setText(q.value("pschhead_status").toString());
     if (q.value("pschhead_type").toString() == "F")
-      _schedtype->setCurrentItem(0);
+      _schedtype->setCurrentIndex(0);
     else if (q.value("pschhead_type").toString() == "N")
-      _schedtype->setCurrentItem(1);
+      _schedtype->setCurrentIndex(1);
     else if (q.value("pschhead_type").toString() == "P")
-      _schedtype->setCurrentItem(2);
+      _schedtype->setCurrentIndex(2);
     else
-      _schedtype->setCurrentItem(-1);
+      _schedtype->setCurrentIndex(-1);
 
 
     _number->setEnabled(false);

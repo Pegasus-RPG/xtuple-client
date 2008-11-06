@@ -498,7 +498,7 @@ void purchaseOrderItem::populate()
 
         if(_vendorItemNumber->text().isEmpty())
           _vendorItemNumber->setText(q.value("itemsrc_vend_item_number").toString());
-        if(_vendorDescrip->text().isEmpty())
+        if(_vendorDescrip->toPlainText().isEmpty())
           _vendorDescrip->setText(q.value("itemsrc_vend_item_descrip").toString());
         _vendorUOM->setText(q.value("itemsrc_vend_uom").toString());
         _minOrderQty->setDouble(q.value("itemsrc_minordqty").toDouble());
@@ -696,14 +696,14 @@ void purchaseOrderItem::sSave()
   if (_itemsrcid != -1)
     q.bindValue(":poitem_itemsrc_id", _itemsrcid);
   q.bindValue(":poitem_vend_item_number", _vendorItemNumber->text());
-  q.bindValue(":poitem_vend_item_descrip", _vendorDescrip->text());
+  q.bindValue(":poitem_vend_item_descrip", _vendorDescrip->toPlainText());
   q.bindValue(":poitem_vend_uom", _vendorUOM->text());
   q.bindValue(":poitem_invvenduomratio", _invVendorUOMRatio->toDouble());
   q.bindValue(":poitem_qty_ordered", _ordered->toDouble());
   q.bindValue(":poitem_unitprice", _unitPrice->localValue());
   q.bindValue(":poitem_freight", _freight->localValue());
   q.bindValue(":poitem_duedate", _dueDate->date());
-  q.bindValue(":poitem_comments", _notes->text());
+  q.bindValue(":poitem_comments", _notes->toPlainText());
   if (_project->isValid())
     q.bindValue(":poitem_prj_id", _project->id());
   if (_metrics->boolean("RevControl"))

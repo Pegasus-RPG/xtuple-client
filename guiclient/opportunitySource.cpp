@@ -136,7 +136,7 @@ enum SetResponse opportunitySource::set(const ParameterList &pParams)
 
 void opportunitySource::sCheck()
 {
-  _name->setText(_name->text().stripWhiteSpace());
+  _name->setText(_name->text().trimmed());
   if ((_mode == cNew) && (_name->text().length() != 0))
   {
     q.prepare( "SELECT opsource_id "
@@ -157,7 +157,7 @@ void opportunitySource::sCheck()
 
 void opportunitySource::sSave()
 {
-  _name->setText(_name->text().stripWhiteSpace().upper());
+  _name->setText(_name->text().trimmed().toUpper());
   if (_name->text().length() == 0)
   {
     QMessageBox::information( this, tr("Invalid Name"),
@@ -192,7 +192,7 @@ void opportunitySource::sSave()
 
   q.bindValue(":opsource_id", _opsourceid);
   q.bindValue(":opsource_name", _name->text());
-  q.bindValue(":opsource_descrip", _description->text().stripWhiteSpace());
+  q.bindValue(":opsource_descrip", _description->text().trimmed());
   q.exec();
 
   done(_opsourceid);

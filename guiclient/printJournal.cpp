@@ -109,7 +109,7 @@ enum SetResponse printJournal::set(const ParameterList &pParams)
     switch ((_type = param.toInt()))
     {
       case SalesJournal:
-        setCaption(tr("Print Sales Journal"));
+        setWindowTitle(tr("Print Sales Journal"));
         _journalNumber->populate( "SELECT jrnluse_number, (jrnluse_use || TEXT(jrnluse_number) || ':' || formatDate(jrnluse_date)) "
                                   "FROM jrnluse "
                                   "WHERE (jrnluse_use='AR-IN') "
@@ -117,7 +117,7 @@ enum SetResponse printJournal::set(const ParameterList &pParams)
         break;
 
       case CreditMemoJournal:
-        setCaption(tr("Print Credit Memo Journal"));
+        setWindowTitle(tr("Print Credit Memo Journal"));
         _journalNumber->populate( "SELECT jrnluse_number, (jrnluse_use || TEXT(jrnluse_number) || ':' || formatDate(jrnluse_date)) "
                                   "FROM jrnluse "
                                   "WHERE (jrnluse_use='AR-CM') "
@@ -125,7 +125,7 @@ enum SetResponse printJournal::set(const ParameterList &pParams)
           break;
 
       case PayablesJournal:
-        setCaption(tr("Print Payables Journal"));
+        setWindowTitle(tr("Print Payables Journal"));
         _journalNumber->populate( "SELECT jrnluse_number, (jrnluse_use || TEXT(jrnluse_number) || ':' || formatDate(jrnluse_date)) "
                                   "FROM jrnluse "
                                   "WHERE (jrnluse_use='AP-VO') "
@@ -133,7 +133,7 @@ enum SetResponse printJournal::set(const ParameterList &pParams)
           break;
 
       case CheckJournal:
-        setCaption(tr("Print Check Journal"));
+        setWindowTitle(tr("Print Check Journal"));
         _journalNumber->populate( "SELECT jrnluse_number, (jrnluse_use || TEXT(jrnluse_number) || ':' || formatDate(jrnluse_date)) "
                                   "FROM jrnluse "
                                   "WHERE (jrnluse_use='AP-CK') "

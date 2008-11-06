@@ -137,7 +137,7 @@ void lotSerial::populate()
     _notes->setText(q.value("ls_notes").toString());
     _changed=false;
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -150,10 +150,10 @@ void lotSerial::sSave()
   q.prepare("UPDATE ls SET"
             " ls_notes=:notes "
             "WHERE (ls_id=:ls_id);");
-  q.bindValue(":notes",_notes->text());
+  q.bindValue(":notes",_notes->toPlainText());
   q.bindValue(":ls_id", _lotSerial->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -200,7 +200,7 @@ void lotSerial::sDeleteCharass()
              "WHERE (charass_id=:charass_id);" );
   q.bindValue(":charass_id", _charass->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -245,7 +245,7 @@ void lotSerial::sDeleteReg()
              "AND (charass_target_id=:lsreg_id))" );
   q.bindValue(":lsreg_id", _reg->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -267,7 +267,7 @@ void lotSerial::sFillList()
   q.exec();
   _charass->clear();
   _charass->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -284,7 +284,7 @@ void lotSerial::sFillList()
   q.exec();
   _reg->clear();
   _reg->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

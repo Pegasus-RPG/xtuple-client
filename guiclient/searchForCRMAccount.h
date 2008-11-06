@@ -71,7 +71,7 @@ class searchForCRMAccount : public XWidget, public Ui::searchForCRMAccount
     Q_OBJECT
 
 public:
-    searchForCRMAccount(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    searchForCRMAccount(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~searchForCRMAccount();
 
 public slots:

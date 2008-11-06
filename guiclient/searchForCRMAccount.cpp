@@ -321,7 +321,7 @@ void searchForCRMAccount::sView()
 
 void searchForCRMAccount::sFillList()
 {
-  if (_search->text().stripWhiteSpace().length() == 0)
+  if (_search->text().trimmed().length() == 0)
   {
     _crmacct->clear();
     return;
@@ -439,7 +439,7 @@ void searchForCRMAccount::sFillList()
 
   MetaSQLQuery mql(sql);
   ParameterList params;
-  params.append("searchString", _search->text().stripWhiteSpace().upper());
+  params.append("searchString", _search->text().trimmed().toUpper());
 
   switch (_subtype)
   {
@@ -506,7 +506,7 @@ void searchForCRMAccount::sFillList()
     params.append("combo_id", _comboCombo->id());
 
   XSqlQuery fillq = mql.toQuery(params);
-  if (fillq.lastError().type() != QSqlError::None)
+  if (fillq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, fillq.lastError().databaseText(), __FILE__, __LINE__);
     return;

@@ -69,7 +69,7 @@ class selectOrderForBilling : public XWidget, public Ui::selectOrderForBilling
     Q_OBJECT
 
 public:
-    selectOrderForBilling(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    selectOrderForBilling(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~selectOrderForBilling();
 
 public slots:

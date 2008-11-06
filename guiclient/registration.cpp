@@ -359,7 +359,7 @@ void registration::sRegister(bool /*pretry*/)
     whatother.append(_whatotherOther->text());
   request += "&" + encodedPair("other_products", whatother.join(", "));
 
-  request += "&" + encodedPair("other_info",    _otherInfo->text());
+  request += "&" + encodedPair("other_info",    _otherInfo->toPlainText());
   request += "&" + encodedPair("website",       _companyUrl->text());
   request += "&" + encodedPair("manpro",(_enduser->isChecked() ? "Yes" : "No"));
   request += "&" + encodedPair("solpro",(_var->isChecked() ? "Yes" : "No"));

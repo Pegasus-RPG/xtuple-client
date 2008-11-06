@@ -169,15 +169,15 @@ void subAccntType::sSave()
     q.bindValue(":subaccnttype_id", _subaccnttypeid);
     q.bindValue(":subaccnttype_code", _code->text());
     q.bindValue(":subaccnttype_descrip", _description->text());
-    if (_type->currentItem() == 0)
+    if (_type->currentIndex() == 0)
       q.bindValue(":subaccnttype_accnt_type", "A");
-    else if (_type->currentItem() == 1)
+    else if (_type->currentIndex() == 1)
       q.bindValue(":subaccnttype_accnt_type", "L");
-    else if (_type->currentItem() == 2)
+    else if (_type->currentIndex() == 2)
       q.bindValue(":subaccnttype_accnt_type", "E");
-    else if (_type->currentItem() == 3)
+    else if (_type->currentIndex() == 3)
       q.bindValue(":subaccnttype_accnt_type", "R");
-    else if (_type->currentItem() == 4)
+    else if (_type->currentIndex() == 4)
       q.bindValue(":subaccnttype_accnt_type", "Q");
     q.exec();
   }
@@ -186,7 +186,7 @@ void subAccntType::sSave()
     q.prepare( "SELECT subaccnttype_id "
                "FROM subaccnttype "
                "WHERE (subaccnttype_code=:subaccnttype_code);");
-    q.bindValue(":subaccnttype_code", _code->text().stripWhiteSpace());
+    q.bindValue(":subaccnttype_code", _code->text().trimmed());
     q.exec();
     if (q.first())
     {
@@ -216,15 +216,15 @@ void subAccntType::sSave()
     q.bindValue(":subaccnttype_id", _subaccnttypeid);
     q.bindValue(":subaccnttype_code", _code->text());
     q.bindValue(":subaccnttype_descrip", _description->text());
-    if (_type->currentItem() == 0)
+    if (_type->currentIndex() == 0)
       q.bindValue(":subaccnttype_accnt_type", "A");
-    else if (_type->currentItem() == 1)
+    else if (_type->currentIndex() == 1)
       q.bindValue(":subaccnttype_accnt_type", "L");
-    else if (_type->currentItem() == 2)
+    else if (_type->currentIndex() == 2)
       q.bindValue(":subaccnttype_accnt_type", "E");
-    else if (_type->currentItem() == 3)
+    else if (_type->currentIndex() == 3)
       q.bindValue(":subaccnttype_accnt_type", "R");
-    else if (_type->currentItem() == 4)
+    else if (_type->currentIndex() == 4)
       q.bindValue(":subaccnttype_accnt_type", "Q");
     q.exec();
   }
@@ -234,7 +234,7 @@ void subAccntType::sSave()
 
 void subAccntType::sCheck()
 {
-  _code->setText(_code->text().stripWhiteSpace());
+  _code->setText(_code->text().trimmed());
   if ( (_mode == cNew) && (_code->text().length()) )
   {
     q.prepare( "SELECT subaccnttype_id "
@@ -266,15 +266,15 @@ void subAccntType::populate()
     _description->setText(q.value("subaccnttype_descrip").toString());
     
     if (q.value("subaccnttype_accnt_type").toString() == "A")
-      _type->setCurrentItem(0);
+      _type->setCurrentIndex(0);
     else if (q.value("subaccnttype_accnt_type").toString() == "L")
-      _type->setCurrentItem(1);
+      _type->setCurrentIndex(1);
     else if (q.value("subaccnttype_accnt_type").toString() == "E")
-      _type->setCurrentItem(2);
+      _type->setCurrentIndex(2);
     else if (q.value("subaccnttype_accnt_type").toString() == "R")
-      _type->setCurrentItem(3);
+      _type->setCurrentIndex(3);
     else if (q.value("subaccnttype_accnt_type").toString() == "Q")
-      _type->setCurrentItem(4);
+      _type->setCurrentIndex(4);
   }
 }
 

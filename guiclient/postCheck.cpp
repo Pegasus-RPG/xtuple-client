@@ -134,7 +134,7 @@ void postCheck::sPost()
       _close->setText(tr("&Close"));
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -171,7 +171,7 @@ void postCheck::populate(int pcheckid)
     _bankaccnt->setId(q.value("checkhead_bankaccnt_id").toInt());
     _check->setId(pcheckid);
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

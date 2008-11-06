@@ -148,7 +148,7 @@ void packingListBatch::sPrintBatch()
     params.append("MultiWhs");
   MetaSQLQuery mql = mqlLoad("packingListBatch", "print");
   q = mql.toQuery(params);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -187,7 +187,7 @@ void packingListBatch::sPrintBatch()
         setupPrinter = FALSE;
 	updateq.bindValue(":packid", q.value("pack_id").toInt());
 	updateq.exec();
-	if (updateq.lastError().type() != QSqlError::None)
+	if (updateq.lastError().type() != QSqlError::NoError)
 	{
 	  systemError(this, updateq.lastError().databaseText(), __FILE__, __LINE__);
 	  orReport::endMultiPrint(&printer);
@@ -244,7 +244,7 @@ void packingListBatch::sClearPrinted()
           "WHERE ( (pack_printed)"
 		  "  AND   (pack_head_type='SO')"
 		  "  AND   (checkSOSitePrivs(pack_head_id)) );" );
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -253,7 +253,7 @@ void packingListBatch::sClearPrinted()
   q.exec( "DELETE FROM pack "
           "WHERE ( (pack_printed)"
 		  "  AND   (pack_head_type='TO') );" );
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -306,7 +306,7 @@ void packingListBatch::sAddSO()
     q.exec();
     if (q.first())
       sFillList();
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -330,7 +330,7 @@ void packingListBatch::sAddTO()
     q.exec();
     if (q.first())
       sFillList();
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -358,7 +358,7 @@ void packingListBatch::sDelete()
 
   MetaSQLQuery mql(sql);
   q = mql.toQuery(params);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -417,7 +417,7 @@ void packingListBatch::sPrintPackingList()
 
     MetaSQLQuery mql(sql);
     q = mql.toQuery(params);
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -433,7 +433,7 @@ void packingListBatch::sFillList()
   setParams(params);
   MetaSQLQuery mql = mqlLoad("packingListBatch", "detail");
   q = mql.toQuery(params);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -506,7 +506,7 @@ void packingListBatch::dropEvent(QDropEvent *pEvent)
 
           sFillList();
         }
-	else if (q.lastError().type() != QSqlError::None)
+	else if (q.lastError().type() != QSqlError::NoError)
 	{
 	  systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	  return;

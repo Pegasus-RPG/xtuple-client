@@ -163,7 +163,7 @@ void prospects::sDelete()
     omfgThis->sProspectsUpdated();
     omfgThis->sCrmAccountsUpdated(-1);
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -198,7 +198,7 @@ void prospects::sFillList()
              "ORDER BY prospect_number;" );
   q.exec();
   _prospect->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

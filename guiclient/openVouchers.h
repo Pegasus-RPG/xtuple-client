@@ -68,7 +68,7 @@ class openVouchers : public XWidget, public Ui::openVouchers
     Q_OBJECT
 
 public:
-    openVouchers(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    openVouchers(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~openVouchers();
 	
     virtual bool checkSitePrivs(int orderid);

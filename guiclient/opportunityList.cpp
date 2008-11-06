@@ -89,7 +89,7 @@ opportunityList::opportunityList(QWidget* parent, const char* name, Qt::WFlags f
     _myUsrId = q.value("usr_id").toInt();
     _usr->setId(_myUsrId);
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     close();
@@ -232,7 +232,7 @@ void opportunityList::sDelete()
     else
       sFillList();
     }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

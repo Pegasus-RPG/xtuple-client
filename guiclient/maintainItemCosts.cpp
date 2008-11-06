@@ -270,7 +270,7 @@ void maintainItemCosts::sDelete()
   q.exec();
   if (q.first())
     stdCost = q.value("itemcost_stdcost").toDouble();
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -296,7 +296,7 @@ void maintainItemCosts::sDelete()
   }
   q.bindValue(":itemcost_id", _itemcost->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 
   sFillList();

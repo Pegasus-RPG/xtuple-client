@@ -66,7 +66,7 @@ class selectPayments : public XWidget, public Ui::selectPayments
     Q_OBJECT
 
 public:
-    selectPayments(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    selectPayments(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~selectPayments();
 
 public slots:

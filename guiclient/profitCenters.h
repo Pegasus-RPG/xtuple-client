@@ -67,7 +67,7 @@ class profitCenters : public XWidget, public Ui::profitCenters
     Q_OBJECT
 
 public:
-    profitCenters(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    profitCenters(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~profitCenters();
 
 public slots:

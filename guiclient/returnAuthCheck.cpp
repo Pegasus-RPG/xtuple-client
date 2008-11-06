@@ -142,8 +142,8 @@ void returnAuthCheck::sSave()
     q.bindValue(":checkDate", _date->date());
     q.bindValue(":amount",	_amount->localValue());
     q.bindValue(":curr_id",	_amount->id());
-    q.bindValue(":for",	_for->text().stripWhiteSpace());
-    q.bindValue(":notes", _notes->text().stripWhiteSpace());
+    q.bindValue(":for",	_for->text().trimmed());
+    q.bindValue(":notes", _notes->toPlainText().trimmed());
 	q.bindValue(":aropen_id", _aropenid);
 	q.exec();
     if (q.first())
@@ -160,14 +160,14 @@ void returnAuthCheck::sSave()
                "WHERE (checkhead_id=:check_id);" );
       q.bindValue(":check_id", _checkid);
       q.exec();
-      if (q.lastError().type() != QSqlError::None)
+      if (q.lastError().type() != QSqlError::NoError)
       {
         systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
         return;
       }
 	  done(TRUE);
 	}
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
         return;
@@ -210,7 +210,7 @@ void returnAuthCheck::sPopulateBankInfo(int pBankaccntid)
       _checkNum->setText(checkNumber.value("bankaccnt_nextchknum").toString());
       _amount->setId(checkNumber.value("bankaccnt_curr_id").toInt());
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, checkNumber.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -244,7 +244,7 @@ void returnAuthCheck::populate()
 	_for->setText(q.value("memo").toString());
 	_notes->setText(q.value("note").toString());
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -259,7 +259,7 @@ void returnAuthCheck::populate()
   q.exec();
   if (q.first())
     _bankaccnt->setId(q.value("bankaccnt_id").toInt());
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

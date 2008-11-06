@@ -68,7 +68,7 @@ class packages : public XWidget, public Ui::packages
     Q_OBJECT
 
 public:
-    packages(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    packages(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~packages();
 
 public slots:

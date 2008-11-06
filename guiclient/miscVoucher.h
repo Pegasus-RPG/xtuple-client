@@ -69,7 +69,7 @@ class miscVoucher : public XWidget, public Ui::miscVoucher
     Q_OBJECT
 
 public:
-    miscVoucher(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    miscVoucher(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~miscVoucher();
 
 public slots:

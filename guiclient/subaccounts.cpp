@@ -155,7 +155,7 @@ void subaccounts::sDelete()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -186,7 +186,7 @@ void subaccounts::sFillList()
              "ORDER BY subaccnt_number;" );
   q.exec();
   _subaccnt->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

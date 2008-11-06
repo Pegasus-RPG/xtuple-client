@@ -68,7 +68,7 @@ class searchForContact : public XWidget, public Ui::searchForContact
     Q_OBJECT
 
 public:
-    searchForContact(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    searchForContact(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~searchForContact();
 
 public slots:

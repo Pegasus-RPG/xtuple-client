@@ -69,7 +69,7 @@ class prospects : public XWidget, public Ui::prospects
     Q_OBJECT
 
 public:
-    prospects(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    prospects(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~prospects();
 
 public slots:

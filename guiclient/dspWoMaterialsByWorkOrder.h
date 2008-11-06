@@ -69,7 +69,7 @@ class dspWoMaterialsByWorkOrder : public XWidget, public Ui::dspWoMaterialsByWor
     Q_OBJECT
 
 public:
-    dspWoMaterialsByWorkOrder(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspWoMaterialsByWorkOrder(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspWoMaterialsByWorkOrder();
 
     virtual bool checkParameters();

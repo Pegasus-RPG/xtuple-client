@@ -129,7 +129,7 @@ void reprintInvoices::sQuery()
   _dates->bindValue(q);
   q.exec();
   _invoice->populate(q, true);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -187,7 +187,7 @@ void reprintInvoices::sPrint()
                                    "Invoice Form is created.")
                                   .arg(q.value("_reportname").toString()) );
       }
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return;
@@ -234,7 +234,7 @@ void reprintInvoices::sPrint()
 	}
       }
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;

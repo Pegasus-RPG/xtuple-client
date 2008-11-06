@@ -117,7 +117,7 @@ void reprioritizeWo::sReprioritize()
   q.prepare("SELECT reprioritizeWo(:wo_id, :newPriority, :reprioritizeChildren);");
   q.bindValue(":wo_id", _wo->id());
   q.bindValue(":newPriority", _new->value());
-  q.bindValue(":reprioritizeChildren", QVariant(_changeChildren->isChecked(), 0));
+  q.bindValue(":reprioritizeChildren", QVariant(_changeChildren->isChecked()));
   q.exec();
 
   omfgThis->sWorkOrdersUpdated(_wo->id(), TRUE);

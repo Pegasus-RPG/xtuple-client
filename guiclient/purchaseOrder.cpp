@@ -647,7 +647,7 @@ void purchaseOrder::sSave()
     q.bindValue(":pohead_terms_id", _terms->id());
   if (_vendaddrid != -1)
     q.bindValue(":pohead_vendaddr_id", _vendaddrid);
-  q.bindValue(":pohead_comments", _notes->text());
+  q.bindValue(":pohead_comments", _notes->toPlainText());
   q.bindValue(":pohead_tax", _tax->localValue());
   q.bindValue(":pohead_freight", _freight->localValue());
   q.bindValue(":pohead_curr_id", _poCurrency->id());
@@ -1037,7 +1037,7 @@ void purchaseOrder::sHandleOrderNumber()
       q.bindValue(":pohead_id", _poheadid);
       q.bindValue(":orderNumber", _orderNumber->text().toInt());
       q.exec();
-      if (q.lastError().type() != QSqlError::None)
+      if (q.lastError().type() != QSqlError::NoError)
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 
       _mode = cEdit;
@@ -1097,7 +1097,7 @@ void purchaseOrder::closeEvent(QCloseEvent *pEvent)
     q.bindValue(":pohead_id", _poheadid);
     q.bindValue(":orderNumber", _orderNumber->text().toInt());
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
   }
 

@@ -69,7 +69,7 @@ class maintainShipping : public XWidget, public Ui::maintainShipping
     Q_OBJECT
 
 public:
-    maintainShipping(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    maintainShipping(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~maintainShipping();
 
 public slots:

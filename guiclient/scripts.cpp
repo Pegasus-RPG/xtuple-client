@@ -130,7 +130,7 @@ void scripts::sDelete()
                "WHERE (script_id=:script_id);" );
     q.bindValue(":script_id", _script->id());
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -150,7 +150,7 @@ void scripts::sFillList()
          "    AND  (relnamespace=pg_namespace.oid))"
          " ORDER BY script_name, script_order, script_id;" );
   _script->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

@@ -66,7 +66,7 @@ class salesReps : public XWidget, public Ui::salesReps
     Q_OBJECT
 
 public:
-    salesReps(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    salesReps(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~salesReps();
 
 public slots:

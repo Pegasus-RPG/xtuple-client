@@ -67,7 +67,7 @@ class shippingForms : public XWidget, public Ui::shippingForms
     Q_OBJECT
 
 public:
-    shippingForms(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    shippingForms(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~shippingForms();
 
     virtual void init();

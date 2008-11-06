@@ -422,7 +422,7 @@ void PoitemTableDelegate::setModelData(QWidget *editor, QAbstractItemModel *pMod
 	      model->setData(model->index(index.row(), WAREHOUS_ID_COL), itemq.value("warehous_id").toInt());
 	      model->setData(model->index(index.row(), WAREHOUS_CODE_COL), itemq.value("warehous_code").toString());
 	    }
-	    else if (itemq.lastError().type() != QSqlError::None)
+	    else if (itemq.lastError().type() != QSqlError::NoError)
 	    {
 	      systemError(0, itemq.lastError().databaseText(), __FILE__, __LINE__);
 	      hitError = true;
@@ -456,7 +456,7 @@ void PoitemTableDelegate::setModelData(QWidget *editor, QAbstractItemModel *pMod
 		hitError = true;
 		break;
 	      }
-	      else if (stdcostq.lastError().type() != QSqlError::None)
+	      else if (stdcostq.lastError().type() != QSqlError::NoError)
 	      {
 		systemError(0, stdcostq.lastError().databaseText(), __FILE__, __LINE__);
 		hitError = true;
@@ -493,7 +493,7 @@ void PoitemTableDelegate::setModelData(QWidget *editor, QAbstractItemModel *pMod
 	      if (_metrics->boolean("UseEarliestAvailDateOnPOItem"))
 		model->setData(model->index(index.row(), POITEM_DUEDATE_COL), itemsrcq.value("earliestdate").toDate());
 	    }
-	    else if (itemsrcq.lastError().type() != QSqlError::None)
+	    else if (itemsrcq.lastError().type() != QSqlError::NoError)
 	    {
 	      systemError(0, itemsrcq.lastError().databaseText(), __FILE__, __LINE__);
 	      hitError = true;
@@ -533,7 +533,7 @@ void PoitemTableDelegate::setModelData(QWidget *editor, QAbstractItemModel *pMod
 	  {
 	    model->setData(model->index(index.row(), POITEM_ITEMSITE_ID_COL), itemq.value("itemsite_id").toInt());
 	  }
-	  else if (itemq.lastError().type() != QSqlError::None)
+	  else if (itemq.lastError().type() != QSqlError::NoError)
 	  {
 	    systemError(0, itemq.lastError().databaseText(), __FILE__, __LINE__);
 	    hitError = true;
@@ -602,7 +602,7 @@ void PoitemTableDelegate::setModelData(QWidget *editor, QAbstractItemModel *pMod
 	  {
 	    model->setData(model->index(index.row(), POITEM_UNITPRICE_COL), q.value("new_itemsrcp_price").toDouble());
 	  }
-	  else if (q.lastError().type() != QSqlError::None)
+	  else if (q.lastError().type() != QSqlError::NoError)
 	  {
 	    systemError(0, q.lastError().databaseText(), __FILE__, __LINE__);
 	    hitError = true;

@@ -113,7 +113,7 @@ enum SetResponse selectPayment::set(const ParameterList &pParams)
       _mode = cEdit;
       _apselectid = q.value("apselect_id").toInt();
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
@@ -195,7 +195,7 @@ void selectPayment::sSave()
     q.exec("SELECT NEXTVAL('apselect_apselect_id_seq') AS apselect_id;");
     if (q.first())
       _apselectid = q.value("apselect_id").toInt();
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -227,7 +227,7 @@ void selectPayment::sSave()
   q.bindValue(":apselect_docdate", _docDate->date());
   q.bindValue(":apselect_discount", _discountAmount->localValue());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -284,7 +284,7 @@ void selectPayment::populate()
     if(q.value("bankaccnt_id").toInt() != -1)
       _bankaccnt->setId(q.value("bankaccnt_id").toInt());
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

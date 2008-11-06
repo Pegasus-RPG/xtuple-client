@@ -140,7 +140,7 @@ void postCreditMemos::sPost()
 
   q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
   q.prepare("SELECT postCreditMemos(:postUnprinted, :journalNumber) AS result;");
-  q.bindValue(":postUnprinted", QVariant(_postUnprinted->isChecked(), 0));
+  q.bindValue(":postUnprinted", QVariant(_postUnprinted->isChecked()));
   q.bindValue(":journalNumber", journalNumber);
   q.exec();
   if (q.first())

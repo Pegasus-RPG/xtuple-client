@@ -148,8 +148,8 @@ enum SetResponse shippingChargeType::set(ParameterList &pParams)
 
 void shippingChargeType::sCheck()
 {
-  _name->setText(_name->text().stripWhiteSpace());
-  if ((_mode == cNew) && (_name->text().stripWhiteSpace().length()))
+  _name->setText(_name->text().trimmed());
+  if ((_mode == cNew) && (_name->text().trimmed().length()))
   {
     q.prepare( "SELECT shipchrg_id "
                "FROM shipchrg "
@@ -212,9 +212,9 @@ void shippingChargeType::sSave()
   }
 
   q.bindValue(":shipchrg_id", _shipchrgid);
-  q.bindValue(":shipchrg_name", _name->text().stripWhiteSpace());
-  q.bindValue(":shipchrg_descrip", _description->text().stripWhiteSpace());
-  q.bindValue(":shipchrg_custfreight", QVariant(_customerFreight->isChecked(), 0));
+  q.bindValue(":shipchrg_name", _name->text().trimmed());
+  q.bindValue(":shipchrg_descrip", _description->text().trimmed());
+  q.bindValue(":shipchrg_custfreight", QVariant(_customerFreight->isChecked()));
   q.exec();
 
   done(_shipchrgid);

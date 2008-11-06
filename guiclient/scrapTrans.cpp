@@ -125,7 +125,7 @@ enum SetResponse scrapTrans::set(const ParameterList &pParams)
     {
       _mode = cNew;
 
-      setCaption(tr("Enter Scrap Transaction"));
+      setWindowTitle(tr("Enter Scrap Transaction"));
       _usernameLit->clear();
       _transDate->setEnabled(_privileges->check("AlterTransactionDates"));
       _transDate->setDate(omfgThis->dbDate());
@@ -136,7 +136,7 @@ enum SetResponse scrapTrans::set(const ParameterList &pParams)
     {
       _mode = cView;
 
-      setCaption(tr("Scrap Transaction"));
+      setWindowTitle(tr("Scrap Transaction"));
       _transDate->setEnabled(FALSE);
       _item->setReadOnly(TRUE);
       _warehouse->setEnabled(FALSE);
@@ -163,7 +163,7 @@ enum SetResponse scrapTrans::set(const ParameterList &pParams)
         _notes->setText(q.value("invhist_comments").toString());
         _item->setItemsiteid(q.value("invhist_itemsite_id").toInt());
       }
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return UndefinedError;
@@ -213,7 +213,7 @@ void scrapTrans::sPost()
              " AND (itemsite_warehous_id=:warehous_id) );" );
   q.bindValue(":qty", _qty->toDouble());
   q.bindValue(":docNumber", _documentNum->text());
-  q.bindValue(":comments", _notes->text());
+  q.bindValue(":comments", _notes->toPlainText());
   q.bindValue(":item_id", _item->id());
   q.bindValue(":warehous_id", _warehouse->id());
   q.bindValue(":date",        _transDate->date());
@@ -228,7 +228,7 @@ void scrapTrans::sPost()
                   __FILE__, __LINE__);
       return;
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -260,7 +260,7 @@ void scrapTrans::sPost()
       _item->setFocus();
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -293,7 +293,7 @@ void scrapTrans::sPopulateQOH(int pWarehousid)
       _beforeQty->setDouble(q.value("itemsite_qtyonhand").toDouble());
       sPopulateQty();
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;

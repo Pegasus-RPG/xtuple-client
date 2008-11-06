@@ -69,7 +69,7 @@ class dspWoBufferStatusByParameterList : public XWidget, public Ui::dspWoBufferS
     Q_OBJECT
 
 public:
-    dspWoBufferStatusByParameterList(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspWoBufferStatusByParameterList(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspWoBufferStatusByParameterList();
 
 public slots:

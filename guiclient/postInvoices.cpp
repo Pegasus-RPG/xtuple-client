@@ -166,7 +166,7 @@ void postInvoices::sPost()
   }
 
   q.prepare("SELECT postInvoices(:postUnprinted, :inclZero) AS result;");
-  q.bindValue(":postUnprinted", QVariant(_postUnprinted->isChecked(), 0));
+  q.bindValue(":postUnprinted", QVariant(_postUnprinted->isChecked()));
   q.bindValue(":inclZero",      QVariant(inclZero, 0));
   q.exec();
   if (q.first())

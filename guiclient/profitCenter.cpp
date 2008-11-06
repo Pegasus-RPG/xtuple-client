@@ -148,7 +148,7 @@ void profitCenter::sSave()
     q.exec("SELECT NEXTVAL('prftcntr_prftcntr_id_seq') AS prftcntr_id;");
     if (q.first())
       _prftcntrid = q.value("prftcntr_id").toInt();
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -182,9 +182,9 @@ void profitCenter::sSave()
 
   q.bindValue(":prftcntr_id", _prftcntrid);
   q.bindValue(":prftcntr_number", _number->text());
-  q.bindValue(":prftcntr_descrip", _descrip->text());
+  q.bindValue(":prftcntr_descrip", _descrip->toPlainText());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -207,7 +207,7 @@ void profitCenter::populate()
 
     _cachedNumber = q.value("prftcntr_number").toString();
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

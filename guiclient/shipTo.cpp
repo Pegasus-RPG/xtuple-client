@@ -91,7 +91,7 @@ shipTo::shipTo(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
       q.exec();
       while(q.next())
         _ediProfile->append(q.value("ediprofile_id").toInt(), q.value("ediprofile_name").toString());
-      if (q.lastError().type() != QSqlError::None)
+      if (q.lastError().type() != QSqlError::NoError)
       {
         systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
         return;
@@ -157,21 +157,21 @@ enum SetResponse shipTo::set(const ParameterList &pParams)
 
 	//  Handle the free-form Ship Via
         _shipVia->setId(-1);
-        QString shipvia = cust.value("cust_shipvia").toString().stripWhiteSpace();
+        QString shipvia = cust.value("cust_shipvia").toString().trimmed();
         if (shipvia.length())
         {
           for (int counter = 0; counter < _shipVia->count(); counter++)
             if (_shipVia->text(counter) == shipvia)
-              _shipVia->setCurrentItem(counter);
+              _shipVia->setCurrentIndex(counter);
 
           if (_shipVia->id() == -1)
           {
             _shipVia->insertItem(shipvia);
-            _shipVia->setCurrentItem(_shipVia->count() - 1);
+            _shipVia->setCurrentIndex(_shipVia->count() - 1);
           }
         }
       }
-      if (cust.lastError().type() != QSqlError::None)
+      if (cust.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, cust.lastError().databaseText(), __FILE__, __LINE__);
 	return UndefinedError;
@@ -302,7 +302,7 @@ void shipTo::sSave()
     q.exec("SELECT NEXTVAL('shipto_shipto_id_seq') AS shipto_id;");
     if (q.first())
       _shiptoid = q.value("shipto_id").toInt();
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       rollback.exec();
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -337,18 +337,18 @@ void shipTo::sSave()
                "WHERE (shipto_id=:shipto_id);" );
 
   q.bindValue(":shipto_id", _shiptoid);
-  q.bindValue(":shipto_active", QVariant(_active->isChecked(), 0));
-  q.bindValue(":shipto_default", QVariant(_default->isChecked(), 0));
+  q.bindValue(":shipto_active", QVariant(_active->isChecked()));
+  q.bindValue(":shipto_default", QVariant(_default->isChecked()));
   q.bindValue(":shipto_cust_id", _custid);
-  q.bindValue(":shipto_num", _shipToNumber->text().stripWhiteSpace());
+  q.bindValue(":shipto_num", _shipToNumber->text().trimmed());
   q.bindValue(":shipto_name", _name->text());
   if (_contact->id() > 0)
     q.bindValue(":shipto_cntct_id", _contact->id());
   if (_address->id() > 0)
     q.bindValue(":shipto_addr_id", _address->id());
   q.bindValue(":shipto_commission", (_commission->toDouble() / 100));
-  q.bindValue(":shipto_comments", _comments->text());
-  q.bindValue(":shipto_shipcomments", _shippingComments->text());
+  q.bindValue(":shipto_comments", _comments->toPlainText());
+  q.bindValue(":shipto_shipcomments", _shippingComments->toPlainText());
   q.bindValue(":shipto_shipvia", _shipVia->currentText());
   if (_taxauth->isValid())
     q.bindValue(":shipto_taxauth_id",  _taxauth->id());
@@ -362,7 +362,7 @@ void shipTo::sSave()
   q.bindValue(":shipto_shipchrg_id", _shipchrg->id());
   q.bindValue(":shipto_ediprofile_id", _ediProfile->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -413,25 +413,25 @@ void shipTo::populate()
     _address->setId(q.value("shipto_addr_id").toInt());
 
     //  Handle the free-form Ship Via
-    _shipVia->setCurrentItem(-1);
+    _shipVia->setCurrentIndex(-1);
     QString shipvia = q.value("shipto_shipvia").toString();
-    if (shipvia.stripWhiteSpace().length() != 0)
+    if (shipvia.trimmed().length() != 0)
     {
       for (int counter = 0; counter < _shipVia->count(); counter++)
         if (_shipVia->text(counter) == shipvia)
-          _shipVia->setCurrentItem(counter);
+          _shipVia->setCurrentIndex(counter);
 
       if (_shipVia->id() == -1)
       {
         _shipVia->insertItem(shipvia);
-        _shipVia->setCurrentItem(_shipVia->count() - 1);
+        _shipVia->setCurrentIndex(_shipVia->count() - 1);
       }
     }
 
     _salesRep->setId(q.value("shipto_salesrep_id").toInt());
     _commission->setDouble(commission * 100);
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -450,7 +450,7 @@ void shipTo::sPopulateNumber()
     q.exec();
     if (q.first())
       _shipToNumber->setText(q.value("n_shipto_num"));
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -474,7 +474,7 @@ void shipTo::sPopulateNumber()
       _shipToNumber->setEnabled(FALSE);
       _name->setFocus();
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -493,7 +493,7 @@ void shipTo::sPopulateCommission(int pSalesrepid)
     q.exec();
     if (q.first())
       _commission->setDouble(q.value("salesrep_commission").toDouble());
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;

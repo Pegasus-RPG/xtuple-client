@@ -231,7 +231,7 @@ void openVouchers::sDelete()
 		            __FILE__, __LINE__);
 	      }
         }
-        else if (q.lastError().type() != QSqlError::None)
+        else if (q.lastError().type() != QSqlError::NoError)
         {
 	      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
         }
@@ -278,7 +278,7 @@ void openVouchers::sPost()
         setDate.bindValue(":distdate",  newDate);
         setDate.bindValue(":vohead_id", id);
         setDate.exec();
-        if (setDate.lastError().type() != QSqlError::None)
+        if (setDate.lastError().type() != QSqlError::NoError)
         {
 	      systemError(this, setDate.lastError().databaseText(), __FILE__, __LINE__);
         }
@@ -329,7 +329,7 @@ void openVouchers::sPost()
 	      else
 	        triedToClosed.append(selected[i]);
         }
-        else if (post.lastError().type() != QSqlError::None)
+        else if (post.lastError().type() != QSqlError::NoError)
         {
 	      systemError(this, post.lastError().databaseText(), __FILE__, __LINE__);
         }
@@ -398,7 +398,7 @@ void openVouchers::sFillList()
   q.exec();
   _vohead->clear();
   _vohead->populate(q, TRUE);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

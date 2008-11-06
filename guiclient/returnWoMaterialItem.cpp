@@ -164,7 +164,7 @@ void returnWoMaterialItem::sReturn()
 
     returnItem.exec("COMMIT;");
   }
-  else if (returnItem.lastError().type() != QSqlError::None)
+  else if (returnItem.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
     systemError(this, returnItem.lastError().databaseText(), __FILE__, __LINE__);

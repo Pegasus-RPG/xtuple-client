@@ -139,7 +139,7 @@ enum SetResponse reassignLotSerial::set(const ParameterList &pParams)
           _source->setCurrentItem(_source->topLevelItem(i));
       }
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
@@ -205,7 +205,7 @@ void reassignLotSerial::sReassign()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -272,7 +272,7 @@ void reassignLotSerial::sFillList()
       q.exec();
       _source->populate(q);
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;

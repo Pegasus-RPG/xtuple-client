@@ -256,7 +256,7 @@ void prospect::sSave()
     QString	msg;
     QWidget*	widget;
   } error[] = {
-    { _number->text().stripWhiteSpace().length() == 0,
+    { _number->text().trimmed().length() == 0,
       tr("You must enter a number for this Prospect before saving"),
       _number
     },
@@ -275,7 +275,7 @@ void prospect::sSave()
     return;
   }
 
-  if (_number->text().stripWhiteSpace() != _cachedNumber)
+  if (_number->text().trimmed() != _cachedNumber)
   {
     // in anticipation of converting prospects to customers, disallow overlap of prospect and customer numbers
     q.prepare( "SELECT prospect_name AS name "
@@ -286,7 +286,7 @@ void prospect::sSave()
 	       "SELECT cust_name AS name "
 	       "FROM cust "
 	       "WHERE (UPPER(cust_number)=UPPER(:prospect_number));" );
-    q.bindValue(":prospect_name", _number->text().stripWhiteSpace());
+    q.bindValue(":prospect_name", _number->text().trimmed());
     q.bindValue(":prospect_id", _prospectid);
     q.exec();
     if (q.first())
@@ -343,8 +343,8 @@ void prospect::sSave()
   }
 
   q.bindValue(":prospect_id",		_prospectid);
-  q.bindValue(":prospect_number",	_number->text().stripWhiteSpace());
-  q.bindValue(":prospect_name",		_name->text().stripWhiteSpace());
+  q.bindValue(":prospect_number",	_number->text().trimmed());
+  q.bindValue(":prospect_name",		_name->text().trimmed());
   if (_contact->id() > 0)
     q.bindValue(":prospect_cntct_id",	_contact->id());	// else NULL
   if (_taxauth->id() > 0)
@@ -353,11 +353,11 @@ void prospect::sSave()
     q.bindValue(":prospect_salesrep_id", _salesrep->id());      // else NULL
   if (_site->id() > 0)
     q.bindValue(":prospect_warehous_id", _site->id());          // else NULL
-  q.bindValue(":prospect_comments",	_notes->text());
-  q.bindValue(":prospect_active",	QVariant(_active->isChecked(), 0));
+  q.bindValue(":prospect_comments",	_notes->toPlainText());
+  q.bindValue(":prospect_active",	QVariant(_active->isChecked()));
 
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -371,7 +371,7 @@ void prospect::sSave()
     q.bindValue(":prospect_id",	_prospectid);
     q.bindValue(":crmacct_id",	_crmacct->id());
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
 	rollback.exec();
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -384,8 +384,8 @@ void prospect::sSave()
 // This is now done in a trigger
     q.prepare( "SELECT createCrmAcct(:number, :name, :active, :type, NULL, "
 	       "      NULL, NULL, :prospect_id, NULL, NULL, :cntct, NULL) AS crmacctid;");
-    q.bindValue(":number",	_number->text().stripWhiteSpace());
-    q.bindValue(":name",	_name->text().stripWhiteSpace());
+    q.bindValue(":number",	_number->text().trimmed());
+    q.bindValue(":name",	_name->text().trimmed());
     q.bindValue(":active",	QVariant(true, 0));
     q.bindValue(":type",	"O");	// TODO - when will this be "I"?
     q.bindValue(":prospect_id",	_prospectid);
@@ -404,7 +404,7 @@ void prospect::sSave()
       }
       _crmacct->setId(crmacctid);
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       rollback.exec();
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -432,7 +432,7 @@ void prospect::sSave()
 
 void prospect::sCheckNumber()
 {
-  _number->setText(_number->text().stripWhiteSpace().upper());
+  _number->setText(_number->text().trimmed().toUpper());
 
   if (_mode == cNew)
   {
@@ -469,7 +469,7 @@ void prospect::sPrintQuote()
   q.exec();
   if (q.first())
     reportname = q.value("reportname").toString();
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -542,7 +542,7 @@ void prospect::sDeleteQuote()
       else
 	omfgThis->sQuotesUpdated(-1);
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -559,7 +559,7 @@ void prospect::sFillQuotesList()
 	    "ORDER BY quhead_number;");
   q.bindValue(":prospect_id", _prospectid);
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -598,7 +598,7 @@ void prospect::populate()
     _notes->setText(prospect.value("prospect_comments").toString());
     _active->setChecked(prospect.value("prospect_active").toBool());
   }
-  else if (prospect.lastError().type() != QSqlError::None)
+  else if (prospect.lastError().type() != QSqlError::NoError)
   {
     systemError(this, prospect.lastError().databaseText(), __FILE__, __LINE__);
     return;

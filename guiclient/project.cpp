@@ -93,7 +93,7 @@ project::project(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     _owner->setId(q.value("usr_id").toInt());
     _assignedTo->setId(q.value("usr_id").toInt());
   }  
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     reject();
@@ -227,11 +227,11 @@ void project::populate()
     _completed->setDate(q.value("prj_completed_date").toDate());
     QString status = q.value("prj_status").toString();
     if("P" == status)
-      _status->setCurrentItem(0);
+      _status->setCurrentIndex(0);
     else if("O" == status)
-      _status->setCurrentItem(1);
+      _status->setCurrentIndex(1);
     else if("C" == status)
-      _status->setCurrentItem(2);
+      _status->setCurrentIndex(2);
   }
 
   sFillTaskList();
@@ -253,7 +253,7 @@ void project::sClose()
 
 void project::sSave()
 {
-  if (_number->text().stripWhiteSpace().isEmpty())
+  if (_number->text().trimmed().isEmpty())
   {
     QMessageBox::warning( this, tr("Cannot Save Project"),
       tr("No Project Number was specified. You must specify a project number.") );
@@ -281,19 +281,20 @@ void project::sSave()
                "WHERE (prj_id=:prj_id);" );
 
   q.bindValue(":prj_id", _prjid);
-  q.bindValue(":prj_number", _number->text().stripWhiteSpace().upper());
+  q.bindValue(":prj_number", _number->text().trimmed().toUpper());
   q.bindValue(":prj_name", _name->text());
-  q.bindValue(":prj_descrip", _descrip->text());
-  q.bindValue(":prj_so", QVariant(_so->isChecked(), 0));
-  q.bindValue(":prj_wo", QVariant(_wo->isChecked(), 0));
-  q.bindValue(":prj_po", QVariant(_po->isChecked(), 0));
+  q.bindValue(":prj_descrip", _descrip->toPlainText());
+  q.bindValue(":prj_so", QVariant(_so->isChecked()));
+  q.bindValue(":prj_wo", QVariant(_wo->isChecked()));
+  q.bindValue(":prj_po", QVariant(_po->isChecked()));
   q.bindValue(":prj_owner_username", _owner->username());
   q.bindValue(":prj_usr_id",   _assignedTo->id());
   q.bindValue(":prj_start_date",	_started->date());
   q.bindValue(":prj_due_date",	_due->date());
   q.bindValue(":prj_assigned_date",	_assigned->date());
   q.bindValue(":prj_completed_date",	_completed->date());
-  switch(_status->currentItem())
+
+  switch(_status->currentIndex())
   {
     case 0:
     default:
@@ -384,7 +385,7 @@ void project::sNumberChanged()
 {
   if((cNew == _mode) && (_number->text().length()))
   {
-    _number->setText(_number->text().stripWhiteSpace().upper());
+    _number->setText(_number->text().trimmed().toUpper());
 
     q.prepare( "SELECT prj_id"
                "  FROM prj"
@@ -405,4 +406,3 @@ void project::sNumberChanged()
     }
   }
 }
-

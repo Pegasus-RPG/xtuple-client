@@ -69,7 +69,7 @@ class dspWoScheduleByWorkOrder : public XWidget, public Ui::dspWoScheduleByWorkO
     Q_OBJECT
 
 public:
-    dspWoScheduleByWorkOrder(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspWoScheduleByWorkOrder(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspWoScheduleByWorkOrder();
 
     virtual enum SetResponse set(const ParameterList&);

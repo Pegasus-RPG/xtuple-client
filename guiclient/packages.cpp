@@ -132,7 +132,7 @@ void packages::sFillList()
              "ORDER BY pkghead_name, pkghead_version DESC;" );
   q.exec();
   _package->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -163,7 +163,7 @@ void packages::sDelete()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -334,7 +334,7 @@ void packages::sEnable()
       return;
     }
   }
-  else if (eq.lastError().type() != QSqlError::None)
+  else if (eq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, eq.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -359,7 +359,7 @@ void packages::sDisable()
       return;
     }
   }
-  else if (dq.lastError().type() != QSqlError::None)
+  else if (dq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, dq.lastError().databaseText(), __FILE__, __LINE__);
     return;

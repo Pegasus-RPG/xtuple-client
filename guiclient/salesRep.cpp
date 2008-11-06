@@ -142,7 +142,7 @@ enum SetResponse salesRep::set(const ParameterList &pParams)
 
 void salesRep::sCheck()
 {
-  _number->setText(_number->text().stripWhiteSpace());
+  _number->setText(_number->text().trimmed());
   if ((_mode == cNew) && (_number->text().length()))
   {
     q.prepare( "SELECT salesrep_id "
@@ -158,7 +158,7 @@ void salesRep::sCheck()
 
       _number->setEnabled(FALSE);
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -168,7 +168,7 @@ void salesRep::sCheck()
 
 void salesRep::sSave()
 {
-  if (_number->text().stripWhiteSpace().length() == 0)
+  if (_number->text().trimmed().length() == 0)
   {
     QMessageBox::critical( this, tr("Cannot Save Sales Rep."),
                            tr("You must enter a Number for this Sales Rep.") );
@@ -176,7 +176,7 @@ void salesRep::sSave()
     return;
   }
 
-  if (_commPrcnt->text().stripWhiteSpace().length() == 0)
+  if (_commPrcnt->text().trimmed().length() == 0)
   {
     QMessageBox::critical( this, tr("Cannot Save Sales Rep."),
                            tr("You must enter a Commission Rate for this Sales Rep.") );
@@ -189,7 +189,7 @@ void salesRep::sSave()
     q.exec("SELECT NEXTVAL('salesrep_salesrep_id_seq') AS salesrep_id;");
     if (q.first())
       _salesrepid = q.value("salesrep_id").toInt();
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -210,9 +210,9 @@ void salesRep::sSave()
   q.bindValue(":salesrep_number", _number->text());
   q.bindValue(":salesrep_name", _name->text());
   q.bindValue(":salesrep_commission", (_commPrcnt->toDouble() / 100));
-  q.bindValue(":salesrep_active", QVariant(_active->isChecked(), 0));
+  q.bindValue(":salesrep_active", QVariant(_active->isChecked()));
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -236,7 +236,7 @@ void salesRep::populate()
     _name->setText(q.value("salesrep_name").toString());
     _commPrcnt->setDouble(q.value("salesrep_commission").toDouble() * 100);
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

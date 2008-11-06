@@ -136,7 +136,7 @@ void postCountTags::sPost()
   sql += ");";
   
   q.prepare(sql);
-  q.bindValue(":thaw", QVariant(_thaw->isChecked(), 0));
+  q.bindValue(":thaw", QVariant(_thaw->isChecked()));
   _warehouse->bindValue(q);
   _parameter->bindValue(q);
   q.exec();

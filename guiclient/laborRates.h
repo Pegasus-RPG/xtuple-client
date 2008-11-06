@@ -68,7 +68,7 @@ class laborRates : public XWidget, public Ui::laborRates
     Q_OBJECT
 
 public:
-    laborRates(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    laborRates(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~laborRates();
 
     virtual void init();

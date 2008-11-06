@@ -175,7 +175,7 @@ enum SetResponse location::set(const ParameterList &pParams)
 
 void location::sCheck()
 {
-  _location->setText(_location->text().stripWhiteSpace());
+  _location->setText(_location->text().trimmed());
   if ( (_mode == cNew) &&
        (_warehouse->isEnabled()) &&
        (_location->text().length()) )
@@ -210,10 +210,10 @@ void location::sSave()
     return;
   }
 
-  if ( (_location->text().stripWhiteSpace().length() == 0) &&
-       (_aisle->text().stripWhiteSpace().length() == 0) &&
-       (_rack->text().stripWhiteSpace().length() == 0) &&
-       (_bin->text().stripWhiteSpace().length() == 0) )
+  if ( (_location->text().trimmed().length() == 0) &&
+       (_aisle->text().trimmed().length() == 0) &&
+       (_rack->text().trimmed().length() == 0) &&
+       (_bin->text().trimmed().length() == 0) )
   {
     QMessageBox::critical( this, tr("Enter Location Name"),
                            tr("<p>You must enter a unique name to identify "
@@ -274,9 +274,9 @@ void location::sSave()
   q.bindValue(":location_bin", _bin->text());
   q.bindValue(":location_name", _location->text());
   q.bindValue(":location_whsezone_id", _whsezone->id());
-  q.bindValue(":location_descrip", _description->text().stripWhiteSpace());
-  q.bindValue(":location_netable", QVariant(_netable->isChecked(), 0));
-  q.bindValue(":location_restrict", QVariant(_restricted->isChecked(), 0));
+  q.bindValue(":location_descrip", _description->toPlainText().trimmed());
+  q.bindValue(":location_netable", QVariant(_netable->isChecked()));
+  q.bindValue(":location_restrict", QVariant(_restricted->isChecked()));
   q.exec();
 
   done(_locationid);

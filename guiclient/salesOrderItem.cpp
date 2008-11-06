@@ -285,7 +285,7 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
         _preferredWarehouseid = q.value("preferredwarehousid").toInt();
       _custName = q.value("f_name").toString();
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
@@ -361,7 +361,7 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
       q.exec();
       if(!q.first() || q.value("cnt").toInt() == 0)
         _prev->setEnabled(false);
-      if (q.lastError().type() != QSqlError::None)
+      if (q.lastError().type() != QSqlError::NoError)
       {
         systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
         return UndefinedError;
@@ -373,7 +373,7 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
       _item->setType(ItemLineEdit::cSold | ItemLineEdit::cItemActive);
       _item->clearExtraClauseList();
 
-      setCaption(tr("Quote Item"));
+      setWindowTitle(tr("Quote Item"));
 
       _save->setEnabled(FALSE);
       _next->setText(tr("New"));
@@ -412,7 +412,7 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
       q.exec();
       if(!q.first() || q.value("cnt").toInt() == 0)
         _prev->setEnabled(false);
-      if (q.lastError().type() != QSqlError::None)
+      if (q.lastError().type() != QSqlError::NoError)
       {
         systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
         return UndefinedError;
@@ -440,7 +440,7 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
       _item->setType(ItemLineEdit::cSold | ItemLineEdit::cItemActive);
       _item->clearExtraClauseList();
 
-      setCaption(tr("Quote Item"));
+      setWindowTitle(tr("Quote Item"));
 
       _item->setReadOnly(TRUE);
       _listPrices->setEnabled(TRUE);
@@ -480,7 +480,7 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
       _item->setType(ItemLineEdit::cSold | ItemLineEdit::cItemActive);
       _item->clearExtraClauseList();
 
-      setCaption(tr("Quote Item"));
+      setWindowTitle(tr("Quote Item"));
 
       //_createOrder->hide();
       _orderQtyLit->hide();
@@ -551,7 +551,7 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
     q.exec();
     if(!q.first() || q.value("id").toInt() == _soitemid)
       _prev->setEnabled(false);
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
@@ -580,7 +580,7 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
       else
         _next->setText(tr("New"));
     }
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
@@ -643,7 +643,7 @@ void salesOrderItem::prepare()
     q.exec("SELECT NEXTVAL('coitem_coitem_id_seq') AS _coitem_id");
     if (q.first())
       _soitemid = q.value("_coitem_id").toInt();
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -656,7 +656,7 @@ void salesOrderItem::prepare()
     q.exec();
     if (q.first())
       _lineNumber->setText(q.value("_linenumber").toString());
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -669,7 +669,7 @@ void salesOrderItem::prepare()
     q.exec();
     if (q.first())
       _scheduledDate->setDate(q.value("scheddate").toDate());
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -681,7 +681,7 @@ void salesOrderItem::prepare()
     q.exec("SELECT NEXTVAL('quitem_quitem_id_seq') AS _quitem_id");
     if (q.first())
       _soitemid = q.value("_quitem_id").toInt();
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -694,7 +694,7 @@ void salesOrderItem::prepare()
     q.exec();
     if (q.first())
       _lineNumber->setText(q.value("n_linenumber").toString());
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -707,7 +707,7 @@ void salesOrderItem::prepare()
     q.exec();
     if (q.first())
       _scheduledDate->setDate(q.value("scheddate").toDate());
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -864,7 +864,7 @@ void salesOrderItem::sSave()
     q.bindValue(":price_invuomratio", _priceinvuomratio);
     q.bindValue(":soitem_prcost", _overridePoPrice->localValue());
     q.bindValue(":soitem_custpn", _customerPN->text());
-    q.bindValue(":soitem_memo", _notes->text());
+    q.bindValue(":soitem_memo", _notes->toPlainText());
     q.bindValue(":item_id", _item->id());
     if(_sub->isChecked())
       q.bindValue(":soitem_substitute_item_id", _subItem->id());
@@ -873,9 +873,9 @@ void salesOrderItem::sSave()
       q.bindValue(":soitem_tax_id", _taxcode->id());
         if (_altCosAccnt->isValid())
           q.bindValue(":soitem_cos_accnt_id", _altCosAccnt->id());
-        q.bindValue(":soitem_warranty",QVariant(_warranty->isChecked(), 0));
+        q.bindValue(":soitem_warranty",QVariant(_warranty->isChecked()));
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       rollback.exec();
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -905,7 +905,7 @@ void salesOrderItem::sSave()
     q.bindValue(":price_uom_id", _priceUOM->id());
     q.bindValue(":price_invuomratio", _priceinvuomratio);
     q.bindValue(":soitem_prcost", _overridePoPrice->localValue());
-    q.bindValue(":soitem_memo", _notes->text());
+    q.bindValue(":soitem_memo", _notes->toPlainText());
     if(_orderId != -1)
     {
       if ((_item->itemType() == "M") || (_item->itemType() == "J"))
@@ -921,10 +921,10 @@ void salesOrderItem::sSave()
       q.bindValue(":soitem_tax_id", _taxcode->id());
     if (_altCosAccnt->isValid())
       q.bindValue(":soitem_cos_accnt_id", _altCosAccnt->id());
-    q.bindValue(":soitem_warranty",QVariant(_warranty->isChecked(), 0));
+    q.bindValue(":soitem_warranty",QVariant(_warranty->isChecked()));
 
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       rollback.exec();
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -953,7 +953,7 @@ void salesOrderItem::sSave()
                         __FILE__, __LINE__);
           }
         }
-        else if (q.lastError().type() != QSqlError::None)
+        else if (q.lastError().type() != QSqlError::NoError)
         {
           systemError(this, tr("Line Item %1\n").arg("") +
                             q.lastError().databaseText(), __FILE__, __LINE__);
@@ -991,7 +991,7 @@ void salesOrderItem::sSave()
               return;
             }
           }
-          else if (q.lastError().type() != QSqlError::None)
+          else if (q.lastError().type() != QSqlError::NoError)
           {
             rollback.exec();
             systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -1028,7 +1028,7 @@ void salesOrderItem::sSave()
                 return;
               }
             }
-            else if (q.lastError().type() != QSqlError::None)
+            else if (q.lastError().type() != QSqlError::NoError)
             {
               rollback.exec();
               systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -1061,7 +1061,7 @@ void salesOrderItem::sSave()
                 return;
               }
             }
-            else if (q.lastError().type() != QSqlError::None)
+            else if (q.lastError().type() != QSqlError::NoError)
             {
               rollback.exec();
               systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -1096,7 +1096,7 @@ void salesOrderItem::sSave()
             return;
           }
         }
-        else if (q.lastError().type() != QSqlError::None)
+        else if (q.lastError().type() != QSqlError::NoError)
         {
           rollback.exec();
           systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -1113,7 +1113,7 @@ void salesOrderItem::sSave()
     q.exec("SELECT NEXTVAL('quitem_quitem_id_seq') AS _quitem_id");
     if (q.first())
       _soitemid = q.value("_quitem_id").toInt();
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       rollback.exec();
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -1155,8 +1155,8 @@ void salesOrderItem::sSave()
     q.bindValue(":price_uom_id", _priceUOM->id());
     q.bindValue(":price_invuomratio", _priceinvuomratio);
     q.bindValue(":quitem_custpn", _customerPN->text());
-    q.bindValue(":quitem_memo", _notes->text());
-    q.bindValue(":quitem_createorder", QVariant(_createOrder->isChecked(), 0));
+    q.bindValue(":quitem_memo", _notes->toPlainText());
+    q.bindValue(":quitem_createorder", QVariant(_createOrder->isChecked()));
     q.bindValue(":quitem_order_warehous_id", _supplyWarehouse->id());
     q.bindValue(":quitem_prcost", _overridePoPrice->localValue());
     q.bindValue(":item_id", _item->id());
@@ -1164,7 +1164,7 @@ void salesOrderItem::sSave()
     if (_taxcode->isValid())
       q.bindValue(":quitem_tax_id", _taxcode->id());
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       rollback.exec();
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -1192,15 +1192,15 @@ void salesOrderItem::sSave()
     q.bindValue(":quitem_price", _netUnitPrice->localValue());
     q.bindValue(":price_uom_id", _priceUOM->id());
     q.bindValue(":price_invuomratio", _priceinvuomratio);
-    q.bindValue(":quitem_memo", _notes->text());
-    q.bindValue(":quitem_createorder", QVariant(_createOrder->isChecked(), 0));
+    q.bindValue(":quitem_memo", _notes->toPlainText());
+    q.bindValue(":quitem_createorder", QVariant(_createOrder->isChecked()));
     q.bindValue(":quitem_order_warehous_id", _supplyWarehouse->id());
     q.bindValue(":quitem_prcost", _overridePoPrice->localValue());
     q.bindValue(":quitem_id", _soitemid);
     if (_taxcode->isValid())
       q.bindValue(":quitem_tax_id", _taxcode->id());
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       rollback.exec();
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -1215,7 +1215,7 @@ void salesOrderItem::sSave()
       q.bindValue(":warehous_id", _warehouse->id());
       q.bindValue(":quitem_id", _soitemid);
       q.exec();
-      if (q.lastError().type() != QSqlError::None)
+      if (q.lastError().type() != QSqlError::NoError)
       {
         rollback.exec();
         systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -1258,7 +1258,7 @@ void salesOrderItem::sSave()
           return;
         }
       }
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
         rollback.exec();
         systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -1282,7 +1282,7 @@ void salesOrderItem::sSave()
       q.bindValue(":orderNumber", _orderNumber->text().toInt());
       q.bindValue(":qty", _orderQty->toDouble());
       q.bindValue(":dueDate", _scheduledDate->date());
-      q.bindValue(":comments", _custName + "\n" + _notes->text());
+      q.bindValue(":comments", _custName + "\n" + _notes->toPlainText());
       q.bindValue(":item_id", _item->id());
       q.bindValue(":warehous_id", _supplyWarehouse->id());
       q.bindValue(":parent_type", QString("S"));
@@ -1326,7 +1326,7 @@ void salesOrderItem::sSave()
         q.bindValue(":orderid", _orderId);
         q.bindValue(":soitem_id", _soitemid);
         q.exec();
-        if (q.lastError().type() != QSqlError::None)
+        if (q.lastError().type() != QSqlError::NoError)
         {
           rollback.exec();
           systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -1342,7 +1342,7 @@ void salesOrderItem::sSave()
         q.bindValue(":orderid", _orderId);
         q.bindValue(":soitem_id", _soitemid);
         q.exec();
-        if (q.lastError().type() != QSqlError::None)
+        if (q.lastError().type() != QSqlError::NoError)
         {
           rollback.exec();
           systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -1358,7 +1358,7 @@ void salesOrderItem::sSave()
         q.bindValue(":orderid", _orderId);
         q.bindValue(":soitem_id", _soitemid);
         q.exec();
-        if (q.lastError().type() != QSqlError::None)
+        if (q.lastError().type() != QSqlError::NoError)
         {
           rollback.exec();
           systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -1366,7 +1366,7 @@ void salesOrderItem::sSave()
         }
       }
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       rollback.exec();
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -1428,7 +1428,7 @@ void salesOrderItem::sPopulateItemsiteInfo()
         }
       }
     }
-    else if (itemsite.lastError().type() != QSqlError::None)
+    else if (itemsite.lastError().type() != QSqlError::NoError)
     {
       systemError(this, itemsite.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -1521,7 +1521,7 @@ void salesOrderItem::sDeterminePrice(bool p)
           _itemchar->setData(idx3, q.value("price").toString(), Qt::DisplayRole);
           _itemchar->setData(idx3, QVariant(_charVars), Qt::UserRole);
         }
-        else if (q.lastError().type() != QSqlError::None)
+        else if (q.lastError().type() != QSqlError::NoError)
         {
           systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
           return;
@@ -1587,7 +1587,7 @@ void salesOrderItem::sDeterminePrice(bool p)
         _orderQtyChanged = _qtyOrdered->toDouble();
       }
     }
-    else if (itemprice.lastError().type() != QSqlError::None)
+    else if (itemprice.lastError().type() != QSqlError::NoError)
     {
       systemError(this, itemprice.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -1706,7 +1706,7 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
         _overridePoPriceLit->hide();
       }
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -1768,7 +1768,7 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
       _itemchar->setData(idx, QVariant(_charVars), Qt::UserRole);
       row++;
     }
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -1940,7 +1940,7 @@ void salesOrderItem::sDetermineAvailability( bool p )
           availability.bindValue(":origQtyOrd",     _originalQtyOrd);
           availability.exec();
           _availability->populate(availability);
-          if (availability.lastError().type() != QSqlError::None)
+          if (availability.lastError().type() != QSqlError::NoError)
           {
             systemError(this, availability.lastError().databaseText(), __FILE__, __LINE__);
             return;
@@ -2011,7 +2011,7 @@ void salesOrderItem::sDetermineAvailability( bool p )
           availability.bindValue(":origQtyOrd", _originalQtyOrd);
           availability.exec();
           _availability->populate(availability);
-          if (availability.lastError().type() != QSqlError::None)
+          if (availability.lastError().type() != QSqlError::NoError)
           {
             systemError(this, availability.lastError().databaseText(), __FILE__, __LINE__);
             return;
@@ -2021,7 +2021,7 @@ void salesOrderItem::sDetermineAvailability( bool p )
       else
         _availability->setEnabled(FALSE);
     }
-    else if (availability.lastError().type() != QSqlError::None)
+    else if (availability.lastError().type() != QSqlError::NoError)
     {
       systemError(this, availability.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -2156,7 +2156,7 @@ void salesOrderItem::sHandleWo(bool pCreate)
             }
           }
           else
-          if (query.lastError().type() != QSqlError::None)
+          if (query.lastError().type() != QSqlError::NoError)
           {
             systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
             return;
@@ -2199,7 +2199,7 @@ void salesOrderItem::sPopulateOrderInfo()
       if (qty.first())
         _orderQty->setDouble(qty.value("qty").toDouble());
 
-      else if (qty.lastError().type() != QSqlError::None)
+      else if (qty.lastError().type() != QSqlError::NoError)
       {
         systemError(this, qty.lastError().databaseText(), __FILE__, __LINE__);
         return;
@@ -2249,7 +2249,7 @@ void salesOrderItem::populate()
   q = mql.toQuery(qparams);
   if (q.first())
     _taxauthid = q.value("taxauth_id").toInt();
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -2388,7 +2388,7 @@ void salesOrderItem::populate()
     sLookupTax();
     sDetermineAvailability();
   }
-  else if (item.lastError().type() != QSqlError::None)
+  else if (item.lastError().type() != QSqlError::NoError)
   {
     systemError(this, item.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -2594,7 +2594,7 @@ void salesOrderItem::sNext()
     }
     set(params);
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -2702,7 +2702,7 @@ void salesOrderItem::sPrev()
     }
     set(params);
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -2750,7 +2750,7 @@ void salesOrderItem::sCancel()
   q.prepare("UPDATE coitem SET coitem_status='X' WHERE (coitem_id=:coitem_id);");
   q.bindValue(":coitem_id", _soitemid);
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -2781,7 +2781,7 @@ void salesOrderItem::sLookupTaxCode()
     _cachedPctB = taxq.value("tax_rateb").toDouble();
     _cachedPctC = taxq.value("tax_ratec").toDouble();
   }
-  else if (taxq.lastError().type() != QSqlError::None)
+  else if (taxq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -2807,7 +2807,7 @@ void salesOrderItem::sLookupTax()
     _cachedRateC= calcq.value("valC").toDouble();
     _tax->setLocalValue(_cachedRateA + _cachedRateB + _cachedRateC);
   }
-  else if (calcq.lastError().type() != QSqlError::None)
+  else if (calcq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, calcq.lastError().databaseText(), __FILE__, __LINE__);
     return;
