@@ -156,13 +156,13 @@ enum SetResponse expenseCategory::set(ParameterList &pParams)
 
 void expenseCategory::sCheck()
 {
-  _category->setText(_category->text().stripWhiteSpace().upper());
+  _category->setText(_category->text().trimmed().toUpper());
   if ((_mode == cNew) && (_category->text().length() != 0))
   {
     q.prepare( "SELECT expcat_id "
                "FROM expcat "
                "WHERE (UPPER(expcat_code)=:expcat_code);" );
-    q.bindValue(":expcat_code", _category->text().stripWhiteSpace());
+    q.bindValue(":expcat_code", _category->text().trimmed());
     q.exec();
     if (q.first())
     {
@@ -227,9 +227,9 @@ void expenseCategory::sSave()
                "WHERE (expcat_id=:expcat_id);" );
 
   q.bindValue(":expcat_id", _expcatid);
-  q.bindValue(":expcat_code", _category->text().stripWhiteSpace());
-  q.bindValue(":expcat_active", QVariant(_active->isChecked(), 0));
-  q.bindValue(":expcat_descrip", _description->text().stripWhiteSpace());
+  q.bindValue(":expcat_code", _category->text().trimmed());
+  q.bindValue(":expcat_active", QVariant(_active->isChecked()));
+  q.bindValue(":expcat_descrip", _description->text().trimmed());
   q.bindValue(":expcat_exp_accnt_id", _expense->id());
   q.bindValue(":expcat_purchprice_accnt_id", _purchasePrice->id());
   q.bindValue(":expcat_liability_accnt_id", _liability->id());

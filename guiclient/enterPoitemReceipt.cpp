@@ -153,7 +153,7 @@ enum SetResponse enterPoitemReceipt::set(const ParameterList &pParams)
       _freightLit->setText(tr("Correct Freight to:"));
       _receive->setText(tr("Co&rrect"));
       _item->setEnabled(false);
-      setCaption(tr("Correct Item Receipt"));
+      setWindowTitle(tr("Correct Item Receipt"));
     }
   }
 
@@ -266,14 +266,14 @@ void enterPoitemReceipt::populate()
           return;
         _item->setItemsiteid(itemsiteid);
       }
-      else if (isq.lastError().type() != QSqlError::None)
+      else if (isq.lastError().type() != QSqlError::NoError)
       {
         systemError(this, isq.lastError().databaseText(), __FILE__, __LINE__);
         return;
       }
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -325,10 +325,10 @@ void enterPoitemReceipt::sReceive()
   {
     q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
     q.prepare("UPDATE recv SET recv_notes = :notes WHERE (recv_id=:recv_id);" );
-    q.bindValue(":notes",	_notes->text());
+    q.bindValue(":notes",	_notes->toPlainText());
     q.bindValue(":recv_id",	_recvid);
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       rollback.exec();
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -343,7 +343,7 @@ void enterPoitemReceipt::sReceive()
 
   q.bindValue(":qty",		_toReceive->toDouble());
   q.bindValue(":freight",	_freight->localValue());
-  q.bindValue(":notes",		_notes->text());
+  q.bindValue(":notes",		_notes->toPlainText());
   q.bindValue(":curr_id",	_freight->id());
   q.bindValue(":effective",	_receiptDate->date());
   q.exec();

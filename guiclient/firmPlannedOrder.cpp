@@ -119,7 +119,7 @@ enum SetResponse firmPlannedOrder::set(const ParameterList &pParams)
       else if (q.value("planord_type").toString() == "W")
         _orderType->setText(tr("Work Order"));
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       reject();
@@ -145,7 +145,7 @@ void firmPlannedOrder::sFirm()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -175,7 +175,7 @@ void firmPlannedOrder::sFirm()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -184,10 +184,10 @@ void firmPlannedOrder::sFirm()
   q.prepare( "UPDATE planord "
              "SET planord_comments=:planord_comments, planord_firm=TRUE "
              "WHERE (planord_number=:orderNumber);" );
-  q.bindValue(":planord_comments", _comments->text());
+  q.bindValue(":planord_comments", _comments->toPlainText());
   q.bindValue(":orderNumber", _number);
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

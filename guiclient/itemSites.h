@@ -69,7 +69,7 @@ class itemSites : public XWidget, public Ui::itemSites
     Q_OBJECT
 
 public:
-    itemSites(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    itemSites(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~itemSites();
 
 public slots:

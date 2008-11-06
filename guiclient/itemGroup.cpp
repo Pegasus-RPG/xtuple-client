@@ -167,7 +167,7 @@ enum SetResponse itemGroup::set(ParameterList &pParams)
 
 void itemGroup::sCheck()
 {
-  _name->setText(_name->text().stripWhiteSpace());
+  _name->setText(_name->text().trimmed());
   if ((_mode == cNew) && (_name->text().length()))
   {
     q.prepare( "SELECT itemgrp_id "
@@ -204,7 +204,7 @@ void itemGroup::sClose()
 
 void itemGroup::sSave()
 {
-  if (_name->text().stripWhiteSpace().length() == 0)
+  if (_name->text().trimmed().length() == 0)
   {
     QMessageBox::warning( this, tr("Cannot Save Item Group"),
                           tr("You must enter a Name for this Item Group before you may save it.") );

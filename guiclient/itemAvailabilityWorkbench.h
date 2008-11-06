@@ -69,7 +69,7 @@ class itemAvailabilityWorkbench : public XWidget, public Ui::itemAvailabilityWor
     Q_OBJECT
 
 public:
-    itemAvailabilityWorkbench(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    itemAvailabilityWorkbench(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~itemAvailabilityWorkbench();
 
     virtual bool setParamsCosted(ParameterList &);

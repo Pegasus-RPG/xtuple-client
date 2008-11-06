@@ -147,7 +147,7 @@ void fixSerial::sFillList()
     maxq = maxMql.toQuery(params);
     if (maxq.first())
       maxval = maxq.value("maxval").toInt();
-    else if (maxq.lastError().type() != QSqlError::None)
+    else if (maxq.lastError().type() != QSqlError::NoError)
     {
       systemError(this, maxq.lastError().databaseText(), __FILE__, __LINE__);
       continue;
@@ -157,7 +157,7 @@ void fixSerial::sFillList()
     seqq = seqMql.toQuery(params);
     if (seqq.first())
       currval = seqq.value("currval").toInt();
-    else if (seqq.lastError().type() != QSqlError::None)
+    else if (seqq.lastError().type() != QSqlError::NoError)
     {
       systemError(this, seqq.lastError().databaseText(), __FILE__, __LINE__);
       continue;
@@ -185,7 +185,7 @@ void fixSerial::sFillList()
   }
 
   QApplication::restoreOverrideCursor();
-  if (relq.lastError().type() != QSqlError::None)
+  if (relq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, relq.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -212,7 +212,7 @@ bool fixSerial::fixOne(XTreeWidgetItem *pItem)
   q.bindValue(":value",		pItem->text(3));
 
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return false;

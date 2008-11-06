@@ -69,7 +69,7 @@ class itemImages : public XWidget, public Ui::itemImages
     Q_OBJECT
 
 public:
-    itemImages(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    itemImages(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~itemImages();
 
     virtual void init();

@@ -197,7 +197,7 @@ itemAvailabilityWorkbench::itemAvailabilityWorkbench(QWidget* parent, const char
   _transType->append(cTransAdjCounts, tr("Adjustments and Counts") );
   _transType->append(cTransTransfers, tr("Transfers")              );
   _transType->append(cTransScraps,    tr("Scraps")                 );
-  _transType->setCurrentItem(0);
+  _transType->setCurrentIndex(0);
   
   // Itemloc
   _itemloc->addColumn(tr("Site"),          _whsColumn,   Qt::AlignCenter, true,  "warehous_code" );
@@ -598,7 +598,7 @@ void itemAvailabilityWorkbench::sFillListCosted()
     return;
   q = mql.toQuery(params);
   _bomitem->populate(q, true);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -635,7 +635,7 @@ void itemAvailabilityWorkbench::sFillListCosted()
       last->setText(0, tr("Standard Cost"));
       last->setText(9, q.value("standard").toString());
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -685,7 +685,7 @@ void itemAvailabilityWorkbench::sFillListRunning()
       q = mql.toQuery(params);
       _availability->populate(q, true);
       sHandleResort();
-      if (q.lastError().type() != QSqlError::None)
+      if (q.lastError().type() != QSqlError::NoError)
       {
         systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
         return;
@@ -815,7 +815,7 @@ void itemAvailabilityWorkbench::sFillListAvail()
   q.bindValue(":startDate", _startDate->date());
   q.bindValue(":endDate", _endDate->date());
   q.bindValue(":item_id", _item->id());
-  q.bindValue(":byLeadtime",QVariant(_leadTime->isChecked(), 0));
+  q.bindValue(":byLeadtime",QVariant(_leadTime->isChecked()));
   _invWarehouse->bindValue(q);
   q.exec();
   _invAvailability->populate(q,TRUE);
@@ -927,7 +927,7 @@ bool itemAvailabilityWorkbench::setParamsCosted(ParameterList &params)
     }
     params.append("revision_id", result);
   }
-  else if (rq.lastError().type() != QSqlError::None)
+  else if (rq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, rq.lastError().databaseText(), __FILE__, __LINE__);
     return false;
@@ -955,7 +955,7 @@ void itemAvailabilityWorkbench::sPrintCosted()
     else
       report.reportError(this);
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this,
                 tr("<p>Could not collect the Indented BOM information to write "

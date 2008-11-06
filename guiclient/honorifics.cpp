@@ -120,7 +120,7 @@ void honorifics::sFillList()
              "ORDER BY hnfc_code;" );
   q.exec();
   _honorifics->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -133,7 +133,7 @@ void honorifics::sDelete()
              "WHERE (hnfc_id=:hnfc_id);" );
   q.bindValue(":hnfc_id", _honorifics->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

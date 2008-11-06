@@ -61,7 +61,7 @@
 
 #include <QTimer>
 #include <QAction>
-#include <Q3VBox>
+#include <QVBoxLayout>
 #include <QStatusBar>
 #include <QWorkspace>
 #include <QDateTime>
@@ -79,10 +79,10 @@
 #include <QCursor>
 #include <QDir>
 #include <QAssistantClient>
-#include <Q3Process>
+#include <QProcess>
 #include <QSqlError>
 #include <QPixmap>
-#include <Q3Frame>
+#include <QFrame>
 #include <QTextStream>
 #include <QCloseEvent>
 #include <QMainWindow>
@@ -383,17 +383,16 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
 
   _assClient->setArguments(commands);
 
-  //QFont f(qApp->font());
-  //f.setPointSize(8);
-  //qApp->setFont(f, TRUE);
   _fixedFont = new QFont("courier", 8);
   _systemFont = new QFont(qApp->font());
 
-  Q3VBox *boxThis = new Q3VBox(this);
-  boxThis->setFrameStyle(Q3Frame::StyledPanel | Q3Frame::Sunken);
-  setCentralWidget(boxThis);
+  // TODO: replace QWorkspace with QMdiArea
+  _workspace = new QWorkspace();
+  setCentralWidget(_workspace);
+  _workspace->setScrollBarsEnabled(true);
+  //_workspace->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
 
-  _workspace = new QWorkspace(boxThis);
+  _workspace->setContentsMargins(0, 0, 0, 0);
 
 //  Install the InputManager
   _inputManager = new InputManager();
@@ -402,7 +401,7 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
 #ifndef Q_WS_MACX
   setIcon(QPixmap(":/images/icon.xpm"));
 #endif
-  setCaption();
+  setWindowTitle();
 
 //  Populate the menu bar
 #ifdef Q_WS_MACX
@@ -483,7 +482,7 @@ bool GUIClient::singleCurrency()
     return retValue;
 }
 
-void GUIClient::setCaption()
+void GUIClient::setWindowTitle()
 {
   QString name;
 
@@ -507,12 +506,12 @@ void GUIClient::setCaption()
     parseDatabaseURL(_databaseURL, protocol, server, database, port);
 
     if (_evaluation)
-      QMainWindow::setCaption( tr("%1 Evaluation %2 - Logged on as %3")
+      QMainWindow::setWindowTitle( tr("%1 Evaluation %2 - Logged on as %3")
                                .arg(_Name)
                                .arg(_Version)
                                .arg(_q.value("username").toString()) );
     else
-      QMainWindow::setCaption( tr("%1 %2 - %3 on %4/%5 AS %6")
+      QMainWindow::setWindowTitle( tr("%1 %2 - %3 on %4/%5 AS %6")
                                .arg(_Name)
                                .arg(_Version)
                                .arg(name)
@@ -521,7 +520,7 @@ void GUIClient::setCaption()
                                .arg(_q.value("username").toString()) );
   }
   else
-    QMainWindow::setCaption(_Name);
+    QMainWindow::setWindowTitle(_Name);
 }
 
 void GUIClient::initMenuBar()
@@ -1199,8 +1198,10 @@ void GUIClient::sCustomCommand()
     }
     else
     {
-      Q3Process *proc = new Q3Process(this);
-      connect(proc, SIGNAL(processExited()), proc, SLOT(deleteLater()));
+      QProcess *proc = new QProcess(this);
+      QString command;
+      QStringList args;
+      connect(proc, SIGNAL(finished(int, QProcess::ExitStatus)), proc, SLOT(deleteLater()));
       q.prepare("SELECT 1 AS base,"
                 "       0 AS ord,"
                 "       cmd_executable AS argument"
@@ -1215,9 +1216,13 @@ void GUIClient::sCustomCommand()
                 " ORDER BY base, ord; ");
       q.bindValue(":cmd_id", it.data());
       q.exec();
-      while(q.next())
-        proc->addArgument(q.value("argument").toString());
-      proc->start();
+      if (q.first())
+      {
+        command = q.value("argument").toString();
+        while(q.next())
+          args.append(q.value("argument").toString());
+        proc->start(command, args);
+      }
     }
   }
 }
@@ -1252,10 +1257,13 @@ void GUIClient::launchBrowser(QWidget * w, const QString & url)
       app += " " + url;
     }
     app.replace("%%", "%");
-    Q3Process *proc = new Q3Process(w);
+    QProcess *proc = new QProcess(w);
     connect(proc, SIGNAL(processExited()), proc, SLOT(deleteLater()));
-    proc->setArguments(QStringList::split(QRegExp(" +"), app));
-    if(proc->start())
+    QStringList args = app.split(QRegExp(" +"));
+    QString cmd = args.first();
+    args.removeFirst();
+    proc->start(cmd, args);
+    if (proc->waitForStarted())
       return;
   }
 

@@ -102,7 +102,7 @@ financialLayoutItem::financialLayoutItem(QWidget* parent, const char* name, bool
   _profit->setType(XComboBox::ProfitCenters);
   _profit->append(-1,tr("All"));
   _profit->setText(tr("All"));
-  _type->setCurrentItem(5);
+  _type->setCurrentIndex(5);
   _sub->setType(XComboBox::Subaccounts);
   _sub->append(-1,tr("All"));
   _sub->setText(tr("All"));
@@ -362,19 +362,19 @@ void financialLayoutItem::sSave()
   q.bindValue(":flitem_flgrp_id", _flgrpid);
   q.bindValue(":flitem_order", order);
   q.bindValue(":flitem_accnt_id", _account->id());
-  q.bindValue(":flitem_showstart", QVariant(_showBeginning->isChecked(), 0));
-  q.bindValue(":flitem_showend", QVariant(_showEnding->isChecked(), 0));
-  q.bindValue(":flitem_showdelta", QVariant(_showDB->isChecked(), 0));
-  q.bindValue(":flitem_showbudget", QVariant(_showBudget->isChecked(), 0));
-  q.bindValue(":flitem_showdiff", QVariant(_showDiff->isChecked(), 0));
-  q.bindValue(":flitem_showcustom", QVariant(_showCustom->isChecked(), 0));
-  q.bindValue(":flitem_subtract", QVariant(_subtract->isChecked(), 0));
-  q.bindValue(":flitem_showstartprcnt", QVariant(_showBeginning->isChecked() && _showBeginningPrcnt->isChecked(), 0));
-  q.bindValue(":flitem_showendprcnt", QVariant(_showEnding->isChecked() && _showEndingPrcnt->isChecked(), 0));
-  q.bindValue(":flitem_showdeltaprcnt", QVariant(_showDB->isChecked() && _showDBPrcnt->isChecked(), 0));
-  q.bindValue(":flitem_showbudgetprcnt", QVariant(_showBudget->isChecked() && _showBudgetPrcnt->isChecked(), 0));
-  q.bindValue(":flitem_showdiffprcnt", QVariant(_showDiff->isChecked() && _showDiffPrcnt->isChecked(), 0));
-  q.bindValue(":flitem_showcustomprcnt", QVariant(_showCustom->isChecked() && _showCustomPrcnt->isChecked(), 0));
+  q.bindValue(":flitem_showstart", QVariant(_showBeginning->isChecked()));
+  q.bindValue(":flitem_showend", QVariant(_showEnding->isChecked()));
+  q.bindValue(":flitem_showdelta", QVariant(_showDB->isChecked()));
+  q.bindValue(":flitem_showbudget", QVariant(_showBudget->isChecked()));
+  q.bindValue(":flitem_showdiff", QVariant(_showDiff->isChecked()));
+  q.bindValue(":flitem_showcustom", QVariant(_showCustom->isChecked()));
+  q.bindValue(":flitem_subtract", QVariant(_subtract->isChecked()));
+  q.bindValue(":flitem_showstartprcnt", QVariant(_showBeginning->isChecked() && _showBeginningPrcnt->isChecked()));
+  q.bindValue(":flitem_showendprcnt", QVariant(_showEnding->isChecked() && _showEndingPrcnt->isChecked()));
+  q.bindValue(":flitem_showdeltaprcnt", QVariant(_showDB->isChecked() && _showDBPrcnt->isChecked()));
+  q.bindValue(":flitem_showbudgetprcnt", QVariant(_showBudget->isChecked() && _showBudgetPrcnt->isChecked()));
+  q.bindValue(":flitem_showdiffprcnt", QVariant(_showDiff->isChecked() && _showDiffPrcnt->isChecked()));
+  q.bindValue(":flitem_showcustomprcnt", QVariant(_showCustom->isChecked() && _showCustomPrcnt->isChecked()));
   q.bindValue(":flitem_id", _flitemid);
   q.bindValue(":flitem_prcnt_flgrp_id", _group->id());
 
@@ -400,15 +400,15 @@ void financialLayoutItem::sSave()
     q.bindValue(":flitem_sub", _sub->currentText());
     q.bindValue(":subaccnttype_id", _subType->id());
 
-    if (_type->currentItem() == 0)
+    if (_type->currentIndex() == 0)
       q.bindValue(":flitem_type", "A");
-    else if (_type->currentItem() == 1)
+    else if (_type->currentIndex() == 1)
       q.bindValue(":flitem_type", "L");
-    else if (_type->currentItem() == 2)
+    else if (_type->currentIndex() == 2)
       q.bindValue(":flitem_type", "E");
-    else if (_type->currentItem() == 3)
+    else if (_type->currentIndex() == 3)
       q.bindValue(":flitem_type", "R");
-    else if (_type->currentItem() == 4)
+    else if (_type->currentIndex() == 4)
       q.bindValue(":flitem_type", "Q");
     else
       q.bindValue(":flitem_type", "");
@@ -452,17 +452,17 @@ void financialLayoutItem::populate()
         _sub->setText(q.value("flitem_sub"));
 
       if (q.value("flitem_type").toString() == "A")
-        _type->setCurrentItem(0);
+        _type->setCurrentIndex(0);
       else if (q.value("flitem_type").toString() == "L")
-        _type->setCurrentItem(1);
+        _type->setCurrentIndex(1);
       else if (q.value("flitem_type").toString() == "E")
-        _type->setCurrentItem(2);
+        _type->setCurrentIndex(2);
       else if (q.value("flitem_type").toString() == "R")
-        _type->setCurrentItem(3);
+        _type->setCurrentIndex(3);
       else if (q.value("flitem_type").toString() == "Q")
-        _type->setCurrentItem(4);
+        _type->setCurrentIndex(4);
       else
-	  _type->setCurrentItem(5);
+	  _type->setCurrentIndex(5);
 
       _subType->setId(q.value("subaccnttype_id").toInt());
     }
@@ -598,22 +598,22 @@ void financialLayoutItem::populateSubTypes()
   query = ("SELECT subaccnttype_id, (subaccnttype_code||'-'||subaccnttype_descrip) "
               "FROM subaccnttype ");
               
-  if (_type->currentItem() != 5)
+  if (_type->currentIndex() != 5)
        query += "WHERE (subaccnttype_accnt_type=:subaccnttype_accnt_type) ";
        
   query +=  "ORDER BY subaccnttype_code; ";
   sub.prepare(query);
-  if  (_type->currentItem() != 5)
+  if  (_type->currentIndex() != 5)
   {
-	if (_type->currentItem() == 0)
+	if (_type->currentIndex() == 0)
 		sub.bindValue(":subaccnttype_accnt_type", "A");
-	else if (_type->currentItem() == 1)
+	else if (_type->currentIndex() == 1)
 		sub.bindValue(":subaccnttype_accnt_type", "L");
-	else if (_type->currentItem() == 2)
+	else if (_type->currentIndex() == 2)
 		sub.bindValue(":subaccnttype_accnt_type", "E");
-	else if (_type->currentItem() == 3)
+	else if (_type->currentIndex() == 3)
 		sub.bindValue(":subaccnttype_accnt_type", "R");
-	else if (_type->currentItem() == 4)
+	else if (_type->currentIndex() == 4)
 		sub.bindValue(":subaccnttype_accnt_type", "Q");
   }
   sub.exec();

@@ -68,7 +68,7 @@ class incidentPriorities : public XWidget, public Ui::incidentPriorities
     Q_OBJECT
 
 public:
-    incidentPriorities(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    incidentPriorities(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~incidentPriorities();
 
 public slots:

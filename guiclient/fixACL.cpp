@@ -105,7 +105,7 @@ void fixACL::sFix()
     }
 //    statusBar()->showMessage(tr("Done. %1 entities examined.").arg(result));
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

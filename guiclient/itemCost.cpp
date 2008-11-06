@@ -126,19 +126,19 @@ enum SetResponse itemCost::set(ParameterList &pParams)
       _mode = cNew;
       _lowerLevel->hide();
       _lowerLevelLit->hide();
-      setCaption("Create Item Cost");
+      setWindowTitle("Create Item Cost");
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
       _costelem->setEnabled(false);
-      setCaption("Enter Actual Cost");
+      setWindowTitle("Enter Actual Cost");
     }
     else if (param.toString() == "view")
     {
       _actualCost->setEnabled(false);
       _costelem->setEnabled(false);
-      setCaption("View Actual Cost");
+      setWindowTitle("View Actual Cost");
     }
   }
       

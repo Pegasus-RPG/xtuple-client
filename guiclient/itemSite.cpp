@@ -224,7 +224,7 @@ enum SetResponse itemSite::set(const ParameterList &pParams)
         else
         {
           _mode = cNew;
-          _controlMethod->setCurrentItem(1);
+          _controlMethod->setCurrentIndex(1);
           _reorderLevel->setDouble(0.0);
           _orderUpToQty->setDouble(0.0);
           _minimumOrder->setDouble(0.0);
@@ -240,7 +240,7 @@ enum SetResponse itemSite::set(const ParameterList &pParams)
       else
       {
         _mode = cNew;
-        _controlMethod->setCurrentItem(1);
+        _controlMethod->setCurrentIndex(1);
         _reorderLevel->setDouble(0.0);
         _orderUpToQty->setDouble(0.0);
         _minimumOrder->setDouble(0.0);
@@ -369,7 +369,7 @@ void itemSite::sSave()
   }
 
   bool isLocationControl = _locationControl->isChecked();
-  bool isLotSerial = (((_controlMethod->currentItem() == 2) || (_controlMethod->currentItem() == 3)) ? TRUE : FALSE);
+  bool isLotSerial = (((_controlMethod->currentIndex() == 2) || (_controlMethod->currentItem() == 3)) ? TRUE : FALSE);
   if ( ( (_mode == cNew) && (isLocationControl) ) ||
        ( (_mode == cEdit) && (isLocationControl) && (!_wasLocationControl) ) )
   {
@@ -473,7 +473,7 @@ void itemSite::sSave()
     XSqlQuery newItemsiteid("SELECT NEXTVAL('itemsite_itemsite_id_seq') AS _itemsite_id");
     if (newItemsiteid.first())
       _itemsiteid = newItemsiteid.value("_itemsite_id").toInt();
-    else if (newItemsiteid.lastError().type() != QSqlError::None)
+    else if (newItemsiteid.lastError().type() != QSqlError::NoError)
     {
       systemError(this, newItemsiteid.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -600,40 +600,40 @@ void itemSite::sSave()
   newItemSite.bindValue(":itemsite_item_id", _item->id());
   newItemSite.bindValue(":itemsite_warehous_id", _warehouse->id());
 
-  newItemSite.bindValue(":itemsite_useparams", QVariant(_useParameters->isChecked(), 0));
+  newItemSite.bindValue(":itemsite_useparams", QVariant(_useParameters->isChecked()));
   newItemSite.bindValue(":itemsite_reorderlevel", _reorderLevel->toDouble());
   newItemSite.bindValue(":itemsite_ordertoqty", _orderUpToQty->toDouble());
   newItemSite.bindValue(":itemsite_minordqty", _minimumOrder->toDouble());
   newItemSite.bindValue(":itemsite_maxordqty", _maximumOrder->toDouble());
   newItemSite.bindValue(":itemsite_multordqty", _orderMultiple->toDouble());
-  newItemSite.bindValue(":itemsite_useparamsmanual", QVariant(_useParametersOnManual->isChecked(), 0));
+  newItemSite.bindValue(":itemsite_useparamsmanual", QVariant(_useParametersOnManual->isChecked()));
 
   newItemSite.bindValue(":itemsite_safetystock", _safetyStock->toDouble());
   newItemSite.bindValue(":itemsite_cyclecountfreq", _cycleCountFreq->value());
   newItemSite.bindValue(":itemsite_plancode_id", _plannerCode->id());
   newItemSite.bindValue(":itemsite_costcat_id", _costcat->id());
     
-  newItemSite.bindValue(":itemsite_active", QVariant(_active->isChecked(), 0));
-  newItemSite.bindValue(":itemsite_supply", QVariant(_supply->isChecked(), 0));
-  newItemSite.bindValue(":itemsite_createpr", QVariant(_createPr->isChecked(), 0));
-  newItemSite.bindValue(":itemsite_createwo", QVariant(_createWo->isChecked(), 0));
-  newItemSite.bindValue(":itemsite_sold", QVariant(_sold->isChecked(), 0));
-  newItemSite.bindValue(":itemsite_stocked", QVariant(_stocked->isChecked(), 0));
-  newItemSite.bindValue(":itemsite_perishable", QVariant(_perishable->isChecked(), 0));
-  newItemSite.bindValue(":itemsite_loccntrl", QVariant(_locationControl->isChecked(), 0));
-  newItemSite.bindValue(":itemsite_disallowblankwip", QVariant((_locationControl->isChecked() && _disallowBlankWIP->isChecked()), 0));
+  newItemSite.bindValue(":itemsite_active", QVariant(_active->isChecked()));
+  newItemSite.bindValue(":itemsite_supply", QVariant(_supply->isChecked()));
+  newItemSite.bindValue(":itemsite_createpr", QVariant(_createPr->isChecked()));
+  newItemSite.bindValue(":itemsite_createwo", QVariant(_createWo->isChecked()));
+  newItemSite.bindValue(":itemsite_sold", QVariant(_sold->isChecked()));
+  newItemSite.bindValue(":itemsite_stocked", QVariant(_stocked->isChecked()));
+  newItemSite.bindValue(":itemsite_perishable", QVariant(_perishable->isChecked()));
+  newItemSite.bindValue(":itemsite_loccntrl", QVariant(_locationControl->isChecked()));
+  newItemSite.bindValue(":itemsite_disallowblankwip", QVariant((_locationControl->isChecked() && _disallowBlankWIP->isChecked())));
     
   newItemSite.bindValue(":itemsite_leadtime", _leadTime->value());
   newItemSite.bindValue(":itemsite_eventfence", _eventFence->value());
   newItemSite.bindValue(":itemsite_soldranking", _soldRanking->value());
     
-  newItemSite.bindValue(":itemsite_location_comments", _locationComments->text().stripWhiteSpace());
-  newItemSite.bindValue(":itemsite_notes", _notes->text().stripWhiteSpace());
+  newItemSite.bindValue(":itemsite_location_comments", _locationComments->text().trimmed());
+  newItemSite.bindValue(":itemsite_notes", _notes->toPlainText().trimmed());
   newItemSite.bindValue(":itemsite_abcclass", _abcClass->currentText());
-  newItemSite.bindValue(":itemsite_autoabcclass", QVariant(_autoUpdateABCClass->isChecked(), 0));
+  newItemSite.bindValue(":itemsite_autoabcclass", QVariant(_autoUpdateABCClass->isChecked()));
     
   newItemSite.bindValue(":itemsite_ordergroup", _orderGroup->value());
-  newItemSite.bindValue(":itemsite_ordergroup_first", QVariant(_orderGroupFirst->isChecked(), 0));
+  newItemSite.bindValue(":itemsite_ordergroup_first", QVariant(_orderGroupFirst->isChecked()));
   newItemSite.bindValue(":itemsite_mps_timefence", _mpsTimeFence->value());
 
   if (_useDefaultLocation->isChecked())
@@ -646,7 +646,7 @@ void itemSite::sSave()
     else if (_miscLocation->isChecked())
     {
       newItemSite.bindValue(":itemsite_location_id", -1);
-      newItemSite.bindValue(":itemsite_location", _miscLocationName->text().stripWhiteSpace());
+      newItemSite.bindValue(":itemsite_location", _miscLocationName->text().trimmed());
     }
   }
   else
@@ -655,13 +655,13 @@ void itemSite::sSave()
     newItemSite.bindValue(":itemsite_location", "");
   }
     
-  if (_controlMethod->currentItem() == 0)
+  if (_controlMethod->currentIndex() == 0)
     newItemSite.bindValue(":itemsite_controlmethod", "N");
-  else if (_controlMethod->currentItem() == 1)
+  else if (_controlMethod->currentIndex() == 1)
     newItemSite.bindValue(":itemsite_controlmethod", "R");
-  else if (_controlMethod->currentItem() == 2)
+  else if (_controlMethod->currentIndex() == 2)
     newItemSite.bindValue(":itemsite_controlmethod", "L");
-  else if (_controlMethod->currentItem() == 3)
+  else if (_controlMethod->currentIndex() == 3)
     newItemSite.bindValue(":itemsite_controlmethod", "S");
 
   if(_costNone->isChecked())
@@ -673,11 +673,11 @@ void itemSite::sSave()
   else if(_costJob->isChecked())
     newItemSite.bindValue(":itemsite_costmethod", "J");
 
-  newItemSite.bindValue(":itemsite_warrpurc", QVariant(_purchWarranty->isChecked(), 0));
-  newItemSite.bindValue(":itemsite_autoreg", QVariant(_autoRegister->isChecked(), 0));
+  newItemSite.bindValue(":itemsite_warrpurc", QVariant(_purchWarranty->isChecked()));
+  newItemSite.bindValue(":itemsite_autoreg", QVariant(_autoRegister->isChecked()));
     
   newItemSite.exec();
-  if (newItemSite.lastError().type() != QSqlError::None)
+  if (newItemSite.lastError().type() != QSqlError::NoError)
   {
     systemError(this, newItemSite.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -769,7 +769,7 @@ void itemSite::sHandleControlMethod()
     _costStd->setEnabled(false);
     _costJob->setEnabled(true);
   }
-  else if (_controlMethod->currentItem() == 0 || _itemType == 'R' || _itemType == 'K')
+  else if (_controlMethod->currentIndex() == 0 || _itemType == 'R' || _itemType == 'K')
   {
     _costNone->setChecked(true);
     _costNone->setEnabled(true);
@@ -789,8 +789,8 @@ void itemSite::sHandleControlMethod()
     _costJob->setEnabled(false);
   }
 
-  if ( (_controlMethod->currentItem() == 2) ||
-       (_controlMethod->currentItem() == 3) )  
+  if ( (_controlMethod->currentIndex() == 2) ||
+       (_controlMethod->currentIndex() == 3) )  
   {
     _perishable->setEnabled(TRUE);
     _tab->setTabEnabled(_tab->indexOf(_expirationTab),TRUE);
@@ -812,7 +812,7 @@ void itemSite::sCacheItemType(char pItemType)
 {
   _itemType = pItemType;
 
-  if (_controlMethod->currentItem() == 0 || _itemType == 'R' || _itemType == 'K')
+  if (_controlMethod->currentIndex() == 0 || _itemType == 'R' || _itemType == 'K')
   {
     _costNone->setChecked(true);
     _costNone->setEnabled(true);
@@ -873,13 +873,13 @@ void itemSite::sCacheItemType(char pItemType)
     if((_itemType == 'R') || (_itemType == 'J') || (_itemType == 'K'))
     {
       _sold->setEnabled(TRUE);
-      _controlMethod->setCurrentItem(0);
+      _controlMethod->setCurrentIndex(0);
     }
     else
     {
       _sold->setChecked(FALSE);
       _sold->setEnabled(FALSE);
-      _controlMethod->setCurrentItem(1);
+      _controlMethod->setCurrentIndex(1);
     }
 	
     _stocked->setChecked(FALSE);
@@ -1022,27 +1022,27 @@ void itemSite::populate()
 
     if (itemsite.value("itemsite_controlmethod").toString() == "N")
     {
-      _controlMethod->setCurrentItem(0);
+      _controlMethod->setCurrentIndex(0);
       _wasLotSerial = FALSE;
     }
     else if (itemsite.value("itemsite_controlmethod").toString() == "R")
     {
-      _controlMethod->setCurrentItem(1);
+      _controlMethod->setCurrentIndex(1);
       _wasLotSerial = FALSE;
     }
     else if (itemsite.value("itemsite_controlmethod").toString() == "L")
     {
-      _controlMethod->setCurrentItem(2);
+      _controlMethod->setCurrentIndex(2);
       _wasLotSerial = TRUE;
     }
     else if (itemsite.value("itemsite_controlmethod").toString() == "S")
     {
-      _controlMethod->setCurrentItem(3);
+      _controlMethod->setCurrentIndex(3);
       _wasLotSerial = TRUE;
     }
 
-    if ( (_controlMethod->currentItem() == 2) ||
-         (_controlMethod->currentItem() == 3) )
+    if ( (_controlMethod->currentIndex() == 2) ||
+         (_controlMethod->currentIndex() == 3) )
     {
       _perishable->setEnabled(TRUE);
       _perishable->setChecked(itemsite.value("itemsite_perishable").toBool());
@@ -1112,7 +1112,7 @@ void itemSite::populate()
 
     for (int counter = 0; counter < _abcClass->count(); counter++)
       if (_abcClass->text(counter) == itemsite.value("itemsite_abcclass").toString())
-        _abcClass->setCurrentItem(counter);
+        _abcClass->setCurrentIndex(counter);
 
     _autoUpdateABCClass->setChecked(itemsite.value("itemsite_autoabcclass").toBool());
 	
@@ -1227,7 +1227,7 @@ int itemSite::createItemSite(QWidget* pparent, int pitemsiteid, int pwhsid, bool
   whsq.exec();
   if (whsq.first())
     whs = whsq.value("warehous_code").toString();
-  else if (whsq.lastError().type() != QSqlError::None)
+  else if (whsq.lastError().type() != QSqlError::NoError)
   {
     systemError(pparent, whsq.lastError().databaseText(), __FILE__, __LINE__);
     return -100;
@@ -1299,7 +1299,7 @@ int itemSite::createItemSite(QWidget* pparent, int pitemsiteid, int pwhsid, bool
 		return result;
 	      }
 	    }
-	    else if (isq.lastError().type() != QSqlError::None)
+	    else if (isq.lastError().type() != QSqlError::NoError)
 	    {
 	      systemError(pparent, isq.lastError().databaseText(), __FILE__, __LINE__);
 	      return -100;
@@ -1308,7 +1308,7 @@ int itemSite::createItemSite(QWidget* pparent, int pitemsiteid, int pwhsid, bool
 	}
 	return itemsiteid;
       } // end if successfully copied an itemsite
-      else if (isq.lastError().type() != QSqlError::None)
+      else if (isq.lastError().type() != QSqlError::NoError)
       {
 	systemError(pparent, isq.lastError().databaseText(), __FILE__, __LINE__);
 	return -100;
@@ -1327,7 +1327,7 @@ int itemSite::createItemSite(QWidget* pparent, int pitemsiteid, int pwhsid, bool
 		  "WHERE itemsite_id=:itemsiteid;");
 	isq.bindValue(":itemsiteid", itemsiteid);
 	isq.exec();
-	if (isq.lastError().type() != QSqlError::None)
+	if (isq.lastError().type() != QSqlError::NoError)
 	{
 	  systemError(pparent, isq.lastError().databaseText(), __FILE__, __LINE__);
 	  return -100;
@@ -1342,7 +1342,7 @@ int itemSite::createItemSite(QWidget* pparent, int pitemsiteid, int pwhsid, bool
       }
     }
   }
-  else if (isq.lastError().type() != QSqlError::None)
+  else if (isq.lastError().type() != QSqlError::NoError)
   {
     systemError(pparent, isq.lastError().databaseText(), __FILE__, __LINE__);
     return -100;

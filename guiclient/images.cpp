@@ -142,7 +142,7 @@ void images::sDelete()
              "WHERE (image_id=:image_id);" );
   q.bindValue(":image_id", _image->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -161,7 +161,7 @@ void images::sFillList()
          "   AND  (relnamespace=pg_namespace.oid))"
          "ORDER BY image_name;" );
   _image->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

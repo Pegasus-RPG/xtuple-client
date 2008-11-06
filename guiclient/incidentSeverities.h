@@ -68,7 +68,7 @@ class incidentSeverities : public XWidget, public Ui::incidentSeverities
     Q_OBJECT
 
 public:
-    incidentSeverities(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    incidentSeverities(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~incidentSeverities();
 
 public slots:

@@ -280,7 +280,7 @@ void itemPricingScheduleItem::sSave( bool pClose)
                                    "You may not create duplicate Pricing Schedule Items." ) );
         return;
       }
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
                   __FILE__, __LINE__);
@@ -315,7 +315,7 @@ void itemPricingScheduleItem::sSave( bool pClose)
                                    "You may not create duplicate Pricing Schedule Items." ) );
         return;
       }
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
                   __FILE__, __LINE__);
@@ -325,7 +325,7 @@ void itemPricingScheduleItem::sSave( bool pClose)
       q.exec("SELECT NEXTVAL('ipsprodcat_ipsprodcat_id_seq') AS ipsprodcat_id;");
       if (q.first())
         _ipsprodcatid = q.value("ipsprodcat_id").toInt();
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
                   __FILE__, __LINE__);
@@ -362,7 +362,7 @@ void itemPricingScheduleItem::sSave( bool pClose)
                                    "You may not create duplicate Pricing Schedule Items." ) );
         return;
       }
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
         systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
                   __FILE__, __LINE__);
@@ -372,7 +372,7 @@ void itemPricingScheduleItem::sSave( bool pClose)
       q.exec("SELECT NEXTVAL('ipsfreight_ipsfreight_id_seq') AS ipsfreight_id;");
       if (q.first())
         _ipsfreightid = q.value("ipsfreight_id").toInt();
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
         systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
                   __FILE__, __LINE__);
@@ -442,7 +442,7 @@ void itemPricingScheduleItem::sSave( bool pClose)
   if (_selectedShipViaFreight->isChecked())
     q.bindValue(":ipsfreight_shipvia", _shipViaFreight->currentText());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
 	systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
                   __FILE__, __LINE__);
@@ -492,7 +492,7 @@ void itemPricingScheduleItem::populate()
 
       sUpdateMargins();
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
 	systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
                   __FILE__, __LINE__);
@@ -513,7 +513,7 @@ void itemPricingScheduleItem::populate()
       _qtyBreakCat->setDouble(q.value("ipsprodcat_qtybreak").toDouble());
       _discount->setDouble(q.value("discntprcnt").toDouble());
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
 	systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
                   __FILE__, __LINE__);
@@ -557,25 +557,25 @@ void itemPricingScheduleItem::populate()
       else
         _allFreightClasses->setChecked(true);
       //  Handle the free-form Ship Via
-      _shipViaFreight->setCurrentItem(-1);
+      _shipViaFreight->setCurrentIndex(-1);
       QString shipvia = q.value("ipsfreight_shipvia").toString();
-      if (shipvia.stripWhiteSpace().length() != 0)
+      if (shipvia.trimmed().length() != 0)
       {
         _selectedShipViaFreight->setChecked(true);
         for (int counter = 0; counter < _shipViaFreight->count(); counter++)
           if (_shipViaFreight->text(counter) == shipvia)
-            _shipViaFreight->setCurrentItem(counter);
+            _shipViaFreight->setCurrentIndex(counter);
 
         if (_shipViaFreight->id() == -1)
         {
           _shipViaFreight->insertItem(shipvia);
-          _shipViaFreight->setCurrentItem(_shipViaFreight->count() - 1);
+          _shipViaFreight->setCurrentIndex(_shipViaFreight->count() - 1);
         }
       }
       else
         _allShipViasFreight->setChecked(true);
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
        systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
                   __FILE__, __LINE__);
@@ -609,7 +609,7 @@ void itemPricingScheduleItem::sUpdateCosts(int pItemid)
               " ORDER BY uom_name;");
   uom.bindValue(":item_id", _item->id());
   uom.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
 	systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
                   __FILE__, __LINE__);
@@ -641,7 +641,7 @@ void itemPricingScheduleItem::sUpdateCosts(int pItemid)
     _qtyUOM->setId(cost.value("item_inv_uom_id").toInt());
     _priceUOM->setId(cost.value("item_price_uom_id").toInt());
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
 	systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
                   __FILE__, __LINE__);
@@ -751,7 +751,7 @@ void itemPricingScheduleItem::sPriceUOMChanged()
 
     sUpdateMargins();
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
                   __FILE__, __LINE__);
@@ -810,7 +810,7 @@ void itemPricingScheduleItem::sDelete()
             "WHERE (ipsitemchar_id=:ipsitemchar_id);");
   q.bindValue(":ipsitemchar_id", _charprice->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
 	systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
                   __FILE__, __LINE__);
@@ -828,7 +828,7 @@ void itemPricingScheduleItem::sFillList()
             "AND (ipsitemchar_ipsitem_id=:ipsitem_id)); ");
   q.bindValue(":ipsitem_id", _ipsitemid);
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
 	systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
                   __FILE__, __LINE__);

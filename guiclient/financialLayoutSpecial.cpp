@@ -223,19 +223,19 @@ void financialLayoutSpecial::sSave()
   q.bindValue(":flspec_flgrp_id", _flgrpid);
   q.bindValue(":flspec_order", order);
   q.bindValue(":flspec_name", _name->text());
-  q.bindValue(":flspec_showstart", QVariant(_showBeginning->isChecked(), 0));
-  q.bindValue(":flspec_showend", QVariant(_showEnding->isChecked(), 0));
-  q.bindValue(":flspec_showdelta", QVariant(_showDB->isChecked(), 0));
-  q.bindValue(":flspec_showbudget", QVariant(_showBudget->isChecked(), 0));
-  q.bindValue(":flspec_showdiff", QVariant(_showDiff->isChecked(), 0));
-  q.bindValue(":flspec_showcustom", QVariant(_showCustom->isChecked(), 0));
-  q.bindValue(":flspec_subtract", QVariant(_subtract->isChecked(), 0));
-  q.bindValue(":flspec_showstartprcnt", QVariant(_showBeginning->isChecked() && _showBeginningPrcnt->isChecked(), 0));
-  q.bindValue(":flspec_showendprcnt", QVariant(_showEnding->isChecked() && _showEndingPrcnt->isChecked(), 0));
-  q.bindValue(":flspec_showdeltaprcnt", QVariant(_showDB->isChecked() && _showDBPrcnt->isChecked(), 0));
-  q.bindValue(":flspec_showbudgetprcnt", QVariant(_showBudget->isChecked() && _showBudgetPrcnt->isChecked(), 0));
-  q.bindValue(":flspec_showdiffprcnt", QVariant(_showDiff->isChecked() && _showDiffPrcnt->isChecked(), 0));
-  q.bindValue(":flspec_showcustomprcnt", QVariant(_showCustom->isChecked() && _showCustomPrcnt->isChecked(), 0));
+  q.bindValue(":flspec_showstart", QVariant(_showBeginning->isChecked()));
+  q.bindValue(":flspec_showend", QVariant(_showEnding->isChecked()));
+  q.bindValue(":flspec_showdelta", QVariant(_showDB->isChecked()));
+  q.bindValue(":flspec_showbudget", QVariant(_showBudget->isChecked()));
+  q.bindValue(":flspec_showdiff", QVariant(_showDiff->isChecked()));
+  q.bindValue(":flspec_showcustom", QVariant(_showCustom->isChecked()));
+  q.bindValue(":flspec_subtract", QVariant(_subtract->isChecked()));
+  q.bindValue(":flspec_showstartprcnt", QVariant(_showBeginning->isChecked() && _showBeginningPrcnt->isChecked()));
+  q.bindValue(":flspec_showendprcnt", QVariant(_showEnding->isChecked() && _showEndingPrcnt->isChecked()));
+  q.bindValue(":flspec_showdeltaprcnt", QVariant(_showDB->isChecked() && _showDBPrcnt->isChecked()));
+  q.bindValue(":flspec_showbudgetprcnt", QVariant(_showBudget->isChecked() && _showBudgetPrcnt->isChecked()));
+  q.bindValue(":flspec_showdiffprcnt", QVariant(_showDiff->isChecked() && _showDiffPrcnt->isChecked()));
+  q.bindValue(":flspec_showcustomprcnt", QVariant(_showCustom->isChecked() && _showCustomPrcnt->isChecked()));
   q.bindValue(":flspec_prcnt_flgrp_id", _group->id());
   q.bindValue(":flspec_id", _flspecid);
 
@@ -252,7 +252,7 @@ void financialLayoutSpecial::sSave()
   else if(_customUseDiff->isChecked())
     q.bindValue(":flspec_custom_source", "F");
 
-  switch(_type->currentItem())
+  switch(_type->currentIndex())
   {
     case 1:
       q.bindValue(":flspec_type", "OpenAP");
@@ -310,9 +310,9 @@ void financialLayoutSpecial::populate()
       _add->setChecked(true);
 
     if(q.value("flspec_type").toString() == "OpenAP")
-      _type->setCurrentItem(1);
+      _type->setCurrentIndex(1);
     else //if(q.value("flspec_type").toString() == "OpenAR")
-      _type->setCurrentItem(0);
+      _type->setCurrentIndex(0);
 
     _flheadid = q.value("flspec_flhead_id").toInt();
 

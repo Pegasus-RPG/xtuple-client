@@ -213,7 +213,7 @@ void itemUOM::sSave()
   q.bindValue(":itemuomconv_id", _itemuomconvid);
   q.bindValue(":tovalue", _toValue->toDouble());
   q.bindValue(":fromvalue", _fromValue->toDouble());
-  q.bindValue(":fractional", QVariant(_fractional->isChecked(), 0));
+  q.bindValue(":fractional", QVariant(_fractional->isChecked()));
   if(q.exec())
     accept();
 }
@@ -385,7 +385,7 @@ void itemUOM::sCheck()
   q.bindValue(":to_uom_id", _uomTo->id());
   q.bindValue(":fromvalue", _fromValue->toDouble());
   q.bindValue(":tovalue", _toValue->toDouble());
-  q.bindValue(":fractional", QVariant(_fractional->isChecked(), 0));
+  q.bindValue(":fractional", QVariant(_fractional->isChecked()));
   q.exec();
 
   sFillList();

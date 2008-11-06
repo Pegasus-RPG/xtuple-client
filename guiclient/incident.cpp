@@ -125,7 +125,7 @@ incident::incident(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     _myUsrId = q.value("usr_id").toInt();
     _owner->setId(_myUsrId);
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     close();
@@ -301,20 +301,39 @@ void incident::sCancel()
 {
   if (cNew == _mode)
   {
-    q.prepare("DELETE FROM comment "
-              "WHERE ((comment_source_id=:incdt_id) "
-              "AND (comment_source='INCDT')); "
-              "DELETE FROM imageass "
-              "WHERE ((imageass_source_id=:incdt_id) "
-              "AND (imageass_source='INCDT')); "
-              "DELETE FROM url "
-              "WHERE ((url_source_id=:incdt_id) "
-              "AND (url_source='INCDT')); "
-              "SELECT releaseIncidentNumber(:incidentNumber);");
-    q.bindValue(":incdt_id", _incdtid);
-    q.bindValue(":incidentNumber", _number->text().toInt());
+    q.prepare("SELECT releaseNumber('IncidentNumber', :number) AS result;");
+    q.bindValue(":number", _number->text());
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.first())
+    {
+      int result = q.value("result").toInt();
+      if (result < 0)
+      {
+        systemError(this, storedProcErrorLookup("releaseNumber", result),
+                    __FILE__, __LINE__);
+        return;
+      }
+    }
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+
+    q.prepare("SELECT deleteIncident(:incdt_id) AS result;");
+    q.bindValue(":incdt_id", _incdtid);
+    q.exec();
+    if (q.first())
+    {
+      int result = q.value("result").toInt();
+      if (result < 0)
+      {
+        systemError(this, storedProcErrorLookup("deleteIncident", result),
+                    __FILE__, __LINE__);
+        return;
+      }
+    }
+    else if (q.lastError().type() != QSqlError::None)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -425,7 +444,7 @@ bool incident::save(bool partial)
   if (_cntct->id() > 0)
     q.bindValue(":incdt_cntct_id", _cntct->id());
   q.bindValue(":incdt_description", _description->text().trimmed());
-  q.bindValue(":incdt_notes", _notes->text().trimmed());
+  q.bindValue(":incdt_notes", _notes->toPlainText().trimmed());
   if(-1 != _item->id())
     q.bindValue(":incdt_item_id", _item->id());
   if(_assignedTo->isValid())
@@ -444,7 +463,7 @@ bool incident::save(bool partial)
   if (_aropenid > 0)
     q.bindValue(":incdt_aropen_id", _aropenid);
 
-  if(!q.exec() && q.lastError().type() != QSqlError::None)
+  if(!q.exec() && q.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -452,7 +471,7 @@ bool incident::save(bool partial)
   }
 
   q.exec("COMMIT;");
-  if(q.lastError().type() != QSqlError::None)
+  if(q.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -481,7 +500,7 @@ void incident::sFillHistoryList()
   q.bindValue(":contact", tr("Contact"));
   q.exec();
   _incdthist->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -621,7 +640,7 @@ void incident::sDeleteTodoItem()
     else
       sFillTodoList();
     }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -647,7 +666,7 @@ void incident::sFillTodoList()
   q.bindValue(":incdt_id", _incdtid);
   q.exec();
   _todoList->populate(q, true);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -765,7 +784,7 @@ void incident::sContactChanged()
   acctq.exec();
   if(acctq.first())
     _crmacct->setId(acctq.value("cntct_crmacct_id").toInt());
-  else if (acctq.lastError().type() != QSqlError::None)
+  else if (acctq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, acctq.lastError().databaseText(), __FILE__, __LINE__);
     return;

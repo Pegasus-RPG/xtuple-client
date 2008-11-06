@@ -67,7 +67,7 @@ class itemGroups : public XWidget, public Ui::itemGroups
     Q_OBJECT
 
 public:
-    itemGroups(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    itemGroups(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~itemGroups();
 
     virtual void init();

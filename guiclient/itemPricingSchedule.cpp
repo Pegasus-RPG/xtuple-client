@@ -183,7 +183,7 @@ enum SetResponse itemPricingSchedule::set(const ParameterList &pParams)
     q.exec("SELECT NEXTVAL('ipshead_ipshead_id_seq') AS ipshead_id;");
     if (q.first())
       _ipsheadid = q.value("ipshead_id").toInt();
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
 	systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
                   __FILE__, __LINE__);
@@ -197,7 +197,7 @@ enum SetResponse itemPricingSchedule::set(const ParameterList &pParams)
 
 void itemPricingSchedule::sSave(bool p)
 {
-  if (_name->text().stripWhiteSpace().isEmpty())
+  if (_name->text().trimmed().isEmpty())
   {
     QMessageBox::critical( this, tr("Enter Name"),
                            tr("You must enter a Name for this Pricing Schedule.") );
@@ -245,7 +245,7 @@ void itemPricingSchedule::sSave(bool p)
   q.bindValue(":ipshead_expires", _dates->endDate());
   q.bindValue(":ipshead_curr_id", _currency->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
 	systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
                   __FILE__, __LINE__);
@@ -334,7 +334,7 @@ void itemPricingSchedule::sDelete()
     return;
   q.bindValue(":ipsitem_id", _ipsitem->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
 	systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
                   __FILE__, __LINE__);
@@ -395,7 +395,7 @@ void itemPricingSchedule::sFillList(int pIpsitemid)
   q.bindValue(":flatrate", tr("Flat Rate"));
   q.bindValue(":peruom", tr("Price Per UOM"));
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
 	systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
                   __FILE__, __LINE__);
@@ -434,7 +434,7 @@ void itemPricingSchedule::populate()
 
     sFillList(-1);
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
 	systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
                   __FILE__, __LINE__);

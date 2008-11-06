@@ -153,7 +153,7 @@ void ediForm::sTypeSelected( int pType )
       _mode = cEdit;
       populate();
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -163,7 +163,7 @@ void ediForm::sTypeSelected( int pType )
 
 bool ediForm::save()
 {
-  if(0 == _type->currentItem())
+  if(0 == _type->currentIndex())
   {
     QMessageBox::critical( this, tr("Cannot Save EDI Form"),
       tr("<p>You must select a Form Type before you can save this form.") );
@@ -171,7 +171,7 @@ bool ediForm::save()
     return false;
   }
 
-  if(_file->text().stripWhiteSpace().isEmpty())
+  if(_file->text().trimmed().isEmpty())
   {
     QMessageBox::critical( this, tr("Cannot Save EDI Form"),
 			  tr("<p>You must specify a file name format before "
@@ -188,7 +188,7 @@ bool ediForm::save()
     q.exec();
     if(q.first())
       _ediformid = q.value("result").toInt();
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return false;
@@ -223,10 +223,10 @@ bool ediForm::save()
 
   q.bindValue(":ediprofile_id", _ediprofileid);
   q.bindValue(":ediform_id", _ediformid);
-  q.bindValue(":ediform_query", _query->text().stripWhiteSpace());
-  q.bindValue(":ediform_file", _file->text().stripWhiteSpace());
+  q.bindValue(":ediform_query", _query->toPlainText().trimmed());
+  q.bindValue(":ediform_file", _file->text().trimmed());
 
-  switch(_type->currentItem())
+  switch(_type->currentIndex())
   {
     case 1: // Invoice
       q.bindValue(":ediform_type", "invoice");
@@ -239,7 +239,7 @@ bool ediForm::save()
       return false;
   }
 
-  switch(_output->currentItem())
+  switch(_output->currentIndex())
   {
     case 0: // Report
       q.bindValue(":ediform_output", "report");
@@ -257,7 +257,7 @@ bool ediForm::save()
   }
 
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return false;
@@ -323,7 +323,7 @@ void ediForm::sCSVDelete()
             " WHERE (ediformdetail_id=:ediformdetail_id); ");
   q.bindValue(":ediformdetail_id", _csvDetails->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -345,7 +345,7 @@ void ediForm::populate()
   {
     if("invoice" == q.value("ediform_type").toString())
     {
-      _type->setCurrentItem(1);
+      _type->setCurrentIndex(1);
       sTypeSelected(1);
     }
     else
@@ -361,13 +361,13 @@ void ediForm::populate()
 
     if("report" == q.value("ediform_output").toString())
     {
-      _output->setCurrentItem(0);
+      _output->setCurrentIndex(0);
       _stack->raiseWidget(0);
       _reportReport->setCurrentText(q.value("ediform_option1").toString());
     }
     else if("csv" == q.value("ediform_output").toString())
     {
-      _output->setCurrentItem(1);
+      _output->setCurrentIndex(1);
       _stack->raiseWidget(1);
       _csvDelimeter->setCurrentText(q.value("ediform_option1").toString());
     }
@@ -382,7 +382,7 @@ void ediForm::populate()
 
     sFillList();
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -398,7 +398,7 @@ void ediForm::sFillList()
   q.bindValue(":ediform_id", _ediformid);
   q.exec();
   _csvDetails->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

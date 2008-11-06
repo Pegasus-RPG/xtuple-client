@@ -125,7 +125,7 @@ void incidentCategories::sFillList()
              "FROM incdtcat "
              "ORDER BY incdtcat_order, incdtcat_name;" );
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -139,7 +139,7 @@ void incidentCategories::sDelete()
              "WHERE (incdtcat_id=:incdtcat_id);" );
   q.bindValue(":incdtcat_id", _incidentCategories->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

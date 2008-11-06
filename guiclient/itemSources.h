@@ -68,7 +68,7 @@ class itemSources : public XWidget, public Ui::itemSources
     Q_OBJECT
 
 public:
-    itemSources(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    itemSources(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~itemSources();
 
 protected slots:

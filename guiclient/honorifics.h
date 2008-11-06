@@ -68,7 +68,7 @@ class honorifics : public XWidget, public Ui::honorifics
     Q_OBJECT
 
 public:
-    honorifics(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    honorifics(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~honorifics();
 
 public slots:

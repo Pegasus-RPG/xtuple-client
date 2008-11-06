@@ -145,7 +145,7 @@ void glTransaction::sPost()
     { ! _credit->isValid(), tr("<p>You must select a Credit Account for this G/L "
 			     "Transaction before you may Post it." ), _credit },
     { _metrics->boolean("MandatoryGLEntryNotes") &&
-      _notes->text().stripWhiteSpace().isEmpty(),
+      _notes->toPlainText().trimmed().isEmpty(),
       tr("<p>You must enter some Notes to describe this transaction."), _notes},
     { true, "", NULL }
   }; // error[]
@@ -177,9 +177,9 @@ void glTransaction::sPost()
   q.prepare( "SELECT insertGLTransaction( 'G/L', :docType, :docNumber, :notes,"
              "                            :creditAccntid, :debitAccntid, -1, :amount, :distDate ) AS result;" );
   q.bindValue(":distDate", _distDate->date());
-  q.bindValue(":docType", _docType->text().stripWhiteSpace());
-  q.bindValue(":docNumber", _docNumber->text().stripWhiteSpace());
-  q.bindValue(":notes", _notes->text().stripWhiteSpace());
+  q.bindValue(":docType", _docType->text().trimmed());
+  q.bindValue(":docNumber", _docNumber->text().trimmed());
+  q.bindValue(":notes", _notes->toPlainText().trimmed());
   q.bindValue(":creditAccntid", _credit->id());
   q.bindValue(":debitAccntid", _debit->id());
   q.bindValue(":amount", _amount->baseValue());
@@ -195,7 +195,7 @@ void glTransaction::sPost()
       _amount->setFocus();
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

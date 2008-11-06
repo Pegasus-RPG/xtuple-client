@@ -69,7 +69,7 @@ class expenseTrans : public XWidget, public Ui::expenseTrans
     Q_OBJECT
 
 public:
-    expenseTrans(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    expenseTrans(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~expenseTrans();
 
 public slots:

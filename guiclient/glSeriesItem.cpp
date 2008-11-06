@@ -158,7 +158,7 @@ void glSeriesItem::sSave()
   else
     q.bindValue(":doctype", "");
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -189,7 +189,7 @@ void glSeriesItem::populate()
 
     _account->setId(q.value("glseries_accnt_id").toInt());
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

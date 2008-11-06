@@ -125,7 +125,7 @@ void incidentSeverities::sFillList()
              "FROM incdtseverity "
              "ORDER BY incdtseverity_order, incdtseverity_name;" );
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -139,7 +139,7 @@ void incidentSeverities::sDelete()
              "WHERE (incdtseverity_id=:incdtseverity_id);" );
   q.bindValue(":incdtseverity_id", _incidentSeverities->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

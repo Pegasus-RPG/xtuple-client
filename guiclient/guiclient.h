@@ -68,7 +68,7 @@
 #include <QTimer>
 #include <QAction>
 #include <QCloseEvent>
-#include <Q3ValueList>
+#include <QList>
 #include <QPixmap>
 #include <QMenu>
 #include <QMenuBar>
@@ -199,7 +199,7 @@ class Action : public QAction
     QString _toolTip;
 };
 
-class ActionSet : public Q3ValueList<Action *>
+class ActionSet : public QList<Action *>
 {
 };
 
@@ -322,6 +322,7 @@ class GUIClient : public QMainWindow
     void sFocusChanged(QWidget* old, QWidget* now);
 
     void sNewErrorMessage();
+    void setWindowTitle();
 
   signals:
     void tick();

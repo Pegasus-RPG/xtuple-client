@@ -188,7 +188,7 @@ void freightClass::sSave()
 
 void freightClass::sCheck()
 {
-  _freightClass->setText(_freightClass->text().stripWhiteSpace());
+  _freightClass->setText(_freightClass->text().trimmed());
   if ( (_mode == cNew) && (_freightClass->text().length()) )
   {
     q.prepare( "SELECT freightclass_id "

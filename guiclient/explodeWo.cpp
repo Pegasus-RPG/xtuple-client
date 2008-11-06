@@ -118,7 +118,7 @@ void explodeWo::sExplode()
   {
     q.prepare("SELECT explodeWo(:wo_id, :explodeChildren) AS result;");
     q.bindValue(":wo_id", _wo->id());
-    q.bindValue(":explodeChildren", QVariant(_multipleLevel->isChecked(), 0));
+    q.bindValue(":explodeChildren", QVariant(_multipleLevel->isChecked()));
     q.exec();
     if (q.first())
     {
@@ -131,7 +131,7 @@ void explodeWo::sExplode()
 	return;
       }
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;

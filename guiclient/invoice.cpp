@@ -167,13 +167,13 @@ enum SetResponse invoice::set(const ParameterList &pParams)
   {
     if (param.toString() == "new")
     {
-      setName("invoice new");
+      setObjectName("invoice new");
       _mode = cNew;
 
       q.exec("SELECT NEXTVAL('invchead_invchead_id_seq') AS invchead_id;");
       if (q.first())
         _invcheadid = q.value("invchead_id").toInt();
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return UndefinedError;
@@ -182,7 +182,7 @@ enum SetResponse invoice::set(const ParameterList &pParams)
       q.exec("SELECT fetchInvcNumber() AS number;");
       if (q.first())
         _invoiceNumber->setText(q.value("number").toString());
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return UndefinedError;
@@ -208,7 +208,7 @@ enum SetResponse invoice::set(const ParameterList &pParams)
       q.bindValue(":invchead_orderdate", _orderDate->date());
       q.bindValue(":invchead_invcdate",	 _invoiceDate->date());
       q.exec();
-      if (q.lastError().type() != QSqlError::None)
+      if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return UndefinedError;
@@ -220,7 +220,7 @@ enum SetResponse invoice::set(const ParameterList &pParams)
     }
     else if (param.toString() == "edit")
     {
-      setName(QString("invoice edit %1").arg(_invcheadid));
+      setObjectName(QString("invoice edit %1").arg(_invcheadid));
       _mode = cEdit;
 
       _new->setEnabled(TRUE);
@@ -230,7 +230,7 @@ enum SetResponse invoice::set(const ParameterList &pParams)
     }
     else if (param.toString() == "view")
     {
-      setName(QString("invoice view %1").arg(_invcheadid));
+      setObjectName(QString("invoice view %1").arg(_invcheadid));
       _mode = cView;
 
       _invoiceNumber->setEnabled(FALSE);
@@ -302,7 +302,7 @@ void invoice::sClose()
                "WHERE (invchead_id=:invchead_id);" );
     q.bindValue(":invchead_id", _invcheadid);
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
   }
 
@@ -348,7 +348,7 @@ void invoice::sPopulateCustomerInfo(int pCustid)
 	  _shipToPhone->clear();
 	}
       }
-      if (cust.lastError().type() != QSqlError::None)
+      if (cust.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, cust.lastError().databaseText(), __FILE__, __LINE__);
 	return;
@@ -356,12 +356,12 @@ void invoice::sPopulateCustomerInfo(int pCustid)
   }
   else
   {
-    _salesrep->setCurrentItem(-1);
+    _salesrep->setCurrentIndex(-1);
     _commission->clear();
-    _terms->setCurrentItem(-1);
+    _terms->setCurrentIndex(-1);
     _custtaxauthid  = -1;
     _taxauthidCache = -1;
-    _taxauth->setCurrentItem(-1);
+    _taxauth->setCurrentIndex(-1);
   }
 }
 
@@ -393,7 +393,7 @@ void invoice::sParseShipToNumber()
     populateShipto(shiptoid.value("shipto_id").toInt());
   else if (_shiptoid != -1)
     populateShipto(-1);
-  if (shiptoid.lastError().type() != QSqlError::None)
+  if (shiptoid.lastError().type() != QSqlError::NoError)
   {
     systemError(this, shiptoid.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -425,7 +425,7 @@ void invoice::populateShipto(int pShiptoid)
       _shipVia->setText(shipto.value("shipto_shipvia"));
       _taxauth->setId(shipto.value("shipto_taxauth_id").toInt());
     }
-    else if (shipto.lastError().type() != QSqlError::None)
+    else if (shipto.lastError().type() != QSqlError::NoError)
     {
       systemError(this, shipto.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -600,10 +600,10 @@ void invoice::sSave()
   q.bindValue(":invchead_misc_accnt_id",_miscChargeAccount->id());
   q.bindValue(":invchead_shipvia",	_shipVia->currentText());
   q.bindValue(":invchead_fob",		_fob->text());
-  q.bindValue(":invchead_notes",	_notes->text());
+  q.bindValue(":invchead_notes",	_notes->toPlainText());
   q.bindValue(":invchead_prj_id",	_project->id());
   q.bindValue(":invchead_shipchrg_id",	_shipChrgs->id());
-  q.bindValue(":invchead_recurring", QVariant(_recurring->isChecked(), 0));
+  q.bindValue(":invchead_recurring", QVariant(_recurring->isChecked()));
   if(_recurring->isChecked()) // only set the following if it's recurring otherwise they end upp null
   {
     QString rtype[] = {"D", "W", "M", "Y"};
@@ -621,7 +621,7 @@ void invoice::sSave()
     q.bindValue(":invchead_freighttax_id", _taxCache.freightId());
 
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -686,7 +686,7 @@ void invoice::sDelete()
              "WHERE (invcitem_id=:invcitem_id);" );
   q.bindValue(":invcitem_id", _invcitem->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -806,7 +806,7 @@ void invoice::populate()
         _shipToNumber->setText(shipto.value("shipto_num"));
       else
         _shiptoid = -1;
-      if (shipto.lastError().type() != QSqlError::None)
+      if (shipto.lastError().type() != QSqlError::NoError)
 	systemError(this, shipto.lastError().databaseText(), __FILE__, __LINE__);
     }
 
@@ -844,7 +844,7 @@ void invoice::populate()
 
     sFillItemList();
   }
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -953,7 +953,7 @@ void invoice::closeEvent(QCloseEvent *pEvent)
     q.bindValue(":invchead_id", _invcheadid);
     q.bindValue(":invoiceNumber", _invoiceNumber->text().toInt());
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
   }
 
@@ -981,7 +981,7 @@ void invoice::sTaxDetail()
     taxq.bindValue(":freightc",		_taxCache.freight(2));
     taxq.bindValue(":invchead_invcdate",_invoiceDate->date());
     taxq.exec();
-    if (taxq.lastError().type() != QSqlError::None)
+    if (taxq.lastError().type() != QSqlError::NoError)
     {
       systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -1288,7 +1288,7 @@ void invoice::sTaxAuthChanged()
   taxauthq.exec();
   if (taxauthq.first())
     _taxcurrid = taxauthq.value("taxauth_curr_id").toInt();
-  else if (taxauthq.lastError().type() != QSqlError::None)
+  else if (taxauthq.lastError().type() != QSqlError::NoError)
   {
     _taxauth->setId(_taxauthidCache);
     systemError(this, taxauthq.lastError().databaseText(), __FILE__, __LINE__);
@@ -1310,7 +1310,7 @@ void invoice::sTaxAuthChanged()
       return;
     }
   }
-  else if (taxauthq.lastError().type() != QSqlError::None)
+  else if (taxauthq.lastError().type() != QSqlError::NoError)
   {
     _taxauth->setId(_taxauthidCache);
     systemError(this, taxauthq.lastError().databaseText(), __FILE__, __LINE__);
@@ -1334,7 +1334,7 @@ void invoice::sTaxAuthChanged()
 		     taxauthq.value("invchead_adjtax_rateb").toDouble(),
 		     taxauthq.value("invchead_adjtax_ratec").toDouble());
   }
-  else if (taxauthq.lastError().type() != QSqlError::None)
+  else if (taxauthq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, taxauthq.lastError().databaseText(), __FILE__, __LINE__);
     return;

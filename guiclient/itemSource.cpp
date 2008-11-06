@@ -156,7 +156,7 @@ enum SetResponse itemSource::set(const ParameterList &pParams)
       q.exec("SELECT NEXTVAL('itemsrc_itemsrc_id_seq') AS _itemsrc_id;");
       if (q.first())
         _itemsrcid = q.value("_itemsrc_id").toInt();
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
         systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
         return UndefinedError;
@@ -247,7 +247,7 @@ bool itemSource::sSave()
                             tr("An Item Source already exists for the Item Number and Vendor you have specified.\n"));
       return false;
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return false;
@@ -301,19 +301,19 @@ bool itemSource::sSave()
 
   q.bindValue(":itemsrc_id", _itemsrcid);
   q.bindValue(":itemsrc_item_id", _item->id());
-  q.bindValue(":itemsrc_active", QVariant(_active->isChecked(), 0));
+  q.bindValue(":itemsrc_active", QVariant(_active->isChecked()));
   q.bindValue(":itemsrc_vend_id", _vendor->id());
   q.bindValue(":itemsrc_vend_item_number", _vendorItemNumber->text());
-  q.bindValue(":itemsrc_vend_item_descrip", _vendorItemDescrip->text());
-  q.bindValue(":itemsrc_vend_uom", _vendorUOM->text().stripWhiteSpace());
+  q.bindValue(":itemsrc_vend_item_descrip", _vendorItemDescrip->toPlainText());
+  q.bindValue(":itemsrc_vend_uom", _vendorUOM->text().trimmed());
   q.bindValue(":itemsrc_invvendoruomratio", _invVendorUOMRatio->toDouble());
   q.bindValue(":itemsrc_minordqty", _minOrderQty->toDouble());
   q.bindValue(":itemsrc_multordqty", _multOrderQty->toDouble());
   q.bindValue(":itemsrc_leadtime", _leadTime->text().toInt());
   q.bindValue(":itemsrc_ranking", _vendorRanking->value());
-  q.bindValue(":itemsrc_comments", _notes->text().stripWhiteSpace());
+  q.bindValue(":itemsrc_comments", _notes->toPlainText().trimmed());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return false;
@@ -383,7 +383,7 @@ void itemSource::sDelete()
                "WHERE (itemsrcp_id=:itemsrcp_id);" );
     q.bindValue(":itemsrcp_id", _itemsrcp->id());
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -431,7 +431,7 @@ void itemSource::sFillPriceList()
   priceq.bindValue(":itemsrc_id", _itemsrcid);
   priceq.exec();
   _itemsrcp->populate(priceq);
-  if (priceq.lastError().type() != QSqlError::None)
+  if (priceq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, priceq.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -466,7 +466,7 @@ void itemSource::populate()
     _notes->setText(itemsrcQ.value("itemsrc_comments").toString());
     sFillPriceList();
   }
-  else if (itemsrcQ.lastError().type() != QSqlError::None)
+  else if (itemsrcQ.lastError().type() != QSqlError::NoError)
   {
     systemError(this, itemsrcQ.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -481,7 +481,7 @@ void itemSource::closeEvent(QCloseEvent *pEvent)
                "WHERE (itemsrcp_itemsrc_id=:itemsrc_id);" );
     q.bindValue(":itemsrc_id", _itemsrcid);
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -499,7 +499,7 @@ void itemSource::sVendorChanged( int pId )
     q.exec();
     if (q.first())
 	_vendorCurrency->setId(q.value("vend_curr_id").toInt());
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;

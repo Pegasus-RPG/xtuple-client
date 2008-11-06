@@ -69,7 +69,7 @@ class ediProfiles : public XWidget, public Ui::ediProfiles
     Q_OBJECT
 
 public:
-    ediProfiles(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    ediProfiles(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~ediProfiles();
 
 public slots:

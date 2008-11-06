@@ -71,7 +71,7 @@ class invoice : public XWidget, public Ui::invoice
     Q_OBJECT
 
 public:
-    invoice(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    invoice(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~invoice();
 
     static void newInvoice( int pCustid );

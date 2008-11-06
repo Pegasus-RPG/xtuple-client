@@ -255,7 +255,7 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
     
   if (_metrics->value("Application") != "OpenMFG")
   {
-    _planningType->setCurrentItem(2);
+    _planningType->setCurrentIndex(2);
     _planningType->hide();
     _planningTypeLit->hide();
   }
@@ -310,7 +310,7 @@ enum SetResponse item::set(const ParameterList &pParams)
     {
       _tab->setEnabled(false);
       
-      setName("item new");
+      setObjectName("item new");
       _mode = cNew;
 
       _bom->hide();
@@ -347,7 +347,7 @@ enum SetResponse item::set(const ParameterList &pParams)
     {
       _tab->setEnabled(true);
     	
-      setName(QString("item edit %1").arg(_itemid));
+      setObjectName(QString("item edit %1").arg(_itemid));
       _mode = cEdit;
 
       connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
@@ -382,7 +382,7 @@ enum SetResponse item::set(const ParameterList &pParams)
     {
       _tab->setEnabled(true);
       
-      setName(QString("item view %1").arg(_itemid));
+      setObjectName(QString("item view %1").arg(_itemid));
       _mode = cView;
 
       _itemNumber->setEnabled(FALSE);
@@ -464,11 +464,11 @@ void item::saveCore()
             "       true, 0.0, 0.0,"
             "       :item_inv_uom_id, :item_inv_uom_id);");
     q.bindValue(":item_id", _itemid);
-    q.bindValue(":item_number", _itemNumber->text().stripWhiteSpace().upper());
-    q.bindValue(":item_type", _itemTypes[_itemtype->currentItem()]);
+    q.bindValue(":item_number", _itemNumber->text().trimmed().toUpper());
+    q.bindValue(":item_type", _itemTypes[_itemtype->currentIndex()]);
     q.bindValue(":item_classcode_id", _classcode->id());
     q.bindValue(":item_inv_uom_id", _inventoryUOM->id());
-    if(!q.exec() || q.lastError().type() != QSqlError::None)
+    if(!q.exec() || q.lastError().type() != QSqlError::NoError)
     {
       q.exec("ROLLBACK;");
       _inTransaction = false;
@@ -485,7 +485,7 @@ void item::saveCore()
 void item::sSave()
 {
   QString sql;
-  QString itemNumber = _itemNumber->text().stripWhiteSpace().upper();
+  QString itemNumber = _itemNumber->text().trimmed().toUpper();
 
   if(!_active->isChecked())
   {
@@ -523,14 +523,14 @@ void item::sSave()
     }
   }
 
-  if(_disallowPlanningType && QString(_itemTypes[_itemtype->currentItem()]) == "L")
+  if(_disallowPlanningType && QString(_itemTypes[_itemtype->currentIndex()]) == "L")
   {
     QMessageBox::warning( this, tr("Planning Type Disallowed"),
       tr("This item is part of one or more Bills of Materials and cannot be a Planning Item.") );
     return;
   }
 
-  if(QString(_itemTypes[_itemtype->currentItem()]) == "K" && !_sold->isChecked())
+  if(QString(_itemTypes[_itemtype->currentIndex()]) == "K" && !_sold->isChecked())
   {
     QMessageBox::warning( this, tr("Must be Sold"),
       tr("Kit item types must be Sold. Please mark this item as sold and set the appropriate options and save again.") );
@@ -559,7 +559,7 @@ void item::sSave()
     }
   }
 
-  if (cEdit == _mode && _itemtype->currentText() != _originalItemType && QString(_itemTypes[_itemtype->currentItem()]) == "K")
+  if (cEdit == _mode && _itemtype->currentText() != _originalItemType && QString(_itemTypes[_itemtype->currentIndex()]) == "K")
   {
     q.prepare("SELECT bomitem_id "
               "FROM bomitem, item "
@@ -611,7 +611,7 @@ void item::sSave()
     return;
   }
 
-  if (_itemtype->currentItem() == -1)
+  if (_itemtype->currentIndex() == -1)
   {
     QMessageBox::information( this, tr("Cannot Save Item"),
                               tr("You must select an Item Type for this Item Type before continuing.")  );
@@ -619,7 +619,7 @@ void item::sSave()
     return;
   }
 
-  if (_classcode->currentItem() == -1)
+  if (_classcode->currentIndex() == -1)
   {
     QMessageBox::information( this, tr("Cannot Save Item"),
                               tr("You must select a Class Code for this Item before continuing.") );
@@ -740,7 +740,7 @@ void item::sSave()
   q.exec();
   while (q.next())
     knownunits.append(q.value("uom_id").toString());
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -759,7 +759,7 @@ void item::sSave()
   QStringList missingunitnames;
   while (q.next())
     missingunitnames.append(q.value("uom_name").toString());
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -837,30 +837,30 @@ void item::sSave()
   q.bindValue(":item_number", itemNumber);
   q.bindValue(":item_descrip1", _description1->text());
   q.bindValue(":item_descrip2", _description2->text());
-  q.bindValue(":item_type", _itemTypes[_itemtype->currentItem()]);
-  q.bindValue(":item_planning_type", _planningTypes[_planningType->currentItem()]);
+  q.bindValue(":item_type", _itemTypes[_itemtype->currentIndex()]);
+  q.bindValue(":item_planning_type", _planningTypes[_planningType->currentIndex()]);
   q.bindValue(":item_classcode_id", _classcode->id());
-  q.bindValue(":item_sold", QVariant(_sold->isChecked(), 0));
+  q.bindValue(":item_sold", QVariant(_sold->isChecked()));
   q.bindValue(":item_prodcat_id", _prodcat->id());
-  q.bindValue(":item_exclusive", QVariant(_exclusive->isChecked(), 0));
+  q.bindValue(":item_exclusive", QVariant(_exclusive->isChecked()));
   q.bindValue(":item_price_uom_id", _priceUOM->id());
   q.bindValue(":item_listprice", _listprice->toDouble());
   q.bindValue(":item_upccode", _upcCode->text());
-  q.bindValue(":item_active", QVariant(_active->isChecked(), 0));
-  q.bindValue(":item_picklist", QVariant(_pickListItem->isChecked(), 0));
-  q.bindValue(":item_fractional", QVariant(_fractional->isChecked(), 0));
-  q.bindValue(":item_config", QVariant(_configured->isChecked(), 0));  
+  q.bindValue(":item_active", QVariant(_active->isChecked()));
+  q.bindValue(":item_picklist", QVariant(_pickListItem->isChecked()));
+  q.bindValue(":item_fractional", QVariant(_fractional->isChecked()));
+  q.bindValue(":item_config", QVariant(_configured->isChecked()));  
   q.bindValue(":item_inv_uom_id", _inventoryUOM->id());
   q.bindValue(":item_maxcost", _maximumDesiredCost->localValue());
   q.bindValue(":item_prodweight", _prodWeight->toDouble());
   q.bindValue(":item_packweight", _packWeight->toDouble());
-  q.bindValue(":item_comments", _notes->text());
-  q.bindValue(":item_extdescrip", _extDescription->text());
+  q.bindValue(":item_comments", _notes->toPlainText());
+  q.bindValue(":item_extdescrip", _extDescription->toPlainText());
   q.bindValue(":item_warrdays", _warranty->value());
   if (_freightClass->isValid())
     q.bindValue(":item_freightclass_id", _freightClass->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     q.exec("ROLLBACK;");
     _inTransaction = false;
@@ -895,10 +895,10 @@ void item::sSave()
 
   if ( ( (_mode == cNew) || (_mode == cCopy) ) && 
      (_privileges->check("MaintainItemSites")) &&
-     ( (*_itemTypes[_itemtype->currentItem()] != 'B') ||
-     (*_itemTypes[_itemtype->currentItem()] != 'F') ||
-     (*_itemTypes[_itemtype->currentItem()] != 'R') ||
-     (*_itemTypes[_itemtype->currentItem()] != 'S') ) )
+     ( (*_itemTypes[_itemtype->currentIndex()] != 'B') ||
+     (*_itemTypes[_itemtype->currentIndex()] != 'F') ||
+     (*_itemTypes[_itemtype->currentIndex()] != 'R') ||
+     (*_itemTypes[_itemtype->currentIndex()] != 'S') ) )
   {
     if (QMessageBox::information( this, tr("Create New Item Sites"),
                                   tr("Would you like to create Item site inventory settings for the newly created Item now?"),
@@ -919,7 +919,7 @@ void item::sSave()
 
 void item::sNew()
 {
-  QString itemType = QString(*(_itemTypes + _itemtype->currentItem()));
+  QString itemType = QString(*(_itemTypes + _itemtype->currentIndex()));
   ParameterList params;
   params.append("mode", "new");
   params.append("item_id", _itemid);
@@ -935,7 +935,7 @@ void item::sNew()
 
 void item::sEdit()
 {
-  QString itemType = QString(*(_itemTypes + _itemtype->currentItem()));
+  QString itemType = QString(*(_itemTypes + _itemtype->currentIndex()));
   ParameterList params;
   params.append("mode", "edit");
   params.append("charass_id", _charass->id());
@@ -994,7 +994,7 @@ void item::sFormatItemNumber()
 {
   if ((_mode == cNew) && (_itemNumber->text().length()))
   {
-    _itemNumber->setText(_itemNumber->text().stripWhiteSpace().upper());
+    _itemNumber->setText(_itemNumber->text().trimmed().toUpper());
 
   //  Check to see if this item exists
     q.prepare( "SELECT item_id "
@@ -1035,7 +1035,7 @@ void item::populate()
     {
       if (QString(item.value("item_type").toString()[0]) == _itemTypes[counter])
       {
-        _itemtype->setCurrentItem(counter);
+        _itemtype->setCurrentIndex(counter);
         sHandleItemtype();
       }
     }
@@ -1083,7 +1083,7 @@ void item::populate()
 
     for (int pcounter = 0; pcounter < _planningType->count(); pcounter++)
       if (QString(item.value("item_planning_type").toString()[0]) == _planningTypes[pcounter])
-        _planningType->setCurrentItem(pcounter);
+        _planningType->setCurrentIndex(pcounter);
 
     sFillList();
     sFillUOMList();
@@ -1120,7 +1120,7 @@ void item::clear()
   _exclusive->setChecked(_metrics->boolean("DefaultSoldItemsExclusive"));
   _fractional->setChecked(FALSE);
 
-  _itemtype->setCurrentItem(0);
+  _itemtype->setCurrentIndex(0);
   _classcode->setNull();
   _freightClass->setNull();
   _prodcat->setNull();
@@ -1150,7 +1150,7 @@ void item::sPopulateUOMs()
 
 void item::sHandleItemtype()
 {
-  QString itemType = QString(*(_itemTypes + _itemtype->currentItem()));
+  QString itemType = QString(*(_itemTypes + _itemtype->currentIndex()));
   bool pickList  = FALSE;
   bool sold      = FALSE;
   bool weight    = FALSE;
@@ -1282,11 +1282,11 @@ void item::sHandleItemtype()
   _transformationsButton->setEnabled(itemType!="K");
 
   if (itemType == "L")
-    _planningType->setCurrentItem(1);
+    _planningType->setCurrentIndex(1);
   else if (!planType)
-    _planningType->setCurrentItem(2);
+    _planningType->setCurrentIndex(2);
   else
-    _planningType->setCurrentItem(0);
+    _planningType->setCurrentIndex(0);
 
   _pickListItem->setChecked(pickList);
   _pickListItem->setEnabled(pickList);
@@ -1795,7 +1795,7 @@ void item::sFillListItemtax()
   q.bindValue(":any", tr("Any"));
   q.exec();
   _itemtax->populate(q, _itemtax->id());
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -1843,7 +1843,7 @@ void item::sDeleteUOM()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -1925,7 +1925,7 @@ void item::sPopulatePriceUOMs()
   q.bindValue(":uom_id", _inventoryUOM->id());
   q.exec();
   _priceUOM->populate(q, pid);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

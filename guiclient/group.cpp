@@ -121,7 +121,7 @@ enum SetResponse group::set(const ParameterList &pParams)
       q.exec("SELECT NEXTVAL('grp_grp_id_seq') AS grp_id;");
       if (q.first())
         _grpid = q.value("grp_id").toInt();
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
         systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
         return UndefinedError;
@@ -134,14 +134,14 @@ enum SetResponse group::set(const ParameterList &pParams)
                  "VALUES( :grp_id, :grp_id, '' );" );
       q.bindValue(":grp_id", _grpid);
       q.exec();
-      if (q.lastError().type() != QSqlError::None)
+      if (q.lastError().type() != QSqlError::NoError)
       {
         systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
         q.exec("ROLLBACK;");
         return UndefinedError;
       }
       
-      _module->setCurrentItem(0);
+      _module->setCurrentIndex(0);
       sModuleSelected(_module->text(0));
       _name->setFocus();
     }
@@ -176,7 +176,7 @@ void group::closeEvent(QCloseEvent * /*pEvent*/)
 
 void group::sCheck()
 {
-  _name->setText(_name->text().stripWhiteSpace());
+  _name->setText(_name->text().trimmed());
   if ((_mode == cNew) && (_name->text().length() != 0))
   {
     q.prepare( "SELECT grp_id "
@@ -197,7 +197,7 @@ void group::sCheck()
 
 void group::sSave()
 {
-  _name->setText(_name->text().stripWhiteSpace().upper());
+  _name->setText(_name->text().trimmed().toUpper());
   if (_name->text().length() == 0)
   {
     QMessageBox::information( this, tr("Invalid Name"),
@@ -212,7 +212,7 @@ void group::sSave()
              " WHERE(grp_id=:grp_id);" );
   q.bindValue(":grp_id", _grpid);
   q.bindValue(":grp_name", _name->text());
-  q.bindValue(":grp_descrip", _description->text().stripWhiteSpace());
+  q.bindValue(":grp_descrip", _description->text().trimmed());
   q.exec();
 
   q.exec("COMMIT;");
@@ -236,7 +236,7 @@ void group::sModuleSelected(const QString &pModule)
   avail.bindValue(":grpid", _grpid);
   avail.exec();
   _available->populate(avail);
-  if (avail.lastError().type() != QSqlError::None)
+  if (avail.lastError().type() != QSqlError::NoError)
   {
     systemError(this, avail.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -253,7 +253,7 @@ void group::sModuleSelected(const QString &pModule)
   grppriv.bindValue(":priv_module", _module->currentText());
   grppriv.exec();
   _granted->populate(grppriv);
-  if (grppriv.lastError().type() != QSqlError::None)
+  if (grppriv.lastError().type() != QSqlError::NoError)
   {
     systemError(this, grppriv.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -326,14 +326,14 @@ void group::populate()
       {
         if (_module->text(counter) == q.value("priv_module").toString())
         {
-          _module->setCurrentItem(counter);
+          _module->setCurrentIndex(counter);
           sModuleSelected(_module->text(counter));
         }
       }
     }
     else
     {
-      _module->setCurrentItem(0);
+      _module->setCurrentIndex(0);
       sModuleSelected(_module->text(0));
     }
 

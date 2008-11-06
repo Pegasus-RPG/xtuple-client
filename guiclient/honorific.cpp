@@ -140,7 +140,7 @@ enum SetResponse honorific::set(const ParameterList &pParams)
 
 void honorific::sCheck()
 {
-  _code->setText(_code->text().stripWhiteSpace());
+  _code->setText(_code->text().trimmed());
   if ( (_mode == cNew) && (_code->text().length()) )
   {
     q.prepare( "SELECT hnfc_id "
@@ -173,7 +173,7 @@ void honorific::sSave()
     q.exec("SELECT NEXTVAL('hnfc_hnfc_id_seq') AS _hnfc_id");
     if (q.first())
       _honorificid = q.value("_hnfc_id").toInt();
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -199,7 +199,7 @@ void honorific::sSave()
                             tr("You may not rename this Title with the entered value as it is in use by another Title.") );
       return;
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -213,7 +213,7 @@ void honorific::sSave()
   q.bindValue(":hnfc_id", _honorificid);
   q.bindValue(":hnfc_code", _code->text());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -233,7 +233,7 @@ void honorific::populate()
   {
     _code->setText(q.value("hnfc_code").toString());
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

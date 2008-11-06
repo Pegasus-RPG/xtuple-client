@@ -296,7 +296,7 @@ void enterPoReceipt::sPost()
             warrdate = newdlg.warranty();
           }
         }
-        else if (q.lastError().type() != QSqlError::None)
+        else if (q.lastError().type() != QSqlError::NoError)
         {
           systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
           rollback.exec();
@@ -327,7 +327,7 @@ void enterPoReceipt::sPost()
         _close->setText(tr("&Close"));
       }
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       rollback.exec();
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -370,7 +370,7 @@ void enterPoReceipt::sFillList()
     MetaSQLQuery fillm = mqlLoad("receipt", "detail");
     q = fillm.toQuery(params);
     _orderitem->populate(q);
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       connect(_order,	SIGNAL(valid(bool)),	this, SLOT(sFillList()));
@@ -407,7 +407,7 @@ void enterPoReceipt::close()
 	  return;
 	}
       }
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return;
@@ -443,7 +443,7 @@ void enterPoReceipt::sReceiveAll()
     }
     omfgThis->sPurchaseOrderReceiptsUpdated();
   }
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

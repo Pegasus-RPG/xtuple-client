@@ -149,7 +149,7 @@ SetResponse freightBreakdown::set(const ParameterList& pParams)
   MetaSQLQuery mql(sql);
   q = mql.toQuery(params);
   _freight->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return UndefinedError;

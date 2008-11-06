@@ -159,7 +159,7 @@ enum SetResponse empGroup::set(const ParameterList &pParams)
       q.exec("SELECT NEXTVAL('empgrp_empgrp_id_seq') AS empgrpid;");
       if (q.first())
         _empgrpid = q.value("empgrpid").toInt();
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return UndefinedError;
@@ -196,7 +196,7 @@ enum SetResponse empGroup::set(const ParameterList &pParams)
 
 void empGroup::sCheck()
 {
-  _name->setText(_name->text().stripWhiteSpace());
+  _name->setText(_name->text().trimmed());
   if ((_mode == cNew) && (_name->text().length()))
   {
     q.prepare( "SELECT empgrp_id "
@@ -211,7 +211,7 @@ void empGroup::sCheck()
       populate();
       _name->setEnabled(FALSE);
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -236,7 +236,7 @@ bool empGroup::close()
         return false;
       }
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return false;
@@ -259,10 +259,10 @@ void empGroup::sSave(const bool pClose)
                "WHERE (empgrp_id=:grpid);" );
 
   q.bindValue(":grpid",          _empgrpid);
-  q.bindValue(":empgrp_name",    _name->text().stripWhiteSpace());
-  q.bindValue(":empgrp_descrip", _descrip->text().stripWhiteSpace());
+  q.bindValue(":empgrp_name",    _name->text().trimmed());
+  q.bindValue(":empgrp_descrip", _descrip->text().trimmed());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -284,7 +284,7 @@ void empGroup::sDelete()
              "WHERE (empgrpitem_id=:empgrpitem_id);" );
   q.bindValue(":empgrpitem_id", _empgrpitem->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -310,7 +310,7 @@ void empGroup::sNew()
     q.exec();
     if (q.first())
       return;
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -323,7 +323,7 @@ void empGroup::sNew()
     q.bindValue(":empgrpitem_empgrp_id", _empgrpid);
     q.bindValue(":empgrpitem_emp_id", empid);
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -343,7 +343,7 @@ void empGroup::sFillList()
   q.bindValue(":empgrp_id", _empgrpid);
   q.exec();
   _empgrpitem->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -362,7 +362,7 @@ void empGroup::populate()
     _name->setText(q.value("empgrp_name").toString());
     _descrip->setText(q.value("empgrp_descrip").toString());
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

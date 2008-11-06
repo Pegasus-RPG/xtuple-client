@@ -315,7 +315,7 @@ bool importXML::importOne(const QString &pFileName)
       xsltfile = q.value("xsltmap_import").toString();
       //TODO: what if more than one row is found?
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return false;
@@ -411,7 +411,7 @@ bool importXML::importOne(const QString &pFileName)
   */
 
   q.exec("BEGIN;");
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return false;
@@ -468,9 +468,9 @@ bool importXML::importOne(const QString &pFileName)
 	columnValueList.append("NULL");
       else if (! columnElem.attribute("value").isEmpty())
 	columnValueList.append("'" + columnElem.attribute("value") + "'");
-      else if (columnElem.text().stripWhiteSpace().startsWith("SELECT"))
+      else if (columnElem.text().trimmed().startsWith("SELECT"))
 	columnValueList.append("(" + columnElem.text() + ")");
-      else if (columnElem.text().stripWhiteSpace() == "[NULL]")
+      else if (columnElem.text().trimmed() == "[NULL]")
 	columnValueList.append("NULL");
       else if (columnElem.attribute("quote") == "false")
 	columnValueList.append(columnElem.text());
@@ -512,7 +512,7 @@ bool importXML::importOne(const QString &pFileName)
     }
 
     q.exec(sql);
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       if (ignoreErr)
       {
@@ -535,7 +535,7 @@ bool importXML::importOne(const QString &pFileName)
   }
 
   q.exec("COMMIT;");
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);

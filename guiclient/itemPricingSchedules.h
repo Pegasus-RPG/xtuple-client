@@ -67,7 +67,7 @@ class itemPricingSchedules : public XWidget, public Ui::itemPricingSchedules
     Q_OBJECT
 
 public:
-    itemPricingSchedules(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    itemPricingSchedules(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~itemPricingSchedules();
 
 public slots:

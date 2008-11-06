@@ -144,7 +144,7 @@ void enterMiscCount::sPost()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -155,7 +155,7 @@ void enterMiscCount::sPost()
              "WHERE ( (itemsite_item_id=:item_id)"
              " AND (itemsite_warehous_id=:warehous_id) );" );
   q.bindValue(":qty", _qty->toDouble());
-  q.bindValue(":comments", _comments->text());
+  q.bindValue(":comments", _comments->toPlainText());
   q.bindValue(":item_id", _item->id());
   q.bindValue(":warehous_id", _warehouse->id());
   q.exec();
@@ -169,7 +169,7 @@ void enterMiscCount::sPost()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

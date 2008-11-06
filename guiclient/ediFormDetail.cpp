@@ -134,7 +134,7 @@ enum SetResponse ediFormDetail::set( const ParameterList & pParams )
 
 void ediFormDetail::sSave()
 {
-  if(_name->text().stripWhiteSpace().isEmpty())
+  if(_name->text().trimmed().isEmpty())
   {
     QMessageBox::critical( this, tr("Cannot Save EDI Form Detail"),
       tr("You must enter in a valid name for this form detail.") );
@@ -142,7 +142,7 @@ void ediFormDetail::sSave()
     return;
   }
 
-  if(_query->text().stripWhiteSpace().isEmpty())
+  if(_query->toPlainText().trimmed().isEmpty())
   {
     QMessageBox::critical( this, tr("Cannot Save EDI Form Detail"),
       tr("You must enter in a valid query for this form detail.") );
@@ -168,9 +168,9 @@ void ediFormDetail::sSave()
 
   q.bindValue(":ediform_id", _ediformid);
   q.bindValue(":ediformdetail_id", _ediformdetailid);
-  q.bindValue(":ediformdetail_name", _name->text().stripWhiteSpace());
-  q.bindValue(":ediformdetail_query", _query->text().stripWhiteSpace());
-  q.bindValue(":ediformdetail_notes", _notes->text());
+  q.bindValue(":ediformdetail_name", _name->text().trimmed());
+  q.bindValue(":ediformdetail_query", _query->toPlainText().trimmed());
+  q.bindValue(":ediformdetail_notes", _notes->toPlainText());
   q.bindValue(":ediformdetail_order", _order->value());
 
   if(!q.exec())

@@ -68,7 +68,7 @@ class financialLayouts : public XWidget, public Ui::financialLayouts
     Q_OBJECT
 
 public:
-    financialLayouts(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    financialLayouts(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~financialLayouts();
 
 public slots:

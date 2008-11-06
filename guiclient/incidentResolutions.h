@@ -68,7 +68,7 @@ class incidentResolutions : public XWidget, public Ui::incidentResolutions
     Q_OBJECT
 
 public:
-    incidentResolutions(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    incidentResolutions(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~incidentResolutions();
 
 public slots:

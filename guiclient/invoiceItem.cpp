@@ -149,7 +149,7 @@ enum SetResponse invoiceItem::set(const ParameterList &pParams)
       _taxauthid = q.value("taxauth_id").toInt();
       _tax->setId(q.value("curr_id").toInt());
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
@@ -196,7 +196,7 @@ enum SetResponse invoiceItem::set(const ParameterList &pParams)
       q.exec();
       if (q.first())
         _lineNumber->setText(q.value("linenumber").toString());
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return UndefinedError;
@@ -259,7 +259,7 @@ void invoiceItem::sSave()
       return;
     }
 
-    if (!_itemDescrip->text().length())
+    if (!_itemDescrip->toPlainText().length())
     {
       QMessageBox::critical( this, tr("Cannot Save Invoice Item"),
                              tr("<p>You must enter a Item Description for this Miscellaneous Invoice Item before you may save it.") );
@@ -305,7 +305,7 @@ void invoiceItem::sSave()
     q.exec("SELECT NEXTVAL('invcitem_invcitem_id_seq') AS invcitem_id;");
     if (q.first())
       _invcitemid = q.value("invcitem_id").toInt();
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -375,7 +375,7 @@ void invoiceItem::sSave()
 
   q.bindValue(":invcitem_id", _invcitemid);
   q.bindValue(":invcitem_number", _itemNumber->text());
-  q.bindValue(":invcitem_descrip", _itemDescrip->text());
+  q.bindValue(":invcitem_descrip", _itemDescrip->toPlainText());
   q.bindValue(":invcitem_salescat_id", _salescat->id());
   q.bindValue(":invcitem_custpn", _custPn->text());
   q.bindValue(":invcitem_ordered", _ordered->toDouble());
@@ -388,7 +388,7 @@ void invoiceItem::sSave()
   if(!_miscSelected->isChecked())
     q.bindValue(":price_uom_id", _pricingUOM->id());
   q.bindValue(":price_invuomratio", _priceinvuomratio);
-  q.bindValue(":invcitem_notes", _notes->text());
+  q.bindValue(":invcitem_notes", _notes->toPlainText());
   if(_taxcode->isValid())
     q.bindValue(":invcitem_tax_id",	_taxcode->id());
   if(_taxtype->isValid())
@@ -401,7 +401,7 @@ void invoiceItem::sSave()
   q.bindValue(":invcitem_tax_ratec",	_cachedRateC);
 
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -475,7 +475,7 @@ void invoiceItem::populate()
 
     _tax->setLocalValue(_cachedRateA + _cachedRateB + _cachedRateC);
   }
-  else if (invcitem.lastError().type() != QSqlError::None)
+  else if (invcitem.lastError().type() != QSqlError::NoError)
   {
     systemError(this, invcitem.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -544,7 +544,7 @@ void invoiceItem::sPopulateItemInfo(int pItemid)
       _unitCost->setBaseValue(q.value("f_unitcost").toDouble());
       _taxtype->setId(q.value("taxtype_id").toInt());
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -600,7 +600,7 @@ void invoiceItem::sDeterminePrice()
       _custPrice->setLocalValue(price);
       _price->setLocalValue(price);
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -630,7 +630,7 @@ void invoiceItem::sLookupTaxCode()
     _cachedPctB	= taxq.value("tax_rateb").toDouble();
     _cachedPctC	= taxq.value("tax_ratec").toDouble();
   }
-  else if (taxq.lastError().type() != QSqlError::None)
+  else if (taxq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, taxq.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -664,7 +664,7 @@ void invoiceItem::sLookupTax()
     _cachedRateC= calcq.value("valC").toDouble();
     _tax->setLocalValue(_cachedRateA + _cachedRateB + _cachedRateC);
   }
-  else if (calcq.lastError().type() != QSqlError::None)
+  else if (calcq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, calcq.lastError().databaseText(), __FILE__, __LINE__);
     return;

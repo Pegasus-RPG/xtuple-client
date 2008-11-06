@@ -67,7 +67,7 @@ class empGroups : public XWidget, public Ui::empGroups
     Q_OBJECT
 
 public:
-    empGroups(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    empGroups(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~empGroups();
 
 public slots:

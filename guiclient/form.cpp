@@ -144,7 +144,7 @@ void form::sSave()
     q.exec("SELECT NEXTVAL('form_form_id_seq') AS _form_id");
     if (q.first())
       _formid = q.value("_form_id").toInt();
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -167,31 +167,31 @@ void form::sSave()
   q.bindValue(":form_descrip", _descrip->text());
   q.bindValue(":form_report_id", _report->id());
 
-  if (_key->currentItem() == 0)
+  if (_key->currentIndex() == 0)
     q.bindValue(":form_key", "Cust");
-  else if (_key->currentItem() == 1)
+  else if (_key->currentIndex() == 1)
     q.bindValue(":form_key", "Item");
-  else if (_key->currentItem() == 2)
+  else if (_key->currentIndex() == 2)
     q.bindValue(":form_key", "ItSt");
-  else if (_key->currentItem() == 3)
+  else if (_key->currentIndex() == 3)
     q.bindValue(":form_key", "PO");
-  else if (_key->currentItem() == 4)
+  else if (_key->currentIndex() == 4)
     q.bindValue(":form_key", "SO");
-  else if (_key->currentItem() == 5)
+  else if (_key->currentIndex() == 5)
     q.bindValue(":form_key", "Vend");
-  else if (_key->currentItem() == 6)
+  else if (_key->currentIndex() == 6)
     q.bindValue(":form_key", "WO");
-  else if (_key->currentItem() == 7)
+  else if (_key->currentIndex() == 7)
     q.bindValue(":form_key", "SASC");
-  else if (_key->currentItem() == 8)
+  else if (_key->currentIndex() == 8)
     q.bindValue(":form_key", "PES");
-  else if (_key->currentItem() == 9)
+  else if (_key->currentIndex() == 9)
     q.bindValue(":form_key", "RA");
   else
     q.bindValue(":form_key", "");
 
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -214,29 +214,29 @@ void form::populate()
     _report->setId(q.value("form_report_id").toInt());
   
     if (q.value("form_key").toString() == "Cust")
-      _key->setCurrentItem(0);
+      _key->setCurrentIndex(0);
     else if (q.value("form_key").toString() == "Item")
-      _key->setCurrentItem(1);
+      _key->setCurrentIndex(1);
     else if (q.value("form_key").toString() == "ItSt")
-      _key->setCurrentItem(2);
+      _key->setCurrentIndex(2);
     else if (q.value("form_key").toString() == "PO")
-      _key->setCurrentItem(3);
+      _key->setCurrentIndex(3);
     else if (q.value("form_key").toString() == "SO")
-      _key->setCurrentItem(4);
+      _key->setCurrentIndex(4);
     else if (q.value("form_key").toString() == "Vend")
-      _key->setCurrentItem(5);
+      _key->setCurrentIndex(5);
     else if (q.value("form_key").toString() == "WO")
-      _key->setCurrentItem(6);
+      _key->setCurrentIndex(6);
     else if (q.value("form_key").toString() == "SASC")
-      _key->setCurrentItem(7);
+      _key->setCurrentIndex(7);
     else if (q.value("form_key").toString() == "PES")
-      _key->setCurrentItem(8);
+      _key->setCurrentIndex(8);
     else if (q.value("form_key").toString() == "RA")
-      _key->setCurrentItem(9);
+      _key->setCurrentIndex(9);
     else
-      _key->setCurrentItem(-1);
+      _key->setCurrentIndex(-1);
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

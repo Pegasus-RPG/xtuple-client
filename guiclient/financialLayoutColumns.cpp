@@ -184,7 +184,7 @@ void financialLayoutColumns::sSave()
     q.exec("SELECT NEXTVAL('flcol_flcol_id_seq') AS flcol_id;");
     if (q.first())
       _flcolid = q.value("flcol_id").toInt();
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -263,7 +263,7 @@ void financialLayoutColumns::sSave()
   }
     
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -318,7 +318,7 @@ void financialLayoutColumns::populate()
     _budgetdiff->setChecked(q.value("flcol_budgetdiff").toBool());
     _budgetdiffprcnt->setChecked(q.value("flcol_budgetdiffprcnt").toBool());  
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -428,7 +428,7 @@ void financialLayoutColumns::sEdit()
                             .arg(errorLine)
                             .arg(errorColumn) );
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

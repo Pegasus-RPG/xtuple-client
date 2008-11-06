@@ -133,7 +133,7 @@ enum SetResponse incidentSeverity::set(const ParameterList &pParams)
 
 void incidentSeverity::sCheck()
 {
-  _name->setText(_name->text().stripWhiteSpace());
+  _name->setText(_name->text().trimmed());
   if ( (_mode == cNew) && (_name->text().length()) )
   {
     q.prepare( "SELECT incdtseverity_id "
@@ -159,7 +159,7 @@ void incidentSeverity::sSave()
     q.exec("SELECT NEXTVAL('incdtseverity_incdtseverity_id_seq') AS _incdtseverity_id");
     if (q.first())
       _incdtseverityId = q.value("_incdtseverity_id").toInt();
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -187,7 +187,7 @@ void incidentSeverity::sSave()
 			       "Incident Severity.") );
       return;
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -203,9 +203,9 @@ void incidentSeverity::sSave()
   q.bindValue(":incdtseverity_id", _incdtseverityId);
   q.bindValue(":incdtseverity_name", _name->text());
   q.bindValue(":incdtseverity_order", _order->value());
-  q.bindValue(":incdtseverity_descrip", _descrip->text());
+  q.bindValue(":incdtseverity_descrip", _descrip->toPlainText());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -227,7 +227,7 @@ void incidentSeverity::populate()
     _order->setValue(q.value("incdtseverity_order").toInt());
     _descrip->setText(q.value("incdtseverity_descrip").toString());
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

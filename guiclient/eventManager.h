@@ -69,7 +69,7 @@ class eventManager : public XWidget, public Ui::eventManager
     Q_OBJECT
 
 public:
-    eventManager(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    eventManager(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~eventManager();
 
 public slots:

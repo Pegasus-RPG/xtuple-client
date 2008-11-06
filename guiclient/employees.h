@@ -66,7 +66,7 @@ class employees : public XWidget, public Ui::employees
     Q_OBJECT
 
 public:
-    employees(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    employees(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~employees();
 
 public slots:

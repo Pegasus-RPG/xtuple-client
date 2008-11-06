@@ -93,7 +93,7 @@ editOwners::editOwners(QWidget* parent, const char* name, bool modal, Qt::WFlags
   {
     _owner->setId(q.value("usr_id").toInt());
   }  
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     reject();
@@ -278,7 +278,7 @@ bool editOwners::modifyOne(XTreeWidgetItem * currentItem)
   q.bindValue(":new_owner_username", _newOwner->username());
   q.bindValue(":id", currentItem->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return false;

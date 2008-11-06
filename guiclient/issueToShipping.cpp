@@ -178,7 +178,7 @@ void issueToShipping::sCatchSoitemid(int pSoitemid)
     _soitem->setId(pSoitemid);
     sIssueStock();
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -205,7 +205,7 @@ void issueToShipping::sCatchToitemid(int porderitemid)
     _soitem->setId(porderitemid);
     sIssueStock();
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -273,7 +273,7 @@ void issueToShipping::sCatchWoid(int pWoid)
       _soitem->setId(q.value("coitem_id").toInt());
       sIssueStock();
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -342,7 +342,7 @@ bool issueToShipping::sufficientItemInventory(int porderitemid)
 		  "<? endif ?>" ;
 	MetaSQLQuery errm(errs);
 	q = errm.toQuery(errp);
-	if (! q.first() && q.lastError().type() != QSqlError::None)
+	if (! q.first() && q.lastError().type() != QSqlError::NoError)
 	    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	systemError(this,
 		    storedProcErrorLookup("sufficientInventoryToShipItem",
@@ -352,7 +352,7 @@ bool issueToShipping::sufficientItemInventory(int porderitemid)
 	return false;
       }
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return false;
@@ -380,7 +380,7 @@ bool issueToShipping::sufficientInventory(int porderheadid)
         return false;
       }
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return false;
@@ -426,7 +426,7 @@ void issueToShipping::sIssueLineBalance()
       }
       q.exec("COMMIT;");
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       rollback.exec();
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -474,7 +474,7 @@ void issueToShipping::sIssueAllBalance()
       q.exec("COMMIT;"); 
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -518,7 +518,7 @@ void issueToShipping::sReturnStock()
       }      
       q.exec("COMMIT;"); 
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       rollback.exec();
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -554,7 +554,7 @@ void issueToShipping::sShip()
       _order->setFocus();
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -605,7 +605,7 @@ void issueToShipping::sFillList()
         _order->setFocus();
       }
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -705,7 +705,7 @@ void issueToShipping::sFillList()
   MetaSQLQuery listm(sql);
   XSqlQuery listq = listm.toQuery(listp);
   _soitem->populate(listq);
-  if (listq.lastError().type() != QSqlError::None)
+  if (listq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, listq.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -772,7 +772,7 @@ void issueToShipping::sBcFind()
 
   if(!q.first())
   {
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -852,7 +852,7 @@ void issueToShipping::sBcFind()
   // If there are no records then the order is complete
   if(!q.first())
   {
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;

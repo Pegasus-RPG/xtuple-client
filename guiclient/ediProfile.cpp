@@ -140,7 +140,7 @@ enum SetResponse ediProfile::set( const ParameterList & pParams )
 
 bool ediProfile::save()
 {
-  if(_name->text().stripWhiteSpace().isEmpty())
+  if(_name->text().trimmed().isEmpty())
   {
     QMessageBox::critical( this, tr("Cannot Save EDI Profile"),
       tr("You must enter in a valid name for this profile.") );
@@ -158,7 +158,7 @@ bool ediProfile::save()
               " WHERE ((ediprofile_name=:ediprofile_name)"
               "   AND  (ediprofile_id!=:ediprofile_id)); ");
   q.bindValue(":ediprofile_id", _ediprofileid);
-  q.bindValue(":ediprofile_name", _name->text().stripWhiteSpace());
+  q.bindValue(":ediprofile_name", _name->text().trimmed());
   q.exec();
   if(q.first())
   {
@@ -205,10 +205,10 @@ bool ediProfile::save()
               " WHERE (ediprofile_id=:ediprofile_id); " );
 
   q.bindValue(":ediprofile_id", _ediprofileid);
-  q.bindValue(":ediprofile_name", _name->text().stripWhiteSpace());
-  q.bindValue(":ediprofile_notes", _notes->text());
+  q.bindValue(":ediprofile_name", _name->text().trimmed());
+  q.bindValue(":ediprofile_notes", _notes->toPlainText());
 
-  switch(_type->currentItem())
+  switch(_type->currentIndex())
   {
     case 0: // Ftp
       q.bindValue(":ediprofile_type", "ftp");
@@ -331,7 +331,7 @@ void ediProfile::populate()
     
     if("ftp" == q.value("ediprofile_type").toString())
     {
-      _type->setCurrentItem(0);
+      _type->setCurrentIndex(0);
       _stack->raiseWidget(0);
       _ftpServer->setText(q.value("ediprofile_option1").toString());
       _ftpLogin->setText(q.value("ediprofile_option2").toString());
@@ -340,7 +340,7 @@ void ediProfile::populate()
     }
     else if("email" == q.value("ediprofile_type").toString())
     {
-      _type->setCurrentItem(1);
+      _type->setCurrentIndex(1);
       _stack->raiseWidget(1);
       _emailTo->setText(q.value("ediprofile_option1").toString());
       _emailSubject->setText(q.value("ediprofile_option2").toString());

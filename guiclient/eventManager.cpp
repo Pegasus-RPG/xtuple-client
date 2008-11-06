@@ -241,7 +241,7 @@ void eventManager::sViewSalesOrder()
   q.exec();
   if (q.first())
     salesOrder::viewSalesOrder(q.value("coitem_cohead_id").toInt());
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -286,7 +286,7 @@ void eventManager::sPrintPackingList()
     newdlg.set(params);
     newdlg.exec();
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -337,7 +337,7 @@ void eventManager::sRecallWo()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -393,7 +393,7 @@ void eventManager::sDeleteWorkOrder()
 	return;
       }
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -412,7 +412,7 @@ void eventManager::sAcknowledge()
   {
     q.bindValue(":evntlog_id", ((XTreeWidgetItem*)(list[i]))->id());
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -432,7 +432,7 @@ void eventManager::sDelete()
   {
     q.bindValue(":evntlog_id", ((XTreeWidgetItem*)(list[i]))->id());
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -453,7 +453,7 @@ void eventManager::sFillList()
     params.append("showAcknowledged");
   q = mql.toQuery(params);
   _event->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

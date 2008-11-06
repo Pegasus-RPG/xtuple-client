@@ -71,7 +71,7 @@ class issueToShipping : public XWidget, public Ui::issueToShipping
     Q_OBJECT
 
 public:
-    issueToShipping(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    issueToShipping(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~issueToShipping();
 
 public slots:

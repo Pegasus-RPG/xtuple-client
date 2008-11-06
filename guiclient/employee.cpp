@@ -143,7 +143,7 @@ employee::employee(QWidget* parent, Qt::WindowFlags fl)
   q.exec();
   if (q.first())
     _currabbr = q.value("curr_abbr").toString();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -153,7 +153,7 @@ employee::employee(QWidget* parent, Qt::WindowFlags fl)
   q.exec("SELECT userCanCreateUsers(CURRENT_USER) AS enabled;");
   if (q.first())
     _createUsers = q.value("enabled").toBool();
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 
   if (_privileges->check("MaintainSalesReps") ||
@@ -196,7 +196,7 @@ enum SetResponse employee::set(const ParameterList &pParams)
       _empcode = q.value("emp_code").toString();
       _comments->setId(_empid);
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
@@ -285,7 +285,7 @@ void employee::sSave(const bool pClose)
     {
       // OK
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -330,7 +330,7 @@ void employee::sSave(const bool pClose)
     {
       // OK
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -468,7 +468,7 @@ void employee::sSave(const bool pClose)
   q.bindValue(":origcode",    _empcode);
   q.bindValue(":image",       _image->number());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -483,7 +483,7 @@ void employee::sSave(const bool pClose)
       _mode  = cEdit;
       _comments->setId(_empid);
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -511,7 +511,7 @@ void employee::reject()
         systemError(this, storedProcErrorLookup("deleteEmp", result),
                     __FILE__, __LINE__);
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
   }
 
@@ -583,7 +583,7 @@ void employee::sPopulate()
     sFillGroupsList();
     _comments->setId(_empid);
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -596,7 +596,7 @@ void employee::sDeleteCharass()
              "WHERE (charass_id=:charass_id);" );
   q.bindValue(":charass_id", _charass->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -642,7 +642,7 @@ void employee::sFillCharassList()
   q.bindValue(":emp_id", _empid);
   q.exec();
   _charass->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -659,7 +659,7 @@ void employee::sFillGroupsList()
   q.bindValue(":emp_id", _empid);
   q.exec();
   _groups->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -711,7 +711,7 @@ void employee::sSalesrep()
     newdlg.set(params);
     _salesrep->setEnabled(newdlg.exec() == QDialog::Rejected);
   }
-  else if (srq.lastError().type() != QSqlError::None)
+  else if (srq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, srq.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -755,7 +755,7 @@ void employee::sUser()
     newdlg.set(params);
     newdlg.exec();
   }
-  else if (usrq.lastError().type() != QSqlError::None)
+  else if (usrq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, usrq.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -799,7 +799,7 @@ void employee::sAttachGroup()
     q.bindValue(":empgrpid", empgrpid);
     q.bindValue(":empid",    _empid);
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -816,7 +816,7 @@ void employee::sDetachGroup()
   q.bindValue(":grpid", _groups->id());
   q.bindValue(":empid", _empid);
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -858,7 +858,7 @@ void employee::sHandleButtons()
     _user->setChecked(true);
     _userButton->setEnabled(_privileges->check("MaintainUsers"));
   }
-  else if (usrq.lastError().type() != QSqlError::None)
+  else if (usrq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, usrq.lastError().databaseText(), __FILE__, __LINE__);
     return;

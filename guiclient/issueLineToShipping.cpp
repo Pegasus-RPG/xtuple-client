@@ -209,7 +209,7 @@ void issueLineToShipping::sIssue()
             "<? endif ?>" ;
         MetaSQLQuery errm(errs);
         q = errm.toQuery(errp);
-        if (! q.first() && q.lastError().type() != QSqlError::None)
+        if (! q.first() && q.lastError().type() != QSqlError::NoError)
             systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
         systemError(this,
               storedProcErrorLookup("sufficientInventoryToShipItem",
@@ -219,7 +219,7 @@ void issueLineToShipping::sIssue()
         return;
       }
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -263,7 +263,7 @@ void issueLineToShipping::sIssue()
         tr("Yes"), tr("No"), _snooze, 0, 1) == 1)
       return;
   }
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -304,7 +304,7 @@ void issueLineToShipping::sIssue()
       accept();
     }
   }
-  else if (issue.lastError().type() != QSqlError::None)
+  else if (issue.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
     systemError(this, issue.lastError().databaseText(), __FILE__, __LINE__);
@@ -369,7 +369,7 @@ void issueLineToShipping::populate()
     _qtyReturned->setDouble(itemq.value("qtyreturned").toDouble());
     _balance->setDouble(itemq.value("balance").toDouble());
   }
-  else if (itemq.lastError().type() != QSqlError::None)
+  else if (itemq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, itemq.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -397,7 +397,7 @@ void issueLineToShipping::populate()
     _shipment->setId(shipq.value("misc_id").toInt());
     _qtyAtShip->setDouble(shipq.value("qtyatship").toDouble());
   }
-  else if (shipq.lastError().type() != QSqlError::None)
+  else if (shipq.lastError().type() != QSqlError::NoError)
   {
     systemError( this, shipq.lastError().databaseText(), __FILE__, __LINE__);
     return;

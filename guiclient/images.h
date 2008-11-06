@@ -67,7 +67,7 @@ class images : public XWidget, public Ui::images
     Q_OBJECT
 
 public:
-    images(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    images(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~images();
 
 public slots:

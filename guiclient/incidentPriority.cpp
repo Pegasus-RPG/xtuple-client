@@ -133,7 +133,7 @@ enum SetResponse incidentPriority::set(const ParameterList &pParams)
 
 void incidentPriority::sCheck()
 {
-  _name->setText(_name->text().stripWhiteSpace());
+  _name->setText(_name->text().trimmed());
   if ( (_mode == cNew) && (_name->text().length()) )
   {
     q.prepare( "SELECT incdtpriority_id "
@@ -159,7 +159,7 @@ void incidentPriority::sSave()
     q.exec("SELECT NEXTVAL('incdtpriority_incdtpriority_id_seq') AS _incdtpriority_id");
     if (q.first())
       _incdtpriorityId = q.value("_incdtpriority_id").toInt();
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -187,7 +187,7 @@ void incidentPriority::sSave()
 			       "Incident Priority.") );
       return;
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -203,9 +203,9 @@ void incidentPriority::sSave()
   q.bindValue(":incdtpriority_id", _incdtpriorityId);
   q.bindValue(":incdtpriority_name", _name->text());
   q.bindValue(":incdtpriority_order", _order->value());
-  q.bindValue(":incdtpriority_descrip", _descrip->text());
+  q.bindValue(":incdtpriority_descrip", _descrip->toPlainText());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -227,7 +227,7 @@ void incidentPriority::populate()
     _order->setValue(q.value("incdtpriority_order").toInt());
     _descrip->setText(q.value("incdtpriority_descrip").toString());
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

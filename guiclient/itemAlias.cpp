@@ -201,11 +201,11 @@ void itemAlias::sSave()
 
   q.bindValue(":itemalias_id", _itemaliasid);
   q.bindValue(":itemalias_item_id", _itemid);
-  q.bindValue(":itemalias_number", _number->text().stripWhiteSpace());
-  q.bindValue(":itemalias_descrip1", _descrip1->text().stripWhiteSpace());
-  q.bindValue(":itemalias_descrip2", _descrip2->text().stripWhiteSpace());
-  q.bindValue(":itemalias_comments", _comments->text());
-  q.bindValue(":itemalias_usedescrip", QVariant(_useDescription->isChecked(), 0));
+  q.bindValue(":itemalias_number", _number->text().trimmed());
+  q.bindValue(":itemalias_descrip1", _descrip1->text().trimmed());
+  q.bindValue(":itemalias_descrip2", _descrip2->text().trimmed());
+  q.bindValue(":itemalias_comments", _comments->toPlainText());
+  q.bindValue(":itemalias_usedescrip", QVariant(_useDescription->isChecked()));
   q.exec();
 
   done(_itemaliasid);

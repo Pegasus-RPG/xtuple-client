@@ -201,7 +201,7 @@ enum SetResponse financialLayout::set(const ParameterList &pParams)
 void financialLayout::sCheck()
 {
 
-  _name->setText(_name->text().stripWhiteSpace());
+  _name->setText(_name->text().trimmed());
   if ((_mode == cNew) || (_name->text().length()))
   {
     q.prepare( "SELECT flhead_id "
@@ -279,17 +279,17 @@ void financialLayout::sSave()
 
   q.bindValue(":flhead_name", _name->text());
   q.bindValue(":flhead_descrip", _descrip->text());
-  q.bindValue(":showtotal", QVariant((_showTotal->isChecked()) || (_showGrandTotal->isChecked()),0));
-  q.bindValue(":flhead_showstart", QVariant((_showTotal->isChecked() && _showStart->isChecked()),0));
+  q.bindValue(":showtotal", QVariant((_showTotal->isChecked()) || (_showGrandTotal->isChecked())));
+  q.bindValue(":flhead_showstart", QVariant((_showTotal->isChecked() && _showStart->isChecked())));
   q.bindValue(":flhead_showend", QVariant((_showTotal->isChecked() && _showEnd->isChecked()) ||
-    ((_showGrandTotal->isChecked()) && (_balance->isChecked())),0));
+    ((_showGrandTotal->isChecked()) && (_balance->isChecked()))));
   q.bindValue(":flhead_showdelta", QVariant((_showTotal->isChecked() && _showDelta->isChecked()) ||
-     ((_showGrandTotal->isChecked()) && (_cash->isChecked())),0));
+     ((_showGrandTotal->isChecked()) && (_cash->isChecked()))));
   q.bindValue(":flhead_showbudget", QVariant((_showTotal->isChecked() && _showBudget->isChecked()) ||
-     ((_showGrandTotal->isChecked()) && (!_adHoc->isChecked())),0));
+     ((_showGrandTotal->isChecked()) && (!_adHoc->isChecked()))));
   q.bindValue(":flhead_showdiff", QVariant((_showTotal->isChecked() && _showDiff->isChecked()) ||
-     ((_showGrandTotal->isChecked()) && (((_income->isChecked())) || (_cash->isChecked()))),0));
-  q.bindValue(":flhead_showcustom", QVariant((_showTotal->isChecked() && _showCustom->isChecked()),0));
+     ((_showGrandTotal->isChecked()) && (((_income->isChecked())) || (_cash->isChecked())))));
+  q.bindValue(":flhead_showcustom", QVariant((_showTotal->isChecked() && _showCustom->isChecked())));
   if ( _income->isChecked() )
     q.bindValue(":flhead_type","I");
   else if ( _balance->isChecked() )
@@ -298,22 +298,22 @@ void financialLayout::sSave()
     q.bindValue(":flhead_type","C");
   else if ( _adHoc->isChecked() )
     q.bindValue(":flhead_type","A");
-  q.bindValue(":flhead_active", QVariant(_active->isChecked(), 0));
+  q.bindValue(":flhead_active", QVariant(_active->isChecked()));
   q.bindValue(":flhead_id", _flheadid);
   q.bindValue(":flhead_custom_label", _customText->text());
-  q.bindValue(":flhead_usealttotal", QVariant(_altTotal->isChecked(), 0));
+  q.bindValue(":flhead_usealttotal", QVariant(_altTotal->isChecked()));
   q.bindValue(":flhead_alttotal", _altTotalText->text());
-  q.bindValue(":flhead_usealtbegin", QVariant(_altBegin->isChecked(), 0));
+  q.bindValue(":flhead_usealtbegin", QVariant(_altBegin->isChecked()));
   q.bindValue(":flhead_altbegin", _altBeginText->text());
-  q.bindValue(":flhead_usealtend", QVariant(_altEnd->isChecked(), 0));
+  q.bindValue(":flhead_usealtend", QVariant(_altEnd->isChecked()));
   q.bindValue(":flhead_altend", _altEndText->text());
-  q.bindValue(":flhead_usealtdebits", QVariant(_altDebits->isChecked(), 0));
+  q.bindValue(":flhead_usealtdebits", QVariant(_altDebits->isChecked()));
   q.bindValue(":flhead_altdebits", _altDebitsText->text());
-  q.bindValue(":flhead_usealtcredits", QVariant(_altCredits->isChecked(), 0));
+  q.bindValue(":flhead_usealtcredits", QVariant(_altCredits->isChecked()));
   q.bindValue(":flhead_altcredits", _altCreditsText->text());
-  q.bindValue(":flhead_usealtbudget", QVariant(_altBudget->isChecked(), 0));
+  q.bindValue(":flhead_usealtbudget", QVariant(_altBudget->isChecked()));
   q.bindValue(":flhead_altbudget", _altBudgetText->text());
-  q.bindValue(":flhead_usealtdiff", QVariant(_altDiff->isChecked(), 0));
+  q.bindValue(":flhead_usealtdiff", QVariant(_altDiff->isChecked()));
   q.bindValue(":flhead_altdiff", _altDiffText->text());
   q.bindValue(":flhead_id", _flheadid);
   q.exec();
@@ -393,7 +393,7 @@ void financialLayout::populate()
     _altDiff->setChecked(q.value("flhead_usealtdiff").toBool());
     _altDiffText->setText(q.value("flhead_altdiff").toString());
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -437,7 +437,7 @@ void financialLayout::sFillList()
   q.bindValue(":flhead_id", _flheadid);
   q.exec();
   _layouts->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

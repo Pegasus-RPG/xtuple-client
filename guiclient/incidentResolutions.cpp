@@ -125,7 +125,7 @@ void incidentResolutions::sFillList()
              "FROM incdtresolution "
              "ORDER BY incdtresolution_order, incdtresolution_name;" );
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -139,7 +139,7 @@ void incidentResolutions::sDelete()
              "WHERE (incdtresolution_id=:incdtresolution_id);" );
   q.bindValue(":incdtresolution_id", _incidentResolutions->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

@@ -225,7 +225,7 @@ void enterPoReturn::sPost()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -300,7 +300,7 @@ void enterPoReturn::sFillList()
     q.exec();
     if (q.first())
       _returnAddr->setId(q.value("addr_id").toInt());
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -338,7 +338,7 @@ void enterPoReturn::sFillList()
     MetaSQLQuery mql(sql);
     q = mql.toQuery(params);
     _poitem->populate(q);
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -359,7 +359,7 @@ void enterPoReturn::closeEvent(QCloseEvent *pEvent)
                "                          AND (poitem_pohead_id=:pohead_id) ) ) );" );
     q.bindValue(":pohead_id", _po->id());
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     }

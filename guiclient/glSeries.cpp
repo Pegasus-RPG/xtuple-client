@@ -153,7 +153,7 @@ enum SetResponse glSeries::set(const ParameterList &pParams)
       _docnumber->setText(q.value("glseries_docnumber").toString());
       _notes->setText(q.value("glseries_notes").toString());
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
@@ -171,7 +171,7 @@ enum SetResponse glSeries::set(const ParameterList &pParams)
       q.exec("SELECT fetchGLSequence() AS glsequence;");
       if (q.first())
         _glsequence = q.value("glsequence").toInt();
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return UndefinedError;
@@ -202,7 +202,7 @@ enum SetResponse glSeries::set(const ParameterList &pParams)
                  "   AND   (glseries_sequence=:glsequence) ); ");
       q.bindValue(":glsequence", _glsequence);
       q.exec();
-      if (q.lastError().type() != QSqlError::None)
+      if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return UndefinedError;
@@ -291,7 +291,7 @@ void glSeries::sDelete()
              "WHERE (glseries_id=:glseries_id);" );
   q.bindValue(":glseries_id", _glseries->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -312,7 +312,7 @@ bool glSeries::update()
       return false;
     }
 
-    if(_metrics->boolean("MandatoryGLEntryNotes") && _notes->text().stripWhiteSpace().isEmpty())
+    if(_metrics->boolean("MandatoryGLEntryNotes") && _notes->toPlainText().trimmed().isEmpty())
     {
       QMessageBox::information( this, tr("Cannot Post G/L Series"),
 				tr("<p>You must enter some Notes to describe this transaction.") );
@@ -327,14 +327,14 @@ bool glSeries::update()
 	       "    glseries_docnumber=:docnumber,"
                "    glseries_distdate=:glseries_distdate "
                "WHERE (glseries_sequence=:glseries_sequence);" );
-    q.bindValue(":glseries_notes", _notes->text());
+    q.bindValue(":glseries_notes", _notes->toPlainText());
     q.bindValue(":source",	_source->text());
     q.bindValue(":doctype",	_doctype->currentText());
     q.bindValue(":docnumber",	_docnumber->text());
     q.bindValue(":glseries_sequence", _glsequence);
     q.bindValue(":glseries_distdate", _date->date());
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return false;
@@ -356,7 +356,7 @@ bool glSeries::update()
       return false;
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return false;
@@ -408,7 +408,7 @@ void glSeries::sPost()
         return;
       }
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -445,7 +445,7 @@ void glSeries::sClose()
     q.prepare("SELECT deleteGLSeries(:glsequence);");
     q.bindValue(":glsequence", _glsequence);
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 
     omfgThis->sGlSeriesUpdated();
@@ -470,13 +470,13 @@ void glSeries::sFillList()
              " AND (glseries_sequence=:glseries_sequence) );" );
   q.bindValue(":glseries_sequence", _glsequence);
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
   _glseries->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -509,7 +509,7 @@ void glSeries::sFillList()
       _credits->setPaletteForegroundColor(QColor("black"));
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

@@ -125,7 +125,7 @@ void incidentPriorities::sFillList()
              "FROM incdtpriority "
              "ORDER BY incdtpriority_order, incdtpriority_name;" );
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -139,7 +139,7 @@ void incidentPriorities::sDelete()
              "WHERE (incdtpriority_id=:incdtpriorityid);" );
   q.bindValue(":incdtpriorityid", _incidentPriorities->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

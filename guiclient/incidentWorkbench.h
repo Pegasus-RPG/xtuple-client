@@ -68,7 +68,7 @@ class incidentWorkbench : public XWidget, public Ui::incidentWorkbench
     Q_OBJECT
 
 public:
-    incidentWorkbench(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    incidentWorkbench(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~incidentWorkbench();
 
 public slots:

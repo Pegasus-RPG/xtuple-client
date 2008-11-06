@@ -125,7 +125,7 @@ enum SetResponse expenseTrans::set(const ParameterList &pParams)
     {
       _mode = cNew;
 
-      setCaption(tr("Enter Expense Transaction"));
+      setWindowTitle(tr("Enter Expense Transaction"));
       _usernameLit->clear();
       _transDate->setEnabled(_privileges->check("AlterTransactionDates"));
       _transDate->setDate(omfgThis->dbDate());
@@ -136,7 +136,7 @@ enum SetResponse expenseTrans::set(const ParameterList &pParams)
     {
       _mode = cView;
 
-      setCaption(tr("Expense Transaction"));
+      setWindowTitle(tr("Expense Transaction"));
       _transDate->setEnabled(FALSE);
       _item->setReadOnly(TRUE);
       _warehouse->setEnabled(FALSE);
@@ -164,7 +164,7 @@ enum SetResponse expenseTrans::set(const ParameterList &pParams)
         _notes->setText(q.value("invhist_comments").toString());
         _item->setItemsiteid(q.value("invhist_itemsite_id").toInt());
       }
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return UndefinedError;
@@ -217,7 +217,7 @@ void expenseTrans::sPost()
   q.bindValue(":qty", _qty->toDouble());
   q.bindValue(":expcatid", _expcat->id());
   q.bindValue(":docNumber", _documentNum->text());
-  q.bindValue(":comments", _notes->text());
+  q.bindValue(":comments", _notes->toPlainText());
   q.bindValue(":item_id", _item->id());
   q.bindValue(":warehous_id", _warehouse->id());
   q.bindValue(":date",        _transDate->date());
@@ -233,7 +233,7 @@ void expenseTrans::sPost()
                   __FILE__, __LINE__);
       return;
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -265,7 +265,7 @@ void expenseTrans::sPost()
       _item->setFocus();
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -298,7 +298,7 @@ void expenseTrans::sPopulateQOH(int pWarehousid)
       _beforeQty->setDouble(q.value("itemsite_qtyonhand").toDouble());
       sPopulateQty();
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;

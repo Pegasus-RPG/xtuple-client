@@ -133,7 +133,7 @@ enum SetResponse incidentResolution::set(const ParameterList &pParams)
 
 void incidentResolution::sCheck()
 {
-  _name->setText(_name->text().stripWhiteSpace());
+  _name->setText(_name->text().trimmed());
   if ( (_mode == cNew) && (_name->text().length()) )
   {
     q.prepare( "SELECT incdtresolution_id "
@@ -159,7 +159,7 @@ void incidentResolution::sSave()
     q.exec("SELECT NEXTVAL('incdtresolution_incdtresolution_id_seq') AS _incdtresolution_id");
     if (q.first())
       _incdtresolutionId = q.value("_incdtresolution_id").toInt();
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -187,7 +187,7 @@ void incidentResolution::sSave()
 			       "Incident Resolution.") );
       return;
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -203,9 +203,9 @@ void incidentResolution::sSave()
   q.bindValue(":incdtresolution_id", _incdtresolutionId);
   q.bindValue(":incdtresolution_name", _name->text());
   q.bindValue(":incdtresolution_order", _order->value());
-  q.bindValue(":incdtresolution_descrip", _descrip->text());
+  q.bindValue(":incdtresolution_descrip", _descrip->toPlainText());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -227,7 +227,7 @@ void incidentResolution::populate()
     _order->setValue(q.value("incdtresolution_order").toInt());
     _descrip->setText(q.value("incdtresolution_descrip").toString());
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

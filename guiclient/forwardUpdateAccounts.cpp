@@ -117,15 +117,15 @@ void forwardUpdateAccounts::sUpdate()
     q.prepare("SELECT forwardUpdateAccount(accnt_id) AS result"
               "  FROM accnt JOIN company ON ( (company_number=accnt_company) AND (NOT company_external) )"
               " WHERE (accnt_type=:accnt_type);");
-    if (_type->currentItem() == 0)
+    if (_type->currentIndex() == 0)
       q.bindValue(":accnt_type", "A");
-    else if (_type->currentItem() == 1)
+    else if (_type->currentIndex() == 1)
       q.bindValue(":accnt_type", "L");
-    else if (_type->currentItem() == 2)
+    else if (_type->currentIndex() == 2)
       q.bindValue(":accnt_type", "E");
-    else if (_type->currentItem() == 3)
+    else if (_type->currentIndex() == 3)
       q.bindValue(":accnt_type", "R");
-    else if (_type->currentItem() == 4)
+    else if (_type->currentIndex() == 4)
       q.bindValue(":accnt_type", "Q");
   }
   else
