@@ -68,7 +68,7 @@ class dspCustomerInformationExport : public XWidget, public Ui::dspCustomerInfor
     Q_OBJECT
 
 public:
-    dspCustomerInformationExport(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspCustomerInformationExport(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspCustomerInformationExport();
 
 public slots:

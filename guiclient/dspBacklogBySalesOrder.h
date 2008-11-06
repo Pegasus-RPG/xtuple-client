@@ -68,7 +68,7 @@ class dspBacklogBySalesOrder : public XWidget, public Ui::dspBacklogBySalesOrder
     Q_OBJECT
 
 public:
-    dspBacklogBySalesOrder(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspBacklogBySalesOrder(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspBacklogBySalesOrder();
 
 public slots:

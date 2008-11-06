@@ -68,7 +68,7 @@ class dspCustomersByCharacteristic : public XWidget, public Ui::dspCustomersByCh
     Q_OBJECT
 
 public:
-    dspCustomersByCharacteristic(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspCustomersByCharacteristic(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspCustomersByCharacteristic();
 
     virtual void setParams(ParameterList&);

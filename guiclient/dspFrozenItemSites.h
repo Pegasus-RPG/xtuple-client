@@ -69,7 +69,7 @@ class dspFrozenItemSites : public XWidget, public Ui::dspFrozenItemSites
     Q_OBJECT
 
 public:
-    dspFrozenItemSites(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspFrozenItemSites(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspFrozenItemSites();
 
 public slots:

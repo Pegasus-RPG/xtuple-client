@@ -69,7 +69,7 @@ class dspAPOpenItemsByVendor : public XWidget, public Ui::dspAPOpenItemsByVendor
     Q_OBJECT
 
 public:
-    dspAPOpenItemsByVendor(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspAPOpenItemsByVendor(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspAPOpenItemsByVendor();
 
 public slots:

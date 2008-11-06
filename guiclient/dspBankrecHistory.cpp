@@ -168,13 +168,13 @@ void dspBankrecHistory::sFillList()
     brq.bindValue(":ending",   tr("Ending Balance"));
     brq.exec();
     _details->populate(brq);
-    if (brq.lastError().type() != QSqlError::None)
+    if (brq.lastError().type() != QSqlError::NoError)
     {
       systemError(this, brq.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

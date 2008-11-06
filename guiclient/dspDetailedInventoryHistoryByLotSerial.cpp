@@ -88,7 +88,7 @@ dspDetailedInventoryHistoryByLotSerial::dspDetailedInventoryHistoryByLotSerial(Q
   _transType->append(cTransAdjCounts, tr("Adjustments and Counts") );
   _transType->append(cTransTransfers, tr("Transfers")              );
   _transType->append(cTransScraps,    tr("Scraps")                 );
-  _transType->setCurrentItem(0);
+  _transType->setCurrentIndex(0);
 
   _invhist->addColumn(tr("Site"),         _whsColumn,          Qt::AlignCenter, true,  "lshist_warehous_code" );
   _invhist->addColumn(tr("Date"),         (_dateColumn + 30),  Qt::AlignRight,  true,  "lshist_transdate"  );

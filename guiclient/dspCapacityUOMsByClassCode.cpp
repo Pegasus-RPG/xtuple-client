@@ -152,7 +152,7 @@ void dspCapacityUOMsByClassCode::sFillList(int pItemid, bool pLocalUpdate)
     _item->populate(q, pItemid);
   else
     _item->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

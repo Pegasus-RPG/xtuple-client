@@ -69,7 +69,7 @@ class dspBreederDistributionVarianceByWarehouse : public XWidget, public Ui::dsp
     Q_OBJECT
 
 public:
-    dspBreederDistributionVarianceByWarehouse(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspBreederDistributionVarianceByWarehouse(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspBreederDistributionVarianceByWarehouse();
     virtual bool setParams(ParameterList &);
 

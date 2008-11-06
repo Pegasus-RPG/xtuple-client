@@ -67,7 +67,7 @@ class dspCapacityUOMsByClassCode : public XWidget, public Ui::dspCapacityUOMsByC
     Q_OBJECT
 
 public:
-    dspCapacityUOMsByClassCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspCapacityUOMsByClassCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspCapacityUOMsByClassCode();
 
     virtual bool setParams(ParameterList &);

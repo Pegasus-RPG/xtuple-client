@@ -69,7 +69,7 @@ class dspCostedIndentedBOM : public XWidget, public Ui::dspCostedIndentedBOM
     Q_OBJECT
 
 public:
-    dspCostedIndentedBOM(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspCostedIndentedBOM(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspCostedIndentedBOM();
 
     virtual bool setParams(ParameterList &params);

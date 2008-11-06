@@ -144,7 +144,7 @@ enum SetResponse department::set(ParameterList& pParams)
 
 void department::sSave()
 {
-    QString number = _number->text().stripWhiteSpace().upper();
+    QString number = _number->text().trimmed().toUpper();
 
     if (number.isEmpty())
     {
@@ -153,7 +153,7 @@ void department::sSave()
 	_number->setFocus();
 	return;
     }
-    if (_name->text().stripWhiteSpace().isEmpty())
+    if (_name->text().trimmed().isEmpty())
     {
 	QMessageBox::critical(this, tr("Cannot Save Department"),
 			      tr("You must enter a Department Name"));
@@ -186,7 +186,7 @@ void department::sSave()
 		      "WHERE (dept_id=:dept_id);");
     q.bindValue(":dept_id",	_deptid);
     q.bindValue(":dept_number",	number);
-    q.bindValue(":dept_name",	_name->text().stripWhiteSpace());
+    q.bindValue(":dept_name",	_name->text().trimmed());
 
     q.exec();
     if (q.lastError().type() != QSqlError::NoError)

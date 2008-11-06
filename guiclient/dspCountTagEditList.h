@@ -69,7 +69,7 @@ class dspCountTagEditList : public XWidget, public Ui::dspCountTagEditList
     Q_OBJECT
 
 public:
-    dspCountTagEditList(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspCountTagEditList(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspCountTagEditList();
 
     virtual void setParams(ParameterList &params);

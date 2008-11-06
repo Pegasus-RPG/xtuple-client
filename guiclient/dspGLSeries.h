@@ -68,7 +68,7 @@ class dspGLSeries : public XWidget, public Ui::dspGLSeries
     Q_OBJECT
 
 public:
-    dspGLSeries(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspGLSeries(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspGLSeries();
 
     virtual bool setParams(ParameterList &);

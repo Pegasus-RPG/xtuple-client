@@ -142,9 +142,9 @@ void databaseInformation::languageChange()
 
 void databaseInformation::sSave()
 {
-  _metrics->set("DatabaseName", _description->text().stripWhiteSpace());
-  _metrics->set("DefaultBatchFromEmailAddress", _defaultFromAddress->text().stripWhiteSpace());
-  _metrics->set("DatabaseComments", _comments->text().stripWhiteSpace());
+  _metrics->set("DatabaseName", _description->text().trimmed());
+  _metrics->set("DefaultBatchFromEmailAddress", _defaultFromAddress->text().trimmed());
+  _metrics->set("DatabaseComments", _comments->toPlainText().trimmed());
   _metrics->set("DisallowMismatchClientVersion", _disallowMismatchClient->isChecked());
 
   _metrics->set("EnableBatchManager", _enableBatchManager->isChecked());
@@ -153,7 +153,7 @@ void databaseInformation::sSave()
 
   _metrics->load();
 
-  omfgThis->setCaption();
+  omfgThis->setWindowTitle();
 
   accept();
 }

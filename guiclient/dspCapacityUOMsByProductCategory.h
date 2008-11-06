@@ -67,7 +67,7 @@ class dspCapacityUOMsByProductCategory : public XWidget, public Ui::dspCapacityU
     Q_OBJECT
 
 public:
-    dspCapacityUOMsByProductCategory(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspCapacityUOMsByProductCategory(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspCapacityUOMsByProductCategory();
 
     virtual bool setParams(ParameterList &);

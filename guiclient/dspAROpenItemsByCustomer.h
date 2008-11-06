@@ -69,7 +69,7 @@ class dspAROpenItemsByCustomer : public XWidget, public Ui::dspAROpenItemsByCust
     Q_OBJECT
 
 public:
-    dspAROpenItemsByCustomer(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspAROpenItemsByCustomer(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspAROpenItemsByCustomer();
     virtual bool setParams(ParameterList&);
 

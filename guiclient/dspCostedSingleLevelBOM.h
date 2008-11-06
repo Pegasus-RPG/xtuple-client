@@ -69,7 +69,7 @@ class dspCostedSingleLevelBOM : public XWidget, public Ui::dspCostedSingleLevelB
     Q_OBJECT
 
 public:
-    dspCostedSingleLevelBOM(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspCostedSingleLevelBOM(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspCostedSingleLevelBOM();
 
     virtual bool setParams(ParameterList &params);

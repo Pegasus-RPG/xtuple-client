@@ -68,7 +68,7 @@ class dspCountTagsByWarehouse : public XWidget, public Ui::dspCountTagsByWarehou
     Q_OBJECT
 
 public:
-    dspCountTagsByWarehouse(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspCountTagsByWarehouse(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspCountTagsByWarehouse();
 
     virtual bool setParams(ParameterList &);

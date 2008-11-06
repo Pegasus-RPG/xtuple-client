@@ -69,7 +69,7 @@ class dspBookingsBySalesRep : public XWidget, public Ui::dspBookingsBySalesRep
     Q_OBJECT
 
 public:
-    dspBookingsBySalesRep(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspBookingsBySalesRep(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspBookingsBySalesRep();
 
     virtual bool setParams(ParameterList &params);

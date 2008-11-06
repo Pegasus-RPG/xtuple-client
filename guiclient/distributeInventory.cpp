@@ -258,7 +258,7 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
             QMessageBox::warning( 0, tr("Inventory Distribution"), 
         tr("There was an error posting the transaction.  Contact your administrator") );
     }
-    else if (post.lastError().type() != QSqlError::None)
+    else if (post.lastError().type() != QSqlError::NoError)
     {
       systemError(0, post.lastError().databaseText(), __FILE__, __LINE__);
       return XDialog::Rejected;
@@ -325,7 +325,7 @@ void distributeInventory::populate()
     else
       _bcQty->clear();
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -373,7 +373,7 @@ void distributeInventory::sPost()
   q.prepare("SELECT distributeToLocations(:itemlocdist_id) AS result;");
   q.bindValue(":itemlocdist_id", _itemlocdistid);
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(0, q.lastError().databaseText(), __FILE__, __LINE__);
     reject();
@@ -547,13 +547,13 @@ void distributeInventory::sFillList()
     q = mql.toQuery(params);
 
     _itemloc->populate(q, true);
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -589,7 +589,7 @@ void distributeInventory::sBcDistribute()
 
   if(!q.first())
   {
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;

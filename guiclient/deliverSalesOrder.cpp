@@ -170,7 +170,7 @@ void deliverSalesOrder::sSubmit()
     q.bindValue(":subject", _subject->text().replace("</docnumber>", soNumber).replace("</doctype>", "SO"));
     q.bindValue(":fileName", _fileName->text().replace("</docnumber>", soNumber).replace("</doctype>", "SO"));
     q.bindValue(":emailBody", _emailBody->toPlainText().replace("</docnumber>", soNumber).replace("</doctype>", "SO"));
-    q.bindValue(":emailHTML", QVariant(_emailHTML->isChecked(), 0));
+    q.bindValue(":emailHTML", QVariant(_emailHTML->isChecked()));
     q.exec();
     if (q.first())
     {

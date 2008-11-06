@@ -69,7 +69,7 @@ class dspDepositsRegister : public XWidget, public Ui::dspDepositsRegister
     Q_OBJECT
 
 public:
-    dspDepositsRegister(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspDepositsRegister(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspDepositsRegister();
 
 public slots:

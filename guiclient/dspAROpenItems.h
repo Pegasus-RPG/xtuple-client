@@ -69,7 +69,7 @@ class dspAROpenItems : public XWidget, public Ui::dspAROpenItems
     Q_OBJECT
 
 public:
-    dspAROpenItems(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspAROpenItems(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspAROpenItems();
 
 public slots:

@@ -68,7 +68,7 @@ class dspExpediteExceptionsByPlannerCode : public XWidget, public Ui::dspExpedit
     Q_OBJECT
 
 public:
-    dspExpediteExceptionsByPlannerCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspExpediteExceptionsByPlannerCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspExpediteExceptionsByPlannerCode();
 
 public slots:

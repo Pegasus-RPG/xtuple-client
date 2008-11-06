@@ -223,7 +223,7 @@ void dspBacklogByCustomer::sAddToPackingListBatch()
       q.prepare("SELECT addToPackingListBatch(:sohead_id) AS result;");
       q.bindValue(":sohead_id", cursor->id());
       q.exec();
-      if (q.lastError().type() != QSqlError::None)
+      if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return;
@@ -296,7 +296,7 @@ void dspBacklogByCustomer::sFillList()
 
   q = mql.toQuery(params);
   _soitem->populate(q, true);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

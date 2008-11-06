@@ -69,7 +69,7 @@ class dspAllocations : public XWidget, public Ui::dspAllocations
     Q_OBJECT
 
 public:
-    dspAllocations(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspAllocations(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspAllocations();
 
 public slots:

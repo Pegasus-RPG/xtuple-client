@@ -70,7 +70,7 @@ class dspARApplications : public XWidget, public Ui::dspARApplications
     Q_OBJECT
 
 public:
-    dspARApplications(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspARApplications(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspARApplications();
 
     virtual bool checkParams();

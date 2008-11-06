@@ -68,7 +68,7 @@ class dspCountSlipsByWarehouse : public XWidget, public Ui::dspCountSlipsByWareh
     Q_OBJECT
 
 public:
-    dspCountSlipsByWarehouse(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspCountSlipsByWarehouse(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspCountSlipsByWarehouse();
 
 public slots:

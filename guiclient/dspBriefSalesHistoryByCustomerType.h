@@ -68,7 +68,7 @@ class dspBriefSalesHistoryByCustomerType : public XWidget, public Ui::dspBriefSa
     Q_OBJECT
 
 public:
-    dspBriefSalesHistoryByCustomerType(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspBriefSalesHistoryByCustomerType(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspBriefSalesHistoryByCustomerType();
 
     virtual bool checkParameters();

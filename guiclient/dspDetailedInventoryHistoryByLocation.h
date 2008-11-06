@@ -68,7 +68,7 @@ class dspDetailedInventoryHistoryByLocation : public XWidget, public Ui::dspDeta
     Q_OBJECT
 
 public:
-    dspDetailedInventoryHistoryByLocation(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspDetailedInventoryHistoryByLocation(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspDetailedInventoryHistoryByLocation();
 
 public slots:

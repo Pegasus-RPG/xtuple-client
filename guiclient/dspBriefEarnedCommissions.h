@@ -68,7 +68,7 @@ class dspBriefEarnedCommissions : public XWidget, public Ui::dspBriefEarnedCommi
     Q_OBJECT
 
 public:
-    dspBriefEarnedCommissions(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspBriefEarnedCommissions(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspBriefEarnedCommissions();
 
 public slots:

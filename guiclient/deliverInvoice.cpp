@@ -87,7 +87,7 @@ deliverInvoice::deliverInvoice(QWidget* parent, const char* name, bool modal, Qt
           "WHERE (usr_username=CURRENT_USER);" );
   if (q.first())
     _fromEmail->setText(q.value("usr_email"));
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -151,7 +151,7 @@ void deliverInvoice::sSubmit()
     q.bindValue(":subject", _subject->text().replace("</docnumber>", invoiceNumber).replace("</doctype>", "Invc"));
     q.bindValue(":fileName", _fileName->text().replace("</docnumber>", invoiceNumber).replace("</doctype>", "Invc"));
     q.bindValue(":emailBody", _emailBody->toPlainText().replace("</docnumber>", invoiceNumber).replace("</doctype>", "Invc"));
-    q.bindValue(":emailHTML", QVariant(_emailHTML->isChecked(), 0));
+    q.bindValue(":emailHTML", QVariant(_emailHTML->isChecked()));
     q.exec();
     if (q.first())
     {
@@ -169,7 +169,7 @@ void deliverInvoice::sSubmit()
       q.bindValue(":batchparam_name", "invchead_id");
       q.bindValue(":batchparam_value", _invoice->id());
       q.exec();
-      if (q.lastError().type() != QSqlError::None)
+      if (q.lastError().type() != QSqlError::NoError)
       {
         systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
         return;
@@ -180,7 +180,7 @@ void deliverInvoice::sSubmit()
       q.bindValue(":batchparam_name", "title");
       q.bindValue(":batchparam_value", "Emailed Customer Copy");
       q.exec();
-      if (q.lastError().type() != QSqlError::None)
+      if (q.lastError().type() != QSqlError::NoError)
       {
         systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
         return;
@@ -194,7 +194,7 @@ void deliverInvoice::sSubmit()
                  "WHERE (invchead_id=:invchead_id);" );
       q.bindValue(":invchead_id", _invoice->id());
       q.exec();
-      if (q.lastError().type() != QSqlError::None)
+      if (q.lastError().type() != QSqlError::NoError)
       {
         systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
         return;
@@ -202,7 +202,7 @@ void deliverInvoice::sSubmit()
       omfgThis->sInvoicesUpdated(_invoice->id(), TRUE);
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -266,7 +266,7 @@ void deliverInvoice::sHandlePoheadid()
       _emailHTML->setChecked(false);
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

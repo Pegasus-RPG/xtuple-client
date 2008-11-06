@@ -180,15 +180,15 @@ enum SetResponse dspBacklogByParameterList::set(const ParameterList &pParams)
   switch (_parameter->type())
   {
     case ParameterGroup::CustomerType:
-      setCaption(tr("Backlog by Customer Type"));
+      setWindowTitle(tr("Backlog by Customer Type"));
       break;
 
     case ParameterGroup::CustomerGroup:
-      setCaption(tr("Backlog by Customer Group"));
+      setWindowTitle(tr("Backlog by Customer Group"));
       break;
 
     case ParameterGroup::ProductCategory:
-      setCaption(tr("Backlog by Product Category"));
+      setWindowTitle(tr("Backlog by Product Category"));
       break;
 
     default:
@@ -315,7 +315,7 @@ void dspBacklogByParameterList::sAddToPackingListBatch()
     q.prepare("SELECT addToPackingListBatch(:sohead_id) AS result;");
     q.bindValue(":sohead_id", ((XTreeWidgetItem*)(selected[i]))->id());
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -376,7 +376,7 @@ void dspBacklogByParameterList::sFillList()
   MetaSQLQuery mql = mqlLoad("salesOrderItems", "detail");
   q = mql.toQuery(params);
   _soitem->populate(q, true);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

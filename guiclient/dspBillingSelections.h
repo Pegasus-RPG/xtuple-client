@@ -67,7 +67,7 @@ class dspBillingSelections : public XWidget, public Ui::dspBillingSelections
     Q_OBJECT
 
 public:
-    dspBillingSelections(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspBillingSelections(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspBillingSelections();
 
 public slots:

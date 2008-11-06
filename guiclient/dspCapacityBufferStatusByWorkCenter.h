@@ -68,7 +68,7 @@ class dspCapacityBufferStatusByWorkCenter : public XWidget, public Ui::dspCapaci
     Q_OBJECT
 
 public:
-    dspCapacityBufferStatusByWorkCenter(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspCapacityBufferStatusByWorkCenter(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspCapacityBufferStatusByWorkCenter();
 
 public slots:

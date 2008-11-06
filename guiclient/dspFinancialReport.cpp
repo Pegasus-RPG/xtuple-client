@@ -431,7 +431,7 @@ void dspFinancialReport::sFillListStatement()
       q.bindValue(":shownumbers", _shownumbers->isChecked());
       q.exec();
       _layout->populate(q, true);
-      if (q.lastError().type() != QSqlError::None)
+      if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return;
@@ -747,7 +747,7 @@ void dspFinancialReport::sFillListTrend()
   q.bindValue(":spec", cFlSpec);
   q.exec();
   _layout->populate(q, true);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

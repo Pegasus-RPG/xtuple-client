@@ -193,7 +193,7 @@ void dspCheckRegister::sFillList()
   
   q = mql.toQuery(params);
   _check->populate(q, true);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -237,7 +237,7 @@ void dspCheckRegister::sFillList()
     _total->setDouble(q.value("amount").toDouble());
     _totalCurr->setText(q.value("currAbbr").toString());
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -282,7 +282,7 @@ void dspCheckRegister::sVoidPosted()
 	return;
       }
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;

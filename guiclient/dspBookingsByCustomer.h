@@ -69,7 +69,7 @@ class dspBookingsByCustomer : public XWidget, public Ui::dspBookingsByCustomer
     Q_OBJECT
 
 public:
-    dspBookingsByCustomer(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspBookingsByCustomer(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspBookingsByCustomer();
 
     virtual bool setParams(ParameterList &);

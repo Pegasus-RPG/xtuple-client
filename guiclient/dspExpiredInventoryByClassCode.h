@@ -67,7 +67,7 @@ class dspExpiredInventoryByClassCode : public XWidget, public Ui::dspExpiredInve
     Q_OBJECT
 
 public:
-    dspExpiredInventoryByClassCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspExpiredInventoryByClassCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspExpiredInventoryByClassCode();
 
 public slots:

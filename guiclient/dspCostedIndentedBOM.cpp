@@ -247,7 +247,7 @@ void dspCostedIndentedBOM::sFillList()
     return;
   q = mql.toQuery(params);
   _bomitem->populate(q, true);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -281,7 +281,7 @@ void dspCostedIndentedBOM::sFillList()
     last->setText(0, tr("Standard Cost"));
     last->setText(9, q.value("standard").toString());
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

@@ -69,7 +69,7 @@ class departments : public XWidget, public Ui::departments
     Q_OBJECT
 
 public:
-    departments(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    departments(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~departments();
 
 public slots:

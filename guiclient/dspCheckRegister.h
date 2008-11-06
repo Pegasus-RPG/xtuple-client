@@ -67,7 +67,7 @@ class dspCheckRegister : public XWidget, public Ui::dspCheckRegister
     Q_OBJECT
 
 public:
-    dspCheckRegister(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspCheckRegister(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspCheckRegister();
 
 public slots:

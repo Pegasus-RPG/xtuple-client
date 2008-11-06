@@ -146,7 +146,7 @@ void deletePlannedOrdersByPlannerCode::sDelete()
   sql += ");";
 
   q.prepare(sql);
-  q.bindValue(":deleteChildren", QVariant(_deleteChildren->isChecked(), 0));
+  q.bindValue(":deleteChildren", QVariant(_deleteChildren->isChecked()));
   q.bindValue(":cutOffDate", _cutoffDate->date());
   _warehouse->bindValue(q);
   _plannerCode->bindValue(q);

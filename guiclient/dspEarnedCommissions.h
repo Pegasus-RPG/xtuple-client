@@ -68,7 +68,7 @@ class dspEarnedCommissions : public XWidget, public Ui::dspEarnedCommissions
     Q_OBJECT
 
 public:
-    dspEarnedCommissions(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspEarnedCommissions(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspEarnedCommissions();
 
 public slots:

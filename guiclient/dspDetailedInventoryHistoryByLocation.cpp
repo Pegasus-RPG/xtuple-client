@@ -89,7 +89,7 @@ dspDetailedInventoryHistoryByLocation::dspDetailedInventoryHistoryByLocation(QWi
   _transType->append(cTransAdjCounts, tr("Adjustments and Counts") );
   _transType->append(cTransTransfers, tr("Transfers")              );
   _transType->append(cTransScraps,    tr("Scraps")                 );
-  _transType->setCurrentItem(0);
+  _transType->setCurrentIndex(0);
 
   _invhist->addColumn(tr("Date"), (_dateColumn + 30), Qt::AlignRight, true, "invhist_transdate");
   _invhist->addColumn(tr("Type"),       _transColumn, Qt::AlignCenter,true, "invhist_transtype");
@@ -287,7 +287,7 @@ void dspDetailedInventoryHistoryByLocation::sFillList()
   q.bindValue(":transType", _transType->id());
   q.exec();
   _invhist->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

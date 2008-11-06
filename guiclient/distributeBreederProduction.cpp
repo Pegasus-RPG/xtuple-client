@@ -109,7 +109,7 @@ enum SetResponse distributeBreederProduction::set(const ParameterList &pParams)
   
       sFillList();
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
@@ -184,7 +184,7 @@ void distributeBreederProduction::sFillList()
   q.bindValue(":wo_id", _woid);
   q.exec();
   _distrib->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

@@ -170,7 +170,7 @@ void dspCountSlipsByWarehouse::sFillList()
   _warehouse->bindValue(q);
   q.exec();
   _cntslip->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

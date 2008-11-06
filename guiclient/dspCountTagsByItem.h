@@ -68,7 +68,7 @@ class dspCountTagsByItem : public XWidget, public Ui::dspCountTagsByItem
     Q_OBJECT
 
 public:
-    dspCountTagsByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspCountTagsByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspCountTagsByItem();
 
     virtual bool setParams(ParameterList &);

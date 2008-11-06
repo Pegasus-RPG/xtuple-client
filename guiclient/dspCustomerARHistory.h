@@ -69,7 +69,7 @@ class dspCustomerARHistory : public XWidget, public Ui::dspCustomerARHistory
     Q_OBJECT
 
 public:
-    dspCustomerARHistory(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspCustomerARHistory(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspCustomerARHistory();
 
     virtual bool checkParameters();

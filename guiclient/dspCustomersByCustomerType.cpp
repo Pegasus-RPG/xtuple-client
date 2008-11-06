@@ -191,7 +191,7 @@ void dspCustomersByCustomerType::sFillList()
   _customerType->bindValue(q);
   q.exec();
   _cust->populate(q, TRUE);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

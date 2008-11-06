@@ -164,7 +164,7 @@ void dspARApplications::sViewCreditMemo()
       newdlg.exec();
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -196,7 +196,7 @@ void dspARApplications::sViewDebitMemo()
     newdlg.set(params);
     newdlg.exec();
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -256,7 +256,7 @@ void dspARApplications::sFillList()
   q = mql.toQuery(params);
   if (q.first())
     _arapply->populate(q);
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

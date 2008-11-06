@@ -169,7 +169,7 @@ void dspCountTagsByItem::sFillList()
     return;
   q = mql.toQuery(params);
   _cnttag->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

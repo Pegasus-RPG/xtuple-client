@@ -732,7 +732,7 @@ void dspCustomerInformation::sEditInvoice()
     invcId	= q.value("id").toInt();
     invcPosted	= q.value("posted").toBool();
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -878,7 +878,7 @@ void dspCustomerInformation::sEditCreditMemo()
     memoId	= q.value("id").toInt();
     memoPosted	= q.value("posted").toBool();
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -935,7 +935,7 @@ void dspCustomerInformation::sViewCreditMemo()
     memoType = q.value("type").toInt();
     memoId = q.value("id").toInt();
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -1043,7 +1043,7 @@ void dspCustomerInformation::sFillPaymentsList()
   _payments->clear();
   _payments->populate(q, true);
 
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -1211,7 +1211,7 @@ void dspCustomerInformation::sConvertQuote()
           return;
         }
       }
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
         systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
         continue;
@@ -1234,7 +1234,7 @@ void dspCustomerInformation::sConvertQuote()
         }
         counter++;
       }
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
         systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
         return;
@@ -1452,7 +1452,7 @@ void dspCustomerInformation::sPrintCreditMemo()
   q.exec();
   if (q.first())
     memoId	= q.value("cmhead_id").toInt();
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

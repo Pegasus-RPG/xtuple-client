@@ -68,7 +68,7 @@ class dspBacklogByItem : public XWidget, public Ui::dspBacklogByItem
     Q_OBJECT
 
 public:
-    dspBacklogByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspBacklogByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspBacklogByItem();
 
     virtual bool setParams(ParameterList &);

@@ -69,7 +69,7 @@ class dspCashReceipts : public XWidget, public Ui::dspCashReceipts
     Q_OBJECT
 
 public:
-    dspCashReceipts(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    dspCashReceipts(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspCashReceipts();
 
 public slots:

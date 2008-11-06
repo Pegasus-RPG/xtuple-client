@@ -126,7 +126,7 @@ void deletePlannedOrder::sDelete()
 {
   q.prepare( "SELECT deletePlannedOrder(:planord_id, :deleteChildren);" );
   q.bindValue(":planord_id", _planord->id());
-  q.bindValue(":deleteChildren", QVariant(_deleteChildren->isChecked(), 0));
+  q.bindValue(":deleteChildren", QVariant(_deleteChildren->isChecked()));
   q.exec();
 
   if (_captive)

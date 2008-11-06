@@ -269,7 +269,7 @@ void dspCountTagEditList::sViewInventoryHistory()
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -356,7 +356,7 @@ void dspCountTagEditList::sDelete()
 				 "the Count Tag before you may delete this Tag.") );
 	continue;
       }
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return;
@@ -367,7 +367,7 @@ void dspCountTagEditList::sDelete()
       q.bindValue(":cnttag_id", ((XTreeWidgetItem*)(selected[i]))->id());
       if(q.exec() && q.first())
 	itemsiteid = q.value("itemsite_id").toInt();
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return;
@@ -379,7 +379,7 @@ void dspCountTagEditList::sDelete()
 	     "WHERE (invcnt_id=:cnttag_id); " );
       q.bindValue(":cnttag_id", ((XTreeWidgetItem*)(selected[i]))->id());
       q.exec();
-      if (q.lastError().type() != QSqlError::None)
+      if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return;
@@ -406,7 +406,7 @@ void dspCountTagEditList::sDelete()
 			  __FILE__, __LINE__);
 	      continue;
 	    }
-	    else if (q.lastError().type() != QSqlError::None)
+	    else if (q.lastError().type() != QSqlError::NoError)
 	    {
 	      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	      return;
@@ -440,7 +440,7 @@ void dspCountTagEditList::sDeleteTag()
   q.bindValue(":cnttag_id", _cnttag->id());
   if (q.exec() && q.first())
     itemsiteid = q.value("itemsite_id").toInt();
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -450,7 +450,7 @@ void dspCountTagEditList::sDeleteTag()
 	     "WHERE (invcnt_id=:cnttag_id);" );
   q.bindValue(":cnttag_id", _cnttag->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -477,13 +477,13 @@ void dspCountTagEditList::sDeleteTag()
 		      __FILE__, __LINE__);
 	  return;
 	}
-	else if (q.lastError().type() != QSqlError::None)
+	else if (q.lastError().type() != QSqlError::NoError)
 	{
 	  systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	  return;
 	}
       }
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return;
@@ -500,7 +500,7 @@ void dspCountTagEditList::sDeleteSlip()
                  "WHERE (cntslip_id=:cntslip_id);" );
   q.bindValue(":cntslip_id", _cnttag->altId());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -696,7 +696,7 @@ void dspCountTagEditList::sFillList()
   MetaSQLQuery mql(sql);
   q = mql.toQuery(params);
   _cnttag->populate(q, true);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -704,7 +704,7 @@ void dspCountTagEditList::sFillList()
   
   _cnttag->expandAll();
 
-  if (_searchFor->text().stripWhiteSpace().length())
+  if (_searchFor->text().trimmed().length())
     sSearch(_searchFor->text());
 }
 
