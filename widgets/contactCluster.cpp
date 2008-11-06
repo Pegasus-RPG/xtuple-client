@@ -421,7 +421,7 @@ void ContactCluster::setDataWidgetMap(XDataWidgetMapper* m)
 }
 
 
-void ContactCluster::setObjectName(const QString& p)
+void ContactCluster::setName(const QString& p)
 {
   int firstSpace = p.indexOf(" ");
   if (firstSpace > 0)
