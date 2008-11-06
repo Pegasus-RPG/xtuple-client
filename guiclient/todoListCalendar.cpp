@@ -104,12 +104,12 @@ void todoListCalendar::languageChange()
   retranslateUi(this);
 }
 
-enum SetResponse todoListCalendar::set(const ParameterList& pParams)
+enum SetResponse todoListCalendar::set(const ParameterList& /*pParams*/)
 {
+/*
   QVariant param;
   bool           valid;
 
-/*
   param = pParams.value("usr_id", &valid);
   if (valid)
   {

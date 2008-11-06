@@ -65,6 +65,7 @@
 class GraphicsButtonReceiver
 {
   public:
+    virtual ~GraphicsButtonReceiver() {};
     virtual void buttonMouseDoubleClickEvent(QGraphicsItem * /*origin*/, QGraphicsSceneMouseEvent * /*event*/) {}
     virtual void buttonMousePressEvent(QGraphicsItem * /*origin*/, QGraphicsSceneMouseEvent * /*event*/) {}
     virtual void buttonMouseReleaseEvent(QGraphicsItem * /*origin*/, QGraphicsSceneMouseEvent * /*event*/) {}
