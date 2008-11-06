@@ -96,11 +96,11 @@ woMaterialItem::woMaterialItem(QWidget* parent, const char* name, bool modal, Qt
 
   QString issueMethod = _metrics->value("DefaultWomatlIssueMethod");
   if (issueMethod == "S")
-    _issueMethod->setCurrentItem(0);
+    _issueMethod->setCurrentIndex(0);
   else if (issueMethod == "L")
-    _issueMethod->setCurrentItem(1);
+    _issueMethod->setCurrentIndex(1);
   else if (issueMethod == "M")
-    _issueMethod->setCurrentItem(2);
+    _issueMethod->setCurrentIndex(2);
 }
 
 /*
@@ -163,11 +163,11 @@ enum SetResponse woMaterialItem::set(const ParameterList &pParams)
   if (valid)
   {
     if (param.toString() == "push")
-      _issueMethod->setCurrentItem(0);
+      _issueMethod->setCurrentIndex(0);
     else if (param.toString() == "pull")
-      _issueMethod->setCurrentItem(1);
+      _issueMethod->setCurrentIndex(1);
     else if (param.toString() == "mixed")
-      _issueMethod->setCurrentItem(2);
+      _issueMethod->setCurrentIndex(2);
   }
 
   param = pParams.value("womatl_id", &valid);
@@ -220,7 +220,7 @@ void woMaterialItem::sSave()
 {
   QString issueMethod;
 
-  switch (_issueMethod->currentItem())
+  switch (_issueMethod->currentIndex())
   {
     case 0:
       issueMethod = 'S';
@@ -329,11 +329,11 @@ void woMaterialItem::populate()
     _scrap->setText(q.value("scrap").toDouble());
 
     if (q.value("womatl_issuemethod").toString() == "S")
-      _issueMethod->setCurrentItem(0);
+      _issueMethod->setCurrentIndex(0);
     else if (q.value("womatl_issuemethod").toString() == "L")
-      _issueMethod->setCurrentItem(1);
+      _issueMethod->setCurrentIndex(1);
     else if (q.value("womatl_issuemethod").toString() == "M")
-      _issueMethod->setCurrentItem(2);
+      _issueMethod->setCurrentIndex(2);
   }
 }
 

@@ -181,7 +181,7 @@ enum SetResponse taxAuthority::set(const ParameterList &pParams)
 
 void taxAuthority::sCheck()
 {
-  _code->setText(_code->text().stripWhiteSpace());
+  _code->setText(_code->text().trimmed());
   if ( (_mode == cNew) && (_code->text().length()) )
   {
     if(cNew == _mode && -1 != _NumberGen && _code->text().toInt() != _NumberGen)
@@ -232,7 +232,7 @@ void taxAuthority::sSave()
                "FROM taxauth "
                "WHERE (taxauth_code=:taxauth_code);");
   }
-  q.bindValue(":taxauth_code", _code->text().stripWhiteSpace());
+  q.bindValue(":taxauth_code", _code->text().trimmed());
   q.exec();
   if (q.first())
   {
@@ -242,7 +242,7 @@ void taxAuthority::sSave()
     _code->setFocus();
     return;
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -296,7 +296,7 @@ void taxAuthority::sSave()
     q.exec("SELECT NEXTVAL('taxauth_taxauth_id_seq') AS taxauth_id;");
     if (q.first())
       _taxauthid = q.value("taxauth_id").toInt();
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       rollback.exec();
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -313,7 +313,7 @@ void taxAuthority::sSave()
 	       "  :taxauth_accnt_id);" );
   }
   q.bindValue(":taxauth_id", _taxauthid);
-  q.bindValue(":taxauth_code", _code->text().stripWhiteSpace());
+  q.bindValue(":taxauth_code", _code->text().trimmed());
   q.bindValue(":taxauth_name", _name->text());
   q.bindValue(":taxauth_extref", _extref->text());
   if(_currency->isValid())
@@ -324,7 +324,7 @@ void taxAuthority::sSave()
   if(_glaccnt->isValid())
     q.bindValue(":taxauth_accnt_id", _glaccnt->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -338,7 +338,7 @@ void taxAuthority::sSave()
     q.bindValue(":taxauth_id",	_taxauthid);
     q.bindValue(":crmacct_id",	_crmacct->id());
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
 	rollback.exec();
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -349,8 +349,8 @@ void taxAuthority::sSave()
   {
     q.prepare( "SELECT createCrmAcct(:number, :name, :active, :type, NULL, "
 	       "      NULL, NULL, NULL, NULL, :taxauthid, NULL, NULL) AS crmacctid;");
-    q.bindValue(":number",	_code->text().stripWhiteSpace());
-    q.bindValue(":name",	_name->text().stripWhiteSpace());
+    q.bindValue(":number",	_code->text().trimmed());
+    q.bindValue(":name",	_name->text().trimmed());
     q.bindValue(":active",	QVariant(true, 0));
     q.bindValue(":type",	"O");	// TODO - when will this be "I"?
     q.bindValue(":taxauthid",	_taxauthid);
@@ -367,7 +367,7 @@ void taxAuthority::sSave()
       }
       _crmacct->setId(crmacctid);
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       rollback.exec();
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -407,7 +407,7 @@ void taxAuthority::populate()
     _county->setText(q.value("taxauth_county").toString());
     _glaccnt->setId(q.value("taxauth_accnt_id").toInt());
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

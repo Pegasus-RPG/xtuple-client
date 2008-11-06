@@ -67,7 +67,7 @@ class unappliedAPCreditMemos : public XWidget, public Ui::unappliedAPCreditMemos
     Q_OBJECT
 
 public:
-    unappliedAPCreditMemos(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    unappliedAPCreditMemos(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~unappliedAPCreditMemos();
 
 public slots:

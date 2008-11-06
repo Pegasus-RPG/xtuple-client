@@ -66,7 +66,7 @@ class voucheringEditList : public XWidget, public Ui::voucheringEditList
     Q_OBJECT
 
 public:
-    voucheringEditList(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    voucheringEditList(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~voucheringEditList();
 
 public slots:

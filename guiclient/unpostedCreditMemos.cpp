@@ -253,7 +253,7 @@ void unpostedCreditMemos::sPost()
         setDate.bindValue(":distdate",  newDate);
         setDate.bindValue(":cmhead_id", id);
         setDate.exec();
-        if (setDate.lastError().type() != QSqlError::None)
+        if (setDate.lastError().type() != QSqlError::NoError)
         {
 	      systemError(this, setDate.lastError().databaseText(), __FILE__, __LINE__);
         }
@@ -314,7 +314,7 @@ void unpostedCreditMemos::sPost()
           else
             triedToClosed.append(selected[i]);
         }
-        else if (postq.lastError().type() != QSqlError::None)
+        else if (postq.lastError().type() != QSqlError::NoError)
         {
           rollback.exec();
           systemError(this, tr("A System Error occurred posting Credit Memo#%1.\n%2")
@@ -361,7 +361,7 @@ void unpostedCreditMemos::sDelete()
 	        systemError(this, tr("Could not delete Credit Memo."),
 		            __FILE__, __LINE__);
         }
-        else if (delq.lastError().type() != QSqlError::None)
+        else if (delq.lastError().type() != QSqlError::NoError)
 	      systemError(this,
 		          tr("Error deleting Credit Memo %1\n").arg(selected[i]->text(0)) +
 		          delq.lastError().databaseText(), __FILE__, __LINE__);

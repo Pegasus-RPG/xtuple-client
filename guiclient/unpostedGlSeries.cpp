@@ -158,7 +158,7 @@ void unpostedGlSeries::sDelete()
     {
       q.bindValue(":id", ((XTreeWidgetItem*)(selected[i]))->altId() );
       q.exec();
-      if (q.lastError().type() != QSqlError::None)
+      if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return;
@@ -218,7 +218,7 @@ void unpostedGlSeries::sPost()
       {
 	triedToClosed.append(selected[i]);
       }
-      else if (post.lastError().type() != QSqlError::None)
+      else if (post.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, post.lastError().databaseText(), __FILE__, __LINE__);
       }
@@ -270,7 +270,7 @@ void unpostedGlSeries::sFillList()
                 "ORDER BY glseries_distdate, glseries_sequence, glseries_amount;");
   fillq.exec();
   _glseries->populate(fillq, true);
-  if (fillq.lastError().type() != QSqlError::None)
+  if (fillq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, fillq.lastError().databaseText(), __FILE__, __LINE__);
     return;

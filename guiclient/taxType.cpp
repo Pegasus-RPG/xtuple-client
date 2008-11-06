@@ -140,7 +140,7 @@ enum SetResponse taxType::set(const ParameterList &pParams)
 
 void taxType::sCheck()
 {
-  _name->setText(_name->text().stripWhiteSpace());
+  _name->setText(_name->text().trimmed());
   if ( (_mode == cNew) && (_name->text().length()) )
   {
     q.prepare( "SELECT taxtype_id "
@@ -161,7 +161,7 @@ void taxType::sCheck()
 
 void taxType::sSave()
 {
-  if (_name->text().stripWhiteSpace().isEmpty())
+  if (_name->text().trimmed().isEmpty())
   {
     QMessageBox::critical(this, tr("Missing Name"),
 			  tr("<p>You must name this Tax Type before saving it."));
@@ -176,7 +176,7 @@ void taxType::sSave()
                "WHERE ( (taxtype_id<>:taxtype_id)"
                " AND (UPPER(taxtype_name)=UPPER(:taxtype_name)) );");
     q.bindValue(":taxtype_id", _taxtypeid);
-    q.bindValue(":taxtype_name", _name->text().stripWhiteSpace());
+    q.bindValue(":taxtype_name", _name->text().trimmed());
     q.exec();
     if (q.first())
     {
@@ -192,7 +192,7 @@ void taxType::sSave()
                "    taxtype_descrip=:taxtype_descrip "
                "WHERE (taxtype_id=:taxtype_id);" );
     q.bindValue(":taxtype_id", _taxtypeid);
-    q.bindValue(":taxtype_name", _name->text().stripWhiteSpace());
+    q.bindValue(":taxtype_name", _name->text().trimmed());
     q.bindValue(":taxtype_descrip", _description->text());
     q.exec();
   }
@@ -201,7 +201,7 @@ void taxType::sSave()
     q.prepare( "SELECT taxtype_id "
                "FROM taxtype "
                "WHERE (UPPER(taxtype_name)=UPPER(:taxtype_name));");
-    q.bindValue(":taxtype_name", _name->text().stripWhiteSpace());
+    q.bindValue(":taxtype_name", _name->text().trimmed());
     q.exec();
     if (q.first())
     {
@@ -228,7 +228,7 @@ void taxType::sSave()
                "VALUES "
                "( :taxtype_id, :taxtype_name, :taxtype_descrip );" );
     q.bindValue(":taxtype_id", _taxtypeid);
-    q.bindValue(":taxtype_name", _name->text().stripWhiteSpace());
+    q.bindValue(":taxtype_name", _name->text().trimmed());
     q.bindValue(":taxtype_descrip", _description->text());
     q.exec();
   }

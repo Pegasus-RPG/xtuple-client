@@ -112,7 +112,7 @@ enum SetResponse vendorAddress::set(const ParameterList &pParams)
       q.exec();
       if(q.first())
         _taxauth->setId(q.value("vend_taxauth_id").toInt());
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return UndefinedError;
@@ -262,17 +262,17 @@ void vendorAddress::sSave()
 
   q.bindValue(":vendaddr_id", _vendaddrid);
   q.bindValue(":vendaddr_vend_id", _vendid);
-  q.bindValue(":vendaddr_code", _number->text().stripWhiteSpace());
-  q.bindValue(":vendaddr_name", _name->text().stripWhiteSpace());
+  q.bindValue(":vendaddr_code", _number->text().trimmed());
+  q.bindValue(":vendaddr_name", _name->text().trimmed());
   if (_contact->id() > 0)
     q.bindValue(":vendaddr_cntct_id", _contact->id());
   if (_address->id() > 0)
     q.bindValue(":vendaddr_addr_id", _address->id());
-  q.bindValue(":vendaddr_comments", _notes->text().stripWhiteSpace());
+  q.bindValue(":vendaddr_comments", _notes->toPlainText().trimmed());
   if(_taxauth->isValid())
     q.bindValue(":vendaddr_taxauth_id", _taxauth->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -293,7 +293,7 @@ void vendorAddress::sCheck()
                "WHERE ( (vendaddr_vend_id=:vend_id)"
                " AND (UPPER(vendaddr_code)=UPPER(:vendaddr_code)) );" );
     q.bindValue(":vend_id", _vendid);
-    q.bindValue(":vendaddr_code", _number->text().stripWhiteSpace());
+    q.bindValue(":vendaddr_code", _number->text().trimmed());
     q.exec();
     if (q.first())
     {

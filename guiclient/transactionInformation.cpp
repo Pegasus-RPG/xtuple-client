@@ -119,7 +119,7 @@ enum SetResponse transactionInformation::set(const ParameterList &pParams)
       _qohAfter->setText(formatQty(q.value("invhist_qoh_after").toDouble()));
       _notes->setText(q.value("invhist_comments").toString());
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
@@ -151,10 +151,10 @@ void transactionInformation::sSave()
   q.prepare( "UPDATE invhist "
              "SET invhist_analyze=:invhist_analyze "
              "WHERE (invhist_id=:invhist_id);" );
-  q.bindValue(":invhist_analyze", QVariant(_analyze->isChecked(), 0));
+  q.bindValue(":invhist_analyze", QVariant(_analyze->isChecked()));
   q.bindValue(":invhist_id", _invhistid);
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

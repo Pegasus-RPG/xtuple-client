@@ -178,7 +178,7 @@ void workCenters::sDelete()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

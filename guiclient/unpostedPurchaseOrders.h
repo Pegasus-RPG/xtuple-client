@@ -67,7 +67,7 @@ class unpostedPurchaseOrders : public XWidget, public Ui::unpostedPurchaseOrders
     Q_OBJECT
 
 public:
-    unpostedPurchaseOrders(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    unpostedPurchaseOrders(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~unpostedPurchaseOrders();
     
     virtual bool checkSitePrivs(int orderid);

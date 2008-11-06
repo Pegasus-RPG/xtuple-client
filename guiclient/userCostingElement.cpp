@@ -207,8 +207,8 @@ void userCostingElement::sSave()
 
   q.bindValue(":costelem_id", _costelemid);
   q.bindValue(":costelem_type", _name->text());
-  q.bindValue(":costelem_active", QVariant(_active->isChecked(), 0));
-  q.bindValue(":costelem_po", QVariant(_acceptPO->isChecked(), 0));
+  q.bindValue(":costelem_active", QVariant(_active->isChecked()));
+  q.bindValue(":costelem_po", QVariant(_acceptPO->isChecked()));
 
   if (_useCostItem->isChecked())
     q.bindValue(":costelem_cost_item_id", _item->id());
@@ -248,7 +248,7 @@ void userCostingElement::populate()
 
 void userCostingElement::sCheck()
 {
-  _name->setText(_name->text().stripWhiteSpace());
+  _name->setText(_name->text().trimmed());
   if ((_mode == cNew) && (_name->text().length()))
   {
     q.prepare( "SELECT costelem_id "

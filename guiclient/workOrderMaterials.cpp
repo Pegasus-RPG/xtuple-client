@@ -272,7 +272,7 @@ void workOrderMaterials::sDelete()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -299,7 +299,7 @@ void workOrderMaterials::sViewAvailability()
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -324,7 +324,7 @@ void workOrderMaterials::sViewSubstituteAvailability()
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -383,7 +383,7 @@ void workOrderMaterials::sSubstitute()
       }
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -430,7 +430,7 @@ void workOrderMaterials::sFillList()
     q.bindValue(":error", tr("Error"));
     q.exec();
     _womatl->populate(q);
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -468,7 +468,7 @@ void workOrderMaterials::sFillList()
         _nonPickQtyPer->setText(formatQtyPer(q.value("qtyper").toDouble()));
       }
     }
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -510,7 +510,7 @@ void workOrderMaterials::sFillList()
         _currentActCost->setText(q.value("f_actcost").toDouble());
         _maxCost->setText(q.value("f_maxcost").toDouble());
       }
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return;

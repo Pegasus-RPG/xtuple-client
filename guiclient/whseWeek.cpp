@@ -200,13 +200,13 @@ bool whseWeek::save(int whsid)
             "       setWhseWkday(:whsid, 5, :friday),"
             "       setWhseWkday(:whsid, 6, :saturday);");
   q.bindValue(":whsid", whsid);
-  q.bindValue(":sunday", QVariant(_sunday->isChecked(), 0));
-  q.bindValue(":monday", QVariant(_monday->isChecked(), 0));
-  q.bindValue(":tuesday", QVariant(_tuesday->isChecked(), 0));
-  q.bindValue(":wednesday", QVariant(_wednesday->isChecked(), 0));
-  q.bindValue(":thursday", QVariant(_thursday->isChecked(), 0));
-  q.bindValue(":friday", QVariant(_friday->isChecked(), 0));
-  q.bindValue(":saturday", QVariant(_saturday->isChecked(), 0));
+  q.bindValue(":sunday", QVariant(_sunday->isChecked()));
+  q.bindValue(":monday", QVariant(_monday->isChecked()));
+  q.bindValue(":tuesday", QVariant(_tuesday->isChecked()));
+  q.bindValue(":wednesday", QVariant(_wednesday->isChecked()));
+  q.bindValue(":thursday", QVariant(_thursday->isChecked()));
+  q.bindValue(":friday", QVariant(_friday->isChecked()));
+  q.bindValue(":saturday", QVariant(_saturday->isChecked()));
 
   if(!q.exec())
   {
@@ -225,13 +225,13 @@ bool whseWeek::save(int whsid)
               "       setWhseWkday(warehous_id, 5, :friday),"
               "       setWhseWkday(warehous_id, 6, :saturday)"
               "  FROM warehous;");
-    q.bindValue(":sunday", QVariant(_sunday->isChecked(), 0));
-    q.bindValue(":monday", QVariant(_monday->isChecked(), 0));
-    q.bindValue(":tuesday", QVariant(_tuesday->isChecked(), 0));
-    q.bindValue(":wednesday", QVariant(_wednesday->isChecked(), 0));
-    q.bindValue(":thursday", QVariant(_thursday->isChecked(), 0));
-    q.bindValue(":friday", QVariant(_friday->isChecked(), 0));
-    q.bindValue(":saturday", QVariant(_saturday->isChecked(), 0));
+    q.bindValue(":sunday", QVariant(_sunday->isChecked()));
+    q.bindValue(":monday", QVariant(_monday->isChecked()));
+    q.bindValue(":tuesday", QVariant(_tuesday->isChecked()));
+    q.bindValue(":wednesday", QVariant(_wednesday->isChecked()));
+    q.bindValue(":thursday", QVariant(_thursday->isChecked()));
+    q.bindValue(":friday", QVariant(_friday->isChecked()));
+    q.bindValue(":saturday", QVariant(_saturday->isChecked()));
     q.exec();
   }
 

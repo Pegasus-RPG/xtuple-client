@@ -89,7 +89,7 @@ todoItem::todoItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     _assignedTo->setId(q.value("usr_id").toInt());
     _owner->setId(q.value("usr_id").toInt());
   }  
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     reject();
@@ -241,8 +241,8 @@ void todoItem::sSave()
   q.bindValue(":completed",	_completed->date());
   if(_priority->isValid())
     q.bindValue(":priority", _priority->id());
-  q.bindValue(":notes",		_notes->text());
-  q.bindValue(":active",	QVariant(_active->isChecked(), 0));
+  q.bindValue(":notes",		_notes->toPlainText());
+  q.bindValue(":active",	QVariant(_active->isChecked()));
   if(_ophead->id() > 0)
     q.bindValue(":ophead_id", _ophead->id());
 
@@ -269,7 +269,7 @@ void todoItem::sSave()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -349,7 +349,7 @@ void todoItem::sHandleIncident()
     incdtq.exec();
     if (incdtq.first())
       _crmacct->setId(incdtq.value("incdt_crmacct_id").toInt());
-    else if (incdtq.lastError().type() != QSqlError::None)
+    else if (incdtq.lastError().type() != QSqlError::NoError)
     {
       systemError(this, incdtq.lastError().databaseText(), __FILE__, __LINE__);
       return;

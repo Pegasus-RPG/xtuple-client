@@ -165,7 +165,7 @@ void workCenter::init()
   _overheadPerMachHour->setValidator(omfgThis->moneyVal());
   _overheadPerUnit->setValidator(omfgThis->moneyVal());
 
-  _setupType->setCurrentItem(-1);
+  _setupType->setCurrentIndex(-1);
 }
 
 enum SetResponse workCenter::set(ParameterList &pParams)
@@ -240,7 +240,7 @@ enum SetResponse workCenter::set(ParameterList &pParams)
 
 void workCenter::sCheck()
 {
-  _code->setText(_code->text().stripWhiteSpace());
+  _code->setText(_code->text().trimmed());
   if ((_mode == cNew) && (_code->text().length()))
   {
     q.prepare( "SELECT wrkcnt_id "
@@ -320,8 +320,8 @@ void workCenter::sSave()
                "WHERE (wrkcnt_id=:wrkcnt_id);" );
 
   q.bindValue(":wrkcnt_id", _wrkcntid);
-  q.bindValue(":wrkcnt_code", _code->text().stripWhiteSpace());
-  q.bindValue(":wrkcnt_descrip", _description->text().stripWhiteSpace());
+  q.bindValue(":wrkcnt_code", _code->text().trimmed());
+  q.bindValue(":wrkcnt_descrip", _description->text().trimmed());
   if(_department->id() != -1)
     q.bindValue(":wrkcnt_dept_id", _department->id());
   q.bindValue(":wrkcnt_warehous_id", _warehouse->id());
@@ -340,9 +340,9 @@ void workCenter::sSave()
   q.bindValue(":wrkcnt_avgsutime", _avgSetup->toDouble());
   q.bindValue(":wrkcnt_dailycap", _dailyCapacity->toDouble());
   q.bindValue(":wrkcnt_efficfactor", (_efficiencyFactor->toDouble() / 100.0));
-  q.bindValue(":wrkcnt_comments", _comments->text());
+  q.bindValue(":wrkcnt_comments", _comments->toPlainText());
 
-  if (_setupType->currentItem() == 0)
+  if (_setupType->currentIndex() == 0)
     q.bindValue(":wrkcnt_caploaduom", "M");
   else
     q.bindValue(":wrkcnt_caploaduom", "L");
@@ -456,10 +456,10 @@ void workCenter::populate()
     sPopulateOverheadRate();
 
     if (q.value("wrkcnt_caploaduom").toString() == "M")
-      _setupType->setCurrentItem(0);
+      _setupType->setCurrentIndex(0);
     else if (q.value("wrkcnt_caploaduom").toString() == "L")
-      _setupType->setCurrentItem(1);
-    else _setupType->setCurrentItem(-1);
+      _setupType->setCurrentIndex(1);
+    else _setupType->setCurrentIndex(-1);
 
     _comments->setText(q.value("wrkcnt_comments").toString());
   }

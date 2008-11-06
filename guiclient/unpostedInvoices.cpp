@@ -189,7 +189,7 @@ void unpostedInvoices::sDelete()
 		            __FILE__, __LINE__);
 	      }
         }
-        else if (q.lastError().type() != QSqlError::None)
+        else if (q.lastError().type() != QSqlError::NoError)
 	      systemError(this,
 		          tr("Error deleting Invoice %1\n").arg(selected[i]->text(0)) +
 		          q.lastError().databaseText(), __FILE__, __LINE__);
@@ -257,7 +257,7 @@ void unpostedInvoices::sPost()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -304,7 +304,7 @@ void unpostedInvoices::sPost()
         setDate.bindValue(":distdate",    newDate);
         setDate.bindValue(":invchead_id", id);
         setDate.exec();
-        if (setDate.lastError().type() != QSqlError::None)
+        if (setDate.lastError().type() != QSqlError::NoError)
         {
 	      systemError(this, setDate.lastError().databaseText(), __FILE__, __LINE__);
         }
@@ -378,7 +378,7 @@ void unpostedInvoices::sPost()
 	    else
 	      triedToClosed.append(selected[i]);
       }
-      else if (post.lastError().type() != QSqlError::None)
+      else if (post.lastError().type() != QSqlError::NoError)
 	    systemError(this, tr("A System Error occurred posting Invoice #%1.\n%2")
 	    	    .arg(selected[i]->text(0))
 	     		.arg(post.lastError().databaseText()),
@@ -447,7 +447,7 @@ void unpostedInvoices::sFillList()
   params.append("unpostedOnly");
   q = mql.toQuery(params);
   _invchead->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

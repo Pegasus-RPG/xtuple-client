@@ -150,7 +150,7 @@ void taxSelection::sSave()
     q.bindValue(":taxsel_tax_id", _tax->id());
 
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -175,7 +175,7 @@ void taxSelection::sPopulate()
     if (! q.value("taxsel_tax_id").isNull())
       _tax->setId(q.value("taxsel_tax_id").toInt());
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

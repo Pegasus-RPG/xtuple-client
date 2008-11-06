@@ -67,7 +67,7 @@ class whseCalendars : public XWidget, public Ui::whseCalendars
     Q_OBJECT
 
 public:
-    whseCalendars(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    whseCalendars(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~whseCalendars();
 
 public slots:

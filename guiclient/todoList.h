@@ -69,7 +69,7 @@ class todoList : public XWidget, public Ui::todoList
   Q_OBJECT
 
   public:
-    todoList(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    todoList(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
 
   public slots:
     virtual void	languageChange();

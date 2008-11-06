@@ -68,7 +68,7 @@ class viewCheckRun : public XWidget, public Ui::viewCheckRun
     Q_OBJECT
 
 public:
-    viewCheckRun(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    viewCheckRun(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~viewCheckRun();
 
 public slots:

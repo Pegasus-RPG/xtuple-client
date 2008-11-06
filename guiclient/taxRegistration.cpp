@@ -164,7 +164,7 @@ void taxRegistration::sSave()
   q.bindValue(":taxreg_taxauth_id", _taxauth->id());
   q.bindValue(":taxreg_number", _number->text());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -187,7 +187,7 @@ void taxRegistration::sPopulate()
     if (handleReltype() < 0)
       return;
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

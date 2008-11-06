@@ -63,6 +63,7 @@
 #include <QMessageBox>
 #include <QSqlError>
 #include <QSqlField>
+#include <QSqlRecord>
 #include <QString>
 
 #include "guiclient.h"
@@ -144,7 +145,7 @@ void ToitemTableModel::findHeadData()
     _tostatus	  = toheadq.value("tohead_status").toString();
     _toheadsrcwhsid=toheadq.value("tohead_src_warehous_id").toInt();
   }
-  else if (toheadq.lastError().type() != QSqlError::None)
+  else if (toheadq.lastError().type() != QSqlError::NoError)
   {
     systemError(0, toheadq.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -293,7 +294,7 @@ bool ToitemTableModel::validRow(QSqlRecord& record)
       field.setValue(ln.value("newln"));
       record.append(field);
     }
-    else if (ln.lastError().type() != QSqlError::None)
+    else if (ln.lastError().type() != QSqlError::NoError)
     {
       errormsg = ln.lastError().databaseText();
     }
@@ -303,7 +304,7 @@ bool ToitemTableModel::validRow(QSqlRecord& record)
     ln.exec();
     if (ln.first())
       record.setValue("toitem_linenumber", ln.value("newln"));
-    else if (ln.lastError().type() != QSqlError::None)
+    else if (ln.lastError().type() != QSqlError::NoError)
     {
       errormsg = ln.lastError().databaseText();
     }
@@ -314,7 +315,7 @@ bool ToitemTableModel::validRow(QSqlRecord& record)
     XSqlQuery idq("SELECT NEXTVAL('toitem_toitem_id_seq') AS toitem_id;");
     if (idq.first())
       record.setValue("toitem_id", idq.value("toitem_id"));
-    else if (idq.lastError().type() != QSqlError::None)
+    else if (idq.lastError().type() != QSqlError::NoError)
       errormsg = idq.lastError().databaseText();
   }
 
@@ -411,7 +412,7 @@ bool ToitemTableModel::validRow(QSqlRecord& record)
       else if (record.field(index).value().isNull())
 	record.setValue(index, calcq.value("tax_ratec"));
     }
-    else if (calcq.lastError().type() != QSqlError::None)
+    else if (calcq.lastError().type() != QSqlError::NoError)
       errormsg = calcq.lastError().databaseText();
   }
 

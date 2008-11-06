@@ -190,7 +190,7 @@ enum SetResponse voucherItem::set(const ParameterList &pParams)
       if (q.value("itemsiteid") != -1)
         _item->setItemsiteid(q.value("itemsiteid").toInt());
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
                   __FILE__, __LINE__);
@@ -219,7 +219,7 @@ enum SetResponse voucherItem::set(const ParameterList &pParams)
       _qtyToVoucher->setText(q.value("voitem_qty").toDouble());
       _freightToVoucher->setLocalValue(q.value("voitem_freight").toDouble());
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
                   __FILE__, __LINE__);
@@ -265,7 +265,7 @@ void voucherItem::sSave()
                            tr("You must make at least one distribution for this Voucher Item before you may save it.") );
     return;
   }
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
                 __FILE__, __LINE__);
@@ -305,7 +305,7 @@ void voucherItem::sSave()
           return;
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
                 __FILE__, __LINE__);
@@ -326,10 +326,10 @@ void voucherItem::sSave()
   q.bindValue(":poitem_id", _poitemid);
   q.bindValue(":voitem_id", _voitemid);
   q.bindValue(":vohead_id", _voheadid);
-  q.bindValue(":voitem_close", QVariant(_closePoitem->isChecked(), 0));
+  q.bindValue(":voitem_close", QVariant(_closePoitem->isChecked()));
   q.bindValue(":voitem_freight", _freightToVoucher->localValue());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
                 __FILE__, __LINE__);
@@ -355,7 +355,7 @@ void voucherItem::sNew()
   q.bindValue(":poitem_id", _poitemid);
   q.bindValue(":voitem_qty", _qtyToVoucher->toDouble());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
                 __FILE__, __LINE__);
@@ -371,7 +371,7 @@ void voucherItem::sNew()
   params.append("effective", _freightToVoucher->effective());
   if (q.first())
   	params.append("amount", q.value("f_amount").toDouble() );
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
                 __FILE__, __LINE__);
@@ -407,7 +407,7 @@ void voucherItem::sDelete()
              "WHERE (vodist_id=:vodist_id);" );
   q.bindValue(":vodist_id", _vodist->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
                 __FILE__, __LINE__);
@@ -504,7 +504,7 @@ void voucherItem::sToggleReceiving(QTreeWidgetItem *pItem)
     q.exec();
     if (q.first())
       _voitemid = (q.value("voitemid").toInt());
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
                   __FILE__, __LINE__);
@@ -521,11 +521,11 @@ void voucherItem::sToggleReceiving(QTreeWidgetItem *pItem)
   q.bindValue(":voitem_id", _voitemid);
   q.bindValue(":vohead_id", _voheadid);
   q.bindValue(":poitem_id", _poitemid);
-  q.bindValue(":voitem_close", QVariant(_closePoitem->isChecked(), 0));
+  q.bindValue(":voitem_close", QVariant(_closePoitem->isChecked()));
   q.bindValue(":voitem_qty", _qtyToVoucher->toDouble());
   q.bindValue(":voitem_freight", _freightToVoucher->localValue());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
                 __FILE__, __LINE__);
@@ -563,7 +563,7 @@ void voucherItem::sToggleReceiving(QTreeWidgetItem *pItem)
   q.bindValue(":voitem_id", _voitemid);
   q.bindValue(":target_id", item->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
                 __FILE__, __LINE__);
@@ -587,7 +587,7 @@ void voucherItem::sFillList()
   q.bindValue(":vohead_id", _voheadid);
   q.exec();
   _vodist->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
                 __FILE__, __LINE__);
@@ -605,7 +605,7 @@ void voucherItem::sFillList()
   if (q.first())
     _totalDistributed->setLocalValue(q.value("totalamount").toDouble() +
 					_freightToVoucher->localValue());
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
                 __FILE__, __LINE__);
@@ -641,7 +641,7 @@ void voucherItem::sFillList()
   q.bindValue(":poitem_id", _poitemid);
   q.exec();
   _uninvoiced->populate(q, true);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
                 __FILE__, __LINE__);

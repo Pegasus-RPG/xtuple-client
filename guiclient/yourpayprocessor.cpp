@@ -80,7 +80,7 @@ YourPayProcessor::YourPayProcessor() : CreditCardProcessor()
   currq.exec("SELECT * FROM curr_symbol WHERE (curr_abbr='USD');");
   if (currq.first())
     _ypcurrid = currq.value("curr_id").toInt();
-  else if (currq.lastError().type() != QSqlError::None)
+  else if (currq.lastError().type() != QSqlError::NoError)
     _errorMsg = currq.lastError().databaseText();
   else if (currq.exec("SELECT * "
 		      "FROM curr_symbol "
@@ -89,7 +89,7 @@ YourPayProcessor::YourPayProcessor() : CreditCardProcessor()
 		      "  AND  (curr_name ~* 'dollar'));") &&
 	   currq.first())
     _ypcurrid = currq.value("curr_id").toInt();
-  else if (currq.lastError().type() != QSqlError::None)
+  else if (currq.lastError().type() != QSqlError::NoError)
     _errorMsg = currq.lastError().databaseText();
 
   if (_ypcurrid <= 0)
@@ -276,7 +276,7 @@ int  YourPayProcessor::doAuthorize(const int pccardid, const int pcvv, const dou
   ypq.exec();
   if (ypq.first() && ! ypq.value("next_seq").isNull())
     oidstr = oidstr + "-" + ypq.value("next_seq").toString();
-  else if (ypq.lastError().type() != QSqlError::None)
+  else if (ypq.lastError().type() != QSqlError::NoError)
   {
     _errorMsg = errorMsg(-24);
     return -24;
@@ -348,7 +348,7 @@ int  YourPayProcessor::doCharge(const int pccardid, const int pcvv, const double
   ypq.exec();
   if (ypq.first() && ! ypq.value("next_seq").isNull())
     oidstr = oidstr + "-" + ypq.value("next_seq").toString();
-  else if (ypq.lastError().type() != QSqlError::None)
+  else if (ypq.lastError().type() != QSqlError::NoError)
   {
     _errorMsg = errorMsg(-44);
     return -44;

@@ -69,7 +69,7 @@ class vendor : public XWidget, public Ui::vendor
     Q_OBJECT
 
 public:
-    vendor(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    vendor(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~vendor();
 
 public slots:

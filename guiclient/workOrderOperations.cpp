@@ -204,7 +204,7 @@ void workOrderOperations::sDeleteOperation()
     q.exec();
     if (q.first())
       omfgThis->sWorkOrderOperationsUpdated(_wo->id(), _wooper->id(), TRUE);
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -227,7 +227,7 @@ void workOrderOperations::sMoveUp()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -250,7 +250,7 @@ void workOrderOperations::sMoveDown()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -288,7 +288,7 @@ void workOrderOperations::sFillList()
   q.bindValue(":wo_id", _wo->id());
   q.exec();
   _wooper->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

@@ -516,7 +516,7 @@ void workOrder::sCreate()
     q.bindValue(":orderQty", orderQty);
     q.bindValue(":leadTime", _leadTime->value());
     q.bindValue(":dueDate", _dueDate->date());
-    q.bindValue(":productionNotes", _productionNotes->text());
+    q.bindValue(":productionNotes", _productionNotes->toPlainText());
     q.bindValue(":prj_id", _project->id());
     q.bindValue(":bom_rev_id", _bomRevision->id());
     q.bindValue(":boo_rev_id", _booRevision->id());
@@ -626,7 +626,7 @@ void workOrder::sCreate()
               "       wo_cosmethod=:wo_cosmethod"
               " WHERE (wo_id=:wo_id); ");
     q.bindValue(":wo_id", _woid);
-    q.bindValue(":productionNotes", _productionNotes->text());
+    q.bindValue(":productionNotes", _productionNotes->toPlainText());
     q.bindValue(":prj_id", _project->id());
     q.bindValue(":bom_rev_id", _bomRevision->id());
     q.bindValue(":boo_rev_id", _booRevision->id());

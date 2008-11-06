@@ -147,7 +147,7 @@ enum SetResponse transformTrans::set(const ParameterList &pParams)
     {
       _mode = cNew;
 
-      setCaption(tr("Enter Transform Transaction"));
+      setWindowTitle(tr("Enter Transform Transaction"));
       _usernameLit->clear();
       _transDate->setEnabled(_privileges->check("AlterTransactionDates"));
       _transDate->setDate(omfgThis->dbDate());
@@ -156,7 +156,7 @@ enum SetResponse transformTrans::set(const ParameterList &pParams)
     {
       _mode = cView;
 
-      setCaption(tr("Transform Transaction"));
+      setWindowTitle(tr("Transform Transaction"));
       _transDate->setEnabled(FALSE);
       _item->setEnabled(FALSE);
       _warehouse->setEnabled(FALSE);
@@ -261,7 +261,7 @@ void transformTrans::sPost()
   q.bindValue(":targetItemid", _target->id());
   q.bindValue(":itemloc_id",   _source->altId());
   q.bindValue(":qty",          _qty->toDouble());
-  q.bindValue(":comments",     _notes->text());
+  q.bindValue(":comments",     _notes->toPlainText());
   q.bindValue(":docnumber",    _documentNum->text());
   q.bindValue(":date",         _transDate->date());
   q.exec();
@@ -275,7 +275,7 @@ void transformTrans::sPost()
                   __FILE__, __LINE__);
       return;
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -291,7 +291,7 @@ void transformTrans::sPost()
 
     q.exec("COMMIT;");
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -349,7 +349,7 @@ void transformTrans::sPopulateTarget(int /*pItemid*/)
     sRecalculateAfter();
 
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -382,7 +382,7 @@ void transformTrans::sFillList()
   q.bindValue(":warehous_id", _warehouse->id());
   q.exec();
   _target->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -426,13 +426,13 @@ void transformTrans::sFillList()
     q.bindValue(":itemsite_id", itemsiteid);
     q.exec();
     _source->populate(q, true);
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -461,7 +461,7 @@ void  transformTrans::sPopulateQOH()
       sRecalculateAfter();
 
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;

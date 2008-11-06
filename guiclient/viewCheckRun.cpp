@@ -133,7 +133,7 @@ void viewCheckRun::sVoid()
     }
     omfgThis->sChecksUpdated(q.value("checkhead_bankaccnt_id").toInt(), _check->id(), TRUE);
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -157,7 +157,7 @@ void viewCheckRun::sDelete()
     }
     omfgThis->sChecksUpdated(q.value("checkhead_bankaccnt_id").toInt(), _check->id(), TRUE);
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -193,7 +193,7 @@ void viewCheckRun::sReplace()
     omfgThis->sChecksUpdated( q.value("checkhead_bankaccnt_id").toInt(),
                                 q.value("result").toInt(), TRUE);
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -215,7 +215,7 @@ void viewCheckRun::sReplaceAll()
     }
     omfgThis->sChecksUpdated(_bankaccnt->id(), -1, TRUE);
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -300,7 +300,7 @@ void viewCheckRun::sFillList()
   params.append("showDetail");
   q = mql.toQuery(params);
   _check->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

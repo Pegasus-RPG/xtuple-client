@@ -141,7 +141,7 @@ enum SetResponse updateActualCostsByItem::set(const ParameterList &pParams)
   if (valid && param.toString() == "standard")
   {
     _updateActual = false;
-    setCaption(tr("Update Standard Costs By Item"));
+    setWindowTitle(tr("Update Standard Costs By Item"));
     _rollUp->setText(tr("&Roll Up Standard Costs"));
   }
 

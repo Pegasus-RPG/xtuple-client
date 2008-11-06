@@ -68,7 +68,7 @@ class voucher : public XWidget, public Ui::voucher
     Q_OBJECT
 
 public:
-    voucher(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    voucher(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~voucher();
 
 public slots:

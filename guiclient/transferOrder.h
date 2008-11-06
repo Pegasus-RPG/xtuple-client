@@ -72,7 +72,7 @@ class transferOrder : public XWidget, public Ui::transferOrder
     Q_OBJECT
 
 public:
-    transferOrder(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    transferOrder(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~transferOrder();
 
     virtual	bool save( bool partial );

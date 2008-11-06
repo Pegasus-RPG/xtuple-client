@@ -155,7 +155,7 @@ void userPreferences::setBackgroundImage(int pImageid)
     _backgroundImageid = q.value("image_id").toInt();
     _background->setText(q.value("description").toString());
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -474,7 +474,7 @@ void userPreferences::sAllWarehousesToggled(int pEvnttypeid)
     q.bindValue(":username", _user->currentText());
   q.bindValue(":evnttype_id", pEvnttypeid);
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -506,7 +506,7 @@ void userPreferences::sWarehouseToggled(QTreeWidgetItem *selected)
   q.bindValue(":evnttype_id", _event->id());
   q.bindValue(":warehous_id", ((XTreeWidgetItem *)selected)->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -535,7 +535,7 @@ void userPreferences::sFillWarehouseList()
       _warehouses->topLevelItem(i)->setText(0, tr("Yes"));
     else
       _warehouses->topLevelItem(i)->setText(0, tr("No"));
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;

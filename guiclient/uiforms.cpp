@@ -127,7 +127,7 @@ void uiforms::sDelete()
              "WHERE (uiform_id=:uiform_id);" );
   q.bindValue(":uiform_id", _uiform->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -146,7 +146,7 @@ void uiforms::sFillList()
          "   AND  (relnamespace=pg_namespace.oid))"
          " ORDER BY uiform_name, uiform_order, uiform_id;" );
   _uiform->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -162,7 +162,7 @@ void uiforms::sTest()
   q.exec();
   if (q.first())
     ; // everything's OK
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

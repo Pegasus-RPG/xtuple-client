@@ -154,7 +154,7 @@ enum SetResponse user::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-      _module->setCurrentItem(0);
+      _module->setCurrentIndex(0);
       sModuleSelected(_module->text(0));
 
       if (_cUsername.isEmpty())
@@ -255,7 +255,7 @@ void user::sSave()
                           "ALTER USER %1 WITH PASSWORD :password;" )
                  .arg(_username->text()) );
       q.bindValue(":username", _username->text());
-      q.bindValue(":createUsers", QVariant(_createUsers->isChecked(), 0));
+      q.bindValue(":createUsers", QVariant(_createUsers->isChecked()));
       q.bindValue(":password", passwd);
       q.exec();
       if (q.lastError().type() != QSqlError::NoError)
@@ -298,7 +298,7 @@ void user::sSave()
     {
       q.prepare("SELECT setUserCanCreateUsers(:username, :createUsers);");
       q.bindValue(":username", _username->text());
-      q.bindValue(":createUsers", QVariant(_createUsers->isChecked(), 0));
+      q.bindValue(":createUsers", QVariant(_createUsers->isChecked()));
       q.exec();
       if (q.lastError().type() != QSqlError::NoError)
       {
@@ -315,13 +315,13 @@ void user::sSave()
                "WHERE (usr_username=:usr_username);" );
   }
 
-  q.bindValue(":usr_username", _username->text().stripWhiteSpace().lower());
+  q.bindValue(":usr_username", _username->text().trimmed().lower());
   q.bindValue(":usr_propername", _properName->text());
   q.bindValue(":usr_email", _email->text());
   q.bindValue(":usr_initials", _initials->text());
   q.bindValue(":usr_locale_id", _locale->id());
-  q.bindValue(":usr_agent", QVariant(_agent->isChecked(), 0));
-  q.bindValue(":usr_active", QVariant(_active->isChecked(), 0));
+  q.bindValue(":usr_agent", QVariant(_agent->isChecked()));
+  q.bindValue(":usr_active", QVariant(_active->isChecked()));
   // keep synchronized with the select below, GUIClient, and main
   q.bindValue(":usr_window", _woTimeClockOnly->isChecked() ? "woTimeClock" : "");
   q.exec();
@@ -332,7 +332,7 @@ void user::sSave()
   }
 
   q.prepare("SELECT setUserPreference(:username, 'DisableExportContents', :value) AS result");
-  q.bindValue(":username", _username->text().stripWhiteSpace().lower());
+  q.bindValue(":username", _username->text().trimmed().lower());
   q.bindValue(":value", (_exportContents->isChecked() ? "t" : "f"));
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
@@ -342,7 +342,7 @@ void user::sSave()
   }
 
   q.prepare("SELECT setUserPreference(:username, 'UseEnhancedAuthentication', :value) AS result");
-  q.bindValue(":username", _username->text().stripWhiteSpace().lower());
+  q.bindValue(":username", _username->text().trimmed().lower());
   q.bindValue(":value", (_enhancedAuth->isChecked() ? "t" : "f"));
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
@@ -352,7 +352,7 @@ void user::sSave()
   }
   
   q.prepare("SELECT setUserPreference(:username, 'selectedSites', :value) AS result");
-  q.bindValue(":username", _username->text().stripWhiteSpace().lower());
+  q.bindValue(":username", _username->text().trimmed().lower());
   q.bindValue(":value", (_selectedSites->isChecked() ? "t" : "f"));
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
@@ -444,7 +444,7 @@ void user::sAdd()
   q.bindValue(":priv_id", _available->id());
   q.exec();
   // no storedProcErrorLookup because the function returns bool, not int
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -469,7 +469,7 @@ void user::sAddAll()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -485,7 +485,7 @@ void user::sRevoke()
   q.bindValue(":priv_id", _granted->id());
   q.exec();
   // no storedProcErrorLookup because the function returns bool, not int
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -510,7 +510,7 @@ void user::sRevokeAll()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -526,7 +526,7 @@ void user::sAddGroup()
   q.bindValue(":grp_id", _availableGroup->id());
   q.exec();
   // no storedProcErrorLookup because the function returns bool, not int
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -542,7 +542,7 @@ void user::sRevokeGroup()
   q.bindValue(":grp_id", _grantedGroup->id());
   q.exec();
   // no storedProcErrorLookup because the function returns bool, not int
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -553,7 +553,7 @@ void user::sRevokeGroup()
 
 void user::sCheck()
 {
-  _cUsername = _username->text().stripWhiteSpace();
+  _cUsername = _username->text().trimmed();
   if (_cUsername.length() > 0)
   {
     q.prepare( "SELECT * "
@@ -659,14 +659,14 @@ void user::populate()
       {
         if (_module->text(counter) == q.value("priv_module").toString())
         {
-          _module->setCurrentItem(counter);
+          _module->setCurrentIndex(counter);
           sModuleSelected(_module->text(counter));
         }
       }
     }
     else
     {
-      _module->setCurrentItem(0);
+      _module->setCurrentIndex(0);
       sModuleSelected(_module->text(0));
     }
   }
@@ -701,7 +701,7 @@ void user::sAddSite()
   q.bindValue(":warehous_id", _availableSite->id());
   q.exec();
   // no storedProcErrorLookup because the function returns bool, not int
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -717,7 +717,7 @@ void user::sRevokeSite()
   q.bindValue(":warehous_id", _grantedSite->id());
   q.exec();
   // no storedProcErrorLookup because the function returns bool, not int
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -730,7 +730,7 @@ void user::populateSite()
 {
 
   ParameterList params;
-  params.append("username", _username->text().stripWhiteSpace().lower());
+  params.append("username", _username->text().trimmed().lower());
   QString sql;
   MetaSQLQuery mql;
   
@@ -745,7 +745,7 @@ void user::populateSite()
   mql.setQuery(sql);
   q = mql.toQuery(params);
   _availableSite->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -759,7 +759,7 @@ void user::populateSite()
   mql.setQuery(sql); 
   q = mql.toQuery(params);
   _grantedSite->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

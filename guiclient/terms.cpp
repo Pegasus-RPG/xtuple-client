@@ -160,7 +160,7 @@ enum SetResponse terms::set(ParameterList &pParams)
 
 void terms::sCheck()
 {
-  _code->setText(_code->text().stripWhiteSpace());
+  _code->setText(_code->text().trimmed());
   if ( (_mode == cNew) && (_code->text().length()) )
   {
     q.prepare( "SELECT terms_id "
@@ -234,9 +234,9 @@ void terms::sSave()
 
   q.bindValue(":terms_id", _termsid);
   q.bindValue(":terms_code", _code->text());
-  q.bindValue(":terms_descrip", _description->text().stripWhiteSpace());
-  q.bindValue(":terms_ap", QVariant(_ap->isChecked(), 0));
-  q.bindValue(":terms_ar", QVariant(_ar->isChecked(), 0));
+  q.bindValue(":terms_descrip", _description->text().trimmed());
+  q.bindValue(":terms_ap", QVariant(_ap->isChecked()));
+  q.bindValue(":terms_ar", QVariant(_ar->isChecked()));
   q.bindValue(":terms_duedays", _dueDays->value());
   q.bindValue(":terms_discdays", _discountDays->value());
   q.bindValue(":terms_discprcnt", (_discountPercent->toDouble() / 100.0));

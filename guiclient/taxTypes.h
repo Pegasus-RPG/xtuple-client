@@ -67,7 +67,7 @@ class taxTypes : public XWidget, public Ui::taxTypes
     Q_OBJECT
 
 public:
-    taxTypes(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    taxTypes(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~taxTypes();
 
 public slots:

@@ -67,7 +67,7 @@ class taxAuthorities : public XWidget, public Ui::taxAuthorities
     Q_OBJECT
 
 public:
-    taxAuthorities(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    taxAuthorities(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~taxAuthorities();
 
 public slots:

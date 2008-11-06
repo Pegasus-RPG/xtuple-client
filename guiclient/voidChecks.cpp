@@ -122,7 +122,7 @@ void voidChecks::sVoid()
     }
     omfgThis->sChecksUpdated(_bankaccnt->id(), -1, TRUE);
   }
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -155,7 +155,7 @@ void voidChecks::sHandleBankAccount(int pBankaccntid)
       _checkNumber->setText(q.value("checknumber").toString());
       _numberOfChecks->setText(q.value("numofchecks").toString());
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;

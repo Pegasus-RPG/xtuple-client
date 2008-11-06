@@ -89,7 +89,7 @@ warehouse::warehouse(QWidget* parent, const char* name, bool modal, Qt::WFlags f
       params.append("mode", "edit");
       params.append("warehous_id", q.value("warehous_id").toInt());
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -139,7 +139,7 @@ enum SetResponse warehouse::set(const ParameterList &pParams)
       q.exec("SELECT NEXTVAL('warehous_warehous_id_seq') AS warehous_id");
       if (q.first())
         _warehousid = q.value("warehous_id").toInt();
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return UndefinedError;
@@ -242,7 +242,7 @@ int warehouse::saveContact(ContactCluster* pContact)
 void warehouse::sSave()
 {
   //  Make sure that at least a warehouse code has been entered
-  if (_code->text().stripWhiteSpace().length() == 0)
+  if (_code->text().trimmed().length() == 0)
   {
     QMessageBox::information( this, tr("Cannot Save Site"),
                               tr("<p>You must enter a code for this Site "
@@ -290,7 +290,7 @@ void warehouse::sSave()
     _countTagPrefix->setFocus();
     return;
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -314,7 +314,7 @@ void warehouse::sSave()
     _code->setFocus();
     return;
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -446,14 +446,14 @@ void warehouse::sSave()
                "WHERE (warehous_id=:warehous_id);" );
   
   q.bindValue(":warehous_id", _warehousid);
-  q.bindValue(":warehous_code", _code->text().stripWhiteSpace().upper());
+  q.bindValue(":warehous_code", _code->text().trimmed().toUpper());
   q.bindValue(":warehous_descrip", _description->text());
   if (_contact->id() > 0)
     q.bindValue(":warehous_cntct_id", _contact->id());	// else NULL
   if (_address->id() > 0)
     q.bindValue(":warehous_addr_id", _address->id());	// else NULL
 
-  q.bindValue(":warehous_active", QVariant(_active->isChecked(), 0));
+  q.bindValue(":warehous_active", QVariant(_active->isChecked()));
   q.bindValue(":warehous_default_accnt_id", _account->id());
   if(_sitetype->isValid())
     q.bindValue(":warehous_sitetype_id", _sitetype->id());
@@ -465,37 +465,37 @@ void warehouse::sSave()
     q.bindValue(":warehous_bol_number",	     _bolNumber->text().toInt());
     q.bindValue(":warehous_counttag_prefix", _countTagPrefix->text());
     q.bindValue(":warehous_counttag_number", _countTagNumber->text().toInt());
-    q.bindValue(":warehous_shipping",	QVariant(_shipping->isChecked(), 0));
-    q.bindValue(":warehous_useslips",	QVariant(_useSlips->isChecked(), 0));
-    q.bindValue(":warehous_enforcearbl",QVariant(_arblGroup->isChecked(), 0));
+    q.bindValue(":warehous_shipping",	QVariant(_shipping->isChecked()));
+    q.bindValue(":warehous_useslips",	QVariant(_useSlips->isChecked()));
+    q.bindValue(":warehous_enforcearbl",QVariant(_arblGroup->isChecked()));
     q.bindValue(":warehous_aislesize",	_aisleSize->value());
-    q.bindValue(":warehous_aislealpha",	QVariant(_aisleAlpha->isChecked(), 0));
+    q.bindValue(":warehous_aislealpha",	QVariant(_aisleAlpha->isChecked()));
     q.bindValue(":warehous_racksize",	_rackSize->value());
-    q.bindValue(":warehous_rackalpha",	QVariant(_rackAlpha->isChecked(), 0));
+    q.bindValue(":warehous_rackalpha",	QVariant(_rackAlpha->isChecked()));
     q.bindValue(":warehous_binsize",	_binSize->value());
-    q.bindValue(":warehous_binalpha",	QVariant(_binAlpha->isChecked(), 0));
+    q.bindValue(":warehous_binalpha",	QVariant(_binAlpha->isChecked()));
     q.bindValue(":warehous_locationsize",  _locationSize->value());
-    q.bindValue(":warehous_locationalpha", QVariant(_locationAlpha->isChecked(), 0));
-    q.bindValue(":warehous_usezones",	   QVariant(_useZones->isChecked(), 0));
+    q.bindValue(":warehous_locationalpha", QVariant(_locationAlpha->isChecked()));
+    q.bindValue(":warehous_usezones",	   QVariant(_useZones->isChecked()));
     q.bindValue(":warehous_shipping_commission", (_shipcomm->toDouble() / 100));
     if(_taxauth->isValid())
       q.bindValue(":warehous_taxauth_id",	_taxauth->id());
   }
 
-  q.bindValue(":warehous_transit",	QVariant(_transit->isChecked(), 0));
+  q.bindValue(":warehous_transit",	QVariant(_transit->isChecked()));
   if (_transit->isChecked())
   {
     if (_shipform->isValid())
       q.bindValue(":warehous_shipform_id",	_shipform->id());
     if (_shipvia->isValid())
       q.bindValue(":warehous_shipvia_id",	_shipvia->id());
-    q.bindValue(":warehous_shipcomments",	_shipcomments->text());
+    q.bindValue(":warehous_shipcomments",	_shipcomments->toPlainText());
     if (_costcat->isValid())
       q.bindValue(":warehous_costcat_id",	_costcat->id());
   }
 
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -556,7 +556,7 @@ void warehouse::populate()
 
 void warehouse::sCheck()
 {
-  _code->setText(_code->text().stripWhiteSpace().upper());
+  _code->setText(_code->text().trimmed().toUpper());
 
   if (_mode == cNew)
   {
@@ -575,10 +575,10 @@ void warehouse::sCheck()
     }
     else
     {
-      if (_countTagPrefix->text().stripWhiteSpace().length() == 0)
+      if (_countTagPrefix->text().trimmed().length() == 0)
         _countTagPrefix->setText(_code->text());
 
-      if (_bolPrefix->text().stripWhiteSpace().length() == 0)
+      if (_bolPrefix->text().trimmed().length() == 0)
         _bolPrefix->setText(_code->text());
     }
   }
@@ -625,7 +625,7 @@ void warehouse::sDeleteZone()
 			     "the selected Site Zone." ) );
     return;
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -635,7 +635,7 @@ void warehouse::sDeleteZone()
              "WHERE (whsezone_id=:whsezone_id);" );
   q.bindValue(":whsezone_id", _whsezone->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -652,7 +652,7 @@ void warehouse::sFillList()
   q.bindValue(":warehous_id", _warehousid);
   q.exec();
   _whsezone->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

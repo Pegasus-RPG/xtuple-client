@@ -213,7 +213,7 @@ void uom::sSave()
   q.bindValue(":uom_id", _uomid);
   q.bindValue(":uom_name", _name->text());
   q.bindValue(":uom_descrip", _description->text());
-  q.bindValue(":uom_item_weight", QVariant(_weightUom->isChecked(), 0));
+  q.bindValue(":uom_item_weight", QVariant(_weightUom->isChecked()));
   q.exec();
 
   done(_uomid);
@@ -221,7 +221,7 @@ void uom::sSave()
 
 void uom::sCheck()
 {
-  _name->setText(_name->text().stripWhiteSpace().toUpper());
+  _name->setText(_name->text().trimmed().toUpper());
   if ( (_mode == cNew) && (_name->text().length()) )
   {
     q.prepare( "SELECT uom_id "
@@ -331,7 +331,7 @@ void uom::sDelete()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

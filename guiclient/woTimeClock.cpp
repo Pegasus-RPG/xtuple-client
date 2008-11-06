@@ -181,7 +181,7 @@ void woTimeClock::sClockIn()
     }
     omfgThis->sWorkOrdersUpdated(WOID, TRUE);
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -210,7 +210,7 @@ void woTimeClock::sClockOut()
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -240,7 +240,7 @@ void woTimeClock::sClockOut()
       if (result < 0)
 	systemError(this, storedProcErrorLookup("unWoClockOut", result), __FILE__, __LINE__);
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 
     _lastEvent->setText(tr("User %1 canceled clock out of %2 at %3\n")

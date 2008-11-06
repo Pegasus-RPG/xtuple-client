@@ -67,7 +67,7 @@ class uiforms : public XWidget, public Ui::uiforms
     Q_OBJECT
 
 public:
-    uiforms(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    uiforms(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~uiforms();
 
 public slots:

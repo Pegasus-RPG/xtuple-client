@@ -173,17 +173,17 @@ void xsltMap::sSave()
     QString	msg;
     QWidget*	widget;
   } error[] = {
-    { _name->text().stripWhiteSpace().isEmpty(),
+    { _name->text().trimmed().isEmpty(),
       tr("<p>You must enter a name for this XSLT Map before saving it."),
       _name
     },
-    { _doctype->text().stripWhiteSpace().isEmpty() &&
-      _system->text().stripWhiteSpace().isEmpty(),
+    { _doctype->text().trimmed().isEmpty() &&
+      _system->text().trimmed().isEmpty(),
       tr("<p>You must enter a Document Type, a System Identifier, or both "
 	 "before saving this XSLT Map."),
-      _doctype->text().stripWhiteSpace().isEmpty() ? _doctype : _system
+      _doctype->text().trimmed().isEmpty() ? _doctype : _system
     },
-    { _import->text().stripWhiteSpace().isEmpty(),
+    { _import->text().trimmed().isEmpty(),
       tr("<p>You must enter an Import XSLT File Name before saving this XSLT Map."),
       _import
     },
@@ -217,7 +217,7 @@ void xsltMap::sSave()
     _name->setFocus();
     return;
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -228,7 +228,7 @@ void xsltMap::sSave()
     q.exec("SELECT NEXTVAL('xsltmap_xsltmap_id_seq') AS result;");
     if (q.first())
       _xsltmapId = q.value("result").toInt();
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -257,7 +257,7 @@ void xsltMap::sSave()
   q.bindValue(":import",  _import->text());
   q.bindValue(":export",  _export->text());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -289,7 +289,7 @@ void xsltMap::sPopulate()
       _import->setText(q.value("xsltmap_import").toString());
       _export->setText(q.value("xsltmap_export").toString());
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;

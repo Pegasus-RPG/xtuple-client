@@ -142,7 +142,7 @@ enum SetResponse transferTrans::set(const ParameterList &pParams)
     {
       _mode = cNew;
 
-      setCaption(tr("Enter Inter-Site Transfer"));
+      setWindowTitle(tr("Enter Inter-Site Transfer"));
       _usernameLit->clear();
       _transDate->setEnabled(_privileges->check("AlterTransactionDates"));
       _transDate->setDate(omfgThis->dbDate());
@@ -158,7 +158,7 @@ enum SetResponse transferTrans::set(const ParameterList &pParams)
     {
       _mode = cView;
 
-      setCaption(tr("Inter-Site Transaction Information"));
+      setWindowTitle(tr("Inter-Site Transaction Information"));
       _transDate->setEnabled(FALSE);
       _item->setEnabled(FALSE);
       _toWarehouse->setEnabled(FALSE);
@@ -260,7 +260,7 @@ void transferTrans::sPost()
   q.bindValue(":to_warehous_id",   _toWarehouse->id());
   q.bindValue(":qty",              _qty->toDouble());
   q.bindValue(":docNumber", _documentNum->text());
-  q.bindValue(":comments", _notes->text());
+  q.bindValue(":comments", _notes->toPlainText());
   q.bindValue(":date",        _transDate->date());
   q.exec();
   if (q.first())
@@ -273,7 +273,7 @@ void transferTrans::sPost()
                   __FILE__, __LINE__);
       return;
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -337,7 +337,7 @@ void transferTrans::sPopulateFromQty(int pWarehousid)
       if (_qty->text().length())
         _fromAfterQty->setText(formatQty(q.value("itemsite_qtyonhand").toDouble() - _qty->toDouble()));
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;

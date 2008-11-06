@@ -68,7 +68,7 @@ class workCenter : public XWidget, public Ui::workCenter
     Q_OBJECT
 
 public:
-    workCenter(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    workCenter(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~workCenter();
 
 public slots:

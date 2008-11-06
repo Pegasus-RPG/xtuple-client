@@ -208,7 +208,7 @@ void uomConv::sSave()
   q.bindValue(":uomconv_to_uom_id", _uomTo->id());
   q.bindValue(":uomconv_from_value", _fromValue->toDouble());
   q.bindValue(":uomconv_to_value", _toValue->toDouble());
-  q.bindValue(":uomconv_fractional", QVariant(_fractional->isChecked(), 0));
+  q.bindValue(":uomconv_fractional", QVariant(_fractional->isChecked()));
   q.exec();
 
   accept();

@@ -68,7 +68,7 @@ class workOrderOperations : public XWidget, public Ui::workOrderOperations
     Q_OBJECT
 
 public:
-    workOrderOperations(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    workOrderOperations(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~workOrderOperations();
 
 public slots:

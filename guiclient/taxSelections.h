@@ -68,7 +68,7 @@ class taxSelections : public XWidget, public Ui::taxSelections
   Q_OBJECT
 
   public:
-    taxSelections(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    taxSelections(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~taxSelections();
 
   public slots:

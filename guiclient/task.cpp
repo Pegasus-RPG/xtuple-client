@@ -162,11 +162,11 @@ void task::populate()
 
     QString status = q.value("prjtask_status").toString();
     if("P" == status)
-      _status->setCurrentItem(0);
+      _status->setCurrentIndex(0);
     else if("O" == status)
-      _status->setCurrentItem(1);
+      _status->setCurrentIndex(1);
     else if("C" == status)
-      _status->setCurrentItem(2);
+      _status->setCurrentIndex(2);
 
     _budgetHours->setText(formatQty(q.value("prjtask_hours_budget").toDouble()));
     _actualHours->setText(formatQty(q.value("prjtask_hours_actual").toDouble()));
@@ -181,7 +181,7 @@ void task::populate()
     //else
     //  _userList->setChecked(TRUE);
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -230,14 +230,14 @@ void task::sSave()
   q.bindValue(":prjtask_id", _prjtaskid);
   q.bindValue(":prjtask_number", _number->text());
   q.bindValue(":prjtask_name", _name->text());
-  q.bindValue(":prjtask_descrip", _descrip->text());
-  //q.bindValue(":prjtask_anyuser", QVariant(_anyUser->isChecked(), 0));
+  q.bindValue(":prjtask_descrip", _descrip->toPlainText());
+  //q.bindValue(":prjtask_anyuser", QVariant(_anyUser->isChecked()));
   q.bindValue(":prjtask_hours_budget", _budgetHours->text().toDouble());
   q.bindValue(":prjtask_hours_actual", _actualHours->text().toDouble());
   q.bindValue(":prjtask_exp_budget", _budgetExp->text().toDouble());
   q.bindValue(":prjtask_exp_actual", _actualExp->text().toDouble());
 
-  switch(_status->currentItem())
+  switch(_status->currentIndex())
   {
     case 0:
     default:
@@ -252,7 +252,7 @@ void task::sSave()
   }
 
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -296,7 +296,7 @@ void task::sNewUser()
       q.exec();
       sFillUserList();
     }
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -314,7 +314,7 @@ void task::sDeleteUser()
   q.bindValue(":usr_id", _usr->id());
   q.bindValue(":prjtask_id", _prjtaskid);
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -334,7 +334,7 @@ void task::sFillUserList()
   q.bindValue(":prjtask_id", _prjtaskid);
   q.exec();
   _usr->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

@@ -160,7 +160,7 @@ void taxRegistrations::sDelete()
             " WHERE (taxreg_id=:taxreg_id);");
   q.bindValue(":taxreg_id", _taxreg->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -177,7 +177,7 @@ void taxRegistrations::sFillList()
             "   AND  (taxreg_taxauth_id=taxauth_id));");
   q.exec();
   _taxreg->populate(q, true);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

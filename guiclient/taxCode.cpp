@@ -148,7 +148,7 @@ enum SetResponse taxCode::set(const ParameterList &pParams)
 
 void taxCode::sSave()
 {
-  if(_code->text().stripWhiteSpace().isEmpty())
+  if(_code->text().trimmed().isEmpty())
   {
     QMessageBox::warning( this, tr("No Tax Name Code"),
                           tr("You must specify a name code for this Tax.") );
@@ -239,7 +239,7 @@ void taxCode::sSave()
                "WHERE (tax_id=:tax_id);" );
 
   q.bindValue(":tax_id", _taxid);
-  q.bindValue(":tax_code", _code->text().stripWhiteSpace());
+  q.bindValue(":tax_code", _code->text().trimmed());
   q.bindValue(":tax_descrip", _description->text());
   q.bindValue(":tax_ratea", ratea);
   q.bindValue(":tax_rateb", rateb);
@@ -247,7 +247,7 @@ void taxCode::sSave()
   q.bindValue(":tax_sales_accnt_id", accounta);
   q.bindValue(":tax_salesb_accnt_id", accountb);
   q.bindValue(":tax_salesc_accnt_id", accountc);
-  q.bindValue(":tax_cumulative", QVariant(_cumulative->isChecked(), 0));
+  q.bindValue(":tax_cumulative", QVariant(_cumulative->isChecked()));
   q.exec();
 
   done (_taxid);
@@ -255,7 +255,7 @@ void taxCode::sSave()
 
 void taxCode::sCheck()
 {
-  _code->setText(_code->text().stripWhiteSpace());
+  _code->setText(_code->text().trimmed());
   if ((_mode == cNew) && (_code->text().length()))
   {
     q.prepare( "SELECT tax_id "

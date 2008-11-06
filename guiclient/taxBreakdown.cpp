@@ -507,7 +507,7 @@ SetResponse taxBreakdown::set(const ParameterList& pParams)
     if (calc != NoError)
       return calc;
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return UndefinedError;
@@ -614,7 +614,7 @@ void taxBreakdown::sSave()
 
   MetaSQLQuery mql(sql);
   q = mql.toQuery(params);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

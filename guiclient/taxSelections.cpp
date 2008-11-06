@@ -150,7 +150,7 @@ void taxSelections::sDelete()
   q.prepare("DELETE FROM taxsel WHERE (taxsel_id=:taxsel_id);");
   q.bindValue(":taxsel_id", _taxsel->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -183,7 +183,7 @@ void taxSelections::sFillList()
   MetaSQLQuery mql(sql);
   q = mql.toQuery(params);
   _taxsel->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

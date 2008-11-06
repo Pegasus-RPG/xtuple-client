@@ -227,7 +227,7 @@ enum SetResponse transferOrderItem::set(const ParameterList &pParams)
       q.exec();
       if(!q.first() || q.value("cnt").toInt() == 0)
         _prev->setEnabled(false);
-      if (q.lastError().type() != QSqlError::None)
+      if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return UndefinedError;
@@ -276,7 +276,7 @@ enum SetResponse transferOrderItem::set(const ParameterList &pParams)
     q.exec();
     if(!q.first() || q.value("id").toInt() == _toitemid)
       _prev->setEnabled(false);
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
@@ -297,7 +297,7 @@ enum SetResponse transferOrderItem::set(const ParameterList &pParams)
       else
         _next->setText(tr("New"));
     }
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
@@ -329,7 +329,7 @@ void transferOrderItem::prepare()
     q.exec();
     if (q.first())
       _lineNumber->setText(q.value("_linenumber").toString());
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -342,7 +342,7 @@ void transferOrderItem::prepare()
     q.exec();
     if (q.first())
       _scheduledDate->setDate(q.value("scheddate").toDate());
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -435,7 +435,7 @@ void transferOrderItem::sSave()
     q.exec("SELECT NEXTVAL('toitem_toitem_id_seq') AS toitem_id");
     if (q.first())
       _toitemid = q.value("toitem_id").toInt();
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -500,7 +500,7 @@ void transferOrderItem::sSave()
   q.bindValue(":toitem_schedshipdate",    _scheduledDate->date()); // ??
   q.bindValue(":toitem_schedrecvdate",    promiseDate);
   q.bindValue(":toitem_qty_ordered",	  _qtyOrdered->toDouble());
-  q.bindValue(":toitem_notes",		  _notes->text());
+  q.bindValue(":toitem_notes",		  _notes->toPlainText());
   q.bindValue(":toitem_uom",		  _item->uom());
   // TODO: q.bindValue(":toitem_prj_id",		);
   q.bindValue(":toitem_freight",	  _freight->localValue());
@@ -515,7 +515,7 @@ void transferOrderItem::sSave()
   q.bindValue(":toitem_freighttax_ratec", _taxCache.freight(2));
 
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -547,7 +547,7 @@ void transferOrderItem::sSave()
 	  return;
 	}
       }
-      else if (q.lastError().type() != QSqlError::None)
+      else if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return;
@@ -585,7 +585,7 @@ void transferOrderItem::sPopulateItemInfo(int pItemid)
       _stdcost->setBaseValue(q.value("stdcost").toDouble());
       _itemsiteid = q.value("itemsite_id").toInt();
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -625,7 +625,7 @@ void transferOrderItem::sPopulateItemInfo(int pItemid)
       _itemchar->setData(idx, pItemid, Qt::UserRole);
       row++;
     }
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -742,7 +742,7 @@ void transferOrderItem::sDetermineAvailability()
             availability.bindValue(":origQtyOrd",     _originalQtyOrd);
             availability.exec();
             _availability->populate(availability);
-	    if (availability.lastError().type() != QSqlError::None)
+	    if (availability.lastError().type() != QSqlError::NoError)
 	    {
 	      systemError(this, availability.lastError().databaseText(), __FILE__, __LINE__);
 	      return;
@@ -762,7 +762,7 @@ void transferOrderItem::sDetermineAvailability()
 		return;
 	      }
 	    }
-	    else if (availability.lastError().type() != QSqlError::None)
+	    else if (availability.lastError().type() != QSqlError::NoError)
 	    {
 	      systemError(this, availability.lastError().databaseText(), __FILE__, __LINE__);
 	      return;
@@ -808,7 +808,7 @@ void transferOrderItem::sDetermineAvailability()
           availability.bindValue(":origQtyOrd", _originalQtyOrd);
           availability.exec();
           _availability->populate(availability);
-          if (availability.lastError().type() != QSqlError::None)
+          if (availability.lastError().type() != QSqlError::NoError)
           {
             systemError(this, availability.lastError().databaseText(), __FILE__, __LINE__);
             return;
@@ -818,7 +818,7 @@ void transferOrderItem::sDetermineAvailability()
       else
         _availability->setEnabled(FALSE);
     }
-    else if (availability.lastError().type() != QSqlError::None)
+    else if (availability.lastError().type() != QSqlError::NoError)
     {
       systemError(this, availability.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -906,7 +906,7 @@ void transferOrderItem::populate()
       sDetermineAvailability();
     }
   }
-  else if (item.lastError().type() != QSqlError::None)
+  else if (item.lastError().type() != QSqlError::NoError)
   {
     systemError(this, item.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -973,7 +973,7 @@ void transferOrderItem::sNext()
 
     set(params);
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -1046,7 +1046,7 @@ void transferOrderItem::sPrev()
 
     set(params);
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -1094,7 +1094,7 @@ void transferOrderItem::sCancel()
   q.prepare("UPDATE toitem SET toitem_status='X' WHERE (toitem_id=:toitem_id);");
   q.bindValue(":toitem_id", _toitemid);
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -1133,7 +1133,7 @@ void transferOrderItem::sLookupTax()
 			 calcq.value("tax_c").toDouble());
     _tax->setLocalValue(_taxCache.total());
   }
-  else if (calcq.lastError().type() != QSqlError::None)
+  else if (calcq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, calcq.lastError().databaseText(), __FILE__, __LINE__);
     return;

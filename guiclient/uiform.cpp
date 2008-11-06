@@ -188,7 +188,7 @@ void uiform::sSave()
     q.exec("SELECT NEXTVAL('uiform_uiform_id_seq') AS _uiform_id");
     if (q.first())
       _uiformid = q.value("_uiform_id").toInt();
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -210,12 +210,12 @@ void uiform::sSave()
   q.bindValue(":uiform_id", _uiformid);
   q.bindValue(":uiform_name", _name->text());
   q.bindValue(":uiform_order", _order->value());
-  q.bindValue(":uiform_enabled", QVariant(_enabled->isChecked(), 0));
+  q.bindValue(":uiform_enabled", QVariant(_enabled->isChecked()));
   q.bindValue(":uiform_source", _source);
   q.bindValue(":uiform_notes", _notes->text());
 
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -244,7 +244,7 @@ void uiform::populate()
 
     sFillList();
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -392,7 +392,7 @@ void uiform::sFillList()
   q.bindValue(":name", _name->text());
   q.exec();
   _script->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -411,7 +411,7 @@ void uiform::sFillList()
   q.bindValue(":name", _name->text());
   q.exec();
   _commands->populate(q);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

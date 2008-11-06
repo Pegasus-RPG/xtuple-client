@@ -68,7 +68,7 @@ class transformTrans : public XWidget, public Ui::transformTrans
     Q_OBJECT
 
 public:
-    transformTrans(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    transformTrans(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~transformTrans();
 
 public slots:

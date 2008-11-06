@@ -116,7 +116,7 @@ void zeroUncountedCountTagsByWarehouse::sZero()
                "FROM invcnt "
                "WHERE (invcnt_qoh_after IS NULL);" );
 
-  q.bindValue(":comments", _comments->text());
+  q.bindValue(":comments", _comments->toPlainText());
   q.exec();
 
   accept();

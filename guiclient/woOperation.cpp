@@ -271,13 +271,13 @@ void woOperation::sSave()
   q.bindValue(":wooper_rntime", _runTime->toDouble());
   q.bindValue(":wooper_rnqtyper", (_runTime->toDouble() / _cachedQtyOrdered));
   q.bindValue(":executionDay", _executionDay->value());
-  q.bindValue(":wooper_instruc", _instructions->text());
-  q.bindValue(":wooper_surpt", QVariant(_reportSetup->isChecked(), 0));
-  q.bindValue(":wooper_sucomplete", QVariant(_setupComplete->isChecked(), 0));
-  q.bindValue(":wooper_rnrpt", QVariant(_reportRun->isChecked(), 0));
-  q.bindValue(":wooper_rncomplete", QVariant(_runComplete->isChecked(), 0));
-  q.bindValue(":wooper_rcvinv", QVariant(_receiveStock->isChecked(), 0));
-  q.bindValue(":wooper_issuecomp", QVariant(_issueComp->isChecked(), 0));
+  q.bindValue(":wooper_instruc", _instructions->toPlainText());
+  q.bindValue(":wooper_surpt", QVariant(_reportSetup->isChecked()));
+  q.bindValue(":wooper_sucomplete", QVariant(_setupComplete->isChecked()));
+  q.bindValue(":wooper_rnrpt", QVariant(_reportRun->isChecked()));
+  q.bindValue(":wooper_rncomplete", QVariant(_runComplete->isChecked()));
+  q.bindValue(":wooper_rcvinv", QVariant(_receiveStock->isChecked()));
+  q.bindValue(":wooper_issuecomp", QVariant(_issueComp->isChecked()));
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
   {

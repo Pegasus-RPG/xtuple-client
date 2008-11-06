@@ -68,7 +68,7 @@ class woTimeClock : public XWidget, public Ui::woTimeClock
     Q_OBJECT
 
 public:
-    woTimeClock(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    woTimeClock(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~woTimeClock();
 
     virtual bool close( bool alsoDelete );

@@ -68,7 +68,7 @@ class warehouses : public XWidget, public Ui::warehouses
     Q_OBJECT
 
 public:
-    warehouses(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    warehouses(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~warehouses();
 
 public slots:

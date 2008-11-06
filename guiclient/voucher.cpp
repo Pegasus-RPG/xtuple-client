@@ -167,7 +167,7 @@ enum SetResponse voucher::set(const ParameterList &pParams)
       q.bindValue(":vohead_id",     _voheadid);
       q.bindValue(":vohead_number", _voucherNumber->text());
       q.exec();
-      if (q.lastError().type() != QSqlError::None)
+      if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return UndefinedError;
@@ -226,7 +226,7 @@ enum SetResponse voucher::set(const ParameterList &pParams)
 
 void voucher::sSave()
 {
-  if (_poNumber->text().stripWhiteSpace().length() == 0)
+  if (_poNumber->text().trimmed().length() == 0)
   {
     QMessageBox::critical( this, tr("Cannot Save Voucher"),
                            tr("<p>You must enter an PO Number before you may "
@@ -262,7 +262,7 @@ void voucher::sSave()
     return;
   }
 
-  if (_invoiceNum->text().stripWhiteSpace().length() == 0)
+  if (_invoiceNum->text().trimmed().length() == 0)
   {
     QMessageBox::critical( this, tr("Cannot Save Voucher"),
                            tr("<p>You must enter a Vendor Invoice Number "
@@ -278,7 +278,7 @@ void voucher::sSave()
                " AND (vohead_invcnumber=:vohead_invcnumber)"
                " AND (pohead_vend_id=:vend_id)"
                " AND (vohead_id<>:vohead_id) );" );
-    q.bindValue(":vohead_invcnumber", _invoiceNum->text().stripWhiteSpace());
+    q.bindValue(":vohead_invcnumber", _invoiceNum->text().trimmed());
     q.bindValue(":vend_id", _poNumber->vendId());
     q.bindValue(":vohead_id", _voheadid);
     q.exec();
@@ -318,10 +318,10 @@ void voucher::sSave()
   q.bindValue(":vohead_distdate", _distributionDate->date());
   q.bindValue(":vohead_docdate", _invoiceDate->date());
   q.bindValue(":vohead_duedate", _dueDate->date());
-  q.bindValue(":vohead_invcnumber", _invoiceNum->text().stripWhiteSpace());
-  q.bindValue(":vohead_reference", _reference->text().stripWhiteSpace());
+  q.bindValue(":vohead_invcnumber", _invoiceNum->text().trimmed());
+  q.bindValue(":vohead_reference", _reference->text().trimmed());
   q.bindValue(":vohead_amount", _amountToDistribute->localValue());
-  q.bindValue(":vohead_1099", QVariant(_flagFor1099->isChecked(), 0));
+  q.bindValue(":vohead_1099", QVariant(_flagFor1099->isChecked()));
   q.bindValue(":vohead_curr_id", _amountToDistribute->id());
   q.exec();
 
@@ -406,7 +406,7 @@ void voucher::sPoList()
 
 void voucher::sPopulate()
 {
-  setCaption(tr("Voucher for P/O #") + _poNumber->text());
+  setWindowTitle(tr("Voucher for P/O #") + _poNumber->text());
 }
 
 void voucher::sDistributions()
@@ -809,13 +809,13 @@ void voucher::closeEvent(QCloseEvent *pEvent)
 	systemError(this, tr("Error deleting temporary Voucher."),
 		    __FILE__, __LINE__);
     }
-    else if (q.lastError().type() != QSqlError::None)
+    else if (q.lastError().type() != QSqlError::NoError)
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 
     q.prepare("SELECT releaseVoNumber(:voucherNumber);" );
     q.bindValue(":voucherNumber", _voucherNumber->text());
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.lastError().type() != QSqlError::NoError)
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
   }
 

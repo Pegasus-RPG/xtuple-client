@@ -201,7 +201,7 @@ void unpostedPurchaseOrders::sDelete()
                                    "%1. If it is 'U' then contact your system "
                                    "Administrator.").arg(list[i]->text(0)),
                           __FILE__, __LINE__);
-          else if (q.lastError().type() != QSqlError::None)
+          else if (q.lastError().type() != QSqlError::NoError)
             systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
           else
             done = true;
@@ -283,7 +283,7 @@ void unpostedPurchaseOrders::sPost()
           else
 			done = true;
 		}
-        else if (q.lastError().type() != QSqlError::None)
+        else if (q.lastError().type() != QSqlError::NoError)
           systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       }
     }
@@ -393,7 +393,7 @@ void unpostedPurchaseOrders::sFillList()
                "ORDER BY pohead_number;" );
   MetaSQLQuery mql(sql);
   q = mql.toQuery(params);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

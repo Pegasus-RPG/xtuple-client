@@ -134,7 +134,7 @@ enum SetResponse updateActualCostsByClassCode::set(ParameterList &pParams)
     if (param.toString() == "standard")
     {
 	_updateActual = false;
-	setCaption(tr("Update Standard Costs By Class Code"));
+	setWindowTitle(tr("Update Standard Costs By Class Code"));
 	_rollUp->setText(tr("&Roll Up Standard Costs"));
     }
     else if (param.toString() != "actual")

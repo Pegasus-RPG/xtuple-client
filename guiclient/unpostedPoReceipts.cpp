@@ -184,7 +184,7 @@ void unpostedPoReceipts::sDelete()
     {
       q.bindValue(":id", ((XTreeWidgetItem*)(selected[i]))->id() );
       q.exec();
-      if (q.lastError().type() != QSqlError::None)
+      if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return;
@@ -248,7 +248,7 @@ void unpostedPoReceipts::sPost()
       setDate.bindValue(":distdate",  newDate);
       setDate.bindValue(":recv_id", id);
       setDate.exec();
-      if (setDate.lastError().type() != QSqlError::None)
+      if (setDate.lastError().type() != QSqlError::NoError)
       {
         systemError(this, setDate.lastError().databaseText(), __FILE__, __LINE__);
       }
@@ -300,7 +300,7 @@ void unpostedPoReceipts::sPost()
         else
           triedToClosed.append(selected[i]);
       }
-      else if (postLine.lastError().type() != QSqlError::None)
+      else if (postLine.lastError().type() != QSqlError::NoError)
       {
         rollback.exec();
         systemError(this, postLine.lastError().databaseText(), __FILE__, __LINE__);

@@ -284,7 +284,7 @@ void warehouseZone::sCheck()
 
 {
 
-  _name->setText(_name->text().stripWhiteSpace());
+  _name->setText(_name->text().trimmed());
 
   if ( (_mode == cNew) && (_name->text().length()) )
 

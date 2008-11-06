@@ -123,7 +123,7 @@ enum SetResponse vendorType::set(const ParameterList &pParams)
 
 void vendorType::sCheck()
 {
-  _code->setText(_code->text().stripWhiteSpace());
+  _code->setText(_code->text().trimmed());
   if ((_mode == cNew) && (_code->text().length()))
   {
     q.prepare( "SELECT vendtype_id "
@@ -157,7 +157,7 @@ void vendorType::sSave()
             " WHERE((vendtype_id != :vendtype_id)"
             "   AND (vendtype_code=:vendtype_code))");
   q.bindValue(":vendtype_id", _vendtypeid);
-  q.bindValue(":vendtype_code", _code->text().stripWhiteSpace());
+  q.bindValue(":vendtype_code", _code->text().trimmed());
   q.exec();
   if(q.first())
   {
@@ -191,8 +191,8 @@ void vendorType::sSave()
                "WHERE (vendtype_id=:vendtype_id);" );
 
   q.bindValue(":vendtype_id", _vendtypeid);
-  q.bindValue(":vendtype_code", _code->text().stripWhiteSpace());
-  q.bindValue(":vendtype_descrip", _description->text().stripWhiteSpace());
+  q.bindValue(":vendtype_code", _code->text().trimmed());
+  q.bindValue(":vendtype_descrip", _description->text().trimmed());
   q.exec();
 
   done(_vendtypeid);

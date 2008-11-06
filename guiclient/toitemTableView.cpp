@@ -329,7 +329,7 @@ void ToitemTableDelegate::setModelData(QWidget *editor, QAbstractItemModel *pMod
 	    model->setData(model->index(index.row(), TOITEM_STDCOST_COL),
 			   formatPurchPrice(itemq.value("stdcost").toDouble()));
 	  }
-	  else if (itemq.lastError().type() != QSqlError::None)
+	  else if (itemq.lastError().type() != QSqlError::NoError)
 	  {
 	    systemError(0, itemq.lastError().databaseText(), __FILE__, __LINE__);
 	    hitError = true;

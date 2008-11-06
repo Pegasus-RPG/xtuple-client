@@ -95,7 +95,7 @@ todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
     _myUsrId = q.value("usr_id").toInt();
     _usr->setId(_myUsrId);
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     close();
@@ -312,7 +312,7 @@ void todoList::sDelete()
     else
       sFillList();
     }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -448,7 +448,7 @@ int todoList::getIncidentId()
     incdt.bindValue(":number", _todoList->currentItem()->text(8).toInt());
     if (incdt.exec() && incdt.first())
      returnVal = incdt.value("incdt_id").toInt();
-    else if (incdt.lastError().type() != QSqlError::None)
+    else if (incdt.lastError().type() != QSqlError::NoError)
       systemError(this, incdt.lastError().databaseText(), __FILE__, __LINE__);
   }
 
@@ -495,7 +495,7 @@ void todoList::sCustomerInfo()
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
-  else if (cust.lastError().type() != QSqlError::None)
+  else if (cust.lastError().type() != QSqlError::NoError)
     systemError(this, cust.lastError().databaseText(), __FILE__, __LINE__);
 
 }

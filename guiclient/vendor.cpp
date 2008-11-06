@@ -327,10 +327,10 @@ void vendor::sSave()
     QString     msg;
     QWidget    *widget;
   } error[] = {
-    { _number->text().stripWhiteSpace().length() == 0,
+    { _number->text().trimmed().length() == 0,
       tr("Please enter a Number for this new Vendor."),
       _number },
-    { _name->text().stripWhiteSpace().length() == 0,
+    { _name->text().trimmed().length() == 0,
       tr("Please enter a Name for this new Vendor."),
       _name },
     { _defaultTerms->id() == -1,
@@ -367,13 +367,13 @@ void vendor::sSave()
       return;
     }
 
-  if (_number->text().stripWhiteSpace().upper() != _cachedNumber.upper())
+  if (_number->text().trimmed().toUpper() != _cachedNumber.upper())
   {
     q.prepare( "SELECT vend_name "
 	       "FROM vendinfo "
 	       "WHERE (UPPER(vend_number)=UPPER(:vend_number)) "
 	       "  AND (vend_id<>:vend_id);" );
-    q.bindValue(":vend_number", _number->text().stripWhiteSpace());
+    q.bindValue(":vend_number", _number->text().trimmed());
     q.bindValue(":vend_id", _vendid);
     q.exec();
     if (q.first())
@@ -548,9 +548,9 @@ void vendor::sSave()
   params.append("vend_terms_id", _defaultTerms->id());
   params.append("vend_curr_id", _defaultCurr->id());
 
-  params.append("vend_number", _number->text().stripWhiteSpace().upper());
-  params.append("vend_accntnum", _accountNumber->text().stripWhiteSpace());
-  params.append("vend_name", _name->text().stripWhiteSpace());
+  params.append("vend_number",   _number->text().trimmed().upper());
+  params.append("vend_accntnum", _accountNumber->text().trimmed());
+  params.append("vend_name",     _name->text().trimmed());
 
   if (_contact1->id() > 0)
     params.append("vend_cntct1_id", _contact1->id());		// else NULL
@@ -559,31 +559,31 @@ void vendor::sSave()
   if (_address->id() > 0)
     params.append("vend_addr_id", _address->id());		// else NULL
 
-  params.append("vend_comments", _notes->text());
-  params.append("vend_pocomments", _poComments->text());
-  params.append("vend_shipvia", _defaultShipVia->text());
+  params.append("vend_comments",   _notes->toPlainText());
+  params.append("vend_pocomments", _poComments->toPlainText());
+  params.append("vend_shipvia",    _defaultShipVia->text());
 
-  params.append("vend_active", QVariant(_active->isChecked()));
-  params.append("vend_po", QVariant(_poItems->isChecked()));
+  params.append("vend_active",        QVariant(_active->isChecked()));
+  params.append("vend_po",            QVariant(_poItems->isChecked()));
   params.append("vend_restrictpurch", QVariant(_restrictToItemSource->isChecked()));
-  params.append("vend_1099", QVariant(_receives1099->isChecked()));
-  params.append("vend_qualified", QVariant(_qualified->isChecked()));
-  params.append("vend_match", QVariant(_match->isChecked()));
+  params.append("vend_1099",          QVariant(_receives1099->isChecked()));
+  params.append("vend_qualified",     QVariant(_qualified->isChecked()));
+  params.append("vend_match",         QVariant(_match->isChecked()));
 
   params.append("vend_emailpodelivery", QVariant(_emailPODelivery->isChecked()));
-  params.append("vend_ediemail", _ediEmail->text());
-  params.append("vend_ediemailbody", _ediEmailBody->text());
-  params.append("vend_edisubject", _ediSubject->text());
-  params.append("vend_edifilename", _ediFilename->text());
-  params.append("vend_edicc", _ediCC->text().stripWhiteSpace());
+  params.append("vend_ediemail",     _ediEmail->text());
+  params.append("vend_ediemailbody", _ediEmailBody->toPlainText());
+  params.append("vend_edisubject",   _ediSubject->text());
+  params.append("vend_edifilename",  _ediFilename->text());
+  params.append("vend_edicc",        _ediCC->text().trimmed());
 
   params.append("key",                   omfgThis->_key);
   params.append("vend_ach_enabled",      QVariant(_achGroup->isChecked()));
-  params.append("vend_ach_routingnumber",_routingNumber->text().stripWhiteSpace());
-  params.append("vend_ach_accntnumber",  _achAccountNumber->text().stripWhiteSpace());
+  params.append("vend_ach_routingnumber",_routingNumber->text().trimmed());
+  params.append("vend_ach_accntnumber",  _achAccountNumber->text().trimmed());
   params.append("vend_ach_use_vendinfo", QVariant(! _useACHSpecial->isChecked()));
-  params.append("vend_ach_indiv_number", _individualId->text().stripWhiteSpace());
-  params.append("vend_ach_indiv_name",   _individualName->text().stripWhiteSpace());
+  params.append("vend_ach_indiv_number", _individualId->text().trimmed());
+  params.append("vend_ach_indiv_name",   _individualName->text().trimmed());
 
   if (_accountType->currentItem() == 0)
     params.append("vend_ach_accnttype",  "K");
@@ -601,12 +601,12 @@ void vendor::sSave()
   else if (_useVendorFOB)
   {
     params.append("vend_fobsource", "V");
-    params.append("vend_fob", _vendorFOB->text().stripWhiteSpace());
+    params.append("vend_fob", _vendorFOB->text().trimmed());
   }
 
   MetaSQLQuery mql(sql);
   q = mql.toQuery(params);
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -625,7 +625,7 @@ void vendor::sSave()
     _contact1->setAccount(_crmacctid);
     _contact2->setAccount(_crmacctid);
   }
-  else if (!q.lastError().type() == QSqlError::None)
+  else if (!q.lastError().type() == QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -661,7 +661,7 @@ void vendor::sCheck()
 //  Switch to cEdit and populate if so.
   if (_number->text().length())
   {
-    _number->setText(_number->text().stripWhiteSpace().upper());
+    _number->setText(_number->text().trimmed().toUpper());
     if(cNew == _mode && -1 != _NumberGen && _number->text().toInt() != _NumberGen)
     {
       XSqlQuery query;
@@ -769,7 +769,7 @@ void vendor::populate()
     sFillTaxregList();
     _comments->setId(_vendid);
   }
-  else if (q.lastError().type() == QSqlError::None)
+  else if (q.lastError().type() == QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -782,7 +782,7 @@ void vendor::populate()
   q.exec();
   if (q.first())
     _crmacctid = q.value("crmacct_id").toInt();
-  else if (q.lastError().type() != QSqlError::None)
+  else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -873,7 +873,7 @@ void vendor::sFillTaxregList()
   taxreg.exec();
   _taxreg->clear();
   _taxreg->populate(taxreg, true);
-  if (taxreg.lastError().type() != QSqlError::None)
+  if (taxreg.lastError().type() != QSqlError::NoError)
   {
     systemError(this, taxreg.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -922,7 +922,7 @@ void vendor::sDeleteTaxreg()
             "WHERE (taxreg_id=:taxreg_id);");
   q.bindValue(":taxreg_id", _taxreg->id());
   q.exec();
-  if (q.lastError().type() != QSqlError::None)
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;

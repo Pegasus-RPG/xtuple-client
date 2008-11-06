@@ -252,7 +252,7 @@ void taxDetail::sCalculateTax()
     _amountC->setLocalValue(calcq.value("ratec").toDouble());
     sCalculateTotal();
   }
-  else if (calcq.lastError().type() != QSqlError::None)
+  else if (calcq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, calcq.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -343,7 +343,7 @@ void taxDetail::sPopulate()
       _amountC->setEnabled(! _readonly);
     }
   }
-  else if (popq.lastError().type() != QSqlError::None)
+  else if (popq.lastError().type() != QSqlError::NoError)
   {
     systemError(this, popq.lastError().databaseText(), __FILE__, __LINE__);
     return;

@@ -191,7 +191,7 @@ void whseCalendar::sSave()
   _dates->bindValue(q);
   q.bindValue(":whsecal_id", _whsecalid);
   q.bindValue(":whsecal_descrip", _description->text());
-  q.bindValue(":whsecal_active", QVariant(_active->isChecked(), 0));
+  q.bindValue(":whsecal_active", QVariant(_active->isChecked()));
   q.exec();
 
   done(_whsecalid);

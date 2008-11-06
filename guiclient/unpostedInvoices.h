@@ -68,7 +68,7 @@ class unpostedInvoices : public XWidget, public Ui::unpostedInvoices
     Q_OBJECT
 
 public:
-    unpostedInvoices(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    unpostedInvoices(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~unpostedInvoices();
     virtual bool checkSitePrivs(int invcid);
 
