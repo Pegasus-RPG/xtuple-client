@@ -5,143 +5,158 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>725</width>
-    <height>366</height>
+    <width>638</width>
+    <height>431</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Batch Manager</string>
   </property>
   <widget class="QWidget" name="widget" >
-   <layout class="QVBoxLayout" >
-    <property name="margin" >
-     <number>5</number>
-    </property>
-    <property name="spacing" >
-     <number>5</number>
-    </property>
-    <item>
-     <layout class="QHBoxLayout" >
-      <property name="margin" >
-       <number>0</number>
+   <layout class="QGridLayout" >
+    <item row="0" column="0" >
+     <layout class="QGridLayout" >
+      <property name="leftMargin" >
+       <number>12</number>
       </property>
-      <property name="spacing" >
-       <number>7</number>
+      <property name="topMargin" >
+       <number>12</number>
       </property>
-      <item>
-       <widget class="QGroupBox" name="_userGroup" >
-        <property name="title" >
-         <string>Submitted By:</string>
-        </property>
-        <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>5</number>
-         </property>
-         <property name="spacing" >
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QRadioButton" name="_currentUser" >
-           <property name="text" >
-            <string>Current &amp;User</string>
-           </property>
-           <property name="checked" >
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QRadioButton" name="_allUsers" >
-           <property name="text" >
-            <string>All Users</string>
-           </property>
-           <property name="checked" >
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" >
-           <property name="margin" >
+      <property name="rightMargin" >
+       <number>12</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>12</number>
+      </property>
+      <property name="horizontalSpacing" >
+       <number>12</number>
+      </property>
+      <property name="verticalSpacing" >
+       <number>12</number>
+      </property>
+      <item row="0" column="0" >
+       <layout class="QHBoxLayout" >
+        <item>
+         <widget class="QGroupBox" name="_userGroup" >
+          <property name="title" >
+           <string>Submitted By:</string>
+          </property>
+          <layout class="QGridLayout" >
+           <property name="leftMargin" >
             <number>0</number>
            </property>
-           <property name="spacing" >
-            <number>5</number>
+           <property name="topMargin" >
+            <number>0</number>
            </property>
-           <item>
-            <widget class="QRadioButton" name="_selectedUser" >
-             <property name="text" >
-              <string>&amp;Selected User</string>
-             </property>
-            </widget>
+           <property name="rightMargin" >
+            <number>0</number>
+           </property>
+           <property name="bottomMargin" >
+            <number>0</number>
+           </property>
+           <property name="horizontalSpacing" >
+            <number>0</number>
+           </property>
+           <item row="0" column="0" >
+            <layout class="QVBoxLayout" >
+             <item>
+              <widget class="QRadioButton" name="_currentUser" >
+               <property name="text" >
+                <string>Current &amp;User</string>
+               </property>
+               <property name="checked" >
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="_allUsers" >
+               <property name="text" >
+                <string>All Users</string>
+               </property>
+               <property name="checked" >
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="_selectedUser" >
+               <property name="text" >
+                <string>&amp;Selected User</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
-           <item>
-            <widget class="XComboBox" name="_usr" >
-             <property name="enabled" >
-              <bool>false</bool>
+           <item row="0" column="1" >
+            <layout class="QVBoxLayout" >
+             <property name="bottomMargin" >
+              <number>8</number>
              </property>
-             <property name="sizePolicy" >
-              <sizepolicy>
-               <hsizetype>1</hsizetype>
-               <vsizetype>1</vsizetype>
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize" >
-              <size>
-               <width>80</width>
-               <height>25</height>
-              </size>
-             </property>
-            </widget>
+             <item>
+              <spacer>
+               <property name="orientation" >
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" >
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="XComboBox" name="_usr" >
+               <property name="enabled" >
+                <bool>false</bool>
+               </property>
+               <property name="sizePolicy" >
+                <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize" >
+                <size>
+                 <width>80</width>
+                 <height>25</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
           </layout>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item>
-       <layout class="QVBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
-        <property name="spacing" >
-         <number>0</number>
-        </property>
-        <item>
-         <widget class="QCheckBox" name="_showCompleted" >
-          <property name="text" >
-           <string>Show Completed Actions</string>
-          </property>
          </widget>
         </item>
         <item>
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeType" >
-           <enum>QSizePolicy::Preferred</enum>
-          </property>
-          <property name="sizeHint" >
-           <size>
-            <width>20</width>
-            <height>75</height>
-           </size>
-          </property>
-         </spacer>
+         <layout class="QVBoxLayout" >
+          <item>
+           <widget class="QCheckBox" name="_showCompleted" >
+            <property name="text" >
+             <string>Show Completed Actions</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeType" >
+             <enum>QSizePolicy::Preferred</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>20</width>
+              <height>75</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
         </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
-        <property name="spacing" >
-         <number>0</number>
-        </property>
         <item>
          <spacer>
           <property name="orientation" >
@@ -152,7 +167,7 @@
           </property>
           <property name="sizeHint" >
            <size>
-            <width>20</width>
+            <width>41</width>
             <height>20</height>
            </size>
           </property>
@@ -160,20 +175,8 @@
         </item>
         <item>
          <layout class="QVBoxLayout" >
-          <property name="margin" >
-           <number>0</number>
-          </property>
-          <property name="spacing" >
-           <number>0</number>
-          </property>
           <item>
            <widget class="QPushButton" name="_close" >
-            <property name="minimumSize" >
-             <size>
-              <width>100</width>
-              <height>30</height>
-             </size>
-            </property>
             <property name="text" >
              <string>&amp;Close</string>
             </property>
@@ -189,8 +192,8 @@
             </property>
             <property name="sizeHint" >
              <size>
-              <width>20</width>
-              <height>70</height>
+              <width>88</width>
+              <height>61</height>
              </size>
             </property>
            </spacer>
@@ -199,165 +202,146 @@
         </item>
        </layout>
       </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QVBoxLayout" >
-      <property name="margin" >
-       <number>0</number>
-      </property>
-      <property name="spacing" >
-       <number>0</number>
-      </property>
-      <item>
-       <layout class="QVBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
+      <item row="1" column="0" >
+       <widget class="QFrame" name="_frame" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+          <horstretch>0</horstretch>
+          <verstretch>1</verstretch>
+         </sizepolicy>
         </property>
-        <property name="spacing" >
-         <number>0</number>
+        <property name="frameShape" >
+         <enum>QFrame::NoFrame</enum>
         </property>
-        <item>
-         <widget class="QLabel" name="_batchLit" >
-          <property name="sizePolicy" >
-           <sizepolicy>
-            <hsizetype>7</hsizetype>
-            <vsizetype>0</vsizetype>
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize" >
-           <size>
-            <width>0</width>
-            <height>20</height>
-           </size>
-          </property>
-          <property name="text" >
-           <string>Batch:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" >
-          <property name="margin" >
-           <number>0</number>
-          </property>
-          <property name="spacing" >
-           <number>7</number>
-          </property>
-          <item>
-           <widget class="XTreeWidget" name="_batch" >
-            <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>7</hsizetype>
-              <vsizetype>7</vsizetype>
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize" >
-             <size>
-              <width>0</width>
-              <height>100</height>
-             </size>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <layout class="QVBoxLayout" >
-            <property name="margin" >
-             <number>0</number>
-            </property>
-            <property name="spacing" >
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="QPushButton" name="_reschedule" >
-              <property name="enabled" >
-               <bool>false</bool>
-              </property>
-              <property name="minimumSize" >
-               <size>
-                <width>100</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="text" >
-               <string>&amp;Reschedule</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="_cancel" >
-              <property name="enabled" >
-               <bool>false</bool>
-              </property>
-              <property name="minimumSize" >
-               <size>
-                <width>100</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="text" >
-               <string>Ca&amp;ncel</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer>
-              <property name="orientation" >
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeType" >
-               <enum>QSizePolicy::Expanding</enum>
-              </property>
-              <property name="sizeHint" >
-               <size>
-                <width>10</width>
-                <height>61</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
+        <property name="frameShadow" >
+         <enum>QFrame::Raised</enum>
         </property>
-        <property name="spacing" >
-         <number>0</number>
-        </property>
-        <item>
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeType" >
-           <enum>QSizePolicy::Expanding</enum>
-          </property>
-          <property name="sizeHint" >
-           <size>
-            <width>20</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="_autoUpdate" >
-          <property name="text" >
-           <string>Automatically Update</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
+        <layout class="QGridLayout" >
+         <property name="leftMargin" >
+          <number>0</number>
+         </property>
+         <property name="topMargin" >
+          <number>0</number>
+         </property>
+         <property name="rightMargin" >
+          <number>0</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>0</number>
+         </property>
+         <item row="0" column="0" >
+          <layout class="QVBoxLayout" >
+           <property name="spacing" >
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="_batchLit" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize" >
+              <size>
+               <width>0</width>
+               <height>20</height>
+              </size>
+             </property>
+             <property name="text" >
+              <string>Batch:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" >
+             <property name="spacing" >
+              <number>7</number>
+             </property>
+             <item>
+              <widget class="XTreeWidget" name="_batch" >
+               <property name="sizePolicy" >
+                <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize" >
+                <size>
+                 <width>0</width>
+                 <height>100</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <layout class="QVBoxLayout" >
+               <property name="spacing" >
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QPushButton" name="_reschedule" >
+                 <property name="enabled" >
+                  <bool>false</bool>
+                 </property>
+                 <property name="minimumSize" >
+                  <size>
+                   <width>100</width>
+                   <height>30</height>
+                  </size>
+                 </property>
+                 <property name="text" >
+                  <string>&amp;Reschedule</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="_cancel" >
+                 <property name="enabled" >
+                  <bool>false</bool>
+                 </property>
+                 <property name="minimumSize" >
+                  <size>
+                   <width>100</width>
+                   <height>30</height>
+                  </size>
+                 </property>
+                 <property name="text" >
+                  <string>Ca&amp;ncel</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer>
+                 <property name="orientation" >
+                  <enum>Qt::Vertical</enum>
+                 </property>
+                 <property name="sizeType" >
+                  <enum>QSizePolicy::Expanding</enum>
+                 </property>
+                 <property name="sizeHint" >
+                  <size>
+                   <width>10</width>
+                   <height>61</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </item>
+         <item row="1" column="0" >
+          <widget class="QCheckBox" name="_autoUpdate" >
+           <property name="text" >
+            <string>Automatically Update</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
       </item>
      </layout>
     </item>
@@ -368,14 +352,14 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>XTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>xtreewidget.h</header>
-  </customwidget>
-  <customwidget>
    <class>XComboBox</class>
    <extends>QComboBox</extends>
    <header>xcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
