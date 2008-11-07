@@ -124,12 +124,10 @@ class OPENMFGWIDGETS_EXPORT Comments : public QWidget
     void sView();
     void refresh();
 
-  signals:
-    void commentAdded();
-
   private:
     enum CommentSources _source;
     int                 _sourceid;
+    QList<QVariant> _commentIDList;
 
     XTreeWidget *_comment;
     QPushButton *_newComment;

@@ -56,6 +56,7 @@
  */
 
 #include <QHBoxLayout>
+
 #include <QLabel>
 #include <QLayout>
 #include <QMessageBox>
@@ -66,6 +67,7 @@
 #include <QVBoxLayout>
 #include <QVariant>
 #include <QWhatsThis>
+#include <QVector>
 
 #include <parameter.h>
 
@@ -115,6 +117,13 @@ comment::comment( QWidget* parent, const char* name, bool modal, Qt::WFlags fl )
 
   _save = new QPushButton(tr("&Save"), this, "_save");
   Layout180->addWidget( _save );
+
+  _next = new QPushButton(tr("&Next"), this, "_next");
+  Layout180->addWidget( _next );
+
+  _prev = new QPushButton(tr("&Previous"), this, "_prev");
+  Layout180->addWidget( _prev );
+
   Layout181->addLayout( Layout180 );
   QSpacerItem* spacer_2 = new QSpacerItem( 20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding );
   Layout181->addItem( spacer_2 );
@@ -124,8 +133,10 @@ comment::comment( QWidget* parent, const char* name, bool modal, Qt::WFlags fl )
   //clearWState( WState_Polished );
 
 // signals and slots connections
-  connect( _save, SIGNAL( clicked() ), this, SLOT( sSave() ) );
-  connect( _close, SIGNAL( clicked() ), this, SLOT( reject() ) );
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(_next, SIGNAL(clicked()), this, SLOT(sNextComment()));
+  connect(_prev, SIGNAL(clicked()), this, SLOT(sPrevComment()));
 
 // tab order
   setTabOrder( _cmnttype, _comment );
@@ -140,6 +151,31 @@ void comment::set(ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
+
+  param = pParams.value("comment_id", &valid);
+  if (valid)
+  {
+    _cmnttype->setType(XComboBox::AllCommentTypes);
+    _commentid = param.toInt();
+    populate();
+  }
+
+  param = pParams.value("commentIDList", &valid);
+  if (valid)
+  {
+    _commentIDList = param.toList();
+    _commentLocation = _commentIDList.indexOf(_commentid);
+
+    if((_commentLocation-1) >= 0)
+      _prev->setEnabled(true); 
+    else
+      _prev->setEnabled(false); 
+
+    if((_commentLocation+1) < _commentIDList.size())
+      _next->setEnabled(true); 
+    else
+      _next->setEnabled(false); 
+  }
 
   param = pParams.value("cust_id", &valid);
   if (valid)
@@ -301,14 +337,6 @@ void comment::set(ParameterList &pParams)
   if (valid)
     _targetId = param.toInt();
 
-  param = pParams.value("comment_id", &valid);
-  if (valid)
-  {
-    _cmnttype->setType(XComboBox::AllCommentTypes);
-    _commentid = param.toInt();
-    populate();
-  }
-
   param = pParams.value("mode", &valid);
   if (valid)
   {
@@ -317,11 +345,14 @@ void comment::set(ParameterList &pParams)
       _mode = cNew;
       
       _comment->setFocus();
+      _next->setVisible(false);
+      _prev->setVisible(false);
     }
     else if (param.toString() == "view")
     {
       _mode = cView;
-
+      _next->setVisible(true);
+      _prev->setVisible(true);
       _cmnttype->setEnabled(FALSE);
       _comment->setReadOnly(TRUE);
       _save->hide();
@@ -387,5 +418,43 @@ void comment::populate()
     QMessageBox::critical(this, tr("Error Selecting Comment"),
                           _query.lastError().databaseText());
     return;
+  }
+}
+
+void comment::sNextComment()
+{
+  if((_commentLocation+1) < _commentIDList.size())
+  {
+    _commentLocation++;
+    _commentid = _commentIDList[_commentLocation].toInt();
+    populate();
+    if((_commentLocation+1) < _commentIDList.size())
+      _next->setEnabled(true); 
+    else
+      _next->setEnabled(false); 
+
+    if((_commentLocation-1) >= 0)
+      _prev->setEnabled(true); 
+    else
+      _prev->setEnabled(false); 
+  }
+}
+
+void comment::sPrevComment()
+{
+  if((_commentLocation-1) >= 0)
+  {
+    _commentLocation--;
+    _commentid = _commentIDList[_commentLocation].toInt();
+    populate();
+    if((_commentLocation-1) >= 0)
+      _prev->setEnabled(true); 
+    else
+      _prev->setEnabled(false); 
+
+    if((_commentLocation+1) < _commentIDList.size())
+      _next->setEnabled(true); 
+    else
+      _next->setEnabled(false); 
   }
 }

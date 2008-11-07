@@ -60,6 +60,7 @@
 #include <QLayout>
 #include <QPushButton>
 #include <QVBoxLayout>
+#include <QList>
 
 #include <parameter.h>
 #include <xsqlquery.h>
@@ -181,10 +182,7 @@ void Comments::sNew()
   newdlg.set(params);
 
   if (newdlg.exec() != QDialog::Rejected)
-  {
-    emit commentAdded();
     refresh();
-  }
 }
 
 void Comments::sView()
@@ -192,6 +190,7 @@ void Comments::sView()
   ParameterList params;
   params.append("mode", "view");
   params.append("comment_id", _comment->id());
+  params.append("commentIDList", _commentIDList);
 
   comment newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -271,5 +270,13 @@ void Comments::refresh()
   comment.bindValue(":source", _commentMap[_source].ident);
   comment.bindValue(":sourceid", _sourceid);
   comment.exec();
+
+  _commentIDList.clear();
+  while(comment.next())
+  {
+    _commentIDList.push_back(comment.value("comment_id").toInt());
+  }
+
+  comment.first();
   _comment->populate(comment);
 }

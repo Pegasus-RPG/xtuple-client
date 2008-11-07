@@ -84,14 +84,20 @@ class OPENMFGWIDGETS_EXPORT comment : public QDialog
     QTextEdit* _comment;
     QPushButton* _close;
     QPushButton* _save;
+    QPushButton* _next;
+    QPushButton* _prev;
 
   public slots:
     virtual void set( ParameterList & pParams );
     virtual void sSave();
     virtual void populate();
+    virtual void sNextComment();
+    virtual void sPrevComment();
 
   private:
     XSqlQuery _query;
+    QList <QVariant> _commentIDList;
+    int _commentLocation;
     int _commentid;
     int _targetId;
     int _mode;
