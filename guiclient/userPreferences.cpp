@@ -236,6 +236,10 @@ void userPreferences::sPopulate()
 
   _idleTimeout->setValue(_pref->value("IdleTimeout").toInt());
 
+  _alarmEvent->setChecked(_pref->boolean("AlarmEventDefault"));
+  _alarmEmail->setChecked(_pref->boolean("AlarmEmailDefault"));
+  _alarmSysmsg->setChecked(_pref->boolean("AlarmSysmsgDefault"));
+
   if(_pref->value("DefaultEllipsesAction") == "search")
     _ellipsesAction->setId(2);
   else
@@ -304,6 +308,10 @@ void userPreferences::sSave()
     _pref->set("InterfaceWindowOption", QString("TopLevel"));
   else
     _pref->set("InterfaceWindowOption", QString("Workspace"));
+
+  _pref->set("AlarmEventDefault", _alarmEvent->isChecked());
+  _pref->set("AlarmEmailDefault", _alarmEmail->isChecked());
+  _pref->set("AlarmSysmsgDefault", _alarmSysmsg->isChecked());
 
   if (_currentUser->isChecked())
   {

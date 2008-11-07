@@ -198,7 +198,6 @@ enum SetResponse todoItem::set(const ParameterList &pParams)
   if (valid)
   {
     _todoitemid = param.toInt();
-    _alarms->setId(_todoitemid);
     sPopulate();
   }
 
@@ -322,6 +321,9 @@ void todoItem::sPopulate()
       _due->setEnabled(true);
       _description->setEnabled(true);
     }
+
+    _alarms->setId(_todoitemid);
+
   }
   else if (q.lastError().type() != QSqlError::NoError)
   {
