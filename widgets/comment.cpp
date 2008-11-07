@@ -118,11 +118,11 @@ comment::comment( QWidget* parent, const char* name, bool modal, Qt::WFlags fl )
   _save = new QPushButton(tr("&Save"), this, "_save");
   Layout180->addWidget( _save );
 
-  _next = new QPushButton(tr("&Next"), this, "_next");
-  Layout180->addWidget( _next );
-
   _prev = new QPushButton(tr("&Previous"), this, "_prev");
   Layout180->addWidget( _prev );
+
+  _next = new QPushButton(tr("&Next"), this, "_next");
+  Layout180->addWidget( _next );
 
   Layout181->addLayout( Layout180 );
   QSpacerItem* spacer_2 = new QSpacerItem( 20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding );
