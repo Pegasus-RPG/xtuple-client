@@ -128,6 +128,7 @@ class OPENMFGWIDGETS_EXPORT UsernameCluster : public QWidget
     QString label() const;
 
   public slots:
+    void sList();
     void setLabel(QString);
     void setUsername(const QString & pUsername);
     void setReadOnly(bool);
@@ -136,9 +137,6 @@ class OPENMFGWIDGETS_EXPORT UsernameCluster : public QWidget
   signals:
     void newId(int);
     void valid(bool);
-
-  private slots:
-    void sList();
 
   private:
     UsernameLineEdit * _username;

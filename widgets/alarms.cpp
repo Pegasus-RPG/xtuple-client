@@ -157,6 +157,25 @@ void Alarms::setRecipient2(int pRecipient)
 void Alarms::setDate(QDate pDate)
 {
   _dueDate = pDate;
+
+  XSqlQuery q;
+  
+  q.prepare("SELECT saveAlarm(alarm_id, alarm_number,"
+            "                 :alarm_date, LOCALTIME, alarm_time_offset, alarm_time_qualifier,"
+            "                 alarm_event, alarm_event_recipient,"
+            "                 alarm_email, alarm_email_recipient,"
+            "                 alarm_sysmsg, alarm_sysmsg_recipient,"
+            "                 alarm_source, alarm_source_id, 'CHANGEALL') AS result "
+            "FROM alarm "
+            "WHERE ( (alarm_source=:alarm_source)"
+            "  AND   (alarm_source_id=:alarm_source_id) ); ");
+
+  q.bindValue(":alarm_date", _dueDate);
+  q.bindValue(":alarm_source", Alarms::_alarmMap[_source].ident);
+  q.bindValue(":alarm_source_id", _sourceid);
+  q.exec();
+  
+  refresh();
 }
 
 void Alarms::setReadOnly(bool pReadOnly)

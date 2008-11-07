@@ -81,6 +81,9 @@ alarmMaint::alarmMaint(QWidget* parent, const char* name, bool modal, Qt::WFlags
     // signals and slots connections
     connect(_cancel, SIGNAL(clicked()), this, SLOT(reject()));
     connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+    connect(_userLookup, SIGNAL(clicked()), this, SLOT(sUserLookup()));
+    connect(_contactCluster, SIGNAL(newId(int)), this, SLOT(sContactLookup(int)));
+    connect(_usernameCluster, SIGNAL(newId(int)), this, SLOT(sUserLookup(int)));
 
     _mode = cNew;
     _source = Alarms::Uninitialized;
@@ -94,6 +97,10 @@ alarmMaint::alarmMaint(QWidget* parent, const char* name, bool modal, Qt::WFlags
       _alarmTime->setTime(tickle.value("dbdate").toTime());
     }
     
+    _eventAlarm->setChecked(_x_preferences && _x_preferences->boolean("AlarmEventDefault"));
+    _emailAlarm->setChecked(_x_preferences && _x_preferences->boolean("AlarmEmailDefault"));
+    _sysmsgAlarm->setChecked(_x_preferences && _x_preferences->boolean("AlarmSysmsgDefault"));
+
     sHandleButtons();
 }
 
@@ -129,10 +136,7 @@ void alarmMaint::set( const ParameterList & pParams )
 
   param = pParams.value("due_date", &valid);
   if(valid)
-  {
-    qDebug(QString("setting _alarmDate"));
     _alarmDate->setDate(param.toDate());
-  }
 
   param = pParams.value("recipient1", &valid);
   if(valid)
@@ -198,6 +202,26 @@ void alarmMaint::sSave()
 
 void alarmMaint::sHandleButtons()
 {
+  _contactCluster->hide();
+}
+
+void alarmMaint::sUserLookup(int pId)
+{
+  sGetUser(pId);
+}
+
+void alarmMaint::sContactLookup(int pId)
+{
+  QString recipient;
+  recipient = _emailRecipient->text();
+  if (recipient.length() == 0)
+    recipient = _contactCluster->emailAddress();
+  else if (recipient != _contactCluster->emailAddress())
+  {
+    recipient += ",";
+    recipient += _contactCluster->emailAddress();
+  }
+  _emailRecipient->setText(recipient);
 }
 
 void alarmMaint::sGetUser(int pUsrId)

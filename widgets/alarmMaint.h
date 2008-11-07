@@ -79,6 +79,8 @@ public slots:
     virtual void sGetUser(int pUsrId);
     virtual void sPopulate();
     virtual void sHandleButtons();
+    virtual void sUserLookup(int pId);
+    virtual void sContactLookup(int pId);
 
 protected slots:
     virtual void languageChange();
