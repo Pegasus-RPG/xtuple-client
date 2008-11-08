@@ -492,8 +492,8 @@
         <attribute name="title" >
          <string>Tax</string>
         </attribute>
-        <layout class="QVBoxLayout" >
-         <item>
+        <layout class="QGridLayout" >
+         <item row="0" column="0" >
           <widget class="QCheckBox" name="_receives1099" >
            <property name="text" >
             <string>Receives a &amp;1099</string>
@@ -503,7 +503,7 @@
            </property>
           </widget>
          </item>
-         <item>
+         <item row="1" column="0" >
           <layout class="QHBoxLayout" >
            <property name="spacing" >
             <number>5</number>
@@ -549,7 +549,7 @@
            </item>
           </layout>
          </item>
-         <item>
+         <item row="2" column="0" >
           <layout class="QHBoxLayout" >
            <item>
             <layout class="QVBoxLayout" >
@@ -653,8 +653,8 @@
         <attribute name="title" >
          <string>Contacts</string>
         </attribute>
-        <layout class="QVBoxLayout" >
-         <item>
+        <layout class="QGridLayout" >
+         <item row="0" column="0" >
           <widget class="QGroupBox" name="_contact1Box" >
            <property name="title" >
             <string/>
@@ -691,7 +691,7 @@
            </layout>
           </widget>
          </item>
-         <item>
+         <item row="1" column="0" >
           <widget class="QGroupBox" name="_contact2Box" >
            <property name="title" >
             <string/>
@@ -725,7 +725,7 @@
            </layout>
           </widget>
          </item>
-         <item>
+         <item row="2" column="0" >
           <spacer>
            <property name="orientation" >
             <enum>Qt::Vertical</enum>
@@ -943,23 +943,8 @@
         <attribute name="title" >
          <string>Notes</string>
         </attribute>
-        <layout class="QHBoxLayout" >
-         <property name="spacing" >
-          <number>5</number>
-         </property>
-         <property name="leftMargin" >
-          <number>5</number>
-         </property>
-         <property name="topMargin" >
-          <number>5</number>
-         </property>
-         <property name="rightMargin" >
-          <number>5</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>5</number>
-         </property>
-         <item>
+        <layout class="QGridLayout" >
+         <item row="0" column="0" >
           <widget class="QTextEdit" name="_notes" />
          </item>
         </layout>
@@ -985,43 +970,62 @@
         <attribute name="title" >
          <string>Order Notes</string>
         </attribute>
-        <layout class="QHBoxLayout" >
-         <property name="spacing" >
-          <number>5</number>
-         </property>
-         <property name="leftMargin" >
-          <number>5</number>
-         </property>
-         <property name="topMargin" >
-          <number>5</number>
-         </property>
-         <property name="rightMargin" >
-          <number>5</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>5</number>
-         </property>
-         <item>
+        <layout class="QGridLayout" >
+         <item row="0" column="0" >
           <widget class="QTextEdit" name="_poComments" />
          </item>
         </layout>
        </widget>
        <widget class="QWidget" name="ediTab" >
         <attribute name="title" >
-         <string>Transmit</string>
+         <string>Transmission</string>
         </attribute>
-        <layout class="QHBoxLayout" >
-         <item>
-          <widget class="QTabWidget" name="_transmitTabGroup" >
+        <layout class="QGridLayout" >
+         <item row="0" column="0" >
+          <layout class="QHBoxLayout" >
+           <property name="spacing" >
+            <number>12</number>
+           </property>
+           <item>
+            <widget class="QRadioButton" name="_poButton" >
+             <property name="text" >
+              <string>Purchase Orders</string>
+             </property>
+             <property name="checked" >
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="_checksButton" >
+             <property name="text" >
+              <string>Checks</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" >
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item row="1" column="0" >
+          <widget class="QStackedWidget" name="_transmitStack" >
            <property name="currentIndex" >
             <number>0</number>
            </property>
-           <widget class="QWidget" name="_purchaseOrderTab" >
-            <attribute name="title" >
-             <string>Purchase Orders</string>
-            </attribute>
-            <layout class="QHBoxLayout" >
-             <item>
+           <widget class="QWidget" name="page_3" >
+            <layout class="QGridLayout" >
+             <item row="0" column="0" >
               <widget class="QGroupBox" name="_emailPODelivery" >
                <property name="title" >
                 <string>Email Purchase Order Delivery</string>
@@ -1192,17 +1196,31 @@
                   </item>
                  </layout>
                 </item>
+                <item>
+                 <widget class="QCheckBox" name="_ediEmailHTML" >
+                  <property name="text" >
+                   <string>Send Email asHTML</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QCheckBox" name="_ediPreview" >
+                  <property name="text" >
+                   <string>Preview before submitting</string>
+                  </property>
+                  <property name="checked" >
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
                </layout>
               </widget>
              </item>
             </layout>
            </widget>
-           <widget class="QWidget" name="_checksTab" >
-            <attribute name="title" >
-             <string>Check Handling</string>
-            </attribute>
-            <layout class="QVBoxLayout" >
-             <item>
+           <widget class="QWidget" name="page_4" >
+            <layout class="QGridLayout" >
+             <item row="0" column="0" >
               <widget class="QGroupBox" name="_achGroup" >
                <property name="title" >
                 <string>Enable ACH Check Printing</string>

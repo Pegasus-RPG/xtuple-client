@@ -188,10 +188,12 @@ bool ediProfile::save()
     q.prepare("INSERT INTO ediprofile "
               "(ediprofile_id, ediprofile_name, ediprofile_notes,"
               " ediprofile_type, ediprofile_option1, ediprofile_option2,"
-              " ediprofile_option3, ediprofile_option4, ediprofile_option5) "
+              " ediprofile_option3, ediprofile_option4, ediprofile_option5,"
+              " ediprofile_preview, ediprofile_emailhtml) "
               "VALUES(:ediprofile_id, :ediprofile_name, :ediprofile_notes,"
               " :ediprofile_type, :ediprofile_option1, :ediprofile_option2,"
-              " :ediprofile_option3, :ediprofile_option4, :ediprofile_option5);" );
+              " :ediprofile_option3, :ediprofile_option4, :ediprofile_option5,"
+              " :ediprofile_preview, :ediprofile_emailhtml);" );
   else
     q.prepare("UPDATE ediprofile"
               "   SET ediprofile_name=:ediprofile_name,"
@@ -201,7 +203,9 @@ bool ediProfile::save()
               "       ediprofile_option2=:ediprofile_option2,"
               "       ediprofile_option3=:ediprofile_option3,"
               "       ediprofile_option4=:ediprofile_option4,"
-              "       ediprofile_option5=:ediprofile_option5"
+              "       ediprofile_option5=:ediprofile_option5,"
+              "       ediprofile_preview=:ediprofile_preview,"
+              "       ediprofile_emailhtml=:ediprofile_emailhtml"
               " WHERE (ediprofile_id=:ediprofile_id); " );
 
   q.bindValue(":ediprofile_id", _ediprofileid);
@@ -223,6 +227,8 @@ bool ediProfile::save()
       q.bindValue(":ediprofile_option2", _emailSubject->text());
       q.bindValue(":ediprofile_option3", _emailBody->toPlainText());
       q.bindValue(":ediprofile_option4", _emailCC->text());
+      q.bindValue(":ediprofile_emailhtml", QVariant(_emailHTML->isChecked()));
+      q.bindValue(":ediprofile_preview", QVariant(_preview->isChecked()));
       break;
     default:
       QMessageBox::critical( this, tr("Cannot Save EDI Profile"),
@@ -316,10 +322,7 @@ void ediProfile::sDelete()
 
 void ediProfile::populate()
 {
-  q.prepare("SELECT ediprofile_name, ediprofile_notes,"
-            "       ediprofile_type, ediprofile_option1,"
-            "       ediprofile_option2, ediprofile_option3,"
-            "       ediprofile_option4, ediprofile_option5"
+  q.prepare("SELECT * "
             "  FROM ediprofile"
             " WHERE (ediprofile_id=:ediprofile_id); ");
   q.bindValue(":ediprofile_id", _ediprofileid);
@@ -346,6 +349,8 @@ void ediProfile::populate()
       _emailSubject->setText(q.value("ediprofile_option2").toString());
       _emailBody->setPlainText(q.value("ediprofile_option3").toString());
       _emailCC->setText(q.value("ediprofile_option4").toString());
+      _preview->setChecked(q.value("ediprofile_preview").toBool());
+      _emailHTML->setChecked(q.value("ediprofile_emailhtml").toBool());
     }
     else
     {

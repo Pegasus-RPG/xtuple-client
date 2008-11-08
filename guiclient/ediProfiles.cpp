@@ -110,7 +110,8 @@ void ediProfiles::init()
 {
 //  statusBar()->hide();
   
-  _ediprofile->addColumn(tr("Profile Name"), -1, Qt::AlignLeft, true, "ediprofile_name" );
+  _ediprofile->addColumn(tr("Name"), -1, Qt::AlignLeft, true, "ediprofile_name" );
+  _ediprofile->addColumn(tr("Type"), _itemColumn, Qt::AlignLeft, true, "ediprofile_type" );
 
   sFillList();
 }
@@ -174,7 +175,7 @@ void ediProfiles::sDelete()
 
 void ediProfiles::sFillList()
 {
-  _ediprofile->populate( "SELECT ediprofile_id, ediprofile_name "
+  _ediprofile->populate( "SELECT ediprofile_id, ediprofile_name, ediprofile_type "
                          "  FROM ediprofile "
                          "ORDER BY ediprofile_name" );
 }

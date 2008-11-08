@@ -106,6 +106,11 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
     connect(_viewTaxreg,   SIGNAL(clicked()), this, SLOT(sViewTaxreg()));
     connect(_soEdiProfile, SIGNAL(activated(int)), this, SLOT(sSoProfileSelected()));
     connect(_custtype, SIGNAL(currentIndexChanged(int)), this, SLOT(sFillCharacteristicList()));
+    connect(_soButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+    connect(_invoiceButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+    connect(_billingButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+    connect(_correspButton, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+    connect(_shiptoButton,  SIGNAL(clicked()), this, SLOT(sHandleButtons()));
     
     _custid = -1;
     _crmacctid = -1;
@@ -531,7 +536,9 @@ bool customer::sSave(bool /*partial*/)
                "       cust_soediemailhtml=:cust_soediemailhtml,"
                "       cust_preferred_warehous_id=:cust_preferred_warehous_id, "
                "       cust_gracedays=:cust_gracedays,"
-               "       cust_curr_id=:cust_curr_id "
+               "       cust_curr_id=:cust_curr_id, "
+               "       cust_edipreview=:cust_edipreview, "
+               "       cust_soedipreview=:cust_soedipreview "
                "WHERE (cust_id=:cust_id);" );
   }
   else
@@ -556,7 +563,8 @@ bool customer::sSave(bool /*partial*/)
                "  cust_soedifilename, cust_soediemailbody, cust_soedicc, "
                "  cust_soediemailhtml, cust_ediemailhtml,"
                "  cust_soediprofile_id, cust_preferred_warehous_id, "
-               "  cust_gracedays, cust_curr_id ) "
+               "  cust_gracedays, cust_curr_id, "
+               "  cust_edipreview, cust_soedipreview ) "
                "VALUES "
                "( :cust_id, :cust_number,"
                "  :cust_salesrep_id, :cust_name,"
@@ -578,7 +586,8 @@ bool customer::sSave(bool /*partial*/)
                "  :cust_soedifilename, :cust_soediemailbody, :cust_soedicc,"
                "  :cust_soediemailhtml, :cust_ediemailhtml,"
                "  :cust_soediprofile_id, :cust_preferred_warehous_id, "
-               "  :cust_gracedays, :cust_curr_id ) " );
+               "  :cust_gracedays, :cust_curr_id, "
+               "  :cust_edipreview, :cust_soedipreview ) " );
 
   q.bindValue(":cust_id", _custid);
   q.bindValue(":cust_number", _number->text().trimmed());
@@ -637,6 +646,7 @@ bool customer::sSave(bool /*partial*/)
   q.bindValue(":cust_ediemailbody", _ediEmailBody->toPlainText().trimmed());
   q.bindValue(":cust_edicc", _ediCC->text().trimmed());
   q.bindValue(":cust_ediemailhtml", QVariant(_ediEmailHTML->isChecked()));
+  q.bindValue(":cust_edipreview", QVariant(_ediPreview->isChecked()));
 
   q.bindValue(":cust_soemaildelivery", QVariant((_soEdiProfile->id()==0)));
   q.bindValue(":cust_soediemail", _soEdiEmail->text().trimmed());
@@ -645,6 +655,7 @@ bool customer::sSave(bool /*partial*/)
   q.bindValue(":cust_soediemailbody", _soEdiEmailBody->toPlainText().trimmed());
   q.bindValue(":cust_soedicc", _soEdiCC->text().trimmed());
   q.bindValue(":cust_soediemailhtml", QVariant(_soEdiEmailHTML->isChecked()));
+  q.bindValue(":cust_soedipreview", QVariant(_soEdiPreview->isChecked()));
 
   q.bindValue(":cust_preferred_warehous_id", _sellingWarehouse->id());
   q.bindValue(":cust_curr_id", _currency->id());
@@ -1264,6 +1275,7 @@ void customer::populate()
     _ediEmailBody->setPlainText(cust.value("cust_ediemailbody").toString());
     _ediCC->setText(cust.value("cust_edicc").toString());
     _ediEmailHTML->setChecked(cust.value("cust_ediemailhtml").toBool());
+    _ediPreview->setChecked(cust.value("cust_edipreview").toBool());
     
     if(cust.value("cust_soemaildelivery").toBool())
       _soEdiProfile->setId(0);
@@ -1280,6 +1292,7 @@ void customer::populate()
     _soEdiEmailBody->setPlainText(cust.value("cust_soediemailbody").toString());
     _soEdiCC->setText(cust.value("cust_soedicc").toString());
     _soEdiEmailHTML->setChecked(cust.value("cust_soediemailhtml").toBool());
+    _soEdiPreview->setChecked(cust.value("cust_soedipreview").toBool());
 
     _comments->setId(_custid);
     sFillShiptoList();
@@ -1447,4 +1460,19 @@ void customer::closeEvent(QCloseEvent *pEvent)
     _NumberGen = -1;
   }
   XWidget::closeEvent(pEvent);
+}
+
+void customer::sHandleButtons()
+{
+  if (_billingButton->isChecked())
+    _addressStack->setCurrentIndex(0);
+  else if (_correspButton->isChecked())
+    _addressStack->setCurrentIndex(1);
+  else
+    _addressStack->setCurrentIndex(2);
+
+  if (_soButton->isChecked())
+    _transmitStack->setCurrentIndex(0);
+  else
+    _transmitStack->setCurrentIndex(1);
 }

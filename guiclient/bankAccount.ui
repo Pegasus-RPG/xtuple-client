@@ -385,7 +385,7 @@
       </sizepolicy>
      </property>
      <property name="currentIndex" >
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="_notesTab" >
       <attribute name="title" >
@@ -399,7 +399,7 @@
      </widget>
      <widget class="QWidget" name="_transmitTab" >
       <attribute name="title" >
-       <string>Transmit</string>
+       <string>Transmission</string>
       </attribute>
       <layout class="QGridLayout" >
        <item row="0" column="0" >

@@ -727,6 +727,16 @@
                         <string/>
                        </property>
                       </item>
+                      <item>
+                       <property name="text" >
+                        <string/>
+                       </property>
+                      </item>
+                      <item>
+                       <property name="text" >
+                        <string/>
+                       </property>
+                      </item>
                      </widget>
                     </item>
                     <item>
@@ -1248,16 +1258,57 @@
         </attribute>
         <layout class="QGridLayout" >
          <item row="0" column="0" >
-          <widget class="QTabWidget" name="_addresses" >
-           <property name="currentIndex" >
-            <number>0</number>
+          <layout class="QHBoxLayout" >
+           <property name="spacing" >
+            <number>12</number>
            </property>
-           <widget class="QWidget" name="_billingTab" >
-            <attribute name="title" >
-             <string>Billing Contact</string>
-            </attribute>
-            <layout class="QVBoxLayout" >
-             <item>
+           <item>
+            <widget class="QRadioButton" name="_billingButton" >
+             <property name="text" >
+              <string>Billing Contact</string>
+             </property>
+             <property name="checked" >
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="_correspButton" >
+             <property name="text" >
+              <string>Correspondence Contact</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="_shiptoButton" >
+             <property name="text" >
+              <string>Ship To</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" >
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item row="1" column="0" >
+          <widget class="QStackedWidget" name="_addressStack" >
+           <property name="currentIndex" >
+            <number>2</number>
+           </property>
+           <widget class="QWidget" name="page" >
+            <layout class="QGridLayout" >
+             <item row="0" column="0" >
               <widget class="ContactCluster" name="_billCntct" >
                <property name="label" >
                 <string/>
@@ -1273,27 +1324,24 @@
                </property>
               </widget>
              </item>
-             <item>
+             <item row="1" column="0" >
               <spacer>
                <property name="orientation" >
                 <enum>Qt::Vertical</enum>
                </property>
                <property name="sizeHint" >
                 <size>
-                 <width>20</width>
-                 <height>40</height>
+                 <width>461</width>
+                 <height>51</height>
                 </size>
                </property>
               </spacer>
              </item>
             </layout>
            </widget>
-           <widget class="QWidget" name="_correspondenceTab" >
-            <attribute name="title" >
-             <string>Correspondence Contact</string>
-            </attribute>
-            <layout class="QVBoxLayout" >
-             <item>
+           <widget class="QWidget" name="page_2" >
+            <layout class="QGridLayout" >
+             <item row="0" column="0" >
               <widget class="ContactCluster" name="_corrCntct" >
                <property name="label" >
                 <string/>
@@ -1309,7 +1357,7 @@
                </property>
               </widget>
              </item>
-             <item>
+             <item row="1" column="0" >
               <spacer>
                <property name="orientation" >
                 <enum>Qt::Vertical</enum>
@@ -1324,12 +1372,9 @@
              </item>
             </layout>
            </widget>
-           <widget class="QWidget" name="_shiptoTab" >
-            <attribute name="title" >
-             <string>Ship-To</string>
-            </attribute>
-            <layout class="QHBoxLayout" >
-             <item>
+           <widget class="QWidget" name="page_3" >
+            <layout class="QGridLayout" >
+             <item row="0" column="0" >
               <widget class="XTreeWidget" name="_shipto" >
                <property name="sizePolicy" >
                 <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
@@ -1339,7 +1384,7 @@
                </property>
               </widget>
              </item>
-             <item>
+             <item row="0" column="1" >
               <layout class="QVBoxLayout" >
                <property name="spacing" >
                 <number>5</number>
@@ -1697,20 +1742,54 @@
        </widget>
        <widget class="QWidget" name="_transmitTab" >
         <attribute name="title" >
-         <string>Transmit</string>
+         <string>Transmission</string>
         </attribute>
-        <layout class="QVBoxLayout" >
-         <item>
-          <widget class="QTabWidget" name="_transmitTypes" >
+        <layout class="QGridLayout" >
+         <item row="0" column="0" >
+          <layout class="QHBoxLayout" >
+           <property name="spacing" >
+            <number>12</number>
+           </property>
+           <item>
+            <widget class="QRadioButton" name="_soButton" >
+             <property name="text" >
+              <string>Sales Order</string>
+             </property>
+             <property name="checked" >
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="_invoiceButton" >
+             <property name="text" >
+              <string>Invoice</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" >
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item row="1" column="0" >
+          <widget class="QStackedWidget" name="_transmitStack" >
            <property name="currentIndex" >
             <number>0</number>
            </property>
-           <widget class="QWidget" name="_so" >
-            <attribute name="title" >
-             <string>Sales Order</string>
-            </attribute>
-            <layout class="QVBoxLayout" >
-             <item>
+           <widget class="QWidget" name="page_4" >
+            <layout class="QGridLayout" >
+             <item row="0" column="0" >
               <layout class="QHBoxLayout" >
                <property name="spacing" >
                 <number>5</number>
@@ -1753,7 +1832,7 @@
                </item>
               </layout>
              </item>
-             <item>
+             <item row="1" column="0" >
               <widget class="QGroupBox" name="_soEdiGroup" >
                <property name="enabled" >
                 <bool>false</bool>
@@ -1941,6 +2020,16 @@
                     </property>
                    </widget>
                   </item>
+                  <item>
+                   <widget class="QCheckBox" name="_soEdiPreview" >
+                    <property name="text" >
+                     <string>Preview before submitting</string>
+                    </property>
+                    <property name="checked" >
+                     <bool>true</bool>
+                    </property>
+                   </widget>
+                  </item>
                  </layout>
                 </item>
                </layout>
@@ -1948,12 +2037,9 @@
              </item>
             </layout>
            </widget>
-           <widget class="QWidget" name="_invoiceTab" >
-            <attribute name="title" >
-             <string>Invoice</string>
-            </attribute>
-            <layout class="QVBoxLayout" >
-             <item>
+           <widget class="QWidget" name="page_5" >
+            <layout class="QGridLayout" >
+             <item row="0" column="0" >
               <layout class="QHBoxLayout" >
                <property name="spacing" >
                 <number>5</number>
@@ -1996,7 +2082,7 @@
                </item>
               </layout>
              </item>
-             <item>
+             <item row="1" column="0" >
               <widget class="QGroupBox" name="_ediGroup" >
                <property name="enabled" >
                 <bool>false</bool>
@@ -2181,6 +2267,16 @@
                    <widget class="QCheckBox" name="_ediEmailHTML" >
                     <property name="text" >
                      <string>Send Email as HTML</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QCheckBox" name="_ediPreview" >
+                    <property name="text" >
+                     <string>Preview before submitting</string>
+                    </property>
+                    <property name="checked" >
+                     <bool>true</bool>
                     </property>
                    </widget>
                   </item>
@@ -2497,22 +2593,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>_shipto</sender>
-   <signal>valid(bool)</signal>
-   <receiver>_viewShipto</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>110</x>
-     <y>143</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>110</x>
-     <y>143</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>_charass</sender>
    <signal>itemSelected(int)</signal>
    <receiver>_editCharacteristic</receiver>
@@ -2540,6 +2620,22 @@
     </hint>
     <hint type="destinationlabel" >
      <x>32</x>
+     <y>143</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_shipto</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_viewShipto</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>110</x>
+     <y>143</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>110</x>
      <y>143</y>
     </hint>
    </hints>

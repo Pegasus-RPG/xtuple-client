@@ -104,6 +104,7 @@ public slots:
     virtual void sViewTaxreg();
     virtual void sLoadProspect(int);
     virtual void sLoadCrmAcct(int);
+    virtual void sHandleButtons();
 
 protected slots:
     virtual void languageChange();
