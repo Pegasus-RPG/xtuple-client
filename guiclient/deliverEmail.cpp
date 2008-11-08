@@ -60,6 +60,12 @@
 #include <qvariant.h>
 #include <qmessagebox.h>
 
+#include <openreports.h>
+#include <parameter.h>
+
+#include <QUrl>
+#include <QDesktopServices>
+
 /*
  *  Constructs a deliverEmail as a child of 'parent', with the
  *  name 'name' and widget flags set to 'f'.
@@ -167,7 +173,6 @@ void deliverEmail::sSubmit()
   q.bindValue(":emailAddress", _email->text());
   q.bindValue(":ccAddress", _cc->text());
   q.bindValue(":subject", _subject->text());
-  q.bindValue(":fileName", _fileName->text());
   q.bindValue(":emailBody", _emailBody->toPlainText());
   q.bindValue(":emailHTML", QVariant(_emailHTML->isChecked(), 0));
   q.exec();
@@ -182,7 +187,6 @@ void deliverEmail::sSubmit()
     _cc->clear();
     _emailBody->clear();
     _subject->clear();
-    _fileName->clear();
   }
 }
 
@@ -341,6 +345,5 @@ void deliverEmail::setProfileId(int profileid)
     _cc->clear();
     _emailBody->clear();
     _subject->clear();
-    _fileName->clear();
   }
 }

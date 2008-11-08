@@ -110,18 +110,18 @@ configureCRM::configureCRM(QWidget* parent, const char* name, bool modal, Qt::WF
                                  "FROM ediprofile "
                                  "WHERE (ediprofile_type='email');");
     _incdtEmailProfile->setId(_metrics->value("CRMIncidentEmailProfile").toInt());
+    _incdtCreated->setChecked(_metrics->boolean("CRMIncidentEmailCreated"));
+    _incdtAssigned->setChecked(_metrics->boolean("CRMIncidentEmailAssigned"));
+    _incdtStatus->setChecked(_metrics->boolean("CRMIncidentEmailStatus"));
+    _incdtUpdated->setChecked(_metrics->boolean("CRMIncidentEmailUpdated"));
+    _incdtComments->setChecked(_metrics->boolean("CRMIncidentEmailComments"));
   }
   else
   {
     _incdtEmailProfileLit->hide();
     _incdtEmailProfile->hide();
+    _incdtDelGroup->hide();
   }
-    
-  _incdtCreated->setChecked(_metrics->boolean("CRMIncidentEmailCreated"));
-  _incdtAssigned->setChecked(_metrics->boolean("CRMIncidentEmailAssigned"));
-  _incdtStatus->setChecked(_metrics->boolean("CRMIncidentEmailStatus"));
-  _incdtUpdated->setChecked(_metrics->boolean("CRMIncidentEmailUpdated"));
-  _incdtComments->setChecked(_metrics->boolean("CRMIncidentEmailComments"));
       
   resize(minimumSize());
 }
@@ -161,13 +161,14 @@ void configureCRM::sSave()
   _metrics->set("AutoCreateProjectsForOrders", (_autoCreate->isChecked() && _useProjects->isChecked()));
   
   if (_metrics->boolean("EnableBatchManager"))
+  {
     _metrics->set("CRMIncidentEmailProfile", _incdtEmailProfile->id());
-
-  _metrics->set("CRMIncidentEmailCreated"   , _incdtCreated->isChecked());
-  _metrics->set("CRMIncidentEmailAssigned"  , _incdtAssigned->isChecked());
-  _metrics->set("CRMIncidentEmailStatus"    , _incdtStatus->isChecked());
-  _metrics->set("CRMIncidentEmailUpdated"   , _incdtUpdated->isChecked());
-  _metrics->set("CRMIncidentEmailComments"  , _incdtComments->isChecked());
+    _metrics->set("CRMIncidentEmailCreated"   , _incdtCreated->isChecked());
+    _metrics->set("CRMIncidentEmailAssigned"  , _incdtAssigned->isChecked());
+    _metrics->set("CRMIncidentEmailStatus"    , _incdtStatus->isChecked());
+    _metrics->set("CRMIncidentEmailUpdated"   , _incdtUpdated->isChecked());
+    _metrics->set("CRMIncidentEmailComments"  , _incdtComments->isChecked());
+  }
   
   _metrics->load();
 
