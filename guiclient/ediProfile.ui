@@ -379,16 +379,6 @@
              </property>
             </widget>
            </item>
-           <item>
-            <widget class="QCheckBox" name="_preview" >
-             <property name="text" >
-              <string>Preview before submitting</string>
-             </property>
-             <property name="checked" >
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
           </layout>
          </item>
         </layout>

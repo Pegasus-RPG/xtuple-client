@@ -349,19 +349,23 @@ void vendor::sSave()
       tr("You must select a Vendor Type for this Vendor before continuing."),
       _vendtype },
     { _achGroup->isChecked() &&
-      _routingNumber->text().stripWhiteSpace().length() == 0,
+      _routingNumber->text().stripWhiteSpace().length() == 0 &&
+      !omfgThis->_key.isEmpty(),
       tr("Please enter a Routing Number if ACH Check Printing is enabled."),
       _routingNumber },
     { _achGroup->isChecked() &&
-      _routingNumber->text().stripWhiteSpace().length() < 9,
+      _routingNumber->text().stripWhiteSpace().length() < 9  &&
+      !omfgThis->_key.isEmpty(),
       tr("Routing Numbers for ACH Check Printing must be 9 digits long."),
       _routingNumber },
     { _achGroup->isChecked() &&
-      _achAccountNumber->text().stripWhiteSpace().length() == 0,
+      _achAccountNumber->text().stripWhiteSpace().length() == 0 &&
+      !omfgThis->_key.isEmpty(),
       tr("Please enter an Account Number if ACH Check Printing is enabled."),
       _achAccountNumber },
     { _achGroup->isChecked() && _useACHSpecial->isChecked() &&
-      _individualName->text().stripWhiteSpace().length() == 0,
+      _individualName->text().stripWhiteSpace().length() == 0 &&
+      !omfgThis->_key.isEmpty(),
       tr("Please enter an Individual Name if ACH Check Printing is enabled and "
          "'%1' is checked.").arg(_useACHSpecial->title()),
       _individualName }
@@ -478,7 +482,6 @@ void vendor::sSave()
           "    vend_taxauth_id=<? value(\"vend_taxauth_id\") ?>,"
           "    vend_match=<? value(\"vend_match\") ?>,"
           "    vend_ach_enabled=<? value(\"vend_ach_enabled\") ?>,"
-          "    vend_edipreview=<? value(\"vend_edipreview\") ?>, "
           "    vend_ediemailhtml=<? value(\"vend_ediemailhtml\") ?>, "
           "<? if exists(\"key\") ?>"
           "    vend_ach_routingnumber=encrypt(setbytea(<? value(\"vend_ach_routingnumber\") ?>),"
@@ -508,7 +511,7 @@ void vendor::sSave()
           "  vend_ach_routingnumber, vend_ach_accntnumber,"
           "  vend_ach_use_vendinfo,"
           "  vend_ach_accnttype, vend_ach_indiv_number,"
-          "  vend_ach_indiv_name, vend_edipreview, vend_ediemailhtml ) "
+          "  vend_ach_indiv_name, vend_ediemailhtml ) "
           "VALUES "
           "( <? value(\"vend_id\") ?>,"
           "  <? value(\"vend_number\") ?>,"
@@ -552,7 +555,6 @@ void vendor::sSave()
           "  <? value(\"vend_ach_accnttype\") ?>,"
           "  <? value(\"vend_ach_indiv_number\") ?>,"
           "  <? value(\"vend_ach_indiv_name\") ?>,"
-          "  <? value(\"vend_edipreview\") ?>,"
           "  <? value(\"vend_ediemailhtml\") ?>"
           "   );"  ;
  
@@ -591,7 +593,6 @@ void vendor::sSave()
   params.append("vend_edifilename",  _ediFilename->text());
   params.append("vend_edicc",        _ediCC->text().trimmed());
   params.append("vend_ediemailhtml", QVariant(_ediEmailHTML->isChecked()));
-  params.append("vend_edipreview", QVariant(_ediPreview->isChecked()));
 
   if (!omfgThis->_key.isEmpty())
     params.append("key",                   omfgThis->_key);
@@ -760,7 +761,6 @@ void vendor::populate()
     _ediEmailBody->setText(q.value("vend_ediemailbody").toString());
     _ediCC->setText(q.value("vend_edicc").toString());
     _ediEmailHTML->setChecked(q.value("vend_ediemailhtml").toBool());
-    _ediPreview->setChecked(q.value("vend_edipreview").toBool());
     
     _taxauth->setId(q.value("vend_taxauth_id").toInt());
 

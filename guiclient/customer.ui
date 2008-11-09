@@ -737,6 +737,11 @@
                         <string/>
                        </property>
                       </item>
+                      <item>
+                       <property name="text" >
+                        <string/>
+                       </property>
+                      </item>
                      </widget>
                     </item>
                     <item>
@@ -2020,16 +2025,6 @@
                     </property>
                    </widget>
                   </item>
-                  <item>
-                   <widget class="QCheckBox" name="_soEdiPreview" >
-                    <property name="text" >
-                     <string>Preview before submitting</string>
-                    </property>
-                    <property name="checked" >
-                     <bool>true</bool>
-                    </property>
-                   </widget>
-                  </item>
                  </layout>
                 </item>
                </layout>
@@ -2267,16 +2262,6 @@
                    <widget class="QCheckBox" name="_ediEmailHTML" >
                     <property name="text" >
                      <string>Send Email as HTML</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QCheckBox" name="_ediPreview" >
-                    <property name="text" >
-                     <string>Preview before submitting</string>
-                    </property>
-                    <property name="checked" >
-                     <bool>true</bool>
                     </property>
                    </widget>
                   </item>
