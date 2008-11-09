@@ -140,13 +140,14 @@ void deliverPurchaseOrder::sSubmit()
   }
 
   q.prepare( "SELECT submitReportToBatch( 'PurchaseOrder', :fromEmail, :emailAddress, :ccAddress, :subject,"
-             "                            :emailBody, :fileName, CURRENT_TIMESTAMP) AS batch_id;" );
+             "                            :emailBody, :fileName, CURRENT_TIMESTAMP, :emailhtml) AS batch_id;" );
   q.bindValue(":fromEmail", _fromEmail->text());
   q.bindValue(":emailAddress", _email->text());
   q.bindValue(":ccAddress", _cc->text());
   q.bindValue(":subject", _subject->text());
   q.bindValue(":fileName", _fileName->text());
   q.bindValue(":emailBody", _emailBody->toPlainText());
+  q.bindValue(":emailhtml", QVariant(_emailHTML->isChecked()));
   q.exec();
   if (q.first())
   {
@@ -200,8 +201,8 @@ void deliverPurchaseOrder::sSubmit()
 void deliverPurchaseOrder::sHandlePoheadid(int pPoheadid)
 {
   q.prepare( "SELECT vend_emailpodelivery, vend_ediemail, vend_ediemailbody, "
-             "       vend_edisubject, vend_edifilename, vend_edicc "
-             "FROM pohead, vend "
+             "       vend_edisubject, vend_edifilename, vend_edicc, vend_ediemailhtml "
+             "FROM pohead, vendinfo "
              "WHERE ( (pohead_vend_id=vend_id)"
              " AND (pohead_id=:pohead_id) );" );
   q.bindValue(":pohead_id", pPoheadid);
@@ -216,6 +217,7 @@ void deliverPurchaseOrder::sHandlePoheadid(int pPoheadid)
       _emailBody->setPlainText(q.value("vend_ediemailbody").toString().replace("</docnumber>", _po->poNumber()).replace("</doctype>", "PO"));
       _subject->setText(q.value("vend_edisubject").toString().replace("</docnumber>", _po->poNumber()).replace("</doctype>", "PO"));
       _fileName->setText(q.value("vend_edifilename").toString().replace("</docnumber>", _po->poNumber()).replace("</doctype>", "PO"));
+      _emailHTML->setChecked(q.value("vend_ediemailhtml").toBool());
     }
     else
     {
