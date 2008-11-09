@@ -67,20 +67,9 @@ deliverInvoice::deliverInvoice(QWidget* parent, const char* name, bool modal, Qt
   setupUi(this);
 
   connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
-  connect(_invoice, SIGNAL(itemSelectionChanged()), this, SLOT(sHandlePoheadid()));
+  connect(_invoice, SIGNAL(newId(int)), this, SLOT(sHandleInvcheadid()));
 
   _captive = FALSE;
-
-  _invoice->addColumn(tr("Invoice #"), _orderColumn, Qt::AlignRight, true, "invchead_invcnumber");
-  _invoice->addColumn(tr("Doc. Date"), _dateColumn,  Qt::AlignCenter,true, "invchead_invcdate");
-  _invoice->addColumn(tr("Customer"),  -1,           Qt::AlignLeft,  true, "cust");
-  _invoice->populate("SELECT invchead_id, cust_id,"
-                     "       invchead_invcnumber, invchead_invcdate,"
-                     "       (TEXT(cust_number) || ' - ' || cust_name) AS cust "
-                     "FROM invchead, cust "
-                     "WHERE ( (invchead_cust_id=cust_id) "
-                     "  AND   (checkInvoiceSitePrivs(invchead_id)) ) "
-                     "ORDER BY invchead_invcdate DESC;", TRUE );
 
   q.exec( "SELECT usr_email "
           "FROM usr "
@@ -219,19 +208,19 @@ void deliverInvoice::sSubmit()
     _emailBody->clear();
     _subject->clear();
     _fileName->clear();
-    _invoice->clearSelection();
+    _invoice->clear();
     _invoice->setFocus();
   }
 }
 
-void deliverInvoice::sHandlePoheadid()
+void deliverInvoice::sHandleInvcheadid()
 {
   q.prepare( "SELECT invchead_printed,"
              "       cust_emaildelivery, cust_ediemail, cust_ediemailbody, "
              "       cust_edisubject, cust_edifilename, cust_edicc, cust_ediemailhtml "
              "FROM invchead, custinfo "
              "WHERE ( (invchead_cust_id=cust_id)"
-             " AND (invchead_id=:invchead_id) );" );
+             " AND (invchead_id=:invchead_id) );");
   q.bindValue(":invchead_id", _invoice->id());
   q.exec();
   if (q.first())

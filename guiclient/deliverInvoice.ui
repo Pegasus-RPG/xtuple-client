@@ -28,137 +28,131 @@
       <number>12</number>
      </property>
      <item row="0" column="0" >
-      <layout class="QVBoxLayout" >
-       <item>
-        <layout class="QVBoxLayout" >
+      <layout class="QGridLayout" >
+       <property name="verticalSpacing" >
+        <number>2</number>
+       </property>
+       <item row="1" column="0" >
+        <widget class="QLabel" name="_fromEmailLit" >
+         <property name="text" >
+          <string>From:</string>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1" >
+        <widget class="XLineEdit" name="_fromEmail" />
+       </item>
+       <item row="2" column="0" >
+        <widget class="QLabel" name="_emailLit" >
+         <property name="text" >
+          <string>Send To:</string>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1" >
+        <widget class="XLineEdit" name="_email" />
+       </item>
+       <item row="3" column="0" >
+        <widget class="QLabel" name="_ccLit" >
+         <property name="text" >
+          <string>Cc:</string>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1" >
+        <widget class="XLineEdit" name="_cc" />
+       </item>
+       <item row="5" column="0" >
+        <widget class="QLabel" name="_subjectLit" >
+         <property name="text" >
+          <string>Subject:</string>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1" >
+        <widget class="XLineEdit" name="_subject" />
+       </item>
+       <item row="6" column="0" >
+        <widget class="QLabel" name="_fileNameLit" >
+         <property name="text" >
+          <string>Filename:</string>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="1" >
+        <layout class="QHBoxLayout" >
          <property name="spacing" >
           <number>0</number>
          </property>
          <item>
-          <widget class="QLabel" name="_invoicesLit" >
+          <widget class="XLineEdit" name="_fileName" />
+         </item>
+         <item>
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeType" >
+            <enum>QSizePolicy::Expanding</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>71</width>
+             <height>10</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item row="4" column="1" >
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="0" column="1" >
+        <widget class="InvoiceCluster" name="_invoice" >
+         <property name="focusPolicy" >
+          <enum>Qt::StrongFocus</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0" >
+        <layout class="QVBoxLayout" >
+         <property name="topMargin" >
+          <number>5</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="_invoiceLit" >
            <property name="text" >
-            <string>Invoices:</string>
+            <string>Invoice #:</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="XTreeWidget" name="_invoice" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize" >
-            <size>
-             <width>0</width>
-             <height>100</height>
-            </size>
-           </property>
-           <property name="maximumSize" >
-            <size>
-             <width>16777215</width>
-             <height>100</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QGridLayout" >
-         <property name="verticalSpacing" >
-          <number>2</number>
-         </property>
-         <item row="0" column="0" >
-          <widget class="QLabel" name="_fromEmailLit" >
-           <property name="text" >
-            <string>From:</string>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1" >
-          <widget class="XLineEdit" name="_fromEmail" />
-         </item>
-         <item row="1" column="0" >
-          <widget class="QLabel" name="_emailLit" >
-           <property name="text" >
-            <string>Send To:</string>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1" >
-          <widget class="XLineEdit" name="_email" />
-         </item>
-         <item row="2" column="0" >
-          <widget class="QLabel" name="_ccLit" >
-           <property name="text" >
-            <string>Cc:</string>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1" >
-          <widget class="XLineEdit" name="_cc" />
-         </item>
-         <item row="4" column="0" >
-          <widget class="QLabel" name="_subjectLit" >
-           <property name="text" >
-            <string>Subject:</string>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="1" >
-          <widget class="XLineEdit" name="_subject" />
-         </item>
-         <item row="5" column="0" >
-          <widget class="QLabel" name="_fileNameLit" >
-           <property name="text" >
-            <string>Filename:</string>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="1" >
-          <layout class="QHBoxLayout" >
-           <property name="spacing" >
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="XLineEdit" name="_fileName" />
-           </item>
-           <item>
-            <spacer>
-             <property name="orientation" >
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeType" >
-              <enum>QSizePolicy::Expanding</enum>
-             </property>
-             <property name="sizeHint" >
-              <size>
-               <width>71</width>
-               <height>10</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </item>
-         <item row="3" column="1" >
           <spacer>
            <property name="orientation" >
             <enum>Qt::Vertical</enum>
@@ -166,7 +160,7 @@
            <property name="sizeHint" >
             <size>
              <width>20</width>
-             <height>20</height>
+             <height>0</height>
             </size>
            </property>
           </spacer>
@@ -264,7 +258,11 @@
            </widget>
           </item>
           <item>
-           <widget class="QTextEdit" name="_emailBody" />
+           <widget class="QTextEdit" name="_emailBody" >
+            <property name="tabChangesFocus" >
+             <bool>true</bool>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -296,14 +294,14 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
+   <class>InvoiceCluster</class>
+   <extends>QWidget</extends>
+   <header>invoicecluster.h</header>
+  </customwidget>
+  <customwidget>
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
-  </customwidget>
-  <customwidget>
-   <class>XTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>xtreewidget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -316,8 +314,8 @@
   <tabstop>_emailBody</tabstop>
   <tabstop>_emailHTML</tabstop>
   <tabstop>_markPrinted</tabstop>
-  <tabstop>_submit</tabstop>
   <tabstop>_close</tabstop>
+  <tabstop>_submit</tabstop>
  </tabstops>
  <resources/>
  <connections>
@@ -328,24 +326,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_invoice</sender>
-   <signal>valid(bool)</signal>
-   <receiver>_submit</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>510</x>
+     <y>44</y>
     </hint>
     <hint type="destinationlabel" >
      <x>20</x>

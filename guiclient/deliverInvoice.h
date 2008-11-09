@@ -75,7 +75,7 @@ public:
 public slots:
     virtual enum SetResponse set(const ParameterList & pParams );
     virtual void sSubmit();
-    virtual void sHandlePoheadid();
+    virtual void sHandleInvcheadid();
 
 protected slots:
     virtual void languageChange();
