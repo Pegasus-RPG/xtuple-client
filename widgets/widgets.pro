@@ -53,6 +53,7 @@ HEADERS += \
            plugins/fileclusterplugin.h \
            plugins/glclusterplugin.h \
            plugins/imageclusterplugin.h \
+           plugins/invoiceclusterplugin.h \
            plugins/invoicelineeditplugin.h \
            plugins/incidentclusterplugin.h \
            plugins/itemclusterplugin.h \
@@ -146,6 +147,7 @@ SOURCES    += OpenMFGWidgets.cpp \
               imageAssignment.cpp \
               file.cpp \
               alarms.cpp alarmMaint.cpp \
+              invoiceCluster.cpp \
 
 HEADERS    += OpenMFGWidgets.h \
               addresscluster.h contactcluster.h crmacctcluster.h \
@@ -195,6 +197,7 @@ HEADERS    += OpenMFGWidgets.h \
               imageAssignment.h \
               file.h \
               alarms.h alarmMaint.h \
+              invoicecluster.h \
 
 FORMS += accountSearch.ui \
          documents.ui \
