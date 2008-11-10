@@ -78,6 +78,9 @@
 #include "salesOrderItem.h"
 #include "storedProcErrorLookup.h"
 #include "purchaseOrderItem.h"
+#include "todoItem.h"
+#include "incident.h"
+#include "task.h"
 
 eventManager::eventManager(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
@@ -133,7 +136,7 @@ void eventManager::sPopulateMenu(QMenu *menu)
 {
   int menuItem;
 
-  if (_event->currentItem()->text(5).length() == 0)
+  if (_event->currentItem()->rawValue("evntlog_dispatched").toString().length() == 0)
   {
     menuItem = menu->insertItem(tr("Acknowledge"), this, SLOT(sAcknowledge()), 0);
     if ( ((_currentUser->isChecked()) && (!_privileges->check("DispatchOwnEvents"))) ||
@@ -151,25 +154,25 @@ void eventManager::sPopulateMenu(QMenu *menu)
   if (list.size() > 1)
     return;
 
-  if ( (_event->currentItem()->text(6) == "WoCreated") ||
-       (_event->currentItem()->text(6) == "WoDueDateChanged") ||
-       (_event->currentItem()->text(6) == "WoQtyChanged") )
+  if ( (_event->currentItem()->rawValue("evnttype_name").toString() == "WoCreated") ||
+       (_event->currentItem()->rawValue("evnttype_name").toString() == "WoDueDateChanged") ||
+       (_event->currentItem()->rawValue("evnttype_name").toString() == "WoQtyChanged") )
   {
     menu->insertSeparator();
 
     menuItem = menu->insertItem(tr("Inventory Availability by Work Order..."), this, SLOT(sInventoryAvailabilityByWorkOrder()), 0);
   }
   
-  else if ( (_event->currentItem()->text(6) == "POitemCreate") )
+  else if ( (_event->currentItem()->rawValue("evnttype_name").toString() == "POitemCreate") )
   {
     menu->insertSeparator();
 
     menuItem = menu->insertItem(tr("View Purchase Order Item..."), this, SLOT(sViewPurchaseOrderItem()), 0);
   }
 
-  else if ( (_event->currentItem()->text(6) == "SoitemCreated") ||
-            (_event->currentItem()->text(6) == "SoitemQtyChanged") ||
-            (_event->currentItem()->text(6) == "SoitemSchedDateChanged") )
+  else if ( (_event->currentItem()->rawValue("evnttype_name").toString() == "SoitemCreated") ||
+            (_event->currentItem()->rawValue("evnttype_name").toString() == "SoitemQtyChanged") ||
+            (_event->currentItem()->rawValue("evnttype_name").toString() == "SoitemSchedDateChanged") )
   {
     menu->insertSeparator();
 
@@ -178,7 +181,7 @@ void eventManager::sPopulateMenu(QMenu *menu)
     menuItem = menu->insertItem(tr("Print Packing List..."), this, SLOT(sPrintPackingList()), 0);
   }
 
-  else if (_event->currentItem()->text(6) == "SoCommentsChanged")
+  else if (_event->currentItem()->rawValue("evnttype_name").toString() == "SoCommentsChanged")
   {
     menu->insertSeparator();
 
@@ -186,7 +189,7 @@ void eventManager::sPopulateMenu(QMenu *menu)
     menuItem = menu->insertItem(tr("Print Packing List..."), this, SLOT(sPrintPackingList()), 0);
   }
 
-  else if (_event->currentItem()->text(6) == "QOHBelowZero")
+  else if (_event->currentItem()->rawValue("evnttype_name").toString() == "QOHBelowZero")
   {
     menu->insertSeparator();
 
@@ -195,7 +198,7 @@ void eventManager::sPopulateMenu(QMenu *menu)
     menuItem = menu->insertItem(tr("View Inventory Availability..."), this, SLOT(sViewInventoryAvailability()), 0);
   }
 
-  else if (_event->currentItem()->text(6) == "RWoQtyRequestChange")
+  else if (_event->currentItem()->rawValue("evnttype_name").toString() == "RWoQtyRequestChange")
   {
     menu->insertSeparator();
 
@@ -204,7 +207,7 @@ void eventManager::sPopulateMenu(QMenu *menu)
     menuItem = menu->insertItem(tr("Print W/O Traveler..."), this, SLOT(sPrintWoTraveler()), 0);
   }
 
-  else if (_event->currentItem()->text(6) == "RWoDueDateRequestChange")
+  else if (_event->currentItem()->rawValue("evnttype_name").toString() == "RWoDueDateRequestChange")
   {
     menu->insertSeparator();
 
@@ -213,19 +216,40 @@ void eventManager::sPopulateMenu(QMenu *menu)
     menuItem = menu->insertItem(tr("Print W/O Traveler..."), this, SLOT(sPrintWoTraveler()), 0);
   }
 
-  else if (_event->currentItem()->text(6) == "RWoRequestCancel")
+  else if (_event->currentItem()->rawValue("evnttype_name").toString() == "RWoRequestCancel")
   {
     menu->insertSeparator();
 
     menuItem = menu->insertItem(tr("Recall Work Order"), this, SLOT(sRecallWo()), 0);
     menuItem = menu->insertItem(tr("Delete Work Order..."), this, SLOT(sDeleteWorkOrder()), 0);
   }
+
+  else if (_event->currentItem()->rawValue("evnttype_name").toString() == "TodoAlarm")
+  {
+    menu->insertSeparator();
+
+    menuItem = menu->insertItem(tr("View Todo Item..."), this, SLOT(sViewTodoItem()), 0);
+  }
+
+  else if (_event->currentItem()->rawValue("evnttype_name").toString() == "IncidentAlarm")
+  {
+    menu->insertSeparator();
+
+    menuItem = menu->insertItem(tr("View Incident..."), this, SLOT(sViewIncident()), 0);
+  }
+
+  else if (_event->currentItem()->rawValue("evnttype_name").toString() == "TaskAlarm")
+  {
+    menu->insertSeparator();
+
+    menuItem = menu->insertItem(tr("View Project Task..."), this, SLOT(sViewTask()), 0);
+  }
 }
 
 void eventManager::sInventoryAvailabilityByWorkOrder()
 {
   ParameterList params;
-  params.append("wo_id", _event->currentItem()->text(0).toInt());
+  params.append("wo_id", _event->currentItem()->rawValue("evntlog_ord_id").toInt());
 
   dspInventoryAvailabilityByWorkOrder *newdlg = new dspInventoryAvailabilityByWorkOrder();
   newdlg->set(params);
@@ -237,7 +261,7 @@ void eventManager::sViewSalesOrder()
   q.prepare( "SELECT coitem_cohead_id "
              "FROM coitem "
              "WHERE (coitem_id=:coitem_id);" );
-  q.bindValue(":coitem_id", _event->currentItem()->text(0).toInt());
+  q.bindValue(":coitem_id", _event->currentItem()->rawValue("evntlog_ord_id").toInt());
   q.exec();
   if (q.first())
     salesOrder::viewSalesOrder(q.value("coitem_cohead_id").toInt());
@@ -252,7 +276,7 @@ void eventManager::sViewSalesOrderItem()
 {
   ParameterList params;
   params.append("mode", "view");
-  params.append("soitem_id", _event->currentItem()->text(0).toInt());
+  params.append("soitem_id", _event->currentItem()->rawValue("evntlog_ord_id").toInt());
       
   salesOrderItem newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -263,7 +287,7 @@ void eventManager::sViewPurchaseOrderItem()
 {
   ParameterList params;
   params.append("mode", "view");
-  params.append("poitem_id", _event->currentItem()->text(0).toInt());
+  params.append("poitem_id", _event->currentItem()->rawValue("evntlog_ord_id").toInt());
       
   purchaseOrderItem newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -275,7 +299,7 @@ void eventManager::sPrintPackingList()
   q.prepare( "SELECT coitem_cohead_id "
              "FROM coitem "
              "WHERE (coitem_id=:coitem_id);" );
-  q.bindValue(":coitem_id", _event->currentItem()->text(0).toInt());
+  q.bindValue(":coitem_id", _event->currentItem()->rawValue("evntlog_ord_id").toInt());
   q.exec();
   if (q.first())
   {
@@ -296,7 +320,7 @@ void eventManager::sPrintPackingList()
 void eventManager::sIssueCountTag()
 {
   ParameterList params;
-  params.append("itemsite_id", _event->currentItem()->text(0).toInt());
+  params.append("itemsite_id", _event->currentItem()->rawValue("evntlog_ord_id").toInt());
   
   createCountTagsByItem newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -306,7 +330,7 @@ void eventManager::sIssueCountTag()
 void eventManager::sViewInventoryHistory()
 {
   ParameterList params;
-  params.append("itemsite_id", _event->currentItem()->text(0).toInt());
+  params.append("itemsite_id", _event->currentItem()->rawValue("evntlog_ord_id").toInt());
   
   dspInventoryHistoryByItem *newdlg = new dspInventoryHistoryByItem();
   newdlg->set(params);
@@ -316,7 +340,7 @@ void eventManager::sViewInventoryHistory()
 void eventManager::sViewInventoryAvailability()
 {
   ParameterList params;
-  params.append("itemsite_id", _event->currentItem()->text(0).toInt());
+  params.append("itemsite_id", _event->currentItem()->rawValue("evntlog_ord_id").toInt());
   
   dspInventoryAvailabilityByItem *newdlg = new dspInventoryAvailabilityByItem();
   newdlg->set(params);
@@ -326,7 +350,7 @@ void eventManager::sViewInventoryAvailability()
 void eventManager::sRecallWo()
 {
   q.prepare("SELECT recallWo(:wo_id, FALSE) AS result;");
-  q.bindValue(":wo_id", _event->currentItem()->text(0).toInt());
+  q.bindValue(":wo_id", _event->currentItem()->rawValue("evntlog_ord_id").toInt());
   q.exec();
   if (q.first())
   {
@@ -347,8 +371,8 @@ void eventManager::sRecallWo()
 void eventManager::sChangeWoQty()
 {
   ParameterList params;
-  params.append("wo_id", _event->currentItem()->text(0).toInt());
-  params.append("newQty", _event->currentItem()->text(2).toDouble());
+  params.append("wo_id", _event->currentItem()->rawValue("evntlog_ord_id").toInt());
+  params.append("newQty", _event->currentItem()->rawValue("evntlog_newvalue").toDouble());
 
   changeWoQty newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -359,8 +383,8 @@ void eventManager::sChangeWoDueDate()
 {
 //  ToDo
 #if 0
-  (new rescheduleWo( _event->currentItem()->text(0).toInt(),
-                     _event->currentItem()->text(1),
+  (new rescheduleWo( _event->currentItem()->rawValue("evntlog_ord_id").toInt(),
+                     _event->currentItem()->rawValue("evntlog_newdate"),
                      omfgThis ))->show();
 #endif
 }
@@ -368,7 +392,7 @@ void eventManager::sChangeWoDueDate()
 void eventManager::sPrintWoTraveler()
 {
   ParameterList params;
-  params.append("wo_id", _event->currentItem()->text(0).toInt());
+  params.append("wo_id", _event->currentItem()->rawValue("evntlog_ord_id").toInt());
 
   printWoTraveler newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -382,7 +406,7 @@ void eventManager::sDeleteWorkOrder()
                              tr("&Yes"), tr("&No"), QString::null, 0, 1) == 0)
   {
     q.prepare("SELECT deleteWo(:wo_id, TRUE) AS returnVal;");
-    q.bindValue(":wo_id", _event->currentItem()->text(0).toInt());
+    q.bindValue(":wo_id", _event->currentItem()->rawValue("evntlog_ord_id").toInt());
     q.exec();
     if (q.first())
     {
@@ -399,6 +423,39 @@ void eventManager::sDeleteWorkOrder()
       return;
     }
   }
+}
+
+void eventManager::sViewTodoItem()
+{
+  ParameterList params;
+  params.append("mode", "view");
+  params.append("todoitem_id", _event->currentItem()->rawValue("evntlog_ord_id").toInt());
+      
+  todoItem newdlg(this, "", TRUE);
+  newdlg.set(params);
+  newdlg.exec();
+}
+
+void eventManager::sViewIncident()
+{
+  ParameterList params;
+  params.append("mode", "view");
+  params.append("incdt_id", _event->currentItem()->rawValue("evntlog_ord_id").toInt());
+      
+  incident newdlg(this, "", TRUE);
+  newdlg.set(params);
+  newdlg.exec();
+}
+
+void eventManager::sViewTask()
+{
+  ParameterList params;
+  params.append("mode", "view");
+  params.append("prjtask_id", _event->currentItem()->rawValue("evntlog_ord_id").toInt());
+      
+  task newdlg(this, "", TRUE);
+  newdlg.set(params);
+  newdlg.exec();
 }
 
 void eventManager::sAcknowledge()

@@ -92,6 +92,9 @@ public slots:
     virtual void sHandleAutoUpdate( bool pAutoUpdate );
     virtual void sHandleEventValid(bool);
     virtual void sViewPurchaseOrderItem();
+    virtual void sViewTodoItem();
+    virtual void sViewIncident();
+    virtual void sViewTask();
 
 
 protected slots:
