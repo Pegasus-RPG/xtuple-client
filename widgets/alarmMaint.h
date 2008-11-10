@@ -77,6 +77,7 @@ public slots:
     virtual void set( const ParameterList & pParams );
     virtual void sSave();
     virtual void sGetUser(int pUsrId);
+    virtual void sGetContact(int pCntctId);
     virtual void sPopulate();
     virtual void sHandleButtons();
     virtual void sUserLookup(int pId);

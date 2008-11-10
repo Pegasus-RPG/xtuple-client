@@ -100,7 +100,7 @@
         <item>
          <widget class="DLineEdit" name="_alarmDate" >
           <property name="enabled" >
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
          </widget>
         </item>

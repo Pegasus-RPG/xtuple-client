@@ -110,8 +110,12 @@ Alarms::Alarms(QWidget *pParent) :
   
   _source = Uninitialized;
   _sourceid = -1;
-  _recipient1 = -1;
-  _recipient2 = -1;
+  _usrId1 = -1;
+  _usrId2 = -1;
+  _usrId3 = -1;
+  _cntctId1 = -1;
+  _cntctId2 = -1;
+  _cntctId3 = -1;
   XSqlQuery tickle;
   tickle.exec( "SELECT CURRENT_TIME AS dbdate;" );
   if (tickle.first())
@@ -144,14 +148,34 @@ void Alarms::setId(int pSourceid)
   refresh();
 }
 
-void Alarms::setRecipient1(int pRecipient)
+void Alarms::setUsrId1(int pUsrId)
 {
-  _recipient1 = pRecipient;
+  _usrId1 = pUsrId;
 }
 
-void Alarms::setRecipient2(int pRecipient)
+void Alarms::setUsrId2(int pUsrId)
 {
-  _recipient2 = pRecipient;
+  _usrId2 = pUsrId;
+}
+
+void Alarms::setUsrId3(int pUsrId)
+{
+  _usrId3 = pUsrId;
+}
+
+void Alarms::setCntctId1(int pCntctId)
+{
+  _cntctId1 = pCntctId;
+}
+
+void Alarms::setCntctId2(int pCntctId)
+{
+  _cntctId2 = pCntctId;
+}
+
+void Alarms::setCntctId3(int pCntctId)
+{
+  _cntctId3 = pCntctId;
 }
 
 void Alarms::setDate(QDate pDate)
@@ -193,8 +217,12 @@ void Alarms::sNew()
   params.append("source", _source);
   params.append("source_id", _sourceid);
   params.append("due_date", _dueDate);
-  params.append("recipient1", _recipient1);
-  params.append("recipient2", _recipient2);
+  params.append("usrId1", _usrId1);
+  params.append("usrId2", _usrId2);
+  params.append("usrId3", _usrId3);
+  params.append("cntctId1", _cntctId1);
+  params.append("cntctId2", _cntctId2);
+  params.append("cntctId3", _cntctId3);
 
   alarmMaint newdlg(this, "", TRUE);
   newdlg.set(params);

@@ -81,7 +81,6 @@ alarmMaint::alarmMaint(QWidget* parent, const char* name, bool modal, Qt::WFlags
     // signals and slots connections
     connect(_cancel, SIGNAL(clicked()), this, SLOT(reject()));
     connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    connect(_userLookup, SIGNAL(clicked()), this, SLOT(sUserLookup()));
     connect(_contactCluster, SIGNAL(newId(int)), this, SLOT(sContactLookup(int)));
     connect(_usernameCluster, SIGNAL(newId(int)), this, SLOT(sUserLookup(int)));
 
@@ -128,7 +127,11 @@ void alarmMaint::set( const ParameterList & pParams )
   
   param = pParams.value("source", &valid);
   if (valid)
+  {
     _source = (enum Alarms::AlarmSources)param.toInt();
+    if ( (Alarms::_alarmMap[_source].ident == "TODO") || (Alarms::_alarmMap[_source].ident == "J") )
+      _alarmDate->setEnabled(false);
+  }
     
   param = pParams.value("source_id", &valid);
   if(valid)
@@ -138,13 +141,29 @@ void alarmMaint::set( const ParameterList & pParams )
   if(valid)
     _alarmDate->setDate(param.toDate());
 
-  param = pParams.value("recipient1", &valid);
+  param = pParams.value("usrId1", &valid);
   if(valid)
     sGetUser(param.toInt());
 
-  param = pParams.value("recipient2", &valid);
+  param = pParams.value("usrId2", &valid);
   if(valid)
     sGetUser(param.toInt());
+
+  param = pParams.value("usrId3", &valid);
+  if(valid)
+    sGetUser(param.toInt());
+
+  param = pParams.value("cntctId1", &valid);
+  if(valid)
+    sGetContact(param.toInt());
+
+  param = pParams.value("cntctId2", &valid);
+  if(valid)
+    sGetContact(param.toInt());
+
+  param = pParams.value("cntctId3", &valid);
+  if(valid)
+    sGetContact(param.toInt());
 
   param = pParams.value("mode", &valid);
   if(valid)
@@ -253,6 +272,29 @@ void alarmMaint::sGetUser(int pUsrId)
     {
       recipient += ",";
       recipient += q.value("usr_email").toString();
+    }
+    _emailRecipient->setText(recipient);
+  }
+}
+
+void alarmMaint::sGetContact(int pCntctId)
+{
+  XSqlQuery q;
+  q.prepare( "SELECT cntct.* "
+             "FROM cntct "
+             "WHERE (cntct_id=:cntct_id);" );
+  q.bindValue(":cntct_id", pCntctId);
+  q.exec();
+  if (q.first())
+  {
+    QString recipient;
+    recipient = _emailRecipient->text();
+    if (recipient.length() == 0)
+      recipient = q.value("cntct_email").toString();
+    else if (recipient != q.value("cntct_email").toString())
+    {
+      recipient += ",";
+      recipient += q.value("cntct_email").toString();
     }
     _emailRecipient->setText(recipient);
   }

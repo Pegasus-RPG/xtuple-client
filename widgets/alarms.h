@@ -115,8 +115,12 @@ class OPENMFGWIDGETS_EXPORT Alarms : public QWidget, public Ui::alarms
   public slots:
     void setType(enum AlarmSources);
     void setId(int);
-    void setRecipient1(int);
-    void setRecipient2(int);
+    void setUsrId1(int);
+    void setUsrId2(int);
+    void setUsrId3(int);
+    void setCntctId1(int);
+    void setCntctId2(int);
+    void setCntctId3(int);
     void setDate(QDate);
     void setReadOnly(bool);
 
@@ -130,8 +134,12 @@ class OPENMFGWIDGETS_EXPORT Alarms : public QWidget, public Ui::alarms
   private:
     enum AlarmSources _source;
     int               _sourceid;
-    int               _recipient1;
-    int               _recipient2;
+    int               _usrId1;
+    int               _usrId2;
+    int               _usrId3;
+    int               _cntctId1;
+    int               _cntctId2;
+    int               _cntctId3;
     QDate             _dueDate;
     QTime             _dueTime;
 
