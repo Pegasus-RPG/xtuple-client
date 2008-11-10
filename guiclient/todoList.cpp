@@ -84,6 +84,11 @@ todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
   _incdtDates->setStartCaption(tr("First Incident Date:"));
   _incdtDates->setEndCaption(tr("Last Incident Date:"));
 
+  _prjtaskDates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
+  _prjtaskDates->setEndNull(tr("Latest"),	  omfgThis->endOfTime(),   TRUE);
+  _prjtaskDates->setStartCaption(tr("First Project Task Date:"));
+  _prjtaskDates->setEndCaption(tr("Last Project Task Date:"));
+
   _usr->setEnabled(_privileges->check("MaintainOtherTodoLists"));
   _usr->setType(ParameterGroup::User);
   q.prepare("SELECT usr_id "
@@ -110,6 +115,8 @@ todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_edit,	SIGNAL(clicked()),	this,	SLOT(sEdit()));
   connect(_incdtDates,	SIGNAL(updated()),	this,   SLOT(sFillList()));
   connect(_incidents,	SIGNAL(toggled(bool)),	this,	SLOT(sFillList()));
+  connect(_prjtaskDates,	SIGNAL(updated()),	this,   SLOT(sFillList()));
+  connect(_projects,	SIGNAL(toggled(bool)),	this,	SLOT(sFillList()));
   connect(_new,		SIGNAL(clicked()),	this,	SLOT(sNew()));
   connect(_print,	SIGNAL(clicked()),	this,	SLOT(sPrint()));
   connect(_todoList,	SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
@@ -332,6 +339,12 @@ void todoList::setParams(ParameterList &params)
     params.append("incdtStartDate", _incdtDates->startDate());
     params.append("incdtEndDate",   _incdtDates->endDate());
   }
+  if (_projects->isChecked())
+  {
+    params.append("projects");
+    params.append("prjtaskStartDate", _prjtaskDates->startDate());
+    params.append("prjtaskEndDate",   _prjtaskDates->endDate());
+  }
   _usr->appendValue(params);
   _dueDates->appendValue(params);
 }
@@ -382,7 +395,7 @@ void todoList::sFillList()
 		"       ) "
 		"<? if exists(\"incidents\")?>"
 		"UNION "
-		"SELECT incdt_id AS id, usr_id AS altId, "
+		"SELECT incdt_id AS id, usr_id AS altId, incdt_owner_username AS owner, "
 		"       'I' AS type, incdtpriority_order AS seq, incdtpriority_name AS priority, "
 		"       incdt_summary AS name, "
 		"       firstLine(incdt_descrip) AS descrip, "
@@ -397,6 +410,30 @@ void todoList::sFillList()
 		"                            AND <? value(\"incdtEndDate\") ?>)"
 		"  <? if not exists(\"completed\") ?> "
 		"   AND (incdt_status != 'L')"
+		"  <? endif ?>"
+		"  <? if exists(\"usr_id\") ?> "
+		"  AND (usr_id=<? value(\"usr_id\") ?>) "
+		"  <? elseif exists(\"usr_pattern\" ?>"
+		"  AND (usr_id IN (SELECT usr_id "
+		"        FROM usr "
+		"        WHERE (usr_username ~ <? value(\"usr_pattern\") ?>))) "
+		"  <? endif ?>"
+		"       ) "
+		"<? endif ?>"
+		"<? if exists(\"projects\")?>"
+		"UNION "
+		"SELECT prjtask_id AS id, usr_id AS altId, prjtask_owner_username AS owner, "
+		"       'J' AS type, NULL AS seq, NULL AS priority, "
+		"       prjtask_name AS name, "
+		"       firstLine(prjtask_descrip) AS descrip, "
+		"       prjtask_status AS status,  prjtask_due_date AS due, "
+		"       usr_username AS usr, NULL AS incdt, '' AS cust, "
+                "       NULL AS due_qtforegroundrole "
+		"FROM prjtask LEFT OUTER JOIN usr ON (usr_id=prjtask_usr_id)"
+		"WHERE ((prjtask_due_date BETWEEN <? value(\"prjtaskStartDate\") ?>"
+		"                             AND <? value(\"prjtaskEndDate\") ?>)"
+		"  <? if not exists(\"completed\") ?> "
+		"   AND (prjtask_status != 'L')"
 		"  <? endif ?>"
 		"  <? if exists(\"usr_id\") ?> "
 		"  AND (usr_id=<? value(\"usr_id\") ?>) "

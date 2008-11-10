@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>748</width>
-    <height>430</height>
+    <width>754</width>
+    <height>486</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -48,76 +48,104 @@
          </item>
          <item>
           <layout class="QVBoxLayout" >
-           <property name="spacing" >
-            <number>5</number>
-           </property>
            <item>
-            <widget class="XCheckBox" name="_active" >
-             <property name="text" >
-              <string>Active Only</string>
-             </property>
-            </widget>
+            <layout class="QHBoxLayout" >
+             <item>
+              <layout class="QVBoxLayout" >
+               <item>
+                <widget class="XCheckBox" name="_active" >
+                 <property name="text" >
+                  <string>Active Only</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="XCheckBox" name="_completed" >
+                 <property name="text" >
+                  <string>Completed</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <widget class="DateCluster" name="_dueDates" >
+               <property name="focusPolicy" >
+                <enum>Qt::StrongFocus</enum>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
            <item>
-            <widget class="XCheckBox" name="_completed" >
-             <property name="text" >
-              <string>Completed</string>
-             </property>
-            </widget>
+            <layout class="QHBoxLayout" >
+             <item>
+              <layout class="QVBoxLayout" >
+               <item>
+                <widget class="XCheckBox" name="_incidents" >
+                 <property name="text" >
+                  <string>Show Incidents</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer>
+                 <property name="orientation" >
+                  <enum>Qt::Vertical</enum>
+                 </property>
+                 <property name="sizeHint" >
+                  <size>
+                   <width>117</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <widget class="DateCluster" name="_incdtDates" >
+               <property name="focusPolicy" >
+                <enum>Qt::StrongFocus</enum>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
            <item>
-            <widget class="XCheckBox" name="_incidents" >
-             <property name="text" >
-              <string>Show Incidents</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer>
-             <property name="orientation" >
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" >
-              <size>
-               <width>20</width>
-               <height>0</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QVBoxLayout" >
-           <property name="spacing" >
-            <number>5</number>
-           </property>
-           <item>
-            <widget class="DateCluster" name="_dueDates" >
-             <property name="focusPolicy" >
-              <enum>Qt::StrongFocus</enum>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer>
-             <property name="orientation" >
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" >
-              <size>
-               <width>20</width>
-               <height>0</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <widget class="DateCluster" name="_incdtDates" >
-             <property name="focusPolicy" >
-              <enum>Qt::StrongFocus</enum>
-             </property>
-            </widget>
+            <layout class="QHBoxLayout" >
+             <item>
+              <layout class="QVBoxLayout" >
+               <item>
+                <widget class="XCheckBox" name="_projects" >
+                 <property name="text" >
+                  <string>Show Project Tasks</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer>
+                 <property name="orientation" >
+                  <enum>Qt::Vertical</enum>
+                 </property>
+                 <property name="sizeHint" >
+                  <size>
+                   <width>20</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <widget class="DateCluster" name="_prjtaskDates" >
+               <property name="focusPolicy" >
+                <enum>Qt::StrongFocus</enum>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
           </layout>
          </item>
@@ -299,6 +327,22 @@
     <hint type="destinationlabel" >
      <x>528</x>
      <y>96</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_projects</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_prjtaskDates</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>322</x>
+     <y>157</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>521</x>
+     <y>180</y>
     </hint>
    </hints>
   </connection>

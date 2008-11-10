@@ -106,6 +106,30 @@ enum SetResponse task::set(const ParameterList &pParams)
   if (valid)
     _prjid = param.toInt();
 
+  param = pParams.value("prj_owner_username", &valid);
+  if (valid)
+    _owner->setUsername(param.toString());
+
+  param = pParams.value("prj_usr_id", &valid);
+  if (valid)
+    _assignedTo->setId(param.toInt());
+
+  param = pParams.value("prj_start_date", &valid);
+  if (valid)
+    _started->setDate(param.toDate());
+
+  param = pParams.value("prj_assigned_date", &valid);
+  if (valid)
+    _assigned->setDate(param.toDate());
+
+  param = pParams.value("prj_due_date", &valid);
+  if (valid)
+    _due->setDate(param.toDate());
+
+  param = pParams.value("prj_completed_date", &valid);
+  if (valid)
+    _completed->setDate(param.toDate());
+
   param = pParams.value("prjtask_id", &valid);
   if (valid)
   {
@@ -119,6 +143,18 @@ enum SetResponse task::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
+
+      q.exec("SELECT NEXTVAL('prjtask_prjtask_id_seq') AS prjtask_id;");
+      if (q.first())
+        _prjtaskid = q.value("prjtask_id").toInt();
+      else
+      {
+        systemError(this, tr("A System Error occurred at %1::%2.")
+                          .arg(__FILE__)
+                          .arg(__LINE__) );
+      }
+
+      _alarms->setId(_prjtaskid);
     }
     if (param.toString() == "edit")
     {
@@ -138,6 +174,13 @@ enum SetResponse task::set(const ParameterList &pParams)
       _actualHours->setEnabled(false);
       _budgetExp->setEnabled(false);
       _actualExp->setEnabled(false);
+      _owner->setEnabled(false);
+      _assignedTo->setEnabled(false);
+      _due->setEnabled(false);
+      _assigned->setEnabled(false);
+      _started->setEnabled(false);
+      _completed->setEnabled(false);
+      _alarms->setEnabled(false);
       _save->hide();
     }
   }
@@ -147,9 +190,7 @@ enum SetResponse task::set(const ParameterList &pParams)
 
 void task::populate()
 {
-  q.prepare( "SELECT prjtask_number, prjtask_name, prjtask_descrip, prjtask_status,"
-             "       prjtask_hours_budget, prjtask_hours_actual,"
-             "       prjtask_exp_budget, prjtask_exp_actual "
+  q.prepare( "SELECT prjtask.* "
              "FROM prjtask "
              "WHERE (prjtask_id=:prjtask_id);" );
   q.bindValue(":prjtask_id", _prjtaskid);
@@ -159,6 +200,12 @@ void task::populate()
     _number->setText(q.value("prjtask_number"));
     _name->setText(q.value("prjtask_name"));
     _descrip->setText(q.value("prjtask_descrip").toString());
+    _owner->setUsername(q.value("prjtask_owner_username").toString());
+    _assignedTo->setId(q.value("prjtask_usr_id").toInt());
+    _started->setDate(q.value("prjtask_start_date").toDate());
+    _assigned->setDate(q.value("prjtask_assigned_date").toDate());
+    _due->setDate(q.value("prjtask_due_date").toDate());
+    _completed->setDate(q.value("prjtask_completed_date").toDate());
 
     QString status = q.value("prjtask_status").toString();
     if("P" == status)
@@ -173,6 +220,7 @@ void task::populate()
     _budgetExp->setText(formatCost(q.value("prjtask_exp_budget").toDouble()));
     _actualExp->setText(formatCost(q.value("prjtask_exp_actual").toDouble()));
 
+    _alarms->setId(_prjtaskid);
     sHoursAdjusted();
     sExpensesAdjusted();
 
@@ -194,27 +242,22 @@ void task::sSave()
 {
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('prjtask_prjtask_id_seq') AS prjtask_id;");
-    if (q.first())
-      _prjtaskid = q.value("prjtask_id").toInt();
-    else
-    {
-      systemError(this, tr("A System Error occurred at %1::%2.")
-                        .arg(__FILE__)
-                        .arg(__LINE__) );
-      return;
-    }
-
     q.prepare( "INSERT INTO prjtask "
                "( prjtask_id, prjtask_prj_id, prjtask_number,"
                "  prjtask_name, prjtask_descrip, prjtask_status,"
                "  prjtask_hours_budget, prjtask_hours_actual,"
-               "  prjtask_exp_budget, prjtask_exp_actual ) "
+               "  prjtask_exp_budget, prjtask_exp_actual,"
+               "  prjtask_start_date, prjtask_due_date,"
+               "  prjtask_assigned_date, prjtask_completed_date,"
+               "  prjtask_owner_username, prjtask_usr_id ) "
                "VALUES "
                "( :prjtask_id, :prjtask_prj_id, :prjtask_number,"
                "  :prjtask_name, :prjtask_descrip, :prjtask_status,"
                "  :prjtask_hours_budget, :prjtask_hours_actual,"
-               "  :prjtask_exp_budget, :prjtask_exp_actual );" );
+               "  :prjtask_exp_budget, :prjtask_exp_actual,"
+               "  :prjtask_start_date, :prjtask_due_date,"
+               "  :prjtask_assigned_date, :prjtask_completed_date,"
+               "  :prjtask_owner_username, :prjtask_usr_id );" );
     q.bindValue(":prjtask_prj_id", _prjid);
   }
   else if (_mode == cEdit)
@@ -224,13 +267,25 @@ void task::sSave()
                "    prjtask_hours_budget=:prjtask_hours_budget,"
                "    prjtask_hours_actual=:prjtask_hours_actual,"
                "    prjtask_exp_budget=:prjtask_exp_budget,"
-               "    prjtask_exp_actual=:prjtask_exp_actual "
+               "    prjtask_exp_actual=:prjtask_exp_actual,"
+               "    prjtask_owner_username=:prjtask_owner_username,"
+               "    prjtask_usr_id=:prjtask_usr_id,"
+               "    prjtask_start_date=:prjtask_start_date,"
+               "    prjtask_due_date=:prjtask_due_date,"
+               "    prjtask_assigned_date=:prjtask_assigned_date,"
+               "    prjtask_completed_date=:prjtask_completed_date "
                "WHERE (prjtask_id=:prjtask_id);" );
 
   q.bindValue(":prjtask_id", _prjtaskid);
   q.bindValue(":prjtask_number", _number->text());
   q.bindValue(":prjtask_name", _name->text());
   q.bindValue(":prjtask_descrip", _descrip->toPlainText());
+  q.bindValue(":prjtask_owner_username", _owner->username());
+  q.bindValue(":prjtask_usr_id",   _assignedTo->id());
+  q.bindValue(":prjtask_start_date",	_started->date());
+  q.bindValue(":prjtask_due_date",	_due->date());
+  q.bindValue(":prjtask_assigned_date",	_assigned->date());
+  q.bindValue(":prjtask_completed_date",	_completed->date());
   //q.bindValue(":prjtask_anyuser", QVariant(_anyUser->isChecked()));
   q.bindValue(":prjtask_hours_budget", _budgetHours->text().toDouble());
   q.bindValue(":prjtask_hours_actual", _actualHours->text().toDouble());

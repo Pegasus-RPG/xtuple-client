@@ -330,6 +330,12 @@ void project::sNewTask()
   ParameterList params;
   params.append("mode", "new");
   params.append("prj_id", _prjid);
+  params.append("prj_owner_username", _owner->username());
+  params.append("prj_usr_id",   _assignedTo->id());
+  params.append("prj_start_date",	_started->date());
+  params.append("prj_due_date",	_due->date());
+  params.append("prj_assigned_date",	_assigned->date());
+  params.append("prj_completed_date",	_completed->date());
 
   task newdlg(this, "", TRUE);
   newdlg.set(params);
