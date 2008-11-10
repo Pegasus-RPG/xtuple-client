@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>701</width>
-    <height>349</height>
+    <height>388</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -35,6 +35,9 @@
      </property>
      <item row="0" column="0" >
       <layout class="QGridLayout" >
+       <property name="verticalSpacing" >
+        <number>2</number>
+       </property>
        <item row="0" column="0" >
         <widget class="QLabel" name="_acctGenerationLit" >
          <property name="text" >
@@ -185,7 +188,7 @@
        <item>
         <layout class="QVBoxLayout" >
          <property name="spacing" >
-          <number>6</number>
+          <number>0</number>
          </property>
          <property name="leftMargin" >
           <number>0</number>
@@ -318,6 +321,23 @@
          <widget class="QCheckBox" name="_incdtComments" >
           <property name="text" >
            <string>Comments added</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="0" >
+         <widget class="Line" name="line" >
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="0" >
+         <widget class="QCheckBox" name="_incdtPreview" >
+          <property name="text" >
+           <string>Preview Email before sending</string>
+          </property>
+          <property name="checked" >
+           <bool>true</bool>
           </property>
          </widget>
         </item>

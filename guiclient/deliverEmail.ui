@@ -49,7 +49,7 @@
         </widget>
        </item>
        <item row="0" column="1" >
-        <widget class="XLineEdit" name="_fromEmail" />
+        <widget class="XLineEdit" name="_from" />
        </item>
        <item row="1" column="0" >
         <widget class="QLabel" name="_emailLit" >
@@ -62,7 +62,7 @@
         </widget>
        </item>
        <item row="1" column="1" >
-        <widget class="XLineEdit" name="_email" />
+        <widget class="XLineEdit" name="_to" />
        </item>
        <item row="2" column="0" >
         <widget class="QLabel" name="_ccLit" >
@@ -194,7 +194,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QTextEdit" name="_emailBody" />
+           <widget class="QTextEdit" name="_body" />
           </item>
           <item>
            <widget class="QCheckBox" name="_emailHTML" >
@@ -222,11 +222,11 @@
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>_fromEmail</tabstop>
-  <tabstop>_email</tabstop>
+  <tabstop>_from</tabstop>
+  <tabstop>_to</tabstop>
   <tabstop>_cc</tabstop>
   <tabstop>_subject</tabstop>
-  <tabstop>_emailBody</tabstop>
+  <tabstop>_body</tabstop>
   <tabstop>_submit</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>

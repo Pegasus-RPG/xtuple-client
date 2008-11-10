@@ -79,17 +79,12 @@ deliverEmail::deliverEmail(QWidget* parent, const char* name, bool modal, Qt::WF
     setupUi(this);
 
     _captive = FALSE;
-    _docid = 0;
-
-    q.exec( "SELECT usr_email "
-          "FROM usr "
-          "WHERE (usr_username=CURRENT_USER);" );
-    if (q.first())
-      _fromEmail->setText(q.value("usr_email"));
 
     // signals and slots connections
     connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
     connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
+    
+    
 
 }
 
@@ -110,92 +105,150 @@ void deliverEmail::languageChange()
     retranslateUi(this);
 }
 
-
-enum SetResponse deliverEmail::set(ParameterList &pParams)
+enum SetResponse deliverEmail::set(const ParameterList &pParams)
 {
-  _captive = TRUE;
-
   QVariant param;
   bool     valid;
-    
-  param = pParams.value("description", &valid);
-  if (valid)
-    _descrip = param.toString();
-    
-  param = pParams.value("docid", &valid);
-  if (valid)
-    _docid = param.toInt();
+  
+  _captive = true;
 
-  param = pParams.value("docbody", &valid);
+  param = pParams.value("from", &valid);
   if (valid)
-    _docbody = param.toString();
-    
-  param = pParams.value("docnumber", &valid);
-  if (valid)
-    _docnumber = param.toString();
+    _from->setText(param.toString());
 
-  param = pParams.value("doctype", &valid);
+  param = pParams.value("to", &valid);
   if (valid)
-    _doctype = param.toString();
+  {
+    _to->setText(param.toString());
+    if (!_to->text().isEmpty())
+      _submit->setEnabled(TRUE);
+  }
+  
+  param = pParams.value("cc", &valid);
+  if (valid)
+    _cc->setText(param.toString());
+  
+  param = pParams.value("subject", &valid);
+  if (valid)
+    _subject->setText(param.toString());
     
-  param = pParams.value("email1", &valid);
+  param = pParams.value("body", &valid);
   if (valid)
-    _email1 = param.toString();
-    
-  param = pParams.value("email2", &valid);
-  if (valid)
-    _email2 = param.toString();
-
-  param = pParams.value("email3", &valid);
-  if (valid)
-    _email3 = param.toString();
-    
-  param = pParams.value("profileid", &valid);
-  if (valid)
-    setProfileId(param.toInt());
+    _body->setText(param.toString());
 
   return NoError;
 }
 
 void deliverEmail::sSubmit()
 {
-  if (_email->text().isEmpty())
+  if (_to->text().isEmpty())
   {
     QMessageBox::critical( this, tr("Cannot Email for Delivery"),
                            tr("You must enter a email address to which this message is to be delivered.") );
-    _email->setFocus();
+    _to->setFocus();
     return;
   }
-
-  q.prepare( "SELECT submitEmailToBatch( :fromEmail, :emailAddress, :ccAddress, :subject,"
-             "                            :emailBody, :fileName, CURRENT_TIMESTAMP, :emailHTML) AS batch_id;" );
-  q.bindValue(":fromEmail", _fromEmail->text());
-  q.bindValue(":emailAddress", _email->text());
-  q.bindValue(":ccAddress", _cc->text());
-  q.bindValue(":subject", _subject->text());
-  q.bindValue(":emailBody", _emailBody->toPlainText());
-  q.bindValue(":emailHTML", QVariant(_emailHTML->isChecked(), 0));
-  q.exec();
-
+  
+  submitEmail(this,
+         _from->text(),
+         _to->text(),
+         _cc->text(),
+         _subject->text(),
+         _body->toPlainText(),
+         _emailHTML->isChecked());
+  
   if (_captive)
     accept();
   else
   {
     _submit->setEnabled(FALSE);
     _close->setText(tr("&Close"));
-    _email->clear();
+    _to->clear();
     _cc->clear();
-    _emailBody->clear();
+    _body->clear();
     _subject->clear();
   }
 }
 
-void deliverEmail::setProfileId(int profileid)
+
+bool deliverEmail::profileEmail(QWidget *parent, int profileid, ParameterList &pParams)
 {
+  if (!profileid)
+    return false;
+
+  QVariant param;
+  bool     valid;
+  
+  bool    preview = false;
+  
+  //Token variables
+  int     docid = 0;
+  QString comments;
+  QString descrip;
+  QString docnumber;
+  QString doctype;
+  QString docbody;
+  QString email1;
+  QString email2; 
+  QString email3; 
+  
+  //Email variables
+  QString from;
+  QString to;
+  QString cc;
+  QString subject;
+  QString body;
+    
+  //Process parameters
+  param = pParams.value("preview", &valid);
+  if (valid)
+    preview = param.toBool(); 
+    
+  param = pParams.value("description", &valid);
+  if (valid)
+    descrip = param.toString();
+    
+  param = pParams.value("docid", &valid);
+  if (valid)
+    docid = param.toInt();
+
+  param = pParams.value("docbody", &valid);
+  if (valid)
+    docbody = param.toString();
+    
+  param = pParams.value("docnumber", &valid);
+  if (valid)
+    docnumber = param.toString();
+
+  param = pParams.value("doctype", &valid);
+  if (valid)
+    doctype = param.toString();
+    
+  param = pParams.value("email1", &valid);
+  if (valid)
+    email1 = param.toString();
+    
+  param = pParams.value("email2", &valid);
+  if (valid)
+    email2 = param.toString();
+
+  param = pParams.value("email3", &valid);
+  if (valid)
+    email3 = param.toString();
+
+  //Get user email
+  q.exec( "SELECT usr_email "
+          "FROM usr "
+          "WHERE (usr_username=CURRENT_USER);" );
+  if (q.first())
+    from=q.value("usr_email").toString();
+    
+  //Process profile
   q.prepare( "SELECT ediprofile_option1 AS emailto, "
              "  ediprofile_option4 AS emailcc, "
              "  ediprofile_option2 AS subject, "
-             "  ediprofile_option3 AS body "
+             "  ediprofile_option3 AS body, "
+             "  ediprofile_emailhtml "
              "FROM ediprofile "
              "WHERE ( (ediprofile_id=:ediprofile_id) "
              " AND (ediprofile_type='email') );" );
@@ -203,147 +256,207 @@ void deliverEmail::setProfileId(int profileid)
   q.exec();
   if (q.first())
   {
-    _submit->setEnabled(TRUE);
-    _email->setText(q.value("emailto").toString());
-    _cc->setText(q.value("emailcc").toString());
-    _emailBody->setPlainText(q.value("body").toString()
-      .replace("</description>" , _descrip)
-      .replace("</docnumber>"   , _docnumber)
-      .replace("</doctype>"     , _doctype)
-      .replace("</docbody>"     , _docbody));
-    _subject->setText(q.value("subject").toString()
-      .replace("</description>" , _descrip)
-      .replace("</docnumber>"   , _docnumber)
-      .replace("</doctype>"     , _doctype)
-      .replace("</docbody>"     , _docbody));
+    to=q.value("emailto").toString();
+    cc=q.value("emailcc").toString();
+    body=QString(q.value("body").toString()
+      .replace("</description>" , descrip)
+      .replace("</docnumber>"   , docnumber)
+      .replace("</doctype>"     , doctype)
+      .replace("</docbody>"     , docbody));
+    subject=QString(q.value("subject").toString()
+      .replace("</description>" , descrip)
+      .replace("</docnumber>"   , docnumber)
+      .replace("</doctype>"     , doctype)
+      .replace("</docbody>"     , docbody));
             
     //Handle E-mail
     //Don't send messages to myself
-    if (_email1 == _fromEmail->text())
-      _email1 = QString::null;
-    if (_email2 == _fromEmail->text())
-      _email2 = QString::null;
-    if (_email3 == _fromEmail->text())
-      _email3 = QString::null;
+    if (email1 == to)
+      email1 = QString::null;
+    if (email2 == from)
+      email2 = QString::null;
+    if (email3 == from)
+      email3 = QString::null;
       
     //Add token addresses to "To" list if applicable
-    if ((_email1.isEmpty()) || (_email->text().count(_email1,Qt::CaseInsensitive)))
-      _email->setText(_email->text().remove("</email1>"));
+    if ((email1.isEmpty()) || (to.count(email1,Qt::CaseInsensitive)))
+      to=to.remove("</email1>");
     else
     {
-      if (_email->text().stripWhiteSpace()
-                        .remove("</email1>")
-                        .remove("</email2>")
-                        .remove("</email3>")
-                        .length())
-        _email->setText(_email->text().replace("</email1>", ", " + _email1));
+      if (to.stripWhiteSpace()
+            .remove("</email1>")
+            .remove("</email2>")
+            .remove("</email3>")
+            .length())
+        to=to.replace("</email1>", ", " + email1);
       else
-        _email->setText(_email->text().replace("</email1>", _email1));
+        to=to.replace("</email1>", email1);
     }
   
-    if ((_email2.isEmpty()) || (_email->text().count(_email2,Qt::CaseInsensitive)))
-      _email->setText(_email->text().remove("</email2>"));
+    if ((email2.isEmpty()) || (to.count(email2,Qt::CaseInsensitive)))
+      to=to.remove("</email2>");
     else
     {
-      if (_email->text().stripWhiteSpace()
-                        .remove("</email1>")
-                        .remove("</email2>")
-                        .remove("</email3>")
-                        .length())
-        _email->setText(_email->text().replace("</email2>", ", " + _email2));
+      if (to.stripWhiteSpace()
+            .remove("</email1>")
+            .remove("</email2>")
+            .remove("</email3>")
+            .length())
+        to=to.replace("</email2>", ", " + email2);
       else
-        _email->setText(_email->text().replace("</email2>", _email2));
+        to=to.replace("</email2>", email2);
     }
         
-    if ((_email3.isEmpty()) || (_email->text().count(_email3,Qt::CaseInsensitive)))
-      _email->setText(_email->text().remove("</email3>"));
+    if ((email3.isEmpty()) || (to.count(email3,Qt::CaseInsensitive)))
+      to=to.remove("</email3>");
     else
     {
-      if (_email->text().stripWhiteSpace()
-                        .remove("</email1>")
-                        .remove("</email2>")
-                        .remove("</email3>")
-                        .length())
-        _email->setText(_email->text().replace("</email3>", ", " + _email3));
+      if (to.stripWhiteSpace()
+            .remove("</email1>")
+            .remove("</email2>")
+            .remove("</email3>")
+            .length())
+        to=to.replace("</email3>", ", " + email3);
       else
-        _email->setText(_email->text().replace("</email3>", _email3));
+        to=to.replace("</email3>", email3);
     }
     
     //Add token addresses to "CC" list if applicable
-    if ((_email1.isEmpty()) || (_cc->text().count(_email1,Qt::CaseInsensitive)))
-      _cc->setText(_cc->text().remove("</email1>"));
+    if ((email1.isEmpty()) || (cc.count(email1,Qt::CaseInsensitive)))
+      cc=cc.remove("</email1>");
     else
     {
-      if (_cc->text().stripWhiteSpace()
-                        .remove("</email1>")
-                        .remove("</email2>")
+      if (cc.stripWhiteSpace()
+            .remove("</email1>")
+            .remove("</email2>")
                         .remove("</email3>")
                         .length())
-        _cc->setText(_cc->text().replace("</email1>", ", " + _email1));
+        cc=cc.replace("</email1>", ", " + email1);
       else
-        _cc->setText(_cc->text().replace("</email1>", _email1));
+        cc=cc.replace("</email1>", email1);
     }
   
-    if ((_email2.isEmpty()) || (_cc->text().count(_email2,Qt::CaseInsensitive)))
-      _cc->setText(_cc->text().remove("</email2>"));
+    if ((email2.isEmpty()) || (cc.count(email2,Qt::CaseInsensitive)))
+      cc=cc.remove("</email2>");
     else
     {
-      if (_cc->text().stripWhiteSpace()
-                        .remove("</email1>")
-                        .remove("</email2>")
-                        .remove("</email3>")
-                        .length())
-        _cc->setText(_cc->text().replace("</email2>", ", " + _email2));
+      if (cc.stripWhiteSpace()
+            .remove("</email1>")
+            .remove("</email2>")
+            .remove("</email3>")
+            .length())
+        cc=cc.replace("</email2>", ", " + email2);
       else
-        _cc->setText(_cc->text().replace("</email2>", _email2));
+        cc=cc.replace("</email2>", email2);
     }
         
-    if ((_email3.isEmpty()) || (_cc->text().count(_email3,Qt::CaseInsensitive)))
-      _cc->setText(_cc->text().remove("</email3>"));
+    if ((email3.isEmpty()) || (cc.count(email3,Qt::CaseInsensitive)))
+      cc=cc.remove("</email3>");
     else
     {
-      if (_cc->text().stripWhiteSpace()
-                        .remove("</email1>")
-                        .remove("</email2>")
-                        .remove("</email3>")
-                        .length())
-        _cc->setText(_cc->text().replace("</email3>", ", " + _email3));
+      if (cc.stripWhiteSpace()
+            .remove("</email1>")
+            .remove("</email2>")
+            .remove("</email3>")
+            .length())
+        cc=cc.replace("</email3>", ", " + email3);
       else
-        _cc->setText(_cc->text().replace("</email3>", _email3));
+        cc=cc.replace("</email3>", email3);
     }
     
     //Build comment detail if applicable
-    if (_emailBody->text().count("</comments>") &&
-         !_doctype.isEmpty() && _docid)
+    if (body.count("</comments>") &&
+         !doctype.isEmpty() && docid)
     {                         
       q.prepare("SELECT comment_user, comment_date, comment_text "
                 "FROM comment "
                 "WHERE ( (comment_source=:doctype) "
                 " AND (comment_source_id=:docid) ) "
                 "ORDER BY comment_date;");
-      q.bindValue(":doctype", _doctype);
-      q.bindValue(":docid", _docid);
+      q.bindValue(":doctype", doctype);
+      q.bindValue(":docid", docid);
       q.exec();
       while (q.next())
       {
-        _comments += "-----------------------------------------------------\n";
-        _comments += q.value("comment_user").toString();
-        _comments += " - ";
-        _comments += q.value("comment_date").toString();
-        _comments += "\n-----------------------------------------------------\n";
-        _comments += q.value("comment_text").toString();
-        _comments += "\n\n";
+        comments += "-----------------------------------------------------\n";
+        comments += q.value("comment_user").toString();
+        comments += " - ";
+        comments += q.value("comment_date").toString();
+        comments += "\n-----------------------------------------------------\n";
+        comments += q.value("comment_text").toString();
+        comments += "\n\n";
       }
       
-      _emailBody->setText(_emailBody->text().replace("</comments>", _comments));
+      body=body.replace("</comments>", comments);
     }
+    
+    if (preview)
+    {
+      ParameterList params;
+      params.append("from", from);
+      params.append("to", to);
+      params.append("cc", cc);
+      params.append("subject", subject);
+      params.append("body", body);
+      params.append("emailhtml", q.value("ediprofile_emailhtml").toBool());
+       
+      deliverEmail newdlg(parent, "", TRUE);
+      newdlg.set(params);
+      if (newdlg.exec() == XDialog::Rejected)
+        return false;
+      else
+        return true;
+    }
+    else
+      submitEmail(parent,from,to,cc,subject,body,q.value("ediprofile_emailhtml").toBool());
   }
   else
-  {
-    _submit->setEnabled(FALSE);
-    _email->clear();
-    _cc->clear();
-    _emailBody->clear();
-    _subject->clear();
-  }
+    return false;
+
+  return true;
 }
+
+bool deliverEmail::submitEmail(QWidget* parent, const QString to, const QString cc, const QString subject, const QString body)
+{
+  QString from;
+  
+  //Get user email
+  q.exec( "SELECT usr_email "
+          "FROM usr "
+          "WHERE (usr_username=CURRENT_USER);" );
+  if (q.first())
+    from=q.value("usr_email").toString();
+  else
+    return false;
+    
+  return submitEmail(parent,from,to,cc,subject,body);
+}
+
+bool deliverEmail::submitEmail(QWidget* parent, const QString from, const QString to, const QString cc, const QString subject, const QString body)
+{
+  return submitEmail(parent,from,to,cc,subject,body,false);
+}
+
+bool deliverEmail::submitEmail(QWidget* parent, const QString from, const QString to, const QString cc, const QString subject, const QString body, const bool emailHTML)
+{
+  if (to.isEmpty())
+    return false;
+
+  q.prepare( "SELECT submitEmailToBatch( :fromEmail, :emailAddress, :ccAddress, :subject,"
+             "                            :emailBody, :fileName, CURRENT_TIMESTAMP, :emailHTML) AS batch_id;" );
+  q.bindValue(":fromEmail", from);
+  q.bindValue(":emailAddress", to);
+  q.bindValue(":ccAddress", cc);
+  q.bindValue(":subject", subject);
+  q.bindValue(":emailBody", body);
+  q.bindValue(":emailHTML", emailHTML);
+  q.exec();
+  if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(parent, q.lastError().databaseText(), __FILE__, __LINE__);
+    return false;
+  }
+  
+  return true;
+}
+

@@ -115,6 +115,7 @@ configureCRM::configureCRM(QWidget* parent, const char* name, bool modal, Qt::WF
     _incdtStatus->setChecked(_metrics->boolean("CRMIncidentEmailStatus"));
     _incdtUpdated->setChecked(_metrics->boolean("CRMIncidentEmailUpdated"));
     _incdtComments->setChecked(_metrics->boolean("CRMIncidentEmailComments"));
+    _incdtPreview->setChecked(_metrics->boolean("CRMIncidentEmailPreview"));
   }
   else
   {
@@ -168,6 +169,7 @@ void configureCRM::sSave()
     _metrics->set("CRMIncidentEmailStatus"    , _incdtStatus->isChecked());
     _metrics->set("CRMIncidentEmailUpdated"   , _incdtUpdated->isChecked());
     _metrics->set("CRMIncidentEmailComments"  , _incdtComments->isChecked());
+    _metrics->set("CRMIncidentEmailPreview"   , _incdtPreview->isChecked());
   }
   
   _metrics->load();

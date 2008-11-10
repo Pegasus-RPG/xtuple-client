@@ -58,6 +58,8 @@
 #ifndef DELIVEREMAIL_H
 #define DELIVEREMAIL_H
 
+#include <QSqlError>
+
 #include "guiclient.h"
 #include "xdialog.h"
 #include <parameter.h>
@@ -71,27 +73,20 @@ class deliverEmail : public XDialog, public Ui::deliverEmail
 public:
     deliverEmail(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~deliverEmail();
-
-public slots:
-    virtual enum SetResponse set( ParameterList & pParams );
-    virtual void sSubmit();
-    virtual void setProfileId( int profileid );
+    
+    static bool profileEmail(QWidget *parent, int profileid, ParameterList & pParams);
+    static bool submitEmail(QWidget *parent, const QString to, const QString cc, const QString subject, const QString body);
+    static bool submitEmail(QWidget *parent, const QString from, const QString to, const QString cc, const QString subject, const QString body);
+    static bool submitEmail(QWidget *parent, const QString from, const QString to, const QString cc, const QString subject, const QString body, const bool emailHTML);
+    
+    virtual enum SetResponse set( const ParameterList & pParams );
 
 protected slots:
     virtual void languageChange();
+    virtual void sSubmit();
 
-private:
+private:    
     bool _captive;
-    
-    int     _docid;
-    QString _comments;
-    QString _descrip;
-    QString _docnumber;
-    QString _doctype;
-    QString _docbody;
-    QString _email1;
-    QString _email2; 
-    QString _email3; 
 
 };
 

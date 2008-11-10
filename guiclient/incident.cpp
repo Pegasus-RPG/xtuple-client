@@ -945,16 +945,14 @@ void incident::sPrepareMail()
   params.append("email1"      , ownerEmail);
   params.append("email2"      , assignedEmail);
   params.append("email3"      , _cntct->emailAddress());
-  params.append("profileid"   , _metrics->value("CRMIncidentEmailProfile"));
+  params.append("preview"     , _metrics->boolean("CRMIncidentEmailPreview"));
     
   sSendMail(params);
 }
 
 void incident::sSendMail(ParameterList & params)
 {
-  deliverEmail newdlg (this,"",true);
-  newdlg.set(params);
-  newdlg.exec();
+  deliverEmail::profileEmail(this, _metrics->value("CRMIncidentEmailProfile").toInt(), params);
 }
 
 void incident::sAssigned()
