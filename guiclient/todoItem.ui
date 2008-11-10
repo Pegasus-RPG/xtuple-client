@@ -628,7 +628,7 @@
    <sender>_owner</sender>
    <signal>newId(int)</signal>
    <receiver>_alarms</receiver>
-   <slot>setRecipient1(int)</slot>
+   <slot>setUsrId1(int)</slot>
    <hints>
     <hint type="sourcelabel" >
      <x>124</x>
@@ -644,7 +644,7 @@
    <sender>_assignedTo</sender>
    <signal>newId(int)</signal>
    <receiver>_alarms</receiver>
-   <slot>setRecipient2(int)</slot>
+   <slot>setUsrId2(int)</slot>
    <hints>
     <hint type="sourcelabel" >
      <x>346</x>

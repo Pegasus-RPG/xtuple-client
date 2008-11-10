@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>675</height>
+    <height>683</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -748,6 +748,20 @@
          </item>
         </layout>
        </widget>
+       <widget class="QWidget" name="_alarmTab" >
+        <attribute name="title" >
+         <string>Alarms</string>
+        </attribute>
+        <layout class="QHBoxLayout" >
+         <item>
+          <widget class="Alarms" name="_alarms" >
+           <property name="type" >
+            <enum>Alarms::Incident</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
       </widget>
      </item>
     </layout>
@@ -756,6 +770,11 @@
  </widget>
  <layoutdefault spacing="5" margin="5" />
  <customwidgets>
+  <customwidget>
+   <class>Alarms</class>
+   <extends>QWidget</extends>
+   <header>alarms.h</header>
+  </customwidget>
   <customwidget>
    <class>Comments</class>
    <extends>QWidget</extends>
@@ -838,5 +857,54 @@
   <tabstop>_cancel</tabstop>
  </tabstops>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>_owner</sender>
+   <signal>newId(int)</signal>
+   <receiver>_alarms</receiver>
+   <slot>setUsrId1(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>140</x>
+     <y>206</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>399</x>
+     <y>541</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_assignedTo</sender>
+   <signal>newId(int)</signal>
+   <receiver>_alarms</receiver>
+   <slot>setUsrId2(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>387</x>
+     <y>206</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>399</x>
+     <y>541</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_cntct</sender>
+   <signal>newId(int)</signal>
+   <receiver>_alarms</receiver>
+   <slot>setCntctId1(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>328</x>
+     <y>326</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>648</x>
+     <y>843</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

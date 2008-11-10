@@ -213,6 +213,7 @@ enum SetResponse incident::set(const ParameterList &pParams)
         _number->setText(q.value("number").toString());
         _comments->setId(_incdtid);
         _documents->setId(_incdtid);
+        _alarms->setId(_incdtid);
       }
       else
       {
@@ -255,6 +256,7 @@ enum SetResponse incident::set(const ParameterList &pParams)
       _cancel->setFocus();
       _comments->setReadOnly(true);
       _documents->setReadOnly(true);
+      _alarms->setReadOnly(true);
     }
   }
 
@@ -595,6 +597,7 @@ void incident::populate()
 
     _comments->setId(_incdtid);
     _documents->setId(_incdtid);
+    _alarms->setId(_incdtid);
 	
     _docType->setText(q.value("docType").toString());
     _docNumber->setText(q.value("docNumber").toString());
