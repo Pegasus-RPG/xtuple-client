@@ -128,8 +128,12 @@ Alarms::Alarms(QWidget *pParent) :
   _alarms->addColumn(tr("Qualifier"),        _itemColumn,   Qt::AlignLeft, true, "f_offset" );
   _alarms->addColumn(tr("Due"),              -1,            Qt::AlignLeft, true, "alarm_time" );
   _alarms->addColumn(tr("Event Recipient"),  _itemColumn,   Qt::AlignLeft, true, "alarm_event_recipient" );
-  _alarms->addColumn(tr("Email Recipient"),  _itemColumn,   Qt::AlignLeft, true, "alarm_email_recipient" );
   _alarms->addColumn(tr("SysMsg Recipient"), _itemColumn,   Qt::AlignLeft, true, "alarm_sysmsg_recipient" );
+  if (_x_metrics)
+  {
+    if (_x_metrics->boolean("EnableBatchManager"))
+      _alarms->addColumn(tr("Email Recipient"),  _itemColumn,   Qt::AlignLeft, true, "alarm_email_recipient" );
+  }
 
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));

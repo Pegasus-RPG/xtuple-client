@@ -97,7 +97,16 @@ alarmMaint::alarmMaint(QWidget* parent, const char* name, bool modal, Qt::WFlags
     }
     
     _eventAlarm->setChecked(_x_preferences && _x_preferences->boolean("AlarmEventDefault"));
-    _emailAlarm->setChecked(_x_preferences && _x_preferences->boolean("AlarmEmailDefault"));
+    if (_x_metrics)
+    {
+      if (_x_metrics->boolean("EnableBatchManager"))
+        _emailAlarm->setChecked(_x_preferences && _x_preferences->boolean("AlarmEmailDefault"));
+      else
+      {
+        _emailAlarm->hide();
+        _emailRecipient->hide();
+      }
+    }
     _sysmsgAlarm->setChecked(_x_preferences && _x_preferences->boolean("AlarmSysmsgDefault"));
 
     sHandleButtons();
