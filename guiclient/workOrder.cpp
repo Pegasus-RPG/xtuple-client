@@ -90,7 +90,7 @@ workOrder::workOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   _lastItemid = -1;
   _comments->setReadOnly(TRUE);
   _woNumber->setValidator(omfgThis->orderVal());
-  _qty->setValidator(omfgThis->qtyVal());
+  _qty->setValidator(omfgThis->transQtyVal());
   _qtyReceived->setPrecision(omfgThis->qtyVal());
   _postedValue->setPrecision(omfgThis->costVal());
   _wipValue->setPrecision(omfgThis->costVal());

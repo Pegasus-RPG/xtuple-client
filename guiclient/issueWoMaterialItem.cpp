@@ -92,11 +92,11 @@ issueWoMaterialItem::issueWoMaterialItem(QWidget* parent, const char* name, bool
 
     _wo->setType(cWoExploded | cWoIssued | cWoReleased);
     _compItemNumber->setAllowNull(TRUE);
-    _qtyToIssue->setValidator(omfgThis->qtyVal());
-    _qtyIssued->setPrecision(omfgThis->qtyVal());
-    _qtyRequired->setPrecision(omfgThis->qtyVal());
-    _beforeQty->setPrecision(omfgThis->qtyVal());
-    _afterQty->setPrecision(omfgThis->qtyVal());
+    _qtyToIssue->setValidator(omfgThis->transQtyVal());
+    _qtyIssued->setPrecision(omfgThis->transQtyVal());
+    _qtyRequired->setPrecision(omfgThis->transQtyVal());
+    _beforeQty->setPrecision(omfgThis->transQtyVal());
+    _afterQty->setPrecision(omfgThis->transQtyVal());
 }
 
 /*
@@ -177,6 +177,19 @@ void issueWoMaterialItem::sCatchItemsiteid(int pItemsiteid)
 
 void issueWoMaterialItem::sIssue()
 {
+  if (_qtyRequired->text().toDouble() >= 0 && _qtyToIssue->text().toDouble() < 0)
+  {
+      QMessageBox::critical(this, windowTitle(), tr("Quantity must be positive."));
+      _qtyToIssue->setFocus();
+      return;
+  }
+  else if(_qtyRequired->text().toDouble() < 0 && _qtyToIssue->text().toDouble() > 0)
+  {
+      QMessageBox::critical(this, windowTitle(), tr("Quantity must be negative for negative requirements."));
+      _qtyToIssue->setFocus();
+      return;
+  }
+    
   q.prepare("SELECT itemsite_id, item_number, warehous_code, "
             "       (COALESCE((SELECT SUM(itemloc_qty) "
             "                    FROM itemloc "
@@ -275,7 +288,12 @@ void issueWoMaterialItem::sPopulateCompInfo(int pWomatlid)
     q.prepare( "SELECT item_descrip1, item_descrip2, uom_name,"
                "       itemuomtouom(itemsite_item_id, NULL, womatl_uom_id, itemsite_qtyonhand) AS qtyonhand,"
                "       womatl_qtyreq, womatl_qtyiss,"
-               "       noNeg(womatl_qtyreq - womatl_qtyiss) AS qtybalance "
+               "       CASE "
+               "         WHEN womatl_qtyreq > 0 THEN "
+               "           noNeg(womatl_qtyreq - womatl_qtyiss) "
+               "         ELSE "
+               "           noPos(womatl_qtyreq - womatl_qtyiss) "
+               "         END AS qtybalance "
                "FROM womatl, itemsite, item, uom "
                "WHERE ( (womatl_itemsite_id=itemsite_id)"
                " AND (itemsite_item_id=item_id)"
