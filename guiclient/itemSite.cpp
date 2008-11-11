@@ -111,7 +111,10 @@ itemSite::itemSite(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     _warehouse->setAllowNull(TRUE);
     _warehouse->setNull();
   }
-  
+
+  //Default to Regular control  
+  _controlMethod->setCurrentIndex(1);
+
   //If not lot serial control, remove options
   if (!_metrics->boolean("LotSerialControl"))
   {
@@ -224,7 +227,6 @@ enum SetResponse itemSite::set(const ParameterList &pParams)
         else
         {
           _mode = cNew;
-          _controlMethod->setCurrentIndex(1);
           _reorderLevel->setDouble(0.0);
           _orderUpToQty->setDouble(0.0);
           _minimumOrder->setDouble(0.0);
@@ -240,7 +242,6 @@ enum SetResponse itemSite::set(const ParameterList &pParams)
       else
       {
         _mode = cNew;
-        _controlMethod->setCurrentIndex(1);
         _reorderLevel->setDouble(0.0);
         _orderUpToQty->setDouble(0.0);
         _minimumOrder->setDouble(0.0);
