@@ -101,17 +101,17 @@ dspInventoryAvailabilityBySourceVendor::dspInventoryAvailabilityBySourceVendor(Q
   _vendorTypes->setType(XComboBox::VendorTypes);
 
   _availability->addColumn(tr("Vendor #"),     _itemColumn, Qt::AlignLeft,  true, "vend_number");
+  _availability->addColumn(tr("Site"),         _whsColumn,  Qt::AlignCenter,true, "warehous_code");
   _availability->addColumn(tr("Item"),         _itemColumn, Qt::AlignLeft,  true, "item_number");
   _availability->addColumn(tr("Description"),  -1,          Qt::AlignLeft,  true, "itemdescrip");
   _availability->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignCenter,true, "uom_name");
-  _availability->addColumn(tr("Site"),         _whsColumn,  Qt::AlignCenter,true, "warehous_code");
   _availability->addColumn(tr("LT"),           _whsColumn,  Qt::AlignCenter,true, "itemsite_leadtime");
   _availability->addColumn(tr("QOH"),          _qtyColumn,  Qt::AlignRight, true, "qoh");
   _availability->addColumn(tr("Allocated"),    _qtyColumn,  Qt::AlignRight, true, "allocated");
   _availability->addColumn(tr("Unallocated"),  _qtyColumn,  Qt::AlignRight, true, "unallocated");
   _availability->addColumn(tr("On Order"),     _qtyColumn,  Qt::AlignRight, true, "ordered");
   _availability->addColumn(tr("Reorder Lvl."), _qtyColumn,  Qt::AlignRight, true, "reorderlevel");
-  _availability->addColumn(tr("OUT Level"),    _qtyColumn,  Qt::AlignRight, true, "outlevel");
+  _availability->addColumn(tr("OUT Level"),    _qtyColumn,  Qt::AlignRight, false, "outlevel");
   _availability->addColumn(tr("Available"),    _qtyColumn,  Qt::AlignRight, true, "available");
   
   if (_preferences->boolean("XCheckBox/forgetful"))
