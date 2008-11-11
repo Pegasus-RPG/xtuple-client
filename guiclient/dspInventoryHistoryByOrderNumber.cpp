@@ -85,19 +85,19 @@ dspInventoryHistoryByOrderNumber::dspInventoryHistoryByOrderNumber(QWidget* pare
   connect(_invhist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
 
   _invhist->addColumn(tr("Transaction Time"),_timeDateColumn, Qt::AlignLeft,  true, "invhist_transdate");
-  _invhist->addColumn(tr("Created Time"),    _timeDateColumn, Qt::AlignLeft,  true, "invhist_created");
-  _invhist->addColumn(tr("User"),               _orderColumn, Qt::AlignCenter,true, "invhist_user");
+  _invhist->addColumn(tr("Created Time"),    _timeDateColumn, Qt::AlignLeft,  false, "invhist_created");
   _invhist->addColumn(tr("Type"),               _transColumn, Qt::AlignCenter,true, "invhist_transtype");
   _invhist->addColumn(tr("Site."),                _whsColumn, Qt::AlignLeft,  true, "warehous_code");
-  _invhist->addColumn(tr("Item Number"),         _itemColumn, Qt::AlignLeft,  true, "item_number");
+  _invhist->addColumn(tr("Item Number"),                  -1, Qt::AlignLeft,  true, "item_number");
   _invhist->addColumn(tr("UOM"),                  _uomColumn, Qt::AlignCenter,true, "invhist_invuom");
   _invhist->addColumn(tr("Trans-Qty"),            _qtyColumn, Qt::AlignRight, true, "invhist_invqty" );
-  _invhist->addColumn(tr("Order #"),                      -1, Qt::AlignCenter,true, "ordernumber");
-  _invhist->addColumn(tr("QOH Before"),           _qtyColumn, Qt::AlignRight, true, "invhist_qoh_before");
-  _invhist->addColumn(tr("QOH After"),            _qtyColumn, Qt::AlignRight, true, "invhist_qoh_after");
-  _invhist->addColumn(tr("Cost Method"),          _qtyColumn, Qt::AlignLeft,  true, "invhist_costmethod");
-  _invhist->addColumn(tr("Value Before"),         _qtyColumn, Qt::AlignRight,true, "invhist_value_before");
-  _invhist->addColumn(tr("Value After"),          _qtyColumn, Qt::AlignRight,true, "invhist_value_after");
+  _invhist->addColumn(tr("Order #"),             _itemColumn, Qt::AlignCenter,true, "ordernumber");
+  _invhist->addColumn(tr("QOH Before"),           _qtyColumn, Qt::AlignRight, false, "invhist_qoh_before");
+  _invhist->addColumn(tr("QOH After"),            _qtyColumn, Qt::AlignRight, false, "invhist_qoh_after");
+  _invhist->addColumn(tr("Cost Method"),          _qtyColumn, Qt::AlignLeft,  false, "invhist_costmethod");
+  _invhist->addColumn(tr("Value Before"),         _qtyColumn, Qt::AlignRight,false, "invhist_value_before");
+  _invhist->addColumn(tr("Value After"),          _qtyColumn, Qt::AlignRight,false, "invhist_value_after");
+  _invhist->addColumn(tr("User"),               _orderColumn, Qt::AlignCenter,true, "invhist_user");
 
   _transType->append(cTransAll,       tr("All Transactions")       );
   _transType->append(cTransReceipts,  tr("Receipts")               );
