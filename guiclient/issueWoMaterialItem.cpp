@@ -77,12 +77,9 @@ issueWoMaterialItem::issueWoMaterialItem(QWidget* parent, const char* name, bool
     setupUi(this);
 
     // signals and slots connections
-    connect(_wo, SIGNAL(valid(bool)), _issue, SLOT(setEnabled(bool)));
-    connect(_wo, SIGNAL(newId(int)), this, SLOT(sPopulateComp(int)));
-    connect(_compItemNumber, SIGNAL(newID(int)), this, SLOT(sPopulateCompInfo(int)));
+    connect(_womatl, SIGNAL(newId(int)), this, SLOT(sSetQOH(int)));
     connect(_qtyToIssue, SIGNAL(textChanged(const QString&)), this, SLOT(sPopulateQOH()));
     connect(_issue, SIGNAL(clicked()), this, SLOT(sIssue()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
 
     _captive = FALSE;
 
@@ -91,10 +88,7 @@ issueWoMaterialItem::issueWoMaterialItem(QWidget* parent, const char* name, bool
     omfgThis->inputManager()->notify(cBCItemSite, this, this, SLOT(sCatchItemsiteid(int)));
 
     _wo->setType(cWoExploded | cWoIssued | cWoReleased);
-    _compItemNumber->setAllowNull(TRUE);
     _qtyToIssue->setValidator(omfgThis->transQtyVal());
-    _qtyIssued->setPrecision(omfgThis->transQtyVal());
-    _qtyRequired->setPrecision(omfgThis->transQtyVal());
     _beforeQty->setPrecision(omfgThis->transQtyVal());
     _afterQty->setPrecision(omfgThis->transQtyVal());
 }
@@ -147,7 +141,7 @@ void issueWoMaterialItem::sCatchItemid(int pItemid)
     q.bindValue(":item_id", pItemid);
     q.exec();
     if (q.first())
-      _compItemNumber->setId(q.value("womatl_id").toInt());
+      _womatl->setId(q.value("womatl_id").toInt());
     else
       audioReject();
   }
@@ -167,7 +161,7 @@ void issueWoMaterialItem::sCatchItemsiteid(int pItemsiteid)
     q.bindValue(":wo_id", _wo->id());
     q.exec();
     if (q.first())
-      _compItemNumber->setId(q.value("womatl_id").toInt());
+      _womatl->setId(q.value("womatl_id").toInt());
     else
       audioReject();
   }
@@ -177,13 +171,13 @@ void issueWoMaterialItem::sCatchItemsiteid(int pItemsiteid)
 
 void issueWoMaterialItem::sIssue()
 {
-  if (_qtyRequired->text().toDouble() >= 0 && _qtyToIssue->text().toDouble() < 0)
+  if (_womatl->qtyRequired() >= 0 && _qtyToIssue->text().toDouble() < 0)
   {
       QMessageBox::critical(this, windowTitle(), tr("Quantity must be positive."));
       _qtyToIssue->setFocus();
       return;
   }
-  else if(_qtyRequired->text().toDouble() < 0 && _qtyToIssue->text().toDouble() > 0)
+  else if(_womatl->qtyRequired() < 0 && _qtyToIssue->text().toDouble() > 0)
   {
       QMessageBox::critical(this, windowTitle(), tr("Quantity must be negative for negative requirements."));
       _qtyToIssue->setFocus();
@@ -201,7 +195,7 @@ void issueWoMaterialItem::sIssue()
             "   AND (NOT ((item_type = 'R') OR (itemsite_controlmethod = 'N'))) "
             "   AND ((itemsite_controlmethod IN ('L', 'S')) OR (itemsite_loccntrl)) "
             "   AND (womatl_id=:womatl_id)); ");
-  q.bindValue(":womatl_id", _compItemNumber->id());
+  q.bindValue(":womatl_id", _womatl->id());
   q.bindValue(":qty", _qtyToIssue->toDouble());
   q.exec();
   while(q.next())
@@ -224,7 +218,7 @@ void issueWoMaterialItem::sIssue()
 
   q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
   q.prepare("SELECT issueWoMaterial(:womatl_id, :qty, TRUE) AS result;");
-  q.bindValue(":womatl_id", _compItemNumber->id());
+  q.bindValue(":womatl_id", _womatl->id());
   q.bindValue(":qty", _qtyToIssue->toDouble());
   q.exec();
   if (q.first())
@@ -262,78 +256,42 @@ void issueWoMaterialItem::sIssue()
   {
     _close->setText(tr("Close"));
     _qtyToIssue->clear();
-    _compItemNumber->setNull();
-    _compItemNumber->setFocus();
+    _womatl->setWoid(_wo->id());
+    _womatl->setFocus();
   }
 }
 
-void issueWoMaterialItem::sPopulateComp(int pWoid)
+void issueWoMaterialItem::sSetQOH(int pWomatlid)
 {
-  q.prepare( "SELECT womatl_id, item_number "
-             "FROM womatl, itemsite, item "
-             "WHERE ( (womatl_itemsite_id=itemsite_id)"
-             " AND (itemsite_item_id=item_id)"
-             " AND (womatl_issuemethod IN ('S', 'M'))"
-             " AND (womatl_wo_id=:wo_id) );" );
-  q.bindValue(":wo_id", pWoid);
-  q.exec();
-  _compItemNumber->populate(q);
-  _compItemNumber->setFocus();
-}
-
-void issueWoMaterialItem::sPopulateCompInfo(int pWomatlid)
-{
-  if (pWomatlid != -1)
+  if (pWomatlid == -1)
   {
-    q.prepare( "SELECT item_descrip1, item_descrip2, uom_name,"
-               "       itemuomtouom(itemsite_item_id, NULL, womatl_uom_id, itemsite_qtyonhand) AS qtyonhand,"
-               "       womatl_qtyreq, womatl_qtyiss,"
-               "       CASE "
-               "         WHEN womatl_qtyreq > 0 THEN "
-               "           noNeg(womatl_qtyreq - womatl_qtyiss) "
-               "         ELSE "
-               "           noPos(womatl_qtyreq - womatl_qtyiss) "
-               "         END AS qtybalance "
-               "FROM womatl, itemsite, item, uom "
-               "WHERE ( (womatl_itemsite_id=itemsite_id)"
-               " AND (itemsite_item_id=item_id)"
-               " AND (womatl_uom_id=uom_id)"
-               " AND (womatl_id=:womatl_id) );" );
-    q.bindValue(":womatl_id", pWomatlid);
-    q.exec();
-    if (q.first())
-    {
-      _compDescription1->setText(q.value("item_descrip1").toString());
-      _compDescription2->setText(q.value("item_descrip2").toString());
-      _compUOM->setText(q.value("uom_name").toString());
-      _uomQty->setText(q.value("uom_name").toString());
-      _qtyRequired->setDouble(q.value("womatl_qtyreq").toDouble());
-      _qtyIssued->setDouble(q.value("womatl_qtyiss").toDouble());
-      _qtyToIssue->setDouble(q.value("qtybalance").toDouble());
-      
-      _cachedQOH = q.value("qtyonhand").toDouble();
-      _beforeQty->setDouble(_cachedQOH);
-
-      sPopulateQOH();
-
-      _qtyToIssue->setFocus();
-
-      return;
-    }
-  }
-  else
-  {
-    _compDescription1->clear();
-    _compDescription2->clear();
-    _compUOM->clear();
-    _uomQty->clear();
-    _qtyRequired->clear();
-    _qtyIssued->clear();
-    _qtyToIssue->clear();
-
     _cachedQOH = 0.0;
     _beforeQty->clear();
     _afterQty->clear();
+  }
+  else
+  {
+    _qtyToIssue->setText(_womatl->qtyRequired() - _womatl->qtyIssued());
+    
+    XSqlQuery qoh;
+    qoh.prepare( "SELECT itemuomtouom(itemsite_item_id, NULL, womatl_uom_id, itemsite_qtyonhand) AS qtyonhand,"
+                 "       uom_name "
+                 "  FROM womatl, itemsite, uom"
+                 " WHERE((womatl_itemsite_id=itemsite_id)"
+                 "   AND (womatl_uom_id=uom_id)"
+                 "   AND (womatl_id=:womatl_id) );" );
+    qoh.bindValue(":womatl_id", pWomatlid);
+    qoh.exec();
+    if (qoh.first())
+    {
+      _uomQty->setText(qoh.value("uom_name").toString());
+      _cachedQOH = qoh.value("qtyonhand").toDouble();
+      _beforeQty->setDouble(_cachedQOH);
+    }
+    else
+      systemError(this, tr("A System Error occurred at %1::%2.")
+                        .arg(__FILE__)
+                        .arg(__LINE__) );
   }
 }
 

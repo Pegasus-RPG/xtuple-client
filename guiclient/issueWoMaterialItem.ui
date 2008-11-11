@@ -5,12 +5,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>631</width>
-    <height>408</height>
+    <width>480</width>
+    <height>478</height>
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Issue W/O Material Item</string>
+   <string>Issue Work Order Material Item</string>
   </property>
   <layout class="QGridLayout" >
    <item row="0" column="0" >
@@ -33,7 +33,7 @@
      <property name="verticalSpacing" >
       <number>12</number>
      </property>
-     <item row="0" column="0" colspan="2" >
+     <item row="0" column="0" >
       <layout class="QHBoxLayout" >
        <property name="spacing" >
         <number>3</number>
@@ -130,59 +130,23 @@
        </item>
       </layout>
      </item>
-     <item row="1" column="0" colspan="2" >
+     <item row="1" column="0" >
       <widget class="QGroupBox" name="_componentGroup" >
        <property name="title" >
         <string/>
        </property>
        <layout class="QGridLayout" >
-        <item row="0" column="0" >
-         <widget class="QLabel" name="_compItemNumberLit" >
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text" >
-           <string>Component Item Number:</string>
-          </property>
-          <property name="alignment" >
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
+        <item rowspan="2" row="0" column="0" colspan="2" >
+         <widget class="WomatlCluster" name="_womatl" />
         </item>
-        <item row="0" column="1" >
-         <widget class="XComboBox" name="_compItemNumber" >
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="2" >
-         <widget class="QLabel" name="_compUOMLit" >
-          <property name="text" >
-           <string>UOM:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="3" >
-         <widget class="QLabel" name="_compUOM" >
-          <property name="minimumSize" >
-           <size>
-            <width>60</width>
-            <height>0</height>
-           </size>
-          </property>
+        <item row="1" column="1" >
+         <widget class="QLabel" name="_compDescription2" >
           <property name="alignment" >
            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
-        <item row="0" column="4" >
+        <item row="1" column="2" >
          <spacer>
           <property name="orientation" >
            <enum>Qt::Horizontal</enum>
@@ -195,20 +159,6 @@
           </property>
          </spacer>
         </item>
-        <item row="1" column="1" colspan="4" >
-         <widget class="QLabel" name="_compDescription1" >
-          <property name="alignment" >
-           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1" colspan="4" >
-         <widget class="QLabel" name="_compDescription2" >
-          <property name="alignment" >
-           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
        </layout>
       </widget>
      </item>
@@ -219,52 +169,6 @@
        </property>
        <layout class="QGridLayout" >
         <item row="0" column="0" >
-         <widget class="QLabel" name="_qtyRequiredLit" >
-          <property name="text" >
-           <string>Total Qty. Required:</string>
-          </property>
-          <property name="alignment" >
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1" >
-         <widget class="XLabel" name="_qtyRequired" >
-          <property name="minimumSize" >
-           <size>
-            <width>80</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="alignment" >
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0" >
-         <widget class="QLabel" name="_qtyIssuedLit" >
-          <property name="text" >
-           <string>Qty. Issued to Date:</string>
-          </property>
-          <property name="alignment" >
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1" >
-         <widget class="XLabel" name="_qtyIssued" >
-          <property name="minimumSize" >
-           <size>
-            <width>80</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="alignment" >
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0" >
          <widget class="QLabel" name="_qtyToIssueLit" >
           <property name="text" >
            <string>Qty. to Issue:</string>
@@ -277,7 +181,7 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="1" >
+        <item row="0" column="1" >
          <widget class="XLineEdit" name="_qtyToIssue" >
           <property name="sizePolicy" >
            <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
@@ -296,7 +200,7 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="2" >
+        <item row="0" column="2" >
          <widget class="QLabel" name="_uomQtyLit" >
           <property name="text" >
            <string>UOM:</string>
@@ -306,7 +210,7 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="3" >
+        <item row="0" column="3" >
          <widget class="QLabel" name="_uomQty" >
           <property name="minimumSize" >
            <size>
@@ -319,29 +223,20 @@
           </property>
          </widget>
         </item>
-       </layout>
-      </widget>
-     </item>
-     <item row="2" column="1" >
-      <widget class="QGroupBox" name="_invGroup" >
-       <property name="title" >
-        <string/>
-       </property>
-       <layout class="QGridLayout" >
-        <item row="0" column="0" >
+        <item row="1" column="0" >
          <widget class="QLabel" name="_beforeQtyLit" >
           <property name="windowTitle" >
            <string/>
           </property>
           <property name="text" >
-           <string>QOH Before</string>
+           <string>QOH Before:</string>
           </property>
           <property name="alignment" >
            <set>Qt::AlignCenter</set>
           </property>
          </widget>
         </item>
-        <item row="0" column="1" >
+        <item row="1" column="1" >
          <widget class="XLabel" name="_beforeQty" >
           <property name="minimumSize" >
            <size>
@@ -354,17 +249,17 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="0" >
+        <item row="2" column="0" >
          <widget class="QLabel" name="_afterQtyLit" >
           <property name="text" >
-           <string>QOH After</string>
+           <string>QOH After:</string>
           </property>
           <property name="alignment" >
            <set>Qt::AlignCenter</set>
           </property>
          </widget>
         </item>
-        <item row="1" column="1" >
+        <item row="2" column="1" >
          <widget class="XLabel" name="_afterQty" >
           <property name="minimumSize" >
            <size>
@@ -377,17 +272,14 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="0" >
+        <item row="0" column="4" >
          <spacer>
           <property name="orientation" >
            <enum>Qt::Horizontal</enum>
           </property>
-          <property name="sizeType" >
-           <enum>QSizePolicy::Expanding</enum>
-          </property>
           <property name="sizeHint" >
            <size>
-            <width>20</width>
+            <width>40</width>
             <height>20</height>
            </size>
           </property>
@@ -409,9 +301,9 @@
    <header>wocluster.h</header>
   </customwidget>
   <customwidget>
-   <class>XComboBox</class>
-   <extends>QComboBox</extends>
-   <header>xcombobox.h</header>
+   <class>WomatlCluster</class>
+   <extends>QWidget</extends>
+   <header>womatlcluster.h</header>
   </customwidget>
   <customwidget>
    <class>XLabel</class>
@@ -426,7 +318,6 @@
  </customwidgets>
  <tabstops>
   <tabstop>_wo</tabstop>
-  <tabstop>_compItemNumber</tabstop>
   <tabstop>_qtyToIssue</tabstop>
   <tabstop>_issue</tabstop>
   <tabstop>_close</tabstop>
@@ -462,6 +353,22 @@
     <hint type="destinationlabel" >
      <x>20</x>
      <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_wo</sender>
+   <signal>newId(int)</signal>
+   <receiver>_womatl</receiver>
+   <slot>setWoid(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>180</x>
+     <y>80</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>233</x>
+     <y>239</y>
     </hint>
    </hints>
   </connection>

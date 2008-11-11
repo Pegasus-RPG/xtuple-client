@@ -79,9 +79,9 @@ returnWoMaterialItem::returnWoMaterialItem(QWidget* parent, const char* name, bo
   omfgThis->inputManager()->notify(cBCWorkOrder, this, _wo, SLOT(setId(int)));
 
   _wo->setType(cWoExploded | cWoReleased | cWoIssued);
-  _qty->setValidator(omfgThis->qtyVal());
-  _beforeQty->setPrecision(omfgThis->qtyVal());
-  _afterQty->setPrecision(omfgThis->qtyVal());
+  _qty->setValidator(omfgThis->transQtyVal());
+  _beforeQty->setPrecision(omfgThis->transQtyVal());
+  _afterQty->setPrecision(omfgThis->transQtyVal());
 }
 
 returnWoMaterialItem::~returnWoMaterialItem()
@@ -127,13 +127,29 @@ void returnWoMaterialItem::sReturn()
     return;
   }
 
-  if (_qty->toDouble() == 0.0)
+  if (_womatl->qtyRequired() >= 0 && _qty->text().toDouble() < 0)
   {
-    QMessageBox::critical( this, tr("Enter Quantity to Return"),
-                           tr( "You must enter a positive quantity, less than the amount issued,\n"
-                               "to return from the selected W/O to Inventory." ) );
-    _qty->setFocus();
-    return;
+      QMessageBox::critical(this, windowTitle(), tr("Quantity must be positive."));
+      _qty->setFocus();
+      return;
+  }
+  else if (_womatl->qtyRequired() >= 0 && _womatl->qtyIssued() < _qty->text().toDouble())
+  {
+      QMessageBox::critical(this, windowTitle(), tr("Quantity less than or equal to quantity already issued."));
+      _qty->setFocus();
+      return;
+  }
+  else if(_womatl->qtyRequired() < 0 && _qty->text().toDouble() > 0)
+  {
+      QMessageBox::critical(this, windowTitle(), tr("Quantity must be negative for negative requirements."));
+      _qty->setFocus();
+      return;
+  }
+  else if(_womatl->qtyRequired() < 0 && _womatl->qtyIssued() > _qty->text().toDouble())
+  {
+      QMessageBox::critical(this, windowTitle(), tr("Quantity greater than or equal to quantity already issued."));
+      _qty->setFocus();
+      return;
   }
 
   XSqlQuery rollback;
@@ -177,7 +193,7 @@ void returnWoMaterialItem::sReturn()
   {
     _qty->clear();
     _close->setText(tr("&Close"));
-    _womatl->setId(-1);
+    _womatl->setWoid(_wo->id());
     _womatl->setFocus();
   }
 }
@@ -192,6 +208,8 @@ void returnWoMaterialItem::sSetQOH(int pWomatlid)
   }
   else
   {
+    _qty->setText(_womatl->qtyIssued());
+      
     XSqlQuery qoh;
     qoh.prepare( "SELECT itemuomtouom(itemsite_item_id, NULL, womatl_uom_id, itemsite_qtyonhand) AS qtyonhand,"
                  "       uom_name "

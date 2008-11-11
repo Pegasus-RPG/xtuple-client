@@ -77,8 +77,7 @@ public slots:
     virtual void sCatchItemid( int pItemid );
     virtual void sCatchItemsiteid( int pItemsiteid );
     virtual void sIssue();
-    virtual void sPopulateComp( int pWoid );
-    virtual void sPopulateCompInfo( int pWomatlid );
+    virtual void sSetQOH(int pWomatlid);
     virtual void sPopulateQOH();
 
 protected slots:
