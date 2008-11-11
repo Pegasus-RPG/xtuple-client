@@ -168,8 +168,7 @@ enum SetResponse postProduction::set(const ParameterList &pParams)
 }
 
 void postProduction::sHandleWoid(int pWoid)
-{
-  qDebug("ordered: %d", _wo->qtyOrdered());
+{  
   q.prepare( "SELECT womatl_issuemethod "
              "FROM womatl "
              "WHERE (womatl_wo_id=:womatl_wo_id);" );
@@ -196,13 +195,21 @@ void postProduction::sHandleWoid(int pWoid)
 
   if (_metrics->boolean("Routings"))
   {
-    q.prepare( "SELECT wooper_id "
-             "FROM wooper "
-             "WHERE (wooper_wo_id=:wo_id);" );
-    q.bindValue(":wo_id", pWoid);
-    q.exec();
-    _backflushOperations->setEnabled(q.first());
-    _backflushOperations->setChecked(q.first());
+    if (_wo->qtyOrdered() < 0)
+    {
+      _backflushOperations->setEnabled(false);
+      _backflushOperations->setChecked(false);
+    }
+    else
+    {
+      q.prepare( "SELECT wooper_id "
+               "FROM wooper "
+               "WHERE (wooper_wo_id=:wo_id);" );
+      q.bindValue(":wo_id", pWoid);
+      q.exec();
+      _backflushOperations->setEnabled(q.first());
+      _backflushOperations->setChecked(q.first());
+    }
   }
 }
 

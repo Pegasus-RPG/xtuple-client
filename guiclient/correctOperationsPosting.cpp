@@ -128,6 +128,15 @@ enum SetResponse correctOperationsPosting::set(const ParameterList &pParams)
 
 void correctOperationsPosting::sHandleWoid(int pWoid)
 {
+  if (_wo->id() != -1 && _wo->qtyOrdered() < 0)
+  {
+    QMessageBox::critical( this, windowTitle(),
+                      tr("Posting of Operations against negative work orders is not supported.") );
+    _wo->setId(-1);
+    _wo->setFocus();
+    return;
+  }
+  
   q.prepare( "SELECT wooper_id, (wooper_seqnumber || ' - ' || wooper_descrip1 || ' ' || wooper_descrip2) "
              "FROM wooper "
              "WHERE (wooper_wo_id=:wo_id) "

@@ -346,6 +346,15 @@ void woTimeClock::clear()
 
 void woTimeClock::sCheckValid()
 {
+  if (_wo->id() != -1 && _wo->qtyOrdered() < 0)
+  {
+    QMessageBox::critical( this, windowTitle(),
+                      tr("Posting of time against negative work orders is not supported.") );
+    _wo->setId(-1);
+    _wo->setFocus();
+    return;
+  }
+  
   if (_user->isValid())
   {
     QString sql = "SELECT wotc_wooper_id, wotc_wo_id, formatWoNumber(wo_id) AS wonum,"

@@ -78,10 +78,10 @@ correctProductionPosting::correctProductionPosting(QWidget* parent, const char* 
   omfgThis->inputManager()->notify(cBCWorkOrder, this, _wo, SLOT(setId(int)));
 
   _wo->setType(cWoIssued);
-  _qty->setValidator(omfgThis->qtyVal());
-  _qtyOrdered->setPrecision(omfgThis->qtyVal());
-  _qtyReceived->setPrecision(omfgThis->qtyVal());
-  _qtyBalance->setPrecision(omfgThis->qtyVal());
+  _qty->setValidator(omfgThis->transQtyVal());
+  _qtyOrdered->setPrecision(omfgThis->transQtyVal());
+  _qtyReceived->setPrecision(omfgThis->transQtyVal());
+  _qtyBalance->setPrecision(omfgThis->transQtyVal());
 
   if (_preferences->boolean("XCheckBox/forgetful"))
   {
@@ -99,6 +99,8 @@ correctProductionPosting::correctProductionPosting(QWidget* parent, const char* 
     _backflushOperations->setChecked(FALSE);
     _backflushOperations->hide();
   }
+  
+  resize(minimumSize());
 }
 
 correctProductionPosting::~correctProductionPosting()
@@ -132,7 +134,19 @@ enum SetResponse correctProductionPosting::set(const ParameterList &pParams)
 
 void correctProductionPosting::sCorrect()
 {
-  if (_qty->toDouble() > _qtyReceivedCache)
+  if (_wo->qtyOrdered() >= 0 && _qty->text().toDouble() < 0)
+  {
+      QMessageBox::critical(this, windowTitle(), tr("Quantity must be positive."));
+      _qty->setFocus();
+      return;
+  }
+  else if(_wo->qtyOrdered() < 0 && _qty->text().toDouble() > 0)
+  {
+      QMessageBox::critical(this, windowTitle(), tr("Quantity must be negative for negative work orders."));
+      _qty->setFocus();
+      return;
+  }
+  else if (_wo->qtyOrdered() >= 0 && _qty->toDouble() > _qtyReceivedCache)
   {
     QMessageBox::warning( this, tr("Cannot Post Correction"),
                           tr( "The Quantity to Correct value you entered is greater than the total Quantity Received from this W/O.\n"
@@ -140,6 +154,15 @@ void correctProductionPosting::sCorrect()
     _qty->setFocus();
     return;
   }
+  else if (_wo->qtyOrdered() < 0 && _qty->toDouble() < _qtyReceivedCache)
+  {
+    QMessageBox::warning( this, tr("Cannot Post Correction"),
+                          tr( "The Quantity to Correct value you entered is less than the total Quantity Received from this W/O.\n"
+                              "The Quantity to correct must be greater than or equal to the Quantity Received." ) );
+    _qty->setFocus();
+    return;
+  }  
+
 
   q.prepare( "SELECT item_type "
              "FROM wo, itemsite, item "
@@ -224,6 +247,12 @@ void correctProductionPosting::sCorrect()
 
 void correctProductionPosting::populate()
 {
+  if (_wo->qtyOrdered() < 0)
+  {
+    _backflushOperations->setEnabled(false);
+    _backflushOperations->setChecked(false);
+  }
+  
   q.prepare("SELECT wo_qtyord,"
             "       wo_qtyrcv,"
             "       noNeg(wo_qtyord - wo_qtyrcv) AS balance"
