@@ -794,8 +794,8 @@ void reconcileBankaccount::sBankaccntChanged()
   if (accntq.first())
   {
     _bankrecid = accntq.value("bankrec_id").toInt();
-    _startDate->setDate(accntq.value("bankrec_opendate").toDate());
-    _endDate->setDate(accntq.value("bankrec_enddate").toDate());
+    _startDate->setDate(accntq.value("bankrec_opendate").toDate(), true);
+    _endDate->setDate(accntq.value("bankrec_enddate").toDate(), true);
     _openBal->setLocalValue(accntq.value("bankrec_openbal").toDouble());
     _endBal->setLocalValue(accntq.value("bankrec_endbal").toDouble());
   }
