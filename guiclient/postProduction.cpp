@@ -85,7 +85,7 @@ postProduction::postProduction(QWidget* parent, const char* name, bool modal, Qt
 
     _closeWo->setEnabled(_privileges->check("CloseWorkOrders"));
 
-    _qty->setValidator(omfgThis->qtyVal());
+    _qty->setValidator(omfgThis->transQtyVal());
     _qtyOrdered->setPrecision(decimalPlaces("qty"));
     _qtyReceived->setPrecision(decimalPlaces("qty"));
     _qtyBalance->setPrecision(decimalPlaces("qty"));
@@ -169,6 +169,7 @@ enum SetResponse postProduction::set(const ParameterList &pParams)
 
 void postProduction::sHandleWoid(int pWoid)
 {
+  qDebug("ordered: %d", _wo->qtyOrdered());
   q.prepare( "SELECT womatl_issuemethod "
              "FROM womatl "
              "WHERE (womatl_wo_id=:womatl_wo_id);" );
@@ -222,6 +223,19 @@ void postProduction::sScrap()
 
 void postProduction::sPost()
 {
+  if (_wo->qtyOrdered() >= 0 && _qty->text().toDouble() < 0)
+  {
+      QMessageBox::critical(this, windowTitle(), tr("Quantity must be positive."));
+      _qty->setFocus();
+      return;
+  }
+  else if(_wo->qtyOrdered() < 0 && _qty->text().toDouble() > 0)
+  {
+      QMessageBox::critical(this, windowTitle(), tr("Quantity must be negative for negative work orders."));
+      _qty->setFocus();
+      return;
+  }
+
   XSqlQuery type;
   type.prepare( "SELECT item_type "
 	            "FROM item,itemsite,wo "
