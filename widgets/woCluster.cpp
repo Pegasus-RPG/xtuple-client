@@ -128,9 +128,12 @@ void WoLineEdit::setId(int pId)
                   "       wo_qtyord, wo_qtyrcv, wo_status,"
                   "       wo_duedate,"
                   "       wo_startdate,"
-                  "       formatQtyPer(wo_qtyord) AS ordered,"
-                  "       formatQtyPer(wo_qtyrcv) AS received, "
-                  "       formatQtyPer(noNeg(wo_qtyord - wo_qtyrcv)) AS balance "
+                  "       CASE "
+                  "       WHEN (wo_qtyord >= 0) THEN "
+                  "         noNeg(wo_qtyord - wo_qtyrcv) "
+                  "       ELSE "
+                  "         noPos(wo_qtyord - wo_qtyrcv) "
+                  "       END AS balance "
                   "FROM wo, itemsite, item, warehous, uom "
                   "WHERE ((wo_itemsite_id=itemsite_id)"
                   " AND (itemsite_item_id=item_id)"
@@ -157,8 +160,8 @@ void WoLineEdit::setId(int pId)
       emit itemDescrip2Changed(wo.value("item_descrip2").toString());
       emit startDateChanged(wo.value("wo_startdate").toDate());
       emit dueDateChanged(wo.value("wo_duedate").toDate());
-      emit qtyOrderedChanged(wo.value("ordered").toDouble());
-      emit qtyReceivedChanged(wo.value("received").toDouble());
+      emit qtyOrderedChanged(wo.value("wo_qtyord").toDouble());
+      emit qtyReceivedChanged(wo.value("wo_qtyrcv").toDouble());
       emit qtyBalanceChanged(wo.value("balance").toDouble());
       emit statusChanged(wo.value("wo_status").toString());
       emit valid(TRUE);
