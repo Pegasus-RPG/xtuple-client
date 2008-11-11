@@ -55,7 +55,7 @@
                <widget class="XComboBox" name="_select" >
                 <item>
                  <property name="text" >
-                  <string>All Cutomers</string>
+                  <string>All Customers</string>
                  </property>
                 </item>
                 <item>
