@@ -151,6 +151,9 @@ void WoLineEdit::setId(int pId)
 
       setText(wo.value("wonumber").toString());
 
+      _qtyOrdered  = wo.value("wo_qtyord").toDouble();
+      _qtyReceived = wo.value("wo_qtyrcv").toDouble();
+
       emit newId(_id);
       emit newItemid(wo.value("item_id").toInt());
       emit warehouseChanged(wo.value("warehous_code").toString());
@@ -165,10 +168,6 @@ void WoLineEdit::setId(int pId)
       emit qtyBalanceChanged(wo.value("balance").toDouble());
       emit statusChanged(wo.value("wo_status").toString());
       emit valid(TRUE);
-
-      _qtyOrdered  = wo.value("wo_qtyord").toDouble();
-      _qtyReceived = wo.value("wo_qtyrcv").toDouble();
-
     }
   }
   else
