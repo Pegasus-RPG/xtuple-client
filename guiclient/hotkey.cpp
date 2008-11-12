@@ -123,6 +123,7 @@ hotkey::hotkey(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _action->addColumn( tr("Display Name"), -1,  Qt::AlignLeft );
 
   QStringList addedactions;
+  QString dspname;
   XTreeWidgetItem *last = 0;
   for (ActionSet::iterator action = omfgThis->actions.begin(); action != omfgThis->actions.end(); action++)
   {
@@ -131,9 +132,10 @@ hotkey::hotkey(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
       addedactions.append((*action)->name());
       last = new XTreeWidgetItem(_action, last, -1,
 				 QVariant((*action)->name()),
-				 (*action)->displayName()); 
+				 QString((*action)->displayName()).remove("&")); 
     }
   }
+  _action->sortItems(0,Qt::AscendingOrder);
 }
 
 /*
