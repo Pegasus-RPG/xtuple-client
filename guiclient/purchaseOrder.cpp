@@ -937,7 +937,7 @@ void purchaseOrder::sFillList()
              "       CASE WHEN(poitem_status='C') THEN :closed"
              "            WHEN(poitem_status='U') THEN :unposted"
              "            WHEN(poitem_status='O' AND ((poitem_qty_received-poitem_qty_returned) > 0) AND (poitem_qty_ordered>(poitem_qty_received-poitem_qty_returned))) THEN :partial"
-             "            WHEN(poitem_status='O' AND ((poitem_qty_received-poitem_qty_returned) > 0) AND (poitem_qty_ordered=(poitem_qty_received-poitem_qty_returned))) THEN :received"
+             "            WHEN(poitem_status='O' AND ((poitem_qty_received-poitem_qty_returned) > 0) AND (poitem_qty_ordered<=(poitem_qty_received-poitem_qty_returned))) THEN :received"
              "            WHEN(poitem_status='O') THEN :open"
              "            ELSE poitem_status"
              "       END AS poitemstatus,"

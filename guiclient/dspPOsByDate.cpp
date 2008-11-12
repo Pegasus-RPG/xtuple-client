@@ -199,7 +199,7 @@ void dspPOsByDate::sFillList()
                "                 AND (SUM(poitem_qty_ordered)>SUM(poitem_qty_received-poitem_qty_returned))) THEN <? value(\"partial\") ?>"
                "            WHEN(poitem_status='O'"
                "                 AND (SUM(poitem_qty_received-poitem_qty_returned) > 0)"
-               "                 AND (SUM(poitem_qty_ordered)=SUM(poitem_qty_received-poitem_qty_returned))) THEN <? value(\"received\") ?>"
+               "                 AND (SUM(poitem_qty_ordered)<=SUM(poitem_qty_received-poitem_qty_returned))) THEN <? value(\"received\") ?>"
                "            WHEN(poitem_status='O') THEN <? value(\"open\") ?>"
                "            ELSE poitem_status"
                "       END AS poitemstatus,"
