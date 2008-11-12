@@ -1213,6 +1213,13 @@
            </property>
           </widget>
          </item>
+         <item row="2" column="0" >
+          <widget class="QCheckBox" name="_emailEvents" >
+           <property name="text" >
+            <string>Send Email notification of selected Events</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
        <widget class="QWidget" name="_alarms" >
@@ -1325,6 +1332,7 @@
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>
