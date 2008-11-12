@@ -59,7 +59,7 @@
 // Created 01/31/2006 GJM
 // Copyright (c) 2006-2008, OpenMFG, LLC
 
-#include "invoicecluster.h"
+#include "invoiceCluster.h"
 
 InvoiceCluster::InvoiceCluster(QWidget* pParent, const char* pName) :
     VirtualCluster(pParent, pName)

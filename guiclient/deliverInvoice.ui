@@ -296,7 +296,7 @@
   <customwidget>
    <class>InvoiceCluster</class>
    <extends>QWidget</extends>
-   <header>invoicecluster.h</header>
+   <header>invoiceCluster.h</header>
   </customwidget>
   <customwidget>
    <class>XLineEdit</class>

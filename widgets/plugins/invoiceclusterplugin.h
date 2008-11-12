@@ -58,7 +58,7 @@
 #ifndef __INVOICECLUSTERPLUGIN_H__
 #define __INVOICECLUSTERPLUGIN_H__
 
-#include "invoicecluster.h"
+#include "invoiceCluster.h"
 
 #include <QDesignerCustomWidgetInterface>
 #include <QtPlugin>
@@ -80,7 +80,7 @@ class InvoiceClusterPlugin : public QObject, public QDesignerCustomWidgetInterfa
              "</widget>\n";
     }
     QString group() const { return "OpenMFG Custom Widgets"; }
-    QString includeFile() const { return "invoicecluster.h"; }
+    QString includeFile() const { return "invoiceCluster.h"; }
     QString name() const { return "InvoiceCluster"; }
     QString toolTip() const { return ""; }
     QString whatsThis() const { return ""; }
