@@ -129,6 +129,7 @@ void errorLogListener::error(const QString & sql, const QSqlError & error)
     _errorList.removeFirst();
 
   emit updated(msg);
-  omfgThis->sNewErrorMessage();
+  if(omfgThis)
+    omfgThis->sNewErrorMessage();
 }
 

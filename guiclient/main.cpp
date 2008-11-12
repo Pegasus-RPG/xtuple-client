@@ -492,6 +492,7 @@ int main(int argc, char *argv[])
     }
   }
 
+  omfgThis = 0;
   omfgThis = new GUIClient(databaseURL, username);
   omfgThis->_key = key;
 
