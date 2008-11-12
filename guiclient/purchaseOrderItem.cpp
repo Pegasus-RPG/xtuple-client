@@ -456,6 +456,7 @@ void purchaseOrderItem::populate()
       _vendorItemNumber->setText(q.value("poitem_vend_item_number").toString());
       _vendorDescrip->setText(q.value("poitem_vend_item_descrip").toString());
       _vendorUOM->setText(q.value("poitem_vend_uom").toString());
+      _uom->setText(q.value("poitem_vend_uom").toString());
     }
     else
     {
@@ -475,6 +476,7 @@ void purchaseOrderItem::populate()
     if (_itemsrcid == -1)
     {
       _vendorUOM->setText(q.value("poitem_vend_uom").toString());
+      _uom->setText(q.value("poitem_vend_uom").toString());
       _invVendorUOMRatio->setDouble(q.value("poitem_invvenduomratio").toDouble());
       _invVendUOMRatio = q.value("poitem_invvenduomratio").toDouble();
     }
@@ -501,6 +503,7 @@ void purchaseOrderItem::populate()
         if(_vendorDescrip->toPlainText().isEmpty())
           _vendorDescrip->setText(q.value("itemsrc_vend_item_descrip").toString());
         _vendorUOM->setText(q.value("itemsrc_vend_uom").toString());
+        _uom->setText(q.value("itemsrc_vend_uom").toString());
         _minOrderQty->setDouble(q.value("itemsrc_minordqty").toDouble());
         _orderQtyMult->setDouble(q.value("itemsrc_multordqty").toDouble());
         _invVendorUOMRatio->setDouble(q.value("itemsrc_invvendoruomratio").toDouble());
@@ -804,6 +807,7 @@ void purchaseOrderItem::sPopulateItemSourceInfo(int pItemid)
         _vendorItemNumber->setText(q.value("itemsrc_vend_item_number").toString());
         _vendorDescrip->setText(q.value("itemsrc_vend_item_descrip").toString());
         _vendorUOM->setText(q.value("itemsrc_vend_uom").toString());
+        _uom->setText(q.value("itemsrc_vend_uom").toString());
         _minOrderQty->setDouble(q.value("itemsrc_minordqty").toDouble());
         _orderQtyMult->setDouble(q.value("itemsrc_multordqty").toDouble());
         _invVendorUOMRatio->setDouble(q.value("itemsrc_invvendoruomratio").toDouble());
@@ -832,6 +836,7 @@ void purchaseOrderItem::sPopulateItemSourceInfo(int pItemid)
       _vendorItemNumber->clear();
       _vendorDescrip->clear();
       _vendorUOM->setText(_item->uom());
+      _uom->setText(_item->uom());
       _minOrderQty->clear();
       _orderQtyMult->clear();
       _invVendorUOMRatio->setDouble(1.0);

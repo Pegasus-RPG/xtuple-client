@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>565</width>
-    <height>633</height>
+    <width>625</width>
+    <height>760</height>
    </rect>
   </property>
   <property name="minimumSize" >
@@ -339,18 +339,34 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="1" >
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Vertical</enum>
+        <item row="2" column="0" >
+         <widget class="QLabel" name="_uomLit" >
+          <property name="text" >
+           <string>UOM:</string>
           </property>
-          <property name="sizeHint" >
+          <property name="alignment" >
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1" >
+         <widget class="QLabel" name="_uom" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+          <property name="minimumSize" >
            <size>
-            <width>20</width>
-            <height>40</height>
+            <width>80</width>
+            <height>0</height>
            </size>
           </property>
-         </spacer>
+          <property name="text" >
+           <string/>
+          </property>
+          <property name="alignment" >
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>

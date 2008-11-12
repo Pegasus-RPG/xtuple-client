@@ -111,8 +111,9 @@ purchaseOrder::purchaseOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   _poitem->addColumn(tr("Status"),      _statusColumn, Qt::AlignCenter,true, "poitemstatus");
   _poitem->addColumn(tr("Item"),        _itemColumn,   Qt::AlignLeft,  true, "item_number");
   _poitem->addColumn(tr("Description"), -1,            Qt::AlignLeft,  true, "item_descrip");
-  _poitem->addColumn(tr("Due Date"),    _dateColumn,   Qt::AlignRight, true,"poitem_duedate");
+  _poitem->addColumn(tr("Due Date"),    _dateColumn,   Qt::AlignRight, true, "poitem_duedate");
   _poitem->addColumn(tr("Ordered"),     _qtyColumn,    Qt::AlignRight, true, "poitem_qty_ordered");
+  _poitem->addColumn(tr("UOM"),         _uomColumn,    Qt::AlignCenter,true, "poitem_vend_uom");
   _poitem->addColumn(tr("Unit Price"),  _priceColumn,  Qt::AlignRight, true, "poitem_unitprice");
   _poitem->addColumn(tr("Ext. Price"),  _moneyColumn,  Qt::AlignRight, true, "extprice");
 
