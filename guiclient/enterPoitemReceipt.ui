@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>555</width>
-    <height>518</height>
+    <width>622</width>
+    <height>671</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -346,6 +346,29 @@
           </property>
          </widget>
         </item>
+        <item row="1" column="0" >
+         <widget class="QLabel" name="_vendorUOMLit" >
+          <property name="text" >
+           <string>Vendor UOM:</string>
+          </property>
+          <property name="alignment" >
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1" >
+         <widget class="QLabel" name="_vendorUOM" >
+          <property name="minimumSize" >
+           <size>
+            <width>40</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text" >
+           <string/>
+          </property>
+         </widget>
+        </item>
         <item row="2" column="0" >
          <widget class="QLabel" name="_orderedLit" >
           <property name="text" >
@@ -392,26 +415,26 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="0" >
-         <widget class="QLabel" name="_vendorUOMLit" >
+        <item row="4" column="0" >
+         <widget class="QLabel" name="_returnedLit" >
           <property name="text" >
-           <string>Vendor UOM:</string>
+           <string>Qty. Returned:</string>
           </property>
           <property name="alignment" >
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
-        <item row="1" column="1" >
-         <widget class="QLabel" name="_vendorUOM" >
+        <item row="4" column="1" >
+         <widget class="XLabel" name="_returned" >
           <property name="minimumSize" >
            <size>
-            <width>40</width>
+            <width>80</width>
             <height>0</height>
            </size>
           </property>
-          <property name="text" >
-           <string/>
+          <property name="alignment" >
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
@@ -546,6 +569,11 @@
    <extends>QWidget</extends>
    <header>itemcluster.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>XLabel</class>
+   <extends>QLabel</extends>
+   <header>xlabel.h</header>
   </customwidget>
   <customwidget>
    <class>XLineEdit</class>

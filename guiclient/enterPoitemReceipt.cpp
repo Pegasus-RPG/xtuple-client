@@ -79,6 +79,7 @@ enterPoitemReceipt::enterPoitemReceipt(QWidget* parent, const char* name, bool m
   _invVendorUOMRatio->setPrecision(omfgThis->ratioVal());
   _ordered->setPrecision(omfgThis->qtyVal());
   _received->setPrecision(omfgThis->qtyVal());
+  _returned->setPrecision(omfgThis->qtyVal());
 
   _toReceive->setValidator(omfgThis->qtyVal());
   _toReceive->setFocus();
@@ -229,6 +230,7 @@ void enterPoitemReceipt::populate()
     _dueDate->setDate(q.value("duedate").toDate());
     _ordered->setDouble(q.value("orderitem_qty_ordered").toDouble());
     _received->setDouble(q.value("qtyreceived").toDouble());
+    _returned->setDouble(q.value("qtyreturned").toDouble());
     _receivable = q.value("receivable").toDouble();
     _notes->setText(q.value("notes").toString());
     _receiptDate->setDate(q.value("effective").toDate());
