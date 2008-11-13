@@ -113,6 +113,8 @@ BOM::BOM(QWidget* parent, const char* name, Qt::WFlags fl)
   _bomitem->addColumn(tr("Scrap %"),      _prcntColumn, Qt::AlignRight,  true, "bomitem_scrap" );
   _bomitem->addColumn(tr("Effective"),    _dateColumn,  Qt::AlignCenter, true, "effective");
   _bomitem->addColumn(tr("Expires"),      _dateColumn,  Qt::AlignCenter, true, "expires");
+  _bomitem->addColumn(tr("Notes"),          _itemColumn,  Qt::AlignLeft,  false, "bomitem_notes"   );
+  _bomitem->addColumn(tr("Ref. Designator"),_itemColumn,  Qt::AlignLeft,  false, "bomitem_ref"   );
   _bomitem->setDragString("bomid=");
   _bomitem->setAltDragString("itemid=");
   

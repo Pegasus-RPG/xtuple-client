@@ -95,17 +95,19 @@ workOrderMaterials::workOrderMaterials(QWidget* parent, const char* name, Qt::WF
   
   omfgThis->inputManager()->notify(cBCWorkOrder, this, _wo, SLOT(setId(int)));
 
-  _womatl->addColumn(tr("Component Item"), _itemColumn,  Qt::AlignLeft,  true, "item_number");
-  _womatl->addColumn(tr("Description"),    -1,           Qt::AlignLeft,  true, "description");
-  _womatl->addColumn(tr("Iss. Meth."),     _orderColumn, Qt::AlignCenter, true, "issuemethod");
-  _womatl->addColumn(tr("Iss. UOM"),       _uomColumn,   Qt::AlignLeft,  true, "uom_name");
-  _womatl->addColumn(tr("Qty. Per"),       _qtyColumn,   Qt::AlignRight, true, "womatl_qtyper");
-  _womatl->addColumn(tr("Scrap %"),        _prcntColumn, Qt::AlignRight, true, "womatl_scrap");
-  _womatl->addColumn(tr("Required"),       _qtyColumn,   Qt::AlignRight, true, "womatl_qtyreq");
-  _womatl->addColumn(tr("Issued"),         _qtyColumn,   Qt::AlignRight, true, "womatl_qtyiss");
-  _womatl->addColumn(tr("Scrapped"),       _qtyColumn,   Qt::AlignRight, true, "womatl_qtywipscrap");
-  _womatl->addColumn(tr("Balance"),        _qtyColumn,   Qt::AlignRight, true, "balance");
-  _womatl->addColumn(tr("Due Date"),       _dateColumn,  Qt::AlignCenter,true, "womatl_duedate");
+  _womatl->addColumn(tr("Component Item"), _itemColumn,  Qt::AlignLeft,   true,  "item_number");
+  _womatl->addColumn(tr("Description"),    -1,           Qt::AlignLeft,   true,  "description");
+  _womatl->addColumn(tr("Iss. Meth."),     _orderColumn, Qt::AlignCenter, true,  "issuemethod");
+  _womatl->addColumn(tr("Iss. UOM"),       _uomColumn,   Qt::AlignLeft,   true,  "uom_name");
+  _womatl->addColumn(tr("Qty. Per"),       _qtyColumn,   Qt::AlignRight,  true,  "womatl_qtyper");
+  _womatl->addColumn(tr("Scrap %"),        _prcntColumn, Qt::AlignRight,  true,  "womatl_scrap");
+  _womatl->addColumn(tr("Required"),       _qtyColumn,   Qt::AlignRight,  true,  "womatl_qtyreq");
+  _womatl->addColumn(tr("Issued"),         _qtyColumn,   Qt::AlignRight,  true,  "womatl_qtyiss");
+  _womatl->addColumn(tr("Scrapped"),       _qtyColumn,   Qt::AlignRight,  true,  "womatl_qtywipscrap");
+  _womatl->addColumn(tr("Balance"),        _qtyColumn,   Qt::AlignRight,  true,  "balance");
+  _womatl->addColumn(tr("Due Date"),       _dateColumn,  Qt::AlignCenter, true,  "womatl_duedate");
+  _womatl->addColumn(tr("Notes"),          _itemColumn,  Qt::AlignLeft,   false, "womatl_notes");
+  _womatl->addColumn(tr("Ref. Designator"),_itemColumn,  Qt::AlignLeft,   false, "womatl_ref");
   
   if (_privileges->check("MaintainWoMaterials"))
   {
