@@ -206,6 +206,9 @@ enum SetResponse woMaterialItem::set(const ParameterList &pParams)
       _uom->setEnabled(FALSE);
       _scrap->setEnabled(FALSE);
       _issueMethod->setEnabled(FALSE);
+      _notes->setEnabled(FALSE);
+      _ref->setEnabled(FALSE);
+
       _close->setText(tr("&Close"));
       _save->hide();
 
@@ -259,7 +262,7 @@ void woMaterialItem::sSave()
 
     int itemsiteid = q.value("itemsiteid").toInt();
 
-    q.prepare("SELECT createWoMaterial(:wo_id, :itemsite_id, :issueMethod, :uom_id, :qtyPer, :scrap, :bomitem_id) AS womatlid;");
+    q.prepare("SELECT createWoMaterial(:wo_id, :itemsite_id, :issueMethod, :uom_id, :qtyPer, :scrap, :bomitem_id, :notes, :ref) AS womatlid;");
     q.bindValue(":wo_id", _wo->id());
     q.bindValue(":itemsite_id", itemsiteid);
     q.bindValue(":issueMethod", issueMethod);
@@ -267,6 +270,8 @@ void woMaterialItem::sSave()
     q.bindValue(":uom_id", _uom->id());
     q.bindValue(":scrap", (_scrap->toDouble() / 100));
     q.bindValue(":bomitem_id", _bomitemid);
+    q.bindValue(":notes", _notes->text());
+    q.bindValue(":ref", _ref->text());
     q.exec();
     if (q.first())
       _womatlid = q.value("womatlid").toInt();
@@ -277,7 +282,7 @@ void woMaterialItem::sSave()
     q.prepare( "UPDATE womatl "
                "SET womatl_qtyper=:qtyPer, womatl_scrap=:scrap, womatl_issuemethod=:issueMethod,"
                "    womatl_uom_id=:uom_id,"
-               "    womatl_qtyreq=(:qtyPer * (1 + :scrap) * wo_qtyord) "
+               "    womatl_qtyreq=(:qtyPer * (1 + :scrap) * wo_qtyord), womatl_notes=:notes, womatl_ref=:ref "
                "FROM wo "
                "WHERE ( (womatl_wo_id=wo_id)"
                " AND (womatl_id=:womatl_id) );" );
@@ -286,6 +291,8 @@ void woMaterialItem::sSave()
     q.bindValue(":qtyPer", _qtyPer->toDouble());
     q.bindValue(":uom_id", _uom->id());
     q.bindValue(":scrap", (_scrap->toDouble() / 100));
+    q.bindValue(":notes", _notes->text());
+    q.bindValue(":ref", _ref->text());
     q.exec();
   }
 
@@ -300,6 +307,8 @@ void woMaterialItem::sSave()
     _qtyRequired->clear();
     _scrap->clear();
     _item->setFocus();
+    _notes->clear();
+    _ref->clear();
   }
 }
 
@@ -314,7 +323,7 @@ void woMaterialItem::populate()
              "       womatl_qtyper AS qtyper,"
              "       womatl_uom_id,"
              "       womatl_scrap * 100 AS scrap,"
-             "       womatl_issuemethod "
+             "       womatl_issuemethod, womatl_notes, womatl_ref "
              "FROM womatl, itemsite "
              "WHERE ( (womatl_itemsite_id=itemsite_id)"
              " AND (womatl_id=:womatl_id) );" );
@@ -327,6 +336,8 @@ void woMaterialItem::populate()
     _qtyPer->setText(q.value("qtyper").toDouble());
     _uom->setId(q.value("womatl_uom_id").toInt());
     _scrap->setText(q.value("scrap").toDouble());
+    _notes->setText(q.value("womatl_notes").toString());
+    _ref->setText(q.value("womatl_ref").toString());
 
     if (q.value("womatl_issuemethod").toString() == "S")
       _issueMethod->setCurrentIndex(0);

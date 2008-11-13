@@ -74,15 +74,17 @@ dspSingleLevelBOM::dspSingleLevelBOM(QWidget* parent, const char* name, Qt::WFla
 
   _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased | ItemLineEdit::cKit);
 
-  _bomitem->addColumn(tr("#"),                   30, Qt::AlignCenter,true, "bomitem_seqnumber" );
-  _bomitem->addColumn(tr("Item Number"),_itemColumn, Qt::AlignLeft,  true, "item_number"   );
-  _bomitem->addColumn(tr("Description"),         -1, Qt::AlignLeft,  true, "itemdescription"   );
-  _bomitem->addColumn(tr("UOM"),         _uomColumn, Qt::AlignCenter,true, "uom_name" );
-  _bomitem->addColumn(tr("Qty. Per"),    _qtyColumn, Qt::AlignRight, true, "qtyper"  );
-  _bomitem->addColumn(tr("Scrap %"),   _prcntColumn, Qt::AlignRight, true, "bomitem_scrap"  );
-  _bomitem->addColumn(tr("Effective"),  _dateColumn, Qt::AlignCenter,true, "bomitem_effective" );
-  _bomitem->addColumn(tr("Expires"),    _dateColumn, Qt::AlignCenter,true, "bomitem_expires" );
-  _bomitem->addColumn(tr("ECN #"),      _itemColumn, Qt::AlignLeft,  true, "bomitem_ecn"   );
+  _bomitem->addColumn(tr("#"),                   30,      Qt::AlignCenter,true, "bomitem_seqnumber" );
+  _bomitem->addColumn(tr("Item Number"),    _itemColumn,  Qt::AlignLeft,  true, "item_number"   );
+  _bomitem->addColumn(tr("Description"),         -1,      Qt::AlignLeft,  true, "itemdescription"   );
+  _bomitem->addColumn(tr("UOM"),            _uomColumn,   Qt::AlignCenter,true, "uom_name" );
+  _bomitem->addColumn(tr("Qty. Per"),       _qtyColumn,   Qt::AlignRight, true, "qtyper"  );
+  _bomitem->addColumn(tr("Scrap %"),        _prcntColumn, Qt::AlignRight, true, "bomitem_scrap"  );
+  _bomitem->addColumn(tr("Effective"),      _dateColumn,  Qt::AlignCenter,true, "bomitem_effective" );
+  _bomitem->addColumn(tr("Expires"),        _dateColumn,  Qt::AlignCenter,true, "bomitem_expires" );
+  _bomitem->addColumn(tr("ECN #"),          _itemColumn,  Qt::AlignLeft,  true, "bomitem_ecn"   );
+  _bomitem->addColumn(tr("Notes"),          _itemColumn,  Qt::AlignLeft,  false, "bomitem_notes"   );
+  _bomitem->addColumn(tr("Ref. Designator"),_itemColumn,  Qt::AlignLeft,  false, "bomitem_ref"   );
 
   _expiredDaysLit->setEnabled(_showExpired->isChecked());
   _expiredDays->setEnabled(_showExpired->isChecked());
