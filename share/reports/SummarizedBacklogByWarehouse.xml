@@ -49,12 +49,12 @@
             ELSE cohead_id
        END AS _coheadid, cohead_id,
        cohead_holdtype, cohead_number, cust_name,
-       CASE WHEN (cohead_holdtype='N') THEN &lt;? value(&quot;none&quot;) ?>
-            WHEN (cohead_holdtype='C') THEN &lt;? value(&quot;credit&quot;) ?>
-            WHEN (cohead_holdtype='S') THEN &lt;? value(&quot;ship&quot;) ?>
-            WHEN (cohead_holdtype='P') THEN &lt;? value(&quot;pack&quot;) ?>
-            WHEN (cohead_holdtype='R') THEN &lt;? value(&quot;return&quot;) ?>
-            ELSE &lt;? value(&quot;Other&quot;) ?>
+       CASE WHEN (cohead_holdtype='N') THEN &lt;? value("none") ?>
+            WHEN (cohead_holdtype='C') THEN &lt;? value("credit") ?>
+            WHEN (cohead_holdtype='S') THEN &lt;? value("ship") ?>
+            WHEN (cohead_holdtype='P') THEN &lt;? value("pack") ?>
+            WHEN (cohead_holdtype='R') THEN &lt;? value("return") ?>
+            ELSE &lt;? value("Other") ?>
        END AS f_holdtype,
        formatDate(cohead_orderdate) AS f_orderdate,
        formatDate(MIN(coitem_scheddate)) AS f_scheddate,
@@ -120,7 +120,7 @@ ORDER BY
 &lt;? if exists("orderByShipDate") ?>
   scheddate,
 &lt;? elseif exists("orderByPackDate") ?>
-  cohead_packdate
+  cohead_packdate,
 &lt;? endif ?>
 cohead_number, cosmisc_shipped;</sql>
  </querysource>
@@ -166,12 +166,38 @@ GROUP BY cohead_id, cohead_number, cust_name, cohead_holdtype,
 &lt;? endif ?></sql>
  </querysource>
  <rpthead>
-  <height>205</height>
+  <height>206</height>
+  <line>
+   <xstart>5</xstart>
+   <ystart>200</ystart>
+   <xend>745</xend>
+   <yend>200</yend>
+   <weight>2</weight>
+  </line>
+  <field>
+   <rect>
+    <x>670</x>
+    <y>170</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>lbl_margin</column>
+   </data>
+  </field>
   <label>
    <rect>
-    <x>430</x>
-    <y>85</y>
-    <width>80</width>
+    <x>30</x>
+    <y>104</y>
+    <width>104</width>
     <height>20</height>
    </rect>
    <font>
@@ -181,12 +207,44 @@ GROUP BY cohead_id, cohead_number, cust_name, cohead_holdtype,
    </font>
    <right/>
    <vcenter/>
-   <string>Start Date:</string>
+   <string>Site:</string>
+  </label>
+  <label>
+   <rect>
+    <x>370</x>
+    <y>170</y>
+    <width>70</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Scheduled</string>
+  </label>
+  <label>
+   <rect>
+    <x>220</x>
+    <y>170</y>
+    <width>60</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Hold Type</string>
   </label>
   <field>
    <rect>
     <x>140</x>
-    <y>105</y>
+    <y>104</y>
     <width>200</width>
     <height>20</height>
    </rect>
@@ -202,25 +260,22 @@ GROUP BY cohead_id, cohead_number, cust_name, cohead_holdtype,
     <column>warehouse</column>
    </data>
   </field>
-  <field>
+  <label>
    <rect>
-    <x>515</x>
-    <y>105</y>
-    <width>200</width>
-    <height>20</height>
+    <x>220</x>
+    <y>185</y>
+    <width>60</width>
+    <height>15</height>
    </rect>
    <font>
     <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
+    <size>8</size>
+    <weight>normal</weight>
    </font>
-   <left/>
+   <right/>
    <vcenter/>
-   <data>
-    <query>head</query>
-    <column>enddate</column>
-   </data>
-  </field>
+   <string>Shipment #</string>
+  </label>
   <field>
    <rect>
     <x>140</x>
@@ -242,22 +297,6 @@ GROUP BY cohead_id, cohead_number, cust_name, cohead_holdtype,
   </field>
   <label>
    <rect>
-    <x>260</x>
-    <y>10</y>
-    <width>465</width>
-    <height>38</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>18</size>
-    <weight>bold</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Summarized Backlog By Site</string>
-  </label>
-  <label>
-   <rect>
     <x>440</x>
     <y>170</y>
     <width>70</width>
@@ -272,77 +311,6 @@ GROUP BY cohead_id, cohead_number, cust_name, cohead_holdtype,
    <vcenter/>
    <string>Pack Date</string>
   </label>
-  <label>
-   <rect>
-    <x>70</x>
-    <y>170</y>
-    <width>145</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Customer</string>
-  </label>
-  <label>
-   <rect>
-    <x>5</x>
-    <y>185</y>
-    <width>60</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Shipped</string>
-  </label>
-  <label>
-   <rect>
-    <x>370</x>
-    <y>170</y>
-    <width>70</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Scheduled</string>
-  </label>
-  <label>
-   <rect>
-    <x>290</x>
-    <y>185</y>
-    <width>70</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Shipped</string>
-  </label>
-  <line>
-   <xstart>5</xstart>
-   <ystart>200</ystart>
-   <xend>745</xend>
-   <yend>200</yend>
-   <weight>2</weight>
-  </line>
   <field>
    <rect>
     <x>515</x>
@@ -364,23 +332,7 @@ GROUP BY cohead_id, cohead_number, cust_name, cohead_holdtype,
   </field>
   <label>
    <rect>
-    <x>30</x>
-    <y>85</y>
-    <width>105</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Customer Type:</string>
-  </label>
-  <label>
-   <rect>
-    <x>220</x>
+    <x>5</x>
     <y>185</y>
     <width>60</width>
     <height>15</height>
@@ -392,7 +344,7 @@ GROUP BY cohead_id, cohead_number, cust_name, cohead_holdtype,
    </font>
    <right/>
    <vcenter/>
-   <string>Shipment #</string>
+   <string>Shipped</string>
   </label>
   <label>
    <rect>
@@ -412,19 +364,19 @@ GROUP BY cohead_id, cohead_number, cust_name, cohead_holdtype,
   </label>
   <label>
    <rect>
-    <x>10</x>
-    <y>170</y>
-    <width>75</width>
-    <height>15</height>
+    <x>260</x>
+    <y>10</y>
+    <width>465</width>
+    <height>37</height>
    </rect>
    <font>
     <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
+    <size>18</size>
+    <weight>bold</weight>
    </font>
-   <left/>
+   <right/>
    <vcenter/>
-   <string>S/O #</string>
+   <string>Summarized Backlog By Site</string>
   </label>
   <field>
    <rect>
@@ -445,11 +397,11 @@ GROUP BY cohead_id, cohead_number, cust_name, cohead_holdtype,
     <column>lbl_sales</column>
    </data>
   </field>
-  <field>
+  <label>
    <rect>
-    <x>670</x>
-    <y>170</y>
-    <width>80</width>
+    <x>70</x>
+    <y>185</y>
+    <width>145</width>
     <height>15</height>
    </rect>
    <font>
@@ -457,11 +409,43 @@ GROUP BY cohead_id, cohead_number, cust_name, cohead_holdtype,
     <size>8</size>
     <weight>normal</weight>
    </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Shipvia</string>
+  </label>
+  <label>
+   <rect>
+    <x>30</x>
+    <y>85</y>
+    <width>104</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
    <right/>
+   <vcenter/>
+   <string>Customer Type:</string>
+  </label>
+  <field>
+   <rect>
+    <x>515</x>
+    <y>104</y>
+    <width>200</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
    <vcenter/>
    <data>
     <query>head</query>
-    <column>lbl_margin</column>
+    <column>enddate</column>
    </data>
   </field>
   <field>
@@ -485,9 +469,25 @@ GROUP BY cohead_id, cohead_number, cust_name, cohead_holdtype,
   </field>
   <label>
    <rect>
-    <x>220</x>
+    <x>430</x>
+    <y>85</y>
+    <width>80</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Start Date:</string>
+  </label>
+  <label>
+   <rect>
+    <x>70</x>
     <y>170</y>
-    <width>60</width>
+    <width>145</width>
     <height>15</height>
    </rect>
    <font>
@@ -497,12 +497,28 @@ GROUP BY cohead_id, cohead_number, cust_name, cohead_holdtype,
    </font>
    <left/>
    <vcenter/>
-   <string>Hold Type</string>
+   <string>Customer</string>
+  </label>
+  <label>
+   <rect>
+    <x>290</x>
+    <y>185</y>
+    <width>70</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Shipped</string>
   </label>
   <label>
    <rect>
     <x>430</x>
-    <y>105</y>
+    <y>104</y>
     <width>80</width>
     <height>20</height>
    </rect>
@@ -517,9 +533,32 @@ GROUP BY cohead_id, cohead_number, cust_name, cohead_holdtype,
   </label>
   <label>
    <rect>
-    <x>70</x>
-    <y>185</y>
-    <width>145</width>
+    <x>10</x>
+    <y>170</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>S/O #</string>
+  </label>
+ </rpthead>
+ <pghead>
+  <firstpage/>
+  <height>6</height>
+ </pghead>
+ <pghead>
+  <height>28</height>
+  <label>
+   <rect>
+    <x>433</x>
+    <y>5</y>
+    <width>70</width>
     <height>15</height>
    </rect>
    <font>
@@ -529,31 +568,8 @@ GROUP BY cohead_id, cohead_number, cust_name, cohead_holdtype,
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Shipvia</string>
+   <string>Pack Date</string>
   </label>
-  <label>
-   <rect>
-    <x>30</x>
-    <y>105</y>
-    <width>105</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Site:</string>
-  </label>
- </rpthead>
- <pghead>
-  <firstpage/>
-  <height>5</height>
- </pghead>
- <pghead>
-  <height>28</height>
   <label>
    <rect>
     <x>80</x>
@@ -579,9 +595,25 @@ GROUP BY cohead_id, cohead_number, cust_name, cohead_holdtype,
   </line>
   <label>
    <rect>
-    <x>434</x>
+    <x>5</x>
     <y>5</y>
-    <width>70</width>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>S/O #/Shipped</string>
+  </label>
+  <label>
+   <rect>
+    <x>275</x>
+    <y>5</y>
+    <width>90</width>
     <height>15</height>
    </rect>
    <font>
@@ -591,7 +623,7 @@ GROUP BY cohead_id, cohead_number, cust_name, cohead_holdtype,
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Pack Date</string>
+   <string>Ordered/Shipped</string>
   </label>
   <label>
    <rect>
@@ -609,27 +641,11 @@ GROUP BY cohead_id, cohead_number, cust_name, cohead_holdtype,
    <vcenter/>
    <string>Scheduled</string>
   </label>
-  <label>
+  <field>
    <rect>
-    <x>5</x>
+    <x>585</x>
     <y>5</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>S/O #/Shipped</string>
-  </label>
-  <label>
-   <rect>
-    <x>215</x>
-    <y>5</y>
-    <width>60</width>
+    <width>80</width>
     <height>15</height>
    </rect>
    <font>
@@ -639,8 +655,11 @@ GROUP BY cohead_id, cohead_number, cust_name, cohead_holdtype,
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Hold Type</string>
-  </label>
+   <data>
+    <query>head</query>
+    <column>lbl_cost</column>
+   </data>
+  </field>
   <field>
    <rect>
     <x>665</x>
@@ -662,9 +681,9 @@ GROUP BY cohead_id, cohead_number, cust_name, cohead_holdtype,
   </field>
   <label>
    <rect>
-    <x>275</x>
+    <x>215</x>
     <y>5</y>
-    <width>90</width>
+    <width>60</width>
     <height>15</height>
    </rect>
    <font>
@@ -674,7 +693,7 @@ GROUP BY cohead_id, cohead_number, cust_name, cohead_holdtype,
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Ordered/Shipped</string>
+   <string>Hold Type</string>
   </label>
   <field>
    <rect>
@@ -693,25 +712,6 @@ GROUP BY cohead_id, cohead_number, cust_name, cohead_holdtype,
    <data>
     <query>head</query>
     <column>lbl_sales</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>585</x>
-    <y>5</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>lbl_cost</column>
    </data>
   </field>
  </pghead>
@@ -743,25 +743,6 @@ GROUP BY cohead_id, cohead_number, cust_name, cohead_holdtype,
     </field>
     <field>
      <rect>
-      <x>220</x>
-      <y>0</y>
-      <width>60</width>
-      <height>15</height>
-     </rect>
-     <font>
-      <face>Arial</face>
-      <size>8</size>
-      <weight>bold</weight>
-     </font>
-     <left/>
-     <vcenter/>
-     <data>
-      <query>detail</query>
-      <column>f_holdtype</column>
-     </data>
-    </field>
-    <field>
-     <rect>
       <x>370</x>
       <y>0</y>
       <width>70</width>
@@ -777,82 +758,6 @@ GROUP BY cohead_id, cohead_number, cust_name, cohead_holdtype,
      <data>
       <query>detail</query>
       <column>f_scheddate</column>
-     </data>
-    </field>
-    <field>
-     <rect>
-      <x>5</x>
-      <y>0</y>
-      <width>70</width>
-      <height>15</height>
-     </rect>
-     <font>
-      <face>Arial</face>
-      <size>8</size>
-      <weight>bold</weight>
-     </font>
-     <left/>
-     <vcenter/>
-     <data>
-      <query>detail</query>
-      <column>cohead_number</column>
-     </data>
-    </field>
-    <field>
-     <rect>
-      <x>290</x>
-      <y>0</y>
-      <width>70</width>
-      <height>15</height>
-     </rect>
-     <font>
-      <face>Arial</face>
-      <size>8</size>
-      <weight>bold</weight>
-     </font>
-     <left/>
-     <vcenter/>
-     <data>
-      <query>detail</query>
-      <column>f_orderdate</column>
-     </data>
-    </field>
-    <field>
-     <rect>
-      <x>440</x>
-      <y>0</y>
-      <width>70</width>
-      <height>15</height>
-     </rect>
-     <font>
-      <face>Arial</face>
-      <size>8</size>
-      <weight>bold</weight>
-     </font>
-     <hcenter/>
-     <vcenter/>
-     <data>
-      <query>detail</query>
-      <column>f_packdate</column>
-     </data>
-    </field>
-    <field>
-     <rect>
-      <x>670</x>
-      <y>0</y>
-      <width>80</width>
-      <height>15</height>
-     </rect>
-     <font>
-      <face>Arial</face>
-      <size>8</size>
-      <weight>bold</weight>
-     </font>
-     <right/>
-     <vcenter/>
-     <data>
-      <query>detail</query>
-      <column>f_margin</column>
      </data>
     </field>
     <field>
@@ -876,6 +781,82 @@ GROUP BY cohead_id, cohead_number, cust_name, cohead_holdtype,
     </field>
     <field>
      <rect>
+      <x>290</x>
+      <y>0</y>
+      <width>70</width>
+      <height>15</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>8</size>
+      <weight>bold</weight>
+     </font>
+     <left/>
+     <vcenter/>
+     <data>
+      <query>detail</query>
+      <column>f_orderdate</column>
+     </data>
+    </field>
+    <field>
+     <rect>
+      <x>670</x>
+      <y>0</y>
+      <width>80</width>
+      <height>15</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>8</size>
+      <weight>bold</weight>
+     </font>
+     <right/>
+     <vcenter/>
+     <data>
+      <query>detail</query>
+      <column>f_margin</column>
+     </data>
+    </field>
+    <field>
+     <rect>
+      <x>5</x>
+      <y>0</y>
+      <width>70</width>
+      <height>15</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>8</size>
+      <weight>bold</weight>
+     </font>
+     <left/>
+     <vcenter/>
+     <data>
+      <query>detail</query>
+      <column>cohead_number</column>
+     </data>
+    </field>
+    <field>
+     <rect>
+      <x>220</x>
+      <y>0</y>
+      <width>60</width>
+      <height>15</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>8</size>
+      <weight>bold</weight>
+     </font>
+     <left/>
+     <vcenter/>
+     <data>
+      <query>detail</query>
+      <column>f_holdtype</column>
+     </data>
+    </field>
+    <field>
+     <rect>
       <x>590</x>
       <y>0</y>
       <width>80</width>
@@ -893,6 +874,25 @@ GROUP BY cohead_id, cohead_number, cust_name, cohead_holdtype,
       <column>f_cost</column>
      </data>
     </field>
+    <field>
+     <rect>
+      <x>440</x>
+      <y>0</y>
+      <width>70</width>
+      <height>15</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>8</size>
+      <weight>bold</weight>
+     </font>
+     <hcenter/>
+     <vcenter/>
+     <data>
+      <query>detail</query>
+      <column>f_packdate</column>
+     </data>
+    </field>
    </head>
   </group>
   <detail>
@@ -902,9 +902,9 @@ GROUP BY cohead_id, cohead_number, cust_name, cohead_holdtype,
    <height>18</height>
    <field>
     <rect>
-     <x>290</x>
+     <x>220</x>
      <y>0</y>
-     <width>70</width>
+     <width>60</width>
      <height>15</height>
     </rect>
     <font>
@@ -916,7 +916,7 @@ GROUP BY cohead_id, cohead_number, cust_name, cohead_holdtype,
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>shipdate</column>
+     <column>cosmisc_number</column>
     </data>
    </field>
    <field>
@@ -940,25 +940,6 @@ GROUP BY cohead_id, cohead_number, cust_name, cohead_holdtype,
    </field>
    <field>
     <rect>
-     <x>220</x>
-     <y>0</y>
-     <width>60</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>cosmisc_number</column>
-    </data>
-   </field>
-   <field>
-    <rect>
      <x>70</x>
      <y>0</y>
      <width>145</width>
@@ -974,6 +955,25 @@ GROUP BY cohead_id, cohead_number, cust_name, cohead_holdtype,
     <data>
      <query>detail</query>
      <column>shipvia</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>290</x>
+     <y>0</y>
+     <width>70</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>shipdate</column>
     </data>
    </field>
   </detail>
@@ -1015,6 +1015,22 @@ GROUP BY cohead_id, cohead_number, cust_name, cohead_holdtype,
    <vcenter/>
    <string>Page:</string>
   </label>
+  <label>
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>85</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Report Date:</string>
+  </label>
   <field>
    <rect>
     <x>705</x>
@@ -1034,44 +1050,9 @@ GROUP BY cohead_id, cohead_number, cust_name, cohead_holdtype,
     <column>page_number</column>
    </data>
   </field>
-  <label>
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>85</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Report Date:</string>
-  </label>
  </pgfoot>
  <rptfoot>
   <height>18</height>
-  <field>
-   <rect>
-    <x>510</x>
-    <y>0</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>bold</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <data>
-    <query>totals</query>
-    <column>f_sales</column>
-   </data>
-  </field>
   <field>
    <rect>
     <x>590</x>
@@ -1093,6 +1074,44 @@ GROUP BY cohead_id, cohead_number, cust_name, cohead_holdtype,
   </field>
   <field>
    <rect>
+    <x>407</x>
+    <y>0</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>lbl_totals</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>510</x>
+    <y>0</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <data>
+    <query>totals</query>
+    <column>f_sales</column>
+   </data>
+  </field>
+  <field>
+   <rect>
     <x>670</x>
     <y>0</y>
     <width>80</width>
@@ -1108,25 +1127,6 @@ GROUP BY cohead_id, cohead_number, cust_name, cohead_holdtype,
    <data>
     <query>totals</query>
     <column>f_margin</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>408</x>
-    <y>0</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>lbl_totals</column>
    </data>
   </field>
  </rptfoot>
