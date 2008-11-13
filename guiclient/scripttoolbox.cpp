@@ -76,6 +76,7 @@
 
 #include "xuiloader.h"
 #include "scriptquery.h"
+#include "mqlutil.h"
 
 QWidget * ScriptToolbox::_lastWindow = 0;
 
@@ -93,6 +94,14 @@ QObject * ScriptToolbox::executeQuery(const QString & query, const ParameterList
 {
   ScriptQuery * sq = new ScriptQuery(_engine);
   MetaSQLQuery mql(query);
+  sq->setQuery(mql.toQuery(params));
+  return sq;
+}
+
+QObject * ScriptToolbox::executeDbQuery(const QString & group, const QString & name, const ParameterList & params)
+{
+  ScriptQuery * sq = new ScriptQuery(_engine);
+  MetaSQLQuery mql = mqlLoad(group, name);
   sq->setQuery(mql.toQuery(params));
   return sq;
 }

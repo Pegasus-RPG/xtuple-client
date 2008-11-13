@@ -113,6 +113,7 @@ class ScriptToolbox : public QObject
   public slots:
 
     QObject * executeQuery(const QString & query, const ParameterList & params);
+    QObject * executeDbQuery(const QString & group, const QString & name, const ParameterList & params);
 
     QObject * widgetGetLayout(QWidget * w);
     void layoutBoxInsertWidget(QObject *, int index, QWidget *, int stretch = 0, int alignment = 0);
