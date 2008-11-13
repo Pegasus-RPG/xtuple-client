@@ -521,6 +521,21 @@ void item::sSave()
         "Deactivate the Item Sites to allow this Item to not be active.") );
       return;
     }
+
+    q.prepare("SELECT itemsrc_id "
+              "FROM itemsrc "
+              "WHERE ((itemsrc_item_id=:item_id)"
+              "  AND  (itemsrc_active)) "
+              "LIMIT 1; ");
+    q.bindValue(":item_id", _itemid);
+    q.exec();
+    if (q.first())         
+    { 
+      QMessageBox::warning( this, tr("Cannot Save Item"),
+        tr("This Item is used in an active Item Source and must be marked as active. "
+        "Deactivate the Item Sources to allow this Item to not be active.") );
+      return;
+    }
   }
 
   if(_disallowPlanningType && QString(_itemTypes[_itemtype->currentIndex()]) == "L")

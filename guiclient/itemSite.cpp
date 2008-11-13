@@ -402,6 +402,23 @@ void itemSite::sSave()
     }
   }
     
+  if(_active->isChecked())
+  {
+    q.prepare("SELECT item_id "
+              "FROM item "
+              "WHERE ((item_id=:item_id)"
+              "  AND  (item_active)) "
+              "LIMIT 1; ");
+    q.bindValue(":item_id", _item->id());
+    q.exec();
+    if (!q.first())         
+    { 
+      QMessageBox::warning( this, tr("Cannot Save Item Site"),
+        tr("This Item Site refers to an inactive Item and must be marked as inactive.") );
+      return;
+    }
+  }
+    
   if(!_active->isChecked())
   {
     if (_qohCache != 0)         
@@ -446,7 +463,7 @@ void itemSite::sSave()
       q.prepare("SELECT raitem_id "
                 "FROM raitem "
                 "WHERE ((raitem_itemsite_id=:itemsite_id)"
-                "  AND  (raitem_qtyreceived<raitem_qtyauthorized)) "
+                "  AND  (raitem_status<>'C')) "
                 "UNION "
                 "SELECT planord_id "
                 "FROM planord "

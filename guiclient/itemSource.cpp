@@ -272,6 +272,23 @@ bool itemSource::sSave()
     return false;
   }
 
+  if(_active->isChecked())
+  {
+    q.prepare("SELECT item_id "
+              "FROM item "
+              "WHERE ((item_id=:item_id)"
+              "  AND  (item_active)) "
+              "LIMIT 1; ");
+    q.bindValue(":item_id", _item->id());
+    q.exec();
+    if (!q.first())         
+    { 
+      QMessageBox::warning( this, tr("Cannot Save Item Source"),
+        tr("This Item Source refers to an inactive Item and must be marked as inactive.") );
+      return false;
+    }
+  }
+    
   if (_mode == cNew)
     q.prepare( "INSERT INTO itemsrc "
                "( itemsrc_id, itemsrc_item_id, itemsrc_active, itemsrc_vend_id,"
