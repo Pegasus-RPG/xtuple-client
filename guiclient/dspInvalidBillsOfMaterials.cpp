@@ -77,6 +77,7 @@ dspInvalidBillsOfMaterials::dspInvalidBillsOfMaterials(QWidget* parent, const ch
 
   _exceptions->addColumn("componentItemid",                 0, Qt::AlignCenter,true, "pitem_id");
   _exceptions->addColumn("componentSiteId",                 0, Qt::AlignCenter,true, "citem_id");
+  _exceptions->addColumn("warehousId",                      0, Qt::AlignCenter,true, "warehous_id");
   _exceptions->addColumn(tr("Site"),               _whsColumn, Qt::AlignCenter,true, "warehous_code");
   _exceptions->addColumn(tr("Parent Item #"),     _itemColumn, Qt::AlignLeft,  true, "parentitem");
   _exceptions->addColumn(tr("Component Item #"),  _itemColumn, Qt::AlignLeft,  true, "componentitem");
@@ -105,12 +106,14 @@ void dspInvalidBillsOfMaterials::sCreateItemSite()
 {
   ParameterList params;
   params.append("mode", "new");
-  params.append("item_id",     _exceptions->currentItem()->text(0).toInt());
-  params.append("warehous_id", _exceptions->currentItem()->text(1).toInt());
+  params.append("item_id",     _exceptions->currentItem()->rawValue("citem_id").toInt());
+  params.append("warehous_id", _exceptions->currentItem()->rawValue("warehous_id").toInt());
   
   itemSite newdlg(this, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
+  
+  sFillList();
 }
 
 void dspInvalidBillsOfMaterials::sEditItemSite()
