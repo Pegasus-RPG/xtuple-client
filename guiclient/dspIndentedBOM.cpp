@@ -86,6 +86,8 @@ dspIndentedBOM::dspIndentedBOM(QWidget* parent, const char* name, Qt::WFlags fl)
   _bomitem->addColumn(tr("Scrap %"),      _prcntColumn, Qt::AlignRight, true, "bomdata_scrap");
   _bomitem->addColumn(tr("Effective"),    _dateColumn,  Qt::AlignCenter,true, "bomdata_effective");
   _bomitem->addColumn(tr("Expires"),      _dateColumn,  Qt::AlignCenter,true, "bomdata_expires");
+  _bomitem->addColumn(tr("Notes"),    _itemColumn,      Qt::AlignCenter,false, "bomdata_notes");
+  _bomitem->addColumn(tr("Ref. Designator"),_itemColumn,Qt::AlignCenter,false, "bomdata_ref");
   _bomitem->setIndentation(10);
 
   _expiredDaysLit->setEnabled(_showExpired->isChecked());
