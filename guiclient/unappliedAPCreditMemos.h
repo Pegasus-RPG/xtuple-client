@@ -60,7 +60,10 @@
 
 #include "guiclient.h"
 #include "xwidget.h"
+
 #include "ui_unappliedAPCreditMemos.h"
+
+class ParameterList;
 
 class unappliedAPCreditMemos : public XWidget, public Ui::unappliedAPCreditMemos
 {
@@ -69,6 +72,7 @@ class unappliedAPCreditMemos : public XWidget, public Ui::unappliedAPCreditMemos
 public:
     unappliedAPCreditMemos(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~unappliedAPCreditMemos();
+    virtual bool setParams(ParameterList &params);
 
 public slots:
     virtual void sPrint();

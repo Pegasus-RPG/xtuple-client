@@ -81,6 +81,7 @@ HEADERS += \
            plugins/usernameclusterplugin.h \
            plugins/usernamelineeditplugin.h \
            plugins/vendorclusterplugin.h \
+           plugins/vendorgroupplugin.h \
            plugins/vendorinfoplugin.h \
            plugins/vendorlineeditplugin.h \
            plugins/warehousegroupplugin.h \
@@ -117,6 +118,7 @@ SOURCES    += OpenMFGWidgets.cpp \
               poCluster.cpp purchaseOrderList.cpp \
               plCluster.cpp plannedOrderList.cpp \
               vendorcluster.cpp \
+              vendorgroup.cpp \
               soCluster.cpp salesOrderList.cpp \
               shiptoCluster.cpp shipToList.cpp \
               toCluster.cpp \
@@ -166,6 +168,7 @@ HEADERS    += OpenMFGWidgets.h \
               pocluster.h purchaseOrderList.h \
               plCluster.h plannedOrderList.h \
               vendorcluster.h \
+              vendorgroup.h \
               socluster.h salesOrderList.h \
               shiptocluster.h shipToList.h \
               tocluster.h \
@@ -205,6 +208,8 @@ FORMS += accountSearch.ui \
          imageAssignment.ui \
          file.ui \
          alarms.ui alarmMaint.ui \
+         vendorgroup.ui \
+
 
 RESOURCES += widgets.qrc
 

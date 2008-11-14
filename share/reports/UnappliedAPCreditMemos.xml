@@ -19,7 +19,17 @@
 FROM apopen, vend
 WHERE ( (apopen_doctype='C')
  AND (apopen_open)
- AND (apopen_vend_id=vend_id) )
+ AND (apopen_vend_id=vend_id)
+&lt;? if exists(&quot;vend_id&quot;) ?>
+   AND (vend_id=&lt;? value(&quot;vend_id&quot;) ?>)
+&lt;? elseif exists(&quot;vendtype_id&quot;) ?>
+   AND (vend_vendtype_id=&lt;? value(&quot;vendtype_id&quot;) ?>)
+&lt;? elseif exists(&quot;vendtype_pattern&quot;) ?>
+   AND (vend_vendtype_id IN (SELECT vendtype_id
+                               FROM vendtype
+                              WHERE (vendtype_code ~ &lt;? value(&quot;vendtype_pattern&quot;) ?>)))
+&lt;? endif ?>
+)
 ORDER BY apopen_docnumber;</sql>
  </querysource>
  <rpthead>

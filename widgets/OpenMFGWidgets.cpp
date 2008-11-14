@@ -108,6 +108,7 @@
 #include "plugins/usernameclusterplugin.h"
 #include "plugins/usernamelineeditplugin.h"
 #include "plugins/vendorclusterplugin.h"
+#include "plugins/vendorgroupplugin.h"
 #include "plugins/vendorinfoplugin.h"
 #include "plugins/vendorlineeditplugin.h"
 #include "plugins/warehousegroupplugin.h"
@@ -179,6 +180,7 @@ OpenMFGPlugin::OpenMFGPlugin(QObject * parent) : QObject(parent)
   m_plugins.append(new UsernameClusterPlugin(this));
   m_plugins.append(new UsernameLineEditPlugin(this));
   m_plugins.append(new VendorClusterPlugin(this));
+  m_plugins.append(new VendorGroupPlugin(this));
   m_plugins.append(new VendorInfoPlugin(this));
   m_plugins.append(new VendorLineEditPlugin(this));
   m_plugins.append(new WarehouseGroupPlugin(this));

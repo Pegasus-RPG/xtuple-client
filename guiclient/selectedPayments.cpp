@@ -77,11 +77,6 @@ selectedPayments::selectedPayments(QWidget* parent, const char* name, Qt::WFlags
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_selectedBankAccount, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
 
-  QString base;
-  q.exec("SELECT currConcat(baseCurrID()) AS base;");
-  if (q.first())
-    base = q.value("base").toString();
-
   _apselect->addColumn(tr("Bank Accnt."), _itemColumn, Qt::AlignLeft  , true, "f_bank"  );
   _apselect->addColumn(tr("Vendor"),      -1,          Qt::AlignLeft  , true, "f_vendor");
   _apselect->addColumn(tr("Doc. Type"),  _orderColumn, Qt::AlignLeft  , true, "doctype");
@@ -90,14 +85,15 @@ selectedPayments::selectedPayments(QWidget* parent, const char* name, Qt::WFlags
   _apselect->addColumn(tr("P/O #"),      _orderColumn, Qt::AlignRight , true, "apopen_ponumber");
   _apselect->addColumn(tr("Selected"),   _moneyColumn, Qt::AlignRight , true, "apselect_amount");
   _apselect->addColumn(tr("Currency"),   _currencyColumn, Qt::AlignLeft,true, "currAbbr" );
-  _apselect->addColumn(tr("Running\n(%1)").arg(base), _moneyColumn, Qt::AlignRight,true,"apselect_running_base" );
+  _apselect->addColumn(tr("Running\n(%1)").arg(CurrDisplay::baseCurrAbbr()), _moneyColumn, Qt::AlignRight, true, "apselect_running_base" );
   if (omfgThis->singleCurrency())
   {
-    _apselect->hideColumn(7);
+    _apselect->hideColumn("currAbbr");
     _apselect->headerItem()->setText(8, tr("Running"));
   }
 
   connect(omfgThis, SIGNAL(paymentsUpdated(int, int, bool)), this, SLOT(sFillList(int)));
+  connect(_vendorgroup, SIGNAL(updated()), this, SLOT(sFillList()));
 
   sFillList();
 }
@@ -112,18 +108,26 @@ void selectedPayments::languageChange()
   retranslateUi(this);
 }
 
-void selectedPayments::setParams(ParameterList & params)
+bool selectedPayments::setParams(ParameterList & params)
 {
+  _vendorgroup->appendValue(params);
+
   if (_selectedBankAccount->isChecked())
     params.append("bankaccntid", _bankaccnt->id());
     
   params.append("voucher",tr("Voucher"));
   params.append("debitmemo",tr("Debit Memo"));
+
+  return true;
 }
 
 void selectedPayments::sPrint()
 {
-  orReport report("SelectedPaymentsList");
+  ParameterList params;
+  if (! setParams(params))
+    return;
+
+  orReport report("SelectedPaymentsList", params);
   if (report.isValid())
     report.print();
   else
@@ -151,7 +155,8 @@ void selectedPayments::sClear()
     int result = q.value("result").toInt();
     if (result < 0)
     {
-      systemError(this, storedProcErrorLookup("clearPayment", result), __FILE__, __LINE__);
+      systemError(this, storedProcErrorLookup("clearPayment", result),
+                  __FILE__, __LINE__);
       return;
     }
   }
@@ -172,8 +177,6 @@ void selectedPayments::sFillList(int pBankaccntid)
 
 void selectedPayments::sFillList()
 {
-  _apselect->clear();
-
   QString sql( "SELECT apopen_id, apselect_id,"
                "       (bankaccnt_name || '-' || bankaccnt_descrip) AS f_bank,"
                "       (vend_number || '-' || vend_name) AS f_vendor,"
@@ -198,16 +201,26 @@ void selectedPayments::sFillList()
 	       "<? if exists(\"bankaccntid\") ?>"
 	       "  AND   (bankaccnt_id=<? value(\"bankaccntid\") ?>)"
 	       "<? endif ?>"
+               "<? if exists(\"vend_id\") ?>"
+               " AND (vend_id=<? value(\"vend_id\") ?>)"
+               "<? elseif exists(\"vendtype_id\") ?>"
+               " AND (vend_vendtype_id=<? value(\"vendtype_id\") ?>)"
+               "<? elseif exists(\"vendtype_pattern\") ?>"
+               " AND (vend_vendtype_id IN (SELECT vendtype_id"
+               "                           FROM vendtype"
+               "                           WHERE (vendtype_code ~ <? value(\"vendtype_pattern\") ?>)))"
+               "<? endif ?>"
 	       " ) "
 	       "ORDER BY bankaccnt_name, vend_number, apopen_docnumber;" );
   ParameterList params;
-  setParams(params);
+  if (! setParams(params))
+    return;
   MetaSQLQuery mql(sql);
   q = mql.toQuery(params);
+  _apselect->populate(q,true);
   if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-  _apselect->populate(q,true);
 }

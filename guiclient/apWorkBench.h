@@ -55,33 +55,44 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#ifndef SELECTEDPAYMENTS_H
-#define SELECTEDPAYMENTS_H
+#ifndef APWORKBENCH_H
+#define APWORKBENCH_H
+
+#include "guiclient.h"
 
 #include "xwidget.h"
-#include <parameter.h>
-#include "ui_selectedPayments.h"
+#include <QMenu>
 
-class selectedPayments : public XWidget, public Ui::selectedPayments
+#include <parameter.h>
+
+#include "ui_apWorkBench.h"
+
+class selectPayments;
+class selectedPayments;
+class unappliedAPCreditMemos;
+class viewCheckRun;
+
+#include "vendorgroup.h"
+
+class apWorkBench : public XWidget, public Ui::apWorkBench
 {
     Q_OBJECT
 
-public:
-    selectedPayments(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~selectedPayments();
+  public:
+    apWorkBench(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
+    ~apWorkBench();
 
-    virtual bool setParams(ParameterList&);
+    virtual SetResponse set(const ParameterList & pParams);
 
-public slots:
-    virtual void sEdit();
-    virtual void sClear();
-    virtual void sFillList(int);
-    virtual void sFillList();
-    virtual void sPrint();
-
-protected slots:
+  protected slots:
     virtual void languageChange();
+    virtual void sCalculateTotalOpen();
 
+  protected:
+    viewCheckRun           *_checkRun;
+    unappliedAPCreditMemos *_credits;
+    selectPayments         *_payables;
+    selectedPayments       *_selectedPayments;
 };
 
-#endif // SELECTEDPAYMENTS_H
+#endif // APWORKBENCH_H

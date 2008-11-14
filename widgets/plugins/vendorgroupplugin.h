@@ -55,33 +55,40 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#ifndef SELECTEDPAYMENTS_H
-#define SELECTEDPAYMENTS_H
+#ifndef __VENDORGROUPPLUGIN_H__
+#define __VENDORGROUPPLUGIN_H__
 
-#include "xwidget.h"
-#include <parameter.h>
-#include "ui_selectedPayments.h"
+#include "vendorgroup.h"
 
-class selectedPayments : public XWidget, public Ui::selectedPayments
+#include <QDesignerCustomWidgetInterface>
+#include <QtPlugin>
+
+class VendorGroupPlugin : public QObject, public QDesignerCustomWidgetInterface
 {
     Q_OBJECT
+    Q_INTERFACES(QDesignerCustomWidgetInterface)
 
-public:
-    selectedPayments(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~selectedPayments();
+  public:
+    VendorGroupPlugin(QObject *parent = 0) : QObject(parent), initialized(false) {}
 
-    virtual bool setParams(ParameterList&);
+    bool isContainer() const { return false; }
+    bool isInitialized() const { return initialized; }
+    QIcon icon() const { return QIcon(); }
+    QString domXml() const
+    {
+      return "<widget class=\"VendorGroup\" name=\"VendorGroup\">\n"
+             "</widget>\n";
+    }
+    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString includeFile() const { return "vendorgroup.h"; }
+    QString name() const { return "VendorGroup"; }
+    QString toolTip() const { return ""; }
+    QString whatsThis() const { return ""; }
+    QWidget *createWidget(QWidget *parent) { return new VendorGroup(parent); }
+    void initialize(QDesignerFormEditorInterface *) { initialized = true; }
 
-public slots:
-    virtual void sEdit();
-    virtual void sClear();
-    virtual void sFillList(int);
-    virtual void sFillList();
-    virtual void sPrint();
-
-protected slots:
-    virtual void languageChange();
-
+  private:
+    bool initialized;
 };
 
-#endif // SELECTEDPAYMENTS_H
+#endif

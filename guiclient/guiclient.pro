@@ -41,7 +41,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                applyDiscount.ui                                                                       \
                arAccountAssignment.ui arAccountAssignments.ui                                         \
                applyARCreditMemo.ui arOpenItem.ui arCreditMemoApplication.ui                          \
-               archRestoreSalesHistory.ui arWorkBench.ui                                              \
+               archRestoreSalesHistory.ui arWorkBench.ui apWorkbench.ui                               \
                assignLotSerial.ui                                                                     \
                ../common/batchManager.ui ../common/batchItem.ui                                       \
                bankAccounts.ui bankAccount.ui                                                         \
@@ -361,7 +361,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                applyDiscount.h                                                                        \
                arAccountAssignment.h arAccountAssignments.h                                           \
                applyARCreditMemo.h arOpenItem.h arCreditMemoApplication.h                             \
-               archRestoreSalesHistory.h arWorkBench.h                                                \
+               archRestoreSalesHistory.h arWorkBench.h apWorkBench.h                                  \
                assignLotSerial.h                                                                      \
                ../common/batchManager.h ../common/batchItem.h                                         \
                bankAccounts.h bankAccount.h                                                           \
@@ -687,7 +687,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp       
                applyDiscount.cpp                                                                      \
                arAccountAssignment.cpp arAccountAssignments.cpp                                       \
                applyARCreditMemo.cpp arOpenItem.cpp arCreditMemoApplication.cpp                       \
-               archRestoreSalesHistory.cpp arWorkBench.cpp                                            \
+               archRestoreSalesHistory.cpp arWorkBench.cpp apWorkBench.cpp                            \
                assignLotSerial.cpp                                                                    \
                ../common/batchManager.cpp ../common/batchItem.cpp                                     \
                bankAccounts.cpp bankAccount.cpp                                                       \

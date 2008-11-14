@@ -35,7 +35,23 @@
  WHERE ((checkhead_bankaccnt_id=&lt;? value("bankaccnt_id") ?>)
    AND  (NOT checkhead_posted)
    AND  (NOT checkhead_replaced)
-   AND  (NOT checkhead_deleted) )
+   AND  (NOT checkhead_deleted)
+&lt;? if exists(&quot;vend_id&quot;) ?>
+   AND (checkrecip_type='V')
+   AND (checkrecip_id=&lt;? value(&quot;vend_id&quot;) ?>)
+&lt;? elseif exists(&quot;vendtype_id&quot;) ?>
+   AND (checkrecip_type='V')
+   AND (checkrecip_id IN (SELECT vend_id
+                          FROM vendinfo
+                          WHERE (vend_vendtype_id=&lt;? value(&quot;vendtype_id&quot;) ?>)))
+&lt;? elseif exists(&quot;vendtype_pattern&quot;) ?>
+   AND (checkrecip_type='V')
+   AND (checkrecip_id IN (SELECT vend_id
+                          FROM vendinfo, vendtype
+                          WHERE ((vend_vendtype_id=vendtype_id)
+                             AND (vendtype_code ~ &lt;? value(&quot;vendtype_pattern&quot;) ?>))))
+&lt;? endif ?>
+   )
 
 UNION SELECT 0 AS amt_check,
              0 AS base_amt_check,
@@ -60,8 +76,23 @@ UNION SELECT 0 AS amt_check,
          AND (checkhead_bankaccnt_id=&lt;? value("bankaccnt_id") ?>)
          AND (NOT checkhead_posted)
          AND (NOT checkhead_replaced)
-         AND (NOT checkhead_deleted) )
-
+         AND (NOT checkhead_deleted)
+&lt;? if exists(&quot;vend_id&quot;) ?>
+         AND (checkhead_recip_type='V')
+         AND (checkhead_recip_id=&lt;? value(&quot;vend_id&quot;) ?>)
+&lt;? elseif exists(&quot;vendtype_id&quot;) ?>
+         AND (checkhead_recip_type='V')
+         AND (checkhead_recip_id IN (SELECT vend_id
+                                FROM vendinfo
+                                WHERE (vend_vendtype_id=&lt;? value(&quot;vendtype_id&quot;) ?>)))
+&lt;? elseif exists(&quot;vendtype_pattern&quot;) ?>
+         AND (checkhead_recip_type='V')
+         AND (checkhead_recip_id IN (SELECT vend_id
+                                FROM vendinfo, vendtype
+                                WHERE ((vend_vendtype_id=vendtype_id)
+                                   AND (vendtype_code ~ &lt;? value(&quot;vendtype_pattern&quot;) ?>))))
+&lt;? endif ?>
+              )
 ORDER BY checkhead_number, primaryid, orderby;</sql>
  </querysource>
  <querysource>

@@ -5,582 +5,402 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>720</width>
-    <height>539</height>
+    <width>725</width>
+    <height>522</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Select Payments</string>
   </property>
-   <layout class="QVBoxLayout" >
-    <item>
-     <layout class="QHBoxLayout" >
+  <layout class="QVBoxLayout" name="verticalLayout" >
+   <item>
+    <layout class="QGridLayout" name="gridLayout" >
+     <item rowspan="2" row="0" column="2" >
+      <layout class="QVBoxLayout" >
+       <item>
+        <widget class="QPushButton" name="_close" >
+         <property name="text" >
+          <string>&amp;Close</string>
+         </property>
+         <property name="autoDefault" >
+          <bool>false</bool>
+         </property>
+         <property name="default" >
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="_print" >
+         <property name="text" >
+          <string>&amp;Print</string>
+         </property>
+         <property name="autoDefault" >
+          <bool>false</bool>
+         </property>
+         <property name="default" >
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" stdset="0" >
+          <size>
+           <width>16</width>
+           <height>0</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item row="0" column="0" >
+      <widget class="VendorGroup" name="_vendorgroup" />
+     </item>
+     <item row="1" column="0" >
+      <widget class="QGroupBox" name="buttonGroup2" >
+       <property name="title" >
+        <string>Due Date</string>
+       </property>
+       <layout class="QVBoxLayout" >
+        <property name="spacing" >
+         <number>0</number>
+        </property>
+        <property name="margin" >
+         <number>5</number>
+        </property>
+        <item>
+         <widget class="QRadioButton" name="_dueAll" >
+          <property name="text" >
+           <string>All</string>
+          </property>
+          <property name="checked" >
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" >
+          <property name="spacing" >
+           <number>5</number>
+          </property>
+          <item>
+           <widget class="QRadioButton" name="_dueOlder" >
+            <property name="text" >
+             <string>Older than</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" >
+            <property name="spacing" >
+             <number>0</number>
+            </property>
+            <item>
+             <spacer>
+              <property name="orientation" >
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType" >
+               <enum>QSizePolicy::Expanding</enum>
+              </property>
+              <property name="sizeHint" stdset="0" >
+               <size>
+                <width>0</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="DLineEdit" name="_dueOlderDate" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" >
+          <property name="spacing" >
+           <number>5</number>
+          </property>
+          <item>
+           <layout class="QVBoxLayout" >
+            <property name="spacing" >
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QRadioButton" name="_dueBetween" >
+              <property name="text" >
+               <string>Due between</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer>
+              <property name="orientation" >
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeType" >
+               <enum>QSizePolicy::Expanding</enum>
+              </property>
+              <property name="sizeHint" stdset="0" >
+               <size>
+                <width>20</width>
+                <height>0</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="DateCluster" name="_dueBetweenDates" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+       <zorder>_dueAll</zorder>
+       <zorder>_vendorgroup</zorder>
+      </widget>
+     </item>
+     <item row="0" column="1" >
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType" >
+        <enum>QSizePolicy::Expanding</enum>
+       </property>
+       <property name="sizeHint" stdset="0" >
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QFrame" name="frame" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
+       <horstretch>0</horstretch>
+       <verstretch>1</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="frameShape" >
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="frameShadow" >
+      <enum>QFrame::Plain</enum>
+     </property>
+     <layout class="QVBoxLayout" >
       <property name="margin" >
        <number>0</number>
       </property>
-      <property name="spacing" >
-       <number>6</number>
-      </property>
-      <item>
-       <widget class="QGroupBox" name="_vendorGroup" >
-        <property name="title" >
-         <string>Show Open Items for</string>
-        </property>
-        <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>5</number>
-         </property>
-         <property name="spacing" >
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QRadioButton" name="_allVendors" >
-           <property name="text" >
-            <string>All Vendors</string>
-           </property>
-           <property name="checked" >
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
-           <property name="spacing" >
-            <number>5</number>
-           </property>
-           <item>
-            <widget class="QRadioButton" name="_selectedVendor" >
-             <property name="text" >
-              <string>Selected Vendor:</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" >
-             <property name="margin" >
-              <number>0</number>
-             </property>
-             <property name="spacing" >
-              <number>0</number>
-             </property>
-             <item>
-              <widget class="VendorInfo" name="_vend" >
-               <property name="enabled" >
-                <bool>false</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer>
-               <property name="orientation" >
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeType" >
-                <enum>QSizePolicy::Expanding</enum>
-               </property>
-               <property name="sizeHint" >
-                <size>
-                 <width>251</width>
-                 <height>16</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
-           <property name="spacing" >
-            <number>5</number>
-           </property>
-           <item>
-            <widget class="QRadioButton" name="_selectedVendorType" >
-             <property name="text" >
-              <string>Selected Vendor Type:</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="XComboBox" name="_vendorTypes" >
-             <property name="enabled" >
-              <bool>false</bool>
-             </property>
-             <property name="sizePolicy" >
-              <sizepolicy>
-               <hsizetype>7</hsizetype>
-               <vsizetype>0</vsizetype>
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
-           <property name="spacing" >
-            <number>5</number>
-           </property>
-           <item>
-            <widget class="QRadioButton" name="_vendorTypePattern" >
-             <property name="text" >
-              <string>Vendor Type Pattern:</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="XLineEdit" name="_vendorType" >
-             <property name="enabled" >
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </widget>
-      </item>
       <item>
        <layout class="QVBoxLayout" >
-        <property name="margin" >
+        <property name="spacing" >
          <number>0</number>
         </property>
+        <item>
+         <widget class="QLabel" name="_openAPItemsLit" >
+          <property name="text" >
+           <string>A/P Open Items:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" >
+          <item>
+           <widget class="XTreeWidget" name="_apopen" >
+            <property name="selectionMode" >
+             <enum>QAbstractItemView::ExtendedSelection</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" >
+            <property name="spacing" >
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QPushButton" name="_select" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
+              <property name="text" >
+               <string>Select...</string>
+              </property>
+              <property name="autoDefault" >
+               <bool>false</bool>
+              </property>
+              <property name="default" >
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="_selectLine" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
+              <property name="text" >
+               <string>Select Line</string>
+              </property>
+              <property name="autoDefault" >
+               <bool>false</bool>
+              </property>
+              <property name="default" >
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="_clear" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
+              <property name="text" >
+               <string>Clear Selection</string>
+              </property>
+              <property name="autoDefault" >
+               <bool>false</bool>
+              </property>
+              <property name="default" >
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="_selectDue" >
+              <property name="text" >
+               <string>Select all Due</string>
+              </property>
+              <property name="autoDefault" >
+               <bool>false</bool>
+              </property>
+              <property name="default" >
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="_selectDiscount" >
+              <property name="text" >
+               <string>Select all Discounts</string>
+              </property>
+              <property name="autoDefault" >
+               <bool>false</bool>
+              </property>
+              <property name="default" >
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="_clearAll" >
+              <property name="text" >
+               <string>Clear Selections</string>
+              </property>
+              <property name="autoDefault" >
+               <bool>false</bool>
+              </property>
+              <property name="default" >
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer>
+              <property name="orientation" >
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeType" >
+               <enum>QSizePolicy::Expanding</enum>
+              </property>
+              <property name="sizeHint" stdset="0" >
+               <size>
+                <width>16</width>
+                <height>46</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" >
         <property name="spacing" >
-         <number>6</number>
+         <number>5</number>
         </property>
         <item>
-         <widget class="QPushButton" name="_close" >
+         <widget class="QLabel" name="_bankaccntLit" >
           <property name="text" >
-           <string>&amp;Close</string>
-          </property>
-          <property name="autoDefault" >
-           <bool>false</bool>
-          </property>
-          <property name="default" >
-           <bool>false</bool>
+           <string>Use default Bank Account:</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="_print" >
-          <property name="text" >
-           <string>&amp;Print</string>
+         <layout class="QHBoxLayout" >
+          <property name="spacing" >
+           <number>0</number>
           </property>
-          <property name="autoDefault" >
-           <bool>false</bool>
-          </property>
-          <property name="default" >
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeType" >
-           <enum>QSizePolicy::Expanding</enum>
-          </property>
-          <property name="sizeHint" >
-           <size>
-            <width>16</width>
-            <height>0</height>
-           </size>
-          </property>
-         </spacer>
+          <item>
+           <widget class="XComboBox" name="_bankaccnt" >
+            <property name="allowNull" >
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType" >
+             <enum>QSizePolicy::MinimumExpanding</enum>
+            </property>
+            <property name="sizeHint" stdset="0" >
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
         </item>
        </layout>
       </item>
      </layout>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" >
-      <property name="margin" >
-       <number>0</number>
-      </property>
-      <property name="spacing" >
-       <number>0</number>
-      </property>
-      <item>
-       <widget class="QGroupBox" name="buttonGroup2" >
-        <property name="title" >
-         <string>Due Date</string>
-        </property>
-        <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>5</number>
-         </property>
-         <property name="spacing" >
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QRadioButton" name="_dueAll" >
-           <property name="text" >
-            <string>All</string>
-           </property>
-           <property name="checked" >
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
-           <property name="spacing" >
-            <number>5</number>
-           </property>
-           <item>
-            <widget class="QRadioButton" name="_dueOlder" >
-             <property name="text" >
-              <string>Older than</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" >
-             <property name="margin" >
-              <number>0</number>
-             </property>
-             <property name="spacing" >
-              <number>0</number>
-             </property>
-             <item>
-              <spacer>
-               <property name="orientation" >
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeType" >
-                <enum>QSizePolicy::Expanding</enum>
-               </property>
-               <property name="sizeHint" >
-                <size>
-                 <width>0</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <widget class="DLineEdit" name="_dueOlderDate" >
-               <property name="enabled" >
-                <bool>false</bool>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
-           <property name="spacing" >
-            <number>5</number>
-           </property>
-           <item>
-            <layout class="QVBoxLayout" >
-             <property name="margin" >
-              <number>0</number>
-             </property>
-             <property name="spacing" >
-              <number>0</number>
-             </property>
-             <item>
-              <widget class="QRadioButton" name="_dueBetween" >
-               <property name="text" >
-                <string>Due between</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer>
-               <property name="orientation" >
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeType" >
-                <enum>QSizePolicy::Expanding</enum>
-               </property>
-               <property name="sizeHint" >
-                <size>
-                 <width>20</width>
-                 <height>0</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <widget class="DateCluster" name="_dueBetweenDates" >
-             <property name="enabled" >
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item>
-       <spacer>
-        <property name="orientation" >
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeType" >
-         <enum>QSizePolicy::Expanding</enum>
-        </property>
-        <property name="sizeHint" >
-         <size>
-          <width>430</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <widget class="QFrame" name="frame" >
-      <property name="sizePolicy" >
-       <sizepolicy>
-        <hsizetype>5</hsizetype>
-        <vsizetype>7</vsizetype>
-        <horstretch>0</horstretch>
-        <verstretch>1</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="frameShape" >
-       <enum>QFrame::NoFrame</enum>
-      </property>
-      <property name="frameShadow" >
-       <enum>QFrame::Plain</enum>
-      </property>
-      <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
-       <property name="spacing" >
-        <number>6</number>
-       </property>
-       <item>
-        <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
-         <property name="spacing" >
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QLabel" name="_openAPItemsLit" >
-           <property name="text" >
-            <string>A/P Open Items:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
-           <property name="spacing" >
-            <number>6</number>
-           </property>
-           <item>
-            <widget class="XTreeWidget" name="_apopen" >
-             <property name="selectionMode" >
-              <enum>QAbstractItemView::ExtendedSelection</enum>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <layout class="QVBoxLayout" >
-             <property name="margin" >
-              <number>0</number>
-             </property>
-             <property name="spacing" >
-              <number>0</number>
-             </property>
-             <item>
-              <widget class="QPushButton" name="_select" >
-               <property name="enabled" >
-                <bool>false</bool>
-               </property>
-               <property name="text" >
-                <string>Select...</string>
-               </property>
-               <property name="autoDefault" >
-                <bool>false</bool>
-               </property>
-               <property name="default" >
-                <bool>false</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="_selectLine" >
-               <property name="enabled" >
-                <bool>false</bool>
-               </property>
-               <property name="text" >
-                <string>Select Line</string>
-               </property>
-               <property name="autoDefault" >
-                <bool>false</bool>
-               </property>
-               <property name="default" >
-                <bool>false</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="_clear" >
-               <property name="enabled" >
-                <bool>false</bool>
-               </property>
-               <property name="text" >
-                <string>Clear Selection</string>
-               </property>
-               <property name="autoDefault" >
-                <bool>false</bool>
-               </property>
-               <property name="default" >
-                <bool>false</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="_selectDue" >
-               <property name="text" >
-                <string>Select all Due</string>
-               </property>
-               <property name="autoDefault" >
-                <bool>false</bool>
-               </property>
-               <property name="default" >
-                <bool>false</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="_selectDiscount" >
-               <property name="text" >
-                <string>Select all Discounts</string>
-               </property>
-               <property name="autoDefault" >
-                <bool>false</bool>
-               </property>
-               <property name="default" >
-                <bool>false</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="_clearAll" >
-               <property name="text" >
-                <string>Clear Selections</string>
-               </property>
-               <property name="autoDefault" >
-                <bool>false</bool>
-               </property>
-               <property name="default" >
-                <bool>false</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer>
-               <property name="orientation" >
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeType" >
-                <enum>QSizePolicy::Expanding</enum>
-               </property>
-               <property name="sizeHint" >
-                <size>
-                 <width>16</width>
-                 <height>46</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
-         <property name="spacing" >
-          <number>5</number>
-         </property>
-         <item>
-          <widget class="QLabel" name="_bankaccntLit" >
-           <property name="text" >
-            <string>Use default Bank Account:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
-           <property name="spacing" >
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="XComboBox" name="_bankaccnt" >
-             <property name="allowNull" >
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer>
-             <property name="orientation" >
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeType" >
-              <enum>QSizePolicy::MinimumExpanding</enum>
-             </property>
-             <property name="sizeHint" >
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </widget>
-    </item>
-   </layout>
+    </widget>
+   </item>
+  </layout>
+  <zorder>frame</zorder>
+  <zorder>gridLayoutWidget</zorder>
+  <zorder>buttonGroup2</zorder>
  </widget>
  <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
@@ -592,23 +412,18 @@
   </customwidget>
   <customwidget>
    <class>DLineEdit</class>
-   <extends>XLineEdit</extends>
+   <extends>QWidget</extends>
    <header>datecluster.h</header>
   </customwidget>
   <customwidget>
-   <class>XLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>xlineedit.h</header>
+   <class>VendorGroup</class>
+   <extends>QWidget</extends>
+   <header>vendorgroup.h</header>
   </customwidget>
   <customwidget>
    <class>XComboBox</class>
    <extends>QComboBox</extends>
    <header>xcombobox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>VendorInfo</class>
-   <extends>QWidget</extends>
-   <header>vendorinfo.h</header>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
@@ -617,12 +432,6 @@
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>_allVendors</tabstop>
-  <tabstop>_selectedVendor</tabstop>
-  <tabstop>_selectedVendorType</tabstop>
-  <tabstop>_vendorTypes</tabstop>
-  <tabstop>_vendorTypePattern</tabstop>
-  <tabstop>_vendorType</tabstop>
   <tabstop>_dueAll</tabstop>
   <tabstop>_dueOlder</tabstop>
   <tabstop>_dueOlderDate</tabstop>
@@ -635,76 +444,10 @@
   <tabstop>_selectDiscount</tabstop>
   <tabstop>_clearAll</tabstop>
   <tabstop>_bankaccnt</tabstop>
-  <tabstop>_print</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
- <includes/>
  <resources/>
  <connections>
-  <connection>
-   <sender>_selectedVendor</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>_vend</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>38</x>
-     <y>81</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>162</x>
-     <y>79</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_selectedVendorType</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>_vendorTypes</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>38</x>
-     <y>110</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>191</x>
-     <y>109</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_vendorTypePattern</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>_vendorType</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>38</x>
-     <y>137</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>182</x>
-     <y>136</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_apopen</sender>
-   <signal>valid(bool)</signal>
-   <receiver>_select</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>319</x>
-     <y>349</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>661</x>
-     <y>349</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>_apopen</sender>
    <signal>valid(bool)</signal>
@@ -734,22 +477,6 @@
     <hint type="destinationlabel" >
      <x>20</x>
      <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_apopen</sender>
-   <signal>itemSelected(int)</signal>
-   <receiver>_select</receiver>
-   <slot>animateClick()</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>242</x>
-     <y>332</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>622</x>
-     <y>332</y>
     </hint>
    </hints>
   </connection>

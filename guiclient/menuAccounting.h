@@ -113,6 +113,8 @@ class menuAccounting : public QObject
     void sPostCheck();
     void sPostChecks();
 
+    void sApWorkBench();
+
     void sEnterMiscApCreditMemo();
     void sUnappliedApCreditMemos();
     void sEnterMiscApDebitMemo();

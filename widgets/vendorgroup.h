@@ -55,33 +55,62 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#ifndef SELECTEDPAYMENTS_H
-#define SELECTEDPAYMENTS_H
 
-#include "xwidget.h"
-#include <parameter.h>
-#include "ui_selectedPayments.h"
+#ifndef VENDORGROUP_H
+#define VENDORGROUP_H
 
-class selectedPayments : public XWidget, public Ui::selectedPayments
+#include "OpenMFGWidgets.h"
+#include "ui_vendorgroup.h"
+
+class ParameterList;
+
+class OPENMFGWIDGETS_EXPORT VendorGroup : public QWidget, public Ui::VendorGroup
 {
-    Q_OBJECT
+  Q_OBJECT
 
-public:
-    selectedPayments(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~selectedPayments();
+  Q_ENUMS(VendorGroupState)
 
-    virtual bool setParams(ParameterList&);
+  Q_PROPERTY(enum VendorGroupState state READ state WRITE setState)
 
-public slots:
-    virtual void sEdit();
-    virtual void sClear();
-    virtual void sFillList(int);
-    virtual void sFillList();
-    virtual void sPrint();
+  public:
+    VendorGroup(QWidget * = 0, const char * = 0);
+    virtual ~VendorGroup();
+    virtual void synchronize(VendorGroup*);
 
-protected slots:
+    enum VendorGroupState
+    {
+      All, Selected, SelectedType, TypePattern
+    };
+
+    virtual void           appendValue(ParameterList &);
+    virtual void           bindValue(XSqlQuery &);
+    virtual QString        typePattern() { return _vendorType->text(); }
+    enum VendorGroupState  state()      { return (VendorGroupState)_select->currentIndex(); }
+    virtual int            vendId()     { return _vend->id(); }
+    virtual int            vendTypeId() { return _vendorTypes->id(); }
+
+    inline bool isAll()          { return _select->currentIndex() == All; }
+    inline bool isSelectedVend() { return _select->currentIndex() == Selected; }
+    inline bool isSelectedType() { return _select->currentIndex() == SelectedType; }
+    inline bool isTypePattern() { return _select->currentIndex() == TypePattern; }
+
+  public slots:
+    virtual void setVendId(int p);
+    virtual void setVendTypeId(int p);
+    virtual void setTypePattern(const QString &p);
+    virtual void setState(int p) { setState((VendorGroupState)p); }
+    virtual void setState(enum VendorGroupState p);
+
+  signals:
+    void newTypePattern(QString);
+    void newState(int);
+    void newVendId(int);
+    void newVendTypeId(int);
+    void updated();
+
+  protected slots:
     virtual void languageChange();
-
+    virtual void sTypePatternFinished();
 };
 
-#endif // SELECTEDPAYMENTS_H
+#endif

@@ -57,34 +57,26 @@
 
 #include "unappliedAPCreditMemos.h"
 
+#include <QSqlError>
 #include <QVariant>
-//#include <QStatusBar>
-#include <parameter.h>
+
+#include <metasql.h>
 #include <openreports.h>
+#include <parameter.h>
+
 #include "applyAPCreditMemo.h"
 #include "apOpenItem.h"
-/*
- *  Constructs a unappliedAPCreditMemos as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
+
 unappliedAPCreditMemos::unappliedAPCreditMemos(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
-//  (void)statusBar();
-
-  // signals and slots connections
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-  connect(_apopen, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_apply, SIGNAL(clicked()), this, SLOT(sApply()));
 
-//  statusBar()->hide();
-  
   _new->setEnabled(_privileges->check("MaintainAPMemos"));
 
   connect(_apopen, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
@@ -95,37 +87,40 @@ unappliedAPCreditMemos::unappliedAPCreditMemos(QWidget* parent, const char* name
   _apopen->addColumn( tr("Applied"),      _moneyColumn,    Qt::AlignRight,  true,  "apopen_paid"  );
   _apopen->addColumn( tr("Balance"),      _moneyColumn,    Qt::AlignRight,  true,  "balance"  );
   _apopen->addColumn( tr("Currency"),     _currencyColumn, Qt::AlignCenter, true,  "currAbbr" );
-  _apopen->addColumn( tr("Base Balance"), _bigMoneyColumn, Qt::AlignRight,  true,  "basebalance"  );
+  _apopen->addColumn( tr("Balance (%1)").arg(CurrDisplay::baseCurrAbbr()), _bigMoneyColumn, Qt::AlignRight, true, "basebalance");
 
   if (omfgThis->singleCurrency())
-      _apopen->hideColumn(5);
+    _apopen->hideColumn("currAbbr");
 
   if (_privileges->check("ApplyAPMemos"))
     connect(_apopen, SIGNAL(valid(bool)), _apply, SLOT(setEnabled(bool)));
 
+  connect(_vendorgroup, SIGNAL(updated()), this, SLOT(sFillList()));
+
   sFillList();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 unappliedAPCreditMemos::~unappliedAPCreditMemos()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void unappliedAPCreditMemos::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
+}
+
+bool unappliedAPCreditMemos::setParams(ParameterList &params)
+{
+  _vendorgroup->appendValue(params);
+  return true;
 }
 
 void unappliedAPCreditMemos::sPrint()
 {
   ParameterList params;
+  if (! setParams(params))
+    return;
 
   orReport report("UnappliedAPCreditMemos", params);
   if (report.isValid())
@@ -160,7 +155,8 @@ void unappliedAPCreditMemos::sView()
 
 void unappliedAPCreditMemos::sFillList()
 {
-  q.prepare( "SELECT apopen_id, apopen_docnumber,"
+  MetaSQLQuery mql(
+             "SELECT apopen_id, apopen_docnumber,"
              "       (vend_number || '-' || vend_name) AS vendor,"
              "       apopen_amount, apopen_paid,"
              "       (apopen_amount - apopen_paid) AS balance,"
@@ -174,10 +170,28 @@ void unappliedAPCreditMemos::sFillList()
              "FROM apopen, vend "
              "WHERE ( (apopen_doctype='C')"
              " AND (apopen_open)"
-             " AND (apopen_vend_id=vend_id) ) "
+             " AND (apopen_vend_id=vend_id)"
+             "<? if exists(\"vend_id\") ?>"
+             " AND (vend_id=<? value(\"vend_id\") ?>)"
+             "<? elseif exists(\"vendtype_id\") ?>"
+             " AND (vend_vendtype_id=<? value(\"vendtype_id\") ?>)"
+             "<? elseif exists(\"vendtype_pattern\") ?>"
+             " AND (vend_vendtype_id IN (SELECT vendtype_id"
+             "                           FROM vendtype"
+             "                           WHERE (vendtype_code ~ <? value(\"vendtype_pattern\") ?>)))"
+             "<? endif ?>"
+             ") "
              "ORDER BY apopen_docnumber;" );
-  q.exec();
+  ParameterList params;
+  if (! setParams(params))
+    return;
+  q = mql.toQuery(params);
   _apopen->populate(q);
+  if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void unappliedAPCreditMemos::sApply()
@@ -191,4 +205,3 @@ void unappliedAPCreditMemos::sApply()
   if (newdlg.exec() != XDialog::Rejected)
     sFillList();
 }
-

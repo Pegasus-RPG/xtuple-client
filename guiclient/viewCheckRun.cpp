@@ -84,9 +84,10 @@ viewCheckRun::viewCheckRun(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_printEditList, SIGNAL(clicked()), this, SLOT(sPrintEditList()));
   connect(_replace, SIGNAL(clicked()), this, SLOT(sReplace()));
   connect(_replaceAll, SIGNAL(clicked()), this, SLOT(sReplaceAll()));
+  connect(_vendorgroup, SIGNAL(updated()), this, SLOT(sFillList()));
+  connect(_vendorgroup, SIGNAL(updated()), this, SLOT(sHandleVendorGroup()));
   connect(_void, SIGNAL(clicked()), this, SLOT(sVoid()));
 
-  _check->setRootIsDecorated(TRUE);
   _check->addColumn(tr("Void"),               _ynColumn, Qt::AlignCenter,true, "checkhead_void");
   _check->addColumn(tr("Misc."),              _ynColumn, Qt::AlignCenter,true, "checkhead_misc" );
   _check->addColumn(tr("Prt'd"),              _ynColumn, Qt::AlignCenter,true, "checkhead_printed" );
@@ -298,6 +299,7 @@ void viewCheckRun::sFillList()
   params.append("showTotal");
   params.append("newOnly");
   params.append("showDetail");
+  _vendorgroup->appendValue(params);
   q = mql.toQuery(params);
   _check->populate(q);
   if (q.lastError().type() != QSqlError::NoError)
@@ -311,6 +313,7 @@ void viewCheckRun::sPrintEditList()
 {
   ParameterList params;
   params.append("bankaccnt_id", _bankaccnt->id()); 
+  _vendorgroup->appendValue(params);
     
   orReport report("ViewAPCheckRunEditList", params);
   if (report.isValid())
@@ -327,4 +330,10 @@ void viewCheckRun::sPrintCheckRun()
   printChecks newdlg(this, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
+}
+
+void viewCheckRun::sHandleVendorGroup()
+{
+  _printCheckRun->setEnabled(_vendorgroup->isAll());
+  _replaceAll->setEnabled(_vendorgroup->isAll());
 }

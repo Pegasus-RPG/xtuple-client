@@ -59,6 +59,7 @@
 
 #include <QSqlError>
 
+#include <metasql.h>
 #include <openreports.h>
 #include <parameter.h>
 
@@ -71,13 +72,6 @@ selectPayments::selectPayments(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
-
-
-  QButtonGroup * vendorButtonGroup = new QButtonGroup(this);
-  vendorButtonGroup->addButton(_allVendors);
-  vendorButtonGroup->addButton(_selectedVendor);
-  vendorButtonGroup->addButton(_selectedVendorType);
-  vendorButtonGroup->addButton(_vendorTypePattern);
 
   QButtonGroup * dueButtonGroup = new QButtonGroup(this);
   dueButtonGroup->addButton(_dueAll);
@@ -93,22 +87,13 @@ selectPayments::selectPayments(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_selectDiscount, SIGNAL(clicked()), this, SLOT(sSelectDiscount()));
   connect(_selectDue, SIGNAL(clicked()), this, SLOT(sSelectDue()));
   connect(_selectLine, SIGNAL(clicked()), this, SLOT(sSelectLine()));
-  connect(_vend, SIGNAL(newId(int)), this, SLOT(sFillList()));
-  connect(_vendorType, SIGNAL(lostFocus()), this, SLOT(sFillList()));
-  connect(_vendorTypes, SIGNAL(newID(int)), this, SLOT(sFillList()));
+  connect(_vendorgroup, SIGNAL(updated()), this, SLOT(sFillList()));
   connect(_bankaccnt, SIGNAL(newID(int)), this, SLOT(sFillList()));
   connect(dueButtonGroup, SIGNAL(buttonClicked(int)), this, SLOT(sFillList()));
-  connect(vendorButtonGroup, SIGNAL(buttonClicked(int)), this, SLOT(sFillList()));
 
   _ignoreUpdates = false;
   
-  _vendorTypes->setType(XComboBox::VendorTypes);
   _bankaccnt->setType(XComboBox::APBankAccounts);
-
-  QString base;
-  q.exec("SELECT currConcat(baseCurrID()) AS base;");
-  if (q.first())
-    base = q.value("base").toString();
 
   _apopen->addColumn(tr("Vendor"),    -1,           Qt::AlignLeft  , true, "vendor" );
   _apopen->addColumn(tr("Doc. Type"), _orderColumn, Qt::AlignCenter, true, "doctype" );
@@ -121,12 +106,12 @@ selectPayments::selectPayments(QWidget* parent, const char* name, Qt::WFlags fl)
   _apopen->addColumn(tr("Selected"),  _moneyColumn, Qt::AlignRight , true, "selected" );
   _apopen->addColumn(tr("Discount"),  _moneyColumn, Qt::AlignRight , true, "discount" );
   _apopen->addColumn(tr("Currency"),  _currencyColumn, Qt::AlignLeft, true, "curr_concat" );
-  _apopen->addColumn(tr("Running (%1)").arg(base), _moneyColumn, Qt::AlignRight, true, "running_selected"  );
+  _apopen->addColumn(tr("Running (%1)").arg(CurrDisplay::baseCurrAbbr()), _moneyColumn, Qt::AlignRight, true, "running_selected"  );
 
   if (omfgThis->singleCurrency())
   {
-      _apopen->hideColumn(10);
-      _apopen->headerItem()->setText(11, tr("Running"));
+    _apopen->hideColumn("curr_concat");
+    _apopen->headerItem()->setText(11, tr("Running"));
   }
 
   connect(omfgThis, SIGNAL(paymentsUpdated(int, int, bool)), this, SLOT(sFillList()));
@@ -144,16 +129,18 @@ void selectPayments::languageChange()
   retranslateUi(this);
 }
 
+bool selectPayments::setParams(ParameterList &params)
+{
+  _vendorgroup->appendValue(params);
+
+  return true;
+}
+
 void selectPayments::sPrint()
 {
   ParameterList params;
-
-  if (_selectedVendor->isChecked())
-    params.append("vend_id", _vend->id());
-  else if (_selectedVendorType->isChecked())
-    params.append("vendtype_id", _vendorTypes->id());
-  else if (_vendorTypePattern->isChecked())
-    params.append("vendtype_pattern", _vendorType->text());
+  if (! setParams(params))
+    return;
 
   orReport report("SelectPaymentsList", params);
   if (report.isValid())
@@ -175,28 +162,41 @@ void selectPayments::sSelectDue()
     bankaccntid = newdlg.exec();
   }
 
-  if (bankaccntid != -1)
+  if (bankaccntid >= 0)
   {
-    if (_allVendors->isChecked())
-      q.prepare( "SELECT selectDueItemsForPayment(vend_id, :bankaccnt_id) AS result "
-                 "FROM vend;" );
-    else if (_selectedVendor->isChecked())
-      q.prepare("SELECT selectDueItemsForPayment(:vend_id, :bankaccnt_id) AS result;");
-    else if (_selectedVendorType->isChecked())
-      q.prepare( "SELECT selectDueItemsForPayment(vend_id, :bankaccnt_id) AS result "
-                 "FROM vend "
-                 "WHERE (vend_vendtype_id=:vendtype_id);" );
-    else if (_vendorTypePattern->isChecked())
-      q.prepare( "SELECT selectDueItemsForPayment(vend_id, :bankaccnt_id) AS result "
-                 "FROM vend "
-                 "WHERE (vend_vendtype_id IN (SELECT vendtype_id FROM vendtype WHERE (vendtype_code ~ :venttype_code)));" );
-
-    q.bindValue(":bankaccnt_id", bankaccntid);
-    q.bindValue(":vend_id", _vend->id());
-    q.bindValue(":vendtype_id", _vendorTypes->id());
-    q.bindValue(":vendtype_code", _vendorType->text());
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
+    MetaSQLQuery mql("SELECT selectDueItemsForPayment("
+                     "    <? if exists(\"vend_id\") ?> <? value(\"vend_id\") ?>"
+                     "    <? else ?> vend_id <? endif ?>,"
+                     "    <? value(\"bankaccnt_id\") ?>) AS result "
+                     "<? if exists(\"vend_id\") ?>"
+                     ";"
+                     "<? elseif exists(\"vendtype_id\") ?>"
+                     "FROM vend "
+                     "WHERE (vend_vendtype_id=<? value(\"vendtype_id\") ?>);"
+                     "<? elseif exists(\"vendtype_pattern\") ?>"
+                     "FROM vend "
+                     "WHERE (vend_vendtype_id IN (SELECT vendtype_id"
+                     "                            FROM vendtype"
+                     "                            WHERE (vendtype_code ~ <? value(\"vendtype_pattern\") ?>)));"
+                     "<? else ?>"
+                     "FROM vend;" 
+                     "<? endif ?>");
+    ParameterList params;
+    if (! setParams(params))
+        return;
+    params.append("bankaccnt_id", bankaccntid);
+    q = mql.toQuery(params);
+    if (q.first())
+    {
+      int result = q.value("result").toInt();
+      if (result < 0)
+      {
+        systemError(this, storedProcErrorLookup("selectDueItemsForPayment", result),
+                    __FILE__, __LINE__);
+        return;
+      }
+    }
+    else if (q.lastError().type() != QSqlError::None)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -219,65 +219,94 @@ void selectPayments::sSelectDiscount()
     bankaccntid = newdlg.exec();
   }
 
-  if (bankaccntid != -1)
+  if (bankaccntid >= 0)
   {
-    if (_allVendors->isChecked())
-      q.prepare( "SELECT selectDiscountItemsForPayment(vend_id, :bankaccnt_id) AS result "
-                 "FROM vend;" );
-    else if (_selectedVendor->isChecked())
-      q.prepare("SELECT selectDiscountItemsForPayment(:vend_id, :bankaccnt_id) AS result;");
-    else if (_selectedVendorType->isChecked())
-      q.prepare( "SELECT selectDiscountItemsForPayment(vend_id, :bankaccnt_id) AS result "
-                 "FROM vend "
-                 "WHERE (vend_vendtype_id=:vendtype_id);" );
-    else if (_vendorTypePattern->isChecked())
-      q.prepare( "SELECT selectDiscountItemsForPayment(vend_id, :bankaccnt_id) AS result "
-                 "FROM vend "
-                 "WHERE (vend_vendtype_id IN (SELECT vendtype_id FROM vendtype WHERE (vendtype_code ~ :venttype_code)));" );
-
-    q.bindValue(":bankaccnt_id", bankaccntid);
-    q.bindValue(":vend_id", _vend->id());
-    q.bindValue(":vendtype_id", _vendorTypes->id());
-    q.bindValue(":vendtype_code", _vendorType->text());
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
+    MetaSQLQuery mql("SELECT selectDiscountItemsForPayment("
+                     "    <? if exists(\"vend_id\") ?> <? value(\"vend_id\") ?>"
+                     "    <? else ?> vend_id <? endif ?>,"
+                     "    <? value(\"bankaccnt_id\") ?>) AS result "
+                     "<? if exists(\"vend_id\") ?>"
+                     ";"
+                     "<? elseif exists(\"vendtype_id\") ?>"
+                     "FROM vend "
+                     "WHERE (vend_vendtype_id=<? value(\"vendtype_id\") ?>);"
+                     "<? elseif exists(\"vendtype_pattern\") ?>"
+                     "FROM vend "
+                     "WHERE (vend_vendtype_id IN (SELECT vendtype_id"
+                     "                            FROM vendtype"
+                     "                            WHERE (vendtype_code ~ <? value(\"vendtype_pattern\") ?>)));"
+                     "<? else ?>"
+                     "FROM vend;" 
+                     "<? endif ?>");
+    ParameterList params;
+    if (! setParams(params))
+        return;
+    params.append("bankaccnt_id", bankaccntid);
+    q = mql.toQuery(params);
+    if (q.first())
+    {
+      int result = q.value("result").toInt();
+      if (result < 0)
+      {
+        systemError(this, storedProcErrorLookup("selectDiscountItemsForPayment", result),
+                    __FILE__, __LINE__);
+        return;
+      }
+    }
+    else if (q.lastError().type() != QSqlError::None)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
-
     omfgThis->sPaymentsUpdated(-1, -1, TRUE);
   }
 }
 
 void selectPayments::sClearAll()
 {
-  if (_allVendors->isChecked())
-    q.prepare( "SELECT clearPayment(apselect_id) AS result "
-               "FROM apselect;" );
-  else if (_selectedVendor->isChecked())
-    q.prepare( "SELECT clearPayment(apselect_id) AS result "
-               "FROM apopen, apselect "
-               "WHERE ( (apselect_apopen_id=apopen_id)"
-               " AND (apopen_vend_id=:vend_id) );" );
-  else if (_selectedVendorType->isChecked())
-    q.prepare( "SELECT clearPayment(apselect_id) AS result "
-               "FROM vend, apopen, apselect "
-               "WHERE ( (apselect_apopen_id=apopen_id)"
-               " AND (apopen_vend_id=vend_id)"
-               " AND (vend_vendtype_id=:vendtype_id) );" );
-  else if (_vendorTypePattern->isChecked())
-    q.prepare( "SELECT clearPayment(apselect_id) AS result "
-               "FROM vend, apopen, apselect "
-               "WHERE ( (apselect_apopen_id=apopen_id)"
-               " AND (apopen_vend_id=vend_id)"
-               " AND (vend_vendtype_id IN (SELECT vendtype_id FROM vendtype WHERE (vendtype_code ~ :vendtype_code)));" );
+  switch (_vendorgroup->state())
+  {
+    case VendorGroup::All:
+      q.prepare( "SELECT clearPayment(apselect_id) AS result "
+                 "FROM apselect;" );
+        break;
+    case VendorGroup::Selected:
+      q.prepare( "SELECT clearPayment(apselect_id) AS result "
+                 "FROM apopen, apselect "
+                 "WHERE ( (apselect_apopen_id=apopen_id)"
+                 " AND (apopen_vend_id=:vend_id) );" );
+      break;
+    case VendorGroup::SelectedType:
+      q.prepare( "SELECT clearPayment(apselect_id) AS result "
+                 "FROM vend, apopen, apselect "
+                 "WHERE ( (apselect_apopen_id=apopen_id)"
+                 " AND (apopen_vend_id=vend_id)"
+                 " AND (vend_vendtype_id=:vendtype_id) );" );
+      break;
+    case VendorGroup::TypePattern:
+      q.prepare( "SELECT clearPayment(apselect_id) AS result "
+                 "FROM vend, apopen, apselect "
+                 "WHERE ( (apselect_apopen_id=apopen_id)"
+                 " AND (apopen_vend_id=vend_id)"
+                 " AND (vend_vendtype_id IN (SELECT vendtype_id"
+                 "                           FROM vendtype"
+                 "                           WHERE (vendtype_code ~ :vendtype_pattern)));" );
+        break;
+    }
 
-  q.bindValue(":vend_id", _vend->id());
-  q.bindValue(":vendtype_id", _vendorTypes->id());
-  q.bindValue(":vendtype_code", _vendorType->text());
+  _vendorgroup->bindValue(q);
   q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
+  if (q.first())
+  {
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("clearPayment", result),
+                  __FILE__, __LINE__);
+      return;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::None)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -415,79 +444,80 @@ void selectPayments::sFillList()
       _currid = q.value("bankaccnt_curr_id").toInt();
   }
   
-  _apopen->clear();
-
-  QString sql( "SELECT apopen_id, COALESCE(apselect_id, -1) AS apselectid,"
-               "       (vend_number || '-' || vend_name) AS vendor,"
-               "       CASE WHEN (apopen_doctype='V') THEN :voucher"
-               "            When (apopen_doctype='D') THEN :debitMemo"
-               "       END AS doctype,"
-               "       apopen_docnumber, apopen_ponumber,"
-               "       apopen_duedate,"
-               "       apopen_docdate,"
-               "       (apopen_amount - apopen_paid - "
-               "                   COALESCE((SELECT SUM(currToCurr(checkitem_curr_id, apopen_curr_id, checkitem_amount + checkitem_discount, CURRENT_DATE)) "
-               "                             FROM checkitem, checkhead "
-               "                             WHERE ((checkitem_checkhead_id=checkhead_id) "
-               "                              AND (checkitem_apopen_id=apopen_id) "
-               "                              AND (NOT checkhead_void) "
-               "                              AND (NOT checkhead_posted)) "
-               "                           ), 0)) AS amount,"
-               "       COALESCE(currToBase(apselect_curr_id, SUM(apselect_amount), CURRENT_DATE), 0) AS selected_base,"
-               "       COALESCE(SUM(apselect_amount), 0) AS selected,"
-               "       COALESCE(SUM(apselect_amount), 0) AS running_selected,"
-               "       COALESCE(SUM(apselect_discount),0) AS discount,"
-               "       CASE WHEN (apopen_duedate <= CURRENT_DATE) THEN 'error' END AS qtforegroundrole, "
-               "       apopen_invcnumber,"
-               "       currConcat(apopen_curr_id) AS curr_concat, "
-               "       'curr' AS amount_xtnumericrole, "
-               "       'curr' AS selected_xtnumericrole, "
-               "       'curr' AS running_selected_xtnumericrole, "
-               "       'curr' AS running_selected_xtrunningrole, "
-               "       'curr' AS discount_xtnumericrole "
-               "FROM vend, apopen LEFT OUTER JOIN apselect ON (apselect_apopen_id=apopen_id) "
-               "WHERE ( (apopen_open)"
-               " AND (apopen_doctype IN ('V', 'D'))"
-               " AND (apopen_vend_id=vend_id)" );
-
-  if (_selectedVendor->isChecked())
-    sql += " AND (vend_id=:vend_id)";
-  else if (_selectedVendorType->isChecked())
-    sql += " AND (vend_vendtype_id=:vendtype_id)";
-  else if (_vendorTypePattern->isChecked())
-    sql += " AND (vend_vendtype_id IN (SELECT vendtype_id FROM vendtype WHERE (vendtype_code ~ :vendtype_code)))";
-
-  if (_dueOlder->isChecked())
-    sql += " AND (apopen_duedate < :olderDate)";
-  else if(_dueBetween->isChecked())
-    sql += " AND (apopen_duedate BETWEEN :startDate AND :endDate)";
-
-  if (_currid != -1)
-    sql += " AND (apopen_curr_id=:curr_id)";
-
-  sql += ") "
+  MetaSQLQuery mql(
+         "SELECT apopen_id, COALESCE(apselect_id, -1) AS apselectid,"
+         "       (vend_number || '-' || vend_name) AS vendor,"
+         "       CASE WHEN (apopen_doctype='V') THEN <? value(\"voucher\") ?>"
+         "            When (apopen_doctype='D') THEN <? value(\"debitMemo\") ?>"
+         "       END AS doctype,"
+         "       apopen_docnumber, apopen_ponumber,"
+         "       apopen_duedate,"
+         "       apopen_docdate,"
+         "       (apopen_amount - apopen_paid - "
+         "                   COALESCE((SELECT SUM(currToCurr(checkitem_curr_id, apopen_curr_id, checkitem_amount + checkitem_discount, CURRENT_DATE)) "
+         "                             FROM checkitem, checkhead "
+         "                             WHERE ((checkitem_checkhead_id=checkhead_id) "
+         "                              AND (checkitem_apopen_id=apopen_id) "
+         "                              AND (NOT checkhead_void) "
+         "                              AND (NOT checkhead_posted)) "
+         "                           ), 0)) AS amount,"
+         "       COALESCE(currToBase(apselect_curr_id, SUM(apselect_amount), CURRENT_DATE), 0) AS selected_base,"
+         "       COALESCE(SUM(apselect_amount), 0) AS selected,"
+         "       COALESCE(SUM(apselect_amount), 0) AS running_selected,"
+         "       COALESCE(SUM(apselect_discount),0) AS discount,"
+         "       CASE WHEN (apopen_duedate <= CURRENT_DATE) THEN 'error' END AS qtforegroundrole, "
+         "       apopen_invcnumber,"
+         "       currConcat(apopen_curr_id) AS curr_concat, "
+         "       'curr' AS amount_xtnumericrole, "
+         "       'curr' AS selected_xtnumericrole, "
+         "       'curr' AS running_selected_xtnumericrole, "
+         "       'curr' AS running_selected_xtrunningrole, "
+         "       'curr' AS discount_xtnumericrole "
+         "FROM vend, apopen LEFT OUTER JOIN apselect ON (apselect_apopen_id=apopen_id) "
+         "WHERE ( (apopen_open)"
+         " AND (apopen_doctype IN ('V', 'D'))"
+         " AND (apopen_vend_id=vend_id)"
+         "<? if exists(\"vend_id\") ?>"
+         " AND (vend_id=<? value(\"vend_id\") ?>)"
+         "<? elseif exists(\"vendtype_id\") ?>"
+         " AND (vend_vendtype_id=<? value(\"vendtype_id\") ?>)"
+         "<? elseif exists(\"vendtype_pattern\") ?>"
+         " AND (vend_vendtype_id IN (SELECT vendtype_id"
+         "                           FROM vendtype"
+         "                           WHERE (vendtype_code ~ <? value(\"vendtype_pattern\") ?>)))"
+         "<? endif ?>"
+         "<? if exists(\"olderDate\") ?>"
+         " AND (apopen_duedate < <? value(\"olderDate\") ?>)"
+         "<? elseif exists(\"startDate\") ?>"
+         " AND (apopen_duedate BETWEEN <? value(\"startDate\") ?> AND <? value(\"endDate\") ?>)"
+         "<? endif ?>"
+         "<? if exists(\"curr_id\") ?>"
+         " AND (apopen_curr_id=<? value(\"curr_id\") ?>)"
+         "<? endif ?>"
+         ") "
          "GROUP BY apopen_id, apselect_id, vend_number, vend_name,"
          "         apopen_doctype, apopen_docnumber, apopen_ponumber,"
          "         apopen_duedate, apopen_docdate, apopen_amount, apopen_paid, "
          "         curr_concat, apopen_curr_id, apselect_curr_id, apopen_invcnumber "
-         "ORDER BY apopen_duedate, (apopen_amount - apopen_paid) DESC;";
+         "ORDER BY apopen_duedate, (apopen_amount - apopen_paid) DESC;");
 
-  q.prepare(sql);
-  q.bindValue(":vend_id", _vend->id());
-  q.bindValue(":vendtype_id", _vendorTypes->id());
-  q.bindValue(":vendtype_code", _vendorType->text());
-  q.bindValue(":voucher", tr("Voucher"));
-  q.bindValue(":debitMemo", tr("D/M"));
+  ParameterList params;
+  if (! setParams(params))
+    return;
+  params.append("voucher", tr("Voucher"));
+  params.append("debitMemo", tr("D/M"));
   if(_dueOlder->isChecked())
-    q.bindValue(":olderDate", _dueOlderDate->date());
+    params.append("olderDate", _dueOlderDate->date());
   else if(_dueBetween->isChecked())
-    _dueBetweenDates->bindValue(q);
-  q.bindValue(":curr_id", _currid);
-  q.exec();
+    _dueBetweenDates->appendValue(params);
+  if (_currid >= 0)
+    params.append("curr_id", _currid);
+
+  q = mql.toQuery(params);
+  _apopen->populate(q,true);
   if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-  _apopen->populate(q,true);
 }

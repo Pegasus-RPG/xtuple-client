@@ -68,6 +68,7 @@ class selectPayments : public XWidget, public Ui::selectPayments
 public:
     selectPayments(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~selectPayments();
+    virtual bool setParams(ParameterList &);
 
 public slots:
     virtual void sPrint();

@@ -97,9 +97,12 @@ XWidgetPrivate::~XWidgetPrivate()
 }
 
 XWidget::XWidget(QWidget * parent, Qt::WindowFlags flags)
-  : QWidget(parent, flags | (parent && parent->isModal() ? Qt::Dialog : Qt::Window))
+  // : QWidget(parent, flags | (parent && parent->isModal() ? Qt::Dialog : Qt::Window))
+  : QWidget(parent,
+            ((flags & (Qt::Dialog | Qt::Window)) && parent && parent->isModal()) ? Qt::Dialog
+                  : flags )
 {
-  if(parent && parent->isModal())
+  if(parent && parent->isModal() && (flags & (Qt::Dialog | Qt::Window)))
   {
     setWindowModality(Qt::ApplicationModal);
     //setWindowFlags(windowFlags() | Qt::Dialog);
@@ -110,9 +113,12 @@ XWidget::XWidget(QWidget * parent, Qt::WindowFlags flags)
 }
 
 XWidget::XWidget(QWidget * parent, const char * name, Qt::WindowFlags flags)
-  : QWidget(parent, flags | (parent && parent->isModal() ? Qt::Dialog : Qt::Window))
+  // : QWidget(parent, flags | (parent && parent->isModal() ? Qt::Dialog : Qt::Window))
+  : QWidget(parent,
+            ((flags & (Qt::Dialog | Qt::Window)) && parent && parent->isModal()) ? Qt::Dialog
+                  : flags )
 {
-  if(parent && parent->isModal())
+  if(parent && parent->isModal() && (flags & (Qt::Dialog | Qt::Window)))
   {
     setWindowModality(Qt::ApplicationModal);
     //setWindowFlags(windowFlags() | Qt::Dialog);
@@ -149,37 +155,39 @@ void XWidget::showEvent(QShowEvent *event)
   {
     _private->_shown = true;
 qDebug("isModal() %s", isModal()?"true":"false");
-
-    QRect availableGeometry = QApplication::desktop()->availableGeometry();
-    if(!omfgThis->showTopLevel() && !isModal())
-      availableGeometry = omfgThis->workspace()->geometry();
-
-    QSettings settings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
-    QString objName = objectName();
-    QPoint pos = settings.value(objName + "/geometry/pos").toPoint();
-    QSize lsize = settings.value(objName + "/geometry/size").toSize();
-
-    if(lsize.isValid() && settings.value(objName + "/geometry/rememberSize", true).toBool())
-      resize(lsize);
-
-    setAttribute(Qt::WA_DeleteOnClose);
-    if(omfgThis->showTopLevel() || isModal())
+    if (windowFlags() & (Qt::Window | Qt::Dialog))
     {
-      omfgThis->_windowList.append(this);
-      QRect r(pos, size());
-      if(!pos.isNull() && availableGeometry.contains(r) && settings.value(objName + "/geometry/rememberPos", true).toBool())
-        move(pos);
-    }
-    else
-    {
-      QWidget * fw = focusWidget();
-      omfgThis->workspace()->addWindow(this);
-      QRect r(pos, size());
-      if(!pos.isNull() && availableGeometry.contains(r) && settings.value(objName + "/geometry/rememberPos", true).toBool())
-        move(pos);
-      // This originally had to be after the show? Will it work here?
-      if(fw)
-        fw->setFocus();
+      QRect availableGeometry = QApplication::desktop()->availableGeometry();
+      if(!omfgThis->showTopLevel() && !isModal())
+        availableGeometry = omfgThis->workspace()->geometry();
+
+      QSettings settings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
+      QString objName = objectName();
+      QPoint pos = settings.value(objName + "/geometry/pos").toPoint();
+      QSize lsize = settings.value(objName + "/geometry/size").toSize();
+
+      if(lsize.isValid() && settings.value(objName + "/geometry/rememberSize", true).toBool())
+        resize(lsize);
+
+      setAttribute(Qt::WA_DeleteOnClose);
+      if(omfgThis->showTopLevel() || isModal())
+      {
+        omfgThis->_windowList.append(this);
+        QRect r(pos, size());
+        if(!pos.isNull() && availableGeometry.contains(r) && settings.value(objName + "/geometry/rememberPos", true).toBool())
+          move(pos);
+      }
+      else
+      {
+        QWidget * fw = focusWidget();
+        omfgThis->workspace()->addWindow(this);
+        QRect r(pos, size());
+        if(!pos.isNull() && availableGeometry.contains(r) && settings.value(objName + "/geometry/rememberPos", true).toBool())
+          move(pos);
+        // This originally had to be after the show? Will it work here?
+        if(fw)
+          fw->setFocus();
+      }
     }
 
     QStringList parts = objectName().split(" ");

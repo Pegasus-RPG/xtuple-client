@@ -91,6 +91,7 @@
 #include "voidChecks.h"
 #include "postCheck.h"
 #include "postChecks.h"
+#include "apWorkBench.h"
 
 #include "unappliedAPCreditMemos.h"
 #include "apOpenItem.h"
@@ -306,6 +307,8 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
     { "ap.postCheck", tr("Post &Check..."), SLOT(sPostCheck()), apPaymentsMenu, _privileges->check("PostPayments"), NULL, NULL, true , NULL },
     { "ap.postChecks", tr("P&ost Checks..."), SLOT(sPostChecks()), apPaymentsMenu, _privileges->check("PostPayments"), NULL, NULL, true , NULL },
                        
+    { "separator", NULL, NULL, apMenu, true, NULL, NULL, true, NULL },
+    { "ap.workbench", tr("&Workbench..."), SLOT(sApWorkBench()), apMenu, _privileges->check("MaintainPayments") || _privileges->check("MaintainAPMemos"), NULL, NULL, true, NULL },
     { "separator", NULL, NULL, apMenu, true, NULL, NULL, true, NULL },
     
     // Accounting | Accaunts Payable | Forms
@@ -686,6 +689,10 @@ void menuAccounting::sPostChecks()
   postChecks(parent, "", TRUE).exec();
 }
 
+void menuAccounting::sApWorkBench()
+{
+  omfgThis->handleNewWindow(new apWorkBench());
+}
 
 //  Memos
 void menuAccounting::sEnterMiscApCreditMemo()
