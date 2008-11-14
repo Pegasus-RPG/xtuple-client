@@ -228,6 +228,8 @@ void dspInventoryAvailabilityBySourceVendor::sPopulateMenu(QMenu *menu, QTreeWid
 
   menuItem = menu->insertItem(tr("View Inventory History..."), this, SLOT(sViewHistory()), 0);
 
+  menu->insertSeparator();
+
   menuItem = menu->insertItem(tr("View Allocations..."), this, SLOT(sViewAllocations()), 0);
   if (selected->text(6).remove(',').toDouble() == 0.0)
     menu->setItemEnabled(menuItem, FALSE);

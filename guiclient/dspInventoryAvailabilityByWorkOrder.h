@@ -78,13 +78,17 @@ public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
     virtual void sPrint();
     virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * selected );
+    virtual void sViewHistory();
     virtual void sViewAllocations();
     virtual void sViewOrders();
     virtual void sRunningAvailability();
     virtual void sViewSubstituteAvailability();
-    virtual void sIssuePO();
-    virtual void sIssueWO();
+    virtual void sCreatePR();
+    virtual void sCreatePO();
+    virtual void sCreateWO();
+    virtual void sPostMiscProduction();
     virtual void sIssueCountTag();
+    virtual void sEnterMiscCount();
     virtual void sFillList();
 
 protected slots:

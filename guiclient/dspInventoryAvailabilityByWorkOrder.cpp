@@ -67,11 +67,15 @@
 
 #include "createCountTagsByItem.h"
 #include "dspAllocations.h"
+#include "dspInventoryHistoryByItem.h"
 #include "dspOrders.h"
 #include "dspRunningAvailability.h"
 #include "dspSubstituteAvailabilityByItem.h"
+#include "enterMiscCount.h"
+#include "postMiscProduction.h"
 #include "inputManager.h"
 #include "purchaseOrder.h"
+#include "purchaseRequest.h"
 #include "workOrder.h"
 
 dspInventoryAvailabilityByWorkOrder::dspInventoryAvailabilityByWorkOrder(QWidget* parent, const char* name, Qt::WFlags fl)
@@ -83,6 +87,7 @@ dspInventoryAvailabilityByWorkOrder::dspInventoryAvailabilityByWorkOrder(QWidget
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_womatl, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_onlyShowShortages, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_includeChildren, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _wo->setType(cWoExploded | cWoIssued | cWoReleased);
 
@@ -147,6 +152,15 @@ bool dspInventoryAvailabilityByWorkOrder::setParams(ParameterList &params)
   if(_onlyShowShortages->isChecked())
     params.append("onlyShowShortages");
 
+  if(_includeChildren->isChecked())
+  {
+    q.prepare("SELECT wo_number FROM wo WHERE wo_id=:wo_id;");
+    q.bindValue(":wo_id", _wo->id());
+    q.exec();
+    if (q.first())
+      params.append("wo_number", q.value("wo_number").toInt());
+  }
+  
   return true;
 }
 
@@ -167,6 +181,12 @@ void dspInventoryAvailabilityByWorkOrder::sPopulateMenu(QMenu *pMenu, QTreeWidge
 {
   int menuItem;
 
+  menuItem = pMenu->insertItem(tr("View Inventory History..."), this, SLOT(sViewHistory()), 0);
+  if (!_privileges->check("ViewInventoryHistory"))
+    pMenu->setItemEnabled(menuItem, FALSE);
+
+  pMenu->insertSeparator();
+
   menuItem = pMenu->insertItem("View Allocations...", this, SLOT(sViewAllocations()), 0);
   if (selected->text(6).toDouble() == 0.0)
     pMenu->setItemEnabled(menuItem, FALSE);
@@ -176,27 +196,55 @@ void dspInventoryAvailabilityByWorkOrder::sPopulateMenu(QMenu *pMenu, QTreeWidge
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem("Running Availability...", this, SLOT(sRunningAvailability()), 0);
-  menuItem = pMenu->insertItem("Substitute Availability...", this, SLOT(sViewSubstituteAvailability()), 0);
+
+  pMenu->insertSeparator();
 
   if (selected->text(0) == "P")
   {
-    pMenu->insertSeparator();
-    menuItem = pMenu->insertItem("Issue Purchase Order...", this, SLOT(sIssuePO()), 0);
+    menuItem = pMenu->insertItem(tr("Create P/R..."), this, SLOT(sCreatePR()), 0);
+    if (!_privileges->check("MaintainPurchaseRequests"))
+      pMenu->setItemEnabled(menuItem, FALSE);
+
+    menuItem = pMenu->insertItem("Create P/O...", this, SLOT(sCreatePO()), 0);
     if (!_privileges->check("MaintainPurchaseOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
-  }
-  else if (selected->text(1) == "M")
-  {
+
     pMenu->insertSeparator();
-    menuItem = pMenu->insertItem("Issue Work Order...", this, SLOT(sIssueWO()), 0);
+  }
+  else if (selected->text(0) == "M")
+  {
+    menuItem = pMenu->insertItem("Create W/O...", this, SLOT(sCreateWO()), 0);
     if (!_privileges->check("MaintainWorkOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
+
+    menuItem = pMenu->insertItem(tr("Post Misc. Production..."), this, SLOT(sPostMiscProduction()), 0);
+    if (!_privileges->check("PostMiscProduction"))
+      pMenu->setItemEnabled(menuItem, FALSE);
+
+    pMenu->insertSeparator();
   }
 
+  menuItem = pMenu->insertItem("View Substitute Availability...", this, SLOT(sViewSubstituteAvailability()), 0);
+
   pMenu->insertSeparator();
+
   menuItem = pMenu->insertItem("Issue Count Tag...", this, SLOT(sIssueCountTag()), 0);
   if (!_privileges->check("IssueCountTags"))
     pMenu->setItemEnabled(menuItem, FALSE);
+
+  menuItem = pMenu->insertItem(tr("Enter Misc. Inventory Count..."), this, SLOT(sEnterMiscCount()), 0);
+  if (!_privileges->check("EnterMiscCounts"))
+    pMenu->setItemEnabled(menuItem, FALSE);
+}
+
+void dspInventoryAvailabilityByWorkOrder::sViewHistory()
+{
+  ParameterList params;
+  params.append("itemsite_id", _womatl->id());
+
+  dspInventoryHistoryByItem *newdlg = new dspInventoryHistoryByItem();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void dspInventoryAvailabilityByWorkOrder::sViewAllocations()
@@ -271,7 +319,18 @@ void dspInventoryAvailabilityByWorkOrder::sViewSubstituteAvailability()
 //  ToDo
 }
 
-void dspInventoryAvailabilityByWorkOrder::sIssuePO()
+void dspInventoryAvailabilityByWorkOrder::sCreatePR()
+{
+  ParameterList params;
+  params.append("mode", "new");
+  params.append("itemsite_id", _womatl->id());
+
+  purchaseRequest newdlg(this, "", TRUE);
+  newdlg.set(params);
+  newdlg.exec();
+}
+
+void dspInventoryAvailabilityByWorkOrder::sCreatePO()
 {
   ParameterList params;
   params.append("mode", "new");
@@ -282,7 +341,7 @@ void dspInventoryAvailabilityByWorkOrder::sIssuePO()
     omfgThis->handleNewWindow(newdlg);
 }
 
-void dspInventoryAvailabilityByWorkOrder::sIssueWO()
+void dspInventoryAvailabilityByWorkOrder::sCreateWO()
 {
   ParameterList params;
   params.append("mode", "new");
@@ -293,12 +352,32 @@ void dspInventoryAvailabilityByWorkOrder::sIssueWO()
   omfgThis->handleNewWindow(newdlg);
 }
 
+void dspInventoryAvailabilityByWorkOrder::sPostMiscProduction()
+{
+  ParameterList params;
+  params.append("itemsite_id", _womatl->id());
+
+  postMiscProduction newdlg(this, "", TRUE);
+  newdlg.set(params);
+  newdlg.exec();
+}
+
 void dspInventoryAvailabilityByWorkOrder::sIssueCountTag()
 {
   ParameterList params;
   params.append("itemsite_id", _womatl->id());
 
   createCountTagsByItem newdlg(this, "", TRUE);
+  newdlg.set(params);
+  newdlg.exec();
+}
+
+void dspInventoryAvailabilityByWorkOrder::sEnterMiscCount()
+{
+  ParameterList params;
+  params.append("itemsite_id", _womatl->id());
+  
+  enterMiscCount newdlg(this, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -349,7 +428,11 @@ void dspInventoryAvailabilityByWorkOrder::sFillList()
                "        AND (womatl_itemsite_id=itemsite_id)"
                "        AND (itemsite_item_id=item_id)"
                "        AND (item_inv_uom_id=uom_id)"
+               "<? if exists(\"wo_number\") ?>"
+               "        AND (wo_number=<? value(\"wo_number\") ?>)) ) AS data "
+               "<? else ?>"
                "        AND (womatl_wo_id=<? value(\"wo_id\") ?>)) ) AS data "
+               "<? endif ?>"
                "<? if exists(\"onlyShowShortages\") ?>"
                "WHERE ( ((qoh + ordered - allocated) < 0)"
                " OR ((qoh + ordered - wobalance) < 0) ) "
