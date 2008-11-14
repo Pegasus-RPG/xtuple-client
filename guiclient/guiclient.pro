@@ -41,7 +41,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                applyDiscount.ui                                                                       \
                arAccountAssignment.ui arAccountAssignments.ui                                         \
                applyARCreditMemo.ui arOpenItem.ui arCreditMemoApplication.ui                          \
-               archRestoreSalesHistory.ui arWorkBench.ui apWorkbench.ui                               \
+               archRestoreSalesHistory.ui arWorkBench.ui apWorkBench.ui                               \
                assignLotSerial.ui                                                                     \
                ../common/batchManager.ui ../common/batchItem.ui                                       \
                bankAccounts.ui bankAccount.ui                                                         \
