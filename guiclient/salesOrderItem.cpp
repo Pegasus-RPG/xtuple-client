@@ -846,7 +846,7 @@ void salesOrderItem::sSave()
                "       :soitem_price, :price_uom_id, :price_invuomratio,"
                "       '', -1,"
                "       :soitem_custpn, :soitem_memo, :soitem_substitute_item_id,"
-                           "       :soitem_prcost, :soitem_tax_id, :soitem_cost_accnt_id, :soitem_warranty "
+                           "       :soitem_prcost, :soitem_tax_id, :soitem_cos_accnt_id, :soitem_warranty "
                "FROM itemsite "
                "WHERE ( (itemsite_item_id=:item_id)"
                " AND (itemsite_warehous_id=:warehous_id) );" );
