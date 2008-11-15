@@ -142,7 +142,7 @@
       <widget class="QGroupBox" name="groupBox" >
        <property name="minimumSize" >
         <size>
-         <width>576</width>
+         <width>624</width>
          <height>0</height>
         </size>
        </property>
