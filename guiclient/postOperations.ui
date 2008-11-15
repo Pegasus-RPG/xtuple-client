@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>696</width>
-    <height>761</height>
+    <width>690</width>
+    <height>747</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -139,7 +139,7 @@
       </layout>
      </item>
      <item row="1" column="0" >
-      <widget class="QGroupBox" name="groupBox" >
+      <widget class="QGroupBox" name="_operationGroup" >
        <property name="minimumSize" >
         <size>
          <width>648</width>
@@ -149,8 +149,8 @@
        <property name="title" >
         <string/>
        </property>
-       <layout class="QGridLayout" >
-        <item row="0" column="0" >
+       <layout class="QHBoxLayout" >
+        <item>
          <widget class="QLabel" name="_woOperationLit" >
           <property name="text" >
            <string>Operation:</string>
@@ -160,38 +160,31 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="1" >
-         <layout class="QHBoxLayout" >
-          <item>
-           <widget class="XComboBox" name="_wooper" >
-            <property name="sizePolicy" >
-             <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="sizeAdjustPolicy" >
-             <enum>QComboBox::AdjustToContents</enum>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer>
-            <property name="orientation" >
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeType" >
-             <enum>QSizePolicy::MinimumExpanding</enum>
-            </property>
-            <property name="sizeHint" >
-             <size>
-              <width>0</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
+        <item>
+         <widget class="XComboBox" name="_wooper" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType" >
+           <enum>QSizePolicy::MinimumExpanding</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>0</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
         </item>
        </layout>
       </widget>
@@ -351,7 +344,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="workcenterGroup" >
+        <widget class="QGroupBox" name="_workcenterGroup" >
          <property name="sizePolicy" >
           <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
            <horstretch>0</horstretch>
@@ -370,6 +363,9 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="focusPolicy" >
+             <enum>Qt::StrongFocus</enum>
+            </property>
             <property name="label" >
              <string/>
             </property>
@@ -384,129 +380,12 @@
       </layout>
      </item>
      <item row="3" column="0" >
-      <widget class="QFrame" name="frame" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
-         <horstretch>0</horstretch>
-         <verstretch>1</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="frameShape" >
-        <enum>QFrame::NoFrame</enum>
-       </property>
-       <property name="frameShadow" >
-        <enum>QFrame::Plain</enum>
-       </property>
-       <layout class="QVBoxLayout" >
-        <property name="spacing" >
-         <number>0</number>
-        </property>
-        <property name="leftMargin" >
-         <number>0</number>
-        </property>
-        <property name="topMargin" >
-         <number>0</number>
-        </property>
-        <property name="rightMargin" >
-         <number>0</number>
-        </property>
-        <property name="bottomMargin" >
-         <number>0</number>
-        </property>
-        <item>
-         <widget class="QCheckBox" name="_issueComponents" >
-          <property name="enabled" >
-           <bool>false</bool>
-          </property>
-          <property name="text" >
-           <string>&amp;Issue Components</string>
-          </property>
-          <property name="shortcut" >
-           <string>Alt+I</string>
-          </property>
-          <property name="checked" >
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="XTreeWidget" name="_womatl" >
-          <property name="enabled" >
-           <bool>false</bool>
-          </property>
-          <property name="minimumSize" >
-           <size>
-            <width>0</width>
-            <height>100</height>
-           </size>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item row="4" column="0" >
-      <layout class="QHBoxLayout" >
-       <property name="spacing" >
-        <number>0</number>
-       </property>
-       <property name="leftMargin" >
-        <number>0</number>
-       </property>
-       <property name="topMargin" >
-        <number>0</number>
-       </property>
-       <property name="rightMargin" >
-        <number>0</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="QCheckBox" name="_receiveInventory" >
-         <property name="enabled" >
-          <bool>false</bool>
-         </property>
-         <property name="text" >
-          <string>&amp;Receive Inventory</string>
-         </property>
-         <property name="shortcut" >
-          <string>Alt+R</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer>
-         <property name="orientation" >
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeType" >
-          <enum>QSizePolicy::Expanding</enum>
-         </property>
-         <property name="sizeHint" >
-          <size>
-           <width>20</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="_closeWO" >
-         <property name="text" >
-          <string>Close W/O</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item row="5" column="0" >
-      <widget class="QGroupBox" name="_postGroup" >
+      <widget class="QGroupBox" name="_moreGroup" >
        <property name="title" >
         <string/>
        </property>
        <layout class="QGridLayout" >
-        <item row="0" column="0" >
+        <item row="2" column="0" >
          <layout class="QHBoxLayout" >
           <item>
            <layout class="QVBoxLayout" >
@@ -814,6 +693,123 @@
           </item>
          </layout>
         </item>
+        <item row="1" column="0" >
+         <layout class="QHBoxLayout" >
+          <property name="spacing" >
+           <number>0</number>
+          </property>
+          <property name="leftMargin" >
+           <number>0</number>
+          </property>
+          <property name="topMargin" >
+           <number>0</number>
+          </property>
+          <property name="rightMargin" >
+           <number>0</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QCheckBox" name="_receiveInventory" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
+            <property name="text" >
+             <string>&amp;Receive Inventory</string>
+            </property>
+            <property name="shortcut" >
+             <string>Alt+R</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType" >
+             <enum>QSizePolicy::Expanding</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="_closeWO" >
+            <property name="text" >
+             <string>Close W/O</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="0" column="0" >
+         <widget class="QFrame" name="_frame" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
+            <horstretch>0</horstretch>
+            <verstretch>1</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="frameShape" >
+           <enum>QFrame::NoFrame</enum>
+          </property>
+          <property name="frameShadow" >
+           <enum>QFrame::Plain</enum>
+          </property>
+          <layout class="QVBoxLayout" >
+           <property name="spacing" >
+            <number>0</number>
+           </property>
+           <property name="leftMargin" >
+            <number>0</number>
+           </property>
+           <property name="topMargin" >
+            <number>0</number>
+           </property>
+           <property name="rightMargin" >
+            <number>0</number>
+           </property>
+           <property name="bottomMargin" >
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QCheckBox" name="_issueComponents" >
+             <property name="enabled" >
+              <bool>false</bool>
+             </property>
+             <property name="text" >
+              <string>&amp;Issue Components</string>
+             </property>
+             <property name="shortcut" >
+              <string>Alt+I</string>
+             </property>
+             <property name="checked" >
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="XTreeWidget" name="_womatl" >
+             <property name="enabled" >
+              <bool>false</bool>
+             </property>
+             <property name="minimumSize" >
+              <size>
+               <width>0</width>
+               <height>100</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
        </layout>
       </widget>
      </item>
@@ -867,9 +863,12 @@
   <tabstop>_qty</tabstop>
   <tabstop>_productionUOM</tabstop>
   <tabstop>_inventoryUOM</tabstop>
+  <tabstop>_wrkcnt</tabstop>
+  <tabstop>_more</tabstop>
   <tabstop>_issueComponents</tabstop>
   <tabstop>_womatl</tabstop>
   <tabstop>_receiveInventory</tabstop>
+  <tabstop>_closeWO</tabstop>
   <tabstop>_postSutime</tabstop>
   <tabstop>_markSuComplete</tabstop>
   <tabstop>_postStandardSutime</tabstop>
@@ -880,7 +879,6 @@
   <tabstop>_postStandardRntime</tabstop>
   <tabstop>_postSpecifiedRntime</tabstop>
   <tabstop>_specifiedRntime</tabstop>
-  <tabstop>_closeWO</tabstop>
   <tabstop>_post</tabstop>
   <tabstop>_scrap</tabstop>
   <tabstop>_close</tabstop>
@@ -1066,71 +1064,7 @@
   <connection>
    <sender>_more</sender>
    <signal>toggled(bool)</signal>
-   <receiver>_issueComponents</receiver>
-   <slot>setVisible(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>666</x>
-     <y>127</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>120</x>
-     <y>352</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_more</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>_womatl</receiver>
-   <slot>setVisible(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>631</x>
-     <y>126</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>161</x>
-     <y>378</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_more</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>_receiveInventory</receiver>
-   <slot>setVisible(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>649</x>
-     <y>133</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>96</x>
-     <y>566</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_more</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>_closeWO</receiver>
-   <slot>setVisible(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>634</x>
-     <y>124</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>619</x>
-     <y>570</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_more</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>_postGroup</receiver>
+   <receiver>_moreGroup</receiver>
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel" >

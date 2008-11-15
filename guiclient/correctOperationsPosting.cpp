@@ -95,11 +95,16 @@ correctOperationsPosting::correctOperationsPosting(QWidget* parent, const char* 
   _womatl->addColumn(tr("Description"), -1,          Qt::AlignLeft, true, "descrip");
   _womatl->addColumn(tr("Iss. UOM"),    _uomColumn,  Qt::AlignLeft, true, "uom_name");
   _womatl->addColumn(tr("Qty. per"),    _qtyColumn,  Qt::AlignRight,true, "womatl_qtyper");
+
+  layout()->setSizeConstraint(QLayout::SetFixedSize);
+  if (!_preferences->boolean("PostOpsShowAll"))
+    _more->click();
 }
 
 correctOperationsPosting::~correctOperationsPosting()
 {
   // no need to delete child widgets, Qt does it all for us
+  _preferences->set("PostOpsShowAll", _more->isChecked());
 }
 
 void correctOperationsPosting::languageChange()
@@ -159,7 +164,7 @@ void correctOperationsPosting::sHandleWoid(int pWoid)
   q.bindValue(":wo_id", pWoid);
   q.exec();
   if (q.first())
-    _inventoryUOM->setText( tr("Post in Inventory UOMs (%1)")
+    _inventoryUOM->setText( tr("Inventory UOMs (%1)")
                             .arg(q.value("uom_name").toString()) );
   else if (q.lastError().type() != QSqlError::NoError)
   {
@@ -192,7 +197,7 @@ void correctOperationsPosting::sHandleWooperid(int)
       _qtyOrdered->setDouble(q.value("wo_qtyord").toDouble());
       _qtyReceived->setDouble(q.value("received").toDouble());
       _qtyBalance->setDouble(q.value("balance").toDouble());
-      _productionUOM->setText( tr("Post in Production UOMs (%1)") 
+      _productionUOM->setText( tr("Production UOMs (%1)") 
                                .arg(q.value("wooper_produom").toString()) );
 
       _standardSutime->setDouble(q.value("wooper_suconsumed").toDouble());
@@ -262,7 +267,7 @@ void correctOperationsPosting::sHandleWooperid(int)
     _qtyOrdered->clear();
     _qtyReceived->clear();
     _qtyBalance->clear();
-    _productionUOM->setText(tr("Post in Production UOMs"));
+    _productionUOM->setText(tr("Production UOMs"));
 
     _qty->clear();
 

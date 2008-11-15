@@ -5,67 +5,50 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>626</width>
-    <height>537</height>
+    <width>719</width>
+    <height>704</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Correct Operation Posting</string>
   </property>
-  <layout class="QVBoxLayout" >
-   <item>
-    <layout class="QHBoxLayout" >
-     <property name="spacing" >
-      <number>3</number>
+  <layout class="QGridLayout" >
+   <item row="0" column="0" >
+    <layout class="QGridLayout" >
+     <property name="leftMargin" >
+      <number>12</number>
      </property>
-     <item>
-      <widget class="WoCluster" name="_wo" />
-     </item>
-     <item>
-      <spacer>
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeType" >
-        <enum>QSizePolicy::Expanding</enum>
-       </property>
-       <property name="sizeHint" >
-        <size>
-         <width>20</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <layout class="QVBoxLayout" >
+     <property name="topMargin" >
+      <number>12</number>
+     </property>
+     <property name="rightMargin" >
+      <number>12</number>
+     </property>
+     <property name="bottomMargin" >
+      <number>12</number>
+     </property>
+     <property name="horizontalSpacing" >
+      <number>12</number>
+     </property>
+     <property name="verticalSpacing" >
+      <number>12</number>
+     </property>
+     <item row="0" column="0" colspan="2" >
+      <layout class="QHBoxLayout" >
        <property name="spacing" >
-        <number>5</number>
+        <number>3</number>
        </property>
        <item>
-        <widget class="QPushButton" name="_close" >
-         <property name="text" >
-          <string>&amp;Cancel</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="_post" >
-         <property name="enabled" >
-          <bool>false</bool>
-         </property>
-         <property name="text" >
-          <string>&amp;Post Correction</string>
-         </property>
-         <property name="default" >
-          <bool>true</bool>
+        <widget class="WoCluster" name="_wo" >
+         <property name="focusPolicy" >
+          <enum>Qt::StrongFocus</enum>
          </property>
         </widget>
        </item>
        <item>
         <spacer>
          <property name="orientation" >
-          <enum>Qt::Vertical</enum>
+          <enum>Qt::Horizontal</enum>
          </property>
          <property name="sizeType" >
           <enum>QSizePolicy::Expanding</enum>
@@ -73,476 +56,40 @@
          <property name="sizeHint" >
           <size>
            <width>20</width>
-           <height>35</height>
+           <height>20</height>
           </size>
          </property>
         </spacer>
        </item>
-      </layout>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" >
-     <property name="spacing" >
-      <number>5</number>
-     </property>
-     <item>
-      <widget class="QLabel" name="_woOperationLit" >
-       <property name="text" >
-        <string>W/O Operation:</string>
-       </property>
-       <property name="alignment" >
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="XComboBox" name="_wooper" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" >
-     <property name="spacing" >
-      <number>7</number>
-     </property>
-     <item>
-      <layout class="QGridLayout" >
-       <property name="horizontalSpacing" >
-        <number>5</number>
-       </property>
-       <property name="verticalSpacing" >
-        <number>5</number>
-       </property>
-       <item row="0" column="0" >
-        <widget class="QLabel" name="_qtyToCorrectLit" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text" >
-          <string>&amp;Qty. to Correct:</string>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-         <property name="buddy" >
-          <cstring>_qty</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1" >
-        <widget class="QGroupBox" name="_uomGroup" >
-         <property name="title" >
-          <string/>
-         </property>
-         <layout class="QVBoxLayout" >
-          <property name="spacing" >
-           <number>0</number>
-          </property>
-          <property name="leftMargin" >
-           <number>5</number>
-          </property>
-          <property name="topMargin" >
-           <number>5</number>
-          </property>
-          <property name="rightMargin" >
-           <number>5</number>
-          </property>
-          <property name="bottomMargin" >
-           <number>5</number>
-          </property>
-          <item>
-           <widget class="QRadioButton" name="_productionUOM" >
-            <property name="sizePolicy" >
-             <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text" >
-             <string>Correct in Production UOMs</string>
-            </property>
-            <property name="checked" >
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QRadioButton" name="_inventoryUOM" >
-            <property name="sizePolicy" >
-             <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text" >
-             <string>Correct in Inventory UOMs</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="0" column="1" >
-        <layout class="QHBoxLayout" >
+       <item>
+        <layout class="QVBoxLayout" >
          <property name="spacing" >
           <number>0</number>
          </property>
          <item>
-          <widget class="XLineEdit" name="_qty" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="maximumSize" >
-            <size>
-             <width>80</width>
-             <height>32767</height>
-            </size>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight</set>
+          <widget class="QPushButton" name="_close" >
+           <property name="text" >
+            <string>&amp;Cancel</string>
            </property>
           </widget>
          </item>
          <item>
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeType" >
-            <enum>QSizePolicy::Preferred</enum>
-           </property>
-           <property name="sizeHint" >
-            <size>
-             <width>20</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
-       <item row="1" column="0" >
-        <spacer>
-         <property name="orientation" >
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeType" >
-          <enum>QSizePolicy::Expanding</enum>
-         </property>
-         <property name="sizeHint" >
-          <size>
-           <width>20</width>
-           <height>0</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QVBoxLayout" >
-       <property name="spacing" >
-        <number>0</number>
-       </property>
-       <item>
-        <layout class="QHBoxLayout" >
-         <property name="spacing" >
-          <number>0</number>
-         </property>
-         <item>
-          <layout class="QHBoxLayout" >
-           <property name="spacing" >
-            <number>5</number>
-           </property>
-           <item>
-            <layout class="QVBoxLayout" >
-             <property name="spacing" >
-              <number>0</number>
-             </property>
-             <item>
-              <widget class="QLabel" name="_qtyOrderedLit" >
-               <property name="text" >
-                <string>W/O Qty. Ordered:</string>
-               </property>
-               <property name="alignment" >
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="_qtyReceivedLit" >
-               <property name="text" >
-                <string>Operation Qty. Received:</string>
-               </property>
-               <property name="alignment" >
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="_qtyBalanceLit" >
-               <property name="text" >
-                <string>Operation Balance Due:</string>
-               </property>
-               <property name="alignment" >
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QVBoxLayout" >
-             <property name="spacing" >
-              <number>0</number>
-             </property>
-             <item>
-              <widget class="XLabel" name="_qtyOrdered" >
-               <property name="sizePolicy" >
-                <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize" >
-                <size>
-                 <width>100</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="alignment" >
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="XLabel" name="_qtyReceived" >
-               <property name="sizePolicy" >
-                <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize" >
-                <size>
-                 <width>100</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="alignment" >
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="XLabel" name="_qtyBalance" >
-               <property name="sizePolicy" >
-                <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize" >
-                <size>
-                 <width>100</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="alignment" >
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeType" >
-            <enum>QSizePolicy::Expanding</enum>
-           </property>
-           <property name="sizeHint" >
-            <size>
-             <width>20</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <spacer>
-         <property name="orientation" >
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeType" >
-          <enum>QSizePolicy::Expanding</enum>
-         </property>
-         <property name="sizeHint" >
-          <size>
-           <width>20</width>
-           <height>0</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <widget class="QFrame" name="frame" >
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
-       <horstretch>0</horstretch>
-       <verstretch>1</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="frameShape" >
-      <enum>QFrame::NoFrame</enum>
-     </property>
-     <property name="frameShadow" >
-      <enum>QFrame::Plain</enum>
-     </property>
-     <layout class="QVBoxLayout" >
-      <property name="spacing" >
-       <number>0</number>
-      </property>
-      <property name="leftMargin" >
-       <number>0</number>
-      </property>
-      <property name="topMargin" >
-       <number>0</number>
-      </property>
-      <property name="rightMargin" >
-       <number>0</number>
-      </property>
-      <property name="bottomMargin" >
-       <number>0</number>
-      </property>
-      <item>
-       <widget class="QCheckBox" name="_returnComponents" >
-        <property name="enabled" >
-         <bool>false</bool>
-        </property>
-        <property name="text" >
-         <string>&amp;Return Components</string>
-        </property>
-        <property name="shortcut" >
-         <string>Alt+R</string>
-        </property>
-        <property name="checked" >
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="XTreeWidget" name="_womatl" >
-        <property name="enabled" >
-         <bool>false</bool>
-        </property>
-        <property name="minimumSize" >
-         <size>
-          <width>0</width>
-          <height>100</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" >
-     <property name="spacing" >
-      <number>0</number>
-     </property>
-     <item>
-      <widget class="QCheckBox" name="_correctInventory" >
-       <property name="enabled" >
-        <bool>false</bool>
-       </property>
-       <property name="text" >
-        <string>&amp;Correct Inventory</string>
-       </property>
-       <property name="shortcut" >
-        <string>Alt+C</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer>
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeType" >
-        <enum>QSizePolicy::Expanding</enum>
-       </property>
-       <property name="sizeHint" >
-        <size>
-         <width>20</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" >
-     <property name="spacing" >
-      <number>7</number>
-     </property>
-     <item>
-      <layout class="QVBoxLayout" >
-       <property name="spacing" >
-        <number>0</number>
-       </property>
-       <item>
-        <layout class="QHBoxLayout" >
-         <property name="spacing" >
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QCheckBox" name="_clearSuComplete" >
+          <widget class="QPushButton" name="_post" >
            <property name="enabled" >
             <bool>false</bool>
            </property>
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
            <property name="text" >
-            <string>Clear Setup Complete Flag</string>
+            <string>&amp;Post</string>
+           </property>
+           <property name="default" >
+            <bool>true</bool>
            </property>
           </widget>
          </item>
          <item>
           <spacer>
            <property name="orientation" >
-            <enum>Qt::Horizontal</enum>
+            <enum>Qt::Vertical</enum>
            </property>
            <property name="sizeType" >
             <enum>QSizePolicy::Expanding</enum>
@@ -550,293 +97,600 @@
            <property name="sizeHint" >
             <size>
              <width>20</width>
-             <height>20</height>
+             <height>35</height>
             </size>
            </property>
           </spacer>
          </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" >
-         <property name="spacing" >
-          <number>0</number>
-         </property>
          <item>
-          <widget class="QCheckBox" name="_correctSutime" >
-           <property name="enabled" >
-            <bool>false</bool>
-           </property>
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
+          <widget class="QPushButton" name="_more" >
            <property name="text" >
-            <string>Correct Setup Time</string>
+            <string>&amp;More</string>
+           </property>
+           <property name="checkable" >
+            <bool>true</bool>
+           </property>
+           <property name="checked" >
+            <bool>true</bool>
            </property>
           </widget>
          </item>
-         <item>
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeType" >
-            <enum>QSizePolicy::Expanding</enum>
-           </property>
-           <property name="sizeHint" >
-            <size>
-             <width>20</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
         </layout>
        </item>
-       <item>
-        <widget class="QGroupBox" name="_sutimeGroup" >
-         <property name="enabled" >
-          <bool>false</bool>
-         </property>
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="title" >
-          <string/>
-         </property>
-         <layout class="QVBoxLayout" >
-          <property name="spacing" >
-           <number>0</number>
+      </layout>
+     </item>
+     <item row="1" column="0" colspan="2" >
+      <widget class="QGroupBox" name="_operationGroup" >
+       <property name="minimumSize" >
+        <size>
+         <width>648</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="title" >
+        <string/>
+       </property>
+       <layout class="QHBoxLayout" >
+        <item>
+         <widget class="QLabel" name="_woOperationLit" >
+          <property name="text" >
+           <string>Operation:</string>
           </property>
-          <property name="leftMargin" >
-           <number>5</number>
+          <property name="alignment" >
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
-          <property name="topMargin" >
-           <number>5</number>
+         </widget>
+        </item>
+        <item>
+         <widget class="XComboBox" name="_wooper" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
           </property>
-          <property name="rightMargin" >
-           <number>5</number>
+         </widget>
+        </item>
+        <item>
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
           </property>
-          <property name="bottomMargin" >
-           <number>5</number>
+          <property name="sizeType" >
+           <enum>QSizePolicy::MinimumExpanding</enum>
           </property>
+          <property name="sizeHint" >
+           <size>
+            <width>0</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item row="2" column="0" >
+      <widget class="QGroupBox" name="_qtyGroup" >
+       <property name="title" >
+        <string>Quantites</string>
+       </property>
+       <layout class="QGridLayout" >
+        <item row="0" column="0" >
+         <widget class="QLabel" name="_qtyOrderedLit" >
+          <property name="text" >
+           <string>Ordered:</string>
+          </property>
+          <property name="alignment" >
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1" >
+         <widget class="XLabel" name="_qtyOrdered" >
+          <property name="alignment" >
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2" >
+         <widget class="QLabel" name="_qtyBalanceLit" >
+          <property name="text" >
+           <string>Due:</string>
+          </property>
+          <property name="alignment" >
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="3" >
+         <widget class="XLabel" name="_qtyBalance" >
+          <property name="alignment" >
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" >
+         <widget class="QLabel" name="_qtyReceivedLit" >
+          <property name="text" >
+           <string>Received:</string>
+          </property>
+          <property name="alignment" >
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1" >
+         <widget class="XLabel" name="_qtyReceived" >
+          <property name="alignment" >
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2" >
+         <widget class="QLabel" name="_qtyToCorrectLit" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text" >
+           <string>&amp;To Correct:</string>
+          </property>
+          <property name="alignment" >
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+          <property name="buddy" >
+           <cstring>_qty</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="3" >
+         <widget class="XLineEdit" name="_qty" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximumSize" >
+           <size>
+            <width>80</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="alignment" >
+           <set>Qt::AlignRight</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item row="2" column="1" >
+      <widget class="QGroupBox" name="_uomGroup" >
+       <property name="title" >
+        <string>Correct In</string>
+       </property>
+       <layout class="QGridLayout" >
+        <item row="0" column="0" >
+         <widget class="QRadioButton" name="_productionUOM" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text" >
+           <string>Production UOMs</string>
+          </property>
+          <property name="checked" >
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" >
+         <widget class="QRadioButton" name="_inventoryUOM" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text" >
+           <string>Inventory UOMs</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1" >
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType" >
+           <enum>QSizePolicy::Preferred</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item row="3" column="0" colspan="2" >
+      <widget class="QGroupBox" name="_moreGroup" >
+       <property name="title" >
+        <string/>
+       </property>
+       <layout class="QGridLayout" >
+        <item row="2" column="0" >
+         <layout class="QHBoxLayout" >
           <item>
-           <layout class="QHBoxLayout" >
-            <property name="spacing" >
-             <number>5</number>
-            </property>
+           <layout class="QVBoxLayout" >
             <item>
-             <widget class="QRadioButton" name="_correctStandardSutime" >
-              <property name="text" >
-               <string>Correct Standard Setup Time:</string>
-              </property>
-              <property name="checked" >
-               <bool>true</bool>
-              </property>
-             </widget>
+             <layout class="QHBoxLayout" >
+              <item>
+               <widget class="QCheckBox" name="_clearSuComplete" >
+                <property name="enabled" >
+                 <bool>false</bool>
+                </property>
+                <property name="sizePolicy" >
+                 <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text" >
+                 <string>Clear Setup Complete Flag</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer>
+                <property name="orientation" >
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeType" >
+                 <enum>QSizePolicy::Expanding</enum>
+                </property>
+                <property name="sizeHint" >
+                 <size>
+                  <width>20</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
             </item>
             <item>
-             <widget class="XLabel" name="_standardSutime" >
-              <property name="sizePolicy" >
-               <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-             </widget>
+             <layout class="QHBoxLayout" >
+              <item>
+               <widget class="QCheckBox" name="_correctSutime" >
+                <property name="enabled" >
+                 <bool>false</bool>
+                </property>
+                <property name="sizePolicy" >
+                 <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text" >
+                 <string>Correct Setup Time</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer>
+                <property name="orientation" >
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeType" >
+                 <enum>QSizePolicy::Expanding</enum>
+                </property>
+                <property name="sizeHint" >
+                 <size>
+                  <width>20</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
             </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" >
-            <property name="spacing" >
-             <number>5</number>
-            </property>
             <item>
-             <widget class="QRadioButton" name="_correctSpecifiedSutime" >
-              <property name="text" >
-               <string>Correct Specified Setup Time:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="XLineEdit" name="_specifiedSutime" >
+             <widget class="QGroupBox" name="_sutimeGroup" >
               <property name="enabled" >
                <bool>false</bool>
               </property>
-              <property name="minimumSize" >
-               <size>
-                <width>80</width>
-                <height>0</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QVBoxLayout" >
-       <property name="spacing" >
-        <number>0</number>
-       </property>
-       <item>
-        <layout class="QHBoxLayout" >
-         <property name="spacing" >
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QCheckBox" name="_clearRnComplete" >
-           <property name="enabled" >
-            <bool>false</bool>
-           </property>
-           <property name="text" >
-            <string>Clear Operation Complete Flag</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeType" >
-            <enum>QSizePolicy::Expanding</enum>
-           </property>
-           <property name="sizeHint" >
-            <size>
-             <width>20</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" >
-         <property name="spacing" >
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QCheckBox" name="_correctRntime" >
-           <property name="enabled" >
-            <bool>false</bool>
-           </property>
-           <property name="text" >
-            <string>Correct Run Time</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeType" >
-            <enum>QSizePolicy::Expanding</enum>
-           </property>
-           <property name="sizeHint" >
-            <size>
-             <width>20</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="_rntimeGroup" >
-         <property name="enabled" >
-          <bool>false</bool>
-         </property>
-         <property name="title" >
-          <string/>
-         </property>
-         <layout class="QVBoxLayout" >
-          <property name="spacing" >
-           <number>0</number>
-          </property>
-          <property name="leftMargin" >
-           <number>5</number>
-          </property>
-          <property name="topMargin" >
-           <number>5</number>
-          </property>
-          <property name="rightMargin" >
-           <number>5</number>
-          </property>
-          <property name="bottomMargin" >
-           <number>5</number>
-          </property>
-          <item>
-           <layout class="QHBoxLayout" >
-            <property name="spacing" >
-             <number>5</number>
-            </property>
-            <item>
-             <widget class="QRadioButton" name="_correctStandardRntime" >
-              <property name="text" >
-               <string>Correct Standard Run Time:</string>
-              </property>
-              <property name="checked" >
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="XLabel" name="_standardRntime" >
               <property name="sizePolicy" >
-               <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="minimumSize" >
-               <size>
-                <width>80</width>
-                <height>0</height>
-               </size>
+              <property name="title" >
+               <string/>
               </property>
+              <layout class="QVBoxLayout" >
+               <item>
+                <layout class="QHBoxLayout" >
+                 <item>
+                  <widget class="QRadioButton" name="_correctStandardSutime" >
+                   <property name="text" >
+                    <string>Correct Standard Setup Time:</string>
+                   </property>
+                   <property name="checked" >
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="XLabel" name="_standardSutime" >
+                   <property name="sizePolicy" >
+                    <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" >
+                 <item>
+                  <widget class="QRadioButton" name="_correctSpecifiedSutime" >
+                   <property name="text" >
+                    <string>Correct Specified Setup Time:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="XLineEdit" name="_specifiedSutime" >
+                   <property name="enabled" >
+                    <bool>false</bool>
+                   </property>
+                   <property name="minimumSize" >
+                    <size>
+                     <width>80</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
              </widget>
             </item>
            </layout>
           </item>
           <item>
-           <layout class="QHBoxLayout" >
-            <property name="spacing" >
-             <number>5</number>
-            </property>
+           <layout class="QVBoxLayout" >
             <item>
-             <widget class="QRadioButton" name="_correctSpecifiedRntime" >
-              <property name="text" >
-               <string>Correct Specified Run Time:</string>
-              </property>
-             </widget>
+             <layout class="QHBoxLayout" >
+              <item>
+               <widget class="QCheckBox" name="_clearRnComplete" >
+                <property name="enabled" >
+                 <bool>false</bool>
+                </property>
+                <property name="text" >
+                 <string>Clear Operation Complete Flag</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer>
+                <property name="orientation" >
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeType" >
+                 <enum>QSizePolicy::Expanding</enum>
+                </property>
+                <property name="sizeHint" >
+                 <size>
+                  <width>20</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
             </item>
             <item>
-             <widget class="XLineEdit" name="_specifiedRntime" />
-               <property name="enabled" >
-                <bool>false</bool>
-               </property>
+             <layout class="QHBoxLayout" >
+              <item>
+               <widget class="QCheckBox" name="_correctRntime" >
+                <property name="enabled" >
+                 <bool>false</bool>
+                </property>
+                <property name="text" >
+                 <string>Correct Run Time</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer>
+                <property name="orientation" >
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeType" >
+                 <enum>QSizePolicy::Expanding</enum>
+                </property>
+                <property name="sizeHint" >
+                 <size>
+                  <width>20</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="_rntimeGroup" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
+              <property name="title" >
+               <string/>
+              </property>
+              <layout class="QVBoxLayout" >
+               <item>
+                <layout class="QHBoxLayout" >
+                 <item>
+                  <widget class="QRadioButton" name="_correctStandardRntime" >
+                   <property name="text" >
+                    <string>Correct Standard Run Time:</string>
+                   </property>
+                   <property name="checked" >
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="XLabel" name="_standardRntime" >
+                   <property name="sizePolicy" >
+                    <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize" >
+                    <size>
+                     <width>80</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" >
+                 <item>
+                  <widget class="QRadioButton" name="_correctSpecifiedRntime" >
+                   <property name="text" >
+                    <string>Correct Specified Run Time:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="XLineEdit" name="_specifiedRntime" />
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </widget>
             </item>
            </layout>
           </item>
          </layout>
-        </widget>
-       </item>
-      </layout>
+        </item>
+        <item row="1" column="0" >
+         <layout class="QHBoxLayout" >
+          <item>
+           <widget class="QCheckBox" name="_correctInventory" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
+            <property name="text" >
+             <string>&amp;Correct Inventory</string>
+            </property>
+            <property name="shortcut" >
+             <string>Alt+C</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType" >
+             <enum>QSizePolicy::Expanding</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item row="0" column="0" >
+         <widget class="QFrame" name="_frame" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
+            <horstretch>0</horstretch>
+            <verstretch>1</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="frameShape" >
+           <enum>QFrame::NoFrame</enum>
+          </property>
+          <property name="frameShadow" >
+           <enum>QFrame::Plain</enum>
+          </property>
+          <layout class="QVBoxLayout" >
+           <property name="spacing" >
+            <number>0</number>
+           </property>
+           <property name="leftMargin" >
+            <number>0</number>
+           </property>
+           <property name="topMargin" >
+            <number>0</number>
+           </property>
+           <property name="rightMargin" >
+            <number>0</number>
+           </property>
+           <property name="bottomMargin" >
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QCheckBox" name="_returnComponents" >
+             <property name="enabled" >
+              <bool>false</bool>
+             </property>
+             <property name="text" >
+              <string>&amp;Return Components</string>
+             </property>
+             <property name="shortcut" >
+              <string>Alt+R</string>
+             </property>
+             <property name="checked" >
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="XTreeWidget" name="_womatl" >
+             <property name="enabled" >
+              <bool>false</bool>
+             </property>
+             <property name="minimumSize" >
+              <size>
+               <width>0</width>
+               <height>100</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </item>
     </layout>
    </item>
@@ -864,6 +718,7 @@
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
@@ -876,6 +731,8 @@
   <tabstop>_wooper</tabstop>
   <tabstop>_qty</tabstop>
   <tabstop>_productionUOM</tabstop>
+  <tabstop>_inventoryUOM</tabstop>
+  <tabstop>_more</tabstop>
   <tabstop>_returnComponents</tabstop>
   <tabstop>_womatl</tabstop>
   <tabstop>_correctInventory</tabstop>
@@ -889,8 +746,8 @@
   <tabstop>_correctStandardRntime</tabstop>
   <tabstop>_correctSpecifiedRntime</tabstop>
   <tabstop>_specifiedRntime</tabstop>
-  <tabstop>_post</tabstop>
   <tabstop>_close</tabstop>
+  <tabstop>_post</tabstop>
  </tabstops>
  <resources/>
  <connections>
@@ -1003,6 +860,22 @@
     <hint type="destinationlabel" >
      <x>20</x>
      <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_more</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_moreGroup</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>657</x>
+     <y>120</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>359</x>
+     <y>486</y>
     </hint>
    </hints>
   </connection>
