@@ -155,7 +155,7 @@ salesOrder::salesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_allocatedCM, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
   connect(_outstandingCM, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
   connect(_authCC, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
-  connect(_show, SIGNAL(clicked()), this, SLOT(sHandleButton()));
+  connect(_more, SIGNAL(clicked()), this, SLOT(sHandleMore()));
   
   _saved = false;
 
@@ -263,8 +263,8 @@ salesOrder::salesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   if(!_metrics->boolean("AlwaysShowSaveAndAdd"))
     _saveAndAdd->hide();
   
-  _show->setChecked(_preferences->boolean("SoShowAll"));
-  sHandleButton();
+  _more->setChecked(_preferences->boolean("SoShowAll"));
+  sHandleMore();
 }
 
 salesOrder::~salesOrder()
@@ -2947,7 +2947,7 @@ void salesOrder::closeEvent(QCloseEvent *pEvent)
   else if(cNewQuote == _mode && _saved)
     omfgThis->sQuotesUpdated(-1);
     
-  _preferences->set("SoShowAll", _show->isChecked());
+  _preferences->set("SoShowAll", _more->isChecked());
 
   XWidget::closeEvent(pEvent);
 }
@@ -4145,41 +4145,36 @@ void salesOrder::sCheckValidContacts()
   else _billToCntct->setEnabled(false);
 }
 
-void salesOrder::sHandleButton()
+void salesOrder::sHandleMore()
 {
-  if (_show->isChecked())
-    _show->setText(tr("<< Less"));
-  else
-    _show->setText(tr("More >>"));
-
-  _project->setVisible(_show->isChecked());
-  _projectLit->setVisible(_show->isChecked());
-  _warehouse->setVisible(_show->isChecked());
-  _shippingWhseLit->setVisible(_show->isChecked());
-  _originatedByLit->setVisible(_show->isChecked());
-  _origin->setVisible(_show->isChecked());
-  _commissionLit->setVisible(_show->isChecked());
-  _commission->setVisible(_show->isChecked());
-  _commissionPrcntLit->setVisible(_show->isChecked());
-  _taxAuthLit->setVisible(_show->isChecked());
-  _taxAuth->setVisible(_show->isChecked());
-  _shipDateLit->setVisible(_show->isChecked());
-  _shipDate->setVisible(_show->isChecked());
-  _packDateLit->setVisible(_show->isChecked());
-  _packDate->setVisible(_show->isChecked());
+  _project->setVisible(_more->isChecked());
+  _projectLit->setVisible(_more->isChecked());
+  _warehouse->setVisible(_more->isChecked());
+  _shippingWhseLit->setVisible(_more->isChecked());
+  _originatedByLit->setVisible(_more->isChecked());
+  _origin->setVisible(_more->isChecked());
+  _commissionLit->setVisible(_more->isChecked());
+  _commission->setVisible(_more->isChecked());
+  _commissionPrcntLit->setVisible(_more->isChecked());
+  _taxAuthLit->setVisible(_more->isChecked());
+  _taxAuth->setVisible(_more->isChecked());
+  _shipDateLit->setVisible(_more->isChecked());
+  _shipDate->setVisible(_more->isChecked());
+  _packDateLit->setVisible(_more->isChecked());
+  _packDate->setVisible(_more->isChecked());
   
  if (ISORDER(_mode))
   {
-    _fromQuote->setVisible(_show->isChecked());
-    _fromQuoteLit->setVisible(_show->isChecked());
-    _shippingCharges->setVisible(_show->isChecked());
-    _shippingChargesLit->setVisible(_show->isChecked());
-    _shippingForm->setVisible(_show->isChecked());
-    _shippingFormLit->setVisible(_show->isChecked());
+    _fromQuote->setVisible(_more->isChecked());
+    _fromQuoteLit->setVisible(_more->isChecked());
+    _shippingCharges->setVisible(_more->isChecked());
+    _shippingChargesLit->setVisible(_more->isChecked());
+    _shippingForm->setVisible(_more->isChecked());
+    _shippingFormLit->setVisible(_more->isChecked());
   }
   else
   {
-    _expireLit->setVisible(_show->isChecked());
-    _expire->setVisible(_show->isChecked());
+    _expireLit->setVisible(_more->isChecked());
+    _expire->setVisible(_more->isChecked());
   }
 }

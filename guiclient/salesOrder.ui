@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>00</width>
-    <height>600</height>
+    <width>901</width>
+    <height>615</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -471,9 +471,9 @@
               </spacer>
              </item>
              <item>
-              <widget class="QPushButton" name="_show" >
+              <widget class="QPushButton" name="_more" >
                <property name="text" >
-                <string>&lt;&lt; Less</string>
+                <string>&amp;More</string>
                </property>
                <property name="checkable" >
                 <bool>true</bool>
@@ -2117,7 +2117,7 @@
   <tabstop>_saveAndAdd</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
-  <tabstop>_show</tabstop>
+  <tabstop>_more</tabstop>
   <tabstop>_newCC</tabstop>
   <tabstop>_salesOrderInformation</tabstop>
   <tabstop>_editCC</tabstop>
