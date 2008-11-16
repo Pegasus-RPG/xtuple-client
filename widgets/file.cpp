@@ -92,7 +92,7 @@ file::file(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     _fileList->setMaximumWidth(25);
 #else
     _fileList->setMinimumWidth(60);
-    _fileLlist->setMinimumHeight(32);
+    _fileList->setMinimumHeight(32);
 #endif
     
     sHandleButtons();
