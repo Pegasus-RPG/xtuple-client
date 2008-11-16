@@ -140,6 +140,7 @@ arWorkBench::arWorkBench(QWidget* parent, const char* name, Qt::WFlags fl)
   _cashrcpt->addColumn(tr("Check/Doc. #"),     _orderColumn, Qt::AlignLeft,  true, "cashrcpt_docnumber");
   _cashrcpt->addColumn(tr("Bank Account"),     _orderColumn, Qt::AlignLeft,  true, "bankaccnt_name");
   _cashrcpt->addColumn(tr("Dist. Date"),        _dateColumn, Qt::AlignCenter,true, "cashrcpt_distdate");
+  _cashrcpt->addColumn(tr("Funds Type"),    _bigMoneyColumn, Qt::AlignCenter,true, "cashrcpt_fundstype");
   _cashrcpt->addColumn(tr("Amount"),        _bigMoneyColumn, Qt::AlignRight, true, "cashrcpt_amount");
   _cashrcpt->addColumn(tr("Currency"),      _currencyColumn, Qt::AlignLeft,  true, "currabbr");
   
@@ -309,6 +310,16 @@ void arWorkBench::sFillCashrcptList()
   MetaSQLQuery mql = mqlLoad("unpostedCashReceipts", "detail");
   ParameterList params;
   setParams(params);
+  params.append("check", tr("Check"));
+  params.append("certifiedCheck", tr("Certified Check"));
+  params.append("masterCard", tr("Master Card"));
+  params.append("visa", tr("Visa"));
+  params.append("americanExpress", tr("American Express"));
+  params.append("discoverCard", tr("Discover Card"));
+  params.append("otherCreditCard", tr("Other Credit Card"));
+  params.append("cash", tr("Cash"));
+  params.append("wireTransfer", tr("Wire Transfer"));
+  params.append("other", tr("Other"));
   q = mql.toQuery(params);
   _cashrcpt->populate(q);
 }
@@ -558,6 +569,8 @@ void arWorkBench::sPostCashrcpt()
 {
   int journalNumber = -1;
 
+  XSqlQuery tx;
+  tx.exec("BEGIN;");
   q.exec("SELECT fetchJournalNumber('C/R') AS journalnumber;");
   if (q.first())
     journalNumber = q.value("journalnumber").toInt();
@@ -567,26 +580,33 @@ void arWorkBench::sPostCashrcpt()
     return;
   }
 
-  q.prepare("SELECT postCashReceipt(:cashrcpt_id, :journalNumber) AS result;");
-  q.bindValue(":cashrcpt_id", _cashrcpt->id());
-  q.bindValue(":journalNumber", journalNumber);
-  q.exec();
-  if (q.first())
+  QList<QTreeWidgetItem*> selected = _cashrcpt->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
   {
-    int result = q.value("result").toInt();
-    if (result < 0)
+    q.prepare("SELECT postCashReceipt(:cashrcpt_id, :journalNumber) AS result;");
+    q.bindValue(":cashrcpt_id", ((XTreeWidgetItem*)(selected[i]))->id());
+    q.bindValue(":journalNumber", journalNumber);
+    q.exec();
+    if (q.first())
     {
-      systemError(this, storedProcErrorLookup("postCashReceipt", result),
-                  __FILE__, __LINE__);
+      int result = q.value("result").toInt();
+      if (result < 0)
+      {
+        systemError(this, storedProcErrorLookup("postCashReceipt", result),
+                    __FILE__, __LINE__);
+        tx.exec("ROLLBACK;");
+        return;
+      }
+    }
+    else if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      tx.exec("ROLLBACK;");
       return;
     }
-    sFillList();
   }
-  else if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
+  tx.exec("COMMIT;");
+  sFillList();
 }
 
 void arWorkBench::sgetCCAmount()

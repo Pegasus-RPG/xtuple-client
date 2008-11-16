@@ -548,17 +548,7 @@ void reconcileBankaccount::populate()
     return;
   }
   _checks->populate(q, TRUE);
-  /*
-  XTreeWidgetItem* lastCheckItem = 0;
-  while (q.next())
-  {
-    lastCheckItem = new XTreeWidgetItem( _checks, lastCheckItem,
-      q.value("id").toInt(), q.value("altid").toInt(),
-      q.value("f_cleared"), q.value("f_date"), q.value("docnumber"),
-      q.value("notes"),
-      q.value("f_amount").isNull() ? tr("?????") : q.value("f_amount") );
-  }
-  */
+
   if(currid != -1)
     _checks->setCurrentItem(_checks->topLevelItem(currid));
   if(_checks->currentItem())

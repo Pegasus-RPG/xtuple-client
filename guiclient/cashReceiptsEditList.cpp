@@ -60,6 +60,8 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
+#include <metasql.h>
+#include "mqlutil.h"
 
 #include <openreports.h>
 #include <parameter.h>
@@ -81,10 +83,14 @@ cashReceiptsEditList::cashReceiptsEditList(QWidget* parent, const char* name, Qt
   connect(_view,   SIGNAL(clicked()), this, SLOT(sView()));
   connect(_post,   SIGNAL(clicked()), this, SLOT(sPost()));
 
-  _cashrcpt->addColumn(tr("Customer"),   -1,              Qt::AlignLeft,  true, "cust_name");
-  _cashrcpt->addColumn(tr("Dist. Date"), _dateColumn,     Qt::AlignCenter,true, "cashrcpt_distdate");
-  _cashrcpt->addColumn(tr("Amount"),     _bigMoneyColumn, Qt::AlignRight, true, "cashrcpt_amount");
-  _cashrcpt->addColumn(tr("Currency"),   _currencyColumn, Qt::AlignLeft,  true, "cashrcpt_curr_id");
+  _cashrcpt->addColumn(tr("Cust. #"),       _bigMoneyColumn, Qt::AlignLeft,  true, "cust_number");                                                                
+  _cashrcpt->addColumn(tr("Name"),                       -1, Qt::AlignLeft,  true, "cust_name"); 
+  _cashrcpt->addColumn(tr("Check/Doc. #"),     _orderColumn, Qt::AlignLeft,  true, "cashrcpt_docnumber");
+  _cashrcpt->addColumn(tr("Bank Account"),     _orderColumn, Qt::AlignLeft,  true, "bankaccnt_name");
+  _cashrcpt->addColumn(tr("Dist. Date"),        _dateColumn, Qt::AlignCenter,true, "cashrcpt_distdate");
+  _cashrcpt->addColumn(tr("Funds Type"),    _bigMoneyColumn, Qt::AlignCenter,true, "cashrcpt_fundstype");
+  _cashrcpt->addColumn(tr("Amount"),        _bigMoneyColumn, Qt::AlignRight, true, "cashrcpt_amount");
+  _cashrcpt->addColumn(tr("Currency"),      _currencyColumn, Qt::AlignLeft,  true, "currabbr");
 
   if (omfgThis->singleCurrency())
       _cashrcpt->hideColumn("cashrcpt_curr_id");
@@ -198,6 +204,8 @@ void cashReceiptsEditList::sPost()
 {
   int journalNumber = -1;
 
+  XSqlQuery tx;
+  tx.exec("BEGIN;");
   q.exec("SELECT fetchJournalNumber('C/R') AS journalnumber;");
   if (q.first())
     journalNumber = q.value("journalnumber").toInt();
@@ -207,24 +215,32 @@ void cashReceiptsEditList::sPost()
     return;
   }
 
-  q.prepare("SELECT postCashReceipt(:cashrcpt_id, :journalNumber) AS result;");
-  q.bindValue(":cashrcpt_id", _cashrcpt->id());
-  q.bindValue(":journalNumber", journalNumber);
-  q.exec();
-  if (q.first())
+  QList<QTreeWidgetItem*> selected = _cashrcpt->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
   {
-    int result = q.value("result").toInt();
-    if (result < 0)
+    q.prepare("SELECT postCashReceipt(:cashrcpt_id, :journalNumber) AS result;");
+    q.bindValue(":cashrcpt_id", ((XTreeWidgetItem*)(selected[i]))->id());
+    q.bindValue(":journalNumber", journalNumber);
+    q.exec();
+    if (q.first())
     {
-      systemError(this, storedProcErrorLookup("postCashReceipt", result));
+      int result = q.value("result").toInt();
+      if (result < 0)
+      {
+        systemError(this, storedProcErrorLookup("postCashReceipt", result),
+                    __FILE__, __LINE__);
+        tx.exec("ROLLBACK;");
+        return;
+      }
+    }
+    else if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      tx.exec("ROLLBACK;");
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
+  tx.exec("COMMIT;");
   sFillList();
 }
 
@@ -239,10 +255,18 @@ void cashReceiptsEditList::sPrint()
 
 void cashReceiptsEditList::sFillList()
 {
-  _cashrcpt->populate( "SELECT cashrcpt_id, *,"
-                       "        'curr' AS cashrcpt_amount_xtnumericrole,"
-		       "	currConcat(cashrcpt_curr_id) AS cashrcpt_curr_id_qtdisplayrole "
-                       "FROM cashrcpt, custinfo "
-                       "WHERE (cashrcpt_cust_id=cust_id) "
-                       "ORDER BY cust_name;" );
+  MetaSQLQuery mql = mqlLoad("unpostedCashReceipts", "detail");
+  ParameterList params;
+  params.append("check", tr("Check"));
+  params.append("certifiedCheck", tr("Certified Check"));
+  params.append("masterCard", tr("Master Card"));
+  params.append("visa", tr("Visa"));
+  params.append("americanExpress", tr("American Express"));
+  params.append("discoverCard", tr("Discover Card"));
+  params.append("otherCreditCard", tr("Other Credit Card"));
+  params.append("cash", tr("Cash"));
+  params.append("wireTransfer", tr("Wire Transfer"));
+  params.append("other", tr("Other"));
+  q = mql.toQuery(params);
+  _cashrcpt->populate(q);
 }
