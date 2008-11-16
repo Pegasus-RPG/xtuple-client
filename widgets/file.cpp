@@ -87,6 +87,13 @@ file::file(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     _mode = cNew;
     _source = Documents::Uninitialized;
     _sourceid = -1;
+
+#ifndef Q_WS_MAC
+    _fileList->setMaximumWidth(25);
+#else
+    _fileList->setMinimumWidth(60);
+    _fileLlist->setMinimumHeight(32);
+#endif
     
     sHandleButtons();
 }
