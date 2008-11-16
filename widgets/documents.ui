@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>404</width>
-    <height>249</height>
+    <width>446</width>
+    <height>209</height>
    </rect>
   </property>
   <property name="minimumSize" >
@@ -38,14 +38,54 @@
     <number>0</number>
    </property>
    <item row="0" column="0" >
-    <widget class="QTabWidget" name="_tab" >
+    <layout class="QHBoxLayout" >
+     <property name="spacing" >
+      <number>12</number>
+     </property>
+     <item>
+      <widget class="QRadioButton" name="_imagesButton" >
+       <property name="text" >
+        <string>Images</string>
+       </property>
+       <property name="checked" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="_filesButton" >
+       <property name="text" >
+        <string>Files</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item row="1" column="0" >
+    <widget class="QStackedWidget" name="_documentsStack" >
+     <property name="minimumSize" >
+      <size>
+       <width>16</width>
+       <height>175</height>
+      </size>
+     </property>
      <property name="currentIndex" >
       <number>0</number>
      </property>
-     <widget class="QWidget" name="_imagesTab" >
-      <attribute name="title" >
-       <string>Images</string>
-      </attribute>
+     <widget class="QWidget" name="page" >
       <layout class="QGridLayout" >
        <item row="0" column="0" >
         <widget class="XTreeWidget" name="_images" >
@@ -78,29 +118,12 @@
           <number>0</number>
          </property>
          <item>
-          <widget class="QPushButton" name="_newImage" >
-           <property name="text" >
-            <string>&amp;New</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="_editImage" >
+          <widget class="QPushButton" name="_openImage" >
            <property name="enabled" >
             <bool>false</bool>
            </property>
            <property name="text" >
-            <string>&amp;Edit</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="_viewImage" >
-           <property name="enabled" >
-            <bool>false</bool>
-           </property>
-           <property name="text" >
-            <string>&amp;View</string>
+            <string>View &amp;Image</string>
            </property>
           </widget>
          </item>
@@ -115,39 +138,86 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="_deleteImage" >
-           <property name="enabled" >
-            <bool>false</bool>
-           </property>
-           <property name="text" >
-            <string>&amp;Delete</string>
-           </property>
-          </widget>
-         </item>
-         <item>
           <spacer>
            <property name="orientation" >
             <enum>Qt::Vertical</enum>
            </property>
            <property name="sizeType" >
-            <enum>QSizePolicy::Expanding</enum>
+            <enum>QSizePolicy::Preferred</enum>
            </property>
            <property name="sizeHint" >
             <size>
-             <width>20</width>
-             <height>0</height>
+             <width>102</width>
+             <height>16</height>
             </size>
            </property>
           </spacer>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" >
+           <property name="spacing" >
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QPushButton" name="_newImage" >
+             <property name="text" >
+              <string>&amp;New</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="_editImage" >
+             <property name="enabled" >
+              <bool>false</bool>
+             </property>
+             <property name="text" >
+              <string>&amp;Edit</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="_viewImage" >
+             <property name="enabled" >
+              <bool>false</bool>
+             </property>
+             <property name="text" >
+              <string>&amp;View</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="_deleteImage" >
+             <property name="enabled" >
+              <bool>false</bool>
+             </property>
+             <property name="text" >
+              <string>&amp;Delete</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType" >
+              <enum>QSizePolicy::Expanding</enum>
+             </property>
+             <property name="sizeHint" >
+              <size>
+               <width>70</width>
+               <height>41</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
          </item>
         </layout>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="_filesTab" >
-      <attribute name="title" >
-       <string>Files</string>
-      </attribute>
+     <widget class="QWidget" name="page_2" >
       <layout class="QGridLayout" >
        <item row="0" column="0" >
         <widget class="XTreeWidget" name="_files" >
@@ -161,6 +231,35 @@
          <property name="spacing" >
           <number>0</number>
          </property>
+         <item>
+          <widget class="QPushButton" name="_openFile" >
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
+           <property name="text" >
+            <string>&amp;Open File</string>
+           </property>
+           <property name="shortcut" >
+            <string>Alt+O</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeType" >
+            <enum>QSizePolicy::Preferred</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>20</width>
+             <height>16</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
          <item>
           <layout class="QVBoxLayout" >
            <property name="spacing" >
@@ -227,36 +326,20 @@
              </property>
             </widget>
            </item>
+           <item>
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" >
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
           </layout>
-         </item>
-         <item>
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeType" >
-            <enum>QSizePolicy::Expanding</enum>
-           </property>
-           <property name="sizeHint" >
-            <size>
-             <width>20</width>
-             <height>0</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <widget class="QPushButton" name="_openFile" >
-           <property name="enabled" >
-            <bool>false</bool>
-           </property>
-           <property name="text" >
-            <string>&amp;Open</string>
-           </property>
-           <property name="shortcut" >
-            <string>Alt+O</string>
-           </property>
-          </widget>
          </item>
         </layout>
        </item>
@@ -286,8 +369,8 @@
      <y>71</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>352</x>
-     <y>77</y>
+     <x>327</x>
+     <y>137</y>
     </hint>
    </hints>
   </connection>
@@ -302,8 +385,8 @@
      <y>104</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>356</x>
-     <y>102</y>
+     <x>327</x>
+     <y>161</y>
     </hint>
    </hints>
   </connection>
@@ -318,8 +401,8 @@
      <y>125</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>346</x>
-     <y>123</y>
+     <x>321</x>
+     <y>73</y>
     </hint>
    </hints>
   </connection>
@@ -334,8 +417,8 @@
      <y>152</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>354</x>
-     <y>153</y>
+     <x>327</x>
+     <y>185</y>
     </hint>
    </hints>
   </connection>
@@ -350,8 +433,8 @@
      <y>80</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>332</x>
-     <y>78</y>
+     <x>327</x>
+     <y>137</y>
     </hint>
    </hints>
   </connection>
@@ -366,8 +449,8 @@
      <y>80</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>353</x>
-     <y>80</y>
+     <x>340</x>
+     <y>113</y>
     </hint>
    </hints>
   </connection>
@@ -382,8 +465,8 @@
      <y>100</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>363</x>
-     <y>103</y>
+     <x>343</x>
+     <y>137</y>
     </hint>
    </hints>
   </connection>
@@ -398,8 +481,8 @@
      <y>130</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>347</x>
-     <y>127</y>
+     <x>340</x>
+     <y>161</y>
     </hint>
    </hints>
   </connection>
@@ -414,8 +497,8 @@
      <y>237</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>343</x>
-     <y>241</y>
+     <x>334</x>
+     <y>49</y>
     </hint>
    </hints>
   </connection>
@@ -430,8 +513,24 @@
      <y>78</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>326</x>
-     <y>82</y>
+     <x>340</x>
+     <y>113</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_images</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_openImage</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>208</x>
+     <y>60</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>375</x>
+     <y>61</y>
     </hint>
    </hints>
   </connection>

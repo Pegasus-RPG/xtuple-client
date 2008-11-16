@@ -149,6 +149,14 @@ void imageAssignment::set(const ParameterList &pParams)
       _save->setFocus();
       _purpose->setEnabled(FALSE);
     }
+    else if (param.toString() == "view")
+    {
+      _mode = cView;
+      _save->hide();
+      _new->hide();
+      _purpose->setEnabled(FALSE);
+      _image->setEnabled(FALSE);
+    }
   }
 }
 

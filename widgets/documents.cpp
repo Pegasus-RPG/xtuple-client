@@ -128,11 +128,15 @@ Documents::Documents(QWidget *pParent) :
   connect(_viewFile, SIGNAL(clicked()), this, SLOT(sViewFile()));
   connect(_openFile, SIGNAL(clicked()), this, SLOT(sOpenFile()));
   
+  connect(_openImage, SIGNAL(clicked()), this, SLOT(sOpenImage()));
   connect(_newImage, SIGNAL(clicked()), this, SLOT(sNewImage()));
   connect(_editImage, SIGNAL(clicked()), this, SLOT(sEditImage()));
   connect(_viewImage, SIGNAL(clicked()), this, SLOT(sViewImage()));
   connect(_printImage, SIGNAL(clicked()), this, SLOT(sPrintImage()));
   connect(_deleteImage, SIGNAL(clicked()), this, SLOT(sDeleteImage()));
+  
+  connect(_imagesButton, SIGNAL(toggled(bool)), this, SLOT(sImagesToggled(bool)));
+  connect(_filesButton, SIGNAL(toggled(bool)), this, SLOT(sFilesToggled(bool)));
 }
 
 void Documents::setType(enum DocumentSources pSource)
@@ -225,6 +229,17 @@ void Documents::sOpenFile()
   }
 }
 
+void Documents::sOpenImage()
+{
+  ParameterList params;
+  params.append("mode", "view");
+  params.append("image_id", _images->altId());
+
+  imageview newdlg(this, "", TRUE);
+  newdlg.set(params);
+  newdlg.exec();
+}
+
 void Documents::sNewImage()
 {
   ParameterList params;
@@ -256,11 +271,13 @@ void Documents::sViewImage()
 {
   ParameterList params;
   params.append("mode", "view");
-  params.append("image_id", _images->altId());
+  params.append("imageass_id", _images->id());
 
-  imageview newdlg(this, "", TRUE);
+  imageAssignment newdlg(this, "", TRUE);
   newdlg.set(params);
-  newdlg.exec();
+
+  if (newdlg.exec() != QDialog::Rejected)
+    refresh();
 }
 
 void Documents::sDeleteImage()
@@ -339,6 +356,28 @@ void Documents::refresh()
   query.exec();
   _files->populate(query);
   
+}
+
+void Documents::sImagesToggled(bool p)
+{
+  if (p)
+  {
+    disconnect(_filesButton, SIGNAL(toggled(bool)), this, SLOT(sFilesToggled(bool)));
+    _filesButton->setChecked(!p);
+    _documentsStack->setCurrentIndex(0);
+    connect(_filesButton, SIGNAL(toggled(bool)), this, SLOT(sFilesToggled(bool)));
+  }
+}
+
+void Documents::sFilesToggled(bool p)
+{
+  if (p)
+  {
+    disconnect(_imagesButton, SIGNAL(toggled(bool)), this, SLOT(sImagesToggled(bool)));
+    _imagesButton->setChecked(!p);
+    _documentsStack->setCurrentIndex(1);
+    connect(_imagesButton, SIGNAL(toggled(bool)), this, SLOT(sImagesToggled(bool)));
+  }
 }
 
 

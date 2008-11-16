@@ -115,13 +115,17 @@ class OPENMFGWIDGETS_EXPORT Documents : public QWidget, public Ui::documents
     void setType(enum DocumentSources);
     void setId(int);
     void setReadOnly(bool);
+    
+    void sFilesToggled(bool p);
+    void sImagesToggled(bool p);
 
+    void sOpenFile();
     void sNewFile();
     void sEditFile();
     void sViewFile();
     void sDeleteFile();
-    void sOpenFile();
     
+    void sOpenImage();
     void sPrintImage();
     void sNewImage();
     void sEditImage();
