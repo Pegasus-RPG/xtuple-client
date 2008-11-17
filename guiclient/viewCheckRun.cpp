@@ -65,6 +65,7 @@
 #include "miscCheck.h"
 #include "mqlutil.h"
 #include "postCheck.h"
+#include "prepareCheckRun.h"
 #include "printCheck.h"
 #include "printChecks.h"
 #include "storedProcErrorLookup.h"
@@ -75,18 +76,20 @@ viewCheckRun::viewCheckRun(QWidget* parent, const char* name, Qt::WFlags fl)
   setupUi(this);
 
   connect(_check, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(sHandleItemSelection()));
-  connect(_bankaccnt, SIGNAL(newID(int)), this, SLOT(sFillList()));
-  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-  connect(_postCheck, SIGNAL(clicked()), this, SLOT(sPost()));
-  connect(_printCheck, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_printCheckRun, SIGNAL(clicked()), this, SLOT(sPrintCheckRun()));
-  connect(_printEditList, SIGNAL(clicked()), this, SLOT(sPrintEditList()));
-  connect(_replace, SIGNAL(clicked()), this, SLOT(sReplace()));
-  connect(_replaceAll, SIGNAL(clicked()), this, SLOT(sReplaceAll()));
-  connect(_vendorgroup, SIGNAL(updated()), this, SLOT(sFillList()));
-  connect(_vendorgroup, SIGNAL(updated()), this, SLOT(sHandleVendorGroup()));
-  connect(_void, SIGNAL(clicked()), this, SLOT(sVoid()));
+  connect(_bankaccnt,     SIGNAL(newID(int)), this, SLOT(sFillList()));
+  connect(_delete,         SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_edit,           SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_newMiscCheck,   SIGNAL(clicked()), this, SLOT(sNewMiscCheck()));
+  connect(_postCheck,      SIGNAL(clicked()), this, SLOT(sPost()));
+  connect(_prepareCheckRun,SIGNAL(clicked()), this, SLOT(sPrepareCheckRun()));
+  connect(_printCheck,     SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_printCheckRun,  SIGNAL(clicked()), this, SLOT(sPrintCheckRun()));
+  connect(_printEditList,  SIGNAL(clicked()), this, SLOT(sPrintEditList()));
+  connect(_replace,        SIGNAL(clicked()), this, SLOT(sReplace()));
+  connect(_replaceAll,     SIGNAL(clicked()), this, SLOT(sReplaceAll()));
+  connect(_vendorgroup,    SIGNAL(updated()), this, SLOT(sFillList()));
+  connect(_vendorgroup,    SIGNAL(updated()), this, SLOT(sHandleVendorGroup()));
+  connect(_void,           SIGNAL(clicked()), this, SLOT(sVoid()));
 
   _check->addColumn(tr("Void"),               _ynColumn, Qt::AlignCenter,true, "checkhead_void");
   _check->addColumn(tr("Misc."),              _ynColumn, Qt::AlignCenter,true, "checkhead_misc" );
@@ -163,6 +166,19 @@ void viewCheckRun::sDelete()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+}
+
+void viewCheckRun::sNewMiscCheck()
+{
+  ParameterList params;
+  params.append("new");
+  params.append("bankaccnt_id", _bankaccnt->id());
+  if (_vendorgroup->isSelectedVend())
+    params.append("vend_id", _vendorgroup->vendId());
+
+  miscCheck *newdlg = new miscCheck(this, "_miscCheck", Qt::Dialog);
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void viewCheckRun::sEdit()
@@ -336,4 +352,14 @@ void viewCheckRun::sHandleVendorGroup()
 {
   _printCheckRun->setEnabled(_vendorgroup->isAll());
   _replaceAll->setEnabled(_vendorgroup->isAll());
+}
+
+void viewCheckRun::sPrepareCheckRun()
+{
+  ParameterList params;
+  params.append("bankaccnt_id", _bankaccnt->id()); 
+
+  prepareCheckRun newdlg(this, "", true);
+  newdlg.set(params);
+  newdlg.exec();
 }

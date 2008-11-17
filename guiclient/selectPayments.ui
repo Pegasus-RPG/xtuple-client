@@ -175,8 +175,6 @@
          </layout>
         </item>
        </layout>
-       <zorder>_dueAll</zorder>
-       <zorder>_vendorgroup</zorder>
       </widget>
      </item>
      <item row="0" column="1" >
@@ -398,9 +396,6 @@
     </widget>
    </item>
   </layout>
-  <zorder>frame</zorder>
-  <zorder>gridLayoutWidget</zorder>
-  <zorder>buttonGroup2</zorder>
  </widget>
  <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
@@ -459,8 +454,8 @@
      <y>398</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>697</x>
-     <y>398</y>
+     <x>710</x>
+     <y>298</y>
     </hint>
    </hints>
   </connection>
@@ -487,12 +482,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>38</x>
-     <y>227</y>
+     <x>59</x>
+     <y>119</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>219</x>
-     <y>226</y>
+     <x>414</x>
+     <y>120</y>
     </hint>
    </hints>
   </connection>
@@ -503,12 +498,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>39</x>
-     <y>255</y>
+     <x>61</x>
+     <y>147</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>158</x>
-     <y>254</y>
+     <x>351</x>
+     <y>179</y>
     </hint>
    </hints>
   </connection>
@@ -519,12 +514,44 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>562</x>
-     <y>366</y>
+     <x>534</x>
+     <y>469</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>659</x>
-     <y>368</y>
+     <x>710</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_apopen</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_select</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>503</x>
+     <y>228</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>576</x>
+     <y>228</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_apopen</sender>
+   <signal>itemSelected(int)</signal>
+   <receiver>_select</receiver>
+   <slot>animateClick()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>408</x>
+     <y>234</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>667</x>
+     <y>224</y>
     </hint>
    </hints>
   </connection>

@@ -97,15 +97,13 @@ XWidgetPrivate::~XWidgetPrivate()
 }
 
 XWidget::XWidget(QWidget * parent, Qt::WindowFlags flags)
-  // : QWidget(parent, flags | (parent && parent->isModal() ? Qt::Dialog : Qt::Window))
   : QWidget(parent,
-            ((flags & (Qt::Dialog | Qt::Window)) && parent && parent->isModal()) ? Qt::Dialog
+            ((flags & (Qt::Dialog | Qt::Window)) && parent && parent->isModal()) ? (flags | Qt::Dialog)
                   : flags )
 {
   if(parent && parent->isModal() && (flags & (Qt::Dialog | Qt::Window)))
   {
     setWindowModality(Qt::ApplicationModal);
-    //setWindowFlags(windowFlags() | Qt::Dialog);
   }
 
   _private = new XWidgetPrivate();
@@ -113,9 +111,8 @@ XWidget::XWidget(QWidget * parent, Qt::WindowFlags flags)
 }
 
 XWidget::XWidget(QWidget * parent, const char * name, Qt::WindowFlags flags)
-  // : QWidget(parent, flags | (parent && parent->isModal() ? Qt::Dialog : Qt::Window))
   : QWidget(parent,
-            ((flags & (Qt::Dialog | Qt::Window)) && parent && parent->isModal()) ? Qt::Dialog
+            ((flags & (Qt::Dialog | Qt::Window)) && parent && parent->isModal()) ? (flags | Qt::Dialog)
                   : flags )
 {
   if(parent && parent->isModal() && (flags & (Qt::Dialog | Qt::Window)))

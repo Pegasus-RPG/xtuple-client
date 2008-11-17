@@ -83,6 +83,23 @@ void prepareCheckRun::languageChange()
   retranslateUi(this);
 }
 
+enum SetResponse prepareCheckRun::set(const ParameterList &pParams)
+{
+  QVariant param;
+  bool     valid;
+
+  param = pParams.value("bankaccnt_id", &valid);
+  if (valid)
+  {
+    _bankaccnt->setId(param.toInt());
+    if (_bankaccnt->isValid())
+      _bankaccnt->setEnabled(FALSE);
+    _checkDate->setFocus();
+  }
+    
+  return NoError;
+}
+
 void prepareCheckRun::sPrint()
 {
 
@@ -110,4 +127,3 @@ void prepareCheckRun::sPrint()
 
   accept();
 }
-

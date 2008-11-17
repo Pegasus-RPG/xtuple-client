@@ -60,6 +60,7 @@
 
 #include "guiclient.h"
 #include "xdialog.h"
+#include <parameter.h>
 #include "ui_prepareCheckRun.h"
 
 class prepareCheckRun : public XDialog, public Ui::prepareCheckRun
@@ -71,6 +72,7 @@ public:
     ~prepareCheckRun();
 
 public slots:
+    enum SetResponse set(const ParameterList &pParams);
     virtual void sPrint();
     
 protected slots:

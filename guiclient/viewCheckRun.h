@@ -72,18 +72,20 @@ public:
     ~viewCheckRun();
 
 public slots:
-    virtual void sVoid();
     virtual void sDelete();
     virtual void sEdit();
+    virtual void sFillList();
+    virtual void sFillList(int);
+    virtual void sHandleItemSelection();
+    virtual void sNewMiscCheck();
+    virtual void sPost();
+    virtual void sPrepareCheckRun();
+    virtual void sPrint();
+    virtual void sPrintCheckRun();
+    virtual void sPrintEditList();
     virtual void sReplace();
     virtual void sReplaceAll();
-    virtual void sPrint();
-    virtual void sPost();
-    virtual void sHandleItemSelection();
-    virtual void sFillList(int);
-    virtual void sFillList();
-    virtual void sPrintEditList();
-    virtual void sPrintCheckRun();
+    virtual void sVoid();
 
 protected slots:
     virtual void languageChange();

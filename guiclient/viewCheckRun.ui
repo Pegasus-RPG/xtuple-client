@@ -5,19 +5,16 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>821</width>
-    <height>387</height>
+    <width>836</width>
+    <height>518</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>View Check Run</string>
   </property>
-  <layout class="QVBoxLayout" >
+  <layout class="QVBoxLayout" name="verticalLayout_4" >
    <item>
-    <layout class="QHBoxLayout" >
-     <property name="spacing" >
-      <number>7</number>
-     </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_2" >
      <item>
       <layout class="QVBoxLayout" >
        <property name="spacing" >
@@ -101,208 +98,219 @@
       </layout>
      </item>
      <item>
-      <layout class="QHBoxLayout" >
-       <property name="spacing" >
-        <number>0</number>
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
        </property>
+       <property name="sizeType" >
+        <enum>QSizePolicy::Expanding</enum>
+       </property>
+       <property name="sizeHint" stdset="0" >
+        <size>
+         <width>13</width>
+         <height>107</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_3" >
        <item>
-        <spacer>
+        <widget class="QPushButton" name="_close" >
+         <property name="text" >
+          <string>&amp;Close</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_4" >
          <property name="orientation" >
-          <enum>Qt::Horizontal</enum>
+          <enum>Qt::Vertical</enum>
          </property>
          <property name="sizeType" >
-          <enum>QSizePolicy::Expanding</enum>
+          <enum>QSizePolicy::Fixed</enum>
          </property>
          <property name="sizeHint" stdset="0" >
           <size>
-           <width>226</width>
-           <height>16</height>
+           <width>20</width>
+           <height>10</height>
           </size>
          </property>
         </spacer>
        </item>
        <item>
-        <layout class="QVBoxLayout" >
-         <property name="spacing" >
-          <number>5</number>
+        <widget class="QPushButton" name="_printEditList" >
+         <property name="text" >
+          <string>&amp;Print Edit List</string>
          </property>
-         <item>
-          <widget class="QPushButton" name="_close" >
-           <property name="text" >
-            <string>&amp;Close</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <layout class="QVBoxLayout" >
-           <property name="spacing" >
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="QPushButton" name="_printEditList" >
-             <property name="text" >
-              <string>&amp;Print Edit List</string>
-             </property>
-             <property name="shortcut" >
-              <string>Alt+P</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="_printCheckRun" >
-             <property name="text" >
-              <string>Print Check Run</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-        </layout>
+         <property name="shortcut" >
+          <string>Alt+P</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="_printCheckRun" >
+         <property name="text" >
+          <string>Print Check Run</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="_prepareCheckRun" >
+         <property name="text" >
+          <string>Prepare Check Run</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
     </layout>
    </item>
    <item>
-    <layout class="QVBoxLayout" >
-     <property name="spacing" >
-      <number>0</number>
+    <widget class="QLabel" name="_checksLit" >
+     <property name="text" >
+      <string>Checks:</string>
      </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout" >
      <item>
-      <widget class="QLabel" name="_checksLit" >
-       <property name="text" >
-        <string>Checks:</string>
+      <widget class="XTreeWidget" name="_check" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
       </widget>
      </item>
      <item>
-      <layout class="QHBoxLayout" >
-       <property name="spacing" >
-        <number>7</number>
-       </property>
+      <layout class="QVBoxLayout" name="verticalLayout_2" >
        <item>
-        <widget class="XTreeWidget" name="_check" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
+        <widget class="QPushButton" name="_printCheck" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
+         <property name="text" >
+          <string>Print Chec&amp;k</string>
          </property>
         </widget>
        </item>
        <item>
-        <layout class="QVBoxLayout" >
-         <property name="spacing" >
-          <number>0</number>
+        <widget class="QPushButton" name="_postCheck" >
+         <property name="enabled" >
+          <bool>false</bool>
          </property>
-         <item>
-          <layout class="QVBoxLayout" >
-           <property name="spacing" >
-            <number>5</number>
-           </property>
-           <item>
-            <layout class="QVBoxLayout" >
-             <property name="spacing" >
-              <number>0</number>
-             </property>
-             <item>
-              <widget class="QPushButton" name="_printCheck" >
-               <property name="enabled" >
-                <bool>false</bool>
-               </property>
-               <property name="text" >
-                <string>Print Chec&amp;k</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="_postCheck" >
-               <property name="enabled" >
-                <bool>false</bool>
-               </property>
-               <property name="text" >
-                <string>Po&amp;st Check</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QVBoxLayout" >
-             <property name="spacing" >
-              <number>0</number>
-             </property>
-             <item>
-              <widget class="QPushButton" name="_void" >
-               <property name="enabled" >
-                <bool>false</bool>
-               </property>
-               <property name="text" >
-                <string>&amp;Void Check</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="_edit" >
-               <property name="enabled" >
-                <bool>false</bool>
-               </property>
-               <property name="text" >
-                <string>Edit Check</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="_delete" >
-               <property name="enabled" >
-                <bool>false</bool>
-               </property>
-               <property name="text" >
-                <string>Delete Check</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="_replace" >
-               <property name="enabled" >
-                <bool>false</bool>
-               </property>
-               <property name="text" >
-                <string>Replace Check</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <widget class="QPushButton" name="_replaceAll" >
-             <property name="enabled" >
-              <bool>true</bool>
-             </property>
-             <property name="text" >
-              <string>Replace All</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeType" >
-            <enum>QSizePolicy::Expanding</enum>
-           </property>
-           <property name="sizeHint" stdset="0" >
-            <size>
-             <width>20</width>
-             <height>75</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
+         <property name="text" >
+          <string>Po&amp;st Check</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_2" >
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Fixed</enum>
+         </property>
+         <property name="sizeHint" stdset="0" >
+          <size>
+           <width>20</width>
+           <height>10</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="_newMiscCheck" >
+         <property name="text" >
+          <string>New Misc. Check</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="_void" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
+         <property name="text" >
+          <string>&amp;Void Check</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="_edit" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
+         <property name="text" >
+          <string>Edit Check</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="_delete" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
+         <property name="text" >
+          <string>Delete Check</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="_replace" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
+         <property name="text" >
+          <string>Replace Check</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_3" >
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Fixed</enum>
+         </property>
+         <property name="sizeHint" stdset="0" >
+          <size>
+           <width>20</width>
+           <height>10</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="_replaceAll" >
+         <property name="enabled" >
+          <bool>true</bool>
+         </property>
+         <property name="text" >
+          <string>Replace All</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" stdset="0" >
+          <size>
+           <width>20</width>
+           <height>10</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </item>
@@ -334,6 +342,7 @@
   <tabstop>_check</tabstop>
   <tabstop>_printCheck</tabstop>
   <tabstop>_postCheck</tabstop>
+  <tabstop>_newMiscCheck</tabstop>
   <tabstop>_void</tabstop>
   <tabstop>_edit</tabstop>
   <tabstop>_delete</tabstop>
@@ -352,8 +361,8 @@
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>673</x>
+     <y>34</y>
     </hint>
     <hint type="destinationlabel" >
      <x>20</x>
@@ -368,12 +377,12 @@
    <slot>animateClick()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>33</x>
+     <y>182</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>689</x>
+     <y>332</y>
     </hint>
    </hints>
   </connection>
