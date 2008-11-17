@@ -97,6 +97,7 @@ unpostedInvoices::unpostedInvoices(QWidget* parent, const char* name, Qt::WFlags
   _invchead->addColumn(tr("Recurring"),  _ynColumn,    Qt::AlignCenter, false, "invchead_recurring" );
   _invchead->addColumn(tr("Ship Date"),  _dateColumn,  Qt::AlignCenter, false, "invchead_shipdate" );
   _invchead->addColumn(tr("P/O #"),      _orderColumn, Qt::AlignCenter, false, "invchead_ponumber" );
+  _invchead->addColumn(tr("Total Amount"), _bigMoneyColumn, Qt::AlignRight, true, "extprice" );
   _invchead->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
   if (! _privileges->check("ChangeARInvcDistDate"))
