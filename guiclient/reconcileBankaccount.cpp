@@ -815,6 +815,7 @@ void reconcileBankaccount::sDateChanged()
   q.prepare("SELECT TRUE AS reconciled "
             "FROM bankrec "
             "WHERE ((bankrec_bankaccnt_id = :bankaccnt_id) "
+            "AND (bankrec_posted) "
             "AND (bankrec_opendate <= :end_date) "
             "AND (bankrec_enddate >= :start_date)) "
             "GROUP BY bankrec_bankaccnt_id");
