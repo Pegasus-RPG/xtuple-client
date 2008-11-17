@@ -100,11 +100,20 @@ dspTimePhasedOpenARItems::dspTimePhasedOpenARItems(QWidget* parent, const char* 
 
   if (!_metrics->boolean("EnableBatchManager"))
     _submit->hide();
+
+  if(_preferences->value("ARAgingDefaultDate") == "doc")
+    _useDocDate->setChecked(true);
+  else
+    _useDistDate->setChecked(true);
 }
 
 dspTimePhasedOpenARItems::~dspTimePhasedOpenARItems()
 {
   // no need to delete child widgets, Qt does it all for us
+  QString str("dist");
+  if(_useDocDate->isChecked())
+    str = "doc";
+  _preferences->set("ARAgingDefaultDate", str);
 }
 
 void dspTimePhasedOpenARItems::languageChange()
@@ -146,6 +155,10 @@ bool dspTimePhasedOpenARItems::setParams(ParameterList &params)
     params.append("report_name", "ARAging");
     params.append("relDate", _asOf->date());
   }
+
+  // have both in case we add a third option
+  params.append("useDocDate",  QVariant(_useDocDate->isChecked()));
+  params.append("useDistDate", QVariant(_useDistDate->isChecked()));
 
   return true;
 }
@@ -352,6 +365,7 @@ void dspTimePhasedOpenARItems::sToggleCustom()
     _periods->setHidden(FALSE);
     _asOf->setDate(omfgThis->dbDate(), true);
     _asOf->setEnabled(FALSE);
+    _useGroup->setHidden(TRUE);
 
     _aropen->setColumnCount(0);
     _aropen->addColumn(tr("Cust. #"), _orderColumn, Qt::AlignLeft, true, "cust_number");
@@ -363,6 +377,8 @@ void dspTimePhasedOpenARItems::sToggleCustom()
     _calendar->setHidden(TRUE);
     _periods->setHidden(TRUE);
     _asOf->setEnabled(TRUE);
+    _useGroup->setHidden(FALSE);
+
     _aropen->setColumnCount(0);
     _aropen->addColumn(tr("Cust. #"),       _orderColumn, Qt::AlignLeft,  true, "araging_cust_number");
     _aropen->addColumn(tr("Customer"),               180, Qt::AlignLeft,  true, "araging_cust_name");
