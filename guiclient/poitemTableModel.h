@@ -115,6 +115,9 @@
 #define POITEM_SOITEM_ID_COL		35
 #define POITEM_PRJ_ID_COL		36
 #define POITEM_STDCOST_COL		37
+#define POITEM_MANUF_NAME_COL           38
+#define POITEM_MANUF_ITEM_NUMBER_COL    39
+#define POITEM_MANUF_ITEM_DESCRIP_COL   40
 
 class PoitemTableModel : public QSqlRelationalTableModel
 {

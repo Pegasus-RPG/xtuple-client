@@ -84,6 +84,7 @@ TODO:	refactor:
 #include "projectcluster.h"
 #include "wcombobox.h"
 #include "xtreewidget.h"	// for column widths
+#include "itemSourceSearch.h"
 
 #define QE_NONINVENTORY
 
@@ -465,7 +466,7 @@ void PoitemTableDelegate::setModelData(QWidget *editor, QAbstractItemModel *pMod
 	    }
 
 	    XSqlQuery itemsrcq;
-	    itemsrcq.prepare( "SELECT itemsrc_id, itemsrc_vend_item_number,"
+	    itemsrcq.prepare( "SELECT pohead_vend_id, itemsrc_id, itemsrc_vend_item_number,"
 		       "       itemsrc_vend_item_descrip, itemsrc_vend_uom,"
 		       "       itemsrc_minordqty,"
 		       "       itemsrc_multordqty,"
@@ -478,6 +479,34 @@ void PoitemTableDelegate::setModelData(QWidget *editor, QAbstractItemModel *pMod
 	    itemsrcq.bindValue(":item_id", item->id());
 	    itemsrcq.bindValue(":pohead_id", model->headId());
 	    itemsrcq.exec();
+            if (itemsrcq.size() > 1)
+            {
+              itemsrcq.first();
+              ParameterList params;
+              params.append("vend_id",  itemsrcq.value("pohead_vend_id").toInt());
+              params.append("search", item->itemNumber());
+              itemSourceSearch newdlg(0, "", true);
+              newdlg.set(params);
+              if(newdlg.exec() == XDialog::Accepted)
+              {
+                int itemsrcid = newdlg.itemsrcId();
+                if(itemsrcid != -1)
+                {
+                  itemsrcq.prepare( "SELECT itemsrc_id, itemsrc_vend_item_number,"
+                             "       itemsrc_vend_item_descrip, itemsrc_vend_uom,"
+                             "       itemsrc_minordqty,"
+                             "       itemsrc_multordqty,"
+                             "       itemsrc_invvendoruomratio,"
+                             "       (CURRENT_DATE + itemsrc_leadtime) AS earliestdate "
+                             "FROM pohead, itemsrc "
+                             "WHERE (itemsrc_id=:itemsrc_id);" );
+                  itemsrcq.bindValue(":itemsrc_id", itemsrcid);
+                  itemsrcq.exec();
+                }
+              }
+              else
+                itemsrcq.clear();
+            }
 	    if (itemsrcq.first())
 	    {
 	      model->setData(model->index(index.row(), POITEM_ITEMSRC_ID_COL), itemsrcq.value("itemsrc_id").toInt());
@@ -488,6 +517,9 @@ void PoitemTableDelegate::setModelData(QWidget *editor, QAbstractItemModel *pMod
 	      model->setData(model->index(index.row(), ITEMSRC_MULTORDQTY_COL), itemsrcq.value("itemsrc_multordqty").toDouble());
 	      model->setData(model->index(index.row(), ITEMSRC_INVVENDORUOMRATIO_COL), itemsrcq.value("itemsrc_invvendoruomratio").toDouble());
 	      model->setData(model->index(index.row(), POITEM_INVVENDUOMRATIO_COL), itemsrcq.value("itemsrc_invvendoruomratio").toDouble());
+              model->setData(model->index(index.row(), POITEM_MANUF_NAME_COL), itemsrcq.value("itemsrc_manuf_name").toString());
+              model->setData(model->index(index.row(), POITEM_MANUF_ITEM_NUMBER_COL), itemsrcq.value("itemsrc_manuf_item_number").toString());
+              model->setData(model->index(index.row(), POITEM_MANUF_ITEM_DESCRIP_COL), itemsrcq.value("itemsrc_manuf_item_descrip").toString());
 	      model->setData(model->index(index.row(), EARLIESTDATE_COL), itemsrcq.value("earliestdate").toDate());
 
 	      if (_metrics->boolean("UseEarliestAvailDateOnPOItem"))
