@@ -71,8 +71,6 @@ public:
     warehouseZone(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~warehouseZone();
 
-    virtual void init();
-
 public slots:
     virtual SetResponse set( ParameterList & pParams );
     virtual void populate();
