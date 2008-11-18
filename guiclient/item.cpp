@@ -174,7 +174,9 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
   _itemsrc->addColumn(tr("Active"),      _dateColumn,   Qt::AlignCenter, true, "itemsrc_active");
   _itemsrc->addColumn(tr("Vendor"),      _itemColumn, Qt::AlignLeft, true, "vend_number" );
   _itemsrc->addColumn(tr("Name"), 	 -1,          Qt::AlignLeft, true, "vend_name" );
-  _itemsrc->addColumn(tr("Vendor Item"), _itemColumn*2, Qt::AlignLeft, true, "itemsrc_vend_item_number" );
+  _itemsrc->addColumn(tr("Vendor Item"), _itemColumn, Qt::AlignLeft, true, "itemsrc_vend_item_number" );
+  _itemsrc->addColumn(tr("Manufacturer"), _itemColumn, Qt::AlignLeft, true, "itemsrc_manuf_name" );
+  _itemsrc->addColumn(tr("Manuf. Item#"), _itemColumn, Qt::AlignLeft, true, "itemsrc_manuf_item_number" );
 
   _itemalias->addColumn(tr("Alias Number"), _itemColumn, Qt::AlignLeft, true, "itemalias_number"  );
   _itemalias->addColumn(tr("Comments"),     -1,          Qt::AlignLeft, true, "itemalias_comments" );
@@ -1232,7 +1234,6 @@ void item::sHandleItemtype()
     capUOM   = TRUE;
     shipUOM  = TRUE;
     planType = TRUE;
-    purchased = TRUE;
     freight  = TRUE;
   }
 
@@ -1244,7 +1245,6 @@ void item::sHandleItemtype()
     capUOM   = TRUE;
     shipUOM  = TRUE;
     planType = TRUE;
-    purchased = TRUE;
     freight  = TRUE;
   }
 
@@ -1996,11 +1996,11 @@ void item::sNewClassCode()
 void item::sHandleButtons()
 {
   if (_notesButton->isChecked())
-    _textStack->setCurrentIndex(0);
+    _remarksStack->setCurrentIndex(0);
   else if (_extDescripButton->isChecked())
-    _textStack->setCurrentIndex(1);
+    _remarksStack->setCurrentIndex(1);
   else if (_commentsButton->isChecked())
-    _textStack->setCurrentIndex(2);
+    _remarksStack->setCurrentIndex(2);
     
   if (_aliasesButton->isChecked())
     _relationshipsStack->setCurrentIndex(0);
@@ -2014,7 +2014,8 @@ void item::sFillSourceList()
 {
   QString sql( "SELECT itemsrc_id, vend_number,"
                "       vend_name, itemsrc_vend_item_number, "
-	       "       itemsrc_active "
+	       "       itemsrc_active, itemsrc_manuf_name, "
+               "       itemsrc_manuf_item_number "
                "FROM item, vend, itemsrc "
                "WHERE ( (itemsrc_item_id=item_id)"
                " AND (itemsrc_vend_id=vend_id)"

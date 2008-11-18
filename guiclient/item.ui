@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>806</width>
-    <height>726</height>
+    <height>692</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -632,84 +632,80 @@
          </property>
          <layout class="QGridLayout" >
           <item row="0" column="0" >
+           <widget class="QLabel" name="_prodcatLit" >
+            <property name="text" >
+             <string>Product C&amp;ategory:</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="buddy" >
+             <cstring>_prodcat</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1" >
+           <widget class="XComboBox" name="_prodcat" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2" >
            <layout class="QHBoxLayout" >
             <item>
-             <widget class="QLabel" name="_prodcatLit" >
+             <widget class="QLabel" name="_warrantyCodeLit" >
               <property name="text" >
-               <string>Product C&amp;ategory:</string>
+               <string>Warranty:</string>
               </property>
               <property name="alignment" >
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
-              <property name="buddy" >
-               <cstring>_prodcat</cstring>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="_warranty" >
+              <property name="maximum" >
+               <number>9999</number>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="XComboBox" name="_prodcat" >
-              <property name="sizePolicy" >
-               <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="_exclusive" >
+             <widget class="QLabel" name="_warrantyCodeLit_2" >
               <property name="text" >
-               <string>Exclusive</string>
+               <string>Days</string>
               </property>
              </widget>
-            </item>
-            <item>
-             <spacer>
-              <property name="orientation" >
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeType" >
-               <enum>QSizePolicy::MinimumExpanding</enum>
-              </property>
-              <property name="sizeHint" >
-               <size>
-                <width>0</width>
-                <height>22</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" >
-              <item>
-               <widget class="QLabel" name="_warrantyCodeLit" >
-                <property name="text" >
-                 <string>Warranty:</string>
-                </property>
-                <property name="alignment" >
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QSpinBox" name="_warranty" >
-                <property name="maximum" >
-                 <number>9999</number>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="_warrantyCodeLit_2" >
-                <property name="text" >
-                 <string>Days</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
             </item>
            </layout>
           </item>
-          <item row="1" column="0" >
+          <item row="0" column="3" >
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType" >
+             <enum>QSizePolicy::MinimumExpanding</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>16</width>
+              <height>29</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="0" column="4" >
+           <widget class="QCheckBox" name="_exclusive" >
+            <property name="text" >
+             <string>Exclusive</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" colspan="5" >
            <layout class="QHBoxLayout" >
             <item>
              <widget class="QLabel" name="_listPriceLit" >
@@ -830,6 +826,12 @@
             </item>
             <item row="0" column="1" >
              <widget class="XLineEdit" name="_prodWeight" >
+              <property name="minimumSize" >
+               <size>
+                <width>75</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="alignment" >
                <set>Qt::AlignRight</set>
               </property>
@@ -876,9 +878,9 @@
        <property name="currentIndex" >
         <number>0</number>
        </property>
-       <widget class="QWidget" name="_generalTab" >
+       <widget class="QWidget" name="_remarksTab" >
         <attribute name="title" >
-         <string>General</string>
+         <string>Remarks</string>
         </attribute>
         <layout class="QGridLayout" >
          <item row="0" column="0" >
@@ -931,7 +933,7 @@
             </layout>
            </item>
            <item>
-            <widget class="QStackedWidget" name="_textStack" >
+            <widget class="QStackedWidget" name="_remarksStack" >
              <property name="currentIndex" >
               <number>0</number>
              </property>
