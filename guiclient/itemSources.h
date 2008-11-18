@@ -79,6 +79,7 @@ protected slots:
     virtual void sNew();
     virtual void sEdit();
     virtual void sView();
+    virtual void sCopy();
     virtual void sDelete();
     virtual void sPopulateMenu( QMenu * menuThis );
     virtual void sFillList();

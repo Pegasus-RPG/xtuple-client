@@ -140,6 +140,7 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_editSrc, SIGNAL(clicked()), this, SLOT(sEditSource()));
   connect(_newSrc, SIGNAL(clicked()), this, SLOT(sNewSource()));
   connect(_viewSrc, SIGNAL(clicked()), this, SLOT(sViewSource()));
+  connect(_copySrc, SIGNAL(clicked()), this, SLOT(sCopySource()));
   connect(_deleteSrc, SIGNAL(clicked()), this, SLOT(sDeleteSource()));
   
   _disallowPlanningType = false;
@@ -213,6 +214,7 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
   {
     connect(_itemsrc, SIGNAL(valid(bool)), _editSrc, SLOT(setEnabled(bool)));
     connect(_itemsrc, SIGNAL(valid(bool)), _viewSrc, SLOT(setEnabled(bool)));
+    connect(_itemsrc, SIGNAL(valid(bool)), _copySrc, SLOT(setEnabled(bool)));
     connect(_itemsrc, SIGNAL(valid(bool)), _deleteSrc, SLOT(setEnabled(bool)));
     connect(_itemsrc, SIGNAL(itemSelected(int)), _editSrc, SLOT(animateClick()));
     _newSrc->setEnabled(_privileges->check("MaintainItemSources"));
@@ -2068,6 +2070,19 @@ void item::sViewSource()
   itemSource newdlg(this, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
+}
+
+void item::sCopySource()
+{
+  ParameterList params;
+  params.append("mode", "copy");
+  params.append("itemsrc_id", _itemsrc->id());
+
+  itemSource newdlg(this, "", TRUE);
+  newdlg.set(params);
+
+  if (newdlg.exec() != XDialog::Rejected)
+    sFillSourceList();
 }
 
 void item::sDeleteSource()

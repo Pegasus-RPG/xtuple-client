@@ -82,6 +82,7 @@ itemSources::itemSources(QWidget* parent, const char* name, Qt::WFlags fl)
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
     connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
     connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+    connect(_copy, SIGNAL(clicked()), this, SLOT(sCopy()));
     connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
     connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
@@ -123,6 +124,7 @@ void itemSources::init()
   if (_privileges->check("MaintainItemSources"))
   {
     connect(_itemsrc, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
+    connect(_itemsrc, SIGNAL(valid(bool)), _copy, SLOT(setEnabled(bool)));
     connect(_itemsrc, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
     connect(_itemsrc, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
   }
@@ -179,6 +181,19 @@ void itemSources::sView()
   itemSource newdlg(this, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
+}
+
+void itemSources::sCopy()
+{
+  ParameterList params;
+  params.append("mode", "copy");
+  params.append("itemsrc_id", _itemsrc->id());
+
+  itemSource newdlg(this, "", TRUE);
+  newdlg.set(params);
+
+  if (newdlg.exec() != XDialog::Rejected)
+    sFillList();
 }
 
 void itemSources::sDelete()

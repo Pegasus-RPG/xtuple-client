@@ -212,6 +212,27 @@ enum SetResponse itemSource::set(const ParameterList &pParams)
 
       _close->setFocus();
     }
+    if (param.toString() == "copy")
+    {
+      _mode = cNew;
+
+      q.exec("SELECT NEXTVAL('itemsrc_itemsrc_id_seq') AS _itemsrc_id;");
+      if (q.first())
+        _itemsrcid = q.value("_itemsrc_id").toInt();
+      else if (q.lastError().type() != QSqlError::NoError)
+      {
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        return UndefinedError;
+      }
+      
+      connect(_itemsrcp, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
+      connect(_itemsrcp, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
+      connect(_itemsrcp, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
+      
+      _item->setReadOnly(TRUE);
+      _vendor->setEnabled(FALSE);
+      _vendorList->hide();
+    }
   }
 
   return NoError;
@@ -243,17 +264,19 @@ bool itemSource::sSave()
                "  FROM itemsrc "
                " WHERE ((itemsrc_item_id=:item_id) "
                "   AND (itemsrc_vend_id=:vend_id) "
+               "   AND (itemsrc_vend_item_number=:itemsrc_vend_item_number) "
                "   AND (UPPER(itemsrc_manuf_name)=UPPER(:itemsrc_manuf_name)) "
                "   AND (UPPER(itemsrc_manuf_item_number)=UPPER(:itemsrc_manuf_item_number)) ) ");
     q.bindValue(":item_id", _item->id());
     q.bindValue(":vend_id", _vendor->id());
+    q.bindValue(":itemsrc_vend_item_number", _vendorItemNumber->text());
     q.bindValue(":itemsrc_manuf_name", _manufName->currentText());
     q.bindValue(":itemsrc_manuf_item_number", _manufItemNumber->text());
     q.exec();
     if(q.first())
     {
       QMessageBox::critical( this, tr("Cannot Save Item Source"),
-                            tr("An Item Source already exists for the Item Number, Vendor, Manfacturer Name and Manufacturer Item Number you have specified.\n"));
+                            tr("An Item Source already exists for the Item Number, Vendor, Vendor Item, Manfacturer Name and Manufacturer Item Number you have specified.\n"));
       return false;
     }
     else if (q.lastError().type() != QSqlError::NoError)

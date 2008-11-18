@@ -126,6 +126,7 @@ public slots:
     virtual void sNewSource();
     virtual void sEditSource();
     virtual void sViewSource();
+    virtual void sCopySource();
     virtual void sDeleteSource();
 
 protected:

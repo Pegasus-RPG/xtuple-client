@@ -1265,6 +1265,16 @@
             </widget>
            </item>
            <item>
+            <widget class="QPushButton" name="_copySrc" >
+             <property name="enabled" >
+              <bool>false</bool>
+             </property>
+             <property name="text" >
+              <string>&amp;Copy</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QPushButton" name="_deleteSrc" >
              <property name="enabled" >
               <bool>false</bool>
