@@ -215,6 +215,8 @@ enum SetResponse itemSource::set(const ParameterList &pParams)
     if (param.toString() == "copy")
     {
       _mode = cNew;
+      _captive = true;
+      int itemsrcidold = _itemsrcid;
 
       q.exec("SELECT NEXTVAL('itemsrc_itemsrc_id_seq') AS _itemsrc_id;");
       if (q.first())
@@ -232,6 +234,22 @@ enum SetResponse itemSource::set(const ParameterList &pParams)
       _item->setReadOnly(TRUE);
       _vendor->setEnabled(FALSE);
       _vendorList->hide();
+      _vendorItemNumber->setText(_vendorItemNumber->text().prepend("Copy Of "));
+      
+      if (sSave())
+      {
+        q.prepare("INSERT INTO itemsrcp ( "
+                  "itemsrcp_itemsrc_id, itemsrcp_qtybreak, "
+                  "itemsrcp_price, itemsrcp_updated, itemsrcp_curr_id) "
+                  "SELECT :itemsrcid, itemsrcp_qtybreak, "
+                  "itemsrcp_price, current_date, itemsrcp_curr_id "
+                  "FROM itemsrcp "
+                  "WHERE (itemsrcp_id=:itemsrcidold); ");
+        q.bindValue(":itemsrcid", _itemsrcid);
+        q.bindValue(":itemsrcidold", itemsrcidold);
+        q.exec();
+        sFillPriceList();
+      }
     }
   }
 
