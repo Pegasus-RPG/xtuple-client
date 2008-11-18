@@ -14,26 +14,26 @@
   <sql>SELECT item_number,
        item_descrip1,
        item_descrip2,
-       &lt;? if exists(&quot;warehous_id&quot;) ?>
+       &lt;? if exists("warehous_id") ?>
          ( SELECT warehous_code
              FROM warehous
-            WHERE (warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>) )
+            WHERE (warehous_id=&lt;? value("warehous_id") ?>) )
        &lt;? else ?>
          text('All Sites')
        &lt;? endif ?>
        AS warehouse,
-       &lt;? if exists(&quot;byDays&quot;) ?>
-         (text('Look ahead ') || text(&lt;? value(&quot;byDays&quot;) ?>) || text(' days'))
-       &lt;? elseif exists(&quot;byDate&quot;) ?>
-         (text('Cutoff date ') || formatDate(&lt;? value(&quot;byDate&quot;) ?>))
-       &lt;? elseif exists(&quot;byDates&quot;) ?>
-         (text('Dates from ') || formatDate(&lt;? value(&quot;startDate&quot;) ?>) || text(' to ') || formatDate(&lt;? value(&quot;endDate&quot;) ?>))
+       &lt;? if exists("byDays") ?>
+         (text('Look ahead ') || text(&lt;? value("byDays") ?>) || text(' days'))
+       &lt;? elseif exists("byDate") ?>
+         (text('Cutoff date ') || formatDate(&lt;? value("byDate") ?>))
+       &lt;? elseif exists("byDates") ?>
+         (text('Dates from ') || formatDate(&lt;? value("startDate") ?>) || text(' to ') || formatDate(&lt;? value("endDate") ?>))
        &lt;? else ?>
          text('Item Site Lead Time')
        &lt;? endif ?>
        AS ltcriteria
   FROM item
-WHERE (item_id=&lt;? value(&quot;item_id&quot;) ?>);
+WHERE (item_id=&lt;? value("item_id") ?>);
 </sql>
  </querysource>
  <querysource>
@@ -50,15 +50,15 @@ WHERE (item_id=&lt;? value(&quot;item_id&quot;) ?>);
   FROM (SELECT warehous_code, itemsite_leadtime,
                CASE WHEN(itemsite_useparams) THEN itemsite_reorderlevel ELSE 0.0 END AS reorderlevel,
                itemsite_qtyonhand AS qtyonhand,
-&lt;? if exists(&quot;byDays&quot;) ?>
-               qtyAllocated(itemsite_id, &lt;? value(&quot;byDays&quot;) ?>) AS allocated,
-               qtyOrdered(itemsite_id, &lt;? value(&quot;byDays&quot;) ?>) AS ordered
-&lt;? elseif exists(&quot;byDate&quot;) ?>
-               qtyAllocated(itemsite_id, (&lt;? value(&quot;byDate&quot;) ?> - CURRENT_DATE)) AS allocated,
-               qtyOrdered(itemsite_id, (&lt;? value(&quot;byDate&quot;) ?> - CURRENT_DATE)) AS ordered
-&lt;? elseif exists(&quot;byDates&quot;) ?>
-               qtyAllocated(itemsite_id, &lt;? value(&quot;startDate&quot;) ?>, &lt;? value(&quot;endDate&quot;) ?>) AS allocated,
-               qtyOrdered(itemsite_id, &lt;? value(&quot;startDate&quot;) ?>, &lt;? value(&quot;endDate&quot;) ?>) AS ordered
+&lt;? if exists("byDays") ?>
+               qtyAllocated(itemsite_id, &lt;? value("byDays") ?>) AS allocated,
+               qtyOrdered(itemsite_id, &lt;? value("byDays") ?>) AS ordered
+&lt;? elseif exists("byDate") ?>
+               qtyAllocated(itemsite_id, (&lt;? value("byDate") ?> - CURRENT_DATE)) AS allocated,
+               qtyOrdered(itemsite_id, (&lt;? value("byDate") ?> - CURRENT_DATE)) AS ordered
+&lt;? elseif exists("byDates") ?>
+               qtyAllocated(itemsite_id, &lt;? value("startDate") ?>, &lt;? value("endDate") ?>) AS allocated,
+               qtyOrdered(itemsite_id, &lt;? value("startDate") ?>, &lt;? value("endDate") ?>) AS ordered
 &lt;? else ?>
                qtyAllocated(itemsite_id, itemsite_leadtime) AS allocated,
                qtyOrdered(itemsite_id, itemsite_leadtime) AS ordered
@@ -67,72 +67,47 @@ WHERE (item_id=&lt;? value(&quot;item_id&quot;) ?>);
          WHERE ((itemsite_active)
            AND (itemsite_warehous_id=warehous_id)
            AND (itemsite_item_id=item_id)
-           AND (item_id=&lt;? value(&quot;item_id&quot;) ?>)
-&lt;? if exists(&quot;warehous_id&quot;) ?>
-           AND (warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>)
+           AND (item_id=&lt;? value("item_id") ?>)
+&lt;? if exists("warehous_id") ?>
+           AND (warehous_id=&lt;? value("warehous_id") ?>)
 &lt;? endif ?>
            )
        ) AS data
-&lt;? if exists(&quot;showReorder&quot;) ?>
- WHERE ( ((qoh - allocated + ordered) &lt;= reorderlevel)
-  &lt;? if exists(&quot;ignoreReorderAtZero&quot;) ?>
-   AND (NOT ( ((qoh - allocated + ordered) = 0) AND (reorderlevel = 0)) )
+&lt;? if exists("showReorder") ?>
+ WHERE ( ((qtyonhand - allocated + ordered) &lt;= reorderlevel)
+  &lt;? if exists("ignoreReorderAtZero") ?>
+   AND (NOT ( ((qtyonhand - allocated + ordered) = 0) AND (reorderlevel = 0)) )
   &lt;? endif ?>
     )
-&lt;? elseif exists(&quot;showShortages ?>
- WHERE ((qoh - allocated + ordered) &lt; 0)
+&lt;? elseif exists("showShortages ?>
+ WHERE ((qtyonhand - allocated + ordered) &lt; 0)
 &lt;? endif ?>
 ORDER BY warehous_code DESC;</sql>
  </querysource>
  <rpthead>
   <height>221</height>
+  <line>
+   <xstart>5</xstart>
+   <ystart>215</ystart>
+   <xend>745</xend>
+   <yend>215</yend>
+   <weight>2</weight>
+  </line>
   <label>
    <rect>
-    <x>540</x>
-    <y>200</y>
-    <width>100</width>
-    <height>15</height>
+    <x>310</x>
+    <y>160</y>
+    <width>130</width>
+    <height>20</height>
    </rect>
    <font>
     <face>Arial</face>
-    <size>8</size>
+    <size>10</size>
     <weight>normal</weight>
    </font>
-   <hcenter/>
+   <right/>
    <vcenter/>
-   <string>Reorder Level</string>
-  </label>
-  <label>
-   <rect>
-    <x>645</x>
-    <y>200</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Available</string>
-  </label>
-  <label>
-   <rect>
-    <x>434</x>
-    <y>200</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>On Order</string>
+   <string>Availability as of: </string>
   </label>
   <label>
    <rect>
@@ -149,45 +124,6 @@ ORDER BY warehous_code DESC;</sql>
    <hcenter/>
    <vcenter/>
    <string>Allocated</string>
-  </label>
-  <line>
-   <xstart>5</xstart>
-   <ystart>215</ystart>
-   <xend>745</xend>
-   <yend>215</yend>
-   <weight>2</weight>
-  </line>
-  <label>
-   <rect>
-    <x>275</x>
-    <y>10</y>
-    <width>450</width>
-    <height>38</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>18</size>
-    <weight>bold</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Inventory Availability by Item</string>
-  </label>
-  <label>
-   <rect>
-    <x>120</x>
-    <y>200</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>QOH</string>
   </label>
   <label>
    <rect>
@@ -208,8 +144,8 @@ ORDER BY warehous_code DESC;</sql>
   <label>
    <rect>
     <x>30</x>
-    <y>160</y>
-    <width>105</width>
+    <y>100</y>
+    <width>104</width>
     <height>20</height>
    </rect>
    <font>
@@ -219,8 +155,46 @@ ORDER BY warehous_code DESC;</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>Site:</string>
+   <string>Item Number:</string>
   </label>
+  <field>
+   <rect>
+    <x>140</x>
+    <y>100</y>
+    <width>197</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>item_number</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>140</x>
+    <y>160</y>
+    <width>150</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>warehouse</column>
+   </data>
+  </field>
   <field>
    <rect>
     <x>140</x>
@@ -242,44 +216,9 @@ ORDER BY warehous_code DESC;</sql>
   </field>
   <label>
    <rect>
-    <x>310</x>
-    <y>160</y>
-    <width>130</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Availability as of: </string>
-  </label>
-  <field>
-   <rect>
-    <x>445</x>
-    <y>160</y>
-    <width>280</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>ltcriteria</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>10</x>
+    <x>645</x>
     <y>200</y>
-    <width>35</width>
+    <width>100</width>
     <height>15</height>
    </rect>
    <font>
@@ -289,48 +228,13 @@ ORDER BY warehous_code DESC;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Site</string>
-  </label>
-  <field>
-   <rect>
-    <x>140</x>
-    <y>160</y>
-    <width>150</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>warehouse</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>30</x>
-    <y>100</y>
-    <width>105</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Item Number:</string>
+   <string>Available</string>
   </label>
   <label>
    <rect>
     <x>30</x>
     <y>120</y>
-    <width>105</width>
+    <width>104</width>
     <height>20</height>
    </rect>
    <font>
@@ -363,6 +267,89 @@ ORDER BY warehous_code DESC;</sql>
   </field>
   <label>
    <rect>
+    <x>540</x>
+    <y>200</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Reorder Level</string>
+  </label>
+  <label>
+   <rect>
+    <x>30</x>
+    <y>160</y>
+    <width>104</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Site:</string>
+  </label>
+  <field>
+   <rect>
+    <x>444</x>
+    <y>160</y>
+    <width>280</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>ltcriteria</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>433</x>
+    <y>200</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>On Order</string>
+  </label>
+  <label>
+   <rect>
+    <x>10</x>
+    <y>200</y>
+    <width>35</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Site</string>
+  </label>
+  <label>
+   <rect>
     <x>60</x>
     <y>200</y>
     <width>50</width>
@@ -377,29 +364,42 @@ ORDER BY warehous_code DESC;</sql>
    <vcenter/>
    <string>LT</string>
   </label>
-  <field>
+  <label>
    <rect>
-    <x>140</x>
-    <y>100</y>
-    <width>198</width>
-    <height>20</height>
+    <x>120</x>
+    <y>200</y>
+    <width>100</width>
+    <height>15</height>
    </rect>
    <font>
     <face>Arial</face>
-    <size>10</size>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>QOH</string>
+  </label>
+  <label>
+   <rect>
+    <x>275</x>
+    <y>10</y>
+    <width>450</width>
+    <height>37</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>18</size>
     <weight>bold</weight>
    </font>
-   <left/>
+   <right/>
    <vcenter/>
-   <data>
-    <query>head</query>
-    <column>item_number</column>
-   </data>
-  </field>
+   <string>Inventory Availability by Item</string>
+  </label>
  </rpthead>
  <pghead>
   <firstpage/>
-  <height>8</height>
+  <height>7</height>
  </pghead>
  <pghead>
   <height>23</height>
@@ -428,38 +428,6 @@ ORDER BY warehous_code DESC;</sql>
   </label>
   <label>
    <rect>
-    <x>225</x>
-    <y>0</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Allocated</string>
-  </label>
-  <label>
-   <rect>
-    <x>60</x>
-    <y>0</y>
-    <width>50</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>LT</string>
-  </label>
-  <label>
-   <rect>
     <x>120</x>
     <y>0</y>
     <width>100</width>
@@ -476,7 +444,7 @@ ORDER BY warehous_code DESC;</sql>
   </label>
   <label>
    <rect>
-    <x>540</x>
+    <x>433</x>
     <y>0</y>
     <width>100</width>
     <height>15</height>
@@ -488,23 +456,7 @@ ORDER BY warehous_code DESC;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Reorder Level</string>
-  </label>
-  <label>
-   <rect>
-    <x>10</x>
-    <y>0</y>
-    <width>35</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Site</string>
+   <string>On Order</string>
   </label>
   <label>
    <rect>
@@ -524,7 +476,39 @@ ORDER BY warehous_code DESC;</sql>
   </label>
   <label>
    <rect>
-    <x>434</x>
+    <x>60</x>
+    <y>0</y>
+    <width>50</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>LT</string>
+  </label>
+  <label>
+   <rect>
+    <x>10</x>
+    <y>0</y>
+    <width>35</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Site</string>
+  </label>
+  <label>
+   <rect>
+    <x>225</x>
     <y>0</y>
     <width>100</width>
     <height>15</height>
@@ -536,7 +520,23 @@ ORDER BY warehous_code DESC;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>On Order</string>
+   <string>Allocated</string>
+  </label>
+  <label>
+   <rect>
+    <x>540</x>
+    <y>0</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Reorder Level</string>
   </label>
  </pghead>
  <section>
@@ -548,9 +548,9 @@ ORDER BY warehous_code DESC;</sql>
    <height>16</height>
    <field>
     <rect>
-     <x>10</x>
+     <x>645</x>
      <y>0</y>
-     <width>35</width>
+     <width>100</width>
      <height>15</height>
     </rect>
     <font>
@@ -558,11 +558,11 @@ ORDER BY warehous_code DESC;</sql>
      <size>8</size>
      <weight>bold</weight>
     </font>
-    <hcenter/>
+    <right/>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>warehous_code</column>
+     <column>f_available</column>
     </data>
    </field>
    <field>
@@ -586,6 +586,63 @@ ORDER BY warehous_code DESC;</sql>
    </field>
    <field>
     <rect>
+     <x>330</x>
+     <y>0</y>
+     <width>100</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_unallocated</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>433</x>
+     <y>0</y>
+     <width>100</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_ordered</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>10</x>
+     <y>0</y>
+     <width>35</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>warehous_code</column>
+    </data>
+   </field>
+   <field>
+    <rect>
      <x>120</x>
      <y>0</y>
      <width>100</width>
@@ -601,25 +658,6 @@ ORDER BY warehous_code DESC;</sql>
     <data>
      <query>detail</query>
      <column>f_qtyonhand</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>645</x>
-     <y>0</y>
-     <width>100</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>f_available</column>
     </data>
    </field>
    <field>
@@ -643,25 +681,6 @@ ORDER BY warehous_code DESC;</sql>
    </field>
    <field>
     <rect>
-     <x>330</x>
-     <y>0</y>
-     <width>100</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>f_unallocated</column>
-    </data>
-   </field>
-   <field>
-    <rect>
      <x>225</x>
      <y>0</y>
      <width>100</width>
@@ -679,45 +698,10 @@ ORDER BY warehous_code DESC;</sql>
      <column>f_allocated</column>
     </data>
    </field>
-   <field>
-    <rect>
-     <x>434</x>
-     <y>0</y>
-     <width>100</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>f_ordered</column>
-    </data>
-   </field>
   </detail>
  </section>
  <pgfoot>
   <height>18</height>
-  <label>
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>85</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Report Date:</string>
-  </label>
   <field>
    <rect>
     <x>90</x>
@@ -737,22 +721,6 @@ ORDER BY warehous_code DESC;</sql>
     <column>report_date</column>
    </data>
   </field>
-  <label>
-   <rect>
-    <x>615</x>
-    <y>0</y>
-    <width>85</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Page:</string>
-  </label>
   <field>
    <rect>
     <x>705</x>
@@ -772,5 +740,37 @@ ORDER BY warehous_code DESC;</sql>
     <column>page_number</column>
    </data>
   </field>
+  <label>
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>85</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Report Date:</string>
+  </label>
+  <label>
+   <rect>
+    <x>615</x>
+    <y>0</y>
+    <width>85</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Page:</string>
+  </label>
  </pgfoot>
 </report>
