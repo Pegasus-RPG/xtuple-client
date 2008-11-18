@@ -71,10 +71,13 @@ public:
     itemSourceSearch(QWidget* parent = 0, const char* name = 0, bool model = false, Qt::WFlags fl = 0);
     ~itemSourceSearch();
 
-    int itemId();
+    int itemsrcId();
     int expcatId();
     QString vendItemNumber();
     QString vendItemDescrip();
+    QString manufName();
+    QString manufItemNumber();
+    QString manufItemDescrip();
 
 public slots:
     virtual enum SetResponse set(const ParameterList &);
@@ -85,6 +88,7 @@ protected slots:
     virtual void sFillList();
 
 private:
+    int _itemid;
     int _vendid;
 };
 

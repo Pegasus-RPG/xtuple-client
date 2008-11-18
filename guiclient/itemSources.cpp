@@ -117,6 +117,8 @@ void itemSources::init()
   _itemsrc->addColumn(tr("Description"), -1,          Qt::AlignLeft, true, "item_descrip" );
   _itemsrc->addColumn(tr("Vendor"),      _itemColumn, Qt::AlignLeft, true, "vend_name" );
   _itemsrc->addColumn(tr("Vendor Item"), _itemColumn, Qt::AlignLeft, true, "itemsrc_vend_item_number" );
+  _itemsrc->addColumn(tr("Manufacturer"), _itemColumn, Qt::AlignLeft, true, "itemsrc_manuf_name" );
+  _itemsrc->addColumn(tr("Manuf. Item#"), _itemColumn, Qt::AlignLeft, true, "itemsrc_manuf_item_number" );
 
   if (_privileges->check("MaintainItemSources"))
   {
@@ -256,7 +258,8 @@ void itemSources::sPopulateMenu(QMenu *menuThis)
 void itemSources::sFillList()
 {
   QString sql( "SELECT itemsrc_id, item_number, (item_descrip1 || ' ' || item_descrip2) AS item_descrip,"
-               "       vend_name, itemsrc_vend_item_number "
+               "       vend_name, itemsrc_vend_item_number, itemsrc_manuf_name, "
+               "       itemsrc_manuf_item_number "
                "FROM item, vend, itemsrc "
                "WHERE ( (itemsrc_item_id=item_id)"
                " AND (itemsrc_vend_id=vend_id)"
@@ -287,7 +290,9 @@ void itemSources::sSearch( const QString &pTarget )
     if ( (_itemsrc->topLevelItem(i)->text(0).startsWith(pTarget, Qt::CaseInsensitive)) ||
          (_itemsrc->topLevelItem(i)->text(1).startsWith(pTarget, Qt::CaseInsensitive)) ||
          (_itemsrc->topLevelItem(i)->text(2).startsWith(pTarget, Qt::CaseInsensitive)) ||
-         (_itemsrc->topLevelItem(i)->text(3).startsWith(pTarget, Qt::CaseInsensitive)) )
+         (_itemsrc->topLevelItem(i)->text(3).startsWith(pTarget, Qt::CaseInsensitive)) ||
+         (_itemsrc->topLevelItem(i)->text(4).startsWith(pTarget, Qt::CaseInsensitive)) ||
+         (_itemsrc->topLevelItem(i)->text(5).startsWith(pTarget, Qt::CaseInsensitive)) )
       break;
   }
 

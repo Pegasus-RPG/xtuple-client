@@ -84,24 +84,26 @@ protected slots:
     virtual void sSave();
     virtual void sPopulateExtPrice();
     virtual void sFindWarehouseItemsites( int pId );
-    virtual void sPopulateItemSourceInfo( int pItemid );
+    virtual void sPopulateItemInfo( int pItemid );
+    virtual void sPopulateItemSourceInfo( int pItemsrcid );
     virtual void sInventoryItemToggled( bool yes );
     virtual void sVendorItemNumberList();
+    virtual void sHandleButtons();
 
 
 private:
-    int _poheadid;
-    QString	_poStatus;
-    int _poitemid;
-    int _mode;
     int _itemsrcid;
-    double _invVendUOMRatio;
-    double _minimumOrder;
-    double _orderMultiple;
+    int _mode;
+    int _poheadid;
+    int _poitemid;
     int _parentwo;
     int _parentso;
     int _preferredWarehouseid;
+    double _invVendUOMRatio;
+    double _minimumOrder;
+    double _orderMultiple;
     bool _overriddenUnitPrice;
+    QString	_poStatus;
     QStandardItemModel * _itemchar;
 
 };

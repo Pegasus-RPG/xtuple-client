@@ -102,6 +102,7 @@ itemSource::itemSource(QWidget* parent, const char* name, bool modal, Qt::WFlags
   _itemsrcp->addColumn(tr("Unit Price"),                          -1, Qt::AlignRight,true, "itemsrcp_price");
   _itemsrcp->addColumn(tr("Currency"),               _currencyColumn, Qt::AlignLeft, true, "currabbr");
   _itemsrcp->addColumn(tr("Unit Price\n(%1)").arg(base),_moneyColumn, Qt::AlignRight,true, "itemsrcp_price_base");
+  
   if (omfgThis->singleCurrency())
   {
     _itemsrcp->hideColumn(1);
@@ -115,6 +116,10 @@ itemSource::itemSource(QWidget* parent, const char* name, bool modal, Qt::WFlags
 
   _vendorCurrency->setType(XComboBox::Currencies);
   _vendorCurrency->setLabel(_vendorCurrencyLit);
+  
+  q.exec("SELECT DISTINCT 1,itemsrc_manuf_name FROM itemsrc;");
+  _manufName->populate(q);
+  _manufName->setCurrentText("");
 }
 
 itemSource::~itemSource()
@@ -237,14 +242,18 @@ bool itemSource::sSave()
     q.prepare( "SELECT itemsrc_id "
                "  FROM itemsrc "
                " WHERE ((itemsrc_item_id=:item_id) "
-               "   AND (itemsrc_vend_id=:vend_id) ) ");
+               "   AND (itemsrc_vend_id=:vend_id) "
+               "   AND (UPPER(itemsrc_manuf_name)=UPPER(:itemsrc_manuf_name)) "
+               "   AND (UPPER(itemsrc_manuf_item_number)=UPPER(:itemsrc_manuf_item_number)) ) ");
     q.bindValue(":item_id", _item->id());
     q.bindValue(":vend_id", _vendor->id());
+    q.bindValue(":itemsrc_manuf_name", _manufName->currentText());
+    q.bindValue(":itemsrc_manuf_item_number", _manufItemNumber->text());
     q.exec();
     if(q.first())
     {
       QMessageBox::critical( this, tr("Cannot Save Item Source"),
-                            tr("An Item Source already exists for the Item Number and Vendor you have specified.\n"));
+                            tr("An Item Source already exists for the Item Number, Vendor, Manfacturer Name and Manufacturer Item Number you have specified.\n"));
       return false;
     }
     else if (q.lastError().type() != QSqlError::NoError)
@@ -296,14 +305,16 @@ bool itemSource::sSave()
                "  itemsrc_vend_uom, itemsrc_invvendoruomratio,"
                "  itemsrc_minordqty, itemsrc_multordqty,"
                "  itemsrc_leadtime, itemsrc_ranking,"
-               "  itemsrc_comments ) "
+               "  itemsrc_comments, itemsrc_manuf_name, "
+               "  itemsrc_manuf_item_number, itemsrc_manuf_item_descrip ) "
                "VALUES "
                "( :itemsrc_id, :itemsrc_item_id, :itemsrc_active, :itemsrc_vend_id,"
                "  :itemsrc_vend_item_number, :itemsrc_vend_item_descrip,"
                "  :itemsrc_vend_uom, :itemsrc_invvendoruomratio,"
                "  :itemsrc_minordqty, :itemsrc_multordqty,"
                "  :itemsrc_leadtime, :itemsrc_ranking,"
-               "  :itemsrc_comments );" );
+               "  :itemsrc_comments, :itemsrc_manuf_name, "
+               "  :itemsrc_manuf_item_number, :itemsrc_manuf_item_descrip );" );
   if (_mode == cEdit)
     q.prepare( "UPDATE itemsrc "
                "SET itemsrc_active=:itemsrc_active,"
@@ -313,7 +324,9 @@ bool itemSource::sSave()
                "    itemsrc_invvendoruomratio=:itemsrc_invvendoruomratio,"
                "    itemsrc_minordqty=:itemsrc_minordqty, itemsrc_multordqty=:itemsrc_multordqty,"
                "    itemsrc_leadtime=:itemsrc_leadtime, itemsrc_ranking=:itemsrc_ranking,"
-               "    itemsrc_comments=:itemsrc_comments "
+               "    itemsrc_comments=:itemsrc_comments, itemsrc_manuf_name=:itemsrc_manuf_name, "
+               "    itemsrc_manuf_item_number=:itemsrc_manuf_item_number, "
+               "    itemsrc_manuf_item_descrip=:itemsrc_manuf_item_descrip "
                "WHERE (itemsrc_id=:itemsrc_id);" );
 
   q.bindValue(":itemsrc_id", _itemsrcid);
@@ -329,6 +342,9 @@ bool itemSource::sSave()
   q.bindValue(":itemsrc_leadtime", _leadTime->text().toInt());
   q.bindValue(":itemsrc_ranking", _vendorRanking->value());
   q.bindValue(":itemsrc_comments", _notes->toPlainText().trimmed());
+  q.bindValue(":itemsrc_manuf_name", _manufName->currentText());
+  q.bindValue(":itemsrc_manuf_item_number", _manufItemNumber->text());
+  q.bindValue(":itemsrc_manuf_item_descrip", _manufItemDescrip->text());
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
   {
@@ -458,11 +474,7 @@ void itemSource::sFillPriceList()
 void itemSource::populate()
 {
   XSqlQuery itemsrcQ;
-  itemsrcQ.prepare( "SELECT itemsrc_item_id, itemsrc_active, itemsrc_vend_id,"
-             "       itemsrc_vend_item_number, itemsrc_vend_item_descrip,"
-             "       itemsrc_vend_uom, itemsrc_invvendoruomratio,"
-             "       itemsrc_minordqty, itemsrc_multordqty,"
-             "       itemsrc_ranking, itemsrc_leadtime, itemsrc_comments "
+  itemsrcQ.prepare( "SELECT * "
              "FROM itemsrc "
              "WHERE (itemsrc_id=:itemsrc_id);" );
   itemsrcQ.bindValue(":itemsrc_id", _itemsrcid);
@@ -481,6 +493,9 @@ void itemSource::populate()
     _vendorRanking->setValue(itemsrcQ.value("itemsrc_ranking").toInt());
     _leadTime->setValue(itemsrcQ.value("itemsrc_leadtime").toInt());
     _notes->setText(itemsrcQ.value("itemsrc_comments").toString());
+    _manufName->setCurrentText(itemsrcQ.value("itemsrc_manuf_name").toString());
+    _manufItemNumber->setText(itemsrcQ.value("itemsrc_manuf_item_number").toString());
+    _manufItemDescrip->setText(itemsrcQ.value("itemsrc_manuf_item_descrip").toString());
     sFillPriceList();
   }
   else if (itemsrcQ.lastError().type() != QSqlError::NoError)

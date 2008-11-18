@@ -73,6 +73,7 @@ itemSourceSearch::itemSourceSearch(QWidget* parent, const char* name, bool modal
   setupUi(this);
 
   _vendid = -1;
+  _itemid = -1;
 
   // signals and slots connections
   connect(_searchNumber, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
@@ -87,6 +88,10 @@ itemSourceSearch::itemSourceSearch(QWidget* parent, const char* name, bool modal
   _itemsrc->addColumn(tr("Vendor"),         _itemColumn, Qt::AlignLeft, true, "vend_name" );
   _itemsrc->addColumn(tr("Vendor Item"),    _itemColumn, Qt::AlignLeft, true, "itemsrc_vend_item_number" );
   _itemsrc->addColumn(tr("Vendor Descrip"), _itemColumn, Qt::AlignLeft, true, "itemsrc_vend_item_descrip" );
+  _itemsrc->addColumn(tr("Manufacturer"),   _itemColumn, Qt::AlignLeft, true, "itemsrc_manuf_name" );
+  _itemsrc->addColumn(tr("Manuf. Item#"),   _itemColumn, Qt::AlignLeft, true, "itemsrc_manuf_item_number" );
+  _itemsrc->addColumn(tr("Manuf. Descrip."),   _itemColumn, Qt::AlignLeft, false, "itemsrc_manuf_item_descrip" );
+
 }
 
 /*
@@ -114,7 +119,7 @@ enum SetResponse itemSourceSearch::set(const ParameterList & pParams)
   param = pParams.value("vend_id", &valid);
   if(valid)
     _vendid = param.toInt();
-  
+
   param = pParams.value("search", &valid);
   if(valid)
     _search->setText(param.toString());
@@ -130,13 +135,16 @@ void itemSourceSearch::sFillList()
   
   bool first = true;
 
-  QString sql( "SELECT itemsrc_item_id AS id,"
+  QString sql( "SELECT itemsrc_id AS id,"
                "       1 AS altid,"
                "       item_number,"
                "       (item_descrip1 || ' ' || item_descrip2) AS item_descrip,"
                "       vend_name,"
                "       itemsrc_vend_item_number,"
-               "       itemsrc_vend_item_descrip "
+               "       itemsrc_vend_item_descrip, "
+               "       itemsrc_manuf_name, "
+               "       itemsrc_manuf_item_number, "
+               "       itemsrc_manuf_item_descrip "
                "  FROM item, vend, itemsrc "
                " WHERE((itemsrc_item_id=item_id)"
                "   AND (itemsrc_vend_id=vend_id)"
@@ -178,10 +186,26 @@ void itemSourceSearch::sFillList()
     first = false;
   }
   
+  if(_searchManufName->isChecked())
+  {
+    if(!first)
+      sql += " OR ";
+    sql +=     "        (itemsrc_manuf_name ~* :searchString)";
+    first = false;
+  }
+  
+  if(_searchManufNumber->isChecked())
+  {
+    if(!first)
+      sql += " OR ";
+    sql +=     "        (itemsrc_manuf_item_number ~* :searchString)";
+    first = false;
+  }
+  
   sql +=       "       )"
                "  )"
                " UNION "
-               "SELECT DISTINCT COALESCE(item_id, poitem_expcat_id) AS id,"
+               "SELECT DISTINCT COALESCE(poitem_itemsrc_id, poitem_expcat_id) AS id,"
                "       CASE WHEN(item_id IS NULL) THEN 2 ELSE 1 END AS altid,"
                "       COALESCE(item_number, :non) AS item_number,"
                "       CASE WHEN(item_id IS NOT NULL) THEN"
@@ -190,7 +214,10 @@ void itemSourceSearch::sFillList()
                "       END AS item_descrip,"
                "       vend_name,"
                "       poitem_vend_item_number,"
-               "       poitem_vend_item_descrip"
+               "       poitem_vend_item_descrip, "
+               "       poitem_manuf_name, "
+               "       poitem_manuf_item_number, "
+               "       poitem_manuf_item_descrip "
                "  FROM vend, pohead, poitem"
                "       LEFT OUTER JOIN expcat ON (poitem_expcat_id=expcat_id)"
                "       LEFT OUTER JOIN itemsite ON (poitem_itemsite_id=itemsite_id)"
@@ -239,6 +266,22 @@ void itemSourceSearch::sFillList()
     sql +=     "        (poitem_vend_item_descrip ~* :searchString)";
     first = false;
   }
+  
+  if(_searchManufName->isChecked())
+  {
+    if(!first)
+      sql += " OR ";
+    sql +=     "        (poitem_manuf_name ~* :searchString)";
+    first = false;
+  }
+  
+  if(_searchManufNumber->isChecked())
+  {
+    if(!first)
+      sql += " OR ";
+    sql +=     "        (poitem_manuf_item_number ~* :searchString)";
+    first = false;
+  }
 
 
   sql +=       "    ) )"
@@ -246,12 +289,13 @@ void itemSourceSearch::sFillList()
   q.prepare(sql);
   q.bindValue(":searchString", _search->text());
   q.bindValue(":vend_id", _vendid);
+  q.bindValue(":item_id", _itemid);
   q.bindValue(":non", tr("Non-Inventory"));
   q.exec();
   _itemsrc->populate(q, TRUE);
 }
 
-int itemSourceSearch::itemId()
+int itemSourceSearch::itemsrcId()
 {
   XTreeWidgetItem * item = (XTreeWidgetItem*)_itemsrc->currentItem();
   if(item)
@@ -288,3 +332,28 @@ QString itemSourceSearch::vendItemDescrip()
     return item->text(4);
   return QString();
 }
+
+QString itemSourceSearch::manufName()
+{
+  XTreeWidgetItem * item = (XTreeWidgetItem*)_itemsrc->currentItem();
+  if(item)
+    return item->text(5);
+  return QString();
+}
+
+QString itemSourceSearch::manufItemNumber()
+{
+  XTreeWidgetItem * item = (XTreeWidgetItem*)_itemsrc->currentItem();
+  if(item)
+    return item->text(6);
+  return QString();
+}
+
+QString itemSourceSearch::manufItemDescrip()
+{
+  XTreeWidgetItem * item = (XTreeWidgetItem*)_itemsrc->currentItem();
+  if(item)
+    return item->text(7);
+  return QString();
+}
+

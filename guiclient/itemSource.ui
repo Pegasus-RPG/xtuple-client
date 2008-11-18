@@ -1,132 +1,60 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>itemSource</class>
  <widget class="QDialog" name="itemSource" >
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>542</width>
-    <height>418</height>
+    <width>600</width>
+    <height>630</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Item Source</string>
   </property>
-  <layout class="QVBoxLayout" >
-   <property name="margin" >
-    <number>5</number>
-   </property>
-   <property name="spacing" >
-    <number>5</number>
-   </property>
-   <item>
-    <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
+  <layout class="QGridLayout" >
+   <item row="0" column="0" >
+    <layout class="QGridLayout" >
+     <property name="leftMargin" >
+      <number>12</number>
      </property>
-     <property name="spacing" >
-      <number>7</number>
+     <property name="topMargin" >
+      <number>12</number>
      </property>
-     <item>
-      <widget class="ItemCluster" name="_item" />
-     </item>
-     <item>
-      <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
-       <property name="spacing" >
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="QCheckBox" name="_active" >
-         <property name="text" >
-          <string>Active</string>
-         </property>
-         <property name="checked" >
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer>
-         <property name="orientation" >
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeType" >
-          <enum>QSizePolicy::Expanding</enum>
-         </property>
-         <property name="sizeHint" >
-          <size>
-           <width>10</width>
-           <height>0</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </item>
-     <item>
+     <property name="rightMargin" >
+      <number>12</number>
+     </property>
+     <property name="bottomMargin" >
+      <number>12</number>
+     </property>
+     <property name="horizontalSpacing" >
+      <number>12</number>
+     </property>
+     <property name="verticalSpacing" >
+      <number>12</number>
+     </property>
+     <item row="0" column="0" >
       <layout class="QHBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
-        <number>0</number>
+        <number>7</number>
        </property>
        <item>
-        <spacer>
-         <property name="orientation" >
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeType" >
-          <enum>QSizePolicy::Expanding</enum>
-         </property>
-         <property name="sizeHint" >
-          <size>
-           <width>0</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
+        <widget class="ItemCluster" name="_item" />
        </item>
        <item>
         <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
-         <property name="spacing" >
-          <number>0</number>
+         <property name="topMargin" >
+          <number>10</number>
          </property>
          <item>
-          <layout class="QVBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
+          <widget class="QCheckBox" name="_active" >
+           <property name="text" >
+            <string>Active</string>
            </property>
-           <property name="spacing" >
-            <number>5</number>
+           <property name="checked" >
+            <bool>true</bool>
            </property>
-           <item>
-            <widget class="QPushButton" name="_close" >
-             <property name="text" >
-              <string>&amp;Cancel</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="_save" >
-             <property name="text" >
-              <string>&amp;Save</string>
-             </property>
-             <property name="default" >
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-          </layout>
+          </widget>
          </item>
          <item>
           <spacer>
@@ -138,7 +66,7 @@
            </property>
            <property name="sizeHint" >
             <size>
-             <width>20</width>
+             <width>10</width>
              <height>0</height>
             </size>
            </property>
@@ -146,106 +74,11 @@
          </item>
         </layout>
        </item>
-      </layout>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
-     <property name="spacing" >
-      <number>5</number>
-     </property>
-     <item>
-      <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
-       <property name="spacing" >
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="QLabel" name="_vendorLit" >
-         <property name="sizePolicy" >
-          <sizepolicy>
-           <hsizetype>5</hsizetype>
-           <vsizetype>0</vsizetype>
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize" >
-          <size>
-           <width>0</width>
-           <height>28</height>
-          </size>
-         </property>
-         <property name="text" >
-          <string>Vendor:</string>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer>
-         <property name="orientation" >
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeType" >
-          <enum>QSizePolicy::Expanding</enum>
-         </property>
-         <property name="sizeHint" >
-          <size>
-           <width>20</width>
-           <height>16</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
-       <property name="spacing" >
-        <number>0</number>
-       </property>
        <item>
         <layout class="QHBoxLayout" >
-         <property name="margin" >
+         <property name="spacing" >
           <number>0</number>
          </property>
-         <property name="spacing" >
-          <number>5</number>
-         </property>
-         <item>
-          <widget class="VendorLineEdit" name="_vendor" >
-           <property name="sizePolicy" >
-            <sizepolicy>
-             <hsizetype>7</hsizetype>
-             <vsizetype>0</vsizetype>
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="_vendorList" >
-           <property name="focusPolicy" >
-            <enum>Qt::NoFocus</enum>
-           </property>
-           <property name="text" >
-            <string>...</string>
-           </property>
-          </widget>
-         </item>
          <item>
           <spacer>
            <property name="orientation" >
@@ -262,219 +95,47 @@
            </property>
           </spacer>
          </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="QLabel" name="_vendorName" >
-         <property name="text" >
-          <string/>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
-     <property name="spacing" >
-      <number>5</number>
-     </property>
-     <item>
-      <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
-       <property name="spacing" >
-        <number>5</number>
-       </property>
-       <item>
-        <layout class="QHBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
-         <property name="spacing" >
-          <number>5</number>
-         </property>
          <item>
-          <widget class="QLabel" name="_vItemNumberLit" >
-           <property name="text" >
-            <string>Vendor Item Number:</string>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="XLineEdit" name="_vendorItemNumber" >
-           <property name="sizePolicy" >
-            <sizepolicy>
-             <hsizetype>5</hsizetype>
-             <vsizetype>0</vsizetype>
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QGridLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
-         <property name="spacing" >
-          <number>5</number>
-         </property>
-         <item row="0" column="0" >
-          <widget class="QLabel" name="_vendorUOMLit" >
-           <property name="text" >
-            <string>Vendor &amp;UOM:</string>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-           <property name="buddy" >
-            <cstring>_vendorUOM</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0" >
-          <widget class="QLabel" name="_invVendorRatioLit" >
-           <property name="text" >
-            <string>Inventory/Vendor UOM Ratio:</string>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0" >
-          <widget class="QLabel" name="_vendorCurrencyLit" >
-           <property name="text" >
-            <string>Vendor Currency:</string>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1" >
-          <layout class="QHBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
+          <layout class="QVBoxLayout" >
            <property name="spacing" >
             <number>0</number>
            </property>
            <item>
-            <widget class="XLineEdit" name="_vendorUOM" >
-             <property name="sizePolicy" >
-              <sizepolicy>
-               <hsizetype>5</hsizetype>
-               <vsizetype>0</vsizetype>
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
+            <layout class="QVBoxLayout" >
+             <property name="spacing" >
+              <number>5</number>
              </property>
-             <property name="maximumSize" >
-              <size>
-               <width>60</width>
-               <height>32767</height>
-              </size>
-             </property>
-            </widget>
+             <item>
+              <widget class="QPushButton" name="_close" >
+               <property name="text" >
+                <string>&amp;Cancel</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="_save" >
+               <property name="text" >
+                <string>&amp;Save</string>
+               </property>
+               <property name="default" >
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
            <item>
             <spacer>
              <property name="orientation" >
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeType" >
-              <enum>QSizePolicy::Preferred</enum>
-             </property>
-             <property name="sizeHint" >
-              <size>
-               <width>0</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </item>
-         <item row="1" column="1" >
-          <layout class="QHBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
-           <property name="spacing" >
-            <number>5</number>
-           </property>
-           <item>
-            <widget class="XLineEdit" name="_invVendorUOMRatio" >
-             <property name="sizePolicy" >
-              <sizepolicy>
-               <hsizetype>5</hsizetype>
-               <vsizetype>0</vsizetype>
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="maximumSize" >
-              <size>
-               <width>80</width>
-               <height>32767</height>
-              </size>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer>
-             <property name="orientation" >
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeType" >
-              <enum>QSizePolicy::Preferred</enum>
-             </property>
-             <property name="sizeHint" >
-              <size>
-               <width>16</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </item>
-         <item row="2" column="1" >
-          <layout class="QHBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
-           <property name="spacing" >
-            <number>5</number>
-           </property>
-           <item>
-            <widget class="XComboBox" name="_vendorCurrency" />
-           </item>
-           <item>
-            <spacer>
-             <property name="orientation" >
-              <enum>Qt::Horizontal</enum>
+              <enum>Qt::Vertical</enum>
              </property>
              <property name="sizeType" >
               <enum>QSizePolicy::Expanding</enum>
              </property>
              <property name="sizeHint" >
               <size>
-               <width>21</width>
-               <height>21</height>
+               <width>20</width>
+               <height>0</height>
               </size>
              </property>
             </spacer>
@@ -485,329 +146,620 @@
        </item>
       </layout>
      </item>
-     <item>
-      <layout class="QGridLayout" >
-       <property name="margin" >
+     <item row="1" column="0" >
+      <widget class="QGroupBox" name="_vendorGroup" >
+       <property name="title" >
+        <string/>
+       </property>
+       <layout class="QGridLayout" >
+        <item row="0" column="0" >
+         <widget class="QLabel" name="_vendorLit" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize" >
+           <size>
+            <width>0</width>
+            <height>28</height>
+           </size>
+          </property>
+          <property name="text" >
+           <string>Vendor:</string>
+          </property>
+          <property name="alignment" >
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1" >
+         <widget class="VendorLineEdit" name="_vendor" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2" >
+         <widget class="QPushButton" name="_vendorList" >
+          <property name="focusPolicy" >
+           <enum>Qt::NoFocus</enum>
+          </property>
+          <property name="text" >
+           <string>...</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1" colspan="2" >
+         <widget class="QLabel" name="_vendorName" >
+          <property name="text" >
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="3" >
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item row="2" column="0" >
+      <widget class="QGroupBox" name="_venditemGroup" >
+       <property name="title" >
+        <string/>
+       </property>
+       <layout class="QGridLayout" >
+        <item row="0" column="0" >
+         <widget class="QLabel" name="_vItemNumberLit" >
+          <property name="text" >
+           <string>Vendor Item Number:</string>
+          </property>
+          <property name="alignment" >
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1" >
+         <widget class="XLineEdit" name="_vendorItemNumber" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2" >
+         <widget class="QLabel" name="_minimumOrderLit" >
+          <property name="text" >
+           <string>Minimum Order:</string>
+          </property>
+          <property name="alignment" >
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+          <property name="buddy" >
+           <cstring>_minimumOrder</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="3" >
+         <widget class="XLineEdit" name="_minOrderQty" >
+          <property name="enabled" >
+           <bool>true</bool>
+          </property>
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="alignment" >
+           <set>Qt::AlignRight</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" >
+         <widget class="QLabel" name="_vendorUOMLit" >
+          <property name="text" >
+           <string>Vendor &amp;UOM:</string>
+          </property>
+          <property name="alignment" >
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+          <property name="buddy" >
+           <cstring>_vendorUOM</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1" >
+         <layout class="QHBoxLayout" >
+          <property name="spacing" >
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="XLineEdit" name="_vendorUOM" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize" >
+             <size>
+              <width>60</width>
+              <height>32767</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType" >
+             <enum>QSizePolicy::Expanding</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>0</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item row="1" column="2" >
+         <widget class="QLabel" name="_multOrderQtyLit" >
+          <property name="text" >
+           <string>Order &amp;Multiple:</string>
+          </property>
+          <property name="alignment" >
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+          <property name="buddy" >
+           <cstring>_multOrderQty</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="3" >
+         <widget class="XLineEdit" name="_multOrderQty" >
+          <property name="enabled" >
+           <bool>true</bool>
+          </property>
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="alignment" >
+           <set>Qt::AlignRight</set>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0" >
+         <widget class="QLabel" name="_invVendorRatioLit" >
+          <property name="text" >
+           <string>Inventory/Vendor UOM Ratio:</string>
+          </property>
+          <property name="alignment" >
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1" >
+         <layout class="QHBoxLayout" >
+          <property name="spacing" >
+           <number>5</number>
+          </property>
+          <item>
+           <widget class="XLineEdit" name="_invVendorUOMRatio" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType" >
+             <enum>QSizePolicy::Preferred</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>16</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item row="3" column="0" >
+         <widget class="QLabel" name="_vendorCurrencyLit" >
+          <property name="text" >
+           <string>Vendor Currency:</string>
+          </property>
+          <property name="alignment" >
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1" >
+         <layout class="QHBoxLayout" >
+          <property name="spacing" >
+           <number>5</number>
+          </property>
+          <item>
+           <widget class="XComboBox" name="_vendorCurrency" />
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType" >
+             <enum>QSizePolicy::Expanding</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>21</width>
+              <height>21</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item row="2" column="2" >
+         <widget class="QLabel" name="_vendorRankingLit" >
+          <property name="text" >
+           <string>Vendor Ranking:</string>
+          </property>
+          <property name="alignment" >
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="2" >
+         <widget class="QLabel" name="_leadTimeLit" >
+          <property name="text" >
+           <string>Lead Time:</string>
+          </property>
+          <property name="alignment" >
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="3" >
+         <layout class="QHBoxLayout" >
+          <item>
+           <widget class="QSpinBox" name="_vendorRanking" >
+            <property name="minimum" >
+             <number>1</number>
+            </property>
+            <property name="maximum" >
+             <number>9</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item row="3" column="3" >
+         <layout class="QHBoxLayout" >
+          <item>
+           <widget class="QSpinBox" name="_leadTime" >
+            <property name="maximum" >
+             <number>999</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType" >
+             <enum>QSizePolicy::Expanding</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>16</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item row="3" column="0" >
+      <widget class="QTabWidget" name="_tab" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+         <horstretch>0</horstretch>
+         <verstretch>1</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="currentIndex" >
         <number>0</number>
        </property>
-       <property name="spacing" >
-        <number>5</number>
-       </property>
-       <item row="0" column="1" >
-        <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
+       <widget class="QWidget" name="tab" >
+        <attribute name="title" >
+         <string>Notes</string>
+        </attribute>
+        <layout class="QHBoxLayout" >
          <property name="spacing" >
-          <number>0</number>
+          <number>5</number>
+         </property>
+         <property name="leftMargin" >
+          <number>5</number>
+         </property>
+         <property name="topMargin" >
+          <number>5</number>
+         </property>
+         <property name="rightMargin" >
+          <number>5</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>5</number>
          </property>
          <item>
-          <widget class="XLineEdit" name="_minOrderQty" >
-           <property name="enabled" >
-            <bool>true</bool>
-           </property>
-           <property name="sizePolicy" >
-            <sizepolicy>
-             <hsizetype>5</hsizetype>
-             <vsizetype>0</vsizetype>
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight</set>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="XLineEdit" name="_multOrderQty" >
-           <property name="enabled" >
-            <bool>true</bool>
-           </property>
-           <property name="sizePolicy" >
-            <sizepolicy>
-             <hsizetype>5</hsizetype>
-             <vsizetype>0</vsizetype>
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight</set>
-           </property>
-          </widget>
+          <widget class="QTextEdit" name="_notes" />
          </item>
         </layout>
-       </item>
-       <item row="1" column="1" >
+       </widget>
+       <widget class="QWidget" name="tab" >
+        <attribute name="title" >
+         <string>Prices</string>
+        </attribute>
         <layout class="QHBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
-          <number>0</number>
+          <number>7</number>
+         </property>
+         <property name="leftMargin" >
+          <number>5</number>
+         </property>
+         <property name="topMargin" >
+          <number>5</number>
+         </property>
+         <property name="rightMargin" >
+          <number>5</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>5</number>
          </property>
          <item>
-          <layout class="QVBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
+          <widget class="XTreeWidget" name="_itemsrcp" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
            </property>
+           <property name="minimumSize" >
+            <size>
+             <width>180</width>
+             <height>0</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" >
            <property name="spacing" >
             <number>0</number>
            </property>
            <item>
-            <widget class="QSpinBox" name="_vendorRanking" >
-             <property name="maximum" >
-              <number>9</number>
-             </property>
-             <property name="minimum" >
-              <number>1</number>
+            <widget class="QPushButton" name="_add" >
+             <property name="text" >
+              <string>&amp;Add</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QSpinBox" name="_leadTime" >
-             <property name="maximum" >
-              <number>999</number>
+            <widget class="QPushButton" name="_edit" >
+             <property name="enabled" >
+              <bool>false</bool>
+             </property>
+             <property name="text" >
+              <string>&amp;Edit</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="_delete" >
+             <property name="enabled" >
+              <bool>false</bool>
+             </property>
+             <property name="text" >
+              <string>&amp;Delete</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType" >
+              <enum>QSizePolicy::Expanding</enum>
+             </property>
+             <property name="sizeHint" >
+              <size>
+               <width>20</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="tab" >
+        <attribute name="title" >
+         <string>Vendor Description</string>
+        </attribute>
+        <layout class="QHBoxLayout" >
+         <property name="spacing" >
+          <number>5</number>
+         </property>
+         <property name="leftMargin" >
+          <number>5</number>
+         </property>
+         <property name="topMargin" >
+          <number>5</number>
+         </property>
+         <property name="rightMargin" >
+          <number>5</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>5</number>
+         </property>
+         <item>
+          <widget class="QTextEdit" name="_vendorItemDescrip" >
+           <property name="tabChangesFocus" >
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="_manfTab" >
+        <attribute name="title" >
+         <string>Manufacturer</string>
+        </attribute>
+        <layout class="QGridLayout" >
+         <item row="0" column="0" >
+          <layout class="QHBoxLayout" >
+           <item>
+            <layout class="QGridLayout" >
+             <item row="0" column="0" >
+              <widget class="QLabel" name="_manufNameLit" >
+               <property name="text" >
+                <string>Name:</string>
+               </property>
+               <property name="alignment" >
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0" >
+              <widget class="QLabel" name="_manufNumberLit" >
+               <property name="text" >
+                <string>Item Number:</string>
+               </property>
+               <property name="alignment" >
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1" >
+              <widget class="XLineEdit" name="_manufItemNumber" >
+               <property name="sizePolicy" >
+                <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1" >
+              <widget class="XComboBox" name="_manufName" >
+               <property name="editable" >
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <spacer>
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Minimum" hsizetype="Preferred" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="orientation" >
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeType" >
+              <enum>QSizePolicy::Preferred</enum>
+             </property>
+             <property name="sizeHint" >
+              <size>
+               <width>150</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item row="1" column="0" >
+          <layout class="QVBoxLayout" >
+           <property name="spacing" >
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="label" >
+             <property name="text" >
+              <string>Description</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QTextEdit" name="_manufItemDescrip" >
+             <property name="tabChangesFocus" >
+              <bool>true</bool>
              </property>
             </widget>
            </item>
           </layout>
          </item>
-         <item>
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeType" >
-            <enum>QSizePolicy::Preferred</enum>
-           </property>
-           <property name="sizeHint" >
-            <size>
-             <width>0</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
         </layout>
-       </item>
-       <item row="1" column="0" >
-        <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
-         <property name="spacing" >
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QLabel" name="_vendorRankingLit" >
-           <property name="text" >
-            <string>Vendor Ranking:</string>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="_leadTimeLit" >
-           <property name="text" >
-            <string>Lead Time:</string>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item row="0" column="0" >
-        <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
-         <property name="spacing" >
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QLabel" name="_minimumOrderLit" >
-           <property name="text" >
-            <string>Minimum Order:</string>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-           <property name="buddy" >
-            <cstring>_minimumOrder</cstring>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="_multOrderQtyLit" >
-           <property name="text" >
-            <string>Order &amp;Multiple:</string>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-           <property name="buddy" >
-            <cstring>_multOrderQty</cstring>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <spacer>
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeType" >
-        <enum>QSizePolicy::Expanding</enum>
-       </property>
-       <property name="sizeHint" >
-        <size>
-         <width>16</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
+       </widget>
+      </widget>
      </item>
     </layout>
-   </item>
-   <item>
-    <widget class="QTabWidget" name="_tab" >
-     <property name="sizePolicy" >
-      <sizepolicy>
-       <hsizetype>7</hsizetype>
-       <vsizetype>7</vsizetype>
-       <horstretch>0</horstretch>
-       <verstretch>1</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="currentIndex" >
-      <number>0</number>
-     </property>
-     <widget class="QWidget" name="tab" >
-      <attribute name="title" >
-       <string>Notes</string>
-      </attribute>
-      <layout class="QHBoxLayout" >
-       <property name="margin" >
-        <number>5</number>
-       </property>
-       <property name="spacing" >
-        <number>5</number>
-       </property>
-       <item>
-        <widget class="QTextEdit" name="_notes" />
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="tab" >
-      <attribute name="title" >
-       <string>Prices</string>
-      </attribute>
-      <layout class="QHBoxLayout" >
-       <property name="margin" >
-        <number>5</number>
-       </property>
-       <property name="spacing" >
-        <number>7</number>
-       </property>
-       <item>
-        <widget class="XTreeWidget" name="_itemsrcp" >
-         <property name="sizePolicy" >
-          <sizepolicy>
-           <hsizetype>7</hsizetype>
-           <vsizetype>7</vsizetype>
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize" >
-          <size>
-           <width>180</width>
-           <height>0</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
-         <property name="spacing" >
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QPushButton" name="_add" >
-           <property name="text" >
-            <string>&amp;Add</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="_edit" >
-           <property name="enabled" >
-            <bool>false</bool>
-           </property>
-           <property name="text" >
-            <string>&amp;Edit</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="_delete" >
-           <property name="enabled" >
-            <bool>false</bool>
-           </property>
-           <property name="text" >
-            <string>&amp;Delete</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeType" >
-            <enum>QSizePolicy::Expanding</enum>
-           </property>
-           <property name="sizeHint" >
-            <size>
-             <width>20</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="tab" >
-      <attribute name="title" >
-       <string>Vendor Description</string>
-      </attribute>
-      <layout class="QHBoxLayout" >
-       <property name="margin" >
-        <number>5</number>
-       </property>
-       <property name="spacing" >
-        <number>5</number>
-       </property>
-       <item>
-        <widget class="QTextEdit" name="_vendorItemDescrip" />
-       </item>
-      </layout>
-     </widget>
-    </widget>
    </item>
   </layout>
  </widget>
@@ -818,40 +770,29 @@
    <class>ItemCluster</class>
    <extends>QWidget</extends>
    <header>itemcluster.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>XTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>xtreewidget.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
   <customwidget>
    <class>VendorLineEdit</class>
    <extends>XLineEdit</extends>
    <header>vendorlineedit.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
   <customwidget>
    <class>XComboBox</class>
    <extends>QComboBox</extends>
    <header>xcombobox.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
   <customwidget>
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>_item</tabstop>
   <tabstop>_active</tabstop>
   <tabstop>_vendor</tabstop>
   <tabstop>_vendorItemNumber</tabstop>
@@ -869,10 +810,12 @@
   <tabstop>_edit</tabstop>
   <tabstop>_delete</tabstop>
   <tabstop>_vendorItemDescrip</tabstop>
+  <tabstop>_manufName</tabstop>
+  <tabstop>_manufItemNumber</tabstop>
+  <tabstop>_manufItemDescrip</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
- <includes/>
  <resources/>
  <connections>
   <connection>

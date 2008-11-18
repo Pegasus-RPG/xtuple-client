@@ -5,196 +5,61 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>527</width>
-    <height>399</height>
+    <width>800</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Item Source Search</string>
   </property>
-  <layout class="QVBoxLayout" >
-   <property name="margin" >
-    <number>9</number>
-   </property>
-   <property name="spacing" >
-    <number>6</number>
-   </property>
-   <item>
-    <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
+  <layout class="QGridLayout" >
+   <item row="0" column="0" >
+    <layout class="QGridLayout" >
+     <property name="leftMargin" >
+      <number>12</number>
      </property>
-     <property name="spacing" >
-      <number>6</number>
+     <property name="topMargin" >
+      <number>12</number>
      </property>
-     <item>
-      <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
+     <property name="rightMargin" >
+      <number>12</number>
+     </property>
+     <property name="bottomMargin" >
+      <number>12</number>
+     </property>
+     <property name="horizontalSpacing" >
+      <number>12</number>
+     </property>
+     <property name="verticalSpacing" >
+      <number>12</number>
+     </property>
+     <item row="0" column="0" >
+      <layout class="QHBoxLayout" >
        <property name="spacing" >
         <number>5</number>
        </property>
        <item>
-        <layout class="QHBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
+        <widget class="QLabel" name="_searchLit" >
+         <property name="text" >
+          <string>S&amp;earch for:</string>
          </property>
-         <property name="spacing" >
-          <number>5</number>
+         <property name="alignment" >
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
-         <item>
-          <widget class="QLabel" name="_searchLit" >
-           <property name="text" >
-            <string>S&amp;earch for:</string>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-           <property name="buddy" >
-            <cstring>_search</cstring>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="XLineEdit" name="_search" />
-         </item>
-        </layout>
+         <property name="buddy" >
+          <cstring>_search</cstring>
+         </property>
+        </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
-         <property name="spacing" >
-          <number>0</number>
-         </property>
-         <item>
-          <layout class="QHBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
-           <property name="spacing" >
-            <number>7</number>
-           </property>
-           <item>
-            <layout class="QVBoxLayout" >
-             <property name="margin" >
-              <number>0</number>
-             </property>
-             <property name="spacing" >
-              <number>1</number>
-             </property>
-             <item>
-              <widget class="QCheckBox" name="_searchNumber" >
-               <property name="text" >
-                <string>Search through Item Numbers</string>
-               </property>
-               <property name="checked" >
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QCheckBox" name="_searchDescrip1" >
-               <property name="text" >
-                <string>Search through Description 1</string>
-               </property>
-               <property name="checked" >
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QCheckBox" name="_searchDescrip2" >
-               <property name="text" >
-                <string>Search through Description 2</string>
-               </property>
-               <property name="checked" >
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QVBoxLayout" >
-             <property name="margin" >
-              <number>0</number>
-             </property>
-             <property name="spacing" >
-              <number>0</number>
-             </property>
-             <item>
-              <widget class="QCheckBox" name="_searchVendNumber" >
-               <property name="text" >
-                <string>Search through Vend. Item Numbers</string>
-               </property>
-               <property name="shortcut" >
-                <string>Alt+I</string>
-               </property>
-               <property name="checked" >
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QCheckBox" name="_searchVendDescrip" >
-               <property name="text" >
-                <string>Search through Vend. Description</string>
-               </property>
-               <property name="checked" >
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer>
-               <property name="orientation" >
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeType" >
-                <enum>QSizePolicy::Preferred</enum>
-               </property>
-               <property name="sizeHint" >
-                <size>
-                 <width>20</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeType" >
-            <enum>QSizePolicy::Expanding</enum>
-           </property>
-           <property name="sizeHint" >
-            <size>
-             <width>20</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
+        <widget class="XLineEdit" name="_search" />
        </item>
       </layout>
      </item>
-     <item>
+     <item rowspan="2" row="0" column="1" >
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
-        <number>6</number>
+        <number>0</number>
        </property>
        <item>
         <widget class="QPushButton" name="_close" >
@@ -231,52 +96,162 @@
        </item>
       </layout>
      </item>
+     <item row="1" column="0" >
+      <widget class="QGroupBox" name="groupBox" >
+       <property name="title" >
+        <string>Search through</string>
+       </property>
+       <layout class="QGridLayout" >
+        <item row="0" column="0" >
+         <layout class="QGridLayout" >
+          <item row="0" column="0" >
+           <widget class="QCheckBox" name="_searchNumber" >
+            <property name="text" >
+             <string>Item Numbers</string>
+            </property>
+            <property name="checked" >
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1" >
+           <widget class="QCheckBox" name="_searchVendNumber" >
+            <property name="text" >
+             <string>Vendor Item Numbers</string>
+            </property>
+            <property name="shortcut" >
+             <string>Alt+I</string>
+            </property>
+            <property name="checked" >
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" >
+           <widget class="QCheckBox" name="_searchDescrip1" >
+            <property name="text" >
+             <string>Description 1</string>
+            </property>
+            <property name="checked" >
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1" >
+           <widget class="QCheckBox" name="_searchVendDescrip" >
+            <property name="text" >
+             <string>Vendor Description</string>
+            </property>
+            <property name="checked" >
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0" >
+           <widget class="QCheckBox" name="_searchDescrip2" >
+            <property name="text" >
+             <string>Description 2</string>
+            </property>
+            <property name="checked" >
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1" >
+           <widget class="QCheckBox" name="_searchManufName" >
+            <property name="text" >
+             <string>Manufacturer Names</string>
+            </property>
+            <property name="shortcut" >
+             <string>Alt+I</string>
+            </property>
+            <property name="checked" >
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1" >
+           <widget class="QCheckBox" name="_searchManufNumber" >
+            <property name="text" >
+             <string>Manufacturer Item Numbers</string>
+            </property>
+            <property name="checked" >
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0" >
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType" >
+             <enum>QSizePolicy::Expanding</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>20</width>
+              <height>10</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item row="2" column="0" colspan="2" >
+      <widget class="QFrame" name="frame" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
+         <horstretch>0</horstretch>
+         <verstretch>1</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="frameShape" >
+        <enum>QFrame::NoFrame</enum>
+       </property>
+       <property name="frameShadow" >
+        <enum>QFrame::Plain</enum>
+       </property>
+       <layout class="QVBoxLayout" >
+        <property name="spacing" >
+         <number>0</number>
+        </property>
+        <property name="leftMargin" >
+         <number>0</number>
+        </property>
+        <property name="topMargin" >
+         <number>0</number>
+        </property>
+        <property name="rightMargin" >
+         <number>0</number>
+        </property>
+        <property name="bottomMargin" >
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="lblItemSourcesLit" >
+          <property name="text" >
+           <string>Item Sources:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="XTreeWidget" name="_itemsrc" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
     </layout>
-   </item>
-   <item>
-    <widget class="QFrame" name="frame" >
-     <property name="sizePolicy" >
-      <sizepolicy>
-       <hsizetype>5</hsizetype>
-       <vsizetype>7</vsizetype>
-       <horstretch>0</horstretch>
-       <verstretch>1</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="frameShape" >
-      <enum>QFrame::NoFrame</enum>
-     </property>
-     <property name="frameShadow" >
-      <enum>QFrame::Plain</enum>
-     </property>
-     <layout class="QVBoxLayout" >
-      <property name="margin" >
-       <number>0</number>
-      </property>
-      <property name="spacing" >
-       <number>0</number>
-      </property>
-      <item>
-       <widget class="QLabel" name="lblItemSourcesLit" >
-        <property name="text" >
-         <string>Item Sources:</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="XTreeWidget" name="_itemsrc" >
-        <property name="sizePolicy" >
-         <sizepolicy>
-          <hsizetype>7</hsizetype>
-          <vsizetype>7</vsizetype>
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
    </item>
   </layout>
  </widget>
