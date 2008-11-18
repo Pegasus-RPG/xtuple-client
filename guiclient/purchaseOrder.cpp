@@ -116,6 +116,9 @@ purchaseOrder::purchaseOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   _poitem->addColumn(tr("UOM"),         _uomColumn,    Qt::AlignCenter,true, "poitem_vend_uom");
   _poitem->addColumn(tr("Unit Price"),  _priceColumn,  Qt::AlignRight, true, "poitem_unitprice");
   _poitem->addColumn(tr("Ext. Price"),  _moneyColumn,  Qt::AlignRight, true, "extprice");
+  _poitem->addColumn(tr("Vend. Item#"), _itemColumn,   Qt::AlignCenter,false, "poitem_vend_item_number");
+  _poitem->addColumn(tr("Manufacturer"),_itemColumn,   Qt::AlignRight, false, "poitem_manuf_name");
+  _poitem->addColumn(tr("Manuf. Item#"),_itemColumn,   Qt::AlignRight, false, "poitem_manuf_item_number");
 
   _qeitem = new PoitemTableModel(this);
   _qeitemView->setModel(_qeitem);
@@ -951,7 +954,8 @@ void purchaseOrder::sFillList()
              "       (poitem_unitprice * poitem_qty_ordered) AS extprice, "
              "       'qty' AS poitem_qty_ordered_xtnumericrole,"
              "       'purchprice' AS poitem_unitprice_xtnumericrole,"
-             "       'curr' AS extprice_xtnumericrole "
+             "       'curr' AS extprice_xtnumericrole, "
+             "        poitem_vend_item_number, poitem_manuf_name, poitem_manuf_item_number "
              "FROM poitem LEFT OUTER JOIN"
              "     ( itemsite JOIN item"
              "       ON (itemsite_item_id=item_id) )"
