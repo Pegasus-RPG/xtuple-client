@@ -55,63 +55,37 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
+#ifndef DSPAPAPPLICATIONS_H
+#define DSPAPAPPLICATIONS_H
 
-#ifndef VENDORGROUP_H
-#define VENDORGROUP_H
+#include "guiclient.h"
 
-#include "OpenMFGWidgets.h"
-#include "ui_vendorgroup.h"
+#include "xwidget.h"
+#include <QMenu>
 
-class ParameterList;
+#include "ui_dspAPApplications.h"
 
-class OPENMFGWIDGETS_EXPORT VendorGroup : public QWidget, public Ui::VendorGroup
+class dspAPApplications : public XWidget, public Ui::dspAPApplications
 {
-  Q_OBJECT
-
-  Q_ENUMS(VendorGroupState)
-
-  Q_PROPERTY(enum VendorGroupState state READ state WRITE setState)
+    Q_OBJECT
 
   public:
-    VendorGroup(QWidget * = 0, const char * = 0);
-    virtual ~VendorGroup();
-    virtual void synchronize(VendorGroup*);
+    dspAPApplications(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
+    ~dspAPApplications();
 
-    enum VendorGroupState
-    {
-      All, Selected, SelectedType, TypePattern
-    };
-
-    virtual void           appendValue(ParameterList &);
-    virtual void           bindValue(XSqlQuery &);
-    virtual QString        typePattern() { return _vendorType->text(); }
-    enum VendorGroupState  state()      { return (VendorGroupState)_select->currentIndex(); }
-    virtual int            vendId()     { return _vend->id(); }
-    virtual int            vendTypeId() { return _vendorTypes->id(); }
-
-    inline bool isAll()          { return _select->currentIndex() == All; }
-    inline bool isSelectedVend() { return _select->currentIndex() == Selected; }
-    inline bool isSelectedType() { return _select->currentIndex() == SelectedType; }
-    inline bool isTypePattern() { return _select->currentIndex() == TypePattern; }
-    virtual bool isValid();
+    virtual bool setParams(ParameterList &);
 
   public slots:
-    virtual void setVendId(int p);
-    virtual void setVendTypeId(int p);
-    virtual void setTypePattern(const QString &p);
-    virtual void setState(int p) { setState((VendorGroupState)p); }
-    virtual void setState(enum VendorGroupState p);
-
-  signals:
-    void newTypePattern(QString);
-    void newState(int);
-    void newVendId(int);
-    void newVendTypeId(int);
-    void updated();
+    virtual void sFillList();
+    virtual void sPopulateMenu(QMenu*);
+    virtual void sPrint();
+    virtual void sViewCreditMemo();
+    virtual void sViewDebitMemo();
+    virtual void sViewVoucher();
 
   protected slots:
     virtual void languageChange();
-    virtual void sTypePatternFinished();
+
 };
 
-#endif
+#endif // DSPARAPPLICATIONS_H

@@ -125,6 +125,7 @@
 #include "searchForCRMAccount.h"
 #include "vendors.h"
 #include "vendorTypes.h"
+#include "vendorWorkBench.h"
 #include "plannerCodes.h"
 #include "rejectCodes.h"
 #include "termses.h"
@@ -286,6 +287,8 @@ menuPurchase::menuPurchase(GUIClient *Pparent) :
     { "po.newVendor", tr("&New..."), SLOT(sNewVendor()), vendorMenu, _privileges->check("MaintainVendors"), NULL, NULL, true , NULL },
     { "po.vendors", tr("&List..."), SLOT(sVendors()), vendorMenu, (_privileges->check("MaintainVendors")) || (_privileges->check("ViewVendors")), NULL, NULL, true , NULL },
     { "po.searchForVendor", tr("&Search..."), SLOT(sSearchForVendor()), vendorMenu, (_privileges->check("MaintainVendors")) || (_privileges->check("ViewVendors")), NULL, NULL, true , NULL },
+    { "separator", NULL, NULL, vendorMenu, true, NULL, NULL, true , NULL },
+    { "po.vendorWorkBench", tr("&Workbench..."), SLOT(sVendorWorkBench()), vendorMenu, _privileges->check("MaintainVendors"), NULL, NULL, true , NULL },
     { "separator", NULL, NULL, vendorMenu, true, NULL, NULL, true , NULL },
     { "po.vendorTypes", tr("&Types..."), SLOT(sVendorTypes()), vendorMenu, (_privileges->check("MaintainVendorTypes")) || (_privileges->check("ViewVendorTypes")), NULL, NULL, true , NULL },
     
@@ -637,6 +640,11 @@ void menuPurchase::sSearchForVendor()
 void menuPurchase::sVendors()
 {
   omfgThis->handleNewWindow(new vendors());
+}
+
+void menuPurchase::sVendorWorkBench()
+{
+  omfgThis->handleNewWindow(new vendorWorkBench());
 }
 
 void menuPurchase::sVendorTypes()

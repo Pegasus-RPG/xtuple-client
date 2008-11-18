@@ -54,7 +54,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                cashReceipt.ui cashReceiptsEditList.ui cashReceiptItem.ui cashReceiptMiscDistrib.ui    \
                changePoitemQty.ui changeWoQty.ui changeQtyToDistributeFromBreeder.ui                  \
                characteristic.ui characteristics.ui characteristicAssignment.ui                       \
-               characteristicPrice.ui checkFormat.ui checkFormats.ui                                  \
+               characteristicPrice.ui          checkFormat.ui checkFormats.ui                         \
                classCodes.ui classCode.ui closePurchaseOrder.ui closeWo.ui                            \
                commentType.ui commentTypes.ui company.ui companies.ui configureAccountingSystem.ui    \
                configureCC.ui configureSO.ui configureIM.ui                                           \
@@ -88,7 +88,8 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                department.ui departments.ui                                                           \
                distributeBreederProduction.ui                         distributeInventory.ui          \
                distributeToLocation.ui                                                                \
-               dspAllocations.ui dspAPOpenItemsByVendor.ui dspAROpenItemsByCustomer.ui                \
+               dspAllocations.ui dspAPApplications.ui                                                 \
+               dspAPOpenItemsByVendor.ui dspAROpenItemsByCustomer.ui                                  \
                dspAROpenItems.ui                                                                      \
                dspARApplications.ui dspBacklogByCustomer.ui dspBacklogByParameterList.ui              \
                dspBacklogByItem.ui dspBacklogBySalesOrder.ui                                          \
@@ -332,7 +333,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                updateReorderLevels.ui   							      \
                users.ui user.ui userList.ui userPreferences.ui                                        \
                userCostingElement.ui costingElements.ui                                               \
-               vendor.ui vendors.ui                                                                   \
+               vendor.ui vendors.ui vendorWorkBench.ui                                                \
                vendorAddress.ui vendorAddressList.ui                                                  \
                vendorType.ui vendorTypes.ui viewCheckRun.ui voidChecks.ui                             \
                voucher.ui voucheringEditList.ui voucherItemDistrib.ui voucherItem.ui                  \
@@ -374,7 +375,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                cashReceipt.h cashReceiptsEditList.h cashReceiptItem.h cashReceiptMiscDistrib.h        \
                changePoitemQty.h changeWoQty.h changeQtyToDistributeFromBreeder.h                     \
                characteristic.h characteristics.h characteristicAssignment.h                          \
-               characteristicPrice.h checkFormat.h checkFormats.h                                     \
+               characteristicPrice.h         checkFormat.h checkFormats.h                             \
                classCodes.h classCode.h closePurchaseOrder.h closeWo.h                                \
                commentType.h commentTypes.h company.h companies.h configureAccountingSystem.h         \
                configureCC.h configureSO.h configureIM.h                                              \
@@ -408,7 +409,8 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                department.h departments.h                                                             \
                distributeBreederProduction.h                        distributeInventory.h             \
                distributeToLocation.h                                                                 \
-               dspAllocations.h dspAPOpenItemsByVendor.h dspAROpenItemsByCustomer.h                   \
+               dspAllocations.h dspAPApplications.h                                                   \
+               dspAPOpenItemsByVendor.h dspAROpenItemsByCustomer.h                                    \
                dspAROpenItems.h                                                                       \
                dspARApplications.h dspBacklogByCustomer.h dspBacklogByParameterList.h                 \
                dspBacklogByItem.h dspBacklogBySalesOrder.h                                            \
@@ -657,7 +659,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                updateReorderLevels.h								      \
                users.h user.h userList.h userPreferences.h                                            \
                userCostingElement.h costingElements.h                                                 \
-               vendor.h vendors.h                                                                     \
+               vendor.h vendors.h vendorWorkBench.h                                                   \
                vendorAddress.h vendorAddressList.h                                                    \
                vendorType.h vendorTypes.h viewCheckRun.h voidChecks.h                                 \
                voucher.h voucheringEditList.h voucherItemDistrib.h voucherItem.h                      \
@@ -700,7 +702,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp       
                cashReceipt.cpp cashReceiptsEditList.cpp cashReceiptItem.cpp cashReceiptMiscDistrib.cpp \
                changePoitemQty.cpp changeWoQty.cpp changeQtyToDistributeFromBreeder.cpp               \
                characteristic.cpp characteristics.cpp characteristicAssignment.cpp                    \
-               characteristicPrice.cpp checkFormat.cpp checkFormats.cpp                               \
+               characteristicPrice.cpp           checkFormat.cpp checkFormats.cpp                     \
                classCodes.cpp classCode.cpp closePurchaseOrder.cpp closeWo.cpp                        \
                commentType.cpp commentTypes.cpp company.cpp companies.cpp configureAccountingSystem.cpp \
                configureCC.cpp configureSO.cpp configureIM.cpp                                        \
@@ -735,7 +737,8 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp       
                department.cpp departments.cpp                                                         \
                distributeBreederProduction.cpp                          distributeInventory.cpp       \
                distributeToLocation.cpp                                                               \
-               dspAllocations.cpp dspAPOpenItemsByVendor.cpp dspAROpenItemsByCustomer.cpp             \
+               dspAllocations.cpp dspAPApplications.cpp                                               \
+               dspAPOpenItemsByVendor.cpp dspAROpenItemsByCustomer.cpp                                \
                dspAROpenItems.cpp                                                                     \
                dspARApplications.cpp dspBacklogByCustomer.cpp dspBacklogByParameterList.cpp           \
                dspBacklogByItem.cpp dspBacklogBySalesOrder.cpp                                        \
@@ -985,7 +988,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp       
                updateReorderLevels.cpp								      \
                users.cpp user.cpp userList.cpp userPreferences.cpp                                    \
                userCostingElement.cpp costingElements.cpp                                             \
-               version.cpp vendor.cpp vendors.cpp                                                     \
+               version.cpp vendor.cpp vendors.cpp vendorWorkBench.cpp                                 \
                vendorAddress.cpp vendorAddressList.cpp                                                \
                vendorType.cpp vendorTypes.cpp viewCheckRun.cpp voidChecks.cpp                         \
                voucher.cpp voucheringEditList.cpp voucherItemDistrib.cpp voucherItem.cpp              \
@@ -1000,7 +1003,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp       
                xmainwindow.cpp xdialog.cpp xuiloader.cpp xwidget.cpp                                  \
                idleShutdown.cpp xdateinputdialog.cpp xsltMap.cpp
 
-QT += xml assistant sql script network
+QT += xml sql script network
 
 RESOURCES += guiclient.qrc sql/querydata.qrc
 

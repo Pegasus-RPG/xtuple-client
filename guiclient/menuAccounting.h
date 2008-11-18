@@ -122,6 +122,7 @@ class menuAccounting : public QObject
     void sDspVendorHistory();
     void sDspCheckRegister();
     void sDspVoucherRegister();
+    void sDspAPApplications();
     void sDspAPOpenItemsByVendor();
     void sDspTimePhasedOpenAPItems();
     

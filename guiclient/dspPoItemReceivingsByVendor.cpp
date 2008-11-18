@@ -71,8 +71,6 @@ dspPoItemReceivingsByVendor::dspPoItemReceivingsByVendor(QWidget* parent, const 
 {
   setupUi(this);
 
-//  (void)statusBar();
-
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_showVariances, SIGNAL(toggled(bool)), this, SLOT(sHandleVariance(bool)));
@@ -93,6 +91,9 @@ dspPoItemReceivingsByVendor::dspPoItemReceivingsByVendor(QWidget* parent, const 
     _porecv->addColumn(tr("Recv. Cost"),  _priceColumn,  Qt::AlignRight,true, "recvcost");
   }
 
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
+  _dates->setEndNull(tr("Latest"),     omfgThis->endOfTime(),   true);
+
   _showVariances->setEnabled(_privileges->check("ViewCosts"));
   sHandleVariance(_showVariances->isChecked());
 }
@@ -109,7 +110,7 @@ void dspPoItemReceivingsByVendor::languageChange()
 
 bool dspPoItemReceivingsByVendor::setParams(ParameterList &pParams)
 {
-  if (!_vendor->isValid())
+  if (!_vendor->isValid() && _vendor->isVisible())
   {
     QMessageBox::warning( this, tr("Enter Vendor Number"),
                           tr( "Please enter a valid Vendor Number." ) );
@@ -160,13 +161,13 @@ void dspPoItemReceivingsByVendor::sHandleVariance(bool pShowVariances)
 {
   if (pShowVariances)
   {
-    _porecv->showColumn(7);
-    _porecv->showColumn(8);
+    _porecv->showColumn("purchcost");
+    _porecv->showColumn("recvcost");
   }
   else
   {
-    _porecv->hideColumn(7);
-    _porecv->hideColumn(8);
+    _porecv->hideColumn("purchcost");
+    _porecv->hideColumn("recvcost");
   }
 }
 

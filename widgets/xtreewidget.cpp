@@ -203,7 +203,7 @@ void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId)
 		   << "xtrunningrole"	   << "xtrunninginit"
 		   << "xtgrouprunningrole" << "xttotalrole"
                    << "xtnumericrole"      << "xtnullrole"
-                   << "xthiddenrole";
+                   << "xtidrole"           << "xthiddenrole";
 	for (int wcol = 0; wcol < _roles.size(); wcol++)
 	{
 	  QVariantMap *role = _roles.value(wcol);
@@ -389,6 +389,11 @@ void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId)
 		! pQuery.value(role->value("xtrunninginit").toString()).isNull() )
               userrole.insert("runninginit",
                                pQuery.value(role->value("xtrunninginit").toString()));
+
+	    if (role->contains("xtidrole") &&
+		! pQuery.value(role->value("xtidrole").toString()).isNull() )
+              userrole.insert("id",
+                              pQuery.value(role->value("xtidrole").toString()).toInt());
 
 	    if (role->contains("xtrunningrole"))
               userrole.insert("runningset",
@@ -727,6 +732,20 @@ int XTreeWidget::id() const
   {
     XTreeWidgetItem * item = (XTreeWidgetItem*)items.at(0);
     return item->_id;
+  }
+  return -1;
+}
+
+int XTreeWidget::id(const QString p) const
+{
+  QList<QTreeWidgetItem*> items = selectedItems();
+  if(items.count() > 0)
+  {
+    int id = items.at(0)->data(column(p), Qt::UserRole).toMap()["id"].toInt();
+    if (DEBUG)
+      qDebug("XTreeWidget::id(%s - column %d) returning %d",
+             qPrintable(p), column(p), id);
+    return id;
   }
   return -1;
 }
@@ -1265,6 +1284,15 @@ void XTreeWidgetItem::constructor(int pId, int pAltId, QVariant v0,
     for(int i = 0; i < header->columnCount(); i++)
       setTextAlignment(i, header->textAlignment(i));
   }
+}
+
+int XTreeWidgetItem::id(const QString p)
+{
+  int id = data(((XTreeWidget*)treeWidget())->column(p), Qt::UserRole).toMap()["id"].toInt();
+  if (DEBUG)
+    qDebug("XTreeWidgetItem::id(%s - column %d) returning %d",
+           qPrintable(p), ((XTreeWidget*)treeWidget())->column(p), id);
+  return id;
 }
 
 void XTreeWidgetItem::setTextColor(const QColor &pColor)

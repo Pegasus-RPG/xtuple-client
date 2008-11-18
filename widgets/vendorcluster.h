@@ -176,7 +176,6 @@ class OPENMFGWIDGETS_EXPORT VendorCluster : public QWidget
   public:
     VendorCluster(QWidget *, const char * = 0);
 
-    inline void     setId(int pId)        { _vendorNumber->setId(pId);         };
     inline int      id()                  { return _vendorNumber->_id;         };
     inline bool     isValid()             { return _vendorNumber->_valid;      };
     inline QString  defaultNumber() const { return _default;                   };
@@ -190,6 +189,7 @@ class OPENMFGWIDGETS_EXPORT VendorCluster : public QWidget
     void setDataWidgetMap(XDataWidgetMapper* m);
     void setDefaultNumber(QString p)            { _default = p;               };
     void setFieldName(QString p)                { _fieldName = p;             };
+    void setId(int pId)                         { _vendorNumber->setId(pId);  };
     void setNumber(const QString& number);
 
   signals:

@@ -98,6 +98,7 @@
 
 #include "dspVendorAPHistory.h"
 #include "dspCheckRegister.h"
+#include "dspAPApplications.h"
 #include "dspVoucherRegister.h"
 #include "dspAPOpenItemsByVendor.h"
 #include "dspTimePhasedOpenAPItems.h"
@@ -328,6 +329,8 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
     { "separator", NULL, NULL, apReportsMenu, true, NULL, NULL, true, NULL },
     { "ap.dspCheckRegister", tr("&Check Register..."), SLOT(sDspCheckRegister()), apReportsMenu, _privileges->check("MaintainPayments"), NULL, NULL, true , NULL },
     { "ap.dspVoucherRegister", tr("&Voucher Register..."), SLOT(sDspVoucherRegister()), apReportsMenu, (_privileges->check("MaintainVouchers") || _privileges->check("ViewVouchers")), NULL, NULL, true , NULL },
+    { "separator", NULL, NULL, apReportsMenu, true, NULL, NULL, true, NULL },
+    { "ap.dspAPApplications", tr("&Applications..."), SLOT(sDspAPApplications()), apReportsMenu, _privileges->check("ViewAPOpenItems"), NULL, NULL, true , NULL },
     { "separator", NULL, NULL, apReportsMenu, true, NULL, NULL, true, NULL },
     { "ap.dspVendorHistory", tr("Vendor &History..."), SLOT(sDspVendorHistory()), apReportsMenu, _privileges->check("ViewAPOpenItems"), NULL, NULL, true , NULL },
     { "separator", NULL, NULL, apReportsMenu, true, NULL, NULL, true, NULL },
@@ -737,6 +740,11 @@ void menuAccounting::sDspCheckRegister()
 void menuAccounting::sDspVoucherRegister()
 {
   omfgThis->handleNewWindow(new dspVoucherRegister());
+}
+
+void menuAccounting::sDspAPApplications()
+{
+  omfgThis->handleNewWindow(new dspAPApplications());
 }
 
 void menuAccounting::sDspAPOpenItemsByVendor()

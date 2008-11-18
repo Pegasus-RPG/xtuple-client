@@ -130,6 +130,28 @@ void VendorGroup::bindValue(XSqlQuery &pQuery)
       ; // nothing
   }
 }
+
+bool VendorGroup::isValid()
+{
+  switch (_select->currentIndex())
+  {
+    case Selected:
+      return _vend->isValid();
+      break;
+    case SelectedType:
+      return _vendorTypes->isValid();
+      break;
+    case TypePattern:
+      return ! _vendorType->text().trimmed().isEmpty();
+      break;
+    case All:
+      return true;
+      break;
+  }
+
+  return false;
+}
+
 void VendorGroup::setVendId(int p)
 {
   _vend->setId(p);

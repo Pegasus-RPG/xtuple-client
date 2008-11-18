@@ -141,6 +141,7 @@ class menuPurchase : public QObject
     void sSearchForVendor();
     void sVendors();
     void sVendorTypes();
+    void sVendorWorkBench();
     void sPlannerCodes();
     void sRejectCodes();
     void sTerms();

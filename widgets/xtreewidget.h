@@ -159,6 +159,7 @@ class OPENMFGWIDGETS_EXPORT XTreeWidgetItem : public QTreeWidgetItem
     inline void setAltId(int pId) { _altId = pId;  }
 
     virtual QVariant rawValue(const QString);
+    virtual int id(const QString);
 
     inline XTreeWidgetItem *child(int idx) const
     {
@@ -207,6 +208,7 @@ class OPENMFGWIDGETS_EXPORT XTreeWidget : public QTreeWidget
     int  altId() const;
     void setId(int);
     int  column(const QString) const;
+    int  id(const QString)     const;
 
     inline XTreeWidgetItem * topLevelItem(int idx) const
     {
