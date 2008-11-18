@@ -119,7 +119,7 @@ creditMemoItem::creditMemoItem(QWidget* parent, const char* name, bool modal, Qt
     _warehouse->hide();
   }
   
-  resize(minimumSize());
+  adjustSize();
 }
 
 creditMemoItem::~creditMemoItem()

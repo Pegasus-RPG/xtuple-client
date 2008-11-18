@@ -120,7 +120,7 @@ purchaseOrderItem::purchaseOrderItem(QWidget* parent, const char* name, bool mod
   if (!_metrics->boolean("RevControl"))
    _tab->removePage(_tab->page(4));
    
-  resize(minimumSize());
+  adjustSize();
 }
 
 /*

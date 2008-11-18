@@ -87,7 +87,7 @@ returnAuthItemLotSerial::returnAuthItemLotSerial(QWidget* parent, const char* na
   _qtyRegistered->setPrecision(omfgThis->qtyVal());
   _qtyReceived->setPrecision(omfgThis->qtyVal());
   
-  resize(minimumSize());
+  adjustSize();
 }
 
 /*

@@ -218,8 +218,7 @@ configureIM::configureIM(QWidget* parent, const char* name, bool modal, Qt::WFla
     
   this->setWindowTitle("Inventory Configuration");
 
-  resize(minimumSize());
-
+  adjustSize();
 }
 
 configureIM::~configureIM()

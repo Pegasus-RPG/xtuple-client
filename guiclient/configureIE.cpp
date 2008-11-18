@@ -106,7 +106,7 @@ configureIE::configureIE(QWidget* parent, const char* name, bool modal, Qt::WFla
   _external->setVisible(false);
   _tabs->removePage(_tabs->page(2));
   
-  resize(minimumSize());
+  adjustSize();
 
   sPopulate();
 }

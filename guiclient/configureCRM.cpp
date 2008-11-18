@@ -124,7 +124,7 @@ configureCRM::configureCRM(QWidget* parent, const char* name, bool modal, Qt::WF
     _incdtDelGroup->hide();
   }
       
-  resize(minimumSize());
+  adjustSize();
 }
 
 /*

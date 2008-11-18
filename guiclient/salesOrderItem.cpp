@@ -230,7 +230,7 @@ salesOrderItem::salesOrderItem(QWidget* parent, const char* name, bool modal, Qt
   if (!_metrics->boolean("EnableReturnAuth"))
     _warranty->hide();
 
-  resize(minimumSize());
+  adjustSize();
   
   _inventoryButton->setEnabled(_showAvailability->isChecked());
   _dependenciesButton->setEnabled(_showAvailability->isChecked());

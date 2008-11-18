@@ -114,7 +114,7 @@ invoiceItem::invoiceItem(QWidget* parent, const char* name, bool modal, Qt::WFla
     _warehouse->hide();
   }
   
-  resize(minimumSize());
+  adjustSize();
 }
 
 invoiceItem::~invoiceItem()

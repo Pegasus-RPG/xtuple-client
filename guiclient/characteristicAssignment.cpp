@@ -74,7 +74,7 @@ characteristicAssignment::characteristicAssignment(QWidget* parent, const char* 
   _listprice->hide();
   _listprice->setValidator(omfgThis->priceVal());
 
-  resize(minimumSize());
+  adjustSize();
 }
 
 characteristicAssignment::~characteristicAssignment()

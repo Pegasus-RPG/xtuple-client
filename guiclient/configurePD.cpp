@@ -160,7 +160,7 @@ configurePD::configurePD(QWidget* parent, const char* name, bool modal, Qt::WFla
   
   this->setWindowTitle("Products Configuration");
 
-  resize(minimumSize());
+  adjustSize();
 }
 
 /*

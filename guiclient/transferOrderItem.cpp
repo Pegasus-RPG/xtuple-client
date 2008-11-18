@@ -148,7 +148,7 @@ transferOrderItem::transferOrderItem(QWidget* parent, const char* name, bool mod
   _toheadid	= -1;
   _taxauthid	= -1;
   _taxCache.clear();
-  resize(minimumSize());
+  adjustSize();
   
   _inventoryButton->setEnabled(_showAvailability->isChecked());
   _dependencyButton->setEnabled(_showAvailability->isChecked());

@@ -78,7 +78,7 @@ createLotSerial::createLotSerial(QWidget* parent, const char* name, bool modal, 
   _serial = false;
   _itemsiteid = -1;
   _preassigned = false;
-  resize(minimumSize());
+  adjustSize();
 
   _qtyToAssign->setValidator(omfgThis->qtyVal());
 }

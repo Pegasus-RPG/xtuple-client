@@ -189,7 +189,7 @@ configureGL::configureGL(QWidget* parent, const char* name, bool modal, Qt::WFla
 
   _recurringBuffer->setValue(_metrics->value("RecurringInvoiceBuffer").toInt());
   
-  resize(minimumSize());
+  adjustSize();
 }
 
 configureGL::~configureGL()

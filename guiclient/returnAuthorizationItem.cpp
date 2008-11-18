@@ -165,7 +165,7 @@ returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* na
   if (!_metrics->boolean("LotSerialControl"))
     _tab->removeTab(_tab->indexOf(_lotserial));
   
-  resize(minimumSize());
+  adjustSize();
   
   q.exec("BEGIN;"); //In case problems or we cancel out
 }

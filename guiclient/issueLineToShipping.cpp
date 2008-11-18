@@ -88,7 +88,7 @@ issueLineToShipping::issueLineToShipping(QWidget* parent, const char* name, bool
   _balance->setPrecision(omfgThis->qtyVal());
   _qtyAtShip->setPrecision(omfgThis->qtyVal());
   
-  resize(minimumSize());
+  adjustSize();
 }
 
 issueLineToShipping::~issueLineToShipping()

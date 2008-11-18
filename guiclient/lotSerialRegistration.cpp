@@ -98,7 +98,7 @@ lotSerialRegistration::lotSerialRegistration(QWidget* parent, const char* name, 
 
   _qty->setValidator(omfgThis->qtyVal());
   
-  resize(minimumSize());
+  adjustSize();
 }
 
 /*

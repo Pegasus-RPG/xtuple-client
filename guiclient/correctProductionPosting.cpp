@@ -100,7 +100,7 @@ correctProductionPosting::correctProductionPosting(QWidget* parent, const char* 
     _backflushOperations->hide();
   }
   
-  resize(minimumSize());
+  adjustSize();
 }
 
 correctProductionPosting::~correctProductionPosting()
