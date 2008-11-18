@@ -75,6 +75,7 @@
 #include "purchaseOrderItem.h"
 #include "storedProcErrorLookup.h"
 #include "transferOrderItem.h"
+#include "returnAuthorizationItem.h"
 
 #define RECV_ORDER_TYPE_COL	1
 #define RECV_QTY_COL		11
@@ -212,6 +213,13 @@ void unpostedPoReceipts::sViewOrderItem()
     newdlg.set(params);
     newdlg.exec();
   }
+  else if (_recv->currentItem()->text(RECV_ORDER_TYPE_COL) == "RA")
+  {
+    params.append("raitem_id",	_recv->altId());
+    returnAuthorizationItem newdlg(this, "", TRUE);
+    newdlg.set(params);
+    newdlg.exec();
+  }
 }
 
 void unpostedPoReceipts::sPost()
@@ -334,10 +342,11 @@ void unpostedPoReceipts::sPopulateMenu(QMenu *pMenu,QTreeWidgetItem *pItem)
   pMenu->insertSeparator();
 
   menuItem = pMenu->insertItem(tr("View Order Item..."),this, SLOT(sViewOrderItem()));
-  pMenu->setItemEnabled(menuItem, ((pItem->text(RECV_ORDER_TYPE_COL) == "PO" &&
-				    _privileges->check("ViewPurchaseOrders")) ||
-				   (pItem->text(RECV_ORDER_TYPE_COL) == "TO" &&
-				    _privileges->check("ViewTransferOrders"))) );
+  pMenu->setItemEnabled(menuItem, (
+    (pItem->text(RECV_ORDER_TYPE_COL) == "PO" && _privileges->check("ViewPurchaseOrders")) ||
+    (pItem->text(RECV_ORDER_TYPE_COL) == "TO" && _privileges->check("ViewTransferOrders")) ||
+    (pItem->text(RECV_ORDER_TYPE_COL) == "RA" && _privileges->check("ViewReturns"))
+    ) );
 }
 
 void unpostedPoReceipts::sFillList()
