@@ -178,17 +178,21 @@ itemAvailabilityWorkbench::itemAvailabilityWorkbench(QWidget* parent, const char
   
   // Invhist
   _invhist->setRootIsDecorated(TRUE);
-  _invhist->addColumn(tr("Time"),          (_dateColumn + 30),   Qt::AlignLeft,   true,  "f_invhist_transdate"   );
-  _invhist->addColumn(tr("User"),          _orderColumn,         Qt::AlignCenter, true,  "invhist_user" );
-  _invhist->addColumn(tr("Type"),          _transColumn,         Qt::AlignCenter, true,  "f_invhist_transtype" );
-  _invhist->addColumn(tr("Site"),          _whsColumn,           Qt::AlignCenter, true,  "warehous_code" );
-  _invhist->addColumn(tr("Order #/Location-Lot/Serial #"), -1,   Qt::AlignLeft,   true,  "ordernumber"   );
-  _invhist->addColumn(tr("UOM"),           _uomColumn,           Qt::AlignCenter, true,  "invhist_invuom" );
-  _invhist->addColumn(tr("Trans-Qty"),     _qtyColumn,           Qt::AlignRight,  true,  "invhist_invqty"  );
-  _invhist->addColumn(tr("From Area"),     _orderColumn,         Qt::AlignLeft,   true,  "locfrom"   );
-  _invhist->addColumn(tr("QOH Before"),    _qtyColumn,           Qt::AlignRight,  true,  "invhist_qoh_before"  );
-  _invhist->addColumn(tr("To Area"),       _orderColumn,         Qt::AlignLeft,   true,  "locto"   );
-  _invhist->addColumn(tr("QOH After"),     _qtyColumn,           Qt::AlignRight,  true,  "invhist_qoh_after"  );
+  _invhist->addColumn(tr("Transaction Time"),_timeDateColumn, Qt::AlignLeft, true, "invhist_transdate");
+  _invhist->addColumn(tr("Created Time"),    _timeDateColumn, Qt::AlignLeft, false, "invhist_created");
+  _invhist->addColumn(tr("Type"),        _transColumn,        Qt::AlignCenter,true, "invhist_transtype");
+  _invhist->addColumn(tr("Site"),        _whsColumn,          Qt::AlignCenter,true, "warehous_code");
+  _invhist->addColumn(tr("Order #/Detail"), -1,Qt::AlignLeft,  true, "orderlocation");
+  _invhist->addColumn(tr("UOM"),         _uomColumn,          Qt::AlignCenter,true, "invhist_invuom");
+  _invhist->addColumn(tr("Trans-Qty"),   _qtyColumn,          Qt::AlignRight, true, "transqty");
+  _invhist->addColumn(tr("From Area"),   _orderColumn,        Qt::AlignLeft,  true, "locfrom");
+  _invhist->addColumn(tr("QOH Before"),  _qtyColumn,          Qt::AlignRight, true, "qohbefore");
+  _invhist->addColumn(tr("To Area"),     _orderColumn,        Qt::AlignLeft,  true, "locto");
+  _invhist->addColumn(tr("QOH After"),   _qtyColumn,          Qt::AlignRight, false, "qohafter");
+  _invhist->addColumn(tr("Cost Method"), _qtyColumn,          Qt::AlignLeft,  false, "costmethod");
+  _invhist->addColumn(tr("Value Before"),_qtyColumn,          Qt::AlignRight, false, "invhist_value_before");
+  _invhist->addColumn(tr("Value After"), _qtyColumn,          Qt::AlignRight, false, "invhist_value_after");
+  _invhist->addColumn(tr("User"),        _orderColumn,        Qt::AlignCenter,true, "invhist_user");
 
   _transType->append(cTransAll,       tr("All Transactions")       );
   _transType->append(cTransReceipts,  tr("Receipts")               );
@@ -459,106 +463,22 @@ void itemAvailabilityWorkbench::sFillListInvhist()
 
   if (_item->isValid())
   {
-    QString sql( "SELECT invhist_id, 0 AS xtindentrole, "
-                 "       invhist_transdate, invhist_transdate AS f_invhist_transdate,"
-                 "       invhist_user, invhist_transtype, invhist_transtype AS f_invhist_transtype, whs1.warehous_code AS warehous_code,"
-                 "       invhist_invqty,"
-                 "       invhist_invuom,"
-                 "       CASE WHEN (invhist_ordtype NOT LIKE '') THEN (invhist_ordtype || '-' || invhist_ordnumber)"
-                 "            ELSE invhist_ordnumber"
-                 "       END AS ordernumber,"
-                 "       invhist_qoh_before,"
-                 "       invhist_qoh_after,"
-                 "       0 AS invdetail_id, '' AS locationname,"
-                 "       CASE WHEN (invhist_transtype='TW') THEN whs1.warehous_code"
-                 "            WHEN (invhist_transtype='IB') THEN whs1.warehous_code"
-                 "            WHEN (invhist_transtype='IM') THEN whs1.warehous_code"
-                 "            WHEN (invhist_transtype='IT') THEN whs1.warehous_code"
-                 "            WHEN (invhist_transtype='RB') THEN 'WIP'"
-                 "            WHEN (invhist_transtype='RM') THEN 'WIP'"
-                 "            WHEN (invhist_transtype='RP') THEN 'PURCH'"
-                 "            WHEN (invhist_transtype='RS') THEN 'SHIP'"
-                 "            WHEN (invhist_transtype='SH') THEN whs1.warehous_code"
-                 "            WHEN (invhist_transtype='SI') THEN whs1.warehous_code"
-                 "            WHEN (invhist_transtype='SV') THEN whs1.warehous_code"
-                 "            ELSE ''"
-                 "       END AS locfrom,"
-                 "       CASE WHEN (invhist_transtype='TW') THEN whs2.warehous_code"
-                 "            WHEN (invhist_transtype='AD') THEN whs1.warehous_code"
-                 "            WHEN (invhist_transtype='CC') THEN whs1.warehous_code"
-                 "            WHEN (invhist_transtype='IB') THEN 'WIP'"
-                 "            WHEN (invhist_transtype='IM') THEN 'WIP'"
-                 "            WHEN (invhist_transtype='NN') THEN whs1.warehous_code"
-                 "            WHEN (invhist_transtype='RB') THEN whs1.warehous_code"
-                 "            WHEN (invhist_transtype='RM') THEN whs1.warehous_code"
-                 "            WHEN (invhist_transtype='RP') THEN whs1.warehous_code"
-                 "            WHEN (invhist_transtype='RS') THEN whs1.warehous_code"
-                 "            WHEN (invhist_transtype='RT') THEN whs1.warehous_code"
-                 "            WHEN (invhist_transtype='RX') THEN whs1.warehous_code"
-                 "            WHEN (invhist_transtype='SH') THEN 'SHIP'"
-                 "            WHEN (invhist_transtype='SI') THEN 'SCRAP'"
-                 "            WHEN (invhist_transtype='SV') THEN 'SHIP'"
-                 "            ELSE ''"
-                 "       END AS locto, "
-                 "       'qty' AS invhist_invqty_xtnumericrole, "
-                 "       'qty' AS invhist_qoh_before_xtnumericrole, "
-                 "       'qty' AS invhist_qoh_after_xtnumericrole, "
-                 "        CASE WHEN (NOT invhist_posted) THEN 'warning' END AS qtforegroundrole "
-                 "FROM itemsite, item, warehous AS whs1, invhist LEFT OUTER JOIN warehous AS whs2 ON (invhist_xfer_warehous_id=whs2.warehous_id) "
-                 "WHERE ( (invhist_itemsite_id=itemsite_id)"
-                 " AND (itemsite_item_id=item_id)"
-                 " AND (itemsite_warehous_id=whs1.warehous_id)"
-                 " AND (itemsite_item_id=:item_id)"
-                 " AND (DATE(invhist_transdate) BETWEEN :startDate AND :endDate)"
-                 " AND (transType(invhist_transtype, :transactionType))" );
-
-    if (_invhistWarehouse->isSelected())
-      sql += " AND (itemsite_warehous_id=:warehous_id)";
-
-    sql += " ) "
-           "UNION SELECT invhist_id, 1 AS xtindentrole,"
-           "             invhist_transdate, NULL as f_invhist_transdate,"
-           "             '' AS invhist_user, invhist_transtype, '' AS f_invhist_transtype, '' AS warehous_code,"
-           "             invdetail_qty AS invhist_invqty,"
-           "             '' AS invhist_invuom,"
-           "             CASE WHEN (invhist_ordtype NOT LIKE '') THEN (invhist_ordtype || '-' || invhist_ordnumber)"
-           "                  ELSE invhist_ordnumber"
-           "             END AS ordernumber,"
-           "             invdetail_qty_before AS invhist_qoh_before,"
-           "             invdetail_qty_after AS invhist_qoh_after,"
-           "             invdetail_id,"
-           "             CASE WHEN (invdetail_location_id=-1) THEN formatlotserialnumber(invdetail_ls_id)"
-           "                  WHEN (invdetail_ls_id IS NULL) THEN formatLocationName(invdetail_location_id)"
-           "                  ELSE (formatLocationName(invdetail_location_id) || '-' || formatlotserialnumber(invdetail_ls_id))"
-           "             END AS locationname,"
-           "             '' AS locfrom,"
-           "             '' AS locto, "
-           "            'qty' AS invhist_invqty_xtnumericrole, "
-           "            'qty' AS invhist_qoh_before_xtnumericrole, "
-           "            'qty' AS invhist_qoh_after_xtnumericrole, "
-           "             CASE WHEN (NOT invhist_posted) THEN 'warning' END AS qtforegroundrole "
-           "FROM itemsite, item, warehous AS whs1, invdetail, invhist LEFT OUTER JOIN warehous AS whs2 ON (invhist_xfer_warehous_id=whs2.warehous_id) "
-           "WHERE ( (invhist_itemsite_id=itemsite_id)"
-           " AND (itemsite_item_id=item_id)"
-           " AND (itemsite_warehous_id=whs1.warehous_id)"
-           " AND (invdetail_invhist_id=invhist_id)"
-           " AND (itemsite_item_id=:item_id)"
-           " AND (DATE(invhist_transdate) BETWEEN :startDate AND :endDate)"
-           " AND (transType(invhist_transtype, :transactionType))";
-
-    if (_invhistWarehouse->isSelected())
-      sql += " AND (itemsite_warehous_id=:warehous_id)";
-
-    sql += ") "
-           "ORDER BY invhist_transdate DESC, invhist_transtype, invhist_id, xtindentrole, locationname;";
-
-    q.prepare(sql);
-    _dates->bindValue(q);
-    q.bindValue(":item_id", _item->id());
-    q.bindValue(":transactionType", _transType->id());
-    _invhistWarehouse->bindValue(q);
-    q.exec();
-    _invhist->populate(q,TRUE);
+    ParameterList params;
+    _dates->appendValue(params);
+    params.append("item_id", _item->id());
+    params.append("transType", _transType->id());
+    _invhistWarehouse->appendValue(params);
+    MetaSQLQuery mql = mqlLoad("inventoryHistory", "detail");
+    q = mql.toQuery(params);
+    if (q.first())
+    {
+      _invhist->populate(q, true);
+    }
+    else if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
 }
 
