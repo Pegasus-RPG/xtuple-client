@@ -11,12 +11,12 @@
  <leftmargin>50</leftmargin>
  <querysource>
   <name>head</name>
-  <sql>SELECT formatDate(&lt;? value(&quot;startDate&quot;) ?>, 'Earliest') AS startdate,
-       formatDate(&lt;? value(&quot;endDate&quot;) ?>, 'Latest') AS enddate,
-       &lt;? if exists(&quot;warehous_id&quot;) ?>
+  <sql>SELECT formatDate(&lt;? value("startDate") ?>, 'Earliest') AS startdate,
+       formatDate(&lt;? value("endDate") ?>, 'Latest') AS enddate,
+       &lt;? if exists("warehous_id") ?>
          ( SELECT warehous_code
              FROM warehous
-            WHERE (warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>) )
+            WHERE (warehous_id=&lt;? value("warehous_id") ?>) )
        &lt;? else ?>
          text('All Sites')
        &lt;? endif ?>
@@ -34,7 +34,10 @@
        formatQty(actiss) AS f_actiss, 
        formatQtyPer(actqtyper) AS f_actqtyper,
        formatQtyPer(actqtyper - projqtyper) AS f_qtypervar,
-       formatPrcnt((1 - (actqtyper / projqtyper)) * -1) AS f_percent
+       CASE WHEN (actqtyper=projqtyper) THEN formatPrcnt(0)
+            WHEN (projqtyper=0) THEN formatPrcnt(actqtyper)
+            ELSE formatPrcnt((1 - (actqtyper / projqtyper)) * -1)
+       END AS f_percent
   FROM ( SELECT womatlvar_posted AS posted,
                 parentitem.item_number AS parent_number,
                 puom.uom_name AS parent_invuom,
@@ -58,20 +61,103 @@
             AND (parentitem.item_inv_uom_id=puom.uom_id)
             AND (componentsite.itemsite_item_id=componentitem.item_id)
             AND (componentitem.item_inv_uom_id=cuom.uom_id)
-            AND (womatlvar_posted BETWEEN &lt;? value(&quot;startDate&quot;) ?> AND &lt;? value(&quot;endDate&quot;) ?>)
-&lt;? if exists(&quot;warehous_id&quot;) ?>
-            AND (componentsite.itemsite_warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>)
+            AND (womatlvar_posted BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
+&lt;? if exists("warehous_id") ?>
+            AND (componentsite.itemsite_warehous_id=&lt;? value("warehous_id") ?>)
 &lt;? endif ?>
                 )
        ) AS data
 ORDER BY posted;</sql>
  </querysource>
  <rpthead>
-  <height>236</height>
+  <height>234</height>
   <label>
    <rect>
-    <x>445</x>
+    <x>590</x>
+    <y>200</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Act. Issue</string>
+  </label>
+  <label>
+   <rect>
+    <x>590</x>
     <y>215</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Act. Qty. per</string>
+  </label>
+  <field>
+   <rect>
+    <x>490</x>
+    <y>130</y>
+    <width>200</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>enddate</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>85</x>
+    <y>215</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Description</string>
+  </label>
+  <label>
+   <rect>
+    <x>265</x>
+    <y>200</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Component Item</string>
+  </label>
+  <label>
+   <rect>
+    <x>520</x>
+    <y>200</y>
     <width>75</width>
     <height>15</height>
    </rect>
@@ -82,7 +168,42 @@ ORDER BY posted;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Produced</string>
+   <string>Proj. Req.</string>
+  </label>
+  <field>
+   <rect>
+    <x>140</x>
+    <y>110</y>
+    <width>200</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>warehouse</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>380</x>
+    <y>110</y>
+    <width>104</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Start Date:</string>
   </label>
   <field>
    <rect>
@@ -105,6 +226,22 @@ ORDER BY posted;</sql>
   </field>
   <label>
    <rect>
+    <x>444</x>
+    <y>200</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Ordered</string>
+  </label>
+  <label>
+   <rect>
     <x>670</x>
     <y>200</y>
     <width>75</width>
@@ -121,246 +258,9 @@ ORDER BY posted;</sql>
   </label>
   <label>
    <rect>
-    <x>380</x>
-    <y>130</y>
-    <width>105</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>End Date:</string>
-  </label>
-  <label>
-   <rect>
-    <x>5</x>
-    <y>200</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Post Date</string>
-  </label>
-  <line>
-   <xstart>5</xstart>
-   <ystart>229</ystart>
-   <xend>745</xend>
-   <yend>229</yend>
-   <weight>2</weight>
-  </line>
-  <label>
-   <rect>
-    <x>265</x>
-    <y>215</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Description</string>
-  </label>
-  <label>
-   <rect>
-    <x>590</x>
-    <y>200</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Act. Issue</string>
-  </label>
-  <label>
-   <rect>
-    <x>520</x>
-    <y>215</y>
-    <width>70</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Proj. Qty. per</string>
-  </label>
-  <label>
-   <rect>
-    <x>380</x>
-    <y>110</y>
-    <width>105</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Start Date:</string>
-  </label>
-  <label>
-   <rect>
-    <x>265</x>
-    <y>200</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Component Item</string>
-  </label>
-  <label>
-   <rect>
-    <x>85</x>
-    <y>215</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Description</string>
-  </label>
-  <label>
-   <rect>
-    <x>520</x>
-    <y>200</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Proj. Req.</string>
-  </label>
-  <label>
-   <rect>
-    <x>670</x>
-    <y>215</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>%</string>
-  </label>
-  <label>
-   <rect>
-    <x>445</x>
-    <y>200</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Ordered</string>
-  </label>
-  <field>
-   <rect>
-    <x>140</x>
-    <y>110</y>
-    <width>200</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>warehouse</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>490</x>
-    <y>130</y>
-    <width>200</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>enddate</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>590</x>
-    <y>215</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Act. Qty. per</string>
-  </label>
-  <label>
-   <rect>
     <x>30</x>
     <y>110</y>
-    <width>105</width>
+    <width>104</width>
     <height>20</height>
    </rect>
    <font>
@@ -390,10 +290,26 @@ ORDER BY posted;</sql>
   </label>
   <label>
    <rect>
-    <x>229</x>
+    <x>5</x>
+    <y>200</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Post Date</string>
+  </label>
+  <label>
+   <rect>
+    <x>228</x>
     <y>10</y>
-    <width>495</width>
-    <height>38</height>
+    <width>494</width>
+    <height>37</height>
    </rect>
    <font>
     <face>Arial</face>
@@ -404,6 +320,93 @@ ORDER BY posted;</sql>
    <vcenter/>
    <string>Material Usage Variance By Site</string>
   </label>
+  <label>
+   <rect>
+    <x>520</x>
+    <y>215</y>
+    <width>70</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Proj. Qty. per</string>
+  </label>
+  <line>
+   <xstart>5</xstart>
+   <ystart>228</ystart>
+   <xend>745</xend>
+   <yend>228</yend>
+   <weight>2</weight>
+  </line>
+  <label>
+   <rect>
+    <x>444</x>
+    <y>215</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Produced</string>
+  </label>
+  <label>
+   <rect>
+    <x>380</x>
+    <y>130</y>
+    <width>104</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>End Date:</string>
+  </label>
+  <label>
+   <rect>
+    <x>670</x>
+    <y>215</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>%</string>
+  </label>
+  <label>
+   <rect>
+    <x>265</x>
+    <y>215</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Description</string>
+  </label>
  </rpthead>
  <pghead>
   <firstpage/>
@@ -413,7 +416,7 @@ ORDER BY posted;</sql>
   <height>36</height>
   <label>
    <rect>
-    <x>445</x>
+    <x>444</x>
     <y>15</y>
     <width>75</width>
     <height>15</height>
@@ -429,7 +432,7 @@ ORDER BY posted;</sql>
   </label>
   <label>
    <rect>
-    <x>445</x>
+    <x>5</x>
     <y>0</y>
     <width>75</width>
     <height>15</height>
@@ -441,7 +444,7 @@ ORDER BY posted;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Ordered</string>
+   <string>Post Date</string>
   </label>
   <label>
    <rect>
@@ -462,6 +465,61 @@ ORDER BY posted;</sql>
   <label>
    <rect>
     <x>520</x>
+    <y>15</y>
+    <width>70</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Proj. Qty. per</string>
+  </label>
+  <label>
+   <rect>
+    <x>670</x>
+    <y>0</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Qty. per Var.</string>
+  </label>
+  <line>
+   <xstart>5</xstart>
+   <ystart>30</ystart>
+   <xend>745</xend>
+   <yend>30</yend>
+   <weight>2</weight>
+  </line>
+  <label>
+   <rect>
+    <x>444</x>
+    <y>0</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Ordered</string>
+  </label>
+  <label>
+   <rect>
+    <x>520</x>
     <y>0</y>
     <width>75</width>
     <height>15</height>
@@ -477,8 +535,24 @@ ORDER BY posted;</sql>
   </label>
   <label>
    <rect>
-    <x>5</x>
-    <y>0</y>
+    <x>85</x>
+    <y>15</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Description</string>
+  </label>
+  <label>
+   <rect>
+    <x>670</x>
+    <y>15</y>
     <width>75</width>
     <height>15</height>
    </rect>
@@ -489,7 +563,23 @@ ORDER BY posted;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Post Date</string>
+   <string>%</string>
+  </label>
+  <label>
+   <rect>
+    <x>590</x>
+    <y>0</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Act. Issue</string>
   </label>
   <label>
    <rect>
@@ -510,7 +600,7 @@ ORDER BY posted;</sql>
   <label>
    <rect>
     <x>85</x>
-    <y>15</y>
+    <y>0</y>
     <width>100</width>
     <height>15</height>
    </rect>
@@ -521,7 +611,7 @@ ORDER BY posted;</sql>
    </font>
    <left/>
    <vcenter/>
-   <string>Description</string>
+   <string>Parent Item</string>
   </label>
   <label>
    <rect>
@@ -539,93 +629,6 @@ ORDER BY posted;</sql>
    <vcenter/>
    <string>Component Item</string>
   </label>
-  <label>
-   <rect>
-    <x>590</x>
-    <y>0</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Act. Issue</string>
-  </label>
-  <line>
-   <xstart>5</xstart>
-   <ystart>30</ystart>
-   <xend>745</xend>
-   <yend>30</yend>
-   <weight>2</weight>
-  </line>
-  <label>
-   <rect>
-    <x>670</x>
-    <y>0</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Qty. per Var.</string>
-  </label>
-  <label>
-   <rect>
-    <x>520</x>
-    <y>15</y>
-    <width>70</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Proj. Qty. per</string>
-  </label>
-  <label>
-   <rect>
-    <x>85</x>
-    <y>0</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Parent Item</string>
-  </label>
-  <label>
-   <rect>
-    <x>670</x>
-    <y>15</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>%</string>
-  </label>
  </pghead>
  <section>
   <name>detail</name>
@@ -636,122 +639,8 @@ ORDER BY posted;</sql>
    <height>51</height>
    <field>
     <rect>
-     <x>670</x>
-     <y>0</y>
-     <width>75</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>f_qtypervar</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>595</x>
-     <y>15</y>
-     <width>75</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>f_actqtyper</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>445</x>
-     <y>15</y>
-     <width>75</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>f_produced</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>265</x>
-     <y>15</y>
-     <width>175</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>child_descrip1</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>5</x>
-     <y>0</y>
-     <width>75</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <hcenter/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>f_posted</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>595</x>
-     <y>0</y>
-     <width>75</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>f_actiss</column>
-    </data>
-   </field>
-   <field>
-    <rect>
      <x>520</x>
-     <y>15</y>
+     <y>0</y>
      <width>75</width>
      <height>15</height>
     </rect>
@@ -764,26 +653,7 @@ ORDER BY posted;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_projqtyper</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>670</x>
-     <y>15</y>
-     <width>75</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>f_percent</column>
+     <column>f_projreq</column>
     </data>
    </field>
    <field>
@@ -807,9 +677,9 @@ ORDER BY posted;</sql>
    </field>
    <field>
     <rect>
-     <x>85</x>
-     <y>30</y>
-     <width>175</width>
+     <x>595</x>
+     <y>15</y>
+     <width>75</width>
      <height>15</height>
     </rect>
     <font>
@@ -817,42 +687,16 @@ ORDER BY posted;</sql>
      <size>8</size>
      <weight>bold</weight>
     </font>
-    <left/>
+    <right/>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>parent_descrip2</column>
-    </data>
-   </field>
-   <line>
-    <xstart>5</xstart>
-    <ystart>45</ystart>
-    <xend>745</xend>
-    <yend>45</yend>
-    <weight>0</weight>
-   </line>
-   <field>
-    <rect>
-     <x>265</x>
-     <y>30</y>
-     <width>175</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>child_descrip2</column>
+     <column>f_actqtyper</column>
     </data>
    </field>
    <field>
     <rect>
-     <x>520</x>
+     <x>444</x>
      <y>0</y>
      <width>75</width>
      <height>15</height>
@@ -866,13 +710,13 @@ ORDER BY posted;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_projreq</column>
+     <column>f_ordered</column>
     </data>
    </field>
    <field>
     <rect>
-     <x>85</x>
-     <y>0</y>
+     <x>265</x>
+     <y>15</y>
      <width>175</width>
      <height>15</height>
     </rect>
@@ -885,7 +729,45 @@ ORDER BY posted;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>parent_number</column>
+     <column>child_descrip1</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>595</x>
+     <y>0</y>
+     <width>75</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_actiss</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>670</x>
+     <y>15</y>
+     <width>75</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_percent</column>
     </data>
    </field>
    <field>
@@ -909,7 +791,7 @@ ORDER BY posted;</sql>
    </field>
    <field>
     <rect>
-     <x>445</x>
+     <x>670</x>
      <y>0</y>
      <width>75</width>
      <height>15</height>
@@ -923,7 +805,128 @@ ORDER BY posted;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_ordered</column>
+     <column>f_qtypervar</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>85</x>
+     <y>0</y>
+     <width>175</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>parent_number</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>444</x>
+     <y>15</y>
+     <width>75</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_produced</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>5</x>
+     <y>0</y>
+     <width>75</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_posted</column>
+    </data>
+   </field>
+   <line>
+    <xstart>5</xstart>
+    <ystart>45</ystart>
+    <xend>745</xend>
+    <yend>45</yend>
+    <weight>0</weight>
+   </line>
+   <field>
+    <rect>
+     <x>520</x>
+     <y>15</y>
+     <width>75</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_projqtyper</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>265</x>
+     <y>30</y>
+     <width>175</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>child_descrip2</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>85</x>
+     <y>30</y>
+     <width>175</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>parent_descrip2</column>
     </data>
    </field>
   </detail>
@@ -949,22 +952,6 @@ ORDER BY posted;</sql>
     <column>page_number</column>
    </data>
   </field>
-  <label>
-   <rect>
-    <x>615</x>
-    <y>0</y>
-    <width>85</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Page:</string>
-  </label>
   <field>
    <rect>
     <x>95</x>
@@ -984,6 +971,22 @@ ORDER BY posted;</sql>
     <column>report_date</column>
    </data>
   </field>
+  <label>
+   <rect>
+    <x>615</x>
+    <y>0</y>
+    <width>85</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Page:</string>
+  </label>
   <label>
    <rect>
     <x>5</x>
