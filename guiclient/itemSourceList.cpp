@@ -100,8 +100,11 @@ void itemSourceList::languageChange()
 
 void itemSourceList::init()
 {
-  _itemsrc->addColumn(tr("Ranking"), _orderColumn, Qt::AlignRight, true, "itemsrc_ranking" );
-  _itemsrc->addColumn(tr("Vendor"),  -1,           Qt::AlignLeft,  true, "vend_name");
+  _itemsrc->addColumn(tr("Ranking"),      _orderColumn, Qt::AlignRight, true, "itemsrc_ranking" );
+  _itemsrc->addColumn(tr("Vendor"),       -1,           Qt::AlignLeft,  true, "vend_name");
+  _itemsrc->addColumn(tr("Vend Item#"),   _itemColumn, Qt::AlignRight, true, "itemsrc_vend_item_number" );
+  _itemsrc->addColumn(tr("Manufacturer"), _itemColumn, Qt::AlignLeft,  true, "itemsrc_manuf_name");
+  _itemsrc->addColumn(tr("Manuf. Item#"), _itemColumn, Qt::AlignRight, true, "itemsrc_manuf_item_number" );
 }
 
 enum SetResponse itemSourceList::set(ParameterList &pParams)
@@ -130,11 +133,15 @@ void itemSourceList::sSelect()
 
 void itemSourceList::sFillList()
 {
-  q.prepare( "SELECT itemsrc_id, itemsrc_ranking, vend_name "
+  q.prepare( "SELECT itemsrc_id, itemsrc_ranking, vend_name, "
+             "  itemsrc_vend_item_number, itemsrc_manuf_name, "
+             "  itemsrc_manuf_item_number "
              "FROM itemsrc, vend "
              "WHERE ( (itemsrc_vend_id=vend_id)"
              " AND (itemsrc_item_id=:item_id) ) "
-             "ORDER BY itemsrc_ranking;" );
+             "ORDER BY itemsrc_ranking, vend_name, "
+             "  itemsrc_vend_item_number, itemsrc_manuf_name, "
+             "  itemsrc_manuf_item_number;" );
   q.bindValue(":item_id", _item->id());
   q.exec();
   _itemsrc->populate(q);

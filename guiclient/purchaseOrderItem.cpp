@@ -337,35 +337,11 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
     _item->setItemsiteid(param.toInt());
     _item->setEnabled(FALSE);
     _warehouse->setEnabled(FALSE);
-
-    q.prepare( "SELECT DISTINCT char_id, char_name,"
-               "       COALESCE(b.charass_value, (SELECT c.charass_value FROM charass c WHERE ((c.charass_target_type='I') AND (c.charass_target_id=:item_id) AND (c.charass_default) AND (c.charass_char_id=char_id)) LIMIT 1)) AS charass_value"
-               "  FROM charass a, char "
-               "    LEFT OUTER JOIN charass b"
-               "      ON (b.charass_target_type='PI'"
-               "      AND b.charass_target_id=:poitem_id"
-               "      AND b.charass_char_id=char_id) "
-               " WHERE ( (a.charass_char_id=char_id)"
-               "   AND   (a.charass_target_type='I')"
-               "   AND   (a.charass_target_id=:item_id) ) "
-               " ORDER BY char_name;" );
-    q.bindValue(":item_id", _item->id());
-    q.bindValue(":poitem_id", _poitemid);
-    q.exec();
-    int row = 0;
-    QModelIndex idx;
-    while(q.next())
-    {
-      _itemchar->insertRow(_itemchar->rowCount());
-      idx = _itemchar->index(row, 0);
-      _itemchar->setData(idx, q.value("char_name"), Qt::DisplayRole);
-      _itemchar->setData(idx, q.value("char_id"), Qt::UserRole);
-      idx = _itemchar->index(row, 1);
-      _itemchar->setData(idx, q.value("charass_value"), Qt::DisplayRole);
-      _itemchar->setData(idx, _item->id(), Qt::UserRole);
-      row++;
-    }
   }
+  
+  param = pParams.value("itemsrc_id", &valid);
+  if (valid)
+    sPopulateItemSourceInfo(param.toInt());
 
   param = pParams.value("qty", &valid);
   if (valid)
@@ -480,6 +456,7 @@ void purchaseOrderItem::populate()
     _itemsrcid = q.value("poitem_itemsrc_id").toInt();
     _vendorItemNumber->setText(q.value("poitem_vend_item_number").toString());
     _vendorDescrip->setText(q.value("poitem_vend_item_descrip").toString());
+    
     if (_itemsrcid == -1)
     {
       _vendorUOM->setText(q.value("poitem_vend_uom").toString());
@@ -845,30 +822,31 @@ void purchaseOrderItem::sPopulateItemInfo(int pItemid)
     }
     
     item.prepare("SELECT itemsrc_id "
-              "FROM itemsrc, pohead "
+                 "FROM itemsrc, pohead "
                  "WHERE ( (itemsrc_vend_id=pohead_vend_id)"
                  " AND (itemsrc_item_id=:item_id)"
                  " AND (pohead_id=:pohead_id) );" );
     item.bindValue(":item_id", pItemid);
     item.bindValue(":pohead_id", _poheadid);
     item.exec();
-    if (item.first())
+    if (item.size() == 1)
     {
-      if (item.size() == 1)
+      item.first();
+      if (item.value("itemsrc_id").toInt() != _itemsrcid)
+        sPopulateItemSourceInfo(item.value("itemsrc_id").toInt());
+    }
+    else if (item.size() > 1)
+    {
+      bool isCurrent = false;
+      while (item.next())
       {
-        if (item.value("itemsrc_id").toInt() != _itemsrcid)
-          sPopulateItemSourceInfo(item.value("itemsrc_id").toInt());
+        if (item.value("itemsrc_id").toInt() == _itemsrcid)
+          isCurrent = true;
       }
-      else if (item.size() > 1)
+      if (!isCurrent)
       {
-        bool isCurrent = false;
-        while (item.next())
-        {
-          if (item.value("itemsrc_id").toInt() == _itemsrcid)
-            isCurrent = true;
-        }
-        if (!isCurrent)
-          sVendorItemNumberList();
+        _vendorItemNumber->clear();
+        sVendorItemNumberList();
       }
     }
   }

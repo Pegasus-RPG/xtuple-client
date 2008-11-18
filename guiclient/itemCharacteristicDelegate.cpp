@@ -127,20 +127,23 @@ void ItemCharacteristicDelegate::setModelData(QWidget *editor, QAbstractItemMode
     charVars.setValue(priceidx.model()->data(priceidx, Qt::UserRole).toList());
   listVars=charVars.toList();
   
-  q.prepare("SELECT formatprice(itemcharprice(:item_id,:char_id,:value,:cust_id,:shipto_id,:qty,:curr_id,:effective)) AS price;");
-  
-  q.bindValue(":item_id"  , listVars.value(ITEM_ID).toInt());
-  q.bindValue(":char_id"  , charidx.model()->data(charidx, Qt::UserRole));
-  q.bindValue(":value"    , comboBox->currentText());
-  q.bindValue(":cust_id"  , listVars.value(CUST_ID));
-  q.bindValue(":shipto_id", listVars.value(SHIPTO_ID));
-  q.bindValue(":qty"      , listVars.value(QTY));
-  q.bindValue(":curr_id"  , listVars.value(CURR_ID));
-  q.bindValue(":effective", listVars.value(EFFECTIVE));
-  q.exec();
-  if (q.first())
-    model->setData(priceidx, q.value("price").toString());
-  model->setData(index, comboBox->currentText());
+  if (listVars.value(CUST_ID).toInt())
+  {
+    q.prepare("SELECT formatprice(itemcharprice(:item_id,:char_id,:value,:cust_id,:shipto_id,:qty,:curr_id,:effective)) AS price;");
+    
+    q.bindValue(":item_id"  , listVars.value(ITEM_ID).toInt());
+    q.bindValue(":char_id"  , charidx.model()->data(charidx, Qt::UserRole));
+    q.bindValue(":value"    , comboBox->currentText());
+    q.bindValue(":cust_id"  , listVars.value(CUST_ID));
+    q.bindValue(":shipto_id", listVars.value(SHIPTO_ID));
+    q.bindValue(":qty"      , listVars.value(QTY));
+    q.bindValue(":curr_id"  , listVars.value(CURR_ID));
+    q.bindValue(":effective", listVars.value(EFFECTIVE));
+    q.exec();
+    if (q.first())
+      model->setData(priceidx, q.value("price").toString());
+    model->setData(index, comboBox->currentText());
+  }
 }
 
 void ItemCharacteristicDelegate::updateEditorGeometry(QWidget *editor,

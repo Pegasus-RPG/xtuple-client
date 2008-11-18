@@ -205,13 +205,10 @@ void itemSourceSearch::sFillList()
   sql +=       "       )"
                "  )"
                " UNION "
-               "SELECT DISTINCT COALESCE(poitem_itemsrc_id, poitem_expcat_id) AS id,"
-               "       CASE WHEN(item_id IS NULL) THEN 2 ELSE 1 END AS altid,"
-               "       COALESCE(item_number, :non) AS item_number,"
-               "       CASE WHEN(item_id IS NOT NULL) THEN"
-               "         (item_descrip1 || ' ' || item_descrip2)"
-               "            ELSE (expcat_code || ' ' || expcat_descrip)"
-               "       END AS item_descrip,"
+               "SELECT DISTINCT poitem_expcat_id AS id,"
+               "        2 AS altid,"
+               "        :non AS item_number,"
+               "       (expcat_code || ' ' || expcat_descrip) AS item_descrip,"
                "       vend_name,"
                "       poitem_vend_item_number,"
                "       poitem_vend_item_descrip, "
@@ -220,22 +217,14 @@ void itemSourceSearch::sFillList()
                "       poitem_manuf_item_descrip "
                "  FROM vend, pohead, poitem"
                "       LEFT OUTER JOIN expcat ON (poitem_expcat_id=expcat_id)"
-               "       LEFT OUTER JOIN itemsite ON (poitem_itemsite_id=itemsite_id)"
-               "       LEFT OUTER JOIN item ON (itemsite_item_id=item_id)"
                " WHERE((pohead_vend_id=vend_id)"
                "   AND (COALESCE(poitem_vend_item_number, '')!='')"
                "   AND (poitem_pohead_id=pohead_id)"
+               "   AND (poitem_itemsite_id IS NULL) "
                "   AND (vend_id=:vend_id)"
                "   AND ( ";
 
   first = true;
-  if(_searchNumber->isChecked())
-  {
-    if(!first)
-      sql += " OR ";
-    sql +=     "        (item_number ~* :searchString)";
-    first = false;
-  }
   if(_searchVendNumber->isChecked())
   {
     if(!first)
@@ -247,16 +236,8 @@ void itemSourceSearch::sFillList()
   {
     if(!first)
       sql += " OR ";
-    sql +=     "        (item_descrip1 ~* :searchString)"
-               "    OR  (expcat_code ~* :searchString)"
+    sql +=     "    (expcat_code ~* :searchString)"
                "    OR  (expcat_descrip ~* :searchString)";
-    first = false;
-  }
-  if(_searchDescrip2->isChecked())
-  {
-    if(!first)
-      sql += " OR ";
-    sql +=     "        (item_descrip2 ~* :searchString)";
     first = false;
   }
   if(_searchVendDescrip->isChecked())

@@ -301,10 +301,10 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
           q.exec();
           if (q.first())
           {
-            if(QMessageBox::question( this, tr("An Open P/O Exists"),
+            if(QMessageBox::question( this, tr("An Open Purchase Order Exists"),
                 tr("An Open Purchase Order already exists for this Vendor.\n"
                    "Would you like to use this Purchase Order?\n"
-                   "Click Yes to use the existing P/O otherwise a new one will be created."),
+                   "Click Yes to use the existing Purchase Order otherwise a new one will be created."),
                 QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes) == QMessageBox::Yes)
             {
 //  Use an existing pohead
@@ -333,7 +333,7 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
           ParameterList newItemParams;
           newItemParams.append("mode", "new");
           newItemParams.append("pohead_id", _poheadid);
-          newItemParams.append("itemsite_id", itemsiteid);
+          newItemParams.append("itemsrc_id", itemsrcid);
 
           if (qty > 0.0)
             newItemParams.append("qty", qty);
