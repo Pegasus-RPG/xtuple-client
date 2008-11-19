@@ -385,6 +385,28 @@ void arWorkBench::sViewInvoiceDetails()
   }
 }
 
+void arWorkBench::sEditAropenOnlyCM()
+{
+  ParameterList params;
+  params.append("mode", "edit");
+  params.append("aropen_id", _aropenCM->id());
+  arOpenItem newdlg(this, "", TRUE);
+  newdlg.set(params);
+
+  if (newdlg.exec() != XDialog::Rejected)
+    sFillList();
+}
+
+void arWorkBench::sViewAropenOnlyCM()
+{
+  ParameterList params;
+  params.append("mode", "view");
+  params.append("aropen_id", _aropenCM->id());
+  arOpenItem newdlg(this, "", TRUE);
+  newdlg.set(params);
+  newdlg.exec();
+}
+
 void arWorkBench::sEditAropenCM()
 {
   ParameterList params;
@@ -811,8 +833,20 @@ void arWorkBench::sPopulateAropenCMMenu(QMenu *pMenu)
 {
   int menuItem;
 
+  if (_aropenCM->id() != -1)
+  {
+    menuItem = pMenu->insertItem(tr("Edit Open Item..."), this, SLOT(sEditAropenOnlyCM()), 0);
+    pMenu->setItemEnabled(menuItem, (_privileges->check("MaintainARMemos")));
+      
+    menuItem = pMenu->insertItem(tr("View Open Item..."), this, SLOT(sViewAropenOnlyCM()), 0);
+    pMenu->setItemEnabled(menuItem,  (_privileges->check("MaintainARMemos") ||
+                                      _privileges->check("ViewARMemos")));
+  }
+
   if (_aropenCM->altId() == 1)
   {
+    pMenu->insertSeparator();
+      
     menuItem = pMenu->insertItem(tr("Edit Credit Memo..."), this, SLOT(sEditAropenCM()), 0);
     if (! _privileges->check("EditAROpenItem"))
       pMenu->setItemEnabled(menuItem, FALSE);

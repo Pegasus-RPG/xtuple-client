@@ -84,6 +84,7 @@ public slots:
     virtual void sDeleteCashrcpt();
     virtual void sEditAropen();
     virtual void sEditAropenCM();
+    virtual void sEditAropenOnlyCM();
     virtual void sEditCashrcpt();
     virtual void sFillAropenCMList();
     virtual void sFillAropenList();
@@ -101,6 +102,7 @@ public slots:
     virtual void sViewInvoice();
     virtual void sViewInvoiceDetails();
     virtual void sViewAropenCM();
+    virtual void sViewAropenOnlyCM();
     virtual void sViewCashrcpt();
     virtual void sVoidPreauth();
     virtual void sgetCCAmount();
