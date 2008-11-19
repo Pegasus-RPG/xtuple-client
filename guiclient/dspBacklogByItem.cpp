@@ -163,19 +163,19 @@ void dspBacklogByItem::sPrint()
 
 void dspBacklogByItem::sEditOrder()
 {
-  salesOrder::editSalesOrder(_soitem->altId(), false);
+  salesOrder::editSalesOrder(_soitem->id(), false);
 }
 
 void dspBacklogByItem::sViewOrder()
 {
-  salesOrder::viewSalesOrder(_soitem->altId());
+  salesOrder::viewSalesOrder(_soitem->id());
 }
 
 void dspBacklogByItem::sEditItem()
 {
   ParameterList params;
   params.append("mode", "edit");
-  params.append("soitem_id", _soitem->id());
+  params.append("soitem_id", _soitem->altId());
       
   salesOrderItem newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -186,7 +186,7 @@ void dspBacklogByItem::sViewItem()
 {
   ParameterList params;
   params.append("mode", "view");
-  params.append("soitem_id", _soitem->id());
+  params.append("soitem_id", _soitem->altId());
       
   salesOrderItem newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -196,7 +196,7 @@ void dspBacklogByItem::sViewItem()
 void dspBacklogByItem::sPrintPackingList()
 {
   ParameterList params;
-  params.append("sohead_id", _soitem->altId());
+  params.append("sohead_id", _soitem->id());
 
   printPackingList newdlg(this, "", TRUE);
   newdlg.set(params);
