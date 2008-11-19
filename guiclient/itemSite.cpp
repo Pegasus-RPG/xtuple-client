@@ -1144,6 +1144,11 @@ void itemSite::populate()
 
     _updates = TRUE;
   }
+  else if (itemsite.lastError().type() != QSqlError::None)
+  {
+    systemError(this, itemsite.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void itemSite::clear()
