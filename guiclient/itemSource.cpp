@@ -78,7 +78,8 @@ itemSource::itemSource(QWidget* parent, const char* name, bool modal, Qt::WFlags
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_vendorList, SIGNAL(clicked()), this, SLOT(sVendorList()));
   connect(_vendor, SIGNAL(nameChanged(const QString&)), _vendorName, SLOT(setText(const QString&)));
-  connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(this, SIGNAL(rejected()), this, SLOT(sRejected()));
   connect(_vendorCurrency, SIGNAL(newID(int)), this, SLOT(sFillPriceList()));
   connect(_vendor, SIGNAL(newId(int)), this, SLOT(sVendorChanged(int)));
 
@@ -90,6 +91,7 @@ itemSource::itemSource(QWidget* parent, const char* name, bool modal, Qt::WFlags
 #endif
 
   _captive = false;
+  _new = false;
   
   QString base;
   q.exec("SELECT currConcat(baseCurrID()) AS base;");
@@ -157,6 +159,7 @@ enum SetResponse itemSource::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
+      _new = true;
 
       q.exec("SELECT NEXTVAL('itemsrc_itemsrc_id_seq') AS _itemsrc_id;");
       if (q.first())
@@ -215,6 +218,7 @@ enum SetResponse itemSource::set(const ParameterList &pParams)
     if (param.toString() == "copy")
     {
       _mode = cNew;
+      _new = true;
       _captive = true;
       int itemsrcidold = _itemsrcid;
 
@@ -232,8 +236,6 @@ enum SetResponse itemSource::set(const ParameterList &pParams)
       connect(_itemsrcp, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
       
       _item->setReadOnly(TRUE);
-      _vendor->setEnabled(FALSE);
-      _vendorList->hide();
       _vendorItemNumber->setText(_vendorItemNumber->text().prepend("Copy Of "));
       
       if (sSave())
@@ -407,12 +409,6 @@ bool itemSource::sSave()
   return true;
 }
 
-void itemSource::sClose()
-{
-  closeEvent(NULL);
-  reject();
-}
-
 void itemSource::sAdd()
 {
   if (_mode == cNew)
@@ -546,12 +542,12 @@ void itemSource::populate()
   }
 }
 
-void itemSource::closeEvent(QCloseEvent *pEvent)
+void itemSource::sRejected()
 {
-  if ( (_mode == cNew) && (pEvent == NULL) )
+  if (_new)
   {
-    q.prepare( "DELETE FROM itemsrcp "
-               "WHERE (itemsrcp_itemsrc_id=:itemsrc_id);" );
+    q.prepare( "DELETE FROM itemsrc "
+               "WHERE (itemsrc_id=:itemsrc_id);" );
     q.bindValue(":itemsrc_id", _itemsrcid);
     q.exec();
     if (q.lastError().type() != QSqlError::NoError)
@@ -560,9 +556,6 @@ void itemSource::closeEvent(QCloseEvent *pEvent)
       return;
     }
   }
-
-  if (pEvent != NULL)
-    XDialog::closeEvent(pEvent);
 }
 
 void itemSource::sVendorChanged( int pId )

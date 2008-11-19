@@ -75,7 +75,6 @@ public:
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
     virtual bool sSave();
-    virtual void sClose();
     virtual void sAdd();
     virtual void sEdit();
     virtual void sDelete();
@@ -83,16 +82,17 @@ public slots:
     virtual void sVendorList();
     virtual void sFillPriceList();
     virtual void populate();
-    virtual void closeEvent( QCloseEvent * pEvent );
+    virtual void sRejected();
     virtual void sVendorChanged( int pId );
 
 protected slots:
     virtual void languageChange();
 
 private:
-    int _mode;
-    int _itemsrcid;
+    int  _mode;
+    int  _itemsrcid;
     bool _captive;
+    bool _new;
 
 };
 
