@@ -228,7 +228,7 @@ void issueWoMaterialBatch::sFillList()
   if (_wo->isValid())
   {
     QTreeWidgetItem * hitem = _womatl->headerItem();
-    if (_wo->qtyOrdered() >= 0)
+    if (_wo->method() == "A")
       hitem->setText(4, tr("Required"));
     else
       hitem->setText(4, tr("Returned"));

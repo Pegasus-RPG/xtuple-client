@@ -258,7 +258,7 @@ void issueWoMaterialItem::sSetQOH(int pWomatlid)
   }
   else
   {
-    if (_wo->qtyOrdered() >= 0)
+    if (_wo->method() == "A")
       _qtyToIssue->setText(_womatl->qtyRequired() - _womatl->qtyIssued());
     else
       _qtyToIssue->setText(_womatl->qtyIssued() * -1);

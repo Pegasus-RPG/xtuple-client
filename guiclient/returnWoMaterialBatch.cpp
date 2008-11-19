@@ -135,7 +135,7 @@ void returnWoMaterialBatch::sReturn()
   q.exec();
   if (q.first())
   {
-    if (q.value("wo_qtyrcv").toDouble() != 0)
+    if (_wo->method() == "A" && q.value("wo_qtyrcv").toDouble() != 0)
     {
       QMessageBox::warning( this, tr("Cannot return Work Order Material"),
                             tr( "This Work Order has had material received against it\n"

@@ -85,7 +85,7 @@ postProduction::postProduction(QWidget* parent, const char* name, bool modal, Qt
 
     _closeWo->setEnabled(_privileges->check("CloseWorkOrders"));
 
-    _qty->setValidator(omfgThis->transQtyVal());
+    _qty->setValidator(omfgThis->qtyVal());
     _qtyOrdered->setPrecision(decimalPlaces("qty"));
     _qtyReceived->setPrecision(decimalPlaces("qty"));
     _qtyBalance->setPrecision(decimalPlaces("qty"));
@@ -169,6 +169,17 @@ enum SetResponse postProduction::set(const ParameterList &pParams)
 
 void postProduction::sHandleWoid(int pWoid)
 {  
+  if (_wo->method() == "A")
+  {
+    _qtyOrderedLit->setText(tr("Qty. Ordered:"));
+    _qtyReceivedLit->setText(tr("Qty. Receveived:"));
+  }
+  else
+  {
+    _qtyOrderedLit->setText(tr("Qty. to Disassemble:"));
+    _qtyReceivedLit->setText(tr("Qty. Disassembled:"));
+  }
+  
   q.prepare( "SELECT womatl_issuemethod "
              "FROM womatl "
              "WHERE (womatl_wo_id=:womatl_wo_id);" );
@@ -195,7 +206,7 @@ void postProduction::sHandleWoid(int pWoid)
 
   if (_metrics->boolean("Routings"))
   {
-    if (_wo->qtyOrdered() < 0)
+    if (_wo->method() == "D")
     {
       _backflushOperations->setEnabled(false);
       _backflushOperations->setChecked(false);
@@ -230,19 +241,6 @@ void postProduction::sScrap()
 
 void postProduction::sPost()
 {
-  if (_wo->qtyOrdered() >= 0 && _qty->text().toDouble() < 0)
-  {
-      QMessageBox::critical(this, windowTitle(), tr("Quantity must be positive."));
-      _qty->setFocus();
-      return;
-  }
-  else if(_wo->qtyOrdered() < 0 && _qty->text().toDouble() > 0)
-  {
-      QMessageBox::critical(this, windowTitle(), tr("Quantity must be negative for negative work orders."));
-      _qty->setFocus();
-      return;
-  }
-
   XSqlQuery type;
   type.prepare( "SELECT item_type "
 	            "FROM item,itemsite,wo "
@@ -292,7 +290,10 @@ void postProduction::sPost()
         q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
         q.prepare("SELECT postProduction(:wo_id, :qty, :backflushMaterials, :backflushOperations, 0, :suUser, :rnUser) AS result;");
         q.bindValue(":wo_id", _wo->id());
-        q.bindValue(":qty", _qty->toDouble());
+        if (_wo->method() == "A")
+          q.bindValue(":qty", _qty->toDouble());
+        else
+          q.bindValue(":qty", _qty->toDouble() * -1);
         q.bindValue(":backflushMaterials", QVariant(_backflush->isChecked()));
         q.bindValue(":backflushOperations", QVariant(_backflushOperations->isChecked()));
         q.bindValue(":suUser", _setupUser->username());
