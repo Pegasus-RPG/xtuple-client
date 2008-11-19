@@ -9,7 +9,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>613</height>
+    <height>628</height>
    </rect>
   </property>
   <property name="minimumSize" >
@@ -42,98 +42,92 @@
      <property name="verticalSpacing" >
       <number>12</number>
      </property>
-     <item row="0" column="0" >
-      <widget class="XLabel" name="_woNumberLit" >
-       <property name="text" >
-        <string>Work Order #:</string>
-       </property>
-       <property name="alignment" >
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
+     <item row="0" column="0" colspan="3" >
+      <layout class="QHBoxLayout" >
+       <item>
+        <widget class="XLabel" name="_woNumberLit" >
+         <property name="text" >
+          <string>Work Order #:</string>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="XLineEdit" name="_woNumber" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>272</width>
+           <height>22</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="_create" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
+         <property name="text" >
+          <string>C&amp;reate</string>
+         </property>
+         <property name="shortcut" >
+          <string>Alt+R</string>
+         </property>
+         <property name="autoDefault" >
+          <bool>true</bool>
+         </property>
+         <property name="default" >
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="_close" >
+         <property name="text" >
+          <string>&amp;Cancel</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
-     <item row="0" column="1" >
-      <widget class="XLineEdit" name="_woNumber" />
-     </item>
-     <item row="0" column="2" colspan="2" >
-      <spacer>
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeType" >
-        <enum>QSizePolicy::Expanding</enum>
-       </property>
-       <property name="sizeHint" >
-        <size>
-         <width>272</width>
-         <height>22</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item row="0" column="4" >
-      <widget class="QPushButton" name="_create" >
-       <property name="enabled" >
-        <bool>false</bool>
-       </property>
-       <property name="text" >
-        <string>C&amp;reate</string>
-       </property>
-       <property name="shortcut" >
-        <string>Alt+R</string>
-       </property>
-       <property name="autoDefault" >
-        <bool>true</bool>
-       </property>
-       <property name="default" >
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="5" >
-      <widget class="QPushButton" name="_close" >
-       <property name="text" >
-        <string>&amp;Cancel</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0" colspan="6" >
+     <item row="1" column="0" colspan="3" >
       <widget class="QGroupBox" name="_itemGroup" >
        <property name="title" >
         <string/>
        </property>
        <layout class="QGridLayout" >
-        <item row="0" column="0" >
-         <layout class="QHBoxLayout" >
-          <item>
-           <widget class="ItemCluster" name="_item" >
-            <property name="minimumSize" >
-             <size>
-              <width>0</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="focusPolicy" >
-             <enum>Qt::StrongFocus</enum>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer>
-            <property name="orientation" >
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" >
-             <size>
-              <width>20</width>
-              <height>16</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
+        <item rowspan="2" row="0" column="0" >
+         <widget class="ItemCluster" name="_item" >
+          <property name="minimumSize" >
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="focusPolicy" >
+           <enum>Qt::StrongFocus</enum>
+          </property>
+         </widget>
         </item>
-        <item row="1" column="0" >
+        <item row="0" column="1" >
          <layout class="QHBoxLayout" >
           <item>
            <widget class="XLabel" name="_warehouseLit" >
@@ -159,7 +153,50 @@
             </property>
             <property name="sizeHint" >
              <size>
-              <width>287</width>
+              <width>71</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item row="1" column="1" >
+         <layout class="QHBoxLayout" >
+          <property name="spacing" >
+           <number>12</number>
+          </property>
+          <item>
+           <widget class="QRadioButton" name="_assembly" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
+            <property name="text" >
+             <string>Assembly</string>
+            </property>
+            <property name="checked" >
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="_disassembly" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
+            <property name="text" >
+             <string>Disassembly</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>40</width>
               <height>20</height>
              </size>
             </property>
@@ -170,7 +207,7 @@
        </layout>
       </widget>
      </item>
-     <item row="2" column="0" colspan="2" >
+     <item row="2" column="0" >
       <widget class="QGroupBox" name="_qtyGroup" >
        <property name="title" >
         <string/>
@@ -185,7 +222,7 @@
               <property name="minimumSize" >
                <size>
                 <width>0</width>
-                <height>0</height>
+                <height>27</height>
                </size>
               </property>
               <property name="text" >
@@ -198,12 +235,6 @@
             </item>
             <item row="0" column="1" >
              <widget class="XLineEdit" name="_qty" >
-              <property name="maximumSize" >
-               <size>
-                <width>80</width>
-                <height>20</height>
-               </size>
-              </property>
               <property name="alignment" >
                <set>Qt::AlignRight</set>
               </property>
@@ -211,6 +242,12 @@
             </item>
             <item row="1" column="0" >
              <widget class="XLabel" name="_qtyReceivedLit" >
+              <property name="minimumSize" >
+               <size>
+                <width>0</width>
+                <height>27</height>
+               </size>
+              </property>
               <property name="text" >
                <string>Qty. Received:</string>
               </property>
@@ -252,7 +289,7 @@
        </layout>
       </widget>
      </item>
-     <item row="2" column="2" >
+     <item row="2" column="1" >
       <widget class="QGroupBox" name="_schedGroup" >
        <property name="title" >
         <string/>
@@ -301,6 +338,12 @@
             </item>
             <item row="1" column="0" >
              <widget class="XLabel" name="_eueDateLit" >
+              <property name="minimumSize" >
+               <size>
+                <width>0</width>
+                <height>27</height>
+               </size>
+              </property>
               <property name="text" >
                <string>Due Date:</string>
               </property>
@@ -321,6 +364,12 @@
             </item>
             <item row="2" column="0" >
              <widget class="XLabel" name="_startDateLit" >
+              <property name="minimumSize" >
+               <size>
+                <width>0</width>
+                <height>27</height>
+               </size>
+              </property>
               <property name="text" >
                <string>Start Date:</string>
               </property>
@@ -356,7 +405,7 @@
        </layout>
       </widget>
      </item>
-     <item row="2" column="3" colspan="3" >
+     <item row="2" column="2" >
       <widget class="QGroupBox" name="_infoGroup" >
        <property name="title" >
         <string/>
@@ -386,7 +435,7 @@
                 <property name="sizeHint" >
                  <size>
                   <width>20</width>
-                  <height>40</height>
+                  <height>0</height>
                  </size>
                 </property>
                </spacer>
@@ -475,7 +524,7 @@
        </layout>
       </widget>
      </item>
-     <item row="3" column="0" colspan="6" >
+     <item row="3" column="0" colspan="3" >
       <widget class="QTabWidget" name="_tabs" >
        <property name="sizePolicy" >
         <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
@@ -491,7 +540,7 @@
        </property>
        <widget class="QWidget" name="tab" >
         <attribute name="title" >
-         <string>Production Notes</string>
+         <string>Notes</string>
         </attribute>
         <layout class="QVBoxLayout" >
          <property name="spacing" >
@@ -847,44 +896,44 @@
        </widget>
       </widget>
      </item>
-    </layout>
-   </item>
-   <item row="1" column="0" >
-    <layout class="QHBoxLayout" >
-     <property name="spacing" >
-      <number>0</number>
-     </property>
-     <property name="leftMargin" >
-      <number>0</number>
-     </property>
-     <property name="topMargin" >
-      <number>0</number>
-     </property>
-     <property name="rightMargin" >
-      <number>0</number>
-     </property>
-     <property name="bottomMargin" >
-      <number>0</number>
-     </property>
-     <item>
-      <widget class="XCheckBox" name="_printTraveler" >
-       <property name="text" >
-        <string>&amp;Print Traveler</string>
+     <item row="4" column="0" colspan="3" >
+      <layout class="QHBoxLayout" >
+       <property name="spacing" >
+        <number>0</number>
        </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="XLabel" name="_bottomSpacer" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
+       <property name="leftMargin" >
+        <number>0</number>
        </property>
-       <property name="text" >
-        <string/>
+       <property name="topMargin" >
+        <number>0</number>
        </property>
-      </widget>
+       <property name="rightMargin" >
+        <number>0</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="XCheckBox" name="_printTraveler" >
+         <property name="text" >
+          <string>&amp;Print Traveler</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="XLabel" name="_bottomSpacer" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text" >
+          <string/>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
     </layout>
    </item>
@@ -902,6 +951,7 @@
    <class>DLineEdit</class>
    <extends>QWidget</extends>
    <header>datecluster.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>ItemCluster</class>

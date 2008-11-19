@@ -76,6 +76,7 @@ workOrder::workOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_item, SIGNAL(newId(int)), this, SLOT(sPopulateItemChar(int)));
   connect(_dueDate, SIGNAL(newDate(const QDate&)), this, SLOT(sUpdateStartDate()));
   connect(_leadTime, SIGNAL(valueChanged(int)), this, SLOT(sUpdateStartDate()));
+  connect(_assembly, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
 
   _bomRevision->setMode(RevisionLineEdit::Use);
   _bomRevision->setType("BOM");
@@ -85,12 +86,13 @@ workOrder::workOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   _captive = FALSE;
   _planordid = -1;
   _woid = -1;
+  _sense = 1;
 
   _lastWarehousid = _warehouse->id();
   _lastItemid = -1;
   _comments->setReadOnly(TRUE);
   _woNumber->setValidator(omfgThis->orderVal());
-  _qty->setValidator(omfgThis->transQtyVal());
+  _qty->setValidator(omfgThis->qtyVal());
   _qtyReceived->setPrecision(omfgThis->qtyVal());
   _postedValue->setPrecision(omfgThis->costVal());
   _wipValue->setPrecision(omfgThis->costVal());
@@ -198,7 +200,8 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
       _item->setType(ItemLineEdit::cGeneralPurchased | ItemLineEdit::cGeneralManufactured | ItemLineEdit::cActive);
       _item->setDefaultType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cActive);
       _qtyReceivedLit->clear();
-      //_tabs->removePage(_tabs->page(3));
+      _assembly->setEnabled(true);
+      _disassembly->setEnabled(true);
 
       populateWoNumber();
     }
@@ -237,7 +240,9 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
         _postedValue->setText(wo.value("wo_postedvalue").toDouble());
         _rcvdValue->setText(wo.value("rcvdvalue").toDouble());
         _wipValue->setText(wo.value("wo_wipvalue").toDouble());
-        _qty->setText(wo.value("wo_qtyord").toDouble());
+        if (wo.value("wo_qtyord").toDouble() < 0)
+          _disassembly->setChecked(true);
+        _qty->setText(wo.value("wo_qtyord").toDouble() * _sense);
         _qtyReceived->setText(wo.value("wo_qtyrcv").toDouble());
         _startDate->setDate(_oldStartDate);
         _dueDate->setDate(_oldDueDate);
@@ -321,7 +326,9 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
         _postedValue->setText(wo.value("wo_postedvalue").toDouble());
         _rcvdValue->setText(wo.value("rcvdvalue").toDouble());
         _wipValue->setText(wo.value("wo_wipvalue").toDouble());
-        _qty->setText(wo.value("wo_qtyord").toDouble());
+        if (wo.value("wo_qtyord").toDouble() < 0)
+          _disassembly->setChecked(true);
+        _qty->setText(wo.value("wo_qtyord").toDouble() * _sense);
         _qtyReceived->setText(wo.value("wo_qtyrcv").toDouble());
         _startDate->setDate(wo.value("wo_startdate").toDate());
         _dueDate->setDate(wo.value("wo_duedate").toDate());
@@ -507,13 +514,14 @@ void workOrder::sCreate()
         return; 
     }
   
-    q.prepare( "SELECT createWo( :woNumber, :itemsite_id, :priority, :orderQty,"
+    q.prepare( "SELECT createWo( :woNumber, :itemsite_id, :priority, :orderQty * :sense,"
                "                 date(:dueDate) - :leadTime, :dueDate, :productionNotes, :ordtype, :ordid, :prj_id,"
                "                 :bom_rev_id, :boo_rev_id, :wo_cosmethod) AS result;" );
     q.bindValue(":woNumber", _woNumber->text().toInt());
     q.bindValue(":itemsite_id", itemsiteid);
     q.bindValue(":priority", _priority->value());
     q.bindValue(":orderQty", orderQty);
+    q.bindValue(":sense", _sense);
     q.bindValue(":leadTime", _leadTime->value());
     q.bindValue(":dueDate", _dueDate->date());
     q.bindValue(":productionNotes", _productionNotes->toPlainText());
@@ -693,9 +701,10 @@ void workOrder::sCreate()
             newQty = q.value("qty").toDouble();
         }
 
-        q.prepare("SELECT changeWoQty(:wo_id, :qty, TRUE);");
+        q.prepare("SELECT changeWoQty(:wo_id, :qty * :sense, TRUE);");
         q.bindValue(":wo_id", _woid);
         q.bindValue(":qty", newQty);
+        q.bindValue(":sense", _sense);
         q.exec();
       }
     }
@@ -851,4 +860,10 @@ void workOrder::sClose()
   close();
 }
 
-
+void workOrder::sHandleButtons()
+{
+  if (_assembly->isChecked())
+    _sense = 1;
+  else
+    _sense = -1;
+}

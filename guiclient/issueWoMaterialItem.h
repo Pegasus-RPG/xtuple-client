@@ -84,7 +84,7 @@ protected slots:
     virtual void languageChange();
 
 private:
-    bool _captive;
+    bool   _captive;
     double _cachedQOH;
 
 };

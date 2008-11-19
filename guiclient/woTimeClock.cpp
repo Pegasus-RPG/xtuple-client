@@ -349,7 +349,7 @@ void woTimeClock::sCheckValid()
   if (_wo->id() != -1 && _wo->qtyOrdered() < 0)
   {
     QMessageBox::critical( this, windowTitle(),
-                      tr("Posting of time against negative work orders is not supported.") );
+                      tr("Posting of time against disassembly work orders is not supported.") );
     _wo->setId(-1);
     _wo->setFocus();
     return;

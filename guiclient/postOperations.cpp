@@ -220,7 +220,7 @@ void postOperations::sHandleWoid(int pWoid)
   if (_wo->id() != -1 && _wo->qtyOrdered() < 0)
   {
     QMessageBox::critical( this, windowTitle(),
-                      tr("Posting of Operations against negative work orders is not supported.") );
+                      tr("Posting of Operations against disassembly work orders is not supported.") );
     _wo->setId(-1);
     _wo->setFocus();
     return;

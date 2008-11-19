@@ -227,6 +227,12 @@ void issueWoMaterialBatch::sFillList()
 
   if (_wo->isValid())
   {
+    QTreeWidgetItem * hitem = _womatl->headerItem();
+    if (_wo->qtyOrdered() >= 0)
+      hitem->setText(4, tr("Required"));
+    else
+      hitem->setText(4, tr("Returned"));
+     
     XSqlQuery womatl;
     womatl.prepare( "SELECT womatl_id, item_number,"
                     " (item_descrip1 || ' ' || item_descrip2) AS itemdescrip, uom_name,"
@@ -239,7 +245,7 @@ void issueWoMaterialBatch::sFillList()
                     "   WHEN (womatl_qtyreq >= 0) THEN "
                     "     noNeg(womatl_qtyreq - womatl_qtyiss) "
                     "   ELSE "
-                    "     noPos(womatl_qtyreq - womatl_qtyiss) "
+                    "     (womatl_qtyiss * -1) "
                     "   END AS required,"
                     " itemsite_qtyonhand,"
                     " abs(noneg((itemsite_qtyonhand - womatl_qtyreq) * -1)) AS short,"

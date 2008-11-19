@@ -88,7 +88,7 @@ issueWoMaterialItem::issueWoMaterialItem(QWidget* parent, const char* name, bool
     omfgThis->inputManager()->notify(cBCItemSite, this, this, SLOT(sCatchItemsiteid(int)));
 
     _wo->setType(cWoExploded | cWoIssued | cWoReleased);
-    _qtyToIssue->setValidator(omfgThis->transQtyVal());
+    _qtyToIssue->setValidator(omfgThis->qtyVal());
     _beforeQty->setPrecision(omfgThis->transQtyVal());
     _afterQty->setPrecision(omfgThis->transQtyVal());
 }
@@ -171,19 +171,6 @@ void issueWoMaterialItem::sCatchItemsiteid(int pItemsiteid)
 
 void issueWoMaterialItem::sIssue()
 {
-  if (_womatl->qtyRequired() >= 0 && _qtyToIssue->text().toDouble() < 0)
-  {
-      QMessageBox::critical(this, windowTitle(), tr("Quantity must be positive."));
-      _qtyToIssue->setFocus();
-      return;
-  }
-  else if(_womatl->qtyRequired() < 0 && _qtyToIssue->text().toDouble() > 0)
-  {
-      QMessageBox::critical(this, windowTitle(), tr("Quantity must be negative for negative requirements."));
-      _qtyToIssue->setFocus();
-      return;
-  }
-    
   q.prepare("SELECT itemsite_id, item_number, warehous_code, "
             "       (COALESCE((SELECT SUM(itemloc_qty) "
             "                    FROM itemloc "
@@ -271,7 +258,10 @@ void issueWoMaterialItem::sSetQOH(int pWomatlid)
   }
   else
   {
-    _qtyToIssue->setText(_womatl->qtyRequired() - _womatl->qtyIssued());
+    if (_wo->qtyOrdered() >= 0)
+      _qtyToIssue->setText(_womatl->qtyRequired() - _womatl->qtyIssued());
+    else
+      _qtyToIssue->setText(_womatl->qtyIssued() * -1);
     
     XSqlQuery qoh;
     qoh.prepare( "SELECT itemuomtouom(itemsite_item_id, NULL, womatl_uom_id, itemsite_qtyonhand) AS qtyonhand,"
@@ -293,6 +283,7 @@ void issueWoMaterialItem::sSetQOH(int pWomatlid)
                         .arg(__FILE__)
                         .arg(__LINE__) );
   }
+  sPopulateQOH();
 }
 
 void issueWoMaterialItem::sPopulateQOH()

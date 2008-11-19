@@ -79,7 +79,7 @@ returnWoMaterialItem::returnWoMaterialItem(QWidget* parent, const char* name, bo
   omfgThis->inputManager()->notify(cBCWorkOrder, this, _wo, SLOT(setId(int)));
 
   _wo->setType(cWoExploded | cWoReleased | cWoIssued);
-  _qty->setValidator(omfgThis->transQtyVal());
+  _qty->setValidator(omfgThis->qtyVal());
   _beforeQty->setPrecision(omfgThis->transQtyVal());
   _afterQty->setPrecision(omfgThis->transQtyVal());
 }
@@ -125,31 +125,6 @@ void returnWoMaterialItem::sReturn()
                            tr("You must select the Work Order from which you with to return Materal") );
     _wo->setFocus();
     return;
-  }
-
-  if (_womatl->qtyRequired() >= 0 && _qty->text().toDouble() < 0)
-  {
-      QMessageBox::critical(this, windowTitle(), tr("Quantity must be positive."));
-      _qty->setFocus();
-      return;
-  }
-  else if (_womatl->qtyRequired() >= 0 && _womatl->qtyIssued() < _qty->text().toDouble())
-  {
-      QMessageBox::critical(this, windowTitle(), tr("Quantity less than or equal to quantity already issued."));
-      _qty->setFocus();
-      return;
-  }
-  else if(_womatl->qtyRequired() < 0 && _qty->text().toDouble() > 0)
-  {
-      QMessageBox::critical(this, windowTitle(), tr("Quantity must be negative for negative requirements."));
-      _qty->setFocus();
-      return;
-  }
-  else if(_womatl->qtyRequired() < 0 && _womatl->qtyIssued() > _qty->text().toDouble())
-  {
-      QMessageBox::critical(this, windowTitle(), tr("Quantity greater than or equal to quantity already issued."));
-      _qty->setFocus();
-      return;
   }
 
   XSqlQuery rollback;
@@ -208,7 +183,10 @@ void returnWoMaterialItem::sSetQOH(int pWomatlid)
   }
   else
   {
-    _qty->setText(_womatl->qtyIssued());
+    if (_wo->qtyOrdered() >= 0)
+      _qty->setText(_womatl->qtyIssued());
+    else
+      _qty->setText((_womatl->qtyRequired()-_womatl->qtyIssued()) * -1);
       
     XSqlQuery qoh;
     qoh.prepare( "SELECT itemuomtouom(itemsite_item_id, NULL, womatl_uom_id, itemsite_qtyonhand) AS qtyonhand,"
@@ -230,6 +208,7 @@ void returnWoMaterialItem::sSetQOH(int pWomatlid)
                         .arg(__FILE__)
                         .arg(__LINE__) );
   }
+  sUpdateQty();
 }
 
 void returnWoMaterialItem::sUpdateQty()

@@ -5,100 +5,54 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>417</width>
-    <height>351</height>
+    <width>600</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Post Miscellaneous Production</string>
   </property>
-  <layout class="QVBoxLayout" >
-   <property name="margin" >
-    <number>5</number>
-   </property>
-   <property name="spacing" >
-    <number>5</number>
-   </property>
-   <item>
-    <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
+  <layout class="QGridLayout" >
+   <item row="0" column="0" >
+    <layout class="QGridLayout" >
+     <property name="leftMargin" >
+      <number>12</number>
      </property>
-     <property name="spacing" >
-      <number>7</number>
+     <property name="topMargin" >
+      <number>12</number>
      </property>
-     <item>
-      <widget class="ItemCluster" name="_item" />
-     </item>
-     <item>
+     <property name="rightMargin" >
+      <number>12</number>
+     </property>
+     <property name="bottomMargin" >
+      <number>12</number>
+     </property>
+     <property name="horizontalSpacing" >
+      <number>12</number>
+     </property>
+     <property name="verticalSpacing" >
+      <number>12</number>
+     </property>
+     <item row="0" column="0" >
       <layout class="QHBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
-        <number>0</number>
+        <number>7</number>
        </property>
        <item>
-        <spacer>
-         <property name="orientation" >
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeType" >
-          <enum>QSizePolicy::Expanding</enum>
-         </property>
-         <property name="sizeHint" >
-          <size>
-           <width>20</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
+        <widget class="ItemCluster" name="_item" />
        </item>
        <item>
-        <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
+        <layout class="QHBoxLayout" >
          <property name="spacing" >
           <number>0</number>
          </property>
          <item>
-          <layout class="QVBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
-           <property name="spacing" >
-            <number>5</number>
-           </property>
-           <item>
-            <widget class="QPushButton" name="_close" >
-             <property name="text" >
-              <string>&amp;Cancel</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="_post" >
-             <property name="enabled" >
-              <bool>false</bool>
-             </property>
-             <property name="text" >
-              <string>&amp;Post</string>
-             </property>
-             <property name="default" >
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
           <spacer>
            <property name="orientation" >
-            <enum>Qt::Vertical</enum>
+            <enum>Qt::Horizontal</enum>
            </property>
            <property name="sizeType" >
-            <enum>QSizePolicy::Preferred</enum>
+            <enum>QSizePolicy::Expanding</enum>
            </property>
            <property name="sizeHint" >
             <size>
@@ -108,91 +62,42 @@
            </property>
           </spacer>
          </item>
-        </layout>
-       </item>
-      </layout>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
-     <property name="spacing" >
-      <number>7</number>
-     </property>
-     <item>
-      <layout class="QHBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
-       <property name="spacing" >
-        <number>5</number>
-       </property>
-       <item>
-        <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
-         <property name="spacing" >
-          <number>5</number>
-         </property>
          <item>
-          <widget class="QLabel" name="_warehouseLit" >
-           <property name="text" >
-            <string>&amp;Site:</string>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-           <property name="buddy" >
-            <cstring>_warehouse</cstring>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="_qtyToPostLit" >
-           <property name="text" >
-            <string>&amp;Qty. to Post:</string>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-           <property name="buddy" >
-            <cstring>_qtyToPost</cstring>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
-         <property name="spacing" >
-          <number>5</number>
-         </property>
-         <item>
-          <layout class="QHBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
+          <layout class="QVBoxLayout" >
            <property name="spacing" >
             <number>0</number>
            </property>
            <item>
-            <widget class="WComboBox" name="_warehouse" >
-             <property name="type" >
-              <enum>WComboBox::Supply</enum>
+            <layout class="QVBoxLayout" >
+             <property name="spacing" >
+              <number>5</number>
              </property>
-            </widget>
+             <item>
+              <widget class="QPushButton" name="_close" >
+               <property name="text" >
+                <string>&amp;Cancel</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="_post" >
+               <property name="enabled" >
+                <bool>false</bool>
+               </property>
+               <property name="text" >
+                <string>&amp;Post</string>
+               </property>
+               <property name="default" >
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
            <item>
             <spacer>
              <property name="orientation" >
-              <enum>Qt::Horizontal</enum>
+              <enum>Qt::Vertical</enum>
              </property>
              <property name="sizeType" >
               <enum>QSizePolicy::Preferred</enum>
@@ -207,244 +112,284 @@
            </item>
           </layout>
          </item>
-         <item>
-          <widget class="XLineEdit" name="_qtyToPost" >
-           <property name="sizePolicy" >
-            <sizepolicy>
-             <hsizetype>5</hsizetype>
-             <vsizetype>0</vsizetype>
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="maximumSize" >
-            <size>
-             <width>80</width>
-             <height>32767</height>
-            </size>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight</set>
-           </property>
-          </widget>
-         </item>
         </layout>
        </item>
       </layout>
      </item>
-     <item>
+     <item row="1" column="0" >
+      <widget class="QGroupBox" name="_typeGroup" >
+       <property name="title" >
+        <string/>
+       </property>
+       <layout class="QGridLayout" >
+        <item row="0" column="0" >
+         <layout class="QHBoxLayout" >
+          <property name="spacing" >
+           <number>12</number>
+          </property>
+          <item>
+           <widget class="QRadioButton" name="_assembly" >
+            <property name="text" >
+             <string>Assemly</string>
+            </property>
+            <property name="checked" >
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="_disassembly" >
+            <property name="text" >
+             <string>Disassembly</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item row="2" column="0" >
+      <widget class="QGroupBox" name="_qtyGroup" >
+       <property name="title" >
+        <string/>
+       </property>
+       <layout class="QGridLayout" >
+        <item row="0" column="0" >
+         <widget class="QLabel" name="_warehouseLit" >
+          <property name="text" >
+           <string>&amp;Site:</string>
+          </property>
+          <property name="alignment" >
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+          <property name="buddy" >
+           <cstring>_warehouse</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1" >
+         <layout class="QHBoxLayout" >
+          <item>
+           <widget class="WComboBox" name="_warehouse" >
+            <property name="type" >
+             <enum>WComboBox::Supply</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType" >
+             <enum>QSizePolicy::Preferred</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item row="0" column="2" >
+         <layout class="QHBoxLayout" >
+          <item>
+           <widget class="XCheckBox" name="_backflush" >
+            <property name="text" >
+             <string>&amp;Backflush</string>
+            </property>
+            <property name="shortcut" >
+             <string>Alt+B</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType" >
+             <enum>QSizePolicy::Expanding</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item row="1" column="0" >
+         <widget class="QLabel" name="_qtyToPostLit" >
+          <property name="text" >
+           <string>&amp;Qty. to Post:</string>
+          </property>
+          <property name="alignment" >
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+          <property name="buddy" >
+           <cstring>_qtyToPost</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1" >
+         <widget class="XLineEdit" name="_qtyToPost" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="alignment" >
+           <set>Qt::AlignRight</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2" >
+         <layout class="QHBoxLayout" >
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType" >
+             <enum>QSizePolicy::Preferred</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="XCheckBox" name="_nonPickItems" >
+            <property name="text" >
+             <string>&amp;Issue Items not on Pick List</string>
+            </property>
+            <property name="shortcut" >
+             <string>Alt+I</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType" >
+             <enum>QSizePolicy::Expanding</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item row="2" column="0" >
+         <widget class="QLabel" name="_documentNumLit" >
+          <property name="text" >
+           <string>Document #:</string>
+          </property>
+          <property name="alignment" >
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1" colspan="2" >
+         <widget class="XLineEdit" name="_documentNum" />
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item row="3" column="0" >
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
         <number>0</number>
        </property>
        <item>
-        <layout class="QHBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
+        <widget class="QLabel" name="_commentsLit" >
+         <property name="text" >
+          <string>Co&amp;mments:</string>
          </property>
-         <property name="spacing" >
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="XCheckBox" name="_backflush" >
-           <property name="text" >
-            <string>&amp;Backflush</string>
-           </property>
-           <property name="shortcut" >
-            <string>Alt+B</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeType" >
-            <enum>QSizePolicy::Expanding</enum>
-           </property>
-           <property name="sizeHint" >
-            <size>
-             <width>20</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
-         <property name="spacing" >
-          <number>0</number>
-         </property>
-         <item>
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeType" >
-            <enum>QSizePolicy::Preferred</enum>
-           </property>
-           <property name="sizeHint" >
-            <size>
-             <width>20</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <widget class="XCheckBox" name="_nonPickItems" >
-           <property name="text" >
-            <string>&amp;Issue Items not on Pick List</string>
-           </property>
-           <property name="shortcut" >
-            <string>Alt+I</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeType" >
-            <enum>QSizePolicy::Expanding</enum>
-           </property>
-           <property name="sizeHint" >
-            <size>
-             <width>20</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <spacer>
-         <property name="orientation" >
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeType" >
-          <enum>QSizePolicy::Preferred</enum>
-         </property>
-         <property name="sizeHint" >
-          <size>
-           <width>20</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
-     <property name="spacing" >
-      <number>5</number>
-     </property>
-     <item>
-      <widget class="QLabel" name="_documentNumLit" >
-       <property name="text" >
-        <string>Document #:</string>
-       </property>
-       <property name="alignment" >
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="XLineEdit" name="_documentNum" />
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QVBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
-     <property name="spacing" >
-      <number>0</number>
-     </property>
-     <item>
-      <widget class="QLabel" name="_commentsLit" >
-       <property name="text" >
-        <string>Co&amp;mments:</string>
-       </property>
-       <property name="buddy" >
-        <cstring>_comments</cstring>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QTextEdit" name="_comments" />
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
-     <property name="spacing" >
-      <number>5</number>
-     </property>
-     <item>
-      <widget class="XCheckBox" name="_immediateTransfer" >
-       <property name="text" >
-        <string>Immediate &amp;Transfer to Site:</string>
-       </property>
-       <property name="shortcut" >
-        <string>Alt+T</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
-       <property name="spacing" >
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="WComboBox" name="_transferWarehouse" >
-         <property name="enabled" >
-          <bool>false</bool>
-         </property>
-         <property name="type" >
-          <enum>WComboBox::NonTransit</enum>
+         <property name="buddy" >
+          <cstring>_comments</cstring>
          </property>
         </widget>
        </item>
        <item>
-        <spacer>
-         <property name="orientation" >
-          <enum>Qt::Horizontal</enum>
+        <widget class="QTextEdit" name="_comments" />
+       </item>
+      </layout>
+     </item>
+     <item row="4" column="0" >
+      <layout class="QHBoxLayout" >
+       <item>
+        <widget class="XCheckBox" name="_immediateTransfer" >
+         <property name="text" >
+          <string>Immediate &amp;Transfer to Site:</string>
          </property>
-         <property name="sizeType" >
-          <enum>QSizePolicy::Expanding</enum>
+         <property name="shortcut" >
+          <string>Alt+T</string>
          </property>
-         <property name="sizeHint" >
-          <size>
-           <width>20</width>
-           <height>20</height>
-          </size>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" >
+         <property name="spacing" >
+          <number>0</number>
          </property>
-        </spacer>
+         <item>
+          <widget class="WComboBox" name="_transferWarehouse" >
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
+           <property name="type" >
+            <enum>WComboBox::NonTransit</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeType" >
+            <enum>QSizePolicy::Expanding</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>20</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
        </item>
       </layout>
      </item>
@@ -456,19 +401,20 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>XCheckBox</class>
-   <extends>QCheckBox</extends>
-   <header>xcheckbox.h</header>
-  </customwidget>
-  <customwidget>
    <class>ItemCluster</class>
    <extends>QWidget</extends>
    <header>itemcluster.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>WComboBox</class>
    <extends>XComboBox</extends>
    <header>wcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
   </customwidget>
   <customwidget>
    <class>XLineEdit</class>
@@ -489,7 +435,6 @@
   <tabstop>_post</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
- <includes/>
  <resources/>
  <connections>
   <connection>

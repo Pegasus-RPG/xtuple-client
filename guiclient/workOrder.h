@@ -80,6 +80,7 @@ public slots:
     virtual void sPopulateItemChar( int pItemid );
     virtual void populateWoNumber();
     virtual void sClose();
+    virtual void sHandleButtons();
 
 protected slots:
     virtual void languageChange();
@@ -87,6 +88,7 @@ protected slots:
 private:
     bool _captive;
     int _planordid;
+    int _sense;
     int _sourceid;
     QString _planordtype;
     int _mode;
