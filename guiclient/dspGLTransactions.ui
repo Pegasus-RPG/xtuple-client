@@ -326,7 +326,7 @@
        <item row="0" column="0" >
         <widget class="QLabel" name="_gltransLit" >
          <property name="text" >
-          <string>General Ledger Transactions:</string>
+          <string>Transactions:</string>
          </property>
          <property name="buddy" >
           <cstring>_gltrans</cstring>
