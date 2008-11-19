@@ -84,6 +84,7 @@ purchaseOrderItem::purchaseOrderItem(QWidget* parent, const char* name, bool mod
 
   _parentwo = -1;
   _parentso = -1;
+  _itemsrcid = -1;
 
   _overriddenUnitPrice = false;
 
