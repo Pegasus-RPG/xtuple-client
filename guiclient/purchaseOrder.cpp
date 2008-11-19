@@ -1060,10 +1060,9 @@ void purchaseOrder::sHandleOrderNumber()
               " WHERE (pohead_id=:pohead_id);");
     q.bindValue(":pohead_id", _poheadid);
     q.bindValue(":pohead_number", _orderNumber->text());
-    if(!q.exec())
-      systemError(this, tr("A System Error occurred at %1::%2.")
-                        .arg(__FILE__)
-                        .arg(__LINE__) );
+    q.exec();
+    if (q.lastError().type() != QSqlError::NoError)
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
   }
 }
 
