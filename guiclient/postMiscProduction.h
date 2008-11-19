@@ -85,6 +85,7 @@ private:
     bool _captive;
     int  _sense;
     int  _itemsiteid;
+    double _qty;
 
 };
 

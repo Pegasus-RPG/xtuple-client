@@ -73,9 +73,10 @@ postMiscProduction::postMiscProduction(QWidget* parent, const char* name, bool m
   _captive = FALSE;
   _itemsiteid = -1;
   _sense = 1;
+  _qty = 0;
 
   _item->setType(ItemLineEdit::cManufactured);
-  _qtyToPost->setValidator(omfgThis->transQtyVal());
+  _qtyToPost->setValidator(omfgThis->qtyVal());
   
   _immediateTransfer->setEnabled(_privileges->check("CreateInterWarehouseTrans"));
     
@@ -132,7 +133,11 @@ enum SetResponse postMiscProduction::set(const ParameterList &pParams)
 
 void postMiscProduction::sPost()
 {
-  if (_qtyToPost->toDouble() == 0)
+  _qty = _qtyToPost->toDouble();
+  if (_disassembly->isChecked())
+    _qty = _qty * -1;
+  
+  if (_qty == 0)
   {
     QMessageBox::warning( this, tr("Invalid Quantity"),
                         tr( "The quantity may not be zero." ) );
@@ -156,7 +161,7 @@ void postMiscProduction::sPost()
              "WHERE ( (itemsite_item_id=:item_id)"
              " AND (itemsite_warehous_id=:warehous_id) );" );
   q.bindValue(":item_id", _item->id());
-  if (_qtyToPost->toDouble() > 0)
+  if (_qty > 0)
     q.bindValue(":warehous_id", _warehouse->id());
   else
     q.bindValue(":warehous_id", _transferWarehouse->id());
@@ -170,7 +175,7 @@ void postMiscProduction::sPost()
 
     q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
     
-    if (_qtyToPost->toDouble() > 0)
+    if (_qty > 0)
     {
       if (post())
       {
@@ -236,7 +241,7 @@ bool postMiscProduction::post()
   q.prepare( "SELECT postMiscProduction( :itemsite_id, :qty, :backflushMaterials,"
              "                           :docNumber, :comments ) AS result;" );
   q.bindValue(":itemsite_id", _itemsiteid);
-  q.bindValue(":qty", _qtyToPost->toDouble());
+  q.bindValue(":qty", _qty);
   q.bindValue(":backflushMaterials", QVariant(_backflush->isChecked()));
   q.bindValue(":docNumber", _documentNum->text().trimmed());
   q.bindValue(":comments", _comments->toPlainText());
@@ -271,7 +276,7 @@ bool postMiscProduction::transfer()
   q.bindValue(":item_id", _item->id());
   q.bindValue(":from_warehous_id", _warehouse->id());
   q.bindValue(":to_warehous_id", _transferWarehouse->id());
-  q.bindValue(":qty", _qtyToPost->toDouble() * _sense);
+  q.bindValue(":qty", _qty * _sense);
   q.bindValue(":documentNumber", _documentNum->text().trimmed());
   q.exec();
   if (q.first())
