@@ -1005,5 +1005,5 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp       
 
 QT += xml sql script network
 
-RESOURCES += guiclient.qrc sql/querydata.qrc
+RESOURCES += guiclient.qrc
 
