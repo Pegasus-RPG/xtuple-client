@@ -850,6 +850,26 @@ void purchaseOrderItem::sPopulateItemInfo(int pItemid)
         sVendorItemNumberList();
       }
     }
+    else
+    {
+      _itemsrcid = -1;
+  
+      _vendorItemNumber->clear();
+      _vendorDescrip->clear();
+      _vendorUOM->setText(_item->uom());
+      _uom->setText(_item->uom());
+      _minOrderQty->clear();
+      _orderQtyMult->clear();
+      _invVendorUOMRatio->setDouble(1.0);
+      _earliestDate->setDate(omfgThis->dbDate());
+      _manufName->clear();
+      _manufItemNumber->clear();
+      _manufItemDescrip->clear();
+  
+      _invVendUOMRatio = 1;
+      _minimumOrder = 0;
+      _orderMultiple = 0;
+    }
   }
 }
 
