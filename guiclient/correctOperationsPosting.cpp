@@ -133,7 +133,7 @@ enum SetResponse correctOperationsPosting::set(const ParameterList &pParams)
 
 void correctOperationsPosting::sHandleWoid(int pWoid)
 {
-  if (_wo->id() != -1 && _wo->qtyOrdered() < 0)
+  if (_wo->id() != -1 && _wo->method() == "D")
   {
     QMessageBox::critical( this, windowTitle(),
                       tr("Posting of Operations against dissembly work orders is not supported.") );

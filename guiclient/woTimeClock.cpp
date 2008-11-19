@@ -346,7 +346,7 @@ void woTimeClock::clear()
 
 void woTimeClock::sCheckValid()
 {
-  if (_wo->id() != -1 && _wo->qtyOrdered() < 0)
+  if (_wo->id() != -1 && _wo->method() == "D")
   {
     QMessageBox::critical( this, windowTitle(),
                       tr("Posting of time against disassembly work orders is not supported.") );

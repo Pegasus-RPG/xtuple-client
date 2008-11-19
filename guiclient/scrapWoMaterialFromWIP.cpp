@@ -239,7 +239,7 @@ void scrapWoMaterialFromWIP::sScrap()
 
 void scrapWoMaterialFromWIP::sHandleButtons()
 {
-  if (_wo->id() != -1 && _wo->qtyOrdered() < 0)
+  if (_wo->id() != -1 && _wo->method() == "D")
   {
     QMessageBox::critical( this, windowTitle(),
                       tr("Posting of scrap against disassembly work orders is not supported.") );

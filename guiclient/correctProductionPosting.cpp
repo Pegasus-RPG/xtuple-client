@@ -134,34 +134,13 @@ enum SetResponse correctProductionPosting::set(const ParameterList &pParams)
 
 void correctProductionPosting::sCorrect()
 {
-  if (_wo->qtyOrdered() >= 0 && _qty->text().toDouble() < 0)
-  {
-      QMessageBox::critical(this, windowTitle(), tr("Quantity must be positive."));
-      _qty->setFocus();
-      return;
-  }
-  else if(_wo->qtyOrdered() < 0 && _qty->text().toDouble() > 0)
-  {
-      QMessageBox::critical(this, windowTitle(), tr("Quantity must be negative for negative work orders."));
-      _qty->setFocus();
-      return;
-  }
-  else if (_wo->qtyOrdered() >= 0 && _qty->toDouble() > _qtyReceivedCache)
+  if (_qty->toDouble() > _qtyReceivedCache)
   {
     QMessageBox::warning( this, tr("Cannot Post Correction"),
-                          tr( "The Quantity to Correct value you entered is greater than the total Quantity Received from this W/O.\n"
-                              "The Quantity to correct must be less than or equal to the Quantity Received." ) );
+                          tr( "The Quantity to correct must be less than or equal to the Quantity already Posted." ) );
     _qty->setFocus();
     return;
   }
-  else if (_wo->qtyOrdered() < 0 && _qty->toDouble() < _qtyReceivedCache)
-  {
-    QMessageBox::warning( this, tr("Cannot Post Correction"),
-                          tr( "The Quantity to Correct value you entered is less than the total Quantity Received from this W/O.\n"
-                              "The Quantity to correct must be greater than or equal to the Quantity Received." ) );
-    _qty->setFocus();
-    return;
-  }  
 
 
   q.prepare( "SELECT item_type "
@@ -195,7 +174,10 @@ void correctProductionPosting::sCorrect()
   q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
   q.prepare("SELECT correctProduction(:wo_id, :qty, :backflushMaterials, :backflushOperations) AS result;");
   q.bindValue(":wo_id", _wo->id());
-  q.bindValue(":qty", _qty->toDouble());
+  if (_wo->method() == "A")
+    q.bindValue(":qty", _qty->toDouble());
+  else
+    q.bindValue(":qty", _qty->toDouble() * -1);
   q.bindValue(":backflushMaterials",  QVariant(_backFlush->isChecked()));
   q.bindValue(":backflushOperations", QVariant(_backflushOperations->isChecked()));
   q.exec();
@@ -247,26 +229,30 @@ void correctProductionPosting::sCorrect()
 
 void correctProductionPosting::populate()
 {
-  if (_wo->qtyOrdered() < 0)
+  if (_wo->id() != -1)
   {
-    _backflushOperations->setEnabled(false);
-    _backflushOperations->setChecked(false);
-  }
-  
-  q.prepare("SELECT wo_qtyord,"
-            "       wo_qtyrcv,"
-            "       noNeg(wo_qtyord - wo_qtyrcv) AS balance"
-            "  FROM wo"
-            " WHERE (wo_id=:wo_id); ");
-  q.bindValue(":wo_id", _wo->id());
-  q.exec();
-  if(q.first())
-  {
-    _qtyOrdered->setDouble(q.value("wo_qtyord").toDouble());
-    _qtyReceived->setDouble(q.value("wo_qtyrcv").toDouble());
-    _qtyBalance->setDouble(q.value("balance").toDouble());
+    if (_wo->method() == "D")
+    {
+      _backFlush->setEnabled(false);
+      _backFlush->setChecked(false);
+      _backflushOperations->setEnabled(false);
+      _backflushOperations->setChecked(false);
+      _qtyOrderedLit->setText(tr("Qty. to Disassemble:"));
+      _qtyReceivedLit->setText(tr("Qty. Disassembled:"));
+    }
+    else
+    {
+      _backFlush->setEnabled(true);
+      _backflushOperations->setEnabled(true);
+      _qtyOrderedLit->setText(tr("Qty. to Disassemble:"));
+      _qtyReceivedLit->setText(tr("Qty. Disassembled:"));
+    }
+    
+    _qtyOrdered->setText(_wo->qtyOrdered());
+    _qtyReceived->setText(_wo->qtyReceived());
+    _qtyBalance->setText(_wo->qtyBalance());
 
-    _qtyReceivedCache = q.value("wo_qtyrcv").toDouble();
+    _qtyReceivedCache = _wo->qtyReceived();
   }
   else
   {
@@ -274,6 +260,7 @@ void correctProductionPosting::populate()
     _qtyReceived->clear();
     _qtyBalance->clear();
 
-    _qtyReceivedCache = 0.0;
+    _qtyReceivedCache = 0;
   }
+
 }

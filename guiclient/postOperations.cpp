@@ -217,7 +217,7 @@ enum SetResponse postOperations::set(const ParameterList &pParams)
 
 void postOperations::sHandleWoid(int pWoid)
 {
-  if (_wo->id() != -1 && _wo->qtyOrdered() < 0)
+  if (_wo->id() != -1 && _wo->method() == "D")
   {
     QMessageBox::critical( this, windowTitle(),
                       tr("Posting of Operations against disassembly work orders is not supported.") );
