@@ -79,6 +79,7 @@ class todoListCalendar : public XWidget, public Ui::todoListCalendar
 
   protected:
     void resizeEvent(QResizeEvent*);
+    void showEvent(QShowEvent*);
 };
 
 #endif // TODOLIST_H

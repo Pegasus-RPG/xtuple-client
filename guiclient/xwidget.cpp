@@ -151,7 +151,6 @@ void XWidget::showEvent(QShowEvent *event)
   if(!_private->_shown)
   {
     _private->_shown = true;
-qDebug("isModal() %s", isModal()?"true":"false");
     if (windowFlags() & (Qt::Window | Qt::Dialog))
     {
       QRect availableGeometry = QApplication::desktop()->availableGeometry();

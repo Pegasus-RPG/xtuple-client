@@ -176,3 +176,11 @@ void todoListCalendar::resizeEvent(QResizeEvent* event)
   _gview->setMinimumWidth(_gview->height() * (_gview->scene()->sceneRect().width() / _gview->scene()->sceneRect().height()));
   _gview->fitInView(_gview->scene()->sceneRect(), Qt::KeepAspectRatio);
 }
+
+void todoListCalendar::showEvent(QShowEvent * event)
+{
+  XWidget::showEvent(event);
+
+  _gview->setMinimumWidth(_gview->height() * (_gview->scene()->sceneRect().width() / _gview->scene()->sceneRect().height()));
+  _gview->fitInView(_gview->scene()->sceneRect(), Qt::KeepAspectRatio);
+}
