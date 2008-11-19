@@ -96,6 +96,7 @@ friend class WoCluster;
     inline int  type() const                   { return _woType;              }
     inline void setType(int pWoType)           { _woType = pWoType;           }
     inline void setWarehouse(int pWarehouseid) { _warehouseid = pWarehouseid; }
+    inline QString method() const                 { return _method;              }
 
   public slots:
     void setId(int);
@@ -110,6 +111,7 @@ friend class WoCluster;
     double  _qtyOrdered;
     double  _qtyReceived;
     XDataWidgetMapper *_mapper;
+    QString _method;
 
   signals:
     void newId(int);
@@ -125,6 +127,7 @@ friend class WoCluster;
     void qtyReceivedChanged(const double);
     void qtyBalanceChanged(const double);
     void statusChanged(const QString &);
+    void methodChanged(const QString &);
     void valid(bool);
 };
 
@@ -151,6 +154,7 @@ class OPENMFGWIDGETS_EXPORT WoCluster : public QWidget
     Q_INVOKABLE inline int id() const          { return _woNumber->_id;                  }
     Q_INVOKABLE inline bool isValid() const    { return _woNumber->_valid;               }
     Q_INVOKABLE inline char status() const     { return _woNumber->_status.toAscii();    }
+    Q_INVOKABLE inline QString method() const     { return _woNumber->method();             }
     Q_INVOKABLE inline double qtyOrdered() const { return _woNumber->_qtyOrdered;        }
     Q_INVOKABLE inline double qtyReceived() const { return _woNumber->_qtyReceived;      }
     Q_INVOKABLE inline double qtyBalance() const
@@ -180,6 +184,7 @@ class OPENMFGWIDGETS_EXPORT WoCluster : public QWidget
     QLabel      *_descrip1;
     QLabel      *_descrip2;
     QLabel      *_status;
+    QLabel      *_method;
     QString      _fieldName;
 
   signals:
@@ -252,7 +257,9 @@ class OPENMFGWIDGETS_EXPORT WomatlCluster : public QWidget
     QLabel      *_descrip2;
     QLabel      *_qtyPer;
     QLabel      *_scrap;
+    QLabel      *_qtyRequiredLit;
     QLabel      *_qtyRequired;
+    QLabel      *_qtyIssuedLit;
     QLabel      *_qtyIssued;
 
     XSqlQuery _womatl;
@@ -261,6 +268,7 @@ class OPENMFGWIDGETS_EXPORT WomatlCluster : public QWidget
     int      _source;
     int      _type;
     int      _sourceId;
+    int      _sense;
     bool     _valid;
     double   _required;
     double   _issued;

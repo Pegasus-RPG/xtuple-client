@@ -125,15 +125,27 @@ void WoLineEdit::setId(int pId)
       wo.prepare( "SELECT formatWONumber(wo_id) AS wonumber,"
                   "       warehous_code, item_id, item_number, uom_name,"
                   "       item_descrip1, item_descrip2,"
-                  "       wo_qtyord, wo_qtyrcv, wo_status,"
+                  "       abs(wo_qtyord) AS wo_qtyord,"
+                  "       abs(wo_qtyrcv) AS wo_qtyrcv, "
+                  "       CASE WHEN (wo_status = 'O') THEN :open "
+                  "       WHEN (wo_status = 'E') THEN :exploded "
+                  "       WHEN (wo_status = 'I') THEN :inprocess "
+                  "       WHEN (wo_status = 'R') THEN :released "
+                  "       WHEN (wo_status = 'C') THEN :closed "
+                  "       ELSE :unknown END AS wo_status,"
                   "       wo_duedate,"
                   "       wo_startdate,"
-                  "       CASE "
-                  "       WHEN (wo_qtyord >= 0) THEN "
-                  "         noNeg(wo_qtyord - wo_qtyrcv) "
+                  "       noNeg(abs(wo_qtyord) - abs(wo_qtyrcv)) AS balance, "
+                  "       CASE WHEN (wo_qtyord >= 0) THEN "
+                  "         :assemble "
                   "       ELSE "
-                  "         noPos(wo_qtyord - wo_qtyrcv) "
-                  "       END AS balance "
+                  "         :disassemble "
+                  "       END AS wo_method, "
+                  "       CASE WHEN (wo_qtyord >= 0) THEN "
+                  "         'A' "
+                  "       ELSE "
+                  "         'D' "
+                  "       END AS method "
                   "FROM wo, itemsite, item, warehous, uom "
                   "WHERE ((wo_itemsite_id=itemsite_id)"
                   " AND (itemsite_item_id=item_id)"
@@ -141,6 +153,13 @@ void WoLineEdit::setId(int pId)
                   " AND (itemsite_warehous_id=warehous_id)"
                   " AND (wo_id=:wo_id));" );
       wo.bindValue(":wo_id", pId);
+      wo.bindValue(":assemble", tr("Assemble"));
+      wo.bindValue(":disassemble", tr("Disassemble"));
+      wo.bindValue(":open", tr("Open"));
+      wo.bindValue(":exploded", tr("Exploded"));
+      wo.bindValue(":inprocess", tr("In Process"));
+      wo.bindValue(":released", tr("Released"));
+      wo.bindValue(":closed", tr("Closed"));
       wo.exec();
       found = (wo.first());
     }
@@ -153,6 +172,7 @@ void WoLineEdit::setId(int pId)
 
       _qtyOrdered  = wo.value("wo_qtyord").toDouble();
       _qtyReceived = wo.value("wo_qtyrcv").toDouble();
+      _method = wo.value("method").toString();
 
       emit newId(_id);
       emit newItemid(wo.value("item_id").toInt());
@@ -167,6 +187,7 @@ void WoLineEdit::setId(int pId)
       emit qtyReceivedChanged(wo.value("wo_qtyrcv").toDouble());
       emit qtyBalanceChanged(wo.value("balance").toDouble());
       emit statusChanged(wo.value("wo_status").toString());
+      emit methodChanged(wo.value("wo_method").toString());
       emit valid(TRUE);
     }
   }
@@ -190,6 +211,7 @@ void WoLineEdit::setId(int pId)
     emit qtyReceivedChanged(0);
     emit qtyBalanceChanged(0);
     emit statusChanged("");
+    emit methodChanged("");
     emit valid(FALSE);
       
     _qtyOrdered  = 0;
@@ -437,11 +459,20 @@ void WoCluster::constructor()
   statusLit->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
   statusLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   _statusLayout->addWidget(statusLit);
-
   _status = new QLabel(this, "_status");
   _status->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
   _status->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
   _statusLayout->addWidget(_status);
+  
+  QLabel *methodLit = new QLabel(tr("Method:"), this, "methodLit");
+  methodLit->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+  methodLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+  _statusLayout->addWidget(methodLit);
+  _method = new QLabel(this, "_method");
+  _method->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+  _method->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+  _statusLayout->addWidget(_method);
+  
   _mainLayout->addLayout(_statusLayout);
 
 //  Make some internal connections
@@ -451,6 +482,7 @@ void WoCluster::constructor()
   connect(_woNumber, SIGNAL(itemDescrip2Changed(const QString &)), _descrip2, SLOT(setText(const QString &)));
   connect(_woNumber, SIGNAL(warehouseChanged(const QString &)), _warehouse, SLOT(setText(const QString &)));
   connect(_woNumber, SIGNAL(statusChanged(const QString &)), _status, SLOT(setText(const QString &)));
+  connect(_woNumber, SIGNAL(methodChanged(const QString &)), _method, SLOT(setText(const QString &)));
 
   connect(_woNumber, SIGNAL(newId(int)), this, SIGNAL(newId(int)));
   connect(_woNumber, SIGNAL(newItemid(int)), this, SIGNAL(newItemid(int)));
@@ -547,6 +579,8 @@ WomatlCluster::WomatlCluster(WoCluster *wocParent, QWidget *parent, const char *
 
   setGeometry(0, 0, parent->width(), parent->height());
 
+  _sense = 1;
+
   connect(wocParent, SIGNAL(newId(int)), SLOT(setWoid(int)));
   connect(this, SIGNAL(newId(int)), wocParent, SLOT(sPopulateInfo(int)));
 }
@@ -598,14 +632,14 @@ void WomatlCluster::constructor()
   _scrap = new QLabel(this, "_scrap");
   _scrap->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
 
-  QLabel *qtyRequiredLit = new QLabel(tr("Qty. Required:"), this, "qtyRequiredLit");
-  qtyRequiredLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+  _qtyRequiredLit = new QLabel(tr("Qty. Required:"), this, "qtyRequiredLit");
+  _qtyRequiredLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
 
   _qtyRequired = new QLabel(this, "_qtyRequired");
   _qtyRequired->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
 
-  QLabel *qtyIssuedLit = new QLabel(tr("Qty. Issued:"), this, "qtyIssuedLit");
-  qtyIssuedLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+  _qtyIssuedLit = new QLabel(tr("Qty. Issued:"), this, "qtyIssuedLit");
+  _qtyIssuedLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
 
   _qtyIssued = new QLabel(this, "_qtyIssued");
   _qtyIssued->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
@@ -627,8 +661,8 @@ void WomatlCluster::constructor()
 
   qtyLitVBoxLyt->addWidget(qtyPerLit);
   qtyLitVBoxLyt->addWidget(scrapLit);
-  qtyLitVBoxLyt->addWidget(qtyRequiredLit);
-  qtyLitVBoxLyt->addWidget(qtyIssuedLit);
+  qtyLitVBoxLyt->addWidget(_qtyRequiredLit);
+  qtyLitVBoxLyt->addWidget(_qtyIssuedLit);
   qtyVBoxLyt->addWidget(_qtyPer);
   qtyVBoxLyt->addWidget(_scrap);
   qtyVBoxLyt->addWidget(_qtyRequired);
@@ -726,12 +760,12 @@ void WomatlCluster::setWoid(int pWoid)
 
   bool qual = FALSE;
   QString sql( "SELECT womatl_id AS womatlid, item_number,"
-               "       wo_id, uom_name, item_descrip1, item_descrip2,"
+               "       wo_id, wo_qtyord, uom_name, item_descrip1, item_descrip2,"
                "       womatl_qtyreq AS _qtyreq, womatl_qtyiss AS _qtyiss,"
                "       formatQtyPer(womatl_qtyper) AS qtyper,"
                "       formatScrap(womatl_scrap) AS scrap,"
-               "       formatQtyPer(womatl_qtyreq) AS qtyreq,"
-               "       formatQtyPer(womatl_qtyiss) AS qtyiss,"
+               "       formatQty(abs(womatl_qtyreq)) AS qtyreq,"
+               "       formatQty(abs(womatl_qtyiss))  AS qtyiss,"
                "       formatQtyPer(womatl_qtywipscrap) AS qtywipscrap "
                "FROM womatl, wo, itemsite, item, uom "
                "WHERE ( (womatl_wo_id=wo_id)"
@@ -767,16 +801,24 @@ void WomatlCluster::setWoid(int pWoid)
 
   sql += ")) );";
 
-  XSqlQuery query;
-  query.prepare(sql);
-  query.bindValue(":wo_id", pWoid);
-  query.exec();
-  if (query.first())
+  _womatl.prepare(sql);
+  _womatl.bindValue(":wo_id", pWoid);
+  _womatl.exec();
+  _itemNumber->populate(_womatl);
+  if (_womatl.first())
   {
-    _womatl.prepare(sql);
-    _womatl.bindValue(":wo_id", pWoid);
-    _womatl.exec();
-    _itemNumber->populate(query);
+    if (_womatl.value("wo_qtyord").toDouble() < 0)
+    {
+      _qtyRequiredLit->setText("Qty. to Return:");
+      _qtyIssuedLit->setText("Qty. Returned:");
+      _sense = -1;
+    }
+    else
+    {
+      _qtyRequiredLit->setText("Qty. Required:");
+      _qtyIssuedLit->setText("Qty. Issued:");
+      _sense = 1;
+    }
   }
   else
   {
@@ -806,15 +848,16 @@ void WomatlCluster::setId(int pWomatlid)
   else
   {
     bool qual = FALSE;
-    QString sql( "SELECT list.womatl_id AS womatlid, item_number,"
+    QString sql( "SELECT list.womatl_id AS womatlid, item_number, "
                  "       wo_id, uom_name, item_descrip1, item_descrip2,"
-                 "       list.womatl_qtyreq AS _qtyreq, list.womatl_qtyiss AS _qtyiss,"
+                 "       abs(list.womatl_qtyreq) AS _qtyreq, "
+                 "       abs(list.womatl_qtyiss) AS _qtyiss,"
                  "       formatQtyPer(list.womatl_qtyper) AS qtyper,"
                  "       formatScrap(list.womatl_scrap) AS scrap,"
-                 "       formatQtyPer(list.womatl_qtyreq) AS qtyreq,"
-                 "       formatQtyPer(list.womatl_qtyiss) AS qtyiss,"
+                 "       formatQty(abs(list.womatl_qtyreq)) AS qtyreq, "
+                 "       formatQty(abs(list.womatl_qtyiss)) AS qtyiss, "
                  "       formatQtyPer(list.womatl_qtywipscrap) AS qtywipscrap "
-                 "FROM womatl AS list, womatl AS target, wo, itemsite, item, uom "
+                 "FROM womatl AS list, womatl AS target, wo, itemsite, item uom "
                  "WHERE ( (list.womatl_wo_id=wo_id)"
                  " AND (target.womatl_wo_id=wo_id)"
                  " AND (list.womatl_itemsite_id=itemsite_id)"
