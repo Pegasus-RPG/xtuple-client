@@ -55,38 +55,37 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#ifndef DSPAPAPPLICATIONS_H
-#define DSPAPAPPLICATIONS_H
+#ifndef CHECK_H
+#define CHECK_H
 
 #include "guiclient.h"
-
 #include "xwidget.h"
-#include <QMenu>
 
-#include "ui_dspAPApplications.h"
+#include "ui_check.h"
 
-class dspAPApplications : public XWidget, public Ui::dspAPApplications
+class ParameterList;
+
+class check : public XWidget, public Ui::check
 {
     Q_OBJECT
 
   public:
-    dspAPApplications(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
-    ~dspAPApplications();
+    check(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
+    ~check();
 
-    virtual bool setParams(ParameterList &);
+    enum SetResponse set(const ParameterList &);
 
   public slots:
+    virtual void clear();
     virtual void sFillList();
-    virtual void sPopulateMenu(QMenu*);
-    virtual void sPrint();
-    virtual void sViewCheck();
-    virtual void sViewCreditMemo();
-    virtual void sViewDebitMemo();
-    virtual void sViewVoucher();
+    virtual void sPopulate();
 
   protected slots:
     virtual void languageChange();
 
+  private:
+    int _checkid;
+
 };
 
-#endif // DSPARAPPLICATIONS_H
+#endif // CHECK_H

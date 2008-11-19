@@ -756,8 +756,7 @@ QString OrderList::type() const
 {
   if(selectedAtDone.count() > 0)
   {
-    XTreeWidgetItem * item = (XTreeWidgetItem*)selectedAtDone.at(0);
-    return item->text(1);
+    return selectedAtDone.at(0)->text(1);
   }
 
   return "";
@@ -798,10 +797,7 @@ QString OrderSearch::type() const
   QList<QTreeWidgetItem*> items = (selectedAtDone.size() > 0) ? selectedAtDone :
 						      _listTab->selectedItems();
   if(items.count() > 0)
-  {
-    XTreeWidgetItem * item = (XTreeWidgetItem*)items.at(0);
-    return item->text(1);
-  }
+    return items.at(0)->text(1);
 
   return "";
 }

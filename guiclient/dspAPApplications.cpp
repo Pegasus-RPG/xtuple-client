@@ -66,6 +66,7 @@
 #include <openreports.h>
 
 #include "apOpenItem.h"
+#include "check.h"
 #include "mqlutil.h"
 #include "voucher.h"
 
@@ -119,6 +120,66 @@ void dspAPApplications::sPrint()
     report.reportError(this);
 }
 
+void dspAPApplications::sViewCheck()
+{
+  int checkid = _apapply->currentItem()->id("apapply_source_docnumber");
+  if (checkid == -1)
+  {
+    XSqlQuery countq;
+    countq.prepare("SELECT COUNT(*) AS count "
+                 "FROM checkhead "
+                 "JOIN checkitem ON (checkhead_id=checkitem_checkhead_id) "
+                 "WHERE ((checkhead_number=:number)"
+                 "   AND (checkitem_amount=:amount));");
+    countq.bindValue(":number", _apapply->currentItem()->text("apapply_source_docnumber"));
+    countq.bindValue(":amount", _apapply->currentItem()->rawValue("apapply_amount"));
+    countq.exec();
+    if (countq.first())
+    {
+      if (countq.value("count").toInt() > 1)
+      {
+        QMessageBox::warning(this, tr("Check Look-Up Failed"),
+                             tr("Found multiple checks with this check number."));
+        return;
+      }
+      else if (countq.value("count").toInt() < 1)
+      {
+        QMessageBox::warning(this, tr("Check Look-Up Failed"),
+                             tr("Could not find the record for this check."));
+        return;
+      }
+    }
+    else if (countq.lastError().type() != QSqlError::None)
+    {
+      systemError(this, countq.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+
+    XSqlQuery chkq;
+    chkq.prepare("SELECT checkhead_id "
+                 "FROM checkhead "
+                 "JOIN checkitem ON (checkhead_id=checkitem_checkhead_id) "
+                 "WHERE ((checkhead_number=:number)"
+                 "   AND (checkitem_amount=:amount));");
+    chkq.bindValue(":number", _apapply->currentItem()->text("apapply_source_docnumber"));
+    chkq.bindValue(":amount", _apapply->currentItem()->rawValue("apapply_amount"));
+    chkq.exec();
+    if (chkq.first())
+      checkid = chkq.value("checkhead_id").toInt();
+    else if (chkq.lastError().type() != QSqlError::None)
+    {
+      systemError(this, chkq.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+  }
+
+  ParameterList params;
+  params.append("checkhead_id", checkid);
+  check *newdlg = new check(this, "check");
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+}
+
 void dspAPApplications::sViewCreditMemo()
 {
   ParameterList params;
@@ -162,6 +223,11 @@ void dspAPApplications::sPopulateMenu(QMenu* pMenu)
                           _privileges->check("MaintainAPMemos") ||
                           _privileges->check("ViewAPMemos"));
   }
+  else if (_apapply->currentItem()->rawValue("apapply_source_doctype") == "K")
+  {
+    menuItem = pMenu->insertItem(tr("View Source Check..."), this, SLOT(sViewCheck()), 0);
+    pMenu->setItemEnabled(menuItem, _privileges->check("MaintainPayments"));
+  }
 
   if (_apapply->currentItem()->rawValue("apapply_target_doctype") == "D")
   {
@@ -187,9 +253,8 @@ void dspAPApplications::sFillList()
 
   MetaSQLQuery mql = mqlLoad("apApplications", "detail");
   q = mql.toQuery(params);
-  if (q.first())
-    _apapply->populate(q);
-  else if (q.lastError().type() != QSqlError::NoError)
+  _apapply->populate(q);
+  if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
@@ -237,6 +302,10 @@ bool dspAPApplications::setParams(ParameterList & params)
     params.append("doctypeList", "'K'");
   else if (_showCreditMemos->isChecked())
     params.append("doctypeList", "'C'");
+  if (_showChecks->isChecked())
+    params.append("showChecks");
+  if (_showCreditMemos->isChecked())
+    params.append("showCreditMemos");
 
   _dates->appendValue(params);
   params.append("creditMemo", tr("C/M"));

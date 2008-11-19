@@ -150,6 +150,8 @@ class OPENMFGWIDGETS_EXPORT XTreeWidgetItem : public QTreeWidgetItem
                      QVariant = QVariant(), QVariant = QVariant() );
 
     void setText(int, const QVariant &);
+    virtual QString text(int p) const { return QTreeWidgetItem::text(p); }
+    virtual QString text(const QString &) const;
     inline void setTextColor(int column, const QColor & color) { QTreeWidgetItem::setTextColor(column, color); }
     void setTextColor(const QColor &);
 

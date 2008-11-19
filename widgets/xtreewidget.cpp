@@ -1306,6 +1306,11 @@ void XTreeWidgetItem::setText(int pColumn, const QVariant & pVariant)
   QTreeWidgetItem::setText(pColumn, pVariant.toString());
 }
 
+QString XTreeWidgetItem::text(const QString &pColumn) const
+{
+  return text(((XTreeWidget*)treeWidget())->column(pColumn));
+}
+
 QVariant XTreeWidgetItem::rawValue(const QString pName)
 {
   int colIdx = ((XTreeWidget*)treeWidget())->column(pName);
