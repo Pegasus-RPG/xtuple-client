@@ -87,7 +87,6 @@ dspSummarizedGLTransactions::dspSummarizedGLTransactions(QWidget* parent, const 
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_selectedSource, SIGNAL(toggled(bool)), _source, SLOT(setEnabled(bool)));
-  connect(_showUsername, SIGNAL(toggled(bool)), this, SLOT(sShowUsername(bool)));
   connect(_gltrans, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
 
   _gltrans->setRootIsDecorated(TRUE);
@@ -100,8 +99,6 @@ dspSummarizedGLTransactions::dspSummarizedGLTransactions(QWidget* parent, const 
   _gltrans->addColumn(tr("Debit"),             _bigMoneyColumn,   Qt::AlignRight,  true,  "debit"  );
   _gltrans->addColumn(tr("Credit"),            _bigMoneyColumn,   Qt::AlignRight,  true,  "credit"  );
   _gltrans->addColumn( tr("Username"),         _userColumn,       Qt::AlignLeft,   true,  "gltrans_username" );
-
-  sShowUsername(_showUsername->isChecked());
 }
 
 /*
@@ -154,8 +151,7 @@ void dspSummarizedGLTransactions::sPrint()
   if (_selectedSource->isChecked())
     params.append("source", _source->currentText());
 
-  if (_showUsername->isChecked())
-    params.append("showUsernames");
+  params.append("showUsernames");
 
   orReport report("SummarizedGLTransactions", params);
   if (report.isValid())
@@ -239,14 +235,6 @@ void dspSummarizedGLTransactions::sFillList()
   {
     _gltrans->populate(q, true);
   }
-}
-
-void dspSummarizedGLTransactions::sShowUsername( bool yes )
-{
-  if(yes)
-    _gltrans->showColumn(8);
-  else
-    _gltrans->hideColumn(8);
 }
 
 void dspSummarizedGLTransactions::sViewTrans()

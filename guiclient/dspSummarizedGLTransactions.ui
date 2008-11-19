@@ -5,152 +5,122 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>789</width>
-    <height>347</height>
+    <width>800</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Summarized G/L Transactions</string>
+   <string>Summarized General Ledger Transactions</string>
   </property>
-   <layout class="QVBoxLayout" >
-    <item>
-     <layout class="QHBoxLayout" >
-      <property name="margin" >
-       <number>0</number>
-      </property>
-      <property name="spacing" >
-       <number>6</number>
-      </property>
-      <item>
-       <layout class="QVBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
-        <property name="spacing" >
-         <number>0</number>
-        </property>
-        <item>
-         <layout class="QHBoxLayout" >
-          <property name="margin" >
-           <number>0</number>
-          </property>
-          <property name="spacing" >
-           <number>5</number>
-          </property>
-          <item>
-           <widget class="QGroupBox" name="_sourceGroup" >
-            <property name="title" >
-             <string/>
+  <layout class="QGridLayout" >
+   <item row="0" column="0" >
+    <layout class="QGridLayout" >
+     <property name="leftMargin" >
+      <number>12</number>
+     </property>
+     <property name="topMargin" >
+      <number>12</number>
+     </property>
+     <property name="rightMargin" >
+      <number>12</number>
+     </property>
+     <property name="bottomMargin" >
+      <number>12</number>
+     </property>
+     <property name="horizontalSpacing" >
+      <number>12</number>
+     </property>
+     <property name="verticalSpacing" >
+      <number>12</number>
+     </property>
+     <item row="0" column="0" >
+      <layout class="QHBoxLayout" >
+       <item>
+        <widget class="QGroupBox" name="_sourceGroup" >
+         <property name="title" >
+          <string/>
+         </property>
+         <layout class="QGridLayout" >
+          <item row="0" column="0" colspan="2" >
+           <widget class="QRadioButton" name="_allSources" >
+            <property name="text" >
+             <string>All Sources</string>
             </property>
-            <layout class="QVBoxLayout" >
-             <property name="margin" >
-              <number>5</number>
-             </property>
-             <property name="spacing" >
-              <number>0</number>
-             </property>
-             <item>
-              <widget class="QRadioButton" name="_allSources" >
-               <property name="text" >
-                <string>All Sources</string>
-               </property>
-               <property name="checked" >
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <layout class="QHBoxLayout" >
-               <property name="margin" >
-                <number>0</number>
-               </property>
-               <property name="spacing" >
-                <number>5</number>
-               </property>
-               <item>
-                <widget class="QRadioButton" name="_selectedSource" >
-                 <property name="text" >
-                  <string>Selected Source:</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="XComboBox" name="_source" >
-                 <property name="enabled" >
-                  <bool>false</bool>
-                 </property>
-                 <item>
-                  <property name="text" >
-                   <string>A/P</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text" >
-                   <string>A/R</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text" >
-                   <string>G/L</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text" >
-                   <string>I/M</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text" >
-                   <string>P/D</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text" >
-                   <string>P/O</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text" >
-                   <string>S/O</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text" >
-                   <string>S/R</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text" >
-                   <string>W/O</string>
-                  </property>
-                 </item>
-                </widget>
-               </item>
-              </layout>
-             </item>
-            </layout>
+            <property name="checked" >
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
-          <item>
-           <layout class="QVBoxLayout" >
-            <property name="margin" >
-             <number>0</number>
+          <item row="1" column="0" >
+           <widget class="QRadioButton" name="_selectedSource" >
+            <property name="text" >
+             <string>Selected Source:</string>
             </property>
-            <property name="spacing" >
-             <number>0</number>
-            </property>
+           </widget>
+          </item>
+          <item row="1" column="1" >
+           <layout class="QHBoxLayout" >
             <item>
-             <widget class="DateCluster" name="_dates" />
+             <widget class="XComboBox" name="_source" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
+              <item>
+               <property name="text" >
+                <string>A/P</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>A/R</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>G/L</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>I/M</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>P/D</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>P/O</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>S/O</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>S/R</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>W/O</string>
+               </property>
+              </item>
+             </widget>
             </item>
             <item>
              <spacer>
               <property name="orientation" >
-               <enum>Qt::Vertical</enum>
+               <enum>Qt::Horizontal</enum>
               </property>
               <property name="sizeHint" >
                <size>
-                <width>20</width>
-                <height>0</height>
+                <width>0</width>
+                <height>20</height>
                </size>
               </property>
              </spacer>
@@ -158,232 +128,171 @@
            </layout>
           </item>
          </layout>
-        </item>
-        <item>
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" >
-           <size>
-            <width>20</width>
-            <height>0</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" >
-          <property name="margin" >
-           <number>0</number>
-          </property>
-          <property name="spacing" >
-           <number>0</number>
-          </property>
-          <item>
-           <spacer>
-            <property name="orientation" >
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeType" >
-             <enum>QSizePolicy::Expanding</enum>
-            </property>
-            <property name="sizeHint" >
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="_dateGroup" >
+         <property name="title" >
+          <string/>
+         </property>
+         <layout class="QGridLayout" >
+          <item row="0" column="0" >
+           <widget class="DateCluster" name="_dates" />
           </item>
-          <item>
-           <widget class="XCheckBox" name="_showUsername" >
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="_showGroup" >
+         <property name="title" >
+          <string>Transactions</string>
+         </property>
+         <layout class="QGridLayout" >
+          <item row="0" column="0" >
+           <widget class="QRadioButton" name="_allTransactions" >
             <property name="text" >
-             <string>Show Username</string>
+             <string>All</string>
+            </property>
+            <property name="checked" >
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" >
+           <widget class="QRadioButton" name="_unpostedTransactions" >
+            <property name="text" >
+             <string>Unposted</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0" >
+           <widget class="QRadioButton" name="_postedTransactions" >
+            <property name="text" >
+             <string>Posted</string>
             </property>
            </widget>
           </item>
          </layout>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QVBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
-        <property name="spacing" >
-         <number>0</number>
-        </property>
-        <item>
-         <widget class="QGroupBox" name="_showGroup" >
-          <property name="title" >
-           <string>Show</string>
-          </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" >
+         <property name="spacing" >
+          <number>0</number>
+         </property>
+         <item>
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeType" >
+            <enum>QSizePolicy::Expanding</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>20</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
           <layout class="QVBoxLayout" >
-           <property name="margin" >
+           <property name="spacing" >
             <number>5</number>
            </property>
-           <property name="spacing" >
-            <number>0</number>
-           </property>
            <item>
-            <widget class="QRadioButton" name="_allTransactions" >
+            <widget class="QPushButton" name="_close" >
              <property name="text" >
-              <string>All Transactions</string>
+              <string>&amp;Close</string>
              </property>
-             <property name="checked" >
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="_query" >
+             <property name="text" >
+              <string>&amp;Query</string>
+             </property>
+             <property name="autoDefault" >
+              <bool>true</bool>
+             </property>
+             <property name="default" >
               <bool>true</bool>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QRadioButton" name="_unpostedTransactions" >
+            <widget class="QPushButton" name="_print" >
              <property name="text" >
-              <string>Unposted Transactions</string>
+              <string>&amp;Print</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QRadioButton" name="_postedTransactions" >
-             <property name="text" >
-              <string>Posted Transactions</string>
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Vertical</enum>
              </property>
-            </widget>
+             <property name="sizeHint" >
+              <size>
+               <width>20</width>
+               <height>0</height>
+              </size>
+             </property>
+            </spacer>
            </item>
           </layout>
-         </widget>
-        </item>
-        <item>
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" >
-           <size>
-            <width>10</width>
-            <height>0</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+     <item row="1" column="0" >
+      <widget class="QFrame" name="frame" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
+         <horstretch>0</horstretch>
+         <verstretch>1</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="frameShape" >
+        <enum>QFrame::NoFrame</enum>
+       </property>
+       <property name="frameShadow" >
+        <enum>QFrame::Plain</enum>
+       </property>
+       <layout class="QVBoxLayout" >
         <property name="spacing" >
          <number>0</number>
         </property>
+        <property name="leftMargin" >
+         <number>0</number>
+        </property>
+        <property name="topMargin" >
+         <number>0</number>
+        </property>
+        <property name="rightMargin" >
+         <number>0</number>
+        </property>
+        <property name="bottomMargin" >
+         <number>0</number>
+        </property>
         <item>
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Horizontal</enum>
+         <widget class="QLabel" name="_gltransLit" >
+          <property name="text" >
+           <string>Transactions:</string>
           </property>
-          <property name="sizeType" >
-           <enum>QSizePolicy::Expanding</enum>
-          </property>
-          <property name="sizeHint" >
-           <size>
-            <width>20</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
+         </widget>
         </item>
         <item>
-         <layout class="QVBoxLayout" >
-          <property name="margin" >
-           <number>0</number>
-          </property>
-          <property name="spacing" >
-           <number>5</number>
-          </property>
-          <item>
-           <widget class="QPushButton" name="_close" >
-            <property name="text" >
-             <string>&amp;Close</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="_query" >
-            <property name="text" >
-             <string>&amp;Query</string>
-            </property>
-            <property name="autoDefault" >
-             <bool>true</bool>
-            </property>
-            <property name="default" >
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="_print" >
-            <property name="text" >
-             <string>&amp;Print</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer>
-            <property name="orientation" >
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" >
-             <size>
-              <width>20</width>
-              <height>0</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
+         <widget class="XTreeWidget" name="_gltrans" />
         </item>
        </layout>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <widget class="QFrame" name="frame" >
-      <property name="sizePolicy" >
-       <sizepolicy>
-        <hsizetype>5</hsizetype>
-        <vsizetype>7</vsizetype>
-        <horstretch>0</horstretch>
-        <verstretch>1</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="frameShape" >
-       <enum>QFrame::NoFrame</enum>
-      </property>
-      <property name="frameShadow" >
-       <enum>QFrame::Plain</enum>
-      </property>
-      <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
-       <property name="spacing" >
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="QLabel" name="_gltransLit" >
-         <property name="text" >
-          <string>Summarized G/L Transactions:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="XTreeWidget" name="_gltrans" />
-       </item>
-      </layout>
-     </widget>
-    </item>
-   </layout>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
  </widget>
  <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
@@ -399,11 +308,6 @@
    <header>xcombobox.h</header>
   </customwidget>
   <customwidget>
-   <class>XCheckBox</class>
-   <extends>QCheckBox</extends>
-   <header>xcheckbox.h</header>
-  </customwidget>
-  <customwidget>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
@@ -415,13 +319,11 @@
   <tabstop>_source</tabstop>
   <tabstop>_dates</tabstop>
   <tabstop>_allTransactions</tabstop>
-  <tabstop>_showUsername</tabstop>
   <tabstop>_query</tabstop>
   <tabstop>_gltrans</tabstop>
   <tabstop>_print</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
- <includes/>
  <resources/>
  <connections>
   <connection>
