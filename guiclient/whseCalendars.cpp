@@ -179,10 +179,11 @@ void whseCalendars::sPrint()
 void whseCalendars::sFillList(int pId)
 {
   _whsecal->populate("SELECT whsecal_id,"
-                     "       COALESCE(warehous_code, 'Any') AS code,"
+                     "       COALESCE((SELECT warehous_code FROM whsinfo WHERE warehous_id=whsecal_warehous_id) , 'Any') AS code,"
                      "       whsecal_descrip "
-                     "  FROM whsecal JOIN site() ON (whsecal_warehous_id=warehous_id)"
-                     " ORDER BY warehous_code,"
+                     "  FROM whsecal "
+                     " WHERE ( (whsecal_warehous_id IN (SELECT warehous_id FROM site())) OR (whsecal_warehous_id IS NULL) )"
+                     " ORDER BY code,"
                      "          whsecal_effective,"
                      "          whsecal_expires;", pId  );
 }
