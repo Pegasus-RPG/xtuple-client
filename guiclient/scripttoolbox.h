@@ -133,6 +133,9 @@ class ScriptToolbox : public QObject
     QWidget * createWidget(const QString & className, QWidget * parent = 0, const QString & name = QString());
     QWidget * lastWindow() const;
 
+    void addColumnXTreeWidget(QWidget * tree, const QString &, int, int, bool = true, const QString = QString(), const QString = QString());
+    void populateXTreeWidget(QWidget * tree, QObject * pSql, bool = FALSE);
+
     bool printReport(const QString & name, const ParameterList & params);
 
     bool coreDisconnect(QObject * sender, const QString & signal, QObject * receiver, const QString & method);

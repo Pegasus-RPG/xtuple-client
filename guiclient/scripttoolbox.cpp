@@ -77,6 +77,7 @@
 #include "xuiloader.h"
 #include "scriptquery.h"
 #include "mqlutil.h"
+#include "xtreewidget.h"
 
 QWidget * ScriptToolbox::_lastWindow = 0;
 
@@ -307,6 +308,21 @@ void ScriptToolbox::setLastWindow(QWidget * lw)
   _lastWindow = lw;
 }
 
+void ScriptToolbox::addColumnXTreeWidget(QWidget * tree, const QString & pString, int pWidth, int pAlignment, bool pVisible, const QString pEditColumn, const QString pDisplayColumn)
+{
+  XTreeWidget *xt = qobject_cast<XTreeWidget*>(tree);
+  if(xt)
+    xt->addColumn(pString, pWidth, pAlignment, pVisible, pEditColumn, pDisplayColumn);
+}
+
+void ScriptToolbox::populateXTreeWidget(QWidget * tree, QObject * pSql, bool pUseAltId)
+{
+  XTreeWidget *xt = qobject_cast<XTreeWidget*>(tree);
+  ScriptQuery *sq = qobject_cast<ScriptQuery*>(pSql);
+  if(xt)
+    xt->populate(sq->query());
+}
+
 // ParameterList Conversion functions
 QScriptValue ParameterListtoScriptValue(QScriptEngine *engine, const ParameterList &params)
 {
@@ -387,4 +403,7 @@ void QtWindowModalityfromScriptValue(const QScriptValue &obj, enum Qt::WindowMod
 {
   en = (enum Qt::WindowModality)obj.toInt32();
 }
+
+
+
 
