@@ -1207,7 +1207,8 @@ void customer::populate()
     _billCntct->setSearchAcct(cust.value("crmacct_id").toInt());
     _creditLimit->set(cust.value("cust_creditlmt").toDouble(),
                       cust.value("cust_creditlmt_curr_id").toInt(),
-                      QDate::currentDate());
+                      QDate::currentDate(),
+                      false);
     _creditRating->setText(cust.value("cust_creditrating"));
     _autoUpdateStatus->setChecked(cust.value("cust_autoupdatestatus").toBool());
     _autoHoldOrders->setChecked(cust.value("cust_autoholdorders").toBool());
