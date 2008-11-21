@@ -1262,6 +1262,7 @@ void returnAuthorization::populate()
       _miscChargeAccount->setEnabled(FALSE);
     }
 
+    _ignoreSoSignals = TRUE;
     if (rahead.value("rahead_disposition").toString() == "C")
       sDispositionChanged();
     else if (rahead.value("rahead_disposition").toString() == "R")
@@ -1272,6 +1273,7 @@ void returnAuthorization::populate()
       _disposition->setCurrentIndex(3);
     else if (rahead.value("rahead_disposition").toString() == "M")
       _disposition->setCurrentIndex(4);
+    _ignoreSoSignals = FALSE;
 
     recalculateTax();
 
@@ -1526,6 +1528,13 @@ void returnAuthorization::sShipWhsChanged()
 
 void returnAuthorization::sDispositionChanged()
 {
+  if (!_ignoreSoSignals) 
+  {
+// Save the change so that disposition of raitems is changed
+    sSave(true);
+    sFillList();
+  }
+
   _new->setEnabled(_cust->isValid() || 
               (_disposition->currentIndex() == 1 && _creditBy->currentIndex() == 0));
   
