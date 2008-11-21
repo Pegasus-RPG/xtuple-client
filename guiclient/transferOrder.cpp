@@ -722,7 +722,7 @@ void transferOrder::sHandleOrderNumber()
       query.exec();
       if (query.first())
       {
-        _mode = cEdit;
+//        _mode = cEdit;
         setToheadid(query.value("tohead_id").toInt());
         populate();
         _orderNumber->setEnabled(FALSE);
