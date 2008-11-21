@@ -138,13 +138,16 @@ void printInvoicesByShipvia::init()
 void printInvoicesByShipvia::sPrint()
 {
   XSqlQuery invoices;
-  invoices.prepare( "SELECT invchead_id, invchead_invcnumber, findCustomerForm(invchead_cust_id, 'I') AS reportname "
-                    "FROM invchead "
-                    "WHERE ( (NOT invchead_printed)"
+  invoices.prepare( "SELECT * FROM ("
+                    "  SELECT invchead_id, invchead_invcnumber, invchead_ordernumber, "
+                    "    findCustomerForm(invchead_cust_id, 'I') AS reportname "
+                    "  FROM invchead "
+                    "  WHERE ( (NOT invchead_printed)"
                     "  AND   (NOT invchead_posted)"
-                    "  AND   (invchead_shipvia=:shipvia)"
-					"  AND   (checkInvoiceSitePrivs(invchead_id)) ) "
-                    "ORDER BY invchead_ordernumber" );
+                    "  AND   (invchead_shipvia=:shipvia)) ) AS data "
+                    "WHERE   (checkInvoiceSitePrivs(invchead_id)) "
+                    "ORDER BY invchead_ordernumber;" );
+
   invoices.bindValue(":shipvia", _shipvia->currentText());
   invoices.exec();
   if (invoices.first())

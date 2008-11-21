@@ -109,12 +109,12 @@ void reprintInvoices::languageChange()
 
 void reprintInvoices::sQuery()
 {
-  QString sql( "SELECT invchead_id, cust_id,"
+  QString sql( "SELECT * FROM ("
+               "  SELECT invchead_id, cust_id,"
                "       invchead_invcnumber, invchead_invcdate,"
                "       (TEXT(cust_number) || ' - ' || cust_name) AS customer "
                "  FROM invchead, cust "
-               " WHERE ( (invchead_cust_id=cust_id)"
-               "   AND   (checkInvoiceSitePrivs(invchead_id))" );
+               " WHERE ( (invchead_cust_id=cust_id)" );
 
   if(_dates->allValid())
     sql +=     "   AND   (invchead_invcdate BETWEEN :startDate AND :endDate) ";
@@ -122,7 +122,8 @@ void reprintInvoices::sQuery()
   if(!_invoicePattern->text().trimmed().isEmpty())
     sql +=     "   AND   (invchead_invcnumber ~ :invc_pattern)";
 
-  sql +=       " )"
+  sql +=       " )) AS data"
+               " WHERE   (checkInvoiceSitePrivs(invchead_id))"
                " ORDER BY invchead_invcdate DESC;";
   q.prepare(sql);
   q.bindValue(":invc_pattern", _invoicePattern->text().trimmed());
