@@ -513,6 +513,8 @@ void cashReceipt::sSave()
 
 bool cashReceipt::save(bool partial)
 {
+double convertedAmount;
+int to = -1, from = -1;
   if (_overapplied &&
       QMessageBox::question(this, tr("Overapplied?"),
                             tr("This Cash Receipt appears to apply too much to"
@@ -555,6 +557,15 @@ bool cashReceipt::save(bool partial)
   {
     _received->setFocus();
     return FALSE;
+  }
+  else //convert the amount///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  {
+
+    from = _received->id();
+    to = _bankaccnt_curr_id;
+
+    convertedAmount = _received->convert(from, to, _received->localValue(), _distDate->date());
+
   }
 
   QString fundsType = _fundsType->itemData(_fundsType->currentIndex()).toString();
@@ -625,14 +636,20 @@ bool cashReceipt::save(bool partial)
 
   q.bindValue(":cashrcpt_id", _cashrcptid);
   q.bindValue(":cashrcpt_cust_id", _cust->id());
-  q.bindValue(":cashrcpt_amount", _received->localValue());
+  if (_received->id() != _bankaccnt_curr_id)
+    q.bindValue(":cashrcpt_amount", convertedAmount);
+  else
+    q.bindValue(":cashrcpt_amount", _received->localValue());
   q.bindValue(":cashrcpt_fundstype", fundsType);
   q.bindValue(":cashrcpt_docnumber", _docNumber->text());
   q.bindValue(":cashrcpt_bankaccnt_id", _bankaccnt->id());
   q.bindValue(":cashrcpt_distdate", _distDate->date());
   q.bindValue(":cashrcpt_notes",          _notes->toPlainText().trimmed());
   q.bindValue(":cashrcpt_usecustdeposit", QVariant(_balCustomerDeposit->isChecked()));
-  q.bindValue(":curr_id", _received->id());
+  if (_received->id() != _bankaccnt_curr_id)
+    q.bindValue(":curr_id", to);
+  else
+    q.bindValue(":curr_id", _received->id());
   if(_altAccnt->isChecked())
     q.bindValue(":cashrcpt_salescat_id", _salescat->id());
   else
@@ -944,3 +961,4 @@ void cashReceipt::sMoveDown()
 
   setCreditCard();
 }
+
