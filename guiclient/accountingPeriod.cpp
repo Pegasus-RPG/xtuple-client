@@ -103,6 +103,28 @@ enum SetResponse accountingPeriod::set(const ParameterList &pParams)
     {
       _mode = cNew;
       _name->setFocus();
+      q.exec("SELECT period_id "
+             "FROM period "
+             "WHERE (period_closed); ");
+      if (q.first())
+        _startDate->setEnabled(false);
+      
+      q.exec("SELECT (LAST(period_end) + 1) AS start_date "
+             "FROM (SELECT period_end "
+             "      FROM period "
+             "      ORDER BY period_end) AS data; ");
+      if (q.first())
+      {
+        _startDate->setDate(q.value("start_date").toDate());
+        int pmonth = _startDate->date().month();
+        QDate pdate = _startDate->date();
+        while (pmonth == _startDate->date().month())
+        {
+          _endDate->setDate(pdate);
+          pdate = pdate.addDays(1);
+          pmonth = pdate.month();
+        }
+      }
     }
     else if (param.toString() == "edit")
     {
@@ -350,14 +372,36 @@ void accountingPeriod::sSave()
 
 void accountingPeriod::populate()
 {
+  q.exec( "SELECT FIRST(period_id) AS first_period_id, "
+            "  LAST(period_id) AS last_period_id "
+            "FROM (SELECT period_id FROM period "
+            "      ORDER BY period_start) AS data; ");
+  if (q.first())
+  {
+    if (q.value("first_period_id").toInt() != _periodid)
+      _startDate->setEnabled(false);
+    if (q.value("last_period_id").toInt() != _periodid)
+      _endDate->setEnabled(false);    
+  }
+  
   q.prepare( "SELECT period_start, period_end, period_closed, period_freeze,"
-             "       period_name, period_yearperiod_id, period_quarter "
+             "       period_name, period_yearperiod_id, period_quarter, "
+             "       (COUNT(trialbal_id) > 0) AS hasTrialBal "
              "FROM period "
-             "WHERE (period_id=:period_id);" );
+             "  LEFT OUTER JOIN trialbal ON (period_id = trialbal_period_id) "
+             "WHERE (period_id=:period_id) "
+             "GROUP BY period_start, period_end, period_closed, period_freeze,"
+             "         period_name, period_yearperiod_id, period_quarter;" );
   q.bindValue(":period_id", _periodid);
   q.exec();
   if (q.first())
   {
+    if (q.value("hasTrialBal").toBool())
+    {
+      _startDate->setEnabled(false);
+      _endDate->setEnabled(false);
+      _year->setEnabled(false);
+    }
     _cachedStartDate = q.value("period_start").toDate();
     _cachedEndDate = q.value("period_end").toDate();
     _cachedClosed = q.value("period_closed").toBool();
