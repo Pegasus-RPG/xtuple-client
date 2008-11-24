@@ -137,10 +137,10 @@ void printInvoices::sPrint()
 {
   XSqlQuery invoices;
   invoices.prepare( "SELECT invchead_id, invchead_invcnumber, findCustomerForm(invchead_cust_id, 'I') AS reportname "
-                    "FROM invchead " 
-                    "WHERE ( (NOT invchead_printed)"
-                    "  AND   (NOT invchead_posted)"
-					"  AND   (checkInvoiceSitePrivs(invchead_id)) ) "
+                    "FROM ( "
+                    "  SELECT * FROM invchead WHERE (NOT invchead_printed)"
+                    "  AND   (NOT invchead_posted)) AS data  " 
+                    "WHERE (checkInvoiceSitePrivs(invchead_id) ) "
                     "ORDER BY invchead_ordernumber" );
   invoices.exec();
   if (invoices.first())
