@@ -229,11 +229,11 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
 
   if (omfgThis->singleCurrency())
   {
-    _arhist->hideColumn(7);
-    _invoice->hideColumn(7);
-    _creditMemo->hideColumn(6);
-    _payments->hideColumn(5);
-    _payments->hideColumn(8);
+    _arhist->hideColumn("currAbbr");
+    _invoice->hideColumn("currAbbr");
+    _creditMemo->hideColumn("currAbbr");
+    _payments->hideColumn("ccpay_currAbbr");
+    _payments->hideColumn("payco_currAbbr");
   }
 
   if (_privileges->check("MaintainCRMAccounts") || _privileges->check("ViewCRMAccounts"))
