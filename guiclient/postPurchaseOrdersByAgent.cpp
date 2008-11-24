@@ -90,10 +90,11 @@ void postPurchaseOrdersByAgent::sPost()
   qDebug("%s called by %s (%p)", __PRETTY_FUNCTION__,
          qPrintable(sender() ? sender()->objectName() : "null ptr"), sender());
   QString sql("SELECT COUNT(postPurchaseOrder(pohead_id)) AS result "
-              "  FROM pohead, poitem "
-              " WHERE ( (poitem_pohead_id=pohead_id)"
-			  "   AND   (checkPOSitePrivs(pohead_id))"
-              "   AND   (poitem_status='U')");
+              "  FROM ( SELECT pohead_id, pohead_agent_username "
+              "           FROM pohead, poitem "
+              "          WHERE ( (poitem_pohead_id=pohead_id)"
+              "            AND   (poitem_status='U') ) ) AS data "
+              " WHERE ( (checkPOSitePrivs(pohead_id))");
   if(_selectedAgent->isChecked())
     sql +=    "   AND   (pohead_agent_username=:username)";
   sql += ")";

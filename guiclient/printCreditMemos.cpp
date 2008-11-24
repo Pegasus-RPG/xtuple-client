@@ -134,10 +134,11 @@ void printCreditMemos::sPrint()
 {
   XSqlQuery cmhead( "SELECT cmhead_id, cmhead_number,"
                     "       findCustomerForm(cmhead_cust_id, 'C') AS _reportname "
-                    "FROM cmhead "
-                    "WHERE ( (NOT cmhead_hold)"
-                    "  AND   (checkCreditMemoSitePrivs(cmhead_id))"
-                    "  AND   (NOT cmhead_printed) );");
+                    "FROM ( SELECT cmhead_id, cmhead_number, cmhead_cust_id "
+                    "       FROM cmhead "
+                    "       WHERE ( (NOT cmhead_hold)"
+                    "         AND   (NOT cmhead_printed) ) ) AS data "
+                    "WHERE (checkCreditMemoSitePrivs(cmhead_id));" );
   if (cmhead.first())
   {
     QPrinter printer(QPrinter::HighResolution);

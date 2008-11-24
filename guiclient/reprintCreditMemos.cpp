@@ -96,9 +96,12 @@ reprintCreditMemos::reprintCreditMemos(QWidget* parent, const char* name, bool m
   _cmhead->populate( "SELECT cmhead_id, cust_id,"
                      "       cmhead_number, cmhead_docdate,"
                      "       (TEXT(cust_number) || ' - ' || cust_name) AS customer "
-                     "FROM cmhead, cust "
-                     "WHERE ( (cmhead_cust_id=cust_id) "
-                    "   AND   (checkCreditMemoSitePrivs(cmhead_id)) ) "
+                     "FROM ( SELECT cmhead_id, cust_id,"
+                     "              cmhead_number, cmhead_docdate,"
+                     "              cust_number, cust_name "
+                     "       FROM cmhead, cust "
+                     "       WHERE (cmhead_cust_id=cust_id) ) AS data "
+                     "WHERE (checkCreditMemoSitePrivs(cmhead_id)) "
                      "ORDER BY cmhead_docdate DESC;", TRUE );
 }
 

@@ -88,9 +88,10 @@ void postCreditMemos::languageChange()
 void postCreditMemos::sPost()
 {
   q.exec( "SELECT cmhead_printed, COUNT(*) AS number "
-          "FROM cmhead "
-          "WHERE ( (NOT cmhead_posted) "
-          "  AND   (checkCreditMemoSitePrivs(cmhead_id)) ) "
+          "FROM ( SELECT cmhead_id, cmhead_printed "
+          "       FROM cmhead "
+          "       WHERE (NOT cmhead_posted) ) AS data "
+          "WHERE (checkCreditMemoSitePrivs(cmhead_id)) "
           "GROUP BY cmhead_printed;" );
   if (q.first())
   {
