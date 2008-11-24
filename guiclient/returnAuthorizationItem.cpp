@@ -1229,7 +1229,7 @@ void returnAuthorizationItem::sDispositionChanged()
 
   if (_disposition->currentIndex() == 3)
   _item->setQuery( QString( "SELECT DISTINCT item_id, item_number, item_descrip1, item_descrip2,"
-                              "                uom_name, item_type, item_config "
+                              "                uom_name, item_type, item_config, (item_descrip1 || ' ' || item_descrip2) AS itemdescrip "
                               "FROM item, itemsite, uom "
                               "WHERE ( (itemsite_item_id=item_id)"
                               " AND (item_inv_uom_id=uom_id)"
@@ -1241,7 +1241,7 @@ void returnAuthorizationItem::sDispositionChanged()
                      .arg(_custid).arg(_shiptoid) );
   else
   _item->setQuery( QString( "SELECT DISTINCT item_id, item_number, item_descrip1, item_descrip2,"
-                              "                uom_name, item_type, item_config "
+                              "                uom_name, item_type, item_config, (item_descrip1 || ' ' || item_descrip2) AS itemdescrip "
                               "FROM item, itemsite, uom "
                               "WHERE ( (itemsite_item_id=item_id)"
                               " AND (item_inv_uom_id=uom_id)"
