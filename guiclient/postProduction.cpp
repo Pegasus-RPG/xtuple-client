@@ -169,38 +169,40 @@ enum SetResponse postProduction::set(const ParameterList &pParams)
 
 void postProduction::sHandleWoid(int pWoid)
 {  
-  if (_wo->method() == "A")
-  {
-    _qtyOrderedLit->setText(tr("Qty. Ordered:"));
-    _qtyReceivedLit->setText(tr("Qty. Receveived:"));
-  }
-  else
+  if (_wo->method() == "D")
   {
     _qtyOrderedLit->setText(tr("Qty. to Disassemble:"));
     _qtyReceivedLit->setText(tr("Qty. Disassembled:"));
+    _backflush->setEnabled(FALSE);
+    _backflush->setChecked(FALSE);
   }
-  
-  q.prepare( "SELECT womatl_issuemethod "
-             "FROM womatl "
-             "WHERE (womatl_wo_id=:womatl_wo_id);" );
-  q.bindValue(":womatl_wo_id", pWoid);
-  q.exec();
-  if (q.first())
+  else
   {
-    if (q.findFirst("womatl_issuemethod", "L") != -1)
+    _qtyOrderedLit->setText(tr("Qty. Ordered:"));
+    _qtyReceivedLit->setText(tr("Qty. Receveived:"));
+    
+    q.prepare( "SELECT womatl_issuemethod "
+              "FROM womatl "
+              "WHERE (womatl_wo_id=:womatl_wo_id);" );
+    q.bindValue(":womatl_wo_id", pWoid);
+    q.exec();
+    if (q.first())
     {
-      _backflush->setEnabled(FALSE);
-      _backflush->setChecked(TRUE);
-    }
-    else if (q.findFirst("womatl_issuemethod", "M") != -1)
-    {
-      _backflush->setEnabled(TRUE);
-      _backflush->setChecked(TRUE);
-    }
-    else
-    {
-      _backflush->setEnabled(FALSE);
-      _backflush->setChecked(FALSE);
+      if (q.findFirst("womatl_issuemethod", "L") != -1)
+      {
+        _backflush->setEnabled(FALSE);
+        _backflush->setChecked(TRUE);
+      }
+      else if (q.findFirst("womatl_issuemethod", "M") != -1)
+      {
+        _backflush->setEnabled(TRUE);
+        _backflush->setChecked(TRUE);
+      }
+      else
+      {
+        _backflush->setEnabled(FALSE);
+        _backflush->setChecked(FALSE);
+      }
     }
   }
 
