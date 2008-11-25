@@ -72,13 +72,19 @@ public:
     virtual bool setParams(ParameterList&);
 
 public slots:
-    virtual void sPrint();
-    virtual void sHandleVariance( bool pShowVariances );
+    virtual void sCorrectReceiving();
+    virtual void sCreateVoucher();
     virtual void sFillList();
+    virtual void sHandleVariance( bool pShowVariances );
+    virtual void sMarkAsInvoiced();
+    virtual void sPopulateMenu(QMenu*, QTreeWidgetItem*);
+    virtual void sPrint();
 
 protected slots:
     virtual void languageChange();
 
+  private:
+    virtual bool recvHasValue();
 };
 
 #endif // DSPPOITEMRECEIVINGSBYVENDOR_H

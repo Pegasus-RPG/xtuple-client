@@ -132,8 +132,10 @@ void unappliedAPCreditMemos::sPrint()
 void unappliedAPCreditMemos::sNew()
 {
   ParameterList params;
-  params.append("mode", "new");
+  params.append("mode",    "new");
   params.append("docType", "creditMemo");
+  if (_vendorgroup->isSelectedVend())
+    params.append("vend_id", _vendorgroup->vendId());
 
   apOpenItem newdlg(this, "", TRUE);
   newdlg.set(params);

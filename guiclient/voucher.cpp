@@ -214,6 +214,10 @@ enum SetResponse voucher::set(const ParameterList &pParams)
     }
   }
 
+  param = pParams.value("pohead_id", &valid);
+  if (valid)
+    _poNumber->setId(param.toInt());
+
   param = pParams.value("vohead_id", &valid);
   if (valid)
   {

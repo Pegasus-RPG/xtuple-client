@@ -81,27 +81,20 @@ apOpenItem::apOpenItem(QWidget* parent, const char* name, bool modal, Qt::WFlags
   _apapply->addColumn( tr("Currency"),_currencyColumn, Qt::AlignLeft,  true, "currabbr");
 
   if (omfgThis->singleCurrency())
-      _apapply->hideColumn(4);
+      _apapply->hideColumn("currabbr");
 
   _terms->setType(XComboBox::APTerms);
   _journalNumber->setEnabled(FALSE);
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 apOpenItem::~apOpenItem()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void apOpenItem::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 enum SetResponse apOpenItem::set(const ParameterList &pParams)
@@ -181,7 +174,11 @@ enum SetResponse apOpenItem::set(const ParameterList &pParams)
       _close->setText(tr("&Close"));
     }
   }
-  
+
+  param = pParams.value("vend_id", &valid);
+  if (valid)
+    _vend->setId(param.toInt());
+
   param = pParams.value("apopen_id", &valid);
   if (valid)
   {
