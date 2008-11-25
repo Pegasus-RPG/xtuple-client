@@ -164,7 +164,7 @@ void searchForContact::sFillList()
 
   QString sql;
 
-  sql = "SELECT addr.*,"
+  sql = "SELECT cntct_id, addr.*,"
 	"       formatAddr(addr_line1, addr_line2, addr_line3, '', '') AS street,"
 	"       crmacct_id AS id, crmacct_number AS number, crmacct_name AS name,"
 	"       cntct.* "
