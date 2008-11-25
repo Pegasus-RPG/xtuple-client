@@ -107,6 +107,12 @@ QObject * ScriptToolbox::executeDbQuery(const QString & group, const QString & n
   return sq;
 }
 
+QObject * ScriptToolbox::createGridLayout()
+{
+  QGridLayout * layout = new QGridLayout;
+  return layout;
+}
+
 QObject * ScriptToolbox::widgetGetLayout(QWidget * w)
 {
   QObject * p = w->parentWidget();
@@ -121,6 +127,37 @@ QObject * ScriptToolbox::widgetGetLayout(QWidget * w)
   }
   return NULL;
 }
+
+/*void ScriptToolbox::layoutBoxInsertLayout(QObject * obj, int index, QWidget * widget, int stretch, int alignment)
+{
+  QBoxLayout * layout = qobject_cast<QBoxLayout*>(obj);
+  if(layout && widget)
+    layout->insertWidget(index, widget, stretch, (Qt::Alignment)alignment);
+}
+*/
+void ScriptToolbox::layoutGridAddLayout(QObject * parent, QObject * child, int row, int column, int alignment)
+{
+  QGridLayout * parentLayout = qobject_cast<QGridLayout*>(parent);
+  QGridLayout * childLayout = qobject_cast<QGridLayout*>(child);
+
+  if(parentLayout)
+    parentLayout->addLayout(childLayout, row, column, (Qt::Alignment)alignment);
+}
+
+/*void ScriptToolbox::layoutGridAddLayout(QObject * obj, QWidget * widget, int fromRow, int fromColumn, int rowSpan, int columnSpan, int alignment)
+{
+  QGridLayout * layout = qobject_cast<QGridLayout*>(obj);
+  if(layout && widget)
+    layout->addWidget(widget, fromRow, fromColumn, rowSpan, columnSpan, (Qt::Alignment)alignment);
+}
+
+void ScriptToolbox::layoutStackedInsertLayout(QObject * obj, int index, QWidget * widget)
+{
+  QStackedLayout * layout = qobject_cast<QStackedLayout*>(obj);
+  if(layout && widget)
+    layout->insertWidget(index, widget);
+}
+*/
 
 void ScriptToolbox::layoutBoxInsertWidget(QObject * obj, int index, QWidget * widget, int stretch, int alignment)
 {

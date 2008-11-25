@@ -245,6 +245,7 @@ class OPENMFGWIDGETS_EXPORT XTreeWidget : public QTreeWidget
     void  populateMenu(QMenu *, QTreeWidgetItem *);
     void  populateMenu(QMenu *, QTreeWidgetItem *, int);
     void  resorted();
+    void  populated();
 
   protected slots:
     void sHeaderClicked(int);

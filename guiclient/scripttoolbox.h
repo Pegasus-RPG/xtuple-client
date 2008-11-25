@@ -116,6 +116,11 @@ class ScriptToolbox : public QObject
     QObject * executeDbQuery(const QString & group, const QString & name, const ParameterList & params);
 
     QObject * widgetGetLayout(QWidget * w);
+
+    QObject * createGridLayout();
+
+    void layoutGridAddLayout(QObject *, QObject *, int row, int column, int alignment = 0);
+
     void layoutBoxInsertWidget(QObject *, int index, QWidget *, int stretch = 0, int alignment = 0);
     void layoutGridAddWidget(QObject *, QWidget *, int row, int column, int alignment = 0);
     void layoutGridAddWidget(QObject *, QWidget *, int fromRow, int fromColumn, int rowSpan, int columnSpan, int alignment = 0);

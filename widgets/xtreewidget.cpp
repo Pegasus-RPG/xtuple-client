@@ -451,6 +451,8 @@ void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId)
     emit valid(FALSE);
 
   qApp->restoreOverrideCursor();
+
+  emit populated();
 }
 
 void XTreeWidget::addColumn(const QString & pString, int pWidth, int pAlignment, bool pVisible, const QString pEditColumn, const QString pDisplayColumn)
