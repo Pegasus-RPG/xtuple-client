@@ -2132,7 +2132,7 @@ void salesOrder::populate()
 
       _warehouse->setId(so.value("cohead_warehous_id").toInt());
       _salesRep->setId(so.value("cohead_salesrep_id").toInt());
-      _commission->setDouble(so.value("commission").toDouble());
+      _commission->setDouble(so.value("commission").toDouble() * 100);
       _taxauthidCache = so.value("cohead_taxauth_id").toInt();
       _taxAuth->setId(so.value("cohead_taxauth_id").toInt());
       _terms->setId(so.value("cohead_terms_id").toInt());
