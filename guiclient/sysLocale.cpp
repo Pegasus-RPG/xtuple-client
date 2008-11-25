@@ -439,24 +439,22 @@ void sysLocale::populate()
 QString sysLocale::convert(const QString &input)
 {
   // TODO: make sure this is deallocated later
-  char *output = new char [input.size()];
+  QByteArray output(input.size()+1, '\0');
   QString errMsg = tr("<p>.Could not translate Qt date/time formatting "
                       "string %1 to PostgreSQL date/time formatting "
                       "string. Error at or near character %2.");
 
-  int o = 0;
   int i = 0;
 
-  output[o] = 0;
   for (i = 0; i < input.size(); i++)
   {
     switch (input[i].toAscii())
     {
     case '\'':
       if (input[++i] == '\'')
-        output[o++] = '\'';
+        output.append('\'');
       else for (; input[i] != '\''; i++)
-        output[o++] = input[i].toAscii();
+        output.append(input[i].toAscii());
       if (input[i] == '\'')
         i++;
       break;
@@ -464,26 +462,26 @@ QString sysLocale::convert(const QString &input)
     case 'd':
       if (input[i+1] != 'd')
       {
-        output[o++] = 'D';
-        output[o++] = 'D';
+        output.append('D');
+        output.append('D');
       }
       else if (input[i+2] != 'd')
       {
-        output[o++] = 'D';
-        output[o++] = 'D';
+        output.append('D');
+        output.append('D');
         i++;
       }
       else if (input[i+3] != 'd')
       {
-        output[o++] = 'D';
-        output[o++] = 'y';
+        output.append('D');
+        output.append('y');
         i += 2;
       }
       else if (input[i+3] == 'd')
       {
-        output[o++] = 'D';
-        output[o++] = 'a';
-        output[o++] = 'y';
+        output.append('D');
+        output.append('a');
+        output.append('y');
         i += 3;
       }
       break;
@@ -491,29 +489,29 @@ QString sysLocale::convert(const QString &input)
     case 'M':
       if (input[i+1] != 'M')
       {
-        output[o++] = 'M';
-        output[o++] = 'M';
+        output.append('M');
+        output.append('M');
       }
       else if (input[i+2] != 'M')
       {
-        output[o++] = 'M';
-        output[o++] = 'M';
+        output.append('M');
+        output.append('M');
         i++;
       }
       else if (input[i+3] != 'M')
       {
-        output[o++] = 'M';
-        output[o++] = 'o';
-        output[o++] = 'n';
+        output.append('M');
+        output.append('o');
+        output.append('n');
         i += 2;
       }
       else if (input[i+3] == 'M')
       {
-        output[o++] = 'M';
-        output[o++] = 'o';
-        output[o++] = 'n';
-        output[o++] = 't';
-        output[o++] = 'h';
+        output.append('M');
+        output.append('o');
+        output.append('n');
+        output.append('t');
+        output.append('h');
         i += 3;
       }
       break;
@@ -526,8 +524,8 @@ QString sysLocale::convert(const QString &input)
       }
       else if (input[i+2] != 'y')
       {
-        output[o++] = 'Y';
-        output[o++] = 'Y';
+        output.append('Y');
+        output.append('Y');
         i++;
       }
       else if (input[i+3] != 'y')
@@ -537,10 +535,10 @@ QString sysLocale::convert(const QString &input)
       }
       else if (input[i+3] == 'y')
       {
-        output[o++] = 'Y';
-        output[o++] = 'Y';
-        output[o++] = 'Y';
-        output[o++] = 'Y';
+        output.append('Y');
+        output.append('Y');
+        output.append('Y');
+        output.append('Y');
         i += 3;
       }
       break;
@@ -557,17 +555,17 @@ QString sysLocale::convert(const QString &input)
           ampm = ((input[j] == 'a' && input[j+1] == 'p') ||
                   (input[j] == 'A' && input[j+1] == 'P'));
         }
-        output[o++] = 'H';
-        output[o++] = 'H';
+        output.append('H');
+        output.append('H');
         if (ampm)
         {
-          output[o++] = '1';
-          output[o++] = '2';
+          output.append('1');
+          output.append('2');
         }
         else
         {
-          output[o++] = '2';
-          output[o++] = '4';
+          output.append('2');
+          output.append('4');
         }
         if (input[i+1] == 'h')
           i++;
@@ -575,22 +573,22 @@ QString sysLocale::convert(const QString &input)
       break;
 
     case 'm':
-      output[o++] = 'M';
-      output[o++] = 'I';
+      output.append('M');
+      output.append('I');
       if (input[i+1] == 'm')
         i++;
       break;
 
     case 's':
-      output[o++] = 'S';
-      output[o++] = 'S';
+      output.append('S');
+      output.append('S');
       if (input[i+1] == 's')
         i++;
       break;
 
     case 'z':
-      output[o++] = 'M';
-      output[o++] = 'S';
+      output.append('M');
+      output.append('S');
       if (input[i+1] == 'z' && input[i+2] != 'z')
       {
         systemError(this, errMsg.arg(input).arg(i), __FILE__, __LINE__);
@@ -601,33 +599,33 @@ QString sysLocale::convert(const QString &input)
       break;
 
     case 'A':
-      output[o++] = 'A';
+      output.append('A');
       if (input[i+1] == 'P')
       {
-        output[o++] = 'M';
+        output.append('M');
         i++;
       }
       break;
 
     case 'a':
-      output[o++] = 'a';
+      output.append('a');
       if (input[i+1] == 'p')
       {
-        output[o++] = 'm';
+        output.append('m');
         i++;
       }
       break;
 
     default:
-      output[o++] = input[i].toAscii();
+      output.append(input[i].toAscii());
       break;
     }
   }
 
-  output[o] = 0;
+  output.append((char)0);
 
   if (DEBUG)
-    qDebug("sysLocale::convert() %s to %s", qPrintable(input), output);
+    qDebug("sysLocale::convert() %s to %s", qPrintable(input), output.constData());
 
   return QString(output);
 }
