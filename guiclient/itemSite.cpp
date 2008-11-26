@@ -431,7 +431,7 @@ void itemSite::sSave()
     q.prepare("SELECT coitem_id "
               "FROM coitem "
               "WHERE ((coitem_itemsite_id=:itemsite_id)"
-              "  AND  (coitem_status<>'C')) "
+              "  AND  (coitem_status NOT IN ('X','C'))) "
               "UNION "
               "SELECT wo_id "
               "FROM wo "
