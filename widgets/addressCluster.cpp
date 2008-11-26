@@ -635,6 +635,13 @@ AddressSearch::AddressSearch(QWidget* pParent, Qt::WindowFlags pFlags)
     _searchCountry    = new XCheckBox(tr("Search Country"));
     _searchPostalCode = new XCheckBox(tr("Search Postal Code"));
     _searchInactive   = new XCheckBox(tr("Show Inactive Addresses"));
+    
+    _searchStreet->setObjectName("_searchStreet");
+    _searchCity->setObjectName("_searchCity");
+    _searchState->setObjectName("_searchState");
+    _searchCountry->setObjectName("_searchCountry");
+    _searchPostalCode->setObjectName("_searchPostalCode");
+    _searchInactive->setObjectName("_searchInactive");
 
     selectorsLyt->addWidget(_searchStreet,     0, 0);
     selectorsLyt->addWidget(_searchCity,       1, 0);
