@@ -171,11 +171,14 @@ void dspPoItemReceivingsByVendor::sPrint()
 
 void dspPoItemReceivingsByVendor::sPopulateMenu(QMenu *menu, QTreeWidgetItem *)
 {
+  QAction *markInvoiced = 0;
+  QAction *correctReceipt = 0;
+  QAction *createVoucher = 0;
   switch (_porecv->altId())
   {
     case 1:     // id = recv_id
-      QAction *markInvoiced   = new QAction(tr("Mark As Invoiced..."),  this);
-      QAction *correctReceipt = new QAction(tr("Correct Receiving..."), this);
+      markInvoiced   = new QAction(tr("Mark As Invoiced..."),  this);
+      correctReceipt = new QAction(tr("Correct Receiving..."), this);
 
       markInvoiced->setEnabled(_privileges->check("MaintainUninvoicedReceipts")
                                && ! _porecv->currentItem()->rawValue("invoiced").isNull()
@@ -190,7 +193,7 @@ void dspPoItemReceivingsByVendor::sPopulateMenu(QMenu *menu, QTreeWidgetItem *)
     case 2:     // id = poreject_id
       break;
     case 3:     // id = unvouchered pohead_id
-      QAction *createVoucher = new QAction(tr("Create Voucher..."),  this);
+      createVoucher = new QAction(tr("Create Voucher..."),  this);
       createVoucher->setEnabled(_privileges->check("MaintainVouchers"));
       connect(createVoucher, SIGNAL(triggered()), this, SLOT(sCreateVoucher()));
       menu->addAction(createVoucher);
