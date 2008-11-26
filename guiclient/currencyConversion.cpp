@@ -223,13 +223,13 @@ void currencyConversion::_sSave()
       sql = QString("INSERT INTO curr_rate "
                     "(curr_id, curr_rate, curr_effective, curr_expires) "
                     "VALUES "
-                    "(:curr_id, %1 :curr_rate, "
+                    "(:curr_id, %1 CAST(:curr_rate AS NUMERIC), "
                     " :curr_effective, :curr_expires)")
                   .arg(inverter);
   else if (_mode == cEdit)
       sql = QString("UPDATE curr_rate SET "
                     "curr_id = :curr_id, "
-                    "curr_rate = %1 :curr_rate, "
+                    "curr_rate = %1 CAST(:curr_rate AS NUMERIC), "
                     "curr_effective = :curr_effective, "
                     "curr_expires = :curr_expires "
                     "WHERE curr_rate_id = :curr_rate_id")
