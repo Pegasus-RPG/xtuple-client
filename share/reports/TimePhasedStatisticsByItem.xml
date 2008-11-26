@@ -287,9 +287,9 @@ ORDER BY calitem_pstart, warehous_code;</sql>
   </label>
   <graph>
    <rect>
-    <x>25</x>
-    <y>117</y>
-    <width>662</width>
+    <x>35</x>
+    <y>116</y>
+    <width>712</width>
     <height>467</height>
    </rect>
    <font>
