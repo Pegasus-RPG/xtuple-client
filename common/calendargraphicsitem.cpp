@@ -62,6 +62,7 @@
 #include <QAbstractGraphicsShapeItem>
 #include <QGraphicsSceneHoverEvent>
 #include <QGraphicsScene>
+#include <QApplication>
 
 #include <QDebug>
 
@@ -178,6 +179,7 @@ CalendarGraphicsItem::CalendarGraphicsItem(CalendarControl * cc, QGraphicsItem *
 
   QDate date;
   qreal dayWidth = __width / 7.0;
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   for(int wday = 0; wday < 7; wday++)
   {
     for(int week = 0; week < 6; week++)
@@ -237,6 +239,7 @@ CalendarGraphicsItem::CalendarGraphicsItem(CalendarControl * cc, QGraphicsItem *
       _items.insert(QString("day%1Text").arg((7 * week) + wday), textItem);
     }
   }
+  QApplication::restoreOverrideCursor();
 }
 
 CalendarGraphicsItem::~CalendarGraphicsItem()
@@ -255,8 +258,8 @@ CalendarControl * CalendarGraphicsItem::calendarControl() const
 
 void CalendarGraphicsItem::setSelectedDay(const QDate & sDate)
 {
-  if(sDate == _selectedDay)
-    return;
+  //if(sDate == _selectedDay)
+  //  return;
 
   _selectedDay = sDate;
 
@@ -278,6 +281,7 @@ void CalendarGraphicsItem::setSelectedDay(const QDate & sDate)
   }
 
   QDate date;
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   for(int wday = 0; wday < 42; wday++)
   {
     date = firstCalendarDay.addDays(wday);
@@ -318,6 +322,7 @@ void CalendarGraphicsItem::setSelectedDay(const QDate & sDate)
       si2->setBrush(dayFill);
     }
   }
+  QApplication::restoreOverrideCursor();
 
   if(_controller)
    _controller->setSelectedDay(_selectedDay);

@@ -64,6 +64,8 @@
 
 #include "ui_todoListCalendar.h"
 
+class CalendarGraphicsItem;
+
 class todoListCalendar : public XWidget, public Ui::todoListCalendar
 {
   Q_OBJECT
@@ -72,14 +74,29 @@ class todoListCalendar : public XWidget, public Ui::todoListCalendar
     todoListCalendar(QWidget* parent = 0, Qt::WindowFlags f = 0);
 
     virtual SetResponse	set(const ParameterList&);
+    void setParams(ParameterList &);
 
   public slots:
     void languageChange();
+    void sFillList();
     void sFillList(const QDate&);
+    void sNew();
+    void sEdit();
+    void sView();
+    void sDelete();
+    void sCustomerInfo();
 
   protected:
     void resizeEvent(QResizeEvent*);
     void showEvent(QShowEvent*);
+
+    QDate _lastDate;
+    int   _myUsrId;
+    CalendarGraphicsItem * calendar;
+
+  protected slots:
+    void handlePrivs();
+    void sPopulateMenu(QMenu*);
 };
 
 #endif // TODOLIST_H

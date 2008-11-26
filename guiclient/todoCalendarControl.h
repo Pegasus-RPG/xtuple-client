@@ -60,14 +60,19 @@
 
 #include <calendarcontrol.h>
 
+class todoListCalendar;
+
 class todoCalendarControl : public CalendarControl
 {
   Q_OBJECT
 
   public:
-    todoCalendarControl(QObject * parent = 0);
+    todoCalendarControl(todoListCalendar * parent = 0);
 
     QString contents(const QDate &);
+
+  protected:
+    todoListCalendar *_list;
 };
 
 #endif // TODOCALENDARCONTROL_H

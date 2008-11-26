@@ -59,18 +59,45 @@
 #include "guiclient.h"
 #include <parameter.h>
 #include <QDebug>
+#include <metasql.h>
 
-todoCalendarControl::todoCalendarControl(QObject * parent)
+#include "todoListCalendar.h"
+
+todoCalendarControl::todoCalendarControl(todoListCalendar * parent)
   : CalendarControl(parent)
 {
+  _list = parent;
 }
 
 QString todoCalendarControl::contents(const QDate & date)
 {
-  QSqlQuery qry;
-  qry.exec(QString("SELECT count(*) AS todoCount"
-                   "  FROM todoitem"
-                   " WHERE(todoitem_due_date='%1');").arg(date.toString(Qt::ISODate)));
+  QString sql = "SELECT count(*) AS result"
+                "  FROM usr, todoitem LEFT OUTER JOIN incdt ON (incdt_id=todoitem_incdt_id) "
+                "                     LEFT OUTER JOIN crmacct ON (crmacct_id=todoitem_crmacct_id) "
+                "                     LEFT OUTER JOIN cust ON (cust_id=crmacct_cust_id) "
+                "                     LEFT OUTER JOIN incdtpriority ON (incdtpriority_id=todoitem_priority_id) "
+                " WHERE((todoitem_usr_id=usr_id)"
+                "   AND (todoitem_due_date = <? value(\"date\") ?>)"
+                "  <? if not exists(\"completed\") ?>"
+                "   AND (todoitem_status != 'C')"
+                "  <? endif ?>"
+                "  <? if exists(\"usr_id\") ?> "
+                "   AND (todoitem_usr_id=<? value(\"usr_id\") ?>) "
+                "  <? elseif exists(\"usr_pattern\" ?>"
+                "   AND (todoitem_usr_id IN (SELECT usr_id "
+                "                              FROM usr "
+                "                             WHERE(usr_username ~ <? value(\"usr_pattern\") ?>))) "
+                "  <? endif ?>"
+                "  <? if exists(\"active\") ?>AND (todoitem_active) <? endif ?>"
+                "       );";
+
+  ParameterList params;
+  params.append("date", date);
+  if(_list)
+    _list->setParams(params);
+
+  MetaSQLQuery mql(sql);
+  XSqlQuery qry = mql.toQuery(params);
   if(qry.first())
   {
     if(qry.value(0).toInt() != 0)
