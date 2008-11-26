@@ -297,8 +297,10 @@ void creditMemo::sSave()
     XSqlQuery query;
     query.prepare( "SELECT cmhead_id "
                    "FROM cmhead "
-                   "WHERE (cmhead_number=:cmhead_number)" );
+                   "WHERE (cmhead_number=:cmhead_number)"
+                   " AND (cmhead_id !=:cmhead_id);" );
     query.bindValue(":cmhead_number", _memoNumber->text());
+    query.bindValue(":cmhead_id", _cmheadid);
     query.exec();
     if (query.first())
     {
