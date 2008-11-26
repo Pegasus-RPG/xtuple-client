@@ -227,6 +227,7 @@ void dspUninvoicedReceivings::sFillList()
                "WHERE ( (porecv_poitem_id=poitem_id)"
                " AND (porecv_vend_id=vend_id)"
                " AND (porecv_posted)"
+               " AND (porecv_vohead_id IS NULL)"
                " AND (NOT porecv_invoiced) "
 	       "<? if exists(\"warehous_id\") ?>"
 	       " AND (itemsite_warehous_id=<? value(\"warehous_id\") ?>)"
