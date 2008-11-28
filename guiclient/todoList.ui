@@ -103,13 +103,6 @@
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout" >
         <item>
-         <widget class="XCheckBox" name="_completed" >
-          <property name="text" >
-           <string>Completed</string>
-          </property>
-         </widget>
-        </item>
-        <item>
          <widget class="XCheckBox" name="_incidents" >
           <property name="text" >
            <string>Incidents</string>
@@ -120,6 +113,13 @@
          <widget class="XCheckBox" name="_projects" >
           <property name="text" >
            <string>Projects</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="XCheckBox" name="_completed" >
+          <property name="text" >
+           <string>Completed</string>
           </property>
          </widget>
         </item>
@@ -279,7 +279,6 @@
  </customwidgets>
  <tabstops>
   <tabstop>_usr</tabstop>
-  <tabstop>_completed</tabstop>
   <tabstop>_incidents</tabstop>
   <tabstop>_dueDates</tabstop>
   <tabstop>_todoList</tabstop>
