@@ -68,6 +68,7 @@
 #include "incident.h"
 #include "dspCustomerInformation.h"
 #include "storedProcErrorLookup.h"
+#include "task.h"
 
 todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
@@ -76,29 +77,17 @@ todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _dueDates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dueDates->setEndNull(tr("Latest"),	  omfgThis->endOfTime(),   TRUE);
-  _dueDates->setStartCaption(tr("First Due Date:"));
-  _dueDates->setEndCaption(tr("Last Due Date:"));
-
-  _incdtDates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
-  _incdtDates->setEndNull(tr("Latest"),	  omfgThis->endOfTime(),   TRUE);
-  _incdtDates->setStartCaption(tr("First Incident Date:"));
-  _incdtDates->setEndCaption(tr("Last Incident Date:"));
-
-  _prjtaskDates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
-  _prjtaskDates->setEndNull(tr("Latest"),	  omfgThis->endOfTime(),   TRUE);
-  _prjtaskDates->setStartCaption(tr("First Project Task Date:"));
-  _prjtaskDates->setEndCaption(tr("Last Project Task Date:"));
 
   _usr->setEnabled(_privileges->check("MaintainOtherTodoLists"));
   _usr->setType(ParameterGroup::User);
-  q.prepare("SELECT usr_id "
+  q.prepare("SELECT usr_id, current_user "
 	    "FROM usr "
 	    "WHERE (usr_username=CURRENT_USER);");
   q.exec();
   if (q.first())
   {
-    _myUsrId = q.value("usr_id").toInt();
-    _usr->setId(_myUsrId);
+    _myUsername = q.value("current_user").toInt();
+    _usr->setId(q.value("usr_id").toInt());
   }
   else if (q.lastError().type() != QSqlError::NoError)
   {
@@ -106,16 +95,12 @@ todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
     close();
   }
 
-  connect(_active,	SIGNAL(toggled(bool)),	this,	SLOT(sFillList()));
   connect(_autoUpdate,	SIGNAL(toggled(bool)),	this,	SLOT(sHandleAutoUpdate(bool)));
   connect(_close,	SIGNAL(clicked()),	this,	SLOT(sClose()));
   connect(_completed,	SIGNAL(toggled(bool)),	this,	SLOT(sFillList()));
   connect(_delete,	SIGNAL(clicked()),	this,	SLOT(sDelete()));
   connect(_dueDates,	SIGNAL(updated()),	this,   SLOT(sFillList()));
-  connect(_edit,	SIGNAL(clicked()),	this,	SLOT(sEdit()));
-  connect(_incdtDates,	SIGNAL(updated()),	this,   SLOT(sFillList()));
   connect(_incidents,	SIGNAL(toggled(bool)),	this,	SLOT(sFillList()));
-  connect(_prjtaskDates,	SIGNAL(updated()),	this,   SLOT(sFillList()));
   connect(_projects,	SIGNAL(toggled(bool)),	this,	SLOT(sFillList()));
   connect(_new,		SIGNAL(clicked()),	this,	SLOT(sNew()));
   connect(_print,	SIGNAL(clicked()),	this,	SLOT(sPrint()));
@@ -125,25 +110,23 @@ todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_todoList,	SIGNAL(itemSelectionChanged()),	this,	SLOT(handlePrivs()));
   connect(_usr,		SIGNAL(updated()),	this,	SLOT(sFillList()));
   connect(_usr,		SIGNAL(updated()),	this,	SLOT(handlePrivs()));
+  connect(_edit,	SIGNAL(clicked()),	this,	SLOT(sEdit()));
   connect(_view,	SIGNAL(clicked()),	this,	SLOT(sView()));
 
   _todoList->addColumn(tr("Type"),    _statusColumn,  Qt::AlignCenter, true, "type");
-  _todoList->addColumn(tr("Seq"),        _seqColumn,  Qt::AlignRight,  true, "seq");
+  _todoList->addColumn(tr("Seq"),        _seqColumn,  Qt::AlignRight,  false, "seq");
   _todoList->addColumn(tr("Priority"),  _userColumn,  Qt::AlignLeft,   true, "priority");
   _todoList->addColumn(tr("User"),      _userColumn,  Qt::AlignLeft,   true, "usr");
   _todoList->addColumn(tr("Name"),              100,  Qt::AlignLeft,   true, "name");
   _todoList->addColumn(tr("Description"),        -1,  Qt::AlignLeft,   true, "descrip");
   _todoList->addColumn(tr("Status"),  _statusColumn,  Qt::AlignLeft,   true, "status");
   _todoList->addColumn(tr("Due Date"),  _dateColumn,  Qt::AlignLeft,   true, "due");
-  _todoList->addColumn(tr("Incident"), _orderColumn,  Qt::AlignLeft,   true, "incdt");
+  _todoList->addColumn(tr("Number"),    _orderColumn,  Qt::AlignLeft,  true, "number");
   _todoList->addColumn(tr("Customer"), _orderColumn,  Qt::AlignLeft,   true, "cust");
   _todoList->addColumn(tr("Owner"),     _userColumn,  Qt::AlignLeft,   false,"owner");
 
   if (_preferences->boolean("XCheckBox/forgetful"))
-  {
-    _active->setChecked(true);
     _incidents->setChecked(true);
-  }
 
   handlePrivs();
   sFillList();
@@ -157,32 +140,36 @@ void todoList::languageChange()
 
 void todoList::sPopulateMenu(QMenu *pMenu)
 {
-  int menuItem;
+  int menuItem; 
 
-  if (_todoList->currentItem()->text(0) == "T")
+  if (_todoList->currentItem()->altId() == 1)
   {
     bool editPriv =
-	(_myUsrId == _todoList->altId() && _privileges->check("MaintainPersonalTodoList")) ||
-	(_myUsrId != _todoList->altId() && _privileges->check("MaintainOtherTodoLists"));
+	(_myUsername == _todoList->currentItem()->text(3) && _privileges->check("MaintainPersonalTodoList")) ||
+	(_myUsername != _todoList->currentItem()->text(3) && _privileges->check("MaintainOtherTodoLists"));
 
     bool viewPriv =
-	(_myUsrId == _todoList->altId() && _privileges->check("ViewPersonalTodoList")) ||
-	(_myUsrId != _todoList->altId() && _privileges->check("ViewOtherTodoLists"));
+	(_myUsername == _todoList->currentItem()->text(3) && _privileges->check("ViewPersonalTodoList")) ||
+	(_myUsername != _todoList->currentItem()->text(3) && _privileges->check("ViewOtherTodoLists"));
 
-    menuItem = pMenu->insertItem(tr("New..."), this, SLOT(sNew()), 0);
+    menuItem = pMenu->insertItem(tr("New To-do..."), this, SLOT(sNew()), 0);
     pMenu->setItemEnabled(menuItem, editPriv);
 
-    menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
+    menuItem = pMenu->insertItem(tr("Edit To-do..."), this, SLOT(sEdit()), 0);
     pMenu->setItemEnabled(menuItem, editPriv);
 
-    menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
+    menuItem = pMenu->insertItem(tr("View To-Do..."), this, SLOT(sView()), 0);
     pMenu->setItemEnabled(menuItem, viewPriv);
 
-    menuItem = pMenu->insertItem(tr("Delete"), this, SLOT(sDelete()), 0);
+    menuItem = pMenu->insertItem(tr("Delete To-Do"), this, SLOT(sDelete()), 0);
     pMenu->setItemEnabled(menuItem, editPriv);
   }
 
-  if (! _todoList->currentItem()->text(8).isEmpty())
+  if (_todoList->altId() == 1 && !_todoList->currentItem()->text(8).isEmpty())
+    pMenu->addSeparator();
+  
+  if ((_todoList->altId() == 1 && !_todoList->currentItem()->text(8).isEmpty()) ||
+       _todoList->altId() == 2)
   {
     menuItem = pMenu->insertItem(tr("Edit Incident"), this, SLOT(sEditIncident()), 0);
     pMenu->setItemEnabled(menuItem, _privileges->check("MaintainIncidents"));
@@ -190,9 +177,19 @@ void todoList::sPopulateMenu(QMenu *pMenu)
     pMenu->setItemEnabled(menuItem, _privileges->check("ViewIncidents") ||
 				    _privileges->check("MaintainIncidents"));
   }
-
-  if (! _todoList->currentItem()->text(9).isEmpty())
+  
+  if (_todoList->altId() == 3)
   {
+    menuItem = pMenu->insertItem(tr("Edit Task"), this, SLOT(sEditTask()), 0);
+    pMenu->setItemEnabled(menuItem, _privileges->check("MaintainProjects"));
+    menuItem = pMenu->insertItem(tr("View Task"), this, SLOT(sViewTask()), 0);
+    pMenu->setItemEnabled(menuItem, _privileges->check("ViewProjects") ||
+      _privileges->check("MaintainProjects"));
+  }
+
+  if (!_todoList->currentItem()->text(9).isEmpty())
+  {
+    pMenu->addSeparator();
     menuItem = pMenu->insertItem(tr("Customer Workbench"), this, SLOT(sCustomerInfo()), 0);
     pMenu->setItemEnabled(menuItem, _privileges->check("MaintainCustomerMasters"));
   }
@@ -223,20 +220,27 @@ void todoList::handlePrivs()
   if (! _todoList->currentItem())
   {
   }
-  else if (_todoList->currentItem()->text(0) == "T")
+  else if (_todoList->altId() == 1)
   {
     editTodoPriv =
-      (_myUsrId == _todoList->altId() && _privileges->check("MaintainPersonalTodoList")) ||
+      (_myUsername == _todoList->currentItem()->text(3) && _privileges->check("MaintainPersonalTodoList")) ||
       (_privileges->check("MaintainOtherTodoLists"));
 
     viewTodoPriv =
-      (_myUsrId == _todoList->altId() && _privileges->check("ViewPersonalTodoList")) ||
+      (_myUsername == _todoList->currentItem()->text(3) && _privileges->check("ViewPersonalTodoList")) ||
       (_privileges->check("ViewOtherTodoLists"));
   }
-  else if (_todoList->currentItem()->text(0) == "I")
+  else if (_todoList->altId() == 2)
   {
-    editTodoPriv = false;
-    viewTodoPriv = false;
+    editTodoPriv = _privileges->check("MaintainIncidents");
+    viewTodoPriv = (_privileges->check("ViewIncidents") ||
+				            _privileges->check("MaintainIncidents"));
+  }
+  else if (_todoList->altId() == 3)
+  {
+    editTodoPriv = _privileges->check("MaintainProjects");
+    viewTodoPriv = (_privileges->check("ViewProjects") ||
+				            _privileges->check("MaintainProjects"));
   }
 
   _usr->setEnabled(_privileges->check("MaintainOtherTodoLists") ||
@@ -245,7 +249,7 @@ void todoList::handlePrivs()
                    _privileges->check("ViewOtherTodoLists"));
   _edit->setEnabled(editTodoPriv && _todoList->id() > 0);
   _view->setEnabled((editTodoPriv || viewTodoPriv) && _todoList->id() > 0);
-  _delete->setEnabled(editTodoPriv && _todoList->id() > 0);
+  _delete->setEnabled(editTodoPriv && _todoList->id() > 0 && _todoList->altId() != 2);
 
   if (editTodoPriv)
   {
@@ -269,7 +273,7 @@ void todoList::sNew()
   ParameterList params;
   params.append("mode", "new");
   if (_usr->isSelected())
-    params.append("usr_id", _usr->id());
+    params.append("usr_username", _myUsername);
 
   todoItem newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -280,32 +284,50 @@ void todoList::sNew()
 
 void todoList::sEdit()
 {
-  ParameterList params;
-  params.append("mode", "edit");
-  params.append("todoitem_id", _todoList->id());
+  if (_todoList->altId() ==2)
+    sEditIncident();
+  else if (_todoList->altId() == 3)
+    sEditTask();
+  else
+  {
+    ParameterList params;
+    params.append("mode", "edit");
+    params.append("todoitem_id", _todoList->id());
 
-  todoItem newdlg(this, "", TRUE);
-  newdlg.set(params);
+    todoItem newdlg(this, "", TRUE);
+    newdlg.set(params);
 
-  if (newdlg.exec() != XDialog::Rejected)
-    sFillList();
+    if (newdlg.exec() != XDialog::Rejected)
+      sFillList();
+  }
 }
 
 void todoList::sView()
 {
-  ParameterList params;
-  params.append("mode", "view");
-  params.append("todoitem_id", _todoList->id());
+  if (_todoList->altId() ==2)
+    sViewIncident();
+  else if (_todoList->altId() == 3)
+    sViewTask();
+  else
+  {
+    ParameterList params;
+    params.append("mode", "view");
+    params.append("todoitem_id", _todoList->id());
 
-  todoItem newdlg(this, "", TRUE);
-  newdlg.set(params);
+    todoItem newdlg(this, "", TRUE);
+    newdlg.set(params);
 
-  newdlg.exec();
+    newdlg.exec();
+  }
 }
 
 void todoList::sDelete()
 {
-  q.prepare("SELECT deleteTodoItem(:todoitem_id) AS result;");
+  if (_todoList->altId() == 1)
+    q.prepare("SELECT deleteTodoItem(:todoitem_id) AS result;");
+  else
+    q.prepare("DELETE FROM prjtask"
+              " WHERE (prjtask_id=:todoitem_id); ");
   q.bindValue(":todoitem_id", _todoList->id());
   q.exec();
   if (q.first())
@@ -316,37 +338,29 @@ void todoList::sDelete()
       systemError(this, storedProcErrorLookup("deleteTodoItem", result));
       return;
     }
-    else
-      sFillList();
-    }
+  }
   else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+  sFillList();
 
 }
 
 void todoList::setParams(ParameterList &params)
 {
-  if (_active->isChecked())
-    params.append("active");
   if (_completed->isChecked())
     params.append("completed");
   if (_incidents->isChecked())
-  {
     params.append("incidents");
-    params.append("incdtStartDate", _incdtDates->startDate());
-    params.append("incdtEndDate",   _incdtDates->endDate());
-  }
   if (_projects->isChecked())
-  {
     params.append("projects");
-    params.append("prjtaskStartDate", _prjtaskDates->startDate());
-    params.append("prjtaskEndDate",   _prjtaskDates->endDate());
-  }
   _usr->appendValue(params);
   _dueDates->appendValue(params);
+  params.append("todo", tr("To-do"));
+  params.append("incident", tr("Incident"));
+  params.append("task", tr("Task"));
 }
 
 void todoList::sPrint()
@@ -363,17 +377,17 @@ void todoList::sPrint()
 
 void todoList::sFillList()
 {
-  QString sql = "SELECT todoitem_id AS id, todoitem_usr_id AS altId, todoitem_owner_username AS owner, "
-		"       'T' AS type, incdtpriority_order AS seq, incdtpriority_name AS priority, "
+  QString sql = "SELECT todoitem_id AS id, 1 AS altId, todoitem_owner_username AS owner, "
+		"       <? value(\"todo\") ?> AS type, incdtpriority_order AS seq, incdtpriority_name AS priority, "
 		"       todoitem_name AS name, "
 		"       firstLine(todoitem_description) AS descrip, "
 		"       todoitem_status AS status, todoitem_due_date AS due, "
-		"       usr_username AS usr, incdt_number AS incdt, cust_number AS cust, "
-                "       CASE WHEN (todoitem_status != 'C'AND "
-                "                  todoitem_due_date < CURRENT_DATE) THEN 'expired'"
-                "            WHEN (todoitem_status != 'C'AND "
-                "                  todoitem_due_date > CURRENT_DATE) THEN 'future'"
-                "       END AS due_qtforegroundrole "
+		"       usr_username AS usr, CAST(incdt_number AS text) AS number, cust_number AS cust, "
+    "       CASE WHEN (todoitem_status != 'C'AND "
+    "                  todoitem_due_date < CURRENT_DATE) THEN 'expired'"
+    "            WHEN (todoitem_status != 'C'AND "
+    "                  todoitem_due_date > CURRENT_DATE) THEN 'future'"
+    "       END AS due_qtforegroundrole "
 		"FROM usr, todoitem LEFT OUTER JOIN incdt ON (incdt_id=todoitem_incdt_id) "
 		"                   LEFT OUTER JOIN crmacct ON (crmacct_id=todoitem_crmacct_id) "
 		"                   LEFT OUTER JOIN cust ON (cust_id=crmacct_cust_id) "
@@ -385,62 +399,56 @@ void todoList::sFillList()
 		"  AND   (todoitem_status != 'C')"
 		"  <? endif ?>"
 		"  <? if exists(\"usr_id\") ?> "
-		"  AND (todoitem_usr_id=<? value(\"usr_id\") ?>) "
+		"  AND (usr_id=<? value(\"usr_id\") ?>) "
 		"  <? elseif exists(\"usr_pattern\" ?>"
-		"  AND (todoitem_usr_id IN (SELECT usr_id "
-		"        FROM usr "
-		"        WHERE (usr_username ~ <? value(\"usr_pattern\") ?>))) "
+		"  AND (usr_username ~ <? value(\"usr_pattern\") ?>) "
 		"  <? endif ?>"
-		"  <? if exists(\"active\") ?>AND (todoitem_active) <? endif ?>"
+		"  <? if not exists(\"completed\") ?>AND (todoitem_active) <? endif ?>"
 		"       ) "
 		"<? if exists(\"incidents\")?>"
 		"UNION "
-		"SELECT incdt_id AS id, usr_id AS altId, incdt_owner_username AS owner, "
-		"       'I' AS type, incdtpriority_order AS seq, incdtpriority_name AS priority, "
+		"SELECT incdt_id AS id, 2 AS altId, incdt_owner_username AS owner, "
+		"       <? value(\"incident\") ?> AS type, incdtpriority_order AS seq, incdtpriority_name AS priority, "
 		"       incdt_summary AS name, "
 		"       firstLine(incdt_descrip) AS descrip, "
-		"       incdt_status AS status,  NULL AS due, "
-		"       incdt_assigned_username AS usr, incdt_number AS incdt, cust_number AS cust, "
+		"       incdt_status AS status,  incdt_timestamp AS due, "
+		"       incdt_assigned_username AS usr, CAST(incdt_number AS text) AS number, cust_number AS cust, "
                 "       NULL AS due_qtforegroundrole "
 		"FROM incdt LEFT OUTER JOIN usr ON (usr_username=incdt_assigned_username)"
 		"           LEFT OUTER JOIN crmacct ON (crmacct_id=incdt_crmacct_id) "
 		"           LEFT OUTER JOIN cust ON (cust_id=crmacct_cust_id) "
     "           LEFT OUTER JOIN incdtpriority ON (incdtpriority_id=incdt_incdtpriority_id) "
-		"WHERE ((incdt_timestamp BETWEEN <? value(\"incdtStartDate\") ?>"
-		"                            AND <? value(\"incdtEndDate\") ?>)"
+		"WHERE ((incdt_timestamp BETWEEN <? value(\"startDate\") ?>"
+		"                            AND <? value(\"endDate\") ?>)"
 		"  <? if not exists(\"completed\") ?> "
 		"   AND (incdt_status != 'L')"
 		"  <? endif ?>"
 		"  <? if exists(\"usr_id\") ?> "
 		"  AND (usr_id=<? value(\"usr_id\") ?>) "
 		"  <? elseif exists(\"usr_pattern\" ?>"
-		"  AND (usr_id IN (SELECT usr_id "
-		"        FROM usr "
-		"        WHERE (usr_username ~ <? value(\"usr_pattern\") ?>))) "
+		"  AND (usr_username ~ <? value(\"usr_pattern\") ?>) "
 		"  <? endif ?>"
 		"       ) "
 		"<? endif ?>"
 		"<? if exists(\"projects\")?>"
 		"UNION "
-		"SELECT prjtask_id AS id, usr_id AS altId, prjtask_owner_username AS owner, "
-		"       'J' AS type, NULL AS seq, NULL AS priority, "
+		"SELECT prjtask_id AS id, 3 AS altId, prjtask_owner_username AS owner, "
+		"       <? value(\"task\") ?> AS type, NULL AS seq, NULL AS priority, "
 		"       prjtask_name AS name, "
 		"       firstLine(prjtask_descrip) AS descrip, "
 		"       prjtask_status AS status,  prjtask_due_date AS due, "
-		"       usr_username AS usr, NULL AS incdt, '' AS cust, "
-                "       NULL AS due_qtforegroundrole "
+		"       usr_username AS usr, prjtask_number AS number, '' AS cust, "
+    "       NULL AS due_qtforegroundrole "
 		"FROM prjtask LEFT OUTER JOIN usr ON (usr_id=prjtask_usr_id)"
-		"WHERE ((prjtask_due_date BETWEEN <? value(\"prjtaskStartDate\") ?>"
-		"                             AND <? value(\"prjtaskEndDate\") ?>)"
+		"WHERE ((prjtask_due_date BETWEEN <? value(\"startDate\") ?>"
+		"                             AND <? value(\"endDate\") ?>)"
 		"  <? if not exists(\"completed\") ?> "
 		"   AND (prjtask_status != 'L')"
 		"  <? endif ?>"
-		"  <? if exists(\"usr_id\") ?> "
+		"  <? if exists(\"usr_username\") ?> "
 		"  AND (usr_id=<? value(\"usr_id\") ?>) "
 		"  <? elseif exists(\"usr_pattern\" ?>"
-		"  AND (usr_id IN (SELECT usr_id "
-		"        FROM usr "
-		"        WHERE (usr_username ~ <? value(\"usr_pattern\") ?>))) "
+		"  AND (usr_username ~ <? value(\"usr_pattern\") ?>) "
 		"  <? endif ?>"
 		"       ) "
 		"<? endif ?>"
@@ -476,7 +484,7 @@ int todoList::getIncidentId()
 {
   int returnVal = -1;
 
-  if (_todoList->currentItem()->text(0) == "I")
+  if (_todoList->currentItem()->altId() == 2)
     returnVal = _todoList->id();
   else if (! _todoList->currentItem()->text(8).isEmpty())
   {
@@ -513,6 +521,32 @@ void todoList::sViewIncident()
   params.append("incdt_id", getIncidentId());
 
   incident newdlg(this, "", TRUE);
+  newdlg.set(params);
+
+  newdlg.exec();
+}
+
+void todoList::sEditTask()
+{
+
+  ParameterList params;
+  params.append("mode", "edit");
+  params.append("prjtask_id", _todoList->id());
+
+  task newdlg(this, "", TRUE);
+  newdlg.set(params);
+
+  if (newdlg.exec() != XDialog::Rejected)
+    sFillList();
+}
+
+void todoList::sViewTask()
+{
+  ParameterList params;
+  params.append("mode", "view");
+  params.append("prjtask_id", _todoList->id());
+
+  task newdlg(this, "", TRUE);
   newdlg.set(params);
 
   newdlg.exec();
