@@ -29,9 +29,9 @@
       </widget>
      </item>
      <item row="0" column="1" >
-      <widget class="QGroupBox" name="_assigndateGroup" >
+      <widget class="QGroupBox" name="_startdateGroup" >
        <property name="title" >
-        <string>Only Assign Dates Between </string>
+        <string>Only Start Dates Between </string>
        </property>
        <property name="checkable" >
         <bool>true</bool>
@@ -41,7 +41,7 @@
        </property>
        <layout class="QGridLayout" name="gridLayout_3" >
         <item row="0" column="0" >
-         <widget class="DateCluster" name="_assignDates" >
+         <widget class="DateCluster" name="_startDates" >
           <property name="focusPolicy" >
            <enum>Qt::StrongFocus</enum>
           </property>

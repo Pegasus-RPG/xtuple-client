@@ -79,8 +79,8 @@ todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _dueDates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dueDates->setEndNull(tr("Latest"),	  omfgThis->endOfTime(),   TRUE);
-  _assignDates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
-  _assignDates->setEndNull(tr("Latest"),	  omfgThis->endOfTime(),   TRUE);
+  _startDates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
+  _startDates->setEndNull(tr("Latest"),	  omfgThis->endOfTime(),   TRUE);
 
   _usr->setEnabled(_privileges->check("MaintainOtherTodoLists"));
   _usr->setType(ParameterGroup::User);
@@ -104,7 +104,7 @@ todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_completed,	SIGNAL(toggled(bool)),	this,	SLOT(sFillList()));
   connect(_delete,	SIGNAL(clicked()),	this,	SLOT(sDelete()));
   connect(_dueDates,	SIGNAL(updated()),	this,   SLOT(sFillList()));
-  connect(_assignDates,	SIGNAL(updated()),	this,   SLOT(sFillList()));
+  connect(_startDates,	SIGNAL(updated()),	this,   SLOT(sFillList()));
   connect(_incidents,	SIGNAL(toggled(bool)),	this,	SLOT(sFillList()));
   connect(_projects,	SIGNAL(toggled(bool)),	this,	SLOT(sFillList()));
   connect(_new,		SIGNAL(clicked()),	this,	SLOT(sNew()));
@@ -118,7 +118,7 @@ todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_edit,	SIGNAL(clicked()),	this,	SLOT(sEdit()));
   connect(_view,	SIGNAL(clicked()),	this,	SLOT(sView()));
   connect(_duedateGroup, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
-  connect(_assigndateGroup, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+  connect(_startdateGroup, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
 
   _todoList->addColumn(tr("Type"),    _statusColumn,  Qt::AlignCenter, true, "type");
   _todoList->addColumn(tr("Seq"),        _seqColumn,  Qt::AlignRight,  false, "seq");
@@ -127,7 +127,7 @@ todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
   _todoList->addColumn(tr("Name"),              100,  Qt::AlignLeft,   true, "name");
   _todoList->addColumn(tr("Description"),        -1,  Qt::AlignLeft,   true, "descrip");
   _todoList->addColumn(tr("Status"),  _statusColumn,  Qt::AlignLeft,   true, "status");
-  _todoList->addColumn(tr("Assign Date"),_dateColumn, Qt::AlignLeft,   false,"assigned");
+  _todoList->addColumn(tr("Start Date"),_dateColumn, Qt::AlignLeft,   false, "start");
   _todoList->addColumn(tr("Due Date"),  _dateColumn,  Qt::AlignLeft,   true, "due");
   _todoList->addColumn(tr("Parent#"),   _orderColumn,  Qt::AlignLeft,  true, "number");
   _todoList->addColumn(tr("Customer"), _orderColumn,  Qt::AlignLeft,   true, "cust");
@@ -394,10 +394,10 @@ void todoList::setParams(ParameterList &params)
     params.append("dueStartDate", _dueDates->startDate());
     params.append("dueEndDate",   _dueDates->endDate());
   }
-  if (_assigndateGroup->isChecked())
+  if (_startdateGroup->isChecked())
   {
-    params.append("assignStartDate", _assignDates->startDate());
-    params.append("assignEndDate",   _assignDates->endDate());
+    params.append("startStartDate", _startDates->startDate());
+    params.append("startEndDate",   _startDates->endDate());
   }
   params.append("todo", tr("To-do"));
   params.append("incident", tr("Incident"));
@@ -423,7 +423,7 @@ void todoList::sFillList()
 		"       <? value(\"todo\") ?> AS type, incdtpriority_order AS seq, incdtpriority_name AS priority, "
 		"       todoitem_name AS name, "
 		"       firstLine(todoitem_description) AS descrip, "
-    "       todoitem_status AS status, todoitem_start_date as assigned, "
+    "       todoitem_status AS status, todoitem_start_date as start, "
 		"       todoitem_due_date AS due, formatDate(todoitem_due_date) AS f_due, "
 		"       usr_username AS usr, CAST(incdt_number AS text) AS number, cust_number AS cust, "
     "       CASE WHEN (todoitem_status != 'C'AND "
@@ -436,9 +436,9 @@ void todoList::sFillList()
 		"                   LEFT OUTER JOIN cust ON (cust_id=crmacct_cust_id) "
     "                   LEFT OUTER JOIN incdtpriority ON (incdtpriority_id=todoitem_priority_id) "
 		"WHERE ( (todoitem_usr_id=usr_id)"
-    "  <? if exists(\"assignStartDate\") ?> "
-    "  AND (todoitem_start_date BETWEEN <? value(\"assignStartDate\") ?>"
-		"                             AND <? value(\"assignEndDate\") ?>)"
+    "  <? if exists(\"startStartDate\") ?> "
+    "  AND (todoitem_start_date BETWEEN <? value(\"startStartDate\") ?>"
+		"                             AND <? value(\"startEndDate\") ?>)"
     "  <? endif ?>"
     "  <? if exists(\"dueStartDate\") ?> "
 		"  AND   (todoitem_due_date BETWEEN <? value(\"dueStartDate\") ?> "
@@ -461,7 +461,7 @@ void todoList::sFillList()
 		"       <? value(\"incident\") ?> AS type, incdtpriority_order AS seq, incdtpriority_name AS priority, "
 		"       incdt_summary AS name, "
 		"       firstLine(incdt_descrip) AS descrip, "
-    "       incdt_status AS status, CAST(incdt_timestamp AS date) AS assigned, "
+    "       incdt_status AS status, CAST(incdt_timestamp AS date) AS start, "
 		"       null AS due, null AS f_due, "
 		"       incdt_assigned_username AS usr, CAST(incdt_number AS text) AS number, cust_number AS cust, "
                 "       NULL AS due_qtforegroundrole "
@@ -491,7 +491,7 @@ void todoList::sFillList()
 		"       <? value(\"task\") ?> AS type, NULL AS seq, NULL AS priority, "
 		"       prjtask_number || '-' || prjtask_name AS name, "
 		"       firstLine(prjtask_descrip) AS descrip, "
-		"       prjtask_status AS status,  prjtask_start_date AS assigned, "
+		"       prjtask_status AS status,  prjtask_start_date AS start, "
     "       prjtask_due_date AS due, formatDate(prjtask_due_date) AS f_due, "
 		"       usr_username AS usr, prj_number, '' AS cust, "
     "       CASE WHEN (prjtask_status != 'C'AND "
@@ -501,9 +501,9 @@ void todoList::sFillList()
     "       END AS due_qtforegroundrole "
 		"FROM prj, prjtask LEFT OUTER JOIN usr ON (usr_id=prjtask_usr_id)"
 		"WHERE ((prj_id=prjtask_prj_id) "
-    "  <? if exists(\"assignStartDate\") ?> "
-    "  AND (prjtask_start_date BETWEEN <? value(\"assignStartDate\") ?>"
-		"                             AND <? value(\"assignEndDate\") ?>)"
+    "  <? if exists(\"startStartDate\") ?> "
+    "  AND (prjtask_start_date BETWEEN <? value(\"startStartDate\") ?>"
+		"                             AND <? value(\"startEndDate\") ?>)"
     "  <? endif ?>"
     "  <? if exists(\"dueStartDate\") ?> "
     "  AND (prjtask_due_date BETWEEN <? value(\"dueStartDate\") ?>"
@@ -523,7 +523,7 @@ void todoList::sFillList()
 		"       <? value(\"project\") ?> AS type, NULL AS seq, NULL AS priority, "
 		"       prj_number || '-' || prj_name AS name, "
 		"       firstLine(prj_descrip) AS descrip, "
-		"       prj_status AS status,  prj_start_date AS assigned, "
+		"       prj_status AS status,  prj_start_date AS start, "
     "       prj_due_date AS due, formatDate(prj_due_date) AS f_due, "
 		"       usr_username AS usr, NULL AS number, '' AS cust, "
     "       CASE WHEN (prj_status != 'C'AND "
@@ -533,9 +533,9 @@ void todoList::sFillList()
     "       END AS due_qtforegroundrole "
 		"FROM prj LEFT OUTER JOIN usr ON (usr_id=prj_usr_id)"
 		"WHERE ((true) "
-    "  <? if exists(\"assignStartDate\") ?> "
-    "  AND (prj_start_date BETWEEN <? value(\"assignStartDate\") ?>"
-		"                             AND <? value(\"assignEndDate\") ?>)"
+    "  <? if exists(\"startStartDate\") ?> "
+    "  AND (prj_start_date BETWEEN <? value(\"startStartDate\") ?>"
+		"                             AND <? value(\"startEndDate\") ?>)"
     "  <? endif ?>"
     "  <? if exists(\"dueStartDate\") ?> "
     "  AND (prj_due_date BETWEEN <? value(\"dueStartDate\") ?>"
