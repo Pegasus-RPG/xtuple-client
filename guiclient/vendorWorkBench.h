@@ -88,6 +88,7 @@ class vendorWorkBench : public XWidget, public Ui::vendorWorkBench
     virtual void sPopulate();
     virtual void sPrint();
     virtual void sVendor();
+    virtual void sHandleButtons();
 
   protected slots:
     virtual void languageChange();

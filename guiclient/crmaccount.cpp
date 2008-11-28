@@ -152,9 +152,6 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_primaryButton, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons())); 	 
   connect(_secondaryButton, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons())); 	 
 	connect(_allButton, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
-  connect(_primaryButton, SIGNAL(toggled(bool)), this, SLOT(sPrimaryToggled(bool))); 	 
-	connect(_secondaryButton, SIGNAL(toggled(bool)), this, SLOT(sSecondaryToggled(bool))); 	 
-	connect(_allButton, SIGNAL(toggled(bool)), this, SLOT(sAllToggled(bool)));
   connect(_customerButton, SIGNAL(clicked()), this, SLOT(sCustomer()));
   connect(_vendorButton, SIGNAL(clicked()), this, SLOT(sVendor()));
 
@@ -1973,46 +1970,4 @@ void crmaccount::sHandleButtons()
 	  _widgetStack->setCurrentIndex(_widgetStack->indexOf(_secondaryPage)); 	 
   else 	 
     _widgetStack->setCurrentIndex(_widgetStack->indexOf(_allPage)); 	 
-}
-
-void crmaccount::sPrimaryToggled(bool p) 	 
-{ 	 
-  if (p) 	 
-	{ 	 
-	  disconnect(_secondaryButton, SIGNAL(toggled(bool)), this, SLOT(sSecondaryToggled(bool))); 	 
-	  disconnect(_allButton, SIGNAL(toggled(bool)), this, SLOT(sAllToggled(bool))); 	 
-	  _secondaryButton->setChecked(false); 	 
-	  _allButton->setChecked(false); 	 
-	  connect(_secondaryButton, SIGNAL(toggled(bool)), this, SLOT(sSecondaryToggled(bool))); 	 
-	  connect(_allButton, SIGNAL(toggled(bool)), this, SLOT(sAllToggled(bool))); 	 
-	} 	 
-	sHandleButtons(); 	 
-} 	 
-	  	 
-void crmaccount::sSecondaryToggled(bool p) 	 
-{ 	 
-  if (p) 	 
-  { 	 
-    disconnect(_primaryButton, SIGNAL(toggled(bool)), this, SLOT(sPrimaryyToggled(bool))); 	 
-    disconnect(_allButton, SIGNAL(toggled(bool)), this, SLOT(sAllToggled(bool))); 	 
-    _primaryButton->setChecked(false); 	 
-	  _allButton->setChecked(false); 	 
-	  connect(_primaryButton, SIGNAL(toggled(bool)), this, SLOT(sPrimaryToggled(bool))); 	 
-	  connect(_allButton, SIGNAL(toggled(bool)), this, SLOT(sAllToggled(bool))); 	 
-  } 	 
-  sHandleButtons(); 	 
-} 	 
-	  	 
-void crmaccount::sAllToggled(bool p) 	 
-{ 	 
-  if (p) 	 
-  { 	 
-    disconnect(_secondaryButton, SIGNAL(toggled(bool)), this, SLOT(sSecondaryToggled(bool))); 	 
-    disconnect(_primaryButton, SIGNAL(toggled(bool)), this, SLOT(sPrimaryToggled(bool))); 	 
-    _secondaryButton->setChecked(false); 	 
-    _primaryButton->setChecked(false); 	 
-    connect(_secondaryButton, SIGNAL(toggled(bool)), this, SLOT(sSecondaryToggled(bool))); 	 
-    connect(_primaryButton, SIGNAL(toggled(bool)), this, SLOT(sPrimaryToggled(bool))); 	 
-  } 	 
-  sHandleButtons(); 	 
 }

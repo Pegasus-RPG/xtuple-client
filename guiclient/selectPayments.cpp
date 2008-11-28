@@ -73,15 +73,12 @@ selectPayments::selectPayments(QWidget* parent, const char* name, Qt::WFlags fl)
 {
   setupUi(this);
 
-  QButtonGroup * dueButtonGroup = new QButtonGroup(this);
-  dueButtonGroup->addButton(_dueAll);
-  dueButtonGroup->addButton(_dueOlder);
-  dueButtonGroup->addButton(_dueBetween);
-
   connect(_clear, SIGNAL(clicked()), this, SLOT(sClear()));
   connect(_clearAll, SIGNAL(clicked()), this, SLOT(sClearAll()));
-  connect(_dueBetweenDates, SIGNAL(updated()), this, SLOT(sFillList()));
-  connect(_dueOlderDate, SIGNAL(newDate(const QDate&)), this, SLOT(sFillList()));
+  connect(_selectDate, SIGNAL(currentIndexChanged(int)), this, SLOT(sFillList()));
+  connect(_startDate, SIGNAL(newDate(const QDate&)), this, SLOT(sFillList()));
+  connect(_endDate, SIGNAL(newDate(const QDate&)), this, SLOT(sFillList()));
+  connect(_onOrBeforeDate, SIGNAL(newDate(const QDate&)), this, SLOT(sFillList()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_select, SIGNAL(clicked()), this, SLOT(sSelect()));
   connect(_selectDiscount, SIGNAL(clicked()), this, SLOT(sSelectDiscount()));
@@ -89,7 +86,6 @@ selectPayments::selectPayments(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_selectLine, SIGNAL(clicked()), this, SLOT(sSelectLine()));
   connect(_vendorgroup, SIGNAL(updated()), this, SLOT(sFillList()));
   connect(_bankaccnt, SIGNAL(newID(int)), this, SLOT(sFillList()));
-  connect(dueButtonGroup, SIGNAL(buttonClicked(int)), this, SLOT(sFillList()));
 
   _ignoreUpdates = false;
   
@@ -428,10 +424,10 @@ void selectPayments::sFillList()
   if(_ignoreUpdates)
     return;
 
-  if((_dueOlder->isChecked() && !_dueOlderDate->isValid())
-    ||(_dueBetween->isChecked() && !_dueBetweenDates->allValid()))
+  if ( (_selectDate->currentIndex() == 1 && !_onOrBeforeDate->isValid())  ||
+        (_selectDate->currentIndex() == 2 && (!_startDate->isValid() || !_endDate->isValid())) )
     return;
-
+    
   int _currid = -1;
   if (_bankaccnt->isValid())
   {
@@ -505,11 +501,14 @@ void selectPayments::sFillList()
   if (! setParams(params))
     return;
   params.append("voucher", tr("Voucher"));
-  params.append("debitMemo", tr("D/M"));
-  if(_dueOlder->isChecked())
-    params.append("olderDate", _dueOlderDate->date());
-  else if(_dueBetween->isChecked())
-    _dueBetweenDates->appendValue(params);
+  params.append("debitMemo", tr("Debit Memo"));
+  if (_selectDate->currentIndex()==1)
+    params.append("olderDate", _onOrBeforeDate->date());
+  else if (_selectDate->currentIndex()==2)
+  {
+    params.append("startDate", _startDate->date());
+    params.append("endDate", _endDate->date());
+  }
   if (_currid >= 0)
     params.append("curr_id", _currid);
 

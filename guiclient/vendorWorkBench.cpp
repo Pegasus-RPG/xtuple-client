@@ -142,6 +142,8 @@ vendorWorkBench::vendorWorkBench(QWidget* parent, const char *name, Qt::WFlags f
   connect(payvend, SIGNAL(newVendId(int)), _payables,     SLOT(sFillList()));
   connect(povend,      SIGNAL(newId(int)), _po,           SLOT(sFillList()));
   connect(rcptvend,    SIGNAL(newId(int)), _receipts,     SLOT(sFillList()));
+  connect(_contact1Button, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
+  connect(_contact2Button, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
 
   _edit->setText(_privileges->check("MaintainVendors") ? tr("Edit") : tr("View"));
 
@@ -342,4 +344,12 @@ void vendorWorkBench::sVendor()
   vendor *newdlg = new vendor(this, "vendor");
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
+}
+
+void vendorWorkBench::sHandleButtons()
+{
+  if (_contact1Button->isChecked())
+    _stackedWidget->setCurrentIndex(_stackedWidget->indexOf(_contact1Page));
+  else
+    _stackedWidget->setCurrentIndex(_stackedWidget->indexOf(_contact2Page));
 }
