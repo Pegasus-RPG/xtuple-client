@@ -82,6 +82,7 @@ class todoList : public XWidget, public Ui::todoList
     virtual void	sEdit();
     virtual void	sEditIncident();
     virtual void  sEditTask();
+    virtual void  sEditProject();
     virtual void	sCustomerInfo();
     virtual void	sFillList();
     virtual void	sHandleAutoUpdate(bool);
@@ -91,11 +92,13 @@ class todoList : public XWidget, public Ui::todoList
     virtual void	sView();
     virtual void	sViewIncident();
     virtual void  sViewTask();
+    virtual void  sViewProject();
     virtual void 	setParams(ParameterList &);
 
   private:
     int		    _mode;
     int		    getIncidentId();
+    int		    getProjectId();
     QString		_myUsername;
 };
 

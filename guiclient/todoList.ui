@@ -12,7 +12,7 @@
   <property name="windowTitle" >
    <string>To-Do List</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_3" >
+  <layout class="QGridLayout" name="gridLayout_4" >
    <item row="0" column="0" >
     <layout class="QGridLayout" name="gridLayout_2" >
      <property name="margin" >
@@ -29,9 +29,37 @@
       </widget>
      </item>
      <item row="0" column="1" >
-      <widget class="QGroupBox" name="_dateGroup" >
+      <widget class="QGroupBox" name="_assigndateGroup" >
        <property name="title" >
-        <string/>
+        <string>Only Assign Dates Between </string>
+       </property>
+       <property name="checkable" >
+        <bool>true</bool>
+       </property>
+       <property name="checked" >
+        <bool>false</bool>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_3" >
+        <item row="0" column="0" >
+         <widget class="DateCluster" name="_assignDates" >
+          <property name="focusPolicy" >
+           <enum>Qt::StrongFocus</enum>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item row="0" column="2" >
+      <widget class="QGroupBox" name="_duedateGroup" >
+       <property name="title" >
+        <string>Only Due Dates Between </string>
+       </property>
+       <property name="checkable" >
+        <bool>true</bool>
+       </property>
+       <property name="checked" >
+        <bool>false</bool>
        </property>
        <layout class="QGridLayout" name="gridLayout" >
         <item row="0" column="0" >
@@ -44,7 +72,7 @@
        </layout>
       </widget>
      </item>
-     <item rowspan="2" row="0" column="2" >
+     <item rowspan="2" row="0" column="3" >
       <layout class="QVBoxLayout" name="verticalLayout_2" >
        <item>
         <widget class="QPushButton" name="_close" >
@@ -68,7 +96,7 @@
        </item>
       </layout>
      </item>
-     <item row="1" column="0" colspan="2" >
+     <item row="1" column="0" colspan="3" >
       <widget class="QGroupBox" name="_showGroup" >
        <property name="title" >
         <string>Show</string>
@@ -91,7 +119,7 @@
         <item>
          <widget class="XCheckBox" name="_projects" >
           <property name="text" >
-           <string>Project Tasks</string>
+           <string>Projects</string>
           </property>
          </widget>
         </item>
@@ -111,7 +139,7 @@
        </layout>
       </widget>
      </item>
-     <item row="2" column="0" colspan="2" >
+     <item row="2" column="0" colspan="3" >
       <layout class="QVBoxLayout" name="verticalLayout_3" >
        <item>
         <widget class="XTreeWidget" name="_todoList" >
@@ -163,7 +191,7 @@
        </item>
       </layout>
      </item>
-     <item row="2" column="2" >
+     <item row="2" column="3" >
       <layout class="QVBoxLayout" name="verticalLayout" >
        <item>
         <widget class="QPushButton" name="_print" >
