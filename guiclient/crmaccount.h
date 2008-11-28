@@ -132,6 +132,7 @@ protected slots:
 	  virtual void sSecondaryToggled(bool p); 	 
     virtual void sAllToggled(bool p);
     virtual void sHandleButtons();
+    virtual void sVendorInfo();
 
 protected:
     virtual void closeEvent(QCloseEvent*);

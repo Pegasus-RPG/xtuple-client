@@ -331,7 +331,7 @@
                <bool>false</bool>
               </property>
               <property name="text" >
-               <string>Vendor...</string>
+               <string>Vendor</string>
               </property>
              </widget>
             </item>

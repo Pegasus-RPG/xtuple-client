@@ -74,6 +74,7 @@
 #include "vendor.h"
 #include "storedProcErrorLookup.h"
 #include "dspCustomerInformation.h"
+#include "vendorWorkBench.h"
 #include "opportunity.h"
 #include "mqlutil.h"
 #include "lotSerialRegistration.h"
@@ -101,11 +102,6 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     close();
   }
-  
-  QMenu * customerMenu = new QMenu;
-  customerMenu->addAction(tr("Edit"), this, SLOT(sCustomer()));
-  customerMenu->addAction(tr("Workbench"),   this, SLOT(sCustomerInfo()));
-  _customerButton->setMenu(customerMenu);
   
   int menuItem;
   QMenu * todoMenu = new QMenu;
@@ -144,7 +140,6 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_taxauthButton,	SIGNAL(clicked()), this, SLOT(sTaxAuth()));
   connect(_todo, SIGNAL(currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)), this, SLOT(sHandleTodoPrivs()));
   connect(_todo, SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*)), this, SLOT(sPopulateTodoMenu(QMenu*)));
-  connect(_vendorButton,	SIGNAL(clicked()), this, SLOT(sVendor()));
   connect(_viewTodoIncdt,	SIGNAL(clicked()), this, SLOT(sViewTodoIncdt()));
   connect(omfgThis, SIGNAL(customersUpdated(int, bool)), this, SLOT(sUpdateRelationships()));
   connect(omfgThis, SIGNAL(prospectsUpdated()),  this, SLOT(sUpdateRelationships()));
@@ -333,12 +328,27 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
         }
       }
 
+      _customerButton->setText("Customer...");
+      _vendorButton->setText("Vendor...");
+      connect(_customerButton, SIGNAL(clicked()), this, SLOT(sCustomer()));
+      connect(_vendorButton, SIGNAL(clicked()), this, SLOT(sVendor()));
       connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
       connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
+      
+      QMenu * customerMenu = new QMenu;
+      customerMenu->addAction(tr("Edit..."), this, SLOT(sCustomer()));
+      customerMenu->addAction(tr("Workbench..."),   this, SLOT(sCustomerInfo()));
+      _customerButton->setMenu(customerMenu);
+  
+      QMenu * vendorMenu = new QMenu;
+      vendorMenu->addAction(tr("Edit..."), this, SLOT(sVendor()));
+      vendorMenu->addAction(tr("Workbench..."),   this, SLOT(sVendorInfo()));
+      _vendorButton->setMenu(vendorMenu);      
+      
       connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
       connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
       _name->setFocus();
@@ -347,6 +357,16 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
     {
       _mode = cView;
 
+      QMenu * customerMenu = new QMenu;
+      customerMenu->addAction(tr("View..."), this, SLOT(sCustomer()));
+      customerMenu->addAction(tr("Workbench..."),   this, SLOT(sCustomerInfo()));
+      _customerButton->setMenu(customerMenu);
+  
+      QMenu * vendorMenu = new QMenu;
+      vendorMenu->addAction(tr("View..."), this, SLOT(sVendor()));
+      vendorMenu->addAction(tr("Workbench..."),   this, SLOT(sVendorInfo()));
+      _vendorButton->setMenu(vendorMenu);         
+      
       _owner->setEnabled(FALSE);
       _number->setEnabled(FALSE);
       _name->setEnabled(FALSE);
@@ -1734,6 +1754,16 @@ void crmaccount::sCustomerInfo()
   params.append("cust_id", _custId);
 
   dspCustomerInformation *newdlg = new dspCustomerInformation(this, Qt::Window);
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+}
+
+void crmaccount::sVendorInfo()
+{
+  ParameterList params;
+  params.append("vend_id", _vendId);
+
+  vendorWorkBench *newdlg = new vendorWorkBench(this, "vendorWorkBench", Qt::Window);
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }
