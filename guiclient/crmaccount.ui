@@ -311,7 +311,7 @@
                <bool>false</bool>
               </property>
               <property name="text" >
-               <string>Customer</string>
+               <string>Customer...</string>
               </property>
              </widget>
             </item>
@@ -331,7 +331,7 @@
                <bool>false</bool>
               </property>
               <property name="text" >
-               <string>Vendor</string>
+               <string>Vendor...</string>
               </property>
              </widget>
             </item>
@@ -517,8 +517,21 @@
                </property>
                <property name="sizeHint" stdset="0" >
                 <size>
-                 <width>20</width>
+                 <width>662</width>
                  <height>69</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="0" column="1" >
+              <spacer name="horizontalSpacer_2" >
+               <property name="orientation" >
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0" >
+                <size>
+                 <width>40</width>
+                 <height>20</height>
                 </size>
                </property>
               </spacer>
@@ -602,8 +615,21 @@
                </property>
                <property name="sizeHint" stdset="0" >
                 <size>
-                 <width>20</width>
+                 <width>662</width>
                  <height>69</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="0" column="1" >
+              <spacer name="horizontalSpacer_3" >
+               <property name="orientation" >
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0" >
+                <size>
+                 <width>40</width>
+                 <height>20</height>
                 </size>
                </property>
               </spacer>

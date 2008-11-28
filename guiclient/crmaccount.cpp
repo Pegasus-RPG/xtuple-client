@@ -155,6 +155,8 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_primaryButton, SIGNAL(toggled(bool)), this, SLOT(sPrimaryToggled(bool))); 	 
 	connect(_secondaryButton, SIGNAL(toggled(bool)), this, SLOT(sSecondaryToggled(bool))); 	 
 	connect(_allButton, SIGNAL(toggled(bool)), this, SLOT(sAllToggled(bool)));
+  connect(_customerButton, SIGNAL(clicked()), this, SLOT(sCustomer()));
+  connect(_vendorButton, SIGNAL(clicked()), this, SLOT(sVendor()));
 
   _contacts->addColumn(tr("First Name"),   50, Qt::AlignLeft, true, "cntct_first_name");
   _contacts->addColumn(tr("Last Name"),	   -1, Qt::AlignLeft, true, "cntct_last_name");
@@ -275,13 +277,6 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
   _attach->setEnabled(_privileges->check("MaintainContacts"));
   _detach->setEnabled(_privileges->check("MaintainContacts"));
 
-  param = pParams.value("crmacct_id", &valid);
-  if (valid)
-  {
-    _crmacctId = param.toInt();
-    sPopulate();
-  }
-
   param = pParams.value("mode", &valid);
   if (valid)
   {
@@ -327,27 +322,13 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
           _NumberGen = q.value("number").toInt();
         }
       }
-
-      _customerButton->setText("Customer...");
-      _vendorButton->setText("Vendor...");
-      connect(_customerButton, SIGNAL(clicked()), this, SLOT(sCustomer()));
-      connect(_vendorButton, SIGNAL(clicked()), this, SLOT(sVendor()));
+      
       connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
       connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
     }
     else if (param.toString() == "edit")
     {
-      _mode = cEdit;
-      
-      QMenu * customerMenu = new QMenu;
-      customerMenu->addAction(tr("Edit..."), this, SLOT(sCustomer()));
-      customerMenu->addAction(tr("Workbench..."),   this, SLOT(sCustomerInfo()));
-      _customerButton->setMenu(customerMenu);
-  
-      QMenu * vendorMenu = new QMenu;
-      vendorMenu->addAction(tr("Edit..."), this, SLOT(sVendor()));
-      vendorMenu->addAction(tr("Workbench..."),   this, SLOT(sVendorInfo()));
-      _vendorButton->setMenu(vendorMenu);      
+      _mode = cEdit;   
       
       connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
       connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
@@ -357,16 +338,6 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
     {
       _mode = cView;
 
-      QMenu * customerMenu = new QMenu;
-      customerMenu->addAction(tr("View..."), this, SLOT(sCustomer()));
-      customerMenu->addAction(tr("Workbench..."),   this, SLOT(sCustomerInfo()));
-      _customerButton->setMenu(customerMenu);
-  
-      QMenu * vendorMenu = new QMenu;
-      vendorMenu->addAction(tr("View..."), this, SLOT(sVendor()));
-      vendorMenu->addAction(tr("Workbench..."),   this, SLOT(sVendorInfo()));
-      _vendorButton->setMenu(vendorMenu);         
-      
       _owner->setEnabled(FALSE);
       _number->setEnabled(FALSE);
       _name->setEnabled(FALSE);
@@ -392,6 +363,13 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
 
       _close->setFocus();
     }
+  }
+  
+  param = pParams.value("crmacct_id", &valid);
+  if (valid)
+  {
+    _crmacctId = param.toInt();
+    sPopulate();
   }
 
   int scripted;
@@ -930,12 +908,39 @@ void crmaccount::sPopulate()
     _secondary->setSearchAcct(_crmacctId);
     _owner->setUsername(q.value("crmacct_owner_username").toString());
 
-    _customer->setChecked(_custId > 0);
+    if (_custId > 0)
+    {
+      _customer->setChecked(true);
+      _customerButton->setText("Customer");
+      disconnect(_customerButton, SIGNAL(clicked()), this, SLOT(sCustomer()));
+      
+      QMenu * customerMenu = new QMenu;
+      if (_mode == cEdit)
+        customerMenu->addAction(tr("Edit..."), this, SLOT(sCustomer()));
+      else
+        customerMenu->addAction(tr("View..."), this, SLOT(sCustomer()));
+      customerMenu->addAction(tr("Workbench..."),   this, SLOT(sCustomerInfo()));
+      _customerButton->setMenu(customerMenu);
+    }
+
     _customer->setDisabled(_customer->isChecked());
     _prospect->setChecked(_prospectId > 0);
     _prospect->setDisabled(_customer->isChecked());
     _taxauth->setChecked(_taxauthId > 0);
-    _vendor->setChecked(_vendId > 0);
+    if (_vendId > 0)
+    {
+      _vendor->setChecked(true);
+      _vendorButton->setText("Vendor");
+      disconnect(_vendorButton, SIGNAL(clicked()), this, SLOT(sVendor()));
+      
+      QMenu * vendorMenu = new QMenu;
+      if (_mode == cEdit)
+        vendorMenu->addAction(tr("Edit..."), this, SLOT(sVendor()));
+      else
+        vendorMenu->addAction(tr("View..."), this, SLOT(sVendor()));
+      vendorMenu->addAction(tr("Workbench..."),   this, SLOT(sVendorInfo()));
+      _vendorButton->setMenu(vendorMenu);   
+    }
     _partner->setChecked(_partnerId > 0);
     _competitor->setChecked(_competitorId > 0);
   }
