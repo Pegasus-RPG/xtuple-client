@@ -69,16 +69,14 @@ class dspCheckRegister : public XWidget, public Ui::dspCheckRegister
 public:
     dspCheckRegister(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::Window);
     ~dspCheckRegister();
+    virtual bool setParams(ParameterList &);
 
 public slots:
     virtual void sPrint();
     virtual void sFillList();
     virtual void sVoidPosted();
-	virtual void sHandleButtons();
-
-protected:
-    virtual bool setParams(ParameterList &);
-
+	  virtual void sHandleButtons();
+   
 protected slots:
     virtual void languageChange();
 

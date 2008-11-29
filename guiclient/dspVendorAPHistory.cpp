@@ -314,8 +314,8 @@ void dspVendorAPHistory::sFillList()
              "ORDER BY sortdate, apopen_id, type;" );
 
   _dates->bindValue(q);
-  q.bindValue(":creditMemo", tr("C/M"));
-  q.bindValue(":debitMemo", tr("D/M"));
+  q.bindValue(":creditMemo", tr("Credit Memo"));
+  q.bindValue(":debitMemo", tr("Debit Memo"));
   q.bindValue(":check", tr("Check"));
   q.bindValue(":voucher", tr("Voucher"));
   q.bindValue(":other", tr("Other"));

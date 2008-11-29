@@ -539,11 +539,17 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_9" />
      </widget>
-     <widget class="QWidget" name="_applicationsTab" >
+     <widget class="QWidget" name="_historyTab" >
       <attribute name="title" >
-       <string>Applications</string>
+       <string>A/P History</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_10" />
+      <layout class="QVBoxLayout" name="verticalLayout_5" />
+     </widget>
+     <widget class="QWidget" name="_checksTab" >
+      <attribute name="title" >
+       <string>Checks</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_3" />
      </widget>
     </widget>
    </item>

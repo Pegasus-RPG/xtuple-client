@@ -85,7 +85,7 @@ selectedPayments::selectedPayments(QWidget* parent, const char* name, Qt::WFlags
   _apselect->addColumn(tr("P/O #"),      _orderColumn, Qt::AlignRight , true, "apopen_ponumber");
   _apselect->addColumn(tr("Selected"),   _moneyColumn, Qt::AlignRight , true, "apselect_amount");
   _apselect->addColumn(tr("Currency"),   _currencyColumn, Qt::AlignLeft,true, "currAbbr" );
-  _apselect->addColumn(tr("Running\n(%1)").arg(CurrDisplay::baseCurrAbbr()), _moneyColumn, Qt::AlignRight, true, "apselect_running_base" );
+  _apselect->addColumn(tr("Running (%1)").arg(CurrDisplay::baseCurrAbbr()), _bigMoneyColumn, Qt::AlignRight, true, "apselect_running_base" );
   if (omfgThis->singleCurrency())
   {
     _apselect->hideColumn("currAbbr");

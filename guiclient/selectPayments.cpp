@@ -97,7 +97,7 @@ selectPayments::selectPayments(QWidget* parent, const char* name, Qt::WFlags fl)
   _apopen->addColumn(tr("Inv. #"),    _orderColumn, Qt::AlignRight , true, "apopen_invcnumber" );
   _apopen->addColumn(tr("P/O #"),     _orderColumn, Qt::AlignRight , true, "apopen_ponumber" );
   _apopen->addColumn(tr("Due Date"),  _dateColumn,  Qt::AlignCenter, true, "apopen_duedate" );
-  _apopen->addColumn(tr("Doc. Date"), _dateColumn,  Qt::AlignCenter, true, "apopen_docdate" );
+  _apopen->addColumn(tr("Doc. Date"), _dateColumn,  Qt::AlignCenter, false, "apopen_docdate" );
   _apopen->addColumn(tr("Amount"),    _moneyColumn, Qt::AlignRight , true, "amount" );
   _apopen->addColumn(tr("Selected"),  _moneyColumn, Qt::AlignRight , true, "selected" );
   _apopen->addColumn(tr("Discount"),  _moneyColumn, Qt::AlignRight , true, "discount" );
@@ -483,7 +483,7 @@ void selectPayments::sFillList()
          "                           WHERE (vendtype_code ~ <? value(\"vendtype_pattern\") ?>)))"
          "<? endif ?>"
          "<? if exists(\"olderDate\") ?>"
-         " AND (apopen_duedate < <? value(\"olderDate\") ?>)"
+         " AND (apopen_duedate <= <? value(\"olderDate\") ?>)"
          "<? elseif exists(\"startDate\") ?>"
          " AND (apopen_duedate BETWEEN <? value(\"startDate\") ?> AND <? value(\"endDate\") ?>)"
          "<? endif ?>"

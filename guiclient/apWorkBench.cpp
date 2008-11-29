@@ -60,7 +60,6 @@
 #include <QSqlError>
 
 #include <metasql.h>
-
 #include "selectPayments.h"
 #include "selectedPayments.h"
 #include "viewCheckRun.h"
@@ -158,10 +157,15 @@ void apWorkBench::sCalculateTotalOpen()
     }
   }
   
-  if (_payables->findChild<QRadioButton*>("_dueOlder")->isChecked())
-    params.append("olderDate", _payables->findChild<DLineEdit*>("_dueOlderDate")->date());
-  else if(_payables->findChild<QRadioButton*>("_dueBetween")->isChecked())
-    _payables->findChild<DateCluster*>("_dueBetweenDates")->appendValue(params);
+  
+  if (_payables->findChild<XComboBox*>("_selectDate")->currentIndex() == 1)
+    params.append("olderDate", _payables->findChild<DLineEdit*>("_onOrBeforeDate")->date());
+  else if(_payables->findChild<XComboBox*>("_selectDate")->currentIndex() == 2)
+  {
+    params.append("startDate", _payables->findChild<DLineEdit*>("_startDate")->date());
+    params.append("endDate", _payables->findChild<DLineEdit*>("_endDate")->date());
+  }
+  
   MetaSQLQuery due(
          "SELECT SUM(currToBase(apopen_curr_id,"
          "                      apopen_amount - apopen_paid - "

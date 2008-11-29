@@ -5,43 +5,49 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>771</width>
-    <height>468</height>
+    <width>800</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Payables Workbench</string>
   </property>
-  <layout class="QGridLayout" name="apWorkBenchLayout" >
-   <item row="0" column="1" >
-    <spacer>
-     <property name="orientation" >
-      <enum>Qt::Horizontal</enum>
+  <layout class="QGridLayout" name="gridLayout_2" >
+   <item row="0" column="0" >
+    <layout class="QGridLayout" name="gridLayout" >
+     <property name="margin" >
+      <number>12</number>
      </property>
-     <property name="sizeHint" stdset="0" >
-      <size>
-       <width>161</width>
-       <height>48</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="0" column="2" >
-    <widget class="XLabel" name="_totalOpenitemsLit" >
-     <property name="text" >
-      <string>Total Open:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="3" >
-    <widget class="CurrDisplay" name="_apopenTotal" />
-   </item>
-   <item row="0" column="4" >
-    <layout class="QVBoxLayout" >
      <property name="spacing" >
-      <number>0</number>
+      <number>12</number>
      </property>
-     <item>
+     <item row="0" column="0" >
+      <widget class="VendorGroup" name="_vendorgroup" />
+     </item>
+     <item row="0" column="1" >
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0" >
+        <size>
+         <width>161</width>
+         <height>48</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="0" column="2" >
+      <widget class="XLabel" name="_totalOpenitemsLit" >
+       <property name="text" >
+        <string>Total Open:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="3" >
+      <widget class="CurrDisplay" name="_apopenTotal" />
+     </item>
+     <item row="0" column="4" >
       <widget class="QPushButton" name="_close" >
        <property name="text" >
         <string>&amp;Close</string>
@@ -54,47 +60,44 @@
        </property>
       </widget>
      </item>
+     <item row="1" column="0" colspan="5" >
+      <widget class="QTabWidget" name="_tab" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+         <horstretch>0</horstretch>
+         <verstretch>1</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="currentIndex" >
+        <number>0</number>
+       </property>
+       <widget class="QWidget" name="_payablesTab" >
+        <attribute name="title" >
+         <string>Payables</string>
+        </attribute>
+        <layout class="QGridLayout" name="_payablesTabLayout" />
+       </widget>
+       <widget class="QWidget" name="_creditsTab" >
+        <attribute name="title" >
+         <string>Credits</string>
+        </attribute>
+        <layout class="QGridLayout" name="_creditsTabLayout" />
+       </widget>
+       <widget class="QWidget" name="_selectionsTab" >
+        <attribute name="title" >
+         <string>Selections</string>
+        </attribute>
+        <layout class="QGridLayout" name="_selectionsTabLayout" />
+       </widget>
+       <widget class="QWidget" name="_checkRunTab" >
+        <attribute name="title" >
+         <string>Checks</string>
+        </attribute>
+        <layout class="QGridLayout" name="_checkRunTabLayout" />
+       </widget>
+      </widget>
+     </item>
     </layout>
-   </item>
-   <item row="1" column="0" colspan="5" >
-    <widget class="QTabWidget" name="_tab" >
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
-       <horstretch>0</horstretch>
-       <verstretch>1</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="currentIndex" >
-      <number>0</number>
-     </property>
-     <widget class="QWidget" name="_payablesTab" >
-      <attribute name="title" >
-       <string>Payables</string>
-      </attribute>
-      <layout class="QGridLayout" name="_payablesTabLayout" />
-     </widget>
-     <widget class="QWidget" name="_creditsTab" >
-      <attribute name="title" >
-       <string>Credits</string>
-      </attribute>
-      <layout class="QGridLayout" name="_creditsTabLayout" />
-     </widget>
-     <widget class="QWidget" name="_selectionsTab" >
-      <attribute name="title" >
-       <string>Selections</string>
-      </attribute>
-      <layout class="QGridLayout" name="_selectionsTabLayout" />
-     </widget>
-     <widget class="QWidget" name="_checkRunTab" >
-      <attribute name="title" >
-       <string>Checks</string>
-      </attribute>
-      <layout class="QGridLayout" name="_checkRunTabLayout" />
-     </widget>
-    </widget>
-   </item>
-   <item row="0" column="0" >
-    <widget class="VendorGroup" name="_vendorgroup" />
    </item>
   </layout>
  </widget>

@@ -73,8 +73,8 @@
 viewCheckRun::viewCheckRun(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
-  setupUi(this);
-
+  setupUi(this);  
+  
   connect(_check, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(sHandleItemSelection()));
   connect(_bankaccnt,     SIGNAL(newID(int)), this, SLOT(sFillList()));
   connect(_delete,         SIGNAL(clicked()), this, SLOT(sDelete()));
@@ -82,9 +82,6 @@ viewCheckRun::viewCheckRun(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_newMiscCheck,   SIGNAL(clicked()), this, SLOT(sNewMiscCheck()));
   connect(_postCheck,      SIGNAL(clicked()), this, SLOT(sPost()));
   connect(_prepareCheckRun,SIGNAL(clicked()), this, SLOT(sPrepareCheckRun()));
-  connect(_printCheck,     SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_printCheckRun,  SIGNAL(clicked()), this, SLOT(sPrintCheckRun()));
-  connect(_printEditList,  SIGNAL(clicked()), this, SLOT(sPrintEditList()));
   connect(_replace,        SIGNAL(clicked()), this, SLOT(sReplace()));
   connect(_replaceAll,     SIGNAL(clicked()), this, SLOT(sReplaceAll()));
   connect(_vendorgroup,    SIGNAL(updated()), this, SLOT(sFillList()));
@@ -107,7 +104,7 @@ viewCheckRun::viewCheckRun(QWidget* parent, const char* name, Qt::WFlags fl)
 
   connect(omfgThis, SIGNAL(checksUpdated(int, int, bool)), this, SLOT(sFillList(int)));
 
-  sFillList();
+  sFillList(); 
 }
 
 viewCheckRun::~viewCheckRun()
@@ -262,13 +259,14 @@ void viewCheckRun::sPost()
 void viewCheckRun::sHandleItemSelection()
 {
   XTreeWidgetItem *selected = _check->currentItem();
+  bool select = false;
 
   if (! selected)
   {
     _void->setEnabled(FALSE);
     _delete->setEnabled(FALSE);
     _replace->setEnabled(FALSE);
-    _printCheck->setEnabled(FALSE);
+    select = true;
 
     _edit->setEnabled(FALSE);
     _postCheck->setEnabled(FALSE);
@@ -281,7 +279,6 @@ void viewCheckRun::sHandleItemSelection()
     _void->setEnabled(FALSE);
     _delete->setEnabled(TRUE);
     _replace->setEnabled(TRUE);
-    _printCheck->setEnabled(FALSE);
 
     _edit->setEnabled(FALSE);
     _postCheck->setEnabled(FALSE);
@@ -292,13 +289,21 @@ void viewCheckRun::sHandleItemSelection()
     _void->setEnabled(selected->rawValue("checkhead_ach_batch").isNull());
     _delete->setEnabled(FALSE);
     _replace->setEnabled(FALSE);
-    _printCheck->setEnabled(selected->rawValue("checkhead_ach_batch").isNull());
+    select = selected->rawValue("checkhead_ach_batch").isNull();
 
     _edit->setEnabled(selected->rawValue("checkhead_misc").toBool() &&
                       ! selected->rawValue("checkhead_printed").toBool());
     _postCheck->setEnabled(selected->rawValue("checkhead_printed").toBool() &&
                            _privileges->check("PostPayments"));
   }
+  
+  QMenu * printMenu = new QMenu;
+  if (select)
+    printMenu->addAction(tr("Selected Check..."), this, SLOT(sPrint()));
+  if (_vendorgroup->isAll())
+    printMenu->addAction(tr("Check Run..."), this, SLOT(sPrintCheckRun()));
+  printMenu->addAction(tr("Edit List"), this, SLOT(sPrintEditList()));
+  _print->setMenu(printMenu); 
 }
 
 void viewCheckRun::sFillList(int pBankaccntid)
@@ -309,6 +314,12 @@ void viewCheckRun::sFillList(int pBankaccntid)
 
 void viewCheckRun::sFillList()
 {
+  QMenu * printMenu = new QMenu;
+  if (_vendorgroup->isAll())
+    printMenu->addAction(tr("Check Run..."), this, SLOT(sPrintCheckRun()));
+  printMenu->addAction(tr("Edit List"),   this, SLOT(sPrintEditList()));
+  _print->setMenu(printMenu);   
+  
   MetaSQLQuery mql = mqlLoad("checkRegister", "detail");
   ParameterList params;
   params.append("bankaccnt_id", _bankaccnt->id());
@@ -350,7 +361,6 @@ void viewCheckRun::sPrintCheckRun()
 
 void viewCheckRun::sHandleVendorGroup()
 {
-  _printCheckRun->setEnabled(_vendorgroup->isAll());
   _replaceAll->setEnabled(_vendorgroup->isAll());
 }
 

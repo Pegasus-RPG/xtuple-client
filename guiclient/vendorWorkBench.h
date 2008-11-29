@@ -65,9 +65,11 @@
 
 class ParameterList;
 
-class dspAPApplications;
+//class dspAPApplications;
+class dspCheckRegister;
 class dspPOsByVendor;
 class dspPoItemReceivingsByVendor;
+class dspVendorAPHistory;
 class unappliedAPCreditMemos;
 class selectPayments;
 
@@ -94,11 +96,13 @@ class vendorWorkBench : public XWidget, public Ui::vendorWorkBench
     virtual void languageChange();
 
   protected:
-    dspAPApplications           *_applications;
+    //dspAPApplications           *_applications;
     unappliedAPCreditMemos      *_credits;
     selectPayments              *_payables;
     dspPOsByVendor              *_po;
     dspPoItemReceivingsByVendor *_receipts;
+    dspVendorAPHistory          *_history;
+    dspCheckRegister            *_checks;
 
   private:
     int _crmacctId;

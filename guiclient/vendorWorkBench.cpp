@@ -67,8 +67,10 @@
 
 #include "crmaccount.h"
 #include "dspAPApplications.h"
+#include "dspCheckRegister.h"
 #include "dspPOsByVendor.h"
 #include "dspPoItemReceivingsByVendor.h"
+#include "dspVendorAPHistory.h"
 #include "selectPayments.h"
 #include "unappliedAPCreditMemos.h"
 #include "vendor.h"
@@ -113,7 +115,8 @@ vendorWorkBench::vendorWorkBench(QWidget* parent, const char *name, Qt::WFlags f
   VendorGroup *cmvend = _credits->findChild<VendorGroup*>("_vendorgroup");
   cmvend->setState(VendorGroup::Selected);
   cmvend->hide();
-
+  
+  /*  With the addition of A/P History and checks, this appears redundant now
   _applications = new dspAPApplications(this, "dspAPApplications", Qt::Widget);
   _applicationsTab->layout()->addWidget(_applications);
   hideme = _applications->findChild<QWidget*>("_close");
@@ -127,21 +130,43 @@ vendorWorkBench::vendorWorkBench(QWidget* parent, const char *name, Qt::WFlags f
   VendorGroup *apvend = _applications->findChild<VendorGroup*>("_vendorgroup");
   apvend->setState(VendorGroup::Selected);
   apvend->hide();
-
+  */
+    
+  _checks = new dspCheckRegister(this, "dspCheckRegister", Qt::Widget);
+  _checksTab->layout()->addWidget(_checks);
+  _checks->findChild<QWidget*>("_close")->hide();
+  _checks->findChild<QGroupBox*>("_recipGroup")->setChecked(true);
+  _checks->findChild<QGroupBox*>("_recipGroup")->hide();
+  _checks->findChild<DateCluster*>("_dates")->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
+  _checks->findChild<DateCluster*>("_dates")->setEndNull(tr("Latest"),	  omfgThis->endOfTime(),   TRUE);
+  VendorCluster *checkvend = _checks->findChild<VendorCluster*>("_vend");
+  
+  _history = new dspVendorAPHistory(this, "dspVendorAPHistory", Qt::Widget);
+  _historyTab->layout()->addWidget(_history);
+  _history->findChild<QWidget*>("_close")->hide();
+  _history->findChild<QWidget*>("_vendGroup")->hide();
+  _history->findChild<DateCluster*>("_dates")->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
+  _history->findChild<DateCluster*>("_dates")->setEndNull(tr("Latest"),	  omfgThis->endOfTime(),   TRUE);
+  VendorCluster *histvend = _history->findChild<VendorCluster*>("_vend");
+  
   connect(_crmacct,     SIGNAL(clicked()), this,          SLOT(sCRMAccount()));
   connect(_edit,        SIGNAL(clicked()), this,          SLOT(sVendor()));
   connect(_print,       SIGNAL(clicked()), this,          SLOT(sPrint()));
-  connect(_vend,       SIGNAL(newId(int)), apvend,        SLOT(setVendId(int)));
+  //connect(_vend,       SIGNAL(newId(int)), apvend,        SLOT(setVendId(int)));
   connect(_vend,       SIGNAL(newId(int)), cmvend,        SLOT(setVendId(int)));
   connect(_vend,       SIGNAL(newId(int)), payvend,       SLOT(setVendId(int)));
   connect(_vend,       SIGNAL(newId(int)), povend,        SLOT(setId(int)));
   connect(_vend,       SIGNAL(newId(int)), rcptvend,      SLOT(setId(int)));
+  connect(_vend,       SIGNAL(newId(int)), histvend,      SLOT(setId(int)));
+  connect(_vend,       SIGNAL(newId(int)), checkvend,     SLOT(setId(int)));
   connect(_vend,       SIGNAL(newId(int)), this,          SLOT(sPopulate()));
-  connect(apvend,  SIGNAL(newVendId(int)), _applications, SLOT(sFillList()));
+  //connect(apvend,  SIGNAL(newVendId(int)), _applications, SLOT(sFillList()));
   connect(cmvend,  SIGNAL(newVendId(int)), _credits,      SLOT(sFillList()));
   connect(payvend, SIGNAL(newVendId(int)), _payables,     SLOT(sFillList()));
   connect(povend,      SIGNAL(newId(int)), _po,           SLOT(sFillList()));
   connect(rcptvend,    SIGNAL(newId(int)), _receipts,     SLOT(sFillList()));
+  connect(histvend,    SIGNAL(newId(int)), _history,      SLOT(sFillList()));
+  connect(checkvend,   SIGNAL(newId(int)), _checks,       SLOT(sFillList()));
   connect(_contact1Button, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
   connect(_contact2Button, SIGNAL(clicked()), this, SLOT(sHandleButtons()));
 
