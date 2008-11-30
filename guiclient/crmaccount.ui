@@ -557,6 +557,9 @@
                </item>
                <item>
                 <widget class="QPushButton" name="_edit" >
+                 <property name="enabled" >
+                  <bool>false</bool>
+                 </property>
                  <property name="text" >
                   <string>Edit</string>
                  </property>
@@ -564,6 +567,9 @@
                </item>
                <item>
                 <widget class="QPushButton" name="_detach" >
+                 <property name="enabled" >
+                  <bool>false</bool>
+                 </property>
                  <property name="text" >
                   <string>Detach</string>
                  </property>
@@ -571,6 +577,9 @@
                </item>
                <item>
                 <widget class="QPushButton" name="_attach" >
+                 <property name="enabled" >
+                  <bool>true</bool>
+                 </property>
                  <property name="text" >
                   <string>Attach</string>
                  </property>
@@ -597,8 +606,14 @@
             <layout class="QGridLayout" name="gridLayout_2" >
              <item row="0" column="0" >
               <widget class="ContactCluster" name="_secondary" >
+               <property name="listVisible" >
+                <bool>false</bool>
+               </property>
                <property name="accountVisible" >
                 <bool>false</bool>
+               </property>
+               <property name="ownerEnabled" >
+                <bool>true</bool>
                </property>
                <property name="activeVisible" >
                 <bool>false</bool>
@@ -1070,12 +1085,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>694</x>
-     <y>232</y>
+     <x>676</x>
+     <y>148</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>785</x>
-     <y>236</y>
+     <x>766</x>
+     <y>152</y>
     </hint>
    </hints>
   </connection>
@@ -1086,12 +1101,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>694</x>
-     <y>261</y>
+     <x>676</x>
+     <y>171</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>785</x>
-     <y>265</y>
+     <x>766</x>
+     <y>175</y>
     </hint>
    </hints>
   </connection>
@@ -1102,12 +1117,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>159</x>
-     <y>310</y>
+     <x>182</x>
+     <y>545</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>159</x>
-     <y>310</y>
+     <x>182</x>
+     <y>545</y>
     </hint>
    </hints>
   </connection>
@@ -1118,12 +1133,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>159</x>
-     <y>310</y>
+     <x>182</x>
+     <y>545</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>159</x>
-     <y>310</y>
+     <x>182</x>
+     <y>545</y>
     </hint>
    </hints>
   </connection>
@@ -1134,12 +1149,12 @@
    <slot>animateClick(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>159</x>
-     <y>310</y>
+     <x>182</x>
+     <y>545</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>159</x>
-     <y>310</y>
+     <x>182</x>
+     <y>545</y>
     </hint>
    </hints>
   </connection>
@@ -1154,8 +1169,8 @@
      <y>489</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>598</x>
-     <y>244</y>
+     <x>1123</x>
+     <y>488</y>
     </hint>
    </hints>
   </connection>
@@ -1166,12 +1181,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>694</x>
-     <y>174</y>
+     <x>676</x>
+     <y>125</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>785</x>
-     <y>178</y>
+     <x>766</x>
+     <y>129</y>
     </hint>
    </hints>
   </connection>
@@ -1182,12 +1197,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>694</x>
-     <y>145</y>
+     <x>676</x>
+     <y>102</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>785</x>
-     <y>149</y>
+     <x>766</x>
+     <y>106</y>
     </hint>
    </hints>
   </connection>
@@ -1198,12 +1213,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>435</x>
-     <y>277</y>
+     <x>458</x>
+     <y>552</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>594</x>
-     <y>248</y>
+     <x>1035</x>
+     <y>372</y>
     </hint>
    </hints>
   </connection>
@@ -1214,12 +1229,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>424</x>
-     <y>295</y>
+     <x>447</x>
+     <y>570</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>594</x>
-     <y>271</y>
+     <x>1035</x>
+     <y>372</y>
     </hint>
    </hints>
   </connection>
@@ -1230,12 +1245,44 @@
    <slot>animateClick()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>483</x>
-     <y>230</y>
+     <x>506</x>
+     <y>505</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>544</x>
-     <y>233</y>
+     <x>1035</x>
+     <y>372</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_contacts</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_edit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>650</x>
+     <y>360</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>689</x>
+     <y>361</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_contacts</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_detach</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>636</x>
+     <y>380</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>699</x>
+     <y>379</y>
     </hint>
    </hints>
   </connection>

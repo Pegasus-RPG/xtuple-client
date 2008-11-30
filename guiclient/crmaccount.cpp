@@ -385,8 +385,6 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
 // similar code in address, customer, shipto, vendor, vendorAddress
 int crmaccount::saveContact(ContactCluster* pContact)
 {
-  pContact->setAccount(_crmacctId);
-
   int answer = 2;	// Cancel
   int saveResult = pContact->save(AddressCluster::CHECK);
 
@@ -658,7 +656,9 @@ void crmaccount::sSave()
   }
 
   int returnVal = 0;
- 
+  
+  _primary->setAccount(_crmacctId);
+  _secondary->setAccount(_crmacctId);
   if (_primary->sChanged())
   {
     returnVal = saveContact(_primary);

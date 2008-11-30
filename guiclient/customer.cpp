@@ -687,6 +687,8 @@ void customer::sSave()
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
+  _billCntct->setAccount(_crmacctid);
+  _corrCntct->setAccount(_crmacctid);
   if (_billCntct->sChanged())
   {
     if (saveContact(_billCntct) < 0)
@@ -1425,6 +1427,8 @@ void customer::sLoadCrmAcct(int crmacctId )
 {
   _notice = FALSE;
   _crmacctid = crmacctId;
+  _billCntct->setSearchAcct(_crmacctid);
+  _corrCntct->setSearchAcct(_crmacctid);
   q.prepare("SELECT * FROM crmacct WHERE (crmacct_id=:crmacct_id);");
   q.bindValue(":crmacct_id", crmacctId);
   q.exec();

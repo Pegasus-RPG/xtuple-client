@@ -159,7 +159,11 @@ void vendor::set(const ParameterList &pParams)
 
   param = pParams.value("crmacct_id", &valid);
   if (valid)
+  {
     _crmacctid = param.toInt();
+    _contact1->setSearchAcct(param.toInt());
+    _contact2->setSearchAcct(param.toInt());
+  }
 
   param = pParams.value("vend_id", &valid);
   if (valid)
