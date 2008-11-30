@@ -85,6 +85,7 @@ void ContactCluster::init()
 
     _layoutDone = false;
     _minimalLayout = false;
+    _searchAcctId = -1;
 
     _grid->removeWidget(_label);	// will be reinserted
     _grid->removeWidget(_description);
@@ -259,6 +260,100 @@ ContactCluster::ContactCluster(QWidget* pParent, const char* pName) :
     init();
 }
 
+void ContactCluster::findDuplicates()
+{
+  QString msg;
+  XSqlQuery r;
+  
+  r.prepare(  "SELECT cntct_id, COALESCE(cntct_crmacct_id,0) AS cntct_crmacct_id "
+              "FROM cntct "
+              "WHERE ( ( cntct_first_name ~~* :first) "
+              " AND (cntct_last_name ~~* :last) );");
+  r.bindValue(":first", _first->text());
+  r.bindValue(":last", _last->text());
+  r.bindValue(":crmacct_id", _searchAcctId);
+  r.exec();
+  if (r.size() == 1)
+  { 
+    r.first();
+    msg = tr("A contact exists with the same first and last name");
+    if (_searchAcctId > 0 && r.value("cntct_crmacct_id").toInt() == 0)
+      msg += tr(" not associated with any CRM Account");
+    else if (_searchAcctId == r.value("cntct_crmacct_id").toInt())
+      msg += tr(" on the current CRM Account");
+    else if (_searchAcctId > 0)
+      msg += tr(" associated with another CRM Account");
+    msg += tr(". Would you like to use the existing contact?");
+    
+    if (QMessageBox::question(this, tr("Existing Contact"), msg,
+                             QMessageBox::Yes | QMessageBox::Default,
+                             QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
+    {
+      r.first();
+      setId(r.value("cntct_id").toInt());
+    }
+  }
+  else if (r.size() > 1)
+  {
+    if (_searchAcctId > 0)
+    {
+      int cnt = 0;
+      int cntctid = 0;
+      while (r.next())
+      {
+        if (r.value("cntct_crmacct_id").toInt() == _searchAcctId)
+        {
+          cnt += 1;
+          cntctid = r.value("cntct_id").toInt();
+        }
+      }
+      if (cnt == 1)
+      {
+         msg = tr("A contact exists with the same first and last name "
+                  "on the current CRM Account. "
+                  "Would you like to use the existing contact?");
+        if (QMessageBox::question(this, tr("Existing Contact"), msg,
+                             QMessageBox::Yes | QMessageBox::Default,
+                             QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
+          setId(cntctid);
+        return;
+      }
+      if (cnt == 0)
+        _searchAcctId = -1;
+    }
+
+    QString msg = tr("Multple contacts exist with the same first and last name");
+    msg += tr(". Would you like to view all the existing contacts?");
+    
+    if (QMessageBox::question(this, tr("Existing Contacts"), msg,
+                             QMessageBox::Yes | QMessageBox::Default,
+                             QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
+    {
+      ContactSearch* newdlg = new ContactSearch(this);
+      if (newdlg)
+      {
+        newdlg->_searchFirst->setChecked(true);
+        newdlg->_searchLast->setChecked(true);
+        newdlg->_search->setText(_first->text() + " " + _last->text());
+        newdlg->sFillList();
+	      int id = newdlg->exec();
+	      setId(id);
+      }
+      else
+	       QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
+			      .arg(__FILE__)
+				    .arg(__LINE__),
+			    tr("Could not instantiate a Search Dialog"));
+    }
+  }
+  else if (r.lastError().type() != QSqlError::None)
+    QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
+                                        .arg(__FILE__)
+                                        .arg(__LINE__),
+                                r.lastError().databaseText());
+
+}
+
 void ContactCluster::setChanged()
 {
   _changed=true;
@@ -277,16 +372,20 @@ void ContactCluster::setId(const int pId)
 
 void ContactCluster::silentSetId(const int pId)
 {
+  disconnect(_first, SIGNAL(lostFocus()), this, SLOT(findDuplicates()));
+  disconnect(_last, SIGNAL(lostFocus()), this, SLOT(findDuplicates()));
   if (pId == -1 || pId == 0)
   {
     _id = -1;
     _valid = false;
+    connect(_first, SIGNAL(lostFocus()), this, SLOT(findDuplicates()));
+    connect(_last, SIGNAL(lostFocus()), this, SLOT(findDuplicates()));
     clear();
   }
   else if (pId == _id)
     return;
   else
-  {
+  {   
       XSqlQuery idQ;
       idQ.prepare(_query + " WHERE cntct_id = :id;");
       idQ.bindValue(":id", pId);
@@ -502,7 +601,11 @@ int ContactCluster::save(AddressCluster::SaveFlags flag)
 
 void ContactCluster::setAccount(const int p)
 {
-  _crmAcct->setId(p);
+  if (_crmAcct->id() != p)
+  {
+    _crmAcct->setId(p);
+    _changed = true;
+  }
 }
 
 void ContactCluster::setOwnerVisible(const bool vis)
@@ -1122,7 +1225,7 @@ void ContactSearch::sFillList()
       "<? if reExists(\"search[FLCTPEW]\") ?> "
       "  AND ("
       "  <? if exists(\"searchFirst\") ?> "
-      "     COALESCE(cntct_first_name,'') || '\n' "
+      "     COALESCE(cntct_first_name,'') || ' ' "
       "  <? else ?>"
       "    '\n' "
       "  <? endif ?>"

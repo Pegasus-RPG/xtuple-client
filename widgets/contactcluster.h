@@ -194,7 +194,7 @@ class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
 	inline virtual QString description()    const { return ""; };
 	inline virtual QString emailAddress()	const { return _email->text(); };
 	inline virtual bool    emailVisible()   const { return _email->isVisible(); };
-        inline virtual QString defaultText()    const { return QString(); };
+  inline virtual QString defaultText()    const { return QString(); };
 	inline virtual QString fax()		const { return _fax->text(); };
 	inline virtual QString first()		const { return _first->text(); };
 	inline virtual QString honorific()	const { return _honorific->currentText(); };
@@ -246,6 +246,7 @@ class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
     public slots:
     	virtual void setNumber(QString p);
 	inline virtual void clearExtraClause()	{ };
+         virtual void findDuplicates();
 	inline virtual void setExtraClause(const QString&) { };
 	inline virtual void setAddress(const int p)     { _address->setId(p); };
         virtual void        setChange(QString p);
