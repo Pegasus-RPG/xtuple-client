@@ -221,10 +221,10 @@ void transformTrans::sPost()
   } error[] = {
     { ! _item->isValid(),
       tr("You must select an Item before posting this transaction."), _item },
-    { _qty->text().length() == 0 || _qty->toDouble() <= 0,
+    { _qty->toDouble() == 0 || _qty->toDouble() <= 0,
       tr("<p>You must enter a positive Quantity before posting this Transaction."),
       _qty },
-    { _qty->toDouble() > _fromBeforeQty->text().toDouble(),
+    { _qty->toDouble() > _fromBeforeQty->toDouble(),
       tr("<p>You may not transform a quantity that is greater than the "
          "quantity of the Transform Source."), _qty },
     { _target->id() < 0,
