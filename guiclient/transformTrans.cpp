@@ -169,7 +169,7 @@ enum SetResponse transformTrans::set(const ParameterList &pParams)
       _post->hide();
 
       q.prepare( "SELECT invhist.*, "
-                 "       formatQty(abs(invhist_invqty)) AS transqty,"
+                 "       abs(invhist_invqty) AS transqty,"
                  "       CASE WHEN (invhist_invqty > 0) THEN invhist_qoh_before"
                  "            ELSE NULL"
                  "       END AS qohbefore,"
@@ -194,11 +194,11 @@ enum SetResponse transformTrans::set(const ParameterList &pParams)
       {
         _transDate->setDate(q.value("invhist_transdate").toDate());
         _username->setText(q.value("invhist_user").toString());
-        _qty->setText(q.value("transqty"));
-        _fromBeforeQty->setText(q.value("fromqohbefore").toDouble());
-        _fromAfterQty->setText(q.value("fromqohafter").toDouble());
-        _toBeforeQty->setText(q.value("qohbefore").toDouble());
-        _toAfterQty->setText(q.value("qohafter").toDouble());
+        _qty->setDouble(q.value("transqty").toDouble());
+        _fromBeforeQty->setDouble(q.value("fromqohbefore").toDouble());
+        _fromAfterQty->setDouble(q.value("fromqohafter").toDouble());
+        _toBeforeQty->setDouble(q.value("qohbefore").toDouble());
+        _toAfterQty->setDouble(q.value("qohafter").toDouble());
         _documentNum->setText(q.value("invhist_docnumber").toString());
         _notes->setText(q.value("invhist_comments").toString());
         _item->setItemsiteid(q.value("invhist_itemsite_id").toInt());
@@ -345,7 +345,7 @@ void transformTrans::sPopulateTarget(int /*pItemid*/)
   {
     _descrip1->setText(q.value("item_descrip1").toString());
     _descrip2->setText(q.value("item_descrip2").toString());
-    _toBeforeQty->setText(formatQty(q.value("itemsite_qtyonhand").toDouble()));
+    _toBeforeQty->setDouble(q.value("itemsite_qtyonhand").toDouble());
     sRecalculateAfter();
 
   }
@@ -443,7 +443,7 @@ void  transformTrans::sPopulateQOH()
 {
   if (_source->id() > -1)
   {
-    _fromBeforeQty->setText(formatQty(_source->currentItem()->data(2, Qt::UserRole).toMap().value("raw").toDouble()));
+    _fromBeforeQty->setDouble(_source->currentItem()->data(2, Qt::UserRole).toMap().value("raw").toDouble());
     sRecalculateAfter();
   }
   else
@@ -457,7 +457,7 @@ void  transformTrans::sPopulateQOH()
     q.exec();
     if (q.first())
     {
-      _fromBeforeQty->setText(formatQty(q.value("itemsite_qtyonhand").toDouble()));
+      _fromBeforeQty->setDouble(q.value("itemsite_qtyonhand").toDouble());
       sRecalculateAfter();
 
     }
@@ -471,10 +471,8 @@ void  transformTrans::sPopulateQOH()
 
 void transformTrans::sRecalculateAfter()
 {
-  _fromAfterQty->setText(formatQty(_fromBeforeQty->text().toDouble() -
-                                   _qty->text().toDouble()));
-  _toAfterQty->setText(formatQty(_toBeforeQty->text().toDouble() +
-                                   _qty->text().toDouble()));
+  _fromAfterQty->setDouble(_fromBeforeQty->toDouble() - _qty->toDouble());
+  _toAfterQty->setDouble(_toBeforeQty->toDouble() + _qty->toDouble());
 }
 
 void transformTrans::sHandleButtons()
