@@ -75,7 +75,7 @@ itemSource::itemSource(QWidget* parent, const char* name, bool modal, Qt::WFlags
   connect(_add, SIGNAL(clicked()), this, SLOT(sAdd()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSaveClicked()));
   connect(_vendorList, SIGNAL(clicked()), this, SLOT(sVendorList()));
   connect(_vendor, SIGNAL(nameChanged(const QString&)), _vendorName, SLOT(setText(const QString&)));
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
@@ -256,6 +256,12 @@ enum SetResponse itemSource::set(const ParameterList &pParams)
   }
 
   return NoError;
+}
+
+void itemSource::sSaveClicked()
+{
+  _captive = false;
+  sSave();
 }
 
 bool itemSource::sSave()
