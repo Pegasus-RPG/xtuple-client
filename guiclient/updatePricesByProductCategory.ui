@@ -80,7 +80,7 @@
          <item row="0" column="3" >
           <widget class="QRadioButton" name="_value" >
            <property name="text" >
-            <string>Monetary Value</string>
+            <string>Fixed Amount</string>
            </property>
           </widget>
          </item>

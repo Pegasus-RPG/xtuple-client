@@ -156,6 +156,7 @@ void updatePricesByPricingSchedule::sUpdate()
 
 void updatePricesByPricingSchedule::sIPSChanged()
 {
+/*
   q.prepare( "SELECT curr_symbol, curr_name "
              "FROM curr_symbol "
              "LEFT OUTER JOIN ipshead ON (ipshead_id=:ipshead_id) "
@@ -164,5 +165,7 @@ void updatePricesByPricingSchedule::sIPSChanged()
   q.exec();
   if(q.first())
   _value->setText(q.value("curr_symbol").toString()+" - "+q.value("curr_name").toString());
+*/
+
 }
 
