@@ -1644,11 +1644,11 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
 
       _priceRatio = q.value("invpricerat").toDouble(); // Always ratio from default price uom
       _invuomid = q.value("item_inv_uom_id").toInt();
+      _invIsFractional = q.value("item_fractional").toBool();
       _priceinvuomratio = _priceRatio; // the ration from the currently selected price uom
       _qtyinvuomratio = 1.0;
 
       _qtyUOM->setId(q.value("item_inv_uom_id").toInt());
-      _invIsFractional = q.value("item_fractional").toBool();
       _priceUOM->setId(q.value("item_price_uom_id").toInt());
       
       _listPrice->setBaseValue(q.value("item_listprice").toDouble());
