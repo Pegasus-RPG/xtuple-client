@@ -153,6 +153,50 @@ void pricingScheduleAssignment::sAssign()
 {
   if (_mode == cNew)
   {
+    q.prepare( "SELECT ipsass_id "
+               "FROM ipsass "
+               "WHERE ( (ipsass_ipshead_id=:ipsass_ipshead_id)"
+               "  AND   (ipsass_cust_id=:ipsass_cust_id)"
+               "  AND   (ipsass_shipto_id=:ipsass_shipto_id)"
+               "  AND   (ipsass_shipto_pattern=:ipsass_shipto_pattern)"
+               "  AND   (ipsass_custtype_id=:ipsass_custtype_id)"
+               "  AND   (ipsass_custtype_pattern=:ipsass_custtype_pattern) );" );
+
+    q.bindValue(":ipsass_ipshead_id", _ipshead->id());
+
+    if (_selectedCustomer->isChecked() || _selectedShiptoPattern->isChecked())
+      q.bindValue(":ipsass_cust_id", _cust->id());
+    else
+      q.bindValue(":ipsass_cust_id", -1);
+
+    if (_selectedCustomerShipto->isChecked())
+      q.bindValue(":ipsass_shipto_id", _customerShipto->id());
+    else
+      q.bindValue(":ipsass_shipto_id", -1);
+  
+    if (_selectedCustomerType->isChecked())
+      q.bindValue(":ipsass_custtype_id", _customerTypes->id());
+    else
+      q.bindValue(":ipsass_custtype_id", -1);
+
+    if (_customerTypePattern->isChecked())
+      q.bindValue(":ipsass_custtype_pattern", _customerType->text());
+    else
+      q.bindValue(":ipsass_custtype_pattern", "");
+
+    if (_selectedShiptoPattern->isChecked())
+      q.bindValue(":ipsass_shipto_pattern", _shiptoPattern->text());
+    else
+      q.bindValue(":ipsass_shipto_pattern", "");
+
+    q.exec();
+    if (q.first())
+    {
+      QMessageBox::critical(this, tr("Cannot Save Pricing Schedule Assignment"),
+                            tr("<p>This Pricing Schedule Assignment already exists."));
+      return;
+    }
+               
     q.exec("SELECT NEXTVAL('ipsass_ipsass_id_seq') AS ipsass_id;");
     if (q.first())
       _ipsassid = q.value("ipsass_id").toInt();
