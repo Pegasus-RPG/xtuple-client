@@ -128,7 +128,10 @@ userPreferences::userPreferences(QWidget* parent, const char* name, bool modal, 
   _ellipsesAction->append(2, tr("Search"));
 
   if (!_metrics->boolean("EnableBatchManager"))
+  {
+    _alarmEmail->setVisible(false);
     _emailEvents->setVisible(false);
+  }
 
   sPopulate();
 }
