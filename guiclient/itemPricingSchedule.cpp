@@ -330,6 +330,9 @@ void itemPricingSchedule::sDelete()
   else if(_ipsitem->altId() == 2)
     q.prepare( "DELETE FROM ipsprodcat "
                "WHERE (ipsprodcat_id=:ipsitem_id);" );
+  else if(_ipsitem->altId() == 3)
+    q.prepare( "DELETE FROM ipsfreight "
+               "WHERE (ipsfreight_id=:ipsitem_id);" );
   else
     return;
   q.bindValue(":ipsitem_id", _ipsitem->id());

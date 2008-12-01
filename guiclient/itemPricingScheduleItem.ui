@@ -670,7 +670,7 @@
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
               <property name="buddy" >
-               <cstring>_qtyBreak</cstring>
+               <cstring>_qtyBreakCat</cstring>
               </property>
              </widget>
             </item>
@@ -800,7 +800,7 @@
                      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                     </property>
                     <property name="buddy" >
-                     <cstring>_qtyBreak</cstring>
+                     <cstring>_qtyBreakFreight</cstring>
                     </property>
                    </widget>
                   </item>
@@ -808,6 +808,9 @@
                    <layout class="QHBoxLayout" >
                     <item>
                      <widget class="XLineEdit" name="_qtyBreakFreight" >
+                      <property name="enabled" >
+                       <bool>false</bool>
+                      </property>
                       <property name="sizePolicy" >
                        <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
                         <horstretch>0</horstretch>
