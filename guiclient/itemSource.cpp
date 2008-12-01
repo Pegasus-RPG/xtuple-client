@@ -217,7 +217,7 @@ enum SetResponse itemSource::set(const ParameterList &pParams)
     }
     if (param.toString() == "copy")
     {
-      _mode = cNew;
+      _mode = cCopy;
       _new = true;
       _captive = true;
       int itemsrcidold = _itemsrcid;
@@ -278,7 +278,7 @@ bool itemSource::sSave()
     return false;
   }
 
-  if(_mode == cNew)
+  if(_mode == cNew || _mode == cCopy)
   {
     q.prepare( "SELECT itemsrc_id "
                "  FROM itemsrc "
@@ -341,7 +341,7 @@ bool itemSource::sSave()
     }
   }
     
-  if (_mode == cNew)
+  if (_mode == cNew || _mode == cCopy)
     q.prepare( "INSERT INTO itemsrc "
                "( itemsrc_id, itemsrc_item_id, itemsrc_active, itemsrc_vend_id,"
                "  itemsrc_vend_item_number, itemsrc_vend_item_descrip,"
@@ -361,6 +361,7 @@ bool itemSource::sSave()
   if (_mode == cEdit)
     q.prepare( "UPDATE itemsrc "
                "SET itemsrc_active=:itemsrc_active,"
+               "    itemsrc_vend_id=:itemsrc_vend_id,"
                "    itemsrc_vend_item_number=:itemsrc_vend_item_number,"
                "    itemsrc_vend_item_descrip=:itemsrc_vend_item_descrip,"
                "    itemsrc_vend_uom=:itemsrc_vend_uom,"
@@ -397,10 +398,13 @@ bool itemSource::sSave()
 
   if (_captive)
   {
+    if (_mode != cCopy)
+    {
+      _vendor->setEnabled(FALSE);
+      _vendorList->hide();
+    }
     _mode = cEdit;
     _item->setReadOnly(TRUE);
-    _vendor->setEnabled(FALSE);
-    _vendorList->hide();
     _captive = false;
   }
   else
@@ -411,7 +415,7 @@ bool itemSource::sSave()
 
 void itemSource::sAdd()
 {
-  if (_mode == cNew)
+  if (_mode == cNew || _mode == cCopy)
   {
     if (!sSave())
       return;
