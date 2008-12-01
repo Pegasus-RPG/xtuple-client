@@ -706,7 +706,7 @@
    <sender>_cancel</sender>
    <signal>clicked()</signal>
    <receiver>lotSerialRegistration</receiver>
-   <slot>reject()</slot>
+   <slot>close()</slot>
    <hints>
     <hint type="sourcelabel" >
      <x>673</x>

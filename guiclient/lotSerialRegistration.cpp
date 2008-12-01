@@ -202,6 +202,20 @@ enum SetResponse lotSerialRegistration::set(const ParameterList &pParams)
   return NoError;
 }
 
+void lotSerialRegistration::closeEvent(QCloseEvent *pEvent)
+{
+  if (_mode == cNew)
+  {
+    q.prepare("SELECT releaseLsRegNumber(:regNumber);" );
+    q.bindValue(":regNumber", _regNumber->text());
+    q.exec();
+    if (q.lastError().type() != QSqlError::NoError)
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  }
+
+  pEvent->accept();
+}
+
 void lotSerialRegistration::sNewCharass()
 {
   ParameterList params;
@@ -411,6 +425,7 @@ void lotSerialRegistration::sSave()
     return;
   }
 
+  _mode = 0;
   close();
 }
 

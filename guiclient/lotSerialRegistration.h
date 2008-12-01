@@ -77,6 +77,7 @@ public:
 
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
+    virtual void closeEvent( QCloseEvent * pEvent );
     virtual void populate();
     virtual void sSave();
     virtual void sNewCharass();
