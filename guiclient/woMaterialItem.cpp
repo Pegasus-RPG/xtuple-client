@@ -169,6 +169,14 @@ enum SetResponse woMaterialItem::set(const ParameterList &pParams)
     else if (param.toString() == "mixed")
       _issueMethod->setCurrentIndex(2);
   }
+  
+  param = pParams.value("notes", &valid);
+  if (valid)
+    _notes->setText(param.toString());
+  
+  param = pParams.value("reference", &valid);
+  if (valid)
+    _ref->setText(param.toString());
 
   param = pParams.value("womatl_id", &valid);
   if (valid)

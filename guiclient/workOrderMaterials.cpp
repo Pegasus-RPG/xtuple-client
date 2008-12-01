@@ -340,7 +340,8 @@ void workOrderMaterials::sSubstitute()
   XSqlQuery sub;
   sub.prepare( "SELECT itemuomtouom(itemsite_item_id, womatl_uom_id, NULL, womatl_qtyper) AS qtyper, womatl_wo_id,"
                "       womatl_scrap, womatl_issuemethod,"
-               "       womatl_duedate, womatl_bomitem_id "
+               "       womatl_duedate, womatl_bomitem_id, "
+               "       womatl_notes, womatl_ref "
                "FROM womatl JOIN itemsite ON (womatl_itemsite_id=itemsite_id) "
                "WHERE (womatl_id=:womatl_id);" );
   sub.bindValue(":womatl_id", womatlid);
@@ -364,6 +365,8 @@ void workOrderMaterials::sSubstitute()
       params.append("item_id", result);
       params.append("qtyPer", (sub.value("qtyper").toDouble() * substitute._uomratio));
       params.append("scrap", sub.value("womatl_scrap"));
+      params.append("notes", sub.value("womatl_notes"));
+      params.append("reference", sub.value("womatl_ref"));
 
       if (sub.value("womatl_issuemethod").toString() == "S")
         params.append("issueMethod", "push");
