@@ -189,11 +189,11 @@ bool ediProfile::save()
               "(ediprofile_id, ediprofile_name, ediprofile_notes,"
               " ediprofile_type, ediprofile_option1, ediprofile_option2,"
               " ediprofile_option3, ediprofile_option4, ediprofile_option5,"
-              " ediprofile_preview, ediprofile_emailhtml) "
+              " ediprofile_emailhtml) "
               "VALUES(:ediprofile_id, :ediprofile_name, :ediprofile_notes,"
               " :ediprofile_type, :ediprofile_option1, :ediprofile_option2,"
               " :ediprofile_option3, :ediprofile_option4, :ediprofile_option5,"
-              " :ediprofile_preview, :ediprofile_emailhtml);" );
+              " :ediprofile_emailhtml);" );
   else
     q.prepare("UPDATE ediprofile"
               "   SET ediprofile_name=:ediprofile_name,"
