@@ -333,8 +333,8 @@ void configureSO::sSave()
 	}
 	else
 	{
-      q.prepare("DELETE FROM rsrv "
-	            " WHERE (rsrv_source='SO');");
+      q.prepare("DELETE FROM itemlocrsrv "
+	            " WHERE (itemlocrsrv_source='SO');");
       q.exec();
     }	
   }
