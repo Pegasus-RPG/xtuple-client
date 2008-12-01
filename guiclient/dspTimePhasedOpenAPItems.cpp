@@ -301,9 +301,9 @@ void dspTimePhasedOpenAPItems::sFillCustom()
          "<? if exists(\"vend_id\") ?>"
          "WHERE (vend_id=<? value (\"vend_id\") ?>)"
          "<? elseif exists(\"vendtype_id\") ?>"
-         "WHERE (vend_vendtype_id=<? value (\"vendtype_id\") ?>"
+         "WHERE (vend_vendtype_id=<? value (\"vendtype_id\") ?>)"
          "<? elseif exists(\"vendtype_code\") ?>"
-         "WHERE (vend_vendtype_id IN (SELECT vendtype_id FROM vendtype WHERE (vendtype_code ~ <? value (\"vendtype_pattern\") ?>)) "
+         "WHERE (vend_vendtype_id IN (SELECT vendtype_id FROM vendtype WHERE (vendtype_code ~ <? value (\"vendtype_pattern\") ?>))) "
          "<? endif ?>"
          "ORDER BY vend_number;";
 
