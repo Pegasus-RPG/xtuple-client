@@ -148,6 +148,14 @@ void userCostingElement::sSave()
 {
   if (_mode == cNew)
   {
+    if (_name->text().length() == 0)
+    {
+      QMessageBox::critical( this, tr("Cannot Save Costing Element"),
+                             tr( "You must enter a Name for this Costing Element." ) );
+      _name->setFocus();
+      return;
+    }
+    
     q.prepare( "SELECT costelem_id "
                "FROM costelem "
                "WHERE (costelem_type=:costelem_type);" );
