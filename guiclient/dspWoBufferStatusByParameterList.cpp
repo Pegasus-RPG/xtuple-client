@@ -213,9 +213,9 @@ void dspWoBufferStatusByParameterList::sView()
   params.append("mode", "view");
   params.append("wo_id", _wo->id());
 
-  workOrder *newdlg = new workOrder(omfgThis->workspace(), "", Qt::WDestructiveClose);
+  workOrder *newdlg = new workOrder();
   newdlg->set(params);
-  newdlg->show();
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void dspWoBufferStatusByParameterList::sPostProduction()
@@ -375,9 +375,9 @@ void dspWoBufferStatusByParameterList::sViewWomatl()
   params.append("wo_id", _wo->id());
   params.append("run");
 
-  dspWoMaterialsByWorkOrder *newdlg = new dspWoMaterialsByWorkOrder(omfgThis->workspace(), "", Qt::WDestructiveClose);
+  dspWoMaterialsByWorkOrder *newdlg = new dspWoMaterialsByWorkOrder();
   newdlg->set(params);
-  newdlg->show();
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void dspWoBufferStatusByParameterList::sViewWooper()
@@ -386,9 +386,9 @@ void dspWoBufferStatusByParameterList::sViewWooper()
   params.append("wo_id", _wo->id());
   params.append("run");
 
-  dspWoOperationsByWorkOrder *newdlg = new dspWoOperationsByWorkOrder(omfgThis->workspace(), "", Qt::WDestructiveClose);
+  dspWoOperationsByWorkOrder *newdlg = new dspWoOperationsByWorkOrder();
   newdlg->set(params);
-  newdlg->show();
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void dspWoBufferStatusByParameterList::sInventoryAvailabilityByWorkOrder()
@@ -397,9 +397,9 @@ void dspWoBufferStatusByParameterList::sInventoryAvailabilityByWorkOrder()
   params.append("wo_id", _wo->id());
   params.append("run");
 
-  dspInventoryAvailabilityByWorkOrder *newdlg = new dspInventoryAvailabilityByWorkOrder(omfgThis->workspace(), "", Qt::WDestructiveClose);
+  dspInventoryAvailabilityByWorkOrder *newdlg = new dspInventoryAvailabilityByWorkOrder();
   newdlg->set(params);
-  newdlg->show();
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void dspWoBufferStatusByParameterList::sReprioritizeWo()
@@ -448,9 +448,9 @@ void dspWoBufferStatusByParameterList::sViewParentWO()
   params.append("mode", "view");
   params.append("wo_id", _wo->altId());
 
-  workOrder *newdlg = new workOrder(omfgThis->workspace(), "", Qt::WDestructiveClose);
+  workOrder *newdlg = new workOrder();
   newdlg->set(params);
-  newdlg->show();
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void dspWoBufferStatusByParameterList::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *selected)
