@@ -776,14 +776,14 @@ void purchaseOrderItem::sPopulateItemInfo(int pItemid)
 {
   XSqlQuery item;
   
-  if (pItemid != -1)
+  if (pItemid != -1 && _mode == cNew)
   {
     if(_metrics->boolean("RequireStdCostForPOItem"))
     {
       item.prepare("SELECT stdCost(:item_id) AS result");
-      item.bindValue(":item_id", item.value("itemsrc_item_id").toInt());
+      item.bindValue(":item_id", pItemid);
       item.exec();
-      if(q.first() && item.value("result").toDouble() == 0.0)
+      if(item.first() && item.value("result").toDouble() == 0.0)
       {
         QMessageBox::critical( this, tr("Selected Item Missing Cost"),
                 tr("<p>The selected item has no Std. Costing information. "
