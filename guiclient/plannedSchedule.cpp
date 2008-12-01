@@ -190,6 +190,30 @@ void plannedSchedule::sSave()
     return;
   }
 
+  if (!_dates->startDate().isValid())
+  {
+    QMessageBox::critical( this, tr("Cannot Save Schedule"),
+                           tr( "You must enter a Start Date for this Schedule before creating it.\n" ) );
+    _dates->setFocus();
+    return;
+  }
+
+  if (!_dates->endDate().isValid())
+  {
+    QMessageBox::critical( this, tr("Cannot Save Schedule"),
+                           tr( "You must enter an End Date for this Schedule before creating it.\n" ) );
+    _dates->setFocus();
+    return;
+  }
+
+  if (_number->text().length() == 0)
+  {
+    QMessageBox::critical( this, tr("Cannot Save Schedule"),
+                           tr( "You must enter a Schedule Number for this Schedule before creating it.\n" ) );
+    _number->setFocus();
+    return;
+  }
+
   if(cNew == _mode && _presaved != true)
   {
     q.prepare("INSERT INTO pschhead "
@@ -222,6 +246,7 @@ void plannedSchedule::sSave()
 
   q.exec();
 
+  disconnect(_number, SIGNAL(lostFocus()), this, SLOT(sNumberChanged()));
   accept();
 }
 
