@@ -84,7 +84,7 @@ dspSingleLevelBOM::dspSingleLevelBOM(QWidget* parent, const char* name, Qt::WFla
   _bomitem->addColumn(tr("Expires"),        _dateColumn,  Qt::AlignCenter,true, "bomitem_expires" );
   _bomitem->addColumn(tr("ECN #"),          _itemColumn,  Qt::AlignLeft,  true, "bomitem_ecn"   );
   _bomitem->addColumn(tr("Notes"),          _itemColumn,  Qt::AlignLeft,  false, "bomitem_notes"   );
-  _bomitem->addColumn(tr("Ref. Designator"),_itemColumn,  Qt::AlignLeft,  false, "bomitem_ref"   );
+  _bomitem->addColumn(tr("Reference"),      _itemColumn,  Qt::AlignLeft,  false, "bomitem_ref"   );
 
   _expiredDaysLit->setEnabled(_showExpired->isChecked());
   _expiredDays->setEnabled(_showExpired->isChecked());

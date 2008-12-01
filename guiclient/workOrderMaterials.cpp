@@ -107,8 +107,8 @@ workOrderMaterials::workOrderMaterials(QWidget* parent, const char* name, Qt::WF
   _womatl->addColumn(tr("Balance"),        _qtyColumn,   Qt::AlignRight,  true,  "balance");
   _womatl->addColumn(tr("Due Date"),       _dateColumn,  Qt::AlignCenter, true,  "womatl_duedate");
   _womatl->addColumn(tr("Notes"),          _itemColumn,  Qt::AlignLeft,   false, "womatl_notes");
-  _womatl->addColumn(tr("Ref. Designator"),_itemColumn,  Qt::AlignLeft,   false, "womatl_ref");
-  
+  _womatl->addColumn(tr("Reference"),      _itemColumn,  Qt::AlignLeft,   false, "womatl_ref");
+   
   if (_privileges->check("MaintainWoMaterials"))
   {
     connect(_womatl, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));

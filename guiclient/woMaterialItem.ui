@@ -15,22 +15,10 @@
   <layout class="QGridLayout" >
    <item row="0" column="0" >
     <layout class="QGridLayout" >
-     <property name="leftMargin" >
+     <property name="margin" >
       <number>12</number>
      </property>
-     <property name="topMargin" >
-      <number>12</number>
-     </property>
-     <property name="rightMargin" >
-      <number>12</number>
-     </property>
-     <property name="bottomMargin" >
-      <number>12</number>
-     </property>
-     <property name="horizontalSpacing" >
-      <number>12</number>
-     </property>
-     <property name="verticalSpacing" >
+     <property name="spacing" >
       <number>12</number>
      </property>
      <item row="0" column="0" >
@@ -55,7 +43,7 @@
            <property name="sizeType" >
             <enum>QSizePolicy::Expanding</enum>
            </property>
-           <property name="sizeHint" >
+           <property name="sizeHint" stdset="0" >
             <size>
              <width>0</width>
              <height>20</height>
@@ -95,7 +83,7 @@
            <property name="sizeType" >
             <enum>QSizePolicy::Expanding</enum>
            </property>
-           <property name="sizeHint" >
+           <property name="sizeHint" stdset="0" >
             <size>
              <width>20</width>
              <height>20</height>
@@ -130,7 +118,7 @@
             <property name="sizeType" >
              <enum>QSizePolicy::Expanding</enum>
             </property>
-            <property name="sizeHint" >
+            <property name="sizeHint" stdset="0" >
              <size>
               <width>16</width>
               <height>72</height>
@@ -181,7 +169,7 @@
                  <property name="orientation" >
                   <enum>Qt::Horizontal</enum>
                  </property>
-                 <property name="sizeHint" >
+                 <property name="sizeHint" stdset="0" >
                   <size>
                    <width>40</width>
                    <height>20</height>
@@ -211,7 +199,7 @@
                  <property name="orientation" >
                   <enum>Qt::Horizontal</enum>
                  </property>
-                 <property name="sizeHint" >
+                 <property name="sizeHint" stdset="0" >
                   <size>
                    <width>20</width>
                    <height>20</height>
@@ -257,7 +245,7 @@
                  <property name="orientation" >
                   <enum>Qt::Horizontal</enum>
                  </property>
-                 <property name="sizeHint" >
+                 <property name="sizeHint" stdset="0" >
                   <size>
                    <width>191</width>
                    <height>20</height>
@@ -297,7 +285,7 @@
                  <property name="orientation" >
                   <enum>Qt::Horizontal</enum>
                  </property>
-                 <property name="sizeHint" >
+                 <property name="sizeHint" stdset="0" >
                   <size>
                    <width>40</width>
                    <height>20</height>
@@ -349,37 +337,10 @@
                  <property name="sizeType" >
                   <enum>QSizePolicy::Expanding</enum>
                  </property>
-                 <property name="sizeHint" >
+                 <property name="sizeHint" stdset="0" >
                   <size>
                    <width>0</width>
                    <height>16</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-              </layout>
-             </item>
-             <item row="5" column="0" >
-              <widget class="QLabel" name="_refLit" >
-               <property name="text" >
-                <string>Ref. Designator:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="5" column="1" >
-              <layout class="QHBoxLayout" >
-               <item>
-                <widget class="QLineEdit" name="_ref" />
-               </item>
-               <item>
-                <spacer>
-                 <property name="orientation" >
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" >
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
                   </size>
                  </property>
                 </spacer>
@@ -393,7 +354,7 @@
              <property name="orientation" >
               <enum>Qt::Vertical</enum>
              </property>
-             <property name="sizeHint" >
+             <property name="sizeHint" stdset="0" >
               <size>
                <width>20</width>
                <height>0</height>
@@ -412,6 +373,16 @@
         <layout class="QGridLayout" >
          <item row="0" column="0" >
           <widget class="QTextEdit" name="_notes" />
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="_referenceTab" >
+        <attribute name="title" >
+         <string>Reference</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout" >
+         <item row="0" column="0" >
+          <widget class="XTextEdit" name="_ref" />
          </item>
         </layout>
        </widget>
@@ -449,6 +420,11 @@
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XTextEdit</class>
+   <extends>QTextEdit</extends>
+   <header>xtextedit.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
