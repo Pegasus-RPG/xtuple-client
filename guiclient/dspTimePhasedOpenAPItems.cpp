@@ -87,8 +87,6 @@ dspTimePhasedOpenAPItems::dspTimePhasedOpenAPItems(QWidget* parent, const char* 
   connect(_query,  SIGNAL(clicked()),     this, SLOT(sFillList()));
   connect(_submit, SIGNAL(clicked()),     this, SLOT(sSubmit()));
 
-  _vendorTypes->setType(XComboBox::VendorTypes);
-
   _asOf->setDate(omfgThis->dbDate(), true);
   sToggleCustom();
 
@@ -127,12 +125,7 @@ bool dspTimePhasedOpenAPItems::setParams(ParameterList &params)
     return false;
   }
 
-  if (_selectedVendor->isChecked())
-    params.append("vend_id", _vend->id());
-  else if (_selectedVendorType->isChecked())
-    params.append("vendtype_id", _vendorTypes->id());
-  else if (_vendorTypePattern->isChecked())
-    params.append("vendtype_pattern", _vendorType->text());
+  _vendorGroup->appendValue(params);
 
   if(_custom->isChecked())
   {
@@ -367,7 +360,7 @@ void dspTimePhasedOpenAPItems::sToggleCustom()
     _apopen->addColumn(tr("90+ Days"),   _bigMoneyColumn, Qt::AlignRight, true, "plus_val");
     _apopen->setColumnCount(0);
     _apopen->addColumn(tr("Vend. #"), _orderColumn, Qt::AlignLeft, true, "apaging_vend_number");
-    _apopen->addColumn(tr("Vendor"),  180,          Qt::AlignLeft, true, "apaging_vend_name");
+    _apopen->addColumn(tr("Vendor"),  -1,          Qt::AlignLeft, true, "apaging_vend_name");
     _apopen->addColumn(tr("Total Open"), _bigMoneyColumn, Qt::AlignRight, true, "apaging_total_val_sum");
     _apopen->addColumn(tr("0+ Days"),    _bigMoneyColumn, Qt::AlignRight, true, "apaging_cur_val_sum");
     _apopen->addColumn(tr("0-30 Days"),  _bigMoneyColumn, Qt::AlignRight, true, "apaging_thirty_val_sum");

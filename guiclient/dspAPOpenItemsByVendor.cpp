@@ -254,8 +254,8 @@ void dspAPOpenItemsByVendor::sFillList()
              " ORDER BY apopen_docdate;" );
   _dates->bindValue(q);
   q.bindValue(":vend_id", _vend->id());
-  q.bindValue(":creditMemo", tr("C/M"));
-  q.bindValue(":debitMemo", tr("D/M"));
+  q.bindValue(":creditMemo", tr("Credit Memo"));
+  q.bindValue(":debitMemo", tr("Debit Memo"));
   q.bindValue(":voucher", tr("Voucher"));
   q.bindValue(":asofdate", _asOf->date());
   q.exec();
