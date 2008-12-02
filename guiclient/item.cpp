@@ -1292,7 +1292,7 @@ void item::sHandleItemtype()
   }
   _fractional->setEnabled(itemType!="K");
   _planningType->setEnabled(itemType!="K");
-  if (_boo->isVisible())
+  if(_privileges->check("MaintainBOOs") && _metrics->boolean("Routings"))
     _boo->setVisible(itemType!="K");
   _workbench->setVisible(itemType!="K");
   _tab->setTabEnabled(_tab->indexOf(_tabUOM),(itemType!="K"));
