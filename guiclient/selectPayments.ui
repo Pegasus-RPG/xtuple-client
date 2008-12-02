@@ -424,6 +424,7 @@
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -451,7 +452,7 @@
     </hint>
     <hint type="destinationlabel" >
      <x>775</x>
-     <y>235</y>
+     <y>210</y>
     </hint>
    </hints>
   </connection>
@@ -483,7 +484,7 @@
     </hint>
     <hint type="destinationlabel" >
      <x>775</x>
-     <y>212</y>
+     <y>187</y>
     </hint>
    </hints>
   </connection>
@@ -500,6 +501,22 @@
     <hint type="destinationlabel" >
      <x>279</x>
      <y>93</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_apopen</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_select</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>637</x>
+     <y>148</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>701</x>
+     <y>148</y>
     </hint>
    </hints>
   </connection>
