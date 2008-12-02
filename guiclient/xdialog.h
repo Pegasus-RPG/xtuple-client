@@ -70,8 +70,12 @@ class XDialog : public QDialog
     XDialog(QWidget * parent, const char * name, bool modal = false, Qt::WindowFlags flags = 0);
     virtual ~XDialog();
 
+  public slots:
+    virtual void done(int);
+    void setRememberPos(bool);
+    void setRememberSize(bool);
+
   protected:
-    virtual void closeEvent ( QCloseEvent * event );
     virtual void showEvent ( QShowEvent * event );
 
   private:

@@ -82,6 +82,8 @@ class XDialogPrivate
 
     bool _shown;
     QScriptEngine * _engine;
+    QAction *_rememberPos;
+    QAction *_rememberSize;
 };
 
 XDialogPrivate::XDialogPrivate()
@@ -94,6 +96,10 @@ XDialogPrivate::~XDialogPrivate()
 {
   if(_engine)
     delete _engine;
+  if(_rememberPos)
+    delete _rememberPos;
+  if(_rememberSize)
+    delete _rememberSize;
 }
 
 XDialog::XDialog(QWidget * parent, Qt::WindowFlags flags)
@@ -112,6 +118,7 @@ XDialog::XDialog(QWidget * parent, const char * name, bool modal, Qt::WindowFlag
     setModal(modal);
 
   _private = new XDialogPrivate();
+  ScriptToolbox::setLastWindow(this);
 }
 
 XDialog::~XDialog()
@@ -120,19 +127,13 @@ XDialog::~XDialog()
     delete _private;
 }
 
-void XDialog::closeEvent(QCloseEvent *event)
+void XDialog::done(int r)
 {
-/* We currently aren't doing this
- * Some additional code needs to be added elsewhere to allow
- * users to enable/disable memory for individual screens
- * and this closeEvent isn't called consistently for dialogs.
-  QString objName = objectName();
   QSettings settings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
-  settings.setValue(objName + "/geometry/size", size());
-  settings.setValue(objName + "/geometry/pos", pos());
- */
+  settings.setValue(objectName() + "/geometry/size", size());
+  settings.setValue(objectName() + "/geometry/pos", pos());
 
-  QDialog::closeEvent(event);
+  QDialog::done(r);
 }
 
 void XDialog::showEvent(QShowEvent *event)
@@ -141,10 +142,6 @@ void XDialog::showEvent(QShowEvent *event)
   {
     _private->_shown = true;
 
-/* We currently aren't doing this
- * The saving portion of this code elsewhere doesn't
- * work consistently and there is no interaction available
- * to users to enable/disable per screen
     QRect availableGeometry = QApplication::desktop()->availableGeometry();
 
     QSettings settings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
@@ -160,7 +157,19 @@ void XDialog::showEvent(QShowEvent *event)
     QRect r(pos, size());
     if(!pos.isNull() && availableGeometry.contains(r) && settings.value(objName + "/geometry/rememberPos", true).toBool())
       move(pos);
- */
+
+    _private->_rememberPos = new QAction(tr("Remember Posisition"), this);
+    _private->_rememberPos->setCheckable(true);
+    _private->_rememberPos->setChecked(settings.value(objectName() + "/geometry/rememberPos", true).toBool());
+    connect(_private->_rememberPos, SIGNAL(triggered(bool)), this, SLOT(setRememberPos(bool)));
+    _private->_rememberSize = new QAction(tr("Remember Size"), this);
+    _private->_rememberSize->setCheckable(true);
+    _private->_rememberSize->setChecked(settings.value(objectName() + "/geometry/rememberSize", true).toBool());
+    connect(_private->_rememberSize, SIGNAL(triggered(bool)), this, SLOT(setRememberSize(bool)));
+
+    addAction(_private->_rememberPos);
+    addAction(_private->_rememberSize);
+    setContextMenuPolicy(Qt::ActionsContextMenu);
 
     QStringList parts = objectName().split(" ");
     QStringList search_parts;
@@ -200,4 +209,20 @@ void XDialog::showEvent(QShowEvent *event)
     }
   }
   QDialog::showEvent(event);
+}
+
+void XDialog::setRememberPos(bool b)
+{
+  QSettings settings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
+  settings.setValue(objectName() + "/geometry/rememberPos", b);
+  if(_private && _private->_rememberPos)
+    _private->_rememberPos->setChecked(b);
+}
+
+void XDialog::setRememberSize(bool b)
+{
+  QSettings settings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
+  settings.setValue(objectName() + "/geometry/rememberSize", b);
+  if(_private && _private->_rememberSize)
+    _private->_rememberSize->setChecked(b);
 }

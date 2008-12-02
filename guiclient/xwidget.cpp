@@ -155,7 +155,7 @@ void XWidget::showEvent(QShowEvent *event)
     {
       QRect availableGeometry = QApplication::desktop()->availableGeometry();
       if(!omfgThis->showTopLevel() && !isModal())
-        availableGeometry = omfgThis->workspace()->geometry();
+        availableGeometry = QRect(QPoint(0, 0), omfgThis->workspace()->size());
 
       QSettings settings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
       QString objName = objectName();
@@ -178,8 +178,8 @@ void XWidget::showEvent(QShowEvent *event)
         QWidget * fw = focusWidget();
         omfgThis->workspace()->addWindow(this);
         QRect r(pos, size());
-        if(!pos.isNull() && availableGeometry.contains(r) && settings.value(objName + "/geometry/rememberPos", true).toBool())
-          move(pos);
+        if(!pos.isNull() && availableGeometry.contains(r) && settings.value(objName + "/geometry/rememberPos", true).toBool() && parentWidget())
+          parentWidget()->move(pos);
         // This originally had to be after the show? Will it work here?
         if(fw)
           fw->setFocus();
