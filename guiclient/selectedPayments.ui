@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>845</width>
     <height>600</height>
    </rect>
   </property>
@@ -56,14 +56,15 @@
            <property name="title" >
             <string/>
            </property>
-           <layout class="QVBoxLayout" >
-            <property name="spacing" >
-             <number>0</number>
-            </property>
-            <property name="margin" >
-             <number>5</number>
-            </property>
-            <item>
+           <layout class="QGridLayout" name="gridLayout_4" >
+            <item row="3" column="1" >
+             <widget class="QRadioButton" name="_selectedBankAccount" >
+              <property name="text" >
+               <string>Bank Account:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1" >
              <widget class="QRadioButton" name="_allBankAccounts" >
               <property name="text" >
                <string>All Bank Accounts</string>
@@ -73,35 +74,21 @@
               </property>
              </widget>
             </item>
-            <item>
-             <layout class="QHBoxLayout" >
-              <property name="spacing" >
-               <number>5</number>
+            <item row="3" column="2" >
+             <widget class="XComboBox" name="_bankaccnt" >
+              <property name="enabled" >
+               <bool>false</bool>
               </property>
-              <item>
-               <widget class="QRadioButton" name="_selectedBankAccount" >
-                <property name="text" >
-                 <string>Bank Account:</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="XComboBox" name="_bankaccnt" >
-                <property name="enabled" >
-                 <bool>false</bool>
-                </property>
-                <property name="sizePolicy" >
-                 <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="type" >
-                 <enum>XComboBox::APBankAccounts</enum>
-                </property>
-               </widget>
-              </item>
-             </layout>
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="type" >
+               <enum>XComboBox::APBankAccounts</enum>
+              </property>
+             </widget>
             </item>
            </layout>
           </widget>
@@ -194,7 +181,7 @@
         </sizepolicy>
        </property>
        <property name="frameShape" >
-        <enum>QFrame::StyledPanel</enum>
+        <enum>QFrame::NoFrame</enum>
        </property>
        <property name="frameShadow" >
         <enum>QFrame::Raised</enum>
@@ -314,9 +301,7 @@
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>_allBankAccounts</tabstop>
   <tabstop>_selectedBankAccount</tabstop>
-  <tabstop>_bankaccnt</tabstop>
   <tabstop>_apselect</tabstop>
   <tabstop>_edit</tabstop>
   <tabstop>_clear</tabstop>
