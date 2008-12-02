@@ -100,7 +100,7 @@ SELECT shiphead_number, 'T/O #:' AS ordertype,
        item_descrip2,
 
        formatQty(coitem_qtyord) AS ordered,
-       formatQty(coship_qty) AS shipped,
+       (SELECT formatQty(SUM(coship_qty)) FROM coship WHERE ((coship_cosmisc_id=&lt;? value("cosmisc_id") ?>) AND (coship_coitem_id=coitem_id))) AS shipped,
 
        CASE WHEN (coitem_status='O' AND (SELECT cust_creditstatus
                                            FROM cust,cohead
@@ -328,6 +328,7 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
    <format>3of9</format>
    <maxlength>20</maxlength>
    <left/>
+   <narrowBarWidth>0.01</narrowBarWidth>
    <data>
     <query>head</query>
     <column>cohead_custponumber</column>
@@ -449,6 +450,7 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
    <format>3of9</format>
    <maxlength>10</maxlength>
    <left/>
+   <narrowBarWidth>0.01</narrowBarWidth>
    <data>
     <query>head</query>
     <column>cust_number</column>
@@ -704,6 +706,7 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
    <format>128</format>
    <maxlength>10</maxlength>
    <left/>
+   <narrowBarWidth>0.01</narrowBarWidth>
    <data>
     <query>head</query>
     <column>order_barcode</column>
@@ -1171,6 +1174,7 @@ and shiphead_id = &lt;? value("shiphead_id") ?>;</sql>
      <format>128</format>
      <maxlength>15</maxlength>
      <right/>
+     <narrowBarWidth>0.01</narrowBarWidth>
      <data>
       <query>detail</query>
       <column>item_barcode</column>
