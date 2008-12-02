@@ -96,6 +96,8 @@ dspMaterialUsageVarianceByBOMItem::dspMaterialUsageVarianceByBOMItem(QWidget* pa
   _womatlvar->addColumn(tr("Act. Qty. per"),  _qtyColumn,   Qt::AlignRight,  true,  "actqtyper"  );
   _womatlvar->addColumn(tr("Qty. per Var."),  _qtyColumn,   Qt::AlignRight,  true,  "qtypervar"  );
   _womatlvar->addColumn(tr("%"),              _prcntColumn, Qt::AlignRight,  true,  "qtypervarpercent"  );
+  _womatlvar->addColumn(tr("Notes"),              -1,       Qt::AlignLeft,   false, "womatlvar_notes");
+  _womatlvar->addColumn(tr("Ref. Designator(s)"), -1,       Qt::AlignLeft,   false, "womatlvar_ref");
 }
 
 /*
@@ -172,6 +174,7 @@ void dspMaterialUsageVarianceByBOMItem::sFillList()
                  "            WHEN (projqtyper=0) THEN actqtyper"
                  "            ELSE ((1 - (actqtyper / projqtyper)) * -1)"
                  "       END AS qtypervarpercent,"
+                 "       womatlvar_notes, womatlvar_ref,"
                  "       'qty' AS ordered_xtnumericrole,"
                  "       'qty' AS received_xtnumericrole,"
                  "       'qty' AS projreq_xtnumericrole,"
@@ -181,6 +184,7 @@ void dspMaterialUsageVarianceByBOMItem::sFillList()
                  "       'qtyper' AS qtypervar_xtnumericrole,"
                  "       'percent' AS qtypervarpercent_xtnumericrole "
                  "FROM ( SELECT womatlvar_id, womatlvar_posted AS posted,"
+                 "              womatlvar_notes, womatlvar_ref,"
                  "              womatlvar_qtyord AS ordered, womatlvar_qtyrcv AS received,"
                  "              (womatlvar_qtyrcv * (womatlvar_qtyper * (1 + womatlvar_scrap))) AS projreq,"
                  "              womatlvar_qtyper AS projqtyper,"
