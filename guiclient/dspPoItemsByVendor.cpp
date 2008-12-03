@@ -348,7 +348,7 @@ void dspPoItemsByVendor::sFillList()
                "       CASE WHEN(poitem_status='C') THEN <? value(\"closed\") ?>"
                "            WHEN(poitem_status='U') THEN <? value(\"unposted\") ?>"
                "            WHEN(poitem_status='O' AND ((poitem_qty_received-poitem_qty_returned) > 0) AND (poitem_qty_ordered>(poitem_qty_received-poitem_qty_returned))) THEN <? value(\"partial\") ?>"
-               "            WHEN(poitem_status='O' AND ((poitem_qty_received-poitem_qty_returned) > 0) AND (poitem_qty_ordered=(poitem_qty_received-poitem_qty_returned))) THEN <? value(\"received\") ?>"
+               "            WHEN(poitem_status='O' AND ((poitem_qty_received-poitem_qty_returned) > 0) AND (poitem_qty_ordered<=(poitem_qty_received-poitem_qty_returned))) THEN <? value(\"received\") ?>"
                "            WHEN(poitem_status='O') THEN <? value(\"open\") ?>"
                "            ELSE poitem_status"
                "       END AS poitemstatus,"
