@@ -84,6 +84,7 @@ XTreeWidget::XTreeWidget(QWidget *pParent) :
   _forgetful = false;
   _settingsLoaded = false;
   _menu = new QMenu(this);
+  _menu->setObjectName("_menu");
 
   setContextMenuPolicy(Qt::CustomContextMenu);
   setSelectionBehavior(QAbstractItemView::SelectRows);
