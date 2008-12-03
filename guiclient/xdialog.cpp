@@ -105,6 +105,7 @@ XDialogPrivate::~XDialogPrivate()
 XDialog::XDialog(QWidget * parent, Qt::WindowFlags flags)
   : QDialog(parent, flags)
 {
+  connect(this, SIGNAL(destroyed(QObject*)), omfgThis, SLOT(windowDestroyed(QObject*)));
   _private = new XDialogPrivate();
   ScriptToolbox::setLastWindow(this);
 }
@@ -116,6 +117,8 @@ XDialog::XDialog(QWidget * parent, const char * name, bool modal, Qt::WindowFlag
     setObjectName(name);
   if(modal)
     setModal(modal);
+
+  connect(this, SIGNAL(destroyed(QObject*)), omfgThis, SLOT(windowDestroyed(QObject*)));
 
   _private = new XDialogPrivate();
   ScriptToolbox::setLastWindow(this);
