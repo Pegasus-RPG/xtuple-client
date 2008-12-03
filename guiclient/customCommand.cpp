@@ -76,6 +76,7 @@ customCommand::customCommand(QWidget* parent, const char* name, bool modal, Qt::
 
   _mode = cNew;
   _cmdid = -1;
+  _saved = false;
   
   _arguments->addColumn(tr("Order"), _whsColumn, Qt::AlignCenter,true, "cmdarg_order");
   _arguments->addColumn(tr("Argument"),      -1, Qt::AlignLeft,  true, "cmdarg_arg");
@@ -181,27 +182,42 @@ void customCommand::setMode(const int pmode)
 
 void customCommand::sSave()
 {
+  if(!save())
+    return;
+
+  // make sure the custom privs get updated
+  q.exec("SELECT updateCustomPrivs();");
+  if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
+  accept();
+}
+bool customCommand::save()
+{
   if(_title->text().trimmed().isEmpty())
   {
     QMessageBox::warning( this, tr("Cannot Save"),
       tr("You must enter in a Menu Label for this command.") );
-    return;
+    return false;
   }
 
   if(_executable->text().trimmed().isEmpty())
   {
     QMessageBox::warning( this, tr("Cannot Save"),
       tr("You must enter in a program to execute.") );
-    return;
+    return false;
   }
 
-  if(cNew == _mode)
+  if((cNew == _mode) && !_saved)
     q.prepare("INSERT INTO cmd"
               "      (cmd_id, cmd_module, cmd_title, cmd_privname,"
               "       cmd_name, cmd_descrip, cmd_executable) "
               "VALUES(:cmd_id, :cmd_module, :cmd_title, :cmd_privname,"
               "       :cmd_name, :cmd_descrip, :cmd_executable);");
-  else if(cEdit == _mode)
+  else if(cEdit == _mode || ((cNew == _mode) && _saved))
     q.prepare("UPDATE cmd"
               "   SET cmd_module=:cmd_module,"
               "       cmd_title=:cmd_title,"
@@ -223,18 +239,10 @@ void customCommand::sSave()
   if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
+    return false;
   }
-
-  // make sure the custom privs get updated
-  q.exec("SELECT updateCustomPrivs();");
-  if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-
-  accept();
+  _saved = true;
+  return true;
 }
 
 void customCommand::reject()
@@ -250,6 +258,14 @@ void customCommand::reject()
       systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
+    query.prepare("DELETE FROM cmd WHERE (cmd_id=:cmd_id);");
+    query.bindValue(":cmd_id", _cmdid);
+    query.exec();
+    if (query.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
 
   XDialog::reject();
@@ -257,6 +273,9 @@ void customCommand::reject()
 
 void customCommand::sNew()
 {
+  if(!save())
+    return;
+
   ParameterList params;
   params.append("mode", "new");
   params.append("cmd_id", _cmdid);

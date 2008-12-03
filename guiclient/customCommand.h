@@ -87,6 +87,9 @@ protected:
     int _cmdid;
     int _mode;
     QString _oldPrivname;
+    bool _saved;
+
+    bool save();
 
 protected slots:
     virtual void languageChange();
