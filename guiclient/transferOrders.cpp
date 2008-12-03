@@ -178,6 +178,7 @@ void transferOrders::sIssue()
   issueToShipping *newdlg = new issueToShipping();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
+  sFillList();
 }
 
 void transferOrders::sDelete()
