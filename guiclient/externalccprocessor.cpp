@@ -194,15 +194,15 @@ int ExternalCCProcessor::handleTrans(const int pccardid, const QString &ptype, c
   if (newdlg.exec() == QDialog::Rejected)
   {
     if (ptype == "A")
-      returnValue = 20;
+      returnValue = -70;
     else if (ptype == "C")
-      returnValue = 40;
+      returnValue = -72;
     else if (ptype == "CP")
-      returnValue = 30;
+      returnValue = -71;
     else if (ptype == "R")
-      returnValue = 50;
+      returnValue = -73;
     else if (ptype == "V")
-      returnValue = 60;
+      returnValue = -74;
     else
       returnValue = -19;
 

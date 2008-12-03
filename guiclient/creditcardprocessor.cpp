@@ -153,6 +153,14 @@ static struct {
   // voids
   { -60, TR("Could not find the Credit Card transaction to void.")	},
 
+  // user chose to cancel
+  { -70, TR("User chose not to process the preauthorization.")		},
+  { -71, TR("User chose not to post-authorize process the charge.")	},
+  { -72, TR("User chose not to process the charge.")			},
+  { -73, TR("User chose not to process the credit.")			},
+  { -74, TR("User chose not to process the void.")			},
+  { -75, TR("User chose not to proceed without CVV code.")		},
+
   // transaction was processed fine but was not successful
   { -90, TR("This Credit Card transaction was denied.\n%1")		},
   { -91, TR("This Credit Card transaction is a duplicate.\n%1")		},
@@ -169,7 +177,8 @@ static struct {
   { -99, TR("The CVV value is not valid.")				},
   {-100, TR("No approval code was received:\n%1\n%2\n%3")		},
 
-  // positive values: warnings
+  // positive values: credit card company successfully processed the
+  // transaction but there was a local failure
   {   1, TR("Database Error")						},
   {   2, TR("Could not generate a unique key for the ccpay table.")	},
   {   3, TR("Stored Procedure Error")					},
@@ -182,17 +191,11 @@ static struct {
             "Credit Card processing transactions may fail.")            },
   {   7, TR("The Port is %2 and is expected to be %3 in %1 mode. "
             "Credit Card processing transactions may fail.")            },
-  {  20, TR("User chose not to process the preauthorization.")		},
-  {  30, TR("User chose not to post-authorize process the charge.")	},
-  {  40, TR("User chose not to process the charge.")			},
-  {  50, TR("User chose not to process the credit.")			},
-  {  60, TR("User chose not to process the void.")			},
   {  94, TR("There was a problem printing the credit card receipt.")    },
   {  96, TR("This transaction failed the CVV check but will be "
 	    "processed anyway.")					},
   {  97, TR("This transaction failed the Address Verification check "
 	    "but will be processed anyway.")				},
-  {  99, TR("User chose not to proceed without CVV code.")		},
 
 };
 
@@ -299,14 +302,14 @@ int CreditCardProcessor::authorize(const int pccardid, const int pcvv, const dou
 		    QMessageBox::Yes | QMessageBox::Default,
 		    QMessageBox::No  | QMessageBox::Escape ) == QMessageBox::No)
   {
-    _errorMsg = errorMsg(20);
-    return 20;
+    _errorMsg = errorMsg(-70);
+    return -70;
   }
 
   ParameterList dbupdateinfo;
   returnVal = doAuthorize(pccardid, pcvv, pamount, ptax, ptaxexempt, pfreight, pduty, pcurrid, pneworder, preforder, pccpayid, dbupdateinfo);
-  if (returnVal == 20)
-    return 20;
+  if (returnVal == -70)
+    return -70;
   else if (returnVal > 0)
     _errorMsg = errorMsg(4).arg(_errorMsg);
 
@@ -441,14 +444,14 @@ int CreditCardProcessor::charge(const int pccardid, const int pcvv, const double
 	      QMessageBox::Yes | QMessageBox::Default,
 	      QMessageBox::No  | QMessageBox::Escape ) == QMessageBox::No)
   {
-    _errorMsg = errorMsg(40);
-    return 40;
+    _errorMsg = errorMsg(-72);
+    return -72;
   }
 
   ParameterList dbupdateinfo;
   returnVal = doCharge(pccardid, pcvv, pamount, ptax, ptaxexempt, pfreight, pduty, pcurrid, pneworder, preforder, pccpayid, dbupdateinfo);
-  if (returnVal == 40)
-    return 40;
+  if (returnVal == -72)
+    return -72;
   else if (returnVal > 0)
     _errorMsg = errorMsg(4).arg(_errorMsg);
 
@@ -628,14 +631,14 @@ int CreditCardProcessor::chargePreauthorized(const int pcvv, const double pamoun
               QMessageBox::Yes | QMessageBox::Default,
               QMessageBox::No  | QMessageBox::Escape ) == QMessageBox::No)
   {
-    _errorMsg = errorMsg(30);
-    return 30;
+    _errorMsg = errorMsg(-71);
+    return -71;
   }
 
   ParameterList dbupdateinfo;
   returnVal = doChargePreauthorized(ccardid, pcvv, pamount, pcurrid, pneworder, preforder, pccpayid, dbupdateinfo);
-  if (returnVal == 30)
-    return 30;
+  if (returnVal == -71)
+    return -71;
   else if (returnVal > 0)
     _errorMsg = errorMsg(4).arg(_errorMsg);
 
@@ -828,8 +831,8 @@ int CreditCardProcessor::credit(const int pccardid, const int pcvv, const double
               QMessageBox::Yes | QMessageBox::Default,
               QMessageBox::No  | QMessageBox::Escape ) == QMessageBox::No)
   {
-    _errorMsg = errorMsg(50);
-    return 50;
+    _errorMsg = errorMsg(-73);
+    return -73;
   }
 
   if (pccpayid > 0)
@@ -910,8 +913,8 @@ int CreditCardProcessor::credit(const int pccardid, const int pcvv, const double
 
   ParameterList dbupdateinfo;
   returnVal = doCredit(pccardid, pcvv, pamount, ptax, ptaxexempt, pfreight, pduty, pcurrid, pneworder, preforder, pccpayid, dbupdateinfo);
-  if (returnVal == 50)
-    return 50;
+  if (returnVal == -73)
+    return -73;
   else if (returnVal < 0)
     return returnVal;
   else if (returnVal > 0)
@@ -1005,8 +1008,8 @@ int CreditCardProcessor::voidPrevious(int &pccpayid)
 				 ccq.value("ccpay_curr_id").toInt(),
 				 neworder, reforder, approval,
                                  pccpayid, dbupdateinfo);
-  if (returnVal == 60)
-    return 60;
+  if (returnVal == -74)
+    return -74;
   else if (returnVal < 0)
     return returnVal;
   else if (returnVal > 0)
@@ -1130,8 +1133,8 @@ int CreditCardProcessor::checkCreditCard(const int pccid, const int pcvv, QStrin
               QMessageBox::Yes | QMessageBox::Default,
               QMessageBox::No  | QMessageBox::Escape ) == QMessageBox::No)
     {
-      _errorMsg = errorMsg(99);
-      return 99;
+      _errorMsg = errorMsg(-75);
+      return -75;
     }
   }
   else if (pcvv == -2)
