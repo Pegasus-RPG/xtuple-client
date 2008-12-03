@@ -530,7 +530,7 @@ void itemPricingScheduleItem::populate()
     if (q.first())
     {
       _qtyBreakFreight->setDouble(q.value("ipsfreight_qtybreak").toDouble());
-      _priceFreight->setLocalValue(q.value("ipsfreight_qtybreak").toDouble());
+      _priceFreight->setLocalValue(q.value("ipsfreight_price").toDouble());
       if (q.value("ipsfreight_type").toString() == "F")
       {
         _flatRateFreight->setChecked(true);
