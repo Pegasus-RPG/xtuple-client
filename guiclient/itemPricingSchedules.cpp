@@ -224,6 +224,8 @@ void itemPricingSchedules::sDelete()
              "WHERE (ipsitem_ipshead_id=:ipshead_id); "
              "DELETE FROM ipsprodcat "
              "WHERE (ipsprodcat_ipshead_id=:ipshead_id); "
+             "DELETE FROM ipsfreight "
+             "WHERE (ipsfreight_ipshead_id=:ipshead_id); "
              "DELETE FROM ipshead "
              "WHERE (ipshead_id=:ipshead_id);" );
   q.bindValue(":ipshead_id", _ipshead->id());
