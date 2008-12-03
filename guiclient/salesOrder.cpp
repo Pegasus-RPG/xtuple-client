@@ -3868,24 +3868,6 @@ void salesOrder::sFreightChanged()
     }
   }
   
-  XSqlQuery freightq;
-  freightq.prepare("SELECT calculateTax(:tax_id, :freight, 0, 'A') AS freighta,"
-                   "     calculateTax(:tax_id, :freight, 0, 'B') AS freightb,"
-                   "     calculateTax(:tax_id, :freight, 0, 'C') AS freightc;");
-  freightq.bindValue(":tax_id", _freighttaxid);
-  freightq.bindValue(":freight", _freight->localValue());
-  freightq.exec();
-  if (freightq.first())
-  {
-    _taxCache[A][Freight] = freightq.value("freighta").toDouble();
-    _taxCache[B][Freight] = freightq.value("freightb").toDouble();
-    _taxCache[C][Freight] = freightq.value("freightc").toDouble();
-  }
-  else if (freightq.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, freightq.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
   recalculateTax();
 }
 
@@ -3928,6 +3910,26 @@ void salesOrder::recalculateTax()
   _taxCache[A][Total] = _taxCache[A][Line] + _taxCache[A][Freight] + _taxCache[A][Adj];
   _taxCache[B][Total] = _taxCache[B][Line] + _taxCache[B][Freight] + _taxCache[B][Adj];
   _taxCache[C][Total] = _taxCache[C][Line] + _taxCache[C][Freight] + _taxCache[C][Adj];
+
+  //  Determine the freight tax
+  XSqlQuery freightq;
+  freightq.prepare("SELECT calculateTax(:tax_id, :freight, 0, 'A') AS freighta,"
+                   "     calculateTax(:tax_id, :freight, 0, 'B') AS freightb,"
+                   "     calculateTax(:tax_id, :freight, 0, 'C') AS freightc;");
+  freightq.bindValue(":tax_id", _freighttaxid);
+  freightq.bindValue(":freight", _freight->localValue());
+  freightq.exec();
+  if (freightq.first())
+  {
+    _taxCache[A][Freight] = freightq.value("freighta").toDouble();
+    _taxCache[B][Freight] = freightq.value("freightb").toDouble();
+    _taxCache[C][Freight] = freightq.value("freightc").toDouble();
+  }
+  else if (freightq.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, freightq.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   _tax->setLocalValue(_taxCache[A][Total] + _taxCache[B][Total] + _taxCache[C][Total]);
   sCalculateTotal();
