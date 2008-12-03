@@ -146,7 +146,7 @@ void batchManager::sFillList()
 
   XSqlQuery batch(_db);
   MetaSQLQuery mql(sql);
-  batch = mql.toQuery(params);
+  batch = mql.toQuery(params, _db);
   _batch->populate(batch);
   if (batch.lastError().type() != QSqlError::NoError)
   {
