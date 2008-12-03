@@ -76,10 +76,10 @@ static const qreal __height = 594.0; // 8.25 * __dpi
 static const qreal __titleHeight = 36.0; // 0.5 * __dpi
 
 static const QFont monthfont("Lucida", 24, QFont::Bold);
-static const QFont navfont("lucida", 18, QFont::Bold);
+static const QFont navfont("lucida", 20, QFont::Bold);
 static const QFont wdayfont("Lucida", 8);
-static const QFont dayfont("Lucida", 14, QFont::Bold);
-static const QFont notesfont("Lucida", 8);
+static const QFont dayfont("Lucida", 20, QFont::Bold);
+static const QFont notesfont("Lucida", 16);
 
 static const QBrush blackFill(Qt::SolidPattern);
 static const QBrush whiteFill("white");
@@ -217,6 +217,8 @@ CalendarGraphicsItem::CalendarGraphicsItem(CalendarControl * cc, QGraphicsItem *
       rectItem = new QGraphicsRectItem(wday * dayWidth, (0.75  + (1.25 * week)) * __dpi, dayWidth, 1.25 * __dpi, this);
       rectItem->setBrush(fill);
       _items.insert(QString("day%1").arg((7 * week) + wday), rectItem);
+      rt = QRectF(rectItem->pos(), rectItem->boundingRect().size());
+      double offset = rt.width() / 3;
       textItem = new QGraphicsSimpleTextItem(QString::number(date.day()), this);
       textItem->setFont(dayfont);
       textItem->setZValue(2);
@@ -234,7 +236,7 @@ CalendarGraphicsItem::CalendarGraphicsItem(CalendarControl * cc, QGraphicsItem *
       textItem->setFont(notesfont);
       textItem->setZValue(2);
       textItem->setBrush(dayFill);
-      textItem->setPos(rt.left() + (rt.width() / 3),
+      textItem->setPos(rt.left() + offset,
                        rt.top() + (rt.height() * 1.5));
       _items.insert(QString("day%1Text").arg((7 * week) + wday), textItem);
     }

@@ -10,7 +10,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Todo List Calendar</string>
+   <string>To-Do List Calendar</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_2" >
    <item>
