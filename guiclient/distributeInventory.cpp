@@ -166,7 +166,9 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
           if(query.first())
           {
             itemlocSeries = query.value("_itemloc_series").toInt();
-            query.prepare( "SELECT createlotserial(itemlocdist_itemsite_id,:lotserial,:itemlocdist_series,'I',itemlocdist_id,:qty,:expiration,:warranty)"
+            query.prepare( "SELECT createlotserial(itemlocdist_itemsite_id,:lotserial,:itemlocdist_series,"
+                           "                       itemlocdist_source_type,itemlocdist_source_id,itemlocdist_id,"
+                           "                       :qty,:expiration,:warranty)"
                            "FROM itemlocdist "
                            "WHERE (itemlocdist_id=:itemlocdist_id);"
                            
