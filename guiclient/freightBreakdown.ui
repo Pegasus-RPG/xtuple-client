@@ -12,143 +12,128 @@
   <property name="windowTitle" >
    <string>Freight Breakdown</string>
   </property>
-  <widget class="QWidget" name="" >
-   <property name="geometry" >
-    <rect>
-     <x>50</x>
-     <y>20</y>
-     <width>493</width>
-     <height>282</height>
-    </rect>
-   </property>
-   <layout class="QVBoxLayout" >
-    <property name="spacing" >
-     <number>12</number>
-    </property>
-    <property name="leftMargin" >
-     <number>12</number>
-    </property>
-    <property name="topMargin" >
-     <number>12</number>
-    </property>
-    <property name="rightMargin" >
-     <number>12</number>
-    </property>
-    <property name="bottomMargin" >
-     <number>12</number>
-    </property>
-    <item>
-     <layout class="QVBoxLayout" >
-      <item>
-       <layout class="QHBoxLayout" >
-        <item>
-         <layout class="QHBoxLayout" >
-          <item>
-           <layout class="QHBoxLayout" >
-            <item>
-             <widget class="QLabel" name="_header" >
-              <property name="text" >
-               <string>Freight Breakdown for Document:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="XLineEdit" name="_document" >
-              <property name="enabled" >
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <spacer>
-            <property name="orientation" >
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" >
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QVBoxLayout" >
-          <item>
-           <widget class="QPushButton" name="_close" >
-            <property name="text" >
-             <string>&amp;Close</string>
-            </property>
-            <property name="default" >
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer>
-            <property name="orientation" >
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" >
-             <size>
-              <width>20</width>
-              <height>0</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" >
-        <property name="spacing" >
-         <number>12</number>
-        </property>
-        <item>
-         <widget class="QRadioButton" name="_calculated" >
-          <property name="text" >
-           <string>Calculated</string>
-          </property>
-          <property name="checked" >
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QRadioButton" name="_manual" >
-          <property name="text" >
-           <string>Manual</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" >
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <widget class="XTreeWidget" name="_freight" />
-    </item>
-   </layout>
-  </widget>
+  <layout class="QVBoxLayout" name="verticalLayout" >
+   <item>
+    <layout class="QVBoxLayout" >
+     <property name="spacing" >
+      <number>12</number>
+     </property>
+     <property name="margin" >
+      <number>12</number>
+     </property>
+     <item>
+      <layout class="QVBoxLayout" >
+       <item>
+        <layout class="QHBoxLayout" >
+         <item>
+          <layout class="QHBoxLayout" >
+           <item>
+            <layout class="QHBoxLayout" >
+             <item>
+              <widget class="QLabel" name="_header" >
+               <property name="text" >
+                <string>Freight Breakdown for Document:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="XLineEdit" name="_document" >
+               <property name="enabled" >
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0" >
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" >
+           <item>
+            <widget class="QPushButton" name="_close" >
+             <property name="text" >
+              <string>&amp;Close</string>
+             </property>
+             <property name="default" >
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0" >
+              <size>
+               <width>20</width>
+               <height>0</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" >
+         <property name="spacing" >
+          <number>12</number>
+         </property>
+         <item>
+          <widget class="QRadioButton" name="_calculated" >
+           <property name="text" >
+            <string>Calculated</string>
+           </property>
+           <property name="checked" >
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="_manual" >
+           <property name="text" >
+            <string>Manual</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0" >
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="XTreeWidget" name="_freight" />
+     </item>
+    </layout>
+   </item>
+  </layout>
  </widget>
  <customwidgets>
   <customwidget>
