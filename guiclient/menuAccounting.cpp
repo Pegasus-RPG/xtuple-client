@@ -476,8 +476,7 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
    
     // Accounting | Master Information
     { "menu",			tr("&Master Information"),	(char*)masterInfoMenu,		mainMenu,	true,						NULL, NULL, true, NULL },
-    { "gl.postTransactionsToExternalAccountingSystem", tr("Post Transactions to External Accounting System..."), SLOT(sPostTransactionsToExternal()), utilitiesMenu, _privileges->check("ViewGLTransactions"), NULL, NULL, _metrics->boolean("EnableExternalAccountingInterface") , NULL },
-    { "gl.dspRWTransactions",		tr("Display Exported Transactions..."),	SLOT(sDspRWTransactions()),	utilitiesMenu,	_privileges->check("ViewGLTransactions"), NULL, NULL, _metrics->boolean("EnableExternalAccountingInterface") , NULL },                               
+    { "gl.postTransactionsToExternalAccountingSystem", tr("Post Transactions to External Accounting System..."), SLOT(sPostTransactionsToExternal()), utilitiesMenu, _privileges->check("ViewGLTransactions"), NULL, NULL, _metrics->boolean("EnableExternalAccountingInterface") , NULL },                             
     { "ap.terms", tr("Ter&ms..."), SLOT(sTerms()), masterInfoMenu, (_privileges->check("MaintainTerms") || _privileges->check("ViewTerms")), NULL, NULL, true , NULL },
     { "separator",			NULL,					NULL,				masterInfoMenu,	true,	NULL, NULL, true , NULL },
     { "ap.bankAccounts", tr("&Bank Accounts..."), SLOT(sBankAccounts()), masterInfoMenu, (_privileges->check("MaintainBankAccounts") || _privileges->check("ViewBankAccounts")), NULL, NULL, true , NULL },
