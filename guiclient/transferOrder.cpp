@@ -1151,8 +1151,8 @@ void transferOrder::sFillItemList()
   _trnsWhs->setEnabled(true);
   _dstWhs->setEnabled(true);
 
-  QString sql("SELECT toitem_id,"
-	      "       toitem_status, closestatus,"
+  QString sql("SELECT toitem_id, closestatus,"
+	      "       toitem_status,"
 	      "       toitem_linenumber, item_number, description,"
 	      "       toitem_schedshipdate,"
 	      "       toitem_qty_ordered, toitem_qty_shipped, toitem_qty_received,"
@@ -1205,7 +1205,7 @@ void transferOrder::sFillItemList()
 	     
   MetaSQLQuery mql(sql);
   q = mql.toQuery(params);
-  _toitem->populate(q);
+  _toitem->populate(q, true);
   if (q.first())
   {
     do
