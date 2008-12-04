@@ -105,6 +105,26 @@ SetResponse freightBreakdown::set(const ParameterList& pParams)
     params.append("order_id", _orderid);
   }
 
+  param = pParams.value("cust_id", &valid);
+  if (valid)
+    params.append("cust_id", param.toInt());
+
+  param = pParams.value("shipto_id", &valid);
+  if (valid)
+    params.append("shipto_id", param.toInt());
+
+  param = pParams.value("orderdate", &valid);
+  if (valid)
+    params.append("orderdate", param.toDate());
+
+  param = pParams.value("shipvia", &valid);
+  if (valid)
+    params.append("shipvia", param.toString());
+
+  param = pParams.value("curr_id", &valid);
+  if (valid)
+    params.append("curr_id", param.toInt());
+
   param = pParams.value("document_number", &valid);
   if (valid)
     _document->setText(param.toString());
@@ -144,7 +164,13 @@ SetResponse freightBreakdown::set(const ParameterList& pParams)
                 "       'salesprice' AS freightdata_price_xtnumericrole,"
                 "       'curr' AS freightdata_total_xtnumericrole,"
                 "       0 AS freightdata_total_xttotalrole "
-                "FROM freightDetail(<? value(\"order_type\") ?>, <? value(\"order_id\") ?>);";
+                "FROM freightDetail(<? value(\"order_type\") ?>,"
+                "                   <? value(\"order_id\") ?>,"
+                "                   <? value(\"cust_id\") ?>,"
+                "                   <? value(\"shipto_id\") ?>,"
+                "                   <? value(\"orderdate\") ?>,"
+                "                   <? value(\"shipvia\") ?>,"
+                "                   <? value(\"curr_id\") ?>);";
 
   MetaSQLQuery mql(sql);
   q = mql.toQuery(params);

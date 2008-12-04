@@ -132,6 +132,7 @@ salesOrder::salesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_saveAndAdd, SIGNAL(clicked()), this, SLOT(sSaveAndAdd()));
   connect(_shippingCharges, SIGNAL(newID(int)), this, SLOT(sHandleShipchrg(int)));
+  connect(_shipVia, SIGNAL(textChanged(const QString&)), this, SLOT(sFillItemList()));
   connect(_shipToAddr, SIGNAL(changed()),        this, SLOT(sConvertShipTo()));
   connect(_shipToList, SIGNAL(clicked()), this, SLOT(sShipToList()));
   connect(_shipToName, SIGNAL(textChanged(const QString&)),        this, SLOT(sConvertShipTo()));
@@ -2700,11 +2701,16 @@ void salesOrder::sFillItemList()
   {
     if (ISORDER(_mode))
       q.prepare("SELECT SUM(freightdata_total) AS freight "
-                "FROM freightDetail('SO', :head_id);");
+                "FROM freightDetail('SO', :head_id, :cust_id, :shipto_id, :orderdate, :shipvia, :curr_id);");
     else if (ISQUOTE(_mode))
       q.prepare("SELECT SUM(freightdata_total) AS freight "
-                "FROM freightDetail('QU', :head_id);");
+                "FROM freightDetail('QU', :head_id, :cust_id, :shipto_id, :orderdate, :shipvia, :curr_id);");
     q.bindValue(":head_id", _soheadid);
+    q.bindValue(":cust_id", _cust->id());
+    q.bindValue(":shipto_id", _shiptoid);
+    q.bindValue(":orderdate", _orderDate->date());
+    q.bindValue(":shipvia", _shipVia->currentText());
+    q.bindValue(":curr_id", _orderCurrency->id());
     q.exec();
     if (q.first())
     {
@@ -3027,6 +3033,7 @@ void salesOrder::sHandleShipchrg(int pShipchrgid)
       {
         _calcfreight = _metrics->boolean("CalculateFreight");
         _freight->setEnabled(TRUE);
+        sFillItemList();
       }
       else
       {
@@ -3034,6 +3041,7 @@ void salesOrder::sHandleShipchrg(int pShipchrgid)
         _freightCache = 0;
         _freight->setEnabled(FALSE);
         _freight->clear();
+        recalculateTax();
       }
     }
   }
@@ -3091,42 +3099,19 @@ void salesOrder::sTaxDetail()
 
 void salesOrder::sFreightDetail()
 {
-  XSqlQuery freightq;
-  if (! ISVIEW(_mode))
-  {
-    if (ISORDER(_mode))
-      freightq.prepare("UPDATE cohead SET cohead_orderdate=:orderdate,"
-                       "                  cohead_warehous_id=:warehous_id,"
-                       "                  cohead_shipto_id=:shipto_id,"
-                       "                  cohead_shipvia=:shipvia "
-                       "WHERE (cohead_id=:head_id);");
-    else
-      freightq.prepare("UPDATE quhead SET quhead_quotedate=:orderdate,"
-                       "                  quhead_warehous_id=:warehous_id,"
-                       "                  quhead_shipto_id=:shipto_id,"
-                       "                  quhead_shipvia=:shipvia "
-                       "WHERE (quhead_id=:head_id);");
-    freightq.bindValue(":orderdate",      _orderDate->date());
-    freightq.bindValue(":warehous_id",    _warehouse->id());
-    freightq.bindValue(":shipto_id",      _shiptoid);
-    freightq.bindValue(":shipvia",        _shipVia->currentText());
-    freightq.bindValue(":head_id",        _soheadid);
-    freightq.exec();
-    if (freightq.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, freightq.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
-  }
-
   ParameterList params;
-  params.append("order_id", _soheadid);
-  params.append("document_number", _orderNumber->text());
   params.append("calcfreight", _calcfreight);
   if (ISORDER(_mode))
     params.append("order_type", "SO");
   else
     params.append("order_type", "QU");
+  params.append("order_id", _soheadid);
+  params.append("document_number", _orderNumber->text());
+  params.append("cust_id", _cust->id());
+  params.append("shipto_id", _shiptoid);
+  params.append("orderdate", _orderDate->date());
+  params.append("shipvia", _shipVia->currentText());
+  params.append("curr_id", _orderCurrency->id());
 
   // mode => view since there are no fields to hold modified freight data
   params.append("mode", "view");
