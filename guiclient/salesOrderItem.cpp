@@ -2282,14 +2282,16 @@ void salesOrderItem::populate()
         "         WHERE (coship_coitem_id=coitem_id)) AS coship_qty,"
         "       coitem_tax_id,"
         "       getItemTaxType(item_id, cohead_taxauth_id) AS coitem_taxtype_id, "
-        "       coitem_cos_accnt_id, coitem_warranty, coitem_qtyreserved "
-        "FROM coitem, warehous, itemsite, item, uom, cohead "
+        "       coitem_cos_accnt_id, coitem_warranty, coitem_qtyreserved, locale_qty_scale "
+        "FROM coitem, warehous, itemsite, item, uom, cohead, locale "
+        "LEFT OUTER JOIN usr ON (usr_username = CURRENT_USER) "
         "WHERE ( (coitem_itemsite_id=itemsite_id)"
         " AND (itemsite_warehous_id=warehous_id)"
         " AND (itemsite_item_id=item_id)"
         " AND (item_inv_uom_id=uom_id)"
         " AND (cohead_id=coitem_cohead_id)"
-        " AND (coitem_id=<? value(\"id\") ?>));" 
+        " AND (coitem_id=<? value(\"id\") ?>) "
+        " AND (locale_id = usr_locale_id));" 
         "<? else ?>"
         "SELECT itemsite_leadtime, COALESCE(warehous_id, -1) AS warehous_id, "
         "       warehous_code,"
@@ -2315,12 +2317,13 @@ void salesOrderItem::populate()
         "       -1 AS coitem_substitute_item_id, quitem_prcost AS coitem_prcost,"
         "       0 AS coship_qty,"
         "       quitem_tax_id AS coitem_tax_id,"
-        "       getItemTaxType(item_id, quhead_taxauth_id) AS coitem_taxtype_id "
-        "  FROM item, uom, quhead, quitem LEFT OUTER JOIN (itemsite JOIN warehous ON (itemsite_warehous_id=warehous_id)) ON (quitem_itemsite_id=itemsite_id) "
+        "       getItemTaxType(item_id, quhead_taxauth_id) AS coitem_taxtype_id, locale_qty_scale"
+        "  FROM item, uom, quhead, locale LEFT OUTER JOIN usr ON (usr_username = 'nmonday'), quitem LEFT OUTER JOIN (itemsite JOIN warehous ON (itemsite_warehous_id=warehous_id)) ON (quitem_itemsite_id=itemsite_id) "
         " WHERE ( (quitem_item_id=item_id)"
         "   AND   (item_inv_uom_id=uom_id)"
         "   AND   (quhead_id=quitem_quhead_id)"
-        "   AND   (quitem_id=<? value(\"id\") ?>) );"
+        "   AND   (quitem_id=<? value(\"id\") ?>) "
+        "   AND   (locale_id = usr_locale_id));"
         "<? endif ?>" ;
 
   qparams.clear();
@@ -2349,7 +2352,7 @@ void salesOrderItem::populate()
     _taxcode->setId(item.value("coitem_tax_id").toInt());
     _orderId = item.value("coitem_order_id").toInt();
     _orderQtyChanged = item.value("qtyord").toDouble();
-    _qtyOrdered->setDouble(_orderQtyChanged);
+    _qtyOrdered->setDouble(_orderQtyChanged, item.value("locale_qty_scale").toInt());
     _scheduledDate->setDate(item.value("coitem_scheddate").toDate());
     _notes->setText(item.value("coitem_memo").toString());
     if (!item.value("quitem_createorder").isNull())
