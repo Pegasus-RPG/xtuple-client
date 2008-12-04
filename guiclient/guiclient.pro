@@ -115,7 +115,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                dspFinancialReport.ui dspFrozenItemSites.ui                                            \
                dspEarnedCommissions.ui dspExpediteExceptionsByPlannerCode.ui                          \
                dspExpiredInventoryByClassCode.ui                                                      \
-               dspGLSeries.ui dspGLTransactions.ui dspRWTransactions.ui                               \
+               dspGLSeries.ui dspGLTransactions.ui                                                    \
                dspIndentedBOM.ui dspIndentedWhereUsed.ui dspInvalidBillsOfMaterials.ui                \
                dspInventoryAvailabilityByItem.ui dspInventoryAvailabilityByParameterList.ui           \
                dspInventoryAvailabilityBySalesOrder.ui dspInventoryAvailabilityBySourceVendor.ui      \
@@ -434,7 +434,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
                dspFinancialReport.h dspFrozenItemSites.h                                              \
                dspEarnedCommissions.h dspExpediteExceptionsByPlannerCode.h                            \
                dspExpiredInventoryByClassCode.h                                                       \
-               dspGLSeries.h dspGLTransactions.h dspRWTransactions.h                                  \
+               dspGLSeries.h dspGLTransactions.h                                                      \
                dspIndentedBOM.h dspIndentedWhereUsed.h dspInvalidBillsOfMaterials.h                   \
                dspInventoryAvailabilityByItem.h dspInventoryAvailabilityByParameterList.h             \
                dspInventoryAvailabilityBySalesOrder.h dspInventoryAvailabilityBySourceVendor.h        \
@@ -763,7 +763,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp       
                dspFinancialReport.cpp dspFrozenItemSites.cpp                                          \
                dspEarnedCommissions.cpp dspExpediteExceptionsByPlannerCode.cpp                        \
                dspExpiredInventoryByClassCode.cpp                                                     \
-               dspGLSeries.cpp dspGLTransactions.cpp dspRWTransactions.cpp                            \
+               dspGLSeries.cpp dspGLTransactions.cpp                                                  \
                dspIndentedBOM.cpp dspIndentedWhereUsed.cpp dspInvalidBillsOfMaterials.cpp             \
                dspInventoryAvailabilityByItem.cpp dspInventoryAvailabilityByParameterList.cpp         \
                dspInventoryAvailabilityBySalesOrder.cpp dspInventoryAvailabilityBySourceVendor.cpp    \
