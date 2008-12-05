@@ -245,7 +245,7 @@ void dspVendorAPHistory::sFillList()
              "       apopen_docdate AS docdate, apopen_duedate AS duedate, apopen_amount AS amount,"
              "       (apopen_amount - apopen_paid) AS balance,"
              "       currconcat(apopen_curr_id) AS currAbbr,"
-             "       currtobase(apopen_curr_id,(apopen_amount - apopen_paid),apopen_docdate) AS base_balance,"
+             "       (apopen_amount - apopen_paid) / round(apopen_curr_rate,5) AS base_balance,"
              "       'curr' AS amount_xtnumericrole,"
              "       'curr' AS balance_xtnumericrole,"
              "       'curr' AS base_balance_xtnumericrole,"

@@ -408,7 +408,7 @@ void apOpenItem::populate()
                  "WHERE (apapply_target_apopen_id=:apopen_id) "
                  "ORDER BY apapply_postdate;" );
 
-      q.bindValue(":creditMemo", tr("C/M"));
+      q.bindValue(":creditMemo", tr("Credit Memo"));
       q.bindValue(":check", tr("Check"));
     }
     else if (docType == "C")
@@ -427,7 +427,7 @@ void apOpenItem::populate()
                  "ORDER BY apapply_postdate;" );
 
       q.bindValue(":voucher", tr("Voucher"));
-      q.bindValue(":debitMemo", tr("D/M"));
+      q.bindValue(":debitMemo", tr("Debit Memo"));
     }
 
     q.bindValue(":apopen_id", _apopenid);

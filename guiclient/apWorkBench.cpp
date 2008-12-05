@@ -58,7 +58,7 @@
 #include "apWorkBench.h"
 
 #include <QSqlError>
-
+ 
 #include <metasql.h>
 #include "selectPayments.h"
 #include "selectedPayments.h"
@@ -106,6 +106,10 @@ apWorkBench::apWorkBench(QWidget* parent, const char* name, Qt::WFlags fl)
   _vendorgroup->synchronize((VendorGroup*)(_checkRun->findChild<QWidget*>("_vendorgroup")));
 
   connect(_vendorgroup, SIGNAL(updated()), this, SLOT(sCalculateTotalOpen()));
+  connect(_query, SIGNAL(clicked()), _payables, SLOT(sFillList()));
+  connect(_query, SIGNAL(clicked()), _credits, SLOT(sFillList()));
+  connect(_query, SIGNAL(clicked()), _selectedPayments, SLOT(sFillList()));
+  connect(_query, SIGNAL(clicked()), _checkRun, SLOT(sFillList()));
 
   sCalculateTotalOpen();
 }
@@ -167,15 +171,14 @@ void apWorkBench::sCalculateTotalOpen()
   }
   
   MetaSQLQuery due(
-         "SELECT SUM(currToBase(apopen_curr_id,"
-         "                      apopen_amount - apopen_paid - "
-         "                      COALESCE((SELECT SUM(currToCurr(checkitem_curr_id, apopen_curr_id, checkitem_amount + checkitem_discount, CURRENT_DATE)) "
+         "SELECT SUM(apopen_amount - apopen_paid - "
+         "                      COALESCE((SELECT SUM((checkitem_amount + checkitem_discount) / round(checkitem_curr_rate,5)) "
          "                                FROM checkitem, checkhead "
          "                                WHERE ((checkitem_checkhead_id=checkhead_id) "
          "                                   AND (checkitem_apopen_id=apopen_id) "
          "                                   AND (NOT checkhead_void) "
          "                                   AND (NOT checkhead_posted)) "
-         "                               ), 0), CURRENT_DATE)) AS openamount_base,"
+         "                               ), 0) / round(apopen_curr_rate,5)) AS openamount_base,"
          "       SUM(COALESCE(currToBase(apselect_curr_id, apselect_amount,"
          "                               CURRENT_DATE), 0)) AS selected_base "
          "FROM vend, apopen"
@@ -212,9 +215,7 @@ void apWorkBench::sCalculateTotalOpen()
 
   // copied from unappliedAPCreditMemos and edited
   MetaSQLQuery cr(
-             "SELECT SUM(currtobase(apopen_curr_id,"
-             "                      (apopen_amount - apopen_paid),"
-             "                      apopen_docdate)) AS basebalance "
+             "SELECT SUM((apopen_amount - apopen_paid)/ round(apopen_curr_rate,5)) AS basebalance "
              "FROM apopen, vend "
              "WHERE ( (apopen_doctype='C')"
              " AND (apopen_open)"
@@ -231,8 +232,10 @@ void apWorkBench::sCalculateTotalOpen()
              ");");
   q = cr.toQuery(params);
   if (q.first())
+  {
     _apopenTotal->setLocalValue(_apopenTotal->localValue() -
                                 q.value("basebalance").toDouble());
+  }
   else if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);

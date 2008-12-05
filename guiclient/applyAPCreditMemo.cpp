@@ -264,9 +264,9 @@ void applyAPCreditMemo::populate()
              "       apopen_docdate, apopen_duedate,"
              "       (apopen_amount - apopen_paid - COALESCE(selected,0.0) -"
              "          COALESCE(prepared,0.0)) AS openamount,"
-	     "       currConcat(apopen_curr_id) AS opencurrabbr, "
+	           "       currConcat(apopen_curr_id) AS opencurrabbr, "
              "       apcreditapply_amount, "
-	     "       currConcat(apcreditapply_curr_id) AS appliedcurrabbr,"
+	           "       currConcat(apcreditapply_curr_id) AS appliedcurrabbr,"
              "       'curr' AS openamount_xtnumericrole,"
              "       'curr' AS apcreditapply_amount_xtnumericrole"
              "  FROM apopen LEFT OUTER JOIN apcreditapply "
@@ -277,7 +277,7 @@ void applyAPCreditMemo::populate()
              "                       GROUP BY apopen_id) AS sub1"
              "         ON (apopen_id=selected_apopen_id)"
              "       LEFT OUTER JOIN (SELECT apopen_id AS prepared_apopen_id,"
-             "                               SUM(currToCurr(checkitem_curr_id, apopen_curr_id, checkitem_amount + checkitem_discount, checkitem_docdate)) AS prepared"
+             "                               SUM((checkitem_amount + checkitem_discount) / round(checkhead_curr_rate,5)) AS prepared"
              "                          FROM checkhead JOIN checkitem ON (checkitem_checkhead_id=checkhead_id)"
              "                                     JOIN apopen ON (checkitem_apopen_id=apopen_id)"
              "                         WHERE ((NOT checkhead_posted)"
@@ -292,7 +292,7 @@ void applyAPCreditMemo::populate()
   q.bindValue(":parentApopenid", _apopenid);
   q.bindValue(":vend_id", _vend->id());
   q.bindValue(":voucher", tr("Voucher"));
-  q.bindValue(":debitMemo", tr("D/M"));
+  q.bindValue(":debitMemo", tr("Debit Memo"));
   q.exec();
   _apopen->populate(q);
   if (q.lastError().type() != QSqlError::NoError)
