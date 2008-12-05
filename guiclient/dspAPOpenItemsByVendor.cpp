@@ -209,6 +209,9 @@ void dspAPOpenItemsByVendor::sPrint()
   params.append("vend_id", _vend->id());
   params.append("asofDate", _asOf->date());
   _dates->appendValue(params);
+  params.append("creditMemo", tr("Credit Memo"));
+  params.append("debitMemo", tr("Debit Memo"));
+  params.append("voucher", tr("Voucher"));
 
   orReport report("APOpenItemsByVendor", params);
   if(report.isValid())

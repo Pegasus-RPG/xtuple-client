@@ -441,6 +441,7 @@ void selectPayments::sFillList()
   }
   
   MetaSQLQuery mql(
+         "SELECT * FROM ( "
          "SELECT apopen_id, COALESCE(apselect_id, -1) AS apselectid,"
          "       (vend_number || '-' || vend_name) AS vendor,"
          "       CASE WHEN (apopen_doctype='V') THEN <? value(\"voucher\") ?>"
@@ -494,7 +495,8 @@ void selectPayments::sFillList()
          "         apopen_doctype, apopen_docnumber, apopen_ponumber,"
          "         apopen_duedate, apopen_docdate, apopen_amount, apopen_paid, "
          "         curr_concat, apopen_curr_id, apselect_curr_id, apopen_invcnumber "
-         "ORDER BY apopen_duedate, (apopen_amount - apopen_paid) DESC;");
+         "ORDER BY apopen_duedate, (apopen_amount - apopen_paid) DESC) AS data "
+         "WHERE (amount != 0);");
 
   ParameterList params;
   if (! setParams(params))
