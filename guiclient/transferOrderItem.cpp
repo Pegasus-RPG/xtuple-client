@@ -1100,13 +1100,19 @@ void transferOrderItem::sCancel()
     return;
   }
 
-  clear();
-  prepare();
-  _prev->setEnabled(true);
-  _item->setFocus();
-
   _modified = false;
   _canceling = false;
+  omfgThis->sTransferOrdersUpdated(_toheadid);
+  if (cNew == _mode)
+  {
+    clear();
+    prepare();
+    _prev->setEnabled(true);
+    _item->setFocus();
+  }
+  else
+    close();
+
 }
 
 void transferOrderItem::sLookupTax()
