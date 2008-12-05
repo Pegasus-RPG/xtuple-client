@@ -147,7 +147,7 @@ enum SetResponse user::set(const ParameterList &pParams)
     _cUsername = param.toString();
     populate();
   }
-
+      
   param = pParams.value("mode", &valid);
   if (valid)
   {
@@ -166,6 +166,8 @@ enum SetResponse user::set(const ParameterList &pParams)
         _active->setFocus();
         sCheck();
       }
+      if (_metrics->boolean("MultiWhs"))
+        populateSite();
     }
     else if (param.toString() == "edit")
     {
@@ -206,12 +208,18 @@ void user::sClose()
 
 void user::sSave()
 {
+  if(save())
+    accept();
+}
+
+bool user::save()
+{
   if (_username->text().length() == 0)
   {
     QMessageBox::warning( this, tr("Cannot save User"),
                           tr( "You must enter a valid Username before you can save this User." ));
     _username->setFocus();
-    return;
+    return false;
   }
 
   if (_passwd->text().length() == 0)
@@ -219,7 +227,7 @@ void user::sSave()
     QMessageBox::warning( this, tr("Cannot save User"),
                           tr( "You must enter a valid Password before you can save this User." ));
     _passwd->setFocus();
-    return;
+    return false;
   }
 
   if (_passwd->text() != _verify->text())
@@ -232,7 +240,7 @@ void user::sSave()
     _verify->clear();
     _passwd->setFocus();
 
-    return;
+    return false;
   }
 
   QString passwd = _passwd->text();
@@ -261,7 +269,7 @@ void user::sSave()
       if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-	return;
+	return false;
       }
     }
     else
@@ -290,7 +298,7 @@ void user::sSave()
       if (q.lastError().type() != QSqlError::NoError)
       {
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-	return;
+	return false;
       }
     }
 
@@ -303,7 +311,7 @@ void user::sSave()
       if (q.lastError().type() != QSqlError::NoError)
       {
         systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-        return;
+        return false;
       }
     }
     
@@ -328,7 +336,7 @@ void user::sSave()
   if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
+    return false;
   }
 
   q.prepare("SELECT setUserPreference(:username, 'DisableExportContents', :value) AS result");
@@ -338,7 +346,7 @@ void user::sSave()
   if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
+    return false;
   }
 
   q.prepare("SELECT setUserPreference(:username, 'UseEnhancedAuthentication', :value) AS result");
@@ -348,7 +356,7 @@ void user::sSave()
   if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
+    return false;
   }
   
   q.prepare("SELECT setUserPreference(:username, 'selectedSites', :value) AS result");
@@ -358,10 +366,10 @@ void user::sSave()
   if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
+    return false;
   }
 
-  accept();
+  return true;
 }
 
 void user::sModuleSelected(const QString &pModule)
@@ -696,6 +704,16 @@ void user::sEnhancedAuthUpdate()
 
 void user::sAddSite()
 {
+  if(_mode == cNew)
+  {
+    if(!save()) return;
+    else
+    {
+      _mode = cEdit;
+      _username->setEnabled(false);
+    }
+  }
+  
   q.prepare("SELECT grantSite(:username, :warehous_id) AS result;");
   q.bindValue(":username", _cUsername);
   q.bindValue(":warehous_id", _availableSite->id());
@@ -730,39 +748,58 @@ void user::populateSite()
 {
 
   ParameterList params;
-  params.append("username", _username->text().trimmed().lower());
   QString sql;
   MetaSQLQuery mql;
-  
-  sql = "SELECT warehous_id, warehous_code "
-	" FROM whsinfo "
-	" WHERE warehous_id NOT IN ( "
-	"	SELECT warehous_id "
-        "	FROM whsinfo, usrsite "
-        "	WHERE ( (usrsite_warehous_id=warehous_id) "
-        "	AND (usrsite_username=<? value(\"username\") ?>))) ";
-  
-  mql.setQuery(sql);
-  q = mql.toQuery(params);
-  _availableSite->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+
+  if (_mode == cNew)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
+    sql = "SELECT warehous_id, warehous_code "
+          " FROM whsinfo ";
+  
+    mql.setQuery(sql);
+    q = mql.toQuery(params);
+    _availableSite->populate(q);
+    if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
-  
-  sql = "SELECT warehous_id,warehous_code,0 AS warehous_level "
-        "FROM whsinfo, usrsite "
-        "WHERE ( (usrsite_warehous_id=warehous_id) "
-        " AND (usrsite_username=<? value(\"username\") ?>)) ";
-		
-  mql.setQuery(sql); 
-  q = mql.toQuery(params);
-  _grantedSite->populate(q);
-  if (q.lastError().type() != QSqlError::NoError)
+  else 
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
+    params.append("username", _username->text().trimmed().lower());
+
+    sql = "SELECT warehous_id, warehous_code "
+          " FROM whsinfo "
+          " WHERE warehous_id NOT IN ( "
+          "	SELECT warehous_id "
+          "	FROM whsinfo, usrsite "
+          "	WHERE ( (usrsite_warehous_id=warehous_id) "
+          "	AND (usrsite_username=<? value(\"username\") ?>))) ";
+  
+    mql.setQuery(sql);
+    q = mql.toQuery(params);
+    _availableSite->populate(q);
+    if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+  
+    sql = "SELECT warehous_id,warehous_code,0 AS warehous_level "
+          "FROM whsinfo, usrsite "
+          "WHERE ( (usrsite_warehous_id=warehous_id) "
+          " AND (usrsite_username=<? value(\"username\") ?>)) ";
+		
+    mql.setQuery(sql); 
+    q = mql.toQuery(params);
+    _grantedSite->populate(q);
+    if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+
   }
 
 }

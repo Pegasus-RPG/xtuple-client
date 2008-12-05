@@ -70,6 +70,7 @@ class user : public XDialog, public Ui::user
 public:
     user(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~user();
+    bool save();
 
 public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
