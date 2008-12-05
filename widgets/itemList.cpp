@@ -182,9 +182,15 @@ void itemList::set(ParameterList &pParams)
   {
     _itemType = param.toUInt();
     setWindowTitle(buildItemLineEditTitle(_itemType, tr("Items")));
+    _showMake->setChecked(_itemType & ItemLineEdit::cGeneralManufactured);
+    _showBuy->setChecked(_itemType & ItemLineEdit::cGeneralPurchased);
   }
   else
+  {
     _itemType = ItemLineEdit::cUndefined;
+    _showMake->hide();
+    _showBuy->hide();
+  }
 
   param = pParams.value("extraClauses", &valid);
   if (valid)
@@ -194,9 +200,6 @@ void itemList::set(ParameterList &pParams)
   _showInactive->setEnabled(!(_itemType & ItemLineEdit::cActive));
   if(!_showInactive->isEnabled())
     _showInactive->hide();
-
-  _showMake->setChecked(_itemType & ItemLineEdit::cGeneralManufactured);
-  _showBuy->setChecked(_itemType & ItemLineEdit::cGeneralPurchased);
 
   param = pParams.value("caption", &valid);
   if (valid)
