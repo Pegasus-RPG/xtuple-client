@@ -265,8 +265,9 @@ enum SetResponse creditMemoItem::set(const ParameterList &pParams)
   }
 
   if (restrict)
-    _item->setQuery( QString( "SELECT DISTINCT item_id, item_number, item_descrip1, item_descrip2, item_active,"
-                              "                item_config, item_type, uom_name "
+    _item->setQuery( QString( "SELECT DISTINCT item_id, item_number, item_descrip1, item_descrip2,"
+                              "                (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
+                              "                item_active, item_config, item_type, uom_name "
                               "FROM invchead, invcitem, item, uom "
                               "WHERE ( (invcitem_invchead_id=invchead_id)"
                               " AND (invcitem_item_id=item_id)"
@@ -276,7 +277,8 @@ enum SetResponse creditMemoItem::set(const ParameterList &pParams)
                      .arg(_invoiceNumber) );
   else
     _item->setQuery( QString( "SELECT DISTINCT item_id, item_number, item_descrip1, item_descrip2,"
-                              "                uom_name, item_type, item_config "
+                              "                (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
+                              "                item_active, uom_name, item_type, item_config "
                               "FROM item, itemsite, uom "
                               "WHERE ( (itemsite_item_id=item_id)"
                               " AND (item_inv_uom_id=uom_id)"
