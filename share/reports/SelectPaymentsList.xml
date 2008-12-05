@@ -21,7 +21,7 @@
        apopen_docnumber, apopen_ponumber,
        apopen_duedate, apopen_docdate,
        (apopen_amount - apopen_paid -
-                   COALESCE((SELECT SUM(currToCurr(checkitem_curr_id, apopen_curr_id, checkitem_amount, CURRENT_DATE))
+                   COALESCE((SELECT SUM(checkitem_amount / round(checkitem_curr_rate,5))
                              FROM checkitem, checkhead
                              WHERE ((checkitem_checkhead_id=checkhead_id)
                               AND (checkitem_apopen_id=apopen_id)
@@ -34,14 +34,14 @@
  WHERE ( (apopen_open)
    AND (apopen_doctype IN ('V', 'D'))
    AND (apopen_vend_id=vend_id)
-&lt;? if exists(&quot;vend_id&quot;) ?>
-   AND (vend_id=&lt;? value(&quot;vend_id&quot;) ?>)
-&lt;? elseif exists(&quot;vendtype_id&quot;) ?>
-   AND (vend_vendtype_id=&lt;? value(&quot;vendtype_id&quot;) ?>)
-&lt;? elseif exists(&quot;vendtype_pattern&quot;) ?>
+&lt;? if exists("vend_id") ?>
+   AND (vend_id=&lt;? value("vend_id") ?>)
+&lt;? elseif exists("vendtype_id") ?>
+   AND (vend_vendtype_id=&lt;? value("vendtype_id") ?>)
+&lt;? elseif exists("vendtype_pattern") ?>
    AND (vend_vendtype_id IN (SELECT vendtype_id
                                FROM vendtype
-                              WHERE (vendtype_code ~ &lt;? value(&quot;vendtype_pattern&quot;) ?>)))
+                              WHERE (vendtype_code ~ &lt;? value("vendtype_pattern") ?>)))
 &lt;? endif ?>
        )
 GROUP BY apopen_id, apselect_id, vend_number, vend_name,
@@ -52,21 +52,21 @@ ORDER BY apopen_duedate, amount DESC;</sql>
  </querysource>
  <querysource>
   <name>head</name>
-  <sql>SELECT &lt;? if exists(&quot;vend_id&quot;) ?>
+  <sql>SELECT &lt;? if exists("vend_id") ?>
          ( SELECT vend_name
              FROM vend
-            WHERE (vend_id=&lt;? value(&quot;vend_id&quot;) ?>) )
-       &lt;? elseif exists(&quot;vendtype_id&quot;) ?>
+            WHERE (vend_id=&lt;? value("vend_id") ?>) )
+       &lt;? elseif exists("vendtype_id") ?>
          ( SELECT (vendtype_code || '-' || vendtype_descrip)
              FROM vendtype
-            WHERE (vendtype_id=&lt;? value(&quot;vendtype_id&quot;) ?>) )
-       &lt;? elseif exists(&quot;vendtype_pattern&quot;) ?>
-         text(&lt;? value(&quot;vendtype_pattern&quot;) ?>)
+            WHERE (vendtype_id=&lt;? value("vendtype_id") ?>) )
+       &lt;? elseif exists("vendtype_pattern") ?>
+         text(&lt;? value("vendtype_pattern") ?>)
        &lt;? else ?>
          text('All Vendors')
        &lt;? endif ?>
        AS f_value,
-       &lt;? if reExists(&quot;vendtype_.*&quot;) ?>
+       &lt;? if reExists("vendtype_.*") ?>
          text('Vendor Type:')
        &lt;? else ?>
          text('Vendor:')
