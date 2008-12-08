@@ -136,6 +136,9 @@ class ScriptToolbox : public QObject
     QString   tabtabText(QWidget * tab, int idx);
 
     QWidget * createWidget(const QString & className, QWidget * parent = 0, const QString & name = QString());
+    QObject * createLayout(const QString & className, QWidget * parent, const QString & name = QString());
+    QWidget * loadUi(const QString & screenName, QWidget * parent = 0);
+
     QWidget * lastWindow() const;
 
     void addColumnXTreeWidget(QWidget * tree, const QString &, int, int, bool = true, const QString = QString(), const QString = QString());

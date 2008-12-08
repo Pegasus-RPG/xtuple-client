@@ -236,6 +236,47 @@ QWidget * ScriptToolbox::createWidget(const QString & className, QWidget * paren
   return ui.createWidget(className, parent, name);
 }
 
+QObject * ScriptToolbox::createLayout(const QString & className, QWidget * parent, const QString & name)
+{
+  XUiLoader ui;
+  return ui.createLayout(className, parent, name);
+}
+
+QWidget * ScriptToolbox::loadUi(const QString & screenName, QWidget * parent)
+{
+  if(screenName.isEmpty())
+    return 0;
+
+  q.prepare("SELECT *"
+            "  FROM uiform"
+            " WHERE((uiform_name=:uiform_name)"
+            "   AND (uiform_enabled))"
+            " ORDER BY uiform_order"
+            " LIMIT 1;");
+  q.bindValue(":uiform_name", screenName);
+  q.exec();
+  if(!q.first())
+  {
+    QMessageBox::critical(0, tr("Could Not Create Form"),
+      tr("Could not create the required form. Either an error occurred or the specified form does not exist.") );
+    return 0;
+  }
+
+  XUiLoader loader;
+  QByteArray ba = q.value("uiform_source").toByteArray();
+  QBuffer uiFile(&ba);
+  if(!uiFile.open(QIODevice::ReadOnly))
+  {
+    QMessageBox::critical(0, tr("Could not load file"),
+        tr("There was an error loading the UI Form from the database."));
+    return 0;
+  }
+  QWidget *ui = loader.load(&uiFile);
+  uiFile.close();
+
+  return ui;
+}
+
 QWidget * ScriptToolbox::lastWindow() const
 {
   return _lastWindow;
