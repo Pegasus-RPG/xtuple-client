@@ -415,7 +415,10 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   // keep synchronized with user.ui.h
   _singleWindow = "";
   if (window.first())
+  {
     _singleWindow = window.value("usr_window").toString();
+    _showTopLevel = true;
+  }
   if (_singleWindow.isEmpty())
     initMenuBar();
 
