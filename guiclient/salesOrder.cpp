@@ -250,7 +250,7 @@ salesOrder::salesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   if (!_metrics->boolean("EnableReturnAuth"))
     _holdType->removeItem(4);
 
-  if(!_metrics->boolean("CCAccept") && !_privileges->check("ProcessCreditCards"))
+  if(!_metrics->boolean("CCAccept") || !_privileges->check("ProcessCreditCards"))
   {
     _salesOrderInformation->removeTab(_salesOrderInformation->indexOf(_creditCardPage));
   }
@@ -3446,6 +3446,9 @@ void salesOrder::sMoveDown()
 
 void salesOrder::sFillCcardList()
 {
+  if(ISQUOTE(_mode) || (!_metrics->boolean("CCAccept") || !_privileges->check("ProcessCreditCards")))
+    return;
+
   q.prepare( "SELECT expireCreditCard(:cust_id, setbytea(:key));");
   q.bindValue(":cust_id", _cust->id());
   q.bindValue(":key", omfgThis->_key);
