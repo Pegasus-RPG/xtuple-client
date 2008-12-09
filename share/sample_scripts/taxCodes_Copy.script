@@ -1,7 +1,7 @@
 function copyClicked()
 {
   var params = new Object;
-  params.tax_id = mywindow.findChild("_tax").id();
+  params.tax_id = mywindow.findChild("_tax").id;
 
   var qry = toolbox.executeQuery("INSERT INTO tax"
                                 +"      (tax_code, tax_descrip,"
