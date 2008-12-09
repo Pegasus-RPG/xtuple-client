@@ -205,7 +205,7 @@ void todoList::sPopulateMenu(QMenu *pMenu)
       _privileges->check("MaintainProjects"));
   }
 
-  if (!_todoList->currentItem()->text(9).isEmpty())
+  if (!_todoList->currentItem()->text(10).isEmpty())
   {
     pMenu->addSeparator();
     menuItem = pMenu->insertItem(tr("Customer Workbench"), this, SLOT(sCustomerInfo()), 0);
