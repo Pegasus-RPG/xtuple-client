@@ -90,6 +90,8 @@ XDialogPrivate::XDialogPrivate()
 {
   _shown = false;
   _engine = 0;
+  _rememberPos = 0;
+  _rememberSize = 0;
 }
 
 XDialogPrivate::~XDialogPrivate()
