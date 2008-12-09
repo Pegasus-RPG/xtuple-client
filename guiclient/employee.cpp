@@ -793,6 +793,18 @@ void employee::sAttachGroup()
   int empgrpid = EmpGroupClusterLineEdit::idFromList(this);
   if (empgrpid != XDialog::Rejected && empgrpid != -1)
   {
+    q.prepare("SELECT * FROM empgrpitem"
+              " WHERE((empgrpitem_empgrp_id=:empgrpid)"
+              "   AND (empgrpitem_emp_id=:empid));");
+    q.bindValue(":empgrpid", empgrpid);
+    q.bindValue(":empid",    _empid);
+    q.exec();
+    if(q.first())
+    {
+      QMessageBox::information(this, tr("Employee in Group"),
+        tr("The employee is already in the selected group.") );
+      return;
+    }
     q.prepare("INSERT INTO empgrpitem (empgrpitem_empgrp_id, empgrpitem_emp_id)"
               " VALUES "
               "(:empgrpid, :empid);");
