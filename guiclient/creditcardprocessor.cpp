@@ -1104,9 +1104,9 @@ int CreditCardProcessor::checkCreditCard(const int pccid, const int pcvv, QStrin
       return -10;
     }
 
-    if (QDate(q.value("ccard_year_expired").toInt(),
-	      q.value("ccard_month_expired").toInt(),
-	      1) < QDate::currentDate())
+    if (q.value("ccard_year_expired").toInt() < QDate::currentDate().year()
+	 || ((q.value("ccard_year_expired").toInt() == QDate::currentDate().year())
+           && q.value("ccard_month_expired").toInt() < QDate::currentDate().month()))
     {
       XSqlQuery xpq;
       xpq.prepare("SELECT expireCreditCard(:custid, setbytea(:key)) AS result;");
