@@ -75,7 +75,7 @@ public:
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
     virtual void sSave();
-    virtual void sSave(bool p);
+    virtual bool sSave(bool p);
     virtual void sCheck();
     virtual void sNew();
     virtual void sEdit();

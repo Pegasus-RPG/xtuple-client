@@ -195,14 +195,14 @@ enum SetResponse itemPricingSchedule::set(const ParameterList &pParams)
   return NoError;
 }
 
-void itemPricingSchedule::sSave(bool p)
+bool itemPricingSchedule::sSave(bool p)
 {
   if (_name->text().trimmed().isEmpty())
   {
     QMessageBox::critical( this, tr("Enter Name"),
                            tr("You must enter a Name for this Pricing Schedule.") );
     _name->setFocus();
-    return;
+    return false;
   }
 
   if (!_dates->startDate().isValid())
@@ -210,7 +210,7 @@ void itemPricingSchedule::sSave(bool p)
     QMessageBox::critical( this, tr("Enter Effective Date"),
                            tr("You must enter an effective date for this Pricing Schedule.") );
     _dates->setFocus();
-    return;
+    return false;
   }
 
   if (!_dates->endDate().isValid())
@@ -218,7 +218,7 @@ void itemPricingSchedule::sSave(bool p)
     QMessageBox::critical( this, tr("Enter Expiration Date"),
                            tr("You must enter an expiration date for this Pricing Schedule.") );
     _dates->setFocus();
-    return;
+    return false;
   }
 
   if (_mode == cNew) 
@@ -259,6 +259,7 @@ void itemPricingSchedule::sSave(bool p)
     q.exec("COMMIT;");
     done(_ipsheadid);
   }
+  return true;
 }
 
 void itemPricingSchedule::sSave()
@@ -272,7 +273,8 @@ void itemPricingSchedule::sCheck()
 
 void itemPricingSchedule::sNew()
 {
-  sSave(false);
+  if(!sSave(false))
+    return;
   ParameterList params;
   params.append("mode", "new");
   params.append("ipshead_id", _ipsheadid);
