@@ -76,6 +76,7 @@ public:
 public slots:
     virtual enum SetResponse set(const ParameterList & pParams );
     virtual void sCheck();
+    virtual void sNameChanged(QString);
     virtual void sSave();
     virtual void populate();
 

@@ -67,10 +67,12 @@ bankAccount::bankAccount(QWidget* parent, const char* name, bool modal, Qt::WFla
 {
   setupUi(this);
 
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_bankName,SIGNAL(textChanged(QString)), this, SLOT(sNameChanged(QString)));
+  connect(_save,               SIGNAL(clicked()), this, SLOT(sSave()));
 
   _nextCheckNum->setValidator(omfgThis->orderVal());
   _routing->setValidator(new QIntValidator(100000000, 999999999, this));
+  _federalReserveDest->setValidator(new QIntValidator(100000000, 999999999, this));
 
   _assetAccount->setType(GLCluster::cAsset);
   _currency->setType(XComboBox::Currencies);
@@ -84,8 +86,17 @@ bankAccount::bankAccount(QWidget* parent, const char* name, bool modal, Qt::WFla
 
   if (_metrics->boolean("ACHEnabled"))
   {
-    _defaultOrigin->setText(_metrics->value("ACHCompanyId"));
-    _immediateOrigin->setEnabled(_overrideDefaultOrigin->isChecked());
+    q.prepare("SELECT fetchMetricText('ACHCompanyName') AS name,"
+              "       formatACHCompanyId() AS number;");
+    q.exec();
+    if (q.first())
+    {
+      _useCompanyIdOrigin->setText(q.value("name").toString());
+      _defaultOrigin->setText(q.value("number").toString());
+    }
+    else if (q.lastError().type() != QSqlError::None)
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+
     if (omfgThis->_key.isEmpty())
       _transmitTab->setEnabled(false);
   }
@@ -123,7 +134,7 @@ enum SetResponse bankAccount::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-      _useDefaultOrigin->setChecked(true);
+      _useCompanyIdOrigin->setChecked(true);
       _name->setFocus();
     }
     else if (param.toString() == "edit")
@@ -191,41 +202,110 @@ void bankAccount::sSave()
   } error[] = {
     { !_assetAccount->isValid(), 
       tr("<p>Select an G/L Account for this Bank Account before saving it."),
-      _assetAccount },
+      _assetAccount
+    },
     { _transmitGroup->isChecked() && _routing->text().trimmed().isEmpty(),
       tr("<p>The bank's Routing Number is required for ACH Check handling."),
-      _routing },
+      _routing
+    },
     { _transmitGroup->isChecked() && _routing->text().trimmed().size() < 9,
       tr("<p>The bank's Routing Number must be a 9 digit number."),
-      _routing },
-    { _transmitGroup->isChecked() && _overrideDefaultOrigin->isChecked() &&
-      _immediateOrigin->text().trimmed().isEmpty(),
-      tr("<p>Immediate Origin is required for ACH Check handling."),
-      _immediateOrigin }
+      _routing
+    },
+    { _transmitGroup->isChecked() &&
+      ! (_useCompanyIdOrigin->isChecked() ||
+         _useRoutingNumberOrigin->isChecked() ||
+         _useOtherOrigin->isChecked()),
+      tr("<p>You must choose which value to use for the Immediate Origin."),
+      _useCompanyIdOrigin
+    },
+    { _transmitGroup->isChecked() && _useOtherOrigin->isChecked() &&
+      _otherOriginName->text().trimmed().isEmpty(),
+      tr("<p>You must enter an Immediate Origin Name if you choose 'Other'."),
+      _otherOriginName
+    },
+    { _transmitGroup->isChecked() && _useOtherOrigin->isChecked() &&
+      _otherOrigin->text().trimmed().isEmpty(),
+      tr("<p>You must enter an Immediate Origin if you choose 'Other'."),
+      _otherOrigin
+    },
+    { _transmitGroup->isChecked() &&
+      ! (_useRoutingNumberDest->isChecked() ||
+         _useFederalReserveDest->isChecked() ||
+         _useOtherDest->isChecked()),
+      tr("<p>You must choose which value to use for the Immediate Destination."),
+      _useRoutingNumberDest
+    },
+    { _transmitGroup->isChecked() && _useFederalReserveDest->isChecked() &&
+      _federalReserveDest->text().trimmed().isEmpty(),
+      tr("<p>You must enter a Federal Reserve Routing Number if you choose "
+         "'Federal Reserve'."),
+      _federalReserveDest
+    },
+    { _transmitGroup->isChecked() && _useOtherDest->isChecked() &&
+      _otherDestName->text().trimmed().isEmpty(),
+      tr("<p>You must enter an Immediate Destination Name if you choose "
+         "'Other'."),
+      _otherDestName
+    },
+    { _transmitGroup->isChecked() && _useOtherDest->isChecked() &&
+      _otherDest->text().trimmed().isEmpty(),
+      tr("<p>You must enter an Immediate Destination number if you choose "
+         "'Other'."),
+      _otherDest
+    }
   };
 
   for (unsigned int i = 0; i < sizeof(error) / sizeof(error[0]); i++)
     if (error[i].condition)
     {
-      QMessageBox::critical(this, tr("Cannot Save Bank Account"),
-                            error[i].msg);
+      QMessageBox::critical(this, tr("Cannot Save Bank Account"), error[i].msg);
       error[i].widget->setFocus();
       return;
     }
 
-  if (_transmitGroup->isChecked() && _overrideDefaultOrigin->isChecked() &&
-      _immediateOrigin->text().size() < 10 &&
+  if (_transmitGroup->isChecked())
+  {
+    if (_useOtherOrigin->isChecked() && _otherOrigin->text().size() < 10 &&
       QMessageBox::question(this, tr("Immediate Origin Too Small?"),
                             tr("<p>The Immediate Origin is usually either a "
                                "10 digit Company Id number or a space followed "
-                               "by a 9 digit Bank Routing Number. Does %1 "
+                               "by a 9 digit Routing Number. Does %1 "
                                "match what your bank told you to enter here?")
-                            .arg(_immediateOrigin->text()),
-                            QMessageBox::Yes,
-                            QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
-  {
-    _immediateOrigin->setFocus();
-    return;
+                            .arg(_otherOrigin->text()),
+                            QMessageBox::Yes | QMessageBox::No,
+                            QMessageBox::No) == QMessageBox::No)
+    {
+      _otherOrigin->setFocus();
+      return;
+    }
+
+    if (_useRoutingNumberOrigin->isChecked() &&
+        _useRoutingNumberDest->isChecked() &&
+        QMessageBox::question(this, tr("Use Bank Routing Number twice?"),
+                              tr("<p>Are you sure your bank expects the "
+                                 "Bank Routing Number as both the Immediate "
+                                 "Origin and the Immediate Destination?"),
+                              QMessageBox::Yes | QMessageBox::No,
+                              QMessageBox::No) == QMessageBox::No)
+    {
+      _useRoutingNumberDest->setFocus();
+      return;
+    }
+
+    if (_useOtherDest->isChecked() && _otherDest->text().size() < 10 &&
+      QMessageBox::question(this, tr("Immediate Destination Too Small?"),
+                            tr("<p>The Immediate Destination is usually either "
+                               "a 10 digit Company Id number or a space "
+                               "followed by a 9 digit Routing Number. Does %1 "
+                               "match what your bank told you to enter here?")
+                            .arg(_otherDest->text()),
+                            QMessageBox::Yes | QMessageBox::No,
+                            QMessageBox::No) == QMessageBox::No)
+    {
+      _otherOrigin->setFocus();
+      return;
+    }
   }
 
   q.prepare( "SELECT bankaccnt_id FROM bankaccnt "
@@ -257,8 +337,10 @@ void bankAccount::sSave()
                "  bankaccnt_accnt_id, bankaccnt_notes,"
                "  bankaccnt_nextchknum, bankaccnt_check_form_id, "
 	       "  bankaccnt_curr_id, bankaccnt_ach_enabled,"
-               "  bankaccnt_routing, bankaccnt_ach_defaultorigin,"
-               "  bankaccnt_ach_origin,"
+               "  bankaccnt_routing, bankaccnt_ach_origintype,"
+               "  bankaccnt_ach_originname, bankaccnt_ach_origin,"
+               "  bankaccnt_ach_desttype, bankaccnt_ach_fed_dest,"
+               "  bankaccnt_ach_destname, bankaccnt_ach_dest,"
                "  bankaccnt_ach_genchecknum, bankaccnt_ach_leadtime)"
                "VALUES "
                "( :bankaccnt_id, :bankaccnt_name, :bankaccnt_descrip,"
@@ -267,15 +349,20 @@ void bankAccount::sSave()
                "  :bankaccnt_accnt_id, :bankaccnt_notes,"
                "  :bankaccnt_nextchknum, :bankaccnt_check_form_id, "
 	       "  :bankaccnt_curr_id, :bankaccnt_ach_enabled,"
-               "  :bankaccnt_routing, :bankaccnt_ach_defaultorigin,"
-               "  :bankaccnt_ach_origin,"
+               "  :bankaccnt_routing, :bankaccnt_ach_origintype,"
+               "  :bankaccnt_ach_originname, :bankaccnt_ach_origin,"
+               "  :bankaccnt_ach_desttype, :bankaccnt_ach_fed_dest,"
+               "  :bankaccnt_ach_destname, :bankaccnt_ach_dest,"
                "  :bankaccnt_ach_genchecknum, :bankaccnt_ach_leadtime);" );
   }
   else if (_mode == cEdit)
     q.prepare( "UPDATE bankaccnt "
-               "SET bankaccnt_name=:bankaccnt_name, bankaccnt_descrip=:bankaccnt_descrip,"
-               "    bankaccnt_bankname=:bankaccnt_bankname, bankaccnt_accntnumber=:bankaccnt_accntnumber,"
-               "    bankaccnt_type=:bankaccnt_type, bankaccnt_ap=:bankaccnt_ap,"
+               "SET bankaccnt_name=:bankaccnt_name,"
+               "    bankaccnt_descrip=:bankaccnt_descrip,"
+               "    bankaccnt_bankname=:bankaccnt_bankname,"
+               "    bankaccnt_accntnumber=:bankaccnt_accntnumber,"
+               "    bankaccnt_type=:bankaccnt_type,"
+               "    bankaccnt_ap=:bankaccnt_ap,"
                "    bankaccnt_ar=:bankaccnt_ar,"
                "    bankaccnt_accnt_id=:bankaccnt_accnt_id,"
                "    bankaccnt_nextchknum=:bankaccnt_nextchknum, "
@@ -284,31 +371,52 @@ void bankAccount::sSave()
 	       "    bankaccnt_notes=:bankaccnt_notes,"
 	       "    bankaccnt_ach_enabled=:bankaccnt_ach_enabled,"
 	       "    bankaccnt_routing=:bankaccnt_routing,"
-               "    bankaccnt_ach_defaultorigin=:bankaccnt_ach_defaultorigin,"
+               "    bankaccnt_ach_origintype=:bankaccnt_ach_origintype,"
+	       "    bankaccnt_ach_originname=:bankaccnt_ach_originname,"
 	       "    bankaccnt_ach_origin=:bankaccnt_ach_origin,"
+               "    bankaccnt_ach_desttype=:bankaccnt_ach_desttype,"
+               "    bankaccnt_ach_fed_dest=:bankaccnt_ach_fed_dest,"
+               "    bankaccnt_ach_destname=:bankaccnt_ach_destname,"
+               "    bankaccnt_ach_dest=:bankaccnt_ach_dest,"
                "    bankaccnt_ach_genchecknum=:bankaccnt_ach_genchecknum,"
                "    bankaccnt_ach_leadtime=:bankaccnt_ach_leadtime "
                "WHERE (bankaccnt_id=:bankaccnt_id);" );
   
-  q.bindValue(":bankaccnt_id", _bankaccntid);
-  q.bindValue(":bankaccnt_name", _name->text());
-  q.bindValue(":bankaccnt_descrip", _description->text().trimmed());
-  q.bindValue(":bankaccnt_bankname", _bankName->text());
+  q.bindValue(":bankaccnt_id",          _bankaccntid);
+  q.bindValue(":bankaccnt_name",        _name->text());
+  q.bindValue(":bankaccnt_descrip",     _description->text().trimmed());
+  q.bindValue(":bankaccnt_bankname",    _bankName->text());
   q.bindValue(":bankaccnt_accntnumber", _accountNumber->text());
   q.bindValue(":bankaccnt_ap",          QVariant(_ap->isChecked()));
   q.bindValue(":bankaccnt_ar",          QVariant(_ar->isChecked()));
-  q.bindValue(":bankaccnt_accnt_id", _assetAccount->id());
-  q.bindValue(":bankaccnt_curr_id", _currency->id());
-  q.bindValue(":bankaccnt_notes",             _notes->text().stripWhiteSpace());
-  q.bindValue(":bankaccnt_ach_enabled",       _transmitGroup->isChecked());
-  q.bindValue(":bankaccnt_routing",           _routing->text());
+  q.bindValue(":bankaccnt_accnt_id",    _assetAccount->id());
+  q.bindValue(":bankaccnt_curr_id",     _currency->id());
+  q.bindValue(":bankaccnt_notes",       _notes->text().stripWhiteSpace());
+  q.bindValue(":bankaccnt_ach_enabled", _transmitGroup->isChecked());
+  q.bindValue(":bankaccnt_routing",     _routing->text());
 
-  q.bindValue(":bankaccnt_ach_defaultorigin", _useDefaultOrigin->isChecked());
-  q.bindValue(":bankaccnt_ach_origin",        _immediateOrigin->text());
+  if (_useCompanyIdOrigin->isChecked())
+    q.bindValue(":bankaccnt_ach_origintype",  "I");
+  else if (_useRoutingNumberOrigin->isChecked())
+    q.bindValue(":bankaccnt_ach_origintype",  "B");
+  else if (_useOtherOrigin->isChecked())
+    q.bindValue(":bankaccnt_ach_origintype",  "O");
+  q.bindValue(":bankaccnt_ach_originname",    _otherOriginName->text());
+  q.bindValue(":bankaccnt_ach_origin",        _otherOrigin->text());
   q.bindValue(":bankaccnt_ach_genchecknum",   _genCheckNumber->isChecked());
   q.bindValue(":bankaccnt_ach_leadtime",      _settlementLeadtime->value());
 
-  q.bindValue(":bankaccnt_nextchknum", _nextCheckNum->text().toInt());
+  if (_useRoutingNumberDest->isChecked())
+    q.bindValue(":bankaccnt_ach_desttype",    "B");
+  else if (_useFederalReserveDest->isChecked())
+    q.bindValue(":bankaccnt_ach_desttype",    "F");
+  else if (_useOtherDest->isChecked())
+    q.bindValue(":bankaccnt_ach_desttype",    "O");
+  q.bindValue(":bankaccnt_ach_fed_dest",      _federalReserveDest->text());
+  q.bindValue(":bankaccnt_ach_destname",      _otherDestName->text());
+  q.bindValue(":bankaccnt_ach_dest",          _otherDest->text());
+
+  q.bindValue(":bankaccnt_nextchknum",    _nextCheckNum->text().toInt());
   q.bindValue(":bankaccnt_check_form_id", _form->id());
 
   if (_type->currentIndex() == 0)
@@ -350,14 +458,27 @@ void bankAccount::populate()
 
     _transmitGroup->setChecked(q.value("bankaccnt_ach_enabled").toBool());   
     _routing->setText(q.value("bankaccnt_routing").toString());      
-    _immediateOrigin->setText(q.value("bankaccnt_ach_origin").toString());    
     _genCheckNumber->setChecked(q.value("bankaccnt_ach_genchecknum").toBool());
     _settlementLeadtime->setValue(q.value("bankaccnt_ach_leadtime").toInt());
 
-    if (q.value("bankaccnt_ach_defaultorigin").toBool())   
-      _useDefaultOrigin->setChecked(true);
-    else
-      _overrideDefaultOrigin->setChecked(true);
+    if (q.value("bankaccnt_ach_origintype").toString() == "I")   
+      _useCompanyIdOrigin->setChecked(true);
+    else if (q.value("bankaccnt_ach_origintype").toString() == "B")   
+      _useRoutingNumberOrigin->setChecked(true);
+    else if (q.value("bankaccnt_ach_origintype").toString() == "O")   
+      _useOtherOrigin->setChecked(true);
+    _otherOriginName->setText(q.value("bankaccnt_ach_originname").toString());
+    _otherOrigin->setText(q.value("bankaccnt_ach_origin").toString());    
+
+    if (q.value("bankaccnt_ach_desttype").toString() == "B")   
+      _useRoutingNumberDest->setChecked(true);
+    else if (q.value("bankaccnt_ach_desttype").toString() == "F")   
+      _useFederalReserveDest->setChecked(true);
+    else if (q.value("bankaccnt_ach_desttype").toString() == "O")   
+      _useOtherDest->setChecked(true);
+    _federalReserveDest->setText(q.value("bankaccnt_ach_fed_dest").toString());
+    _otherDestName->setText(q.value("bankaccnt_ach_destname").toString());
+    _otherDest->setText(q.value("bankaccnt_ach_dest").toString());
 
     if (q.value("bankaccnt_type").toString() == "K")
       _type->setCurrentIndex(0);
@@ -369,4 +490,10 @@ void bankAccount::populate()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+}
+
+void bankAccount::sNameChanged(QString pName)
+{
+  _useRoutingNumberDest->setText(pName);
+  _useRoutingNumberOrigin->setText(pName);
 }

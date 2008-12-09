@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>682</width>
-    <height>562</height>
+    <width>700</width>
+    <height>636</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -46,7 +46,7 @@
            <property name="sizeType" >
             <enum>QSizePolicy::Expanding</enum>
            </property>
-           <property name="sizeHint" >
+           <property name="sizeHint" stdset="0" >
             <size>
              <width>76</width>
              <height>10</height>
@@ -111,7 +111,7 @@
          <property name="sizeType" >
           <enum>QSizePolicy::MinimumExpanding</enum>
          </property>
-         <property name="sizeHint" >
+         <property name="sizeHint" stdset="0" >
           <size>
            <width>10</width>
            <height>0</height>
@@ -228,7 +228,7 @@
         <property name="sizeType" >
          <enum>QSizePolicy::Fixed</enum>
         </property>
-        <property name="sizeHint" >
+        <property name="sizeHint" stdset="0" >
          <size>
           <width>20</width>
           <height>20</height>
@@ -284,7 +284,7 @@
           <property name="sizeType" >
            <enum>QSizePolicy::Expanding</enum>
           </property>
-          <property name="sizeHint" >
+          <property name="sizeHint" stdset="0" >
            <size>
             <width>42</width>
             <height>16</height>
@@ -321,7 +321,7 @@
           <property name="orientation" >
            <enum>Qt::Horizontal</enum>
           </property>
-          <property name="sizeHint" >
+          <property name="sizeHint" stdset="0" >
            <size>
             <width>40</width>
             <height>20</height>
@@ -368,7 +368,7 @@
      <property name="orientation" >
       <enum>Qt::Vertical</enum>
      </property>
-     <property name="sizeHint" >
+     <property name="sizeHint" stdset="0" >
       <size>
        <width>20</width>
        <height>40</height>
@@ -385,7 +385,7 @@
       </sizepolicy>
      </property>
      <property name="currentIndex" >
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="_notesTab" >
       <attribute name="title" >
@@ -430,54 +430,88 @@
           <item row="0" column="1" >
            <widget class="XLineEdit" name="_routing" />
           </item>
-          <item rowspan="3" row="0" column="2" >
+          <item row="2" column="0" colspan="2" >
+           <widget class="QCheckBox" name="_genCheckNumber" >
+            <property name="text" >
+             <string>Create Check Number for ACH Checks</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0" colspan="2" >
            <widget class="QGroupBox" name="_originGroup" >
             <property name="title" >
-             <string>Immediate Origin Handling</string>
+             <string>Immediate Origin Name and Number</string>
             </property>
             <layout class="QGridLayout" >
-             <item row="0" column="0" >
-              <widget class="QRadioButton" name="_useDefaultOrigin" >
+             <item row="0" column="0" colspan="2" >
+              <widget class="QRadioButton" name="_useCompanyIdOrigin" >
                <property name="text" >
-                <string>Use Default:</string>
+                <string>Company Name</string>
                </property>
                <property name="checked" >
                 <bool>true</bool>
                </property>
               </widget>
              </item>
-             <item row="0" column="1" >
+             <item row="0" column="2" >
               <widget class="QLabel" name="_defaultOrigin" >
                <property name="text" >
                 <string>default</string>
                </property>
               </widget>
              </item>
-             <item row="1" column="0" >
-              <widget class="QRadioButton" name="_overrideDefaultOrigin" >
+             <item row="3" column="0" >
+              <widget class="QRadioButton" name="_useOtherOrigin" >
                <property name="text" >
-                <string>Override Default:</string>
+                <string/>
                </property>
               </widget>
              </item>
-             <item row="1" column="1" >
-              <widget class="XLineEdit" name="_immediateOrigin" >
+             <item row="1" column="0" colspan="2" >
+              <widget class="QRadioButton" name="_useRoutingNumberOrigin" >
+               <property name="text" >
+                <string>Bank Name</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="2" >
+              <widget class="XLineEdit" name="_otherOrigin" >
+               <property name="enabled" >
+                <bool>false</bool>
+               </property>
                <property name="maxLength" >
                 <number>10</number>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1" >
+              <widget class="QLineEdit" name="_otherOriginName" >
+               <property name="enabled" >
+                <bool>false</bool>
+               </property>
+               <property name="maxLength" >
+                <number>23</number>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="2" >
+              <widget class="QLabel" name="_routingNumberOrigin" >
+               <property name="text" >
+                <string>Routing Number</string>
                </property>
               </widget>
              </item>
             </layout>
            </widget>
           </item>
-          <item row="1" column="0" >
+          <item row="0" column="2" >
            <widget class="QLabel" name="_settlementLeadtimeLit" >
             <property name="text" >
              <string>Settlement Lead Time:</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="1" >
+          <item row="0" column="3" >
            <widget class="QSpinBox" name="_settlementLeadtime" >
             <property name="minimum" >
              <number>1</number>
@@ -487,14 +521,82 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="0" colspan="2" >
-           <widget class="QCheckBox" name="_genCheckNumber" >
-            <property name="text" >
-             <string>Create Check Number for ACH Checks</string>
+          <item row="3" column="2" colspan="2" >
+           <widget class="QGroupBox" name="_destinationGroup" >
+            <property name="title" >
+             <string>Immediate Destination Name and Number</string>
             </property>
+            <layout class="QGridLayout" name="gridLayout" >
+             <item row="0" column="0" colspan="2" >
+              <widget class="QRadioButton" name="_useRoutingNumberDest" >
+               <property name="text" >
+                <string>Bank Name</string>
+               </property>
+               <property name="checked" >
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0" colspan="2" >
+              <widget class="QRadioButton" name="_useFederalReserveDest" >
+               <property name="text" >
+                <string>Federal Reserve</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0" >
+              <widget class="QRadioButton" name="_useOtherDest" >
+               <property name="text" >
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="2" >
+              <widget class="QLineEdit" name="_federalReserveDest" >
+               <property name="enabled" >
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="2" >
+              <widget class="QLineEdit" name="_otherDest" >
+               <property name="enabled" >
+                <bool>false</bool>
+               </property>
+               <property name="maxLength" >
+                <number>10</number>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1" >
+              <widget class="QLineEdit" name="_otherDestName" >
+               <property name="enabled" >
+                <bool>false</bool>
+               </property>
+               <property name="maxLength" >
+                <number>23</number>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="2" >
+              <widget class="QLabel" name="_routingNumberDest" >
+               <property name="text" >
+                <string>Routing Number</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </widget>
           </item>
          </layout>
+         <zorder>_routingLit</zorder>
+         <zorder>_routing</zorder>
+         <zorder>_genCheckNumber</zorder>
+         <zorder>_originGroup</zorder>
+         <zorder>_settlementLeadtimeLit</zorder>
+         <zorder>_settlementLeadtime</zorder>
+         <zorder>_otherOrigin</zorder>
+         <zorder>_destinationGroup</zorder>
         </widget>
        </item>
        <item row="1" column="0" >
@@ -502,7 +604,7 @@
          <property name="orientation" >
           <enum>Qt::Vertical</enum>
          </property>
-         <property name="sizeHint" >
+         <property name="sizeHint" stdset="0" >
           <size>
            <width>20</width>
            <height>0</height>
@@ -552,9 +654,17 @@
   <tabstop>_routing</tabstop>
   <tabstop>_settlementLeadtime</tabstop>
   <tabstop>_genCheckNumber</tabstop>
-  <tabstop>_useDefaultOrigin</tabstop>
-  <tabstop>_overrideDefaultOrigin</tabstop>
-  <tabstop>_immediateOrigin</tabstop>
+  <tabstop>_useCompanyIdOrigin</tabstop>
+  <tabstop>_useRoutingNumberOrigin</tabstop>
+  <tabstop>_useOtherOrigin</tabstop>
+  <tabstop>_otherOriginName</tabstop>
+  <tabstop>_otherOrigin</tabstop>
+  <tabstop>_useRoutingNumberDest</tabstop>
+  <tabstop>_useFederalReserveDest</tabstop>
+  <tabstop>_federalReserveDest</tabstop>
+  <tabstop>_useOtherDest</tabstop>
+  <tabstop>_otherDestName</tabstop>
+  <tabstop>_otherDest</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
@@ -567,8 +677,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>607</x>
-     <y>34</y>
+     <x>685</x>
+     <y>45</y>
     </hint>
     <hint type="destinationlabel" >
      <x>20</x>
@@ -641,34 +751,130 @@
    </hints>
   </connection>
   <connection>
-   <sender>_overrideDefaultOrigin</sender>
+   <sender>_useOtherOrigin</sender>
    <signal>toggled(bool)</signal>
-   <receiver>_immediateOrigin</receiver>
+   <receiver>_otherOrigin</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>408</x>
-     <y>454</y>
+     <x>80</x>
+     <y>560</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>547</x>
-     <y>457</y>
+     <x>335</x>
+     <y>561</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>_useDefaultOrigin</sender>
+   <sender>_useCompanyIdOrigin</sender>
    <signal>toggled(bool)</signal>
    <receiver>_defaultOrigin</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>440</x>
-     <y>433</y>
+     <x>152</x>
+     <y>507</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>512</x>
-     <y>435</y>
+     <x>335</x>
+     <y>504</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_useFederalReserveDest</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_federalReserveDest</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>523</x>
+     <y>533</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>642</x>
+     <y>532</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_useOtherDest</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_otherDest</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>405</x>
+     <y>562</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>642</x>
+     <y>562</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_useOtherDest</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_otherDestName</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>405</x>
+     <y>562</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>523</x>
+     <y>562</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_routing</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>_routingNumberOrigin</receiver>
+   <slot>setText(QString)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>285</x>
+     <y>421</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>282</x>
+     <y>523</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_routing</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>_routingNumberDest</receiver>
+   <slot>setText(QString)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>350</x>
+     <y>415</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>562</x>
+     <y>499</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_useOtherOrigin</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_otherOriginName</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>65</x>
+     <y>549</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>97</x>
+     <y>552</y>
     </hint>
    </hints>
   </connection>

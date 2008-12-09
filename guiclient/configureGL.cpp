@@ -84,6 +84,13 @@ configureGL::configureGL(QWidget* parent, const char* name, bool modal, Qt::WFla
     _nextACHBatchNumber->setValidator(omfgThis->orderVal());
     if (! _metrics->value("ACHCompanyId").trimmed().isEmpty())
       _companyId->setText(_metrics->value("ACHCompanyId"));
+    if (! _metrics->value("ACHCompanyIdType").trimmed().isEmpty())
+      if (_metrics->value("ACHCompanyIdType").trimmed() == "D")
+        _companyIdIsDUNS->setChecked(true);
+      else if (_metrics->value("ACHCompanyIdType").trimmed() == "E")
+        _companyIdIsEIN->setChecked(true);
+      else if (_metrics->value("ACHCompanyIdType").trimmed() == "O")
+        _companyIdIsOther->setChecked(true);
     if (! _metrics->value("ACHCompanyName").trimmed().isEmpty())
       _companyName->setText(_metrics->value("ACHCompanyName"));
     if (_metrics->value("ACHDefaultSuffix").trimmed().isEmpty())
@@ -204,17 +211,41 @@ void configureGL::languageChange()
 
 void configureGL::sSave()
 {
-  if (_metrics->boolean("ACHSupported") && _companyId->text().size() < 10 &&
-      QMessageBox::question(this, tr("Company ID Correct?"),
-                            tr("The Company ID is usually a 10 digit number, "
-                               "either a Taxpayer ID number, an IRS EIN, or a "
-                               "DUNS number. Are you sure your Company ID "
-                               "is correct?"),
-                            QMessageBox::Yes,
-                            QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+  if (_metrics->boolean("ACHSupported"))
   {
-    _companyId->setFocus();
-    return;
+    QString tmpCompanyId = _companyId->text();
+    struct {
+      bool    condition;
+      QString msg;
+      QWidget *widget;
+    } error[] = {
+      { _companyId->text().isEmpty(),
+        tr("Please enter a default Company Id if you are going to create "
+           "ACH files."),
+        _companyId },
+      { (_companyIdIsEIN->isChecked() || _companyIdIsDUNS->isChecked()) && 
+        tmpCompanyId.remove("-").size() != 9,
+        tr("EIN, TIN, and DUNS numbers are all 9 digit numbers. Other "
+           "characters (except dashes for readability) are not allowed."),
+        _companyId },
+      { _companyIdIsOther->isChecked() && _companyId->text().size() > 10,
+        tr("Company Ids must be 10 characters or shorter (not counting dashes "
+           "in EIN's, TIN's, and DUNS numbers)."),
+        _companyId },
+      { ! (_companyIdIsEIN->isChecked() || _companyIdIsDUNS->isChecked() ||
+           _companyIdIsOther->isChecked()),
+        tr("Please mark whether the Company Id is an EIN, TIN, DUNS number, "
+           "or Other."),
+        _companyIdIsEIN }
+    };
+    for (unsigned int i = 0; i < sizeof(error) / sizeof(error[0]); i++)
+      if (error[i].condition)
+      {
+        QMessageBox::critical(this, tr("Cannot Save Accounting Configuration"),
+                              error[i].msg);
+        error[i].widget->setFocus();
+        return;
+      }
   }
 
   // AP
@@ -228,6 +259,15 @@ void configureGL::sSave()
     if (_achGroup->isChecked())
     {
       _metrics->set("ACHCompanyId",     _companyId->text().trimmed());
+      if (_companyId->text().trimmed().length() > 0)
+      {
+        if (_companyIdIsDUNS->isChecked())
+          _metrics->set("ACHCompanyIdType", QString("D"));
+        else if (_companyIdIsEIN->isChecked())
+          _metrics->set("ACHCompanyIdType", QString("E"));
+        else if (_companyIdIsOther->isChecked())
+          _metrics->set("ACHCompanyIdType", QString("O"));
+      }
       _metrics->set("ACHCompanyName",   _companyName->text().trimmed());
       _metrics->set("ACHDefaultSuffix", _achSuffix->currentText().trimmed());
       q.prepare("SELECT setNextNumber('ACHBatch', :number) AS result;");

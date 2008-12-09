@@ -15,22 +15,10 @@
   <layout class="QGridLayout" >
    <item row="0" column="0" >
     <layout class="QGridLayout" >
-     <property name="leftMargin" >
+     <property name="margin" >
       <number>12</number>
      </property>
-     <property name="topMargin" >
-      <number>12</number>
-     </property>
-     <property name="rightMargin" >
-      <number>12</number>
-     </property>
-     <property name="bottomMargin" >
-      <number>12</number>
-     </property>
-     <property name="horizontalSpacing" >
-      <number>12</number>
-     </property>
-     <property name="verticalSpacing" >
+     <property name="spacing" >
       <number>12</number>
      </property>
      <item row="0" column="0" >
@@ -93,7 +81,7 @@
                  <property name="sizeType" >
                   <enum>QSizePolicy::Expanding</enum>
                  </property>
-                 <property name="sizeHint" >
+                 <property name="sizeHint" stdset="0" >
                   <size>
                    <width>20</width>
                    <height>20</height>
@@ -158,7 +146,7 @@
                         <property name="orientation" >
                          <enum>Qt::Horizontal</enum>
                         </property>
-                        <property name="sizeHint" >
+                        <property name="sizeHint" stdset="0" >
                          <size>
                           <width>40</width>
                           <height>20</height>
@@ -188,7 +176,7 @@
                  <property name="sizeType" >
                   <enum>QSizePolicy::Expanding</enum>
                  </property>
-                 <property name="sizeHint" >
+                 <property name="sizeHint" stdset="0" >
                   <size>
                    <width>16</width>
                    <height>10</height>
@@ -319,7 +307,7 @@
                  <property name="sizeType" >
                   <enum>QSizePolicy::Expanding</enum>
                  </property>
-                 <property name="sizeHint" >
+                 <property name="sizeHint" stdset="0" >
                   <size>
                    <width>159</width>
                    <height>20</height>
@@ -376,7 +364,7 @@
                  <property name="sizeType" >
                   <enum>QSizePolicy::MinimumExpanding</enum>
                  </property>
-                 <property name="sizeHint" >
+                 <property name="sizeHint" stdset="0" >
                   <size>
                    <width>40</width>
                    <height>20</height>
@@ -471,7 +459,7 @@
                  <property name="sizeType" >
                   <enum>QSizePolicy::Expanding</enum>
                  </property>
-                 <property name="sizeHint" >
+                 <property name="sizeHint" stdset="0" >
                   <size>
                    <width>181</width>
                    <height>20</height>
@@ -491,7 +479,7 @@
              <property name="sizeType" >
               <enum>QSizePolicy::Expanding</enum>
              </property>
-             <property name="sizeHint" >
+             <property name="sizeHint" stdset="0" >
               <size>
                <width>20</width>
                <height>0</height>
@@ -546,7 +534,7 @@
                <property name="sizeType" >
                 <enum>QSizePolicy::Expanding</enum>
                </property>
-               <property name="sizeHint" >
+               <property name="sizeHint" stdset="0" >
                 <size>
                  <width>20</width>
                  <height>20</height>
@@ -609,7 +597,7 @@
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="0" >
+                <item row="4" column="0" >
                  <widget class="QLabel" name="_companyNameLit" >
                   <property name="text" >
                    <string>Company Name:</string>
@@ -625,17 +613,14 @@
                 <item row="1" column="1" >
                  <widget class="XLineEdit" name="_companyId" >
                   <property name="text" >
-                   <string>EIN/DUNS#</string>
-                  </property>
-                  <property name="maxLength" >
-                   <number>10</number>
+                   <string/>
                   </property>
                   <property name="defaultText" >
                    <string/>
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="1" >
+                <item row="4" column="1" >
                  <widget class="XLineEdit" name="_companyName" >
                   <property name="text" >
                    <string/>
@@ -645,7 +630,7 @@
                   </property>
                  </widget>
                 </item>
-                <item row="3" column="0" >
+                <item row="5" column="0" >
                  <widget class="QLabel" name="_achSuffixLit" >
                   <property name="text" >
                    <string>Default File Suffix:</string>
@@ -655,7 +640,7 @@
                   </property>
                  </widget>
                 </item>
-                <item row="3" column="1" >
+                <item row="5" column="1" >
                  <widget class="QComboBox" name="_achSuffix" >
                   <property name="editable" >
                    <bool>true</bool>
@@ -677,6 +662,34 @@
                   </item>
                  </widget>
                 </item>
+                <item row="1" column="2" >
+                 <widget class="QLabel" name="label" >
+                  <property name="text" >
+                   <string>is a(n):</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="3" >
+                 <widget class="QRadioButton" name="_companyIdIsEIN" >
+                  <property name="text" >
+                   <string>EIN/TIN</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="3" >
+                 <widget class="QRadioButton" name="_companyIdIsDUNS" >
+                  <property name="text" >
+                   <string>DUNS Number</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="3" >
+                 <widget class="QRadioButton" name="_companyIdIsOther" >
+                  <property name="text" >
+                   <string>Other</string>
+                  </property>
+                 </widget>
+                </item>
                </layout>
               </widget>
              </item>
@@ -685,7 +698,7 @@
                <property name="orientation" >
                 <enum>Qt::Horizontal</enum>
                </property>
-               <property name="sizeHint" >
+               <property name="sizeHint" stdset="0" >
                 <size>
                  <width>40</width>
                  <height>20</height>
@@ -705,7 +718,7 @@
            <property name="sizeType" >
             <enum>QSizePolicy::Expanding</enum>
            </property>
-           <property name="sizeHint" >
+           <property name="sizeHint" stdset="0" >
             <size>
              <width>571</width>
              <height>391</height>
@@ -764,7 +777,7 @@
                <property name="sizeType" >
                 <enum>QSizePolicy::Expanding</enum>
                </property>
-               <property name="sizeHint" >
+               <property name="sizeHint" stdset="0" >
                 <size>
                  <width>34</width>
                  <height>20</height>
@@ -799,16 +812,7 @@
             <property name="spacing" >
              <number>5</number>
             </property>
-            <property name="leftMargin" >
-             <number>5</number>
-            </property>
-            <property name="topMargin" >
-             <number>5</number>
-            </property>
-            <property name="rightMargin" >
-             <number>5</number>
-            </property>
-            <property name="bottomMargin" >
+            <property name="margin" >
              <number>5</number>
             </property>
             <item>
@@ -869,7 +873,7 @@
                   <property name="sizeType" >
                    <enum>QSizePolicy::Expanding</enum>
                   </property>
-                  <property name="sizeHint" >
+                  <property name="sizeHint" stdset="0" >
                    <size>
                     <width>20</width>
                     <height>20</height>
@@ -896,16 +900,7 @@
             <bool>false</bool>
            </property>
            <layout class="QHBoxLayout" >
-            <property name="leftMargin" >
-             <number>5</number>
-            </property>
-            <property name="topMargin" >
-             <number>5</number>
-            </property>
-            <property name="rightMargin" >
-             <number>5</number>
-            </property>
-            <property name="bottomMargin" >
+            <property name="margin" >
              <number>5</number>
             </property>
             <item>
@@ -933,7 +928,7 @@
               <property name="orientation" >
                <enum>Qt::Horizontal</enum>
               </property>
-              <property name="sizeHint" >
+              <property name="sizeHint" stdset="0" >
                <size>
                 <width>40</width>
                 <height>20</height>
@@ -986,7 +981,7 @@
            <property name="sizeType" >
             <enum>QSizePolicy::Expanding</enum>
            </property>
-           <property name="sizeHint" >
+           <property name="sizeHint" stdset="0" >
             <size>
              <width>575</width>
              <height>31</height>
@@ -1034,7 +1029,7 @@
          <property name="sizeType" >
           <enum>QSizePolicy::Expanding</enum>
          </property>
-         <property name="sizeHint" >
+         <property name="sizeHint" stdset="0" >
           <size>
            <width>20</width>
            <height>20</height>
