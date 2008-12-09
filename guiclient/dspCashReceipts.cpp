@@ -61,6 +61,7 @@
 //#include <QStatusBar>
 #include <QMessageBox>
 #include <QWorkspace>
+#include <QSqlError>
 
 #include <metasql.h>
 #include "mqlutil.h"
@@ -220,5 +221,10 @@ void dspCashReceipts::sFillList()
   q = mql.toQuery(params);
   if (q.first())
     _arapply->populate(q);
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
