@@ -87,8 +87,8 @@ itemUOM::itemUOM(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_add, SIGNAL(clicked()), this, SLOT(sAdd()));
   connect(_remove, SIGNAL(clicked()), this, SLOT(sRemove()));
 
-  _fromValue->setValidator(omfgThis->qtyVal());
-  _toValue->setValidator(omfgThis->qtyVal());
+  _fromValue->setValidator(omfgThis->ratioVal());
+  _toValue->setValidator(omfgThis->ratioVal());
 
   _fromValue->setDouble(1);
   _toValue->setDouble(1);
