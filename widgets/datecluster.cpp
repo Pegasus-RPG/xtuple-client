@@ -391,7 +391,10 @@ void XDateEdit::showCalendar()
   if (DEBUG)
     qDebug("%s::showCalendar()",
             qPrintable(parent() ? parent()->objectName() : objectName()));
-  DCalendarPopup *cal = new DCalendarPopup(date(), this);
+  QDate d = date();
+  if(d.isNull() || d == _nullDate)
+    d = QDate::currentDate();
+  DCalendarPopup *cal = new DCalendarPopup(d, this);
   connect(cal, SIGNAL(newDate(const QDate &)), this, SIGNAL(newDate(const QDate &)));
   cal->show();
 }
