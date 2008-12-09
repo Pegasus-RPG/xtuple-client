@@ -242,7 +242,7 @@ void scriptEditor::populate()
 
 void scriptEditor::sImport()
 {
-  QString filename = QFileDialog::getOpenFileName(this, tr("Open File"), QString::null, tr("Script (*.script)"));
+  QString filename = QFileDialog::getOpenFileName(this, tr("Open File"), QString::null, tr("Script (*.script *.js)"));
   if(filename.isNull())
     return;
 
@@ -259,7 +259,7 @@ void scriptEditor::sImport()
 
 void scriptEditor::sExport()
 {
-  QString filename = QFileDialog::getSaveFileName( this, tr("Save File"), QString::null, tr("Script (*.script)"));
+  QString filename = QFileDialog::getSaveFileName( this, tr("Save File"), QString::null, tr("Script (*.script *.js)"));
   if(filename.isNull())
     return;
 
