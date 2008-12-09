@@ -68,6 +68,7 @@
        
        quitem_id,
        quitem_linenumber,
+       quitem_custpn, 
        item_number,
        item_descrip1,
        --The following 2 lines are new in 2.3
@@ -1246,7 +1247,7 @@ cntct, quhead, custinfo where cust_id = quhead_cust_id  and cust_cntct_id = cntc
     </field>
    </head>
    <foot>
-    <height>19</height>
+    <height>33.8828</height>
     <label>
      <rect>
       <x>155</x>
@@ -1267,8 +1268,8 @@ cntct, quhead, custinfo where cust_id = quhead_cust_id  and cust_cntct_id = cntc
      <rect>
       <x>290</x>
       <y>0</y>
-      <width>450</width>
-      <height>13</height>
+      <width>454.347</width>
+      <height>13.2412</height>
      </rect>
      <bottompad>10</bottompad>
      <font>
@@ -1281,6 +1282,42 @@ cntct, quhead, custinfo where cust_id = quhead_cust_id  and cust_cntct_id = cntc
      <data>
       <query>items</query>
       <column>quitem_memo</column>
+     </data>
+    </text>
+    <label>
+     <rect>
+      <x>196.342</x>
+      <y>15.3707</y>
+      <width>85.6497</width>
+      <height>15.665</height>
+     </rect>
+     <font>
+      <face>Sans Serif</face>
+      <size>8</size>
+      <weight>normal</weight>
+     </font>
+     <left/>
+     <top/>
+     <string>Customer P/N:</string>
+    </label>
+    <text>
+     <rect>
+      <x>289.596</x>
+      <y>15.5884</y>
+      <width>199</width>
+      <height>17.1</height>
+     </rect>
+     <bottompad>0</bottompad>
+     <font>
+      <face>Sans Serif</face>
+      <size>8</size>
+      <weight>bold</weight>
+     </font>
+     <left/>
+     <top/>
+     <data>
+      <query>items</query>
+      <column>quitem_custpn</column>
      </data>
     </text>
    </foot>

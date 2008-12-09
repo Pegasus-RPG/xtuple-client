@@ -2300,7 +2300,7 @@ void salesOrderItem::populate()
         "       stdcost(item_id) AS stdcost,"
         "       'O' AS coitem_status, quitem_quhead_id AS coitem_cohead_id,"
         "       '' AS coitem_order_type, -1 AS coitem_order_id,"
-        "       '' AS coitem_custpn,"
+        "       quitem_custpn AS coitem_custpn,"
         "       quitem_memo AS coitem_memo, quitem_createorder,"
         "       quitem_order_warehous_id,"
         "       quitem_linenumber AS linenumber,"
