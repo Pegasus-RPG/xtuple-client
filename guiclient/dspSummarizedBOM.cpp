@@ -63,6 +63,7 @@
 #include <metasql.h>
 #include <openreports.h>
 #include <parameter.h>
+#include "item.h"
 
 #include "storedProcErrorLookup.h"
 
@@ -71,6 +72,7 @@ dspSummarizedBOM::dspSummarizedBOM(QWidget* parent, const char* name, Qt::WFlags
 {
   setupUi(this);
 
+  connect(_bomitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_item, SIGNAL(valid(bool)), _revision, SLOT(setEnabled(bool)));
@@ -178,7 +180,7 @@ void dspSummarizedBOM::sFillList()
   if (!setParams(params))
     return;
 
-  MetaSQLQuery mql("SELECT *,"
+  MetaSQLQuery mql(" SELECT item_id AS itemid, *,"
                    "       'qtyper' AS bomdata_qtyper_xtnumericrole,"
                    "       CASE WHEN bomdata_expired THEN 'expired'"
                    "            WHEN bomdata_future  THEN 'future'"
@@ -186,7 +188,8 @@ void dspSummarizedBOM::sFillList()
                    "FROM summarizedBOM(<? value(\"item_id\") ?>,"
                    "                     <? value(\"revision_id\") ?>,"
                    "                     <? value(\"expiredDays\") ?>,"
-                   "                     <? value(\"futureDays\") ?>);" );
+                   "                     <? value(\"futureDays\") ?>)"
+                   "     JOIN item ON (bomdata_item_number=item_number);" );
   q = mql.toQuery(params);
   _bomitem->populate(q);
   if (q.lastError().type() != QSqlError::NoError)
@@ -194,4 +197,24 @@ void dspSummarizedBOM::sFillList()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+}
+
+void dspSummarizedBOM::sPopulateMenu(QMenu *pMenu)
+{
+  int menuItem;
+
+  menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
+  if (!_privileges->check("MaintainItemMasters"))
+  pMenu->setItemEnabled(menuItem, FALSE);
+  menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
+}
+
+void dspSummarizedBOM::sEdit()
+{
+  item::editItem(_bomitem->id());
+}
+
+void dspSummarizedBOM::sView()
+{
+  item::viewItem(_bomitem->id());
 }

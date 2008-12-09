@@ -63,6 +63,7 @@
 
 #include <metasql.h>
 #include <openreports.h>
+#include "item.h"
 
 dspIndentedBOM::dspIndentedBOM(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
@@ -71,6 +72,7 @@ dspIndentedBOM::dspIndentedBOM(QWidget* parent, const char* name, Qt::WFlags fl)
 
 //  (void)statusBar();
 
+  connect(_bomitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_item, SIGNAL(valid(bool)), _revision, SLOT(setEnabled(bool)));
@@ -185,7 +187,7 @@ void dspIndentedBOM::sFillList()
   if (! setParams(params))
     return;
 
-  MetaSQLQuery mql("SELECT *,"
+  MetaSQLQuery mql("SELECT bomdata_item_id AS itemid, *,"
                    "      'percent' AS bomdata_scrap_xtnumericrole,"
                    "       'qtyper' AS bomdata_qtyper_xtnumericrole,"
                    "       CASE WHEN COALESCE(bomdata_effective, startOfTime()) <="
@@ -212,4 +214,23 @@ void dspIndentedBOM::sFillList()
     return;
   }
   _bomitem->expandAll();
+}
+
+void dspIndentedBOM::sPopulateMenu(QMenu *pMenu)
+{
+  int menuItem;
+  menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
+  if (!_privileges->check("MaintainItemMasters"))
+  pMenu->setItemEnabled(menuItem, FALSE);
+  menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
+}
+
+void dspIndentedBOM::sEdit()
+{
+  item::editItem(_bomitem->id());
+}
+
+void dspIndentedBOM::sView()
+{
+  item::viewItem(_bomitem->id());
 }

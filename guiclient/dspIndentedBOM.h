@@ -75,6 +75,9 @@ public:
     virtual bool setParams(ParameterList &);
 
 public slots:
+    virtual void sEdit();
+    virtual void sView();
+    virtual void sPopulateMenu( QMenu * );
     virtual enum SetResponse set( const ParameterList & pParams );
     virtual void sPrint();
     virtual void sFillList();

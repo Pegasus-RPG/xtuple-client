@@ -62,12 +62,14 @@
 
 #include <metasql.h>
 #include <openreports.h>
+#include "item.h"
 
 dspSingleLevelBOM::dspSingleLevelBOM(QWidget* parent, const char* name, Qt::WFlags fl)
     : XWidget(parent, name, fl)
 {
   setupUi(this);
 
+  connect(_bomitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_item, SIGNAL(valid(bool)), _revision, SLOT(setEnabled(bool)));
@@ -168,7 +170,7 @@ void dspSingleLevelBOM::sFillList(int, bool)
     return;
 
   MetaSQLQuery mql(
-               "SELECT bomitem.*, item_number, uom_name,"
+               "SELECT bomitem_item_id AS itemid, bomitem.*, item_number, uom_name,"
                "       (item_descrip1 || ' ' || item_descrip2) AS itemdescription,"
                "       itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper) AS qtyper,"
                "       'qtyper' AS qtyper_xtnumericrole,"
@@ -206,4 +208,26 @@ void dspSingleLevelBOM::sFillList(int, bool)
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+}
+
+void dspSingleLevelBOM::sPopulateMenu(QMenu *pMenu)
+{
+  int menuItem;
+
+  menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
+  if (!_privileges->check("MaintainItemMasters"))
+    pMenu->setItemEnabled(menuItem, FALSE);
+
+  menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
+
+}
+
+void dspSingleLevelBOM::sEdit()
+{
+  item::editItem(_bomitem->id());
+}
+
+void dspSingleLevelBOM::sView()
+{
+  item::viewItem(_bomitem->id());
 }
