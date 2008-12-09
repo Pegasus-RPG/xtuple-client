@@ -605,6 +605,16 @@ int todoList::getProjectId()
 
   if (_todoList->currentItem()->altId() == 4)
     returnVal = _todoList->id();
+  else if (_todoList->currentItem()->altId() == 3)
+  {
+    XSqlQuery prj;
+    prj.prepare("SELECT prjtask_prj_id FROM prjtask WHERE (prjtask_id=:prjtask_id);");
+    prj.bindValue(":prjtask_id", _todoList->id());
+    if (prj.exec() && prj.first())
+     returnVal = prj.value("prjtask_prj_id").toInt();
+    else if (prj.lastError().type() != QSqlError::NoError)
+     systemError(this, prj.lastError().databaseText(), __FILE__, __LINE__);
+  }
   else if (! _todoList->currentItem()->text(8).isEmpty())
   {
     XSqlQuery prj;
