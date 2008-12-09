@@ -546,7 +546,7 @@ void dspFinancialReport::sFillListTrend()
     }
     if(_showDebits->isChecked())
     {
-      colname = "flrpt_debits)";
+      colname = "flrpt_debits";
       _layout->addColumn(tr("%1\n%2").arg(periods.at(c)).arg(_columnLabels.value(cDebits)),
                          _bigMoneyColumn, Qt::AlignRight, true, QString("r%1%2").arg(c).arg(colname));
       q1c += QString(",CASE WHEN(flgrp_summarize AND flgrp_showdelta) THEN r%1.%2 ELSE NULL END AS r%3%4, 'curr' AS r%5%6_xtnumericrole").arg(c).arg(colname).arg(c).arg(colname).arg(c).arg(colname);
