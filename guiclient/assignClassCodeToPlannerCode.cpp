@@ -57,55 +57,43 @@
 
 #include "assignClassCodeToPlannerCode.h"
 
-#include <qvariant.h>
+#include <QMessageBox>
+#include <QVariant>
 
-/*
- *  Constructs a assignClassCodeToPlannerCode as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 assignClassCodeToPlannerCode::assignClassCodeToPlannerCode(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+  : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  // signals and slots connections
+  connect(_assign, SIGNAL(clicked()), this, SLOT(sAssign()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
 
-    // signals and slots connections
-    connect(_assign, SIGNAL(clicked()), this, SLOT(sAssign()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-assignClassCodeToPlannerCode::~assignClassCodeToPlannerCode()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void assignClassCodeToPlannerCode::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void assignClassCodeToPlannerCode::init()
-{
   _classCode->setType(ParameterGroup::ClassCode);
 
   _planCode->setAllowNull(TRUE);
   _planCode->setType(XComboBox::PlannerCodes);
 }
 
+assignClassCodeToPlannerCode::~assignClassCodeToPlannerCode()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void assignClassCodeToPlannerCode::languageChange()
+{
+  retranslateUi(this);
+}
+
 void assignClassCodeToPlannerCode::sAssign()
 {
+  if(!_planCode->isValid())
+  {
+    QMessageBox::warning(this, tr("No Planner Code Selected"),
+      tr("You must select a Planner Code to assign before continuing.") );
+    return;
+  }
+
   QString sql( "UPDATE itemsite "
                "SET itemsite_plancode_id=:plancode_id "
                "FROM item "

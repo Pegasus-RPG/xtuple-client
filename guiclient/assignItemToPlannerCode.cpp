@@ -57,54 +57,42 @@
 
 #include "assignItemToPlannerCode.h"
 
-#include <qvariant.h>
+#include <QMessageBox>
+#include <QVariant>
 
-/*
- *  Constructs a assignItemToPlannerCode as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 assignItemToPlannerCode::assignItemToPlannerCode(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
-
+  setupUi(this);
 
     // signals and slots connections
-    connect(_item, SIGNAL(valid(bool)), _assign, SLOT(setEnabled(bool)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_assign, SIGNAL(clicked()), this, SLOT(sAssign()));
-    init();
-}
+  connect(_item, SIGNAL(valid(bool)), _assign, SLOT(setEnabled(bool)));
+  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(_assign, SIGNAL(clicked()), this, SLOT(sAssign()));
 
-/*
- *  Destroys the object and frees any allocated resources
- */
-assignItemToPlannerCode::~assignItemToPlannerCode()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void assignItemToPlannerCode::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void assignItemToPlannerCode::init()
-{
   _plannerCode->setAllowNull(TRUE);
   _plannerCode->setType(XComboBox::PlannerCodes);
 }
 
+assignItemToPlannerCode::~assignItemToPlannerCode()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void assignItemToPlannerCode::languageChange()
+{
+  retranslateUi(this);
+}
+
 void assignItemToPlannerCode::sAssign()
 {
+  if(!_plannerCode->isValid())
+  {
+    QMessageBox::warning(this, tr("No Planner Code Selected"),
+      tr("You must select a Planner Code to assign before continuing.") );
+    return;
+  }
+
   QString sql( "UPDATE itemsite "
                "SET itemsite_plancode_id=:plancode_id "
                "WHERE ( (itemsite_item_id=:item_id)" );
