@@ -69,6 +69,13 @@
 #include <QList>
 #include <QMenu>
 #include <QTabWidget>
+#include <QFileDialog>
+#include <QDesktopServices>
+#include <QUrl>
+#include <QFile>
+#include <QDir>
+#include <QIODevice>
+#include <QTextStream>
 
 #include <parameter.h>
 #include <metasql.h>
@@ -271,7 +278,7 @@ QWidget * ScriptToolbox::loadUi(const QString & screenName, QWidget * parent)
         tr("There was an error loading the UI Form from the database."));
     return 0;
   }
-  QWidget *ui = loader.load(&uiFile);
+  QWidget *ui = loader.load(&uiFile, parent);
   uiFile.close();
 
   return ui;
@@ -298,6 +305,150 @@ bool ScriptToolbox::printReport(const QString & name, const ParameterList & para
 bool ScriptToolbox::coreDisconnect(QObject * sender, const QString & signal, QObject * receiver, const QString & method)
 {
   return QObject::disconnect(sender, QString("2%1").arg(signal).toUtf8().data(), receiver, QString("1%1").arg(method).toUtf8().data());
+}
+
+QString ScriptToolbox::fileDialog(QWidget * parent, const QString & caption, const QString & dir, const QString & filter, int fileModeSel, int acceptModeSel)
+{
+  QStringList filters;
+  QString path;
+  QFileDialog::FileMode	 _fileMode;
+  QFileDialog::AcceptMode _acceptMode;
+
+  switch (fileModeSel)
+  {
+  case 1:
+   _fileMode = QFileDialog::ExistingFile;
+   break;
+  case 2:
+   _fileMode = QFileDialog::Directory;
+   break;
+  case 3:
+   _fileMode = QFileDialog::DirectoryOnly;
+   break;
+  case 4:
+   _fileMode = QFileDialog::ExistingFiles;
+   break;
+  default:
+   _fileMode = QFileDialog::AnyFile;
+  }
+
+  switch (acceptModeSel)
+  {
+  case 1:
+   _acceptMode = QFileDialog::AcceptSave;
+   break;
+  default:
+   _acceptMode = QFileDialog::AcceptOpen;
+  }
+
+  QFileDialog newdlg(parent, caption, dir);
+  newdlg.setFileMode(_fileMode);
+  newdlg.setAcceptMode(_acceptMode);
+  if (! filter.isEmpty())
+  {
+    filters << filter << tr("Any Files (*)");
+    newdlg.setFilters(filters);
+  }
+  if (newdlg.exec())  path = newdlg.selectedFiles().join(", ");
+  else path = "";
+
+  return path;
+}
+
+void ScriptToolbox::openUrl(const QString & fileUrl)
+{
+    //If url scheme is missing, we'll assume it is "file" for now.
+    QUrl url(fileUrl);
+    if (url.scheme().isEmpty())
+      url.setScheme("file");
+    QDesktopServices::openUrl(url);
+}
+
+bool ScriptToolbox::copyFile(const QString & oldName, const QString & newName)
+{
+   return QFile::copy(oldName, newName);
+}
+
+QString ScriptToolbox::getFileName(const QString & path)
+{
+    QFileInfo fi(path);
+    return fi.fileName();
+}
+
+bool ScriptToolbox::renameFile(const QString & oldName, const QString & newName)
+{
+   return QFile::rename(oldName, newName);
+}
+
+bool ScriptToolbox::removeFile(const QString & name)
+{
+   return QFile::remove(name);
+}
+
+bool ScriptToolbox::fileExists(const QString & name)
+{
+   return QFile::exists(name);
+}
+
+QString ScriptToolbox::textStreamRead(const QString & name)
+{
+  QFile file(name);
+  if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) return "error";
+  QTextStream stream(&file);
+  QString fileText = tr(file.readAll());
+  file.close();
+  return fileText;
+}
+
+bool ScriptToolbox::textStreamWrite(const QString & pName, const QString & WriteText)
+{
+   QString name = pName;
+   if(name.isEmpty() || WriteText.isEmpty()) return false;
+   QFileInfo fi(name);
+   if(fi.suffix().isEmpty())
+      name += ".txt";
+   QFile file(name);
+   if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) return false;
+   QTextStream out(&file);
+   out << WriteText;
+   file.close();
+   return true;
+}
+
+bool fileExists(const QString & name)
+{
+   QFile file(name);
+   return file.exists();
+}
+
+QString ScriptToolbox::getHomeDir()
+{
+   return QDir::homePath();
+}
+
+QString ScriptToolbox::getCurrentDir()
+{
+   return QDir::currentPath();
+}
+
+QString ScriptToolbox::rootPath()
+{
+   return QDir::rootPath();
+}
+
+
+bool ScriptToolbox::makePath(const QString & mkPath, const QString & rootPath)
+{
+   QDir dir(rootPath);
+
+   return dir.mkpath(mkPath);
+}
+
+bool ScriptToolbox::removePath(const QString & rmPath, const QString & rootPath)
+{
+   QDir dir(rootPath);
+
+   return dir.rmpath(rmPath);
 }
 
 int ScriptToolbox::messageBox(const QString & type, QWidget * parent, const QString & title, const QString & text, int buttons, int defaultButton)
@@ -378,7 +529,7 @@ void ScriptToolbox::populateXTreeWidget(QWidget * tree, QObject * pSql, bool pUs
   XTreeWidget *xt = qobject_cast<XTreeWidget*>(tree);
   ScriptQuery *sq = qobject_cast<ScriptQuery*>(pSql);
   if(xt)
-    xt->populate(sq->query());
+    xt->populate(sq->query(), pUseAltId);
 }
 
 // ParameterList Conversion functions

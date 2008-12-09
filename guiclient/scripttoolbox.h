@@ -148,6 +148,21 @@ class ScriptToolbox : public QObject
 
     bool coreDisconnect(QObject * sender, const QString & signal, QObject * receiver, const QString & method);
 
+    QString fileDialog(QWidget * parent, const QString & caption, const QString & dir, const QString & filter, int fileModeSel, int acceptModeSel);
+    void openUrl(const QString & fileUrl);
+    bool copyFile(const QString & oldName, const QString & newName);
+    QString getFileName(const QString & path);
+    bool renameFile(const QString & oldName, const QString & newName);
+    bool removeFile(const QString & name);
+    bool fileExists(const QString & name);
+    QString textStreamRead(const QString & name);
+    bool textStreamWrite(const QString & name, const QString & WriteText);
+    QString getHomeDir();
+    QString getCurrentDir();
+    QString rootPath();
+    bool makePath(const QString & mkPath, const QString & rootPath);
+    bool removePath(const QString & rmPath, const QString & rootPath);
+
     int messageBox(const QString & type, QWidget * parent, const QString & title, const QString & text, int buttons = 0x00000400, int defaultButton = 0x00000000);
   private:
     QScriptEngine * _engine;
