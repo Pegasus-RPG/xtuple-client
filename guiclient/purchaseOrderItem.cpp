@@ -182,7 +182,7 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
       if (q.value("vend_restrictpurch").toBool())
       {
         _item->setQuery( QString( "SELECT DISTINCT item_id, item_number, item_descrip1, item_descrip2,"
-                                  "                uom_name, item_type, item_config "
+                                  "                uom_name, item_type, item_config, item_active "
                                   "FROM item, itemsite, itemsrc, uom  "
                                   "WHERE ( (itemsite_item_id=item_id)"
                                   " AND (itemsrc_item_id=item_id)"
@@ -191,10 +191,10 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
                                   " AND (item_active)"
                                   " AND (itemsrc_active)"
                                   " AND (itemsrc_vend_id=%1) ) "
-                                  "ORDER BY item_number;" )
+                                  "ORDER BY item_number" )
                          .arg(q.value("vend_id").toInt()) );
         _item->setValidationQuery( QString( "SELECT DISTINCT item_id, item_number, item_descrip1, item_descrip2,"
-                                            "                uom_name, item_type, item_config "
+                                            "                uom_name, item_type, item_config, item_active "
                                             "FROM item, itemsite, itemsrc, uom  "
                                             "WHERE ( (itemsite_item_id=item_id)"
                                             " AND (itemsrc_item_id=item_id)"
@@ -203,8 +203,7 @@ enum SetResponse purchaseOrderItem::set(const ParameterList &pParams)
                                             " AND (item_active)"
                                             " AND (itemsrc_active)"
                                             " AND (itemsrc_vend_id=%1) "
-                                            " AND (itemsite_item_id=:item_id) ) "
-                                            "ORDER BY item_number;" )
+                                            " AND (itemsite_item_id=:item_id) ) ")
                                    .arg(q.value("vend_id").toInt()) );
       }
       else
