@@ -759,7 +759,7 @@ void initErrorLookupHash()
   { "distributeVoucherLine", -4, TR("Distribution would result in a negative "
                                     "amount. "
                                     "Please distribute manually."),     0, "" },
-  { "distributeVoucherLine", -4, TR("Item has multiple cost elements. "
+  { "distributeVoucherLine", -5, TR("Item has multiple cost elements. "
                                     "Please distribute manually."),     0, "" },
 
 
