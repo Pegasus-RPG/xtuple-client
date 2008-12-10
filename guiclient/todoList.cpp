@@ -173,10 +173,10 @@ void todoList::sPopulateMenu(QMenu *pMenu)
     pMenu->setItemEnabled(menuItem, editPriv);
   }
 
-  if (_todoList->altId() == 1 && !_todoList->currentItem()->text(8).isEmpty())
+  if (_todoList->altId() == 1 && !_todoList->currentItem()->text(9).isEmpty())
     pMenu->addSeparator();
   
-  if ((_todoList->altId() == 1 && !_todoList->currentItem()->text(8).isEmpty()) ||
+  if ((_todoList->altId() == 1 && !_todoList->currentItem()->text(9).isEmpty()) ||
        _todoList->altId() == 2)
   {
     menuItem = pMenu->insertItem(tr("Edit Incident"), this, SLOT(sEditIncident()), 0);
@@ -585,11 +585,11 @@ int todoList::getIncidentId()
 
   if (_todoList->currentItem()->altId() == 2)
     returnVal = _todoList->id();
-  else if (! _todoList->currentItem()->text(8).isEmpty())
+  else if (! _todoList->currentItem()->text(9).isEmpty())
   {
     XSqlQuery incdt;
     incdt.prepare("SELECT incdt_id FROM incdt WHERE (incdt_number=:number);");
-    incdt.bindValue(":number", _todoList->currentItem()->text(8).toInt());
+    incdt.bindValue(":number", _todoList->currentItem()->text(9).toInt());
     if (incdt.exec() && incdt.first())
      returnVal = incdt.value("incdt_id").toInt();
     else if (incdt.lastError().type() != QSqlError::NoError)
@@ -615,11 +615,11 @@ int todoList::getProjectId()
     else if (prj.lastError().type() != QSqlError::NoError)
      systemError(this, prj.lastError().databaseText(), __FILE__, __LINE__);
   }
-  else if (! _todoList->currentItem()->text(8).isEmpty())
+  else if (! _todoList->currentItem()->text(9).isEmpty())
   {
     XSqlQuery prj;
     prj.prepare("SELECT prj_id FROM prj WHERE (prj_number=:number);");
-    prj.bindValue(":number", _todoList->currentItem()->text(8));
+    prj.bindValue(":number", _todoList->currentItem()->text(9));
     if (prj.exec() && prj.first())
      returnVal = prj.value("prj_id").toInt();
     else if (prj.lastError().type() != QSqlError::NoError)
@@ -710,7 +710,7 @@ void todoList::sCustomerInfo()
 {
   XSqlQuery cust;
   cust.prepare("SELECT cust_id FROM cust WHERE (cust_number=:number);");
-  cust.bindValue(":number", _todoList->currentItem()->text(9));
+  cust.bindValue(":number", _todoList->currentItem()->text(10));
   if (cust.exec() && cust.first())
   {
     ParameterList params;
