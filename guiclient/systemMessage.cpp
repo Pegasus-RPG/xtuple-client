@@ -141,7 +141,7 @@ enum SetResponse systemMessage::set(ParameterList &pParams)
       _expiresTime->setEnabled(FALSE);
       _message->setReadOnly(TRUE);
       _close->setText("&Acknowlege");
-      _save->hide();
+      _save->setText("&Snooze");
 
       _close->setFocus();
     }
@@ -197,6 +197,16 @@ void systemMessage::sSave()
       else
         reject();
     }
+  }
+  else if (_mode == cAcknowledge)
+  {
+    q.prepare( "SELECT snoozeMessage(msguser_msg_id) "
+               "FROM msguser "
+               "WHERE (msguser_id=:msguser_id);" );
+    q.bindValue(":msguser_id", _msguserid);
+    q.exec();
+
+    accept();
   }
 }
 
