@@ -177,7 +177,11 @@ void woList::sFillList()
   QString sql;
 
   if (_sql.length())
+  {
     sql = _sql;
+    if (_warehouse->isSelected())
+      sql = QString("SELECT * FROM (%1) AS dummy WHERE (itemsite_warehous_id=:warehous_id)").arg(sql);
+  }
   else
   {
     sql = "SELECT wo_id,"

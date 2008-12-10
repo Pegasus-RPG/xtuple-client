@@ -82,14 +82,16 @@ dspJobCosting::dspJobCosting(QWidget* parent, const char* name, Qt::WFlags fl)
                   "       formatDate(wo_startdate) AS startdate,"
                   "       formatQtyPer(wo_qtyord) AS ordered,"
                   "       formatQtyPer(wo_qtyrcv) AS received, "
-                  "       formatQtyPer(noNeg(wo_qtyord - wo_qtyrcv)) AS balance "
+                  "       formatQtyPer(noNeg(wo_qtyord - wo_qtyrcv)) AS balance,"
+                  "       (item_descrip1 || ' ' || item_descrip2) AS descrip,"
+                  "       warehous_id "
                   "FROM wo, itemsite, item, warehous, uom "
                   "WHERE ((wo_itemsite_id=itemsite_id)"
                   " AND (itemsite_item_id=item_id)"
                   " AND (item_inv_uom_id=uom_id)"
                   " AND (itemsite_warehous_id=warehous_id)"
                   " AND (item_type = 'J')) "
-				  "ORDER BY formatWONumber(wo_id) DESC;");
+                  "ORDER BY formatWONumber(wo_id) DESC");
   
   QString _codecol;
   if (!_metrics->boolean("Routings"))
