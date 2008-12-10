@@ -72,6 +72,7 @@
                      qtyAllocated(itemsite_id, coitem_scheddate) AS allocated,
                      qtyOrdered(itemsite_id, coitem_scheddate) AS ordered,
                      qtyatshipping(coitem_id) AS atshipping,
+                     coitem_qtyreserved,
                      CASE WHEN(itemsite_useparams) THEN itemsite_reorderlevel ELSE 0.0 END AS reorderlevel 
 &lt;? if exists(showWoSupply) ?>,  
                      COALESCE(wo_id,-1) AS wo_id,
