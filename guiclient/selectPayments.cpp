@@ -451,7 +451,7 @@ void selectPayments::sFillList()
          "       apopen_duedate,"
          "       apopen_docdate,"
          "       (apopen_amount - apopen_paid - "
-         "                   COALESCE((SELECT SUM((checkitem_amount + checkitem_discount) / round(checkitem_curr_rate,5)) "
+         "                   COALESCE((SELECT SUM(checkitem_amount + checkitem_discount) "
          "                             FROM checkitem, checkhead "
          "                             WHERE ((checkitem_checkhead_id=checkhead_id) "
          "                              AND (checkitem_apopen_id=apopen_id) "
