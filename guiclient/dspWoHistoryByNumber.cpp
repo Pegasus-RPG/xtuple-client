@@ -221,6 +221,7 @@ void dspWoHistoryByNumber::sFillList()
   MetaSQLQuery mql = mqlLoad("workOrderHistory", "detail");
   ParameterList params;
   params.append("wo_number", _woNumber->text());
+  params.append("revControl", _metrics->boolean("RevControl"));
   if (_showOnlyTopLevel->isChecked())
     params.append("showOnlyTopLevel");
   q = mql.toQuery(params);
