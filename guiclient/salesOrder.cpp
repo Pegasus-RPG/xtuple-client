@@ -3068,7 +3068,8 @@ void salesOrder::sTaxDetail()
                     "  quhead_freight=:freight,"
                     "  quhead_quotedate=:date "
                     "WHERE (quhead_id=:head_id);");
-    taxq.bindValue(":taxauth",        _taxAuth->id());
+    if (_taxAuth->isValid())
+      taxq.bindValue(":taxauth",        _taxAuth->id());
     taxq.bindValue(":freight",        _freight->localValue());
     taxq.bindValue(":date",        _orderDate->date());
     taxq.bindValue(":head_id", _soheadid);
