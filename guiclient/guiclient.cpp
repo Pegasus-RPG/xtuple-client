@@ -415,12 +415,11 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
   // keep synchronized with user.ui.h
   _singleWindow = "";
   if (window.first())
-  {
     _singleWindow = window.value("usr_window").toString();
-    _showTopLevel = true;
-  }
   if (_singleWindow.isEmpty())
     initMenuBar();
+  else
+    _showTopLevel = true; // if we are in single level mode we want to run toplevel always
 
 //  Load the user indicated background image
   _splash->showMessage(tr("Loading the Background Image"), SplashTextAlignment, SplashTextColor);
