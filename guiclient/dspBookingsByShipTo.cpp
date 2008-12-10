@@ -80,7 +80,7 @@ dspBookingsByShipTo::dspBookingsByShipTo(QWidget* parent, const char* name, Qt::
 
   _soitem->addColumn(tr("S/O #"),            _orderColumn,    Qt::AlignLeft,   true,  "coitem_linenumber"  );
   _soitem->addColumn(tr("Ord. Date"),        _dateColumn,     Qt::AlignCenter, true,  "cohead_orderdate");
-  _soitem->addColumn(tr("Item Number"),      _itemColumn,     Qt::AlignLeft,   true,  "item_number"  );
+  _soitem->addColumn(tr("Customer/Item Number"),    _itemColumn,     Qt::AlignLeft,   true,  "item_number"  );
   _soitem->addColumn(tr("Description"),      -1,              Qt::AlignLeft,   true,  "itemdescription"  );
   _soitem->addColumn(tr("Ordered"),          _qtyColumn,      Qt::AlignRight,  true,  "coitem_qtyord" );
   _soitem->addColumn(tr("Unit Price"),       _priceColumn,    Qt::AlignRight,  true,  "coitem_price" );
