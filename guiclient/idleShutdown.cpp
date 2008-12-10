@@ -57,52 +57,29 @@
 
 #include "idleShutdown.h"
 
-#include <qvariant.h>
+#include <QVariant>
+#include <QTimerEvent>
 
-/*
- *  Constructs a idleShutdown as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 idleShutdown::idleShutdown(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-
-    // signals and slots connections
-    connect(_btnCancel, SIGNAL(pressed()), this, SLOT(reject()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-idleShutdown::~idleShutdown()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void idleShutdown::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QTimerEvent>
-
-void idleShutdown::init()
-{
   _secsRemaining = 60;
-  _count->setText(QString::number(_secsRemaining));
+  _countMessage = _count->text();
+  _count->setText(_countMessage.arg(_secsRemaining));
 
   startTimer(1000);
+}
+
+idleShutdown::~idleShutdown()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void idleShutdown::languageChange()
+{
+  retranslateUi(this);
 }
 
 enum SetResponse idleShutdown::set(ParameterList &pParams)
@@ -122,7 +99,7 @@ void idleShutdown::timerEvent(QTimerEvent*)
   _secsRemaining--;
 
   if (_secsRemaining > 1)
-    _count->setText(QString::number(_secsRemaining));
+    _count->setText(_countMessage.arg(_secsRemaining));
   else
     accept();
 }
