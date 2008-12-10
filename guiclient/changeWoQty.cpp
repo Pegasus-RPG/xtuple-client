@@ -129,6 +129,9 @@ void changeWoQty::sChangeQty()
 
   double    newQty = _newQtyOrdered->toDouble();
 
+  if(newQty == 0 && QMessageBox::question(this, tr("Zero Qty. Value"), tr("The current value specified is 0. Are you sure you want to continue?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::No)
+    return;
+
   q.prepare( "SELECT validateOrderQty(wo_itemsite_id, :qty, TRUE) AS qty "
              "FROM wo "
              "WHERE (wo_id=:wo_id);" );
