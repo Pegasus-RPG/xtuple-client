@@ -132,8 +132,7 @@ WHERE ((wo_status&lt;>'C')
   AND  (womatl_wo_id=wo_id)
   AND  (womatlis.itemsite_item_id=&lt;? value("item_id") ?>)
   AND  (womatlis.itemsite_warehous_id=&lt;? value("warehous_id") ?>)
-  AND  (womatl_itemsite_id=womatlis.itemsite_id)
-  AND  (item_type IN ('P', 'M', 'C', 'O')) )
+  AND  (womatl_itemsite_id=womatlis.itemsite_id) )
 
 UNION
 SELECT pohead_id AS orderid, poitem_id AS altorderid,
