@@ -262,9 +262,9 @@ class OpenMFGCustInfoAction : public CustInfoAction
       while(w && !w->isWindow())
         w = w->parentWidget();
       if(w && w->isModal())
-	  {
+      {
     	params.append("modal");
-        dspCustomerInformation * newdlg = new dspCustomerInformation(w);
+        dspCustomerInformation * newdlg = new dspCustomerInformation(w, Qt::Window);
         newdlg->set(params);
         omfgThis->handleNewWindow(newdlg);
       }
