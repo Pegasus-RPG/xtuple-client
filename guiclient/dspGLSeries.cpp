@@ -198,7 +198,7 @@ void dspGLSeries::sFillList()
                    "       'curr' AS debit_xtnumericrole,"
                    "       'curr' AS credit_xtnumericrole "
                    "FROM (SELECT DISTINCT "
-                   "       -1 AS gltrans_id, gltrans_sequence, gltrans_date, "
+                   "       gltrans_sequence, -1 AS gltrans_id, gltrans_date, "
                    "       gltrans_source, gltrans_journalnumber,"
                    "       gltrans_doctype, '' AS gltrans_docnumber,"
                    "       firstLine(gltrans_notes) AS account,"
@@ -218,7 +218,7 @@ void dspGLSeries::sFillList()
                    "<? endif ?>"
                    ")"
                    "UNION "
-                   "SELECT gltrans_id, gltrans_sequence, gltrans_date, "
+                   "SELECT gltrans_sequence, gltrans_id, gltrans_date, "
                    "       NULL, NULL,"
                    "       NULL, gltrans_docnumber,"
                    "       (formatGLAccount(accnt_id) || ' - ' || accnt_descrip) AS account,"
@@ -243,7 +243,7 @@ void dspGLSeries::sFillList()
                    "ORDER BY gltrans_date, gltrans_sequence,"
                    "         xtindentrole, gltrans_amount;");
   q = mql.toQuery(params);
-  _gltrans->populate(q);
+  _gltrans->populate(q, true);
   if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
