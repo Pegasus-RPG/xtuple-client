@@ -102,6 +102,11 @@ enum SetResponse prepareCheckRun::set(const ParameterList &pParams)
 
 void prepareCheckRun::sPrint()
 {
+  if(!_bankaccnt->isValid())
+  {
+    QMessageBox::warning(this, tr("No Bank Account"), tr("You must select a Bank Account before you may continue."));
+    return;
+  }
 
   q.prepare("SELECT createChecks(:bankaccnt_id, :checkDate) AS result;");
   q.bindValue(":bankaccnt_id", _bankaccnt->id());
