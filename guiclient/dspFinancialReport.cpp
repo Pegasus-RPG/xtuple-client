@@ -768,7 +768,7 @@ void dspFinancialReport::sFillPeriods()
   else if (_quarter->isChecked())
   {
     _periods->populate("SELECT LAST(period_id),"
-                       "('Q' || period_quarter || '-' || EXTRACT(year from yearperiod_end)) AS f_name "
+                       "('Q' || period_quarter || '-' || EXTRACT(year from yearperiod_end)) AS f_name,"
                        "'' AS alt_name "
                        "FROM "
             " (SELECT period_id, period_quarter, yearperiod_end "
