@@ -110,6 +110,7 @@ apWorkBench::apWorkBench(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_query, SIGNAL(clicked()), _credits, SLOT(sFillList()));
   connect(_query, SIGNAL(clicked()), _selectedPayments, SLOT(sFillList()));
   connect(_query, SIGNAL(clicked()), _checkRun, SLOT(sFillList()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sCalculateTotalOpen()));
 
   sCalculateTotalOpen();
 }
@@ -172,7 +173,7 @@ void apWorkBench::sCalculateTotalOpen()
   
   MetaSQLQuery due(
          "SELECT SUM(apopen_amount - apopen_paid - "
-         "                      COALESCE((SELECT SUM((checkitem_amount + checkitem_discount) / round(checkitem_curr_rate,5)) "
+         "                      COALESCE((SELECT SUM(checkitem_amount + checkitem_discount) "
          "                                FROM checkitem, checkhead "
          "                                WHERE ((checkitem_checkhead_id=checkhead_id) "
          "                                   AND (checkitem_apopen_id=apopen_id) "
