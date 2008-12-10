@@ -262,11 +262,18 @@ void alarmMaint::sGetUser(int pUsrId)
   q.exec();
   if (q.first())
   {
+    bool recipientFound = false;
     QString recipient;
     recipient = _eventRecipient->text();
+    for (int pcounter = 0; pcounter < 10; pcounter++)
+    {
+      if (recipient.section(",", pcounter, pcounter) == q.value("usr_username").toString())
+        recipientFound = true;
+    }
+      
     if (recipient.length() == 0)
       recipient = q.value("usr_username").toString();
-    else if (recipient != q.value("usr_username").toString())
+    else if (!recipientFound)
     {
       recipient += ",";
       recipient += q.value("usr_username").toString();
@@ -274,10 +281,17 @@ void alarmMaint::sGetUser(int pUsrId)
     _eventRecipient->setText(recipient);
     _sysmsgRecipient->setText(recipient);
 
+    recipientFound = false;
     recipient = _emailRecipient->text();
+    for (int pcounter = 0; pcounter < 10; pcounter++)
+    {
+      if (recipient.section(",", pcounter, pcounter) == q.value("usr_email").toString())
+        recipientFound = true;
+    }
+      
     if (recipient.length() == 0)
       recipient = q.value("usr_email").toString();
-    else if (recipient != q.value("usr_email").toString())
+    else if (!recipientFound)
     {
       recipient += ",";
       recipient += q.value("usr_email").toString();
