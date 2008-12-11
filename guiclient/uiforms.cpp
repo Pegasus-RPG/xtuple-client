@@ -79,7 +79,7 @@ uiforms::uiforms(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _uiform->addColumn(tr("Name"),   _itemColumn, Qt::AlignLeft,  true, "uiform_name");
   _uiform->addColumn(tr("Description"),     -1, Qt::AlignLeft,  true, "uiform_notes");
-  _uiform->addColumn(tr("Order"),    _ynColumn, Qt::AlignCenter,true, "uiforom_order");
+  _uiform->addColumn(tr("Order"),    _ynColumn, Qt::AlignCenter,true, "uiform_order");
   _uiform->addColumn(tr("Enabled"),  _ynColumn, Qt::AlignCenter,true, "uiform_enabled");
   _uiform->addColumn(tr("Package"),_itemColumn, Qt::AlignLeft,  false,"nspname");
 
