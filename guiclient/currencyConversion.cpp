@@ -187,6 +187,13 @@ void currencyConversion::_sSave()
       _currency->setFocus();
       return;
   }
+
+  if (_rate->toDouble() == 0)
+  {
+    QMessageBox::warning(this, tr("No Rate Specified"),
+      tr("You must specify a Rate that is not zero.") );
+    return;
+  }
   
   if (!_dateCluster->startDate().isValid())
   {
