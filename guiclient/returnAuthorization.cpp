@@ -400,6 +400,8 @@ bool returnAuthorization::sSave(bool partial)
 
   if (_authNumber->text().isEmpty())
   {
+    if(partial && !isVisible())
+      return false;
     QMessageBox::critical( this, tr("Cannot Save Return Authorization"),
       tr("You may not save this Return Authorization until you have entered a valid Authorization Number.") );
     _authNumber->setFocus();
