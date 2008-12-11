@@ -166,9 +166,9 @@ itemAvailabilityWorkbench::itemAvailabilityWorkbench(QWidget* parent, const char
   _bomitem->setRootIsDecorated(TRUE);
   _bomitem->addColumn(tr("Seq #"),       _itemColumn, Qt::AlignLeft,  true, "bomdata_bomwork_seqnumber");
   _bomitem->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft,  true, "bomdata_item_number");
-  _bomitem->addColumn(tr("Description"),          -1, Qt::AlignLeft,  true, "bomdata_item_descrip");
+  _bomitem->addColumn(tr("Description"),          -1, Qt::AlignLeft,  true, "bomdata_itemdescription");
   _bomitem->addColumn(tr("UOM"),          _uomColumn, Qt::AlignCenter,true, "bomdata_uom_name");
-  _bomitem->addColumn(tr("Ext. Qty. Per"),_qtyColumn, Qt::AlignRight, true, "bomdata_bomwork_qtyper");
+  _bomitem->addColumn(tr("Ext. Qty. Per"),_qtyColumn, Qt::AlignRight, true, "bomdata_qtyper");
   _bomitem->addColumn(tr("Scrap %"),    _prcntColumn, Qt::AlignRight, true, "bomdata_scrap");
   _bomitem->addColumn(tr("Effective"),   _dateColumn, Qt::AlignCenter,true, "bomdata_effective");
   _bomitem->addColumn(tr("Expires"),     _dateColumn, Qt::AlignCenter,true, "bomdata_expires");
@@ -493,14 +493,15 @@ void itemAvailabilityWorkbench::sFillListCosted()
                     "                     -1"
                     "            ELSE bomdata_item_id"
                     "       END AS altid,"
-                    "       *,"
-                    "<? if exists(\"useStandardCosts\") ?>"
-                    "       bomdata_stdunitcost AS unitcost,"
+                    "       *, "
+                    "<? if exists(\"useStandardCosts\") ?> "
+                    "       bomdata_stdunitcost AS unitcost, "
                     "       bomdata_stdextendedcost AS extendedcost, "
-                    "<? elseif exists(\"useActualCosts\") ?>"
-                    "       bomdata_actunitcost AS unitcost,"
+                    "<? elseif exists(\"useActualCosts\") ?> "
+                    "       bomdata_actunitcost AS unitcost, "
                     "       bomdata_actextendedcost AS extendedcost, "
-                    "<? endif ?>"
+                    "<? endif ?> "
+                    "       bomdata_qtyper, "
                     "       'qtyper' AS bomdata_qtyper_xtnumericrole,"
                     "       'percent' AS bomdata_scrap_xtnumericrole,"
                     "       'cost' AS unitcost_xtnumericrole,"
@@ -510,7 +511,7 @@ void itemAvailabilityWorkbench::sFillListCosted()
                     "       CASE WHEN bomdata_expired THEN 'expired'"
                     "            WHEN bomdata_future  THEN 'future'"
                     "       END AS qtforegroundrole,"
-                    "       bomdata_bomwork_level - 1 AS xtindentrole "
+                    "       bomdata_bomwork_level - 1 AS xtindentrole, bomdata_itemdescription "
                     "FROM indentedbom(<? value(\"item_id\") ?>,"
                     "                 <? value(\"revision_id\") ?>,0,0)");
   ParameterList params;
