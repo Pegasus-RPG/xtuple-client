@@ -9,15 +9,10 @@
  <bottommargin>100</bottommargin>
  <rightmargin>100</rightmargin>
  <leftmargin>100</leftmargin>
- <querysource>
+ <querysource loadFromDb="true" >
   <name>exchangeRates</name>
-  <sql>SELECT
-	currConcat(curr_id) AS currConcat,
-	curr_rate,
-	curr_effective, curr_expires
-FROM	curr_symbol NATURAL JOIN curr_rate
-WHERE	curr_base = FALSE
-ORDER BY currConcat, curr_effective; </sql>
+  <mqlgroup>currencyConversions</mqlgroup>
+  <mqlname>detail</mqlname>
  </querysource>
  <querysource>
   <name>baseCurrency</name>
@@ -288,7 +283,7 @@ ORDER BY currConcat;</sql>
     <top/>
     <data>
      <query>exchangeRates</query>
-     <column>currConcat</column>
+     <column>f_curr</column>
     </data>
    </field>
    <field>
@@ -326,7 +321,7 @@ ORDER BY currConcat;</sql>
     <top/>
     <data>
      <query>exchangeRates</query>
-     <column>curr_rate</column>
+     <column>rate</column>
     </data>
    </field>
    <field>
