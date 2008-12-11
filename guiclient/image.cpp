@@ -188,42 +188,46 @@ void image::sSave()
 {
   XSqlQuery newImage;
 
+  if (__image.isNull())
+  {
+    QMessageBox::warning(this, tr("No Image Specified"),
+      tr("You must load an image before you may save this record.") );
+    return;
+  }
+
   if (_mode == cNew)
   {
-    if (!__image.isNull())
-    {
-      XSqlQuery imageid("SELECT NEXTVAL('image_image_id_seq') AS _image_id");
-      if (imageid.first())
-        _imageid = imageid.value("_image_id").toInt();
+    XSqlQuery imageid("SELECT NEXTVAL('image_image_id_seq') AS _image_id");
+    if (imageid.first())
+      _imageid = imageid.value("_image_id").toInt();
 //  ToDo
- 
-      QImageWriter imageIo;
-      QBuffer  imageBuffer;
-      QString  imageString;
 
-      imageBuffer.open(QIODevice::ReadWrite);
-      imageIo.setDevice(&imageBuffer);
-      imageIo.setFormat("PNG");
+    QImageWriter imageIo;
+    QBuffer  imageBuffer;
+    QString  imageString;
 
-      if (!imageIo.write(__image))
-      {
-//  ToDo - should issue an error here
-        reject();
-        return;
-      }
+    imageBuffer.open(QIODevice::ReadWrite);
+    imageIo.setDevice(&imageBuffer);
+    imageIo.setFormat("PNG");
 
-      imageBuffer.close();
-      imageString = QUUEncode(imageBuffer);
-
-      newImage.prepare( "INSERT INTO image "
-                        "(image_id, image_name, image_descrip, image_data) "
-                        "VALUES "
-                        "(:image_id, :image_name, :image_descrip, :image_data);" );
-      newImage.bindValue(":image_id", _imageid);
-      newImage.bindValue(":image_name", _name->text());
-      newImage.bindValue(":image_descrip", _descrip->toPlainText());
-      newImage.bindValue(":image_data", imageString);
+    if (!imageIo.write(__image))
+    {
+      QMessageBox::critical(this, tr("Error Saving Image"),
+        tr("There was an error trying to save the image.") );
+      return;
     }
+
+    imageBuffer.close();
+    imageString = QUUEncode(imageBuffer);
+
+    newImage.prepare( "INSERT INTO image "
+                      "(image_id, image_name, image_descrip, image_data) "
+                      "VALUES "
+                      "(:image_id, :image_name, :image_descrip, :image_data);" );
+    newImage.bindValue(":image_id", _imageid);
+    newImage.bindValue(":image_name", _name->text());
+    newImage.bindValue(":image_descrip", _descrip->toPlainText());
+    newImage.bindValue(":image_data", imageString);
   }
   else if (_mode == cEdit)
   {
