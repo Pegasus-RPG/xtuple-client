@@ -177,10 +177,7 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
       }
     }
     else
-    {
-      _tab->removePage(_tab->page(9));
-      _tab->removePage(_tab->page(8));
-    }
+      _tab->removePage(_tab->page(_tab->indexOf(_transmitTab)));
     
     //If not multi-warehouse hide whs control
     if (!_metrics->boolean("MultiWhs"))
