@@ -204,14 +204,11 @@ void dspCheckRegister::sFillList()
 	
   QString tots("SELECT SUM(currToCurr(checkhead_curr_id, bankaccnt_curr_id,"
                "           checkhead_amount, checkhead_checkdate)) AS amount, "
-               "currConcat(bankaccnt_curr_id) AS currAbbr "
-               "FROM bankaccnt, checkhead LEFT OUTER JOIN "
-               "checkrecip ON ((checkhead_recip_id=checkrecip_id) "
-               "AND  (checkhead_recip_type=checkrecip_type)) "
-               "WHERE ((NOT checkhead_void) "
-               "AND   (checkhead_checkdate BETWEEN <? value(\"startDate\") ?> AND <? value(\"endDate\") ?> ) "
-               "AND   (bankaccnt_id=checkhead_bankaccnt_id) "
-               "AND   (checkhead_bankaccnt_id=<? value(\"bankaccnt_id\") ?>)  "
+               "       currConcat(bankaccnt_curr_id) AS currAbbr "
+               "  FROM bankaccnt LEFT OUTER JOIN"
+               "       checkhead ON ((bankaccnt_id=checkhead_bankaccnt_id)"
+               "                AND  (checkhead_checkdate BETWEEN <? value(\"startDate\") ?> AND <? value(\"endDate\") ?> ) "
+               "                AND  (NOT checkhead_void)"
                " <? if exists(\"check_number\") ?>"
                " AND   (CAST(checkhead_number AS text) ~ <? value(\"check_number\") ?>)"
                " <? endif ?>"
@@ -229,6 +226,10 @@ void dspCheckRegister::sFillList()
                " AND   (checkhead_recip_id = <? value(\"recip_id\") ?> )"
                " <? endif ?>"
                " <? endif ?>)"
+               "       LEFT OUTER JOIN "
+               "       checkrecip ON ((checkhead_recip_id=checkrecip_id) "
+               "                 AND  (checkhead_recip_type=checkrecip_type)) "
+               " WHERE(bankaccnt_id=<? value(\"bankaccnt_id\") ?>)  "
                "GROUP BY bankaccnt_curr_id;" );
   MetaSQLQuery totm(tots);
   q = totm.toQuery(params);	// reused from above
