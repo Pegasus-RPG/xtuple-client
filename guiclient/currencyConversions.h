@@ -83,6 +83,7 @@ public slots:
     virtual void sFillList();
     virtual void sPopulateMenu( QMenu * pMenu );
     virtual void setBaseCurrency();
+    virtual bool setParams(ParameterList &);
 
 protected slots:
     virtual void languageChange();

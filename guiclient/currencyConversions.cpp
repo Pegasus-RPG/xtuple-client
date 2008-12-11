@@ -62,8 +62,11 @@
 #include <QSqlError>
 #include <QVariant>
 
+#include <openreports.h>
+#include <metasql.h>
+#include "mqlutil.h"
+
 #include "currencyConversion.h"
-#include "openreports.h"
 #include "currency.h"
 #include "datecluster.h"
 #include "xcombobox.h"
@@ -193,6 +196,8 @@ void currencyConversions::sView()
 void currencyConversions::sPrint()
 {
     ParameterList params;
+    if (! setParams(params))
+      return;
     
     orReport report("CurrencyConversionList", params);
     if (report.isValid())
@@ -232,41 +237,23 @@ void currencyConversions::sNewCurrency()
     _queryParameters->repopulateSelected();
 }
 
+bool currencyConversions::setParams(ParameterList &params)
+{
+  if (_metrics->value("CurrencyExchangeSense").toInt() == 1)
+    params.append("invert");
+  _queryParameters->appendValue(params);
+  _dateCluster->appendValue(params);
+  
+  return true;
+}
+
 void currencyConversions::sFillList()
 {
-  QString inverter("");
-
-  if (_metrics->value("CurrencyExchangeSense").toInt() == 1)
-      inverter = "1 / ";
-
-  // the N in round(%1 curr_rate, N) has to be SCALE - 1 of curr_rate's
-  // NUMERIC(p, SCALE) type definition
-  QString sql = QString("SELECT curr_rate_id, currConcat(curr_id) AS f_curr, "
-                        "    ROUND(%1 curr_rate, 5) AS rate, curr_effective, "
-                        "    curr_expires "
-                        "FROM curr_symbol NATURAL JOIN curr_rate "
-                        "WHERE curr_base = FALSE "
-                        "  AND curr_expires >= :startDate "
-                        "  AND curr_effective <= :endDate ").arg(inverter);
-
-  if (_queryParameters->isSelected())
-  {
-      QString intString;
-      sql+= " AND curr_id = :curr_id ";
-  }
-  else if (_queryParameters->isPattern())
-  {
-      sql += " AND currConcat(curr_id) ~ :currConcat_pattern ";
-  }
-
-  sql += " ORDER BY f_curr, curr_effective, curr_expires ";
-  
-  q.prepare(sql);
-
-  _queryParameters->bindValue(q);
-  _dateCluster->bindValue(q);
-
-  q.exec();
+  MetaSQLQuery mql = mqlLoad("currencyConversions", "detail");
+  ParameterList params;
+  if (! setParams(params))
+    return;
+  q = mql.toQuery(params);
   _conversionRates->populate(q);
   if (q.lastError().type() != QSqlError::NoError)
   {
