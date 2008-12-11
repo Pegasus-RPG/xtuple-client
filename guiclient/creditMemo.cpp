@@ -1066,6 +1066,17 @@ void creditMemo::closeEvent(QCloseEvent *pEvent)
 {
   if ( (_mode == cNew) && (_cmheadid != -1) )
   {
+    q.prepare("SELECT deleteCreditMemo(:cmhead_id) AS result;");
+    q.bindValue(":cmhead_id", _cmheadid);
+    q.exec();
+    if (q.first())
+      ; // TODO: add error checking when function returns int instead of boolean
+    else if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+
     if ( (_metrics->value("CMNumberGeneration") == "A") || 
          (_metrics->value("CMNumberGeneration") == "O")   )
       q.prepare("SELECT releaseCmNumber(:number) AS result;");
@@ -1075,17 +1086,6 @@ void creditMemo::closeEvent(QCloseEvent *pEvent)
     q.bindValue(":number", _memoNumber->text());
     q.exec();
     if (q.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
-
-    q.prepare("SELECT deleteCreditMemo(:cmhead_id) AS result;");
-    q.bindValue(":cmhead_id", _cmheadid);
-    q.exec();
-    if (q.first())
-      ; // TODO: add error checking when function returns int instead of boolean
-    else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
