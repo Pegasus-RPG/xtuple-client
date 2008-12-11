@@ -169,7 +169,7 @@ enum SetResponse creditMemo::set(const ParameterList &pParams)
 		"    :cmhead_id, :cmhead_number, :cmhead_docdate, false"
 		");");
       q.bindValue(":cmhead_id",		_cmheadid);
-      q.bindValue(":cmhead_number",	_memoNumber->text());
+      q.bindValue(":cmhead_number",	(!_memoNumber->text().isEmpty() ? _memoNumber->text() : QString("tmp%1").arg(_cmheadid)));
       q.bindValue(":cmhead_docdate",	_memoDate->date());
       q.exec();
       if (q.lastError().type() != QSqlError::NoError)
