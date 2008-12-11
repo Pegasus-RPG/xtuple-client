@@ -86,6 +86,7 @@ unpostedInvoices::unpostedInvoices(QWidget* parent, const char* name, Qt::WFlags
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
   connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _invchead->addColumn(tr("Invoice #"),  _orderColumn, Qt::AlignLeft,   true,  "invchead_invcnumber" );
   _invchead->addColumn(tr("Prnt'd"),     _orderColumn, Qt::AlignCenter, true,  "invchead_printed" );

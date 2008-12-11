@@ -60,6 +60,13 @@
           </widget>
          </item>
          <item>
+          <widget class="QPushButton" name="_query" >
+           <property name="text" >
+            <string>&amp;Query</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <layout class="QVBoxLayout" >
            <property name="spacing" >
             <number>0</number>
@@ -212,12 +219,14 @@
  </customwidgets>
  <tabstops>
   <tabstop>_invchead</tabstop>
+  <tabstop>_printJournal</tabstop>
   <tabstop>_new</tabstop>
   <tabstop>_edit</tabstop>
   <tabstop>_view</tabstop>
   <tabstop>_delete</tabstop>
   <tabstop>_print</tabstop>
   <tabstop>_post</tabstop>
+  <tabstop>_query</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
  <resources/>
