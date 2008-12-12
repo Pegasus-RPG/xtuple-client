@@ -221,6 +221,20 @@ bool itemPricingSchedule::sSave(bool p)
     return false;
   }
 
+  q.prepare("SELECT ipshead_id"
+            "  FROM ipshead"
+            " WHERE ((ipshead_name=:ipshead_name)"
+            "   AND  (ipshead_id != :ipshead_id))");
+  q.bindValue(":ipshead_id", _ipsheadid);
+  q.bindValue(":ipshead_name", _name->text());
+  q.exec();
+  if(q.first())
+  {
+    QMessageBox::warning(this, tr("Pricing Schedule Already Exists"),
+                      tr("A Pricing Schedule with the entered Name already exists."));
+    return false;
+  }
+
   if (_mode == cNew) 
     q.prepare( "INSERT INTO ipshead "
                "( ipshead_id, ipshead_name, ipshead_descrip,"
