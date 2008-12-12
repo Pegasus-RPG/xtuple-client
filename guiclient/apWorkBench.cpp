@@ -172,14 +172,14 @@ void apWorkBench::sCalculateTotalOpen()
   }
   
   MetaSQLQuery due(
-         "SELECT SUM(apopen_amount - apopen_paid - "
+         "SELECT SUM((apopen_amount - apopen_paid - "
          "                      COALESCE((SELECT SUM(checkitem_amount + checkitem_discount) "
          "                                FROM checkitem, checkhead "
          "                                WHERE ((checkitem_checkhead_id=checkhead_id) "
          "                                   AND (checkitem_apopen_id=apopen_id) "
          "                                   AND (NOT checkhead_void) "
          "                                   AND (NOT checkhead_posted)) "
-         "                               ), 0) / round(apopen_curr_rate,5)) AS openamount_base,"
+         "                               ), 0)) / round(apopen_curr_rate,5)) AS openamount_base,"
          "       SUM(COALESCE(currToBase(apselect_curr_id, apselect_amount,"
          "                               CURRENT_DATE), 0)) AS selected_base "
          "FROM vend, apopen"
