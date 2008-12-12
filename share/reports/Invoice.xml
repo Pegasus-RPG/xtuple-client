@@ -60,7 +60,7 @@ ORDER BY ordernumber;</sql>
        CASE WHEN (invcitem_custpn != '' AND itemalias_usedescrip=TRUE) THEN itemalias_descrip2
             ELSE item_descrip2
        END AS descrip2,
-       formatPrice(invcitem_price / COALESCE(invcitem_price_invuomratio,1)) AS f_unitprice,
+       formatPrice(invcitem_qty_invuomratio * invcitem_price / COALESCE(invcitem_price_invuomratio,1)) AS f_unitprice,
        formatMoney(round((invcitem_billed * invcitem_qty_invuomratio) * (invcitem_price / COALESCE(invcitem_price_invuomratio,1)),2)) AS f_extprice,
        invcitem_notes,
        getInvcitemLotSerial(invcitem_id) AS lotserial,
