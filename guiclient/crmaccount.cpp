@@ -232,6 +232,8 @@ crmaccount::crmaccount(QWidget* parent, const char* name, Qt::WFlags fl)
   
   _primary->setInitialsVisible(false);
   _secondary->setInitialsVisible(false);
+  _primary->setListVisible(true);
+  _secondary->setListVisible(true);
 }
 
 crmaccount::~crmaccount()
