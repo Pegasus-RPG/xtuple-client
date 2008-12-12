@@ -2993,6 +2993,14 @@ void salesOrder::dropEvent(QDropEvent *pEvent)
       if (target.contains(","))
         target = target.left(target.find(","));
 
+      if( !_saved && ((_mode == cNew) || (_mode == cNewQuote)) )
+      {
+        if(!save(true))
+          return;
+        else
+          populate();
+      }
+
       ParameterList params;
       params.append("sohead_id", _soheadid);
       params.append("cust_id", _cust->id());
