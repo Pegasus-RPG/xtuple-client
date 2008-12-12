@@ -237,9 +237,9 @@ bool dspGLTransactions::setParams(ParameterList &params)
 	return false;
       }
       XSqlQuery glq;
-      glq.prepare("SELECT SUM(gltrans_amount) AS glamount "
+      glq.prepare("SELECT COALESCE(SUM(gltrans_amount),0) AS glamount "
                   "FROM gltrans "
-                  "WHERE ((gltrans_date BETWEEN :periodstart AND :querystart)"
+                  "WHERE ((gltrans_date BETWEEN :periodstart AND date :querystart - interval '1 day')"
                   "  AND  (gltrans_accnt_id=:accnt_id));");
       glq.bindValue(":periodstart", periodStart);
       glq.bindValue(":querystart",  _dates->startDate());
