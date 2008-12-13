@@ -5,29 +5,23 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>626</width>
+    <width>800</width>
     <height>600</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Project</string>
   </property>
-  <layout class="QGridLayout" >
-   <property name="leftMargin" >
-    <number>12</number>
-   </property>
-   <property name="topMargin" >
-    <number>12</number>
-   </property>
-   <property name="rightMargin" >
-    <number>12</number>
-   </property>
-   <property name="bottomMargin" >
-    <number>12</number>
-   </property>
+  <layout class="QGridLayout" name="gridLayout_4" >
    <item row="0" column="0" >
-    <layout class="QGridLayout" >
-     <item row="0" column="0" >
+    <layout class="QGridLayout" name="gridLayout_3" >
+     <property name="margin" >
+      <number>12</number>
+     </property>
+     <property name="spacing" >
+      <number>12</number>
+     </property>
+     <item row="0" column="0" colspan="2" >
       <layout class="QGridLayout" >
        <item row="0" column="0" >
         <widget class="QLabel" name="_numberLit" >
@@ -44,16 +38,7 @@
          <property name="spacing" >
           <number>0</number>
          </property>
-         <property name="leftMargin" >
-          <number>0</number>
-         </property>
-         <property name="topMargin" >
-          <number>0</number>
-         </property>
-         <property name="rightMargin" >
-          <number>0</number>
-         </property>
-         <property name="bottomMargin" >
+         <property name="margin" >
           <number>0</number>
          </property>
          <item>
@@ -67,7 +52,7 @@
            <property name="sizeType" >
             <enum>QSizePolicy::Expanding</enum>
            </property>
-           <property name="sizeHint" >
+           <property name="sizeHint" stdset="0" >
             <size>
              <width>46</width>
              <height>16</height>
@@ -84,16 +69,7 @@
            <property name="spacing" >
             <number>5</number>
            </property>
-           <property name="leftMargin" >
-            <number>0</number>
-           </property>
-           <property name="topMargin" >
-            <number>0</number>
-           </property>
-           <property name="rightMargin" >
-            <number>0</number>
-           </property>
-           <property name="bottomMargin" >
+           <property name="margin" >
             <number>0</number>
            </property>
            <item>
@@ -129,7 +105,7 @@
            <property name="sizeType" >
             <enum>QSizePolicy::Expanding</enum>
            </property>
-           <property name="sizeHint" >
+           <property name="sizeHint" stdset="0" >
             <size>
              <width>77</width>
              <height>91</height>
@@ -178,7 +154,7 @@
            <property name="sizeType" >
             <enum>QSizePolicy::Expanding</enum>
            </property>
-           <property name="sizeHint" >
+           <property name="sizeHint" stdset="0" >
             <size>
              <width>65</width>
              <height>71</height>
@@ -194,145 +170,120 @@
       </layout>
      </item>
      <item row="1" column="0" >
-      <layout class="QGridLayout" >
-       <item row="0" column="0" >
-        <widget class="QGroupBox" name="_ordersGroup" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="title" >
-          <string>Assignable Orders</string>
-         </property>
+      <widget class="QGroupBox" name="groupBox" >
+       <property name="title" >
+        <string>Users</string>
+       </property>
+       <layout class="QGridLayout" >
+        <item row="0" column="0" >
          <layout class="QGridLayout" >
+          <item row="0" column="1" >
+           <widget class="UsernameCluster" name="_owner" >
+            <property name="label" >
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1" >
+           <widget class="UsernameCluster" name="_assignedTo" >
+            <property name="label" >
+             <string/>
+            </property>
+           </widget>
+          </item>
           <item row="0" column="0" >
-           <layout class="QGridLayout" >
-            <item row="0" column="0" >
-             <layout class="QGridLayout" >
-              <item row="0" column="0" >
-               <widget class="QCheckBox" name="_so" >
-                <property name="text" >
-                 <string>Sales Orders</string>
-                </property>
-                <property name="checked" >
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="1" >
-               <widget class="QCheckBox" name="_wo" >
-                <property name="text" >
-                 <string>Work Orders</string>
-                </property>
-                <property name="checked" >
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="2" >
-               <widget class="QCheckBox" name="_po" >
-                <property name="text" >
-                 <string>Purchase Orders</string>
-                </property>
-                <property name="checked" >
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item row="0" column="1" >
-             <spacer>
-              <property name="orientation" >
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" >
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
+           <widget class="QLabel" name="_ownerLit" >
+            <property name="text" >
+             <string>Owner:</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" >
+           <widget class="QLabel" name="_assignedToLit" >
+            <property name="text" >
+             <string>Assigned To:</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
           </item>
          </layout>
-        </widget>
-       </item>
-       <item rowspan="2" row="0" column="1" >
-        <widget class="QGroupBox" name="groupBox" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="title" >
-          <string>Users</string>
-         </property>
-         <layout class="QGridLayout" >
-          <item row="0" column="0" >
-           <layout class="QGridLayout" >
-            <item row="0" column="1" >
-             <widget class="UsernameCluster" name="_owner" >
-              <property name="label" >
-               <string/>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1" >
-             <widget class="UsernameCluster" name="_assignedTo" >
-              <property name="label" >
-               <string/>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0" >
-             <widget class="QLabel" name="_ownerLit" >
-              <property name="text" >
-               <string>Owner:</string>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0" >
-             <widget class="QLabel" name="_assignedToLit" >
-              <property name="text" >
-               <string>Assigned To:</string>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="1" column="0" >
-        <spacer>
-         <property name="orientation" >
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeType" >
-          <enum>QSizePolicy::Minimum</enum>
-         </property>
-         <property name="sizeHint" >
-          <size>
-           <width>20</width>
-           <height>10</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
+        </item>
+        <item row="0" column="1" >
+         <spacer name="horizontalSpacer" >
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0" >
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+       <zorder>horizontalSpacer</zorder>
+       <zorder>_ordersGroup</zorder>
+      </widget>
      </item>
-     <item row="2" column="0" >
+     <item row="1" column="1" >
+      <widget class="QGroupBox" name="_ordersGroup" >
+       <property name="title" >
+        <string>Assignable Orders</string>
+       </property>
+       <layout class="QGridLayout" name="gridLayout" >
+        <item row="0" column="0" >
+         <widget class="QCheckBox" name="_so" >
+          <property name="text" >
+           <string>Sales Orders</string>
+          </property>
+          <property name="checked" >
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item rowspan="2" row="0" column="1" >
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0" >
+           <size>
+            <width>211</width>
+            <height>18</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="1" column="0" >
+         <widget class="QCheckBox" name="_wo" >
+          <property name="text" >
+           <string>Work Orders</string>
+          </property>
+          <property name="checked" >
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0" >
+         <widget class="QCheckBox" name="_po" >
+          <property name="text" >
+           <string>Purchase Orders</string>
+          </property>
+          <property name="checked" >
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item row="2" column="0" colspan="2" >
       <widget class="QTabWidget" name="_tab" >
        <property name="sizePolicy" >
         <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
@@ -347,129 +298,120 @@
         <attribute name="title" >
          <string>Status</string>
         </attribute>
-        <layout class="QGridLayout" >
+        <layout class="QGridLayout" name="gridLayout_2" >
          <item row="0" column="0" >
-          <widget class="QGroupBox" name="_dateGroup" >
-           <property name="title" >
-            <string/>
+          <widget class="QLabel" name="_statusLit" >
+           <property name="text" >
+            <string>Status:</string>
            </property>
-           <layout class="QGridLayout" >
-            <item row="1" column="0" >
-             <widget class="QLabel" name="_dueLit" >
-              <property name="text" >
-               <string>Due:</string>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1" >
-             <widget class="DLineEdit" name="_due" >
-              <property name="sizePolicy" >
-               <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0" >
-             <widget class="QLabel" name="_assignedLit" >
-              <property name="text" >
-               <string>Assigned:</string>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1" >
-             <widget class="DLineEdit" name="_assigned" />
-            </item>
-            <item row="3" column="0" >
-             <widget class="QLabel" name="_startedLit" >
-              <property name="text" >
-               <string>Started:</string>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="1" >
-             <widget class="DLineEdit" name="_started" />
-            </item>
-            <item row="4" column="0" >
-             <widget class="QLabel" name="_completedLit" >
-              <property name="text" >
-               <string>Completed:</string>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="1" >
-             <widget class="DLineEdit" name="_completed" />
-            </item>
-            <item row="2" column="2" >
-             <spacer>
-              <property name="orientation" >
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" >
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item row="5" column="1" >
-             <spacer>
-              <property name="orientation" >
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" >
-               <size>
-                <width>20</width>
-                <height>40</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item row="0" column="1" >
-             <widget class="XComboBox" name="_status" >
-              <item>
-               <property name="text" >
-                <string>Concept</string>
-               </property>
-              </item>
-              <item>
-               <property name="text" >
-                <string>In-Process</string>
-               </property>
-              </item>
-              <item>
-               <property name="text" >
-                <string>Complete</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item row="0" column="0" >
-             <widget class="QLabel" name="_statusLit" >
-              <property name="text" >
-               <string>Status:</string>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-           </layout>
+           <property name="alignment" >
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
           </widget>
+         </item>
+         <item row="0" column="1" >
+          <widget class="XComboBox" name="_status" >
+           <item>
+            <property name="text" >
+             <string>Concept</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>In-Process</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>Complete</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="1" column="0" >
+          <widget class="QLabel" name="_dueLit" >
+           <property name="text" >
+            <string>Due:</string>
+           </property>
+           <property name="alignment" >
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1" >
+          <widget class="DLineEdit" name="_due" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
+         </item>
+         <item rowspan="2" row="1" column="2" >
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0" >
+            <size>
+             <width>413</width>
+             <height>21</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="2" column="0" >
+          <widget class="QLabel" name="_assignedLit" >
+           <property name="text" >
+            <string>Assigned:</string>
+           </property>
+           <property name="alignment" >
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1" >
+          <widget class="DLineEdit" name="_assigned" />
+         </item>
+         <item row="3" column="0" >
+          <widget class="QLabel" name="_startedLit" >
+           <property name="text" >
+            <string>Started:</string>
+           </property>
+           <property name="alignment" >
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1" >
+          <widget class="DLineEdit" name="_started" />
+         </item>
+         <item row="4" column="0" >
+          <widget class="QLabel" name="_completedLit" >
+           <property name="text" >
+            <string>Completed:</string>
+           </property>
+           <property name="alignment" >
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1" >
+          <widget class="DLineEdit" name="_completed" />
+         </item>
+         <item row="5" column="0" colspan="2" >
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0" >
+            <size>
+             <width>20</width>
+             <height>36</height>
+            </size>
+           </property>
+          </spacer>
          </item>
         </layout>
        </widget>
@@ -481,16 +423,7 @@
          <property name="spacing" >
           <number>7</number>
          </property>
-         <property name="leftMargin" >
-          <number>5</number>
-         </property>
-         <property name="topMargin" >
-          <number>5</number>
-         </property>
-         <property name="rightMargin" >
-          <number>5</number>
-         </property>
-         <property name="bottomMargin" >
+         <property name="margin" >
           <number>5</number>
          </property>
          <item>
@@ -508,16 +441,7 @@
            <property name="spacing" >
             <number>5</number>
            </property>
-           <property name="leftMargin" >
-            <number>0</number>
-           </property>
-           <property name="topMargin" >
-            <number>0</number>
-           </property>
-           <property name="rightMargin" >
-            <number>0</number>
-           </property>
-           <property name="bottomMargin" >
+           <property name="margin" >
             <number>0</number>
            </property>
            <item>
@@ -532,16 +456,7 @@
              <property name="spacing" >
               <number>0</number>
              </property>
-             <property name="leftMargin" >
-              <number>0</number>
-             </property>
-             <property name="topMargin" >
-              <number>0</number>
-             </property>
-             <property name="rightMargin" >
-              <number>0</number>
-             </property>
-             <property name="bottomMargin" >
+             <property name="margin" >
               <number>0</number>
              </property>
              <item>
@@ -601,7 +516,7 @@
                <property name="sizeType" >
                 <enum>QSizePolicy::Expanding</enum>
                </property>
-               <property name="sizeHint" >
+               <property name="sizeHint" stdset="0" >
                 <size>
                  <width>20</width>
                  <height>20</height>
@@ -623,16 +538,7 @@
          <property name="spacing" >
           <number>6</number>
          </property>
-         <property name="leftMargin" >
-          <number>5</number>
-         </property>
-         <property name="topMargin" >
-          <number>5</number>
-         </property>
-         <property name="rightMargin" >
-          <number>5</number>
-         </property>
-         <property name="bottomMargin" >
+         <property name="margin" >
           <number>5</number>
          </property>
          <item>
