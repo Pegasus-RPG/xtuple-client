@@ -659,7 +659,7 @@
         <attribute name="title" >
          <string>Notes</string>
         </attribute>
-        <layout class="QGridLayout" >
+        <layout class="QGridLayout" name="gridLayout_6" >
          <item row="0" column="0" >
           <widget class="QTextEdit" name="_notes" />
          </item>
@@ -669,7 +669,7 @@
         <attribute name="title" >
          <string>Comments</string>
         </attribute>
-        <layout class="QGridLayout" >
+        <layout class="QGridLayout" name="gridLayout_7" >
          <item row="0" column="0" >
           <widget class="Comments" name="_comments" >
            <property name="focusPolicy" >
@@ -686,7 +686,7 @@
         <attribute name="title" >
          <string>Characteristics</string>
         </attribute>
-        <layout class="QGridLayout" >
+        <layout class="QGridLayout" name="gridLayout_8" >
          <item row="0" column="0" >
           <widget class="XTreeWidget" name="_charass" />
          </item>
@@ -743,7 +743,7 @@
         <attribute name="title" >
          <string>To-Do List</string>
         </attribute>
-        <layout class="QGridLayout" >
+        <layout class="QGridLayout" name="gridLayout_9" >
          <item row="0" column="0" >
           <layout class="QHBoxLayout" >
            <property name="spacing" >
@@ -892,7 +892,7 @@
         <attribute name="title" >
          <string>Opportunities</string>
         </attribute>
-        <layout class="QGridLayout" >
+        <layout class="QGridLayout" name="gridLayout_10" >
          <item row="0" column="0" >
           <widget class="XTreeWidget" name="_oplist" />
          </item>
@@ -902,7 +902,7 @@
         <attribute name="title" >
          <string>Registrations</string>
         </attribute>
-        <layout class="QGridLayout" >
+        <layout class="QGridLayout" name="gridLayout_11" >
          <item row="0" column="0" >
           <widget class="XTreeWidget" name="_reg" >
            <property name="focusPolicy" >
@@ -975,7 +975,7 @@
         <attribute name="title" >
          <string>Documents</string>
         </attribute>
-        <layout class="QGridLayout" >
+        <layout class="QGridLayout" name="gridLayout_12" >
          <item row="0" column="0" >
           <widget class="Documents" name="_documents" >
            <property name="type" >
