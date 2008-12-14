@@ -67,7 +67,7 @@ createRecurringInvoices::createRecurringInvoices(QWidget* parent, const char* na
 {
   setupUi(this);
 
-  connect(_update, SIGNAL(clicked()), this, SLOT(sUpdate()));
+  connect(_update, SIGNAL(clicked()), this, SLOT(sCreate()));
   connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
 
   if (!_metrics->boolean("EnableBatchManager"))
@@ -84,7 +84,7 @@ void createRecurringInvoices::languageChange()
   retranslateUi(this);
 }
 
-void createRecurringInvoices::sUpdate()
+void createRecurringInvoices::sCreate()
 {
   q.exec("SELECT createRecurringInvoices();");
 

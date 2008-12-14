@@ -22,7 +22,7 @@
    <item>
     <widget class="QLabel" name="label" >
      <property name="text" >
-      <string>Check and Create Recurring Invoices that are within the Recurring Invoice Buffer period.</string>
+      <string>Create Recurring Invoices within the defined buffer period for all Customers.</string>
      </property>
      <property name="alignment" >
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -91,7 +91,7 @@
          <item>
           <widget class="QPushButton" name="_update" >
            <property name="text" >
-            <string>&amp;Update</string>
+            <string>&amp;Create</string>
            </property>
            <property name="default" >
             <bool>true</bool>
