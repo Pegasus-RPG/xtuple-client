@@ -208,6 +208,11 @@ void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId)
 	for (int wcol = 0; wcol < _roles.size(); wcol++)
 	{
 	  QVariantMap *role = _roles.value(wcol);
+          if (! role)
+          {
+            qWarning("XTreeWidget::populate() there is no role for column %d", wcol);
+            continue;
+          }
 	  QString colname = role->value("qteditrole").toString();
 	  for (int k = 0; k < knownroles.size(); k++)
 	  {
@@ -290,6 +295,11 @@ void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId)
 	  for (int col = 0; col < _roles.size(); col++)
 	  {
 	    QVariantMap *role = _roles.value(col);
+            if (! role)
+            {
+              qWarning("XTreeWidget::populate() there is no role for column %d", col);
+              continue;
+            }
             QVariantMap userrole;
             QVariant    rawValue = pQuery.value(role->value("qteditrole").toString());
             QString     nullValue = "";

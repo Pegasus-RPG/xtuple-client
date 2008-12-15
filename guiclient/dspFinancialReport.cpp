@@ -282,7 +282,7 @@ void dspFinancialReport::sFillListStatement()
           if (q.value("flcol_budgetprcnt").toBool())
           {
             _layout->addColumn(tr("%1\n% of Group").arg(label.value("flstmthead_qtr").toString()),
-                               _bigMoneyColumn, Qt::AlignRight );
+                               _bigMoneyColumn, Qt::AlignRight, true, "flstmtitem_qtrbudgetprcnt" );
             qc += ",flstmtitem_qtrbudgetprcnt, 'percent' AS flstmtitem_qtrbudgetprcent_xtnumericrole";
           }
           if (q.value("flcol_budgetdiff").toBool())
@@ -356,7 +356,7 @@ void dspFinancialReport::sFillListStatement()
         if (q.value("flcol_priorprcnt").toBool())
         {
           _layout->addColumn(tr("%1\n% of Group").arg(label.value("flstmthead_prmonth").toString()),
-                             _bigMoneyColumn, Qt::AlignRight, "flstmtitem_prmonthprcnt");
+                             _bigMoneyColumn, Qt::AlignRight, true, "flstmtitem_prmonthprcnt");
           qc += ",flstmtitem_prmonthprcnt, 'percent' AS flstmtitem_prmonthprcnt_xtnumericrole";
         }
         if (q.value("flcol_priordiff").toBool())
@@ -368,7 +368,7 @@ void dspFinancialReport::sFillListStatement()
         if (q.value("flcol_priordiffprcnt").toBool())
         {
           _layout->addColumn(tr("%1\n%2 % Diff.").arg(label.value("flstmthead_prmonth").toString()).arg(label.value("flstmthead_typedescrip2").toString()),
-                             _bigMoneyColumn, Qt::AlignRight, "flstmtitem_prmonthdiffprcnt");
+                             _bigMoneyColumn, Qt::AlignRight, true, "flstmtitem_prmonthdiffprcnt");
           qc += ",flstmtitem_prmonthdiffprcnt, 'percent' AS flstmtitem_prmonthdiffprcnt_xtnumericrole";
         }
       }
@@ -382,12 +382,12 @@ void dspFinancialReport::sFillListStatement()
         {
           _layout->addColumn(tr("%1\n% of Group").arg(label.value("flstmthead_prqtr").toString()),
                              _bigMoneyColumn, Qt::AlignRight, true, "flstmtitem_prqtrprcnt");
-           qc += ",flstmtitem_prqtrprcnt, flstmtitem_prqtrprcnt_xtnumericrole";
+           qc += ",flstmtitem_prqtrprcnt, 'percent' AS flstmtitem_prqtrprcnt_xtnumericrole";
         }
         if (q.value("flcol_priordiff").toBool())
         {
           _layout->addColumn(tr("%1\n%2 Diff.").arg(label.value("flstmthead_prqtr").toString()).arg(label.value("flstmthead_typedescrip2").toString()),
-                             _bigMoneyColumn, Qt::AlignRight, "flstmtitem_prqtrdiff");
+                             _bigMoneyColumn, Qt::AlignRight, true, "flstmtitem_prqtrdiff");
            qc += ",flstmtitem_prqtrdiff, 'curr' AS flstmtitem_prqtrdiff_xtnumericrole";
         }
         if (q.value("flcol_priordiffprcnt").toBool())
