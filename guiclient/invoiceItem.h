@@ -80,6 +80,7 @@ public slots:
     virtual void sCalculateExtendedPrice();
     virtual void sPopulateItemInfo( int pItemid );
     virtual void sDeterminePrice();
+    virtual void sListPrices();
     virtual void sLookupTax();
     virtual void sLookupTaxCode();
     virtual void sPriceGroup();

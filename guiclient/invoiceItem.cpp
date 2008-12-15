@@ -63,6 +63,7 @@
 
 #include <metasql.h>
 
+#include "priceList.h"
 #include "taxDetail.h"
 
 invoiceItem::invoiceItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
@@ -73,6 +74,7 @@ invoiceItem::invoiceItem(QWidget* parent, const char* name, bool modal, Qt::WFla
   connect(_billed,  SIGNAL(lostFocus()),    this, SLOT(sCalculateExtendedPrice()));
   connect(_item,    SIGNAL(newId(int)),     this, SLOT(sPopulateItemInfo(int)));
   connect(_extended,SIGNAL(valueChanged()), this, SLOT(sLookupTax()));
+  connect(_listPrices,   SIGNAL(clicked()), this, SLOT(sListPrices()));
   connect(_price,   SIGNAL(idChanged(int)), this, SLOT(sPriceGroup()));
   connect(_price,   SIGNAL(valueChanged()), this, SLOT(sCalculateExtendedPrice()));
   connect(_save,    SIGNAL(clicked()),      this, SLOT(sSave()));
@@ -775,3 +777,22 @@ void invoiceItem::sMiscSelected(bool isMisc)
     _item->setId(-1);
 }
 
+void invoiceItem::sListPrices()
+{
+  ParameterList params;
+  params.append("cust_id",   _custid);
+  //params.append("shipto_id", _shiptoid);
+  params.append("item_id",   _item->id());
+  params.append("qty",       _billed->toDouble() * _qtyinvuomratio);
+  params.append("curr_id",   _price->id());
+  params.append("effective", _price->effective());
+
+  priceList newdlg(this, "", TRUE);
+  newdlg.set(params);
+  if ( (newdlg.exec() == XDialog::Accepted) &&
+       (_privileges->check("OverridePrice")) &&
+       (!_metrics->boolean("DisableSalesOrderPriceOverride")) )
+  {
+    _price->setLocalValue(newdlg._selectedPrice * (_priceinvuomratio / _priceRatioCache));
+  }
+}

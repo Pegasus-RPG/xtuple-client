@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>712</width>
-    <height>736</height>
+    <width>747</width>
+    <height>738</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -24,10 +24,7 @@
      <property name="bottomMargin" >
       <number>12</number>
      </property>
-     <property name="horizontalSpacing" >
-      <number>12</number>
-     </property>
-     <property name="verticalSpacing" >
+     <property name="spacing" >
       <number>12</number>
      </property>
      <item row="0" column="0" colspan="2" >
@@ -86,7 +83,7 @@
          <property name="sizeType" >
           <enum>QSizePolicy::Expanding</enum>
          </property>
-         <property name="sizeHint" >
+         <property name="sizeHint" stdset="0" >
           <size>
            <width>201</width>
            <height>20</height>
@@ -129,7 +126,7 @@
          <property name="sizeType" >
           <enum>QSizePolicy::Expanding</enum>
          </property>
-         <property name="sizeHint" >
+         <property name="sizeHint" stdset="0" >
           <size>
            <width>20</width>
            <height>0</height>
@@ -168,7 +165,7 @@
             <property name="sizeType" >
              <enum>QSizePolicy::Expanding</enum>
             </property>
-            <property name="sizeHint" >
+            <property name="sizeHint" stdset="0" >
              <size>
               <width>10</width>
               <height>10</height>
@@ -230,7 +227,7 @@
                <property name="sizeType" >
                 <enum>QSizePolicy::Expanding</enum>
                </property>
-               <property name="sizeHint" >
+               <property name="sizeHint" stdset="0" >
                 <size>
                  <width>72</width>
                  <height>70</height>
@@ -263,7 +260,7 @@
             <property name="sizeType" >
              <enum>QSizePolicy::Expanding</enum>
             </property>
-            <property name="sizeHint" >
+            <property name="sizeHint" stdset="0" >
              <size>
               <width>10</width>
               <height>10</height>
@@ -282,22 +279,10 @@
            <string>Miscellaneous</string>
           </property>
           <layout class="QGridLayout" >
-           <property name="leftMargin" >
+           <property name="margin" >
             <number>0</number>
            </property>
-           <property name="topMargin" >
-            <number>0</number>
-           </property>
-           <property name="rightMargin" >
-            <number>0</number>
-           </property>
-           <property name="bottomMargin" >
-            <number>0</number>
-           </property>
-           <property name="horizontalSpacing" >
-            <number>2</number>
-           </property>
-           <property name="verticalSpacing" >
+           <property name="spacing" >
             <number>2</number>
            </property>
            <item row="0" column="1" >
@@ -345,7 +330,7 @@
                <property name="sizeType" >
                 <enum>QSizePolicy::Expanding</enum>
                </property>
-               <property name="sizeHint" >
+               <property name="sizeHint" stdset="0" >
                 <size>
                  <width>16</width>
                  <height>0</height>
@@ -420,7 +405,7 @@
             <property name="orientation" >
              <enum>Qt::Horizontal</enum>
             </property>
-            <property name="sizeHint" >
+            <property name="sizeHint" stdset="0" >
              <size>
               <width>40</width>
               <height>20</height>
@@ -576,7 +561,7 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="1" >
+        <item row="1" column="1" colspan="2" >
          <layout class="QHBoxLayout" >
           <item>
            <widget class="XComboBox" name="_pricingUOM" />
@@ -586,7 +571,7 @@
             <property name="orientation" >
              <enum>Qt::Horizontal</enum>
             </property>
-            <property name="sizeHint" >
+            <property name="sizeHint" stdset="0" >
              <size>
               <width>40</width>
               <height>20</height>
@@ -606,7 +591,7 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="1" >
+        <item row="2" column="1" colspan="2" >
          <widget class="CurrCluster" name="_extended" >
           <property name="currencyEditable" stdset="0" >
            <bool>false</bool>
@@ -616,6 +601,13 @@
           </property>
           <property name="enabled" >
            <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2" >
+         <widget class="QPushButton" name="_listPrices" >
+          <property name="text" >
+           <string>...</string>
           </property>
          </widget>
         </item>
@@ -822,16 +814,7 @@
             <property name="spacing" >
              <number>0</number>
             </property>
-            <property name="leftMargin" >
-             <number>0</number>
-            </property>
-            <property name="topMargin" >
-             <number>0</number>
-            </property>
-            <property name="rightMargin" >
-             <number>0</number>
-            </property>
-            <property name="bottomMargin" >
+            <property name="margin" >
              <number>0</number>
             </property>
             <item>
@@ -881,6 +864,7 @@
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>XURLLabel</class>
@@ -893,7 +877,6 @@
   <tabstop>_item</tabstop>
   <tabstop>_warehouse</tabstop>
   <tabstop>_miscSelected</tabstop>
-  <tabstop>_itemNumber</tabstop>
   <tabstop>_itemDescrip</tabstop>
   <tabstop>_salescat</tabstop>
   <tabstop>_custPn</tabstop>
@@ -901,14 +884,17 @@
   <tabstop>_billed</tabstop>
   <tabstop>_qtyUOM</tabstop>
   <tabstop>_price</tabstop>
+  <tabstop>_listPrices</tabstop>
   <tabstop>_pricingUOM</tabstop>
   <tabstop>_extended</tabstop>
   <tabstop>_taxtype</tabstop>
   <tabstop>_taxcode</tabstop>
   <tabstop>_tax</tabstop>
-  <tabstop>_notes</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
+  <tabstop>_itemNumber</tabstop>
+  <tabstop>_tab</tabstop>
+  <tabstop>_notes</tabstop>
  </tabstops>
  <resources/>
  <connections>
