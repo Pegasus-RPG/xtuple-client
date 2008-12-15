@@ -167,7 +167,7 @@ void unpostedPoReceipts::sEdit()
 
   enterPoitemReceipt *newdlg = new enterPoitemReceipt();
   newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
+  newdlg->exec();
 }
 
 void unpostedPoReceipts::sDelete()
