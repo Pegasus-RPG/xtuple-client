@@ -149,23 +149,26 @@ void printPackingListBatchByShipvia::sPrint()
     if (_metrics->boolean("MultiWhs"))
       params.append("MultiWhs");
 
-    orReport report(packq.value( packq.value("pack_shiphead_id").isNull() ?
-			      "pickform" : "packform").toString(), params);
-    if (report.isValid())
+    if (packq.value("orderhead_status").toString() != "C")
     {
-      if (report.print(&printer, setupPrinter))
-        setupPrinter = FALSE;
+      orReport report(packq.value( packq.value("pack_shiphead_id").isNull() ?
+                                   "pickform" : "packform").toString(), params);
+      if (report.isValid())
+      {
+        if (report.print(&printer, setupPrinter))
+          setupPrinter = FALSE;
+        else
+        {
+          orReport::endMultiPrint(&printer);
+          return;
+        }
+      }
       else
       {
-	orReport::endMultiPrint(&printer);
+        report.reportError(this);
+        orReport::endMultiPrint(&printer);
         return;
       }
-    }
-    else
-    {
-      report.reportError(this);
-      orReport::endMultiPrint(&printer);
-      return;
     }
 
     MetaSQLQuery mql(prts);
