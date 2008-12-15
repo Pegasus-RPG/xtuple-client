@@ -630,7 +630,7 @@ void dspFinancialReport::sFillListTrend()
       _layout->addColumn(tr("%1\n%2 %").arg(periods.at(c)).arg(_columnLabels.value(cDiff)),
                          _ynColumn, Qt::AlignRight, true, QString("r%1%2").arg(c).arg(colname));
       q1c += QString(",CASE WHEN(flgrp_summarize AND flgrp_showdiffprcnt) THEN r%1.%2 ELSE NULL END AS r%3%4, 'percent' AS r%5%6_xtnumericrole").arg(c).arg(colname).arg(c).arg(colname).arg(c).arg(colname);
-      sharedColumns += QString(",%1, %2_xtnumericrole").arg(colname).arg(colname);
+      sharedColumns += QString(",%1, 'percent' AS %2_xtnumericrole").arg(colname).arg(colname);
     }
     if(_showCustom->isChecked())
     {
