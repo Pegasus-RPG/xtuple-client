@@ -574,6 +574,15 @@ int to = -1, from = -1;
     if (!_ccEdit &&
         (fundsType == "A" || fundsType == "D" || fundsType == "M" || fundsType == "V"))
     {
+      if (_cc->id() <= -1)
+      {
+        QMessageBox::warning(this, tr("Select a Credit Card"),
+                             tr("Please select a Credit Card from the list "
+                                "before continuing."));
+        _tab->setCurrentIndex(_tab->indexOf(_creditCardTab));
+        _cc->setFocus();
+        return FALSE;
+      }
       CreditCardProcessor *cardproc = CreditCardProcessor::getProcessor();
       if (! cardproc)
       {
@@ -902,6 +911,8 @@ void cashReceipt::setCreditCard()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+  if (_cc->topLevelItemCount() == 1)
+    _cc->setCurrentItem(_cc->topLevelItem(0));
 }
 
 void cashReceipt::sNewCreditCard()
