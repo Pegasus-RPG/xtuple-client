@@ -344,10 +344,12 @@ void vendorWorkBench::sPopulate()
     return;
   }
 
-  MetaSQLQuery balm("SELECT SUM(vohead_amount) AS balance "
-                    "FROM vohead "
-                    "WHERE (NOT vohead_posted"
-                    "   AND (vohead_vend_id=<? value(\"vend_id\") ?>));");
+  MetaSQLQuery balm("SELECT (apopen_amount-apopen_paid) / apopen_curr_rate * "
+                    "  CASE WHEN (apopen_doctype IN ('D','V')) THEN 1 "
+                    "  ELSE -1 END AS balance "
+                    "FROM apopen "
+                    "WHERE ((apopen_open)"
+                    "   AND (apopen_vend_id=<? value(\"vend_id\") ?>));");
   q = balm.toQuery(params);
   if (q.first())
     _openBalance->setDouble(q.value("balance").toDouble());
