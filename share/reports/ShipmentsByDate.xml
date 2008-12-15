@@ -11,41 +11,117 @@
  <leftmargin>50</leftmargin>
  <querysource>
   <name>head</name>
-  <sql>SELECT formatDate(&lt;? value("startDate") ?>) AS startdate,
-       formatDate(&lt;? value("endDate") ?>) AS enddate;</sql>
+  <sql>SELECT formatDate(date(&lt;? value("startDate") ?>)) AS startDate,
+       formatDate(date(&lt;? value("endDate") ?>)) AS endDate;
+</sql>
  </querysource>
  <querysource>
   <name>detail</name>
-  <sql>SELECT cosmisc_id,
-       formatShipmentNumber(cosmisc_id) AS cosmisc_number,
-       coitem_id,
-       cohead_number,
-       (cust_number || '-' || cust_name) AS customer,
-       formatDate(cosmisc_shipdate) AS f_shipdate,
-       coitem_linenumber,
+  <sql>SELECT shiphead_id, lineitem_id,
+       CASE WHEN (level=0) THEN order_number
+            ELSE item_number
+       END AS order_item,
+       CASE WHEN (level=0) THEN customer
+            ELSE itemdescription
+       END AS cust_desc,
+       shiphead_order_type,
+       shiphead_number, 
+       order_number, 
+       customer,
+       shiphead_shipdate AS f_shipdate,
+       shiphead_tracknum,
+       shiphead_freight,
+       freight_curr_abbr,
+       linenumber,
        item_number,
-       item_descrip1,
-       item_descrip2,
-       uom_name,
+       itemdescription,
        warehous_code,
-       formatQty(coitem_qtyord) AS f_qtyord,
-       formatQty(SUM(coship_qty)) AS f_qtyshipped
-  FROM coship, cosmisc, coitem, cohead, cust, itemsite, item, uom, warehous
- WHERE ( (coship_cosmisc_id=cosmisc_id)
-   AND (coship_coitem_id=coitem_id)
-   AND (coitem_itemsite_id=itemsite_id)
-   AND (itemsite_item_id=item_id)
-   AND (item_inv_uom_id=uom_id)
-   AND (itemsite_warehous_id=warehous_id)
-   AND (cosmisc_cohead_id=cohead_id)
-   AND (cohead_cust_id=cust_id)
-   AND (cosmisc_shipped)
-   AND (cosmisc_shipdate BETWEEN &lt;? value("startDate") ?> and &lt;? value("endDate") ?>) )
-GROUP BY cosmisc_id, coitem_id,
-         cohead_number, cust_number, cust_name, cosmisc_shipdate,
+       formatQty(qtyord) AS f_qtyord,
+       formatQty(qtyshipped) AS f_qtyshipped
+FROM (
+SELECT shiphead_id, coitem_id AS lineitem_id, cohead_number AS sortkey1, shiphead_number AS sortkey2, 1 AS level,
+       shiphead_order_type,
+       shiphead_number,
+       cohead_number AS order_number, 
+       (cust_number || '-' || cust_name) AS customer,
+       shiphead_shipdate,
+       shiphead_tracknum,
+       shiphead_freight,
+       currConcat(shiphead_freight_curr_id) AS freight_curr_abbr, 
+       coitem_linenumber AS linenumber, item_number,
+       (item_descrip1 || ' ' || item_descrip2) AS itemdescription,
+       warehous_code,
+       coitem_qtyord AS qtyord,
+       SUM(shipitem_qty) AS qtyshipped
+FROM shipitem, shiphead, coitem, cohead, cust, itemsite, item, warehous 
+WHERE ( (shipitem_shiphead_id=shiphead_id)
+ AND (shipitem_orderitem_id=coitem_id)
+ AND (coitem_itemsite_id=itemsite_id)
+ AND (coitem_status &lt;> 'X')
+ AND (itemsite_item_id=item_id)
+ AND (itemsite_warehous_id=warehous_id)
+ AND (shiphead_order_id=cohead_id)
+ AND (cohead_cust_id=cust_id)
+ AND (shiphead_shipped)
+ AND (shiphead_order_type='SO')
+&lt;? if exists("startDate") ?>
+ AND (shiphead_shipdate BETWEEN &lt;? value("startDate") ?> and &lt;? value("endDate") ?>)
+&lt;? endif ?>
+&lt;? if exists("sohead_id") ?>
+ AND (cohead_id = &lt;? value("sohead_id") ?>)
+&lt;? endif ?>
+&lt;? if exists("shiphead_id") ?>
+ AND (shiphead_id = &lt;? value("shiphead_id") ?>)
+&lt;? endif ?>
+      ) 
+GROUP BY shiphead_id, coitem_id, shiphead_order_type, shiphead_number,
+         cohead_number, cust_number, cust_name, shiphead_shipdate,
          coitem_linenumber, item_number, item_descrip1, item_descrip2,
-         uom_name, warehous_code, coitem_qtyord
-ORDER BY cosmisc_id, coitem_linenumber;</sql>
+         warehous_code, shiphead_tracknum, coitem_qtyord, 
+         shiphead_freight, shiphead_freight_curr_id 
+&lt;? if exists("MultiWhs") ?>
+UNION
+SELECT shiphead_id, toitem_id AS lineitem_id, tohead_number AS sortkey1, shiphead_number AS sortkey2, 1 AS level,
+       shiphead_order_type,
+       shiphead_number,
+       tohead_number AS order_number, 
+       tohead_destname AS customer,
+       shiphead_shipdate,
+       shiphead_tracknum,
+       shiphead_freight,
+       currConcat(shiphead_freight_curr_id) AS freight_curr_abbr, 
+       toitem_linenumber AS linenumber, item_number,
+       (item_descrip1 || ' ' || item_descrip2) AS itemdescription,
+       tohead_srcname AS warehous_code,
+       toitem_qty_ordered AS qtyord,
+       SUM(shipitem_qty) AS qtyshipped
+FROM shipitem, shiphead, toitem, tohead, item 
+WHERE ( (shipitem_shiphead_id=shiphead_id)
+ AND (shipitem_orderitem_id=toitem_id)
+ AND (toitem_status &lt;> 'X')
+ AND (toitem_item_id=item_id)
+ AND (shiphead_order_id=tohead_id)
+ AND (shiphead_shipped)
+ AND (shiphead_order_type='TO')
+&lt;? if exists("startDate") ?>
+ AND (shiphead_shipdate BETWEEN &lt;? value("startDate") ?> and &lt;? value("endDate") ?>)
+&lt;? endif ?>
+&lt;? if exists("tohead_id") ?>
+ AND (tohead_id = &lt;? value("tohead_id") ?>)
+&lt;? endif ?>
+&lt;? if exists("shiphead_id") ?>
+ AND (shiphead_id = &lt;? value("shiphead_id") ?>)
+&lt;? endif ?>
+      ) 
+GROUP BY shiphead_id, toitem_id, shiphead_order_type, shiphead_number,
+         tohead_number, tohead_destname, shiphead_shipdate,
+         toitem_linenumber, item_number, item_descrip1, item_descrip2,
+         tohead_srcname, shiphead_tracknum, toitem_qty_ordered, 
+         shiphead_freight, shiphead_freight_curr_id 
+&lt;? endif ?>
+   ) AS data
+ORDER BY sortkey1, sortkey2, level, linenumber DESC;
+</sql>
  </querysource>
  <rpthead>
   <height>221</height>
@@ -270,22 +346,6 @@ ORDER BY cosmisc_id, coitem_linenumber;</sql>
    <vcenter/>
    <string>End Date:</string>
   </label>
-  <label>
-   <rect>
-    <x>385</x>
-    <y>185</y>
-    <width>50</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>UOM</string>
-  </label>
  </rpthead>
  <pghead>
   <firstpage/>
@@ -295,7 +355,7 @@ ORDER BY cosmisc_id, coitem_linenumber;</sql>
   <height>41</height>
   <label>
    <rect>
-    <x>500</x>
+    <x>605</x>
     <y>5</y>
     <width>75</width>
     <height>15</height>
@@ -311,7 +371,7 @@ ORDER BY cosmisc_id, coitem_linenumber;</sql>
   </label>
   <label>
    <rect>
-    <x>85</x>
+    <x>190</x>
     <y>5</y>
     <width>50</width>
     <height>15</height>
@@ -334,7 +394,7 @@ ORDER BY cosmisc_id, coitem_linenumber;</sql>
   </line>
   <label>
    <rect>
-    <x>5</x>
+    <x>110</x>
     <y>5</y>
     <width>75</width>
     <height>15</height>
@@ -350,7 +410,7 @@ ORDER BY cosmisc_id, coitem_linenumber;</sql>
   </label>
   <label>
    <rect>
-    <x>340</x>
+    <x>450</x>
     <y>5</y>
     <width>50</width>
     <height>15</height>
@@ -362,11 +422,11 @@ ORDER BY cosmisc_id, coitem_linenumber;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>UOM</string>
+   <string>Site</string>
   </label>
   <label>
    <rect>
-    <x>140</x>
+    <x>250</x>
     <y>5</y>
     <width>105</width>
     <height>15</height>
@@ -382,23 +442,7 @@ ORDER BY cosmisc_id, coitem_linenumber;</sql>
   </label>
   <label>
    <rect>
-    <x>285</x>
-    <y>5</y>
-    <width>50</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>UOM</string>
-  </label>
-  <label>
-   <rect>
-    <x>418</x>
+    <x>537</x>
     <y>5</y>
     <width>75</width>
     <height>15</height>
@@ -414,7 +458,7 @@ ORDER BY cosmisc_id, coitem_linenumber;</sql>
   </label>
   <label>
    <rect>
-    <x>140</x>
+    <x>250</x>
     <y>20</y>
     <width>105</width>
     <height>15</height>
@@ -433,7 +477,7 @@ ORDER BY cosmisc_id, coitem_linenumber;</sql>
   <name>detail</name>
   <group>
    <name>cohead_number</name>
-   <column>cohead_number</column>
+   <column>order_number</column>
    <head>
     <height>45</height>
     <label>
@@ -450,7 +494,7 @@ ORDER BY cosmisc_id, coitem_linenumber;</sql>
      </font>
      <right/>
      <vcenter/>
-     <string>S/O #:</string>
+     <string>Order #:</string>
     </label>
     <line>
      <xstart>85</xstart>
@@ -491,7 +535,7 @@ ORDER BY cosmisc_id, coitem_linenumber;</sql>
      <vcenter/>
      <data>
       <query>detail</query>
-      <column>cohead_number</column>
+      <column>order_number</column>
      </data>
     </field>
     <field>
@@ -519,7 +563,7 @@ ORDER BY cosmisc_id, coitem_linenumber;</sql>
    <key>
     <query>detail</query>
    </key>
-   <height>51</height>
+   <height>33</height>
    <field>
     <rect>
      <x>240</x>
@@ -560,9 +604,9 @@ ORDER BY cosmisc_id, coitem_linenumber;</sql>
    </field>
    <line>
     <xstart>5</xstart>
-    <ystart>45</ystart>
+    <ystart>28</ystart>
     <xend>745</xend>
-    <yend>45</yend>
+    <yend>28</yend>
     <weight>0</weight>
    </line>
    <field>
@@ -581,7 +625,7 @@ ORDER BY cosmisc_id, coitem_linenumber;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>cosmisc_number</column>
+     <column>shiphead_number</column>
     </data>
    </field>
    <field>
@@ -619,7 +663,7 @@ ORDER BY cosmisc_id, coitem_linenumber;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>coitem_linenumber</column>
+     <column>linenumber</column>
     </data>
    </field>
    <field>
@@ -639,44 +683,6 @@ ORDER BY cosmisc_id, coitem_linenumber;</sql>
     <data>
      <query>detail</query>
      <column>f_shipdate</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>385</x>
-     <y>0</y>
-     <width>50</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <hcenter/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>uom_name</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>240</x>
-     <y>30</y>
-     <width>250</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>item_descrip2</column>
     </data>
    </field>
    <field>
@@ -702,7 +708,7 @@ ORDER BY cosmisc_id, coitem_linenumber;</sql>
     <rect>
      <x>240</x>
      <y>15</y>
-     <width>250</width>
+     <width>455</width>
      <height>15</height>
     </rect>
     <font>
@@ -714,7 +720,7 @@ ORDER BY cosmisc_id, coitem_linenumber;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_descrip1</column>
+     <column>itemdescription</column>
     </data>
    </field>
   </detail>
