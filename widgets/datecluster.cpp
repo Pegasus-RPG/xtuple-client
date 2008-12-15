@@ -225,20 +225,21 @@ void XDateEdit::parseDate()
              qPrintable(dateFormatStr));
 
     QDate tmp = QDate::fromString(dateString, dateFormatStr);
-    if (tmp.isValid() && dateFormatStr.indexOf(QRegExp("y{2}")) >= 0)
+    bool twodigitformat = dateFormatStr.indexOf(QRegExp("y{2}[^y]")) >= 0;
+    if (tmp.isValid())
     {
-      qDebug("%s::parseDate() found valid 2-digit year %d",
-             qPrintable(parent() ? parent()->objectName() : objectName()),
-             tmp.year());
-      if (tmp.year() < 1950)     // Qt docs say 2-digit years are 1900-based so
+      if (twodigitformat && tmp.year() < 1950) // Qt docs say 2-digit years are 1900-based so
       {
+        qDebug("%s::parseDate() found valid 2-digit year %d",
+               qPrintable(parent() ? parent()->objectName() : objectName()),
+               tmp.year());
         tmp = tmp.addYears(100); // add backwards-compat with pre-3.0 DLineEdit
         qDebug("%s::parseDate() altered year to %d",
                qPrintable(parent() ? parent()->objectName() : objectName()),
                tmp.year());
       }
     }
-    else
+    else if(twodigitformat)
     {
       // try 4 digits, ignoring the possibility of '-literals in the format str
       dateFormatStr.replace(QRegExp("y{2}"), "yyyy");
