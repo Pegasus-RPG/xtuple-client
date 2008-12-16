@@ -249,6 +249,80 @@ void XDateEdit::parseDate()
                qPrintable(dateFormatStr));
       tmp = QDate::fromString(dateString, dateFormatStr);
     }
+    else
+    {
+      // try 2 digits, ignoring the possibility of '-literals in the format str
+      dateFormatStr.replace(QRegExp("y{4}"), "yy");
+      if (DEBUG)
+        qDebug("%s::parseDate() rewriting format string to %s",
+               qPrintable(parent() ? parent()->objectName() : objectName()),
+               qPrintable(dateFormatStr));
+      tmp = QDate::fromString(dateString, dateFormatStr);
+      if (tmp.isValid() && tmp.year() < 1950) // Qt docs say 2-digit years are 1900-based so
+      {
+        qDebug("%s::parseDate() found valid 2-digit year %d",
+               qPrintable(parent() ? parent()->objectName() : objectName()),
+               tmp.year());
+        tmp = tmp.addYears(100); // add backwards-compat with pre-3.0 DLineEdit
+        qDebug("%s::parseDate() altered year to %d",
+               qPrintable(parent() ? parent()->objectName() : objectName()),
+               tmp.year());
+      }
+    }
+    if(!tmp.isValid())
+    {
+      // still no match -- we will decompose the format and input and
+      // build a date based on that information
+      QRegExp rx("(\\d+)");
+      QRegExp rx2("(m+|y+|d+)");
+      rx2.setCaseSensitivity(Qt::CaseInsensitive);
+      QStringList numberList;
+      QStringList formatList;
+      int pos = 0;
+      while ((pos = rx.indexIn(dateString, pos)) != -1)
+      {
+        numberList << rx.cap(1);
+        pos += rx.matchedLength();
+      }
+      pos = 0;
+      while((pos = rx2.indexIn(dateFormatStr, pos)) != -1)
+      {
+        formatList << rx2.cap(1);
+        pos += rx2.matchedLength();
+      }
+
+      // if we don't have exactly 3 and the numberList is not 2 or 3 then don't bother
+      if(formatList.size() == 3 && (numberList.size() == 2 || numberList.size() == 3))
+      {
+        int year = today.year();
+        int day = -1;
+        int month = -1;
+
+        pos = 0;
+        for (int i = 0; i < formatList.size(); ++i)
+        {
+          QChar ch = formatList.at(i).toLower().at(0);
+          if(ch == 'y' && numberList.size() == 3)
+          {
+            year = numberList.at(pos).toInt();
+            pos++;
+          }
+          else if(ch == 'm')
+          {
+            month = numberList.at(pos).toInt();
+            pos++;
+          }
+          else if(ch == 'd')
+          {
+            day = numberList.at(pos).toInt();
+            pos++;
+          }
+        }
+        
+        if(day > 0 && month > 0 && year > 0)
+          tmp = QDate(year, month, day);
+      }
+    }
 
     setDate(QDate(tmp.year(), tmp.month(), tmp.day()), true );
   }
