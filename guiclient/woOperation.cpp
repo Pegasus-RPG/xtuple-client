@@ -312,6 +312,7 @@ void woOperation::sHandleStdopn(int pStdopnid)
       _description1->setText(q.value("stdopn_descrip1"));
       _description2->setText(q.value("stdopn_descrip2"));
       _toolingReference->setText(q.value("stdopn_toolref"));
+      _instructions->setText(q.value("stdopn_instructions").toString());
 
       _wrkcnt->setId(q.value("stdopn_wrkcnt_id").toInt());
 
