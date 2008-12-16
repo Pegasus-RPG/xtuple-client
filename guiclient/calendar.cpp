@@ -151,6 +151,21 @@ enum SetResponse calendar::set(const ParameterList &pParams)
 
 void calendar::sSave()
 {
+  q.prepare("SELECT calhead_id"
+            "  FROM calhead"
+            " WHERE((calhead_id != :calhead_id)"
+            "   AND (calhead_name=:calhead_name))");
+  q.bindValue(":calhead_id",       _calheadid);
+  q.bindValue(":calhead_name",   _name->text());
+  q.exec();
+  if(q.first())
+  {
+    QMessageBox::critical(this, tr("Duplicate Calendar Name"),
+      tr("A Calendar already exists for the Name specified.") );
+    _name->setFocus();
+    return;
+  }
+
   if (_mode == cNew)
   {
     if (_type =='R')
