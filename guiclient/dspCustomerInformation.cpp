@@ -221,19 +221,11 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   _payments->addColumn(tr("Timestamp"),    _timeDateColumn, Qt::AlignLeft,   true,  "ccpay_transaction_datetime"  );
   _payments->addColumn(tr("Entered By"),   _userColumn,     Qt::AlignLeft,   true,  "ccpay_by_username"  );
   _payments->addColumn(tr("Total Amount"), _moneyColumn,    Qt::AlignRight,  true,  "ccpay_amount" );
+  _payments->addColumn(tr("Amount Currency"),     _currencyColumn, Qt::AlignLeft,   true,  "ccpay_currAbbr"  );
   _payments->addColumn(tr("Document #"),   -1,              Qt::AlignLeft,   true,  "docnumber"  );
   _payments->addColumn(tr("Reference"),    _orderColumn,    Qt::AlignLeft,   true,  "ccpay_r_ref"  );
   _payments->addColumn(tr("Allocated"),    _moneyColumn,    Qt::AlignRight,  true,  "allocated" );
-  _payments->addColumn(tr("Currency"),     _currencyColumn, Qt::AlignLeft,   true,  "payco_currAbbr"  );
-
-  if (omfgThis->singleCurrency())
-  {
-    _arhist->hideColumn("currAbbr");
-    _invoice->hideColumn("currAbbr");
-    _creditMemo->hideColumn("currAbbr");
-    _payments->hideColumn("ccpay_currAbbr");
-    _payments->hideColumn("payco_currAbbr");
-  }
+  _payments->addColumn(tr("Allocated Currency"),     _currencyColumn, Qt::AlignLeft,   true,  "payco_currAbbr"  );
 
   if (_privileges->check("MaintainCRMAccounts") || _privileges->check("ViewCRMAccounts"))
     connect (_cust, SIGNAL(valid(bool)), _crmAccount, SLOT(setEnabled(bool)));
