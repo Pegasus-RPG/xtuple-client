@@ -483,9 +483,9 @@ void purchaseOrderItem::populate()
       q.exec();
       if (q.first())
       {
-        _vendorItemNumber->setEnabled(FALSE);
-        _vendorItemNumberList->setEnabled(FALSE);
-        _vendorDescrip->setEnabled(FALSE);
+//        _vendorItemNumber->setEnabled(FALSE);
+//        _vendorItemNumberList->setEnabled(FALSE);
+//        _vendorDescrip->setEnabled(FALSE);
         _vendorUOM->setEnabled(FALSE);
         _manufName->setEnabled(FALSE);
         _manufItemNumber->setEnabled(FALSE);
