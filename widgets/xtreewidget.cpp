@@ -320,8 +320,13 @@ void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId)
 	    if (role->contains("qtdisplayrole") &&
 		! pQuery.value(role->value("qtdisplayrole").toString()).isNull())
             {
-	      last->setData(col, Qt::DisplayRole,
-			pQuery.value(role->value("qtdisplayrole").toString()));
+              bool valid = false;
+              double doubleval = QLocale(QLocale::C).toDouble(pQuery.value(role->value("qtdisplayrole").toString()).toString(), &valid);
+              if (valid)
+                last->setData(col, Qt::DisplayRole, QLocale().toString(doubleval, 'f', scale));
+              else
+                last->setData(col, Qt::DisplayRole,
+                          pQuery.value(role->value("qtdisplayrole").toString()));
             }
             else if (role->contains("xtnumericrole") &&
                      ((pQuery.value(role->value("xtnumericrole").toString()).toString() == "percent") ||

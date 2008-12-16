@@ -61,7 +61,6 @@
 
 #include <QMenu>
 #include <QSqlError>
-//#include <QStatusBar>
 #include <QVariant>
 
 #include <metasql.h>
@@ -176,8 +175,6 @@ void dspTrialBalances::sPrint()
 
 void dspTrialBalances::sFillList()
 {
-  _trialbal->clear();
-
   QString sql( "SELECT accnt_id, period_id, accnt_descrip, trialbal_dirty,"
                "       period_start, period_end,"
                "       formatGLAccount(accnt_id) AS account,"
@@ -186,8 +183,8 @@ void dspTrialBalances::sFillList()
                "       (trialbal_beginning*-1) AS beginning,"
                "       (trialbal_ending*-1) AS ending,"
                "       (trialbal_debits - trialbal_credits) AS diff,"
-               "       ABS(trialbal_beginning*-1) AS beginning_qtdisplayrole,"
-               "       ABS(trialbal_ending*-1) AS ending_qtdisplayrole,"
+               "       ABS(trialbal_beginning) AS beginning_qtdisplayrole,"
+               "       ABS(trialbal_ending) AS ending_qtdisplayrole,"
                "       ABS(trialbal_debits - trialbal_credits) AS diff_qtdisplayrole,"
                "       CASE WHEN ((trialbal_beginning*-1)<0) THEN 'CR' END AS beginningsense,"
                "       CASE WHEN ((trialbal_ending*-1)<0) THEN 'CR' END AS endingsense,"
