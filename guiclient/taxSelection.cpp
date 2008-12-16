@@ -102,6 +102,15 @@ enum SetResponse taxSelection::set(const ParameterList& pParams)
     {
       _mode = cNew;
       _taxauth->setFocus();
+
+      q.exec("SELECT NEXTVAL('taxsel_taxsel_id_seq') AS _taxsel_id;");
+      if (q.first())
+        _taxselId = q.value("_taxsel_id").toInt();
+      else if (q.lastError().type() != QSqlError::NoError)
+      {
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        return UndefinedError;
+      }
     }
     else if (param.toString() == "edit")
     {
@@ -125,11 +134,33 @@ enum SetResponse taxSelection::set(const ParameterList& pParams)
 
 void taxSelection::sSave()
 {
+  q.prepare("SELECT taxsel_id"
+            "  FROM taxsel"
+            " WHERE((taxsel_id!= :taxsel_id)"
+            "   AND (taxsel_taxauth_id=:taxsel_taxauth_id)"
+            "   AND (taxsel_taxtype_id=:taxsel_taxtype_id)"
+            "   AND (taxsel_tax_id=:taxsel_tax_id))");
+  q.bindValue(":taxsel_id", _taxselId);
+  if (_taxauth->isValid())
+    q.bindValue(":taxsel_taxauth_id", _taxauth->id());
+  if (_taxtype->isValid())
+    q.bindValue(":taxsel_taxtype_id", _taxtype->id());
+  if (_tax->isValid())
+    q.bindValue(":taxsel_tax_id", _tax->id());
+  q.exec();
+  if(q.first())
+  {
+    QMessageBox::critical(this, tr("Duplicate Tax Selection"),
+      tr("A Tax Selection already exists for the parameters specified.") );
+    _taxauth->setFocus();
+    return;
+  }
+
   if (cNew == _mode)
   {
-    q.prepare("INSERT INTO taxsel ("
+    q.prepare("INSERT INTO taxsel (taxsel_id,"
 	      "    taxsel_taxauth_id,  taxsel_taxtype_id,  taxsel_tax_id "
-	      "  ) VALUES ( "
+	      "  ) VALUES (:taxsel_id, "
 	      "    :taxsel_taxauth_id, :taxsel_taxtype_id, :taxsel_tax_id "
 	      ");");
   }
@@ -140,8 +171,8 @@ void taxSelection::sSave()
 	      "    taxsel_taxtype_id=:taxsel_taxtype_id,"
 	      "    taxsel_tax_id=:taxsel_tax_id "
 	      "WHERE (taxsel_id=:taxsel_id);");
-    q.bindValue(":taxsel_id", _taxselId);
   }
+  q.bindValue(":taxsel_id", _taxselId);
   if (_taxauth->isValid())
     q.bindValue(":taxsel_taxauth_id", _taxauth->id());
   if (_taxtype->isValid())
