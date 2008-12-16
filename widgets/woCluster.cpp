@@ -153,8 +153,8 @@ void WoLineEdit::setId(int pId)
                   " AND (itemsite_warehous_id=warehous_id)"
                   " AND (wo_id=:wo_id));" );
       wo.bindValue(":wo_id", pId);
-      wo.bindValue(":assemble", tr("Assemble"));
-      wo.bindValue(":disassemble", tr("Disassemble"));
+      wo.bindValue(":assemble", tr("Assembly"));
+      wo.bindValue(":disassemble", tr("Disassembly"));
       wo.bindValue(":open", tr("Open"));
       wo.bindValue(":exploded", tr("Exploded"));
       wo.bindValue(":inprocess", tr("In Process"));
