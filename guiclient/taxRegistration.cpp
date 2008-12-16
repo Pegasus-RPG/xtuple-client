@@ -57,6 +57,7 @@
 
 #include "taxRegistration.h"
 
+#include <QMessageBox>
 #include <QSqlError>
 #include <QVariant>
 
@@ -111,6 +112,15 @@ enum SetResponse taxRegistration::set(const ParameterList pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
+
+      q.exec("SELECT NEXTVAL('taxreg_taxreg_id_seq') AS _taxreg_id;");
+      if (q.first())
+        _taxregid = q.value("_taxreg_id").toInt();
+      else if (q.lastError().type() != QSqlError::NoError)
+      {
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        return UndefinedError;
+      }
     }
     else if (param.toString() == "edit")
     {
@@ -138,12 +148,29 @@ enum SetResponse taxRegistration::set(const ParameterList pParams)
 
 void taxRegistration::sSave()
 {
+  q.prepare("SELECT taxreg_id"
+            "  FROM taxreg"
+            " WHERE((taxreg_id!= :taxreg_id)"
+            "   AND (taxreg_taxauth_id=:taxreg_taxauth_id)"
+            "   AND (taxreg_number=:taxreg_number))");
+  q.bindValue(":taxreg_id", _taxregid);
+  q.bindValue(":taxreg_taxauth_id", _taxauth->id());
+  q.bindValue(":taxreg_number", _number->text());
+  q.exec();
+  if(q.first())
+  {
+    QMessageBox::critical(this, tr("Duplicate Tax Registration"),
+      tr("A Tax Registration already exists for the parameters specified.") );
+    _taxauth->setFocus();
+    return;
+  }
+
   if (cNew == _mode)
   {
-    q.prepare("INSERT INTO taxreg ("
+    q.prepare("INSERT INTO taxreg (taxreg_id,"
 	      "    taxreg_rel_id, taxreg_rel_type, "
 	      "    taxreg_taxauth_id, taxreg_number "
-	      " ) VALUES ("
+	      " ) VALUES (:taxreg_id,"
 	      "    :taxreg_rel_id, :taxreg_rel_type, "
 	      "    :taxreg_taxauth_id, :taxreg_number "
 	      " );");
@@ -156,8 +183,8 @@ void taxRegistration::sSave()
 	      "    taxreg_taxauth_id=:taxreg_taxauth_id, "
 	      "    taxreg_number=:taxreg_number "
 	      "WHERE (taxreg_id=:taxreg_id);");
-    q.bindValue(":taxreg_id", _taxregid);
   }
+  q.bindValue(":taxreg_id", _taxregid);
   q.bindValue(":taxreg_rel_id", _relid); //_reltype == "C" ? _cust->id() : _vend->id());
   if(!_reltype.isEmpty())
     q.bindValue(":taxreg_rel_type", _reltype);
