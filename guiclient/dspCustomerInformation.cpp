@@ -221,7 +221,6 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   _payments->addColumn(tr("Timestamp"),    _timeDateColumn, Qt::AlignLeft,   true,  "ccpay_transaction_datetime"  );
   _payments->addColumn(tr("Entered By"),   _userColumn,     Qt::AlignLeft,   true,  "ccpay_by_username"  );
   _payments->addColumn(tr("Total Amount"), _moneyColumn,    Qt::AlignRight,  true,  "ccpay_amount" );
-  _payments->addColumn(tr("Currency"),     _currencyColumn, Qt::AlignLeft,   true,  "ccpay_currAbbr"  );
   _payments->addColumn(tr("Document #"),   -1,              Qt::AlignLeft,   true,  "docnumber"  );
   _payments->addColumn(tr("Reference"),    _orderColumn,    Qt::AlignLeft,   true,  "ccpay_r_ref"  );
   _payments->addColumn(tr("Allocated"),    _moneyColumn,    Qt::AlignRight,  true,  "allocated" );
