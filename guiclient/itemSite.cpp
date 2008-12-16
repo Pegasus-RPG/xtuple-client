@@ -418,6 +418,45 @@ void itemSite::sSave()
       return;
     }
   }
+
+  if (_locationControl->isChecked() && _disallowBlankWIP->isChecked())
+  {
+    q.prepare("SELECT EXISTS(SELECT boohead_id"
+              "              FROM boohead"
+              "              WHERE ((COALESCE(boohead_final_location_id, -1) = -1)"
+              "                 AND (boohead_rev_id=getActiveRevId('BOO', :item_id))"
+              "                 AND (boohead_item_id=:item_id))"
+              "        UNION SELECT booitem_id"
+              "              FROM booitem JOIN"
+              "                   boohead ON (booitem_item_id=boohead_item_id"
+              "                           AND booitem_rev_id=boohead_rev_id)"
+              "              WHERE ((COALESCE(booitem_wip_location_id, -1) = -1)"
+              "                 AND (boohead_rev_id=getActiveRevId('BOO', :item_id))"
+              "                 AND (boohead_item_id=:item_id))"
+              "       ) AS isBlank;");
+    q.bindValue(":item_id", _item->id());
+    q.exec();
+    if (q.first())
+    {
+      if (q.value("isBlank").toBool() &&
+          QMessageBox::question(this, tr("Save anyway?"),
+                                tr("<p>You have selected to disallow blank WIP "
+                                   "locations but the active Bill Of Operations "
+                                   "for this Item is either missing a Final "
+                                   "Location or contains an Operation without "
+                                   "a WIP Location. Are you sure you want to "
+                                   "save this Item Site?<p>If you say 'Yes' "
+                                   "then you should fix the Bill Of Operations."),
+                                QMessageBox::Yes | QMessageBox::No,
+                                QMessageBox::No) == QMessageBox::No)
+        return;
+    }
+    else if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+  }
     
   if(!_active->isChecked())
   {

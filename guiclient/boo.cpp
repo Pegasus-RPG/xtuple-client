@@ -187,6 +187,57 @@ enum SetResponse boo::set(const ParameterList &pParams)
 
 void boo::sSave()
 {
+  bool childhasblankloc = false;
+  q.prepare("SELECT BOOL_OR(COALESCE(booitem_wip_location_id, -1) = -1) AS blankloc "
+            "FROM booitem "
+            "WHERE ((booitem_item_id=:item_id)"
+            "   AND (booitem_rev_id=:rev_id));");
+  q.bindValue(":item_id", _item->id());
+  q.bindValue(":rev_id",  _revision->id());
+  q.exec();
+  if (q.first())
+    childhasblankloc = q.value("blankloc").toBool();
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+  if (_finalLocation->id() <= -1 || childhasblankloc)
+  {
+    q.prepare("SELECT EXISTS(SELECT itemsite_id"
+              "              FROM itemsite"
+              "              WHERE (itemsite_loccntrl"
+              "                 AND itemsite_disallowblankwip"
+              "                 AND itemsite_active"
+              "                 AND (itemsite_item_id=:item_id))"
+              "       ) AS disallowblankwip;");
+    q.bindValue(":item_id", _item->id());
+    q.exec();
+    if (q.first())
+    {
+      if (q.value("disallowblankwip").toBool() &&
+          QMessageBox::question(this, tr("Save anyway?"),
+                                (childhasblankloc ?
+                                  tr("<p>At least one Bill Of Operations Item "
+                                     "has no WIP Location.") :
+                                  tr("<p>This Bill Of Operations has no Final "
+                                     "Location.")) +
+                                  tr(" However, at least one Item Site for "
+                                     "this Item requires WIP Locations. Are "
+                                     "you sure you want to save this Bill Of "
+                                     "Operations?<p>If you say 'Yes' then you "
+                                     "should fix the Item Site."),
+                                QMessageBox::Yes | QMessageBox::No,
+                                QMessageBox::No) == QMessageBox::No)
+          return;
+    }
+    else if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+  }
+
   if (_mode == cEdit )
   {
 	q.prepare( "UPDATE boohead "
