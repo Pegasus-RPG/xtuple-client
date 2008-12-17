@@ -70,26 +70,14 @@ scrapWoMaterialFromWIP::scrapWoMaterialFromWIP(QWidget* parent, const char* name
 {
   setupUi(this);
 
-  // signals and slots connections
-  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
   connect(_qty, SIGNAL(textChanged(const QString&)), this, SLOT(sHandleButtons()));
-  connect(_scrap, SIGNAL(clicked()), this, SLOT(sScrap()));
-  connect(_scrapComponent, SIGNAL(toggled(bool)), _qtyScrappedFromWIPLit, SLOT(setEnabled(bool)));
-  connect(_scrapComponent, SIGNAL(toggled(bool)), _qty, SLOT(setEnabled(bool)));
-  connect(_scrapComponent, SIGNAL(toggled(bool)), _womatl, SLOT(setEnabled(bool)));
-  connect(_scrapComponent, SIGNAL(toggled(bool)), _qtyScrappedFromWIPLit, SLOT(setEnabled(bool)));
+  connect(_scrap,              SIGNAL(clicked()), this, SLOT(sScrap()));
   connect(_scrapComponent, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
-  connect(_scrapComponent, SIGNAL(toggled(bool)), _qtyLit, SLOT(setEnabled(bool)));
-  connect(_scrapTopLevel, SIGNAL(toggled(bool)), _topLevelQtyLit, SLOT(setEnabled(bool)));
-  connect(_scrapTopLevel, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
-  connect(_scrapTopLevel, SIGNAL(toggled(bool)), _topLevelQty, SLOT(setEnabled(bool)));
+  connect(_scrapTopLevel,  SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
   connect(_topLevelQty, SIGNAL(textChanged(const QString&)), this, SLOT(sHandleButtons()));
   connect(_topLevelQty, SIGNAL(textChanged(const QString&)), this, SLOT(sHandleButtons()));
-  connect(_wo, SIGNAL(newId(int)), _womatl, SLOT(setWoid(int)));
-  connect(_wo, SIGNAL(valid(bool)), this, SLOT(sHandleButtons()));
+  connect(_wo,     SIGNAL(valid(bool)), this, SLOT(sHandleButtons()));
   connect(_womatl, SIGNAL(valid(bool)), this, SLOT(sHandleButtons()));
-  connect(_womatl, SIGNAL(valid(bool)), _scrap, SLOT(setEnabled(bool)));
-  connect(_womatl, SIGNAL(newQtyScrappedFromWIP(const QString&)), _qtyScrappedFromWIP, SLOT(setText(const QString&)));
 
   _captive = FALSE;
   _fromWOTC = FALSE;
@@ -100,6 +88,7 @@ scrapWoMaterialFromWIP::scrapWoMaterialFromWIP(QWidget* parent, const char* name
   //_womatl->setType(WomatlCluster::Push);
   _qty->setValidator(omfgThis->qtyVal());
   _topLevelQty->setValidator(omfgThis->qtyVal());
+  _qtyScrappedFromWIP->setPrecision(omfgThis->qtyVal());
 }
 
 scrapWoMaterialFromWIP::~scrapWoMaterialFromWIP()

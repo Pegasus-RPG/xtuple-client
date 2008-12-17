@@ -209,6 +209,7 @@ FORMS += accountSearch.ui \
          file.ui \
          alarms.ui alarmMaint.ui \
          vendorgroup.ui \
+         womatlcluster.ui
 
 
 RESOURCES += widgets.qrc

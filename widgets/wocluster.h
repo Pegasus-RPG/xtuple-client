@@ -64,8 +64,9 @@
 
 #include "OpenMFGWidgets.h"
 #include <QDate>
-#include "xlineedit.h"
 #include <xsqlquery.h>
+#include "xlineedit.h"
+#include "ui_womatlcluster.h"
 
 class QLabel;
 class QPushButton;
@@ -199,7 +200,7 @@ class OPENMFGWIDGETS_EXPORT WoCluster : public QWidget
     void valid(bool);
 };
 
-class OPENMFGWIDGETS_EXPORT WomatlCluster : public QWidget
+class OPENMFGWIDGETS_EXPORT WomatlCluster : public QWidget, public Ui::WomatlCluster
 {
   Q_OBJECT
   Q_PROPERTY(QString fieldName      READ fieldName      WRITE setFieldName)
@@ -234,9 +235,9 @@ class OPENMFGWIDGETS_EXPORT WomatlCluster : public QWidget
   signals:
     void newId(int);
     void valid(bool);
-    void newQtyRequired(const QString &);
-    void newQtyIssued(const QString &);
-    void newQtyScrappedFromWIP(const QString &);
+    void newQtyRequired(const double);
+    void newQtyIssued(const double);
+    void newQtyScrappedFromWIP(const double);
 
   public slots:
     void setDataWidgetMap(XDataWidgetMapper* m);
@@ -248,19 +249,11 @@ class OPENMFGWIDGETS_EXPORT WomatlCluster : public QWidget
     void sPopulateInfo(int);
     void sRefresh();
 
+  protected slots:
+    virtual void languageChange();
+
   private:
     void constructor();
-
-    XComboBox   *_itemNumber;
-    QLabel      *_uom;
-    QLabel      *_descrip1;
-    QLabel      *_descrip2;
-    QLabel      *_qtyPer;
-    QLabel      *_scrap;
-    QLabel      *_qtyRequiredLit;
-    QLabel      *_qtyRequired;
-    QLabel      *_qtyIssuedLit;
-    QLabel      *_qtyIssued;
 
     XSqlQuery _womatl;
     int      _id;

@@ -587,6 +587,8 @@ WomatlCluster::WomatlCluster(WoCluster *wocParent, QWidget *parent, const char *
 
 void WomatlCluster::constructor()
 {
+  setupUi(this);
+
   _valid  = FALSE;
   _id     = -1;
   _woid   = -1;
@@ -598,79 +600,19 @@ void WomatlCluster::constructor()
   _required = 0.0;
   _issued = 0.0;
 
-//  Create the component Widgets
-  QLabel *itemNumberLit = new QLabel(tr("Component Item Number:"), this, "itemNumberLit");
-  itemNumberLit->setGeometry(0, 0, 140, 25);
-  itemNumberLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-
-  _itemNumber = new XComboBox(this, "_itemNumber");
-  _itemNumber->setGeometry(145, 0, 120, 25);
-  _itemNumber->setAllowNull(TRUE);
-  _itemNumber->setDefaultCode(XComboBox::None);
-
-  QLabel *uomLit = new QLabel(tr("UOM:"), this, "uomLit");
-  uomLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-
-  _uom = new QLabel(this, "_uom");
-  _uom->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-
-  _descrip1 = new QLabel(this, "_descrip1");
-  _descrip1->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-
-  _descrip2 = new QLabel(this, "_descrip2");
-  _descrip2->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-
-  QLabel *qtyPerLit = new QLabel(tr("Qty. Per:"), this, "qtyPerLit");
-  qtyPerLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-
-  _qtyPer = new QLabel(this, "_qtyPer");
-  _qtyPer->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-
-  QLabel *scrapLit = new QLabel(tr("Scrap %:"), this, "scrapLit");
-  scrapLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-
-  _scrap = new QLabel(this, "_scrap");
-  _scrap->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-
-  _qtyRequiredLit = new QLabel(tr("Qty. Required:"), this, "qtyRequiredLit");
-  _qtyRequiredLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-
-  _qtyRequired = new QLabel(this, "_qtyRequired");
-  _qtyRequired->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-
-  _qtyIssuedLit = new QLabel(tr("Qty. Issued:"), this, "qtyIssuedLit");
-  _qtyIssuedLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-
-  _qtyIssued = new QLabel(this, "_qtyIssued");
-  _qtyIssued->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-
-  // lay out the component widgets
-  QVBoxLayout *clusterLyt    = new QVBoxLayout(this, 5, -1, "clusterLyt");
-  QHBoxLayout *itemMainLyt   = new QHBoxLayout(clusterLyt, -1, "itemMainLyt");
-  QHBoxLayout *itemDescLyt   = new QHBoxLayout(clusterLyt, -1, "itemDescLyt");
-  QHBoxLayout *qtyHBoxLyt    = new QHBoxLayout(clusterLyt, -1, "qtyHBoxLyt");
-  QVBoxLayout *qtyLitVBoxLyt = new QVBoxLayout(qtyHBoxLyt, -1, "qtyLitVBoxLyt");
-  QVBoxLayout *qtyVBoxLyt    = new QVBoxLayout(qtyHBoxLyt, -1, "qtyVBoxLyt");
-
-  itemMainLyt->addWidget(itemNumberLit);
-  itemMainLyt->addWidget(_itemNumber);
-  itemMainLyt->addWidget(uomLit);
-  itemMainLyt->addWidget(_uom);
-  itemDescLyt->addWidget(_descrip1);
-  itemDescLyt->addWidget(_descrip2);
-
-  qtyLitVBoxLyt->addWidget(qtyPerLit);
-  qtyLitVBoxLyt->addWidget(scrapLit);
-  qtyLitVBoxLyt->addWidget(_qtyRequiredLit);
-  qtyLitVBoxLyt->addWidget(_qtyIssuedLit);
-  qtyVBoxLyt->addWidget(_qtyPer);
-  qtyVBoxLyt->addWidget(_scrap);
-  qtyVBoxLyt->addWidget(_qtyRequired);
-  qtyVBoxLyt->addWidget(_qtyIssued);
-
   connect(_itemNumber, SIGNAL(newID(int)), SLOT(sPopulateInfo(int)));
 
+  _qtyIssued->setPrecision(decimalPlaces("qty"));
+  _qtyPer->setPrecision(decimalPlaces("qtyper"));
+  _qtyRequired->setPrecision(decimalPlaces("qty"));
+  _scrap->setPrecision(decimalPlaces("percent"));
+
   setFocusProxy(_itemNumber);
+}
+
+void WomatlCluster::languageChange()
+{
+  retranslateUi(this);
 }
 
 void WomatlCluster::setReadOnly(bool)
@@ -745,9 +687,9 @@ void WomatlCluster::setWooperid(int pWooperid)
     _issued  = 0.0;
     
     emit newId(-1);
-    emit newQtyRequired(formatQtyPer(0.0));
-    emit newQtyIssued(formatQtyPer(0.0));
-    emit newQtyScrappedFromWIP(formatQtyPer(0.0));
+    emit newQtyRequired(0.0);
+    emit newQtyIssued(0.0);
+    emit newQtyScrappedFromWIP(0.0);
 
     _itemNumber->clear();
   }
@@ -762,11 +704,11 @@ void WomatlCluster::setWoid(int pWoid)
   QString sql( "SELECT womatl_id AS womatlid, item_number,"
                "       wo_id, wo_qtyord, uom_name, item_descrip1, item_descrip2,"
                "       womatl_qtyreq AS _qtyreq, womatl_qtyiss AS _qtyiss,"
-               "       formatQtyPer(womatl_qtyper) AS qtyper,"
-               "       formatScrap(womatl_scrap) AS scrap,"
-               "       formatQty(abs(womatl_qtyreq)) AS qtyreq,"
-               "       formatQty(abs(womatl_qtyiss))  AS qtyiss,"
-               "       formatQtyPer(womatl_qtywipscrap) AS qtywipscrap "
+               "       womatl_qtyper AS qtyper,"
+               "       womatl_scrap * 100 AS scrap,"
+               "       ABS(womatl_qtyreq) AS qtyreq,"
+               "       ABS(womatl_qtyiss)  AS qtyiss,"
+               "       womatl_qtywipscrap AS qtywipscrap "
                "FROM womatl, wo, itemsite, item, uom "
                "WHERE ( (womatl_wo_id=wo_id)"
                " AND (womatl_itemsite_id=itemsite_id)"
@@ -829,9 +771,9 @@ void WomatlCluster::setWoid(int pWoid)
     _issued  = 0.0;
     
     emit newId(-1);
-    emit newQtyRequired(formatQtyPer(0.0));
-    emit newQtyIssued(formatQtyPer(0.0));
-    emit newQtyScrappedFromWIP(formatQtyPer(0.0));
+    emit newQtyRequired(0.0);
+    emit newQtyIssued(0.0);
+    emit newQtyScrappedFromWIP(0.0);
 
     _itemNumber->clear();
   }
@@ -850,13 +792,13 @@ void WomatlCluster::setId(int pWomatlid)
     bool qual = FALSE;
     QString sql( "SELECT list.womatl_id AS womatlid, item_number, "
                  "       wo_id, uom_name, item_descrip1, item_descrip2,"
-                 "       abs(list.womatl_qtyreq) AS _qtyreq, "
-                 "       abs(list.womatl_qtyiss) AS _qtyiss,"
-                 "       formatQtyPer(list.womatl_qtyper) AS qtyper,"
-                 "       formatScrap(list.womatl_scrap) AS scrap,"
-                 "       formatQty(abs(list.womatl_qtyreq)) AS qtyreq, "
-                 "       formatQty(abs(list.womatl_qtyiss)) AS qtyiss, "
-                 "       formatQtyPer(list.womatl_qtywipscrap) AS qtywipscrap "
+                 "       ABS(list.womatl_qtyreq) AS _qtyreq, "
+                 "       ABS(list.womatl_qtyiss) AS _qtyiss,"
+                 "       (list.womatl_qtyper) AS qtyper,"
+                 "       (list.womatl_scrap * 100) AS scrap,"
+                 "       (abs(list.womatl_qtyreq)) AS qtyreq, "
+                 "       (abs(list.womatl_qtyiss)) AS qtyiss, "
+                 "       (list.womatl_qtywipscrap) AS qtywipscrap "
                  "FROM womatl AS list, womatl AS target, wo, itemsite, item uom "
                  "WHERE ( (list.womatl_wo_id=wo_id)"
                  " AND (target.womatl_wo_id=wo_id)"
@@ -959,7 +901,7 @@ void WomatlCluster::sPopulateInfo(int pWomatlid)
     _issued = 0;
 
     emit newId(-1);
-    emit newQtyScrappedFromWIP("");
+    emit newQtyScrappedFromWIP(0.0);
     emit valid(FALSE);
   }
   else if (_womatl.findFirst("womatlid", pWomatlid) != -1)
@@ -967,10 +909,10 @@ void WomatlCluster::sPopulateInfo(int pWomatlid)
     _uom->setText(_womatl.value("uom_name").toString());
     _descrip1->setText(_womatl.value("item_descrip1").toString());
     _descrip2->setText(_womatl.value("item_descrip2").toString());
-    _qtyPer->setText(_womatl.value("qtyper").toString());
-    _scrap->setText(_womatl.value("scrap").toString());
-    _qtyRequired->setText(_womatl.value("qtyreq").toString());
-    _qtyIssued->setText(_womatl.value("qtyiss").toString());
+    _qtyPer->setDouble(_womatl.value("qtyper").toDouble());
+    _scrap->setDouble(_womatl.value("scrap").toDouble());
+    _qtyRequired->setDouble(_womatl.value("qtyreq").toDouble());
+    _qtyIssued->setDouble(_womatl.value("qtyiss").toDouble());
 
     _id = pWomatlid;
     _valid = TRUE;
@@ -978,7 +920,7 @@ void WomatlCluster::sPopulateInfo(int pWomatlid)
     _issued = _womatl.value("_qtyiss").toDouble();
 
     emit newId(_id);
-    emit newQtyScrappedFromWIP(_womatl.value("qtywipscrap").toString());
+    emit newQtyScrappedFromWIP(_womatl.value("qtywipscrap").toDouble());
     emit valid(TRUE);
   }
 }
