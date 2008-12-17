@@ -182,7 +182,10 @@ void Comments::sNew()
   newdlg.set(params);
 
   if (newdlg.exec() != QDialog::Rejected)
+  {
+    emit commentAdded();
     refresh();
+  }
 }
 
 void Comments::sView()
