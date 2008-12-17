@@ -94,10 +94,11 @@ public slots:
     virtual void sViewAR();
     virtual void sContactChanged();
     virtual void sPrepareMail();
-    virtual void sSendMail(ParameterList & params);
+    virtual void sSendMail(ParameterList & params, ParameterList & rptParams);
     virtual void sChanged() {_updated=true;};
     virtual void sAssigned();
     virtual void sCommentAdded() {_commentAdded=true;};
+    virtual void sUpdateEdiProfile();
 
 signals:
     void prepareMail();
@@ -111,7 +112,9 @@ private:
     int		_mode;
     int		_myUsrId;
     int         _aropenid;
+    int         _ediprofileid;
     bool	_saved;
+    QString     _ardoctype;
     QStringList	_statusCodes;
     
     bool        _commentAdded;

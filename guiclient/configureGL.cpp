@@ -136,6 +136,7 @@ configureGL::configureGL(QWidget* parent, const char* name, bool modal, Qt::WFla
   _warnLate->setChecked(_metrics->boolean("AutoCreditWarnLateCustomers"));
   if(!_metrics->value("DefaultAutoCreditWarnGraceDays").isEmpty())
     _graceDays->setValue(_metrics->value("DefaultAutoCreditWarnGraceDays").toInt());
+  _incdtCategory->setId(_metrics->value("DefaultARIncidentStatus").toInt());
   
   // GL
   _mainSize->setValue(_metrics->value("GLMainSize").toInt());
@@ -304,6 +305,7 @@ void configureGL::sSave()
     _metrics->set("DefaultAutoCreditWarnGraceDays", _graceDays->value());
 
   _metrics->set("RecurringInvoiceBuffer", _recurringBuffer->value());
+  _metrics->set("DefaultARIncidentStatus", _incdtCategory->id());
   
   // GL
   Action *profitcenter = 0;

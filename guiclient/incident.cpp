@@ -79,6 +79,13 @@ incident::incident(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _statusCodes << "N" << "F" << "C" << "A" << "R" << "L";
   setupUi(this);
 
+  _incdtid = -1;
+  _commentAdded = false;
+  _updated = false;
+  _ediprofileid = -1;
+  _saved = false;
+  _aropenid = -1;
+  
   if(!_privileges->check("EditOwner")) _owner->setEnabled(false);
 
   // signals and slots connections
@@ -97,12 +104,12 @@ incident::incident(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   //connect(_return,      SIGNAL(clicked()),        this, SLOT(sReturn()));
   connect(_viewAR,        SIGNAL(clicked()),        this, SLOT(sViewAR()));
   connect(_cntct,         SIGNAL(changed()),        this, SLOT(sContactChanged()));
-  connect(this,           SIGNAL(prepareMail()),    this, SLOT(sPrepareMail()));
   connect(_assignedTo,    SIGNAL(newId(int)),       this, SLOT(sAssigned()));
   connect(_comments,      SIGNAL(commentAdded()),   this, SLOT(sCommentAdded()));
   
   //Note changes for e-mail notification
-  connect(_category,      SIGNAL(textChanged(QString)), this, SLOT(sChanged()));
+  connect(_category,      SIGNAL(currentIndexChanged(int)), this, SLOT(sUpdateEdiProfile()));
+  connect(_category,      SIGNAL(currentIndexChanged(int)), this, SLOT(sChanged()));
   connect(_description,   SIGNAL(textChanged(QString)), this, SLOT(sChanged()));
   connect(_crmacct,       SIGNAL(newId(int))          , this, SLOT(sChanged()));
   connect(_owner,         SIGNAL(newId(int))          , this, SLOT(sChanged()));
@@ -116,10 +123,6 @@ incident::incident(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_notes,         SIGNAL(textChanged())       , this, SLOT(sChanged()));
   connect(_item,          SIGNAL(newId(int))          , this, SLOT(sChanged()));
   connect(_lotserial,     SIGNAL(newId(int))          , this, SLOT(sChanged()));
-  
-  _incdtid = -1;
-  _commentAdded = false;
-  _updated = false;
 
   _severity->setType(XComboBox::IncidentSeverity);
   _priority->setType(XComboBox::IncidentPriority);
@@ -163,9 +166,8 @@ incident::incident(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 
   // because this causes a pop-behind situation we are hiding for now.
   //_return->hide();
-
-  _saved = false;
-  _aropenid = -1;
+  
+  sUpdateEdiProfile();
 }
 
 /*
@@ -277,6 +279,29 @@ enum SetResponse incident::set(const ParameterList &pParams)
   if (valid)
   {
     _aropenid = param.toInt();
+    q.prepare("SELECT aropen_doctype, aropen_docnumber, "
+              "       CASE WHEN (aropen_doctype='C') THEN :creditMemo"
+              "            WHEN (aropen_doctype='D') THEN :debitMemo"
+              "            WHEN (aropen_doctype='I') THEN :invoice"
+              "            WHEN (aropen_doctype='R') THEN :cashdeposit"
+              "            ELSE '' END AS docType "
+              "FROM aropen "
+              "WHERE (aropen_id=:aropen_id);");
+    q.bindValue(":aropen_id", _aropenid);
+    q.bindValue(":creditMemo", tr("Credit Memo"));
+    q.bindValue(":debitMemo", tr("Debit Memo"));
+    q.bindValue(":invoice", tr("Invoice"));
+    q.bindValue(":cashdeposit", tr("Customer Deposit"));    
+    q.exec();
+    if (q.first())
+    { 
+      if (_metrics->value("DefaultARIncidentStatus").toInt())
+        _category->setId(_metrics->value("DefaultARIncidentStatus").toInt());
+      _ardoctype=q.value("aropen_doctype").toString();
+      _docType->setText(q.value("docType").toString());
+      _docNumber->setText(q.value("aropen_docnumber").toString());
+      _description->setText(QString("%1 #%2").arg(q.value("docType").toString()).arg(q.value("aropen_docnumber").toString()));
+    }
   }
 
   sHandleTodoPrivs();
@@ -487,7 +512,6 @@ bool incident::save(bool partial)
     q.bindValue(":incdt_ls_id", _lotserial->id());
   if (_aropenid > 0)
     q.bindValue(":incdt_aropen_id", _aropenid);
-
   if(!q.exec() && q.lastError().type() != QSqlError::NoError)
   {
     rollback.exec();
@@ -553,15 +577,16 @@ void incident::populate()
             "            WHEN (aropen_doctype='I') THEN :invoice"
             "            WHEN (aropen_doctype='R') THEN :cashdeposit"
             "            ELSE ''"
-            "       END AS docType "
+            "       END AS docType, "
+            "       aropen_doctype "
             "FROM incdt LEFT OUTER JOIN cntct ON (incdt_cntct_id=cntct_id)"
 			"           LEFT OUTER JOIN aropen ON (incdt_aropen_id=aropen_id) "
             "WHERE (incdt_id=:incdt_id); ");
   q.bindValue(":incdt_id", _incdtid);
-  q.bindValue(":creditMemo", tr("C/M"));
-  q.bindValue(":debitMemo", tr("D/M"));
+  q.bindValue(":creditMemo", tr("Credit Memo"));
+  q.bindValue(":debitMemo", tr("Debit Memo"));
   q.bindValue(":invoice", tr("Invoice"));
-  q.bindValue(":cashdeposit", tr("C/D"));
+  q.bindValue(":cashdeposit", tr("Customer Deposit"));
   q.exec();
   if(q.first())
   {
@@ -602,6 +627,7 @@ void incident::populate()
     _docType->setText(q.value("docType").toString());
     _docNumber->setText(q.value("docNumber").toString());
     _aropenid = q.value("docId").toInt();
+    _ardoctype = q.value("aropen_doctype").toString();
     if (_aropenid > 0)
       _viewAR->setEnabled(true);
 
@@ -827,6 +853,7 @@ void incident::sPrepareMail()
   //Users can use scripting to disconnect the signal that calls this and implement their
   //own logic to build message tokens if they like
   ParameterList params;
+  ParameterList rptParams;
   QString ownerEmail;
   QString assignedEmail;
   QString docbody;
@@ -949,13 +976,34 @@ void incident::sPrepareMail()
   params.append("email2"      , assignedEmail);
   params.append("email3"      , _cntct->emailAddress());
   params.append("preview"     , _metrics->boolean("CRMIncidentEmailPreview"));
-    
-  sSendMail(params);
+  
+  if (_ardoctype == "I")
+  {
+    if (QMessageBox::question(this, tr("Attach Invoice"),
+                              tr("<p>Would you like to attach a copy of the invoice "
+                              "to the email to be sent?"),
+                              QMessageBox::Yes | QMessageBox::Default,
+                              QMessageBox::No) == QMessageBox::Yes)
+    {
+      q.prepare( "SELECT invchead_id, findCustomerForm(invchead_cust_id, 'I') AS invoiceform "
+             "FROM invchead "
+             "WHERE (invchead_invcnumber=:invcnumber);" );
+      q.bindValue(":invcnumber", _docNumber->text());
+      q.exec();
+      if (q.first())
+      {
+        params.append("reportName", q.value("invoiceform").toString());
+        params.append("fileName", tr("Invoice-%1").arg(_docNumber->text()));
+        rptParams.append("invchead_id", q.value("invchead_id").toInt());
+      }
+    }
+  }
+  sSendMail(params, rptParams);
 }
 
-void incident::sSendMail(ParameterList & params)
+void incident::sSendMail(ParameterList & params, ParameterList & rptParams)
 {
-  deliverEmail::profileEmail(this, _metrics->value("CRMIncidentEmailProfile").toInt(), params);
+  deliverEmail::profileEmail(this, _ediprofileid, params, rptParams);
 }
 
 void incident::sAssigned()
@@ -964,4 +1012,36 @@ void incident::sAssigned()
     _status->setCurrentIndex(3);
 }
 
-
+void incident::sUpdateEdiProfile()
+{
+  disconnect(this,           SIGNAL(prepareMail()),    this, SLOT(sPrepareMail()));
+  if (_category->id() != -1)
+  {
+    XSqlQuery edi;
+    edi.prepare("SELECT COALESCE(incdtcat_ediprofile_id,fetchMetricValue('CRMIncidentEmailProfile')) AS ediprofile_id "
+              "FROM incdtcat "
+              "WHERE (incdtcat_id=:incdtcat_id);");
+    edi.bindValue(":incdtcat_id", _category->id());
+    edi.exec();
+    if (edi.first())
+    {
+      connect(this,           SIGNAL(prepareMail()),    this, SLOT(sPrepareMail()));
+      _ediprofileid=edi.value("ediprofile_id").toInt();
+    }
+    else if (edi.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      _ediprofileid=-1;
+      return;
+    }
+    else
+      _ediprofileid=-1;
+  }
+  else if (_metrics->value("CRMIncidentEmailProfile").toInt())
+  {
+    connect(this,           SIGNAL(prepareMail()),    this, SLOT(sPrepareMail()));
+    _ediprofileid=_metrics->value("CRMIncidentEmailProfile").toInt();
+  }
+  else
+    _ediprofileid=-1;
+}

@@ -135,6 +135,10 @@ enum SetResponse deliverEmail::set(const ParameterList &pParams)
   param = pParams.value("body", &valid);
   if (valid)
     _body->setText(param.toString());
+    
+  param = pParams.value("fileName", &valid);
+  if (valid)
+    _filename->setText(param.toString());
 
   return NoError;
 }
@@ -149,13 +153,25 @@ void deliverEmail::sSubmit()
     return;
   }
   
-  submitEmail(this,
+  if (_reportName.isEmpty())
+    submitEmail(this,
          _from->text(),
          _to->text(),
          _cc->text(),
          _subject->text(),
          _body->toPlainText(),
          _emailHTML->isChecked());
+  else
+    submitReport(this,
+         _reportName,
+         _filename->text(),
+         _from->text(),
+         _to->text(),
+         _cc->text(),
+         _subject->text(),
+         _body->toPlainText(),
+         _emailHTML->isChecked(),
+         _reportParams);
   
   if (_captive)
     accept();
@@ -167,11 +183,12 @@ void deliverEmail::sSubmit()
     _cc->clear();
     _body->clear();
     _subject->clear();
+    _filename->clear();
   }
 }
 
 
-bool deliverEmail::profileEmail(QWidget *parent, int profileid, ParameterList &pParams)
+bool deliverEmail::profileEmail(QWidget *parent, int profileid, ParameterList &pParams, ParameterList &rptParams)
 {
   if (!profileid)
     return false;
@@ -180,6 +197,8 @@ bool deliverEmail::profileEmail(QWidget *parent, int profileid, ParameterList &p
   bool     valid;
   
   bool    preview = false;
+  QString reportName;
+  QString fileName;
   
   //Token variables
   int     docid = 0;
@@ -203,6 +222,14 @@ bool deliverEmail::profileEmail(QWidget *parent, int profileid, ParameterList &p
   param = pParams.value("preview", &valid);
   if (valid)
     preview = param.toBool(); 
+    
+  param = pParams.value("reportName", &valid);
+  if (valid)
+    reportName = param.toString();   
+    
+  param = pParams.value("fileName", &valid);
+  if (valid)
+    fileName = param.toString();   
     
   param = pParams.value("description", &valid);
   if (valid)
@@ -399,16 +426,21 @@ bool deliverEmail::profileEmail(QWidget *parent, int profileid, ParameterList &p
       params.append("subject", subject);
       params.append("body", body);
       params.append("emailhtml", q.value("ediprofile_emailhtml").toBool());
+      params.append("fileName", fileName);
        
       deliverEmail newdlg(parent, "", TRUE);
       newdlg.set(params);
+      newdlg.setReportName(reportName);
+      newdlg.setReportParameters(rptParams);
       if (newdlg.exec() == XDialog::Rejected)
         return false;
       else
         return true;
     }
-    else
+    else if (reportName.isEmpty())
       submitEmail(parent,from,to,cc,subject,body,q.value("ediprofile_emailhtml").toBool());
+    else
+      submitReport(parent,reportName,fileName,from,to,cc,subject,body,q.value("ediprofile_emailhtml").toBool(),rptParams);
   }
   else
     return false;
@@ -459,4 +491,62 @@ bool deliverEmail::submitEmail(QWidget* parent, const QString from, const QStrin
   
   return true;
 }
+
+bool deliverEmail::submitReport(QWidget* parent, const QString reportName, const QString fileName, const QString from, const QString to, const QString cc, const QString subject, const QString body, const bool emailHTML, ParameterList &rptParams)
+{
+  if (to.isEmpty())
+    return false;
+
+  q.prepare( "SELECT submitReportToBatch( :reportname, :fromEmail, :emailAddress, :ccAddress, :subject,"
+             "                            :emailBody, :fileName, CURRENT_TIMESTAMP, :emailHTML) AS batch_id;" );
+  q.bindValue(":reportname", reportName);
+  q.bindValue(":fileName", fileName);
+  q.bindValue(":fromEmail", from);
+  q.bindValue(":emailAddress", to);
+  q.bindValue(":ccAddress", cc);
+  q.bindValue(":subject", subject);
+  q.bindValue(":emailBody", body);
+  q.bindValue(":emailHTML", emailHTML);
+  q.exec();
+  if (q.first())
+  {
+    int batch_id = q.value("batch_id").toInt();
+    int counter;
+ 
+    q.prepare( "INSERT INTO batchparam "
+             "( batchparam_batch_id, batchparam_order,"
+             "  batchparam_name, batchparam_value ) "
+             "VALUES "
+             "( :batchparam_batch_id, :batchparam_order,"
+             "  :batchparam_name, :batchparam_value );" );
+    q.bindValue(":batchparam_batch_id", batch_id);
+                 
+    for (counter = 0; counter < rptParams.count(); counter++)
+    {
+      q.bindValue(":batchparam_order", counter+1);
+      q.bindValue(":batchparam_name", rptParams.name(counter));
+      q.bindValue(":batchparam_value", rptParams.value(counter));
+      q.exec();
+      if (q.lastError().type() != QSqlError::NoError)
+      {
+        systemError(parent, q.lastError().databaseText(), __FILE__, __LINE__);
+        return false;
+      }
+    }
+
+    q.bindValue(":batchparam_batch_id", batch_id);
+    q.bindValue(":batchparam_order", counter+2);
+    q.bindValue(":batchparam_name", "title");
+    q.bindValue(":batchparam_value", "Emailed Customer Copy");
+    q.exec();
+    if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(parent, q.lastError().databaseText(), __FILE__, __LINE__);
+      return false;
+    }
+  }
+  
+  return true;
+}
+
 

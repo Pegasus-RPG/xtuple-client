@@ -78,6 +78,16 @@ incidentCategory::incidentCategory(QWidget* parent, const char* name, bool modal
     connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
     connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
     connect(_name, SIGNAL(lostFocus()), this, SLOT(sCheck()));
+    
+    if (!_metrics->boolean("EnableBatchManager"))
+    {
+      _ediprofile->hide();
+      _ediprofileLit->hide();
+    }
+    else
+      _ediprofile->populate("SELECT ediprofile_id, ediprofile_name "
+                            "FROM ediprofile "
+                            "WHERE (ediprofile_type='email');");
 }
 
 incidentCategory::~incidentCategory()
@@ -166,9 +176,9 @@ void incidentCategory::sSave()
     }
 
     q.prepare( "INSERT INTO incdtcat "
-               "(incdtcat_id, incdtcat_name, incdtcat_order, incdtcat_descrip)"
+               "(incdtcat_id, incdtcat_name, incdtcat_order, incdtcat_descrip, incdtcat_ediprofile_id)"
                " VALUES "
-               "(:incdtcat_id, :incdtcat_name, :incdtcat_order, :incdtcat_descrip);" );
+               "(:incdtcat_id, :incdtcat_name, :incdtcat_order, :incdtcat_descrip, :incdtcat_ediprofile_id );" );
   }
   else if (_mode == cEdit)
   {
@@ -196,7 +206,8 @@ void incidentCategory::sSave()
     q.prepare( "UPDATE incdtcat "
                "SET incdtcat_name=:incdtcat_name, "
 	       "    incdtcat_order=:incdtcat_order, "
-	       "    incdtcat_descrip=:incdtcat_descrip "
+	       "    incdtcat_descrip=:incdtcat_descrip, "
+               "    incdtcat_ediprofile_id=:incdtcat_ediprofile_id "
                "WHERE (incdtcat_id=:incdtcat_id);" );
   }
 
@@ -204,6 +215,8 @@ void incidentCategory::sSave()
   q.bindValue(":incdtcat_name", _name->text());
   q.bindValue(":incdtcat_order", _order->value());
   q.bindValue(":incdtcat_descrip", _descrip->toPlainText());
+  if (_ediprofile->id() != -1)
+    q.bindValue(":incdtcat_ediprofile_id", _ediprofile->id());
   q.exec();
   if (q.lastError().type() != QSqlError::NoError)
   {
@@ -216,7 +229,7 @@ void incidentCategory::sSave()
 
 void incidentCategory::populate()
 {
-  q.prepare( "SELECT * "
+  q.prepare( "SELECT *,COALESCE(incdtcat_ediprofile_id,-1) AS ediprofile "
              "FROM incdtcat "
              "WHERE (incdtcat_id=:incdtcat_id);" );
   q.bindValue(":incdtcat_id", _incdtcatId);
@@ -226,6 +239,7 @@ void incidentCategory::populate()
     _name->setText(q.value("incdtcat_name").toString());
     _order->setValue(q.value("incdtcat_order").toInt());
     _descrip->setText(q.value("incdtcat_descrip").toString());
+    _ediprofile->setId(q.value("ediprofile").toInt());
   }
   else if (q.lastError().type() != QSqlError::NoError)
   {

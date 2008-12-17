@@ -74,19 +74,24 @@ public:
     deliverEmail(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~deliverEmail();
     
-    static bool profileEmail(QWidget *parent, int profileid, ParameterList & pParams);
+    static bool profileEmail(QWidget *parent, int profileid, ParameterList & pParams, ParameterList & pRptParams = 0);
     static bool submitEmail(QWidget *parent, const QString to, const QString cc, const QString subject, const QString body);
     static bool submitEmail(QWidget *parent, const QString from, const QString to, const QString cc, const QString subject, const QString body);
     static bool submitEmail(QWidget *parent, const QString from, const QString to, const QString cc, const QString subject, const QString body, const bool emailHTML);
+    static bool submitReport(QWidget *parent, const QString reportName, const QString fileName, const QString from, const QString to, const QString cc, const QString subject, const QString body, const bool emailHTML, ParameterList & rptParams);
     
     virtual enum SetResponse set( const ParameterList & pParams );
+    virtual void setReportName(const QString & name) {_reportName = name;};
+    virtual void setReportParameters(const ParameterList & rptParams) {_reportParams = rptParams;};
 
 protected slots:
     virtual void languageChange();
     virtual void sSubmit();
 
 private:    
-    bool _captive;
+    bool          _captive;
+    QString       _reportName;
+    ParameterList _reportParams;
 
 };
 
