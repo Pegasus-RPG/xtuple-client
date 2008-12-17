@@ -50,7 +50,7 @@
      </property>
      <widget class="QWidget" name="_all" />
      <widget class="QWidget" name="_selectedVendor" >
-      <layout class="QGridLayout" >
+      <layout class="QGridLayout" name="gridLayout" >
        <property name="margin" >
         <number>0</number>
        </property>
@@ -64,7 +64,7 @@
       </layout>
      </widget>
      <widget class="QWidget" name="_selectedVendorType" >
-      <layout class="QGridLayout" name="gridLayout" >
+      <layout class="QGridLayout" name="gridLayout1" >
        <item row="0" column="0" >
         <widget class="XComboBox" name="_vendorTypes" >
          <property name="enabled" >

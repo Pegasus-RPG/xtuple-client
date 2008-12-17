@@ -208,7 +208,7 @@ void XLineEdit::focusInEvent(QFocusEvent *pEvent)
   QLineEdit::focusInEvent(pEvent);
 }
 
-void XLineEdit::setData(const QString &pString)
+void XLineEdit::setData(const QString &/*pString*/)
 {
   if (_mapper->model() &&
       _mapper->model()->data(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this))).toString() != text())

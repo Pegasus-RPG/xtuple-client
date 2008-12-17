@@ -238,7 +238,7 @@ void alarmMaint::sUserLookup(int pId)
   sGetUser(pId);
 }
 
-void alarmMaint::sContactLookup(int pId)
+void alarmMaint::sContactLookup(int /*pId*/)
 {
   QString recipient;
   recipient = _emailRecipient->text();

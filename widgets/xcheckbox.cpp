@@ -141,3 +141,4 @@ void XCheckBox::setDataWidgetMap(XDataWidgetMapper* m)
   _mapper=m;
   connect(this, SIGNAL(stateChanged(int)), this, SLOT(setData())); 
 }
+
