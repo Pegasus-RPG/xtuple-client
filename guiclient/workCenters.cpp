@@ -148,9 +148,9 @@ void workCenters::sCopy()
   params.append("mode", "copy");
   params.append("wrkcnt_id", _wrkcnt->id());
 
-  workCenter *newdlg = new workCenter(this, "", Qt::WDestructiveClose);
+  workCenter *newdlg = new workCenter();
   newdlg->set(params);
-  newdlg->show();
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void workCenters::sView()
@@ -159,9 +159,9 @@ void workCenters::sView()
   params.append("mode", "view");
   params.append("wrkcnt_id", _wrkcnt->id());
 
-  workCenter *newdlg = new workCenter(this, "", Qt::WDestructiveClose);
+  workCenter *newdlg = new workCenter();
   newdlg->set(params);
-  newdlg->show();
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void workCenters::sDelete()
