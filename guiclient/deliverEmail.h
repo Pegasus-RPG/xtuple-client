@@ -74,7 +74,7 @@ public:
     deliverEmail(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~deliverEmail();
     
-    static bool profileEmail(QWidget *parent, int profileid, ParameterList & pParams, ParameterList & pRptParams = 0);
+    static bool profileEmail(QWidget *parent, int profileid, ParameterList & pParams, ParameterList & pRptParams);
     static bool submitEmail(QWidget *parent, const QString to, const QString cc, const QString subject, const QString body);
     static bool submitEmail(QWidget *parent, const QString from, const QString to, const QString cc, const QString subject, const QString body);
     static bool submitEmail(QWidget *parent, const QString from, const QString to, const QString cc, const QString subject, const QString body, const bool emailHTML);
