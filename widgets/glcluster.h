@@ -102,10 +102,9 @@ class OPENMFGWIDGETS_EXPORT GLCluster : public QWidget
 
     void setReadOnly(bool);
 
-    int id();
-    bool isValid();
-
   public slots:
+    bool isValid();
+    int id();
     void setDataWidgetMap(XDataWidgetMapper* m);
     void setId(int);
     void setEnabled(bool);

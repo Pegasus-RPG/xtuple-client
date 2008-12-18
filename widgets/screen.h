@@ -72,11 +72,13 @@ class OPENMFGWIDGETS_EXPORT Screen : public QWidget
 		
 	Q_ENUMS(Modes)
 	Q_ENUMS(SearchTypes)
+        Q_ENUMS(Disposition)
 	
 	Q_PROPERTY (QString		schemaName            READ schemaName		WRITE setSchemaName)
 	Q_PROPERTY (QString 		tableName             READ tableName 		WRITE setTableName)
         Q_PROPERTY (int                 primaryKeyColumns     READ primaryKeyColumns    WRITE setPrimaryKeyColumns)
-	Q_PROPERTY (Modes		mode                  READ mode                 WRITE setMode)
+	Q_PROPERTY (Modes		mode                  READ mode                 WRITE setMode)              
+        Q_PROPERTY (Disposition         check                 READ check                DESIGNABLE false)
 
 	public:
 		Screen(QWidget * = 0);
@@ -85,19 +87,19 @@ class OPENMFGWIDGETS_EXPORT Screen : public QWidget
 		enum Modes { New, Edit, View };
                 enum Disposition { NoChanges, Save, Cancel };
 		Modes mode();
+                Disposition check();
 	
-                bool    isDirty();
-                int     currentIndex();
-                int     primaryKeyColumns() const { return _keyColumns;       };
-	        QString schemaName()        const { return _schemaName;       };
-	        QString sortColumn()        const { return _sortColumn;       };
-		QString tableName()         const { return _tableName;        };
                 XSqlTableModel *model();
                 
                 void showEvent ( QShowEvent * event );
        	
 	public slots:
-                Disposition check();
+                bool isDirty();
+                int  currentIndex();
+                int  primaryKeyColumns() const { return _keyColumns;       };
+	        QString schemaName()        const { return _schemaName;       };
+	        QString sortColumn()        const { return _sortColumn;       };
+		QString tableName()         const { return _tableName;        };
                 void insert();
                 void newMappedWidget(QWidget *widget);
                 void removeCurrent();
