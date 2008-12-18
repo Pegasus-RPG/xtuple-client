@@ -88,7 +88,9 @@ SELECT shiphead_number, 'T/O #:' AS ordertype,
 --     kitting functionality
        formatsolinenumber(coitem_id) AS linenumber,
        coitem_memo AS memo,
-       item_number,
+       CASE WHEN (coitem_custpn != '') THEN coitem_custpn
+            ELSE item_number
+       END AS item_number,
        formatitemsitebarcode(itemsite_id) AS item_barcode,
        formatsoitembarcode(coitem_id) AS orderitem_barcode,
 --     In 2.3 replaced the next line:
@@ -96,8 +98,12 @@ SELECT shiphead_number, 'T/O #:' AS ordertype,
 --     with:
        (select uom_name from uom where uom_id = coitem_qty_uom_id) AS uom_name,
        itemsellinguom(item_id) AS shipuom,
-       item_descrip1,
-       item_descrip2,
+       CASE WHEN (coitem_custpn != '' AND itemalias_usedescrip=TRUE) THEN itemalias_descrip1
+            ELSE item_descrip1
+       END AS item_descrip1,
+       CASE WHEN (coitem_custpn != '' AND itemalias_usedescrip=TRUE) THEN itemalias_descrip2
+            ELSE item_descrip2
+       END AS item_descrip2,
 
        formatQty(coitem_qtyord) AS ordered,
        (SELECT formatQty(SUM(coship_qty)) FROM coship WHERE ((coship_cosmisc_id=&lt;? value("cosmisc_id") ?>) AND (coship_coitem_id=coitem_id))) AS shipped,
@@ -142,12 +148,13 @@ SELECT shiphead_number, 'T/O #:' AS ordertype,
        END AS char_title,
        getPacklistCharName(coship_cosmisc_id, coitem_id) AS char_name,
        getPacklistCharValue(coship_cosmisc_id, coitem_id) AS char_value
-  FROM itemsite, item, coitem, coship, uom
- WHERE ( (coitem_itemsite_id=itemsite_id)
-   AND (itemsite_item_id=item_id)
-   AND (item_inv_uom_id=uom_id)
-   AND (coitem_status &lt;> 'X')
-   AND (coitem_id=coship_coitem_id)
+  FROM coship
+       JOIN coitem ON (coitem_id=coship_coitem_id)
+       JOIN itemsite ON (itemsite_id=coitem_itemsite_id)
+       JOIN item ON (item_id=itemsite_item_id)
+       JOIN uom ON (uom_id=item_inv_uom_id)
+       LEFT OUTER JOIN itemalias ON (itemalias_item_id=item_id AND itemalias_number=coitem_custpn) 
+ WHERE ( (coitem_status &lt;> 'X')
    AND (coship_cosmisc_id=&lt;? value("cosmisc_id") ?>)
 )
 &lt;? if exists("MultiWhs") ?>

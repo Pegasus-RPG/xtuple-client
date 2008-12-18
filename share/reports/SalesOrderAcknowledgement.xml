@@ -54,15 +54,21 @@
   <sql>SELECT 1 AS groupby,
        coitem_linenumber,
        coitem_memo,
-       item_number,
+       CASE WHEN (coitem_custpn != '') THEN coitem_custpn
+            ELSE item_number
+       END AS item_number,
        formatitemsitebarcode(itemsite_id) AS item_barcode,
 --     In 2.3 replaced the next line:
 --     uom_name,
 --     with:
        (select uom_name from uom where uom_id = coitem_qty_uom_id) AS uom_name,
        itemSellingUOM(item_id) AS item_shipuom,
-       item_descrip1,
-       item_descrip2,
+       CASE WHEN (coitem_custpn != '' AND itemalias_usedescrip=TRUE) THEN itemalias_descrip1
+            ELSE item_descrip1
+       END AS item_descrip1,
+       CASE WHEN (coitem_custpn != '' AND itemalias_usedescrip=TRUE) THEN itemalias_descrip2
+            ELSE item_descrip2
+       END AS item_descrip2,
        formatQty(coitem_qtyord) AS ordered,
        formatQty(coitem_qtyshipped - coitem_qtyreturned) AS shipped,
        formatQty(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned)) AS balance,
@@ -101,11 +107,12 @@
                                           >= (coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned)) THEN 'R'
             ELSE coitem_status
        END AS f_status
-  FROM itemsite, item, uom, coitem
- WHERE ( (coitem_itemsite_id=itemsite_id)
-   AND (itemsite_item_id=item_id)
-   AND (item_inv_uom_id=uom_id)
-   AND (coitem_status &lt;> 'X')
+  FROM coitem
+       JOIN itemsite ON (itemsite_id=coitem_itemsite_id)
+       JOIN item ON (item_id=itemsite_item_id)
+       JOIN uom ON (uom_id=item_inv_uom_id)
+       LEFT OUTER JOIN itemalias ON (itemalias_item_id=item_id AND itemalias_number=coitem_custpn) 
+ WHERE ( (coitem_status &lt;> 'X')
    AND (coitem_status &lt;> 'C')
 -- 1 REMOVE THIS AND CLOSED LINES WILL NOT DISPLAY ON PACKING LIST  
    &lt;? if exists("hide closed") ?>
@@ -116,6 +123,7 @@
 )
 --2.3 add coitem_qty_uom_id, to the GROUP BY clause
 GROUP BY coitem_qty_uom_id, coitem_linenumber, coitem_id, coitem_memo, item_number, uom_name, item_id,
+         coitem_custpn, itemalias_usedescrip, itemalias_descrip1, itemalias_descrip2,
          item_descrip1, item_descrip2, coitem_qtyord, coitem_qty_invuomratio, coitem_qtyshipped,
          coitem_qtyreturned, coitem_status, coitem_cohead_id,
          itemsite_id, itemsite_qtyonhand, itemsite_warehous_id, item_id
@@ -257,6 +265,7 @@ WHERE ((image_name='logo'));</sql>
    <format>3of9</format>
    <maxlength>10</maxlength>
    <left/>
+   <narrowBarWidth>0.01</narrowBarWidth>
    <data>
     <query>head</query>
     <column>cust_number</column>
@@ -272,6 +281,7 @@ WHERE ((image_name='logo'));</sql>
    <format>3of9</format>
    <maxlength>20</maxlength>
    <left/>
+   <narrowBarWidth>0.01</narrowBarWidth>
    <data>
     <query>head</query>
     <column>cohead_custponumber</column>
@@ -408,6 +418,7 @@ WHERE ((image_name='logo'));</sql>
    <format>128</format>
    <maxlength>10</maxlength>
    <left/>
+   <narrowBarWidth>0.01</narrowBarWidth>
    <data>
     <query>head</query>
     <column>order_barcode</column>
@@ -832,6 +843,7 @@ WHERE ((image_name='logo'));</sql>
     <format>128</format>
     <maxlength>15</maxlength>
     <left/>
+    <narrowBarWidth>0.01</narrowBarWidth>
     <data>
      <query>detail</query>
      <column>item_barcode</column>
