@@ -93,6 +93,15 @@ void XTreeView::selectionChanged(const QItemSelection & selected, const QItemSel
   QTreeView::selectionChanged(selected, deselected);
 }
 
+void XTreeView::insert()
+{ 
+  int row=_model.rowCount();
+  
+  _model.insertRows(row,1);
+  for (int i = 0; i < _idx.count(); ++i)
+    _model.setData(_model.index(row,i),_idx.value(i));
+}
+
 void XTreeView::populate(int p)
 { 
   XSqlTableModel *t=static_cast<XSqlTableModel*>(_mapper->model());
@@ -120,8 +129,7 @@ void XTreeView::save()
 
 void XTreeView::selectRow(int index)
 {
-  qDebug("index %d", index);
-    selectionModel()->select(QItemSelection(model()->index(index,0),model()->index(index,model()->columnCount())),
+  selectionModel()->select(QItemSelection(model()->index(index,0),model()->index(index,model()->columnCount())),
                                         QItemSelectionModel::ClearAndSelect |
                                         QItemSelectionModel::Rows);
 }

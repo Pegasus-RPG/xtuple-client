@@ -124,6 +124,7 @@
 #include "plugins/xlineeditplugin.h"
 #include "plugins/xtreewidgetplugin.h"
 #include "plugins/xtreeviewplugin.h"
+#include "plugins/xspinboxplugin.h"
 #include "plugins/xurllabelplugin.h"
 #include "plugins/xtexteditplugin.h"
 
@@ -194,6 +195,7 @@ OpenMFGPlugin::OpenMFGPlugin(QObject * parent) : QObject(parent)
   m_plugins.append(new XComboBoxPlugin(this));
   m_plugins.append(new XLabelPlugin(this));
   m_plugins.append(new XLineEditPlugin(this));
+  m_plugins.append(new XSpinBoxPlugin(this));
   m_plugins.append(new XTreeWidgetPlugin(this));
   m_plugins.append(new XTreeViewPlugin(this));
   m_plugins.append(new XURLLabelPlugin(this));

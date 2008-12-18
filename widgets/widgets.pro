@@ -100,6 +100,7 @@ HEADERS += \
            plugins/xtexteditplugin.h \
 	   plugins/screenplugin.h\
            plugins/xtreeviewplugin.h \
+           plugins/xspinboxplugin.h \
 
 SOURCES    += OpenMFGWidgets.cpp \
               addressCluster.cpp contactCluster.cpp crmacctCluster.cpp \
@@ -150,6 +151,7 @@ SOURCES    += OpenMFGWidgets.cpp \
               file.cpp \
               alarms.cpp alarmMaint.cpp \
               invoiceCluster.cpp \
+              xspinbox.cpp \
 
 HEADERS    += OpenMFGWidgets.h \
               addresscluster.h contactcluster.h crmacctcluster.h \
@@ -201,6 +203,7 @@ HEADERS    += OpenMFGWidgets.h \
               file.h \
               alarms.h alarmMaint.h \
               invoicecluster.h \
+              xspinbox.h \
 
 FORMS += accountSearch.ui \
          documents.ui \

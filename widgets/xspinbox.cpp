@@ -1,4 +1,4 @@
-  /*
+/*
  * Common Public Attribution License Version 1.0. 
  * 
  * The contents of this file are subject to the Common Public Attribution 
@@ -55,60 +55,18 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#ifndef XTREEVIEW_H
+#include "xspinbox.h"
 
-#define XTREEVIEW_H
-
-#include <QTreeView>
-#include <QMenu>
-
-#include "xdatawidgetmapper.h"
-#include "xsqltablemodel.h"
-#include "OpenMFGWidgets.h"
-
-class OPENMFGWIDGETS_EXPORT XTreeView : public QTreeView
+XSpinBox::XSpinBox(QWidget *pParent) :
+  QSpinBox(pParent)
 {
-    Q_OBJECT
-    Q_PROPERTY(QString        schemaName            READ schemaName           WRITE setSchemaName       )
-    Q_PROPERTY(QString        tableName             READ tableName            WRITE setTableName        )
-    Q_PROPERTY(int            primaryKeyCoulmns     READ primaryKeyColumns    WRITE setPrimaryKeyColumns)
-    
-    public:
-      XTreeView(QWidget *parent = 0);
+}
 
-      int          primaryKeyColumns()       const            { return _keyColumns;         };
-      QString      schemaName()              const            { return _schemaName;         };
-      QString      tableName()               const            { return _tableName;          };
-      
-    public slots:
-      virtual void insert();
-      virtual void populate(int p);
-      virtual void save();
-      virtual void selectRow(int index);
-      virtual void setDataWidgetMap(XDataWidgetMapper* mapper);
-      virtual void setModel(XSqlTableModel* model);
-      virtual void setPrimaryKeyColumns(int p)                { _keyColumns = p;            };
-      virtual void setSchemaName(QString p)                   { _schemaName = p;            };
-      virtual void setTableName(QString p)                    { _tableName = p;             };
+void XSpinBox::setDataWidgetMap(XDataWidgetMapper* m)
+{
+  m->addMapping(this, _fieldName, "value", "defaultValue");
+}
 
-    signals:
-      void  newModel(XSqlTableModel *model);
-      void  rowSelected(int);
-      void  valid(bool);
-      
-    protected:
-      virtual void selectionChanged(const QItemSelection & selected, const QItemSelection & deselected);
-      
-    private:
-      int               _keyColumns;
-      QString           _schemaName;
-      QString           _tableName;
-      QSqlDatabase      *_db;
-      QSqlRecord        _idx;
-      XDataWidgetMapper *_mapper;
-      XSqlTableModel    _model;
-      QItemSelectionModel *_selectModel;
- 
-};
 
-#endif
+
+
