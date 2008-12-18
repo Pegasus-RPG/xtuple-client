@@ -136,15 +136,19 @@ void taxSelection::sSave()
 {
   q.prepare("SELECT taxsel_id"
             "  FROM taxsel"
-            " WHERE((taxsel_id!= :taxsel_id)"
-            "   AND (taxsel_taxauth_id=:taxsel_taxauth_id)"
-            "   AND (taxsel_taxtype_id=:taxsel_taxtype_id)"
+            " WHERE((taxsel_id != :taxsel_id)"
+            "   AND (COALESCE(taxsel_taxauth_id, 0)=:taxsel_taxauth_id)"
+            "   AND (COALESCE(taxsel_taxtype_id, 0)=:taxsel_taxtype_id)"
             "   AND (taxsel_tax_id=:taxsel_tax_id))");
   q.bindValue(":taxsel_id", _taxselId);
   if (_taxauth->isValid())
     q.bindValue(":taxsel_taxauth_id", _taxauth->id());
+  else
+    q.bindValue(":taxsel_taxauth_id", 0);
   if (_taxtype->isValid())
     q.bindValue(":taxsel_taxtype_id", _taxtype->id());
+  else
+    q.bindValue(":taxsel_taxtype_id", 0);
   if (_tax->isValid())
     q.bindValue(":taxsel_tax_id", _tax->id());
   q.exec();
