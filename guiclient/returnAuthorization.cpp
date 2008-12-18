@@ -213,26 +213,6 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
   bool     valid;
   QString metric;
 
-  param = pParams.value("incdt_id", &valid);
-  if (valid)
-    _incident->setId(param.toInt());
-
-  param = pParams.value("cust_id", &valid);
-  if(cNew == _mode && valid)
-    _cust->setId(param.toInt());
-
-  param = pParams.value("sohead_id", &valid);
-  if (cNew == _mode && valid)
-    _origso->setId(param.toInt());
-
-  param = pParams.value("rahead_id", &valid);
-  if (valid)
-  {
-    _raheadid = param.toInt();
-    _comments->setId(_raheadid);
-    populate();
-  }
-
   param = pParams.value("mode", &valid);
   if (valid)
   {
@@ -312,7 +292,32 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
     else if (param.toString() == "view")
     {
       _mode = cView;
+      disconnect(_raitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem*)));
+    }
+  }
 
+  param = pParams.value("incdt_id", &valid);
+  if (valid)
+    _incident->setId(param.toInt());
+
+  param = pParams.value("cust_id", &valid);
+  if(cNew == _mode && valid)
+    _cust->setId(param.toInt());
+
+  param = pParams.value("sohead_id", &valid);
+  if (cNew == _mode && valid)
+    _origso->setId(param.toInt());
+
+  param = pParams.value("rahead_id", &valid);
+  if (valid)
+  {
+    _raheadid = param.toInt();
+    _comments->setId(_raheadid);
+    populate();
+  }
+
+  if (_mode == cView)
+  {
       _authNumber->setEnabled(FALSE);
       _authDate->setEnabled(FALSE);
       _expireDate->setEnabled(FALSE);
@@ -363,9 +368,8 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
 
       _cancel->setText("&Close");
       _cancel->setFocus();
-    }
   }
-
+  
   return NoError;
 }
 
