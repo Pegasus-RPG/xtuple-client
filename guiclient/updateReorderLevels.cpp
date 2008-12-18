@@ -284,7 +284,7 @@ void updateReorderLevels::sOpenEdit(QTreeWidgetItem *item, const int col)
   }
 }
 
-void updateReorderLevels::sCloseEdit(QTreeWidgetItem *current, QTreeWidgetItem *previous)
+void updateReorderLevels::sCloseEdit(QTreeWidgetItem * /*current*/, QTreeWidgetItem *previous)
 {
   _results->closePersistentEditor(previous,7);
 }
@@ -293,10 +293,12 @@ void updateReorderLevels::sItemChanged(QTreeWidgetItem *item, const int col)
 {
   // Only positive numbers allowed
   if (col==7)
+  {
     if (item->data(col,Qt::EditRole).toDouble() < 0)
       item->setData(col,Qt::EditRole,0);
     else
       item->setData(col,Qt::EditRole,item->data(col,Qt::EditRole).toDouble());
+  }
 }
 
 

@@ -342,8 +342,6 @@ void dspQOHByParameterList::sHandleValue(bool pShowValue)
 
 void dspQOHByParameterList::sFillList()
 {
-  int itemsiteid = _qoh->id();
-
   _qoh->clear();
   _qoh->setColumnVisible(12, _showValue->isChecked() && _usePostedCosts->isChecked());
   

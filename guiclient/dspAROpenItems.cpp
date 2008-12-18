@@ -220,7 +220,7 @@ void dspAROpenItems::sViewInvoiceDetails()
   q.prepare("SELECT invchead_id FROM aropen, invchead WHERE ((aropen_id=:aropen_id) AND (invchead_invcnumber=aropen_docnumber));");
   q.bindValue(":aropen_id", _aropen->id());
   q.exec();
-  if (q.first());
+  if (q.first())
   {
     ParameterList params;
     params.append("invchead_id", q.value("invchead_id"));

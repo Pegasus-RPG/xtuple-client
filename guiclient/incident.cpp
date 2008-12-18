@@ -870,13 +870,15 @@ void incident::sPrepareMail()
   //Determine reason, if none exit
   if (_statusCache != 3 && 
       _status->currentIndex() == 3 &&
-      _metrics->boolean("CRMIncidentEmailAssigned") );
+      _metrics->boolean("CRMIncidentEmailAssigned") )
     reason = tr("The following incident has been ASSIGNED.");
-  if (cNew == _mode)
+  else if (cNew == _mode)
+  {
     if (_metrics->boolean("CRMIncidentEmailCreated"))
       reason = tr("The following incident has been CREATED.");
     else
       return;
+  }
   else if (_statusCache != _status->currentIndex() && 
       _metrics->boolean("CRMIncidentEmailStatus") )
     reason = tr("The status of the following incident has been changed to %1.").arg(_status->currentText().upper());

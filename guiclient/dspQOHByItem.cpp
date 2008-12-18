@@ -261,8 +261,6 @@ void dspQOHByItem::sFillList()
   _qoh->clear();
   _qoh->setColumnVisible(8, _showValue->isChecked() && _usePostedCosts->isChecked());
 
-  int itemsiteid = _qoh->id();
-
   QString sql( "SELECT itemsite_id, detail,"
                "       warehous_code,"
                "       CASE WHEN (NOT useDefaultLocation(itemsite_id)) THEN :none"

@@ -173,8 +173,8 @@ void searchForItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
 
   if ((((XTreeWidgetItem *)pSelected)->text(2) == tr("Purchased") ||
       (((XTreeWidgetItem *)pSelected)->text(2) == tr("Job")) ||
-      (((XTreeWidgetItem *)pSelected)->text(2) == tr("Manufactured"))
-      && _metrics->boolean("Routings")))
+      (((XTreeWidgetItem *)pSelected)->text(2) == tr("Manufactured")))
+      && _metrics->boolean("Routings"))
   {
     pMenu->insertSeparator();
 

@@ -85,12 +85,14 @@ configureGL::configureGL(QWidget* parent, const char* name, bool modal, Qt::WFla
     if (! _metrics->value("ACHCompanyId").trimmed().isEmpty())
       _companyId->setText(_metrics->value("ACHCompanyId"));
     if (! _metrics->value("ACHCompanyIdType").trimmed().isEmpty())
+    {
       if (_metrics->value("ACHCompanyIdType").trimmed() == "D")
         _companyIdIsDUNS->setChecked(true);
       else if (_metrics->value("ACHCompanyIdType").trimmed() == "E")
         _companyIdIsEIN->setChecked(true);
       else if (_metrics->value("ACHCompanyIdType").trimmed() == "O")
         _companyIdIsOther->setChecked(true);
+    }
     if (! _metrics->value("ACHCompanyName").trimmed().isEmpty())
       _companyName->setText(_metrics->value("ACHCompanyName"));
     if (_metrics->value("ACHDefaultSuffix").trimmed().isEmpty())
