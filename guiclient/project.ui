@@ -174,8 +174,8 @@
        <property name="title" >
         <string>Users</string>
        </property>
-       <layout class="QGridLayout" >
-        <item row="0" column="0" >
+       <layout class="QHBoxLayout" name="horizontalLayout" >
+        <item>
          <layout class="QGridLayout" >
           <item row="0" column="1" >
            <widget class="UsernameCluster" name="_owner" >
@@ -213,8 +213,8 @@
           </item>
          </layout>
         </item>
-        <item row="0" column="1" >
-         <spacer name="horizontalSpacer" >
+        <item>
+         <spacer>
           <property name="orientation" >
            <enum>Qt::Horizontal</enum>
           </property>
@@ -227,8 +227,6 @@
          </spacer>
         </item>
        </layout>
-       <zorder>horizontalSpacer</zorder>
-       <zorder>_ordersGroup</zorder>
       </widget>
      </item>
      <item row="1" column="1" >
@@ -236,7 +234,7 @@
        <property name="title" >
         <string>Assignable Orders</string>
        </property>
-       <layout class="QGridLayout" name="gridLayout" >
+       <layout class="QGridLayout" >
         <item row="0" column="0" >
          <widget class="QCheckBox" name="_so" >
           <property name="text" >

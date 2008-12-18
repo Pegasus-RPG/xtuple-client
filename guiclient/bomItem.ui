@@ -475,7 +475,7 @@
         <attribute name="title" >
          <string>Reference</string>
         </attribute>
-        <layout class="QGridLayout" name="gridLayout" >
+        <layout class="QGridLayout" >
          <item row="0" column="0" >
           <widget class="XTextEdit" name="_ref" />
          </item>

@@ -526,7 +526,7 @@
             <property name="title" >
              <string>Immediate Destination Name and Number</string>
             </property>
-            <layout class="QGridLayout" name="gridLayout" >
+            <layout class="QGridLayout" >
              <item row="0" column="0" colspan="2" >
               <widget class="QRadioButton" name="_useRoutingNumberDest" >
                <property name="text" >

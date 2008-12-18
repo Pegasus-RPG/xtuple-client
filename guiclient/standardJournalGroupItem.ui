@@ -176,9 +176,6 @@
                   <property name="alignment" >
                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                   </property>
-                  <property name="buddy" >
-                   <cstring>_effective</cstring>
-                  </property>
                  </widget>
                 </item>
                </layout>

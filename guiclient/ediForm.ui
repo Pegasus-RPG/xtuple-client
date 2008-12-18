@@ -83,9 +83,6 @@
          <property name="alignment" >
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
-         <property name="buddy" >
-          <cstring>comboBox2</cstring>
-         </property>
         </widget>
        </item>
        <item row="2" column="1" >
@@ -139,9 +136,6 @@
          <property name="alignment" >
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
-         <property name="buddy" >
-          <cstring>comboBox2</cstring>
-         </property>
         </widget>
        </item>
        <item row="0" column="0" >
@@ -151,9 +145,6 @@
          </property>
          <property name="alignment" >
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-         <property name="buddy" >
-          <cstring>comboBox2</cstring>
          </property>
         </widget>
        </item>

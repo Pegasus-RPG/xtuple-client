@@ -490,7 +490,7 @@
             <number>0</number>
            </property>
            <widget class="QWidget" name="_primaryPage" >
-            <layout class="QGridLayout" name="gridLayout" >
+            <layout class="QGridLayout" >
              <item row="0" column="0" >
               <widget class="ContactCluster" name="_primary" >
                <property name="label" >

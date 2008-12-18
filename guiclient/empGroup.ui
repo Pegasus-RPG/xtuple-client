@@ -307,7 +307,7 @@
  <tabstops>
   <tabstop>_name</tabstop>
   <tabstop>_descrip</tabstop>
-  <tabstop>_empgroupitem</tabstop>
+  <tabstop>_empgrpitem</tabstop>
   <tabstop>_delete</tabstop>
   <tabstop>_new</tabstop>
   <tabstop>_save</tabstop>

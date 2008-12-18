@@ -151,9 +151,6 @@
                 <property name="alignment" >
                   <set>Qt::AlignVCenter</set>
                 </property>
-                <property name="buddy" stdset="0" >
-                  <cstring></cstring>
-                </property>
               </widget>
             </item>
             <item>

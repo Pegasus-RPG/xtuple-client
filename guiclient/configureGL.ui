@@ -778,7 +778,7 @@
         <attribute name="title" >
          <string>Accounts Receivable</string>
         </attribute>
-        <layout class="QGridLayout" name="gridLayout" >
+        <layout class="QGridLayout" >
          <item row="0" column="0" >
           <layout class="QHBoxLayout" >
            <property name="spacing" >
