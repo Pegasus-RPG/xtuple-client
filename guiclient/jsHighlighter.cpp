@@ -61,13 +61,9 @@
 
 #include "format.h"
 
-#include <QDebug>
-
 JSHighlighter::JSHighlighter(QTextDocument *document)
   : QSyntaxHighlighter(document)
 {
-  qDebug() << "constructing JSHighlighter";
-
   _commentColor   = namedColor("altemphasis");
   _errorColor     = namedColor("error");
   _extensionColor = namedColor("warning");
@@ -99,7 +95,6 @@ JSHighlighter::~JSHighlighter()
 
 void JSHighlighter::highlightBlock(const QString &text)
 {
-  qDebug() << "highlightBlock(" << text << ")";
   int state = previousBlockState();
   int start = 0;
 

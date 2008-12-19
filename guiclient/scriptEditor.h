@@ -64,6 +64,8 @@
 
 #include "ui_scriptEditor.h"
 
+class JSHighlighter;
+
 class scriptEditor : public XDialog, public Ui::scriptEditor
 {
     Q_OBJECT
@@ -86,6 +88,7 @@ protected slots:
 private:
     int _mode;
     int _scriptid;
+    JSHighlighter *_highlighter;
 
 };
 
