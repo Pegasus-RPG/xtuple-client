@@ -64,6 +64,8 @@
 #include <QTextStream>
 #include <QScriptEngine>
 
+#include "jsHighlighter.h"
+
 #define DEBUG false
 
 scriptEditor::scriptEditor(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
@@ -74,6 +76,9 @@ scriptEditor::scriptEditor(QWidget* parent, const char* name, bool modal, Qt::WF
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_import, SIGNAL(clicked()), this, SLOT(sImport()));
   connect(_export, SIGNAL(clicked()), this, SLOT(sExport()));
+
+  _highlighter = new JSHighlighter(_source->document());
+  _source->document()->setDefaultFont(QFont("Courier"));
 }
 
 scriptEditor::~scriptEditor()
