@@ -1586,13 +1586,35 @@ void item::viewItem( int pId )
 
 void item::sEditBOO()
 {
-  ParameterList params;
-  params.append("mode", "edit");
-  params.append("item_id", _itemid);
+  XSqlQuery booQuery;
+  booQuery.prepare("SELECT * FROM booitem WHERE booitem_item_id=:item_id");
+  booQuery.bindValue(":item_id", _itemid);
+  booQuery.exec();
 
-  boo *newdlg = new boo();
-  newdlg->set(params);
-  omfgThis->handleNewWindow(newdlg);
+  ParameterList params;
+
+  if(booQuery.size() > 0)
+  {
+    params.append("mode", "edit");
+    params.append("item_id", _itemid);
+    
+    boo *newdlg = new boo();
+    newdlg->set(params);
+    omfgThis->handleNewWindow(newdlg);
+  }
+  else
+  {
+    if(_mode == cNew)
+    {
+      saveCore();
+    }
+    params.append("mode", "new");
+    params.append("item_id", _itemid);  
+        
+    boo *newdlg = new boo();
+    newdlg->set(params);
+    omfgThis->handleNewWindow(newdlg);
+  }
 }
 
 void item::sEditBOM()
