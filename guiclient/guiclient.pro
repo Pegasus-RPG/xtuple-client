@@ -672,6 +672,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h            
 	       creditcardprocessor.h authorizedotnetprocessor.h verisignprocessor.h                   \
 	       yourpayprocessor.h externalccprocessor.h externalCCTransaction.h                       \
                xmainwindow.h xdialog.h xuiloader.h xwidget.h                                          \
+               jsHighlighter.h                                                                        \
                idleShutdown.h xdateinputdialog.h xsltMap.h                                            \
                xTupleDesigner.h xTupleDesignerActions.h
 
@@ -1002,6 +1003,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp       
 	       creditcardprocessor.cpp authorizedotnetprocessor.cpp verisignprocessor.cpp             \
 	       yourpayprocessor.cpp externalccprocessor.cpp externalCCTransaction.cpp                 \
                xmainwindow.cpp xdialog.cpp xuiloader.cpp xwidget.cpp                                  \
+               jsHighlighter.cpp                                                                      \
                idleShutdown.cpp xdateinputdialog.cpp xsltMap.cpp                                            \
                xTupleDesigner.cpp xTupleDesignerActions.cpp
 
