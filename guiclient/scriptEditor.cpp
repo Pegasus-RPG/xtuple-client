@@ -73,12 +73,18 @@ scriptEditor::scriptEditor(QWidget* parent, const char* name, bool modal, Qt::WF
 {
   setupUi(this);
 
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-  connect(_import, SIGNAL(clicked()), this, SLOT(sImport()));
-  connect(_export, SIGNAL(clicked()), this, SLOT(sExport()));
+  connect(_export,       SIGNAL(clicked()), this, SLOT(sExport()));
+  connect(_import,       SIGNAL(clicked()), this, SLOT(sImport()));
+  connect(_line, SIGNAL(editingFinished()), this, SLOT(sGoto()));
+  connect(_save,         SIGNAL(clicked()), this, SLOT(sSave()));
 
   _highlighter = new JSHighlighter(_source->document());
-  _source->document()->setDefaultFont(QFont("Courier"));
+  _document = _source->document();
+  _document->setDefaultFont(QFont("Courier"));
+
+  connect(_document, SIGNAL(blockCountChanged(int)), this, SLOT(sBlockCountChanged(int)));
+  connect(_document, SIGNAL(modificationChanged(bool)), this, SLOT(setWindowModified(bool)));
+  connect(_source, SIGNAL(cursorPositionChanged()), this, SLOT(sPositionChanged()));
 }
 
 scriptEditor::~scriptEditor()
@@ -89,6 +95,34 @@ scriptEditor::~scriptEditor()
 void scriptEditor::languageChange()
 {
   retranslateUi(this);
+}
+
+void scriptEditor::closeEvent(QCloseEvent *event)
+{
+  qDebug("document modified? %d", _document->isModified());
+  if (_document->isModified())
+  {
+    switch (QMessageBox::question(this, tr("Save Changes?"),
+                                  tr("Do you want to save your changes?"),
+                                  QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel))
+    {
+      case QMessageBox::Yes:
+        if (sSave())
+          event->accept();
+        else
+          event->ignore();
+        break;
+      case QMessageBox::No:
+        event->accept();
+        break;
+      case QMessageBox::Cancel:
+      default:
+        event->ignore();
+        break;
+    }
+  }
+  else
+    event->accept();
 }
 
 enum SetResponse scriptEditor::set(const ParameterList &pParams)
@@ -132,7 +166,6 @@ void scriptEditor::setMode(const int pmode)
       _notes->setReadOnly(false);
       _source->setReadOnly(false);
       _enabled->setEnabled(true);
-      _close->setText(tr("&Cancel"));
       _save->show();
       if (pmode == cNew)
         _name->setFocus();
@@ -148,7 +181,6 @@ void scriptEditor::setMode(const int pmode)
       _notes->setReadOnly(TRUE);
       _source->setReadOnly(TRUE);
       _enabled->setEnabled(FALSE);
-      _close->setText(tr("&Close"));
       _save->hide();
       _close->setFocus();
   };
@@ -156,14 +188,14 @@ void scriptEditor::setMode(const int pmode)
   _mode = pmode;
 }
 
-void scriptEditor::sSave()
+bool scriptEditor::sSave()
 {
   if (_name->text().length() == 0)
   {
     QMessageBox::warning( this, tr("Script Name is Invalid"),
                           tr("<p>You must enter a valid name for this Script.") );
     _name->setFocus();
-    return;
+    return false;
   }
 
   QScriptEngine engine;
@@ -173,7 +205,7 @@ void scriptEditor::sSave()
                           tr("<p>The script appears incomplete are you sure you want to save?"),
                              QMessageBox::Yes,
                              QMessageBox::No  | QMessageBox::Default) != QMessageBox::Yes)
-    return;
+    return false;
   }
   
   if (_mode == cNew)
@@ -184,7 +216,7 @@ void scriptEditor::sSave()
     else if (q.lastError().type() != QSqlError::NoError)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
+      return false;
     }
 
     q.prepare( "INSERT INTO script "
@@ -211,10 +243,12 @@ void scriptEditor::sSave()
   if (q.lastError().type() != QSqlError::NoError)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
+    return false;
   }
 
-  done(_scriptid);
+  _document->setModified(false);
+  setMode(cEdit);
+  return true;
 }
 
 void scriptEditor::populate()
@@ -285,3 +319,20 @@ void scriptEditor::sExport()
   file.close();
 }
 
+void scriptEditor::sGoto()
+{
+  QTextCursor cursor = QTextCursor(_document->findBlockByNumber(_line->value() - 1));
+  _source->setTextCursor(cursor);
+  _source->ensureCursorVisible();
+  _source->setFocus();
+}
+
+void scriptEditor::sBlockCountChanged(const int p)
+{
+  _line->setMaximum(p);
+}
+
+void scriptEditor::sPositionChanged()
+{
+  _line->setValue(_source->textCursor().blockNumber() + 1);
+}

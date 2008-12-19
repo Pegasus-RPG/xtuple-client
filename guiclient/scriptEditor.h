@@ -76,19 +76,26 @@ public:
 
 public slots:
     virtual enum SetResponse set(const ParameterList & pParams );
-    virtual void sSave();
     virtual void populate();
-    virtual void sImport();
     virtual void sExport();
+    virtual void sGoto();
+    virtual void sImport();
+    virtual bool sSave();
 
 protected slots:
     virtual void languageChange();
     virtual void setMode(const int);
+    virtual void sBlockCountChanged(const int);
+    virtual void sPositionChanged();
+
+  protected:
+    virtual void closeEvent(QCloseEvent *);
 
 private:
     int _mode;
     int _scriptid;
     JSHighlighter *_highlighter;
+    QTextDocument *_document;
 
 };
 

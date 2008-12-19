@@ -10,7 +10,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Script Editor</string>
+   <string>[*]Script Editor</string>
   </property>
   <layout class="QVBoxLayout" >
    <item>
@@ -65,16 +65,7 @@
          <property name="spacing" >
           <number>0</number>
          </property>
-         <property name="leftMargin" >
-          <number>0</number>
-         </property>
-         <property name="topMargin" >
-          <number>0</number>
-         </property>
-         <property name="rightMargin" >
-          <number>0</number>
-         </property>
-         <property name="bottomMargin" >
+         <property name="margin" >
           <number>0</number>
          </property>
          <item>
@@ -88,7 +79,7 @@
            <property name="sizeType" >
             <enum>QSizePolicy::Expanding</enum>
            </property>
-           <property name="sizeHint" >
+           <property name="sizeHint" stdset="0" >
             <size>
              <width>20</width>
              <height>20</height>
@@ -115,7 +106,7 @@
            <property name="orientation" >
             <enum>Qt::Horizontal</enum>
            </property>
-           <property name="sizeHint" >
+           <property name="sizeHint" stdset="0" >
             <size>
              <width>40</width>
              <height>20</height>
@@ -139,16 +130,7 @@
        <property name="spacing" >
         <number>0</number>
        </property>
-       <property name="leftMargin" >
-        <number>0</number>
-       </property>
-       <property name="topMargin" >
-        <number>0</number>
-       </property>
-       <property name="rightMargin" >
-        <number>0</number>
-       </property>
-       <property name="bottomMargin" >
+       <property name="margin" >
         <number>0</number>
        </property>
        <item>
@@ -156,22 +138,13 @@
          <property name="spacing" >
           <number>5</number>
          </property>
-         <property name="leftMargin" >
-          <number>0</number>
-         </property>
-         <property name="topMargin" >
-          <number>0</number>
-         </property>
-         <property name="rightMargin" >
-          <number>0</number>
-         </property>
-         <property name="bottomMargin" >
+         <property name="margin" >
           <number>0</number>
          </property>
          <item>
           <widget class="QPushButton" name="_close" >
            <property name="text" >
-            <string>&amp;Cancel</string>
+            <string>&amp;Close</string>
            </property>
            <property name="shortcut" >
             <string>Alt+C</string>
@@ -198,7 +171,7 @@
          <property name="sizeType" >
           <enum>QSizePolicy::Expanding</enum>
          </property>
-         <property name="sizeHint" >
+         <property name="sizeHint" stdset="0" >
           <size>
            <width>20</width>
            <height>20</height>
@@ -228,11 +201,14 @@
    <item>
     <layout class="QHBoxLayout" >
      <item>
+      <widget class="QSpinBox" name="_line" />
+     </item>
+     <item>
       <spacer>
        <property name="orientation" >
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" >
+       <property name="sizeHint" stdset="0" >
         <size>
          <width>40</width>
          <height>20</height>
@@ -284,7 +260,7 @@
    <sender>_close</sender>
    <signal>clicked()</signal>
    <receiver>scriptEditor</receiver>
-   <slot>reject()</slot>
+   <slot>close()</slot>
    <hints>
     <hint type="sourcelabel" >
      <x>20</x>
