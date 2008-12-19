@@ -181,7 +181,7 @@ void accountingYearPeriod::sSave()
 	int result = q.value("result").toInt();
 	if (result < 0)
 	{
-	  systemError(this, storedProcErrorLookup("changeAccountingYearPeriodDates", result), __FILE__, __LINE__);
+	  systemError(this, storedProcErrorLookup("createAccountingYearPeriod", result), __FILE__, __LINE__);
 	  return;
 	}
       }
