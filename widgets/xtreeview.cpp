@@ -98,8 +98,11 @@ void XTreeView::insert()
   int row=_model.rowCount();
   
   _model.insertRows(row,1);
+  //Set default values for foreign keys
   for (int i = 0; i < _idx.count(); ++i)
     _model.setData(_model.index(row,i),_idx.value(i));
+  qDebug("row %d",row);
+  selectRow(row);
 }
 
 void XTreeView::populate(int p)
@@ -122,6 +125,26 @@ void XTreeView::populate(int p)
   }
 }
 
+void XTreeView::removeRows(int row, int count)
+{
+  _model.removeRows(row, count);
+}
+
+void XTreeView::removeSelected()
+{
+  QModelIndexList selected=selectedIndexes();
+  for (int i = 0; i < selected.count(); i++)
+  {
+    _model.removeRows(selected.value(i).row(), 1);
+    setRowHidden(selected.value(i).row(),selected.value(i).parent(),true);
+  }
+}
+
+void XTreeView::revertAll()
+{
+  _model.revertAll();
+}
+
 void XTreeView::save()
 {
   _model.submitAll();
@@ -129,7 +152,7 @@ void XTreeView::save()
 
 void XTreeView::selectRow(int index)
 {
-  selectionModel()->select(QItemSelection(model()->index(index,0),model()->index(index,model()->columnCount())),
+  selectionModel()->select(QItemSelection(model()->index(index,0),model()->index(index,0)),
                                         QItemSelectionModel::ClearAndSelect |
                                         QItemSelectionModel::Rows);
 }

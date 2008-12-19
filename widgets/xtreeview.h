@@ -83,6 +83,9 @@ class OPENMFGWIDGETS_EXPORT XTreeView : public QTreeView
     public slots:
       virtual void insert();
       virtual void populate(int p);
+      virtual void removeRows(int row, int count);
+      virtual void removeSelected();
+      virtual void revertAll();
       virtual void save();
       virtual void selectRow(int index);
       virtual void setDataWidgetMap(XDataWidgetMapper* mapper);
