@@ -431,7 +431,6 @@ void ContactCluster::silentSetId(const int pId)
 
 void ContactCluster::setNumber(QString p)
 {
-  qDebug("Set Number" + p);
   if (p == _number->text())
     return;
 

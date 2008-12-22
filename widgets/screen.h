@@ -94,12 +94,14 @@ class OPENMFGWIDGETS_EXPORT Screen : public QWidget
                 void showEvent ( QShowEvent * event );
        	
 	public slots:
+                bool cancel();
                 bool isDirty();
                 int  currentIndex();
                 int  primaryKeyColumns() const { return _keyColumns;       };
 	        QString schemaName()        const { return _schemaName;       };
 	        QString sortColumn()        const { return _sortColumn;       };
 		QString tableName()         const { return _tableName;        };
+                void deleteCurrent();
                 void insert();
                 void newMappedWidget(QWidget *widget);
                 void removeCurrent();
@@ -129,6 +131,8 @@ class OPENMFGWIDGETS_EXPORT Screen : public QWidget
 		void newDataWidgetMapper(XDataWidgetMapper *mapper);
                 void newModel(XSqlTableModel *model);
 		void saved(bool);
+                void revertedAll();
+                void reverted(int index);
 
 	private:
                 bool                    _shown;

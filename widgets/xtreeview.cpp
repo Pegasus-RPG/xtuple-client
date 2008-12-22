@@ -101,7 +101,6 @@ void XTreeView::insert()
   //Set default values for foreign keys
   for (int i = 0; i < _idx.count(); ++i)
     _model.setData(_model.index(row,i),_idx.value(i));
-  qDebug("row %d",row);
   selectRow(row);
 }
 
@@ -143,6 +142,8 @@ void XTreeView::removeSelected()
 void XTreeView::revertAll()
 {
   _model.revertAll();
+  if (_mapper)
+    populate(_mapper->currentIndex());
 }
 
 void XTreeView::save()

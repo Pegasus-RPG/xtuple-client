@@ -85,7 +85,7 @@ Screen::Disposition Screen::check()
   if (isDirty())
   {
     if (QMessageBox::question(this, tr("Unsaved work"),
-                                   tr("Would you like to save your work?"),
+                                   tr("You have made changes that have not been saved.  Would you like an opportunity to save your work?"),
                                    QMessageBox::Yes | QMessageBox::Default,
                                    QMessageBox::No ) == QMessageBox::Yes)
       return Save;
@@ -112,6 +112,20 @@ void Screen::showEvent(QShowEvent *event)
 Screen::Modes Screen::mode()
 {
   return _mode;
+}
+
+bool Screen::cancel()
+{
+  switch (check())
+  {
+    case Save:
+      return false;
+    case Cancel:
+      revertRow(currentIndex());
+      return true;
+    default: //No Change
+      return true;
+  }
 }
 
 bool Screen::isDirty()
@@ -142,6 +156,12 @@ int Screen::currentIndex()
   return _mapper->currentIndex();
 }
 
+void Screen::deleteCurrent()
+{
+  removeCurrent();
+  save();
+}
+
 void Screen::insert()
 {
   _model->insertRows(_model->rowCount(),1);
@@ -167,11 +187,13 @@ void Screen::removeRows(int row, int count)
 void Screen::revert()
 {
   _mapper->revert();
+  emit reverted(currentIndex());
 }
 
 void Screen::revertAll()
 {
   _model->revertAll();
+  emit revertedAll();
 }
 
 void Screen::revertRow(int row)
@@ -181,6 +203,7 @@ void Screen::revertRow(int row)
 
 void Screen::save()
 { 
+  qDebug("saving");
   disconnect(_mapper, SIGNAL(currentIndexChanged(int)), this, SIGNAL(currentIndexChanged(int)));
   int i=_mapper->currentIndex();
   _mapper->submit();
@@ -195,11 +218,12 @@ void Screen::save()
   }
   else
   {
+    emit saved(true);
     if (_mode==New)
       insert();
-    emit saved(true);
   }
   connect(_mapper, SIGNAL(currentIndexChanged(int)), this, SIGNAL(currentIndexChanged(int)));
+    qDebug("saved");
 }
 
 void Screen::search(QString criteria)
