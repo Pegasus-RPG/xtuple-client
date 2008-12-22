@@ -206,6 +206,23 @@ xTupleDesigner::xTupleDesigner(QWidget* parent, const char* name, Qt::WFlags fl)
   QDesignerComponents::initializeResources();
 
   _widgetwindow   = new WidgetBoxWindow(this);
+/////////////////
+  _formeditor->setTopLevel(_widgetwindow);
+#ifndef Q_WS_MAC
+  _widgetwindow->setMenuBar(_menubar);
+  _widgetwindow->action()->setVisible(false);
+  //_widgetwindow->setSaveSettingsOnClose(true);
+  //qDesigner->setMainWindow(widgetBoxWrapper);
+  //_widgetwindow->setWindowTitle(tr("Qt Designer"));
+#endif
+  //_widgetwindow->addToolBar(m_fileToolBar);
+  //_widgetwindow->addToolBar(m_editToolBar);
+  //_widgetwindow->addToolBar(m_toolToolBar);
+  //_widgetwindow->addToolBar(m_formToolBar);
+
+  //_widgetwindow->insertToolBarBreak(m_formToolBar);
+/////////////
+  
   _objinspwindow  = new ObjectInspectorWindow(this);
   _propinspwindow = new PropertyEditorWindow(this);
   _slotedwindow   = new SignalSlotEditorWindow(this);
