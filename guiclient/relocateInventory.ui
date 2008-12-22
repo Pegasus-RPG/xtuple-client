@@ -5,20 +5,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>523</width>
-    <height>433</height>
+    <width>537</width>
+    <height>527</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Relocate Inventory</string>
   </property>
-  <layout class="QVBoxLayout" >
-   <property name="spacing" >
-    <number>5</number>
-   </property>
-   <property name="margin" >
-    <number>5</number>
-   </property>
+  <layout class="QVBoxLayout" name="verticalLayout" >
    <item>
     <layout class="QHBoxLayout" >
      <property name="spacing" >
@@ -177,6 +171,33 @@
     </layout>
    </item>
    <item>
+    <layout class="QHBoxLayout" name="horizontalLayout" >
+     <item>
+      <widget class="XCheckBox" name="_defaultToTarget" >
+       <property name="text" >
+        <string>Set Default Location to Target on Move</string>
+       </property>
+       <property name="forgetful" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_2" >
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0" >
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
     <layout class="QHBoxLayout" >
      <property name="spacing" >
       <number>7</number>
@@ -328,6 +349,7 @@
    <class>DLineEdit</class>
    <extends>QWidget</extends>
    <header>datecluster.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>ItemCluster</class>
@@ -339,6 +361,11 @@
    <class>WComboBox</class>
    <extends>XComboBox</extends>
    <header>wcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
   </customwidget>
   <customwidget>
    <class>XLineEdit</class>
@@ -357,7 +384,6 @@
   <tabstop>_source</tabstop>
   <tabstop>_target</tabstop>
   <tabstop>_qty</tabstop>
-  <tabstop>_notes</tabstop>
   <tabstop>_move</tabstop>
   <tabstop>_close</tabstop>
   <tabstop>_transDate</tabstop>

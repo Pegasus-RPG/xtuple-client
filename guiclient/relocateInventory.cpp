@@ -264,6 +264,8 @@ void relocateInventory::sMove()
     systemError(this, relocate.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+  
+  sChangeDefaultLocation();
 
   if (_captive)
     accept();
@@ -281,6 +283,8 @@ void relocateInventory::sMove()
 
 void relocateInventory::sFillList()
 {
+  sShowHideDefaultToTarget();
+  
   if (_item->isValid())
   {
     XSqlQuery query;
@@ -289,7 +293,9 @@ void relocateInventory::sFillList()
                    "            ELSE formatLocationName(itemloc_location_id)"
                    "       END AS location,"
                    "       formatlotserialnumber(itemloc_ls_id) AS lotserial,"
-                   "       'qty' AS itemloc_qty_xtnumericrole "
+                   "       'qty' AS itemloc_qty_xtnumericrole,"
+                   "       CASE WHEN (itemloc_location_id=itemsite_location_id) THEN 'altemphasis' "
+                   "       END AS location_qtforegroundrole "
                    "FROM itemloc, itemsite "
                    "WHERE ( (itemloc_itemsite_id=itemsite_id)"
                    " AND (itemsite_item_id=:item_id)"
@@ -306,21 +312,27 @@ void relocateInventory::sFillList()
       return;
     }
 
-    query.prepare( "SELECT location_id,"
+    query.prepare( "SELECT location_id, locationname, qty,"
+                   "       'qty' AS qty_xtnumericrole,"
+                   "       CASE WHEN (qty=0) THEN '' "
+                   "       END AS qty_qtdisplayrole,"
+                   "       CASE WHEN (location_id=itemsite_location_id) THEN 'altemphasis' "
+                   "       END AS locationname_qtforegroundrole "
+                   "FROM ( "
+                   "SELECT location_id, itemsite_location_id,"
                    "       formatLocationName(location_id) AS locationname,"
                    "       ( SELECT COALESCE(SUM(itemloc_qty), 0)"
                    "         FROM itemloc, itemsite"
                    "         WHERE ( (itemloc_location_id=location_id)"
                    "         AND (itemloc_itemsite_id=itemsite_id)"
                    "         AND (itemsite_item_id=:item_id)"
-                   "         AND (itemsite_warehous_id=location_warehous_id))) AS qty,"
-                   "       'qty' AS qty_xtnumericrole "
+                   "         AND (itemsite_warehous_id=location_warehous_id))) AS qty "
                    "FROM location, itemsite "
                    "WHERE ( (itemsite_warehous_id=:warehous_id)"
                    " AND (location_warehous_id=:warehous_id)"
                    " AND (itemsite_item_id=:item_id)"
                    " AND  (validLocation(location_id, itemsite_id)) ) "
-                   "ORDER BY locationname;" );
+                   "ORDER BY locationname ) AS data" );
     query.bindValue(":warehous_id", _warehouse->id());
     query.bindValue(":item_id", _item->id());
     query.exec();
@@ -336,4 +348,60 @@ void relocateInventory::sFillList()
     _source->clear();
     _target->clear();
   }
+}
+
+void relocateInventory::sShowHideDefaultToTarget()
+{
+   XSqlQuery query;
+   query.prepare(" SELECT itemsite_id, itemsite_loccntrl, itemsite_location_id "
+                 "  FROM itemsite "
+                 "  WHERE (itemsite_item_id=:item_id) ");
+   query.bindValue(":item_id", _item->id());
+   query.exec();
+   if(query.first())
+   {
+      if(query.value("itemsite_id").toInt() != -1
+         && query.value("itemsite_loccntrl").toBool()
+         && query.value("itemsite_location_id").toInt() != -1)
+      {
+         _defaultToTarget->show();
+        //Allow default location update with correct privileges
+        if (_privileges->check("MaintainItemSites"))
+            _defaultToTarget->setEnabled(true);
+        else
+            _defaultToTarget->setEnabled(false);
+            _defaultToTarget->setChecked(false);
+      }
+      else
+      {
+         _defaultToTarget->hide();
+         _defaultToTarget->setChecked(false);
+      }
+   }
+   else
+   {
+     _defaultToTarget->hide();
+     _defaultToTarget->setChecked(false);
+   }
+}
+
+void relocateInventory::sChangeDefaultLocation()
+{
+   if (_defaultToTarget->isChecked())
+   {
+   XSqlQuery query;
+   query.prepare( " UPDATE itemsite"
+                  " SET itemsite_location_id=:target_id"
+                  " WHERE (itemsite_item_id=:item_id) ");
+   query.bindValue(":target_id", _target->id());
+   query.bindValue(":item_id", _item->id());
+   query.exec();
+   sFillList();
+   if (query.lastError().type() != QSqlError::NoError)
+      {
+        systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
+        return;
+      }
+   }
+
 }

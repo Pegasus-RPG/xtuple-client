@@ -74,6 +74,8 @@ public:
 public slots:
     virtual enum SetResponse set(const ParameterList & pParams );
     virtual void sMove();
+    virtual void sChangeDefaultLocation();
+    virtual void sShowHideDefaultToTarget();
 
 protected slots:
     virtual void languageChange();
