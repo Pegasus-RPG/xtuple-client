@@ -970,20 +970,3 @@ void contact::sViewWarehouse()
   newdlg.set(params);
   newdlg.exec();
 }
-
-QString contact::timeToString(int timeInt)
-{
-  QString formattedTime = "";
-  timeInt = timeInt + (3600*5);//add 5 hours to convert to local time.
-  time_t* myTime = new time_t(timeInt);
-  tm* timeStruct = localtime(myTime);
-  QString theMonth = QString::number(timeStruct->tm_mon+1);
-  QString theYear = QString::number(timeStruct->tm_year+1900);
-  QString theDay = QString::number(timeStruct->tm_mday);
-  QString theHour = QString::number(timeStruct->tm_hour);
-  QString theMinute = QString::number(timeStruct->tm_min);
-  QString theSecond = QString::number(timeStruct->tm_sec);
-
-  formattedTime = theMonth+"/"+theDay+"/"+theYear+" "+theHour+":"+theMinute+":"+theSecond;
-  return formattedTime;
-}

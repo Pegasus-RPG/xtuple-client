@@ -77,7 +77,6 @@ public:
 
 public slots:
     virtual SetResponse set(const ParameterList &pParams);
-    QString timeToString(int timeInt);
 
 protected slots:
     virtual void languageChange();
