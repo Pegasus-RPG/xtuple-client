@@ -67,8 +67,7 @@
 
 #include "timeoutHandler.h"
 
-#include <qapplication.h>
-//Added by qt3to4:
+#include <QApplication>
 #include <QEvent>
 
 /*

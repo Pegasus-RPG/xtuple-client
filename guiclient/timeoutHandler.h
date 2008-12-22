@@ -67,10 +67,9 @@
 #ifndef __TIMEOUT_H__
 #define __TIMEOUT_H__
 
-#include <qobject.h>
-#include <qtimer.h>
-#include <qdatetime.h>
-//Added by qt3to4:
+#include <QObject>
+#include <QTimer>
+#include <QDateTime>
 #include <QEvent>
 
 class TimeoutHandler : public QObject {
