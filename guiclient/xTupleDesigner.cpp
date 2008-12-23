@@ -210,7 +210,7 @@ xTupleDesigner::xTupleDesigner(QWidget* parent, const char* name, Qt::WFlags fl)
   _formeditor->setTopLevel(_widgetwindow);
 #ifndef Q_WS_MAC
   _widgetwindow->setMenuBar(_menubar);
-  _widgetwindow->action()->setVisible(false);
+  //_widgetwindow->action()->setVisible(false);
   //_widgetwindow->setSaveSettingsOnClose(true);
   //qDesigner->setMainWindow(widgetBoxWrapper);
   //_widgetwindow->setWindowTitle(tr("Qt Designer"));
