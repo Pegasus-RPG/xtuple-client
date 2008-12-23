@@ -77,19 +77,20 @@ class QDoubleValidator;
  */
 class OPENMFGWIDGETS_EXPORT CurrDisplay : public QWidget
 {
-    Q_OBJECT
+  Q_OBJECT
 
-    Q_ENUMS(CurrDisplayFormats)
+  Q_ENUMS(CurrDisplayFormats)
 
-    Q_PROPERTY(CurrDisplayFormats format    READ format                   WRITE setFormat)
-    Q_PROPERTY(bool localControl            READ localControl             WRITE setLocalControl)
-    Q_PROPERTY(bool enabled                 READ isEnabled                WRITE setEnabled)
-    Q_PROPERTY(QString fieldNameValue       READ fieldNameValue           WRITE setFieldNameValue)
-    Q_PROPERTY(double localValue            READ localValue               WRITE setLocalValue)
-    Q_PROPERTY(double defaultLocalValue     READ defaultLocalValue        WRITE setDefaultLocalValue)
-    
+  Q_PROPERTY(double  baseValue         READ baseValue         WRITE setBaseValue)
+  Q_PROPERTY(double  defaultLocalValue READ defaultLocalValue WRITE setDefaultLocalValue)
+  Q_PROPERTY(bool    enabled           READ isEnabled         WRITE setEnabled)
+  Q_PROPERTY(QString fieldNameValue    READ fieldNameValue    WRITE setFieldNameValue)
+  Q_PROPERTY(CurrDisplayFormats format READ format            WRITE setFormat)
+  Q_PROPERTY(int     id                READ id                WRITE setId)
+  Q_PROPERTY(bool    localControl      READ localControl      WRITE setLocalControl)
+  Q_PROPERTY(double  localValue        READ localValue        WRITE setLocalValue)
 
-    public:
+  public:
 	CurrDisplay(QWidget * parent, const char* name = 0);
 	~CurrDisplay();
 

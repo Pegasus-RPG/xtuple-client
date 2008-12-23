@@ -210,6 +210,8 @@ class GUIClient : public QMainWindow
   friend class XDialog;
 
   Q_OBJECT
+
+  Q_PROPERTY(QString key READ key)
   
   public:
     GUIClient(const QString &, const QString &);
@@ -266,6 +268,8 @@ class GUIClient : public QMainWindow
     QMap<const QObject*,int> _customCommands;
 
     QString _key;
+    QString key() { return _key; }
+
     QString _singleWindow;
 
     void launchBrowser(QWidget*, const QString &);

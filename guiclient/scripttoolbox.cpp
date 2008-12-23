@@ -85,6 +85,7 @@
 #include "scriptquery.h"
 #include "mqlutil.h"
 #include "xtreewidget.h"
+#include "creditcardprocessor.h"
 
 QWidget * ScriptToolbox::_lastWindow = 0;
 
@@ -613,6 +614,7 @@ void QtWindowModalityfromScriptValue(const QScriptValue &obj, enum Qt::WindowMod
   en = (enum Qt::WindowModality)obj.toInt32();
 }
 
-
-
-
+QObject *ScriptToolbox::getCreditCardProcessor()
+{
+  return CreditCardProcessor::getProcessor();
+}

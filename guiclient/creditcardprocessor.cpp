@@ -73,7 +73,7 @@
 #include "verisignprocessor.h"
 #include "yourpayprocessor.h"
 
-#define DEBUG false
+#define DEBUG true
 
 /* NOTE TO SUBCLASSERS:
   It is your job to make sure that all of the configuration options available
@@ -160,6 +160,9 @@ static struct {
   { -73, TR("User chose not to process the credit.")			},
   { -74, TR("User chose not to process the void.")			},
   { -75, TR("User chose not to proceed without CVV code.")		},
+
+  // scripting errors
+  { -81, TR("Scripting error in %1: Input parameter %2 is not a(n) %3") },
 
   // transaction was processed fine but was not successful
   { -90, TR("This Credit Card transaction was denied.\n%1")		},
@@ -1684,4 +1687,571 @@ QString CreditCardProcessor::buildURL(const QString pserver, const QString pport
 
   if (DEBUG) qDebug("buildURL: returning %s", serverStr.toAscii().data());
   return serverStr;
+}
+
+// TODO: memory leak of poutput!
+ParameterList CreditCardProcessor::authorize(const ParameterList &pinput)
+{
+  if (DEBUG) qDebug("authorize(ParameterList&) entered");
+
+  ParameterList *poutput = new ParameterList;
+  QVariant       param;
+  bool           valid;
+  QString        context = "authorize";
+
+  int    ccard_id = -1;
+  int    cvv      =  0;
+  double amount   =  0.0;
+  double tax      =  0.0;
+  bool   taxExempt=  true;
+  double freight  =  0.0;
+  double duty     =  0.0;
+  int    curr_id  = -1;
+  int    ccpay_id = -1;
+  int    ref_id   = -1;
+  QString neworder;
+  QString reforder;
+  QString reftype;
+
+  param = pinput.value("ccard_id", &valid);
+  if (valid)
+  {
+    ccard_id = param.toInt(&valid);
+    if (!valid)
+    {
+      _errorMsg = errorMsg(-81).arg(context).arg("ccard_id").arg("int");
+      poutput->append("returnVal", -81);
+      return *poutput;
+    }
+  }
+
+  param = pinput.value("cvv", &valid);
+  if (valid)
+  {
+    cvv = param.toInt(&valid);
+    if (!valid)
+    {
+      _errorMsg = errorMsg(-81).arg(context).arg("cvv").arg("int");
+      poutput->append("returnVal", -81);
+      return *poutput;
+    }
+  }
+
+  param = pinput.value("amount", &valid);
+  if (valid)
+  {
+    amount = param.toDouble(&valid);
+    if (!valid)
+    {
+      _errorMsg = errorMsg(-81).arg(context).arg("amount").arg("double");
+      poutput->append("returnVal", -81);
+      return *poutput;
+    }
+  }
+
+  param = pinput.value("tax", &valid);
+  if (valid)
+  {
+    tax = param.toDouble(&valid);
+    if (!valid)
+    {
+      _errorMsg = errorMsg(-81).arg(context).arg("tax").arg("double");
+      poutput->append("returnVal", -81);
+      return *poutput;
+    }
+  }
+
+  param = pinput.value("taxExempt", &valid);
+  if (valid)
+    taxExempt = param.toBool();
+
+  param = pinput.value("freight", &valid);
+  if (valid)
+  {
+    freight = param.toDouble(&valid);
+    if (!valid)
+    {
+      _errorMsg = errorMsg(-81).arg(context).arg("freight").arg("double");
+      poutput->append("returnVal", -81);
+      return *poutput;
+    }
+  }
+
+  param = pinput.value("duty", &valid);
+  if (valid)
+  {
+    duty = param.toDouble(&valid);
+    if (!valid)
+    {
+      _errorMsg = errorMsg(-81).arg(context).arg("duty").arg("double");
+      poutput->append("returnVal", -81);
+      return *poutput;
+    }
+  }
+
+  param = pinput.value("curr_id", &valid);
+  if (valid)
+  {
+    curr_id = param.toInt(&valid);
+    if (!valid)
+    {
+      _errorMsg = errorMsg(-81).arg(context).arg("curr_id").arg("int");
+      poutput->append("returnVal", -81);
+      return *poutput;
+    }
+  }
+
+  param = pinput.value("neworder", &valid);
+  if (valid)
+    neworder = param.toString();
+
+  param = pinput.value("reforder", &valid);
+  if (valid)
+    reforder = param.toString();
+
+  param = pinput.value("reftype", &valid);
+  if (valid)
+    reftype = param.toString();
+
+  param = pinput.value("refid", &valid);
+  if (valid)
+  {
+    ref_id = param.toInt(&valid);
+    if (!valid)
+    {
+      _errorMsg = errorMsg(-81).arg(context).arg("refid").arg("int");
+      poutput->append("returnVal", -81);
+      return *poutput;
+    }
+  }
+
+  int returnVal = getProcessor()->authorize(ccard_id, cvv, amount, tax,
+                                            taxExempt, freight, duty, curr_id,
+                                            neworder, reforder, ccpay_id,
+                                            reftype, ref_id);
+
+  poutput->append("returnVal", returnVal);
+  poutput->append("neworder",  neworder);
+  poutput->append("reforder",  reforder);
+  poutput->append("ccpayid",   ccpay_id);
+  poutput->append("refid",     ref_id);
+
+  return *poutput;
+}
+
+// TODO: memory leak of poutput!
+ParameterList CreditCardProcessor::charge(const ParameterList &pinput)
+{
+  if (DEBUG) qDebug("charge(ParameterList&) entered");
+
+  ParameterList *poutput = new ParameterList;
+  QVariant       param;
+  bool           valid;
+  QString        context = "charge";
+
+  int    ccard_id = -1;
+  int    cvv      =  0;
+  double amount   =  0.0;
+  double tax      =  0.0;
+  bool   taxExempt=  true;
+  double freight  =  0.0;
+  double duty     =  0.0;
+  int    curr_id  = -1;
+  int    ccpay_id = -1;
+  int    ref_id   = -1;
+  QString neworder;
+  QString reforder;
+  QString reftype;
+
+  param = pinput.value("ccard_id", &valid);
+  if (valid)
+  {
+    ccard_id = param.toInt(&valid);
+    if (!valid)
+    {
+      _errorMsg = errorMsg(-81).arg(context).arg("ccard_id").arg("int");
+      poutput->append("returnVal", -81);
+      return *poutput;
+    }
+  }
+
+  param = pinput.value("cvv", &valid);
+  if (valid)
+  {
+    cvv = param.toInt(&valid);
+    if (!valid)
+    {
+      _errorMsg = errorMsg(-81).arg(context).arg("cvv").arg("int");
+      poutput->append("returnVal", -81);
+      return *poutput;
+    }
+  }
+
+  param = pinput.value("amount", &valid);
+  if (valid)
+  {
+    amount = param.toDouble(&valid);
+    if (!valid)
+    {
+      _errorMsg = errorMsg(-81).arg(context).arg("amount").arg("double");
+      poutput->append("returnVal", -81);
+      return *poutput;
+    }
+  }
+
+  param = pinput.value("tax", &valid);
+  if (valid)
+  {
+    tax = param.toDouble(&valid);
+    if (!valid)
+    {
+      _errorMsg = errorMsg(-81).arg(context).arg("tax").arg("double");
+      poutput->append("returnVal", -81);
+      return *poutput;
+    }
+  }
+
+  param = pinput.value("taxExempt", &valid);
+  if (valid)
+    taxExempt = param.toBool();
+
+  param = pinput.value("freight", &valid);
+  if (valid)
+  {
+    freight = param.toDouble(&valid);
+    if (!valid)
+    {
+      _errorMsg = errorMsg(-81).arg(context).arg("freight").arg("double");
+      poutput->append("returnVal", -81);
+      return *poutput;
+    }
+  }
+
+  param = pinput.value("duty", &valid);
+  if (valid)
+  {
+    duty = param.toDouble(&valid);
+    if (!valid)
+    {
+      _errorMsg = errorMsg(-81).arg(context).arg("duty").arg("double");
+      poutput->append("returnVal", -81);
+      return *poutput;
+    }
+  }
+
+  param = pinput.value("curr_id", &valid);
+  if (valid)
+  {
+    curr_id = param.toInt(&valid);
+    if (!valid)
+    {
+      _errorMsg = errorMsg(-81).arg(context).arg("curr_id").arg("int");
+      poutput->append("returnVal", -81);
+      return *poutput;
+    }
+  }
+
+  param = pinput.value("neworder", &valid);
+  if (valid)
+    neworder = param.toString();
+
+  param = pinput.value("reforder", &valid);
+  if (valid)
+    reforder = param.toString();
+
+  param = pinput.value("reftype", &valid);
+  if (valid)
+    reftype = param.toString();
+
+  param = pinput.value("refid", &valid);
+  if (valid)
+  {
+    ref_id = param.toInt(&valid);
+    if (!valid)
+    {
+      _errorMsg = errorMsg(-81).arg(context).arg("refid").arg("int");
+      poutput->append("returnVal", -81);
+      return *poutput;
+    }
+  }
+
+  int returnVal = getProcessor()->charge(ccard_id, cvv, amount, tax,
+                                            taxExempt, freight, duty, curr_id,
+                                            neworder, reforder, ccpay_id,
+                                            reftype, ref_id);
+
+  poutput->append("returnVal", returnVal);
+  poutput->append("neworder",  neworder);
+  poutput->append("reforder",  reforder);
+  poutput->append("ccpayid",   ccpay_id);
+  poutput->append("refid",     ref_id);
+
+  return *poutput;
+}
+
+// TODO: memory leak of poutput!
+ParameterList CreditCardProcessor::chargePreauthorized(const ParameterList &pinput)
+{
+  if (DEBUG) qDebug("chargePreauthorized(ParameterList&) entered");
+
+  ParameterList *poutput = new ParameterList;
+  QVariant       param;
+  bool           valid;
+  QString        context = "chargePreauthorized";
+
+  int    cvv      =  0;
+  double amount   =  0.0;
+  int    curr_id  = -1;
+  int    ccpay_id = -1;
+  QString neworder;
+  QString reforder;
+
+  param = pinput.value("cvv", &valid);
+  if (valid)
+  {
+    cvv = param.toInt(&valid);
+    if (!valid)
+    {
+      _errorMsg = errorMsg(-81).arg(context).arg("cvv").arg("int");
+      poutput->append("returnVal", -81);
+      return *poutput;
+    }
+  }
+
+  param = pinput.value("amount", &valid);
+  if (valid)
+  {
+    amount = param.toDouble(&valid);
+    if (!valid)
+    {
+      _errorMsg = errorMsg(-81).arg(context).arg("amount").arg("double");
+      poutput->append("returnVal", -81);
+      return *poutput;
+    }
+  }
+
+  param = pinput.value("curr_id", &valid);
+  if (valid)
+  {
+    curr_id = param.toInt(&valid);
+    if (!valid)
+    {
+      _errorMsg = errorMsg(-81).arg(context).arg("curr_id").arg("int");
+      poutput->append("returnVal", -81);
+      return *poutput;
+    }
+  }
+
+  param = pinput.value("neworder", &valid);
+  if (valid)
+    neworder = param.toString();
+
+  param = pinput.value("reforder", &valid);
+  if (valid)
+    reforder = param.toString();
+
+  param = pinput.value("ccpay_id", &valid);
+  if (valid)
+  {
+    ccpay_id = param.toInt(&valid);
+    if (!valid)
+    {
+      _errorMsg = errorMsg(-81).arg(context).arg("ccpay_id").arg("int");
+      poutput->append("returnVal", -81);
+      return *poutput;
+    }
+  }
+
+  int returnVal = getProcessor()->chargePreauthorized(cvv, amount, curr_id,
+                                                      neworder, reforder,
+                                                      ccpay_id);
+
+  poutput->append("returnVal", returnVal);
+  poutput->append("neworder",  neworder);
+  poutput->append("reforder",  reforder);
+  poutput->append("ccpayid",   ccpay_id);
+
+  return *poutput;
+}
+
+// TODO: memory leak of poutput!
+ParameterList CreditCardProcessor::credit(const ParameterList &pinput)
+{
+  if (DEBUG) qDebug("credit(ParameterList&) entered");
+
+  ParameterList *poutput = new ParameterList;
+  QVariant       param;
+  bool           valid;
+  QString        context = "credit";
+
+  int    ccard_id = -1;
+  int    cvv      =  0;
+  double amount   =  0.0;
+  double tax      =  0.0;
+  bool   taxExempt=  true;
+  double freight  =  0.0;
+  double duty     =  0.0;
+  int    curr_id  = -1;
+  int    ccpay_id = -1;
+  int    ref_id   = -1;
+  QString neworder;
+  QString reforder;
+  QString reftype;
+
+  param = pinput.value("ccard_id", &valid);
+  if (valid)
+  {
+    ccard_id = param.toInt(&valid);
+    if (!valid)
+    {
+      _errorMsg = errorMsg(-81).arg(context).arg("ccard_id").arg("int");
+      poutput->append("returnVal", -81);
+      return *poutput;
+    }
+  }
+
+  param = pinput.value("cvv", &valid);
+  if (valid)
+  {
+    cvv = param.toInt(&valid);
+    if (!valid)
+    {
+      _errorMsg = errorMsg(-81).arg(context).arg("cvv").arg("int");
+      poutput->append("returnVal", -81);
+      return *poutput;
+    }
+  }
+
+  param = pinput.value("amount", &valid);
+  if (valid)
+  {
+    amount = param.toDouble(&valid);
+    if (!valid)
+    {
+      _errorMsg = errorMsg(-81).arg(context).arg("amount").arg("double");
+      poutput->append("returnVal", -81);
+      return *poutput;
+    }
+  }
+
+  param = pinput.value("tax", &valid);
+  if (valid)
+  {
+    tax = param.toDouble(&valid);
+    if (!valid)
+    {
+      _errorMsg = errorMsg(-81).arg(context).arg("tax").arg("double");
+      poutput->append("returnVal", -81);
+      return *poutput;
+    }
+  }
+
+  param = pinput.value("taxExempt", &valid);
+  if (valid)
+    taxExempt = param.toBool();
+
+  param = pinput.value("freight", &valid);
+  if (valid)
+  {
+    freight = param.toDouble(&valid);
+    if (!valid)
+    {
+      _errorMsg = errorMsg(-81).arg(context).arg("freight").arg("double");
+      poutput->append("returnVal", -81);
+      return *poutput;
+    }
+  }
+
+  param = pinput.value("duty", &valid);
+  if (valid)
+  {
+    duty = param.toDouble(&valid);
+    if (!valid)
+    {
+      _errorMsg = errorMsg(-81).arg(context).arg("duty").arg("double");
+      poutput->append("returnVal", -81);
+      return *poutput;
+    }
+  }
+
+  param = pinput.value("curr_id", &valid);
+  if (valid)
+  {
+    curr_id = param.toInt(&valid);
+    if (!valid)
+    {
+      _errorMsg = errorMsg(-81).arg(context).arg("curr_id").arg("int");
+      poutput->append("returnVal", -81);
+      return *poutput;
+    }
+  }
+
+  param = pinput.value("neworder", &valid);
+  if (valid)
+    neworder = param.toString();
+
+  param = pinput.value("reforder", &valid);
+  if (valid)
+    reforder = param.toString();
+
+  param = pinput.value("reftype", &valid);
+  if (valid)
+    reftype = param.toString();
+
+  param = pinput.value("refid", &valid);
+  if (valid)
+  {
+    ref_id = param.toInt(&valid);
+    if (!valid)
+    {
+      _errorMsg = errorMsg(-81).arg(context).arg("refid").arg("int");
+      poutput->append("returnVal", -81);
+      return *poutput;
+    }
+  }
+
+  int returnVal = getProcessor()->credit(ccard_id, cvv, amount, tax,
+                                         taxExempt, freight, duty, curr_id,
+                                         neworder, reforder, ccpay_id,
+                                         reftype, ref_id);
+
+  poutput->append("returnVal", returnVal);
+  poutput->append("neworder",  neworder);
+  poutput->append("reforder",  reforder);
+  poutput->append("ccpayid",   ccpay_id);
+  poutput->append("refid",     ref_id);
+
+  return *poutput;
+}
+
+// TODO: memory leak of poutput!
+ParameterList CreditCardProcessor::voidPrevious(const ParameterList &pinput)
+{
+  if (DEBUG) qDebug("voidPrevious(ParameterList&) entered");
+
+  ParameterList *poutput = new ParameterList;
+  QVariant       param;
+  bool           valid;
+  QString        context = "voidPrevious";
+
+  int    ccpay_id = -1;
+
+  param = pinput.value("ccpay_id", &valid);
+  if (valid)
+  {
+    ccpay_id = param.toInt(&valid);
+    if (!valid)
+    {
+      _errorMsg = errorMsg(-81).arg(context).arg("ccpay_id").arg("int");
+      poutput->append("returnVal", -81);
+      return *poutput;
+    }
+  }
+
+  int returnVal = getProcessor()->voidPrevious(ccpay_id);
+
+  poutput->append("returnVal", returnVal);
+  poutput->append("ccpayid",   ccpay_id);
+
+  return *poutput;
 }

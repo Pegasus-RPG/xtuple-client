@@ -1433,5 +1433,4 @@ void GUIClient::loadScriptGlobals(QScriptEngine * engine)
 
   QScriptValue privilegesval = engine->newQObject(_privileges);
   engine->globalObject().setProperty("privileges", privilegesval);
-
 }

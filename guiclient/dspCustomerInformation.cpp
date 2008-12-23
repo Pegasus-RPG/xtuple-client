@@ -994,44 +994,18 @@ void dspCustomerInformation::sCashReceipt()
 
 void dspCustomerInformation::sFillPaymentsList()
 {
-  q.prepare("SELECT ccpay_id, cohead_id,"
-            "       CASE WHEN (ccpay_type='A') THEN :preauth"
-            "            WHEN (ccpay_type='C') THEN :charge"
-            "            WHEN (ccpay_type='R') THEN :refund"
-            "            ELSE ccpay_type"
-            "       END AS type,"
-            "       CASE WHEN (ccpay_status='A') THEN :authorized"
-            "            WHEN (ccpay_status='C') THEN :approved"
-            "            WHEN (ccpay_status='D') THEN :declined"
-            "            WHEN (ccpay_status='V') THEN :voided"
-            "            WHEN (ccpay_status='X') THEN :noapproval"
-            "            ELSE ccpay_status"
-            "       END AS status,"
-            "       ccpay_transaction_datetime, ccpay_by_username, ccpay_amount,"
-            "       currConcat(ccpay_curr_id) AS ccpay_currAbbr,"
-            "       COALESCE(cohead_number, ccpay_order_number) AS docnumber,"
-            "       ccpay_r_ref,"
-            "       ABS(COALESCE(payco_amount, ccpay_amount)) AS allocated,"
-            "       currConcat(COALESCE(payco_curr_id, ccpay_curr_id)) AS payco_currAbbr,"
-            "       'curr' AS ccpay_amount_xtnumericrole,"
-            "       'curr' AS allocated_xtnumericrole "
-            "  FROM ccpay LEFT OUTER JOIN "
-            "       (payco JOIN cohead ON (payco_cohead_id=cohead_id))"
-            "         ON (payco_ccpay_id=ccpay_id)"
-            " WHERE ((ccpay_cust_id=:cust_id))"
-            " ORDER BY ccpay_transaction_datetime;");
-  q.bindValue(":cust_id", _cust->id());
-  q.bindValue(":preauth", tr("Preauthorization"));
-  q.bindValue(":charge",  tr("Charge"));
-  q.bindValue(":refund",  tr("Refund"));
-  q.bindValue(":authorized", tr("Authorized"));
-  q.bindValue(":approved",   tr("Approved"));
-  q.bindValue(":declined",   tr("Declined"));
-  q.bindValue(":voided",     tr("Voided"));
-  q.bindValue(":noapproval", tr("No Approval Code"));
-  q.exec();
-
-  _payments->clear();
+  MetaSQLQuery mql = mqlLoad("ccpayments", "list");
+  ParameterList params;
+  params.append("cust_id",    _cust->id());
+  params.append("preauth",    tr("Preauthorization"));
+  params.append("charge",     tr("Charge"));
+  params.append("refund",     tr("Refund"));
+  params.append("authorized", tr("Authorized"));
+  params.append("approved",   tr("Approved"));
+  params.append("declined",   tr("Declined"));
+  params.append("voided",     tr("Voided"));
+  params.append("noapproval", tr("No Approval Code"));
+  q = mql.toQuery(params);
   _payments->populate(q, true);
 
   if (q.lastError().type() != QSqlError::NoError)
