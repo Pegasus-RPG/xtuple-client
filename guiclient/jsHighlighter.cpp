@@ -114,6 +114,7 @@ void JSHighlighter::highlightBlock(const QString &text)
       {
         state = NormalState;
         setFormat(start, i - start + 1, _literalColor);
+        start = i;
       }
     }
     else if (text.mid(i, 2) == "//")
@@ -140,12 +141,25 @@ void JSHighlighter::highlightBlock(const QString &text)
       {
         setFormat(i, kwtest.matchedLength(), _keywordColor);
         i += kwtest.matchedLength();
+        start = i;
         break;
       }
       else if (extest.indexIn(text.mid(i)) == 0)
       {
         setFormat(i, extest.matchedLength(), _extensionColor);
         i += extest.matchedLength();
+        start = i;
+        break;
+      }
+    }
+    else
+    {
+      QRegExp numericTest("^-?[0-9]+\\.?[0-9]*");
+      if (numericTest.indexIn(text.mid(i)) == 0)
+      {
+        setFormat(i, numericTest.matchedLength(), _literalColor);
+        i += numericTest.matchedLength();
+        start = i;
         break;
       }
     }
