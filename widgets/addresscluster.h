@@ -146,20 +146,20 @@ class OPENMFGWIDGETS_EXPORT AddressCluster : public VirtualCluster
 	AddressCluster(QWidget*, const char* = 0);
 	
 	inline virtual bool    activeVisible() const { return _active->isVisible(); };
-        inline virtual QString addrChange()  const { return _addrChange->text(); };
-	inline virtual QString city()        const { return _city->text(); };
-	inline virtual QString country()     const { return _country->currentText(); };
-	inline virtual QString description() const { return ""; };
-	inline virtual bool    isValid()     const { return _valid; };
-	inline virtual QString label()	     const { return _label->text(); };
-	inline virtual QString line1()       const { return _addr1->text(); };
-	inline virtual QString line2()       const { return _addr2->text(); };
-	inline virtual QString line3()       const { return _addr3->text(); };
-	inline virtual int     id()	     const { return _id; };
-	inline virtual QString notes()	     const { return _notes; };
-               virtual QString number()      const { return QString(); };
-	inline virtual QString postalCode()  const { return _postalcode->text(); };
-	inline virtual QString state()       const { return _state->currentText(); };
+        inline virtual QString addrChange()   const { return _addrChange->text(); };
+	Q_INVOKABLE virtual QString city()    const { return _city->text(); }
+	Q_INVOKABLE virtual QString country() const { return _country->currentText(); }
+	Q_INVOKABLE virtual QString description() const { return ""; }
+	Q_INVOKABLE virtual bool    isValid() const { return _valid; }
+	inline virtual QString label()	      const { return _label->text(); };
+	Q_INVOKABLE virtual QString line1()   const { return _addr1->text(); }
+	Q_INVOKABLE virtual QString line2()   const { return _addr2->text(); }
+	Q_INVOKABLE virtual QString line3()   const { return _addr3->text(); }
+	Q_INVOKABLE virtual int     id()      const { return _id; }
+	inline virtual QString notes()	      const { return _notes; };
+               virtual QString number()       const { return QString(); };
+	Q_INVOKABLE virtual QString postalCode()  const { return _postalcode->text(); }
+	Q_INVOKABLE virtual QString state()   const { return _state->currentText(); }
 	
 	// Return data map values
 	virtual QString  fieldNameAddrChange()  const { return _fieldNameAddrChange; };

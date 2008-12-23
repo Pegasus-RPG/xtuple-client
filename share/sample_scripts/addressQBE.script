@@ -1,0 +1,80 @@
+mywindow.findChild("_close").clicked.connect(mywindow, "close");
+
+var _searchMe = mywindow.findChild("_searchMe");
+var _found    = mywindow.findChild("_found");
+
+
+_found.addColumn("Line 1",      -1, 1, true, "addr_line1");
+_found.addColumn("Line 2",      -1, 1, true, "addr_line2");
+_found.addColumn("Line 3",      -1, 1, true, "addr_line3");
+_found.addColumn("City",        -1, 1, true, "addr_city");
+_found.addColumn("State",       -1, 1, true, "addr_state");
+_found.addColumn("Postal Code", -1, 1, true, "addr_postalcode");
+_found.addColumn("Country",     -1, 1, true, "addr_country");
+
+function sFillList()
+{
+  var params = new Object;
+
+  if (_searchMe.line1() != "")
+    params.line = _searchMe.line1();
+  if (_searchMe.line2() != "")
+    params.line = (params.line ? params.line + "|" : "") + _searchMe.line2();
+  if (_searchMe.line3() != "")
+    params.line = (params.line ? params.line + "|" : "") + _searchMe.line3();
+  if (_searchMe.city() != "")
+    params.city = _searchMe.city();
+  if (_searchMe.state() != "")
+    params.state = _searchMe.state();
+  if (_searchMe.postalCode() != "")
+    params.postal = _searchMe.postalCode();
+  if (_searchMe.country() != "")
+    params.country = _searchMe.country();
+
+  var qry = toolbox.executeQuery("SELECT * FROM addr "
+                     + "WHERE true "
+                     + "<? if exists(\"line\") ?>"
+                     + " AND (addr_line1 ~* <? value(\"line\") ?>"
+                     + "      OR addr_line2 ~* <? value(\"line\") ?>"
+                     + "      OR addr_line3 ~* <? value(\"line\") ?>)"
+                     + "<? endif ?>"
+                     + "<? if exists(\"city\") ?>"
+                     + " AND addr_city ~* <? value(\"city\") ?>"
+                     + "<? endif ?>"
+                     + "<? if exists(\"state\") ?>"
+                     + " AND addr_state ~* <? value(\"state\") ?>"
+                     + "<? endif ?>"
+                     + "<? if exists(\"postal\") ?>"
+                     + " AND addr_postalcode ~* <? value(\"postal\") ?>"
+                     + "<? endif ?>"
+                     + "<? if exists(\"country\") ?>"
+                     + " AND addr_country ~* <? value(\"country\") ?>"
+                     + "<? endif ?>"
+                     + ";",
+                     params);
+  _found.populate(qry);
+}
+
+function sEditAddr()
+{
+  mainwindow.sReportError("_edit pressed");
+  // look at guiclient.* and screens' _test button to see how to open a new window
+  var childwnd = toolbox.openWindow("address", mywindow, 1);
+
+  mainwindow.sReportError(childwnd);
+  for (var i in childwnd)
+    mainwindow.sReportError("childwnd." + i + " = " + childwnd[i]);
+}
+
+function sCoords()
+{
+  mainwindow.sReportError("_coords pressed");
+  var childwnd = toolbox.openWindow("addressCoordinates", mywindow, 1);
+
+  var addr = childwnd.findChild("_addr");
+  addr.id = _found.id;
+}
+
+mywindow.findChild("_query").clicked.connect(sFillList);
+mywindow.findChild("_edit").clicked.connect(sEditAddr);
+mywindow.findChild("_coords").clicked.connect(sCoords);

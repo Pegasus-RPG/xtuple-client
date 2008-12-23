@@ -65,6 +65,7 @@
 #include <QMessageBox>
 #include <QScriptEngine>
 #include <QScriptValueIterator>
+#include <QSqlError>
 #include <QDateTime>
 #include <QList>
 #include <QMenu>
@@ -86,6 +87,8 @@
 #include "scriptquery.h"
 #include "mqlutil.h"
 #include "xtreewidget.h"
+#include "xmainwindow.h"
+#include "xdialog.h"
 #include "creditcardprocessor.h"
 
 QWidget * ScriptToolbox::_lastWindow = 0;
@@ -517,6 +520,51 @@ QScriptValue ScriptToolbox::variantToScriptValue(QScriptEngine * engine, QVarian
 void ScriptToolbox::setLastWindow(QWidget * lw)
 {
   _lastWindow = lw;
+}
+
+// first pass copied roughly from uiforms::sTest()
+QWidget *ScriptToolbox::openWindow(QString pname, QWidget *parent, Qt::WindowFlags flags)
+{
+  QWidget *returnVal = 0;
+
+  XSqlQuery screenq;
+  screenq.prepare("SELECT * "
+                  "FROM uiform "
+                  "WHERE (uiform_name=:uiform_name);");
+  screenq.bindValue(":uiform_name", pname);
+  screenq.exec();
+  if (screenq.first())
+  {
+    XUiLoader loader;
+    QByteArray ba = screenq.value("uiform_source").toByteArray();
+    QBuffer uiFile(&ba);
+    if (!uiFile.open(QIODevice::ReadOnly))
+    {
+      QMessageBox::critical(0, tr("Could not load UI"),
+                            tr("<p>There was an error loading the UI Form "
+                               "from the database."));
+      return 0;
+    }
+    QWidget *ui = loader.load(&uiFile);
+    uiFile.close();
+
+    // TODO: handle differently if ui.inherits(QDialog) || flags & Qt::Dialog?
+    XMainWindow *window = new XMainWindow(parent,
+                                          screenq.value("uiform_name").toString(),
+                                          flags);
+    window->setCentralWidget(ui);
+    window->setWindowTitle(ui->windowTitle());
+    omfgThis->handleNewWindow(window);
+    returnVal = window;
+  }
+  else if (screenq.lastError().type() != QSqlError::None)
+  {
+    systemError(0, screenq.lastError().databaseText(), __FILE__, __LINE__);
+    return 0;
+  }
+
+  _lastWindow = returnVal;
+  return returnVal;
 }
 
 void ScriptToolbox::addColumnXTreeWidget(QWidget * tree, const QString & pString, int pWidth, int pAlignment, bool pVisible, const QString pEditColumn, const QString pDisplayColumn)
