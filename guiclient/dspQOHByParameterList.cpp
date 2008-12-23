@@ -332,18 +332,18 @@ void dspQOHByParameterList::sIssueCountTag()
 
 void dspQOHByParameterList::sHandleValue(bool pShowValue)
 {
-  _qoh->setColumnHidden(9, !pShowValue);
-  _qoh->setColumnHidden(10, !pShowValue);
-  _qoh->setColumnHidden(11, !pShowValue);
-  _qoh->setColumnHidden(12, !pShowValue);
+  _qoh->setColumnHidden(_qoh->column("cost"),         !pShowValue);
+  _qoh->setColumnHidden(_qoh->column("value"),        !pShowValue);
+  _qoh->setColumnHidden(_qoh->column("f_nnvalue"),    !pShowValue);
+  _qoh->setColumnHidden(_qoh->column("f_costmethod"), !pShowValue);
 
   _costsGroup->setEnabled(pShowValue);
 }
 
 void dspQOHByParameterList::sFillList()
 {
-  _qoh->clear();
-  _qoh->setColumnVisible(12, _showValue->isChecked() && _usePostedCosts->isChecked());
+  _qoh->setColumnVisible(_qoh->column("f_costmethod"),
+                         _showValue->isChecked() && _usePostedCosts->isChecked());
   
   QString sql( "SELECT itemsite_id, detail,"
                "       warehous_code, classcode_code, item_number, uom_name,"

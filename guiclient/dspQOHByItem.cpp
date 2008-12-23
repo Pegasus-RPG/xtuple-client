@@ -258,7 +258,6 @@ void dspQOHByItem::sHandleValue(bool pShowValue)
 
 void dspQOHByItem::sFillList()
 {
-  _qoh->clear();
   _qoh->setColumnVisible(8, _showValue->isChecked() && _usePostedCosts->isChecked());
 
   QString sql( "SELECT itemsite_id, detail,"
