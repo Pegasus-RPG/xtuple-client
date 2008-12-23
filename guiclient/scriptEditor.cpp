@@ -70,8 +70,8 @@
 
 static QString lastSaveDir = QString();
 
-scriptEditor::scriptEditor(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+scriptEditor::scriptEditor(QWidget* parent, const char* name, Qt::WFlags fl)
+    : XWidget(parent, name, fl)
 {
   setupUi(this);
 
@@ -87,6 +87,8 @@ scriptEditor::scriptEditor(QWidget* parent, const char* name, bool modal, Qt::WF
   connect(_document, SIGNAL(blockCountChanged(int)), this, SLOT(sBlockCountChanged(int)));
   connect(_document, SIGNAL(modificationChanged(bool)), this, SLOT(setWindowModified(bool)));
   connect(_source, SIGNAL(cursorPositionChanged()), this, SLOT(sPositionChanged()));
+
+  _scriptid = -1;
 }
 
 scriptEditor::~scriptEditor()

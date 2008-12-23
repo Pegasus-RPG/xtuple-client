@@ -105,7 +105,7 @@ void uiforms::sNew()
   newdlg->set(params);
 
   omfgThis->handleNewWindow(newdlg);
-  sFillList();
+  connect(newdlg, SIGNAL(destroyed(QObject*)), this, SLOT(sFillList()));
 }
 
 void uiforms::sEdit()
@@ -118,7 +118,7 @@ void uiforms::sEdit()
   newdlg->set(params);
 
   omfgThis->handleNewWindow(newdlg);
-  sFillList();
+  connect(newdlg, SIGNAL(destroyed(QObject*)), this, SLOT(sFillList()));
 }
 
 void uiforms::sDelete()

@@ -347,11 +347,11 @@ void uiform::sScriptNew()
   ParameterList params;
   params.append("mode", "new");
 
-  scriptEditor newdlg(this, "", TRUE);
-  newdlg.set(params);
+  scriptEditor *newdlg = new scriptEditor(this, "", Qt::Window);
+  newdlg->set(params);
 
-  if (newdlg.exec() != XDialog::Rejected)
-    sFillList();
+  omfgThis->handleNewWindow(newdlg);
+  connect(newdlg, SIGNAL(destroyed()), this, SLOT(sFillList()));
 }
 
 void uiform::sScriptEdit()
@@ -360,11 +360,11 @@ void uiform::sScriptEdit()
   params.append("mode", "edit");
   params.append("script_id", _script->id());
 
-  scriptEditor newdlg(this, "", TRUE);
-  newdlg.set(params);
+  scriptEditor *newdlg = new scriptEditor(this, "", Qt::Window);
+  newdlg->set(params);
 
-  if (newdlg.exec() != XDialog::Rejected)
-    sFillList();
+  omfgThis->handleNewWindow(newdlg);
+  connect(newdlg, SIGNAL(destroyed()), this, SLOT(sFillList()));
 }
 
 void uiform::sScriptDelete()

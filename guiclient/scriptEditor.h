@@ -59,19 +59,19 @@
 #define SCRIPTEDITOR_H
 
 #include "guiclient.h"
-#include "xdialog.h"
+#include "xwidget.h"
 #include <parameter.h>
 
 #include "ui_scriptEditor.h"
 
 class JSHighlighter;
 
-class scriptEditor : public XDialog, public Ui::scriptEditor
+class scriptEditor : public XWidget, public Ui::scriptEditor
 {
     Q_OBJECT
 
 public:
-    scriptEditor(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
+    scriptEditor(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = 0);
     ~scriptEditor();
 
 public slots:
