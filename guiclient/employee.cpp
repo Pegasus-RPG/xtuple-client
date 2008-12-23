@@ -283,6 +283,34 @@ void employee::sSave(const bool pClose)
       return;
   }
   
+  if (_mode == cNew)
+  {
+    q.prepare("SELECT emp_id"
+              "  FROM emp"
+              " WHERE(emp_code=:code)");
+    q.bindValue(":code", _code->text());
+    q.exec();
+    if(q.first())
+    {
+      QMessageBox::critical(this, tr("Duplicate Employee"),
+        tr("An Employee already exists for the Code specified.") );
+      _code->setFocus();
+      return;
+    }
+    q.prepare("SELECT emp_id"
+              "  FROM emp"
+              " WHERE(emp_number=:number)");
+    q.bindValue(":number", _number->text());
+    q.exec();
+    if(q.first())
+    {
+      QMessageBox::critical(this, tr("Duplicate Employee"),
+        tr("An Employee already exists for the Number specified.") );
+      _number->setFocus();
+      return;
+    }
+  }
+
   if (_user->isChecked() && pClose)
   {
     q.prepare("SELECT usr_id FROM usr WHERE usr_username=:username;");
