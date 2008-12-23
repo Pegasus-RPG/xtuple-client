@@ -76,6 +76,7 @@
 #include <QDir>
 #include <QIODevice>
 #include <QTextStream>
+#include <qwebview.h>
 
 #include <parameter.h>
 #include <metasql.h>
@@ -533,6 +534,14 @@ void ScriptToolbox::populateXTreeWidget(QWidget * tree, QObject * pSql, bool pUs
     xt->populate(sq->query(), pUseAltId);
 }
 
+void ScriptToolbox::loadQWebView(QWidget * webView, const QString & url)
+{
+  QUrl p = QUrl(url);
+  QWebView *wv = qobject_cast<QWebView*>(webView);
+  if(wv)
+    wv->load(p);
+}
+
 // ParameterList Conversion functions
 QScriptValue ParameterListtoScriptValue(QScriptEngine *engine, const ParameterList &params)
 {
@@ -618,3 +627,4 @@ QObject *ScriptToolbox::getCreditCardProcessor()
 {
   return CreditCardProcessor::getProcessor();
 }
+

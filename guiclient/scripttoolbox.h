@@ -75,6 +75,7 @@ class QStackedLayout;
 class QScriptEngine;
 
 Q_DECLARE_METATYPE(ParameterList)
+Q_DECLARE_METATYPE(QUrl);
 Q_DECLARE_METATYPE(XSqlQuery);
 Q_DECLARE_METATYPE(enum SetResponse)
 Q_DECLARE_METATYPE(enum ParameterGroup::ParameterGroupStates);
@@ -143,6 +144,8 @@ class ScriptToolbox : public QObject
 
     void addColumnXTreeWidget(QWidget * tree, const QString &, int, int, bool = true, const QString = QString(), const QString = QString());
     void populateXTreeWidget(QWidget * tree, QObject * pSql, bool = FALSE);
+    
+    void loadQWebView(QWidget * webView, const QString & url);
 
     bool printReport(const QString & name, const ParameterList & params);
 

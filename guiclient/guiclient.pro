@@ -1008,6 +1008,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp       
                xTupleDesigner.cpp xTupleDesignerActions.cpp
 
 QT += xml sql script network
+QT += webkit
 
 RESOURCES += guiclient.qrc
 
