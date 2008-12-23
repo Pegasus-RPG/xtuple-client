@@ -68,6 +68,8 @@
 
 #define DEBUG false
 
+static QString lastSaveDir = QString();
+
 scriptEditor::scriptEditor(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
@@ -99,7 +101,6 @@ void scriptEditor::languageChange()
 
 void scriptEditor::closeEvent(QCloseEvent *event)
 {
-  qDebug("document modified? %d", _document->isModified());
   if (_document->isModified())
   {
     switch (QMessageBox::question(this, tr("Save Changes?"),
@@ -190,7 +191,7 @@ void scriptEditor::setMode(const int pmode)
 
 bool scriptEditor::sSave()
 {
-  if (_name->text().length() == 0)
+  if (_name->text().trimmed().length() == 0)
   {
     QMessageBox::warning( this, tr("Script Name is Invalid"),
                           tr("<p>You must enter a valid name for this Script.") );
@@ -298,7 +299,12 @@ void scriptEditor::sImport()
 
 void scriptEditor::sExport()
 {
-  QString filename = QFileDialog::getSaveFileName( this, tr("Save File"), QString::null, tr("Script (*.script *.js)"));
+  QString filename = QFileDialog::getSaveFileName(this, tr("Save Script File"),
+                                                  lastSaveDir +
+                                                  QDir::separator() +
+                                                  _name->text().trimmed() +
+                                                  ".script",
+                                                  tr("Script (*.script *.js)"));
   if(filename.isNull())
     return;
 
@@ -317,6 +323,8 @@ void scriptEditor::sExport()
   ts.setCodec("UTF-8");
   ts << _source->toPlainText();
   file.close();
+
+  lastSaveDir = fi.absolutePath();
 }
 
 void scriptEditor::sGoto()
