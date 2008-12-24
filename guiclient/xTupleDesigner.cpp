@@ -206,14 +206,10 @@ xTupleDesigner::xTupleDesigner(QWidget* parent, const char* name, Qt::WFlags fl)
   QDesignerComponents::initializeResources();
 
   _widgetwindow   = new WidgetBoxWindow(this);
-/////////////////
   _formeditor->setTopLevel(_widgetwindow);
 #ifndef Q_WS_MAC
   _widgetwindow->setMenuBar(_menubar);
-  //_widgetwindow->action()->setVisible(false);
-  //_widgetwindow->setSaveSettingsOnClose(true);
-  //qDesigner->setMainWindow(widgetBoxWrapper);
-  //_widgetwindow->setWindowTitle(tr("Qt Designer"));
+  _actions->widgetBoxAct()->setVisible(false);
 #endif
   //_widgetwindow->addToolBar(m_fileToolBar);
   //_widgetwindow->addToolBar(m_editToolBar);
@@ -233,9 +229,13 @@ xTupleDesigner::xTupleDesigner(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_actions->signalSlotAct(),SIGNAL(toggled(bool)), _slotedwindow,  SLOT(setVisible(bool)));
 
   omfgThis->handleNewWindow(_widgetwindow);
+  _widgetwindow->setAttribute(Qt::WA_DeleteOnClose, false);
   omfgThis->handleNewWindow(_objinspwindow);
+  _objinspwindow->setAttribute(Qt::WA_DeleteOnClose, false);
   omfgThis->handleNewWindow(_propinspwindow);
+  _propinspwindow->setAttribute(Qt::WA_DeleteOnClose, false);
   omfgThis->handleNewWindow(_slotedwindow);
+  _slotedwindow->setAttribute(Qt::WA_DeleteOnClose, false);
 
   // resource editor;
   // action editor;
@@ -265,12 +265,12 @@ xTupleDesigner::xTupleDesigner(QWidget* parent, const char* name, Qt::WFlags fl)
 
 xTupleDesigner::~xTupleDesigner()
 {
-  if (_objinspwindow)  _objinspwindow->close();
-  if (_propinspwindow) _propinspwindow->close();
-  if (_slotedwindow)   _slotedwindow->close();
-  if (_widgetwindow)   _widgetwindow->close();
+  if (_objinspwindow)  _objinspwindow->deleteLater();
+  if (_propinspwindow) _propinspwindow->deleteLater();
+  if (_slotedwindow)   _slotedwindow->deleteLater();
+  if (_widgetwindow)   _widgetwindow->deleteLater();
 
-  if (_designer)   _designer->deleteLater();
+  //if (_designer)   _designer->deleteLater();
   if (_formeditor) _formeditor->deleteLater();
   if (_formwindow) _formwindow->deleteLater();
 }
@@ -355,7 +355,7 @@ void xTupleDesigner::setSource(QIODevice *psrc, QString pfilename)
   emit nameChanged(name());
   emit sourceChanged(_formwindow->contents());
 
-  debugObjectTree(this, "setSource(QIODevice,QString)", 3);
+  //debugObjectTree(this, "setSource(QIODevice,QString)", 3);
 }
 
 void xTupleDesigner::setSource(QString psrc)
