@@ -59,6 +59,7 @@
 
 #include <QSqlError>
 #include <QVariant>
+#include <QMessageBox>
 
 #include "userList.h"
 
@@ -242,6 +243,22 @@ void task::populate()
 
 void task::sSave()
 {
+  if (_number->text().length() == 0)
+  {
+      QMessageBox::warning( this, tr("Cannot Save Project Task"),
+                            tr("You must enter a valid Number.") );
+      _number->setFocus();
+      return;
+  }
+  
+  if (_name->text().length() == 0)
+  {
+      QMessageBox::warning( this, tr("Cannot Save Project Task"),
+                            tr("You must enter a valid Name.") );
+      _name->setFocus();
+      return;
+  }
+  
   if (_mode == cNew)
   {
     q.prepare( "INSERT INTO prjtask "
