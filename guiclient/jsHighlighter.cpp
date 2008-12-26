@@ -100,6 +100,12 @@ void JSHighlighter::highlightBlock(const QString &text)
 
   for (int i = 0; i < text.length(); i++)
   {
+    QRegExp kwtest("^(" + _keyword.join("|") + ")\\W?");
+    QRegExp extest("^(" + _extension.join("|") + ")\\W?");
+    QRegExp numericTest("^(0xX[0-9a-fA-F]+)|(-?[0-9]+(\\.[0-9]+)?)");
+    QRegExp wordtest("^\\w+");
+    QRegExp quotetest("^\"[^\"]*\"");
+
     if (state == InsideCStyleComment)
     {
       if (text.mid(i, 2) == "*/")
@@ -110,6 +116,7 @@ void JSHighlighter::highlightBlock(const QString &text)
     }
     else if (state == InsideString)
     {
+      // TODO: if i == 0 then error color until next "
       if (text.mid(i, 1) == "\"")
       {
         state = NormalState;
@@ -127,42 +134,33 @@ void JSHighlighter::highlightBlock(const QString &text)
       start = i;
       state = InsideCStyleComment;
     }
+    else if (quotetest.indexIn(text.mid(i)) == 0)
+    {
+      setFormat(i, quotetest.matchedLength(), _literalColor);
+      i += quotetest.matchedLength();
+    }
     else if (text.mid(i, 1) == "\"")
     {
       start = i;
       state = InsideString;
     }
-    else if (text.mid(i - 1, 1).trimmed().isEmpty())
+    else if (kwtest.indexIn(text.mid(i)) == 0)
     {
-      // TODO: is there a faster way using captured text?
-      QRegExp kwtest("^(" + _keyword.join("|") + ")\\W");
-      QRegExp extest("^(" + _extension.join("|") + ")\\W");
-      if (kwtest.indexIn(text.mid(i)) == 0)
-      {
-        setFormat(i, kwtest.matchedLength(), _keywordColor);
-        i += kwtest.matchedLength();
-        start = i;
-        break;
-      }
-      else if (extest.indexIn(text.mid(i)) == 0)
-      {
-        setFormat(i, extest.matchedLength(), _extensionColor);
-        i += extest.matchedLength();
-        start = i;
-        break;
-      }
+      setFormat(i, kwtest.matchedLength(), _keywordColor);
+      i += kwtest.matchedLength();
     }
-    else
+    else if (extest.indexIn(text.mid(i)) == 0)
     {
-      QRegExp numericTest("^-?[0-9]+\\.?[0-9]*");
-      if (numericTest.indexIn(text.mid(i)) == 0)
-      {
-        setFormat(i, numericTest.matchedLength(), _literalColor);
-        i += numericTest.matchedLength();
-        start = i;
-        break;
-      }
+      setFormat(i, extest.matchedLength(), _extensionColor);
+      i += extest.matchedLength();
     }
+    else if (numericTest.indexIn(text.mid(i)) == 0)
+    {
+      setFormat(i, numericTest.matchedLength(), _literalColor);
+      i += numericTest.matchedLength();
+    }
+    else if (wordtest.indexIn(text.mid(i)) == 0)        // skip non-keywords
+      i += wordtest.matchedLength();
   }
 
   if (state == InsideCStyleComment)
