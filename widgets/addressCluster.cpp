@@ -401,7 +401,7 @@ void AddressCluster::check()
     XSqlQuery tx;
 
     tx.exec("BEGIN;");
-    int result=save();
+    int result=save(CHECK);
     tx.exec("ROLLBACK;");
     if (result == -2)
     {

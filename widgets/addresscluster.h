@@ -196,7 +196,7 @@ class OPENMFGWIDGETS_EXPORT AddressCluster : public VirtualCluster
 	virtual void	sList();
 	virtual void	sSearch();
 	virtual void	setId(const int);
-        virtual int	save(enum SaveFlags = CHECK);
+        virtual int	save(enum SaveFlags);
         virtual void    check();
 
 	// Set data map values      
