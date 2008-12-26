@@ -1,5 +1,21 @@
 var _addr = mywindow.findChild("_addr");
 
+function set(input)
+{
+  if ("addr_id" in input)
+  {
+    _addr.id = input.addr_id;
+    mainwindow.sReportError("_addr.id is now " + _addr.id);
+  }
+  else
+  {
+    mainwindow.sReportError("no addr_id passed to set()");
+    return 5;
+  }
+
+  return 0;
+}
+
 function sSave()
 {
   var result = _addr.save("CHECK");

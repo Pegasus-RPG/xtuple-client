@@ -590,6 +590,7 @@ QWidget *ScriptToolbox::openWindow(QString name, QWidget *parent, Qt::WindowModa
       omfgThis->handleNewWindow(window);
       returnVal = window;
     }
+    _lastWindow = window;
   }
   else if (screenq.lastError().type() != QSqlError::None)
   {
@@ -597,7 +598,6 @@ QWidget *ScriptToolbox::openWindow(QString name, QWidget *parent, Qt::WindowModa
     return 0;
   }
 
-  _lastWindow = returnVal;
   return returnVal;
 }
 

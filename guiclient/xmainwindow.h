@@ -59,6 +59,10 @@
 
 #include <QMainWindow>
 
+#include <parameter.h>
+
+#include "guiclient.h"
+
 class QScriptEngine;
 class XMainWindowPrivate;
 
@@ -66,10 +70,17 @@ class XMainWindow : public QMainWindow
 {
   Q_OBJECT
 
+  Q_PROPERTY(ParameterList params READ get WRITE set DESIGNABLE false);
+
   public:
     XMainWindow(QWidget * parent = 0, Qt::WindowFlags flags = 0);
     XMainWindow(QWidget * parent, const char * name, Qt::WindowFlags flags = 0);
     virtual ~XMainWindow();
+
+    Q_INVOKABLE virtual ParameterList get() const;
+
+  public slots:
+    virtual enum SetResponse set(const ParameterList &);
 
   protected:
     virtual void closeEvent ( QCloseEvent * event );
@@ -80,6 +91,8 @@ class XMainWindow : public QMainWindow
     friend class ScriptToolbox;
     XMainWindowPrivate *_private;
     friend QScriptEngine *engine(XMainWindow*);
+
+    ParameterList _params;
 };
 
 #endif // __XMAINWINDOW_H__

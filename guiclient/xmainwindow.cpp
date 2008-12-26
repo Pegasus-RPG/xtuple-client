@@ -119,6 +119,32 @@ XMainWindow::~XMainWindow()
     delete _private;
 }
 
+enum SetResponse XMainWindow::set(const ParameterList &params)
+{
+  enum SetResponse returnValue = NoError;
+  _params = params;
+
+  if (engine(this))
+  {
+    if (engine(this)->globalObject().property("set").isFunction())
+    {
+      QScriptValueList args;
+      args << ParameterListtoScriptValue(engine(this), _params);
+      QScriptValue tmp = engine(this)->globalObject().property("set").call(QScriptValue(), args);
+      SetResponsefromScriptValue(tmp, returnValue);
+    }
+    else
+      qDebug("engine's script doesn't have a set function");
+  }
+
+  return returnValue;
+}
+
+ParameterList XMainWindow::get() const
+{
+  return _params;
+}
+
 void XMainWindow::closeEvent(QCloseEvent *event)
 {
   QString objName = objectName();
