@@ -59,6 +59,7 @@
 
 #include <QMainWindow>
 
+class QScriptEngine;
 class XMainWindowPrivate;
 
 class XMainWindow : public QMainWindow
@@ -76,7 +77,9 @@ class XMainWindow : public QMainWindow
 
   private:
     friend class XMainWindowPrivate;
+    friend class ScriptToolbox;
     XMainWindowPrivate *_private;
+    friend QScriptEngine *engine(XMainWindow*);
 };
 
 #endif // __XMAINWINDOW_H__

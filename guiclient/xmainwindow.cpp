@@ -210,3 +210,17 @@ qDebug("isModal() %s", isModal()?"true":"false");
   }
   QMainWindow::showEvent(event);
 }
+
+QScriptEngine *engine(XMainWindow *win)
+{
+  // copied from showEvent - why is it hidden there and not in the constructor?
+  if(!win->_private->_engine)
+  {
+    win->_private->_engine = new QScriptEngine();
+    omfgThis->loadScriptGlobals(win->_private->_engine);
+    QScriptValue mywindow = win->_private->_engine->newQObject(win);
+    win->_private->_engine->globalObject().setProperty("mywindow", mywindow);
+  }
+
+  return win->_private->_engine;
+}

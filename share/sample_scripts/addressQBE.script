@@ -55,21 +55,23 @@ function sFillList()
   _found.populate(qry);
 }
 
+// open a .ui created as a QDialog
 function sEditAddr()
 {
-  mainwindow.sReportError("_edit pressed");
-  // look at guiclient.* and screens' _test button to see how to open a new window
-  var childwnd = toolbox.openWindow("address", mywindow, 1);
+  // pass NonModal and Window, both of which should be modified by the toolbox for a QDialog
+  var childwnd = toolbox.openWindow("addressDialog", mywindow, 0, 1);
+  var addr = childwnd.findChild("_addr");
+  addr.id = _found.id;
 
-  mainwindow.sReportError(childwnd);
-  for (var i in childwnd)
-    mainwindow.sReportError("childwnd." + i + " = " + childwnd[i]);
+  var execval = childwnd.exec();
+  sFillList();
 }
 
+// open a .ui created as a QWidget
 function sCoords()
 {
-  mainwindow.sReportError("_coords pressed");
-  var childwnd = toolbox.openWindow("addressCoordinates", mywindow, 1);
+  // 0 => NonModal, but you can change that
+  var childwnd = toolbox.openWindow("addressCoordinates", mywindow, 0, 3);
 
   var addr = childwnd.findChild("_addr");
   addr.id = _found.id;

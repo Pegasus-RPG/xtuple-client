@@ -522,8 +522,7 @@ void ScriptToolbox::setLastWindow(QWidget * lw)
   _lastWindow = lw;
 }
 
-// first pass copied roughly from uiforms::sTest()
-QWidget *ScriptToolbox::openWindow(QString pname, QWidget *parent, Qt::WindowFlags flags)
+QWidget *ScriptToolbox::openWindow(QString name, QWidget *parent, Qt::WindowModality modality, Qt::WindowFlags flags)
 {
   QWidget *returnVal = 0;
 
@@ -531,7 +530,7 @@ QWidget *ScriptToolbox::openWindow(QString pname, QWidget *parent, Qt::WindowFla
   screenq.prepare("SELECT * "
                   "FROM uiform "
                   "WHERE (uiform_name=:uiform_name);");
-  screenq.bindValue(":uiform_name", pname);
+  screenq.bindValue(":uiform_name", name);
   screenq.exec();
   if (screenq.first())
   {
@@ -548,14 +547,49 @@ QWidget *ScriptToolbox::openWindow(QString pname, QWidget *parent, Qt::WindowFla
     QWidget *ui = loader.load(&uiFile);
     uiFile.close();
 
-    // TODO: handle differently if ui.inherits(QDialog) || flags & Qt::Dialog?
+    if (ui->inherits("QDialog"))
+    {
+      flags |= Qt::Dialog;
+      if (modality == Qt::NonModal)
+        modality = Qt::WindowModal;
+    }
+
     XMainWindow *window = new XMainWindow(parent,
                                           screenq.value("uiform_name").toString(),
                                           flags);
+
     window->setCentralWidget(ui);
     window->setWindowTitle(ui->windowTitle());
-    omfgThis->handleNewWindow(window);
-    returnVal = window;
+    window->setWindowModality(modality);
+
+    if (ui->inherits("QDialog"))
+    {
+      QDialog *innerdlg = qobject_cast<QDialog*>(ui);
+
+      connect(innerdlg, SIGNAL(finished(int)), window, SLOT(close()));
+      connect(innerdlg, SIGNAL(accepted()),    window, SLOT(close()));
+      connect(innerdlg, SIGNAL(rejected()),    window, SLOT(close()));
+
+      // alternative to creating mydialog object:
+      // for each property of mydialog (including functions)
+      //   add a property to _engine's mywindow property
+      if (engine(window))
+      {
+        QScriptValue mydialog = engine(window)->newQObject(innerdlg);
+        engine(window)->globalObject().setProperty("mydialog", mydialog);
+      }
+      else
+        qDebug("Could not find the script engine to embed a dialog inside "
+               "a placeholder window");
+
+      omfgThis->handleNewWindow(window);
+      returnVal = ui;
+    }
+    else
+    {
+      omfgThis->handleNewWindow(window);
+      returnVal = window;
+    }
   }
   else if (screenq.lastError().type() != QSqlError::None)
   {
@@ -669,6 +703,32 @@ QScriptValue QtWindowModalitytoScriptValue(QScriptEngine *engine, const enum Qt:
 void QtWindowModalityfromScriptValue(const QScriptValue &obj, enum Qt::WindowModality &en)
 {
   en = (enum Qt::WindowModality)obj.toInt32();
+}
+
+QScriptValue SaveFlagstoScriptValue(QScriptEngine *engine, const enum SaveFlags &en)
+{
+  return QScriptValue(engine, (int)en);
+}
+
+void SaveFlagsfromScriptValue(const QScriptValue &obj, enum SaveFlags &en)
+{
+  if (obj.isNumber())
+    en = (enum SaveFlags)obj.toInt32();
+  else if (obj.isString())
+  {
+    if (obj.toString() == "CHECK")
+      en = CHECK;
+    else if (obj.toString() == "CHANGEONE")
+      en = CHANGEONE;
+    else if (obj.toString() == "CHANGEALL")
+      en = CHANGEALL;
+    else
+      qDebug("string %s could not be converted to SaveFlags",
+             qPrintable(obj.toString()));
+  }
+  else
+    qDebug("object %s could not be converted to SaveFlags",
+           qPrintable(obj.toString()));
 }
 
 QObject *ScriptToolbox::getCreditCardProcessor()

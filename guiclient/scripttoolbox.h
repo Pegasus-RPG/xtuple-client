@@ -67,12 +67,23 @@
 #include "parameter.h"
 #include "guiclient.h"
 
+#include "addresscluster.h"     // for AddressCluster::SaveFlags
+
 class QWidget;
 class QLayout;
 class QGridLayout;
 class QBoxLayout;
 class QStackedLayout;
 class QScriptEngine;
+
+/* TODO: remove this enum and use AddressCluster::SaveFlags directly
+   for some reason working with AddressCluster::SaveFlags failed but this works.
+ */
+enum SaveFlags
+{ CHECK = AddressCluster::CHECK,
+  CHANGEONE = AddressCluster::CHANGEONE,
+  CHANGEALL = AddressCluster::CHANGEALL
+};
 
 Q_DECLARE_METATYPE(ParameterList)
 Q_DECLARE_METATYPE(QUrl);
@@ -81,6 +92,8 @@ Q_DECLARE_METATYPE(enum SetResponse)
 Q_DECLARE_METATYPE(enum ParameterGroup::ParameterGroupStates);
 Q_DECLARE_METATYPE(enum ParameterGroup::ParameterGroupTypes);
 Q_DECLARE_METATYPE(enum Qt::WindowModality);
+Q_DECLARE_METATYPE(enum SaveFlags);
+//Q_DECLARE_METATYPE(enum AddressCluster::SaveFlags);
 
 QScriptValue ParameterListtoScriptValue(QScriptEngine *engine, const ParameterList &params);
 void ParameterListfromScriptValue(const QScriptValue &obj, ParameterList &params);
@@ -99,6 +112,11 @@ void ParameterGroupTypesfromScriptValue(const QScriptValue &obj, enum ParameterG
 
 QScriptValue QtWindowModalitytoScriptValue(QScriptEngine *engine, const enum Qt::WindowModality &en);
 void QtWindowModalityfromScriptValue(const QScriptValue &obj, enum Qt::WindowModality &en);
+
+QScriptValue SaveFlagstoScriptValue(QScriptEngine *engine, const enum SaveFlags &en);
+void SaveFlagsfromScriptValue(const QScriptValue &obj, enum SaveFlags &en);
+// QScriptValue SaveFlagstoScriptValue(QScriptEngine *engine, const enum AddressCluster::SaveFlags &en);
+// void SaveFlagsfromScriptValue(const QScriptValue &obj, enum AddressCluster::SaveFlags &en);
 
 class ScriptToolbox : public QObject
 {
@@ -141,7 +159,7 @@ class ScriptToolbox : public QObject
     QWidget * loadUi(const QString & screenName, QWidget * parent = 0);
 
     QWidget * lastWindow() const;
-    QWidget * openWindow(const QString pname, QWidget *parent = 0, Qt::WindowFlags flags = 0);
+    QWidget * openWindow(const QString pname, QWidget *parent = 0, Qt::WindowModality modality = Qt::NonModal, Qt::WindowFlags flags = 0);
 
     void addColumnXTreeWidget(QWidget * tree, const QString &, int, int, bool = true, const QString = QString(), const QString = QString());
     void populateXTreeWidget(QWidget * tree, QObject * pSql, bool = FALSE);

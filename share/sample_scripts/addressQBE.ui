@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>614</width>
-    <height>410</height>
+    <width>604</width>
+    <height>298</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -74,7 +74,7 @@
         <bool>false</bool>
        </property>
        <property name="text" >
-        <string>Edit</string>
+        <string>Open Dialog</string>
        </property>
       </widget>
      </item>
@@ -84,7 +84,7 @@
         <bool>false</bool>
        </property>
        <property name="text" >
-        <string>Coordinates</string>
+        <string>Open Widget</string>
        </property>
       </widget>
      </item>
