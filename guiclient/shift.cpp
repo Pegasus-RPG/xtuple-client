@@ -118,10 +118,22 @@ enum SetResponse shift::set(ParameterList& pParams)
     param = pParams.value("mode", &valid);
     if (valid)
     {
+
 	if (param.toString() == "new")
 	{
-	    _mode = cNew;
-	    _number->setFocus();
+    _mode = cNew;
+    _number->setFocus();
+    q.exec("SELECT NEXTVAL('shift_shift_id_seq') AS shift_id;");
+    if (q.first())
+      _shiftid =  q.value("shift_id").toInt();
+    else
+    {
+      systemError(this, tr("A System Error occurred at %1::%2\n\n%3")
+				.arg(__FILE__)
+				.arg(__LINE__)
+				.arg(q.lastError().databaseText()));
+      return UndefinedError;
+    }
 	}
 	else if (param.toString() == "edit")
 	{
@@ -161,19 +173,29 @@ void shift::sSave()
 	return;
     }
     
+  q.prepare( "SELECT shift_id "
+             "FROM shift "
+             "WHERE ( (shift_id<>:shift_id)"
+             " AND (UPPER(shift_number)=UPPER(:shift_number)) );");
+  q.bindValue(":shift_id", _shiftid);
+  q.bindValue(":shift_number", number);
+  q.exec();
+  if (q.first())
+  {
+    QMessageBox::critical( this, tr("Cannot Create Shift"),
+			   tr( "A Shift with the entered number already exists."
+			       "You may not create a Shift with this number." ) );
+    _number->setFocus();
+    return;
+  }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
     if (_mode == cNew)
     {
-	q.exec("SELECT NEXTVAL('shift_shift_id_seq') AS shift_id;");
-	if (q.first())
-	    _shiftid =  q.value("shift_id").toInt();
-	else
-	{
-	    systemError(this, tr("A System Error occurred at %1::%2\n\n%3")
-				.arg(__FILE__)
-				.arg(__LINE__)
-				.arg(q.lastError().databaseText()));
-	    return;
-	}
 	q.prepare("INSERT INTO shift "
 		  "( shift_id, shift_number, shift_name ) "
 		  "VALUES "
