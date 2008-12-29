@@ -118,6 +118,15 @@ enum SetResponse sysLocale::set(ParameterList &pParams)
     {
       _mode = cNew;
       _code->setFocus();
+
+      q.exec("SELECT NEXTVAL('locale_locale_id_seq') AS _locale_id");
+      if (q.first())
+        _localeid = q.value("_locale_id").toInt();
+      else
+      {
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        return UndefinedError;
+      }
     }
     else if (param.toString() == "edit")
     {
@@ -181,14 +190,31 @@ void sysLocale::sSave()
     return;
   }
 
+  q.prepare( "SELECT locale_id "
+             "FROM locale "
+             "WHERE ( (locale_id<>:locale_id)"
+             " AND (UPPER(locale_code)=UPPER(:locale_code)) );");
+  q.bindValue(":locale_id", _localeid);
+  q.bindValue(":locale_code", _code->text().trimmed());
+  q.exec();
+  if (q.first())
+  {
+    QMessageBox::critical( this, tr("Cannot Create Locale"),
+			   tr( "A Locale with the entered code already exists."
+			       "You may not create a Locale with this code." ) );
+    _code->setFocus();
+    return;
+  }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
   QLocale sampleLocale = generateLocale();
 
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('locale_locale_id_seq') AS _locale_id");
-    if (q.first())
-      _localeid = q.value("_locale_id").toInt();
-
     q.prepare( "INSERT INTO locale "
                "( locale_id, locale_code, locale_descrip,"
                "  locale_lang_id, locale_country_id, "
