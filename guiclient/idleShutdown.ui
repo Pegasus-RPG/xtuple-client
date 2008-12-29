@@ -16,7 +16,7 @@
    <item>
     <widget class="QLabel" name="_message" >
      <property name="text" >
-      <string>You have been idle for %1 minute(s).  OpenMFG will be closed unless you Cancel.</string>
+      <string>You have been idle for %1 minute(s).  xTuple ERP will be closed unless you Cancel.</string>
      </property>
      <property name="alignment" >
       <set>Qt::AlignCenter</set>
