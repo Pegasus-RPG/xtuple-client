@@ -86,6 +86,9 @@
 #include "printSoForm.h"
 #include "salesOrder.h"
 #include "crmaccount.h"
+#include "failedPostList.h"
+#include "getGLDistDate.h"
+#include "storedProcErrorLookup.h"
 
 dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
     : XWidget (parent, fl)
@@ -766,6 +769,189 @@ void dspCustomerInformation::sViewInvoice()
   }
 }
 
+void dspCustomerInformation::sPostInvoice()
+{
+  bool changeDate = false;
+  QDate newDate = QDate::currentDate();
+
+  if (_privileges->check("ChangeARInvcDistDate"))
+  {
+    getGLDistDate newdlg(this, "", TRUE);
+    newdlg.sSetDefaultLit(tr("Invoice Date"));
+    if (newdlg.exec() == XDialog::Accepted)
+    {
+      newDate = newdlg.date();
+      changeDate = (newDate.isValid());
+    }
+    else
+      return;
+  }
+
+  int journal = -1;
+  q.exec("SELECT fetchJournalNumber('AR-IN') AS result;");
+  if (q.first())
+  {
+    journal = q.value("result").toInt();
+    if (journal < 0)
+    {
+      systemError(this, storedProcErrorLookup("fetchJournalNumber", journal), __FILE__, __LINE__);
+      return;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
+  XSqlQuery xrate;
+  xrate.prepare("SELECT curr_rate "
+		"FROM curr_rate, invchead "
+		"WHERE ((curr_id=invchead_curr_id)"
+		"  AND  (invchead_id=:invchead_id)"
+		"  AND  (invchead_invcdate BETWEEN curr_effective AND curr_expires));");
+  // if SUM becomes dependent on curr_id then move XRATE before it in the loop
+  XSqlQuery sum;
+  sum.prepare("SELECT COALESCE(SUM(round((invcitem_billed * invcitem_qty_invuomratio) *"
+	      "                 (invcitem_price / "
+	      "                  CASE WHEN (item_id IS NULL) THEN 1"
+	      "                       ELSE invcitem_price_invuomratio"
+	      "                  END), 2)),0) + "
+	      "       invchead_freight + invchead_tax + "
+	      "       invchead_misc_amount AS subtotal "
+	      "  FROM invchead LEFT OUTER JOIN invcitem ON (invcitem_invchead_id=invchead_id) LEFT OUTER JOIN"
+	      "       item ON (invcitem_item_id=item_id) "
+	      " WHERE(invchead_id=:invchead_id) "
+	      " GROUP BY invchead_freight, invchead_tax, invchead_misc_amount;");
+
+  XSqlQuery post;
+  post.prepare("SELECT postInvoice(:invchead_id, :journal) AS result;");
+
+  XSqlQuery setDate;
+  setDate.prepare("UPDATE invchead SET invchead_gldistdate=:distdate "
+		  "WHERE invchead_id=:invchead_id;");
+
+  QList<QTreeWidgetItem *> selected = _invoice->selectedItems();
+  QList<QTreeWidgetItem *> triedToClosed;
+
+  for (int i = 0; i < selected.size(); i++)
+  {
+    if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
+	{
+      int id = ((XTreeWidgetItem*)(selected[i]))->id();
+
+      if (changeDate)
+      {
+        setDate.bindValue(":distdate",    newDate);
+        setDate.bindValue(":invchead_id", id);
+        setDate.exec();
+        if (setDate.lastError().type() != QSqlError::NoError)
+        {
+	      systemError(this, setDate.lastError().databaseText(), __FILE__, __LINE__);
+        }
+      }
+	}
+  }
+
+  bool tryagain = false;
+  do {
+    for (int i = 0; i < selected.size(); i++)
+    {
+      if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
+	  {
+        int id = ((XTreeWidgetItem*)(selected[i]))->id();
+
+        sum.bindValue(":invchead_id", id);
+        if (sum.exec() && sum.first() && sum.value("subtotal").toDouble() == 0)
+        {
+	      if (QMessageBox::question(this, tr("Invoice Has Value 0"),
+		      		  tr("Invoice #%1 has a total value of 0.\n"
+			     	     "Would you like to post it anyway?")
+				    .arg(selected[i]->text(0)),
+				  QMessageBox::Yes,
+				  QMessageBox::No | QMessageBox::Default)
+	      == QMessageBox::No)
+	        continue;
+        }
+        else if (sum.lastError().type() != QSqlError::NoError)
+        {
+	      systemError(this, sum.lastError().databaseText(), __FILE__, __LINE__);
+	      continue;
+        }
+        else if (sum.value("subtotal").toDouble() != 0)
+        {
+	      xrate.bindValue(":invchead_id", id);
+	      xrate.exec();
+	      if (xrate.lastError().type() != QSqlError::NoError)
+	      {
+	        systemError(this, tr("System Error posting Invoice #%1\n%2")
+			            .arg(selected[i]->text(0))
+			            .arg(xrate.lastError().databaseText()),
+		                __FILE__, __LINE__);
+	        continue;
+	      }
+	      else if (!xrate.first() || xrate.value("curr_rate").isNull())
+	      {
+	        systemError(this, tr("Could not post Invoice #%1 because of a missing exchange rate.")
+						.arg(selected[i]->text(0)));
+	        continue;
+	      }
+        }
+
+        post.bindValue(":invchead_id", id);
+        post.bindValue(":journal",     journal);
+        post.exec();
+        if (post.first())
+        {
+	      int result = post.value("result").toInt();
+	      if (result < 0)
+	        systemError(this, storedProcErrorLookup("postInvoice", result),
+		            __FILE__, __LINE__);
+        }
+        // contains() string is hard-coded in stored procedure
+        else if (post.lastError().databaseText().contains("post to closed period"))
+        {
+	    if (changeDate)
+	    {
+	      triedToClosed = selected;
+	      break;
+	    }
+	    else
+	      triedToClosed.append(selected[i]);
+      }
+      else if (post.lastError().type() != QSqlError::NoError)
+	    systemError(this, tr("A System Error occurred posting Invoice #%1.\n%2")
+	    	    .arg(selected[i]->text(0))
+	     		.arg(post.lastError().databaseText()),
+		        __FILE__, __LINE__);
+    }
+
+      if (triedToClosed.size() > 0)
+      {
+        failedPostList newdlg(this, "", true);
+        newdlg.sSetList(triedToClosed, _invoice->headerItem(), _invoice->header());
+        tryagain = (newdlg.exec() == XDialog::Accepted);
+        selected = triedToClosed;
+        triedToClosed.clear();
+      }
+	}
+  } while (tryagain);
+
+//  if (_printJournal->isChecked())
+//  {
+//    ParameterList params;
+//    params.append("journalNumber", journal);
+//
+//    orReport report("SalesJournal", params);
+//    if (report.isValid())
+//      report.print();
+//    else
+//      report.reportError(this);
+//  }
+
+  omfgThis->sInvoicesUpdated(-1, TRUE);
+}
+
 void dspCustomerInformation::sFillCreditMemoList()
 {
   disconnect(_creditMemo, SIGNAL(valid(bool)), this, SLOT(sHandleCreditMemoPrint()));
@@ -1062,6 +1248,7 @@ void dspCustomerInformation::sPopulateMenuSalesOrder( QMenu * pMenu )
 
 void dspCustomerInformation::sPopulateMenuInvoice( QMenu * pMenu,  QTreeWidgetItem *selected)
 {
+  XTreeWidgetItem * item = (XTreeWidgetItem*)selected;
   int menuItem;
   menuItem = pMenu->insertItem(tr("New Invoice..."), this, SLOT(sNewInvoice()), 0);
   if(!_privileges->check("MaintainMiscInvoices"))
@@ -1072,6 +1259,12 @@ void dspCustomerInformation::sPopulateMenuInvoice( QMenu * pMenu,  QTreeWidgetIt
   if(!_privileges->check("MaintainMiscInvoices"))
     pMenu->setItemEnabled(menuItem, FALSE);
   pMenu->insertItem(tr("View Invoice..."), this, SLOT(sViewInvoice()), 0);
+  if(item->rawValue("posted").toBool() == FALSE)
+  {
+    menuItem = pMenu->insertItem(tr("Post Invoice..."), this, SLOT(sPostInvoice()), 0);
+    if(!_privileges->check("PostMiscInvoices"))
+      pMenu->setItemEnabled(menuItem, FALSE);
+  }
   pMenu->insertSeparator();
 
   if (selected->text(3).length() != 0)
@@ -1466,3 +1659,26 @@ void dspCustomerInformation::sPrintStatement()
 		  report.reportError(this);
 	  }
 }
+
+bool dspCustomerInformation::checkSitePrivs(int invcid)
+{
+  if (_preferences->boolean("selectedSites"))
+  {
+    XSqlQuery check;
+    check.prepare("SELECT checkInvoiceSitePrivs(:invcheadid) AS result;");
+    check.bindValue(":invcheadid", invcid);
+    check.exec();
+    if (check.first())
+    {
+    if (!check.value("result").toBool())
+      {
+        QMessageBox::critical(this, tr("Access Denied"),
+                                       tr("You may not view or edit this Invoice as it references "
+                                       "a Site for which you have not been granted privileges.")) ;
+        return false;
+      }
+    }
+  }
+  return true;
+}
+

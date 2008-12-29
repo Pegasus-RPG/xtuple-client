@@ -76,6 +76,7 @@ public:
     virtual SetResponse set( const ParameterList & pParams );
 
     static void doDialog(QWidget * parent, const ParameterList & pParams);
+    virtual bool checkSitePrivs(int invcid);
 
 public slots:
     virtual void sPopulate();
@@ -95,6 +96,7 @@ public slots:
     virtual void sNewInvoice();
     virtual void sEditInvoice();
     virtual void sViewInvoice();
+    virtual void sPostInvoice();
     virtual void sFillCreditMemoList();
     virtual void sNewCreditMemo();
     virtual void sEditCreditMemo();
