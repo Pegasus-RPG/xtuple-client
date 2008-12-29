@@ -48,7 +48,8 @@ function sSave()
     toolbox.messageBox("critical", mywindow, "Save Error",
                        "There was an error saving the address");
   else
-    mydialog.accept();
+    mywindow.close();
 }
 
 _save.clicked.connect(sSave);
+_cancel.clicked.connect(mywindow, "close");

@@ -5,12 +5,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>650</width>
-    <height>201</height>
+    <width>737</width>
+    <height>156</height>
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Dialog</string>
+   <string>Address Dialog</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout" >
    <item>
@@ -52,7 +52,7 @@
  <customwidgets>
   <customwidget>
    <class>AddressCluster</class>
-   <extends>QWidget</extends>
+   <extends></extends>
    <header>addresscluster.h</header>
   </customwidget>
  </customwidgets>
