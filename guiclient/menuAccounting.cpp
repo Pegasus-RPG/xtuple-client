@@ -349,6 +349,8 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
     { "ar.listUnpostedInvoices", tr("&List Unposted..."), SLOT(sUnpostedInvoices()), arInvoicesMenu, _privileges->check("SelectBilling"), new QPixmap(":/images/unpostedInvoices.png"), toolBar, true , "List Unposted Invoices" },
     { "separator", NULL, NULL, arInvoicesMenu, true, NULL, NULL, true, NULL },
     { "ar.postInvoices", tr("&Post..."), SLOT(sPostInvoices()), arInvoicesMenu, _privileges->check("PostMiscInvoices"), NULL, NULL, true , NULL },
+    { "separator", NULL, NULL, arInvoicesMenu, true, NULL, NULL, _metrics->boolean("EnableBatchManager"), NULL },
+    { "ar.scheduleInvoiceForEmailDelivery", tr("&Email Invoice..."), SLOT(sDeliverInvoice()), arInvoicesMenu, _privileges->check("PrintInvoices"), NULL, NULL, _metrics->boolean("EnableBatchManager") , NULL },
 
     // Accounting | Accounts Receivable | Memos
     { "menu", tr("&Memos"), (char*)arMemosMenu,	arMenu, true,	 NULL, NULL, true, NULL },
@@ -371,8 +373,6 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
     { "menu", tr("&Forms"), (char*)arFormsMenu,	arMenu, true,	 NULL, NULL, true, NULL },
     { "ar.printInvoices", tr("Print &Invoices..."), SLOT(sPrintInvoices()), arFormsMenu, _privileges->check("PrintInvoices"), NULL, NULL, true , NULL },
     { "ar.reprintInvoices", tr("&Re-Print Invoices..."), SLOT(sReprintInvoices()), arFormsMenu, _privileges->check("PrintInvoices"), NULL, NULL, true , NULL },
-    { "separator", NULL, NULL, arFormsMenu, true, NULL, NULL, _metrics->boolean("EnableBatchManager"), NULL },
-    { "ar.scheduleInvoiceForEmailDelivery", tr("&Schedule Invoice for Email Delivery..."), SLOT(sDeliverInvoice()), arFormsMenu, _privileges->check("PrintInvoices"), NULL, NULL, _metrics->boolean("EnableBatchManager") , NULL },
     { "separator", NULL, NULL, arFormsMenu, true, NULL, NULL, true, NULL },
     { "ar.printStatementByCustomer", tr("Print S&tatement by Customer..."), SLOT(sPrintStatementByCustomer()), arFormsMenu, _privileges->check("ViewAROpenItems"), NULL, NULL, true , NULL },
     { "ar.printStatementsByCustomerType", tr("Print State&ments by Customer Type..."), SLOT(sPrintStatementsByCustomerType()), arFormsMenu, _privileges->check("ViewAROpenItems"), NULL, NULL, true , NULL },
