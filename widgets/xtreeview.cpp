@@ -81,6 +81,22 @@ XTreeView::XTreeView(QWidget *parent) :
   _model.setEditStrategy(QSqlTableModel::OnManualSubmit);
 }
 
+int XTreeView::size()
+{
+  return _model.query().size();
+}
+
+QVariant XTreeView::value(int row, int column)
+{
+  return model()->data(model()->index(row,column));
+}
+
+QVariant XTreeView::selectedValue(int column)
+{
+  QModelIndexList selected=selectedIndexes();
+  return value(selected.first().row(),column);
+}
+
 void XTreeView::selectionChanged(const QItemSelection & selected, const QItemSelection & deselected)
 {
   if (!selected.indexes().isEmpty())
@@ -153,7 +169,7 @@ void XTreeView::save()
 
 void XTreeView::selectRow(int index)
 {
-  selectionModel()->select(QItemSelection(model()->index(index,0),model()->index(index,0)),
+  selectionModel()->select(QItemSelection(model()->index(index,0),QTreeView::model()->index(index,0)),
                                         QItemSelectionModel::ClearAndSelect |
                                         QItemSelectionModel::Rows);
 }
@@ -189,6 +205,4 @@ void XTreeView::setModel(XSqlTableModel * model)
   }
   emit newModel(model);
 }
-
-
 

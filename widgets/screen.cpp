@@ -275,6 +275,7 @@ void Screen::setMode(Modes p)
 void Screen::setModel(XSqlTableModel *model)
 {
   _model=model;
+  _model->setKeys(_keyColumns);
   _model->setEditStrategy(QSqlTableModel::OnManualSubmit);
   setDataWidgetMapper(_model);
   emit newModel(_model);

@@ -74,14 +74,18 @@ XSqlTableModel::~XSqlTableModel()
 void XSqlTableModel::setTable(const QString &tableName, int keyColumns)
 {
   QSqlRelationalTableModel::setTable(tableName);
-  
-  if (keyColumns)
+  setKeys(keyColumns);
+}
+
+void XSqlTableModel::setKeys(int keyColumns)
+{
+  if (keyColumns && tableName().length())
   {
-    QSqlRecord rec = database().record(tableName);
-    QSqlIndex idx(tableName);
+    QSqlRecord rec = database().record(tableName());
+    QSqlIndex idx(tableName());
     for (int i = 0; i < keyColumns; i++)
       idx.append(rec.field(i));
-    idx.setName(tableName + "_pkey");
+    idx.setName(tableName() + "_pkey");
     QSqlRelationalTableModel::setPrimaryKey(idx);
   }
 }

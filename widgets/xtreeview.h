@@ -69,9 +69,10 @@
 class OPENMFGWIDGETS_EXPORT XTreeView : public QTreeView
 {
     Q_OBJECT
-    Q_PROPERTY(QString        schemaName            READ schemaName           WRITE setSchemaName       )
-    Q_PROPERTY(QString        tableName             READ tableName            WRITE setTableName        )
-    Q_PROPERTY(int            primaryKeyCoulmns     READ primaryKeyColumns    WRITE setPrimaryKeyColumns)
+    Q_PROPERTY(QString         schemaName            READ schemaName           WRITE setSchemaName       )
+    Q_PROPERTY(QString         tableName             READ tableName            WRITE setTableName        )
+    Q_PROPERTY(int             primaryKeyCoulmns     READ primaryKeyColumns    WRITE setPrimaryKeyColumns)
+    Q_PROPERTY(int             size                  READ size                                             DESIGNABLE false)
     
     public:
       XTreeView(QWidget *parent = 0);
@@ -81,6 +82,9 @@ class OPENMFGWIDGETS_EXPORT XTreeView : public QTreeView
       QString      tableName()               const            { return _tableName;          };
       
     public slots:
+      virtual int  size();
+      virtual QVariant value(int row, int column);
+      virtual QVariant selectedValue(int column);
       virtual void insert();
       virtual void populate(int p);
       virtual void removeRows(int row, int count);

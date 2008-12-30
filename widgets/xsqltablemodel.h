@@ -71,6 +71,7 @@ class OPENMFGWIDGETS_EXPORT XSqlTableModel : public QSqlRelationalTableModel
       ~XSqlTableModel();
     
     virtual void setTable(const QString &tableName, int keyColumns);
+    virtual void setKeys(int keyColumns);
 
 };
 
