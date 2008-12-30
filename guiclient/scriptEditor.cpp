@@ -269,6 +269,7 @@ void scriptEditor::populate()
     _enabled->setChecked(q.value("script_enabled").toBool());
     _source->setText(q.value("script_source").toString());
     _notes->setText(q.value("script_notes").toString());
+    setWindowTitle("[*]" + tr("Script Editor - %1").arg(_name->text()));
     if (DEBUG)
       qDebug("scriptEditor::populate() inPackage = %d",
              q.value("inPackage").toBool());
