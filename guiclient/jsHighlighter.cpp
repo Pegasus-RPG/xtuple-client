@@ -100,11 +100,12 @@ void JSHighlighter::highlightBlock(const QString &text)
 
   for (int i = 0; i < text.length(); i++)
   {
-    QRegExp kwtest("^(" + _keyword.join("|") + ")\\W?");
-    QRegExp extest("^(" + _extension.join("|") + ")\\W?");
-    QRegExp numericTest("^(0xX[0-9a-fA-F]+)|(-?[0-9]+(\\.[0-9]+)?)");
+    QRegExp kwtest("^(" + _keyword.join("|") + ")(?=\\W)");
+    QRegExp extest("^(" + _extension.join("|") + ")(?=\\W)");
+    QRegExp numerictest("^(0[xX][0-9a-fA-F]+)|(-?[0-9]+(\\.[0-9]+)?)");
     QRegExp wordtest("^\\w+");
     QRegExp quotetest("^\"[^\"]*\"");
+    QRegExp regexptest("/[^/]*/[igm]?");
 
     if (state == InsideCStyleComment)
     {
@@ -154,10 +155,15 @@ void JSHighlighter::highlightBlock(const QString &text)
       setFormat(i, extest.matchedLength(), _extensionColor);
       i += extest.matchedLength();
     }
-    else if (numericTest.indexIn(text.mid(i)) == 0)
+    else if (numerictest.indexIn(text.mid(i)) == 0)
     {
-      setFormat(i, numericTest.matchedLength(), _literalColor);
-      i += numericTest.matchedLength();
+      setFormat(i, numerictest.matchedLength(), _literalColor);
+      i += numerictest.matchedLength();
+    }
+    else if (regexptest.indexIn(text.mid(i)) == 0)
+    {
+      setFormat(i, regexptest.matchedLength(), _literalColor);
+      i += regexptest.matchedLength();
     }
     else if (wordtest.indexIn(text.mid(i)) == 0)        // skip non-keywords
       i += wordtest.matchedLength();
