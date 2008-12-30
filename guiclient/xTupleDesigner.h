@@ -84,7 +84,6 @@ class xTupleDesigner : public XMainWindow
     virtual bool                  formEnabled()    { return _formEnabled; }
     virtual int                   formId()         { return _formId;      }
     QDesignerFormWindowInterface *formwindow()     { return _formwindow;  }
-    virtual bool                  isChanged();
     virtual QString               name();
     virtual QString               notes() const    { return _notes;       }
     virtual int                   order()          { return _order;       }
@@ -111,8 +110,11 @@ class xTupleDesigner : public XMainWindow
     void orderChanged(int);
     void sourceChanged(QString);
 
-  private:
+  protected:
+    virtual void closeEvent(QCloseEvent *);
 
+  private:
+    friend class WidgetBoxWindow;
     QWidget                             *_designer;
     QDesignerFormEditorInterface        *_formeditor;
     bool                                 _formEnabled;

@@ -211,7 +211,7 @@ void uiform::sSave()
     return;
   }
 
-  if (_mode == cNew)
+  if (_mode == cNew && _uiformid == -1)
   {
     q.exec("SELECT NEXTVAL('uiform_uiform_id_seq') AS _uiform_id");
     if (q.first())
@@ -228,7 +228,7 @@ void uiform::sSave()
                "(:uiform_id, :uiform_name, :uiform_notes, :uiform_order, :uiform_enabled, :uiform_source);" );
 
   }
-  else if (_mode == cEdit)
+  else if (_mode != cView)
     q.prepare( "UPDATE uiform "
                "SET uiform_name=:uiform_name, uiform_notes=:uiform_notes,"
                "    uiform_order=:uiform_order, uiform_enabled=:uiform_enabled,"
@@ -311,9 +311,9 @@ void uiform::sEdit()
 
   connect(designer, SIGNAL(formEnabledChanged(bool)),_enabled,SLOT(setChecked(bool)));
   connect(designer, SIGNAL(formIdChanged(int)),      this,    SLOT(setFormId(int)));
-  connect(designer, SIGNAL(nameChanged(QString)),    _name,   SLOT(setText(QString)));
+  //connect(designer, SIGNAL(nameChanged(QString)),    _name,   SLOT(setText(QString)));
   connect(designer, SIGNAL(notesChanged(QString)),   _notes,  SLOT(setText(QString)));
-  connect(designer, SIGNAL(orderChanged(int)),       _order,  SLOT(setValue(int)));
+  //connect(designer, SIGNAL(orderChanged(int)),       _order,  SLOT(setValue(int)));
   connect(designer, SIGNAL(sourceChanged(QString)),  this,    SLOT(setSource(QString)));
 
   omfgThis->handleNewWindow(designer);

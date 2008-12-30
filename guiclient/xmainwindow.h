@@ -78,13 +78,16 @@ class XMainWindow : public QMainWindow
     virtual ~XMainWindow();
 
     Q_INVOKABLE virtual ParameterList get() const;
+    Q_INVOKABLE QAction *action() const;
 
   public slots:
     virtual enum SetResponse set(const ParameterList &);
 
   protected:
-    virtual void closeEvent ( QCloseEvent * event );
-    virtual void showEvent ( QShowEvent * event );
+    virtual void closeEvent(QCloseEvent *);
+    virtual void showEvent(QShowEvent *);
+    virtual void hideEvent(QHideEvent *);
+    virtual void changeEvent(QEvent *);
 
   private:
     friend class XMainWindowPrivate;
@@ -93,6 +96,9 @@ class XMainWindow : public QMainWindow
     friend QScriptEngine *engine(XMainWindow*);
 
     ParameterList _params;
+
+  private slots:
+    void showMe(bool);
 };
 
 #endif // __XMAINWINDOW_H__

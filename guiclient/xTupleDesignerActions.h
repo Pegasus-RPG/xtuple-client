@@ -77,14 +77,9 @@ class xTupleDesignerActions : QObject
     virtual QActionGroup *formActions()   { return _formActions;   }
     virtual QActionGroup *toolActions()   { return _toolActions;   }
 
-    virtual QAction      *widgetBoxAct()  { return _widgetBoxAct;  }
-    virtual QAction      *objectInspAct() { return _objectInspAct; }
-    virtual QAction      *propertyEdAct() { return _propertyEdAct; }
-    virtual QAction      *signalSlotAct() { return _signalSlotAct; }
-
   public slots:
     virtual void sActiveFormWindowChanged(QDesignerFormWindowInterface*);
-    virtual void sClose();
+    virtual bool sClose();
     virtual void sEditBuddies();
     virtual void sEditSignalSlot();
     virtual void sEditTabOrder();
@@ -103,11 +98,6 @@ class xTupleDesignerActions : QObject
     QActionGroup *_fileActions;
     QActionGroup *_formActions;
     QActionGroup *_toolActions;
-
-    QAction      *_objectInspAct;
-    QAction      *_propertyEdAct;
-    QAction      *_signalSlotAct;
-    QAction      *_widgetBoxAct;
 
 };
 

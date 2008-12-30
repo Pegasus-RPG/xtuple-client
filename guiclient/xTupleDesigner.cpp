@@ -73,8 +73,6 @@
 
 // TODO: (re)move the following when the UI gets sorted out
 #include <QHBoxLayout>
-#include <QPushButton>
-#include <QSplitter>
 
 #include "xTupleDesignerActions.h"
 #include "xmainwindow.h"
@@ -84,17 +82,30 @@ class WidgetBoxWindow : public XMainWindow
   public:
     WidgetBoxWindow(xTupleDesigner *);
 
+  protected:
+    virtual void closeEvent(QCloseEvent *);
+
   private:
     QDesignerWidgetBoxInterface *_widgetbox;
+    xTupleDesigner * _designer;
 };
 
 WidgetBoxWindow::WidgetBoxWindow(xTupleDesigner *parent)
   : XMainWindow(parent, "_widgetBoxWindow", Qt::Tool)
 {
+  _designer = parent;
   _widgetbox = QDesignerComponents::createWidgetBox(parent->formeditor(), this);
   parent->formeditor()->setWidgetBox(_widgetbox);
   setCentralWidget(_widgetbox);
   setWindowTitle(tr("Widget Box"));
+}
+
+void WidgetBoxWindow::closeEvent(QCloseEvent * event)
+{
+  if(_designer->_actions->sClose())
+    XMainWindow::closeEvent(event);
+  else
+    event->ignore();
 }
 
 class ObjectInspectorWindow : public XMainWindow
@@ -200,16 +211,25 @@ xTupleDesigner::xTupleDesigner(QWidget* parent, const char* name, Qt::WFlags fl)
     _formmenu->addAction(a);
 
   _toolmenu = _menubar->addMenu(tr("&Tool"));
-  foreach (QAction *a, _actions->toolActions()->actions())
-    _toolmenu->addAction(a);
-
   QDesignerComponents::initializeResources();
 
   _widgetwindow   = new WidgetBoxWindow(this);
+  _objinspwindow  = new ObjectInspectorWindow(this);
+  _propinspwindow = new PropertyEditorWindow(this);
+  _slotedwindow   = new SignalSlotEditorWindow(this);
+
+  _actions->toolActions()->addAction(_widgetwindow->action());
+  _actions->toolActions()->addAction(_objinspwindow->action());
+  _actions->toolActions()->addAction(_propinspwindow->action());
+  _actions->toolActions()->addAction(_slotedwindow->action());
+
+  foreach (QAction *a, _actions->toolActions()->actions())
+    _toolmenu->addAction(a);
+
   _formeditor->setTopLevel(_widgetwindow);
 #ifndef Q_WS_MAC
   _widgetwindow->setMenuBar(_menubar);
-  _actions->widgetBoxAct()->setVisible(false);
+  _widgetwindow->action()->setVisible(false);
 #endif
   //_widgetwindow->addToolBar(m_fileToolBar);
   //_widgetwindow->addToolBar(m_editToolBar);
@@ -217,17 +237,7 @@ xTupleDesigner::xTupleDesigner(QWidget* parent, const char* name, Qt::WFlags fl)
   //_widgetwindow->addToolBar(m_formToolBar);
 
   //_widgetwindow->insertToolBarBreak(m_formToolBar);
-/////////////
   
-  _objinspwindow  = new ObjectInspectorWindow(this);
-  _propinspwindow = new PropertyEditorWindow(this);
-  _slotedwindow   = new SignalSlotEditorWindow(this);
-
-  connect(_actions->widgetBoxAct(), SIGNAL(toggled(bool)), _widgetwindow,  SLOT(setVisible(bool)));
-  connect(_actions->objectInspAct(),SIGNAL(toggled(bool)), _objinspwindow, SLOT(setVisible(bool)));
-  connect(_actions->propertyEdAct(),SIGNAL(toggled(bool)), _propinspwindow,SLOT(setVisible(bool)));
-  connect(_actions->signalSlotAct(),SIGNAL(toggled(bool)), _slotedwindow,  SLOT(setVisible(bool)));
-
   omfgThis->handleNewWindow(_widgetwindow);
   _widgetwindow->setAttribute(Qt::WA_DeleteOnClose, false);
   omfgThis->handleNewWindow(_objinspwindow);
@@ -245,7 +255,7 @@ xTupleDesigner::xTupleDesigner(QWidget* parent, const char* name, Qt::WFlags fl)
   // toolbar creation
 
   _formwindow = _formeditor->formWindowManager()->createFormWindow(this, Qt::Window);
-  qDebug() << "_formwindow->hasFeature(EditFeature) = " << _formwindow->hasFeature(QDesignerFormWindowInterface::EditFeature);
+  //qDebug() << "_formwindow->hasFeature(EditFeature) = " << _formwindow->hasFeature(QDesignerFormWindowInterface::EditFeature);
   _formeditor->formWindowManager()->setActiveFormWindow(_formwindow);
   _formeditor->objectInspector()->setFormWindow(_formwindow);
   _formwindow->editWidgets();
@@ -321,23 +331,6 @@ void xTupleDesigner::setOrder(int p)
   emit orderChanged(p);
 }
 
-static void debugObjectTree(QObject *p, QString label, int depth)
-{
-  for (int i = 0; i < p->children().size(); i++)
-  {
-    QObject *child = p->children().at(i);
-    qDebug() << label << "," << QString::number(i) << ":"
-             << child
-             << (QString(child->inherits("QWidget") ? "is" : "not") + " a widget")
-             << (child->inherits("QWidget") ?
-                   QString("that ") +
-                   (((QWidget*)child)->acceptDrops() ? "" : "cannot ") +
-                   "accept drops" : "");
-    if (depth > 0)
-      debugObjectTree(child, label + "," + QString::number(i), depth - 1);
-  }
-}
-
 void xTupleDesigner::setSource(QIODevice *psrc, QString pfilename)
 {
   if (! psrc || ! _formwindow)
@@ -354,8 +347,6 @@ void xTupleDesigner::setSource(QIODevice *psrc, QString pfilename)
   _formwindow->setFileName(pfilename);
   emit nameChanged(name());
   emit sourceChanged(_formwindow->contents());
-
-  //debugObjectTree(this, "setSource(QIODevice,QString)", 3);
 }
 
 void xTupleDesigner::setSource(QString psrc)
@@ -369,10 +360,6 @@ void xTupleDesigner::setSource(QString psrc)
   _formwindow->setFileName("");
   emit nameChanged(name());
   emit sourceChanged(_formwindow->contents());
-
-  qDebug() << "setSource(QString);";
-  for (int i = 0; i < children().size(); i++)
-    qDebug() << "setSource() " << i << ": " << children().at(i);
 }
 
 QString xTupleDesigner::source()
@@ -380,14 +367,11 @@ QString xTupleDesigner::source()
   return _formwindow->contents();
 }
 
-// TODO: this always seems to return true
-bool xTupleDesigner::isChanged()
+void xTupleDesigner::closeEvent(QCloseEvent * event)
 {
-  _source->reset();
-  bool returnValue =
-          (_source->size()    != _formwindow->contents().size() ||
-           _source->readAll().data() != _formwindow->contents().toAscii().data());
-  _source->reset();
-  qDebug("xTupleDesigner::isChanged() returning %d", returnValue);
-  return returnValue;
+  if(_actions->sClose())
+    XMainWindow::closeEvent(event);
+  else
+    event->ignore();
 }
+

@@ -64,6 +64,10 @@
 #include <QSqlError>
 #include <QtDesigner>
 
+// TODO: can we live without this?
+// copied from .../qt-mac-commercial-src-4.4.3/tools/designer/src/lib/shared/pluginmanager_p.h
+#include "pluginmanager_p.h"
+
 #include "xTupleDesigner.h"
 
 static QAction *separator(QObject *parent)
@@ -110,22 +114,16 @@ xTupleDesignerActions::xTupleDesignerActions(xTupleDesigner *parent)
 
   QDesignerFormWindowManagerInterface *formwm = parent->formeditor()->formWindowManager();
 
-  QAction *editBuddiesAct    = new QAction(tr("Edit Buddies"),   this);
-  QAction *editSignalSlotAct = new QAction(tr("Edit Signal/Slot Connections"), this);
-  QAction *editTabOrderAct   = new QAction(tr("Edit Tab Order"), this);
-  QAction *editWidgetsAct    = new QAction(tr("Edit Widgets"),   this);
+  //QAction *editBuddiesAct    = new QAction(tr("Edit Buddies"),   this);
+  //QAction *editSignalSlotAct = new QAction(tr("Edit Signal/Slot Connections"), this);
+  //QAction *editTabOrderAct   = new QAction(tr("Edit Tab Order"), this);
+  //QAction *editWidgetsAct    = new QAction(tr("Edit Widgets"),   this);
   QAction *redoAct           = formwm->actionRedo();
   QAction *undoAct           = formwm->actionUndo();
 
-  editWidgetsAct->setCheckable(true);
 
   undoAct->setShortcut(tr("CTRL+Z"));
   redoAct->setShortcut(tr("CTRL+SHIFT+Z"));
-
-  connect(editBuddiesAct,    SIGNAL(triggered()), this, SLOT(sEditBuddies()));
-  connect(editSignalSlotAct, SIGNAL(triggered()), this, SLOT(sEditSignalSlot()));
-  connect(editTabOrderAct,   SIGNAL(triggered()), this, SLOT(sEditTabOrder()));
-  connect(editWidgetsAct,    SIGNAL(triggered()), this, SLOT(sEditWidgets()));
 
   _editActions->addAction(undoAct);
   _editActions->addAction(redoAct);
@@ -138,12 +136,38 @@ xTupleDesignerActions::xTupleDesignerActions(xTupleDesigner *parent)
   _editActions->addAction(separator(this));
   _editActions->addAction(formwm->actionLower());
   _editActions->addAction(formwm->actionRaise());
-  // TODO: The following require plugins!
-  //_editActions->addAction(separator(this));
-  //_editActions->addAction(editBuddiesAct);
-  //_editActions->addAction(editSignalSlotAct);
-  //_editActions->addAction(editTabOrderAct);
-  //_editActions->addAction(editWidgetsAct);
+
+  _toolActions = new QActionGroup(parent);
+  _toolActions->setObjectName("_toolActions");
+  _toolActions->setExclusive(false);
+
+  QAction *m_editWidgetsAction = new QAction(tr("Edit Widgets"),   this);
+  m_editWidgetsAction->setCheckable(true);
+  QList<QKeySequence> shortcuts;
+  shortcuts.append(QKeySequence(Qt::Key_F3));
+#if QT_VERSION >= 0x040900 // "ESC" switching to edit mode: Activate once item delegates handle shortcut overrides for ESC.
+  shortcuts.append(QKeySequence(Qt::Key_Escape));
+#endif
+  m_editWidgetsAction->setShortcuts(shortcuts);
+  m_editWidgetsAction->setIcon(QIcon(_designer->formeditor()->resourceLocation() + QLatin1String("/widgettool.png")));
+  connect(m_editWidgetsAction, SIGNAL(triggered()), this, SLOT(sEditWidgets()));
+  m_editWidgetsAction->setChecked(true);
+  m_editWidgetsAction->setEnabled(false);
+  _toolActions->addAction(m_editWidgetsAction);
+
+  QList<QObject*> builtinPlugins = QPluginLoader::staticInstances();
+  builtinPlugins += _designer->formeditor()->pluginManager()->instances();
+  foreach (QObject *plugin, builtinPlugins)
+  {
+    if (QDesignerFormEditorPluginInterface *formEditorPlugin = qobject_cast<QDesignerFormEditorPluginInterface*>(plugin))
+    {
+      if (QAction *action = formEditorPlugin->action())
+      {
+        _toolActions->addAction(action);
+        action->setCheckable(true);
+      }
+    }
+  }
 
   _formActions = new QActionGroup(parent);
   _formActions->setObjectName("_formActions");
@@ -158,30 +182,6 @@ xTupleDesignerActions::xTupleDesignerActions(xTupleDesigner *parent)
   _formActions->addAction(formwm->actionBreakLayout());
   _formActions->addAction(formwm->actionAdjustSize());
   _formActions->addAction(formwm->actionSimplifyLayout());
-
-  _toolActions = new QActionGroup(parent);
-  _toolActions->setObjectName("_toolActions");
-  _toolActions->setExclusive(false);
-
-  _objectInspAct = new QAction(tr("Object Inspector"),   this);
-  _propertyEdAct = new QAction(tr("Property Editor"),    this);
-  _signalSlotAct = new QAction(tr("Signal/Slot Editor"), this);
-  _widgetBoxAct  = new QAction(tr("Widget Box"),         this);
-
-  _objectInspAct->setCheckable(true);
-  _propertyEdAct->setCheckable(true);
-  _signalSlotAct->setCheckable(true);
-  _widgetBoxAct->setCheckable(true);
-
-  _objectInspAct->setChecked(true);
-  _propertyEdAct->setChecked(true);
-  _signalSlotAct->setChecked(true);
-  _widgetBoxAct->setChecked(true);
-
-  _toolActions->addAction(_objectInspAct);
-  _toolActions->addAction(_propertyEdAct);
-  _toolActions->addAction(_signalSlotAct);
-  _toolActions->addAction(_widgetBoxAct);
 
   connect(formwm, SIGNAL(activeFormWindowChanged(QDesignerFormWindowInterface*)),
           this,   SLOT(sActiveFormWindowChanged(QDesignerFormWindowInterface*)));
@@ -203,10 +203,13 @@ void xTupleDesignerActions::sActiveFormWindowChanged(QDesignerFormWindowInterfac
       actionGroupList.at(i)->actions().at(j)->setEnabled(pwindow != 0);
 }
 
-void xTupleDesignerActions::sClose()
+bool xTupleDesignerActions::sClose()
 {
-  if (! _designer->isChanged())
+  if (! _designer->formwindow()->isDirty())
+  {
     _designer->close();
+    return true;
+  }
 
   switch (QMessageBox::question(_designer, tr("Save changes?"),
                                 tr("Do you want to save your changes before "
@@ -219,12 +222,15 @@ void xTupleDesignerActions::sClose()
         _designer->close();
       break;
     case QMessageBox::Discard:
+      _designer->formwindow()->setDirty(false);
       _designer->close();
       break;
     case QMessageBox::Cancel:
     default:
-      return;
+      return false;
   }
+
+  return true;
 }
 
 void xTupleDesignerActions::sOpen()
@@ -233,12 +239,15 @@ void xTupleDesignerActions::sOpen()
                                                   QString::null,
                                                   tr("UI (*.ui)"));
   if (! filename.isNull())
+  {
     _designer->setSource(new QFile(filename), filename);
+    _designer->formwindow()->setDirty(false);
+  }
 }
 
 void xTupleDesignerActions::sRevert()
 {
-  if (_designer->isChanged() &&
+  if (_designer->formwindow()->isDirty() &&
       QMessageBox::question(_designer, tr("Really revert?"),
                             tr("Are you sure you want to throw away "
                                "your changes since the last save?"),
@@ -334,6 +343,7 @@ bool xTupleDesignerActions::sSaveToDB()
   }
 
   _designer->setSource(_designer->source());
+  _designer->formwindow()->setDirty(false);
   return true;
 }
 
@@ -368,6 +378,7 @@ bool xTupleDesignerActions::sSaveFile()
   ts << _designer->source();
   file.close();
   _designer->setSource(_designer->source());
+  _designer->formwindow()->setDirty(false);
 
   return true;
 }
