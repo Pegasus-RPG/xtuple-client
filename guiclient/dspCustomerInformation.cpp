@@ -74,6 +74,7 @@
 #include "arWorkBench.h"
 #include "cashReceipt.h"
 #include "creditMemo.h"
+#include "distributeInventory.h"
 #include "creditcardprocessor.h"
 #include "crmaccount.h"
 #include "customer.h"
@@ -97,7 +98,7 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
 
   connect(_arhist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuArhist(QMenu*, QTreeWidgetItem*)));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-  connect(_creditMemo, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuCreditMemo(QMenu*)));
+  connect(_creditMemo, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuCreditMemo(QMenu*, QTreeWidgetItem*)));
   connect(_cust, SIGNAL(newId(int)), this, SLOT(sPopulate()));
   connect(_custList, SIGNAL(clicked()), _cust, SLOT(sEllipses()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
@@ -1145,6 +1146,127 @@ void dspCustomerInformation::sViewCreditMemo()
   }
 }
 
+void dspCustomerInformation::sPostCreditMemo()
+{
+  bool changeDate = false;
+  QDate newDate = QDate::currentDate();
+
+  if (_privileges->check("ChangeSOMemoPostDate"))
+  {
+    getGLDistDate newdlg(this, "", TRUE);
+    newdlg.sSetDefaultLit(tr("Credit Memo Date"));
+    if (newdlg.exec() == XDialog::Accepted)
+    {
+      newDate = newdlg.date();
+      changeDate = (newDate.isValid());
+    }
+    else
+      return;
+  }
+
+  XSqlQuery setDate;
+  setDate.prepare("UPDATE cmhead SET cmhead_gldistdate=:distdate "
+		  "WHERE cmhead_id=:cmhead_id;");
+
+  QList<QTreeWidgetItem *> selected = _creditMemo->selectedItems();
+  QList<QTreeWidgetItem *> triedToClosed;
+
+  for (int i = 0; i < selected.size(); i++)
+  {
+    if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
+    {
+      int id = ((XTreeWidgetItem*)(selected[i]))->id();
+
+      if (changeDate)
+      {
+        setDate.bindValue(":distdate",  newDate);
+        setDate.bindValue(":cmhead_id", id);
+        setDate.exec();
+        if (setDate.lastError().type() != QSqlError::NoError)
+        {
+	      systemError(this, setDate.lastError().databaseText(), __FILE__, __LINE__);
+        }
+      }
+    }
+  }
+
+  XSqlQuery rollback;
+  rollback.prepare("ROLLBACK;");
+    
+  XSqlQuery postq;
+  postq.prepare("SELECT postCreditMemo(:cmhead_id, 0) AS result;");
+
+  bool tryagain = false;
+  do {
+    for (int i = 0; i < selected.size(); i++)
+    {
+      if (checkSitePrivs(((XTreeWidgetItem*)(selected[i]))->id()))
+      {
+        int id = ((XTreeWidgetItem*)(selected[i]))->id();
+ 
+        XSqlQuery tx;
+        tx.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
+      
+        postq.bindValue(":cmhead_id", id);
+        postq.exec();
+        if (postq.first())
+        {
+          int result = postq.value("result").toInt();
+          if (result < 0)
+          {
+            rollback.exec();
+            systemError( this, storedProcErrorLookup("postCreditMemo", result),
+                  __FILE__, __LINE__);
+            return;
+          }
+          else
+          {
+            if (distributeInventory::SeriesAdjust(result, this) == XDialog::Rejected)
+            {
+              rollback.exec();
+              QMessageBox::information( this, tr("Post Credit Memo"), tr("Transaction Canceled") );
+              return;
+            }
+
+            q.exec("COMMIT;");
+          }
+        }
+        // contains() string is hard-coded in stored procedure
+        else if (postq.lastError().databaseText().contains("post to closed period"))
+        {
+          rollback.exec();
+          if (changeDate)
+          {
+            triedToClosed = selected;
+            break;
+          }
+          else
+            triedToClosed.append(selected[i]);
+        }
+        else if (postq.lastError().type() != QSqlError::NoError)
+        {
+          rollback.exec();
+          systemError(this, tr("A System Error occurred posting Credit Memo#%1.\n%2")
+                  .arg(selected[i]->text(0))
+                  .arg(postq.lastError().databaseText()),
+                __FILE__, __LINE__);
+        }
+      }
+
+      if (triedToClosed.size() > 0)
+      {
+        failedPostList newdlg(this, "", true);
+        newdlg.sSetList(triedToClosed, _creditMemo->headerItem(), _creditMemo->header());
+        tryagain = (newdlg.exec() == XDialog::Accepted);
+        selected = triedToClosed;
+        triedToClosed.clear();
+      }
+    }
+  } while (tryagain);
+
+  omfgThis->sCreditMemosUpdated();
+}
+
 void dspCustomerInformation::sEditAropen()
 {
   ParameterList params;
@@ -1288,8 +1410,9 @@ void dspCustomerInformation::sPopulateMenuInvoice( QMenu * pMenu,  QTreeWidgetIt
   }
 }
 
-void dspCustomerInformation::sPopulateMenuCreditMemo( QMenu * pMenu )
+void dspCustomerInformation::sPopulateMenuCreditMemo( QMenu * pMenu, QTreeWidgetItem *selected )
 {
+  XTreeWidgetItem * item = (XTreeWidgetItem*)selected;
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("New Credit Memo..."), this, SLOT(sNewCreditMemo()), 0);
@@ -1303,6 +1426,13 @@ void dspCustomerInformation::sPopulateMenuCreditMemo( QMenu * pMenu )
    ||(_creditMemo->altId() == -3 && !_privileges->check("EditAROpenItem")))
     pMenu->setItemEnabled(menuItem, FALSE);
   pMenu->insertItem(tr("View Credit Memo..."), this, SLOT(sViewCreditMemo()), 0);
+
+  if(item->rawValue("posted").toBool() == FALSE)
+  {
+    menuItem = pMenu->insertItem(tr("Post Credit Memo..."), this, SLOT(sPostCreditMemo()), 0);
+    if(!_privileges->check("PostARDocuments"))
+      pMenu->setItemEnabled(menuItem, FALSE);
+  }
 }
 
 void dspCustomerInformation::sPopulateMenuArhist( QMenu * pMenu,  QTreeWidgetItem *selected)

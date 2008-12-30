@@ -101,13 +101,14 @@ public slots:
     virtual void sNewCreditMemo();
     virtual void sEditCreditMemo();
     virtual void sViewCreditMemo();
+    virtual void sPostCreditMemo();
     virtual void sEditAropen();
     virtual void sViewAropen();
     virtual void sFillPaymentsList();
     virtual void sPopulateMenuQuote(QMenu*);
     virtual void sPopulateMenuSalesOrder(QMenu*);
     virtual void sPopulateMenuInvoice(QMenu*, QTreeWidgetItem *selected);
-    virtual void sPopulateMenuCreditMemo(QMenu*);
+    virtual void sPopulateMenuCreditMemo(QMenu*, QTreeWidgetItem *selected);
     virtual void sPopulateMenuArhist(QMenu*, QTreeWidgetItem *selected);
     virtual void sConvertQuote();
     virtual void sCreditMemoSelected(bool);
