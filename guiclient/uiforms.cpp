@@ -123,6 +123,12 @@ void uiforms::sEdit()
 
 void uiforms::sDelete()
 {
+  if (QMessageBox::question(this,  tr("Really delete?"),
+                            tr("Are you sure you want to delete this screen?"),
+                            QMessageBox::Yes | QMessageBox::No,
+                            QMessageBox::No) == QMessageBox::No)
+    return;
+
   q.prepare( "DELETE FROM uiform "
              "WHERE (uiform_id=:uiform_id);" );
   q.bindValue(":uiform_id", _uiform->id());
